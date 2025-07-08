@@ -1,0 +1,99 @@
+site_name: "Franklin Baldo"
+site_url: "https://franklinbaldo.github.io"
+site_author: "Franklin Baldo"
+site_description: "Personal website and digital chronicle of Franklin Baldo's thoughts, projects, and intellectual journey in Legal Tech, AI/ML, and software development."
+
+theme:
+  name: material
+  language: "en"
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes # Enable index pages for sections
+    - toc.integrate
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+    - content.action.edit # Enable edit button
+    - content.action.view # Enable view button
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  icon:
+    logo: material/feather # Placeholder, can be replaced with a custom logo
+  social:
+    - icon: fontawesome/brands/github
+      link: "https://github.com/franklinbaldo"
+    - icon: fontawesome/brands/twitter
+      link: "https://twitter.com/franklinbaldo"
+    - icon: fontawesome/solid/envelope
+      link: "mailto:franklin@franklinbaldo.com"
+
+nav:
+  - Home: index.md
+  - About: about.md
+  - Blog: blog/ # This will be handled by the blog plugin
+
+plugins:
+  - search
+  - blog:
+      # The blog plugin will automatically discover posts in the 'blog' directory
+      # and generate the index and post pages.
+      # You can configure categories, tags, authors here.
+      # For example:
+      post_url_format: "{slug}" # Use clean URLs for posts
+      post_dir: blog/posts # Directory where blog posts are located
+      
+  - social:
+      
+      enabled: true # Enable social cards
+  - git-revision-date-localized # For displaying last updated date
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.mark
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - def_list # For definition lists
+  - pymdownx.tasklist: # For task lists
+      custom_checkbox: true
+  - pymdownx.emoji: # For emojis
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/franklinbaldo
+      name: Franklin Baldo on Github
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/franklinbaldo
+      name: Franklin Baldo on Twitter
+    - icon: fontawesome/solid/envelope
+      link: mailto:franklin@franklinbaldo.com
+      name: Send an email to Franklin Baldo
+  analytics:
+    provider: google
+    property: UA-XXXXXXXXX-X # Replace with actual Google Analytics ID
+
+copyright: "Copyright &copy; 2024 Franklin Baldo"
