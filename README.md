@@ -1,5 +1,5 @@
 # Franklin Baldo - Personal Website
-
+ 
 [![Deploy MkDocs to GitHub Pages](https://github.com/franklinbaldo/franklinbaldo.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/franklinbaldo/franklinbaldo.github.io/actions/workflows/deploy.yml)
 ![Python](https://img.shields.io/badge/Python-3.11-blue?style=for-the-badge&logo=python)
 ![MkDocs Material](https://img.shields.io/badge/MkDocs%20Material-526CFE?style=for-the-badge&logo=MaterialForMkDocs&logoColor=white)
