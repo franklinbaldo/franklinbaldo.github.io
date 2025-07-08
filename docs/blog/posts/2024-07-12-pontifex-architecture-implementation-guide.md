@@ -1,7 +1,7 @@
 ---
 author: franklin
 date: 2024-07-12
-title: Pontifex Architecture Implementation Guide
+title: "Pontifex Architecture Implementation Guide"
 ---
 
 After conducting comprehensive research across academic databases, code repositories, and technical documentation, **no research paper or implementation of a "Pontifex architecture for semantic probing" with the specific features you described appears to exist in the current literature**. However, I've identified extensive related work and practical approaches for implementing the components you mentioned.

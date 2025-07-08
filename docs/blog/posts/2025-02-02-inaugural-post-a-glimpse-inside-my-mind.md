@@ -1,7 +1,7 @@
 ---
 author: franklin
 date: 2025-02-02
-title: Inaugural Post: A Glimpse Inside My Mind
+title: "Inaugural Post: A Glimpse Inside My Mind"
 ---
 Welcome to this repository - fair warning: it's going to be beautifully chaotic. Like \[Gwern's digital garden\]([https://www.gwern.net/](https://www.gwern.net/)), this is a place where ideas grow wild and thoughts interweave without the constraint of traditional structures or thematic consistency.
 
