@@ -78,7 +78,7 @@ graph TD
 
 ### **3. O Elenco de Agentes: Uma Equipe de Especialistas Digitais**
 
-Cada etapa do pipeline é executada por um agente especializado, que é essencialmente um script Python envolvendo um prompt bem definido para a API do Gemini.
+Cada etapa do pipeline é executada por um agente especializado, que é essencialmente um script Python envolvendo um prompt bem definido para a API do Gemini. (Para detalhes técnicos da implementação, veja o [Guia de Arquitetura Pontifex](/blog/pontifex-architecture-implementation-guide).)
 
 | Agente | Persona | Responsabilidade Principal |
 | :--- | :--- | :--- |
@@ -108,7 +108,7 @@ Este projeto não termina quando o primeiro post for publicado. Sua verdadeira f
 *   **Resultado Esperado:** O sistema atinge um estado de "confiabilidade supervisionada". A maioria dos leads de fontes primárias (GitHub, seu blog) são processados automaticamente, exigindo apenas uma rápida aprovação humana no PR. O blog é atualizado quase em tempo real com suas atividades públicas.
 *   **Hipóteses:**
     *   **Voz Narrativa Consistente:** Após meses de ajuste de prompt e exemplos, o `WriterAgent` e o `EditorAgent` convergirão para uma voz editorial que é indistinguível da sua própria escrita para posts factuais.
-    *   **Expansão de Fontes:** O sistema será expandido para incluir fontes mais complexas, como discussões no X/Twitter ou a resolução de mercados no Manifold, exigindo que os agentes aprendam a sintetizar múltiplos pontos de dados em uma única narrativa.
+    *   **Expansão de Fontes:** O sistema será expandido para incluir fontes mais complexas, como discussões no X/Twitter ou a resolução de mercados no Manifold, exigindo que os agentes aprendam a sintetizar múltiplos pontos de dados em uma única narrativa. (Veja [Will AI Discover New Conservation Law?](/blog/will-ai-discover-new-conservation-law-before-2050) como um exemplo de exploração via mercados de predição).
     *   **Feedback Loop:** Os artigos publicados (e suas métricas de engajamento, se disponíveis) podem se tornar um novo input para o sistema, que poderia aprender quais tipos de posts são mais "interessantes".
 
 #### **Horizonte 2 (Ano 2-4): Inteligência Emergente e Síntese**
@@ -117,7 +117,7 @@ Este projeto não termina quando o primeiro post for publicado. Sua verdadeira f
 *   **Hipóteses:**
     *   **Geração de Posts "On This Day":** O sistema pode gerar automaticamente posts do tipo "Há 3 anos, Franklin estava explorando este conceito..." correlacionando artigos antigos com atividades atuais.
     *   **Detecção de Evolução de Pensamento:** Um agente analítico poderia, trimestralmente, analisar todos os posts sobre um determinado tópico (ex: "Inteligência Artificial") e redigir um meta-artigo intitulado "Uma Análise da Minha Posição em IA: Evolução de Q1 2025 a Q1 2026", destacando mudanças de opinião e contradições.
-    *   **Identificação de Conexões Inexploradas:** O sistema poderia identificar que um commit em um projeto de física quântica e uma aposta no Manifold sobre leis de conservação ocorreram na mesma semana e sugerir um post mais profundo conectando os dois eventos, algo que você mesmo poderia não ter notado. O prompt se tornaria: "Analise os leads da última semana e proponha uma tese original que os conecte."
+    *   **Identificação de Conexões Inexploradas:** O sistema poderia identificar que um commit em um projeto de física quântica e uma aposta no Manifold sobre leis de conservação ocorreram na mesma semana e sugerir um post mais profundo conectando os dois eventos, algo que você mesmo poderia não ter notado. O prompt se tornaria: "Analise os leads da última semana e proponha uma tese original que os conecte." (Um exemplo inicial de sondagem semântica pode ser visto em [Pontifex Novel Architecture](/blog/pontifex-novel-architecture-semantic-probing).)
 
 #### **Horizonte 3 (Ano 5+): O Oráculo Pessoal e a Máquina de Legado**
 
