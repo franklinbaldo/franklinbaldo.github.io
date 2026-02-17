@@ -1,0 +1,149 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const formatDate = (date: Date) => {
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(date);
+};
+---
+
+<Layout title={post.data.title} description={post.data.description}>
+  <article class="max-w-3xl mx-auto py-8 font-serif leading-relaxed animate-fade-in">
+    <header class="mb-12 text-center md:text-left border-b border-[#2a2b36] pb-8 relative">
+      <div class="absolute top-0 right-0 text-[10rem] opacity-[0.03] font-serif font-bold text-[#ff9e64] pointer-events-none select-none -z-10 transform translate-x-1/4 -translate-y-1/4">
+        {new Date(post.data.date).getFullYear()}
+      </div>
+
+      <div class="mb-6">
+        <time datetime={post.data.date.toISOString()} class="text-xs font-mono text-[#7dcfff]/80 uppercase tracking-widest block mb-4 border border-[#7dcfff]/20 inline-block px-2 py-1 rounded bg-[#1a1b26]/50 backdrop-blur-sm">
+          {formatDate(post.data.date)}
+        </time>
+        <h1 class="text-4xl md:text-5xl font-bold text-[#e0e0e0] leading-tight mb-4 tracking-tight">
+          {post.data.title}
+        </h1>
+      </div>
+      
+      <div class="flex gap-6 items-center text-sm font-mono text-gray-500 justify-center md:justify-start">
+        {post.data.author && <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#ff9e64]"></span>By {post.data.author}</span>}
+        <span class="opacity-50">|</span>
+        <span>{(post.body.length / 500).toFixed(0)} min read</span>
+      </div>
+    </header>
+    
+    <div class="markdown-content text-lg">
+      <Content />
+    </div>
+
+    <div class="mt-16 pt-8 border-t border-[#2a2b36] flex justify-between items-center text-sm font-mono text-gray-500">
+      <a href="/" class="hover:text-[#ff9e64] transition-colors flex items-center gap-2">
+        <span>&larr;</span> Back to Timeline
+      </a>
+      <span class="opacity-50">End of Entry</span>
+    </div>
+  </article>
+</Layout>
+
+<style is:global>
+  /* Custom prose styles for Memory Palace aesthetic */
+  .markdown-content {
+    color: #c0caf5;
+  }
+  .markdown-content h2 {
+    color: #ff9e64;
+    font-size: 1.8em;
+    margin-top: 2em;
+    margin-bottom: 0.8em;
+    border-bottom: 1px solid #2a2b36;
+    padding-bottom: 0.3em;
+    font-weight: 700;
+  }
+  .markdown-content h3 {
+    color: #7dcfff;
+    font-size: 1.4em;
+    margin-top: 1.5em;
+    margin-bottom: 0.6em;
+    font-weight: 600;
+  }
+  .markdown-content p {
+    margin-bottom: 1.5em;
+    line-height: 1.8;
+  }
+  .markdown-content a {
+    color: #7dcfff;
+    text-decoration: none;
+    border-bottom: 1px dashed #7dcfff;
+    transition: all 0.2s;
+  }
+  .markdown-content a:hover {
+    color: #ff9e64;
+    border-bottom-color: #ff9e64;
+  }
+  .markdown-content blockquote {
+    border-left: 4px solid #ff9e64;
+    padding-left: 1.5em;
+    color: #9aa5ce;
+    font-style: italic;
+    background: rgba(255, 158, 100, 0.05);
+    padding: 1.5em;
+    border-radius: 0 4px 4px 0;
+    margin: 2em 0;
+  }
+  .markdown-content code {
+    font-family: 'JetBrains Mono', monospace;
+    background: #1a1b26;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-size: 0.85em;
+    color: #ff9e64;
+    border: 1px solid #2a2b36;
+  }
+  .markdown-content pre {
+    background: #0f1019 !important;
+    padding: 1.5em;
+    border-radius: 8px;
+    border: 1px solid #2a2b36;
+    overflow-x: auto;
+    margin: 2em 0;
+  }
+  .markdown-content ul {
+    list-style-type: disc;
+    padding-left: 1.5em;
+    margin-bottom: 1.5em;
+  }
+  .markdown-content ol {
+    list-style-type: decimal;
+    padding-left: 1.5em;
+    margin-bottom: 1.5em;
+  }
+  .markdown-content li {
+    margin-bottom: 0.5em;
+  }
+  .markdown-content hr {
+    border-color: #2a2b36;
+    margin: 3em 0;
+  }
+  .markdown-content strong {
+    color: #e0e0e0;
+    font-weight: 700;
+  }
+  .markdown-content img {
+    border-radius: 8px;
+    border: 1px solid #2a2b36;
+    margin: 2em auto;
+  }
+</style>
