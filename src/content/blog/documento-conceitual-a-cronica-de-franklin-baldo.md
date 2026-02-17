@@ -34,7 +34,7 @@ A Crônica será construída sobre quatro pilares fundamentais:
 
 ### **2. Visão Arquitetural: O Boswell Digital**
 
-Inspirado em James Boswell, o biógrafo de Samuel Johnson, nosso sistema funcionará como um "Boswell Digital" – um observador diligente que registra, contextualiza e narra. O fluxo de trabalho é o seguinte:
+Inspirado em James Boswell, o biógrafo de Samuel Johnson, nosso sistema funcionará como um ["Boswell Digital"](/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital) – um observador diligente que registra, contextualiza e narra. O fluxo de trabalho é o seguinte:
 
 ```mermaid
 graph TD

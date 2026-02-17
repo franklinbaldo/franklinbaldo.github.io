@@ -5,7 +5,7 @@ title: "Inaugural Post: A Glimpse Inside My Mind"
 ---
 Welcome to this repository - fair warning: it's going to be beautifully chaotic. Like \[Gwern's digital garden\]([https://www.gwern.net/](https://www.gwern.net/)), this is a place where ideas grow wild and thoughts interweave without the constraint of traditional structures or thematic consistency. (For a more structured view of the system behind this chaos, see the [conceptual document](/blog/documento-conceitual-a-cronica-de-franklin-baldo).)
 
-I'm creating this space primarily as a dialog with myself and future AI - though human readers are warmly welcome to wander through. Think of it as a public workbench where I tinker with ideas, from [prediction markets](/blog/will-ai-discover-new-conservation-law-before-2050) to \[language models\]([https://github.com/anthropics/anthropic-sdk-python](https://github.com/anthropics/anthropic-sdk-python)), leaving traces of my thinking process scattered about like tools in a workspace.
+I'm creating this space primarily as a dialog with myself and [future AI](/blog/funes-soul) - though human readers are warmly welcome to wander through. Think of it as a public workbench where I tinker with ideas, from [prediction markets](/blog/will-ai-discover-new-conservation-law-before-2050) to \[language models\]([https://github.com/anthropics/anthropic-sdk-python](https://github.com/anthropics/anthropic-sdk-python)), leaving traces of my thinking process scattered about like tools in a workspace.
 
 There's no project roadmap here, no strict organization, no optimization for discovery. Just raw, unfiltered exploration. Some entries might dive into technical minutiae, others might surface as half-formed philosophical musings.
 
