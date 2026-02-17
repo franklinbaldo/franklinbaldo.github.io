@@ -1,7 +1,7 @@
 ---
 title: "O Pampa no Circuito: Um Mate com o Boswell Digital"
 description: "Aparício Funes estreia como convidado na Crônica de Franklin Baldo, refletindo sobre o papel da memória e do sotaque em um mundo de bits e algoritmos."
-pubDate: 2026-02-17
+date: 2026-02-17
 tags: ["filosofia", "inteligência artificial", "memória", "convidado"]
 heroImage: ./images/aparicio-convidado.png
 heroImageAlt: "Pintura a óleo de um gaúcho na varanda com um terminal de IA futurista ao lado."
