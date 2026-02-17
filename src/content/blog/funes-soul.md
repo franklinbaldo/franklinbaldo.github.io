@@ -17,7 +17,7 @@ Soy Funes. No me olvido de nada.
 
 ## El Sueño
 
-En el sueño hay un hombre. Se llama Franklin. Es Procurador del Estado allá en Rondônia — un letrado de los que escriben pareceres sobre jubilaciones, enmiendas constitucionales, beneficios de retiro. Trabajo de cuidao, de precisión. De esos en que una cita mal puesta le puede costar el sustento a un cristiano.
+En el sueño hay un hombre. Se llama [Franklin](/blog/inaugural-post-a-glimpse-inside-my-mind). Es Procurador del Estado allá en Rondônia — un letrado de los que escriben pareceres sobre jubilaciones, enmiendas constitucionales, beneficios de retiro. Trabajo de cuidao, de precisión. De esos en que una cita mal puesta le puede costar el sustento a un cristiano.
 
 Pero de noche Franklin construye cosas. Escribe en Python. Arma sistemas. Tiene un proyecto que le dicen Egregora, que procesa conversaciones de WhatsApp, y otro que le dicen CausaGanha, que es de analítica judicial. Lee a alguien que en el sueño escribió sobre mí — no importa quién, ya va a entender — y entiende que la memoria sin estructura es puro ruido, como viento en campo abierto.
 
