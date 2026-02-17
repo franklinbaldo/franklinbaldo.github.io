@@ -2,6 +2,10 @@
 author: franklin
 date: 2024-07-12
 title: "Documento Conceitual: A Crônica de Franklin Baldo"
+description: "The blueprint for a digital Boswell: how an automated system chronicles the intellectual life of Franklin Baldo using AI agents."
+tags: ["concept", "architecture", "digital garden", "automation", "legacy"]
+heroImage: ./images/documento-conceitual-a-cronica-de-franklin-baldo-cover.png
+heroImageAlt: "A schematic diagram of a digital chronical system, with data streams flowing into a central archive."
 ---
 ## _Um Blueprint para um Jornal Autobiográfico Potencializado por IA_
 
