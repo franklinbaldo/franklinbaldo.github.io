@@ -30,10 +30,10 @@ const formatDate = (date: Date) => {
       </div>
 
       <div class="mb-6">
-        <time datetime={post.data.date.toISOString()} class="text-xs font-mono text-[#7dcfff]/80 uppercase tracking-widest block mb-4 border border-[#7dcfff]/20 inline-block px-2 py-1 rounded bg-[#1a1b26]/50 backdrop-blur-sm">
+        <time datetime={post.data.date.toISOString()} class="text-xs font-mono text-gray-500 uppercase tracking-widest block mb-4 inline-block">
           {formatDate(post.data.date)}
         </time>
-        <h1 class="text-4xl md:text-5xl font-bold text-[#e0e0e0] leading-tight mb-4 tracking-tight">
+        <h1 class="text-5xl md:text-6xl font-bold text-[#e0e0e0] leading-tight mb-6 tracking-tight">
           {post.data.title}
         </h1>
       </div>
@@ -65,6 +65,19 @@ const formatDate = (date: Date) => {
     text-align: justify;
     hyphens: auto;
   }
+
+  /* Drop Cap Implementation */
+  .markdown-content > p:first-of-type::first-letter {
+    float: left;
+    font-size: 3.5rem;
+    line-height: 0.8;
+    padding-right: 0.5rem;
+    padding-top: 0.1rem;
+    font-family: 'EB Garamond', serif;
+    font-weight: 700;
+    color: #ff9e64;
+  }
+
   .markdown-content h2 {
     color: #ff9e64;
     font-size: 1.8em;
@@ -85,19 +98,20 @@ const formatDate = (date: Date) => {
     margin-bottom: 1.5em;
     line-height: 1.65;
   }
+
+  /* Refined Link Styles (Gwern-inspired) */
   .markdown-content a {
-    color: #7dcfff;
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
+    color: inherit;
+    text-decoration: underline dotted 1px rgba(125, 207, 255, 0.5);
     text-underline-offset: 3px;
-    text-decoration-color: rgba(125, 207, 255, 0.5);
     border-bottom: none;
     transition: all 0.2s;
   }
   .markdown-content a:hover {
     color: #ff9e64;
-    text-decoration-color: #ff9e64;
+    text-decoration: underline solid 2px #ff9e64;
   }
+
   .markdown-content blockquote {
     border-left: 3px solid #ff9e64;
     padding-left: 1.2em;
