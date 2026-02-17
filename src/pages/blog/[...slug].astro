@@ -23,9 +23,9 @@ const formatDate = (date: Date) => {
 ---
 
 <Layout title={post.data.title} description={post.data.description}>
-  <article class="max-w-3xl mx-auto py-8 font-serif leading-relaxed animate-fade-in">
+  <article class="max-w-2xl mx-auto py-8 font-serif leading-relaxed animate-fade-in">
     <header class="mb-12 text-center md:text-left border-b border-[#2a2b36] pb-8 relative">
-      <div class="absolute top-0 right-0 text-[10rem] opacity-[0.03] font-serif font-bold text-[#ff9e64] pointer-events-none select-none -z-10 transform translate-x-1/4 -translate-y-1/4">
+      <div class="absolute top-0 right-0 text-[10rem] opacity-[0.01] font-serif font-bold text-[#ff9e64] pointer-events-none select-none -z-10 transform translate-x-1/4 -translate-y-1/4">
         {new Date(post.data.date).getFullYear()}
       </div>
 
@@ -62,11 +62,13 @@ const formatDate = (date: Date) => {
   /* Custom prose styles for Memory Palace aesthetic */
   .markdown-content {
     color: #c0caf5;
+    text-align: justify;
+    hyphens: auto;
   }
   .markdown-content h2 {
     color: #ff9e64;
     font-size: 1.8em;
-    margin-top: 2em;
+    margin-top: 2.5em;
     margin-bottom: 0.8em;
     border-bottom: 1px solid #2a2b36;
     padding-bottom: 0.3em;
@@ -75,32 +77,35 @@ const formatDate = (date: Date) => {
   .markdown-content h3 {
     color: #7dcfff;
     font-size: 1.4em;
-    margin-top: 1.5em;
+    margin-top: 2em;
     margin-bottom: 0.6em;
     font-weight: 600;
   }
   .markdown-content p {
     margin-bottom: 1.5em;
-    line-height: 1.8;
+    line-height: 1.65;
   }
   .markdown-content a {
     color: #7dcfff;
-    text-decoration: none;
-    border-bottom: 1px dashed #7dcfff;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(125, 207, 255, 0.5);
+    border-bottom: none;
     transition: all 0.2s;
   }
   .markdown-content a:hover {
     color: #ff9e64;
-    border-bottom-color: #ff9e64;
+    text-decoration-color: #ff9e64;
   }
   .markdown-content blockquote {
-    border-left: 4px solid #ff9e64;
-    padding-left: 1.5em;
+    border-left: 3px solid #ff9e64;
+    padding-left: 1.2em;
     color: #9aa5ce;
     font-style: italic;
-    background: rgba(255, 158, 100, 0.05);
-    padding: 1.5em;
-    border-radius: 0 4px 4px 0;
+    background: transparent;
+    padding: 0.5em 0 0.5em 1.2em;
+    border-radius: 0;
     margin: 2em 0;
   }
   .markdown-content code {
