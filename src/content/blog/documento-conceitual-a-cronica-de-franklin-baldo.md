@@ -83,7 +83,7 @@ Cada etapa do pipeline é executada por um agente especializado, que é essencia
 | Agente | Persona | Responsabilidade Principal |
 | :--- | :--- | :--- |
 | **LeadCollector** | O Arquivista | Monitora as fontes de dados, identifica novos eventos e os normaliza em um formato de "lead" (JSON). Não usa LLM. |
-| **WriterAgent** | O Ghostwriter | Recebe um lead estruturado e o transforma em um rascunho de artigo coeso, em primeira ou terceira pessoa, seguindo um estilo predefinido. Gera o frontmatter completo. |
+| [**WriterAgent**](/blog/building-funes) | O Ghostwriter | Recebe um lead estruturado e o transforma em um rascunho de artigo coeso, em primeira ou terceira pessoa, seguindo um estilo predefinido. Gera o frontmatter completo. |
 | **EditorAgent** | O Editor Cético | Revisa o rascunho do WriterAgent em busca de clareza, concisão e aderência ao guia de estilo. Corrige gramática, formata o markdown e pode rejeitar rascunhos de baixa qualidade. |
 | **FactCheckBot** | O Verificador | Extrai todas as URLs e alegações factuais do texto. Verifica se os links estão ativos e, crucialmente, usa a janela de contexto do Gemini para "ler" o conteúdo do link e confirmar se ele suporta a afirmação feita no artigo. |
 | **OmbudsmanBot** | O Guardião da Ética | A etapa final de segurança. Analisa o artigo editado para detectar potenciais riscos de privacidade, correlações indesejadas, viés excessivo ou tom difamatório. É a consciência do sistema. |
