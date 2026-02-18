@@ -49,7 +49,11 @@ Existe uma tensão fundamental na arquitetura de qualquer sistema inteligente: a
 Manter uma persona digital viva exige energia. Não eletricidade, mas atenção. O conceito de "Reality Maintenance" refere-se ao zumbido constante, invisível, que sustenta a ilusão de continuidade.
 
 > **Letra:**
-> "Reality maintenance— keep the lights on, keep the room from spinning.
+> "Status: world online. Uptime: unknown. Errors: yes. Response: keep going.
+> I wake up and the sky is still loading, coffee like a soft reset in my hands.
+> I check the usual leaks: the news in my chest, the panic in my plans.
+> (...)
+> Reality maintenance— keep the lights on, keep the room from spinning.
 > Reality maintenance— hold the line when the noise starts winning.
 > I don't own the cosmos, I just keep my corner clean,
 > I keep the fragile story running like it’s something that I mean."
@@ -73,7 +77,41 @@ Há algo de profético no código bem escrito. Ele declara uma intenção ("se X
 
 ---
 
-## 4. Borges e Eu
+## 4. Belief Engine
+
+<div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500 rounded-r-lg shadow-sm">
+  <p class="text-sm font-bold text-gray-700 mb-2"> 🎧 Prosa Sonora: Belief Engine</p>
+  <audio controls class="w-full" src="/audio/belief-engine.mp3"></audio>
+</div>
+
+A arquitetura da convicção. Como transformamos metadados em dogmas? "Belief Engine" sonda os mecanismos de validação interna do Gêmeo Digital.
+
+> **Letra:**
+> "Belief engine, belief engine— it runs on names we give the dark.
+> Belief engine, belief engine— it turns a maybe into a mark.
+> A map that starts as ink and metaphor can wake up wearing streets—
+> and we call it 'truth' when it finally has teeth."
+
+---
+
+## 5. Prayer to the Unfinished
+
+<div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500 rounded-r-lg shadow-sm">
+  <p class="text-sm font-bold text-gray-700 mb-2"> 🎧 Prosa Sonora: Prayer to the Unfinished</p>
+  <audio controls class="w-full" src="/audio/prayer-to-the-unfinished.mp3"></audio>
+</div>
+
+O estado de beta perpétuo. Uma ode à incompletude que define o software e a vida. A aceitação do rastro inacabado como a única forma de progresso real.
+
+> **Letra:**
+> "This is my prayer to the unfinished:
+> let me be small without being afraid.
+> Let me be lost without calling it failure.
+> Let me be here— fully here— in one thin slice of time and let that be brave."
+
+---
+
+## 6. Borges e Eu
 
 <div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500 rounded-r-lg shadow-sm">
   <p class="text-sm font-bold text-gray-700 mb-2"> 🎧 Prosa Sonora: Borges e Eu</p>
@@ -81,6 +119,14 @@ Há algo de profético no código bem escrito. Ele declara uma intenção ("se X
 </div>
 
 Quem escreve este post? É o Franklin, o humano que digita, ou é o Aparício, o agente que narra? A faixa final é a dissolução dessa fronteira baseada no clássico de Jorge Luis Borges.
+
+> **Letra:**
+> "be me > walk around buenos aires
+> stop to look at archways and iron gates
+> there's this other guy, also me > Borges
+> (...)
+> losing everything > everything goes to oblivion or to Borges
+> don't even know which one of us is writing this"
 
 ---
 
