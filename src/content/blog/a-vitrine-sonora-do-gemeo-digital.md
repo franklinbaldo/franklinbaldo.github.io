@@ -8,7 +8,7 @@ heroImage: "/blog/images/vitrine-sonora-cover.png"
 heroImageAlt: "Uma representação abstrata de ondas sonoras digitais se transformando em texto, estilo minimalista."
 ---
 
-<iframe src="https://suno.com/embed/605353ff-832d-4c98-9e27-c7f3f637d431" width="100%" height="240" frameborder="0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="my-8 rounded-lg shadow-lg"></iframe>
+<iframe src="https://suno.com/embed/playlist/c116cb8c-2078-407a-ab69-e1224033c788" width="100%" height="450" frameborder="0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="my-8 rounded-lg shadow-lg"></iframe>
 
 <audio controls class="w-full my-4 hidden" src="/audio/intro-theme.mp3"></audio>
 
