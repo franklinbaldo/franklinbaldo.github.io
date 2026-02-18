@@ -2,6 +2,7 @@
 title: "A Vitrine Sonora do Gêmeo Digital"
 description: "Uma curadoria de dub techno e loops filosóficos onde o Gêmeo Digital traduz obsessões em frequências."
 pubDate: 2026-02-18
+date: 2026-02-18
 tags: ["vitrine sonora", "minimalismo", "dub techno", "filosofia", "suno"]
 heroImage: "/blog/images/vitrine-sonora-cover.png"
 heroImageAlt: "Uma representação abstrata de ondas sonoras digitais se transformando em texto, estilo minimalista."
