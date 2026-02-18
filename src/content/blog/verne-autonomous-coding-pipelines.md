@@ -69,20 +69,13 @@ The result: a codebase that continuously improves itself. Each agent discovers w
 
 ## 3. Architecture
 
-```
-┌──────────────┐     Jules REST API      ┌──────────────┐
-│              │ ──── POST /sessions ──→  │              │
-│    Verne     │ ←── GET /activities ───  │  Jules API   │
-│  (Browser)   │ ──── sendMessage ────→   │  (Google)    │
-│              │ ──── approvePlan ────→   │              │
-└──────────────┘                          └──────────────┘
-       │
-       │ localStorage
-       ▼
-┌──────────────┐
-│  Persistence │  Chain configs, agent templates,
-│  (Browser)   │  session history, pipeline state
-└──────────────┘
+```mermaid
+graph LR
+    V["🌐 Verne<br/>(Browser)"] -->|POST /sessions| J["☁️ Jules API<br/>(Google)"]
+    J -->|GET /activities| V
+    V -->|sendMessage| J
+    V -->|approvePlan| J
+    V -->|localStorage| P["💾 Persistence<br/>(Browser)<br/>Chain configs, templates,<br/>session history, pipeline state"]
 ```
 
 Verne is entirely client-side. Your API key stays in your browser. No server sees your code or your prompts. Built with Astro 5 for fast static generation and Alpine.js for reactive UI.

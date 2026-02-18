@@ -73,6 +73,36 @@ const { title, description = "A digital memory palace.", image } = Astro.props;
       </div>
     </footer>
     
+    <!-- Mermaid diagram support -->
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'dark',
+        themeVariables: {
+          darkMode: true,
+          background: '#1a1b26',
+          primaryColor: '#7dcfff',
+          primaryTextColor: '#e0e0e0',
+          primaryBorderColor: '#2a2b36',
+          lineColor: '#ff9e64',
+          secondaryColor: '#2a2b36',
+          tertiaryColor: '#13141f',
+          fontFamily: 'JetBrains Mono, monospace',
+          fontSize: '14px',
+        }
+      });
+      // Convert ```mermaid code blocks to rendered diagrams
+      document.querySelectorAll('pre > code.language-mermaid').forEach((el) => {
+        const pre = el.parentElement;
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = el.textContent;
+        pre.replaceWith(div);
+      });
+      await mermaid.run();
+    </script>
+
     <!-- The Aleph (Floating Action Button) -->
     <div class="fixed bottom-8 right-8 z-50 group">
       <button id="aleph-toggle" class="w-14 h-14 rounded-full bg-[#7dcfff] hover:bg-[#ff9e64] transition-all duration-300 shadow-[0_0_15px_rgba(125,207,255,0.3)] hover:shadow-[0_0_20px_rgba(255,158,100,0.5)] flex items-center justify-center text-[#13141f] cursor-pointer hover:scale-110 active:scale-95" aria-label="The Aleph">
