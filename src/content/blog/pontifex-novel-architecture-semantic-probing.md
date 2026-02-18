@@ -2,6 +2,10 @@
 author: franklin
 date: 2024-07-12
 title: "Pontifex: A Novel Architecture for Semantic Probing"
+description: "Introducing Pontifex: a novel architecture for semantic probing that unifies byte-level occlusion with bilateral semantic comparison across multiple embedding spaces."
+tags: ["artificial intelligence", "research", "interpretability", "semantic probing"]
+heroImage: ./images/pontifex-novel-architecture-semantic-probing-cover.png
+heroImageAlt: "Abstract geometric representation of neural network layers converging with glowing data streams."
 ---
 
 We present **Pontifex**, a novel architecture that unifies two techniques for rapid, general-purpose semantic probing across languages and representation spaces. Pontifex combines **(i)** ultra-fast byte-level occlusion with *bilateral* semantic comparison and **(ii)** *convergent multi-space semantic investigation* via neural convergence layers. By occluding raw byte sequences and comparing the resulting semantic representations on both sides of the occlusion, Pontifex efficiently identifies influential input segments. Simultaneously, it conducts parallel inquiries in multiple embedding spaces and learns to **converge** their semantic evidence without requiring explicit transformations between spaces. In experiments, Pontifex achieves an order-of-magnitude speedup over token-level and LLM-based interpretability methods, while preserving semantic consistency across languages. It outperforms standard embedding probing techniques in cross-lingual and cross-modal benchmarks, aligning diverse embeddings to reveal shared concepts. We discuss how Pontifex’s cross-space agreement mechanism yields more robust and language-agnostic interpretability, and we outline future directions for extending this approach to multimodal convergence and unsupervised hypothesis generation of semantic features.

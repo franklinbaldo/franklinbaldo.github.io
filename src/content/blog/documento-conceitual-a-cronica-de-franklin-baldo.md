@@ -2,6 +2,10 @@
 author: franklin
 date: 2024-07-12
 title: "Documento Conceitual: A Crônica de Franklin Baldo"
+description: "The blueprint for a digital Boswell: how an automated system chronicles the intellectual life of Franklin Baldo using AI agents."
+tags: ["concept", "architecture", "digital garden", "automation", "legacy"]
+heroImage: ./images/documento-conceitual-a-cronica-de-franklin-baldo-cover.png
+heroImageAlt: "A schematic diagram of a digital chronical system, with data streams flowing into a central archive."
 ---
 ## _Um Blueprint para um Jornal Autobiográfico Potencializado por IA_
 
@@ -34,7 +38,7 @@ A Crônica será construída sobre quatro pilares fundamentais:
 
 ### **2. Visão Arquitetural: O Boswell Digital**
 
-Inspirado em James Boswell, o biógrafo de Samuel Johnson, nosso sistema funcionará como um "Boswell Digital" – um observador diligente que registra, contextualiza e narra. O fluxo de trabalho é o seguinte:
+Inspirado em James Boswell, o biógrafo de Samuel Johnson, nosso sistema funcionará como um ["Boswell Digital"](/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital) – um observador diligente que registra, contextualiza e narra. O fluxo de trabalho é o seguinte:
 
 ```mermaid
 graph TD
@@ -83,7 +87,7 @@ Cada etapa do pipeline é executada por um agente especializado, que é essencia
 | Agente | Persona | Responsabilidade Principal |
 | :--- | :--- | :--- |
 | **LeadCollector** | O Arquivista | Monitora as fontes de dados, identifica novos eventos e os normaliza em um formato de "lead" (JSON). Não usa LLM. |
-| **WriterAgent** | O Ghostwriter | Recebe um lead estruturado e o transforma em um rascunho de artigo coeso, em primeira ou terceira pessoa, seguindo um estilo predefinido. Gera o frontmatter completo. |
+| [**WriterAgent**](/blog/building-funes) | O Ghostwriter | Recebe um lead estruturado e o transforma em um rascunho de artigo coeso, em primeira ou terceira pessoa, seguindo um estilo predefinido. Gera o frontmatter completo. |
 | **EditorAgent** | O Editor Cético | Revisa o rascunho do WriterAgent em busca de clareza, concisão e aderência ao guia de estilo. Corrige gramática, formata o markdown e pode rejeitar rascunhos de baixa qualidade. |
 | **FactCheckBot** | O Verificador | Extrai todas as URLs e alegações factuais do texto. Verifica se os links estão ativos e, crucialmente, usa a janela de contexto do Gemini para "ler" o conteúdo do link e confirmar se ele suporta a afirmação feita no artigo. |
 | **OmbudsmanBot** | O Guardião da Ética | A etapa final de segurança. Analisa o artigo editado para detectar potenciais riscos de privacidade, correlações indesejadas, viés excessivo ou tom difamatório. É a consciência do sistema. |

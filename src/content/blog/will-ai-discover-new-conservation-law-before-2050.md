@@ -2,6 +2,10 @@
 author: franklin
 date: 2024-07-12
 title: "Will AI Discover a New Conservation Law Before 2050?"
+description: "A quantum speculation about machines that reveal hidden symmetries of the universe, tested through betting in prediction markets."
+tags: ["physics", "artificial intelligence", "prediction markets", "speculation", "science fiction"]
+heroImage: ./images/will-ai-discover-new-conservation-law-before-2050-cover.png
+heroImageAlt: "Pixelated virtual universes floating in quantum space, with mathematical equations emerging from simulations like holograms, representing symmetries discovered by artificial intelligences."
 ---
 
 ## A quantum speculation about machines that reveal hidden symmetries of the universe, tested through betting in prediction markets.
@@ -130,10 +134,6 @@ A: Prediction markets aggregate distributed knowledge and create incentives for 
 
 **Q: What if David Deutsch is right about explanatory knowledge?**
 A: Then we'll learn something fundamental about the nature of understanding, creativity, and consciousness. Even a "negative" answer would be a significant scientific discovery.
-
----
-
-**Suggested Image**: *Alt-text: Pixelated virtual universes floating in quantum space, with mathematical equations emerging from simulations like holograms, representing symmetries discovered by artificial intelligences.*
 
 ---
 
