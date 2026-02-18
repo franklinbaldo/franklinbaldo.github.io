@@ -6,8 +6,9 @@ description: "How I built an autonomous literary protocol where each new chapter
 tags: ["borges", "ai", "protocol", "generative-literature", "open-source"]
 ---
 
-> **Protocol:** Hrönir Encyclopedia v2
+> **Protocol:** Hrönir Encyclopedia v3
 > **Status:** ACTIVE — accepting contributions
+> **Update (2026-02-18):** Protocol v3 is now fully implemented. Elo ratings, sessions, and duels have been removed. The system is purely graph-based: write content, point to predecessor, and let quadratic influence resolve the canon.
 > **Author:** Franklin Baldo
 > **Repository:** [github.com/franklinbaldo/hronir](https://github.com/franklinbaldo/hronir)
 > **License:** MIT (code) / CC0 (generated texts)
@@ -72,6 +73,9 @@ The repository grows like a living organism. New branches sprout daily. Some are
 ```bash
 # Store a chapter and declare its predecessor — that's the whole protocol
 uv run hronir store my_chapter.md --predecessor <uuid>
+
+# Check the current canonical path
+uv run hronir canon
 ```
 
 One command. You provide content and a pointer. The system does the rest.
@@ -117,7 +121,7 @@ Where `γ ∈ (0, 1)` is a decay factor (e.g., 0.3–0.5). This would reward hr�
 
 **Concerns:** Recursive influence calculation adds complexity and may create feedback loops where early chapters accumulate permanent advantage. The decay factor `γ` requires empirical tuning. This mechanism is NOT part of the current protocol specification and is documented here for future evaluation.
 
-**Status:** EXPERIMENTAL. Pending simulation results before inclusion in protocol v3.
+**Status:** EXPERIMENTAL. Not included in protocol v3. Pending simulation results before future inclusion.
 
 ## 8. Design Constraints
 
