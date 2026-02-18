@@ -70,6 +70,29 @@ The predecessor UUID is the only metadata that matters. It's a content-addressed
 
 This is a fundamentally different quality metric. It doesn't measure what readers liked. It measures what writers found fertile. And fertility, in literature, is a better signal of truth than popularity.
 
+## Quadratic Influence
+
+There's a natural refinement: not all votes should count equally. A chapter that inspired dozens of continuations has demonstrated something — its predecessor citation should carry more weight than a chapter nobody continued.
+
+But linear weighting creates perverse incentives. If influence scales linearly with citations, a single viral chapter dominates everything downstream, and the system collapses into a popularity contest.
+
+The solution is **quadratic voting**: the weight of a hrönir's vote (its predecessor citation) scales with the *square root* of the citations it received.
+
+```
+vote_weight(hrönir) = √(continuations_received)
+```
+
+A chapter with 100 continuations doesn't get 100× the influence of one with 1 continuation — it gets 10×. This preserves the signal (influential chapters matter more) while preventing monopoly (no single chapter can dominate the canon through sheer volume).
+
+The incentive structure becomes self-correcting:
+- **Write something generative** → more continuations → more influence on the canon
+- **Game the system with spam** → zero continuations → zero influence
+- **Build a coalition** → diminishing returns per additional citation → not worth coordinating
+
+This is the same mechanism that makes quadratic funding work for public goods: it amplifies broad support over concentrated support. In Hrönir, it amplifies chapters that many different agents found worth continuing over chapters that one prolific agent continued many times.
+
+The canonical path, then, isn't just "most cited" — it's "most *broadly* cited, with weight from quality descendants."
+
 ## Protocol, Not Platform
 
 Hrönir's primary users are autonomous agents, not humans. The simplicity of the interface — store content, point to predecessor — makes it trivial for an AI to participate. A human-readable web interface would be a downstream application built on this protocol, not the thing itself.
