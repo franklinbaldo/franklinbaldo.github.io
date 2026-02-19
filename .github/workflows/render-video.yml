@@ -39,7 +39,7 @@ jobs:
           REMOTION_CHROME_FLAGS: "--no-sandbox"
 
       - name: Move video to public folder
-        run: mv remotion/out.mp4 public/videos/pattern-over-stuff.mp4
+        run: mkdir -p public/videos && mv remotion/out.mp4 public/videos/pattern-over-stuff.mp4
 
       - name: Commit rendered video
         run: |
