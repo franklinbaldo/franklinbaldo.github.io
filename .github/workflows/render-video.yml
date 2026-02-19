@@ -15,6 +15,8 @@ permissions:
 jobs:
   render:
     runs-on: ubuntu-latest
+    outputs:
+      video_uploaded: ${{ steps.upload.outputs.uploaded }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,19 +42,19 @@ jobs:
         env:
           REMOTION_CHROME_FLAGS: "--no-sandbox"
 
-      - name: Move video to public folder
-        run: mkdir -p public/videos && mv remotion/out.mp4 public/videos/pattern-over-stuff.mp4
-
-      - name: Commit rendered video (without LFS)
+      - name: Upload video to GitHub Release
+        id: upload
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config user.name "Cinelasta [bot]"
-          git config user.email "franklinbaldo@users.noreply.github.com"
-          # Ensure mp4 is NOT tracked by LFS
-          git lfs untrack "*.mp4" 2>/dev/null || true
-          git add .gitattributes
-          git add --force public/videos/pattern-over-stuff.mp4
-          git diff --cached --quiet || git commit -m "chore(cinelasta): render Pattern Over Stuff video"
-          git push
+          # Delete existing release if exists
+          gh release delete video-renders --yes 2>/dev/null || true
+          # Create new release and upload video
+          gh release create video-renders remotion/out.mp4#pattern-over-stuff.mp4 \
+            --title "Rendered Videos" \
+            --notes "Auto-rendered videos. Updated on $(date -u '+%Y-%m-%d %H:%M UTC')" \
+            --latest=false
+          echo "uploaded=true" >> "$GITHUB_OUTPUT"
 
   deploy:
     needs: render
@@ -63,9 +65,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 0
+
+      - name: Download rendered video from Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p public/videos
+          gh release download video-renders \
+            --pattern "pattern-over-stuff.mp4" \
+            --dir public/videos
 
       - name: Setup Node
         uses: actions/setup-node@v4
