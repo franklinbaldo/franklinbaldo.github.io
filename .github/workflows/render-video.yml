@@ -29,8 +29,8 @@ jobs:
         run: npm ci
 
       - name: Install Chrome for Remotion
-        run: npx remotion browser ensure
         working-directory: remotion
+        run: npx remotion browser ensure
 
       - name: Render video
         working-directory: remotion
@@ -38,11 +38,13 @@ jobs:
         env:
           REMOTION_CHROME_FLAGS: "--no-sandbox"
 
-      - name: Upload to GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: videos-latest
-          name: "Videos — Latest Render"
-          body: "Vídeos renderizados automaticamente pelo Remotion."
-          files: remotion/out.mp4
-          make_latest: true
+      - name: Move video to public folder
+        run: mv remotion/out.mp4 public/videos/pattern-over-stuff.mp4
+
+      - name: Commit rendered video
+        run: |
+          git config user.name "Cinelasta [bot]"
+          git config user.email "franklinbaldo@users.noreply.github.com"
+          git add public/videos/pattern-over-stuff.mp4
+          git diff --cached --quiet || git commit -m "chore(cinelasta): render Pattern Over Stuff video [skip ci]"
+          git push
