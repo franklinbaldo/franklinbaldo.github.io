@@ -17,10 +17,7 @@ sessions/*.lock
 **/package-lock.json
 
 # Build artifacts (gerados, não versionados)
-workspace/.astro/
-workspace/dist/
-workspace/node_modules/
+**/node_modules/
+**/.astro/
+**/dist/
 workspace/backup-posts-locais/
-
-# Workspace duplicado (acidental)
-workspace/workspace/
