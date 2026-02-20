@@ -1,0 +1,33 @@
+/* Gwern-style Typography for Long-Form Content */
+/* Inspired by gwern.net */
+
+/*
+   SCOPE: Apply only to main content areas to avoid breaking navigation/footer.
+   Selectors: article, main, .content, .prose
+*/
+
+article p,
+main p,
+.content p,
+.prose p {
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  overflow-wrap: break-word;
+  hanging-punctuation: first last;
+  line-height: 1.6; /* Ensure good readability */
+  max-width: 70ch; /* Gwern recommends ~65-75 chars per line for optimal reading */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Typography Refinements - Scoped to Article Body */
+article,
+main,
+.content,
+.prose {
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  font-variant-numeric: oldstyle-nums proportional-nums;
+}
