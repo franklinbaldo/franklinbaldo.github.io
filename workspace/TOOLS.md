@@ -23,7 +23,17 @@ Este arquivo guarda as notas sobre as nossas ferramentas locais e como elas deve
 *   **Emoji:** 🧉
 
 
-## 🌳 Publicação canônica do `ecos-do-pampa` (Git Subtree)
+## 🌳 Publicação canônica dos blogs (Git Subtree)
+
+### Blog do Adi (`adibaldo.github.io`)
+- Remote: `adibaldo` -> `https://github.com/adibaldo/adibaldo.github.io.git`
+- Prefixo no monorepo: `workspace/adibaldo.github.io`
+- Comandos:
+  - `./scripts/subtree-adibaldo.sh pull`  (traz mudanças do repo público)
+  - `./scripts/subtree-adibaldo.sh push`  (publica do monorepo para o público)
+  - `./scripts/subtree-adibaldo.sh split` (gera SHA do split)
+
+### Ecos do Pampa (`ecos-do-pampa`)
 - Remote: `ecos` -> `https://github.com/franklinbaldo/ecos-do-pampa.git`
 - Prefixo no monorepo: `workspace/ecos-do-pampa`
 - Comandos:
