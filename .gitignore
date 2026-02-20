@@ -16,17 +16,11 @@ sessions/
 # NPM lock files (updates recorrentes locais)
 **/package-lock.json
 
-# Blog repositories (managed separately)
-workspace/adibaldo.github.io/
-workspace/franklinbaldo.github.io/
-workspace/ecos-do-pampa/
-workspace/omunicipio.github.io/
-
-# Workspace artifacts (duplicação acidental)
-workspace/workspace/
-
-# Build artifacts
+# Build artifacts (gerados, não versionados)
 workspace/.astro/
 workspace/dist/
 workspace/node_modules/
 workspace/backup-posts-locais/
+
+# Workspace duplicado (acidental)
+workspace/workspace/
