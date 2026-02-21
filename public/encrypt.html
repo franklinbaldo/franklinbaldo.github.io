@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧠 Funes - Encrypt</title>
+<script src="https://unpkg.com/openpgp@5.11.2/dist/openpgp.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'SF Mono',Monaco,'Cascadia Code',monospace;background:#0a0a0a;color:#e0e0e0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.container{max-width:560px;width:100%;background:#141414;border:1px solid #222;border-radius:12px;padding:32px}
+h1{font-size:1.3em;margin-bottom:4px;color:#fff}
+.sub{color:#666;font-size:.85em;margin-bottom:24px}
+label{display:block;font-size:.8em;color:#888;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+textarea{width:100%;background:#0a0a0a;border:1px solid #333;border-radius:8px;padding:12px;color:#fff;font-family:inherit;font-size:.9em;resize:vertical;outline:none;transition:border-color .2s}
+textarea:focus{border-color:#4a9eff}
+#input{height:80px;margin-bottom:16px}
+#output{height:160px;margin-bottom:12px}
+button{width:100%;padding:12px;border:none;border-radius:8px;font-family:inherit;font-size:.9em;font-weight:600;cursor:pointer;transition:all .2s}
+#encryptBtn{background:#4a9eff;color:#fff;margin-bottom:12px}
+#encryptBtn:hover{background:#3a8eef}
+#encryptBtn:disabled{background:#333;color:#666;cursor:not-allowed}
+#copyBtn{background:#222;color:#aaa;display:none}
+#copyBtn:hover{background:#333;color:#fff}
+#telegramBtn{background:#2AABEE;color:#fff;display:none;margin-top:8px}
+#telegramBtn:hover{background:#229ED9}
+.status{text-align:center;font-size:.8em;margin-top:8px;height:20px;color:#4a9eff}
+.fingerprint{font-size:.7em;color:#444;margin-top:16px;text-align:center;word-break:break-all}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🧠 Funes Encrypt</h1>
+<p class="sub">Criptografe segredos para o Ireneo. Só ele pode ler.</p>
+
+<label for="input">Texto / Token / Segredo</label>
+<textarea id="input" placeholder="Cole aqui o que quer criptografar..."></textarea>
+
+<button id="encryptBtn" onclick="encrypt()">🔒 Criptografar</button>
+
+<label for="output">Mensagem Criptografada</label>
+<textarea id="output" readonly placeholder="O resultado aparece aqui..."></textarea>
+
+<button id="copyBtn" onclick="copyResult()">📋 Copiar</button>
+<button id="telegramBtn" onclick="sendTelegram()">✈️ Enviar pro Funes no Telegram</button>
+
+<div class="status" id="status"></div>
+
+<div class="fingerprint">
+Fingerprint: 8072 D682 7561 FA81 A575 21D7 B129 CC3F AA83 8017
+</div>
+</div>
+
+<script>
+const PUBLIC_KEY = `-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+vA==
+=qcI+
+-----END PGP PUBLIC KEY BLOCK-----`;
+
+async function encrypt() {
+  const input = document.getElementById('input').value.trim();
+  if (!input) return;
+
+  const btn = document.getElementById('encryptBtn');
+  const status = document.getElementById('status');
+  btn.disabled = true;
+  status.textContent = 'Criptografando...';
+
+  try {
+    const publicKey = await openpgp.readKey({ armoredKey: PUBLIC_KEY });
+    const encrypted = await openpgp.encrypt({
+      message: await openpgp.createMessage({ text: input }),
+      encryptionKeys: publicKey,
+    });
+    document.getElementById('output').value = encrypted;
+    document.getElementById('copyBtn').style.display = 'block';
+    document.getElementById('telegramBtn').style.display = 'block';
+    status.textContent = '✅ Pronto! Envie pro Funes.';
+  } catch (e) {
+    status.textContent = '❌ Erro: ' + e.message;
+  }
+  btn.disabled = false;
+}
+
+async function copyResult() {
+  const output = document.getElementById('output');
+  await navigator.clipboard.writeText(output.value);
+  document.getElementById('status').textContent = '📋 Copiado!';
+}
+
+function sendTelegram() {
+  const text = document.getElementById('output').value;
+  const encoded = encodeURIComponent(text);
+  window.open('https://t.me/share/url?text=' + encoded, '_blank');
+}
+</script>
+</body>
+</html>
