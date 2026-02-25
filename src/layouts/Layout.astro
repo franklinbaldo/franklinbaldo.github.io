@@ -1,0 +1,117 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+
+const { title, description = "A digital memory palace.", image } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <ClientRouter />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {image && <meta property="og:image" content={new URL(image, Astro.url)} />}
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    {image && <meta property="twitter:image" content={new URL(image, Astro.url)} />}
+  </head>
+  <body class="bg-[#13141f] text-[#e0e0e0] font-serif min-h-screen flex flex-col antialiased selection:bg-[#7dcfff] selection:text-[#13141f]">
+    <header class="py-6 px-4 border-b border-[#2a2b36] sticky top-0 bg-[#13141f]/90 backdrop-blur-sm z-10 transition-all duration-300">
+      <nav class="max-w-3xl mx-auto flex justify-between items-center">
+        <a href="/" class="text-2xl font-bold text-[#ff9e64] hover:text-[#7dcfff] transition-colors tracking-tight">
+          The Memory Palace
+        </a>
+        <div class="flex gap-6 font-mono text-sm">
+          <a href="/about" class="hover:text-[#ff9e64] transition-colors relative group">
+            <span>About</span>
+            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#ff9e64] transition-all group-hover:w-full"></span>
+          </a>
+          <a href="/rss.xml" class="hover:text-[#ff9e64] transition-colors relative group">
+            <span>RSS</span>
+            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#ff9e64] transition-all group-hover:w-full"></span>
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="flex-grow max-w-3xl mx-auto w-full px-4 py-12 relative animate-fade-in">
+      <slot />
+    </main>
+
+    <footer class="py-8 border-t border-[#2a2b36] mt-auto bg-[#0f1019]">
+      <div class="max-w-3xl mx-auto px-4 text-center text-sm text-gray-500 font-mono flex flex-col gap-4">
+        <div class="flex justify-center gap-6">
+          <a href="https://github.com/franklinbaldo" target="_blank" rel="noopener noreferrer" class="hover:text-[#7dcfff] transition-colors">GitHub</a>
+          <a href="https://twitter.com/franklinbaldo" target="_blank" rel="noopener noreferrer" class="hover:text-[#7dcfff] transition-colors">Twitter</a>
+          <a href="mailto:franklin@franklinbaldo.com" class="hover:text-[#7dcfff] transition-colors">Email</a>
+        </div>
+        <div class="flex flex-col gap-1 opacity-70">
+          <p>&copy; {new Date().getFullYear()} Franklin Baldo.</p>
+          <p class="text-xs">Built with Astro & Tailwind. A digital garden.</p>
+        </div>
+      </div>
+    </footer>
+    
+    <!-- The Aleph (Floating Action Button) -->
+    <div class="fixed bottom-8 right-8 z-50 group">
+      <button id="aleph-toggle" class="w-14 h-14 rounded-full bg-[#7dcfff] hover:bg-[#ff9e64] transition-all duration-300 shadow-[0_0_15px_rgba(125,207,255,0.3)] hover:shadow-[0_0_20px_rgba(255,158,100,0.5)] flex items-center justify-center text-[#13141f] cursor-pointer hover:scale-110 active:scale-95" aria-label="The Aleph">
+        <span class="text-3xl font-bold font-serif relative top-[-2px]">א</span>
+      </button>
+      
+      <!-- Expanded menu (hidden by default) -->
+      <div id="aleph-menu" class="absolute bottom-16 right-0 w-48 bg-[#1a1b26] border border-[#2a2b36] rounded-lg shadow-xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto overflow-hidden">
+        <div class="p-2 flex flex-col gap-1">
+          <a href="/search" class="block px-3 py-2 text-sm hover:bg-[#2a2b36] rounded text-[#e0e0e0] hover:text-[#7dcfff]">Search (WIP)</a>
+          <a href="/tags" class="block px-3 py-2 text-sm hover:bg-[#2a2b36] rounded text-[#e0e0e0] hover:text-[#7dcfff]">Tags</a>
+          <a href="/random" class="block px-3 py-2 text-sm hover:bg-[#2a2b36] rounded text-[#e0e0e0] hover:text-[#7dcfff]">Random Note</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0f1019;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a2b36;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #7dcfff;
+  }
+</style>

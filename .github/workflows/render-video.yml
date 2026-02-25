@@ -1,0 +1,97 @@
+name: Render Pattern Over Stuff Video
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'remotion/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    outputs:
+      video_uploaded: ${{ steps.upload.outputs.uploaded }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: remotion/package-lock.json
+
+      - name: Install dependencies
+        working-directory: remotion
+        run: npm ci
+
+      - name: Install Chrome for Remotion
+        working-directory: remotion
+        run: npx remotion browser ensure
+
+      - name: Render video
+        working-directory: remotion
+        run: npx remotion render src/index.ts PatternOverStuff out.mp4
+        env:
+          REMOTION_CHROME_FLAGS: "--no-sandbox"
+
+      - name: Upload video to GitHub Release
+        id: upload
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Delete existing release if exists
+          gh release delete video-renders --yes 2>/dev/null || true
+          # Create new release and upload video
+          gh release create video-renders remotion/out.mp4#pattern-over-stuff.mp4 \
+            --title "Rendered Videos" \
+            --notes "Auto-rendered videos. Updated on $(date -u '+%Y-%m-%d %H:%M UTC')" \
+            --latest=false
+          echo "uploaded=true" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: render
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download rendered video from Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p public/videos
+          gh release download video-renders \
+            --pattern "pattern-over-stuff.mp4" \
+            --dir public/videos
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Astro
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
