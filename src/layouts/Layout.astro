@@ -35,6 +35,9 @@ const { title, description = "A digital memory palace.", image } = Astro.props;
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     {image && <meta property="twitter:image" content={new URL(image, Astro.url)} />}
+    
+    <!-- Gwern Typography Enhancement -->
+    <link rel="stylesheet" href="/css/gwern-typography.css" />
   </head>
   <body class="bg-[#13141f] text-[#e0e0e0] font-serif min-h-screen flex flex-col antialiased selection:bg-[#7dcfff] selection:text-[#13141f]">
     <header class="py-6 px-4 border-b border-[#2a2b36] sticky top-0 bg-[#13141f]/90 backdrop-blur-sm z-10 transition-all duration-300">

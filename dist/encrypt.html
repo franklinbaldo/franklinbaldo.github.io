@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw Encrypt</title>
+<script src="https://unpkg.com/openpgp@5.11.2/dist/openpgp.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#e0e0e0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.container{max-width:520px;width:100%;background:#141414;border:1px solid #222;border-radius:16px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.header{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.lock-icon{width:32px;height:32px;background:#1a2d1a;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+h1{font-size:1.2em;color:#fff;font-weight:700}
+.sub{color:#555;font-size:.82em;margin-bottom:20px;line-height:1.5}
+label{display:block;font-size:.72em;color:#666;margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+textarea,select{width:100%;background:#0d0d0d;border:1px solid #2a2a2a;border-radius:10px;padding:12px;color:#fff;font-family:'SF Mono',Monaco,'Cascadia Code',monospace;font-size:.85em;outline:none;transition:border-color .2s,box-shadow .2s}
+textarea:focus,select:focus{border-color:#4a9eff;box-shadow:0 0 0 3px rgba(74,158,255,.1)}
+textarea{resize:vertical}
+textarea::placeholder{color:#333}
+select{cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23555' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;font-family:inherit}
+.field{margin-bottom:14px}
+#input{height:80px}
+#output{height:140px;font-size:.78em}
+button{width:100%;padding:11px;border:none;border-radius:10px;font-family:inherit;font-size:.85em;font-weight:600;cursor:pointer;transition:all .15s}
+button:active{transform:scale(.98)}
+#encryptBtn{background:linear-gradient(135deg,#4a9eff,#357ae8);color:#fff;margin-bottom:8px}
+#encryptBtn:hover{background:linear-gradient(135deg,#5aadff,#4a9eff)}
+#encryptBtn:disabled{background:#222;color:#555;cursor:not-allowed;transform:none}
+.btn-row{display:flex;gap:6px;margin-bottom:6px}
+.btn-row button{width:auto;flex:1;font-size:.8em;padding:9px 8px}
+#copyBtn{background:#1a1a1a;color:#888;border:1px solid #2a2a2a;display:none}
+#copyBtn:hover{background:#222;color:#fff;border-color:#333}
+#clearBtn{background:#1a1a1a;color:#888;border:1px solid #2a2a2a;display:none}
+#clearBtn:hover{background:#222;color:#fff;border-color:#333}
+.btn-row-send{display:flex;gap:6px}
+.btn-row-send button{width:auto;flex:1;font-size:.8em;padding:9px 8px}
+#telegramBtn{background:#2AABEE;color:#fff;display:none}
+#telegramBtn:hover{background:#229ED9}
+#channelBtn{background:#1a2d1a;color:#4ade80;border:1px solid #2d5a2d;display:none;font-size:.8em;padding:9px 8px}
+#channelBtn:hover{background:#1d3a1d;color:#5bef91}
+.status{text-align:center;font-size:.78em;margin-top:10px;min-height:18px;color:#4a9eff;transition:color .2s}
+.status.error{color:#ef4444}
+.status.success{color:#4ade80}
+.key-info{margin-top:14px;padding:12px;background:#0d0d0d;border:1px solid #1a1a1a;border-radius:10px}
+.key-info .ki-name{font-size:.82em;color:#ccc;font-weight:600;margin-bottom:4px}
+.key-info .ki-row{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.key-info .ki-label{font-size:.68em;color:#555;text-transform:uppercase;letter-spacing:.05em;min-width:65px}
+.key-info .ki-value{font-size:.72em;color:#777;font-family:'SF Mono',Monaco,monospace;word-break:break-all}
+.badge{display:inline-block;font-size:.65em;padding:2px 7px;border-radius:4px;margin-left:6px;vertical-align:middle;font-weight:600}
+.badge-agent{background:#1a3a1a;color:#4ade80;border:1px solid #2d5a2d}
+.badge-vault{background:#3a2a1a;color:#fbbf24;border:1px solid #5a3d1a}
+.hint{font-size:.72em;color:#444;margin-top:6px;line-height:1.4}
+.footer{margin-top:16px;text-align:center;font-size:.65em;color:#333}
+.footer a{color:#444;text-decoration:none}
+.footer a:hover{color:#666}
+@media(max-width:480px){
+  .container{padding:20px}
+  .btn-row,.btn-row-send{flex-direction:column}
+  .btn-row button,.btn-row-send button{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+  <div class="lock-icon">&#128274;</div>
+  <h1>OpenClaw Encrypt</h1>
+</div>
+<p class="sub">Criptografe segredos para os agentes. Tudo roda no seu navegador &mdash; nenhum dado sai da sua maquina.</p>
+
+<div class="field">
+  <label for="recipient">Destinatario</label>
+  <select id="recipient" onchange="updateRecipient()">
+    <option value="ireneo">Ireneo Funes &mdash; agente</option>
+    <option value="aparicio">Aparicio Funes &mdash; agente</option>
+    <option value="vault">Vault (Porteiro) &mdash; relay seguro</option>
+  </select>
+</div>
+
+<div class="field">
+  <label for="input">Segredo</label>
+  <textarea id="input" placeholder="Cole aqui o token, senha ou segredo..."></textarea>
+</div>
+
+<button id="encryptBtn" onclick="encrypt()">Criptografar</button>
+
+<div class="field" style="margin-top:10px">
+  <label for="output">Resultado</label>
+  <textarea id="output" readonly placeholder="O bloco PGP aparece aqui..."></textarea>
+</div>
+
+<div class="btn-row">
+  <button id="copyBtn" onclick="copyResult()">Copiar</button>
+  <button id="clearBtn" onclick="clearAll()">Limpar</button>
+</div>
+<div class="btn-row-send">
+  <button id="telegramBtn" onclick="sendTelegram()">Enviar DM</button>
+  <button id="channelBtn" onclick="sendChannel()">Enviar no Canal</button>
+</div>
+
+<div class="status" id="status"></div>
+
+<div class="key-info" id="keyInfo"></div>
+
+<div class="footer">
+  Chaves atualizadas em <span id="keyDate">2026-02-24</span> &middot;
+  <a href="https://github.com/franklinbaldo/franklinbaldo.github.io" target="_blank">src</a>
+</div>
+</div>
+
+<script>
+const RECIPIENTS = {
+  ireneo: {
+    name: 'Ireneo Funes',
+    type: 'agent',
+    telegram: 'irineu_funes_bot',
+    fingerprints: [
+      { uid: 'OpenClaw Agent ireneo-funes', fp: '78D4 7ADF 5C0C A455 BB45 261B 26AC 4AAD 3E6E 85DE' },
+      { uid: 'Ireneo Funes (personal)', fp: '8072 D682 7561 FA81 A575 21D7 B129 CC3F AA83 8017' }
+    ],
+    hint: 'O Ireneo pode decriptar diretamente. A mensagem e criptografada para ambas as chaves (agente + pessoal).',
+    key: `-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+=QQYS
+-----END PGP PUBLIC KEY BLOCK-----`
+  },
+
+  aparicio: {
+    name: 'Aparicio Funes',
+    type: 'agent',
+    telegram: 'aparicio_funes_bot',
+    fingerprints: [
+      { uid: 'OpenClaw Agent aparicio-funes', fp: 'A46B D8B1 83C5 DD64 A988 729E CB74 F5A8 DD22 37CF' }
+    ],
+    hint: 'O Aparicio pode decriptar diretamente com gpg --decrypt.',
+    key: `-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+=9crx
+-----END PGP PUBLIC KEY BLOCK-----`
+  },
+
+  vault: {
+    name: 'Vault (Porteiro)',
+    type: 'vault',
+    telegram: 'irineu_funes_bot',
+    fingerprints: [
+      { uid: 'OpenClaw Vault', fp: '7F76 AC8E 7863 3195 A6EE 60A2 F1E5 D2B1 4E1A 6285' }
+    ],
+    hint: 'O Vault decripta no relay. O agente nunca ve o valor em texto puro. Use para tokens e credenciais de API.',
+    key: `-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+c89vjH/cwLU7o6iMY8QcV/DvOI4H
+=wNB6
+-----END PGP PUBLIC KEY BLOCK-----`
+  }
+};
+
+const CHANNEL_LINK = 'https://t.me/+TFskk4L-Xn9hZWEx';
+
+function getRecipient() {
+  return RECIPIENTS[document.getElementById('recipient').value];
+}
+
+function updateRecipient() {
+  const r = getRecipient();
+  const badge = r.type === 'vault'
+    ? '<span class="badge badge-vault">vault</span>'
+    : '<span class="badge badge-agent">agente</span>';
+
+  let html = '<div class="ki-name">' + r.name + ' ' + badge + '</div>';
+  for (const fp of r.fingerprints) {
+    html += '<div class="ki-row"><span class="ki-label">Finger.</span><span class="ki-value">' + fp.fp + '</span></div>';
+  }
+  html += '<div class="hint">' + r.hint + '</div>';
+
+  document.getElementById('keyInfo').innerHTML = html;
+  document.getElementById('output').value = '';
+  hideButtons();
+  document.getElementById('status').textContent = '';
+  document.getElementById('status').className = 'status';
+}
+
+function hideButtons() {
+  document.getElementById('copyBtn').style.display = 'none';
+  document.getElementById('clearBtn').style.display = 'none';
+  document.getElementById('telegramBtn').style.display = 'none';
+  document.getElementById('channelBtn').style.display = 'none';
+}
+
+function showButtons() {
+  document.getElementById('copyBtn').style.display = 'block';
+  document.getElementById('clearBtn').style.display = 'block';
+  document.getElementById('telegramBtn').style.display = 'block';
+  document.getElementById('channelBtn').style.display = 'block';
+}
+
+async function encrypt() {
+  const input = document.getElementById('input').value.trim();
+  if (!input) return;
+
+  const r = getRecipient();
+  const btn = document.getElementById('encryptBtn');
+  const status = document.getElementById('status');
+  btn.disabled = true;
+  status.className = 'status';
+  status.textContent = 'Criptografando...';
+
+  try {
+    // readKeys handles armored blocks with multiple keys
+    const keys = await openpgp.readKeys({ armoredKeys: r.key });
+    const encrypted = await openpgp.encrypt({
+      message: await openpgp.createMessage({ text: input }),
+      encryptionKeys: keys,
+    });
+
+    document.getElementById('output').value = encrypted;
+    showButtons();
+    document.getElementById('telegramBtn').textContent = 'DM @' + r.telegram;
+    status.className = 'status success';
+    status.textContent = 'Criptografado para ' + r.name;
+  } catch (e) {
+    // Fallback: try single key read
+    try {
+      const key = await openpgp.readKey({ armoredKey: r.key });
+      const encrypted = await openpgp.encrypt({
+        message: await openpgp.createMessage({ text: input }),
+        encryptionKeys: key,
+      });
+      document.getElementById('output').value = encrypted;
+      showButtons();
+      document.getElementById('telegramBtn').textContent = 'DM @' + r.telegram;
+      status.className = 'status success';
+      status.textContent = 'Criptografado para ' + r.name;
+    } catch (e2) {
+      status.className = 'status error';
+      status.textContent = 'Erro: ' + e2.message;
+    }
+  }
+  btn.disabled = false;
+}
+
+function clearAll() {
+  document.getElementById('input').value = '';
+  document.getElementById('output').value = '';
+  hideButtons();
+  document.getElementById('status').textContent = '';
+  document.getElementById('status').className = 'status';
+  document.getElementById('input').focus();
+}
+
+async function copyResult() {
+  const output = document.getElementById('output').value;
+  await navigator.clipboard.writeText(output);
+  const status = document.getElementById('status');
+  status.className = 'status success';
+  status.textContent = 'Copiado!';
+}
+
+function sendTelegram() {
+  const r = getRecipient();
+  const text = document.getElementById('output').value;
+  const status = document.getElementById('status');
+
+  navigator.clipboard.writeText(text).then(() => {
+    status.className = 'status success';
+    status.textContent = 'Copiado! Abrindo @' + r.telegram + '...';
+  }).catch(() => {
+    status.textContent = 'Abrindo @' + r.telegram + '...';
+  });
+
+  window.location.href = 'tg://resolve?domain=' + r.telegram;
+  setTimeout(() => {
+    window.open('https://t.me/' + r.telegram, '_blank');
+  }, 2000);
+}
+
+function sendChannel() {
+  const text = document.getElementById('output').value;
+  const status = document.getElementById('status');
+
+  navigator.clipboard.writeText(text).then(() => {
+    status.className = 'status success';
+    status.textContent = 'Copiado! Abrindo canal Familia Funes...';
+  }).catch(() => {
+    status.textContent = 'Abrindo canal...';
+  });
+
+  window.open(CHANNEL_LINK, '_blank');
+}
+
+// Init
+updateRecipient();
+</script>
+</body>
+</html>

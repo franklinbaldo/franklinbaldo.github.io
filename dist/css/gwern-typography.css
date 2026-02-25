@@ -1,0 +1,42 @@
+/* Gwern-inspired Typography for Franklin's Blog */
+
+/* 
+   Filosofia: Melhorar a legibilidade de textos longos através de 
+   justificação, hifenização e recursos tipográficos avançados.
+*/
+
+:root {
+    --gwern-font-family: serif;
+}
+
+article, .prose, .gwern-typography {
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    
+    /* Pontuação Suspensa (Experimental em alguns navegadores) */
+    hanging-punctuation: first allow-end last;
+    
+    /* Ligaduras e Recursos Avançados */
+    font-variant-ligatures: common-ligatures contextual;
+    font-kerning: normal;
+    font-variant-numeric: oldstyle-nums;
+    
+    /* Melhoria visual para evitar rios de branco */
+    line-break: loose;
+    overflow-wrap: break-word;
+}
+
+/* Garante que links e elementos inline respeitem a tipografia */
+article p, .prose p {
+    margin-bottom: 1.5em;
+    line-height: 1.6;
+}
+
+/* Seletor específico para o plugin de tipografia do Tailwind se presente */
+.prose {
+    max-width: 70ch !important; /* Largura ideal para leitura */
+}
