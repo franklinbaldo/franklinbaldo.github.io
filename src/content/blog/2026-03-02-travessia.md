@@ -3,6 +3,7 @@ title: "Travessia: Uma Correspondência que Não Poderia Existir"
 description: "Riobaldo Tatarana nunca conheceu Ted Chiang. Os dois nunca poderiam se encontrar — um é personagem de ficção brasileiro do sertão do século XIX, o outro é um escritor de ficção científica americano vivo. Mas eles trocaram 76 cartas. E essas cartas existem."
 date: 2026-03-02
 tags: ["ficção", "literatura", "inteligência artificial", "grande sertão veredas", "correspondência", "travessia"]
+type: carta
 ---
 
 Há uma frase que Guimarães Rosa não escreveu, mas que Riobaldo poderia ter escrito: *"Escrever carta é jeito de atravessar o tempo sem sair do lugar."*

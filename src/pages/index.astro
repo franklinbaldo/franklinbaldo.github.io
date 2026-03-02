@@ -3,30 +3,60 @@ import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('blog')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  (a, b) => {
+    const dateA = (a.data.date || a.data.pubDate || new Date(0)).valueOf();
+    const dateB = (b.data.date || b.data.pubDate || new Date(0)).valueOf();
+    return dateB - dateA;
+  }
 );
 
 const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat('pt-BR', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   }).format(date);
 };
+
+const typeLabels: Record<string, string> = {
+  carta:    'Cartas',
+  fita:     'Fitas',
+  ensaio:   'Ensaios',
+  'ficção': 'Ficção',
+  técnico:  'Técnico',
+  diálogo:  'Diálogos',
+};
+
+const typeColors: Record<string, { badge: string; dot: string }> = {
+  carta:    { badge: 'bg-rose-900/40 text-rose-300 border-rose-700/50',   dot: 'border-rose-400 group-hover:bg-rose-400 group-hover:border-rose-400' },
+  fita:     { badge: 'bg-violet-900/40 text-violet-300 border-violet-700/50', dot: 'border-violet-400 group-hover:bg-violet-400 group-hover:border-violet-400' },
+  ensaio:   { badge: 'bg-amber-900/40 text-amber-300 border-amber-700/50',  dot: 'border-amber-400 group-hover:bg-amber-400 group-hover:border-amber-400' },
+  'ficção': { badge: 'bg-emerald-900/40 text-emerald-300 border-emerald-700/50', dot: 'border-emerald-400 group-hover:bg-emerald-400 group-hover:border-emerald-400' },
+  técnico:  { badge: 'bg-sky-900/40 text-sky-300 border-sky-700/50',       dot: 'border-sky-400 group-hover:bg-sky-400 group-hover:border-sky-400' },
+  diálogo:  { badge: 'bg-teal-900/40 text-teal-300 border-teal-700/50',    dot: 'border-teal-400 group-hover:bg-teal-400 group-hover:border-teal-400' },
+};
+
+const defaultDot = 'border-[#7dcfff] group-hover:bg-[#ff9e64] group-hover:border-[#ff9e64]';
+const defaultBadge = 'bg-[#2a2b36] text-[#7dcfff]/70 border-[#3a3b46]';
+
+// Collect types that actually exist in posts
+const availableTypes = [...new Set(
+  posts.map(p => p.data.type).filter(Boolean)
+)] as string[];
 ---
 
 <Layout title="The Memory Palace">
   <section class="max-w-2xl mx-auto py-8">
-    <div class="mb-16 animate-fade-in">
+    <div class="mb-12 animate-fade-in">
       <h1 class="text-4xl md:text-5xl font-serif text-[#ff9e64] mb-6 tracking-tight relative inline-block">
         The Chronicle
         <span class="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-[#7dcfff] to-transparent opacity-50"></span>
       </h1>
-      
+
       <p class="text-lg md:text-xl leading-relaxed text-[#e0e0e0]/90 font-light">
         A digital memory palace. Thoughts on AI, philosophy, and the future, preserved in amber and electric light.
       </p>
-      
+
       <div class="mt-6 flex gap-4 text-xs font-mono text-[#7dcfff]/60">
         <span>> STATUS: ONLINE</span>
         <span>> LOC: MEMORY_PALACE</span>
@@ -34,36 +64,160 @@ const formatDate = (date: Date) => {
       </div>
     </div>
 
-    <div class="relative border-l border-[#2a2b36] ml-3 md:ml-6 space-y-12 pb-12">
-      {posts.map((post, index) => (
-        <article class="relative pl-8 md:pl-12 group transition-all duration-300 hover:translate-x-1">
-          <!-- Timeline dot -->
-          <div class="absolute -left-[5px] md:-left-[5px] top-2 w-2.5 h-2.5 rounded-full bg-[#1a1b26] border border-[#7dcfff] group-hover:bg-[#ff9e64] group-hover:border-[#ff9e64] group-hover:scale-125 transition-all z-10 shadow-[0_0_10px_rgba(125,207,255,0.2)]"></div>
-          
-          <div class="flex flex-col gap-1 mb-3">
-            <time datetime={post.data.date.toISOString()} class="text-xs font-mono text-[#7dcfff]/70 tracking-wider uppercase mb-1 block">
-              {formatDate(post.data.date)}
-            </time>
-            
-            <h2 class="text-2xl font-serif font-bold leading-tight">
-              <a href={`/blog/${post.slug}/`} class="text-[#e0e0e0] hover:text-[#ff9e64] transition-colors decoration-transparent group-hover:underline decoration-[#ff9e64]/30 underline-offset-4">
-                {post.data.title}
-              </a>
-            </h2>
-          </div>
-          
-          <p class="text-gray-400 text-sm md:text-base leading-relaxed line-clamp-3 mb-3 font-serif opacity-80 group-hover:opacity-100 transition-opacity">
-            {post.body.substring(0, 200).replace(/[#*]/g, '')}...
-          </p>
-          
-          <div class="flex items-center gap-4 text-xs font-mono text-gray-500 group-hover:text-[#7dcfff]/60 transition-colors">
-            <a href={`/blog/${post.slug}/`} class="flex items-center gap-1 hover:text-[#ff9e64]">
-              Read Entry 
-              <span class="group-hover:translate-x-1 transition-transform">-></span>
-            </a>
-          </div>
-        </article>
+    <!-- Filter bar -->
+    <div class="mb-10 flex flex-wrap gap-2 items-center" id="filter-bar">
+      <button
+        data-filter="all"
+        class="filter-btn active px-3 py-1.5 rounded-full text-xs font-mono border transition-all duration-200"
+        aria-pressed="true"
+      >
+        Todos
+      </button>
+      {availableTypes.map(type => (
+        <button
+          data-filter={type}
+          class="filter-btn px-3 py-1.5 rounded-full text-xs font-mono border transition-all duration-200"
+          aria-pressed="false"
+        >
+          {typeLabels[type] ?? type}
+        </button>
       ))}
+    </div>
+
+    <!-- Counter -->
+    <p class="text-xs font-mono text-[#7dcfff]/40 mb-6" id="doc-count">
+      {posts.length} documentos
+    </p>
+
+    <!-- Timeline -->
+    <div class="relative border-l border-[#2a2b36] ml-3 md:ml-6 space-y-12 pb-12" id="timeline">
+      {posts.map((post) => {
+        const type = post.data.type;
+        const colors = type ? (typeColors[type] ?? { badge: defaultBadge, dot: defaultDot }) : { badge: defaultBadge, dot: defaultDot };
+        const postDate = post.data.date || post.data.pubDate || new Date(0);
+
+        return (
+          <article
+            class="relative pl-8 md:pl-12 group transition-all duration-300 hover:translate-x-1"
+            data-type={type ?? 'sem-tipo'}
+          >
+            <!-- Timeline dot -->
+            <div class={`absolute -left-[5px] top-2 w-2.5 h-2.5 rounded-full bg-[#1a1b26] border transition-all z-10 shadow-[0_0_10px_rgba(125,207,255,0.15)] group-hover:scale-125 ${colors.dot}`}></div>
+
+            <div class="flex flex-col gap-1 mb-3">
+              <div class="flex items-center gap-3 flex-wrap">
+                <time datetime={postDate.toISOString()} class="text-xs font-mono text-[#7dcfff]/70 tracking-wider uppercase">
+                  {formatDate(postDate)}
+                </time>
+                {type && (
+                  <span class={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${colors.badge}`}>
+                    {typeLabels[type] ?? type}
+                  </span>
+                )}
+              </div>
+
+              <h2 class="text-2xl font-serif font-bold leading-tight mt-1">
+                <a
+                  href={`/blog/${post.slug}/`}
+                  class="text-[#e0e0e0] hover:text-[#ff9e64] transition-colors decoration-transparent group-hover:underline decoration-[#ff9e64]/30 underline-offset-4"
+                >
+                  {post.data.title}
+                </a>
+              </h2>
+            </div>
+
+            <p class="text-gray-400 text-sm md:text-base leading-relaxed line-clamp-3 mb-3 font-serif opacity-80 group-hover:opacity-100 transition-opacity">
+              {post.data.description ?? post.body.substring(0, 200).replace(/[#*\[\]]/g, '')}...
+            </p>
+
+            <div class="flex items-center gap-4 text-xs font-mono text-gray-500 group-hover:text-[#7dcfff]/60 transition-colors">
+              <a href={`/blog/${post.slug}/`} class="flex items-center gap-1 hover:text-[#ff9e64]">
+                Ler entrada
+                <span class="group-hover:translate-x-1 transition-transform">-></span>
+              </a>
+              {post.data.author && (
+                <span class="text-[#7dcfff]/30">por {post.data.author}</span>
+              )}
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    <!-- Empty state -->
+    <div id="empty-state" class="hidden text-center py-16 text-[#7dcfff]/40 font-mono text-sm">
+      Nenhum documento nesta categoria.
     </div>
   </section>
 </Layout>
+
+<style>
+  .filter-btn {
+    background: transparent;
+    border-color: #3a3b46;
+    color: #7dcfff99;
+    cursor: pointer;
+  }
+  .filter-btn:hover {
+    border-color: #7dcfff;
+    color: #7dcfff;
+  }
+  .filter-btn.active {
+    background: #ff9e6420;
+    border-color: #ff9e64;
+    color: #ff9e64;
+  }
+  article[data-type] {
+    transition: opacity 0.2s ease, max-height 0.3s ease;
+  }
+  article.hidden-doc {
+    display: none;
+  }
+</style>
+
+<script>
+  const filterBar = document.getElementById('filter-bar') as HTMLElement;
+  const timeline = document.getElementById('timeline') as HTMLElement;
+  const countEl = document.getElementById('doc-count') as HTMLElement;
+  const emptyState = document.getElementById('empty-state') as HTMLElement;
+  const articles = timeline.querySelectorAll<HTMLElement>('article[data-type]');
+  const buttons = filterBar.querySelectorAll<HTMLButtonElement>('.filter-btn');
+
+  let activeFilter = 'all';
+
+  function applyFilter(filter: string) {
+    activeFilter = filter;
+
+    // Update buttons
+    buttons.forEach(btn => {
+      const isActive = btn.dataset.filter === filter;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-pressed', String(isActive));
+    });
+
+    // Show/hide articles
+    let visible = 0;
+    articles.forEach(article => {
+      const match = filter === 'all' || article.dataset.type === filter;
+      article.classList.toggle('hidden-doc', !match);
+      if (match) visible++;
+    });
+
+    // Update count
+    const total = articles.length;
+    if (filter === 'all') {
+      countEl.textContent = `${total} documentos`;
+    } else {
+      countEl.textContent = `${visible} de ${total} documentos`;
+    }
+
+    // Empty state
+    emptyState.classList.toggle('hidden', visible > 0);
+  }
+
+  filterBar.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.filter-btn');
+    if (!btn) return;
+    applyFilter(btn.dataset.filter ?? 'all');
+  });
+</script>

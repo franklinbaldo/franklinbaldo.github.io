@@ -6,6 +6,7 @@ description: "The blueprint for a digital Boswell: how an automated system chron
 tags: ["concept", "architecture", "digital garden", "automation", "legacy"]
 heroImage: ./images/documento-conceitual-a-cronica-de-franklin-baldo-cover.png
 heroImageAlt: "A schematic diagram of a digital chronical system, with data streams flowing into a central archive."
+type: técnico
 ---
 ## _Um Blueprint para um Jornal Autobiográfico Potencializado por IA_
 

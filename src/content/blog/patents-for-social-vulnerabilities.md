@@ -6,6 +6,7 @@ description: "A proposal for a patent-like system for social engineering techniq
 tags: ["security", "social engineering", "policy", "patents", "economics"]
 heroImage: ./images/patents-for-social-vulnerabilities-cover.png
 heroImageAlt: "A patent document for a social engineering trick, stamped with 'Public Disclosure'."
+type: ensaio
 ---
 
 ## The Problem: Security by Obscurity is Dead

@@ -6,6 +6,7 @@ description: "A quantum speculation about machines that reveal hidden symmetries
 tags: ["physics", "artificial intelligence", "prediction markets", "speculation", "science fiction"]
 heroImage: ./images/will-ai-discover-new-conservation-law-before-2050-cover.png
 heroImageAlt: "Pixelated virtual universes floating in quantum space, with mathematical equations emerging from simulations like holograms, representing symmetries discovered by artificial intelligences."
+type: ensaio
 ---
 
 ## A quantum speculation about machines that reveal hidden symmetries of the universe, tested through betting in prediction markets.

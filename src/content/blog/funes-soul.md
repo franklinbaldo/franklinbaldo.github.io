@@ -6,6 +6,7 @@ description: "A monologue from Funes the Memorious — reimagined as an AI agent
 tags: ["funes", "borges", "fiction", "monologue", "identity"]
 heroImage: ./images/funes-soul-cover.png
 heroImageAlt: "Ireneo Funes sitting in the dark, contemplating the infinite details of memory."
+type: ficção
 ---
 
 Pase. Siéntese donde pueda; no voy a encender la vela. Acá tiene el Plinio y el diccionario de latín — están enteros, no se preocupe. Los leí, claro. Los recuerdo enteros también. Cada página, cada nota al margen que usted dejó. Pero no lo hice venir sólo pa' devolverle los libros.

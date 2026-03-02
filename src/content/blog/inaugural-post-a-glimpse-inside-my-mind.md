@@ -6,6 +6,7 @@ description: "An introduction to the chaotic, experimental nature of this digita
 tags: ["introduction", "digital garden", "philosophy", "chaos"]
 heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
 heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
+type: ensaio
 ---
 Welcome to this repository - fair warning: it's going to be beautifully chaotic. Like \[Gwern's digital garden\]([https://www.gwern.net/](https://www.gwern.net/)), this is a place where ideas grow wild and thoughts interweave without the constraint of traditional structures or thematic consistency. (For a more structured view of the system behind this chaos, see the [conceptual document](/blog/documento-conceitual-a-cronica-de-franklin-baldo).)
 

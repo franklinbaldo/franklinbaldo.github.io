@@ -6,6 +6,7 @@ description: "The story behind SOUL.md — how a Borges character became the per
 tags: ["artificial intelligence", "borges", "software engineering", "agents", "funes"]
 heroImage: ./images/building-funes-cover.png
 heroImageAlt: "A dark room in Fray Bentos with a young man on a cot, dreaming of digital structures and code."
+type: ensaio
 ---
 
 ## The Experiment

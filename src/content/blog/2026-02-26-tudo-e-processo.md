@@ -4,6 +4,7 @@ description: "Há vinte e cinco séculos, quatro vozes em cantos opostos do mund
 date: 2026-02-26
 heroImage: "./images/tudo-e-processo-cover.png"
 tags: ["filosofia", "processo", "complexidade", "heráclito", "budismo", "teoria da montagem"]
+type: ensaio
 ---
 
 Há vinte e cinco séculos, quatro vozes em cantos opostos do mundo convergiram para a mesma intuição.
