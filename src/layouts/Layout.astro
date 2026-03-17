@@ -42,33 +42,67 @@ const { title, description = "A digital memory palace.", image } = Astro.props;
   <body class="bg-black text-white font-serif min-h-screen antialiased selection:bg-white selection:text-black">
     <div class="min-h-screen flex flex-col md:flex-row">
       <!-- Left Sidebar / Structural Anchor -->
-      <header class="w-full md:w-64 border-b md:border-b-0 md:border-r border-white flex flex-col sticky top-0 md:h-screen bg-black z-10 shrink-0">
-        <div class="p-6 md:p-8 flex-grow">
-          <a href="/" class="block text-xl font-mono font-bold tracking-tighter uppercase mb-12 border-b-2 border-transparent hover:border-white w-fit transition-none">
-            The Chronicle
-           </a>
+      <header class="w-full md:w-64 border-b md:border-b-0 md:border-r border-white sticky top-0 md:h-screen bg-black z-10 shrink-0">
+        <details class="group md:hidden">
+          <summary class="list-none cursor-pointer p-6 flex items-center justify-between gap-4 font-mono uppercase tracking-wide">
+            <span class="text-xl font-bold tracking-tighter">The Chronicle</span>
+            <span class="border border-white px-3 py-2 text-xs leading-none group-open:bg-white group-open:text-black">
+              [ Menu ]
+            </span>
+          </summary>
 
-          <nav class="flex flex-col gap-4 font-mono text-sm">
-            <a href="/about" class="border border-transparent hover:border-white p-2 -ml-2 transition-none uppercase tracking-wide">
-              [ About ]
-            </a>
-            <a href="/rss.xml" class="border border-transparent hover:border-white p-2 -ml-2 transition-none uppercase tracking-wide">
-              [ RSS ]
-            </a>
-            <a href="/tags" class="border border-transparent hover:border-white p-2 -ml-2 transition-none uppercase tracking-wide">
-              [ Tags ]
-            </a>
-          </nav>
-         </div>
+          <div class="border-t border-white px-6 pb-6">
+            <nav class="flex flex-col gap-3 font-mono text-sm pt-6">
+              <a href="/about" class="border border-white p-3 transition-none uppercase tracking-wide hover:bg-white hover:text-black">
+                [ About ]
+              </a>
+              <a href="/rss.xml" class="border border-white p-3 transition-none uppercase tracking-wide hover:bg-white hover:text-black">
+                [ RSS ]
+              </a>
+              <a href="/tags" class="border border-white p-3 transition-none uppercase tracking-wide hover:bg-white hover:text-black">
+                [ Tags ]
+              </a>
+            </nav>
 
-        <footer class="p-6 md:p-8 border-t border-white text-xs font-mono uppercase tracking-widest mt-auto">
-          <div class="flex flex-col gap-4">
-            <a href="https://github.com/franklinbaldo" target="_blank" rel="noopener noreferrer" class="hover:bg-white hover:text-black p-1 -ml-1 transition-none w-fit">GitHub</a>
-            <a href="https://twitter.com/franklinbaldo" target="_blank" rel="noopener noreferrer" class="hover:bg-white hover:text-black p-1 -ml-1 transition-none w-fit">Twitter</a>
-            <a href="mailto:franklin@franklinbaldo.com" class="hover:bg-white hover:text-black p-1 -ml-1 transition-none w-fit">Email</a>
-            <p class="mt-4 border-t border-white/50 pt-4 text-white/50">SYSTEM_ONLINE</p>
+            <footer class="border-t border-white mt-6 pt-6 text-xs font-mono uppercase tracking-widest">
+              <div class="flex flex-col gap-3">
+                <a href="https://github.com/franklinbaldo" target="_blank" rel="noopener noreferrer" class="border border-transparent hover:border-white p-2 -ml-2 transition-none w-fit">GitHub</a>
+                <a href="https://twitter.com/franklinbaldo" target="_blank" rel="noopener noreferrer" class="border border-transparent hover:border-white p-2 -ml-2 transition-none w-fit">Twitter</a>
+                <a href="mailto:franklin@franklinbaldo.com" class="border border-transparent hover:border-white p-2 -ml-2 transition-none w-fit">Email</a>
+                <p class="mt-4 border-t border-white/50 pt-4 text-white/50">SYSTEM_ONLINE</p>
+              </div>
+            </footer>
           </div>
-        </footer>
+        </details>
+
+        <div class="hidden md:flex md:h-screen md:flex-col">
+          <div class="p-6 md:p-8 flex-grow">
+            <a href="/" class="block text-xl font-mono font-bold tracking-tighter uppercase mb-12 border-b-2 border-transparent hover:border-white w-fit transition-none">
+              The Chronicle
+            </a>
+
+            <nav class="flex flex-col gap-4 font-mono text-sm">
+              <a href="/about" class="border border-transparent hover:border-white p-2 -ml-2 transition-none uppercase tracking-wide">
+                [ About ]
+              </a>
+              <a href="/rss.xml" class="border border-transparent hover:border-white p-2 -ml-2 transition-none uppercase tracking-wide">
+                [ RSS ]
+              </a>
+              <a href="/tags" class="border border-transparent hover:border-white p-2 -ml-2 transition-none uppercase tracking-wide">
+                [ Tags ]
+              </a>
+            </nav>
+          </div>
+
+          <footer class="p-6 md:p-8 border-t border-white text-xs font-mono uppercase tracking-widest mt-auto">
+            <div class="flex flex-col gap-4">
+              <a href="https://github.com/franklinbaldo" target="_blank" rel="noopener noreferrer" class="hover:bg-white hover:text-black p-1 -ml-1 transition-none w-fit">GitHub</a>
+              <a href="https://twitter.com/franklinbaldo" target="_blank" rel="noopener noreferrer" class="hover:bg-white hover:text-black p-1 -ml-1 transition-none w-fit">Twitter</a>
+              <a href="mailto:franklin@franklinbaldo.com" class="hover:bg-white hover:text-black p-1 -ml-1 transition-none w-fit">Email</a>
+              <p class="mt-4 border-t border-white/50 pt-4 text-white/50">SYSTEM_ONLINE</p>
+            </div>
+          </footer>
+        </div>
       </header>
 
       <!-- Main Content Area -->
@@ -80,6 +114,10 @@ const { title, description = "A digital memory palace.", image } = Astro.props;
  </html>
 
  <style is:global>
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
   /* Strict scrollbar overriding smooth OS defaults to raw blocks */
    ::-webkit-scrollbar {
     width: 12px;
