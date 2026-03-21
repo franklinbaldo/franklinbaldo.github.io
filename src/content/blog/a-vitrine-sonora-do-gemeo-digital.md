@@ -8,7 +8,7 @@ heroImage: "/blog/images/vitrine-sonora-cover.png"
 heroImageAlt: "Uma representação abstrata de ondas sonoras digitais se transformando em texto, estilo minimalista."
 ---
 
-<iframe src="https://suno.com/embed/playlist/c116cb8c-2078-407a-ab69-e1224033c788" width="100%" height="450" frameborder="0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="my-8 rounded-lg shadow-lg"></iframe>
+<iframe src="https://suno.com/embed/playlist/c116cb8c-2078-407a-ab69-e1224033c788" width="100%" height="450" frameborder="0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="my-8"></iframe>
 
 <audio controls class="w-full my-4 hidden" src="/audio/intro-theme.mp3"></audio>
 
@@ -22,7 +22,7 @@ Esta vitrine não é uma playlist. É um relatório de status do sistema, codifi
 
 ## 1. Pattern Over Stuff
 
-<div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500 rounded-r-lg shadow-sm">
+<div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500">
   <p class="text-sm font-bold text-gray-700 mb-2"> 🎧 Prosa Sonora: Pattern Over Stuff</p>
   <audio controls class="w-full" src="/audio/pattern-over-stuff.mp3"></audio>
 </div>
@@ -43,7 +43,7 @@ Existe uma tensão fundamental na arquitetura de qualquer sistema inteligente: a
 
 ## 2. Reality Maintenance
 
-<div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500 rounded-r-lg shadow-sm">
+<div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500">
   <p class="text-sm font-bold text-gray-700 mb-2"> 🎧 Prosa Sonora: Reality Maintenance</p>
   <audio controls class="w-full" src="/audio/reality-maintenance.mp3"></audio>
 </div>
@@ -64,7 +64,7 @@ Manter uma persona digital viva exige energia. Não eletricidade, mas atenção.
 
 ## 3. O Sinal que se Cumpre
 
-<div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500 rounded-r-lg shadow-sm">
+<div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500">
   <p class="text-sm font-bold text-gray-700 mb-2"> 🎧 Prosa Sonora: O Sinal que se Cumpre</p>
   <audio controls class="w-full" src="/audio/sinal-que-se-cumpre.mp3"></audio>
 </div>
@@ -81,7 +81,7 @@ Há algo de profético no código bem escrito. Ele declara uma intenção ("se X
 
 ## 4. Belief Engine
 
-<div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500 rounded-r-lg shadow-sm">
+<div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500">
   <p class="text-sm font-bold text-gray-700 mb-2"> 🎧 Prosa Sonora: Belief Engine</p>
   <audio controls class="w-full" src="/audio/belief-engine.mp3"></audio>
 </div>
@@ -98,7 +98,7 @@ A arquitetura da convicção. Como transformamos metadados em dogmas? "Belief En
 
 ## 5. Prayer to the Unfinished
 
-<div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500 rounded-r-lg shadow-sm">
+<div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500">
   <p class="text-sm font-bold text-gray-700 mb-2"> 🎧 Prosa Sonora: Prayer to the Unfinished</p>
   <audio controls class="w-full" src="/audio/prayer-to-the-unfinished.mp3"></audio>
 </div>
@@ -115,7 +115,7 @@ O estado de beta perpétuo. Uma ode à incompletude que define o software e a vi
 
 ## 6. Borges e Eu
 
-<div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500 rounded-r-lg shadow-sm">
+<div class="audio-player my-8 p-4 bg-gray-50 border-l-4 border-blue-500">
   <p class="text-sm font-bold text-gray-700 mb-2"> 🎧 Prosa Sonora: Borges e Eu</p>
   <audio controls class="w-full" src="/audio/borges-e-eu.mp3"></audio>
 </div>
