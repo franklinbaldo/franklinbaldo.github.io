@@ -1,6 +1,6 @@
 ---
 author: franklin
-date: 2024-05-18
+date: 2026-03-21
 title: "The Intelligible Void: On Hassabis, Silicon, and Events All the Way Down"
 description: "Why does the universe appear intelligible? Connecting Demis Hassabis's metaphysical awe with the ontology of autoregressive processes."
 tags: ["philosophy", "AI", "metaphysics", "process ontology", "Demis Hassabis"]
