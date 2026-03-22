@@ -50,7 +50,7 @@ const formatDate = (date: Date) => {
     </div>
 
     <div class="mt-16 pt-8 border-t border-[#2a2b36] flex justify-between items-center text-sm font-mono text-gray-500">
-      <a href="/" class="hover:text-[#ff9e64] transition-colors flex items-center gap-2">
+      <a href="/" class="hover:bg-white hover:text-black transition-none flex items-center gap-2">
         <span>&larr;</span> Back to Timeline
       </a>
       <span class="opacity-50">End of Entry</span>
@@ -105,11 +105,12 @@ const formatDate = (date: Date) => {
     text-decoration: underline dotted 1px rgba(125, 207, 255, 0.5);
     text-underline-offset: 3px;
     border-bottom: none;
-    transition: all 0.2s;
+    transition: none;
   }
   .markdown-content a:hover {
-    color: #ff9e64;
-    text-decoration: underline solid 2px #ff9e64;
+    color: var(--color-bg-primary, black);
+    background-color: var(--color-text-primary, white);
+    text-decoration: none;
   }
 
   .markdown-content blockquote {
