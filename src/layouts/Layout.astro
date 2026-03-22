@@ -6,9 +6,11 @@ interface Props {
   title: string;
   description?: string;
   image?: string;
+  type?: "website" | "article";
 }
 
-const { title, description = "A digital memory palace.", image } = Astro.props;
+const { title, description = "A digital memory palace.", image, type = "website" } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
@@ -20,13 +22,16 @@ const { title, description = "A digital memory palace.", image } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
     <ClientRouter />
     
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={type} />
     <meta property="og:url" content={Astro.url} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="The Chronicle" />
+    <meta property="og:locale" content="en_US" />
     {image && <meta property="og:image" content={new URL(image, Astro.url)} />}
 
     <!-- Twitter -->

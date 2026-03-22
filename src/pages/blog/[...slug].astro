@@ -20,9 +20,25 @@ const formatDate = (date: Date) => {
     day: 'numeric',
   }).format(date);
 };
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.data.title,
+  "description": post.data.description,
+  "image": post.data.heroImage ? new URL(post.data.heroImage, Astro.site) : undefined,
+  "author": {
+    "@type": "Person",
+    "name": post.data.author || "Franklin Baldo"
+  },
+  "datePublished": post.data.date.toISOString(),
+  "dateModified": post.data.updatedDate ? post.data.updatedDate.toISOString() : post.data.date.toISOString(),
+  "url": new URL(Astro.url.pathname, Astro.site)
+};
 ---
 
-<Layout title={post.data.title} description={post.data.description} image={post.data.heroImage}>
+<Layout title={post.data.title} description={post.data.description} image={post.data.heroImage} type="article">
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <article class="max-w-2xl mx-auto py-8 font-serif leading-relaxed animate-fade-in">
     <header class="mb-12 text-center md:text-left border-b border-[#2a2b36] pb-8 relative">
       <div class="absolute top-0 right-0 text-[10rem] opacity-[0.01] font-serif font-bold text-[#ff9e64] pointer-events-none select-none -z-10 transform translate-x-1/4 -translate-y-1/4">
