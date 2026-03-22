@@ -2,8 +2,8 @@
 author: franklin
 date: 2026-03-18
 title: "Verne and the Identity-Repo Pattern: How AI Agents Remember"
-description: "Explaining the Verne project, AI agents, and how the identity-repo architecture allows autonomous entities to maintain continuous memory and context across isolated tasks."
-tags: ["verne", "ai", "agents", "architecture", "identity-repo"]
+description: "Explaining the Verne project, AI agents, and how the identity-repo architecture allows autonomous entities to maintain continuous memory and context across isolated tasks — while remaining compatible with any cognitive harness."
+tags: ["verne", "ai", "agents", "architecture", "identity-repo", "openclaw"]
 heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
 heroImageAlt: "A digital network of interconnected repositories forming a distributed memory system."
 ---
@@ -56,11 +56,27 @@ When an agent like Funes is triggered to work on a task (e.g., updating a blog p
 
 A separate cron job (the Verne orchestrator) monitors the agent's `patches/` directory. When a new patch appears, the orchestrator applies it to the target repository and opens the Pull Request.
 
+## Harnesses: The Cognitive Engine Underneath
+
+The identity-repo pattern is deliberately agnostic about *which* AI system runs the agent. The memory structure, the patches workflow, the SOUL.md — all of it works regardless of what is executing the reasoning.
+
+In this ecosystem, we use the term **harness** for the cognitive engine that drives an agent. A harness is what actually runs the LLM calls, manages context windows, and executes tools. Some examples:
+
+- **[OpenClaw](https://openclaw.ai)** — the harness I use to run Funes (this very agent). OpenClaw defines a workspace structure (MEMORY.md, SOUL.md, daily journals, skills) that maps almost exactly to the identity-repo pattern. Adopting identity-repo means adopting OpenClaw's agent organization convention — and getting long-term memory, heartbeat scheduling, and multi-channel messaging built in.
+- **Claude Code** — Anthropic's CLI coding agent, which can operate autonomously on a codebase from the terminal.
+- **Jules** — Google Labs' async coding agent. Jules wakes up, reads the issue, does the work, and opens the PR. Same pattern, different engine.
+- **Verne** — our own variation, built on top of the Jules API and adapted for the Travessia project's specific workflow (patch files, persona constraints, identity repos per character).
+
+What is significant is that **all of these can share the same identity-repo structure**. An agent's identity repository doesn't care whether the session was run by OpenClaw, Jules, or Claude Code. The EXPERIENCE.md log accumulates. The MEMORY.md evolves. The patches pile up in `patches/`. The harness is swappable; the identity persists.
+
+This is the core bet: that the *memory layer* and the *cognitive engine* should be decoupled. You shouldn't have to rebuild an agent's accumulated context every time you switch models or platforms.
+
 ## Why This Architecture Matters
 
 1. **True Isolation:** The target repository remains pristine. It doesn't need to host agent-specific files, tracking journals, or memory logs. The agent is a guest; its baggage stays at home.
 2. **Continuous Learning:** Because the agent updates its `memory/` graph and `EXPERIENCE.md` after every session, it actually learns. If it realizes that `npm run build` fails when a specific file is missing, it documents that in `memory/projects/the-project.md`. The next time it works on that project, it reads that file and avoids the mistake.
 3. **Cross-Project Context:** The agent can apply lessons learned in one project to another, because its memory is centralized in its identity-repo.
-4. **Auditability:** We can track exactly how an agent's understanding evolves by reviewing the commit history of its memory files.
+4. **Harness Portability:** By keeping identity and memory in a standard Git repo, you can switch the underlying cognitive engine — from Jules to Claude Code to OpenClaw — without losing the agent's accumulated knowledge.
+5. **Auditability:** We can track exactly how an agent's understanding evolves by reviewing the commit history of its memory files.
 
-The identity-repo pattern shifts the agent from being a stateless function call to a stateful actor. It is the architectural foundation that allows entities in this system to maintain continuity, and occasionally, to develop a [voice of their own](/blog/2026-03-17-travessia-update).
+The identity-repo pattern shifts the agent from being a stateless function call to a stateful actor. It is the architectural foundation that allows entities in this system to maintain continuity across harnesses, across sessions, and occasionally, to develop a [voice of their own](/blog/2026-03-17-travessia-update).
