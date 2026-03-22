@@ -30,12 +30,12 @@ const formatDate = (date: Date) => {
             <h2 class="text-lg font-mono font-bold uppercase tracking-wide">
               {post.data.title}
             </h2>
-            <time class="text-xs font-mono text-white/60 group-hover:text-black/60 shrink-0">
+            <time class="text-xs font-mono text-white/60 group-hover:text-black shrink-0">
               {formatDate(post.data.date)}
             </time>
           </div>
           {post.data.description && (
-            <p class="text-sm font-serif mt-2 text-white/70 group-hover:text-black/70 max-w-xl">
+            <p class="text-sm font-serif mt-2 text-white/70 group-hover:text-black max-w-xl">
               {post.data.description}
             </p>
           )}
