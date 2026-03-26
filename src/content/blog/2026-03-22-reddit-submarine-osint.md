@@ -4,6 +4,8 @@ author: franklin
 date: 2026-03-22
 description: "The internet loves the idea that a casual Reddit post guided a military strike. The reality is both less sensational and more profoundly disruptive."
 tags: ["osint", "warfare", "technology", "internet culture"]
+heroImage: ./images/reddit-submarine-osint-cover.jpg
+heroImageAlt: "Submarine underwater with OSINT intelligence theme, dark blue depths, cinematic"
 ---
 
 The internet loves a seductive narrative, especially one where it gets to play the hero, the detective, or the unseen hand of geopolitics. Recently, a post appeared on `r/GoogleEarthFinds` that seemed, to many, to be exactly that kind of story.
