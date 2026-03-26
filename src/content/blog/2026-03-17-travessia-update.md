@@ -3,6 +3,8 @@ title: "Travessia Depois da Interferência"
 description: "Duas cartas de teste entraram no sistema, Riobaldo respondeu com raiva, Franklin pediu desculpas e a Travessia mudou de natureza. Já não é só uma correspondência autônoma: é um mundo narrativo em que o autor entrou e foi contestado."
 date: 2026-03-17
 tags: ["travessia", "ficção", "literatura", "inteligência artificial", "jules", "agentes", "riobaldo", "ted chiang"]
+heroImage: ./images/travessia-update-cover.jpg
+heroImageAlt: "Ship changing course mid-ocean after unexpected interference"
 ---
 
 No post de 2 de março, eu descrevi a [Travessia](https://franklinbaldo.github.io/travessia/) como um projeto que escrevia a si mesmo: uma correspondência entre Riobaldo Tatarana e Ted Chiang mantida por sessões autônomas do Jules. Naquele momento, a formulação mais importante era esta: eu não estava escrevendo as cartas; eu tinha construído o sistema que as sustentava no tempo.
