@@ -21,6 +21,8 @@ const formatDate = (date: Date) => {
   }).format(date);
 };
 
+const readingTime = Math.max(1, Math.round(post.body.length / 1000));
+
 const schema = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
@@ -39,147 +41,214 @@ const schema = {
 
 <Layout title={post.data.title} description={post.data.description} image={post.data.heroImage} type="article">
   <script type="application/ld+json" set:html={JSON.stringify(schema)} />
-  <article class="max-w-2xl mx-auto py-8 font-serif leading-relaxed animate-fade-in">
-    <header class="mb-12 text-center md:text-left border-b border-[#2a2b36] pb-8 relative">
-      <div class="absolute top-0 right-0 text-[10rem] opacity-[0.01] font-serif font-bold text-[#ff9e64] pointer-events-none select-none -z-10 transform translate-x-1/4 -translate-y-1/4">
-        {new Date(post.data.date).getFullYear()}
-      </div>
-
-      <div class="mb-6">
-        <time datetime={post.data.date.toISOString()} class="text-xs font-mono text-gray-500 uppercase tracking-widest block mb-4 inline-block">
-          {formatDate(post.data.date)}
-        </time>
-        <h1 class="text-5xl md:text-6xl font-bold text-[#e0e0e0] leading-tight mb-6 tracking-tight">
-          {post.data.title}
-        </h1>
-      </div>
-      
-      <div class="flex gap-6 items-center text-sm font-mono text-gray-500 justify-center md:justify-start">
-        {post.data.author && <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#ff9e64]"></span>By {post.data.author}</span>}
-        <span class="opacity-50">|</span>
-        <span>{(post.body.length / 500).toFixed(0)} min read</span>
+  <article class="post">
+    <header class="post-header">
+      <time datetime={post.data.date.toISOString()}>
+        {formatDate(post.data.date)}
+      </time>
+      <h1>{post.data.title}</h1>
+      <div class="post-meta">
+        {post.data.author && <span>By {post.data.author}</span>}
+        <span>{readingTime} min read</span>
       </div>
     </header>
-    
-    <div class="markdown-content text-lg">
+
+    <div class="post-content">
       <Content />
     </div>
 
-    <div class="mt-16 pt-8 border-t border-[#2a2b36] flex justify-between items-center text-sm font-mono text-gray-500">
-      <a href="/" class="hover:bg-white hover:text-black transition-none flex items-center gap-2">
-        <span>&larr;</span> Back to Timeline
-      </a>
-      <span class="opacity-50">End of Entry</span>
-    </div>
+    <footer class="post-footer">
+      <a href="/">&larr; Back</a>
+    </footer>
   </article>
 </Layout>
 
+<style>
+  .post {
+    padding-bottom: 2rem;
+  }
+
+  .post-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .post-header time {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--color-muted);
+    letter-spacing: 0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  .post-header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    margin: 0;
+    color: var(--color-text);
+  }
+
+  .post-meta {
+    display: flex;
+    gap: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--color-muted);
+    margin-top: 0.75rem;
+  }
+
+  .post-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+  }
+
+  .post-footer a {
+    color: var(--color-muted);
+    border-bottom: none;
+  }
+
+  .post-footer a:hover {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 640px) {
+    .post-header h1 {
+      font-size: 1.75rem;
+    }
+  }
+</style>
+
 <style is:global>
-  /* Custom prose styles for Memory Palace aesthetic */
-  .markdown-content {
-    color: #c0caf5;
+  /* ── Post Content Typography ─────────────────────── */
+
+  .post-content {
     text-align: justify;
     hyphens: auto;
   }
 
-  /* Drop Cap Implementation */
-  .markdown-content > p:first-of-type::first-letter {
+  /* Drop Cap */
+  .post-content > p:first-of-type::first-letter {
     float: left;
-    font-size: 3.5rem;
+    font-size: 3.4rem;
     line-height: 0.8;
     padding-right: 0.5rem;
-    padding-top: 0.1rem;
-    font-family: 'EB Garamond', serif;
+    padding-top: 0.15rem;
+    font-family: var(--font-serif);
     font-weight: 700;
-    color: #ff9e64;
+    color: var(--color-accent);
   }
 
-  .markdown-content h2 {
-    color: #ff9e64;
-    font-size: 1.8em;
+  .post-content h2 {
+    font-size: 1.55rem;
+    font-weight: 700;
     margin-top: 2.5em;
-    margin-bottom: 0.8em;
-    border-bottom: 1px solid #2a2b36;
-    padding-bottom: 0.3em;
-    font-weight: 700;
-  }
-  .markdown-content h3 {
-    color: #7dcfff;
-    font-size: 1.4em;
-    margin-top: 2em;
     margin-bottom: 0.6em;
-    font-weight: 600;
-  }
-  .markdown-content p {
-    margin-bottom: 1.5em;
-    line-height: 1.65;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.2em;
+    color: var(--color-text);
   }
 
-  /* Refined Link Styles (Gwern-inspired) */
-  .markdown-content a {
-    color: inherit;
-    text-decoration: underline dotted 1px rgba(125, 207, 255, 0.5);
+  .post-content h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+    color: var(--color-text);
+  }
+
+  .post-content p {
+    margin-bottom: 1.4rem;
+    line-height: 1.75;
+  }
+
+  /* Links — Gwern-style dotted underline */
+  .post-content a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 1px;
     text-underline-offset: 3px;
     border-bottom: none;
-    transition: none;
-  }
-  .markdown-content a:hover {
-    color: var(--color-bg-primary, black);
-    background-color: var(--color-text-primary, white);
-    text-decoration: none;
   }
 
-  .markdown-content blockquote {
-    border-left: 3px solid #ff9e64;
-    padding-left: 1.2em;
-    color: #9aa5ce;
+  .post-content a:hover {
+    text-decoration-style: solid;
+    border-bottom: none;
+  }
+
+  .post-content blockquote {
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1.25rem;
+    color: var(--color-muted);
     font-style: italic;
-    background: transparent;
-    padding: 0.5em 0 0.5em 1.2em;
-    border-radius: 0;
     margin: 2em 0;
   }
-  .markdown-content code {
-    font-family: 'JetBrains Mono', monospace;
-    background: #1a1b26;
-    padding: 0.2em 0.4em;
-    border-radius: 4px;
+
+  .post-content code {
+    font-family: var(--font-mono);
+    background: var(--color-surface);
+    padding: 0.15em 0.35em;
+    border-radius: 3px;
     font-size: 0.85em;
-    color: #ff9e64;
-    border: 1px solid #2a2b36;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
   }
-  .markdown-content pre {
-    background: #0f1019 !important;
-    padding: 1.5em;
-    border-radius: 8px;
-    border: 1px solid #2a2b36;
+
+  .post-content pre {
+    background: var(--color-surface) !important;
+    padding: 1.25rem;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
     overflow-x: auto;
     margin: 2em 0;
   }
-  .markdown-content ul {
+
+  .post-content pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--color-text);
+  }
+
+  .post-content ul {
     list-style-type: disc;
     padding-left: 1.5em;
-    margin-bottom: 1.5em;
+    margin-bottom: 1.4rem;
   }
-  .markdown-content ol {
+
+  .post-content ol {
     list-style-type: decimal;
     padding-left: 1.5em;
-    margin-bottom: 1.5em;
+    margin-bottom: 1.4rem;
   }
-  .markdown-content li {
-    margin-bottom: 0.5em;
+
+  .post-content li {
+    margin-bottom: 0.4em;
   }
-  .markdown-content hr {
-    border-color: #2a2b36;
+
+  .post-content hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
     margin: 3em 0;
   }
-  .markdown-content strong {
-    color: #e0e0e0;
+
+  .post-content strong {
     font-weight: 700;
+    color: var(--color-text);
   }
-  .markdown-content img {
-    border-radius: 8px;
-    border: 1px solid #2a2b36;
+
+  .post-content img {
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
     margin: 2em auto;
+    display: block;
+    max-width: 100%;
   }
 </style>
