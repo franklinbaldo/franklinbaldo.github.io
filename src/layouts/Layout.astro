@@ -7,9 +7,10 @@ interface Props {
   description?: string;
   image?: string;
   type?: "website" | "article";
+  wide?: boolean;
 }
 
-const { title, description = "A digital memory palace.", image, type = "website" } = Astro.props;
+const { title, description = "A digital memory palace.", image, type = "website", wide = false } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -41,16 +42,30 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta property="twitter:description" content={description} />
     {image && <meta property="twitter:image" content={new URL(image, Astro.url)} />}
 
-    <!-- Gwern Typography Enhancement -->
+    <!-- Typography Enhancement -->
     <link rel="stylesheet" href="/css/gwern-typography.css" />
   </head>
   <body>
     <div class="site-wrapper">
       <header class="site-header">
-        <a href="/" class="site-name">Franklin Baldo</a>
+        <div class="header-brand">
+          <a href="/" class="site-logo" aria-label="Home">
+            <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="21" cy="21" r="21" fill="#393939"/>
+              <text x="21" y="27" text-anchor="middle" fill="#fff" font-family="Georgia, serif" font-size="20" font-weight="700">FB</text>
+            </svg>
+          </a>
+          <a href="/" class="site-name">Franklin Baldo</a>
+        </div>
         <nav class="site-nav">
-          <a href="/about">About</a>
-          <a href="/rss.xml">RSS</a>
+          <div class="nav-group">
+            <a href="/about">About</a>
+            <a href="/">Essays</a>
+          </div>
+          <div class="nav-group">
+            <a href="/rss.xml">RSS</a>
+            <a href="https://github.com/franklinbaldo" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </div>
         </nav>
       </header>
 
@@ -59,12 +74,18 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       </main>
 
       <footer class="site-footer">
-        <div class="footer-links">
-          <a href="https://github.com/franklinbaldo" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <span class="footer-sep">&middot;</span>
-          <a href="https://twitter.com/franklinbaldo" target="_blank" rel="noopener noreferrer">Twitter</a>
-          <span class="footer-sep">&middot;</span>
-          <a href="mailto:franklin@franklinbaldo.com">Email</a>
+        <div class="footer-newsletter">
+          <p class="footer-cta-label">Stay updated</p>
+          <p class="footer-cta-desc">Writing about AI, philosophy, and the architecture of the future.</p>
+          <a href="/rss.xml" class="footer-subscribe">Subscribe via RSS &rarr;</a>
+        </div>
+        <div class="footer-bottom">
+          <div class="footer-links">
+            <a href="https://github.com/franklinbaldo" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://twitter.com/franklinbaldo" target="_blank" rel="noopener noreferrer">Twitter</a>
+            <a href="mailto:franklin@franklinbaldo.com">Email</a>
+          </div>
+          <p class="footer-copy">&copy; {new Date().getFullYear()} Franklin Baldo</p>
         </div>
       </footer>
     </div>
@@ -73,7 +94,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 <style>
   .site-wrapper {
-    max-width: 38rem;
+    max-width: var(--content-width);
     margin: 0 auto;
     padding: 0 1.5rem;
     min-height: 100vh;
@@ -81,18 +102,37 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     flex-direction: column;
   }
 
+  /* ── Header ──────────────────────────────────────── */
+
   .site-header {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
-    padding: 2.5rem 0 2rem;
+    padding: 2rem 0;
     border-bottom: 1px solid var(--color-border);
     margin-bottom: 3rem;
   }
 
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .site-logo {
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+  }
+
+  .site-logo:hover {
+    border-bottom: none;
+    opacity: 0.8;
+  }
+
   .site-name {
     font-family: var(--font-serif);
-    font-size: 1.35rem;
+    font-size: 1.2rem;
     font-weight: 600;
     color: var(--color-text);
     letter-spacing: -0.02em;
@@ -100,43 +140,106 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   }
 
   .site-name:hover {
-    color: var(--color-accent);
+    color: var(--color-muted);
     border-bottom: none;
   }
 
   .site-nav {
     display: flex;
-    gap: 1.5rem;
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    letter-spacing: 0.03em;
+    gap: 2rem;
   }
 
-  .site-nav a {
+  .nav-group {
+    display: flex;
+    gap: 1.25rem;
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    letter-spacing: 0.01em;
+  }
+
+  .nav-group a {
     color: var(--color-muted);
     border-bottom: none;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
   }
 
-  .site-nav a:hover {
-    color: var(--color-accent);
+  .nav-group a:hover {
+    color: var(--color-text);
     border-bottom: none;
   }
+
+  /* ── Main ────────────────────────────────────────── */
 
   .site-main {
     flex-grow: 1;
   }
 
+  /* ── Footer ──────────────────────────────────────── */
+
   .site-footer {
     margin-top: auto;
-    padding: 2rem 0;
+    padding-top: 0;
+  }
+
+  .footer-newsletter {
     border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    padding: 2.5rem 0;
+    margin-top: 4rem;
     text-align: center;
   }
 
-  .footer-links {
-    font-family: var(--font-mono);
+  .footer-cta-label {
+    font-family: var(--font-sans);
     font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
     color: var(--color-muted);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .footer-cta-desc {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+    max-width: 36ch;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  .footer-subscribe {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-text);
+    font-weight: 500;
+    padding-bottom: 1px;
+  }
+
+  .footer-subscribe:hover {
+    color: var(--color-muted);
+    border-bottom-color: var(--color-muted);
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0 2rem;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 1.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
   .footer-links a {
@@ -145,22 +248,40 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   }
 
   .footer-links a:hover {
-    color: var(--color-accent);
+    color: var(--color-text);
   }
 
-  .footer-sep {
-    margin: 0 0.5rem;
-    color: var(--color-border);
+  .footer-copy {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    color: var(--color-muted);
+    margin: 0;
+    letter-spacing: 0.02em;
   }
+
+  /* ── Mobile ──────────────────────────────────────── */
 
   @media (max-width: 640px) {
     .site-header {
-      padding: 1.5rem 0 1.25rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.5rem 0;
       margin-bottom: 2rem;
     }
 
     .site-nav {
-      gap: 1rem;
+      gap: 1.25rem;
+    }
+
+    .nav-group {
+      gap: 0.75rem;
+    }
+
+    .footer-bottom {
+      flex-direction: column;
+      gap: 0.75rem;
+      text-align: center;
     }
   }
 </style>
