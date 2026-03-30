@@ -1,19 +1,17 @@
 @import "tailwindcss";
 
-/* Editorial Clean — warm off-white, serif-first, quiet accent */
+/* ── Design Tokens ─────────────────────────────────── */
 
 :root {
   --font-serif: "EB Garamond", Georgia, serif;
   --font-mono: "JetBrains Mono", monospace;
 
-  --color-bg:       #faf8f4;   /* warm paper */
-  --color-surface:  #f2efe9;   /* subtle card/sidebar */
-  --color-border:   #d6d0c4;   /* muted warm gray */
-  --color-text:     #1c1917;   /* near-black, warm */
-  --color-muted:    #78716c;   /* stone-500 */
-  --color-accent:   #92400e;   /* amber-800, earthy */
-
-  --spacing-container: 44rem;
+  --color-bg:      #faf8f4;
+  --color-surface: #f2efe9;
+  --color-border:  #d6d0c4;
+  --color-text:    #1c1917;
+  --color-muted:   #78716c;
+  --color-accent:  #92400e;
 }
 
 /* ── Base ──────────────────────────────────────────── */
@@ -51,7 +49,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 { font-size: 2.25rem; }
-h2 { font-size: 1.6rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.2em; }
+h2 { font-size: 1.55rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.2em; }
 h3 { font-size: 1.25rem; }
 
 /* ── Links ──────────────────────────────────────────── */
@@ -115,27 +113,16 @@ blockquote {
   padding-left: 0.75rem;
 }
 
-/* ── Utility classes used by Astro templates ────────── */
+/* ── Selection ─────────────────────────────────────── */
 
-/* Override Tailwind "text-white" / "bg-black" patterns from brutalist era */
-.text-white { color: var(--color-text) !important; }
-.bg-black, .bg-\[\#000\] { background-color: var(--color-bg) !important; }
-.border-white { border-color: var(--color-border) !important; }
-.hover\:bg-white:hover { background-color: var(--color-surface) !important; color: var(--color-text) !important; }
-.hover\:text-black:hover { color: var(--color-text) !important; }
-.text-white\/60, .text-white\/70 { color: var(--color-muted) !important; }
-.group-hover\:text-black { color: var(--color-text) !important; }
-
-/* Index heading — remove monospace uppercase */
-h1.font-mono, h2.font-mono {
-  font-family: var(--font-serif);
-  text-transform: none;
-  letter-spacing: -0.02em;
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-bg);
 }
 
 /* ── Mobile ─────────────────────────────────────────── */
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   body {
     font-size: 1rem;
     line-height: 1.7;

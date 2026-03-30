@@ -24,13 +24,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
     <ClientRouter />
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content={type} />
     <meta property="og:url" content={Astro.url} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:site_name" content="The Chronicle" />
+    <meta property="og:site_name" content="Franklin Baldo" />
     <meta property="og:locale" content="en_US" />
     {image && <meta property="og:image" content={new URL(image, Astro.url)} />}
 
@@ -40,92 +40,127 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     {image && <meta property="twitter:image" content={new URL(image, Astro.url)} />}
-    
+
     <!-- Gwern Typography Enhancement -->
     <link rel="stylesheet" href="/css/gwern-typography.css" />
   </head>
-  <body class="bg-black text-white font-serif min-h-screen antialiased selection:bg-white selection:text-black">
-    <div class="min-h-screen flex flex-col md:flex-row">
-      <!-- Left Sidebar / Structural Anchor -->
-      <header class="w-full md:w-64 border-b md:border-b-0 md:border-r border-white sticky top-0 md:h-screen bg-black z-10 shrink-0">
-        <div class="md:hidden px-4 py-4">
-          <div class="flex flex-wrap items-center gap-x-4 gap-y-3 font-mono uppercase">
-            <a href="/" class="text-base font-bold tracking-tighter leading-none whitespace-nowrap border border-white px-3 py-2 hover:bg-white hover:text-black transition-none">
-              The Chronicle
-            </a>
-
-            <nav class="flex flex-wrap items-center gap-2 text-[11px] tracking-[0.2em]">
-              <a href="/about" class="border border-white px-2 py-1.5 hover:bg-white hover:text-black transition-none">
-                [ About ]
-              </a>
-              <a href="/rss.xml" class="border border-white px-2 py-1.5 hover:bg-white hover:text-black transition-none">
-                [ RSS ]
-              </a>
-              <a href="/tags" class="border border-white px-2 py-1.5 hover:bg-white hover:text-black transition-none">
-                [ Tags ]
-              </a>
-            </nav>
-          </div>
-
-          <div class="mt-3 flex flex-wrap items-center gap-2 border-t border-white pt-3 text-[10px] font-mono uppercase tracking-[0.22em]">
-            <a href="https://github.com/franklinbaldo" target="_blank" rel="noopener noreferrer" class="border border-white px-2 py-1.5 hover:bg-white hover:text-black transition-none">GitHub</a>
-            <a href="https://twitter.com/franklinbaldo" target="_blank" rel="noopener noreferrer" class="border border-white px-2 py-1.5 hover:bg-white hover:text-black transition-none">Twitter</a>
-            <a href="mailto:franklin@franklinbaldo.com" class="border border-white px-2 py-1.5 hover:bg-white hover:text-black transition-none">Email</a>
-          </div>
-        </div>
-
-        <div class="hidden md:flex md:h-screen md:flex-col">
-          <div class="p-6 md:p-8 flex-grow">
-            <a href="/" class="block text-xl font-mono font-bold tracking-tighter uppercase mb-12 border-b-2 border-transparent hover:border-white w-fit transition-none">
-              The Chronicle
-            </a>
-
-            <nav class="flex flex-col gap-4 font-mono text-sm">
-              <a href="/about" class="border border-transparent hover:border-white p-2 -ml-2 transition-none uppercase tracking-wide">
-                [ About ]
-              </a>
-              <a href="/rss.xml" class="border border-transparent hover:border-white p-2 -ml-2 transition-none uppercase tracking-wide">
-                [ RSS ]
-              </a>
-              <a href="/tags" class="border border-transparent hover:border-white p-2 -ml-2 transition-none uppercase tracking-wide">
-                [ Tags ]
-              </a>
-            </nav>
-          </div>
-
-          <footer class="p-6 md:p-8 border-t border-white text-xs font-mono uppercase tracking-widest mt-auto">
-            <div class="flex flex-col gap-4">
-              <a href="https://github.com/franklinbaldo" target="_blank" rel="noopener noreferrer" class="hover:bg-white hover:text-black p-1 -ml-1 transition-none w-fit">GitHub</a>
-              <a href="https://twitter.com/franklinbaldo" target="_blank" rel="noopener noreferrer" class="hover:bg-white hover:text-black p-1 -ml-1 transition-none w-fit">Twitter</a>
-              <a href="mailto:franklin@franklinbaldo.com" class="hover:bg-white hover:text-black p-1 -ml-1 transition-none w-fit">Email</a>
-              <p class="mt-4 border-t border-white/50 pt-4 text-white/50">SYSTEM_ONLINE</p>
-            </div>
-          </footer>
-        </div>
+  <body>
+    <div class="site-wrapper">
+      <header class="site-header">
+        <a href="/" class="site-name">Franklin Baldo</a>
+        <nav class="site-nav">
+          <a href="/about">About</a>
+          <a href="/rss.xml">RSS</a>
+        </nav>
       </header>
 
-      <!-- Main Content Area -->
-      <main class="flex-grow w-full max-w-[44rem] px-5 py-10 md:px-10 md:py-14 lg:px-12">
+      <main class="site-main">
         <slot />
       </main>
-     </div>
-   </body>
- </html>
 
- <style is:global>
-  /* Strict scrollbar overriding smooth OS defaults to raw blocks */
-   ::-webkit-scrollbar {
-    width: 12px;
-   }
-   ::-webkit-scrollbar-track {
-    background: #000;
-    border-left: 1px solid #fff;
-   }
-   ::-webkit-scrollbar-thumb {
-    background: #fff;
-    border: 2px solid #000;
-   }
-   ::-webkit-scrollbar-thumb:hover {
-    background: #ff0000;
-   }
- </style>
+      <footer class="site-footer">
+        <div class="footer-links">
+          <a href="https://github.com/franklinbaldo" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <span class="footer-sep">&middot;</span>
+          <a href="https://twitter.com/franklinbaldo" target="_blank" rel="noopener noreferrer">Twitter</a>
+          <span class="footer-sep">&middot;</span>
+          <a href="mailto:franklin@franklinbaldo.com">Email</a>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
+
+<style>
+  .site-wrapper {
+    max-width: 38rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .site-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 2.5rem 0 2rem;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 3rem;
+  }
+
+  .site-name {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--color-text);
+    letter-spacing: -0.02em;
+    border-bottom: none;
+  }
+
+  .site-name:hover {
+    color: var(--color-accent);
+    border-bottom: none;
+  }
+
+  .site-nav {
+    display: flex;
+    gap: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+  }
+
+  .site-nav a {
+    color: var(--color-muted);
+    border-bottom: none;
+  }
+
+  .site-nav a:hover {
+    color: var(--color-accent);
+    border-bottom: none;
+  }
+
+  .site-main {
+    flex-grow: 1;
+  }
+
+  .site-footer {
+    margin-top: auto;
+    padding: 2rem 0;
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+  }
+
+  .footer-links {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-muted);
+  }
+
+  .footer-links a {
+    color: var(--color-muted);
+    border-bottom: none;
+  }
+
+  .footer-links a:hover {
+    color: var(--color-accent);
+  }
+
+  .footer-sep {
+    margin: 0 0.5rem;
+    color: var(--color-border);
+  }
+
+  @media (max-width: 640px) {
+    .site-header {
+      padding: 1.5rem 0 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .site-nav {
+      gap: 1rem;
+    }
+  }
+</style>
