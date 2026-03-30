@@ -13,71 +13,132 @@ const formatDate = (date: Date) => {
     day: 'numeric',
   }).format(date);
 };
+
+const formatYear = (date: Date) => date.getFullYear().toString();
 ---
 
-<Layout title="Franklin Baldo">
-  <section>
-    {posts.map(post => (
-      <article class="post-item">
-        <time datetime={post.data.date.toISOString()}>
-          {formatDate(post.data.date)}
-        </time>
-        <h2>
-          <a href={`/blog/${post.slug}`}>{post.data.title}</a>
-        </h2>
-        {post.data.description && (
-          <p class="post-description">{post.data.description}</p>
-        )}
-      </article>
-    ))}
+<Layout title="Franklin Baldo — Writer & Technologist">
+  <section class="essays-index">
+    <h1 class="page-title">Essays</h1>
+    <p class="page-subtitle">On AI, philosophy, and the architecture of the future.</p>
+
+    <div class="post-list">
+      {posts.map((post, i) => {
+        const showYear = i === 0 || formatYear(post.data.date) !== formatYear(posts[i - 1].data.date);
+        return (
+          <>
+            {showYear && <h2 class="year-heading">{formatYear(post.data.date)}</h2>}
+            <article class="post-item">
+              <a href={`/blog/${post.slug}`} class="post-link">
+                <span class="post-title">{post.data.title}</span>
+                {post.data.description && (
+                  <span class="post-description">{post.data.description}</span>
+                )}
+                <time datetime={post.data.date.toISOString()}>
+                  {formatDate(post.data.date)}
+                </time>
+              </a>
+            </article>
+          </>
+        );
+      })}
+    </div>
   </section>
 </Layout>
 
 <style>
-  section {
-    padding-top: 1rem;
+  .essays-index {
+    padding-top: 0;
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.25rem 0;
+    color: var(--color-text);
+  }
+
+  .page-subtitle {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    margin-bottom: 2.5rem;
+    letter-spacing: 0.01em;
+  }
+
+  .year-heading {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-muted);
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .year-heading:first-child {
+    margin-top: 0;
+  }
+
+  .post-list {
+    /* Reset default heading styles within list */
   }
 
   .post-item {
-    margin-bottom: 2.75rem;
+    margin-bottom: 0;
   }
 
-  .post-item time {
+  .post-link {
     display: block;
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    color: var(--color-muted);
-    letter-spacing: 0.02em;
-    margin-bottom: 0.3rem;
-  }
-
-  .post-item h2 {
-    font-family: var(--font-serif);
-    font-size: 1.45rem;
-    font-weight: 600;
-    line-height: 1.3;
-    letter-spacing: -0.02em;
-    margin: 0;
-    border: none;
-    padding: 0;
-  }
-
-  .post-item h2 a {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--color-surface);
     color: var(--color-text);
-    border-bottom: none;
+    text-decoration: none;
+    transition: background-color 0.1s ease;
   }
 
-  .post-item h2 a:hover {
-    color: var(--color-accent);
-    border-bottom: none;
+  .post-link:hover {
+    background-color: var(--color-surface);
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    border-bottom: 1px solid var(--color-surface);
+    border-radius: 3px;
+  }
+
+  .post-title {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+    color: var(--color-text);
   }
 
   .post-description {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
     color: var(--color-muted);
-    font-size: 1rem;
-    line-height: 1.55;
-    margin-top: 0.35rem;
-    margin-bottom: 0;
+    line-height: 1.5;
+    margin-top: 0.2rem;
     max-width: 55ch;
+  }
+
+  .post-link time {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    color: var(--color-muted);
+    letter-spacing: 0.02em;
+    margin-top: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 </style>

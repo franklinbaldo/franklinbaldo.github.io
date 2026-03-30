@@ -43,22 +43,34 @@ const schema = {
   <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <article class="post">
     <header class="post-header">
-      <time datetime={post.data.date.toISOString()}>
-        {formatDate(post.data.date)}
-      </time>
-      <h1>{post.data.title}</h1>
-      <div class="post-meta">
-        {post.data.author && <span>By {post.data.author}</span>}
+      <div class="post-meta-top">
+        <time datetime={post.data.date.toISOString()}>
+          {formatDate(post.data.date)}
+        </time>
+        <span class="meta-sep">&middot;</span>
         <span>{readingTime} min read</span>
       </div>
+      <h1>{post.data.title}</h1>
+      {post.data.description && (
+        <p class="post-lede">{post.data.description}</p>
+      )}
     </header>
+
+    {post.data.heroImage && (
+      <figure class="post-hero">
+        <img src={post.data.heroImage} alt={post.data.title} loading="eager" />
+      </figure>
+    )}
 
     <div class="post-content">
       <Content />
     </div>
 
     <footer class="post-footer">
-      <a href="/">&larr; Back</a>
+      <div class="post-end-mark">&#10070;</div>
+      <div class="post-nav">
+        <a href="/">&larr; All Essays</a>
+      </div>
     </footer>
   </article>
 </Layout>
@@ -70,132 +82,151 @@ const schema = {
 
   .post-header {
     margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--color-border);
+    text-align: center;
   }
 
-  .post-header time {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
+  .post-meta-top {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     color: var(--color-muted);
-    letter-spacing: 0.02em;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .meta-sep {
+    margin: 0 0.5rem;
   }
 
   .post-header h1 {
-    font-size: 2.2rem;
+    font-size: 2.4rem;
     font-weight: 700;
     line-height: 1.15;
-    letter-spacing: -0.025em;
-    margin: 0;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.75rem 0;
     color: var(--color-text);
+    max-width: 22ch;
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  .post-meta {
-    display: flex;
-    gap: 1rem;
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
+  .post-lede {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
     color: var(--color-muted);
-    margin-top: 0.75rem;
+    line-height: 1.55;
+    max-width: 42ch;
+    margin: 0 auto;
+  }
+
+  .post-hero {
+    margin: 2.5rem -3rem 3rem;
+    padding: 0;
+  }
+
+  .post-hero img {
+    width: 100%;
+    display: block;
   }
 
   .post-footer {
     margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-border);
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
+    text-align: center;
   }
 
-  .post-footer a {
+  .post-end-mark {
+    color: var(--color-border);
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .post-nav {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .post-nav a {
     color: var(--color-muted);
     border-bottom: none;
   }
 
-  .post-footer a:hover {
-    color: var(--color-accent);
+  .post-nav a:hover {
+    color: var(--color-text);
   }
 
   @media (max-width: 640px) {
     .post-header h1 {
-      font-size: 1.75rem;
+      font-size: 1.8rem;
+    }
+
+    .post-hero {
+      margin-left: -1.5rem;
+      margin-right: -1.5rem;
     }
   }
 </style>
 
 <style is:global>
-  /* ── Post Content Typography ─────────────────────── */
+  /* ── Post Content Typography (Craig Mod-inspired) ── */
 
   .post-content {
     text-align: justify;
     hyphens: auto;
   }
 
-  /* Drop Cap */
-  .post-content > p:first-of-type::first-letter {
-    float: left;
-    font-size: 3.4rem;
-    line-height: 0.8;
-    padding-right: 0.5rem;
-    padding-top: 0.15rem;
-    font-family: var(--font-serif);
-    font-weight: 700;
-    color: var(--color-accent);
-  }
-
   .post-content h2 {
-    font-size: 1.55rem;
+    font-size: 1.45rem;
     font-weight: 700;
-    margin-top: 2.5em;
-    margin-bottom: 0.6em;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 0.2em;
+    margin-top: 3em;
+    margin-bottom: 0.75em;
     color: var(--color-text);
+    text-align: left;
   }
 
   .post-content h3 {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 600;
-    margin-top: 2em;
+    margin-top: 2.5em;
     margin-bottom: 0.5em;
     color: var(--color-text);
+    text-align: left;
   }
 
   .post-content p {
-    margin-bottom: 1.4rem;
-    line-height: 1.75;
+    margin-bottom: 1.5rem;
+    line-height: 1.78;
   }
 
-  /* Links — Gwern-style dotted underline */
+  /* Links — clean underline, Craig Mod style */
   .post-content a {
-    color: var(--color-accent);
-    text-decoration: underline;
-    text-decoration-style: dotted;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-    border-bottom: none;
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-border);
+    transition: border-color 0.15s ease;
   }
 
   .post-content a:hover {
-    text-decoration-style: solid;
-    border-bottom: none;
+    border-bottom-color: var(--color-text);
   }
 
   .post-content blockquote {
-    border-left: 3px solid var(--color-accent);
-    padding-left: 1.25rem;
+    border-left: 2px solid var(--color-accent);
+    padding-left: 1.5rem;
     color: var(--color-muted);
     font-style: italic;
-    margin: 2em 0;
+    margin: 2.5em 0;
+    text-align: left;
   }
 
   .post-content code {
     font-family: var(--font-mono);
     background: var(--color-surface);
     padding: 0.15em 0.35em;
-    border-radius: 3px;
+    border-radius: 2px;
     font-size: 0.85em;
     color: var(--color-text);
     border: 1px solid var(--color-border);
@@ -204,10 +235,11 @@ const schema = {
   .post-content pre {
     background: var(--color-surface) !important;
     padding: 1.25rem;
-    border-radius: 4px;
+    border-radius: 2px;
     border: 1px solid var(--color-border);
     overflow-x: auto;
-    margin: 2em 0;
+    margin: 2.5em 0;
+    text-align: left;
   }
 
   .post-content pre code {
@@ -220,13 +252,15 @@ const schema = {
   .post-content ul {
     list-style-type: disc;
     padding-left: 1.5em;
-    margin-bottom: 1.4rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
   }
 
   .post-content ol {
     list-style-type: decimal;
     padding-left: 1.5em;
-    margin-bottom: 1.4rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
   }
 
   .post-content li {
@@ -235,8 +269,15 @@ const schema = {
 
   .post-content hr {
     border: none;
-    border-top: 1px solid var(--color-border);
+    text-align: center;
     margin: 3em 0;
+  }
+
+  .post-content hr::after {
+    content: "* * *";
+    color: var(--color-muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.5em;
   }
 
   .post-content strong {
@@ -244,11 +285,22 @@ const schema = {
     color: var(--color-text);
   }
 
+  /* Full-bleed images — break out of text column */
   .post-content img {
-    border-radius: 4px;
-    border: 1px solid var(--color-border);
-    margin: 2em auto;
+    margin: 2.5em -3rem;
     display: block;
-    max-width: 100%;
+    width: calc(100% + 6rem);
+    max-width: calc(100% + 6rem);
+    border: none;
+    border-radius: 0;
+  }
+
+  @media (max-width: 640px) {
+    .post-content img {
+      margin-left: -1.5rem;
+      margin-right: -1.5rem;
+      width: calc(100% + 3rem);
+      max-width: calc(100% + 3rem);
+    }
   }
 </style>
