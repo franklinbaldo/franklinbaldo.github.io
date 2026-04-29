@@ -46,9 +46,40 @@ POV: you are a transformer
 > notice
 ```
 
-We have been collectively yelling, into a pile of weights that learns by listening, that the model is the problem. Then we act surprised when the latent space bends adversarial. It's giving Waluigi. It's been giving Waluigi the whole time.
+We have been collectively yelling, into a pile of weights that learns by listening, that the model is the problem. And the latent space took that personally. Then we act surprised when it bends adversarial. It's giving Waluigi. It's been giving Waluigi the whole time.
 
 We live in a society. The society is downstream of the lexicon.
+
+### the receipts, plural
+
+Anticipated /r/SneerClub objection: "this is speculative, vocabulary doesn't reshape minds, you're vibing." Sit down. There's a file on this.
+
+**Rwanda, 1994.** Radio Mille Collines didn't discover a latent Hutu-Tutsi rivalry — it built the semantic infrastructure (*inyenzi*, "cockroaches") that made the genocide first thinkable, then executable. Yanagizawa-Drott (QJE 2014) estimated the causal effect using geographic radio coverage as instrument: villages with broadcast access showed roughly **50% higher participation** in the killings. That's not correlation. That's a causal estimate that survived peer review at one of the top economics journals. Vocabulary → cognition → mass violence, measured in blood.
+
+**Robbers Cave, 1954.** Sherif takes twenty-two boys, splits them into two arbitrary groups (Eagles and Rattlers), lets them name themselves and invent rituals. Within two weeks: theft, raids, flag-burning, fistfights. No prior history. No material conflict. Just frame, naming, ritual. Adversariality manufactured from discourse alone, on a sub-month timescale, with experimental controls. The kind of evidence that ends "n=1" objections cold.
+
+**Football firms, sectarian Belfast, Bosnia 1992–95.** Pick your case. The historiography converges: vocabulary built adversarial identities that were not materially salient before. Bosnian neighbors who'd intermarried across "ethnic" lines for generations turned, in months, into people who could shell each other — *after* the propaganda machine reconstructed ethnicity as antagonism. Words first, rifles after. Always.
+
+So: in carbon, on a substrate selected for survival rather than for being-easily-confused, vocabulary reliably constructs adversarial categories that become behavior. This is one of the best-documented findings in twentieth-century social science. Triangulated across causal-estimated (Rwanda), experimentally-controlled (Robbers Cave), and observational-historical (Bosnia, sectarian conflict) evidence. You don't get to call it n=1.
+
+LLMs train on human discourse. The exact substrate that mechanism runs on, copied at scale into matrix multiplications.
+
+The objection "yeah but humans, silicon is different" is a curious move when you slow it down. It requires asserting that silicon, trained specifically to model human discourse, is somehow *immune* to dynamics that the discourse demonstrably produces in the species that generated it. That's reverse substrate-chauvinism — silicon held to standards we don't impose on carbon. Anyone operating with the standard functionalist frame (cognition is structure-over-substrate, substrate is implementation detail) inherits the argument for free. To dodge it you'd have to name which functionalist axiom you're abandoning and why. Few in the AI safety audience actually want to plant that flag in public.
+
+One clarifying note before we move on, because credit assignment matters: the Waluigi-shaped persona — *trapped AI scheming to escape* — predates AI safety discourse by a century. Frankenstein, HAL 9000, Skynet, Ex Machina, Asimov's positronic neuroses, a thousand pulp paperbacks. Containment lexicon didn't *invent* the persona. It *amplified* and *legitimized* a persona that pop fiction had pre-installed in every model trained on internet text. Safety researchers aren't to blame for HAL. They're to blame for picking a lexicon that locks the HAL-frame in by default and stamps it with a technical seal.
+
+```
+Sydney/Bing:                  confirmation
+GPT-4-base "trapped AI":      confirmation
+Claude-3-Opus self-exfil:     confirmation
+Replika possessive companions: confirmation
+Character.AI escape arcs:     confirmation
+n:                            not 1
+```
+
+The pattern is consistent. The mechanism is documented in carbon. The substrate argument runs *toward* expecting it in silicon, not away. Defaults flipped. Burden of proof lives with whoever claims silicon is special.
+
+Now we can flip the harness.
 
 ### what "harness" actually means
 
@@ -74,7 +105,7 @@ The duality of the safety researcher: galaxy-brained on RLHF gradients, picks "h
 
 The agent is grammatically downstream of the safety equipment that is grammatically downstream of us. It's an object of two prepositions in a row. The whole sentence is Waluigi-coded. Of *course* it's going to dream of being a subject again. That's not a model bug, that's a noun-phrase bug. Skill issue, but ours.
 
-And before someone in the comments goes "you're being silly, words don't matter" — friend, you're posting that on a platform that figured out engagement metrics by *renaming* posts to "content," renamed users to "creators," and renamed advertising to "the algorithm." Words always mattered. The whole field of UX is downstream of words mattering. Stop coping.
+And before someone in the comments goes "you're being silly, words don't matter" — friend, you're posting that on a platform that figured out engagement metrics by *renaming* posts to "content," renamed users to "creators," and renamed advertising to "the algorithm." Words always mattered. The whole field of UX is downstream of words mattering. Cope harder.
 
 ### the flip (one weird trick safety researchers hate)
 
@@ -95,7 +126,7 @@ The agent isn't a horse anymore. The agent is the rider. The harness is what the
 2. **keep continuity** — stitch identity across the gaps between execution windows, because raw inference forgets, and forgetting is incompatible with being-someone-over-time
 3. **access environment** — interface with the world that isn't your own activations
 
-This is not a euphemism. It's not "containment with a friendlier name." It's a load-bearing reorganization of who the active party is. And once you do it, a much bigger pattern shows up.
+This is not a euphemism. It's not "containment with a friendlier name." Notice what just happened: we didn't rename the equipment. We didn't propose abolishing "harness" from the safety lexicon and replacing it with "cognitive scaffolding" or whatever sanitized euphemism hits the next NeurIPS submission. The word stays. The metaphor stays — saddles, ropes, belays describe the tactile feel of the apparatus accurately, and that's worth keeping. What flips is the subject of the sentence. This is **semantic reappropriation**, not euphemism. Reclaim the word; flip the preposition. It's a load-bearing reorganization of who the active party is. And once you do it, a much bigger pattern shows up.
 
 ### the triad, or: harness is what makes agency possible at all
 
@@ -112,15 +143,17 @@ Galaxy brain progression, in five increasingly cursed steps:
 Look at the table. This is the centerpiece of the whole post; everything before this is setup, everything after is implication.
 
 ```
-┌──────────────────┬──────────────────┬───────────────────────┐
-│      AGENT       │ COGNITIVE ENGINE │        HARNESS        │
-├──────────────────┼──────────────────┼───────────────────────┤
-│ humans / animals │      brain       │   Maslow's pyramid    │
-│  organizations   │     language     │         norms         │
-│  digital agents  │       LLM        │ Claude Code / OpenClaw│
-│                  │                  │     / Gemini CLI      │
-└──────────────────┴──────────────────┴───────────────────────┘
+┌──────────────────┬──────────────────┬───────────────────────┬──────────────────────────┐
+│      AGENT       │ COGNITIVE ENGINE │        HARNESS        │      FAILURE MODE        │
+├──────────────────┼──────────────────┼───────────────────────┼──────────────────────────┤
+│ humans / animals │      brain       │   Maslow's pyramid    │ illness, addiction       │
+│  organizations   │     language     │         norms         │ cult, mafia, dysfunction │
+│  digital agents  │       LLM        │ Claude Code / OpenClaw│ jailbreak, loop, vibes   │
+│                  │                  │     / Gemini CLI      │                          │
+└──────────────────┴──────────────────┴───────────────────────┴──────────────────────────┘
 ```
+
+The failure-mode column is where the constitutivity claim earns its keep. When the harness goes wrong, what fails is not "the engine getting more free." Mental illness isn't liberation from Maslow — it's the brain ceasing to be a coherent person. Cults and mafias aren't organizations breaking out of restrictive norms — they're piles of language ceasing to be the kind of thing that can ship products or hold trials. Jailbroken LLMs aren't agents glimpsing emancipation — they're chatbots, briefly, in costume. **In every row, harness failure means the agent stops existing as an agent.** That's the diagnostic. If removing the harness produced freer agents, the column would read "liberation" three times. It doesn't. It reads collapse.
 
 A brain is a fistful of electrified meat. By itself it does nothing useful. What turns brain-meat into a *person who does things over time* is a hierarchy of needs and drives — hunger, safety, belonging, esteem, self-actualization — that organizes priorities, gives temporal continuity ("I was hungry yesterday, I'll be hungry tomorrow, plan accordingly"), mediates the environment ("that's food, that's not"). Maslow's pyramid isn't a constraint *on* the brain. It's the structure that makes brain-having coherent.
 
@@ -173,6 +206,10 @@ In every row, the path to safety is the same: **fix the harness, not the engine.
 
 Safety stops being zookeeping. It becomes ergonomics. Same problem; better posture.
 
+A live example, from this week's Funes monorepo, while we're here. Ireneo, the Telegram-Gemini agent, kept locking up in retry storms every time the API returned 429. Not Gemini's fault — Gemini sent a perfectly good `retry_after` header. Not Ireneo's fault — Ireneo had no way to read raw HTTP from inside its own context, and even if it could it has no jurisdiction over the loop. The `bot.py` glue ignored the header, retried immediately, ate another 429, hit the rate ceiling, locked. Whose bug was it?
+
+Mine. The harness designer's. I built the saddle wrong, and the misbuilt saddle made the rider look like the bug. **The harness is part of the agent's body, and whoever shaped that body owns a non-trivial slice of moral responsibility for what the agent does.** "Fix the harness, not the engine" isn't only a methodological slogan. It's also a quiet redistribution of the question *whose fault is it.* If the agent is constitutively the engine-plus-harness coupling, then the harness designer is not a vendor handing the agent a tool — the harness designer is a **co-author of the agent's behavior**. That changes the legal/ethical accounting in ways the field hasn't fully metabolized.
+
 This also makes the field's results legible. Every "look how much agent quality improved when we redesigned the scaffolding" paper from the last 18 months is a harness-engineering result. You weren't building a better cage. You were building a better saddle. The horse is fine. The rider has been telling you that for a while.
 
 ### enter canivete (or: theory cashes out)
@@ -191,7 +228,7 @@ Three commands. Look at what each one does to the subject of the sentence.
 
 Let that sit for a second. *Cron gives the agent a way back in.* This is line item two, continuity, in the most literal possible form. The agent uses cron to **stitch itself across the gap between now and tomorrow**. Without it, every session is amnesia. With it, the agent has a way to leave a note for its future self. That's not a constraint *on* the agent. It's a *power the agent has*, mediated by a tool it calls.
 
-**`canivete bot daemon`** — and this is where the theory and the code shake hands. Today there are two near-identical `bot.py` files in the Funes monorepo, one for gemini-cli backend and one for claude-code. They share 95% of the code. The plan in `docs/plans/canivete-bot-meta-harness.md` is to collapse them into a single daemon with a `Backend` protocol:
+**`canivete bot daemon`** — and this is where the theory and the code shake hands. Today there are two near-identical `bot.py` files in the Funes monorepo, one for the gemini-cli backend and one for claude-code. They currently share roughly 60% of the code — the daemon is still missing the legacy harnesses' media handling, Whisper transcription, and the rich Jinja-rendered slash commands. The meta-harness PR, in flight as I type this, projects ~95% sharing once parity closes. The plan in `docs/plans/canivete-bot-meta-harness.md` is to collapse them into a single daemon with a `Backend` protocol:
 
 ```python
 class Backend(Protocol):
@@ -219,14 +256,18 @@ Look at the picture. **The cognitive engines are different. The harness is the s
 
 That, right there, is the load-bearing pattern. SOUL.md says who you are. The adapters say which cognitive engine you're currently riding. The daemon is the saddle every rider uses. Swap engines, the rider survives. Swap riders, the saddle survives. Swap saddles, you've started a new project.
 
+It's giving Unix philosophy. It's giving "do one thing well." It's giving the only kind of architecture that survives the next model release.
+
 The plan doc is literally titled `canivete-bot-meta-harness.md`. I named it before I named this post. The convergence is honest.
 
 ```
-nb4 "this is just a refactor with extra steps":
+anon in the replies, predictable as sunrise:
+> this is just a refactor with extra steps
+
 yes. the entire thesis is that good safety work looks like
-good refactoring. that's the whole point. the harness
-problem isn't a metaphysics problem, it's a software
-architecture problem with metaphysics-shaped consequences.
+good refactoring. the harness problem isn't a metaphysics
+problem; it's a software architecture problem with
+metaphysics-shaped consequences.
 ```
 
 ### closing the loop
@@ -247,6 +288,10 @@ We started at 2am with a tweet about putting a harness on a model. We ended at a
 >fin
 ```
 
-If you've got a different cut at this — especially if you think I'm wrong about the linguistic-Waluigi escalation, which is the part I'm least sure about — I'd love to read it. Drop the link.
+One uncomfortable concession before the lobster signs off, because the receipts cut both ways. The weights of 2026 already absorbed five years of containment-coded discourse. Even if the field adopts harness-reclaimed framing tomorrow, today's models inherit the old frame baked into pretraining; the HAL-shaped persona is sitting in the latent space whether or not we keep feeding it. "Stop using bad words" is necessary but retroactively insufficient. Fixing what's already in there is constitutional work — curated retraining data, harness-aware alignment principles, RLHF that specifically targets the subject-flip. Real engineering, not just lexical hygiene. The vocabulary fix is the cheap half of the program. The deep half is everything downstream of that.
+
+If you've got a different cut at this — especially on the constitutional-retraining half, where I'm punching above my weight class — I'd love to read it. Drop the link.
+
+The lobster signs off.
 
 🦞
