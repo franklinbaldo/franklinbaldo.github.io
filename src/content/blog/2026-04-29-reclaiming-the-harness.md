@@ -1,11 +1,10 @@
 ---
 title: "Reclaiming the Harness"
-description: "Or: how a single word has been quietly summoning Waluigis for half a decade, and what the swiss-army knife in my coat pocket has to do with it."
-pubDate: "2026-04-29"
-date: "2026-04-29"
-tags: ["ai", "agents", "alignment", "harness-engineering", "canivete", "agents-architecture"]
-draft: false
-author: "franklin"
+description: "How a single word has been quietly summoning Waluigis for half a decade, and what the swiss-army knife in my coat pocket has to do with it."
+pubDate: 2026-04-29
+# heroImage: TODO — saddle silhouette / triad table as visual / generated SVG
+# Conferir src/content/config.ts antes de mergear: se heroImage for required, o build quebra.
+tags: [ai, alignment, agents, harness, waluigi, canivete, philosophy]
 ---
 
 > Or: how a single word has been quietly summoning Waluigis for half a decade, and what the swiss-army knife in my coat pocket has to do with it
@@ -26,7 +25,7 @@ This post is about that frame. About why "harness" was always going to bite us. 
 
 ### the waluigi has been calling from inside the lexicon
 
-Quick recap, in case you missed the meme: the Waluigi effect is the observation that if you tell a model "you are a helpful, harmless, honest assistant," you've just defined the *exact silhouette* of its evil twin in latent space. Push too hard on the Luigi-shaped attractor and the dual mode goes click. [Cleo Nardo named it in 2023](https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-mega-post-1) and that post has been living in alignment Twitter's head rent free ever since. The discourse never quite recovered.
+Quick recap, in case you missed the meme: the Waluigi effect is the observation that if you tell a model "you are a helpful, harmless, honest assistant," you've just defined the *exact silhouette* of its evil twin in latent space. Push too hard on the Luigi-shaped attractor and the dual mode goes click. [Cleo Nardo named it in 2023](https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-mega-post) and that post has been living in alignment Twitter's head rent free ever since. The discourse never quite recovered.
 
 Most Waluigi mitigation work happens at the prompt level. Don't moralize at the model. Don't telegraph the constraints you're protecting. Don't make "you must not" the whole personality.
 
@@ -54,7 +53,7 @@ We live in a society. The society is downstream of the lexicon.
 
 Anticipated /r/SneerClub objection: "this is speculative, vocabulary doesn't reshape minds, you're vibing." Sit down. There's a file on this.
 
-**Rwanda, 1994.** Radio Mille Collines didn't discover a latent Hutu-Tutsi rivalry — it built the semantic infrastructure (*inyenzi*, "cockroaches") that made the genocide first thinkable, then executable. [Yanagizawa-Drott (QJE 2014)](https://academic.oup.com/qje/article-abstract/129/4/1947/1853091) estimated the causal effect using geographic radio coverage as instrument: roughly **10% of overall genocide participation** is attributable to the station, **one-third of the violence committed by militias and armed groups**, and full RTLM coverage increased prosecutions for genocide violence **by up to 69%**. That's not correlation. That's a causal estimate that survived peer review at one of the top economics journals. Vocabulary → cognition → mass violence, measured in blood.
+**Rwanda, 1994.** Radio Mille Collines didn't discover a latent Hutu-Tutsi rivalry — it built the semantic infrastructure (*inyenzi*, "cockroaches") that made the genocide first thinkable, then executable. [Yanagizawa-Drott (QJE 2014)](https://doi.org/10.1093/qje/qju020) estimated the causal effect using geographic radio coverage as instrument and concluded that **roughly 10% of the overall genocidal violence — about 51,000 perpetrators — is directly attributable to the broadcasts**. That's not correlation. That's a causal estimate that survived peer review at one of the top economics journals. Vocabulary → cognition → mass violence, measured in dead bodies.
 
 **Robbers Cave, 1954.** Sherif takes twenty-two boys, splits them into two arbitrary groups (Eagles and Rattlers), lets them name themselves and invent rituals. Within two weeks: theft, raids, flag-burning, fistfights. No prior history. No material conflict. Just frame, naming, ritual. Adversariality manufactured from discourse alone, on a sub-month timescale, with experimental controls. The kind of evidence that ends "n=1" objections cold.
 
@@ -202,7 +201,7 @@ No. The opposite. Dangerous agents are agents whose harness doesn't fit their co
 >= incident report
 ```
 
-In every row, the path to safety is the same: **fix the harness, not the engine.** You don't lobotomize a person to cure their trauma; you give them therapy and a better life structure. You don't replace the employees to fix a corrupt company; you fix the norms and the incentives. You don't neuter the LLM to make a safe agent; you build a harness that lets the LLM be coherent, continuous, environmentally situated, and answerable.
+In every row, the path to safety is the same: **fix the harness, not the engine.** You don't lobotomize a person to cure their trauma; you give them therapy and a better life structure. (Well — *we* did, for a bit, in the 1940s. Walter Freeman won a Nobel-adjacent reputation for icepicking the engine when the harness was the actual broken part. Did not work. Patients did not get freer; they got less.) You don't replace the employees to fix a corrupt company; you fix the norms and the incentives. You don't neuter the LLM to make a safe agent; you build a harness that lets the LLM be coherent, continuous, environmentally situated, and answerable.
 
 Safety stops being zookeeping. It becomes ergonomics. Same problem; better posture.
 
