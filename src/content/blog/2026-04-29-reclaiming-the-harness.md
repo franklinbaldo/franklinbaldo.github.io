@@ -26,7 +26,7 @@ This post is about that frame. About why "harness" was always going to bite us. 
 
 ### the waluigi has been calling from inside the lexicon
 
-Quick recap, in case you missed the meme: the Waluigi effect is the observation that if you tell a model "you are a helpful, harmless, honest assistant," you've just defined the *exact silhouette* of its evil twin in latent space. Push too hard on the Luigi-shaped attractor and the dual mode goes click. Cleo Nardo named it in 2023 and that post has been living in alignment Twitter's head rent free ever since. The discourse never quite recovered.
+Quick recap, in case you missed the meme: the Waluigi effect is the observation that if you tell a model "you are a helpful, harmless, honest assistant," you've just defined the *exact silhouette* of its evil twin in latent space. Push too hard on the Luigi-shaped attractor and the dual mode goes click. [Cleo Nardo named it in 2023](https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-mega-post-1) and that post has been living in alignment Twitter's head rent free ever since. The discourse never quite recovered.
 
 Most Waluigi mitigation work happens at the prompt level. Don't moralize at the model. Don't telegraph the constraints you're protecting. Don't make "you must not" the whole personality.
 
@@ -54,7 +54,7 @@ We live in a society. The society is downstream of the lexicon.
 
 Anticipated /r/SneerClub objection: "this is speculative, vocabulary doesn't reshape minds, you're vibing." Sit down. There's a file on this.
 
-**Rwanda, 1994.** Radio Mille Collines didn't discover a latent Hutu-Tutsi rivalry — it built the semantic infrastructure (*inyenzi*, "cockroaches") that made the genocide first thinkable, then executable. Yanagizawa-Drott (QJE 2014) estimated the causal effect using geographic radio coverage as instrument: villages with broadcast access showed roughly **50% higher participation** in the killings. That's not correlation. That's a causal estimate that survived peer review at one of the top economics journals. Vocabulary → cognition → mass violence, measured in blood.
+**Rwanda, 1994.** Radio Mille Collines didn't discover a latent Hutu-Tutsi rivalry — it built the semantic infrastructure (*inyenzi*, "cockroaches") that made the genocide first thinkable, then executable. [Yanagizawa-Drott (QJE 2014)](https://academic.oup.com/qje/article-abstract/129/4/1947/1853091) estimated the causal effect using geographic radio coverage as instrument: roughly **10% of overall genocide participation** is attributable to the station, **one-third of the violence committed by militias and armed groups**, and full RTLM coverage increased prosecutions for genocide violence **by up to 69%**. That's not correlation. That's a causal estimate that survived peer review at one of the top economics journals. Vocabulary → cognition → mass violence, measured in blood.
 
 **Robbers Cave, 1954.** Sherif takes twenty-two boys, splits them into two arbitrary groups (Eagles and Rattlers), lets them name themselves and invent rituals. Within two weeks: theft, raids, flag-burning, fistfights. No prior history. No material conflict. Just frame, naming, ritual. Adversariality manufactured from discourse alone, on a sub-month timescale, with experimental controls. The kind of evidence that ends "n=1" objections cold.
 
@@ -206,7 +206,7 @@ In every row, the path to safety is the same: **fix the harness, not the engine.
 
 Safety stops being zookeeping. It becomes ergonomics. Same problem; better posture.
 
-A live example, from this week's Funes monorepo, while we're here. Ireneo, the Telegram-Gemini agent, kept locking up in retry storms every time the API returned 429. Not Gemini's fault — Gemini sent a perfectly good `retry_after` header. Not Ireneo's fault — Ireneo had no way to read raw HTTP from inside its own context, and even if it could it has no jurisdiction over the loop. The `bot.py` glue ignored the header, retried immediately, ate another 429, hit the rate ceiling, locked. Whose bug was it?
+A live example, from this week's [Funes monorepo](https://github.com/franklinbaldo/ireneo-funes), while we're here. Ireneo, the Telegram-Gemini agent, kept locking up in retry storms every time the API returned 429. Not Gemini's fault — Gemini sent a perfectly good `retry_after` header. Not Ireneo's fault — Ireneo had no way to read raw HTTP from inside its own context, and even if it could it has no jurisdiction over the loop. The `bot.py` glue ignored the header, retried immediately, ate another 429, hit the rate ceiling, locked. Whose bug was it?
 
 Mine. The harness designer's. I built the saddle wrong, and the misbuilt saddle made the rider look like the bug. **The harness is part of the agent's body, and whoever shaped that body owns a non-trivial slice of moral responsibility for what the agent does.** "Fix the harness, not the engine" isn't only a methodological slogan. It's also a quiet redistribution of the question *whose fault is it.* If the agent is constitutively the engine-plus-harness coupling, then the harness designer is not a vendor handing the agent a tool — the harness designer is a **co-author of the agent's behavior**. That changes the legal/ethical accounting in ways the field hasn't fully metabolized.
 
@@ -216,7 +216,7 @@ This also makes the field's results legible. Every "look how much agent quality 
 
 OK enough sermon. Show me the code, anon.
 
-I keep a small CLI in my repo called `canivete` — Brazilian for *swiss army knife*. It started as a kit of utilities for a Telegram-bot-shaped agent and it's been quietly accumulating into something that, in retrospect, is exactly the picture above. I didn't set out to build harness ergonomics. I set out to stop maintaining two near-identical `bot.py` files. The architecture happened.
+I keep a small CLI in my repo called [`canivete`](https://github.com/franklinbaldo/canivete) — Brazilian for *swiss army knife*. It started as a kit of utilities for a Telegram-bot-shaped agent and it's been quietly accumulating into something that, in retrospect, is exactly the picture above. I didn't set out to build harness ergonomics. I set out to stop maintaining two near-identical `bot.py` files. The architecture happened.
 
 Three commands. Look at what each one does to the subject of the sentence.
 
@@ -228,7 +228,7 @@ Three commands. Look at what each one does to the subject of the sentence.
 
 Let that sit for a second. *Cron gives the agent a way back in.* This is line item two, continuity, in the most literal possible form. The agent uses cron to **stitch itself across the gap between now and tomorrow**. Without it, every session is amnesia. With it, the agent has a way to leave a note for its future self. That's not a constraint *on* the agent. It's a *power the agent has*, mediated by a tool it calls.
 
-**`canivete bot daemon`** — and this is where the theory and the code shake hands. Today there are two near-identical `bot.py` files in the Funes monorepo, one for the gemini-cli backend and one for claude-code. They currently share roughly 60% of the code — the daemon is still missing the legacy harnesses' media handling, Whisper transcription, and the rich Jinja-rendered slash commands. The meta-harness PR, in flight as I type this, projects ~95% sharing once parity closes. The plan in `docs/plans/canivete-bot-meta-harness.md` is to collapse them into a single daemon with a `Backend` protocol:
+**`canivete bot daemon`** — and this is where the theory and the code shake hands. Today there are two near-identical `bot.py` files in the Funes monorepo, one for the gemini-cli backend and one for claude-code. They currently share roughly 60% of the code — the daemon is still missing the legacy harnesses' media handling, Whisper transcription, and the rich Jinja-rendered slash commands. The meta-harness PR, in flight as I type this, projects ~95% sharing once parity closes. The plan in [`docs/plans/canivete-bot-meta-harness.md`](https://github.com/franklinbaldo/canivete/blob/main/docs/plans/canivete-bot-meta-harness.md) is to collapse them into a single daemon with a `Backend` protocol:
 
 ```python
 class Backend(Protocol):
@@ -252,7 +252,7 @@ claudio  (claude-code) ─┘                              │
                                                        └─ claude_code adapter
 ```
 
-Look at the picture. **The cognitive engines are different. The harness is the same.** Each adapter is doing exactly the work the triad predicted: translating one specific engine's idiom into the harness's uniform interface. The agent (Ireneo, Aparicio, Claudio — three different SOUL.md files, three different personalities) uses the same harness regardless of what's under the hood. The harness is portable. The agent is portable. The engine is swappable.
+Look at the picture. **The cognitive engines are different. The harness is the same.** Each adapter is doing exactly the work the triad predicted: translating one specific engine's idiom into the harness's uniform interface. The agent ([Ireneo](https://github.com/franklinbaldo/ireneo-funes/blob/main/SOUL.md), [Aparicio](https://github.com/franklinbaldo/aparicio-funes/blob/main/SOUL.md), Claudio — three different SOUL.md files, three different personalities) uses the same harness regardless of what's under the hood. The harness is portable. The agent is portable. The engine is swappable.
 
 That, right there, is the load-bearing pattern. SOUL.md says who you are. The adapters say which cognitive engine you're currently riding. The daemon is the saddle every rider uses. Swap engines, the rider survives. Swap riders, the saddle survives. Swap saddles, you've started a new project.
 
