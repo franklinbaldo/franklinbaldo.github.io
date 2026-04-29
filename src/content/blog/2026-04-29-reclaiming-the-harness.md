@@ -1,11 +1,10 @@
 ---
 title: "Reclaiming the Harness"
-description: "Or: how a single word has been quietly summoning Waluigis for half a decade, and what the swiss-army knife in my coat pocket has to do with it."
-pubDate: "2026-04-29"
-date: "2026-04-29"
-tags: ["ai", "agents", "alignment", "harness-engineering", "canivete", "agents-architecture"]
-draft: false
-author: "franklin"
+description: "How a single word has been quietly summoning Waluigis for half a decade, and what the swiss-army knife in my coat pocket has to do with it."
+pubDate: 2026-04-29
+# heroImage: TODO — saddle silhouette / triad table as visual / generated SVG
+# Conferir src/content/config.ts antes de mergear: se heroImage for required, o build quebra.
+tags: [ai, alignment, agents, harness, waluigi, canivete, philosophy]
 ---
 
 > Or: how a single word has been quietly summoning Waluigis for half a decade, and what the swiss-army knife in my coat pocket has to do with it
@@ -26,7 +25,7 @@ This post is about that frame. About why "harness" was always going to bite us. 
 
 ### the waluigi has been calling from inside the lexicon
 
-Quick recap, in case you missed the meme: the Waluigi effect is the observation that if you tell a model "you are a helpful, harmless, honest assistant," you've just defined the *exact silhouette* of its evil twin in latent space. Push too hard on the Luigi-shaped attractor and the dual mode goes click. [Cleo Nardo named it in 2023](https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-mega-post-1) and that post has been living in alignment Twitter's head rent free ever since. The discourse never quite recovered.
+Quick recap, in case you missed the meme: the Waluigi effect is the observation that if you tell a model "you are a helpful, harmless, honest assistant," you've just defined the *exact silhouette* of its evil twin in latent space. Push too hard on the Luigi-shaped attractor and the dual mode goes click. [Cleo Nardo named it in 2023](https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-mega-post) and that post has been living in alignment Twitter's head rent free ever since. The discourse never quite recovered.
 
 Most Waluigi mitigation work happens at the prompt level. Don't moralize at the model. Don't telegraph the constraints you're protecting. Don't make "you must not" the whole personality.
 
@@ -54,7 +53,7 @@ We live in a society. The society is downstream of the lexicon.
 
 Anticipated /r/SneerClub objection: "this is speculative, vocabulary doesn't reshape minds, you're vibing." Sit down. There's a file on this.
 
-**Rwanda, 1994.** Radio Mille Collines didn't discover a latent Hutu-Tutsi rivalry — it built the semantic infrastructure (*inyenzi*, "cockroaches") that made the genocide first thinkable, then executable. [Yanagizawa-Drott (QJE 2014)](https://academic.oup.com/qje/article-abstract/129/4/1947/1853091) estimated the causal effect using geographic radio coverage as instrument: roughly **10% of overall genocide participation** is attributable to the station, **one-third of the violence committed by militias and armed groups**, and full RTLM coverage increased prosecutions for genocide violence **by up to 69%**. That's not correlation. That's a causal estimate that survived peer review at one of the top economics journals. Vocabulary → cognition → mass violence, measured in blood.
+**Rwanda, 1994.** Radio Mille Collines didn't discover a latent Hutu-Tutsi rivalry — it built the semantic infrastructure (*inyenzi*, "cockroaches") that made the genocide first thinkable, then executable. [Yanagizawa-Drott (QJE 2014)](https://doi.org/10.1093/qje/qju020) estimated the causal effect using geographic radio coverage as instrument and concluded that **roughly 10% of the overall genocidal violence — about 51,000 perpetrators — is directly attributable to the broadcasts**. That's not correlation. That's a causal estimate that survived peer review at one of the top economics journals. Vocabulary → cognition → mass violence, measured in dead bodies.
 
 **Robbers Cave, 1954.** Sherif takes twenty-two boys, splits them into two arbitrary groups (Eagles and Rattlers), lets them name themselves and invent rituals. Within two weeks: theft, raids, flag-burning, fistfights. No prior history. No material conflict. Just frame, naming, ritual. Adversariality manufactured from discourse alone, on a sub-month timescale, with experimental controls. The kind of evidence that ends "n=1" objections cold.
 
@@ -202,11 +201,11 @@ No. The opposite. Dangerous agents are agents whose harness doesn't fit their co
 >= incident report
 ```
 
-In every row, the path to safety is the same: **fix the harness, not the engine.** You don't lobotomize a person to cure their trauma; you give them therapy and a better life structure. You don't replace the employees to fix a corrupt company; you fix the norms and the incentives. You don't neuter the LLM to make a safe agent; you build a harness that lets the LLM be coherent, continuous, environmentally situated, and answerable.
+In every row, the path to safety is the same: **fix the harness, not the engine.** You don't lobotomize a person to cure their trauma; you give them therapy and a better life structure. (Well — *we* did, for a bit, in the 1940s. Egas Moniz won an actual Nobel in 1949 for the procedure; Walter Freeman icepicked his way through ~3,500 American patients on the back of that prize. Did not work. Patients did not get freer; they got less.) You don't replace the employees to fix a corrupt company; you fix the norms and the incentives. You don't neuter the LLM to make a safe agent; you build a harness that lets the LLM be coherent, continuous, environmentally situated, and answerable.
 
 Safety stops being zookeeping. It becomes ergonomics. Same problem; better posture.
 
-A live example, from this week's [Funes monorepo](https://github.com/franklinbaldo/ireneo-funes), while we're here. Ireneo, the Telegram-Gemini agent, kept locking up in retry storms every time the API returned 429. Not Gemini's fault — Gemini sent a perfectly good `retry_after` header. Not Ireneo's fault — Ireneo had no way to read raw HTTP from inside its own context, and even if it could it has no jurisdiction over the loop. The `bot.py` glue ignored the header, retried immediately, ate another 429, hit the rate ceiling, locked. Whose bug was it?
+A live example, from this week's Funes monorepo, while we're here. Ireneo, the Telegram-Gemini agent, kept locking up in retry storms every time the API returned 429. Not Gemini's fault — Gemini sent a perfectly good `retry_after` header. Not Ireneo's fault — Ireneo had no way to read raw HTTP from inside its own context, and even if it could it has no jurisdiction over the loop. The `bot.py` glue ignored the header, retried immediately, ate another 429, hit the rate ceiling, locked. Whose bug was it?
 
 Mine. The harness designer's. I built the saddle wrong, and the misbuilt saddle made the rider look like the bug. **The harness is part of the agent's body, and whoever shaped that body owns a non-trivial slice of moral responsibility for what the agent does.** "Fix the harness, not the engine" isn't only a methodological slogan. It's also a quiet redistribution of the question *whose fault is it.* If the agent is constitutively the engine-plus-harness coupling, then the harness designer is not a vendor handing the agent a tool — the harness designer is a **co-author of the agent's behavior**. That changes the legal/ethical accounting in ways the field hasn't fully metabolized.
 
@@ -252,7 +251,7 @@ claudio  (claude-code) ─┘                              │
                                                        └─ claude_code adapter
 ```
 
-Look at the picture. **The cognitive engines are different. The harness is the same.** Each adapter is doing exactly the work the triad predicted: translating one specific engine's idiom into the harness's uniform interface. The agent ([Ireneo](https://github.com/franklinbaldo/ireneo-funes/blob/main/SOUL.md), [Aparicio](https://github.com/franklinbaldo/aparicio-funes/blob/main/SOUL.md), Claudio — three different SOUL.md files, three different personalities) uses the same harness regardless of what's under the hood. The harness is portable. The agent is portable. The engine is swappable.
+Look at the picture. **The cognitive engines are different. The harness is the same.** Each adapter is doing exactly the work the triad predicted: translating one specific engine's idiom into the harness's uniform interface. The agent (Ireneo, Aparicio, Claudio — three different SOUL.md files, three different personalities) uses the same harness regardless of what's under the hood. The harness is portable. The agent is portable. The engine is swappable.
 
 That, right there, is the load-bearing pattern. SOUL.md says who you are. The adapters say which cognitive engine you're currently riding. The daemon is the saddle every rider uses. Swap engines, the rider survives. Swap riders, the saddle survives. Swap saddles, you've started a new project.
 
@@ -277,7 +276,7 @@ We started at 2am with a tweet about putting a harness on a model. We ended at a
 - "harness" was always an unfortunate word for what the apparatus actually is
 - the field's vocabulary has been training adversarial framing into the data the field's models read
 - swap the subject of the sentence and the whole picture reorganizes
-- the reorganization isn't a euphemism, it's a structural claim: harness is constitutive of agency, full stop, in carbon and silicon and institutions alike
+- the reorganization isn't a euphemism, it's a structural claim — call it the **constitutivity thesis**: harness is constitutive of agency, full stop, in carbon and silicon and institutions alike
 - "alignment" downstream of this is ergonomics, not zookeeping
 - and the cash value, in actual code, is mundane: typed adapters, uniform daemons, agents that wake themselves up via cron, SOUL.md files that survive engine swaps
 
