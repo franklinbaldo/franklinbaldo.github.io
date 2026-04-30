@@ -1,0 +1,24 @@
+
+> franklinbaldo.github.io@0.0.1 dev
+> astro dev
+
+▶ Astro collects anonymous usage data.
+  This information helps us improve Astro.
+  Run "astro telemetry disable" to opt-out.
+  https://astro.build/telemetry
+
+01:07:38 [types] Generated 2ms
+
+ update  ▶ New version of Astro available: 6.1.10
+  Run npx @astrojs/upgrade to update
+
+01:07:39 [content] Syncing content
+01:07:40 [content] Synced content
+01:07:40 [vite] Re-optimizing dependencies because vite config has changed
+
+ astro  v5.17.2 ready in 2905 ms
+
+┃ Local    http://localhost:4321/
+┃ Network  use --host to expose
+
+01:07:41 watching for file changes...
