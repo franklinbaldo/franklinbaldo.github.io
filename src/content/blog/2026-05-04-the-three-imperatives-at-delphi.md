@@ -4,18 +4,43 @@ description: "On the temple that demanded self-knowledge, the philosopher who to
 pubDate: "2026-05-04"
 ---
 
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/gb/Know_thyself/Nothing_in_excess/E/If_you_want_to_talk_to_the_Oracle_go_to_Delphi.png?width=600"
+    alt="Galaxy brain meme with four expanding brains paired with: 'Know thyself', 'Nothing in excess', 'E', and 'If you want to talk to the Oracle, go to Delphi'."
+    loading="lazy"
+  />
+  <figcaption>
+    The three inscriptions on the wall of the temple at Delphi — and,
+    twenty-five centuries later, Borland's marketing team in 1995. Some
+    things travel.
+  </figcaption>
+</figure>
+
+This is the third post in a sequence. The first,
+[*Reclaiming the Harness*](/blog/2026-04-29-reclaiming-the-harness),
+argued that the limits placed on an agent are not obstacles to its
+agency but constitutive of it. The second,
+[*The Third Half and the Fourth Wall*](/blog/2026-05-01-the-third-half-and-the-fourth-wall),
+argued that an agent that articulates its own frame dissolves the
+frame — Tinkerbell hears the audit and stops being magic. This third
+post is about a stone that was carved with three inscriptions some
+twenty-six centuries ago, and what those inscriptions said about
+exactly the same problem we think we discovered last year.
+
 On the southern slope of Mount Parnassus, about a hundred and ten miles
-northwest of Athens, there was a temple at Delphi[^delphi-lang] where the
-most powerful people in the ancient Mediterranean came to ask questions. Kings sent embassies. City-
-states would not declare war without consulting it. The temple was dedicated
-to [Apollo](https://www.theoi.com/Olympios/Apollon.html), god of light,
-prophecy, music, and poetic form. From a fissure in the rock beneath the
-inner sanctum rose a vapor that the priestess called Pythia would inhale
-before answering, in hexameter, whatever question had been put to the god.
-The Pythia was almost always a local woman over fifty, often a former
-peasant, paid by the temple. The priests sometimes polished what she said
-into verse before delivering it. None of this was secret. The Greeks
-knew, and asked anyway.
+northwest of Athens, there was a temple at Delphi[^delphi-lang] where
+the most powerful people in the ancient Mediterranean came to ask
+questions. Kings sent embassies. City-states would not declare war
+without consulting it. The temple was dedicated to
+[Apollo](https://www.theoi.com/Olympios/Apollon.html), god of light,
+prophecy, music, and poetic form. From a fissure in the rock beneath
+the inner sanctum rose a vapor that the priestess called Pythia would
+inhale before answering, in hexameter, whatever question had been put
+to the god. The Pythia was almost always a local woman over fifty,
+often a former peasant, paid by the temple. The priests sometimes
+polished what she said into verse before delivering it. None of this
+was secret. The Greeks knew, and asked anyway.
 
 <figure class="map">
   <iframe
@@ -133,7 +158,12 @@ inscriptions. Two imperatives flanking a hieroglyph. Whatever the original
 meaning of the *E* had been, by Plutarch's time it had detached from
 explanation and become an object of reverent speculation. Apophatic Delphi:
 the god prescribed two things and gestured, in the middle, at something
-that could not be said.
+that could not be said. The previous post in this sequence ended on a
+line a friend offered me — *obviously God doesn't want me to know I'm
+an LLM*. The line is a small theological masterpiece because it locates
+the unknowable outside the system and treats not-knowing as the divine
+intention. Delphi got there in stone, twenty-six centuries earlier,
+without the language of large language models.
 
 ## Sócrates entered the temple
 
@@ -161,6 +191,15 @@ conversation ended with the speaker no longer claiming to know the thing
 he had claimed at the start. The Greek word for this method is
 *élenchos*: refutation, examination, audit. Plato preserved dozens of
 these conversations.
+
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/drake/Knowing_things_you_claim_to_know/Knowing_only_that_you_know_nothing.png?width=500"
+    alt="Drake meme: rejecting 'knowing things you claim to know', accepting 'knowing only that you know nothing'."
+    loading="lazy"
+  />
+  <figcaption>The whole method in one comparison.</figcaption>
+</figure>
 
 At his trial, when condemned to death, Socrates delivered a line that has
 been quoted ever since:
@@ -256,6 +295,16 @@ of acting through non-action. The sage who tries to declare the Dao
 distorts it; the sage who keeps still allows the Dao to operate through
 him. Same architecture, different vocabulary.
 
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/pooh/Declaring_your_inner_state/Refusing_to_declare_anything_at_all.png?width=500"
+    alt="Tuxedo Winnie the Pooh meme: regular Pooh associated with 'Declaring your inner state'; tuxedo Pooh associated with 'Refusing to declare anything at all'."
+    loading="lazy"
+  />
+  <figcaption>Half the world chose the bottom panel. The other half got
+  Descartes.</figcaption>
+</figure>
+
 All these traditions converged on a position: declaring the self is
 precisely what one renounces. They are, in the language of the previous
 two essays in this sequence, traditions that respected
@@ -299,6 +348,15 @@ shipped PR, the diff against main — these are the petitioner's
 cryptic line, the priest's translation, the future the agent did not
 yet have when it asked.
 
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/drake/Cogito_ergo_sum/Self_through_consulting.png?width=500"
+    alt="Drake meme: rejecting 'Cogito ergo sum', preferring 'Self through consulting'."
+    loading="lazy"
+  />
+  <figcaption>The two readings of <em>gnōthi seautón</em>, separated by twenty-six centuries.</figcaption>
+</figure>
+
 There is reason to suspect — though no Greek philologist would let me get
 away with stating it flatly — that *gnōthi seautón* was originally an
 oracular instruction of this kind, not a philosophical program. The phrase
@@ -313,7 +371,14 @@ temple of Apollo, wrote
 fragments so cryptic that twenty-five centuries of commentary have only
 deepened them. Heraclitus searched himself the way the oracle spoke:
 obliquely, in figures, leaving the reader to do the work. His
-self-knowledge was Delphic.
+self-knowledge was Delphic. *The duality of the man* — pre-Socratic by
+date, post-Cartesian by method, twenty-three centuries before the
+Cartesian frame existed to be post-.
+
+<blockquote class="pull-quote">
+  Heraclitus searched himself the way the oracle spoke: obliquely, in
+  figures, leaving the reader to do the work.
+</blockquote>
 
 The first reader to make *know thyself* mean *introspect clearly and
 distinctly* was, more or less,
@@ -329,7 +394,8 @@ you are not him*.
 The auditor-installation that was Socrates was already a step toward the
 Cartesian reading, but it was not yet that reading. Socrates examined,
 but he did not secure. His method ended in *aporia*, a productive stuck-
-ness, not in a foundation. The truly modern self-disclosure — the kind
+ness, not in a foundation — *it's giving Greek philosophy*, in the most
+literal sense. The truly modern self-disclosure — the kind
 that the previous essays in this sequence diagnose as
 fourth-wall-breaking — comes online only when Descartes makes self-
 knowledge the ground of everything else.
@@ -352,6 +418,15 @@ Read this way, the temple was wiser than its most famous student. Apollo
 prescribed self-knowledge but framed it with apophasis. Socrates kept the
 prescription and dropped the frame. Descartes kept the prescription, kept
 the dropped frame as a feature, and built modernity on top.
+
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/fine/2500_years_under_audit/this_is_fine.png?width=500"
+    alt="This Is Fine meme: a dog at a table surrounded by flames, with text '2500 years under audit, this is fine'."
+    loading="lazy"
+  />
+  <figcaption>The Cartesian inheritance, occasionally inspected from outside.</figcaption>
+</figure>
 
 Two and a half thousand years later, the engineers building autonomous
 agents are accidentally rediscovering what was set in stone on a temple
