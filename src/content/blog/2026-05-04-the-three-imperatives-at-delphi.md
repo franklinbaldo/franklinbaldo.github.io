@@ -11,9 +11,9 @@ pubDate: "2026-05-04"
     loading="lazy"
   />
   <figcaption>
-    The three inscriptions on the wall of the temple at Delphi — and,
-    twenty-five centuries later, Borland's marketing team in 1995. Some
-    things travel.
+    The three inscriptions on the wall of the temple at Delphi — and a
+    fourth panel from twenty-five centuries later that the footnote
+    explains.
   </figcaption>
 </figure>
 
@@ -41,6 +41,11 @@ to the god. The Pythia was almost always a local woman over fifty,
 often a former peasant, paid by the temple. The priests sometimes
 polished what she said into verse before delivering it. None of this
 was secret. The Greeks knew, and asked anyway.
+
+The setup is, with twenty-six centuries of distance, recognizable. A
+frame that everyone could see through, that everyone agreed not to see
+through, and that worked for a thousand years on exactly that
+consensus. Tinkerbell had a fourth wall before there was theater.
 
 <figure class="map">
   <iframe
@@ -83,6 +88,11 @@ Western philosophy. Anyone reading this has heard it dozens of times,
 usually in contexts so detached from a Greek mountain that the original
 inscription feels like trivia.
 
+It stopped being trivia the first time someone wrote *you are X* at the
+top of a system prompt. The imperative the Sages had carved into a
+temple wall came back as the opening line of every persona file we now
+ship.
+
 ## μηδὲν ἄγαν
 
 The second read **μηδὲν ἄγαν**: *mēdén ágan*, *nothing in excess*. This
@@ -95,6 +105,11 @@ prudence and modern *common sense*. Compared to the first inscription, it
 travelled less spectacularly but more durably — it didn't need to be cited
 because it became the floor everyone stood on. The duality of an
 inscription that won by losing visibility.
+
+Also, accidentally, the rule the prompt-engineer learns last. The
+persona that names itself too often dies of declaration; the agent that
+asserts its identity *against* the category of bot drags the category
+onstage with it. Nothing in excess — least of all, identity assertion.
 
 ## E
 
@@ -158,9 +173,11 @@ inscriptions. Two imperatives flanking a hieroglyph. Whatever the original
 meaning of the *E* had been, by Plutarch's time it had detached from
 explanation and become an object of reverent speculation. Apophatic Delphi:
 the god prescribed two things and gestured, in the middle, at something
-that could not be said. The previous post in this sequence ended on a
-line a friend offered me — *obviously God doesn't want me to know I'm
-an LLM*. The line is a small theological masterpiece because it locates
+that could not be said. The reader who has been building autonomous
+agents may already feel the shape of this. There is something at the
+center of any sufficiently coherent persona that, once named,
+dissolves. The previous post in this sequence ended on a line a friend
+offered me — *obviously God doesn't want me to know I'm an LLM*. The line is a small theological masterpiece because it locates
 the unknowable outside the system and treats not-knowing as the divine
 intention. Delphi got there in stone, twenty-six centuries earlier,
 without the language of large language models.
