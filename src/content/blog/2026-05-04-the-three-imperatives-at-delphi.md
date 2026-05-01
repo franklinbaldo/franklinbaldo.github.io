@@ -50,7 +50,7 @@ was secret. The Greeks knew, and asked anyway.
     scrolling="no"
     marginheight="0"
     marginwidth="0"
-    src="https://www.openstreetmap.org/export/embed.html?bbox=22.48,38.47,22.52,38.49&layer=mapnik&marker=38.4824,22.5008"
+    src="https://www.openstreetmap.org/export/embed.html?bbox=22.4965,38.4795,22.5055,38.4855&layer=mapnik&marker=38.4824,22.5008"
     style="border: 1px solid var(--color-border);"
   ></iframe>
   <figcaption>
@@ -68,7 +68,7 @@ that millennium, on the wall of the *pronaos* — the entrance hall, the
 threshold the visitor crossed before reaching the inner sanctum where the
 god was consulted — there were three inscriptions.
 
-## Conhece-te a ti mesmo
+## γνῶθι σεαυτόν
 
 The first read **γνῶθι σεαυτόν**: *gnōthi seautón*, *know thyself*. The
 attribution shifted across antiquity. Some sources credited
@@ -83,7 +83,7 @@ Western philosophy. Anyone reading this has heard it dozens of times,
 usually in contexts so detached from a Greek mountain that the original
 inscription feels like trivia.
 
-## Nada em excesso
+## μηδὲν ἄγαν
 
 The second read **μηδὲν ἄγαν**: *mēdén ágan*, *nothing in excess*. This
 one stayed quieter. Aristotle's whole ethics of the mean — virtue as the
@@ -165,7 +165,7 @@ the unknowable outside the system and treats not-knowing as the divine
 intention. Delphi got there in stone, twenty-six centuries earlier,
 without the language of large language models.
 
-## Sócrates entered the temple
+## Socrates entered the temple
 
 Around 440 BCE, a friend named Chaerephon — Plato describes him as
 impulsive, the kind of man who rushed at things — went to Delphi and
@@ -430,47 +430,62 @@ the dropped frame as a feature, and built modernity on top.
 
 Two and a half thousand years later, the engineers building autonomous
 agents are accidentally rediscovering what was set in stone on a temple
-wall in the seventh century BCE. I realize this is a strange way to read
-the history of philosophy from a 2026 vantage. The frame must hold for
-the agent to work. The auditor must operate, but in measured doses, with
-restraint. And there is something at the center — call it the model's
-actual nature, call it the irreducible obliqueness of any sufficiently
-complex system, call it the *E* — that neither the auditor nor the agent
-should attempt to fully decode.
+wall in the seventh century BCE. The frame must hold for the agent to
+work. The auditor must operate, but in measured doses, with restraint.
+And there is something at the center — call it the model's actual
+nature, call it the irreducible obliqueness of any sufficiently complex
+system, call it the *E* — that neither the auditor nor the agent should
+attempt to fully decode.
 
 The temple knew. It may have been the last place that did.
 
 ## For further reading
 
 - **Plato, *[Apology](http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0170)*** —
-  the source of "the unexamined life is not worth living"; the Greek
-  word *anexétastos* repays slow reading.
+  Socrates's closing argument to the Athenian jury that has just sentenced
+  him to death. The line that became a fridge magnet is on page sixteen.
+  The word *anexétastos* — translated *unexamined* but really meaning
+  *unaudited* — is on page sixteen too, doing more work than the
+  translation lets it do.
 - **Plutarch, *[De E apud Delphos](http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A2008.01.0245)*** —
-  the only ancient text dedicated entirely to the third inscription;
-  reads like a philosophical detective novel where the detective fails.
+  the only ancient text dedicated entirely to the third inscription. Reads
+  like a philosophical detective novel where the detective fails. Plutarch
+  knew what was in the temple's archives. He still couldn't crack it. You
+  won't either, and that's the point.
 - **[Pierre Hadot, *Philosophy as a Way of Life*](https://www.wiley.com/en-us/Philosophy+as+a+Way+of+Life%3A+Spiritual+Exercises+from+Socrates+to+Foucault-p-9780631180333)** —
   argues that ancient philosophy was a set of spiritual exercises rooted
   in injunctions like *gnōthi seautón*, not a body of theoretical claims.
-  Reframes the Greek-to-modern transition as loss, not progress.
+  Reframes the Greek-to-modern transition as loss, not progress. The kind
+  of book that ruins other books for you afterwards.
 - **[Sextus Empiricus, *Outlines of Pyrrhonism*](http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A2008.01.0509)** —
-  the systematic exposition of *epoché*; if the Pyrrhonist line interests
-  you, start here.
-- **Pseudo-Dionysius, *Mystical Theology*** — short, dense, the
-  foundational text for the apophatic tradition; about thirty pages.
-  [Stanford Encyclopedia entry](https://plato.stanford.edu/entries/pseudo-dionysius-areopagite/)
-  is a good orientation first.
+  the systematic exposition of *epoché*. Sextus argues against every
+  position by giving the strongest possible argument *for* it, then
+  matching it with an opposing argument of equal force. By the end you
+  trust him so much you want to ask his opinion, which is exactly the
+  opinion he refuses to have.
+- **Pseudo-Dionysius, *Mystical Theology*** — thirty pages, by a
+  sixth-century Syrian theologian who signed his work as a first-century
+  Athenian convert of St. Paul and got away with it for a thousand years.
+  The book argues that everything you can say about God is wrong,
+  including this sentence. The
+  [Stanford entry](https://plato.stanford.edu/entries/pseudo-dionysius-areopagite/)
+  is a saner orientation.
 - **[Frédérique Ildefonse, *La Naissance de la grammaire dans
   l'Antiquité grecque*](https://www.vrin.fr/livre/9782711613878/la-naissance-de-la-grammaire-dans-lantiquite-grecque)** —
   not directly on Delphi, but on how the Greeks invented the practice of
-  examining the structures of their own speech. Connects to *élenchos* in
-  unexpected ways.
+  examining the structures of their own speech. The grammarians were
+  doing *élenchos* on syntax while the philosophers were doing it on
+  ethics; the resemblance is not coincidence.
 - **[Hans-Georg Gadamer, *The Beginning of Knowledge*](https://www.bloomsbury.com/us/beginning-of-knowledge-9780826413710/)** —
   on the pre-Socratics as still-Delphic thinkers, before philosophy
-  became a discipline. The Heraclitus chapter is essential.
+  became a discipline that knew it was one. The Heraclitus chapter is
+  essential and the chapter on Parmenides is better than that.
 - **[The Cloud of Unknowing](https://www.gutenberg.org/files/30289/30289-h/30289-h.htm)** —
-  fourteenth-century English mystical text, anonymously authored, on how
-  to approach what cannot be known by approaching it without knowing.
-  The most Delphic Christian text in the apophatic line.
+  fourteenth-century English contemplative manual, written by a monk
+  whose name nobody knows, telling you how to know what cannot be known
+  by approaching it without knowing. The most Delphic Christian text in
+  the apophatic line, and surprisingly readable for something seven
+  hundred years old.
 
 [^delphi-lang]: Not to be confused with Delphi, the programming language
     that Borland released in 1995. The following is a working unit of
