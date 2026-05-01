@@ -3,7 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('blog')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  (a, b) =>
+    (b.data.date || b.data.pubDate).valueOf() -
+    (a.data.date || a.data.pubDate).valueOf()
 );
 
 const formatDate = (date: Date) => {
@@ -24,18 +26,20 @@ const formatYear = (date: Date) => date.getFullYear().toString();
 
     <div class="post-list">
       {posts.map((post, i) => {
-        const showYear = i === 0 || formatYear(post.data.date) !== formatYear(posts[i - 1].data.date);
+        const d = post.data.date || post.data.pubDate;
+        const prevD = i > 0 ? (posts[i - 1].data.date || posts[i - 1].data.pubDate) : null;
+        const showYear = i === 0 || formatYear(d) !== formatYear(prevD);
         return (
           <>
-            {showYear && <h2 class="year-heading">{formatYear(post.data.date)}</h2>}
+            {showYear && <h2 class="year-heading">{formatYear(d)}</h2>}
             <article class="post-item">
               <a href={`/blog/${post.slug}`} class="post-link">
                 <span class="post-title">{post.data.title}</span>
                 {post.data.description && (
                   <span class="post-description">{post.data.description}</span>
                 )}
-                <time datetime={post.data.date.toISOString()}>
-                  {formatDate(post.data.date)}
+                <time datetime={d.toISOString()}>
+                  {formatDate(d)}
                 </time>
               </a>
             </article>
