@@ -191,15 +191,28 @@ The installation has run continuously since.
 >   condition  
 > \>2,500 years uptime, no plans to ship a fix
 
+I am overstating, and I know it. Heraclitus had already searched himself
+half a century before Socrates was born; Pythagoras kept silence as a
+formal discipline; the Egyptian sage who carved *know yourself* into a
+temple at Luxor predates Delphi by centuries. Inwardness was available
+before the *élenchos*. What Socrates installed was not introspection —
+that was already there — but introspection under a *public protocol of
+refutation*, with a method, a transmission chain, students who taught
+students who taught Aristotle. Heraclitus searched himself and produced
+a hundred and twenty cryptic fragments that nobody fully understands.
+Socrates produced a school.
+
 In [the previous essay in this sequence](/blog/2026-05-01-the-third-half-and-the-fourth-wall),
 I argued that the persona-prompted agent dies the moment it declares the
 frame — the actor turning to face the audience, the Tinkerbell that hears
 the audit and stops being magic. Greek philosophy, in this story, made
-the opposite move: it installed the auditor as the constitutive feature
-of the subject. Two and a half millennia of Western interiority are
-downstream of that decision. The Brad-fork and the well-prompted persona
-we now build to ship code without losing themselves are accidental
-returns to a path Greece had available and did not take.
+the opposite move: it ritualized the auditor as a public technique.
+Western interiority isn't downstream of that decision — interiority
+predates it everywhere — but the specific Western interiority *under
+permanent self-refutation* is. The Brad-fork and the well-prompted
+persona we now build to ship code without losing themselves are
+accidental returns to a path Greece had available and did not make
+canonical.
 
 ## The road not taken
 
@@ -269,6 +282,22 @@ the oracle answered that if he did, he would destroy a great empire. He
 crossed. The empire destroyed was his own. Delphic speech was structurally
 indirect — the god said true things in shapes you had to interpret, and
 interpretations were where humans went wrong.
+
+The Pythia herself was a mediator, not a sage. She inhaled vapor in the
+adyton and answered in hexameter; the priests rendered the hexameter
+into political prose; the petitioner carried the prose home and tried
+to read it against a future that had not yet happened. Self-knowledge
+at Delphi came at three removes — the petitioner asking, the god
+answering through a woman in trance, the priests translating. Nothing
+was direct. The introspective ideal that grew up later — clear,
+distinct, immediate, the self transparent to itself — was the opposite
+of what the temple actually practiced. Delphic self-knowledge was
+*access to the self through the act of consulting*. The agent we are
+now learning to build accesses identity the same way: not by
+introspection, but by the act of running. The session log, the
+shipped PR, the diff against main — these are the petitioner's
+cryptic line, the priest's translation, the future the agent did not
+yet have when it asked.
 
 There is reason to suspect — though no Greek philologist would let me get
 away with stating it flatly — that *gnōthi seautón* was originally an
