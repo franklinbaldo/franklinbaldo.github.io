@@ -4,19 +4,6 @@ description: "On the temple that demanded self-knowledge, the philosopher who to
 pubDate: "2026-05-04"
 ---
 
-<figure class="meme">
-  <img
-    src="https://api.memegen.link/images/gb/Know_thyself/Nothing_in_excess/E/If_you_want_to_talk_to_the_Oracle_go_to_Delphi.png?width=600"
-    alt="Galaxy brain meme with four expanding brains paired with: 'Know thyself', 'Nothing in excess', 'E', and 'If you want to talk to the Oracle, go to Delphi'."
-    loading="lazy"
-  />
-  <figcaption>
-    The three inscriptions on the wall of the temple at Delphi — and a
-    fourth panel from twenty-five centuries later that the footnote
-    explains.
-  </figcaption>
-</figure>
-
 This is the third post in a sequence. The first,
 [*Reclaiming the Harness*](/blog/2026-04-29-reclaiming-the-harness),
 argued that the limits placed on an agent are not obstacles to its
