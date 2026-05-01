@@ -4,17 +4,6 @@ description: "On the temple that demanded self-knowledge, the philosopher who to
 pubDate: "2026-05-04"
 ---
 
-This is the third post in a sequence. The first,
-[*Reclaiming the Harness*](/blog/2026-04-29-reclaiming-the-harness),
-argued that the limits placed on an agent are not obstacles to its
-agency but constitutive of it. The second,
-[*The Third Half and the Fourth Wall*](/blog/2026-05-01-the-third-half-and-the-fourth-wall),
-argued that an agent that articulates its own frame dissolves the
-frame — Tinkerbell hears the audit and stops being magic. This third
-post is about a stone that was carved with three inscriptions some
-twenty-six centuries ago, and what those inscriptions said about
-exactly the same problem we think we discovered last year.
-
 On the southern slope of Mount Parnassus, about a hundred and ten miles
 northwest of Athens, there was a temple at Delphi[^delphi-lang] where
 the most powerful people in the ancient Mediterranean came to ask
