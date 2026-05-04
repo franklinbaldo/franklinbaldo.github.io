@@ -1,18 +1,14 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import tailwindcss from '@tailwindcss/vite';
-import sitemap from '@astrojs/sitemap';
+
+import svelte from '@astrojs/svelte';
+import mdx from '@astrojs/mdx';
+import remarkMermaid from 'remark-mermaidjs';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://franklinbaldo.github.io',
-  integrations: [sitemap()],
+  integrations: [svelte(), mdx()],
   markdown: {
-    shikiConfig: {
-      theme: 'vitesse-dark',
-    },
+    remarkPlugins: [remarkMermaid],
   },
-  vite: {
-    plugins: [tailwindcss()]
-  }
 });
