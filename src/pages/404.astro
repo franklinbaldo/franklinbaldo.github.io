@@ -1,8 +1,14 @@
 ---
+import { getCollection } from "astro:content";
 import PageLayout from "../layouts/PageLayout.astro";
+
+const recent = (await getCollection("blog"))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 5);
 ---
 
-<PageLayout title="Not Found | Franklin Baldo" description="Page not found.">
+<PageLayout title="Not Found" description="Page not found.">
   <article>
     <header>
       <hgroup>
@@ -10,9 +16,56 @@ import PageLayout from "../layouts/PageLayout.astro";
         <p>That page doesn’t exist — or it has been pruned from the garden.</p>
       </hgroup>
     </header>
+
+    <h2>Search</h2>
+    <div id="search"></div>
+
+    <h2>Recently published</h2>
+    <ul>
+      {recent.map((post) => (
+        <li>
+          <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+          <small>
+            <time datetime={post.data.date.toISOString()}>
+              {post.data.date.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })}
+            </time>
+          </small>
+        </li>
+      ))}
+    </ul>
+
     <p>
-      Try the <a href="/">home page</a>, the <a href="/archive/">archive</a>,
+      Or try the <a href="/">home page</a>, the <a href="/archive/">archive</a>,
       or browse by <a href="/tags/">tag</a>.
     </p>
   </article>
+
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <script is:inline src="/pagefind/pagefind-ui.js"></script>
+  <script is:inline>
+    function initSearch() {
+      if (window.PagefindUI && document.getElementById("search") && !document.querySelector("#search .pagefind-ui")) {
+        new window.PagefindUI({ element: "#search", showImages: false, showSubResults: true });
+      }
+    }
+    window.addEventListener("DOMContentLoaded", initSearch);
+    document.addEventListener("astro:page-load", initSearch);
+  </script>
 </PageLayout>
+
+<style>
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  ul li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.25rem 0;
+  }
+  ul li small {
+    color: var(--pico-muted-color);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

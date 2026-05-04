@@ -1,0 +1,114 @@
+---
+interface Props {
+  url: string | URL;
+}
+
+interface Mention {
+  type: string;
+  author?: { name?: string; url?: string; photo?: string };
+  url?: string;
+  published?: string;
+  "wm-property"?:
+    | "in-reply-to"
+    | "like-of"
+    | "repost-of"
+    | "mention-of"
+    | "bookmark-of";
+}
+
+const { url } = Astro.props;
+const target = typeof url === "string" ? url : url.href;
+
+let mentions: Mention[] = [];
+try {
+  const api = new URL("https://webmention.io/api/mentions.jf2");
+  api.searchParams.set("target", target);
+  api.searchParams.set("per-page", "100");
+  const res = await fetch(api);
+  if (res.ok) {
+    const data = (await res.json()) as { children?: Mention[] };
+    mentions = data.children ?? [];
+  }
+} catch (err) {
+  console.warn(`[webmentions] fetch failed for ${target}:`, err);
+}
+
+const likes = mentions.filter((m) => m["wm-property"] === "like-of");
+const reposts = mentions.filter((m) => m["wm-property"] === "repost-of");
+const replies = mentions.filter(
+  (m) => m["wm-property"] === "in-reply-to" || m["wm-property"] === "mention-of",
+);
+---
+
+{mentions.length > 0 && (
+  <section class="webmentions" aria-label="Webmentions">
+    <h3>Mentions across the web</h3>
+
+    {(likes.length > 0 || reposts.length > 0) && (
+      <ul class="facepile">
+        {[...likes, ...reposts].map((m) => (
+          <li>
+            <a href={m.author?.url ?? m.url ?? "#"} title={m.author?.name ?? "anonymous"}>
+              {m.author?.photo
+                ? <img src={m.author.photo} alt={m.author?.name ?? ""} loading="lazy" />
+                : <span class="dot" aria-hidden="true" />}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+
+    {replies.length > 0 && (
+      <ol class="reply-list">
+        {replies.map((m) => (
+          <li>
+            <a href={m.url ?? m.author?.url ?? "#"}>
+              <strong>{m.author?.name ?? "someone"}</strong>
+            </a>
+            {m.published && (
+              <small> · <time datetime={m.published}>{new Date(m.published).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "2-digit" })}</time></small>
+            )}
+          </li>
+        ))}
+      </ol>
+    )}
+  </section>
+)}
+
+<style>
+  .webmentions {
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed var(--pico-border-color);
+  }
+  .webmentions h3 {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--pico-muted-color);
+    margin-bottom: 0.75rem;
+  }
+  .facepile {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .facepile img,
+  .facepile .dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--pico-muted-color);
+  }
+  .reply-list {
+    padding-left: 1.25rem;
+  }
+  .reply-list li {
+    margin-bottom: 0.4rem;
+    color: var(--pico-muted-color);
+  }
+</style>

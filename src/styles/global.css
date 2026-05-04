@@ -1,6 +1,7 @@
 @import "@picocss/pico/css/pico.min.css";
 @import "@fontsource/eb-garamond";
 @import "@fontsource/jetbrains-mono";
+@import "katex/dist/katex.min.css";
 
 :root {
   --pico-font-family: "EB Garamond", serif;

@@ -15,12 +15,12 @@ import PageLayout from "../layouts/PageLayout.astro";
   <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
   <script is:inline src="/pagefind/pagefind-ui.js"></script>
   <script is:inline>
-    window.addEventListener("DOMContentLoaded", () => {
-      new PagefindUI({
-        element: "#search",
-        showImages: false,
-        showSubResults: true,
-      });
-    });
+    function initSearch() {
+      if (window.PagefindUI && document.getElementById("search") && !document.querySelector("#search .pagefind-ui")) {
+        new window.PagefindUI({ element: "#search", showImages: false, showSubResults: true });
+      }
+    }
+    window.addEventListener("DOMContentLoaded", initSearch);
+    document.addEventListener("astro:page-load", initSearch);
   </script>
 </PageLayout>

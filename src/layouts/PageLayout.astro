@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 
@@ -9,6 +10,7 @@ interface Props {
   image?: string;
   type?: "website" | "article";
   publishedTime?: Date;
+  modifiedTime?: Date;
   tags?: string[];
 }
 
@@ -22,6 +24,7 @@ const {
   image,
   type = "website",
   publishedTime,
+  modifiedTime,
   tags,
 } = source as Props;
 
@@ -39,6 +42,7 @@ const jsonLd = type === "article"
       description,
       author: { "@type": "Person", name: "Franklin Baldo", url: Astro.site?.href },
       datePublished: publishedTime?.toISOString(),
+      ...(modifiedTime && { dateModified: modifiedTime.toISOString() }),
       mainEntityOfPage: canonical.href,
       ...(ogImage && { image: ogImage }),
       ...(tags?.length && { keywords: tags.join(", ") }),
@@ -63,6 +67,11 @@ const jsonLd = type === "article"
     <link rel="alternate" type="application/rss+xml" title="Franklin Baldo" href={rssUrl} />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
+    <link rel="webmention" href="https://webmention.io/franklinbaldo.github.io/webmention" />
+    <link rel="pingback" href="https://webmention.io/franklinbaldo.github.io/xmlrpc" />
+
+    <ClientRouter />
+
     <meta property="og:type" content={type} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -71,6 +80,9 @@ const jsonLd = type === "article"
     {ogImage && <meta property="og:image" content={ogImage} />}
     {publishedTime && (
       <meta property="article:published_time" content={publishedTime.toISOString()} />
+    )}
+    {modifiedTime && (
+      <meta property="article:modified_time" content={modifiedTime.toISOString()} />
     )}
     {tags?.map((tag) => <meta property="article:tag" content={tag} />)}
 

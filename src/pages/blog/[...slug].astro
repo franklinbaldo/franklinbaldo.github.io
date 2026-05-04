@@ -5,6 +5,8 @@ import PageLayout from '../../layouts/PageLayout.astro';
 import BackToTop from '../../components/BackToTop.astro';
 import ShareButton from '../../components/ShareButton.astro';
 import CodeCopyEnhancer from '../../components/CodeCopyEnhancer.astro';
+import MermaidEnhancer from '../../components/MermaidEnhancer.astro';
+import Webmentions from '../../components/Webmentions.astro';
 import { getSeriesContext } from '../../lib/series';
 
 export async function getStaticPaths() {
@@ -20,6 +22,10 @@ const post = Astro.props;
 const { Content, remarkPluginFrontmatter } = await render(post);
 const { heroImage, heroImageAlt, title, description, date, tags } = post.data;
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
+const lastModifiedISO: string | undefined = remarkPluginFrontmatter.lastModified;
+const lastModified = lastModifiedISO ? new Date(lastModifiedISO) : undefined;
+// Only show "Updated" if it's at least 24h after the publish date.
+const showUpdated = lastModified && lastModified.valueOf() - date.valueOf() > 86400_000;
 const series = await getSeriesContext(post);
 ---
 
@@ -29,6 +35,7 @@ const series = await getSeriesContext(post);
   image={heroImage?.src ?? `/og/${post.id}.png`}
   type="article"
   publishedTime={date}
+  modifiedTime={lastModified}
   tags={tags}
 >
   <article data-pagefind-body>
@@ -41,6 +48,11 @@ const series = await getSeriesContext(post);
               {date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
             </time>
             {minutesRead && <> · {minutesRead} min read</>}
+            {showUpdated && lastModified && (
+              <> · updated <time datetime={lastModified.toISOString()}>
+                {lastModified.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </time></>
+            )}
           </small>
         </p>
       </hgroup>
@@ -109,8 +121,11 @@ const series = await getSeriesContext(post);
       )}
       <ShareButton title={title} />
     </footer>
+
+    <Webmentions url={new URL(Astro.url.pathname, Astro.site!)} />
   </article>
 
   <BackToTop />
   <CodeCopyEnhancer />
+  <MermaidEnhancer />
 </PageLayout>
