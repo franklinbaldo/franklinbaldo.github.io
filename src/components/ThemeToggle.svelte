@@ -1,28 +1,23 @@
 <script>
   import { onMount } from 'svelte';
 
-  let theme = 'light';
+  let theme = $state('light');
 
   onMount(() => {
-    theme = document.documentElement.getAttribute('data-theme') || 
-            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    applyTheme(theme);
+    theme = document.documentElement.dataset.theme
+      ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   });
 
-  function toggleTheme() {
+  function toggle() {
     theme = theme === 'light' ? 'dark' : 'light';
-    applyTheme(theme);
-  }
-
-  function applyTheme(newTheme) {
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('theme', theme);
   }
 </script>
 
-<button 
-  class="btn-emoji" 
-  on:click={toggleTheme} 
+<button
+  class="btn-emoji"
+  onclick={toggle}
   aria-label="Toggle theme"
   title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
 >

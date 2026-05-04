@@ -3,8 +3,6 @@ title: "O que aprendi orquestrando agentes de IA para preservar a memória famil
 description: "Uma reflexão sobre a engenharia do afeto, a falibilidade das máquinas e a construção do projeto Alfarrábios do Adi."
 date: 2026-03-30
 tags: [ia, agentes, memoria, filosofia, engenharia]
-heroImage: './images/orquestrando-agentes-capa.png'
-heroImageAlt: 'Orquestrando agentes para preservar memórias'
 ---
 
 Há algo de profundamente paradoxal em confiar a uma rede neural os fragmentos da existência de um ser humano. Enquanto escrevo isto, um pequeno ecossistema de silício e requisições opera silenciosamente no fundo de um servidor, encarregado de uma tarefa estritamente humana: compilar, estruturar e publicar as memórias do meu pai, Adi Baldo.

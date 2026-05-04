@@ -1,6 +1,6 @@
-<script>
-  import ThemeToggle from './ThemeToggle.svelte';
-</script>
+---
+import ThemeToggle from './ThemeToggle.svelte';
+---
 
 <header class="container">
   <nav>
@@ -10,7 +10,7 @@
     <ul>
       <li><a href="/" class="secondary">🏠 Home</a></li>
       <li><a href="/about" class="secondary">📚 About</a></li>
-      <li><ThemeToggle /></li>
+      <li><ThemeToggle client:idle /></li>
     </ul>
   </nav>
 </header>
