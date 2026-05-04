@@ -24,10 +24,21 @@ try {
   const api = new URL("https://webmention.io/api/mentions.jf2");
   api.searchParams.set("target", target);
   api.searchParams.set("per-page", "100");
-  const res = await fetch(api);
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10_000);
+  let res: Response;
+  try {
+    res = await fetch(api, { signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+
   if (res.ok) {
-    const data = (await res.json()) as { children?: Mention[] };
-    mentions = data.children ?? [];
+    const data: unknown = await res.json();
+    if (data && typeof data === "object" && Array.isArray((data as any).children)) {
+      mentions = (data as { children: Mention[] }).children;
+    }
   }
 } catch (err) {
   console.warn(`[webmentions] fetch failed for ${target}:`, err);

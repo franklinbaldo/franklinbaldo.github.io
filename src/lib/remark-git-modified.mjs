@@ -11,7 +11,7 @@ function lastModified(filePath) {
     const out = execFileSync(
       'git',
       ['log', '-1', '--format=%cI', '--', rel],
-      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 5_000 },
     ).trim();
     return out || null;
   } catch {

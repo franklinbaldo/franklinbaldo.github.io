@@ -41,7 +41,7 @@ const recent = (await getCollection("blog"))
   </article>
 
   <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
-  <script is:inline src="/pagefind/pagefind-ui.js"></script>
+  <script is:inline defer src="/pagefind/pagefind-ui.js"></script>
   <script is:inline>
     function initSearch() {
       if (window.PagefindUI && document.getElementById("search") && !document.querySelector("#search .pagefind-ui")) {

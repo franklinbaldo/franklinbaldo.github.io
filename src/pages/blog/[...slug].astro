@@ -24,8 +24,9 @@ const { heroImage, heroImageAlt, title, description, date, tags } = post.data;
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
 const lastModifiedISO: string | undefined = remarkPluginFrontmatter.lastModified;
 const lastModified = lastModifiedISO ? new Date(lastModifiedISO) : undefined;
-// Only show "Updated" if it's at least 24h after the publish date.
-const showUpdated = lastModified && lastModified.valueOf() - date.valueOf() > 86400_000;
+// Only show "Updated" if it's at least one day after the publish date.
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const showUpdated = lastModified && lastModified.valueOf() - date.valueOf() > MS_PER_DAY;
 const series = await getSeriesContext(post);
 ---
 
