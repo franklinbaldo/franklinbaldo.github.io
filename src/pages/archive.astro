@@ -1,0 +1,58 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "../layouts/PageLayout.astro";
+
+const posts = (await getCollection("blog"))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const byYear = new Map<number, typeof posts>();
+for (const post of posts) {
+  const year = post.data.date.getFullYear();
+  if (!byYear.has(year)) byYear.set(year, []);
+  byYear.get(year)!.push(post);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
+---
+
+<PageLayout title="Archive | Franklin Baldo" description="All essays, by year.">
+  <article>
+    <header>
+      <h1>Archive</h1>
+      <p><small>{posts.length} essays</small></p>
+    </header>
+
+    {years.map((year) => (
+      <section>
+        <h2>{year}</h2>
+        <ul class="archive-list">
+          {byYear.get(year)!.map((post) => (
+            <li>
+              <time datetime={post.data.date.toISOString()}>
+                {post.data.date.toLocaleDateString("en-US", { month: "short", day: "2-digit" })}
+              </time>
+              <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </article>
+</PageLayout>
+
+<style>
+  .archive-list {
+    list-style: none;
+    padding: 0;
+  }
+  .archive-list li {
+    display: grid;
+    grid-template-columns: 5rem 1fr;
+    gap: 1rem;
+    padding: 0.25rem 0;
+  }
+  .archive-list time {
+    color: var(--pico-muted-color);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

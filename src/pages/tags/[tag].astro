@@ -1,0 +1,42 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import PageLayout from "../../layouts/PageLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+
+export async function getStaticPaths() {
+  const posts = (await getCollection("blog")).filter((p) => !p.data.draft);
+  const byTag = new Map<string, CollectionEntry<"blog">[]>();
+  for (const post of posts) {
+    for (const tag of post.data.tags ?? []) {
+      if (!byTag.has(tag)) byTag.set(tag, []);
+      byTag.get(tag)!.push(post);
+    }
+  }
+  return [...byTag.entries()].map(([tag, posts]) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+    },
+  }));
+}
+
+interface Props {
+  tag: string;
+  posts: CollectionEntry<"blog">[];
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<PageLayout title={`#${tag} | Franklin Baldo`} description={`Essays tagged #${tag}.`}>
+  <article>
+    <header>
+      <hgroup>
+        <h1>#{tag}</h1>
+        <p><small>{posts.length} {posts.length === 1 ? "post" : "posts"} · <a href="/tags/">all tags</a></small></p>
+      </hgroup>
+    </header>
+    {posts.map((post) => <PostCard post={post} />)}
+  </article>
+</PageLayout>

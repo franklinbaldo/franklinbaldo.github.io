@@ -1,0 +1,38 @@
+---
+---
+
+<a href="#main" class="back-to-top" aria-label="Back to top">↑ Top</a>
+
+<style>
+  .back-to-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--pico-background-color);
+    color: var(--pico-muted-color);
+    border: 1px solid var(--pico-border-color);
+    border-radius: var(--pico-border-radius);
+    font-size: 0.85rem;
+    text-decoration: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  @media (min-width: 600px) {
+    /* Show only after the user has scrolled past the first viewport. */
+    .back-to-top {
+      animation: fade-in linear both;
+      animation-timeline: scroll(root);
+      animation-range: 100vh 110vh;
+    }
+  }
+
+  @keyframes fade-in {
+    to {
+      opacity: 0.85;
+      pointer-events: auto;
+    }
+  }
+</style>

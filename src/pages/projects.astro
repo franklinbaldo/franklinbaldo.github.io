@@ -1,0 +1,184 @@
+---
+import PageLayout from "../layouts/PageLayout.astro";
+
+const USER = "franklinbaldo";
+const token = import.meta.env.GITHUB_TOKEN ?? process.env.GITHUB_TOKEN;
+
+interface Repo {
+  name: string;
+  full_name: string;
+  description: string | null;
+  html_url: string;
+  homepage: string | null;
+  language: string | null;
+  stargazers_count: number;
+  forks_count: number;
+  pushed_at: string;
+  topics: string[];
+  fork: boolean;
+  archived: boolean;
+}
+
+let repos: Repo[] = [];
+let error: string | null = null;
+
+try {
+  const res = await fetch(
+    `https://api.github.com/users/${USER}/repos?per_page=100&sort=updated`,
+    {
+      headers: {
+        Accept: "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    }
+  );
+  if (!res.ok) throw new Error(`GitHub API ${res.status}: ${await res.text()}`);
+  const data = (await res.json()) as Repo[];
+  repos = data
+    .filter((r) => !r.fork && !r.archived)
+    .sort(
+      (a, b) =>
+        b.stargazers_count - a.stargazers_count ||
+        new Date(b.pushed_at).valueOf() - new Date(a.pushed_at).valueOf()
+    );
+} catch (e) {
+  error = e instanceof Error ? e.message : String(e);
+  console.warn(`[projects] failed to fetch repos: ${error}`);
+}
+
+const fmt = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "2-digit",
+});
+
+const langColor: Record<string, string> = {
+  TypeScript: "#3178c6",
+  JavaScript: "#f1e05a",
+  Python: "#3572A5",
+  Astro: "#ff5d01",
+  Svelte: "#ff3e00",
+  HTML: "#e34c26",
+  CSS: "#563d7c",
+  Shell: "#89e051",
+  Rust: "#dea584",
+  Go: "#00ADD8",
+  Lua: "#000080",
+};
+---
+
+<PageLayout
+  title="Projects | Franklin Baldo"
+  description="Public repositories, pulled live from GitHub at build time."
+>
+  <article>
+    <header>
+      <hgroup>
+        <h1>Projects</h1>
+        <p>
+          <small>
+            Public repos from
+            <a href={`https://github.com/${USER}`}>@{USER}</a>,
+            sorted by stars · last fetched at build
+          </small>
+        </p>
+      </hgroup>
+    </header>
+
+    {error && (
+      <p>
+        <small>
+          Couldn't load the live list (<code>{error.slice(0, 120)}</code>).
+          Visit <a href={`https://github.com/${USER}?tab=repositories`}>my GitHub</a> directly.
+        </small>
+      </p>
+    )}
+
+    {repos.length === 0 && !error && <p>No public repos to show right now.</p>}
+
+    <ul class="project-grid">
+      {repos.map((repo) => (
+        <li>
+          <article>
+            <header>
+              <h3>
+                <a href={repo.html_url}>{repo.name}</a>
+              </h3>
+              {repo.description && <p>{repo.description}</p>}
+            </header>
+            <footer>
+              <small>
+                {repo.language && (
+                  <span class="lang">
+                    <span
+                      class="lang-dot"
+                      style={`background:${langColor[repo.language] ?? "var(--pico-muted-color)"}`}
+                      aria-hidden="true"
+                    ></span>
+                    {repo.language}
+                  </span>
+                )}
+                {repo.stargazers_count > 0 && <span>★ {repo.stargazers_count}</span>}
+                {repo.forks_count > 0 && <span>⑂ {repo.forks_count}</span>}
+                <span class="pushed">
+                  updated <time datetime={repo.pushed_at}>{fmt.format(new Date(repo.pushed_at))}</time>
+                </span>
+                {repo.homepage && (
+                  <a href={repo.homepage} class="contrast">↗ site</a>
+                )}
+              </small>
+            </footer>
+          </article>
+        </li>
+      ))}
+    </ul>
+  </article>
+</PageLayout>
+
+<style>
+  .project-grid {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    gap: 1rem;
+  }
+  .project-grid > li > article {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .project-grid h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.1rem;
+  }
+  .project-grid p {
+    margin: 0.25rem 0 0;
+    color: var(--pico-muted-color);
+  }
+  .project-grid footer {
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--pico-border-color);
+  }
+  .project-grid footer small {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    color: var(--pico-muted-color);
+  }
+  .lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .lang-dot {
+    display: inline-block;
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: 50%;
+  }
+</style>
