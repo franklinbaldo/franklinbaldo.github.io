@@ -1,7 +1,10 @@
 {
-  "name": "franklinbaldo.github.io",
+  "name": "franklinbaldo-pico",
   "type": "module",
   "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -9,12 +12,15 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/rss": "^4.0.15",
-    "@astrojs/sitemap": "^3.7.0",
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/svelte": "^8.1.0",
     "@fontsource/eb-garamond": "^5.2.7",
     "@fontsource/jetbrains-mono": "^5.2.8",
-    "@tailwindcss/vite": "^4.1.18",
-    "astro": "^5.18.1",
-    "tailwindcss": "^4.1.18"
+    "@picocss/pico": "^2.1.1",
+    "astro": "^6.2.1",
+    "playwright": "^1.59.1",
+    "remark-mermaidjs": "^7.0.0",
+    "svelte": "^5.55.5",
+    "typescript": "^5.9.3"
   }
 }

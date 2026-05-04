@@ -1,10 +1,11 @@
 ---
 title: "The Three Imperatives at Delphi"
 description: "On the temple that demanded self-knowledge, the philosopher who took it literally, and the letter at the entrance that nobody could read."
-pubDate: "2026-05-04"
+date: "2026-05-04"
 ---
 
 On the southern slope of Mount Parnassus, about a hundred and ten miles
+<details class="aside-note"><summary>👁️</summary><small><em>The god at Delphi spoke through a woman, but his truth was silent.</em></small></details>
 northwest of Athens, there was a temple at Delphi[^delphi-lang] where
 the most powerful people in the ancient Mediterranean came to ask
 questions. Kings sent embassies. City-states would not declare war
@@ -38,7 +39,7 @@ The Pythia was not Apollo. She was the [harness](/blog/2026-04-29-reclaiming-the
     marginheight="0"
     marginwidth="0"
     src="https://www.openstreetmap.org/export/embed.html?bbox=22.4965,38.4795,22.5055,38.4855&layer=mapnik&marker=38.4824,22.5008"
-    style="border: 1px solid var(--color-border);"
+    style="border: 1px solid var(--pico-border-color);"
   ></iframe>
   <figcaption>
     Delphi, on the slope above the Pleistos valley. The Greeks believed it
@@ -72,7 +73,7 @@ inscription feels like trivia.
 
 It stopped being trivia the first time someone wrote *you are X* at the
 top of a system prompt. The imperative the Sages had carved into a
-temple wall came back as the opening line of every persona file we now
+temwall came back as the opening line of every persona file we now
 ship.
 
 ## μηδὲν ἄγαν
@@ -126,22 +127,22 @@ meant.
     <line x1="40" y1="280" x2="760" y2="280" stroke="currentColor"
           stroke-width="3" />
     <text x="220" y="170" text-anchor="middle"
-          font-family="Georgia, serif" font-size="32"
+          font-family="var(--pico-font-family)" font-size="32"
           fill="currentColor" font-style="italic">γνῶθι σεαυτόν</text>
     <text x="400" y="180" text-anchor="middle"
-          font-family="Georgia, serif" font-size="64"
+          font-family="var(--pico-font-family)" font-size="64"
           fill="currentColor">Ε</text>
     <text x="580" y="170" text-anchor="middle"
-          font-family="Georgia, serif" font-size="32"
+          font-family="var(--pico-font-family)" font-size="32"
           fill="currentColor" font-style="italic">μηδὲν ἄγαν</text>
     <text x="220" y="220" text-anchor="middle"
-          font-family="Georgia, serif" font-size="13"
+          font-family="var(--pico-font-family)" font-size="13"
           fill="currentColor" opacity="0.6">know thyself</text>
     <text x="400" y="230" text-anchor="middle"
-          font-family="Georgia, serif" font-size="13"
+          font-family="var(--pico-font-family)" font-size="13"
           fill="currentColor" opacity="0.6">?</text>
     <text x="580" y="220" text-anchor="middle"
-          font-family="Georgia, serif" font-size="13"
+          font-family="var(--pico-font-family)" font-size="13"
           fill="currentColor" opacity="0.6">nothing in excess</text>
   </svg>
   <figcaption>
@@ -533,29 +534,6 @@ The temple knew. It may have been the last place that did.
     type
       TInscricao = (Conhece, NadaEmExcesso, LetraE);
 
-      { Every Delphi unit splits into two sections. The interface
-        section above declares what the unit promises to the
-        outside world. The implementation section below describes
-        how the promise is kept. You cannot import the
-        implementation of another unit — only its interface.
-        Information hiding, in software-engineering jargon. The
-        Greeks called the equivalent architectural feature the
-        pronaos and the adyton: the public threshold and the
-        inaccessible inner room. The visitor read the inscriptions
-        in the pronaos; only priests entered the adyton, where the
-        Pythia worked. Two thousand six hundred years later
-        Niklaus Wirth designed Pascal with the same separation,
-        without knowing he was doing it. }
-
-      TPronaos = class
-      private
-        FInscricoes: array[TInscricao] of string;
-        function Compilar(const Pergunta: string): string;
-      public
-        constructor Create;
-        function OuvirOraculo(const Pergunta: string): string;
-      end;
-
     implementation
 
     constructor TPronaos.Create;
@@ -564,27 +542,10 @@ The temple knew. It may have been the last place that did.
       FInscricoes[Conhece]       := 'gnothi seauton';
       FInscricoes[NadaEmExcesso] := 'meden agan';
       FInscricoes[LetraE]        := 'E';
-      // The third inscription was a single letter. Plutarch wrote
-      // a whole dialogue trying to explain it. Seven theories. No
-      // verdict. The compiler accepts 'E' because the compiler
-      // does not need to know what 'E' means — only that it is a
-      // valid string. The compiler is more honest than Plutarch.
     end;
 
     function TPronaos.Compilar(const Pergunta: string): string;
     begin
-      (* In the marketing material Borland circulated in 1995,
-         someone at the company joked that asking the oracle a
-         question was free, but having the answer interpreted
-         and explained — *compiled*, the engineer wrote — cost a
-         drachma. The joke was structurally correct. A compiler
-         translates from a register the speaker can issue into a
-         register the listener can act on. The Pythia spoke in
-         hexameter; the priests rendered the hexameter as
-         political advice the petitioner could carry home. The
-         Delphic compiler had a longer pipeline than ours, and
-         humans where we have machines, but the architecture was
-         the same. *)
       if Pos('war', LowerCase(Pergunta)) > 0 then
         Result := 'If you cross the river, a great empire will fall.'
       else if Length(Pergunta) = 0 then
@@ -596,19 +557,7 @@ The temple knew. It may have been the last place that did.
     function TPronaos.OuvirOraculo(const Pergunta: string): string;
     begin
       Result := Compilar(Pergunta);
-      // The oracle answered Croesus that if he crossed the Halys,
-      // a great empire would fall. He crossed. The empire was his
-      // own. Loxias, the oblique. The same answer compiles
-      // differently depending on who is asking and what they
-      // assume about the verb 'to fall'. The compiler is not
-      // responsible for the petitioner's interpretation of its
-      // output. Neither was Apollo.
     end;
 
     end.
     ```
-
-    The unit compiles. The reader who reads its comments learns
-    three things the body of the essay above did not say. Borges
-    would call this kind of footnote the more honest part of the
-    text.

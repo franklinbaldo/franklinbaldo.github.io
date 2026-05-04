@@ -1,0 +1,49 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="container">
+  <hr />
+  <nav>
+    <ul>
+      <li><small>© {year} Franklin Baldo</small></li>
+    </ul>
+    <ul>
+      <li>
+        <small class="agent-status" aria-live="polite">
+          <span class="indicator" aria-hidden="true"></span>
+          System Active
+        </small>
+      </li>
+    </ul>
+  </nav>
+</footer>
+
+<style>
+  footer {
+    padding-top: var(--pico-spacing);
+    padding-bottom: var(--pico-spacing);
+    margin-top: 4rem;
+  }
+
+  .agent-status {
+    display: inline-flex;
+    align-items: center;
+    color: var(--pico-muted-color);
+  }
+
+  .indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #10b981;
+    margin-right: 0.5rem;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+  }
+</style>

@@ -1,148 +1,25 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { getCollection } from 'astro:content';
+import { getCollection } from "astro:content";
+import PageLayout from "../layouts/PageLayout.astro";
+import PostList from "../components/PostList.astro";
 
-const posts = (await getCollection('blog')).sort(
-  (a, b) =>
-    (b.data.date || b.data.pubDate).valueOf() -
-    (a.data.date || a.data.pubDate).valueOf()
-);
-
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(date);
-};
-
-const formatYear = (date: Date) => date.getFullYear().toString();
+const posts = (await getCollection("blog"))
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<Layout title="Franklin Baldo — Writer & Technologist">
-  <section class="essays-index">
-    <h1 class="page-title">Essays</h1>
-    <p class="page-subtitle">On AI, philosophy, and the architecture of the future.</p>
-
-    <div class="post-list">
-      {posts.map((post, i) => {
-        const d = post.data.date || post.data.pubDate;
-        const prevD = i > 0 ? (posts[i - 1].data.date || posts[i - 1].data.pubDate) : null;
-        const showYear = i === 0 || formatYear(d) !== formatYear(prevD);
-        return (
-          <>
-            {showYear && <h2 class="year-heading">{formatYear(d)}</h2>}
-            <article class="post-item">
-              <a href={`/blog/${post.slug}`} class="post-link">
-                <span class="post-title">{post.data.title}</span>
-                {post.data.description && (
-                  <span class="post-description">{post.data.description}</span>
-                )}
-                <time datetime={d.toISOString()}>
-                  {formatDate(d)}
-                </time>
-              </a>
-            </article>
-          </>
-        );
-      })}
-    </div>
+<PageLayout title="Home | Franklin Baldo" description="Lawyer and State Attorney. Exploring the intersections of process metaphysics, AI agency, and the architecture of legal systems.">
+  <section id="hero" style="margin-bottom: 4rem;">
+    <hgroup>
+      <h1>Franklin Baldo</h1>
+      <p>Lawyer and State Attorney. Exploring the boundaries of AI agents, process metaphysics, and legal design.</p>
+    </hgroup>
+    <p>
+      This space serves as my digital garden—a collection of essays, 
+      technical guides, and philosophical fragments on how we inhabit 
+      a world increasingly mediated by intelligence.
+    </p>
   </section>
-</Layout>
 
-<style>
-  .essays-index {
-    padding-top: 0;
-  }
-
-  .page-title {
-    font-family: var(--font-serif);
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    margin: 0 0 0.25rem 0;
-    color: var(--color-text);
-  }
-
-  .page-subtitle {
-    font-family: var(--font-sans);
-    font-size: 0.9rem;
-    color: var(--color-muted);
-    margin-bottom: 2.5rem;
-    letter-spacing: 0.01em;
-  }
-
-  .year-heading {
-    font-family: var(--font-sans);
-    font-size: 0.72rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-muted);
-    margin: 2.5rem 0 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .year-heading:first-child {
-    margin-top: 0;
-  }
-
-  .post-list {
-    /* Reset default heading styles within list */
-  }
-
-  .post-item {
-    margin-bottom: 0;
-  }
-
-  .post-link {
-    display: block;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--color-surface);
-    color: var(--color-text);
-    text-decoration: none;
-    transition: background-color 0.1s ease;
-  }
-
-  .post-link:hover {
-    background-color: var(--color-surface);
-    margin-left: -0.75rem;
-    margin-right: -0.75rem;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-    border-bottom: 1px solid var(--color-surface);
-    border-radius: 3px;
-  }
-
-  .post-title {
-    display: block;
-    font-family: var(--font-serif);
-    font-size: 1.25rem;
-    font-weight: 600;
-    line-height: 1.35;
-    letter-spacing: -0.015em;
-    color: var(--color-text);
-  }
-
-  .post-description {
-    display: block;
-    font-family: var(--font-serif);
-    font-size: 0.95rem;
-    color: var(--color-muted);
-    line-height: 1.5;
-    margin-top: 0.2rem;
-    max-width: 55ch;
-  }
-
-  .post-link time {
-    display: block;
-    font-family: var(--font-sans);
-    font-size: 0.72rem;
-    color: var(--color-muted);
-    letter-spacing: 0.02em;
-    margin-top: 0.35rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-</style>
+  <PostList posts={posts} />
+</PageLayout>
