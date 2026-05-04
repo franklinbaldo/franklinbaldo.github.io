@@ -1,0 +1,26 @@
+---
+import PageLayout from "../layouts/PageLayout.astro";
+---
+
+<PageLayout title="Search | Franklin Baldo" description="Full-text search across the garden.">
+  <article>
+    <header>
+      <h1>Search</h1>
+      <p><small>Full-text search across all essays. Index built with <a href="https://pagefind.app/">Pagefind</a>.</small></p>
+    </header>
+
+    <div id="search"></div>
+  </article>
+
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <script is:inline src="/pagefind/pagefind-ui.js"></script>
+  <script is:inline>
+    window.addEventListener("DOMContentLoaded", () => {
+      new PagefindUI({
+        element: "#search",
+        showImages: false,
+        showSubResults: true,
+      });
+    });
+  </script>
+</PageLayout>
