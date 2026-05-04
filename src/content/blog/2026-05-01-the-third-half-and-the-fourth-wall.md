@@ -3,6 +3,8 @@ title: "The Third Half and the Fourth Wall"
 description: "On Tinkerbell, persona prompts, and why declaring the frame is what kills the play."
 date: 2026-05-01
 tags: [ai, agents, persona-prompts, alignment, philosophy, tinkerbell]
+series: harness
+seriesOrder: 2
 ---
 
 I was tweaking a prompt for an autonomous agent. The first line said *you are Brad Frost*. The second said *you are not a bot pretending to be Brad Frost — Brad Frost*. I read it back and realized the second sentence had killed the first.

@@ -6,6 +6,8 @@ description: "Exploring the integration of the Jules API into the canivete daemo
 tags: ["artificial intelligence", "software engineering", "agents", "jules", "canivete", "harness"]
 heroImage: ./images/pontifex-architecture-implementation-guide-cover.png
 heroImageAlt: "Abstract representation of agent architecture and data flows."
+series: harness
+seriesOrder: 4
 ---
 
 ## The Harness Evolves

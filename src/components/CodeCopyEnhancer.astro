@@ -1,0 +1,59 @@
+---
+// Wraps every <pre> on the page with a "Copy" button.
+// Client-only, deferred. No-op if scripting is disabled.
+---
+
+<script>
+  const DEFAULT_LABEL = "Copy";
+
+  function enhance() {
+    document.querySelectorAll<HTMLPreElement>("article pre").forEach((pre) => {
+      if (pre.parentElement?.classList.contains("code-block")) return;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "code-block";
+      pre.parentNode?.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "code-copy";
+      button.textContent = DEFAULT_LABEL;
+      button.setAttribute("aria-label", "Copy code");
+
+      let resetTimer: number | undefined;
+      let inFlight = false;
+
+      const flash = (text: string) => {
+        button.textContent = text;
+        if (resetTimer !== undefined) window.clearTimeout(resetTimer);
+        resetTimer = window.setTimeout(() => {
+          button.textContent = DEFAULT_LABEL;
+          resetTimer = undefined;
+        }, 1500);
+      };
+
+      button.addEventListener("click", async () => {
+        if (inFlight) return;
+        inFlight = true;
+        try {
+          const code = pre.querySelector("code")?.innerText ?? pre.innerText;
+          await navigator.clipboard.writeText(code);
+          flash("Copied!");
+        } catch {
+          flash("Failed");
+        } finally {
+          inFlight = false;
+        }
+      });
+
+      wrapper.appendChild(button);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", enhance);
+  } else {
+    enhance();
+  }
+</script>

@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { excerpt } from '../lib/excerpt';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -24,6 +25,8 @@ const formattedDate = post.data.date.toLocaleDateString('en-US', {
   month: 'long',
   day: 'numeric',
 });
+
+const blurb = excerpt(post.body ?? '', 320) || post.data.description;
 ---
 
 <article>
@@ -31,14 +34,14 @@ const formattedDate = post.data.date.toLocaleDateString('en-US', {
     <hgroup>
       <h3>
         <span class="emoji" aria-hidden="true">{emoji}</span>
-        <a href={`/blog/${post.id}`} class="contrast">{post.data.title}</a>
+        <a href={`/blog/${post.id}/`} class="contrast">{post.data.title}</a>
       </h3>
       <p><small>{formattedDate}</small></p>
     </hgroup>
   </header>
-  <p>{post.data.description}</p>
+  <p class="excerpt">{blurb}</p>
   <footer>
-    <a href={`/blog/${post.id}`}>Read essay →</a>
+    <a href={`/blog/${post.id}/`}>Continue reading →</a>
   </footer>
 </article>
 
@@ -55,5 +58,9 @@ const formattedDate = post.data.date.toLocaleDateString('en-US', {
   .emoji {
     margin-right: 0.5rem;
     filter: grayscale(100%);
+  }
+  .excerpt {
+    color: var(--pico-color);
+    margin-bottom: 0.75rem;
   }
 </style>

@@ -1,0 +1,103 @@
+---
+interface Props {
+  title: string;
+  url?: string;
+}
+const { title, url } = Astro.props;
+const href = url ?? Astro.url.href;
+---
+
+<button
+  type="button"
+  class="share-button"
+  data-title={title}
+  data-url={href}
+  aria-label="Share this post"
+>
+  <span class="share-icon" aria-hidden="true">↗</span>
+  <span class="share-label">Share</span>
+</button>
+
+<script>
+  const DEFAULT_LABEL = "Share";
+  const buttonState = new WeakMap<HTMLButtonElement, {
+    timer?: number;
+    inFlight: boolean;
+  }>();
+
+  function flash(button: HTMLButtonElement, text: string) {
+    const label = button.querySelector<HTMLElement>(".share-label");
+    if (!label) return;
+    const state = buttonState.get(button) ?? { inFlight: false };
+    if (state.timer !== undefined) window.clearTimeout(state.timer);
+    label.textContent = text;
+    state.timer = window.setTimeout(() => {
+      label.textContent = DEFAULT_LABEL;
+      state.timer = undefined;
+    }, 1800);
+    buttonState.set(button, state);
+  }
+
+  document.addEventListener("click", async (event) => {
+    const button = (event.target as HTMLElement)?.closest<HTMLButtonElement>(".share-button");
+    if (!button) return;
+
+    const state = buttonState.get(button) ?? { inFlight: false };
+    if (state.inFlight) return;
+    state.inFlight = true;
+    buttonState.set(button, state);
+
+    try {
+      const title = button.dataset.title ?? document.title;
+      const url = button.dataset.url ?? location.href;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, url });
+          return;
+        } catch (err) {
+          if ((err as Error).name === "AbortError") return;
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(url);
+        flash(button, "Link copied");
+      } catch {
+        flash(button, "Couldn't copy");
+      }
+    } finally {
+      const s = buttonState.get(button);
+      if (s) {
+        s.inFlight = false;
+        buttonState.set(button, s);
+      }
+    }
+  });
+</script>
+
+<style>
+  .share-button {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--pico-border-color);
+    color: var(--pico-muted-color);
+    border-radius: var(--pico-border-radius);
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .share-button:hover,
+  .share-button:focus-visible {
+    color: var(--pico-color);
+    border-color: var(--pico-muted-color);
+  }
+  .share-icon {
+    display: inline-block;
+    transform: rotate(-12deg);
+  }
+</style>
