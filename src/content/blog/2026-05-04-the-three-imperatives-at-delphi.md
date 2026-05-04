@@ -4,10 +4,8 @@ description: "On the temple that demanded self-knowledge, the philosopher who to
 date: "2026-05-04"
 ---
 
-import SecretNote from '../../components/SecretNote.svelte';
-
 On the southern slope of Mount Parnassus, about a hundred and ten miles
-<SecretNote client:load text="The god at Delphi spoke through a woman, but his truth was silent." />
+<details class="aside-note"><summary>👁️</summary><small><em>The god at Delphi spoke through a woman, but his truth was silent.</em></small></details>
 northwest of Athens, there was a temple at Delphi[^delphi-lang] where
 the most powerful people in the ancient Mediterranean came to ask
 questions. Kings sent embassies. City-states would not declare war
