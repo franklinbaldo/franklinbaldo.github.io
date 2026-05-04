@@ -20,6 +20,8 @@
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@picocss/pico": "^2.1.1",
     "astro": "^6.2.1",
+    "astro-og-canvas": "^0.11.1",
+    "canvaskit-wasm": "^0.41.1",
     "mdast-util-to-string": "^4.0.0",
     "pagefind": "^1.5.2",
     "playwright": "^1.59.1",

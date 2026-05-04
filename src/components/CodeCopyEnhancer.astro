@@ -1,0 +1,43 @@
+---
+// Wraps every <pre> on the page with a "Copy" button.
+// Client-only, deferred. No-op if scripting is disabled.
+---
+
+<script>
+  function enhance() {
+    document.querySelectorAll<HTMLPreElement>("article pre").forEach((pre) => {
+      if (pre.parentElement?.classList.contains("code-block")) return;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "code-block";
+      pre.parentNode?.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "code-copy";
+      button.textContent = "Copy";
+      button.setAttribute("aria-label", "Copy code");
+
+      button.addEventListener("click", async () => {
+        const code = pre.querySelector("code")?.innerText ?? pre.innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          const original = button.textContent;
+          button.textContent = "Copied!";
+          window.setTimeout(() => { button.textContent = original; }, 1500);
+        } catch {
+          button.textContent = "Failed";
+        }
+      });
+
+      wrapper.appendChild(button);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", enhance);
+  } else {
+    enhance();
+  }
+</script>

@@ -3,6 +3,9 @@ import { type CollectionEntry, getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import PageLayout from '../../layouts/PageLayout.astro';
 import BackToTop from '../../components/BackToTop.astro';
+import ShareButton from '../../components/ShareButton.astro';
+import CodeCopyEnhancer from '../../components/CodeCopyEnhancer.astro';
+import { getSeriesContext } from '../../lib/series';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -17,12 +20,13 @@ const post = Astro.props;
 const { Content, remarkPluginFrontmatter } = await render(post);
 const { heroImage, heroImageAlt, title, description, date, tags } = post.data;
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
+const series = await getSeriesContext(post);
 ---
 
 <PageLayout
   title={title}
   description={description}
-  image={heroImage?.src}
+  image={heroImage?.src ?? `/og/${post.id}.png`}
   type="article"
   publishedTime={date}
   tags={tags}
@@ -52,10 +56,48 @@ const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
       )}
     </header>
 
+    {series && (
+      <aside class="series-banner">
+        <small>
+          Part {series.index + 1} of {series.posts.length} in the
+          <strong>{series.slug}</strong> series.
+          <details>
+            <summary>All posts in this series</summary>
+            <ol>
+              {series.posts.map((p, i) => (
+                <li>
+                  {i === series.index
+                    ? <><strong>{p.data.title}</strong> <em>(this post)</em></>
+                    : <a href={`/blog/${p.id}/`}>{p.data.title}</a>}
+                </li>
+              ))}
+            </ol>
+          </details>
+        </small>
+      </aside>
+    )}
+
     <Content />
 
-    {tags && tags.length > 0 && (
-      <footer class="post-tags">
+    {series && (series.prev || series.next) && (
+      <nav class="series-nav" aria-label="Series navigation">
+        {series.prev ? (
+          <a href={`/blog/${series.prev.id}/`} class="prev" rel="prev">
+            <small>← Previous in series</small>
+            <span>{series.prev.data.title}</span>
+          </a>
+        ) : <span />}
+        {series.next ? (
+          <a href={`/blog/${series.next.id}/`} class="next" rel="next">
+            <small>Next in series →</small>
+            <span>{series.next.data.title}</span>
+          </a>
+        ) : <span />}
+      </nav>
+    )}
+
+    <footer class="post-footer">
+      {tags && tags.length > 0 && (
         <small>
           Tags: {tags.map((tag, i) => (
             <>
@@ -64,9 +106,11 @@ const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
             </>
           ))}
         </small>
-      </footer>
-    )}
+      )}
+      <ShareButton title={title} />
+    </footer>
   </article>
 
   <BackToTop />
+  <CodeCopyEnhancer />
 </PageLayout>
