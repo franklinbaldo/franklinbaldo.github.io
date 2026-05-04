@@ -4,8 +4,6 @@ date: 2026-03-21
 title: "We Are All Becoming Lobsters"
 description: "On transformation, hyperstition, and the machinery of gradual replacement. Drawing connections between Kafka, Lanthimos, and the agentic present."
 tags: ["transformation", "AI agents", "hyperstition", "Kafka", "culture", "digital future"]
-heroImage: ./images/lobster-transformation-cover.png
-heroImageAlt: "A surreal image suggesting the blurred boundary between human and crustacean forms"
 ---
 
 > *"As Gregor Samsa awoke one morning from uneasy dreams he found himself transformed in his bed into a monstrous vermin."*

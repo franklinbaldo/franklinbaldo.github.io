@@ -1,43 +1,58 @@
-# Astro Starter Kit: Minimal
+# franklinbaldo.github.io
 
-```sh
-npm create astro@latest -- --template minimal
+Personal blog and digital garden of Franklin Baldo. Built with **Astro 6**,
+**Pico.css v2**, and a small set of **Svelte 5** islands for interactive bits.
+
+## Stack
+
+- [Astro 6](https://astro.build/) with `@astrojs/mdx`
+- [Pico.css v2](https://picocss.com/) (semantic, classless-ish CSS)
+- [Svelte 5](https://svelte.dev/) — used only for genuinely interactive
+  components (`ThemeToggle`, `SecretNote`); everything else is `.astro`
+- Typography: EB Garamond (body) / JetBrains Mono (code) via `@fontsource`
+- `astro:assets` for image optimization (heroes generate responsive WebP)
+
+## Commands
+
+| Command           | Action                                       |
+| :---------------- | :------------------------------------------- |
+| `npm install`     | Install dependencies                         |
+| `npm run dev`     | Start dev server at `localhost:4321`         |
+| `npm run build`   | Build production site to `./dist/`           |
+| `npm run preview` | Preview the built site locally               |
+
+Requires Node `>=22.12.0` (see `package.json#engines`).
+
+## Project layout
+
+```
+src/
+├── components/        Header.astro, Footer.astro, PostCard.astro,
+│                      PostList.astro, ThemeToggle.svelte, SecretNote.svelte
+├── content/
+│   └── blog/          MDX posts + colocated images/
+├── content.config.ts  Collection schema (heroImage uses image() helper)
+├── layouts/
+│   └── PageLayout.astro
+├── pages/
+│   ├── about.astro
+│   ├── index.astro
+│   └── blog/[...slug].astro
+└── styles/global.css  Pico v2 + Paper/Stone theme tokens
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Hero images for posts live in `src/content/blog/images/` so the schema's
+`image()` helper can resolve them and generate responsive variants.
 
-## 🚀 Project Structure
+## Notes on the modernization migration
 
-Inside of your Astro project, you'll see the following folders and files:
+The legacy site shipped a few standalone routes that were dropped during
+the move to Astro 6:
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+- **RSS feed (`/rss.xml`)** — removed. Re-add via
+  [`@astrojs/rss`](https://docs.astro.build/en/recipes/rss/) when needed.
+- **`/encrypt.html`** — removed. The static page-encryption demo can be
+  reintroduced as an Astro page if it becomes useful again.
+- **`/vault/`** — removed. Was an unmaintained landing page.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+If you depended on any of these, open an issue.

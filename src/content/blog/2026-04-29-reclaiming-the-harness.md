@@ -2,10 +2,8 @@
 title: "Reclaiming the Harness"
 description: "How a single word has been quietly summoning Waluigis for half a decade, and what the swiss-army knife in my coat pocket has to do with it."
 date: 2026-04-29
----
-# heroImage: TODO — saddle silhouette / triad table as visual / generated SVG
-# Conferir src/content/config.ts antes de mergear: se heroImage for required, o build quebra.
 tags: [ai, alignment, agents, harness, waluigi, canivete, philosophy]
+---
 
 > Or: how a single word has been quietly summoning Waluigis for half a decade, and what the swiss-army knife in my coat pocket has to do with it
 ```

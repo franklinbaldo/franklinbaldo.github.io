@@ -1,5 +1,6 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import PageLayout from '../../layouts/PageLayout.astro';
 
 export async function getStaticPaths() {
@@ -9,25 +10,34 @@ export async function getStaticPaths() {
     props: post,
   }));
 }
-type Props = CollectionEntry<"blog">;
+type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content } = await render(post);
+const { heroImage, heroImageAlt, title, description, date } = post.data;
 ---
 
-<PageLayout title={`${post.data.title} | Franklin Baldo`} description={post.data.description}>
+<PageLayout title={`${title} | Franklin Baldo`} description={description}>
   <article>
     <header>
       <hgroup>
-        <h1>{post.data.title}</h1>
+        <h1>{title}</h1>
         <p>
-          <small>{post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</small>
+          <small>{date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</small>
         </p>
       </hgroup>
+      {heroImage && (
+        <Image
+          src={heroImage}
+          alt={heroImageAlt ?? ''}
+          widths={[480, 800, 1200]}
+          sizes="(max-width: 800px) 100vw, 800px"
+          format="webp"
+          loading="eager"
+        />
+      )}
     </header>
-    
-    <!-- Rendered Markdown Content -->
+
     <Content />
-    
   </article>
 </PageLayout>

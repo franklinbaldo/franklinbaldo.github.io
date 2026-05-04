@@ -1,0 +1,59 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+
+const emojiMap: Record<string, string> = {
+  philosophy: '🧠',
+  legal: '⚖️',
+  ai: '🤖',
+  agents: '🤝',
+  process: '🌀',
+  default: '📄',
+};
+
+const tag = post.data.tags?.[0]?.toLowerCase();
+const emoji = (tag && emojiMap[tag]) || emojiMap.default;
+
+const formattedDate = post.data.date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<article>
+  <header>
+    <hgroup>
+      <h3>
+        <span class="emoji" aria-hidden="true">{emoji}</span>
+        <a href={`/blog/${post.id}`} class="contrast">{post.data.title}</a>
+      </h3>
+      <p><small>{formattedDate}</small></p>
+    </hgroup>
+  </header>
+  <p>{post.data.description}</p>
+  <footer>
+    <a href={`/blog/${post.id}`}>Read essay →</a>
+  </footer>
+</article>
+
+<style>
+  article {
+    margin-bottom: 2rem;
+  }
+  hgroup {
+    margin-bottom: 0;
+  }
+  h3 {
+    margin-bottom: 0.25rem;
+  }
+  .emoji {
+    margin-right: 0.5rem;
+    filter: grayscale(100%);
+  }
+</style>
