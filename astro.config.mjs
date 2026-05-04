@@ -4,18 +4,21 @@ import { defineConfig } from 'astro/config';
 import svelte from '@astrojs/svelte';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import remarkMermaid from 'remark-mermaidjs';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
+import { remarkGitModified } from './src/lib/remark-git-modified.mjs';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://franklinbaldo.github.io',
   integrations: [svelte(), mdx(), sitemap()],
   markdown: {
-    remarkPlugins: [remarkMermaid, remarkReadingTime],
+    remarkPlugins: [remarkMath, remarkReadingTime, remarkGitModified],
     rehypePlugins: [
+      rehypeKatex,
       rehypeSlug,
       [
         rehypeAutolinkHeadings,

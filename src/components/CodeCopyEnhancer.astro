@@ -56,4 +56,6 @@
   } else {
     enhance();
   }
+  // Re-run after Astro client-side navigation (view transitions).
+  document.addEventListener("astro:page-load", enhance);
 </script>

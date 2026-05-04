@@ -4,6 +4,7 @@ description: "On the temple that demanded self-knowledge, the philosopher who to
 date: "2026-05-04"
 series: harness
 seriesOrder: 3
+featured: true
 ---
 
 On the southern slope of Mount Parnassus, about a hundred and ten miles

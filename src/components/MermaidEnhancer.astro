@@ -1,0 +1,51 @@
+---
+// Renders mermaid code blocks client-side.
+// Looks for <pre><code class="language-mermaid">…</code></pre> emitted by
+// the default Shiki/markdown pipeline, swaps the wrapper to a mermaid
+// container, then runs mermaid.run on it. No build-time dependency on
+// Playwright; broken diagrams degrade gracefully to a code block.
+---
+
+<script>
+  let initialized = false;
+
+  async function render() {
+    const codeBlocks = document.querySelectorAll<HTMLElement>(
+      "article pre > code.language-mermaid",
+    );
+    if (codeBlocks.length === 0) return;
+
+    const targets: HTMLElement[] = [];
+    codeBlocks.forEach((code) => {
+      const pre = code.parentElement;
+      if (!pre || pre.dataset.mermaidProcessed === "true") return;
+      const source = code.textContent ?? "";
+      const container = document.createElement("div");
+      container.className = "mermaid";
+      container.textContent = source;
+      pre.replaceWith(container);
+      targets.push(container);
+    });
+
+    if (targets.length === 0) return;
+
+    const { default: mermaid } = await import("mermaid");
+    if (!initialized) {
+      const dark = document.documentElement.dataset.theme === "dark";
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: dark ? "dark" : "neutral",
+        securityLevel: "strict",
+      });
+      initialized = true;
+    }
+    try {
+      await mermaid.run({ nodes: targets });
+    } catch (err) {
+      console.warn("[mermaid] render error:", err);
+    }
+  }
+
+  render();
+  document.addEventListener("astro:page-load", render);
+</script>
