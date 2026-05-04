@@ -17,7 +17,9 @@ interface Props {
 const SITE_NAME = "Franklin Baldo";
 // When used via Markdown/MDX `layout:` frontmatter, Astro passes
 // `{ frontmatter, ... }`; in regular usage the props come directly.
-const source = (Astro.props as any).frontmatter ?? Astro.props;
+type LayoutProps = Props & { frontmatter?: Props };
+const raw = Astro.props as LayoutProps;
+const source: Props = raw.frontmatter ?? raw;
 const {
   title,
   description = "Franklin Baldo's Digital Garden",
@@ -26,7 +28,7 @@ const {
   publishedTime,
   modifiedTime,
   tags,
-} = source as Props;
+} = source;
 
 const documentTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
 

@@ -1,4 +1,4 @@
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { relative, resolve } from 'node:path';
 
 const ROOT = process.cwd();
@@ -6,8 +6,11 @@ const ROOT = process.cwd();
 function lastModified(filePath) {
   try {
     const rel = relative(ROOT, resolve(filePath));
-    const out = execSync(
-      `git log -1 --format=%cI -- "${rel}"`,
+    // execFileSync (array form) skips the shell entirely — no
+    // interpolation, no injection risk on funky filenames.
+    const out = execFileSync(
+      'git',
+      ['log', '-1', '--format=%cI', '--', rel],
       { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
     ).trim();
     return out || null;
