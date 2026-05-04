@@ -19,35 +19,59 @@ const href = url ?? Astro.url.href;
 </button>
 
 <script>
+  const DEFAULT_LABEL = "Share";
+  const buttonState = new WeakMap<HTMLButtonElement, {
+    timer?: number;
+    inFlight: boolean;
+  }>();
+
+  function flash(button: HTMLButtonElement, text: string) {
+    const label = button.querySelector<HTMLElement>(".share-label");
+    if (!label) return;
+    const state = buttonState.get(button) ?? { inFlight: false };
+    if (state.timer !== undefined) window.clearTimeout(state.timer);
+    label.textContent = text;
+    state.timer = window.setTimeout(() => {
+      label.textContent = DEFAULT_LABEL;
+      state.timer = undefined;
+    }, 1800);
+    buttonState.set(button, state);
+  }
+
   document.addEventListener("click", async (event) => {
     const button = (event.target as HTMLElement)?.closest<HTMLButtonElement>(".share-button");
     if (!button) return;
-    const title = button.dataset.title ?? document.title;
-    const url = button.dataset.url ?? location.href;
-    const label = button.querySelector(".share-label");
-    const original = label?.textContent ?? "Share";
 
-    const setLabel = (text: string) => {
-      if (label) label.textContent = text;
-      window.setTimeout(() => {
-        if (label) label.textContent = original;
-      }, 1800);
-    };
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, url });
-        return;
-      } catch (err) {
-        if ((err as Error).name === "AbortError") return;
-      }
-    }
+    const state = buttonState.get(button) ?? { inFlight: false };
+    if (state.inFlight) return;
+    state.inFlight = true;
+    buttonState.set(button, state);
 
     try {
-      await navigator.clipboard.writeText(url);
-      setLabel("Link copied");
-    } catch {
-      setLabel("Couldn't copy");
+      const title = button.dataset.title ?? document.title;
+      const url = button.dataset.url ?? location.href;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, url });
+          return;
+        } catch (err) {
+          if ((err as Error).name === "AbortError") return;
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(url);
+        flash(button, "Link copied");
+      } catch {
+        flash(button, "Couldn't copy");
+      }
+    } finally {
+      const s = buttonState.get(button);
+      if (s) {
+        s.inFlight = false;
+        buttonState.set(button, s);
+      }
     }
   });
 </script>

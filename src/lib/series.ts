@@ -17,8 +17,13 @@ export async function getSeriesContext(
   const all = (await getCollection("blog"))
     .filter((p) => !p.data.draft && p.data.series === series)
     .sort((a, b) => {
-      const ao = a.data.seriesOrder, bo = b.data.seriesOrder;
+      // Explicit seriesOrder always wins. Posts with order come before
+      // posts without; ties (or both missing) break by publication date.
+      const ao = a.data.seriesOrder;
+      const bo = b.data.seriesOrder;
       if (ao != null && bo != null) return ao - bo;
+      if (ao != null) return -1;
+      if (bo != null) return 1;
       return a.data.date.valueOf() - b.data.date.valueOf();
     });
 
