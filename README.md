@@ -44,15 +44,20 @@ src/
 Hero images for posts live in `src/content/blog/images/` so the schema's
 `image()` helper can resolve them and generate responsive variants.
 
+## Feeds
+
+RSS feed available at [`/rss.xml`](https://franklinbaldo.github.io/rss.xml),
+generated from the `blog` collection via
+[`@astrojs/rss`](https://docs.astro.build/en/recipes/rss/). The layout adds a
+`<link rel="alternate">` for autodiscovery.
+
 ## Notes on the modernization migration
 
-The legacy site shipped a few standalone routes that were dropped during
-the move to Astro 6:
+A couple of legacy standalone routes were dropped during the move to
+Astro 6 and have not been reintroduced:
 
-- **RSS feed (`/rss.xml`)** — removed. Re-add via
-  [`@astrojs/rss`](https://docs.astro.build/en/recipes/rss/) when needed.
-- **`/encrypt.html`** — removed. The static page-encryption demo can be
-  reintroduced as an Astro page if it becomes useful again.
-- **`/vault/`** — removed. Was an unmaintained landing page.
+- **`/encrypt.html`** — static page-encryption demo. Can be brought back as
+  an Astro page if it becomes useful again.
+- **`/vault/`** — unmaintained landing page.
 
-If you depended on any of these, open an issue.
+If you depended on either, open an issue.
