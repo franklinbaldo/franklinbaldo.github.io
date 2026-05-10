@@ -17,6 +17,7 @@ interface Repo {
   topics: string[];
   fork: boolean;
   archived: boolean;
+  private: boolean;
 }
 
 let repos: Repo[] = [];
@@ -36,7 +37,7 @@ try {
   if (!res.ok) throw new Error(`GitHub API ${res.status}: ${await res.text()}`);
   const data = (await res.json()) as Repo[];
   repos = data
-    .filter((r) => !r.fork && !r.archived)
+    .filter((r) => !r.fork && !r.archived && !r.private)
     .sort(
       (a, b) =>
         b.stargazers_count - a.stargazers_count ||
