@@ -101,7 +101,8 @@ const langColor: Record<string, string> = {
     <ul class="project-grid">
       {repos.map((repo) => (
         <li>
-          <article>
+          <article class={repo.stargazers_count > 0 ? "featured" : ""}>
+            {repo.stargazers_count > 0 && <span class="badge-featured">Featured</span>}
             <header>
               <h3>
                 <a href={repo.html_url}>{repo.name}</a>
@@ -120,7 +121,7 @@ const langColor: Record<string, string> = {
                     {repo.language}
                   </span>
                 )}
-                {repo.stargazers_count > 0 && <span>★ {repo.stargazers_count}</span>}
+                {repo.stargazers_count > 0 && <span class="stars">★ {repo.stargazers_count}</span>}
                 {repo.forks_count > 0 && <span>⑂ {repo.forks_count}</span>}
                 <span class="pushed">
                   updated <time datetime={repo.pushed_at}>{fmt.format(new Date(repo.pushed_at))}</time>
@@ -143,7 +144,7 @@ const langColor: Record<string, string> = {
     padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
-    gap: 1rem;
+    gap: 1.5rem;
   }
   .project-grid > li > article {
     height: 100%;
@@ -151,18 +152,42 @@ const langColor: Record<string, string> = {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+  .project-grid > li > article:hover {
+    transform: translateY(-4px);
+  }
+  .project-grid article.featured {
+    border: 1px solid var(--pico-primary-border);
+    box-shadow: 0 4px 12px var(--pico-primary-focus);
+    position: relative;
+  }
+  .badge-featured {
+    position: absolute;
+    top: -12px;
+    right: 12px;
+    background: var(--pico-primary-background);
+    color: var(--pico-primary-inverse);
+    padding: 2px 10px;
+    font-size: 0.65rem;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    z-index: 1;
   }
   .project-grid h3 {
     margin: 0 0 0.25rem 0;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
   }
   .project-grid p {
     margin: 0.25rem 0 0;
     color: var(--pico-muted-color);
+    line-height: 1.4;
   }
   .project-grid footer {
     margin-top: 1rem;
-    padding-top: 0.5rem;
+    padding-top: 0.75rem;
     border-top: 1px dashed var(--pico-border-color);
   }
   .project-grid footer small {
@@ -170,6 +195,11 @@ const langColor: Record<string, string> = {
     flex-wrap: wrap;
     gap: 0.5rem 1rem;
     color: var(--pico-muted-color);
+    align-items: center;
+  }
+  .stars {
+    color: var(--pico-primary);
+    font-weight: bold;
   }
   .lang {
     display: inline-flex;
@@ -178,8 +208,8 @@ const langColor: Record<string, string> = {
   }
   .lang-dot {
     display: inline-block;
-    width: 0.7em;
-    height: 0.7em;
+    width: 0.75em;
+    height: 0.75em;
     border-radius: 50%;
   }
 </style>
