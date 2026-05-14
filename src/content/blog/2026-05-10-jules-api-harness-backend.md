@@ -2,6 +2,7 @@
 title: "The Jules API as a Harness Backend"
 author: franklin
 date: 2026-05-10
+lang: en
 description: "Exploring the integration of the Jules API into the canivete daemon. How sessions and activities map to a continuous identity, and the metaphysical implications of agent orchestration."
 tags: ["artificial intelligence", "software engineering", "agents", "jules", "canivete", "harness"]
 heroImage: ./images/pontifex-architecture-implementation-guide-cover.png

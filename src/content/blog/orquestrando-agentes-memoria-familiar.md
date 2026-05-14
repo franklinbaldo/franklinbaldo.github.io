@@ -2,6 +2,7 @@
 title: "O que aprendi orquestrando agentes de IA para preservar a memória familiar"
 description: "Uma reflexão sobre a engenharia do afeto, a falibilidade das máquinas e a construção do projeto Alfarrábios do Adi."
 date: 2026-03-30
+lang: pt
 tags: [ia, agentes, memoria, filosofia, engenharia]
 ---
 

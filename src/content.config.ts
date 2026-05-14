@@ -12,6 +12,7 @@ const blog = defineCollection({
     heroImage: image().optional(),
     heroImageAlt: z.string().optional(),
     lang: z.enum(['en', 'pt']).optional(),
+    translationKey: z.string().optional(),
     series: z.string().optional(),
     seriesOrder: z.number().optional(),
     featured: z.boolean().optional(),

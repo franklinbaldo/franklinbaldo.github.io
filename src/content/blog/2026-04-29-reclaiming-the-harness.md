@@ -2,6 +2,7 @@
 title: "Reclaiming the Harness"
 description: "How a single word has been quietly summoning Waluigis for half a decade, and what the swiss-army knife in my coat pocket has to do with it."
 date: 2026-04-29
+lang: en
 tags: [ai, alignment, agents, harness, waluigi, canivete, philosophy]
 series: harness
 seriesOrder: 1

@@ -1,6 +1,7 @@
 ---
 author: franklin
 date: 2026-03-18
+lang: en
 title: "Verne and the Identity-Repo Pattern: How AI Agents Remember"
 description: "Explaining the Verne project, AI agents, and how the identity-repo architecture allows autonomous entities to maintain continuous memory and context across isolated tasks — while remaining compatible with any cognitive harness."
 tags: ["verne", "ai", "agents", "architecture", "identity-repo", "openclaw"]

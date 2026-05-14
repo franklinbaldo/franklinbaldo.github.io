@@ -2,6 +2,7 @@
 title: "Hermes Agent vs OpenClaw: por que minha experiência ficou muito melhor"
 description: "Um relato honesto, baseado nas minhas próprias sessões, sobre o salto de UX entre o antigo harness OpenClaw e o Hermes Agent."
 date: "2026-04-04"
+lang: pt
 tags: ["ai", "agents", "developer-tools", "automation", "software-engineering"]
 draft: false
 author: "franklin"
