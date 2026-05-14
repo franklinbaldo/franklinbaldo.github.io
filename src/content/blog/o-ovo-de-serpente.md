@@ -96,29 +96,51 @@ O ovo nasceu. A serpente ainda está crescendo.
 
 É fato notório que a frase "livre convencimento motivado" continua sendo usada pelos tribunais brasileiros como se o CPC 2015 não existisse — em varas de primeira instância, em câmaras de tribunal, em decisões monocráticas de ministros que deveriam saber melhor. A expressão foi eliminada do texto da lei em março de 2016 e ressuscitou imediatamente na prática forense, como se a cabeça tivesse sido cortada e o corpo tivesse decidido continuar rastejando por conta própria.
 
-<figure class="meme">
-  <img
-    src="https://api.memegen.link/images/same/antes_do_CPC_2015/depois_do_CPC_2015.png?width=500"
-    alt="Meme da Pam de The Office segurando duas fotos: 'antes do CPC 2015' e 'depois do CPC 2015' — sugerindo que são a mesma imagem."
-    loading="lazy"
-  />
-  <figcaption>O art. 371 eliminou "livremente" em 2015. A jurisprudência ainda não recebeu o memorando.</figcaption>
-</figure>
-
 DiMaggio e Powell chamaram esse mecanismo de isomorfismo coercitivo superficial: a norma muda, a linguagem se adapta na casca, e o comportamento de fundo permanece. O problema não é falta de lei — o CPC 2015 é uma lei boa. O problema é que o habitus patrimonialista, formado ao longo de décadas em que qualquer coisa escrita servia de motivação, não é desconstruído por decreto. Bourdieu chamava de *history turned into nature*: história incorporada que opera como segunda natureza, tornando certas práticas espontâneas e outras impensáveis. Planck disse sobre a ciência que ela avança funeral por funeral — os oponentes de uma nova verdade não são convencidos, eles morrem, e a geração seguinte cresce sem conhecer outra coisa. O direito não é diferente. A serpente do dever de racionalidade não vai convencer quem internalizou o livre convencimento como reflexo. Vai ser natural para quem entrou na faculdade quando o código já existia — se o habitus não vencer antes, transmitindo-se às novas gerações pelas mesmas instituições que o produziram.
+
+<figure class="svg-illustration">
+  <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title-habitus">
+    <title id="title-habitus">O habitus: a mesma fala, dita como argumento e operada como reflexo</title>
+    <!-- Painel esquerdo: argumento explícito -->
+    <rect x="20" y="30" width="310" height="220" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <text x="175" y="52" text-anchor="middle" font-family="serif" font-size="11" fill="currentColor" font-style="italic">geração que aprendeu o código</text>
+    <!-- Silhueta esquerda -->
+    <circle cx="120" cy="120" r="22" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M 98 142 Q 120 158 142 142 L 142 195 L 98 195 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <!-- Balão de fala visível -->
+    <path d="M 165 95 Q 165 75 185 75 L 295 75 Q 315 75 315 95 L 315 135 Q 315 155 295 155 L 195 155 L 175 175 L 180 155 L 185 155 Q 165 155 165 135 Z" fill="none" stroke="currentColor" stroke-width="1.2"/>
+    <text x="240" y="100" text-anchor="middle" font-family="serif" font-size="10" fill="currentColor">"identifico os fundamentos</text>
+    <text x="240" y="115" text-anchor="middle" font-family="serif" font-size="10" fill="currentColor">determinantes do precedente</text>
+    <text x="240" y="130" text-anchor="middle" font-family="serif" font-size="10" fill="currentColor">e enfrento os argumentos</text>
+    <text x="240" y="145" text-anchor="middle" font-family="serif" font-size="10" fill="currentColor">capazes de infirmar"</text>
+    <text x="175" y="225" text-anchor="middle" font-family="serif" font-size="9" fill="currentColor" opacity="0.7">argumento explícito</text>
+    <text x="175" y="240" text-anchor="middle" font-family="serif" font-size="9" fill="currentColor" opacity="0.7">passível de auditoria</text>
+    <!-- Painel direito: reflexo internalizado -->
+    <rect x="370" y="30" width="310" height="220" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <text x="525" y="52" text-anchor="middle" font-family="serif" font-size="11" fill="currentColor" font-style="italic">geração formada no livre convencimento</text>
+    <!-- Silhueta direita -->
+    <circle cx="470" cy="120" r="22" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M 448 142 Q 470 158 492 142 L 492 195 L 448 195 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <!-- Aura/halo interno (mesma fala virou reflexo) -->
+    <ellipse cx="470" cy="120" rx="34" ry="34" fill="none" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6"/>
+    <ellipse cx="470" cy="120" rx="46" ry="46" fill="none" stroke="currentColor" stroke-width="0.6" stroke-dasharray="2,3" opacity="0.4"/>
+    <!-- Texto interno difuso, sem balão -->
+    <text x="555" y="100" text-anchor="middle" font-family="serif" font-size="9" fill="currentColor" opacity="0.55">decido</text>
+    <text x="595" y="118" text-anchor="middle" font-family="serif" font-size="9" fill="currentColor" opacity="0.55">conforme</text>
+    <text x="565" y="138" text-anchor="middle" font-family="serif" font-size="9" fill="currentColor" opacity="0.55">minha</text>
+    <text x="600" y="156" text-anchor="middle" font-family="serif" font-size="9" fill="currentColor" opacity="0.55">consciência</text>
+    <text x="525" y="225" text-anchor="middle" font-family="serif" font-size="9" fill="currentColor" opacity="0.7">disposição incorporada</text>
+    <text x="525" y="240" text-anchor="middle" font-family="serif" font-size="9" fill="currentColor" opacity="0.7">opera abaixo da deliberação</text>
+    <!-- Eixo do tempo entre painéis -->
+    <line x1="335" y1="140" x2="365" y2="140" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3,3"/>
+    <text x="350" y="160" text-anchor="middle" font-family="serif" font-size="8" fill="currentColor" opacity="0.5">funeral por funeral</text>
+  </svg>
+  <figcaption>A mesma exigência do art. 489 §1º: em uma geração é argumento; na anterior, foi reflexo que dispensava argumento. O habitus não se desconstrói por decreto.</figcaption>
+</figure>
 
 O que torna a situação atual diferente de todas as anteriores é que os custos de produzir argumentação de qualidade estão caindo. Não de modo dramático ainda, mas de modo sistemático. Cada vez que um procurador de estado ou defensor público consegue produzir, em tempo razoável, uma peça com fundamentação estruturada que identifica os fundamentos determinantes do precedente invocado e demonstra o ajuste do caso, a serpente do dever de racionalidade cresce um pouco. Cada peça dessas que chega ao STF e que o STF precisa decidir se enfrenta ou ignora é um momento em que o ovo está se abrindo.
 
 Bolsonaro disse uma vez, com a candura involuntária que às vezes o caracterizava, que ia beneficiar o filho sim. É o patrimonialismo que se sabe patrimonialismo e não vê problema nisso. Fux é diferente — tem escrúpulos, acredita no sistema, ajudou a construir um código que é genuinamente bom. E ainda assim defendeu a filha para o cargo de desembargadora, telefonou para quem precisava telefonar, usou o peso do cargo. Não porque calculou friamente e concluiu que a prerrogativa pessoal vale mais que o princípio. Mas porque o habitus patrimonialista opera abaixo do nível da deliberação consciente — é disposição incorporada, não escolha. O homem que escreveu o art. 489, §1º, não percebeu a contradição entre o que escreveu e o que fez.
-
-<figure class="meme">
-  <img
-    src="https://api.memegen.link/images/bus/patrimonialismo_descarado/patrimonialismo_de_gravata.png?width=500"
-    alt="Meme 'Two Guys on a Bus': cara triste olhando pela janela com legenda 'patrimonialismo descarado'; cara sorrindo de frente com legenda 'patrimonialismo de gravata' — sugerindo que são a mesma coisa vista por dois ângulos."
-    loading="lazy"
-  />
-  <figcaption>O mesmo ônibus, dois passageiros, autoconsciências diferentes.</figcaption>
-</figure>
 
 Não se engane com a sofisticação. A prova está no julgamento.
 
