@@ -141,3 +141,14 @@ E o Yudkowsky fica aqui no final, porque intelectualmente honesto é o que se te
 - **Douglass North, *Institutions, Institutional Change and Economic Performance*** — por que enforcement fraco transforma boas normas em decoração; a serpente do dever de racionalidade precisa de mecanismo de enforcement para crescer.
 - **Daniel Mitidiero, *Precedentes: da persuasão à vinculação*** — o argumento processual sobre vinculação racional versus vinculação hierárquica; o dever de fundamentação é simétrico e se aplica ao STF quando julga reclamações.
 - **Marc Galanter, "Why the 'Haves' Come Out Ahead" (*Law & Society Review*, 1974)** — sobre como repeat players estruturam o sistema jurídico a seu favor; o telefonema do ministro é o repeat player em sua forma mais concentrada.
+
+## Crônica do patrimonialismo (gonzo e correlatos)
+
+A teoria sociológica explica a estrutura; a crônica registra o cheiro da sala. As duas coisas se sustentam mutuamente, e há uma tradição brasileira recente de fazer a segunda em registro gonzo — descendente direto de Hunter S. Thompson — que esta seção homenageia.
+
+- **"Excelentíssima Fux", *Revista Piauí*** — a reportagem que abre este ensaio; reconstrução do telefonema e da promoção da filha do ministro. Jornalismo longo-formato fazendo o que o sistema preferia que não fosse feito.
+- **Medo e Delírio em Brasília (Pedro Daltro)** — crônica gonzo da política brasileira em forma de diário paranoico-lúcido, herdeira direta de Thompson; o livro homônimo compila os melhores trechos. Lê-se o patrimonialismo do dia a dia como quem lê meteorologia.
+- **Hunter S. Thompson, *Fear and Loathing on the Campaign Trail '72*** — a fonte do registro; o que torna o gonzo politicamente útil é a recusa em fingir neutralidade quando o objeto observado não é neutro com o observador.
+- **Eliane Brum, *Brasil, construtor de ruínas*** — reportagem como diagnóstico estrutural; o patrimonialismo visto a partir das ruínas que ele constrói, não dos gabinetes que o operam.
+- **Vladimir Safatle, colunas na *Folha* e *El País*** — não é gonzo, mas é o registro de quem escreve sabendo que está sendo lido pelo objeto criticado e não recua por isso; necessário como contraponto teórico ao gonzo puro.
+- **Comissão Nacional da Verdade, *Brasil: Nunca Mais*** — documento que não é crônica nem teoria, mas arquivo; lembrete de que o patrimonialismo judicial brasileiro tem fase histórica em que cobriu tortura com despacho fundamentado.
