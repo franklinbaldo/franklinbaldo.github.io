@@ -4,6 +4,10 @@ description: "On Cucumber, content-addressing, and an alignment technique that t
 date: "2026-05-14"
 ---
 
+A communication arrives in a legal office. It may create a deadline. It may require a task. It may need to be routed to another desk. Or it may require nothing except a reasoned acknowledgment and closure.
+
+An AI agent reads it. It can summarize, it can reason about what should happen next, it can draft a response. But in this system there is one thing it cannot do: invent a verb. Every action it may propose must already exist as a named, reviewed, content-addressed playbook on disk. Alignment, here, is not a property hidden in the model's weights. It is a property of a directory.
+
 There is a file on a laptop somewhere — perhaps in Porto Velho, perhaps elsewhere — called `playbooks/tier1/receber_expediente_com_prazo__a1b2c3d4.feature`. The eight hex characters after the double underscore are not decoration. They are the prefix of a UUIDv5 computed over the file's normalized content. The file does not carry a name to which a hash is attached. The file's name *is* the hash.
 
 This is a small commitment with consequences. Change a character — a comma added, a Gherkin keyword recapitalized — and the hash changes, and the filename changes, and the file as an identifiable thing in the world ceases to be that file and becomes another. There is no silent edit. The act of editing is, structurally, an act of replacement.
@@ -151,15 +155,6 @@ And apply, the act of executing the Gherkin against the legal system, is best-ef
 ## The harder question
 
 It would be easy to say this pattern is local — that it works for narrow legal-administrative automation and nothing else. The harder, more interesting question is the inverse: where would this *not* apply? On examination most of the candidates fall.
-
-<figure class="meme">
-  <img
-    src="https://api.memegen.link/images/drake/Closed_domain_vs_open_domain/Three_semantic_questions_about_the_domain.png?width=500"
-    alt="Drake meme: Drake rejecting 'Closed domain vs open domain' in the top panel, approving 'Three semantic questions about the domain' in the bottom panel."
-    loading="lazy"
-  />
-  <figcaption>The lazy binary is "domains where this generalizes vs. domains where it doesn't." The honest question is finer: it asks three things about the domain before it asks anything about scale.</figcaption>
-</figure>
 
 Trading at high frequency, the textbook latency objection, does not actually escape the pattern; it relocates the human approval. Risk auditors sample executions after the fact, regulators like MiFID II already require structured trade records, and when something deviates the proposal-like artifact is the object of review. Even when no human reviews, the interpretability gain alone — a flash-crash forensic that begins at a structured proposal instead of an unstructured log — justifies the artifact. Industrial control is similar: the more you look at it, the more it already *is* this pattern with different vocabulary. The playbook is the controller; the proposal is the setpoint change; the comment on the expediente is the entry in the operator log.
 
