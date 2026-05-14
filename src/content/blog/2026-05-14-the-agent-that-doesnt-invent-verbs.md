@@ -100,8 +100,6 @@ How does the agent find the right scenario? The first answer that suggests itsel
 
 A matcher built into the tool steals the judgment that should belong to the reasoning system above it. The current design does no matching. PINK exposes the canon as a tree and lets the agent walk it. The agent keeps Tier 1 and Tier 2 in working context — the upper canon, small enough to fit there. For a given expediente, the agent picks a Tier 2 whose preconditions describe the case, asks PINK for its `children`, and if the list is non-empty, reads each child and chooses the specialization that fits. The loop terminates at a leaf — a node with no children of its own — and the proposal binds that leaf. If at any descent step no child fits the case, the agent proposes a new Tier N+1 under the current node, carrying `@concretiza:<current_uuid>`. That is the system's learning gradient, disciplined: every new scenario points by content-hash to its parent.
 
-<figure class="mermaid-diagram">
-
 ```mermaid
 graph LR
   D[Discover<br/><i>read Metabase</i>] --> F[Fetch<br/><i>read Kanoê PDFs</i>]
@@ -110,8 +108,7 @@ graph LR
   R --> A[Apply<br/><i>kanoe writes + expediente comment</i>]
 ```
 
-<figcaption>The five-stage pipeline. The first three are read-only against the legal system of record; the fourth is human gating; the fifth is the only stage that mutates Kanoê, and only via approved write primitives.</figcaption>
-</figure>
+*The five-stage pipeline. The first three are read-only against the legal system of record; the fourth is human gating; the fifth is the only stage that mutates Kanoê, and only via approved write primitives.*
 
 PINK is deliberately stupid. *And it's a feature, not a bug.* All inference happens in the LLM, where it belongs; all structure lives in PINK, where it can be audited deterministically. The chain of descent — which Tier 2, which Tier 3, which Tier 4 — is recorded in a `traversal:` field on the proposal, with the UUID of each visited node. Months later, a reviewer asking *why did the agent descend this far* reads the chain and reconstructs the reasoning step by step. Interpretability of the act, not from weights but from artifact.
 
