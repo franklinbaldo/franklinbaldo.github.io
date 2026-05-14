@@ -20,7 +20,7 @@ type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content, remarkPluginFrontmatter } = await render(post);
-const { heroImage, heroImageAlt, title, description, date, tags } = post.data;
+const { heroImage, heroImageAlt, title, description, date, tags, lang } = post.data;
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
 const lastModifiedISO: string | undefined = remarkPluginFrontmatter.lastModified;
 const lastModified = lastModifiedISO ? new Date(lastModifiedISO) : undefined;
@@ -38,6 +38,7 @@ const series = await getSeriesContext(post);
   publishedTime={date}
   modifiedTime={lastModified}
   tags={tags}
+  lang={lang}
 >
   <article data-pagefind-body>
     <header>
