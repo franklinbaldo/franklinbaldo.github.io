@@ -2,6 +2,7 @@
 title: "The Third Half and the Fourth Wall"
 description: "On Tinkerbell, persona prompts, and why declaring the frame is what kills the play."
 date: 2026-05-01
+lang: en
 tags: [ai, agents, persona-prompts, alignment, philosophy, tinkerbell]
 series: harness
 seriesOrder: 2

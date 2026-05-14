@@ -20,7 +20,8 @@ const emojiMap: Record<string, string> = {
 const tag = post.data.tags?.[0]?.toLowerCase();
 const emoji = (tag && emojiMap[tag]) || emojiMap.default;
 
-const formattedDate = post.data.date.toLocaleDateString('en-US', {
+const postLang = post.data.lang ?? 'en';
+const formattedDate = post.data.date.toLocaleDateString(postLang === 'pt' ? 'pt-BR' : 'en-US', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
@@ -36,7 +37,10 @@ const blurb = excerpt(post.body ?? '', 320) || post.data.description;
         <span class="emoji" aria-hidden="true">{emoji}</span>
         <a href={`/blog/${post.id}/`} class="contrast">{post.data.title}</a>
       </h3>
-      <p><small>{formattedDate}</small></p>
+      <p>
+        <small>{formattedDate}</small>
+        {postLang === 'pt' && <small class="lang-badge" aria-label="Post in Portuguese">🇧🇷 PT</small>}
+      </p>
     </hgroup>
   </header>
   <p class="excerpt">{blurb}</p>
@@ -62,5 +66,10 @@ const blurb = excerpt(post.body ?? '', 320) || post.data.description;
   .excerpt {
     color: var(--pico-color);
     margin-bottom: 0.75rem;
+  }
+  .lang-badge {
+    margin-left: 0.5rem;
+    opacity: 0.7;
+    font-size: 0.75em;
   }
 </style>

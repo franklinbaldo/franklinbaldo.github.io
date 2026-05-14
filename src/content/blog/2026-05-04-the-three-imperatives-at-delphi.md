@@ -2,6 +2,7 @@
 title: "The Three Imperatives at Delphi"
 description: "On the temple that demanded self-knowledge, the philosopher who took it literally, and the letter at the entrance that nobody could read."
 date: "2026-05-04"
+lang: en
 series: harness
 seriesOrder: 3
 featured: true

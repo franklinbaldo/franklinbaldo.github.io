@@ -1,6 +1,7 @@
 ---
 author: franklin
 date: 2025-02-02
+lang: en
 title: "Inaugural Post: A Glimpse Inside My Mind"
 description: "An introduction to the chaotic, experimental nature of this digital garden and the philosophy behind it."
 tags: ["introduction", "digital garden", "philosophy", "chaos"]

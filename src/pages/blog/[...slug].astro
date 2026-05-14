@@ -20,7 +20,7 @@ type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content, remarkPluginFrontmatter } = await render(post);
-const { heroImage, heroImageAlt, title, description, date, tags, lang } = post.data;
+const { heroImage, heroImageAlt, title, description, date, tags, lang, translationKey } = post.data;
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
 const lastModifiedISO: string | undefined = remarkPluginFrontmatter.lastModified;
 const lastModified = lastModifiedISO ? new Date(lastModifiedISO) : undefined;
@@ -28,6 +28,14 @@ const lastModified = lastModifiedISO ? new Date(lastModifiedISO) : undefined;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const showUpdated = lastModified && lastModified.valueOf() - date.valueOf() > MS_PER_DAY;
 const series = await getSeriesContext(post);
+
+const allPosts = await getCollection('blog');
+const translation = translationKey
+  ? allPosts.find(
+      (p) => p.data.translationKey === translationKey && p.id !== post.id,
+    )
+  : null;
+const translationHref = translation ? `/blog/${translation.id}/` : undefined;
 ---
 
 <PageLayout
@@ -39,6 +47,7 @@ const series = await getSeriesContext(post);
   modifiedTime={lastModified}
   tags={tags}
   lang={lang}
+  translationHref={translationHref}
 >
   <article data-pagefind-body>
     <header>
@@ -119,6 +128,13 @@ const series = await getSeriesContext(post);
               <a href={`/tags/${tag}/`}>#{tag}</a>
             </>
           ))}
+        </small>
+      )}
+      {translationHref && (
+        <small class="translation-link">
+          <a href={translationHref}>
+            {lang === 'pt' ? '🇺🇸 Read in English' : '🇧🇷 Ler em Português'}
+          </a>
         </small>
       )}
       <ShareButton title={title} />

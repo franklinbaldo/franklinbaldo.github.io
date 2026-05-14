@@ -13,6 +13,7 @@ interface Props {
   modifiedTime?: Date;
   tags?: string[];
   lang?: "en" | "pt";
+  translationHref?: string;
 }
 
 const SITE_NAME = "Franklin Baldo";
@@ -30,6 +31,7 @@ const {
   modifiedTime,
   tags,
   lang = "en",
+  translationHref,
 } = source;
 
 const documentTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
@@ -83,6 +85,11 @@ const jsonLd = type === "article"
     <link rel="alternate" type="application/rss+xml" title="Franklin Baldo" href={rssUrl} />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
+    <link rel="alternate" hreflang={lang} href={canonical.href} />
+    {translationHref && (
+      <link rel="alternate" hreflang={lang === "pt" ? "en" : "pt"} href={new URL(translationHref, Astro.site).href} />
+    )}
+
     <link rel="webmention" href="https://webmention.io/franklinbaldo.github.io/webmention" />
     <link rel="pingback" href="https://webmention.io/franklinbaldo.github.io/xmlrpc" />
 
@@ -122,6 +129,9 @@ const jsonLd = type === "article"
       const theme = localStorage.getItem('theme') ||
         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', theme);
+    </script>
+    <script is:inline define:vars={{ translationHref }}>
+      window.__translationHref = translationHref || null;
     </script>
   </head>
   <body>

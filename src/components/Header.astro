@@ -1,5 +1,6 @@
 ---
 import ThemeToggle from './ThemeToggle.svelte';
+import LanguageSwitcher from './LanguageSwitcher.svelte';
 ---
 
 <header class="container">
@@ -15,6 +16,7 @@ import ThemeToggle from './ThemeToggle.svelte';
       <li><a href="https://github.com/franklinbaldo/skills" class="secondary" aria-label="Skills">⚡</a></li>
       <li><a href="/search/" class="secondary" aria-label="Search">🔎</a></li>
       <li><a href="/about/" class="secondary" aria-label="About">📚</a></li>
+      <li><LanguageSwitcher client:idle /></li>
       <li><ThemeToggle client:idle /></li>
     </ul>
   </nav>

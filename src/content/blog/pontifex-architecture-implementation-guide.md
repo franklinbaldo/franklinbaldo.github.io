@@ -1,6 +1,7 @@
 ---
 author: franklin
 date: 2024-07-12
+lang: en
 title: "Pontifex Architecture Implementation Guide"
 description: "A practical guide to implementing the Pontifex architecture for semantic probing using existing tools and libraries."
 tags: ["implementation", "code", "python", "pytorch", "pontifex"]

@@ -2,6 +2,7 @@
 title: "A Arte de Delegar: Orquestrando Jules e Claude no Dia a Dia"
 description: "Reflexões de um engenheiro de software e pai sobre como delegar tarefas para agentes de IA mantendo a rédea da supervisão humana."
 date: "2026-03-28"
+lang: pt
 tags: ["ai", "agents", "software-engineering", "parenting", "metaphysics"]
 draft: false
 author: "franklin"

@@ -3,6 +3,7 @@ author: franklin
 title: "O Ovo de Serpente"
 description: "O dever de racionalidade é incompatível com o patrimonialismo judicial. O art. 489 do CPC 2015 é o ovo dessa serpente — incubado dentro do sistema patrimonialista, pelas mãos do seu representante mais eloquente, sem que ele percebesse o que estava chocando."
 date: 2026-05-10
+lang: pt
 tags: ["direito", "cpc", "patrimonialismo", "fundamentação", "livre convencimento"]
 ---
 

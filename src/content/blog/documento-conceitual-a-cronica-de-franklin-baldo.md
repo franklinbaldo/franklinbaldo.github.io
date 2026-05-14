@@ -1,6 +1,7 @@
 ---
 author: franklin
 date: 2024-07-12
+lang: pt
 title: "Documento Conceitual: A Crônica de Franklin Baldo"
 description: "The blueprint for a digital Boswell: how an automated system chronicles the intellectual life of Franklin Baldo using AI agents."
 tags: ["concept", "architecture", "digital garden", "automation", "legacy"]

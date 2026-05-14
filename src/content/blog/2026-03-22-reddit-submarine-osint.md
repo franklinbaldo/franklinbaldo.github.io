@@ -2,6 +2,7 @@
 title: "Are they really using a Reddit post to help bomb a submarine in Iran?"
 author: franklin
 date: 2026-03-22
+lang: en
 description: "The internet loves the idea that a casual Reddit post guided a military strike. The reality is both less sensational and more profoundly disruptive."
 tags: ["osint", "warfare", "technology", "internet culture"]
 heroImage: ./images/reddit-submarine-osint-cover.jpg
