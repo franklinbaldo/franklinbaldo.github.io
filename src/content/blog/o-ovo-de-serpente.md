@@ -46,7 +46,7 @@ O ovo foi colocado dentro do sistema patrimonialista pelas mãos do seu represen
 
 A serpente do dever de racionalidade, quando aplicada consistentemente, não respeita hierarquia. O art. 489, §1º, do CPC não contém exceção para o STF. O art. 93, IX, da Constituição exige que todas as decisões do Poder Judiciário sejam fundamentadas — todas, sem distinção de instância.
 
-O Paper 1D da série acadêmica que escrevo em paralelo a este blog desenvolve o argumento com aparato de notas de rodapé. A versão sem aparato é esta: o STF que responde a uma reclamação contra decisão que afastou precedente vinculante com argumentos sólidos, e responde apenas com "a súmula vinculante assim determina", está violando o mesmo art. 489, §1º, que o código instalou. A serpente que nasceu do ovo ataca para cima também.
+O Paper 1D da série acadêmica que escrevo em paralelo a este blog (em preparação) desenvolve o argumento com aparato de notas de rodapé. A versão sem aparato é esta: o STF que responde a uma reclamação contra decisão que afastou precedente vinculante com argumentos sólidos, e responde apenas com "a súmula vinculante assim determina", está violando o mesmo art. 489, §1º, que o código instalou. A serpente que nasceu do ovo ataca para cima também.
 
 Isso é o que torna o ciclo incômodo para quem o construiu. O dever de racionalidade que o CPC 2015 instalou — e que Fux ajudou a instalar sem perceber sua extensão — é o instrumento que torna visível a ausência de fundamentação substantiva nas decisões do próprio STF. Inclusive nas de Fux. O ovo choca o seu arquiteto.
 
@@ -96,17 +96,35 @@ O ovo nasceu. A serpente ainda está crescendo.
 
 É fato notório que a frase "livre convencimento motivado" continua sendo usada pelos tribunais brasileiros como se o CPC 2015 não existisse — em varas de primeira instância, em câmaras de tribunal, em decisões monocráticas de ministros que deveriam saber melhor. A expressão foi eliminada do texto da lei em março de 2016 e ressuscitou imediatamente na prática forense, como se a cabeça tivesse sido cortada e o corpo tivesse decidido continuar rastejando por conta própria.
 
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/same/antes_do_CPC_2015/depois_do_CPC_2015.png?width=500"
+    alt="Meme da Pam de The Office segurando duas fotos: 'antes do CPC 2015' e 'depois do CPC 2015' — sugerindo que são a mesma imagem."
+    loading="lazy"
+  />
+  <figcaption>O art. 371 eliminou "livremente" em 2015. A jurisprudência ainda não recebeu o memorando.</figcaption>
+</figure>
+
 DiMaggio e Powell chamaram esse mecanismo de isomorfismo coercitivo superficial: a norma muda, a linguagem se adapta na casca, e o comportamento de fundo permanece. O problema não é falta de lei — o CPC 2015 é uma lei boa. O problema é que o habitus patrimonialista, formado ao longo de décadas em que qualquer coisa escrita servia de motivação, não é desconstruído por decreto. Bourdieu chamava de *history turned into nature*: história incorporada que opera como segunda natureza, tornando certas práticas espontâneas e outras impensáveis. Planck disse sobre a ciência que ela avança funeral por funeral — os oponentes de uma nova verdade não são convencidos, eles morrem, e a geração seguinte cresce sem conhecer outra coisa. O direito não é diferente. A serpente do dever de racionalidade não vai convencer quem internalizou o livre convencimento como reflexo. Vai ser natural para quem entrou na faculdade quando o código já existia — se o habitus não vencer antes, transmitindo-se às novas gerações pelas mesmas instituições que o produziram.
 
 O que torna a situação atual diferente de todas as anteriores é que os custos de produzir argumentação de qualidade estão caindo. Não de modo dramático ainda, mas de modo sistemático. Cada vez que um procurador de estado ou defensor público consegue produzir, em tempo razoável, uma peça com fundamentação estruturada que identifica os fundamentos determinantes do precedente invocado e demonstra o ajuste do caso, a serpente do dever de racionalidade cresce um pouco. Cada peça dessas que chega ao STF e que o STF precisa decidir se enfrenta ou ignora é um momento em que o ovo está se abrindo.
 
 Bolsonaro disse uma vez, com a candura involuntária que às vezes o caracterizava, que ia beneficiar o filho sim. É o patrimonialismo que se sabe patrimonialismo e não vê problema nisso. Fux é diferente — tem escrúpulos, acredita no sistema, ajudou a construir um código que é genuinamente bom. E ainda assim defendeu a filha para o cargo de desembargadora, telefonou para quem precisava telefonar, usou o peso do cargo. Não porque calculou friamente e concluiu que a prerrogativa pessoal vale mais que o princípio. Mas porque o habitus patrimonialista opera abaixo do nível da deliberação consciente — é disposição incorporada, não escolha. O homem que escreveu o art. 489, §1º, não percebeu a contradição entre o que escreveu e o que fez.
 
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/bus/patrimonialismo_descarado/patrimonialismo_de_gravata.png?width=500"
+    alt="Meme 'Two Guys on a Bus': cara triste olhando pela janela com legenda 'patrimonialismo descarado'; cara sorrindo de frente com legenda 'patrimonialismo de gravata' — sugerindo que são a mesma coisa vista por dois ângulos."
+    loading="lazy"
+  />
+  <figcaption>O mesmo ônibus, dois passageiros, autoconsciências diferentes.</figcaption>
+</figure>
+
 Não se engane com a sofisticação. A prova está no julgamento.
 
 Streck sabia o que estava fazendo quando pressionou pela eliminação do livre convencimento. Fux assinou o código. O ovo estava em ambos — mas com consciências muito diferentes sobre o que estavam chocando.
 
-Em 2025, quando Bolsonaro foi julgado no STF pelo envolvimento na tentativa de golpe de Estado, Fux proferiu dez horas de voto pela absolvição — mais veemente na defesa do que os próprios advogados contratados para isso. O argumento era processual: competência do tribunal, foro privilegiado, questões formais. O habitus não precisa de argumento substantivo para funcionar. Reconhece o seu e vai.
+Em 2025, quando Bolsonaro foi julgado no STF pelo envolvimento na tentativa de golpe de Estado, Fux proferiu cerca de onze horas de voto pela absolvição de Bolsonaro (e de outros cinco réus do mesmo núcleo) — mais veemente na defesa do que os próprios advogados contratados para isso. O argumento era processual: competência do tribunal, foro privilegiado, questões formais. O habitus não precisa de argumento substantivo para funcionar. Reconhece o seu e vai.
 
 A serpente está nascendo. Devagar, com resistência de todas as partes que têm interesse em que ela não nasça. Mas está nascendo.
 
