@@ -146,7 +146,7 @@ Não se engane com a sofisticação. A prova está no julgamento.
 
 Streck sabia o que estava fazendo quando pressionou pela eliminação do livre convencimento. Fux assinou o código. O ovo estava em ambos — mas com consciências muito diferentes sobre o que estavam chocando.
 
-Em 2025, quando Bolsonaro foi julgado no STF pelo envolvimento na tentativa de golpe de Estado, Fux proferiu cerca de onze horas de voto pela absolvição de Bolsonaro (e de outros cinco réus do mesmo núcleo) — mais veemente na defesa do que os próprios advogados contratados para isso. O argumento era processual: competência do tribunal, foro privilegiado, questões formais. O habitus não precisa de argumento substantivo para funcionar. Reconhece o seu e vai.
+Em 2025, quando Bolsonaro foi julgado no STF pelo envolvimento na tentativa de golpe de Estado, Fux proferiu cerca de onze horas de voto pela absolvição de Bolsonaro (e de outros cinco réus do mesmo núcleo) — mais veemente na defesa do que os próprios advogados contratados para isso. Fux levou para o pessoal. O argumento era processual: competência do tribunal, foro privilegiado, questões formais. O habitus não precisa de argumento substantivo para funcionar. Reconhece o seu e vai.
 
 A serpente está nascendo. Devagar, com resistência de todas as partes que têm interesse em que ela não nasça. Mas está nascendo.
 
