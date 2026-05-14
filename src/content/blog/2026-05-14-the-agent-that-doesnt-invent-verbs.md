@@ -2,6 +2,8 @@
 title: "The Agent That Doesn't Invent Verbs"
 description: "On Cucumber, content-addressing, and an alignment technique that turns out to be older than alignment."
 date: "2026-05-14"
+series: harness
+seriesOrder: 5
 ---
 
 A communication arrives in a legal office. It may create a deadline. It may require a task. It may need to be routed to another desk. Or it may require nothing except a reasoned acknowledgment and closure.
@@ -33,7 +35,7 @@ This file lives in a directory called `playbooks/`, alongside its siblings and d
 
 Most of the public discourse on AI alignment happens in the weights — interpretability via probing, alignment via training, oversight via post-hoc filtering. Here it happens in a directory. The agent's action space is enumerated; the enumeration is human-readable; the enumeration grows only when humans approve additions; and the act of approving an addition is a git commit. There is no probing required, because there is nothing inscrutable: the agent's vocabulary is on disk, in a language the lawyer reading the file already knows.
 
-This is alignment-by-affordance-restriction. It works not because a model was trained to refuse, but because the syntax of what the agent can do is itself constrained, and the constraints are written in prose that a non-engineer can audit. The technique is old enough to feel like cheating. Expert systems in the 1980s did something like it; so did doctrinal codifications, going back further. What is new is the recognition that an LLM, given a catalog, can pick from it and bind to it competently — and that this is enough, in the right domain, to deliver useful behavior without ceding the catalog.
+This is alignment-by-affordance-restriction. It is what [the harness, reclaimed](/blog/2026-04-29-reclaiming-the-harness), looks like at the level of a concrete action vocabulary: not a cage around a cognitive engine, but the structure that constitutes what the engine is allowed to mean. It works not because a model was trained to refuse, but because the syntax of what the agent can do is itself constrained, and the constraints are written in prose that a non-engineer can audit. The technique is old enough to feel like cheating. Expert systems in the 1980s did something like it; so did doctrinal codifications, going back further. What is new is the recognition that an LLM, given a catalog, can pick from it and bind to it competently — and that this is enough, in the right domain, to deliver useful behavior without ceding the catalog.
 
 <figure class="meme">
   <img
@@ -128,7 +130,7 @@ The canon's nodes are content-addressed via UUIDv5 over normalized content. The 
 
 Acyclicity is by construction. Every `@concretiza:` edge points from a higher tier to a strictly lower tier. There is no rule that says *no cycles* because cycles are unreachable: edges only flow downward. The lint that enforces this is a single line.
 
-The structural result is a canon that resembles a Merkle network more than a versioned directory: every node is identified by a hash of its content, edges reference hashes, and the proposal-to-canon relationship is just another edge — from a markdown artifact to a content-hash node. Git tracks the history of the bag of nodes; the bag of nodes is itself a graph that the agent navigates and the lint verifies. Two artifacts that pin the same UUID are guaranteed to be talking about the same content, because the UUID *is* the content. The pinning is structural, not by convention.
+The structural result is a canon that resembles a Merkle network more than a versioned directory: every node is identified by a hash of its content, edges reference hashes, and the proposal-to-canon relationship is just another edge — from a markdown artifact to a content-hash node. The same trick [Verne uses for agent identity](/blog/2026-03-18-verne-identity-repo) — content-addressing as the substrate for things that must remain reidentifiable across moves and renames — applied here to the agent's vocabulary instead of its memory. Git tracks the history of the bag of nodes; the bag of nodes is itself a graph that the agent navigates and the lint verifies. Two artifacts that pin the same UUID are guaranteed to be talking about the same content, because the UUID *is* the content. The pinning is structural, not by convention.
 
 <figure class="meme">
   <img
@@ -163,7 +165,7 @@ When the three answers are *yes*, the pattern fits, with the human approval plac
 
 The institutional reading is the cleanest. The canon is the corpus of doctrinal positions the office endorses. The proposal is the brief prepared by an advisor — bindings, traversal, reasoning, all written down for the principal to read. The apply is the principal's signature on the act. The comment on the expediente is the institutional justification that travels with the act forever in the case record.
 
-The agent is the diligent counsel. Not the apprentice — *that word is doing too much*, with its picture of someone supervised because they are still learning. The counsel is technically competent, often expert; supervised not by distrust but by constitutional design. The authority belongs to the principal because it must; the counsel prepares the act, commits to it in writing, hands it up. What the counsel cannot do is sign. What the catalog adds, and what content-addressing and traversal preserve, is the property that the counsel's preparation is structurally legible: anyone with access to the records can reconstruct exactly what was proposed, why it was proposed, and whether the signed act matched the proposal.
+The agent is the diligent counsel. Not the apprentice — *that word is doing too much*, with its picture of someone supervised because they are still learning. [Elsewhere I have described this in the register of daily delegation](/blog/2026-03-28-delegando-para-agentes), where the discipline is to hand the task down without handing the signature down. The counsel is technically competent, often expert; supervised not by distrust but by constitutional design. The authority belongs to the principal because it must; the counsel prepares the act, commits to it in writing, hands it up. What the counsel cannot do is sign. What the catalog adds, and what content-addressing and traversal preserve, is the property that the counsel's preparation is structurally legible: anyone with access to the records can reconstruct exactly what was proposed, why it was proposed, and whether the signed act matched the proposal.
 
 The file is still on the laptop, named for its own content. Inside it, a paragraph of Portuguese describes a result it does not produce. A reader will arrive, eventually.
 
