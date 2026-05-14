@@ -8,13 +8,13 @@ import ThemeToggle from './ThemeToggle.svelte';
       <li><strong>Franklin Baldo</strong></li>
     </ul>
     <ul>
-      <li><a href="/" class="secondary">🏠</a></li>
-      <li><a href="/archive/" class="secondary">📂</a></li>
-      <li><a href="/tags/" class="secondary">🏷️</a></li>
-      <li><a href="/projects/" class="secondary">⚙️</a></li>
-      <li><a href="https://github.com/franklinbaldo/skills" class="secondary" title="Skills">⚡</a></li>
-      <li><a href="/search/" class="secondary">🔎</a></li>
-      <li><a href="/about/" class="secondary">📚</a></li>
+      <li><a href="/" class="secondary" aria-label="Home">🏠</a></li>
+      <li><a href="/archive/" class="secondary" aria-label="Archive">📂</a></li>
+      <li><a href="/tags/" class="secondary" aria-label="Tags">🏷️</a></li>
+      <li><a href="/projects/" class="secondary" aria-label="Projects">⚙️</a></li>
+      <li><a href="https://github.com/franklinbaldo/skills" class="secondary" aria-label="Skills">⚡</a></li>
+      <li><a href="/search/" class="secondary" aria-label="Search">🔎</a></li>
+      <li><a href="/about/" class="secondary" aria-label="About">📚</a></li>
       <li><ThemeToggle client:idle /></li>
     </ul>
   </nav>
