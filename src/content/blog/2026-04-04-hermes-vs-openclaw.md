@@ -4,6 +4,7 @@ description: "Um relato honesto, baseado nas minhas próprias sessões, sobre o 
 date: "2026-04-04"
 lang: pt
 tags: ["ai", "agents", "developer-tools", "automation", "software-engineering"]
+translationKey: hermes-vs-openclaw
 draft: false
 author: "franklin"
 ---

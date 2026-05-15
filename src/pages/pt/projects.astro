@@ -1,5 +1,5 @@
 ---
-import PageLayout from "../layouts/PageLayout.astro";
+import PageLayout from "../../layouts/PageLayout.astro";
 
 const USER = "franklinbaldo";
 const token = import.meta.env.GITHUB_TOKEN ?? process.env.GITHUB_TOKEN;
@@ -48,31 +48,31 @@ try {
   console.warn(`[projects] failed to fetch repos: ${error}`);
 }
 
-const fmt = new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", day: "2-digit" });
+const fmt = new Intl.DateTimeFormat("pt-BR", { year: "numeric", month: "short", day: "2-digit" });
 ---
 
 <PageLayout
-  title="Projects | Franklin Baldo"
-  description="Public repositories, pulled live from GitHub at build time."
-  lang="en"
-  translationHref="/pt/projects/"
+  title="Projetos | Franklin Baldo"
+  description="Repositórios públicos, carregados diretamente do GitHub no momento do build."
+  lang="pt"
+  translationHref="/projects/"
 >
   <hgroup>
-    <h1>Projects</h1>
+    <h1>Projetos</h1>
     <p><small>
-      Public repos from <a href={`https://github.com/${USER}`}>@{USER}</a>,
-      sorted by stars · last fetched at build
+      Repos públicos de <a href={`https://github.com/${USER}`}>@{USER}</a>,
+      ordenados por estrelas · atualizado no build
     </small></p>
   </hgroup>
 
   {error && (
     <p><small>
-      Couldn't load the live list (<code>{error.slice(0, 120)}</code>).
-      Visit <a href={`https://github.com/${USER}?tab=repositories`}>my GitHub</a> directly.
+      Não foi possível carregar a lista (<code>{error.slice(0, 120)}</code>).
+      Visite <a href={`https://github.com/${USER}?tab=repositories`}>meu GitHub</a> diretamente.
     </small></p>
   )}
 
-  {repos.length === 0 && !error && <p>No public repos to show right now.</p>}
+  {repos.length === 0 && !error && <p>Nenhum repositório público disponível no momento.</p>}
 
   {repos.map((repo) => (
     <article>
@@ -86,7 +86,7 @@ const fmt = new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", 
         <small>
           {repo.language && <><kbd>{repo.language}</kbd> · </>}
           {repo.forks_count > 0 && <>⑂ {repo.forks_count} · </>}
-          updated <time datetime={repo.pushed_at}>{fmt.format(new Date(repo.pushed_at))}</time>
+          atualizado <time datetime={repo.pushed_at}>{fmt.format(new Date(repo.pushed_at))}</time>
           {repo.homepage && <> · <a href={repo.homepage}>↗ site</a></>}
         </small>
       </footer>

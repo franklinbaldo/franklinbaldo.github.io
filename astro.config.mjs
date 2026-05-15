@@ -15,7 +15,41 @@ import { rehypeWrapTables } from './src/lib/rehype-wrap-tables.mjs';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://franklinbaldo.github.io',
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    sitemap({
+      serialize(item) {
+        const base = 'https://franklinbaldo.github.io';
+        const path = item.url.startsWith(base) ? item.url.slice(base.length) : item.url;
+
+        // Static EN↔PT page pairs
+        const enToPt = {
+          '/': '/pt/',
+          '/about/': '/pt/about/',
+          '/archive/': '/pt/archive/',
+          '/tags/': '/pt/tags/',
+          '/search/': '/pt/search/',
+          '/projects/': '/pt/projects/',
+        };
+        const ptToEn = Object.fromEntries(Object.entries(enToPt).map(([e, p]) => [p, e]));
+
+        if (enToPt[path]) {
+          item.links = [
+            { lang: 'en-US', url: item.url },
+            { lang: 'pt-BR', url: base + enToPt[path] },
+            { lang: 'x-default', url: item.url },
+          ];
+        } else if (ptToEn[path]) {
+          item.links = [
+            { lang: 'pt-BR', url: item.url },
+            { lang: 'en-US', url: base + ptToEn[path] },
+            { lang: 'x-default', url: base + ptToEn[path] },
+          ];
+        }
+        return item;
+      },
+    }),
+  ],
   prefetch: {
     defaultStrategy: 'viewport',
   },
