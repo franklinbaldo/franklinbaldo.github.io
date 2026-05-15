@@ -9,9 +9,9 @@ tags: ["lgpd", "privacidade", "transparência", "segurança", "direito"]
 
 Num diário oficial qualquer, no cabeçalho de uma decisão monocrática do Tribunal de Contas, aparece a frase:
 
-> INTERESSADA: Mariana Esteves Carvalho Albuquerque. CPF n. `***.123.456-**`.
+> INTERESSADA: Mariana Esteves Carvalho Albuquerque. CPF n. `***.482.317-**`.
 
-A frase está bem composta. O nome inteiro, com as preposições no lugar. O CPF picotado nas pontas. O Iperon, ao concedê-la, não viu razão para esconder o nome de quem se aposentou; o Tribunal de Contas, ao registrá-la, não viu razão para mudar essa escolha; mas ambos viram razão para esconder dois pedaços do CPF. O documento publica e oculta na mesma linha, com a serenidade do funcionalismo bem treinado.
+A frase está bem composta. O nome inteiro, com as preposições no lugar. O CPF picotado nas pontas. O Iperon, ao conceder a aposentadoria, não viu razão para esconder o nome de quem se aposentou; o Tribunal de Contas, ao registrar o ato, não viu razão para mudar essa escolha; mas ambos viram razão para esconder dois pedaços do CPF. O documento publica e oculta na mesma linha, com a serenidade do funcionalismo bem treinado.
 
 A cena se repete por centenas de decisões. O Tribunal de Contas faz o exame sumário dos atos de aposentadoria concedidos pelo instituto previdenciário estadual e publica o resultado no seu próprio Diário Oficial. Cada decisão traz o nome completo do interessado, o cargo, a lotação, os artigos da Constituição e das emendas em que se fundamenta o ato, e o CPF mascarado nas pontas. Ninguém leu a página inteira e perguntou: se o nome está aqui, o que os asteriscos estão protegendo?
 
@@ -50,7 +50,9 @@ Mariana Esteves Carvalho Albuquerque, cujo nome aparece na decisão monocrática
 
 A pergunta que o asterisco pretende esquivar é uma pergunta que o asterisco não tem como esquivar: *quem é essa pessoa*. O ato já respondeu. O CPF picotado é uma confirmação redundante de uma identificação já operada pelo próprio cabeçalho do documento.
 
-Quando o sistema brasileiro de proteção performática se sente especialmente diligente — cof cof cof, o IPERON 🤧 — anonimiza também a matrícula. Algo como `****-1234` aparece ao lado do CPF picotado. A operação é matematicamente pior do que publicar um dos dois inteiro. Dois identificadores parcialmente mascarados se cruzam por interseção: o conjunto de candidatos compatíveis com `***.452.318-**` intersectado com o conjunto compatível com `****-1234` fecha, na maioria dos casos, em uma única pessoa, mesmo sem o nome. A cartilha que esconde dois dedos do CPF *e* dois dedos da matrícula está dando mais informação, não menos.
+Quando o sistema brasileiro de proteção performática se sente especialmente diligente, anonimiza também a matrícula. Algo como `****-1234` aparece ao lado do CPF picotado. A operação é matematicamente pior do que publicar um dos dois inteiro. Dois identificadores parcialmente mascarados se cruzam por interseção: o conjunto de candidatos compatíveis com `***.482.317-**` intersectado com o conjunto compatível com `****-1234` fecha, na maioria dos casos, em uma única pessoa, mesmo sem o nome. A cartilha que esconde dois dedos do CPF *e* dois dedos da matrícula está dando mais informação, não menos.
+
+Cof cof cof, o IPERON 🤧.
 
 Não foi sempre assim. Em algum momento entre 2018 e 2022, todo mundo no serviço público brasileiro se convenceu — por uma combinação de cartilhas avulsas e medo do escritório jurídico — de que o CPF picotado era a marca formal da conformidade com a LGPD. Aplicou-se o picote sem mexer no resto. O nome continuou inteiro porque tirar o nome seria, aí sim, contrariar a finalidade do ato. O CPF foi a peça oferecida ao ritual.
 
@@ -188,7 +190,7 @@ flowchart TD
 
 ## A alternativa honesta
 
-O caminho técnico honesto para atos administrativos de servidor é simples e antigo. Ou se publica nominalmente o que a Constituição quer público — nome, cargo, lotação, fundamentação legal, valor dos proventos — e se aceita que a fiscalização é, em parte, popular; ou se protege de verdade o que precisa ser protegido — saúde, dependentes, dados bancários, endereço pessoal — com segregação de funções, registro de acesso por matrícula, auditoria periódica das consultas internas e dispositivos que detectem padrões de curiosidade inadequada no acesso ao banco. As duas operações são compatíveis: a primeira é publicidade, a segunda é proteção. O asterisco no Diário Oficial não é nenhuma das duas. É uma terceira coisa, que parece com a segunda enquanto desfaz a primeira.
+O caminho técnico honesto para atos administrativos de servidor é simples e antigo. Ou se publica nominalmente o que a Constituição quer público — nome, cargo, lotação, fundamentação legal, valor dos proventos — e se aceita que a fiscalização é, em parte, popular; ou se protege de verdade o que precisa ser protegido — saúde, dependentes, dados bancários, endereço pessoal — com segregação de funções, registro de acesso por matrícula, auditoria periódica das consultas internas e dispositivos que detectem padrões de curiosidade inadequada no acesso ao banco. As duas operações são compatíveis: a primeira é publicidade, a segunda é proteção. O asterisco no Diário Oficial não é nenhuma das duas. É uma terceira coisa, que parece com a segunda enquanto desfaz a primeira — uma porta com fechadura que abre para o Robson e tranca a Dona Maria.
 
 O asterisco no Diário Oficial não esconde uma pessoa. Esconde quem pode olhar para ela. Robson está olhando.
 
@@ -204,4 +206,4 @@ O asterisco no Diário Oficial não esconde uma pessoa. Esconde quem pode olhar 
 - **Verbete [*Walter Delgatti Neto*](https://pt.wikipedia.org/wiki/Walter_Delgatti_Neto)** — o hacker de Araraquara como personagem documental: o teto técnico médio brasileiro tem nome, endereço, ficha criminal e tornozeleira.
 - **Jorge Luis Borges, *Funes el memorioso*** — sobre o que acontece quando o banco de dados não esquece.
 
-[^1]: O leitor que clicou nesta nota provavelmente também é o leitor que escreveria as quinze linhas de Python. Os dois dígitos verificadores do CPF são definidos da seguinte maneira: dado o prefixo de nove dígitos `d₁…d₉`, calcula-se a soma ponderada `s₁ = 10·d₁ + 9·d₂ + 8·d₃ + … + 2·d₉`; o décimo dígito `D₁` é `(s₁·10) mod 11`, com a convenção de que o resultado vira 0 se for igual a 10. O décimo primeiro `D₂` é definido analogamente, com pesos de 11 a 2 aplicados a `d₁…d₉` e ao recém-calculado `D₁`. A operação é determinística e barata. Roda em silêncio dentro de qualquer sistema que valide CPF — bancos, declarações, formulários — e há décadas. Esconder os dois últimos dígitos é como esconder o resultado de uma soma cujas parcelas todas se vêem.
+[^1]: O leitor que clicou nesta nota provavelmente também é o leitor que escreveria as quinze linhas de Python. Os dois dígitos verificadores do CPF são definidos da seguinte maneira: dado o prefixo de nove dígitos `d₁…d₉`, calcula-se a soma ponderada `s₁ = 10·d₁ + 9·d₂ + 8·d₃ + … + 2·d₉`, toma-se o resto `r₁ = s₁ mod 11`, e o décimo dígito `D₁` é `11 - r₁`, com a convenção de que vira `0` quando `r₁` for menor que 2. O décimo primeiro `D₂` é definido analogamente, com pesos de 11 a 2 aplicados a `d₁…d₉` e ao recém-calculado `D₁`. A operação é determinística e barata. Roda em silêncio dentro de qualquer sistema que valide CPF — bancos, declarações, formulários — e há décadas. Esconder os dois últimos dígitos é como esconder o resultado de uma soma cujas parcelas todas se vêem.
