@@ -15,6 +15,8 @@ export function remarkHasMath() {
         return false;
       }
     });
-    data.astro.frontmatter.hasMath = hasMath;
+    if (data?.astro?.frontmatter) {
+      data.astro.frontmatter.hasMath = hasMath;
+    }
   };
 }
