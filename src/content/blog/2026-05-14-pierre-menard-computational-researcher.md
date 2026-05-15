@@ -3,6 +3,8 @@ title: "Pierre Menard, Computational Researcher"
 description: "On writing the paper before doing the research, and other engineering practices that should embarrass us less than they do."
 date: "2026-05-14"
 lang: en
+translationKey: pierre-menard
+tags: ["research", "writing", "methodology", "borges", "tdd", "ai"]
 ---
 
 Pierre Menard, *autor del Quijote*, spent years cultivating an archaic Spanish so that, without copying Cervantes, his sentences would coincide word for word with Cervantes'. The method, as Borges tells it in *Ficciones*, was secret and infinitely laborious. I would suggest to Menard a more economical methodology: first, copy the *Quijote* letter for letter. Then go live the life that would make the author of that copy produce that exact *Quijote*, had he sat down to write it himself instead of copying. When you fail to live that life — and you will fail — try again. Refactor the life. Revert the commit. Iterate until the words you would have written coincide with the words you already copied.

@@ -1,0 +1,91 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+  currentId: string;
+  tags: string[];
+  lang?: 'en' | 'pt';
+}
+
+const { currentId, tags, lang } = Astro.props;
+
+const related = tags.length === 0 ? [] : (await getCollection('blog'))
+  .filter(p => !p.data.draft && p.id !== currentId)
+  .map(p => ({
+    post: p,
+    shared: (p.data.tags ?? []).filter(t => tags.includes(t)).length,
+  }))
+  .filter(({ shared }) => shared > 0)
+  .sort((a, b) => b.shared - a.shared || b.post.data.date.valueOf() - a.post.data.date.valueOf())
+  .slice(0, 3)
+  .map(({ post }) => post);
+
+const heading = lang === 'pt' ? 'Posts relacionados' : 'Related posts';
+---
+
+{related.length > 0 && (
+  <section class="related-posts">
+    <h2>{heading}</h2>
+    <ul>
+      {related.map(p => (
+        <li>
+          <a href={`/blog/${p.id}/`}>{p.data.title}</a>
+          {p.data.description && <p>{p.data.description}</p>}
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<style>
+  .related-posts {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--pico-muted-border-color);
+  }
+
+  .related-posts h2 {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    color: var(--pico-muted-color);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .related-posts ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+
+  .related-posts li {
+    padding: 0.75rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+  }
+
+  .related-posts a {
+    font-weight: 600;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.9em;
+  }
+
+  .related-posts a:hover {
+    text-decoration: underline;
+  }
+
+  .related-posts p {
+    font-size: 0.8em;
+    color: var(--pico-muted-color);
+    margin: 0;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
