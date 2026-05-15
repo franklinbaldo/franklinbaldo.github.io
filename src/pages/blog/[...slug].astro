@@ -26,6 +26,7 @@ const post = Astro.props;
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const { heroImage, heroImageAlt, title, description, date, tags, lang, translationKey } = post.data;
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
+const hasMath: boolean = !!remarkPluginFrontmatter.hasMath;
 const lastModifiedISO: string | undefined = remarkPluginFrontmatter.lastModified;
 const lastModified = lastModifiedISO ? new Date(lastModifiedISO) : undefined;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -51,6 +52,7 @@ const translationHref = translation ? `/blog/${translation.id}/` : undefined;
   tags={tags}
   lang={lang}
   translationHref={translationHref}
+  hasMath={hasMath}
 >
   <div id="read-progress" aria-hidden="true"></div>
 

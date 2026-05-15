@@ -3,6 +3,9 @@ dist/
 # generated types
 .astro/
 
+# copied at build time from node_modules/katex by scripts/copy-katex.mjs
+public/katex/
+
 # dependencies
 node_modules/
 
