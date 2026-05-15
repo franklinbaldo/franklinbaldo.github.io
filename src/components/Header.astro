@@ -1,6 +1,6 @@
 ---
-import ThemeToggle from './ThemeToggle.svelte';
-import LanguageSwitcher from './LanguageSwitcher.svelte';
+import ThemeToggle from './ThemeToggle.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
 ---
 
 <header class="container">
@@ -16,9 +16,9 @@ import LanguageSwitcher from './LanguageSwitcher.svelte';
       <li><a href="https://github.com/franklinbaldo/skills" class="secondary" aria-label="Skills">⚡</a></li>
       <li><a href="/search/" class="secondary" aria-label="Search">🔎</a></li>
       <li><a href="/about/" class="secondary" aria-label="About">📚</a></li>
-      <li><a href="#subscribe" class="subscribe-cta" aria-label="Subscribe"><span class="label-long">Subscribe</span><span class="label-short" aria-hidden="true">✉️</span></a></li>
-      <li><LanguageSwitcher client:idle /></li>
-      <li><ThemeToggle client:idle /></li>
+      <li><a href="#subscribe" role="button" class="subscribe-cta">Subscribe</a></li>
+      <li><LanguageSwitcher /></li>
+      <li><ThemeToggle /></li>
     </ul>
   </nav>
 </header>
@@ -27,5 +27,9 @@ import LanguageSwitcher from './LanguageSwitcher.svelte';
   header {
     padding-top: var(--pico-spacing);
     padding-bottom: var(--pico-spacing);
+  }
+  .subscribe-cta {
+    padding: 0.4rem 0.9rem;
+    font-size: 0.875rem;
   }
 </style>

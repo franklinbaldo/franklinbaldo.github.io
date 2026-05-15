@@ -1,0 +1,72 @@
+---
+---
+
+<button
+  class="lang-switcher"
+  type="button"
+  data-lang-switcher
+  aria-label="Switch language"
+  hidden
+>
+  <span class="label">🌐</span>
+</button>
+
+<script is:inline>
+  (() => {
+    const btn = document.querySelector('[data-lang-switcher]');
+    if (!btn) return;
+    const label = btn.querySelector('.label');
+
+    const stored = localStorage.getItem('lang');
+    let lang = (stored === 'en' || stored === 'pt')
+      ? stored
+      : (navigator.language.toLowerCase().startsWith('pt') ? 'pt' : 'en');
+    if (!stored) localStorage.setItem('lang', lang);
+
+    const translationHref = window.__translationHref || null;
+    const pageLang = document.documentElement.lang;
+
+    if (pageLang && translationHref && pageLang !== lang) {
+      const key = 'visited:' + location.pathname;
+      if (!sessionStorage.getItem(key)) {
+        sessionStorage.setItem(key, '1');
+        location.href = translationHref;
+        return;
+      }
+    }
+
+    label.textContent = lang === 'en' ? '🇧🇷 PT' : '🇺🇸 EN';
+    btn.title = lang === 'en' ? 'Ler em Português' : 'Read in English';
+    btn.hidden = false;
+    if (!translationHref) {
+      btn.style.opacity = '0.4';
+      btn.style.cursor = 'default';
+    }
+
+    btn.addEventListener('click', () => {
+      const target = lang === 'en' ? 'pt' : 'en';
+      localStorage.setItem('lang', target);
+      if (translationHref) location.href = translationHref;
+    });
+  })();
+</script>
+
+<style>
+  .lang-switcher {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    filter: grayscale(100%);
+    transition: filter 0.2s ease, transform 0.2s ease;
+  }
+  .lang-switcher:hover,
+  .lang-switcher:focus-visible {
+    filter: grayscale(0%);
+    transform: scale(1.15);
+    background: transparent;
+  }
+</style>

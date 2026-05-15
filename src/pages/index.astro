@@ -3,7 +3,7 @@ import { getCollection } from "astro:content";
 import PageLayout from "../layouts/PageLayout.astro";
 import PostList from "../components/PostList.astro";
 import SubscribeBox from "../components/SubscribeBox.astro";
-import LangFilter from "../components/LangFilter.svelte";
+import LangFilter from "../components/LangFilter.astro";
 
 const all = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
@@ -42,7 +42,7 @@ const ordered = [...featured, ...rest];
   <SubscribeBox lang="en" />
 
   <div class="filter-row">
-    <LangFilter client:load />
+    <LangFilter />
   </div>
 
   <PostList posts={ordered} />

@@ -40,3 +40,49 @@ const copy = lang === 'pt'
   </form>
   <small><a href="/rss.xml">{copy.rss}</a></small>
 </aside>
+
+<style>
+  .subscribe {
+    background: var(--pico-primary-background);
+    color: var(--pico-primary-inverse);
+    padding: 1.5rem;
+    margin: 2.5rem auto;
+    max-width: 680px;
+    text-align: center;
+    border-radius: var(--pico-border-radius);
+  }
+  .subscribe :global(hgroup h3) {
+    color: var(--pico-primary-inverse);
+    margin-bottom: 0.25rem;
+    font-family: var(--app-font-display);
+  }
+  .subscribe :global(hgroup p) {
+    color: var(--pico-primary-inverse);
+    opacity: 0.85;
+    margin-bottom: 1rem;
+  }
+  .subscribe form {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+  }
+  .subscribe input[type="email"] {
+    flex: 1 1 200px;
+    background: var(--pico-background-color);
+    color: var(--pico-color);
+    border-color: transparent;
+    margin: 0;
+  }
+  .subscribe button {
+    background: var(--pico-color);
+    color: var(--pico-background-color);
+    border-color: var(--pico-color);
+    margin: 0;
+    width: auto;
+  }
+  .subscribe small a {
+    color: var(--pico-primary-inverse);
+    opacity: 0.85;
+  }
+</style>

@@ -2,7 +2,7 @@
 import { type CollectionEntry, getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
 import PostCard from "../../components/PostCard.astro";
-import LangFilter from "../../components/LangFilter.svelte";
+import LangFilter from "../../components/LangFilter.astro";
 
 export async function getStaticPaths() {
   const posts = (await getCollection("blog")).filter((p) => !p.data.draft);
@@ -38,7 +38,7 @@ const { tag, posts } = Astro.props;
         <p><small>{posts.length} {posts.length === 1 ? "post" : "posts"} · <a href="/tags/">all tags</a></small></p>
       </hgroup>
     </header>
-    <LangFilter client:load />
+    <LangFilter />
     {posts.map((post) => <PostCard post={post} />)}
   </article>
 </PageLayout>

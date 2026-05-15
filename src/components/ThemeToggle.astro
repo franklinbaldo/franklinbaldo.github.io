@@ -1,0 +1,64 @@
+---
+---
+
+<button
+  class="theme-toggle"
+  type="button"
+  data-theme-toggle
+  aria-label="Toggle theme"
+  title="Toggle theme"
+>
+  <span class="icon" aria-hidden="true"></span>
+</button>
+
+<script is:inline>
+  (() => {
+    const btn = document.querySelector('[data-theme-toggle]');
+    if (!btn) return;
+    const icon = btn.querySelector('.icon');
+    const root = document.documentElement;
+
+    const apply = (t) => {
+      root.dataset.theme = t;
+      icon.textContent = t === 'light' ? '🌑' : '☀️';
+      btn.title = t === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+    };
+
+    const stored = localStorage.getItem('theme');
+    const initial = stored
+      ?? root.dataset.theme
+      ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    apply(initial);
+
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (localStorage.getItem('theme')) return;
+      apply(e.matches ? 'dark' : 'light');
+    });
+
+    btn.addEventListener('click', () => {
+      const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+      localStorage.setItem('theme', next);
+      apply(next);
+    });
+  })();
+</script>
+
+<style>
+  .theme-toggle {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: 1.5rem;
+    cursor: pointer;
+    filter: grayscale(100%);
+    transition: filter 0.2s ease, transform 0.2s ease;
+    line-height: 1;
+  }
+  .theme-toggle:hover,
+  .theme-toggle:focus-visible {
+    filter: grayscale(0%);
+    transform: scale(1.15);
+    background: transparent;
+  }
+</style>

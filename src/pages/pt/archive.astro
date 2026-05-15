@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
-import LangFilter from "../../components/LangFilter.svelte";
+import LangFilter from "../../components/LangFilter.astro";
 
 const posts = (await getCollection("blog"))
   .filter((p) => !p.data.draft)
@@ -28,7 +28,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
       <p><small>{posts.length} ensaios</small></p>
     </header>
 
-    <LangFilter client:load />
+    <LangFilter />
 
     {years.map((year) => (
       <section>
