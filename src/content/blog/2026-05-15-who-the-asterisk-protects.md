@@ -56,11 +56,11 @@ It wasn't always this way. Sometime between 2018 and 2022, everyone in the Brazi
 
 ```mermaid
 flowchart LR
-    A["Act in the Court Gazette<br/>full name<br/>partial CPF"] --> B[Transparency Portal]
-    A --> C[Searchable Official Gazette]
-    B --> D[registration, position, posting]
+    A["Act in the Court Gazette<br/>full name<br/>partial CPF"] --> B["Transparency Portal"]
+    A --> C["Searchable Official Gazette"]
+    B --> D["registration, position, posting"]
     C --> E["older publications<br/>(full CPF)"]
-    D --> F[unique identification]
+    D --> F["unique identification"]
     E --> F
 ```
 
@@ -87,10 +87,10 @@ The technical ceiling of the non-state, non-Big-Tech Brazilian adversary has a n
 
 ```mermaid
 flowchart LR
-    M["Dona Maria"] -.stopped by asterisks.-> X["—"]
-    R["Robson"] -->|10 minutes| ID["unique<br/>identification"]
-    R -.+ stubbornness<br/>+ Serasa dump.-> H["hacker from<br/>Araraquara"]
-    H -->|15 seconds| ID
+    M["Dona Maria"] -. "stopped by asterisks" .-> X["—"]
+    R["Robson"] -->|"10 minutes"| ID["unique<br/>identification"]
+    R -. "+ stubbornness<br/>+ Serasa dump" .-> H["hacker from<br/>Araraquara"]
+    H -->|"15 seconds"| ID
 ```
 
 ## The PET bottle on top of the meter
