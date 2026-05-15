@@ -1,0 +1,132 @@
+---
+import { t, locale } from '../lib/i18n';
+
+interface Props {
+  title: string;
+  url: string;
+  date: Date;
+  lang?: string;
+}
+
+const { title, url, date, lang } = Astro.props;
+const loc = locale(lang);
+const formattedDate = date.toLocaleDateString(loc, { year: 'numeric', month: 'long', day: 'numeric' });
+const citation = `Baldo, F. "${title}." Franklin Baldo, ${formattedDate}. ${url}`;
+const isPt = (lang ?? '') === 'pt';
+const labels = {
+  share: isPt ? 'Compartilhar' : 'Share',
+  rss: 'RSS',
+  cite: isPt ? 'Citar' : 'Cite',
+  citeCopied: isPt ? 'Citação copiada' : 'Citation copied',
+  citeFailed: isPt ? 'Não foi possível copiar' : "Couldn't copy",
+};
+---
+
+<nav class="post-action-bar" aria-label={isPt ? 'Ações do post' : 'Post actions'}>
+  <button
+    type="button"
+    class="action-btn share-button"
+    data-title={title}
+    data-url={url}
+    aria-label={labels.share}
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+      <path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7"/>
+      <path d="M16 6l-4-4-4 4"/>
+      <line x1="12" y1="2" x2="12" y2="15"/>
+    </svg>
+    <span class="action-label">{labels.share}</span>
+  </button>
+
+  <a class="action-btn" href="/rss.xml" aria-label="RSS feed">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+      <path d="M4 11a9 9 0 019 9"/>
+      <path d="M4 4a16 16 0 0116 16"/>
+      <circle cx="5" cy="19" r="1.5" fill="currentColor"/>
+    </svg>
+    <span class="action-label">{labels.rss}</span>
+  </a>
+
+  <button
+    type="button"
+    class="action-btn cite-button"
+    data-citation={citation}
+    data-success={labels.citeCopied}
+    data-error={labels.citeFailed}
+    aria-label={labels.cite}
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+      <path d="M7 7h4v6a4 4 0 01-4 4v-2a2 2 0 002-2H7zM15 7h4v6a4 4 0 01-4 4v-2a2 2 0 002-2h-2z"/>
+    </svg>
+    <span class="action-label">{labels.cite}</span>
+  </button>
+</nav>
+
+<script>
+  document.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement)?.closest<HTMLButtonElement>('.cite-button');
+    if (!btn) return;
+    const text = btn.dataset.citation ?? '';
+    const label = btn.querySelector<HTMLElement>('.action-label');
+    const original = label?.textContent ?? '';
+    try {
+      await navigator.clipboard.writeText(text);
+      if (label) label.textContent = btn.dataset.success ?? 'Copied';
+    } catch {
+      if (label) label.textContent = btn.dataset.error ?? "Couldn't copy";
+    }
+    window.setTimeout(() => {
+      if (label) label.textContent = original;
+    }, 1800);
+  });
+</script>
+
+<style>
+  .post-action-bar {
+    display: none;
+  }
+  @media (max-width: 800px) {
+    .post-action-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 40;
+      border-top: 1px solid var(--pico-muted-border-color);
+      background: var(--pico-card-background-color);
+      padding: 0.5rem 0;
+      backdrop-filter: blur(6px);
+    }
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.15rem;
+      padding: 0.4rem 0.25rem;
+      border: 0;
+      background: transparent;
+      color: var(--pico-color);
+      text-decoration: none;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .action-btn svg {
+      width: 22px;
+      height: 22px;
+      color: var(--pico-primary);
+    }
+    .action-btn:hover {
+      color: var(--pico-primary);
+    }
+    .action-label {
+      letter-spacing: 0.02em;
+    }
+    /* Reserve space at bottom of the post body so the bar doesn't overlap. */
+    .post-body {
+      padding-bottom: 4rem;
+    }
+  }
+</style>
