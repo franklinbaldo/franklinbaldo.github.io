@@ -1,0 +1,38 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+---
+
+<PageLayout
+  title="Busca | Franklin Baldo"
+  description="Busca de texto completo pelos ensaios."
+  lang="pt"
+  translationHref="/search/"
+>
+  <article>
+    <header>
+      <h1>Busca</h1>
+      <p><small>Busca de texto completo por todos os ensaios. Índice construído com <a href="https://pagefind.app/">Pagefind</a>.</small></p>
+    </header>
+
+    <div id="search"></div>
+  </article>
+
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <script is:inline defer src="/pagefind/pagefind-ui.js"></script>
+  <script is:inline>
+    function initSearch() {
+      if (window.PagefindUI && document.getElementById("search") && !document.querySelector("#search .pagefind-ui")) {
+        new window.PagefindUI({
+          element: "#search",
+          showImages: false,
+          showSubResults: true,
+          filters: {
+            lang: "pt"
+          }
+        });
+      }
+    }
+    window.addEventListener("DOMContentLoaded", initSearch);
+    document.addEventListener("astro:page-load", initSearch);
+  </script>
+</PageLayout>

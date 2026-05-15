@@ -51,7 +51,7 @@ const translationHref = translation ? `/blog/${translation.id}/` : undefined;
   lang={lang}
   translationHref={translationHref}
 >
-  <article data-pagefind-body>
+  <article data-pagefind-body data-pagefind-filter={`lang:${lang}`}>
     <header>
       <hgroup>
         <h1>{title}</h1>

@@ -104,6 +104,7 @@ const jsonLd = type === "article"
     <meta property="og:url" content={canonical.href} />
     <meta property="og:site_name" content="Franklin Baldo" />
     <meta property="og:locale" content={lang === "pt" ? "pt_BR" : "en_US"} />
+    {translationHref && <meta property="og:locale:alternate" content={lang === "pt" ? "en_US" : "pt_BR"} />}
     {ogImage && <meta property="og:image" content={ogImage} />}
     {ogImage && <meta property="og:image:alt" content={title} />}
     {publishedTime && (

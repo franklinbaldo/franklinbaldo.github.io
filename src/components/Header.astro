@@ -8,10 +8,11 @@ interface Props {
 const { lang = 'en' } = Astro.props;
 
 const isPt = lang === 'pt';
-const homeHref   = isPt ? '/pt/'          : '/';
-const archiveHref = isPt ? '/pt/archive/' : '/archive/';
-const tagsHref   = isPt ? '/pt/tags/'    : '/tags/';
-const aboutHref  = isPt ? '/pt/about/'   : '/about/';
+const homeHref    = isPt ? '/pt/'          : '/';
+const archiveHref = isPt ? '/pt/archive/'  : '/archive/';
+const tagsHref    = isPt ? '/pt/tags/'     : '/tags/';
+const searchHref  = isPt ? '/pt/search/'   : '/search/';
+const aboutHref   = isPt ? '/pt/about/'    : '/about/';
 ---
 
 <header class="container">
@@ -25,7 +26,7 @@ const aboutHref  = isPt ? '/pt/about/'   : '/about/';
       <li><a href={tagsHref} class="secondary" aria-label="Tags">🏷️</a></li>
       <li><a href="/projects/" class="secondary" aria-label="Projects">⚙️</a></li>
       <li><a href="https://github.com/franklinbaldo/skills" class="secondary" aria-label="Skills">⚡</a></li>
-      <li><a href="/search/" class="secondary" aria-label="Search">🔎</a></li>
+      <li><a href={searchHref} class="secondary" aria-label="Search">🔎</a></li>
       <li><a href={aboutHref} class="secondary" aria-label="About">📚</a></li>
       <li><LanguageSwitcher client:idle /></li>
       <li><ThemeToggle client:idle /></li>
