@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
-import PageLayout from "../layouts/PageLayout.astro";
-import LangFilter from "../components/LangFilter.svelte";
+import PageLayout from "../../layouts/PageLayout.astro";
+import LangFilter from "../../components/LangFilter.svelte";
 
 const posts = (await getCollection("blog"))
   .filter((p) => !p.data.draft)
@@ -16,11 +16,16 @@ for (const post of posts) {
 const years = [...byYear.keys()].sort((a, b) => b - a);
 ---
 
-<PageLayout title="Archive | Franklin Baldo" description="All essays, by year." translationHref="/pt/archive/">
+<PageLayout
+  title="Arquivo | Franklin Baldo"
+  description="Todos os ensaios, por ano."
+  lang="pt"
+  translationHref="/archive/"
+>
   <article>
     <header>
-      <h1>Archive</h1>
-      <p><small>{posts.length} essays</small></p>
+      <h1>Arquivo</h1>
+      <p><small>{posts.length} ensaios</small></p>
     </header>
 
     <LangFilter client:load />
@@ -32,11 +37,11 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
           {byYear.get(year)!.map((post) => (
             <li data-post-lang={post.data.lang ?? 'en'}>
               <time datetime={post.data.date.toISOString()}>
-                {post.data.date.toLocaleDateString("en-US", { month: "short", day: "2-digit" })}
+                {post.data.date.toLocaleDateString("pt-BR", { month: "short", day: "2-digit" })}
               </time>
               <span class="archive-title">
                 <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-                {post.data.lang === 'pt' && <small class="lang-flag" aria-label="Post in Portuguese">🇧🇷</small>}
+                {(post.data.lang === undefined || post.data.lang === 'en') && <small class="lang-flag" aria-label="Post em inglês">🇺🇸</small>}
               </span>
             </li>
           ))}
