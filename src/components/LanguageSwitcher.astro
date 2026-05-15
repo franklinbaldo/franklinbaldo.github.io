@@ -2,20 +2,20 @@
 ---
 
 <button
-  class="lang-switcher"
   type="button"
+  class="contrast outline"
   data-lang-switcher
   aria-label="Switch language"
   hidden
 >
-  <span class="label">🌐</span>
+  <span data-label>🌐</span>
 </button>
 
 <script is:inline>
   (() => {
     const btn = document.querySelector('[data-lang-switcher]');
     if (!btn) return;
-    const label = btn.querySelector('.label');
+    const label = btn.querySelector('[data-label]');
 
     const stored = localStorage.getItem('lang');
     let lang = (stored === 'en' || stored === 'pt')
@@ -35,38 +35,13 @@
       }
     }
 
-    label.textContent = lang === 'en' ? '🇧🇷 PT' : '🇺🇸 EN';
-    btn.title = lang === 'en' ? 'Ler em Português' : 'Read in English';
+    label.textContent = lang === 'en' ? 'PT' : 'EN';
+    btn.setAttribute('aria-label', lang === 'en' ? 'Ler em Português' : 'Read in English');
     btn.hidden = false;
-    if (!translationHref) {
-      btn.style.opacity = '0.4';
-      btn.style.cursor = 'default';
-    }
+    btn.disabled = !translationHref;
 
     btn.addEventListener('click', () => {
-      const target = lang === 'en' ? 'pt' : 'en';
-      localStorage.setItem('lang', target);
       if (translationHref) location.href = translationHref;
     });
   })();
 </script>
-
-<style>
-  .lang-switcher {
-    background: transparent;
-    border: none;
-    padding: 0;
-    margin: 0;
-    font-size: 0.85rem;
-    letter-spacing: 0.02em;
-    cursor: pointer;
-    filter: grayscale(100%);
-    transition: filter 0.2s ease, transform 0.2s ease;
-  }
-  .lang-switcher:hover,
-  .lang-switcher:focus-visible {
-    filter: grayscale(0%);
-    transform: scale(1.15);
-    background: transparent;
-  }
-</style>

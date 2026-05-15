@@ -9,32 +9,17 @@ const copy = lang === 'pt'
   : { tagline: 'Lawyer and State Attorney. Writes on AI agency, process metaphysics, and legal design.', more: 'More essays →' };
 ---
 
-<aside class="author-bio">
-  <img src="/favicon.svg" alt="Franklin Baldo" width="64" height="64" />
-  <div class="bio-text">
-    <h4>Franklin Baldo</h4>
-    <p>{copy.tagline} <a href={lang === 'pt' ? '/pt/' : '/'}>{copy.more}</a></p>
-  </div>
+<aside>
+  <article>
+    <header>
+      <hgroup>
+        <h3>Franklin Baldo</h3>
+        <p><small>{lang === 'pt' ? 'Autor' : 'Author'}</small></p>
+      </hgroup>
+    </header>
+    <p>{copy.tagline}</p>
+    <footer>
+      <a href={lang === 'pt' ? '/pt/' : '/'}>{copy.more}</a>
+    </footer>
+  </article>
 </aside>
-
-<style>
-  .author-bio {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    margin: 3rem 0 1.5rem;
-    padding: 1.25rem;
-    border: 1px solid var(--pico-border-color);
-    border-radius: var(--pico-border-radius);
-  }
-  .author-bio img {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    margin: 0;
-  }
-  .bio-text { flex: 1; min-width: 0; }
-  .bio-text h4 { margin: 0 0 0.25rem; font-size: 1.05rem; }
-  .bio-text p { margin: 0; color: var(--pico-muted-color); font-size: 0.95rem; }
-</style>

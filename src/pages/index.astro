@@ -21,55 +21,14 @@ const ordered = [...featured, ...rest];
   lang="en"
   translationHref="/pt/"
 >
-  <section class="hero-compact">
-    <hgroup>
-      <h1>Franklin Baldo</h1>
-      <p>Essays on AI agency, process metaphysics, and legal design.</p>
-    </hgroup>
-    <p class="identity-links">
-      <small>
-        <a href="/about/">About</a>
-        <span aria-hidden="true"> · </span>
-        <a href="https://github.com/franklinbaldo" rel="me">GitHub</a>
-        <span aria-hidden="true"> · </span>
-        <a href="https://twitter.com/franklinbaldo" rel="me">Twitter</a>
-        <span aria-hidden="true"> · </span>
-        <a href="/rss.xml">RSS</a>
-      </small>
-    </p>
-  </section>
+  <hgroup>
+    <h1>Franklin Baldo</h1>
+    <p>Essays on AI agency, process metaphysics, and legal design.</p>
+  </hgroup>
 
   <SubscribeBox lang="en" />
 
-  <div class="filter-row">
-    <LangFilter />
-  </div>
+  <LangFilter />
 
   <PostList posts={ordered} />
 </PageLayout>
-
-<style>
-  .hero-compact {
-    margin-bottom: 2rem;
-    text-align: center;
-  }
-  .hero-compact hgroup {
-    margin-bottom: 0.5rem;
-  }
-  .hero-compact h1 {
-    margin-bottom: 0.25rem;
-  }
-  .hero-compact hgroup > p {
-    color: var(--pico-muted-color);
-    margin: 0;
-  }
-  .identity-links {
-    margin: 0.5rem 0 0;
-    color: var(--pico-muted-color);
-  }
-  .filter-row {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 1rem;
-  }
-</style>

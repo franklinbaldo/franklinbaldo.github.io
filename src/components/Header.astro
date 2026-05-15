@@ -6,30 +6,17 @@ import LanguageSwitcher from './LanguageSwitcher.astro';
 <header class="container">
   <nav>
     <ul>
-      <li><strong>Franklin Baldo</strong></li>
+      <li><strong><a href="/" class="contrast">Franklin Baldo</a></strong></li>
     </ul>
     <ul>
-      <li><a href="/" class="secondary" aria-label="Home">🏠</a></li>
-      <li><a href="/archive/" class="secondary" aria-label="Archive">📂</a></li>
-      <li><a href="/tags/" class="secondary" aria-label="Tags">🏷️</a></li>
-      <li><a href="/projects/" class="secondary" aria-label="Projects">⚙️</a></li>
-      <li><a href="https://github.com/franklinbaldo/skills" class="secondary" aria-label="Skills">⚡</a></li>
-      <li><a href="/search/" class="secondary" aria-label="Search">🔎</a></li>
-      <li><a href="/about/" class="secondary" aria-label="About">📚</a></li>
-      <li><a href="#subscribe" role="button" class="subscribe-cta">Subscribe</a></li>
+      <li><a href="/archive/" class="secondary">Archive</a></li>
+      <li><a href="/tags/" class="secondary">Tags</a></li>
+      <li><a href="/projects/" class="secondary">Projects</a></li>
+      <li><a href="/search/" class="secondary">Search</a></li>
+      <li><a href="/about/" class="secondary">About</a></li>
+      <li><a href="#subscribe" role="button">Subscribe</a></li>
       <li><LanguageSwitcher /></li>
       <li><ThemeToggle /></li>
     </ul>
   </nav>
 </header>
-
-<style>
-  header {
-    padding-top: var(--pico-spacing);
-    padding-bottom: var(--pico-spacing);
-  }
-  .subscribe-cta {
-    padding: 0.4rem 0.9rem;
-    font-size: 0.875rem;
-  }
-</style>

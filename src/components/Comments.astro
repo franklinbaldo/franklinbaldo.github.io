@@ -4,7 +4,6 @@ interface Props {
 }
 const { lang = 'en' } = Astro.props;
 
-// Configure these via giscus.app and replace the placeholders below.
 const GISCUS_REPO = 'franklinbaldo/franklinbaldo.github.io';
 const GISCUS_REPO_ID = 'REPLACE_WITH_REPO_ID';
 const GISCUS_CATEGORY = 'Comments';
@@ -12,10 +11,12 @@ const GISCUS_CATEGORY_ID = 'REPLACE_WITH_CATEGORY_ID';
 const isConfigured =
   !GISCUS_REPO_ID.startsWith('REPLACE') &&
   !GISCUS_CATEGORY_ID.startsWith('REPLACE');
+
+const headingId = 'comments-heading';
 ---
 
-<section class="comments" aria-label="Comments">
-  <h3>{lang === 'pt' ? 'Comentários' : 'Comments'}</h3>
+<section aria-labelledby={headingId}>
+  <h3 id={headingId}>{lang === 'pt' ? 'Comentários' : 'Comments'}</h3>
   {isConfigured ? (
     <div id="giscus-container" data-giscus></div>
   ) : (
@@ -61,11 +62,3 @@ const isConfigured =
     }
   </script>
 )}
-
-<style>
-  .comments {
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--pico-border-color);
-  }
-</style>

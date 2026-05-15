@@ -10,6 +10,7 @@ const copy = lang === 'pt'
   ? {
       title: 'Receba os ensaios por email',
       subtitle: 'Sobre agentes de IA, metafísica do processo e design jurídico. Sem spam.',
+      label: 'Email',
       placeholder: 'seu@email.com',
       button: 'Inscrever',
       rss: 'Prefiro RSS',
@@ -17,70 +18,32 @@ const copy = lang === 'pt'
   : {
       title: 'Subscribe',
       subtitle: 'Essays on AI agency, process metaphysics, and legal design. No spam, unsubscribe anytime.',
+      label: 'Email',
       placeholder: 'you@email.com',
       button: 'Subscribe',
       rss: 'I prefer RSS',
     };
 ---
 
-<aside class="subscribe" id="subscribe">
-  <hgroup>
-    <h3>{copy.title}</h3>
-    <p>{copy.subtitle}</p>
-  </hgroup>
-  <form
-    action={`https://buttondown.email/api/emails/embed-subscribe/${username}`}
-    method="post"
-    target="popupwindow"
-    onsubmit={`window.open('https://buttondown.email/${username}', 'popupwindow')`}
-  >
-    <input type="email" name="email" placeholder={copy.placeholder} required aria-label="email" />
-    <button type="submit">{copy.button}</button>
-  </form>
-  <small><a href="/rss.xml">{copy.rss}</a></small>
+<aside id="subscribe">
+  <article>
+    <hgroup>
+      <h3>{copy.title}</h3>
+      <p>{copy.subtitle}</p>
+    </hgroup>
+    <form
+      action={`https://buttondown.email/api/emails/embed-subscribe/${username}`}
+      method="post"
+      target="popupwindow"
+    >
+      <label>
+        {copy.label}
+        <input type="email" name="email" placeholder={copy.placeholder} required />
+      </label>
+      <button type="submit">{copy.button}</button>
+    </form>
+    <footer>
+      <small><a href="/rss.xml">{copy.rss}</a></small>
+    </footer>
+  </article>
 </aside>
-
-<style>
-  .subscribe {
-    background: var(--pico-primary-background);
-    color: var(--pico-primary-inverse);
-    padding: 1.5rem;
-    margin: 2.5rem auto;
-    max-width: 680px;
-    text-align: center;
-    border-radius: var(--pico-border-radius);
-  }
-  .subscribe :global(hgroup h3) {
-    color: var(--pico-primary-inverse);
-    margin-bottom: 0.25rem;
-  }
-  .subscribe :global(hgroup p) {
-    color: var(--pico-primary-inverse);
-    opacity: 0.85;
-    margin-bottom: 1rem;
-  }
-  .subscribe form {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-bottom: 0.75rem;
-  }
-  .subscribe input[type="email"] {
-    flex: 1 1 200px;
-    background: var(--pico-background-color);
-    color: var(--pico-color);
-    border-color: transparent;
-    margin: 0;
-  }
-  .subscribe button {
-    background: var(--pico-color);
-    color: var(--pico-background-color);
-    border-color: var(--pico-color);
-    margin: 0;
-    width: auto;
-  }
-  .subscribe small a {
-    color: var(--pico-primary-inverse);
-    opacity: 0.85;
-  }
-</style>

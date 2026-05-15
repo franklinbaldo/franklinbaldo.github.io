@@ -8,160 +8,45 @@ interface Props {
 }
 
 const { post } = Astro.props;
+const { title, date, lang, heroImage, heroImageAlt, featured, description } = post.data;
 
-const emojiMap: Record<string, string> = {
-  philosophy: '🧠',
-  legal: '⚖️',
-  ai: '🤖',
-  agents: '🤝',
-  process: '🌀',
-  default: '📄',
-};
-
-const tag = post.data.tags?.[0]?.toLowerCase();
-const emoji = (tag && emojiMap[tag]) || emojiMap.default;
-
-const postLang = post.data.lang ?? 'en';
-const formattedDate = post.data.date.toLocaleDateString(postLang === 'pt' ? 'pt-BR' : 'en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
+const postLang = lang ?? 'en';
+const formattedDate = date.toLocaleDateString(postLang === 'pt' ? 'pt-BR' : 'en-US', {
+  year: 'numeric', month: 'long', day: 'numeric',
 });
 
-const blurb = excerpt(post.body ?? '', 220) || post.data.description;
-
+const blurb = excerpt(post.body ?? '', 220) || description;
 const wordCount = (post.body ?? '').trim().split(/\s+/).filter(Boolean).length;
 const minutesRead = Math.max(1, Math.round(wordCount / 220));
 
 const href = `/blog/${post.id}/`;
-const { heroImage, heroImageAlt, featured } = post.data;
 ---
 
-<article class="post-card" data-post-lang={postLang}>
-  <a href={href} class="card-link" aria-label={post.data.title}></a>
-  <div class="thumb">
-    {heroImage ? (
+<article data-post-lang={postLang}>
+  {heroImage && (
+    <a href={href}>
       <Image
         src={heroImage}
         alt={heroImageAlt ?? ''}
-        widths={[120, 240]}
-        sizes="120px"
+        widths={[480, 800]}
+        sizes="(max-width: 800px) 100vw, 800px"
         format="webp"
         loading="lazy"
       />
-    ) : (
-      <span class="emoji" aria-hidden="true">{emoji}</span>
-    )}
-  </div>
-  <div class="body">
-    <h3 class="title">{post.data.title}</h3>
-    <p class="excerpt">{blurb}</p>
-    <p class="meta">
-      <small>
-        <time datetime={post.data.date.toISOString()}>{formattedDate}</time>
-        <span aria-hidden="true"> · </span>
-        {minutesRead} min
-        {featured && <> <span aria-hidden="true"> · </span><mark class="badge">Featured</mark></>}
-        {postLang === 'pt' && <> <span aria-hidden="true"> · </span><span class="lang-badge" aria-label="Post in Portuguese">🇧🇷 PT</span></>}
-      </small>
-    </p>
-  </div>
+    </a>
+  )}
+  <header>
+    <hgroup>
+      <h2><a href={href}>{title}</a></h2>
+      <p>
+        <small>
+          <time datetime={date.toISOString()}>{formattedDate}</time>
+          {' · '}{minutesRead} min
+          {featured && <> {' · '}<mark>Featured</mark></>}
+          {postLang === 'pt' && <> {' · '}<span aria-label="Post in Portuguese">🇧🇷 PT</span></>}
+        </small>
+      </p>
+    </hgroup>
+  </header>
+  <p>{blurb}</p>
 </article>
-
-<style>
-  .post-card {
-    position: relative;
-    display: grid;
-    grid-template-columns: 96px 1fr;
-    gap: 1rem;
-    align-items: start;
-    padding: 1.25rem 0;
-    margin: 0;
-    border: none;
-    background: transparent;
-    box-shadow: none;
-  }
-  .card-link {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-  }
-  .thumb {
-    width: 96px;
-    height: 96px;
-    background: var(--pico-primary-background);
-    color: var(--pico-primary-inverse);
-    display: grid;
-    place-items: center;
-    overflow: hidden;
-    border-radius: var(--pico-border-radius);
-    flex-shrink: 0;
-  }
-  .thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    margin: 0;
-    border-radius: 0;
-  }
-  .thumb .emoji {
-    font-size: 2rem;
-    filter: grayscale(100%);
-    opacity: 0.85;
-  }
-  .body {
-    min-width: 0;
-  }
-  .title {
-    margin: 0 0 0.4rem;
-    font-size: 1.35rem;
-    line-height: 1.25;
-    color: var(--pico-h2-color);
-  }
-  .excerpt {
-    color: var(--pico-color);
-    margin: 0 0 0.5rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    font-size: 0.975rem;
-  }
-  .meta {
-    margin: 0;
-    color: var(--pico-muted-color);
-  }
-  .badge {
-    background: var(--pico-primary-background);
-    color: var(--pico-primary-inverse);
-    padding: 0.05rem 0.4rem;
-    border-radius: var(--pico-border-radius);
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .lang-badge {
-    opacity: 0.8;
-  }
-  .post-card:hover .title {
-    color: var(--pico-primary);
-  }
-
-  @media (max-width: 480px) {
-    .post-card {
-      grid-template-columns: 64px 1fr;
-      gap: 0.75rem;
-    }
-    .thumb {
-      width: 64px;
-      height: 64px;
-    }
-    .thumb .emoji {
-      font-size: 1.5rem;
-    }
-    .title {
-      font-size: 1.15rem;
-    }
-  }
-</style>
