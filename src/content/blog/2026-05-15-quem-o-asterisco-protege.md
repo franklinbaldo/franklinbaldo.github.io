@@ -111,6 +111,8 @@ O ritual brasileiro normalmente paga o preço da inutilidade técnica com o lucr
 
 Este aqui não paga e não lucra.
 
+Não é anonimização. É sabor anonimização.[^sabor]
+
 Não é teatro de segurança. É teatro do teatro de segurança.
 
 E aqui está a razão econômica do incômodo: mesmo que o asterisco fosse ritual no sentido de Henrich, ou teatro no sentido de Schneier, ainda assim teria de pagar pelo que custa do outro lado da balança — a fricção que adiciona à transparência. Cada asterisco encarece a verificação para o cidadão, o jornalista, o pesquisador, o controle social. Esse encarecimento não é zero; é o preço cobrado em nome de um benefício de proteção que, como já vimos, não existe. Ritual sem lastro adaptativo, teatro sem plateia convencida, e em troca a verificação fica mais cara para quem deveria poder verificar. Não há benefício que compense. A fricção adicional à transparência é injustificada — não no sentido jurídico, no sentido aritmético: nada do lado positivo da conta cobre o que foi gasto.
@@ -212,5 +214,7 @@ O asterisco no Diário Oficial não esconde uma pessoa. Esconde quem pode olhar 
 - **Lei nº 12.527/2011 (LAI), art. 8º** — a transparência ativa como dever do Estado, prioritária sobre a privacidade do agente público no exercício da função.
 - **Verbete [*Walter Delgatti Neto*](https://pt.wikipedia.org/wiki/Walter_Delgatti_Neto)** — o hacker de Araraquara como personagem documental: o teto técnico médio brasileiro tem nome, endereço, ficha criminal e tornozeleira.
 - **Jorge Luis Borges, *Funes el memorioso*** — sobre o que acontece quando o banco de dados não esquece.
+
+[^sabor]: O bordão *"sabor X"* — geralmente pronunciado com ênfase no "BOR" e gesto com as mãos — é um meme criado pelo influenciador fitness Toguro. Origem: a bebida alcoólica da marca Mansão Maromba não podia ser classificada como "energético" porque não tinha cafeína nem taurina na composição (regras da vigilância sanitária), então passou a ser anunciada como *sabor energético*. A repetição da frase para justificar a lacuna regulatória viralizou e virou gíria: usa-se *"sabor X"* para classificar algo que tem a vibe ou a forma de X sem ser X de fato. O asterisco no Diário Oficial é, nesse sentido exato, sabor anonimização.
 
 [^1]: O leitor que clicou nesta nota provavelmente também é o leitor que escreveria as quinze linhas de Python. Os dois dígitos verificadores do CPF são definidos da seguinte maneira: dado o prefixo de nove dígitos `d₁…d₉`, calcula-se a soma ponderada `s₁ = 10·d₁ + 9·d₂ + 8·d₃ + … + 2·d₉`, toma-se o resto `r₁ = s₁ mod 11`, e o décimo dígito `D₁` é `11 - r₁`, com a convenção de que vira `0` quando `r₁` for menor que 2. O décimo primeiro `D₂` é definido analogamente, com pesos de 11 a 2 aplicados a `d₁…d₉` e ao recém-calculado `D₁`. A operação é determinística e barata. Roda em silêncio dentro de qualquer sistema que valide CPF — bancos, declarações, formulários — e há décadas. Esconder os dois últimos dígitos é como esconder o resultado de uma soma cujas parcelas todas se vêem.
