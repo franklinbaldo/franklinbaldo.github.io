@@ -170,6 +170,12 @@ const jsonLd = type === "article"
       }
       .footnotes li p { display: inline; margin: 0; }
       [data-footnote-backref] { text-decoration: none; opacity: 0.6; margin-left: 0.25rem; }
+      .overflow-table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: var(--pico-typography-spacing-vertical, 1rem);
+      }
+      .overflow-table > table { margin-bottom: 0; }
     </style>
   </body>
 </html>
