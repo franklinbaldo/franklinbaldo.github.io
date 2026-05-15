@@ -24,16 +24,31 @@ const navLinks = [
   { href: searchHref,   label: t(lang, 'nav.search') },
   { href: aboutHref,    label: t(lang, 'nav.about') },
 ];
+
+// Pico styles aria-current="page" distinctly; flag the link whose path
+// the reader is currently on. Treat exact match and prefix match (so a
+// post under /blog/... highlights nothing — that's fine; nav stays
+// inert on per-post pages).
+const here = Astro.url.pathname.replace(/\/$/, '') + '/';
+const isCurrent = (href: string) => {
+  const h = href.replace(/\/$/, '') + '/';
+  if (h === '/' || h === `${prefix}/`) return here === h;
+  return here === h;
+};
 ---
 
 <header class="container">
   <nav>
     <ul>
-      <li><strong><a href={homeHref} class="contrast">Franklin Baldo</a></strong></li>
+      <li><strong><a href={homeHref} class="contrast" aria-current={here === homeHref ? 'page' : undefined}>Franklin Baldo</a></strong></li>
     </ul>
     <ul class="nav-inline">
       {navLinks.map((l) => (
-        <li><a href={l.href} class="secondary">{l.label}</a></li>
+        <li>
+          <a href={l.href} class="secondary" aria-current={isCurrent(l.href) ? 'page' : undefined}>
+            {l.label}
+          </a>
+        </li>
       ))}
       <li><LanguageSwitcher /></li>
       <li><ThemeToggle /></li>
@@ -42,11 +57,15 @@ const navLinks = [
       <li><LanguageSwitcher /></li>
       <li><ThemeToggle /></li>
       <li>
-        <details class="menu">
+        <details class="dropdown burger-menu">
           <summary aria-label={menuLabel}>☰</summary>
           <ul>
             {navLinks.map((l) => (
-              <li><a href={l.href}>{l.label}</a></li>
+              <li>
+                <a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>
+                  {l.label}
+                </a>
+              </li>
             ))}
           </ul>
         </details>
@@ -61,33 +80,11 @@ const navLinks = [
     .nav-inline { display: none; }
     .nav-burger { display: flex; }
   }
-  .menu { position: relative; }
-  .menu > summary { list-style: none; cursor: pointer; padding: 0.25rem 0.5rem; }
-  .menu > summary::-webkit-details-marker { display: none; }
-  .menu[open] > ul {
-    position: absolute;
+  /* Right-align the dropdown panel so it doesn't overflow the viewport. */
+  .burger-menu > summary { padding-inline: 0.5rem; }
+  .burger-menu > ul {
     right: 0;
-    top: 100%;
-    z-index: 10;
-    background: var(--pico-background-color);
-    border: 1px solid var(--pico-border-color);
-    border-radius: var(--pico-border-radius);
-    padding: 0.5rem;
-    list-style: none;
+    left: auto;
     min-width: 12rem;
-    margin: 0.25rem 0 0;
-  }
-  .menu[open] > ul > li {
-    padding: 0;
-  }
-  .menu[open] > ul > li > a {
-    display: block;
-    padding: 0.5rem 0.75rem;
-    text-decoration: none;
-    border-radius: calc(var(--pico-border-radius) / 2);
-  }
-  .menu[open] > ul > li > a:hover {
-    background: var(--pico-primary-background);
-    color: var(--pico-primary-inverse);
   }
 </style>
