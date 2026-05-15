@@ -8,14 +8,12 @@ import PageLayout from "../../layouts/PageLayout.astro";
   lang="pt"
   translationHref="/search/"
 >
-  <article>
-    <header>
-      <h1>Busca</h1>
-      <p><small>Busca de texto completo por todos os ensaios. Índice construído com <a href="https://pagefind.app/">Pagefind</a>.</small></p>
-    </header>
+  <hgroup>
+    <h1>Busca</h1>
+    <p><small>Busca de texto completo por todos os ensaios. Índice construído com <a href="https://pagefind.app/">Pagefind</a>.</small></p>
+  </hgroup>
 
-    <div id="search"></div>
-  </article>
+  <search id="search"></search>
 
   <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
   <script is:inline defer src="/pagefind/pagefind-ui.js"></script>

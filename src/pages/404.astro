@@ -9,22 +9,23 @@ const recent = (await getCollection("blog"))
 ---
 
 <PageLayout title="Not Found" description="Page not found.">
-  <article>
-    <header>
-      <hgroup>
-        <h1>404</h1>
-        <p>That page doesn’t exist — or it has been pruned from the garden.</p>
-      </hgroup>
-    </header>
+  <hgroup>
+    <h1>404</h1>
+    <p>That page doesn’t exist — or it has been pruned from the garden.</p>
+  </hgroup>
 
-    <h2>Search</h2>
-    <div id="search"></div>
+  <section aria-labelledby="search-heading">
+    <h2 id="search-heading">Search</h2>
+    <search id="search"></search>
+  </section>
 
+  <nav aria-label="Recently published">
     <h2>Recently published</h2>
     <ul>
       {recent.map((post) => (
         <li>
           <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+          {' — '}
           <small>
             <time datetime={post.data.date.toISOString()}>
               {post.data.date.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })}
@@ -33,12 +34,14 @@ const recent = (await getCollection("blog"))
         </li>
       ))}
     </ul>
+  </nav>
 
+  <nav aria-label="Other pages">
     <p>
       Or try the <a href="/">home page</a>, the <a href="/archive/">archive</a>,
       or browse by <a href="/tags/">tag</a>.
     </p>
-  </article>
+  </nav>
 
   <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
   <script is:inline defer src="/pagefind/pagefind-ui.js"></script>
@@ -52,20 +55,3 @@ const recent = (await getCollection("blog"))
     document.addEventListener("astro:page-load", initSearch);
   </script>
 </PageLayout>
-
-<style>
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  ul li {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.25rem 0;
-  }
-  ul li small {
-    color: var(--pico-muted-color);
-    font-variant-numeric: tabular-nums;
-  }
-</style>

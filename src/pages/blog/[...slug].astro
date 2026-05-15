@@ -9,6 +9,9 @@ import MermaidEnhancer from '../../components/MermaidEnhancer.astro';
 import Webmentions from '../../components/Webmentions.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
+import SubscribeBox from '../../components/SubscribeBox.astro';
+import AuthorBio from '../../components/AuthorBio.astro';
+import Comments from '../../components/Comments.astro';
 import { getSeriesContext } from '../../lib/series';
 
 export async function getStaticPaths() {
@@ -26,16 +29,15 @@ const { heroImage, heroImageAlt, title, description, date, tags, lang, translati
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
 const lastModifiedISO: string | undefined = remarkPluginFrontmatter.lastModified;
 const lastModified = lastModifiedISO ? new Date(lastModifiedISO) : undefined;
-// Only show "Updated" if it's at least one day after the publish date.
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const showUpdated = lastModified && lastModified.valueOf() - date.valueOf() > MS_PER_DAY;
 const series = await getSeriesContext(post);
+const locale = lang === 'pt' ? 'pt-BR' : 'en-US';
+const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
 
 const allPosts = await getCollection('blog');
 const translation = translationKey
-  ? allPosts.find(
-      (p) => p.data.translationKey === translationKey && p.id !== post.id,
-    )
+  ? allPosts.find((p) => p.data.translationKey === translationKey && p.id !== post.id)
   : null;
 const translationHref = translation ? `/blog/${translation.id}/` : undefined;
 ---
@@ -51,19 +53,19 @@ const translationHref = translation ? `/blog/${translation.id}/` : undefined;
   lang={lang}
   translationHref={translationHref}
 >
+  <div id="read-progress" aria-hidden="true"></div>
+
   <article data-pagefind-body data-pagefind-filter={`lang:${lang}`}>
     <header>
       <hgroup>
         <h1>{title}</h1>
         <p>
           <small>
-            <time datetime={date.toISOString()}>
-              {date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-            </time>
+            <time datetime={date.toISOString()}>{date.toLocaleDateString(locale, dateOpts)}</time>
             {minutesRead && <> · {minutesRead} min read</>}
             {showUpdated && lastModified && (
-              <> · updated <time datetime={lastModified.toISOString()}>
-                {lastModified.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              <> · {lang === 'pt' ? 'atualizado' : 'updated'} <time datetime={lastModified.toISOString()}>
+                {lastModified.toLocaleDateString(locale, dateOpts)}
               </time></>
             )}
           </small>
@@ -82,23 +84,23 @@ const translationHref = translation ? `/blog/${translation.id}/` : undefined;
     </header>
 
     {series && (
-      <aside class="series-banner">
+      <aside>
         <small>
-          Part {series.index + 1} of {series.posts.length} in the
-          <strong>{series.slug}</strong> series.
-          <details>
-            <summary>All posts in this series</summary>
-            <ol>
-              {series.posts.map((p, i) => (
-                <li>
-                  {i === series.index
-                    ? <><strong>{p.data.title}</strong> <em>(this post)</em></>
-                    : <a href={`/blog/${p.id}/`}>{p.data.title}</a>}
-                </li>
-              ))}
-            </ol>
-          </details>
+          {lang === 'pt' ? 'Parte' : 'Part'} {series.index + 1} {lang === 'pt' ? 'de' : 'of'} {series.posts.length}
+          {' — '}<strong>{series.slug}</strong>.
         </small>
+        <details>
+          <summary>{lang === 'pt' ? 'Todos os posts da série' : 'All posts in this series'}</summary>
+          <ol>
+            {series.posts.map((p, i) => (
+              <li>
+                {i === series.index
+                  ? <><strong>{p.data.title}</strong> <em>({lang === 'pt' ? 'este post' : 'this post'})</em></>
+                  : <a href={`/blog/${p.id}/`}>{p.data.title}</a>}
+              </li>
+            ))}
+          </ol>
+        </details>
       </aside>
     )}
 
@@ -106,50 +108,76 @@ const translationHref = translation ? `/blog/${translation.id}/` : undefined;
 
     <Content />
 
-    <RelatedPosts currentId={post.id} tags={tags ?? []} lang={lang} />
-
-    {series && (series.prev || series.next) && (
-      <nav class="series-nav" aria-label="Series navigation">
-        {series.prev ? (
-          <a href={`/blog/${series.prev.id}/`} class="prev" rel="prev">
-            <small>← Previous in series</small>
-            <span>{series.prev.data.title}</span>
-          </a>
-        ) : <span />}
-        {series.next ? (
-          <a href={`/blog/${series.next.id}/`} class="next" rel="next">
-            <small>Next in series →</small>
-            <span>{series.next.data.title}</span>
-          </a>
-        ) : <span />}
-      </nav>
-    )}
-
-    <footer class="post-footer">
+    <footer>
       {tags && tags.length > 0 && (
-        <small>
-          Tags: {tags.map((tag, i) => (
-            <>
-              {i > 0 && ", "}
-              <a href={`/tags/${tag}/`}>#{tag}</a>
-            </>
+        <p><small>
+          {lang === 'pt' ? 'Tags' : 'Tags'}: {tags.map((tag, i) => (
+            <>{i > 0 && ', '}<a href={`/tags/${tag}/`}>#{tag}</a></>
           ))}
-        </small>
+        </small></p>
       )}
       {translationHref && (
-        <small class="translation-link">
+        <p><small>
           <a href={translationHref}>
             {lang === 'pt' ? '🇺🇸 Read in English' : '🇧🇷 Ler em Português'}
           </a>
-        </small>
+        </small></p>
       )}
       <ShareButton title={title} />
     </footer>
-
-    <Webmentions url={new URL(Astro.url.pathname, Astro.site!)} />
   </article>
+
+  <AuthorBio lang={lang} />
+
+  <SubscribeBox lang={lang} />
+
+  <RelatedPosts currentId={post.id} tags={tags ?? []} lang={lang} />
+
+  {series && (series.prev || series.next) && (
+    <nav aria-label="Series navigation">
+      <ul>
+        {series.prev && (
+          <li><a href={`/blog/${series.prev.id}/`} rel="prev">← {series.prev.data.title}</a></li>
+        )}
+        {series.next && (
+          <li><a href={`/blog/${series.next.id}/`} rel="next">{series.next.data.title} →</a></li>
+        )}
+      </ul>
+    </nav>
+  )}
+
+  <Webmentions url={new URL(Astro.url.pathname, Astro.site!)} />
+
+  <Comments lang={lang} />
 
   <BackToTop />
   <CodeCopyEnhancer />
   <MermaidEnhancer />
+
+  <script is:inline>
+    (() => {
+      const bar = document.getElementById('read-progress');
+      if (!bar) return;
+      const update = () => {
+        const h = document.documentElement;
+        const max = h.scrollHeight - h.clientHeight;
+        const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+        bar.style.setProperty('--p', pct + '%');
+      };
+      update();
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+    })();
+  </script>
 </PageLayout>
+
+<style>
+  #read-progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--pico-primary) var(--p, 0%), transparent 0);
+    z-index: 50;
+    pointer-events: none;
+  }
+</style>

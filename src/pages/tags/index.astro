@@ -15,32 +15,12 @@ const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeComp
 ---
 
 <PageLayout title="Tags | Franklin Baldo" description="Browse essays by tag." lang="en" translationHref="/pt/tags/">
-  <article>
-    <header>
-      <h1>Tags</h1>
-    </header>
-    <ul class="tag-cloud">
+  <h1>Tags</h1>
+  <nav aria-label="All tags">
+    <ul>
       {tags.map(([tag, count]) => (
-        <li>
-          <a href={`/tags/${tag}/`}>#{tag}</a>
-          <small>({count})</small>
-        </li>
+        <li><a href={`/tags/${tag}/`}>#{tag}</a> <small>({count})</small></li>
       ))}
     </ul>
-  </article>
+  </nav>
 </PageLayout>
-
-<style>
-  .tag-cloud {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 1rem;
-  }
-  .tag-cloud li {
-    display: inline-flex;
-    gap: 0.25rem;
-    align-items: baseline;
-  }
-</style>

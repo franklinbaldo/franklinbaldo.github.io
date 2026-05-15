@@ -144,5 +144,33 @@ const jsonLd = type === "article"
     </main>
 
     <Footer />
+
+    <style is:global>
+      .heading-anchor {
+        margin-left: 0.4em;
+        color: var(--pico-muted-color);
+        text-decoration: none;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+      }
+      :is(h2, h3, h4, h5, h6):hover .heading-anchor,
+      .heading-anchor:focus {
+        opacity: 0.7;
+      }
+      .footnotes {
+        margin-top: 4rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--pico-border-color);
+        font-size: 0.9rem;
+        color: var(--pico-muted-color);
+      }
+      .footnotes h2 {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .footnotes li p { display: inline; margin: 0; }
+      [data-footnote-backref] { text-decoration: none; opacity: 0.6; margin-left: 0.25rem; }
+    </style>
   </body>
 </html>

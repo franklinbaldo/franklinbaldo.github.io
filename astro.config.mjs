@@ -1,7 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
-import svelte from '@astrojs/svelte';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math';
@@ -14,7 +13,7 @@ import { remarkGitModified } from './src/lib/remark-git-modified.mjs';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://franklinbaldo.github.io',
-  integrations: [svelte(), mdx(), sitemap()],
+  integrations: [mdx(), sitemap()],
   markdown: {
     remarkPlugins: [remarkMath, remarkReadingTime, remarkGitModified],
     rehypePlugins: [

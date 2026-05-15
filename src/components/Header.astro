@@ -1,6 +1,6 @@
 ---
-import ThemeToggle from './ThemeToggle.svelte';
-import LanguageSwitcher from './LanguageSwitcher.svelte';
+import ThemeToggle from './ThemeToggle.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
 
 interface Props {
   lang?: 'en' | 'pt';
@@ -8,11 +8,15 @@ interface Props {
 const { lang = 'en' } = Astro.props;
 
 const isPt = lang === 'pt';
-const homeHref    = isPt ? '/pt/'          : '/';
-const archiveHref = isPt ? '/pt/archive/'  : '/archive/';
-const tagsHref    = isPt ? '/pt/tags/'     : '/tags/';
-const searchHref  = isPt ? '/pt/search/'   : '/search/';
-const aboutHref   = isPt ? '/pt/about/'    : '/about/';
+const homeHref    = isPt ? '/pt/'         : '/';
+const archiveHref = isPt ? '/pt/archive/' : '/archive/';
+const tagsHref    = isPt ? '/pt/tags/'    : '/tags/';
+const searchHref  = isPt ? '/pt/search/'  : '/search/';
+const aboutHref   = isPt ? '/pt/about/'   : '/about/';
+
+const labels = isPt
+  ? { archive: 'Arquivo', tags: 'Tags', projects: 'Projetos', search: 'Busca', about: 'Sobre', subscribe: 'Inscrever' }
+  : { archive: 'Archive', tags: 'Tags', projects: 'Projects', search: 'Search', about: 'About', subscribe: 'Subscribe' };
 ---
 
 <header class="container">
@@ -21,22 +25,14 @@ const aboutHref   = isPt ? '/pt/about/'    : '/about/';
       <li><strong><a href={homeHref} class="contrast">Franklin Baldo</a></strong></li>
     </ul>
     <ul>
-      <li><a href={homeHref} class="secondary" aria-label="Home">🏠</a></li>
-      <li><a href={archiveHref} class="secondary" aria-label="Archive">📂</a></li>
-      <li><a href={tagsHref} class="secondary" aria-label="Tags">🏷️</a></li>
-      <li><a href="/projects/" class="secondary" aria-label="Projects">⚙️</a></li>
-      <li><a href="https://github.com/franklinbaldo/skills" class="secondary" aria-label="Skills">⚡</a></li>
-      <li><a href={searchHref} class="secondary" aria-label="Search">🔎</a></li>
-      <li><a href={aboutHref} class="secondary" aria-label="About">📚</a></li>
-      <li><LanguageSwitcher client:idle /></li>
-      <li><ThemeToggle client:idle /></li>
+      <li><a href={archiveHref} class="secondary">{labels.archive}</a></li>
+      <li><a href={tagsHref} class="secondary">{labels.tags}</a></li>
+      <li><a href="/projects/" class="secondary">{labels.projects}</a></li>
+      <li><a href={searchHref} class="secondary">{labels.search}</a></li>
+      <li><a href={aboutHref} class="secondary">{labels.about}</a></li>
+      <li><a href="#subscribe" role="button">{labels.subscribe}</a></li>
+      <li><LanguageSwitcher /></li>
+      <li><ThemeToggle /></li>
     </ul>
   </nav>
 </header>
-
-<style>
-  header {
-    padding-top: var(--pico-spacing);
-    padding-bottom: var(--pico-spacing);
-  }
-</style>

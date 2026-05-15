@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import { excerpt } from '../lib/excerpt';
 
 interface Props {
@@ -7,69 +8,48 @@ interface Props {
 }
 
 const { post } = Astro.props;
+const { title, date, lang, heroImage, heroImageAlt, featured, description } = post.data;
 
-const emojiMap: Record<string, string> = {
-  philosophy: '🧠',
-  legal: '⚖️',
-  ai: '🤖',
-  agents: '🤝',
-  process: '🌀',
-  default: '📄',
-};
-
-const tag = post.data.tags?.[0]?.toLowerCase();
-const emoji = (tag && emojiMap[tag]) || emojiMap.default;
-
-const postLang = post.data.lang ?? 'en';
-const formattedDate = post.data.date.toLocaleDateString(postLang === 'pt' ? 'pt-BR' : 'en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
+const postLang = lang ?? 'en';
+const formattedDate = date.toLocaleDateString(postLang === 'pt' ? 'pt-BR' : 'en-US', {
+  year: 'numeric', month: 'long', day: 'numeric',
 });
 
-const blurb = excerpt(post.body ?? '', 320) || post.data.description;
+const blurb = excerpt(post.body ?? '', 220) || description;
+const wordCount = (post.body ?? '').trim().split(/\s+/).filter(Boolean).length;
+const minutesRead = Math.max(1, Math.round(wordCount / 220));
+
+const href = `/blog/${post.id}/`;
 ---
 
 <article data-post-lang={postLang}>
+  {heroImage && (
+    <a href={href}>
+      <Image
+        src={heroImage}
+        alt={heroImageAlt ?? ''}
+        widths={[480, 800]}
+        sizes="(max-width: 800px) 100vw, 800px"
+        format="webp"
+        loading="lazy"
+      />
+    </a>
+  )}
   <header>
     <hgroup>
-      <h3>
-        <span class="emoji" aria-hidden="true">{emoji}</span>
-        <a href={`/blog/${post.id}/`} class="contrast">{post.data.title}</a>
-      </h3>
+      <h2><a href={href}>{title}</a></h2>
       <p>
-        <small>{formattedDate}</small>
-        {postLang === 'pt' && <small class="lang-badge" aria-label="Post in Portuguese">🇧🇷 PT</small>}
+        <small>
+          <time datetime={date.toISOString()}>{formattedDate}</time>
+          {' · '}{minutesRead} min
+          {featured && <> {' · '}<mark>Featured</mark></>}
+          {postLang === 'pt' && <> {' · '}<span aria-label="Post in Portuguese">🇧🇷 PT</span></>}
+        </small>
       </p>
     </hgroup>
   </header>
-  <p class="excerpt">{blurb}</p>
+  <p>{blurb}</p>
   <footer>
-    <a href={`/blog/${post.id}/`}>{postLang === 'pt' ? 'Continuar lendo →' : 'Continue reading →'}</a>
+    <a href={href}>{postLang === 'pt' ? 'Continuar lendo →' : 'Continue reading →'}</a>
   </footer>
 </article>
-
-<style>
-  article {
-    margin-bottom: 2rem;
-  }
-  hgroup {
-    margin-bottom: 0;
-  }
-  h3 {
-    margin-bottom: 0.25rem;
-  }
-  .emoji {
-    margin-right: 0.5rem;
-    filter: grayscale(100%);
-  }
-  .excerpt {
-    color: var(--pico-color);
-    margin-bottom: 0.75rem;
-  }
-  .lang-badge {
-    margin-left: 0.5rem;
-    opacity: 0.7;
-    font-size: 0.75em;
-  }
-</style>
