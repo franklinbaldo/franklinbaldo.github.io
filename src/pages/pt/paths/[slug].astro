@@ -1,0 +1,55 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { READING_PATHS, getPathPosts } from '../../../lib/paths';
+
+export async function getStaticPaths() {
+  return READING_PATHS.map((path) => ({
+    params: { slug: path.slug },
+    props: { path },
+  }));
+}
+
+const { path } = Astro.props;
+const posts = await getPathPosts(path.slug, 'pt');
+const enHasPosts = (await getPathPosts(path.slug, 'en')).length > 0;
+const translations = enHasPosts ? { en: `/paths/${path.slug}/` } : {};
+---
+
+<PageLayout
+  title={`${path.title.pt} | Caminho de leitura`}
+  description={path.blurb.pt}
+  lang="pt"
+  translations={translations}
+>
+  <hgroup>
+    <p><small><a href="/pt/">← Início</a> · <em>Caminho de leitura</em></small></p>
+    <h1>{path.title.pt}</h1>
+    <p>{path.blurb.pt}</p>
+  </hgroup>
+
+  <p><small>{posts.length} {posts.length === 1 ? 'ensaio' : 'ensaios'}, em ordem sugerida de leitura.</small></p>
+
+  <ol class="path-list">
+    {posts.map((post) => (
+      <li>
+        <PostCard post={post} />
+      </li>
+    ))}
+  </ol>
+</PageLayout>
+
+<style>
+  .path-list {
+    list-style: decimal inside;
+    padding: 0;
+  }
+  .path-list > li {
+    margin-block: var(--pico-spacing);
+  }
+  .path-list > li > article {
+    display: inline-block;
+    width: calc(100% - 2rem);
+    vertical-align: top;
+  }
+</style>

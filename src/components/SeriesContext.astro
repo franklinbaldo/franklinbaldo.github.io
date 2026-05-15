@@ -1,0 +1,46 @@
+---
+import type { SeriesContext } from '../lib/series';
+import { t } from '../lib/i18n';
+
+interface Props {
+  series: SeriesContext;
+  lang?: string;
+  variant?: 'aside' | 'nav';
+}
+
+const { series, lang, variant = 'aside' } = Astro.props;
+---
+
+{variant === 'aside' && (
+  <aside class="series-context">
+    <small>
+      {t(lang, 'post.partOf')} {series.index + 1} {t(lang, 'post.of')} {series.posts.length}
+      {' — '}<strong>{series.slug}</strong>.
+    </small>
+    <details>
+      <summary>{t(lang, 'post.allInSeries')}</summary>
+      <ol>
+        {series.posts.map((p, i) => (
+          <li>
+            {i === series.index
+              ? <><strong>{p.data.title}</strong> <em>({t(lang, 'post.thisPost')})</em></>
+              : <a href={`/blog/${p.id}/`}>{p.data.title}</a>}
+          </li>
+        ))}
+      </ol>
+    </details>
+  </aside>
+)}
+
+{variant === 'nav' && (series.prev || series.next) && (
+  <nav aria-label={t(lang, 'series.navLabel')} class="series-nav">
+    <ul>
+      {series.prev && (
+        <li><a href={`/blog/${series.prev.id}/`} rel="prev">← {series.prev.data.title}</a></li>
+      )}
+      {series.next && (
+        <li><a href={`/blog/${series.next.id}/`} rel="next">{series.next.data.title} →</a></li>
+      )}
+    </ul>
+  </nav>
+)}

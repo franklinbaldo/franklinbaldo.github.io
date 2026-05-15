@@ -1,12 +1,12 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
-import PageLayout from "../../layouts/PageLayout.astro";
-import PostCard from "../../components/PostCard.astro";
+import PageLayout from "../../../layouts/PageLayout.astro";
+import PostCard from "../../../components/PostCard.astro";
 
 export async function getStaticPaths() {
   const posts = (await getCollection("blog"))
     .filter((p) => !p.data.draft)
-    .filter((p) => (p.data.lang ?? 'en') === 'en');
+    .filter((p) => p.data.lang === 'pt');
   const byTag = new Map<string, CollectionEntry<"blog">[]>();
   for (const post of posts) {
     for (const tag of post.data.tags ?? []) {
@@ -31,12 +31,16 @@ interface Props {
 const { tag, posts } = Astro.props;
 ---
 
-<PageLayout title={`#${tag} | Franklin Baldo`} description={`Essays tagged #${tag}.`} lang="en">
+<PageLayout
+  title={`#${tag} | Franklin Baldo`}
+  description={`Ensaios marcados com #${tag}.`}
+  lang="pt"
+>
   <article>
     <header>
       <hgroup>
         <h1>#{tag}</h1>
-        <p><small>{posts.length} {posts.length === 1 ? "post" : "posts"} · <a href="/tags/">all tags</a></small></p>
+        <p><small>{posts.length} {posts.length === 1 ? "post" : "posts"} · <a href="/pt/tags/">todas as etiquetas</a></small></p>
       </hgroup>
     </header>
     {posts.map((post) => <PostCard post={post} />)}

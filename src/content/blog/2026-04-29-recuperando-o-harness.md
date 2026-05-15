@@ -7,6 +7,7 @@ tags: [ai, alignment, agents, harness, waluigi, canivete, philosophy]
 series: harness
 seriesOrder: 1
 featured: true
+featuredReason: "Origem do vocabulário do harness que dá nome à série."
 translationKey: reclaiming-harness
 ---
 

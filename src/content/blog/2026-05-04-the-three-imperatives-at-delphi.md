@@ -7,6 +7,7 @@ translationKey: delphi-imperatives
 series: harness
 seriesOrder: 3
 featured: true
+featuredReason: "A foundational essay for the Agency and Constraint reading path."
 ---
 
 On the southern slope of Mount Parnassus, about a hundred and ten miles

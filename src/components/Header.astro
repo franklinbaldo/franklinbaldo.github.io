@@ -1,29 +1,28 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
 import LanguageSwitcher from './LanguageSwitcher.astro';
+import { t, urlPrefix } from '../lib/i18n';
 
 interface Props {
-  lang?: 'en' | 'pt';
+  lang?: string;
 }
 const { lang = 'en' } = Astro.props;
 
-const isPt = lang === 'pt';
-const homeHref    = isPt ? '/pt/'         : '/';
-const archiveHref = isPt ? '/pt/archive/' : '/archive/';
-const tagsHref    = isPt ? '/pt/tags/'    : '/tags/';
-const searchHref  = isPt ? '/pt/search/'  : '/search/';
-const aboutHref   = isPt ? '/pt/about/'   : '/about/';
+const prefix = urlPrefix(lang);
+const homeHref    = `${prefix}/`;
+const archiveHref = `${prefix}/archive/`;
+const tagsHref    = `${prefix}/tags/`;
+const searchHref  = `${prefix}/search/`;
+const aboutHref   = `${prefix}/about/`;
 
-const labels = isPt
-  ? { archive: 'Arquivo', tags: 'Tags', projects: 'Projetos', search: 'Busca', about: 'Sobre', menu: 'Menu' }
-  : { archive: 'Archive', tags: 'Tags', projects: 'Projects', search: 'Search', about: 'About', menu: 'Menu' };
+const menuLabel = t(lang, 'nav.menu');
 
 const navLinks = [
-  { href: archiveHref,  label: labels.archive },
-  { href: tagsHref,     label: labels.tags },
-  { href: '/projects/', label: labels.projects },
-  { href: searchHref,   label: labels.search },
-  { href: aboutHref,    label: labels.about },
+  { href: archiveHref,  label: t(lang, 'nav.archive') },
+  { href: tagsHref,     label: t(lang, 'nav.tags') },
+  { href: '/projects/', label: t(lang, 'nav.projects') },
+  { href: searchHref,   label: t(lang, 'nav.search') },
+  { href: aboutHref,    label: t(lang, 'nav.about') },
 ];
 ---
 
@@ -44,7 +43,7 @@ const navLinks = [
       <li><ThemeToggle /></li>
       <li>
         <details class="menu">
-          <summary aria-label={labels.menu}>☰</summary>
+          <summary aria-label={menuLabel}>☰</summary>
           <ul>
             {navLinks.map((l) => (
               <li><a href={l.href}>{l.label}</a></li>

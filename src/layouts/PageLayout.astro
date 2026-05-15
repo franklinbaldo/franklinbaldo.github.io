@@ -3,6 +3,7 @@ import "../styles/global.css";
 import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import { LANGUAGES, DEFAULT_LANG } from "../lib/i18n";
 
 interface Props {
   title: string;
@@ -12,14 +13,13 @@ interface Props {
   publishedTime?: Date;
   modifiedTime?: Date;
   tags?: string[];
-  lang?: "en" | "pt";
-  translationHref?: string;
+  lang?: string;
+  /** Map of lang code → href for the same content in another language. */
+  translations?: Record<string, string>;
   hasMath?: boolean;
 }
 
 const SITE_NAME = "Franklin Baldo";
-// When used via Markdown/MDX `layout:` frontmatter, Astro passes
-// `{ frontmatter, ... }`; in regular usage the props come directly.
 type LayoutProps = Props & { frontmatter?: Props };
 const raw = Astro.props as LayoutProps;
 const source: Props = raw.frontmatter ?? raw;
@@ -31,8 +31,8 @@ const {
   publishedTime,
   modifiedTime,
   tags,
-  lang = "en",
-  translationHref,
+  lang = DEFAULT_LANG,
+  translations = {},
   hasMath,
 } = source;
 
@@ -41,6 +41,12 @@ const documentTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAM
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = image ? new URL(image, Astro.site).href : undefined;
 const rssUrl = new URL("rss.xml", Astro.site);
+
+const ogLocale = (LANGUAGES[lang] ?? LANGUAGES[DEFAULT_LANG]).locale.replace("-", "_");
+const alternateEntries = Object.entries(translations);
+const alternateOgLocales = alternateEntries
+  .map(([code]) => LANGUAGES[code]?.locale.replace("-", "_"))
+  .filter((v): v is string => !!v);
 
 const breadcrumbLd = type === "article"
   ? {
@@ -89,9 +95,9 @@ const jsonLd = type === "article"
     {hasMath && <link rel="stylesheet" href="/katex/katex.min.css" />}
 
     <link rel="alternate" hreflang={lang} href={canonical.href} />
-    {translationHref && (
-      <link rel="alternate" hreflang={lang === "pt" ? "en" : "pt"} href={new URL(translationHref, Astro.site).href} />
-    )}
+    {alternateEntries.map(([code, href]) => (
+      <link rel="alternate" hreflang={code} href={new URL(href, Astro.site).href} />
+    ))}
 
     <link rel="webmention" href="https://webmention.io/franklinbaldo.github.io/webmention" />
     <link rel="pingback" href="https://webmention.io/franklinbaldo.github.io/xmlrpc" />
@@ -106,8 +112,8 @@ const jsonLd = type === "article"
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.href} />
     <meta property="og:site_name" content="Franklin Baldo" />
-    <meta property="og:locale" content={lang === "pt" ? "pt_BR" : "en_US"} />
-    {translationHref && <meta property="og:locale:alternate" content={lang === "pt" ? "en_US" : "pt_BR"} />}
+    <meta property="og:locale" content={ogLocale} />
+    {alternateOgLocales.map((l) => <meta property="og:locale:alternate" content={l} />)}
     {ogImage && <meta property="og:image" content={ogImage} />}
     {ogImage && <meta property="og:image:alt" content={title} />}
     {publishedTime && (
@@ -134,8 +140,9 @@ const jsonLd = type === "article"
         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', theme);
     </script>
-    <script is:inline define:vars={{ translationHref }}>
-      window.__translationHref = translationHref || null;
+    <script is:inline define:vars={{ translations, pageLang: lang }}>
+      window.__pageLang = pageLang;
+      window.__translations = translations || {};
     </script>
   </head>
   <body>

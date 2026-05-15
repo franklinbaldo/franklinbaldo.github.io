@@ -2,31 +2,37 @@
 import { getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
 import PostList from "../../components/PostList.astro";
-import LangFilter from "../../components/LangFilter.astro";
+import FeaturedRail from "../../components/FeaturedRail.astro";
+import PathsTeaser from "../../components/PathsTeaser.astro";
 
 const all = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
+  .filter((post) => post.data.lang === 'pt')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const featured = all.filter((p) => p.data.featured);
 const featuredIds = new Set(featured.map((p) => p.id));
-const rest = all.filter((p) => !featuredIds.has(p.id));
-const ordered = [...featured, ...rest];
+const recent = all.filter((p) => !featuredIds.has(p.id)).slice(0, 8);
 ---
 
 <PageLayout
   title="Início"
   description="Advogado e Procurador do Estado. Explorando as interseções entre metafísica do processo, agentes de IA e a arquitetura dos sistemas jurídicos."
   lang="pt"
-  translationHref="/"
+  translations={{ en: "/" }}
 >
   <hgroup>
     <h1>Franklin Baldo</h1>
     <p>Ensaios sobre agentes de IA, metafísica do processo e design jurídico.</p>
   </hgroup>
 
+  <FeaturedRail posts={featured} lang="pt" />
 
-  <LangFilter />
+  <PathsTeaser lang="pt" />
 
-  <PostList posts={ordered} />
+  <section aria-label="Ensaios recentes">
+    <h2>Ensaios recentes</h2>
+    <PostList posts={recent} />
+    <p><small><a href="/pt/archive/">Ver o arquivo completo →</a></small></p>
+  </section>
 </PageLayout>

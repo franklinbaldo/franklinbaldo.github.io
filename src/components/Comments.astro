@@ -1,8 +1,10 @@
 ---
+import { t, DEFAULT_LANG } from '../lib/i18n';
+
 interface Props {
-  lang?: 'en' | 'pt';
+  lang?: string;
 }
-const { lang = 'en' } = Astro.props;
+const { lang } = Astro.props;
 
 const GISCUS_REPO = 'franklinbaldo/franklinbaldo.github.io';
 const GISCUS_REPO_ID = 'REPLACE_WITH_REPO_ID';
@@ -13,23 +15,22 @@ const isConfigured =
   !GISCUS_CATEGORY_ID.startsWith('REPLACE');
 
 const headingId = 'comments-heading';
+const giscusLang = lang ?? DEFAULT_LANG;
 ---
 
 <section aria-labelledby={headingId}>
-  <h3 id={headingId}>{lang === 'pt' ? 'Comentários' : 'Comments'}</h3>
+  <h3 id={headingId}>{t(lang, 'comments.heading')}</h3>
   {isConfigured ? (
     <div id="giscus-container" data-giscus></div>
   ) : (
-    <p><small>{lang === 'pt'
-      ? 'Comentários ainda não configurados.'
-      : 'Comments not configured yet.'}</small></p>
+    <p><small>{t(lang, 'comments.notConfigured')}</small></p>
   )}
 </section>
 
 {isConfigured && (
   <script
     is:inline
-    define:vars={{ GISCUS_REPO, GISCUS_REPO_ID, GISCUS_CATEGORY, GISCUS_CATEGORY_ID, lang }}
+    define:vars={{ GISCUS_REPO, GISCUS_REPO_ID, GISCUS_CATEGORY, GISCUS_CATEGORY_ID, giscusLang }}
   >
     const container = document.getElementById('giscus-container');
     if (container) {
@@ -49,7 +50,7 @@ const headingId = 'comments-heading';
         s.setAttribute('data-emit-metadata', '0');
         s.setAttribute('data-input-position', 'top');
         s.setAttribute('data-theme', 'preferred_color_scheme');
-        s.setAttribute('data-lang', lang === 'pt' ? 'pt' : 'en');
+        s.setAttribute('data-lang', giscusLang);
         container.appendChild(s);
       };
       const io = new IntersectionObserver((entries) => {

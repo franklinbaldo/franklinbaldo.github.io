@@ -1,12 +1,12 @@
 ---
+import { t, urlPrefix } from '../lib/i18n';
+
 interface Props {
-  lang?: 'en' | 'pt';
+  lang?: string;
 }
 
-const { lang = 'en' } = Astro.props;
-const copy = lang === 'pt'
-  ? { tagline: 'Advogado e Procurador do Estado. Escreve sobre agentes de IA, metafísica do processo e design jurídico.', more: 'Mais ensaios →' }
-  : { tagline: 'Lawyer and State Attorney. Writes on AI agency, process metaphysics, and legal design.', more: 'More essays →' };
+const { lang } = Astro.props;
+const homeHref = `${urlPrefix(lang)}/`;
 ---
 
 <aside>
@@ -14,12 +14,12 @@ const copy = lang === 'pt'
     <header>
       <hgroup>
         <h3>Franklin Baldo</h3>
-        <p><small>{lang === 'pt' ? 'Autor' : 'Author'}</small></p>
+        <p><small>{t(lang, 'author.label')}</small></p>
       </hgroup>
     </header>
-    <p>{copy.tagline}</p>
+    <p>{t(lang, 'author.tagline')}</p>
     <footer>
-      <a href={lang === 'pt' ? '/pt/' : '/'}>{copy.more}</a>
+      <a href={homeHref}>{t(lang, 'author.more')}</a>
     </footer>
   </article>
 </aside>

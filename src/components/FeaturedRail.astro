@@ -1,0 +1,77 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { t, locale } from '../lib/i18n';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  lang?: string;
+}
+
+const { posts, lang } = Astro.props;
+const loc = locale(lang);
+const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
+---
+
+{posts.length > 0 && (
+  <section class="featured-rail" aria-label={t(lang, 'featured.label')}>
+    {posts.map((post) => {
+      const { title, date, description, featuredReason, heroImage, heroImageAlt } = post.data;
+      const href = `/blog/${post.id}/`;
+      return (
+        <article class="featured-card">
+          <p class="eyebrow"><small>{t(lang, 'featured.label')}</small></p>
+          <h2><a href={href}>{title}</a></h2>
+          <p class="lede">{description}</p>
+          <p class="meta">
+            <small>
+              <time datetime={date.toISOString()}>{date.toLocaleDateString(loc, dateOpts)}</time>
+            </small>
+          </p>
+          {featuredReason && (
+            <p class="reason"><small><em>{featuredReason}</em></small></p>
+          )}
+          {heroImage && (
+            <a href={href} class="thumb" aria-hidden="true" tabindex="-1">
+              <Image
+                src={heroImage}
+                alt={heroImageAlt ?? ''}
+                widths={[480, 800]}
+                sizes="(max-width: 800px) 100vw, 800px"
+                format="webp"
+                loading="eager"
+              />
+            </a>
+          )}
+          <p class="cta">
+            <a href={href}>{t(lang, 'post.continueReading')}</a>
+          </p>
+        </article>
+      );
+    })}
+  </section>
+)}
+
+<style>
+  .featured-rail {
+    margin-block: var(--pico-spacing);
+  }
+  .featured-card {
+    border: 1px solid var(--pico-muted-border-color);
+    padding: var(--pico-spacing);
+  }
+  .featured-card .eyebrow {
+    margin: 0 0 .25rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--pico-primary);
+  }
+  .featured-card .reason {
+    margin: .25rem 0 .75rem;
+    color: var(--pico-muted-color);
+  }
+  .featured-card .thumb {
+    display: block;
+    margin-block: .5rem;
+  }
+</style>
