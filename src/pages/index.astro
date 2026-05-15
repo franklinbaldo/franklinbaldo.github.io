@@ -4,6 +4,7 @@ import PageLayout from "../layouts/PageLayout.astro";
 import RecentList from "../components/RecentList.astro";
 import FeaturedRail from "../components/FeaturedRail.astro";
 import PathsTeaser from "../components/PathsTeaser.astro";
+import HomeAuthorRail from "../components/HomeAuthorRail.astro";
 
 const all = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
@@ -23,15 +24,19 @@ const latestHref = latest ? `/blog/${latest.id}/` : "/archive/";
   lang="en"
   translations={{ pt: "/pt/" }}
 >
-  <section class="home-hero" aria-label="Introduction">
-    <p class="home-eyebrow"><small>Franklin Baldo</small></p>
-    <h1 class="home-thesis">cybernetic Borges, building agents in <span class="accent">Delphi</span>.</h1>
-    <p class="home-lede">Essays on AI agency, process metaphysics, and the architecture of legal systems.</p>
-    <p class="home-cta">
-      <a class="cta-primary" href={latestHref}>Read latest essay →</a>
-      <a class="cta-secondary" href="/about/">About this blog</a>
-    </p>
-  </section>
+  <div class="home-top">
+    <section class="home-hero" aria-label="Introduction">
+      <p class="home-eyebrow"><small>Franklin Baldo</small></p>
+      <h1 class="home-thesis">cybernetic Borges, building agents in <span class="accent">Delphi</span>.</h1>
+      <p class="home-lede">Essays on AI agency, process metaphysics, and the architecture of legal systems.</p>
+      <p class="home-cta">
+        <a class="cta-primary" href={latestHref}>Read latest essay →</a>
+        <a class="cta-secondary" href="/about/">About this blog</a>
+      </p>
+    </section>
+
+    <HomeAuthorRail lang="en" />
+  </div>
 
   <FeaturedRail posts={featured} lang="en" />
 
@@ -48,8 +53,20 @@ const latestHref = latest ? `/blog/${latest.id}/` : "/archive/";
 </PageLayout>
 
 <style>
-  .home-hero {
+  .home-top {
     margin-block: calc(var(--pico-spacing) * 1.5) calc(var(--pico-spacing) * 2.5);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: calc(var(--pico-spacing) * 2);
+  }
+  @media (min-width: 1100px) {
+    .home-top {
+      grid-template-columns: minmax(0, 1fr) 18rem;
+      gap: calc(var(--pico-spacing) * 3);
+      align-items: start;
+    }
+  }
+  .home-hero {
     max-width: 38rem;
   }
   .home-eyebrow {

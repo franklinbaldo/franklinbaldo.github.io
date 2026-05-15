@@ -4,6 +4,7 @@ import PageLayout from "../../layouts/PageLayout.astro";
 import RecentList from "../../components/RecentList.astro";
 import FeaturedRail from "../../components/FeaturedRail.astro";
 import PathsTeaser from "../../components/PathsTeaser.astro";
+import HomeAuthorRail from "../../components/HomeAuthorRail.astro";
 
 const all = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
@@ -23,15 +24,19 @@ const latestHref = latest ? `/blog/${latest.id}/` : "/pt/archive/";
   lang="pt"
   translations={{ en: "/" }}
 >
-  <section class="home-hero" aria-label="Introdução">
-    <p class="home-eyebrow"><small>Franklin Baldo</small></p>
-    <h1 class="home-thesis">Borges cibernético, construindo agentes em <span class="accent">Delfos</span>.</h1>
-    <p class="home-lede">Ensaios sobre agência de IA, metafísica do processo e a arquitetura dos sistemas jurídicos.</p>
-    <p class="home-cta">
-      <a class="cta-primary" href={latestHref}>Ler ensaio mais recente →</a>
-      <a class="cta-secondary" href="/pt/about/">Sobre este blog</a>
-    </p>
-  </section>
+  <div class="home-top">
+    <section class="home-hero" aria-label="Introdução">
+      <p class="home-eyebrow"><small>Franklin Baldo</small></p>
+      <h1 class="home-thesis">Borges cibernético, construindo agentes em <span class="accent">Delfos</span>.</h1>
+      <p class="home-lede">Ensaios sobre agência de IA, metafísica do processo e a arquitetura dos sistemas jurídicos.</p>
+      <p class="home-cta">
+        <a class="cta-primary" href={latestHref}>Ler ensaio mais recente →</a>
+        <a class="cta-secondary" href="/pt/about/">Sobre este blog</a>
+      </p>
+    </section>
+
+    <HomeAuthorRail lang="pt" />
+  </div>
 
   <FeaturedRail posts={featured} lang="pt" />
 
@@ -48,8 +53,20 @@ const latestHref = latest ? `/blog/${latest.id}/` : "/pt/archive/";
 </PageLayout>
 
 <style>
-  .home-hero {
+  .home-top {
     margin-block: calc(var(--pico-spacing) * 1.5) calc(var(--pico-spacing) * 2.5);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: calc(var(--pico-spacing) * 2);
+  }
+  @media (min-width: 1100px) {
+    .home-top {
+      grid-template-columns: minmax(0, 1fr) 18rem;
+      gap: calc(var(--pico-spacing) * 3);
+      align-items: start;
+    }
+  }
+  .home-hero {
     max-width: 38rem;
   }
   .home-eyebrow {
