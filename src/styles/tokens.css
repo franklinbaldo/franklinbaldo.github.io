@@ -8,14 +8,14 @@
  */
 
 :root {
-  --pico-background-color: #f7f1e6;
+  --pico-background-color: #f4ecdc;
   --pico-color: #2a241d;
   --pico-muted-color: #6b6258;
-  --pico-muted-border-color: #d8cdb8;
-  --pico-border-color: #c9bca3;
-  --pico-card-background-color: #fbf6ec;
-  --pico-card-sectioning-background-color: #f3ecdc;
-  --pico-code-background-color: #efe7d4;
+  --pico-muted-border-color: #d4c8b0;
+  --pico-border-color: #c2b59a;
+  --pico-card-background-color: #faf3e2;
+  --pico-card-sectioning-background-color: #efe5d0;
+  --pico-code-background-color: #ebe1c8;
   --pico-mark-background-color: #fae1c0;
   --pico-mark-color: #2a241d;
 }

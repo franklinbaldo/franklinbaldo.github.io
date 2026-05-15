@@ -25,13 +25,47 @@ body::before {
   background-image: url("/cobogo.svg");
   background-size: 240px 240px;
   background-repeat: repeat;
-  opacity: 0.05;
-  color: var(--pico-primary);
+  opacity: 0.08;
+  color: var(--pico-muted-color);
   pointer-events: none;
 }
 
-/* Reading article gets a faint paper-grain shadow on wide screens. */
-@media (min-width: 1200px) {
+/*
+ * Post-page sticky-TOC sidebar layout. Lives in global.css (not the post
+ * route's scoped <style>) so Pico's `nav` selectors and the post route's
+ * component-scoped class names don't fight each other.
+ */
+.post-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.toc-col {
+  display: none;
+}
+
+@media (min-width: 1100px) {
+  .post-grid {
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .toc-col {
+    display: block;
+    position: sticky;
+    top: 4.5rem;
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
+    padding-top: 0.25rem;
+  }
+
+  /* Hide the inline collapsible ToC on desktop — sidebar replaces it. */
+  .post-body .toc-inline {
+    display: none;
+  }
+
+  /* Reading article gets a faint paper-grain shadow on wide screens. */
   .post-body > article {
     box-shadow: 0 1px 0 var(--pico-muted-border-color),
                 0 24px 48px -32px rgba(42, 36, 29, 0.15);

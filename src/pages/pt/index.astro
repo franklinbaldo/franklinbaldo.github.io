@@ -21,7 +21,7 @@ const recent = all.filter((p) => !featuredIds.has(p.id)).slice(0, 8);
   lang="pt"
   translations={{ en: "/" }}
 >
-  <hgroup>
+  <hgroup class="home-hero">
     <h1>Franklin Baldo</h1>
     <p>Ensaios sobre agentes de IA, metafísica do processo e design jurídico.</p>
   </hgroup>
@@ -30,9 +30,42 @@ const recent = all.filter((p) => !featuredIds.has(p.id)).slice(0, 8);
 
   <PathsTeaser lang="pt" />
 
-  <section aria-label="Ensaios recentes">
-    <h2>Ensaios recentes</h2>
+  <section class="home-recent" aria-label="Ensaios recentes">
+    <p class="section-eyebrow"><small>Ensaios recentes</small></p>
+    <h2 class="section-heading">Ensaios recentes</h2>
     <PostList posts={recent} />
     <p><small><a href="/pt/archive/">Ver o arquivo completo →</a></small></p>
   </section>
 </PageLayout>
+
+<style>
+  .home-hero {
+    margin-block: calc(var(--pico-spacing) * 1.5) calc(var(--pico-spacing) * 2);
+  }
+  .home-hero h1 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1.05;
+    margin-bottom: .25rem;
+  }
+  .home-hero p {
+    font-size: 1.15rem;
+    color: var(--pico-muted-color);
+    max-width: 55ch;
+  }
+  .home-recent {
+    margin-block: calc(var(--pico-spacing) * 2);
+  }
+  .section-eyebrow {
+    margin: 0 0 .25rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--pico-primary);
+  }
+  .section-heading {
+    margin: 0 0 var(--pico-spacing);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.15;
+  }
+</style>
