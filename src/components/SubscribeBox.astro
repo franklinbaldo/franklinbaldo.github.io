@@ -33,7 +33,6 @@ const copy = lang === 'pt'
     method="post"
     target="popupwindow"
     onsubmit={`window.open('https://buttondown.email/${username}', 'popupwindow')`}
-    class="actions"
   >
     <input type="email" name="email" placeholder={copy.placeholder} required aria-label="email" />
     <button type="submit">{copy.button}</button>
