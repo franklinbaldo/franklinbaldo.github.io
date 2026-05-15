@@ -13,7 +13,7 @@ import AuthorBio from '../../components/AuthorBio.astro';
 import Comments from '../../components/Comments.astro';
 import SeriesContext from '../../components/SeriesContext.astro';
 import { getSeriesContext } from '../../lib/series';
-import { t, locale as localeFor, urlPrefix, DEFAULT_LANG } from '../../lib/i18n';
+import { t, targetCopy, locale as localeFor, urlPrefix, DEFAULT_LANG } from '../../lib/i18n';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -39,15 +39,19 @@ const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
 const tagsPrefix = `${urlPrefix(lang)}/tags`;
 
 const allPosts = await getCollection('blog');
-const translation = translationKey
-  ? allPosts.find((p) => p.data.translationKey === translationKey && p.id !== post.id)
-  : null;
-const translationHref = translation ? `/blog/${translation.id}/` : undefined;
-const translationLang = translation?.data.lang ?? DEFAULT_LANG;
-const translations: Record<string, string> = translationHref
-  ? { [translationLang]: translationHref }
-  : {};
-const translationLabel = translation ? t(lang, 'lang.switchLabel') : undefined;
+const translationSiblings = translationKey
+  ? allPosts.filter((p) => p.data.translationKey === translationKey && p.id !== post.id)
+  : [];
+const translations: Record<string, string> = Object.fromEntries(
+  translationSiblings.map((p) => [p.data.lang ?? DEFAULT_LANG, `/blog/${p.id}/`]),
+);
+const translationLinks = translationSiblings.map((p) => {
+  const targetLang = p.data.lang ?? DEFAULT_LANG;
+  return {
+    href: `/blog/${p.id}/`,
+    label: targetCopy(lang, targetLang).invitation,
+  };
+});
 ---
 
 <PageLayout
@@ -106,9 +110,11 @@ const translationLabel = translation ? t(lang, 'lang.switchLabel') : undefined;
           ))}
         </small></p>
       )}
-      {translationHref && translationLabel && (
+      {translationLinks.length > 0 && (
         <p><small>
-          <a href={translationHref}>{translationLabel}</a>
+          {translationLinks.map((link, i) => (
+            <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
+          ))}
         </small></p>
       )}
       <ShareButton title={title} />

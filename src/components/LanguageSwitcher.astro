@@ -1,18 +1,17 @@
 ---
 import { LANGUAGES, DEFAULT_LANG } from '../lib/i18n';
 
-const langLabels = Object.fromEntries(
-  Object.entries(LANGUAGES).map(([code, cfg]) => [code, cfg.ui['lang.label']]),
-);
-const switchLabels = Object.fromEntries(
-  Object.entries(LANGUAGES).map(([code, cfg]) => [code, cfg.ui['lang.switchLabel']]),
-);
-const noTransLabels = Object.fromEntries(
-  Object.entries(LANGUAGES).map(([code, cfg]) => [code, cfg.ui['lang.noTranslation']]),
-);
 const supported = Object.keys(LANGUAGES);
 const navMatch = Object.fromEntries(
   Object.entries(LANGUAGES).map(([code, cfg]) => [code, cfg.navMatch]),
+);
+// Per-current-page table of how to describe each potential target language.
+// targetCopy[currentPageLang][targetLang] = { shortLabel, invitation, noTranslation }
+const targetCopyTable = Object.fromEntries(
+  Object.entries(LANGUAGES).map(([code, cfg]) => [code, cfg.targets]),
+);
+const ariaTable = Object.fromEntries(
+  Object.entries(LANGUAGES).map(([code, cfg]) => [code, cfg.ui['lang.switchAria']]),
 );
 ---
 
@@ -28,7 +27,7 @@ const navMatch = Object.fromEntries(
 
 <script
   is:inline
-  define:vars={{ supported, langLabels, switchLabels, noTransLabels, navMatch, defaultLang: DEFAULT_LANG }}
+  define:vars={{ supported, navMatch, targetCopyTable, ariaTable, defaultLang: DEFAULT_LANG }}
 >
   (() => {
     const btn = document.querySelector('[data-lang-switcher]');
@@ -51,6 +50,7 @@ const navMatch = Object.fromEntries(
 
     const translations = (window.__translations || {});
     const pageLang = window.__pageLang || document.documentElement.lang || defaultLang;
+    const fromCurrent = targetCopyTable[pageLang] || {};
 
     // Auto-redirect once if user prefers a different language and a translation exists.
     if (translations[userLang] && pageLang !== userLang) {
@@ -62,22 +62,27 @@ const navMatch = Object.fromEntries(
       }
     }
 
-    // Decide target language: prefer user's stored choice if a translation exists,
-    // else first available alternate translation.
+    // Pick a target: user's preferred lang if a translation exists, else the
+    // first available alternate, else null.
     const otherCodes = supported.filter((c) => c !== pageLang);
-    const candidate = translations[userLang] ? userLang
-      : otherCodes.find((c) => translations[c]);
+    const candidate = translations[userLang]
+      ? userLang
+      : otherCodes.find((c) => translations[c]) || null;
 
-    // Labels are authored from the current page's perspective: the EN bundle's
-    // `lang.label` says "PT" because that's what an EN reader sees on the button.
-    // So look up labels by pageLang, not by the target candidate.
+    // Labels are looked up FROM the current page lang ABOUT the chosen target,
+    // so the button text always describes whichever target the click will open.
     if (candidate) {
-      label.textContent = langLabels[pageLang] || pageLang.toUpperCase();
-      btn.setAttribute('aria-label', switchLabels[pageLang] || `Switch language`);
+      const copy = fromCurrent[candidate] || { shortLabel: candidate.toUpperCase(), invitation: 'Switch language' };
+      label.textContent = copy.shortLabel;
+      btn.setAttribute('aria-label', copy.invitation);
       btn.disabled = false;
     } else {
-      label.textContent = langLabels[pageLang] || '—';
-      btn.setAttribute('aria-label', noTransLabels[pageLang] || 'No translation');
+      // No translation: describe one of the unavailable alternates so the
+      // button still communicates intent.
+      const fallback = otherCodes[0];
+      const copy = (fallback && fromCurrent[fallback]) || null;
+      label.textContent = (copy && copy.shortLabel) || '—';
+      btn.setAttribute('aria-label', (copy && copy.noTranslation) || ariaTable[pageLang] || 'No translation');
       btn.disabled = true;
     }
     btn.hidden = false;

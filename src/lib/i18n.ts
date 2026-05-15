@@ -19,7 +19,6 @@ const UI_KEYS = [
   'post.series',
   'post.allInSeries',
   'post.thisPost',
-  'post.readInLang',
   'series.navLabel',
   'featured.label',
   'paths.heading',
@@ -36,12 +35,26 @@ const UI_KEYS = [
   'comments.notConfigured',
   'related.heading',
   'toc.label',
-  'lang.label',
-  'lang.switchLabel',
-  'lang.noTranslation',
+  'lang.switchAria',
 ] as const;
 
 export type UIKey = (typeof UI_KEYS)[number];
+
+/**
+ * Strings describing another language from the current language's perspective.
+ * `LANGUAGES.en.targets.pt.invitation` is what an EN reader sees inviting
+ * them to switch to PT ("Ler em Português"). Adding a third language means
+ * adding its target entry to every existing language config (and a new
+ * config block).
+ */
+export interface TargetLangCopy {
+  /** Short label shown on a compact button, e.g. "PT". */
+  shortLabel: string;
+  /** Full invitation, typically written in the target language. */
+  invitation: string;
+  /** Shown when no translation exists in this target language. */
+  noTranslation: string;
+}
 
 export interface LangConfig {
   code: string;
@@ -49,9 +62,10 @@ export interface LangConfig {
   locale: string;
   /** URL prefix for in-site links; empty string for the default language. */
   urlPrefix: string;
-  /** Lowercase prefixes of `navigator.language` that should resolve to this code. */
+  /** Lowercase prefixes of `navigator.language` that resolve to this code. */
   navMatch: string[];
   ui: Record<UIKey, string>;
+  targets: Record<string, TargetLangCopy>;
 }
 
 export const LANGUAGES: Record<string, LangConfig> = {
@@ -78,7 +92,6 @@ export const LANGUAGES: Record<string, LangConfig> = {
       'post.series': 'series.',
       'post.allInSeries': 'All posts in this series',
       'post.thisPost': 'this post',
-      'post.readInLang': 'Read in Portuguese',
       'series.navLabel': 'Series navigation',
       'featured.label': 'Featured essay',
       'paths.heading': 'Reading paths',
@@ -95,9 +108,14 @@ export const LANGUAGES: Record<string, LangConfig> = {
       'comments.notConfigured': 'Comments not configured yet.',
       'related.heading': 'Related posts',
       'toc.label': 'Contents',
-      'lang.label': 'PT',
-      'lang.switchLabel': 'Ler em Português',
-      'lang.noTranslation': 'Sem versão em português',
+      'lang.switchAria': 'Switch language',
+    },
+    targets: {
+      pt: {
+        shortLabel: 'PT',
+        invitation: 'Ler em Português',
+        noTranslation: 'Sem versão em português',
+      },
     },
   },
   pt: {
@@ -123,7 +141,6 @@ export const LANGUAGES: Record<string, LangConfig> = {
       'post.series': '.',
       'post.allInSeries': 'Todos os posts desta série',
       'post.thisPost': 'este post',
-      'post.readInLang': 'Read in English',
       'series.navLabel': 'Navegação da série',
       'featured.label': 'Ensaio em destaque',
       'paths.heading': 'Caminhos de leitura',
@@ -140,9 +157,14 @@ export const LANGUAGES: Record<string, LangConfig> = {
       'comments.notConfigured': 'Comentários ainda não configurados.',
       'related.heading': 'Posts relacionados',
       'toc.label': 'Conteúdo',
-      'lang.label': 'EN',
-      'lang.switchLabel': 'Read in English',
-      'lang.noTranslation': 'No English version',
+      'lang.switchAria': 'Alterar idioma',
+    },
+    targets: {
+      en: {
+        shortLabel: 'EN',
+        invitation: 'Read in English',
+        noTranslation: 'No English version',
+      },
     },
   },
 };
@@ -155,6 +177,24 @@ function configFor(lang: string | undefined): LangConfig {
 export function t(lang: string | undefined, key: UIKey): string {
   const cfg = configFor(lang);
   return cfg.ui[key] ?? LANGUAGES[DEFAULT_LANG].ui[key];
+}
+
+/**
+ * Look up the copy describing `targetLang` from `currentLang`'s perspective.
+ * Falls back to a code-only label when the pairing is undefined.
+ */
+export function targetCopy(
+  currentLang: string | undefined,
+  targetLang: string,
+): TargetLangCopy {
+  const cfg = configFor(currentLang);
+  return (
+    cfg.targets[targetLang] ?? {
+      shortLabel: targetLang.toUpperCase(),
+      invitation: targetLang.toUpperCase(),
+      noTranslation: `No ${targetLang.toUpperCase()} version`,
+    }
+  );
 }
 
 /**
@@ -177,7 +217,6 @@ export function urlPrefix(lang: string | undefined): string {
   return configFor(lang).urlPrefix;
 }
 
-/** All language codes the site is configured for. */
 export function supportedLangs(): string[] {
   return Object.keys(LANGUAGES);
 }
