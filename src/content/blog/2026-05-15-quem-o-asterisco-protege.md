@@ -1,0 +1,181 @@
+---
+title: "Quem o asterisco protege"
+description: "Sobre a anonimização parcial do CPF, a garrafa pet no padrão de energia, e a barreira que escolheu o lado errado."
+date: "2026-05-15"
+lang: pt
+translationKey: asterisk-protects
+tags: ["lgpd", "privacidade", "transparência", "segurança", "direito"]
+---
+
+Num diário oficial qualquer, no cabeçalho de uma decisão monocrática do Tribunal de Contas, aparece a frase:
+
+> INTERESSADA: Mariana Esteves Carvalho Albuquerque. CPF n. `***.123.456-**`.
+
+A frase está bem composta. O nome inteiro, com as preposições no lugar. O CPF picotado nas pontas. O Iperon, ao concedê-la, não viu razão para esconder o nome de quem se aposentou; o Tribunal de Contas, ao registrá-la, não viu razão para mudar essa escolha; mas ambos viram razão para esconder dois pedaços do CPF. O documento publica e oculta na mesma linha, com a serenidade do funcionalismo bem treinado.
+
+A cena se repete por centenas de decisões. O Tribunal de Contas faz o exame sumário dos atos de aposentadoria concedidos pelo instituto previdenciário estadual e publica o resultado no seu próprio Diário Oficial. Cada decisão traz o nome completo do interessado, o cargo, a lotação, os artigos da Constituição e das emendas em que se fundamenta o ato, e o CPF mascarado nas pontas. Ninguém leu a página inteira e perguntou: se o nome está aqui, o que os asteriscos estão protegendo?
+
+## A conta que ninguém faz
+
+O CPF brasileiro tem onze dígitos. Os nove primeiros são, em princípio, livres; os dois últimos são dígitos verificadores, calculados a partir dos nove primeiros por uma operação previsível — o módulo onze, fixado em norma da Receita Federal[^1]. Em outras palavras: os dois últimos não acrescentam informação que já não esteja contida nos nove primeiros. Existem para detectar erros de digitação, não para esconder informação.
+
+Quando se mascara um CPF na forma `***.XXX.XXX-**`, esconde-se cinco dígitos. O leitor casual conta cinco asteriscos e imagina cinco dígitos de incerteza. Cinco dígitos decimais seriam cem mil possibilidades. Cem mil é um número grande.
+
+Não é o número certo.
+
+Os dois últimos asteriscos não escondem nada que os outros não tenham dito. Dado qualquer prefixo de nove dígitos, os dois verificadores são únicos. Sobram os três asteriscos do início. Três dígitos decimais. Mil possibilidades.
+
+Para enumerar essas mil possibilidades, basta um *for* de três níveis em qualquer linguagem que tenha aritmética inteira. Para cada terna candidata, calcula-se os dois verificadores, completa-se o CPF, está pronto: um CPF válido por candidato, mil candidatos no total. A operação cabe em quinze linhas de Python. Roda em microssegundos.
+
+A matemática está matematicando. Cinco asteriscos parecem cinco dígitos. Não são.
+
+<figure class="svg-illustration">
+  <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title-entropia">
+    <title id="title-entropia">Entropia percebida vs entropia real do CPF parcialmente anonimizado</title>
+    <text x="20" y="32" font-family="serif" font-size="14" fill="currentColor">entropia ingênua (cinco dígitos): 100.000 candidatos</text>
+    <rect x="20" y="42" width="660" height="20" fill="currentColor" opacity="0.85"/>
+    <text x="20" y="100" font-family="serif" font-size="14" fill="currentColor">entropia real (verificadores são funções): 1.000 candidatos</text>
+    <rect x="20" y="110" width="6.6" height="20" fill="currentColor" opacity="0.85"/>
+    <text x="20" y="168" font-family="serif" font-size="14" fill="currentColor">com nome no Portal da Transparência: ≈ 1 candidato</text>
+    <rect x="20" y="178" width="1" height="20" fill="currentColor" opacity="0.85"/>
+  </svg>
+  <figcaption>A redução da incerteza, em escala linear. O nome completo apaga o que sobrou.</figcaption>
+</figure>
+
+## O nome é a porta da frente
+
+A operação anterior — gerar mil candidatos — é elegante e desnecessária. Em quase todos os casos práticos, ninguém precisa gerar mil candidatos, porque cinco asteriscos vivem cercados de informação que já identifica unicamente o titular.
+
+Mariana Esteves Carvalho Albuquerque, cujo nome aparece na decisão monocrática, não é qualquer Mariana. É servidora pública estadual aposentada, com cargo definido, lotação registrada, matrícula numerada. O Portal da Transparência publica o nome completo, a matrícula, o cargo, a lotação e a remuneração de toda a folha. O Diário Oficial Eletrônico do Estado, pesquisável por texto integral em quase duas décadas de arquivo, traz a portaria de nomeação, alguma promoção, alguma licença, a publicação do ato concessório de aposentadoria. Em alguma dessas publicações, ao longo desses vinte anos, o CPF apareceu inteiro. A LGPD virou regra em 2018; o resto da história documental do servidor é anterior, e foi indexada.
+
+A pergunta que o asterisco pretende esquivar é uma pergunta que o asterisco não tem como esquivar: *quem é essa pessoa*. O ato já respondeu. O CPF picotado é uma confirmação redundante de uma identificação já operada pelo próprio cabeçalho do documento.
+
+Quando o sistema brasileiro de proteção performática se sente especialmente diligente — cof cof cof, o IPERON 🤧 — anonimiza também a matrícula. Algo como `****-1234` aparece ao lado do CPF picotado. A operação é matematicamente pior do que publicar um dos dois inteiro. Dois identificadores parcialmente mascarados se cruzam por interseção: o conjunto de candidatos compatíveis com `***.452.318-**` intersectado com o conjunto compatível com `****-1234` fecha, na maioria dos casos, em uma única pessoa, mesmo sem o nome. A cartilha que esconde dois dedos do CPF *e* dois dedos da matrícula está dando mais informação, não menos.
+
+Não foi sempre assim. Em algum momento entre 2018 e 2022, todo mundo no serviço público brasileiro se convenceu — por uma combinação de cartilhas avulsas e medo do escritório jurídico — de que o CPF picotado era a marca formal da conformidade com a LGPD. Aplicou-se o picote sem mexer no resto. O nome continuou inteiro porque tirar o nome seria, aí sim, contrariar a finalidade do ato. O CPF foi a peça oferecida ao ritual.
+
+```mermaid
+flowchart LR
+    A["Ato no DOE-TCE<br/>nome completo<br/>CPF parcial"] --> B[Portal da Transparência]
+    A --> C[Diário Oficial pesquisável]
+    B --> D[matrícula, cargo, lotação]
+    C --> E["publicações anteriores<br/>(CPF inteiro)"]
+    D --> F[identificação unívoca]
+    E --> F
+```
+
+## Robson e Dona Maria
+
+Robson tem vinte e sete anos, é técnico de informática num posto de gasolina na BR-364 e sabe Python o suficiente para resolver problemas pequenos. Mantém as máquinas de cartão, configura o Wi-Fi da loja de conveniência, atualiza o sistema da bomba. Lê o ato porque o cunhado se aposentou e ele estava curioso. Os asteriscos não o detêm porque ele nem precisa decifrá-los: cola o nome no Google, encontra o servidor no Portal da Transparência, confirma com a página de aprovados de algum concurso antigo, e em dez minutos tem o quadro completo. Não usou nenhuma ferramenta que não seja gratuita. Não baixou nada. Não rodou nenhum script. Apenas leu — e o sistema brasileiro de publicações oficiais permite que se leia.
+
+Dona Maria mora ao lado de um servidor que se aposentou por incapacidade permanente no ano passado mas continua jogando peladas no domingo. Ela é viúva, leu jornal a vida inteira, e desconfia. Procura o nome do vizinho no Diário Oficial, encontra a decisão monocrática, lê *aposentadoria por invalidez*, e vê o CPF picotado nas pontas. Não tem treinamento técnico nenhum. Não conhece o Portal da Transparência. Os asteriscos a paralisam, não porque sejam intransponíveis, mas porque sinalizam ritual jurídico e Dona Maria entendeu, com razão, que não foi convidada para o ritual. Fecha o navegador. A fiscalização social que ela poderia ter exercido — uma das pequenas vigilâncias civis que sustentam o controle dos atos administrativos — não aconteceu.
+
+A pergunta vértebra do post inteiro cabe numa só frase: contra qual dos dois a anonimização funciona?
+
+Contra a Dona Maria. Robson nem sabe que ela existe.
+
+<figure class="meme">
+  <img src="https://api.memegen.link/images/drake/publicar_o_CPF_inteiro/publicar_nome_completo_e_CPF_picotado.png?width=500" alt="Meme do Drake: rejeitando 'publicar o CPF inteiro' e aprovando 'publicar nome completo e CPF picotado'"/>
+  <figcaption>O segundo identifica unicamente. O primeiro identifica unicamente. A diferença é estética.</figcaption>
+</figure>
+
+## O hacker de Araraquara
+
+Para o caso em que Robson não fecha por triangulação web — homonímia teimosa, servidor com presença digital limpa, vítima sem CPF publicado em parte alguma — não é preciso invocar uma categoria nova. É o próprio Robson, com mais tenacidade e mais tempo livre. Podemos chamá-lo de [hacker de Araraquara](https://pt.wikipedia.org/wiki/Walter_Delgatti_Neto), em homenagem ao personagem do folclore político brasileiro que progrediu para o regime aberto na semana passada. A diferença para o Robson é uma só: este aqui baixou, num torrent qualquer, o *dump* da Serasa de 2021 — duzentos e vinte milhões de CPFs com nome completo, data de nascimento, endereço e nome da mãe, indexados em algum SQLite no HD externo. Em qualquer caso difícil, resolve em quinze segundos.
+
+O teto técnico do adversário não-estatal e não-Big-Tech brasileiro tem nome, ficha criminal e tornozeleira — e é, materialmente, o Robson do parágrafo anterior com mais teimosia. A barreira da cartilha nunca chegou nem ao nível do Robson.
+
+```mermaid
+flowchart LR
+    M["Dona Maria"] -.barrada nos asteriscos.-> X["—"]
+    R["Robson"] -->|10 minutos| ID["identificação<br/>unívoca"]
+    R -.+ teimosia<br/>+ dump Serasa.-> H["hacker de<br/>Araraquara"]
+    H -->|15 segundos| ID
+```
+
+## A garrafa pet em cima do padrão
+
+Há um nome técnico para esse tipo de erro, e ele veio antes do CPF: *security theater*, ou teatro de segurança, expressão cunhada pelo criptógrafo Bruce Schneier no início dos anos 2000 para descrever rituais públicos de proteção cuja função real é apenas exibir que uma proteção está sendo executada. A inspeção de sapato no aeroporto é o exemplo americano canônico. A grade na janela com a porta dos fundos destrancada é o exemplo brasileiro genérico, e quase qualquer condomínio do país oferece a sua variação.
+
+O caso paradigmático, contudo, é melhor: lembra de quando a gente colocava garrafa pet com água em cima do padrão de energia? Foi o ritual nacional dos anos 1990 e começo dos 2000 — uma garrafa cheia, deitada ou de pé, sobre o medidor, na fé serena de que aquilo segurava o consumo. Não segurava. A água não tem opinião sobre o medidor. Mas funcionava por outro caminho: a gente via a garrafa ali, todo dia, e lembrava de apagar a luz da sala. O ritual era falso na física e verdadeiro na psicologia. Funcionava por engano, mas funcionava.
+
+O asterisco no Diário Oficial é uma garrafa pet sem nem o efeito de lembrete. Quem vê os cinco asteriscos não pensa *preciso proteger os dados do servidor*; pensa, na melhor das hipóteses, *ah, anonimização*, e segue para o nome inteiro logo ao lado.
+
+Eu e os outros 843 Franklin Silveira Baldo deste país agradecemos publicamente terem escondido o 7, o 6 e o 4 do meu CPF logo depois de terem dito o nome completo de cada um de nós.
+
+E quem produz o ato, na outra ponta, também não pensa em proteção — pensa em conformidade formal. Nenhum dos dois lados da publicação está sendo psicologicamente lembrado de coisa alguma. O ritual brasileiro normalmente paga o preço da inutilidade técnica com o lucro do efeito psicológico. Este aqui não paga e não lucra.
+
+Não é teatro de segurança. É teatro do teatro de segurança.
+
+## A cartilha que se contradiz
+
+A produção da cartilha tem uma sociologia própria, e o primeiro absurdo é que não há *a* cartilha — há centenas. Não saiu da Autoridade Nacional de Proteção de Dados uma orientação técnica unificada. Não saiu do governo federal uma instrução normativa de aplicação geral. Não saiu de nenhum órgão central uma diretriz que pudesse ser seguida por todo o setor público. Em vez disso, em cada autarquia, cada tribunal, cada secretaria de estado, cada conselho profissional, cada universidade pública, formou-se um comitê de governança de dados próprio — pessoas do jurídico, do gabinete da presidência, da tecnologia da informação e da comunicação. Cada um desses comitês se reúne. Cada um produz, em algum trimestre, um documento intitulado, com discreta variação local, *Boas Práticas de Anonimização de Dados Pessoais em Atos Administrativos*. Tem entre quatro e doze páginas, traz o brasão do órgão, alguma fundamentação na LGPD, e uma seção final com exemplos de mascaramento. O exemplo invariavelmente recomendado é o `***.XXX.XXX-**`. A cartilha é aprovada por portaria. A portaria é publicada no Diário Oficial. No mesmo Diário Oficial, três páginas adiante, o ato concessório de aposentadoria de alguém aparece com o nome inteiro e o CPF picotado.
+
+Centenas de comitês independentes, em paralelo, durante anos, trabalharam para chegar à mesma resposta errada.
+
+Tipo de produtividade institucional que só o Brasil consegue.
+
+Peço licença para cometer uma carteirada de baixa periculosidade: minha dissertação de mestrado foi sobre transparência administrativa. Não é título nobiliárquico; no máximo, autoriza uma irritação tecnicamente qualificada com a garrafa pet normativa.
+
+Há um detalhe que torna a coisa ainda mais elegante. Os autores da cartilha — o jurídico, o gabinete, a TI — são exatamente as pessoas com acesso integral aos bancos de dados do órgão. Eles próprios constituem o conjunto contra o qual a anonimização do CPF na publicação seria, em tese, uma defesa. São os Robsons internos, com a diferença de que têm credencial. O ritual está sendo executado, em parte significativa, pelos próprios atores contra quem aparentaria proteger — e na prática nunca protegeu, porque ninguém precisa de CPF picotado quando se tem login no sistema. A cartilha não é uma política de segurança. É uma performance de conformidade, escrita pelos próprios atores que a tornariam ineficaz, dirigida a um adversário externo que não existe.
+
+Para medir a profundidade do reflexo, pedi opinião editorial deste ensaio a um modelo de linguagem comercial. O pobre coitado, treinado em terabytes de texto público brasileiro pós-2018, me recomendou — com toda a boa intenção — que eu *anonimizasse o exemplo inicial*, porque citar um nome real ao lado de um CPF parcialmente mascarado podia, segundo ele, *expor a pessoa específica*. A cartilha contaminou até o leitor sintético. Saiu de Porto Velho, atravessou o Pacífico, foi treinada em algum servidor na Califórnia, e voltou intacta sob a forma de recomendação editorial bem-intencionada. O ritual encontrou modo de se propagar mesmo sem comitês.
+
+<figure class="meme">
+  <img src="https://api.memegen.link/images/gb/esconder_3_digitos/esconder_5_digitos/esconder_5_mas_2_sao_verificadores/nao_publicar.png?width=500" alt="Galaxy brain meme em quatro níveis: esconder 3 dígitos, esconder 5 dígitos, esconder 5 mas 2 são verificadores, não publicar"/>
+  <figcaption>O nível iluminado escapou ao comitê.</figcaption>
+</figure>
+
+## O que a LGPD efetivamente diz
+
+A LGPD definiu anonimização no art. 5º, inciso XI, com palavras que não admitem o uso brasileiro do termo:
+
+<blockquote class="pull-quote">
+Anonimização: utilização de meios técnicos razoáveis e disponíveis no momento do tratamento, por meio dos quais um dado perde a possibilidade de associação, direta ou indireta, a um indivíduo.
+</blockquote>
+
+Mil candidatos cruzados com nome completo, cargo, lotação e duas décadas de Diário Oficial indexado não constituem dado que perdeu a possibilidade de associação. Robson não é meio técnico irrazoável. É um técnico de posto de gasolina com Python. A definição legal de anonimização é generosamente larga, e ainda assim a prática brasileira não cabe dentro dela.
+
+O verbo da definição é específico: *perde* a possibilidade de associação. Não dificulta. Não encarece. Não desestimula curiosos. Perde. A LGPD adotou uma definição binária — ou o dado foi de fato desvinculado do titular, ou não foi. Não há regime intermediário, não há meia-anonimização. Truques que tornam a reidentificação trivial para qualquer Robson não cumprem a hipótese legal: sequer chegam a tentar. Pelo lado da privacidade, portanto, o picote não tem onde se apoiar.
+
+Sobra examiná-lo pelo lado oposto: o da transparência. A LGPD prevê, no art. 23, hipótese específica para tratamento de dados pessoais pelo poder público, articulada com a Lei de Acesso à Informação, cujo art. 8º define o catálogo da transparência ativa — remunerações, atos de pessoal, contratos. A Constituição, no art. 37, *caput*, faz da publicidade um princípio reitor da administração pública. O Supremo Tribunal Federal, no ARE 652.777 de 2015, decidiu que a divulgação nominal da remuneração de servidores é legítima decorrência desse princípio. O sistema jurídico, em outras palavras, já fez sua escolha em favor da transparência para atos administrativos de servidor — e o picote do CPF opera abaixo dessa escolha, encarecendo a verificação para quem deveria poder verificar. Não anonimiza porque não consegue. Atrapalha porque o nome inteiro ao lado convoca uma verificação que o picote dificulta sem necessidade. Faz o pior dos dois mundos, e o faz com firmeza.
+
+## A *mens legis* ausente
+
+A LGPD não foi pensada no Brasil. É, em larga medida, a prima brasileira do *General Data Protection Regulation* europeu — o GDPR, escrito em 2016 e em vigor desde 2018. O GDPR não saiu de um vácuo legislativo: saiu, em parte considerável, da resposta política à percepção crescente, ao longo dos anos 2010, de que algumas empresas concentravam um poder informacional desproporcional. O escândalo Cambridge Analytica, em 2018, deu nome e rosto a essa percepção — a Facebook revelou ter exposto os dados de oitenta e sete milhões de usuários a uma firma de consultoria política que os usou para microdirecionamento eleitoral, num episódio que atravessou a campanha do Brexit e a eleição americana de 2016. O trabalho legislativo do GDPR já estava em curso antes do escândalo; Cambridge Analytica deu o nome popular ao que estava sendo regulado. A LGPD, dois anos depois, refletiu a mesma motivação.
+
+O que aconteceu no caminho entre a lei e a cartilha é uma forma de transferência. As empresas que originaram a preocupação seguem operando essencialmente como operavam. Vazamentos sistêmicos atravessam a paisagem brasileira sem provocar resposta institucional proporcional. A Serasa vazou cerca de duzentos e vinte milhões de CPFs em 2021. Registros do INSS aparecem em fóruns há anos. O operador de telemarketing que liga no horário do almoço da gente sabe o valor exato da última fatura, e a gente já desistiu de perguntar como ele sabe. A LGPD existe enquanto tudo isso acontece. Mas a parte da LGPD que efetivamente pega — que gera comitês, cartilhas, treinamentos, ações disciplinares internas, exclusão de informação útil dos bancos de dados públicos — é a parte que aperta o agente menos perigoso do sistema: o servidor de atendimento, o pesquisador acadêmico, o jornalista local, o cidadão fiscalizador.
+
+Quem escreveu a LGPD pensava em Mark Zuckerberg. Quem aplica a LGPD pensa em Dona Maria.
+
+Não é necessário atribuir má-fé sistêmica a ninguém para que isso aconteça, e eu não atribuo. O ritual sobrevive sozinho, por uma combinação de aversão a risco institucional, fragmentação da capacidade técnica do Estado, e a inércia administrativa que prefere uma proteção formal demonstrável a uma proteção substantiva difícil de exibir. A cartilha é exibível. A segregação de funções interna não é. O asterisco é a marca visível da conformidade, e por isso se multiplicou.
+
+```mermaid
+flowchart TD
+    Q["Quem o asterisco<br/>parcial não barra"]
+    P["Quem o asterisco<br/>parcial barra"]
+    Q --> BT["Big Tech / brokers de dados"]
+    Q --> H["hacker de Araraquara"]
+    Q --> R["Robson"]
+    P --> DM["Dona Maria"]
+```
+
+## A alternativa honesta
+
+O caminho técnico honesto para atos administrativos de servidor é simples e antigo. Ou se publica nominalmente o que a Constituição quer público — nome, cargo, lotação, fundamentação legal, valor dos proventos — e se aceita que a fiscalização é, em parte, popular; ou se protege de verdade o que precisa ser protegido — saúde, dependentes, dados bancários, endereço pessoal — com segregação de funções, registro de acesso por matrícula, auditoria periódica das consultas internas e dispositivos que detectem padrões de curiosidade inadequada no acesso ao banco. As duas operações são compatíveis: a primeira é publicidade, a segunda é proteção. O asterisco no Diário Oficial não é nenhuma das duas. É uma terceira coisa, que parece com a segunda enquanto desfaz a primeira.
+
+O asterisco no Diário Oficial não esconde uma pessoa. Esconde quem pode olhar para ela. Robson está olhando.
+
+## Para se aprofundar
+
+- **Lei nº 13.709/2018 (LGPD), art. 5º, XI** — a definição legal de anonimização que a prática brasileira não cumpre.
+- **Latanya Sweeney, *[k-Anonymity: A Model for Protecting Privacy](https://epic.org/wp-content/uploads/privacy/reidentification/Sweeney_Article.pdf)* (2002)** — o paper canônico, com o achado de que três atributos demográficos identificam unicamente cerca de 87% dos cidadãos americanos.
+- **Arvind Narayanan e Vitaly Shmatikov, *[Robust De-anonymization of Large Sparse Datasets](https://www.cs.cornell.edu/~shmat/shmat_oak08netflix.pdf)* (2008)** — o Netflix Prize, prova empírica de que datasets "anonimizados" frequentemente não são.
+- **Paul Ohm, *[Broken Promises of Privacy: Responding to the Surprising Failure of Anonymization](https://www.uclalawreview.org/pdf/57-6-3.pdf)* (UCLA Law Review, 2010)** — o ensaio jurídico americano contra a ilusão da anonimização perfeita.
+- **Bruce Schneier, *[Beyond Fear](https://www.schneier.com/books/beyond-fear/)* (2003)** — o livro em que aparece pela primeira vez a expressão *security theater*, e a sistematização do que é proteção real vs. proteção performática.
+- **STF, ARE 652.777/SP (2015)** — a divulgação nominal da remuneração de servidores como decorrência do princípio constitucional da publicidade.
+- **Lei nº 12.527/2011 (LAI), art. 8º** — a transparência ativa como dever do Estado, prioritária sobre a privacidade do agente público no exercício da função.
+- **Verbete [*Walter Delgatti Neto*](https://pt.wikipedia.org/wiki/Walter_Delgatti_Neto)** — o hacker de Araraquara como personagem documental: o teto técnico médio brasileiro tem nome, endereço, ficha criminal e tornozeleira.
+- **Jorge Luis Borges, *Funes el memorioso*** — sobre o que acontece quando o banco de dados não esquece.
+
+[^1]: O leitor que clicou nesta nota provavelmente também é o leitor que escreveria as quinze linhas de Python. Os dois dígitos verificadores do CPF são definidos da seguinte maneira: dado o prefixo de nove dígitos `d₁…d₉`, calcula-se a soma ponderada `s₁ = 10·d₁ + 9·d₂ + 8·d₃ + … + 2·d₉`; o décimo dígito `D₁` é `(s₁·10) mod 11`, com a convenção de que o resultado vira 0 se for igual a 10. O décimo primeiro `D₂` é definido analogamente, com pesos de 11 a 2 aplicados a `d₁…d₉` e ao recém-calculado `D₁`. A operação é determinística e barata. Roda em silêncio dentro de qualquer sistema que valide CPF — bancos, declarações, formulários — e há décadas. Esconder os dois últimos dígitos é como esconder o resultado de uma soma cujas parcelas todas se vêem.

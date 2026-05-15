@@ -1,0 +1,181 @@
+---
+title: "Who the asterisk protects"
+description: "On partial CPF anonymization, the PET bottle on top of the electricity meter, and the barrier that picked the wrong side."
+date: "2026-05-15"
+lang: en
+translationKey: asterisk-protects
+tags: ["lgpd", "privacy", "transparency", "security", "law"]
+---
+
+In some routine official gazette, in the header of a single-judge decision from the State Court of Accounts, you find this sentence:
+
+> INTERESTED PARTY: Mariana Esteves Carvalho Albuquerque. CPF no. `***.123.456-**`.
+
+The sentence is well composed. The full name, prepositions in place. The CPF chopped at both ends. Iperon, when granting the retirement, saw no reason to hide the name of the retiree; the Court of Accounts, when registering it, saw no reason to change that choice; but both saw reason to hide two chunks of the CPF. The document publishes and conceals on the same line, with the serenity of well-trained civil service.
+
+The scene repeats across hundreds of decisions. The Court of Accounts performs the summary review of retirement acts granted by the state pension institute and publishes the result in its own Official Gazette. Each decision carries the interested party's full name, position, posting, the articles of the Constitution and amendments on which the act is founded, and the CPF masked at both ends. Nobody read the whole page and asked: if the name is right here, what are the asterisks protecting?
+
+## The math nobody does
+
+The Brazilian CPF has eleven digits. The first nine are, in principle, free; the last two are check digits, computed from the first nine by a predictable operation — modulo eleven, fixed in a Receita Federal regulation[^1]. In other words: the last two add no information that isn't already contained in the first nine. They exist to detect typos, not to hide information.
+
+When a CPF is masked in the form `***.XXX.XXX-**`, five digits are hidden. The casual reader counts five asterisks and imagines five digits of uncertainty. Five decimal digits would mean a hundred thousand possibilities. A hundred thousand is a big number.
+
+It's the wrong number.
+
+The last two asterisks don't hide anything the others haven't already said. Given any nine-digit prefix, the two check digits are unique. That leaves the three asterisks at the start. Three decimal digits. A thousand possibilities.
+
+To enumerate those thousand possibilities, all you need is a three-level *for* loop in any language with integer arithmetic. For each candidate triple, you compute the two check digits, complete the CPF, and you're done: one valid CPF per candidate, a thousand candidates in total. The operation fits in fifteen lines of Python. It runs in microseconds.
+
+The math is mathing. Five asterisks look like five digits. They are not.
+
+<figure class="svg-illustration">
+  <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title-entropy">
+    <title id="title-entropy">Perceived entropy vs. real entropy of a partially anonymized CPF</title>
+    <text x="20" y="32" font-family="serif" font-size="14" fill="currentColor">naive entropy (five digits): 100,000 candidates</text>
+    <rect x="20" y="42" width="660" height="20" fill="currentColor" opacity="0.85"/>
+    <text x="20" y="100" font-family="serif" font-size="14" fill="currentColor">real entropy (check digits are functions): 1,000 candidates</text>
+    <rect x="20" y="110" width="6.6" height="20" fill="currentColor" opacity="0.85"/>
+    <text x="20" y="168" font-family="serif" font-size="14" fill="currentColor">with the name in the Transparency Portal: ≈ 1 candidate</text>
+    <rect x="20" y="178" width="1" height="20" fill="currentColor" opacity="0.85"/>
+  </svg>
+  <figcaption>The reduction of uncertainty, in linear scale. The full name erases what was left.</figcaption>
+</figure>
+
+## The name is the front door
+
+The previous exercise — generating a thousand candidates — is elegant and unnecessary. In almost every practical case, nobody needs to generate a thousand candidates, because the five asterisks live surrounded by information that already uniquely identifies the person.
+
+Mariana Esteves Carvalho Albuquerque, whose name appears in the single-judge decision, is not just any Mariana. She is a retired state civil servant, with a defined position, a recorded posting, a numbered registration. The Transparency Portal publishes the full name, registration number, position, posting and salary of the entire payroll. The state's Electronic Official Gazette, searchable by full text across almost two decades of archive, carries the appointment ordinance, some promotion, some leave, the publication of the retirement act. Somewhere in those publications, over those twenty years, the CPF appeared in full. The LGPD became law in 2018; the rest of the servant's documentary history is older, and was indexed.
+
+The question the asterisk pretends to dodge is a question the asterisk has no way of dodging: *who is this person*. The act has already answered. The chopped CPF is a redundant confirmation of an identification already performed by the document's own header.
+
+When the Brazilian system of performative protection feels especially diligent — ahem ahem, IPERON 🤧 — it also anonymizes the registration number. Something like `****-1234` appears next to the chopped CPF. The operation is mathematically worse than publishing either of the two in full. Two partially masked identifiers cross by intersection: the set of candidates compatible with `***.452.318-**` intersected with the set compatible with `****-1234` collapses, in most cases, to a single person, even without the name. The handbook that hides two fingers of the CPF *and* two fingers of the registration number is giving more information, not less.
+
+It wasn't always this way. Sometime between 2018 and 2022, everyone in the Brazilian public service became convinced — by a combination of stray handbooks and fear of the legal office — that the chopped CPF was the formal mark of LGPD compliance. The chop was applied without touching the rest. The name stayed in full because removing the name would, then yes, contradict the purpose of the act. The CPF was the offering laid on the altar.
+
+```mermaid
+flowchart LR
+    A["Act in the Court Gazette<br/>full name<br/>partial CPF"] --> B[Transparency Portal]
+    A --> C[Searchable Official Gazette]
+    B --> D[registration, position, posting]
+    C --> E["older publications<br/>(full CPF)"]
+    D --> F[unique identification]
+    E --> F
+```
+
+## Robson and Dona Maria
+
+Robson is twenty-seven, an IT technician at a gas station on the BR-364 highway, and knows enough Python to solve small problems. He maintains the card terminals, configures the convenience store's Wi-Fi, updates the pump's system. He reads the act because his brother-in-law has just retired and he's curious. The asterisks don't stop him because he doesn't even need to decipher them: he pastes the name into Google, finds the servant on the Transparency Portal, confirms it on the approved-candidates page of some old civil service exam, and in ten minutes he has the full picture. He used no tool that isn't free. He downloaded nothing. He ran no script. He just read — and the Brazilian system of official publications allows reading.
+
+Dona Maria lives next to a civil servant who retired for permanent disability last year but still plays pickup soccer on Sundays. She's a widow, has read newspapers her whole life, and she's suspicious. She looks up her neighbor's name in the Official Gazette, finds the single-judge decision, reads *disability retirement*, and sees the CPF chopped at the ends. She has no technical training. She doesn't know about the Transparency Portal. The asterisks paralyze her, not because they are insurmountable, but because they signal legal ritual and Dona Maria has understood, correctly, that she wasn't invited to the ritual. She closes the browser. The social oversight she could have exercised — one of those small civic vigilances that sustain control over administrative acts — did not happen.
+
+The spine question of the whole post fits in one sentence: which of the two does the anonymization work against?
+
+Against Dona Maria. Robson doesn't even know she exists.
+
+<figure class="meme">
+  <img src="https://api.memegen.link/images/drake/publish_the_full_CPF/publish_full_name_and_chopped_CPF.png?width=500" alt="Drake meme: rejecting 'publish the full CPF' and approving 'publish full name and chopped CPF'"/>
+  <figcaption>The second uniquely identifies. The first uniquely identifies. The difference is aesthetic.</figcaption>
+</figure>
+
+## The hacker from Araraquara
+
+For the case in which Robson can't close it through web triangulation — stubborn homonymy, a servant with a clean digital presence, a target whose CPF was never published anywhere — there's no need to invoke a new category. It's the same Robson, with more tenacity and more free time. We can call him the [hacker from Araraquara](https://pt.wikipedia.org/wiki/Walter_Delgatti_Neto), in honor of the character from Brazilian political folklore who was moved to open prison last week. The only difference from Robson is this: this one downloaded, from some torrent, the 2021 Serasa *dump* — two hundred and twenty million CPFs with full name, date of birth, address and mother's name, indexed in some SQLite file on an external drive. In any hard case, he resolves it in fifteen seconds.
+
+The technical ceiling of the non-state, non-Big-Tech Brazilian adversary has a name, a criminal record and an ankle monitor — and is, materially, the Robson from the previous paragraph with more stubbornness. The handbook's barrier never even reached Robson's level.
+
+```mermaid
+flowchart LR
+    M["Dona Maria"] -.stopped by asterisks.-> X["—"]
+    R["Robson"] -->|10 minutes| ID["unique<br/>identification"]
+    R -.+ stubbornness<br/>+ Serasa dump.-> H["hacker from<br/>Araraquara"]
+    H -->|15 seconds| ID
+```
+
+## The PET bottle on top of the meter
+
+There's a technical name for this kind of mistake, and it came before the CPF: *security theater*, the expression coined by the cryptographer Bruce Schneier in the early 2000s to describe public protection rituals whose real function is just to display that a protection is being executed. The shoe inspection at airports is the canonical American example. Bars on the windows with the back door unlocked is the generic Brazilian example, and almost any condominium in the country offers its variation.
+
+The paradigmatic case, though, is a better one: remember when we used to put a PET bottle full of water on top of the electricity meter? It was the national ritual of the 1990s and early 2000s — a full bottle, lying down or standing up, on top of the meter, in the serene faith that it slowed consumption. It didn't. Water has no opinion about the meter. But it worked through another path: we saw the bottle there, every day, and remembered to turn off the living-room light. The ritual was false in physics and true in psychology. It worked by mistake, but it worked.
+
+The asterisk in the Official Gazette is a PET bottle without even the reminder effect. Whoever sees the five asterisks doesn't think *I need to protect the servant's data*; thinks, at best, *ah, anonymization*, and moves on to the full name right next to it.
+
+The other 843 Franklin Silveira Baldos and I publicly thank you for hiding the 7, the 6 and the 4 of my CPF right after stating each one of our full names.
+
+And whoever produces the act, on the other end, also isn't thinking about protection — they're thinking about formal compliance. Neither side of the publication is being psychologically reminded of anything. The Brazilian ritual normally pays the price of technical uselessness with the profit of psychological effect. This one neither pays nor profits.
+
+It isn't security theater. It's theater of security theater.
+
+## The self-contradicting handbook
+
+The production of the handbook has its own sociology, and the first absurdity is that there isn't *the* handbook — there are hundreds. No unified technical guidance came out of the National Data Protection Authority. No general normative instruction came out of the federal government. No directive that the whole public sector could follow came out of any central body. Instead, in every autarchy, every court, every state secretariat, every professional council, every public university, a data-governance committee of its own was formed — people from legal, from the chief of staff's office, from IT and from communications. Each of these committees meets. Each produces, in some quarter, a document titled, with discreet local variation, *Best Practices for Anonymization of Personal Data in Administrative Acts*. It's between four and twelve pages long, it bears the body's coat of arms, some grounding in the LGPD, and a final section with masking examples. The invariably recommended example is `***.XXX.XXX-**`. The handbook is approved by ordinance. The ordinance is published in the Official Gazette. In that same Official Gazette, three pages later, someone's retirement act appears with the full name and the chopped CPF.
+
+Hundreds of independent committees, in parallel, over years, worked to arrive at the same wrong answer.
+
+The kind of institutional productivity only Brazil can pull off.
+
+A small pull-of-the-credentials, low risk: my master's thesis was on administrative transparency. It's not a noble title; at most, it authorizes a technically qualified irritation with the normative PET bottle.
+
+There's a detail that makes the thing even more elegant. The handbook's authors — legal, the chief of staff's office, IT — are exactly the people with full access to the body's databases. They themselves constitute the set against which the anonymization of the CPF in the publication would, in theory, be a defense. They are the internal Robsons, with the difference that they have credentials. The ritual is being executed, in significant part, by the very actors against whom it would appear to protect — and in practice it has never protected, because nobody needs a chopped CPF when they have a login to the system. The handbook is not a security policy. It is a performance of compliance, written by the very actors who would render it ineffective, addressed to an external adversary who does not exist.
+
+To measure the depth of the reflex, I asked a commercial language model for editorial feedback on this essay. The poor thing, trained on terabytes of Brazilian public text post-2018, recommended — with the best intentions — that I *anonymize the opening example*, because citing a real name next to a partially masked CPF could, according to it, *expose the specific person*. The handbook has even contaminated the synthetic reader. It left Porto Velho, crossed the Pacific, was trained on some server in California, and came back intact in the form of well-meaning editorial advice. The ritual found a way to propagate itself even without committees.
+
+<figure class="meme">
+  <img src="https://api.memegen.link/images/gb/hide_3_digits/hide_5_digits/hide_5_but_2_are_check_digits/dont_publish.png?width=500" alt="Galaxy brain meme in four levels: hide 3 digits, hide 5 digits, hide 5 but 2 are check digits, don't publish"/>
+  <figcaption>The enlightened level escaped the committee.</figcaption>
+</figure>
+
+## What the LGPD actually says
+
+The LGPD defined anonymization in art. 5, item XI, with words that don't admit the Brazilian use of the term:
+
+<blockquote class="pull-quote">
+Anonymization: the use of reasonable and available technical means at the time of processing, by which a datum loses the possibility of association, directly or indirectly, with an individual.
+</blockquote>
+
+A thousand candidates crossed with full name, position, posting and two decades of indexed Official Gazette do not constitute a datum that has lost the possibility of association. Robson is not an unreasonable technical means. He's a gas-station tech with Python. The legal definition of anonymization is generously broad, and even so the Brazilian practice doesn't fit inside it.
+
+The verb in the definition is specific: *loses* the possibility of association. Doesn't make it harder. Doesn't make it more expensive. Doesn't discourage the curious. Loses. The LGPD adopted a binary definition — either the datum was in fact disconnected from the subject, or it wasn't. There is no intermediate regime, there is no half-anonymization. Tricks that make reidentification trivial for any Robson don't meet the legal hypothesis: they don't even try. From the privacy side, then, the chop has nothing to stand on.
+
+That leaves examining it from the opposite side: transparency. The LGPD provides, in art. 23, a specific hypothesis for the processing of personal data by the public power, articulated with the Access to Information Law, whose art. 8 defines the catalog of active transparency — salaries, personnel acts, contracts. The Constitution, in art. 37, *caput*, makes publicity a guiding principle of public administration. The Supreme Federal Court, in ARE 652.777 of 2015, decided that the nominal disclosure of civil servants' salaries is a legitimate consequence of that principle. The legal system, in other words, has already made its choice in favor of transparency for civil-servant administrative acts — and the chop of the CPF operates below that choice, raising the cost of verification for those who should be able to verify. It doesn't anonymize because it can't. It gets in the way because the full name right next to it summons a verification that the chop makes harder for no reason. It does the worst of both worlds, and does it firmly.
+
+## The missing *mens legis*
+
+The LGPD was not conceived in Brazil. It is, to a large extent, the Brazilian cousin of the European *General Data Protection Regulation* — the GDPR, written in 2016 and in force since 2018. The GDPR did not come from a legislative vacuum: it came, in considerable part, from the political response to the growing perception, throughout the 2010s, that some companies were concentrating a disproportionate informational power. The Cambridge Analytica scandal, in 2018, gave name and face to that perception — Facebook revealed it had exposed the data of eighty-seven million users to a political consulting firm that used them for electoral microtargeting, in an episode that ran through the Brexit campaign and the 2016 American election. The GDPR's legislative work was already under way before the scandal; Cambridge Analytica gave the popular name to what was being regulated. The LGPD, two years later, reflected the same motivation.
+
+What happened on the way from the law to the handbook is a form of transference. The companies that originated the concern keep operating essentially as they operated. Systemic leaks cross the Brazilian landscape without provoking a proportional institutional response. Serasa leaked some two hundred and twenty million CPFs in 2021. INSS records have appeared on forums for years. The telemarketer who calls during our lunch break knows the exact value of our last bill, and we've given up asking how he knows. The LGPD exists while all of this happens. But the part of the LGPD that actually bites — that generates committees, handbooks, training sessions, internal disciplinary actions, removal of useful information from public databases — is the part that squeezes the least dangerous agent in the system: the front-desk servant, the academic researcher, the local journalist, the citizen overseer.
+
+Whoever wrote the LGPD was thinking about Mark Zuckerberg. Whoever applies the LGPD is thinking about Dona Maria.
+
+It isn't necessary to attribute systemic bad faith to anyone for this to happen, and I don't. The ritual survives on its own, by a combination of institutional risk aversion, the fragmentation of the state's technical capacity, and the administrative inertia that prefers a demonstrable formal protection to a substantive protection that's hard to display. The handbook is displayable. Internal segregation of duties isn't. The asterisk is the visible mark of compliance, and that's why it multiplied.
+
+```mermaid
+flowchart TD
+    Q["Whom the partial<br/>asterisk doesn't stop"]
+    P["Whom the partial<br/>asterisk stops"]
+    Q --> BT["Big Tech / data brokers"]
+    Q --> H["hacker from Araraquara"]
+    Q --> R["Robson"]
+    P --> DM["Dona Maria"]
+```
+
+## The honest alternative
+
+The honest technical path for civil-servant administrative acts is simple and old. Either you publish by name what the Constitution wants public — name, position, posting, legal grounds, value of the benefits — and accept that oversight is, in part, popular; or you actually protect what needs to be protected — health, dependents, banking data, home address — through segregation of duties, access logs by registration number, periodic auditing of internal queries and mechanisms that detect patterns of inappropriate curiosity in database access. The two operations are compatible: the first is publicity, the second is protection. The asterisk in the Official Gazette is neither. It is a third thing, which looks like the second while undoing the first.
+
+The asterisk in the Official Gazette doesn't hide a person. It hides who is allowed to look at her. Robson is looking.
+
+## Further reading
+
+- **Law no. 13.709/2018 (LGPD), art. 5, XI** — the legal definition of anonymization that Brazilian practice fails to meet.
+- **Latanya Sweeney, *[k-Anonymity: A Model for Protecting Privacy](https://epic.org/wp-content/uploads/privacy/reidentification/Sweeney_Article.pdf)* (2002)** — the canonical paper, with the finding that three demographic attributes uniquely identify roughly 87% of American citizens.
+- **Arvind Narayanan and Vitaly Shmatikov, *[Robust De-anonymization of Large Sparse Datasets](https://www.cs.cornell.edu/~shmat/shmat_oak08netflix.pdf)* (2008)** — the Netflix Prize, empirical proof that "anonymized" datasets frequently are not.
+- **Paul Ohm, *[Broken Promises of Privacy: Responding to the Surprising Failure of Anonymization](https://www.uclalawreview.org/pdf/57-6-3.pdf)* (UCLA Law Review, 2010)** — the American legal essay against the illusion of perfect anonymization.
+- **Bruce Schneier, *[Beyond Fear](https://www.schneier.com/books/beyond-fear/)* (2003)** — the book in which the expression *security theater* first appears, and the systematization of what is real vs. performative protection.
+- **STF, ARE 652.777/SP (2015)** — the nominal disclosure of civil servants' salaries as a consequence of the constitutional principle of publicity.
+- **Law no. 12.527/2011 (LAI), art. 8** — active transparency as a duty of the State, taking priority over the privacy of the public agent in the exercise of office.
+- **Wikipedia entry on [*Walter Delgatti Neto*](https://pt.wikipedia.org/wiki/Walter_Delgatti_Neto)** — the hacker from Araraquara as documentary character: the average Brazilian technical ceiling has a name, an address, a criminal record and an ankle monitor.
+- **Jorge Luis Borges, *Funes el memorioso*** — on what happens when the database doesn't forget.
+
+[^1]: The reader who clicked this footnote is probably also the reader who would write the fifteen lines of Python. The CPF's two check digits are defined as follows: given the nine-digit prefix `d₁…d₉`, you compute the weighted sum `s₁ = 10·d₁ + 9·d₂ + 8·d₃ + … + 2·d₉`; the tenth digit `D₁` is `(s₁·10) mod 11`, with the convention that the result becomes 0 if it equals 10. The eleventh `D₂` is defined analogously, with weights from 11 down to 2 applied to `d₁…d₉` and the freshly computed `D₁`. The operation is deterministic and cheap. It runs silently inside any system that validates a CPF — banks, tax returns, forms — and has done so for decades. Hiding the last two digits is like hiding the result of a sum whose every term is in plain sight.
