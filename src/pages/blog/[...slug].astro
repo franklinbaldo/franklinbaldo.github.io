@@ -169,36 +169,4 @@ const translationLinks = translationSiblings.map((p) => {
     z-index: 50;
     pointer-events: none;
   }
-
-  .post-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  /* Hide desktop sidebar on small screens */
-  .toc-col {
-    display: none;
-  }
-
-  @media (min-width: 1200px) {
-    .post-grid {
-      grid-template-columns: 200px minmax(0, 1fr);
-      gap: 2.5rem;
-      align-items: start;
-    }
-
-    .toc-col {
-      display: block;
-      position: sticky;
-      top: 4.5rem;
-      max-height: calc(100vh - 6rem);
-      overflow-y: auto;
-      padding-top: 0.25rem;
-    }
-
-    /* Hide the inline collapsible ToC on desktop — sidebar replaces it */
-    .post-body :global(.toc-inline) {
-      display: none;
-    }
-  }
 </style>

@@ -54,24 +54,93 @@ const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
 
 <style>
   .featured-rail {
-    margin-block: var(--pico-spacing);
+    margin-block: calc(var(--pico-spacing) * 1.5);
+    display: grid;
+    gap: var(--pico-spacing);
   }
   .featured-card {
+    position: relative;
+    overflow: hidden;
     border: 1px solid var(--pico-muted-border-color);
-    padding: var(--pico-spacing);
+    border-left: 4px solid var(--pico-primary);
+    background: var(--pico-card-background-color);
+    padding: calc(var(--pico-spacing) * 1.25) calc(var(--pico-spacing) * 1.5);
+  }
+  /* Cobogó motif in the upper-right corner: visible enough to read as
+     architecture, soft enough not to compete with text. */
+  .featured-card::after {
+    content: "";
+    position: absolute;
+    top: -1.5rem;
+    right: -1.5rem;
+    width: 200px;
+    height: 200px;
+    background-image: url("/cobogo.svg");
+    background-size: 100px 100px;
+    background-repeat: repeat;
+    opacity: 0.18;
+    color: var(--pico-primary);
+    pointer-events: none;
+  }
+  .featured-card > * {
+    position: relative;
+    z-index: 1;
+    max-width: calc(100% - 80px);
+  }
+  .featured-card > .thumb,
+  .featured-card > .cta {
+    max-width: 100%;
+  }
+  @media (max-width: 600px) {
+    .featured-card::after {
+      width: 140px;
+      height: 140px;
+      opacity: 0.12;
+    }
+    .featured-card > * {
+      max-width: 100%;
+    }
   }
   .featured-card .eyebrow {
-    margin: 0 0 .25rem;
+    margin: 0 0 .5rem;
+    font-size: 0.78rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: .08em;
+    letter-spacing: 0.14em;
     color: var(--pico-primary);
   }
+  .featured-card h2 {
+    margin: 0 0 .5rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.15;
+  }
+  .featured-card h2 a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .featured-card h2 a:hover {
+    color: var(--pico-primary);
+  }
+  .featured-card .lede {
+    margin: 0 0 .5rem;
+    font-size: 1.05rem;
+    color: var(--pico-color);
+  }
+  .featured-card .meta {
+    margin: 0 0 .5rem;
+    color: var(--pico-muted-color);
+  }
   .featured-card .reason {
-    margin: .25rem 0 .75rem;
+    margin: .75rem 0 .25rem;
+    padding-top: .5rem;
+    border-top: 1px dashed var(--pico-muted-border-color);
     color: var(--pico-muted-color);
   }
   .featured-card .thumb {
     display: block;
-    margin-block: .5rem;
+    margin-block: .75rem;
+  }
+  .featured-card .cta {
+    margin: .75rem 0 0;
   }
 </style>

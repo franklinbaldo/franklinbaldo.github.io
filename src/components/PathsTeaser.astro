@@ -21,15 +21,16 @@ const pathsRoot = `${urlPrefix(lang)}/paths`;
 
 {visible.length > 0 && (
   <section class="paths-teaser" aria-label={t(lang, 'paths.heading')}>
-    <h2>{t(lang, 'paths.heading')}</h2>
-    <p class="paths-blurb"><small>{t(lang, 'paths.blurb')}</small></p>
+    <p class="paths-eyebrow"><small>{t(lang, 'paths.heading')}</small></p>
+    <h2 class="paths-heading">{t(lang, 'paths.heading')}</h2>
+    <p class="paths-blurb">{t(lang, 'paths.blurb')}</p>
     <div class="paths-grid">
       {visible.map(({ path, count }) => (
         <article class="path-card">
           <h3>
             <a href={`${pathsRoot}/${path.slug}/`}>{pick(lang, path.title)}</a>
           </h3>
-          <p>{pick(lang, path.blurb)}</p>
+          <p class="path-blurb">{pick(lang, path.blurb)}</p>
           <p class="path-meta">
             <small>
               {count} {t(lang, count === 1 ? 'paths.essay' : 'paths.essays')}
@@ -45,29 +46,54 @@ const pathsRoot = `${urlPrefix(lang)}/paths`;
 
 <style>
   .paths-teaser {
-    margin-block: calc(var(--pico-spacing) * 1.5);
+    margin-block: calc(var(--pico-spacing) * 2);
+  }
+  .paths-eyebrow {
+    margin: 0 0 .25rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--pico-primary);
+  }
+  .paths-heading {
+    margin: 0 0 .5rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.15;
   }
   .paths-blurb {
-    margin-top: -.25rem;
+    margin: 0 0 var(--pico-spacing);
     color: var(--pico-muted-color);
+    max-width: 50ch;
   }
   .paths-grid {
     display: grid;
     gap: var(--pico-spacing);
-    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
   }
   .path-card {
     border: 1px solid var(--pico-muted-border-color);
-    padding: calc(var(--pico-spacing) * .75);
+    border-top: 2px solid var(--pico-primary);
+    background: var(--pico-card-background-color);
+    padding: calc(var(--pico-spacing) * 1.25);
   }
   .path-card h3 {
-    margin: 0 0 .25rem;
-    font-size: 1.1rem;
-  }
-  .path-card p {
     margin: 0 0 .5rem;
+    font-size: 1.4rem;
+    line-height: 1.2;
+  }
+  .path-card h3 a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .path-card h3 a:hover {
+    color: var(--pico-primary);
+  }
+  .path-blurb {
+    margin: 0 0 .75rem;
   }
   .path-meta {
+    margin: 0;
     color: var(--pico-muted-color);
   }
 </style>
