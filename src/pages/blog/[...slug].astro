@@ -40,6 +40,8 @@ const translation = translationKey
   ? allPosts.find((p) => p.data.translationKey === translationKey && p.id !== post.id)
   : null;
 const translationHref = translation ? `/blog/${translation.id}/` : undefined;
+
+const tagBase = lang === 'pt' ? '/pt/tags/' : '/tags/';
 ---
 
 <PageLayout
@@ -56,102 +58,110 @@ const translationHref = translation ? `/blog/${translation.id}/` : undefined;
 >
   <div id="read-progress" aria-hidden="true"></div>
 
-  <article data-pagefind-body data-pagefind-filter={`lang:${lang}`}>
-    <header>
-      <hgroup>
-        <h1>{title}</h1>
-        <p>
-          <small>
-            <time datetime={date.toISOString()}>{date.toLocaleDateString(locale, dateOpts)}</time>
-            {minutesRead && <> · {minutesRead} min read</>}
-            {showUpdated && lastModified && (
-              <> · {lang === 'pt' ? 'atualizado' : 'updated'} <time datetime={lastModified.toISOString()}>
-                {lastModified.toLocaleDateString(locale, dateOpts)}
-              </time></>
+  <div class="post-grid">
+    <aside class="toc-col" aria-label={lang === 'pt' ? 'Conteúdo' : 'Table of Contents'}>
+      <TableOfContents headings={headings} lang={lang} sidebar />
+    </aside>
+
+    <div class="post-body">
+      <article data-pagefind-body data-pagefind-filter={`lang:${lang}`}>
+        <header>
+          <hgroup>
+            <h1>{title}</h1>
+            <p>
+              <small>
+                <time datetime={date.toISOString()}>{date.toLocaleDateString(locale, dateOpts)}</time>
+                {minutesRead && <> · {minutesRead} min read</>}
+                {showUpdated && lastModified && (
+                  <> · {lang === 'pt' ? 'atualizado' : 'updated'} <time datetime={lastModified.toISOString()}>
+                    {lastModified.toLocaleDateString(locale, dateOpts)}
+                  </time></>
+                )}
+              </small>
+            </p>
+          </hgroup>
+          {heroImage && (
+            <Image
+              src={heroImage}
+              alt={heroImageAlt ?? ''}
+              widths={[480, 800, 1200]}
+              sizes="(max-width: 800px) 100vw, 800px"
+              format="webp"
+              loading="eager"
+            />
+          )}
+        </header>
+
+        {series && (
+          <aside>
+            <small>
+              {lang === 'pt' ? 'Parte' : 'Part'} {series.index + 1} {lang === 'pt' ? 'de' : 'of'} {series.posts.length}
+              {' — '}<strong>{series.slug}</strong>.
+            </small>
+            <details>
+              <summary>{lang === 'pt' ? 'Todos os posts da série' : 'All posts in this series'}</summary>
+              <ol>
+                {series.posts.map((p, i) => (
+                  <li>
+                    {i === series.index
+                      ? <><strong>{p.data.title}</strong> <em>({lang === 'pt' ? 'este post' : 'this post'})</em></>
+                      : <a href={`/blog/${p.id}/`}>{p.data.title}</a>}
+                  </li>
+                ))}
+              </ol>
+            </details>
+          </aside>
+        )}
+
+        <TableOfContents headings={headings} lang={lang} />
+
+        <Content />
+
+        <footer>
+          {tags && tags.length > 0 && (
+            <p><small>
+              {lang === 'pt' ? 'Tags' : 'Tags'}: {tags.map((tag, i) => (
+                <>{i > 0 && ', '}<a href={`${tagBase}${tag}/`}>#{tag}</a></>
+              ))}
+            </small></p>
+          )}
+          {translationHref && (
+            <p><small>
+              <a href={translationHref}>
+                {lang === 'pt' ? '🇺🇸 Read in English' : '🇧🇷 Ler em Português'}
+              </a>
+            </small></p>
+          )}
+          <ShareButton title={title} />
+        </footer>
+      </article>
+
+      <AuthorBio lang={lang} />
+
+      <RelatedPosts currentId={post.id} tags={tags ?? []} lang={lang} />
+
+      {series && (series.prev || series.next) && (
+        <nav aria-label="Series navigation">
+          <ul>
+            {series.prev && (
+              <li><a href={`/blog/${series.prev.id}/`} rel="prev">← {series.prev.data.title}</a></li>
             )}
-          </small>
-        </p>
-      </hgroup>
-      {heroImage && (
-        <Image
-          src={heroImage}
-          alt={heroImageAlt ?? ''}
-          widths={[480, 800, 1200]}
-          sizes="(max-width: 800px) 100vw, 800px"
-          format="webp"
-          loading="eager"
-        />
+            {series.next && (
+              <li><a href={`/blog/${series.next.id}/`} rel="next">{series.next.data.title} →</a></li>
+            )}
+          </ul>
+        </nav>
       )}
-    </header>
 
-    {series && (
-      <aside>
-        <small>
-          {lang === 'pt' ? 'Parte' : 'Part'} {series.index + 1} {lang === 'pt' ? 'de' : 'of'} {series.posts.length}
-          {' — '}<strong>{series.slug}</strong>.
-        </small>
-        <details>
-          <summary>{lang === 'pt' ? 'Todos os posts da série' : 'All posts in this series'}</summary>
-          <ol>
-            {series.posts.map((p, i) => (
-              <li>
-                {i === series.index
-                  ? <><strong>{p.data.title}</strong> <em>({lang === 'pt' ? 'este post' : 'this post'})</em></>
-                  : <a href={`/blog/${p.id}/`}>{p.data.title}</a>}
-              </li>
-            ))}
-          </ol>
-        </details>
-      </aside>
-    )}
+      <Webmentions url={new URL(Astro.url.pathname, Astro.site!)} />
 
-    <TableOfContents headings={headings} lang={lang} />
+      <Comments lang={lang} />
 
-    <Content />
-
-    <footer>
-      {tags && tags.length > 0 && (
-        <p><small>
-          {lang === 'pt' ? 'Tags' : 'Tags'}: {tags.map((tag, i) => (
-            <>{i > 0 && ', '}<a href={`/tags/${tag}/`}>#{tag}</a></>
-          ))}
-        </small></p>
-      )}
-      {translationHref && (
-        <p><small>
-          <a href={translationHref}>
-            {lang === 'pt' ? '🇺🇸 Read in English' : '🇧🇷 Ler em Português'}
-          </a>
-        </small></p>
-      )}
-      <ShareButton title={title} />
-    </footer>
-  </article>
-
-  <AuthorBio lang={lang} />
-
-  <RelatedPosts currentId={post.id} tags={tags ?? []} lang={lang} />
-
-  {series && (series.prev || series.next) && (
-    <nav aria-label="Series navigation">
-      <ul>
-        {series.prev && (
-          <li><a href={`/blog/${series.prev.id}/`} rel="prev">← {series.prev.data.title}</a></li>
-        )}
-        {series.next && (
-          <li><a href={`/blog/${series.next.id}/`} rel="next">{series.next.data.title} →</a></li>
-        )}
-      </ul>
-    </nav>
-  )}
-
-  <Webmentions url={new URL(Astro.url.pathname, Astro.site!)} />
-
-  <Comments lang={lang} />
-
-  <BackToTop />
-  <CodeCopyEnhancer />
-  <MermaidEnhancer />
+      <BackToTop />
+      <CodeCopyEnhancer />
+      <MermaidEnhancer />
+    </div>
+  </div>
 
   <script is:inline>
     (() => {
@@ -178,5 +188,37 @@ const translationHref = translation ? `/blog/${translation.id}/` : undefined;
     background: linear-gradient(to right, var(--pico-primary) var(--p, 0%), transparent 0);
     z-index: 50;
     pointer-events: none;
+  }
+
+  .post-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  /* Hide desktop sidebar on small screens */
+  .toc-col {
+    display: none;
+  }
+
+  @media (min-width: 1200px) {
+    .post-grid {
+      grid-template-columns: 200px minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    .toc-col {
+      display: block;
+      position: sticky;
+      top: 4.5rem;
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+      padding-top: 0.25rem;
+    }
+
+    /* Hide the inline collapsible ToC on desktop — sidebar replaces it */
+    .post-body :global(.toc-inline) {
+      display: none;
+    }
   }
 </style>
