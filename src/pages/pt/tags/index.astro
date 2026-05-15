@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import PageLayout from "../../layouts/PageLayout.astro";
+import PageLayout from "../../../layouts/PageLayout.astro";
 
 const posts = (await getCollection("blog")).filter((p) => !p.data.draft);
 
@@ -14,9 +14,14 @@ for (const post of posts) {
 const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 ---
 
-<PageLayout title="Tags | Franklin Baldo" description="Browse essays by tag." lang="en" translationHref="/pt/tags/">
-  <h1>Tags</h1>
-  <nav aria-label="All tags">
+<PageLayout
+  title="Etiquetas | Franklin Baldo"
+  description="Navegue pelos ensaios por etiqueta."
+  lang="pt"
+  translationHref="/tags/"
+>
+  <h1>Etiquetas</h1>
+  <nav aria-label="Todas as etiquetas">
     <ul>
       {tags.map(([tag, count]) => (
         <li><a href={`/tags/${tag}/`}>#{tag}</a> <small>({count})</small></li>

@@ -49,4 +49,7 @@ const href = `/blog/${post.id}/`;
     </hgroup>
   </header>
   <p>{blurb}</p>
+  <footer>
+    <a href={href}>{postLang === 'pt' ? 'Continuar lendo →' : 'Continue reading →'}</a>
+  </footer>
 </article>
