@@ -97,7 +97,9 @@ const ICONS: Record<string, string> = {
   .paths-grid {
     display: grid;
     gap: var(--pico-spacing);
-    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    /* min(20rem, 100%) keeps each card from forcing the grid track wider
+       than the viewport at <320px screens — the classic "rfs grid" pattern. */
+    grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
   }
   .path-card {
     display: grid;

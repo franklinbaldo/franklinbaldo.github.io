@@ -125,6 +125,22 @@ body::before {
   min-width: 0;
 }
 
+/*
+ * Universal wrap policy. Long URLs, long inline code snippets like
+ * `package.method_with_a_very_long_name`, and unbreakable identifiers in
+ * headings would otherwise force a paragraph (and its grid track) wider
+ * than the viewport. `overflow-wrap: anywhere` allows the browser to
+ * break inside such tokens only when nothing else fits, which is exactly
+ * what we want for narrow phones without harming normal prose flow.
+ */
+:where(p, li, dd, dt, blockquote, h1, h2, h3, h4, h5, h6, a) {
+  overflow-wrap: anywhere;
+}
+:not(pre) > code {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .skip-link {
   position: absolute;
   left: -9999px;
