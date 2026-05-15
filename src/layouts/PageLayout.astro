@@ -14,6 +14,7 @@ interface Props {
   tags?: string[];
   lang?: "en" | "pt";
   translationHref?: string;
+  hasMath?: boolean;
 }
 
 const SITE_NAME = "Franklin Baldo";
@@ -32,6 +33,7 @@ const {
   tags,
   lang = "en",
   translationHref,
+  hasMath,
 } = source;
 
 const documentTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
@@ -84,6 +86,7 @@ const jsonLd = type === "article"
     <link rel="canonical" href={canonical.href} />
     <link rel="alternate" type="application/rss+xml" title="Franklin Baldo" href={rssUrl} />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    {hasMath && <link rel="stylesheet" href="/katex/katex.min.css" />}
 
     <link rel="alternate" hreflang={lang} href={canonical.href} />
     {translationHref && (
