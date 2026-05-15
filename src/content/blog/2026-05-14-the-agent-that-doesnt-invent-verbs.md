@@ -3,6 +3,8 @@ title: "The Agent That Doesn't Invent Verbs"
 description: "On Cucumber, content-addressing, and an alignment technique that turns out to be older than alignment."
 date: "2026-05-14"
 lang: en
+translationKey: agent-no-verbs
+tags: ["ai", "agents", "alignment", "gherkin", "harness", "software-engineering"]
 series: harness
 seriesOrder: 5
 ---

@@ -7,6 +7,8 @@ import ShareButton from '../../components/ShareButton.astro';
 import CodeCopyEnhancer from '../../components/CodeCopyEnhancer.astro';
 import MermaidEnhancer from '../../components/MermaidEnhancer.astro';
 import Webmentions from '../../components/Webmentions.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
 import { getSeriesContext } from '../../lib/series';
 
 export async function getStaticPaths() {
@@ -19,7 +21,7 @@ export async function getStaticPaths() {
 type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
-const { Content, remarkPluginFrontmatter } = await render(post);
+const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const { heroImage, heroImageAlt, title, description, date, tags, lang, translationKey } = post.data;
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
 const lastModifiedISO: string | undefined = remarkPluginFrontmatter.lastModified;
@@ -100,7 +102,11 @@ const translationHref = translation ? `/blog/${translation.id}/` : undefined;
       </aside>
     )}
 
+    <TableOfContents headings={headings} lang={lang} />
+
     <Content />
+
+    <RelatedPosts currentId={post.id} tags={tags ?? []} lang={lang} />
 
     {series && (series.prev || series.next) && (
       <nav class="series-nav" aria-label="Series navigation">
