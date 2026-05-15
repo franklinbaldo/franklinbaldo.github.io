@@ -2,8 +2,8 @@
 import { getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
 import PostList from "../../components/PostList.astro";
-import PostCard from "../../components/PostCard.astro";
-import LangFilter from "../../components/LangFilter.svelte";
+import SubscribeBox from "../../components/SubscribeBox.astro";
+import LangFilter from "../../components/LangFilter.astro";
 
 const all = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
@@ -12,6 +12,7 @@ const all = (await getCollection("blog"))
 const featured = all.filter((p) => p.data.featured);
 const featuredIds = new Set(featured.map((p) => p.id));
 const rest = all.filter((p) => !featuredIds.has(p.id));
+const ordered = [...featured, ...rest];
 ---
 
 <PageLayout
@@ -20,35 +21,14 @@ const rest = all.filter((p) => !featuredIds.has(p.id));
   lang="pt"
   translationHref="/"
 >
-  <section id="hero" style="margin-bottom: 4rem;">
-    <hgroup>
-      <h1>Franklin Baldo</h1>
-      <p>Advogado e Procurador do Estado. Explorando os limites dos agentes de IA, metafísica do processo e design jurídico.</p>
-    </hgroup>
-    <p>
-      Este espaço é o meu jardim digital — uma coleção de ensaios,
-      guias técnicos e fragmentos filosóficos sobre como habitamos
-      um mundo cada vez mais mediado pela inteligência.
-    </p>
-    <p class="identity-links">
-      <small>
-        <a href="https://github.com/franklinbaldo" rel="me">GitHub</a>
-        ·
-        <a href="https://twitter.com/franklinbaldo" rel="me">Twitter</a>
-        ·
-        <a href="/rss.xml">RSS</a>
-      </small>
-    </p>
-  </section>
+  <hgroup>
+    <h1>Franklin Baldo</h1>
+    <p>Ensaios sobre agentes de IA, metafísica do processo e design jurídico.</p>
+  </hgroup>
 
-  <LangFilter client:load />
+  <SubscribeBox lang="pt" />
 
-  {featured.length > 0 && (
-    <section id="featured">
-      <h2>Destaques</h2>
-      {featured.map((post) => <PostCard post={post} />)}
-    </section>
-  )}
+  <LangFilter />
 
-  <PostList posts={rest} />
+  <PostList posts={ordered} />
 </PageLayout>

@@ -4,12 +4,12 @@ import PostCard from './PostCard.astro';
 
 interface Props {
   posts: CollectionEntry<'blog'>[];
+  label?: string;
 }
 
-const { posts } = Astro.props;
+const { posts, label } = Astro.props;
 ---
 
-<section id="essays">
-  <h2>Essays</h2>
+<section aria-label={label ?? 'Posts'}>
   {posts.map((post) => <PostCard post={post} />)}
 </section>
