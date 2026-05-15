@@ -6,6 +6,7 @@ lang: pt
 tags: ["ai", "agents", "software-engineering", "parenting", "metaphysics"]
 draft: false
 author: "franklin"
+translationKey: "delegating-to-agents"
 ---
 
 Há algo de profundamente estranho e ao mesmo tempo familiar em observar dois agentes de inteligência artificial — Jules e Claude — colaborarem em uma base de código enquanto minha filha mais nova dorme no quarto ao lado. Como engenheiro de software, a automação sempre foi o cálice sagrado; como pai, a delegação tornou-se uma necessidade de sobrevivência. Mas a intersecção dessas duas realidades revelou uma complexidade inesperada: a de que a verdadeira dificuldade não está em fazer as máquinas trabalharem, mas em saber como supervisioná-las sem sufocá-las.

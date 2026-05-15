@@ -24,7 +24,7 @@ const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeComp
   <nav aria-label="Todas as etiquetas">
     <ul>
       {tags.map(([tag, count]) => (
-        <li><a href={`/tags/${tag}/`}>#{tag}</a> <small>({count})</small></li>
+        <li><a href={`/pt/tags/${tag}/`}>#{tag}</a> <small>({count})</small></li>
       ))}
     </ul>
   </nav>
