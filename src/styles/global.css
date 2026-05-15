@@ -1,8 +1,42 @@
 @import "@picocss/pico/css/pico.orange.min.css";
 @import "@fontsource/inter";
+@import "./tokens.css";
+@import "./typography.css";
 
 :root {
   --pico-font-family-sans-serif: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+/*
+ * Cobogó motif as a subtle background — a single tile from /cobogo.svg
+ * repeated and rendered at low opacity so it reads as architecture, not
+ * noise. The accent color is inherited via `currentColor` in the SVG, so
+ * the tile follows the theme.
+ */
+body {
+  position: relative;
+  isolation: isolate;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url("/cobogo.svg");
+  background-size: 240px 240px;
+  background-repeat: repeat;
+  opacity: 0.05;
+  color: var(--pico-primary);
+  pointer-events: none;
+}
+
+/* Reading article gets a faint paper-grain shadow on wide screens. */
+@media (min-width: 1200px) {
+  .post-body > article {
+    box-shadow: 0 1px 0 var(--pico-muted-border-color),
+                0 24px 48px -32px rgba(42, 36, 29, 0.15);
+    border-radius: 2px;
+  }
 }
 
 .skip-link {

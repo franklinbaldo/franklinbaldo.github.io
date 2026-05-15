@@ -1,0 +1,36 @@
+/*
+ * Typography — Fraunces serif for display, Inter sans for body.
+ *
+ * Fraunces is loaded weight 400 + 600 only (subset comes from @fontsource).
+ * Headings and the article-page hgroup paragraph use the serif; small-caps
+ * are reserved for time/byline metadata.
+ */
+
+@import "@fontsource/fraunces/400.css";
+@import "@fontsource/fraunces/600.css";
+
+:root {
+  --pico-font-family-serif: "Fraunces", "Source Serif Pro", Georgia, serif;
+}
+
+h1, h2, h3, h4, h5, h6,
+hgroup > h1 + p {
+  font-family: var(--pico-font-family-serif);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+h1 { line-height: 1.1; }
+h2, h3 { line-height: 1.2; }
+
+article > header hgroup > h1 + p {
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 0;
+}
+
+article time,
+article > header hgroup > p small {
+  font-variant-numeric: oldstyle-nums;
+  font-feature-settings: "smcp";
+}
