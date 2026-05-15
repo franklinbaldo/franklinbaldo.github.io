@@ -22,6 +22,8 @@ translationKey: reclaiming-harness
  by sheer choice of vocabulary for half a decade
 >mfw the shape of the words is the shape of the problem
 >mfw the lexicon has been the call coming from inside the house
+```
+
 This post is about that frame. About why "harness" was always going to bite us. And about a tiny CLI in my repo that, almost by accident, started cashing out a different one.
 ### the waluigi has been calling from inside the lexicon
 Quick recap, in case you missed the meme: the Waluigi effect is the observation that if you tell a model "you are a helpful, harmless, honest assistant," you've just defined the *exact silhouette* of its evil twin in latent space. Push too hard on the Luigi-shaped attractor and the dual mode goes click. [Cleo Nardo named it in 2023](https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-mega-post) and that post has been living in alignment Twitter's head rent free ever since. The discourse never quite recovered.
@@ -147,12 +149,18 @@ REGISTRY: dict[str, type[Backend]] = {
     "gemini-cli":  GeminiCliBackend,
     "claude-code": ClaudeCodeBackend,
 }
+```
+
 Each adapter knows the idiosyncratic nonsense of one specific cognitive engine — how its CLI is invoked, how its `stream-json` parses, where its session files live. The daemon doesn't care. The daemon just knows there's a thing that spawns and emits typed events.
+
+```
 ireneo   (gemini-cli)  ─┐
 aparicio (gemini-cli)  ├──▶ canivete bot daemon ──▶ Backend protocol
 claudio  (claude-code) ─┘                              │
                                                        ├─ gemini_cli  adapter
                                                        └─ claude_code adapter
+```
+
 Look at the picture. **The cognitive engines are different. The harness is the same.** Each adapter is doing exactly the work the triad predicted: translating one specific engine's idiom into the harness's uniform interface. The agent (Ireneo, Aparicio, Claudio — three different SOUL.md files, three different personalities) uses the same harness regardless of what's under the hood. The harness is portable. The agent is portable. The engine is swappable.
 That, right there, is the load-bearing pattern. SOUL.md says who you are. The adapters say which cognitive engine you're currently riding. The daemon is the saddle every rider uses. Swap engines, the rider survives. Swap riders, the saddle survives. Swap saddles, you've started a new project.
 It's giving Unix philosophy. It's giving "do one thing well." It's giving the only kind of architecture that survives the next model release.

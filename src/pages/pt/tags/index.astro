@@ -23,11 +23,47 @@ const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeComp
   translations={{ en: "/tags/" }}
 >
   <h1>Etiquetas</h1>
-  <nav aria-label="Todas as etiquetas">
-    <ul>
-      {tags.map(([tag, count]) => (
-        <li><a href={`/pt/tags/${tag}/`}>#{tag}</a> <small>({count})</small></li>
-      ))}
-    </ul>
-  </nav>
+  <p><small>{tags.length} etiquetas · ordenadas por frequência</small></p>
+  <ul class="tag-cloud" aria-label="Todas as etiquetas">
+    {tags.map(([tag, count]) => (
+      <li>
+        <a href={`/pt/tags/${tag}/`}>
+          <span class="tag-name">#{tag}</span>
+          <span class="tag-count">{count}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
 </PageLayout>
+
+<style>
+  .tag-cloud {
+    list-style: none;
+    padding: 0;
+    margin: var(--pico-spacing) 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tag-cloud li { margin: 0; }
+  .tag-cloud a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: 999px;
+    text-decoration: none;
+    background: var(--pico-card-background-color);
+    color: var(--pico-color);
+    font-size: 0.9rem;
+  }
+  .tag-cloud a:hover {
+    border-color: var(--pico-primary);
+    color: var(--pico-primary);
+  }
+  .tag-count {
+    color: var(--pico-muted-color);
+    font-size: 0.78rem;
+  }
+</style>
