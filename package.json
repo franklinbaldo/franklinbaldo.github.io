@@ -17,6 +17,7 @@
     "@astrojs/sitemap": "^3.7.2",
     "@astrojs/svelte": "^8.1.0",
     "@fontsource/eb-garamond": "^5.2.7",
+    "@fontsource/inter": "^5.2.8",
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@picocss/pico": "^2.1.1",
     "astro": "^6.2.1",

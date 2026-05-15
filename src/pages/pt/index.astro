@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
 import PostList from "../../components/PostList.astro";
-import PostCard from "../../components/PostCard.astro";
+import SubscribeBox from "../../components/SubscribeBox.astro";
 import LangFilter from "../../components/LangFilter.svelte";
 
 const all = (await getCollection("blog"))
@@ -12,6 +12,7 @@ const all = (await getCollection("blog"))
 const featured = all.filter((p) => p.data.featured);
 const featuredIds = new Set(featured.map((p) => p.id));
 const rest = all.filter((p) => !featuredIds.has(p.id));
+const ordered = [...featured, ...rest];
 ---
 
 <PageLayout
@@ -20,35 +21,55 @@ const rest = all.filter((p) => !featuredIds.has(p.id));
   lang="pt"
   translationHref="/"
 >
-  <section id="hero" style="margin-bottom: 4rem;">
+  <section class="hero-compact">
     <hgroup>
       <h1>Franklin Baldo</h1>
-      <p>Advogado e Procurador do Estado. Explorando os limites dos agentes de IA, metafísica do processo e design jurídico.</p>
+      <p>Ensaios sobre agentes de IA, metafísica do processo e design jurídico.</p>
     </hgroup>
-    <p>
-      Este espaço é o meu jardim digital — uma coleção de ensaios,
-      guias técnicos e fragmentos filosóficos sobre como habitamos
-      um mundo cada vez mais mediado pela inteligência.
-    </p>
     <p class="identity-links">
       <small>
+        <a href="/pt/about/">Sobre</a>
+        <span aria-hidden="true"> · </span>
         <a href="https://github.com/franklinbaldo" rel="me">GitHub</a>
-        ·
+        <span aria-hidden="true"> · </span>
         <a href="https://twitter.com/franklinbaldo" rel="me">Twitter</a>
-        ·
+        <span aria-hidden="true"> · </span>
         <a href="/rss.xml">RSS</a>
       </small>
     </p>
   </section>
 
-  <LangFilter client:load />
+  <SubscribeBox lang="pt" />
 
-  {featured.length > 0 && (
-    <section id="featured">
-      <h2>Destaques</h2>
-      {featured.map((post) => <PostCard post={post} />)}
-    </section>
-  )}
+  <div class="filter-row">
+    <LangFilter client:load />
+  </div>
 
-  <PostList posts={rest} />
+  <PostList posts={ordered} />
 </PageLayout>
+
+<style>
+  .hero-compact {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .hero-compact hgroup {
+    margin-bottom: 0.5rem;
+  }
+  .hero-compact h1 {
+    margin-bottom: 0.25rem;
+  }
+  .hero-compact hgroup > p {
+    color: var(--pico-muted-color);
+    margin: 0;
+  }
+  .identity-links {
+    margin: 0.5rem 0 0;
+    color: var(--pico-muted-color);
+  }
+  .filter-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+  }
+</style>

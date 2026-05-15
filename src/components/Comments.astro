@@ -1,0 +1,69 @@
+---
+interface Props {
+  lang?: 'en' | 'pt';
+}
+const { lang = 'en' } = Astro.props;
+
+// Configure these via giscus.app and replace the placeholders below.
+const GISCUS_REPO = 'franklinbaldo/franklinbaldo.github.io';
+const GISCUS_REPO_ID = 'REPLACE_WITH_REPO_ID';
+const GISCUS_CATEGORY = 'Comments';
+const GISCUS_CATEGORY_ID = 'REPLACE_WITH_CATEGORY_ID';
+const isConfigured = !GISCUS_REPO_ID.startsWith('REPLACE');
+---
+
+<section class="comments" aria-label="Comments">
+  <h3>{lang === 'pt' ? 'Comentários' : 'Comments'}</h3>
+  {isConfigured ? (
+    <div id="giscus-container" data-giscus></div>
+  ) : (
+    <p><small>{lang === 'pt'
+      ? 'Comentários ainda não configurados.'
+      : 'Comments not configured yet.'}</small></p>
+  )}
+</section>
+
+{isConfigured && (
+  <script
+    is:inline
+    define:vars={{ GISCUS_REPO, GISCUS_REPO_ID, GISCUS_CATEGORY, GISCUS_CATEGORY_ID, lang }}
+  >
+    const container = document.getElementById('giscus-container');
+    if (container) {
+      const load = () => {
+        if (container.dataset.loaded) return;
+        container.dataset.loaded = '1';
+        const s = document.createElement('script');
+        s.src = 'https://giscus.app/client.js';
+        s.async = true;
+        s.crossOrigin = 'anonymous';
+        s.setAttribute('data-repo', GISCUS_REPO);
+        s.setAttribute('data-repo-id', GISCUS_REPO_ID);
+        s.setAttribute('data-category', GISCUS_CATEGORY);
+        s.setAttribute('data-category-id', GISCUS_CATEGORY_ID);
+        s.setAttribute('data-mapping', 'pathname');
+        s.setAttribute('data-reactions-enabled', '1');
+        s.setAttribute('data-emit-metadata', '0');
+        s.setAttribute('data-input-position', 'top');
+        s.setAttribute('data-theme', 'preferred_color_scheme');
+        s.setAttribute('data-lang', lang === 'pt' ? 'pt' : 'en');
+        container.appendChild(s);
+      };
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          load();
+          io.disconnect();
+        }
+      });
+      io.observe(container);
+    }
+  </script>
+)}
+
+<style>
+  .comments {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--pico-border-color);
+  }
+</style>

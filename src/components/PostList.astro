@@ -4,12 +4,27 @@ import PostCard from './PostCard.astro';
 
 interface Props {
   posts: CollectionEntry<'blog'>[];
+  heading?: string;
 }
 
-const { posts } = Astro.props;
+const { posts, heading } = Astro.props;
 ---
 
-<section id="essays">
-  <h2>Essays</h2>
+<section class="post-list" id="essays">
+  {heading && <small class="list-heading">{heading}</small>}
   {posts.map((post) => <PostCard post={post} />)}
 </section>
+
+<style>
+  .post-list > article + article {
+    border-top: 1px solid var(--pico-border-color);
+  }
+  .list-heading {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--pico-muted-color);
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+  }
+</style>

@@ -1,0 +1,18 @@
+---
+interface Props {
+  lang?: 'en' | 'pt';
+}
+
+const { lang = 'en' } = Astro.props;
+const copy = lang === 'pt'
+  ? { tagline: 'Advogado e Procurador do Estado. Escreve sobre agentes de IA, metafísica do processo e design jurídico.', more: 'Mais ensaios →' }
+  : { tagline: 'Lawyer and State Attorney. Writes on AI agency, process metaphysics, and legal design.', more: 'More essays →' };
+---
+
+<aside class="author-bio">
+  <img src="/favicon.svg" alt="Franklin Baldo" width="64" height="64" />
+  <div class="bio-text">
+    <h4>Franklin Baldo</h4>
+    <p>{copy.tagline} <a href={lang === 'pt' ? '/pt/' : '/'}>{copy.more}</a></p>
+  </div>
+</aside>

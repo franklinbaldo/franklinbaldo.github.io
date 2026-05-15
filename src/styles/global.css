@@ -1,13 +1,39 @@
 @import "@picocss/pico/css/pico.min.css";
+@import "@fontsource/inter";
 @import "@fontsource/eb-garamond";
 @import "@fontsource/jetbrains-mono";
 @import "katex/dist/katex.min.css";
 
 :root {
-  --pico-font-family: "EB Garamond", serif;
+  --pico-font-family-sans-serif: "Inter", system-ui, -apple-system, sans-serif;
+  --pico-font-family: var(--pico-font-family-sans-serif);
   --pico-font-family-monospace: "JetBrains Mono", monospace;
-  --pico-line-height: 1.8;
-  --pico-typography-spacing-vertical: 1.5rem;
+  --pico-line-height: 1.65;
+  --pico-typography-spacing-vertical: 1.4rem;
+
+  --app-font-display: "EB Garamond", Georgia, serif;
+  --app-touch-target: 44px;
+  --app-reading-width: 680px;
+  --app-page-gap: clamp(1rem, 3vw, 2rem);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+h1, h2, h3, h4,
+hgroup > h1, hgroup > h2, hgroup > h3 {
+  font-family: var(--app-font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+h1 { text-wrap: balance; }
+p, li { text-wrap: pretty; }
+
+main > article {
+  max-width: var(--app-reading-width);
+  margin-inline: auto;
 }
 
 /* Light mode (Paper/Stone) */
@@ -15,47 +41,49 @@
 :root:not([data-theme="dark"]) {
   --pico-background-color: #fdfcfb;
   --pico-color: #1a1a1a;
-  
-  /* Primary colors adjusted for reading */
-  --pico-primary: #333333;
-  --pico-primary-hover: #111111;
-  --pico-primary-background: #eeeeee;
-  
-  /* Text and headers */
+
+  --pico-primary: #c2410c;
+  --pico-primary-hover: #9a3412;
+  --pico-primary-background: #c2410c;
+  --pico-primary-inverse: #ffffff;
+
   --pico-h1-color: #111111;
   --pico-h2-color: #222222;
   --pico-h3-color: #333333;
-  
-  /* Form elements and borders */
+
   --pico-border-color: #e5e5e5;
   --pico-muted-color: #666666;
 }
 
-/* Dark mode */
+/* Dark mode (warmer) */
 @media only screen and (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --pico-background-color: #121212;
-    --pico-color: #d1d1d1;
-    --pico-primary: #aaaaaa;
-    --pico-primary-hover: #ffffff;
-    --pico-h1-color: #ffffff;
-    --pico-h2-color: #eeeeee;
+    --pico-background-color: #1a1a1a;
+    --pico-color: #d6d3d0;
+    --pico-primary: #fb923c;
+    --pico-primary-hover: #fdba74;
+    --pico-primary-background: #fb923c;
+    --pico-primary-inverse: #1a1a1a;
+    --pico-h1-color: #fafafa;
+    --pico-h2-color: #ededed;
     --pico-h3-color: #dddddd;
-    --pico-border-color: #333333;
-    --pico-muted-color: #888888;
+    --pico-border-color: #333130;
+    --pico-muted-color: #8a8784;
   }
 }
 
 [data-theme="dark"] {
-  --pico-background-color: #121212;
-  --pico-color: #d1d1d1;
-  --pico-primary: #aaaaaa;
-  --pico-primary-hover: #ffffff;
-  --pico-h1-color: #ffffff;
-  --pico-h2-color: #eeeeee;
+  --pico-background-color: #1a1a1a;
+  --pico-color: #d6d3d0;
+  --pico-primary: #fb923c;
+  --pico-primary-hover: #fdba74;
+  --pico-primary-background: #fb923c;
+  --pico-primary-inverse: #1a1a1a;
+  --pico-h1-color: #fafafa;
+  --pico-h2-color: #ededed;
   --pico-h3-color: #dddddd;
-  --pico-border-color: #333333;
-  --pico-muted-color: #888888;
+  --pico-border-color: #333130;
+  --pico-muted-color: #8a8784;
 }
 
 /* Base styles adjustments */
@@ -247,4 +275,166 @@ nav .btn-emoji {
 .skip-link:focus {
   left: 0.5rem;
   top: 0.5rem;
+}
+
+/* Minimal app utility layer */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pico-spacing);
+}
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.actions > * {
+  flex: 1 1 auto;
+}
+.scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.responsive-grid {
+  display: grid;
+  gap: var(--pico-spacing);
+}
+@media (min-width: 540px) {
+  .actions > * {
+    flex: initial;
+  }
+}
+@media (min-width: 768px) {
+  .responsive-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Tap targets */
+button,
+[role="button"],
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+summary {
+  min-height: var(--app-touch-target);
+}
+
+/* Reading progress bar */
+.read-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background: var(--pico-primary);
+  z-index: 50;
+  transition: width 0.1s linear;
+  pointer-events: none;
+}
+
+/* Subscribe box */
+.subscribe {
+  background: var(--pico-primary-background);
+  color: var(--pico-primary-inverse);
+  border: none;
+  padding: 1.5rem;
+  margin: 2.5rem auto;
+  max-width: var(--app-reading-width);
+  text-align: center;
+}
+.subscribe hgroup h3 {
+  color: var(--pico-primary-inverse);
+  margin-bottom: 0.25rem;
+  font-family: var(--app-font-display);
+}
+.subscribe hgroup p {
+  color: var(--pico-primary-inverse);
+  opacity: 0.85;
+  margin-bottom: 1rem;
+}
+.subscribe form {
+  margin-bottom: 0.75rem;
+}
+.subscribe input[type="email"] {
+  background: var(--pico-background-color);
+  color: var(--pico-color);
+  border-color: transparent;
+  margin-bottom: 0;
+}
+.subscribe button {
+  background: var(--pico-color);
+  color: var(--pico-background-color);
+  border-color: var(--pico-color);
+  margin-bottom: 0;
+}
+.subscribe button:hover {
+  background: var(--pico-h1-color);
+  border-color: var(--pico-h1-color);
+}
+.subscribe small a {
+  color: var(--pico-primary-inverse);
+  opacity: 0.85;
+}
+
+/* Author bio */
+.author-bio {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin: 3rem 0 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--pico-border-color);
+}
+.author-bio img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin: 0;
+}
+.author-bio .bio-text {
+  flex: 1;
+  min-width: 0;
+}
+.author-bio h4 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+}
+.author-bio p {
+  margin: 0;
+  color: var(--pico-muted-color);
+  font-size: 0.95rem;
+}
+
+/* Header subscribe CTA */
+.subscribe-cta {
+  background: var(--pico-primary-background);
+  color: var(--pico-primary-inverse) !important;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--pico-border-radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--app-touch-target);
+}
+.subscribe-cta:hover {
+  background: var(--pico-primary-hover);
+}
+.subscribe-cta .label-short { display: none; }
+@media (max-width: 540px) {
+  .subscribe-cta .label-long { display: none; }
+  .subscribe-cta .label-short { display: inline; }
 }
