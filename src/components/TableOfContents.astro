@@ -14,16 +14,21 @@ interface Props {
 }
 
 const { headings, lang, sidebar = false } = Astro.props;
+// rehype-autolink-headings injects a trailing anchor character into each
+// heading's rendered text content; strip it so the ToC reads "Coherence"
+// instead of "Coherence#".
+const clean = (s: string) => s.replace(/#\s*$/, '').trim();
 const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
 const label = t(lang, 'toc.label');
 
 type Node = { slug: string; text: string; children: Node[] };
 const tree: Node[] = [];
 for (const h of toc) {
+  const text = clean(h.text);
   if (h.depth === 2) {
-    tree.push({ slug: h.slug, text: h.text, children: [] });
+    tree.push({ slug: h.slug, text, children: [] });
   } else if (tree.length > 0) {
-    tree[tree.length - 1].children.push({ slug: h.slug, text: h.text, children: [] });
+    tree[tree.length - 1].children.push({ slug: h.slug, text, children: [] });
   }
 }
 

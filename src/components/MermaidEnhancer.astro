@@ -10,19 +10,22 @@
   let initialized = false;
 
   async function render() {
-    const codeBlocks = document.querySelectorAll<HTMLElement>(
-      "article pre > code.language-mermaid",
+    // Astro's default Shiki pipeline emits mermaid blocks as
+    // <pre data-language="mermaid"><code>…</code></pre> — the language tag
+    // lives on the <pre>, not on the <code>. Earlier selector targeted
+    // .language-mermaid on <code> and matched nothing.
+    const preBlocks = document.querySelectorAll<HTMLElement>(
+      "article pre[data-language='mermaid']",
     );
-    if (codeBlocks.length === 0) return;
+    if (preBlocks.length === 0) return;
 
     const targets: HTMLElement[] = [];
-    codeBlocks.forEach((code) => {
-      const pre = code.parentElement;
-      if (!pre || pre.dataset.mermaidProcessed === "true") return;
-      const source = code.textContent ?? "";
+    preBlocks.forEach((pre) => {
+      if (pre.dataset.mermaidProcessed === "true") return;
+      const source = pre.textContent ?? "";
       const container = document.createElement("div");
       container.className = "mermaid";
-      container.textContent = source;
+      container.textContent = source.trim();
       pre.replaceWith(container);
       targets.push(container);
     });

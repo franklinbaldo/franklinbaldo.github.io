@@ -37,7 +37,10 @@ body::before {
  */
 .post-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  /* minmax(0, 1fr) is critical: the default `1fr` is `minmax(min-content, 1fr)`,
+     so a long pre/img/code block would force the track wider than the viewport
+     and create a page-wide horizontal scroll. */
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .toc-col {
@@ -78,7 +81,7 @@ body::before {
  * direct-child <p> after the header so the cap only appears at the opening
  * of the essay, not inside asides or footnotes.
  */
-.post-body article > p:first-of-type::first-letter {
+.post-body > article > p:first-of-type::first-letter {
   float: left;
   font-family: var(--pico-font-family-serif);
   font-size: 4.2rem;
@@ -89,10 +92,53 @@ body::before {
   margin-top: 0.15rem;
 }
 @media (max-width: 600px) {
-  .post-body article > p:first-of-type::first-letter {
+  .post-body > article > p:first-of-type::first-letter {
     font-size: 3.4rem;
     padding-right: 0.4rem;
   }
+}
+
+/*
+ * Hard guarantee that nothing in the article body forces horizontal scroll:
+ *   - Astro's <Image> emits the intrinsic dimensions on width/height attrs;
+ *     without max-width: 100% the natural 1200px hero blasts past a 390px
+ *     mobile viewport.
+ *   - Shiki's .astro-code <pre> elements have `overflow-x: auto` inline but
+ *     no max-width, so a long line inside still pushes the parent wide.
+ *   - <table> needs the same protection on long rows.
+ */
+.post-body img,
+.post-body svg:not(.path-icon svg):not(.rail-avatar svg):not(.icon),
+.post-body video,
+.post-body iframe {
+  max-width: 100%;
+  height: auto;
+}
+.post-body pre,
+.post-body table,
+.post-body .mermaid {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.post-body pre code {
+  display: inline-block;
+  min-width: 0;
+}
+
+/*
+ * Universal wrap policy. Long URLs, long inline code snippets like
+ * `package.method_with_a_very_long_name`, and unbreakable identifiers in
+ * headings would otherwise force a paragraph (and its grid track) wider
+ * than the viewport. `overflow-wrap: anywhere` allows the browser to
+ * break inside such tokens only when nothing else fits, which is exactly
+ * what we want for narrow phones without harming normal prose flow.
+ */
+:where(p, li, dd, dt, blockquote, h1, h2, h3, h4, h5, h6, a) {
+  overflow-wrap: anywhere;
+}
+:not(pre) > code {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .skip-link {
