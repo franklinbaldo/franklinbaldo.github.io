@@ -45,7 +45,7 @@ const blurb = excerpt(post.body ?? '', 320) || post.data.description;
   </header>
   <p class="excerpt">{blurb}</p>
   <footer>
-    <a href={`/blog/${post.id}/`}>Continue reading →</a>
+    <a href={`/blog/${post.id}/`}>{postLang === 'pt' ? 'Continuar lendo →' : 'Continue reading →'}</a>
   </footer>
 </article>
 
