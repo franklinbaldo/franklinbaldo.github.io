@@ -1,49 +1,5 @@
-@import "@picocss/pico/css/pico.min.css";
-@import "@fontsource/inter";
-@import "@fontsource/eb-garamond";
-@import "@fontsource/jetbrains-mono";
+@import "@picocss/pico/css/pico.orange.min.css";
 @import "katex/dist/katex.min.css";
-
-:root {
-  --pico-font-family-sans-serif: "Inter", system-ui, -apple-system, sans-serif;
-  --pico-font-family: var(--pico-font-family-sans-serif);
-  --pico-font-family-monospace: "JetBrains Mono", monospace;
-  --app-font-display: "EB Garamond", Georgia, serif;
-  --app-reading-width: 680px;
-}
-
-[data-theme="light"],
-:root:not([data-theme="dark"]) {
-  --pico-primary: #c2410c;
-  --pico-primary-hover: #9a3412;
-  --pico-primary-background: #c2410c;
-  --pico-primary-inverse: #ffffff;
-}
-
-@media only screen and (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --pico-primary: #fb923c;
-    --pico-primary-hover: #fdba74;
-    --pico-primary-background: #fb923c;
-    --pico-primary-inverse: #1a1a1a;
-  }
-}
-
-[data-theme="dark"] {
-  --pico-primary: #fb923c;
-  --pico-primary-hover: #fdba74;
-  --pico-primary-background: #fb923c;
-  --pico-primary-inverse: #1a1a1a;
-}
-
-h1, h2, h3, h4 {
-  font-family: var(--app-font-display);
-}
-
-main > article {
-  max-width: var(--app-reading-width);
-  margin-inline: auto;
-}
 
 .skip-link {
   position: absolute;
@@ -54,7 +10,4 @@ main > article {
   background: var(--pico-background-color);
   color: var(--pico-primary);
 }
-.skip-link:focus {
-  left: 0.5rem;
-  top: 0.5rem;
-}
+.skip-link:focus { left: 0.5rem; top: 0.5rem; }
