@@ -68,6 +68,10 @@ const translationLinks = translationSiblings.map((p) => {
 >
   <div id="read-progress" aria-hidden="true"></div>
 
+  <aside class="border-rail" aria-hidden="true">
+    <span>{lang === 'pt' ? 'NOTAS · DA · FRONTEIRA' : 'NOTES · FROM · THE · BORDER'}</span>
+  </aside>
+
   <div class="post-grid">
     <aside class="toc-col" aria-label={t(lang, 'toc.label')}>
       <TableOfContents headings={headings} lang={lang} sidebar />
@@ -168,5 +172,35 @@ const translationLinks = translationSiblings.map((p) => {
     background: linear-gradient(to right, var(--pico-primary) var(--p, 0%), transparent 0);
     z-index: 50;
     pointer-events: none;
+  }
+
+  /* Decorative left rail — desktop only, purely typographic. */
+  .border-rail {
+    display: none;
+  }
+  @media (min-width: 1400px) {
+    .border-rail {
+      display: block;
+      position: fixed;
+      left: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%) rotate(180deg);
+      writing-mode: vertical-rl;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.32em;
+      color: var(--pico-muted-color);
+      pointer-events: none;
+      user-select: none;
+    }
+    .border-rail span::after {
+      content: "";
+      display: inline-block;
+      margin-top: 0.75rem;
+      width: 1px;
+      height: 2.5rem;
+      background: var(--pico-muted-color);
+      opacity: 0.5;
+    }
   }
 </style>

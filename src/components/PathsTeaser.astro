@@ -17,6 +17,31 @@ const cards = await Promise.all(
 
 const visible = cards.filter((c) => c.count > 0);
 const pathsRoot = `${urlPrefix(lang)}/paths`;
+
+// Thin-line icons that match the cobogó aesthetic. Stroke uses currentColor
+// so each icon picks up the card's accent at render time.
+const ICONS: Record<string, string> = {
+  'agency-and-constraint': `
+    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <circle cx="32" cy="32" r="27"/>
+      <circle cx="32" cy="32" r="18"/>
+      <circle cx="32" cy="32" r="9"/>
+      <circle cx="32" cy="32" r="2.2" fill="currentColor"/>
+      <line x1="32" y1="2" x2="32" y2="13"/>
+      <line x1="32" y1="51" x2="32" y2="62"/>
+      <line x1="2" y1="32" x2="13" y2="32"/>
+      <line x1="51" y1="32" x2="62" y2="32"/>
+    </svg>`,
+  'memory-and-funes': `
+    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <circle cx="32" cy="32" r="6"/>
+      <circle cx="32" cy="32" r="14"/>
+      <circle cx="32" cy="32" r="22"/>
+      <circle cx="32" cy="32" r="28"/>
+      <line x1="32" y1="32" x2="60" y2="32"/>
+      <circle cx="60" cy="32" r="1.6" fill="currentColor"/>
+    </svg>`,
+};
 ---
 
 {visible.length > 0 && (
@@ -27,17 +52,20 @@ const pathsRoot = `${urlPrefix(lang)}/paths`;
     <div class="paths-grid">
       {visible.map(({ path, count }) => (
         <article class="path-card">
-          <h3>
-            <a href={`${pathsRoot}/${path.slug}/`}>{pick(lang, path.title)}</a>
-          </h3>
-          <p class="path-blurb">{pick(lang, path.blurb)}</p>
-          <p class="path-meta">
-            <small>
-              {count} {t(lang, count === 1 ? 'paths.essay' : 'paths.essays')}
-              {' · '}
-              <a href={`${pathsRoot}/${path.slug}/`}>{t(lang, 'paths.startHere')}</a>
-            </small>
-          </p>
+          <div class="path-icon" set:html={ICONS[path.slug] ?? ''} />
+          <div class="path-body">
+            <h3>
+              <a href={`${pathsRoot}/${path.slug}/`}>{pick(lang, path.title)}</a>
+            </h3>
+            <p class="path-blurb">{pick(lang, path.blurb)}</p>
+            <p class="path-meta">
+              <small>
+                {count}{' '}{t(lang, count === 1 ? 'paths.essay' : 'paths.essays')}
+                {' · '}
+                <a href={`${pathsRoot}/${path.slug}/`}>{t(lang, 'paths.startHere')}</a>
+              </small>
+            </p>
+          </div>
         </article>
       ))}
     </div>
@@ -72,10 +100,30 @@ const pathsRoot = `${urlPrefix(lang)}/paths`;
     grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
   }
   .path-card {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: start;
     border: 1px solid var(--pico-muted-border-color);
     border-top: 2px solid var(--pico-primary);
     background: var(--pico-card-background-color);
     padding: calc(var(--pico-spacing) * 1.25);
+  }
+  .path-icon {
+    width: 64px;
+    height: 64px;
+    color: var(--pico-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .path-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .path-body {
+    min-width: 0;
   }
   .path-card h3 {
     margin: 0 0 .5rem;
@@ -95,5 +143,15 @@ const pathsRoot = `${urlPrefix(lang)}/paths`;
   .path-meta {
     margin: 0;
     color: var(--pico-muted-color);
+  }
+  @media (max-width: 480px) {
+    .path-card {
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: 1rem;
+    }
+    .path-icon {
+      width: 48px;
+      height: 48px;
+    }
   }
 </style>
