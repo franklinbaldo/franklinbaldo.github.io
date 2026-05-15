@@ -56,11 +56,11 @@ Não foi sempre assim. Em algum momento entre 2018 e 2022, todo mundo no serviç
 
 ```mermaid
 flowchart LR
-    A["Ato no DOE-TCE<br/>nome completo<br/>CPF parcial"] --> B[Portal da Transparência]
-    A --> C[Diário Oficial pesquisável]
-    B --> D[matrícula, cargo, lotação]
+    A["Ato no DOE-TCE<br/>nome completo<br/>CPF parcial"] --> B["Portal da Transparência"]
+    A --> C["Diário Oficial pesquisável"]
+    B --> D["matrícula, cargo, lotação"]
     C --> E["publicações anteriores<br/>(CPF inteiro)"]
-    D --> F[identificação unívoca]
+    D --> F["identificação unívoca"]
     E --> F
 ```
 
@@ -87,10 +87,10 @@ O teto técnico do adversário não-estatal e não-Big-Tech brasileiro tem nome,
 
 ```mermaid
 flowchart LR
-    M["Dona Maria"] -.barrada nos asteriscos.-> X["—"]
-    R["Robson"] -->|10 minutos| ID["identificação<br/>unívoca"]
-    R -.+ teimosia<br/>+ dump Serasa.-> H["hacker de<br/>Araraquara"]
-    H -->|15 segundos| ID
+    M["Dona Maria"] -. "barrada nos asteriscos" .-> X["—"]
+    R["Robson"] -->|"10 minutos"| ID["identificação<br/>unívoca"]
+    R -. "+ teimosia<br/>+ dump Serasa" .-> H["hacker de<br/>Araraquara"]
+    H -->|"15 segundos"| ID
 ```
 
 ## A garrafa pet em cima do padrão
