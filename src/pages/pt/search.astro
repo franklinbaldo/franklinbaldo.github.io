@@ -13,24 +13,10 @@ import PageLayout from "../../layouts/PageLayout.astro";
     <p><small>Busca de texto completo por todos os ensaios. Índice construído com <a href="https://pagefind.app/">Pagefind</a>.</small></p>
   </hgroup>
 
-  <search id="search"></search>
+  <search>
+    <pagefind-searchbox data-filter="lang:pt"></pagefind-searchbox>
+  </search>
 
-  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
-  <script is:inline defer src="/pagefind/pagefind-ui.js"></script>
-  <script is:inline>
-    function initSearch() {
-      if (window.PagefindUI && document.getElementById("search") && !document.querySelector("#search .pagefind-ui")) {
-        new window.PagefindUI({
-          element: "#search",
-          showImages: false,
-          showSubResults: true,
-          filters: {
-            lang: "pt"
-          }
-        });
-      }
-    }
-    window.addEventListener("DOMContentLoaded", initSearch);
-    document.addEventListener("astro:page-load", initSearch);
-  </script>
+  <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
+  <script is:inline type="module" src="/pagefind/pagefind-component-ui.js"></script>
 </PageLayout>
