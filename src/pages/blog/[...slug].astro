@@ -47,7 +47,7 @@ const translationLang = translation?.data.lang ?? DEFAULT_LANG;
 const translations: Record<string, string> = translationHref
   ? { [translationLang]: translationHref }
   : {};
-const translationLabel = translation ? t(translationLang, 'lang.switchLabel') : undefined;
+const translationLabel = translation ? t(lang, 'lang.switchLabel') : undefined;
 ---
 
 <PageLayout

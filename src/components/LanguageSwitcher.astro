@@ -68,15 +68,16 @@ const navMatch = Object.fromEntries(
     const candidate = translations[userLang] ? userLang
       : otherCodes.find((c) => translations[c]);
 
+    // Labels are authored from the current page's perspective: the EN bundle's
+    // `lang.label` says "PT" because that's what an EN reader sees on the button.
+    // So look up labels by pageLang, not by the target candidate.
     if (candidate) {
-      label.textContent = langLabels[candidate] || candidate.toUpperCase();
-      btn.setAttribute('aria-label', switchLabels[candidate] || `Switch to ${candidate}`);
+      label.textContent = langLabels[pageLang] || pageLang.toUpperCase();
+      btn.setAttribute('aria-label', switchLabels[pageLang] || `Switch language`);
       btn.disabled = false;
     } else {
-      // No translation available: show the first alternate's "no translation" label.
-      const fallback = otherCodes[0];
-      label.textContent = (fallback && langLabels[fallback]) || '—';
-      btn.setAttribute('aria-label', (fallback && noTransLabels[fallback]) || 'No translation');
+      label.textContent = langLabels[pageLang] || '—';
+      btn.setAttribute('aria-label', noTransLabels[pageLang] || 'No translation');
       btn.disabled = true;
     }
     btn.hidden = false;
