@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { t } from '../lib/i18n';
+import { t, DEFAULT_LANG } from '../lib/i18n';
 
 interface Props {
   currentId: string;
@@ -9,9 +9,10 @@ interface Props {
 }
 
 const { currentId, tags, lang } = Astro.props;
+const currentLang = lang ?? DEFAULT_LANG;
 
 const related = tags.length === 0 ? [] : (await getCollection('blog'))
-  .filter(p => !p.data.draft && p.id !== currentId)
+  .filter(p => !p.data.draft && p.id !== currentId && (p.data.lang ?? DEFAULT_LANG) === currentLang)
   .map(p => ({
     post: p,
     shared: (p.data.tags ?? []).filter(t => tags.includes(t)).length,
