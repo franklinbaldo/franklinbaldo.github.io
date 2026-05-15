@@ -30,7 +30,7 @@ const formattedDate = post.data.date.toLocaleDateString(postLang === 'pt' ? 'pt-
 const blurb = excerpt(post.body ?? '', 320) || post.data.description;
 ---
 
-<article>
+<article data-post-lang={postLang}>
   <header>
     <hgroup>
       <h3>

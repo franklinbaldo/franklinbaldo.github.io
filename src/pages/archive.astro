@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import PageLayout from "../layouts/PageLayout.astro";
+import LangFilter from "../components/LangFilter.svelte";
 
 const posts = (await getCollection("blog"))
   .filter((p) => !p.data.draft)
@@ -22,16 +23,21 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
       <p><small>{posts.length} essays</small></p>
     </header>
 
+    <LangFilter client:load />
+
     {years.map((year) => (
       <section>
         <h2>{year}</h2>
         <ul class="archive-list">
           {byYear.get(year)!.map((post) => (
-            <li>
+            <li data-post-lang={post.data.lang ?? 'en'}>
               <time datetime={post.data.date.toISOString()}>
                 {post.data.date.toLocaleDateString("en-US", { month: "short", day: "2-digit" })}
               </time>
-              <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+              <span class="archive-title">
+                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                {post.data.lang === 'pt' && <small class="lang-flag" aria-label="Post in Portuguese">🇧🇷</small>}
+              </span>
             </li>
           ))}
         </ul>
@@ -54,5 +60,14 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
   .archive-list time {
     color: var(--pico-muted-color);
     font-variant-numeric: tabular-nums;
+  }
+  .archive-title {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .lang-flag {
+    opacity: 0.7;
+    font-size: 0.75em;
   }
 </style>
