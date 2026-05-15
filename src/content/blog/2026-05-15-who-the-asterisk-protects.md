@@ -146,9 +146,35 @@ The LGPD was not conceived in Brazil. It is, to a large extent, the Brazilian co
 
 What happened on the way from the law to the handbook is a form of transference. The companies that originated the concern keep operating essentially as they operated. Systemic leaks cross the Brazilian landscape without provoking a proportional institutional response. Serasa leaked some two hundred and twenty million CPFs in 2021. INSS records have appeared on forums for years. The telemarketer who calls during our lunch break knows the exact value of our last bill, and we've given up asking how he knows. The LGPD exists while all of this happens. But the part of the LGPD that actually bites — that generates committees, handbooks, training sessions, internal disciplinary actions, removal of useful information from public databases — is the part that squeezes the least dangerous agent in the system: the front-desk servant, the academic researcher, the local journalist, the citizen overseer.
 
-Whoever wrote the LGPD was thinking about Mark Zuckerberg. Whoever applies the LGPD is thinking about Dona Maria.
+<figure class="svg-illustration">
+  <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title-boss">
+    <title id="title-boss">Promised final boss vs. enemy actually fought: the disproportion between the threat that justified the LGPD and the curious neighbor it actually reaches</title>
+    <line x1="350" y1="20" x2="350" y2="300" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+    <text x="175" y="38" font-family="serif" font-size="11" fill="currentColor" text-anchor="middle" letter-spacing="2">PROMISED FINAL BOSS</text>
+    <g transform="translate(175, 175)">
+      <path d="M -55,-80 Q -55,-110 0,-110 Q 55,-110 55,-80 L 55,-20 Q 55,-10 50,-5 L 50,75 Q 50,85 40,85 L -40,85 Q -50,85 -50,75 L -50,-5 Q -55,-10 -55,-20 Z" fill="currentColor" opacity="0.9"/>
+      <ellipse cx="-18" cy="-70" rx="8" ry="4" fill="white" opacity="0.85"/>
+      <ellipse cx="18" cy="-70" rx="8" ry="4" fill="white" opacity="0.85"/>
+      <path d="M -45,-85 Q -50,-100 -35,-105" fill="none" stroke="currentColor" stroke-width="2" opacity="0.7"/>
+      <path d="M 45,-85 Q 50,-100 35,-105" fill="none" stroke="currentColor" stroke-width="2" opacity="0.7"/>
+    </g>
+    <text x="175" y="290" font-family="serif" font-size="18" fill="currentColor" text-anchor="middle" font-weight="bold">Mark Zuckerberg</text>
+    <text x="525" y="38" font-family="serif" font-size="11" fill="currentColor" text-anchor="middle" letter-spacing="2">ENEMY ACTUALLY FOUGHT</text>
+    <g transform="translate(525, 245)">
+      <circle cx="0" cy="-22" r="4" fill="currentColor"/>
+      <path d="M -5,-19 Q -7,-15 -6,-10 L 6,-10 Q 7,-15 5,-19 Z" fill="currentColor"/>
+      <path d="M -6,-10 L -7,2 L 7,2 L 6,-10 Z" fill="currentColor"/>
+      <rect x="4" y="-5" width="3" height="6" fill="currentColor"/>
+      <line x1="-5" y1="2" x2="-5" y2="9" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="5" y1="2" x2="5" y2="9" stroke="currentColor" stroke-width="1.5"/>
+    </g>
+    <text x="525" y="275" font-family="serif" font-size="18" fill="currentColor" text-anchor="middle" font-weight="bold">Dona Maria</text>
+    <text x="525" y="293" font-family="serif" font-size="12" fill="currentColor" text-anchor="middle" font-style="italic" opacity="0.7">(in the Official Gazette)</text>
+  </svg>
+  <figcaption>The scale is proportional to the argument. The LGPD reaches Dona Maria. Mark Zuckerberg is still the size he was.</figcaption>
+</figure>
 
-It isn't necessary to attribute systemic bad faith to anyone for this to happen, and I don't. The ritual survives on its own, by a combination of institutional risk aversion, the fragmentation of the state's technical capacity, and the administrative inertia that prefers a demonstrable formal protection to a substantive protection that's hard to display. The handbook is displayable. Internal segregation of duties isn't. The asterisk is the visible mark of compliance, and that's why it multiplied.
+It isn't necessary to attribute systemic bad faith to anyone for this to happen, and I don't. The LGPD was drafted with a definition of anonymization that admits compliance via asterisks. It was drafted with hypotheses for processing by the public power that admit conservative interpretation. It was drafted without clearly ranking, in the text, the constitutional principle of publicity over the legal right to data protection when the data subject is a public agent in the exercise of office. Each of those drafting silences became, for the average administrator, authorization for the chop. The ritual survives on its own, sustained by the combination of a law designed to allow the ritual and a public administration designed to prefer a demonstrable formal protection to a substantive protection that's hard to display. The handbook is displayable. Internal segregation of duties isn't. The asterisk is the visible mark of compliance, and that's why it multiplied.
 
 ```mermaid
 flowchart TD

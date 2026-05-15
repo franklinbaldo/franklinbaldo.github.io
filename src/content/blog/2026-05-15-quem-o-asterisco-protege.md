@@ -146,9 +146,35 @@ A LGPD não foi pensada no Brasil. É, em larga medida, a prima brasileira do *G
 
 O que aconteceu no caminho entre a lei e a cartilha é uma forma de transferência. As empresas que originaram a preocupação seguem operando essencialmente como operavam. Vazamentos sistêmicos atravessam a paisagem brasileira sem provocar resposta institucional proporcional. A Serasa vazou cerca de duzentos e vinte milhões de CPFs em 2021. Registros do INSS aparecem em fóruns há anos. O operador de telemarketing que liga no horário do almoço da gente sabe o valor exato da última fatura, e a gente já desistiu de perguntar como ele sabe. A LGPD existe enquanto tudo isso acontece. Mas a parte da LGPD que efetivamente pega — que gera comitês, cartilhas, treinamentos, ações disciplinares internas, exclusão de informação útil dos bancos de dados públicos — é a parte que aperta o agente menos perigoso do sistema: o servidor de atendimento, o pesquisador acadêmico, o jornalista local, o cidadão fiscalizador.
 
-Quem escreveu a LGPD pensava em Mark Zuckerberg. Quem aplica a LGPD pensa em Dona Maria.
+<figure class="svg-illustration">
+  <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title-boss">
+    <title id="title-boss">Boss final prometido vs inimigo enfrentado: desproporção entre a ameaça que justificou a LGPD e a vizinha curiosa que ela efetivamente atinge</title>
+    <line x1="350" y1="20" x2="350" y2="300" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+    <text x="175" y="38" font-family="serif" font-size="11" fill="currentColor" text-anchor="middle" letter-spacing="2">BOSS FINAL PROMETIDO</text>
+    <g transform="translate(175, 175)">
+      <path d="M -55,-80 Q -55,-110 0,-110 Q 55,-110 55,-80 L 55,-20 Q 55,-10 50,-5 L 50,75 Q 50,85 40,85 L -40,85 Q -50,85 -50,75 L -50,-5 Q -55,-10 -55,-20 Z" fill="currentColor" opacity="0.9"/>
+      <ellipse cx="-18" cy="-70" rx="8" ry="4" fill="white" opacity="0.85"/>
+      <ellipse cx="18" cy="-70" rx="8" ry="4" fill="white" opacity="0.85"/>
+      <path d="M -45,-85 Q -50,-100 -35,-105" fill="none" stroke="currentColor" stroke-width="2" opacity="0.7"/>
+      <path d="M 45,-85 Q 50,-100 35,-105" fill="none" stroke="currentColor" stroke-width="2" opacity="0.7"/>
+    </g>
+    <text x="175" y="290" font-family="serif" font-size="18" fill="currentColor" text-anchor="middle" font-weight="bold">Mark Zuckerberg</text>
+    <text x="525" y="38" font-family="serif" font-size="11" fill="currentColor" text-anchor="middle" letter-spacing="2">INIMIGO ENFRENTADO</text>
+    <g transform="translate(525, 245)">
+      <circle cx="0" cy="-22" r="4" fill="currentColor"/>
+      <path d="M -5,-19 Q -7,-15 -6,-10 L 6,-10 Q 7,-15 5,-19 Z" fill="currentColor"/>
+      <path d="M -6,-10 L -7,2 L 7,2 L 6,-10 Z" fill="currentColor"/>
+      <rect x="4" y="-5" width="3" height="6" fill="currentColor"/>
+      <line x1="-5" y1="2" x2="-5" y2="9" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="5" y1="2" x2="5" y2="9" stroke="currentColor" stroke-width="1.5"/>
+    </g>
+    <text x="525" y="275" font-family="serif" font-size="18" fill="currentColor" text-anchor="middle" font-weight="bold">Dona Maria</text>
+    <text x="525" y="293" font-family="serif" font-size="12" fill="currentColor" text-anchor="middle" font-style="italic" opacity="0.7">(no Diário Oficial)</text>
+  </svg>
+  <figcaption>A escala é proporcional ao argumento. A LGPD chega à Dona Maria. Mark Zuckerberg continua do tamanho que era.</figcaption>
+</figure>
 
-Não é necessário atribuir má-fé sistêmica a ninguém para que isso aconteça, e eu não atribuo. O ritual sobrevive sozinho, por uma combinação de aversão a risco institucional, fragmentação da capacidade técnica do Estado, e a inércia administrativa que prefere uma proteção formal demonstrável a uma proteção substantiva difícil de exibir. A cartilha é exibível. A segregação de funções interna não é. O asterisco é a marca visível da conformidade, e por isso se multiplicou.
+Não é necessário atribuir má-fé sistêmica a ninguém para que isso aconteça, e eu não atribuo. A LGPD foi escrita com uma definição de anonimização que admite ser cumprida com asteriscos. Foi escrita com hipóteses de tratamento pelo poder público que admitem ser interpretadas conservadoramente. Foi escrita sem hierarquizar claramente, no texto, o princípio constitucional da publicidade sobre o direito legal à proteção de dados quando o titular é agente público no exercício da função. Cada um desses silêncios redacionais virou, para o gestor mediano, autorização para o picote. O ritual sobrevive sozinho, sustentado pela combinação entre uma lei desenhada para permitir o ritual e uma administração pública desenhada para preferir a proteção formal demonstrável à proteção substantiva difícil de exibir. A cartilha é exibível. A segregação de funções interna não é. O asterisco é a marca visível da conformidade, e por isso se multiplicou.
 
 ```mermaid
 flowchart TD
