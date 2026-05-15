@@ -31,6 +31,7 @@ const labels = {
   citeBibtex: 'BibTeX',
   copy: isPt ? 'Copiar' : 'Copy',
   copied: isPt ? 'Copiado' : 'Copied',
+  failed: isPt ? 'Não foi possível copiar' : "Couldn't copy",
   close: isPt ? 'Fechar' : 'Close',
 };
 ---
@@ -90,6 +91,7 @@ const labels = {
         class="outline cite-copy"
         data-target=".cite-apa"
         data-copied={labels.copied}
+        data-failed={labels.failed}
       >{labels.copy}</button>
     </section>
     <section>
@@ -100,6 +102,7 @@ const labels = {
         class="outline cite-copy"
         data-target=".cite-bibtex"
         data-copied={labels.copied}
+        data-failed={labels.failed}
       >{labels.copy}</button>
     </section>
   </article>
@@ -131,6 +134,8 @@ const labels = {
       try {
         await navigator.clipboard.writeText(text);
         copyBtn.textContent = copyBtn.dataset.copied ?? 'Copied';
+      } catch {
+        copyBtn.textContent = copyBtn.dataset.failed ?? "Couldn't copy";
       } finally {
         copyBtn.removeAttribute('aria-busy');
         window.setTimeout(() => {
