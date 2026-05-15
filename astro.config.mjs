@@ -9,11 +9,15 @@ import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 import { remarkGitModified } from './src/lib/remark-git-modified.mjs';
+import { rehypeWrapTables } from './src/lib/rehype-wrap-tables.mjs';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://franklinbaldo.github.io',
   integrations: [mdx(), sitemap()],
+  prefetch: {
+    defaultStrategy: 'viewport',
+  },
   markdown: {
     remarkPlugins: [remarkMath, remarkReadingTime, remarkGitModified],
     rehypePlugins: [
@@ -27,6 +31,7 @@ export default defineConfig({
           content: { type: 'text', value: '#' },
         },
       ],
+      rehypeWrapTables,
     ],
   },
 });

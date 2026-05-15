@@ -16,7 +16,9 @@ const recent = (await getCollection("blog"))
 
   <section aria-labelledby="search-heading">
     <h2 id="search-heading">Search</h2>
-    <search id="search"></search>
+    <search>
+      <pagefind-searchbox></pagefind-searchbox>
+    </search>
   </section>
 
   <nav aria-label="Recently published">
@@ -43,15 +45,6 @@ const recent = (await getCollection("blog"))
     </p>
   </nav>
 
-  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
-  <script is:inline defer src="/pagefind/pagefind-ui.js"></script>
-  <script is:inline>
-    function initSearch() {
-      if (window.PagefindUI && document.getElementById("search") && !document.querySelector("#search .pagefind-ui")) {
-        new window.PagefindUI({ element: "#search", showImages: false, showSubResults: true });
-      }
-    }
-    window.addEventListener("DOMContentLoaded", initSearch);
-    document.addEventListener("astro:page-load", initSearch);
-  </script>
+  <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
+  <script is:inline type="module" src="/pagefind/pagefind-component-ui.js"></script>
 </PageLayout>
