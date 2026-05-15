@@ -2,7 +2,6 @@
 import { getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
 import PostList from "../../components/PostList.astro";
-import SubscribeBox from "../../components/SubscribeBox.astro";
 import LangFilter from "../../components/LangFilter.astro";
 
 const all = (await getCollection("blog"))
@@ -26,7 +25,6 @@ const ordered = [...featured, ...rest];
     <p>Ensaios sobre agentes de IA, metafísica do processo e design jurídico.</p>
   </hgroup>
 
-  <SubscribeBox lang="pt" />
 
   <LangFilter />
 
