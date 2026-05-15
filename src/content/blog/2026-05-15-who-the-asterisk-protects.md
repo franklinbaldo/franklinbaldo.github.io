@@ -9,7 +9,7 @@ tags: ["lgpd", "privacy", "transparency", "security", "law"]
 
 In some routine official gazette, in the header of a single-judge decision from the State Court of Accounts, you find this sentence:
 
-> INTERESTED PARTY: Conceição Monteiro Saldanha dos Santos. CPF no. `***.237.552-**`.
+> INTERESTED PARTY: Mariana Esteves Carvalho Albuquerque. CPF no. `***.123.456-**`.
 
 The sentence is well composed. The full name, prepositions in place. The CPF chopped at both ends. Iperon, when granting the retirement, saw no reason to hide the name of the retiree; the Court of Accounts, when registering it, saw no reason to change that choice; but both saw reason to hide two chunks of the CPF. The document publishes and conceals on the same line, with the serenity of well-trained civil service.
 
@@ -46,7 +46,7 @@ The math is mathing. Five asterisks look like five digits. They are not.
 
 The previous exercise — generating a thousand candidates — is elegant and unnecessary. In almost every practical case, nobody needs to generate a thousand candidates, because the five asterisks live surrounded by information that already uniquely identifies the person.
 
-Conceição Monteiro Saldanha dos Santos, whose name appears in the single-judge decision, is not just any Conceição. She is a retired state civil servant, with a defined position, a recorded posting, a numbered registration. The Transparency Portal publishes the full name, registration number, position, posting and salary of the entire payroll. The state's Electronic Official Gazette, searchable by full text across almost two decades of archive, carries the appointment ordinance, some promotion, some leave, the publication of the retirement act. Somewhere in those publications, over those twenty years, the CPF appeared in full. The LGPD became law in 2018; the rest of the servant's documentary history is older, and was indexed.
+Mariana Esteves Carvalho Albuquerque, whose name appears in the single-judge decision, is not just any Mariana. She is a retired state civil servant, with a defined position, a recorded posting, a numbered registration. The Transparency Portal publishes the full name, registration number, position, posting and salary of the entire payroll. The state's Electronic Official Gazette, searchable by full text across almost two decades of archive, carries the appointment ordinance, some promotion, some leave, the publication of the retirement act. Somewhere in those publications, over those twenty years, the CPF appeared in full. The LGPD became law in 2018; the rest of the servant's documentary history is older, and was indexed.
 
 The question the asterisk pretends to dodge is a question the asterisk has no way of dodging: *who is this person*. The act has already answered. The chopped CPF is a redundant confirmation of an identification already performed by the document's own header.
 

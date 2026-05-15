@@ -9,7 +9,7 @@ tags: ["lgpd", "privacidade", "transparência", "segurança", "direito"]
 
 Num diário oficial qualquer, no cabeçalho de uma decisão monocrática do Tribunal de Contas, aparece a frase:
 
-> INTERESSADA: Conceição Monteiro Saldanha dos Santos. CPF n. `***.237.552-**`.
+> INTERESSADA: Mariana Esteves Carvalho Albuquerque. CPF n. `***.123.456-**`.
 
 A frase está bem composta. O nome inteiro, com as preposições no lugar. O CPF picotado nas pontas. O Iperon, ao concedê-la, não viu razão para esconder o nome de quem se aposentou; o Tribunal de Contas, ao registrá-la, não viu razão para mudar essa escolha; mas ambos viram razão para esconder dois pedaços do CPF. O documento publica e oculta na mesma linha, com a serenidade do funcionalismo bem treinado.
 
@@ -46,7 +46,7 @@ A matemática está matematicando. Cinco asteriscos parecem cinco dígitos. Não
 
 A operação anterior — gerar mil candidatos — é elegante e desnecessária. Em quase todos os casos práticos, ninguém precisa gerar mil candidatos, porque cinco asteriscos vivem cercados de informação que já identifica unicamente o titular.
 
-Conceição Monteiro Saldanha dos Santos, cujo nome aparece na decisão monocrática, não é qualquer Conceição. É servidora pública estadual aposentada, com cargo definido, lotação registrada, matrícula numerada. O Portal da Transparência publica o nome completo, a matrícula, o cargo, a lotação e a remuneração de toda a folha. O Diário Oficial Eletrônico do Estado, pesquisável por texto integral em quase duas décadas de arquivo, traz a portaria de nomeação, alguma promoção, alguma licença, a publicação do ato concessório de aposentadoria. Em alguma dessas publicações, ao longo desses vinte anos, o CPF apareceu inteiro. A LGPD virou regra em 2018; o resto da história documental do servidor é anterior, e foi indexada.
+Mariana Esteves Carvalho Albuquerque, cujo nome aparece na decisão monocrática, não é qualquer Mariana. É servidora pública estadual aposentada, com cargo definido, lotação registrada, matrícula numerada. O Portal da Transparência publica o nome completo, a matrícula, o cargo, a lotação e a remuneração de toda a folha. O Diário Oficial Eletrônico do Estado, pesquisável por texto integral em quase duas décadas de arquivo, traz a portaria de nomeação, alguma promoção, alguma licença, a publicação do ato concessório de aposentadoria. Em alguma dessas publicações, ao longo desses vinte anos, o CPF apareceu inteiro. A LGPD virou regra em 2018; o resto da história documental do servidor é anterior, e foi indexada.
 
 A pergunta que o asterisco pretende esquivar é uma pergunta que o asterisco não tem como esquivar: *quem é essa pessoa*. O ato já respondeu. O CPF picotado é uma confirmação redundante de uma identificação já operada pelo próprio cabeçalho do documento.
 
