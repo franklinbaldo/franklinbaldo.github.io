@@ -9,7 +9,9 @@ const GISCUS_REPO = 'franklinbaldo/franklinbaldo.github.io';
 const GISCUS_REPO_ID = 'REPLACE_WITH_REPO_ID';
 const GISCUS_CATEGORY = 'Comments';
 const GISCUS_CATEGORY_ID = 'REPLACE_WITH_CATEGORY_ID';
-const isConfigured = !GISCUS_REPO_ID.startsWith('REPLACE');
+const isConfigured =
+  !GISCUS_REPO_ID.startsWith('REPLACE') &&
+  !GISCUS_CATEGORY_ID.startsWith('REPLACE');
 ---
 
 <section class="comments" aria-label="Comments">
