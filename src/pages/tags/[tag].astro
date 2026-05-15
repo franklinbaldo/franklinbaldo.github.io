@@ -31,12 +31,17 @@ interface Props {
 const { tag, posts } = Astro.props;
 ---
 
-<PageLayout title={`#${tag} | Franklin Baldo`} description={`Essays tagged #${tag}.`} lang="en">
+<PageLayout
+  title={`#${tag} | Franklin Baldo`}
+  description={`Essays tagged #${tag}.`}
+  lang="en"
+  translations={{ pt: `/pt/tags/${tag}/` }}
+>
   <article>
     <header>
       <hgroup>
         <h1>#{tag}</h1>
-        <p><small>{posts.length} {posts.length === 1 ? "post" : "posts"} · <a href="/tags/">all tags</a></small></p>
+        <p><small>{posts.length} {posts.length === 1 ? "post" : "posts"} · <a href="/tags/">all tags</a> · <a href={`/pt/tags/${tag}/`}>🇧🇷 PT</a></small></p>
       </hgroup>
     </header>
     {posts.map((post) => <PostCard post={post} />)}

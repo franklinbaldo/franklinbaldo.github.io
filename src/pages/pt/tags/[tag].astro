@@ -33,8 +33,9 @@ const { tag, posts } = Astro.props;
 
 <PageLayout
   title={`#${tag} | Franklin Baldo`}
-  description={`Ensaios marcados com #${tag}.`}
+  description={`Ensaios com a etiqueta #${tag}.`}
   lang="pt"
+  translations={{ en: `/tags/${tag}/` }}
 >
   <article>
     <header>

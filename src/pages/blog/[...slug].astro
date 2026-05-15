@@ -68,72 +68,80 @@ const translationLinks = translationSiblings.map((p) => {
 >
   <div id="read-progress" aria-hidden="true"></div>
 
-  <article data-pagefind-body data-pagefind-filter={`lang:${lang}`}>
-    <header>
-      <hgroup>
-        <h1>{title}</h1>
-        <p>
-          <small>
-            <time datetime={date.toISOString()}>{date.toLocaleDateString(locale, dateOpts)}</time>
-            {minutesRead && <> · {minutesRead} {t(lang, 'post.minutesRead')}</>}
-            {showUpdated && lastModified && (
-              <> · {t(lang, 'post.updated')} <time datetime={lastModified.toISOString()}>
-                {lastModified.toLocaleDateString(locale, dateOpts)}
-              </time></>
-            )}
-          </small>
-        </p>
-      </hgroup>
-      {heroImage && (
-        <Image
-          src={heroImage}
-          alt={heroImageAlt ?? ''}
-          widths={[480, 800, 1200]}
-          sizes="(max-width: 800px) 100vw, 800px"
-          format="webp"
-          loading="eager"
-        />
-      )}
-    </header>
+  <div class="post-grid">
+    <aside class="toc-col" aria-label={t(lang, 'toc.label')}>
+      <TableOfContents headings={headings} lang={lang} sidebar />
+    </aside>
 
-    {series && <SeriesContext series={series} lang={lang ?? DEFAULT_LANG} variant="aside" />}
+    <div class="post-body">
+      <article data-pagefind-body data-pagefind-filter={`lang:${lang}`}>
+        <header>
+          <hgroup>
+            <h1>{title}</h1>
+            <p>
+              <small>
+                <time datetime={date.toISOString()}>{date.toLocaleDateString(locale, dateOpts)}</time>
+                {minutesRead && <> · {minutesRead} {t(lang, 'post.minutesRead')}</>}
+                {showUpdated && lastModified && (
+                  <> · {t(lang, 'post.updated')} <time datetime={lastModified.toISOString()}>
+                    {lastModified.toLocaleDateString(locale, dateOpts)}
+                  </time></>
+                )}
+              </small>
+            </p>
+          </hgroup>
+          {heroImage && (
+            <Image
+              src={heroImage}
+              alt={heroImageAlt ?? ''}
+              widths={[480, 800, 1200]}
+              sizes="(max-width: 800px) 100vw, 800px"
+              format="webp"
+              loading="eager"
+            />
+          )}
+        </header>
 
-    <TableOfContents headings={headings} lang={lang} />
+        {series && <SeriesContext series={series} lang={lang ?? DEFAULT_LANG} variant="aside" />}
 
-    <Content />
+        <TableOfContents headings={headings} lang={lang} />
 
-    <footer>
-      {tags && tags.length > 0 && (
-        <p><small>
-          {t(lang, 'post.tags')} {tags.map((tag, i) => (
-            <>{i > 0 && ', '}<a href={`${tagsPrefix}/${tag}/`}>#{tag}</a></>
-          ))}
-        </small></p>
-      )}
-      {translationLinks.length > 0 && (
-        <p><small>
-          {translationLinks.map((link, i) => (
-            <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
-          ))}
-        </small></p>
-      )}
-      <ShareButton title={title} />
-    </footer>
-  </article>
+        <Content />
 
-  <AuthorBio lang={lang} />
+        <footer>
+          {tags && tags.length > 0 && (
+            <p><small>
+              {t(lang, 'post.tags')} {tags.map((tag, i) => (
+                <>{i > 0 && ', '}<a href={`${tagsPrefix}/${tag}/`}>#{tag}</a></>
+              ))}
+            </small></p>
+          )}
+          {translationLinks.length > 0 && (
+            <p><small>
+              {translationLinks.map((link, i) => (
+                <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
+              ))}
+            </small></p>
+          )}
+          <ShareButton title={title} />
+        </footer>
+      </article>
 
-  <RelatedPosts currentId={post.id} tags={tags ?? []} lang={lang} />
+      <AuthorBio lang={lang} />
 
-  {series && <SeriesContext series={series} lang={lang ?? DEFAULT_LANG} variant="nav" />}
+      <RelatedPosts currentId={post.id} tags={tags ?? []} lang={lang} />
 
-  <Webmentions url={new URL(Astro.url.pathname, Astro.site!)} />
+      {series && <SeriesContext series={series} lang={lang ?? DEFAULT_LANG} variant="nav" />}
 
-  <Comments lang={lang} />
+      <Webmentions url={new URL(Astro.url.pathname, Astro.site!)} />
 
-  <BackToTop />
-  <CodeCopyEnhancer />
-  <MermaidEnhancer />
+      <Comments lang={lang} />
+
+      <BackToTop />
+      <CodeCopyEnhancer />
+      <MermaidEnhancer />
+    </div>
+  </div>
 
   <script is:inline>
     (() => {
@@ -160,5 +168,37 @@ const translationLinks = translationSiblings.map((p) => {
     background: linear-gradient(to right, var(--pico-primary) var(--p, 0%), transparent 0);
     z-index: 50;
     pointer-events: none;
+  }
+
+  .post-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  /* Hide desktop sidebar on small screens */
+  .toc-col {
+    display: none;
+  }
+
+  @media (min-width: 1200px) {
+    .post-grid {
+      grid-template-columns: 200px minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    .toc-col {
+      display: block;
+      position: sticky;
+      top: 4.5rem;
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+      padding-top: 0.25rem;
+    }
+
+    /* Hide the inline collapsible ToC on desktop — sidebar replaces it */
+    .post-body :global(.toc-inline) {
+      display: none;
+    }
   }
 </style>

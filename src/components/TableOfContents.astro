@@ -10,9 +10,10 @@ export interface Heading {
 interface Props {
   headings: Heading[];
   lang?: string;
+  sidebar?: boolean;
 }
 
-const { headings, lang } = Astro.props;
+const { headings, lang, sidebar = false } = Astro.props;
 const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
 const label = t(lang, 'toc.label');
 
@@ -25,14 +26,16 @@ for (const h of toc) {
     tree[tree.length - 1].children.push({ slug: h.slug, text: h.text, children: [] });
   }
 }
+
+const listItems = tree.map(item => ({ ...item }));
 ---
 
 {toc.length >= 3 && (
-  <nav aria-label={label}>
-    <details>
-      <summary>{label}</summary>
+  sidebar ? (
+    <nav class="toc-sidebar-nav" aria-label={label}>
+      <p class="toc-label">{label}</p>
       <ol>
-        {tree.map(item => (
+        {listItems.map(item => (
           <li>
             <a href={`#${item.slug}`}>{item.text}</a>
             {item.children.length > 0 && (
@@ -45,6 +48,64 @@ for (const h of toc) {
           </li>
         ))}
       </ol>
-    </details>
-  </nav>
+    </nav>
+  ) : (
+    <nav class="toc-inline" aria-label={label}>
+      <details>
+        <summary>{label}</summary>
+        <ol>
+          {tree.map(item => (
+            <li>
+              <a href={`#${item.slug}`}>{item.text}</a>
+              {item.children.length > 0 && (
+                <ol>
+                  {item.children.map(child => (
+                    <li><a href={`#${child.slug}`}>{child.text}</a></li>
+                  ))}
+                </ol>
+              )}
+            </li>
+          ))}
+        </ol>
+      </details>
+    </nav>
+  )
 )}
+
+<style>
+  .toc-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--pico-muted-color);
+    margin: 0 0 0.5rem 0;
+  }
+  .toc-sidebar-nav ol {
+    font-size: 0.82rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .toc-sidebar-nav ol ol {
+    padding-left: 0.875rem;
+    margin-top: 0.1rem;
+  }
+  .toc-sidebar-nav li {
+    margin: 0;
+  }
+  .toc-sidebar-nav a {
+    color: var(--pico-muted-color);
+    text-decoration: none;
+    display: block;
+    padding: 0.2rem 0.5rem;
+    border-left: 2px solid transparent;
+    line-height: 1.35;
+    border-radius: 0 var(--pico-border-radius) var(--pico-border-radius) 0;
+    transition: color 0.1s, border-color 0.1s;
+  }
+  .toc-sidebar-nav a:hover {
+    color: var(--pico-primary);
+    border-left-color: var(--pico-primary);
+  }
+</style>
