@@ -25,7 +25,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
   <LangFilter />
 
   {years.map((year) => (
-    <section>
+    <nav aria-label={`Posts from ${year}`}>
       <h2>{year}</h2>
       <ul>
         {byYear.get(year)!.map((post) => (
@@ -41,6 +41,6 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
           </li>
         ))}
       </ul>
-    </section>
+    </nav>
   ))}
 </PageLayout>

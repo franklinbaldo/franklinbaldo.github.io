@@ -13,17 +13,36 @@ interface Props {
 const { headings, lang } = Astro.props;
 const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
 const label = lang === 'pt' ? 'Conteúdo' : 'Contents';
+
+type Node = { slug: string; text: string; children: Node[] };
+const tree: Node[] = [];
+for (const h of toc) {
+  if (h.depth === 2) {
+    tree.push({ slug: h.slug, text: h.text, children: [] });
+  } else if (tree.length > 0) {
+    tree[tree.length - 1].children.push({ slug: h.slug, text: h.text, children: [] });
+  }
+}
 ---
 
 {toc.length >= 3 && (
-  <details aria-label={label}>
-    <summary>{label}</summary>
-    <ol>
-      {toc.map(h => (
-        <li style={h.depth === 3 ? 'margin-left: 1rem;' : undefined}>
-          <a href={`#${h.slug}`}>{h.text}</a>
-        </li>
-      ))}
-    </ol>
-  </details>
+  <nav aria-label={label}>
+    <details>
+      <summary>{label}</summary>
+      <ol>
+        {tree.map(item => (
+          <li>
+            <a href={`#${item.slug}`}>{item.text}</a>
+            {item.children.length > 0 && (
+              <ol>
+                {item.children.map(child => (
+                  <li><a href={`#${child.slug}`}>{child.text}</a></li>
+                ))}
+              </ol>
+            )}
+          </li>
+        ))}
+      </ol>
+    </details>
+  </nav>
 )}

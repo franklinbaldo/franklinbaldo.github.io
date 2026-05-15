@@ -49,12 +49,6 @@ try {
 }
 
 const fmt = new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", day: "2-digit" });
-
-const langColor: Record<string, string> = {
-  TypeScript: "#3178c6", JavaScript: "#f1e05a", Python: "#3572A5",
-  Astro: "#ff5d01", HTML: "#e34c26", CSS: "#563d7c", Shell: "#89e051",
-  Rust: "#dea584", Go: "#00ADD8", Lua: "#000080", Lean: "#2ed2ff",
-};
 ---
 
 <PageLayout
@@ -88,13 +82,7 @@ const langColor: Record<string, string> = {
       </header>
       <footer>
         <small>
-          {repo.language && (
-            <>
-              <span aria-hidden="true" style={`display:inline-block;width:.7em;height:.7em;border-radius:50%;background:${langColor[repo.language] ?? 'var(--pico-muted-color)'};vertical-align:middle;margin-right:.25em;`}></span>
-              {repo.language}
-              {' · '}
-            </>
-          )}
+          {repo.language && <><kbd>{repo.language}</kbd> · </>}
           {repo.forks_count > 0 && <>⑂ {repo.forks_count} · </>}
           updated <time datetime={repo.pushed_at}>{fmt.format(new Date(repo.pushed_at))}</time>
           {repo.homepage && <> · <a href={repo.homepage}>↗ site</a></>}

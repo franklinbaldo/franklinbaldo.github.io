@@ -16,12 +16,11 @@ const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeComp
 
 <PageLayout title="Tags | Franklin Baldo" description="Browse essays by tag.">
   <h1>Tags</h1>
-  <p>
-    {tags.map(([tag, count], i) => (
-      <>
-        {i > 0 && ' · '}
-        <a href={`/tags/${tag}/`}>#{tag}</a> <small>({count})</small>
-      </>
-    ))}
-  </p>
+  <nav aria-label="All tags">
+    <ul>
+      {tags.map(([tag, count]) => (
+        <li><a href={`/tags/${tag}/`}>#{tag}</a> <small>({count})</small></li>
+      ))}
+    </ul>
+  </nav>
 </PageLayout>

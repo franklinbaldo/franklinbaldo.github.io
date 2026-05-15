@@ -3,14 +3,12 @@ import PageLayout from "../layouts/PageLayout.astro";
 ---
 
 <PageLayout title="Search | Franklin Baldo" description="Full-text search across the garden.">
-  <article>
-    <header>
-      <h1>Search</h1>
-      <p><small>Full-text search across all essays. Index built with <a href="https://pagefind.app/">Pagefind</a>.</small></p>
-    </header>
+  <hgroup>
+    <h1>Search</h1>
+    <p><small>Full-text search across all essays. Index built with <a href="https://pagefind.app/">Pagefind</a>.</small></p>
+  </hgroup>
 
-    <div id="search"></div>
-  </article>
+  <search id="search"></search>
 
   <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
   <script is:inline defer src="/pagefind/pagefind-ui.js"></script>
