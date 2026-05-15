@@ -48,25 +48,12 @@ try {
   console.warn(`[projects] failed to fetch repos: ${error}`);
 }
 
-const fmt = new Intl.DateTimeFormat("en-US", {
-  year: "numeric",
-  month: "short",
-  day: "2-digit",
-});
+const fmt = new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", day: "2-digit" });
 
 const langColor: Record<string, string> = {
-  TypeScript: "#3178c6",
-  JavaScript: "#f1e05a",
-  Python: "#3572A5",
-  Astro: "#ff5d01",
-  Svelte: "#ff3e00",
-  HTML: "#e34c26",
-  CSS: "#563d7c",
-  Shell: "#89e051",
-  Rust: "#dea584",
-  Go: "#00ADD8",
-  Lua: "#000080",
-  Lean: "#2ed2ff",
+  TypeScript: "#3178c6", JavaScript: "#f1e05a", Python: "#3572A5",
+  Astro: "#ff5d01", HTML: "#e34c26", CSS: "#563d7c", Shell: "#89e051",
+  Rust: "#dea584", Go: "#00ADD8", Lua: "#000080", Lean: "#2ed2ff",
 };
 ---
 
@@ -74,143 +61,45 @@ const langColor: Record<string, string> = {
   title="Projects | Franklin Baldo"
   description="Public repositories, pulled live from GitHub at build time."
 >
-  <article>
-    <header>
-      <hgroup>
-        <h1>Projects</h1>
-        <p>
-          <small>
-            Public repos from
-            <a href={`https://github.com/${USER}`}>@{USER}</a>,
-            sorted by stars · last fetched at build
-          </small>
-        </p>
-      </hgroup>
-    </header>
+  <hgroup>
+    <h1>Projects</h1>
+    <p><small>
+      Public repos from <a href={`https://github.com/${USER}`}>@{USER}</a>,
+      sorted by stars · last fetched at build
+    </small></p>
+  </hgroup>
 
-    {error && (
-      <p>
+  {error && (
+    <p><small>
+      Couldn't load the live list (<code>{error.slice(0, 120)}</code>).
+      Visit <a href={`https://github.com/${USER}?tab=repositories`}>my GitHub</a> directly.
+    </small></p>
+  )}
+
+  {repos.length === 0 && !error && <p>No public repos to show right now.</p>}
+
+  {repos.map((repo) => (
+    <article>
+      <header>
+        <hgroup>
+          <h3><a href={repo.html_url}>{repo.name}</a> {repo.stargazers_count > 0 && <mark>★ {repo.stargazers_count}</mark>}</h3>
+          {repo.description && <p>{repo.description}</p>}
+        </hgroup>
+      </header>
+      <footer>
         <small>
-          Couldn't load the live list (<code>{error.slice(0, 120)}</code>).
-          Visit <a href={`https://github.com/${USER}?tab=repositories`}>my GitHub</a> directly.
+          {repo.language && (
+            <>
+              <span aria-hidden="true" style={`display:inline-block;width:.7em;height:.7em;border-radius:50%;background:${langColor[repo.language] ?? 'var(--pico-muted-color)'};vertical-align:middle;margin-right:.25em;`}></span>
+              {repo.language}
+              {' · '}
+            </>
+          )}
+          {repo.forks_count > 0 && <>⑂ {repo.forks_count} · </>}
+          updated <time datetime={repo.pushed_at}>{fmt.format(new Date(repo.pushed_at))}</time>
+          {repo.homepage && <> · <a href={repo.homepage}>↗ site</a></>}
         </small>
-      </p>
-    )}
-
-    {repos.length === 0 && !error && <p>No public repos to show right now.</p>}
-
-    <ul class="project-grid">
-      {repos.map((repo) => (
-        <li>
-          <article class={repo.stargazers_count > 0 ? "featured" : ""}>
-            {repo.stargazers_count > 0 && <span class="badge-featured">Featured</span>}
-            <header>
-              <h3>
-                <a href={repo.html_url}>{repo.name}</a>
-              </h3>
-              {repo.description && <p>{repo.description}</p>}
-            </header>
-            <footer>
-              <small>
-                {repo.language && (
-                  <span class="lang">
-                    <span
-                      class="lang-dot"
-                      style={`background:${langColor[repo.language] ?? "var(--pico-muted-color)"}`}
-                      aria-hidden="true"
-                    ></span>
-                    {repo.language}
-                  </span>
-                )}
-                {repo.stargazers_count > 0 && <span class="stars">★ {repo.stargazers_count}</span>}
-                {repo.forks_count > 0 && <span>⑂ {repo.forks_count}</span>}
-                <span class="pushed">
-                  updated <time datetime={repo.pushed_at}>{fmt.format(new Date(repo.pushed_at))}</time>
-                </span>
-                {repo.homepage && (
-                  <a href={repo.homepage} class="contrast">↗ site</a>
-                )}
-              </small>
-            </footer>
-          </article>
-        </li>
-      ))}
-    </ul>
-  </article>
+      </footer>
+    </article>
+  ))}
 </PageLayout>
-
-<style>
-  .project-grid {
-    list-style: none;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
-    gap: 1.5rem;
-  }
-  .project-grid > li > article {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  }
-  .project-grid > li > article:hover {
-    transform: translateY(-4px);
-  }
-  .project-grid article.featured {
-    border: 1px solid var(--pico-primary-border);
-    box-shadow: 0 4px 12px var(--pico-primary-focus);
-    position: relative;
-  }
-  .badge-featured {
-    position: absolute;
-    top: -12px;
-    right: 12px;
-    background: var(--pico-primary-background);
-    color: var(--pico-primary-inverse);
-    padding: 2px 10px;
-    font-size: 0.65rem;
-    border-radius: 4px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    z-index: 1;
-  }
-  .project-grid h3 {
-    margin: 0 0 0.25rem 0;
-    font-size: 1.15rem;
-  }
-  .project-grid p {
-    margin: 0.25rem 0 0;
-    color: var(--pico-muted-color);
-    line-height: 1.4;
-  }
-  .project-grid footer {
-    margin-top: 1rem;
-    padding-top: 0.75rem;
-    border-top: 1px dashed var(--pico-border-color);
-  }
-  .project-grid footer small {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1rem;
-    color: var(--pico-muted-color);
-    align-items: center;
-  }
-  .stars {
-    color: var(--pico-primary);
-    font-weight: bold;
-  }
-  .lang {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-  .lang-dot {
-    display: inline-block;
-    width: 0.75em;
-    height: 0.75em;
-    border-radius: 50%;
-  }
-</style>

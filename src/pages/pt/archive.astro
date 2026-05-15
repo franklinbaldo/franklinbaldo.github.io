@@ -22,57 +22,30 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
   lang="pt"
   translationHref="/archive/"
 >
-  <article>
-    <header>
-      <h1>Arquivo</h1>
-      <p><small>{posts.length} ensaios</small></p>
-    </header>
+  <hgroup>
+    <h1>Arquivo</h1>
+    <p><small>{posts.length} ensaios</small></p>
+  </hgroup>
 
-    <LangFilter />
+  <LangFilter />
 
-    {years.map((year) => (
-      <section>
-        <h2>{year}</h2>
-        <ul class="archive-list">
-          {byYear.get(year)!.map((post) => (
-            <li data-post-lang={post.data.lang ?? 'en'}>
+  {years.map((year) => (
+    <section>
+      <h2>{year}</h2>
+      <ul>
+        {byYear.get(year)!.map((post) => (
+          <li data-post-lang={post.data.lang ?? 'en'}>
+            <small>
               <time datetime={post.data.date.toISOString()}>
                 {post.data.date.toLocaleDateString("pt-BR", { month: "short", day: "2-digit" })}
               </time>
-              <span class="archive-title">
-                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-                {(post.data.lang === undefined || post.data.lang === 'en') && <small class="lang-flag" aria-label="Post em inglês">🇺🇸</small>}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
-    ))}
-  </article>
+              {' — '}
+            </small>
+            <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+            {(post.data.lang === undefined || post.data.lang === 'en') && <small aria-label="Post em inglês"> 🇺🇸</small>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
 </PageLayout>
-
-<style>
-  .archive-list {
-    list-style: none;
-    padding: 0;
-  }
-  .archive-list li {
-    display: grid;
-    grid-template-columns: 5rem 1fr;
-    gap: 1rem;
-    padding: 0.25rem 0;
-  }
-  .archive-list time {
-    color: var(--pico-muted-color);
-    font-variant-numeric: tabular-nums;
-  }
-  .archive-title {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-  .lang-flag {
-    opacity: 0.7;
-    font-size: 0.75em;
-  }
-</style>

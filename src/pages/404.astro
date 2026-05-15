@@ -25,6 +25,7 @@ const recent = (await getCollection("blog"))
       {recent.map((post) => (
         <li>
           <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+          {' — '}
           <small>
             <time datetime={post.data.date.toISOString()}>
               {post.data.date.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })}
@@ -52,20 +53,3 @@ const recent = (await getCollection("blog"))
     document.addEventListener("astro:page-load", initSearch);
   </script>
 </PageLayout>
-
-<style>
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  ul li {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.25rem 0;
-  }
-  ul li small {
-    color: var(--pico-muted-color);
-    font-variant-numeric: tabular-nums;
-  }
-</style>

@@ -52,25 +52,29 @@ const replies = mentions.filter(
 ---
 
 {mentions.length > 0 && (
-  <section class="webmentions" aria-label="Webmentions">
-    <h3>Mentions across the web</h3>
+  <section aria-labelledby="webmentions-heading">
+    <h3 id="webmentions-heading">Mentions across the web</h3>
 
     {(likes.length > 0 || reposts.length > 0) && (
-      <ul class="facepile">
-        {[...likes, ...reposts].map((m) => (
-          <li>
-            <a href={m.author?.url ?? m.url ?? "#"} title={m.author?.name ?? "anonymous"}>
-              {m.author?.photo
-                ? <img src={m.author.photo} alt={m.author?.name ?? ""} loading="lazy" />
-                : <span class="dot" aria-hidden="true" />}
-            </a>
-          </li>
-        ))}
-      </ul>
+      <p>
+        <small>
+          {likes.length > 0 && <>{likes.length} {likes.length === 1 ? 'like' : 'likes'}</>}
+          {likes.length > 0 && reposts.length > 0 && ' · '}
+          {reposts.length > 0 && <>{reposts.length} {reposts.length === 1 ? 'repost' : 'reposts'}</>}
+          {' from '}
+          {[...likes, ...reposts].slice(0, 5).map((m, i) => (
+            <>
+              {i > 0 && ', '}
+              <a href={m.author?.url ?? m.url ?? '#'}>{m.author?.name ?? 'anonymous'}</a>
+            </>
+          ))}
+          {likes.length + reposts.length > 5 && <> +{likes.length + reposts.length - 5} more</>}
+        </small>
+      </p>
     )}
 
     {replies.length > 0 && (
-      <ol class="reply-list">
+      <ol>
         {replies.map((m) => (
           <li>
             <a href={m.url ?? m.author?.url ?? "#"}>
@@ -85,41 +89,3 @@ const replies = mentions.filter(
     )}
   </section>
 )}
-
-<style>
-  .webmentions {
-    margin-top: 3rem;
-    padding-top: 1.25rem;
-    border-top: 1px dashed var(--pico-border-color);
-  }
-  .webmentions h3 {
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--pico-muted-color);
-    margin-bottom: 0.75rem;
-  }
-  .facepile {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-  .facepile img,
-  .facepile .dot {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-    background: var(--pico-muted-color);
-  }
-  .reply-list {
-    padding-left: 1.25rem;
-  }
-  .reply-list li {
-    margin-bottom: 0.4rem;
-    color: var(--pico-muted-color);
-  }
-</style>

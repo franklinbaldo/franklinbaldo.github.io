@@ -41,7 +41,10 @@
     btn.disabled = !translationHref;
 
     btn.addEventListener('click', () => {
-      if (translationHref) location.href = translationHref;
+      if (!translationHref) return;
+      const target = lang === 'en' ? 'pt' : 'en';
+      localStorage.setItem('lang', target);
+      location.href = translationHref;
     });
   })();
 </script>
