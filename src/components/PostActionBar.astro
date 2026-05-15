@@ -11,14 +11,28 @@ interface Props {
 const { title, url, date, lang } = Astro.props;
 const loc = locale(lang);
 const formattedDate = date.toLocaleDateString(loc, { year: 'numeric', month: 'long', day: 'numeric' });
-const citation = `Baldo, F. "${title}." Franklin Baldo, ${formattedDate}. ${url}`;
+const year = date.getFullYear();
+const citationPlain = `Baldo, F. (${year}). ${title}. Franklin Baldo. ${url}`;
+const citationBibtex = `@misc{baldo${year}${title.toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 12)},
+  author = {Baldo, Franklin},
+  title  = {${title}},
+  year   = {${year}},
+  url    = {${url}},
+  note   = {Franklin Baldo, ${formattedDate}}
+}`;
+
 const isPt = (lang ?? '') === 'pt';
 const labels = {
   share: isPt ? 'Compartilhar' : 'Share',
   rss: 'RSS',
   cite: isPt ? 'Citar' : 'Cite',
-  citeCopied: isPt ? 'Citação copiada' : 'Citation copied',
-  citeFailed: isPt ? 'Não foi possível copiar' : "Couldn't copy",
+  citeDialogTitle: isPt ? 'Citar este ensaio' : 'Cite this essay',
+  citeApa: 'APA',
+  citeBibtex: 'BibTeX',
+  copy: isPt ? 'Copiar' : 'Copy',
+  copied: isPt ? 'Copiado' : 'Copied',
+  failed: isPt ? 'Não foi possível copiar' : "Couldn't copy",
+  close: isPt ? 'Fechar' : 'Close',
 };
 ---
 
@@ -49,11 +63,9 @@ const labels = {
 
   <button
     type="button"
-    class="action-btn cite-button"
-    data-citation={citation}
-    data-success={labels.citeCopied}
-    data-error={labels.citeFailed}
+    class="action-btn cite-open"
     aria-label={labels.cite}
+    aria-haspopup="dialog"
   >
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
       <path d="M7 7h4v6a4 4 0 01-4 4v-2a2 2 0 002-2H7zM15 7h4v6a4 4 0 01-4 4v-2a2 2 0 002-2h-2z"/>
@@ -62,22 +74,80 @@ const labels = {
   </button>
 </nav>
 
+<dialog id="cite-dialog" aria-labelledby="cite-dialog-title">
+  <article>
+    <header>
+      <button class="close cite-close" aria-label={labels.close}></button>
+      <hgroup>
+        <h3 id="cite-dialog-title">{labels.citeDialogTitle}</h3>
+        <p><small>{title}</small></p>
+      </hgroup>
+    </header>
+    <section>
+      <p class="cite-eyebrow"><small>{labels.citeApa}</small></p>
+      <pre><code class="cite-apa">{citationPlain}</code></pre>
+      <button
+        type="button"
+        class="outline cite-copy"
+        data-target=".cite-apa"
+        data-copied={labels.copied}
+        data-failed={labels.failed}
+      >{labels.copy}</button>
+    </section>
+    <section>
+      <p class="cite-eyebrow"><small>{labels.citeBibtex}</small></p>
+      <pre><code class="cite-bibtex">{citationBibtex}</code></pre>
+      <button
+        type="button"
+        class="outline cite-copy"
+        data-target=".cite-bibtex"
+        data-copied={labels.copied}
+        data-failed={labels.failed}
+      >{labels.copy}</button>
+    </section>
+  </article>
+</dialog>
+
 <script>
+  const dialog = document.getElementById('cite-dialog') as HTMLDialogElement | null;
+
   document.addEventListener('click', async (e) => {
-    const btn = (e.target as HTMLElement)?.closest<HTMLButtonElement>('.cite-button');
-    if (!btn) return;
-    const text = btn.dataset.citation ?? '';
-    const label = btn.querySelector<HTMLElement>('.action-label');
-    const original = label?.textContent ?? '';
-    try {
-      await navigator.clipboard.writeText(text);
-      if (label) label.textContent = btn.dataset.success ?? 'Copied';
-    } catch {
-      if (label) label.textContent = btn.dataset.error ?? "Couldn't copy";
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+
+    if (target.closest('.cite-open')) {
+      dialog?.showModal();
+      return;
     }
-    window.setTimeout(() => {
-      if (label) label.textContent = original;
-    }, 1800);
+    if (target.closest('.cite-close')) {
+      dialog?.close();
+      return;
+    }
+    const copyBtn = target.closest<HTMLButtonElement>('.cite-copy');
+    if (copyBtn) {
+      const selector = copyBtn.dataset.target;
+      if (!selector) return;
+      const codeEl = dialog?.querySelector<HTMLElement>(selector);
+      const text = codeEl?.textContent ?? '';
+      const original = copyBtn.textContent ?? '';
+      copyBtn.setAttribute('aria-busy', 'true');
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = copyBtn.dataset.copied ?? 'Copied';
+      } catch {
+        copyBtn.textContent = copyBtn.dataset.failed ?? "Couldn't copy";
+      } finally {
+        copyBtn.removeAttribute('aria-busy');
+        window.setTimeout(() => {
+          copyBtn.textContent = original;
+        }, 1400);
+      }
+    }
+  });
+
+  // ESC + backdrop click already close <dialog> when opened with showModal.
+  dialog?.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
   });
 </script>
 
@@ -124,9 +194,29 @@ const labels = {
     .action-label {
       letter-spacing: 0.02em;
     }
-    /* Reserve space at bottom of the post body so the bar doesn't overlap. */
     .post-body {
       padding-bottom: 4rem;
     }
+  }
+  /* The cite-open button should also be available outside the mobile
+     bottom bar. Promote it onto the share button row of the post footer
+     by also exposing it inline if needed (not implemented here — opt-in
+     by adding the .cite-open trigger elsewhere). */
+
+  #cite-dialog .cite-eyebrow {
+    margin: 0 0 .25rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--pico-primary);
+  }
+  #cite-dialog pre {
+    margin: 0 0 .5rem;
+    max-height: 12rem;
+    overflow: auto;
+  }
+  #cite-dialog section {
+    margin-block: 1rem;
   }
 </style>

@@ -1,26 +1,27 @@
 ---
+// Semantic switch element instead of a button — Pico styles
+// [role="switch"] with the same pill-toggle UI and assistive tech
+// announces the on/off state correctly ("Dark mode: on").
 ---
 
-<button
-  type="button"
-  class="contrast outline"
-  data-theme-toggle
-  aria-label="Toggle theme"
->
-  <span data-icon aria-hidden="true">🌑</span>
-</button>
+<label class="theme-toggle" aria-label="Dark mode">
+  <input type="checkbox" role="switch" data-theme-toggle />
+  <span class="theme-icon" data-icon aria-hidden="true">🌑</span>
+</label>
 
 <script is:inline>
   (() => {
-    const btn = document.querySelector('[data-theme-toggle]');
-    if (!btn) return;
-    const icon = btn.querySelector('[data-icon]');
+    const input = document.querySelector('input[data-theme-toggle]');
+    if (!input) return;
+    const label = input.closest('label');
+    const icon = label && label.querySelector('[data-icon]');
     const root = document.documentElement;
 
     const apply = (t) => {
       root.dataset.theme = t;
-      icon.textContent = t === 'light' ? '🌑' : '☀️';
-      btn.setAttribute('aria-label', t === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
+      input.checked = t === 'dark';
+      if (icon) icon.textContent = t === 'dark' ? '☀️' : '🌑';
+      if (label) label.setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
     };
 
     const stored = localStorage.getItem('theme');
@@ -31,10 +32,29 @@
       apply(e.matches ? 'dark' : 'light');
     });
 
-    btn.addEventListener('click', () => {
-      const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+    input.addEventListener('change', () => {
+      const next = input.checked ? 'dark' : 'light';
       localStorage.setItem('theme', next);
       apply(next);
     });
   })();
 </script>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    cursor: pointer;
+    user-select: none;
+  }
+  .theme-toggle input[type="checkbox"] {
+    /* Pico's [role="switch"] styling kicks in via the role attribute. */
+    margin: 0;
+  }
+  .theme-icon {
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+</style>

@@ -8,9 +8,9 @@ import PageLayout from "../layouts/PageLayout.astro";
     <p><small>Full-text search across all essays. Index built with <a href="https://pagefind.app/">Pagefind</a>.</small></p>
   </hgroup>
 
-  <search>
+  <fieldset role="search" class="search-fieldset">
     <pagefind-searchbox></pagefind-searchbox>
-  </search>
+  </fieldset>
 
   <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
   <script is:inline type="module" src="/pagefind/pagefind-component-ui.js"></script>

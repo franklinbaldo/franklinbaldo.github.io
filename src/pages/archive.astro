@@ -23,32 +23,39 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
   </hgroup>
 
   {years.map((year) => (
-    <section aria-label={`Posts from ${year}`} class="archive-year">
-      <h2>{year}</h2>
-      <ol>
-        {byYear.get(year)!.map((post) => (
-          <li>
-            <small>
-              <time datetime={post.data.date.toISOString()}>
-                {post.data.date.toLocaleDateString("en-US", { month: "short", day: "2-digit" })}
-              </time>
-              {' — '}
-            </small>
-            <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-          </li>
-        ))}
-      </ol>
+    <section aria-labelledby={`archive-${year}`} class="archive-year">
+      <h2 id={`archive-${year}`}>{year}</h2>
+      <table class="striped archive-table">
+        <thead>
+          <tr>
+            <th scope="col" class="col-date">Date</th>
+            <th scope="col">Title</th>
+          </tr>
+        </thead>
+        <tbody>
+          {byYear.get(year)!.map((post) => (
+            <tr>
+              <td class="col-date">
+                <time datetime={post.data.date.toISOString()}>
+                  {post.data.date.toLocaleDateString("en-US", { month: "short", day: "2-digit" })}
+                </time>
+              </td>
+              <td><a href={`/blog/${post.id}/`}>{post.data.title}</a></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </section>
   ))}
 </PageLayout>
 
 <style>
-  .archive-year ol {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  .archive-year { margin-block: calc(var(--pico-spacing) * 1.5); }
+  .archive-table { font-size: 0.95rem; }
+  .archive-table .col-date {
+    width: 6rem;
+    color: var(--pico-muted-color);
+    white-space: nowrap;
   }
-  .archive-year li {
-    margin-block: 0.3rem;
-  }
+  .archive-table th { font-weight: 600; }
 </style>

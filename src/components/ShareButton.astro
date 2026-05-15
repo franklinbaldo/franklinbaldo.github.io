@@ -42,6 +42,8 @@ const href = url ?? Astro.url.href;
     if (state.inFlight) return;
     state.inFlight = true;
     buttonState.set(button, state);
+    // Pico shows a built-in spinner overlay when aria-busy="true".
+    button.setAttribute("aria-busy", "true");
 
     try {
       const title = button.dataset.title ?? document.title;
@@ -68,6 +70,7 @@ const href = url ?? Astro.url.href;
         s.inFlight = false;
         buttonState.set(button, s);
       }
+      button.removeAttribute("aria-busy");
     }
   });
 </script>
