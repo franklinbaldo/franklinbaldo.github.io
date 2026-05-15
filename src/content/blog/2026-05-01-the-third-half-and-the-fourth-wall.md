@@ -6,6 +6,7 @@ lang: en
 tags: [ai, agents, persona-prompts, alignment, philosophy, tinkerbell]
 series: harness
 seriesOrder: 2
+translationKey: third-half-fourth-wall
 ---
 
 I was tweaking a prompt for an autonomous agent. The first line said *you are Brad Frost*. The second said *you are not a bot pretending to be Brad Frost — Brad Frost*. I read it back and realized the second sentence had killed the first.

@@ -1,0 +1,22 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+---
+
+<PageLayout
+  title="Busca | Franklin Baldo"
+  description="Busca de texto completo pelos ensaios."
+  lang="pt"
+  translationHref="/search/"
+>
+  <hgroup>
+    <h1>Busca</h1>
+    <p><small>Busca de texto completo por todos os ensaios. Índice construído com <a href="https://pagefind.app/">Pagefind</a>.</small></p>
+  </hgroup>
+
+  <search>
+    <pagefind-searchbox data-filter="lang:pt"></pagefind-searchbox>
+  </search>
+
+  <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
+  <script is:inline type="module" src="/pagefind/pagefind-component-ui.js"></script>
+</PageLayout>

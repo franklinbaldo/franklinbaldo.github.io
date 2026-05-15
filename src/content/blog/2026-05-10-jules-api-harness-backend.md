@@ -9,6 +9,7 @@ heroImage: ./images/pontifex-architecture-implementation-guide-cover.png
 heroImageAlt: "Abstract representation of agent architecture and data flows."
 series: harness
 seriesOrder: 4
+translationKey: jules-api-harness
 ---
 
 ## The Harness Evolves
