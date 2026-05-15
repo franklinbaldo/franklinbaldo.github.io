@@ -1,0 +1,95 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { t, locale, DEFAULT_LANG } from '../lib/i18n';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  lang?: string;
+}
+
+const { posts, lang } = Astro.props;
+const loc = locale(lang);
+const dateOpts = { month: 'short', day: '2-digit', year: 'numeric' } as const;
+const minRead = (body: string | undefined) => {
+  const wc = (body ?? '').trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(wc / 220));
+};
+---
+
+<ul class="recent-list">
+  {posts.map((post) => {
+    const { title, date, tags } = post.data;
+    const href = `/blog/${post.id}/`;
+    const tag = tags?.[0];
+    return (
+      <li class="recent-row">
+        <a class="recent-link" href={href}>
+          <span class="recent-title">{title}</span>
+          <span class="recent-meta">
+            <time datetime={date.toISOString()}>{date.toLocaleDateString(loc, dateOpts)}</time>
+            <span class="recent-dot" aria-hidden="true">·</span>
+            <span class="recent-read">{minRead(post.body)} {t(lang, 'post.minutesRead')}</span>
+            {tag && <span class="recent-tag">{tag}</span>}
+          </span>
+        </a>
+      </li>
+    );
+  })}
+</ul>
+
+<style>
+  .recent-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--pico-muted-border-color);
+  }
+  .recent-row {
+    border-bottom: 1px solid var(--pico-muted-border-color);
+    margin: 0;
+  }
+  .recent-link {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem 1.5rem;
+    align-items: baseline;
+    padding: 0.75rem 0.25rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .recent-link:hover .recent-title {
+    color: var(--pico-primary);
+    text-decoration: underline;
+  }
+  .recent-title {
+    font-family: var(--pico-font-family-serif);
+    font-size: 1.1rem;
+    line-height: 1.3;
+  }
+  .recent-meta {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    color: var(--pico-muted-color);
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+  .recent-tag {
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: 999px;
+    padding: 0.05rem 0.55rem;
+    font-size: 0.72rem;
+    text-transform: lowercase;
+    letter-spacing: 0.04em;
+    color: var(--pico-muted-color);
+  }
+  @media (max-width: 600px) {
+    .recent-link {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+    .recent-meta {
+      white-space: normal;
+    }
+  }
+</style>

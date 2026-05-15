@@ -73,6 +73,28 @@ body::before {
   }
 }
 
+/*
+ * Drop cap on the first paragraph of an article body. Targets the first
+ * direct-child <p> after the header so the cap only appears at the opening
+ * of the essay, not inside asides or footnotes.
+ */
+.post-body article > p:first-of-type::first-letter {
+  float: left;
+  font-family: var(--pico-font-family-serif);
+  font-size: 4.2rem;
+  line-height: 0.82;
+  font-weight: 600;
+  color: var(--pico-primary);
+  padding: 0.35rem 0.55rem 0 0;
+  margin-top: 0.15rem;
+}
+@media (max-width: 600px) {
+  .post-body article > p:first-of-type::first-letter {
+    font-size: 3.4rem;
+    padding-right: 0.4rem;
+  }
+}
+
 .skip-link {
   position: absolute;
   left: -9999px;
