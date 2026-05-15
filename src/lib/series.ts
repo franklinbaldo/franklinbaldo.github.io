@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from "astro:content";
+import { DEFAULT_LANG } from "./i18n";
 
 export interface SeriesContext {
   slug: string;
@@ -10,12 +11,20 @@ export interface SeriesContext {
 
 export async function getSeriesContext(
   post: CollectionEntry<"blog">,
+  options: { lang?: string } = {},
 ): Promise<SeriesContext | null> {
   const series = post.data.series;
   if (!series) return null;
 
+  const lang = options.lang ?? post.data.lang ?? DEFAULT_LANG;
+
   const all = (await getCollection("blog"))
-    .filter((p) => !p.data.draft && p.data.series === series)
+    .filter(
+      (p) =>
+        !p.data.draft &&
+        p.data.series === series &&
+        (p.data.lang ?? DEFAULT_LANG) === lang,
+    )
     .sort((a, b) => {
       // Explicit seriesOrder always wins. Posts with order come before
       // posts without; ties (or both missing) break by publication date.

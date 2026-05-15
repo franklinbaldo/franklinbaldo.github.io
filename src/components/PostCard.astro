@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
-import { excerpt } from '../lib/excerpt';
+import { t, locale, DEFAULT_LANG } from '../lib/i18n';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -10,12 +10,12 @@ interface Props {
 const { post } = Astro.props;
 const { title, date, lang, heroImage, heroImageAlt, featured, description } = post.data;
 
-const postLang = lang ?? 'en';
-const formattedDate = date.toLocaleDateString(postLang === 'pt' ? 'pt-BR' : 'en-US', {
+const postLang = lang ?? DEFAULT_LANG;
+const formattedDate = date.toLocaleDateString(locale(postLang), {
   year: 'numeric', month: 'long', day: 'numeric',
 });
 
-const blurb = excerpt(post.body ?? '', 220) || description;
+const blurb = description;
 const wordCount = (post.body ?? '').trim().split(/\s+/).filter(Boolean).length;
 const minutesRead = Math.max(1, Math.round(wordCount / 220));
 
@@ -43,13 +43,12 @@ const href = `/blog/${post.id}/`;
           <time datetime={date.toISOString()}>{formattedDate}</time>
           {' · '}{minutesRead} min
           {featured && <> {' · '}<mark>Featured</mark></>}
-          {postLang === 'pt' && <> {' · '}<span aria-label="Post in Portuguese">🇧🇷 PT</span></>}
         </small>
       </p>
     </hgroup>
   </header>
   <p>{blurb}</p>
   <footer>
-    <a href={href}>{postLang === 'pt' ? 'Continuar lendo →' : 'Continue reading →'}</a>
+    <a href={href}>{t(postLang, 'post.continueReading')}</a>
   </footer>
 </article>

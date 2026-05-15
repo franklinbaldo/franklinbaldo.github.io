@@ -1,10 +1,10 @@
 ---
 import { getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
-import LangFilter from "../../components/LangFilter.astro";
 
 const posts = (await getCollection("blog"))
   .filter((p) => !p.data.draft)
+  .filter((p) => p.data.lang === 'pt')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const byYear = new Map<number, typeof posts>();
@@ -20,21 +20,19 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
   title="Arquivo | Franklin Baldo"
   description="Todos os ensaios, por ano."
   lang="pt"
-  translationHref="/archive/"
+  translations={{ en: "/archive/" }}
 >
   <hgroup>
     <h1>Arquivo</h1>
     <p><small>{posts.length} ensaios</small></p>
   </hgroup>
 
-  <LangFilter />
-
   {years.map((year) => (
-    <nav aria-label={`Posts de ${year}`}>
+    <section aria-label={`Posts de ${year}`} class="archive-year">
       <h2>{year}</h2>
-      <ul>
+      <ol>
         {byYear.get(year)!.map((post) => (
-          <li data-post-lang={post.data.lang ?? 'en'}>
+          <li>
             <small>
               <time datetime={post.data.date.toISOString()}>
                 {post.data.date.toLocaleDateString("pt-BR", { month: "short", day: "2-digit" })}
@@ -42,10 +40,20 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
               {' — '}
             </small>
             <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-            {(post.data.lang === undefined || post.data.lang === 'en') && <small aria-label="Post em inglês"> 🇺🇸</small>}
           </li>
         ))}
-      </ul>
-    </nav>
+      </ol>
+    </section>
   ))}
 </PageLayout>
+
+<style>
+  .archive-year ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .archive-year li {
+    margin-block: 0.3rem;
+  }
+</style>

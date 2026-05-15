@@ -1,4 +1,18 @@
 ---
+import { LANGUAGES, DEFAULT_LANG } from '../lib/i18n';
+
+const supported = Object.keys(LANGUAGES);
+const navMatch = Object.fromEntries(
+  Object.entries(LANGUAGES).map(([code, cfg]) => [code, cfg.navMatch]),
+);
+// Per-current-page table of how to describe each potential target language.
+// targetCopy[currentPageLang][targetLang] = { shortLabel, invitation, noTranslation }
+const targetCopyTable = Object.fromEntries(
+  Object.entries(LANGUAGES).map(([code, cfg]) => [code, cfg.targets]),
+);
+const ariaTable = Object.fromEntries(
+  Object.entries(LANGUAGES).map(([code, cfg]) => [code, cfg.ui['lang.switchAria']]),
+);
 ---
 
 <button
@@ -11,40 +25,74 @@
   <span data-label>🌐</span>
 </button>
 
-<script is:inline>
+<script
+  is:inline
+  define:vars={{ supported, navMatch, targetCopyTable, ariaTable, defaultLang: DEFAULT_LANG }}
+>
   (() => {
     const btn = document.querySelector('[data-lang-switcher]');
     if (!btn) return;
     const label = btn.querySelector('[data-label]');
 
-    const stored = localStorage.getItem('lang');
-    let lang = (stored === 'en' || stored === 'pt')
-      ? stored
-      : (navigator.language.toLowerCase().startsWith('pt') ? 'pt' : 'en');
-    if (!stored) localStorage.setItem('lang', lang);
+    const detect = () => {
+      const stored = localStorage.getItem('lang');
+      if (stored && supported.includes(stored)) return stored;
+      const navLang = (navigator.language || '').toLowerCase();
+      for (const code of supported) {
+        const prefixes = navMatch[code] || [code];
+        if (prefixes.some((p) => navLang.startsWith(p))) return code;
+      }
+      return defaultLang;
+    };
 
-    const translationHref = window.__translationHref || null;
-    const pageLang = document.documentElement.lang;
+    const userLang = detect();
+    if (!localStorage.getItem('lang')) localStorage.setItem('lang', userLang);
 
-    if (pageLang && translationHref && pageLang !== lang) {
+    const translations = (window.__translations || {});
+    const pageLang = window.__pageLang || document.documentElement.lang || defaultLang;
+    const fromCurrent = targetCopyTable[pageLang] || {};
+
+    // Auto-redirect once if user prefers a different language and a translation exists.
+    if (translations[userLang] && pageLang !== userLang) {
       const key = 'visited:' + location.pathname;
       if (!sessionStorage.getItem(key)) {
         sessionStorage.setItem(key, '1');
-        location.href = translationHref;
+        location.href = translations[userLang];
         return;
       }
     }
 
-    label.textContent = lang === 'en' ? 'PT' : 'EN';
-    btn.setAttribute('aria-label', lang === 'en' ? 'Ler em Português' : 'Read in English');
+    // Pick a target: user's preferred lang if a translation exists, else the
+    // first available alternate, else null.
+    const otherCodes = supported.filter((c) => c !== pageLang);
+    const candidate = translations[userLang]
+      ? userLang
+      : otherCodes.find((c) => translations[c]) || null;
+
+    // Labels are looked up FROM the current page lang ABOUT the chosen target,
+    // so the button text always describes whichever target the click will open.
+    if (candidate) {
+      const copy = fromCurrent[candidate] || { shortLabel: candidate.toUpperCase(), invitation: 'Switch language' };
+      label.textContent = copy.shortLabel;
+      btn.setAttribute('aria-label', copy.invitation);
+      btn.disabled = false;
+    } else {
+      // No translation: describe one of the unavailable alternates so the
+      // button still communicates intent.
+      const fallback = otherCodes[0];
+      const copy = (fallback && fromCurrent[fallback]) || null;
+      label.textContent = (copy && copy.shortLabel) || '—';
+      btn.setAttribute('aria-label', (copy && copy.noTranslation) || ariaTable[pageLang] || 'No translation');
+      btn.disabled = true;
+    }
     btn.hidden = false;
-    btn.disabled = !translationHref;
 
     btn.addEventListener('click', () => {
-      if (!translationHref) return;
-      const target = lang === 'en' ? 'pt' : 'en';
-      localStorage.setItem('lang', target);
-      location.href = translationHref;
+      if (!candidate) return;
+      const target = translations[candidate];
+      if (!target) return;
+      localStorage.setItem('lang', candidate);
+      location.href = target;
     });
   })();
 </script>

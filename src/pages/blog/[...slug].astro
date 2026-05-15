@@ -11,7 +11,10 @@ import TableOfContents from '../../components/TableOfContents.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
 import AuthorBio from '../../components/AuthorBio.astro';
 import Comments from '../../components/Comments.astro';
+import SeriesContext from '../../components/SeriesContext.astro';
+import PostActionBar from '../../components/PostActionBar.astro';
 import { getSeriesContext } from '../../lib/series';
+import { t, targetCopy, locale as localeFor, urlPrefix, DEFAULT_LANG } from '../../lib/i18n';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -31,17 +34,25 @@ const lastModifiedISO: string | undefined = remarkPluginFrontmatter.lastModified
 const lastModified = lastModifiedISO ? new Date(lastModifiedISO) : undefined;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const showUpdated = lastModified && lastModified.valueOf() - date.valueOf() > MS_PER_DAY;
-const series = await getSeriesContext(post);
-const locale = lang === 'pt' ? 'pt-BR' : 'en-US';
+const series = await getSeriesContext(post, { lang: lang ?? DEFAULT_LANG });
+const locale = localeFor(lang);
 const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
+const tagsPrefix = `${urlPrefix(lang)}/tags`;
 
 const allPosts = await getCollection('blog');
-const translation = translationKey
-  ? allPosts.find((p) => p.data.translationKey === translationKey && p.id !== post.id)
-  : null;
-const translationHref = translation ? `/blog/${translation.id}/` : undefined;
-
-const tagBase = lang === 'pt' ? '/pt/tags/' : '/tags/';
+const translationSiblings = translationKey
+  ? allPosts.filter((p) => p.data.translationKey === translationKey && p.id !== post.id)
+  : [];
+const translations: Record<string, string> = Object.fromEntries(
+  translationSiblings.map((p) => [p.data.lang ?? DEFAULT_LANG, `/blog/${p.id}/`]),
+);
+const translationLinks = translationSiblings.map((p) => {
+  const targetLang = p.data.lang ?? DEFAULT_LANG;
+  return {
+    href: `/blog/${p.id}/`,
+    label: targetCopy(lang, targetLang).invitation,
+  };
+});
 ---
 
 <PageLayout
@@ -53,13 +64,17 @@ const tagBase = lang === 'pt' ? '/pt/tags/' : '/tags/';
   modifiedTime={lastModified}
   tags={tags}
   lang={lang}
-  translationHref={translationHref}
+  translations={translations}
   hasMath={hasMath}
 >
   <div id="read-progress" aria-hidden="true"></div>
 
+  <aside class="border-rail" aria-hidden="true">
+    <span>{lang === 'pt' ? 'NOTAS · DA · FRONTEIRA' : 'NOTES · FROM · THE · BORDER'}</span>
+  </aside>
+
   <div class="post-grid">
-    <aside class="toc-col" aria-label={lang === 'pt' ? 'Conteúdo' : 'Table of Contents'}>
+    <aside class="toc-col" aria-label={t(lang, 'toc.label')}>
       <TableOfContents headings={headings} lang={lang} sidebar />
     </aside>
 
@@ -71,9 +86,9 @@ const tagBase = lang === 'pt' ? '/pt/tags/' : '/tags/';
             <p>
               <small>
                 <time datetime={date.toISOString()}>{date.toLocaleDateString(locale, dateOpts)}</time>
-                {minutesRead && <> · {minutesRead} min read</>}
+                {minutesRead && <> · {minutesRead} {t(lang, 'post.minutesRead')}</>}
                 {showUpdated && lastModified && (
-                  <> · {lang === 'pt' ? 'atualizado' : 'updated'} <time datetime={lastModified.toISOString()}>
+                  <> · {t(lang, 'post.updated')} <time datetime={lastModified.toISOString()}>
                     {lastModified.toLocaleDateString(locale, dateOpts)}
                   </time></>
                 )}
@@ -92,26 +107,7 @@ const tagBase = lang === 'pt' ? '/pt/tags/' : '/tags/';
           )}
         </header>
 
-        {series && (
-          <aside>
-            <small>
-              {lang === 'pt' ? 'Parte' : 'Part'} {series.index + 1} {lang === 'pt' ? 'de' : 'of'} {series.posts.length}
-              {' — '}<strong>{series.slug}</strong>.
-            </small>
-            <details>
-              <summary>{lang === 'pt' ? 'Todos os posts da série' : 'All posts in this series'}</summary>
-              <ol>
-                {series.posts.map((p, i) => (
-                  <li>
-                    {i === series.index
-                      ? <><strong>{p.data.title}</strong> <em>({lang === 'pt' ? 'este post' : 'this post'})</em></>
-                      : <a href={`/blog/${p.id}/`}>{p.data.title}</a>}
-                  </li>
-                ))}
-              </ol>
-            </details>
-          </aside>
-        )}
+        {series && <SeriesContext series={series} lang={lang ?? DEFAULT_LANG} variant="aside" />}
 
         <TableOfContents headings={headings} lang={lang} />
 
@@ -120,16 +116,16 @@ const tagBase = lang === 'pt' ? '/pt/tags/' : '/tags/';
         <footer>
           {tags && tags.length > 0 && (
             <p><small>
-              {lang === 'pt' ? 'Tags' : 'Tags'}: {tags.map((tag, i) => (
-                <>{i > 0 && ', '}<a href={`${tagBase}${tag}/`}>#{tag}</a></>
+              {t(lang, 'post.tags')} {tags.map((tag, i) => (
+                <>{i > 0 && ', '}<a href={`${tagsPrefix}/${tag}/`}>#{tag}</a></>
               ))}
             </small></p>
           )}
-          {translationHref && (
+          {translationLinks.length > 0 && (
             <p><small>
-              <a href={translationHref}>
-                {lang === 'pt' ? '🇺🇸 Read in English' : '🇧🇷 Ler em Português'}
-              </a>
+              {translationLinks.map((link, i) => (
+                <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
+              ))}
             </small></p>
           )}
           <ShareButton title={title} />
@@ -140,18 +136,7 @@ const tagBase = lang === 'pt' ? '/pt/tags/' : '/tags/';
 
       <RelatedPosts currentId={post.id} tags={tags ?? []} lang={lang} />
 
-      {series && (series.prev || series.next) && (
-        <nav aria-label="Series navigation">
-          <ul>
-            {series.prev && (
-              <li><a href={`/blog/${series.prev.id}/`} rel="prev">← {series.prev.data.title}</a></li>
-            )}
-            {series.next && (
-              <li><a href={`/blog/${series.next.id}/`} rel="next">{series.next.data.title} →</a></li>
-            )}
-          </ul>
-        </nav>
-      )}
+      {series && <SeriesContext series={series} lang={lang ?? DEFAULT_LANG} variant="nav" />}
 
       <Webmentions url={new URL(Astro.url.pathname, Astro.site!)} />
 
@@ -162,6 +147,13 @@ const tagBase = lang === 'pt' ? '/pt/tags/' : '/tags/';
       <MermaidEnhancer />
     </div>
   </div>
+
+  <PostActionBar
+    title={title}
+    url={new URL(Astro.url.pathname, Astro.site!).href}
+    date={date}
+    lang={lang}
+  />
 
   <script is:inline>
     (() => {
@@ -190,35 +182,33 @@ const tagBase = lang === 'pt' ? '/pt/tags/' : '/tags/';
     pointer-events: none;
   }
 
-  .post-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  /* Hide desktop sidebar on small screens */
-  .toc-col {
+  /* Decorative left rail — desktop only, purely typographic. */
+  .border-rail {
     display: none;
   }
-
-  @media (min-width: 1200px) {
-    .post-grid {
-      grid-template-columns: 200px minmax(0, 1fr);
-      gap: 2.5rem;
-      align-items: start;
-    }
-
-    .toc-col {
+  @media (min-width: 1400px) {
+    .border-rail {
       display: block;
-      position: sticky;
-      top: 4.5rem;
-      max-height: calc(100vh - 6rem);
-      overflow-y: auto;
-      padding-top: 0.25rem;
+      position: fixed;
+      left: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%) rotate(180deg);
+      writing-mode: vertical-rl;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.32em;
+      color: var(--pico-muted-color);
+      pointer-events: none;
+      user-select: none;
     }
-
-    /* Hide the inline collapsible ToC on desktop — sidebar replaces it */
-    .post-body :global(.toc-inline) {
-      display: none;
+    .border-rail span::after {
+      content: "";
+      display: inline-block;
+      margin-top: 0.75rem;
+      width: 1px;
+      height: 2.5rem;
+      background: var(--pico-muted-color);
+      opacity: 0.5;
     }
   }
 </style>

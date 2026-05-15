@@ -7,6 +7,7 @@ translationKey: delphi-imperatives
 series: harness
 seriesOrder: 3
 featured: true
+featuredReason: "Um ensaio fundacional para o caminho de leitura Agência e Restrição."
 tags: ["filosofia", "ia", "agentes", "harness", "história", "autoconhecimento"]
 ---
 

@@ -2,7 +2,9 @@
 import { getCollection } from "astro:content";
 import PageLayout from "../../../layouts/PageLayout.astro";
 
-const posts = (await getCollection("blog")).filter((p) => !p.data.draft);
+const posts = (await getCollection("blog"))
+  .filter((p) => !p.data.draft)
+  .filter((p) => p.data.lang === 'pt');
 
 const counts = new Map<string, number>();
 for (const post of posts) {
@@ -18,7 +20,7 @@ const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeComp
   title="Etiquetas | Franklin Baldo"
   description="Navegue pelos ensaios por etiqueta."
   lang="pt"
-  translationHref="/tags/"
+  translations={{ en: "/tags/" }}
 >
   <h1>Etiquetas</h1>
   <nav aria-label="Todas as etiquetas">

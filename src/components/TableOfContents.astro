@@ -1,4 +1,6 @@
 ---
+import { t } from '../lib/i18n';
+
 export interface Heading {
   depth: number;
   slug: string;
@@ -7,13 +9,13 @@ export interface Heading {
 
 interface Props {
   headings: Heading[];
-  lang?: 'en' | 'pt';
+  lang?: string;
   sidebar?: boolean;
 }
 
 const { headings, lang, sidebar = false } = Astro.props;
 const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
-const label = lang === 'pt' ? 'Conteúdo' : 'Contents';
+const label = t(lang, 'toc.label');
 
 type Node = { slug: string; text: string; children: Node[] };
 const tree: Node[] = [];

@@ -1,32 +1,128 @@
 ---
 import { getCollection } from "astro:content";
 import PageLayout from "../layouts/PageLayout.astro";
-import PostList from "../components/PostList.astro";
-import LangFilter from "../components/LangFilter.astro";
+import RecentList from "../components/RecentList.astro";
+import FeaturedRail from "../components/FeaturedRail.astro";
+import PathsTeaser from "../components/PathsTeaser.astro";
 
 const all = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
+  .filter((post) => (post.data.lang ?? 'en') === 'en')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const featured = all.filter((p) => p.data.featured);
 const featuredIds = new Set(featured.map((p) => p.id));
-const rest = all.filter((p) => !featuredIds.has(p.id));
-const ordered = [...featured, ...rest];
+const recent = all.filter((p) => !featuredIds.has(p.id)).slice(0, 8);
+const latest = featured[0] ?? all[0];
+const latestHref = latest ? `/blog/${latest.id}/` : "/archive/";
 ---
 
 <PageLayout
   title="Home"
   description="Lawyer and State Attorney. Exploring the intersections of process metaphysics, AI agency, and the architecture of legal systems."
   lang="en"
-  translationHref="/pt/"
+  translations={{ pt: "/pt/" }}
 >
-  <hgroup>
-    <h1>Franklin Baldo</h1>
-    <p>Essays on AI agency, process metaphysics, and legal design.</p>
-  </hgroup>
+  <section class="home-hero" aria-label="Introduction">
+    <p class="home-eyebrow"><small>Franklin Baldo</small></p>
+    <h1 class="home-thesis">cybernetic Borges, building agents in <span class="accent">Delphi</span>.</h1>
+    <p class="home-lede">Essays on AI agency, process metaphysics, and the architecture of legal systems.</p>
+    <p class="home-cta">
+      <a class="cta-primary" href={latestHref}>Read latest essay →</a>
+      <a class="cta-secondary" href="/about/">About this blog</a>
+    </p>
+  </section>
 
+  <FeaturedRail posts={featured} lang="en" />
 
-  <LangFilter />
+  <PathsTeaser lang="en" />
 
-  <PostList posts={ordered} />
+  <section class="home-recent" aria-label="Recent essays">
+    <p class="section-eyebrow"><small>Recent essays</small></p>
+    <h2 class="section-heading">Recent essays</h2>
+    <RecentList posts={recent} lang="en" />
+    <p class="home-archive-link">
+      <small><a href="/archive/">View the full archive →</a></small>
+    </p>
+  </section>
 </PageLayout>
+
+<style>
+  .home-hero {
+    margin-block: calc(var(--pico-spacing) * 1.5) calc(var(--pico-spacing) * 2.5);
+    max-width: 38rem;
+  }
+  .home-eyebrow {
+    margin: 0 0 .25rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--pico-primary);
+  }
+  .home-thesis {
+    font-size: clamp(2.25rem, 5.5vw, 4rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin: 0 0 .75rem;
+  }
+  .home-thesis .accent {
+    color: var(--pico-primary);
+  }
+  .home-lede {
+    font-size: 1.15rem;
+    color: var(--pico-muted-color);
+    max-width: 55ch;
+    margin: 0 0 1.25rem;
+  }
+  .home-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 0;
+  }
+  .cta-primary {
+    display: inline-block;
+    padding: 0.65rem 1.1rem;
+    background: var(--pico-primary);
+    color: var(--pico-primary-inverse, #fff);
+    text-decoration: none;
+    border-radius: var(--pico-border-radius);
+    font-weight: 600;
+  }
+  .cta-primary:hover {
+    background: var(--pico-primary-hover, var(--pico-primary));
+    opacity: 0.92;
+  }
+  .cta-secondary {
+    display: inline-block;
+    padding: 0.65rem 1.1rem;
+    border: 1px solid var(--pico-border-color);
+    color: var(--pico-color);
+    text-decoration: none;
+    border-radius: var(--pico-border-radius);
+  }
+  .cta-secondary:hover {
+    border-color: var(--pico-primary);
+    color: var(--pico-primary);
+  }
+  .home-recent {
+    margin-block: calc(var(--pico-spacing) * 2);
+  }
+  .section-eyebrow {
+    margin: 0 0 .25rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--pico-primary);
+  }
+  .section-heading {
+    margin: 0 0 var(--pico-spacing);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.15;
+  }
+  .home-archive-link {
+    margin-top: var(--pico-spacing);
+  }
+</style>

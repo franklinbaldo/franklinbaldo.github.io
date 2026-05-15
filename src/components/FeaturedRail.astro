@@ -1,0 +1,146 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { t, locale } from '../lib/i18n';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  lang?: string;
+}
+
+const { posts, lang } = Astro.props;
+const loc = locale(lang);
+const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
+---
+
+{posts.length > 0 && (
+  <section class="featured-rail" aria-label={t(lang, 'featured.label')}>
+    {posts.map((post) => {
+      const { title, date, description, featuredReason, heroImage, heroImageAlt } = post.data;
+      const href = `/blog/${post.id}/`;
+      return (
+        <article class="featured-card">
+          <p class="eyebrow"><small>{t(lang, 'featured.label')}</small></p>
+          <h2><a href={href}>{title}</a></h2>
+          <p class="lede">{description}</p>
+          <p class="meta">
+            <small>
+              <time datetime={date.toISOString()}>{date.toLocaleDateString(loc, dateOpts)}</time>
+            </small>
+          </p>
+          {featuredReason && (
+            <p class="reason"><small><em>{featuredReason}</em></small></p>
+          )}
+          {heroImage && (
+            <a href={href} class="thumb" aria-hidden="true" tabindex="-1">
+              <Image
+                src={heroImage}
+                alt={heroImageAlt ?? ''}
+                widths={[480, 800]}
+                sizes="(max-width: 800px) 100vw, 800px"
+                format="webp"
+                loading="eager"
+              />
+            </a>
+          )}
+          <p class="cta">
+            <a href={href}>{t(lang, 'post.continueReading')}</a>
+          </p>
+        </article>
+      );
+    })}
+  </section>
+)}
+
+<style>
+  .featured-rail {
+    margin-block: calc(var(--pico-spacing) * 1.5);
+    display: grid;
+    gap: var(--pico-spacing);
+  }
+  .featured-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--pico-muted-border-color);
+    border-left: 4px solid var(--pico-primary);
+    background: var(--pico-card-background-color);
+    padding: calc(var(--pico-spacing) * 1.25) calc(var(--pico-spacing) * 1.5);
+  }
+  /* Cobogó motif in the upper-right corner: visible enough to read as
+     architecture, soft enough not to compete with text. */
+  .featured-card::after {
+    content: "";
+    position: absolute;
+    top: -1.5rem;
+    right: -1.5rem;
+    width: 200px;
+    height: 200px;
+    background-image: url("/cobogo.svg");
+    background-size: 100px 100px;
+    background-repeat: repeat;
+    opacity: 0.18;
+    color: var(--pico-primary);
+    pointer-events: none;
+  }
+  .featured-card > * {
+    position: relative;
+    z-index: 1;
+    max-width: calc(100% - 80px);
+  }
+  .featured-card > .thumb,
+  .featured-card > .cta {
+    max-width: 100%;
+  }
+  @media (max-width: 600px) {
+    .featured-card::after {
+      width: 140px;
+      height: 140px;
+      opacity: 0.12;
+    }
+    .featured-card > * {
+      max-width: 100%;
+    }
+  }
+  .featured-card .eyebrow {
+    margin: 0 0 .5rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--pico-primary);
+  }
+  .featured-card h2 {
+    margin: 0 0 .5rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.15;
+  }
+  .featured-card h2 a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .featured-card h2 a:hover {
+    color: var(--pico-primary);
+  }
+  .featured-card .lede {
+    margin: 0 0 .5rem;
+    font-size: 1.05rem;
+    color: var(--pico-color);
+  }
+  .featured-card .meta {
+    margin: 0 0 .5rem;
+    color: var(--pico-muted-color);
+  }
+  .featured-card .reason {
+    margin: .75rem 0 .25rem;
+    padding-top: .5rem;
+    border-top: 1px dashed var(--pico-muted-border-color);
+    color: var(--pico-muted-color);
+  }
+  .featured-card .thumb {
+    display: block;
+    margin-block: .75rem;
+  }
+  .featured-card .cta {
+    margin: .75rem 0 0;
+  }
+</style>
