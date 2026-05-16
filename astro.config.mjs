@@ -31,6 +31,20 @@ export default defineConfig({
           patterns: [],
         },
       ],
+      transformers: [
+        {
+          name: 'greentext-line-marker',
+          line(node, line) {
+            if (this.options.lang !== 'greentext') return;
+            const text = node.children
+              .map((c) => (c.type === 'element' ? c.children?.[0]?.value ?? '' : ''))
+              .join('');
+            if (/^\s*>/.test(text)) {
+              node.properties.class = `${node.properties.class ?? ''} gt-quote`.trim();
+            }
+          },
+        },
+      ],
     },
     remarkPlugins: [remarkMath, remarkHasMath, remarkReadingTime, remarkGitModified],
     rehypePlugins: [
