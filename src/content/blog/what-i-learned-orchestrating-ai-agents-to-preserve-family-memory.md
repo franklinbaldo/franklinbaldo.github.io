@@ -1,10 +1,13 @@
 ---
-
 title: "What I Learned Orchestrating AI Agents to Preserve Family Memory"
+translationKey: family-memory
 description: "A reflection on the engineering of affect, the fallibility of machines and the construction of the Alfarrábios do Adi project."
 date: 2026-03-30
 lang: en
-tags: [ia, agentes, memoria, filosofia, engenharia]
+tags: ["ia", "agentes", "memoria", "filosofia", "engenharia"]
+heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
+heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
+
 ---
 There is something deeply paradoxical about entrusting a neural network with the fragments of a human being's existence. As I write this, a small ecosystem of silicon and requests operates silently in the background of a server, charged with a strictly human task: compiling, structuring, and publishing the memoirs of my father, Adi Baldo.
 At 76 years old, my father has accumulated a continent of stories. They are chronicles of a time that no longer exists, reflections of a life that overflows in photographs and stories told around the table. I decided that this heritage should not dissipate into thin air nor become a hostage to oblivion. This is how the "Alfarrábios do Adi" project was born, designed not as a mere static repository, but as a living preservation mechanism.

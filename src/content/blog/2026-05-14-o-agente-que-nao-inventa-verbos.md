@@ -4,9 +4,12 @@ description: "Sobre Cucumber, endereçamento de conteúdo, e uma técnica de ali
 date: "2026-05-14"
 lang: pt
 translationKey: agent-no-verbs
-tags: ["ia", "agentes", "alinhamento", "gherkin", "harness", "engenharia-de-software"]
+tags: ["ia", "agentes", "alinhamento", "gherkin", "harness", "engenharia-de-software", "ai", "agents", "alignment", "software-engineering"]
 series: harness
 seriesOrder: 5
+heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
+heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
+
 ---
 
 Uma comunicação chega a um escritório jurídico. Pode criar um prazo. Pode exigir uma tarefa. Pode precisar ser roteada para outra mesa. Ou pode não exigir nada além de um reconhecimento fundamentado e encerramento.

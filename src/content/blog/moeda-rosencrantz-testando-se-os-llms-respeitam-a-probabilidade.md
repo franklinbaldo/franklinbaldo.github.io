@@ -1,6 +1,7 @@
 ---
 
 title: "Moeda Rosencrantz: Testando se os LLMs respeitam a probabilidade"
+translationKey: rosencrantz-coin
 description: "Um projeto de pesquisa que transforma tabuleiros do Campo Minado parcialmente revelados em testes exatos de probabilidade para modelos de linguagem, em três universos experimentais e quatro enquadramentos narrativos."
 date: 2026-03-17
 lang: pt

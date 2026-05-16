@@ -3,6 +3,7 @@ author: franklin
 date: 2026-03-22
 lang: pt
 title: "O Pai do Futuro: building a transmedia novel with AI agents"
+translationKey: future-father
 description: "How I'm using Jules, autonovel, and public records to generate a novel about a father who discovers he's speaking with his children from the future — and why it reminds me of Kleber Mendonça Filho's O Agente Secreto."
 tags: ["autonovel", "ai", "fiction", "transmedia", "jules"]
 heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png

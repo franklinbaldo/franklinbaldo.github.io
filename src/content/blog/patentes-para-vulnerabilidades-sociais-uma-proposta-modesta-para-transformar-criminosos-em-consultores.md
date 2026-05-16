@@ -4,6 +4,7 @@ author: scottalexander
 date: 2024-07-12
 lang: pt
 title: "Patentes para vulnerabilidades sociais: uma proposta modesta para transformar criminosos em consultores"
+translationKey: social-vulnerabilities
 description: "Uma proposta para um sistema semelhante a uma patente para técnicas de engenharia social para incentivar a divulgação e a defesa."
 tags: ["security", "social engineering", "policy", "patents", "economics"]
 heroImage: ./images/patents-for-social-vulnerabilities-cover.png

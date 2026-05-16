@@ -1,11 +1,14 @@
 ---
-
 author: franklin
 date: 2026-03-21
 lang: pt
 title: "Estamos todos nos tornando lagostas"
+translationKey: we-are-all-becoming-lobsters
 description: "Sobre a transformação, a hiperstição e a maquinaria da substituição gradual. Estabelecendo conexões entre Kafka, Lanthimos e o presente agente."
 tags: ["transformation", "AI agents", "hyperstition", "Kafka", "culture", "digital future"]
+heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
+heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
+
 ---
 > *"Certa manhã, quando Gregor Samsa acordou de sonhos inquietos, ele se viu transformado em sua cama em um verme monstruoso."*
 > — Franz Kafka, 1915. A espécie nunca foi especificada.

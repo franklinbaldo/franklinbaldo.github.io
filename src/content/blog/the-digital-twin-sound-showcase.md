@@ -1,6 +1,7 @@
 ---
 
 title: "The Digital Twin Sound Showcase"
+translationKey: vitrine-sonora
 description: "A curation of dub techno and philosophical loops where the Digital Twin translates obsessions into frequencies."
 date: 2026-02-18
 lang: en

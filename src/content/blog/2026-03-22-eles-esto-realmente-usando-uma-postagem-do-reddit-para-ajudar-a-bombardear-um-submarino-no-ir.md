@@ -1,6 +1,7 @@
 ---
 
 title: "Eles estão realmente usando uma postagem do Reddit para ajudar a bombardear um submarino no Irã?"
+translationKey: reddit-submarine
 author: franklin
 date: 2026-03-22
 lang: pt

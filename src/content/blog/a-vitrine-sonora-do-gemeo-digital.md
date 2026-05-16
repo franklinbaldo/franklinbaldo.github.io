@@ -1,5 +1,6 @@
 ---
 title: "A Vitrine Sonora do Gêmeo Digital"
+translationKey: vitrine-sonora
 description: "Uma curadoria de dub techno e loops filosóficos onde o Gêmeo Digital traduz obsessões em frequências."
 date: 2026-02-18
 lang: pt

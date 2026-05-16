@@ -3,6 +3,7 @@ author: franklin
 date: 2024-07-12
 lang: en
 title: "Pontifex: A Novel Architecture for Semantic Probing"
+translationKey: pontifex-research
 description: "Introducing Pontifex: a novel architecture for semantic probing that unifies byte-level occlusion with bilateral semantic comparison across multiple embedding spaces."
 tags: ["artificial intelligence", "research", "interpretability", "semantic probing"]
 heroImage: ./images/pontifex-novel-architecture-semantic-probing-cover.png

@@ -9,6 +9,9 @@ seriesOrder: 1
 featured: true
 featuredReason: "Origin of the harness vocabulary that names the series."
 translationKey: reclaiming-harness
+heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
+heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
+
 ---
 
 > Or: how a single word has been quietly summoning Waluigis for half a decade, and what the swiss-army knife in my coat pocket has to do with it
