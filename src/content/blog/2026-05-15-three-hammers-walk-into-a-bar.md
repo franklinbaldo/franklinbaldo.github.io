@@ -39,24 +39,28 @@ The civil servant's hammer is *legalidade estrita.* Article 37 of the 1988 *Cons
 
 Three hammers, three properties. *That word is doing too much* when I say neutrally that *the paper describes a pattern.* The honest sentence is that the pattern, for the first three properties, describes the work I had already done before I knew I was doing it.
 
-## The fourth hammer is not mine
+## The fourth hammer is from another shelf
 
-Property 4 — *content-addressed canon* — was not in the toolbox I brought to the paper. Catalog entries are identified by hash of normalized content; filenames embed the hash; structural edges between entries point at hashes; an edit changes the hash, which changes the identity, which makes the act of editing structurally an act of replacement. The audit trail is not a separate ledger maintained alongside the catalog — *the catalog is the ledger*, because content equals identity.
+Property 4 — *content-addressed canon* — was not in the professional toolbox I brought to the paper. It came from a different shelf of the same library: the one where I keep what I have read for pleasure rather than for work.
 
-This is not a technique that administrative-legal practice developed. It is borrowed, openly, from software supply chain. Merkle trees (Merkle, 1987). Git's object model, in which every commit, tree, and blob is a SHA. Sigstore and the SLSA framework for verifying that what was built is what runs. In-toto attestations. Software people figured out, painfully, that *the human-readable name of a thing is not a reliable identifier for the thing,* and that durable provenance requires identifying every artifact by what it contains.
+Catalog entries are identified by hash of normalized content; filenames embed the hash; structural edges between entries point at hashes; an edit changes the hash, which changes the identity, which makes the act of editing structurally an act of replacement. The audit trail is not a separate ledger maintained alongside the catalog — *the catalog is the ledger*, because content equals identity.
 
-Administrative-legal practice classically fails at exactly this. *Carbono-papelado* in Brazilian offices was the closest thing to a hash function: the carbon copy guaranteed that two pieces of paper had the same content, by mechanical impression rather than by transcription. *It's giving primitive Merkle leaf.* But the carbon copy did not survive archival migration; case files were lost in floods, in fires, in the move to digital systems where original-form imprecision was silently smoothed out. A *norma revogada* whose pre-revocation text the present office no longer has is a regular event; the act that depends on the older version becomes legally uncitable, not because anyone decided so, but because the text has drifted under everyone's feet.
+This is not, at its origin, a software-supply-chain idea. It is, at its origin, a *meta* idea — the kind of move where the name of a thing is the thing, the artifact contains its own identifier, the structure folds in on itself in a small closed loop. I have been collecting such moves for as long as I have been reading. The first book to make me notice them was a long volume about a mathematician, a graphic artist, and a composer, whose central argument was that self-reference is what produces minds out of matter. I did not fully understand it as a teenager and I am not sure I fully understand it now, but it left a residue: a habit of recognizing when an object contains its own description, and a small thrill when one does. Content-addressing is one such move, and a particularly clean one.
+
+The paper itself cites Merkle trees, Git's object model, in-toto attestations, and the SLSA framework — there is a substantial literature in which software people learned, painfully, that the human-readable name of a thing is not a reliable identifier for it. That literature belongs in the paper. But the citations were assembled during the writing, with the help of an AI assistant who knew where to look — they are not the seed. The supply-chain lineage is the technical vocabulary I borrowed to *state* the obsession formally, well after the obsession had picked the design.
+
+Administrative-legal practice has never had a working version of this property. *Carbono-papelado* in Brazilian offices was the closest thing — a kind of mechanical hash function: the carbon copy guaranteed that two pieces of paper had the same content, by mechanical impression rather than by transcription. *It's giving primitive Merkle leaf.* But the carbon copy did not survive archival migration; case files were lost in floods, in fires, in the move to digital systems where original-form imprecision was silently smoothed out. A *norma revogada* whose pre-revocation text the present office no longer has is a regular event; the act that depends on the older version becomes legally uncitable, not because anyone decided so, but because the text has drifted under everyone's feet. The professional tradition would have liked the property, but did not invent the technical move that delivers it. That move came from a different reading life of the same reader.
 
 <figure class="meme">
   <img
-    src="https://api.memegen.link/images/drake/Inventing_Property_4_from_first_principles/Reading_the_SLSA_spec_and_writing_it_down.png?width=500"
-    alt="Drake meme: Drake refusing the top panel labeled 'Inventing Property 4 from first principles'; Drake nodding approvingly at the bottom panel labeled 'Reading the SLSA spec and writing it down'."
+    src="https://api.memegen.link/images/drake/Citing_SLSA_in_the_paper/Citing_the_paperback_I_actually_got_the_idea_from.png?width=500"
+    alt="Drake meme: Drake refusing the top panel labeled 'Citing SLSA in the paper'; Drake nodding approvingly at the bottom panel labeled 'Citing the paperback I actually got the idea from'."
     loading="lazy"
   />
-  <figcaption>The honest tally on Property 4. Three I had on me from the day job; one I copied from people who had already solved my problem on a different artifact.</figcaption>
+  <figcaption>The honest tally on Property 4. The technical lineage in the paper is real; the personal lineage is older and comes from a different bookshelf entirely.</figcaption>
 </figure>
 
-This is what makes the paper a paper and not a memoir. The three hammers from my professional formation produced three properties that were useful but always incomplete. Content-addressing was the piece that was missing — the technical guarantee that the catalog the agent acted under at moment *t₀* is recoverable, bit-for-bit, at moment *t₁*, no matter how the filesystem has been rearranged in between. The administrative-legal tradition would have liked this property and could not produce it. It had to come from software that learned, the hard way, that you cannot trust filenames.
+None of this makes Property 4 the load-bearing piece of the paper. The paper's central claim runs through the three professional postures and their fit with the three semantic conditions of applicability; content-addressing is a clean technical move that makes the audit trail behave the way the rest of the design needs it to, but the paper would still be a paper without it, just with a softer audit guarantee. What the fourth property reveals, instead, is biographical: an obsession that has been running in parallel to the three professional ones for as long as I have had a reading life, on a shelf I had stopped noticing. The hammer was always there. I had been swinging it without naming it.
 
 ## If you're a hammer
 
@@ -80,7 +84,7 @@ The three of them have finished their drinks. The barman, who has been listening
 
 He nods at a corner table. The three turn to look. There is nobody there, or there is a man with three handles, or there is a stack of paper signed in three different scripts. Cervantes would have liked the structure, though not necessarily approved of it.
 
-The lawyer, the Brazilian, and the civil servant did not align an AI. They were aligned by an AI. The catalog found the *servidor*; the *despacho* found the chain of *vistos*; the brief found the lawyer. A fourth thing — a hash — found them all from outside, and noted, with the politeness of software, that the three of them had been the same person all along.
+The lawyer, the Brazilian, and the civil servant did not align an AI. They were aligned by an AI. The catalog found the *servidor*; the *despacho* found the chain of *vistos*; the brief found the lawyer. A fourth thing — a hash — arrived from another shelf of the same reader's library, and noted, with the politeness of software, that the three of them had been the same person all along.
 
 The bar closes. A reader will arrive, eventually.
 
@@ -90,7 +94,8 @@ The bar closes. A reader will arrive, eventually.
 - **Celso Antônio Bandeira de Mello, *Curso de Direito Administrativo*** — the strict-legality principle in its most explicit canonical form; Property 1 read aloud sounds like a translation of his pages on the *vinculação* of the public administrator.
 - **Roberto DaMatta, *Carnavais, Malandros e Heróis* (1979)** — the anthropological account of *jeitinho*, the *despacho*, and Brazilian institutional practice; the Brazilian hammer is one of his standing themes, even if he was describing it from outside the office.
 - **Lucy Suchman, *Plans and Situated Actions* (1987)** — the lawyer's hammer in academic register: plans as accountability artifacts, not as causal cognition. The proposal-as-commitment in our paper is what this looks like when implemented on a directory.
-- **Ralph Merkle, *A Digital Signature Based on a Conventional Encryption Function* (1987)** — the patent on the fourth hammer; the source the administrative-legal tradition could not have produced and had to import.
+- **Douglas Hofstadter, *Gödel, Escher, Bach: An Eternal Golden Braid* (1979)** — the book that planted the obsession with self-reference and strange loops long before any of this had a technical vocabulary. The fourth hammer's *personal* lineage runs through here.
+- **Ralph Merkle, *A Digital Signature Based on a Conventional Encryption Function* (1987)** — the canonical technical reference for content-addressing; cited in the paper, but read after the fact. The fourth hammer's *technical* lineage runs through here.
 - **Franklin Baldo, *[Alignment by Affordance Restriction](https://github.com/franklinbaldo/papers/blob/main/paper_affordance_restriction.md)*** — the paper this post is the biographical companion to. The four properties are stated formally in Section 3; this post is the unofficial appendix on where three of them came from.
 - **[The Agent That Doesn't Invent Verbs](/blog/2026-05-14-the-agent-that-doesnt-invent-verbs)** — the architectural companion: how the four properties look in a working system.
 - **[Pierre Menard, Computational Researcher](/blog/2026-05-14-pierre-menard-computational-researcher)** — the methodological companion: how the paper was written before the research was done. This post is the third register — biographical, on where the writer's own hammers came from.
