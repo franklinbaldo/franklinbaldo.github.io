@@ -42,7 +42,6 @@ const PALETTE = {
   accent: "#d97706",
 };
 
-const SUB_BY_LANG = { en: "Digital Garden", pt: "Jardim Digital" } as const;
 const DOMAIN = "franklinbaldo.github.io";
 
 const TITLE_HARD_CAP = 70;
@@ -114,19 +113,15 @@ function buildTree(input: CardInput): El {
             display: "flex",
             fontFamily: "Inter",
             fontWeight: 400,
-            fontSize: 19,
+            fontSize: 20,
             color: PALETTE.muted,
             marginTop: 4,
           },
         },
-        SUB_BY_LANG[lang]
+        DOMAIN
       )
     )
   );
-
-  const accentRule = h("div", {
-    style: { display: "flex", width: 60, height: 4, background: PALETTE.accent, marginTop: 36 },
-  });
 
   const titleEl = h(
     "div",
@@ -138,7 +133,7 @@ function buildTree(input: CardInput): El {
         fontSize: titleSize,
         lineHeight: 1.05,
         color: PALETTE.ink,
-        marginTop: 28,
+        marginTop: 44,
         maxWidth: 760,
       },
     },
@@ -170,52 +165,34 @@ function buildTree(input: CardInput): El {
       style: {
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
+        gap: 10,
         marginTop: "auto",
-        width: "100%",
       },
     },
-    h(
-      "div",
-      { style: { display: "flex", gap: 10 } },
-      ...(showChips
-        ? tags.slice(0, 3).map((tag) =>
-            h(
-              "div",
-              {
-                style: {
-                  display: "flex",
-                  alignItems: "center",
-                  paddingLeft: 18,
-                  paddingRight: 18,
-                  paddingTop: 8,
-                  paddingBottom: 8,
-                  borderRadius: 21,
-                  background: PALETTE.accent,
-                  color: "#fff",
-                  fontFamily: "Inter",
-                  fontWeight: 600,
-                  fontSize: 20,
-                },
+    ...(showChips
+      ? tags.slice(0, 3).map((tag) =>
+          h(
+            "div",
+            {
+              style: {
+                display: "flex",
+                alignItems: "center",
+                paddingLeft: 18,
+                paddingRight: 18,
+                paddingTop: 8,
+                paddingBottom: 8,
+                borderRadius: 21,
+                background: PALETTE.accent,
+                color: "#fff",
+                fontFamily: "Inter",
+                fontWeight: 600,
+                fontSize: 20,
               },
-              tag
-            )
+            },
+            tag
           )
-        : [])
-    ),
-    h(
-      "div",
-      {
-        style: {
-          display: "flex",
-          fontFamily: "Inter",
-          fontWeight: 400,
-          fontSize: 22,
-          color: PALETTE.muted,
-        },
-      },
-      DOMAIN
-    )
+        )
+      : [])
   );
 
   const contentColumn = h(
@@ -226,11 +203,15 @@ function buildTree(input: CardInput): El {
         flexDirection: "column",
         width: "100%",
         height: "100%",
-        padding: 80,
+        // Slightly more top padding so the byline doesn't collide with the
+        // top accent bar.
+        paddingTop: 70,
+        paddingRight: 80,
+        paddingBottom: 80,
+        paddingLeft: 80,
       },
     },
     eyebrow,
-    accentRule,
     titleEl,
     ...(descEl ? [descEl] : []),
     chipsRow
@@ -250,6 +231,18 @@ function buildTree(input: CardInput): El {
     },
   });
 
+  const topAccent = h("div", {
+    style: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: 1200,
+      height: 10,
+      background: PALETTE.accent,
+      display: "flex",
+    },
+  });
+
   return h(
     "div",
     {
@@ -262,6 +255,7 @@ function buildTree(input: CardInput): El {
       },
     },
     cobogo,
+    topAccent,
     contentColumn
   );
 }
