@@ -73,12 +73,12 @@ const truncate = (s: string, max: number) =>
 // column we have once the big avatar is on the left.
 function fitTypography(title: string): { titleSize: number; descCap: number } {
   const n = title.length;
-  if (n <= 12) return { titleSize: 88, descCap: 130 };
-  if (n <= 20) return { titleSize: 72, descCap: 130 };
-  if (n <= 32) return { titleSize: 60, descCap: 120 };
-  if (n <= 48) return { titleSize: 52, descCap: 110 };
-  if (n <= 64) return { titleSize: 44, descCap: 100 };
-  return { titleSize: 38, descCap: 80 };
+  if (n <= 12) return { titleSize: 108, descCap: 130 };
+  if (n <= 20) return { titleSize: 92, descCap: 130 };
+  if (n <= 32) return { titleSize: 76, descCap: 120 };
+  if (n <= 48) return { titleSize: 64, descCap: 110 };
+  if (n <= 64) return { titleSize: 54, descCap: 100 };
+  return { titleSize: 46, descCap: 80 };
 }
 
 type El = { type: string; props: Record<string, unknown> };
@@ -116,33 +116,6 @@ export function buildTree(input: CardInput): El {
     }),
   );
 
-  const leftColumn = h(
-    "div",
-    {
-      style: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 18,
-        flexShrink: 0,
-      },
-    },
-    avatar,
-    h(
-      "div",
-      {
-        style: {
-          display: "flex",
-          fontFamily: "Inter",
-          fontWeight: 600,
-          fontSize: 22,
-          color: PALETTE.inkSoft,
-        },
-      },
-      DOMAIN_BY_LANG[lang],
-    ),
-  );
-
   const eyebrow = h(
     "div",
     {
@@ -158,9 +131,36 @@ export function buildTree(input: CardInput): El {
     SUB_BY_LANG[lang].toUpperCase(),
   );
 
-  const accentRule = h("div", {
-    style: { display: "flex", width: 60, height: 4, background: PALETTE.accent, marginTop: 18 },
-  });
+  const url = h(
+    "div",
+    {
+      style: {
+        display: "flex",
+        fontFamily: "Inter",
+        fontWeight: 600,
+        fontSize: 22,
+        color: PALETTE.inkSoft,
+      },
+    },
+    DOMAIN_BY_LANG[lang],
+  );
+
+  const leftColumn = h(
+    "div",
+    {
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 18,
+        flexShrink: 0,
+      },
+    },
+    eyebrow,
+    avatar,
+    url,
+  );
+
 
   const titleEl = h(
     "div",
@@ -172,7 +172,6 @@ export function buildTree(input: CardInput): El {
         fontSize: titleSize,
         lineHeight: 1.05,
         color: PALETTE.ink,
-        marginTop: 24,
       },
     },
     title,
@@ -186,10 +185,10 @@ export function buildTree(input: CardInput): El {
             display: "flex",
             fontFamily: "Inter",
             fontWeight: 400,
-            fontSize: 26,
-            lineHeight: 1.35,
+            fontSize: 34,
+            lineHeight: 1.3,
             color: PALETTE.inkSoft,
-            marginTop: 18,
+            marginTop: 26,
           },
         },
         description,
@@ -206,10 +205,9 @@ export function buildTree(input: CardInput): El {
         flex: 1,
         minWidth: 0,
         justifyContent: "center",
+        gap: 18,
       },
     },
-    eyebrow,
-    accentRule,
     titleEl,
     ...(descEl ? [descEl] : []),
   );
