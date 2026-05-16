@@ -9,17 +9,50 @@ const { lang } = Astro.props;
 const homeHref = `${urlPrefix(lang)}/`;
 ---
 
-<aside>
+<aside class="author-bio">
   <article>
     <header>
-      <hgroup>
-        <h3>Franklin Baldo</h3>
-        <p><small>{t(lang, 'author.label')}</small></p>
-      </hgroup>
+      <div class="bio-head">
+        <img class="bio-avatar" src="/avatar.png" alt="Franklin Baldo" width="64" height="64" loading="lazy" decoding="async" />
+        <hgroup>
+          <h3>Franklin Baldo</h3>
+          <p><small>{t(lang, 'author.label')}</small></p>
+        </hgroup>
+      </div>
     </header>
     <p>{t(lang, 'author.tagline')}</p>
+    <ul class="bio-links">
+      <li><a href="https://github.com/franklinbaldo" rel="me noopener" target="_blank">GitHub</a></li>
+      <li><a href="https://twitter.com/franklinbaldo" rel="me noopener" target="_blank">Twitter</a></li>
+      <li><a href="/rss.xml">RSS</a></li>
+    </ul>
     <footer>
       <a href={homeHref}>{t(lang, 'author.more')}</a>
     </footer>
   </article>
 </aside>
+
+<style>
+  .bio-head {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+  .bio-avatar {
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .bio-head hgroup {
+    margin: 0;
+  }
+  .bio-links {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    font-size: 0.9rem;
+  }
+</style>
