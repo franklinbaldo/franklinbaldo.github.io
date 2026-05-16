@@ -39,7 +39,7 @@ O martelo do servidor público é a *legalidade estrita.* O artigo 37 da *Consti
 
 Três martelos, três propriedades. *Essa palavra está fazendo trabalho demais* quando digo neutralmente que *o artigo descreve um padrão.* A frase honesta é que o padrão, nas três primeiras propriedades, descreve o trabalho que eu já havia feito antes de saber que estava fazendo.
 
-## O quarto martelo vem de outra estante
+## O quarto martelo, de passagem
 
 Propriedade 4 — *cânone endereçado por conteúdo* — não estava na caixa de ferramentas profissional que trouxe para o artigo. Veio de uma estante diferente da mesma biblioteca: aquela onde guardo o que li por prazer e não por trabalho.
 
@@ -60,7 +60,7 @@ A prática administrativa-jurídica nunca teve uma versão funcional dessa propr
   <figcaption>O balanço honesto sobre a Propriedade 4. A linhagem técnica no artigo é real; a linhagem pessoal é mais antiga e vem de uma estante inteiramente diferente.</figcaption>
 </figure>
 
-Nada disso faz da Propriedade 4 a peça que sustenta o artigo. A tese central percorre as três posturas profissionais e seu encaixe com as três condições semânticas de aplicabilidade; o endereçamento por conteúdo é um movimento técnico limpo que faz a trilha de auditoria se comportar do jeito que o resto do design exige, mas o artigo continuaria sendo artigo sem ele, só com uma garantia de auditoria mais frouxa. O que a quarta propriedade revela, em vez disso, é biográfico: uma obsessão que vem rodando em paralelo às três profissionais há tanto tempo quanto tenho vida de leitura, numa estante que eu havia parado de notar. O martelo sempre esteve ali. Eu vinha batendo com ele sem nomeá-lo.
+Nada disso faz da Propriedade 4 a peça que sustenta o artigo. A tese central percorre as três posturas profissionais e seu encaixe com as três condições semânticas de aplicabilidade; o endereçamento por conteúdo é um movimento técnico limpo que faz a trilha de auditoria se comportar do jeito que o resto do design exige, mas o artigo continuaria sendo artigo sem ele, só com uma garantia de auditoria mais frouxa. O que a quarta propriedade revela, em vez disso, é biográfico: uma obsessão que vem rodando em paralelo às três profissionais desde que tenho vida de leitura, numa estante que eu havia parado de notar. O martelo sempre esteve ali. Eu vinha batendo com ele sem nomeá-lo.
 
 ## Se você é martelo
 
@@ -73,6 +73,8 @@ A resposta honesta, para o alinhamento geral, é provavelmente sim. A escrita cr
 </blockquote>
 
 O que os três martelos *identificam*, quando encaixam, não é uma metáfora de alinhamento mas uma especificação de onde esse padrão particular se aplica. A [Seção 5 do artigo](https://github.com/franklinbaldo/papers/blob/main/paper_affordance_restriction.md) nomeia três perguntas semânticas — *existe uma unidade discreta de ação, existe um registro onde a reflexão pertence, o operador quer ser auditável* — e as perguntas são, em retrospecto, os três martelos perguntando *onde no mundo nós três nos sustentamos simultaneamente?* Quando todas as três respostas são sim, o padrão encaixa e o advogado-brasileiro-servidor-público concorda consigo mesmo nos três cabos. Quando qualquer resposta é não, o acordo colapsa e um dos martelos está sendo pedido para pregar algo que não é prego.
+
+Há uma versão mais forte do aviso que vale registrar, porque é a versão que eu, de onde estou, não consigo responder. Talvez o design correto para agentes jurídico-administrativos não seja o que um advogado-brasileiro-servidor escreveria — talvez alguém de formação profissional diferente proponha algo mais estranho e melhor, mesmo dentro deste domínio delimitado. De dentro da formação, não tenho como verificar a negação. O movimento honesto é deixar a proposta, o exemplo trabalhado e as condições de aplicabilidade numa forma com que um padrão concorrente possa se comparar, e esperar.
 
 É também por isso que [o post companheiro](/blog/2026-05-14-o-agente-que-nao-inventa-verbos) limita sua afirmação a agentes administrativos-jurídicos delimitados. O padrão não foi derivado de uma teoria geral de alinhamento. Foi abstraído das condições em que os três martelos se sustentam simultaneamente. Dentro dessas condições o padrão encaixa sem resto. Fora delas, nenhum dos martelos é a ferramenta certa, e fingir o contrário é a piada virada contra o contador da piada.
 

@@ -39,7 +39,7 @@ The civil servant's hammer is *legalidade estrita.* Article 37 of the 1988 *Cons
 
 Three hammers, three properties. *That word is doing too much* when I say neutrally that *the paper describes a pattern.* The honest sentence is that the pattern, for the first three properties, describes the work I had already done before I knew I was doing it.
 
-## The fourth hammer is from another shelf
+## The fourth hammer, in passing
 
 Property 4 — *content-addressed canon* — was not in the professional toolbox I brought to the paper. It came from a different shelf of the same library: the one where I keep what I have read for pleasure rather than for work.
 
@@ -73,6 +73,8 @@ The honest answer, for general alignment, is probably yes. Open creative writing
 </blockquote>
 
 What the three hammers *do* identify, when they fit, is not a metaphor for alignment but a specification of where this particular pattern applies. The [paper's Section 5](https://github.com/franklinbaldo/papers/blob/main/paper_affordance_restriction.md) names three semantic questions — *is there a discrete unit of action, is there a record where reflection belongs, does the operator want to be auditable* — and the questions are, in retrospect, the three hammers asking *where in the world do we all hold simultaneously?* When all three answers are yes, the pattern fits and the lawyer-Brazilian-civil-servant agrees with himself across his three handles. When any answer is no, the agreement collapses and one of the hammers is being asked to drive in something that is not a nail.
+
+There is a stronger version of the warning worth registering, because it is the version I cannot answer from where I stand. Perhaps the right design for legal-administrative agents is not what a lawyer-Brazilian-civil-servant would write — perhaps someone with a different professional formation would propose something stranger and better, even inside this delimited domain. From inside the formation I have no way to verify the negation. The honest move is to leave the proposal, the worked example, and the applicability conditions in a form a competing pattern could compare itself against, and to wait.
 
 This is also why [the companion post](/blog/2026-05-14-the-agent-that-doesnt-invent-verbs) limits its claim to bounded administrative-legal agents. The pattern was not derived from a general theory of alignment. It was abstracted from the conditions under which the three hammers all hold. Inside those conditions the pattern fits without remainder. Outside them, none of the hammers is the right tool, and pretending otherwise is the joke turned against the joker.
 
