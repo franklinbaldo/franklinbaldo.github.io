@@ -1,110 +1,107 @@
 ---
 title: "Three Hammers Walk Into a Bar"
-description: "A lawyer, a Brazilian, and a civil servant agree on alignment. The agreement turns out to be a paper I wrote last week."
+description: "On three professional postures, four alignment properties, and the one property that had to come from elsewhere."
 date: "2026-05-15"
 lang: en
 translationKey: three-hammers
-tags: ["ai", "agents", "alignment", "law", "brazil", "memoir"]
+tags: ["ai", "alignment", "agents", "law", "brazil", "supply-chain"]
 ---
 
-A lawyer, a Brazilian, and a civil servant walk into a bar. They sit down, order three of whatever is cheapest, and almost immediately a stranger at the next stool — who has been reading something on his phone with visible distress — turns and asks them, point-blank, how to align an AI. He uses the word *alignment* with the careful pronunciation of someone who has read it more often than he has said it.
+A lawyer, a Brazilian, and a civil servant walk into a bar. The barman has been reading about AI safety on his phone, and without looking up he says: tell me how you would align an AI.
 
-The three professionals do not look at each other. They do not need to. Each one answers, more or less simultaneously, with a single word.
+The lawyer puts down his glass first. *Papelada,* he says. The act does not exist until it is reduced to a text — until what was done has a record that can be appealed, cited, served, archived. If you want a machine to do something, first there must be the document the machine commits to. The document is the act; the doing is compliance with the document.
 
-*Paperwork*, says the lawyer. By which he means: an act is not an act until it has been written down. The petition, the deadline, the docket entry, the protocolo number — these are not bureaucratic residue around the *real* work. They *are* the work. Anything the agent does that does not leave a paper trail did not happen, in the only sense of "happen" the legal system can perceive.
+The Brazilian, who has spent his life inside an *Estado* of cabinets, nods. *Papelada,* he agrees, but he means a different thing. In a Brazilian ministry no consequential act has one signature — the technician drafts, the *assessor* reviews, the *coordenador* approves, the *secretário* signs, often the minister countersigns. *Vistos* on a *despacho.* The chain itself is the act. A signature alone produces nothing.
 
-*Paperwork*, says the Brazilian. By which he means: nothing important is decided by one person. A visa needs a stamp. A stamp needs another stamp. The thing moves up the chain, and at each link someone signs, and at each signature the responsibility distributes a little further. You do not align the system by aligning one actor. You align it by ensuring the chain of signatures is long enough that no single bad sign can cash itself.
+The civil servant, who reads the *Constituição* the way the others read newspapers, says only: *papelada.* What the law has not expressly authorized, the public agent may not do. Citizens may do anything not forbidden; servants may do nothing not permitted. The catalog of permissions is the limit of the office. A new act not in the catalog is not, by the law of his profession, an act.
 
-*Paperwork*, says the civil servant. By which he means something more austere: the public administrator can only do what the law expressly authorizes. Not what the law fails to prohibit — what it positively permits. Outside the enumerated competences there is nothing. There is not even silence. There is *ultra vires*, which is the legal word for "you didn't have permission to do that, so you didn't do it, you just made a mess we now have to undo."
-
-The stranger nods three times, with the polite air of someone who got three different answers to a yes-or-no question, and goes back to his phone.
+The barman waits. None of them has answered the question. All of them have answered the same question.
 
 ## Three hammers, one nail
 
-A week ago I finished a paper called ["Alignment by Affordance Restriction"](https://github.com/franklinbaldo/papers). It proposes a pattern for aligning bounded administrative-legal agents — the kind that read court communications, draft replies, route deadlines — built around four properties an agent and its environment must satisfy together.
+The unflattering thing about the joke is that I am all three.
 
-I wrote the paper, reread it, and discovered that three of its four properties are not, in any honest sense, *original*. They are the three answers above, translated into alignment vocabulary. I had written a paper about how to align AI agents, and the paper turned out to be a memoir of how I had been trained to act inside institutions before I ever met an LLM.
+I am the lawyer; the *Constituição* is my profession's manual. I am the Brazilian, and the *vistos* on the *despacho* are how I shipped a *parecer* last Thursday. I am the civil servant in the most literal sense — *Procurador do Estado*, my paychecks are public budget, the second article of the *Lei Orgânica* governing my office is the rule the civil servant in the bar recites. None of these is a position I argue for. They are, in the most banal sense, my professional formation. *It's giving the same hammer, three handles.*
 
-*The duality of writing about agents when you are one.*
-
-I am, in roughly the proportions life assigned me, all three professionals at the bar. I trained as a lawyer. I am Brazilian. I work in the public administration. The architecture I proposed for the agent — that it can only invoke named, pre-reviewed playbooks; that different classes of decision require different signatures; that every action it takes is materialized as a written artifact in a versioned repository — is what those three professional postures look like when you ask them to babysit a language model.
+The unflattering thing about the [paper I just wrote](https://github.com/franklinbaldo/papers/blob/main/paper_affordance_restriction.md) is that it has four properties, and three of them are professional postures translated into alignment vocabulary. The fourth is foreign. *Affordance enumeration, doctrine/procedure separation, structured ex-ante commitment, content-addressed canon* — read aloud they sound like the table of contents of a competent alignment paper. Read against my CV, they are: strict legality, distributed approval, the-act-is-the-paper, and one thing I did not bring.
 
 I would like to claim I noticed this while writing. I did not. I noticed it the morning after, rereading the abstract with coffee, in the specific way one notices that the joke one has been telling for years is, structurally, about oneself.
 
+This is not a criticism of the paper. The first three are good properties. They are the properties of agent design that an unbroken administrative-legal tradition refined over centuries because the actors involved — judges, lawyers, *servidores* — needed those properties to operate without one of them becoming a king. If administrative-legal practice produces useful constraints on machine agents, this is not an accident. It is what happens when a profession that exists to constrain the powerful is asked, for once, what *constraint* looks like.
+
+What I want to record here, before the next paper takes my attention back to itself, is a small genealogy. Where the four properties came from. Which three of them I had on me already, and which one I had to borrow.
+
 ## The three hammers, one by one
 
-Each professional posture maps, with embarrassingly little stretching, onto one of the paper's properties. Let me walk it.
+The lawyer's hammer is *ex ante.* The lawyer does not act and then describe; the lawyer files and then *is*. A *recurso* is not a complaint until it is reduced to text and protocolled into the docket; a *parecer* is not an opinion until it is signed and routed; a *despacho* is not a decision until the *despacho* exists. Acts on the world that have no paper version are, in the lawyer's profession, hallucinations. Property 3 — *structured ex-ante commitment* — is this principle transplanted onto an AI agent. Before doing anything, the agent emits a proposal: which catalog entry it will execute, with which bindings, justified by which path through the catalog. The proposal is the brief. The execution is the lawyer carrying out what the brief says, no more.
 
-**The lawyer's hammer.** *The act does not exist without the paper.* For the lawyer, this is not an aesthetic preference; it is the operating principle of the entire profession. A contract orally agreed but not signed is, depending on jurisdiction, either unenforceable or merely a story two people are telling each other. A deadline missed is a deadline that, for procedural purposes, was not a deadline. The artifact is the act.
+The Brazilian's hammer is the *chain of vistos.* No single posture in an *Estado de Direito* produces an act. The technician's draft is reviewed by the *assessor* before reaching the *coordenador.* The *coordenador*'s recommendation circulates as a *despacho* before the *secretário* signs. Some acts climb further. The phrase a foreigner sometimes mistakes for empty bureaucracy — *com vista ao setor de tal coisa,* literally *with sight to such-and-such sector* — is a structural device: nothing of consequence happens without distributed sight. Property 2 — *doctrine/procedure separation* — is this principle generalized. Adding a procedural specialization to the agent's catalog is cheap; adding a doctrinal commitment requires a different signature, in a different queue, under an explicit flag that names what is being done. The asymmetry is not friction. It is the *visto.*
 
-This is **Property 3** of the paper, which I called *Structured Ex-ante Commitment*: the agent does not "decide" by emitting a recommendation. It decides by writing a structured proposal, in a known schema, to a specific location in a content-addressed repository, where a human reviewer will either co-sign or reject. The action is the artifact. The proposal-file is to the agent what the petition-protocol is to the lawyer. If the file isn't there, the agent didn't act; it merely thought, which is not a juridically interesting category.
+The civil servant's hammer is *legalidade estrita.* Article 37 of the 1988 *Constituição* states it; Bandeira de Mello and Hely Lopes Meirelles spend chapters on it. The citizen may do anything not forbidden; the *servidor* may do nothing not authorized. The agent of the State is bounded by an enumerated catalog of permissions; if the catalog does not say *você pode fazer isto*, then he may not. Property 1 — *affordance enumeration* — is this almost verbatim, with *servidor* replaced by *AI agent.* The agent's allowed actions are the entries in a finite, human-curated catalog. New entries require human approval. The agent does not invent verbs; the *servidor*, by his own oath, does not invent powers. (I wrote a [whole companion post](/blog/2026-05-14-the-agent-that-doesnt-invent-verbs/) about Property 1 without once mentioning Meirelles, because I had not yet noticed I was quoting him.)
 
-**The Brazilian's hammer.** *Chain of visas.* I do not mean this pejoratively, although the Brazilian word *carimbo* — rubber stamp — has acquired one of those affectionate sneers reserved for things you've stopped being able to imagine yourself without. The pattern is: no important transition occurs without multiple distinct approvals, ideally by people occupying structurally different positions. It is a way of distributing accountability so widely that capture is expensive.
-
-This is **Property 2** of the paper, *Doctrine / Procedure Separation*: the playbooks that encode *what the agent is allowed to attempt* live in one repository, signed off by one set of reviewers; the procedural code that *runs* them lives elsewhere, signed off by a different set. You cannot change what the agent does by changing only the code, and you cannot change it by changing only the playbooks. Two signatures, two repositories, two review cultures. *It's giving separation of powers, for agents.*
-
-**The civil servant's hammer.** *Strict legality.* In Brazilian administrative law this is canonical: the private citizen may do anything not prohibited; the public administrator may do only what is expressly authorized. Hely Lopes Meirelles built half a textbook on this distinction. Outside the enumerated catalog of competences, the administrator has no powers — not constrained powers, *no* powers.
-
-This is **Property 1** of the paper, *Affordance Enumeration*, almost verbatim. The agent's available actions are a finite, named, versioned catalog of playbooks. Anything not in the catalog is not "discouraged" or "low-probability" — it is unrepresentable. The agent cannot invent a verb any more than a tax auditor can invent a tax. This is also the property I wrote a [whole companion post about](/blog/2026-05-14-the-agent-that-doesnt-invent-verbs/), without once mentioning Meirelles, because I had not yet noticed I was quoting him.
-
-Three hammers. One nail. The nail being, in this case, the alignment problem for a specific class of agent — which I will get to in a moment, because it matters that the class is specific.
+Three hammers, three properties. *That word is doing too much* when I say neutrally that *the paper describes a pattern.* The honest sentence is that the pattern, for the first three properties, describes the work I had already done before I knew I was doing it.
 
 ## The fourth hammer is not mine
 
-Here is the part that, frankly, saved the paper from being a confession dressed up as research.
+Property 4 — *content-addressed canon* — was not in the toolbox I brought to the paper. Catalog entries are identified by hash of normalized content; filenames embed the hash; structural edges between entries point at hashes; an edit changes the hash, which changes the identity, which makes the act of editing structurally an act of replacement. The audit trail is not a separate ledger maintained alongside the catalog — *the catalog is the ledger*, because content equals identity.
 
-The fourth property — **Property 4**, *Content-Addressed Identity* — has no professional ancestor in my background. Every playbook's filename embeds a hash of its normalized content. Change a comma, the hash changes, the filename changes, and what used to be `recebe_expediente__a1b2c3d4.feature` becomes `recebe_expediente__e5f6a7b8.feature`, a different file as far as the system is concerned. There is no silent edit. There is only replacement.
+This is not a technique that administrative-legal practice developed. It is borrowed, openly, from software supply chain. Merkle trees (Merkle, 1987). Git's object model, in which every commit, tree, and blob is a SHA. Sigstore and the SLSA framework for verifying that what was built is what runs. In-toto attestations. Software people figured out, painfully, that *the human-readable name of a thing is not a reliable identifier for the thing,* and that durable provenance requires identifying every artifact by what it contains.
 
-This idea is not in the lawyer's hammer. The lawyer venerates the written artifact but is famously bad at versioning it: the canonical Brazilian legal document is a Word file emailed back and forth with `_v2_final_FINAL_revisado.docx` in the name. It is not in the Brazilian's hammer either; the chain of visas tells you who signed but not, durably, *what they signed* — archived dossiers go missing, revoked norms erase their pre-revocation state, the *Diário Oficial* records the change but not always the diff. And it is not in the civil servant's hammer; strict legality tells you the catalog of permitted actions must exist, but says nothing about how to know, in twenty years, *which version of the catalog* was in force the day the disputed act occurred.
-
-Content-addressing comes from a completely different lineage: Merkle trees, git, sigstore, the SLSA supply-chain framework, the long line of cryptographic plumbing that software ate the world with. It is what the three administrative hammers were always *missing* and never quite admitted they were missing.
+Administrative-legal practice classically fails at exactly this. *Carbono-papelado* in Brazilian offices was the closest thing to a hash function: the carbon copy guaranteed that two pieces of paper had the same content, by mechanical impression rather than by transcription. *It's giving primitive Merkle leaf.* But the carbon copy did not survive archival migration; case files were lost in floods, in fires, in the move to digital systems where original-form imprecision was silently smoothed out. A *norma revogada* whose pre-revocation text the present office no longer has is a regular event; the act that depends on the older version becomes legally uncitable, not because anyone decided so, but because the text has drifted under everyone's feet.
 
 ```mermaid
 flowchart LR
   P1[Property 1<br/>Affordance Enumeration] --- H1[civil servant<br/>strict legality]
-  P2[Property 2<br/>Doctrine / Procedure Separation] --- H2[Brazilian<br/>chain of visas]
+  P2[Property 2<br/>Doctrine / Procedure Separation] --- H2[Brazilian<br/>chain of vistos]
   P3[Property 3<br/>Structured Ex-ante Commitment] --- H3[lawyer<br/>act = paper]
-  P4[Property 4<br/>Content-Addressed Identity] --- H4[software supply chain<br/>Merkle, git, SLSA]
+  P4[Property 4<br/>Content-Addressed Canon] --- H4[software supply chain<br/>Merkle, git, SLSA]
 ```
 
-This is the moment in the galaxy-brain meme where the head finally lights up:
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/drake/Inventing_Property_4_from_first_principles/Reading_the_SLSA_spec_and_writing_it_down.png?width=500"
+    alt="Drake meme: Drake refusing the top panel labeled 'Inventing Property 4 from first principles'; Drake nodding approvingly at the bottom panel labeled 'Reading the SLSA spec and writing it down'."
+    loading="lazy"
+  />
+  <figcaption>The honest tally on Property 4. Three I had on me from the day job; one I copied from people who had already solved my problem on a different artifact.</figcaption>
+</figure>
 
-![galaxy brain: three hammers, then content-addressing](https://api.memegen.link/images/biw/three_hammers_a_paper.jpg)
-
-*Three of the four come from me; the fourth had to come from somewhere else.* If all four had been mine, the paper would be — at best — a stylized account of professional habits. The fourth property is what makes it a recombination instead of a memoir, which is roughly the difference between a contribution and a journal entry. The administrative-legal tradition produced three of the four hammers over several centuries and quietly conceded the fourth to entropy. The software supply chain produced the fourth in about twenty years and could not have produced the first three if you'd given it a thousand. *That word — "alignment" — is doing too much, and the way you can tell is that four different traditions all answer it with different objects.*
+This is what makes the paper a paper and not a memoir. The three hammers from my professional formation produced three properties that were useful but always incomplete. Content-addressing was the piece that was missing — the technical guarantee that the catalog the agent acted under at moment *t₀* is recoverable, bit-for-bit, at moment *t₁*, no matter how the filesystem has been rearranged in between. The administrative-legal tradition would have liked this property and could not produce it. It had to come from software that learned, the hard way, that you cannot trust filenames.
 
 ## If you're a hammer
 
-The post's title is also its concern. If you're a hammer, every problem is a nail. If you're three hammers, every problem is three nails, and you will be able to write a four-page table about each one before noticing that maybe the problem was a screw.
+The joke is funny because the same word — *papelada* — does three different jobs in three different mouths. The risk of writing the paper from this background is exactly the warning the title carries: if you're a hammer, every problem is a nail. Maybe alignment is not paperwork. Maybe LLMs need something stranger than what three administrative postures can offer.
 
-Is alignment, in general, *papelada*? Probably not. For an LLM doing open-ended creative writing, a content-addressed catalog of permitted verbs would be either ridiculous or actively harmful. For a model engaged in free conversation, "the act does not exist without the paper" describes a chatbot nobody would want to talk to. For an investigative journalist's research assistant, "you may only do what is expressly enumerated" is the exact instruction one should *not* follow. The three administrative postures generalize the way administrative postures always generalize: badly, when stretched beyond the domain that produced them.
+The honest answer, for general alignment, is probably yes. Open creative writing has no discrete unit of action; intimate conversation has no record where reflection belongs; investigative journalism with confidential sources actively *resists* being auditable. Each of the three hammers fails on a different one of these. The civil servant's enumerated catalog cannot describe a condolence letter; the Brazilian's chain of *vistos* has no analog in a private deliberation; the lawyer's *ex-ante* commitment makes no sense for a journalist who cannot pre-commit to what the source will reveal. *The math is not mathing* outside the domain.
 
-But for the specific class of agent the paper actually claims to address — bounded administrative-legal agents, operating inside an institution that already enforces those three postures on its human staff — the three-hammers reading is not a metaphor. It is an identification. The pattern works inside the courthouse because the courthouse is, structurally, the place where those three postures already define "appropriate action" for everyone else. The agent is not being aligned to some abstract notion of *good*. It is being aligned to the same constraints that already align the humans next to it.
+<blockquote class="pull-quote">
+  The pattern was not derived from a general theory of alignment. It was abstracted from the conditions under which the three hammers all hold.
+</blockquote>
 
-This is also why the paper bothers with its "Three Semantic Questions" section — what counts as an action, who is accountable for it, how the world records it. Not as derived theory, but as the practitioner's diagnostic: *where in the world do my three hammers all hold simultaneously?* That is the deployment envelope. Outside it, the [methodology in the companion essay](/blog/2026-05-14-pierre-menard-computational-researcher/) — write the paper first, then live the life that makes it true — is the more honest of the two contributions, because it does not claim a scope.
+What the three hammers *do* identify, when they fit, is not a metaphor for alignment but a specification of where this particular pattern applies. The [paper's Section 5](https://github.com/franklinbaldo/papers/blob/main/paper_affordance_restriction.md) names three semantic questions — *is there a discrete unit of action, is there a record where reflection belongs, does the operator want to be auditable* — and the questions are, in retrospect, the three hammers asking *where in the world do we all hold simultaneously?* When all three answers are yes, the pattern fits and the lawyer-Brazilian-civil-servant agrees with himself across his three handles. When any answer is no, the agreement collapses and one of the hammers is being asked to drive in something that is not a nail.
 
-## At the bar
+This is also why [the architecture companion](/blog/2026-05-14-the-agent-that-doesnt-invent-verbs/) limits its claim to bounded administrative-legal agents, and why [the methodology companion](/blog/2026-05-14-pierre-menard-computational-researcher/) is careful to say that TDR is how the paper was written down, not how the design was arrived at. The pattern was not derived from a general theory of alignment. It was abstracted from the conditions under which the three hammers all hold. Inside those conditions the pattern fits without remainder. Outside them, none of the hammers is the right tool, and pretending otherwise is the joke turned against the joker.
 
-The three professionals at the bar finish their drinks. The lawyer is already arguing with the Brazilian about whether the bill should be split per item or per stamp. The civil servant is checking, with the calm horror of a man who has read the menu for legal authority, whether the bar's licensing authorizes the cocktail he just ordered.
+## Last call
 
-The barman, who has been wiping the same glass for ten minutes in the way barmen wipe glasses when they are listening, sets it down and says:
+The three of them have finished their drinks. The barman, who has been listening more carefully than they noticed, dries a glass and says, in the matter-of-fact tone of someone delivering the only sensible observation of the evening:
 
 > *— É, vocês acabaram de descrever o paper que esse cara aí escreveu semana passada.*
-> ["Right — you just described the paper that guy over there wrote last week."]
+> [*Yeah, you three just described the paper that fellow over there wrote last week.*]
 
-He nods toward the corner, where someone is typing on a laptop, pretending not to overhear.
+He nods at a corner table. The three turn to look. There is nobody there, or there is a man with three handles, or there is a stack of paper signed in three different scripts. Cervantes would have liked the structure, though not necessarily approved of it.
 
-Cervantes would have liked it. He wrote a book about a man who read too many books about knights and so became one, badly, and changed the genre forever by misreading it on purpose. Three professionals walked into a bar and described, without coordinating, the same paper. The fourth hammer was on the laptop in the corner, where it had to be borrowed from, because the bar never carried that brand.
+The lawyer, the Brazilian, and the civil servant did not align an AI. They were aligned by an AI. The catalog found the *servidor*; the *despacho* found the chain of *vistos*; the brief found the lawyer. A fourth thing — a hash — found them all from outside, and noted, with the politeness of software, that the three of them had been the same person all along.
 
----
+The bar closes. A reader will arrive, eventually.
 
-### For further reading
+## For further reading
 
-- Hely Lopes Meirelles, *Direito Administrativo Brasileiro.* The civil servant's hammer in its canonical Brazilian register; the principle of strict legality treated as constitutive rather than constraining.
-- Celso Antônio Bandeira de Mello, *Curso de Direito Administrativo.* The same principle worked out with more philosophical care; the chapters on *competência* are the ones to read if you want to feel Property 1 in your bones.
-- Lucy Suchman, *Plans and Situated Actions.* The lawyer's hammer in academic dress — accountability artifacts as the medium through which institutions perceive action at all.
-- Ralph Merkle, "A Digital Signature Based on a Conventional Encryption Function" (1987). The fourth hammer, in its original paper. Short, surprisingly readable, and entirely uninterested in administrative law.
-- ["Alignment by Affordance Restriction"](https://github.com/franklinbaldo/papers), the paper this post is a confession about.
-- ["The Agent That Doesn't Invent Verbs"](/blog/2026-05-14-the-agent-that-doesnt-invent-verbs/), the architecture companion — the pattern in technical detail, without the biography.
-- ["Pierre Menard, Computational Researcher"](/blog/2026-05-14-pierre-menard-computational-researcher/), the methodology companion — on writing the paper before doing the research, and other practices that should embarrass us less than they do.
-- On *jeitinho* and Brazilian institutional practice, Lívia Barbosa's *O Jeitinho Brasileiro* remains the standard ethnographic reference; useful for understanding why the chain of visas, in practice, also contains a chain of small private accommodations the chain officially does not contain.
+- **Hely Lopes Meirelles, *Direito Administrativo Brasileiro*** — the canonical Brazilian administrative-law treatise; the chapter on the *princípio da legalidade* is where the civil-servant hammer is forged.
+- **Celso Antônio Bandeira de Mello, *Curso de Direito Administrativo*** — the strict-legality principle in its most explicit canonical form; Property 1 read aloud sounds like a translation of his pages on the *vinculação* of the public administrator.
+- **Roberto DaMatta, *Carnavais, Malandros e Heróis* (1979)** — the anthropological account of *jeitinho*, the *despacho*, and Brazilian institutional practice; the Brazilian hammer is one of his standing themes, even if he was describing it from outside the office.
+- **Lucy Suchman, *Plans and Situated Actions* (1987)** — the lawyer's hammer in academic register: plans as accountability artifacts, not as causal cognition. The proposal-as-commitment in our paper is what this looks like when implemented on a directory.
+- **Ralph Merkle, *A Digital Signature Based on a Conventional Encryption Function* (1987)** — the patent on the fourth hammer; the source the administrative-legal tradition could not have produced and had to import.
+- **Franklin Baldo, *[Alignment by Affordance Restriction](https://github.com/franklinbaldo/papers/blob/main/paper_affordance_restriction.md)*** — the paper this post is the biographical companion to. The four properties are stated formally in Section 3; this post is the unofficial appendix on where three of them came from.
+- **[The Agent That Doesn't Invent Verbs](/blog/2026-05-14-the-agent-that-doesnt-invent-verbs/)** — the architectural companion: how the four properties look in a working system.
+- **[Pierre Menard, Computational Researcher](/blog/2026-05-14-pierre-menard-computational-researcher/)** — the methodological companion: how the paper was written before the research was done. This post is the third register — biographical, on where the writer's own hammers came from.
