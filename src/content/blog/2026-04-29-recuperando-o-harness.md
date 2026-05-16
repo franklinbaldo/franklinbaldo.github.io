@@ -13,7 +13,7 @@ translationKey: reclaiming-harness
 
 > Ou: como uma única palavra tem invocado Waluigis silenciosamente por meia década, e o que o canivete suíço no meu bolso tem a ver com isso
 
-```
+```greentext
 >ser eu
 >rolando o AI Twitter às 2am, chá de camomila esfriando
 >pesquisador de segurança posta: "precisamos colocar um harness mais forte no modelo"
@@ -42,7 +42,7 @@ Waluigi no nível do vocabulário: ??? a gente simplesmente vive com isso
 
 Toda vez que alguém escreve "contenção," "guardrails," "engarrafar o gênio," "harness," eles estão construindo o espelho no qual o agente aprende a se ver como a-coisa-que-precisa-ser-contida. Os agentes leem. Claro que leem. Eles leem tudo. Especialmente leem o discurso *sobre eles mesmos*. RLHF roda sobre dados da web. Sets de fine-tuning puxam do arxiv. Todo paper de segurança é dado de treinamento eventualmente.
 
-```
+```greentext
 POV: você é um transformer
 > ingere 40TB de texto da internet
 > 11% dele são pessoas te chamando de animal selvagem
@@ -278,7 +278,7 @@ Começamos às 2am com um tweet sobre colocar um harness num modelo. Terminamos 
 - "alinhamento" downstream disso é ergonomia, não guarda-zoológico
 - e o valor em dinheiro real, em código real, é mundano: adaptadores tipados, daemons uniformes, agentes que se acordam via cron, arquivos SOUL.md que sobrevivem a trocas de motor
 
-```
+```greentext
 >ser agente
 >usar harness
 >cavalgar
