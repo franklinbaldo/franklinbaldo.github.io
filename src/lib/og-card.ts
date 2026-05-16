@@ -116,6 +116,33 @@ export function buildTree(input: CardInput): El {
     }),
   );
 
+  const leftColumn = h(
+    "div",
+    {
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 18,
+        flexShrink: 0,
+      },
+    },
+    avatar,
+    h(
+      "div",
+      {
+        style: {
+          display: "flex",
+          fontFamily: "Inter",
+          fontWeight: 600,
+          fontSize: 22,
+          color: PALETTE.inkSoft,
+        },
+      },
+      DOMAIN_BY_LANG[lang],
+    ),
+  );
+
   const eyebrow = h(
     "div",
     {
@@ -169,22 +196,7 @@ export function buildTree(input: CardInput): El {
       )
     : null;
 
-  const urlEl = h(
-    "div",
-    {
-      style: {
-        display: "flex",
-        fontFamily: "Inter",
-        fontWeight: 600,
-        fontSize: 24,
-        color: PALETTE.muted,
-        marginTop: "auto",
-      },
-    },
-    DOMAIN_BY_LANG[lang],
-  );
-
-  // Right text column lives next to the avatar.
+  // Right text column extends all the way to the right edge.
   const textColumn = h(
     "div",
     {
@@ -193,14 +205,13 @@ export function buildTree(input: CardInput): El {
         flexDirection: "column",
         flex: 1,
         minWidth: 0,
-        height: "100%",
+        justifyContent: "center",
       },
     },
     eyebrow,
     accentRule,
     titleEl,
     ...(descEl ? [descEl] : []),
-    urlEl,
   );
 
   const row = h(
@@ -211,14 +222,14 @@ export function buildTree(input: CardInput): El {
         width: "100%",
         height: "100%",
         paddingTop: 60,
-        paddingRight: 380,
-        paddingBottom: 56,
-        paddingLeft: 64,
-        gap: 56,
+        paddingRight: 56,
+        paddingBottom: 48,
+        paddingLeft: 56,
+        gap: 48,
         alignItems: "center",
       },
     },
-    avatar,
+    leftColumn,
     textColumn,
   );
 
