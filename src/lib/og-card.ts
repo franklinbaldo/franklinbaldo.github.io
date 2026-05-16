@@ -60,7 +60,10 @@ const PALETTE = {
   ring: "#ede4d3",
 };
 
-const SUB_BY_LANG = { en: "Digital Garden", pt: "Jardim Digital" } as const;
+const SUB_BY_LANG = {
+  en: "Franklin Baldo's Digital Garden",
+  pt: "Jardim Digital de Franklin Baldo",
+} as const;
 const DOMAIN = "franklinbaldo.github.io";
 
 const TITLE_HARD_CAP = 90;
@@ -125,9 +128,13 @@ export function buildTree(input: CardInput): El {
         display: "flex",
         fontFamily: "Inter",
         fontWeight: 600,
-        fontSize: 22,
+        fontSize: 18,
+        lineHeight: 1.3,
         color: PALETTE.muted,
-        letterSpacing: 3,
+        letterSpacing: 2,
+        width: AVATAR_SIZE,
+        textAlign: "center",
+        justifyContent: "center",
       },
     },
     SUB_BY_LANG[lang].toUpperCase(),
@@ -140,11 +147,12 @@ export function buildTree(input: CardInput): El {
         display: "flex",
         fontFamily: "Inter",
         fontWeight: 600,
-        fontSize: 18,
-        lineHeight: 1.3,
+        fontSize: 24,
+        lineHeight: 1.25,
         color: PALETTE.inkSoft,
         width: AVATAR_SIZE,
         textAlign: "center",
+        justifyContent: "center",
         wordBreak: "break-all",
       },
     },
