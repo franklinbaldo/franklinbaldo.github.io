@@ -16,7 +16,7 @@ pages["_site"] = {
   },
 };
 
-const FRAUNCES_700 = "https://cdn.jsdelivr.net/fontsource/fonts/fraunces@latest/latin-700-normal.ttf";
+const FRAUNCES_600 = "https://cdn.jsdelivr.net/fontsource/fonts/fraunces@latest/latin-600-normal.ttf";
 const FRAUNCES_400 = "https://cdn.jsdelivr.net/fontsource/fonts/fraunces@latest/latin-400-normal.ttf";
 
 const route = await OGImageRoute({
@@ -25,29 +25,33 @@ const route = await OGImageRoute({
   getImageOptions: (_path, post) => ({
     title: post.data.title,
     description: post.data.description,
+    logo: {
+      path: "./public/avatar-og.png",
+      size: [180, 180],
+    },
     bgGradient: [
-      [248, 235, 213],
-      [228, 205, 175],
+      [244, 236, 220],
+      [239, 229, 208],
     ],
-    padding: 96,
+    padding: 90,
     font: {
       title: {
         families: ["Fraunces"],
-        weight: "Bold",
-        size: 84,
-        color: [74, 53, 32],
-        lineHeight: 1.1,
+        weight: "SemiBold",
+        size: 104,
+        color: [42, 36, 29],
+        lineHeight: 1.05,
       },
       description: {
         families: ["Fraunces"],
         weight: "Normal",
-        size: 36,
-        color: [124, 95, 67],
-        lineHeight: 1.4,
+        size: 42,
+        color: [107, 98, 88],
+        lineHeight: 1.35,
       },
     },
-    fonts: [FRAUNCES_700, FRAUNCES_400],
-    quality: 90,
+    fonts: [FRAUNCES_600, FRAUNCES_400],
+    quality: 92,
   }),
 });
 
