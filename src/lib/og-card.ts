@@ -49,6 +49,8 @@ export interface CardInput {
   kind?: CardKind;
   /** URL path on the site (e.g. "/blog/foo/"). Defaults to "/". */
   path?: string;
+  /** PNG buffer for the QR code that points back at this page. */
+  qrPng?: Buffer;
 }
 
 const PALETTE = {
@@ -60,8 +62,6 @@ const PALETTE = {
   muted: "#8c785a",
   ring: "#ede4d3",
 };
-
-const DOMAIN = "franklinbaldo.github.io";
 
 const TITLE_HARD_CAP = 90;
 
@@ -87,15 +87,15 @@ const h = (type: string, props: Record<string, unknown> = {}, ...children: unkno
   props: { ...props, children: children.length === 1 ? children[0] : children },
 });
 
-const AVATAR_SIZE = 340;
+const AVATAR_SIZE = 240;
+
+const QR_SIZE = 200;
 
 export function buildTree(input: CardInput): El {
-  const { title: rawTitle, description: rawDesc, lang = "en", path = "/" } = input;
+  const { title: rawTitle, description: rawDesc, lang = "en", qrPng } = input;
   const title = truncate(rawTitle, TITLE_HARD_CAP);
   const { titleSize, descCap } = fitTypography(title);
   const description = rawDesc ? truncate(rawDesc, descCap) : undefined;
-  // Full canonical URL, with the trailing slash stripped for display.
-  const fullUrl = (DOMAIN + path).replace(/\/$/, "");
 
   const avatar = h(
     "div",
@@ -137,24 +137,35 @@ export function buildTree(input: CardInput): El {
     t(lang, "og.siteEyebrow").toUpperCase(),
   );
 
-  const url = h(
-    "div",
-    {
-      style: {
-        display: "flex",
-        fontFamily: "Inter",
-        fontWeight: 600,
-        fontSize: 24,
-        lineHeight: 1.25,
-        color: PALETTE.inkSoft,
-        width: AVATAR_SIZE,
-        textAlign: "center",
-        justifyContent: "center",
-        wordBreak: "break-all",
-      },
-    },
-    fullUrl,
-  );
+  const qrEl = qrPng
+    ? h("img", {
+        src: `data:image/png;base64,${qrPng.toString("base64")}`,
+        width: QR_SIZE,
+        height: QR_SIZE,
+        style: { display: "flex", width: QR_SIZE, height: QR_SIZE, borderRadius: 12 },
+      })
+    : null;
+
+  const qrHint = qrPng
+    ? h(
+        "div",
+        {
+          style: {
+            display: "flex",
+            fontFamily: "Inter",
+            fontWeight: 600,
+            fontSize: 16,
+            lineHeight: 1.2,
+            color: PALETTE.muted,
+            letterSpacing: 1.5,
+            width: AVATAR_SIZE,
+            textAlign: "center",
+            justifyContent: "center",
+          },
+        },
+        t(lang, "og.qrHint").toUpperCase(),
+      )
+    : null;
 
   const leftColumn = h(
     "div",
@@ -163,13 +174,15 @@ export function buildTree(input: CardInput): El {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 18,
+        gap: 12,
         flexShrink: 0,
+        width: AVATAR_SIZE,
       },
     },
     eyebrow,
     avatar,
-    url,
+    ...(qrEl ? [qrEl] : []),
+    ...(qrHint ? [qrHint] : []),
   );
 
 
