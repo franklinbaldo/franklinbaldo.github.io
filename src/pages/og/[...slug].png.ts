@@ -13,6 +13,7 @@ export async function getStaticPaths() {
       description: post.data.description,
       tags: post.data.tags ?? [],
       lang: post.data.lang ?? "en",
+      path: `/blog/${post.id}/`,
     },
   }));
 }
@@ -24,6 +25,7 @@ export const GET: APIRoute = async ({ props }) => {
     tags: props.tags as string[],
     lang: props.lang as "en" | "pt",
     kind: "post",
+    path: props.path as string,
   });
   return new Response(png, {
     headers: {

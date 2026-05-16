@@ -8,6 +8,7 @@ export const GET: APIRoute = async () => {
     tags: [],
     lang: "en",
     kind: "home",
+    path: "/",
   });
   return new Response(png, {
     headers: {

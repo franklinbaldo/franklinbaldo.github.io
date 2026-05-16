@@ -46,6 +46,8 @@ export interface CardInput {
   tags?: string[];
   lang?: "en" | "pt";
   kind?: CardKind;
+  /** URL path on the site (e.g. "/blog/foo/"). Defaults to "/". */
+  path?: string;
 }
 
 const PALETTE = {
@@ -59,10 +61,7 @@ const PALETTE = {
 };
 
 const SUB_BY_LANG = { en: "Digital Garden", pt: "Jardim Digital" } as const;
-const DOMAIN_BY_LANG = {
-  en: "franklinbaldo.github.io",
-  pt: "franklinbaldo.github.io/pt",
-} as const;
+const DOMAIN = "franklinbaldo.github.io";
 
 const TITLE_HARD_CAP = 90;
 
@@ -73,12 +72,13 @@ const truncate = (s: string, max: number) =>
 // column we have once the big avatar is on the left.
 function fitTypography(title: string): { titleSize: number; descCap: number } {
   const n = title.length;
-  if (n <= 12) return { titleSize: 108, descCap: 130 };
-  if (n <= 20) return { titleSize: 92, descCap: 130 };
-  if (n <= 32) return { titleSize: 76, descCap: 120 };
-  if (n <= 48) return { titleSize: 64, descCap: 110 };
-  if (n <= 64) return { titleSize: 54, descCap: 100 };
-  return { titleSize: 46, descCap: 80 };
+  if (n <= 10) return { titleSize: 132, descCap: 130 };
+  if (n <= 16) return { titleSize: 116, descCap: 130 };
+  if (n <= 24) return { titleSize: 100, descCap: 130 };
+  if (n <= 36) return { titleSize: 84, descCap: 120 };
+  if (n <= 52) return { titleSize: 70, descCap: 110 };
+  if (n <= 72) return { titleSize: 58, descCap: 100 };
+  return { titleSize: 48, descCap: 80 };
 }
 
 type El = { type: string; props: Record<string, unknown> };
@@ -90,10 +90,12 @@ const h = (type: string, props: Record<string, unknown> = {}, ...children: unkno
 const AVATAR_SIZE = 340;
 
 export function buildTree(input: CardInput): El {
-  const { title: rawTitle, description: rawDesc, lang = "en" } = input;
+  const { title: rawTitle, description: rawDesc, lang = "en", path = "/" } = input;
   const title = truncate(rawTitle, TITLE_HARD_CAP);
   const { titleSize, descCap } = fitTypography(title);
   const description = rawDesc ? truncate(rawDesc, descCap) : undefined;
+  // Full canonical URL, with the trailing slash stripped for display.
+  const fullUrl = (DOMAIN + path).replace(/\/$/, "");
 
   const avatar = h(
     "div",
@@ -138,11 +140,15 @@ export function buildTree(input: CardInput): El {
         display: "flex",
         fontFamily: "Inter",
         fontWeight: 600,
-        fontSize: 22,
+        fontSize: 18,
+        lineHeight: 1.3,
         color: PALETTE.inkSoft,
+        width: AVATAR_SIZE,
+        textAlign: "center",
+        wordBreak: "break-all",
       },
     },
-    DOMAIN_BY_LANG[lang],
+    fullUrl,
   );
 
   const leftColumn = h(
@@ -185,10 +191,10 @@ export function buildTree(input: CardInput): El {
             display: "flex",
             fontFamily: "Inter",
             fontWeight: 400,
-            fontSize: 34,
+            fontSize: 38,
             lineHeight: 1.3,
             color: PALETTE.inkSoft,
-            marginTop: 26,
+            marginTop: 30,
           },
         },
         description,
