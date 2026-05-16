@@ -20,7 +20,10 @@ export default defineConfig({
     sitemap({
       serialize(item) {
         const base = 'https://franklinbaldo.github.io';
-        const path = item.url.startsWith(base) ? item.url.slice(base.length) : item.url;
+        let path = item.url.startsWith(base) ? item.url.slice(base.length) : item.url;
+        // Astro sometimes emits the site root without a trailing slash; normalize so map keys hit.
+        if (path === '') path = '/';
+        if (!path.endsWith('/') && !path.includes('.')) path = path + '/';
 
         // Static EN↔PT page pairs
         const enToPt = {
