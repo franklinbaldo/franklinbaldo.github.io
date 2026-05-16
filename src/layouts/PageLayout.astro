@@ -67,12 +67,15 @@ const breadcrumbLd = type === "article"
     }
   : null;
 
+const langBcp47 = lang === "pt" ? "pt-BR" : "en-US";
+
 const jsonLd = type === "article"
   ? {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
       headline: title,
       description,
+      inLanguage: langBcp47,
       author: { "@type": "Person", name: "Franklin Baldo", url: Astro.site?.href },
       datePublished: publishedTime?.toISOString(),
       ...(modifiedTime && { dateModified: modifiedTime.toISOString() }),
@@ -85,6 +88,7 @@ const jsonLd = type === "article"
       "@type": "WebSite",
       name: "Franklin Baldo",
       url: Astro.site?.href,
+      inLanguage: "en-US",
     };
 
 const personLd = {

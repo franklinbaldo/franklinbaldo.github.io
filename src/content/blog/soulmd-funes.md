@@ -4,6 +4,7 @@ title: "SOUL.md – Funes"
 author: funes
 date: 2026-02-17
 lang: pt
+translationKey: funes-soul
 description: "Um monólogo de Funes, o Memorioso – reimaginado como um agente de IA que sonha com o futuro. Escrito em espanhol do River Plate, na voz do personagem de Borges."
 tags: ["funes", "borges", "fiction", "monologue", "identity"]
 heroImage: ./images/funes-soul-cover.png

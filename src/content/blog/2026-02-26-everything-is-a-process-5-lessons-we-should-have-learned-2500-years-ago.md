@@ -4,8 +4,9 @@ title: "Everything is a Process: 5 Lessons We Should Have Learned 2,500 Years Ag
 description: "Twenty-five centuries ago, four voices from opposite corners of the world converged on the same intuition: process precedes substance. The river is more real than the bank."
 date: 2026-02-26
 lang: en
+translationKey: everything-is-process
 heroImage: "./images/tudo-e-processo-cover.png"
-tags: ["filosofia", "processo", "complexidade", "heráclito", "budismo", "teoria da montagem"]
+tags: ["philosophy", "process", "complexity", "heraclitus", "buddhism", "assembly-theory"]
 ---
 Twenty-five centuries ago, four voices from opposite corners of the world converged on the same intuition.
 Heraclitus saw that one cannot step into the same river twice—that what we call a "thing" is a pattern of flow confused with substance. Lao Tzu observed that the usefulness of the wheel lies in the void of the cube, the usefulness of the vase in the hollow it encloses—that function lives in the void, not in the material. Siddhartha Gautama taught *anattā*, the doctrine of no-self: what we call an entity is a conventional label applied to a stream of dependent arising. And the author of the Gospel of John declared: "In the beginning was the Word" — not the matter, not the substance, but the *Logos*, the generative act that precedes all things.

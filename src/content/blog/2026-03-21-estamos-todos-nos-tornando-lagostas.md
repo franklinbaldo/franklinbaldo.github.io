@@ -3,6 +3,7 @@
 author: franklin
 date: 2026-03-21
 lang: pt
+translationKey: becoming-lobsters
 title: "Estamos todos nos tornando lagostas"
 description: "Sobre a transformação, a hiperstição e a maquinaria da substituição gradual. Estabelecendo conexões entre Kafka, Lanthimos e o presente agente."
 tags: ["transformation", "AI agents", "hyperstition", "Kafka", "culture", "digital future"]
