@@ -1,6 +1,5 @@
 ---
 title: "Tudo é Processo: 5 Lições que Deveríamos Ter Aprendido Há 2.500 Anos"
-translationKey: everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago
 description: "Há vinte e cinco séculos, quatro vozes em cantos opostos do mundo convergiram para a mesma intuição: o processo precede a substância. O rio é mais real que a margem."
 date: 2026-02-26
 lang: pt

@@ -1,6 +1,5 @@
 ---
 title: "Are they really using a Reddit post to help bomb a submarine in Iran?"
-translationKey: reddit-submarine
 author: franklin
 date: 2026-03-22
 lang: en

@@ -4,7 +4,7 @@ description: "Reflections from a software engineer and father on how to delegate
 date: "2026-03-28"
 lang: en
 tags: ["ai", "agents", "software-engineering", "parenting", "metaphysics"]
-draft: false
+draft: true
 author: "franklin"
 ---
 There's something deeply strange and yet familiar about watching two artificial intelligence agents—[Jules](/blog/2026-05-10-jules-api-harness-backend/) and Claude—collaborate on a codebase while my youngest daughter sleeps in the next room. As a software engineer, automation has always been the holy grail; As a parent, delegation has become a necessity for survival. But the intersection of these two realities revealed an unexpected complexity: that the real difficulty is not in making machines work, but in knowing how to supervise them without suffocating them.

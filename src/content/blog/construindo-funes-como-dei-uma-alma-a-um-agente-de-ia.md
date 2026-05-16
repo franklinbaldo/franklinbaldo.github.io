@@ -1,7 +1,6 @@
 ---
 
 title: "Construindo Funes: como dei uma alma a um agente de IA"
-translationKey: building-funes
 author: franklin
 date: 2026-02-17
 lang: pt

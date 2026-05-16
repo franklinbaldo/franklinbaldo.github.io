@@ -5,7 +5,6 @@ date: 2026-03-18
 lang: pt
 translationKey: verne-identity-repo
 title: "Verne e o padrão Identity-Repo: como os agentes de IA se lembram"
-translationKey: verne-identity-repo
 description: "Explicando o projeto Verne, os agentes de IA e como a arquitetura de repositório de identidade permite que entidades autônomas mantenham memória e contexto contínuos em tarefas isoladas, permanecendo compatíveis com qualquer equipamento cognitivo."
 tags: ["verne", "ai", "agents", "architecture", "identity-repo", "openclaw"]
 heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
