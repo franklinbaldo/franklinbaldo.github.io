@@ -9,59 +9,42 @@
   <span class="theme-icon" data-icon aria-hidden="true">🌑</span>
 </label>
 
-<script is:inline>
-  (() => {
-    if (window.__themeToggleInit) {
-      // Re-sync existing inputs after a view transition swapped the DOM.
-      window.__themeToggleSync && window.__themeToggleSync();
-      return;
-    }
-    window.__themeToggleInit = true;
-    const root = document.documentElement;
+<script>
+  // Astro bundles non-inline <script> once per site and handles
+  // view-transition re-execution via astro:page-load. The PageLayout's
+  // is:inline bootstrap already set data-theme on <html> before paint,
+  // so this just wires the toggles.
+  const root = document.documentElement;
 
-    const currentTheme = () =>
-      localStorage.getItem('theme') ||
-      root.dataset.theme ||
-      (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-
-    const apply = (t) => {
-      root.dataset.theme = t;
-      document.querySelectorAll('input[data-theme-toggle]').forEach((input) => {
-        input.checked = t === 'dark';
-        const label = input.closest('label');
-        const icon = label && label.querySelector('[data-icon]');
-        if (icon) icon.textContent = t === 'dark' ? '☀️' : '🌑';
-        if (label)
-          label.setAttribute(
-            'aria-label',
-            t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
-          );
-      });
-    };
-
-    const bind = () => {
-      document.querySelectorAll('input[data-theme-toggle]').forEach((input) => {
-        if (input.dataset.themeBound === 'true') return;
-        input.dataset.themeBound = 'true';
-        input.addEventListener('change', () => {
-          const next = input.checked ? 'dark' : 'light';
-          localStorage.setItem('theme', next);
-          apply(next);
-        });
-      });
-      apply(currentTheme());
-    };
-
-    window.__themeToggleSync = bind;
-
-    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-      if (localStorage.getItem('theme')) return;
-      apply(e.matches ? 'dark' : 'light');
+  const apply = (theme: 'dark' | 'light') => {
+    root.dataset.theme = theme;
+    document.querySelectorAll<HTMLInputElement>('input[data-theme-toggle]').forEach((toggle) => {
+      toggle.checked = theme === 'dark';
+      const icon = toggle.parentElement?.querySelector<HTMLElement>('[data-icon]');
+      if (icon) icon.textContent = theme === 'dark' ? '☀️' : '🌑';
     });
+  };
 
-    bind();
-    document.addEventListener('astro:page-load', bind);
-  })();
+  const sync = () => {
+    document.querySelectorAll<HTMLInputElement>('input[data-theme-toggle]').forEach((toggle) => {
+      if (toggle.dataset.bound) return;
+      toggle.dataset.bound = '1';
+      toggle.addEventListener('change', () => {
+        const next = toggle.checked ? 'dark' : 'light';
+        localStorage.setItem('theme', next);
+        apply(next);
+      });
+    });
+    apply((root.dataset.theme as 'dark' | 'light') ?? 'light');
+  };
+
+  sync();
+  document.addEventListener('astro:page-load', sync);
+
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (localStorage.getItem('theme')) return;
+    apply(e.matches ? 'dark' : 'light');
+  });
 </script>
 
 <style>

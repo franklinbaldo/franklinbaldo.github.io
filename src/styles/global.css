@@ -206,6 +206,29 @@ body::before {
 }
 .post-body blockquote.pull-quote > p:last-child { margin-bottom: 0; }
 
+/*
+ * 4chan-style greentext block: ```greentext fenced code in markdown.
+ * Shiki has no grammar for it and emits a plain <pre data-language="greentext">,
+ * so we just restyle that selector. Background, font and greentext color
+ * are overridden; Shiki's inline per-token color on the inner <span>s
+ * still wins inside, so we also normalize those.
+ */
+.post-body pre[data-language="greentext"] {
+  background: var(--pico-card-background-color) !important;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: 2px;
+  padding: 0.9rem 1.1rem;
+  font-family: "Arial", "Helvetica", sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #789922;
+}
+.post-body pre[data-language="greentext"] code,
+.post-body pre[data-language="greentext"] span {
+  color: inherit;
+}
+[data-theme="dark"] .post-body pre[data-language="greentext"] { color: #b5bd68; }
+
 .skip-link {
   position: absolute;
   left: -9999px;
