@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import satori from "satori";
 import sharp from "sharp";
+import { t } from "./i18n";
 
 const read = (p: string) => readFileSync(resolve(process.cwd(), p));
 
@@ -60,10 +61,6 @@ const PALETTE = {
   ring: "#ede4d3",
 };
 
-const SUB_BY_LANG = {
-  en: "Franklin Baldo's Digital Garden",
-  pt: "Jardim Digital de Franklin Baldo",
-} as const;
 const DOMAIN = "franklinbaldo.github.io";
 
 const TITLE_HARD_CAP = 90;
@@ -137,7 +134,7 @@ export function buildTree(input: CardInput): El {
         justifyContent: "center",
       },
     },
-    SUB_BY_LANG[lang].toUpperCase(),
+    t(lang, "og.siteEyebrow").toUpperCase(),
   );
 
   const url = h(

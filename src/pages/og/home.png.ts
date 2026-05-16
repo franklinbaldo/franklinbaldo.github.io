@@ -1,10 +1,11 @@
 import type { APIRoute } from "astro";
 import { renderOgCard } from "../../lib/og-card";
+import { t } from "../../lib/i18n";
 
 export const GET: APIRoute = async () => {
   const png = await renderOgCard({
     title: "Franklin Baldo",
-    description: "Essays on AI agency, process metaphysics, and the architecture of legal systems.",
+    description: t("en", "og.siteDescription"),
     tags: [],
     lang: "en",
     kind: "home",
