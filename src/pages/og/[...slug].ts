@@ -6,7 +6,15 @@ import { getCollection } from "astro:content";
 const SKIP = process.env.SKIP_OG === "1";
 
 const posts = SKIP ? [] : await getCollection("blog");
-const pages = Object.fromEntries(posts.map((post) => [post.id, post]));
+const pages: Record<string, { data: { title: string; description: string } }> =
+  Object.fromEntries(posts.map((post) => [post.id, post]));
+
+pages["_site"] = {
+  data: {
+    title: "Franklin Baldo",
+    description: "Lawyer and State Attorney. Essays on AI agency, process metaphysics, and legal design.",
+  },
+};
 
 const route = await OGImageRoute({
   param: "slug",
