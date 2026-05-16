@@ -1,24 +1,32 @@
 ---
 // Handwritten OG card background (1200×630).
 // Layout: large rectangular avatar on the left (vertically centered),
-// text composited on the right by /og/[...slug].png.ts via sharp.
+// big cobogó tile bleeding off the right edge as an architectural
+// motif. Title/description/url are composited on top by the
+// /og/[...slug].png.ts endpoint via sharp.
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const W = 1200;
 const H = 630;
-const TILE = 100;
 const ACCENT_H = 10;
 
 const AVATAR_SIZE = 320;
 const AVATAR_X = 72;
 const AVATAR_Y = Math.round((H - AVATAR_SIZE) / 2);
-const AVATAR_RADIUS = 12;
+const AVATAR_RADIUS = 14;
 const RING = 5;
 
 const avatarPath = resolve(process.cwd(), "public/avatar.png");
 const avatarB64 = readFileSync(avatarPath).toString("base64");
+
+// Cobogó tile — single large instance bleeding off the right edge.
+// Color it warm tan so it reads as architecture against the dark bg.
+const COBOGO_STROKE = "#7a6a52";
+const COBOGO_SIZE = 760;
+const COBOGO_X = W - 540;
+const COBOGO_Y = (H - COBOGO_SIZE) / 2;
 ---
 
 <svg xmlns="http://www.w3.org/2000/svg" width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
@@ -27,26 +35,6 @@ const avatarB64 = readFileSync(avatarPath).toString("base64");
       <stop offset="0" stop-color="#1a1612" />
       <stop offset="1" stop-color="#221c16" />
     </linearGradient>
-    <pattern id="cobogo" x="0" y="0" width={TILE} height={TILE} patternUnits="userSpaceOnUse">
-      <g fill="none" stroke="#3a3026" stroke-width="0.9" opacity="0.75">
-        <rect x="0" y="0" width={TILE/2} height={TILE/2} />
-        <rect x={TILE/2} y="0" width={TILE/2} height={TILE/2} />
-        <rect x="0" y={TILE/2} width={TILE/2} height={TILE/2} />
-        <rect x={TILE/2} y={TILE/2} width={TILE/2} height={TILE/2} />
-        <circle cx={TILE/4} cy={TILE/4} r={TILE*0.18} />
-        <circle cx={TILE*3/4} cy={TILE/4} r={TILE*0.18} />
-        <circle cx={TILE/4} cy={TILE*3/4} r={TILE*0.18} />
-        <circle cx={TILE*3/4} cy={TILE*3/4} r={TILE*0.18} />
-        <line x1="0" y1="0" x2={TILE/2} y2={TILE/2} />
-        <line x1={TILE/2} y1="0" x2="0" y2={TILE/2} />
-        <line x1={TILE/2} y1="0" x2={TILE} y2={TILE/2} />
-        <line x1={TILE} y1="0" x2={TILE/2} y2={TILE/2} />
-        <line x1="0" y1={TILE/2} x2={TILE/2} y2={TILE} />
-        <line x1={TILE/2} y1={TILE/2} x2="0" y2={TILE} />
-        <line x1={TILE/2} y1={TILE/2} x2={TILE} y2={TILE} />
-        <line x1={TILE} y1={TILE/2} x2={TILE/2} y2={TILE} />
-      </g>
-    </pattern>
     <radialGradient id="glow" cx="0.12" cy="0.18" r="0.5">
       <stop offset="0" stop-color="#f56b3d" stop-opacity="0.16" />
       <stop offset="1" stop-color="#f56b3d" stop-opacity="0" />
@@ -64,9 +52,33 @@ const avatarB64 = readFileSync(avatarPath).toString("base64");
   </defs>
 
   <rect width={W} height={H} fill="url(#bg)" />
-  <rect width={W} height={H} fill="url(#cobogo)" />
-  <rect width={W} height={H} fill="url(#glow)" />
 
+  <g
+    transform={`translate(${COBOGO_X}, ${COBOGO_Y}) scale(${COBOGO_SIZE / 120})`}
+    fill="none"
+    stroke={COBOGO_STROKE}
+    stroke-width="0.55"
+    opacity="0.55"
+  >
+    <rect x="0" y="0" width="60" height="60" />
+    <rect x="60" y="0" width="60" height="60" />
+    <rect x="0" y="60" width="60" height="60" />
+    <rect x="60" y="60" width="60" height="60" />
+    <circle cx="30" cy="30" r="22" />
+    <circle cx="90" cy="30" r="22" />
+    <circle cx="30" cy="90" r="22" />
+    <circle cx="90" cy="90" r="22" />
+    <line x1="0" y1="0" x2="60" y2="60" />
+    <line x1="60" y1="0" x2="0" y2="60" />
+    <line x1="60" y1="0" x2="120" y2="60" />
+    <line x1="120" y1="0" x2="60" y2="60" />
+    <line x1="0" y1="60" x2="60" y2="120" />
+    <line x1="60" y1="60" x2="0" y2="120" />
+    <line x1="60" y1="60" x2="120" y2="120" />
+    <line x1="120" y1="60" x2="60" y2="120" />
+  </g>
+
+  <rect width={W} height={H} fill="url(#glow)" />
   <rect x="0" y="0" width={W} height={ACCENT_H} fill="#f56b3d" />
 
   <rect
