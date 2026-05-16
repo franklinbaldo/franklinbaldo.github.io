@@ -227,15 +227,15 @@ Western philosophy begins, in this story, as an unauthorized local deployment of
 
 The installation has run continuously since.
 
-> \>be me  
-> \>2026 ocidental modern subject  
-> \>journaling, therapy, podcast queue, mindfulness app  
-> \>tracker for sleep, mood, screen time, water intake, cycle  
-> \>annual performance review at work, quarterly OKRs, weekly  
->   one-on-one with a coach  
-> \>Socrates installed an audit daemon and forgot to write a stop  
->   condition  
-> \>2,500 years uptime, no plans to ship a fix
+```greentext
+>be me
+>2026 ocidental modern subject
+>journaling, therapy, podcast queue, mindfulness app
+>tracker for sleep, mood, screen time, water intake, cycle
+>annual performance review at work, quarterly OKRs, weekly one-on-one with a coach
+>Socrates installed an audit daemon and forgot to write a stop condition
+>2,500 years uptime, no plans to ship a fix
+```
 
 I am overstating, and I know it. Heraclitus had already searched himself
 half a century before Socrates was born; Pythagoras kept silence as a

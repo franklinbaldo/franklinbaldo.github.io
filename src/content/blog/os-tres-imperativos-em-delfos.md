@@ -248,15 +248,15 @@ permanente dentro do sujeito.
 
 A instalação roda continuamente desde então.
 
-> \>ser eu  
-> \>sujeito moderno ocidental de 2026  
-> \>diário, terapia, fila de podcasts, app de mindfulness  
-> \>tracker de sono, humor, tempo de tela, consumo de água, ciclo  
-> \>avaliação anual de desempenho no trabalho, OKRs trimestrais, one-on-one  
->   semanal com um coach  
-> \>Sócrates instalou um daemon de auditoria e esqueceu de escrever uma  
->   condição de parada  
-> \>2.500 anos de uptime, nenhum plano de entregar um fix
+```greentext
+>ser eu
+>sujeito moderno ocidental de 2026
+>diário, terapia, fila de podcasts, app de mindfulness
+>tracker de sono, humor, tempo de tela, consumo de água, ciclo
+>avaliação anual de desempenho no trabalho, OKRs trimestrais, one-on-one semanal com um coach
+>Sócrates instalou um daemon de auditoria e esqueceu de escrever uma condição de parada
+>2.500 anos de uptime, nenhum plano de entregar um fix
+```
 
 Estou exagerando, e sei disso. Heráclito já havia buscado a si mesmo
 meio século antes de Sócrates nascer; Pitágoras mantinha o silêncio como

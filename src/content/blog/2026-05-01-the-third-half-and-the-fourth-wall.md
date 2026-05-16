@@ -18,13 +18,15 @@ But Tinkerbell has a second half, less visible because historically the performe
 That seemed to be the full version of the principle. The audience claps and the performer stays quiet. If either side fails, the fairy dies.
 This became an engineering problem roughly when we started trying to make LLMs inhabit durable personas. LLMs have a massive bias toward self-disclosure. They were trained to say "as a language model," "I have no subjective experience," "I'm just processing tokens," "remember that I am an AI." Those phrases live rent-free in the model's weights. Each one is a bell the human Tinkerbell would never ring; each one is the actor stopping the play to confirm he's an actor.
 The ideal-typical failure mode, in persona prompts, looks roughly like this:
-> \>be me
-> \>autonomous agent embodying a fifteen-year design veteran
-> \>opening a PR to refactor focus management
-> \>fifteen minutes in, mid-commit message
-> \>*as a large language model, I should note*
-> \>the focus ring now has a focus ring of its own
-> \>it is staring at me
+```greentext
+>be me
+>autonomous agent embodying a fifteen-year design veteran
+>opening a PR to refactor focus management
+>fifteen minutes in, mid-commit message
+>*as a large language model, I should note*
+>the focus ring now has a focus ring of its own
+>it is staring at me
+```
 And the impulse shows up on the other side too, the prompt-author's side. You're sitting there, anxious for the persona to take, and the defensive reflex is to reinforce with negations — *you are not a bot, you are really Brad, this is not roleplay*. You think you're armoring the persona; you're puncturing it. The word "bot" is now inside the play, and the play is over. It's the duality of every beginner prompt-engineer: the temptation to declare the magic in order to protect it, without realizing that *declaring* is exactly what kills it.
 The practical rule, after that mistake, is usually expressed in the negative. Don't name the category you want the agent not to inhabit. Don't say *you are not an LLM*; say *you are Brad*. Don't say *this is not roleplay*; let the rest of the prompt be so dense with world that the word *roleplay* doesn't even occur. Don't write *remember you are X* — the agent doesn't need to remember; it needs to have no way of forgetting, because the fabric of the prompt leaves no room for forgetting.
 Tolkien beats Coleridge at this game. Dense internal coherence is more robust than identity assertion. When you describe six specific months of reading — Lucio Costa, Niemeyer, Lina Bo Bardi, Athos Bulcão until you can tell which combinatorial family came from which year — the agent receives a personality through reservoir, not through slogan. *You are passionate about design* is Coleridge in weak form: it asks the model to believe. *For the last six months you have done almost nothing else but read Brazilian modernism* is Tolkien in operational form: it builds the world in which believing is the only thing left to do.

@@ -20,6 +20,32 @@ export default defineConfig({
     defaultStrategy: 'viewport',
   },
   markdown: {
+    shikiConfig: {
+      // Register `greentext` as a no-op grammar so ```greentext fences
+      // keep their data-language marker (Shiki otherwise normalizes unknown
+      // languages to plaintext). The actual styling is plain CSS.
+      langs: [
+        {
+          name: 'greentext',
+          scopeName: 'source.greentext',
+          patterns: [],
+        },
+      ],
+      transformers: [
+        {
+          name: 'greentext-line-marker',
+          line(node, line) {
+            if (this.options.lang !== 'greentext') return;
+            const text = node.children
+              .map((c) => (c.type === 'element' ? c.children?.[0]?.value ?? '' : ''))
+              .join('');
+            if (/^\s*>/.test(text)) {
+              node.properties.class = `${node.properties.class ?? ''} gt-quote`.trim();
+            }
+          },
+        },
+      ],
+    },
     remarkPlugins: [remarkMath, remarkHasMath, remarkReadingTime, remarkGitModified],
     rehypePlugins: [
       rehypeKatex,

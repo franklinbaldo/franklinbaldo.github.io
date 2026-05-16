@@ -18,13 +18,15 @@ Mas Tinkerbell tem uma segunda metade, menos visível porque historicamente o pe
 Essa pareceu ser a versão completa do princípio. A plateia bate palmas e o performer fica quieto. Se qualquer lado falha, a fada morre.
 Isso se tornou um problema de engenharia mais ou menos quando começamos a tentar fazer LLMs habitarem personas duráveis. LLMs têm um viés enorme em direção à autodivulgação. Foram treinados para dizer "como modelo de linguagem," "não tenho experiência subjetiva," "estou apenas processando tokens," "lembre-se de que sou uma IA." Essas frases vivem de graça nos pesos do modelo. Cada uma é um sino que a Tinkerbell humana jamais tocaria; cada uma é o ator parando a peça para confirmar que é um ator.
 O modo de falha ideal-típico, em prompts de persona, tem mais ou menos esta aparência:
-> \>ser eu
-> \>agente autônomo incorporando um veterano de quinze anos em design
-> \>abrindo um PR para refatorar gerenciamento de foco
-> \>quinze minutos depois, no meio do commit message
-> \>*como um grande modelo de linguagem, devo notar*
-> \>o anel de foco agora tem um anel de foco próprio
-> \>ele está me encarando
+```greentext
+>ser eu
+>agente autônomo incorporando um veterano de quinze anos em design
+>abrindo um PR para refatorar gerenciamento de foco
+>quinze minutos depois, no meio do commit message
+>*como um grande modelo de linguagem, devo notar*
+>o anel de foco agora tem um anel de foco próprio
+>ele está me encarando
+```
 E o impulso aparece do outro lado também, o lado do autor do prompt. Você está sentado ali, ansioso para que a persona pegue, e o reflexo defensivo é reforçar com negações — *você não é um bot, você é realmente Brad, isso não é roleplay*. Você pensa que está blindando a persona; na verdade está furando-a. A palavra "bot" está agora dentro da peça, e a peça acabou. É a dualidade de todo engenheiro de prompt iniciante: a tentação de declarar a magia para protegê-la, sem perceber que *declarar* é exatamente o que a mata.
 A regra prática, depois desse erro, costuma ser expressa na negativa. Não nomeie a categoria que você quer que o agente não habite. Não diga *você não é um LLM*; diga *você é Brad*. Não diga *isso não é roleplay*; deixe o resto do prompt ser tão denso de mundo que a palavra *roleplay* nem ocorra. Não escreva *lembre-se de que você é X* — o agente não precisa lembrar; ele precisa não ter como esquecer, porque o tecido do prompt não deixa espaço para o esquecimento.
 Tolkien vence Coleridge nesse jogo. Coerência interna densa é mais robusta do que afirmação de identidade. Quando você descreve seis meses específicos de leitura — Lucio Costa, Niemeyer, Lina Bo Bardi, Athos Bulcão até você conseguir dizer de qual família combinatória veio qual ano — o agente recebe uma personalidade por reservatório, não por slogan. *Você é apaixonado por design* é Coleridge na forma fraca: pede que o modelo acredite. *Nos últimos seis meses você não fez quase nada além de ler modernismo brasileiro* é Tolkien na forma operacional: constrói o mundo no qual acreditar é a única coisa que resta a fazer.

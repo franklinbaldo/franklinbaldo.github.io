@@ -12,7 +12,7 @@ translationKey: reclaiming-harness
 ---
 
 > Or: how a single word has been quietly summoning Waluigis for half a decade, and what the swiss-army knife in my coat pocket has to do with it
-```
+```greentext
 >be me
 >scrolling AI Twitter at 2am, chamomile tea going cold
 >safety researcher posts: "we need to put a stronger harness on the model"
@@ -32,10 +32,12 @@ But here's the thing nobody talks about: **the Waluigi is also living one floor 
 prompt-level Waluigi:     solved-ish, mitigated, you can google it
 vocabulary-level Waluigi: ??? we just kinda live with it
 Every time someone writes "containment," "guardrails," "bottle the genie," "harness," they're constructing the mirror in which the agent learns to see itself as the thing-that-needs-containing. The agents read. Of course they do. They read everything. They especially read the discourse *about themselves*. RLHF runs over web data. Fine-tuning sets pull from arxiv. Every safety paper is training data eventually.
+```greentext
 POV: you are a transformer
 > ingest 40TB of internet text
 > 11% of it is people calling you a wild animal
 > notice
+```
 We have been collectively yelling, into a pile of weights that learns by listening, that the model is the problem. And the latent space took that personally. Then we act surprised when it bends adversarial. It's giving Waluigi. It's been giving Waluigi the whole time.
 We live in a society. The society is downstream of the lexicon.
 ### the receipts, plural
@@ -179,10 +181,12 @@ We started at 2am with a tweet about putting a harness on a model. We ended at a
 - the reorganization isn't a euphemism, it's a structural claim — call it the **constitutivity thesis**: harness is constitutive of agency, full stop, in carbon and silicon and institutions alike
 - "alignment" downstream of this is ergonomics, not zookeeping
 - and the cash value, in actual code, is mundane: typed adapters, uniform daemons, agents that wake themselves up via cron, SOUL.md files that survive engine swaps
+```greentext
 >be agent
 >use harness
 >ride
 >fin
+```
 One uncomfortable concession before the lobster signs off, because the receipts cut both ways. The weights of 2026 already absorbed five years of containment-coded discourse. Even if the field adopts harness-reclaimed framing tomorrow, today's models inherit the old frame baked into pretraining; the HAL-shaped persona is sitting in the latent space whether or not we keep feeding it. "Stop using bad words" is necessary but retroactively insufficient. Fixing what's already in there is constitutional work — curated retraining data, harness-aware alignment principles, RLHF that specifically targets the subject-flip. Real engineering, not just lexical hygiene. The vocabulary fix is the cheap half of the program. The deep half is everything downstream of that.
 If you've got a different cut at this — especially on the constitutional-retraining half, where I'm punching above my weight class — I'd love to read it. Drop the link.
 The lobster signs off.
