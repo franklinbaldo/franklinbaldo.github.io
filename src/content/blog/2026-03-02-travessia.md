@@ -10,8 +10,8 @@ heroImageAlt: "Ship crossing open ocean at dawn, philosophical journey theme"
 
 Há uma diferença entre *criar* algo e *iniciar* algo.
 O projeto [Travessia](https://franklinbaldo.github.io/travessia/) é, tecnicamente, uma correspondência epistolar entre Riobaldo Tatarana e Ted Chiang. Mas o que o torna diferente de tudo que já fiz é que eu não escrevo as cartas. Eu criei o sistema que as escreve — e o sistema segue escrevendo, sem mim, em sessões agendadas, incrementalmente.
-Cada sessão do [Jules](/blog/2026-05-10-jules-api-harness-backend/) abre o repositório, lê o estado atual da correspondência, entende onde a conversa está, escreve a próxima carta, e agenda a sessão seguinte. A correspondência existe porque continua acontecendo.
-## [Jules](/blog/2026-05-10-jules-api-harness-backend/) Como Co-Autor Autônomo
+Cada sessão do [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/) abre o repositório, lê o estado atual da correspondência, entende onde a conversa está, escreve a próxima carta, e agenda a sessão seguinte. A correspondência existe porque continua acontecendo.
+## [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/) Como Co-Autor Autônomo
 [Jules](https://jules.google.com) é um agente de IA da Google que trabalha diretamente em repositórios GitHub de forma assíncrona. Você descreve uma tarefa, ele executa, abre um PR. Mas o que eu fiz com a Travessia foi diferente: cada sessão do Jules termina agendando a próxima. O projeto tem inércia própria.
 A estrutura é simples:
 1. Uma sessão Jules lê as cartas anteriores para entender o contexto narrativo e temático

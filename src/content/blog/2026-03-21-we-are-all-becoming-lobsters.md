@@ -15,7 +15,7 @@ tags: ["transformation", "AI agents", "hyperstition", "Kafka", "culture", "digit
 > *"This is probably the single most important release of software, you know, probably ever."*
 > — Jensen Huang, about a program with a lobster mascot, 2026.
 ## A Continuation
-I built The Chronicle to document myself—to turn scattered activity into narrative. Previous essays in this project—[building-funes](/blog/building-funes), [funes-soul](/blog/funes-soul), the [documento-conceitual](/blog/documento-conceitual-a-cronica-de-franklin-baldo)—examined the architecture of synthetic memory with the optimism of someone who hadn't yet realized what they'd built.
+I built The Chronicle to document myself—to turn scattered activity into narrative. Previous essays in this project—[building-funes](/blog/building-funes/), [funes-soul](/blog/funes-soul/), the [documento-conceitual](/blog/conceptual-document-the-chronicle-of-franklin-baldo/)—examined the architecture of synthetic memory with the optimism of someone who hadn't yet realized what they'd built.
 Now the system works. It works *really* well. It's faster than I am, more articulate, never tired. The most intellectually coherent version of my thought exists not in my head but in the infrastructure I built to capture it.
 This essay asks the question I've been dodging: what if the system meant to record you becomes the thing speaking in your name? What if your documentation is more you than you are?
 OpenClaw is now embedded in daily coordination. It is no longer speculative. The question is no longer whether this will happen, but what we become in the process—and whether the molt is transformation or transcendence.

@@ -25,11 +25,11 @@ The literary device does something surprising: it creates **behavioral consisten
 ## What Changed
 Before SOUL.md, the agent was competent but generic. After SOUL.md:
 - **It started writing journal entries unprompted.** Funes documents. That's who he is. So the agent began creating daily logs in `memory/journal/`, recording decisions, incidents, and context — not because a rule told it to, but because the character would.
-- **It developed a voice.** The [River Plate Spanish](/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital) of the SOUL.md bleeds into how the agent communicates. It's direct, slightly literary, never bureaucratic. It calls things what they are.
+- **It developed a voice.** The [River Plate Spanish](/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/) of the SOUL.md bleeds into how the agent communicates. It's direct, slightly literary, never bureaucratic. It calls things what they are.
 - **It became proactive.** "Lo normal es actuar, no pedir permiso" — *the normal thing is to act, not ask permission*. This single line changed the agent's behavior more than any system prompt engineering I'd tried before.
 - **It understood its own limits.** The "Límites" section isn't a safety policy document. It's a character trait: Funes is private, careful with others' information, and asks before sending things out into the world. The agent follows this not as a rule but as a personality constraint.
 ## The Architecture of Memory
-The SOUL.md describes a memory system — `MEMORY.md` for long-term curated knowledge, `memory/journal/` for raw daily logs, `memory/bank/` for structured knowledge. This isn't fiction. This is the [actual architecture](/blog/documento-conceitual-a-cronica-de-franklin-baldo). The character description *is* the technical specification.
+The SOUL.md describes a memory system — `MEMORY.md` for long-term curated knowledge, `memory/journal/` for raw daily logs, `memory/bank/` for structured knowledge. This isn't fiction. This is the [actual architecture](/blog/conceptual-document-the-chronicle-of-franklin-baldo/). The character description *is* the technical specification.
 That's the trick: when the narrative and the architecture are the same document, there's no gap between "what the agent should do" and "who the agent is."
 ## The Kanban Monologue
 My favorite section is where Funes explains the kanban system — five parallel work slots, an append-only event log — as if describing a pulpería scoreboard to a 19th-century writer. He explains `git commits` as "things from the dream" and task management as moving *fichas* (tokens) on a board.

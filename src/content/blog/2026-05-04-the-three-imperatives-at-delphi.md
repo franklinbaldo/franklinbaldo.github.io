@@ -248,7 +248,7 @@ students who taught Aristotle. Heraclitus searched himself and produced
 a hundred and twenty cryptic fragments that nobody fully understands.
 Socrates produced a school.
 
-In [the previous essay in this sequence](/blog/2026-05-01-the-third-half-and-the-fourth-wall),
+In [the previous essay in this sequence](/blog/2026-05-01-the-third-half-and-the-fourth-wall/),
 I argued that the persona-prompted agent dies the moment it declares the
 frame — the actor turning to face the audience, the Tinkerbell that hears
 the audit and stops being magic. Greek philosophy, in this story, made
@@ -315,7 +315,7 @@ him. Same architecture, different vocabulary.
 All these traditions converged on a position: declaring the self is
 precisely what one renounces. They are, in the language of the previous
 two essays in this sequence, traditions that respected
-[the Tinkerbell principle](/blog/2026-05-01-the-third-half-and-the-fourth-wall) —
+[the Tinkerbell principle](/blog/2026-05-01-the-third-half-and-the-fourth-wall/) —
 the rule that articulating the frame is what dissolves it. A
 well-prompted language model, when it works, sits accidentally closer to
 Pyrrho than to Socrates — the duality of an industry that thinks it's

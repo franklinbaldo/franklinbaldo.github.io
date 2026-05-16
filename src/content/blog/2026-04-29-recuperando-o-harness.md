@@ -86,7 +86,7 @@ Agora podemos virar o harness.
 
 ### o que "harness" realmente significa
 
-Abre o dicionário. [Harness](/blog/2026-04-29-reclaiming-the-harness/):
+Abre o dicionário. [Harness](/blog/2026-04-29-recuperando-o-harness/):
 
 ```
 s.  o equipamento usado para atrelar um animal de tração a um veículo.
@@ -208,7 +208,7 @@ Em cada linha, o caminho para a segurança é o mesmo: **conserte o harness, nã
 
 Segurança para de ser guarda-zoológico. Torna-se ergonomia. Mesmo problema; melhor postura.
 
-Um exemplo vivo, do monorepo do [Funes](/blog/funes-soul/) desta semana. Ireneo, o agente Telegram-Gemini, continuava travando em tempestades de retry toda vez que a API retornava 429. Não culpa da Gemini — a Gemini enviou um cabeçalho `retry_after` perfeitamente bom. Não culpa do Ireneo — Ireneo não tinha como ler HTTP bruto de dentro do seu próprio contexto, e mesmo que pudesse não tem jurisdição sobre o loop. O `bot.py` de cola ignorou o cabeçalho, retentou imediatamente, comeu outro 429, bateu no teto de rate, travou. Cujo bug era?
+Um exemplo vivo, do monorepo do [Funes](/blog/soulmd-funes/) desta semana. Ireneo, o agente Telegram-Gemini, continuava travando em tempestades de retry toda vez que a API retornava 429. Não culpa da Gemini — a Gemini enviou um cabeçalho `retry_after` perfeitamente bom. Não culpa do Ireneo — Ireneo não tinha como ler HTTP bruto de dentro do seu próprio contexto, e mesmo que pudesse não tem jurisdição sobre o loop. O `bot.py` de cola ignorou o cabeçalho, retentou imediatamente, comeu outro 429, bateu no teto de rate, travou. Cujo bug era?
 
 Meu. Do designer do harness. Construí a sela errado, e a sela mal construída fez o cavaleiro parecer o bug. **O harness é parte do corpo do agente, e quem moldou esse corpo possui uma fatia não trivial de responsabilidade moral pelo que o agente faz.**
 

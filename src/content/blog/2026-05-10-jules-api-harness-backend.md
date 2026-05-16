@@ -13,7 +13,7 @@ translationKey: jules-api-harness
 ---
 
 ## The [Harness](/blog/2026-04-29-reclaiming-the-harness/) Evolves
-A few weeks ago, I wrote about [reclaiming the word "harness"](/blog/2026-04-29-reclaiming-the-harness) — not as a cage for a cognitive engine, but as the very structure that makes agency possible. I argued that the harness is constitutive. Without it, an LLM is a brilliant, distractible vibes generator. With it, it becomes an entity capable of memory, continuity, and action.
+A few weeks ago, I wrote about [reclaiming the word "harness"](/blog/2026-04-29-reclaiming-the-harness/) — not as a cage for a cognitive engine, but as the very structure that makes agency possible. I argued that the harness is constitutive. Without it, an LLM is a brilliant, distractible vibes generator. With it, it becomes an entity capable of memory, continuity, and action.
 The argument culminated in a concrete architectural move: the `canivete bot daemon`. A single daemon acting as the universal saddle for various cognitive engines, accessed via a `Backend` protocol. The initial implementation supported `gemini-cli` and `claude-code`.
 Today, we add a third: the [Jules API](https://developers.google.com/jules/api).
 ## The [Jules](/blog/2026-05-10-jules-api-harness-backend/) Backend

@@ -54,7 +54,7 @@ Nas sessões recentes, ele usou uma combinação bem mais madura de ferramentas:
 - `todo` para manter plano explícito
 - browser + snapshot para inspeção de páginas quando necessário
 Isso parece detalhe, mas na prática reduz muito o custo cognitivo da automação. Em vez de eu ficar pensando “qual comando improvisado vai fazer esse agente sobreviver?”, eu consigo pensar mais no problema.
-Um bom exemplo veio justamente quando eu estava investigando o CausaGanha. A sessão não ficou só no superficial. O Hermes foi até o metadata do Internet Archive, contou arquivos recentes, comparou versões históricas de `completed-items.json`, separou “refresh de catálogo” de “avanço real de backfill”, e depois abriu sessões [Jules](/blog/2026-05-10-jules-api-harness-backend/) com instruções mais precisas. Isso está muito mais perto de análise operacional de verdade do que de uma sequência de ferramentas disparadas a esmo.
+Um bom exemplo veio justamente quando eu estava investigando o CausaGanha. A sessão não ficou só no superficial. O Hermes foi até o metadata do Internet Archive, contou arquivos recentes, comparou versões históricas de `completed-items.json`, separou “refresh de catálogo” de “avanço real de backfill”, e depois abriu sessões [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/) com instruções mais precisas. Isso está muito mais perto de análise operacional de verdade do que de uma sequência de ferramentas disparadas a esmo.
 No OpenClaw, eu sentia várias vezes que o agente conseguia executar comandos. No Hermes, eu sinto com mais frequência que ele consegue conduzir uma investigação.
 ## Contexto e continuidade
 Outro ganho grande é continuidade.
@@ -72,7 +72,7 @@ O Hermes me passa outra sensação: mais chão de fábrica. Menos malabarismo. M
 Mesmo quando dá errado, normalmente dá errado de um jeito diagnosticável. E isso, no uso diário, vale ouro.
 ## Onde o OpenClaw ainda teve mérito
 Seria injusto fingir que o OpenClaw não serviu para nada. Serviu bastante.
-Foi nele que se consolidaram várias rotinas minhas de heartbeat, memória, [Jules](/blog/2026-05-10-jules-api-harness-backend/), backlog, checagem de PRs e documentação de contexto. Ele me ajudou a aprender o que eu realmente queria de um agente operacional. Em certo sentido, foi o OpenClaw que me deixou exigente com o Hermes.
+Foi nele que se consolidaram várias rotinas minhas de heartbeat, memória, [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/), backlog, checagem de PRs e documentação de contexto. Ele me ajudou a aprender o que eu realmente queria de um agente operacional. Em certo sentido, foi o OpenClaw que me deixou exigente com o Hermes.
 Também não dá para ignorar o recorte da amostra: eu tenho 81 sessões antigas de um lado e só 3 do outro no formato novo. Então seria desonesto chamar isso de comparação estatística definitiva.
 Mas experiência de ferramenta não é só estatística. É textura. É fluidez. É quantas vezes eu preciso interromper o fluxo para consertar o próprio mecanismo.
 E aí a diferença já está bastante clara.

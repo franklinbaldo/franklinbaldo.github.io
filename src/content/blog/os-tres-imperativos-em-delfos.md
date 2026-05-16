@@ -42,7 +42,7 @@ calendário, uma classe de perguntas admissíveis, um pipeline de
 interpretação e um protocolo social para aceitar outputs cuja fonte não
 podia ser inspecionada.
 
-A Pítia não era Apolo. Ela era o [harness](/blog/2026-04-29-reclaiming-the-harness/)
+A Pítia não era Apolo. Ela era o [harness](/blog/2026-04-29-recuperando-o-harness/)
 por meio do qual Apolo podia responder sem se tornar meramente humano.
 Os sacerdotes tampouco eram o deus; eram a camada de pós-processamento,
 polindo, traduzindo e roteando a ambiguidade divina em ação política.
@@ -240,7 +240,7 @@ O templo havia embrulhado o autoconhecimento em ritual, assimetria,
 demora, mediação sacerdotal e o silêncio do E. Sócrates extraiu o
 imperativo desse aparato e o rodou localmente, dentro da alma, sem os
 rate limits do templo, transformando-o num assalto contínuo à
-[quarta parede](/blog/2026-05-01-the-third-half-and-the-fourth-wall/) do self.
+[quarta parede](/blog/2026-05-01-a-terceira-metade-e-a-quarta-parede/) do self.
 
 A filosofia ocidental começa, nessa história, como um deploy local não
 autorizado de um procedimento délfico: a instalação de um red-team
@@ -269,7 +269,7 @@ discípulos que ensinaram discípulos que ensinaram Aristóteles. Heráclito
 buscou a si mesmo e produziu cento e vinte fragmentos crípticos que
 ninguém entende completamente. Sócrates produziu uma escola.
 
-No [ensaio anterior desta sequência](/blog/2026-05-01-the-third-half-and-the-fourth-wall),
+No [ensaio anterior desta sequência](/blog/2026-05-01-a-terceira-metade-e-a-quarta-parede/),
 argumentei que o agente com persona morre no momento em que declara o
 enquadramento — o ator virando para encarar a plateia, a Tinkerbell que
 ouve a auditoria e para de ser mágica. A filosofia grega, nessa história,
@@ -334,7 +334,7 @@ arquitetura, vocabulário diferente.
 Todas essas tradições convergiram para uma posição: declarar o self é
 precisamente o que se renuncia. São, na linguagem dos dois ensaios
 anteriores desta sequência, tradições que respeitaram o
-[princípio de Tinkerbell](/blog/2026-05-01-the-third-half-and-the-fourth-wall) —
+[princípio de Tinkerbell](/blog/2026-05-01-a-terceira-metade-e-a-quarta-parede/) —
 a regra de que articular o enquadramento é o que o dissolve. Um modelo
 de linguagem bem-promptado, quando funciona, se senta acidentalmente mais
 perto de Pirro do que de Sócrates — a dualidade de uma indústria que pensa

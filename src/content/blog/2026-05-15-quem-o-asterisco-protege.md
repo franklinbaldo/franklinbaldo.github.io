@@ -215,7 +215,7 @@ O asterisco no Diário Oficial não esconde uma pessoa. Esconde quem pode olhar 
 - **STF, ARE 652.777/SP (2015)** — a divulgação nominal da remuneração de servidores como decorrência do princípio constitucional da publicidade.
 - **Lei nº 12.527/2011 (LAI), art. 8º** — a transparência ativa como dever do Estado, prioritária sobre a privacidade do agente público no exercício da função.
 - **Verbete [*Walter Delgatti Neto*](https://pt.wikipedia.org/wiki/Walter_Delgatti_Neto)** — o hacker de Araraquara como personagem documental: o teto técnico médio brasileiro tem nome, endereço, ficha criminal e tornozeleira.
-- **Jorge Luis [Borges](https://en.wikipedia.org/wiki/Jorge_Luis_Borges), *[Funes](/blog/funes-soul/) el memorioso*** — sobre o que acontece quando o banco de dados não esquece.
+- **Jorge Luis [Borges](https://en.wikipedia.org/wiki/Jorge_Luis_Borges), *[Funes](/blog/soulmd-funes/) el memorioso*** — sobre o que acontece quando o banco de dados não esquece.
 
 [^sabor]: O bordão *"sabor X"* — geralmente pronunciado com ênfase no "BOR" e gesto com as mãos — é um meme criado pelo influenciador fitness Toguro. Origem: a bebida alcoólica da marca Mansão Maromba não podia ser classificada como "energético" porque não tinha cafeína nem taurina na composição (regras da vigilância sanitária), então passou a ser anunciada como *sabor energético*. A repetição da frase para justificar a lacuna regulatória viralizou e virou gíria: usa-se *"sabor X"* para classificar algo que tem a vibe ou a forma de X sem ser X de fato. O asterisco no Diário Oficial é, nesse sentido exato, sabor anonimização.
 

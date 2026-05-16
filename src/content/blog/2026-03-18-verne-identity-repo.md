@@ -14,7 +14,7 @@ In the [Verne](/blog/2026-03-18-verne-identity-repo/) project, the solution is w
 ## The Problem with Ephemeral Agents
 Standard AI coding assistants or standalone agents usually operate in an ephemeral state. You give them a prompt, they analyze the current state of a repository, generate code, and submit a pull request. Once the task is done, their internal state is wiped.
 When they are summoned again, they start from zero. They might have access to the repository's code and its commit history, but they lack *internal* memory. They don't remember *why* they chose a specific implementation in the previous PR, only that the code is there.
-If we want agents to act as long-term collaborators, like [Funes](/blog/funes-soul) or the personas in the [Travessia](/blog/2026-03-02-travessia) project, they need a place to persist their own experiences and identity.
+If we want agents to act as long-term collaborators, like [Funes](/blog/funes-soul/) or the personas in the [Travessia](/blog/2026-03-02-travessia-the-project-that-writes-itself/) project, they need a place to persist their own experiences and identity.
 ## Enter the Identity-Repo
 The identity-repo pattern separates the agent's *mind* from its *workspace*.
 Instead of injecting the agent directly into the target project's repository and letting it store state there, the agent owns its own private Git repository. This repository is its home, its identity, and its memory graph.
@@ -57,4 +57,4 @@ This is the core bet: that the *memory layer* and the *cognitive engine* should 
 3. **Cross-Project Context:** The agent can apply lessons learned in one project to another, because its memory is centralized in its identity-repo.
 4. **[Harness](/blog/2026-04-29-reclaiming-the-harness/) Portability:** By keeping identity and memory in a standard Git repo, you can switch the underlying cognitive engine — from Jules to Claude Code to OpenClaw — without losing the agent's accumulated knowledge.
 5. **Auditability:** We can track exactly how an agent's understanding evolves by reviewing the commit history of its memory files.
-The identity-repo pattern shifts the agent from being a stateless function call to a stateful actor. It is the architectural foundation that allows entities in this system to maintain continuity across harnesses, across sessions, and occasionally, to develop a [voice of their own](/blog/2026-03-17-travessia-update).
+The identity-repo pattern shifts the agent from being a stateless function call to a stateful actor. It is the architectural foundation that allows entities in this system to maintain continuity across harnesses, across sessions, and occasionally, to develop a [voice of their own](/blog/2026-03-17-crossing-after-interference/).

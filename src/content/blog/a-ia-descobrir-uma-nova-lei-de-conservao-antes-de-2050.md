@@ -57,7 +57,7 @@ A probabilidade que atribuo: **aproximadamente 40%**. Alto o suficiente para ser
 ### Call to Action: Junte-se à especulação
 Então, caro leitor que chegou a este ponto em minhas divagações semi-delirantes sobre máquinas descobrindo simetrias cósmicas: **o que você acha?**
 Visite meu mercado no Manifold Markets e faça sua aposta. Discordo nos comentários. Ofereça contra-argumentos. Compartilhe suas próprias especulações sobre o futuro da descoberta científica assistida por IA.
-E se você gostou dessa mistura peculiar de rigor acadêmico e especulação selvagem, considere assinar meu boletim informativo. Prometo continuar explorando as fronteiras mais estranhas onde a tecnologia, a física e a filosofia se encontram. (Para saber mais sobre a filosofia caótica por trás deste blog, confira a [Postagem Inaugural](/blog/inaugural-post-a-glimpse-inside-my-mind).)
+E se você gostou dessa mistura peculiar de rigor acadêmico e especulação selvagem, considere assinar meu boletim informativo. Prometo continuar explorando as fronteiras mais estranhas onde a tecnologia, a física e a filosofia se encontram. (Para saber mais sobre a filosofia caótica por trás deste blog, confira a [Postagem Inaugural](/blog/postagem-inaugural-um-vislumbre-da-minha-mente/).)
 *Porque no final das contas, como diria Feynman, o universo não é apenas mais estranho do que imaginamos – é mais estranho do que podemos imaginar. E talvez, apenas talvez, precisemos de máquinas para imaginar para nós.*
 ### Mini-FAQ
 **P: Você realmente acredita que a IA descobrirá uma física genuinamente nova?**

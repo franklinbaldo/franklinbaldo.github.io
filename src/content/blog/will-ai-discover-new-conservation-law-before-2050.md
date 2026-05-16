@@ -57,7 +57,7 @@ The probability I assign: **approximately 40%**. High enough to be intriguing, l
 ### Call-to-Action: Join the Speculation
 So, dear reader who has reached this point in my semi-delirious rambling about machines discovering cosmic symmetries: **what do you think?**
 Visit my market on Manifold Markets and place your bet. Disagree in the comments. Offer counter-arguments. Share your own speculations about the future of AI-assisted scientific discovery.
-And if you enjoyed this peculiar mixture of academic rigor and wild speculation, consider subscribing to my newsletter. I promise to continue exploring the strangest frontiers where technology, physics, and philosophy meet. (For more on the chaotic philosophy behind this blog, check out the [Inaugural Post](/blog/inaugural-post-a-glimpse-inside-my-mind).)
+And if you enjoyed this peculiar mixture of academic rigor and wild speculation, consider subscribing to my newsletter. I promise to continue exploring the strangest frontiers where technology, physics, and philosophy meet. (For more on the chaotic philosophy behind this blog, check out the [Inaugural Post](/blog/inaugural-post-a-glimpse-inside-my-mind/).)
 *Because in the end, as Feynman would say, the universe is not only stranger than we imagine—it's stranger than we can imagine. And perhaps, just perhaps, we'll need machines to imagine for us.*
 ### Mini-FAQ
 **Q: Do you really believe AI will discover genuinely new physics?**
