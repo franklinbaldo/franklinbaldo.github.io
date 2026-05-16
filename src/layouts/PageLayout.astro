@@ -39,7 +39,7 @@ const {
 const documentTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const DEFAULT_OG_IMAGE = "/avatar.png";
+const DEFAULT_OG_IMAGE = lang === "pt" ? "/og/_site-pt.png" : "/og/_site.png";
 const ogImageRaw = image ?? DEFAULT_OG_IMAGE;
 const ogImage = Astro.site ? new URL(ogImageRaw, Astro.site).href : ogImageRaw;
 const rssUrl = new URL("rss.xml", Astro.site);

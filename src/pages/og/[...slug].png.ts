@@ -27,13 +27,23 @@ const escape = (s: string) =>
 
 const trunc = (s: string, n: number) => (s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s);
 
-type CardData = { title: string; description?: string; tags?: string[] };
+type CardData = {
+  title: string;
+  description?: string;
+  tags?: string[];
+  lang?: "en" | "pt";
+};
 
 const buildEntries = async () => {
   const posts = SKIP ? [] : await getCollection("blog");
   const entries: Array<{ slug: string; data: CardData }> = posts.map((p) => ({
     slug: p.id,
-    data: { title: p.data.title, description: p.data.description, tags: p.data.tags },
+    data: {
+      title: p.data.title,
+      description: p.data.description,
+      tags: p.data.tags,
+      lang: p.data.lang ?? "en",
+    },
   }));
   entries.push({
     slug: "_site",
@@ -42,6 +52,17 @@ const buildEntries = async () => {
       description:
         "Lawyer and State Attorney. Essays on AI agency, process metaphysics, and legal design.",
       tags: ["digital-garden"],
+      lang: "en",
+    },
+  });
+  entries.push({
+    slug: "_site-pt",
+    data: {
+      title: "Franklin Baldo",
+      description:
+        "Advogado e Procurador do Estado. Ensaios sobre agentes de IA, metafísica do processo e design jurídico.",
+      tags: ["jardim-digital"],
+      lang: "pt",
     },
   });
   return entries;
@@ -104,10 +125,11 @@ async function renderDescription(description: string, tag: string | undefined) {
     .toBuffer();
 }
 
-async function renderUrl() {
+async function renderUrl(lang: "en" | "pt") {
+  const url = lang === "pt" ? "franklinbaldo.github.io/pt" : "franklinbaldo.github.io";
   return await sharp({
     text: {
-      text: `<span foreground="#9d917e" font_family="Fraunces SemiBold" size="${26 * 1024}">franklinbaldo.github.io</span>`,
+      text: `<span foreground="#9d917e" font_family="Fraunces SemiBold" size="${26 * 1024}">${url}</span>`,
       fontfile: FONT_SEMIBOLD,
       width: TEXT_WIDTH,
       height: 40,
@@ -123,6 +145,7 @@ export const GET: APIRoute = async ({ props }) => {
   const title = trunc(data.title, 100);
   const description = trunc(data.description ?? "", 90);
   const tag = data.tags?.[0];
+  const lang = data.lang ?? "en";
 
   const container = await AstroContainer.create();
   const svg = await container.renderToString(OGCard);
@@ -130,7 +153,7 @@ export const GET: APIRoute = async ({ props }) => {
 
   const titleLayer = await renderTitle(title);
   const descLayer = await renderDescription(description, tag);
-  const urlLayer = await renderUrl();
+  const urlLayer = await renderUrl(lang);
 
   const descTop = TITLE_TOP + titleLayer.height + 24;
 
