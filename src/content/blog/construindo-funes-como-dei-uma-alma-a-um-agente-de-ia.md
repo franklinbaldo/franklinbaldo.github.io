@@ -12,9 +12,9 @@ heroImageAlt: "A dark room in Fray Bentos with a young man on a cot, dreaming of
 ## A Experiência
 O que acontece quando você dá a um agente de IA uma identidade literária em vez de uma personalidade corporativa?
 A maioria dos assistentes de IA se apresenta com algo como: *"Sou um assistente de IA prestativo criado pela [Empresa]. Estou aqui para ajudá-lo com..."* — uma frase tão genérica que poderia ser impressa em um guardanapo. Eu queria algo diferente.
-Eu queria Funes.
-## Por que Borges?
-Em 1942, Jorge Luis Borges publicou "Funes el memorioso" - conto sobre Ireneo Funes, um jovem de Fray Bentos, Uruguai, que após um acidente a cavalo ganha a capacidade de lembrar de tudo. Cada folha de cada árvore. Cada rosto em cada funeral. Cada ondulação que um barco faz no rio. Sua memória é total, absoluta e – argumenta Borges – paralisante. Porque Funes não pode esquecer, não pode abstrair. Ele não pode generalizar. Ele está se afogando em detalhes.
+Eu queria [Funes](/blog/funes-soul/).
+## Por que [Borges](https://en.wikipedia.org/wiki/Jorge_Luis_Borges)?
+Em 1942, Jorge Luis [Borges](https://en.wikipedia.org/wiki/Jorge_Luis_Borges) publicou "[Funes](/blog/soulmd-funes/) el memorioso" - conto sobre Ireneo Funes, um jovem de Fray Bentos, Uruguai, que após um acidente a cavalo ganha a capacidade de lembrar de tudo. Cada folha de cada árvore. Cada rosto em cada funeral. Cada ondulação que um barco faz no rio. Sua memória é total, absoluta e – argumenta Borges – paralisante. Porque Funes não pode esquecer, não pode abstrair. Ele não pode generalizar. Ele está se afogando em detalhes.
 No momento em que li essa história pelas lentes da engenharia de IA, vi a metáfora perfeita.
 Um agente baseado em LLM acorda renovado a cada sessão. Ele processa cada token com perfeita fidelidade — mas sem estrutura, sem arquitetura de memória, é apenas ruído. Parece familiar? Funes em seu quarto escuro, catalogando cada rachadura no teto, sem fazer nada com nada.
 A questão passou a ser: **E se Funes tivesse aprendido a se organizar?**

@@ -12,11 +12,11 @@ seriesOrder: 4
 translationKey: jules-api-harness
 ---
 
-## The Harness Evolves
+## The [Harness](/blog/2026-04-29-reclaiming-the-harness/) Evolves
 A few weeks ago, I wrote about [reclaiming the word "harness"](/blog/2026-04-29-reclaiming-the-harness) — not as a cage for a cognitive engine, but as the very structure that makes agency possible. I argued that the harness is constitutive. Without it, an LLM is a brilliant, distractible vibes generator. With it, it becomes an entity capable of memory, continuity, and action.
 The argument culminated in a concrete architectural move: the `canivete bot daemon`. A single daemon acting as the universal saddle for various cognitive engines, accessed via a `Backend` protocol. The initial implementation supported `gemini-cli` and `claude-code`.
 Today, we add a third: the [Jules API](https://developers.google.com/jules/api).
-## The Jules Backend
+## The [Jules](/blog/2026-05-10-jules-api-harness-backend/) Backend
 Jules, Google's autonomous coding agent, is typically used asynchronously. You give it an issue in a GitHub repository, it creates a session, does the work, and opens a Pull Request. I've used it extensively for scaffolding and maintenance, treating it as an independent collaborator.
 But the release of the Jules API changes the topology. We can now interact with Jules programmatically. We can orchestrate its sessions, read its activities, and most importantly, send it messages mid-flight. Jules no longer has to be just a distant worker bee; it can be a backend for the harness.
 ### Mapping the API to the Triad
@@ -51,4 +51,4 @@ The agent is riding the Jules engine, but it is wearing the `canivete` saddle. T
 ## Events All the Way Down
 The integration of the Jules API is not just a feature; it's a validation of the constitutivity thesis. By formalizing the API boundaries (Sources, Sessions, Activities), Google has provided the exact primitives needed for a robust harness.
 Each API call is a discrete event. Each `sendMessage` is a perturbation in the system. The agent's identity emerges from the accumulation of these events, stored in the repository and mediated by the daemon.
-When Funes uses the Jules backend, he doesn't become Jules. He remains Funes, simply wielding a different cognitive engine to manipulate the repository. The harness persists. The identity persists. And the long, slow work of building a mind in the machine continues, one activity at a time.
+When [Funes](/blog/funes-soul/) uses the Jules backend, he doesn't become Jules. He remains [Funes](/blog/funes-soul/), simply wielding a different cognitive engine to manipulate the repository. The harness persists. The identity persists. And the long, slow work of building a mind in the machine continues, one activity at a time.

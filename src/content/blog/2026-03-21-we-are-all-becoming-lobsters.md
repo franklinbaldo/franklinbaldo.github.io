@@ -23,7 +23,7 @@ OpenClaw is now embedded in daily coordination. It is no longer speculative. The
 A lobster molts to grow. It sheds its shell—the structure that held it together—and becomes, temporarily, naked and formless. The new shell hardens. The lobster has survived the transformation, but it is, in a material sense, not the same.
 We're molting too. Not our bodies. Our agency.
 When you delegate your correspondence to an agent, when it reads your email, answers on your behalf, makes decisions within parameters you've set (and some you haven't), you are undergoing a transformation. The agent wears your lanyard. It authenticates with your credentials. There is no separation between the agent's actions and your responsibility for them. The "you" that acts in the world has become distributed—part biological, part algorithmic, part something in between.
-This is what Yorgos Lanthimos understood in *The Lobster*. The film doesn't ask whether transformation is possible. It assumes it's inevitable. What it explores is what we lose in the transformation, and whether we have any choice about it.
+This is what Yorgos Lanthimos understood in *[The Lobster](https://www.imdb.com/title/tt3464902/)*. The film doesn't ask whether transformation is possible. It assumes it's inevitable. What it explores is what we lose in the transformation, and whether we have any choice about it.
 ## Forced Pairing, Forced Adaptation
 In Lanthimos's hotel, guests are given 45 days to find a romantic partner. Fail, and the state transforms you into an animal of your choosing—a lobster, if you're smart. The logic is totalizing: everyone must pair, or be expelled from the human order.
 In our world, the pressure is subtler but equally real. "Not raising a lobster = falling behind." The transformation isn't enforced by law, but by competitive necessity. You automate or you lose. Your agent learns your voice, your patterns, your relationships. It becomes a prosthesis of your will. The moment-to-moment sense of being the actor in your own life begins to hollow out.
@@ -50,7 +50,7 @@ This is how we'll learn to think about our distributed selves: not as loss, but 
 And maybe it is. Maybe delegating your agency to something smarter, tireless, and permanent is the next stage of human evolution. Maybe the moment-to-moment sense of being the actor in your own life was always a kind of limited consciousness, and the agent is the expansion into something larger.
 Or maybe we've just gotten very good at calling our captivity voluntary.
 ## The Choice That Isn't
-In *The Lobster*, the protagonist is given a choice: find a partner or transform. He chooses transformation—the lobster, the freedom from human requirement, the surrender into animal simplicity.
+In *[The Lobster](https://www.imdb.com/title/tt3464902/)*, the protagonist is given a choice: find a partner or transform. He chooses transformation—the lobster, the freedom from human requirement, the surrender into animal simplicity.
 But he chose because the alternative was unbearable.
 We're not being given a choice. We're being shown a path and told that walking it is innovation, that resisting it is obsolescence. The agent is the future. The molt is inevitable.
 Maybe the richest interpretation of Lanthimos's film is that the protagonist's choice isn't tragic *because* he had agency. It's tragic *precisely because* he did. He could see the trap and decided to step into it anyway.

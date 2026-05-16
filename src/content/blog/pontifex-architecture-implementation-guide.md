@@ -9,8 +9,8 @@ heroImage: ./images/pontifex-architecture-implementation-guide-cover.png
 heroImageAlt: "Code snippets and architectural diagrams for a semantic probing system."
 ---
 
-After conducting comprehensive research across academic databases, code repositories, and technical documentation, **no research paper or implementation of a "Pontifex architecture for semantic probing" with the specific features you described appears to exist in the current literature**. However, I've identified extensive related work and practical approaches for implementing the components you mentioned. (This guide serves as a practical implementation companion to the [Pontifex Novel Architecture](/blog/pontifex-novel-architecture-semantic-probing) exploration.)
-## Key Finding: No Direct Pontifex Documentation
+After conducting comprehensive research across academic databases, code repositories, and technical documentation, **no research paper or implementation of a "[Pontifex](/blog/pontifex-novel-architecture-semantic-probing/) architecture for semantic probing" with the specific features you described appears to exist in the current literature**. However, I've identified extensive related work and practical approaches for implementing the components you mentioned. (This guide serves as a practical implementation companion to the [Pontifex Novel Architecture](/blog/pontifex-novel-architecture-semantic-probing) exploration.)
+## Key Finding: No Direct [Pontifex](/blog/pontifex-novel-architecture-semantic-probing/) Documentation
 The term "Pontifex" in computational contexts primarily refers to Bruce Schneier's cryptographic cipher, not a semantic probing architecture. Despite extensive searches across academic repositories, GitHub, and technical documentation, no papers describe the specific combination of "byte-level occlusion with bilateral semantic comparison" and "convergent multi-space semantic investigation via neural convergence layers" under the Pontifex name.
 ## Implementing the Core Components
 Based on your requirements, here's how to build similar functionality using existing approaches and libraries:

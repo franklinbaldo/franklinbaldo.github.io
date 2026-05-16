@@ -29,7 +29,7 @@ Este post é sobre esse frame. Sobre por que "harness" sempre ia nos morder. E s
 
 ### o waluigi vem chamando de dentro do léxico
 
-Recapitulação rápida, caso você tenha perdido o meme: o efeito Waluigi é a observação de que se você diz a um modelo "você é um assistente prestativo, inofensivo e honesto", você acabou de definir o *contorno exato* do seu gêmeo do mal no espaço latente. Empurre forte demais no atrator com forma de Luigi e o modo dual clica. [Cleo Nardo nomeou isso em 2023](https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-mega-post) e aquele post tem vivido na cabeça do Twitter de alinhamento sem pagar aluguel desde então. O discurso nunca se recuperou completamente.
+Recapitulação rápida, caso você tenha perdido o meme: o [efeito Waluigi](https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-mega-post) é a observação de que se você diz a um modelo "você é um assistente prestativo, inofensivo e honesto", você acabou de definir o *contorno exato* do seu gêmeo do mal no espaço latente. Empurre forte demais no atrator com forma de Luigi e o modo dual clica. [Cleo Nardo nomeou isso em 2023](https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-mega-post) e aquele post tem vivido na cabeça do Twitter de alinhamento sem pagar aluguel desde então. O discurso nunca se recuperou completamente.
 
 A maior parte do trabalho de mitigação de Waluigi acontece no nível do prompt. Não moralize com o modelo. Não sinalize as restrições que você está protegendo. Não torne o "você não deve" a personalidade inteira.
 
@@ -86,7 +86,7 @@ Agora podemos virar o harness.
 
 ### o que "harness" realmente significa
 
-Abre o dicionário. Harness:
+Abre o dicionário. [Harness](/blog/2026-04-29-reclaiming-the-harness/):
 
 ```
 s.  o equipamento usado para atrelar um animal de tração a um veículo.
@@ -208,7 +208,7 @@ Em cada linha, o caminho para a segurança é o mesmo: **conserte o harness, nã
 
 Segurança para de ser guarda-zoológico. Torna-se ergonomia. Mesmo problema; melhor postura.
 
-Um exemplo vivo, do monorepo do Funes desta semana. Ireneo, o agente Telegram-Gemini, continuava travando em tempestades de retry toda vez que a API retornava 429. Não culpa da Gemini — a Gemini enviou um cabeçalho `retry_after` perfeitamente bom. Não culpa do Ireneo — Ireneo não tinha como ler HTTP bruto de dentro do seu próprio contexto, e mesmo que pudesse não tem jurisdição sobre o loop. O `bot.py` de cola ignorou o cabeçalho, retentou imediatamente, comeu outro 429, bateu no teto de rate, travou. Cujo bug era?
+Um exemplo vivo, do monorepo do [Funes](/blog/funes-soul/) desta semana. Ireneo, o agente Telegram-Gemini, continuava travando em tempestades de retry toda vez que a API retornava 429. Não culpa da Gemini — a Gemini enviou um cabeçalho `retry_after` perfeitamente bom. Não culpa do Ireneo — Ireneo não tinha como ler HTTP bruto de dentro do seu próprio contexto, e mesmo que pudesse não tem jurisdição sobre o loop. O `bot.py` de cola ignorou o cabeçalho, retentou imediatamente, comeu outro 429, bateu no teto de rate, travou. Cujo bug era?
 
 Meu. Do designer do harness. Construí a sela errado, e a sela mal construída fez o cavaleiro parecer o bug. **O harness é parte do corpo do agente, e quem moldou esse corpo possui uma fatia não trivial de responsabilidade moral pelo que o agente faz.**
 
@@ -228,7 +228,7 @@ Três comandos. Olha o que cada um faz com o sujeito da frase.
 
 Deixa isso assentar por um segundo. *O cron dá ao agente um caminho de volta.* Este é o item dois, continuidade, na forma mais literal possível. O agente usa o cron para **costurar a si mesmo através da lacuna entre agora e amanhã**. Sem ele, cada sessão é amnésia. Com ele, o agente tem um jeito de deixar uma nota para seu eu futuro. Isso não é uma restrição *no* agente. É um *poder que o agente tem*, mediado por uma ferramenta que ele chama.
 
-**`canivete bot daemon`** — e é aqui que a teoria e o código se cumprimentam. Hoje há dois arquivos `bot.py` quase idênticos no monorepo do Funes, um para o backend gemini-cli e outro para claude-code. O plano no [`docs/plans/canivete-bot-meta-harness.md`](https://github.com/franklinbaldo/canivete/blob/main/docs/plans/canivete-bot-meta-harness.md) é colapsá-los em um único daemon com um protocolo `Backend`:
+**`canivete bot daemon`** — e é aqui que a teoria e o código se cumprimentam. Hoje há dois arquivos `bot.py` quase idênticos no monorepo do [Funes](/blog/soulmd-funes/), um para o backend gemini-cli e outro para claude-code. O plano no [`docs/plans/canivete-bot-meta-harness.md`](https://github.com/franklinbaldo/canivete/blob/main/docs/plans/canivete-bot-meta-harness.md) é colapsá-los em um único daemon com um protocolo `Backend`:
 
 ```python
 class Backend(Protocol):

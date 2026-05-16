@@ -10,8 +10,8 @@ heroImageAlt: "Ship crossing open ocean at dawn, philosophical journey theme"
 ---
 There is a difference between *creating* something and *starting* something.
 The project [Travessia](https://franklinbaldo.github.io/travessia/) is, technically, an epistolary correspondence between Riobaldo Tatarana and Ted Chiang. But what makes it different from anything I've ever done is that I don't write the letters. I created the system that writes them — and the system continues writing, without me, in scheduled sessions, incrementally.
-Each Jules session opens the repository, reads the current status of the correspondence, understands where the conversation is, writes the next letter, and schedules the next session. The correspondence exists because it keeps happening.
-## Jules as Independent Co-Author
+Each [Jules](/blog/2026-05-10-jules-api-harness-backend/) session opens the repository, reads the current status of the correspondence, understands where the conversation is, writes the next letter, and schedules the next session. The correspondence exists because it keeps happening.
+## [Jules](/blog/2026-05-10-jules-api-harness-backend/) as Independent Co-Author
 [Jules](https://jules.google.com) is a Google AI agent that works directly on GitHub repositories asynchronously. You describe a task, it executes it, it opens a PR. But what I did with Travessia was different: each Jules session ends with scheduling the next one. The project has its own inertia.
 The structure is simple:
 1. One session Jules reads the previous letters to understand the narrative and thematic context

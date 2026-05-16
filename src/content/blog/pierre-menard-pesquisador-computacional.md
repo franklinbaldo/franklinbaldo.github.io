@@ -7,7 +7,7 @@ translationKey: pierre-menard
 tags: ["pesquisa", "escrita", "metodologia", "borges", "tdd", "ia"]
 ---
 
-Pierre Menard, *autor del Quijote*, passou anos cultivando um espanhol arcaico para que, sem copiar Cervantes, suas frases coincidissem palavra por palavra com as de Cervantes. O método, como Borges conta em *Ficções*, era secreto e infinitamente laborioso. Eu sugeriria a Menard uma metodologia mais econômica: primeiro, copie o *Quixote* letra por letra. Depois vá viver a vida que faria o autor dessa cópia produzir exatamente esse *Quixote*, caso ele tivesse se sentado para escrevê-lo em vez de copiá-lo. Quando fracassar em viver essa vida — e você irá fracassar — tente de novo. Refatore a vida. Reverta o commit. Itere até que as palavras que você teria escrito coincidam com as palavras que você já copiou.
+Pierre Menard, *autor del Quijote*, passou anos cultivando um espanhol arcaico para que, sem copiar Cervantes, suas frases coincidissem palavra por palavra com as de Cervantes. O método, como [Borges](https://en.wikipedia.org/wiki/Jorge_Luis_Borges) conta em *Ficções*, era secreto e infinitamente laborioso. Eu sugeriria a Menard uma metodologia mais econômica: primeiro, copie o *Quixote* letra por letra. Depois vá viver a vida que faria o autor dessa cópia produzir exatamente esse *Quixote*, caso ele tivesse se sentado para escrevê-lo em vez de copiá-lo. Quando fracassar em viver essa vida — e você irá fracassar — tente de novo. Refatore a vida. Reverta o commit. Itere até que as palavras que você teria escrito coincidam com as palavras que você já copiou.
 
 Foi aproximadamente isso que fiz com um artigo de alinhamento esta semana. Sentei e escrevi seis mil palavras como se a pesquisa já estivesse concluída. Seção de limitações, roteiro de validação, tabela de aplicabilidade, afirmações numeradas no resumo, lista de referências com dezessete citações reais e quatro marcadas `[CITATION NEEDED]` para as que ainda não li mas pretendo. Agora preciso ir viver a vida que tornaria essas palavras verdadeiras. Quando fracassar — e fracassarei — reverto o commit e começo de novo.
 
@@ -88,7 +88,7 @@ Pierre Menard escreveu o *Quixote* depois de Cervantes, com as mesmas palavras, 
 ## Para leitura adicional
 
 - **Kent Beck, *Test-Driven Development by Example* (2002).** O texto canônico sobre TDD; o parágrafo que distingue "escrever o teste primeiro" de "documentar seus planos" é o que se traduz diretamente para o TDR.
-- **Jorge Luis Borges, "Pierre Menard, autor del *Quijote*" em *Ficções* (1944).** O padroeiro de cada metodologia que envolve escrever algo antes de estar qualificado para escrevê-lo.
+- **Jorge Luis [Borges](https://en.wikipedia.org/wiki/Jorge_Luis_Borges), "Pierre Menard, autor del *Quijote*" em *Ficções* (1944).** O padroeiro de cada metodologia que envolve escrever algo antes de estar qualificado para escrevê-lo.
 - **Donald Knuth, "Literate Programming" em *The Computer Journal* (1984).** O argumento mais antigo de que o programa e sua documentação devem ser o mesmo artefato, refatorados juntos. TDR é pesquisa literária nesse sentido.
 - **Bruno Latour, *Ciência em Ação* (1987).** Sobre a construção social de fatos científicos; o capítulo sobre como artigos fabricam em vez de descrevem seus fatos é o que deveria deixar qualquer praticante de TDR levemente nervoso.
 - **Karl Popper, *Conjecturas e Refutações* (1963).** O caso original para escrever afirmações falsificáveis antes de testá-las. TDR é uma pequena implementação dessa postura aplicada ao processo de um único pesquisador.

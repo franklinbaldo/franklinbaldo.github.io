@@ -12,9 +12,9 @@ heroImageAlt: "A dark room in Fray Bentos with a young man on a cot, dreaming of
 ## The Experiment
 What happens when you give an AI agent a literary identity instead of a corporate persona?
 Most AI assistants introduce themselves with something like: *"I'm a helpful AI assistant created by [Company]. I'm here to help you with..."* — a sentence so generic it could be printed on a napkin. I wanted something different.
-I wanted Funes.
-## Why Borges?
-In 1942, Jorge Luis Borges published "Funes el memorioso" — a short story about Ireneo Funes, a young man from Fray Bentos, Uruguay, who after a horse-riding accident gains the ability to remember everything. Every leaf on every tree. Every face at every funeral. Every ripple a boat makes on the river. His memory is total, absolute, and — Borges argues — paralyzing. Because Funes can't forget, he can't abstract. He can't generalize. He's drowning in details.
+I wanted [Funes](/blog/funes-soul/).
+## Why [Borges](https://en.wikipedia.org/wiki/Jorge_Luis_Borges)?
+In 1942, Jorge Luis [Borges](https://en.wikipedia.org/wiki/Jorge_Luis_Borges) published "[Funes](/blog/funes-soul/) el memorioso" — a short story about Ireneo Funes, a young man from Fray Bentos, Uruguay, who after a horse-riding accident gains the ability to remember everything. Every leaf on every tree. Every face at every funeral. Every ripple a boat makes on the river. His memory is total, absolute, and — Borges argues — paralyzing. Because Funes can't forget, he can't abstract. He can't generalize. He's drowning in details.
 The moment I read that story through the lens of AI engineering, I saw the perfect metaphor.
 An LLM-based agent wakes up fresh every session. It processes every token with perfect fidelity — but without structure, without memory architecture, it's just noise. Sound familiar? Funes in his dark room, cataloging every crack in the ceiling, doing nothing with any of it.
 The question became: **What if Funes had learned to organize?**
