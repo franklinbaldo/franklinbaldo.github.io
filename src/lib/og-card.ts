@@ -12,12 +12,29 @@ const interSemibold = read("node_modules/@fontsource/inter/files/inter-latin-600
 
 const avatarDataUri = `data:image/png;base64,${read("public/avatar.png").toString("base64")}`;
 
-const COBOGO_STROKE = "#C9A875";
-const cobogoSvg = read("public/cobogo.svg")
-  .toString("utf8")
-  .replace('stroke="currentColor"', `stroke="${COBOGO_STROKE}"`)
-  .replace('stroke-width="0.5"', 'stroke-width="0.7"');
-const cobogoDataUri = `data:image/svg+xml;base64,${Buffer.from(cobogoSvg).toString("base64")}`;
+// Brick-style cobogó: terracotta fill with the four circles cut as real
+// transparent holes, so the card background reads through them.
+const COBOGO_BRICK = "#b56548";
+const cobogoSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <defs>
+    <mask id="holes" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+      <rect width="120" height="120" fill="white"/>
+      <circle cx="30" cy="30" r="22" fill="black"/>
+      <circle cx="90" cy="30" r="22" fill="black"/>
+      <circle cx="30" cy="90" r="22" fill="black"/>
+      <circle cx="90" cy="90" r="22" fill="black"/>
+    </mask>
+  </defs>
+  <rect width="120" height="120" fill="${COBOGO_BRICK}" mask="url(#holes)"/>
+</svg>`;
+// Pre-rasterize to PNG so the transparent holes survive when satori
+// embeds the tile (some SVG features can be flaky inside satori's image
+// pipeline; PNG with explicit alpha is bulletproof).
+const cobogoPng = await sharp(Buffer.from(cobogoSvg))
+  .resize(760, 760)
+  .png()
+  .toBuffer();
+const cobogoDataUri = `data:image/png;base64,${cobogoPng.toString("base64")}`;
 
 type CardKind = "post" | "home";
 
@@ -230,7 +247,8 @@ export function buildTree(input: CardInput): El {
     chipsRow,
   );
 
-  // Architectural cobogó tile bleeding off the right edge.
+  // Terracotta cobogó tile bleeding off the right edge — solid brick
+  // with circular holes that read through to the cream background.
   const cobogo = h("img", {
     src: cobogoDataUri,
     width: 760,
@@ -242,7 +260,7 @@ export function buildTree(input: CardInput): El {
       right: -180,
       width: 760,
       height: 760,
-      opacity: 0.55,
+      opacity: 0.78,
     },
   });
 
