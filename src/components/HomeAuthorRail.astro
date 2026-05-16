@@ -11,17 +11,8 @@ const homeSearch = `${urlPrefix(lang)}/search/`;
 ---
 
 <aside class="home-author-rail" aria-label={t(lang, 'author.aboutEyebrow')}>
-  <div class="rail-avatar" data-tooltip="Franklin Baldo" data-placement="bottom" aria-hidden="true">
-    <svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="1.2">
-      <circle cx="48" cy="48" r="46" />
-      <circle cx="48" cy="48" r="38" />
-      <text x="48" y="56" text-anchor="middle"
-            font-family="Fraunces, serif"
-            font-size="28"
-            font-weight="600"
-            fill="currentColor"
-            stroke="none">FB</text>
-    </svg>
+  <div class="rail-avatar" data-tooltip="Franklin Baldo" data-placement="bottom">
+    <img src="/avatar.png" alt="Franklin Baldo" width="96" height="96" loading="lazy" decoding="async" />
   </div>
 
   <p class="rail-eyebrow"><small>{t(lang, 'author.aboutEyebrow')}</small></p>
@@ -66,10 +57,12 @@ const homeSearch = `${urlPrefix(lang)}/search/`;
     margin-bottom: 1rem;
     color: var(--pico-primary);
   }
-  .rail-avatar svg {
+  .rail-avatar img {
     width: 100%;
     height: 100%;
     display: block;
+    border-radius: 50%;
+    object-fit: cover;
   }
   .rail-eyebrow {
     margin: 0 0 .35rem;

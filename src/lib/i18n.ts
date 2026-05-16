@@ -41,6 +41,9 @@ const UI_KEYS = [
   'related.heading',
   'toc.label',
   'lang.switchAria',
+  'og.siteEyebrow',
+  'og.siteDescription',
+  'og.qrHint',
 ] as const;
 
 export type UIKey = (typeof UI_KEYS)[number];
@@ -119,6 +122,9 @@ export const LANGUAGES: Record<string, LangConfig> = {
       'related.heading': 'Related posts',
       'toc.label': 'Contents',
       'lang.switchAria': 'Switch language',
+      'og.siteEyebrow': "Franklin Baldo's Digital Garden",
+      'og.siteDescription': 'Essays on AI agency, process metaphysics, and the architecture of legal systems.',
+      'og.qrHint': 'Scan to read',
     },
     targets: {
       pt: {
@@ -173,6 +179,9 @@ export const LANGUAGES: Record<string, LangConfig> = {
       'related.heading': 'Posts relacionados',
       'toc.label': 'Conteúdo',
       'lang.switchAria': 'Alterar idioma',
+      'og.siteEyebrow': 'Jardim Digital de Franklin Baldo',
+      'og.siteDescription': 'Ensaios sobre agentes de IA, metafísica do processo e a arquitetura dos sistemas jurídicos.',
+      'og.qrHint': 'Aponte para ler',
     },
     targets: {
       en: {

@@ -17,6 +17,10 @@ const blog = defineCollection({
     seriesOrder: z.number().optional(),
     featured: z.boolean().optional(),
     featuredReason: z.string().optional(),
+    /** Single emoji that represents the post — used to steer the AI
+     *  prompt for the social-card QR code and as the centerpiece in
+     *  the fallback plain QR. */
+    emoji: z.string().optional(),
   }),
 });
 
