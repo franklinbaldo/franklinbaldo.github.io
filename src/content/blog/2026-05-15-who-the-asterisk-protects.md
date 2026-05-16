@@ -74,7 +74,7 @@ Dona Maria lives next to a civil servant who retired for permanent disability la
 
 The spine question of the whole post fits in one sentence: which of the two does the anonymization work against?
 
-Against Dona Maria. Robson doesn't even know she exists.
+Against Dona Maria. For Robson, an asterisk is *challenge accepted*.
 
 <figure class="meme">
   <img src="https://api.memegen.link/images/drake/publish_the_full_CPF/publish_full_name_and_chopped_CPF.png?width=500" alt="Drake meme: rejecting 'publish the full CPF' and approving 'publish full name and chopped CPF'"/>
