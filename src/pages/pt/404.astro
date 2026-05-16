@@ -1,0 +1,55 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "../../layouts/PageLayout.astro";
+
+const recent = (await getCollection("blog"))
+  .filter((p) => !p.data.draft && (p.data.lang ?? 'en') === 'pt')
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 5);
+---
+
+<PageLayout
+  title="Não encontrado | Franklin Baldo"
+  description="Página não encontrada."
+  lang="pt"
+  translations={{ en: "/404/" }}
+>
+  <hgroup>
+    <h1>404</h1>
+    <p>Essa página não existe — ou foi podada do jardim.</p>
+  </hgroup>
+
+  <section aria-labelledby="search-heading">
+    <h2 id="search-heading">Buscar</h2>
+    <search>
+      <pagefind-searchbox></pagefind-searchbox>
+    </search>
+  </section>
+
+  <nav aria-label="Publicados recentemente">
+    <h2>Publicados recentemente</h2>
+    <ul>
+      {recent.map((post) => (
+        <li>
+          <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+          {' — '}
+          <small>
+            <time datetime={post.data.date.toISOString()}>
+              {post.data.date.toLocaleDateString("pt-BR", { month: "short", day: "2-digit", year: "numeric" })}
+            </time>
+          </small>
+        </li>
+      ))}
+    </ul>
+  </nav>
+
+  <nav aria-label="Outras páginas">
+    <p>
+      Ou tente a <a href="/pt/">página inicial</a>, o <a href="/pt/archive/">arquivo</a>,
+      ou navegue por <a href="/pt/tags/">tag</a>.
+    </p>
+  </nav>
+
+  <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
+  <script is:inline type="module" src="/pagefind/pagefind-component-ui.js"></script>
+</PageLayout>

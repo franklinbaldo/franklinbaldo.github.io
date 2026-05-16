@@ -1,0 +1,94 @@
+---
+import PageLayout from "../layouts/PageLayout.astro";
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Who is Franklin Baldo?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Franklin Baldo is a lawyer and State Attorney (Procurador do Estado) in Brazil, exploring AI agents, process metaphysics, and legal design.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What topics does this blog cover?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Essays on AI agency, process metaphysics, and the architecture of legal systems. Also explores family memory and tools for thought.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is the Harness?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The Harness is a conceptual framework for AI agents, alignment, and the language we use to constrain machine behavior.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is this blog available in Portuguese?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Most posts are in English, but key essays have Portuguese versions. The Portuguese version of the blog is at franklinbaldo.github.io/pt/.",
+      },
+    },
+  ],
+};
+---
+
+<PageLayout
+  title="About | Franklin Baldo"
+  description="Lawyer, State Attorney, and digital gardener — exploring AI agency, process metaphysics, and legal design."
+  lang="en"
+  translations={{ pt: "/pt/about/" }}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} is:inline slot="head" />
+  <article data-pagefind-body>
+    <h1>About</h1>
+
+    <p>
+      I am a <strong>lawyer and State Attorney</strong> (<em>Procurador do Estado</em>) in Brazil,
+      exploring the boundaries of AI agents, process metaphysics, and legal design.
+      I build small tools for thought, transparency, and family memory.
+    </p>
+
+    <h2>What lives here</h2>
+
+    <p>
+      This space is a digital garden — a slow accumulation of essays, technical
+      guides, and philosophical fragments on how we inhabit a world increasingly
+      mediated by intelligence. A few recurring threads:
+    </p>
+
+    <ul>
+      <li><strong>The Harness</strong> — agents, alignment, and the language we build cages with.</li>
+      <li><strong>Process</strong> — Whitehead, Heraclitus, and computation as becoming.</li>
+      <li><strong>Legal design</strong> — public law in the age of probabilistic systems.</li>
+      <li><strong>Family memory</strong> — what it means to archive a life with help from a machine.</li>
+    </ul>
+
+    <p>Most posts are in English; some are in Portuguese.</p>
+
+    <h2>Find me</h2>
+
+    <ul>
+      <li>GitHub — <a href="https://github.com/franklinbaldo" rel="me">github.com/franklinbaldo</a></li>
+      <li>Twitter / X — <a href="https://twitter.com/franklinbaldo" rel="me">twitter.com/franklinbaldo</a></li>
+      <li>RSS — <a href="/rss.xml">/rss.xml</a></li>
+    </ul>
+
+    <h2>Colophon</h2>
+
+    <p>
+      Built with <a href="https://astro.build/">Astro</a> and vanilla <a href="https://picocss.com/">Pico.css</a> —
+      no JS framework, system fonts. Search is powered by
+      <a href="https://pagefind.app/">Pagefind</a>. The source lives at
+      <a href="https://github.com/franklinbaldo/franklinbaldo.github.io">franklinbaldo/franklinbaldo.github.io</a>.
+    </p>
+  </article>
+</PageLayout>
