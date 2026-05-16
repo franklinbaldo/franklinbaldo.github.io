@@ -45,21 +45,13 @@ const PALETTE = {
 const SUB_BY_LANG = { en: "Digital Garden", pt: "Jardim Digital" } as const;
 const DOMAIN = "franklinbaldo.github.io";
 
-const TITLE_HARD_CAP = 70;
-
-function truncate(s: string, max: number): string {
-  return s.length > max ? s.slice(0, max - 1).trimEnd() + "…" : s;
-}
-
-// Title size + description budget scale together. Long titles eat into the
-// description's vertical budget so they don't collide with the chip row.
-function fitTypography(title: string): { titleSize: number; descCap: number } {
+function fitTitleSize(title: string): number {
   const n = title.length;
-  if (n <= 14) return { titleSize: 96, descCap: 160 }; // 1 line
-  if (n <= 22) return { titleSize: 80, descCap: 160 }; // 1 line
-  if (n <= 36) return { titleSize: 64, descCap: 150 }; // 1–2 lines
-  if (n <= 52) return { titleSize: 52, descCap: 130 }; // 2 lines
-  return { titleSize: 44, descCap: 90 }; // 2–3 lines
+  if (n <= 18) return 72;
+  if (n <= 28) return 60;
+  if (n <= 44) return 50;
+  if (n <= 64) return 42;
+  return 36;
 }
 
 type El = { type: string; props: Record<string, unknown> };
@@ -69,10 +61,8 @@ const h = (type: string, props: Record<string, unknown> = {}, ...children: unkno
 });
 
 function buildTree(input: CardInput): El {
-  const { title: rawTitle, description: rawDesc, tags = [], lang = "en", kind = "post" } = input;
-  const title = truncate(rawTitle, TITLE_HARD_CAP);
-  const { titleSize, descCap } = fitTypography(title);
-  const description = rawDesc ? truncate(rawDesc, descCap) : undefined;
+  const { title, description, tags = [], lang = "en", kind = "post" } = input;
+  const titleSize = fitTitleSize(title);
   const showChips = tags.length > 0;
 
   const eyebrow = h(
