@@ -141,6 +141,71 @@ body::before {
   word-break: break-word;
 }
 
+/*
+ * Figures inside posts. Markdown authors use a few semantic classes:
+ *   - .svg-illustration: inline editorial diagrams (SVGs that inherit
+ *     currentColor so they follow the theme).
+ *   - .meme: third-party meme images (memegen.link etc).
+ *   - bare <figure> blocks should also have sane spacing/centering.
+ * Without these rules figures rendered as flush-left blocks with no caption
+ * styling, no breathing room around them, and no max-width on memes.
+ */
+.post-body figure {
+  margin: 2.25rem auto;
+  text-align: center;
+}
+.post-body figure > img,
+.post-body figure > svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
+.post-body figcaption {
+  margin-top: 0.6rem;
+  font-family: var(--pico-font-family-serif);
+  font-size: 0.88rem;
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--pico-muted-color);
+  max-width: 36rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+.post-body figure.svg-illustration {
+  padding: 1rem 0;
+}
+.post-body figure.svg-illustration > svg {
+  width: 100%;
+  max-width: 640px;
+  color: var(--pico-color);
+}
+.post-body figure.meme > img {
+  max-width: min(100%, 480px);
+  border-radius: 4px;
+  box-shadow: 0 1px 0 var(--pico-muted-border-color),
+              0 12px 24px -18px rgba(42, 36, 29, 0.25);
+}
+
+/*
+ * Pull-quote: a visually distinct in-article quote used to highlight a
+ * canonical passage (e.g. a statute being analyzed). Without this rule it
+ * was indistinguishable from a regular Pico blockquote.
+ */
+.post-body blockquote.pull-quote {
+  margin: 2rem auto;
+  padding: 1.25rem 1.5rem;
+  max-width: 38rem;
+  border-left: 3px solid var(--pico-primary);
+  background: var(--pico-card-sectioning-background-color);
+  font-family: var(--pico-font-family-serif);
+  font-size: 1.05rem;
+  line-height: 1.55;
+  font-style: normal;
+  color: var(--pico-color);
+}
+.post-body blockquote.pull-quote > p:last-child { margin-bottom: 0; }
+
 .skip-link {
   position: absolute;
   left: -9999px;

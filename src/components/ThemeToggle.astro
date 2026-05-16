@@ -11,32 +11,56 @@
 
 <script is:inline>
   (() => {
-    const input = document.querySelector('input[data-theme-toggle]');
-    if (!input) return;
-    const label = input.closest('label');
-    const icon = label && label.querySelector('[data-icon]');
+    if (window.__themeToggleInit) {
+      // Re-sync existing inputs after a view transition swapped the DOM.
+      window.__themeToggleSync && window.__themeToggleSync();
+      return;
+    }
+    window.__themeToggleInit = true;
     const root = document.documentElement;
+
+    const currentTheme = () =>
+      localStorage.getItem('theme') ||
+      root.dataset.theme ||
+      (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 
     const apply = (t) => {
       root.dataset.theme = t;
-      input.checked = t === 'dark';
-      if (icon) icon.textContent = t === 'dark' ? '☀️' : '🌑';
-      if (label) label.setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      document.querySelectorAll('input[data-theme-toggle]').forEach((input) => {
+        input.checked = t === 'dark';
+        const label = input.closest('label');
+        const icon = label && label.querySelector('[data-icon]');
+        if (icon) icon.textContent = t === 'dark' ? '☀️' : '🌑';
+        if (label)
+          label.setAttribute(
+            'aria-label',
+            t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
+          );
+      });
     };
 
-    const stored = localStorage.getItem('theme');
-    apply(stored ?? root.dataset.theme ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+    const bind = () => {
+      document.querySelectorAll('input[data-theme-toggle]').forEach((input) => {
+        if (input.dataset.themeBound === 'true') return;
+        input.dataset.themeBound = 'true';
+        input.addEventListener('change', () => {
+          const next = input.checked ? 'dark' : 'light';
+          localStorage.setItem('theme', next);
+          apply(next);
+        });
+      });
+      apply(currentTheme());
+    };
+
+    window.__themeToggleSync = bind;
 
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
       if (localStorage.getItem('theme')) return;
       apply(e.matches ? 'dark' : 'light');
     });
 
-    input.addEventListener('change', () => {
-      const next = input.checked ? 'dark' : 'light';
-      localStorage.setItem('theme', next);
-      apply(next);
-    });
+    bind();
+    document.addEventListener('astro:page-load', bind);
   })();
 </script>
 
