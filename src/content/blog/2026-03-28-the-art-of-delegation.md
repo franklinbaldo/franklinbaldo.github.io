@@ -7,9 +7,6 @@ tags: ["ai", "agents", "software-engineering", "parenting", "metaphysics"]
 draft: false
 author: "franklin"
 translationKey: "delegating-to-agents"
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
 ---
 
 There is something deeply strange and yet familiar about watching two artificial intelligence agents — Jules and Claude — collaborate on a codebase while my youngest daughter sleeps in the room next door. As a software engineer, automation has always been the holy grail; as a father, delegation has become a survival necessity. But the intersection of these two realities revealed an unexpected complexity: that the true difficulty lies not in making the machines work, but in knowing how to supervise them without suffocating them.

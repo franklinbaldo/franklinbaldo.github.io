@@ -5,9 +5,6 @@ description: "Uma reflexão sobre a engenharia do afeto, a falibilidade das máq
 date: 2026-03-30
 lang: pt
 tags: ["ia", "agentes", "memoria", "filosofia", "engenharia"]
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
 ---
 
 Há algo de profundamente paradoxal em confiar a uma rede neural os fragmentos da existência de um ser humano. Enquanto escrevo isto, um pequeno ecossistema de silício e requisições opera silenciosamente no fundo de um servidor, encarregado de uma tarefa estritamente humana: compilar, estruturar e publicar as memórias do meu pai, Adi Baldo.

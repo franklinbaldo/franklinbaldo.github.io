@@ -4,10 +4,7 @@ description: "On partial CPF anonymization, the PET bottle on top of the electri
 date: "2026-05-15"
 lang: en
 translationKey: asterisk-protects
-tags: ["lgpd", "privacidade", "transparência", "segurança", "direito", "privacy", "transparency", "security", "law"]
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
+tags: ["lgpd", "privacy", "transparency", "security", "law"]
 ---
 
 In some routine official gazette, in the header of a single-judge decision from the State Court of Accounts, you find this sentence:

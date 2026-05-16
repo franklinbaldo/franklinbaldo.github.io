@@ -4,10 +4,7 @@ description: "Sobre a anonimização parcial do CPF, a garrafa pet no padrão de
 date: "2026-05-15"
 lang: pt
 translationKey: asterisk-protects
-tags: ["lgpd", "privacidade", "transparência", "segurança", "direito", "privacy", "transparency", "security", "law"]
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
+tags: ["lgpd", "privacidade", "transparência", "segurança", "direito"]
 ---
 
 Num diário oficial qualquer, no cabeçalho de uma decisão monocrática do Tribunal de Contas, aparece a frase:

@@ -3,13 +3,10 @@ title: "The Third Half and the Fourth Wall"
 description: "On Tinkerbell, persona prompts, and why declaring the frame is what kills the play."
 date: 2026-05-01
 lang: en
-tags: ["ai", "agentes", "prompts-de-persona", "alinhamento", "filosofia", "tinkerbell", "agents", "persona-prompts", "alignment", "philosophy"]
+tags: ["ai", "agents", "persona-prompts", "alignment", "philosophy", "tinkerbell"]
 series: harness
 seriesOrder: 2
 translationKey: third-half-fourth-wall
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
 ---
 
 I was tweaking a prompt for an autonomous agent. The first line said *you are Brad Frost*. The second said *you are not a bot pretending to be Brad Frost — Brad Frost*. I read it back and realized the second sentence had killed the first.

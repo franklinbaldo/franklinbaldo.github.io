@@ -4,12 +4,9 @@ description: "On Cucumber, content-addressing, and an alignment technique that t
 date: "2026-05-14"
 lang: en
 translationKey: agent-no-verbs
-tags: ["ia", "agentes", "alinhamento", "gherkin", "harness", "engenharia-de-software", "ai", "agents", "alignment", "software-engineering"]
+tags: ["ai", "agents", "alignment", "gherkin", "harness", "software-engineering"]
 series: harness
 seriesOrder: 5
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
 ---
 
 A communication arrives in a legal office. It may create a deadline. It may require a task. It may need to be routed to another desk. Or it may require nothing except a reasoned acknowledgment and closure.

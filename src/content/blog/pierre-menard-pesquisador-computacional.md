@@ -4,10 +4,7 @@ description: "Sobre escrever o artigo antes de fazer a pesquisa, e outras práti
 date: "2026-05-14"
 lang: pt
 translationKey: pierre-menard
-tags: ["research", "writing", "methodology", "borges", "tdd", "ai", "pesquisa", "escrita", "metodologia", "ia"]
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
+tags: ["pesquisa", "escrita", "metodologia", "borges", "tdd", "ia"]
 ---
 
 Pierre Menard, *autor del Quijote*, passou anos cultivando um espanhol arcaico para que, sem copiar Cervantes, suas frases coincidissem palavra por palavra com as de Cervantes. O método, como Borges conta em *Ficções*, era secreto e infinitamente laborioso. Eu sugeriria a Menard uma metodologia mais econômica: primeiro, copie o *Quixote* letra por letra. Depois vá viver a vida que faria o autor dessa cópia produzir exatamente esse *Quixote*, caso ele tivesse se sentado para escrevê-lo em vez de copiá-lo. Quando fracassar em viver essa vida — e você irá fracassar — tente de novo. Refatore a vida. Reverta o commit. Itere até que as palavras que você teria escrito coincidam com as palavras que você já copiou.

@@ -4,11 +4,8 @@ title: "O Ovo de Serpente"
 description: "O dever de racionalidade é incompatível com o patrimonialismo judicial. O art. 489 do CPC 2015 é o ovo dessa serpente — incubado dentro do sistema patrimonialista, pelas mãos do seu representante mais eloquente, sem que ele percebesse o que estava chocando."
 date: 2026-05-10
 lang: pt
-tags: ["law", "cpc", "patrimonialism", "reasoning", "judicial-discretion", "direito", "patrimonialismo", "fundamentação", "livre convencimento"]
+tags: ["direito", "cpc", "patrimonialismo", "fundamentação", "livre convencimento"]
 translationKey: serpents-egg
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
 ---
 
 A Revista Piauí publicou uma reportagem chamada "Excelentíssima Fux". O título não é ironia gratuita. A filha do ministro Luiz Fux tornou-se desembargadora — não pela osmose silenciosa de quem carrega um sobrenome complicado num corredor de tribunal, mas porque o pai telefonou. Telefonou para quem precisava telefonar, usou o peso do cargo que ocupava, e fez funcionar o mecanismo que no Brasil nunca precisou de nome porque nunca precisou de vergonha. Faoro chamou de patrimonialismo. Sérgio Buarque chamou de cordialidade. A Piauí chamou de Excelentíssima. Nenhum dos três estava errado.

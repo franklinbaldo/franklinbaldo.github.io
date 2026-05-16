@@ -5,9 +5,6 @@ date: "2026-05-15"
 lang: en
 translationKey: three-hammers
 tags: ["ai", "alignment", "agents", "law", "brazil", "supply-chain"]
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
 ---
 
 A lawyer, a Brazilian, and a civil servant walk into a bar. The barman has been reading about AI safety on his phone, and without looking up he says: tell me how you would align an AI.

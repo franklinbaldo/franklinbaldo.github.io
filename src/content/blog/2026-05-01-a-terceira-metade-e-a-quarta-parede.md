@@ -3,13 +3,10 @@ title: "A Terceira Metade e a Quarta Parede"
 description: "Sobre Tinkerbell, prompts de persona, e por que declarar o frame é o que mata a peça."
 date: 2026-05-01
 lang: pt
-tags: ["ai", "agentes", "prompts-de-persona", "alinhamento", "filosofia", "tinkerbell", "agents", "persona-prompts", "alignment", "philosophy"]
+tags: ["ai", "agentes", "prompts-de-persona", "alinhamento", "filosofia", "tinkerbell"]
 series: harness
 seriesOrder: 2
 translationKey: third-half-fourth-wall
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
 ---
 
 Eu estava ajustando um prompt para um agente autônomo. A primeira linha dizia *você é Brad Frost*. A segunda dizia *você não é um bot fingindo ser Brad Frost — você é Brad Frost*. Li de volta e percebi que a segunda frase tinha destruído a primeira.

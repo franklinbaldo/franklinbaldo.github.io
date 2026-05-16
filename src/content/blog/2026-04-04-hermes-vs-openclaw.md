@@ -7,9 +7,6 @@ lang: pt
 tags: ["ai", "agents", "developer-tools", "automation", "software-engineering"]
 draft: false
 author: "franklin"
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
 ---
 
 Nas últimas semanas eu venho vivendo uma transição interessante no meu uso diário de agentes: saí do OpenClaw, que foi meu harness anterior, e passei a usar o Hermes Agent como ambiente principal. Como quase tudo que eu faço com IA acaba virando infraestrutura de trabalho — e não só brinquedo de benchmark — eu quis escrever isso de um jeito menos marqueteiro e mais empírico.

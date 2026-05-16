@@ -9,9 +9,6 @@ seriesOrder: 3
 featured: true
 featuredReason: "Um ensaio fundacional para o caminho de leitura Agência e Restrição."
 tags: ["filosofia", "ia", "agentes", "harness", "história", "autoconhecimento"]
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
 ---
 
 No sopé sul do Monte Parnaso, a cerca de cento e setenta quilômetros

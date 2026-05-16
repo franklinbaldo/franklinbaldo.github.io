@@ -4,11 +4,8 @@ title: "The Serpent's Egg"
 description: "The duty of rationality is incompatible with judicial patrimonialism. Article 489 of the Brazilian Civil Procedure Code of 2015 is that serpent's egg — incubated inside the patrimonial system, by the hands of its most eloquent representative, without him realizing what he was hatching."
 date: 2026-05-10
 lang: en
-tags: ["law", "cpc", "patrimonialism", "reasoning", "judicial-discretion", "direito", "patrimonialismo", "fundamentação", "livre convencimento"]
+tags: ["law", "cpc", "patrimonialism", "reasoning", "judicial-discretion"]
 translationKey: serpents-egg
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
 ---
 
 The Brazilian magazine *Piauí* published an article called "Excelentíssima Fux" — "His Excellency Fux," with a feminine twist. The title is not gratuitous irony. The daughter of Supreme Court Justice Luiz Fux became an appellate judge — not through the silent osmosis of someone carrying a complicated surname in a courthouse hallway, but because her father called. He called whoever needed to be called, used the weight of his office, and made the mechanism work — the one that in Brazil never needed a name because it never needed shame. Faoro called it patrimonialism. Sérgio Buarque called it *cordiality*. *Piauí* called it His Excellency. None of the three was wrong.

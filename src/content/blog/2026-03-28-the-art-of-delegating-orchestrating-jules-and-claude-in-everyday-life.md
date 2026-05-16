@@ -6,9 +6,6 @@ lang: en
 tags: ["ai", "agents", "software-engineering", "parenting", "metaphysics"]
 draft: false
 author: "franklin"
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
 ---
 There's something deeply strange and yet familiar about watching two artificial intelligence agents—Jules and Claude—collaborate on a codebase while my youngest daughter sleeps in the next room. As a software engineer, automation has always been the holy grail; As a parent, delegation has become a necessity for survival. But the intersection of these two realities revealed an unexpected complexity: that the real difficulty is not in making machines work, but in knowing how to supervise them without suffocating them.
 In my day-to-day ontology, each task I delegate to Jules (generally focused on engineering tasks and rigorous scaffolding) or to Claude (more prone to synthesis and lateral thinking) is not a mere command executed in a vacuum. They are events. And, as a process philosopher would argue, they are *events all the way*. Each prompt is a disturbance in the system, a coded intention that reverberates through latent space until returned as code, text, or architecture.

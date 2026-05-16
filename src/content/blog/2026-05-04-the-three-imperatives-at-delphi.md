@@ -1,6 +1,5 @@
 ---
 title: "The Three Imperatives at Delphi"
-tags: ["filosofia", "ia", "agentes", "harness", "história", "autoconhecimento"]
 description: "On the temple that demanded self-knowledge, the philosopher who took it literally, and the letter at the entrance that nobody could read."
 date: "2026-05-04"
 lang: en
@@ -9,9 +8,6 @@ series: harness
 seriesOrder: 3
 featured: true
 featuredReason: "A foundational essay for the Agency and Constraint reading path."
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
-
 ---
 
 On the southern slope of Mount Parnassus, about a hundred and ten miles
