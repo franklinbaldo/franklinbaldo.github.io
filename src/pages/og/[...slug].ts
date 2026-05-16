@@ -16,6 +16,9 @@ pages["_site"] = {
   },
 };
 
+const FRAUNCES_700 = "https://cdn.jsdelivr.net/fontsource/fonts/fraunces@latest/latin-700-normal.ttf";
+const FRAUNCES_400 = "https://cdn.jsdelivr.net/fontsource/fonts/fraunces@latest/latin-400-normal.ttf";
+
 const route = await OGImageRoute({
   param: "slug",
   pages,
@@ -23,15 +26,28 @@ const route = await OGImageRoute({
     title: post.data.title,
     description: post.data.description,
     bgGradient: [
-      [253, 252, 251],
-      [238, 238, 238],
+      [248, 235, 213],
+      [228, 205, 175],
     ],
-    border: { color: [26, 26, 26], width: 8, side: "inline-start" },
-    padding: 80,
+    padding: 96,
     font: {
-      title: { weight: "Bold", size: 64, color: [17, 17, 17] },
-      description: { size: 32, color: [102, 102, 102], lineHeight: 1.4 },
+      title: {
+        families: ["Fraunces"],
+        weight: "Bold",
+        size: 84,
+        color: [74, 53, 32],
+        lineHeight: 1.1,
+      },
+      description: {
+        families: ["Fraunces"],
+        weight: "Normal",
+        size: 36,
+        color: [124, 95, 67],
+        lineHeight: 1.4,
+      },
     },
+    fonts: [FRAUNCES_700, FRAUNCES_400],
+    quality: 90,
   }),
 });
 
