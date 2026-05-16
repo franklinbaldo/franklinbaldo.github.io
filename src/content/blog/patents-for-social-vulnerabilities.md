@@ -3,6 +3,7 @@ author: scottalexander
 date: 2024-07-12
 lang: en
 title: "Patents For Social Vulnerabilities: A Modest Proposal For Turning Criminals Into Consultants"
+translationKey: social-vulnerabilities
 description: "A proposal for a patent-like system for social engineering techniques to incentivize disclosure and defense."
 tags: ["security", "social engineering", "policy", "patents", "economics"]
 heroImage: ./images/patents-for-social-vulnerabilities-cover.png

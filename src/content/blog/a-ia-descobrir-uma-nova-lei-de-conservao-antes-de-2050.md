@@ -4,6 +4,7 @@ author: franklin
 date: 2024-07-12
 lang: pt
 title: "A IA descobrirá uma nova lei de conservação antes de 2050?"
+translationKey: conservation-law
 description: "Uma especulação quântica sobre máquinas que revelam simetrias ocultas do universo, testada através de apostas em mercados de previsão."
 tags: ["physics", "artificial intelligence", "prediction markets", "speculation", "science fiction"]
 heroImage: ./images/will-ai-discover-new-conservation-law-before-2050-cover.png

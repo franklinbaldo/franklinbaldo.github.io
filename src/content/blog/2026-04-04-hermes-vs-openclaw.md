@@ -1,5 +1,6 @@
 ---
 title: "Hermes Agent vs OpenClaw: por que minha experiência ficou muito melhor"
+translationKey: hermes-agent-vs-openclaw-why-my-experience-got-so-much-better
 description: "Um relato honesto, baseado nas minhas próprias sessões, sobre o salto de UX entre o antigo harness OpenClaw e o Hermes Agent."
 date: "2026-04-04"
 lang: pt

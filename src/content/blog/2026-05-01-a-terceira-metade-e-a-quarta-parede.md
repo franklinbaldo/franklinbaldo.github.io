@@ -3,7 +3,7 @@ title: "A Terceira Metade e a Quarta Parede"
 description: "Sobre Tinkerbell, prompts de persona, e por que declarar o frame é o que mata a peça."
 date: 2026-05-01
 lang: pt
-tags: [ai, agentes, prompts-de-persona, alinhamento, filosofia, tinkerbell]
+tags: ["ai", "agentes", "prompts-de-persona", "alinhamento", "filosofia", "tinkerbell"]
 series: harness
 seriesOrder: 2
 translationKey: third-half-fourth-wall

@@ -1,5 +1,4 @@
 ---
-
 title: "The Art of Delegating: Orchestrating Jules and Claude in Everyday Life"
 description: "Reflections from a software engineer and father on how to delegate tasks to AI agents while keeping the reins of human supervision."
 date: "2026-03-28"

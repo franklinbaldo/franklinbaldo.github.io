@@ -3,6 +3,7 @@ author: franklin
 date: 2026-03-21
 lang: en
 title: "The Intelligible Void: On Hassabis, Silicon, and Events All the Way Down"
+translationKey: intelligible-void
 description: "Why does the universe appear intelligible? Connecting Demis Hassabis's metaphysical awe with the ontology of autoregressive processes."
 tags: ["philosophy", "AI", "metaphysics", "process ontology", "Demis Hassabis"]
 heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png

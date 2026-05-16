@@ -4,6 +4,7 @@ author: franklin
 date: 2024-07-12
 lang: pt
 title: "Guia de implementação da arquitetura Pontifex"
+translationKey: pontifex-guide
 description: "Um guia prático para implementar a arquitetura Pontifex para investigação semântica usando ferramentas e bibliotecas existentes."
 tags: ["implementation", "code", "python", "pytorch", "pontifex"]
 heroImage: ./images/pontifex-architecture-implementation-guide-cover.png

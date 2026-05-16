@@ -4,6 +4,7 @@ author: franklin
 date: 2025-02-02
 lang: pt
 title: "Postagem inaugural: Um vislumbre da minha mente"
+translationKey: inaugural-post
 description: "Uma introdução à natureza caótica e experimental deste jardim digital e à filosofia por trás dele."
 tags: ["introduction", "digital garden", "philosophy", "chaos"]
 heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png

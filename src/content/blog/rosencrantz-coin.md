@@ -1,5 +1,6 @@
 ---
 title: "Rosencrantz Coin: Testing Whether LLMs Respect Probability"
+translationKey: rosencrantz-coin
 description: "A research project that turns partially revealed Minesweeper boards into exact probability tests for language models, across three experimental universes and four narrative framings."
 date: 2026-03-17
 lang: en

@@ -3,6 +3,7 @@ author: franklin
 date: 2026-03-21
 lang: en
 title: "We Are All Becoming Lobsters"
+translationKey: we-are-all-becoming-lobsters
 description: "On transformation, hyperstition, and the machinery of gradual replacement. Drawing connections between Kafka, Lanthimos, and the agentic present."
 tags: ["transformation", "AI agents", "hyperstition", "Kafka", "culture", "digital future"]
 ---

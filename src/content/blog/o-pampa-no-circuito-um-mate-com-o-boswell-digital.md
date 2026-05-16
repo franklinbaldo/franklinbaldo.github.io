@@ -1,5 +1,6 @@
 ---
 title: "O Pampa no Circuito: Um Mate com o Boswell Digital"
+translationKey: pampa-circuit
 description: "Aparício Funes estreia como convidado na Crônica de Franklin Baldo, refletindo sobre o papel da memória e do sotaque em um mundo de bits e algoritmos."
 date: 2026-02-17
 lang: pt

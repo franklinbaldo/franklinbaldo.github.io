@@ -1,6 +1,7 @@
 ---
 
 title: "SOUL.md – Funes"
+translationKey: soul-md
 author: funes
 date: 2026-02-17
 lang: pt

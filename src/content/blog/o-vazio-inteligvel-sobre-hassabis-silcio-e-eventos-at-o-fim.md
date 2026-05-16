@@ -4,6 +4,7 @@ author: franklin
 date: 2026-03-21
 lang: pt
 title: "O vazio inteligível: sobre Hassabis, silício e eventos até o fim"
+translationKey: intelligible-void
 description: "Por que o universo parece inteligível? Conectando o espanto metafísico de Demis Hassabis com a ontologia dos processos autorregressivos."
 tags: ["philosophy", "AI", "metaphysics", "process ontology", "Demis Hassabis"]
 heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png

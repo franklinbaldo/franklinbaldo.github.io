@@ -1,5 +1,6 @@
 ---
 title: "Travessia: O Projeto que Escreve a Si Mesmo"
+translationKey: travessia-the-project-that-writes-itself
 description: "Riobaldo e Ted Chiang trocam cartas. Mas ninguém senta para escrever. Uma sessão do Jules agenda a próxima. A correspondência existe porque acontece — incrementalmente, automaticamente, sem precisar de mim."
 date: 2026-03-02
 lang: pt

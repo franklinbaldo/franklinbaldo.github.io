@@ -1,6 +1,7 @@
 ---
 
 title: "Everything is a Process: 5 Lessons We Should Have Learned 2,500 Years Ago"
+translationKey: everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago
 description: "Twenty-five centuries ago, four voices from opposite corners of the world converged on the same intuition: process precedes substance. The river is more real than the bank."
 date: 2026-02-26
 lang: en

@@ -4,6 +4,7 @@ author: franklin
 date: 2024-07-12
 lang: pt
 title: "Pontifex: uma nova arquitetura para investigação semântica"
+translationKey: pontifex-research
 description: "Apresentando Pontifex: uma nova arquitetura para sondagem semântica que unifica a oclusão em nível de byte com comparação semântica bilateral em vários espaços de incorporação."
 tags: ["artificial intelligence", "research", "interpretability", "semantic probing"]
 heroImage: ./images/pontifex-novel-architecture-semantic-probing-cover.png
