@@ -18,6 +18,9 @@ export const GET: APIRoute = async ({ props }) => {
   const png = await renderOgCard({
     title: post.data.title,
     description: post.data.description,
+    tags: post.data.tags ?? [],
+    lang: (post.data.lang as "en" | "pt" | undefined) ?? "en",
+    kind: "post",
   });
   return new Response(new Uint8Array(png), {
     headers: { "Content-Type": "image/png" },

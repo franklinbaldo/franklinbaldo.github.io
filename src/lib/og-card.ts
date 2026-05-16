@@ -23,9 +23,14 @@ const cobogoSvg = read("public/cobogo.svg")
   .replace('stroke-width="0.5"', 'stroke-width="0.7"');
 const cobogoDataUri = `data:image/svg+xml;base64,${Buffer.from(cobogoSvg).toString("base64")}`;
 
+type CardKind = "post" | "home";
+
 export interface CardInput {
   title: string;
   description?: string;
+  tags?: string[];
+  lang?: "en" | "pt";
+  kind?: CardKind;
 }
 
 const PALETTE = {
@@ -45,15 +50,15 @@ function truncate(s: string, max: number): string {
   return s.length > max ? s.slice(0, max - 1).trimEnd() + "…" : s;
 }
 
-// Title size + description budget scale together. Without chips we have more
-// vertical room, so titles can grow noticeably bigger.
+// Title size + description budget scale together. Long titles eat into the
+// description's vertical budget so they don't collide with the chip row.
 function fitTypography(title: string): { titleSize: number; descCap: number } {
   const n = title.length;
-  if (n <= 14) return { titleSize: 112, descCap: 180 };
-  if (n <= 22) return { titleSize: 96, descCap: 180 };
-  if (n <= 36) return { titleSize: 76, descCap: 170 };
-  if (n <= 52) return { titleSize: 62, descCap: 150 };
-  return { titleSize: 52, descCap: 120 };
+  if (n <= 14) return { titleSize: 96, descCap: 160 }; // 1 line
+  if (n <= 22) return { titleSize: 80, descCap: 160 }; // 1 line
+  if (n <= 36) return { titleSize: 64, descCap: 150 }; // 1–2 lines
+  if (n <= 52) return { titleSize: 52, descCap: 130 }; // 2 lines
+  return { titleSize: 44, descCap: 90 }; // 2–3 lines
 }
 
 type El = { type: string; props: Record<string, unknown> };
@@ -63,10 +68,11 @@ const h = (type: string, props: Record<string, unknown> = {}, ...children: unkno
 });
 
 function buildTree(input: CardInput): El {
-  const { title: rawTitle, description: rawDesc } = input;
+  const { title: rawTitle, description: rawDesc, tags = [], lang = "en", kind = "post" } = input;
   const title = truncate(rawTitle, TITLE_HARD_CAP);
   const { titleSize, descCap } = fitTypography(title);
   const description = rawDesc ? truncate(rawDesc, descCap) : undefined;
+  const showChips = tags.length > 0;
 
   const eyebrow = h(
     "div",
@@ -128,7 +134,7 @@ function buildTree(input: CardInput): El {
         lineHeight: 1.05,
         color: PALETTE.ink,
         marginTop: 44,
-        maxWidth: 1040,
+        maxWidth: 760,
       },
     },
     title
@@ -146,12 +152,48 @@ function buildTree(input: CardInput): El {
             lineHeight: 1.35,
             color: PALETTE.inkSoft,
             marginTop: 18,
-            maxWidth: 1040,
+            maxWidth: 760,
           },
         },
         description
       )
     : null;
+
+  const chipsRow = h(
+    "div",
+    {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        marginTop: "auto",
+      },
+    },
+    ...(showChips
+      ? tags.slice(0, 3).map((tag) =>
+          h(
+            "div",
+            {
+              style: {
+                display: "flex",
+                alignItems: "center",
+                paddingLeft: 18,
+                paddingRight: 18,
+                paddingTop: 8,
+                paddingBottom: 8,
+                borderRadius: 21,
+                background: PALETTE.accent,
+                color: "#fff",
+                fontFamily: "Inter",
+                fontWeight: 600,
+                fontSize: 20,
+              },
+            },
+            tag
+          )
+        )
+      : [])
+  );
 
   const contentColumn = h(
     "div",
@@ -171,7 +213,8 @@ function buildTree(input: CardInput): El {
     },
     eyebrow,
     titleEl,
-    ...(descEl ? [descEl] : [])
+    ...(descEl ? [descEl] : []),
+    chipsRow
   );
 
   const cobogo = h("img", {
@@ -184,7 +227,7 @@ function buildTree(input: CardInput): El {
       right: -180,
       width: 760,
       height: 760,
-      opacity: 0.38,
+      opacity: 0.55,
     },
   });
 
