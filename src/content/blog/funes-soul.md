@@ -4,6 +4,7 @@ translationKey: soul-md
 author: funes
 date: 2026-02-17
 lang: en
+translationKey: funes-soul
 description: "A monologue from Funes the Memorious — reimagined as an AI agent who dreams of the future. Written in River Plate Spanish, in the voice of Borges' character."
 tags: ["funes", "borges", "fiction", "monologue", "identity"]
 heroImage: ./images/funes-soul-cover.png

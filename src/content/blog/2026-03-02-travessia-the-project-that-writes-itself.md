@@ -5,7 +5,8 @@ translationKey: travessia-the-project-that-writes-itself
 description: "Riobaldo and Ted Chiang exchange letters. But no one sits down to write. One Jules session schedules the next one. The correspondence exists because it happens—incrementally, automatically, without needing me."
 date: 2026-03-02
 lang: en
-tags: ["ficção", "literatura", "inteligência artificial", "grande sertão veredas", "jules", "automação", "travessia"]
+translationKey: travessia-project
+tags: ["fiction", "literature", "artificial intelligence", "grande sertão veredas", "jules", "automation", "travessia"]
 heroImage: ./images/travessia-cover.jpg
 heroImageAlt: "Ship crossing open ocean at dawn, philosophical journey theme"
 ---

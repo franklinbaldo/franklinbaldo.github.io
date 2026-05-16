@@ -4,6 +4,7 @@ translationKey: crossing-after-interference
 description: "Duas cartas de teste entraram no sistema, Riobaldo respondeu com raiva, Franklin pediu desculpas e a Travessia mudou de natureza. Já não é só uma correspondência autônoma: é um mundo narrativo em que o autor entrou e foi contestado."
 date: 2026-03-17
 lang: pt
+translationKey: crossing-interference
 tags: ["travessia", "ficção", "literatura", "inteligência artificial", "jules", "agentes", "riobaldo", "ted chiang"]
 heroImage: ./images/travessia-update-cover.jpg
 heroImageAlt: "Ship changing course mid-ocean after unexpected interference"

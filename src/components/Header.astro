@@ -9,18 +9,19 @@ interface Props {
 const { lang = 'en' } = Astro.props;
 
 const prefix = urlPrefix(lang);
-const homeHref    = `${prefix}/`;
-const archiveHref = `${prefix}/archive/`;
-const tagsHref    = `${prefix}/tags/`;
-const searchHref  = `${prefix}/search/`;
-const aboutHref   = `${prefix}/about/`;
+const homeHref     = `${prefix}/`;
+const archiveHref  = `${prefix}/archive/`;
+const tagsHref     = `${prefix}/tags/`;
+const searchHref   = `${prefix}/search/`;
+const aboutHref    = `${prefix}/about/`;
+const projectsHref = `${prefix}/projects/`;
 
 const menuLabel = t(lang, 'nav.menu');
 
 const navLinks = [
   { href: archiveHref,  label: t(lang, 'nav.archive') },
   { href: tagsHref,     label: t(lang, 'nav.tags') },
-  { href: '/projects/', label: t(lang, 'nav.projects') },
+  { href: projectsHref, label: t(lang, 'nav.projects') },
   { href: searchHref,   label: t(lang, 'nav.search') },
   { href: aboutHref,    label: t(lang, 'nav.about') },
 ];

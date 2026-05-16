@@ -4,6 +4,7 @@ translationKey: hermes-agent-vs-openclaw-why-my-experience-got-so-much-better
 description: "An honest account, based on my own sessions, about the UX leap between the old OpenClaw harness and the Hermes Agent."
 date: "2026-04-04"
 lang: en
+translationKey: hermes-vs-openclaw
 tags: ["ai", "agents", "developer-tools", "automation", "software-engineering"]
 draft: false
 author: "franklin"

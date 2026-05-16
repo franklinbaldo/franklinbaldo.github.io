@@ -5,7 +5,8 @@ translationKey: crossing-after-interference
 description: "Two test letters entered the system, Riobaldo responded angrily, Franklin apologized and the Crossing changed its nature. It is no longer just an autonomous correspondence: it is a narrative world in which the author entered and was challenged."
 date: 2026-03-17
 lang: en
-tags: ["travessia", "ficção", "literatura", "inteligência artificial", "jules", "agentes", "riobaldo", "ted chiang"]
+translationKey: crossing-interference
+tags: ["travessia", "fiction", "literature", "artificial intelligence", "jules", "agents", "riobaldo", "ted chiang"]
 heroImage: ./images/travessia-update-cover.jpg
 heroImageAlt: "Ship changing course mid-ocean after unexpected interference"
 ---

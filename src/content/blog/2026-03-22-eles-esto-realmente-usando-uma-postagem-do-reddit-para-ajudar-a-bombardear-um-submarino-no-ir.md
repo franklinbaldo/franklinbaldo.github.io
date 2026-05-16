@@ -5,6 +5,7 @@ translationKey: reddit-submarine
 author: franklin
 date: 2026-03-22
 lang: pt
+translationKey: reddit-submarine-osint
 description: "A internet adora a ideia de que uma postagem casual no Reddit orientou um ataque militar. A realidade é menos sensacional e mais profundamente perturbadora."
 tags: ["osint", "warfare", "technology", "internet culture"]
 heroImage: ./images/reddit-submarine-osint-cover.jpg

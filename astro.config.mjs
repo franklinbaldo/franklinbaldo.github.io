@@ -15,7 +15,39 @@ import { rehypeWrapTables } from './src/lib/rehype-wrap-tables.mjs';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://franklinbaldo.github.io',
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    sitemap({
+      serialize(item) {
+        const base = 'https://franklinbaldo.github.io';
+        const staticPairs = {
+          [base + '/']: base + '/pt/',
+          [base + '/about/']: base + '/pt/about/',
+          [base + '/archive/']: base + '/pt/archive/',
+          [base + '/tags/']: base + '/pt/tags/',
+          [base + '/search/']: base + '/pt/search/',
+          [base + '/projects/']: base + '/pt/projects/',
+        };
+        const ptToEn = Object.fromEntries(
+          Object.entries(staticPairs).map(([en, pt]) => [pt, en])
+        );
+        if (staticPairs[item.url]) {
+          item.links = [
+            { lang: 'en-US', url: item.url },
+            { lang: 'pt-BR', url: staticPairs[item.url] },
+            { lang: 'x-default', url: item.url },
+          ];
+        } else if (ptToEn[item.url]) {
+          item.links = [
+            { lang: 'en-US', url: ptToEn[item.url] },
+            { lang: 'pt-BR', url: item.url },
+            { lang: 'x-default', url: ptToEn[item.url] },
+          ];
+        }
+        return item;
+      },
+    }),
+  ],
   prefetch: {
     defaultStrategy: 'viewport',
   },
