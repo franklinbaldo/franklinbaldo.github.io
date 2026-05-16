@@ -74,7 +74,7 @@ Dona Maria mora ao lado de um servidor que se aposentou por incapacidade permane
 
 A pergunta vértebra do post inteiro cabe numa só frase: contra qual dos dois a anonimização funciona?
 
-Contra a Dona Maria. Robson nem sabe que ela existe.
+Contra a Dona Maria. Para o Robson, asterisco é *challenge accepted*.
 
 <figure class="meme">
   <img src="https://api.memegen.link/images/drake/publicar_o_CPF_inteiro/publicar_nome_completo_e_CPF_picotado.png?width=500" alt="Meme do Drake: rejeitando 'publicar o CPF inteiro' e aprovando 'publicar nome completo e CPF picotado'"/>
