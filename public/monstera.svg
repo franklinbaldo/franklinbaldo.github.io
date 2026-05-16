@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 300" fill="none">
+  <!-- Stylized monstera deliciosa leaf — clean ovate silhouette with
+       the characteristic fenestrations (oblong "windows") along the
+       midrib. A two-tone green keeps it from looking flat. -->
+  <defs>
+    <linearGradient id="leaf" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a6f3a" />
+      <stop offset="1" stop-color="#274d27" />
+    </linearGradient>
+  </defs>
+  <g stroke="#1a3517" stroke-width="2.4" stroke-linejoin="round">
+    <!-- Leaf body: heart-tipped at the petiole, pointed at the apex. -->
+    <path
+      fill="url(#leaf)"
+      d="M110 18
+         C 170 24 200 90 200 168
+         C 200 224 168 270 122 290
+         Q 110 296 98 290
+         C 52 270 20 224 20 168
+         C 20 90 50 24 110 18 Z" />
+    <!-- Central vein -->
+    <path d="M110 26 Q 112 160 116 286" stroke="#1a3517" stroke-width="2.2" />
+    <!-- Side veins -->
+    <path d="M110 60 Q 60 80 30 100" stroke="#1a3517" stroke-width="1.4" opacity="0.7" />
+    <path d="M110 60 Q 160 80 190 100" stroke="#1a3517" stroke-width="1.4" opacity="0.7" />
+    <path d="M110 130 Q 60 150 28 170" stroke="#1a3517" stroke-width="1.4" opacity="0.7" />
+    <path d="M110 130 Q 160 150 192 170" stroke="#1a3517" stroke-width="1.4" opacity="0.7" />
+    <path d="M110 200 Q 70 220 50 244" stroke="#1a3517" stroke-width="1.4" opacity="0.7" />
+    <path d="M110 200 Q 150 220 170 244" stroke="#1a3517" stroke-width="1.4" opacity="0.7" />
+    <!-- Fenestrations -->
+    <ellipse cx="78" cy="110" rx="9" ry="20" fill="#FAF7F2" />
+    <ellipse cx="142" cy="110" rx="9" ry="20" fill="#FAF7F2" />
+    <ellipse cx="72" cy="170" rx="11" ry="24" fill="#FAF7F2" />
+    <ellipse cx="148" cy="170" rx="11" ry="24" fill="#FAF7F2" />
+    <ellipse cx="82" cy="230" rx="8" ry="16" fill="#FAF7F2" />
+    <ellipse cx="138" cy="230" rx="8" ry="16" fill="#FAF7F2" />
+  </g>
+</svg>
