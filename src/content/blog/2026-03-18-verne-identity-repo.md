@@ -4,7 +4,6 @@ date: 2026-03-18
 lang: en
 translationKey: verne-identity-repo
 title: "Verne and the Identity-Repo Pattern: How AI Agents Remember"
-translationKey: verne-identity-repo
 description: "Explaining the Verne project, AI agents, and how the identity-repo architecture allows autonomous entities to maintain continuous memory and context across isolated tasks — while remaining compatible with any cognitive harness."
 tags: ["verne", "ai", "agents", "architecture", "identity-repo", "openclaw"]
 heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
