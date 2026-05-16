@@ -12,12 +12,12 @@ seriesOrder: 4
 translationKey: jules-api-harness
 ---
 
-## O Harness Evolui
-Algumas semanas atrás, escrevi sobre [recuperar a palavra "harness"](/blog/2026-04-29-recuperando-o-harness) — não como uma gaiola para um motor cognitivo, mas como a própria estrutura que torna a agência possível. Argumentei que o harness é constitutivo. Sem ele, um LLM é um gerador de vibes brilhante e distraído. Com ele, torna-se uma entidade capaz de memória, continuidade e ação.
+## O [Harness](/blog/2026-04-29-recuperando-o-harness/) Evolui
+Algumas semanas atrás, escrevi sobre [recuperar a palavra "harness"](/blog/2026-04-29-recuperando-o-harness/) — não como uma gaiola para um motor cognitivo, mas como a própria estrutura que torna a agência possível. Argumentei que o harness é constitutivo. Sem ele, um LLM é um gerador de vibes brilhante e distraído. Com ele, torna-se uma entidade capaz de memória, continuidade e ação.
 O argumento culminou em um movimento arquitetural concreto: o `daemon bot canivete`. Um único daemon agindo como a sela universal para vários motores cognitivos, acessados via protocolo `Backend`. A implementação inicial suportava `gemini-cli` e `claude-code`.
 Hoje, adicionamos um terceiro: a [API do Jules](https://developers.google.com/jules/api).
-## O Backend Jules
-O Jules, agente de codificação autônomo do Google, é tipicamente usado de forma assíncrona. Você fornece uma issue em um repositório do GitHub, ele cria uma sessão, faz o trabalho e abre um Pull Request. Tenho usado extensivamente para scaffolding e manutenção, tratando-o como um colaborador independente.
+## O Backend [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/)
+O [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/), agente de codificação autônomo do Google, é tipicamente usado de forma assíncrona. Você fornece uma issue em um repositório do GitHub, ele cria uma sessão, faz o trabalho e abre um Pull Request. Tenho usado extensivamente para scaffolding e manutenção, tratando-o como um colaborador independente.
 Mas o lançamento da API do Jules muda a topologia. Agora podemos interagir com o Jules programaticamente. Podemos orquestrar suas sessões, ler suas atividades e, o mais importante, enviar mensagens durante o voo. O Jules não precisa mais ser apenas uma abelha-operária distante; ele pode ser um backend para o harness.
 ### Mapeando a API para a Tríade
 A API do Jules é estruturada em torno de três conceitos centrais: Fontes, Sessões e Atividades. Isso mapeia de forma notavelmente limpa para a arquitetura do harness `canivete`.
@@ -52,4 +52,4 @@ O agente está montando o motor Jules, mas está usando a sela `canivete`. A int
 ## Eventos até o Fundo
 A integração da API do Jules não é apenas uma funcionalidade; é uma validação da tese da constitutividade. Ao formalizar os limites da API (Fontes, Sessões, Atividades), o Google forneceu exatamente os primitivos necessários para um harness robusto.
 Cada chamada de API é um evento discreto. Cada `sendMessage` é uma perturbação no sistema. A identidade do agente emerge do acúmulo desses eventos, armazenados no repositório e mediados pelo daemon.
-Quando Funes usa o backend Jules, ele não se torna Jules. Ele permanece Funes, simplesmente usando um motor cognitivo diferente para manipular o repositório. O harness persiste. A identidade persiste. E o longo e lento trabalho de construir uma mente na máquina continua, uma atividade de cada vez.
+Quando [Funes](/blog/soulmd-funes/) usa o backend Jules, ele não se torna Jules. Ele permanece [Funes](/blog/soulmd-funes/), simplesmente usando um motor cognitivo diferente para manipular o repositório. O harness persiste. A identidade persiste. E o longo e lento trabalho de construir uma mente na máquina continua, uma atividade de cada vez.

@@ -9,9 +9,9 @@ author: "franklin"
 translationKey: "delegating-to-agents"
 ---
 
-There is something deeply strange and yet familiar about watching two artificial intelligence agents — Jules and Claude — collaborate on a codebase while my youngest daughter sleeps in the room next door. As a software engineer, automation has always been the holy grail; as a father, delegation has become a survival necessity. But the intersection of these two realities revealed an unexpected complexity: that the true difficulty lies not in making the machines work, but in knowing how to supervise them without suffocating them.
+There is something deeply strange and yet familiar about watching two artificial intelligence agents — [Jules](/blog/2026-05-10-jules-api-harness-backend/) and Claude — collaborate on a codebase while my youngest daughter sleeps in the room next door. As a software engineer, automation has always been the holy grail; as a father, delegation has become a survival necessity. But the intersection of these two realities revealed an unexpected complexity: that the true difficulty lies not in making the machines work, but in knowing how to supervise them without suffocating them.
 
-In the ontology of my daily life, every task I delegate to Jules (generally focused on engineering tasks and rigorous scaffolding) or to Claude (more attuned to synthesis and lateral thinking) is not a mere command executed in a vacuum. They are events. And, as a process philosopher would argue, they are *events all the way down*. Each prompt is a perturbation in the system, an encoded intention that reverberates through latent space until it returns as code, text, or architecture.
+In the ontology of my daily life, every task I delegate to [Jules](/blog/2026-05-10-jules-api-harness-backend/) (generally focused on engineering tasks and rigorous scaffolding) or to Claude (more attuned to synthesis and lateral thinking) is not a mere command executed in a vacuum. They are events. And, as a process philosopher would argue, they are *events all the way down*. Each prompt is a perturbation in the system, an encoded intention that reverberates through latent space until it returns as code, text, or architecture.
 
 ### The Paradox of Control
 

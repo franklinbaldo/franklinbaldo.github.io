@@ -55,7 +55,7 @@ In recent sessions, he used a much more mature combination of tools:
 - `todo` to keep explicit plan
 - browser + snapshot for page inspection when necessary
 This seems like a detail, but in practice it greatly reduces the cognitive cost of automation. Instead of thinking “what improvised command will make this agent survive?”, I can think more about the problem.
-A good example came just when I was investigating CausaGanha. The session was not just superficial. Hermes went to the Internet Archive metadata, counted recent files, compared historical versions of `completed-items.json`, separated “catalog refresh” from “actual backfill advancement”, and then opened Jules sessions with more precise instructions. This is much closer to real operational analysis than a sequence of tools fired at random.
+A good example came just when I was investigating CausaGanha. The session was not just superficial. Hermes went to the Internet Archive metadata, counted recent files, compared historical versions of `completed-items.json`, separated “catalog refresh” from “actual backfill advancement”, and then opened [Jules](/blog/2026-05-10-jules-api-harness-backend/) sessions with more precise instructions. This is much closer to real operational analysis than a sequence of tools fired at random.
 In OpenClaw, I often felt that the agent was able to execute commands. In Hermes, I feel more often than not that he can conduct an investigation.
 ## Context and continuity
 Another big gain is continuity.
@@ -73,7 +73,7 @@ The Hermes gives me another feeling: more of a factory floor. Less juggling. Les
 Even when it goes wrong, it usually goes wrong in a diagnosable way. And that, in daily use, is worth its weight in gold.
 ## Where OpenClaw Still Had Merit
 It would be unfair to pretend that OpenClaw was useless. It served a lot.
-It was there that several of my heartbeat, memory, Jules, backlog, PR checking and context documentation routines were consolidated. He helped me learn what I really wanted from an operational agent. In a sense, it was OpenClaw that made me picky about Hermes.
+It was there that several of my heartbeat, memory, [Jules](/blog/2026-05-10-jules-api-harness-backend/), backlog, PR checking and context documentation routines were consolidated. He helped me learn what I really wanted from an operational agent. In a sense, it was OpenClaw that made me picky about Hermes.
 You also can't ignore the sample cut: I have 81 old sessions on one side and only 3 on the other in the new format. So it would be dishonest to call this a definitive statistical comparison.
 But tool experience is not just statistics. It's texture. It's fluidity. That's how many times I need to interrupt the flow to fix the mechanism itself.
 And then the difference is already quite clear.
