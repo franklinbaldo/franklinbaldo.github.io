@@ -4,7 +4,6 @@ import { renderOgCard } from "../../lib/og-card";
 import { getQrPng } from "../../lib/og-qr";
 
 const SKIP = process.env.SKIP_OG === "1";
-const SITE = "https://franklinbaldo.github.io";
 
 export async function getStaticPaths() {
   const posts = SKIP ? [] : await getCollection("blog");
@@ -17,27 +16,25 @@ export async function getStaticPaths() {
       tags: post.data.tags ?? [],
       lang: post.data.lang ?? "en",
       path: `/blog/${post.id}/`,
-      emoji: post.data.emoji,
     },
   }));
 }
 
 export const GET: APIRoute = async ({ props }) => {
   const slug = props.slug as string;
-  const path = props.path as string;
-  const qrPng = await getQrPng({
+  const lang = props.lang as "en" | "pt";
+  const qrPng = getQrPng({
     slug,
-    url: SITE + path,
-    emoji: props.emoji as string | undefined,
+    fallbackSlug: lang === "pt" ? "home-pt" : "home",
   });
   const png = await renderOgCard({
     title: props.title as string,
     description: props.description as string | undefined,
     tags: props.tags as string[],
-    lang: props.lang as "en" | "pt",
+    lang,
     kind: "post",
-    path,
-    qrPng,
+    path: props.path as string,
+    qrPng: qrPng ?? undefined,
   });
   return new Response(png, {
     headers: {

@@ -11,6 +11,7 @@ const interRegular = read("node_modules/@fontsource/inter/files/inter-latin-400-
 const interSemibold = read("node_modules/@fontsource/inter/files/inter-latin-600-normal.woff");
 
 const avatarDataUri = `data:image/png;base64,${read("public/avatar.png").toString("base64")}`;
+const monsteraDataUri = `data:image/svg+xml;base64,${read("public/monstera.svg").toString("base64")}`;
 
 // Brick-style cobogó: terracotta fill with the four circles as real
 // transparent holes (cream background reads through), with cement-grey
@@ -137,35 +138,56 @@ export function buildTree(input: CardInput): El {
     t(lang, "og.siteEyebrow").toUpperCase(),
   );
 
-  const qrEl = qrPng
-    ? h("img", {
-        src: `data:image/png;base64,${qrPng.toString("base64")}`,
-        width: QR_SIZE,
-        height: QR_SIZE,
-        style: { display: "flex", width: QR_SIZE, height: QR_SIZE, borderRadius: 12 },
-      })
-    : null;
-
-  const qrHint = qrPng
-    ? h(
-        "div",
-        {
-          style: {
-            display: "flex",
-            fontFamily: "Inter",
-            fontWeight: 600,
-            fontSize: 16,
-            lineHeight: 1.2,
-            color: PALETTE.muted,
-            letterSpacing: 1.5,
-            width: AVATAR_SIZE,
-            textAlign: "center",
-            justifyContent: "center",
+  // When the artistic QR is cached, show it under the avatar. Otherwise
+  // fall back to the canonical URL as text — the same fallback chain
+  // continues in src/lib/og-qr.ts (slug → home → null).
+  const bottomBlock = qrPng
+    ? [
+        h("img", {
+          src: `data:image/png;base64,${qrPng.toString("base64")}`,
+          width: QR_SIZE,
+          height: QR_SIZE,
+          style: { display: "flex", width: QR_SIZE, height: QR_SIZE, borderRadius: 12 },
+        }),
+        h(
+          "div",
+          {
+            style: {
+              display: "flex",
+              fontFamily: "Inter",
+              fontWeight: 600,
+              fontSize: 16,
+              lineHeight: 1.2,
+              color: PALETTE.muted,
+              letterSpacing: 1.5,
+              width: AVATAR_SIZE,
+              textAlign: "center",
+              justifyContent: "center",
+            },
           },
-        },
-        t(lang, "og.qrHint").toUpperCase(),
-      )
-    : null;
+          t(lang, "og.qrHint").toUpperCase(),
+        ),
+      ]
+    : [
+        h(
+          "div",
+          {
+            style: {
+              display: "flex",
+              fontFamily: "Inter",
+              fontWeight: 600,
+              fontSize: 22,
+              lineHeight: 1.25,
+              color: PALETTE.inkSoft,
+              width: AVATAR_SIZE,
+              textAlign: "center",
+              justifyContent: "center",
+              wordBreak: "break-all",
+            },
+          },
+          ("franklinbaldo.github.io" + (input.path || "/")).replace(/\/$/, ""),
+        ),
+      ];
 
   const leftColumn = h(
     "div",
@@ -181,8 +203,7 @@ export function buildTree(input: CardInput): El {
     },
     eyebrow,
     avatar,
-    ...(qrEl ? [qrEl] : []),
-    ...(qrHint ? [qrHint] : []),
+    ...bottomBlock,
   );
 
 
@@ -288,6 +309,41 @@ export function buildTree(input: CardInput): El {
     },
   });
 
+  // Brazilian garden: jibóia/monstera leaves spilling in from the
+  // right corners, in front of the cobogó wall but behind the text
+  // and avatar. Bleed off the edges so they read as foliage hanging
+  // into the frame, not as a centerpiece.
+  const leafA = h("img", {
+    src: monsteraDataUri,
+    width: 280,
+    height: 380,
+    style: {
+      display: "flex",
+      position: "absolute",
+      top: -180,
+      right: -100,
+      width: 280,
+      height: 380,
+      transform: "rotate(-22deg)",
+      opacity: 0.82,
+    },
+  });
+  const leafB = h("img", {
+    src: monsteraDataUri,
+    width: 240,
+    height: 330,
+    style: {
+      display: "flex",
+      position: "absolute",
+      bottom: -200,
+      right: -70,
+      width: 240,
+      height: 330,
+      transform: "rotate(150deg)",
+      opacity: 0.8,
+    },
+  });
+
   return h(
     "div",
     {
@@ -300,6 +356,8 @@ export function buildTree(input: CardInput): El {
       },
     },
     cobogo,
+    leafA,
+    leafB,
     accentBar,
     row,
   );
