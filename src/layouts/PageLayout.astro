@@ -40,7 +40,8 @@ const documentTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAM
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const DEFAULT_OG_IMAGE = "/avatar.png";
-const ogImage = new URL(image ?? DEFAULT_OG_IMAGE, Astro.site).href;
+const ogImageRaw = image ?? DEFAULT_OG_IMAGE;
+const ogImage = Astro.site ? new URL(ogImageRaw, Astro.site).href : ogImageRaw;
 const rssUrl = new URL("rss.xml", Astro.site);
 
 const SOCIAL_PROFILES = [
@@ -91,7 +92,7 @@ const personLd = {
   "@type": "Person",
   name: "Franklin Baldo",
   url: Astro.site?.href,
-  image: new URL("/avatar.png", Astro.site).href,
+  image: Astro.site ? new URL("/avatar.png", Astro.site).href : "/avatar.png",
   jobTitle: "Lawyer and State Attorney",
   sameAs: SOCIAL_PROFILES,
 };
