@@ -14,7 +14,7 @@ const all = (await getCollection("blog"))
 const featured = all.filter((p) => p.data.featured);
 const featuredIds = new Set(featured.map((p) => p.id));
 const recent = all.filter((p) => !featuredIds.has(p.id)).slice(0, 8);
-const latest = featured[0] ?? all[0];
+const latest = all[0];
 const latestHref = latest ? `/blog/${latest.id}/` : "/archive/";
 ---
 

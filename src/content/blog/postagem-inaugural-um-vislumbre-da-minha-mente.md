@@ -6,7 +6,7 @@ lang: pt
 title: "Postagem inaugural: Um vislumbre da minha mente"
 description: "Uma introdução à natureza caótica e experimental deste jardim digital e à filosofia por trás dele."
 tags: ["introduction", "digital garden", "philosophy", "chaos"]
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
+heroImage: ./images/monstera-watercolor.png
 heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
 ---
 Bem-vindo a este repositório – aviso justo: será lindamente caótico. Tal como o \[jardim digital de Gwern\]([https://www.gwern.net/](https://www.gwern.net/)), este é um lugar onde as ideias crescem de forma selvagem e os pensamentos se entrelaçam sem a restrição das estruturas tradicionais ou da consistência temática. (Para uma visão mais estruturada do sistema por trás deste caos, consulte o [documento conceitual](/blog/documento-conceitual-a-cronica-de-franklin-baldo).)
