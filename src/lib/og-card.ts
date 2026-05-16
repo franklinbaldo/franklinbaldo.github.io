@@ -3,7 +3,6 @@ import { resolve } from "node:path";
 import satori from "satori";
 import sharp from "sharp";
 
-// Anchor reads to project root so they work in both dev and bundled build.
 const read = (p: string) => readFileSync(resolve(process.cwd(), p));
 
 const frauncesBold = read("node_modules/@fontsource/fraunces/files/fraunces-latin-700-normal.woff");
@@ -12,9 +11,11 @@ const interSemibold = read("node_modules/@fontsource/inter/files/inter-latin-600
 
 const avatarDataUri = `data:image/png;base64,${read("public/avatar.png").toString("base64")}`;
 
-// Brick-style cobogó: terracotta fill with the four circles cut as real
-// transparent holes, so the card background reads through them.
+// Brick-style cobogó: terracotta fill with the four circles as real
+// transparent holes (cream background reads through), with cement-grey
+// mortar lines between sub-bricks and around the holes.
 const COBOGO_BRICK = "#b56548";
+const COBOGO_MORTAR = "#8a8076";
 const cobogoSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
   <defs>
     <mask id="holes" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
@@ -25,11 +26,12 @@ const cobogoSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="1
       <circle cx="90" cy="90" r="22" fill="black"/>
     </mask>
   </defs>
-  <rect width="120" height="120" fill="${COBOGO_BRICK}" mask="url(#holes)"/>
+  <g mask="url(#holes)">
+    <rect width="120" height="120" fill="${COBOGO_BRICK}"/>
+    <line x1="60" y1="0" x2="60" y2="120" stroke="${COBOGO_MORTAR}" stroke-width="4"/>
+    <line x1="0" y1="60" x2="120" y2="60" stroke="${COBOGO_MORTAR}" stroke-width="4"/>
+  </g>
 </svg>`;
-// Pre-rasterize to PNG so the transparent holes survive when satori
-// embeds the tile (some SVG features can be flaky inside satori's image
-// pipeline; PNG with explicit alpha is bulletproof).
 const cobogoPng = await sharp(Buffer.from(cobogoSvg))
   .resize(760, 760)
   .png()
@@ -53,8 +55,7 @@ const PALETTE = {
   ink: "#1c1814",
   inkSoft: "#5f503c",
   muted: "#8c785a",
-  chipBg: "#d97706",
-  chipText: "#ffffff",
+  ring: "#ede4d3",
 };
 
 const SUB_BY_LANG = { en: "Digital Garden", pt: "Jardim Digital" } as const;
@@ -63,19 +64,21 @@ const DOMAIN_BY_LANG = {
   pt: "franklinbaldo.github.io/pt",
 } as const;
 
-const TITLE_HARD_CAP = 70;
+const TITLE_HARD_CAP = 90;
 
 const truncate = (s: string, max: number) =>
   s.length > max ? s.slice(0, max - 1).trimEnd() + "…" : s;
 
-// Char-count heuristic: single render, no measure-and-retry.
+// Char-count heuristic — single render. Sized for the narrower text
+// column we have once the big avatar is on the left.
 function fitTypography(title: string): { titleSize: number; descCap: number } {
   const n = title.length;
-  if (n <= 14) return { titleSize: 96, descCap: 160 };
-  if (n <= 22) return { titleSize: 80, descCap: 160 };
-  if (n <= 36) return { titleSize: 64, descCap: 150 };
-  if (n <= 52) return { titleSize: 52, descCap: 130 };
-  return { titleSize: 44, descCap: 90 };
+  if (n <= 12) return { titleSize: 88, descCap: 130 };
+  if (n <= 20) return { titleSize: 72, descCap: 130 };
+  if (n <= 32) return { titleSize: 60, descCap: 120 };
+  if (n <= 48) return { titleSize: 52, descCap: 110 };
+  if (n <= 64) return { titleSize: 44, descCap: 100 };
+  return { titleSize: 38, descCap: 80 };
 }
 
 type El = { type: string; props: Record<string, unknown> };
@@ -84,58 +87,52 @@ const h = (type: string, props: Record<string, unknown> = {}, ...children: unkno
   props: { ...props, children: children.length === 1 ? children[0] : children },
 });
 
+const AVATAR_SIZE = 340;
+
 export function buildTree(input: CardInput): El {
-  const { title: rawTitle, description: rawDesc, tags = [], lang = "en" } = input;
+  const { title: rawTitle, description: rawDesc, lang = "en" } = input;
   const title = truncate(rawTitle, TITLE_HARD_CAP);
   const { titleSize, descCap } = fitTypography(title);
   const description = rawDesc ? truncate(rawDesc, descCap) : undefined;
-  const chips = tags.slice(0, 3);
+
+  const avatar = h(
+    "div",
+    {
+      style: {
+        display: "flex",
+        width: AVATAR_SIZE,
+        height: AVATAR_SIZE,
+        borderRadius: 16,
+        border: `5px solid ${PALETTE.ring}`,
+        boxSizing: "border-box",
+        overflow: "hidden",
+      },
+    },
+    h("img", {
+      src: avatarDataUri,
+      width: AVATAR_SIZE,
+      height: AVATAR_SIZE,
+      style: { display: "flex", width: "100%", height: "100%", objectFit: "cover" },
+    }),
+  );
 
   const eyebrow = h(
     "div",
-    { style: { display: "flex", alignItems: "center", gap: 22 } },
-    h("img", {
-      src: avatarDataUri,
-      width: 96,
-      height: 96,
-      style: { display: "flex", width: 96, height: 96, borderRadius: 48 },
-    }),
-    h(
-      "div",
-      { style: { display: "flex", flexDirection: "column" } },
-      h(
-        "div",
-        {
-          style: {
-            display: "flex",
-            fontFamily: "Inter",
-            fontWeight: 600,
-            fontSize: 22,
-            color: PALETTE.inkSoft,
-            letterSpacing: 2,
-          },
-        },
-        "FRANKLIN BALDO",
-      ),
-      h(
-        "div",
-        {
-          style: {
-            display: "flex",
-            fontFamily: "Inter",
-            fontWeight: 400,
-            fontSize: 19,
-            color: PALETTE.muted,
-            marginTop: 4,
-          },
-        },
-        SUB_BY_LANG[lang],
-      ),
-    ),
+    {
+      style: {
+        display: "flex",
+        fontFamily: "Inter",
+        fontWeight: 600,
+        fontSize: 22,
+        color: PALETTE.muted,
+        letterSpacing: 3,
+      },
+    },
+    SUB_BY_LANG[lang].toUpperCase(),
   );
 
   const accentRule = h("div", {
-    style: { display: "flex", width: 60, height: 4, background: PALETTE.accent, marginTop: 36 },
+    style: { display: "flex", width: 60, height: 4, background: PALETTE.accent, marginTop: 18 },
   });
 
   const titleEl = h(
@@ -148,8 +145,7 @@ export function buildTree(input: CardInput): El {
         fontSize: titleSize,
         lineHeight: 1.05,
         color: PALETTE.ink,
-        marginTop: 28,
-        maxWidth: 760,
+        marginTop: 24,
       },
     },
     title,
@@ -163,104 +159,86 @@ export function buildTree(input: CardInput): El {
             display: "flex",
             fontFamily: "Inter",
             fontWeight: 400,
-            fontSize: 28,
+            fontSize: 26,
             lineHeight: 1.35,
             color: PALETTE.inkSoft,
             marginTop: 18,
-            maxWidth: 760,
           },
         },
         description,
       )
     : null;
 
-  const chipsRow = h(
+  const urlEl = h(
     "div",
     {
       style: {
         display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
+        fontFamily: "Inter",
+        fontWeight: 600,
+        fontSize: 24,
+        color: PALETTE.muted,
         marginTop: "auto",
-        width: "100%",
       },
     },
-    h(
-      "div",
-      { style: { display: "flex", gap: 10 } },
-      ...chips.map((tag) =>
-        h(
-          "div",
-          {
-            style: {
-              display: "flex",
-              alignItems: "center",
-              paddingLeft: 18,
-              paddingRight: 18,
-              paddingTop: 8,
-              paddingBottom: 8,
-              borderRadius: 21,
-              background: PALETTE.chipBg,
-              color: PALETTE.chipText,
-              fontFamily: "Inter",
-              fontWeight: 600,
-              fontSize: 20,
-            },
-          },
-          tag,
-        ),
-      ),
-    ),
-    h(
-      "div",
-      {
-        style: {
-          display: "flex",
-          fontFamily: "Inter",
-          fontWeight: 400,
-          fontSize: 22,
-          color: PALETTE.muted,
-        },
-      },
-      DOMAIN_BY_LANG[lang],
-    ),
+    DOMAIN_BY_LANG[lang],
   );
 
-  const contentColumn = h(
+  // Right text column lives next to the avatar.
+  const textColumn = h(
     "div",
     {
       style: {
         display: "flex",
         flexDirection: "column",
-        width: "100%",
+        flex: 1,
+        minWidth: 0,
         height: "100%",
-        paddingTop: 92,
-        paddingRight: 80,
-        paddingBottom: 80,
-        paddingLeft: 80,
       },
     },
     eyebrow,
     accentRule,
     titleEl,
     ...(descEl ? [descEl] : []),
-    chipsRow,
+    urlEl,
   );
 
-  // Terracotta cobogó tile bleeding off the right edge — solid brick
-  // with circular holes that read through to the cream background.
+  const row = h(
+    "div",
+    {
+      style: {
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        paddingTop: 60,
+        paddingRight: 380,
+        paddingBottom: 56,
+        paddingLeft: 64,
+        gap: 56,
+        alignItems: "center",
+      },
+    },
+    avatar,
+    textColumn,
+  );
+
+  // Terracotta cobogó tile on the right, extending left far enough to
+  // sit behind the profile photo. Avatar and text live in later
+  // siblings, so they stack on top. Lower opacity keeps text legible
+  // where the brick passes under the text column.
   const cobogo = h("img", {
     src: cobogoDataUri,
-    width: 760,
-    height: 760,
+    width: 880,
+    height: 720,
     style: {
       display: "flex",
       position: "absolute",
-      top: -140,
-      right: -180,
-      width: 760,
-      height: 760,
-      opacity: 0.78,
+      top: -45,
+      right: -120,
+      width: 880,
+      height: 720,
+      opacity: 0.55,
+      objectFit: "cover",
     },
   });
 
@@ -290,7 +268,7 @@ export function buildTree(input: CardInput): El {
     },
     cobogo,
     accentBar,
-    contentColumn,
+    row,
   );
 }
 
