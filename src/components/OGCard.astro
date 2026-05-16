@@ -1,8 +1,7 @@
 ---
 // Handwritten OG card background (1200×630).
-// Renders the cobogó motif, orange accent bar, and circular avatar ring.
-// Title/description text is composited over this server-side by the
-// /og/[...slug] endpoint using sharp + Fraunces TTFs from public/fonts.
+// Layout: large rectangular avatar on the left (vertically centered),
+// text composited on the right by /og/[...slug].png.ts via sharp.
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -11,9 +10,12 @@ const W = 1200;
 const H = 630;
 const TILE = 100;
 const ACCENT_H = 10;
-const AVATAR_SIZE = 120;
-const AVATAR_X = 64;
-const AVATAR_Y = 70;
+
+const AVATAR_SIZE = 320;
+const AVATAR_X = 72;
+const AVATAR_Y = Math.round((H - AVATAR_SIZE) / 2);
+const AVATAR_RADIUS = 12;
+const RING = 5;
 
 const avatarPath = resolve(process.cwd(), "public/avatar.png");
 const avatarB64 = readFileSync(avatarPath).toString("base64");
@@ -45,12 +47,19 @@ const avatarB64 = readFileSync(avatarPath).toString("base64");
         <line x1={TILE} y1={TILE/2} x2={TILE/2} y2={TILE} />
       </g>
     </pattern>
-    <radialGradient id="glow" cx="0.18" cy="0.22" r="0.55">
-      <stop offset="0" stop-color="#f56b3d" stop-opacity="0.14" />
+    <radialGradient id="glow" cx="0.12" cy="0.18" r="0.5">
+      <stop offset="0" stop-color="#f56b3d" stop-opacity="0.16" />
       <stop offset="1" stop-color="#f56b3d" stop-opacity="0" />
     </radialGradient>
     <clipPath id="avatarClip">
-      <circle cx={AVATAR_X + AVATAR_SIZE/2} cy={AVATAR_Y + AVATAR_SIZE/2} r={AVATAR_SIZE/2 - 4} />
+      <rect
+        x={AVATAR_X + RING}
+        y={AVATAR_Y + RING}
+        width={AVATAR_SIZE - RING * 2}
+        height={AVATAR_SIZE - RING * 2}
+        rx={AVATAR_RADIUS - 4}
+        ry={AVATAR_RADIUS - 4}
+      />
     </clipPath>
   </defs>
 
@@ -60,36 +69,24 @@ const avatarB64 = readFileSync(avatarPath).toString("base64");
 
   <rect x="0" y="0" width={W} height={ACCENT_H} fill="#f56b3d" />
 
-  <circle
-    cx={AVATAR_X + AVATAR_SIZE/2}
-    cy={AVATAR_Y + AVATAR_SIZE/2}
-    r={AVATAR_SIZE/2}
-    fill="none"
-    stroke="#ede4d3"
-    stroke-width="4"
-  />
-  <image
-    href={`data:image/png;base64,${avatarB64}`}
+  <rect
     x={AVATAR_X}
     y={AVATAR_Y}
     width={AVATAR_SIZE}
     height={AVATAR_SIZE}
+    rx={AVATAR_RADIUS}
+    ry={AVATAR_RADIUS}
+    fill="none"
+    stroke="#ede4d3"
+    stroke-width={RING}
+  />
+  <image
+    href={`data:image/png;base64,${avatarB64}`}
+    x={AVATAR_X + RING}
+    y={AVATAR_Y + RING}
+    width={AVATAR_SIZE - RING * 2}
+    height={AVATAR_SIZE - RING * 2}
     clip-path="url(#avatarClip)"
     preserveAspectRatio="xMidYMid slice"
   />
-
-  <text
-    x={AVATAR_X + AVATAR_SIZE + 24}
-    y={AVATAR_Y + AVATAR_SIZE/2 - 6}
-    fill="#ede4d3"
-    font-family="Fraunces SemiBold"
-    font-size="34"
-  >Franklin Baldo</text>
-  <text
-    x={AVATAR_X + AVATAR_SIZE + 24}
-    y={AVATAR_Y + AVATAR_SIZE/2 + 26}
-    fill="#9d917e"
-    font-family="Fraunces"
-    font-size="22"
-  >franklinbaldo.github.io</text>
 </svg>
