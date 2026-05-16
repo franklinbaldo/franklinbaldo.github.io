@@ -19,33 +19,35 @@ pages["_site"] = {
 const FRAUNCES_600 = "https://cdn.jsdelivr.net/fontsource/fonts/fraunces@latest/latin-600-normal.ttf";
 const FRAUNCES_400 = "https://cdn.jsdelivr.net/fontsource/fonts/fraunces@latest/latin-400-normal.ttf";
 
+const trunc = (s: string, n: number) => (s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s);
+
 const route = await OGImageRoute({
   param: "slug",
   pages,
   getImageOptions: (_path, post) => ({
-    title: post.data.title,
-    description: post.data.description,
+    title: trunc(post.data.title, 60),
+    description: trunc(post.data.description ?? "", 95),
     logo: {
       path: "./public/avatar-og.png",
-      size: [180, 180],
+      size: [120, 120],
     },
     bgGradient: [
       [244, 236, 220],
       [239, 229, 208],
     ],
-    padding: 90,
+    padding: 72,
     font: {
       title: {
         families: ["Fraunces"],
         weight: "SemiBold",
-        size: 104,
+        size: 68,
         color: [42, 36, 29],
-        lineHeight: 1.05,
+        lineHeight: 1.1,
       },
       description: {
         families: ["Fraunces"],
         weight: "Normal",
-        size: 42,
+        size: 32,
         color: [107, 98, 88],
         lineHeight: 1.35,
       },
