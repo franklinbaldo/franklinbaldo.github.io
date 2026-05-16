@@ -25,31 +25,31 @@ const route = await OGImageRoute({
   param: "slug",
   pages,
   getImageOptions: (_path, post) => ({
-    title: trunc(post.data.title, 60),
-    description: trunc(post.data.description ?? "", 95),
+    title: trunc(post.data.title, 50),
+    description: trunc(post.data.description ?? "", 90),
     logo: {
       path: "./public/avatar-og.png",
-      size: [120, 120],
+      size: [110, 110],
     },
-    bgGradient: [
-      [244, 236, 220],
-      [239, 229, 208],
-    ],
+    bgImage: {
+      path: "./public/og-bg.png",
+      fit: "cover",
+    },
     padding: 72,
     font: {
       title: {
         families: ["Fraunces"],
         weight: "SemiBold",
-        size: 68,
+        size: 78,
         color: [42, 36, 29],
-        lineHeight: 1.1,
+        lineHeight: 1.08,
       },
       description: {
         families: ["Fraunces"],
         weight: "Normal",
-        size: 32,
+        size: 34,
         color: [107, 98, 88],
-        lineHeight: 1.35,
+        lineHeight: 1.3,
       },
     },
     fonts: [FRAUNCES_600, FRAUNCES_400],
