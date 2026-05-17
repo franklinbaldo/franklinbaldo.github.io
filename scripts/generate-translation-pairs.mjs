@@ -21,7 +21,7 @@ for (const file of files) {
   const fm = match[1];
 
   const get = (key) => {
-    const m = fm.match(new RegExp(`^${key}:\\s*(.+)$`, 'm'));
+    const m = fm.match(new RegExp(`^${key}:\\s*([^\r\n]+)$`, 'm'));
     return m ? m[1].trim() : undefined;
   };
 
