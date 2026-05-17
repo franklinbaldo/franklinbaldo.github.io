@@ -2,9 +2,18 @@
 import { getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
 
-const posts = (await getCollection("blog"))
+const all = await getCollection("blog");
+
+// Build set of translationKeys present in EN so we can mark paired PT posts
+const enKeys = new Set(
+  all
+    .filter((p) => !p.data.draft && (p.data.lang ?? 'en') === 'en' && p.data.translationKey)
+    .map((p) => p.data.translationKey!)
+);
+
+const posts = all
   .filter((p) => !p.data.draft)
-  .filter((p) => p.data.lang === 'pt')
+  .filter((p) => (p.data.lang ?? 'en') === 'pt')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const byYear = new Map<number, typeof posts>();
@@ -35,19 +44,26 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
           <tr>
             <th scope="col" class="col-date">Data</th>
             <th scope="col">Título</th>
+            <th scope="col" class="col-en" aria-label="Versão em inglês disponível">EN</th>
           </tr>
         </thead>
         <tbody>
-          {byYear.get(year)!.map((post) => (
-            <tr>
-              <td class="col-date">
-                <time datetime={post.data.date.toISOString()}>
-                  {post.data.date.toLocaleDateString("pt-BR", { month: "short", day: "2-digit" })}
-                </time>
-              </td>
-              <td><a href={`/blog/${post.id}/`}>{post.data.title}</a></td>
-            </tr>
-          ))}
+          {byYear.get(year)!.map((post) => {
+            const hasEn = !!(post.data.translationKey && enKeys.has(post.data.translationKey));
+            return (
+              <tr>
+                <td class="col-date">
+                  <time datetime={post.data.date.toISOString()}>
+                    {post.data.date.toLocaleDateString("pt-BR", { month: "short", day: "2-digit" })}
+                  </time>
+                </td>
+                <td><a href={`/blog/${post.id}/`}>{post.data.title}</a></td>
+                <td class="col-en">
+                  {hasEn && <span class="en-badge" aria-label="Versão em inglês disponível" title="Versão em inglês disponível">EN</span>}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </section>
@@ -63,4 +79,20 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
     white-space: nowrap;
   }
   .archive-table th { font-weight: 600; }
+  .col-en {
+    width: 2.5rem;
+    text-align: center;
+  }
+  .en-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--pico-primary) 15%, transparent);
+    color: var(--pico-primary);
+    border: 1px solid color-mix(in srgb, var(--pico-primary) 35%, transparent);
+    vertical-align: middle;
+  }
 </style>

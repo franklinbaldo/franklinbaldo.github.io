@@ -1,5 +1,7 @@
+import { DEFAULT_LANG as _DEFAULT_LANG, LANG_META } from './languages.mjs';
+
+export { DEFAULT_LANG } from './languages.mjs';
 export type Lang = 'en' | 'pt';
-export const DEFAULT_LANG: Lang = 'en';
 
 const UI_KEYS = [
   'nav.home',
@@ -48,29 +50,16 @@ const UI_KEYS = [
 
 export type UIKey = (typeof UI_KEYS)[number];
 
-/**
- * Strings describing another language from the current language's perspective.
- * `LANGUAGES.en.targets.pt.invitation` is what an EN reader sees inviting
- * them to switch to PT ("Ler em Português"). Adding a third language means
- * adding its target entry to every existing language config (and a new
- * config block).
- */
 export interface TargetLangCopy {
-  /** Short label shown on a compact button, e.g. "PT". */
   shortLabel: string;
-  /** Full invitation, typically written in the target language. */
   invitation: string;
-  /** Shown when no translation exists in this target language. */
   noTranslation: string;
 }
 
 export interface LangConfig {
   code: string;
-  /** BCP-47 locale tag for Intl APIs. */
   locale: string;
-  /** URL prefix for in-site links; empty string for the default language. */
   urlPrefix: string;
-  /** Lowercase prefixes of `navigator.language` that resolve to this code. */
   navMatch: string[];
   ui: Record<UIKey, string>;
   targets: Record<string, TargetLangCopy>;
@@ -79,9 +68,7 @@ export interface LangConfig {
 export const LANGUAGES: Record<string, LangConfig> = {
   en: {
     code: 'en',
-    locale: 'en-US',
-    urlPrefix: '',
-    navMatch: ['en'],
+    ...LANG_META.en,
     ui: {
       'nav.home': 'Home',
       'nav.archive': 'Archive',
@@ -136,9 +123,7 @@ export const LANGUAGES: Record<string, LangConfig> = {
   },
   pt: {
     code: 'pt',
-    locale: 'pt-BR',
-    urlPrefix: '/pt',
-    navMatch: ['pt'],
+    ...LANG_META.pt,
     ui: {
       'nav.home': 'Início',
       'nav.archive': 'Arquivo',
@@ -194,19 +179,14 @@ export const LANGUAGES: Record<string, LangConfig> = {
 };
 
 function configFor(lang: string | undefined): LangConfig {
-  return LANGUAGES[lang ?? DEFAULT_LANG] ?? LANGUAGES[DEFAULT_LANG];
+  return LANGUAGES[lang ?? _DEFAULT_LANG] ?? LANGUAGES[_DEFAULT_LANG];
 }
 
-/** Translate a UI key with default-language fallback. */
 export function t(lang: string | undefined, key: UIKey): string {
   const cfg = configFor(lang);
-  return cfg.ui[key] ?? LANGUAGES[DEFAULT_LANG].ui[key];
+  return cfg.ui[key] ?? LANGUAGES[_DEFAULT_LANG].ui[key];
 }
 
-/**
- * Look up the copy describing `targetLang` from `currentLang`'s perspective.
- * Falls back to a code-only label when the pairing is undefined.
- */
 export function targetCopy(
   currentLang: string | undefined,
   targetLang: string,
@@ -221,16 +201,12 @@ export function targetCopy(
   );
 }
 
-/**
- * Generic per-language lookup for caller-provided dictionaries (e.g. reading
- * path titles). Falls back to the default-language entry, then to any entry.
- */
 export function pick<T>(
   lang: string | undefined,
   dict: Record<string, T>,
 ): T {
-  const key = lang ?? DEFAULT_LANG;
-  return dict[key] ?? dict[DEFAULT_LANG] ?? (Object.values(dict)[0] as T);
+  const key = lang ?? _DEFAULT_LANG;
+  return dict[key] ?? dict[_DEFAULT_LANG] ?? (Object.values(dict)[0] as T);
 }
 
 export function locale(lang: string | undefined): string {
@@ -246,12 +222,12 @@ export function supportedLangs(): string[] {
 }
 
 export function detectLang(): string {
-  if (typeof window === 'undefined') return DEFAULT_LANG;
+  if (typeof window === 'undefined') return _DEFAULT_LANG;
   const stored = localStorage.getItem('lang');
   if (stored && LANGUAGES[stored]) return stored;
   const navLang = navigator.language.toLowerCase();
   for (const cfg of Object.values(LANGUAGES)) {
     if (cfg.navMatch.some((m) => navLang.startsWith(m))) return cfg.code;
   }
-  return DEFAULT_LANG;
+  return _DEFAULT_LANG;
 }

@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 const { path } = Astro.props;
 const posts = await getPathPosts(path.slug, 'pt');
 const enHasPosts = (await getPathPosts(path.slug, 'en')).length > 0;
-const translations = enHasPosts ? { en: `/paths/${path.slug}/` } : {};
+const translations: Record<string, string> = enHasPosts ? { en: `/paths/${path.slug}/` } : {};
 ---
 
 <PageLayout
