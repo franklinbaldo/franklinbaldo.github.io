@@ -1,8 +1,9 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import { readFileSync } from 'node:fs';
+import { DEFAULT_LANG, LANG_META } from './src/lib/languages.mjs';
 
-/** @type {Record<string, { en: string; pt: string }>} */
+/** @type {Record<string, Record<string, string>>} */
 let blogPairs = {};
 try {
   blogPairs = JSON.parse(readFileSync('./src/generated/blog-translation-pairs.json', 'utf-8'));
@@ -29,6 +30,17 @@ export default defineConfig({
     sitemap({
       serialize(item) {
         const base = 'https://franklinbaldo.github.io';
+
+        // Build hreflang links from a { [langCode]: absoluteUrl } map.
+        /** @param {Record<string, string>} langUrls */
+        const makeLinks = (langUrls) => [
+          ...Object.entries(langUrls).map(([code, url]) => ({
+            lang: LANG_META[code]?.locale ?? code,
+            url,
+          })),
+          { lang: 'x-default', url: langUrls[DEFAULT_LANG] ?? Object.values(langUrls)[0] },
+        ];
+
         const staticPairs = {
           [base + '/']: base + '/pt/',
           [base + '/about/']: base + '/pt/about/',
@@ -40,28 +52,19 @@ export default defineConfig({
         const ptToEn = Object.fromEntries(
           Object.entries(staticPairs).map(([en, pt]) => [pt, en])
         );
+
         if (staticPairs[item.url]) {
-          item.links = [
-            { lang: 'en-US', url: item.url },
-            { lang: 'pt-BR', url: staticPairs[item.url] },
-            { lang: 'x-default', url: item.url },
-          ];
+          item.links = makeLinks({ en: item.url, pt: staticPairs[item.url] });
         } else if (ptToEn[item.url]) {
-          item.links = [
-            { lang: 'en-US', url: ptToEn[item.url] },
-            { lang: 'pt-BR', url: item.url },
-            { lang: 'x-default', url: ptToEn[item.url] },
-          ];
+          item.links = makeLinks({ en: ptToEn[item.url], pt: item.url });
         } else {
           // Blog post pairs — look up pre-generated bidirectional map.
           const path = item.url.replace(base, '');
           const pair = blogPairs[path];
           if (pair) {
-            item.links = [
-              { lang: 'en-US', url: base + pair.en },
-              { lang: 'pt-BR', url: base + pair.pt },
-              { lang: 'x-default', url: base + pair.en },
-            ];
+            item.links = makeLinks(
+              Object.fromEntries(Object.entries(pair).map(([code, p]) => [code, base + p]))
+            );
           }
         }
         return item;
@@ -81,6 +84,7 @@ export default defineConfig({
           name: 'greentext',
           scopeName: 'source.greentext',
           patterns: [],
+          repository: {},
         },
       ],
       transformers: [
@@ -89,7 +93,11 @@ export default defineConfig({
           line(node, line) {
             if (this.options.lang !== 'greentext') return;
             const text = node.children
-              .map((c) => (c.type === 'element' ? c.children?.[0]?.value ?? '' : ''))
+              .map((c) => {
+                if (c.type !== 'element') return '';
+                const child = c.children?.[0];
+                return child?.type === 'text' ? child.value : '';
+              })
               .join('');
             if (/^\s*>/.test(text)) {
               node.properties.class = `${node.properties.class ?? ''} gt-quote`.trim();
