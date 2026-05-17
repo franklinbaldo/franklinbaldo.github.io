@@ -1,5 +1,10 @@
 ---
+interface Props {
+  lang?: string;
+}
+const { lang = 'en' } = Astro.props;
 const year = new Date().getFullYear();
+const rssHref = lang === 'pt' ? '/pt/rss.xml' : '/rss.xml';
 ---
 
 <footer class="container">
@@ -9,7 +14,7 @@ const year = new Date().getFullYear();
       <li><small>© {year} Franklin Baldo</small></li>
     </ul>
     <ul>
-      <li><small><a href="/rss.xml">RSS</a></small></li>
+      <li><small><a href={rssHref}>RSS</a></small></li>
       <li><small><a href="https://github.com/franklinbaldo" rel="me">GitHub</a></small></li>
     </ul>
   </nav>

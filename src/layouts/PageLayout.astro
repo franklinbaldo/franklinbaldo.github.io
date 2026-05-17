@@ -44,7 +44,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 const DEFAULT_OG_IMAGE = lang === "pt" ? "/og/home-pt.png" : "/og/home.png";
 const ogImageRaw = image ?? DEFAULT_OG_IMAGE;
 const ogImage = Astro.site ? new URL(ogImageRaw, Astro.site).href : ogImageRaw;
-const rssUrl = new URL("rss.xml", Astro.site);
+const rssUrl = new URL(lang === 'pt' ? "pt/rss.xml" : "rss.xml", Astro.site);
 
 const SOCIAL_PROFILES = [
   "https://github.com/franklinbaldo",
@@ -117,6 +117,7 @@ const personLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{documentTitle}</title>
     <meta name="description" content={description} />
+    <meta name="author" content="Franklin Baldo" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -124,7 +125,7 @@ const personLd = {
     <meta name="theme-color" content="#1f1f1f" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#fdfdfd" media="(prefers-color-scheme: light)" />
     <link rel="canonical" href={canonical.href} />
-    <link rel="alternate" type="application/rss+xml" title="Franklin Baldo" href={rssUrl} />
+    <link rel="alternate" type="application/rss+xml" title={lang === 'pt' ? 'Franklin Baldo (Português)' : 'Franklin Baldo'} href={rssUrl} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     {hasMath && <link rel="stylesheet" href="/katex/katex.min.css" />}
 
@@ -190,7 +191,7 @@ const personLd = {
       <slot />
     </main>
 
-    <Footer />
+    <Footer lang={lang} />
 
     <style is:global>
       .heading-anchor {

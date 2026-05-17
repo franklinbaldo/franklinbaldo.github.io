@@ -1,5 +1,14 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { readFileSync } from 'node:fs';
+
+/** @type {Record<string, { en: string; pt: string }>} */
+let blogPairs = {};
+try {
+  blogPairs = JSON.parse(readFileSync('./src/generated/blog-translation-pairs.json', 'utf-8'));
+} catch {
+  // File not yet generated — sitemap will emit blog posts without hreflang.
+}
 
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
@@ -43,6 +52,17 @@ export default defineConfig({
             { lang: 'pt-BR', url: item.url },
             { lang: 'x-default', url: ptToEn[item.url] },
           ];
+        } else {
+          // Blog post pairs — look up pre-generated bidirectional map.
+          const path = item.url.replace(base, '');
+          const pair = blogPairs[path];
+          if (pair) {
+            item.links = [
+              { lang: 'en-US', url: base + pair.en },
+              { lang: 'pt-BR', url: base + pair.pt },
+              { lang: 'x-default', url: base + pair.en },
+            ];
+          }
         }
         return item;
       },
