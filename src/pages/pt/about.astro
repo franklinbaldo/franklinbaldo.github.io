@@ -1,5 +1,44 @@
 ---
 import PageLayout from "../../layouts/PageLayout.astro";
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Quem é Franklin Baldo?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Franklin Baldo é advogado e Procurador do Estado no Brasil, explorando os limites dos agentes de IA, metafísica do processo e design jurídico.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Quais tópicos este blog aborda?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "O blog aborda ensaios sobre agentes de IA, metafísica do processo e a arquitetura dos sistemas jurídicos, além de explorar memória familiar e ferramentas de pensamento.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "O que é o Harness?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "O Harness é um framework conceitual sobre agentes de IA, alinhamento e a linguagem que usamos para construir as restrições do comportamento das máquinas.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Este blog está disponível em inglês?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Sim. A maioria dos posts é publicada em inglês, com versões em português para os principais textos. O blog tem versão em inglês em franklinbaldo.github.io.",
+      },
+    },
+  ],
+};
 ---
 
 <PageLayout
@@ -8,6 +47,7 @@ import PageLayout from "../../layouts/PageLayout.astro";
   lang="pt"
   translations={{ en: "/about/" }}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} is:inline slot="head" />
   <article data-pagefind-body>
     <h1>Sobre</h1>
 

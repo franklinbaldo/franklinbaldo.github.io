@@ -17,6 +17,7 @@ interface Props {
   /** Map of lang code → href for the same content in another language. */
   translations?: Record<string, string>;
   hasMath?: boolean;
+  wordCount?: number;
 }
 
 const SITE_NAME = "Franklin Baldo";
@@ -34,6 +35,7 @@ const {
   lang = DEFAULT_LANG,
   translations = {},
   hasMath,
+  wordCount,
 } = source;
 
 const documentTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
@@ -54,6 +56,11 @@ const alternateEntries = Object.entries(translations);
 const alternateOgLocales = alternateEntries
   .map(([code]) => LANGUAGES[code]?.locale.replace("-", "_"))
   .filter((v): v is string => !!v);
+
+// x-default hreflang: point to EN version (current page if EN, else translation to EN).
+const xDefaultHref = lang === DEFAULT_LANG
+  ? canonical.href
+  : (translations[DEFAULT_LANG] ? new URL(translations[DEFAULT_LANG], Astro.site).href : null);
 
 const breadcrumbLd = type === "article"
   ? {
@@ -82,6 +89,7 @@ const jsonLd = type === "article"
       mainEntityOfPage: canonical.href,
       image: ogImage,
       ...(tags?.length && { keywords: tags.join(", ") }),
+      ...(wordCount && { wordCount }),
     }
   : {
       "@context": "https://schema.org",
@@ -124,6 +132,7 @@ const personLd = {
     {alternateEntries.map(([code, href]) => (
       <link rel="alternate" hreflang={code} href={new URL(href, Astro.site).href} />
     ))}
+    {xDefaultHref && <link rel="alternate" hreflang="x-default" href={xDefaultHref} />}
 
     <link rel="webmention" href="https://webmention.io/franklinbaldo.github.io/webmention" />
     <link rel="pingback" href="https://webmention.io/franklinbaldo.github.io/xmlrpc" />
@@ -161,6 +170,7 @@ const personLd = {
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
     <script type="application/ld+json" set:html={JSON.stringify(personLd)} is:inline />
     {breadcrumbLd && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} is:inline />}
+    <slot name="head" />
 
     <script is:inline>
       const theme = localStorage.getItem('theme') ||

@@ -29,6 +29,7 @@ const post = Astro.props;
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const { heroImage, heroImageAlt, title, description, date, tags, lang, translationKey } = post.data;
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
+const wordCount: number | undefined = minutesRead ? minutesRead * 200 : undefined;
 const hasMath: boolean = !!remarkPluginFrontmatter.hasMath;
 const lastModifiedISO: string | undefined = remarkPluginFrontmatter.lastModified;
 const lastModified = lastModifiedISO ? new Date(lastModifiedISO) : undefined;
@@ -66,6 +67,7 @@ const translationLinks = translationSiblings.map((p) => {
   lang={lang}
   translations={translations}
   hasMath={hasMath}
+  wordCount={wordCount}
 >
   <progress
     id="read-progress"
