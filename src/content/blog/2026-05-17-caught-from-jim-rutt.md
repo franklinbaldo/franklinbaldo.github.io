@@ -6,7 +6,7 @@ lang: en
 translationKey: caught-from-jim-rutt
 tags: ["philosophy", "metaphysics", "probability", "podcasts", "rutt"]
 heroImage: ./images/caught-from-jim-rutt-cover.png
-heroImageAlt: "Lone figure between a starscape with radio telescope and orbital lines on the left, and geometric stone blocks with a Gaussian curve on the right."
+heroImageAlt: "A man at a kitchen sink, washing dishes with headphones on, wearing a focused, slightly tired expression. Behind him, a thought-cloud contains abstract scientific symbols: an atom, a Gaussian curve, geometric shapes, a spiral, an infinity sign, a molecule. Warm domestic lighting from a window."
 ---
 
 The first time Jim Rutt mentioned the two questions, I was barely paying attention. He was interviewing someone — I don't remember who, I don't remember the episode — and the topic drifted, as topics on his show drift, into one of his standing obsessions. He said something like *the Fermi paradox is one of the two questions I really can't stop thinking about*, and the guest nodded politely, and they moved on. I noted it as the kind of thing a smart American podcaster says, the way other smart American podcasters say things about cognitive biases or about Stoicism. *Of course,* I thought, *Fermi*. I was a nerd in the nineties. I have read Drake. I have read Sagan. I have read the relevant short Asimov essays. Fermi is furniture in my head; it has been there since I was twelve. Hearing it from Rutt was like hearing someone reach for an old standard at the piano. Pleasant, recognizable, no information.

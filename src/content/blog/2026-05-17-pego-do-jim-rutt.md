@@ -6,7 +6,7 @@ lang: pt
 translationKey: caught-from-jim-rutt
 tags: ["filosofia", "metafísica", "probabilidade", "podcasts", "rutt"]
 heroImage: ./images/caught-from-jim-rutt-cover.png
-heroImageAlt: "Figura solitária entre um céu estrelado com radiotelescópio e linhas orbitais à esquerda, e blocos geométricos de pedra com uma curva gaussiana à direita."
+heroImageAlt: "Um homem na pia da cozinha, lavando louça com fone de ouvido, expressão concentrada e ligeiramente cansada. Atrás dele, uma nuvem de pensamento contém símbolos científicos abstratos: um átomo, uma curva gaussiana, formas geométricas, uma espiral, um símbolo de infinito, uma molécula. Iluminação doméstica quente vindo de uma janela."
 ---
 
 Da primeira vez que Jim Rutt mencionou as duas perguntas, eu mal estava prestando atenção. Ele entrevistava alguém — não lembro quem, não lembro o episódio — e o assunto derivou, como assuntos derivam no programa dele, para uma de suas obsessões permanentes. Disse algo como *o paradoxo de Fermi é uma das duas perguntas em que eu não consigo parar de pensar*, e o convidado assentiu educadamente, e seguiram em frente. Anotei como o tipo de coisa que um podcaster americano inteligente diz, do mesmo jeito que outros podcasters americanos inteligentes falam de vieses cognitivos ou de Estoicismo. *Claro,* pensei, *Fermi*. Fui nerd nos anos noventa. Li Drake. Li Sagan. Li os ensaios curtos do Asimov sobre o tema. Fermi é mobília na minha cabeça; está lá desde os meus doze anos. Ouvir aquilo do Rutt era como ouvir alguém atacar um clássico no piano. Agradável, reconhecível, sem informação.
