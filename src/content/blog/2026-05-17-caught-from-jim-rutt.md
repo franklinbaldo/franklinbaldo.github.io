@@ -1,5 +1,5 @@
 ---
-title: "Caught from Jim Rutt"
+title: "Two Questions, Out Loud"
 description: "Two pivot questions, declared out loud because someone else has been declaring his for a decade and the consistency, in the end, was the argument."
 date: "2026-05-17"
 lang: en

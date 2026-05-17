@@ -1,5 +1,5 @@
 ---
-title: "Kibei do Jim Rutt"
+title: "Duas Perguntas, em Voz Alta"
 description: "Duas perguntas-pivô, declaradas em voz alta porque alguém mais vem declarando as dele há uma década e a consistência, no fim, era o argumento."
 date: "2026-05-17"
 lang: pt
