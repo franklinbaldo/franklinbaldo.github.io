@@ -3,9 +3,9 @@ title: "Two Questions, Out Loud"
 description: "Two pivot questions, declared out loud because someone else has been declaring his for a decade and the consistency, in the end, was the argument."
 date: "2026-05-17"
 lang: en
-translationKey: caught-from-jim-rutt
+translationKey: two-questions-out-loud
 tags: ["philosophy", "metaphysics", "probability", "podcasts", "rutt"]
-heroImage: ./images/caught-from-jim-rutt-cover.png
+heroImage: ./images/two-questions-out-loud-cover.png
 heroImageAlt: "A man at a kitchen sink, washing dishes with headphones on, wearing a focused, slightly tired expression. Behind him, a thought-cloud contains abstract scientific symbols: an atom, a Gaussian curve, geometric shapes, a spiral, an infinity sign, a molecule. Warm domestic lighting from a window."
 ---
 

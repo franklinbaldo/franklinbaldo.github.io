@@ -3,9 +3,9 @@ title: "Duas Perguntas, em Voz Alta"
 description: "Duas perguntas-pivô, declaradas em voz alta porque alguém mais vem declarando as dele há uma década e a consistência, no fim, era o argumento."
 date: "2026-05-17"
 lang: pt
-translationKey: caught-from-jim-rutt
+translationKey: two-questions-out-loud
 tags: ["filosofia", "metafísica", "probabilidade", "podcasts", "rutt"]
-heroImage: ./images/caught-from-jim-rutt-cover.png
+heroImage: ./images/two-questions-out-loud-cover.png
 heroImageAlt: "Um homem na pia da cozinha, lavando louça com fone de ouvido, expressão concentrada e ligeiramente cansada. Atrás dele, uma nuvem de pensamento contém símbolos científicos abstratos: um átomo, uma curva gaussiana, formas geométricas, uma espiral, um símbolo de infinito, uma molécula. Iluminação doméstica quente vindo de uma janela."
 ---
 
