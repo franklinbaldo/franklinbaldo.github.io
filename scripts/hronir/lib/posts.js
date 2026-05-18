@@ -6,10 +6,16 @@ export const POSTS_DIR = "src/content/blog";
 export const OUT_DIR = ".routines/hronir";
 
 export function listPosts(dir = POSTS_DIR) {
-  return fs
-    .readdirSync(dir)
-    .filter((f) => /\.mdx?$/.test(f))
-    .map((f) => path.join(dir, f));
+  const out = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      out.push(...listPosts(full));
+    } else if (/\.mdx?$/.test(entry.name)) {
+      out.push(full);
+    }
+  }
+  return out;
 }
 
 export function readPost(filePath) {
