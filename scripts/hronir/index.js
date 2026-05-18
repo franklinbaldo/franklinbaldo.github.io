@@ -4,7 +4,7 @@ import { init, continueCmd, decide, ranking, worst, editWorst, migrate, doctor, 
 const [, , cmd, ...args] = process.argv;
 
 function usage() {
-  console.error("Uso: hronir {init [--matches N] [--skip-edit] [--skip-rating] [--agent-id <id>] [--eval-lang <pt|en>] [--min-appearances N]|continue|decide --winner <a_or_b> [--agent-id <id>] --clash <text> --winner-defense <text> --loser-critique <text>|ranking|worst|edit-worst|migrate [--dry-run]|doctor|end [--skip-edit] [--force]}");
+  console.error("Uso: hronir {init [--matches N] [--skip-edit] [--skip-rating] [--agent-id <id>] [--eval-lang <lang>] [--min-appearances N]|continue|decide --winner <a_or_b> [--agent-id <id>] --clash <text> --winner-defense <text> --loser-critique <text>|ranking|worst|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force]}");
   process.exit(1);
 }
 

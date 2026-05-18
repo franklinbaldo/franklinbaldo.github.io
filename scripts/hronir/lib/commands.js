@@ -1,10 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
-import os from "node:os";
 import matter from "gray-matter";
 import { execFileSync } from "node:child_process";
 import { rating, predictWin } from "openskill";
-import { OUT_DIR, RATES_DIR, listEnglishWithKey, keyForPath, readPost, listPosts, getPostUuid, findBilingualFiles } from "./posts.js";
+import { OUT_DIR, RATES_DIR, listEnglishWithKey, keyForPath, readPost, listPosts, getPostUuid, findTranslations } from "./posts.js";
 import { listMatchFiles, readMatch, writeMatch, postKey } from "./matches.js";
 import { computeRatings } from "./ranking.js";
 
@@ -489,36 +488,28 @@ function collectDefensesForWinners(winnerKeys, limit = 5) {
 }
 
 function getRecentlyEditedKeys(limit = 2) {
-  const editsDir = path.join(OUT_DIR, "edits");
-  if (!fs.existsSync(editsDir)) {
-    return [];
-  }
-  const files = fs.readdirSync(editsDir)
-    .filter(f => f.endsWith(".md"))
-    .map(f => {
-      const fullPath = path.join(editsDir, f);
-      return {
-        name: f,
-        path: fullPath,
-        time: fs.statSync(fullPath).mtimeMs
-      };
-    })
-    .sort((a, b) => b.time - a.time);
-
-  const keys = [];
-  for (const file of files) {
-    if (keys.length >= limit) break;
-    try {
-      const { data } = readMatch(file.path);
-      const postKey = data.post_key;
-      if (postKey && !keys.includes(postKey)) {
-        keys.push(postKey);
-      }
-    } catch {
-      // ignore parse errors
+  // Cooldown is derived from editHistory[] on each post's frontmatter.
+  // The most recent edit timestamp across all translations of a key wins.
+  const latestByKey = new Map();
+  for (const p of listPosts()) {
+    const data = readPost(p);
+    if (!data.translationKey) continue;
+    const history = Array.isArray(data.editHistory) ? data.editHistory : [];
+    if (history.length === 0) continue;
+    let latest = 0;
+    for (const entry of history) {
+      const t = entry?.timestamp ? Date.parse(String(entry.timestamp)) : 0;
+      if (t > latest) latest = t;
     }
+    if (!latest) continue;
+    const key = String(data.translationKey);
+    const prev = latestByKey.get(key) || 0;
+    if (latest > prev) latestByKey.set(key, latest);
   }
-  return keys;
+  return [...latestByKey.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([key]) => key);
 }
 
 export function editWorst() {
@@ -571,9 +562,9 @@ export function editWorst() {
   const topRows = eligible.filter(r => r.key !== worstRow.key).slice(0, 3);
   const topKeys = topRows.map((r) => r.key);
 
-  const bilingualFiles = findBilingualFiles(worstRow.key);
+  const translationFiles = findTranslations(worstRow.key);
   const originalVersions = {};
-  for (const fileInfo of bilingualFiles) {
+  for (const fileInfo of translationFiles) {
     const uuid = getPostUuid(fileInfo.path);
     if (uuid) {
       originalVersions[fileInfo.lang] = uuid;
@@ -610,7 +601,7 @@ export function editWorst() {
   }
 
   console.log(`# Pior ranqueado (≥${minApps} aparições): ${worstRow.key}`);
-  for (const fileInfo of bilingualFiles) {
+  for (const fileInfo of translationFiles) {
     console.log(`# Path (${fileInfo.lang}): ${fileInfo.path} (UUIDv5: ${originalVersions[fileInfo.lang] || "N/A"})`);
   }
   console.log(`# Ordinal: ${worstRow.ordinal.toFixed(3)} (mu ${worstRow.mu.toFixed(3)}, sigma ${worstRow.sigma.toFixed(3)}, wins ${worstRow.wins}/${worstRow.appearances})`);
@@ -673,10 +664,10 @@ export function editWorst() {
     "argumentativo-formal (paper-shaped, defesa de tese, citação",
     "acadêmica densa). Em caso de dúvida, blog.",
     "",
-    "Edite o post em AMBOS os idiomas (a propriedade 'replacedVersion' já foi injetada automaticamente):",
+    "Edite o post em TODOS os idiomas listados abaixo (a propriedade 'replacedVersion' já foi injetada automaticamente):",
   ];
-  for (const fileInfo of bilingualFiles) {
-    stepLines.push(`- ${fileInfo.path}`);
+  for (const fileInfo of translationFiles) {
+    stepLines.push(`- [${fileInfo.lang}] ${fileInfo.path}`);
   }
   stepLines.push(
     "",
@@ -829,10 +820,8 @@ export function doctor() {
       if (!data.loser_critique || data.loser_critique === "TODO") {
         issues.push(`${base}: o campo 'loser_critique' no frontmatter está ausente ou é 'TODO'`);
       }
-      if (!data.eval_lang) {
+      if (!data.eval_lang || typeof data.eval_lang !== "string" || !data.eval_lang.trim()) {
         issues.push(`${base}: o campo 'eval_lang' no frontmatter está ausente`);
-      } else if (data.eval_lang !== "pt" && data.eval_lang !== "en") {
-        issues.push(`${base}: o campo 'eval_lang' deve ser 'pt' ou 'en'`);
       }
     }
 
@@ -930,8 +919,8 @@ export function editCommit(msg) {
     process.exit(1);
   }
 
-  const bilingualFiles = findBilingualFiles(worstKey);
-  if (bilingualFiles.length === 0) {
+  const translationFiles = findTranslations(worstKey);
+  if (translationFiles.length === 0) {
     console.error(`Erro: Nenhum arquivo de post encontrado para a chave "${worstKey}".`);
     process.exit(1);
   }
@@ -939,7 +928,7 @@ export function editCommit(msg) {
   const timestamp = new Date().toISOString();
   let anyMissing = false;
 
-  for (const fileInfo of bilingualFiles) {
+  for (const fileInfo of translationFiles) {
     const originalUuid = originalVersions[fileInfo.lang];
     const currentUuid = getPostUuid(fileInfo.path);
 
@@ -950,7 +939,7 @@ export function editCommit(msg) {
 
     if (currentUuid === originalUuid) {
       console.error(`Erro: O arquivo ${fileInfo.path} (${fileInfo.lang}) não foi modificado.`);
-      console.error("Todas as versões bilíngues devem ser editadas antes de commitar.");
+      console.error("Todas as traduções devem ser editadas antes de commitar.");
       anyMissing = true;
     }
   }
@@ -960,7 +949,7 @@ export function editCommit(msg) {
   }
 
   // Inject editHistory into each file's frontmatter
-  for (const fileInfo of bilingualFiles) {
+  for (const fileInfo of translationFiles) {
     const originalUuid = originalVersions[fileInfo.lang];
     if (!originalUuid) continue;
 
