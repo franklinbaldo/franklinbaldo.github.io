@@ -1,13 +1,13 @@
 ---
 run_id: 2026-05-18T02-05-51
-run_at: 2026-05-18T02:05:51Z
+run_at: 2026-05-18T02:05:51.000Z
 match_index: 4
 criterion: compelling
 post_a:
-  slug: 2026-05-04-the-three-imperatives-at-delphi
+  key: delphi-imperatives
   path: src/content/blog/2026-05-04-the-three-imperatives-at-delphi.md
 post_b:
-  slug: 2026-05-17-two-questions-out-loud
+  key: two-questions-out-loud
   path: src/content/blog/2026-05-17-two-questions-out-loud.md
 winner: a
 margin: 3

@@ -11,7 +11,14 @@
     "dev": "astro dev",
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "hronir": "node scripts/hronir/index.js",
+    "hronir:init": "node scripts/hronir/index.js init",
+    "hronir:present": "node scripts/hronir/index.js present",
+    "hronir:ranking": "node scripts/hronir/index.js ranking",
+    "hronir:worst": "node scripts/hronir/index.js worst",
+    "hronir:migrate": "node scripts/hronir/index.js migrate",
+    "hronir:doctor": "node scripts/hronir/index.js doctor"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.4",
@@ -36,6 +43,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "gray-matter": "^4.0.3",
     "playwright": "^1.60.0"
   }
 }

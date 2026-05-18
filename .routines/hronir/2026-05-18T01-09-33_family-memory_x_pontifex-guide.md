@@ -1,13 +1,13 @@
 ---
 run_id: 2026-05-18T01-09-33
-run_at: 2026-05-18T01:09:33Z
+run_at: 2026-05-18T01:09:33.000Z
 match_index: 1
 criterion: gateway
 post_a:
-  slug: orquestrando-agentes-memoria-familiar
+  key: family-memory
   path: src/content/blog/orquestrando-agentes-memoria-familiar.md
 post_b:
-  slug: pontifex-architecture-implementation-guide
+  key: pontifex-guide
   path: src/content/blog/pontifex-architecture-implementation-guide.md
 winner: a
 margin: 4

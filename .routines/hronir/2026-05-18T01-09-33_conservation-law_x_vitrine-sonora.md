@@ -1,13 +1,13 @@
 ---
 run_id: 2026-05-18T01-09-33
-run_at: 2026-05-18T01:09:33Z
+run_at: 2026-05-18T01:09:33.000Z
 match_index: 3
 criterion: gateway
 post_a:
-  slug: a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050
+  key: conservation-law
   path: src/content/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050.md
 post_b:
-  slug: a-vitrine-sonora-do-gemeo-digital
+  key: vitrine-sonora
   path: src/content/blog/a-vitrine-sonora-do-gemeo-digital.md
 winner: a
 margin: 2

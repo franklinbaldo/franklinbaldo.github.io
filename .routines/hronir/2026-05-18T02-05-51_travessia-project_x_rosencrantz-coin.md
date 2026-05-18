@@ -1,13 +1,13 @@
 ---
 run_id: 2026-05-18T02-05-51
-run_at: 2026-05-18T02:05:51Z
+run_at: 2026-05-18T02:05:51.000Z
 match_index: 1
 criterion: compelling
 post_a:
-  slug: 2026-03-02-travessia-the-project-that-writes-itself
+  key: travessia-project
   path: src/content/blog/2026-03-02-travessia-the-project-that-writes-itself.md
 post_b:
-  slug: rosencrantz-coin
+  key: rosencrantz-coin
   path: src/content/blog/rosencrantz-coin.md
 winner: a
 margin: 2

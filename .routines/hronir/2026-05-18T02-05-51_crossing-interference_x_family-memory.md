@@ -1,14 +1,15 @@
 ---
 run_id: 2026-05-18T02-05-51
-run_at: 2026-05-18T02:05:51Z
+run_at: 2026-05-18T02:05:51.000Z
 match_index: 5
 criterion: compelling
 post_a:
-  slug: 2026-03-17-crossing-after-interference
+  key: crossing-interference
   path: src/content/blog/2026-03-17-crossing-after-interference.md
 post_b:
-  slug: what-i-learned-orchestrating-ai-agents-to-preserve-family-memory
-  path: src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory.md
+  key: family-memory
+  path: >-
+    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory.md
 winner: a
 margin: 2
 confidence: medium

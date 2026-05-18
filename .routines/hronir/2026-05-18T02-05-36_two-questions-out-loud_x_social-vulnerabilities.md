@@ -1,13 +1,13 @@
 ---
 run_id: 2026-05-18T02-05-36
-run_at: 2026-05-18T02:05:36Z
+run_at: 2026-05-18T02:05:36.000Z
 match_index: 2
 criterion: gateway
 post_a:
-  slug: 2026-05-17-two-questions-out-loud
+  key: two-questions-out-loud
   path: src/content/blog/2026-05-17-two-questions-out-loud.md
 post_b:
-  slug: patents-for-social-vulnerabilities
+  key: social-vulnerabilities
   path: src/content/blog/patents-for-social-vulnerabilities.md
 winner: a
 margin: 4

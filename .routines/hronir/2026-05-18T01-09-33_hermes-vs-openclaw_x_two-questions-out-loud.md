@@ -1,13 +1,13 @@
 ---
 run_id: 2026-05-18T01-09-33
-run_at: 2026-05-18T01:09:33Z
+run_at: 2026-05-18T01:09:33.000Z
 match_index: 2
 criterion: gateway
 post_a:
-  slug: 2026-04-04-hermes-vs-openclaw
+  key: hermes-vs-openclaw
   path: src/content/blog/2026-04-04-hermes-vs-openclaw.md
 post_b:
-  slug: 2026-05-17-two-questions-out-loud
+  key: two-questions-out-loud
   path: src/content/blog/2026-05-17-two-questions-out-loud.md
 winner: b
 margin: 3

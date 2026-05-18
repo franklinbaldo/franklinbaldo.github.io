@@ -1,13 +1,13 @@
 ---
 run_id: 2026-05-18T01-09-33
-run_at: 2026-05-18T01:09:33Z
+run_at: 2026-05-18T01:09:33.000Z
 match_index: 4
 criterion: gateway
 post_a:
-  slug: 2026-03-18-verne-identity-repo
+  key: verne-identity-repo
   path: src/content/blog/2026-03-18-verne-identity-repo.md
 post_b:
-  slug: 2026-05-15-quem-o-asterisco-protege
+  key: asterisk-protects
   path: src/content/blog/2026-05-15-quem-o-asterisco-protege.md
 winner: b
 margin: 4

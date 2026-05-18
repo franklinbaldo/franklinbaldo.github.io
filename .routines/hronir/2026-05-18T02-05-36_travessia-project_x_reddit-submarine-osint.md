@@ -1,13 +1,13 @@
 ---
 run_id: 2026-05-18T02-05-36
-run_at: 2026-05-18T02:05:36Z
+run_at: 2026-05-18T02:05:36.000Z
 match_index: 3
 criterion: gateway
 post_a:
-  slug: 2026-03-02-travessia-the-project-that-writes-itself
+  key: travessia-project
   path: src/content/blog/2026-03-02-travessia-the-project-that-writes-itself.md
 post_b:
-  slug: 2026-03-22-reddit-submarine-osint
+  key: reddit-submarine-osint
   path: src/content/blog/2026-03-22-reddit-submarine-osint.md
 winner: a
 margin: 3

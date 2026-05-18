@@ -19,6 +19,9 @@ jobs:
 
       - run: npm ci
 
+      - name: Hrönir doctor
+        run: npm run hronir:doctor
+
       - name: Astro type check
         run: npx astro check
 
