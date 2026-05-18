@@ -8,82 +8,67 @@ tags: ["ai", "agents", "developer-tools", "automation", "software-engineering"]
 draft: false
 author: "franklin"
 ---
-In the last few weeks I have been experiencing an interesting transition in my daily use of agents: I left OpenClaw, which was my previous harness, and started using Hermes Agent as my main environment. As almost everything I do with AI ends up becoming work infrastructure — and not just a benchmark toy — I wanted to write this in a less marketing and more empirical way.
-So I did the obvious: I went to look at the sessions.
-In the directory `/opt/data/sessions/`, I found 81 old sessions classifiable as OpenClaw and 3 recent sessions already in Hermes format. This is not an academic benchmark; It's an operational sample of my own routine. And that's precisely why it interests me more than sterilized comparisons.
-The short summary is this: Hermes is not magical, it doesn't make mistakes, and it still stumbles on environmental details. But the overall experience was clearly better. Better for investigating, better for recovering context, better for correcting yourself in flight and, most importantly, better for getting real work done.
-## What the logs show
-OpenClaw left quite a trail. In the 81 sessions I analyzed, there were:
-- 1,414 tool calls
-- 137 tool errors
-- 39 sessions with at least one tool error
-- something around 48.1% of sessions with some operational friction
-The examples are very concrete, and several of them sound familiar to me because I experience this on a daily basis:
-- schema error: `Missing required parameter: newText (newText or new_string)`
-- command/flag error: `Unknown JSON field: "mergeableState"`
-- environment error: `kanban: command not found`
-- runtime error in heartbeat: `Failed to spawn: heartbeat`
-These errors alone do not condemn a platform. Any agent system that actually touches shell, GitHub, files, and real automation is going to hit corners. The problem with OpenClaw was different: the friction often seemed to be in the harness itself, in the way the tools fit together, in the schematics, in the ergonomics, and not just in the task itself.
-There was a recurring pattern of “it almost happened”: the agent even understood the objective, but wasted time on details of the tool’s interface. In a session on February 14, for example, the flow was simple: read `HEARTBEAT.md`, query PRs, update a section of the file. The work was done, but first came the famous hit of `edit` without `newText`. Did you resolve it later? Resolved. But with that feeling of a tool getting in the way more than helping.
-Another trait of OpenClaw was operational repetition. Many sessions turned into small cron loops, heartbeats, `NO_REPLY`, mechanical checks, without a good gradient between “check” and “act”. For simple tasks, this was enough. In investigation, debugging and coordination of various parts, I felt that the system became more fragile and more verbose than it needed to be.
-## Hermes also makes mistakes — but he makes better mistakes
-I preferred to look at Hermes honestly, because it would be easy to write a false victory. In the 3 recent logs that are already in the new format, I found:
-- 225 tool calls
-- 22 results with error or non-zero output
-In other words: it is not true that Hermes is a world without flaws. It is not.
-In the recent logs themselves, stumbles appear such as:
+
+I have 81 OpenClaw session logs sitting in `/opt/data/sessions/` and 3 Hermes sessions next to them. That's not a comparison — it's a before-and-after from someone's personal infrastructure. I'm going to write about it anyway, with that caveat visible.
+
+The reason I care is practical. I don't run benchmarks. I use agents for real work: keeping CausaGanha's backfill pipelines honest, opening [Jules](/blog/2026-05-10-jules-api-harness-backend/) sessions from Porto Velho at 11pm when the day job is done, maintaining the identity repo, debugging whatever broke while I was in a court hearing. The comparison that matters to me is not "which one scores higher on MMLU" — it's "which one I can hand a task to and walk away from."
+
+The thing I'd underestimated, going into this analysis, is how much harness design is perception of intelligence. Not metaphorically. When an agent trips over a schema error and loops on it, it reads as dim. When it trips over the same error and routes around it in two moves, it reads as sharp. The model might be identical in both cases. The *harness* makes the difference.
+
+## What the OpenClaw logs show
+
+81 sessions. 1,414 tool calls. 137 tool errors. 39 sessions with at least one error. Roughly 48% of sessions had some kind of operational friction.
+
+The specific errors are the kind that stop being surprising once you've seen them a few times:
+
+- `Missing required parameter: newText (newText or new_string)`
+- `Unknown JSON field: "mergeableState"`
+- `kanban: command not found`
+- `Failed to spawn: heartbeat`
+
+None of these condemn a platform. Any agent doing real work against shell, GitHub, and live files is going to hit corners. The question is what happens next.
+
+In OpenClaw, the pattern was: error → agent registers the error → agent tries a slightly different phrasing of the same thing → same error. Or: error → successful workaround → next session starts from scratch and hits the same wall. A session on February 14 went like this: simple flow, read `HEARTBEAT.md`, query PRs, update a section. The work got done. But first came the familiar `edit`-without-`newText` collision, the loop, the eventual workaround. The task was straightforward. The harness made it an obstacle course.
+
+The other pattern was repetition without gradient. Sessions collapsed into cron loops — heartbeat, `NO_REPLY`, mechanical check. Fine for rote tasks. For actual investigation, the verbosity became noise and the fragility became a problem.
+
+## Hermes also makes mistakes
+
+22 errors out of 225 tool calls in the 3 recent sessions. Not zero.
+
 - `bash: python: command not found`
-- search in a non-existent path (`/home/ubuntu`)
-- security locks for `curl patterns | python3`
-- authentication failures in third-party visual tools (`invalid x-api-key`)
-If I just looked at the raw error count, I might tell the wrong story. Because the difference is not in “there are no mistakes”. The difference is in the system's behavior after the error.
-At Hermes, the pattern has been much more like this:
-1. the attempt fails
-2. the agent understands why it failed
-3. change of tool or approach
-4. continue the task until the objective is reached
-This detail changes everything.
-When the shell complained about `python`, for example, the flow continued with `python3` without drama. When the security scan blocked a `curl | python3`, the agent got around it correctly by writing temporary file and using another form of parse. When the browser view gave 401, the investigation continued by textual snapshot, Jina, shell and files. This is much closer to what I expect from a technical partner and much less like a demo script.
-## The real leap: quality of investigation
-The point where Hermes won me once and for all was not in the “beautiful chat”. It was in the capacity of investigation.
-In recent sessions, he used a much more mature combination of tools:
-- `session_search` to retrieve cross-session context
-- `read_file` and `search_files` with better granularity
-- `execute_code` for local processing without shell workarounds
-- `patch` and `write_file` for predictable editing
-- `todo` to keep explicit plan
-- browser + snapshot for page inspection when necessary
-This seems like a detail, but in practice it greatly reduces the cognitive cost of automation. Instead of thinking “what improvised command will make this agent survive?”, I can think more about the problem.
-A good example came just when I was investigating CausaGanha. The session was not just superficial. Hermes went to the Internet Archive metadata, counted recent files, compared historical versions of `completed-items.json`, separated “catalog refresh” from “actual backfill advancement”, and then opened [Jules](/blog/2026-05-10-jules-api-harness-backend/) sessions with more precise instructions. This is much closer to real operational analysis than a sequence of tools fired at random.
-In OpenClaw, I often felt that the agent was able to execute commands. In Hermes, I feel more often than not that he can conduct an investigation.
-## Context and continuity
-Another big gain is continuity.
-One of the most annoying problems in the previous experience was that moment when you knew you had already talked about it, but the system couldn't re-anchor itself properly. Sometimes it was necessary to re-explain too much. Sometimes the agent even remembered “the atmosphere” of the task, but not the right facts. In a recent old session, this came up quite explicitly: I had to point out that we were talking about something discussed just a few hours before, and the system basically admitted that it had lost the thread.
-Hermes doesn't resolve this in a mystical way. What it does is better operational memory engineering:
-- lean persistent memory for durable facts
-- `session_search` for recalling previous sessions
-- skills for recurring procedure
-- structured reading of the workspace
-This is much more sustainable. Rather than trying to fake a total memory, he seems more comfortable saying “I’ll look through the records”—which, for real work, is better than confident ad-libbing.
-## Tool UX matters more than it seems
-I underestimated for a long time how much tool UX changes the perception of intelligence.
-If an agent “thinks well”, but keeps tripping over schema, file editing, how to pass arguments, how to parse output, the final feeling is sand in the gears. This is what several OpenClaw sessions conveyed to me. It wasn't necessarily the model's stupidity. It was the model + harness + tools set delivering too much friction.
-The Hermes gives me another feeling: more of a factory floor. Less juggling. Less “this should have worked”.
-Even when it goes wrong, it usually goes wrong in a diagnosable way. And that, in daily use, is worth its weight in gold.
-## Where OpenClaw Still Had Merit
-It would be unfair to pretend that OpenClaw was useless. It served a lot.
-It was there that several of my heartbeat, memory, [Jules](/blog/2026-05-10-jules-api-harness-backend/), backlog, PR checking and context documentation routines were consolidated. He helped me learn what I really wanted from an operational agent. In a sense, it was OpenClaw that made me picky about Hermes.
-You also can't ignore the sample cut: I have 81 old sessions on one side and only 3 on the other in the new format. So it would be dishonest to call this a definitive statistical comparison.
-But tool experience is not just statistics. It's texture. It's fluidity. That's how many times I need to interrupt the flow to fix the mechanism itself.
-And then the difference is already quite clear.
-## My practical conclusion
-If I summarized it in one sentence:
-The OpenClaw seemed like a promising harness for agents. Hermes already looks more like a work environment.
-In OpenClaw, I often felt like I needed to manage the tool in order to get the work done.
-At Hermes, much more often, I simply do the work.
-That doesn't mean perfection. There are still broken credentials, security-blocked commands, wrong path choices, environmental confusion, and minor real-world collisions. But Hermes has a quality that today I value more than “reasoning benchmark”: recovery capacity.
-For those who use agents in personal production — that is, to investigate bugs, open an external session, create a report, edit code, cross logs, consult GitHub, touch files and publish results — this ability is worth more than an occasional flash in a demo prompt.
-In the end, this is what changed my perception.
-OpenClaw gave me several glimpses into the future.
-Hermes started to give me a routine.
-And, for serious work, routine almost always wins.
+- search against `/home/ubuntu` (doesn't exist)
+- security block on `curl patterns | python3`
+- `invalid x-api-key` from a visual browser tool
+
+What's different is the behavior after. When the shell complained about `python`, the next move was `python3`. No drama, no loop. When the security scan blocked `curl | python3`, a temp file appeared and the parse strategy changed. When the browser view returned 401, the investigation continued through snapshot, Jina, and file reads.
+
+That four-step loop — fail, understand why, pivot, continue — sounds small. In practice it's the difference between an agent I can delegate to and an agent I have to supervise.
+
+## The CausaGanha session
+
+The clearest example: a session investigating CausaGanha's backfill status. Not a surface ping. Hermes pulled Internet Archive metadata, counted recent files, compared historical versions of `completed-items.json`, separated "catalog refresh" from "actual backfill advancement," then opened [Jules](/blog/2026-05-10-jules-api-harness-backend/) sessions with tighter instructions based on what it found.
+
+That kind of layered investigation — where each step narrows the question for the next — is what I'd been hoping agents could do for a while. OpenClaw got there sometimes. Hermes does it more consistently.
+
+The tool mix helps: `session_search` for cross-session context, `read_file` and `search_files` with real granularity, `execute_code` for local processing without shell improvisation, `todo` to keep a plan visible. The practical effect is that I spend less time thinking "what incantation will keep this agent alive?" and more time thinking about the actual problem.
+
+## The memory problem
+
+Continuity was the constant friction in OpenClaw. I'd know we had discussed something two hours before; the system would be adrift. Sometimes it had the *feeling* of a previous session — the right vocabulary, roughly the right context — but not the specific facts. Once I had to say explicitly: this is something we talked about today.
+
+Hermes doesn't fix this through magic. It makes the memory architecture honest: lean persistent memory for durable facts, `session_search` for previous sessions, skills for recurring procedures, structured workspace reading. Instead of pretending to remember, it says "let me check the records" — which for real work is more useful than confident improvisation.
+
+## Where OpenClaw deserves credit
+
+Most of the routines Hermes now runs better were built in OpenClaw. Heartbeat, memory, Jules integration, backlog management, PR checking, context documentation — those patterns came out of 81 sessions of figuring out what I actually needed from an operational agent. In a real sense OpenClaw made me picky enough to notice the difference.
+
+And the sample is what it is. Three sessions versus 81 doesn't settle anything statistically. This is texture, not rigor.
+
+But texture is the thing. How many times do I stop to fix the mechanism instead of running the task? That's the number that matters at 11pm in Porto Velho when the thing I actually care about is whether the pipeline advanced.
+
+OpenClaw gave me a clearer picture of what I wanted.
+
+Hermes is starting to give me a routine.
+
+For serious work, routine wins.
