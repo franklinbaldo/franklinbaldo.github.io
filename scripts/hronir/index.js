@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import { init, present, ranking, worst, migrate, doctor } from "./lib/commands.js";
+import { init, present, ranking, worst, editWorst, migrate, doctor } from "./lib/commands.js";
 
 const [, , cmd, ...args] = process.argv;
 
 function usage() {
-  console.error("Uso: hronir {init|present <match>|ranking|worst|migrate [--dry-run]|doctor}");
+  console.error("Uso: hronir {init|present <match>|ranking|worst|edit-worst|migrate [--dry-run]|doctor}");
   process.exit(1);
 }
 
@@ -20,6 +20,9 @@ switch (cmd) {
     break;
   case "worst":
     worst();
+    break;
+  case "edit-worst":
+    editWorst();
     break;
   case "migrate":
     migrate({ dryRun: args.includes("--dry-run") });

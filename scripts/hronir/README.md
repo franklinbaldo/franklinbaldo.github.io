@@ -2,6 +2,16 @@
 
 Sistema de avaliação par-a-par de posts do blog. Cada rodada sorteia 10 posts EN com `translationKey`, monta 5 partidas, e um avaliador (humano ou modelo) escolhe um vencedor por partida defendendo apaixonadamente. O ranking acumulado identifica o post que mais perde, e esse post recebe uma crítica registrada.
 
+> **Este CLI é não-interativo por design** (rodado por Claude Code).
+> Não use `readline`, `inquirer`, `prompts`, leitura de `process.stdin`,
+> nem confirmações em tela do tipo `[y/N]`. Toda saída vai direto pro
+> stdout via `console.log`, sem paginação. O default de qualquer ação
+> destrutiva ou que sobrescreve é "prossiga sem perguntar". Se algum
+> subcomando futuro precisar de confirmação destrutiva (ex: `reset`),
+> implemente com flag explícita `--yes`, não com prompt interativo.
+>
+> Comandos não devem mudar de comportamento baseado em `process.stdout.isTTY`.
+
 ## Identidade canônica
 
 `translationKey` (do frontmatter do post) é a identidade. Versões em idiomas diferentes do mesmo ensaio compartilham a mesma `translationKey` e portanto consolidam wins/appearances no ranking. Match files referenciam posts por `key` (= translationKey) e `path` (= caminho do .md).
@@ -29,11 +39,20 @@ Todos via npm scripts no raiz:
 | `npm run hronir:init` | Sorteia 10 posts EN, cria 5 match files `winner: TODO` |
 | `npm run hronir:present -- <match.md>` | Imprime os dois posts + instrução pro avaliador |
 | `npm run hronir:ranking` | Score acumulado de todos os matches preenchidos |
-| `npm run hronir:worst` | Imprime translationKey do pior ranqueado |
+| `npm run hronir:worst` | Imprime translationKey do pior ranqueado (apenas inspeção) |
+| `npm run hronir:edit-worst` | Imprime worst + top 3, defesas em que worst perdeu (5 mais recentes) e defesas dos top 3 (5 mais recentes), e instrui edição do post |
 | `npm run hronir:migrate` | Normaliza matches legados (slug → key, renomeia arquivos) |
 | `npm run hronir:doctor` | Verifica inconsistências (keys, paths, duplicatas) |
 
 Cada comando termina com uma linha `NEXT STEP:` apontando o próximo passo, exceto quando o fluxo termina.
+
+## Fluxo
+
+```
+init → present (×5) → edit-worst → (edição manual do post worst)
+```
+
+`worst` continua disponível para inspeção pontual, mas o fluxo automático termina em `edit-worst`: o sinal extraído da rodada não é só "este é o pior", e sim "aqui está o pior, aqui estão as defesas em que ele perdeu, aqui estão as defesas dos melhores — edite reduzindo o gap". A crítica em prosa (em `.routines/hronir/critiques/`) continua sendo um registro válido, mas não é mais o terminal do pipeline.
 
 ## Ranking
 

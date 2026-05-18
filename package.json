@@ -17,6 +17,7 @@
     "hronir:present": "node scripts/hronir/index.js present",
     "hronir:ranking": "node scripts/hronir/index.js ranking",
     "hronir:worst": "node scripts/hronir/index.js worst",
+    "hronir:edit-worst": "node scripts/hronir/index.js edit-worst",
     "hronir:migrate": "node scripts/hronir/index.js migrate",
     "hronir:doctor": "node scripts/hronir/index.js doctor"
   },
