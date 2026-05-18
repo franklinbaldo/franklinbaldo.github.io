@@ -72,20 +72,18 @@ export function init(options = {}) {
   const skipRating = !!options.skipRating;
   const agentId = options.agentId || "human";
   const evalLang = options.evalLang || "pt";
-  const { runId } = utcStamp();
   const sessionPath = SESSION_PATH;
 
   if (skipRating) {
     const session = {
       target: 0,
       completed: 0,
-      runId,
       agentId,
       evalLang,
       state: "need_edit",
       skipEdit: false,
       skipRating: true,
-      currentFile: null,
+      currentMatch: null,
       minAppearances: options.minAppearances || null
     };
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
@@ -104,13 +102,12 @@ export function init(options = {}) {
   const session = {
     target: matchesOpt,
     completed: 0,
-    runId,
     agentId,
     evalLang,
     state: "ready_for_next",
     skipEdit,
     skipRating: false,
-    currentFile: null,
+    currentMatch: null,
     minAppearances: options.minAppearances || null
   };
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
@@ -122,7 +119,7 @@ export function init(options = {}) {
   continueCmd();
 }
 
-function generateNextMatch(runId) {
+function generateNextMatch() {
   const candidates = listEnglishWithKey();
   const ranking = computeRatings();
   const ratingByKey = new Map();
@@ -157,25 +154,7 @@ function generateNextMatch(runId) {
   }
   pairs.sort((x, y) => (y.score - x.score) || (x.jitter - y.jitter));
 
-  const used = new Set();
-  const files = listMatchFiles();
-  for (const f of files) {
-    const { data } = readMatch(f);
-    if (data.winner === "TODO" || !data.winner) {
-      const aKey = postKey(data.post_a);
-      const bKey = postKey(data.post_b);
-      if (aKey) used.add(aKey);
-      if (bKey) used.add(bKey);
-    }
-  }
-
-  let chosen = null;
-  for (const p of pairs) {
-    if (used.has(p.a.translationKey) || used.has(p.b.translationKey)) continue;
-    chosen = p;
-    break;
-  }
-
+  const chosen = pairs[0];
   if (!chosen) {
     console.error("Não há pares elegíveis disponíveis no momento.");
     process.exit(1);
@@ -183,9 +162,6 @@ function generateNextMatch(runId) {
 
   let { a, b } = chosen;
   if (Math.random() < 0.5) [a, b] = [b, a];
-
-  const { runAt } = utcStamp();
-  const file = path.join(RATES_DIR, `${runId}_${a.translationKey}_x_${b.translationKey}.md`);
 
   const sessionPath = SESSION_PATH;
   let matchIndex = 1;
@@ -198,26 +174,14 @@ function generateNextMatch(runId) {
     evalLang = s.evalLang || "pt";
   }
 
-  const fm = {
-    run_id: runId,
-    run_at: runAt,
+  console.log(`Gerado match ${matchIndex} (active sampling).`);
+  return {
     match_index: matchIndex,
     post_a: { key: a.translationKey, path: a.path, version: getPostUuid(a.path) },
     post_b: { key: b.translationKey, path: b.path, version: getPostUuid(b.path) },
-    winner: "TODO",
     agent_id: agentId,
     eval_lang: evalLang,
-    prompt_version: "passion-v1",
-    season: 1,
-    override: null,
-    clash: "TODO",
-    winner_defense: "TODO",
-    loser_critique: "TODO",
   };
-
-  writeMatch(file, fm, "");
-  console.log(`Gerado match ${matchIndex} (active sampling).`);
-  return file;
 }
 
 export function continueCmd() {
@@ -253,30 +217,28 @@ export function continueCmd() {
     }
 
     console.log(`\n=== MATCH ${session.completed + 1} DE ${session.target} ===\n`);
-    const file = generateNextMatch(session.runId);
-    session.currentFile = file;
+    const match = generateNextMatch();
+    session.currentMatch = match;
     session.state = "reading_a";
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
   }
 
   if (session.state === "reading_a") {
-    const { data } = readMatch(session.currentFile);
-    const aPath = data.post_a?.path;
-    
+    const aPath = session.currentMatch?.post_a?.path;
+
     console.log("=== PRIMEIRO POST (A) ===\n");
     console.log(fs.readFileSync(aPath, "utf8"));
     console.log("\n---\n");
-    
+
     session.state = "reading_b";
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
-    
+
     nextStep(`rode \`npm run hronir:continue\` para ler o SEGUNDO POST.`);
     return;
   }
 
   if (session.state === "reading_b") {
-    const { data } = readMatch(session.currentFile);
-    const bPath = data.post_b?.path;
+    const bPath = session.currentMatch?.post_b?.path;
     
     console.log("=== SEGUNDO POST (B) ===\n");
     console.log(fs.readFileSync(bPath, "utf8"));
@@ -342,7 +304,11 @@ export function decide(args) {
     process.exit(1);
   }
 
-  const matchFile = session.currentFile;
+  const currentMatch = session.currentMatch;
+  if (!currentMatch || !currentMatch.post_a || !currentMatch.post_b) {
+    console.error("Erro: sessão sem match atual. Rode `npm run hronir:continue` para gerar um match.");
+    process.exit(1);
+  }
 
   let winner = "TODO";
   let agentId = session.agentId || "TODO";
@@ -381,25 +347,36 @@ export function decide(args) {
     process.exit(1);
   }
 
-  const { data } = readMatch(matchFile);
-  data.winner = winner;
-  data.agent_id = agentId;
-  if (evalLang) {
-    data.eval_lang = evalLang;
-  }
-  data.clash = clash;
-  data.winner_defense = winnerDefense;
-  data.loser_critique = loserCritique;
-  delete data.model;
-  delete data.critique;
+  const { runId, runAt } = utcStamp();
+  const aKey = currentMatch.post_a.key;
+  const bKey = currentMatch.post_b.key;
+  const matchFile = path.join(RATES_DIR, `${runId}_${aKey}_x_${bKey}.md`);
 
+  const data = {
+    run_id: runId,
+    run_at: runAt,
+    match_index: currentMatch.match_index,
+    post_a: currentMatch.post_a,
+    post_b: currentMatch.post_b,
+    winner,
+    agent_id: agentId,
+    eval_lang: evalLang || currentMatch.eval_lang || session.evalLang || "pt",
+    prompt_version: "passion-v1",
+    season: 1,
+    override: null,
+    clash,
+    winner_defense: winnerDefense,
+    loser_critique: loserCritique,
+  };
+
+  fs.mkdirSync(RATES_DIR, { recursive: true });
   writeMatch(matchFile, data, "");
 
-  console.log(`Match ${path.basename(matchFile)} atualizado com sucesso!`);
+  console.log(`Match ${path.basename(matchFile)} criado com sucesso!`);
 
   session.completed += 1;
   session.state = "ready_for_next";
-  session.currentFile = null;
+  session.currentMatch = null;
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
   nextStep("Rode `npm run hronir:continue` para ir para o próximo passo.");
@@ -652,13 +629,12 @@ export function editWorst() {
     : {
         target: 0,
         completed: 0,
-        runId: utcStamp().runId,
         agentId: "human",
         evalLang: null,
         state: "need_edit",
         skipEdit: false,
         skipRating: true,
-        currentFile: null,
+        currentMatch: null,
         minAppearances: minApps,
       };
   session.state = "need_edit";
