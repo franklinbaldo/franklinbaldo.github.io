@@ -4,25 +4,60 @@ author: franklin
 date: 2026-03-22
 lang: en
 translationKey: reddit-submarine-osint
-description: "The internet loves the idea that a casual Reddit post guided a military strike. The reality is both less sensational and more profoundly disruptive."
+description: "The internet loves the idea that a Reddit post guided a military strike. I live in Porto Velho, where the same subreddit tracks deforestation IBAMA hasn't registered yet."
 tags: ["osint", "warfare", "technology", "internet culture"]
 heroImage: ./images/reddit-submarine-osint-cover.jpg
 heroImageAlt: "Submarine underwater with OSINT intelligence theme, dark blue depths, cinematic"
 ---
 
-The internet loves a seductive narrative, especially one where it gets to play the hero, the detective, or the unseen hand of geopolitics. Recently, a post appeared on `r/GoogleEarthFinds` that seemed, to many, to be exactly that kind of story.
-A user shared coordinates—[27.1462289, 56.2109822](https://www.google.com/maps/place/27%C2%B008'46.4%22N+56%C2%B012'39.5%22E/)—pointing to what clearly appears to be a Kilo-class submarine sitting exposed in an Iranian dry dock. The image is crisp, the asset is significant, and the implications felt immediate. Almost instantly, the whisper network of the internet began asking the thrilling, terrifying question: *Are they really using a Reddit post to help bomb a submarine in Iran?*
-The idea is intoxicating. It suggests a democratization of lethality, a world where a bored teenager clicking through satellite imagery can casually crowdsource a military strike. But before we accept this as a new paradigm of war, we need to carefully parse what is observable, what is plausible, and what is purely speculative.
-### The Observable and the Plausible
-Here is what we know for certain: the coordinates exist, the satellite imagery is public, and the Reddit post is real. We can observe a submarine in a dry dock. We can also observe that the post gathered attention, indexed the location, and circulated the image across social platforms.
-It is also highly plausible—even certain—that modern militaries and intelligence agencies monitor open-source intelligence (OSINT). They scrape forums, track social media sentiment, and analyze commercially available satellite data.
-But this is where we must draw a hard line. Plausibility is not proof.
-### Confusing Correlation with Causation
-To suggest that a military apparatus with billion-dollar reconnaissance budgets, dedicated spy satellites, and signals intelligence networks is relying on `r/GoogleEarthFinds` to locate a massive, static piece of naval infrastructure is a profound leap. A Kilo-class submarine does not sneak into a dry dock unnoticed by state-level actors.
-The internet frequently confuses correlation with causation. If a military strike were to happen at those coordinates tomorrow, thousands of users would point to the Reddit post as the catalyst. *We found it first*, they would say. *We guided the bombs.* But the reality is that the military already knew it was there. The Reddit post is merely an echo of a reality that state sensors had already registered.
-Claiming Reddit guides bombs is not just an overstatement; it misreads how intelligence actually works.
-### The True Shift: The Perceptual Environment of War
-However, discarding the sensationalist framing does not mean the phenomenon is meaningless. The fact that a civilian can identify, broadcast, and discuss the precise location of a foreign military asset in near real-time is a profound shift.
-The strongest framing here is not about operational inputs; it is about the perceptual environment of war. Open-source intelligence, public satellite imagery, and social platforms have transformed conflict from a closed, state-managed narrative into a highly visible, searchable, and commentable public event.
-Even when these platforms do not direct the missiles, they shape the attention, interpretation, and public understanding of the conflict. A Reddit post acts as a public ledger, forcing a piece of military infrastructure into the global consciousness. It indexes the asset. It creates a space where the ethics, logistics, and implications of a potential strike are debated before the first siren even wails.
-War is no longer just something that happens; it is something we all watch, annotate, and verify together. The public is not pulling the trigger, but they are increasingly staring down the barrel alongside those who do. The deeper question isn't whether Reddit is targeting submarines. The question is what happens to our understanding of conflict when every dry dock on earth is only a click away.
+I live in Porto Velho, Rondônia, where `r/GoogleEarthFinds` gets used every few weeks to spot an illegal mining operation that IBAMA hasn't officially registered yet. The images are usually weeks ahead of the formal report. Sometimes the garimpeiros found the same satellite pass first and were already gone by the time anyone acted.
+
+So when a post appeared on that subreddit — coordinates [27.1462289, 56.2109822](https://www.google.com/maps/place/27%C2%B008'46.4%22N+56%C2%B012'39.5%22E/), a Kilo-class submarine sitting in an Iranian dry dock, crisp image, significant asset — and the internet started asking whether Reddit had just helped guide a military strike, my reaction was not the standard pundit one. It was: *I've watched this movie. Just on a smaller scale.*
+
+The question everyone was asking is intoxicating: *a bored teenager clicking through satellite imagery, casually crowdsourcing a military strike.* The democratization of lethality. Every dry dock on earth only a click away.
+
+I don't think that's what happened. I also don't know for certain. I genuinely have no idea what goes into a targeting decision at that level, and anyone who tells you they do is selling something.
+
+## What we can actually say
+
+Here is what's observable: the coordinates are real, the post is real, the submarine appears to be there. Militaries and intelligence agencies do monitor open-source data — that part is publicly documented and unsurprising. OSINT as a discipline has a decades-long institutional history.
+
+Here is where we have to stop. The gap between "they monitor OSINT" and "this post influenced this strike" is not a small inference. It is the claim that an apparatus with dedicated spy satellites, signals intelligence, and billion-dollar reconnaissance budgets did not already know the location of a massive, static piece of naval infrastructure that cannot sneak into a dry dock.
+
+A Kilo-class submarine does not arrive unannounced.
+
+```mermaid
+graph LR
+  subgraph State ["State Intelligence (continuous)"]
+    S1[Satellites] --> S2[Analysts]
+    S2 --> S3[Targeting]
+  end
+  subgraph Civil ["Open-Source (intermittent)"]
+    C1[Satellite imagery APIs] --> C2[r/GoogleEarthFinds]
+    C2 --> C3[Social amplification]
+  end
+  S3 -. "already knew" .-> C3
+```
+
+The two flows run in parallel. They occasionally intersect when OSINT surfaces something the state apparatus missed or chose not to publicize — but a parked submarine in a known facility is not that case. The Reddit post is almost certainly an echo, not a signal.
+
+## The part that actually matters
+
+What interests me more — and this is where the Amazon analog becomes useful — is what OSINT does to the *perceptual environment* rather than to the operational one.
+
+In Rondônia, IBAMA losing the OSINT race to garimpeiros is not a metaphor. The garimpeiros use the same freely available satellite data to find areas where enforcement is thin. IBAMA uses the same tools too, with better funding and institutional authority, but the information is symmetrical and the response times are not. What changes is not who controls the assets. What changes is who controls the window of plausible deniability.
+
+That is what the submarine post does to the geopolitical environment, even if it never influenced a single targeting decision. It collapses the deniability window. Once a Kilo-class sub has been posted, indexed, and debated on Reddit, the pretense that its presence is a state secret becomes operationally expensive. It is not that the internet guided the bombs. It is that the internet made the non-bombing of the submarine a legible choice, where before it was a blank.
+
+This distinction feels important to me, though I'll admit I'm not sure how far to push it.
+
+War is increasingly visible, searchable, and commentable in near real-time. The public is not pulling any triggers. But the gap between what states know and what their publics can verify has narrowed in a way that changes the costs of certain kinds of lying. In the Amazon, the garimpeiros and the regulators and the satellite platforms and the subreddit all have access to roughly the same images, on roughly the same timeline. What's unequal is what they can *do* with them.
+
+Who controls the missiles hasn't changed. Who controls the plausible deniability might be.
+
+## For further reading
+
+- **Bellingcat, [bellingcat.com](https://www.bellingcat.com/)** — the organization that put open-source conflict investigation on the map; their methodology write-ups are worth reading even if you don't care about the specific investigations.
+- **Jeffrey Lewis and the Arms Control Wonk team** — academic satellite imagery analysis done before the subreddit era; useful baseline for what state-of-the-art OSINT looked like institutionally.
+- **Bruno Latour, *Reassembling the Social*** — not about OSINT, but the chapter on "matters of concern" vs. "matters of fact" is the philosophical ground under the perceptual-environment argument.
+- **Raoni Rajão et al., "The rotten apples of Brazil's agribusiness" (Science, 2020)** — on data asymmetry in Amazon enforcement, with the specific dynamics of who has the satellite data and who acts on it.

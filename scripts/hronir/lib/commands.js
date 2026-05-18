@@ -1,12 +1,46 @@
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
+import { rating, predictWin } from "openskill";
 import { OUT_DIR, listEnglishWithKey, keyForPath, readPost, listPosts } from "./posts.js";
 import { listMatchFiles, readMatch, writeMatch, postKey } from "./matches.js";
+import { computeRatings } from "./ranking.js";
 
 const MIN_APPEARANCES = 3;
+const STALE_BONUS = 3.0;
 const SKILLS_DIR = "scripts/hronir/skills";
 const ARCHIVE_DIR = path.join(OUT_DIR, "archive");
 const EDITS_DIR = path.join(OUT_DIR, "edits");
+
+function gitMtime(filePath) {
+  try {
+    const out = execFileSync("git", ["log", "-1", "--format=%ct", "--", filePath], {
+      stdio: ["ignore", "pipe", "ignore"],
+    }).toString().trim();
+    return out ? Number(out) * 1000 : 0;
+  } catch {
+    return 0;
+  }
+}
+
+function latestMatchTimeByKey() {
+  const out = new Map();
+  for (const f of listMatchFiles()) {
+    const { data } = readMatch(f);
+    const aKey = postKey(data.post_a);
+    const bKey = postKey(data.post_b);
+    const ts = data.run_at instanceof Date
+      ? data.run_at.getTime()
+      : Date.parse(String(data.run_at || data.run_id || "")) || 0;
+    if (!ts) continue;
+    for (const k of [aKey, bKey]) {
+      if (!k) continue;
+      const prev = out.get(k) || 0;
+      if (ts > prev) out.set(k, ts);
+    }
+  }
+  return out;
+}
 
 function utcStamp() {
   const iso = new Date().toISOString();
@@ -14,15 +48,6 @@ function utcStamp() {
     runId: iso.replace(/[:.]/g, "-").replace(/-\d+Z$/, ""),
     runAt: iso.replace(/\.\d+Z$/, "Z"),
   };
-}
-
-function shuffle(arr) {
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
 }
 
 function nextStep(text) {
@@ -35,18 +60,74 @@ export function init() {
   fs.mkdirSync(path.join(OUT_DIR, "critiques"), { recursive: true });
 
   const candidates = listEnglishWithKey();
-  if (candidates.length < 10) {
-    console.error(`Erro: só ${candidates.length} posts EN com translationKey em src/content/blog`);
+  const corpusSize = candidates.length;
+  if (corpusSize < 4) {
+    console.error(`Erro: só ${corpusSize} posts EN com translationKey em src/content/blog (mínimo 4 para formar 2 pares)`);
     process.exit(1);
   }
 
-  const sample = shuffle(candidates).slice(0, 10);
+  const nMatches = Math.min(20, Math.floor(corpusSize / 2));
+
+  // Active sampling: pick pairs that maximize expected information.
+  // Score = -|predictWin - 0.5| + sigma_a + sigma_b + stale_bonus(a) + stale_bonus(b)
+  //   -|p - 0.5|         →  closer to 50/50 = higher entropy of outcome
+  //   sigma_a/b          →  prefer posts we know less about
+  //   stale_bonus        →  +STALE_BONUS if post was git-edited after its last
+  //                         rated match (current ratings may not reflect the
+  //                         new version; re-evaluate). 0 for never-rated posts.
+  // Greedy: sort pairs by score DESC, pick top-N s.t. no post repeats within run.
+  const ranking = computeRatings();
+  const ratingByKey = new Map();
+  for (const r of ranking) ratingByKey.set(r.key, { mu: r.mu, sigma: r.sigma });
+  const getRating = (key) => ratingByKey.get(key) ?? rating();
+
+  const lastMatchTime = latestMatchTimeByKey();
+  const staleByKey = new Map();
+  for (const c of candidates) {
+    const lastMatch = lastMatchTime.get(c.translationKey) || 0;
+    if (lastMatch === 0) {
+      staleByKey.set(c.translationKey, false);
+      continue;
+    }
+    const mtime = gitMtime(c.path);
+    staleByKey.set(c.translationKey, mtime > lastMatch);
+  }
+  const staleBonus = (key) => (staleByKey.get(key) ? STALE_BONUS : 0);
+
+  const pairs = [];
+  for (let i = 0; i < candidates.length; i++) {
+    for (let j = i + 1; j < candidates.length; j++) {
+      const a = candidates[i];
+      const b = candidates[j];
+      const ra = getRating(a.translationKey);
+      const rb = getRating(b.translationKey);
+      const [pA] = predictWin([[ra], [rb]]);
+      const score = -Math.abs(pA - 0.5) + ra.sigma + rb.sigma
+        + staleBonus(a.translationKey) + staleBonus(b.translationKey);
+      // Random jitter for tie-break: cold start has many identical scores;
+      // without this, stable sort + greedy = same posts picked every run.
+      pairs.push({ a, b, score, pA, sa: ra.sigma, sb: rb.sigma, jitter: Math.random() });
+    }
+  }
+  pairs.sort((x, y) => (y.score - x.score) || (x.jitter - y.jitter));
+
+  const used = new Set();
+  const chosen = [];
+  for (const p of pairs) {
+    if (chosen.length >= nMatches) break;
+    if (used.has(p.a.translationKey) || used.has(p.b.translationKey)) continue;
+    chosen.push(p);
+    used.add(p.a.translationKey);
+    used.add(p.b.translationKey);
+  }
+
+  console.log(`Corpus: ${corpusSize} posts elegíveis. Criando ${chosen.length} matches (active sampling).`);
+
   const { runId, runAt } = utcStamp();
   const created = [];
 
-  for (let i = 0; i < 5; i++) {
-    let a = sample[i * 2];
-    let b = sample[i * 2 + 1];
+  for (let i = 0; i < chosen.length; i++) {
+    let { a, b } = chosen[i];
     if (Math.random() < 0.5) [a, b] = [b, a];
 
     const file = path.join(
@@ -101,59 +182,47 @@ export function present(matchFile) {
   console.log("- model: identificador do modelo executando");
   console.log("- substitua <!-- TODO --> pelo texto da defesa, em português");
 
-  nextStep(`Editar ${matchFile} com a decisão e a defesa. Quando os 5 matches estiverem preenchidos, rode \`npm run hronir:edit-worst\`.`);
+  const stepLines = [
+    "A defesa deve ter:",
+    "- mínimo 100 palavras (piso de qualidade)",
+    "- meta 200 palavras (alvo natural)",
+    "- mencionar os dois posts pelo nome ou pela key",
+    "- explicar concretamente, não no abstrato",
+    "",
+    "Defesa muito curta ou genérica perde a função do sistema.",
+    "",
+    `Editar ${matchFile} com a decisão e a defesa. Quando todos os matches da rodada estiverem preenchidos, rode \`npm run hronir:edit-worst\`. Para retomar do meio da rodada, \`npm run hronir:resume\`.`,
+  ];
+  nextStep(stepLines.join("\n"));
 }
 
-function aggregate() {
-  const wins = new Map();
-  const appearances = new Map();
-  const labels = new Map();
+// Ratings via OpenSkill (computeRatings, lib/ranking.js).
+// Output: rows ordered by ordinal DESC (best first).
 
-  for (const f of listMatchFiles()) {
-    const { data } = readMatch(f);
-    let winner = data.winner;
-    if (data.override && data.override !== "null") winner = data.override;
-    if (winner === "TODO" || !winner) continue;
-
-    const aKey = postKey(data.post_a);
-    const bKey = postKey(data.post_b);
-    if (!aKey || !bKey) continue;
-
-    appearances.set(aKey, (appearances.get(aKey) || 0) + 1);
-    appearances.set(bKey, (appearances.get(bKey) || 0) + 1);
-    if (data.post_a?.path) labels.set(aKey, data.post_a.path);
-    if (data.post_b?.path) labels.set(bKey, data.post_b.path);
-    if (winner === "a") wins.set(aKey, (wins.get(aKey) || 0) + 1);
-    else if (winner === "b") wins.set(bKey, (wins.get(bKey) || 0) + 1);
-  }
-
-  const rows = [];
-  for (const [key, a] of appearances) {
-    const w = wins.get(key) || 0;
-    const score = Math.floor((w * 1000) / a) + a;
-    rows.push({ key, wins: w, appearances: a, score, path: labels.get(key) || "" });
-  }
-  rows.sort((x, y) => x.score - y.score || x.key.localeCompare(y.key));
-  return rows;
+function fmt(n, w = 6) {
+  return n.toFixed(3).padStart(w);
 }
 
 export function ranking() {
-  const rows = aggregate();
-  for (const r of rows) {
-    console.log(`${r.score}\t${r.wins}\t${r.appearances}\t${r.key}`);
+  const rows = computeRatings();
+  console.log(`rank\tkey\tordinal\tmu\tsigma\tW/N`);
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    console.log(`${i + 1}\t${r.key}\t${fmt(r.ordinal)}\t${fmt(r.mu)}\t${fmt(r.sigma)}\t${r.wins}/${r.appearances}`);
   }
   nextStep("Rode `npm run hronir:edit-worst` para iniciar a edição do pior ranqueado (ou `npm run hronir:worst` apenas para inspeção).");
 }
 
 export function worst() {
-  const rows = aggregate();
-  if (rows.length === 0) {
-    console.error("Sem matches preenchidos suficientes para ranquear.");
+  const rows = computeRatings();
+  const eligible = rows.filter((r) => r.appearances >= MIN_APPEARANCES);
+  if (eligible.length === 0) {
+    console.error(`Sem posts com appearances >= ${MIN_APPEARANCES}.`);
     process.exit(1);
   }
-  const w = rows[0];
+  const w = eligible[eligible.length - 1];
   console.log(w.key);
-  console.error(`(path: ${w.path}, wins: ${w.wins}/${w.appearances}, score: ${w.score})`);
+  console.error(`(path: ${w.path}, wins: ${w.wins}/${w.appearances}, ordinal: ${w.ordinal.toFixed(3)}, mu: ${w.mu.toFixed(3)}, sigma: ${w.sigma.toFixed(3)})`);
 }
 
 function collectDefensesForLoser(loserKey, limit = 5) {
@@ -217,7 +286,7 @@ function collectDefensesForWinners(winnerKeys, limit = 5) {
 }
 
 export function editWorst() {
-  const rows = aggregate();
+  const rows = computeRatings();
   if (rows.length === 0) {
     console.error("Sem matches preenchidos suficientes para ranquear.");
     process.exit(1);
@@ -232,14 +301,17 @@ export function editWorst() {
     return;
   }
 
-  const worstRow = eligible[0];
-  const topRows = eligible.slice(-3).reverse();
+  // rows are sorted by ordinal DESC (best first); worst eligible is the last,
+  // top 3 are the first three eligible — same threshold applied to both sides
+  // so contrast set never comes from low-volume posts.
+  const worstRow = eligible[eligible.length - 1];
+  const topRows = eligible.slice(0, 3);
   const topKeys = topRows.map((r) => r.key);
 
   console.log(`# Pior ranqueado (≥${MIN_APPEARANCES} aparições): ${worstRow.key}`);
-  console.log(`# Elegíveis: ${eligible.length} de ${rows.length} no ranking total`);
   console.log(`# Path: ${worstRow.path}`);
-  console.log(`# Score: ${worstRow.score} (wins ${worstRow.wins}/${worstRow.appearances})`);
+  console.log(`# Ordinal: ${worstRow.ordinal.toFixed(3)} (mu ${worstRow.mu.toFixed(3)}, sigma ${worstRow.sigma.toFixed(3)}, wins ${worstRow.wins}/${worstRow.appearances})`);
+  console.log(`# Elegíveis: ${eligible.length} de ${rows.length} no ranking total`);
   console.log("");
   console.log("# Top 3 (contraste): " + topKeys.join(", "));
   console.log("");
@@ -326,6 +398,56 @@ export function editWorst() {
     `Após editar, rode: npm run hronir:archive-post ${worstRow.key}`,
   ];
   nextStep(stepLines.join("\n"));
+}
+
+export function resume() {
+  const files = listMatchFiles();
+  if (files.length === 0) {
+    console.log("Nenhum match encontrado em .routines/hronir/.");
+    nextStep("rode `npm run hronir:init` para começar uma rodada.");
+    return;
+  }
+
+  const byRun = new Map();
+  for (const f of files) {
+    const { data } = readMatch(f);
+    const runId = String(data.run_id || "");
+    if (!runId) continue;
+    if (!byRun.has(runId)) byRun.set(runId, []);
+    byRun.get(runId).push({ file: f, data });
+  }
+
+  if (byRun.size === 0) {
+    console.log("Nenhum match com run_id encontrado.");
+    nextStep("rode `npm run hronir:init` para começar uma rodada.");
+    return;
+  }
+
+  const latestRunId = [...byRun.keys()].sort().pop();
+  const matches = byRun.get(latestRunId);
+  matches.sort((a, b) => (a.data.match_index || 0) - (b.data.match_index || 0));
+
+  const pending = matches.filter((m) => m.data.winner === "TODO" || !m.data.winner);
+  const total = matches.length;
+
+  console.log(`# Rodada mais recente: ${latestRunId}`);
+  console.log(`# Matches: ${total} total, ${pending.length} pendentes, ${total - pending.length} preenchidos`);
+  console.log("");
+
+  if (pending.length === 0) {
+    console.log("Todos os matches da rodada estão preenchidos.");
+    nextStep("rode `npm run hronir:edit-worst`.");
+    return;
+  }
+
+  console.log("Pendentes:");
+  for (const m of pending) {
+    console.log(`  [${m.data.match_index ?? "?"}] ${m.file}`);
+  }
+  console.log("");
+
+  const first = pending[0].file;
+  nextStep(`rode \`npm run hronir:present -- ${first}\` (próximo pendente).`);
 }
 
 export function archivePost(key) {
