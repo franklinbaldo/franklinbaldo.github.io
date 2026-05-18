@@ -2,142 +2,53 @@
 import { getCollection } from "astro:content";
 import PageLayout from "../layouts/PageLayout.astro";
 import RecentList from "../components/RecentList.astro";
-import FeaturedRail from "../components/FeaturedRail.astro";
 import PathsTeaser from "../components/PathsTeaser.astro";
-import HomeAuthorRail from "../components/HomeAuthorRail.astro";
 
 const all = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
   .filter((post) => (post.data.lang ?? 'en') === 'en')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const featured = all.filter((p) => p.data.featured);
-const featuredIds = new Set(featured.map((p) => p.id));
-const recent = all.filter((p) => !featuredIds.has(p.id)).slice(0, 8);
-const latest = featured[0] ?? all[0];
-const latestHref = latest ? `/blog/${latest.id}/` : "/archive/";
+const recent = all.slice(0, 12);
 ---
 
 <PageLayout
   title="Home"
-  description="Lawyer and State Attorney. Exploring the intersections of process metaphysics, AI agency, and the architecture of legal systems."
+  description="Franklin Baldo — notes on AI, law, and systems."
   lang="en"
   translations={{ pt: "/pt/" }}
 >
-  <div class="home-top">
-    <section class="home-hero" aria-label="Introduction">
-      <p class="home-eyebrow"><small>Franklin Baldo</small></p>
-      <h1 class="home-thesis">cybernetic Borges, building agents in <span class="accent">Delphi</span>.</h1>
-      <p class="home-lede">Essays on AI agency, process metaphysics, and the architecture of legal systems.</p>
-      <div class="home-cta" role="group">
-        <a class="cta-primary" href={latestHref}>Read latest essay →</a>
-        <a class="cta-secondary" href="/about/">About this blog</a>
-      </div>
-    </section>
+  <section class="home-hero" aria-label="Introduction">
+    <h1 class="home-title">Franklin Baldo</h1>
+    <p class="home-tagline">Notes on AI, law, and systems.</p>
+  </section>
 
-    <HomeAuthorRail lang="en" />
-  </div>
-
-  <FeaturedRail posts={featured} lang="en" />
-
-  <PathsTeaser lang="en" />
-
-  <section class="home-recent" aria-label="Recent essays">
-    <p class="section-eyebrow"><small>Recent essays</small></p>
-    <h2 class="section-heading">Recent essays</h2>
+  <section class="home-recent" aria-label="Recent posts">
     <RecentList posts={recent} lang="en" />
     <p class="home-archive-link">
       <small><a href="/archive/">View the full archive →</a></small>
     </p>
   </section>
+
+  <PathsTeaser lang="en" />
 </PageLayout>
 
 <style>
-  .home-top {
-    margin-block: calc(var(--pico-spacing) * 1.5) calc(var(--pico-spacing) * 2.5);
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: calc(var(--pico-spacing) * 2);
-  }
-  @media (min-width: 1100px) {
-    .home-top {
-      grid-template-columns: minmax(0, 1fr) 18rem;
-      gap: calc(var(--pico-spacing) * 3);
-      align-items: start;
-    }
-  }
   .home-hero {
-    max-width: 38rem;
+    margin-block: calc(var(--pico-spacing) * 1.25) calc(var(--pico-spacing) * 1.5);
   }
-  .home-eyebrow {
+  .home-title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
     margin: 0 0 .25rem;
-    font-size: 0.78rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--pico-primary);
+    letter-spacing: -0.01em;
   }
-  .home-thesis {
-    font-size: clamp(2.25rem, 5.5vw, 4rem);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-    margin: 0 0 .75rem;
-  }
-  .home-thesis .accent {
-    color: var(--pico-primary);
-  }
-  .home-lede {
-    font-size: 1.15rem;
+  .home-tagline {
     color: var(--pico-muted-color);
-    max-width: 55ch;
-    margin: 0 0 1.25rem;
-  }
-  .home-cta {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
     margin: 0;
-  }
-  .cta-primary {
-    display: inline-block;
-    padding: 0.65rem 1.1rem;
-    background: var(--pico-primary);
-    color: var(--pico-primary-inverse, #fff);
-    text-decoration: none;
-    border-radius: var(--pico-border-radius);
-    font-weight: 600;
-  }
-  .cta-primary:hover {
-    background: var(--pico-primary-hover, var(--pico-primary));
-    opacity: 0.92;
-  }
-  .cta-secondary {
-    display: inline-block;
-    padding: 0.65rem 1.1rem;
-    border: 1px solid var(--pico-border-color);
-    color: var(--pico-color);
-    text-decoration: none;
-    border-radius: var(--pico-border-radius);
-  }
-  .cta-secondary:hover {
-    border-color: var(--pico-primary);
-    color: var(--pico-primary);
+    font-size: 1rem;
   }
   .home-recent {
-    margin-block: calc(var(--pico-spacing) * 2);
-  }
-  .section-eyebrow {
-    margin: 0 0 .25rem;
-    font-size: 0.78rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--pico-primary);
-  }
-  .section-heading {
-    margin: 0 0 var(--pico-spacing);
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    line-height: 1.15;
+    margin-block: calc(var(--pico-spacing) * 1.5) calc(var(--pico-spacing) * 2);
   }
   .home-archive-link {
     margin-top: var(--pico-spacing);

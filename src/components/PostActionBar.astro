@@ -1,6 +1,4 @@
 ---
-import { t, locale } from '../lib/i18n';
-
 interface Props {
   title: string;
   url: string;
@@ -8,221 +6,64 @@ interface Props {
   lang?: string;
 }
 
-const { title, url, date, lang } = Astro.props;
-const loc = locale(lang);
-const formattedDate = date.toLocaleDateString(loc, { year: 'numeric', month: 'long', day: 'numeric' });
-const year = date.getFullYear();
-const citationPlain = `Baldo, F. (${year}). ${title}. Franklin Baldo. ${url}`;
-const citationBibtex = `@misc{baldo${year}${title.toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 12)},
-  author = {Baldo, Franklin},
-  title  = {${title}},
-  year   = {${year}},
-  url    = {${url}},
-  note   = {Franklin Baldo, ${formattedDate}}
-}`;
-
+const { title, url, lang } = Astro.props;
 const isPt = (lang ?? '') === 'pt';
-const labels = {
-  share: isPt ? 'Compartilhar' : 'Share',
-  rss: 'RSS',
-  cite: isPt ? 'Citar' : 'Cite',
-  citeDialogTitle: isPt ? 'Citar este ensaio' : 'Cite this essay',
-  citeApa: 'APA',
-  citeBibtex: 'BibTeX',
-  copy: isPt ? 'Copiar' : 'Copy',
-  copied: isPt ? 'Copiado' : 'Copied',
-  failed: isPt ? 'Não foi possível copiar' : "Couldn't copy",
-  close: isPt ? 'Fechar' : 'Close',
-};
+const shareLabel = isPt ? 'Compartilhar' : 'Share';
 ---
 
-<nav class="post-action-bar" aria-label={isPt ? 'Ações do post' : 'Post actions'}>
-  <button
-    type="button"
-    class="action-btn share-button"
-    data-title={title}
-    data-url={url}
-    aria-label={labels.share}
-  >
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-      <path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7"/>
-      <path d="M16 6l-4-4-4 4"/>
-      <line x1="12" y1="2" x2="12" y2="15"/>
-    </svg>
-    <span class="action-label">{labels.share}</span>
-  </button>
-
-  <a class="action-btn" href="/rss.xml" aria-label="RSS feed">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-      <path d="M4 11a9 9 0 019 9"/>
-      <path d="M4 4a16 16 0 0116 16"/>
-      <circle cx="5" cy="19" r="1.5" fill="currentColor"/>
-    </svg>
-    <span class="action-label">{labels.rss}</span>
-  </a>
-
-  <button
-    type="button"
-    class="action-btn cite-open"
-    aria-label={labels.cite}
-    aria-haspopup="dialog"
-  >
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-      <path d="M7 7h4v6a4 4 0 01-4 4v-2a2 2 0 002-2H7zM15 7h4v6a4 4 0 01-4 4v-2a2 2 0 002-2h-2z"/>
-    </svg>
-    <span class="action-label">{labels.cite}</span>
-  </button>
-</nav>
-
-<dialog id="cite-dialog" aria-labelledby="cite-dialog-title">
-  <article>
-    <header>
-      <button class="close cite-close" aria-label={labels.close}></button>
-      <hgroup>
-        <h3 id="cite-dialog-title">{labels.citeDialogTitle}</h3>
-        <p><small>{title}</small></p>
-      </hgroup>
-    </header>
-    <section>
-      <p class="cite-eyebrow"><small>{labels.citeApa}</small></p>
-      <pre><code class="cite-apa">{citationPlain}</code></pre>
-      <button
-        type="button"
-        class="outline cite-copy"
-        data-target=".cite-apa"
-        data-copied={labels.copied}
-        data-failed={labels.failed}
-      >{labels.copy}</button>
-    </section>
-    <section>
-      <p class="cite-eyebrow"><small>{labels.citeBibtex}</small></p>
-      <pre><code class="cite-bibtex">{citationBibtex}</code></pre>
-      <button
-        type="button"
-        class="outline cite-copy"
-        data-target=".cite-bibtex"
-        data-copied={labels.copied}
-        data-failed={labels.failed}
-      >{labels.copy}</button>
-    </section>
-  </article>
-</dialog>
-
-<script>
-  const dialog = document.getElementById('cite-dialog') as HTMLDialogElement | null;
-
-  document.addEventListener('click', async (e) => {
-    const target = e.target as HTMLElement | null;
-    if (!target) return;
-
-    if (target.closest('.cite-open')) {
-      dialog?.showModal();
-      return;
-    }
-    if (target.closest('.cite-close')) {
-      dialog?.close();
-      return;
-    }
-    const copyBtn = target.closest<HTMLButtonElement>('.cite-copy');
-    if (copyBtn) {
-      const selector = copyBtn.dataset.target;
-      if (!selector) return;
-      const codeEl = dialog?.querySelector<HTMLElement>(selector);
-      const text = codeEl?.textContent ?? '';
-      const original = copyBtn.textContent ?? '';
-      copyBtn.setAttribute('aria-busy', 'true');
-      try {
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = copyBtn.dataset.copied ?? 'Copied';
-      } catch {
-        copyBtn.textContent = copyBtn.dataset.failed ?? "Couldn't copy";
-      } finally {
-        copyBtn.removeAttribute('aria-busy');
-        window.setTimeout(() => {
-          copyBtn.textContent = original;
-        }, 1400);
-      }
-    }
-  });
-
-  // ESC + backdrop click already close <dialog> when opened with showModal.
-  dialog?.addEventListener('click', (e) => {
-    if (e.target === dialog) dialog.close();
-  });
-</script>
+<button
+  type="button"
+  class="share-fab share-button"
+  data-title={title}
+  data-url={url}
+  aria-label={shareLabel}
+  title={shareLabel}
+>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+    <path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7"/>
+    <path d="M16 6l-4-4-4 4"/>
+    <line x1="12" y1="2" x2="12" y2="15"/>
+  </svg>
+</button>
 
 <style>
-  .post-action-bar {
-    display: none;
-  }
-  @media (max-width: 800px) {
-    .post-action-bar {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 40;
-      border-top: 1px solid var(--pico-muted-border-color);
-      background: var(--pico-card-background-color);
-      padding: 0.5rem 0;
-      backdrop-filter: blur(6px);
-    }
-    .action-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.15rem;
-      padding: 0.4rem 0.25rem;
-      border: 0;
-      background: transparent;
-      color: var(--pico-color);
-      text-decoration: none;
-      font-size: 0.75rem;
-      cursor: pointer;
-    }
-    .action-btn svg {
-      width: 22px;
-      height: 22px;
-      color: var(--pico-primary);
-    }
-    .action-btn:hover {
-      color: var(--pico-primary);
-    }
-    .action-label {
-      letter-spacing: 0.02em;
-    }
-    .post-body {
-      padding-bottom: 4rem;
-    }
-  }
-  /* The cite-open button should also be available outside the mobile
-     bottom bar. Promote it onto the share button row of the post footer
-     by also exposing it inline if needed (not implemented here — opt-in
-     by adding the .cite-open trigger elsewhere). */
-
-  #cite-dialog .cite-eyebrow {
-    margin: 0 0 .25rem;
-    font-size: 0.72rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
+  .share-fab {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 40;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 999px;
+    border: 1px solid var(--pico-muted-border-color);
+    background: var(--pico-card-background-color);
     color: var(--pico-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   }
-  #cite-dialog pre {
-    margin: 0 0 .5rem;
-    max-height: 12rem;
-    overflow: auto;
-    white-space: pre-wrap;
-    word-break: break-word;
+  .share-fab:hover {
+    color: var(--pico-primary-hover, var(--pico-primary));
+    border-color: var(--pico-primary);
   }
-  #cite-dialog pre code {
-    white-space: inherit;
-    word-break: inherit;
+  .share-fab svg {
+    width: 20px;
+    height: 20px;
   }
-  #cite-dialog section {
-    margin-block: 1rem;
+  /* BackToTop pill lives at bottom-right ≥600px; stack the FAB above it
+     in the 600–800px range so they don't compete for the same tap area. */
+  @media (min-width: 600px) and (max-width: 800px) {
+    .share-fab {
+      bottom: 4.25rem;
+      right: 1.5rem;
+    }
+  }
+  @media (min-width: 801px) {
+    .share-fab {
+      display: none;
+    }
   }
 </style>

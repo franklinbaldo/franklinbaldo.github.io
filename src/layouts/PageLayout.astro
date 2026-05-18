@@ -178,6 +178,18 @@ const personLd = {
         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', theme);
     </script>
+    <script is:inline>
+      // Preserve the current theme across Astro view transitions: the
+      // server-rendered <html> in the incoming document has no data-theme,
+      // so without this the page would flash to the OS default before the
+      // bootstrap script in the new <head> reapplies localStorage.
+      document.addEventListener('astro:before-swap', (event) => {
+        const current = document.documentElement.getAttribute('data-theme');
+        if (current) {
+          event.newDocument.documentElement.setAttribute('data-theme', current);
+        }
+      });
+    </script>
     <script is:inline define:vars={{ translations, pageLang: lang }}>
       window.__pageLang = pageLang;
       window.__translations = translations || {};
