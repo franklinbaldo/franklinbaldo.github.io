@@ -35,16 +35,20 @@ export function init() {
   fs.mkdirSync(path.join(OUT_DIR, "critiques"), { recursive: true });
 
   const candidates = listEnglishWithKey();
-  if (candidates.length < 40) {
-    console.error(`Erro: só ${candidates.length} posts EN com translationKey em src/content/blog (mínimo 40)`);
+  const corpusSize = candidates.length;
+  if (corpusSize < 4) {
+    console.error(`Erro: só ${corpusSize} posts EN com translationKey em src/content/blog (mínimo 4 para formar 2 pares)`);
     process.exit(1);
   }
 
-  const sample = shuffle(candidates).slice(0, 40);
+  const nMatches = Math.min(20, Math.floor(corpusSize / 2));
+  console.log(`Corpus: ${corpusSize} posts elegíveis. Criando ${nMatches} matches.`);
+
+  const sample = shuffle(candidates).slice(0, nMatches * 2);
   const { runId, runAt } = utcStamp();
   const created = [];
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < nMatches; i++) {
     let a = sample[i * 2];
     let b = sample[i * 2 + 1];
     if (Math.random() < 0.5) [a, b] = [b, a];
@@ -110,7 +114,7 @@ export function present(matchFile) {
     "",
     "Defesa muito curta ou genérica perde a função do sistema.",
     "",
-    `Editar ${matchFile} com a decisão e a defesa. Quando os 20 matches da rodada estiverem preenchidos, rode \`npm run hronir:edit-worst\`. Para retomar do meio da rodada, \`npm run hronir:resume\`.`,
+    `Editar ${matchFile} com a decisão e a defesa. Quando todos os matches da rodada estiverem preenchidos, rode \`npm run hronir:edit-worst\`. Para retomar do meio da rodada, \`npm run hronir:resume\`.`,
   ];
   nextStep(stepLines.join("\n"));
 }

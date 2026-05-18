@@ -36,7 +36,7 @@ Todos via npm scripts no raiz:
 
 | Comando | Função |
 |---------|--------|
-| `npm run hronir:init` | Sorteia 40 posts EN, cria 20 match files `winner: TODO` |
+| `npm run hronir:init` | Sorteia posts EN, cria até 20 match files (n = min(20, ⌊corpus/2⌋); falha se corpus < 4) |
 | `npm run hronir:present -- <match.md>` | Imprime os dois posts + instrução pro avaliador (meta de palavras na defesa) |
 | `npm run hronir:resume` | Identifica a rodada mais recente, lista pendentes, aponta próximo |
 | `npm run hronir:ranking` | Score acumulado de todos os matches preenchidos |
@@ -51,7 +51,7 @@ Cada comando termina com uma linha `NEXT STEP:` apontando o próximo passo, exce
 ## Fluxo
 
 ```
-init → present (×20) → edit-worst → (edição manual do post worst) → archive-post <key>
+init → present (×n_matches) → edit-worst → (edição manual do post worst) → archive-post <key>
 ```
 
 `resume` em qualquer ponto identifica a rodada mais recente e aponta o próximo pendente. Útil para crash recovery ou retomada entre sessões.
