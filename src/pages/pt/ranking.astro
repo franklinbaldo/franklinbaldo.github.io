@@ -13,7 +13,7 @@ for (const p of all) {
   const lang = p.data.lang ?? "en";
   // Prefer PT entry on this page; otherwise fall back to anything.
   if (!existing || lang === "pt") {
-    byKey.set(key, { slug: p.slug ?? p.id.replace(/\.mdx?$/, ""), title: p.data.title, lang });
+    byKey.set(key, { slug: p.id, title: p.data.title, lang });
   }
 }
 
