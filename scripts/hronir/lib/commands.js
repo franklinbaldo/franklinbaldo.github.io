@@ -1,13 +1,46 @@
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
+import { rating, predictWin } from "openskill";
 import { OUT_DIR, listEnglishWithKey, keyForPath, readPost, listPosts } from "./posts.js";
 import { listMatchFiles, readMatch, writeMatch, postKey } from "./matches.js";
 import { computeRatings } from "./ranking.js";
 
 const MIN_APPEARANCES = 3;
+const STALE_BONUS = 3.0;
 const SKILLS_DIR = "scripts/hronir/skills";
 const ARCHIVE_DIR = path.join(OUT_DIR, "archive");
 const EDITS_DIR = path.join(OUT_DIR, "edits");
+
+function gitMtime(filePath) {
+  try {
+    const out = execFileSync("git", ["log", "-1", "--format=%ct", "--", filePath], {
+      stdio: ["ignore", "pipe", "ignore"],
+    }).toString().trim();
+    return out ? Number(out) * 1000 : 0;
+  } catch {
+    return 0;
+  }
+}
+
+function latestMatchTimeByKey() {
+  const out = new Map();
+  for (const f of listMatchFiles()) {
+    const { data } = readMatch(f);
+    const aKey = postKey(data.post_a);
+    const bKey = postKey(data.post_b);
+    const ts = data.run_at instanceof Date
+      ? data.run_at.getTime()
+      : Date.parse(String(data.run_at || data.run_id || "")) || 0;
+    if (!ts) continue;
+    for (const k of [aKey, bKey]) {
+      if (!k) continue;
+      const prev = out.get(k) || 0;
+      if (ts > prev) out.set(k, ts);
+    }
+  }
+  return out;
+}
 
 function utcStamp() {
   const iso = new Date().toISOString();
@@ -15,15 +48,6 @@ function utcStamp() {
     runId: iso.replace(/[:.]/g, "-").replace(/-\d+Z$/, ""),
     runAt: iso.replace(/\.\d+Z$/, "Z"),
   };
-}
-
-function shuffle(arr) {
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
 }
 
 function nextStep(text) {
@@ -43,15 +67,67 @@ export function init() {
   }
 
   const nMatches = Math.min(20, Math.floor(corpusSize / 2));
-  console.log(`Corpus: ${corpusSize} posts elegíveis. Criando ${nMatches} matches.`);
 
-  const sample = shuffle(candidates).slice(0, nMatches * 2);
+  // Active sampling: pick pairs that maximize expected information.
+  // Score = -|predictWin - 0.5| + sigma_a + sigma_b + stale_bonus(a) + stale_bonus(b)
+  //   -|p - 0.5|         →  closer to 50/50 = higher entropy of outcome
+  //   sigma_a/b          →  prefer posts we know less about
+  //   stale_bonus        →  +STALE_BONUS if post was git-edited after its last
+  //                         rated match (current ratings may not reflect the
+  //                         new version; re-evaluate). 0 for never-rated posts.
+  // Greedy: sort pairs by score DESC, pick top-N s.t. no post repeats within run.
+  const ranking = computeRatings();
+  const ratingByKey = new Map();
+  for (const r of ranking) ratingByKey.set(r.key, { mu: r.mu, sigma: r.sigma });
+  const getRating = (key) => ratingByKey.get(key) ?? rating();
+
+  const lastMatchTime = latestMatchTimeByKey();
+  const staleByKey = new Map();
+  for (const c of candidates) {
+    const lastMatch = lastMatchTime.get(c.translationKey) || 0;
+    if (lastMatch === 0) {
+      staleByKey.set(c.translationKey, false);
+      continue;
+    }
+    const mtime = gitMtime(c.path);
+    staleByKey.set(c.translationKey, mtime > lastMatch);
+  }
+  const staleBonus = (key) => (staleByKey.get(key) ? STALE_BONUS : 0);
+
+  const pairs = [];
+  for (let i = 0; i < candidates.length; i++) {
+    for (let j = i + 1; j < candidates.length; j++) {
+      const a = candidates[i];
+      const b = candidates[j];
+      const ra = getRating(a.translationKey);
+      const rb = getRating(b.translationKey);
+      const [pA] = predictWin([[ra], [rb]]);
+      const score = -Math.abs(pA - 0.5) + ra.sigma + rb.sigma
+        + staleBonus(a.translationKey) + staleBonus(b.translationKey);
+      // Random jitter for tie-break: cold start has many identical scores;
+      // without this, stable sort + greedy = same posts picked every run.
+      pairs.push({ a, b, score, pA, sa: ra.sigma, sb: rb.sigma, jitter: Math.random() });
+    }
+  }
+  pairs.sort((x, y) => (y.score - x.score) || (x.jitter - y.jitter));
+
+  const used = new Set();
+  const chosen = [];
+  for (const p of pairs) {
+    if (chosen.length >= nMatches) break;
+    if (used.has(p.a.translationKey) || used.has(p.b.translationKey)) continue;
+    chosen.push(p);
+    used.add(p.a.translationKey);
+    used.add(p.b.translationKey);
+  }
+
+  console.log(`Corpus: ${corpusSize} posts elegíveis. Criando ${chosen.length} matches (active sampling).`);
+
   const { runId, runAt } = utcStamp();
   const created = [];
 
-  for (let i = 0; i < nMatches; i++) {
-    let a = sample[i * 2];
-    let b = sample[i * 2 + 1];
+  for (let i = 0; i < chosen.length; i++) {
+    let { a, b } = chosen[i];
     if (Math.random() < 0.5) [a, b] = [b, a];
 
     const file = path.join(

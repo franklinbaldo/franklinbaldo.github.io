@@ -36,7 +36,7 @@ Todos via npm scripts no raiz:
 
 | Comando | Função |
 |---------|--------|
-| `npm run hronir:init` | Sorteia posts EN, cria até 20 match files (n = min(20, ⌊corpus/2⌋); falha se corpus < 4) |
+| `npm run hronir:init` | Cria até 20 match files (n = min(20, ⌊corpus/2⌋); falha se corpus < 4). Seleção por **active sampling** (ver abaixo). |
 | `npm run hronir:present -- <match.md>` | Imprime os dois posts + instrução pro avaliador (meta de palavras na defesa) |
 | `npm run hronir:resume` | Identifica a rodada mais recente, lista pendentes, aponta próximo |
 | `npm run hronir:ranking` | Score acumulado de todos os matches preenchidos |
@@ -94,6 +94,22 @@ Ranking via **OpenSkill** (modelo Weng-Lin, atualização bayesiana online de Pl
 - **`ordinal = mu − 3·sigma`** — score conservador usado para a ordem global. Penaliza incerteza explicitamente: um post novo, mesmo com mu alto, fica atrás de um post estabelecido com mu um pouco menor.
 
 A ordem da tabela é por `ordinal` descendente. Tie-break alfabético por `key`. O `worst` retorna o post com menor `ordinal` entre os elegíveis (`appearances >= MIN_APPEARANCES`) — note que aqui não é "tie-break", é filtro: posts sem volume mínimo são ignorados antes de pegar o último.
+
+### Active sampling no `init`
+
+`init` não sorteia matches no escuro. Para cada par possível de posts elegíveis, calcula:
+
+```
+score = -|predictWin(a, b) - 0.5| + sigma_a + sigma_b + stale_bonus(a) + stale_bonus(b)
+```
+
+- `predictWin` próximo de 0.5 → resultado mais incerto → mais informação extraída pela partida (entropia máxima do outcome).
+- `sigma_a + sigma_b` → preferir pares onde a incerteza individual ainda é alta. Posts que já têm muitas partidas (sigma baixo) cedem prioridade.
+- `stale_bonus` → `+3.0` se o post foi editado no git **depois** do match mais recente em que entrou; `0` se nunca foi avaliado ou se está em dia. Detecção binária: qualquer commit que toca o arquivo conta. (Versão refinada por linhas alteradas é uma melhoria futura — por ora corrige typo conta igual a reescrever metade.)
+
+Greedy: ordena pares por score descendente, com jitter aleatório para tie-break, e pega os top-N garantindo que nenhum post apareça duas vezes no mesmo run.
+
+**Cold start:** quando todo mundo tem σ=8.33 e μ=25 default, `predictWin` é sempre 0.5 e o termo de incerteza só soma — qualquer par é informativamente equivalente. O jitter garante que runs sucessivos cobrem subsets diferentes em vez de fixar nos mesmos posts. À medida que partidas acumulam, o sampling foca em pares próximos no skill, posts subexplorados, e posts cuja versão atual divergiu da que foi avaliada.
 
 ### Por que MIN_APPEARANCES ainda importa com OpenSkill
 
