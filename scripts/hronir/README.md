@@ -100,15 +100,16 @@ A ordem da tabela é por `ordinal` descendente. Tie-break alfabético por `key`.
 `init` não sorteia matches no escuro. Para cada par possível de posts elegíveis, calcula:
 
 ```
-score = -|predictWin(a, b) - 0.5| + sigma_a + sigma_b
+score = -|predictWin(a, b) - 0.5| + sigma_a + sigma_b + stale_bonus(a) + stale_bonus(b)
 ```
 
 - `predictWin` próximo de 0.5 → resultado mais incerto → mais informação extraída pela partida (entropia máxima do outcome).
 - `sigma_a + sigma_b` → preferir pares onde a incerteza individual ainda é alta. Posts que já têm muitas partidas (sigma baixo) cedem prioridade.
+- `stale_bonus` → `+3.0` se o post foi editado no git **depois** do match mais recente em que entrou; `0` se nunca foi avaliado ou se está em dia. Detecção binária: qualquer commit que toca o arquivo conta. (Versão refinada por linhas alteradas é uma melhoria futura — por ora corrige typo conta igual a reescrever metade.)
 
-Greedy: ordena pares por score descendente e pega os top-N, garantindo que nenhum post apareça duas vezes no mesmo run.
+Greedy: ordena pares por score descendente, com jitter aleatório para tie-break, e pega os top-N garantindo que nenhum post apareça duas vezes no mesmo run.
 
-**Cold start:** quando todo mundo tem σ=8.33 e μ=25 default, `predictWin` é sempre 0.5 e o termo de incerteza só soma — qualquer par é informativamente equivalente. O greedy nesse regime se comporta praticamente como random. À medida que partidas acumulam, o sampling foca em pares próximos no skill e em posts subexplorados.
+**Cold start:** quando todo mundo tem σ=8.33 e μ=25 default, `predictWin` é sempre 0.5 e o termo de incerteza só soma — qualquer par é informativamente equivalente. O jitter garante que runs sucessivos cobrem subsets diferentes em vez de fixar nos mesmos posts. À medida que partidas acumulam, o sampling foca em pares próximos no skill, posts subexplorados, e posts cuja versão atual divergiu da que foi avaliada.
 
 ### Por que MIN_APPEARANCES ainda importa com OpenSkill
 
