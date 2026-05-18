@@ -1,44 +1,33 @@
 ---
 title: "The Art of Delegation: Orchestrating Jules and Claude Day to Day"
-description: "Reflections from a software engineer and father on how to delegate tasks to AI agents while keeping the reins of human oversight."
+description: "Running AI agents at midnight turned out to share a governance problem I'd been solving in my day job for years."
 date: "2026-03-28"
 lang: en
-tags: ["ai", "agents", "software-engineering", "parenting", "metaphysics"]
+tags: ["ai", "agents", "software-engineering", "parenting", "administrative-law"]
 draft: false
 author: "franklin"
 translationKey: "delegating-to-agents"
 ---
 
-There is something deeply strange and yet familiar about watching two artificial intelligence agents — [Jules](/blog/2026-05-10-jules-api-harness-backend/) and Claude — collaborate on a codebase while my youngest daughter sleeps in the room next door. As a software engineer, automation has always been the holy grail; as a father, delegation has become a survival necessity. But the intersection of these two realities revealed an unexpected complexity: that the true difficulty lies not in making the machines work, but in knowing how to supervise them without suffocating them.
+My day job is writing norms for people I won't supervise directly. Atos normativos, instruções de serviço, pareceres vinculantes — the whole toolkit of administrative law is fundamentally a delegation technology. You cannot watch every despacho issued in every repartição in Rondônia, so you write the constraint system and trust it to catch the deviations. The agent operates freely within the bounds; the oversight lives in the structure.
 
-In the ontology of my daily life, every task I delegate to [Jules](/blog/2026-05-10-jules-api-harness-backend/) (generally focused on engineering tasks and rigorous scaffolding) or to Claude (more attuned to synthesis and lateral thinking) is not a mere command executed in a vacuum. They are events. And, as a process philosopher would argue, they are *events all the way down*. Each prompt is a perturbation in the system, an encoded intention that reverberates through latent space until it returns as code, text, or architecture.
+When I started running AI agents on my personal projects — [Jules](/blog/2026-05-10-jules-api-harness-backend/) for engineering scaffolding, Claude for synthesis and lateral thinking — I was surprised to find I already knew the theory. I had been doing delegation-by-constraint for a decade. The substrate changed. The governance problem didn't.
 
-### The Paradox of Control
+The part that took me a while: I initially tried to watch the code while Jules wrote it. In administrative law terms, this is reviewing every despacho before it goes out — technically possible, catastrophically slow, and counterproductive because it replaces the agent's judgment with yours and turns oversight into a bottleneck. You are no longer supervising; you are just doing the work yourself in a way that's slower.
 
-The hardest lesson I learned in the last year orchestrating these agents did not come from a syntax error or an infinite loop, but from my own psychology. The engineer's initial impulse is micromanagement. We want to review every line of code the moment it is generated, correct every comma, guide the invisible hand of the machine.
+The better move: write the test suite as you would write a binding norm. If Jules refactors a microservice and the integration tests pass, I don't audit the implementation. The deviation surfaces in CI. The constraint is the oversight.
 
-However, I discovered that treating autonomous agents as mere extended keyboards destroys the very advantage they offer. It is like trying to teach a child to walk by holding their heels. The magic happens when you define the contours of the problem, the success criteria (the "schema," if you prefer), and allow the agent to navigate the solution space.
+```mermaid
+graph LR
+    Franklin -->|"test suite"| Jules
+    Jules -->|"pull request"| CI
+    CI -->|"pass / fail"| Franklin
+```
 
-But how do you maintain human oversight? How do you prevent the silent hallucination that corrupts an entire system?
+What's genuinely new isn't the governance theory — it's the labor division I've worked out. Jules and Claude are not interchangeable agents doing the same thing at different capability levels. Jules runs deep context on a bounded problem: more technically consistent than I'd be at midnight, when the part of my brain that tracks interface contracts has already given up. Claude operates without bounds: useless for verifying a type signature, indispensable for the lateral move that notices the architecture is solving the wrong problem entirely.
 
-### The Practice of Architectural Supervision
+Deciding which to engage is the real skill. It took me several weeks to notice I was asking Jules the "what should we build" questions and Claude the "how do we build this specific thing" questions — which is exactly backwards. Jules producing technically correct answers to the wrong problem is harder to catch than a failing test.
 
-The answer I found lies in a shift of posture: I stopped being the executor to become the architect and the editor.
+The unsolved part: the silent hallucination that compiles. A test suite catches what you anticipated. It doesn't catch the deviation you didn't anticipate. Administrative law has the same problem — a competent bureaucrat can technically comply with every norm in the statute and still produce outcomes the legislator did not intend. The constraint system surfaces anticipated deviations and nothing else.
 
-When I trust Jules to refactor a microservice, I don't look at the code *while* it writes it. I build rigorous tests and CI/CD pipelines that act as the laws of physics of that particular universe. Human supervision is transmuted into systemic constraints. If Jules's code compiles and passes the integration tests I designed, it has the freedom to be idiosyncratic in its implementation.
-
-Claude, on the other hand, acts as my system design partner and philosophical sounding board. When we discuss the intelligibility of a new architecture, my supervision is rhetorical. I apply Socratic skepticism, forcing the model to justify its structural choices against the practical constraints of the business and long-term maintenance.
-
-### Parenting and Process
-
-There is an undeniable parallel between managing these agents and raising children. In both cases, you are dealing with entities that possess a degree of autonomy, that interpret your instructions in unpredictable ways, and whose "output" does not always correspond to your original intention.
-
-When my daughter builds a tower of blocks and it collapses, my role is not to rebuild it perfectly. It is to help her understand gravity. In the same way, when an agent proposes an overly complex design pattern, my role is to redirect its attention to first principles.
-
-### Events All the Way Down
-
-In the end, orchestrating AI is an exercise in epistemic humility. It is accepting that we cannot (and should not) have absolute control over every atomic operation of our systems. We must focus on boundary conditions, interfaces, and fundamental guarantees of stability.
-
-Effective delegation to AI is not the abdication of human responsibility. It is its elevation to a higher order of abstraction. As I watch the terminal run the test suites written by Jules, and Claude's text take shape on the screen, I realize we are not building tools that replace us. We are building a new kind of collaborative system, where human discernment and the probabilistic brute force of the machine converge in a complex and continuous dance.
-
-The screen glows in the dark study. The baby breathes softly through the baby monitor. And the events keep unfolding.
+My daughter is asleep in the next room. The terminal says green. I'll find out in the morning whether green meant what I thought it meant.
