@@ -1,72 +1,133 @@
 # Hrönir
 
-Sistema de avaliação par-a-par de posts do blog. Cada rodada sorteia 10 posts EN com `translationKey`, monta 5 partidas, e um avaliador (humano ou modelo) escolhe um vencedor por partida defendendo apaixonadamente. O ranking acumulado identifica o post que mais perde, e esse post recebe uma crítica registrada.
+Sistema de avaliação par-a-par de posts do blog. Cada rodada gera N partidas (default 10) por **active sampling**, um avaliador (humano ou modelo) escolhe um vencedor por partida defendendo apaixonadamente, e ao final o post pior ranqueado recebe uma edição — registrada como `editHistory[]` no próprio frontmatter do post.
 
 > **Este CLI é não-interativo por design** (rodado por Claude Code).
 > Não use `readline`, `inquirer`, `prompts`, leitura de `process.stdin`,
 > nem confirmações em tela do tipo `[y/N]`. Toda saída vai direto pro
 > stdout via `console.log`, sem paginação. O default de qualquer ação
 > destrutiva ou que sobrescreve é "prossiga sem perguntar". Se algum
-> subcomando futuro precisar de confirmação destrutiva (ex: `reset`),
-> implemente com flag explícita `--yes`, não com prompt interativo.
+> subcomando precisar de confirmação destrutiva, implemente com flag
+> explícita (ex: `--force`), não com prompt interativo.
 >
 > Comandos não devem mudar de comportamento baseado em `process.stdout.isTTY`.
 
 ## Identidade canônica
 
-`translationKey` (do frontmatter do post) é a identidade. Versões em idiomas diferentes do mesmo ensaio compartilham a mesma `translationKey` e portanto consolidam wins/appearances no ranking. Match files referenciam posts por `key` (= translationKey) e `path` (= caminho do .md).
+`translationKey` (do frontmatter do post) é a identidade. Todas as traduções de um mesmo ensaio compartilham `translationKey` e consolidam wins/appearances no ranking. Match files referenciam posts por `key` (= translationKey), `path` (= caminho do .md) e `version` (= UUIDv5 derivado do conteúdo).
+
+A solução é **i18n completa, sem assumir bilinguismo**: `edit-worst` e `edit-commit` operam sobre todas as traduções existentes para uma `translationKey`, qualquer número de idiomas.
 
 ## Estrutura
 
 ```
 .routines/hronir/
-  <run_id>_<keyA>_x_<keyB>.md     # um arquivo por partida
-  critiques/
-    <key>.md                       # crítica do pior ranqueado de cada rodada
+  rates/                              # matches gerados pelo fluxo atual
+    <run_id>_<keyA>_x_<keyB>.md
+  edit-history/<key>/<lang>/<uuid>.md # snapshot do post antes da edição
+  critiques/<key>.md                  # crítica em prosa (registro)
+  <run_id>_..._x_....md               # matches legados (continuam suportados)
+hronir_session.json                   # estado da rodada ativa (commitado)
 scripts/hronir/
-  index.js                         # CLI entrypoint
-  lib/                             # comandos
-  package.json                     # devDeps (gray-matter)
-  README.md                        # este arquivo
+  index.js                            # CLI entrypoint
+  lib/                                # comandos
+  skills/                             # skills versionadas (blog / essay)
+  README.md                           # este arquivo
 ```
+
+`hronir_session.json` é tracked de propósito: ele sinaliza que uma rodada está em andamento (e `doctor` reclama quando existe), evitando commits parciais.
 
 ## Comandos
 
-Todos via npm scripts no raiz:
+Todos via npm scripts na raiz:
 
 | Comando | Função |
 |---------|--------|
-| `npm run hronir:init` | Cria até 20 match files (n = min(20, ⌊corpus/2⌋); falha se corpus < 4). Seleção por **active sampling** (ver abaixo). |
-| `npm run hronir:present -- <match.md>` | Imprime os dois posts + instrução pro avaliador (meta de palavras na defesa) |
-| `npm run hronir:resume` | Identifica a rodada mais recente, lista pendentes, aponta próximo |
+| `npm run hronir:init -- [opções]` | Cria a sessão, vai direto pro primeiro match. Opções: `--matches N` (default 10), `--agent-id <id>` (default `human`), `--eval-lang <lang>` (default `pt`), `--min-appearances N`, `--skip-edit`, `--skip-rating` |
+| `npm run hronir:continue` | Avança o estado da sessão: gera próximo match, imprime post A, depois post B, depois espera decisão |
+| `npm run hronir:decide -- --winner <a\|b> --clash "..." --winner-defense "..." --loser-critique "..."` | Registra a decisão do match atual e devolve a sessão para `ready_for_next` |
 | `npm run hronir:ranking` | Score acumulado de todos os matches preenchidos |
-| `npm run hronir:worst` | Imprime translationKey do pior ranqueado (apenas inspeção) |
-| `npm run hronir:edit-worst` | Pior elegível + top 3, defesas, registro auditável em `edits/`, e instrução pra ler as skills antes de editar |
-| `npm run hronir:archive-post -- <key>` | Move todos os matches envolvendo `<key>` para `archive/`. Pós-edição, o post reinicia em 0 aparições |
-| `npm run hronir:migrate` | Normaliza matches legados (slug → key, renomeia arquivos) |
-| `npm run hronir:doctor` | Verifica inconsistências (keys, paths, duplicatas) |
+| `npm run hronir:worst` | Imprime translationKey do pior ranqueado |
+| `npm run hronir:edit-worst` | Pior elegível + top 3 + defesas + crítica acumulada. Faz snapshot de cada tradução em `edit-history/`, injeta `replacedVersion` no frontmatter dos posts, marca a sessão como `need_edit` |
+| `npm run hronir:edit-commit -- --msg "..."` | Valida que cada tradução foi efetivamente alterada (UUIDv5 mudou), injeta `editHistory[]` no frontmatter de cada arquivo, fecha a sessão |
+| `npm run hronir:end -- [--skip-edit\|--force]` | Encerra a rodada. Recusa se há matches pendentes ou edição pendente, a menos que `--force` |
+| `npm run hronir:migrate -- [--dry-run]` | Normaliza matches legados (`slug:` → `key:`, renomeia arquivo) |
+| `npm run hronir:doctor` | Verifica inconsistências. Sai com código 1 se encontrar — usado no CI |
 
 Cada comando termina com uma linha `NEXT STEP:` apontando o próximo passo, exceto quando o fluxo termina.
 
 ## Fluxo
 
 ```
-init → present (×n_matches) → edit-worst → (edição manual do post worst) → archive-post <key>
+init
+ └─> continue          # gera match 1, imprime post A
+     └─> continue      # imprime post B
+         └─> decide    # registra decisão
+             └─> continue  # gera match 2, imprime post A
+                 ...
+                 └─> continue  # após N matches, sessão entra em 'need_edit'
+                     └─> edit-worst   # mostra pior post + contexto, snapshot, marca posts
+                         └─> [edição manual em todas as traduções]
+                             └─> edit-commit --msg "..."  # registra editHistory[]
 ```
 
-`resume` em qualquer ponto identifica a rodada mais recente e aponta o próximo pendente. Útil para crash recovery ou retomada entre sessões.
+A máquina de estados está em `hronir_session.json`: `ready_for_next → reading_a → reading_b → deciding → ready_for_next → … → need_edit → (sessão fechada)`.
+
+### Atalhos
+
+- `--skip-rating` em `init`: pula matches e vai direto pra `edit-worst` (útil quando só quer editar o pior acumulado).
+- `--skip-edit` em `init` ou `end`: encerra após os matches, sem fase de edição.
+- `--force` em `end`: descarta a sessão mesmo no meio da rodada.
+
+## Match file
+
+```yaml
+---
+run_id: 2026-05-18T20-28-00
+run_at: 2026-05-18T20:28:00Z
+match_index: 1
+post_a:
+  key: third-half-fourth-wall
+  path: src/content/blog/2026-05-01-the-third-half-and-the-fourth-wall.md
+  version: 2c8f1a3b-...                # UUIDv5 do corpo
+post_b:
+  key: rosencrantz-coin
+  path: src/content/blog/rosencrantz-coin.md
+  version: 9b14e7d2-...
+winner: a                                # 'a' | 'b' | 'TODO'
+agent_id: claude-opus-4-7                # quem decidiu
+eval_lang: pt                            # idioma em que a avaliação foi feita
+prompt_version: passion-v1
+season: 1
+override: null
+clash: "..."                             # o confronto em prosa
+winner_defense: "..."                    # defesa apaixonada do vencedor
+loser_critique: "..."                    # crítica do perdedor (alimenta edit-worst)
+---
+```
+
+Campos legados (`model`, body livre) continuam aceitos por `doctor` quando `agent_id` está ausente, para não invalidar matches antigos.
+
+## editHistory
+
+`edit-commit` injeta uma entrada por edição no frontmatter de cada tradução:
+
+```yaml
+editHistory:
+  - uuid: "22c3fbae-..."                 # UUIDv5 do conteúdo ANTES da edição
+    timestamp: "2026-05-18T17:19:55.965Z"
+    msg: "Reorganizei a estrutura..."
+```
+
+Esse é o registro auditável da linhagem do post. Substitui o antigo `.routines/hronir/edits/<key>-<ts>.md`. O cooldown de `edit-worst` (que evita reeditar o mesmo post duas rodadas seguidas) é derivado desse campo.
 
 ## Meta de palavras nas defesas
 
-`present` instrui o avaliador que cada defesa deve ter mínimo 100 palavras (piso de qualidade), meta 200 (alvo natural), mencionar os dois posts pelo nome ou pela key, e explicar concretamente. Não há validação coerciva no `doctor` — é instrução proativa. Defesa muito curta ou genérica perde a função do sistema (`edit-worst` lê e cita essas defesas; pouca substância dá pouco sinal).
-
-`worst` continua disponível para inspeção pontual, mas o fluxo automático termina em `edit-worst` + `archive-post`. A crítica em prosa em `.routines/hronir/critiques/` continua sendo um registro válido, mas não dirige a edição; o que dirige são as **skills versionadas** (próxima seção) e o registro auditável em `.routines/hronir/edits/<key>-<ts>.md`.
+`continue` (estado `reading_b`) instrui o avaliador que cada defesa deve ter mínimo 100 palavras (piso de qualidade), meta 200 (alvo natural), mencionar os dois posts pelo nome ou pela key, e explicar concretamente. Não há validação coerciva no `doctor` — é instrução proativa. Defesa muito curta ou genérica perde a função do sistema (`edit-worst` lê e cita essas defesas; pouca substância dá pouco sinal).
 
 ## Threshold de volume
 
-`edit-worst` só considera posts com `appearances >= MIN_APPEARANCES` (default 3). Se nenhum post elegível, imprime mensagem informativa e termina com exit 0 (não é erro — apenas sinal de que a rodada ainda não acumulou volume suficiente para edição confiável).
-
-Para ajustar o threshold, edite a constante no topo de `scripts/hronir/lib/commands.js`.
+`edit-worst` só considera posts com `appearances >= MIN_APPEARANCES` (default 3, override via `--min-appearances`). Se nenhum post elegível, imprime mensagem informativa e termina com exit 0 (não é erro — apenas sinal de que a rodada ainda não acumulou volume suficiente).
 
 ## Skills
 
@@ -77,93 +138,41 @@ Em `scripts/hronir/skills/`:
 
 O `edit-worst` instrui a leitura de **ambas** antes de editar e a escolher a aplicável (default: blog). Atenção especial à seção *Protection against tightening* e ao *Voice-fidelity pass* — o reflexo do LLM de tighten/smooth/fortify é o failure mode aqui.
 
-## Archive
-
-`archive-post <key>` move todos os matches envolvendo `<key>` para `.routines/hronir/archive/<key>-<timestamp>/`. O agregador (`ranking`/`worst`/`edit-worst`) ignora arquivos em subdiretórios — apenas matches diretos em `.routines/hronir/` contam. Intenção: pós-edição, o post é objeto novo; appearances reinicia em zero, evitando arrastar o veredito pré-edição como dado válido.
-
-## Registro auditável
-
-`edit-worst` cria `.routines/hronir/edits/<key>-<timestamp>.md` com frontmatter contendo `post_key`, `post_path`, `model`, `skill_used`, `appearances_at_edit`, `wins_at_edit`, `defenses_archived_to` (placeholder). Campos `model`, `skill_used` e o corpo (resumo do que foi mudado e por quê) são preenchidos pelo agente após editar o post. O arquivo serve como linhagem da edição.
-
 ## Ranking
 
-Ranking via **OpenSkill** (modelo Weng-Lin, atualização bayesiana online de Plackett-Luce). Cada par é tratado como uma partida 1v1; vencedor sobe `mu` e desce `sigma`, perdedor o oposto. Três eixos saem da computação, todos exibidos lado a lado em `hronir:ranking`:
+Ranking via **OpenSkill** (modelo Weng-Lin, atualização bayesiana online de Plackett-Luce). Cada par é tratado como uma partida 1v1; vencedor sobe `mu` e desce `sigma`, perdedor o oposto. Três eixos saem da computação:
 
-- **`mu`** — estimativa pontual da "qualidade" do post. Sobe quando o post vence, desce quando perde, com magnitude proporcional à surpresa (vencer um post de mu alto vale mais).
-- **`sigma`** — incerteza sobre `mu`. Começa alta (pouca informação) e cai a cada partida. Não diz que o post é ruim — diz que ainda não sabemos.
-- **`ordinal = mu − 3·sigma`** — score conservador usado para a ordem global. Penaliza incerteza explicitamente: um post novo, mesmo com mu alto, fica atrás de um post estabelecido com mu um pouco menor.
+- **`mu`** — estimativa pontual da "qualidade" do post.
+- **`sigma`** — incerteza sobre `mu`. Não diz que o post é ruim — diz que ainda não sabemos.
+- **`ordinal = mu − 3·sigma`** — score conservador usado para a ordem global. Um post novo com mu alto fica atrás de um post estabelecido com mu um pouco menor.
 
-A ordem da tabela é por `ordinal` descendente. Tie-break alfabético por `key`. O `worst` retorna o post com menor `ordinal` entre os elegíveis (`appearances >= MIN_APPEARANCES`) — note que aqui não é "tie-break", é filtro: posts sem volume mínimo são ignorados antes de pegar o último.
+A ordem da tabela é por `ordinal` descendente, tie-break alfabético por `key`. `worst` retorna o post com menor `ordinal` entre os elegíveis (`appearances >= MIN_APPEARANCES`).
 
-### Active sampling no `init`
+### Active sampling
 
-`init` não sorteia matches no escuro. Para cada par possível de posts elegíveis, calcula:
+Cada chamada de `continue` (não `init` em bloco) gera um match. Para cada par possível, calcula:
 
 ```
 score = -|predictWin(a, b) - 0.5| + sigma_a + sigma_b + stale_bonus(a) + stale_bonus(b)
 ```
 
-- `predictWin` próximo de 0.5 → resultado mais incerto → mais informação extraída pela partida (entropia máxima do outcome).
-- `sigma_a + sigma_b` → preferir pares onde a incerteza individual ainda é alta. Posts que já têm muitas partidas (sigma baixo) cedem prioridade.
-- `stale_bonus` → `+3.0` se o post foi editado no git **depois** do match mais recente em que entrou; `0` se nunca foi avaliado ou se está em dia. Detecção binária: qualquer commit que toca o arquivo conta. (Versão refinada por linhas alteradas é uma melhoria futura — por ora corrige typo conta igual a reescrever metade.)
+- `predictWin` próximo de 0.5 → resultado mais incerto → mais informação.
+- `sigma_a + sigma_b` → preferir pares com incerteza ainda alta.
+- `stale_bonus` → `+3.0` se o post foi editado no git **depois** do match mais recente em que entrou; `0` caso contrário.
 
-Greedy: ordena pares por score descendente, com jitter aleatório para tie-break, e pega os top-N garantindo que nenhum post apareça duas vezes no mesmo run.
-
-**Cold start:** quando todo mundo tem σ=8.33 e μ=25 default, `predictWin` é sempre 0.5 e o termo de incerteza só soma — qualquer par é informativamente equivalente. O jitter garante que runs sucessivos cobrem subsets diferentes em vez de fixar nos mesmos posts. À medida que partidas acumulam, o sampling foca em pares próximos no skill, posts subexplorados, e posts cuja versão atual divergiu da que foi avaliada.
+Ordena pares por score descendente (com jitter pra desempate no cold start) e pega o topo, evitando posts já usados no run atual.
 
 ### Por que MIN_APPEARANCES ainda importa com OpenSkill
 
-OpenSkill já carrega incerteza em `sigma`, então em tese seria possível ranquear posts com 1 partida. Mas duas razões mantêm o threshold:
+OpenSkill já carrega incerteza em `sigma`. Mas:
 
-1. **Sinal de defesa.** `edit-worst` consome as defesas como contexto. Um post com 1 derrota dá só 1 defesa pra trabalhar; com 3+ derrotas, o conjunto de defesas começa a triangular o problema do post.
-2. **Estabilidade.** Os 3 primeiros matches de um post podem oscilar muito (sigma alto, ordinal sensível). MIN_APPEARANCES=3 evita editar com base num único par que pode ter sido sorte/azar.
+1. **Sinal de defesa.** `edit-worst` consome as defesas como contexto. Um post com 1 derrota dá só 1 defesa pra trabalhar.
+2. **Estabilidade.** Os 3 primeiros matches de um post podem oscilar muito. `MIN_APPEARANCES=3` evita editar com base num único par sortudo.
 
-`appearances` continua reportado ao lado de `mu`/`sigma` exatamente para isso ser legível.
+## Crítica do pior (registro)
 
-## Match file
-
-```yaml
----
-run_id: 2026-05-18T02-48-18
-run_at: 2026-05-18T02:48:18Z
-match_index: 1
-post_a:
-  key: third-half-fourth-wall
-  path: src/content/blog/2026-05-01-the-third-half-and-the-fourth-wall.md
-post_b:
-  key: rosencrantz-coin
-  path: src/content/blog/rosencrantz-coin.md
-winner: TODO              # 'a', 'b', ou TODO
-model: TODO               # identificador do modelo executando
-prompt_version: passion-v1
-season: 1
-override: null            # se preenchido, sobrescreve winner
----
-
-<!-- defesa em português aqui -->
-```
-
-## Crítica do pior
-
-Template em `.routines/hronir/critiques/<key>.md`:
-
-```markdown
----
-post_key: <translationKey>
-post_path: <caminho>
-run_id: <run_id da rodada>
-model: <modelo executando>
-prompt_version: critique-v1
----
-
-Crítica honesta respondendo:
-- O que o post tenta fazer?
-- Por que provavelmente perdeu as comparações?
-- Se você fosse editá-lo, o que mudaria — e por quê?
-
-A crítica é registro. Não edite o post original.
-```
+`.routines/hronir/critiques/<key>.md` continua sendo um lugar válido pra registrar uma crítica em prosa do pior post, mas não é gerada nem requerida pelo fluxo automático — o que dirige a edição são as **skills** e as defesas/críticas dos matches.
 
 ## Migração
 
-`migrate` é idempotente: lê cada match, resolve `post_a.path` e `post_b.path` para `translationKey` real (lookup no frontmatter do post), reescreve `slug:` como `key:`, e renomeia o arquivo se o nome não bate. `doctor` valida o resultado.
+`migrate` é idempotente: lê cada match, resolve `post_a.path` e `post_b.path` para `translationKey` real, reescreve `slug:` como `key:`, e renomeia o arquivo se o nome não bate. `doctor` valida o resultado.
