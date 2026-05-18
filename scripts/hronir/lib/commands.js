@@ -162,8 +162,10 @@ function generateNextMatch(runId) {
   for (const f of files) {
     const { data } = readMatch(f);
     if (data.winner === "TODO" || !data.winner) {
-      if (data.post_a?.key) used.add(data.post_a.key);
-      if (data.post_b?.key) used.add(data.post_b.key);
+      const aKey = postKey(data.post_a);
+      const bKey = postKey(data.post_b);
+      if (aKey) used.add(aKey);
+      if (bKey) used.add(bKey);
     }
   }
 
@@ -907,26 +909,8 @@ export function end(options = {}) {
     return;
   }
 
-  if (options.skipEdit) {
-    if (fs.existsSync(sessionPath)) {
-      fs.unlinkSync(sessionPath);
-    }
-    console.log("Fase de edição do pior post pulada (--skip-edit ativa).");
-    console.log("\n✅ Sucesso! Rodada do Hronir finalizada.");
-    return;
-  }
-
   if (fs.existsSync(sessionPath)) {
     const session = JSON.parse(fs.readFileSync(sessionPath, "utf8"));
-
-    if (session.state === "need_edit" && session.worstKey) {
-      console.error("Erro: Há uma edição pendente que não foi registrada.");
-      console.error(`Post editado: ${session.worstKey}`);
-      console.error("");
-      console.error("Para registrar suas alterações e encerrar a rodada, rode:");
-      console.error(`  npm run hronir:edit-commit -- --msg "Sua mensagem explicando o que fez e o porquê"`);
-      process.exit(1);
-    }
 
     const matchesPending = (session.target ?? 0) > (session.completed ?? 0);
     const midMatch = ["reading_a", "reading_b", "deciding"].includes(session.state);
@@ -937,7 +921,19 @@ export function end(options = {}) {
       process.exit(1);
     }
 
+    if (!options.skipEdit && session.state === "need_edit" && session.worstKey) {
+      console.error("Erro: Há uma edição pendente que não foi registrada.");
+      console.error(`Post editado: ${session.worstKey}`);
+      console.error("");
+      console.error("Para registrar suas alterações e encerrar a rodada, rode:");
+      console.error(`  npm run hronir:edit-commit -- --msg "Sua mensagem explicando o que fez e o porquê"`);
+      process.exit(1);
+    }
+
     fs.unlinkSync(sessionPath);
+  }
+  if (options.skipEdit) {
+    console.log("Fase de edição do pior post pulada (--skip-edit ativa).");
   }
   console.log("\n✅ Sucesso! Rodada do Hronir finalizada.");
 }
