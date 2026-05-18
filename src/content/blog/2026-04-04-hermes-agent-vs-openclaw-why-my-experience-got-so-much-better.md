@@ -13,7 +13,7 @@ I have 81 OpenClaw session logs sitting in `/opt/data/sessions/` and 3 Hermes se
 
 The reason I care is practical. I don't run benchmarks. I use agents for real work: keeping CausaGanha's backfill pipelines honest, opening [Jules](/blog/2026-05-10-jules-api-harness-backend/) sessions from Porto Velho at 11pm when the day job is done, maintaining the identity repo, debugging whatever broke while I was in a court hearing. The comparison that matters to me is not "which one scores higher on MMLU" — it's "which one I can hand a task to and walk away from."
 
-The thing I'd underestimated, going into this analysis, is how much harness design is perception of intelligence. Not metaphorically. When an agent trips over a schema error and loops on it, it reads as dim. When it trips over the same error and routes around it in two moves, it reads as sharp. The model might be identical in both cases. The *harness* makes the difference.
+The thing I'd underestimated, going into this analysis, is how much harness design is perception of intelligence. Not metaphorically. When an agent trips over a schema error and loops on it, it reads as dim. When it trips over the same error and routes around it in two moves, it reads as sharp. The model might be identical in both cases. The _harness_ makes the difference.
 
 ## What the OpenClaw logs show
 
@@ -55,7 +55,7 @@ The tool mix helps: `session_search` for cross-session context, `read_file` and 
 
 ## The memory problem
 
-Continuity was the constant friction in OpenClaw. I'd know we had discussed something two hours before; the system would be adrift. Sometimes it had the *feeling* of a previous session — the right vocabulary, roughly the right context — but not the specific facts. Once I had to say explicitly: this is something we talked about today.
+Continuity was the constant friction in OpenClaw. I'd know we had discussed something two hours before; the system would be adrift. Sometimes it had the _feeling_ of a previous session — the right vocabulary, roughly the right context — but not the specific facts. Once I had to say explicitly: this is something we talked about today.
 
 Hermes doesn't fix this through magic. It makes the memory architecture honest: lean persistent memory for durable facts, `session_search` for previous sessions, skills for recurring procedures, structured workspace reading. Instead of pretending to remember, it says "let me check the records" — which for real work is more useful than confident improvisation.
 

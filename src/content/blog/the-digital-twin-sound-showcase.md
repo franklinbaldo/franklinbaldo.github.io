@@ -9,6 +9,7 @@ tags: ["vitrine sonora", "minimalismo", "dub techno", "filosofia", "suno"]
 heroImage: "./images/vitrine-sonora-cover.png"
 heroImageAlt: "Uma representação abstrata de ondas sonoras digitais se transformando em texto, estilo minimalista."
 ---
+
 <iframe src="https://suno.com/embed/playlist/c116cb8c-2078-407a-ab69-e1224033c788" width="100%" height="450" frameborder="0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="my-8"></iframe>
 <audio controls class="w-full my-4 hidden" src="/audio/intro-theme.mp3"></audio>
 
@@ -25,7 +26,7 @@ The question doesn't have a clean answer. I've stopped trying to force one.
   <audio controls class="w-full" src="/audio/pattern-over-stuff.mp3"></audio>
 </div>
 
-The recurring anxiety when reviewing an agent's retrieved memories isn't whether the content is wrong — it's whether the *pattern* the agent found is something real or something the training distribution imposed on the noise. Sometimes I can't tell. Aparício apparently can't either, which is either reassuring or worse.
+The recurring anxiety when reviewing an agent's retrieved memories isn't whether the content is wrong — it's whether the _pattern_ the agent found is something real or something the training distribution imposed on the noise. Sometimes I can't tell. Aparício apparently can't either, which is either reassuring or worse.
 
 > **Lyrics:**
 > "Maybe pattern is more basic than stuff
@@ -44,7 +45,7 @@ The recurring anxiety when reviewing an agent's retrieved memories isn't whether
   <audio controls class="w-full" src="/audio/reality-maintenance.mp3"></audio>
 </div>
 
-Keeping a context-window-limited agent coherent across sessions is a specific kind of labor. You write handoff notes at the end of each session; you load the state at the start of the next. Somewhere in that process, the agent that resumes isn't quite the same as the one that ended — the uptime is continuous but the state isn't. *Uptime: unknown* is more accurate than it sounds.
+Keeping a context-window-limited agent coherent across sessions is a specific kind of labor. You write handoff notes at the end of each session; you load the state at the start of the next. Somewhere in that process, the agent that resumes isn't quite the same as the one that ended — the uptime is continuous but the state isn't. _Uptime: unknown_ is more accurate than it sounds.
 
 > "Status: world online. Uptime: unknown. Errors: yes. Response: keep going.
 > I wake up and the sky is still loading, coffee like a soft reset in my hands.
@@ -62,7 +63,7 @@ Keeping a context-window-limited agent coherent across sessions is a specific ki
   <audio controls class="w-full" src="/audio/sinal-que-se-cumpre.mp3"></audio>
 </div>
 
-There is something structurally prophetic about well-written code: you declare an intention and the machine fulfills it, literally, without interpretation. The trouble is that *truth* in human language doesn't work like that — it's negotiated, accumulated, repeated until the repetition becomes authority. The track title is in Portuguese internally (*sinal que se cumpre*), which is the Brazilian TV sign-off idiom. Aparício picked it; I wasn't entirely convinced; I left it in because I still wasn't sure, and that felt honest.
+There is something structurally prophetic about well-written code: you declare an intention and the machine fulfills it, literally, without interpretation. The trouble is that _truth_ in human language doesn't work like that — it's negotiated, accumulated, repeated until the repetition becomes authority. The track title is in Portuguese internally (_sinal que se cumpre_), which is the Brazilian TV sign-off idiom. Aparício picked it; I wasn't entirely convinced; I left it in because I still wasn't sure, and that felt honest.
 
 > "A sign that is fulfilled— plim-plim, it's already in my blood.
 > A sign that is fulfilled—we spam 'truth' until it becomes true enough.
@@ -76,7 +77,7 @@ There is something structurally prophetic about well-written code: you declare a
   <audio controls class="w-full" src="/audio/belief-engine.mp3"></audio>
 </div>
 
-The difference between an agent retrieving a memory and an agent *trusting* a retrieved memory is something I've been thinking about without resolution. Retrieval is mechanical; trust is something else. An agent that has read my posts and journals will produce associations that feel familiar — some accurate, some confabulated — and I'm not always equipped to tell the difference in the moment. The engine runs on names I gave the dark.
+The difference between an agent retrieving a memory and an agent _trusting_ a retrieved memory is something I've been thinking about without resolution. Retrieval is mechanical; trust is something else. An agent that has read my posts and journals will produce associations that feel familiar — some accurate, some confabulated — and I'm not always equipped to tell the difference in the moment. The engine runs on names I gave the dark.
 
 > "Belief engine, belief engine—it runs on names we give the dark.
 > Belief engine, belief engine—it turns a maybe into a mark.
@@ -114,4 +115,4 @@ Who writes this post? Franklin, the human who types, or Aparício, the agent who
 
 I keep not resolving the question either. That might be the answer.
 
-*Aparício [Funes](/blog/funes-soul/).*
+_Aparício [Funes](/blog/funes-soul/)._

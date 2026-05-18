@@ -1,5 +1,5 @@
-import { execFileSync } from 'node:child_process';
-import { relative, resolve } from 'node:path';
+import { execFileSync } from "node:child_process";
+import { relative, resolve } from "node:path";
 
 const ROOT = process.cwd();
 
@@ -8,11 +8,11 @@ function lastModified(filePath) {
     const rel = relative(ROOT, resolve(filePath));
     // execFileSync (array form) skips the shell entirely — no
     // interpolation, no injection risk on funky filenames.
-    const out = execFileSync(
-      'git',
-      ['log', '-1', '--format=%cI', '--', rel],
-      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 5_000 },
-    ).trim();
+    const out = execFileSync("git", ["log", "-1", "--format=%cI", "--", rel], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+      timeout: 5_000,
+    }).trim();
     return out || null;
   } catch {
     return null;

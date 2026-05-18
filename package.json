@@ -12,7 +12,10 @@
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "hronir": "node scripts/hronir/index.js",
+    "hronir:next": "node scripts/hronir/index.js next",
     "hronir:init": "node scripts/hronir/index.js init",
     "hronir:continue": "node scripts/hronir/index.js continue",
     "hronir:decide": "node scripts/hronir/index.js decide",
@@ -49,6 +52,8 @@
     "@astrojs/check": "^0.9.9",
     "gray-matter": "^4.0.3",
     "openskill": "^4.1.1",
-    "playwright": "^1.60.0"
+    "playwright": "^1.60.0",
+    "prettier": "^3.8.3",
+    "remark": "15.0.1"
   }
 }

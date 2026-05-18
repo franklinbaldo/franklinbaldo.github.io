@@ -12,7 +12,13 @@
 // back to a plain qrcode-with-emoji-overlay tile (see src/lib/og-qr.ts).
 
 import { createHash } from "node:crypto";
-import { readFileSync, readdirSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
+import {
+  readFileSync,
+  readdirSync,
+  writeFileSync,
+  existsSync,
+  mkdirSync,
+} from "node:fs";
 import { resolve, basename } from "node:path";
 import { load as parseYaml } from "js-yaml";
 import { BrowserMultiFormatReader } from "@zxing/library";
@@ -25,10 +31,15 @@ const SITE = "https://franklinbaldo.github.io";
 const HF_TOKEN = process.env.HF_TOKEN;
 const HF_MODEL = "monster-labs/control_v1p_sd15_qrcode_monster";
 
-const SLUG_FILTER = process.argv.slice(2).find((a) => a.startsWith("--slug="))?.slice(7);
+const SLUG_FILTER = process.argv
+  .slice(2)
+  .find((a) => a.startsWith("--slug="))
+  ?.slice(7);
 
 mkdirSync(CACHE_DIR, { recursive: true });
-const manifest = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, "utf8")) : {};
+const manifest = existsSync(MANIFEST)
+  ? JSON.parse(readFileSync(MANIFEST, "utf8"))
+  : {};
 
 const EMOJI_NOUN = {
   "🤖": "robot, circuit-board geometry",
@@ -44,7 +55,9 @@ const EMOJI_NOUN = {
 };
 
 function emojiPrompt(emoji) {
-  const noun = emoji ? EMOJI_NOUN[emoji] || "abstract emblem" : "abstract geometric emblem";
+  const noun = emoji
+    ? EMOJI_NOUN[emoji] || "abstract emblem"
+    : "abstract geometric emblem";
   return `${noun}, cobogó architectural pattern, terracotta brick and cream paper, hand-drawn ink illustration, isometric, minimal, warm earth tones, no text, no letters`;
 }
 
@@ -91,16 +104,21 @@ async function callHfQrModel({ url, prompt }) {
       num_inference_steps: 30,
     },
   };
-  const res = await fetch(`https://api-inference.huggingface.co/models/${HF_MODEL}`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${HF_TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
+  const res = await fetch(
+    `https://api-inference.huggingface.co/models/${HF_MODEL}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${HF_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }
+  );
   if (!res.ok) {
-    console.warn(`[generate-qrs] HF ${res.status} for ${url}: ${await res.text()}`);
+    console.warn(
+      `[generate-qrs] HF ${res.status} for ${url}: ${await res.text()}`
+    );
     return null;
   }
   return Buffer.from(await res.arrayBuffer());
@@ -158,12 +176,16 @@ async function generateOne(post) {
   for (let attempt = 0; attempt < 3 && !png; attempt++) {
     png = await callHfQrModel({ url: post.url, prompt });
     if (png && !(await verifyScans(png, post.url))) {
-      console.warn(`[generate-qrs] ${post.slug}: attempt ${attempt + 1} did not scan, retrying`);
+      console.warn(
+        `[generate-qrs] ${post.slug}: attempt ${attempt + 1} did not scan, retrying`
+      );
       png = null;
     }
   }
   if (!png) {
-    console.warn(`[generate-qrs] ${post.slug}: no usable QR — Astro build will fall back to plain QR`);
+    console.warn(
+      `[generate-qrs] ${post.slug}: no usable QR — Astro build will fall back to plain QR`
+    );
     return false;
   }
   writeFileSync(resolve(CACHE_DIR, `${post.slug}.png`), png);
@@ -173,17 +195,20 @@ async function generateOne(post) {
 
 async function main() {
   const targets = [...listPosts(), ...listHomes()].filter(
-    (p) => !SLUG_FILTER || p.slug === SLUG_FILTER,
+    (p) => !SLUG_FILTER || p.slug === SLUG_FILTER
   );
   if (!HF_TOKEN) {
-    console.warn("[generate-qrs] HF_TOKEN not set — nothing to generate. The build will use the plain-QR fallback.");
+    console.warn(
+      "[generate-qrs] HF_TOKEN not set — nothing to generate. The build will use the plain-QR fallback."
+    );
     return;
   }
   let changed = false;
   for (const p of targets) {
     if (await generateOne(p)) changed = true;
   }
-  if (changed) writeFileSync(MANIFEST, JSON.stringify(manifest, null, 2) + "\n");
+  if (changed)
+    writeFileSync(MANIFEST, JSON.stringify(manifest, null, 2) + "\n");
   console.log(`[generate-qrs] done (${Object.keys(manifest).length} cached)`);
 }
 

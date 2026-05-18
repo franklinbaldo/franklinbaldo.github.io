@@ -18,20 +18,21 @@ idioma no índice e arquivo.
 ## O que foi feito nesta sessão
 
 ### Merge de PR aberta
+
 - **PR #66** (multilingual infrastructure) — merge squash realizado.
 - **PR #38** (dependabot defu) — mantida aberta (conflito de merge; baixa prioridade).
 
 ### Implementações nesta branch (`claude/affectionate-dirac-S75Iu`)
 
-| Arquivo | Mudança |
-|---------|---------|
+| Arquivo                            | Mudança                                                                                                                                            |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/components/LangFilter.svelte` | **Novo** — filtro All / 🇺🇸 EN / 🇧🇷 PT com Svelte 5 runes; persiste preferência em `localStorage.lang`; aplica `display:none` em `[data-post-lang]` |
-| `src/components/PostCard.astro` | `data-post-lang={postLang}` no `<article>` — permite que LangFilter filtre cards |
-| `src/pages/index.astro` | `translationHref="/pt/"` no PageLayout + `<LangFilter client:load />` |
-| `src/pages/about.mdx` | `lang: en` e `translationHref: /pt/about/` no frontmatter |
-| `src/pages/archive.astro` | `<LangFilter client:load />` + `data-post-lang` em cada `<li>` + flag 🇧🇷 nos posts PT |
-| `src/pages/pt/index.astro` | **Novo** — homepage em PT (`lang="pt"`, `translationHref="/"`, hero em português) |
-| `src/pages/pt/about.astro` | **Novo** — página sobre em PT (`lang="pt"`, `translationHref="/about/"`) |
+| `src/components/PostCard.astro`    | `data-post-lang={postLang}` no `<article>` — permite que LangFilter filtre cards                                                                   |
+| `src/pages/index.astro`            | `translationHref="/pt/"` no PageLayout + `<LangFilter client:load />`                                                                              |
+| `src/pages/about.mdx`              | `lang: en` e `translationHref: /pt/about/` no frontmatter                                                                                          |
+| `src/pages/archive.astro`          | `<LangFilter client:load />` + `data-post-lang` em cada `<li>` + flag 🇧🇷 nos posts PT                                                              |
+| `src/pages/pt/index.astro`         | **Novo** — homepage em PT (`lang="pt"`, `translationHref="/"`, hero em português)                                                                  |
+| `src/pages/pt/about.astro`         | **Novo** — página sobre em PT (`lang="pt"`, `translationHref="/about/"`)                                                                           |
 
 ### Por que cada mudança importa
 
@@ -62,6 +63,7 @@ idioma no índice e arquivo.
 ## Próximas sessões — backlog priorizado
 
 ### Alta prioridade
+
 1. **Criar pares de tradução de posts** — usar `translationKey` para linkar. Começar
    pelos 3 posts mais recentes em EN (The Agent That Doesn't Invent Verbs,
    Pierre Menard, The Three Imperatives). Cada tradução = novo arquivo `.md` com slug PT.
@@ -70,12 +72,14 @@ idioma no índice e arquivo.
 3. **Related Posts** ao fim de cada post — interseção de tags, ordenado por data.
 
 ### Média prioridade
+
 4. **LangFilter em /tags/ e /search/** — consistência UX.
 5. **PT version de /archive/** — URL `/pt/archive/` com textos em PT.
 6. **Pagination** em `/archive/` e `/tags/[tag]/` (Astro `paginate()`).
 7. **dependabot #38** — atualizar `defu` manualmente (baixo risco).
 
 ### Baixa prioridade
+
 8. **og:locale:alternate** quando `lang=pt`.
 9. **wordCount no JSON-LD** (minutesRead já disponível).
 10. **FAQ Schema** na /about/ e /pt/about/.

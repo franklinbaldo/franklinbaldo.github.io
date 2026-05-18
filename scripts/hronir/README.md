@@ -41,18 +41,18 @@ scripts/hronir/
 
 Todos via npm scripts na raiz:
 
-| Comando | Função |
-|---------|--------|
-| `npm run hronir:init -- [opções]` | Cria a sessão, vai direto pro primeiro match. Opções: `--matches N` (default 10), `--agent-id <id>` (default `human`), `--eval-lang <lang>` (default `pt`), `--min-appearances N`, `--skip-edit`, `--skip-rating` |
-| `npm run hronir:continue` | Avança o estado da sessão: gera próximo match, imprime post A, depois post B, depois espera decisão |
-| `npm run hronir:decide -- --winner <a\|b> --clash "..." --winner-defense "..." --loser-critique "..."` | Registra a decisão do match atual e devolve a sessão para `ready_for_next` |
-| `npm run hronir:ranking` | Score acumulado de todos os matches preenchidos |
-| `npm run hronir:worst` | Imprime translationKey do pior ranqueado |
-| `npm run hronir:edit-worst` | Pior elegível + top 3 + defesas + crítica acumulada. Faz snapshot de cada tradução em `edit-history/`, injeta `replacedVersion` no frontmatter dos posts, marca a sessão como `need_edit` |
-| `npm run hronir:edit-commit -- --msg "..."` | Valida que cada tradução foi efetivamente alterada (UUIDv5 mudou), injeta `editHistory[]` no frontmatter de cada arquivo, fecha a sessão |
-| `npm run hronir:end -- [--skip-edit\|--force]` | Encerra a rodada. Recusa se há matches pendentes ou edição pendente, a menos que `--force` |
-| `npm run hronir:migrate -- [--dry-run]` | Normaliza matches legados (`slug:` → `key:`, renomeia arquivo) |
-| `npm run hronir:doctor` | Verifica inconsistências. Sai com código 1 se encontrar — usado no CI |
+| Comando                                                                                                | Função                                                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run hronir:init -- [opções]`                                                                      | Cria a sessão, vai direto pro primeiro match. Opções: `--matches N` (default 10), `--agent-id <id>` (default `human`), `--eval-lang <lang>` (default `pt`), `--min-appearances N`, `--skip-edit`, `--skip-rating` |
+| `npm run hronir:continue`                                                                              | Avança o estado da sessão: gera próximo match, imprime post A, depois post B, depois espera decisão                                                                                                               |
+| `npm run hronir:decide -- --winner <a\|b> --clash "..." --winner-defense "..." --loser-critique "..."` | Registra a decisão do match atual e devolve a sessão para `ready_for_next`                                                                                                                                        |
+| `npm run hronir:ranking`                                                                               | Score acumulado de todos os matches preenchidos                                                                                                                                                                   |
+| `npm run hronir:worst`                                                                                 | Imprime translationKey do pior ranqueado                                                                                                                                                                          |
+| `npm run hronir:edit-worst`                                                                            | Pior elegível + top 3 + defesas + crítica acumulada. Faz snapshot de cada tradução em `edit-history/`, injeta `replacedVersion` no frontmatter dos posts, marca a sessão como `need_edit`                         |
+| `npm run hronir:edit-commit -- --msg "..."`                                                            | Valida que cada tradução foi efetivamente alterada (UUIDv5 mudou), injeta `editHistory[]` no frontmatter de cada arquivo, fecha a sessão                                                                          |
+| `npm run hronir:end -- [--skip-edit\|--force]`                                                         | Encerra a rodada. Recusa se há matches pendentes ou edição pendente, a menos que `--force`                                                                                                                        |
+| `npm run hronir:migrate -- [--dry-run]`                                                                | Normaliza matches legados (`slug:` → `key:`, renomeia arquivo)                                                                                                                                                    |
+| `npm run hronir:doctor`                                                                                | Verifica inconsistências. Sai com código 1 se encontrar — usado no CI                                                                                                                                             |
 
 Cada comando termina com uma linha `NEXT STEP:` apontando o próximo passo, exceto quando o fluxo termina.
 
@@ -136,7 +136,7 @@ Em `scripts/hronir/skills/`:
 - `franklin-blog/SKILL.md` — para posts informais, ensaísticos, voz pessoal
 - `franklin-essay/SKILL.md` — para posts argumentativo-formais (paper-shaped, defesa de tese, citação acadêmica densa)
 
-O `edit-worst` instrui a leitura de **ambas** antes de editar e a escolher a aplicável (default: blog). Atenção especial à seção *Protection against tightening* e ao *Voice-fidelity pass* — o reflexo do LLM de tighten/smooth/fortify é o failure mode aqui.
+O `edit-worst` instrui a leitura de **ambas** antes de editar e a escolher a aplicável (default: blog). Atenção especial à seção _Protection against tightening_ e ao _Voice-fidelity pass_ — o reflexo do LLM de tighten/smooth/fortify é o failure mode aqui.
 
 ## Ranking
 

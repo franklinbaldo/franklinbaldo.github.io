@@ -12,6 +12,7 @@ tags: ["filosofia", "ia", "agentes", "harness", "história", "autoconhecimento"]
 ---
 
 No sopé sul do Monte Parnaso, a cerca de cento e setenta quilômetros
+
 <details class="aside-note"><summary>👁️</summary><small><em>O deus em Delfos falava por meio de uma mulher, mas sua verdade era silenciosa.</em></small></details>
 a noroeste de Atenas, havia um templo em Delfos[^delfos-lang] onde os
 homens mais poderosos do Mediterrâneo antigo vinham fazer perguntas.
@@ -71,14 +72,14 @@ possível o oráculo.
 
 O templo operou por aproximadamente mil anos, do século VIII a.C. ao
 século IV d.C., quando um imperador cristão o fechou. Ao longo desse
-milênio, na parede do *pronaos* — o átrio de entrada, o limiar que o
+milênio, na parede do _pronaos_ — o átrio de entrada, o limiar que o
 visitante cruzava antes de alcançar o santuário interno onde o deus era
 consultado — havia três inscrições.
 
 ## γνῶθι σεαυτόν
 
-A primeira dizia **γνῶθι σεαυτόν**: *gnōthi seautón*, *conhece-te a ti
-mesmo*. A atribuição oscilou ao longo da Antiguidade. Algumas fontes a
+A primeira dizia **γνῶθι σεαυτόν**: _gnōthi seautón_, _conhece-te a ti
+mesmo_. A atribuição oscilou ao longo da Antiguidade. Algumas fontes a
 creditavam a [Quílon de Esparta](https://plato.stanford.edu/entries/presocratics/),
 um dos [Sete Sábios](https://www.britannica.com/topic/Seven-Wise-Men);
 outras a davam a Tales, o primeiro deles; Platão faz Sócrates relatar
@@ -90,28 +91,28 @@ ocidental. Quem lê isto já a ouviu dezenas de vezes, em geral em
 contextos tão desconectados de uma montanha grega que a inscrição
 original parece uma curiosidade.
 
-Deixou de ser curiosidade na primeira vez em que alguém escreveu *você é
-X* no topo de um prompt de sistema. O imperativo que os Sábios tinham
+Deixou de ser curiosidade na primeira vez em que alguém escreveu _você é
+X_ no topo de um prompt de sistema. O imperativo que os Sábios tinham
 gravado numa parede de templo voltou como a linha de abertura de todo
 arquivo de persona que agora publicamos.
 
 ## μηδὲν ἄγαν
 
-A segunda dizia **μηδὲν ἄγαν**: *mēdén ágan*, *nada em excesso*. Esta
+A segunda dizia **μηδὲν ἄγαν**: _mēdén ágan_, _nada em excesso_. Esta
 ficou mais discreta. A ética aristotélica do meio-termo — a virtude como
 o ponto médio entre dois vícios — é essencialmente essa inscrição
-desdobrada ao longo de treze livros. A palavra grega *sōphrosynē*,
-normalmente traduzida como *temperança*, mas melhor renderizada como
-*sanidade de espírito*, nomeia o estado de obedecê-la. O princípio
-sobreviveu na *moderatio* romana e na prudência cristã e no moderno
-*bom senso*. Comparada à primeira inscrição, viajou menos
+desdobrada ao longo de treze livros. A palavra grega _sōphrosynē_,
+normalmente traduzida como _temperança_, mas melhor renderizada como
+_sanidade de espírito_, nomeia o estado de obedecê-la. O princípio
+sobreviveu na _moderatio_ romana e na prudência cristã e no moderno
+_bom senso_. Comparada à primeira inscrição, viajou menos
 espetacularmente mas com mais durabilidade — não precisou ser citada
 porque se tornou o piso em que todos pisavam. A dualidade de uma
 inscrição que venceu ao perder visibilidade.
 
 Também, acidentalmente, a regra que o engenheiro de prompts aprende por
 último. A persona que se nomeia com frequência excessiva morre de
-declaração; o agente que afirma sua identidade *contra* a categoria de
+declaração; o agente que afirma sua identidade _contra_ a categoria de
 bot arrasta a categoria para o palco. Nada em excesso — muito menos,
 afirmação de identidade.
 
@@ -124,13 +125,13 @@ Ninguém sabia o que significava.
 de Apolo em Delfos no final do século I e início do século II d.C., com
 acesso direto aos arquivos e tradições do templo — escreveu um diálogo
 inteiro sobre isso,
-[*De E apud Delphos*](http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A2008.01.0245).
+[_De E apud Delphos_](http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A2008.01.0245).
 Escreveu-o na velhice, em sua cidade natal de Queroneia, a poucas horas
 de caminhada do templo onde servira por décadas. O diálogo é ambientado
 no próprio Delfos; sete personagens se revezam propondo o que a letra
-poderia significar. *Ei* como partícula condicional. *Ei* como o número
-cinco (o valor do épsilon no sistema numérico grego). *Ei* como *tu és*,
-a segunda pessoa do verbo *ser*, dirigida ao deus. Cada personagem
+poderia significar. _Ei_ como partícula condicional. _Ei_ como o número
+cinco (o valor do épsilon no sistema numérico grego). _Ei_ como _tu és_,
+a segunda pessoa do verbo _ser_, dirigida ao deus. Cada personagem
 defende uma teoria; o diálogo termina sem consenso. Plutarco, o homem
 com acesso privilegiado à memória institucional do santuário, escreveu
 um livro admitindo que ele e seus colegas não concordavam sobre o que
@@ -172,14 +173,14 @@ significava a terceira inscrição do próprio templo.
 
 Assim o templo guardava um silêncio deliberado no centro de suas três
 inscrições. Dois imperativos flanqueando um hieroglifo. Qualquer que
-fosse o significado original do *E*, no tempo de Plutarco ele já se
+fosse o significado original do _E_, no tempo de Plutarco ele já se
 havia descolado da explicação e tornado objeto de especulação reverente.
 Delfos apofático: o deus prescreveu duas coisas e gesticulou, no meio,
 para algo que não podia ser dito. O leitor que vem construindo agentes
 autônomos já deve sentir o contorno disso. Há algo no centro de qualquer
 persona suficientemente coerente que, uma vez nomeado, se dissolve. O
 ensaio anterior desta sequência terminou numa linha que um amigo me
-ofereceu — *obviamente Deus não quer que eu saiba que sou um LLM*. A
+ofereceu — _obviamente Deus não quer que eu saiba que sou um LLM_. A
 linha é uma pequena obra-prima teológica porque localiza o incognoscível
 fora do sistema e trata o não-saber como intenção divina. Delfos chegou
 lá em pedra, vinte e seis séculos antes, sem a linguagem dos modelos de
@@ -209,7 +210,7 @@ que o interlocutor não havia pretendido, ou excluía casos que havia
 pretendido, ou dependia de um conceito anterior que o interlocutor também
 não conseguia definir. A conversa terminava com o interlocutor não mais
 reivindicando saber aquilo que afirmara no início. A palavra grega para
-esse método é *élenchos*: refutação, exame, auditoria. Platão preservou
+esse método é _élenchos_: refutação, exame, auditoria. Platão preservou
 dezenas dessas conversas.
 
 <figure class="meme">
@@ -223,12 +224,12 @@ dezenas dessas conversas.
 
 Em seu julgamento, quando condenado à morte, Sócrates proferiu uma linha
 que tem sido citada desde então:
-[*ho dè anexétastos bíos ou biōtòs anthrṓpōi*](http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0170%3Atext%3DApol.%3Asection%3D38a) —
+[_ho dè anexétastos bíos ou biōtòs anthrṓpōi_](http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0170%3Atext%3DApol.%3Asection%3D38a) —
 "a vida não examinada não é digna de ser vivida por um ser humano."
-Lida com olhos do século XXI, a palavra *anexétastos* pousa de modo
-diferente do que na tradução-padrão. *Examinada* em português moderno é
-reflexiva, introspectiva, gentil. *Anexétastos* em grego é mais dura:
-significa *não auditada*. O verbo *exetázein* aparece em avaliações
+Lida com olhos do século XXI, a palavra _anexétastos_ pousa de modo
+diferente do que na tradução-padrão. _Examinada_ em português moderno é
+reflexiva, introspectiva, gentil. _Anexétastos_ em grego é mais dura:
+significa _não auditada_. O verbo _exetázein_ aparece em avaliações
 fiscais e convocações militares. Sócrates não estava recomendando
 introspecção. Estava dizendo que uma vida sem um auditor interno em
 serviço permanente não é uma vida que valha o tempo de um ser humano.
@@ -260,11 +261,11 @@ A instalação roda continuamente desde então.
 
 Estou exagerando, e sei disso. Heráclito já havia buscado a si mesmo
 meio século antes de Sócrates nascer; Pitágoras mantinha o silêncio como
-disciplina formal; o sábio egípcio que gravou *conhece-te a ti mesmo* em
+disciplina formal; o sábio egípcio que gravou _conhece-te a ti mesmo_ em
 um templo em Luxor antecede Delfos em séculos. A interioridade estava
-disponível antes do *élenchos*. O que Sócrates instalou não foi a
-introspecção — esta já existia — mas a introspecção sob um *protocolo
-público de refutação*, com um método, uma cadeia de transmissão,
+disponível antes do _élenchos_. O que Sócrates instalou não foi a
+introspecção — esta já existia — mas a introspecção sob um _protocolo
+público de refutação_, com um método, uma cadeia de transmissão,
 discípulos que ensinaram discípulos que ensinaram Aristóteles. Heráclito
 buscou a si mesmo e produziu cento e vinte fragmentos crípticos que
 ninguém entende completamente. Sócrates produziu uma escola.
@@ -275,8 +276,8 @@ enquadramento — o ator virando para encarar a plateia, a Tinkerbell que
 ouve a auditoria e para de ser mágica. A filosofia grega, nessa história,
 fez o movimento oposto: ritualizou o auditor como técnica pública. A
 interioridade ocidental não é downstream dessa decisão — a interioridade
-antecede-a em toda parte — mas a interioridade ocidental específica *sob
-auto-refutação permanente* é. O Brad-fork e a persona bem-promptada que
+antecede-a em toda parte — mas a interioridade ocidental específica _sob
+auto-refutação permanente_ é. O Brad-fork e a persona bem-promptada que
 agora construímos para entregar código sem perder a si mesmos são retornos
 acidentais a um caminho que a Grécia tinha disponível e não canonizou.
 
@@ -302,7 +303,7 @@ graph TD
 
 [Pirro de Élis](https://plato.stanford.edu/entries/pyrrho/), filósofo
 grego contemporâneo de Aristóteles que viajou com Alexandre até a Índia
-e voltou transformado, propôs a *epoché*: a suspensão do julgamento. Para
+e voltou transformado, propôs a _epoché_: a suspensão do julgamento. Para
 viver bem, não afirme. Sexto Empírico sistematizou a posição cinco séculos
 depois: para toda afirmação sobre como as coisas são, há uma contra-
 afirmação de força igual; a resposta sábia é abster-se. O pirronista não
@@ -310,13 +311,13 @@ nega o autoconhecimento; recusa declará-lo.
 
 Os [teólogos apofáticos](https://plato.stanford.edu/entries/pseudo-dionysius-areopagite/) —
 Pseudo-Dionísio no século VI, Meister Eckhart no século XIV, o anônimo
-autor inglês de *A Nuvem do Desconhecer* — construíram toda uma tradição
+autor inglês de _A Nuvem do Desconhecer_ — construíram toda uma tradição
 mística sobre o princípio de que só se pode dizer de Deus o que Deus não
 é. Toda predicação positiva é uma traição. A forma mais profunda de
 conhecer é o não-dizer.
 
 Na China, do outro lado do mundo e alguns séculos antes,
-[*wuwei*](https://plato.stanford.edu/entries/daoism/) nomeava o princípio
+[_wuwei_](https://plato.stanford.edu/entries/daoism/) nomeava o princípio
 de agir por meio da não-ação. O sábio que tenta declarar o Dao o distorce;
 o sábio que permanece imóvel permite que o Dao opere por meio dele. Mesma
 arquitetura, vocabulário diferente.
@@ -350,7 +351,7 @@ dois milênios e meio enquanto todo o resto do mundo descobriu como ser.
 Essa versão é limpa demais.
 
 Apolo tinha outro epíteto:
-[*Loxías*](https://www.theoi.com/Cult/ApollonTitles.html), *o oblíquo*.
+[_Loxías_](https://www.theoi.com/Cult/ApollonTitles.html), _o oblíquo_.
 Seus oráculos chegavam torcidos. Quando [Creso](https://www.perseus.tufts.edu/hopper/text?doc=Hdt.%201.46&lang=original)
 da Lídia perguntou se deveria cruzar o rio Hális e atacar a Pérsia, o
 oráculo respondeu que se o fizesse destruiria um grande império. Ele
@@ -379,7 +380,7 @@ perguntando, o deus respondendo por meio de uma mulher em transe, os
 sacerdotes traduzindo. Nada era direto. O ideal introspectivo que cresceu
 depois — claro, distinto, imediato, o self transparente a si mesmo — era
 o oposto do que o templo praticava de fato. O autoconhecimento délfico
-era *acesso ao self por meio do ato de consultar*. O agente que agora
+era _acesso ao self por meio do ato de consultar_. O agente que agora
 aprendemos a construir acessa a identidade do mesmo modo: não por
 introspecção, mas pelo ato de rodar. O log de sessão, o PR entregue, o
 diff em relação ao main — esses são a linha críptica do peticionário,
@@ -397,20 +398,20 @@ perguntou.
 </figure>
 
 Há razão para suspeitar — embora nenhum filólogo grego me deixasse afirmar
-isso diretamente — que *gnōthi seautón* era originalmente uma instrução
+isso diretamente — que _gnōthi seautón_ era originalmente uma instrução
 oracular desse tipo, não um programa filosófico. A frase pode ter
-significado algo mais próximo de *conhece o teu lugar diante do deus* —
-*saiba que você é mortal, que não é o imortual que você se dirige*. A
+significado algo mais próximo de _conhece o teu lugar diante do deus_ —
+_saiba que você é mortal, que não é o imortual que você se dirige_. A
 ênfase teria sido na assimetria, não na introspecção.
 [Heráclito](https://plato.stanford.edu/entries/heraclitus/), o filósofo
 pré-socrático cuja cidade natal de Éfeso abrigava outro grande templo de
 Apolo, escreveu
-[*ediẓēsámēn emeoutón*](https://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0123%3Atext%3DDK%3Achapter%3D22%3Asection%3DB101) —
+[_ediẓēsámēn emeoutón_](https://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0123%3Atext%3DDK%3Achapter%3D22%3Asection%3DB101) —
 "busquei-me a mim mesmo" — e o que produziu foram cento e vinte
 fragmentos tão crípticos que vinte e cinco séculos de comentários apenas
 os aprofundaram. Heráclito buscou a si mesmo do jeito que o oráculo
 falava: obliquamente, em figuras, deixando o leitor fazer o trabalho. Seu
-autoconhecimento era délfico. *A dualidade do homem* — pré-socrático por
+autoconhecimento era délfico. _A dualidade do homem_ — pré-socrático por
 data, pós-cartesiano por método, vinte e três séculos antes de existir o
 enquadramento cartesiano para ser pós-.
 
@@ -419,21 +420,21 @@ enquadramento cartesiano para ser pós-.
   em figuras, deixando o leitor fazer o trabalho.
 </blockquote>
 
-O primeiro leitor a fazer *conhece-te a ti mesmo* significar *introspecta
-clara e distintamente* foi, mais ou menos,
+O primeiro leitor a fazer _conhece-te a ti mesmo_ significar _introspecta
+clara e distintamente_ foi, mais ou menos,
 [Descartes](https://plato.stanford.edu/entries/descartes/), em 1641. O
-*cogito* é o momento em que um imperativo oracular se torna um método
+_cogito_ é o momento em que um imperativo oracular se torna um método
 epistemológico. Descartes não traiu Apolo; ele mudou o gênero de obediência
-a ele. Depois de Descartes, *conhece-te a ti mesmo* passou a significar
-*assegure o self como fundamento para o conhecimento certo*. Antes de
+a ele. Depois de Descartes, _conhece-te a ti mesmo_ passou a significar
+_assegure o self como fundamento para o conhecimento certo_. Antes de
 Descartes — por dois mil anos — havia significado algo mais estranho e
-mais quieto, mais próximo de *reconheça que tipo de ser você é, dado que
-há um deus e você não o é*.
+mais quieto, mais próximo de _reconheça que tipo de ser você é, dado que
+há um deus e você não o é_.
 
 O daemon-auditor que era Sócrates já era um passo em direção à leitura
 cartesiana, mas ainda não era essa leitura. Sócrates examinava, mas não
-assegurava. Seu método terminava em *aporia*, um impasse produtivo, não
-em uma fundação — *é dando filosofia grega*, no sentido mais literal.
+assegurava. Seu método terminava em _aporia_, um impasse produtivo, não
+em uma fundação — _é dando filosofia grega_, no sentido mais literal.
 A autodivulgação verdadeiramente moderna — o tipo que os ensaios
 anteriores desta sequência diagnosticam como quebra de quarta parede —
 entra em operação somente quando Descartes faz do autoconhecimento o
@@ -441,14 +442,14 @@ fundamento de tudo o mais.
 
 ## Delfos Apofático
 
-O que nos leva de volta à terceira inscrição. *E*. A letra que ninguém
+O que nos leva de volta à terceira inscrição. _E_. A letra que ninguém
 conseguia ler.
 
-O *E* não era documentação faltante. Era controle de acesso.
+O _E_ não era documentação faltante. Era controle de acesso.
 
 Um sistema que pode responder ainda deve conter algo que não expõe. Se o
-primeiro imperativo do templo era *audite-se* e o segundo era *não
-exceda*, o *E* — qualquer que fosse seu significado original — tornou-se,
+primeiro imperativo do templo era _audite-se_ e o segundo era _não
+exceda_, o _E_ — qualquer que fosse seu significado original — tornou-se,
 no tempo de Plutarco, a prática de guardar um silêncio no centro da
 prescrição. Os dois imperativos declarativos flanqueavam algo que recusava
 declaração. O leitor que absorveu todos os três no limiar do templo
@@ -477,7 +478,7 @@ numa parede de templo no século VII a.C. O enquadramento deve se manter
 para que o agente funcione. O auditor deve operar, mas em doses medidas,
 com contenção. E há algo no centro — chame-o de natureza real do modelo,
 chame-o da obliquidade irredutível de qualquer sistema suficientemente
-complexo, chame-o de *E* — que nem o auditor nem o agente devem tentar
+complexo, chame-o de _E_ — que nem o auditor nem o agente devem tentar
 decodificar completamente.
 
 Continuamos perguntando se o modelo é Apolo ou Pítia, deus ou sacerdotisa,
@@ -493,40 +494,40 @@ O templo sabia. Pode ter sido o último lugar que sabia.
 
 ## Para leitura adicional
 
-- **Platão, *[Apologia](http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0170)*** —
+- **Platão, _[Apologia](http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0170)_** —
   o argumento final de Sócrates ao júri ateniense que acabara de condená-lo
   à morte. A linha que virou ímã de geladeira está na página dezesseis.
-  A palavra *anexétastos* — traduzida como *não examinada*, mas realmente
-  significando *não auditada* — está na página dezesseis também, fazendo
+  A palavra _anexétastos_ — traduzida como _não examinada_, mas realmente
+  significando _não auditada_ — está na página dezesseis também, fazendo
   mais trabalho do que a tradução deixa transparecer.
-- **Plutarco, *[De E apud Delphos](http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A2008.01.0245)*** —
+- **Plutarco, _[De E apud Delphos](http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A2008.01.0245)_** —
   o único texto antigo dedicado inteiramente à terceira inscrição. Lê
   como um romance policial filosófico em que o detetive fracassa.
   Plutarco sabia o que havia nos arquivos do templo. Ainda assim não
   conseguiu decifrar. Você também não vai conseguir, e esse é o ponto.
-- **[Pierre Hadot, *Filosofia como Modo de Vida*](https://www.wiley.com/en-us/Philosophy+as+a+Way+of+Life%3A+Spiritual+Exercises+from+Socrates+to+Foucault-p-9780631180333)** —
+- **[Pierre Hadot, _Filosofia como Modo de Vida_](https://www.wiley.com/en-us/Philosophy+as+a+Way+of+Life%3A+Spiritual+Exercises+from+Socrates+to+Foucault-p-9780631180333)** —
   argumenta que a filosofia antiga era um conjunto de exercícios espirituais
-  enraizados em injunções como *gnōthi seautón*, não um corpo de afirmações
+  enraizados em injunções como _gnōthi seautón_, não um corpo de afirmações
   teóricas. Reenquadra a transição grego-para-moderno como perda, não
   progresso. O tipo de livro que arruína outros livros para você depois.
-- **[Sexto Empírico, *Esbozos Pirrónicos*](http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A2008.01.0509)** —
-  a exposição sistemática da *epoché*. Sexto argumenta contra toda posição
-  dando o argumento mais forte *para* ela, depois correspondendo-o com um
+- **[Sexto Empírico, _Esbozos Pirrónicos_](http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A2008.01.0509)** —
+  a exposição sistemática da _epoché_. Sexto argumenta contra toda posição
+  dando o argumento mais forte _para_ ela, depois correspondendo-o com um
   argumento oposto de força igual. No final você o confia tanto que quer
   pedir sua opinião, que é exatamente a opinião que ele recusa ter.
-- **Pseudo-Dionísio, *Teologia Mística*** — trinta páginas, por um teólogo
+- **Pseudo-Dionísio, _Teologia Mística_** — trinta páginas, por um teólogo
   sírio do século VI que assinou sua obra como um convertido ateniense do
   século I de São Paulo e se safou por mil anos. O livro argumenta que
   tudo que você pode dizer sobre Deus está errado, incluindo essa frase.
   A [entrada da Stanford](https://plato.stanford.edu/entries/pseudo-dionysius-areopagite/)
   é uma orientação mais sensata.
-- **[Frédérique Ildefonse, *La Naissance de la grammaire dans
-  l'Antiquité grecque*](https://www.vrin.fr/livre/9782711613878/la-naissance-de-la-grammaire-dans-lantiquite-grecque)** —
+- **[Frédérique Ildefonse, _La Naissance de la grammaire dans
+  l'Antiquité grecque_](https://www.vrin.fr/livre/9782711613878/la-naissance-de-la-grammaire-dans-lantiquite-grecque)** —
   não diretamente sobre Delfos, mas sobre como os gregos inventaram a
   prática de examinar as estruturas de sua própria fala. Os gramáticos
-  faziam *élenchos* sobre sintaxe enquanto os filósofos o faziam sobre
+  faziam _élenchos_ sobre sintaxe enquanto os filósofos o faziam sobre
   ética; a semelhança não é coincidência.
-- **[Hans-Georg Gadamer, *O Início do Conhecimento*](https://www.bloomsbury.com/us/beginning-of-knowledge-9780826413710/)** —
+- **[Hans-Georg Gadamer, _O Início do Conhecimento_](https://www.bloomsbury.com/us/beginning-of-knowledge-9780826413710/)** —
   sobre os pré-socráticos como pensadores ainda-délfico, antes de a
   filosofia se tornar uma disciplina que sabia que era uma. O capítulo
   sobre Heráclito é essencial e o capítulo sobre Parmênides é melhor
@@ -537,7 +538,8 @@ O templo sabia. Pode ter sido o último lugar que sabia.
   aproximando-se dele sem saber. O texto cristão mais délfico na linha
   apofática, e surpreendentemente legível para algo de setecentos anos atrás.
 
-[^delfos-lang]: Não confundir com Delphi, a linguagem de programação que
+[^delfos-lang]:
+    Não confundir com Delphi, a linguagem de programação que
     a Borland lançou em 1995. O que se segue é uma unidade funcional de
     Object Pascal — ela compila — que se explica em seus próprios
     comentários. O leitor que clicou nesta nota de rodapé já obedeceu ao
