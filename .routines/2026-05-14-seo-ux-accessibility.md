@@ -16,20 +16,21 @@ num audit completo.
 ## O que foi feito nesta sessão
 
 ### PR aberto — dependabot #38
+
 - `defu` 6.1.4 → 6.1.6 tem conflito de merge; não foi possível fazer merge.
   Ação: fechar manualmente e atualizar o lock file na próxima sessão.
 
 ### Melhorias implementadas (branch `claude/trusting-fermi-IbmMb`)
 
-| Arquivo | Mudança |
-|---------|---------|
-| `src/components/Header.astro` | `aria-label` em todos os links de nav (acessibilidade WCAG 2.1) |
-| `src/layouts/PageLayout.astro` | `twitter:site`, `twitter:creator`, `og:locale` dinâmico, `og:image:alt`, `twitter:image:alt` |
-| `src/layouts/PageLayout.astro` | BreadcrumbList JSON-LD para artigos (Home > Blog > Post) |
-| `src/layouts/PageLayout.astro` | Prop `lang` passada até o `<html lang>` |
-| `src/content.config.ts` | Campo `lang: z.enum(['en','pt']).optional()` no schema |
-| `src/pages/blog/[...slug].astro` | Passa `lang` do frontmatter para o layout |
-| `public/robots.txt` | Criado: permite tudo, bloqueia `/og/`, aponta para sitemap |
+| Arquivo                          | Mudança                                                                                      |
+| -------------------------------- | -------------------------------------------------------------------------------------------- |
+| `src/components/Header.astro`    | `aria-label` em todos os links de nav (acessibilidade WCAG 2.1)                              |
+| `src/layouts/PageLayout.astro`   | `twitter:site`, `twitter:creator`, `og:locale` dinâmico, `og:image:alt`, `twitter:image:alt` |
+| `src/layouts/PageLayout.astro`   | BreadcrumbList JSON-LD para artigos (Home > Blog > Post)                                     |
+| `src/layouts/PageLayout.astro`   | Prop `lang` passada até o `<html lang>`                                                      |
+| `src/content.config.ts`          | Campo `lang: z.enum(['en','pt']).optional()` no schema                                       |
+| `src/pages/blog/[...slug].astro` | Passa `lang` do frontmatter para o layout                                                    |
+| `public/robots.txt`              | Criado: permite tudo, bloqueia `/og/`, aponta para sitemap                                   |
 
 ### Por que cada mudança importa
 
@@ -43,6 +44,7 @@ num audit completo.
 ## Próximas sessões — backlog priorizado
 
 ### Alta prioridade
+
 1. **Table of Contents automático** para posts longos — usar headings rehypeSlug já
    existentes. Componente Astro que gera `<nav>` com âncoras dos H2/H3.
 2. **Pagination em /archive/ e /tags/[tag]/** — carregar todos os posts de uma vez
@@ -51,6 +53,7 @@ num audit completo.
    Algoritmo simples: interseção de tags, ordenado por data.
 
 ### Média prioridade
+
 4. **dependabot #38** — atualizar `defu` manualmente (npm update defu, commitar lock file).
 5. **og:locale:alternate** — quando `lang=pt`, adicionar `<meta property="og:locale:alternate" content="en_US">`.
 6. **wordCount no JSON-LD** — `minutesRead` já está disponível via remark plugin; passar
@@ -59,6 +62,7 @@ num audit completo.
    a API falhar o build quebra. Adicionar fallback com dados cacheados.
 
 ### Baixa prioridade
+
 8. **FAQ Schema** na página /about/.
 9. **Focus management** nas transições de página (ClientRouter).
 10. **Testar posts em PT** adicionando `lang: pt` no frontmatter dos posts PT existentes

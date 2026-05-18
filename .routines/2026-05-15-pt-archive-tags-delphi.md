@@ -18,18 +18,19 @@ em `/tags/`, e tradução fiel do post "The Three Imperatives at Delphi".
 ## O que foi feito nesta sessão
 
 ### Merge de PR aberta
+
 - **PR #68** (ToC + Related Posts + primeiras traduções) — CI checks verdes (GitGuardian + Kilo) → squash merge realizado.
 - **PR #38** (dependabot defu) — mantida aberta (conflito de merge; baixa prioridade).
 
 ### Implementações nesta branch (`claude/affectionate-dirac-yyLpv`)
 
-| Arquivo | Mudança |
-|---------|---------|
-| `src/pages/pt/archive.astro` | **Novo** — `/pt/archive/`: textos em PT, datas `pt-BR`, `translationHref="/archive/"`, flag 🇺🇸 nos posts EN (inverso do arquivo EN que mostra 🇧🇷), LangFilter |
-| `src/pages/archive.astro` | `translationHref="/pt/archive/"` adicionado ao PageLayout — LanguageSwitcher não fica mais grayed-out no `/archive/` |
-| `src/pages/tags/[tag].astro` | `<LangFilter client:load />` adicionado após o `<h1>` — PostCard já tem `data-post-lang`, então o filtro funciona sem mais mudanças |
-| `src/content/blog/2026-05-04-the-three-imperatives-at-delphi.md` | `translationKey: delphi-imperatives` adicionado ao frontmatter |
-| `src/content/blog/os-tres-imperativos-em-delfos.md` | **Novo** — tradução fiel completa de "The Three Imperatives at Delphi" em PT, terceira parte da série harness |
+| Arquivo                                                          | Mudança                                                                                                                                                       |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/pages/pt/archive.astro`                                     | **Novo** — `/pt/archive/`: textos em PT, datas `pt-BR`, `translationHref="/archive/"`, flag 🇺🇸 nos posts EN (inverso do arquivo EN que mostra 🇧🇷), LangFilter |
+| `src/pages/archive.astro`                                        | `translationHref="/pt/archive/"` adicionado ao PageLayout — LanguageSwitcher não fica mais grayed-out no `/archive/`                                          |
+| `src/pages/tags/[tag].astro`                                     | `<LangFilter client:load />` adicionado após o `<h1>` — PostCard já tem `data-post-lang`, então o filtro funciona sem mais mudanças                           |
+| `src/content/blog/2026-05-04-the-three-imperatives-at-delphi.md` | `translationKey: delphi-imperatives` adicionado ao frontmatter                                                                                                |
+| `src/content/blog/os-tres-imperativos-em-delfos.md`              | **Novo** — tradução fiel completa de "The Three Imperatives at Delphi" em PT, terceira parte da série harness                                                 |
 
 ### Por que cada mudança importa
 
@@ -62,17 +63,20 @@ em `/tags/`, e tradução fiel do post "The Three Imperatives at Delphi".
 ## Próximas sessões — backlog priorizado
 
 ### Alta prioridade
+
 1. **Traduzir `2026-05-01-the-third-half-and-the-fourth-wall`** (PT) — segundo post da série harness, referenciado em Delfos. Slug: `a-terceira-metade-e-a-quarta-parede.md`.
 2. **Traduzir `2026-04-29-reclaiming-the-harness`** (PT) — primeiro post da série; permite que toda a sequência harness esteja disponível em PT. Slug: `recuperando-o-harness.md`.
 3. **Traduzir `2026-05-10-jules-api-harness-backend`** (PT) — quarto post da série.
 
 ### Média prioridade
+
 4. **LangFilter em `/search/`** — consistência UX. O pagefind não filtra por lang nativamente; o LangFilter poderia pelo menos aplicar `display:none` nos resultados com `[data-post-lang]`, mas os resultados do Pagefind não têm esse atributo — precisaria de abordagem diferente (ex.: metadado de lang no índice pagefind via `data-pagefind-filter="lang:pt"`).
 5. **Sticky ToC sidebar em telas largas** — CSS grid `aside` ao lado do `article` em `>1024px`. Backlog desde PR #68.
 6. **`/pt/tags/`** — versão PT da listagem de tags com texto em português.
 7. **dependabot #38** — atualizar `defu` manualmente (npm update defu, commitar lock file).
 
 ### Baixa prioridade
+
 8. **`og:locale:alternate`** quando `lang=pt`.
 9. **FAQ Schema** na `/about/` e `/pt/about/`.
 10. **Focus management** nas transições de página (ClientRouter).

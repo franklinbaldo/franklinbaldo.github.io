@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import matter from "gray-matter";
+import { remark } from "remark";
 
 export const POSTS_DIR = "src/content/blog";
 export const OUT_DIR = ".routines/hronir";
@@ -81,12 +82,16 @@ export function findTranslations(translationKey) {
 }
 
 // Content-derived UUIDv5: stable identifier for the current body of a post.
-// Frontmatter is stripped so that metadata churn (editHistory pushes,
-// replacedVersion injection) does not change the version of the body itself.
+// Frontmatter is stripped and the body is normalized through remark so that
+// metadata churn and cosmetic formatting drift do not change the UUID.
 export function getPostUuid(filePath) {
   if (!fs.existsSync(filePath)) return null;
   const raw = fs.readFileSync(filePath, "utf8");
   const { content } = matter(raw);
-  const normalized = content.replace(/\r\n/g, "\n").trim();
+  const normalized = remark()
+    .processSync(content)
+    .toString()
+    .replace(/\r\n/g, "\n")
+    .trim();
   return uuidv5(normalized, HRONIR_NAMESPACE);
 }

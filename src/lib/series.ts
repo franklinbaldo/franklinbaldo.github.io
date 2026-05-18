@@ -11,7 +11,7 @@ export interface SeriesContext {
 
 export async function getSeriesContext(
   post: CollectionEntry<"blog">,
-  options: { lang?: string } = {},
+  options: { lang?: string } = {}
 ): Promise<SeriesContext | null> {
   const series = post.data.series;
   if (!series) return null;
@@ -23,7 +23,7 @@ export async function getSeriesContext(
       (p) =>
         !p.data.draft &&
         p.data.series === series &&
-        (p.data.lang ?? DEFAULT_LANG) === lang,
+        (p.data.lang ?? DEFAULT_LANG) === lang
     )
     .sort((a, b) => {
       // Explicit seriesOrder always wins. Posts with order come before

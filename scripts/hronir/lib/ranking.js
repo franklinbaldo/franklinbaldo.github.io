@@ -19,7 +19,8 @@ export function computeRatings() {
     // objects, and String(Date) returns locale text ("Mon May 18 ...") that
     // does NOT sort chronologically via localeCompare. Coerce Dates to ISO.
     const rawRunAt = data.run_at ?? data.run_id ?? "";
-    const runAt = rawRunAt instanceof Date ? rawRunAt.toISOString() : String(rawRunAt);
+    const runAt =
+      rawRunAt instanceof Date ? rawRunAt.toISOString() : String(rawRunAt);
 
     raw.push({
       runAt,

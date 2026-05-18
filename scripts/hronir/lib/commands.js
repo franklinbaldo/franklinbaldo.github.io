@@ -3,7 +3,16 @@ import path from "node:path";
 import matter from "gray-matter";
 import { execFileSync } from "node:child_process";
 import { rating, predictWin } from "openskill";
-import { OUT_DIR, RATES_DIR, listEnglishWithKey, keyForPath, readPost, listPosts, getPostUuid, findTranslations } from "./posts.js";
+import {
+  OUT_DIR,
+  RATES_DIR,
+  listEnglishWithKey,
+  keyForPath,
+  readPost,
+  listPosts,
+  getPostUuid,
+  findTranslations,
+} from "./posts.js";
 import { listMatchFiles, readMatch, writeMatch, postKey } from "./matches.js";
 import { computeRatings } from "./ranking.js";
 
@@ -16,9 +25,15 @@ const SESSION_PATH = "hronir_session.json";
 
 function gitMtime(filePath) {
   try {
-    const out = execFileSync("git", ["log", "-1", "--format=%ct", "--", filePath], {
-      stdio: ["ignore", "pipe", "ignore"],
-    }).toString().trim();
+    const out = execFileSync(
+      "git",
+      ["log", "-1", "--format=%ct", "--", filePath],
+      {
+        stdio: ["ignore", "pipe", "ignore"],
+      }
+    )
+      .toString()
+      .trim();
     return out ? Number(out) * 1000 : 0;
   } catch {
     return 0;
@@ -31,9 +46,10 @@ function latestMatchTimeByKey() {
     const { data } = readMatch(f);
     const aKey = postKey(data.post_a);
     const bKey = postKey(data.post_b);
-    const ts = data.run_at instanceof Date
-      ? data.run_at.getTime()
-      : Date.parse(String(data.run_at || data.run_id || "")) || 0;
+    const ts =
+      data.run_at instanceof Date
+        ? data.run_at.getTime()
+        : Date.parse(String(data.run_at || data.run_id || "")) || 0;
     if (!ts) continue;
     for (const k of [aKey, bKey]) {
       if (!k) continue;
@@ -54,15 +70,23 @@ function utcStamp() {
 
 function nextStep(text) {
   console.log("");
-  console.log("================================================================================");
+  console.log(
+    "================================================================================"
+  );
   console.log("👉 NEXT STEP:");
-  console.log("================================================================================");
+  console.log(
+    "================================================================================"
+  );
   console.log(text);
-  console.log("================================================================================");
+  console.log(
+    "================================================================================"
+  );
 }
 
 export function init(options = {}) {
-  console.log(`\n\n████████████████████████████████████████████████████████████████████████████████\n█                                                                              █\n█                    🎬 INÍCIO DE UMA NOVA SESSÃO DO HRONIR                     █\n█                                                                              █\n████████████████████████████████████████████████████████████████████████████████\n`);
+  console.log(
+    `\n\n████████████████████████████████████████████████████████████████████████████████\n█                                                                              █\n█                    🎬 INÍCIO DE UMA NOVA SESSÃO DO HRONIR                     █\n█                                                                              █\n████████████████████████████████████████████████████████████████████████████████\n`
+  );
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.mkdirSync(RATES_DIR, { recursive: true });
@@ -72,24 +96,24 @@ export function init(options = {}) {
   const skipRating = !!options.skipRating;
   const agentId = options.agentId || "human";
   const evalLang = options.evalLang || "pt";
-  const { runId } = utcStamp();
   const sessionPath = SESSION_PATH;
 
   if (skipRating) {
     const session = {
       target: 0,
       completed: 0,
-      runId,
       agentId,
       evalLang,
       state: "need_edit",
       skipEdit: false,
       skipRating: true,
-      currentFile: null,
-      minAppearances: options.minAppearances || null
+      currentMatch: null,
+      minAppearances: options.minAppearances || null,
     };
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
-    console.log(`Sessão iniciada diretamente na fase de edição do pior post (--skip-rating ativo).`);
+    console.log(
+      `Sessão iniciada diretamente na fase de edição do pior post (--skip-rating ativo).`
+    );
     editWorst();
     return;
   }
@@ -104,25 +128,26 @@ export function init(options = {}) {
   const session = {
     target: matchesOpt,
     completed: 0,
-    runId,
     agentId,
     evalLang,
     state: "ready_for_next",
     skipEdit,
     skipRating: false,
-    currentFile: null,
-    minAppearances: options.minAppearances || null
+    currentMatch: null,
+    minAppearances: options.minAppearances || null,
   };
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
-  console.log(`Sessão iniciada para ${matchesOpt} matches com agente "${agentId}" e avaliações em "${evalLang}".`);
+  console.log(
+    `Sessão iniciada para ${matchesOpt} matches com agente "${agentId}" e avaliações em "${evalLang}".`
+  );
   if (skipEdit) {
     console.log("Fase de edição do pior post será pulada (--skip-edit ativo).");
   }
   continueCmd();
 }
 
-function generateNextMatch(runId) {
+function generateNextMatch() {
   const candidates = listEnglishWithKey();
   const ranking = computeRatings();
   const ratingByKey = new Map();
@@ -150,32 +175,26 @@ function generateNextMatch(runId) {
       const ra = getRating(a.translationKey);
       const rb = getRating(b.translationKey);
       const [pA] = predictWin([[ra], [rb]]);
-      const score = -Math.abs(pA - 0.5) + ra.sigma + rb.sigma
-        + staleBonus(a.translationKey) + staleBonus(b.translationKey);
-      pairs.push({ a, b, score, pA, sa: ra.sigma, sb: rb.sigma, jitter: Math.random() });
+      const score =
+        -Math.abs(pA - 0.5) +
+        ra.sigma +
+        rb.sigma +
+        staleBonus(a.translationKey) +
+        staleBonus(b.translationKey);
+      pairs.push({
+        a,
+        b,
+        score,
+        pA,
+        sa: ra.sigma,
+        sb: rb.sigma,
+        jitter: Math.random(),
+      });
     }
   }
-  pairs.sort((x, y) => (y.score - x.score) || (x.jitter - y.jitter));
+  pairs.sort((x, y) => y.score - x.score || x.jitter - y.jitter);
 
-  const used = new Set();
-  const files = listMatchFiles();
-  for (const f of files) {
-    const { data } = readMatch(f);
-    if (data.winner === "TODO" || !data.winner) {
-      const aKey = postKey(data.post_a);
-      const bKey = postKey(data.post_b);
-      if (aKey) used.add(aKey);
-      if (bKey) used.add(bKey);
-    }
-  }
-
-  let chosen = null;
-  for (const p of pairs) {
-    if (used.has(p.a.translationKey) || used.has(p.b.translationKey)) continue;
-    chosen = p;
-    break;
-  }
-
+  const chosen = pairs[0];
   if (!chosen) {
     console.error("Não há pares elegíveis disponíveis no momento.");
     process.exit(1);
@@ -183,9 +202,6 @@ function generateNextMatch(runId) {
 
   let { a, b } = chosen;
   if (Math.random() < 0.5) [a, b] = [b, a];
-
-  const { runAt } = utcStamp();
-  const file = path.join(RATES_DIR, `${runId}_${a.translationKey}_x_${b.translationKey}.md`);
 
   const sessionPath = SESSION_PATH;
   let matchIndex = 1;
@@ -198,33 +214,31 @@ function generateNextMatch(runId) {
     evalLang = s.evalLang || "pt";
   }
 
-  const fm = {
-    run_id: runId,
-    run_at: runAt,
+  console.log(`Gerado match ${matchIndex} (active sampling).`);
+  return {
     match_index: matchIndex,
-    post_a: { key: a.translationKey, path: a.path, version: getPostUuid(a.path) },
-    post_b: { key: b.translationKey, path: b.path, version: getPostUuid(b.path) },
-    winner: "TODO",
+    post_a: {
+      key: a.translationKey,
+      path: a.path,
+      version: getPostUuid(a.path),
+    },
+    post_b: {
+      key: b.translationKey,
+      path: b.path,
+      version: getPostUuid(b.path),
+    },
     agent_id: agentId,
     eval_lang: evalLang,
-    prompt_version: "passion-v1",
-    season: 1,
-    override: null,
-    clash: "TODO",
-    winner_defense: "TODO",
-    loser_critique: "TODO",
   };
-
-  writeMatch(file, fm, "");
-  console.log(`Gerado match ${matchIndex} (active sampling).`);
-  return file;
 }
 
 export function continueCmd() {
   const sessionPath = SESSION_PATH;
   if (!fs.existsSync(sessionPath)) {
     console.log("Nenhuma sessão ativa encontrada.");
-    nextStep("rode `npm run hronir:init` para começar uma rodada ou `npm run hronir:edit-worst`.");
+    nextStep(
+      "rode `npm run hronir:init` para começar uma rodada ou `npm run hronir:edit-worst`."
+    );
     return;
   }
 
@@ -232,7 +246,9 @@ export function continueCmd() {
 
   if (session.state === "need_edit") {
     console.log("Fase de matches concluída. Você precisa editar o pior post.");
-    nextStep("rode `npm run hronir:edit-worst` para ver os detalhes ou `npm run hronir:end --skip-edit` para ignorar.");
+    nextStep(
+      "rode `npm run hronir:edit-worst` para ver os detalhes ou `npm run hronir:end --skip-edit` para ignorar."
+    );
     return;
   }
 
@@ -246,45 +262,49 @@ export function continueCmd() {
       } else {
         session.state = "need_edit";
         fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
-        console.log(`Sessão de matches concluída! (${session.target} matches avaliados).`);
-        nextStep("rode `npm run hronir:edit-worst` para iniciar a etapa de edição do pior post.");
+        console.log(
+          `Sessão de matches concluída! (${session.target} matches avaliados).`
+        );
+        nextStep(
+          "rode `npm run hronir:edit-worst` para iniciar a etapa de edição do pior post."
+        );
       }
       return;
     }
 
-    console.log(`\n=== MATCH ${session.completed + 1} DE ${session.target} ===\n`);
-    const file = generateNextMatch(session.runId);
-    session.currentFile = file;
+    console.log(
+      `\n=== MATCH ${session.completed + 1} DE ${session.target} ===\n`
+    );
+    const match = generateNextMatch();
+    session.currentMatch = match;
     session.state = "reading_a";
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
   }
 
   if (session.state === "reading_a") {
-    const { data } = readMatch(session.currentFile);
-    const aPath = data.post_a?.path;
-    
+    const aPath = session.currentMatch?.post_a?.path;
+
     console.log("=== PRIMEIRO POST (A) ===\n");
     console.log(fs.readFileSync(aPath, "utf8"));
     console.log("\n---\n");
-    
+
     session.state = "reading_b";
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
-    
+
     nextStep(`rode \`npm run hronir:continue\` para ler o SEGUNDO POST.`);
     return;
   }
 
   if (session.state === "reading_b") {
-    const { data } = readMatch(session.currentFile);
-    const bPath = data.post_b?.path;
-    
+    const bPath = session.currentMatch?.post_b?.path;
+
     console.log("=== SEGUNDO POST (B) ===\n");
     console.log(fs.readFileSync(bPath, "utf8"));
     console.log("\n---\n");
-    
+
     session.state = "deciding";
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
-    
+
     const stepLines = [
       "Escolha um vencedor e defenda apaixonadamente a escolha.",
       "- mínimo 100 palavras (piso de qualidade)",
@@ -293,16 +313,55 @@ export function continueCmd() {
       "- orientações sobre formas estimuladas de defesa: citar pontos específicos que deram certo ou falharam, trechos marcantes ou falhas de clareza",
       "",
       `Para decidir, rode:`,
-      `npm run hronir:decide --winner <a_or_b> --clash "<confronto>" --winner-defense "<defesa>" --loser-critique "<critica>" (ou passe --agent-id <id> para sobrescrever)`
+      `npm run hronir:decide --winner <a_or_b> --clash "<confronto>" --winner-defense "<defesa>" --loser-critique "<critica>" (ou passe --agent-id <id> para sobrescrever)`,
     ];
     nextStep(stepLines.join("\n"));
     return;
   }
 
   if (session.state === "deciding") {
-    nextStep(`Você precisa decidir o match atual. Rode: npm run hronir:decide --winner <a_or_b> --clash "<confronto>" --winner-defense "<defesa>" --loser-critique "<critica>" (ou passe --agent-id <id> para sobrescrever)`);
+    nextStep(
+      `Você precisa decidir o match atual. Rode: npm run hronir:decide --winner <a_or_b> --clash "<confronto>" --winner-defense "<defesa>" --loser-critique "<critica>" (ou passe --agent-id <id> para sobrescrever)`
+    );
     return;
   }
+}
+
+export function next(initOptions = {}) {
+  const sessionPath = SESSION_PATH;
+  if (!fs.existsSync(sessionPath)) {
+    console.log("Nenhuma sessão ativa: iniciando nova rodada.");
+    init(initOptions);
+    return;
+  }
+
+  const session = JSON.parse(fs.readFileSync(sessionPath, "utf8"));
+  console.log(
+    `Sessão detectada: state=${session.state}, ${session.completed ?? 0}/${session.target ?? 0} matches.`
+  );
+
+  if (session.state === "deciding") {
+    nextStep(
+      `Decisão pendente. Rode: npm run hronir:decide --winner <a_or_b> --clash "<confronto>" --winner-defense "<defesa>" --loser-critique "<critica>"`
+    );
+    return;
+  }
+
+  if (session.state === "need_edit") {
+    if (session.worstKey) {
+      console.log(
+        `Edição em andamento para "${session.worstKey}". Baseline já registrado — não vou refazer snapshot.`
+      );
+      nextStep(
+        `Edite os arquivos do post e rode \`npm run hronir:edit-commit -- --msg "<mensagem>"\` para fechar a rodada.`
+      );
+      return;
+    }
+    editWorst();
+    return;
+  }
+
+  continueCmd();
 }
 
 export function decide(args) {
@@ -314,11 +373,19 @@ export function decide(args) {
 
   const session = JSON.parse(fs.readFileSync(sessionPath, "utf8"));
   if (session.state !== "deciding") {
-    console.error(`Erro: Estado atual é '${session.state}', esperado 'deciding'. Rode npm run hronir:continue.`);
+    console.error(
+      `Erro: Estado atual é '${session.state}', esperado 'deciding'. Rode npm run hronir:continue.`
+    );
     process.exit(1);
   }
 
-  const matchFile = session.currentFile;
+  const currentMatch = session.currentMatch;
+  if (!currentMatch || !currentMatch.post_a || !currentMatch.post_b) {
+    console.error(
+      "Erro: sessão sem match atual. Rode `npm run hronir:continue` para gerar um match."
+    );
+    process.exit(1);
+  }
 
   let winner = "TODO";
   let agentId = session.agentId || "TODO";
@@ -329,11 +396,19 @@ export function decide(args) {
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--winner") winner = args[++i];
-    else if (args[i] === "--agent-id" || args[i] === "--agent" || args[i] === "--model") agentId = args[++i];
+    else if (
+      args[i] === "--agent-id" ||
+      args[i] === "--agent" ||
+      args[i] === "--model"
+    )
+      agentId = args[++i];
     else if (args[i] === "--clash") clash = args[++i];
-    else if (args[i] === "--winner-defense" || args[i] === "--defense") winnerDefense = args[++i];
-    else if (args[i] === "--loser-critique" || args[i] === "--critique") loserCritique = args[++i];
-    else if (args[i] === "--eval-lang" || args[i] === "--lang") evalLang = args[++i];
+    else if (args[i] === "--winner-defense" || args[i] === "--defense")
+      winnerDefense = args[++i];
+    else if (args[i] === "--loser-critique" || args[i] === "--critique")
+      loserCritique = args[++i];
+    else if (args[i] === "--eval-lang" || args[i] === "--lang")
+      evalLang = args[++i];
   }
 
   if (winner !== "a" && winner !== "b") {
@@ -341,7 +416,9 @@ export function decide(args) {
     process.exit(1);
   }
   if (!agentId || agentId === "TODO") {
-    console.error("Erro: --agent-id deve ser especificado ou definido no init.");
+    console.error(
+      "Erro: --agent-id deve ser especificado ou definido no init."
+    );
     process.exit(1);
   }
   if (!winnerDefense) {
@@ -357,25 +434,36 @@ export function decide(args) {
     process.exit(1);
   }
 
-  const { data } = readMatch(matchFile);
-  data.winner = winner;
-  data.agent_id = agentId;
-  if (evalLang) {
-    data.eval_lang = evalLang;
-  }
-  data.clash = clash;
-  data.winner_defense = winnerDefense;
-  data.loser_critique = loserCritique;
-  delete data.model;
-  delete data.critique;
+  const { runId, runAt } = utcStamp();
+  const aKey = currentMatch.post_a.key;
+  const bKey = currentMatch.post_b.key;
+  const matchFile = path.join(RATES_DIR, `${runId}_${aKey}_x_${bKey}.md`);
 
+  const data = {
+    run_id: runId,
+    run_at: runAt,
+    match_index: currentMatch.match_index,
+    post_a: currentMatch.post_a,
+    post_b: currentMatch.post_b,
+    winner,
+    agent_id: agentId,
+    eval_lang: evalLang || currentMatch.eval_lang || session.evalLang || "pt",
+    prompt_version: "passion-v1",
+    season: 1,
+    override: null,
+    clash,
+    winner_defense: winnerDefense,
+    loser_critique: loserCritique,
+  };
+
+  fs.mkdirSync(RATES_DIR, { recursive: true });
   writeMatch(matchFile, data, "");
 
-  console.log(`Match ${path.basename(matchFile)} atualizado com sucesso!`);
+  console.log(`Match ${path.basename(matchFile)} criado com sucesso!`);
 
   session.completed += 1;
   session.state = "ready_for_next";
-  session.currentFile = null;
+  session.currentMatch = null;
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
   nextStep("Rode `npm run hronir:continue` para ir para o próximo passo.");
@@ -390,9 +478,13 @@ export function ranking() {
   console.log(`rank\tkey\tordinal\tmu\tsigma\tW/N`);
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i];
-    console.log(`${i + 1}\t${r.key}\t${fmt(r.ordinal)}\t${fmt(r.mu)}\t${fmt(r.sigma)}\t${r.wins}/${r.appearances}`);
+    console.log(
+      `${i + 1}\t${r.key}\t${fmt(r.ordinal)}\t${fmt(r.mu)}\t${fmt(r.sigma)}\t${r.wins}/${r.appearances}`
+    );
   }
-  nextStep("Rode `npm run hronir:edit-worst` para iniciar a edição do pior ranqueado (ou `npm run hronir:worst` apenas para inspeção).");
+  nextStep(
+    "Rode `npm run hronir:edit-worst` para iniciar a edição do pior ranqueado (ou `npm run hronir:worst` apenas para inspeção)."
+  );
 }
 
 export function worst() {
@@ -404,7 +496,9 @@ export function worst() {
   }
   const w = eligible[eligible.length - 1];
   console.log(w.key);
-  console.error(`(path: ${w.path}, wins: ${w.wins}/${w.appearances}, ordinal: ${w.ordinal.toFixed(3)}, mu: ${w.mu.toFixed(3)}, sigma: ${w.sigma.toFixed(3)})`);
+  console.error(
+    `(path: ${w.path}, wins: ${w.wins}/${w.appearances}, ordinal: ${w.ordinal.toFixed(3)}, mu: ${w.mu.toFixed(3)}, sigma: ${w.sigma.toFixed(3)})`
+  );
 }
 
 function collectDefensesForLoser(loserKey, limit = 5) {
@@ -427,18 +521,30 @@ function collectDefensesForLoser(loserKey, limit = 5) {
     let body = "";
     let parsedCritique = null;
     if (data.clash || data.winner_defense || data.loser_critique) {
-      const c = (data.clash && data.clash !== "TODO") ? data.clash : "";
-      const w = (data.winner_defense && data.winner_defense !== "TODO") ? data.winner_defense : "";
-      const l = (data.loser_critique && data.loser_critique !== "TODO") ? data.loser_critique : "";
+      const c = data.clash && data.clash !== "TODO" ? data.clash : "";
+      const w =
+        data.winner_defense && data.winner_defense !== "TODO"
+          ? data.winner_defense
+          : "";
+      const l =
+        data.loser_critique && data.loser_critique !== "TODO"
+          ? data.loser_critique
+          : "";
       body = `[Confronto]\n${c}\n\n[Defesa]\n${w}`;
       parsedCritique = l || null;
     } else {
       body = (content || "").replace(/^\s*<!--\s*TODO\s*-->\s*$/m, "").trim();
       if (!body) continue;
       parsedCritique = data.critique || null;
-      const clashMatch = body.match(/# O Confronto\s*\n([\s\S]*?)(?=# O Vencedor|# O Perdedor|$)/i);
-      const winnerMatch = body.match(/# O Vencedor\s*\n([\s\S]*?)(?=# O Confronto|# O Perdedor|$)/i);
-      const loserMatch = body.match(/# O Perdedor\s*\n([\s\S]*?)(?=# O Confronto|# O Vencedor|$)/i);
+      const clashMatch = body.match(
+        /# O Confronto\s*\n([\s\S]*?)(?=# O Vencedor|# O Perdedor|$)/i
+      );
+      const winnerMatch = body.match(
+        /# O Vencedor\s*\n([\s\S]*?)(?=# O Confronto|# O Perdedor|$)/i
+      );
+      const loserMatch = body.match(
+        /# O Perdedor\s*\n([\s\S]*?)(?=# O Confronto|# O Vencedor|$)/i
+      );
       if (clashMatch || winnerMatch || loserMatch) {
         const parsedClash = clashMatch ? clashMatch[1].trim() : "";
         const parsedWinner = winnerMatch ? winnerMatch[1].trim() : "";
@@ -446,7 +552,9 @@ function collectDefensesForLoser(loserKey, limit = 5) {
         body = `[Confronto]\n${parsedClash}\n\n[Defesa]\n${parsedWinner}`;
         parsedCritique = parsedLoser;
       } else {
-        const parts = body.split(/\n---\s*\n\s*(?:#+\s*)?Critique(?:\s*:)?\s*\n/i);
+        const parts = body.split(
+          /\n---\s*\n\s*(?:#+\s*)?Critique(?:\s*:)?\s*\n/i
+        );
         if (parts.length > 1) {
           body = parts[0].trim();
           parsedCritique = parts[1].trim();
@@ -464,7 +572,9 @@ function collectDefensesForLoser(loserKey, limit = 5) {
       critique: parsedCritique,
     });
   }
-  out.sort((a, b) => String(b.runAt || b.runId).localeCompare(String(a.runAt || a.runId)));
+  out.sort((a, b) =>
+    String(b.runAt || b.runId).localeCompare(String(a.runAt || a.runId))
+  );
   return out.slice(0, limit);
 }
 
@@ -485,14 +595,21 @@ function collectDefensesForWinners(winnerKeys, limit = 5) {
 
     let body;
     if (data.clash || data.winner_defense) {
-      const c = (data.clash && data.clash !== "TODO") ? data.clash : "";
-      const w = (data.winner_defense && data.winner_defense !== "TODO") ? data.winner_defense : "";
+      const c = data.clash && data.clash !== "TODO" ? data.clash : "";
+      const w =
+        data.winner_defense && data.winner_defense !== "TODO"
+          ? data.winner_defense
+          : "";
       body = `[Confronto]\n${c}\n\n[Defesa]\n${w}`;
     } else {
       body = (content || "").replace(/^\s*<!--\s*TODO\s*-->\s*$/m, "").trim();
       if (!body) continue;
-      const clashMatch = body.match(/# O Confronto\s*\n([\s\S]*?)(?=# O Vencedor|# O Perdedor|$)/i);
-      const winnerMatch = body.match(/# O Vencedor\s*\n([\s\S]*?)(?=# O Confronto|# O Perdedor|$)/i);
+      const clashMatch = body.match(
+        /# O Confronto\s*\n([\s\S]*?)(?=# O Vencedor|# O Perdedor|$)/i
+      );
+      const winnerMatch = body.match(
+        /# O Vencedor\s*\n([\s\S]*?)(?=# O Confronto|# O Perdedor|$)/i
+      );
       if (clashMatch || winnerMatch) {
         const parsedClash = clashMatch ? clashMatch[1].trim() : "";
         const parsedWinner = winnerMatch ? winnerMatch[1].trim() : "";
@@ -509,7 +626,9 @@ function collectDefensesForWinners(winnerKeys, limit = 5) {
       body,
     });
   }
-  out.sort((a, b) => String(b.runAt || b.runId).localeCompare(String(a.runAt || a.runId)));
+  out.sort((a, b) =>
+    String(b.runAt || b.runId).localeCompare(String(a.runAt || a.runId))
+  );
   return out.slice(0, limit);
 }
 
@@ -543,14 +662,23 @@ export function editWorst() {
   let minApps = MIN_APPEARANCES;
   if (fs.existsSync(sessionPath)) {
     const session = JSON.parse(fs.readFileSync(sessionPath, "utf8"));
-    const midMatch = ["reading_a", "reading_b", "deciding"].includes(session.state);
+    const midMatch = ["reading_a", "reading_b", "deciding"].includes(
+      session.state
+    );
     const matchesPending = (session.target ?? 0) > (session.completed ?? 0);
     if (midMatch || (session.state === "ready_for_next" && matchesPending)) {
-      console.error(`Erro: Há um match em andamento (estado: ${session.state}, ${session.completed ?? 0}/${session.target ?? 0}).`);
-      console.error(`Finalize a avaliação dos matches com \`npm run hronir:continue\` / \`npm run hronir:decide\` antes de editar o pior post.`);
+      console.error(
+        `Erro: Há um match em andamento (estado: ${session.state}, ${session.completed ?? 0}/${session.target ?? 0}).`
+      );
+      console.error(
+        `Finalize a avaliação dos matches com \`npm run hronir:continue\` / \`npm run hronir:decide\` antes de editar o pior post.`
+      );
       process.exit(1);
     }
-    if (session.minAppearances !== undefined && session.minAppearances !== null) {
+    if (
+      session.minAppearances !== undefined &&
+      session.minAppearances !== null
+    ) {
       minApps = session.minAppearances;
     }
   }
@@ -564,7 +692,9 @@ export function editWorst() {
   if (eligible.length === 0) {
     console.log(`Volume insuficiente para edit-worst.`);
     console.log(`Mínimo: ${minApps} aparições por post.`);
-    console.log(`Elegíveis: ${eligible.length} posts de ${rows.length} no ranking total.`);
+    console.log(
+      `Elegíveis: ${eligible.length} posts de ${rows.length} no ranking total.`
+    );
     console.log(`Próxima rodada pode acumular mais sinal.`);
     nextStep("nenhum. Termine a rodada com PR só dos matches.");
     return;
@@ -583,11 +713,13 @@ export function editWorst() {
   }
 
   if (!worstRow) {
-    console.log("Aviso: Todos os posts elegíveis foram editados recentemente. Usando o pior colocado absoluto.");
+    console.log(
+      "Aviso: Todos os posts elegíveis foram editados recentemente. Usando o pior colocado absoluto."
+    );
     worstRow = eligible[eligible.length - 1];
   }
 
-  const topRows = eligible.filter(r => r.key !== worstRow.key).slice(0, 3);
+  const topRows = eligible.filter((r) => r.key !== worstRow.key).slice(0, 3);
   const topKeys = topRows.map((r) => r.key);
 
   const translationFiles = findTranslations(worstRow.key);
@@ -596,26 +728,41 @@ export function editWorst() {
     const uuid = getPostUuid(fileInfo.path);
     if (uuid) {
       originalVersions[fileInfo.lang] = uuid;
-      const langDir = path.join(".routines", "hronir", "edit-history", worstRow.key, fileInfo.lang);
+      const langDir = path.join(
+        ".routines",
+        "hronir",
+        "edit-history",
+        worstRow.key,
+        fileInfo.lang
+      );
       fs.mkdirSync(langDir, { recursive: true });
       const destPath = path.join(langDir, `${uuid}.md`);
       fs.copyFileSync(fileInfo.path, destPath);
-      console.log(`[edit-history] Snapshotted version ${uuid} (${fileInfo.lang}) of ${fileInfo.path} to edit-history/${worstRow.key}/${fileInfo.lang}/${uuid}.md`);
+      console.log(
+        `[edit-history] Snapshotted version ${uuid} (${fileInfo.lang}) of ${fileInfo.path} to edit-history/${worstRow.key}/${fileInfo.lang}/${uuid}.md`
+      );
 
       // Automatically inject or update replacedVersion in the post frontmatter
       const raw = fs.readFileSync(fileInfo.path, "utf8");
       const replacedRegex = /^replacedVersion:\s*.*$/m;
       if (replacedRegex.test(raw)) {
-        const updated = raw.replace(replacedRegex, `replacedVersion: "${uuid}"`);
+        const updated = raw.replace(
+          replacedRegex,
+          `replacedVersion: "${uuid}"`
+        );
         fs.writeFileSync(fileInfo.path, updated, "utf8");
-        console.log(`[edit-worst] Automatically updated replacedVersion to "${uuid}" in ${fileInfo.path}`);
+        console.log(
+          `[edit-worst] Automatically updated replacedVersion to "${uuid}" in ${fileInfo.path}`
+        );
       } else {
         const parts = raw.split("---");
         if (parts.length >= 3) {
           parts[1] = parts[1].trimEnd() + `\nreplacedVersion: "${uuid}"\n`;
           const updated = parts.join("---");
           fs.writeFileSync(fileInfo.path, updated, "utf8");
-          console.log(`[edit-worst] Automatically injected replacedVersion: "${uuid}" into ${fileInfo.path}`);
+          console.log(
+            `[edit-worst] Automatically injected replacedVersion: "${uuid}" into ${fileInfo.path}`
+          );
         }
       }
     }
@@ -628,13 +775,12 @@ export function editWorst() {
     : {
         target: 0,
         completed: 0,
-        runId: utcStamp().runId,
         agentId: "human",
         evalLang: null,
         state: "need_edit",
         skipEdit: false,
         skipRating: true,
-        currentFile: null,
+        currentMatch: null,
         minAppearances: minApps,
       };
   session.state = "need_edit";
@@ -644,10 +790,16 @@ export function editWorst() {
 
   console.log(`# Pior ranqueado (≥${minApps} aparições): ${worstRow.key}`);
   for (const fileInfo of translationFiles) {
-    console.log(`# Path (${fileInfo.lang}): ${fileInfo.path} (UUIDv5: ${originalVersions[fileInfo.lang] || "N/A"})`);
+    console.log(
+      `# Path (${fileInfo.lang}): ${fileInfo.path} (UUIDv5: ${originalVersions[fileInfo.lang] || "N/A"})`
+    );
   }
-  console.log(`# Ordinal: ${worstRow.ordinal.toFixed(3)} (mu ${worstRow.mu.toFixed(3)}, sigma ${worstRow.sigma.toFixed(3)}, wins ${worstRow.wins}/${worstRow.appearances})`);
-  console.log(`# Elegíveis: ${eligible.length} de ${rows.length} no ranking total`);
+  console.log(
+    `# Ordinal: ${worstRow.ordinal.toFixed(3)} (mu ${worstRow.mu.toFixed(3)}, sigma ${worstRow.sigma.toFixed(3)}, wins ${worstRow.wins}/${worstRow.appearances})`
+  );
+  console.log(
+    `# Elegíveis: ${eligible.length} de ${rows.length} no ranking total`
+  );
   console.log("");
   console.log("# Top 3 (contraste): " + topKeys.join(", "));
   console.log("");
@@ -716,7 +868,7 @@ export function editWorst() {
     "Diminua o gap observado entre este post e os melhores, mantendo o espírito do post.",
     "",
     "Após concluir as edições, registre as alterações e encerre a rodada rodando:",
-    "npm run hronir:edit-commit -- --msg \"Sua mensagem explicando o que fez e o porquê\""
+    'npm run hronir:edit-commit -- --msg "Sua mensagem explicando o que fez e o porquê"'
   );
   nextStep(stepLines.join("\n"));
 }
@@ -758,7 +910,8 @@ export function migrate({ dryRun = false } = {}) {
     const oldKeyB = postKey(data.post_b);
     const hadSlugA = "slug" in (data.post_a || {});
     const hadSlugB = "slug" in (data.post_b || {});
-    const fmChanged = oldKeyA !== aKey || oldKeyB !== bKey || hadSlugA || hadSlugB;
+    const fmChanged =
+      oldKeyA !== aKey || oldKeyB !== bKey || hadSlugA || hadSlugB;
 
     const newFm = { ...data };
     newFm.post_a = { key: aKey, path: aPath };
@@ -784,7 +937,9 @@ export function migrate({ dryRun = false } = {}) {
 
     if (needsRename) {
       if (fs.existsSync(targetPath) && targetPath !== f) {
-        warnings.push(`${f}: destino já existe (${targetPath}), mantendo nome atual`);
+        warnings.push(
+          `${f}: destino já existe (${targetPath}), mantendo nome atual`
+        );
       } else {
         fs.renameSync(f, targetPath);
         renamed++;
@@ -792,7 +947,9 @@ export function migrate({ dryRun = false } = {}) {
     }
   }
 
-  console.log(`migrate: ${changed} frontmatters alterados, ${renamed} arquivos renomeados, ${skipped} pulados`);
+  console.log(
+    `migrate: ${changed} frontmatters alterados, ${renamed} arquivos renomeados, ${skipped} pulados`
+  );
   if (warnings.length) {
     console.log("\nAvisos:");
     for (const w of warnings) console.log("  - " + w);
@@ -805,7 +962,9 @@ export function doctor() {
   const issues = [];
 
   if (fs.existsSync(SESSION_PATH)) {
-    issues.push(`Sessão ativa do Hronir detectada (${SESSION_PATH}). Finalize a rodada antes de commitar.`);
+    issues.push(
+      `Sessão ativa do Hronir detectada (${SESSION_PATH}). Finalize a rodada antes de commitar.`
+    );
   }
 
   for (const f of listMatchFiles()) {
@@ -829,19 +988,25 @@ export function doctor() {
 
     if (!aKey) issues.push(`${base}: post_a.key ausente`);
     if (!bKey) issues.push(`${base}: post_b.key ausente`);
-    if (!aPath || !fs.existsSync(aPath)) issues.push(`${base}: post_a.path inexistente (${aPath})`);
-    if (!bPath || !fs.existsSync(bPath)) issues.push(`${base}: post_b.path inexistente (${bPath})`);
+    if (!aPath || !fs.existsSync(aPath))
+      issues.push(`${base}: post_a.path inexistente (${aPath})`);
+    if (!bPath || !fs.existsSync(bPath))
+      issues.push(`${base}: post_b.path inexistente (${bPath})`);
 
     if (aPath && fs.existsSync(aPath)) {
       const expected = pathToKey.get(aPath);
       if (expected && aKey && expected !== aKey) {
-        issues.push(`${base}: post_a.key=${aKey} mas translationKey real é ${expected}`);
+        issues.push(
+          `${base}: post_a.key=${aKey} mas translationKey real é ${expected}`
+        );
       }
     }
     if (bPath && fs.existsSync(bPath)) {
       const expected = pathToKey.get(bPath);
       if (expected && bKey && expected !== bKey) {
-        issues.push(`${base}: post_b.key=${bKey} mas translationKey real é ${expected}`);
+        issues.push(
+          `${base}: post_b.key=${bKey} mas translationKey real é ${expected}`
+        );
       }
     }
 
@@ -851,22 +1016,34 @@ export function doctor() {
     const isNewSchema = !!data.agent_id;
     if (isNewSchema && data.winner !== "TODO") {
       if (!data.clash || data.clash === "TODO") {
-        issues.push(`${base}: o campo 'clash' no frontmatter está ausente ou é 'TODO'`);
+        issues.push(
+          `${base}: o campo 'clash' no frontmatter está ausente ou é 'TODO'`
+        );
       }
       if (!data.winner_defense || data.winner_defense === "TODO") {
-        issues.push(`${base}: o campo 'winner_defense' no frontmatter está ausente ou é 'TODO'`);
+        issues.push(
+          `${base}: o campo 'winner_defense' no frontmatter está ausente ou é 'TODO'`
+        );
       }
       if (!data.loser_critique || data.loser_critique === "TODO") {
-        issues.push(`${base}: o campo 'loser_critique' no frontmatter está ausente ou é 'TODO'`);
+        issues.push(
+          `${base}: o campo 'loser_critique' no frontmatter está ausente ou é 'TODO'`
+        );
       }
-      if (!data.eval_lang || typeof data.eval_lang !== "string" || !data.eval_lang.trim()) {
+      if (
+        !data.eval_lang ||
+        typeof data.eval_lang !== "string" ||
+        !data.eval_lang.trim()
+      ) {
         issues.push(`${base}: o campo 'eval_lang' no frontmatter está ausente`);
       }
     }
 
     const expectedName = `${data.run_id}_${aKey}_x_${bKey}.md`;
     if (aKey && bKey && base !== expectedName) {
-      issues.push(`${base}: nome de arquivo difere do esperado (${expectedName})`);
+      issues.push(
+        `${base}: nome de arquivo difere do esperado (${expectedName})`
+      );
     }
   }
 
@@ -880,7 +1057,9 @@ export function doctor() {
     const pair = [aKey, bKey].sort().join("|");
     const sig = `${data.run_id}::${pair}`;
     if (seen.has(sig)) {
-      issues.push(`duplicate: ${path.basename(seen.get(sig))} e ${path.basename(f)} (mesmo run_id + par)`);
+      issues.push(
+        `duplicate: ${path.basename(seen.get(sig))} e ${path.basename(f)} (mesmo run_id + par)`
+      );
     } else {
       seen.set(sig, f);
     }
@@ -913,20 +1092,34 @@ export function end(options = {}) {
     const session = JSON.parse(fs.readFileSync(sessionPath, "utf8"));
 
     const matchesPending = (session.target ?? 0) > (session.completed ?? 0);
-    const midMatch = ["reading_a", "reading_b", "deciding"].includes(session.state);
+    const midMatch = ["reading_a", "reading_b", "deciding"].includes(
+      session.state
+    );
     if (midMatch || matchesPending) {
       console.error("Erro: A rodada ainda não foi concluída.");
-      console.error(`Estado: ${session.state}, ${session.completed ?? 0}/${session.target ?? 0} matches.`);
-      console.error("Rode `npm run hronir:continue` para retomar, ou `npm run hronir:end -- --force` para descartar a sessão.");
+      console.error(
+        `Estado: ${session.state}, ${session.completed ?? 0}/${session.target ?? 0} matches.`
+      );
+      console.error(
+        "Rode `npm run hronir:continue` para retomar, ou `npm run hronir:end -- --force` para descartar a sessão."
+      );
       process.exit(1);
     }
 
-    if (!options.skipEdit && session.state === "need_edit" && session.worstKey) {
+    if (
+      !options.skipEdit &&
+      session.state === "need_edit" &&
+      session.worstKey
+    ) {
       console.error("Erro: Há uma edição pendente que não foi registrada.");
       console.error(`Post editado: ${session.worstKey}`);
       console.error("");
-      console.error("Para registrar suas alterações e encerrar a rodada, rode:");
-      console.error(`  npm run hronir:edit-commit -- --msg "Sua mensagem explicando o que fez e o porquê"`);
+      console.error(
+        "Para registrar suas alterações e encerrar a rodada, rode:"
+      );
+      console.error(
+        `  npm run hronir:edit-commit -- --msg "Sua mensagem explicando o que fez e o porquê"`
+      );
       process.exit(1);
     }
 
@@ -940,14 +1133,18 @@ export function end(options = {}) {
 
 export function editCommit(msg) {
   if (!fs.existsSync(SESSION_PATH)) {
-    console.error("Erro: Nenhuma sessão do Hronir ativa. Rode 'npm run hronir:init' primeiro.");
+    console.error(
+      "Erro: Nenhuma sessão do Hronir ativa. Rode 'npm run hronir:init' primeiro."
+    );
     process.exit(1);
   }
 
   const session = JSON.parse(fs.readFileSync(SESSION_PATH, "utf8"));
 
   if (session.state !== "need_edit") {
-    console.error(`Erro: A sessão atual não está na fase de edição (estado: ${session.state}).`);
+    console.error(
+      `Erro: A sessão atual não está na fase de edição (estado: ${session.state}).`
+    );
     process.exit(1);
   }
 
@@ -955,13 +1152,17 @@ export function editCommit(msg) {
   const originalVersions = session.originalVersions || {};
 
   if (!worstKey) {
-    console.error("Erro: worstKey não encontrado na sessão. Sessão pode estar corrompida.");
+    console.error(
+      "Erro: worstKey não encontrado na sessão. Sessão pode estar corrompida."
+    );
     process.exit(1);
   }
 
   const translationFiles = findTranslations(worstKey);
   if (translationFiles.length === 0) {
-    console.error(`Erro: Nenhum arquivo de post encontrado para a chave "${worstKey}".`);
+    console.error(
+      `Erro: Nenhum arquivo de post encontrado para a chave "${worstKey}".`
+    );
     process.exit(1);
   }
 
@@ -973,12 +1174,16 @@ export function editCommit(msg) {
     const currentUuid = getPostUuid(fileInfo.path);
 
     if (!originalUuid) {
-      console.warn(`[Aviso] Versão original não registrada para o idioma "${fileInfo.lang}". Pulando.`);
+      console.warn(
+        `[Aviso] Versão original não registrada para o idioma "${fileInfo.lang}". Pulando.`
+      );
       continue;
     }
 
     if (currentUuid === originalUuid) {
-      console.error(`Erro: O arquivo ${fileInfo.path} (${fileInfo.lang}) não foi modificado.`);
+      console.error(
+        `Erro: O arquivo ${fileInfo.path} (${fileInfo.lang}) não foi modificado.`
+      );
       console.error("Todas as traduções devem ser editadas antes de commitar.");
       anyMissing = true;
     }
@@ -1010,7 +1215,9 @@ export function editCommit(msg) {
     fs.writeFileSync(fileInfo.path, updated, "utf8");
 
     const currentUuid = getPostUuid(fileInfo.path);
-    console.log(`[edit-commit] Registrado em ${fileInfo.path} (${fileInfo.lang}): uuid anterior ${originalUuid} → novo ${currentUuid}`);
+    console.log(
+      `[edit-commit] Registrado em ${fileInfo.path} (${fileInfo.lang}): uuid anterior ${originalUuid} → novo ${currentUuid}`
+    );
   }
 
   // Close the session
@@ -1022,6 +1229,7 @@ export function editCommit(msg) {
   console.log(`   Timestamp: ${timestamp}`);
   console.log(`   Post: ${worstKey}`);
   console.log("");
-  console.log("Rodada do Hronir encerrada. Commit as alterações com git normalmente.");
+  console.log(
+    "Rodada do Hronir encerrada. Commit as alterações com git normalmente."
+  );
 }
-

@@ -18,7 +18,7 @@ O patrimonialismo judicial tem uma inimiga natural: o dever de racionalidade.
 
 Não o dever de fundamentar formalmente — esse o sistema já tinha, na forma do art. 131 do CPC de 1973, que exigia que o juiz "indicasse os motivos que lhe formaram o convencimento". Décadas de prática forense reduziram essa exigência a formalidade de superfície: qualquer coisa escrita servia de motivo. A decisão estava fundamentada desde que houvesse palavras no espaço da fundamentação. O "livre convencimento motivado" tornou-se o princípio que protegia a discricionariedade do juiz não de arbitrariedades externas, mas de ter que se justificar. Era a serpente domada — o animal transformado em ornamento de sala.
 
-O dever de racionalidade *substantivo* é diferente. É a exigência de que a fundamentação identifique os fundamentos determinantes do precedente invocado, enfrente os argumentos capazes de infirmar a conclusão, demonstre por que o caso se enquadra na ratio — e não apenas declare que o juiz assim entendeu. Esse dever é incompatível com o patrimonialismo porque o patrimonialismo vive de opacidade: a prerrogativa pessoal só funciona enquanto não precisa se justificar. Exigência de racionalidade substantiva é luz sobre o ovo.
+O dever de racionalidade _substantivo_ é diferente. É a exigência de que a fundamentação identifique os fundamentos determinantes do precedente invocado, enfrente os argumentos capazes de infirmar a conclusão, demonstre por que o caso se enquadra na ratio — e não apenas declare que o juiz assim entendeu. Esse dever é incompatível com o patrimonialismo porque o patrimonialismo vive de opacidade: a prerrogativa pessoal só funciona enquanto não precisa se justificar. Exigência de racionalidade substantiva é luz sobre o ovo.
 
 Streck nomeou isso. Vinha da hermenêutica filosófica e chegou ao mesmo diagnóstico por outro caminho: o juiz que "decide conforme sua consciência" não está exercendo liberdade racional — está exercendo poder pessoal disfarçado de princípio jurídico. Passou anos fazendo o que ele mesmo chamou de "lobby epistêmico" dentro da comissão do novo código. A serpente do dever de racionalidade, Streck queria que ela nascesse.
 
@@ -42,7 +42,7 @@ graph LR
 
 O ovo foi colocado dentro do sistema patrimonialista pelas mãos do seu representante mais eloquente. Fux presidiu a comissão. Fux assinou o anteprojeto. Fux não percebeu — ou não quis perceber, o que dá no mesmo — que o art. 489, §1º, era o ovo de uma serpente que iria atacar exatamente o tipo de poder que ele exercia fora do código e dentro do cargo.
 
-*É Bolsonaro sancionando a lei penal que um dia voltaria para julgá-lo.*
+_É Bolsonaro sancionando a lei penal que um dia voltaria para julgá-lo._
 
 ## O que acontece quando o ovo eclode
 
@@ -98,7 +98,7 @@ O ovo nasceu. A serpente ainda está crescendo.
 
 É fato notório que a frase "livre convencimento motivado" continua sendo usada pelos tribunais brasileiros como se o CPC 2015 não existisse — em varas de primeira instância, em câmaras de tribunal, em decisões monocráticas de ministros que deveriam saber melhor. A expressão foi eliminada do texto da lei em março de 2016 e ressuscitou imediatamente na prática forense, como se a cabeça tivesse sido cortada e o corpo tivesse decidido continuar rastejando por conta própria.
 
-DiMaggio e Powell chamaram esse mecanismo de isomorfismo coercitivo superficial: a norma muda, a linguagem se adapta na casca, e o comportamento de fundo permanece. O problema não é falta de lei — o CPC 2015 é uma lei boa. O problema é que o habitus patrimonialista, formado ao longo de décadas em que qualquer coisa escrita servia de motivação, não é desconstruído por decreto. Bourdieu chamava de *history turned into nature*: história incorporada que opera como segunda natureza, tornando certas práticas espontâneas e outras impensáveis. Planck disse sobre a ciência que ela avança funeral por funeral — os oponentes de uma nova verdade não são convencidos, eles morrem, e a geração seguinte cresce sem conhecer outra coisa. O direito não é diferente. A serpente do dever de racionalidade não vai convencer quem internalizou o livre convencimento como reflexo. Vai ser natural para quem entrou na faculdade quando o código já existia — se o habitus não vencer antes, transmitindo-se às novas gerações pelas mesmas instituições que o produziram.
+DiMaggio e Powell chamaram esse mecanismo de isomorfismo coercitivo superficial: a norma muda, a linguagem se adapta na casca, e o comportamento de fundo permanece. O problema não é falta de lei — o CPC 2015 é uma lei boa. O problema é que o habitus patrimonialista, formado ao longo de décadas em que qualquer coisa escrita servia de motivação, não é desconstruído por decreto. Bourdieu chamava de _history turned into nature_: história incorporada que opera como segunda natureza, tornando certas práticas espontâneas e outras impensáveis. Planck disse sobre a ciência que ela avança funeral por funeral — os oponentes de uma nova verdade não são convencidos, eles morrem, e a geração seguinte cresce sem conhecer outra coisa. O direito não é diferente. A serpente do dever de racionalidade não vai convencer quem internalizou o livre convencimento como reflexo. Vai ser natural para quem entrou na faculdade quando o código já existia — se o habitus não vencer antes, transmitindo-se às novas gerações pelas mesmas instituições que o produziram.
 
 <figure class="svg-illustration">
   <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title-habitus">
@@ -158,21 +158,21 @@ E o Yudkowsky fica aqui no final, porque intelectualmente honesto é o que se te
 
 ## Para se aprofundar
 
-- **Lenio Streck, *O que é isto — decido conforme minha consciência?*** — o diagnóstico mais direto do solipsismo judicial brasileiro; Streck nomeou o problema quando nomear era inconveniente e continuou nomeando depois.
-- **Raymundo Faoro, *Os Donos do Poder*** — a genealogia do patrimonialismo ibérico no Estado brasileiro; o telefonema do ministro não é anomalia — é consequência de estrutura que Faoro descreveu com precisão nos anos 1950.
-- **Sérgio Buarque de Holanda, *Raízes do Brasil*** — o "homem cordial" e a dificuldade brasileira de separar pessoa de função; mais atual do que deveria, noventa anos depois.
-- **Paul DiMaggio e Walter Powell, "The Iron Cage Revisited" (*American Sociological Review*, 1983)** — os três mecanismos de isomorfismo institucional; explica por que o CPC 2015 produziu conformidade de linguagem sem mudança de prática em boa parte do Judiciário.
-- **Douglass North, *Institutions, Institutional Change and Economic Performance*** — por que enforcement fraco transforma boas normas em decoração; a serpente do dever de racionalidade precisa de mecanismo de enforcement para crescer.
-- **Daniel Mitidiero, *Precedentes: da persuasão à vinculação*** — o argumento processual sobre vinculação racional versus vinculação hierárquica; o dever de fundamentação é simétrico e se aplica ao STF quando julga reclamações.
-- **Marc Galanter, "Why the 'Haves' Come Out Ahead" (*Law & Society Review*, 1974)** — sobre como repeat players estruturam o sistema jurídico a seu favor; o telefonema do ministro é o repeat player em sua forma mais concentrada.
+- **Lenio Streck, _O que é isto — decido conforme minha consciência?_** — o diagnóstico mais direto do solipsismo judicial brasileiro; Streck nomeou o problema quando nomear era inconveniente e continuou nomeando depois.
+- **Raymundo Faoro, _Os Donos do Poder_** — a genealogia do patrimonialismo ibérico no Estado brasileiro; o telefonema do ministro não é anomalia — é consequência de estrutura que Faoro descreveu com precisão nos anos 1950.
+- **Sérgio Buarque de Holanda, _Raízes do Brasil_** — o "homem cordial" e a dificuldade brasileira de separar pessoa de função; mais atual do que deveria, noventa anos depois.
+- **Paul DiMaggio e Walter Powell, "The Iron Cage Revisited" (_American Sociological Review_, 1983)** — os três mecanismos de isomorfismo institucional; explica por que o CPC 2015 produziu conformidade de linguagem sem mudança de prática em boa parte do Judiciário.
+- **Douglass North, _Institutions, Institutional Change and Economic Performance_** — por que enforcement fraco transforma boas normas em decoração; a serpente do dever de racionalidade precisa de mecanismo de enforcement para crescer.
+- **Daniel Mitidiero, _Precedentes: da persuasão à vinculação_** — o argumento processual sobre vinculação racional versus vinculação hierárquica; o dever de fundamentação é simétrico e se aplica ao STF quando julga reclamações.
+- **Marc Galanter, "Why the 'Haves' Come Out Ahead" (_Law & Society Review_, 1974)** — sobre como repeat players estruturam o sistema jurídico a seu favor; o telefonema do ministro é o repeat player em sua forma mais concentrada.
 
 ## Crônica do patrimonialismo (gonzo e correlatos)
 
 A teoria sociológica explica a estrutura; a crônica registra o cheiro da sala. As duas coisas se sustentam mutuamente, e há uma tradição brasileira recente de fazer a segunda em registro gonzo — descendente direto de Hunter S. Thompson — que esta seção homenageia.
 
-- **"Excelentíssima Fux", *Revista Piauí*** — a reportagem que abre este ensaio; reconstrução do telefonema e da promoção da filha do ministro. Jornalismo longo-formato fazendo o que o sistema preferia que não fosse feito.
+- **"Excelentíssima Fux", _Revista Piauí_** — a reportagem que abre este ensaio; reconstrução do telefonema e da promoção da filha do ministro. Jornalismo longo-formato fazendo o que o sistema preferia que não fosse feito.
 - **Medo e Delírio em Brasília (Pedro Daltro)** — crônica gonzo da política brasileira em forma de diário paranoico-lúcido, herdeira direta de Thompson; o livro homônimo compila os melhores trechos. Lê-se o patrimonialismo do dia a dia como quem lê meteorologia.
-- **Hunter S. Thompson, *Fear and Loathing on the Campaign Trail '72*** — a fonte do registro; o que torna o gonzo politicamente útil é a recusa em fingir neutralidade quando o objeto observado não é neutro com o observador.
-- **Eliane Brum, *Brasil, construtor de ruínas*** — reportagem como diagnóstico estrutural; o patrimonialismo visto a partir das ruínas que ele constrói, não dos gabinetes que o operam.
-- **Vladimir Safatle, colunas na *Folha* e *El País*** — não é gonzo, mas é o registro de quem escreve sabendo que está sendo lido pelo objeto criticado e não recua por isso; necessário como contraponto teórico ao gonzo puro.
-- **Comissão Nacional da Verdade, *Brasil: Nunca Mais*** — documento que não é crônica nem teoria, mas arquivo; lembrete de que o patrimonialismo judicial brasileiro tem fase histórica em que cobriu tortura com despacho fundamentado.
+- **Hunter S. Thompson, _Fear and Loathing on the Campaign Trail '72_** — a fonte do registro; o que torna o gonzo politicamente útil é a recusa em fingir neutralidade quando o objeto observado não é neutro com o observador.
+- **Eliane Brum, _Brasil, construtor de ruínas_** — reportagem como diagnóstico estrutural; o patrimonialismo visto a partir das ruínas que ele constrói, não dos gabinetes que o operam.
+- **Vladimir Safatle, colunas na _Folha_ e _El País_** — não é gonzo, mas é o registro de quem escreve sabendo que está sendo lido pelo objeto criticado e não recua por isso; necessário como contraponto teórico ao gonzo puro.
+- **Comissão Nacional da Verdade, _Brasil: Nunca Mais_** — documento que não é crônica nem teoria, mas arquivo; lembrete de que o patrimonialismo judicial brasileiro tem fase histórica em que cobriu tortura com despacho fundamentado.

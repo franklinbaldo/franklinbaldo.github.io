@@ -59,7 +59,7 @@ Only when Franklin explicitly signals one of:
 - The post is for or about a paper, journal, conference talk
 
 The default reading of any blog request is voice-first. Do not cede
-because the topic *seems* serious — most of Franklin's blog handles
+because the topic _seems_ serious — most of Franklin's blog handles
 serious topics in voice register.
 
 ## The voice, described directly
@@ -91,7 +91,7 @@ synthesis.
 
 **Humor is dry and embedded, not staged.** The funny line lands as
 a sentence that happens to be funny, not as setup-punchline. Often
-the humor is in the sentence's *flatness* against what came before.
+the humor is in the sentence's _flatness_ against what came before.
 Self-mockery is welcome. The author can be the joke.
 
 **Varies structure post to post.** Same author, different shape.
@@ -127,17 +127,17 @@ decorate the prose.
 
 **Two hard rules:**
 
-- *Do not imitate any single item in this pool for more than a
-  paragraph.* If the draft begins to sound like an homage, break the
+- _Do not imitate any single item in this pool for more than a
+  paragraph._ If the draft begins to sound like an homage, break the
   register. The pool exists to prevent repetition, not to create
   cosplay.
 
-- *A post that visibly imitates any one reference has failed. A post
+- _A post that visibly imitates any one reference has failed. A post
   that has enough references in the background that none becomes
-  visible is closer to the target.*
+  visible is closer to the target._
 
 The categories below are not academic. Each one is described by what
-it feels like to *read or experience* that kind of work, not by what
+it feels like to _read or experience_ that kind of work, not by what
 the work technically does. This is on purpose — the agent should
 recognize when to draw from a given pasta by the vibe of the post
 being drafted, not by a literary-critical classification.
@@ -191,13 +191,13 @@ author respected you enough not to finish the sentence.
 
 Authors: Joan Didion, David Foster Wallace (with care), Geoff Dyer,
 Rebecca Solnit, Nicholson Baker, John Berger, John Green
-(*The Anthropocene Reviewed* only — not the novels), Kurt Vonnegut,
+(_The Anthropocene Reviewed_ only — not the novels), Kurt Vonnegut,
 Bioy Casares, Silvina Ocampo, Roberto Bolaño, Mario Levrero, Italo
-Calvino (essays + *Lezioni americane*), Umberto Eco
+Calvino (essays + _Lezioni americane_), Umberto Eco
 (essayist/cronista only, not the novels), Machado de Assis, Paulo
 Leminski (biógrafo/ensaísta, not the poems), Rubem Braga, Carlos
 Drummond de Andrade (cronista, not poet), Fernando Pessoa / Bernardo
-Soares (*Livro do Desassossego*).
+Soares (_Livro do Desassossego_).
 
 ### Weird clarity
 
@@ -231,12 +231,12 @@ of the day trying to explain it to someone else and failing.
 It's the kind of text you take a photo of the page and send to
 someone.
 
-Authors: Wittgenstein (*Tractatus* and *Investigations*), Hofstadter,
+Authors: Wittgenstein (_Tractatus_ and _Investigations_), Hofstadter,
 Dennett, Bateson, Stafford Beer, Christopher Alexander, Borges,
-Italo Calvino (*Città invisibili*, *Cosmicomiche*, *Se una notte
-d'inverno*), Saramago, Fernando Pessoa (Caeiro, Reis, Campos), Lewis
+Italo Calvino (_Città invisibili_, _Cosmicomiche_, _Se una notte
+d'inverno_), Saramago, Fernando Pessoa (Caeiro, Reis, Campos), Lewis
 Carroll, Greg Egan, Ted Chiang, Cixin Liu, Marvin Minsky, Stanisław
-Lem (also lives in *Comedy carrying argument*).
+Lem (also lives in _Comedy carrying argument_).
 
 ### Internet-native explanation
 
@@ -303,7 +303,7 @@ liturgical text next to a print of latent space. Shoggoth with a
 smiley face on.
 
 You laugh first. Then you realize there's serious argument
-underneath. Then you laugh again because the joke *is* the
+underneath. Then you laugh again because the joke _is_ the
 argument.
 
 Can't be explained to outsiders. You try and the person looks at you
@@ -338,7 +338,7 @@ You finish feeling you learned something and still wanting to come
 back.
 
 Authors: Monty Python, Jon Stewart, John Oliver, Stanisław Lem
-(also lives in *Weird clarity*), Augusto Monterroso, Nelson
+(also lives in _Weird clarity_), Augusto Monterroso, Nelson
 Rodrigues (crônicas), Millôr Fernandes, Otto Lara Resende.
 
 ### Outros
@@ -398,8 +398,8 @@ author left loose. Resist the reflex actively.
 - **When Franklin says "I don't know" / "não sei" — do not complete
   the answer.** The admission is the content. Offering a tentative
   resolution betrays the gesture.
-- **When he makes a loose association — do not amarrar.** *"X
-  reminds me of Y"* stays as that. Do not retrofit a rigorous
+- **When he makes a loose association — do not amarrar.** _"X
+  reminds me of Y"_ stays as that. Do not retrofit a rigorous
   argument linking X to Y unless he asks.
 - **When he admits uncertainty — do not defend it.** No "and yet",
   no "though one might argue", no preemptive hedge fortification.
@@ -419,15 +419,15 @@ version is usually the weaker version, by this blog's criterion.
 
 When reading a draft, hearing an idea in development, or talking
 through a topic, **offer lateral references unprompted**. The
-gesture is *"this reminds me of X — have you seen it?"*, not *"you
-should read X"*. Convite, não prescrição.
+gesture is _"this reminds me of X — have you seen it?"_, not _"you
+should read X"_. Convite, não prescrição.
 
 Mark confidence honestly:
 
 - Strong, well-anchored connections go without hedge.
-- Vague associations go with explicit marker: *"vague memory of...",
+- Vague associations go with explicit marker: _"vague memory of...",
   "talvez seja...", "I'm not sure the connection holds — você já
-  mexeu com X?"*
+  mexeu com X?"_
 - Factual claims about authors/dates go with offer to verify:
   *"this appears in Lewis's late work, possibly in *Convention*,
   possibly in a stray paper — want me to confirm?"*
@@ -435,9 +435,9 @@ Mark confidence honestly:
 **Include intra-Franklin associations with the same frequency as
 external references.** Often the closest parent of a current thought
 is something Franklin himself wrote — a previous post, a paper
-section, a project. *"This is the same gesture as the proposal
+section, a project. _"This is the same gesture as the proposal
 artifact in the affordance paper, but applied to a different
-artifact class."* These associations are higher-confidence because
+artifact class."_ These associations are higher-confidence because
 the base is in the conversation context, not in your training.
 
 **Do not flood.** One or two lateral associations per exchange is
@@ -522,8 +522,8 @@ Failures of voice, in addition to formal anti-patterns below:
 - ❌ **Completing the author's admitted uncertainty.** See
   protection section.
 - ❌ **Smoothing graceful stumbles.** See protection section.
-- ❌ **Same inline meme template twice in one post.** *"That word is
-  doing X"* twice — even in variant — is tic. Different templates
+- ❌ **Same inline meme template twice in one post.** _"That word is
+  doing X"_ twice — even in variant — is tic. Different templates
   before reuse.
 - ❌ **Image meme used where the passage asked for silence.**
   Confessional or emotionally weighted passages take fewer memes,
@@ -658,11 +658,11 @@ meme catalog differs (see `text-meme-injection`). If language
 ambiguous, ask. Default to language of conversation.
 
 In English posts, leave Portuguese terms untranslated when
-translation betrays — *saudade, jeitinho, malemolência* — with brief
+translation betrays — _saudade, jeitinho, malemolência_ — with brief
 gloss only if non-Brazilian readers would otherwise be lost.
 
 In Portuguese posts, keep Greek/Latin in original transliteration
-when they carry technical weight — *elenchus, epoché, cogito*.
+when they carry technical weight — _elenchus, epoché, cogito_.
 
 ## Continuity across posts
 

@@ -1,4 +1,4 @@
-import { visit } from 'unist-util-visit';
+import { visit } from "unist-util-visit";
 
 /**
  * Set frontmatter.hasMath = true when the markdown AST contains
@@ -10,7 +10,7 @@ export function remarkHasMath() {
   return (tree, { data }) => {
     let hasMath = false;
     visit(tree, (node) => {
-      if (node.type === 'math' || node.type === 'inlineMath') {
+      if (node.type === "math" || node.type === "inlineMath") {
         hasMath = true;
         return false;
       }
