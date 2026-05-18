@@ -36,8 +36,9 @@ Todos via npm scripts no raiz:
 
 | Comando | Função |
 |---------|--------|
-| `npm run hronir:init` | Sorteia 10 posts EN, cria 5 match files `winner: TODO` |
-| `npm run hronir:present -- <match.md>` | Imprime os dois posts + instrução pro avaliador |
+| `npm run hronir:init` | Sorteia 40 posts EN, cria 20 match files `winner: TODO` |
+| `npm run hronir:present -- <match.md>` | Imprime os dois posts + instrução pro avaliador (meta de palavras na defesa) |
+| `npm run hronir:resume` | Identifica a rodada mais recente, lista pendentes, aponta próximo |
 | `npm run hronir:ranking` | Score acumulado de todos os matches preenchidos |
 | `npm run hronir:worst` | Imprime translationKey do pior ranqueado (apenas inspeção) |
 | `npm run hronir:edit-worst` | Pior elegível + top 3, defesas, registro auditável em `edits/`, e instrução pra ler as skills antes de editar |
@@ -50,8 +51,14 @@ Cada comando termina com uma linha `NEXT STEP:` apontando o próximo passo, exce
 ## Fluxo
 
 ```
-init → present (×5) → edit-worst → (edição manual do post worst) → archive-post <key>
+init → present (×20) → edit-worst → (edição manual do post worst) → archive-post <key>
 ```
+
+`resume` em qualquer ponto identifica a rodada mais recente e aponta o próximo pendente. Útil para crash recovery ou retomada entre sessões.
+
+## Meta de palavras nas defesas
+
+`present` instrui o avaliador que cada defesa deve ter mínimo 100 palavras (piso de qualidade), meta 200 (alvo natural), mencionar os dois posts pelo nome ou pela key, e explicar concretamente. Não há validação coerciva no `doctor` — é instrução proativa. Defesa muito curta ou genérica perde a função do sistema (`edit-worst` lê e cita essas defesas; pouca substância dá pouco sinal).
 
 `worst` continua disponível para inspeção pontual, mas o fluxo automático termina em `edit-worst` + `archive-post`. A crítica em prosa em `.routines/hronir/critiques/` continua sendo um registro válido, mas não dirige a edição; o que dirige são as **skills versionadas** (próxima seção) e o registro auditável em `.routines/hronir/edits/<key>-<ts>.md`.
 

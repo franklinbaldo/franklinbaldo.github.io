@@ -35,16 +35,16 @@ export function init() {
   fs.mkdirSync(path.join(OUT_DIR, "critiques"), { recursive: true });
 
   const candidates = listEnglishWithKey();
-  if (candidates.length < 10) {
-    console.error(`Erro: só ${candidates.length} posts EN com translationKey em src/content/blog`);
+  if (candidates.length < 40) {
+    console.error(`Erro: só ${candidates.length} posts EN com translationKey em src/content/blog (mínimo 40)`);
     process.exit(1);
   }
 
-  const sample = shuffle(candidates).slice(0, 10);
+  const sample = shuffle(candidates).slice(0, 40);
   const { runId, runAt } = utcStamp();
   const created = [];
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 20; i++) {
     let a = sample[i * 2];
     let b = sample[i * 2 + 1];
     if (Math.random() < 0.5) [a, b] = [b, a];
@@ -101,7 +101,18 @@ export function present(matchFile) {
   console.log("- model: identificador do modelo executando");
   console.log("- substitua <!-- TODO --> pelo texto da defesa, em português");
 
-  nextStep(`Editar ${matchFile} com a decisão e a defesa. Quando os 5 matches estiverem preenchidos, rode \`npm run hronir:edit-worst\`.`);
+  const stepLines = [
+    "A defesa deve ter:",
+    "- mínimo 100 palavras (piso de qualidade)",
+    "- meta 200 palavras (alvo natural)",
+    "- mencionar os dois posts pelo nome ou pela key",
+    "- explicar concretamente, não no abstrato",
+    "",
+    "Defesa muito curta ou genérica perde a função do sistema.",
+    "",
+    `Editar ${matchFile} com a decisão e a defesa. Quando os 20 matches da rodada estiverem preenchidos, rode \`npm run hronir:edit-worst\`. Para retomar do meio da rodada, \`npm run hronir:resume\`.`,
+  ];
+  nextStep(stepLines.join("\n"));
 }
 
 function aggregate() {
@@ -325,6 +336,56 @@ export function editWorst() {
     `Após editar, rode: npm run hronir:archive-post ${worstRow.key}`,
   ];
   nextStep(stepLines.join("\n"));
+}
+
+export function resume() {
+  const files = listMatchFiles();
+  if (files.length === 0) {
+    console.log("Nenhum match encontrado em .routines/hronir/.");
+    nextStep("rode `npm run hronir:init` para começar uma rodada.");
+    return;
+  }
+
+  const byRun = new Map();
+  for (const f of files) {
+    const { data } = readMatch(f);
+    const runId = String(data.run_id || "");
+    if (!runId) continue;
+    if (!byRun.has(runId)) byRun.set(runId, []);
+    byRun.get(runId).push({ file: f, data });
+  }
+
+  if (byRun.size === 0) {
+    console.log("Nenhum match com run_id encontrado.");
+    nextStep("rode `npm run hronir:init` para começar uma rodada.");
+    return;
+  }
+
+  const latestRunId = [...byRun.keys()].sort().pop();
+  const matches = byRun.get(latestRunId);
+  matches.sort((a, b) => (a.data.match_index || 0) - (b.data.match_index || 0));
+
+  const pending = matches.filter((m) => m.data.winner === "TODO" || !m.data.winner);
+  const total = matches.length;
+
+  console.log(`# Rodada mais recente: ${latestRunId}`);
+  console.log(`# Matches: ${total} total, ${pending.length} pendentes, ${total - pending.length} preenchidos`);
+  console.log("");
+
+  if (pending.length === 0) {
+    console.log("Todos os matches da rodada estão preenchidos.");
+    nextStep("rode `npm run hronir:edit-worst`.");
+    return;
+  }
+
+  console.log("Pendentes:");
+  for (const m of pending) {
+    console.log(`  [${m.data.match_index ?? "?"}] ${m.file}`);
+  }
+  console.log("");
+
+  const first = pending[0].file;
+  nextStep(`rode \`npm run hronir:present -- ${first}\` (próximo pendente).`);
 }
 
 export function archivePost(key) {
