@@ -3,6 +3,11 @@ import path from "node:path";
 import { OUT_DIR, listEnglishWithKey, keyForPath, readPost, listPosts } from "./posts.js";
 import { listMatchFiles, readMatch, writeMatch, postKey } from "./matches.js";
 
+const MIN_APPEARANCES = 3;
+const SKILLS_DIR = "scripts/hronir/skills";
+const ARCHIVE_DIR = path.join(OUT_DIR, "archive");
+const EDITS_DIR = path.join(OUT_DIR, "edits");
+
 function utcStamp() {
   const iso = new Date().toISOString();
   return {
@@ -217,11 +222,21 @@ export function editWorst() {
     console.error("Sem matches preenchidos suficientes para ranquear.");
     process.exit(1);
   }
-  const worstRow = rows[0];
+  const eligible = rows.filter((r) => r.appearances >= MIN_APPEARANCES);
+  if (eligible.length === 0) {
+    console.log(`Volume insuficiente para edit-worst.`);
+    console.log(`Mínimo: ${MIN_APPEARANCES} aparições por post.`);
+    console.log(`Elegíveis: ${eligible.length} posts de ${rows.length} no ranking total.`);
+    console.log(`Próxima rodada pode acumular mais sinal.`);
+    nextStep("nenhum. Termine a rodada com PR só dos matches.");
+    return;
+  }
+
+  const worstRow = eligible[0];
   const topRows = rows.slice(-3).reverse();
   const topKeys = topRows.map((r) => r.key);
 
-  console.log(`# Pior ranqueado: ${worstRow.key}`);
+  console.log(`# Pior ranqueado (≥${MIN_APPEARANCES} aparições): ${worstRow.key}`);
   console.log(`# Path: ${worstRow.path}`);
   console.log(`# Score: ${worstRow.score} (wins ${worstRow.wins}/${worstRow.appearances})`);
   console.log("");
@@ -267,7 +282,80 @@ export function editWorst() {
     }
   }
 
-  nextStep(`edite o post em ${worstRow.path} para diminuir o gap observado entre ele e os melhores, mantendo o espírito do post. Expanda, corte ou reescreva conforme necessário. Não há método prescrito — o resultado é o que importa.`);
+  // Audit record: skeleton; agent fills skill_used / model / body after editing.
+  const editTs = new Date().toISOString().replace(/[:.]/g, "-").replace(/-\d+Z$/, "");
+  fs.mkdirSync(EDITS_DIR, { recursive: true });
+  const editLogPath = path.join(EDITS_DIR, `${worstRow.key}-${editTs}.md`);
+  if (!fs.existsSync(editLogPath)) {
+    const editLogFm = {
+      post_key: worstRow.key,
+      post_path: worstRow.path,
+      run_id: editTs,
+      model: "TODO",
+      skill_used: "TODO (franklin-blog ou franklin-essay)",
+      prompt_version: "edit-worst-v2",
+      appearances_at_edit: worstRow.appearances,
+      wins_at_edit: worstRow.wins,
+      defenses_archived_to: path.join(ARCHIVE_DIR, `${worstRow.key}-<timestamp do archive-post>`),
+    };
+    const body = "\n[Resumo breve: o que foi mudado e por quê, sob qual skill]\n";
+    writeMatch(editLogPath, editLogFm, body);
+  }
+  console.log(`# Edit log: ${editLogPath}`);
+  console.log("");
+
+  const stepLines = [
+    "Antes de editar, leia AS DUAS skills:",
+    `- ${SKILLS_DIR}/franklin-blog/SKILL.md`,
+    `- ${SKILLS_DIR}/franklin-essay/SKILL.md`,
+    "",
+    "Decida qual aplicar ao post worst.",
+    "Default: franklin-blog. Use franklin-essay APENAS se o post for",
+    "argumentativo-formal (paper-shaped, defesa de tese, citação",
+    "acadêmica densa). Em caso de dúvida, blog.",
+    "",
+    `Siga a skill escolhida ao editar o post em ${worstRow.path}.`,
+    "Atenção especial à seção 'Protection against tightening' (blog) e",
+    "ao 'Voice-fidelity pass' — o LLM reflex de tighten/smooth/fortify",
+    "é a falha mode aqui.",
+    "",
+    "Diminua o gap observado entre este post e os melhores,",
+    "mantendo o espírito do post.",
+    "",
+    `Após editar, rode: npm run hronir:archive-post ${worstRow.key}`,
+  ];
+  nextStep(stepLines.join("\n"));
+}
+
+export function archivePost(key) {
+  if (!key) {
+    console.error("Uso: hronir archive-post <key>");
+    process.exit(1);
+  }
+
+  const matched = [];
+  for (const f of listMatchFiles()) {
+    const { data } = readMatch(f);
+    const aKey = postKey(data.post_a);
+    const bKey = postKey(data.post_b);
+    if (aKey === key || bKey === key) matched.push(f);
+  }
+
+  if (matched.length === 0) {
+    console.log(`Nenhum match encontrado envolvendo key='${key}'.`);
+    return;
+  }
+
+  const ts = new Date().toISOString().replace(/[:.]/g, "-").replace(/-\d+Z$/, "");
+  const destDir = path.join(ARCHIVE_DIR, `${key}-${ts}`);
+  fs.mkdirSync(destDir, { recursive: true });
+
+  for (const f of matched) {
+    const dest = path.join(destDir, path.basename(f));
+    fs.renameSync(f, dest);
+  }
+
+  console.log(`Arquivados ${matched.length} matches em ${destDir}.`);
 }
 
 function buildPathToKeyIndex() {
