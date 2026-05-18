@@ -1,14 +1,21 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { OUT_DIR } from "./posts.js";
+import { OUT_DIR, RATES_DIR } from "./posts.js";
 
 export function listMatchFiles() {
-  if (!fs.existsSync(OUT_DIR)) return [];
-  return fs
-    .readdirSync(OUT_DIR)
-    .filter((f) => /_x_.*\.md$/.test(f))
-    .map((f) => path.join(OUT_DIR, f));
+  const out = [];
+  const seen = new Set();
+  for (const dir of [OUT_DIR, RATES_DIR]) {
+    if (!fs.existsSync(dir)) continue;
+    for (const f of fs.readdirSync(dir)) {
+      if (!/_x_.*\.md$/.test(f)) continue;
+      if (seen.has(f)) continue;
+      seen.add(f);
+      out.push(path.join(dir, f));
+    }
+  }
+  return out;
 }
 
 export function readMatch(filePath) {
