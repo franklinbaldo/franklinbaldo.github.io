@@ -6,7 +6,7 @@ import { listMatchFiles, readMatch, writeMatch, postKey } from "./matches.js";
 function utcStamp() {
   const iso = new Date().toISOString();
   return {
-    runId: iso.replace(/[:.]/g, "-").replace(/-\d+Z$/, "").replace(/T/, "T"),
+    runId: iso.replace(/[:.]/g, "-").replace(/-\d+Z$/, ""),
     runAt: iso.replace(/\.\d+Z$/, "Z"),
   };
 }
