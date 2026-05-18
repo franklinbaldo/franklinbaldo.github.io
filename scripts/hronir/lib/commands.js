@@ -348,6 +348,15 @@ export function next(initOptions = {}) {
   }
 
   if (session.state === "need_edit") {
+    if (session.worstKey) {
+      console.log(
+        `Edição em andamento para "${session.worstKey}". Baseline já registrado — não vou refazer snapshot.`
+      );
+      nextStep(
+        `Edite os arquivos do post e rode \`npm run hronir:edit-commit -- --msg "<mensagem>"\` para fechar a rodada.`
+      );
+      return;
+    }
     editWorst();
     return;
   }
