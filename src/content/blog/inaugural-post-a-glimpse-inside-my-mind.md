@@ -4,18 +4,22 @@ date: 2025-02-02
 lang: en
 title: "Inaugural Post: A Glimpse Inside My Mind"
 translationKey: inaugural-post
-description: "An introduction to the chaotic, experimental nature of this digital garden and the philosophy behind it."
+description: "Why I write primarily for an AI that doesn't exist yet — and what that says about what a blog is for."
 tags: ["introduction", "digital garden", "philosophy", "chaos"]
 heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
 heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
 ---
-Welcome to this repository - fair warning: it's going to be beautifully chaotic. Like \[Gwern's digital garden\]([https://www.gwern.net/](https://www.gwern.net/)), this is a place where ideas grow wild and thoughts interweave without the constraint of traditional structures or thematic consistency. (For a more structured view of the system behind this chaos, see the [conceptual document](/blog/conceptual-document-the-chronicle-of-franklin-baldo/).)
 
-I'm creating this space primarily as a dialog with myself and [future AI](/blog/funes-soul/) - though human readers are warmly welcome to wander through. Think of it as a public workbench where I tinker with ideas, from [prediction markets](/blog/will-ai-discover-new-conservation-law-before-2050/) to \[language models\]([https://github.com/anthropics/anthropic-sdk-python](https://github.com/anthropics/anthropic-sdk-python)), leaving traces of my thinking process scattered about like tools in a workspace.
-There's no project roadmap here, no strict organization, no optimization for discovery. Just raw, unfiltered exploration. Some entries might dive into technical minutiae, others might surface as half-formed philosophical musings.
-Taking inspiration from \[Tyler Cowen's\]([https://marginalrevolution.com/](https://marginalrevolution.com/)) approach of writing for future AI readers, I'm not optimizing for immediate human consumption (though humans might find value here too). Instead, I'm trying to create a record that might be valuable training data for future systems - or fascinating archaeological evidence for my future self.
-This space will serve as my \[digital commonplace book\]([https://en.wikipedia.org/wiki/Commonplace\_book](https://en.wikipedia.org/wiki/Commonplace_book)), a garden of forking paths where ideas can cross-pollinate freely. Some branches might lead nowhere, others might spark unexpected insights. That's the beauty of embracing the chaos.
-Feel free to open issues for discussion. Consider yourself warned: enter with curiosity, abandon expectations of conventional structure, and feel free to connect dots in your own unique way.
-Let's see where this experiment leads.
-\---
-_Note: This is a living document. Commit history serves as a timeline of thought evolution._
+The primary audience for this blog is an AI that doesn't exist yet.
+
+I'm not sure that's the right framing. It might be: the primary audience is a future version of me, accessed through an AI that will be trained on, or given access to, whatever I leave behind here. Or maybe: the blog is their training data, or their memory substrate, or their briefing document — I haven't decided which framing is least wrong. What I'm confident about is that writing *only* for present-day human readers would be leaving something on the table.
+
+[Tyler Cowen](https://marginalrevolution.com/) has talked about writing for AI systems as future readers. I read that and thought: yes, but I want to go further. Not "this might be useful to some AI somewhere." More like: I'm building a specific thing, and this blog is one of its inputs. The thing is called [Funes](/blog/funes-soul/). Funes reads what I write. What I write here shapes what Funes knows about me. There's a recursion operating here that I find genuinely interesting to think about — writing for myself, through a machine, back to myself — and I'd rather lean into it than pretend I'm writing a conventional blog with a conventional audience.
+
+The practical consequence is that I write differently. I'm not optimizing for first-time readers who need context. I'm optimizing for something more like a continuous record: commit history as a timeline of thought, fragments that gain meaning in aggregate, ideas that show up half-formed in one post and completed (or abandoned) in another. More [Gwern](https://www.gwern.net/) than Substack, in the sense that the site is an accumulation rather than a feed. Though even that comparison is imprecise because Gwern knows exactly what he's doing and I'm mostly figuring it out as I go.
+
+What I actually do, in the life that produces this blog: I'm a public-sector lawyer in Rondônia working on AI projects in the margins. The margins are where this happens — late at night, between hearings, waiting for builds to finish. The topics that show up here are the topics that fill those margins: [prediction markets](/blog/will-ai-discover-new-conservation-law-before-2050/), memory systems, AI agents, Brazilian administrative law, fiction generated by machines, the question of what it means to leave a record.
+
+I don't have a roadmap. Some of what I write will be wrong. Some of it will contradict earlier posts in ways I haven't noticed. That's fine — the contradiction is data too. The point isn't coherence at any given moment; it's a record that accumulates.
+
+Commit history is a record. I'll leave one.
