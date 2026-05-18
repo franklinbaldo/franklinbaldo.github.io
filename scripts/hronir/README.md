@@ -87,9 +87,13 @@ O `edit-worst` instrui a leitura de **ambas** antes de editar e a escolher a apl
 
 ## Ranking
 
-Ranking via **OpenSkill** (modelo Weng-Lin, atualização bayesiana online de Plackett-Luce). Cada par é tratado como uma partida 1v1; vencedor sobe `mu` e desce `sigma`, perdedor o oposto. A ordem global usa `ordinal(r) = mu - 3*sigma` — score conservador que penaliza incerteza, então um post com poucas partidas tende a ter ordinal menor mesmo que `mu` esteja alto.
+Ranking via **OpenSkill** (modelo Weng-Lin, atualização bayesiana online de Plackett-Luce). Cada par é tratado como uma partida 1v1; vencedor sobe `mu` e desce `sigma`, perdedor o oposto. Três eixos saem da computação, todos exibidos lado a lado em `hronir:ranking`:
 
-Tie-break alfabético. O `worst` retorna o de menor ordinal entre os posts com `appearances >= MIN_APPEARANCES`.
+- **`mu`** — estimativa pontual da "qualidade" do post. Sobe quando o post vence, desce quando perde, com magnitude proporcional à surpresa (vencer um post de mu alto vale mais).
+- **`sigma`** — incerteza sobre `mu`. Começa alta (pouca informação) e cai a cada partida. Não diz que o post é ruim — diz que ainda não sabemos.
+- **`ordinal = mu − 3·sigma`** — score conservador usado para a ordem global. Penaliza incerteza explicitamente: um post novo, mesmo com mu alto, fica atrás de um post estabelecido com mu um pouco menor.
+
+A ordem da tabela é por `ordinal` descendente. Tie-break alfabético por `key`. O `worst` retorna o post com menor `ordinal` entre os elegíveis (`appearances >= MIN_APPEARANCES`) — note que aqui não é "tie-break", é filtro: posts sem volume mínimo são ignorados antes de pegar o último.
 
 ### Por que MIN_APPEARANCES ainda importa com OpenSkill
 
