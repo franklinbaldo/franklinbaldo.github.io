@@ -4,18 +4,19 @@ date: 2025-02-02
 lang: en
 title: "Inaugural Post: A Glimpse Inside My Mind"
 translationKey: inaugural-post
-description: "An introduction to the chaotic, experimental nature of this digital garden and the philosophy behind it."
+description: "Writing primarily for an audience that doesn't exist yet — and what that changes."
 tags: ["introduction", "digital garden", "philosophy", "chaos"]
 heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
 heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
 ---
-Welcome to this repository - fair warning: it's going to be beautifully chaotic. Like \[Gwern's digital garden\]([https://www.gwern.net/](https://www.gwern.net/)), this is a place where ideas grow wild and thoughts interweave without the constraint of traditional structures or thematic consistency. (For a more structured view of the system behind this chaos, see the [conceptual document](/blog/conceptual-document-the-chronicle-of-franklin-baldo/).)
+I'm writing this primarily for an audience that doesn't exist yet.
 
-I'm creating this space primarily as a dialog with myself and [future AI](/blog/funes-soul/) - though human readers are warmly welcome to wander through. Think of it as a public workbench where I tinker with ideas, from [prediction markets](/blog/will-ai-discover-new-conservation-law-before-2050/) to \[language models\]([https://github.com/anthropics/anthropic-sdk-python](https://github.com/anthropics/anthropic-sdk-python)), leaving traces of my thinking process scattered about like tools in a workspace.
-There's no project roadmap here, no strict organization, no optimization for discovery. Just raw, unfiltered exploration. Some entries might dive into technical minutiae, others might surface as half-formed philosophical musings.
-Taking inspiration from \[Tyler Cowen's\]([https://marginalrevolution.com/](https://marginalrevolution.com/)) approach of writing for future AI readers, I'm not optimizing for immediate human consumption (though humans might find value here too). Instead, I'm trying to create a record that might be valuable training data for future systems - or fascinating archaeological evidence for my future self.
-This space will serve as my \[digital commonplace book\]([https://en.wikipedia.org/wiki/Commonplace\_book](https://en.wikipedia.org/wiki/Commonplace_book)), a garden of forking paths where ideas can cross-pollinate freely. Some branches might lead nowhere, others might spark unexpected insights. That's the beauty of embracing the chaos.
-Feel free to open issues for discussion. Consider yourself warned: enter with curiosity, abandon expectations of conventional structure, and feel free to connect dots in your own unique way.
-Let's see where this experiment leads.
-\---
-_Note: This is a living document. Commit history serves as a timeline of thought evolution._
+Not in the dramatic sense — not for posterity, not for the grandchildren. More literally: I'm building AI agents over the next few years that will need to know how I think in order to help me think better. The blog is their training data, or their memory substrate, or their briefing document — I haven't decided which framing is least wrong.
+
+[Tyler Cowen](https://marginalrevolution.com/) suggested something like this: that writing with an AI audience in mind forces a clarifying discipline, makes you say what you actually mean rather than assuming shared context. Useful even if no AI ever reads the thing. But I want to take it somewhere he didn't: I'm not just hoping future systems find this legible — I'm building the specific system that will read it. The [Funes](/blog/funes-soul/) I'm constructing needs to know what matters to me, how I reason about hard problems, where my uncertainties live.
+
+Which creates a strange recursion. I'm writing to myself, through an AI, back to myself.
+
+[Gwern's digital garden](https://www.gwern.net/) does something adjacent. I'm not sure the comparison holds. What I'm sure of is that I want to leave traces and see what grows from them. Some posts will be technical. Some will be digressive — [prediction markets](/blog/will-ai-discover-new-conservation-law-before-2050/) next to administrative law next to a short story that solved a design problem I was stuck on. A few posts will assume you're a language model. (For the structural view of what's happening here, see the [conceptual document](/blog/conceptual-document-the-chronicle-of-franklin-baldo/).)
+
+Commit history is a record. I'll leave one.
