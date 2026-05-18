@@ -17,6 +17,8 @@ export function computeRatings() {
 
     raw.push({
       runAt: String(data.run_at || data.run_id || ""),
+      matchIndex: Number.isFinite(data.match_index) ? data.match_index : 0,
+      filename: f,
       aKey,
       bKey,
       aPath: data.post_a?.path || "",
@@ -25,8 +27,15 @@ export function computeRatings() {
     });
   }
 
-  // 2. Sort by run_at ascending (stable temporal order matters for OpenSkill).
-  raw.sort((x, y) => x.runAt.localeCompare(y.runAt));
+  // 2. Sort by run_at ascending (OpenSkill is order-sensitive); within a run
+  //    (same run_at) break ties by match_index then filename so different
+  //    environments produce identical ratings for identical data.
+  raw.sort((x, y) => {
+    const cmp = x.runAt.localeCompare(y.runAt);
+    if (cmp !== 0) return cmp;
+    if (x.matchIndex !== y.matchIndex) return x.matchIndex - y.matchIndex;
+    return x.filename.localeCompare(y.filename);
+  });
 
   // 3. Iterate, maintain Map<key, rating>, update appearances/wins.
   const ratings = new Map();
@@ -42,8 +51,8 @@ export function computeRatings() {
   for (const m of raw) {
     const aRating = ensure(m.aKey);
     const bRating = ensure(m.bKey);
-    labels.set(m.aKey, m.aPath);
-    labels.set(m.bKey, m.bPath);
+    if (m.aPath) labels.set(m.aKey, m.aPath);
+    if (m.bPath) labels.set(m.bKey, m.bPath);
     appearances.set(m.aKey, (appearances.get(m.aKey) || 0) + 1);
     appearances.set(m.bKey, (appearances.get(m.bKey) || 0) + 1);
 
