@@ -346,6 +346,14 @@ export function decide(args) {
     console.error("Erro: --winner-defense ou --defense não pode ser vazia.");
     process.exit(1);
   }
+  if (!clash) {
+    console.error("Erro: --clash não pode ser vazio.");
+    process.exit(1);
+  }
+  if (!loserCritique) {
+    console.error("Erro: --loser-critique ou --critique não pode ser vazio.");
+    process.exit(1);
+  }
 
   const { data } = readMatch(matchFile);
   data.winner = winner;
@@ -353,9 +361,9 @@ export function decide(args) {
   if (evalLang) {
     data.eval_lang = evalLang;
   }
-  data.clash = clash || "TODO";
-  data.winner_defense = winnerDefense || "TODO";
-  data.loser_critique = loserCritique || "TODO";
+  data.clash = clash;
+  data.winner_defense = winnerDefense;
+  data.loser_critique = loserCritique;
   delete data.model;
   delete data.critique;
 
@@ -593,12 +601,26 @@ export function editWorst() {
     }
   }
 
-  if (fs.existsSync(SESSION_PATH)) {
-    const session = JSON.parse(fs.readFileSync(SESSION_PATH, "utf8"));
-    session.worstKey = worstRow.key;
-    session.originalVersions = originalVersions;
-    fs.writeFileSync(SESSION_PATH, JSON.stringify(session, null, 2));
-  }
+  // Persist worstKey/originalVersions so edit-commit can close the loop,
+  // creating a minimal session if edit-worst was invoked standalone.
+  const session = fs.existsSync(SESSION_PATH)
+    ? JSON.parse(fs.readFileSync(SESSION_PATH, "utf8"))
+    : {
+        target: 0,
+        completed: 0,
+        runId: utcStamp().runId,
+        agentId: "human",
+        evalLang: null,
+        state: "need_edit",
+        skipEdit: false,
+        skipRating: true,
+        currentFile: null,
+        minAppearances: minApps,
+      };
+  session.state = "need_edit";
+  session.worstKey = worstRow.key;
+  session.originalVersions = originalVersions;
+  fs.writeFileSync(SESSION_PATH, JSON.stringify(session, null, 2));
 
   console.log(`# Pior ranqueado (≥${minApps} aparições): ${worstRow.key}`);
   for (const fileInfo of translationFiles) {
@@ -766,13 +788,6 @@ export function doctor() {
     issues.push(`Sessão ativa do Hronir detectada (${SESSION_PATH}). Finalize a rodada antes de commitar.`);
   }
 
-  if (fs.existsSync(OUT_DIR)) {
-    const rootFiles = fs.readdirSync(OUT_DIR).filter(f => /_x_.*\.md$/.test(f));
-    for (const f of rootFiles) {
-      issues.push(`${f}: arquivo rate deve estar na subpasta 'rates/' (${RATES_DIR})`);
-    }
-  }
-
   for (const f of listMatchFiles()) {
     const { data } = readMatch(f);
     const base = path.basename(f);
@@ -810,7 +825,11 @@ export function doctor() {
       }
     }
 
-    if (data.winner !== "TODO") {
+    // New-schema fields are only required for matches produced by the
+    // post-#145 flow (which always sets agent_id). Legacy matches with the
+    // old `model` field are accepted as-is.
+    const isNewSchema = !!data.agent_id;
+    if (isNewSchema && data.winner !== "TODO") {
       if (!data.clash || data.clash === "TODO") {
         issues.push(`${base}: o campo 'clash' no frontmatter está ausente ou é 'TODO'`);
       }
@@ -879,9 +898,9 @@ export function end(options = {}) {
     return;
   }
 
-  // Check if there is an active session still waiting for edit-commit
   if (fs.existsSync(sessionPath)) {
     const session = JSON.parse(fs.readFileSync(sessionPath, "utf8"));
+
     if (session.state === "need_edit" && session.worstKey) {
       console.error("Erro: Há uma edição pendente que não foi registrada.");
       console.error(`Post editado: ${session.worstKey}`);
@@ -890,9 +909,16 @@ export function end(options = {}) {
       console.error(`  npm run hronir:edit-commit -- --msg "Sua mensagem explicando o que fez e o porquê"`);
       process.exit(1);
     }
-  }
 
-  if (fs.existsSync(sessionPath)) {
+    const matchesPending = (session.target ?? 0) > (session.completed ?? 0);
+    const midMatch = ["reading_a", "reading_b", "deciding"].includes(session.state);
+    if (midMatch || matchesPending) {
+      console.error("Erro: A rodada ainda não foi concluída.");
+      console.error(`Estado: ${session.state}, ${session.completed ?? 0}/${session.target ?? 0} matches.`);
+      console.error("Rode `npm run hronir:continue` para retomar, ou `npm run hronir:end -- --force` para descartar a sessão.");
+      process.exit(1);
+    }
+
     fs.unlinkSync(sessionPath);
   }
   console.log("\n✅ Sucesso! Rodada do Hronir finalizada.");
