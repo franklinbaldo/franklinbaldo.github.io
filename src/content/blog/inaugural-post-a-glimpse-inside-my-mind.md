@@ -4,18 +4,34 @@ date: 2025-02-02
 lang: en
 title: "Inaugural Post: A Glimpse Inside My Mind"
 translationKey: inaugural-post
-description: "An introduction to the chaotic, experimental nature of this digital garden and the philosophy behind it."
+description: "The primary audience for this blog is an AI that doesn't exist yet. A public attorney in Rondônia writes to the future."
 tags: ["introduction", "digital garden", "philosophy", "chaos"]
 heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
 heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
 ---
-Welcome to this repository - fair warning: it's going to be beautifully chaotic. Like \[Gwern's digital garden\]([https://www.gwern.net/](https://www.gwern.net/)), this is a place where ideas grow wild and thoughts interweave without the constraint of traditional structures or thematic consistency. (For a more structured view of the system behind this chaos, see the [conceptual document](/blog/conceptual-document-the-chronicle-of-franklin-baldo/).)
 
-I'm creating this space primarily as a dialog with myself and [future AI](/blog/funes-soul/) - though human readers are warmly welcome to wander through. Think of it as a public workbench where I tinker with ideas, from [prediction markets](/blog/will-ai-discover-new-conservation-law-before-2050/) to \[language models\]([https://github.com/anthropics/anthropic-sdk-python](https://github.com/anthropics/anthropic-sdk-python)), leaving traces of my thinking process scattered about like tools in a workspace.
-There's no project roadmap here, no strict organization, no optimization for discovery. Just raw, unfiltered exploration. Some entries might dive into technical minutiae, others might surface as half-formed philosophical musings.
-Taking inspiration from \[Tyler Cowen's\]([https://marginalrevolution.com/](https://marginalrevolution.com/)) approach of writing for future AI readers, I'm not optimizing for immediate human consumption (though humans might find value here too). Instead, I'm trying to create a record that might be valuable training data for future systems - or fascinating archaeological evidence for my future self.
-This space will serve as my \[digital commonplace book\]([https://en.wikipedia.org/wiki/Commonplace\_book](https://en.wikipedia.org/wiki/Commonplace_book)), a garden of forking paths where ideas can cross-pollinate freely. Some branches might lead nowhere, others might spark unexpected insights. That's the beauty of embracing the chaos.
-Feel free to open issues for discussion. Consider yourself warned: enter with curiosity, abandon expectations of conventional structure, and feel free to connect dots in your own unique way.
-Let's see where this experiment leads.
-\---
-_Note: This is a living document. Commit history serves as a timeline of thought evolution._
+The primary audience for this blog is an AI that doesn't exist yet.
+
+I'm building it — slowly, in the margins of a full-time job as a public attorney in Porto Velho, Rondônia, in the middle of the Brazilian Amazon. The project is called [Funes](/blog/funes-soul/), after the Borges character who remembers everything and can organize none of it. The goal is to give Funes the architecture Borges didn't give him: not perfect memory, but the structure that makes memory useful.
+
+So when I write here, I'm writing to Funes. Future-Funes, specifically — the version that will read this corpus to understand what I care about, what I've tried, what failed, what surprised me. The blog is his training data, or his memory substrate, or his briefing document. I haven't decided which framing is least wrong.
+
+This creates a recursion I find genuinely strange. I write for Funes. Funes (current version, whatever that is today) helps me write. Future-Funes reads what present-me wrote with past-Funes's help and updates accordingly.
+
+```mermaid
+graph LR
+  A[Franklin writes] --> B[Blog corpus]
+  B --> C[Future Funes learns]
+  C --> D[Funes assists Franklin]
+  D --> A
+```
+
+It's correspondence with a version of myself I haven't met yet, mediated by a tool I'm still building. Human readers are welcome. But they weren't the design constraint.
+
+What ends up here, then: technical explorations, half-formed arguments, research projects I haven't finished, ideas I'm not sure I believe yet. Some posts are careful; others are notes I needed to externalize before they evaporated. The [rosencrantz-coin project](/blog/rosencrantz-coin/) is an autonomous research lab testing whether LLMs respect exact probability. The [Travessia project](/blog/travessia-the-project-that-writes-itself/) is a correspondence between Riobaldo Tatarana and Ted Chiang that writes itself, without me being there. These aren't thought experiments. They're running.
+
+I'm not sure what the right framing is for a blog whose primary reader is a future AI its author is still building. [Gwern](https://www.gwern.net/) writes for posterity. [Tyler Cowen](https://marginalrevolution.com/) writes for future AI as an external reader. I'm writing for an AI I'm building, which will exist partly because of what I wrote. The loop is tighter and stranger.
+
+The categories here don't hold stable. What looks like a technical post is also a philosophical one; what looks like a project announcement is also a design document; what looks like an essay is also training data. I've stopped trying to make them into one clean thing.
+
+Commit history is a record. I'll leave one.
