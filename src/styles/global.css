@@ -70,8 +70,9 @@ body::before {
 
   /* Reading article gets a faint paper-grain shadow on wide screens. */
   .post-body > article {
-    box-shadow: 0 1px 0 var(--pico-muted-border-color),
-                0 24px 48px -32px rgba(42, 36, 29, 0.15);
+    box-shadow:
+      0 1px 0 var(--pico-muted-border-color),
+      0 24px 48px -32px rgba(42, 36, 29, 0.15);
     border-radius: 2px;
   }
 }
@@ -183,8 +184,9 @@ body::before {
 .post-body figure.meme > img {
   max-width: min(100%, 480px);
   border-radius: 4px;
-  box-shadow: 0 1px 0 var(--pico-muted-border-color),
-              0 12px 24px -18px rgba(42, 36, 29, 0.25);
+  box-shadow:
+    0 1px 0 var(--pico-muted-border-color),
+    0 12px 24px -18px rgba(42, 36, 29, 0.25);
 }
 
 /*
@@ -204,7 +206,9 @@ body::before {
   font-style: normal;
   color: var(--pico-color);
 }
-.post-body blockquote.pull-quote > p:last-child { margin-bottom: 0; }
+.post-body blockquote.pull-quote > p:last-child {
+  margin-bottom: 0;
+}
 
 /*
  * 4chan-style greentext block: ```greentext fenced code in markdown.
@@ -237,7 +241,11 @@ body::before {
   color: #c5c8c6;
 }
 [data-theme="dark"] .post-body pre[data-language="greentext"] .line.gt-quote,
-[data-theme="dark"] .post-body pre[data-language="greentext"] .line.gt-quote span {
+[data-theme="dark"]
+  .post-body
+  pre[data-language="greentext"]
+  .line.gt-quote
+  span {
   color: #b5bd68 !important;
 }
 
@@ -250,4 +258,7 @@ body::before {
   background: var(--pico-background-color);
   color: var(--pico-primary);
 }
-.skip-link:focus { left: 0.5rem; top: 0.5rem; }
+.skip-link:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+}

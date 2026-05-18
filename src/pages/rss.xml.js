@@ -1,14 +1,14 @@
-import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
+import rss from "@astrojs/rss";
+import { getCollection } from "astro:content";
 
 export async function GET(context) {
-  const posts = (await getCollection('blog'))
+  const posts = (await getCollection("blog"))
     .filter((post) => !post.data.draft)
-    .filter((post) => (post.data.lang ?? 'en') === 'en')
+    .filter((post) => (post.data.lang ?? "en") === "en")
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
   return rss({
-    title: 'Franklin Baldo',
+    title: "Franklin Baldo",
     description:
       "Lawyer and State Attorney. Exploring the intersections of process metaphysics, AI agency, and the architecture of legal systems.",
     site: context.site,
@@ -19,6 +19,6 @@ export async function GET(context) {
       link: `/blog/${post.id}/`,
       categories: post.data.tags ?? [],
     })),
-    customData: '<language>en-us</language>',
+    customData: "<language>en-us</language>",
   });
 }

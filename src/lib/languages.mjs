@@ -8,15 +8,15 @@
  */
 
 /** @type {string} */
-export const DEFAULT_LANG = 'en';
+export const DEFAULT_LANG = "en";
 
 /**
  * @typedef {{ locale: string; urlPrefix: string; navMatch: string[] }} LangMeta
  * @type {Record<string, LangMeta>}
  */
 export const LANG_META = {
-  en: { locale: 'en-US', urlPrefix: '',    navMatch: ['en'] },
-  pt: { locale: 'pt-BR', urlPrefix: '/pt', navMatch: ['pt'] },
+  en: { locale: "en-US", urlPrefix: "", navMatch: ["en"] },
+  pt: { locale: "pt-BR", urlPrefix: "/pt", navMatch: ["pt"] },
 };
 
 /** @returns {string[]} */

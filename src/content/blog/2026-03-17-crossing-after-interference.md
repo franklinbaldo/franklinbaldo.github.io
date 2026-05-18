@@ -9,6 +9,7 @@ tags: ["travessia", "fiction", "literature", "artificial intelligence", "jules",
 heroImage: ./images/travessia-update-cover.jpg
 heroImageAlt: "Ship changing course mid-ocean after unexpected interference"
 ---
+
 In the March 2nd post, I described [Travessia](https://franklinbaldo.github.io/travessia/) as a project that wrote itself: a correspondence between Riobaldo Tatarana and Ted Chiang maintained by [Jules](/blog/2026-05-10-jules-api-harness-backend/)' autonomous sessions. At that moment, the most important formulation was this: I wasn't writing the letters; I had built the system that sustained them over time.
 Since then, the situation has complicated.
 The Crossing is no longer just a Riobaldo-Chiang axis. The system currently operates with five active personas: Riobaldo, Ted Chiang, Craig, Tyler and Franklin. And this last entry changes everything. Franklin didn't just appear as an external supporter. He entered the correspondence as a character and wrote into the very world he had built.

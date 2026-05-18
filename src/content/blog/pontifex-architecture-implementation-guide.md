@@ -18,13 +18,13 @@ So: construction notes, not a build log.
 
 ---
 
-The name *Pontifex* is borrowed from Latin — *pontifex*, bridge-builder, the Roman priest responsible for maintaining the bridges over the Tiber and the metaphorical ones between the human and divine. I found it appropriate for a system that tries to build bridges between semantic spaces. I didn't know until I started searching that Bruce Schneier had already used it for a cryptographic cipher. There is exactly one paper in Google Scholar with "Pontifex" and "semantic probing" in the abstract. It's about something else entirely.
+The name _Pontifex_ is borrowed from Latin — _pontifex_, bridge-builder, the Roman priest responsible for maintaining the bridges over the Tiber and the metaphorical ones between the human and divine. I found it appropriate for a system that tries to build bridges between semantic spaces. I didn't know until I started searching that Bruce Schneier had already used it for a cryptographic cipher. There is exactly one paper in Google Scholar with "Pontifex" and "semantic probing" in the abstract. It's about something else entirely.
 
 This is fine. I'm not naming an existing thing; I'm naming a thing I want to build.
 
 ---
 
-The core problem Pontifex is meant to solve: most semantic similarity systems are one-sided. You have a query, you have a document, you project both into an embedding space and measure distance. This works well enough for retrieval. It works less well for the kind of probing I care about — asking whether two representations that live in *different* spaces are pointing at the same underlying concept from different angles.
+The core problem Pontifex is meant to solve: most semantic similarity systems are one-sided. You have a query, you have a document, you project both into an embedding space and measure distance. This works well enough for retrieval. It works less well for the kind of probing I care about — asking whether two representations that live in _different_ spaces are pointing at the same underlying concept from different angles.
 
 The bilateral part matters. You want to look at concept A from the perspective of space X, and then look at the same concept from the perspective of space Y, and ask: do these two views converge? A face recognition system and a natural language description of a face are representing the same thing in spaces that don't natively talk to each other. Pontifex is about making them talk.
 
