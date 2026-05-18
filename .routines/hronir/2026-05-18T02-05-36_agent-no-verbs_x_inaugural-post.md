@@ -1,13 +1,13 @@
 ---
 run_id: 2026-05-18T02-05-36
-run_at: 2026-05-18T02:05:36Z
+run_at: 2026-05-18T02:05:36.000Z
 match_index: 5
 criterion: gateway
 post_a:
-  slug: 2026-05-14-the-agent-that-doesnt-invent-verbs
+  key: agent-no-verbs
   path: src/content/blog/2026-05-14-the-agent-that-doesnt-invent-verbs.md
 post_b:
-  slug: inaugural-post-a-glimpse-inside-my-mind
+  key: inaugural-post
   path: src/content/blog/inaugural-post-a-glimpse-inside-my-mind.md
 winner: a
 margin: 2

@@ -1,13 +1,13 @@
 ---
 run_id: 2026-05-18T02-05-51
-run_at: 2026-05-18T02:05:51Z
+run_at: 2026-05-18T02:05:51.000Z
 match_index: 2
 criterion: compelling
 post_a:
-  slug: 2026-05-15-three-hammers-walk-into-a-bar
+  key: three-hammers
   path: src/content/blog/2026-05-15-three-hammers-walk-into-a-bar.md
 post_b:
-  slug: inaugural-post-a-glimpse-inside-my-mind
+  key: inaugural-post
   path: src/content/blog/inaugural-post-a-glimpse-inside-my-mind.md
 winner: a
 margin: 5

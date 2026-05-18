@@ -1,13 +1,13 @@
 ---
 run_id: 2026-05-18T02-05-51
-run_at: 2026-05-18T02:05:51Z
+run_at: 2026-05-18T02:05:51.000Z
 match_index: 3
 criterion: compelling
 post_a:
-  slug: 2026-05-14-the-agent-that-doesnt-invent-verbs
+  key: agent-no-verbs
   path: src/content/blog/2026-05-14-the-agent-that-doesnt-invent-verbs.md
 post_b:
-  slug: building-funes
+  key: building-funes
   path: src/content/blog/building-funes.md
 winner: a
 margin: 3

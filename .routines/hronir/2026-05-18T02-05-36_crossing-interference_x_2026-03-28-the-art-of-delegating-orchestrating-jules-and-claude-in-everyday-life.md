@@ -1,14 +1,16 @@
 ---
 run_id: 2026-05-18T02-05-36
-run_at: 2026-05-18T02:05:36Z
+run_at: 2026-05-18T02:05:36.000Z
 match_index: 1
 criterion: gateway
 post_a:
-  slug: 2026-03-17-crossing-after-interference
+  key: crossing-interference
   path: src/content/blog/2026-03-17-crossing-after-interference.md
 post_b:
-  slug: 2026-03-28-the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life
-  path: src/content/blog/2026-03-28-the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life.md
+  key: >-
+    2026-03-28-the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life
+  path: >-
+    src/content/blog/2026-03-28-the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life.md
 winner: b
 margin: 2
 confidence: medium

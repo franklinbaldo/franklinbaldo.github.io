@@ -1,13 +1,13 @@
 ---
 run_id: 2026-05-18T01-09-33
-run_at: 2026-05-18T01:09:33Z
+run_at: 2026-05-18T01:09:33.000Z
 match_index: 5
 criterion: gateway
 post_a:
-  slug: 2026-05-10-a-api-do-jules-como-backend-do-harness
+  key: jules-api-harness
   path: src/content/blog/2026-05-10-a-api-do-jules-como-backend-do-harness.md
 post_b:
-  slug: the-digital-twin-sound-showcase
+  key: vitrine-sonora
   path: src/content/blog/the-digital-twin-sound-showcase.md
 winner: b
 margin: 1
