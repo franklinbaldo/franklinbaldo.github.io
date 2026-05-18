@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import { init, present, ranking, worst, editWorst, archivePost, migrate, doctor } from "./lib/commands.js";
+import { init, present, ranking, worst, editWorst, archivePost, resume, migrate, doctor } from "./lib/commands.js";
 
 const [, , cmd, ...args] = process.argv;
 
 function usage() {
-  console.error("Uso: hronir {init|present <match>|ranking|worst|edit-worst|archive-post <key>|migrate [--dry-run]|doctor}");
+  console.error("Uso: hronir {init|present <match>|resume|ranking|worst|edit-worst|archive-post <key>|migrate [--dry-run]|doctor}");
   process.exit(1);
 }
 
@@ -14,6 +14,9 @@ switch (cmd) {
     break;
   case "present":
     present(args[0]);
+    break;
+  case "resume":
+    resume();
     break;
   case "ranking":
     ranking();
