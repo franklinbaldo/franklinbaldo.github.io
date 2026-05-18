@@ -233,10 +233,11 @@ export function editWorst() {
   }
 
   const worstRow = eligible[0];
-  const topRows = rows.slice(-3).reverse();
+  const topRows = eligible.slice(-3).reverse();
   const topKeys = topRows.map((r) => r.key);
 
   console.log(`# Pior ranqueado (≥${MIN_APPEARANCES} aparições): ${worstRow.key}`);
+  console.log(`# Elegíveis: ${eligible.length} de ${rows.length} no ranking total`);
   console.log(`# Path: ${worstRow.path}`);
   console.log(`# Score: ${worstRow.score} (wins ${worstRow.wins}/${worstRow.appearances})`);
   console.log("");
