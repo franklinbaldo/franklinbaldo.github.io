@@ -87,9 +87,18 @@ O `edit-worst` instrui a leitura de **ambas** antes de editar e a escolher a apl
 
 ## Ranking
 
-Score = `floor(wins * 1000 / appearances) + appearances`. Tie-break por chave alfabética. O `worst` retorna o de menor score.
+Ranking via **OpenSkill** (modelo Weng-Lin, atualização bayesiana online de Plackett-Luce). Cada par é tratado como uma partida 1v1; vencedor sobe `mu` e desce `sigma`, perdedor o oposto. A ordem global usa `ordinal(r) = mu - 3*sigma` — score conservador que penaliza incerteza, então um post com poucas partidas tende a ter ordinal menor mesmo que `mu` esteja alto.
 
-A componente `+ appearances` é deliberada: posts com mais aparições têm mais informação sobre eles, então um post com 0/1 fica acima de um post sem dados. O pior ranqueado precisa ter aparecido pelo menos uma vez.
+Tie-break alfabético. O `worst` retorna o de menor ordinal entre os posts com `appearances >= MIN_APPEARANCES`.
+
+### Por que MIN_APPEARANCES ainda importa com OpenSkill
+
+OpenSkill já carrega incerteza em `sigma`, então em tese seria possível ranquear posts com 1 partida. Mas duas razões mantêm o threshold:
+
+1. **Sinal de defesa.** `edit-worst` consome as defesas como contexto. Um post com 1 derrota dá só 1 defesa pra trabalhar; com 3+ derrotas, o conjunto de defesas começa a triangular o problema do post.
+2. **Estabilidade.** Os 3 primeiros matches de um post podem oscilar muito (sigma alto, ordinal sensível). MIN_APPEARANCES=3 evita editar com base num único par que pode ter sido sorte/azar.
+
+`appearances` continua reportado ao lado de `mu`/`sigma` exatamente para isso ser legível.
 
 ## Match file
 

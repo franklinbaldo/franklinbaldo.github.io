@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { OUT_DIR, listEnglishWithKey, keyForPath, readPost, listPosts } from "./posts.js";
 import { listMatchFiles, readMatch, writeMatch, postKey } from "./matches.js";
+import { computeRatings } from "./ranking.js";
 
 const MIN_APPEARANCES = 3;
 const SKILLS_DIR = "scripts/hronir/skills";
@@ -119,56 +120,33 @@ export function present(matchFile) {
   nextStep(stepLines.join("\n"));
 }
 
-function aggregate() {
-  const wins = new Map();
-  const appearances = new Map();
-  const labels = new Map();
+// Ratings via OpenSkill (computeRatings, lib/ranking.js).
+// Output: rows ordered by ordinal DESC (best first).
 
-  for (const f of listMatchFiles()) {
-    const { data } = readMatch(f);
-    let winner = data.winner;
-    if (data.override && data.override !== "null") winner = data.override;
-    if (winner === "TODO" || !winner) continue;
-
-    const aKey = postKey(data.post_a);
-    const bKey = postKey(data.post_b);
-    if (!aKey || !bKey) continue;
-
-    appearances.set(aKey, (appearances.get(aKey) || 0) + 1);
-    appearances.set(bKey, (appearances.get(bKey) || 0) + 1);
-    if (data.post_a?.path) labels.set(aKey, data.post_a.path);
-    if (data.post_b?.path) labels.set(bKey, data.post_b.path);
-    if (winner === "a") wins.set(aKey, (wins.get(aKey) || 0) + 1);
-    else if (winner === "b") wins.set(bKey, (wins.get(bKey) || 0) + 1);
-  }
-
-  const rows = [];
-  for (const [key, a] of appearances) {
-    const w = wins.get(key) || 0;
-    const score = Math.floor((w * 1000) / a) + a;
-    rows.push({ key, wins: w, appearances: a, score, path: labels.get(key) || "" });
-  }
-  rows.sort((x, y) => x.score - y.score || x.key.localeCompare(y.key));
-  return rows;
+function fmt(n, w = 6) {
+  return n.toFixed(3).padStart(w);
 }
 
 export function ranking() {
-  const rows = aggregate();
-  for (const r of rows) {
-    console.log(`${r.score}\t${r.wins}\t${r.appearances}\t${r.key}`);
+  const rows = computeRatings();
+  console.log(`rank\tkey\tordinal\tmu\tsigma\tW/N`);
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    console.log(`${i + 1}\t${r.key}\t${fmt(r.ordinal)}\t${fmt(r.mu)}\t${fmt(r.sigma)}\t${r.wins}/${r.appearances}`);
   }
   nextStep("Rode `npm run hronir:edit-worst` para iniciar a edição do pior ranqueado (ou `npm run hronir:worst` apenas para inspeção).");
 }
 
 export function worst() {
-  const rows = aggregate();
-  if (rows.length === 0) {
-    console.error("Sem matches preenchidos suficientes para ranquear.");
+  const rows = computeRatings();
+  const eligible = rows.filter((r) => r.appearances >= MIN_APPEARANCES);
+  if (eligible.length === 0) {
+    console.error(`Sem posts com appearances >= ${MIN_APPEARANCES}.`);
     process.exit(1);
   }
-  const w = rows[0];
+  const w = eligible[eligible.length - 1];
   console.log(w.key);
-  console.error(`(path: ${w.path}, wins: ${w.wins}/${w.appearances}, score: ${w.score})`);
+  console.error(`(path: ${w.path}, wins: ${w.wins}/${w.appearances}, ordinal: ${w.ordinal.toFixed(3)}, mu: ${w.mu.toFixed(3)}, sigma: ${w.sigma.toFixed(3)})`);
 }
 
 function collectDefensesForLoser(loserKey, limit = 5) {
@@ -232,7 +210,7 @@ function collectDefensesForWinners(winnerKeys, limit = 5) {
 }
 
 export function editWorst() {
-  const rows = aggregate();
+  const rows = computeRatings();
   if (rows.length === 0) {
     console.error("Sem matches preenchidos suficientes para ranquear.");
     process.exit(1);
@@ -247,14 +225,17 @@ export function editWorst() {
     return;
   }
 
-  const worstRow = eligible[0];
-  const topRows = eligible.slice(-3).reverse();
+  // rows are sorted by ordinal DESC (best first); worst eligible is the last,
+  // top 3 are the first three eligible — same threshold applied to both sides
+  // so contrast set never comes from low-volume posts.
+  const worstRow = eligible[eligible.length - 1];
+  const topRows = eligible.slice(0, 3);
   const topKeys = topRows.map((r) => r.key);
 
   console.log(`# Pior ranqueado (≥${MIN_APPEARANCES} aparições): ${worstRow.key}`);
-  console.log(`# Elegíveis: ${eligible.length} de ${rows.length} no ranking total`);
   console.log(`# Path: ${worstRow.path}`);
-  console.log(`# Score: ${worstRow.score} (wins ${worstRow.wins}/${worstRow.appearances})`);
+  console.log(`# Ordinal: ${worstRow.ordinal.toFixed(3)} (mu ${worstRow.mu.toFixed(3)}, sigma ${worstRow.sigma.toFixed(3)}, wins ${worstRow.wins}/${worstRow.appearances})`);
+  console.log(`# Elegíveis: ${eligible.length} de ${rows.length} no ranking total`);
   console.log("");
   console.log("# Top 3 (contraste): " + topKeys.join(", "));
   console.log("");
