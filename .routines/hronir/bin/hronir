@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+set -e
+
+POSTS_DIR="src/content/blog"
+OUT_DIR=".routines/hronir"
+mkdir -p "$OUT_DIR"
+
+extract_key() {
+  awk '
+    /^---[[:space:]]*$/ { n++; next }
+    n==1 && /^translationKey:/ {
+      sub(/^translationKey:[[:space:]]*/, "")
+      gsub(/["'"'"']/, "")
+      print
+      exit
+    }
+  ' "$1"
+}
+
+extract_lang() {
+  awk '
+    /^---[[:space:]]*$/ { n++; next }
+    n==1 && /^lang:/ {
+      sub(/^lang:[[:space:]]*/, "")
+      gsub(/["'"'"']/, "")
+      print
+      exit
+    }
+  ' "$1"
+}
+
+case "$1" in
+  init)
+    mapfile -t ALL_EN < <(
+      find "$POSTS_DIR" -type f \( -name "*.md" -o -name "*.mdx" \) | while read -r f; do
+        lang=$(extract_lang "$f")
+        if [ -z "$lang" ] || [ "$lang" = "en" ]; then
+          if [ -n "$(extract_key "$f")" ]; then
+            echo "$f"
+          fi
+        fi
+      done | sort
+    )
+
+    if [ "${#ALL_EN[@]}" -lt 10 ]; then
+      echo "Erro: só ${#ALL_EN[@]} posts EN com translationKey em $POSTS_DIR" >&2
+      exit 1
+    fi
+
+    mapfile -t SAMPLE < <(printf "%s\n" "${ALL_EN[@]}" | shuf -n 10)
+
+    TS=$(date -u +"%Y-%m-%dT%H-%M-%S")
+    RUN_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+    for i in 0 1 2 3 4; do
+      A_PATH="${SAMPLE[$((i*2))]}"
+      B_PATH="${SAMPLE[$((i*2+1))]}"
+      A_KEY=$(extract_key "$A_PATH")
+      B_KEY=$(extract_key "$B_PATH")
+
+      if (( RANDOM % 2 )); then
+        K1=$A_KEY; K2=$B_KEY; P1=$A_PATH; P2=$B_PATH
+      else
+        K1=$B_KEY; K2=$A_KEY; P1=$B_PATH; P2=$A_PATH
+      fi
+
+      FILE="$OUT_DIR/${TS}_${K1}_x_${K2}.md"
+
+      cat > "$FILE" <<EOF
+---
+run_id: $TS
+run_at: $RUN_AT
+match_index: $((i+1))
+post_a:
+  key: $K1
+  path: $P1
+post_b:
+  key: $K2
+  path: $P2
+winner: TODO
+model: TODO
+prompt_version: passion-v1
+season: 1
+override: null
+---
+
+<!-- TODO -->
+EOF
+      echo "$FILE"
+    done
+    ;;
+
+  present)
+    match_file="$2"
+    if [ -z "$match_file" ] || [ ! -f "$match_file" ]; then
+      echo "Uso: hronir present <caminho-do-match.md>" >&2
+      exit 1
+    fi
+
+    a_path=$(awk '/^post_a:/{f=1; next} f && /path:/{sub(/.*path:[[:space:]]*/,""); print; exit}' "$match_file")
+    b_path=$(awk '/^post_b:/{f=1; next} f && /path:/{sub(/.*path:[[:space:]]*/,""); print; exit}' "$match_file")
+
+    cat <<EOF
+Aqui estão dois posts do blog de Franklin Baldo.
+
+=== PRIMEIRO POST ===
+
+$(cat "$a_path")
+
+=== SEGUNDO POST ===
+
+$(cat "$b_path")
+
+---
+
+Escolha um. Defenda apaixonadamente a escolha.
+
+Edite $match_file:
+- winner: a (primeiro) ou b (segundo)
+- model: o identificador do modelo que está executando
+- substitua o <!-- TODO --> pelo texto da defesa, em português
+EOF
+    ;;
+
+  *)
+    echo "Uso: hronir {init|present <match-file>}" >&2
+    exit 1
+    ;;
+esac
