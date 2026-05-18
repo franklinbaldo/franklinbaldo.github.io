@@ -10,6 +10,7 @@ import Webmentions from '../../components/Webmentions.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
 import AuthorBio from '../../components/AuthorBio.astro';
+import { getRankByKey } from '../../lib/hronir-rank';
 import Comments from '../../components/Comments.astro';
 import SeriesContext from '../../components/SeriesContext.astro';
 import PostActionBar from '../../components/PostActionBar.astro';
@@ -35,6 +36,10 @@ const lastModifiedISO: string | undefined = remarkPluginFrontmatter.lastModified
 const lastModified = lastModifiedISO ? new Date(lastModifiedISO) : undefined;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const showUpdated = lastModified && lastModified.valueOf() - date.valueOf() > MS_PER_DAY;
+
+const rankInfo = translationKey ? getRankByKey().get(translationKey) : undefined;
+const rankLabel = lang === 'pt' ? 'ranking Hrönir' : 'Hrönir rank';
+const rankHref = lang === 'pt' ? '/pt/ranking/' : '/ranking/';
 const series = await getSeriesContext(post, { lang: lang ?? DEFAULT_LANG });
 const locale = localeFor(lang);
 const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
@@ -98,6 +103,9 @@ const translationLinks = translationSiblings.map((p) => {
                   <> · {t(lang, 'post.updated')} <time datetime={lastModified.toISOString()}>
                     {lastModified.toLocaleDateString(locale, dateOpts)}
                   </time></>
+                )}
+                {rankInfo && (
+                  <> · <a href={rankHref} title={`μ ${rankInfo.row.mu.toFixed(2)}, σ ${rankInfo.row.sigma.toFixed(2)}, ${rankInfo.row.wins}/${rankInfo.row.appearances}`}>{rankLabel} #{rankInfo.rank}/{rankInfo.total}</a></>
                 )}
               </small>
             </p>
