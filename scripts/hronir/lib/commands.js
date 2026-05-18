@@ -55,10 +55,12 @@ export function init() {
       const rb = getRating(b.translationKey);
       const [pA] = predictWin([[ra], [rb]]);
       const score = -Math.abs(pA - 0.5) + ra.sigma + rb.sigma;
-      pairs.push({ a, b, score, pA, sa: ra.sigma, sb: rb.sigma });
+      // Random jitter for tie-break: cold start has many identical scores;
+      // without this, stable sort + greedy = same posts picked every run.
+      pairs.push({ a, b, score, pA, sa: ra.sigma, sb: rb.sigma, jitter: Math.random() });
     }
   }
-  pairs.sort((x, y) => y.score - x.score);
+  pairs.sort((x, y) => (y.score - x.score) || (x.jitter - y.jitter));
 
   const used = new Set();
   const chosen = [];
