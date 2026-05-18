@@ -163,7 +163,7 @@ function buildPathToKeyIndex() {
 export function migrate({ dryRun = false } = {}) {
   const pathToKey = buildPathToKeyIndex();
   const files = listMatchFiles();
-  let migrated = 0;
+  let changed = 0;
   let renamed = 0;
   let skipped = 0;
   const warnings = [];
@@ -185,29 +185,35 @@ export function migrate({ dryRun = false } = {}) {
       continue;
     }
 
+    const oldKeyA = postKey(data.post_a);
+    const oldKeyB = postKey(data.post_b);
+    const hadSlugA = "slug" in (data.post_a || {});
+    const hadSlugB = "slug" in (data.post_b || {});
+    const fmChanged = oldKeyA !== aKey || oldKeyB !== bKey || hadSlugA || hadSlugB;
+
     const newFm = { ...data };
     newFm.post_a = { key: aKey, path: aPath };
     newFm.post_b = { key: bKey, path: bPath };
-    // Drop legacy 'slug' if present anywhere; gray-matter rewrite handles it.
-    if ("criterion" in newFm && !newFm.criterion) delete newFm.criterion;
 
-    const oldKeyA = postKey(data.post_a);
-    const oldKeyB = postKey(data.post_b);
     const filenameNeeded = `${data.run_id}_${aKey}_x_${bKey}.md`;
     const currentBase = path.basename(f);
     const targetPath = path.join(path.dirname(f), filenameNeeded);
+    const needsRename = currentBase !== filenameNeeded;
 
     if (dryRun) {
-      if (oldKeyA !== aKey || oldKeyB !== bKey || currentBase !== filenameNeeded) {
+      if (fmChanged || needsRename) {
         console.log(`would migrate: ${currentBase} -> ${filenameNeeded}`);
-        migrated++;
+        changed++;
       }
       continue;
     }
 
-    writeMatch(f, newFm, content);
+    if (fmChanged) {
+      writeMatch(f, newFm, content);
+      changed++;
+    }
 
-    if (currentBase !== filenameNeeded) {
+    if (needsRename) {
       if (fs.existsSync(targetPath) && targetPath !== f) {
         warnings.push(`${f}: destino já existe (${targetPath}), mantendo nome atual`);
       } else {
@@ -215,10 +221,9 @@ export function migrate({ dryRun = false } = {}) {
         renamed++;
       }
     }
-    migrated++;
   }
 
-  console.log(`migrate: ${migrated} arquivos normalizados, ${renamed} renomeados, ${skipped} pulados`);
+  console.log(`migrate: ${changed} frontmatters alterados, ${renamed} arquivos renomeados, ${skipped} pulados`);
   if (warnings.length) {
     console.log("\nAvisos:");
     for (const w of warnings) console.log("  - " + w);
