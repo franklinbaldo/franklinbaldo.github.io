@@ -2,6 +2,16 @@
 
 Sistema de avaliação par-a-par de posts do blog. Cada rodada sorteia 10 posts EN com `translationKey`, monta 5 partidas, e um avaliador (humano ou modelo) escolhe um vencedor por partida defendendo apaixonadamente. O ranking acumulado identifica o post que mais perde, e esse post recebe uma crítica registrada.
 
+> **Este CLI é não-interativo por design** (rodado por Claude Code).
+> Não use `readline`, `inquirer`, `prompts`, leitura de `process.stdin`,
+> nem confirmações em tela do tipo `[y/N]`. Toda saída vai direto pro
+> stdout via `console.log`, sem paginação. O default de qualquer ação
+> destrutiva ou que sobrescreve é "prossiga sem perguntar". Se algum
+> subcomando futuro precisar de confirmação destrutiva (ex: `reset`),
+> implemente com flag explícita `--yes`, não com prompt interativo.
+>
+> Comandos não devem mudar de comportamento baseado em `process.stdout.isTTY`.
+
 ## Identidade canônica
 
 `translationKey` (do frontmatter do post) é a identidade. Versões em idiomas diferentes do mesmo ensaio compartilham a mesma `translationKey` e portanto consolidam wins/appearances no ranking. Match files referenciam posts por `key` (= translationKey) e `path` (= caminho do .md).
