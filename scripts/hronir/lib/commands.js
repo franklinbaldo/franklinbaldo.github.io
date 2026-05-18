@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { OUT_DIR, listEnglishWithKey, keyForPath, readPost, listPosts } from "./posts.js";
 import { listMatchFiles, readMatch, writeMatch, postKey } from "./matches.js";
+import { computeRatings } from "./ranking.js";
 
 const MIN_APPEARANCES = 3;
 const SKILLS_DIR = "scripts/hronir/skills";
@@ -35,16 +36,20 @@ export function init() {
   fs.mkdirSync(path.join(OUT_DIR, "critiques"), { recursive: true });
 
   const candidates = listEnglishWithKey();
-  if (candidates.length < 10) {
-    console.error(`Erro: só ${candidates.length} posts EN com translationKey em src/content/blog`);
+  const corpusSize = candidates.length;
+  if (corpusSize < 4) {
+    console.error(`Erro: só ${corpusSize} posts EN com translationKey em src/content/blog (mínimo 4 para formar 2 pares)`);
     process.exit(1);
   }
 
-  const sample = shuffle(candidates).slice(0, 10);
+  const nMatches = Math.min(20, Math.floor(corpusSize / 2));
+  console.log(`Corpus: ${corpusSize} posts elegíveis. Criando ${nMatches} matches.`);
+
+  const sample = shuffle(candidates).slice(0, nMatches * 2);
   const { runId, runAt } = utcStamp();
   const created = [];
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < nMatches; i++) {
     let a = sample[i * 2];
     let b = sample[i * 2 + 1];
     if (Math.random() < 0.5) [a, b] = [b, a];
@@ -101,59 +106,47 @@ export function present(matchFile) {
   console.log("- model: identificador do modelo executando");
   console.log("- substitua <!-- TODO --> pelo texto da defesa, em português");
 
-  nextStep(`Editar ${matchFile} com a decisão e a defesa. Quando os 5 matches estiverem preenchidos, rode \`npm run hronir:edit-worst\`.`);
+  const stepLines = [
+    "A defesa deve ter:",
+    "- mínimo 100 palavras (piso de qualidade)",
+    "- meta 200 palavras (alvo natural)",
+    "- mencionar os dois posts pelo nome ou pela key",
+    "- explicar concretamente, não no abstrato",
+    "",
+    "Defesa muito curta ou genérica perde a função do sistema.",
+    "",
+    `Editar ${matchFile} com a decisão e a defesa. Quando todos os matches da rodada estiverem preenchidos, rode \`npm run hronir:edit-worst\`. Para retomar do meio da rodada, \`npm run hronir:resume\`.`,
+  ];
+  nextStep(stepLines.join("\n"));
 }
 
-function aggregate() {
-  const wins = new Map();
-  const appearances = new Map();
-  const labels = new Map();
+// Ratings via OpenSkill (computeRatings, lib/ranking.js).
+// Output: rows ordered by ordinal DESC (best first).
 
-  for (const f of listMatchFiles()) {
-    const { data } = readMatch(f);
-    let winner = data.winner;
-    if (data.override && data.override !== "null") winner = data.override;
-    if (winner === "TODO" || !winner) continue;
-
-    const aKey = postKey(data.post_a);
-    const bKey = postKey(data.post_b);
-    if (!aKey || !bKey) continue;
-
-    appearances.set(aKey, (appearances.get(aKey) || 0) + 1);
-    appearances.set(bKey, (appearances.get(bKey) || 0) + 1);
-    if (data.post_a?.path) labels.set(aKey, data.post_a.path);
-    if (data.post_b?.path) labels.set(bKey, data.post_b.path);
-    if (winner === "a") wins.set(aKey, (wins.get(aKey) || 0) + 1);
-    else if (winner === "b") wins.set(bKey, (wins.get(bKey) || 0) + 1);
-  }
-
-  const rows = [];
-  for (const [key, a] of appearances) {
-    const w = wins.get(key) || 0;
-    const score = Math.floor((w * 1000) / a) + a;
-    rows.push({ key, wins: w, appearances: a, score, path: labels.get(key) || "" });
-  }
-  rows.sort((x, y) => x.score - y.score || x.key.localeCompare(y.key));
-  return rows;
+function fmt(n, w = 6) {
+  return n.toFixed(3).padStart(w);
 }
 
 export function ranking() {
-  const rows = aggregate();
-  for (const r of rows) {
-    console.log(`${r.score}\t${r.wins}\t${r.appearances}\t${r.key}`);
+  const rows = computeRatings();
+  console.log(`rank\tkey\tordinal\tmu\tsigma\tW/N`);
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    console.log(`${i + 1}\t${r.key}\t${fmt(r.ordinal)}\t${fmt(r.mu)}\t${fmt(r.sigma)}\t${r.wins}/${r.appearances}`);
   }
   nextStep("Rode `npm run hronir:edit-worst` para iniciar a edição do pior ranqueado (ou `npm run hronir:worst` apenas para inspeção).");
 }
 
 export function worst() {
-  const rows = aggregate();
-  if (rows.length === 0) {
-    console.error("Sem matches preenchidos suficientes para ranquear.");
+  const rows = computeRatings();
+  const eligible = rows.filter((r) => r.appearances >= MIN_APPEARANCES);
+  if (eligible.length === 0) {
+    console.error(`Sem posts com appearances >= ${MIN_APPEARANCES}.`);
     process.exit(1);
   }
-  const w = rows[0];
+  const w = eligible[eligible.length - 1];
   console.log(w.key);
-  console.error(`(path: ${w.path}, wins: ${w.wins}/${w.appearances}, score: ${w.score})`);
+  console.error(`(path: ${w.path}, wins: ${w.wins}/${w.appearances}, ordinal: ${w.ordinal.toFixed(3)}, mu: ${w.mu.toFixed(3)}, sigma: ${w.sigma.toFixed(3)})`);
 }
 
 function collectDefensesForLoser(loserKey, limit = 5) {
@@ -217,7 +210,7 @@ function collectDefensesForWinners(winnerKeys, limit = 5) {
 }
 
 export function editWorst() {
-  const rows = aggregate();
+  const rows = computeRatings();
   if (rows.length === 0) {
     console.error("Sem matches preenchidos suficientes para ranquear.");
     process.exit(1);
@@ -232,14 +225,17 @@ export function editWorst() {
     return;
   }
 
-  const worstRow = eligible[0];
-  const topRows = eligible.slice(-3).reverse();
+  // rows are sorted by ordinal DESC (best first); worst eligible is the last,
+  // top 3 are the first three eligible — same threshold applied to both sides
+  // so contrast set never comes from low-volume posts.
+  const worstRow = eligible[eligible.length - 1];
+  const topRows = eligible.slice(0, 3);
   const topKeys = topRows.map((r) => r.key);
 
   console.log(`# Pior ranqueado (≥${MIN_APPEARANCES} aparições): ${worstRow.key}`);
-  console.log(`# Elegíveis: ${eligible.length} de ${rows.length} no ranking total`);
   console.log(`# Path: ${worstRow.path}`);
-  console.log(`# Score: ${worstRow.score} (wins ${worstRow.wins}/${worstRow.appearances})`);
+  console.log(`# Ordinal: ${worstRow.ordinal.toFixed(3)} (mu ${worstRow.mu.toFixed(3)}, sigma ${worstRow.sigma.toFixed(3)}, wins ${worstRow.wins}/${worstRow.appearances})`);
+  console.log(`# Elegíveis: ${eligible.length} de ${rows.length} no ranking total`);
   console.log("");
   console.log("# Top 3 (contraste): " + topKeys.join(", "));
   console.log("");
@@ -326,6 +322,56 @@ export function editWorst() {
     `Após editar, rode: npm run hronir:archive-post ${worstRow.key}`,
   ];
   nextStep(stepLines.join("\n"));
+}
+
+export function resume() {
+  const files = listMatchFiles();
+  if (files.length === 0) {
+    console.log("Nenhum match encontrado em .routines/hronir/.");
+    nextStep("rode `npm run hronir:init` para começar uma rodada.");
+    return;
+  }
+
+  const byRun = new Map();
+  for (const f of files) {
+    const { data } = readMatch(f);
+    const runId = String(data.run_id || "");
+    if (!runId) continue;
+    if (!byRun.has(runId)) byRun.set(runId, []);
+    byRun.get(runId).push({ file: f, data });
+  }
+
+  if (byRun.size === 0) {
+    console.log("Nenhum match com run_id encontrado.");
+    nextStep("rode `npm run hronir:init` para começar uma rodada.");
+    return;
+  }
+
+  const latestRunId = [...byRun.keys()].sort().pop();
+  const matches = byRun.get(latestRunId);
+  matches.sort((a, b) => (a.data.match_index || 0) - (b.data.match_index || 0));
+
+  const pending = matches.filter((m) => m.data.winner === "TODO" || !m.data.winner);
+  const total = matches.length;
+
+  console.log(`# Rodada mais recente: ${latestRunId}`);
+  console.log(`# Matches: ${total} total, ${pending.length} pendentes, ${total - pending.length} preenchidos`);
+  console.log("");
+
+  if (pending.length === 0) {
+    console.log("Todos os matches da rodada estão preenchidos.");
+    nextStep("rode `npm run hronir:edit-worst`.");
+    return;
+  }
+
+  console.log("Pendentes:");
+  for (const m of pending) {
+    console.log(`  [${m.data.match_index ?? "?"}] ${m.file}`);
+  }
+  console.log("");
+
+  const first = pending[0].file;
+  nextStep(`rode \`npm run hronir:present -- ${first}\` (próximo pendente).`);
 }
 
 export function archivePost(key) {

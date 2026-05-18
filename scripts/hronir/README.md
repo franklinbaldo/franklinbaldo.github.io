@@ -36,8 +36,9 @@ Todos via npm scripts no raiz:
 
 | Comando | Função |
 |---------|--------|
-| `npm run hronir:init` | Sorteia 10 posts EN, cria 5 match files `winner: TODO` |
-| `npm run hronir:present -- <match.md>` | Imprime os dois posts + instrução pro avaliador |
+| `npm run hronir:init` | Sorteia posts EN, cria até 20 match files (n = min(20, ⌊corpus/2⌋); falha se corpus < 4) |
+| `npm run hronir:present -- <match.md>` | Imprime os dois posts + instrução pro avaliador (meta de palavras na defesa) |
+| `npm run hronir:resume` | Identifica a rodada mais recente, lista pendentes, aponta próximo |
 | `npm run hronir:ranking` | Score acumulado de todos os matches preenchidos |
 | `npm run hronir:worst` | Imprime translationKey do pior ranqueado (apenas inspeção) |
 | `npm run hronir:edit-worst` | Pior elegível + top 3, defesas, registro auditável em `edits/`, e instrução pra ler as skills antes de editar |
@@ -50,8 +51,14 @@ Cada comando termina com uma linha `NEXT STEP:` apontando o próximo passo, exce
 ## Fluxo
 
 ```
-init → present (×5) → edit-worst → (edição manual do post worst) → archive-post <key>
+init → present (×n_matches) → edit-worst → (edição manual do post worst) → archive-post <key>
 ```
+
+`resume` em qualquer ponto identifica a rodada mais recente e aponta o próximo pendente. Útil para crash recovery ou retomada entre sessões.
+
+## Meta de palavras nas defesas
+
+`present` instrui o avaliador que cada defesa deve ter mínimo 100 palavras (piso de qualidade), meta 200 (alvo natural), mencionar os dois posts pelo nome ou pela key, e explicar concretamente. Não há validação coerciva no `doctor` — é instrução proativa. Defesa muito curta ou genérica perde a função do sistema (`edit-worst` lê e cita essas defesas; pouca substância dá pouco sinal).
 
 `worst` continua disponível para inspeção pontual, mas o fluxo automático termina em `edit-worst` + `archive-post`. A crítica em prosa em `.routines/hronir/critiques/` continua sendo um registro válido, mas não dirige a edição; o que dirige são as **skills versionadas** (próxima seção) e o registro auditável em `.routines/hronir/edits/<key>-<ts>.md`.
 
@@ -80,9 +87,22 @@ O `edit-worst` instrui a leitura de **ambas** antes de editar e a escolher a apl
 
 ## Ranking
 
-Score = `floor(wins * 1000 / appearances) + appearances`. Tie-break por chave alfabética. O `worst` retorna o de menor score.
+Ranking via **OpenSkill** (modelo Weng-Lin, atualização bayesiana online de Plackett-Luce). Cada par é tratado como uma partida 1v1; vencedor sobe `mu` e desce `sigma`, perdedor o oposto. Três eixos saem da computação, todos exibidos lado a lado em `hronir:ranking`:
 
-A componente `+ appearances` é deliberada: posts com mais aparições têm mais informação sobre eles, então um post com 0/1 fica acima de um post sem dados. O pior ranqueado precisa ter aparecido pelo menos uma vez.
+- **`mu`** — estimativa pontual da "qualidade" do post. Sobe quando o post vence, desce quando perde, com magnitude proporcional à surpresa (vencer um post de mu alto vale mais).
+- **`sigma`** — incerteza sobre `mu`. Começa alta (pouca informação) e cai a cada partida. Não diz que o post é ruim — diz que ainda não sabemos.
+- **`ordinal = mu − 3·sigma`** — score conservador usado para a ordem global. Penaliza incerteza explicitamente: um post novo, mesmo com mu alto, fica atrás de um post estabelecido com mu um pouco menor.
+
+A ordem da tabela é por `ordinal` descendente. Tie-break alfabético por `key`. O `worst` retorna o post com menor `ordinal` entre os elegíveis (`appearances >= MIN_APPEARANCES`) — note que aqui não é "tie-break", é filtro: posts sem volume mínimo são ignorados antes de pegar o último.
+
+### Por que MIN_APPEARANCES ainda importa com OpenSkill
+
+OpenSkill já carrega incerteza em `sigma`, então em tese seria possível ranquear posts com 1 partida. Mas duas razões mantêm o threshold:
+
+1. **Sinal de defesa.** `edit-worst` consome as defesas como contexto. Um post com 1 derrota dá só 1 defesa pra trabalhar; com 3+ derrotas, o conjunto de defesas começa a triangular o problema do post.
+2. **Estabilidade.** Os 3 primeiros matches de um post podem oscilar muito (sigma alto, ordinal sensível). MIN_APPEARANCES=3 evita editar com base num único par que pode ter sido sorte/azar.
+
+`appearances` continua reportado ao lado de `mu`/`sigma` exatamente para isso ser legível.
 
 ## Match file
 
