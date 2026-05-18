@@ -40,7 +40,8 @@ Todos via npm scripts no raiz:
 | `npm run hronir:present -- <match.md>` | Imprime os dois posts + instrução pro avaliador |
 | `npm run hronir:ranking` | Score acumulado de todos os matches preenchidos |
 | `npm run hronir:worst` | Imprime translationKey do pior ranqueado (apenas inspeção) |
-| `npm run hronir:edit-worst` | Imprime worst + top 3, defesas em que worst perdeu (5 mais recentes) e defesas dos top 3 (5 mais recentes), e instrui edição do post |
+| `npm run hronir:edit-worst` | Pior elegível + top 3, defesas, registro auditável em `edits/`, e instrução pra ler as skills antes de editar |
+| `npm run hronir:archive-post -- <key>` | Move todos os matches envolvendo `<key>` para `archive/`. Pós-edição, o post reinicia em 0 aparições |
 | `npm run hronir:migrate` | Normaliza matches legados (slug → key, renomeia arquivos) |
 | `npm run hronir:doctor` | Verifica inconsistências (keys, paths, duplicatas) |
 
@@ -49,10 +50,33 @@ Cada comando termina com uma linha `NEXT STEP:` apontando o próximo passo, exce
 ## Fluxo
 
 ```
-init → present (×5) → edit-worst → (edição manual do post worst)
+init → present (×5) → edit-worst → (edição manual do post worst) → archive-post <key>
 ```
 
-`worst` continua disponível para inspeção pontual, mas o fluxo automático termina em `edit-worst`: o sinal extraído da rodada não é só "este é o pior", e sim "aqui está o pior, aqui estão as defesas em que ele perdeu, aqui estão as defesas dos melhores — edite reduzindo o gap". A crítica em prosa (em `.routines/hronir/critiques/`) continua sendo um registro válido, mas não é mais o terminal do pipeline.
+`worst` continua disponível para inspeção pontual, mas o fluxo automático termina em `edit-worst` + `archive-post`. A crítica em prosa em `.routines/hronir/critiques/` continua sendo um registro válido, mas não dirige a edição; o que dirige são as **skills versionadas** (próxima seção) e o registro auditável em `.routines/hronir/edits/<key>-<ts>.md`.
+
+## Threshold de volume
+
+`edit-worst` só considera posts com `appearances >= MIN_APPEARANCES` (default 3). Se nenhum post elegível, imprime mensagem informativa e termina com exit 0 (não é erro — apenas sinal de que a rodada ainda não acumulou volume suficiente para edição confiável).
+
+Para ajustar o threshold, edite a constante no topo de `scripts/hronir/lib/commands.js`.
+
+## Skills
+
+Em `scripts/hronir/skills/`:
+
+- `franklin-blog/SKILL.md` — para posts informais, ensaísticos, voz pessoal
+- `franklin-essay/SKILL.md` — para posts argumentativo-formais (paper-shaped, defesa de tese, citação acadêmica densa)
+
+O `edit-worst` instrui a leitura de **ambas** antes de editar e a escolher a aplicável (default: blog). Atenção especial à seção *Protection against tightening* e ao *Voice-fidelity pass* — o reflexo do LLM de tighten/smooth/fortify é o failure mode aqui.
+
+## Archive
+
+`archive-post <key>` move todos os matches envolvendo `<key>` para `.routines/hronir/archive/<key>-<timestamp>/`. O agregador (`ranking`/`worst`/`edit-worst`) ignora arquivos em subdiretórios — apenas matches diretos em `.routines/hronir/` contam. Intenção: pós-edição, o post é objeto novo; appearances reinicia em zero, evitando arrastar o veredito pré-edição como dado válido.
+
+## Registro auditável
+
+`edit-worst` cria `.routines/hronir/edits/<key>-<timestamp>.md` com frontmatter contendo `post_key`, `post_path`, `model`, `skill_used`, `appearances_at_edit`, `wins_at_edit`, `defenses_archived_to` (placeholder). Campos `model`, `skill_used` e o corpo (resumo do que foi mudado e por quê) são preenchidos pelo agente após editar o post. O arquivo serve como linhagem da edição.
 
 ## Ranking
 
