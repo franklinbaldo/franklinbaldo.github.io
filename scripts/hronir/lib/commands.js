@@ -96,7 +96,7 @@ export function present(matchFile) {
   console.log("- model: identificador do modelo executando");
   console.log("- substitua <!-- TODO --> pelo texto da defesa, em português");
 
-  nextStep(`Editar ${matchFile} com a decisão e a defesa. Quando os 5 matches estiverem preenchidos, rode \`npm run hronir:worst\`.`);
+  nextStep(`Editar ${matchFile} com a decisão e a defesa. Quando os 5 matches estiverem preenchidos, rode \`npm run hronir:edit-worst\`.`);
 }
 
 function aggregate() {
@@ -137,7 +137,7 @@ export function ranking() {
   for (const r of rows) {
     console.log(`${r.score}\t${r.wins}\t${r.appearances}\t${r.key}`);
   }
-  nextStep("Rode `npm run hronir:worst` para identificar o pior ranqueado e iniciar a etapa de crítica.");
+  nextStep("Rode `npm run hronir:edit-worst` para iniciar a edição do pior ranqueado (ou `npm run hronir:worst` apenas para inspeção).");
 }
 
 export function worst() {
@@ -149,7 +149,125 @@ export function worst() {
   const w = rows[0];
   console.log(w.key);
   console.error(`(path: ${w.path}, wins: ${w.wins}/${w.appearances}, score: ${w.score})`);
-  nextStep(`Leia ${w.path} completo e escreva crítica em .routines/hronir/critiques/${w.key}.md (template em scripts/hronir/README.md).`);
+}
+
+function collectDefensesForLoser(loserKey, limit = 5) {
+  const out = [];
+  for (const f of listMatchFiles()) {
+    const { data, content } = readMatch(f);
+    let winner = data.winner;
+    if (data.override && data.override !== "null") winner = data.override;
+    if (winner === "TODO" || !winner) continue;
+
+    const aKey = postKey(data.post_a);
+    const bKey = postKey(data.post_b);
+    const loserSide = winner === "a" ? "b" : "a";
+    const loserSideKey = loserSide === "a" ? aKey : bKey;
+    const winnerSideKey = winner === "a" ? aKey : bKey;
+    if (loserSideKey !== loserKey) continue;
+
+    const body = (content || "").replace(/^\s*<!--\s*TODO\s*-->\s*$/m, "").trim();
+    if (!body) continue;
+    out.push({
+      file: path.basename(f),
+      runId: data.run_id || "",
+      runAt: data.run_at || "",
+      winner: winnerSideKey,
+      loser: loserSideKey,
+      body,
+    });
+  }
+  out.sort((a, b) => String(b.runAt || b.runId).localeCompare(String(a.runAt || a.runId)));
+  return out.slice(0, limit);
+}
+
+function collectDefensesForWinners(winnerKeys, limit = 5) {
+  const set = new Set(winnerKeys);
+  const out = [];
+  for (const f of listMatchFiles()) {
+    const { data, content } = readMatch(f);
+    let winner = data.winner;
+    if (data.override && data.override !== "null") winner = data.override;
+    if (winner === "TODO" || !winner) continue;
+
+    const aKey = postKey(data.post_a);
+    const bKey = postKey(data.post_b);
+    const winnerSideKey = winner === "a" ? aKey : bKey;
+    const loserSideKey = winner === "a" ? bKey : aKey;
+    if (!set.has(winnerSideKey)) continue;
+
+    const body = (content || "").replace(/^\s*<!--\s*TODO\s*-->\s*$/m, "").trim();
+    if (!body) continue;
+    out.push({
+      file: path.basename(f),
+      runId: data.run_id || "",
+      runAt: data.run_at || "",
+      winner: winnerSideKey,
+      loser: loserSideKey,
+      body,
+    });
+  }
+  out.sort((a, b) => String(b.runAt || b.runId).localeCompare(String(a.runAt || a.runId)));
+  return out.slice(0, limit);
+}
+
+export function editWorst() {
+  const rows = aggregate();
+  if (rows.length === 0) {
+    console.error("Sem matches preenchidos suficientes para ranquear.");
+    process.exit(1);
+  }
+  const worstRow = rows[0];
+  const topRows = rows.slice(-3).reverse();
+  const topKeys = topRows.map((r) => r.key);
+
+  console.log(`# Pior ranqueado: ${worstRow.key}`);
+  console.log(`# Path: ${worstRow.path}`);
+  console.log(`# Score: ${worstRow.score} (wins ${worstRow.wins}/${worstRow.appearances})`);
+  console.log("");
+  console.log("# Top 3 (contraste): " + topKeys.join(", "));
+  console.log("");
+  console.log("=== CONTEÚDO DO POST WORST ===");
+  console.log("");
+
+  if (worstRow.path && fs.existsSync(worstRow.path)) {
+    console.log(fs.readFileSync(worstRow.path, "utf8"));
+  } else {
+    console.log(`(arquivo não encontrado: ${worstRow.path})`);
+  }
+
+  console.log("");
+  console.log("=== DEFESAS EM QUE ESTE POST PERDEU ===");
+  console.log("");
+  const losses = collectDefensesForLoser(worstRow.key, 5);
+  if (losses.length === 0) {
+    console.log("(nenhuma defesa textual encontrada em derrotas)");
+  } else {
+    for (const d of losses) {
+      console.log(`--- ${d.file}`);
+      console.log(`(venceu: ${d.winner})`);
+      console.log("");
+      console.log(d.body);
+      console.log("");
+    }
+  }
+
+  console.log("=== DEFESAS DE POSTS QUE VENCERAM (top 3) ===");
+  console.log("");
+  const wins = collectDefensesForWinners(topKeys, 5);
+  if (wins.length === 0) {
+    console.log("(nenhuma defesa textual encontrada para o top 3)");
+  } else {
+    for (const d of wins) {
+      console.log(`--- ${d.file}`);
+      console.log(`(vencedor: ${d.winner}, contra: ${d.loser})`);
+      console.log("");
+      console.log(d.body);
+      console.log("");
+    }
+  }
+
+  nextStep(`edite o post em ${worstRow.path} para diminuir o gap observado entre ele e os melhores, mantendo o espírito do post. Expanda, corte ou reescreva conforme necessário. Não há método prescrito — o resultado é o que importa.`);
 }
 
 function buildPathToKeyIndex() {
