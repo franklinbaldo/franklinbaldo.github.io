@@ -13,6 +13,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "hronir": "node scripts/hronir/index.js",
+    "hronir:next": "node scripts/hronir/index.js next",
     "hronir:init": "node scripts/hronir/index.js init",
     "hronir:continue": "node scripts/hronir/index.js continue",
     "hronir:decide": "node scripts/hronir/index.js decide",

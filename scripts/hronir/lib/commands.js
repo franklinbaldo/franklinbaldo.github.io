@@ -305,6 +305,30 @@ export function continueCmd() {
   }
 }
 
+export function next(initOptions = {}) {
+  const sessionPath = SESSION_PATH;
+  if (!fs.existsSync(sessionPath)) {
+    console.log("Nenhuma sessão ativa: iniciando nova rodada.");
+    init(initOptions);
+    return;
+  }
+
+  const session = JSON.parse(fs.readFileSync(sessionPath, "utf8"));
+  console.log(`Sessão detectada: state=${session.state}, ${session.completed ?? 0}/${session.target ?? 0} matches.`);
+
+  if (session.state === "deciding") {
+    nextStep(`Decisão pendente. Rode: npm run hronir:decide --winner <a_or_b> --clash "<confronto>" --winner-defense "<defesa>" --loser-critique "<critica>"`);
+    return;
+  }
+
+  if (session.state === "need_edit") {
+    editWorst();
+    return;
+  }
+
+  continueCmd();
+}
+
 export function decide(args) {
   const sessionPath = SESSION_PATH;
   if (!fs.existsSync(sessionPath)) {

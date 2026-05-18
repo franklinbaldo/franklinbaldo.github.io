@@ -1,10 +1,31 @@
 #!/usr/bin/env node
-import { init, continueCmd, decide, ranking, worst, editWorst, migrate, doctor, end, editCommit } from "./lib/commands.js";
+import { createRequire } from "node:module";
+
+function preflight() {
+  const require = createRequire(import.meta.url);
+  const required = ["gray-matter", "openskill"];
+  const missing = [];
+  for (const pkg of required) {
+    try {
+      require.resolve(pkg);
+    } catch {
+      missing.push(pkg);
+    }
+  }
+  if (missing.length > 0) {
+    console.error(`Erro: dependências ausentes em node_modules: ${missing.join(", ")}.`);
+    console.error("Rode `npm install` na raiz do projeto antes de chamar o hronir.");
+    process.exit(1);
+  }
+}
+preflight();
+
+const { init, continueCmd, decide, ranking, worst, editWorst, migrate, doctor, end, editCommit, next } = await import("./lib/commands.js");
 
 const [, , cmd, ...args] = process.argv;
 
 function usage() {
-  console.error("Uso: hronir {init [--matches N] [--skip-edit] [--skip-rating] [--agent-id <id>] [--eval-lang <lang>] [--min-appearances N]|continue|decide --winner <a_or_b> [--agent-id <id>] --clash <text> --winner-defense <text> --loser-critique <text>|ranking|worst|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force]}");
+  console.error("Uso: hronir {next [init-opts]|init [--matches N] [--skip-edit] [--skip-rating] [--agent-id <id>] [--eval-lang <lang>] [--min-appearances N]|continue|decide --winner <a_or_b> [--agent-id <id>] --clash <text> --winner-defense <text> --loser-critique <text>|ranking|worst|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force]}");
   process.exit(1);
 }
 
@@ -41,6 +62,28 @@ switch (cmd) {
   case "continue":
     continueCmd();
     break;
+  case "next":
+  case "auto": {
+    let matchesOpt = 10;
+    const mIdx = args.indexOf("--matches");
+    if (mIdx !== -1 && args[mIdx + 1]) {
+      matchesOpt = parseInt(args[mIdx + 1], 10) || 10;
+    }
+    const skipEdit = args.includes("--skip-edit");
+    const skipRating = args.includes("--skip-rating");
+    if (skipRating) matchesOpt = 0;
+    let agentId = "human";
+    const agentIdIdx = args.indexOf("--agent-id") !== -1 ? args.indexOf("--agent-id") : args.indexOf("--agent");
+    if (agentIdIdx !== -1 && args[agentIdIdx + 1]) agentId = args[agentIdIdx + 1];
+    let evalLang = "pt";
+    const evalLangIdx = args.indexOf("--eval-lang") !== -1 ? args.indexOf("--eval-lang") : args.indexOf("--lang");
+    if (evalLangIdx !== -1 && args[evalLangIdx + 1]) evalLang = args[evalLangIdx + 1];
+    let minAppearances = null;
+    const minAppIdx = args.indexOf("--min-appearances") !== -1 ? args.indexOf("--min-appearances") : args.indexOf("--min-app");
+    if (minAppIdx !== -1 && args[minAppIdx + 1]) minAppearances = parseInt(args[minAppIdx + 1], 10) || null;
+    next({ matches: matchesOpt, skipEdit, skipRating, agentId, evalLang, minAppearances });
+    break;
+  }
   case "decide":
     decide(args);
     break;
