@@ -118,8 +118,9 @@ EOF
       override=$(extract_field override "$f")
       [ "$override" != "null" ] && [ -n "$override" ] && winner="$override"
       [ "$winner" = "TODO" ] && continue
-      a_key=$(awk '/^post_a:/{f=1; next} f && /key:/{sub(/.*key:[[:space:]]*/,""); print; exit}' "$f")
-      b_key=$(awk '/^post_b:/{f=1; next} f && /key:/{sub(/.*key:[[:space:]]*/,""); print; exit}' "$f")
+      a_key=$(awk '/^post_a:/{f=1; next} f && /(key|slug):/{sub(/.*(key|slug):[[:space:]]*/,""); print; exit}' "$f")
+      b_key=$(awk '/^post_b:/{f=1; next} f && /(key|slug):/{sub(/.*(key|slug):[[:space:]]*/,""); print; exit}' "$f")
+      [ -z "$a_key" ] || [ -z "$b_key" ] && continue
       APPEARANCES[$a_key]=$((${APPEARANCES[$a_key]:-0}+1))
       APPEARANCES[$b_key]=$((${APPEARANCES[$b_key]:-0}+1))
       if [ "$winner" = "a" ]; then
