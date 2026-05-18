@@ -420,25 +420,35 @@ function collectDefensesForLoser(loserKey, limit = 5) {
     const winnerSideKey = winner === "a" ? aKey : bKey;
     if (loserSideKey !== loserKey) continue;
 
-    let body = (content || "").replace(/^\s*<!--\s*TODO\s*-->\s*$/m, "").trim();
-    if (!body) continue;
-
-    let parsedCritique = data.critique || null;
-    const clashMatch = body.match(/# O Confronto\s*\n([\s\S]*?)(?=# O Vencedor|# O Perdedor|$)/i);
-    const winnerMatch = body.match(/# O Vencedor\s*\n([\s\S]*?)(?=# O Confronto|# O Perdedor|$)/i);
-    const loserMatch = body.match(/# O Perdedor\s*\n([\s\S]*?)(?=# O Confronto|# O Vencedor|$)/i);
-
-    if (clashMatch || winnerMatch || loserMatch) {
-      const parsedClash = clashMatch ? clashMatch[1].trim() : "";
-      const parsedWinner = winnerMatch ? winnerMatch[1].trim() : "";
-      const parsedLoser = loserMatch ? loserMatch[1].trim() : "";
-      body = `[Confronto]\n${parsedClash}\n\n[Defesa]\n${parsedWinner}`;
-      parsedCritique = parsedLoser;
+    // New-schema matches (post-#145) carry the prose in frontmatter fields.
+    // Prefer those; fall back to body parsing for legacy matches.
+    let body = "";
+    let parsedCritique = null;
+    if (data.clash || data.winner_defense || data.loser_critique) {
+      const c = (data.clash && data.clash !== "TODO") ? data.clash : "";
+      const w = (data.winner_defense && data.winner_defense !== "TODO") ? data.winner_defense : "";
+      const l = (data.loser_critique && data.loser_critique !== "TODO") ? data.loser_critique : "";
+      body = `[Confronto]\n${c}\n\n[Defesa]\n${w}`;
+      parsedCritique = l || null;
     } else {
-      const parts = body.split(/\n---\s*\n\s*(?:#+\s*)?Critique(?:\s*:)?\s*\n/i);
-      if (parts.length > 1) {
-        body = parts[0].trim();
-        parsedCritique = parts[1].trim();
+      body = (content || "").replace(/^\s*<!--\s*TODO\s*-->\s*$/m, "").trim();
+      if (!body) continue;
+      parsedCritique = data.critique || null;
+      const clashMatch = body.match(/# O Confronto\s*\n([\s\S]*?)(?=# O Vencedor|# O Perdedor|$)/i);
+      const winnerMatch = body.match(/# O Vencedor\s*\n([\s\S]*?)(?=# O Confronto|# O Perdedor|$)/i);
+      const loserMatch = body.match(/# O Perdedor\s*\n([\s\S]*?)(?=# O Confronto|# O Vencedor|$)/i);
+      if (clashMatch || winnerMatch || loserMatch) {
+        const parsedClash = clashMatch ? clashMatch[1].trim() : "";
+        const parsedWinner = winnerMatch ? winnerMatch[1].trim() : "";
+        const parsedLoser = loserMatch ? loserMatch[1].trim() : "";
+        body = `[Confronto]\n${parsedClash}\n\n[Defesa]\n${parsedWinner}`;
+        parsedCritique = parsedLoser;
+      } else {
+        const parts = body.split(/\n---\s*\n\s*(?:#+\s*)?Critique(?:\s*:)?\s*\n/i);
+        if (parts.length > 1) {
+          body = parts[0].trim();
+          parsedCritique = parts[1].trim();
+        }
       }
     }
 
@@ -471,15 +481,21 @@ function collectDefensesForWinners(winnerKeys, limit = 5) {
     const loserSideKey = winner === "a" ? bKey : aKey;
     if (!set.has(winnerSideKey)) continue;
 
-    let body = (content || "").replace(/^\s*<!--\s*TODO\s*-->\s*$/m, "").trim();
-    if (!body) continue;
-
-    const clashMatch = body.match(/# O Confronto\s*\n([\s\S]*?)(?=# O Vencedor|# O Perdedor|$)/i);
-    const winnerMatch = body.match(/# O Vencedor\s*\n([\s\S]*?)(?=# O Confronto|# O Perdedor|$)/i);
-    if (clashMatch || winnerMatch) {
-      const parsedClash = clashMatch ? clashMatch[1].trim() : "";
-      const parsedWinner = winnerMatch ? winnerMatch[1].trim() : "";
-      body = `[Confronto]\n${parsedClash}\n\n[Defesa]\n${parsedWinner}`;
+    let body;
+    if (data.clash || data.winner_defense) {
+      const c = (data.clash && data.clash !== "TODO") ? data.clash : "";
+      const w = (data.winner_defense && data.winner_defense !== "TODO") ? data.winner_defense : "";
+      body = `[Confronto]\n${c}\n\n[Defesa]\n${w}`;
+    } else {
+      body = (content || "").replace(/^\s*<!--\s*TODO\s*-->\s*$/m, "").trim();
+      if (!body) continue;
+      const clashMatch = body.match(/# O Confronto\s*\n([\s\S]*?)(?=# O Vencedor|# O Perdedor|$)/i);
+      const winnerMatch = body.match(/# O Vencedor\s*\n([\s\S]*?)(?=# O Confronto|# O Perdedor|$)/i);
+      if (clashMatch || winnerMatch) {
+        const parsedClash = clashMatch ? clashMatch[1].trim() : "";
+        const parsedWinner = winnerMatch ? winnerMatch[1].trim() : "";
+        body = `[Confronto]\n${parsedClash}\n\n[Defesa]\n${parsedWinner}`;
+      }
     }
 
     out.push({
@@ -525,9 +541,11 @@ export function editWorst() {
   let minApps = MIN_APPEARANCES;
   if (fs.existsSync(sessionPath)) {
     const session = JSON.parse(fs.readFileSync(sessionPath, "utf8"));
-    if (session.state === "ready_for_next" && session.completed < session.target) {
-      console.error(`Erro: Você ainda possui ${session.target - session.completed} matches pendentes na sessão atual.`);
-      console.error(`Finalize a avaliação dos matches antes de editar o pior post.`);
+    const midMatch = ["reading_a", "reading_b", "deciding"].includes(session.state);
+    const matchesPending = (session.target ?? 0) > (session.completed ?? 0);
+    if (midMatch || (session.state === "ready_for_next" && matchesPending)) {
+      console.error(`Erro: Há um match em andamento (estado: ${session.state}, ${session.completed ?? 0}/${session.target ?? 0}).`);
+      console.error(`Finalize a avaliação dos matches com \`npm run hronir:continue\` / \`npm run hronir:decide\` antes de editar o pior post.`);
       process.exit(1);
     }
     if (session.minAppearances !== undefined && session.minAppearances !== null) {
