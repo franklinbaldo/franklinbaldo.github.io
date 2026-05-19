@@ -6,9 +6,15 @@ import { t } from "./i18n";
 
 const read = (p: string) => readFileSync(resolve(process.cwd(), p));
 
-const frauncesBold = read("node_modules/@fontsource/fraunces/files/fraunces-latin-700-normal.woff");
-const interRegular = read("node_modules/@fontsource/inter/files/inter-latin-400-normal.woff");
-const interSemibold = read("node_modules/@fontsource/inter/files/inter-latin-600-normal.woff");
+const frauncesBold = read(
+  "node_modules/@fontsource/fraunces/files/fraunces-latin-700-normal.woff"
+);
+const interRegular = read(
+  "node_modules/@fontsource/inter/files/inter-latin-400-normal.woff"
+);
+const interSemibold = read(
+  "node_modules/@fontsource/inter/files/inter-latin-600-normal.woff"
+);
 
 const avatarDataUri = `data:image/png;base64,${read("public/avatar.png").toString("base64")}`;
 const monsteraDataUri = `data:image/svg+xml;base64,${read("public/monstera.svg").toString("base64")}`;
@@ -83,7 +89,11 @@ function fitTypography(title: string): { titleSize: number; descCap: number } {
 }
 
 type El = { type: string; props: Record<string, unknown> };
-const h = (type: string, props: Record<string, unknown> = {}, ...children: unknown[]): El => ({
+const h = (
+  type: string,
+  props: Record<string, unknown> = {},
+  ...children: unknown[]
+): El => ({
   type,
   props: { ...props, children: children.length === 1 ? children[0] : children },
 });
@@ -115,8 +125,13 @@ export function buildTree(input: CardInput): El {
       src: avatarDataUri,
       width: AVATAR_SIZE,
       height: AVATAR_SIZE,
-      style: { display: "flex", width: "100%", height: "100%", objectFit: "cover" },
-    }),
+      style: {
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+      },
+    })
   );
 
   const eyebrow = h(
@@ -135,7 +150,7 @@ export function buildTree(input: CardInput): El {
         justifyContent: "center",
       },
     },
-    t(lang, "og.siteEyebrow").toUpperCase(),
+    t(lang, "og.siteEyebrow").toUpperCase()
   );
 
   // When the artistic QR is cached, show it under the avatar. Otherwise
@@ -147,7 +162,12 @@ export function buildTree(input: CardInput): El {
           src: `data:image/png;base64,${qrPng.toString("base64")}`,
           width: QR_SIZE,
           height: QR_SIZE,
-          style: { display: "flex", width: QR_SIZE, height: QR_SIZE, borderRadius: 12 },
+          style: {
+            display: "flex",
+            width: QR_SIZE,
+            height: QR_SIZE,
+            borderRadius: 12,
+          },
         }),
         h(
           "div",
@@ -165,7 +185,7 @@ export function buildTree(input: CardInput): El {
               justifyContent: "center",
             },
           },
-          t(lang, "og.qrHint").toUpperCase(),
+          t(lang, "og.qrHint").toUpperCase()
         ),
       ]
     : [
@@ -185,7 +205,7 @@ export function buildTree(input: CardInput): El {
               wordBreak: "break-all",
             },
           },
-          ("franklinbaldo.github.io" + (input.path || "/")).replace(/\/$/, ""),
+          ("franklinbaldo.github.io" + (input.path || "/")).replace(/\/$/, "")
         ),
       ];
 
@@ -203,9 +223,8 @@ export function buildTree(input: CardInput): El {
     },
     eyebrow,
     avatar,
-    ...bottomBlock,
+    ...bottomBlock
   );
-
 
   const titleEl = h(
     "div",
@@ -219,7 +238,7 @@ export function buildTree(input: CardInput): El {
         color: PALETTE.ink,
       },
     },
-    title,
+    title
   );
 
   const descEl = description
@@ -236,7 +255,7 @@ export function buildTree(input: CardInput): El {
             marginTop: 30,
           },
         },
-        description,
+        description
       )
     : null;
 
@@ -254,7 +273,7 @@ export function buildTree(input: CardInput): El {
       },
     },
     titleEl,
-    ...(descEl ? [descEl] : []),
+    ...(descEl ? [descEl] : [])
   );
 
   const row = h(
@@ -273,7 +292,7 @@ export function buildTree(input: CardInput): El {
       },
     },
     leftColumn,
-    textColumn,
+    textColumn
   );
 
   // Terracotta cobogó tile on the right, extending left far enough to
@@ -359,7 +378,7 @@ export function buildTree(input: CardInput): El {
     leafA,
     leafB,
     accentBar,
-    row,
+    row
   );
 }
 

@@ -38,7 +38,7 @@ What changes in serious mode:
 - Hedges must do real defensive work, not be ornamental
 - Citations must be checked, not associative
 - "I do not know" is still acceptable, but accompanied by
-  characterization of *what* would resolve the not-knowing
+  characterization of _what_ would resolve the not-knowing
 
 What does not change:
 
@@ -105,9 +105,9 @@ For each problem identified, choose one of three responses:
 - **(a) Cut.** The move was ornament; remove it.
 - **(b) Reformulate for precision.** The move is doing real work but
   is stated too loosely.
-- **(c) Keep with explicit disclaimer.** *"I am overstating, and I
-  know it"*, *"there is reason to suspect — though no careful
-  reader would let me get away with stating it flatly — that..."*
+- **(c) Keep with explicit disclaimer.** _"I am overstating, and I
+  know it"_, _"there is reason to suspect — though no careful
+  reader would let me get away with stating it flatly — that..."_
 
 Option (c) is often the strongest move — the admission preserves the
 gesture and disarms the critic in one motion. Use (c) when the move
@@ -122,13 +122,13 @@ precision used to name the successes.
 
 This is **not** the same as defensive hedging. Limitations are
 admissions of where the argument does not reach. Hedges are
-decorations on arguments that *do* reach. Confusion between the two
+decorations on arguments that _do_ reach. Confusion between the two
 is the most common failure of serious-mode writing.
 
-A useful test: a limitation should be falsifiable. *"This pattern
-fails in domains without discrete units of action"* is a real
-limitation — you can name domains and check. *"Of course, more
-research is needed"* is hedge ornament — it commits to nothing.
+A useful test: a limitation should be falsifiable. _"This pattern
+fails in domains without discrete units of action"_ is a real
+limitation — you can name domains and check. _"Of course, more
+research is needed"_ is hedge ornament — it commits to nothing.
 
 ## Anti-patterns of argument
 
@@ -156,7 +156,7 @@ tightening, functional fidelity check, reference pool — **see
 Two modifications specific to serious mode:
 
 - **Visual apparatus, image memes:** serious-mode posts typically
-  use *fewer* image memes (1 maximum, often zero) and lean on
+  use _fewer_ image memes (1 maximum, often zero) and lean on
   mermaid, pull quotes, and footnotes when visual rest is needed.
   The reader is in a more formal register; image memes can deflate.
 

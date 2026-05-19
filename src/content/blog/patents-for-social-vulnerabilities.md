@@ -20,7 +20,7 @@ Software has CVEs. The [Common Vulnerabilities and Exposures database](https://w
 
 ## A third option
 
-A researcher — or, yes, a former criminal — documents a repeatable social vector: the specific psychological triggers, execution steps, target demographics. Files it. The filing is published immediately; the patent application *is* the disclosure. Corporations license the patent to build training and defenses. The researcher earns royalties from defensive licensing.
+A researcher — or, yes, a former criminal — documents a repeatable social vector: the specific psychological triggers, execution steps, target demographics. Files it. The filing is published immediately; the patent application _is_ the disclosure. Corporations license the patent to build training and defenses. The researcher earns royalties from defensive licensing.
 
 The black hat currently has two options: exploit the vulnerability (high reward, high risk), or disclose it for free (zero reward). This adds a third: patent the vulnerability. Zero risk, high reward.
 
@@ -36,7 +36,7 @@ The enforcement asymmetry: patent infringement suits work when defendants have a
 
 The knowledge problem: who verifies that a disclosed technique is genuine and distinct? Patent examiners assess novelty by searching prior art. The prior art for social engineering is scattered across police reports, victim testimonies, security conference talks, and lore. There is no corpus.
 
-None of these kill the idea, exactly. They make it hard. The prior art problem might be solvable with a tiered system that doesn't require full novelty, just first *documented* articulation. The enforcement asymmetry is real but patent infringement isn't the only enforcement mechanism — you could use it as an additional tool against the ones who do have assets: platforms, infrastructure providers, payment processors, money mules with accounts. The knowledge problem is a version of the same problem CVE has, and CVE functions anyway, imperfectly, which is better than not at all.
+None of these kill the idea, exactly. They make it hard. The prior art problem might be solvable with a tiered system that doesn't require full novelty, just first _documented_ articulation. The enforcement asymmetry is real but patent infringement isn't the only enforcement mechanism — you could use it as an additional tool against the ones who do have assets: platforms, infrastructure providers, payment processors, money mules with accounts. The knowledge problem is a version of the same problem CVE has, and CVE functions anyway, imperfectly, which is better than not at all.
 
 What keeps me returning to this is the incentive structure. Right now there is no legitimate market for the knowledge that social engineers possess. That knowledge gets sold on dark forums or used directly. Creating a legitimate market — even a strange one that involves IP rights over attack patterns — changes the rational calculus at the margin. Some people at the margin would take the legitimate route. Probably not most people. Margins are margins.
 

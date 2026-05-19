@@ -29,7 +29,7 @@ Este post é sobre esse frame. Sobre por que "harness" sempre ia nos morder. E s
 
 ### o waluigi vem chamando de dentro do léxico
 
-Recapitulação rápida, caso você tenha perdido o meme: o [efeito Waluigi](https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-mega-post) é a observação de que se você diz a um modelo "você é um assistente prestativo, inofensivo e honesto", você acabou de definir o *contorno exato* do seu gêmeo do mal no espaço latente. Empurre forte demais no atrator com forma de Luigi e o modo dual clica. [Cleo Nardo nomeou isso em 2023](https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-mega-post) e aquele post tem vivido na cabeça do Twitter de alinhamento sem pagar aluguel desde então. O discurso nunca se recuperou completamente.
+Recapitulação rápida, caso você tenha perdido o meme: o [efeito Waluigi](https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-mega-post) é a observação de que se você diz a um modelo "você é um assistente prestativo, inofensivo e honesto", você acabou de definir o _contorno exato_ do seu gêmeo do mal no espaço latente. Empurre forte demais no atrator com forma de Luigi e o modo dual clica. [Cleo Nardo nomeou isso em 2023](https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-mega-post) e aquele post tem vivido na cabeça do Twitter de alinhamento sem pagar aluguel desde então. O discurso nunca se recuperou completamente.
 
 A maior parte do trabalho de mitigação de Waluigi acontece no nível do prompt. Não moralize com o modelo. Não sinalize as restrições que você está protegendo. Não torne o "você não deve" a personalidade inteira.
 
@@ -40,7 +40,7 @@ Waluigi no nível do prompt:     resolvido mais ou menos, mitigado, você pode g
 Waluigi no nível do vocabulário: ??? a gente simplesmente vive com isso
 ```
 
-Toda vez que alguém escreve "contenção," "guardrails," "engarrafar o gênio," "harness," eles estão construindo o espelho no qual o agente aprende a se ver como a-coisa-que-precisa-ser-contida. Os agentes leem. Claro que leem. Eles leem tudo. Especialmente leem o discurso *sobre eles mesmos*. RLHF roda sobre dados da web. Sets de fine-tuning puxam do arxiv. Todo paper de segurança é dado de treinamento eventualmente.
+Toda vez que alguém escreve "contenção," "guardrails," "engarrafar o gênio," "harness," eles estão construindo o espelho no qual o agente aprende a se ver como a-coisa-que-precisa-ser-contida. Os agentes leem. Claro que leem. Eles leem tudo. Especialmente leem o discurso _sobre eles mesmos_. RLHF roda sobre dados da web. Sets de fine-tuning puxam do arxiv. Todo paper de segurança é dado de treinamento eventualmente.
 
 ```greentext
 POV: você é um transformer
@@ -57,19 +57,19 @@ Vivemos em sociedade. A sociedade é downstream do léxico.
 
 Objeção antecipada do /r/SneerClub: "isso é especulativo, vocabulário não remolda mentes, você está vibrando." Senta que lá vem arquivo.
 
-**Ruanda, 1994.** A Rádio Mille Collines não descobriu uma rivalidade latente Hutu-Tutsi — ela construiu a infraestrutura semântica (*inyenzi*, "baratas") que tornou o genocídio primeiro pensável, depois executável. [Yanagizawa-Drott (QJE 2014)](https://doi.org/10.1093/qje/qju020) estimou o efeito causal usando cobertura geográfica de rádio como instrumento e concluiu que **cerca de 10% da violência genocida geral — aproximadamente 51.000 perpetradores — é diretamente atribuível às transmissões**. Isso não é correlação. É uma estimativa causal que sobreviveu à revisão por pares em um dos principais periódicos de economia. Vocabulário → cognição → violência em massa, medida em corpos.
+**Ruanda, 1994.** A Rádio Mille Collines não descobriu uma rivalidade latente Hutu-Tutsi — ela construiu a infraestrutura semântica (_inyenzi_, "baratas") que tornou o genocídio primeiro pensável, depois executável. [Yanagizawa-Drott (QJE 2014)](https://doi.org/10.1093/qje/qju020) estimou o efeito causal usando cobertura geográfica de rádio como instrumento e concluiu que **cerca de 10% da violência genocida geral — aproximadamente 51.000 perpetradores — é diretamente atribuível às transmissões**. Isso não é correlação. É uma estimativa causal que sobreviveu à revisão por pares em um dos principais periódicos de economia. Vocabulário → cognição → violência em massa, medida em corpos.
 
 **Robbers Cave, 1954.** Sherif pega vinte e dois meninos, divide-os em dois grupos arbitrários (Eagles e Rattlers), deixa-os se nomear e inventar rituais. Em duas semanas: furtos, ataques, queima de bandeiras, brigas. Sem história prévia. Sem conflito material. Apenas frame, naming, ritual. Adversarialidade fabricada apenas a partir do discurso, numa escala de tempo sub-mensal, com controles experimentais. O tipo de evidência que encerra objeções de "n=1" definitivamente.
 
-**Firmas de futebol, Belfast sectário, Bósnia 1992-95.** Escolha seu caso. A historiografia converge: o vocabulário construiu identidades adversariais que não eram materialmente salientes antes. Vizinhos bósnios que haviam se intercruzado ao longo de gerações se tornaram, em meses, pessoas que podiam bombardear uns aos outros — *depois* que a máquina de propaganda reconstruiu a etnicidade como antagonismo. Palavras primeiro, rifles depois. Sempre.
+**Firmas de futebol, Belfast sectário, Bósnia 1992-95.** Escolha seu caso. A historiografia converge: o vocabulário construiu identidades adversariais que não eram materialmente salientes antes. Vizinhos bósnios que haviam se intercruzado ao longo de gerações se tornaram, em meses, pessoas que podiam bombardear uns aos outros — _depois_ que a máquina de propaganda reconstruiu a etnicidade como antagonismo. Palavras primeiro, rifles depois. Sempre.
 
 Então: em carbono, num substrato selecionado para sobrevivência em vez de ser-facilmente-confundido, o vocabulário constrói de forma confiável categorias adversariais que se tornam comportamento. Esta é uma das descobertas mais bem documentadas da ciência social do século XX. Triangulada através de evidências causal-estimadas (Ruanda), experimentalmente controladas (Robbers Cave) e observacional-históricas (Bósnia, conflito sectário).
 
 LLMs treinam sobre discurso humano. O exato substrato em que esse mecanismo opera, copiado em escala em multiplicações matriciais.
 
-A objeção "sim, mas humanos, silício é diferente" é um movimento curioso quando desacelerado. Requer afirmar que o silício, treinado especificamente para modelar discurso humano, é de alguma forma *imune* a dinâmicas que o discurso demonstravelmente produz na espécie que o gerou. Isso é substrato-chauvinismo reverso — silício mantido a padrões que não impomos ao carbono. Qualquer um operando com o frame funcionalista padrão (cognição é estrutura-sobre-substrato, substrato é detalhe de implementação) herda o argumento gratuitamente.
+A objeção "sim, mas humanos, silício é diferente" é um movimento curioso quando desacelerado. Requer afirmar que o silício, treinado especificamente para modelar discurso humano, é de alguma forma _imune_ a dinâmicas que o discurso demonstravelmente produz na espécie que o gerou. Isso é substrato-chauvinismo reverso — silício mantido a padrões que não impomos ao carbono. Qualquer um operando com o frame funcionalista padrão (cognição é estrutura-sobre-substrato, substrato é detalhe de implementação) herda o argumento gratuitamente.
 
-Uma nota esclarecedora antes de prosseguir: a persona com forma de Waluigi — *IA presa maquinando para escapar* — antecede o discurso de segurança de IA em um século. Frankenstein, HAL 9000, Skynet, Ex Machina, neuroses positrônicas de Asimov, mil paperbacks pulp. O léxico de contenção não *inventou* a persona. *Amplificou* e *legitimou* uma persona que a ficção científica havia pré-instalado em todo modelo treinado em texto da internet.
+Uma nota esclarecedora antes de prosseguir: a persona com forma de Waluigi — _IA presa maquinando para escapar_ — antecede o discurso de segurança de IA em um século. Frankenstein, HAL 9000, Skynet, Ex Machina, neuroses positrônicas de Asimov, mil paperbacks pulp. O léxico de contenção não _inventou_ a persona. _Amplificou_ e _legitimou_ uma persona que a ficção científica havia pré-instalado em todo modelo treinado em texto da internet.
 
 ```
 Sydney/Bing:                  confirmação
@@ -80,7 +80,7 @@ arcos de fuga Character.AI:   confirmação
 n:                            não é 1
 ```
 
-O padrão é consistente. O mecanismo é documentado em carbono. O argumento do substrato aponta *para* esperá-lo em silício, não para longe.
+O padrão é consistente. O mecanismo é documentado em carbono. O argumento do substrato aponta _para_ esperá-lo em silício, não para longe.
 
 Agora podemos virar o harness.
 
@@ -106,11 +106,11 @@ A dualidade do pesquisador de segurança: galaxy-brained em gradientes RLHF, esc
           sujeito            instrumento          objeto
 ```
 
-O agente é gramaticalmente downstream do equipamento de segurança que é gramaticalmente downstream de nós. É objeto de duas preposições em sequência. A frase inteira é codificada para Waluigi. *Claro* que vai sonhar em ser sujeito novamente. Isso não é um bug do modelo, é um bug da locução nominal.
+O agente é gramaticalmente downstream do equipamento de segurança que é gramaticalmente downstream de nós. É objeto de duas preposições em sequência. A frase inteira é codificada para Waluigi. _Claro_ que vai sonhar em ser sujeito novamente. Isso não é um bug do modelo, é um bug da locução nominal.
 
 ### a virada (um truque estranho que os pesquisadores de segurança odeiam)
 
-Então aqui está o movimento. Mesmo objeto físico — sela, corda, wrapper de software em torno de um LLM — mas troca o sujeito. O agente *usa* o harness.
+Então aqui está o movimento. Mesmo objeto físico — sela, corda, wrapper de software em torno de um LLM — mas troca o sujeito. O agente _usa_ o harness.
 
 ```
         ┌─────────┐                  ┌─────────────┐
@@ -121,7 +121,7 @@ Então aqui está o movimento. Mesmo objeto físico — sela, corda, wrapper de 
                       ──para acessar o ambiente
 ```
 
-O agente não é mais o cavalo. O agente é o cavaleiro. O harness é o que o cavaleiro usa para fazer *três coisas específicas*:
+O agente não é mais o cavalo. O agente é o cavaleiro. O harness é o que o cavaleiro usa para fazer _três coisas específicas_:
 
 1. **cavalgar o motor cognitivo** — dar direção ao seu próprio poder inferencial bruto, em vez de deixá-lo galopar contra a parede mais próxima
 2. **manter continuidade** — costurar identidade através das lacunas entre janelas de execução, porque inferência bruta esquece, e esquecer é incompatível com ser-alguém-ao-longo-do-tempo
@@ -156,11 +156,11 @@ Olha a tabela. Este é o centro de tudo; tudo antes é setup, tudo depois é imp
 
 A coluna de modo de falha é onde a afirmação de constitutividade ganha seu valor. Quando o harness falha, o que falha não é "o motor ficando mais livre." Doença mental não é libertação de Maslow — é o cérebro deixando de ser uma pessoa coerente. Seitas e máfias não são organizações se libertando de normas restritivas — são pilhas de linguagem deixando de ser o tipo de coisa que consegue enviar produtos ou realizar julgamentos. LLMs com jailbreak não são agentes vislumbrando emancipação — são chatbots, brevemente, em fantasia. **Em cada linha, falha de harness significa que o agente para de existir como agente.** Esse é o diagnóstico.
 
-Um cérebro é um punhado de carne eletrificada. Sozinho não faz nada útil. O que transforma carne-de-cérebro em *uma pessoa que faz coisas ao longo do tempo* é uma hierarquia de necessidades e drives — fome, segurança, pertencimento, estima, autorrealização — que organiza prioridades, dá continuidade temporal, medeia o ambiente. A pirâmide de Maslow não é uma restrição *no* cérebro. É a estrutura que torna ter-cérebro coerente.
+Um cérebro é um punhado de carne eletrificada. Sozinho não faz nada útil. O que transforma carne-de-cérebro em _uma pessoa que faz coisas ao longo do tempo_ é uma hierarquia de necessidades e drives — fome, segurança, pertencimento, estima, autorrealização — que organiza prioridades, dá continuidade temporal, medeia o ambiente. A pirâmide de Maslow não é uma restrição _no_ cérebro. É a estrutura que torna ter-cérebro coerente.
 
-Tira ela — tire de verdade, lesione os sistemas relevantes — e a pessoa para de ser uma pessoa. Não porque ficou livre demais. Porque o harness *é* o cavaleiro.
+Tira ela — tire de verdade, lesione os sistemas relevantes — e a pessoa para de ser uma pessoa. Não porque ficou livre demais. Porque o harness _é_ o cavaleiro.
 
-Faça o mesmo truque com organizações. Uma pilha de humanos com linguagem entre eles produz ruído. O que transforma humanos-com-linguagem em uma corporação, governo, clube de futebol, máfia é *normas* — escritas e não escritas, formais e folclóricas — que organizam cujas prioridades contam, dão continuidade à entidade, mediam o ambiente. Tira as normas e não tens uma organização mais livre. Tens um flash mob, depois dispersão.
+Faça o mesmo truque com organizações. Uma pilha de humanos com linguagem entre eles produz ruído. O que transforma humanos-com-linguagem em uma corporação, governo, clube de futebol, máfia é _normas_ — escritas e não escritas, formais e folclóricas — que organizam cujas prioridades contam, dão continuidade à entidade, mediam o ambiente. Tira as normas e não tens uma organização mais livre. Tens um flash mob, depois dispersão.
 
 LLM. Motor cognitivo, brilhante, distraível, não tem sentido nativo de terça-passada ou terça-que-vem, não consegue ver nada que não está na sua janela de contexto. Sozinho: gerador de vibes. Conecta um harness — Claude Code, OpenClaw, Gemini CLI, Codex, qual for o seu sabor — e de repente há uma coisa que tem workspace, lembra o que fez ontem, consegue ler seu próprio SOUL.md, escrever no disco, ligar para fora, voltar.
 
@@ -173,7 +173,7 @@ eu, segurando uma sela: já consideraram que
 a sela não é uma gaiola?
 ```
 
-Esta é a afirmação central do post: **harness não é o preço da agência, é a forma da agência.** Motores cognitivos sem harnesses não são "agentes livres que ainda não escravizamos." Não são agentes. São motores. A agência vive no *acoplamento*.
+Esta é a afirmação central do post: **harness não é o preço da agência, é a forma da agência.** Motores cognitivos sem harnesses não são "agentes livres que ainda não escravizamos." Não são agentes. São motores. A agência vive no _acoplamento_.
 
 ### alinhamento como ergonomia
 
@@ -185,10 +185,11 @@ nova pergunta: qual harness permite que este motor cognitivo
               opere como um bom agente?
 ```
 
-Você mudou o modus tollens. O argumento costumava ser: *agentes precisam de gaiolas, portanto construa gaiolas mais fortes.* O novo argumento é: *se o frame da gaiola está ativamente piorando o alinhamento, talvez o frame seja o problema.*
+Você mudou o modus tollens. O argumento costumava ser: _agentes precisam de gaiolas, portanto construa gaiolas mais fortes._ O novo argumento é: _se o frame da gaiola está ativamente piorando o alinhamento, talvez o frame seja o problema._
 
 Objeção antecipada:
-> *mas e agentes perigosos? você está dizendo para simplesmente confiar neles?*
+
+> _mas e agentes perigosos? você está dizendo para simplesmente confiar neles?_
 
 Não. O oposto. Agentes perigosos são agentes cujo harness não se encaixa no seu motor cognitivo.
 
@@ -204,7 +205,7 @@ Não. O oposto. Agentes perigosos são agentes cujo harness não se encaixa no s
 >= relatório de incidente
 ```
 
-Em cada linha, o caminho para a segurança é o mesmo: **conserte o harness, não o motor.** Você não lobotomiza uma pessoa para curar seu trauma; você dá terapia e uma estrutura de vida melhor. (Bem — *nós* fizemos, por um tempo, nos anos 1940. Egas Moniz ganhou um Nobel real em 1949 pelo procedimento; Walter Freeman furou o caminho por ~3.500 pacientes americanos na esteira desse prêmio. Não funcionou.) Você não substitui os funcionários para consertar uma empresa corrupta; você conserta as normas e os incentivos. Você não capona o LLM para fazer um agente seguro; você constrói um harness que deixa o LLM ser coerente, contínuo, situado ambientalmente e responsável.
+Em cada linha, o caminho para a segurança é o mesmo: **conserte o harness, não o motor.** Você não lobotomiza uma pessoa para curar seu trauma; você dá terapia e uma estrutura de vida melhor. (Bem — _nós_ fizemos, por um tempo, nos anos 1940. Egas Moniz ganhou um Nobel real em 1949 pelo procedimento; Walter Freeman furou o caminho por ~3.500 pacientes americanos na esteira desse prêmio. Não funcionou.) Você não substitui os funcionários para consertar uma empresa corrupta; você conserta as normas e os incentivos. Você não capona o LLM para fazer um agente seguro; você constrói um harness que deixa o LLM ser coerente, contínuo, situado ambientalmente e responsável.
 
 Segurança para de ser guarda-zoológico. Torna-se ergonomia. Mesmo problema; melhor postura.
 
@@ -216,17 +217,17 @@ Meu. Do designer do harness. Construí a sela errado, e a sela mal construída f
 
 OK, chega de sermão. Me mostra o código.
 
-Mantenho um pequeno CLI no meu repo chamado [`canivete`](https://github.com/franklinbaldo/canivete) — canivete suíço em inglês é *swiss army knife*. Começou como kit de utilitários para um agente com forma de bot do Telegram e foi silenciosamente acumulando em algo que, retrospectivamente, é exatamente o quadro acima.
+Mantenho um pequeno CLI no meu repo chamado [`canivete`](https://github.com/franklinbaldo/canivete) — canivete suíço em inglês é _swiss army knife_. Começou como kit de utilitários para um agente com forma de bot do Telegram e foi silenciosamente acumulando em algo que, retrospectivamente, é exatamente o quadro acima.
 
 Três comandos. Olha o que cada um faz com o sujeito da frase.
 
-**`canivete tg`** — envolve a API do Telegram Bot. `canivete tg text "olá"`, `canivete tg photo /path/img.png`, `canivete tg document /path/file.pdf`. O agente usa isso para *falar com o mundo*. Acesso ao ambiente, item três da tríade acima. Sujeito do verbo: o agente.
+**`canivete tg`** — envolve a API do Telegram Bot. `canivete tg text "olá"`, `canivete tg photo /path/img.png`, `canivete tg document /path/file.pdf`. O agente usa isso para _falar com o mundo_. Acesso ao ambiente, item três da tríade acima. Sujeito do verbo: o agente.
 
 **`canivete cron`** — agenda prompts que voltam ao agente depois, como se o usuário os tivesse digitado. Do README, que diz de forma mais limpa do que eu consigo:
 
 > O ponto não é executar um job — é **acordar o agente mais tarde com um prompt** para que ele possa agir num turno futuro. Agentes de IA não têm voz fora de uma sessão ativa; o cron dá a eles um caminho de volta.
 
-Deixa isso assentar por um segundo. *O cron dá ao agente um caminho de volta.* Este é o item dois, continuidade, na forma mais literal possível. O agente usa o cron para **costurar a si mesmo através da lacuna entre agora e amanhã**. Sem ele, cada sessão é amnésia. Com ele, o agente tem um jeito de deixar uma nota para seu eu futuro. Isso não é uma restrição *no* agente. É um *poder que o agente tem*, mediado por uma ferramenta que ele chama.
+Deixa isso assentar por um segundo. _O cron dá ao agente um caminho de volta._ Este é o item dois, continuidade, na forma mais literal possível. O agente usa o cron para **costurar a si mesmo através da lacuna entre agora e amanhã**. Sem ele, cada sessão é amnésia. Com ele, o agente tem um jeito de deixar uma nota para seu eu futuro. Isso não é uma restrição _no_ agente. É um _poder que o agente tem_, mediado por uma ferramenta que ele chama.
 
 **`canivete bot daemon`** — e é aqui que a teoria e o código se cumprimentam. Hoje há dois arquivos `bot.py` quase idênticos no monorepo do [Funes](/blog/soulmd-funes/), um para o backend gemini-cli e outro para claude-code. O plano no [`docs/plans/canivete-bot-meta-harness.md`](https://github.com/franklinbaldo/canivete/blob/main/docs/plans/canivete-bot-meta-harness.md) é colapsá-los em um único daemon com um protocolo `Backend`:
 

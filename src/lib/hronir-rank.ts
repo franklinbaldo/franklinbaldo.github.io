@@ -22,7 +22,10 @@ export function getRanking(): RankRow[] {
   return _cache;
 }
 
-export function getRankByKey(): Map<string, { rank: number; row: RankRow; total: number }> {
+export function getRankByKey(): Map<
+  string,
+  { rank: number; row: RankRow; total: number }
+> {
   const rows = getRanking();
   const map = new Map<string, { rank: number; row: RankRow; total: number }>();
   for (let i = 0; i < rows.length; i++) {

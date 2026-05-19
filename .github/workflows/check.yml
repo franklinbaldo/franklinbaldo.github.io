@@ -19,6 +19,9 @@ jobs:
 
       - run: npm ci
 
+      - name: Prettier check
+        run: npx prettier --check .
+
       - name: Hrönir doctor
         run: npm run hronir:doctor
 
