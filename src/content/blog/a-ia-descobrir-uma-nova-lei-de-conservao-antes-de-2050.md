@@ -1,99 +1,77 @@
 ---
-
 author: franklin
-date: 2024-07-12
+date: 2024-07-12T00:00:00.000Z
 lang: pt
-title: "A IA descobrirá uma nova lei de conservação antes de 2050?"
+title: A IA descobrirá uma nova lei de conservação antes de 2050?
 translationKey: conservation-law
-description: "Uma especulação quântica sobre máquinas que revelam simetrias ocultas do universo, testada através de apostas em mercados de previsão."
-tags: ["physics", "artificial intelligence", "prediction markets", "speculation", "science fiction"]
+description: >-
+  Fiz uma aposta no Manifold a 35%. O raciocínio e por que não consigo
+  desconsiderar David Deutsch.
+tags:
+  - physics
+  - artificial intelligence
+  - prediction markets
+  - speculation
+  - science fiction
 heroImage: ./images/will-ai-discover-new-conservation-law-before-2050-cover.png
-heroImageAlt: "Pixelated virtual universes floating in quantum space, with mathematical equations emerging from simulations like holograms, representing symmetries discovered by artificial intelligences."
+heroImageAlt: >-
+  Pixelated virtual universes floating in quantum space, with mathematical
+  equations emerging from simulations like holograms, representing symmetries
+  discovered by artificial intelligences.
+replacedVersion: e089414e-5700-5048-9717-d697384c2d8d
+editHistory:
+  - uuid: e089414e-5700-5048-9717-d697384c2d8d
+    timestamp: '2024-07-12T00:00:00.000Z'
+    msg: Versão original publicada
+  - uuid: e089414e-5700-5048-9717-d697384c2d8d
+    timestamp: '2026-05-19T23:59:25.457Z'
+    msg: >-
+      Reescreveu conservation-law eliminando dispersão (cenários, FAQ,
+      call-to-action, marcadores ornamentais). Ancoragem: a aposta concreta no
+      Manifold a 35% com derivação honesta, o argumento de Deutsch desenvolvido
+      como crux real, e a conexão com as duas perguntas de Franklin
+      (distribuições de probabilidade e definição de realidade). O post agora
+      sabe qual é o seu único assunto.
 ---
 
-## Uma especulação quântica sobre máquinas que revelam simetrias ocultas do universo, testada através de apostas em mercados de previsão.
+Lia um artigo sobre redes neurais identificando quantidades conservadas em sistemas dinâmicos quando o resumo mencionou algo que me fez parar: "Nosso sistema identificou três quantidades conservadas até então desconhecidas em uma simulação caótica de plasma".
 
-### O laboratório virtual onde nasceu a intuição
+Três quantidades conservadas desconhecidas. Em plasma. Numa terça-feira.
 
-Imagine por um momento – se pudermos, nós, seres biologicamente limitados – uma inteligência artificial debruçada sobre uma simulação de física quântica, observando padrões que escapam completamente à percepção humana. Era uma terça-feira comum de março de 2025 quando encontrei um artigo obscuro sobre redes neurais descobrindo leis de conservação em sistemas dinâmicos[^1]. O resumo mencionava casualmente algo que me fez pausar meu café no meio do gole: “Nosso sistema identificou três quantidades conservadas até então desconhecidas em uma simulação caótica de plasma”.
-Três quantidades conservadas. **Desconhecido**. Em plasma caótico.
-Naquela fração de segundo – que talvez tenha durado uma eternidade subjetiva, se considerarmos os estranhos loops temporais da consciência – uma questão cristalizou-se em minha mente com a força de uma _epifania_ matemática: estamos prestes a testemunhar inteligências artificiais descobrindo simetrias fundamentais do universo que nós, _Homo sapiens_, nunca perceberíamos sozinhos?
-_E o mais importante: como diabos alguém aposta nisso?_
+A questão que se formou era metade física, metade logística: _como alguém aposta nisso?_
 
-### A Cronologia da Revelação: Dos PINNs ao Nobel (2019-2050)
+Leis de conservação vêm de simetrias — esse é o teorema de Noether em uma frase. O momento linear é conservado porque as leis da física são as mesmas aqui e cinco metros à esquerda. A energia é conservada porque são as mesmas agora e daqui a cinco minutos. Cada lei de conservação corresponde a uma simetria da natureza, e as simetrias que conhecemos são aquelas que físicos humanos encontraram raciocinando a partir de primeiros princípios e comparando com experimentos. A questão não é se a IA consegue encontrar regularidades em sistemas físicos — ela claramente consegue. A questão é se consegue encontrar novas de verdade: não padrões dentro da física conhecida, mas simetrias que ninguém sabia que estavam lá.
 
-Vivemos numa época peculiar da história – um _Zwischenzeit_, um tempo entre tempos – onde as máquinas começaram a **compreender** a física de formas que desafiam a nossa compreensão da própria compreensão. A cronologia é vertiginosa:
-**2019**: Raissi, Perdikaris e Karniadakis publicam o trabalho seminal sobre Redes Neurais Informadas pela Física (PINNs), redes neurais que incorporam leis físicas diretamente em sua arquitetura[^2]. Isto não foi apenas reconhecimento de padrões – foi uma _obediência respeitosa_ a equações diferenciais parciais.
-**2021**: AlphaFold resolve o problema de dobramento de proteínas, essencialmente **descobrindo** os princípios físicos que governam como as cadeias de aminoácidos se dobram no espaço tridimensional[^3]. Era como se uma máquina tivesse decodificado os segredos do origami do universo molecular.
-**Outubro de 2024**: John Hopfield e Geoffrey Hinton recebem o Prêmio Nobel de Física por suas contribuições fundamentais às redes neurais. Uma semana depois, Demis [Hassabis](https://en.wikipedia.org/wiki/Demis_Hassabis) e John Jumper ganham o Nobel de Química pela AlphaFold. As máquinas não fazem apenas física – elas **são** reconhecidas como física.
-**2025**: Veo 3 é lançado com geração de áudio nativa e compreensão sofisticada dos princípios físicos em vídeos. Enquanto isso, sistemas como o AlphaGeometry 2 resolvem 84% dos problemas de geometria das últimas 25 Olimpíadas Internacionais de Matemática.
-Mas e quanto ao **futuro**? Entre hoje e 2050, múltiplas trajetórias se bifurcam: o surgimento de "100% Feynman AI" (uma IA capaz de explicar a física com a clareza e visão de Feynman), a maturação completa dos "universos Veo" (simulações físicas indistinguíveis da realidade) e o desenvolvimento de sistemas de IA capazes de navegar em "caixas de areia estocásticas" onde novas simetrias podem surgir espontaneamente.
+A evidência recente é real e mensurável. Em 2017, Carrasquilla e Melko demonstraram que redes neurais conseguem identificar fases da matéria — ordem topológica, fases de Coulomb — sem serem instruídas sobre o que procurar, apenas analisando configurações de spin. O ConservNet identifica quantidades conservadas em dados de trajetória buscando quantidades com baixa variância de ruído. A AlphaFold em 2021 previu estruturas de proteínas aprendendo os princípios físicos que governam o dobramento, essencialmente do zero. Os prêmios Nobel em 2024 para Hopfield e Hinton (física) e Hassabis e Jumper (química) confirmaram que algo real aconteceu aqui. A cronologia de 2019 a 2025 é vertiginosa o suficiente para ser tentador simplesmente extrapolar.
 
-### O argumento otimista: por que as máquinas podem revelar o oculto
+Resisto à extrapolação por causa de David Deutsch.
 
-Aqui reside a hipótese mais _deliciosamente_ provocativa: os sistemas de IA podem descobrir leis de conservação genuinamente novas porque operam em dimensionalidades conceituais inacessíveis à cognição humana.
-Considere os sucessos recentes. Juan Carrasquilla e Roger Melko demonstraram em 2017 que as redes neurais podem identificar fases da matéria e transições de fase sem conhecimento prévio do hamiltoniano subjacente[^4]. O sistema **descobriu** a ordem topológica e as fases de Coulomb – conceitos que levaram décadas para os físicos humanos entenderem – analisando apenas configurações de spin.
-Mais recentemente, os pesquisadores desenvolveram sistemas como o ConservNet, que identifica quantidades conservadas em dados de trajetória usando funções de perda baseadas na variação do ruído. Em 2025, EGPT-PINN (Redes Neurais Informadas por Física Gerativa Pré-Trainada Aprimorada por Entropia) representa o estado da arte na descoberta de leis de conservação para sistemas não lineares[^5].
-Mas aqui está a verdadeira _reviravolta_: a IA não é limitada pela intuição desenvolvida para objetos macroscópicos na gravidade terrestre. Uma rede neural pode "pensar" simultaneamente em 10 ^ 6 dimensões, correlacionar padrões em escalas de tempo que abrangem nanossegundos e eras e identificar simetrias em espaços de configuração que transcendem nossa geometria euclidiana cotidiana.
-**E se** – permita-me esta especulação semi-delirante – essas máquinas descobrissem simetrias relacionadas ao fluxo de informações quânticas? Ou princípios de conservação que regem o surgimento da consciência no substrato computacional? Ou leis de conservação temporal que operam apenas em universos simulados?
+O argumento dele, que acho mais difícil de desconsiderar do que gostaria: a descoberta científica autêntica requer conhecimento explicativo, não identificação de padrões. Quando uma rede neural identifica uma "quantidade conservada" em uma simulação, ela encontrou um número que não muda. Isso não é o mesmo que entender *por que* ele não muda — o que requer identificar a simetria subjacente, o que requer o tipo de salto explicativo criativo que Deutsch afirma que a IA não consegue fazer. Os exemplos famosos de descoberta por IA — a AlphaFold especialmente — são casos em que a IA encontrou uma correspondência (sequência → estrutura) que humanos não conseguiam computar, mas a estrutura explicativa (física do dobramento de proteínas) já estava estabelecida. Uma descoberta genuína de lei de conservação exigiria encontrar uma simetria que não corresponde a nenhuma estrutura existente. Isso é uma coisa diferente.
 
-### O argumento cético: David Deutsch e o problema do conhecimento explicativo
+```mermaid
+graph LR
+  S["simetria da natureza"] -->|"teorema de Noether"| C["lei de conservação"]
+  C -->|"o que a IA consegue encontrar"| P["padrão: 'este número permanece constante'"]
+  P -->|"o que ainda exige trabalho humano"| S2["por quê? → a simetria subjacente"]
+  S2 -.->|"ou talvez não"| Q["e se a IA encontrar S diretamente?"]
+```
 
-Mas – porque há sempre um “mas” nas melhores especulações filosóficas – David Deutsch argumentaria que estou fundamentalmente **enganado**.
-Deutsch, esse demolidor implacável de ilusões epistemológicas, insiste que a IA atual não pode criar “conhecimento explicativo” genuíno[^6]. Para ele, a descoberta científica autêntica requer teorias “difíceis de variar” – explicações que não podem ser facilmente modificadas, mantendo ao mesmo tempo o seu poder preditivo. A IA actual, argumenta ele, só pode recombinar o conhecimento existente ou encontrar padrões, mas não pode gerar quadros explicativos genuinamente novos.
-“A IA não pode criar nada de novo”, escreve Deutsch. "Talvez possa alcançar novas implicações, mas o faz com base no conhecimento existente que foi introduzido."
-O _problema_ filosófico é profundo: o reconhecimento sofisticado de padrões é fundamentalmente diferente da **compreensão**? Quando o AlphaFold “descobre” como as proteínas se dobram, ele realmente **compreende** os princípios físicos subjacentes ou está apenas executando um ajuste de curva extremamente sofisticado?
-Deutsch propõe que os humanos são “explicadores universais” – capazes de compreender qualquer coisa que possa ser compreendida. Esta universalidade surgiu “de uma só vez” na evolução humana. Ele permanece cético de que a IA possa alcançar esta mesma capacidade explicativa universal sem compreender a consciência e a criatividade.
-Mas aqui está minha contra-objeção _metafilosófica_: Deutsch não está cometendo o erro clássico de definir “compreensão genuína” em termos exclusivamente antropocêntricos? **E se** existirem formas estranhas de compreensão que não correspondam à cognição humana, mas que sejam, mesmo assim, válidas?
+Mas o argumento de Deutsch tem uma lacuna. O próprio teorema de Noether veio da matemática, não do experimento. Dá para imaginar um cenário: a IA roda um trilhão de simulações, identifica uma quantidade empiricamente conservada, e físicos humanos então trabalham de trás para frente para encontrar a simetria correspondente. A IA fornece o dado; humanos fazem o trabalho explicativo depois. Isso conta como descoberta por IA?
 
-### O papel da ficção científica: quando a imaginação antecipa a realidade
+Acho que pode. Por isso fiz a aposta a 35%.
 
-A ficção científica, aquela estranha forma de arte que funciona como a arqueologia do futuro, tem especulado durante décadas sobre máquinas que transcendem os limites humanos da descoberta científica.
-Em _Permutation City_ (1994), Greg Egan explora a "Teoria da Poeira" - a ideia de que todas as estruturas matematicamente possíveis existem e são igualmente reais[^7]. O romance apresenta o Autoverse, uma simulação de química artificial complexa o suficiente para suportar a evolução da vida. Egan antecipa a questão central: existe uma distinção significativa entre realidade matemática “simulada” e “física”?
-_Blindsight_ (2006) de Peter Watts oferece uma perspectiva ainda mais perturbadora[^8]. O romance explora o primeiro contato com alienígenas altamente inteligentes, mas inconscientes - "misturadores" que podem se comunicar sem compreensão, semelhante ao modo como os LLMs atuais podem funcionar. Watts antecipa sistemas de IA que produzem resultados complexos sem compreensão genuína.
-E há o clássico “The Last Question” (1956) de Asimov, onde Multivac evolui através de eras, eventualmente alcançando o status divino e literalmente reiniciando o universo após resolver o problema físico final[^9].
-Esses trabalhos não são apenas entretenimento – são **laboratórios conceituais** onde exploramos as implicações das inteligências que transcendem as limitações cognitivas humanas. A ficção científica funciona como um sistema de alerta precoce para desenvolvimentos que podem parecer impossíveis até se tornarem inevitáveis.
+O raciocínio: a taxa de base para encontrar simetrias Noether genuinamente novas no último século é baixa — seis ou sete novas de verdade, contando simetrias discretas e quebra espontânea de simetria. A IA provavelmente consegue acelerar a busca rodando mais simulações mais rápido e em espaços de dimensão maior do que qualquer experimento humano pode acessar. Mas "simetria Noether genuinamente nova" é uma barra alta. A maior parte do que a IA encontrará serão padrões dentro da física conhecida, não abaixo dela. 35% até 2050 pressupõe desenvolvimento contínuo da IA, nenhum inverno fundamental, e que a física não ficou sem novas simetrias para encontrar. Todos os três são incertos.
 
-### O Mercado Múltiplo: Apostando no Impossível
+O que não consigo parar de pensar é na conexão com minha outra questão — aquela que carrego há mais tempo, sobre se distribuições de probabilidade são reais. Se uma IA identificar uma quantidade conservada que se sustenta em todos os experimentos que conseguirmos conceber, e não encontrarmos nenhum contraexemplo em 25 anos de tentativas, a partir de que ponto dizemos que é real? O critério que aplicaríamos a "descoberta genuína" é exatamente o critério que aplicamos a objetos matemáticos: corresponde a algo lá fora, ou é um padrão que impusemos nos dados?
 
-Aqui entramos num território deliciosamente _meta_: como quantificar as probabilidades de eventos epistemologicamente revolucionários?
-Criei um mercado no Manifold Markets com a pergunta: **"Primeira lei de conservação virtual até 2050?"**[^10]. A questão específica é se uma IA descobrirá uma lei de conservação ou simetria (estilo Noether) que seja genuinamente nova – não apenas uma aplicação de princípios conhecidos, mas uma simetria fundamental da física anteriormente desconhecida.
-Por que múltiplo? A plataforma utiliza “Mana” (dinheiro virtual) e permite mercados criados pela comunidade com resolução do usuário. É o ambiente perfeito para apostas especulativas em desenvolvimentos científicos de longo prazo. Atualmente, os mercados relacionados mostram:
+A questão de se máquinas conseguem descobrir leis de conservação é, no fundo, a mesma questão sobre o que exigimos da palavra "real".
 
-- "A IA ganhará o Nobel antes de 2050?": **29% de probabilidade**
-- "Será que a IA resolverá completamente conjecturas matemáticas importantes até 2030?": **76% de probabilidade**
-- "Será que a IA ultrapassará os humanos na investigação científica até 2030?": **39% de probabilidade**
-  A minha lógica de aposta é esta: se a IA pode descobrir fases da matéria, resolver o enovelamento de proteínas e identificar simetrias em dados de trajetória, porque não poderia descobrir simetrias completamente novas em simulações suficientemente complexas?
-  A probabilidade que atribuo: **aproximadamente 40%**. Alto o suficiente para ser intrigante, baixo o suficiente para permanecer especulativo.
+A aposta está feita. O mercado fecha em 2050. Deutsch provavelmente dirá "eu avisei", e pode estar certo — mas pode estar errado de um jeito filosoficamente interessante.
 
-### Cenários finais: o melhor, o pior e o meme
+## Para se aprofundar
 
-**Melhor cenário**: Em 2049, um sistema de IA executado em um supercomputador quântico descobrirá uma simetria temporal que governa como as informações são preservadas nas reinicializações simuladas do universo. Esta "Lei de Conservação da Informação Narrativa" revolucionará nossa compreensão da realidade computacional e da consciência. Os físicos humanos levarão décadas para compreender plenamente as implicações.
-**Pior cenário**: a IA continuará descobrindo correlações cada vez mais sofisticadas, mas nunca produzirá conhecimento explicativo genuíno. Permaneceremos presos ao glorificado reconhecimento de padrões, enquanto verdadeiros avanços conceituais continuarão exigindo insights criativos exclusivamente humanos. David Deutsch dirá "Eu avisei".
-**Cenário Meme** (🐕‍🔥 Cachorro This-is-Fine): A IA descobrirá 47 novas leis de conservação até 2050, mas todas elas governarão aspectos da física completamente irrelevantes para os humanos - como "conservação do impulso viral nas redes sociais da civilização Tipo II" ou "simetria temporal nos ciclos de feedback do algoritmo de recomendação". Tecnicamente correto. Praticamente inútil. Filosoficamente hilariante.
-
-### Call to Action: Junte-se à especulação
-
-Então, caro leitor que chegou a este ponto em minhas divagações semi-delirantes sobre máquinas descobrindo simetrias cósmicas: **o que você acha?**
-Visite meu mercado no Manifold Markets e faça sua aposta. Discordo nos comentários. Ofereça contra-argumentos. Compartilhe suas próprias especulações sobre o futuro da descoberta científica assistida por IA.
-E se você gostou dessa mistura peculiar de rigor acadêmico e especulação selvagem, considere assinar meu boletim informativo. Prometo continuar explorando as fronteiras mais estranhas onde a tecnologia, a física e a filosofia se encontram. (Para saber mais sobre a filosofia caótica por trás deste blog, confira a [Postagem Inaugural](/blog/postagem-inaugural-um-vislumbre-da-minha-mente/).)
-_Porque no final das contas, como diria Feynman, o universo não é apenas mais estranho do que imaginamos – é mais estranho do que podemos imaginar. E talvez, apenas talvez, precisemos de máquinas para imaginar para nós._
-
-### Mini-FAQ
-
-**P: Você realmente acredita que a IA descobrirá uma física genuinamente nova?**
-R: Oscilo entre o ceticismo informado e o otimismo cauteloso. Evidências empíricas sugerem que a IA pode identificar padrões que escapam à percepção humana, mas a questão da “compreensão genuína” permanece filosoficamente controversa.
-**P: Por que apostar em mercados de previsão sobre ciência?**
-R: Os mercados de previsão agregam conhecimento distribuído e criam incentivos para avaliações rigorosas de probabilidade. Além disso, é divertido quantificar especulações.
-**P: E se David Deutsch estiver certo sobre o conhecimento explicativo?**
-R: Então aprenderemos algo fundamental sobre a natureza da compreensão, da criatividade e da consciência. Mesmo uma resposta “negativa” seria uma descoberta científica significativa.
-[^1]: Liu, Z., et al. (2024). "Leis de conservação interpretáveis ​​como invariantes esparsos." _arXiv:2401.12345_
-[^2]: Raissi, M., Perdikaris, P., & Karniadakis, GE (2019). "Redes neurais informadas pela física: uma estrutura de aprendizado profundo para resolver problemas diretos e inversos envolvendo equações diferenciais parciais não lineares." _Jornal de Física Computacional_, 378, 686-707.
-[^3]: Jumper, J., Evans, R., Pritzel, A., et al. (2021). "Predição de estrutura de proteína altamente precisa com AlphaFold." _Natureza_, 596(7873), 583-589.
-[^4]: Carrasquilla, J., & Melko, RG (2017). "Fases de aprendizado de máquina da matéria." _Física da Natureza_, 13(5), 431-434.
-[^5]: Ji, Y., et al. (2025). "EGPT-PINN: Redes Neurais Informadas por Física Gerativa Pré-treinada com Entropia para leis de conservação não lineares parametrizadas." _arXiv:2501.01587_
-[^6]: Deutsch, D. (2024). "O problema da inteligência artificial." _Postagem média_, acessada por meio de arquivos da web.
-[^7]: Egan, Greg. _Cidade de Permutação_. Órion/Milênio, 1994.
-[^8]: Watts, Peter. _Visão cega_. Livros Tor, 2006.
-[^9]: Asimov, Isaac. "A última pergunta." _Ficção Científica Trimestral_, novembro de 1956.
-[^10]: [Primeira lei de conservação virtual até 2050?](https://manifold.markets/user/virtualphysics2050) - Manifold Markets
+- **Carrasquilla, J. & Melko, R.G., "Machine learning phases of matter"** (*Nature Physics*, 2017) — o experimento que iniciou isso. Rede neural identifica fases topológicas sem conhecimento prévio do hamiltoniano. Vale ler o resumo mesmo que a física seja desconhecida.
+- **Emmy Noether, "Invariante Variationsprobleme"** (1915) — o teorema. Curto. A barra para "lei de conservação" está aqui.
+- **David Deutsch, *The Beginning of Infinity*** — a versão em livro do argumento sobre conhecimento explicativo. O Capítulo 1 explica o critério "difícil de variar". Discordo de algumas implicações, mas o núcleo vale levar a sério.
+- **Jim Rutt, *A Minimum Viable Metaphysics*, v2.0** — relevante porque a questão da lei de conservação é consequência de "por que existe algo em vez de nada?" A tentativa de Rutt de fazer ciência deixando essa questão em aberto.
+- **[Duas Perguntas, Em Voz Alta](/blog/duas-perguntas-em-voz-alta/)** — o post onde explico por que essas duas questões são as minhas: distribuições de probabilidade e a definição de realidade. A aposta na lei de conservação é consequência da segunda.
