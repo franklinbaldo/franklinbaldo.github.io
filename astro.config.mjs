@@ -27,6 +27,16 @@ import { rehypeWrapTables } from "./src/lib/rehype-wrap-tables.mjs";
 // https://astro.build/config
 export default defineConfig({
   site: "https://franklinbaldo.github.io",
+  vite: {
+    ssr: {
+      external: ["remark", "gray-matter", "openskill"],
+    },
+    build: {
+      rollupOptions: {
+        external: ["remark", "gray-matter", "openskill"],
+      },
+    },
+  },
   integrations: [
     mdx(),
     sitemap({

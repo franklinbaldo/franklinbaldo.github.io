@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { OUT_DIR, RATES_DIR } from "./posts.js";
+import { OUT_DIR, RATES_DIR } from "./constants.js";
 
 export function listMatchFiles() {
   const out = [];

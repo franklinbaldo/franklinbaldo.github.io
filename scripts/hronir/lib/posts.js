@@ -4,9 +4,9 @@ import crypto from "node:crypto";
 import matter from "gray-matter";
 import { remark } from "remark";
 
-export const POSTS_DIR = "src/content/blog";
-export const OUT_DIR = ".routines/hronir";
-export const RATES_DIR = path.join(OUT_DIR, "rates");
+export { POSTS_DIR } from "./constants.js";
+export { OUT_DIR } from "./constants.js";
+export { RATES_DIR } from "./constants.js";
 
 // Stable namespace for hronir post-version UUIDs. Generated once; do not change.
 const HRONIR_NAMESPACE = "6f8a3c1e-2b94-5d7f-9e10-a4c8f2b6d031";

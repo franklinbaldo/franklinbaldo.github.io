@@ -7,7 +7,7 @@ title: "Postagem inaugural: Um vislumbre da minha mente"
 translationKey: inaugural-post
 description: "Uma introdução à natureza caótica e experimental deste jardim digital e à filosofia por trás dele."
 tags: ["introduction", "digital garden", "philosophy", "chaos"]
-heroImage: ./images/monstera-watercolor.png
+heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
 heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
 ---
 
