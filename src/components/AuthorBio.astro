@@ -1,5 +1,7 @@
 ---
+import { Image } from 'astro:assets';
 import { t, urlPrefix } from '../lib/i18n';
+import avatarImage from '../assets/images/avatar.png';
 
 interface Props {
   lang?: string;
@@ -13,7 +15,15 @@ const homeHref = `${urlPrefix(lang)}/`;
   <article>
     <header>
       <div class="bio-head">
-        <img class="bio-avatar" src="/avatar.png" alt="Franklin Baldo" width="64" height="64" loading="lazy" decoding="async" />
+        <Image 
+          class="bio-avatar" 
+          src={avatarImage} 
+          alt="Franklin Baldo" 
+          width={64} 
+          height={64} 
+          loading="lazy" 
+          decoding="async" 
+        />
         <hgroup>
           <h3>Franklin Baldo</h3>
           <p><small>{t(lang, 'author.label')}</small></p>

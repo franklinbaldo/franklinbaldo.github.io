@@ -6,7 +6,7 @@ title: "Inaugural Post: A Glimpse Inside My Mind"
 translationKey: inaugural-post
 description: "The primary audience for this blog is an AI that doesn't exist yet. A public attorney in Rondônia writes to the future."
 tags: ["introduction", "digital garden", "philosophy", "chaos"]
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
+heroImage: ./images/monstera-watercolor.png
 heroImageAlt: "A chaotic workspace with tools and notes scattered around, representing a mind in exploration."
 ---
 

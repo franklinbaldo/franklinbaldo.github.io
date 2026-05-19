@@ -1,113 +1,83 @@
 ---
+import { Image } from 'astro:assets';
 import { t, urlPrefix } from '../lib/i18n';
+import avatarImage from '../assets/images/avatar.png';
 
 interface Props {
-  lang?: string;
+  lang: string;
 }
 
 const { lang } = Astro.props;
-const homeAbout = `${urlPrefix(lang)}/about/`;
 const homeSearch = `${urlPrefix(lang)}/search/`;
 ---
 
 <aside class="home-author-rail" aria-label={t(lang, 'author.aboutEyebrow')}>
   <div class="rail-avatar" data-tooltip="Franklin Baldo" data-placement="bottom">
-    <img src="/avatar.png" alt="Franklin Baldo" width="96" height="96" loading="lazy" decoding="async" />
+    <Image 
+      src={avatarImage} 
+      alt="Franklin Baldo" 
+      width={96} 
+      height={96} 
+      loading="lazy" 
+      decoding="async" 
+    />
   </div>
 
   <p class="rail-eyebrow"><small>{t(lang, 'author.aboutEyebrow')}</small></p>
   <p class="rail-bio">{t(lang, 'author.tagline')}</p>
   <p class="rail-more">
-    <a href={homeAbout}>{t(lang, 'author.aboutMore')}</a>
+    <a href={`${urlPrefix(lang)}/about/`}>{t(lang, 'author.moreAbout')}</a>
+    <span>•</span>
+    <a href={homeSearch}>{t(lang, 'nav.search')}</a>
   </p>
-
-  <hr class="rail-divider" />
-
-  <p class="rail-eyebrow"><small>{t(lang, 'author.stayInLoop')}</small></p>
-  <ul class="rail-links">
-    <li>
-      <a href="/rss.xml">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-          <path d="M4 11a9 9 0 019 9"/>
-          <path d="M4 4a16 16 0 0116 16"/>
-          <circle cx="5" cy="19" r="1.4" fill="currentColor"/>
-        </svg>
-        <span>{t(lang, 'author.rssFeed')}</span>
-      </a>
-    </li>
-    <li>
-      <a href={homeSearch}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-          <circle cx="11" cy="11" r="7"/>
-          <line x1="16.2" y1="16.2" x2="21" y2="21"/>
-        </svg>
-        <span>{t(lang, 'author.searchEssays')}</span>
-      </a>
-    </li>
-  </ul>
 </aside>
 
 <style>
   .home-author-rail {
-    color: var(--pico-color);
+    text-align: center;
+    padding: 1.5rem 1rem;
+    background: var(--pico-card-background-color);
+    border-radius: var(--pico-border-radius);
+    border: 1px solid var(--pico-muted-border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: sticky;
+    top: 5.5rem;
   }
   .rail-avatar {
-    width: 96px;
-    height: 96px;
-    margin-bottom: 1rem;
-    color: var(--pico-primary);
+    margin-bottom: 0.5rem;
   }
   .rail-avatar img {
-    width: 100%;
-    height: 100%;
-    display: block;
     border-radius: 50%;
+    width: 96px;
+    height: 96px;
     object-fit: cover;
+    border: 2px solid var(--pico-primary);
+    background: var(--pico-background-color);
   }
   .rail-eyebrow {
-    margin: 0 0 .35rem;
-    font-size: 0.72rem;
-    font-weight: 600;
+    margin: 0;
     text-transform: uppercase;
-    letter-spacing: 0.16em;
-    color: var(--pico-primary);
-  }
-  .rail-bio {
-    margin: 0 0 .75rem;
-    font-size: 0.95rem;
-    line-height: 1.5;
+    letter-spacing: 0.05em;
     color: var(--pico-muted-color);
   }
-  .rail-more {
-    margin: 0 0 1.25rem;
-  }
-  .rail-divider {
-    border: 0;
-    border-top: 1px solid var(--pico-muted-border-color);
-    margin: 0 0 1rem;
-  }
-  .rail-links {
-    list-style: none;
-    padding: 0;
+  .rail-bio {
     margin: 0;
-    display: grid;
-    gap: 0.5rem;
-  }
-  .rail-links a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
     color: var(--pico-color);
+  }
+  .rail-more {
+    margin: 0.5rem 0 0;
+    font-size: 0.85rem;
+    display: flex;
+    gap: 0.5rem;
+    color: var(--pico-muted-color);
+  }
+  .rail-more a {
     text-decoration: none;
-    font-size: 0.92rem;
-  }
-  .rail-links a:hover {
-    color: var(--pico-primary);
-  }
-  .rail-links svg {
-    width: 18px;
-    height: 18px;
-    color: var(--pico-primary);
-    flex-shrink: 0;
+    font-weight: 500;
   }
 </style>

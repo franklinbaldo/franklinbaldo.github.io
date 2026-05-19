@@ -6,7 +6,7 @@ title: "Pontifex: A Novel Architecture for Semantic Probing"
 translationKey: pontifex-research
 description: "An architecture for probing semantic space from multiple angles at once — and why I keep returning to it even though nobody's built it yet."
 tags: ["artificial intelligence", "research", "interpretability", "semantic probing"]
-heroImage: ./images/pontifex-novel-architecture-semantic-probing-cover.png
+heroImage: ./images/cobogo-watercolor.png
 heroImageAlt: "Abstract geometric representation of neural network layers converging with glowing data streams."
 ---
 
