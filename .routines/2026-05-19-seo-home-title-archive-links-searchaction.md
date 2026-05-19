@@ -26,14 +26,14 @@ Estado ao chegar:
 
 ## PRs revisados e mergeados
 
-| PR | Título | Ação |
-|----|--------|------|
-| #151 | hronir run 2026-05-19T13-08-59 + edit-worst (pontifex-guide) | **Mergeado** (squash) — CI verde: check ✅ Kilo ✅ GitGuardian ✅ |
-| #139 | feat(seo/ux): og:image dimensions, article:author, TOC scroll observer, 404 i18n | **Mergeado** (squash) — CI verde: check ✅ Kilo ✅ GitGuardian ✅ |
-| #150 | Consolidação de PRs | **Pulado** — CI failed (build failure) |
-| #147 | hronir delegating-to-agents | **Pulado** — base desatualizada (fd64964) |
-| #124–128, #136 | hronir runs antigos | **Pulados** — base muito desatualizada, "Não auto-merge" |
-| #102 | Optimize profile visuals | **Pulado** — Kilo Code Review falhando, base extremamente desatualizada |
+| PR             | Título                                                                           | Ação                                                                    |
+| -------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| #151           | hronir run 2026-05-19T13-08-59 + edit-worst (pontifex-guide)                     | **Mergeado** (squash) — CI verde: check ✅ Kilo ✅ GitGuardian ✅       |
+| #139           | feat(seo/ux): og:image dimensions, article:author, TOC scroll observer, 404 i18n | **Mergeado** (squash) — CI verde: check ✅ Kilo ✅ GitGuardian ✅       |
+| #150           | Consolidação de PRs                                                              | **Pulado** — CI failed (build failure)                                  |
+| #147           | hronir delegating-to-agents                                                      | **Pulado** — base desatualizada (fd64964)                               |
+| #124–128, #136 | hronir runs antigos                                                              | **Pulados** — base muito desatualizada, "Não auto-merge"                |
+| #102           | Optimize profile visuals                                                         | **Pulado** — Kilo Code Review falhando, base extremamente desatualizada |
 
 ## Ações realizadas nesta sessão
 
@@ -42,10 +42,12 @@ Estado ao chegar:
 **Problema**: `title="Home"` gerava `<title>Home | Franklin Baldo</title>` no browser tab e snippets de busca. "Home" é um título fraco para SEO — não descreve o conteúdo nem atrai cliques.
 
 **Arquivos**:
+
 - `src/pages/index.astro`
 - `src/pages/pt/index.astro`
 
 **Mudança EN**:
+
 ```astro
 - title="Home"
 - description="Franklin Baldo — notes on AI, law, and systems."
@@ -54,6 +56,7 @@ Estado ao chegar:
 ```
 
 **Mudança PT**:
+
 ```astro
 - title="Início"
 - description="Franklin Baldo — notas sobre IA, direito e sistemas."
@@ -70,12 +73,14 @@ O `documentTitle` em PageLayout.astro detecta que o título já contém "Frankli
 **Problema**: Os badges "PT" (no arquivo EN) e "EN" (no arquivo PT) indicavam disponibilidade de tradução mas eram elementos `<span>` não clicáveis. Um usuário que queria ir para a versão em outro idioma precisava abrir o post e clicar no LanguageSwitcher.
 
 **Arquivos**:
+
 - `src/pages/archive.astro`
 - `src/pages/pt/archive.astro`
 
 **Mudança**: Substituídas as Sets (`ptKeys`, `enKeys`) por Maps (`ptByKey`, `enByKey`) que mapeiam `translationKey → post id`. Os badges foram convertidos de `<span>` para `<a>` com `href="/blog/${ptId}/"` (ou `enId`).
 
 **Resultado**:
+
 - Badge PT no arquivo EN → link direto para o post PT correspondente
 - Badge EN no arquivo PT → link direto para o post EN correspondente
 - Hover state adicionado (background mais escuro + underline)
@@ -89,6 +94,7 @@ O `documentTitle` em PageLayout.astro detecta que o título já contém "Frankli
 **Arquivo**: `src/layouts/PageLayout.astro`
 
 **Mudança**:
+
 ```json
 {
   "@type": "WebSite",
@@ -113,6 +119,7 @@ Em páginas PT, `inLanguage` é `pt-BR` e `urlTemplate` aponta para `/pt/search/
 **Problema**: `src/pages/search.astro` não tinha o prop `lang="en"`, o que fazia o WebSite schema usar o idioma default em vez de "en" explícito. Além disso, a SearchAction só é útil se a página de busca consegue processar o parâmetro `?q=` na URL.
 
 **Arquivos**:
+
 - `src/pages/search.astro`
 - `src/pages/pt/search.astro`
 
@@ -138,17 +145,17 @@ Em páginas PT, `inLanguage` é `pt-BR` e `urlTemplate` aponta para `/pt/search/
 
 ## Cobertura de idioma por página estática
 
-| Página EN | Página PT | LanguageSwitcher | Status |
-|-----------|-----------|-----------------|--------|
-| `/` | `/pt/` | ✅ | ✅ |
-| `/about/` | `/pt/about/` | ✅ | ✅ |
-| `/archive/` | `/pt/archive/` | ✅ | ✅ |
-| `/projects/` | `/pt/projects/` | ✅ | ✅ |
-| `/search/` | `/pt/search/` | ✅ | ✅ |
-| `/tags/` | `/pt/tags/` | ✅ | ✅ |
-| `/ranking/` | `/pt/ranking/` | ✅ | ✅ |
-| `/404` | `/pt/404` | ✅ | ✅ |
-| Posts EN | Posts PT | via translationKey | 31 pares ✅ |
+| Página EN    | Página PT       | LanguageSwitcher   | Status      |
+| ------------ | --------------- | ------------------ | ----------- |
+| `/`          | `/pt/`          | ✅                 | ✅          |
+| `/about/`    | `/pt/about/`    | ✅                 | ✅          |
+| `/archive/`  | `/pt/archive/`  | ✅                 | ✅          |
+| `/projects/` | `/pt/projects/` | ✅                 | ✅          |
+| `/search/`   | `/pt/search/`   | ✅                 | ✅          |
+| `/tags/`     | `/pt/tags/`     | ✅                 | ✅          |
+| `/ranking/`  | `/pt/ranking/`  | ✅                 | ✅          |
+| `/404`       | `/pt/404`       | ✅                 | ✅          |
+| Posts EN     | Posts PT        | via translationKey | 31 pares ✅ |
 
 Cobertura multilingual: **100% das páginas estáticas + 100% dos posts ativos**.
 
