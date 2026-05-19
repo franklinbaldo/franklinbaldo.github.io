@@ -96,7 +96,15 @@ const jsonLd = type === "article"
       "@type": "WebSite",
       name: "Franklin Baldo",
       url: Astro.site?.href,
-      inLanguage: "en-US",
+      inLanguage: langBcp47,
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${Astro.site ? new URL(lang === 'pt' ? '/pt/search/' : '/search/', Astro.site).href : '/search/'}?q={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
     };
 
 const personLd = {

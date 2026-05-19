@@ -2,7 +2,7 @@
 import PageLayout from "../layouts/PageLayout.astro";
 ---
 
-<PageLayout title="Search | Franklin Baldo" description="Full-text search across the garden." translations={{ pt: "/pt/search/" }}>
+<PageLayout title="Search | Franklin Baldo" description="Full-text search across the garden." lang="en" translations={{ pt: "/pt/search/" }}>
   <hgroup>
     <h1>Search</h1>
     <p><small>Full-text search across all essays. Index built with <a href="https://pagefind.app/">Pagefind</a>.</small></p>
@@ -14,4 +14,19 @@ import PageLayout from "../layouts/PageLayout.astro";
 
   <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
   <script is:inline type="module" src="/pagefind/pagefind-component-ui.js"></script>
+  <script is:inline>
+    // Pre-populate search from ?q= URL param (enables Google Sitelinks Searchbox action)
+    (() => {
+      const q = new URLSearchParams(location.search).get('q');
+      if (!q) return;
+      const tryInit = () => {
+        const box = document.querySelector('pagefind-searchbox');
+        if (!box) { setTimeout(tryInit, 80); return; }
+        box.setAttribute('query', q);
+        const ev = new CustomEvent('pagefind:init', { detail: { query: q } });
+        box.dispatchEvent(ev);
+      };
+      document.addEventListener('DOMContentLoaded', tryInit);
+    })();
+  </script>
 </PageLayout>
