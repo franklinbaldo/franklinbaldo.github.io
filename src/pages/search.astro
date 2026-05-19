@@ -15,18 +15,15 @@ import PageLayout from "../layouts/PageLayout.astro";
   <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
   <script is:inline type="module" src="/pagefind/pagefind-component-ui.js"></script>
   <script is:inline>
-    // Pre-populate search from ?q= URL param (enables Google Sitelinks Searchbox action)
+    // Pre-populate search from ?q= URL param (enables Google Sitelinks Searchbox action).
+    // Uses the documented pagefind-searchbox instance API: triggerSearch().
     (() => {
       const q = new URLSearchParams(location.search).get('q');
       if (!q) return;
-      const tryInit = () => {
+      customElements.whenDefined('pagefind-searchbox').then(() => {
         const box = document.querySelector('pagefind-searchbox');
-        if (!box) { setTimeout(tryInit, 80); return; }
-        box.setAttribute('query', q);
-        const ev = new CustomEvent('pagefind:init', { detail: { query: q } });
-        box.dispatchEvent(ev);
-      };
-      document.addEventListener('DOMContentLoaded', tryInit);
+        if (box && typeof box.triggerSearch === 'function') box.triggerSearch(q);
+      });
     })();
   </script>
 </PageLayout>

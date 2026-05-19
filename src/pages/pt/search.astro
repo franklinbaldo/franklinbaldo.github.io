@@ -23,14 +23,10 @@ import PageLayout from "../../layouts/PageLayout.astro";
     (() => {
       const q = new URLSearchParams(location.search).get('q');
       if (!q) return;
-      const tryInit = () => {
+      customElements.whenDefined('pagefind-searchbox').then(() => {
         const box = document.querySelector('pagefind-searchbox');
-        if (!box) { setTimeout(tryInit, 80); return; }
-        box.setAttribute('query', q);
-        const ev = new CustomEvent('pagefind:init', { detail: { query: q } });
-        box.dispatchEvent(ev);
-      };
-      document.addEventListener('DOMContentLoaded', tryInit);
+        if (box && typeof box.triggerSearch === 'function') box.triggerSearch(q);
+      });
     })();
   </script>
 </PageLayout>
