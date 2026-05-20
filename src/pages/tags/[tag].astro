@@ -34,24 +34,66 @@ interface Props {
 }
 
 const { tag, posts, hasPtCounterpart } = Astro.props;
+const count = posts.length;
+const description = `${count} ${count === 1 ? "essay" : "essays"} tagged #${tag} — Franklin Baldo's digital garden on AI, law, and process.`;
+
+const collectionLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: `#${tag}`,
+  description,
+  inLanguage: "en-US",
+  url: Astro.site ? new URL(`/tags/${tag}/`, Astro.site).href : `/tags/${tag}/`,
+  hasPart: posts.map((p) => ({
+    "@type": "BlogPosting",
+    headline: p.data.title,
+    url: Astro.site ? new URL(`/blog/${p.id}/`, Astro.site).href : `/blog/${p.id}/`,
+    datePublished: p.data.date.toISOString(),
+  })),
+};
 ---
 
 <PageLayout
   title={`#${tag} | Franklin Baldo`}
-  description={`Essays tagged #${tag}.`}
+  description={description}
   lang="en"
   translations={hasPtCounterpart ? { pt: `/pt/tags/${tag}/` } : {}}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(collectionLd)} is:inline slot="head" />
   <article>
     <header>
       <hgroup>
         <h1>#{tag}</h1>
-        <p><small>
-          {posts.length} {posts.length === 1 ? "post" : "posts"} · <a href="/tags/">all tags</a>
-          {hasPtCounterpart && (<> · <a href={`/pt/tags/${tag}/`}>🇧🇷 PT</a></>)}
-        </small></p>
+        <p>
+          <small>
+            {count} {count === 1 ? "essay" : "essays"} · <a href="/tags/">all tags</a>
+            {hasPtCounterpart && (
+              <> · <a class="lang-badge" href={`/pt/tags/${tag}/`} title="Ler em Português">PT</a></>
+            )}
+          </small>
+        </p>
       </hgroup>
     </header>
     {posts.map((post) => <PostCard post={post} />)}
   </article>
 </PageLayout>
+
+<style>
+  .lang-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--pico-primary) 15%, transparent);
+    color: var(--pico-primary);
+    border: 1px solid color-mix(in srgb, var(--pico-primary) 35%, transparent);
+    text-decoration: none;
+    vertical-align: middle;
+  }
+  .lang-badge:hover {
+    background: color-mix(in srgb, var(--pico-primary) 25%, transparent);
+    text-decoration: none;
+  }
+</style>

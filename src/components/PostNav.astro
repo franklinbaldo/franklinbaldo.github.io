@@ -1,0 +1,84 @@
+---
+interface Props {
+  prev: { href: string; title: string } | null;
+  next: { href: string; title: string } | null;
+  lang?: string;
+}
+const { prev, next, lang = "en" } = Astro.props;
+const prevLabel = lang === "pt" ? "← Anterior" : "← Previous";
+const nextLabel = lang === "pt" ? "Próximo →" : "Next →";
+const navLabel = lang === "pt" ? "Navegação entre posts" : "Post navigation";
+---
+
+{
+  (prev || next) && (
+    <nav class="post-nav" aria-label={navLabel}>
+      {prev ? (
+        <a class="post-nav-link post-nav-prev" href={prev.href}>
+          <span class="post-nav-dir">{prevLabel}</span>
+          <span class="post-nav-title">{prev.title}</span>
+        </a>
+      ) : (
+        <span />
+      )}
+      {next && (
+        <a class="post-nav-link post-nav-next" href={next.href}>
+          <span class="post-nav-dir">{nextLabel}</span>
+          <span class="post-nav-title">{next.title}</span>
+        </a>
+      )}
+    </nav>
+  )
+}
+
+<style>
+  .post-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-block: calc(var(--pico-spacing) * 2);
+    padding-top: calc(var(--pico-spacing) * 1.5);
+    border-top: 1px solid var(--pico-border-color);
+  }
+  .post-nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--pico-border-radius);
+    border: 1px solid var(--pico-border-color);
+    text-decoration: none;
+    color: inherit;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease;
+  }
+  .post-nav-link:hover {
+    border-color: var(--pico-primary);
+    background: color-mix(in srgb, var(--pico-primary) 6%, transparent);
+    text-decoration: none;
+  }
+  .post-nav-next {
+    text-align: right;
+  }
+  .post-nav-dir {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--pico-primary);
+    text-transform: uppercase;
+  }
+  .post-nav-title {
+    font-size: 0.9rem;
+    color: var(--pico-color);
+    line-height: 1.35;
+  }
+  @media (max-width: 600px) {
+    .post-nav {
+      grid-template-columns: 1fr;
+    }
+    .post-nav-next {
+      text-align: left;
+    }
+  }
+</style>

@@ -14,6 +14,7 @@ import { getRankByKey } from '../../lib/hronir-rank';
 import Comments from '../../components/Comments.astro';
 import SeriesContext from '../../components/SeriesContext.astro';
 import PostActionBar from '../../components/PostActionBar.astro';
+import PostNav from '../../components/PostNav.astro';
 import { getSeriesContext } from '../../lib/series';
 import { t, targetCopy, locale as localeFor, urlPrefix, DEFAULT_LANG } from '../../lib/i18n';
 
@@ -46,6 +47,17 @@ const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
 const tagsPrefix = `${urlPrefix(lang)}/tags`;
 
 const allPosts = await getCollection('blog');
+
+// Prev / next posts in the same language, ordered by date ascending.
+const postLang = lang ?? DEFAULT_LANG;
+const sameLangPosts = allPosts
+  .filter((p) => !p.data.draft && (p.data.lang ?? DEFAULT_LANG) === postLang)
+  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+const postIdx = sameLangPosts.findIndex((p) => p.id === post.id);
+const prevPost = postIdx > 0 ? sameLangPosts[postIdx - 1] : null;
+const nextPost = postIdx < sameLangPosts.length - 1 ? sameLangPosts[postIdx + 1] : null;
+const prevNav = prevPost ? { href: `/blog/${prevPost.id}/`, title: prevPost.data.title } : null;
+const nextNav = nextPost ? { href: `/blog/${nextPost.id}/`, title: nextPost.data.title } : null;
 const translationSiblings = translationKey
   ? allPosts.filter((p) => p.data.translationKey === translationKey && p.id !== post.id)
   : [];
@@ -152,6 +164,8 @@ const translationLinks = translationSiblings.map((p) => {
       <RelatedPosts currentId={post.id} tags={tags ?? []} lang={lang} />
 
       {series && <SeriesContext series={series} lang={lang ?? DEFAULT_LANG} variant="nav" />}
+
+      <PostNav prev={prevNav} next={nextNav} lang={lang} />
 
       <Webmentions url={new URL(Astro.url.pathname, Astro.site!)} />
 

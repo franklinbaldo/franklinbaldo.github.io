@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, date, lang, heroImage, heroImageAlt, featured, description } = post.data;
+const { title, date, lang, heroImage, heroImageAlt, featured, description, tags } = post.data;
 
 const postLang = lang ?? DEFAULT_LANG;
 const formattedDate = date.toLocaleDateString(locale(postLang), {
@@ -20,6 +20,8 @@ const wordCount = (post.body ?? '').trim().split(/\s+/).filter(Boolean).length;
 const minutesRead = Math.max(1, Math.round(wordCount / 220));
 
 const href = `/blog/${post.id}/`;
+const tagsPrefix = postLang === 'pt' ? '/pt/tags' : '/tags';
+const visibleTags = (tags ?? []).slice(0, 3);
 ---
 
 <article data-post-lang={postLang}>
@@ -49,6 +51,37 @@ const href = `/blog/${post.id}/`;
   </header>
   <p>{blurb}</p>
   <footer>
+    {visibleTags.length > 0 && (
+      <p class="card-tags">
+        {visibleTags.map((tag) => (
+          <a href={`${tagsPrefix}/${tag}/`} class="card-tag">#{tag}</a>
+        ))}
+      </p>
+    )}
     <a href={href}>{t(postLang, 'post.continueReading')}</a>
   </footer>
 </article>
+
+<style>
+  .card-tags {
+    margin-bottom: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  .card-tag {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.1em 0.45em;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--pico-secondary) 12%, transparent);
+    color: var(--pico-secondary);
+    border: 1px solid color-mix(in srgb, var(--pico-secondary) 30%, transparent);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .card-tag:hover {
+    background: color-mix(in srgb, var(--pico-secondary) 22%, transparent);
+    text-decoration: none;
+  }
+</style>
