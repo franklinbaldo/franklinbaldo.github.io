@@ -23,9 +23,31 @@ for (const post of posts) {
   byYear.get(year)!.push(post);
 }
 const years = [...byYear.keys()].sort((a, b) => b - a);
+
+function estMinutes(body: string | undefined): number {
+  if (!body) return 1;
+  const words = body.trim().split(/\s+/).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
+const archiveLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Archive — Franklin Baldo",
+  description: "All essays by Franklin Baldo, organized by year.",
+  inLanguage: "en-US",
+  url: Astro.site ? new URL("/archive/", Astro.site).href : "/archive/",
+  hasPart: posts.map((p) => ({
+    "@type": "BlogPosting",
+    headline: p.data.title,
+    url: Astro.site ? new URL(`/blog/${p.id}/`, Astro.site).href : `/blog/${p.id}/`,
+    datePublished: p.data.date.toISOString(),
+  })),
+};
 ---
 
 <PageLayout title="Archive | Franklin Baldo" description="All essays, by year." lang="en" translations={{ pt: "/pt/archive/" }}>
+  <script type="application/ld+json" set:html={JSON.stringify(archiveLd)} is:inline slot="head" />
   <hgroup>
     <h1>Archive</h1>
     <p><small>{posts.length} essays</small></p>
@@ -39,12 +61,14 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
           <tr>
             <th scope="col" class="col-date">Date</th>
             <th scope="col">Title</th>
+            <th scope="col" class="col-min" aria-label="Estimated reading time">~min</th>
             <th scope="col" class="col-pt" aria-label="Portuguese version available">PT</th>
           </tr>
         </thead>
         <tbody>
           {byYear.get(year)!.map((post) => {
             const ptId = post.data.translationKey ? ptByKey.get(post.data.translationKey) : undefined;
+            const mins = estMinutes(post.body);
             return (
               <tr>
                 <td class="col-date">
@@ -53,6 +77,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
                   </time>
                 </td>
                 <td><a href={`/blog/${post.id}/`}>{post.data.title}</a></td>
+                <td class="col-min">{mins}</td>
                 <td class="col-pt">
                   {ptId && (
                     <a class="pt-badge" href={`/blog/${ptId}/`} aria-label="Portuguese version available" title="Ler em Português">PT</a>
@@ -76,6 +101,14 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
     white-space: nowrap;
   }
   .archive-table th { font-weight: 600; }
+  .col-min {
+    width: 3.5rem;
+    text-align: right;
+    color: var(--pico-muted-color);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
   .col-pt {
     width: 2.5rem;
     text-align: center;
@@ -96,5 +129,8 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
   a.pt-badge:hover {
     background: color-mix(in srgb, var(--pico-primary) 25%, transparent);
     text-decoration: underline;
+  }
+  @media (max-width: 480px) {
+    .col-min { display: none; }
   }
 </style>
