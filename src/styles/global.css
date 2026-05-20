@@ -262,3 +262,31 @@ body::before {
   left: 0.5rem;
   top: 0.5rem;
 }
+
+.suno-embed,
+.manifold-embed,
+.github-repo {
+  margin: 1.5rem 0;
+}
+.suno-embed iframe,
+.manifold-embed iframe {
+  border-radius: var(--pico-border-radius);
+  display: block;
+}
+.github-repo img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+.github-repo a {
+  display: block;
+  text-decoration: none;
+}
+.suno-embed figcaption,
+.manifold-embed figcaption,
+.github-repo figcaption {
+  font-size: 0.875em;
+  color: var(--pico-muted-color);
+  text-align: center;
+  margin-top: 0.5rem;
+}
