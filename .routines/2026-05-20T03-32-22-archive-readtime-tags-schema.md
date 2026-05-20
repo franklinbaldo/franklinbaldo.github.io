@@ -24,14 +24,14 @@ Estado ao chegar:
 
 ## PRs revisados
 
-| PR                     | Título                                            | Ação                                                        |
-| ---------------------- | ------------------------------------------------- | ----------------------------------------------------------- |
-| #155                   | 4 bilingual posts (Suno, Manifold, GitHub, handle) | **Mergeado** (squash) — CI verde: check ✅ Kilo ✅ GitGuardian ✅ |
-| #150                   | Consolidação                                      | **Fechado** — CI/Kilo failed, conteúdo já absorvido         |
-| #147                   | hronir run 2026-05-18T19 (delegating-to-agents)   | **Fechado** — base desatualizada, dirty merge state         |
-| #136                   | hronir run 2026-05-18T12 (inaugural-post)         | **Fechado** — base muito desatualizada                      |
-| #124, #125, #126, #127, #128 | hronir runs 2026-05-18T05–09               | **Fechados** — base extremamente desatualizada              |
-| #102                   | Optimize profile visuals                          | **Mantido aberto** — tem valor real (pixel art, latest essay) |
+| PR                           | Título                                             | Ação                                                              |
+| ---------------------------- | -------------------------------------------------- | ----------------------------------------------------------------- |
+| #155                         | 4 bilingual posts (Suno, Manifold, GitHub, handle) | **Mergeado** (squash) — CI verde: check ✅ Kilo ✅ GitGuardian ✅ |
+| #150                         | Consolidação                                       | **Fechado** — CI/Kilo failed, conteúdo já absorvido               |
+| #147                         | hronir run 2026-05-18T19 (delegating-to-agents)    | **Fechado** — base desatualizada, dirty merge state               |
+| #136                         | hronir run 2026-05-18T12 (inaugural-post)          | **Fechado** — base muito desatualizada                            |
+| #124, #125, #126, #127, #128 | hronir runs 2026-05-18T05–09                       | **Fechados** — base extremamente desatualizada                    |
+| #102                         | Optimize profile visuals                           | **Mantido aberto** — tem valor real (pixel art, latest essay)     |
 
 ## Ações realizadas nesta sessão
 
@@ -40,6 +40,7 @@ Estado ao chegar:
 **Problema**: A tabela do arquivo mostrava data e título, mas não dava ao leitor nenhuma indicação de quanto tempo demora cada ensaio. Leitores precisavam abrir o post para ver o tempo de leitura na metadata do artigo.
 
 **Arquivos modificados**:
+
 - `src/pages/archive.astro`
 - `src/pages/pt/archive.astro`
 
