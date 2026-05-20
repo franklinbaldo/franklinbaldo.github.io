@@ -1,0 +1,274 @@
+---
+import PageLayout from "../layouts/PageLayout.astro";
+import { sleep } from "../lib/suno";
+
+const HANDLE = "franklinbaldo";
+const SUNO_API = "https://studio-api-prod.suno.com/api";
+
+interface Clip {
+  id: string;
+  title: string;
+  audio_url: string;
+  image_url: string;
+  image_large_url?: string;
+  created_at: string;
+  play_count: number;
+  upvote_count: number;
+  major_model_version?: string;
+  metadata?: {
+    tags?: string;
+    prompt?: string;
+    duration?: number | null;
+    make_instrumental?: boolean;
+  };
+  is_public: boolean;
+}
+
+interface Playlist {
+  id: string;
+  name: string;
+  description?: string;
+  image_url: string;
+  song_count: number;
+  total_duration?: number;
+  play_count?: number;
+  upvote_count?: number;
+  is_public: boolean;
+  playlist_clips?: { clip: Clip; relative_index: number }[];
+}
+
+interface ProfileResponse {
+  clips: Clip[];
+  playlists: Playlist[];
+  num_total_clips: number;
+  display_name: string;
+  profile_description?: string;
+  avatar_image_url: string;
+}
+
+let clips: Clip[] = [];
+let playlists: Playlist[] = [];
+let profile: ProfileResponse | null = null;
+let error: string | null = null;
+
+async function fetchJSON<T>(url: string): Promise<T> {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const res = await fetch(url, { headers: { Accept: "application/json" } });
+    if (res.ok) return (await res.json()) as T;
+    if ((res.status === 429 || res.status >= 500) && attempt < 3) {
+      await sleep(1000 * Math.pow(2, attempt));
+      continue;
+    }
+    throw new Error(`HTTP ${res.status} on ${url}`);
+  }
+  throw new Error(`exhausted retries on ${url}`);
+}
+
+try {
+  const first = await fetchJSON<ProfileResponse>(
+    `${SUNO_API}/profiles/${HANDLE}/?page=1&playlists_sort_by=created_at&clips_sort_by=created_at`
+  );
+  profile = first;
+  playlists = (first.playlists ?? []).filter((p) => p.is_public);
+
+  const total = Math.max(0, first.num_total_clips ?? 0);
+  const seen = new Set<string>();
+  for (const c of first.clips ?? []) {
+    if (!seen.has(c.id)) { seen.add(c.id); clips.push(c); }
+  }
+  let page = 2;
+  while (clips.length < total) {
+    const next = await fetchJSON<ProfileResponse>(
+      `${SUNO_API}/profiles/${HANDLE}/?page=${page}&playlists_sort_by=created_at&clips_sort_by=created_at`
+    );
+    const got = next.clips ?? [];
+    if (got.length === 0) break;
+    for (const c of got) {
+      if (!seen.has(c.id)) { seen.add(c.id); clips.push(c); }
+    }
+    page++;
+  }
+
+  clips = clips
+    .filter((c) => c.is_public)
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
+    );
+} catch (e) {
+  error = e instanceof Error ? e.message : String(e);
+  console.warn(`[musicas] failed: ${error}`);
+}
+
+const fmtDate = new Intl.DateTimeFormat("pt-BR", {
+  year: "numeric",
+  month: "short",
+  day: "2-digit",
+});
+
+function fmtDuration(sec?: number | null): string {
+  if (!sec || sec <= 0) return "";
+  const total = Math.round(sec);
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+function parseTags(raw?: string): string[] {
+  if (!raw) return [];
+  return raw
+    .split(/[,;]/)
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .slice(0, 6);
+}
+---
+
+<PageLayout
+  title="Músicas | Franklin Baldo"
+  description="Músicas e playlists publicadas no Suno, buscadas ao vivo no build."
+>
+  <hgroup>
+    <h1>Músicas</h1>
+    <p><small>
+      Músicas públicas de <a href={`https://suno.com/@${HANDLE}`}>@{HANDLE}</a> no Suno,
+      ordenadas pelas mais recentes · atualizado no build.
+    </small></p>
+  </hgroup>
+
+  {error && (
+    <p><small>
+      Não consegui carregar as músicas agora (<code>{error.slice(0, 120)}</code>).
+      Veja direto em <a href={`https://suno.com/@${HANDLE}`}>suno.com/@{HANDLE}</a>.
+    </small></p>
+  )}
+
+  {playlists.length > 0 && (
+    <section>
+      <h2>Playlists</h2>
+      <div class="playlists-grid">
+        {playlists.map((p) => (
+          <article class="playlist-card">
+            <a href={`https://suno.com/playlist/${p.id}`}>
+              <img src={p.image_url} alt={`Capa da playlist ${p.name}`} loading="lazy" width="200" height="200" />
+            </a>
+            <header>
+              <h3><a href={`https://suno.com/playlist/${p.id}`}>{p.name}</a></h3>
+              {p.description && <p><small>{p.description}</small></p>}
+            </header>
+            <footer>
+              <small>
+                {p.song_count} {p.song_count === 1 ? "música" : "músicas"}
+                {p.total_duration ? ` · ${fmtDuration(p.total_duration)}` : ""}
+              </small>
+            </footer>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {clips.length > 0 && (
+    <section>
+      <h2>Todas as músicas <small>({clips.length})</small></h2>
+      <div class="songs-grid">
+        {clips.map((c) => {
+          const tags = parseTags(c.metadata?.tags);
+          const duration = fmtDuration(c.metadata?.duration);
+          const lyrics = c.metadata?.prompt ?? "";
+          return (
+            <article class="song-card" id={c.id}>
+              <a href={`https://suno.com/song/${c.id}`} class="cover">
+                <img
+                  src={c.image_url}
+                  alt={`Capa de ${c.title}`}
+                  loading="lazy"
+                  width="300"
+                  height="300"
+                />
+              </a>
+              <header>
+                <h3>
+                  <a href={`https://suno.com/song/${c.id}`}>{c.title || "(sem título)"}</a>
+                </h3>
+                <p>
+                  <small>
+                    <time datetime={c.created_at}>{fmtDate.format(new Date(c.created_at))}</time>
+                    {duration && <> · {duration}</>}
+                    {c.major_model_version && <> · {c.major_model_version}</>}
+                  </small>
+                </p>
+              </header>
+
+              {c.audio_url && (
+                <audio controls preload="none" src={c.audio_url}></audio>
+              )}
+
+              {tags.length > 0 && (
+                <p class="tags">
+                  {tags.map((t) => <kbd>{t}</kbd>)}
+                </p>
+              )}
+
+              <footer>
+                <small>
+                  ▶ {c.play_count ?? 0} · ♥ {c.upvote_count ?? 0}
+                </small>
+                {lyrics.trim() && (
+                  <details>
+                    <summary><small>Letra</small></summary>
+                    <pre class="lyrics">{lyrics}</pre>
+                  </details>
+                )}
+              </footer>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  )}
+</PageLayout>
+
+<style>
+  .playlists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .playlist-card img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: var(--pico-border-radius);
+  }
+  .playlist-card h3 { font-size: 1rem; margin: 0.5rem 0 0.25rem; }
+
+  .songs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+  .song-card { display: flex; flex-direction: column; }
+  .song-card .cover img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: var(--pico-border-radius);
+  }
+  .song-card h3 { font-size: 1.05rem; margin: 0.5rem 0 0.25rem; }
+  .song-card audio { width: 100%; margin: 0.5rem 0; }
+  .song-card .tags { margin: 0.25rem 0; display: flex; flex-wrap: wrap; gap: 0.25rem; }
+  .song-card .tags kbd { font-size: 0.7rem; }
+  .song-card .lyrics {
+    white-space: pre-wrap;
+    font-size: 0.85rem;
+    max-height: 20rem;
+    overflow-y: auto;
+    background: var(--pico-code-background-color);
+    padding: 0.75rem;
+    border-radius: var(--pico-border-radius);
+  }
+</style>
