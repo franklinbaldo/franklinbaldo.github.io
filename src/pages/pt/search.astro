@@ -19,4 +19,14 @@ import PageLayout from "../../layouts/PageLayout.astro";
 
   <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
   <script is:inline type="module" src="/pagefind/pagefind-component-ui.js"></script>
+  <script is:inline>
+    (() => {
+      const q = new URLSearchParams(location.search).get('q');
+      if (!q) return;
+      customElements.whenDefined('pagefind-searchbox').then(() => {
+        const box = document.querySelector('pagefind-searchbox');
+        if (box && typeof box.triggerSearch === 'function') box.triggerSearch(q);
+      });
+    })();
+  </script>
 </PageLayout>

@@ -13,6 +13,7 @@ session: 12
 Décima-segunda sessão com o sistema `.routines/`. Branch designado: `claude/great-mccarthy-obXnp`.
 
 Estado ao chegar:
+
 - PRs #136, #137, #138 abertos (hronir runs + editorial fix)
 - PRs #124, #125, #126, #127, #128 abertos com base desatualizada (conflitos)
 - PR #102 aberto há muito tempo com Kilo Code Review falhando (2 bugs confirmados: `---` indentado + `author.moreAbout` → `author.aboutMore`)
@@ -23,13 +24,13 @@ Estado ao chegar:
 
 ## PRs revisados e mergeados
 
-| PR | Título | Ação |
-|----|--------|------|
-| #137 | hronir run 2026-05-18T13-11-01 + edit-worst (pontifex-research) | **Mergeado** (squash) — CI verde: check ✅ GitGuardian ✅ |
-| #138 | Revisar "Duas Perguntas": corrigir 2ª pergunta Rutt | **Mergeado** (squash) — CI verde: check ✅ GitGuardian ✅ |
-| #136 | hronir run 2026-05-18T12-59-25 + edit-worst (inaugural-post) | **Conflito** — base desatualizada após merge de #137/#138, pulado |
-| #124–128 | hronir runs antigos | **Pulados** — base muito antiga (4245f22), todos com conflitos |
-| #102 | Optimize profile visuals | **Pulado** — Kilo Code Review falhando + base extremamente desatualizada |
+| PR       | Título                                                          | Ação                                                                     |
+| -------- | --------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| #137     | hronir run 2026-05-18T13-11-01 + edit-worst (pontifex-research) | **Mergeado** (squash) — CI verde: check ✅ GitGuardian ✅                |
+| #138     | Revisar "Duas Perguntas": corrigir 2ª pergunta Rutt             | **Mergeado** (squash) — CI verde: check ✅ GitGuardian ✅                |
+| #136     | hronir run 2026-05-18T12-59-25 + edit-worst (inaugural-post)    | **Conflito** — base desatualizada após merge de #137/#138, pulado        |
+| #124–128 | hronir runs antigos                                             | **Pulados** — base muito antiga (4245f22), todos com conflitos           |
+| #102     | Optimize profile visuals                                        | **Pulado** — Kilo Code Review falhando + base extremamente desatualizada |
 
 ## Ações realizadas
 
@@ -40,6 +41,7 @@ Estado ao chegar:
 **Arquivo**: `src/layouts/PageLayout.astro`
 
 **Mudança**: Duas linhas adicionadas após `og:image:alt`:
+
 ```html
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
@@ -54,6 +56,7 @@ As OG images do site têm dimensões fixas 1200×630 (padrão para `summary_larg
 **Arquivo**: `src/layouts/PageLayout.astro`
 
 **Mudança**: Tag adicionada no bloco article-specific, após os tags `article:modified_time`:
+
 ```html
 {type === 'article' && <meta property="article:author" content={new URL("/about/", Astro.site).href} />}
 ```
@@ -67,6 +70,7 @@ Aponta para `/about/` que é a página canônica do autor no site.
 **Arquivo**: `src/components/TableOfContents.astro`
 
 **Mudança**: Script `IntersectionObserver` adicionado ao final do componente:
+
 - Observa todos os headings (`h2`, `h3`) referenciados na TOC
 - Quando um heading cruza o viewport, marca o link correspondente com `.toc-active`
 - Fallback por posição de scroll para cobrir casos onde nenhum heading está intersectando
@@ -81,6 +85,7 @@ Aponta para `/about/` que é a página canônica do autor no site.
 **Arquivo**: `src/pages/404.astro`
 
 **Mudança**:
+
 ```astro
 - <PageLayout title="Not Found" description="Page not found.">
 + <PageLayout title="Not Found | Franklin Baldo" description="Page not found." lang="en" translations={{ pt: "/pt/404/" }}>
@@ -106,28 +111,30 @@ Também aproveitado para padronizar o title format (`| Franklin Baldo`) consiste
 
 ## Cobertura PT por página
 
-| Página EN | Página PT | Status |
-|-----------|-----------|--------|
-| `/` | `/pt/` | ✅ translations wired |
-| `/about/` | `/pt/about/` | ✅ |
-| `/archive/` | `/pt/archive/` | ✅ |
-| `/projects/` | `/pt/projects/` | ✅ |
-| `/search/` | `/pt/search/` | ✅ |
-| `/tags/` | `/pt/tags/` | ✅ |
-| `/ranking/` | `/pt/ranking/` | ✅ |
-| `/404` | `/pt/404` | ✅ (corrigido nesta sessão) |
-| Posts EN | Posts PT (via translationKey) | ~31 pares, cobertura parcial |
+| Página EN    | Página PT                     | Status                       |
+| ------------ | ----------------------------- | ---------------------------- |
+| `/`          | `/pt/`                        | ✅ translations wired        |
+| `/about/`    | `/pt/about/`                  | ✅                           |
+| `/archive/`  | `/pt/archive/`                | ✅                           |
+| `/projects/` | `/pt/projects/`               | ✅                           |
+| `/search/`   | `/pt/search/`                 | ✅                           |
+| `/tags/`     | `/pt/tags/`                   | ✅                           |
+| `/ranking/`  | `/pt/ranking/`                | ✅                           |
+| `/404`       | `/pt/404`                     | ✅ (corrigido nesta sessão)  |
+| Posts EN     | Posts PT (via translationKey) | ~31 pares, cobertura parcial |
 
 Todos os posts EN ainda não traduzidos mostram o LanguageSwitcher desabilitado.
 
 ## Próximas sessões — backlog priorizado
 
 ### Alta prioridade
+
 1. **PR #102 rebase/fix**: O PR tem valor real (pixel art avatar, Astro Image, latest essay logic). Mas está tão desatualizado que a melhor abordagem é um novo PR cherry-picking as mudanças válidas em cima do main atual, corrigindo os 2 bugs (`---` indentado e `author.moreAbout` → `author.aboutMore`).
 
 2. **Posts sem tradução PT**: ~número de posts EN sem `translationKey` conectado a um post PT. Criar traduções para os posts mais rankeados (topo do Hrönir ranking) é o maior impacto para cobertura PT.
 
 ### Média prioridade
+
 3. **Pagination no archive**: O arquivo cresce linearmente. Astro `paginate()` antes de ter >100 posts.
 
 4. **Search page — hreflang no sitemap**: Verificar se `/search/` e `/pt/search/` aparecem no sitemap com hreflang correto.
@@ -135,6 +142,7 @@ Todos os posts EN ainda não traduzidos mostram o LanguageSwitcher desabilitado.
 5. **OG image dinâmica por post**: Gerar imagens OG únicas por post (com título, tags) via `@vercel/og` ou similar. Atualmente todos os posts usam a mesma imagem padrão.
 
 ### Baixa prioridade
+
 6. **Focus management** nas transições de página (ClientRouter) — acessibilidade.
 7. **`defu` dependabot PR #38** — atualização simples de patch, vale mergear.
 8. **Dedup PR #136** — post `inaugural-post` (PR #136 ficou com conflito). A versão atual no main ainda é a versão anterior; considerar reaplicar o edit manualmente.
