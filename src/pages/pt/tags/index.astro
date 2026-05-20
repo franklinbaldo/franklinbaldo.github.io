@@ -14,6 +14,21 @@ for (const post of posts) {
 }
 
 const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+
+const itemListLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Etiquetas — Franklin Baldo",
+  description: `${tags.length} etiquetas em ${posts.length} ensaios sobre IA, direito e processo.`,
+  url: Astro.site ? new URL("/pt/tags/", Astro.site).href : "/pt/tags/",
+  numberOfItems: tags.length,
+  itemListElement: tags.map(([tag, count], i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: `#${tag} (${count})`,
+    url: Astro.site ? new URL(`/pt/tags/${tag}/`, Astro.site).href : `/pt/tags/${tag}/`,
+  })),
+};
 ---
 
 <PageLayout
@@ -22,6 +37,7 @@ const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeComp
   lang="pt"
   translations={{ en: "/tags/" }}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(itemListLd)} is:inline slot="head" />
   <h1>Etiquetas</h1>
   <p><small>{tags.length} etiquetas · ordenadas por frequência</small></p>
   <ul class="tag-cloud" aria-label="Todas as etiquetas">

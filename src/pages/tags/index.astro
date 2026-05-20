@@ -14,9 +14,25 @@ for (const post of posts) {
 }
 
 const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+
+const itemListLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Tags — Franklin Baldo",
+  description: `${tags.length} tags across ${posts.length} essays on AI, law, and process.`,
+  url: Astro.site ? new URL("/tags/", Astro.site).href : "/tags/",
+  numberOfItems: tags.length,
+  itemListElement: tags.map(([tag, count], i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: `#${tag} (${count})`,
+    url: Astro.site ? new URL(`/tags/${tag}/`, Astro.site).href : `/tags/${tag}/`,
+  })),
+};
 ---
 
 <PageLayout title="Tags | Franklin Baldo" description="Browse essays by tag." lang="en" translations={{ pt: "/pt/tags/" }}>
+  <script type="application/ld+json" set:html={JSON.stringify(itemListLd)} is:inline slot="head" />
   <h1>Tags</h1>
   <p><small>{tags.length} tags · sorted by frequency</small></p>
   <ul class="tag-cloud" aria-label="All tags">

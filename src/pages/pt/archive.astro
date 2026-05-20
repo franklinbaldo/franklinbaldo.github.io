@@ -16,6 +16,27 @@ const posts = all
   .filter((p) => (p.data.lang ?? 'en') === 'pt')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
+function estMinutes(body: string | undefined): number {
+  if (!body) return 1;
+  const words = body.trim().split(/\s+/).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
+const archiveLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Arquivo — Franklin Baldo",
+  description: "Todos os ensaios de Franklin Baldo, organizados por ano.",
+  inLanguage: "pt-BR",
+  url: Astro.site ? new URL("/pt/archive/", Astro.site).href : "/pt/archive/",
+  hasPart: posts.map((p) => ({
+    "@type": "BlogPosting",
+    headline: p.data.title,
+    url: Astro.site ? new URL(`/blog/${p.id}/`, Astro.site).href : `/blog/${p.id}/`,
+    datePublished: p.data.date.toISOString(),
+  })),
+};
+
 const byYear = new Map<number, typeof posts>();
 for (const post of posts) {
   const year = post.data.date.getFullYear();
@@ -31,6 +52,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
   lang="pt"
   translations={{ en: "/archive/" }}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(archiveLd)} is:inline slot="head" />
   <hgroup>
     <h1>Arquivo</h1>
     <p><small>{posts.length} ensaios</small></p>
@@ -44,12 +66,14 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
           <tr>
             <th scope="col" class="col-date">Data</th>
             <th scope="col">Título</th>
+            <th scope="col" class="col-min" aria-label="Tempo estimado de leitura">~min</th>
             <th scope="col" class="col-en" aria-label="Versão em inglês disponível">EN</th>
           </tr>
         </thead>
         <tbody>
           {byYear.get(year)!.map((post) => {
             const enId = post.data.translationKey ? enByKey.get(post.data.translationKey) : undefined;
+            const mins = estMinutes(post.body);
             return (
               <tr>
                 <td class="col-date">
@@ -58,6 +82,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
                   </time>
                 </td>
                 <td><a href={`/blog/${post.id}/`}>{post.data.title}</a></td>
+                <td class="col-min">{mins}</td>
                 <td class="col-en">
                   {enId && (
                     <a class="en-badge" href={`/blog/${enId}/`} aria-label="English version available" title="Read in English">EN</a>
@@ -81,6 +106,14 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
     white-space: nowrap;
   }
   .archive-table th { font-weight: 600; }
+  .col-min {
+    width: 3.5rem;
+    text-align: right;
+    color: var(--pico-muted-color);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
   .col-en {
     width: 2.5rem;
     text-align: center;
@@ -101,5 +134,8 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
   a.en-badge:hover {
     background: color-mix(in srgb, var(--pico-primary) 25%, transparent);
     text-decoration: underline;
+  }
+  @media (max-width: 480px) {
+    .col-min { display: none; }
   }
 </style>
