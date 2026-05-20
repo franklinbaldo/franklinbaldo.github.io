@@ -9,46 +9,18 @@ draft: false
 author: "franklin"
 ---
 
-My [GitHub](https://github.com/franklinbaldo) has 64 public repositories. Most of them are open works — not unfinished out of carelessness, but built in public on purpose, corrected as I go. Since nobody is obliged to walk through my profile README by README, here is a short tour, grouped by theme.
+For me, a repository is the cheapest way to think an idea through until it talks back. That isn't metaphor — it's workflow. I start by writing a README, and when the README starts arguing with me I know the rest is worth building. There are 64 public repositories on my [GitHub](https://github.com/franklinbaldo). Half of them will die without a reader. That is fine.
 
-## Legal-tech
+The ones I reread with pleasure are few, and not always the ones that pick up stars. I'll start with those.
 
-I am a lawyer. A good part of what I build starts from a professional itch.
+**[causaganha](https://github.com/franklinbaldo/causaganha)** is the one that occupies most of my head: structured extraction of official gazettes and lawsuits, DuckDB at the core. I am a lawyer in Porto Velho, and that machine is what might let me, one day, practice the profession a different way.
 
-- **[causaganha](https://github.com/franklinbaldo/causaganha)** — structured extraction and analysis of official gazettes and lawsuits, with DuckDB at the core. The project that occupies most of my head.
-- **[skills](https://github.com/franklinbaldo/skills)** — experiments in legal formalization in Lean 4. More of a philosophical exercise than a product, for now.
-- **[papers](https://github.com/franklinbaldo/papers)** — personal research archive crossing AI and law.
+Orbiting it is a layer of agents and harness. **[canivete](https://github.com/franklinbaldo/canivete)** is the orchestration CLI — the name says it all: a Swiss-army tool that does many things adequately. **[funes-memories](https://github.com/franklinbaldo/funes-memories)** is a memory journal for agents inspired by Borges' Funes; more about forgetting with judgment than about remembering everything. **[the-theater](https://github.com/franklinbaldo/the-theater)** is a stage where multiple agents act out a problem, useful for analytical role-play. **[hronir](https://github.com/franklinbaldo/hronir)** is a metaphysical data engine — yes, as Borgesian as it sounds.
 
-## Agents and harness
+A part of my work smells of Porto Velho. **[quem-sao-eles](https://github.com/franklinbaldo/quem-sao-eles)** is an open catalog of Brazilian politicians, with a focus on traceability. **[dinossauro](https://github.com/franklinbaldo/dinossauro)** exhumes public budget items buried in the _Portal da Transparência_. **[baliza](https://github.com/franklinbaldo/baliza)** is my most-visited pinned repo, a tagging and reading tool for public datasets. Those three taught me that civic-tech without a lawyer nearby tends to become a pretty blog post with no legal effect. And the reverse, too.
 
-The layer that holds most of the rest together.
+## The others
 
-- **[canivete](https://github.com/franklinbaldo/canivete)** — agent orchestration CLI. The name says it all: a little Swiss-army tool that does many things adequately.
-- **[funes-memories](https://github.com/franklinbaldo/funes-memories)** — a memory journal for agents, inspired by Borges' Funes. More about forgetting with judgment than about remembering everything.
-- **[the-theater](https://github.com/franklinbaldo/the-theater)** — a stage where multiple agents act out a problem. Useful for analytical role-play.
-- **[hronir](https://github.com/franklinbaldo/hronir)** — a metaphysical data engine. Yes, it is as Borgesian as it sounds.
+**[autonovel](https://github.com/franklinbaldo/autonovel)** is a long-form text engine. **[travessia](https://github.com/franklinbaldo/travessia)** is a publishing theme — the name comes from Riobaldo, of course. **[verne](https://github.com/franklinbaldo/verne)** I nicknamed the "extraordinary voyages" of my research. **[rosencrantz-coin](https://github.com/franklinbaldo/rosencrantz-coin)** holds TeX experiments on substrate invariance in LLMs — Stoppard meets language model. **[egregora-v3](https://github.com/franklinbaldo/egregora-v3)** is an LLM-driven blog generator where the _egregora_, in this case, is me. **[cobogo](https://github.com/franklinbaldo/cobogo)** is a Svelte design system inspired by Brazilian modernist architecture. **[skills](https://github.com/franklinbaldo/skills)** are experiments in legal formalization in Lean 4 — more philosophical exercise than product, for now. **[papers](https://github.com/franklinbaldo/papers)** is a personal research archive crossing AI and law.
 
-## Brazilian civic-tech
-
-The part of my work that smells of Porto Velho.
-
-- **[quem-sao-eles](https://github.com/franklinbaldo/quem-sao-eles)** — open catalog of Brazilian politicians, with a focus on traceability.
-- **[dinossauro](https://github.com/franklinbaldo/dinossauro)** — public-budget exhumation, aimed at items buried in the _Portal da Transparência_.
-- **[baliza](https://github.com/franklinbaldo/baliza)** — my most-visited pinned repo, a tagging and reading tool for public datasets.
-
-## Literary and structural
-
-Repositories I use as scaffolding for writing and aesthetics.
-
-- **[autonovel](https://github.com/franklinbaldo/autonovel)** — a long-form text generation engine. Everything I have tried about machine-assisted novel writing has passed through here.
-- **[travessia](https://github.com/franklinbaldo/travessia)** — a publishing theme. The name comes from Riobaldo, of course.
-- **[verne](https://github.com/franklinbaldo/verne)** — a pinned repo. I jokingly call it the "extraordinary voyages" of my research.
-- **[rosencrantz-coin](https://github.com/franklinbaldo/rosencrantz-coin)** — TeX experiments on substrate invariance in LLMs. Stoppard meets language model.
-- **[egregora-v3](https://github.com/franklinbaldo/egregora-v3)** — a blog generator driven by an LLM. The _egregora_, in this case, is me.
-- **[cobogo](https://github.com/franklinbaldo/cobogo)** — a Svelte design system inspired by Brazilian modernist architecture. Yes, the cobogó.
-
-## Why so many?
-
-Because, for me, a repository is the cheapest way to think an idea through until it talks back. Most of them will never become a product. But none of them was useless, because each one taught me the tool that supports the next.
-
-If you landed here out of curiosity, start with _causaganha_, _funes-memories_, and _baliza_. Those three explain the rest best.
+The other 49 or 50 I cannot defend one by one. Some I reread with pleasure; others, with embarrassment. I don't always know which is which until I open it.
