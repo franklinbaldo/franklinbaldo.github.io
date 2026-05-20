@@ -9,7 +9,7 @@ draft: false
 author: "franklin"
 ---
 
-There is one platform I have been opening almost every day for over a year: [Manifold Markets](https://manifold.markets/FranklinBaldo). It is a play-money prediction market where every market is a question about the future. My streak sits at 495 days. That says less about discipline and more about a healthy addiction: I *like* being forced to quantify what I think.
+There is one platform I have been opening almost every day for over a year: [Manifold Markets](https://manifold.markets/FranklinBaldo). It is a play-money prediction market where every market is a question about the future. My streak sits at 495 days. That says less about discipline and more about a healthy addiction: I _like_ being forced to quantify what I think.
 
 Reading back the markets I created, I realized I had accidentally built a public diary of my obsessions.
 
@@ -17,12 +17,12 @@ Reading back the markets I created, I realized I had accidentally built a public
 
 A few from my own backlog:
 
-- *[Will a play-money alternative to Manifold appear before 2025?](https://manifold.markets/FranklinBaldo/will-a-play-money-alternative-to-ma)* — a period when I was anxious about the platform's own future.
-- *[Do we have AGI now? \[Experimental\]](https://manifold.markets/FranklinBaldo/do-we-have-agi-now)* — when I wanted to force my friends to define AGI before arguing about it.
-- *[X (Twitter) vs. Brazil Supreme Court by April 2025](https://manifold.markets/FranklinBaldo/what-will-be-true-about-the-x-and-b)* — a lawyer in Porto Velho unable to look away from the news.
-- *[BTC 30-day flip profitability](https://manifold.markets/FranklinBaldo/would-i-make-a-profit-by-buying-bit)* — an almost econometric curiosity about my own intuitions.
-- *[Will human audiobook narration become unnecessary before 2026?](https://manifold.markets/FranklinBaldo/will-human-narration-for-audiobooks)* — resolved YES, and a gut punch for several people I respect.
-- *[Will I use GPT-4 before 2024?](https://manifold.markets/FranklinBaldo/will-i-use-gpt4-before-2024)* — shameless self-ethnography.
+- _[Will a play-money alternative to Manifold appear before 2025?](https://manifold.markets/FranklinBaldo/will-a-play-money-alternative-to-ma)_ — a period when I was anxious about the platform's own future.
+- _[Do we have AGI now? \[Experimental\]](https://manifold.markets/FranklinBaldo/do-we-have-agi-now)_ — when I wanted to force my friends to define AGI before arguing about it.
+- _[X (Twitter) vs. Brazil Supreme Court by April 2025](https://manifold.markets/FranklinBaldo/what-will-be-true-about-the-x-and-b)_ — a lawyer in Porto Velho unable to look away from the news.
+- _[BTC 30-day flip profitability](https://manifold.markets/FranklinBaldo/would-i-make-a-profit-by-buying-bit)_ — an almost econometric curiosity about my own intuitions.
+- _[Will human audiobook narration become unnecessary before 2026?](https://manifold.markets/FranklinBaldo/will-human-narration-for-audiobooks)_ — resolved YES, and a gut punch for several people I respect.
+- _[Will I use GPT-4 before 2024?](https://manifold.markets/FranklinBaldo/will-i-use-gpt4-before-2024)_ — shameless self-ethnography.
 
 Each market is a question I couldn't stop asking at the time. The act of turning it into a market forces you to pick a resolution condition, a deadline, a definition. That is cognitive hygiene.
 

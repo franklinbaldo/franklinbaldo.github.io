@@ -9,7 +9,7 @@ draft: false
 author: "franklin"
 ---
 
-Eu fiz um exercício meio constrangedor outro dia: digitei meu próprio handle, *franklinbaldo*, num buscador, e fui clicando em tudo. Não para conferir reputação — para entender que tipo de pessoa um estranho montaria, juntando os cacos.
+Eu fiz um exercício meio constrangedor outro dia: digitei meu próprio handle, _franklinbaldo_, num buscador, e fui clicando em tudo. Não para conferir reputação — para entender que tipo de pessoa um estranho montaria, juntando os cacos.
 
 O resultado foi mais interessante do que eu esperava. Não há uma persona. Há um arquipélago.
 
@@ -18,17 +18,17 @@ O resultado foi mais interessante do que eu esperava. Não há uma persona. Há 
 Aqui está o que aparece, mais ou menos na ordem em que cai a página:
 
 - **[franklinbaldo.github.io](https://franklinbaldo.github.io)** — este site. Astro, bilíngue, com posts sobre agentes, automação, literatura e leis. É meu hub principal.
-- **[github.com/franklinbaldo](https://github.com/franklinbaldo)** — 64 repositórios, muita coisa em obra aberta, do *causaganha* ao *cobogo*. O eu técnico.
+- **[github.com/franklinbaldo](https://github.com/franklinbaldo)** — 64 repositórios, muita coisa em obra aberta, do _causaganha_ ao _cobogo_. O eu técnico.
 - **[suno.com/@franklinbaldo](https://suno.com/@franklinbaldo)** — 92 músicas, personas inventadas, Borges encontrando o sertão. O eu musical.
-- **[manifold.markets/FranklinBaldo](https://manifold.markets/FranklinBaldo)** — *streak* de 495 dias, mercados sobre AGI, BTC, STF e narradores de audiolivro. O eu apostador.
+- **[manifold.markets/FranklinBaldo](https://manifold.markets/FranklinBaldo)** — _streak_ de 495 dias, mercados sobre AGI, BTC, STF e narradores de audiolivro. O eu apostador.
 - **[observablehq.com/@franklinbaldo](https://observablehq.com/@franklinbaldo)** — cadernos de Observable com visualizações e protótipos. O eu que ainda gosta de gráfico interativo.
 - **[Google Scholar](https://scholar.google.com.br/citations?user=ITCU0pgAAAAJ&hl=pt-BR)** — meu perfil acadêmico. Pequeno, mas existe.
-- **[Repositório institucional da UNIR](https://www.ri.unir.br/jspui/handle/123456789/78/browse?type=author&order=ASC&rpp=20&value=Baldo,+Franklin+Silveira)** — trabalhos arquivados como *Baldo, Franklin Silveira*. O eu universitário.
+- **[Repositório institucional da UNIR](https://www.ri.unir.br/jspui/handle/123456789/78/browse?type=author&order=ASC&rpp=20&value=Baldo,+Franklin+Silveira)** — trabalhos arquivados como _Baldo, Franklin Silveira_. O eu universitário.
 - **[Baldo e Queiroz Advocacia](https://juridicocerto.com/p/baldo-e-queiroz-adv)** — escritório em Porto Velho, civil e processo civil. O eu advogado.
 - **X / Twitter** — perfil que existe, mas anda atrás do paywall de visualização; aparece linkado pelo Suno e pelo GitHub.
 - **ORCID** — ID acadêmico ligado ao meu GitHub.
 
-Junte tudo e o que se vê é um sujeito que, faltando combinação melhor, eu chamaria de *advogado-engenheiro-de-prompts com vício em Borges*.
+Junte tudo e o que se vê é um sujeito que, faltando combinação melhor, eu chamaria de _advogado-engenheiro-de-prompts com vício em Borges_.
 
 ## O que cada lugar diz que o outro não diz
 
@@ -50,7 +50,7 @@ Cada plataforma tem uma fatia honesta de mim, e omite o resto. Isso não é defe
 
 Três coisas.
 
-Primeira: **handle único é um presente**. Eu uso *franklinbaldo* há muito tempo, em quase tudo. Isso me dá um custo de migração baixo e uma identidade rastreável sem confusão homônima.
+Primeira: **handle único é um presente**. Eu uso _franklinbaldo_ há muito tempo, em quase tudo. Isso me dá um custo de migração baixo e uma identidade rastreável sem confusão homônima.
 
 Segunda: **o autorretrato distribuído é mais honesto do que o LinkedIn**. Ninguém escolheu a curadoria final. A curadoria é o tempo.
 

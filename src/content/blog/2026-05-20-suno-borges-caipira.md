@@ -33,14 +33,14 @@ Organizei as músicas em coleções que, relendo agora, parecem capítulos de um
 - **Brazil philosophy** (10) — tentativas de musicar ideias que eu leio e fico ruminando;
 - **Borges (PT)** (11) e **Borges (EN)** (3) — porque traduzir Borges para canção é um vício que eu não pretendo largar.
 
-Quem clica espera *single* e encontra ensaio. Faz sentido. É assim que eu escuto também.
+Quem clica espera _single_ e encontra ensaio. Faz sentido. É assim que eu escuto também.
 
 ## Por que isso importa para mim
 
-Suno é o tipo de ferramenta que me obriga a explicar o que eu quero ouvir antes de ouvir. Isso é um exercício curioso: você descobre, no meio do prompt, que não queria *bossa* — queria *bossa com fôlego curto e violão sujo*. Que não queria *Borges* — queria *Borges como se Riobaldo o lesse em voz alta*.
+Suno é o tipo de ferramenta que me obriga a explicar o que eu quero ouvir antes de ouvir. Isso é um exercício curioso: você descobre, no meio do prompt, que não queria _bossa_ — queria _bossa com fôlego curto e violão sujo_. Que não queria _Borges_ — queria _Borges como se Riobaldo o lesse em voz alta_.
 
 Eu não sei se isso é música. Sei que é escrita.
 
 E sei que é o lugar mais íntimo da minha presença online: 17 seguidores, sem algoritmo me empurrando, sem métrica para perseguir. Só a pasta crescendo, e de vez em quando uma faixa que me surpreende.
 
-Se você for ouvir, comece pelo *Aleph caipira*. É o que melhor me traduz hoje.
+Se você for ouvir, comece pelo _Aleph caipira_. É o que melhor me traduz hoje.

@@ -33,7 +33,7 @@ The layer that holds most of the rest together.
 The part of my work that smells of Porto Velho.
 
 - **[quem-sao-eles](https://github.com/franklinbaldo/quem-sao-eles)** — open catalog of Brazilian politicians, with a focus on traceability.
-- **[dinossauro](https://github.com/franklinbaldo/dinossauro)** — public-budget exhumation, aimed at items buried in the *Portal da Transparência*.
+- **[dinossauro](https://github.com/franklinbaldo/dinossauro)** — public-budget exhumation, aimed at items buried in the _Portal da Transparência_.
 - **[baliza](https://github.com/franklinbaldo/baliza)** — my most-visited pinned repo, a tagging and reading tool for public datasets.
 
 ## Literary and structural
@@ -44,11 +44,11 @@ Repositories I use as scaffolding for writing and aesthetics.
 - **[travessia](https://github.com/franklinbaldo/travessia)** — a publishing theme. The name comes from Riobaldo, of course.
 - **[verne](https://github.com/franklinbaldo/verne)** — a pinned repo. I jokingly call it the "extraordinary voyages" of my research.
 - **[rosencrantz-coin](https://github.com/franklinbaldo/rosencrantz-coin)** — TeX experiments on substrate invariance in LLMs. Stoppard meets language model.
-- **[egregora-v3](https://github.com/franklinbaldo/egregora-v3)** — a blog generator driven by an LLM. The *egregora*, in this case, is me.
+- **[egregora-v3](https://github.com/franklinbaldo/egregora-v3)** — a blog generator driven by an LLM. The _egregora_, in this case, is me.
 - **[cobogo](https://github.com/franklinbaldo/cobogo)** — a Svelte design system inspired by Brazilian modernist architecture. Yes, the cobogó.
 
 ## Why so many?
 
 Because, for me, a repository is the cheapest way to think an idea through until it talks back. Most of them will never become a product. But none of them was useless, because each one taught me the tool that supports the next.
 
-If you landed here out of curiosity, start with *causaganha*, *funes-memories*, and *baliza*. Those three explain the rest best.
+If you landed here out of curiosity, start with _causaganha_, _funes-memories_, and _baliza_. Those three explain the rest best.

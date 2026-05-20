@@ -29,7 +29,7 @@ None of these are anyone's real voice. They are masks. And like every good mask,
 I organized the songs into collections that, reading them back, feel like chapters of a book I would not know how to write in prose:
 
 - **Meditação** (11 tracks) — slow ambient, to calm the dog and the head;
-- **Aleph caipira** (8) — Borges meets the *viola*, the point that contains every point as seen from a porch in Rondônia;
+- **Aleph caipira** (8) — Borges meets the _viola_, the point that contains every point as seen from a porch in Rondônia;
 - **Brazil philosophy** (10) — attempts to set to music the ideas I keep chewing on;
 - **Borges (PT)** (11) and **Borges (EN)** (3) — because translating Borges into song is a habit I have no intention of dropping.
 
@@ -37,10 +37,10 @@ People click expecting a single and find an essay. Fair enough. That is how I li
 
 ## Why this matters to me
 
-Suno is the kind of tool that forces you to explain what you want to hear *before* you hear it. That is an odd exercise: in the middle of writing the prompt, you discover you didn't want *bossa* — you wanted *bossa with short breath and a dirty guitar*. You didn't want *Borges* — you wanted *Borges as if Riobaldo were reading him aloud*.
+Suno is the kind of tool that forces you to explain what you want to hear _before_ you hear it. That is an odd exercise: in the middle of writing the prompt, you discover you didn't want _bossa_ — you wanted _bossa with short breath and a dirty guitar_. You didn't want _Borges_ — you wanted _Borges as if Riobaldo were reading him aloud_.
 
 I don't know if this is music. I know it is writing.
 
 And I know it is the most intimate place of my online presence: 17 followers, no algorithm pushing anything, no metric to chase. Just the folder growing, and now and then a track that surprises me.
 
-If you are going to listen, start with *Aleph caipira*. That is the one that translates me best right now.
+If you are going to listen, start with _Aleph caipira_. That is the one that translates me best right now.
