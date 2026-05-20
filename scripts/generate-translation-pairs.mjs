@@ -1,4 +1,4 @@
-// Scans src/content/blog/*.md frontmatter and emits
+// Scans src/content/blog/*.{md,mdx} frontmatter and emits
 // src/generated/blog-translation-pairs.json — a bidirectional map
 // { "/blog/slug/": { en: "/blog/en-slug/", pt: "/blog/pt-slug/" } }
 // Used by astro.config.mjs to inject hreflang links into the sitemap.
@@ -12,7 +12,9 @@ const blogDir = join(__dir, "../src/content/blog");
 const outDir = join(__dir, "../src/generated");
 const outFile = join(outDir, "blog-translation-pairs.json");
 
-const files = readdirSync(blogDir).filter((f) => f.endsWith(".md"));
+const files = readdirSync(blogDir).filter(
+  (f) => f.endsWith(".md") || f.endsWith(".mdx")
+);
 
 const posts = [];
 for (const file of files) {
@@ -32,7 +34,7 @@ for (const file of files) {
   if (!key) continue;
 
   const lang = get("lang") ?? DEFAULT_LANG;
-  const id = file.replace(/\.md$/, "");
+  const id = file.replace(/\.mdx?$/, "");
   posts.push({ id, lang, key });
 }
 

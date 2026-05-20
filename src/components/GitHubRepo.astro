@@ -1,0 +1,25 @@
+---
+interface Props {
+  owner?: string;
+  repo: string;
+  caption?: string;
+}
+const { owner = "franklinbaldo", repo, caption } = Astro.props;
+const base = `https://github-readme-stats.vercel.app/api/pin/?username=${owner}&repo=${repo}`;
+const lightSrc = `${base}&theme=default`;
+const darkSrc = `${base}&theme=transparent&text_color=eeeeee&title_color=ffffff&icon_color=89b4fa&border_color=44475a`;
+---
+
+<figure class="github-repo">
+  <a
+    href={`https://github.com/${owner}/${repo}`}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset={darkSrc} />
+      <img src={lightSrc} alt={`${owner}/${repo}`} loading="lazy" />
+    </picture>
+  </a>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
