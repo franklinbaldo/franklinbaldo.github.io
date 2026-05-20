@@ -50,10 +50,19 @@ let playlists: Playlist[] = [];
 let profile: ProfileResponse | null = null;
 let error: string | null = null;
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 async function fetchJSON<T>(url: string): Promise<T> {
-  const res = await fetch(url, { headers: { Accept: "application/json" } });
-  if (!res.ok) throw new Error(`HTTP ${res.status} on ${url}`);
-  return (await res.json()) as T;
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const res = await fetch(url, { headers: { Accept: "application/json" } });
+    if (res.ok) return (await res.json()) as T;
+    if ((res.status === 429 || res.status >= 500) && attempt < 3) {
+      await sleep(1000 * Math.pow(2, attempt));
+      continue;
+    }
+    throw new Error(`HTTP ${res.status} on ${url}`);
+  }
+  throw new Error(`exhausted retries on ${url}`);
 }
 
 try {

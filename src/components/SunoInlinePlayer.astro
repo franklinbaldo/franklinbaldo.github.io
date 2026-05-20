@@ -31,7 +31,8 @@ const audioMap = await fetchAudioMap();
 
   function init() {
     const bar = document.getElementById("suno-inline-player");
-    if (!bar) return;
+    if (!bar || bar.dataset.sunoInit === "1") return;
+    bar.dataset.sunoInit = "1";
     const audio = document.getElementById("suno-inline-audio") as
       | HTMLAudioElement
       | null;
@@ -89,8 +90,10 @@ const audioMap = await fetchAudioMap();
       'a[href*="suno.com/song/"]'
     );
     anchors.forEach((a) => {
+      if (a.dataset.sunoBound === "1") return;
       const m = a.href.match(SONG_RE);
       if (!m) return;
+      a.dataset.sunoBound = "1";
       a.classList.add("suno-songlink");
       a.addEventListener("click", (e: MouseEvent) => {
         if (
