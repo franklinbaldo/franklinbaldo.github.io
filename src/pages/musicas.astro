@@ -1,5 +1,6 @@
 ---
 import PageLayout from "../layouts/PageLayout.astro";
+import { sleep } from "../lib/suno";
 
 const HANDLE = "franklinbaldo";
 const SUNO_API = "https://studio-api-prod.suno.com/api";
@@ -50,8 +51,6 @@ let playlists: Playlist[] = [];
 let profile: ProfileResponse | null = null;
 let error: string | null = null;
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
 async function fetchJSON<T>(url: string): Promise<T> {
   for (let attempt = 0; attempt < 4; attempt++) {
     const res = await fetch(url, { headers: { Accept: "application/json" } });
@@ -72,7 +71,7 @@ try {
   profile = first;
   playlists = (first.playlists ?? []).filter((p) => p.is_public);
 
-  const total = first.num_total_clips ?? 0;
+  const total = Math.max(0, first.num_total_clips ?? 0);
   const seen = new Set<string>();
   for (const c of first.clips ?? []) {
     if (!seen.has(c.id)) { seen.add(c.id); clips.push(c); }

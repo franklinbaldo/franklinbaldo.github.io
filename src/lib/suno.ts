@@ -14,6 +14,7 @@ interface ProfileResponse {
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+export { sleep };
 
 async function fetchJSON<T>(url: string): Promise<T> {
   for (let attempt = 0; attempt < 4; attempt++) {
@@ -47,7 +48,7 @@ async function _fetchAllClips(): Promise<SunoClip[]> {
     `${SUNO_API}/profiles/${HANDLE}/?page=${p}&playlists_sort_by=created_at&clips_sort_by=created_at`;
 
   const first = await fetchJSON<ProfileResponse>(url(1));
-  const total = first.num_total_clips ?? 0;
+  const total = Math.max(0, first.num_total_clips ?? 0);
   for (const c of first.clips ?? []) {
     if (!seen.has(c.id)) {
       seen.add(c.id);
