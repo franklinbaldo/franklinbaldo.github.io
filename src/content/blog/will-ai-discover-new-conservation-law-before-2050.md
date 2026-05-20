@@ -46,7 +46,7 @@ The recent evidence is real and measurable. In 2017, Carrasquilla and Melko demo
 
 I resist the extrapolation because of David Deutsch.
 
-His argument, which I find harder to dismiss than I'd like: authentic scientific discovery requires explanatory knowledge, not pattern identification. When a neural network identifies a "conserved quantity" in a simulation, it has found a number that doesn't change. That is not the same as understanding *why* it doesn't change — which requires identifying the underlying symmetry, which requires the kind of creative explanatory leap Deutsch claims AI cannot make. The famous examples of AI discovery — AlphaFold especially — are cases where the AI found a correspondence (sequence → structure) that humans couldn't compute, but the explanatory framework (protein folding physics) was already in place. A genuine conservation law discovery would require finding a symmetry that doesn't correspond to any existing framework. That's a different thing.
+His argument, which I find harder to dismiss than I'd like: authentic scientific discovery requires explanatory knowledge, not pattern identification. When a neural network identifies a "conserved quantity" in a simulation, it has found a number that doesn't change. That is not the same as understanding _why_ it doesn't change — which requires identifying the underlying symmetry, which requires the kind of creative explanatory leap Deutsch claims AI cannot make. The famous examples of AI discovery — AlphaFold especially — are cases where the AI found a correspondence (sequence → structure) that humans couldn't compute, but the explanatory framework (protein folding physics) was already in place. A genuine conservation law discovery would require finding a symmetry that doesn't correspond to any existing framework. That's a different thing.
 
 ```mermaid
 graph LR
@@ -70,8 +70,8 @@ The bet is placed. The market closes in 2050. Deutsch will probably say "I told 
 
 ## For further reading
 
-- **Carrasquilla, J. & Melko, R.G., "Machine learning phases of matter"** (*Nature Physics*, 2017) — the experiment that started this. Neural network identifies topological phases without prior knowledge of the Hamiltonian. Worth reading the abstract even if the physics is unfamiliar.
+- **Carrasquilla, J. & Melko, R.G., "Machine learning phases of matter"** (_Nature Physics_, 2017) — the experiment that started this. Neural network identifies topological phases without prior knowledge of the Hamiltonian. Worth reading the abstract even if the physics is unfamiliar.
 - **Emmy Noether, "Invariante Variationsprobleme"** (1915) — the theorem. Short. The bar for "conservation law" is here.
-- **David Deutsch, *The Beginning of Infinity*** — the book-length version of the explanatory knowledge argument. Chapter 1 explains the "hard to vary" criterion. I disagree with some implications but the core is worth taking seriously.
-- **Jim Rutt, *A Minimum Viable Metaphysics*, v2.0** — relevant because the conservation law question is downstream of "why is there something rather than nothing?" Rutt's attempt to do science while leaving that question open.
+- **David Deutsch, _The Beginning of Infinity_** — the book-length version of the explanatory knowledge argument. Chapter 1 explains the "hard to vary" criterion. I disagree with some implications but the core is worth taking seriously.
+- **Jim Rutt, _A Minimum Viable Metaphysics_, v2.0** — relevant because the conservation law question is downstream of "why is there something rather than nothing?" Rutt's attempt to do science while leaving that question open.
 - **[Two Questions, Out Loud](/blog/two-questions-out-loud/)** — the post where I explain why these two questions are mine: probability distributions and the definition of reality. The conservation law bet is a consequence of the second one.

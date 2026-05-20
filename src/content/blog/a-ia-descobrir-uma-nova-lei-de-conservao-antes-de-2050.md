@@ -46,7 +46,7 @@ A evidência recente é real e mensurável. Em 2017, Carrasquilla e Melko demons
 
 Resisto à extrapolação por causa de David Deutsch.
 
-O argumento dele, que acho mais difícil de desconsiderar do que gostaria: a descoberta científica autêntica requer conhecimento explicativo, não identificação de padrões. Quando uma rede neural identifica uma "quantidade conservada" em uma simulação, ela encontrou um número que não muda. Isso não é o mesmo que entender *por que* ele não muda — o que requer identificar a simetria subjacente, o que requer o tipo de salto explicativo criativo que Deutsch afirma que a IA não consegue fazer. Os exemplos famosos de descoberta por IA — a AlphaFold especialmente — são casos em que a IA encontrou uma correspondência (sequência → estrutura) que humanos não conseguiam computar, mas a estrutura explicativa (física do dobramento de proteínas) já estava estabelecida. Uma descoberta genuína de lei de conservação exigiria encontrar uma simetria que não corresponde a nenhuma estrutura existente. Isso é uma coisa diferente.
+O argumento dele, que acho mais difícil de desconsiderar do que gostaria: a descoberta científica autêntica requer conhecimento explicativo, não identificação de padrões. Quando uma rede neural identifica uma "quantidade conservada" em uma simulação, ela encontrou um número que não muda. Isso não é o mesmo que entender _por que_ ele não muda — o que requer identificar a simetria subjacente, o que requer o tipo de salto explicativo criativo que Deutsch afirma que a IA não consegue fazer. Os exemplos famosos de descoberta por IA — a AlphaFold especialmente — são casos em que a IA encontrou uma correspondência (sequência → estrutura) que humanos não conseguiam computar, mas a estrutura explicativa (física do dobramento de proteínas) já estava estabelecida. Uma descoberta genuína de lei de conservação exigiria encontrar uma simetria que não corresponde a nenhuma estrutura existente. Isso é uma coisa diferente.
 
 ```mermaid
 graph LR
@@ -70,8 +70,8 @@ A aposta está feita. O mercado fecha em 2050. Deutsch provavelmente dirá "eu a
 
 ## Para se aprofundar
 
-- **Carrasquilla, J. & Melko, R.G., "Machine learning phases of matter"** (*Nature Physics*, 2017) — o experimento que iniciou isso. Rede neural identifica fases topológicas sem conhecimento prévio do hamiltoniano. Vale ler o resumo mesmo que a física seja desconhecida.
+- **Carrasquilla, J. & Melko, R.G., "Machine learning phases of matter"** (_Nature Physics_, 2017) — o experimento que iniciou isso. Rede neural identifica fases topológicas sem conhecimento prévio do hamiltoniano. Vale ler o resumo mesmo que a física seja desconhecida.
 - **Emmy Noether, "Invariante Variationsprobleme"** (1915) — o teorema. Curto. A barra para "lei de conservação" está aqui.
-- **David Deutsch, *The Beginning of Infinity*** — a versão em livro do argumento sobre conhecimento explicativo. O Capítulo 1 explica o critério "difícil de variar". Discordo de algumas implicações, mas o núcleo vale levar a sério.
-- **Jim Rutt, *A Minimum Viable Metaphysics*, v2.0** — relevante porque a questão da lei de conservação é consequência de "por que existe algo em vez de nada?" A tentativa de Rutt de fazer ciência deixando essa questão em aberto.
+- **David Deutsch, _The Beginning of Infinity_** — a versão em livro do argumento sobre conhecimento explicativo. O Capítulo 1 explica o critério "difícil de variar". Discordo de algumas implicações, mas o núcleo vale levar a sério.
+- **Jim Rutt, _A Minimum Viable Metaphysics_, v2.0** — relevante porque a questão da lei de conservação é consequência de "por que existe algo em vez de nada?" A tentativa de Rutt de fazer ciência deixando essa questão em aberto.
 - **[Duas Perguntas, Em Voz Alta](/blog/duas-perguntas-em-voz-alta/)** — o post onde explico por que essas duas questões são as minhas: distribuições de probabilidade e a definição de realidade. A aposta na lei de conservação é consequência da segunda.
