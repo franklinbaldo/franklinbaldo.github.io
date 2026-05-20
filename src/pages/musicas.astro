@@ -69,7 +69,7 @@ try {
     if (!seen.has(c.id)) { seen.add(c.id); clips.push(c); }
   }
   let page = 2;
-  while (clips.length < total && page < 50) {
+  while (clips.length < total) {
     const next = await fetchJSON<ProfileResponse>(
       `${SUNO_API}/profiles/${HANDLE}/?page=${page}&playlists_sort_by=created_at&clips_sort_by=created_at`
     );
