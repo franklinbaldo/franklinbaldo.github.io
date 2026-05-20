@@ -1,0 +1,180 @@
+---
+import { fetchAudioMap } from "../lib/suno";
+
+const audioMap = await fetchAudioMap();
+---
+
+<div
+  id="suno-inline-player"
+  data-audio-map={JSON.stringify(audioMap)}
+  hidden
+  role="region"
+  aria-label="Player do Suno"
+>
+  <audio id="suno-inline-audio" preload="none"></audio>
+  <button id="suno-inline-toggle" type="button" aria-label="Tocar">▶</button>
+  <div class="suno-inline-meta">
+    <span class="suno-inline-label" id="suno-inline-label">tocando</span>
+    <span class="suno-inline-title" id="suno-inline-title"></span>
+  </div>
+  <a
+    id="suno-inline-ext"
+    class="suno-inline-ext"
+    href="#"
+    target="_blank"
+    rel="noopener noreferrer">Suno ↗</a
+  >
+</div>
+
+<script>
+  const SONG_RE = /suno\.com\/song\/([0-9a-fA-F-]{36})/;
+
+  function init() {
+    const bar = document.getElementById("suno-inline-player");
+    if (!bar) return;
+    const audio = document.getElementById("suno-inline-audio") as
+      | HTMLAudioElement
+      | null;
+    const toggle = document.getElementById("suno-inline-toggle") as
+      | HTMLButtonElement
+      | null;
+    const titleEl = document.getElementById("suno-inline-title");
+    const labelEl = document.getElementById("suno-inline-label");
+    const extEl = document.getElementById("suno-inline-ext") as
+      | HTMLAnchorElement
+      | null;
+    if (!audio || !toggle || !titleEl || !labelEl || !extEl) return;
+
+    let map: Record<string, string> = {};
+    try {
+      map = JSON.parse(bar.dataset.audioMap || "{}");
+    } catch {
+      map = {};
+    }
+
+    const srcFor = (id: string) =>
+      map[id] || `https://cdn1.suno.ai/${id}.mp3`;
+
+    function play(id: string, label: string) {
+      bar!.hidden = false;
+      titleEl!.textContent = label || "Suno";
+      labelEl!.textContent = "tocando";
+      extEl!.href = `https://suno.com/song/${id}`;
+      audio!.src = srcFor(id);
+      audio!.play().catch(() => {
+        labelEl!.textContent = "não consegui tocar";
+      });
+    }
+
+    toggle.addEventListener("click", () => {
+      if (audio.paused) audio.play().catch(() => {});
+      else audio.pause();
+    });
+    audio.addEventListener("play", () => {
+      toggle.textContent = "❚❚";
+      toggle.setAttribute("aria-label", "Pausar");
+    });
+    const onStop = () => {
+      toggle.textContent = "▶";
+      toggle.setAttribute("aria-label", "Tocar");
+    };
+    audio.addEventListener("pause", onStop);
+    audio.addEventListener("ended", onStop);
+    audio.addEventListener("error", () => {
+      labelEl!.textContent = "não consegui tocar";
+      onStop();
+    });
+
+    const anchors = document.querySelectorAll<HTMLAnchorElement>(
+      'a[href*="suno.com/song/"]'
+    );
+    anchors.forEach((a) => {
+      const m = a.href.match(SONG_RE);
+      if (!m) return;
+      a.classList.add("suno-songlink");
+      a.addEventListener("click", (e: MouseEvent) => {
+        if (
+          e.button !== 0 ||
+          e.metaKey ||
+          e.ctrlKey ||
+          e.shiftKey ||
+          e.altKey
+        )
+          return;
+        e.preventDefault();
+        play(m[1], a.textContent?.trim() ?? "");
+      });
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+  document.addEventListener("astro:page-load", init);
+</script>
+
+<style is:global>
+  a.suno-songlink {
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+  }
+</style>
+
+<style>
+  #suno-inline-player {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    max-width: 38rem;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.85rem;
+    background: var(--pico-card-background-color, #fff);
+    border: 1px solid var(--pico-muted-border-color, #ddd);
+    border-radius: var(--pico-border-radius, 8px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+    z-index: 50;
+  }
+  #suno-inline-toggle {
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    background: var(--pico-primary, #1095c1);
+    color: var(--pico-primary-inverse, #fff);
+    display: grid;
+    place-items: center;
+    padding: 0;
+  }
+  .suno-inline-meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+  }
+  .suno-inline-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--pico-muted-color, #777);
+  }
+  .suno-inline-title {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .suno-inline-ext {
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+</style>
