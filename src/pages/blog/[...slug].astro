@@ -103,6 +103,14 @@ const translationLinks = translationSiblings.map((p) => {
     </aside>
 
     <div class="post-body">
+      <nav aria-label={lang === 'pt' ? 'Navegação' : 'Breadcrumb'} class="post-breadcrumb">
+        <ol>
+          <li><a href={`${urlPrefix(lang)}/`}>{t(lang, 'nav.home')}</a></li>
+          <li><a href={`${urlPrefix(lang)}/archive/`}>{t(lang, 'nav.archive')}</a></li>
+          <li aria-current="page">{title}</li>
+        </ol>
+      </nav>
+
       <article data-pagefind-body data-pagefind-filter={`lang:${lang}`}>
         <header>
           <hgroup>
@@ -202,6 +210,40 @@ const translationLinks = translationSiblings.map((p) => {
 </PageLayout>
 
 <style>
+  .post-breadcrumb {
+    margin-bottom: calc(var(--pico-spacing) * 0.75);
+  }
+  .post-breadcrumb ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    font-size: 0.8rem;
+    color: var(--pico-muted-color);
+  }
+  .post-breadcrumb li + li::before {
+    content: " / ";
+    padding: 0 0.35em;
+    color: var(--pico-muted-color);
+  }
+  .post-breadcrumb a {
+    color: var(--pico-muted-color);
+    text-decoration: none;
+  }
+  .post-breadcrumb a:hover {
+    color: var(--pico-primary);
+    text-decoration: underline;
+  }
+  .post-breadcrumb [aria-current="page"] {
+    color: var(--pico-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 40ch;
+  }
+
   /* Native <progress> styled to fit the editorial palette. Uses
      accent-color so Pico's primary token drives both the fill and the
      focus ring. Stays fixed to the top of the viewport while reading. */

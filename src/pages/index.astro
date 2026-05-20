@@ -10,6 +10,8 @@ const all = (await getCollection("blog"))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const recent = all.slice(0, 12);
+const latest = all[0];
+const latestHref = latest ? `/blog/${latest.id}/` : "/archive/";
 ---
 
 <PageLayout
@@ -21,6 +23,9 @@ const recent = all.slice(0, 12);
   <section class="home-hero" aria-label="Introduction">
     <h1 class="home-title">Franklin Baldo</h1>
     <p class="home-tagline">Notes on AI, law, and systems.</p>
+    <p class="home-cta">
+      <a href={latestHref} class="contrast">Read latest essay →</a>
+    </p>
   </section>
 
   <section class="home-recent" aria-label="Recent posts">
@@ -49,6 +54,13 @@ const recent = all.slice(0, 12);
   }
   .home-recent {
     margin-block: calc(var(--pico-spacing) * 1.5) calc(var(--pico-spacing) * 2);
+  }
+  .home-cta {
+    margin: calc(var(--pico-spacing) * 0.75) 0 0;
+  }
+  .home-cta a {
+    font-size: 0.95rem;
+    font-weight: 500;
   }
   .home-archive-link {
     margin-top: var(--pico-spacing);
