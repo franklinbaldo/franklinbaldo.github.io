@@ -100,9 +100,10 @@ const fmtDate = new Intl.DateTimeFormat("pt-BR", {
 
 function fmtDuration(sec?: number | null): string {
   if (!sec || sec <= 0) return "";
-  const m = Math.floor(sec / 60);
-  const s = Math.round(sec % 60).toString().padStart(2, "0");
-  return `${m}:${s}`;
+  const total = Math.round(sec);
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
 function parseTags(raw?: string): string[] {
