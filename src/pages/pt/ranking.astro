@@ -1,10 +1,11 @@
 ---
 import PageLayout from "../../layouts/PageLayout.astro";
 import { getCollection } from "astro:content";
-import { getRanking } from "../../lib/hronir-rank";
+import { getRanking, getRankingStats, getRecentDuels } from "../../lib/hronir-rank";
+import RankingView, { type RankPostInfo, type UnratedItem, type RankingStrings } from "../../components/RankingView.astro";
 
 const all = await getCollection("blog");
-const byKey = new Map<string, { slug: string; title: string; lang: string }>();
+const byKey = new Map<string, RankPostInfo>();
 for (const p of all) {
   if (p.data.draft) continue;
   const key = p.data.translationKey;
@@ -24,6 +25,27 @@ const enriched = rows.map((r, i) => ({
   post: byKey.get(r.key),
 }));
 
+const ratedKeys = new Set(rows.map((r) => r.key));
+const unrated: UnratedItem[] = [];
+const seenUnrated = new Set<string>();
+for (const p of all) {
+  if (p.data.draft) continue;
+  const key = p.data.translationKey;
+  if (!key || ratedKeys.has(key) || seenUnrated.has(key)) continue;
+  // Prefer PT title for this page.
+  const lang = p.data.lang ?? "en";
+  const preferred =
+    lang === "pt"
+      ? p
+      : all.find((q) => q.data.translationKey === key && (q.data.lang ?? "en") === "pt") ?? p;
+  unrated.push({ slug: preferred.id, title: preferred.data.title });
+  seenUnrated.add(key);
+}
+unrated.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+
+const stats = getRankingStats();
+const recent = getRecentDuels(8);
+
 const itemListLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
@@ -39,6 +61,41 @@ const itemListLd = {
     url: r.post ? `https://franklinbaldo.github.io/blog/${r.post.slug}/` : undefined,
   })).filter((item) => item.url),
 };
+
+const strings: RankingStrings = {
+  subtitle: "Posts ordenados pelo ordinal do OpenSkill (μ − 3σ). Maior é melhor. Atualizado a cada build a partir de .routines/hronir/.",
+  intro:
+    "O sistema Hrönir confronta posts em duelos par-a-par. Um avaliador (às vezes eu, às vezes um modelo) escolhe um vencedor e escreve uma defesa apaixonada. O OpenSkill transforma esses duelos num ranking contínuo com incerteza explícita (σ): posts com poucas aparições têm σ maior e portanto ordinal mais baixo mesmo com μ alto.",
+  podiumLabel: "Pódio",
+  statsTotalDuels: "duelos disputados",
+  statsTotalRated: "posts no ranking",
+  statsAvgDuels: "duelos por post (média)",
+  statsLastDuel: "último duelo",
+  tableCaption: "Ranking completo, ordenado por ordinal decrescente.",
+  thRank: "#",
+  thPost: "Post",
+  thOrdinal: "ordinal",
+  thMu: "μ",
+  thSigma: "σ",
+  thRecord: "V/N",
+  thConfidence: "confiança",
+  unratedHeading: "Ainda sem duelo",
+  unratedBlurb: "Posts publicados que ainda não passaram por nenhuma comparação Hrönir.",
+  recentHeading: "Últimos duelos",
+  recentBlurb: "Os confrontos mais recentes que afetaram o ranking.",
+  recentBeats: "venceu",
+  emptyState: "Sem posts ranqueados ainda — rode uma rodada Hrönir para popular o ranking.",
+  ordinalTip: "Ordinal = μ − 3σ. Combina habilidade estimada com penalidade pela incerteza.",
+  muTip: "μ (mu): habilidade média estimada pelo OpenSkill.",
+  sigmaTip: "σ (sigma): incerteza da estimativa. Cai à medida que o post acumula duelos.",
+  confidenceHigh: "alta",
+  confidenceMedium: "média",
+  confidenceLow: "baixa",
+  podiumGold: "1º lugar",
+  podiumSilver: "2º lugar",
+  podiumBronze: "3º lugar",
+  noDate: "—",
+};
 ---
 
 <PageLayout
@@ -48,55 +105,13 @@ const itemListLd = {
   translations={{ en: "/ranking/" }}
 >
   <script type="application/ld+json" set:html={JSON.stringify(itemListLd)} slot="head" is:inline />
-  <hgroup>
-    <h1>Ranking</h1>
-    <p>
-      <small>
-        Posts ordenados pelo <em>ordinal</em> do OpenSkill (μ − 3σ). Maior é melhor.
-        Atualizado a cada build a partir de <code>.routines/hronir/</code>.
-      </small>
-    </p>
-  </hgroup>
-
-  <p>
-    O sistema Hrönir confronta posts em duelos par-a-par. Um avaliador (às vezes eu, às vezes um modelo)
-    escolhe um vencedor e escreve uma defesa apaixonada. O OpenSkill transforma esses duelos num ranking
-    contínuo com incerteza explícita (σ). Posts com poucas aparições têm σ maior e portanto ordinal mais
-    baixo mesmo com μ alto.
-  </p>
-
-  <table class="striped">
-    <thead>
-      <tr>
-        <th scope="col" style="text-align:right">#</th>
-        <th scope="col">Post</th>
-        <th scope="col" style="text-align:right">ordinal</th>
-        <th scope="col" style="text-align:right">μ</th>
-        <th scope="col" style="text-align:right">σ</th>
-        <th scope="col" style="text-align:right">V/N</th>
-      </tr>
-    </thead>
-    <tbody>
-      {enriched.map((r) => (
-        <tr>
-          <td style="text-align:right">{r.rank}</td>
-          <td>
-            {r.post ? (
-              <a href={`/blog/${r.post.slug}/`}>{r.post.title}</a>
-            ) : (
-              <code>{r.key}</code>
-            )}
-          </td>
-          <td style="text-align:right"><code>{r.ordinal.toFixed(2)}</code></td>
-          <td style="text-align:right"><code>{r.mu.toFixed(2)}</code></td>
-          <td style="text-align:right"><code>{r.sigma.toFixed(2)}</code></td>
-          <td style="text-align:right"><code>{r.wins}/{r.appearances}</code></td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-
-  {enriched.length === 0 && (
-    <p><em>Sem posts ranqueados ainda — rode uma rodada Hrönir para popular o ranking.</em></p>
-  )}
+  <RankingView
+    lang="pt"
+    rows={enriched}
+    unrated={unrated}
+    recent={recent}
+    stats={stats}
+    postByKey={byKey}
+    strings={strings}
+  />
 </PageLayout>

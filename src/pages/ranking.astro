@@ -1,10 +1,11 @@
 ---
 import PageLayout from "../layouts/PageLayout.astro";
 import { getCollection } from "astro:content";
-import { getRanking } from "../lib/hronir-rank";
+import { getRanking, getRankingStats, getRecentDuels } from "../lib/hronir-rank";
+import RankingView, { type RankPostInfo, type UnratedItem, type RankingStrings } from "../components/RankingView.astro";
 
 const all = await getCollection("blog");
-const byKey = new Map<string, { slug: string; title: string; lang: string }>();
+const byKey = new Map<string, RankPostInfo>();
 for (const p of all) {
   if (p.data.draft) continue;
   const key = p.data.translationKey;
@@ -23,6 +24,26 @@ const enriched = rows.map((r, i) => ({
   post: byKey.get(r.key),
 }));
 
+const ratedKeys = new Set(rows.map((r) => r.key));
+const unrated: UnratedItem[] = [];
+const seenUnrated = new Set<string>();
+for (const p of all) {
+  if (p.data.draft) continue;
+  const key = p.data.translationKey;
+  if (!key || ratedKeys.has(key) || seenUnrated.has(key)) continue;
+  const lang = p.data.lang ?? "en";
+  const preferred =
+    lang === "en"
+      ? p
+      : all.find((q) => q.data.translationKey === key && (q.data.lang ?? "en") === "en") ?? p;
+  unrated.push({ slug: preferred.id, title: preferred.data.title });
+  seenUnrated.add(key);
+}
+unrated.sort((a, b) => a.title.localeCompare(b.title, "en-US"));
+
+const stats = getRankingStats();
+const recent = getRecentDuels(8);
+
 const itemListLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
@@ -38,6 +59,41 @@ const itemListLd = {
     url: r.post ? `https://franklinbaldo.github.io/blog/${r.post.slug}/` : undefined,
   })).filter((item) => item.url),
 };
+
+const strings: RankingStrings = {
+  subtitle: "Posts ordered by OpenSkill ordinal (μ − 3σ). Higher is better. Updated every build from .routines/hronir/.",
+  intro:
+    "The Hrönir system pits posts against each other in pairwise duels. An evaluator (sometimes me, sometimes a model) picks a winner and writes a passionate defense. OpenSkill turns those duels into a continuous ranking with explicit uncertainty (σ): posts with few appearances have larger σ and therefore a lower ordinal even with high μ.",
+  podiumLabel: "Podium",
+  statsTotalDuels: "duels run",
+  statsTotalRated: "posts ranked",
+  statsAvgDuels: "duels per post (avg)",
+  statsLastDuel: "last duel",
+  tableCaption: "Full ranking, ordered by descending ordinal.",
+  thRank: "#",
+  thPost: "Post",
+  thOrdinal: "ordinal",
+  thMu: "μ",
+  thSigma: "σ",
+  thRecord: "W/N",
+  thConfidence: "confidence",
+  unratedHeading: "Not yet duelled",
+  unratedBlurb: "Published posts that haven't gone through a Hrönir comparison yet.",
+  recentHeading: "Latest duels",
+  recentBlurb: "The most recent matchups that moved the ranking.",
+  recentBeats: "beat",
+  emptyState: "No rated posts yet — run a Hrönir round to populate the ranking.",
+  ordinalTip: "Ordinal = μ − 3σ. Combines estimated skill with a penalty for uncertainty.",
+  muTip: "μ (mu): OpenSkill's estimate of average skill.",
+  sigmaTip: "σ (sigma): uncertainty around the estimate. Shrinks as the post accumulates duels.",
+  confidenceHigh: "high",
+  confidenceMedium: "medium",
+  confidenceLow: "low",
+  podiumGold: "1st place",
+  podiumSilver: "2nd place",
+  podiumBronze: "3rd place",
+  noDate: "—",
+};
 ---
 
 <PageLayout
@@ -47,54 +103,13 @@ const itemListLd = {
   translations={{ pt: "/pt/ranking/" }}
 >
   <script type="application/ld+json" set:html={JSON.stringify(itemListLd)} slot="head" is:inline />
-  <hgroup>
-    <h1>Ranking</h1>
-    <p>
-      <small>
-        Posts ordered by OpenSkill <em>ordinal</em> (μ − 3σ). Higher is better.
-        Updated every build from <code>.routines/hronir/</code>.
-      </small>
-    </p>
-  </hgroup>
-
-  <p>
-    The Hrönir system pits posts against each other in pairwise duels. An evaluator (sometimes me, sometimes a model)
-    picks a winner and writes a passionate defense. OpenSkill turns those duels into a continuous ranking with
-    explicit uncertainty (σ). Posts with few appearances have larger σ and therefore a lower ordinal even with high μ.
-  </p>
-
-  <table class="striped">
-    <thead>
-      <tr>
-        <th scope="col" style="text-align:right">#</th>
-        <th scope="col">Post</th>
-        <th scope="col" style="text-align:right">ordinal</th>
-        <th scope="col" style="text-align:right">μ</th>
-        <th scope="col" style="text-align:right">σ</th>
-        <th scope="col" style="text-align:right">W/N</th>
-      </tr>
-    </thead>
-    <tbody>
-      {enriched.map((r) => (
-        <tr>
-          <td style="text-align:right">{r.rank}</td>
-          <td>
-            {r.post ? (
-              <a href={`/blog/${r.post.slug}/`}>{r.post.title}</a>
-            ) : (
-              <code>{r.key}</code>
-            )}
-          </td>
-          <td style="text-align:right"><code>{r.ordinal.toFixed(2)}</code></td>
-          <td style="text-align:right"><code>{r.mu.toFixed(2)}</code></td>
-          <td style="text-align:right"><code>{r.sigma.toFixed(2)}</code></td>
-          <td style="text-align:right"><code>{r.wins}/{r.appearances}</code></td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-
-  {enriched.length === 0 && (
-    <p><em>No rated posts yet — run a Hrönir round to populate the ranking.</em></p>
-  )}
+  <RankingView
+    lang="en"
+    rows={enriched}
+    unrated={unrated}
+    recent={recent}
+    stats={stats}
+    postByKey={byKey}
+    strings={strings}
+  />
 </PageLayout>
