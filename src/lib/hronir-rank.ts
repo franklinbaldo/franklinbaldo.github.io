@@ -75,6 +75,10 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
     const rawRunAt = (data as any).run_at ?? (data as any).run_id ?? "";
     const runAt =
       rawRunAt instanceof Date ? rawRunAt.toISOString() : String(rawRunAt);
+    // Skip matches without a parseable timestamp: an empty runAt would
+    // sort ahead of every real duel in the "Latest duels" list and
+    // render with a placeholder date, which is worse than not showing it.
+    if (!runAt) continue;
 
     const winnerKey = winner === "a" ? aKey : bKey;
     const loserKey = winner === "a" ? bKey : aKey;
