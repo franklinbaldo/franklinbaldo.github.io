@@ -100,7 +100,7 @@ try {
   console.warn(`[musicas] failed: ${error}`);
 }
 
-const fmtDate = new Intl.DateTimeFormat("pt-BR", {
+const fmtDate = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
   month: "short",
   day: "2-digit",
@@ -125,21 +125,23 @@ function parseTags(raw?: string): string[] {
 ---
 
 <PageLayout
-  title="Músicas | Franklin Baldo"
-  description="Músicas e playlists publicadas no Suno, buscadas ao vivo no build."
+  title="Music | Franklin Baldo"
+  description="Songs and playlists published on Suno, fetched live at build time."
+  lang="en"
+  translations={{ pt: "/pt/musicas/" }}
 >
   <hgroup>
-    <h1>Músicas</h1>
+    <h1>Music</h1>
     <p><small>
-      Músicas públicas de <a href={`https://suno.com/@${HANDLE}`}>@{HANDLE}</a> no Suno,
-      ordenadas pelas mais recentes · atualizado no build.
+      Public songs from <a href={`https://suno.com/@${HANDLE}`}>@{HANDLE}</a> on Suno,
+      sorted by most recent · updated at build time.
     </small></p>
   </hgroup>
 
   {error && (
     <p><small>
-      Não consegui carregar as músicas agora (<code>{error.slice(0, 120)}</code>).
-      Veja direto em <a href={`https://suno.com/@${HANDLE}`}>suno.com/@{HANDLE}</a>.
+      Couldn't load songs right now (<code>{error.slice(0, 120)}</code>).
+      See them directly at <a href={`https://suno.com/@${HANDLE}`}>suno.com/@{HANDLE}</a>.
     </small></p>
   )}
 
@@ -150,7 +152,7 @@ function parseTags(raw?: string): string[] {
         {playlists.map((p) => (
           <article class="playlist-card">
             <a href={`https://suno.com/playlist/${p.id}`}>
-              <img src={p.image_url} alt={`Capa da playlist ${p.name}`} loading="lazy" width="200" height="200" />
+              <img src={p.image_url} alt={`Cover art for playlist ${p.name}`} loading="lazy" width="200" height="200" />
             </a>
             <header>
               <h3><a href={`https://suno.com/playlist/${p.id}`}>{p.name}</a></h3>
@@ -158,7 +160,7 @@ function parseTags(raw?: string): string[] {
             </header>
             <footer>
               <small>
-                {p.song_count} {p.song_count === 1 ? "música" : "músicas"}
+                {p.song_count} {p.song_count === 1 ? "song" : "songs"}
                 {p.total_duration ? ` · ${fmtDuration(p.total_duration)}` : ""}
               </small>
             </footer>
@@ -170,7 +172,7 @@ function parseTags(raw?: string): string[] {
 
   {clips.length > 0 && (
     <section>
-      <h2>Todas as músicas <small>({clips.length})</small></h2>
+      <h2>All songs <small>({clips.length})</small></h2>
       <div class="songs-grid">
         {clips.map((c) => {
           const tags = parseTags(c.metadata?.tags);
@@ -181,7 +183,7 @@ function parseTags(raw?: string): string[] {
               <a href={`https://suno.com/song/${c.id}`} class="cover">
                 <img
                   src={c.image_url}
-                  alt={`Capa de ${c.title}`}
+                  alt={`Cover art for ${c.title}`}
                   loading="lazy"
                   width="300"
                   height="300"
@@ -189,7 +191,7 @@ function parseTags(raw?: string): string[] {
               </a>
               <header>
                 <h3>
-                  <a href={`https://suno.com/song/${c.id}`}>{c.title || "(sem título)"}</a>
+                  <a href={`https://suno.com/song/${c.id}`}>{c.title || "(untitled)"}</a>
                 </h3>
                 <p>
                   <small>
@@ -216,7 +218,7 @@ function parseTags(raw?: string): string[] {
                 </small>
                 {lyrics.trim() && (
                   <details>
-                    <summary><small>Letra</small></summary>
+                    <summary><small>Lyrics</small></summary>
                     <pre class="lyrics">{lyrics}</pre>
                   </details>
                 )}
