@@ -53,6 +53,8 @@ export default defineConfig({
           [base + "/tags/"]: base + "/pt/tags/",
           [base + "/search/"]: base + "/pt/search/",
           [base + "/projects/"]: base + "/pt/projects/",
+          [base + "/ranking/"]: base + "/pt/ranking/",
+          [base + "/musicas/"]: base + "/pt/musicas/",
         };
         const ptToEn = Object.fromEntries(
           Object.entries(staticPairs).map(([en, pt]) => [pt, en])
