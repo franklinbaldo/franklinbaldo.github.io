@@ -23,6 +23,22 @@ const enriched = rows.map((r, i) => ({
   ...r,
   post: byKey.get(r.key),
 }));
+
+const itemListLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Ranking — Franklin Baldo",
+  description: "Posts ranqueados por comparações par-a-par sob o sistema Hrönir.",
+  inLanguage: "pt-BR",
+  url: "https://franklinbaldo.github.io/pt/ranking/",
+  numberOfItems: enriched.length,
+  itemListElement: enriched.map((r) => ({
+    "@type": "ListItem",
+    position: r.rank,
+    name: r.post ? r.post.title : r.key,
+    url: r.post ? `https://franklinbaldo.github.io/blog/${r.post.slug}/` : undefined,
+  })).filter((item) => item.url),
+};
 ---
 
 <PageLayout
@@ -31,6 +47,7 @@ const enriched = rows.map((r, i) => ({
   lang="pt"
   translations={{ en: "/ranking/" }}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(itemListLd)} slot="head" is:inline />
   <hgroup>
     <h1>Ranking</h1>
     <p>
