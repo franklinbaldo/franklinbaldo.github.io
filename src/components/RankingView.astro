@@ -1,0 +1,612 @@
+---
+import type { RankRow, DuelEntry, RankingStats } from "../lib/hronir-rank";
+
+export interface RankPostInfo {
+  slug: string;
+  title: string;
+  lang: string;
+}
+
+export interface EnrichedRow extends RankRow {
+  rank: number;
+  post?: RankPostInfo;
+}
+
+export interface UnratedItem {
+  slug: string;
+  title: string;
+}
+
+export interface RankingStrings {
+  /** small grey label below H1 */
+  subtitle: string;
+  intro: string;
+  podiumLabel: string;
+  statsTotalDuels: string;
+  statsTotalRated: string;
+  statsLastDuel: string;
+  statsAvgDuels: string;
+  tableCaption: string;
+  thRank: string;
+  thPost: string;
+  thOrdinal: string;
+  thMu: string;
+  thSigma: string;
+  thRecord: string; // V/N or W/N
+  thConfidence: string;
+  unratedHeading: string;
+  unratedBlurb: string;
+  recentHeading: string;
+  recentBlurb: string;
+  recentBeats: string; // e.g. "venceu" / "beat"
+  emptyState: string;
+  ordinalTip: string;
+  muTip: string;
+  sigmaTip: string;
+  confidenceHigh: string;
+  confidenceMedium: string;
+  confidenceLow: string;
+  podiumGold: string;
+  podiumSilver: string;
+  podiumBronze: string;
+  noDate: string;
+}
+
+interface Props {
+  lang: "en" | "pt";
+  rows: EnrichedRow[];
+  unrated: UnratedItem[];
+  recent: DuelEntry[];
+  stats: RankingStats;
+  postByKey: Map<string, RankPostInfo>;
+  strings: RankingStrings;
+}
+
+const { rows, unrated, recent, stats, postByKey, strings, lang } = Astro.props as Props;
+
+const locale = lang === "pt" ? "pt-BR" : "en-US";
+
+function fmtDate(iso: string | null): string {
+  if (!iso) return strings.noDate;
+  const d = new Date(iso);
+  if (Number.isNaN(d.valueOf())) return strings.noDate;
+  return d.toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" });
+}
+
+const ordinals = rows.map((r) => r.ordinal);
+const ordMax = ordinals.length > 0 ? Math.max(...ordinals) : 0;
+const ordMin = ordinals.length > 0 ? Math.min(...ordinals) : 0;
+const ordRange = Math.max(ordMax - ordMin, 0.0001);
+
+function barPct(ordinal: number): number {
+  // Map [ordMin, ordMax] -> [6, 100] so even the lowest still shows a sliver.
+  const t = (ordinal - ordMin) / ordRange;
+  return Math.round(6 + t * 94);
+}
+
+function confidenceLevel(sigma: number, appearances: number): {
+  level: "high" | "medium" | "low";
+  label: string;
+} {
+  if (appearances < 3) return { level: "low", label: strings.confidenceLow };
+  if (sigma < 6.4) return { level: "high", label: strings.confidenceHigh };
+  if (sigma < 7.0) return { level: "medium", label: strings.confidenceMedium };
+  return { level: "low", label: strings.confidenceLow };
+}
+
+const podium = rows.slice(0, 3);
+const rest = rows.slice(3);
+
+const podiumMeta = [
+  { label: strings.podiumGold, place: 1 },
+  { label: strings.podiumSilver, place: 2 },
+  { label: strings.podiumBronze, place: 3 },
+];
+
+const avgDuels =
+  stats.totalRated > 0 ? ((stats.totalDuels * 2) / stats.totalRated).toFixed(1) : "0";
+
+function postLabel(key: string): string {
+  return postByKey.get(key)?.title ?? key;
+}
+function postHref(key: string): string | null {
+  const p = postByKey.get(key);
+  return p ? `/blog/${p.slug}/` : null;
+}
+---
+
+<hgroup>
+  <h1>Ranking</h1>
+  <p><small>{strings.subtitle}</small></p>
+</hgroup>
+
+<p class="rank-intro">{strings.intro}</p>
+
+{rows.length > 0 && (
+  <section class="rank-stats" aria-label={strings.statsTotalDuels}>
+    <div class="rank-stat">
+      <span class="rank-stat-value">{stats.totalDuels}</span>
+      <span class="rank-stat-label">{strings.statsTotalDuels}</span>
+    </div>
+    <div class="rank-stat">
+      <span class="rank-stat-value">{stats.totalRated}</span>
+      <span class="rank-stat-label">{strings.statsTotalRated}</span>
+    </div>
+    <div class="rank-stat">
+      <span class="rank-stat-value">{avgDuels}</span>
+      <span class="rank-stat-label">{strings.statsAvgDuels}</span>
+    </div>
+    <div class="rank-stat">
+      <span class="rank-stat-value rank-stat-date">{fmtDate(stats.lastDuelAt)}</span>
+      <span class="rank-stat-label">{strings.statsLastDuel}</span>
+    </div>
+  </section>
+)}
+
+{podium.length > 0 && (
+  <section class="rank-podium" aria-label={strings.podiumLabel}>
+    {podium.map((r, i) => {
+      const meta = podiumMeta[i];
+      const href = r.post ? `/blog/${r.post.slug}/` : null;
+      return (
+        <article class={`podium-card podium-${meta.place}`}>
+          <header class="podium-head">
+            <span class="podium-medal" aria-hidden="true">{meta.place}</span>
+            <span class="podium-label">{meta.label}</span>
+          </header>
+          <h3 class="podium-title">
+            {href ? <a href={href}>{r.post!.title}</a> : <code>{r.key}</code>}
+          </h3>
+          <dl class="podium-stats">
+            <div>
+              <dt>{strings.thOrdinal}</dt>
+              <dd>{r.ordinal.toFixed(2)}</dd>
+            </div>
+            <div>
+              <dt>{strings.thRecord}</dt>
+              <dd>{r.wins}/{r.appearances}</dd>
+            </div>
+          </dl>
+        </article>
+      );
+    })}
+  </section>
+)}
+
+{rows.length > 0 && (
+  <div class="overflow-table rank-table-wrap">
+    <table class="rank-table">
+      <caption class="rank-caption">{strings.tableCaption}</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="col-rank">{strings.thRank}</th>
+          <th scope="col" class="col-post">{strings.thPost}</th>
+          <th scope="col" class="col-ordinal">
+            <abbr title={strings.ordinalTip}>{strings.thOrdinal}</abbr>
+          </th>
+          <th scope="col" class="col-mu">
+            <abbr title={strings.muTip}>{strings.thMu}</abbr>
+          </th>
+          <th scope="col" class="col-sigma">
+            <abbr title={strings.sigmaTip}>{strings.thSigma}</abbr>
+          </th>
+          <th scope="col" class="col-record">{strings.thRecord}</th>
+          <th scope="col" class="col-confidence">{strings.thConfidence}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rest.map((r) => {
+          const conf = confidenceLevel(r.sigma, r.appearances);
+          const winRate = r.appearances > 0 ? Math.round((r.wins / r.appearances) * 100) : 0;
+          return (
+            <tr>
+              <th scope="row" class="col-rank">{r.rank}</th>
+              <td class="col-post">
+                {r.post ? (
+                  <a href={`/blog/${r.post.slug}/`}>{r.post.title}</a>
+                ) : (
+                  <code>{r.key}</code>
+                )}
+                <div class="ord-bar" aria-hidden="true">
+                  <span style={`width:${barPct(r.ordinal)}%`}></span>
+                </div>
+              </td>
+              <td class="col-ordinal num"><strong>{r.ordinal.toFixed(2)}</strong></td>
+              <td class="col-mu num">{r.mu.toFixed(2)}</td>
+              <td class="col-sigma num">{r.sigma.toFixed(2)}</td>
+              <td class="col-record num" title={`${winRate}%`}>{r.wins}/{r.appearances}</td>
+              <td class="col-confidence">
+                <span class={`conf-badge conf-${conf.level}`}>{conf.label}</span>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+)}
+
+{rows.length === 0 && (
+  <p class="rank-empty"><em>{strings.emptyState}</em></p>
+)}
+
+{unrated.length > 0 && (
+  <section class="rank-unrated">
+    <h2>{strings.unratedHeading}</h2>
+    <p><small>{strings.unratedBlurb}</small></p>
+    <ul>
+      {unrated.map((u) => (
+        <li><a href={`/blog/${u.slug}/`}>{u.title}</a></li>
+      ))}
+    </ul>
+  </section>
+)}
+
+{recent.length > 0 && (
+  <section class="rank-recent">
+    <h2>{strings.recentHeading}</h2>
+    <p><small>{strings.recentBlurb}</small></p>
+    <ol class="recent-list">
+      {recent.map((d) => {
+        const winnerHref = postHref(d.winnerKey);
+        const loserHref = postHref(d.loserKey);
+        return (
+          <li>
+            <span class="recent-date">{fmtDate(d.runAt)}</span>
+            <span class="recent-line">
+              {winnerHref ? (
+                <a class="recent-winner" href={winnerHref}>{postLabel(d.winnerKey)}</a>
+              ) : (
+                <span class="recent-winner"><code>{d.winnerKey}</code></span>
+              )}
+              <span class="recent-verb"> {strings.recentBeats} </span>
+              {loserHref ? (
+                <a class="recent-loser" href={loserHref}>{postLabel(d.loserKey)}</a>
+              ) : (
+                <span class="recent-loser"><code>{d.loserKey}</code></span>
+              )}
+              {d.criterion && (
+                <span class="recent-criterion"> · <code>{d.criterion}</code></span>
+              )}
+            </span>
+          </li>
+        );
+      })}
+    </ol>
+  </section>
+)}
+
+<style>
+  .rank-intro {
+    max-width: 38rem;
+  }
+
+  /* Stats banner ------------------------------------------------------ */
+  .rank-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: 0.75rem;
+    margin: 1.5rem 0 2rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    background: var(--pico-card-sectioning-background-color);
+  }
+  .rank-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .rank-stat-value {
+    font-family: var(--pico-font-family-monospace);
+    font-size: 1.45rem;
+    font-weight: 600;
+    color: var(--pico-color);
+    line-height: 1.1;
+  }
+  .rank-stat-date {
+    font-size: 1.05rem;
+    font-weight: 500;
+  }
+  .rank-stat-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--pico-muted-color);
+  }
+
+  /* Podium ----------------------------------------------------------- */
+  .rank-podium {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 0.85rem;
+    margin: 1.5rem 0 2.5rem;
+  }
+  .podium-card {
+    border: 1px solid var(--pico-muted-border-color);
+    border-top: 3px solid var(--pico-primary);
+    border-radius: var(--pico-border-radius);
+    padding: 0.9rem 1rem 0.75rem;
+    background: var(--pico-card-background-color);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .podium-1 { border-top-color: #d4a017; }
+  .podium-2 { border-top-color: #9aa0a6; }
+  .podium-3 { border-top-color: #b07843; }
+
+  .podium-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+  .podium-medal {
+    font-family: var(--pico-font-family-monospace);
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--pico-primary);
+  }
+  .podium-1 .podium-medal { color: #d4a017; }
+  .podium-2 .podium-medal { color: #9aa0a6; }
+  .podium-3 .podium-medal { color: #b07843; }
+  .podium-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--pico-muted-color);
+  }
+  .podium-title {
+    font-size: 1.02rem;
+    line-height: 1.3;
+    margin: 0;
+  }
+  .podium-title a {
+    text-decoration: none;
+  }
+  .podium-title a:hover {
+    text-decoration: underline;
+  }
+  .podium-stats {
+    display: flex;
+    gap: 1.25rem;
+    margin: 0;
+    padding-top: 0.35rem;
+    border-top: 1px dashed var(--pico-muted-border-color);
+  }
+  .podium-stats > div {
+    display: flex;
+    flex-direction: column;
+  }
+  .podium-stats dt {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--pico-muted-color);
+    margin: 0;
+  }
+  .podium-stats dd {
+    font-family: var(--pico-font-family-monospace);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  /* Table ----------------------------------------------------------- */
+  .rank-table-wrap {
+    margin-top: 0.5rem;
+  }
+  .rank-caption {
+    text-align: left;
+    font-size: 0.78rem;
+    color: var(--pico-muted-color);
+    margin-bottom: 0.4rem;
+    caption-side: top;
+  }
+  .rank-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  .rank-table thead th {
+    position: sticky;
+    top: 0;
+    background: var(--pico-background-color);
+    border-bottom: 2px solid var(--pico-muted-border-color);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--pico-muted-color);
+    text-align: left;
+    padding: 0.55rem 0.5rem;
+    z-index: 1;
+  }
+  .rank-table tbody td,
+  .rank-table tbody th {
+    padding: 0.55rem 0.5rem;
+    border-bottom: 1px solid var(--pico-muted-border-color);
+    vertical-align: top;
+  }
+  .rank-table tbody tr:hover {
+    background: var(--pico-card-sectioning-background-color);
+  }
+  .rank-table .num {
+    font-family: var(--pico-font-family-monospace);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .rank-table th.col-ordinal,
+  .rank-table th.col-mu,
+  .rank-table th.col-sigma,
+  .rank-table th.col-record {
+    text-align: right;
+  }
+  .rank-table .col-rank {
+    width: 2.5rem;
+    text-align: right;
+    font-family: var(--pico-font-family-monospace);
+    font-weight: 500;
+    color: var(--pico-muted-color);
+  }
+  .rank-table .col-post a {
+    text-decoration: none;
+  }
+  .rank-table .col-post a:hover {
+    text-decoration: underline;
+  }
+  .ord-bar {
+    margin-top: 0.4rem;
+    height: 3px;
+    background: var(--pico-muted-border-color);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .ord-bar > span {
+    display: block;
+    height: 100%;
+    background: var(--pico-primary);
+    opacity: 0.55;
+  }
+
+  .conf-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--pico-muted-border-color);
+    color: var(--pico-muted-color);
+    white-space: nowrap;
+  }
+  .conf-high {
+    color: #2d6a4f;
+    border-color: #2d6a4f55;
+    background: #2d6a4f12;
+  }
+  .conf-medium {
+    color: #b08300;
+    border-color: #b0830044;
+    background: #b0830012;
+  }
+  .conf-low {
+    color: var(--pico-muted-color);
+    border-color: var(--pico-muted-border-color);
+    background: transparent;
+  }
+  [data-theme="dark"] .conf-high {
+    color: #74c69d;
+    border-color: #74c69d55;
+    background: #74c69d12;
+  }
+  [data-theme="dark"] .conf-medium {
+    color: #f1c453;
+    border-color: #f1c45355;
+    background: #f1c45312;
+  }
+
+  /* On narrow screens fold μ, σ, and confidence columns away — keep
+     ordinal, record, and the bar visible since they carry the visual
+     story. */
+  @media (max-width: 720px) {
+    .rank-table .col-mu,
+    .rank-table .col-sigma,
+    .rank-table .col-confidence {
+      display: none;
+    }
+  }
+
+  /* Unrated --------------------------------------------------------- */
+  .rank-unrated,
+  .rank-recent {
+    margin-top: 3rem;
+  }
+  .rank-unrated h2,
+  .rank-recent h2 {
+    font-size: 1.15rem;
+    margin-bottom: 0.2rem;
+  }
+  .rank-unrated ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 0.4rem 1rem;
+  }
+  .rank-unrated li::before {
+    content: "·";
+    color: var(--pico-muted-color);
+    margin-right: 0.4rem;
+  }
+
+  /* Recent duels --------------------------------------------------- */
+  .recent-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .recent-list li {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 0.6rem;
+    align-items: baseline;
+    font-size: 0.93rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px dashed var(--pico-muted-border-color);
+  }
+  .recent-list li:last-child {
+    border-bottom: 0;
+  }
+  .recent-date {
+    font-family: var(--pico-font-family-monospace);
+    font-size: 0.78rem;
+    color: var(--pico-muted-color);
+    white-space: nowrap;
+  }
+  .recent-winner {
+    font-weight: 600;
+  }
+  .recent-loser {
+    color: var(--pico-muted-color);
+    text-decoration: line-through;
+    text-decoration-color: var(--pico-muted-border-color);
+  }
+  .recent-loser:hover {
+    color: var(--pico-color);
+  }
+  .recent-verb {
+    color: var(--pico-muted-color);
+    font-size: 0.85rem;
+  }
+  .recent-criterion {
+    color: var(--pico-muted-color);
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 540px) {
+    .recent-list li {
+      grid-template-columns: 1fr;
+      gap: 0.1rem;
+    }
+  }
+
+  .rank-empty {
+    padding: 2rem 1rem;
+    text-align: center;
+    border: 1px dashed var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    color: var(--pico-muted-color);
+  }
+
+  abbr[title] {
+    text-decoration: none;
+    border-bottom: 1px dotted var(--pico-muted-color);
+    cursor: help;
+  }
+</style>
