@@ -83,9 +83,16 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
       runAt,
       winnerKey,
       loserKey,
-      margin: typeof (data as any).margin === "number" ? (data as any).margin : undefined,
-      confidence: (data as any).confidence ? String((data as any).confidence) : undefined,
-      criterion: (data as any).criterion ? String((data as any).criterion) : undefined,
+      margin:
+        typeof (data as any).margin === "number"
+          ? (data as any).margin
+          : undefined,
+      confidence: (data as any).confidence
+        ? String((data as any).confidence)
+        : undefined,
+      criterion: (data as any).criterion
+        ? String((data as any).criterion)
+        : undefined,
     });
   }
 
