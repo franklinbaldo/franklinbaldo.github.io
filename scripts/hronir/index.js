@@ -42,47 +42,57 @@ const [, , cmd, ...args] = process.argv;
 
 function usage() {
   console.error(
-    "Uso: hronir {next [init-opts]|init [--matches N] [--skip-edit] [--skip-rating] [--agent-id <id>] [--eval-lang <lang>] [--min-appearances N]|continue|decide --winner <a_or_b> [--agent-id <id>] --clash <text> --winner-defense <text> --loser-critique <text>|ranking|worst|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force]}"
+    "Uso: hronir {next --agent-id <id> [init-opts]|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--min-appearances N]|continue|decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text>|ranking|worst|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force]}"
   );
   process.exit(1);
 }
 
+// Read the value for `flagName` from args. Rejects values that look like
+// another flag (i.e. start with `--`) so that `--agent-id --matches 5`
+// doesn't silently bind agentId to "--matches".
+function readFlagValue(args, indices) {
+  for (const idx of indices) {
+    if (idx === -1) continue;
+    const v = args[idx + 1];
+    if (v == null) {
+      console.error(`Erro: ${args[idx]} exige um valor.`);
+      process.exit(1);
+    }
+    if (typeof v === "string" && v.startsWith("--")) {
+      console.error(
+        `Erro: ${args[idx]} exige um valor, mas recebeu outra flag (${v}).`
+      );
+      process.exit(1);
+    }
+    return v;
+  }
+  return null;
+}
+
 switch (cmd) {
   case "init": {
-    let matchesOpt = 10;
-    const mIdx = args.indexOf("--matches");
-    if (mIdx !== -1 && args[mIdx + 1]) {
-      matchesOpt = parseInt(args[mIdx + 1], 10) || 10;
-    }
+    const matchesRaw = readFlagValue(args, [args.indexOf("--matches")]);
+    let matchesOpt = matchesRaw != null ? parseInt(matchesRaw, 10) || 10 : 10;
     const skipEdit = args.includes("--skip-edit");
     const skipRating = args.includes("--skip-rating");
     if (skipRating) {
       matchesOpt = 0;
     }
-    let agentId = "human";
-    const agentIdIdx =
-      args.indexOf("--agent-id") !== -1
-        ? args.indexOf("--agent-id")
-        : args.indexOf("--agent");
-    if (agentIdIdx !== -1 && args[agentIdIdx + 1]) {
-      agentId = args[agentIdIdx + 1];
-    }
-    let evalLang = "pt";
-    const evalLangIdx =
-      args.indexOf("--eval-lang") !== -1
-        ? args.indexOf("--eval-lang")
-        : args.indexOf("--lang");
-    if (evalLangIdx !== -1 && args[evalLangIdx + 1]) {
-      evalLang = args[evalLangIdx + 1];
-    }
-    let minAppearances = null;
-    const minAppIdx =
-      args.indexOf("--min-appearances") !== -1
-        ? args.indexOf("--min-appearances")
-        : args.indexOf("--min-app");
-    if (minAppIdx !== -1 && args[minAppIdx + 1]) {
-      minAppearances = parseInt(args[minAppIdx + 1], 10) || null;
-    }
+    const agentId = readFlagValue(args, [
+      args.indexOf("--agent-id"),
+      args.indexOf("--agent"),
+    ]);
+    const evalLangRaw = readFlagValue(args, [
+      args.indexOf("--eval-lang"),
+      args.indexOf("--lang"),
+    ]);
+    const evalLang = evalLangRaw || "pt";
+    const minAppRaw = readFlagValue(args, [
+      args.indexOf("--min-appearances"),
+      args.indexOf("--min-app"),
+    ]);
+    const minAppearances =
+      minAppRaw != null ? parseInt(minAppRaw, 10) || null : null;
     init({
       matches: matchesOpt,
       skipEdit,
@@ -98,35 +108,26 @@ switch (cmd) {
     break;
   case "next":
   case "auto": {
-    let matchesOpt = 10;
-    const mIdx = args.indexOf("--matches");
-    if (mIdx !== -1 && args[mIdx + 1]) {
-      matchesOpt = parseInt(args[mIdx + 1], 10) || 10;
-    }
+    const matchesRaw = readFlagValue(args, [args.indexOf("--matches")]);
+    let matchesOpt = matchesRaw != null ? parseInt(matchesRaw, 10) || 10 : 10;
     const skipEdit = args.includes("--skip-edit");
     const skipRating = args.includes("--skip-rating");
     if (skipRating) matchesOpt = 0;
-    let agentId = "human";
-    const agentIdIdx =
-      args.indexOf("--agent-id") !== -1
-        ? args.indexOf("--agent-id")
-        : args.indexOf("--agent");
-    if (agentIdIdx !== -1 && args[agentIdIdx + 1])
-      agentId = args[agentIdIdx + 1];
-    let evalLang = "pt";
-    const evalLangIdx =
-      args.indexOf("--eval-lang") !== -1
-        ? args.indexOf("--eval-lang")
-        : args.indexOf("--lang");
-    if (evalLangIdx !== -1 && args[evalLangIdx + 1])
-      evalLang = args[evalLangIdx + 1];
-    let minAppearances = null;
-    const minAppIdx =
-      args.indexOf("--min-appearances") !== -1
-        ? args.indexOf("--min-appearances")
-        : args.indexOf("--min-app");
-    if (minAppIdx !== -1 && args[minAppIdx + 1])
-      minAppearances = parseInt(args[minAppIdx + 1], 10) || null;
+    const agentId = readFlagValue(args, [
+      args.indexOf("--agent-id"),
+      args.indexOf("--agent"),
+    ]);
+    const evalLangRaw = readFlagValue(args, [
+      args.indexOf("--eval-lang"),
+      args.indexOf("--lang"),
+    ]);
+    const evalLang = evalLangRaw || "pt";
+    const minAppRaw = readFlagValue(args, [
+      args.indexOf("--min-appearances"),
+      args.indexOf("--min-app"),
+    ]);
+    const minAppearances =
+      minAppRaw != null ? parseInt(minAppRaw, 10) || null : null;
     next({
       matches: matchesOpt,
       skipEdit,
