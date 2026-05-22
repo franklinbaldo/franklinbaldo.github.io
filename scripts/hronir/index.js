@@ -42,7 +42,7 @@ const [, , cmd, ...args] = process.argv;
 
 function usage() {
   console.error(
-    "Uso: hronir {next [init-opts]|init [--matches N] [--skip-edit] [--skip-rating] [--agent-id <id>] [--eval-lang <lang>] [--min-appearances N]|continue|decide --winner <a_or_b> [--agent-id <id>] --clash <text> --winner-defense <text> --loser-critique <text>|ranking|worst|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force]}"
+    "Uso: hronir {next --agent-id <id> [init-opts]|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--min-appearances N]|continue|decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text> [--agent-id <id>] [--perspective <id>] [--eval-lang <lang>]|ranking|worst|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force]}"
   );
   process.exit(1);
 }
@@ -59,7 +59,7 @@ switch (cmd) {
     if (skipRating) {
       matchesOpt = 0;
     }
-    let agentId = "human";
+    let agentId = null;
     const agentIdIdx =
       args.indexOf("--agent-id") !== -1
         ? args.indexOf("--agent-id")
@@ -106,7 +106,7 @@ switch (cmd) {
     const skipEdit = args.includes("--skip-edit");
     const skipRating = args.includes("--skip-rating");
     if (skipRating) matchesOpt = 0;
-    let agentId = "human";
+    let agentId = null;
     const agentIdIdx =
       args.indexOf("--agent-id") !== -1
         ? args.indexOf("--agent-id")

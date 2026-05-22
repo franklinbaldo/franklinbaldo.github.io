@@ -1,6 +1,6 @@
 # Hrönir
 
-Sistema de avaliação par-a-par de posts do blog. Cada rodada gera N partidas (default 10) por **active sampling**, um avaliador (humano ou modelo) escolhe um vencedor por partida defendendo apaixonadamente, e ao final o post pior ranqueado recebe uma edição — registrada como `editHistory[]` no próprio frontmatter do post.
+Sistema de avaliação par-a-par de posts do blog. Cada rodada gera N partidas (default 10) por **active sampling**. Para cada partida o Hrönir sorteia uma **perspectiva de leitor** (ver `perspectives/`) e o avaliador, identificando-se obrigatoriamente, atribui estrelas (1.00–5.00) a cada post junto com uma resenha de cada e um confronto. O vencedor é derivado mecanicamente: quem tem mais estrelas. Ao final, o post pior ranqueado recebe uma edição — registrada como `editHistory[]` no próprio frontmatter do post.
 
 > **Este CLI é não-interativo por design** (rodado por Claude Code).
 > Não use `readline`, `inquirer`, `prompts`, leitura de `process.stdin`,
@@ -32,6 +32,7 @@ scripts/hronir/
   index.js                            # CLI entrypoint
   lib/                                # comandos
   skills/                             # skills versionadas (blog / essay)
+  perspectives/                       # personas de leitor sorteadas por match
   README.md                           # este arquivo
 ```
 
@@ -41,18 +42,18 @@ scripts/hronir/
 
 Todos via npm scripts na raiz:
 
-| Comando                                                                                                | Função                                                                                                                                                                                                            |
-| ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run hronir:init -- [opções]`                                                                      | Cria a sessão, vai direto pro primeiro match. Opções: `--matches N` (default 10), `--agent-id <id>` (default `human`), `--eval-lang <lang>` (default `pt`), `--min-appearances N`, `--skip-edit`, `--skip-rating` |
-| `npm run hronir:continue`                                                                              | Avança o estado da sessão: gera próximo match, imprime post A, depois post B, depois espera decisão                                                                                                               |
-| `npm run hronir:decide -- --winner <a\|b> --clash "..." --winner-defense "..." --loser-critique "..."` | Registra a decisão do match atual e devolve a sessão para `ready_for_next`                                                                                                                                        |
-| `npm run hronir:ranking`                                                                               | Score acumulado de todos os matches preenchidos                                                                                                                                                                   |
-| `npm run hronir:worst`                                                                                 | Imprime translationKey do pior ranqueado                                                                                                                                                                          |
-| `npm run hronir:edit-worst`                                                                            | Pior elegível + top 3 + defesas + crítica acumulada. Faz snapshot de cada tradução em `edit-history/`, injeta `replacedVersion` no frontmatter dos posts, marca a sessão como `need_edit`                         |
-| `npm run hronir:edit-commit -- --msg "..."`                                                            | Valida que cada tradução foi efetivamente alterada (UUIDv5 mudou), injeta `editHistory[]` no frontmatter de cada arquivo, fecha a sessão                                                                          |
-| `npm run hronir:end -- [--skip-edit\|--force]`                                                         | Encerra a rodada. Recusa se há matches pendentes ou edição pendente, a menos que `--force`                                                                                                                        |
-| `npm run hronir:migrate -- [--dry-run]`                                                                | Normaliza matches legados (`slug:` → `key:`, renomeia arquivo)                                                                                                                                                    |
-| `npm run hronir:doctor`                                                                                | Verifica inconsistências. Sai com código 1 se encontrar — usado no CI                                                                                                                                             |
+| Comando                                                                                                                                                     | Função                                                                                                                                                                                                                                     |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm run hronir:init -- --agent-id <id> [opções]`                                                                                                           | Cria a sessão, vai direto pro primeiro match. `--agent-id <id>` é **obrigatório** (sem default). Opções: `--matches N` (default 10), `--eval-lang <lang>` (default `pt`), `--min-appearances N`, `--skip-edit`, `--skip-rating`            |
+| `npm run hronir:continue`                                                                                                                                   | Avança o estado da sessão: imprime a **perspectiva sorteada** + post A; depois imprime post B; depois espera decisão                                                                                                                       |
+| `npm run hronir:decide -- --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "..." --review-b "..." --clash "..." [--agent-id <id>] [--perspective <id>]` | Registra a decisão. Cada `--rate-*` é número 1.00–5.00 (até duas decimais, empate proibido). Cada `--review-*` e o `--clash` têm piso de 100 palavras. Vencedor é derivado: quem tem mais estrelas. Devolve a sessão para `ready_for_next` |
+| `npm run hronir:ranking`                                                                                                                                    | Score acumulado de todos os matches preenchidos                                                                                                                                                                                            |
+| `npm run hronir:worst`                                                                                                                                      | Imprime translationKey do pior ranqueado                                                                                                                                                                                                   |
+| `npm run hronir:edit-worst`                                                                                                                                 | Pior elegível + top 3 + defesas + crítica acumulada. Faz snapshot de cada tradução em `edit-history/`, injeta `replacedVersion` no frontmatter dos posts, marca a sessão como `need_edit`                                                  |
+| `npm run hronir:edit-commit -- --msg "..."`                                                                                                                 | Valida que cada tradução foi efetivamente alterada (UUIDv5 mudou), injeta `editHistory[]` no frontmatter de cada arquivo, fecha a sessão                                                                                                   |
+| `npm run hronir:end -- [--skip-edit\|--force]`                                                                                                              | Encerra a rodada. Recusa se há matches pendentes ou edição pendente, a menos que `--force`                                                                                                                                                 |
+| `npm run hronir:migrate -- [--dry-run]`                                                                                                                     | Normaliza matches legados (`slug:` → `key:`, renomeia arquivo)                                                                                                                                                                             |
+| `npm run hronir:doctor`                                                                                                                                     | Verifica inconsistências. Sai com código 1 se encontrar — usado no CI                                                                                                                                                                      |
 
 Cada comando termina com uma linha `NEXT STEP:` apontando o próximo passo, exceto quando o fluxo termina.
 
@@ -83,8 +84,8 @@ A máquina de estados está em `hronir_session.json`: `ready_for_next → readin
 
 ```yaml
 ---
-run_id: 2026-05-18T20-28-00
-run_at: 2026-05-18T20:28:00Z
+run_id: 2026-05-22T09-53-19
+run_at: 2026-05-22T09:53:19Z
 match_index: 1
 post_a:
   key: third-half-fourth-wall
@@ -94,19 +95,22 @@ post_b:
   key: rosencrantz-coin
   path: src/content/blog/rosencrantz-coin.md
   version: 9b14e7d2-...
-winner: a                                # 'a' | 'b' | 'TODO'
-agent_id: claude-opus-4-7                # quem decidiu
+winner: a                                # derivado: a se rate_a > rate_b, senão b
+agent_id: claude-opus-4-7                # quem decidiu (obrigatório, sem default)
 eval_lang: pt                            # idioma em que a avaliação foi feita
-prompt_version: passion-v1
+prompt_version: stars-v1                 # marcador do schema atual
 season: 1
 override: null
-clash: "..."                             # o confronto em prosa
-winner_defense: "..."                    # defesa apaixonada do vencedor
-loser_critique: "..."                    # crítica do perdedor (alimenta edit-worst)
+perspective_id: returning-reader         # persona de leitor aplicada nesta partida
+rate_a: 4.25                             # número 1.00–5.00 (até duas decimais, empate proibido)
+rate_b: 3.75
+clash: "..."                             # ≥100 palavras, confronto sob a perspectiva sorteada
+review_a: "..."                          # ≥100 palavras, resenha do post A
+review_b: "..."                          # ≥100 palavras, resenha do post B
 ---
 ```
 
-Campos legados (`model`, body livre) continuam aceitos por `doctor` quando `agent_id` está ausente, para não invalidar matches antigos.
+`doctor` valida o schema `stars-v1` (rates, 100 palavras, perspective, derived-winner consistency). Matches anteriores (`prompt_version` ausente ou `passion-v1`) seguem aceitos como estão — o piso de 100 palavras e a perspectiva são exigidos apenas a partir de `stars-v1`. Campos legados (`model`, `winner_defense`, `loser_critique`, body livre) continuam aceitos.
 
 ## editHistory
 
@@ -121,9 +125,28 @@ editHistory:
 
 Esse é o registro auditável da linhagem do post. Substitui o antigo `.routines/hronir/edits/<key>-<ts>.md`. O cooldown de `edit-worst` (que evita reeditar o mesmo post duas rodadas seguidas) é derivado desse campo.
 
-## Meta de palavras nas defesas
+## Piso de palavras (stars-v1)
 
-`continue` (estado `reading_b`) instrui o avaliador que cada defesa deve ter mínimo 100 palavras (piso de qualidade), meta 200 (alvo natural), mencionar os dois posts pelo nome ou pela key, e explicar concretamente. Não há validação coerciva no `doctor` — é instrução proativa. Defesa muito curta ou genérica perde a função do sistema (`edit-worst` lê e cita essas defesas; pouca substância dá pouco sinal).
+No schema `stars-v1` o `decide` valida coercivamente: `--clash`, `--review-a` e `--review-b` precisam ter pelo menos **100 palavras** cada. O `doctor` repete a checagem nos arquivos persistidos. Resenha curta ou genérica perde a função do sistema (`edit-worst` lê e cita essas resenhas; pouca substância dá pouco sinal). Meta natural: 200 palavras por campo.
+
+## Perspectivas (leitores do blog)
+
+Cada match no schema `stars-v1` é avaliado a partir de uma **perspectiva de leitor** sorteada aleatoriamente no `continue` (estado `ready_for_next` → `reading_a`). A perspectiva é um arquivo em `scripts/hronir/perspectives/<id>.md` com frontmatter (`id`, `name`, `summary`) e um corpo de instruções dizendo o que premiar, o que penalizar, e como escrever a resenha e o confronto a partir daquela ótica.
+
+As 8 perspectivas atuais derivam das categorias de leitores descritas em `skills/franklin-blog/SKILL.md`:
+
+| id                        | leitor                                                                                               |
+| ------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `long-form-rationalist`   | Reader de Scott Alexander, Robin Hanson, Zvi, Gwern. Testa calibração epistêmica.                    |
+| `lateral-essayist`        | Reader de Didion, Calvino, Pessoa, Sebald. Lê para estrutura-como-movimento.                         |
+| `weird-clarity`           | Reader de Borges, Wittgenstein, Ted Chiang. Quer o frio de uma sentença clara que resiste paráfrase. |
+| `internet-native`         | Viewer de Hbomberguy, Folding Ideas. Tolera digressão se o ritmo a paga.                             |
+| `skeptical-specialist`    | Leitor adversarial bem-informado (do `franklin-essay`). Caça a alegação mais fraca.                  |
+| `curious-outsider`        | Leitor inteligente sem contexto do tópico. Testa generosidade pedagógica.                            |
+| `returning-reader`        | Leitor habitual do blog. Conhece os tiques; vigia auto-repetição entre posts recentes.               |
+| `comedy-carries-argument` | Reader de Lem, Monterroso, Nelson Rodrigues. Testa se a piada é alavanca ou decoração.               |
+
+Para fixar uma perspectiva em vez de sortear (útil para investigar), use `--perspective <id>` no `decide`. As resenhas (`review_a`, `review_b`) e o confronto (`clash`) devem ser escritos **a partir da perspectiva sorteada**, não em registro neutro.
 
 ## Threshold de volume
 

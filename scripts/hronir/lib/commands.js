@@ -15,6 +15,7 @@ import {
 } from "./posts.js";
 import { listMatchFiles, readMatch, writeMatch, postKey } from "./matches.js";
 import { computeRatings } from "./ranking.js";
+import { pickRandomPerspective, loadPerspective } from "./perspectives.js";
 
 const MIN_APPEARANCES = 3;
 const STALE_BONUS = 3.0;
@@ -22,6 +23,45 @@ const SKILLS_DIR = "scripts/hronir/skills";
 const ARCHIVE_DIR = path.join(OUT_DIR, "archive");
 const EDITS_DIR = path.join(OUT_DIR, "edits");
 const SESSION_PATH = "hronir_session.json";
+const MIN_WORDS = 100;
+const PROMPT_VERSION = "stars-v1";
+
+function wordCount(s) {
+  if (!s || typeof s !== "string") return 0;
+  return s.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function parseRate(raw, flagName) {
+  if (raw == null || String(raw).trim() === "") {
+    console.error(`Erro: ${flagName} é obrigatório.`);
+    process.exit(1);
+  }
+  const s = String(raw).trim();
+  // up to two decimal places, mandatory digit before/after the point if dotted
+  if (!/^\d+(\.\d{1,2})?$/.test(s)) {
+    console.error(
+      `Erro: ${flagName} deve ser um número entre 1.00 e 5.00 com no máximo duas casas decimais (recebido: ${JSON.stringify(raw)}).`
+    );
+    process.exit(1);
+  }
+  const n = Number(s);
+  if (!Number.isFinite(n) || n < 1 || n > 5) {
+    console.error(
+      `Erro: ${flagName} deve estar entre 1.00 e 5.00 (recebido: ${JSON.stringify(raw)}).`
+    );
+    process.exit(1);
+  }
+  // round to two decimals to avoid float drift in stored data
+  return Math.round(n * 100) / 100;
+}
+
+function isValidRate(n) {
+  if (typeof n !== "number" || !Number.isFinite(n)) return false;
+  if (n < 1 || n > 5) return false;
+  // accept up to two decimals (allow small float drift)
+  const scaled = n * 100;
+  return Math.abs(scaled - Math.round(scaled)) < 1e-6;
+}
 
 function gitMtime(filePath) {
   try {
@@ -94,7 +134,13 @@ export function init(options = {}) {
 
   const skipEdit = !!options.skipEdit;
   const skipRating = !!options.skipRating;
-  const agentId = options.agentId || "human";
+  const agentId = options.agentId;
+  if (!agentId || agentId === "TODO") {
+    console.error(
+      "Erro: --agent-id é obrigatório. Identifique o avaliador explicitamente (ex.: --agent-id claude-opus-4-7 ou --agent-id franklin)."
+    );
+    process.exit(1);
+  }
   const evalLang = options.evalLang || "pt";
   const sessionPath = SESSION_PATH;
 
@@ -214,7 +260,11 @@ function generateNextMatch() {
     evalLang = s.evalLang || "pt";
   }
 
-  console.log(`Gerado match ${matchIndex} (active sampling).`);
+  const perspective = pickRandomPerspective();
+
+  console.log(
+    `Gerado match ${matchIndex} (active sampling). Perspectiva: ${perspective.name}.`
+  );
   return {
     match_index: matchIndex,
     post_a: {
@@ -229,7 +279,22 @@ function generateNextMatch() {
     },
     agent_id: agentId,
     eval_lang: evalLang,
+    perspective_id: perspective.id,
   };
+}
+
+function perspectiveBanner(perspective) {
+  return [
+    "================================================================================",
+    `🎭 PERSPECTIVA DESTE MATCH: ${perspective.name}`,
+    `   id: ${perspective.id}`,
+    "================================================================================",
+    perspective.summary,
+    "",
+    perspective.body,
+    "================================================================================",
+    "",
+  ].join("\n");
 }
 
 export function continueCmd() {
@@ -283,6 +348,11 @@ export function continueCmd() {
 
   if (session.state === "reading_a") {
     const aPath = session.currentMatch?.post_a?.path;
+    const perspectiveId = session.currentMatch?.perspective_id;
+    if (perspectiveId) {
+      const perspective = loadPerspective(perspectiveId);
+      console.log(perspectiveBanner(perspective));
+    }
 
     console.log("=== PRIMEIRO POST (A) ===\n");
     console.log(fs.readFileSync(aPath, "utf8"));
@@ -297,6 +367,13 @@ export function continueCmd() {
 
   if (session.state === "reading_b") {
     const bPath = session.currentMatch?.post_b?.path;
+    const perspectiveId = session.currentMatch?.perspective_id;
+    if (perspectiveId) {
+      const perspective = loadPerspective(perspectiveId);
+      console.log(
+        `🎭 Lembrete da perspectiva: ${perspective.name} — ${perspective.summary}\n`
+      );
+    }
 
     console.log("=== SEGUNDO POST (B) ===\n");
     console.log(fs.readFileSync(bPath, "utf8"));
@@ -305,15 +382,23 @@ export function continueCmd() {
     session.state = "deciding";
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
+    const perspectiveLine = perspectiveId
+      ? `Avalie a partir da perspectiva: ${loadPerspective(perspectiveId).name} (id: ${perspectiveId}).`
+      : "(sem perspectiva atribuída — verifique a sessão)";
+
     const stepLines = [
-      "Escolha um vencedor e defenda apaixonadamente a escolha.",
-      "- mínimo 100 palavras (piso de qualidade)",
-      "- meta 200 palavras (alvo natural)",
-      "- mencionar os dois posts pelo nome ou pela key",
-      "- orientações sobre formas estimuladas de defesa: citar pontos específicos que deram certo ou falharam, trechos marcantes ou falhas de clareza",
+      perspectiveLine,
+      "",
+      "Atribua estrelas (1.00–5.00) a cada post e escreva uma resenha de cada,",
+      "depois um confronto. O vencedor é derivado mecanicamente: quem",
+      "tiver mais estrelas. Empates são rejeitados — comprometa-se.",
+      "",
+      "- --rate-a / --rate-b: número de 1.00 a 5.00 com até duas casas decimais (proibido empate)",
+      "- --review-a / --review-b: mínimo 100 palavras cada, escritas a partir da perspectiva atribuída",
+      "- --clash: mínimo 100 palavras, narra o confronto entre os dois posts pela ótica da perspectiva",
       "",
       `Para decidir, rode:`,
-      `npm run hronir:decide --winner <a_or_b> --clash "<confronto>" --winner-defense "<defesa>" --loser-critique "<critica>" (ou passe --agent-id <id> para sobrescrever)`,
+      `npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>" (--agent-id <id> e --perspective <id> são opcionais para sobrescrever)`,
     ];
     nextStep(stepLines.join("\n"));
     return;
@@ -321,7 +406,7 @@ export function continueCmd() {
 
   if (session.state === "deciding") {
     nextStep(
-      `Você precisa decidir o match atual. Rode: npm run hronir:decide --winner <a_or_b> --clash "<confronto>" --winner-defense "<defesa>" --loser-critique "<critica>" (ou passe --agent-id <id> para sobrescrever)`
+      `Você precisa decidir o match atual. Rode: npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>"`
     );
     return;
   }
@@ -342,7 +427,7 @@ export function next(initOptions = {}) {
 
   if (session.state === "deciding") {
     nextStep(
-      `Decisão pendente. Rode: npm run hronir:decide --winner <a_or_b> --clash "<confronto>" --winner-defense "<defesa>" --loser-critique "<critica>"`
+      `Decisão pendente. Rode: npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>"`
     );
     return;
   }
@@ -387,52 +472,80 @@ export function decide(args) {
     process.exit(1);
   }
 
-  let winner = "TODO";
   let agentId = session.agentId || "TODO";
   let clash = "";
-  let winnerDefense = "";
-  let loserCritique = "";
+  let reviewA = "";
+  let reviewB = "";
+  let rateA = null;
+  let rateB = null;
+  let perspectiveOverride = null;
   let evalLang = null;
 
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === "--winner") winner = args[++i];
-    else if (
+    if (
       args[i] === "--agent-id" ||
       args[i] === "--agent" ||
       args[i] === "--model"
     )
       agentId = args[++i];
     else if (args[i] === "--clash") clash = args[++i];
-    else if (args[i] === "--winner-defense" || args[i] === "--defense")
-      winnerDefense = args[++i];
-    else if (args[i] === "--loser-critique" || args[i] === "--critique")
-      loserCritique = args[++i];
+    else if (args[i] === "--review-a") reviewA = args[++i];
+    else if (args[i] === "--review-b") reviewB = args[++i];
+    else if (args[i] === "--rate-a") rateA = args[++i];
+    else if (args[i] === "--rate-b") rateB = args[++i];
+    else if (args[i] === "--perspective") perspectiveOverride = args[++i];
     else if (args[i] === "--eval-lang" || args[i] === "--lang")
       evalLang = args[++i];
   }
 
-  if (winner !== "a" && winner !== "b") {
-    console.error("Erro: --winner deve ser 'a' ou 'b'.");
-    process.exit(1);
-  }
   if (!agentId || agentId === "TODO") {
     console.error(
       "Erro: --agent-id deve ser especificado ou definido no init."
     );
     process.exit(1);
   }
-  if (!winnerDefense) {
-    console.error("Erro: --winner-defense ou --defense não pode ser vazia.");
+
+  const parsedRateA = parseRate(rateA, "--rate-a");
+  const parsedRateB = parseRate(rateB, "--rate-b");
+  if (parsedRateA === parsedRateB) {
+    console.error(
+      `Erro: --rate-a e --rate-b não podem ser iguais (${parsedRateA.toFixed(2)} x ${parsedRateB.toFixed(2)}). Comprometa-se.`
+    );
     process.exit(1);
   }
-  if (!clash) {
-    console.error("Erro: --clash não pode ser vazio.");
+
+  const wcClash = wordCount(clash);
+  const wcReviewA = wordCount(reviewA);
+  const wcReviewB = wordCount(reviewB);
+  if (wcClash < MIN_WORDS) {
+    console.error(
+      `Erro: --clash precisa ter pelo menos ${MIN_WORDS} palavras (recebido: ${wcClash}).`
+    );
     process.exit(1);
   }
-  if (!loserCritique) {
-    console.error("Erro: --loser-critique ou --critique não pode ser vazio.");
+  if (wcReviewA < MIN_WORDS) {
+    console.error(
+      `Erro: --review-a precisa ter pelo menos ${MIN_WORDS} palavras (recebido: ${wcReviewA}).`
+    );
     process.exit(1);
   }
+  if (wcReviewB < MIN_WORDS) {
+    console.error(
+      `Erro: --review-b precisa ter pelo menos ${MIN_WORDS} palavras (recebido: ${wcReviewB}).`
+    );
+    process.exit(1);
+  }
+
+  const perspectiveId = perspectiveOverride || currentMatch.perspective_id;
+  if (!perspectiveId) {
+    console.error(
+      "Erro: nenhuma perspectiva atribuída ao match e nenhuma --perspective passada."
+    );
+    process.exit(1);
+  }
+  const perspective = loadPerspective(perspectiveId);
+
+  const winner = parsedRateA > parsedRateB ? "a" : "b";
 
   const { runId, runAt } = utcStamp();
   const aKey = currentMatch.post_a.key;
@@ -448,18 +561,23 @@ export function decide(args) {
     winner,
     agent_id: agentId,
     eval_lang: evalLang || currentMatch.eval_lang || session.evalLang || "pt",
-    prompt_version: "passion-v1",
+    prompt_version: PROMPT_VERSION,
     season: 1,
     override: null,
+    perspective_id: perspective.id,
+    rate_a: parsedRateA,
+    rate_b: parsedRateB,
     clash,
-    winner_defense: winnerDefense,
-    loser_critique: loserCritique,
+    review_a: reviewA,
+    review_b: reviewB,
   };
 
   fs.mkdirSync(RATES_DIR, { recursive: true });
   writeMatch(matchFile, data, "");
 
-  console.log(`Match ${path.basename(matchFile)} criado com sucesso!`);
+  console.log(
+    `Match ${path.basename(matchFile)} criado com sucesso! (perspectiva: ${perspective.name}, ${parsedRateA.toFixed(2)}★ vs ${parsedRateB.toFixed(2)}★, vencedor: ${winner})`
+  );
 
   session.completed += 1;
   session.state = "ready_for_next";
@@ -516,11 +634,29 @@ function collectDefensesForLoser(loserKey, limit = 5) {
     const winnerSideKey = winner === "a" ? aKey : bKey;
     if (loserSideKey !== loserKey) continue;
 
-    // New-schema matches (post-#145) carry the prose in frontmatter fields.
-    // Prefer those; fall back to body parsing for legacy matches.
+    // Stars-schema matches (post-#stars-v1) carry symmetric review_a/review_b;
+    // older new-schema matches use winner_defense/loser_critique; legacy
+    // matches keep prose in the body.
     let body = "";
     let parsedCritique = null;
-    if (data.clash || data.winner_defense || data.loser_critique) {
+    const perspectiveLabel = data.perspective_id
+      ? `[Perspectiva]: ${data.perspective_id}\n\n`
+      : "";
+    if (data.review_a || data.review_b) {
+      const c = data.clash && data.clash !== "TODO" ? data.clash : "";
+      const winnerReview =
+        winner === "a" ? data.review_a || "" : data.review_b || "";
+      const loserReview =
+        winner === "a" ? data.review_b || "" : data.review_a || "";
+      const rateWinner = winner === "a" ? data.rate_a : data.rate_b;
+      const rateLoser = winner === "a" ? data.rate_b : data.rate_a;
+      const starsLine =
+        rateWinner != null && rateLoser != null
+          ? `[Estrelas] vencedor ${rateWinner}★ vs perdedor ${rateLoser}★\n\n`
+          : "";
+      body = `${perspectiveLabel}${starsLine}[Confronto]\n${c}\n\n[Resenha do vencedor]\n${winnerReview}`;
+      parsedCritique = loserReview || null;
+    } else if (data.clash || data.winner_defense || data.loser_critique) {
       const c = data.clash && data.clash !== "TODO" ? data.clash : "";
       const w =
         data.winner_defense && data.winner_defense !== "TODO"
@@ -530,7 +666,7 @@ function collectDefensesForLoser(loserKey, limit = 5) {
         data.loser_critique && data.loser_critique !== "TODO"
           ? data.loser_critique
           : "";
-      body = `[Confronto]\n${c}\n\n[Defesa]\n${w}`;
+      body = `${perspectiveLabel}[Confronto]\n${c}\n\n[Defesa]\n${w}`;
       parsedCritique = l || null;
     } else {
       body = (content || "").replace(/^\s*<!--\s*TODO\s*-->\s*$/m, "").trim();
@@ -594,13 +730,27 @@ function collectDefensesForWinners(winnerKeys, limit = 5) {
     if (!set.has(winnerSideKey)) continue;
 
     let body;
-    if (data.clash || data.winner_defense) {
+    const perspectiveLabel = data.perspective_id
+      ? `[Perspectiva]: ${data.perspective_id}\n\n`
+      : "";
+    if (data.review_a || data.review_b) {
+      const c = data.clash && data.clash !== "TODO" ? data.clash : "";
+      const winnerReview =
+        winner === "a" ? data.review_a || "" : data.review_b || "";
+      const rateWinner = winner === "a" ? data.rate_a : data.rate_b;
+      const rateLoser = winner === "a" ? data.rate_b : data.rate_a;
+      const starsLine =
+        rateWinner != null && rateLoser != null
+          ? `[Estrelas] vencedor ${rateWinner}★ vs perdedor ${rateLoser}★\n\n`
+          : "";
+      body = `${perspectiveLabel}${starsLine}[Confronto]\n${c}\n\n[Resenha do vencedor]\n${winnerReview}`;
+    } else if (data.clash || data.winner_defense) {
       const c = data.clash && data.clash !== "TODO" ? data.clash : "";
       const w =
         data.winner_defense && data.winner_defense !== "TODO"
           ? data.winner_defense
           : "";
-      body = `[Confronto]\n${c}\n\n[Defesa]\n${w}`;
+      body = `${perspectiveLabel}[Confronto]\n${c}\n\n[Defesa]\n${w}`;
     } else {
       body = (content || "").replace(/^\s*<!--\s*TODO\s*-->\s*$/m, "").trim();
       if (!body) continue;
@@ -1014,20 +1164,18 @@ export function doctor() {
     // post-#145 flow (which always sets agent_id). Legacy matches with the
     // old `model` field are accepted as-is.
     const isNewSchema = !!data.agent_id;
+    const isStarsSchema =
+      data.prompt_version === PROMPT_VERSION ||
+      data.rate_a != null ||
+      data.rate_b != null;
+
     if (isNewSchema && data.winner !== "TODO") {
+      if (!data.agent_id || data.agent_id === "TODO") {
+        issues.push(`${base}: o campo 'agent_id' está ausente ou é 'TODO'`);
+      }
       if (!data.clash || data.clash === "TODO") {
         issues.push(
           `${base}: o campo 'clash' no frontmatter está ausente ou é 'TODO'`
-        );
-      }
-      if (!data.winner_defense || data.winner_defense === "TODO") {
-        issues.push(
-          `${base}: o campo 'winner_defense' no frontmatter está ausente ou é 'TODO'`
-        );
-      }
-      if (!data.loser_critique || data.loser_critique === "TODO") {
-        issues.push(
-          `${base}: o campo 'loser_critique' no frontmatter está ausente ou é 'TODO'`
         );
       }
       if (
@@ -1036,6 +1184,81 @@ export function doctor() {
         !data.eval_lang.trim()
       ) {
         issues.push(`${base}: o campo 'eval_lang' no frontmatter está ausente`);
+      }
+
+      if (isStarsSchema) {
+        // Stars-schema-only rules: 100-word floor, perspective, rate validity,
+        // derived-winner consistency. Pre-stars matches keep their original
+        // prose without retroactive enforcement.
+        if (
+          data.clash &&
+          data.clash !== "TODO" &&
+          wordCount(data.clash) < MIN_WORDS
+        ) {
+          issues.push(
+            `${base}: 'clash' tem ${wordCount(data.clash)} palavras (mínimo ${MIN_WORDS})`
+          );
+        }
+        const ra = data.rate_a;
+        const rb = data.rate_b;
+        if (!isValidRate(ra)) {
+          issues.push(
+            `${base}: 'rate_a' deve ser número 1.00-5.00 com até duas decimais (got ${ra})`
+          );
+        }
+        if (!isValidRate(rb)) {
+          issues.push(
+            `${base}: 'rate_b' deve ser número 1.00-5.00 com até duas decimais (got ${rb})`
+          );
+        }
+        if (isValidRate(ra) && isValidRate(rb)) {
+          if (ra === rb) {
+            issues.push(`${base}: rate_a == rate_b (${ra}); empate proibido`);
+          } else {
+            const derivedWinner = ra > rb ? "a" : "b";
+            if (data.winner !== derivedWinner) {
+              issues.push(
+                `${base}: winner=${data.winner} não bate com rate_a=${ra}, rate_b=${rb} (derivado: ${derivedWinner})`
+              );
+            }
+          }
+        }
+        if (!data.review_a || data.review_a === "TODO") {
+          issues.push(
+            `${base}: o campo 'review_a' no frontmatter está ausente ou é 'TODO'`
+          );
+        } else if (wordCount(data.review_a) < MIN_WORDS) {
+          issues.push(
+            `${base}: 'review_a' tem ${wordCount(data.review_a)} palavras (mínimo ${MIN_WORDS})`
+          );
+        }
+        if (!data.review_b || data.review_b === "TODO") {
+          issues.push(
+            `${base}: o campo 'review_b' no frontmatter está ausente ou é 'TODO'`
+          );
+        } else if (wordCount(data.review_b) < MIN_WORDS) {
+          issues.push(
+            `${base}: 'review_b' tem ${wordCount(data.review_b)} palavras (mínimo ${MIN_WORDS})`
+          );
+        }
+        if (!data.perspective_id) {
+          issues.push(
+            `${base}: o campo 'perspective_id' está ausente (obrigatório para schema stars)`
+          );
+        }
+      } else {
+        // Pre-stars new-schema matches: require the fields exist but don't
+        // enforce the 100-word floor retroactively (rule did not exist at write time).
+        if (!data.winner_defense || data.winner_defense === "TODO") {
+          issues.push(
+            `${base}: o campo 'winner_defense' no frontmatter está ausente ou é 'TODO'`
+          );
+        }
+        if (!data.loser_critique || data.loser_critique === "TODO") {
+          issues.push(
+            `${base}: o campo 'loser_critique' no frontmatter está ausente ou é 'TODO'`
+          );
+        }
       }
     }
 
