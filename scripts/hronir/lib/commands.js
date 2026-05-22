@@ -407,8 +407,8 @@ export function continueCmd() {
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
     const perspectiveLine = perspective
-      ? `Avalie a partir da perspectiva: ${perspective.name} (id: ${perspectiveId}).`
-      : "(sem perspectiva atribuída — passe --perspective <id> ao decide)";
+      ? `Avalie a partir da perspectiva: ${perspective.name} (id: ${perspectiveId}). A perspectiva é fixa para este match — não há override.`
+      : "(sem perspectiva atribuída — sessão inconsistente; rode novamente `npm run hronir:continue`)";
 
     const stepLines = [
       perspectiveLine,
@@ -422,7 +422,7 @@ export function continueCmd() {
       "- --clash: mínimo 100 palavras, narra o confronto entre os dois posts pela ótica da perspectiva",
       "",
       `Para decidir, rode:`,
-      `npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>" (--agent-id <id> e --perspective <id> são opcionais para sobrescrever)`,
+      `npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>"`,
     ];
     nextStep(stepLines.join("\n"));
     return;
@@ -502,8 +502,6 @@ export function decide(args) {
   let reviewB = "";
   let rateA = null;
   let rateB = null;
-  let perspectiveOverride = null;
-  let evalLang = null;
 
   const removedFlags = new Set([
     "--winner",
@@ -511,12 +509,25 @@ export function decide(args) {
     "--defense",
     "--loser-critique",
     "--critique",
+    "--perspective",
+    "--eval-lang",
+    "--lang",
   ]);
   for (let i = 0; i < args.length; i++) {
     if (removedFlags.has(args[i])) {
-      console.error(
-        `Erro: a flag ${args[i]} foi removida. Use --rate-a / --rate-b (1.00–5.00) e --review-a / --review-b. O vencedor é derivado das estrelas.`
-      );
+      if (args[i] === "--perspective") {
+        console.error(
+          "Erro: --perspective não é uma flag de decide. A perspectiva é sorteada e fixada em `continue`; o avaliador a recebe via banner antes de decidir, sem poder sobrescrever."
+        );
+      } else if (args[i] === "--eval-lang" || args[i] === "--lang") {
+        console.error(
+          "Erro: --eval-lang só é aceita em `init`. A língua de avaliação é fixa pela sessão."
+        );
+      } else {
+        console.error(
+          `Erro: a flag ${args[i]} foi removida. Use --rate-a / --rate-b (1.00–5.00) e --review-a / --review-b. O vencedor é derivado das estrelas.`
+        );
+      }
       process.exit(1);
     }
     if (
@@ -530,9 +541,6 @@ export function decide(args) {
     else if (args[i] === "--review-b") reviewB = args[++i];
     else if (args[i] === "--rate-a") rateA = args[++i];
     else if (args[i] === "--rate-b") rateB = args[++i];
-    else if (args[i] === "--perspective") perspectiveOverride = args[++i];
-    else if (args[i] === "--eval-lang" || args[i] === "--lang")
-      evalLang = args[++i];
   }
 
   if (!agentId || agentId === "TODO") {
@@ -573,13 +581,10 @@ export function decide(args) {
     process.exit(1);
   }
 
-  const perspectiveId = perspectiveOverride || currentMatch.perspective_id;
+  const perspectiveId = currentMatch.perspective_id;
   if (!perspectiveId) {
-    const known = listPerspectives()
-      .map((p) => p.id)
-      .join(", ");
     console.error(
-      `Erro: nenhuma perspectiva atribuída a este match. Passe --perspective <id>. Disponíveis: ${known}.`
+      "Erro: a sessão atual não tem perspectiva atribuída. Rode `npm run hronir:continue` para sortear uma."
     );
     process.exit(1);
   }
@@ -606,7 +611,7 @@ export function decide(args) {
     post_b: currentMatch.post_b,
     winner,
     agent_id: agentId,
-    eval_lang: evalLang || currentMatch.eval_lang || session.evalLang || "pt",
+    eval_lang: currentMatch.eval_lang || session.evalLang || "pt",
     prompt_version: PROMPT_VERSION,
     season: 1,
     override: null,
