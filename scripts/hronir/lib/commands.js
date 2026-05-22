@@ -15,7 +15,11 @@ import {
 } from "./posts.js";
 import { listMatchFiles, readMatch, writeMatch, postKey } from "./matches.js";
 import { computeRatings } from "./ranking.js";
-import { pickRandomPerspective, loadPerspective } from "./perspectives.js";
+import {
+  pickRandomPerspective,
+  loadPerspective,
+  listPerspectives,
+} from "./perspectives.js";
 
 const MIN_APPEARANCES = 3;
 const STALE_BONUS = 3.0;
@@ -348,10 +352,24 @@ export function continueCmd() {
 
   if (session.state === "reading_a") {
     const aPath = session.currentMatch?.post_a?.path;
+    // Backfill perspective for in-flight sessions created before stars-v1:
+    // pick one now and persist so the rest of the flow has a stable lens.
+    if (session.currentMatch && !session.currentMatch.perspective_id) {
+      const picked = pickRandomPerspective();
+      session.currentMatch.perspective_id = picked.id;
+      fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
+      console.log(
+        `(perspectiva sorteada para sessão em andamento: ${picked.name})`
+      );
+    }
     const perspectiveId = session.currentMatch?.perspective_id;
     if (perspectiveId) {
-      const perspective = loadPerspective(perspectiveId);
-      console.log(perspectiveBanner(perspective));
+      try {
+        console.log(perspectiveBanner(loadPerspective(perspectiveId)));
+      } catch (e) {
+        console.error(`Erro ao carregar perspectiva: ${e.message}`);
+        process.exit(1);
+      }
     }
 
     console.log("=== PRIMEIRO POST (A) ===\n");
@@ -368,11 +386,17 @@ export function continueCmd() {
   if (session.state === "reading_b") {
     const bPath = session.currentMatch?.post_b?.path;
     const perspectiveId = session.currentMatch?.perspective_id;
+    let perspective = null;
     if (perspectiveId) {
-      const perspective = loadPerspective(perspectiveId);
-      console.log(
-        `🎭 Lembrete da perspectiva: ${perspective.name} — ${perspective.summary}\n`
-      );
+      try {
+        perspective = loadPerspective(perspectiveId);
+        console.log(
+          `🎭 Lembrete da perspectiva: ${perspective.name} — ${perspective.summary}\n`
+        );
+      } catch (e) {
+        console.error(`Erro ao carregar perspectiva: ${e.message}`);
+        process.exit(1);
+      }
     }
 
     console.log("=== SEGUNDO POST (B) ===\n");
@@ -382,9 +406,9 @@ export function continueCmd() {
     session.state = "deciding";
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
-    const perspectiveLine = perspectiveId
-      ? `Avalie a partir da perspectiva: ${loadPerspective(perspectiveId).name} (id: ${perspectiveId}).`
-      : "(sem perspectiva atribuída — verifique a sessão)";
+    const perspectiveLine = perspective
+      ? `Avalie a partir da perspectiva: ${perspective.name} (id: ${perspectiveId}).`
+      : "(sem perspectiva atribuída — passe --perspective <id> ao decide)";
 
     const stepLines = [
       perspectiveLine,
@@ -481,7 +505,20 @@ export function decide(args) {
   let perspectiveOverride = null;
   let evalLang = null;
 
+  const removedFlags = new Set([
+    "--winner",
+    "--winner-defense",
+    "--defense",
+    "--loser-critique",
+    "--critique",
+  ]);
   for (let i = 0; i < args.length; i++) {
+    if (removedFlags.has(args[i])) {
+      console.error(
+        `Erro: a flag ${args[i]} foi removida. Use --rate-a / --rate-b (1.00–5.00) e --review-a / --review-b. O vencedor é derivado das estrelas.`
+      );
+      process.exit(1);
+    }
     if (
       args[i] === "--agent-id" ||
       args[i] === "--agent" ||
@@ -538,12 +575,21 @@ export function decide(args) {
 
   const perspectiveId = perspectiveOverride || currentMatch.perspective_id;
   if (!perspectiveId) {
+    const known = listPerspectives()
+      .map((p) => p.id)
+      .join(", ");
     console.error(
-      "Erro: nenhuma perspectiva atribuída ao match e nenhuma --perspective passada."
+      `Erro: nenhuma perspectiva atribuída a este match. Passe --perspective <id>. Disponíveis: ${known}.`
     );
     process.exit(1);
   }
-  const perspective = loadPerspective(perspectiveId);
+  let perspective;
+  try {
+    perspective = loadPerspective(perspectiveId);
+  } catch (e) {
+    console.error(`Erro: ${e.message}`);
+    process.exit(1);
+  }
 
   const winner = parsedRateA > parsedRateB ? "a" : "b";
 
@@ -1117,6 +1163,19 @@ export function doctor() {
     );
   }
 
+  // Validate the perspectives directory once up front so a malformed
+  // file is caught even when no match references it yet.
+  try {
+    const ps = listPerspectives();
+    if (ps.length === 0) {
+      issues.push(
+        `scripts/hronir/perspectives/: nenhum arquivo de perspectiva encontrado.`
+      );
+    }
+  } catch (e) {
+    issues.push(`scripts/hronir/perspectives/: ${e.message}`);
+  }
+
   for (const f of listMatchFiles()) {
     const { data } = readMatch(f);
     const base = path.basename(f);
@@ -1160,19 +1219,96 @@ export function doctor() {
       }
     }
 
-    // New-schema fields are only required for matches produced by the
-    // post-#145 flow (which always sets agent_id). Legacy matches with the
-    // old `model` field are accepted as-is.
-    const isNewSchema = !!data.agent_id;
-    const isStarsSchema =
-      data.prompt_version === PROMPT_VERSION ||
-      data.rate_a != null ||
-      data.rate_b != null;
+    // Schema detection.
+    //   - stars-v1: explicit prompt_version marker only. We deliberately do
+    //     NOT infer stars-schema from a stray rate_a/rate_b field, so a
+    //     hand-edited legacy match doesn't get retroactively reclassified.
+    //   - new-schema (pre-stars): `agent_id` set, prose in frontmatter.
+    //   - legacy: neither marker — accepted as-is for historical compatibility.
+    const isStarsSchema = data.prompt_version === PROMPT_VERSION;
+    const isNewSchema = !!data.agent_id || isStarsSchema;
 
-    if (isNewSchema && data.winner !== "TODO") {
+    // Stars-schema invariants are independent of agent_id presence: a match
+    // produced by the new flow must pass them regardless of whether the file
+    // also has the agent_id field (which is itself required below).
+    if (isStarsSchema && data.winner !== "TODO") {
       if (!data.agent_id || data.agent_id === "TODO") {
         issues.push(`${base}: o campo 'agent_id' está ausente ou é 'TODO'`);
       }
+      if (!data.clash || data.clash === "TODO") {
+        issues.push(
+          `${base}: o campo 'clash' no frontmatter está ausente ou é 'TODO'`
+        );
+      } else if (wordCount(data.clash) < MIN_WORDS) {
+        issues.push(
+          `${base}: 'clash' tem ${wordCount(data.clash)} palavras (mínimo ${MIN_WORDS})`
+        );
+      }
+      if (
+        !data.eval_lang ||
+        typeof data.eval_lang !== "string" ||
+        !data.eval_lang.trim()
+      ) {
+        issues.push(`${base}: o campo 'eval_lang' no frontmatter está ausente`);
+      }
+      const ra = data.rate_a;
+      const rb = data.rate_b;
+      if (!isValidRate(ra)) {
+        issues.push(
+          `${base}: 'rate_a' deve ser número 1.00-5.00 com até duas decimais (got ${ra})`
+        );
+      }
+      if (!isValidRate(rb)) {
+        issues.push(
+          `${base}: 'rate_b' deve ser número 1.00-5.00 com até duas decimais (got ${rb})`
+        );
+      }
+      if (isValidRate(ra) && isValidRate(rb)) {
+        if (ra === rb) {
+          issues.push(`${base}: rate_a == rate_b (${ra}); empate proibido`);
+        } else {
+          const derivedWinner = ra > rb ? "a" : "b";
+          if (data.winner !== derivedWinner) {
+            issues.push(
+              `${base}: winner=${data.winner} não bate com rate_a=${ra}, rate_b=${rb} (derivado: ${derivedWinner})`
+            );
+          }
+        }
+      }
+      if (!data.review_a || data.review_a === "TODO") {
+        issues.push(
+          `${base}: o campo 'review_a' no frontmatter está ausente ou é 'TODO'`
+        );
+      } else if (wordCount(data.review_a) < MIN_WORDS) {
+        issues.push(
+          `${base}: 'review_a' tem ${wordCount(data.review_a)} palavras (mínimo ${MIN_WORDS})`
+        );
+      }
+      if (!data.review_b || data.review_b === "TODO") {
+        issues.push(
+          `${base}: o campo 'review_b' no frontmatter está ausente ou é 'TODO'`
+        );
+      } else if (wordCount(data.review_b) < MIN_WORDS) {
+        issues.push(
+          `${base}: 'review_b' tem ${wordCount(data.review_b)} palavras (mínimo ${MIN_WORDS})`
+        );
+      }
+      if (!data.perspective_id) {
+        issues.push(
+          `${base}: o campo 'perspective_id' está ausente (obrigatório para schema stars)`
+        );
+      } else {
+        try {
+          loadPerspective(String(data.perspective_id));
+        } catch (e) {
+          issues.push(
+            `${base}: perspective_id "${data.perspective_id}" não corresponde a nenhum arquivo em scripts/hronir/perspectives/`
+          );
+        }
+      }
+    } else if (isNewSchema && data.winner !== "TODO") {
+      // Pre-stars new-schema matches: require the fields exist but don't
+      // enforce the 100-word floor retroactively (rule did not exist at write time).
       if (!data.clash || data.clash === "TODO") {
         issues.push(
           `${base}: o campo 'clash' no frontmatter está ausente ou é 'TODO'`
@@ -1185,80 +1321,15 @@ export function doctor() {
       ) {
         issues.push(`${base}: o campo 'eval_lang' no frontmatter está ausente`);
       }
-
-      if (isStarsSchema) {
-        // Stars-schema-only rules: 100-word floor, perspective, rate validity,
-        // derived-winner consistency. Pre-stars matches keep their original
-        // prose without retroactive enforcement.
-        if (
-          data.clash &&
-          data.clash !== "TODO" &&
-          wordCount(data.clash) < MIN_WORDS
-        ) {
-          issues.push(
-            `${base}: 'clash' tem ${wordCount(data.clash)} palavras (mínimo ${MIN_WORDS})`
-          );
-        }
-        const ra = data.rate_a;
-        const rb = data.rate_b;
-        if (!isValidRate(ra)) {
-          issues.push(
-            `${base}: 'rate_a' deve ser número 1.00-5.00 com até duas decimais (got ${ra})`
-          );
-        }
-        if (!isValidRate(rb)) {
-          issues.push(
-            `${base}: 'rate_b' deve ser número 1.00-5.00 com até duas decimais (got ${rb})`
-          );
-        }
-        if (isValidRate(ra) && isValidRate(rb)) {
-          if (ra === rb) {
-            issues.push(`${base}: rate_a == rate_b (${ra}); empate proibido`);
-          } else {
-            const derivedWinner = ra > rb ? "a" : "b";
-            if (data.winner !== derivedWinner) {
-              issues.push(
-                `${base}: winner=${data.winner} não bate com rate_a=${ra}, rate_b=${rb} (derivado: ${derivedWinner})`
-              );
-            }
-          }
-        }
-        if (!data.review_a || data.review_a === "TODO") {
-          issues.push(
-            `${base}: o campo 'review_a' no frontmatter está ausente ou é 'TODO'`
-          );
-        } else if (wordCount(data.review_a) < MIN_WORDS) {
-          issues.push(
-            `${base}: 'review_a' tem ${wordCount(data.review_a)} palavras (mínimo ${MIN_WORDS})`
-          );
-        }
-        if (!data.review_b || data.review_b === "TODO") {
-          issues.push(
-            `${base}: o campo 'review_b' no frontmatter está ausente ou é 'TODO'`
-          );
-        } else if (wordCount(data.review_b) < MIN_WORDS) {
-          issues.push(
-            `${base}: 'review_b' tem ${wordCount(data.review_b)} palavras (mínimo ${MIN_WORDS})`
-          );
-        }
-        if (!data.perspective_id) {
-          issues.push(
-            `${base}: o campo 'perspective_id' está ausente (obrigatório para schema stars)`
-          );
-        }
-      } else {
-        // Pre-stars new-schema matches: require the fields exist but don't
-        // enforce the 100-word floor retroactively (rule did not exist at write time).
-        if (!data.winner_defense || data.winner_defense === "TODO") {
-          issues.push(
-            `${base}: o campo 'winner_defense' no frontmatter está ausente ou é 'TODO'`
-          );
-        }
-        if (!data.loser_critique || data.loser_critique === "TODO") {
-          issues.push(
-            `${base}: o campo 'loser_critique' no frontmatter está ausente ou é 'TODO'`
-          );
-        }
+      if (!data.winner_defense || data.winner_defense === "TODO") {
+        issues.push(
+          `${base}: o campo 'winner_defense' no frontmatter está ausente ou é 'TODO'`
+        );
+      }
+      if (!data.loser_critique || data.loser_critique === "TODO") {
+        issues.push(
+          `${base}: o campo 'loser_critique' no frontmatter está ausente ou é 'TODO'`
+        );
       }
     }
 
