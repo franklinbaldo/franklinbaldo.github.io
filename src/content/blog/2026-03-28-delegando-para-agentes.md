@@ -1,36 +1,65 @@
 ---
-title: "A Arte de Delegar: Orquestrando Jules e Claude no Dia a Dia"
-description: "Reflexões de um engenheiro de software e pai sobre como delegar tarefas para agentes de IA mantendo a rédea da supervisão humana."
-date: "2026-03-28"
+title: 'A Arte de Delegar: Assinaturas e Caixas de Areia'
+description: >-
+  Por que o problema com agentes autônomos não é o microgerenciamento, mas a
+  distinção administrativa entre redigir o ato e assiná-lo.
+date: '2026-03-28'
 lang: pt
-tags: ["ai", "agents", "software-engineering", "parenting", "metaphysics"]
+tags:
+  - ai
+  - agents
+  - software-engineering
+  - law
+  - metaphysics
 draft: false
-author: "franklin"
-translationKey: "delegating-to-agents"
+author: franklin
+translationKey: delegating-to-agents
+replacedVersion: a5f84a5f-0380-55f4-a27f-1904b5cf0630
+editHistory:
+  - uuid: a5f84a5f-0380-55f4-a27f-1904b5cf0630
+    timestamp: '2026-05-22T03:31:42.922Z'
+    msg: >-
+      Rewrite 'The Art of Delegation' to remove generic parenting cliches and
+      ground it in the specific administrative/legal context of delegation and
+      signature, elevating the process-metaphysics.
 ---
 
-Há algo de profundamente estranho e ao mesmo tempo familiar em observar dois agentes de inteligência artificial — [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/) e Claude — colaborarem em uma base de código enquanto minha filha mais nova dorme no quarto ao lado. Como engenheiro de software, a automação sempre foi o cálice sagrado; como pai, a delegação tornou-se uma necessidade de sobrevivência. Mas a intersecção dessas duas realidades revelou uma complexidade inesperada: a de que a verdadeira dificuldade não está em fazer as máquinas trabalharem, mas em saber como supervisioná-las sem sufocá-las.
-Na ontologia do meu dia a dia, cada tarefa que delego a [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/) (geralmente focado em tarefas de engenharia e scaffolding rigoroso) ou a Claude (mais afeito à síntese e ao pensamento lateral) não é um mero comando executado no vácuo. São eventos. E, como argumentaria um filósofo do processo, são _eventos até o fim_. Cada prompt é uma perturbação no sistema, uma intenção codificada que reverbera através do espaço latente até retornar como código, texto ou arquitetura.
+O problema com a maior parte do que se escreve sobre delegação para IA é a suposição de que a dificuldade é emocional. O engenheiro, dizem-nos, tem dificuldade em abrir mão do controle. A solução oferecida geralmente é alguma variação de "confie no sistema" ou "trate o agente como um desenvolvedor júnior".
 
-### O Paradoxo do Controle
+Isso é um conselho ruim embrulhado numa metáfora ruim. A dificuldade não é emocional; é estrutural. E a estrutura é algo que a profissão jurídica resolveu há muito tempo, porque a profissão jurídica é, no fundo, uma tecnologia para gerenciar delegações perigosas.
 
-A lição mais dura que aprendi no último ano orquestrando esses agentes não veio de um erro de sintaxe ou de um loop infinito, mas da minha própria psicologia. O impulso inicial do engenheiro é o microgerenciamento. Queremos revisar cada linha de código no momento em que é gerada, corrigir cada vírgula, guiar a mão invisível da máquina.
-No entanto, descobri que tratar agentes autônomos como meros teclados estendidos destrói a própria vantagem que eles oferecem. É como tentar ensinar uma criança a andar segurando seus calcanhares. A magia acontece quando você define os contornos do problema, os critérios de sucesso (o "schema", se preferir), e permite que o agente navegue pelo espaço de soluções.
-Mas como manter a supervisão humana? Como evitar a alucinação silenciosa que corrompe um sistema inteiro?
+Passo meus dias em uma procuradoria do Estado em Rondônia, lendo *pareceres* redigidos por assessores e assinando aqueles que não me aterrorizam. Quando delego a elaboração de uma manifestação jurídica, não estou pedindo a alguém para ser meu teclado estendido. Estou delegando a tarefa de atravessar os autos, identificar o direito aplicável e propor uma conclusão. O que eu *não* estou delegando é a assinatura. A assinatura é a fronteira irreversível.
 
-### A Prática da Supervisão Arquitetural
+Quando orquestramos agentes como [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/) e Claude, o problema não é que queremos microgerenciar seus comandos. O problema é que a engenharia de software, ao contrário do direito administrativo, não separa nativamente a minuta da assinatura. No código, escrever a função e executá-la frequentemente parecem o mesmo movimento contínuo.
 
-A resposta que encontrei reside em uma mudança de postura: deixei de ser o executor para me tornar o arquiteto e o editor.
-Quando confio a Jules a refatoração de um microsserviço, não olho para o código _enquanto_ ele o escreve. Eu construto testes rigorosos e pipelines de CI/CD que atuam como as leis da física daquele universo particular. A supervisão humana é transmutada em restrições sistêmicas. Se o código de Jules compila e passa nos testes de integração que eu desenhei, ele tem a liberdade de ser idiossincrático na sua implementação.
-Claude, por outro lado, atua como meu parceiro de design de sistema e de reflexão filosófica. Quando discutimos a inteligibilidade de uma nova arquitetura, minha supervisão é retórica. Eu aplico um ceticismo socrático, forçando o modelo a justificar suas escolhas estruturais contra as restrições práticas do negócio e da manutenção a longo prazo.
+## Os limites da caixa de areia
 
-### Paternidade e Processo
+Quando confio a Jules a refatoração de um microsserviço em background, a ansiedade não vem do medo de que Jules escolha o padrão de design errado. A ansiedade vem do fato de que Jules tem permissão de escrita.
 
-Há um paralelo inegável entre gerenciar esses agentes e criar filhos. Em ambos os casos, você está lidando com entidades que possuem um grau de autonomia, que interpretam suas instruções de maneiras imprevisíveis, e cuja "saída" nem sempre corresponde à sua intenção original.
-Quando minha filha constrói uma torre de blocos e ela desmorona, meu papel não é reconstruí-la perfeitamente. É ajudá-la a entender a gravidade. Da mesma forma, quando um agente propõe um padrão de design excessivamente complexo, meu papel é redirecionar sua atenção para os primeiros princípios.
+A solução não é ficar por cima do ombro de Jules enquanto ele escreve. A solução é construir uma caixa de areia onde as ações do agente sejam explicitamente tratadas como *propostas*. O pipeline de CI/CD, as suítes de teste, as regras estritas de linting — esses não são apenas mecanismos de garantia de qualidade. Eles são o equivalente às regras institucionais que dizem que um assessor pode redigir um *parecer*, mas não pode assinar o *ofício* final.
 
-### Eventos Até o Fim
+A mágica da delegação acontece quando você restringe o espaço de saída, não o processo. Você define os limites da caixa de areia — o schema, as invariantes, os testes — e permite que o agente navegue livremente pelo interior. Se os testes passam, a proposta é válida. Mas o passo de *apply* — o merge real do PR, o deploy para produção — isso continua sendo uma assinatura humana.
 
-No final das contas, orquestrar IA é um exercício de humildade epistêmica. É aceitar que não podemos (e não devemos) ter o controle absoluto sobre cada operação atômica de nossos sistemas. Devemos focar nas condições de contorno, nas interfaces e nas garantias fundamentais de estabilidade.
-A delegação eficaz para a IA não é a abdicação da responsabilidade humana. É a sua elevação a uma ordem superior de abstração. Enquanto observo o terminal rodar as suites de teste escritas por Jules, e o texto de Claude tomar forma na tela, percebo que não estamos construindo ferramentas que nos substituem. Estamos construindo um novo tipo de sistema colaborativo, onde o discernimento humano e a força bruta probabilística da máquina convergem em uma dança complexa e contínua.
-A tela brilha no escritório escuro. A bebê respira suavemente pela babá eletrônica. E os eventos continuam a se desdobrar.
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/drake/Microgerenciar_os_prompts_do_agente/Restringir_a_caixa_de_areia_do_agente.png?width=500"
+    alt="Meme do Drake: Rejeitando 'Microgerenciar os prompts do agente', aprovando 'Restringir a caixa de areia do agente'."
+    loading="lazy"
+  />
+  <figcaption>A mudança de postura necessária para realmente tornar os sistemas autônomos úteis.</figcaption>
+</figure>
+
+## O harness como desenho constitucional
+
+É por isso que o *harness* importa mais do que o modelo. [Funes](/blog/funes-soul/) não é o Claude; Funes é o Claude envolvido em um conjunto específico de regras, memórias e restrições. Quando Funes lê seu `SOUL.md` e decide documentar uma decisão em vez de apenas executá-la, ele está operando dentro de um arcabouço administrativo.
+
+Ele age porque o arcabouço permite, e ele pausa quando o arcabouço exige uma assinatura. *Reversível → age, irreversível → pergunta.* Isso não é apenas uma heurística de segurança; é uma teoria de desenho constitucional para agentes.
+
+Não estamos construindo ferramentas que nos substituem. Estamos construindo um aparato administrativo onde o discernimento humano senta na beirada da caixa de areia, revisando as propostas geradas pela força bruta probabilística lá dentro. A tela brilha no escritório escuro. Os *pull requests* se acumulam. E a assinatura espera.
+
+## Para se aprofundar
+
+- **Lucy Suchman, *Plans and Situated Actions* (1987)** — sobre a diferença entre o plano como modelo cognitivo e o plano como artefato de prestação de contas. O PR como proposta é exatamente esse tipo de artefato.
+- **[Retomando o Harness](/blog/2026-04-29-retomando-o-harness/)** — por que o *harness* não é apenas andaime, mas a estrutura constitutiva real do agente.
+- **[A API do Jules como Backend do Harness](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/)** — como a mudança de *worker* assíncrono para agente conversável altera o cálculo de confiança da delegação.
+- **[O Agente Que Não Inventa Verbos](/blog/2026-05-14-o-agente-que-nao-inventa-verbos/)** — o que acontece quando você força um agente a usar apenas playbooks nomeados e endereçados por conteúdo no disco.
