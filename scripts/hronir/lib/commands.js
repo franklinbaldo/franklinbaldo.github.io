@@ -1275,10 +1275,15 @@ export function doctor() {
         );
       }
       if (isValidRate(ra) && isValidRate(rb)) {
-        if (ra === rb) {
+        // Compare at the two-decimal-rounded integer level so drifted floats
+        // (e.g. 4.25000001 vs 4.25) are caught as ties, matching how
+        // parseRate stores values and how isValidRate tolerates drift.
+        const ra100 = Math.round(ra * 100);
+        const rb100 = Math.round(rb * 100);
+        if (ra100 === rb100) {
           issues.push(`${base}: rate_a == rate_b (${ra}); empate proibido`);
         } else {
-          const derivedWinner = ra > rb ? "a" : "b";
+          const derivedWinner = ra100 > rb100 ? "a" : "b";
           if (data.winner !== derivedWinner) {
             issues.push(
               `${base}: winner=${data.winner} não bate com rate_a=${ra}, rate_b=${rb} (derivado: ${derivedWinner})`
