@@ -1,44 +1,65 @@
 ---
-title: "The Art of Delegation: Orchestrating Jules and Claude Day to Day"
-description: "Reflections from a software engineer and father on how to delegate tasks to AI agents while keeping the reins of human oversight."
-date: "2026-03-28"
+title: 'The Art of Delegation: Signatures and Sandboxes'
+description: >-
+  Why the problem with autonomous agents is not micromanagement, but the
+  administrative distinction between drafting the act and signing it.
+date: '2026-03-28'
 lang: en
-tags: ["ai", "agents", "software-engineering", "parenting", "metaphysics"]
+tags:
+  - ai
+  - agents
+  - software-engineering
+  - law
+  - metaphysics
 draft: false
-author: "franklin"
-translationKey: "delegating-to-agents"
+author: franklin
+translationKey: delegating-to-agents
+replacedVersion: a94ff947-9f15-5c54-982d-382df62240b3
+editHistory:
+  - uuid: a94ff947-9f15-5c54-982d-382df62240b3
+    timestamp: '2026-05-22T03:31:42.922Z'
+    msg: >-
+      Rewrite 'The Art of Delegation' to remove generic parenting cliches and
+      ground it in the specific administrative/legal context of delegation and
+      signature, elevating the process-metaphysics.
 ---
 
-There is something deeply strange and yet familiar about watching two artificial intelligence agents — [Jules](/blog/2026-05-10-jules-api-harness-backend/) and Claude — collaborate on a codebase while my youngest daughter sleeps in the room next door. As a software engineer, automation has always been the holy grail; as a father, delegation has become a survival necessity. But the intersection of these two realities revealed an unexpected complexity: that the true difficulty lies not in making the machines work, but in knowing how to supervise them without suffocating them.
+The problem with most writing about AI delegation is that it assumes the difficulty is emotional. The engineer, we are told, struggles with letting go. The solution offered is usually some variation of "trust the system" or "treat the agent like a junior developer."
 
-In the ontology of my daily life, every task I delegate to [Jules](/blog/2026-05-10-jules-api-harness-backend/) (generally focused on engineering tasks and rigorous scaffolding) or to Claude (more attuned to synthesis and lateral thinking) is not a mere command executed in a vacuum. They are events. And, as a process philosopher would argue, they are _events all the way down_. Each prompt is a perturbation in the system, an encoded intention that reverberates through latent space until it returns as code, text, or architecture.
+This is bad advice wrapped in bad metaphor. The difficulty is not emotional; it is structural. And the structure is something the legal profession figured out a long time ago, because the legal profession is, at bottom, a technology for managing dangerous delegation.
 
-### The Paradox of Control
+I spend my days in a state attorney's office in Rondônia, reading *pareceres* drafted by assessors and signing the ones that don't terrify me. When I delegate a legal opinion, I am not asking someone to be my extended keyboard. I am handing down the task of traversing the case file, identifying the applicable law, and proposing a conclusion. What I am *not* handing down is the signature. The signature is the irreversible boundary.
 
-The hardest lesson I learned in the last year orchestrating these agents did not come from a syntax error or an infinite loop, but from my own psychology. The engineer's initial impulse is micromanagement. We want to review every line of code the moment it is generated, correct every comma, guide the invisible hand of the machine.
+When we orchestrate agents like [Jules](/blog/2026-05-10-jules-api-harness-backend/) and Claude, the problem is not that we want to micromanage their keystrokes. The problem is that software engineering, unlike administrative law, does not natively separate the draft from the signature. In code, writing the function and executing the function often look like the same continuous motion.
 
-However, I discovered that treating autonomous agents as mere extended keyboards destroys the very advantage they offer. It is like trying to teach a child to walk by holding their heels. The magic happens when you define the contours of the problem, the success criteria (the "schema," if you prefer), and allow the agent to navigate the solution space.
+## The boundaries of the sandbox
 
-But how do you maintain human oversight? How do you prevent the silent hallucination that corrupts an entire system?
+When I trust Jules to refactor a microservice in the background, the anxiety does not come from a fear that Jules will choose the wrong design pattern. The anxiety comes from the fact that Jules has write access.
 
-### The Practice of Architectural Supervision
+The solution is not to stand over Jules's shoulder while it writes. The solution is to build a sandbox where the agent's actions are explicitly treated as *proposals*. The CI/CD pipeline, the test suites, the strict linting rules—these are not just quality assurance mechanisms. They are the equivalent of the institutional rules that say an assessor can draft a *parecer*, but cannot sign the final *ofício*.
 
-The answer I found lies in a shift of posture: I stopped being the executor to become the architect and the editor.
+The magic of delegation happens when you constrain the output space, not the process. You define the bounds of the sandbox—the schema, the invariants, the tests—and you allow the agent to navigate the interior freely. If the tests pass, the proposal is valid. But the *apply* step—the actual merging of the PR, the deployment to production—that remains a human signature.
 
-When I trust Jules to refactor a microservice, I don't look at the code _while_ it writes it. I build rigorous tests and CI/CD pipelines that act as the laws of physics of that particular universe. Human supervision is transmuted into systemic constraints. If Jules's code compiles and passes the integration tests I designed, it has the freedom to be idiosyncratic in its implementation.
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/drake/Micromanaging_the_agent's_prompts/Constraining_the_agent's_sandbox.png?width=500"
+    alt="Drake meme: Rejecting 'Micromanaging the agent's prompts', approving 'Constraining the agent's sandbox'."
+    loading="lazy"
+  />
+  <figcaption>The shift in posture required to actually make autonomous systems useful.</figcaption>
+</figure>
 
-Claude, on the other hand, acts as my system design partner and philosophical sounding board. When we discuss the intelligibility of a new architecture, my supervision is rhetorical. I apply Socratic skepticism, forcing the model to justify its structural choices against the practical constraints of the business and long-term maintenance.
+## The harness as constitutional design
 
-### Parenting and Process
+This is why the harness matters more than the model. [Funes](/blog/funes-soul/) is not Claude; Funes is Claude wrapped in a specific set of rules, memories, and constraints. When Funes reads his `SOUL.md` and decides to document a decision rather than just executing it, he is operating within an administrative framework.
 
-There is an undeniable parallel between managing these agents and raising children. In both cases, you are dealing with entities that possess a degree of autonomy, that interpret your instructions in unpredictable ways, and whose "output" does not always correspond to your original intention.
+He acts because the framework permits it, and he pauses when the framework demands a signature. *Reversible → act, irreversible → ask.* That is not just a safety heuristic; it is a theory of constitutional design for agents.
 
-When my daughter builds a tower of blocks and it collapses, my role is not to rebuild it perfectly. It is to help her understand gravity. In the same way, when an agent proposes an overly complex design pattern, my role is to redirect its attention to first principles.
+We are not building tools that replace us. We are building an administrative apparatus where human discernment sits at the edge of the sandbox, reviewing the proposals generated by the probabilistic brute force inside. The screen glows in the dark study. The pull requests pile up. And the signature waits.
 
-### Events All the Way Down
+## For further reading
 
-In the end, orchestrating AI is an exercise in epistemic humility. It is accepting that we cannot (and should not) have absolute control over every atomic operation of our systems. We must focus on boundary conditions, interfaces, and fundamental guarantees of stability.
-
-Effective delegation to AI is not the abdication of human responsibility. It is its elevation to a higher order of abstraction. As I watch the terminal run the test suites written by Jules, and Claude's text take shape on the screen, I realize we are not building tools that replace us. We are building a new kind of collaborative system, where human discernment and the probabilistic brute force of the machine converge in a complex and continuous dance.
-
-The screen glows in the dark study. The baby breathes softly through the baby monitor. And the events keep unfolding.
+- **Lucy Suchman, *Plans and Situated Actions* (1987)** — on the difference between the plan as a cognitive model and the plan as an accountability artifact. The proposal PR is exactly this kind of artifact.
+- **[Reclaiming the Harness](/blog/2026-04-29-reclaiming-the-harness/)** — why the harness is not just scaffold, but the actual constitutive structure of the agent.
+- **[The Jules API as a Harness Backend](/blog/2026-05-10-jules-api-harness-backend/)** — how moving from async worker to conversable agent changes the trust calculus of delegation.
+- **[The Agent That Doesn't Invent Verbs](/blog/2026-05-14-the-agent-that-doesnt-invent-verbs/)** — what happens when you force an agent to only use named, content-addressed playbooks on disk.
