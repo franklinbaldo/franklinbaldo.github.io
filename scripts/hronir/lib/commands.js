@@ -581,12 +581,18 @@ export function decide(args) {
     process.exit(1);
   }
 
-  const perspectiveId = currentMatch.perspective_id;
+  // Pre-PR sessions can land in state=deciding with no perspective_id on
+  // currentMatch — continueCmd's backfill only fires from reading_a. Pick
+  // one here so the upgrade doesn't strand the session.
+  let perspectiveId = currentMatch.perspective_id;
   if (!perspectiveId) {
-    console.error(
-      "Erro: a sessão atual não tem perspectiva atribuída. Rode `npm run hronir:continue` para sortear uma."
+    const picked = pickRandomPerspective();
+    perspectiveId = picked.id;
+    currentMatch.perspective_id = picked.id;
+    fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
+    console.log(
+      `(perspectiva sorteada para sessão em andamento: ${picked.name})`
     );
-    process.exit(1);
   }
   let perspective;
   try {
