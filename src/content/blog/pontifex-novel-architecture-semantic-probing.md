@@ -16,7 +16,7 @@ heroImage: ./images/pontifex-novel-architecture-semantic-probing-cover.png
 heroImageAlt: >-
   Abstract geometric representation of neural network layers converging with
   glowing data streams.
-replacedVersion: 35a9443e-a732-58cd-bcaf-91770ee80c9f
+replacedVersion: 76bfdfd5-450b-48c5-8b8b-fdba449c7cf9
 editHistory:
   - uuid: 35a9443e-a732-58cd-bcaf-91770ee80c9f
     timestamp: '2026-05-20T13:26:16.139Z'
@@ -30,6 +30,14 @@ editHistory:
       escolhidos'. EN: reescrita quase total do corpo, mesma estrutura. PT:
       parágrafo de motivação causaganha adicionado no início da introdução;
       seção de limitações expandida com o argumento do ponto cego.
+  - uuid: 76bfdfd5-450b-48c5-8b8b-fdba449c7cf9
+    timestamp: '2026-05-22T12:00:00.000Z'
+    msg: >-
+      Adicionado parágrafo curto em 'What this does and doesn't claim'
+      caracterizando o repositório pontifex como gesto à Pierre Menard:
+      abrir o repo antes de existir sistema, README como caderno do
+      pesquisador que escreveria Pontifex. Links para
+      github.com/franklinbaldo/pontifex e para o post de tour dos repos.
 ---
 
 The problem I kept running into started with [causaganha](https://github.com/franklinbaldo/causaganha) — my project for extracting and analyzing Brazilian official gazettes. A gazette page mixes Portuguese prose, legal Latin, case numbers, proper names, and occasional English acronyms. I was trying to probe which parts of a parsed text carried the semantic load — was the case outcome determined by the judge's name, the statute cited, or the phrasing of the operative clause? Standard interpretability tools gave me answers, but they gave me answers _in the model's coordinate system_. Which is fine if you have one model and trust it. It's less fine when you suspect the interesting thing — the thing that determines outcomes across jurisdictions and across registers — lives at a level that doesn't respect any particular model's geometry.
@@ -88,6 +96,8 @@ This doesn't kill the architecture. It means the architecture is only as good as
 ## What this does and doesn't claim
 
 Pontifex is an architecture, not a result. I have built pieces: the byte-level occlusion engine, some bilateral comparison experiments across multilingual models. The convergence layer is theoretical at this level of detail.
+
+The repo lives at [github.com/franklinbaldo/pontifex](https://github.com/franklinbaldo/pontifex). I opened it before I had written a line of the actual system, which is how I work — [I open a repo whenever an idea is odd enough that I want it to argue back at me](/blog/2026-05-22-github-a-tour-of-the-repos/), and the README is where the arguing happens. Call it a Pierre Menard move. I'm not building Pontifex by copying out a system that already exists somewhere; I'm trying to become the kind of researcher who would write it, and the repo is the artifact that researcher would have. The README is that person's notebook, not yet the system. Sometimes the notebook is enough to find out the person was wrong about the whole thing; sometimes the notebook slowly starts to compile.
 
 What I believe is that the _shape_ is right. Probing from multiple angles produces more reliable attributions than single-model analysis. Byte-level operations reduce preprocessing assumptions. Convergence as a validation mechanism is a better paradigm than projection for cases where the relationship between spaces is genuinely nonlinear.
 
