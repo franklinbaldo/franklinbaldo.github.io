@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import { DEFAULT_LANG } from "./i18n";
+import { isPublished } from "./publish";
 
 export interface SeriesContext {
   slug: string;
@@ -21,7 +22,7 @@ export async function getSeriesContext(
   const all = (await getCollection("blog"))
     .filter(
       (p) =>
-        !p.data.draft &&
+        isPublished(p) &&
         p.data.series === series &&
         (p.data.lang ?? DEFAULT_LANG) === lang
     )

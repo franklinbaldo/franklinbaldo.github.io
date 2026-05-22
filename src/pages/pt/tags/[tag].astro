@@ -2,9 +2,10 @@
 import { type CollectionEntry, getCollection } from "astro:content";
 import PageLayout from "../../../layouts/PageLayout.astro";
 import PostCard from "../../../components/PostCard.astro";
+import { isPublished } from "../../../lib/publish";
 
 export async function getStaticPaths() {
-  const all = (await getCollection("blog")).filter((p) => !p.data.draft);
+  const all = (await getCollection("blog")).filter((p) => isPublished(p));
   const ptPosts = all.filter((p) => p.data.lang === 'pt');
   const enTags = new Set<string>();
   for (const post of all.filter((p) => (p.data.lang ?? 'en') === 'en')) {
