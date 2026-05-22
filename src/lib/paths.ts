@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import { DEFAULT_LANG } from "./i18n";
+import { isPublished } from "./publish";
 
 export type Lang = "en" | "pt";
 
@@ -63,7 +64,7 @@ export async function getPathPosts(
   const path = getReadingPath(slug);
   if (!path) return [];
 
-  const all = (await getCollection("blog")).filter((p) => !p.data.draft);
+  const all = (await getCollection("blog")).filter((p) => isPublished(p));
 
   if (path.source.type === "series") {
     const seriesName = path.source.series;

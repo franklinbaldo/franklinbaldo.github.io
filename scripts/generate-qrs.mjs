@@ -63,6 +63,7 @@ function emojiPrompt(emoji) {
 
 function listPosts() {
   const dir = resolve(ROOT, "src/content/blog");
+  const now = new Date();
   return readdirSync(dir)
     .filter((f) => f.endsWith(".md"))
     .map((f) => {
@@ -75,8 +76,12 @@ function listPosts() {
         emoji: fm.emoji,
         lang: fm.lang || "en",
         url: `${SITE}/blog/${slug}/`,
+        draft: fm.draft === true,
+        publishDate: fm.publishDate ? new Date(fm.publishDate) : null,
       };
-    });
+    })
+    .filter((p) => !p.draft)
+    .filter((p) => !p.publishDate || p.publishDate <= now);
 }
 
 function listHomes() {

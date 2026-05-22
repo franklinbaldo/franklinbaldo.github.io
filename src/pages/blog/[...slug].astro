@@ -16,11 +16,12 @@ import SeriesContext from '../../components/SeriesContext.astro';
 import PostActionBar from '../../components/PostActionBar.astro';
 import PostNav from '../../components/PostNav.astro';
 import { getSeriesContext } from '../../lib/series';
+import { isPublished } from '../../lib/publish';
 import { t, targetCopy, locale as localeFor, urlPrefix, DEFAULT_LANG } from '../../lib/i18n';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  return posts.map((post) => ({
+  return posts.filter((post) => isPublished(post)).map((post) => ({
     params: { slug: post.id },
     props: post,
   }));
@@ -51,7 +52,7 @@ const allPosts = await getCollection('blog');
 // Prev / next posts in the same language, ordered by date ascending.
 const postLang = lang ?? DEFAULT_LANG;
 const sameLangPosts = allPosts
-  .filter((p) => !p.data.draft && (p.data.lang ?? DEFAULT_LANG) === postLang)
+  .filter((p) => isPublished(p) && (p.data.lang ?? DEFAULT_LANG) === postLang)
   .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
 const postIdx = sameLangPosts.findIndex((p) => p.id === post.id);
 const prevPost = postIdx > 0 ? sameLangPosts[postIdx - 1] : null;

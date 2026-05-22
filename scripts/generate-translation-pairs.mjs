@@ -30,6 +30,13 @@ for (const file of files) {
 
   if (get("draft") === "true") continue;
 
+  const publishDateRaw = get("publishDate");
+  if (publishDateRaw) {
+    const publishDate = new Date(publishDateRaw);
+    if (!Number.isNaN(publishDate.valueOf()) && publishDate > new Date())
+      continue;
+  }
+
   const key = get("translationKey");
   if (!key) continue;
 

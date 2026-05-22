@@ -1047,6 +1047,33 @@ export function doctor() {
     }
   }
 
+  // Advisory: scheduled-publish front-matter sanity.
+  // Flag posts that pair draft:true with a publishDate (operator likely meant
+  // one or the other), or that have an invalid publishDate value.
+  const now = new Date();
+  for (const p of listPosts()) {
+    const data = readPost(p);
+    const base = path.basename(p);
+    if (data.publishDate != null) {
+      const pd = new Date(data.publishDate);
+      if (Number.isNaN(pd.valueOf())) {
+        issues.push(`${base}: publishDate inválido (${data.publishDate})`);
+        continue;
+      }
+      if (data.draft === true) {
+        issues.push(
+          `${base}: draft:true combinado com publishDate — escolha um dos dois (publishDate=${pd.toISOString()})`
+        );
+      }
+      const year = pd.getUTCFullYear();
+      if (year < 2000 || year > now.getUTCFullYear() + 10) {
+        issues.push(
+          `${base}: publishDate fora da faixa plausível (${pd.toISOString()})`
+        );
+      }
+    }
+  }
+
   // Detect duplicate matches (same run_id + unordered pair of keys)
   const seen = new Map();
   for (const f of listMatchFiles()) {

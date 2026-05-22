@@ -2,12 +2,13 @@
 import PageLayout from "../layouts/PageLayout.astro";
 import { getCollection } from "astro:content";
 import { getRanking, getRankingStats, getRecentDuels } from "../lib/hronir-rank";
+import { isPublished } from "../lib/publish";
 import RankingView, { type RankPostInfo, type UnratedItem, type RankingStrings } from "../components/RankingView.astro";
 
 const all = await getCollection("blog");
 const byKey = new Map<string, RankPostInfo>();
 for (const p of all) {
-  if (p.data.draft) continue;
+  if (!isPublished(p)) continue;
   const key = p.data.translationKey;
   if (!key) continue;
   // Prefer EN entry for the link; fall back to first seen.
@@ -28,7 +29,7 @@ const ratedKeys = new Set(rows.map((r) => r.key));
 const unrated: UnratedItem[] = [];
 const seenUnrated = new Set<string>();
 for (const p of all) {
-  if (p.data.draft) continue;
+  if (!isPublished(p)) continue;
   const key = p.data.translationKey;
   if (!key || ratedKeys.has(key) || seenUnrated.has(key)) continue;
   const lang = p.data.lang ?? "en";

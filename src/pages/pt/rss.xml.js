@@ -1,9 +1,10 @@
 import rss from "@astrojs/rss";
 import { getCollection } from "astro:content";
+import { isPublished } from "../../lib/publish";
 
 export async function GET(context) {
   const posts = (await getCollection("blog"))
-    .filter((post) => !post.data.draft)
+    .filter((post) => isPublished(post))
     .filter((post) => (post.data.lang ?? "en") === "pt")
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 

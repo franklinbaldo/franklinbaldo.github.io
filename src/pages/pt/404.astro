@@ -1,9 +1,10 @@
 ---
 import { getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
+import { isPublished } from "../../lib/publish";
 
 const recent = (await getCollection("blog"))
-  .filter((p) => !p.data.draft && (p.data.lang ?? 'en') === 'pt')
+  .filter((p) => isPublished(p) && (p.data.lang ?? 'en') === 'pt')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 5);
 ---

@@ -3,9 +3,10 @@ import { getCollection } from "astro:content";
 import PageLayout from "../layouts/PageLayout.astro";
 import RecentList from "../components/RecentList.astro";
 import PathsTeaser from "../components/PathsTeaser.astro";
+import { isPublished } from "../lib/publish";
 
 const all = (await getCollection("blog"))
-  .filter((post) => !post.data.draft)
+  .filter((post) => isPublished(post))
   .filter((post) => (post.data.lang ?? 'en') === 'en')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
