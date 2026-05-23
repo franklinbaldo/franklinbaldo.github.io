@@ -14,14 +14,17 @@ tags:
 draft: false
 author: franklin
 translationKey: delegating-to-agents
-replacedVersion: a5f84a5f-0380-55f4-a27f-1904b5cf0630
-editHistory:
-  - uuid: a5f84a5f-0380-55f4-a27f-1904b5cf0630
-    timestamp: '2026-05-22T03:31:42.922Z'
-    msg: >-
-      Rewrite 'The Art of Delegation' to remove generic parenting cliches and
-      ground it in the specific administrative/legal context of delegation and
-      signature, elevating the process-metaphysics.
+previousVersion:
+  uuid: b02fe317-ce8a-52f5-9685-6241cc495f97
+  url: >-
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/d697b21a753773fe6aeee9b8adcdabac42abd782/src/content/blog/2026-03-28-delegando-para-agentes.md
+  timestamp: '2026-05-23T19:42:48.489Z'
+  msg: >-
+    Adicionou incidente concreto de Porto Velho (parecer de prazo processual em
+    fevereiro) para ancorar a distinção minuta/assinatura em experiência real.
+    Conectou explicitamente a pressão do prazo judicial com a pressão de 14 PRs
+    abertos. Trocou o fechamento atmosférico por linha deadpan curta. Reduziu
+    For Further Reading de 4 para 2 entradas (cortou 2 auto-links).
 ---
 
 O problema com a maior parte do que se escreve sobre delegação para IA é a suposição de que a dificuldade é emocional. O engenheiro, dizem-nos, tem dificuldade em abrir mão do controle. A solução oferecida geralmente é alguma variação de "confie no sistema" ou "trate o agente como um desenvolvedor júnior".
@@ -30,7 +33,11 @@ Isso é um conselho ruim embrulhado numa metáfora ruim. A dificuldade não é e
 
 Passo meus dias em uma procuradoria do Estado em Rondônia, lendo _pareceres_ redigidos por assessores e assinando aqueles que não me aterrorizam. Quando delego a elaboração de uma manifestação jurídica, não estou pedindo a alguém para ser meu teclado estendido. Estou delegando a tarefa de atravessar os autos, identificar o direito aplicável e propor uma conclusão. O que eu _não_ estou delegando é a assinatura. A assinatura é a fronteira irreversível.
 
-Quando orquestramos agentes como [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/) e Claude, o problema não é que queremos microgerenciar seus comandos. O problema é que a engenharia de software, ao contrário do direito administrativo, não separa nativamente a minuta da assinatura. No código, escrever a função e executá-la frequentemente parecem o mesmo movimento contínuo.
+A pressão para borrar essa linha é real e específica. Em fevereiro passado, eu tinha três pareceres esperando e uma audiência às quatro da tarde. A assessora em quem mais confio tinha redigido um parecer sobre prazo processual. Trabalhei com ela dois anos. Eu conhecia o histórico dela. A audiência era em trinta e cinco minutos. Assinei sem ler com a atenção que deveria. O parecer estava em grande parte correto — mas "em grande parte correto" numa questão de prazo é como se perde uma janela recursal de alguém que confiou na procuradoria para acertar. Encontrei o erro na manhã seguinte e nos movemos para corrigi-lo antes de a data se esgotar. Conseguimos. Nem sempre se consegue.
+
+É assim que "a assinatura é a fronteira irreversível" parece na prática: não como um princípio filosófico, mas como uma decisão de quinta-feira tomada sob pressão de tempo, onde a regra institucional que diz _você assina como se tivesse lido cada palavra_ é a única coisa que protege a pessoa cujos direitos dependem da data.
+
+Quando orquestramos agentes como [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/) e Claude, o problema não é que queremos microgerenciar seus comandos. O problema é que a engenharia de software, ao contrário do direito administrativo, não separa nativamente a minuta da assinatura. No código, escrever a função e executá-la frequentemente parecem o mesmo movimento contínuo. Pior: quando o agente é rápido e os testes passam e há catorze pull requests abertos, a pressão para simplesmente dar merge é a mesma pressão em que eu estava às três e vinte e cinco de uma quinta-feira em Porto Velho.
 
 ## Os limites da caixa de areia
 
