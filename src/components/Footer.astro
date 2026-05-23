@@ -1,17 +1,33 @@
 ---
+import { urlPrefix } from '../lib/i18n';
+
 interface Props {
   lang?: string;
 }
 const { lang = 'en' } = Astro.props;
 const year = new Date().getFullYear();
+const prefix = urlPrefix(lang);
 const rssHref = lang === 'pt' ? '/pt/rss.xml' : '/rss.xml';
+
+const footerNav = [
+  { href: `${prefix}/archive/`,  label: lang === 'pt' ? 'Arquivo'   : 'Archive'  },
+  { href: `${prefix}/musicas/`,  label: lang === 'pt' ? 'Músicas'   : 'Music'    },
+  { href: `${prefix}/ranking/`,  label: lang === 'pt' ? 'Ranking'   : 'Ranking'  },
+  { href: `${prefix}/projects/`, label: lang === 'pt' ? 'Projetos'  : 'Projects' },
+  { href: `${prefix}/about/`,    label: lang === 'pt' ? 'Sobre'     : 'About'    },
+];
 ---
 
 <footer class="container">
   <hr />
-  <nav>
+  <nav class="footer-nav">
     <ul>
       <li><small>© {year} Franklin Baldo</small></li>
+    </ul>
+    <ul class="footer-links">
+      {footerNav.map((l) => (
+        <li><small><a href={l.href} class="secondary">{l.label}</a></small></li>
+      ))}
     </ul>
     <ul>
       <li><small><a href={rssHref}>RSS</a></small></li>
@@ -19,3 +35,15 @@ const rssHref = lang === 'pt' ? '/pt/rss.xml' : '/rss.xml';
     </ul>
   </nav>
 </footer>
+
+<style>
+  @media (max-width: 768px) {
+    .footer-nav {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .footer-links {
+      flex-wrap: wrap;
+    }
+  }
+</style>
