@@ -42,6 +42,33 @@ function githubBlobUrl(sha, filepath) {
   return `${GITHUB_BLOB_BASE}/${sha}/${filepath}`;
 }
 
+// True if `filepath` has staged or unstaged changes against HEAD, or is
+// untracked. Used by edit-worst to refuse running when the working-tree
+// content of a target post diverges from the version that the captured
+// HEAD permalink will resolve to — otherwise the stored (uuid, url) pair
+// in previousVersion would describe two different files.
+function isFileDirtyAtHead(filepath) {
+  try {
+    execFileSync("git", ["diff", "--quiet", "HEAD", "--", filepath], {
+      stdio: ["ignore", "ignore", "ignore"],
+    });
+  } catch {
+    return true;
+  }
+  try {
+    execFileSync(
+      "git",
+      ["diff", "--quiet", "--cached", "HEAD", "--", filepath],
+      {
+        stdio: ["ignore", "ignore", "ignore"],
+      }
+    );
+  } catch {
+    return true;
+  }
+  return false;
+}
+
 function wordCount(s) {
   if (!s || typeof s !== "string") return 0;
   return s.trim().split(/\s+/).filter(Boolean).length;
@@ -948,6 +975,26 @@ export function editWorst() {
   const topKeys = topRows.map((r) => r.key);
 
   const translationFiles = findTranslations(worstRow.key);
+
+  // Precondition: each target post must match HEAD exactly. The captured
+  // HEAD permalink is what will resolve `previousVersion.url`, and the
+  // stored uuid is computed from the working-tree file. If the working
+  // tree diverges from HEAD, those two would describe different content
+  // and the lineage link would be wrong.
+  const dirty = translationFiles.filter((f) => isFileDirtyAtHead(f.path));
+  if (dirty.length > 0) {
+    console.error(
+      "Erro: edit-worst requer que os arquivos do post estejam limpos em relação a HEAD"
+    );
+    console.error(
+      "(previousVersion.url aponta para HEAD; uuid é derivado do conteúdo no disco — precisam coincidir)."
+    );
+    console.error("Arquivos com mudanças não commitadas:");
+    for (const f of dirty) console.error(`  - ${f.path}`);
+    console.error("Commit ou stash essas mudanças antes de rodar edit-worst.");
+    process.exit(1);
+  }
+
   const originalVersions = {};
   const replacedAtCommit = currentHeadSha();
   for (const fileInfo of translationFiles) {
