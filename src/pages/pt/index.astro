@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
 import RecentList from "../../components/RecentList.astro";
 import PathsTeaser from "../../components/PathsTeaser.astro";
+import HomeAuthorRail from "../../components/HomeAuthorRail.astro";
 import { isPublished } from "../../lib/publish";
 
 const all = (await getCollection("blog"))
@@ -21,25 +22,59 @@ const latestHref = latest ? `/blog/${latest.id}/` : "/pt/archive/";
   lang="pt"
   translations={{ en: "/" }}
 >
-  <section class="home-hero" aria-label="Introdução">
-    <h1 class="home-title">Franklin Baldo</h1>
-    <p class="home-tagline">Notas sobre IA, direito e sistemas.</p>
-    <p class="home-cta">
-      <a href={latestHref} class="contrast">Ler último ensaio →</a>
-    </p>
-  </section>
+  <div class="home-layout">
+    <div class="home-main">
+      <section class="home-hero" aria-label="Introdução">
+        <h1 class="home-title">Franklin Baldo</h1>
+        <p class="home-tagline">Notas sobre IA, direito e sistemas.</p>
+        <p class="home-cta">
+          <a href={latestHref} class="contrast">Ler último ensaio →</a>
+        </p>
+      </section>
 
-  <section class="home-recent" aria-label="Posts recentes">
-    <RecentList posts={recent} lang="pt" />
-    <p class="home-archive-link">
-      <small><a href="/pt/archive/">Ver o arquivo completo →</a></small>
-    </p>
-  </section>
+      <section class="home-recent" aria-label="Posts recentes">
+        <RecentList posts={recent} lang="pt" />
+        <p class="home-archive-link">
+          <small><a href="/pt/archive/">Ver o arquivo completo →</a></small>
+        </p>
+      </section>
 
-  <PathsTeaser lang="pt" />
+      <PathsTeaser lang="pt" />
+    </div>
+
+    <aside class="home-rail" aria-label="Sobre o autor">
+      <HomeAuthorRail lang="pt" />
+    </aside>
+  </div>
 </PageLayout>
 
 <style>
+  .home-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  @media (min-width: 1100px) {
+    .home-layout {
+      grid-template-columns: minmax(0, 1fr) 220px;
+      align-items: start;
+    }
+
+    .home-rail {
+      position: sticky;
+      top: 4.5rem;
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+
+  @media (max-width: 1099px) {
+    .home-rail {
+      display: none;
+    }
+  }
+
   .home-hero {
     margin-block: calc(var(--pico-spacing) * 1.25) calc(var(--pico-spacing) * 1.5);
   }

@@ -122,6 +122,22 @@ function parseTags(raw?: string): string[] {
     .filter(Boolean)
     .slice(0, 6);
 }
+
+const musicJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "MusicPlaylist",
+  "name": "Music by Franklin Baldo",
+  "description": "Songs and playlists published on Suno by Franklin Baldo.",
+  "url": "https://franklinbaldo.github.io/musicas/",
+  "numTracks": clips.length,
+  "track": clips.slice(0, 20).map((c) => ({
+    "@type": "MusicRecording",
+    "name": c.title || "(untitled)",
+    "url": `https://suno.com/song/${c.id}`,
+    "datePublished": c.created_at?.split("T")[0],
+    "duration": c.metadata?.duration ? `PT${Math.floor(c.metadata.duration / 60)}M${Math.round(c.metadata.duration % 60)}S` : undefined,
+  })).filter((t) => t.name),
+};
 ---
 
 <PageLayout
@@ -130,6 +146,7 @@ function parseTags(raw?: string): string[] {
   lang="en"
   translations={{ pt: "/pt/musicas/" }}
 >
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(musicJsonLd)} is:inline />
   <hgroup>
     <h1>Music</h1>
     <p><small>
