@@ -1,6 +1,6 @@
 # Hrönir
 
-Sistema de avaliação par-a-par de posts do blog. Cada rodada gera N partidas (default 10) por **active sampling**. Para cada partida o Hrönir sorteia uma **perspectiva de leitor** (ver `perspectives/`) e o avaliador, identificando-se obrigatoriamente, atribui estrelas (1.00–5.00) a cada post junto com uma resenha de cada e um confronto. O vencedor é derivado mecanicamente: quem tem mais estrelas. Ao final, o post pior ranqueado recebe uma edição — registrada como `editHistory[]` no próprio frontmatter do post.
+Sistema de avaliação par-a-par de posts do blog. Cada rodada gera N partidas (default 10) por **active sampling**. Para cada partida o Hrönir sorteia uma **perspectiva de leitor** (ver `perspectives/`) e o avaliador, identificando-se obrigatoriamente, atribui estrelas (1.00–5.00) a cada post junto com uma resenha de cada e um confronto. O vencedor é derivado mecanicamente: quem tem mais estrelas. Ao final, o post pior ranqueado recebe uma edição — registrada como `previousVersion` no próprio frontmatter do post (linked list de uma aresta apontando para a versão anterior no GitHub).
 
 > **Este CLI é não-interativo por design** (rodado por Claude Code).
 > Não use `readline`, `inquirer`, `prompts`, leitura de `process.stdin`,
@@ -24,7 +24,6 @@ A solução é **i18n completa, sem assumir bilinguismo**: `edit-worst` e `edit-
 .routines/hronir/
   rates/                              # matches gerados pelo fluxo atual
     <run_id>_<keyA>_x_<keyB>.md
-  edit-history/<key>/<lang>/<uuid>.md # snapshot do post antes da edição
   critiques/<key>.md                  # crítica em prosa (registro)
   <run_id>_..._x_....md               # matches legados (continuam suportados)
 hronir_session.json                   # estado da rodada ativa (commitado)
@@ -35,6 +34,8 @@ scripts/hronir/
   perspectives/                       # personas de leitor sorteadas por match
   README.md                           # este arquivo
 ```
+
+Versões anteriores de cada post **não** são snapshotadas no repo — vivem no git. `edit-commit` grava `previousVersion: { uuid, url, timestamp, msg }` no frontmatter, onde `url` é um permalink GitHub (`blob/<sha>/<path>`) para o arquivo no commit imediatamente antes da edição. Para reconstruir a linhagem completa, abra o `url`: a versão anterior tem seu próprio `previousVersion`, e assim por diante até a primeira versão.
 
 `hronir_session.json` é tracked de propósito: ele sinaliza que uma rodada está em andamento (e `doctor` reclama quando existe), evitando commits parciais.
 
@@ -49,8 +50,8 @@ Todos via npm scripts na raiz:
 | `npm run hronir:decide -- --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "..." --review-b "..." --clash "..."` | Registra a decisão. Cada `--rate-*` é número 1.00–5.00 (até duas decimais, empate proibido). Cada `--review-*` e o `--clash` têm piso de 100 palavras. Vencedor é derivado: quem tem mais estrelas. Agente, perspectiva e idioma são fixos pela sessão (vêm de `init` / sorteio em `continue`). Devolve a sessão para `ready_for_next` |
 | `npm run hronir:ranking`                                                                                             | Score acumulado de todos os matches preenchidos                                                                                                                                                                                                                                                                                        |
 | `npm run hronir:worst`                                                                                               | Imprime translationKey do pior ranqueado                                                                                                                                                                                                                                                                                               |
-| `npm run hronir:edit-worst`                                                                                          | Pior elegível + top 3 + defesas + crítica acumulada. Faz snapshot de cada tradução em `edit-history/`, injeta `replacedVersion` no frontmatter dos posts, marca a sessão como `need_edit`                                                                                                                                              |
-| `npm run hronir:edit-commit -- --msg "..."`                                                                          | Valida que cada tradução foi efetivamente alterada (UUIDv5 mudou), injeta `editHistory[]` no frontmatter de cada arquivo, fecha a sessão                                                                                                                                                                                               |
+| `npm run hronir:edit-worst`                                                                                          | Pior elegível + top 3 + defesas + crítica acumulada. Captura `git HEAD` na sessão (URL do GitHub pra versão prestes a ser substituída), injeta `replacedVersion` (marker transiente) no frontmatter dos posts, marca a sessão como `need_edit`                                                                                         |
+| `npm run hronir:edit-commit -- --msg "..."`                                                                          | Valida que cada tradução foi efetivamente alterada (UUIDv5 mudou), grava `previousVersion: { uuid, url, timestamp, msg }` no frontmatter (substitui qualquer `replacedVersion`/`editHistory` legados), fecha a sessão                                                                                                                  |
 | `npm run hronir:end -- [--skip-edit\|--force]`                                                                       | Encerra a rodada. Recusa se há matches pendentes ou edição pendente, a menos que `--force`                                                                                                                                                                                                                                             |
 | `npm run hronir:migrate -- [--dry-run]`                                                                              | Normaliza matches legados (`slug:` → `key:`, renomeia arquivo)                                                                                                                                                                                                                                                                         |
 | `npm run hronir:doctor`                                                                                              | Verifica inconsistências. Sai com código 1 se encontrar — usado no CI                                                                                                                                                                                                                                                                  |
@@ -67,9 +68,9 @@ init
              └─> continue  # gera match 2, imprime post A
                  ...
                  └─> continue  # após N matches, sessão entra em 'need_edit'
-                     └─> edit-worst   # mostra pior post + contexto, snapshot, marca posts
+                     └─> edit-worst   # mostra pior post + contexto, captura HEAD, marca posts
                          └─> [edição manual em todas as traduções]
-                             └─> edit-commit --msg "..."  # registra editHistory[]
+                             └─> edit-commit --msg "..."  # grava previousVersion
 ```
 
 A máquina de estados está em `hronir_session.json`: `ready_for_next → reading_a → reading_b → deciding → ready_for_next → … → need_edit → (sessão fechada)`.
@@ -112,18 +113,21 @@ review_b: "..."                          # ≥100 palavras, resenha do post B
 
 `doctor` valida o schema `stars-v1` (rates, 100 palavras, perspective, derived-winner consistency). Matches anteriores (`prompt_version` ausente ou `passion-v1`) seguem aceitos como estão — o piso de 100 palavras e a perspectiva são exigidos apenas a partir de `stars-v1`. Campos legados (`model`, `winner_defense`, `loser_critique`, body livre) continuam aceitos.
 
-## editHistory
+## previousVersion (linked list)
 
-`edit-commit` injeta uma entrada por edição no frontmatter de cada tradução:
+`edit-commit` grava no frontmatter de cada tradução uma única aresta apontando para a versão imediatamente anterior:
 
 ```yaml
-editHistory:
-  - uuid: "22c3fbae-..."                 # UUIDv5 do conteúdo ANTES da edição
-    timestamp: "2026-05-18T17:19:55.965Z"
-    msg: "Reorganizei a estrutura..."
+previousVersion:
+  uuid: "22c3fbae-..." # UUIDv5 do conteúdo ANTES da edição
+  url: "https://github.com/franklinbaldo/franklinbaldo.github.io/blob/<sha>/<path>"
+  timestamp: "2026-05-18T17:19:55.965Z"
+  msg: "Reorganizei a estrutura..."
 ```
 
-Esse é o registro auditável da linhagem do post. Substitui o antigo `.routines/hronir/edits/<key>-<ts>.md`. O cooldown de `edit-worst` (que evita reeditar o mesmo post duas rodadas seguidas) é derivado desse campo.
+O `sha` é o `git HEAD` capturado no `edit-worst` — i.e. o commit imediatamente antes da edição entrar. A versão anterior, ao abrir o link, carrega seu próprio `previousVersion` (e assim por diante), formando uma linked list reconstruída via git em vez de duplicada no repo.
+
+Cooldown de `edit-worst` (evita reeditar o mesmo post duas rodadas seguidas) é derivado de `previousVersion.timestamp`. Posts legados que ainda usam o antigo `editHistory[]` continuam respeitados como fallback; o primeiro `edit-commit` neles substitui o campo legado por `previousVersion`.
 
 ## Piso de palavras (stars-v1)
 
