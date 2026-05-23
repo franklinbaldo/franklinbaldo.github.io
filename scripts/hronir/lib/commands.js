@@ -33,7 +33,9 @@ const GITHUB_BLOB_BASE =
   "https://github.com/franklinbaldo/franklinbaldo.github.io/blob";
 
 function currentHeadSha() {
-  return execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+  return execFileSync("git", ["rev-parse", "HEAD"], {
+    encoding: "utf8",
+  }).trim();
 }
 
 function githubBlobUrl(sha, filepath) {
