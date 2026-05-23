@@ -23,6 +23,19 @@ const blog = defineCollection({
        *  prompt for the social-card QR code and as the centerpiece in
        *  the fallback plain QR. */
       emoji: z.string().optional(),
+      /** Linked-list pointer to the immediately previous version of this
+       *  post. `url` is a GitHub permalink to the file at the commit
+       *  before this edit landed; following it shows the prior version,
+       *  which itself carries its own `previousVersion` pointer (and so
+       *  on until the original commit). Set by `npm run hronir:edit-commit`. */
+      previousVersion: z
+        .object({
+          uuid: z.string(),
+          url: z.string().url(),
+          timestamp: z.string(),
+          msg: z.string(),
+        })
+        .optional(),
     }),
 });
 

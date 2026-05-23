@@ -30,7 +30,7 @@ type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
-const { heroImage, heroImageAlt, title, description, date, tags, lang, translationKey } = post.data;
+const { heroImage, heroImageAlt, title, description, date, tags, lang, translationKey, previousVersion } = post.data;
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
 const wordCount: number | undefined = minutesRead ? minutesRead * 200 : undefined;
 const hasMath: boolean = !!remarkPluginFrontmatter.hasMath;
@@ -162,6 +162,17 @@ const translationLinks = translationSiblings.map((p) => {
               {translationLinks.map((link, i) => (
                 <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
               ))}
+            </small></p>
+          )}
+          {previousVersion && (
+            <p><small>
+              {t(lang, 'post.previousVersion')}:{' '}
+              <a href={previousVersion.url} rel="external nofollow" title={previousVersion.msg}>
+                <time datetime={previousVersion.timestamp}>
+                  {new Date(previousVersion.timestamp).toLocaleDateString(locale, dateOpts)}
+                </time>
+              </a>
+              {previousVersion.msg && <> — <span class="prev-msg">{previousVersion.msg}</span></>}
             </small></p>
           )}
           <ShareButton title={title} />

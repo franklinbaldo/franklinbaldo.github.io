@@ -29,6 +29,45 @@ const EDITS_DIR = path.join(OUT_DIR, "edits");
 const SESSION_PATH = "hronir_session.json";
 const MIN_WORDS = 100;
 const PROMPT_VERSION = "stars-v1";
+const GITHUB_BLOB_BASE =
+  "https://github.com/franklinbaldo/franklinbaldo.github.io/blob";
+
+function currentHeadSha() {
+  return execFileSync("git", ["rev-parse", "HEAD"], {
+    encoding: "utf8",
+  }).trim();
+}
+
+function githubBlobUrl(sha, filepath) {
+  return `${GITHUB_BLOB_BASE}/${sha}/${filepath}`;
+}
+
+// True if `filepath` has staged or unstaged changes against HEAD, or is
+// untracked. Used by edit-worst to refuse running when the working-tree
+// content of a target post diverges from the version that the captured
+// HEAD permalink will resolve to — otherwise the stored (uuid, url) pair
+// in previousVersion would describe two different files.
+function isFileDirtyAtHead(filepath) {
+  try {
+    execFileSync("git", ["diff", "--quiet", "HEAD", "--", filepath], {
+      stdio: ["ignore", "ignore", "ignore"],
+    });
+  } catch {
+    return true;
+  }
+  try {
+    execFileSync(
+      "git",
+      ["diff", "--quiet", "--cached", "HEAD", "--", filepath],
+      {
+        stdio: ["ignore", "ignore", "ignore"],
+      }
+    );
+  } catch {
+    return true;
+  }
+  return false;
+}
 
 function wordCount(s) {
   if (!s || typeof s !== "string") return 0;
@@ -840,23 +879,29 @@ function collectDefensesForWinners(winnerKeys, limit = 5) {
 }
 
 function getRecentlyEditedKeys(limit = 2) {
-  // Cooldown is derived from editHistory[] on each post's frontmatter.
-  // The most recent edit timestamp across all translations of a key wins.
+  // Cooldown is derived from previousVersion.timestamp on each post's
+  // frontmatter (linked-list of edits, only the immediate predecessor is
+  // stored per file). Legacy posts still using editHistory[] are honored
+  // via fallback. The most recent edit timestamp across all translations
+  // of a key wins.
   const latestByKey = new Map();
   for (const p of listPosts()) {
     const data = readPost(p);
     if (!data.translationKey) continue;
-    const history = Array.isArray(data.editHistory) ? data.editHistory : [];
-    if (history.length === 0) continue;
     let latest = 0;
-    for (const entry of history) {
-      const t = entry?.timestamp ? Date.parse(String(entry.timestamp)) : 0;
-      if (t > latest) latest = t;
+    const prev = data.previousVersion;
+    if (prev?.timestamp) {
+      latest = Date.parse(String(prev.timestamp)) || 0;
+    } else if (Array.isArray(data.editHistory)) {
+      for (const entry of data.editHistory) {
+        const t = entry?.timestamp ? Date.parse(String(entry.timestamp)) : 0;
+        if (t > latest) latest = t;
+      }
     }
     if (!latest) continue;
     const key = String(data.translationKey);
-    const prev = latestByKey.get(key) || 0;
-    if (latest > prev) latestByKey.set(key, latest);
+    const prevLatest = latestByKey.get(key) || 0;
+    if (latest > prevLatest) latestByKey.set(key, latest);
   }
   return [...latestByKey.entries()]
     .sort((a, b) => b[1] - a[1])
@@ -930,26 +975,36 @@ export function editWorst() {
   const topKeys = topRows.map((r) => r.key);
 
   const translationFiles = findTranslations(worstRow.key);
+
+  // Precondition: each target post must match HEAD exactly. The captured
+  // HEAD permalink is what will resolve `previousVersion.url`, and the
+  // stored uuid is computed from the working-tree file. If the working
+  // tree diverges from HEAD, those two would describe different content
+  // and the lineage link would be wrong.
+  const dirty = translationFiles.filter((f) => isFileDirtyAtHead(f.path));
+  if (dirty.length > 0) {
+    console.error(
+      "Erro: edit-worst requer que os arquivos do post estejam limpos em relação a HEAD"
+    );
+    console.error(
+      "(previousVersion.url aponta para HEAD; uuid é derivado do conteúdo no disco — precisam coincidir)."
+    );
+    console.error("Arquivos com mudanças não commitadas:");
+    for (const f of dirty) console.error(`  - ${f.path}`);
+    console.error("Commit ou stash essas mudanças antes de rodar edit-worst.");
+    process.exit(1);
+  }
+
   const originalVersions = {};
+  const replacedAtCommit = currentHeadSha();
   for (const fileInfo of translationFiles) {
     const uuid = getPostUuid(fileInfo.path);
     if (uuid) {
-      originalVersions[fileInfo.lang] = uuid;
-      const langDir = path.join(
-        ".routines",
-        "hronir",
-        "edit-history",
-        worstRow.key,
-        fileInfo.lang
-      );
-      fs.mkdirSync(langDir, { recursive: true });
-      const destPath = path.join(langDir, `${uuid}.md`);
-      fs.copyFileSync(fileInfo.path, destPath);
-      console.log(
-        `[edit-history] Snapshotted version ${uuid} (${fileInfo.lang}) of ${fileInfo.path} to edit-history/${worstRow.key}/${fileInfo.lang}/${uuid}.md`
-      );
+      originalVersions[fileInfo.lang] = { uuid, path: fileInfo.path };
 
-      // Automatically inject or update replacedVersion in the post frontmatter
+      // Inject a transient `replacedVersion` marker so edit-commit knows
+      // the file is mid-edit. The prior version itself lives in git at
+      // ${replacedAtCommit}; we don't snapshot it.
       const raw = fs.readFileSync(fileInfo.path, "utf8");
       const replacedRegex = /^replacedVersion:\s*.*$/m;
       if (replacedRegex.test(raw)) {
@@ -959,7 +1014,7 @@ export function editWorst() {
         );
         fs.writeFileSync(fileInfo.path, updated, "utf8");
         console.log(
-          `[edit-worst] Automatically updated replacedVersion to "${uuid}" in ${fileInfo.path}`
+          `[edit-worst] Updated replacedVersion to "${uuid}" in ${fileInfo.path}`
         );
       } else {
         const parts = raw.split("---");
@@ -968,10 +1023,13 @@ export function editWorst() {
           const updated = parts.join("---");
           fs.writeFileSync(fileInfo.path, updated, "utf8");
           console.log(
-            `[edit-worst] Automatically injected replacedVersion: "${uuid}" into ${fileInfo.path}`
+            `[edit-worst] Injected replacedVersion: "${uuid}" into ${fileInfo.path}`
           );
         }
       }
+      console.log(
+        `[edit-worst] Prior version of ${fileInfo.path}: ${githubBlobUrl(replacedAtCommit, fileInfo.path)}`
+      );
     }
   }
 
@@ -993,12 +1051,13 @@ export function editWorst() {
   session.state = "need_edit";
   session.worstKey = worstRow.key;
   session.originalVersions = originalVersions;
+  session.replacedAtCommit = replacedAtCommit;
   fs.writeFileSync(SESSION_PATH, JSON.stringify(session, null, 2));
 
   console.log(`# Pior ranqueado (≥${minApps} aparições): ${worstRow.key}`);
   for (const fileInfo of translationFiles) {
     console.log(
-      `# Path (${fileInfo.lang}): ${fileInfo.path} (UUIDv5: ${originalVersions[fileInfo.lang] || "N/A"})`
+      `# Path (${fileInfo.lang}): ${fileInfo.path} (UUIDv5: ${originalVersions[fileInfo.lang]?.uuid || "N/A"})`
     );
   }
   console.log(
@@ -1487,10 +1546,18 @@ export function editCommit(msg) {
 
   const worstKey = session.worstKey;
   const originalVersions = session.originalVersions || {};
+  const replacedAtCommit = session.replacedAtCommit;
 
   if (!worstKey) {
     console.error(
       "Erro: worstKey não encontrado na sessão. Sessão pode estar corrompida."
+    );
+    process.exit(1);
+  }
+
+  if (!replacedAtCommit) {
+    console.error(
+      "Erro: replacedAtCommit não encontrado na sessão. Rode edit-worst novamente."
     );
     process.exit(1);
   }
@@ -1507,17 +1574,17 @@ export function editCommit(msg) {
   let anyMissing = false;
 
   for (const fileInfo of translationFiles) {
-    const originalUuid = originalVersions[fileInfo.lang];
+    const original = originalVersions[fileInfo.lang];
     const currentUuid = getPostUuid(fileInfo.path);
 
-    if (!originalUuid) {
+    if (!original) {
       console.warn(
         `[Aviso] Versão original não registrada para o idioma "${fileInfo.lang}". Pulando.`
       );
       continue;
     }
 
-    if (currentUuid === originalUuid) {
+    if (currentUuid === original.uuid) {
       console.error(
         `Erro: O arquivo ${fileInfo.path} (${fileInfo.lang}) não foi modificado.`
       );
@@ -1530,30 +1597,31 @@ export function editCommit(msg) {
     process.exit(1);
   }
 
-  // Inject editHistory into each file's frontmatter
+  // Write previousVersion (immediate predecessor only — linked list via git).
+  // Drop the transient replacedVersion marker and legacy editHistory[] in the
+  // same pass so each file's frontmatter carries only the one-hop link.
   for (const fileInfo of translationFiles) {
-    const originalUuid = originalVersions[fileInfo.lang];
-    if (!originalUuid) continue;
+    const original = originalVersions[fileInfo.lang];
+    if (!original) continue;
 
     const raw = fs.readFileSync(fileInfo.path, "utf8");
     const parsed = matter(raw);
 
-    if (!Array.isArray(parsed.data.editHistory)) {
-      parsed.data.editHistory = [];
-    }
-
-    parsed.data.editHistory.push({
-      uuid: originalUuid,
+    parsed.data.previousVersion = {
+      uuid: original.uuid,
+      url: githubBlobUrl(replacedAtCommit, original.path),
       timestamp,
       msg,
-    });
+    };
+    delete parsed.data.replacedVersion;
+    delete parsed.data.editHistory;
 
     const updated = matter.stringify(parsed.content, parsed.data);
     fs.writeFileSync(fileInfo.path, updated, "utf8");
 
     const currentUuid = getPostUuid(fileInfo.path);
     console.log(
-      `[edit-commit] Registrado em ${fileInfo.path} (${fileInfo.lang}): uuid anterior ${originalUuid} → novo ${currentUuid}`
+      `[edit-commit] Registrado em ${fileInfo.path} (${fileInfo.lang}): uuid anterior ${original.uuid} → novo ${currentUuid}`
     );
   }
 
