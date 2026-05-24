@@ -1,4 +1,6 @@
 ---
+import { t } from "../lib/i18n";
+
 interface Props {
   title: string;
   url: string;
@@ -7,8 +9,7 @@ interface Props {
 }
 
 const { title, url, lang } = Astro.props;
-const isPt = (lang ?? '') === 'pt';
-const shareLabel = isPt ? 'Compartilhar' : 'Share';
+const shareLabel = t(lang, "post.share");
 ---
 
 <button
@@ -53,17 +54,11 @@ const shareLabel = isPt ? 'Compartilhar' : 'Share';
     width: 20px;
     height: 20px;
   }
-  /* BackToTop pill lives at bottom-right ≥600px; stack the FAB above it
-     in the 600–800px range so they don't compete for the same tap area. */
-  @media (min-width: 600px) and (max-width: 800px) {
+  /* Stack the share FAB above the BackToTop pill so they don't overlap. */
+  @media (min-width: 600px) {
     .share-fab {
       bottom: 4.25rem;
       right: 1.5rem;
-    }
-  }
-  @media (min-width: 801px) {
-    .share-fab {
-      display: none;
     }
   }
 </style>

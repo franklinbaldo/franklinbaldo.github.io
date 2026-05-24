@@ -1,13 +1,22 @@
 ---
+import { t, locale as localeFor } from "../lib/i18n";
+
+interface NavItem {
+  href: string;
+  title: string;
+  date?: Date;
+}
 interface Props {
-  prev: { href: string; title: string } | null;
-  next: { href: string; title: string } | null;
+  prev: NavItem | null;
+  next: NavItem | null;
   lang?: string;
 }
-const { prev, next, lang = "en" } = Astro.props;
-const prevLabel = lang === "pt" ? "← Anterior" : "← Previous";
-const nextLabel = lang === "pt" ? "Próximo →" : "Next →";
-const navLabel = lang === "pt" ? "Navegação entre posts" : "Post navigation";
+const { prev, next, lang } = Astro.props;
+const prevLabel = t(lang, "post.prev");
+const nextLabel = t(lang, "post.next");
+const navLabel = t(lang, "post.navLabel");
+const dateOpts = { year: "numeric", month: "short" } as const;
+const fmt = (d: Date) => d.toLocaleDateString(localeFor(lang), dateOpts);
 ---
 
 {
@@ -17,6 +26,7 @@ const navLabel = lang === "pt" ? "Navegação entre posts" : "Post navigation";
         <a class="post-nav-link post-nav-prev" href={prev.href}>
           <span class="post-nav-dir">{prevLabel}</span>
           <span class="post-nav-title">{prev.title}</span>
+          {prev.date && <span class="post-nav-date">{fmt(prev.date)}</span>}
         </a>
       ) : (
         <span />
@@ -25,6 +35,7 @@ const navLabel = lang === "pt" ? "Navegação entre posts" : "Post navigation";
         <a class="post-nav-link post-nav-next" href={next.href}>
           <span class="post-nav-dir">{nextLabel}</span>
           <span class="post-nav-title">{next.title}</span>
+          {next.date && <span class="post-nav-date">{fmt(next.date)}</span>}
         </a>
       )}
     </nav>
@@ -72,6 +83,11 @@ const navLabel = lang === "pt" ? "Navegação entre posts" : "Post navigation";
     font-size: 0.9rem;
     color: var(--pico-color);
     line-height: 1.35;
+  }
+  .post-nav-date {
+    font-size: 0.72rem;
+    color: var(--pico-muted-color);
+    margin-top: 0.1rem;
   }
   @media (max-width: 600px) {
     .post-nav {

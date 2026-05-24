@@ -11,7 +11,7 @@ const rssHref = lang === 'pt' ? '/pt/rss.xml' : '/rss.xml';
 
 const footerNav = [
   { href: `${prefix}/archive/`,  label: lang === 'pt' ? 'Arquivo'   : 'Archive'  },
-  { href: `${prefix}/musicas/`,  label: lang === 'pt' ? 'Músicas'   : 'Music'    },
+  { href: lang === 'pt' ? `${prefix}/musicas/` : '/music/', label: lang === 'pt' ? 'Músicas' : 'Music' },
   { href: `${prefix}/ranking/`,  label: lang === 'pt' ? 'Ranking'   : 'Ranking'  },
   { href: `${prefix}/projects/`, label: lang === 'pt' ? 'Projetos'  : 'Projects' },
   { href: `${prefix}/about/`,    label: lang === 'pt' ? 'Sobre'     : 'About'    },

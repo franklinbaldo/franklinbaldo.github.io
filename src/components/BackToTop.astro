@@ -20,13 +20,11 @@
     transition: opacity 0.2s ease;
   }
 
-  @media (min-width: 600px) {
-    /* Show only after the user has scrolled past the first viewport. */
-    .back-to-top {
-      animation: fade-in linear both;
-      animation-timeline: scroll(root);
-      animation-range: 100vh 110vh;
-    }
+  /* Show only after the user has scrolled past the first viewport. */
+  .back-to-top {
+    animation: fade-in linear both;
+    animation-timeline: scroll(root);
+    animation-range: 100vh 110vh;
   }
 
   @keyframes fade-in {
@@ -36,3 +34,23 @@
     }
   }
 </style>
+
+<script>
+  // JS fallback for browsers that don't support scroll-driven animations
+  // (mainly Safari < 17 and any narrow-viewport context where the CSS
+  // animation-timeline rule may not fire).
+  function initBackToTop() {
+    const el = document.querySelector<HTMLAnchorElement>('.back-to-top');
+    if (!el) return;
+    if (CSS.supports('animation-timeline', 'scroll(root)')) return;
+    const update = () => {
+      const show = window.scrollY > window.innerHeight;
+      el.style.opacity = show ? '0.85' : '0';
+      el.style.pointerEvents = show ? 'auto' : 'none';
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+  }
+  document.addEventListener('astro:page-load', initBackToTop);
+  initBackToTop();
+</script>

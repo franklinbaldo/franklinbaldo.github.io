@@ -7,6 +7,12 @@
   --pico-font-family-sans-serif: "Inter", system-ui, -apple-system, sans-serif;
 }
 
+/* Smooth scroll with offset for the sticky header so anchors land visible. */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem;
+}
+
 /*
  * Cobogó motif as a subtle background — a single tile from /cobogo.svg
  * repeated and rendered at low opacity so it reads as architecture, not
@@ -80,9 +86,11 @@ body::before {
 /*
  * Drop cap on the first paragraph of an article body. Targets the first
  * direct-child <p> after the header so the cap only appears at the opening
- * of the essay, not inside asides or footnotes.
+ * of the essay, not inside asides or footnotes. The [data-dropcap] attribute
+ * is set by a script in the post layout that verifies the paragraph is long
+ * enough (≥80 chars) to warrant the treatment.
  */
-.post-body > article > p:first-of-type::first-letter {
+.post-body > article > p[data-dropcap]::first-letter {
   float: left;
   font-family: var(--pico-font-family-serif);
   font-size: 4.2rem;
@@ -93,7 +101,7 @@ body::before {
   margin-top: 0.15rem;
 }
 @media (max-width: 600px) {
-  .post-body > article > p:first-of-type::first-letter {
+  .post-body > article > p[data-dropcap]::first-letter {
     font-size: 3.4rem;
     padding-right: 0.4rem;
   }
@@ -261,6 +269,54 @@ body::before {
 .skip-link:focus {
   left: 0.5rem;
   top: 0.5rem;
+}
+
+/* Tag chips in the post footer. */
+.tag-pill {
+  display: inline-block;
+  padding: 0.1em 0.55em;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  color: var(--pico-muted-color);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
+}
+.tag-pill:hover {
+  border-color: var(--pico-primary);
+  color: var(--pico-primary);
+  background: color-mix(in srgb, var(--pico-primary) 6%, transparent);
+}
+
+/* Code block language badge — displayed via CSS from the data-language attr
+   set by CodeCopyEnhancer on the .code-block wrapper. */
+.code-block[data-language]::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 0.45rem;
+  left: 0.75rem;
+  font-size: 0.68rem;
+  font-family: var(--pico-font-family-monospace, monospace);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--pico-muted-color);
+  opacity: 0.7;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Reading time badge in the post header meta line. */
+.reading-badge {
+  display: inline-block;
+  padding: 0.05em 0.45em;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  font-size: 0.78rem;
+  vertical-align: middle;
 }
 
 .suno-embed,
