@@ -18,10 +18,11 @@
 
 // ─── Config ────────────────────────────────────────────────────────────────
 
-const PROPS         = PropertiesService.getScriptProperties();
-const GITHUB_TOKEN  = PROPS.getProperty('GITHUB_TOKEN');
-const GITHUB_REPO   = PROPS.getProperty('GITHUB_REPO')   || 'franklinbaldo/franklinbaldo.github.io';
-const GITHUB_BRANCH = PROPS.getProperty('GITHUB_BRANCH') || 'main';
+const PROPS = PropertiesService.getScriptProperties();
+const GITHUB_TOKEN = PROPS.getProperty("GITHUB_TOKEN");
+const GITHUB_REPO =
+  PROPS.getProperty("GITHUB_REPO") || "franklinbaldo/franklinbaldo.github.io";
+const GITHUB_BRANCH = PROPS.getProperty("GITHUB_BRANCH") || "main";
 
 // ─── Entry point ───────────────────────────────────────────────────────────
 
@@ -29,21 +30,41 @@ function createWeeklyPost() {
   const videos = getWatchHistoryThisWeek();
 
   if (videos.length === 0) {
-    console.log('Nenhum vídeo assistido esta semana.');
+    console.log("Nenhum vídeo assistido esta semana.");
     return;
   }
 
   const { mondayDate, sundayDate } = getWeekRange();
   const translationKey = `youtube-week-${formatDate(mondayDate)}`;
 
-  const ptContent = buildMarkdown(videos, mondayDate, sundayDate, 'pt', translationKey);
-  const enContent = buildMarkdown(videos, mondayDate, sundayDate, 'en', translationKey);
+  const ptContent = buildMarkdown(
+    videos,
+    mondayDate,
+    sundayDate,
+    "pt",
+    translationKey
+  );
+  const enContent = buildMarkdown(
+    videos,
+    mondayDate,
+    sundayDate,
+    "en",
+    translationKey
+  );
 
   const ptSlug = `${formatDate(mondayDate)}-youtube-da-semana`;
   const enSlug = `${formatDate(mondayDate)}-youtube-weekly-watch`;
 
-  pushToGithub(`src/content/blog/${ptSlug}.md`, ptContent, `post: youtube semanal ${formatDate(mondayDate)}`);
-  pushToGithub(`src/content/blog/${enSlug}.md`, enContent, `post: youtube weekly ${formatDate(mondayDate)}`);
+  pushToGithub(
+    `src/content/blog/${ptSlug}.md`,
+    ptContent,
+    `post: youtube semanal ${formatDate(mondayDate)}`
+  );
+  pushToGithub(
+    `src/content/blog/${enSlug}.md`,
+    enContent,
+    `post: youtube weekly ${formatDate(mondayDate)}`
+  );
 
   console.log(`Posts criados: ${ptSlug}.md e ${enSlug}.md`);
 }
@@ -59,21 +80,21 @@ function getWatchHistoryThisWeek() {
 
   do {
     const params = {
-      playlistId: 'HL',   // ID especial do YouTube para Watch History
+      playlistId: "HL", // ID especial do YouTube para Watch History
       maxResults: 50,
-      part: 'snippet,contentDetails',
+      part: "snippet,contentDetails",
     };
     if (pageToken) params.pageToken = pageToken;
 
     let response;
     try {
-      response = YouTube.PlaylistItems.list('snippet,contentDetails', params);
+      response = YouTube.PlaylistItems.list("snippet,contentDetails", params);
     } catch (e) {
-      console.error('Erro ao acessar YouTube API:', e.message);
+      console.error("Erro ao acessar YouTube API:", e.message);
       break;
     }
 
-    for (const item of (response.items || [])) {
+    for (const item of response.items || []) {
       const publishedAt = new Date(item.snippet.publishedAt); // data em que você assistiu
       if (publishedAt.getTime() < cutoff) {
         pageToken = null; // para o loop — chegamos em vídeos anteriores à semana
@@ -81,9 +102,9 @@ function getWatchHistoryThisWeek() {
       }
 
       videos.push({
-        title:     item.snippet.title,
-        channel:   item.snippet.videoOwnerChannelTitle || '',
-        videoId:   item.contentDetails.videoId,
+        title: item.snippet.title,
+        channel: item.snippet.videoOwnerChannelTitle || "",
+        videoId: item.contentDetails.videoId,
         watchedAt: publishedAt,
       });
     }
@@ -93,7 +114,7 @@ function getWatchHistoryThisWeek() {
 
   // remove duplicatas (mesmo vídeo assistido mais de uma vez)
   const seen = new Set();
-  return videos.filter(v => {
+  return videos.filter((v) => {
     if (seen.has(v.videoId)) return false;
     seen.add(v.videoId);
     return true;
@@ -103,7 +124,7 @@ function getWatchHistoryThisWeek() {
 // ─── Markdown builder ──────────────────────────────────────────────────────
 
 function buildMarkdown(videos, mondayDate, sundayDate, lang, translationKey) {
-  const isPT = lang === 'pt';
+  const isPT = lang === "pt";
   const weekLabel = `${formatDateLong(mondayDate, lang)} – ${formatDateLong(sundayDate, lang)}`;
 
   const title = isPT
@@ -118,29 +139,31 @@ function buildMarkdown(videos, mondayDate, sundayDate, lang, translationKey) {
     ? `Vídeos que assisti esta semana — sem curadoria, sem julgamento, só o que estava no meu histórico.`
     : `Videos I watched this week — no curation, no judgment, just what was in my history.`;
 
-  const videoLines = videos.map(v => {
-    const url = `https://www.youtube.com/watch?v=${v.videoId}`;
-    const day = formatDateShort(v.watchedAt, lang);
-    return `- [${escapeYaml(v.title)}](${url}) — **${v.channel}** *(${day})*`;
-  }).join('\n');
+  const videoLines = videos
+    .map((v) => {
+      const url = `https://www.youtube.com/watch?v=${v.videoId}`;
+      const day = formatDateShort(v.watchedAt, lang);
+      return `- [${escapeYaml(v.title)}](${url}) — **${v.channel}** *(${day})*`;
+    })
+    .join("\n");
 
   const tags = isPT
-    ? ['youtube', 'semana', 'vídeos', 'curadoria']
-    : ['youtube', 'weekly', 'videos', 'curation'];
+    ? ["youtube", "semana", "vídeos", "curadoria"]
+    : ["youtube", "weekly", "videos", "curation"];
 
   const frontmatter = [
-    '---',
+    "---",
     `title: "${escapeYaml(title)}"`,
     `description: "${escapeYaml(description)}"`,
     `date: "${formatDate(mondayDate)}"`,
     `lang: ${lang}`,
     `translationKey: ${translationKey}`,
     `tags:`,
-    ...tags.map(t => `  - ${t}`),
+    ...tags.map((t) => `  - ${t}`),
     `draft: false`,
     `author: franklin`,
-    '---',
-  ].join('\n');
+    "---",
+  ].join("\n");
 
   return `${frontmatter}\n\n${intro}\n\n## Vídeos\n\n${videoLines}\n`;
 }
@@ -153,14 +176,14 @@ function pushToGithub(path, content, commitMessage) {
 
   const headers = {
     Authorization: `Bearer ${GITHUB_TOKEN}`,
-    Accept: 'application/vnd.github+json',
-    'X-GitHub-Api-Version': '2022-11-28',
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
   };
 
   // verifica se o arquivo já existe (pra pegar o sha, necessário para update)
   let sha = null;
   const checkResp = UrlFetchApp.fetch(apiUrl, {
-    method: 'get',
+    method: "get",
     headers,
     muteHttpExceptions: true,
   });
@@ -176,7 +199,7 @@ function pushToGithub(path, content, commitMessage) {
   if (sha) body.sha = sha;
 
   const resp = UrlFetchApp.fetch(apiUrl, {
-    method: 'put',
+    method: "put",
     headers,
     payload: JSON.stringify(body),
     muteHttpExceptions: true,
@@ -193,7 +216,7 @@ function pushToGithub(path, content, commitMessage) {
 function getWeekRange() {
   const now = new Date();
   const dayOfWeek = now.getDay(); // 0=dom, 1=seg, ...
-  const diffToMonday = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
+  const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
 
   const mondayDate = new Date(now);
   mondayDate.setDate(now.getDate() + diffToMonday);
@@ -208,23 +231,26 @@ function getWeekRange() {
 
 function formatDate(d) {
   const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
 }
 
 function formatDateShort(d, lang) {
-  return d.toLocaleDateString(lang === 'pt' ? 'pt-BR' : 'en-US', {
-    weekday: 'short', day: 'numeric', month: 'short',
+  return d.toLocaleDateString(lang === "pt" ? "pt-BR" : "en-US", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
   });
 }
 
 function formatDateLong(d, lang) {
-  return d.toLocaleDateString(lang === 'pt' ? 'pt-BR' : 'en-US', {
-    day: 'numeric', month: 'long',
+  return d.toLocaleDateString(lang === "pt" ? "pt-BR" : "en-US", {
+    day: "numeric",
+    month: "long",
   });
 }
 
 function escapeYaml(str) {
-  return (str || '').replace(/"/g, '\\"');
+  return (str || "").replace(/"/g, '\\"');
 }
