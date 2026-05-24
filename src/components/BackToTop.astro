@@ -42,7 +42,7 @@
   function initBackToTop() {
     const el = document.querySelector<HTMLAnchorElement>('.back-to-top');
     if (!el) return;
-    if (CSS.supports('animation-timeline', 'scroll()')) return;
+    if (CSS.supports('animation-timeline', 'scroll(root)')) return;
     const update = () => {
       const show = window.scrollY > window.innerHeight;
       el.style.opacity = show ? '0.85' : '0';

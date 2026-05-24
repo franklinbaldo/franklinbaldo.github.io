@@ -12,7 +12,7 @@ const prefix = urlPrefix(lang);
 const homeHref     = `${prefix}/`;
 const archiveHref  = `${prefix}/archive/`;
 const tagsHref     = `${prefix}/tags/`;
-const musicHref    = `${prefix}/musicas/`;
+const musicHref    = lang === 'pt' ? `${prefix}/musicas/` : '/music/';
 const searchHref   = `${prefix}/search/`;
 const aboutHref    = `${prefix}/about/`;
 const projectsHref = `${prefix}/projects/`;

@@ -54,7 +54,7 @@ export default defineConfig({
           [base + "/search/"]: base + "/pt/search/",
           [base + "/projects/"]: base + "/pt/projects/",
           [base + "/ranking/"]: base + "/pt/ranking/",
-          [base + "/musicas/"]: base + "/pt/musicas/",
+          [base + "/music/"]: base + "/pt/musicas/",
         };
         const ptToEn = Object.fromEntries(
           Object.entries(staticPairs).map(([en, pt]) => [pt, en])
@@ -80,6 +80,9 @@ export default defineConfig({
       },
     }),
   ],
+  redirects: {
+    "/musicas/": "/music/",
+  },
   prefetch: {
     defaultStrategy: "viewport",
   },
