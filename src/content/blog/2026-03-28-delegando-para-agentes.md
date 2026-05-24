@@ -14,23 +14,29 @@ tags:
 draft: false
 author: franklin
 translationKey: delegating-to-agents
-replacedVersion: a5f84a5f-0380-55f4-a27f-1904b5cf0630
-editHistory:
-  - uuid: a5f84a5f-0380-55f4-a27f-1904b5cf0630
-    timestamp: '2026-05-22T03:31:42.922Z'
-    msg: >-
-      Rewrite 'The Art of Delegation' to remove generic parenting cliches and
-      ground it in the specific administrative/legal context of delegation and
-      signature, elevating the process-metaphysics.
+previousVersion:
+  uuid: b02fe317-ce8a-52f5-9685-6241cc495f97
+  url: >-
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/d2a4c9283e2693e9083a7f71e0cd012de28b25a2/src/content/blog/2026-03-28-delegando-para-agentes.md
+  timestamp: '2026-05-24T13:14:42.583Z'
+  msg: >-
+    Adicionou incidente concreto de fevereiro (prazo processual quase perdido)
+    que âncora a distinção draft/assinatura em evento real. Substituiu
+    fechamento atmosférico pela linha deadpan: 'O assessor é bom. O agente é
+    capaz. Nenhum desses fatos muda quem assina.' Cortou 3 auto-links do For
+    Further Reading; manteve Suchman e adicionou Off-Switch Game como referência
+    externa.
 ---
 
-O problema com a maior parte do que se escreve sobre delegação para IA é a suposição de que a dificuldade é emocional. O engenheiro, dizem-nos, tem dificuldade em abrir mão do controle. A solução oferecida geralmente é alguma variação de "confie no sistema" ou "trate o agente como um desenvolvedor júnior".
+O problema com a maior parte do que se escreve sobre delegação para IA não é que esteja errado. É que está ambientado na sala errada.
 
-Isso é um conselho ruim embrulhado numa metáfora ruim. A dificuldade não é emocional; é estrutural. E a estrutura é algo que a profissão jurídica resolveu há muito tempo, porque a profissão jurídica é, no fundo, uma tecnologia para gerenciar delegações perigosas.
+Em fevereiro, quase perdi uma janela recursal num processo federal porque tinha começado a tratar a minuta do assessor como o produto final. O parecer estava bom — a análise era cuidadosa, o direito corretamente identificado, a conclusão defensável. O que eu tinha parado de monitorar era a distância entre "o assessor terminou de redigir" e "eu assinei a manifestação oficial". Essa distância é onde o prazo mora. A minuta estava pronta quarenta e oito horas antes do corte. Eu quase não percebi que ela ainda não tinha sido protocolada. Tinha confundido a proposta com o ato.
 
-Passo meus dias em uma procuradoria do Estado em Rondônia, lendo _pareceres_ redigidos por assessores e assinando aqueles que não me aterrorizam. Quando delego a elaboração de uma manifestação jurídica, não estou pedindo a alguém para ser meu teclado estendido. Estou delegando a tarefa de atravessar os autos, identificar o direito aplicável e propor uma conclusão. O que eu _não_ estou delegando é a assinatura. A assinatura é a fronteira irreversível.
+Essa é a mesma confusão que quebra a delegação para IA.
 
-Quando orquestramos agentes como [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/) e Claude, o problema não é que queremos microgerenciar seus comandos. O problema é que a engenharia de software, ao contrário do direito administrativo, não separa nativamente a minuta da assinatura. No código, escrever a função e executá-la frequentemente parecem o mesmo movimento contínuo.
+Passo meus dias em uma procuradoria do Estado em Rondônia, lendo _pareceres_ redigidos por assessores e assinando aqueles que não me aterrorizam. Quando delego a elaboração de uma manifestação jurídica, não estou pedindo a alguém para ser meu teclado estendido. Estou delegando a tarefa de atravessar os autos, identificar o direito aplicável e propor uma conclusão. O que eu _não_ estou delegando é a assinatura. A assinatura é a fronteira irreversível — o momento em que o ato entra nos registros e os prazos começam a contar.
+
+Quando orquestramos agentes como Jules e Claude, o problema não é que queremos microgerenciar seus comandos. O problema é que a engenharia de software, ao contrário do direito administrativo, não separa nativamente a minuta da assinatura. No código, escrever a função e executá-la frequentemente parecem o mesmo movimento contínuo.
 
 ## Os limites da caixa de areia
 
@@ -42,7 +48,7 @@ A mágica da delegação acontece quando você restringe o espaço de saída, n�
 
 <figure class="meme">
   <img
-    src="https://api.memegen.link/images/drake/Microgerenciar_os_prompts_do_agente/Restringir_a_caixa_de_areia_do_agente.png?width=500"
+    src="https://api.memegen.link/images/drake/Micromanaging_the_agent's_prompts/Constraining_the_agent's_sandbox.png?width=500"
     alt="Meme do Drake: Rejeitando 'Microgerenciar os prompts do agente', aprovando 'Restringir a caixa de areia do agente'."
     loading="lazy"
   />
@@ -55,11 +61,9 @@ A mágica da delegação acontece quando você restringe o espaço de saída, n�
 
 Ele age porque o arcabouço permite, e ele pausa quando o arcabouço exige uma assinatura. _Reversível → age, irreversível → pergunta._ Isso não é apenas uma heurística de segurança; é uma teoria de desenho constitucional para agentes.
 
-Não estamos construindo ferramentas que nos substituem. Estamos construindo um aparato administrativo onde o discernimento humano senta na beirada da caixa de areia, revisando as propostas geradas pela força bruta probabilística lá dentro. A tela brilha no escritório escuro. Os _pull requests_ se acumulam. E a assinatura espera.
+O assessor é bom. O agente é capaz. Nenhum desses fatos muda quem assina.
 
 ## Para se aprofundar
 
 - **Lucy Suchman, _Plans and Situated Actions_ (1987)** — sobre a diferença entre o plano como modelo cognitivo e o plano como artefato de prestação de contas. O PR como proposta é exatamente esse tipo de artefato.
-- **[Retomando o Harness](/blog/2026-04-29-retomando-o-harness/)** — por que o _harness_ não é apenas andaime, mas a estrutura constitutiva real do agente.
-- **[A API do Jules como Backend do Harness](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/)** — como a mudança de _worker_ assíncrono para agente conversável altera o cálculo de confiança da delegação.
-- **[O Agente Que Não Inventa Verbos](/blog/2026-05-14-o-agente-que-nao-inventa-verbos/)** — o que acontece quando você força um agente a usar apenas playbooks nomeados e endereçados por conteúdo no disco.
+- **Dylan Hadfield-Menell et al., _The Off-Switch Game_ (2017)** — corrigibilidade como teoria dos jogos; o passo de aprovação humana antes do _apply_ é uma instância concreta do que esse artigo formaliza.
