@@ -346,3 +346,35 @@ body::before {
   text-align: center;
   margin-top: 0.5rem;
 }
+
+@media print {
+  body::before {
+    display: none;
+  }
+  #read-progress,
+  .share-fab,
+  .back-to-top,
+  header.container,
+  footer.container,
+  .toc-col,
+  .toc-inline,
+  .border-rail,
+  .post-breadcrumb,
+  .author-bio,
+  .post-nav,
+  .related-posts {
+    display: none !important;
+  }
+  .post-grid,
+  .home-layout {
+    display: block;
+  }
+  .post-body > article {
+    box-shadow: none;
+  }
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    opacity: 0.6;
+  }
+}
