@@ -77,6 +77,7 @@ function getWatchHistoryThisWeek() {
   const videos = [];
 
   let pageToken = null;
+  let reachedCutoff = false;
 
   do {
     const params = {
@@ -97,7 +98,7 @@ function getWatchHistoryThisWeek() {
     for (const item of response.items || []) {
       const publishedAt = new Date(item.snippet.publishedAt); // data em que você assistiu
       if (publishedAt.getTime() < cutoff) {
-        pageToken = null; // para o loop — chegamos em vídeos anteriores à semana
+        reachedCutoff = true;
         break;
       }
 
@@ -109,7 +110,7 @@ function getWatchHistoryThisWeek() {
       });
     }
 
-    pageToken = response.nextPageToken || null;
+    pageToken = reachedCutoff ? null : response.nextPageToken || null;
   } while (pageToken);
 
   // remove duplicatas (mesmo vídeo assistido mais de uma vez)
@@ -143,7 +144,7 @@ function buildMarkdown(videos, mondayDate, sundayDate, lang, translationKey) {
     .map((v) => {
       const url = `https://www.youtube.com/watch?v=${v.videoId}`;
       const day = formatDateShort(v.watchedAt, lang);
-      return `- [${escapeYaml(v.title)}](${url}) — **${v.channel}** *(${day})*`;
+      return `- [${escapeMarkdown(v.title)}](${url}) — **${escapeMarkdown(v.channel)}** *(${day})*`;
     })
     .join("\n");
 
@@ -165,7 +166,8 @@ function buildMarkdown(videos, mondayDate, sundayDate, lang, translationKey) {
     "---",
   ].join("\n");
 
-  return `${frontmatter}\n\n${intro}\n\n## Vídeos\n\n${videoLines}\n`;
+  const heading = isPT ? "## Vídeos" : "## Videos";
+  return `${frontmatter}\n\n${intro}\n\n${heading}\n\n${videoLines}\n`;
 }
 
 // ─── GitHub API ────────────────────────────────────────────────────────────
@@ -182,7 +184,7 @@ function pushToGithub(path, content, commitMessage) {
 
   // verifica se o arquivo já existe (pra pegar o sha, necessário para update)
   let sha = null;
-  const checkResp = UrlFetchApp.fetch(apiUrl, {
+  const checkResp = UrlFetchApp.fetch(`${apiUrl}?ref=${GITHUB_BRANCH}`, {
     method: "get",
     headers,
     muteHttpExceptions: true,
@@ -253,4 +255,8 @@ function formatDateLong(d, lang) {
 
 function escapeYaml(str) {
   return (str || "").replace(/"/g, '\\"');
+}
+
+function escapeMarkdown(str) {
+  return (str || "").replace(/[[\]()]/g, "\\$&");
 }
