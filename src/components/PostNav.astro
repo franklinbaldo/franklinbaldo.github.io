@@ -1,4 +1,6 @@
 ---
+import { t, locale as localeFor } from "../lib/i18n";
+
 interface NavItem {
   href: string;
   title: string;
@@ -9,13 +11,12 @@ interface Props {
   next: NavItem | null;
   lang?: string;
 }
-const { prev, next, lang = "en" } = Astro.props;
-const prevLabel = lang === "pt" ? "← Anterior" : "← Previous";
-const nextLabel = lang === "pt" ? "Próximo →" : "Next →";
-const navLabel = lang === "pt" ? "Navegação entre posts" : "Post navigation";
-const locale = lang === "pt" ? "pt-BR" : "en-US";
+const { prev, next, lang } = Astro.props;
+const prevLabel = t(lang, "post.prev");
+const nextLabel = t(lang, "post.next");
+const navLabel = t(lang, "post.navLabel");
 const dateOpts = { year: "numeric", month: "short" } as const;
-const fmt = (d: Date) => d.toLocaleDateString(locale, dateOpts);
+const fmt = (d: Date) => d.toLocaleDateString(localeFor(lang), dateOpts);
 ---
 
 {
