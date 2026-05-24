@@ -67,8 +67,18 @@ const breadcrumbLd = type === "article"
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: Astro.site?.href },
-        { "@type": "ListItem", position: 2, name: "Blog", item: new URL("/archive/", Astro.site).href },
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: lang === "pt" ? "Início" : "Home",
+          item: Astro.site ? new URL(lang === "pt" ? "/pt/" : "/", Astro.site).href : "/",
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: lang === "pt" ? "Arquivo" : "Blog",
+          item: Astro.site ? new URL(lang === "pt" ? "/pt/archive/" : "/archive/", Astro.site).href : "/archive/",
+        },
         { "@type": "ListItem", position: 3, name: title, item: canonical.href },
       ],
     }
