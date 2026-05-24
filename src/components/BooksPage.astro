@@ -1,6 +1,6 @@
 ---
 import PageLayout from "../layouts/PageLayout.astro";
-import { pick, locale as getLocale } from "../lib/i18n";
+import { pick } from "../lib/i18n";
 import type { Lang } from "../lib/i18n";
 import { XMLParser } from "fast-xml-parser";
 
@@ -59,7 +59,8 @@ const ui = pick(lang, {
   },
 });
 
-const translations = lang === "en" ? { pt: "/pt/livros/" } : { en: "/books/" };
+const translations: Record<string, string> =
+  lang === "en" ? { pt: "/pt/livros/" } : { en: "/books/" };
 
 const GOODREADS_RSS = "https://www.goodreads.com/review/list_rss/5942034?shelf=read";
 const GOODREADS_PROFILE = "https://www.goodreads.com/user/show/5942034";
@@ -120,7 +121,6 @@ try {
 }
 
 const likedCount = books.filter((b) => b.user_rating >= 4).length;
-const fmtDate = new Intl.DateTimeFormat(getLocale(lang), { year: "numeric", month: "short" });
 
 const booksJsonLd = {
   "@context": "https://schema.org",
@@ -207,9 +207,6 @@ const booksJsonLd = {
           {books.map((book) => {
             const pubYear = book.book_published ? String(book.book_published) : "";
             const liked = book.user_rating >= 4;
-            const readDate = book.user_read_at
-              ? fmtDate.format(new Date(book.user_read_at.replace(/\//g, "-")))
-              : null;
             return (
               <article
                 class="book-card"
