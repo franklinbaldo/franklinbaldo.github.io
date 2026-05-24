@@ -12,6 +12,8 @@
 
       const wrapper = document.createElement("div");
       wrapper.className = "code-block";
+      const lang = pre.getAttribute("data-language");
+      if (lang) wrapper.setAttribute("data-language", lang);
       pre.parentNode?.insertBefore(wrapper, pre);
       wrapper.appendChild(pre);
 

@@ -57,8 +57,8 @@ const sameLangPosts = allPosts
 const postIdx = sameLangPosts.findIndex((p) => p.id === post.id);
 const prevPost = postIdx > 0 ? sameLangPosts[postIdx - 1] : null;
 const nextPost = postIdx < sameLangPosts.length - 1 ? sameLangPosts[postIdx + 1] : null;
-const prevNav = prevPost ? { href: `/blog/${prevPost.id}/`, title: prevPost.data.title } : null;
-const nextNav = nextPost ? { href: `/blog/${nextPost.id}/`, title: nextPost.data.title } : null;
+const prevNav = prevPost ? { href: `/blog/${prevPost.id}/`, title: prevPost.data.title, date: prevPost.data.date } : null;
+const nextNav = nextPost ? { href: `/blog/${nextPost.id}/`, title: nextPost.data.title, date: nextPost.data.date } : null;
 const translationSiblings = translationKey
   ? allPosts.filter((p) => p.data.translationKey === translationKey && p.id !== post.id)
   : [];
@@ -119,7 +119,7 @@ const translationLinks = translationSiblings.map((p) => {
             <p>
               <small>
                 <time datetime={date.toISOString()}>{date.toLocaleDateString(locale, dateOpts)}</time>
-                {minutesRead && <> · {minutesRead} {t(lang, 'post.minutesRead')}</>}
+                {minutesRead && <> · <span class="reading-badge">{minutesRead} {t(lang, 'post.minutesRead')}</span></>}
                 {showUpdated && lastModified && (
                   <> · {t(lang, 'post.updated')} <time datetime={lastModified.toISOString()}>
                     {lastModified.toLocaleDateString(locale, dateOpts)}
@@ -132,14 +132,17 @@ const translationLinks = translationSiblings.map((p) => {
             </p>
           </hgroup>
           {heroImage && (
-            <Image
-              src={heroImage}
-              alt={heroImageAlt ?? ''}
-              widths={[480, 800, 1200]}
-              sizes="(max-width: 800px) 100vw, 800px"
-              format="webp"
-              loading="eager"
-            />
+            <figure class="hero-figure">
+              <Image
+                src={heroImage}
+                alt={heroImageAlt ?? ''}
+                widths={[480, 800, 1200]}
+                sizes="(max-width: 800px) 100vw, 800px"
+                format="webp"
+                loading="eager"
+              />
+              {heroImageAlt && <figcaption>{heroImageAlt}</figcaption>}
+            </figure>
           )}
         </header>
 
@@ -153,7 +156,7 @@ const translationLinks = translationSiblings.map((p) => {
           {tags && tags.length > 0 && (
             <p><small>
               {t(lang, 'post.tags')} {tags.map((tag, i) => (
-                <>{i > 0 && ', '}<a href={`${tagsPrefix}/${tag}/`}>#{tag}</a></>
+                <>{i > 0 && ' '}<a class="tag-pill" href={`${tagsPrefix}/${tag}/`}>#{tag}</a></>
               ))}
             </small></p>
           )}
@@ -203,6 +206,24 @@ const translationLinks = translationSiblings.map((p) => {
     date={date}
     lang={lang}
   />
+
+  <script is:inline>
+    (() => {
+      // Drop cap: only apply to the first direct-child <p> of the article
+      // when it has enough text to look good with a large initial capital.
+      function applyDropCap() {
+        const article = document.querySelector('.post-body > article');
+        if (!article) return;
+        const firstP = article.querySelector(':scope > p');
+        if (!firstP) return;
+        if ((firstP.textContent ?? '').trim().length >= 80) {
+          firstP.setAttribute('data-dropcap', '');
+        }
+      }
+      applyDropCap();
+      document.addEventListener('astro:page-load', applyDropCap);
+    })();
+  </script>
 
   <script is:inline>
     (() => {
@@ -303,5 +324,22 @@ const translationLinks = translationSiblings.map((p) => {
       background: var(--pico-muted-color);
       opacity: 0.5;
     }
+  }
+
+  .hero-figure {
+    margin: 1.5rem 0 2rem;
+    text-align: center;
+  }
+  .hero-figure img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+  .hero-figure figcaption {
+    margin-top: 0.5rem;
+    font-family: var(--pico-font-family-serif);
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--pico-muted-color);
   }
 </style>

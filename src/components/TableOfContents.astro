@@ -139,6 +139,7 @@ const listItems = tree.map(item => ({ ...item }));
       links.forEach((a) => {
         const isActive = a.getAttribute('href') === `#${id}`;
         a.classList.toggle('toc-active', isActive);
+        if (isActive) a.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       });
     };
 
