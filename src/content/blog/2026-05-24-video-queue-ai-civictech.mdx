@@ -1,8 +1,10 @@
 ---
-title: "35 talks I'm planning to watch: AI agents, civic tech, and digital democracy"
+title: '35 talks I''m planning to watch: AI agents, civic tech, and digital democracy'
 description: >-
-  From pelicans on bicycles to Querido Diário, vTaiwan, and Polis — a personal queue of 35 videos across AI engineering, govtech, and participatory infrastructure.
-date: "2026-05-24"
+  From pelicans on bicycles to Querido Diário, vTaiwan, and Polis — a personal
+  queue of 35 videos across AI engineering, govtech, and participatory
+  infrastructure.
+date: '2026-05-24'
 lang: en
 translationKey: video-queue-ai-civictech-2026-05
 tags:
@@ -12,18 +14,36 @@ tags:
   - agents
   - video-queue
 draft: false
-emoji: 📺
+emoji: "\U0001F4FA"
+previousVersion:
+  uuid: 45df5f9e-91f6-520f-aae0-eba48ec736a3
+  url: >-
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/edc19037e34a3de14e345c7c405b8ae1c6ee3e83/src\content\blog\2026-05-24-video-queue-ai-civictech.mdx
+  timestamp: '2026-05-24T20:24:30.975Z'
+  msg: >-
+    Refatorado o post de watchlists do YouTube para tecer a voz narrativa
+    confessional do Franklin, ligando-o com Porto Velho, Canivete e causaganha.
+    Títulos de seção reescritos para formato evocativo, inserção de diagrama
+    Mermaid de fluxo de civic tech para descanso visual, e fechamento com frase
+    de impacto deadpan.
 ---
 
-These are the talks I'm planning to watch. Not a retrospective, not a recommendation post — just a snapshot of what's sitting in my queue this weekend, annotated enough that I'll remember why I put them there.
+I have a habit of accumulating queues because it feels like the cheapest way to simulate progress. 
 
-Two clusters. The first is software engineering and AI, mostly conferences from 2025. The second is civic tech and govtech, which I've been calling "civil tech" but probably should not — the field has a name and the name is **civic tech**.
+Every weekend in Porto Velho, when the humidity climbs and the energy grid begins to sag under the weight of three thousand air conditioners, I open a new browser window and start bookmarking talks. It is a protective reflex. I work in a state attorney's office where the backlog behaves like a physical liquid, filling every room, and the temptation is to believe that if I just watch Evan You explain Vite or Geoffrey Hinton discuss the limits of human intelligence, I will somehow be closer to building the tools that might save me.
+
+The browser window now has forty-seven open tabs. It is a monument to intentions I haven't earned yet.
+
+Most of these are not recommendations. To recommend a talk, you have to have watched it, and to have watched it, you have to have surrendered forty minutes to someone else's rhythm. What sits below is the queue — the annotated list of things I have decided to care about before the compiler tells me I've spent another weekend performing the act of research.
+
+Two clusters. The first is software engineering and AI—mostly from 2025, when the word 'agent' went from a conceptual framework to a CLI tool you could actually run. The second is civic tech and govtech, which I've been calling 'civil tech' in my drafts until Canivete pointed out the term doesn't exist. The name is civic tech, even if the tools often feel like they belong in a museum of good intentions.
 
 ---
 
-## Software engineering & AI
+## Where the code meets the latent space
 
 The AI engineering cluster runs from very practical (how to build reliable agents) to philosophical (what are we actually doing here). Dex Horthy appears twice because his 12-factor agents framing keeps coming up in conversations and I want to read the source, not the second-hand summaries.
+
 
 |   # | Talk                                                                                                                            |
 | --: | ------------------------------------------------------------------------------------------------------------------------------- |
@@ -50,9 +70,10 @@ The AI engineering cluster runs from very practical (how to build reliable agent
 
 ---
 
-## Civic tech / govtech
+## What civic tech smells like when it's real
 
 This is the cluster I'm more interested in right now. I work in public administration in Rondônia and I've been thinking about what it would take for accountability data to actually reach the people who should be reading it. The Brazilian videos are where I start. The international ones are where I go for mental models that Brazil hasn't built yet.
+
 
 ### Brazil
 
@@ -88,11 +109,21 @@ This is the cluster I'm more interested in right now. I work in public administr
 
 **[2025 State of Digital Public Infrastructure Report Launch](https://www.youtube.com/watch?v=YmBpHGmZC9g)** — the broader "digital public infrastructure" frame: identity, payments, data exchange, public rails. The [Digital Public Goods Alliance](https://digitalpublicgoods.net/) framing is useful here.
 
+```mermaid
+graph TD
+  PDF["The PDF (Graveyard of Data)"] -->|1. OKBR / Querido Diário| API["Searchable Public API"]
+  API -->|2. Brasil.IO / DadosJusBr| Structured["Structured Public Rails"]
+  Structured -->|3. GetCalFresh / Summer EBT| Service["Real Service Delivery"]
+  Structured -->|4. vTaiwan / Decidim / Polis| Deliberation["Deliberative Public Assembly"]
+```
+
 ---
 
-## Watch order I'm following
+## The path through the thicket
 
-The civic tech sequence matters more than the AI one, so I'm starting there:
+The queue is not a database; it is a trajectory. 
+
+If I watch these in isolation, they are just thirty-five people talking in well-lit rooms. The sequence has to argue with itself. I'm starting with the civic tech cluster because that is where the friction lives for me right now. The watch order I'm following is a path from data extraction to actual governance:
 
 1. **Querido Diário API** — Brazilian data liberation, close to home
 2. **Brasil.IO: Dados abertos para mais democracia** — the infrastructure that makes the data usable
@@ -103,3 +134,10 @@ The civic tech sequence matters more than the AI one, so I'm starting there:
 7. **Decidim** — the platform layer for participatory processes
 
 That sequence moves from **Brazilian data liberation** → **public-service delivery** → **deliberative and democratic infrastructure**. It ends at questions I don't know how to answer yet, which is usually a sign the queue is worth the time.
+
+The illusion of the queue is that the list itself is an achievement. You annotated it, you sorted it, you formatted the Markdown. It looks like a pipeline.
+
+But a pipeline that doesn't run is just steel sitting in the dirt. I know this because causaganha has been sitting in my repository for three years, and the moment I stop writing code, the official gazette returns to being a pile of unindexed PDFs. The queue will wait. The browser will eventually crash and release the memory.
+
+The list is clean. The code is unwritten. Only one of them survives the weekend.
+
