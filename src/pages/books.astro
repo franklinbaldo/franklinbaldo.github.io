@@ -13,7 +13,6 @@ interface GoodreadsItem {
   user_rating: number;
   user_read_at: string;
   book_published: string | number;
-  book_description?: string;
 }
 
 let books: GoodreadsItem[] = [];
@@ -39,7 +38,6 @@ try {
         : String(v ?? "");
 
     const imageUrl = str(item["book_image_url"]);
-    // Upgrade small thumbnail (_SY75_) to a larger size
     const coverUrl = imageUrl.replace("._SY75_.", "._SX200_.").replace("._SX98_.", "._SX200_.");
 
     return {
@@ -53,120 +51,306 @@ try {
     };
   });
 
-  // Sort: books with a read date first (most recent), then unread-dated books
   books.sort((a, b) => {
-    if (!a.user_read_at && !b.user_read_at) return 0;
-    if (!a.user_read_at) return 1;
-    if (!b.user_read_at) return -1;
-    return new Date(b.user_read_at).valueOf() - new Date(a.user_read_at).valueOf();
+    if (b.user_rating !== a.user_rating) return b.user_rating - a.user_rating;
+    return a.title.localeCompare(b.title);
   });
 } catch (e) {
   error = e instanceof Error ? e.message : String(e);
   console.warn(`[books] failed to fetch Goodreads RSS: ${error}`);
 }
 
-const fmtDate = new Intl.DateTimeFormat("en-US", {
-  year: "numeric",
-  month: "short",
-});
-
-function stars(rating: number): string {
-  if (!rating) return "";
-  return "★".repeat(rating) + "☆".repeat(5 - rating);
-}
+const likedCount = books.filter((b) => b.user_rating >= 4).length;
 
 const booksJsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  "name": "Books Read by Franklin Baldo",
-  "description": "Books Franklin Baldo has read, sourced from Goodreads.",
-  "url": "https://franklinbaldo.github.io/books/",
-  "numberOfItems": books.length,
-  "itemListElement": books.slice(0, 20).map((b, i) => ({
-    "@type": "ListItem",
-    "position": i + 1,
-    "item": {
-      "@type": "Book",
-      "name": b.title,
-      "author": { "@type": "Person", "name": b.author_name },
-      "url": b.link,
-    },
-  })),
+  name: "Books Read by Franklin Baldo",
+  description: "Books Franklin Baldo has read and recommends, sourced from Goodreads.",
+  url: "https://franklinbaldo.github.io/books/",
+  numberOfItems: likedCount,
+  itemListElement: books
+    .filter((b) => b.user_rating >= 4)
+    .slice(0, 20)
+    .map((b, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Book",
+        name: b.title,
+        author: { "@type": "Person", name: b.author_name },
+        url: b.link,
+      },
+    })),
 };
 ---
 
 <PageLayout
   title="Books | Franklin Baldo"
-  description="Books I've read, fetched from my Goodreads shelf."
+  description="Books I've read and enjoyed, from my Goodreads shelf."
   lang="en"
   translations={{ pt: "/pt/livros/" }}
 >
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(booksJsonLd)} is:inline />
+
   <hgroup>
     <h1>Books</h1>
-    <p><small>
-      Books I've read, sourced from my
-      <a href={GOODREADS_PROFILE}>Goodreads shelf</a> · {books.length} books · updated at build time.
-    </small></p>
+    <p>
+      <small>
+        Books I've read and enjoyed — the rest are on my
+        <a href={GOODREADS_PROFILE}>Goodreads shelf</a>.
+      </small>
+    </p>
   </hgroup>
 
-  {error && (
-    <p><small>
-      Couldn't load books right now (<code>{error.slice(0, 120)}</code>).
-      See them directly on <a href={GOODREADS_PROFILE}>Goodreads</a>.
-    </small></p>
-  )}
+  {
+    error && (
+      <p>
+        <small>
+          Couldn't load books right now (<code>{error.slice(0, 120)}</code>). See them directly on{" "}
+          <a href={GOODREADS_PROFILE}>Goodreads</a>.
+        </small>
+      </p>
+    )
+  }
 
-  {books.length > 0 && (
-    <div class="books-grid">
-      {books.map((book) => {
-        const readDate = book.user_read_at
-          ? fmtDate.format(new Date(book.user_read_at.replace(/\//g, "-")))
-          : null;
-        const rating = stars(book.user_rating);
-        const pubYear = book.book_published ? String(book.book_published) : null;
+  {
+    books.length > 0 && (
+      <>
+        <div class="books-controls">
+          <div class="filter-pills" role="group" aria-label="Filter books">
+            <button class="pill active" data-filter="liked">
+              ★ Favorites <span class="pill-count">{likedCount}</span>
+            </button>
+            <button class="pill" data-filter="all">
+              All <span class="pill-count">{books.length}</span>
+            </button>
+          </div>
+          <label class="sort-label">
+            <span>Sort</span>
+            <select id="sort-select" aria-label="Sort by">
+              <option value="rating-desc">★ Rating</option>
+              <option value="date-desc">Date read</option>
+              <option value="year-desc">Year published</option>
+              <option value="title-asc">Title A–Z</option>
+            </select>
+          </label>
+        </div>
 
-        return (
-          <article class="book-card">
-            <a href={book.link} class="cover-link">
-              <img
-                src={book.book_image_url}
-                alt={`Cover of ${book.title}`}
-                loading="lazy"
-                width="200"
-                height="300"
-              />
-            </a>
-            <div class="book-info">
-              <h2><a href={book.link}>{book.title}</a></h2>
-              <p class="author">{book.author_name}</p>
-              {rating && <p class="rating" aria-label={`${book.user_rating} out of 5 stars`}>{rating}</p>}
-              <p class="meta">
-                <small>
-                  {readDate && <>Read {readDate}</>}
-                  {readDate && pubYear && <> · </>}
-                  {pubYear && Number(pubYear) > 0 && <>Published {pubYear}</>}
-                </small>
-              </p>
-            </div>
-          </article>
-        );
-      })}
-    </div>
-  )}
+        <p class="results-info">
+          <small>
+            <span id="visible-count">{likedCount}</span> books
+          </small>
+        </p>
+
+        <div class="books-grid" id="books-grid">
+          {books.map((book) => {
+            const pubYear = book.book_published ? String(book.book_published) : "";
+            const liked = book.user_rating >= 4;
+            return (
+              <article
+                class="book-card"
+                data-rating={book.user_rating}
+                data-date={book.user_read_at}
+                data-year={pubYear}
+                data-title={book.title}
+                aria-hidden={!liked ? "true" : undefined}
+                style={!liked ? "display:none" : undefined}
+              >
+                <a href={book.link} class="cover-link" tabindex="-1" aria-hidden="true">
+                  <img
+                    src={book.book_image_url}
+                    alt=""
+                    loading="lazy"
+                    width="200"
+                    height="300"
+                  />
+                </a>
+                <div class="book-info">
+                  <h2>
+                    <a href={book.link}>{book.title}</a>
+                  </h2>
+                  <p class="author">{book.author_name}</p>
+                  {book.user_rating > 0 && (
+                    <p class="rating" aria-label={`${book.user_rating} out of 5 stars`}>
+                      {"★".repeat(book.user_rating)}
+                      {"☆".repeat(5 - book.user_rating)}
+                    </p>
+                  )}
+                  {pubYear && Number(pubYear) > 0 && (
+                    <p class="year">
+                      <small>{pubYear}</small>
+                    </p>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </>
+    )
+  }
 </PageLayout>
 
+<script>
+  const grid = document.getElementById("books-grid") as HTMLElement;
+  const sortSelect = document.getElementById("sort-select") as HTMLSelectElement;
+  const pills = document.querySelectorAll<HTMLButtonElement>(".pill[data-filter]");
+  const countEl = document.getElementById("visible-count");
+
+  let currentFilter = "liked";
+
+  function cards() {
+    return Array.from(grid.querySelectorAll<HTMLElement>(".book-card"));
+  }
+
+  function applyFilterAndSort() {
+    const all = cards();
+    const sortVal = sortSelect.value;
+
+    all.forEach((card) => {
+      const rating = Number(card.dataset.rating);
+      const show = currentFilter === "all" || rating >= 4;
+      card.style.display = show ? "" : "none";
+      card.setAttribute("aria-hidden", show ? "false" : "true");
+    });
+
+    const visible = all.filter((c) => c.style.display !== "none");
+
+    visible.sort((a, b) => {
+      switch (sortVal) {
+        case "rating-desc":
+          return Number(b.dataset.rating) - Number(a.dataset.rating);
+        case "date-desc": {
+          const da = a.dataset.date ? new Date(a.dataset.date.replace(/\//g, "-")).valueOf() : 0;
+          const db = b.dataset.date ? new Date(b.dataset.date.replace(/\//g, "-")).valueOf() : 0;
+          return db - da;
+        }
+        case "year-desc":
+          return (Number(b.dataset.year) || 0) - (Number(a.dataset.year) || 0);
+        case "title-asc":
+          return (a.dataset.title ?? "").localeCompare(b.dataset.title ?? "");
+        default:
+          return 0;
+      }
+    });
+
+    visible.forEach((card) => grid.appendChild(card));
+
+    if (countEl) countEl.textContent = String(visible.length);
+  }
+
+  pills.forEach((pill) => {
+    pill.addEventListener("click", () => {
+      pills.forEach((p) => p.classList.remove("active"));
+      pill.classList.add("active");
+      currentFilter = pill.dataset.filter ?? "liked";
+      applyFilterAndSort();
+    });
+  });
+
+  sortSelect.addEventListener("change", applyFilterAndSort);
+</script>
+
 <style>
+  .books-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .filter-pills {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 2rem;
+    border: 1px solid var(--pico-muted-border-color);
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--pico-color);
+    transition:
+      background 0.15s,
+      border-color 0.15s,
+      color 0.15s;
+    font-family: inherit;
+  }
+
+  .pill:hover {
+    border-color: var(--pico-primary);
+  }
+
+  .pill.active {
+    background: var(--pico-primary);
+    border-color: var(--pico-primary);
+    color: var(--pico-primary-inverse);
+  }
+
+  .pill-count {
+    font-size: 0.75rem;
+    opacity: 0.75;
+  }
+
+  .sort-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--pico-muted-color);
+    margin: 0;
+  }
+
+  .sort-label select {
+    padding: 0.3rem 0.5rem;
+    border-radius: var(--pico-border-radius);
+    border: 1px solid var(--pico-muted-border-color);
+    background: var(--pico-background-color);
+    color: var(--pico-color);
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .results-info {
+    color: var(--pico-muted-color);
+    margin-bottom: 1rem;
+  }
+
   .books-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1.25rem;
   }
 
   .book-card {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    border-radius: var(--pico-border-radius);
+    border: 1px solid var(--pico-muted-border-color);
+    overflow: hidden;
+    background: var(--pico-card-background-color, var(--pico-background-color));
+    transition:
+      transform 0.15s,
+      box-shadow 0.15s;
+  }
+
+  .book-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .cover-link {
+    display: block;
+    overflow: hidden;
   }
 
   .cover-link img {
@@ -174,17 +358,35 @@ const booksJsonLd = {
     height: auto;
     aspect-ratio: 2 / 3;
     object-fit: cover;
-    border-radius: var(--pico-border-radius);
+    display: block;
+    transition: transform 0.2s;
+  }
+
+  .book-card:hover .cover-link img {
+    transform: scale(1.04);
+  }
+
+  .book-info {
+    padding: 0.6rem 0.65rem 0.75rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .book-info h2 {
-    font-size: 0.9rem;
+    font-size: 0.82rem;
+    font-weight: 600;
     margin: 0 0 0.2rem;
     line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .book-info h2 a {
     text-decoration: none;
+    color: var(--pico-color);
   }
 
   .book-info h2 a:hover {
@@ -192,19 +394,23 @@ const booksJsonLd = {
   }
 
   .book-info .author {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--pico-muted-color);
-    margin: 0 0 0.2rem;
+    margin: 0 0 0.3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .book-info .rating {
-    font-size: 0.85rem;
-    color: var(--pico-primary);
-    margin: 0 0 0.2rem;
-    letter-spacing: 0.05em;
+    font-size: 0.8rem;
+    color: #d4921a;
+    margin: 0 0 auto;
+    letter-spacing: 0.03em;
   }
 
-  .book-info .meta {
-    margin: 0;
+  .book-info .year {
+    margin: 0.35rem 0 0;
+    color: var(--pico-muted-color);
   }
 </style>
