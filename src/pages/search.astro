@@ -12,6 +12,8 @@ import PageLayout from "../layouts/PageLayout.astro";
     <pagefind-searchbox></pagefind-searchbox>
   </fieldset>
 
+  <p class="search-hint" id="search-hint">Type a word or phrase to search through all essays.</p>
+
   <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
   <script is:inline type="module" src="/pagefind/pagefind-component-ui.js"></script>
   <script is:inline>
@@ -19,11 +21,25 @@ import PageLayout from "../layouts/PageLayout.astro";
     // Uses the documented pagefind-searchbox instance API: triggerSearch().
     (() => {
       const q = new URLSearchParams(location.search).get('q');
-      if (!q) return;
       customElements.whenDefined('pagefind-searchbox').then(() => {
         const box = document.querySelector('pagefind-searchbox');
-        if (box && typeof box.triggerSearch === 'function') box.triggerSearch(q);
+        const hint = document.getElementById('search-hint');
+        if (box) {
+          box.addEventListener('input', () => hint?.remove(), { once: true });
+          if (q && typeof box.triggerSearch === 'function') {
+            hint?.remove();
+            box.triggerSearch(q);
+          }
+        }
       });
     })();
   </script>
+
+  <style>
+    .search-hint {
+      color: var(--pico-muted-color);
+      font-size: 0.9rem;
+      margin-top: 0.75rem;
+    }
+  </style>
 </PageLayout>
