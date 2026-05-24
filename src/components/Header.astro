@@ -13,6 +13,7 @@ const homeHref     = `${prefix}/`;
 const archiveHref  = `${prefix}/archive/`;
 const tagsHref     = `${prefix}/tags/`;
 const musicHref    = lang === 'pt' ? `${prefix}/musicas/` : '/music/';
+const booksHref    = lang === 'pt' ? `${prefix}/livros/` : '/books/';
 const searchHref   = `${prefix}/search/`;
 const aboutHref    = `${prefix}/about/`;
 const projectsHref = `${prefix}/projects/`;
@@ -24,6 +25,7 @@ const navLinks = [
   { href: tagsHref,     label: t(lang, 'nav.tags') },
   { href: projectsHref, label: t(lang, 'nav.projects') },
   { href: musicHref,    label: t(lang, 'nav.music') },
+  { href: booksHref,    label: t(lang, 'nav.books') },
   { href: searchHref,   label: t(lang, 'nav.search') },
   { href: aboutHref,    label: t(lang, 'nav.about') },
 ];
