@@ -281,7 +281,10 @@ body::before {
   color: var(--pico-muted-color);
   text-decoration: none;
   white-space: nowrap;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
 }
 .tag-pill:hover {
   border-color: var(--pico-primary);

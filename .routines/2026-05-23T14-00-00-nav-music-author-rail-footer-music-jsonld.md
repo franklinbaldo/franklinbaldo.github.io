@@ -23,9 +23,9 @@ Estado ao chegar:
 
 ## PRs revisados e mergeados
 
-| PR   | Título                                                           | Ação                                                                                   |
-| ---- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| #174 | hronir: run (2026-05-23T13-08-21)                                | **Fix + Merge** — Conflito em 2 arquivos MDX resolvido localmente (checkout --ours), push e squash-merge |
+| PR   | Título                            | Ação                                                                                                     |
+| ---- | --------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| #174 | hronir: run (2026-05-23T13-08-21) | **Fix + Merge** — Conflito em 2 arquivos MDX resolvido localmente (checkout --ours), push e squash-merge |
 
 ### Detalhes do fix PR #174
 
