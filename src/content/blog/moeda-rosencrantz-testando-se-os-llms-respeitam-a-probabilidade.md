@@ -6,8 +6,6 @@ description: "Um projeto de pesquisa que transforma tabuleiros do Campo Minado p
 date: 2026-03-17
 lang: pt
 tags: ["artificial intelligence", "llms", "probability", "minesweeper", "agents", "jules", "research"]
-heroImage: ./images/rosencrantz-cover.jpg
-heroImageAlt: "Gold coin spinning in void, Rosencrantz theatrical stage, probability and fate"
 ---
 
 A maioria das avaliações LLM pergunta se um modelo pode explicar, resumir ou imitar. O projeto **rosencrantz-coin** pede algo mais restrito:

@@ -5,8 +5,6 @@ date: 2026-05-10
 lang: en
 description: "When Jules became conversable mid-session, something shifted. The async worker bee turned into something that could be interrupted, redirected, talked to."
 tags: ["artificial intelligence", "software engineering", "agents", "jules", "canivete", "harness"]
-heroImage: ./images/pontifex-architecture-implementation-guide-cover.png
-heroImageAlt: "Abstract representation of agent architecture and data flows."
 series: harness
 seriesOrder: 4
 translationKey: jules-api-harness

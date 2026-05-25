@@ -6,8 +6,6 @@ translationKey: verne-identity-repo
 title: "Verne and the Identity-Repo Pattern: How AI Agents Remember"
 description: "The identity-repo pattern bets that an agent's memory and its cognitive engine are separable things. Here's what that looks like in practice — and why it matters more than it sounds."
 tags: ["verne", "ai", "agents", "architecture", "identity-repo", "openclaw"]
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A digital network of interconnected repositories forming a distributed memory system."
 ---
 
 Every time you summon a coding agent, it wakes up knowing nothing about you.

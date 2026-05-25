@@ -5,8 +5,6 @@ date: "2026-05-17"
 lang: pt
 translationKey: two-questions-out-loud
 tags: ["filosofia", "metafísica", "probabilidade", "podcasts", "rutt"]
-heroImage: ./images/two-questions-out-loud-cover.png
-heroImageAlt: "Um homem na pia da cozinha, lavando louça com fone de ouvido, expressão concentrada e ligeiramente cansada. Atrás dele, uma nuvem de pensamento contém símbolos científicos abstratos: um átomo, uma curva gaussiana, formas geométricas, uma espiral, um símbolo de infinito, uma molécula. Iluminação doméstica quente vindo de uma janela."
 ---
 
 Da primeira vez que Jim Rutt mencionou as duas perguntas, eu mal estava prestando atenção — mas as duas grudaram, e grudaram juntas. Ele entrevistava alguém — não lembro quem, não lembro o episódio — e o assunto derivou, como assuntos derivam no programa dele, para o que eu mais tarde reconheceria como o gesto fixo: anunciou as duas em par, na cadência de ranking, _a maior pergunta da ciência é por que algo e não nada; a segunda maior é o paradoxo de Fermi_. O convidado assentiu educadamente, seguiram em frente, e eu não percebi que tinha guardado as duas até elas voltarem, duas semanas depois, em outro episódio, com outro convidado. Por motivos que vou tentar reconstruir mais adiante, as duas perguntas, num jeito particular, sempre grudaram em mim — o fato de eu estar ouvindo _o podcast do Jim Rutt enquanto lavava a louça_, e não, digamos, alguma coisa com mais convívio humano envolvido, já era prova circunstancial de que minha cabeça tinha sido feita para grudar nelas. Ouvir o Rutt anunciar o par era, então, como ouvir alguém atacar dois clássicos no piano em sequência rápida. Agradável, reconhecível, sem informação — mas reconhecido inteiro, e reconhecido _como par_.

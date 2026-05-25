@@ -7,8 +7,6 @@ title: "O vazio inteligível: sobre Hassabis, silício e eventos até o fim"
 translationKey: intelligible-void
 description: "Por que o universo parece inteligível? Conectando o espanto metafísico de Demis Hassabis com a ontologia dos processos autorregressivos."
 tags: ["philosophy", "AI", "metaphysics", "process ontology", "Demis Hassabis"]
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A representation of matter organizing into intelligence."
 ---
 
 Quando Demis [Hassabis](https://en.wikipedia.org/wiki/Demis_Hassabis) descreve a experiência da investigação científica profunda, a sua linguagem inevitavelmente ultrapassa os limites do estritamente empírico e chega ao teológico. Ele falou da sensação de fazer ciência como algo semelhante a “ler a mente de Deus”. Ele descreve uma realidade tão legível que parece estar “olhando para trás” ou “gritando” para o observador. O mais surpreendente é que ele expressa uma reverência profunda e quase desconcertada pelo fato de a matéria comum – elétrons, silício, cobre, areia – poder se organizar em sistemas capazes de modelar, ler e compreender o universo do qual surgiu.

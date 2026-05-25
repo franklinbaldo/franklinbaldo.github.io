@@ -7,8 +7,6 @@ title: "Patentes para vulnerabilidades sociais: uma proposta modesta para transf
 translationKey: social-vulnerabilities
 description: "Uma proposta para um sistema semelhante a uma patente para técnicas de engenharia social para incentivar a divulgação e a defesa."
 tags: ["security", "social engineering", "policy", "patents", "economics"]
-heroImage: ./images/patents-for-social-vulnerabilities-cover.png
-heroImageAlt: "A patent document for a social engineering trick, stamped with 'Public Disclosure'."
 ---
 
 ## O problema: a segurança pela obscuridade está morta

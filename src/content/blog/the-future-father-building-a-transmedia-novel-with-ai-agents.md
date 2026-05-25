@@ -7,8 +7,6 @@ translationKey: future-father
 title: "The Future Father: building a transmedia novel with AI agents"
 description: "How I'm using Jules, autonovel, and public records to generate a novel about a father who discovers he's speaking with his children from the future — and why it reminds me of Kleber Mendonça Filho's O Agente Secreto."
 tags: ["autonovel", "ai", "fiction", "transmedia", "jules"]
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A late-night study, a server rack humming, books by Borges."
 ---
 
 Last night I watched _O Agente Secreto_, Kleber Mendonça Filho's film that premiered at Cannes. Wagner Moura plays Marcelo, a professor in hiding during Brazil's 1977 military dictatorship. He returns to Recife, assumes a new identity, and slowly realizes he is being watched by everyone around him without being told that he is the object of surveillance. The film is not about paranoia. It is about the asymmetry of observation: some people know, and one person does not. The tension lives in that gap.

@@ -6,8 +6,6 @@ title: "Patents For Social Vulnerabilities: A Modest Proposal For Turning Crimin
 translationKey: social-vulnerabilities
 description: "What if we treated social engineering techniques like software bugs — disclosable, ownable, tradeable?"
 tags: ["security", "social engineering", "policy", "patents", "economics"]
-heroImage: ./images/patents-for-social-vulnerabilities-cover.png
-heroImageAlt: "A patent document for a social engineering trick, stamped with 'Public Disclosure'."
 ---
 
 I've been trying to find the flaw in this idea for about three days and I keep failing, which usually means I'm either missing something obvious or the idea is actually good. I'm not sure which.

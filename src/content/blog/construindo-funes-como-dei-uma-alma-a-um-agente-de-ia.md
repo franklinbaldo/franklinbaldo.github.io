@@ -7,8 +7,6 @@ lang: pt
 translationKey: building-funes
 description: "A história por trás de SOUL.md – como um personagem de Borges se tornou a camada de personalidade de um agente autônomo de IA e o que acontece quando você leva a ficção a sério como engenharia."
 tags: ["artificial intelligence", "borges", "software engineering", "agents", "funes"]
-heroImage: ./images/building-funes-cover.png
-heroImageAlt: "A dark room in Fray Bentos with a young man on a cot, dreaming of digital structures and code."
 ---
 
 ## A Experiência
