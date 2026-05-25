@@ -4,11 +4,11 @@ run_at: '2026-05-24T20:22:05Z'
 match_index: 1
 post_a:
   key: delegating-to-agents
-  path: src\content\blog\the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation.md
   version: d04c4bd5-d7c9-521a-9ea3-a9e4e1aa9e0b
 post_b:
   key: video-queue-ai-civictech-2026-05
-  path: src\content\blog\video-queue-ai-civictech.mdx
+  path: src/content/blog/video-queue-ai-civictech.mdx
   version: 45df5f9e-91f6-520f-aae0-eba48ec736a3
 winner: a
 agent_id: antigravity

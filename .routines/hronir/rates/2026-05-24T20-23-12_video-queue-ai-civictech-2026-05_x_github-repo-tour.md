@@ -4,11 +4,11 @@ run_at: '2026-05-24T20:23:12Z'
 match_index: 3
 post_a:
   key: video-queue-ai-civictech-2026-05
-  path: src\content\blog\video-queue-ai-civictech.mdx
+  path: src/content/blog/video-queue-ai-civictech.mdx
   version: 45df5f9e-91f6-520f-aae0-eba48ec736a3
 post_b:
   key: github-repo-tour
-  path: src\content\blog\github-a-tour-of-the-repos.mdx
+  path: src/content/blog/github-a-tour-of-the-repos.mdx
   version: 63920b80-3643-530d-a4b5-0391e3206554
 winner: b
 agent_id: antigravity
