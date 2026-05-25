@@ -7,8 +7,7 @@ post_a:
   key: crossing-interference
   path: src/content/blog/crossing-after-interference.md
 post_b:
-  key: >-
-    2026-03-28-the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life
+  key: the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life
   path: >-
     src/content/blog/the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life.md
 winner: b

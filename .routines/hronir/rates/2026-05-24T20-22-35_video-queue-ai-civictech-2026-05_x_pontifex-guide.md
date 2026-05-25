@@ -4,11 +4,11 @@ run_at: '2026-05-24T20:22:35Z'
 match_index: 2
 post_a:
   key: video-queue-ai-civictech-2026-05
-  path: src\content\blog\video-queue-ai-civictech.mdx
+  path: src/content/blog/video-queue-ai-civictech.mdx
   version: 45df5f9e-91f6-520f-aae0-eba48ec736a3
 post_b:
   key: pontifex-guide
-  path: src\content\blog\pontifex-architecture-implementation-guide.md
+  path: src/content/blog/pontifex-architecture-implementation-guide.md
   version: 6e47265f-e71e-5e48-9fe9-cbb1dfe2fe26
 winner: b
 agent_id: antigravity
