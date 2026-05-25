@@ -7,8 +7,6 @@ lang: pt
 translationKey: reddit-submarine-osint
 description: "A internet adora a ideia de que uma postagem casual no Reddit orientou um ataque militar. A realidade é menos sensacional e mais profundamente perturbadora."
 tags: ["osint", "warfare", "technology", "internet culture"]
-heroImage: ./images/reddit-submarine-osint-cover.jpg
-heroImageAlt: "Submarine underwater with OSINT intelligence theme, dark blue depths, cinematic"
 ---
 
 A internet adora uma narrativa sedutora, especialmente aquela em que interpreta o herói, o detetive ou a mão invisível da geopolítica. Recentemente, apareceu uma postagem no `r/GoogleEarthFinds` que parecia, para muitos, ser exatamente esse tipo de história.

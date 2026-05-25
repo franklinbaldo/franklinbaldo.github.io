@@ -13,10 +13,6 @@ tags:
   - python
   - pytorch
   - pontifex
-heroImage: ./images/pontifex-architecture-implementation-guide-cover.png
-heroImageAlt: >-
-  Trechos de código e diagramas arquiteturais para um sistema de sondagem
-  semântica.
 replacedVersion: b4329a90-d455-5c93-8bb2-eb4fb3500fb0
 editHistory:
   - uuid: b4329a90-d455-5c93-8bb2-eb4fb3500fb0

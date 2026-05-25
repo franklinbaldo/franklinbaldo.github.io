@@ -12,10 +12,6 @@ tags:
   - research
   - interpretability
   - semantic probing
-heroImage: ./images/pontifex-novel-architecture-semantic-probing-cover.png
-heroImageAlt: >-
-  Abstract geometric representation of neural network layers converging with
-  glowing data streams.
 replacedVersion: 0bcd4b45-386b-4fcf-a114-f4c2addd9e0b
 editHistory:
   - uuid: 35a9443e-a732-58cd-bcaf-91770ee80c9f

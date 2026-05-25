@@ -5,7 +5,6 @@ description: "Twenty-five centuries ago, four voices from opposite corners of th
 date: 2026-02-26
 lang: en
 translationKey: everything-is-process
-heroImage: "./images/tudo-e-processo-cover.png"
 tags: ["philosophy", "process", "complexity", "heraclitus", "buddhism", "assembly-theory"]
 ---
 

@@ -13,8 +13,6 @@ tags:
   - python
   - pytorch
   - pontifex
-heroImage: ./images/pontifex-architecture-implementation-guide-cover.png
-heroImageAlt: Code snippets and architectural diagrams for a semantic probing system.
 replacedVersion: d61931a4-4986-5e66-9774-134d32f272ff
 editHistory:
   - uuid: d61931a4-4986-5e66-9774-134d32f272ff

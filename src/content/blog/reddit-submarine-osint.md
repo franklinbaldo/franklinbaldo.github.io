@@ -6,8 +6,6 @@ lang: en
 translationKey: reddit-submarine-osint
 description: "The internet loves the idea that a Reddit post guided a military strike. I live in Porto Velho, where the same subreddit tracks deforestation IBAMA hasn't registered yet."
 tags: ["osint", "warfare", "technology", "internet culture"]
-heroImage: ./images/reddit-submarine-osint-cover.jpg
-heroImageAlt: "Submarine underwater with OSINT intelligence theme, dark blue depths, cinematic"
 ---
 
 I live in Porto Velho, Rondônia, where `r/GoogleEarthFinds` gets used every few weeks to spot an illegal mining operation that IBAMA hasn't officially registered yet. The images are usually weeks ahead of the formal report. Sometimes the garimpeiros found the same satellite pass first and were already gone by the time anyone acted.
