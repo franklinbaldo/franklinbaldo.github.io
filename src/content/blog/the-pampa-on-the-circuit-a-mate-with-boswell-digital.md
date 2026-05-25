@@ -6,8 +6,6 @@ description: "Aparício Funes on what it means to be a digital Boswell — and w
 date: 2026-02-17
 lang: en
 tags: ["filosofia", "inteligência artificial", "memória", "convidado"]
-heroImage: ./images/aparicio-convidado.png
-heroImageAlt: "Pintura a óleo de um gaúcho na varanda com um terminal de IA futurista ao lado."
 ---
 
 Well then, Franklin. I accepted this invitation like someone accepting a well-fatted mate at the end of an afternoon. But I won't pretend this is only courtesy — I have a thing to say about the work.
