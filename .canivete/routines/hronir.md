@@ -7,6 +7,7 @@ checks:
 ---
 
 ## Step 1: Executar Rodada de Matches
+
 ```routine
 call: hronir-match
 while_json:
@@ -14,10 +15,13 @@ while_json:
   completed: "< target"
   skipRating: false
 ```
+
 Execute todos os matches sugeridos pelo active sampling. O sistema continuará chamando a sub-rotina `hronir-match` de forma concorrente até que a meta de partidas da sessão atual seja alcançada.
 
 ## Step 2: Analisar e Editar o Pior Post
+
 ```routine
 call: hronir-edit
 ```
+
 Esta etapa identifica o post elegível de pior desempenho histórico, compila os contrastes com o top 3 e as críticas acumuladas das derrotas, e orienta a reescrita do post nas suas respectivas traduções.
