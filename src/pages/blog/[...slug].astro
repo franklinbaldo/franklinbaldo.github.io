@@ -29,6 +29,9 @@ export async function getStaticPaths() {
 type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
+if (post.data.lang === 'pt') {
+  return Astro.redirect(`/pt/blog/${post.id}/`);
+}
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const { heroImage, heroImageAlt, title, description, date, tags, lang, translationKey, previousVersion } = post.data;
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
@@ -57,18 +60,21 @@ const sameLangPosts = allPosts
 const postIdx = sameLangPosts.findIndex((p) => p.id === post.id);
 const prevPost = postIdx > 0 ? sameLangPosts[postIdx - 1] : null;
 const nextPost = postIdx < sameLangPosts.length - 1 ? sameLangPosts[postIdx + 1] : null;
-const prevNav = prevPost ? { href: `/blog/${prevPost.id}/`, title: prevPost.data.title, date: prevPost.data.date } : null;
-const nextNav = nextPost ? { href: `/blog/${nextPost.id}/`, title: nextPost.data.title, date: nextPost.data.date } : null;
+const prevNav = prevPost ? { href: (prevPost.data.lang ?? DEFAULT_LANG) === 'pt' ? `/pt/blog/${prevPost.id}/` : `/blog/${prevPost.id}/`, title: prevPost.data.title, date: prevPost.data.date } : null;
+const nextNav = nextPost ? { href: (nextPost.data.lang ?? DEFAULT_LANG) === 'pt' ? `/pt/blog/${nextPost.id}/` : `/blog/${nextPost.id}/`, title: nextPost.data.title, date: nextPost.data.date } : null;
 const translationSiblings = translationKey
   ? allPosts.filter((p) => p.data.translationKey === translationKey && p.id !== post.id)
   : [];
 const translations: Record<string, string> = Object.fromEntries(
-  translationSiblings.map((p) => [p.data.lang ?? DEFAULT_LANG, `/blog/${p.id}/`]),
+  translationSiblings.map((p) => {
+    const targetLang = p.data.lang ?? DEFAULT_LANG;
+    return [targetLang, targetLang === 'pt' ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`];
+  }),
 );
 const translationLinks = translationSiblings.map((p) => {
   const targetLang = p.data.lang ?? DEFAULT_LANG;
   return {
-    href: `/blog/${p.id}/`,
+    href: targetLang === 'pt' ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`,
     label: targetCopy(lang, targetLang).invitation,
   };
 });

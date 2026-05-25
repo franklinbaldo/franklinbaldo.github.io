@@ -8,7 +8,7 @@ post_a:
 post_b:
   key: hermes-vs-openclaw
   path: >-
-    src/content/blog/2026-04-04-hermes-agent-vs-openclaw-why-my-experience-got-so-much-better.md
+    src/content/blog/hermes-agent-vs-openclaw-why-my-experience-got-so-much-better.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

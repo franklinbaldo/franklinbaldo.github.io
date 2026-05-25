@@ -4,10 +4,10 @@ run_at: 2026-05-18T03:09:26Z
 match_index: 1
 post_a:
   key: serpents-egg
-  path: src/content/blog/2026-05-10-the-serpents-egg.md
+  path: src/content/blog/the-serpents-egg.md
 post_b:
   key: travessia-project
-  path: src/content/blog/2026-03-02-travessia-the-project-that-writes-itself.md
+  path: src/content/blog/travessia-the-project-that-writes-itself.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

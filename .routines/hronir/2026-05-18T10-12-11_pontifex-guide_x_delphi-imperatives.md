@@ -7,7 +7,7 @@ post_a:
   path: src/content/blog/pontifex-architecture-implementation-guide.md
 post_b:
   key: delphi-imperatives
-  path: src/content/blog/2026-05-04-the-three-imperatives-at-delphi.md
+  path: src/content/blog/the-three-imperatives-at-delphi.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

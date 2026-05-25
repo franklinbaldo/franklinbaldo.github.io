@@ -4,10 +4,10 @@ run_at: '2026-05-18T12:14:34Z'
 match_index: 5
 post_a:
   key: travessia-project
-  path: src/content/blog/2026-03-02-travessia-the-project-that-writes-itself.md
+  path: src/content/blog/travessia-the-project-that-writes-itself.md
 post_b:
   key: pierre-menard
-  path: src/content/blog/2026-05-14-pierre-menard-computational-researcher.md
+  path: src/content/blog/pierre-menard-computational-researcher.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

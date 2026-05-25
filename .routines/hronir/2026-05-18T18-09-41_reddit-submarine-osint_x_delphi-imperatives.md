@@ -4,10 +4,10 @@ run_at: '2026-05-18T18:09:41Z'
 match_index: 9
 post_a:
   key: reddit-submarine-osint
-  path: src/content/blog/2026-03-22-reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint.md
 post_b:
   key: delphi-imperatives
-  path: src/content/blog/2026-05-04-the-three-imperatives-at-delphi.md
+  path: src/content/blog/the-three-imperatives-at-delphi.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

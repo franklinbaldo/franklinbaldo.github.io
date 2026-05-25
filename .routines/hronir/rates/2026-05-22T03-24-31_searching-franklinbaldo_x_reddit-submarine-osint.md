@@ -4,11 +4,11 @@ run_at: '2026-05-22T03:24:31Z'
 match_index: 8
 post_a:
   key: searching-franklinbaldo
-  path: src/content/blog/2026-05-23-searching-franklinbaldo.mdx
+  path: src/content/blog/searching-franklinbaldo.mdx
   version: e3228fd6-6336-5d3e-9520-7cf3796edad2
 post_b:
   key: reddit-submarine-osint
-  path: src/content/blog/2026-03-22-reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint.md
   version: 790123ae-b84d-5a72-8f0d-d2fbd4ee89d6
 winner: a
 agent_id: human

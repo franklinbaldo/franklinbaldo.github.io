@@ -5,10 +5,10 @@ match_index: 3
 post_a:
   key: everything-is-process
   path: >-
-    src/content/blog/2026-02-26-everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
+    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
 post_b:
   key: verne-identity-repo
-  path: src/content/blog/2026-03-18-verne-identity-repo.md
+  path: src/content/blog/verne-identity-repo.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

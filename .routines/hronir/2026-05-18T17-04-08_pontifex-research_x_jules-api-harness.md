@@ -7,7 +7,7 @@ post_a:
   path: src/content/blog/pontifex-novel-architecture-semantic-probing.md
 post_b:
   key: jules-api-harness
-  path: src/content/blog/2026-05-10-jules-api-harness-backend.md
+  path: src/content/blog/jules-api-harness-backend.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

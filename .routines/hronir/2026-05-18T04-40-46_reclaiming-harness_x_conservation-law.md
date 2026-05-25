@@ -4,7 +4,7 @@ run_at: '2026-05-18T04:40:46Z'
 match_index: 4
 post_a:
   key: reclaiming-harness
-  path: src/content/blog/2026-04-29-reclaiming-the-harness.md
+  path: src/content/blog/reclaiming-the-harness.md
 post_b:
   key: conservation-law
   path: src/content/blog/will-ai-discover-new-conservation-law-before-2050.md

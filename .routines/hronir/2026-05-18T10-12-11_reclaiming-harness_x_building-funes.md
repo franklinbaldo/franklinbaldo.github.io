@@ -4,7 +4,7 @@ run_at: '2026-05-18T10:12:11Z'
 match_index: 4
 post_a:
   key: reclaiming-harness
-  path: src/content/blog/2026-04-29-reclaiming-the-harness.md
+  path: src/content/blog/reclaiming-the-harness.md
 post_b:
   key: building-funes
   path: src/content/blog/building-funes.md

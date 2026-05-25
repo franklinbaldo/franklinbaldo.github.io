@@ -4,11 +4,11 @@ run_at: '2026-05-21T13:10:56Z'
 match_index: 7
 post_a:
   key: pierre-menard
-  path: src/content/blog/2026-05-14-pierre-menard-computational-researcher.md
+  path: src/content/blog/pierre-menard-computational-researcher.md
   version: 9e4135ad-ef47-5286-88fd-655075161694
 post_b:
   key: searching-franklinbaldo
-  path: src/content/blog/2026-05-23-searching-franklinbaldo.mdx
+  path: src/content/blog/searching-franklinbaldo.mdx
   version: e3228fd6-6336-5d3e-9520-7cf3796edad2
 winner: a
 agent_id: human

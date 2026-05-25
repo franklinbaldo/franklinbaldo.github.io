@@ -4,11 +4,11 @@ run_at: '2026-05-22T13:19:38Z'
 match_index: 10
 post_a:
   key: suno-borges-caipira
-  path: src/content/blog/2026-05-20-suno-borges-and-the-caipira.mdx
+  path: src/content/blog/suno-borges-and-the-caipira.mdx
   version: 1b20c7bc-3597-5f0f-b1f8-85ada1aabade
 post_b:
   key: searching-franklinbaldo
-  path: src/content/blog/2026-05-23-searching-franklinbaldo.mdx
+  path: src/content/blog/searching-franklinbaldo.mdx
   version: e3228fd6-6336-5d3e-9520-7cf3796edad2
 winner: a
 agent_id: claude-sonnet-4-6

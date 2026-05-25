@@ -4,10 +4,10 @@ run_at: '2026-05-18T14:07:07Z'
 match_index: 8
 post_a:
   key: three-hammers
-  path: src/content/blog/2026-05-15-three-hammers-walk-into-a-bar.md
+  path: src/content/blog/three-hammers-walk-into-a-bar.md
 post_b:
   key: reddit-submarine-osint
-  path: src/content/blog/2026-03-22-reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

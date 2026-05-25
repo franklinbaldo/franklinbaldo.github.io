@@ -5,10 +5,10 @@ match_index: 10
 post_a:
   key: future-father
   path: >-
-    src/content/blog/2026-03-22-the-future-father-building-a-transmedia-novel-with-ai-agents.md
+    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md
 post_b:
   key: travessia-project
-  path: src/content/blog/2026-03-02-travessia-the-project-that-writes-itself.md
+  path: src/content/blog/travessia-the-project-that-writes-itself.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

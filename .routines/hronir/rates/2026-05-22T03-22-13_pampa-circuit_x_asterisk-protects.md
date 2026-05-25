@@ -8,7 +8,7 @@ post_a:
   version: b8248564-b943-59cf-a4dd-b50638708e57
 post_b:
   key: asterisk-protects
-  path: src/content/blog/2026-05-15-who-the-asterisk-protects.md
+  path: src/content/blog/who-the-asterisk-protects.md
   version: 928509c0-8b88-5aed-b95a-046cbd754716
 winner: a
 agent_id: human

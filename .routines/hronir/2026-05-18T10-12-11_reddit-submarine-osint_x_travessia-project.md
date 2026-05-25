@@ -4,10 +4,10 @@ run_at: '2026-05-18T10:12:11Z'
 match_index: 2
 post_a:
   key: reddit-submarine-osint
-  path: src/content/blog/2026-03-22-reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint.md
 post_b:
   key: travessia-project
-  path: src/content/blog/2026-03-02-travessia-the-project-that-writes-itself.md
+  path: src/content/blog/travessia-the-project-that-writes-itself.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

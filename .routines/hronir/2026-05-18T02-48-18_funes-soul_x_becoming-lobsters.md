@@ -7,7 +7,7 @@ post_a:
   path: src/content/blog/funes-soul.md
 post_b:
   key: becoming-lobsters
-  path: src/content/blog/2026-03-21-we-are-all-becoming-lobsters.md
+  path: src/content/blog/we-are-all-becoming-lobsters.md
 winner: a
 model: claude-opus-4-7
 prompt_version: passion-v1

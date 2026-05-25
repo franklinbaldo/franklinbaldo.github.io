@@ -4,11 +4,11 @@ run_at: '2026-05-19T23:53:29Z'
 match_index: 3
 post_a:
   key: third-half-fourth-wall
-  path: src/content/blog/2026-05-01-the-third-half-and-the-fourth-wall.md
+  path: src/content/blog/the-third-half-and-the-fourth-wall.md
   version: c571e755-cc9d-5d33-ae7f-69cecf870f93
 post_b:
   key: reclaiming-harness
-  path: src/content/blog/2026-04-29-reclaiming-the-harness.md
+  path: src/content/blog/reclaiming-the-harness.md
   version: 2ccaa892-3525-5fe2-a223-fecd03131149
 winner: b
 agent_id: human

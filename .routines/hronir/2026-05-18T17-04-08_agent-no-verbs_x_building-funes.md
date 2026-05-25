@@ -4,7 +4,7 @@ run_at: '2026-05-18T17:04:08Z'
 match_index: 6
 post_a:
   key: agent-no-verbs
-  path: src/content/blog/2026-05-14-the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
 post_b:
   key: building-funes
   path: src/content/blog/building-funes.md

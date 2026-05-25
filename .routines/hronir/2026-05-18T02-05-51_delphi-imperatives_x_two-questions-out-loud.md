@@ -5,10 +5,10 @@ match_index: 4
 criterion: compelling
 post_a:
   key: delphi-imperatives
-  path: src/content/blog/2026-05-04-the-three-imperatives-at-delphi.md
+  path: src/content/blog/the-three-imperatives-at-delphi.md
 post_b:
   key: two-questions-out-loud
-  path: src/content/blog/2026-05-17-two-questions-out-loud.md
+  path: src/content/blog/two-questions-out-loud.md
 winner: a
 margin: 3
 confidence: medium

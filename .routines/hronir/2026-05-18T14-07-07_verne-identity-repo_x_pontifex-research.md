@@ -4,7 +4,7 @@ run_at: '2026-05-18T14:07:07Z'
 match_index: 1
 post_a:
   key: verne-identity-repo
-  path: src/content/blog/2026-03-18-verne-identity-repo.md
+  path: src/content/blog/verne-identity-repo.md
 post_b:
   key: pontifex-research
   path: src/content/blog/pontifex-novel-architecture-semantic-probing.md

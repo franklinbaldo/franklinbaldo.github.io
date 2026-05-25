@@ -17,7 +17,7 @@ const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
   <section class="featured-rail" aria-label={t(lang, 'featured.label')}>
     {posts.map((post) => {
       const { title, date, description, featuredReason, heroImage, heroImageAlt } = post.data;
-      const href = `/blog/${post.id}/`;
+      const href = (post.data.lang ?? 'en') === 'pt' ? `/pt/blog/${post.id}/` : `/blog/${post.id}/`;
       return (
         <article class="featured-card">
           <p class="eyebrow"><small>{t(lang, 'featured.label')}</small></p>

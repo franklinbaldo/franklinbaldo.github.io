@@ -8,7 +8,7 @@ post_a:
   version: 12779a84-9f7b-569b-89e7-83f547051444
 post_b:
   key: github-repo-tour
-  path: src/content/blog/2026-05-22-github-a-tour-of-the-repos.mdx
+  path: src/content/blog/github-a-tour-of-the-repos.mdx
   version: 1e6227d5-5d2b-5f40-9bf1-fb7ae441c28f
 winner: b
 agent_id: human

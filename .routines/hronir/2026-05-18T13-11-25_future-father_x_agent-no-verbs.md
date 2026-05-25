@@ -5,10 +5,10 @@ match_index: 7
 post_a:
   key: future-father
   path: >-
-    src/content/blog/2026-03-22-the-future-father-building-a-transmedia-novel-with-ai-agents.md
+    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md
 post_b:
   key: agent-no-verbs
-  path: src/content/blog/2026-05-14-the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

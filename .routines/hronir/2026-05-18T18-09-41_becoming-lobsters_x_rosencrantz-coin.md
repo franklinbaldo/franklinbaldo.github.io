@@ -4,7 +4,7 @@ run_at: '2026-05-18T18:09:41Z'
 match_index: 15
 post_a:
   key: becoming-lobsters
-  path: src/content/blog/2026-03-21-we-are-all-becoming-lobsters.md
+  path: src/content/blog/we-are-all-becoming-lobsters.md
 post_b:
   key: rosencrantz-coin
   path: src/content/blog/rosencrantz-coin.md

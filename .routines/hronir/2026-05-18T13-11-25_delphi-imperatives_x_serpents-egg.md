@@ -4,10 +4,10 @@ run_at: '2026-05-18T13:11:25Z'
 match_index: 14
 post_a:
   key: delphi-imperatives
-  path: src/content/blog/2026-05-04-the-three-imperatives-at-delphi.md
+  path: src/content/blog/the-three-imperatives-at-delphi.md
 post_b:
   key: serpents-egg
-  path: src/content/blog/2026-05-10-the-serpents-egg.md
+  path: src/content/blog/the-serpents-egg.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

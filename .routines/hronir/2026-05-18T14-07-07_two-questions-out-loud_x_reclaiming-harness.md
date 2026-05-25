@@ -4,10 +4,10 @@ run_at: '2026-05-18T14:07:07Z'
 match_index: 11
 post_a:
   key: two-questions-out-loud
-  path: src/content/blog/2026-05-17-two-questions-out-loud.md
+  path: src/content/blog/two-questions-out-loud.md
 post_b:
   key: reclaiming-harness
-  path: src/content/blog/2026-04-29-reclaiming-the-harness.md
+  path: src/content/blog/reclaiming-the-harness.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

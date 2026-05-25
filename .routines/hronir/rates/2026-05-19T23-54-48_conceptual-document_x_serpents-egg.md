@@ -8,7 +8,7 @@ post_a:
   version: 826385fa-007f-5aa0-b19c-8992810d9155
 post_b:
   key: serpents-egg
-  path: src/content/blog/2026-05-10-the-serpents-egg.md
+  path: src/content/blog/the-serpents-egg.md
   version: 1b7cfab0-ad1c-5a00-943d-e5bbc2dad839
 winner: b
 agent_id: human

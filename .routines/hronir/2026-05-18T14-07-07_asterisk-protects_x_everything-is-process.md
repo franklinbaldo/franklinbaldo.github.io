@@ -4,11 +4,11 @@ run_at: '2026-05-18T14:07:07Z'
 match_index: 2
 post_a:
   key: asterisk-protects
-  path: src/content/blog/2026-05-15-who-the-asterisk-protects.md
+  path: src/content/blog/who-the-asterisk-protects.md
 post_b:
   key: everything-is-process
   path: >-
-    src/content/blog/2026-02-26-everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
+    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

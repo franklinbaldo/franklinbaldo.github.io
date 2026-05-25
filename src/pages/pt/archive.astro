@@ -33,7 +33,7 @@ const archiveLd = {
   hasPart: posts.map((p) => ({
     "@type": "BlogPosting",
     headline: p.data.title,
-    url: Astro.site ? new URL(`/blog/${p.id}/`, Astro.site).href : `/blog/${p.id}/`,
+    url: Astro.site ? new URL(`/pt/blog/${p.id}/`, Astro.site).href : `/pt/blog/${p.id}/`,
     datePublished: p.data.date.toISOString(),
   })),
 };
@@ -82,7 +82,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
                     {post.data.date.toLocaleDateString("pt-BR", { month: "short", day: "2-digit" })}
                   </time>
                 </td>
-                <td><a href={`/blog/${post.id}/`}>{post.data.title}</a></td>
+                <td><a href={`/pt/blog/${post.id}/`}>{post.data.title}</a></td>
                 <td class="col-min">{mins}</td>
                 <td class="col-en">
                   {enId && (

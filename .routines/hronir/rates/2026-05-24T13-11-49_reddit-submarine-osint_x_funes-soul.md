@@ -4,7 +4,7 @@ run_at: '2026-05-24T13:11:49Z'
 match_index: 10
 post_a:
   key: reddit-submarine-osint
-  path: src/content/blog/2026-03-22-reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint.md
   version: 790123ae-b84d-5a72-8f0d-d2fbd4ee89d6
 post_b:
   key: funes-soul

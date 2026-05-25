@@ -4,7 +4,7 @@ run_at: '2026-05-18T15:11:54Z'
 match_index: 12
 post_a:
   key: two-questions-out-loud
-  path: src/content/blog/2026-05-17-two-questions-out-loud.md
+  path: src/content/blog/two-questions-out-loud.md
 post_b:
   key: funes-soul
   path: src/content/blog/funes-soul.md

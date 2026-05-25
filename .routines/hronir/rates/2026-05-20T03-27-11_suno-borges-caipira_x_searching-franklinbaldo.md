@@ -4,11 +4,11 @@ run_at: '2026-05-20T03:27:11Z'
 match_index: 4
 post_a:
   key: suno-borges-caipira
-  path: src/content/blog/2026-05-20-suno-borges-and-the-caipira.mdx
+  path: src/content/blog/suno-borges-and-the-caipira.mdx
   version: c79d0d29-5b04-522f-8ed4-396f55d8b041
 post_b:
   key: searching-franklinbaldo
-  path: src/content/blog/2026-05-23-searching-franklinbaldo.mdx
+  path: src/content/blog/searching-franklinbaldo.mdx
   version: e3228fd6-6336-5d3e-9520-7cf3796edad2
 winner: b
 agent_id: human

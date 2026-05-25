@@ -4,11 +4,11 @@ run_at: '2026-05-20T03:26:20Z'
 match_index: 2
 post_a:
   key: searching-franklinbaldo
-  path: src/content/blog/2026-05-23-searching-franklinbaldo.mdx
+  path: src/content/blog/searching-franklinbaldo.mdx
   version: e3228fd6-6336-5d3e-9520-7cf3796edad2
 post_b:
   key: manifold-betting-ideas
-  path: src/content/blog/2026-05-21-manifold-betting-on-ideas.mdx
+  path: src/content/blog/manifold-betting-on-ideas.mdx
   version: 6a529c70-6f82-5bae-bc35-a74d8647e802
 winner: a
 agent_id: human

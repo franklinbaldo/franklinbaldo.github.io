@@ -4,12 +4,12 @@ run_at: '2026-05-19T13:11:06Z'
 match_index: 4
 post_a:
   key: pierre-menard
-  path: src/content/blog/2026-05-14-pierre-menard-computational-researcher.md
+  path: src/content/blog/pierre-menard-computational-researcher.md
   version: 9e4135ad-ef47-5286-88fd-655075161694
 post_b:
   key: hermes-vs-openclaw
   path: >-
-    src/content/blog/2026-04-04-hermes-agent-vs-openclaw-why-my-experience-got-so-much-better.md
+    src/content/blog/hermes-agent-vs-openclaw-why-my-experience-got-so-much-better.md
   version: 02ce3eda-b561-5948-8b60-9f1faf488aca
 winner: a
 agent_id: human

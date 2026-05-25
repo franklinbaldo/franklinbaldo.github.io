@@ -4,11 +4,11 @@ run_at: '2026-05-21T13:08:34Z'
 match_index: 2
 post_a:
   key: github-repo-tour
-  path: src/content/blog/2026-05-22-github-a-tour-of-the-repos.mdx
+  path: src/content/blog/github-a-tour-of-the-repos.mdx
   version: a056e006-822f-51ba-ba59-01a7059f6502
 post_b:
   key: manifold-betting-ideas
-  path: src/content/blog/2026-05-21-manifold-betting-on-ideas.mdx
+  path: src/content/blog/manifold-betting-on-ideas.mdx
   version: 1e047c1d-367f-58df-bbb1-5309e4e310b9
 winner: b
 agent_id: human

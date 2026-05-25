@@ -4,7 +4,7 @@ run_at: '2026-05-24T13:04:08Z'
 match_index: 1
 post_a:
   key: github-repo-tour
-  path: src/content/blog/2026-05-22-github-a-tour-of-the-repos.mdx
+  path: src/content/blog/github-a-tour-of-the-repos.mdx
   version: 63920b80-3643-530d-a4b5-0391e3206554
 post_b:
   key: family-memory

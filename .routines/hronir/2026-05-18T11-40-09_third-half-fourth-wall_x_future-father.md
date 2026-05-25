@@ -4,11 +4,11 @@ run_at: '2026-05-18T11:40:09Z'
 match_index: 2
 post_a:
   key: third-half-fourth-wall
-  path: src/content/blog/2026-05-01-the-third-half-and-the-fourth-wall.md
+  path: src/content/blog/the-third-half-and-the-fourth-wall.md
 post_b:
   key: future-father
   path: >-
-    src/content/blog/2026-03-22-the-future-father-building-a-transmedia-novel-with-ai-agents.md
+    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

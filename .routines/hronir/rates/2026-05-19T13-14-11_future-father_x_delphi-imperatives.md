@@ -5,11 +5,11 @@ match_index: 10
 post_a:
   key: future-father
   path: >-
-    src/content/blog/2026-03-22-the-future-father-building-a-transmedia-novel-with-ai-agents.md
+    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md
   version: b5c85777-369f-5c2d-ba8e-2bfce7b0b824
 post_b:
   key: delphi-imperatives
-  path: src/content/blog/2026-05-04-the-three-imperatives-at-delphi.md
+  path: src/content/blog/the-three-imperatives-at-delphi.md
   version: a296becb-eff7-5546-b101-978854cb6204
 winner: a
 agent_id: human

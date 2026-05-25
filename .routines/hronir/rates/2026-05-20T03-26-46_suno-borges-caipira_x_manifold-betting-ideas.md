@@ -4,11 +4,11 @@ run_at: '2026-05-20T03:26:46Z'
 match_index: 3
 post_a:
   key: suno-borges-caipira
-  path: src/content/blog/2026-05-20-suno-borges-and-the-caipira.mdx
+  path: src/content/blog/suno-borges-and-the-caipira.mdx
   version: c79d0d29-5b04-522f-8ed4-396f55d8b041
 post_b:
   key: manifold-betting-ideas
-  path: src/content/blog/2026-05-21-manifold-betting-on-ideas.mdx
+  path: src/content/blog/manifold-betting-on-ideas.mdx
   version: 6a529c70-6f82-5bae-bc35-a74d8647e802
 winner: a
 agent_id: human

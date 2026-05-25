@@ -8,7 +8,7 @@ post_a:
   version: 826385fa-007f-5aa0-b19c-8992810d9155
 post_b:
   key: travessia-project
-  path: src/content/blog/2026-03-02-travessia-the-project-that-writes-itself.md
+  path: src/content/blog/travessia-the-project-that-writes-itself.md
   version: d114f8bb-e09a-5ba8-b50a-48cdc01b5c34
 winner: b
 agent_id: human

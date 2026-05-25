@@ -4,10 +4,10 @@ run_at: '2026-05-18T16:05:56Z'
 match_index: 16
 post_a:
   key: serpents-egg
-  path: src/content/blog/2026-05-10-the-serpents-egg.md
+  path: src/content/blog/the-serpents-egg.md
 post_b:
   key: delegating-to-agents
-  path: src/content/blog/2026-03-28-the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

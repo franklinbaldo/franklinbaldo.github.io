@@ -4,7 +4,7 @@ run_at: '2026-05-18T16:05:56Z'
 match_index: 1
 post_a:
   key: jules-api-harness
-  path: src/content/blog/2026-05-10-jules-api-harness-backend.md
+  path: src/content/blog/jules-api-harness-backend.md
 post_b:
   key: social-vulnerabilities
   path: src/content/blog/patents-for-social-vulnerabilities.md

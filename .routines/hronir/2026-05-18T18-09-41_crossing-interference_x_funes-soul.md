@@ -4,7 +4,7 @@ run_at: '2026-05-18T18:09:41Z'
 match_index: 12
 post_a:
   key: crossing-interference
-  path: src/content/blog/2026-03-17-crossing-after-interference.md
+  path: src/content/blog/crossing-after-interference.md
 post_b:
   key: funes-soul
   path: src/content/blog/funes-soul.md

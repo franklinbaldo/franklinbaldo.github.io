@@ -4,11 +4,11 @@ run_at: '2026-05-22T03:22:30Z'
 match_index: 3
 post_a:
   key: verne-identity-repo
-  path: src/content/blog/2026-03-18-verne-identity-repo.md
+  path: src/content/blog/verne-identity-repo.md
   version: d6fb456a-8667-5ab5-b4f3-528eab5af463
 post_b:
   key: three-hammers
-  path: src/content/blog/2026-05-15-three-hammers-walk-into-a-bar.md
+  path: src/content/blog/three-hammers-walk-into-a-bar.md
   version: 5c53e34c-d7cd-5b59-aa3f-c25ec6754687
 winner: b
 agent_id: human

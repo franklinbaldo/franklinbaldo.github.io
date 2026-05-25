@@ -5,7 +5,7 @@ match_index: 1
 criterion: compelling
 post_a:
   key: travessia-project
-  path: src/content/blog/2026-03-02-travessia-the-project-that-writes-itself.md
+  path: src/content/blog/travessia-the-project-that-writes-itself.md
 post_b:
   key: rosencrantz-coin
   path: src/content/blog/rosencrantz-coin.md

@@ -4,11 +4,11 @@ run_at: '2026-05-19T13:13:11Z'
 match_index: 8
 post_a:
   key: asterisk-protects
-  path: src/content/blog/2026-05-15-who-the-asterisk-protects.md
+  path: src/content/blog/who-the-asterisk-protects.md
   version: 928509c0-8b88-5aed-b95a-046cbd754716
 post_b:
   key: agent-no-verbs
-  path: src/content/blog/2026-05-14-the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
   version: 2ddbcdb4-b91c-53f9-9c2b-9ef778416ce6
 winner: a
 agent_id: human

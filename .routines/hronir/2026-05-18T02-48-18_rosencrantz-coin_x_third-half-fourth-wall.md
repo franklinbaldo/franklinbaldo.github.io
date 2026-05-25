@@ -7,7 +7,7 @@ post_a:
   path: src/content/blog/rosencrantz-coin.md
 post_b:
   key: third-half-fourth-wall
-  path: src/content/blog/2026-05-01-the-third-half-and-the-fourth-wall.md
+  path: src/content/blog/the-third-half-and-the-fourth-wall.md
 winner: b
 model: claude-opus-4-7
 prompt_version: passion-v1

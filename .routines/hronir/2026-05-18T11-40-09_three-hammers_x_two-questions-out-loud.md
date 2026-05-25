@@ -4,10 +4,10 @@ run_at: '2026-05-18T11:40:09Z'
 match_index: 5
 post_a:
   key: three-hammers
-  path: src/content/blog/2026-05-15-three-hammers-walk-into-a-bar.md
+  path: src/content/blog/three-hammers-walk-into-a-bar.md
 post_b:
   key: two-questions-out-loud
-  path: src/content/blog/2026-05-17-two-questions-out-loud.md
+  path: src/content/blog/two-questions-out-loud.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

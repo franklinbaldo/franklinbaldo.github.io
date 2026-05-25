@@ -8,7 +8,7 @@ post_a:
     src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory.md
 post_b:
   key: serpents-egg
-  path: src/content/blog/2026-05-10-the-serpents-egg.md
+  path: src/content/blog/the-serpents-egg.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

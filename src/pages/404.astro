@@ -27,7 +27,7 @@ const recent = (await getCollection("blog"))
     <ul>
       {recent.map((post) => (
         <li>
-          <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+          <a href={post.data.lang === "pt" ? `/pt/blog/${post.id}/` : `/blog/${post.id}/`}>{post.data.title}</a>
           {' — '}
           <small>
             <time datetime={post.data.date.toISOString()}>

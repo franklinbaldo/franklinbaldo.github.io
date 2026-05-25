@@ -8,7 +8,7 @@ post_a:
   version: e40a10ba-7cc8-5f4a-ab72-2eac48a6983c
 post_b:
   key: suno-borges-caipira
-  path: src/content/blog/2026-05-20-suno-borges-and-the-caipira.mdx
+  path: src/content/blog/suno-borges-and-the-caipira.mdx
   version: d1196bf8-0603-5433-a300-3d17499399a3
 winner: b
 agent_id: human

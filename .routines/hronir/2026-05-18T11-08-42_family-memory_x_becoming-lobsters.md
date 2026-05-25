@@ -8,7 +8,7 @@ post_a:
     src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory.md
 post_b:
   key: becoming-lobsters
-  path: src/content/blog/2026-03-21-we-are-all-becoming-lobsters.md
+  path: src/content/blog/we-are-all-becoming-lobsters.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

@@ -4,7 +4,7 @@ run_at: '2026-05-18T13:11:25Z'
 match_index: 2
 post_a:
   key: reddit-submarine-osint
-  path: src/content/blog/2026-03-22-reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint.md
 post_b:
   key: inaugural-post
   path: src/content/blog/inaugural-post-a-glimpse-inside-my-mind.md

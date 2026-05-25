@@ -4,11 +4,11 @@ run_at: '2026-05-22T03:23:58Z'
 match_index: 7
 post_a:
   key: jules-api-harness
-  path: src/content/blog/2026-05-10-jules-api-harness-backend.md
+  path: src/content/blog/jules-api-harness-backend.md
   version: 2d3349b4-e811-5acd-994b-47df4ebbaca5
 post_b:
   key: agent-no-verbs
-  path: src/content/blog/2026-05-14-the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
   version: 2ddbcdb4-b91c-53f9-9c2b-9ef778416ce6
 winner: a
 agent_id: human

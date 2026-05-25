@@ -1,290 +1,290 @@
 {
-  "/blog/2026-02-26-everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/": {
-    "en": "/blog/2026-02-26-everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/",
-    "pt": "/blog/2026-02-26-tudo-e-processo/"
+  "/pt/blog/a-api-do-jules-como-backend-do-harness/": {
+    "pt": "/pt/blog/a-api-do-jules-como-backend-do-harness/",
+    "en": "/blog/jules-api-harness-backend/"
   },
-  "/blog/2026-02-26-tudo-e-processo/": {
-    "en": "/blog/2026-02-26-everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/",
-    "pt": "/blog/2026-02-26-tudo-e-processo/"
+  "/blog/jules-api-harness-backend/": {
+    "pt": "/pt/blog/a-api-do-jules-como-backend-do-harness/",
+    "en": "/blog/jules-api-harness-backend/"
   },
-  "/blog/2026-03-02-travessia-the-project-that-writes-itself/": {
-    "en": "/blog/2026-03-02-travessia-the-project-that-writes-itself/",
-    "pt": "/blog/2026-03-02-travessia/"
-  },
-  "/blog/2026-03-02-travessia/": {
-    "en": "/blog/2026-03-02-travessia-the-project-that-writes-itself/",
-    "pt": "/blog/2026-03-02-travessia/"
-  },
-  "/blog/2026-03-17-crossing-after-interference/": {
-    "en": "/blog/2026-03-17-crossing-after-interference/",
-    "pt": "/blog/2026-03-17-travessia-update/"
-  },
-  "/blog/2026-03-17-travessia-update/": {
-    "en": "/blog/2026-03-17-crossing-after-interference/",
-    "pt": "/blog/2026-03-17-travessia-update/"
-  },
-  "/blog/2026-03-18-verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram/": {
-    "pt": "/blog/2026-03-18-verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram/",
-    "en": "/blog/2026-03-18-verne-identity-repo/"
-  },
-  "/blog/2026-03-18-verne-identity-repo/": {
-    "pt": "/blog/2026-03-18-verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram/",
-    "en": "/blog/2026-03-18-verne-identity-repo/"
-  },
-  "/blog/2026-03-21-estamos-todos-nos-tornando-lagostas/": {
-    "pt": "/blog/2026-03-21-estamos-todos-nos-tornando-lagostas/",
-    "en": "/blog/2026-03-21-we-are-all-becoming-lobsters/"
-  },
-  "/blog/2026-03-21-we-are-all-becoming-lobsters/": {
-    "pt": "/blog/2026-03-21-estamos-todos-nos-tornando-lagostas/",
-    "en": "/blog/2026-03-21-we-are-all-becoming-lobsters/"
-  },
-  "/blog/2026-03-22-eles-esto-realmente-usando-uma-postagem-do-reddit-para-ajudar-a-bombardear-um-submarino-no-ir/": {
-    "pt": "/blog/2026-03-22-eles-esto-realmente-usando-uma-postagem-do-reddit-para-ajudar-a-bombardear-um-submarino-no-ir/",
-    "en": "/blog/2026-03-22-reddit-submarine-osint/"
-  },
-  "/blog/2026-03-22-reddit-submarine-osint/": {
-    "pt": "/blog/2026-03-22-eles-esto-realmente-usando-uma-postagem-do-reddit-para-ajudar-a-bombardear-um-submarino-no-ir/",
-    "en": "/blog/2026-03-22-reddit-submarine-osint/"
-  },
-  "/blog/2026-03-22-o-pai-do-futuro/": {
-    "pt": "/blog/2026-03-22-o-pai-do-futuro/",
-    "en": "/blog/2026-03-22-the-future-father-building-a-transmedia-novel-with-ai-agents/"
-  },
-  "/blog/2026-03-22-the-future-father-building-a-transmedia-novel-with-ai-agents/": {
-    "pt": "/blog/2026-03-22-o-pai-do-futuro/",
-    "en": "/blog/2026-03-22-the-future-father-building-a-transmedia-novel-with-ai-agents/"
-  },
-  "/blog/2026-03-28-delegando-para-agentes/": {
-    "pt": "/blog/2026-03-28-delegando-para-agentes/",
-    "en": "/blog/2026-03-28-the-art-of-delegation/"
-  },
-  "/blog/2026-03-28-the-art-of-delegation/": {
-    "pt": "/blog/2026-03-28-delegando-para-agentes/",
-    "en": "/blog/2026-03-28-the-art-of-delegation/"
-  },
-  "/blog/2026-04-04-hermes-agent-vs-openclaw-why-my-experience-got-so-much-better/": {
-    "en": "/blog/2026-04-04-hermes-agent-vs-openclaw-why-my-experience-got-so-much-better/",
-    "pt": "/blog/2026-04-04-hermes-vs-openclaw/"
-  },
-  "/blog/2026-04-04-hermes-vs-openclaw/": {
-    "en": "/blog/2026-04-04-hermes-agent-vs-openclaw-why-my-experience-got-so-much-better/",
-    "pt": "/blog/2026-04-04-hermes-vs-openclaw/"
-  },
-  "/blog/2026-04-29-reclaiming-the-harness/": {
-    "en": "/blog/2026-04-29-reclaiming-the-harness/",
-    "pt": "/blog/2026-04-29-recuperando-o-harness/"
-  },
-  "/blog/2026-04-29-recuperando-o-harness/": {
-    "en": "/blog/2026-04-29-reclaiming-the-harness/",
-    "pt": "/blog/2026-04-29-recuperando-o-harness/"
-  },
-  "/blog/2026-05-01-a-terceira-metade-e-a-quarta-parede/": {
-    "pt": "/blog/2026-05-01-a-terceira-metade-e-a-quarta-parede/",
-    "en": "/blog/2026-05-01-the-third-half-and-the-fourth-wall/"
-  },
-  "/blog/2026-05-01-the-third-half-and-the-fourth-wall/": {
-    "pt": "/blog/2026-05-01-a-terceira-metade-e-a-quarta-parede/",
-    "en": "/blog/2026-05-01-the-third-half-and-the-fourth-wall/"
-  },
-  "/blog/2026-05-04-the-three-imperatives-at-delphi/": {
-    "en": "/blog/2026-05-04-the-three-imperatives-at-delphi/",
-    "pt": "/blog/os-tres-imperativos-em-delfos/"
-  },
-  "/blog/os-tres-imperativos-em-delfos/": {
-    "en": "/blog/2026-05-04-the-three-imperatives-at-delphi/",
-    "pt": "/blog/os-tres-imperativos-em-delfos/"
-  },
-  "/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/": {
-    "pt": "/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/",
-    "en": "/blog/2026-05-10-jules-api-harness-backend/"
-  },
-  "/blog/2026-05-10-jules-api-harness-backend/": {
-    "pt": "/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/",
-    "en": "/blog/2026-05-10-jules-api-harness-backend/"
-  },
-  "/blog/2026-05-10-the-serpents-egg/": {
-    "en": "/blog/2026-05-10-the-serpents-egg/",
-    "pt": "/blog/o-ovo-de-serpente/"
-  },
-  "/blog/o-ovo-de-serpente/": {
-    "en": "/blog/2026-05-10-the-serpents-egg/",
-    "pt": "/blog/o-ovo-de-serpente/"
-  },
-  "/blog/2026-05-14-o-agente-que-nao-inventa-verbos/": {
-    "pt": "/blog/2026-05-14-o-agente-que-nao-inventa-verbos/",
-    "en": "/blog/2026-05-14-the-agent-that-doesnt-invent-verbs/"
-  },
-  "/blog/2026-05-14-the-agent-that-doesnt-invent-verbs/": {
-    "pt": "/blog/2026-05-14-o-agente-que-nao-inventa-verbos/",
-    "en": "/blog/2026-05-14-the-agent-that-doesnt-invent-verbs/"
-  },
-  "/blog/2026-05-14-pierre-menard-computational-researcher/": {
-    "en": "/blog/2026-05-14-pierre-menard-computational-researcher/",
-    "pt": "/blog/pierre-menard-pesquisador-computacional/"
-  },
-  "/blog/pierre-menard-pesquisador-computacional/": {
-    "en": "/blog/2026-05-14-pierre-menard-computational-researcher/",
-    "pt": "/blog/pierre-menard-pesquisador-computacional/"
-  },
-  "/blog/2026-05-15-quem-o-asterisco-protege/": {
-    "pt": "/blog/2026-05-15-quem-o-asterisco-protege/",
-    "en": "/blog/2026-05-15-who-the-asterisk-protects/"
-  },
-  "/blog/2026-05-15-who-the-asterisk-protects/": {
-    "pt": "/blog/2026-05-15-quem-o-asterisco-protege/",
-    "en": "/blog/2026-05-15-who-the-asterisk-protects/"
-  },
-  "/blog/2026-05-15-three-hammers-walk-into-a-bar/": {
-    "en": "/blog/2026-05-15-three-hammers-walk-into-a-bar/",
-    "pt": "/blog/2026-05-15-tres-martelos-entram-num-bar/"
-  },
-  "/blog/2026-05-15-tres-martelos-entram-num-bar/": {
-    "en": "/blog/2026-05-15-three-hammers-walk-into-a-bar/",
-    "pt": "/blog/2026-05-15-tres-martelos-entram-num-bar/"
-  },
-  "/blog/2026-05-17-duas-perguntas-em-voz-alta/": {
-    "pt": "/blog/2026-05-17-duas-perguntas-em-voz-alta/",
-    "en": "/blog/2026-05-17-two-questions-out-loud/"
-  },
-  "/blog/2026-05-17-two-questions-out-loud/": {
-    "pt": "/blog/2026-05-17-duas-perguntas-em-voz-alta/",
-    "en": "/blog/2026-05-17-two-questions-out-loud/"
-  },
-  "/blog/2026-05-20-suno-borges-and-the-caipira/": {
-    "en": "/blog/2026-05-20-suno-borges-and-the-caipira/",
-    "pt": "/blog/2026-05-20-suno-borges-caipira/"
-  },
-  "/blog/2026-05-20-suno-borges-caipira/": {
-    "en": "/blog/2026-05-20-suno-borges-and-the-caipira/",
-    "pt": "/blog/2026-05-20-suno-borges-caipira/"
-  },
-  "/blog/2026-05-21-manifold-apostando-em-ideias/": {
-    "pt": "/blog/2026-05-21-manifold-apostando-em-ideias/",
-    "en": "/blog/2026-05-21-manifold-betting-on-ideas/"
-  },
-  "/blog/2026-05-21-manifold-betting-on-ideas/": {
-    "pt": "/blog/2026-05-21-manifold-apostando-em-ideias/",
-    "en": "/blog/2026-05-21-manifold-betting-on-ideas/"
-  },
-  "/blog/2026-05-22-github-a-tour-of-the-repos/": {
-    "en": "/blog/2026-05-22-github-a-tour-of-the-repos/",
-    "pt": "/blog/2026-05-22-github-um-tour-pelos-repos/"
-  },
-  "/blog/2026-05-22-github-um-tour-pelos-repos/": {
-    "en": "/blog/2026-05-22-github-a-tour-of-the-repos/",
-    "pt": "/blog/2026-05-22-github-um-tour-pelos-repos/"
-  },
-  "/blog/2026-05-23-procurando-franklinbaldo/": {
-    "pt": "/blog/2026-05-23-procurando-franklinbaldo/",
-    "en": "/blog/2026-05-23-searching-franklinbaldo/"
-  },
-  "/blog/2026-05-23-searching-franklinbaldo/": {
-    "pt": "/blog/2026-05-23-procurando-franklinbaldo/",
-    "en": "/blog/2026-05-23-searching-franklinbaldo/"
-  },
-  "/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050/": {
-    "pt": "/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050/",
+  "/pt/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050/": {
+    "pt": "/pt/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050/",
     "en": "/blog/will-ai-discover-new-conservation-law-before-2050/"
   },
   "/blog/will-ai-discover-new-conservation-law-before-2050/": {
-    "pt": "/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050/",
+    "pt": "/pt/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050/",
     "en": "/blog/will-ai-discover-new-conservation-law-before-2050/"
   },
-  "/blog/a-vitrine-sonora-do-gemeo-digital/": {
-    "pt": "/blog/a-vitrine-sonora-do-gemeo-digital/",
+  "/pt/blog/a-terceira-metade-e-a-quarta-parede/": {
+    "pt": "/pt/blog/a-terceira-metade-e-a-quarta-parede/",
+    "en": "/blog/the-third-half-and-the-fourth-wall/"
+  },
+  "/blog/the-third-half-and-the-fourth-wall/": {
+    "pt": "/pt/blog/a-terceira-metade-e-a-quarta-parede/",
+    "en": "/blog/the-third-half-and-the-fourth-wall/"
+  },
+  "/pt/blog/a-vitrine-sonora-do-gemeo-digital/": {
+    "pt": "/pt/blog/a-vitrine-sonora-do-gemeo-digital/",
     "en": "/blog/the-digital-twin-sound-showcase/"
   },
   "/blog/the-digital-twin-sound-showcase/": {
-    "pt": "/blog/a-vitrine-sonora-do-gemeo-digital/",
+    "pt": "/pt/blog/a-vitrine-sonora-do-gemeo-digital/",
     "en": "/blog/the-digital-twin-sound-showcase/"
   },
   "/blog/building-funes/": {
     "en": "/blog/building-funes/",
-    "pt": "/blog/construindo-funes-como-dei-uma-alma-a-um-agente-de-ia/"
+    "pt": "/pt/blog/construindo-funes-como-dei-uma-alma-a-um-agente-de-ia/"
   },
-  "/blog/construindo-funes-como-dei-uma-alma-a-um-agente-de-ia/": {
+  "/pt/blog/construindo-funes-como-dei-uma-alma-a-um-agente-de-ia/": {
     "en": "/blog/building-funes/",
-    "pt": "/blog/construindo-funes-como-dei-uma-alma-a-um-agente-de-ia/"
+    "pt": "/pt/blog/construindo-funes-como-dei-uma-alma-a-um-agente-de-ia/"
   },
   "/blog/conceptual-document-the-chronicle-of-franklin-baldo/": {
     "en": "/blog/conceptual-document-the-chronicle-of-franklin-baldo/",
-    "pt": "/blog/documento-conceitual-a-cronica-de-franklin-baldo/"
+    "pt": "/pt/blog/documento-conceitual-a-cronica-de-franklin-baldo/"
   },
-  "/blog/documento-conceitual-a-cronica-de-franklin-baldo/": {
+  "/pt/blog/documento-conceitual-a-cronica-de-franklin-baldo/": {
     "en": "/blog/conceptual-document-the-chronicle-of-franklin-baldo/",
-    "pt": "/blog/documento-conceitual-a-cronica-de-franklin-baldo/"
+    "pt": "/pt/blog/documento-conceitual-a-cronica-de-franklin-baldo/"
+  },
+  "/blog/crossing-after-interference/": {
+    "en": "/blog/crossing-after-interference/",
+    "pt": "/pt/blog/travessia-update/"
+  },
+  "/pt/blog/travessia-update/": {
+    "en": "/blog/crossing-after-interference/",
+    "pt": "/pt/blog/travessia-update/"
+  },
+  "/pt/blog/delegando-para-agentes/": {
+    "pt": "/pt/blog/delegando-para-agentes/",
+    "en": "/blog/the-art-of-delegation/"
+  },
+  "/blog/the-art-of-delegation/": {
+    "pt": "/pt/blog/delegando-para-agentes/",
+    "en": "/blog/the-art-of-delegation/"
+  },
+  "/pt/blog/duas-perguntas-em-voz-alta/": {
+    "pt": "/pt/blog/duas-perguntas-em-voz-alta/",
+    "en": "/blog/two-questions-out-loud/"
+  },
+  "/blog/two-questions-out-loud/": {
+    "pt": "/pt/blog/duas-perguntas-em-voz-alta/",
+    "en": "/blog/two-questions-out-loud/"
+  },
+  "/pt/blog/eles-esto-realmente-usando-uma-postagem-do-reddit-para-ajudar-a-bombardear-um-submarino-no-ir/": {
+    "pt": "/pt/blog/eles-esto-realmente-usando-uma-postagem-do-reddit-para-ajudar-a-bombardear-um-submarino-no-ir/",
+    "en": "/blog/reddit-submarine-osint/"
+  },
+  "/blog/reddit-submarine-osint/": {
+    "pt": "/pt/blog/eles-esto-realmente-usando-uma-postagem-do-reddit-para-ajudar-a-bombardear-um-submarino-no-ir/",
+    "en": "/blog/reddit-submarine-osint/"
+  },
+  "/pt/blog/estamos-todos-nos-tornando-lagostas/": {
+    "pt": "/pt/blog/estamos-todos-nos-tornando-lagostas/",
+    "en": "/blog/we-are-all-becoming-lobsters/"
+  },
+  "/blog/we-are-all-becoming-lobsters/": {
+    "pt": "/pt/blog/estamos-todos-nos-tornando-lagostas/",
+    "en": "/blog/we-are-all-becoming-lobsters/"
+  },
+  "/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/": {
+    "en": "/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/",
+    "pt": "/pt/blog/tudo-e-processo/"
+  },
+  "/pt/blog/tudo-e-processo/": {
+    "en": "/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/",
+    "pt": "/pt/blog/tudo-e-processo/"
   },
   "/blog/funes-soul/": {
     "en": "/blog/funes-soul/",
-    "pt": "/blog/soulmd-funes/"
+    "pt": "/pt/blog/soulmd-funes/"
   },
-  "/blog/soulmd-funes/": {
+  "/pt/blog/soulmd-funes/": {
     "en": "/blog/funes-soul/",
-    "pt": "/blog/soulmd-funes/"
+    "pt": "/pt/blog/soulmd-funes/"
   },
-  "/blog/guia-de-implementao-da-arquitetura-pontifex/": {
-    "pt": "/blog/guia-de-implementao-da-arquitetura-pontifex/",
+  "/blog/github-a-tour-of-the-repos/": {
+    "en": "/blog/github-a-tour-of-the-repos/",
+    "pt": "/pt/blog/github-um-tour-pelos-repos/"
+  },
+  "/pt/blog/github-um-tour-pelos-repos/": {
+    "en": "/blog/github-a-tour-of-the-repos/",
+    "pt": "/pt/blog/github-um-tour-pelos-repos/"
+  },
+  "/pt/blog/guia-de-implementao-da-arquitetura-pontifex/": {
+    "pt": "/pt/blog/guia-de-implementao-da-arquitetura-pontifex/",
     "en": "/blog/pontifex-architecture-implementation-guide/"
   },
   "/blog/pontifex-architecture-implementation-guide/": {
-    "pt": "/blog/guia-de-implementao-da-arquitetura-pontifex/",
+    "pt": "/pt/blog/guia-de-implementao-da-arquitetura-pontifex/",
     "en": "/blog/pontifex-architecture-implementation-guide/"
+  },
+  "/blog/hermes-agent-vs-openclaw-why-my-experience-got-so-much-better/": {
+    "en": "/blog/hermes-agent-vs-openclaw-why-my-experience-got-so-much-better/",
+    "pt": "/pt/blog/hermes-vs-openclaw/"
+  },
+  "/pt/blog/hermes-vs-openclaw/": {
+    "en": "/blog/hermes-agent-vs-openclaw-why-my-experience-got-so-much-better/",
+    "pt": "/pt/blog/hermes-vs-openclaw/"
   },
   "/blog/inaugural-post-a-glimpse-inside-my-mind/": {
     "en": "/blog/inaugural-post-a-glimpse-inside-my-mind/",
-    "pt": "/blog/postagem-inaugural-um-vislumbre-da-minha-mente/"
+    "pt": "/pt/blog/postagem-inaugural-um-vislumbre-da-minha-mente/"
   },
-  "/blog/postagem-inaugural-um-vislumbre-da-minha-mente/": {
+  "/pt/blog/postagem-inaugural-um-vislumbre-da-minha-mente/": {
     "en": "/blog/inaugural-post-a-glimpse-inside-my-mind/",
-    "pt": "/blog/postagem-inaugural-um-vislumbre-da-minha-mente/"
+    "pt": "/pt/blog/postagem-inaugural-um-vislumbre-da-minha-mente/"
   },
-  "/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/": {
-    "pt": "/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/",
+  "/pt/blog/manifold-apostando-em-ideias/": {
+    "pt": "/pt/blog/manifold-apostando-em-ideias/",
+    "en": "/blog/manifold-betting-on-ideas/"
+  },
+  "/blog/manifold-betting-on-ideas/": {
+    "pt": "/pt/blog/manifold-apostando-em-ideias/",
+    "en": "/blog/manifold-betting-on-ideas/"
+  },
+  "/pt/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/": {
+    "pt": "/pt/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/",
     "en": "/blog/rosencrantz-coin/"
   },
   "/blog/rosencrantz-coin/": {
-    "pt": "/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/",
+    "pt": "/pt/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/",
     "en": "/blog/rosencrantz-coin/"
   },
-  "/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital/": {
-    "pt": "/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital/",
+  "/pt/blog/o-agente-que-nao-inventa-verbos/": {
+    "pt": "/pt/blog/o-agente-que-nao-inventa-verbos/",
+    "en": "/blog/the-agent-that-doesnt-invent-verbs/"
+  },
+  "/blog/the-agent-that-doesnt-invent-verbs/": {
+    "pt": "/pt/blog/o-agente-que-nao-inventa-verbos/",
+    "en": "/blog/the-agent-that-doesnt-invent-verbs/"
+  },
+  "/pt/blog/o-ovo-de-serpente/": {
+    "pt": "/pt/blog/o-ovo-de-serpente/",
+    "en": "/blog/the-serpents-egg/"
+  },
+  "/blog/the-serpents-egg/": {
+    "pt": "/pt/blog/o-ovo-de-serpente/",
+    "en": "/blog/the-serpents-egg/"
+  },
+  "/pt/blog/o-pai-do-futuro/": {
+    "pt": "/pt/blog/o-pai-do-futuro/",
+    "en": "/blog/the-future-father-building-a-transmedia-novel-with-ai-agents/"
+  },
+  "/blog/the-future-father-building-a-transmedia-novel-with-ai-agents/": {
+    "pt": "/pt/blog/o-pai-do-futuro/",
+    "en": "/blog/the-future-father-building-a-transmedia-novel-with-ai-agents/"
+  },
+  "/pt/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital/": {
+    "pt": "/pt/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital/",
     "en": "/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/"
   },
   "/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/": {
-    "pt": "/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital/",
+    "pt": "/pt/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital/",
     "en": "/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/"
   },
-  "/blog/o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim/": {
-    "pt": "/blog/o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim/",
+  "/pt/blog/o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim/": {
+    "pt": "/pt/blog/o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim/",
     "en": "/blog/the-intelligible-void-hassabis-and-events/"
   },
   "/blog/the-intelligible-void-hassabis-and-events/": {
-    "pt": "/blog/o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim/",
+    "pt": "/pt/blog/o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim/",
     "en": "/blog/the-intelligible-void-hassabis-and-events/"
   },
-  "/blog/orquestrando-agentes-memoria-familiar/": {
-    "pt": "/blog/orquestrando-agentes-memoria-familiar/",
+  "/pt/blog/orquestrando-agentes-memoria-familiar/": {
+    "pt": "/pt/blog/orquestrando-agentes-memoria-familiar/",
     "en": "/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory/"
   },
   "/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory/": {
-    "pt": "/blog/orquestrando-agentes-memoria-familiar/",
+    "pt": "/pt/blog/orquestrando-agentes-memoria-familiar/",
     "en": "/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory/"
   },
-  "/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/": {
-    "pt": "/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/",
+  "/pt/blog/os-tres-imperativos-em-delfos/": {
+    "pt": "/pt/blog/os-tres-imperativos-em-delfos/",
+    "en": "/blog/the-three-imperatives-at-delphi/"
+  },
+  "/blog/the-three-imperatives-at-delphi/": {
+    "pt": "/pt/blog/os-tres-imperativos-em-delfos/",
+    "en": "/blog/the-three-imperatives-at-delphi/"
+  },
+  "/pt/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/": {
+    "pt": "/pt/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/",
     "en": "/blog/patents-for-social-vulnerabilities/"
   },
   "/blog/patents-for-social-vulnerabilities/": {
-    "pt": "/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/",
+    "pt": "/pt/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/",
     "en": "/blog/patents-for-social-vulnerabilities/"
+  },
+  "/blog/pierre-menard-computational-researcher/": {
+    "en": "/blog/pierre-menard-computational-researcher/",
+    "pt": "/pt/blog/pierre-menard-pesquisador-computacional/"
+  },
+  "/pt/blog/pierre-menard-pesquisador-computacional/": {
+    "en": "/blog/pierre-menard-computational-researcher/",
+    "pt": "/pt/blog/pierre-menard-pesquisador-computacional/"
   },
   "/blog/pontifex-novel-architecture-semantic-probing/": {
     "en": "/blog/pontifex-novel-architecture-semantic-probing/",
-    "pt": "/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/"
+    "pt": "/pt/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/"
   },
-  "/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/": {
+  "/pt/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/": {
     "en": "/blog/pontifex-novel-architecture-semantic-probing/",
-    "pt": "/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/"
+    "pt": "/pt/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/"
+  },
+  "/pt/blog/procurando-franklinbaldo/": {
+    "pt": "/pt/blog/procurando-franklinbaldo/",
+    "en": "/blog/searching-franklinbaldo/"
+  },
+  "/blog/searching-franklinbaldo/": {
+    "pt": "/pt/blog/procurando-franklinbaldo/",
+    "en": "/blog/searching-franklinbaldo/"
+  },
+  "/pt/blog/quem-o-asterisco-protege/": {
+    "pt": "/pt/blog/quem-o-asterisco-protege/",
+    "en": "/blog/who-the-asterisk-protects/"
+  },
+  "/blog/who-the-asterisk-protects/": {
+    "pt": "/pt/blog/quem-o-asterisco-protege/",
+    "en": "/blog/who-the-asterisk-protects/"
+  },
+  "/blog/reclaiming-the-harness/": {
+    "en": "/blog/reclaiming-the-harness/",
+    "pt": "/pt/blog/recuperando-o-harness/"
+  },
+  "/pt/blog/recuperando-o-harness/": {
+    "en": "/blog/reclaiming-the-harness/",
+    "pt": "/pt/blog/recuperando-o-harness/"
+  },
+  "/blog/suno-borges-and-the-caipira/": {
+    "en": "/blog/suno-borges-and-the-caipira/",
+    "pt": "/pt/blog/suno-borges-caipira/"
+  },
+  "/pt/blog/suno-borges-caipira/": {
+    "en": "/blog/suno-borges-and-the-caipira/",
+    "pt": "/pt/blog/suno-borges-caipira/"
+  },
+  "/blog/three-hammers-walk-into-a-bar/": {
+    "en": "/blog/three-hammers-walk-into-a-bar/",
+    "pt": "/pt/blog/tres-martelos-entram-num-bar/"
+  },
+  "/pt/blog/tres-martelos-entram-num-bar/": {
+    "en": "/blog/three-hammers-walk-into-a-bar/",
+    "pt": "/pt/blog/tres-martelos-entram-num-bar/"
+  },
+  "/blog/travessia-the-project-that-writes-itself/": {
+    "en": "/blog/travessia-the-project-that-writes-itself/",
+    "pt": "/pt/blog/travessia/"
+  },
+  "/pt/blog/travessia/": {
+    "en": "/blog/travessia-the-project-that-writes-itself/",
+    "pt": "/pt/blog/travessia/"
+  },
+  "/pt/blog/verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram/": {
+    "pt": "/pt/blog/verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram/",
+    "en": "/blog/verne-identity-repo/"
+  },
+  "/blog/verne-identity-repo/": {
+    "pt": "/pt/blog/verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram/",
+    "en": "/blog/verne-identity-repo/"
   }
 }

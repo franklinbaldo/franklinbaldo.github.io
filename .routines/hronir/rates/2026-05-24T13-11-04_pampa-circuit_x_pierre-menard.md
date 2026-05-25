@@ -8,7 +8,7 @@ post_a:
   version: b8248564-b943-59cf-a4dd-b50638708e57
 post_b:
   key: pierre-menard
-  path: src/content/blog/2026-05-14-pierre-menard-computational-researcher.md
+  path: src/content/blog/pierre-menard-computational-researcher.md
   version: 9e4135ad-ef47-5286-88fd-655075161694
 winner: a
 agent_id: claude-sonnet-4-6

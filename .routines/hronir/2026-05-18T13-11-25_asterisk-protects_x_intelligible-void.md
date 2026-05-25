@@ -4,7 +4,7 @@ run_at: '2026-05-18T13:11:25Z'
 match_index: 4
 post_a:
   key: asterisk-protects
-  path: src/content/blog/2026-05-15-who-the-asterisk-protects.md
+  path: src/content/blog/who-the-asterisk-protects.md
 post_b:
   key: intelligible-void
   path: src/content/blog/the-intelligible-void-hassabis-and-events.md

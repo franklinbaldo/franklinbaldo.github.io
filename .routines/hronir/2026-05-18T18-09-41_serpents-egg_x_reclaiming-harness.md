@@ -4,10 +4,10 @@ run_at: '2026-05-18T18:09:41Z'
 match_index: 13
 post_a:
   key: serpents-egg
-  path: src/content/blog/2026-05-10-the-serpents-egg.md
+  path: src/content/blog/the-serpents-egg.md
 post_b:
   key: reclaiming-harness
-  path: src/content/blog/2026-04-29-reclaiming-the-harness.md
+  path: src/content/blog/reclaiming-the-harness.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

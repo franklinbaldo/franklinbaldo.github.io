@@ -4,7 +4,7 @@ run_at: '2026-05-22T13:13:08Z'
 match_index: 4
 post_a:
   key: delphi-imperatives
-  path: src/content/blog/2026-05-04-the-three-imperatives-at-delphi.md
+  path: src/content/blog/the-three-imperatives-at-delphi.md
   version: a296becb-eff7-5546-b101-978854cb6204
 post_b:
   key: conceptual-document

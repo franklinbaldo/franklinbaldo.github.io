@@ -19,7 +19,7 @@ const blurb = description;
 const wordCount = (post.body ?? '').trim().split(/\s+/).filter(Boolean).length;
 const minutesRead = Math.max(1, Math.round(wordCount / 220));
 
-const href = `/blog/${post.id}/`;
+const href = postLang === 'pt' ? `/pt/blog/${post.id}/` : `/blog/${post.id}/`;
 const tagsPrefix = postLang === 'pt' ? '/pt/tags' : '/tags';
 const allTags = tags ?? [];
 const visibleTags = allTags.slice(0, 3);

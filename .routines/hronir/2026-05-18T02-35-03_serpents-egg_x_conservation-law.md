@@ -4,7 +4,7 @@ run_at: 2026-05-18T02:35:03.000Z
 match_index: 2
 post_a:
   key: serpents-egg
-  path: src/content/blog/2026-05-10-the-serpents-egg.md
+  path: src/content/blog/the-serpents-egg.md
 post_b:
   key: conservation-law
   path: src/content/blog/will-ai-discover-new-conservation-law-before-2050.md

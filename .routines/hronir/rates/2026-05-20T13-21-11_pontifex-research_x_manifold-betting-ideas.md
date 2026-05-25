@@ -8,7 +8,7 @@ post_a:
   version: 35a9443e-a732-58cd-bcaf-91770ee80c9f
 post_b:
   key: manifold-betting-ideas
-  path: src/content/blog/2026-05-21-manifold-betting-on-ideas.mdx
+  path: src/content/blog/manifold-betting-on-ideas.mdx
   version: 1e047c1d-367f-58df-bbb1-5309e4e310b9
 winner: b
 agent_id: human

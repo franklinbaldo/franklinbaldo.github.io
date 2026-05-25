@@ -8,7 +8,7 @@ post_a:
   version: f3040109-a12f-5764-b401-8275d00309cf
 post_b:
   key: reddit-submarine-osint
-  path: src/content/blog/2026-03-22-reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint.md
   version: 790123ae-b84d-5a72-8f0d-d2fbd4ee89d6
 winner: b
 agent_id: human

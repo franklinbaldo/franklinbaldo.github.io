@@ -4,7 +4,7 @@ run_at: '2026-05-22T13:10:45Z'
 match_index: 2
 post_a:
   key: manifold-betting-ideas
-  path: src/content/blog/2026-05-21-manifold-betting-on-ideas.mdx
+  path: src/content/blog/manifold-betting-on-ideas.mdx
   version: 1e047c1d-367f-58df-bbb1-5309e4e310b9
 post_b:
   key: inaugural-post

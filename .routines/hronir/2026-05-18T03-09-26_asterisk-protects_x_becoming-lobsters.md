@@ -4,10 +4,10 @@ run_at: 2026-05-18T03:09:26Z
 match_index: 3
 post_a:
   key: asterisk-protects
-  path: src/content/blog/2026-05-15-who-the-asterisk-protects.md
+  path: src/content/blog/who-the-asterisk-protects.md
 post_b:
   key: becoming-lobsters
-  path: src/content/blog/2026-03-21-we-are-all-becoming-lobsters.md
+  path: src/content/blog/we-are-all-becoming-lobsters.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

@@ -4,10 +4,10 @@ run_at: '2026-05-18T17:04:08Z'
 match_index: 7
 post_a:
   key: asterisk-protects
-  path: src/content/blog/2026-05-15-who-the-asterisk-protects.md
+  path: src/content/blog/who-the-asterisk-protects.md
 post_b:
   key: pierre-menard
-  path: src/content/blog/2026-05-14-pierre-menard-computational-researcher.md
+  path: src/content/blog/pierre-menard-computational-researcher.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

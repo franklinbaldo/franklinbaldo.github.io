@@ -4,7 +4,7 @@ run_at: '2026-05-21T13:09:56Z'
 match_index: 5
 post_a:
   key: verne-identity-repo
-  path: src/content/blog/2026-03-18-verne-identity-repo.md
+  path: src/content/blog/verne-identity-repo.md
   version: d6fb456a-8667-5ab5-b4f3-528eab5af463
 post_b:
   key: social-vulnerabilities

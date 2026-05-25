@@ -4,11 +4,11 @@ run_at: '2026-05-20T03:28:01Z'
 match_index: 6
 post_a:
   key: github-repo-tour
-  path: src/content/blog/2026-05-22-github-a-tour-of-the-repos.mdx
+  path: src/content/blog/github-a-tour-of-the-repos.mdx
   version: a056e006-822f-51ba-ba59-01a7059f6502
 post_b:
   key: suno-borges-caipira
-  path: src/content/blog/2026-05-20-suno-borges-and-the-caipira.mdx
+  path: src/content/blog/suno-borges-and-the-caipira.mdx
   version: c79d0d29-5b04-522f-8ed4-396f55d8b041
 winner: b
 agent_id: human

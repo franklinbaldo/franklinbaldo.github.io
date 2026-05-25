@@ -7,7 +7,7 @@ post_a:
   path: src/content/blog/funes-soul.md
 post_b:
   key: delegating-to-agents
-  path: src/content/blog/2026-03-28-the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

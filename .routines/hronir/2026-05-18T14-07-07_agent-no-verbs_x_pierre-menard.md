@@ -4,10 +4,10 @@ run_at: '2026-05-18T14:07:07Z'
 match_index: 4
 post_a:
   key: agent-no-verbs
-  path: src/content/blog/2026-05-14-the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
 post_b:
   key: pierre-menard
-  path: src/content/blog/2026-05-14-pierre-menard-computational-researcher.md
+  path: src/content/blog/pierre-menard-computational-researcher.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

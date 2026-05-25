@@ -5,7 +5,7 @@ match_index: 4
 post_a:
   key: everything-is-process
   path: >-
-    src/content/blog/2026-02-26-everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
+    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
   version: 0ed4e735-82c5-571a-99a4-397266e1580d
 post_b:
   key: vitrine-sonora

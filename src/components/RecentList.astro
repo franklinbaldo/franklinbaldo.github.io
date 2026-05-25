@@ -19,7 +19,7 @@ const minRead = (body: string | undefined) => {
 <ul class="recent-list">
   {posts.map((post) => {
     const { title, date, tags } = post.data;
-    const href = `/blog/${post.id}/`;
+    const href = post.data.lang === 'pt' ? `/pt/blog/${post.id}/` : `/blog/${post.id}/`;
     const tag = tags?.[0];
     return (
       <li class="recent-row">

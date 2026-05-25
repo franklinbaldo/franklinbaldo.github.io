@@ -5,10 +5,10 @@ match_index: 4
 criterion: gateway
 post_a:
   key: delegating-to-agents
-  path: src/content/blog/2026-03-28-the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation.md
 post_b:
   key: three-hammers
-  path: src/content/blog/2026-05-15-three-hammers-walk-into-a-bar.md
+  path: src/content/blog/three-hammers-walk-into-a-bar.md
 winner: a
 margin: 2
 confidence: low

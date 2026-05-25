@@ -4,7 +4,7 @@ run_at: '2026-05-18T15:11:54Z'
 match_index: 4
 post_a:
   key: pierre-menard
-  path: src/content/blog/2026-05-14-pierre-menard-computational-researcher.md
+  path: src/content/blog/pierre-menard-computational-researcher.md
 post_b:
   key: intelligible-void
   path: src/content/blog/the-intelligible-void-hassabis-and-events.md

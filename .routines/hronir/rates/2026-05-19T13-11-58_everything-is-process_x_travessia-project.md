@@ -5,11 +5,11 @@ match_index: 6
 post_a:
   key: everything-is-process
   path: >-
-    src/content/blog/2026-02-26-everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
+    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
   version: 0ed4e735-82c5-571a-99a4-397266e1580d
 post_b:
   key: travessia-project
-  path: src/content/blog/2026-03-02-travessia-the-project-that-writes-itself.md
+  path: src/content/blog/travessia-the-project-that-writes-itself.md
   version: d114f8bb-e09a-5ba8-b50a-48cdc01b5c34
 winner: b
 agent_id: human

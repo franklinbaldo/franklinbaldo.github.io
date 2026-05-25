@@ -4,7 +4,7 @@ run_at: '2026-05-20T03:29:14Z'
 match_index: 9
 post_a:
   key: searching-franklinbaldo
-  path: src/content/blog/2026-05-23-searching-franklinbaldo.mdx
+  path: src/content/blog/searching-franklinbaldo.mdx
   version: e3228fd6-6336-5d3e-9520-7cf3796edad2
 post_b:
   key: pampa-circuit

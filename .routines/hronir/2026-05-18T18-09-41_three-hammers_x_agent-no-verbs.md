@@ -4,10 +4,10 @@ run_at: '2026-05-18T18:09:41Z'
 match_index: 6
 post_a:
   key: three-hammers
-  path: src/content/blog/2026-05-15-three-hammers-walk-into-a-bar.md
+  path: src/content/blog/three-hammers-walk-into-a-bar.md
 post_b:
   key: agent-no-verbs
-  path: src/content/blog/2026-05-14-the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

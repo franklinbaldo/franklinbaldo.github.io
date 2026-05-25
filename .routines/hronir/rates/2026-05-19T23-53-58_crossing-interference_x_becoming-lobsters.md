@@ -4,11 +4,11 @@ run_at: '2026-05-19T23:53:58Z'
 match_index: 4
 post_a:
   key: crossing-interference
-  path: src/content/blog/2026-03-17-crossing-after-interference.md
+  path: src/content/blog/crossing-after-interference.md
   version: fb42f337-befb-5de1-8e65-d25256a81da6
 post_b:
   key: becoming-lobsters
-  path: src/content/blog/2026-03-21-we-are-all-becoming-lobsters.md
+  path: src/content/blog/we-are-all-becoming-lobsters.md
   version: 2e72f3cd-0eb0-590e-bb86-1add1abf8c34
 winner: a
 agent_id: human

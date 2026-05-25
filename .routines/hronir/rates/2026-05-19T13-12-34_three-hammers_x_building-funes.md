@@ -4,7 +4,7 @@ run_at: '2026-05-19T13:12:34Z'
 match_index: 7
 post_a:
   key: three-hammers
-  path: src/content/blog/2026-05-15-three-hammers-walk-into-a-bar.md
+  path: src/content/blog/three-hammers-walk-into-a-bar.md
   version: 5c53e34c-d7cd-5b59-aa3f-c25ec6754687
 post_b:
   key: building-funes

@@ -4,10 +4,10 @@ run_at: '2026-05-18T14:07:07Z'
 match_index: 13
 post_a:
   key: serpents-egg
-  path: src/content/blog/2026-05-10-the-serpents-egg.md
+  path: src/content/blog/the-serpents-egg.md
 post_b:
   key: crossing-interference
-  path: src/content/blog/2026-03-17-crossing-after-interference.md
+  path: src/content/blog/crossing-after-interference.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

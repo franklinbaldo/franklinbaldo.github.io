@@ -5,7 +5,7 @@ match_index: 10
 post_a:
   key: future-father
   path: >-
-    src/content/blog/2026-03-22-the-future-father-building-a-transmedia-novel-with-ai-agents.md
+    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md
 post_b:
   key: building-funes
   path: src/content/blog/building-funes.md

@@ -5,7 +5,7 @@ match_index: 5
 post_a:
   key: everything-is-process
   path: >-
-    src/content/blog/2026-02-26-everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
+    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
 post_b:
   key: intelligible-void
   path: src/content/blog/the-intelligible-void-hassabis-and-events.md

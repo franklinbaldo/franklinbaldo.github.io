@@ -4,10 +4,10 @@ run_at: '2026-05-18T13:11:25Z'
 match_index: 10
 post_a:
   key: becoming-lobsters
-  path: src/content/blog/2026-03-21-we-are-all-becoming-lobsters.md
+  path: src/content/blog/we-are-all-becoming-lobsters.md
 post_b:
   key: reclaiming-harness
-  path: src/content/blog/2026-04-29-reclaiming-the-harness.md
+  path: src/content/blog/reclaiming-the-harness.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

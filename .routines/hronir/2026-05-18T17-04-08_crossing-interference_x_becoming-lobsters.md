@@ -4,10 +4,10 @@ run_at: '2026-05-18T17:04:08Z'
 match_index: 16
 post_a:
   key: crossing-interference
-  path: src/content/blog/2026-03-17-crossing-after-interference.md
+  path: src/content/blog/crossing-after-interference.md
 post_b:
   key: becoming-lobsters
-  path: src/content/blog/2026-03-21-we-are-all-becoming-lobsters.md
+  path: src/content/blog/we-are-all-becoming-lobsters.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

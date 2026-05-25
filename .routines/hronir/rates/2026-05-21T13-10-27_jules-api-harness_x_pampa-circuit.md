@@ -4,7 +4,7 @@ run_at: '2026-05-21T13:10:27Z'
 match_index: 6
 post_a:
   key: jules-api-harness
-  path: src/content/blog/2026-05-10-jules-api-harness-backend.md
+  path: src/content/blog/jules-api-harness-backend.md
   version: 2d3349b4-e811-5acd-994b-47df4ebbaca5
 post_b:
   key: pampa-circuit

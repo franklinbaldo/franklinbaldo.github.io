@@ -4,7 +4,7 @@ run_at: '2026-05-24T20:22:35Z'
 match_index: 2
 post_a:
   key: video-queue-ai-civictech-2026-05
-  path: src\content\blog\2026-05-24-video-queue-ai-civictech.mdx
+  path: src\content\blog\video-queue-ai-civictech.mdx
   version: 45df5f9e-91f6-520f-aae0-eba48ec736a3
 post_b:
   key: pontifex-guide

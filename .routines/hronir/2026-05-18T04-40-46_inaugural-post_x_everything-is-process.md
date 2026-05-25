@@ -8,7 +8,7 @@ post_a:
 post_b:
   key: everything-is-process
   path: >-
-    src/content/blog/2026-02-26-everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
+    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

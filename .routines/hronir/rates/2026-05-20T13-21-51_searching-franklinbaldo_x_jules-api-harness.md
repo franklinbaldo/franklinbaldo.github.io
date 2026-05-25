@@ -4,11 +4,11 @@ run_at: '2026-05-20T13:21:51Z'
 match_index: 9
 post_a:
   key: searching-franklinbaldo
-  path: src/content/blog/2026-05-23-searching-franklinbaldo.mdx
+  path: src/content/blog/searching-franklinbaldo.mdx
   version: e3228fd6-6336-5d3e-9520-7cf3796edad2
 post_b:
   key: jules-api-harness
-  path: src/content/blog/2026-05-10-jules-api-harness-backend.md
+  path: src/content/blog/jules-api-harness-backend.md
   version: 2d3349b4-e811-5acd-994b-47df4ebbaca5
 winner: b
 agent_id: human

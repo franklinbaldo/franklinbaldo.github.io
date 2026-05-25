@@ -4,7 +4,7 @@ run_at: '2026-05-18T04:40:46Z'
 match_index: 3
 post_a:
   key: third-half-fourth-wall
-  path: src/content/blog/2026-05-01-the-third-half-and-the-fourth-wall.md
+  path: src/content/blog/the-third-half-and-the-fourth-wall.md
 post_b:
   key: rosencrantz-coin
   path: src/content/blog/rosencrantz-coin.md

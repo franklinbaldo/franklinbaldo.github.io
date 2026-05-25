@@ -7,7 +7,7 @@ post_a:
   path: src/content/blog/pontifex-architecture-implementation-guide.md
 post_b:
   key: reddit-submarine-osint
-  path: src/content/blog/2026-03-22-reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

@@ -4,12 +4,12 @@ run_at: '2026-05-22T03:21:56Z'
 match_index: 1
 post_a:
   key: suno-borges-caipira
-  path: src/content/blog/2026-05-20-suno-borges-and-the-caipira.mdx
+  path: src/content/blog/suno-borges-and-the-caipira.mdx
   version: 1b20c7bc-3597-5f0f-b1f8-85ada1aabade
 post_b:
   key: hermes-vs-openclaw
   path: >-
-    src/content/blog/2026-04-04-hermes-agent-vs-openclaw-why-my-experience-got-so-much-better.md
+    src/content/blog/hermes-agent-vs-openclaw-why-my-experience-got-so-much-better.md
   version: 02ce3eda-b561-5948-8b60-9f1faf488aca
 winner: a
 agent_id: human

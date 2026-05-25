@@ -8,7 +8,7 @@ post_a:
   version: 12779a84-9f7b-569b-89e7-83f547051444
 post_b:
   key: delegating-to-agents
-  path: src/content/blog/2026-03-28-the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation.md
   version: 3747e09a-9469-5370-8019-2e220f2126eb
 winner: a
 agent_id: claude-sonnet-4-6

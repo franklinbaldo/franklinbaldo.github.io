@@ -4,10 +4,10 @@ run_at: '2026-05-18T15:11:54Z'
 match_index: 5
 post_a:
   key: agent-no-verbs
-  path: src/content/blog/2026-05-14-the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
 post_b:
   key: asterisk-protects
-  path: src/content/blog/2026-05-15-who-the-asterisk-protects.md
+  path: src/content/blog/who-the-asterisk-protects.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

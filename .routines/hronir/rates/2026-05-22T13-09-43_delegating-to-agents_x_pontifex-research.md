@@ -4,7 +4,7 @@ run_at: '2026-05-22T13:09:43Z'
 match_index: 1
 post_a:
   key: delegating-to-agents
-  path: src/content/blog/2026-03-28-the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation.md
   version: 3747e09a-9469-5370-8019-2e220f2126eb
 post_b:
   key: pontifex-research

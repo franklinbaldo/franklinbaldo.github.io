@@ -5,12 +5,12 @@ match_index: 1
 criterion: gateway
 post_a:
   key: crossing-interference
-  path: src/content/blog/2026-03-17-crossing-after-interference.md
+  path: src/content/blog/crossing-after-interference.md
 post_b:
   key: >-
     2026-03-28-the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life
   path: >-
-    src/content/blog/2026-03-28-the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life.md
+    src/content/blog/the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life.md
 winner: b
 margin: 2
 confidence: medium

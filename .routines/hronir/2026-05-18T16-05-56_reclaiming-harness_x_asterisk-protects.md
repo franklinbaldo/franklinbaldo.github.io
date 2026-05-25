@@ -4,10 +4,10 @@ run_at: '2026-05-18T16:05:56Z'
 match_index: 8
 post_a:
   key: reclaiming-harness
-  path: src/content/blog/2026-04-29-reclaiming-the-harness.md
+  path: src/content/blog/reclaiming-the-harness.md
 post_b:
   key: asterisk-protects
-  path: src/content/blog/2026-05-15-who-the-asterisk-protects.md
+  path: src/content/blog/who-the-asterisk-protects.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

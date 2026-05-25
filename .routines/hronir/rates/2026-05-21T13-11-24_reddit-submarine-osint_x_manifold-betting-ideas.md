@@ -4,11 +4,11 @@ run_at: '2026-05-21T13:11:24Z'
 match_index: 8
 post_a:
   key: reddit-submarine-osint
-  path: src/content/blog/2026-03-22-reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint.md
   version: 790123ae-b84d-5a72-8f0d-d2fbd4ee89d6
 post_b:
   key: manifold-betting-ideas
-  path: src/content/blog/2026-05-21-manifold-betting-on-ideas.mdx
+  path: src/content/blog/manifold-betting-on-ideas.mdx
   version: 1e047c1d-367f-58df-bbb1-5309e4e310b9
 winner: a
 agent_id: human

@@ -5,11 +5,11 @@ match_index: 3
 post_a:
   key: everything-is-process
   path: >-
-    src/content/blog/2026-02-26-everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
+    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
 post_b:
   key: hermes-vs-openclaw
   path: >-
-    src/content/blog/2026-04-04-hermes-agent-vs-openclaw-why-my-experience-got-so-much-better.md
+    src/content/blog/hermes-agent-vs-openclaw-why-my-experience-got-so-much-better.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

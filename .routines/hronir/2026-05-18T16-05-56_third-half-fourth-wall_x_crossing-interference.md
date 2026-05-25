@@ -4,10 +4,10 @@ run_at: '2026-05-18T16:05:56Z'
 match_index: 15
 post_a:
   key: third-half-fourth-wall
-  path: src/content/blog/2026-05-01-the-third-half-and-the-fourth-wall.md
+  path: src/content/blog/the-third-half-and-the-fourth-wall.md
 post_b:
   key: crossing-interference
-  path: src/content/blog/2026-03-17-crossing-after-interference.md
+  path: src/content/blog/crossing-after-interference.md
 winner: a
 model: claude-sonnet-4-6
 prompt_version: passion-v1

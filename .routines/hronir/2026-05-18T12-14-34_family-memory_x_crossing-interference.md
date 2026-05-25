@@ -8,7 +8,7 @@ post_a:
     src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory.md
 post_b:
   key: crossing-interference
-  path: src/content/blog/2026-03-17-crossing-after-interference.md
+  path: src/content/blog/crossing-after-interference.md
 winner: b
 model: claude-sonnet-4-6
 prompt_version: passion-v1

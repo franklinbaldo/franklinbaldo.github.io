@@ -8,7 +8,7 @@ post_a:
   version: e308ec3f-d136-5cf1-8407-a4b21940bdd1
 post_b:
   key: agent-no-verbs
-  path: src/content/blog/2026-05-14-the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
   version: 2ddbcdb4-b91c-53f9-9c2b-9ef778416ce6
 winner: b
 agent_id: claude-sonnet-4-6

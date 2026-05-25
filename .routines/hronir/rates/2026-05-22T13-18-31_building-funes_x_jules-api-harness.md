@@ -8,7 +8,7 @@ post_a:
   version: f3fabcd1-3889-561a-ad4f-67aecd34fd09
 post_b:
   key: jules-api-harness
-  path: src/content/blog/2026-05-10-jules-api-harness-backend.md
+  path: src/content/blog/jules-api-harness-backend.md
   version: 2d3349b4-e811-5acd-994b-47df4ebbaca5
 winner: a
 agent_id: claude-sonnet-4-6

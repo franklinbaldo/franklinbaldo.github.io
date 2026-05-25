@@ -4,7 +4,7 @@ run_at: '2026-05-19T23:54:22Z'
 match_index: 5
 post_a:
   key: delegating-to-agents
-  path: src/content/blog/2026-03-28-the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation.md
   version: a94ff947-9f15-5c54-982d-382df62240b3
 post_b:
   key: rosencrantz-coin

@@ -4,10 +4,10 @@ run_at: 2026-05-18T02:48:18Z
 match_index: 2
 post_a:
   key: delegating-to-agents
-  path: src/content/blog/2026-03-28-the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation.md
 post_b:
   key: serpents-egg
-  path: src/content/blog/2026-05-10-the-serpents-egg.md
+  path: src/content/blog/the-serpents-egg.md
 winner: b
 model: claude-opus-4-7
 prompt_version: passion-v1
