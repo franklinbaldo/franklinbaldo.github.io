@@ -5,8 +5,6 @@ description: "A research project that turns partially revealed Minesweeper board
 date: 2026-03-17
 lang: en
 tags: ["artificial intelligence", "llms", "probability", "minesweeper", "agents", "jules", "research"]
-heroImage: ./images/rosencrantz-cover.jpg
-heroImageAlt: "Gold coin spinning in void, Rosencrantz theatrical stage, probability and fate"
 ---
 
 Most LLM evaluations ask whether a model can explain, summarize, or imitate. The **rosencrantz-coin** project asks something narrower:

@@ -6,8 +6,6 @@ description: "Six tracks Aparício Funes proposed as a status report. The questi
 date: 2026-02-18
 lang: en
 tags: ["vitrine sonora", "minimalismo", "dub techno", "filosofia", "suno"]
-heroImage: "./images/vitrine-sonora-cover.png"
-heroImageAlt: "Uma representação abstrata de ondas sonoras digitais se transformando em texto, estilo minimalista."
 ---
 
 <iframe src="https://suno.com/embed/playlist/c116cb8c-2078-407a-ab69-e1224033c788" width="100%" height="450" frameborder="0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="my-8"></iframe>

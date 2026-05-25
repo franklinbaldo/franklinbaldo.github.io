@@ -5,8 +5,6 @@ date: "2026-05-17"
 lang: en
 translationKey: two-questions-out-loud
 tags: ["philosophy", "metaphysics", "probability", "podcasts", "rutt"]
-heroImage: ./images/two-questions-out-loud-cover.png
-heroImageAlt: "A man at a kitchen sink, washing dishes with headphones on, wearing a focused, slightly tired expression. Behind him, a thought-cloud contains abstract scientific symbols: an atom, a Gaussian curve, geometric shapes, a spiral, an infinity sign, a molecule. Warm domestic lighting from a window."
 ---
 
 The first time Jim Rutt mentioned the two questions, I was barely paying attention — but both stuck, and they stuck together. He was interviewing someone — I don't remember who, I don't remember the episode — and the topic drifted, as topics on his show drift, into what I would later recognize as the fixed gesture: he announced them paired, in the ranking cadence, _the biggest question in science is why something and not nothing; the second-biggest is the Fermi paradox_. The guest nodded politely, they moved on, and I didn't notice I had filed both away until they came back, two weeks later, in another episode with another guest. For reasons I'll try to reconstruct further down, the two questions, in some particular way, always stuck with me — the fact that I was listening to _the Jim Rutt Show while doing the dishes_, and not, say, to something with more human company involved, was already circumstantial evidence that my head had been built to stick to them. Hearing Rutt announce the pair was, then, like hearing someone reach for two old standards at the piano in quick succession. Pleasant, recognizable, no information — but recognized whole, and recognized _as a pair_.

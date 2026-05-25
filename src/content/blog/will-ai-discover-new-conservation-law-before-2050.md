@@ -13,11 +13,6 @@ tags:
   - prediction markets
   - speculation
   - science fiction
-heroImage: ./images/will-ai-discover-new-conservation-law-before-2050-cover.png
-heroImageAlt: >-
-  Pixelated virtual universes floating in quantum space, with mathematical
-  equations emerging from simulations like holograms, representing symmetries
-  discovered by artificial intelligences.
 replacedVersion: e35feb69-4815-5246-8a93-a8af4a25235b
 editHistory:
   - uuid: e35feb69-4815-5246-8a93-a8af4a25235b

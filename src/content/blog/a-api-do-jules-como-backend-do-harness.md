@@ -5,8 +5,6 @@ date: 2026-05-10
 lang: pt
 description: "Explorando a integração da API do Jules no daemon canivete. Como sessões e atividades mapeiam para uma identidade contínua, e as implicações metafísicas da orquestração de agentes."
 tags: ["inteligência artificial", "engenharia de software", "agentes", "jules", "canivete", "harness"]
-heroImage: ./images/pontifex-architecture-implementation-guide-cover.png
-heroImageAlt: "Representação abstrata da arquitetura de agentes e fluxos de dados."
 series: harness
 seriesOrder: 4
 translationKey: jules-api-harness

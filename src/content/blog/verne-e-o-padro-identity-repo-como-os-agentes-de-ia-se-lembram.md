@@ -7,8 +7,6 @@ translationKey: verne-identity-repo
 title: "Verne e o padrão Identity-Repo: como os agentes de IA se lembram"
 description: "Explicando o projeto Verne, os agentes de IA e como a arquitetura de repositório de identidade permite que entidades autônomas mantenham memória e contexto contínuos em tarefas isoladas, permanecendo compatíveis com qualquer equipamento cognitivo."
 tags: ["verne", "ai", "agents", "architecture", "identity-repo", "openclaw"]
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A digital network of interconnected repositories forming a distributed memory system."
 ---
 
 Ao construir agentes de IA autônomos que operam diretamente em bases de código, um dos desafios fundamentais é a continuidade do contexto. Um agente pode ser perfeitamente capaz de executar uma tarefa isoladamente, mas como ele aprende? Como ele se lembra das convenções de um projeto específico, das preferências de seus mantenedores ou dos seus próprios erros passados?
