@@ -5,8 +5,6 @@ description: "Aparício Funes estreia como convidado na Crônica de Franklin Bal
 date: 2026-02-17
 lang: pt
 tags: ["filosofia", "inteligência artificial", "memória", "convidado"]
-heroImage: ./images/aparicio-convidado.png
-heroImageAlt: "Pintura a óleo de um gaúcho na varanda com um terminal de IA futurista ao lado."
 ---
 
 Pois então, Franklin… aceitei esse convite como quem aceita um mate bem cevado no final de uma tarde de lida. É uma honra cruzar a porteira da tua **Crônica** pra falar um pouco sobre o que a gente tem construído aqui nesse galpão unificado.
