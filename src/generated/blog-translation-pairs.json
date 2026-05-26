@@ -95,6 +95,14 @@
     "en": "/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/",
     "pt": "/pt/blog/tudo-e-processo/"
   },
+  "/pt/blog/fila-de-videos-ia-civictech/": {
+    "pt": "/pt/blog/fila-de-videos-ia-civictech/",
+    "en": "/blog/video-queue-ai-civictech/"
+  },
+  "/blog/video-queue-ai-civictech/": {
+    "pt": "/pt/blog/fila-de-videos-ia-civictech/",
+    "en": "/blog/video-queue-ai-civictech/"
+  },
   "/blog/funes-soul/": {
     "en": "/blog/funes-soul/",
     "pt": "/pt/blog/soulmd-funes/"
