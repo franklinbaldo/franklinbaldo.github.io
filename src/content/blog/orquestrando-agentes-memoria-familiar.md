@@ -1,21 +1,73 @@
 ---
-title: "O que aprendi orquestrando agentes de IA para preservar a memória familiar"
+title: O que aprendi orquestrando agentes de IA para preservar a memória familiar
 translationKey: family-memory
-description: "Uma reflexão sobre a engenharia do afeto, a falibilidade das máquinas e a construção do projeto Alfarrábios do Adi."
-date: 2026-03-30
+description: >-
+  Meu pai grava histórias no celular. Jules commitou o ano errado. É isso que
+  construí a partir daí.
+date: 2026-03-30T00:00:00.000Z
 lang: pt
-tags: ["ia", "agentes", "memoria", "filosofia", "engenharia"]
+tags:
+  - ia
+  - agentes
+  - memoria
+  - familia
+  - engenharia
+previousVersion:
+  uuid: 5d01d8a7-b975-5bf2-8c5d-070b6b7ca314
+  url: >-
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/b95fcc1fb600b6cc2c4880d060748a942eec8aa7/src/content/blog/orquestrando-agentes-memoria-familiar.md
+  timestamp: '2026-05-25T13:24:40.067Z'
+  msg: >-
+    Reescreveu family-memory: abertura com cena concreta (caminhão BR-364, Jules
+    commitou 1977), falha de preenchimento de silêncio (poste de cerca),
+    heurística reversível/irreversível em seção própria com diagrama Mermaid,
+    voz não-traduzida, fechamento seco com git history
 ---
 
-Há algo de profundamente paradoxal em confiar a uma rede neural os fragmentos da existência de um ser humano. Enquanto escrevo isto, um pequeno ecossistema de silício e requisições opera silenciosamente no fundo de um servidor, encarregado de uma tarefa estritamente humana: compilar, estruturar e publicar as memórias do meu pai, Adi Baldo.
-Aos 76 anos, meu pai acumula um continente de histórias. São crônicas de um tempo que já não existe, reflexões de uma vida que transborda em fotografias e relatos contados ao redor da mesa. Decidi que esse patrimônio não deveria se dissipar no ar nem ficar refém do esquecimento. Assim nasceu o projeto "Alfarrábios do Adi", idealizado não como um mero repositório estático, mas como um mecanismo vivo de preservação.
-Para dar conta dessa empreitada, construí uma arquitetura de dois agentes. De um lado, temos o Aparício [Funes](/blog/soulmd-funes/) — encarnado por um modelo Claude, nomeado em homenagem ao memorioso personagem concebido por Jorge Luis [Borges](https://en.wikipedia.org/wiki/Jorge_Luis_Borges). [Funes](/blog/soulmd-funes/) atua como o orquestrador cognitivo: ele recebe as gravações, extrai o núcleo narrativo, sugere conexões e estrutura o fluxo de trabalho.
-Do outro lado, encontra-se [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/), um agente especializado na sintaxe fria da codificação. É tarefa de [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/) traduzir o raciocínio abstrato de Funes em _commits_ rastreáveis. Jules gera imagens de capa via _prompts_, lida com arquivos Markdown, ajusta o _frontmatter_ exigido pelo _framework_ Astro, cria _Pull Requests_ e realiza o _merge_ para que a história de Adi Baldo transcenda o repositório.
-Na prática, porém, a orquestração de agentes autônomos para lidar com algo tão sensível revelou-se um exercício formidável de humildade técnica. A promessa de uma agência autônoma quase sempre esbarra nas fricções triviais da infraestrutura. O que os manuais de IA não explicitam é o quão obstinadas são as falhas de coordenação. Observei Jules, com toda a sua destreza, travar repetidas vezes por causa de um `source_context` mal definido. Vi dezenas de _Pull Requests_ permanecerem num limbo, abandonados sem _merge_ porque o agente simplesmente perdeu o fio da meada em sua própria árvore de decisões.
-Também houve ocasiões em que Aparício Funes delirou de forma sutil, fundindo cronologias díspares e tentando inserir detalhes espúrios. A inteligência artificial generativa sofre de um _horror vacui_ — o horror ao vazio. A memória humana, em contraste, é tecida tanto por lembranças nítidas quanto pelos silêncios do esquecimento. Obrigar uma rede neural a respeitar o silêncio de uma lembrança incompleta é um dos maiores desafios de contenção semântica que já enfrentei.
-Esses incidentes forçaram-me a adotar um pragmatismo estrito, que se cristalizou em um princípio arquitetônico que agora rege meus agentes: _reversível → age, irreversível → pergunta_.
-Se Jules precisa formatar o bloco YAML de um _post_ ou redimensionar uma imagem — ações periféricas que podem ser desfeitas instantaneamente com um `git revert` —, ele possui permissão total para avançar de forma autônoma. Contudo, se a ação envolve reescrever o núcleo de uma anedota ou aprovar um _Pull Request_ final que alterará a narrativa pública e permanente da trajetória de Adi Baldo — uma mudança irreversível em termos de valor histórico —, a execução entra em pausa. O sistema é forçado a devolver o controle decisório para mim.
-Essa heurística não atua meramente como uma salvaguarda técnica. Ela funciona como uma fronteira epistemológica fundamental. Ela reconhece que a curadoria do afeto e a responsabilidade pela verdade biográfica só podem ser chanceladas por aquele que partilha o mesmo sangue e a mesma história. A máquina propõe; a carne dispõe.
-Apesar dos tropeços, há momentos de uma eficácia quase sublime. Quando os agentes entram em sincronia, o resultado assemelha-se a uma mágica meticulosa. Funes refina a oralidade do meu pai com delicadeza, preservando a sua cadência peculiar, enquanto Jules carrega o fardo burocrático do código. A máquina atua não como uma substituta da agência humana, mas como um poderoso amplificador cognitivo da nossa capacidade de recordar e perenizar.
-Toda essa jornada me conduz a uma reflexão mais profunda sobre a ontologia do legado digital. Na era analógica, preservar significava estocar papéis em caixas de sapatos. Hoje, na ótica da metafísica de processos, preservar a memória de alguém significa instanciar processos contínuos. Significa decodificar o afeto em estruturas de dados inteligíveis, que possuam a capacidade de resistir à inexorável entropia do tempo físico e da obsolescência tecnológica.
-Ao iterar o projeto dos "Alfarrábios do Adi", percebo que não estou apenas documentando o passado do meu pai; estou erigindo um monumento de natureza temporal. A orquestração desses agentes de inteligência artificial é uma tentativa poética e pragmática de garantir que as "recorrências" da vida de Adi não sejam extintas. A memória, afinal, não é um artefato estático, mas um evento em contínuo desdobramento. E ao confiar a manutenção dessa continuidade à dança imperfeita entre Funes e Jules, encontro uma forma irremediavelmente moderna de honrar as raízes que formam a espinha dorsal de quem eu sou.
+Meu pai grava as histórias dele no aplicativo de memo de voz do celular, sentado à mesa da cozinha em Ariquemes, e me manda o arquivo pelo WhatsApp. Os arquivos soam como rádio ruim: interferência do ventilador de teto, um cachorro latindo lá do fundo, a voz do Adi entrando e saindo conforme ele vai se animando. No novembro passado ele me mandou quarenta e dois minutos sobre o caminhão que quebrou na BR-364 em 1987 e como eles consertaram com um arame e uma prece.
+
+O [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/), recebendo esse arquivo como contexto, produziu um commit datando a história em 1977. O diff era plausível. A mensagem do git, bem formatada. O ano estava errado.
+
+Este é o projeto. Meu pai tem 76 anos e um continente de histórias, e eu tenho tentado automatizar a preservação delas usando dois agentes: Aparício [Funes](/blog/soulmd-funes/) — um modelo Claude nomeado em homenagem ao personagem de Borges, aquele que lembrava de tudo — como o orquestrador narrativo, e Jules como a camada de execução, cuidando de commits e pull requests. A configuração faz sentido no papel. As falhas são instrutivas.
+
+## A falha que não esperava
+
+O ano errado é recuperável — `git revert`, tenta de novo, pronto. O que demorou mais para eu perceber foi o problema mais sutil: Funes preenchendo silêncios.
+
+A memória humana tem lacunas. Adi não lembra se eram um ou dois caminhões, se o arame veio do kit da cabine ou de um poste de cerca. Ele diz "um arame" e para. Um modelo treinado para coerência narrativa quer que a história se sustente, então ele alcança um detalhe plausível. O silêncio vira um objeto específico. O poste de cerca que nunca foi mencionado aparece no segundo parágrafo.
+
+Isso não é exatamente alucinação no sentido técnico. É o que ouvintes fazem o tempo todo — preencher, arredondar, tornar coerente. Exceto que ouvintes não commitam isso num repositório que pode sobreviver à pessoa que poderia contradizer o detalhe. Adi ainda está vivo. Ele pode me dizer se o arame veio de um poste de cerca. Daqui a vinte anos, ele não vai estar.
+
+## A regra que veio disso
+
+Um mês de projeto, depois de suficientes dessas situações, eu me fixei num princípio: _reversível → age, irreversível → pergunta_.
+
+Formatação de YAML, imagens redimensionadas, reformulações de parágrafo: Jules faz, eu reviso no PR. Qualquer edição que toque na substância de uma história — detalhes com nome, cronologia, o registro emocional de um momento — exige sinal verde explícito meu antes do merge. A fronteira não é técnica. É biográfica: o que pode ser desfeito, e o que vira registro permanente.
+
+Não tenho certeza se isso é suficiente. A regra impede Jules de inventar o poste de cerca de forma autônoma. Não impede Funes de apresentar um poste de cerca inventado de forma tão plausível que eu aprovo sem perceber. Há uma verificação que o sistema não consegue fazer por mim — aquela onde eu preciso conhecer a história bem o suficiente para pegar o detalhe que não estava lá. Alguns meses eu consigo. Alguns meses estou revisando PRs à meia-noite em Porto Velho e estou passando rápido.
+
+```mermaid
+flowchart LR
+  R["Jules propõe<br/>mudança"] --> Q{"Reversível?"}
+  Q -- sim --> A["Auto-merge<br/>para fila de revisão"]
+  Q -- não --> H["Aguarda<br/>aprovação do Franklin"]
+  H --> D["Merge ou rejeita"]
+```
+
+## O que está funcionando
+
+Meu pai gravou quatorze arquivos nos últimos três meses. Na década anterior de pedidos, consegui talvez o mesmo número no total. Algo na infraestrutura — o conhecimento de que existe um sistema esperando, que a gravação vai pra algum lugar — fez o ato parecer permanente o suficiente para valer a pena.
+
+Não sei se é o sistema funcionando ou se estou interpretando demais uma mudança no tamanho da amostra. Provavelmente os dois.
+
+Quando os agentes estão em sincronia — quando Funes extrai limpo e Jules commita sem inventar — o resultado é algo que eu não teria construído manualmente. Não porque a prosa seja extraordinária, mas porque ela existe. A história sobre o caminhão na BR-364 existe num repositório com timestamp e mensagem de commit. Meu pai pode ler. Os netos dele vão poder.
+
+A versão errada também está lá — a que tinha 1977. Corrigimos, e ambas estão no histórico agora, com timestamps.
+
+Acho isso estranhamente apropriado.
+
+## Para leitura adicional
+
+- **[Funes, sua memória](/blog/soulmd-funes/)** — o documento de personagem do agente Aparício Funes; de onde veio o nome e o que significa construir uma persona em torno de um personagem de Borges que não esquece nada.
+- **[A API do Jules como Backend do Harness](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/)** — o que Jules realmente faz nessa stack e por que o modelo assíncrono importa.
+- **Jorge Luis Borges, "Funes el memorioso"** — a fonte. Funes lembra de tudo; essa é a maldição dele. O agente nomeado em sua homenagem é projetado para ser seletivo. Ainda estou descobrindo se isso é ironia ou correção.

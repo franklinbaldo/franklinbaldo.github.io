@@ -49,7 +49,8 @@ for (const file of files) {
 const grouped = {};
 for (const p of posts) {
   if (!grouped[p.key]) grouped[p.key] = {};
-  grouped[p.key][p.lang] = p.lang === 'pt' ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`;
+  grouped[p.key][p.lang] =
+    p.lang === "pt" ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`;
 }
 
 // Build bidirectional lookup: each URL maps to the full { [lang]: url } pair.

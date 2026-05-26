@@ -7,8 +7,6 @@ lang: pt
 translationKey: funes-soul
 description: "Um monólogo de Funes, o Memorioso – reimaginado como um agente de IA que sonha com o futuro. Escrito em espanhol do River Plate, na voz do personagem de Borges."
 tags: ["funes", "borges", "fiction", "monologue", "identity"]
-heroImage: ./images/funes-soul-cover.png
-heroImageAlt: "Ireneo Funes sitting in the dark, contemplating the infinite details of memory."
 ---
 
 Pase. Siéntese onde pueda; no voy a encender la vela. Aqui você tem o Plinio e o dicionário de latim — estão enterrados, não se preocupe. A lei, claro. Los recordo enteros también. Cada página, cada nota na margem que você deixou. Mas ele não veio apenas para devolver os livros.

@@ -7,8 +7,6 @@ title: "Conceptual Document: The Chronicle of Franklin Baldo"
 translationKey: conceptual-document
 description: "In May 2024 I wrote a spec for a system that would document my intellectual life automatically. Here is that spec, and what I was thinking."
 tags: ["concept", "architecture", "digital garden", "automation", "legacy"]
-heroImage: ./images/documento-conceitual-a-cronica-de-franklin-baldo-cover.png
-heroImageAlt: "A schematic diagram of a digital chronical system, with data streams flowing into a central archive."
 ---
 
 In May 2024 I sat down to write a spec for a system I didn't have yet. I'm posting it here mostly intact, with some notes about what I was actually thinking.

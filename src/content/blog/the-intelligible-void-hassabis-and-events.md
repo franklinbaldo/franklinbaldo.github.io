@@ -6,8 +6,6 @@ title: "The Intelligible Void: On Hassabis, Silicon, and Events All the Way Down
 translationKey: intelligible-void
 description: "Why does the universe appear intelligible? Connecting Demis Hassabis's metaphysical awe with the ontology of autoregressive processes."
 tags: ["philosophy", "AI", "metaphysics", "process ontology", "Demis Hassabis"]
-heroImage: ./images/inaugural-post-a-glimpse-inside-my-mind-cover.png
-heroImageAlt: "A representation of matter organizing into intelligence."
 ---
 
 When Demis [Hassabis](https://en.wikipedia.org/wiki/Demis_Hassabis) describes the experience of deep scientific inquiry, his language inevitably slips the bounds of the strictly empirical and edges into the theological. He has spoken of the sensation of doing science as feeling akin to "reading the mind of God." He describes a reality so vibrantly legible that it seems to be "staring back" or "shouting" at the observer. Most strikingly, he expresses a profound, almost bewildered reverence that ordinary matter—electrons, silicon, copper, sand—can organize itself into systems capable of modeling, reading, and understanding the universe from which it arose.

@@ -6,8 +6,6 @@ date: 2026-03-17
 lang: en
 translationKey: crossing-interference
 tags: ["travessia", "fiction", "literature", "artificial intelligence", "jules", "agents", "riobaldo", "ted chiang"]
-heroImage: ./images/travessia-update-cover.jpg
-heroImageAlt: "Ship changing course mid-ocean after unexpected interference"
 ---
 
 In the March 2nd post, I described [Travessia](https://franklinbaldo.github.io/travessia/) as a project that wrote itself: a correspondence between Riobaldo Tatarana and Ted Chiang maintained by [Jules](/blog/2026-05-10-jules-api-harness-backend/)' autonomous sessions. At that moment, the most important formulation was this: I wasn't writing the letters; I had built the system that sustained them over time.

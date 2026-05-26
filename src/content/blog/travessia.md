@@ -5,8 +5,6 @@ date: 2026-03-02
 lang: pt
 translationKey: travessia-project
 tags: ["ficção", "literatura", "inteligência artificial", "grande sertão veredas", "jules", "automação", "travessia"]
-heroImage: ./images/travessia-cover.jpg
-heroImageAlt: "Ship crossing open ocean at dawn, philosophical journey theme"
 ---
 
 Há uma diferença entre _criar_ algo e _iniciar_ algo.

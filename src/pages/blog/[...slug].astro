@@ -43,17 +43,15 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const showUpdated = lastModified && lastModified.valueOf() - date.valueOf() > MS_PER_DAY;
 
 const rankInfo = translationKey ? getRankByKey().get(translationKey) : undefined;
-const rankLabel = lang === 'pt' ? 'ranking Hrönir' : 'Hrönir rank';
-const rankHref = lang === 'pt' ? '/pt/ranking/' : '/ranking/';
-const series = await getSeriesContext(post, { lang: lang ?? DEFAULT_LANG });
+const postLang: string = lang ?? DEFAULT_LANG;
+const rankLabel = postLang === 'pt' ? 'ranking Hrönir' : 'Hrönir rank';
+const rankHref = postLang === 'pt' ? '/pt/ranking/' : '/ranking/';
+const series = await getSeriesContext(post, { lang: postLang });
 const locale = localeFor(lang);
 const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
 const tagsPrefix = `${urlPrefix(lang)}/tags`;
 
 const allPosts = await getCollection('blog');
-
-// Prev / next posts in the same language, ordered by date ascending.
-const postLang = lang ?? DEFAULT_LANG;
 const sameLangPosts = allPosts
   .filter((p) => isPublished(p) && (p.data.lang ?? DEFAULT_LANG) === postLang)
   .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
@@ -97,11 +95,11 @@ const translationLinks = translationSiblings.map((p) => {
     id="read-progress"
     max="100"
     value="0"
-    aria-label={lang === 'pt' ? 'Progresso de leitura' : 'Reading progress'}
+    aria-label={postLang === 'pt' ? 'Progresso de leitura' : 'Reading progress'}
   ></progress>
 
   <aside class="border-rail" aria-hidden="true">
-    <span>{lang === 'pt' ? 'NOTAS · DA · FRONTEIRA' : 'NOTES · FROM · THE · BORDER'}</span>
+    <span>{postLang === 'pt' ? 'NOTAS · DA · FRONTEIRA' : 'NOTES · FROM · THE · BORDER'}</span>
   </aside>
 
   <div class="post-grid">
@@ -110,7 +108,7 @@ const translationLinks = translationSiblings.map((p) => {
     </aside>
 
     <div class="post-body">
-      <nav aria-label={lang === 'pt' ? 'Navegação' : 'Breadcrumb'} class="post-breadcrumb">
+      <nav aria-label={postLang === 'pt' ? 'Navegação' : 'Breadcrumb'} class="post-breadcrumb">
         <ol>
           <li><a href={`${urlPrefix(lang)}/`}>{t(lang, 'nav.home')}</a></li>
           <li><a href={`${urlPrefix(lang)}/archive/`}>{t(lang, 'nav.archive')}</a></li>
