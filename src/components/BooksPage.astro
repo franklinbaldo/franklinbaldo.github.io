@@ -61,6 +61,7 @@ const ui = pick(lang, {
 
 const translations: Record<string, string> =
   lang === "en" ? { pt: "/pt/livros/" } : { en: "/books/" };
+const ogImage = lang === "en" ? "/og/books.png" : "/og/books-pt.png";
 
 const GOODREADS_RSS = "https://www.goodreads.com/review/list_rss/5942034?shelf=read";
 const GOODREADS_PROFILE = "https://www.goodreads.com/user/show/5942034";
@@ -148,6 +149,7 @@ const booksJsonLd = {
 <PageLayout
   title={ui.pageTitle}
   description={ui.description}
+  image={ogImage}
   lang={lang}
   translations={translations}
 >
