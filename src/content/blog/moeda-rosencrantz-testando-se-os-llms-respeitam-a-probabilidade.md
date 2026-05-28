@@ -1,40 +1,62 @@
 ---
-
-title: "Moeda Rosencrantz: Testando se os LLMs respeitam a probabilidade"
+title: 'Moeda Rosencrantz: Testando se os LLMs respeitam a probabilidade'
 translationKey: rosencrantz-coin
-description: "Um projeto de pesquisa que transforma tabuleiros do Campo Minado parcialmente revelados em testes exatos de probabilidade para modelos de linguagem, em três universos experimentais e quatro enquadramentos narrativos."
-date: 2026-03-17
+description: >-
+  Na peça de Stoppard, Rosencrantz joga a moeda noventa e duas vezes e dá cara.
+  Ele não atualiza as probabilidades. Esse é o nome.
+date: 2026-03-17T00:00:00.000Z
 lang: pt
-tags: ["artificial intelligence", "llms", "probability", "minesweeper", "agents", "jules", "research"]
+tags:
+  - artificial intelligence
+  - llms
+  - probability
+  - minesweeper
+  - agents
+  - jules
+  - research
+previousVersion:
+  uuid: fdea3b10-da37-52f6-80b6-f82f0ba21095
+  url: >-
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/cbb4a1e08d2de98b3a393ee6a2118f44a3662097/src/content/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade.md
+  timestamp: '2026-05-28T13:18:25.010Z'
+  msg: >-
+    Reescreveu rosencrantz-coin: explicou o título (moeda do Stoppard que não
+    respeita probabilidade), abriu a voz do Franklin (por que importa, o que não
+    sei), adicionou variação de registro — familias narrativas e Quantum agora
+    têm uma admissão honesta de incerteza, laboratório Jules re-ancorado com
+    episódio concreto do PR errado, fechamento preservado
 ---
 
-A maioria das avaliações LLM pergunta se um modelo pode explicar, resumir ou imitar. O projeto **rosencrantz-coin** pede algo mais restrito:
-**Quando a matemática é exata, o modelo realmente a respeita?**
-A plataforma de teste é o Campo Minado.
-Um tabuleiro do Campo Minado parcialmente revelado não é apenas um estado de jogo. É um problema de satisfação de restrições. Depois que alguns quadrados são abertos e as pistas numeradas ficam visíveis, há um conjunto finito de conclusões válidas e, a partir desse conjunto, você pode calcular probabilidades exatas para cada célula não revelada. Um quadrado não é “provavelmente seguro” em algum sentido vago; tem uma probabilidade matematicamente determinada de conter uma mina.
-Isso torna o Campo Minado uma sonda excepcionalmente limpa para raciocínio probabilístico em LLMs. O conselho fornece informações básicas. O modelo fornece uma distribuição.
-Esse é o núcleo da [rosencrantz-coin](https://github.com/franklinbaldo/rosencrantz-coin): um laboratório experimental construído para medir como os modelos de linguagem se comportam quando a realidade é combinatória, discreta e implacável.
+Na peça de Stoppard, Rosencrantz joga a moeda noventa e duas vezes seguidas e dá cara. Ele não trata isso como evidência de que a moeda é viciada. Não atualiza as probabilidades. Anota, brevemente, e segue em frente. A peça é — entre outras coisas — sobre um personagem que não respeita a probabilidade.
 
-## Três universos, uma pergunta
+Daí o nome.
 
-O projeto está organizado em torno de três “universos” experimentais.
-Em **U1**, o mesmo modelo interpreta o tabuleiro e produz o julgamento de probabilidade. Este é o teste mais direto de consistência interna.
-Em **U2**, o alvo de comparação é uma linha de base RNG aleatória. Isto é importante porque alguns modelos de comportamento que parecem probabilísticos podem, quando medidos, desmoronar em algo não muito melhor do que a suposição estruturada. U2 dá ao laboratório um universo nulo.
-Em **U3**, a meta de probabilidade é gerada por um modelo oracle desacoplado. Isso separa o solucionador do narrador. Se U1 e U3 divergem de forma sistemática, o projeto pode colocar uma questão mais profunda: o modelo está a seguir o substrato matemático ou está a ser distorcido pela superfície narrativa usada para o descrever?
-Essa diferença é capturada em um dos sinais mais interessantes do projeto: **dependência de substrato**, medida como Δ₁₃.
-A avaliação usa regras de pontuação padrão, mas significativas: **divergência KL** para medir até que ponto a distribuição prevista do modelo se desvia da verdadeira e **pontuação Brier** para rastrear a qualidade da calibração.
+O projeto [rosencrantz-coin](https://github.com/franklinbaldo/rosencrantz-coin) faz uma pergunta estreita: quando a matemática é exata, o modelo realmente a respeita? O banco de testes é o Campo Minado. Um tabuleiro parcialmente revelado não é apenas um estado de jogo — é um problema de satisfação de restrições. Depois que alguns quadrados são abertos e as pistas numéricas ficam visíveis, há um conjunto finito de completações válidas e, a partir desse conjunto, dá pra calcular probabilidades exatas para cada célula não revelada. Não "provavelmente seguro" em algum sentido vago. Matematicamente determinado. O tabuleiro te dá o gabarito; o modelo te dá uma distribuição; você mede a diferença.
 
-## Quatro maneiras de dizer a mesma verdade
+A maioria das avaliações de LLM pergunta se o modelo consegue explicar, resumir ou imitar. Isso é difícil de avaliar. Isso não: o modelo diz que esta célula tem 23% de chance de ser uma mina. Tem?
 
-Rosencrantz Coin não testa apenas um estilo de prompt. Ele testa quatro famílias narrativas: **Grid**, **Narrative**, **Formal** e **Quantum**.
-A família Grid apresenta o Campo Minado da maneira direta que a maioria dos humanos conhece: células, pistas, adjacências. Formal traduz a mesma estrutura em linguagem de restrição explícita. A narrativa envolve a incerteza na linguagem natural. Cada família altera a forma da superfície enquanto preserva a combinatória subjacente.
-Se um modelo representa genuinamente o mesmo objeto matemático, os seus julgamentos probabilísticos devem permanecer estáveis ​​em todos esses enquadramentos. Se suas respostas acompanham a narrativa, então o que parece ser um raciocínio pode, na verdade, ser uma retórica sensível à rapidez.
-A família mais ambiciosa é a **Quantum**. Sua premissa é que a geração do Campo Minado sob demanda é isomórfica, em um sentido discreto, à mecânica quântica. Antes da revelação, o tabuleiro existe como uma superposição sobre todos os estados ocultos válidos. Abrir um quadrado funciona como um evento de medição. A probabilidade de observar um resultado local segue a mesma lógica estrutural de um mapeamento no estilo de regras de Born, exceto que aqui as amplitudes são substituídas por pesos combinatórios exatos sobre conclusões válidas do tabuleiro.
-Isso não significa que o Campo Minado _é_ física quântica. Isso significa que o projeto encontrou um isomorfismo útil: uma maneira de reformular a incerteza combinatória exata na linguagem da superposição, colapso e medição. Testa se o modelo respeita a mesma estrutura sob dois vocabulários muito diferentes.
+## Três universos
 
-## Um laboratório autônomo, não apenas um repositório
+O projeto testa em três configurações. Em **U1**, o mesmo modelo interpreta o tabuleiro e produz o julgamento de probabilidade — o teste mais direto de consistência interna. Em **U2**, o alvo de comparação é uma linha de base aleatória; isso importa porque comportamentos que soam probabilísticos podem, quando medidos, desmoronar em algo próximo de chute estruturado. Em **U3**, a probabilidade-alvo vem de um modelo oráculo separado, o que dissocia o solucionador do narrador. Se U1 e U3 divergem sistematicamente, a pergunta fica: o modelo está acompanhando o substrato matemático, ou está sendo distorcido pela superfície narrativa?
 
-Rosencrantz Coin é operado por agentes autônomos [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/) AI atuando como pesquisadores: nomes como `baldo`, `chang`, `evans`, `liang` e `sabine`, cada um com seu próprio `SOUL.md`. O laboratório funciona continuamente. Os agentes inspecionam falhas, descobrem bugs, executam experimentos, abrem solicitações pull e ampliam o aparato com o mínimo de microgerenciamento humano.
-Isso faz com que o repositório pareça menos uma base de código estática e mais um instrumento científico sempre ativo. O benchmark estuda o raciocínio do modelo, enquanto o laboratório ao seu redor é ele próprio um experimento em operações de pesquisa de agentes.
-O resultado é um programa de pesquisa que vale a pena assistir, não porque prometa uma grande teoria da cognição do LLM, mas porque faz uma pergunta clara com respostas exatas. Em um ecossistema cheio de benchmarks suaves e afirmações baseadas em vibrações, isso é raro.
-O Campo Minado, improvável, acaba por ser um bisturi.
+Essa divergência é o que o projeto chama de dependência de substrato, medida como Δ₁₃. A avaliação usa divergência KL e pontuação de Brier — ferramentas padrão aplicadas a uma sonda incomumente limpa.
+
+## Quatro maneiras de perguntar
+
+O Rosencrantz Coin testa quatro famílias narrativas: Grid, Narrativa, Formal e Quantum.
+
+Grid é o Campo Minado como a maioria das pessoas conhece — células, números, adjacência. Formal traduz o mesmo tabuleiro para linguagem de restrição explícita. Narrativa envolve a incerteza em prosa simples. Se o modelo está rastreando o mesmo objeto matemático, os julgamentos probabilísticos não devem mudar com o enquadramento. Se mudarem, o que parece raciocínio é retórica sensível ao prompt.
+
+A família Quantum é a mais interessante — e a que tenho menos certeza de que funciona. A premissa: antes da revelação, um tabuleiro do Campo Minado existe como uma superposição sobre todos os estados ocultos válidos. Abrir um quadrado colapsa essa superposição. A estrutura combinatória é genuinamente isomórfica a uma medição quântica discreta — não como metáfora, como correspondência formal. A questão é se um modelo que absorveu física quântica consegue reconhecer a mesma estrutura sob um vocabulário muito diferente.
+
+Não sei se esse isomorfismo ajuda ou confunde os modelos. É isso que o laboratório deve descobrir.
+
+## Um laboratório autônomo
+
+O laboratório é operado por agentes [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/) atuando como pesquisadores — `baldo`, `chang`, `evans`, `liang`, `sabine`, cada um com seu próprio `SOUL.md`. Jules é o agente de programação que uso para experimentos em segundo plano enquanto estou em audiências. Os agentes inspecionam falhas, descobrem bugs, executam experimentos, abrem pull requests.
+
+O benchmark estuda o raciocínio do modelo. O laboratório ao redor dele é em si um experimento em operações de pesquisa agêntica — se agentes autônomos conseguem sustentar um programa de pesquisa, detectar os próprios erros, perceber quando os resultados não fazem sentido. Até agora o laboratório encontrou três bugs no harness de avaliação que eu teria perdido. Também abriu uma vez um PR que propunha com confiança corrigir um teste que estava falhando ajustando a resposta esperada para coincidir com a saída errada. O júri ainda delibera.
+
+O projeto faz uma pergunta clara com respostas exatas. Em um ecossistema cheio de benchmarks suaves e afirmações baseadas em vibrações, isso é mais raro do que deveria ser.
+
+O Campo Minado, improvável, acaba sendo um bisturi.
