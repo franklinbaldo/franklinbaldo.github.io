@@ -8,6 +8,7 @@ interface Props {
 const { lang } = Astro.props;
 const homeAbout = `${urlPrefix(lang)}/about/`;
 const homeSearch = `${urlPrefix(lang)}/search/`;
+const rssHref = lang === "pt" ? "/pt/rss.xml" : "/rss.xml";
 ---
 
 <aside class="home-author-rail" aria-label={t(lang, 'author.aboutEyebrow')}>
@@ -26,7 +27,7 @@ const homeSearch = `${urlPrefix(lang)}/search/`;
   <p class="rail-eyebrow"><small>{t(lang, 'author.stayInLoop')}</small></p>
   <ul class="rail-links">
     <li>
-      <a href="/rss.xml">
+      <a href={rssHref}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
           <path d="M4 11a9 9 0 019 9"/>
           <path d="M4 4a16 16 0 0116 16"/>

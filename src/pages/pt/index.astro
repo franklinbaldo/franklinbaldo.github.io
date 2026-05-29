@@ -13,7 +13,7 @@ const all = (await getCollection("blog"))
 
 const recent = all.slice(0, 12);
 const latest = all[0];
-const latestHref = latest ? `/blog/${latest.id}/` : "/pt/archive/";
+const latestHref = latest ? `/pt/blog/${latest.id}/` : "/pt/archive/";
 ---
 
 <PageLayout
