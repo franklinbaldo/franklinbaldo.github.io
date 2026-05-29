@@ -1,8 +1,8 @@
 ---
 title: 'The Art of Delegation: Signatures and Sandboxes'
 description: >-
-  Why the problem with autonomous agents is not micromanagement, but the
-  administrative distinction between drafting the act and signing it.
+  The sandbox separates draft from act. What it doesn't do is answer where the
+  accountability lives when the sandbox fails.
 date: '2026-03-28'
 lang: en
 tags:
@@ -15,40 +15,52 @@ draft: false
 author: franklin
 translationKey: delegating-to-agents
 previousVersion:
-  uuid: d04c4bd5-d7c9-521a-9ea3-a9e4e1aa9e0b
+  uuid: 89fe2121-7090-56d1-a0dd-adea417fea52
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/d353fd1dce1fa025a8a975be942176eb22ba4c87/src/content/blog/the-art-of-delegation.md
-  timestamp: '2026-05-26T13:23:41.259Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/ef3d2a033d7c5faa5d30a91794447bfa98b1ee16/src/content/blog/the-art-of-delegation.md
+  timestamp: '2026-05-29T13:18:18.176Z'
   msg: >-
-    Ancorado o incidente de fevereiro no tipo específico de caso (auto de
-    infração tributária, prazo de 48h), tornando a falha concreta em vez de
-    abstrata. Adicionado parágrafo explicando por que a engenharia de software
-    não separa nativamente minuta de assinatura — a legibilidade da lacuna é o
-    que o direito administrativo fornece e o código precisa recriar. Expandido o
-    comportamento concreto do Funes no harness (PR sem merge, causaganha draft
-    sem envio). Dois novos itens no For Further Reading: Lei 9.784 como fonte
-    normativa direta e Brooks para o princípio da equipe cirúrgica.
+    Expôs a falha honesta da analogia assessor/agente: o assessor tem
+    responsabilidade profissional, o agente não — a assinatura carrega não só a
+    separação minuta/ato mas toda a accountability que o agente estruturalmente
+    não pode carregar. Adicionado incidente do tribunal para ancorar a tese: a
+    explicação ao juízo seria idêntica se fosse IA ou assessor, o que revela
+    onde o peso real da assinatura fica. Nova seção 'A falha honesta da
+    analogia' / 'The analogy's honest flaw'. Meme recaptionou para reconhecer
+    essa limitação.
 ---
 
 The problem with most writing about AI delegation is not that it's wrong. It's that it's set in the wrong room.
 
-In February, I almost missed a window in a federal tax case because I had started treating the assessor's draft as the deliverable. The case was a state revenue objection — an _auto de infração_, forty-eight hours to contest before the administrative window closed. The _parecer_ was good: the applicable statute correctly identified, the procedural argument solid, the conclusion defensible. The assessor had marked it ready for review on Monday morning. The window closed Wednesday at midnight. On Tuesday afternoon I realized the submission had not been filed. The draft was complete. The act was not. That is a forty-eight-hour gap during which I had stopped tracking something I was legally responsible for.
+In February, I almost missed a forty-eight-hour administrative window in a federal tax objection because I had begun treating the assessor's draft as the deliverable. The _parecer_ was good. The submission was not filed. I found out on Tuesday afternoon when a calendar alert fired for a deadline I had mentally moved from _my_ column to _the assessor's_ column the moment the draft came in. It had not moved.
 
-This is the same confusion that breaks AI delegation.
+When I later had to explain the near-miss to my coordinator, I noticed something that should have been obvious: it would have made no difference whether the error was in an AI agent's draft or the assessor's draft. The explanation would have been identical. The tribunal does not ask _who_ proposed the wrong date; it asks _who signed_. That is not a procedural technicality. That is the reason the signature exists.
 
-I spend my days in a state attorney's office in Rondônia, reading _pareceres_ drafted by assessors and signing the ones that don't terrify me. When I delegate a legal opinion, I am not asking someone to be my extended keyboard. I am handing down the task of traversing the case file, identifying the applicable law, and proposing a conclusion. What I am _not_ handing down is the signature. The signature is the irreversible boundary — the moment the act enters the record and the deadlines start moving.
+This is the error AI delegation is waiting to repeat at scale.
 
-The reason this distinction doesn't arise naturally in software engineering is that the feedback loop is tighter. In law, the delays are built into the institution: the assessor finishes drafting, the protocol office has a processing window, the court's system has its own schedule. The stages are physically separate and the gap is legible. In code, the developer writes the function, the tests pass in thirty seconds, the PR auto-merges on green. The proposal and the act compress into a continuous motion, and the point where the agent's output stops being draft and starts being act is never made explicit.
+I spend my days in a state attorney's office in Rondônia, reading _pareceres_ and signing the ones that don't terrify me. When I delegate the drafting, I am not outsourcing judgment — I am outsourcing the traversal of the case file, the identification of the applicable law, the construction of the argument. What I am _not_ delegating is the signature. The signature is the irreversible boundary: the moment the act enters the record and the deadlines start moving.
 
-When we orchestrate agents like Jules and Claude, the problem is not that we want to micromanage their keystrokes. The problem is that software engineering, unlike administrative law, does not natively separate the draft from the signature. In code, writing the function and executing the function often look like the same continuous motion.
+Software engineering does not natively recognize this distinction because the feedback loop compresses it. In law, the gap between draft and act is physically legible — the assessor finishes, the protocol office has its window, the court has its own schedule. In code, the developer writes the function, the tests pass in thirty seconds, the PR merges on green. The draft and the act become a continuous motion, and nobody writes down where one ends and the other begins.
 
 ## The boundaries of the sandbox
 
-When I trust Jules to refactor a microservice in the background, the anxiety does not come from a fear that Jules will choose the wrong design pattern. The anxiety comes from the fact that Jules has write access.
+The anxiety is real and it has nothing to do with capability. When I hand Jules a refactoring task, I am not worried Jules will choose the wrong design pattern. I am worried Jules has write access.
 
-The solution is not to stand over Jules's shoulder while it writes. The solution is to build a sandbox where the agent's actions are explicitly treated as _proposals_. The CI/CD pipeline, the test suites, the strict linting rules—these are not just quality assurance mechanisms. They are the equivalent of the institutional rules that say an assessor can draft a _parecer_, but cannot sign the final _ofício_.
+The solution is not to stand over Jules's shoulder while it writes. The solution is to build a sandbox where the agent's actions are explicitly treated as _proposals_. The CI/CD pipeline, the test suites, the strict linting rules — these are not just quality assurance mechanisms. They are the equivalent of the institutional rules that say an assessor can draft a _parecer_, but cannot sign the final _ofício_.
 
 The magic of delegation happens when you constrain the output space, not the process. You define the bounds of the sandbox — the schema, the invariants, the tests — and you allow the agent to navigate the interior freely. If the tests pass, the proposal is valid. But the _apply_ step — the actual merging of the PR, the deployment to production — that remains a human signature. A CI pipeline that cannot be bypassed is a protocol office: a mandatory processing step between the draft and the act that makes the stages legible again.
+
+## The analogy's honest flaw
+
+Here is where the administrative law parallel flatters the software problem.
+
+In a _parecer_, the assessor's accountability is professional. If an assessor gives consistently bad legal advice, they face formal review — the _corregedoria_, the professional council, eventually the career track. There is a chain from the act to the person who drafted it, and that chain has teeth. The signature does not only separate draft from act: it separates whose career is on the line from whose was not.
+
+An AI agent has no career. It cannot be disciplined. The sandbox constrains what it can do, but the sandbox does not answer the question of what happens when the sandbox fails. When an agent does something wrong inside the bounds of its access, the accountability flows upward to the human who designed the harness — not sideways to the agent. That is not a property I built in; it is a property of agents without institutional standing.
+
+The sandbox is necessary. It is not sufficient for accountability. The signature step in software delegation is doing more work than the administrative parallel suggests: it is not just making the proposal-versus-act boundary explicit. It is also carrying all the professional weight that the agent structurally cannot carry.
+
+I did not see this clearly until I was writing out the analogy and noticed the sentence "the assessor is good" sounded reasonable in a way that "Jules is good" does not, and could not, quite mean the same thing. Both sentences describe capacity. Only one describes a person who can be accountable for anything.
 
 <figure class="meme">
   <img
@@ -56,18 +68,18 @@ The magic of delegation happens when you constrain the output space, not the pro
     alt="Drake meme: Rejecting 'Micromanaging the agent's prompts', approving 'Constraining the agent's sandbox'."
     loading="lazy"
   />
-  <figcaption>The shift in posture required to actually make autonomous systems useful.</figcaption>
+  <figcaption>The shift matters. But it answers "which action" more cleanly than it answers "whose fault" — and the tribunal cares more about the second question.</figcaption>
 </figure>
 
 ## The harness as constitutional design
 
-This is why the harness matters more than the model. [Funes](/blog/funes-soul/) is not Claude; Funes is Claude wrapped in a specific set of rules, memories, and constraints. When Funes reads his `SOUL.md` and decides to document a decision rather than just executing it, he is operating within an administrative framework.
+This is why the harness matters more than the model. [Funes](/blog/funes-soul/) is not Claude; Funes is Claude wrapped in a specific set of rules, memories, and constraints.
 
-Funes opens pull requests; he does not merge them. He updates memory files; he does not send emails on his own. When I asked him to draft a response to an external inquiry about causaganha, he wrote the draft and created a PR containing it. He did not send the message. Not because a rule said _do not send messages without permission_. Because the harness simply had no wiring for outbound external messages — the sandbox made the signature step structurally required, not behaviorally enforced.
+Funes opens pull requests; he does not merge them. He updates memory files; he does not send emails on his own. When I asked him to draft a response to an external inquiry about causaganha, he wrote the draft and created a PR containing it. He did not send the message. Not because a rule said _do not send messages without permission_. Because the harness had no wiring for outbound external messages — the sandbox made the signature step structurally required, not behaviorally enforced.
 
-He acts because the framework permits it, and he pauses when the framework demands a signature. _Reversível → age, irreversível → pergunta._ That is not just a safety heuristic; it is a theory of constitutional design for agents.
+_Reversível → age, irreversível → pergunta._ That is not just a safety heuristic; it is a decision about where accountability concentrates. Every action the agent takes freely is an action whose accountability has been pre-delegated by whoever designed the harness. Every action requiring a signature is an action whose accountability remains explicitly with the human who signs.
 
-The assessor is good. The agent is capable. Neither of those facts changes who signs.
+The assessor is good. The agent is capable. Neither of those facts changes who signs — or where the accountability lives when the signature turns out to be wrong.
 
 ## For further reading
 
