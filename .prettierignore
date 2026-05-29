@@ -5,4 +5,5 @@ public/pagefind/
 package-lock.json
 .routines/hronir/
 .routines/takeout/
+.routines/*.md
 hronir_session.json
