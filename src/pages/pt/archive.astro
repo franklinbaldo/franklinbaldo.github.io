@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
 import { isPublished } from "../../lib/publish";
+import { t } from "../../lib/i18n";
 
 const all = await getCollection("blog");
 
@@ -59,6 +60,15 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
     <p><small>{posts.length} ensaios</small></p>
   </hgroup>
 
+  {years.length > 1 && (
+    <nav class="year-jump" aria-label="Ir para o ano">
+      <small>{t("pt", "archive.jumpToYear")}</small>
+      {years.map((year) => (
+        <a href={`#archive-${year}`}>{year}</a>
+      ))}
+    </nav>
+  )}
+
   {years.map((year) => (
     <section aria-labelledby={`archive-${year}`} class="archive-year">
       <h2 id={`archive-${year}`}>{year}</h2>
@@ -99,6 +109,28 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
 </PageLayout>
 
 <style>
+  .year-jump {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: calc(var(--pico-spacing) * 1.5);
+    color: var(--pico-muted-color);
+  }
+  .year-jump a {
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.15em 0.5em;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--pico-primary) 10%, transparent);
+    color: var(--pico-primary);
+    border: 1px solid color-mix(in srgb, var(--pico-primary) 25%, transparent);
+    text-decoration: none;
+  }
+  .year-jump a:hover {
+    background: color-mix(in srgb, var(--pico-primary) 20%, transparent);
+    text-decoration: none;
+  }
   .archive-year { margin-block: calc(var(--pico-spacing) * 1.5); }
   .archive-table { font-size: 0.95rem; }
   .archive-table .col-date {
