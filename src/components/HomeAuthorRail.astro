@@ -24,7 +24,7 @@ const rssHref = lang === "pt" ? "/pt/rss.xml" : "/rss.xml";
 
   <hr class="rail-divider" />
 
-  <p class="rail-eyebrow"><small>{t(lang, 'author.stayInLoop')}</small></p>
+  <p class="rail-eyebrow rail-loop-eyebrow"><small>{t(lang, 'author.stayInLoop')}</small></p>
   <ul class="rail-links">
     <li>
       <a href={rssHref}>
@@ -110,5 +110,47 @@ const rssHref = lang === "pt" ? "/pt/rss.xml" : "/rss.xml";
     height: 18px;
     color: var(--pico-primary);
     flex-shrink: 0;
+  }
+
+  /* Compact horizontal layout on mobile/tablet */
+  @media (max-width: 1099px) {
+    .home-author-rail {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      grid-template-rows: auto;
+      column-gap: 1rem;
+      align-items: start;
+    }
+    .rail-avatar {
+      grid-row: 1 / 5;
+      width: 56px;
+      height: 56px;
+      margin-bottom: 0;
+    }
+    .rail-eyebrow { grid-column: 2; }
+    .rail-bio {
+      grid-column: 2;
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .rail-more {
+      grid-column: 2;
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem;
+    }
+    .rail-divider { display: none; }
+    .rail-links {
+      grid-column: 2;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .rail-links a { font-size: 0.85rem; }
+    /* Hide the "Stay in loop" eyebrow on mobile — links are self-evident */
+    .rail-loop-eyebrow { display: none; }
   }
 </style>
