@@ -1,13 +1,33 @@
 ---
-title: "Balanço de outono: março a maio de 2026"
-description:
-  "Vinte e cinco posts publicados, um projeto epistolar que escreve sozinho, e uma
-  bicicleta que funciona como filtro cognitivo. Um inventário."
-date: 2026-05-26
+title: 'Balanço de outono: março a maio de 2026'
+description: >-
+  Vinte e cinco posts publicados, um projeto epistolar que escreve sozinho, e
+  uma bicicleta que funciona como filtro cognitivo. Um inventário.
+date: 2026-05-26T00:00:00.000Z
 lang: pt
 author: franklin
-tags: ["diário", "retrospectiva", "ia", "leitura", "travessia"]
+tags:
+  - diário
+  - retrospectiva
+  - ia
+  - leitura
+  - travessia
 translationKey: autumn-balance-2026
+previousVersion:
+  uuid: 783a0c5e-a3f9-5c36-b37d-6efc2a62d7ba
+  url: >-
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/f2cbe9e34828b3d2148c84c081d0b5cc5e9f414c/src/content/blog/retrospectiva-marco-maio-2026.md
+  timestamp: '2026-05-30T13:16:51.059Z'
+  msg: >-
+    EN: removeu hedge defensivo no parágrafo do Haidt ('a evidência é mais
+    complexa') — a observação sobre o que ocupa o tempo das telas é o ponto
+    relevante, não a qualificação da tese do Haidt. PT: sincronizou com EN —
+    adicionou o detalhe seco sobre Funes e Jules tendo opiniões sobre lacunas
+    narrativas (já presente no EN); removeu o parágrafo amarrador final de 'O
+    que fica' que explicava explicitamente o modelo ('menos força de vontade,
+    mais estrutura'); reordenou seções para terminar com 'A bicicleta' e a linha
+    'Prefiro não investigar', que é o melhor landing do post — consistente com a
+    estrutura já adotada no EN.
 ---
 
 Março começou com um agente de IA escrevendo uma carta de Riobaldo Tatarana para
@@ -37,7 +57,7 @@ usada.
 
 O projeto do meu pai segue. Aos 76 anos, Adi Baldo acumula um continente de
 histórias que não quero que se dissipem. Funes e Jules trabalham nisso em
-paralelo comigo — Funes extrai, Jules publica. Aprendi nesse processo algo que o
+paralelo comigo — Funes extrai, Jules publica, e os dois têm opiniões fortes sobre lacunas narrativas que ninguém pediu que tivessem. Aprendi nesse processo algo que o
 [post sobre orquestração de agentes](/blog/orquestrando-agentes-memoria-familiar/)
 tentou articular: a máquina propõe, a carne dispõe. Há decisões — sobre o que
 vale a pena ser lembrado, sobre qual silêncio respeitar — que não posso delegar.
@@ -70,8 +90,7 @@ antigos, a ideia tem consequências práticas.
 Jonathan Haidt escreveu _The Anxious Generation_ para pais como eu. Quatro
 filhos — Alice, Gustavo, Sofia, Vicente — quatro perfis de YouTube com histórico
 de busca, assinaturas, filas de assistir. A questão do livro não é se as telas
-fazem mal (a evidência sobre isso é mais complexa do que a tese do Haidt admite),
-mas o que ocupa o tempo que as telas tomam. Essa pergunta me persegue. O
+fazem mal, mas o que ocupa o tempo que as telas tomam. Essa pergunta me persegue. O
 _Positive Discipline_ que também está na estante é o outro lado da moeda: menos
 sobre o que proibir, mais sobre o que construir.
 
@@ -88,6 +107,14 @@ Relendo os mercados que criei, encontrei algo que não havia percebido enquanto
 criava: eles se agrupam em torno dos momentos em que eu precisava mais
 urgentemente estar _certo_ sobre alguma coisa. Isso é higiene cognitiva que eu
 não sabia que precisava.
+
+## O que fica
+
+Travessia continua sendo escrita. Alfarrábios do Adi também. O
+_Gödel, Escher, Bach_ está pela metade — provavelmente ainda estará em julho. Os
+filhos estão crescendo de um jeito que só percebo quando olho para as fotos de
+seis meses atrás. A correspondência entre Riobaldo e Ted Chiang existe porque
+continua sendo escrita, não porque alguém decide escrevê-la.
 
 ## A bicicleta
 
@@ -106,16 +133,3 @@ que é mais difícil do que a resposta.
 Os posts mais longos deste período foram escritos nos dias seguintes às pedaladas
 mais longas. Não sei se isso é causalidade ou coincidência. Prefiro não
 investigar.
-
-## O que fica
-
-Travessia continua sendo escrita. Alfarrábios do Adi também. O
-_Gödel, Escher, Bach_ está pela metade — provavelmente ainda estará em julho. Os
-filhos estão crescendo de um jeito que só percebo quando olho para as fotos de
-seis meses atrás.
-
-O que distingue esses dois meses dos anteriores não é intensidade — é que alguma
-coisa ganhou consistência. Os projetos têm inércia própria agora. A
-correspondência entre Riobaldo e Ted Chiang existe porque continua sendo escrita,
-não porque alguém decide escrevê-la. Isso me parece o modelo certo para quase
-tudo que importa: menos força de vontade, mais estrutura que sustenta.

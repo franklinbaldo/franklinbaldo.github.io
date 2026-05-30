@@ -14,18 +14,20 @@ tags:
   - travessia
 translationKey: autumn-balance-2026
 previousVersion:
-  uuid: 09a56efd-149a-53e9-a567-38626940992a
+  uuid: c1728b4f-735b-5319-b4ea-6f8d3899aef7
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/19c083d9ce1e6cd7325c49035423d94db442c525/src/content/blog/autumn-balance-march-may-2026.md
-  timestamp: '2026-05-27T13:17:01.369Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/f2cbe9e34828b3d2148c84c081d0b5cc5e9f414c/src/content/blog/autumn-balance-march-may-2026.md
+  timestamp: '2026-05-30T13:16:51.059Z'
   msg: >-
-    Reordenou seções: bicicleta agora encerra o post com 'I prefer not to
-    investigate' como linha final; cortou tese conclusória do What remains;
-    pequeno toque seco no Alfarrábios (Funes tem opiniões sobre lacunas
-    narrativas). Objetivos: criar pacing pelo contraste sério/seco, dar à linha
-    de recusa ('prefer not to investigate') o posto de landing que ela merecia,
-    e remover a amarração explícita que o Lateral Essayist e o Internet-Native
-    penalizaram.
+    EN: removeu hedge defensivo no parágrafo do Haidt ('a evidência é mais
+    complexa') — a observação sobre o que ocupa o tempo das telas é o ponto
+    relevante, não a qualificação da tese do Haidt. PT: sincronizou com EN —
+    adicionou o detalhe seco sobre Funes e Jules tendo opiniões sobre lacunas
+    narrativas (já presente no EN); removeu o parágrafo amarrador final de 'O
+    que fica' que explicava explicitamente o modelo ('menos força de vontade,
+    mais estrutura'); reordenou seções para terminar com 'A bicicleta' e a linha
+    'Prefiro não investigar', que é o melhor landing do post — consistente com a
+    estrutura já adotada no EN.
 ---
 
 March began with an AI agent writing a letter from Riobaldo Tatarana to Ted Chiang. May ends with me trying to inventory what happened between those two dates — and discovering that the line connecting them is denser than I had imagined.
@@ -50,7 +52,7 @@ Borges appears in the middle of this as the counterpoint: _La biblioteca de Babe
 
 ## _The Anxious Generation_ and four children with YouTube
 
-Jonathan Haidt wrote _The Anxious Generation_ for parents like me. Four children — Alice, Gustavo, Sofia, Vicente — four YouTube profiles with search history, subscriptions, watch queues. The book's question is not whether screens are harmful (the evidence on that is more complex than Haidt's thesis admits), but what occupies the time that screens consume. That question haunts me. The _Positive Discipline_ also on the shelf is the other side of the coin: less about what to prohibit, more about what to build.
+Jonathan Haidt wrote _The Anxious Generation_ for parents like me. Four children — Alice, Gustavo, Sofia, Vicente — four YouTube profiles with search history, subscriptions, watch queues. The book's question is not whether screens are harmful, but what occupies the time that screens consume. That question haunts me. The _Positive Discipline_ also on the shelf is the other side of the coin: less about what to prohibit, more about what to build.
 
 ## 495 days on Manifold
 
