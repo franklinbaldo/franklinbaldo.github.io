@@ -3,6 +3,5 @@ dist/
 .astro/
 public/pagefind/
 package-lock.json
-.routines/hronir/
-.routines/takeout/
+.routines/
 hronir_session.json
