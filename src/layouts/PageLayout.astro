@@ -74,7 +74,9 @@ const breadcrumbLd = type === "article"
     }
   : null;
 
-const langBcp47 = lang === "pt" ? "pt-BR" : "en-US";
+// BCP47 for structured data and HTML attributes; pt-BR distinguishes Brazilian from European Portuguese
+const langBcp47 = lang === "pt" ? "pt-BR" : "en";
+const hreflangFor = (code: string) => code === "pt" ? "pt-BR" : code;
 
 const jsonLd = type === "article"
   ? {
@@ -119,7 +121,7 @@ const personLd = {
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={langBcp47}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -137,9 +139,9 @@ const personLd = {
     <link rel="sitemap" href="/sitemap-index.xml" />
     {hasMath && <link rel="stylesheet" href="/katex/katex.min.css" />}
 
-    <link rel="alternate" hreflang={lang} href={canonical.href} />
+    <link rel="alternate" hreflang={hreflangFor(lang)} href={canonical.href} />
     {alternateEntries.map(([code, href]) => (
-      <link rel="alternate" hreflang={code} href={new URL(href, Astro.site).href} />
+      <link rel="alternate" hreflang={hreflangFor(code)} href={new URL(href, Astro.site).href} />
     ))}
     {xDefaultHref && <link rel="alternate" hreflang="x-default" href={xDefaultHref} />}
 
@@ -205,12 +207,20 @@ const personLd = {
       window.__pageLang = pageLang;
       window.__translations = translations || {};
     </script>
+    <script is:inline>
+      // Move focus to <main> after ClientRouter (SPA) navigations so keyboard
+      // and screen-reader users land in the new content, not limbo.
+      document.addEventListener('astro:after-swap', () => {
+        const main = document.getElementById('main');
+        if (main) main.focus({ preventScroll: true });
+      });
+    </script>
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
     <Header lang={lang} />
 
-    <main id="main" class="container">
+    <main id="main" tabindex="-1" class="container">
       <slot />
     </main>
 
