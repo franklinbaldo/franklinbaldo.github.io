@@ -9,10 +9,10 @@ Head original do push que disparou o relatório pedido: `a332d44`
 
 Checks rodados no commit `a332d44` (head no momento da falha Kilo):
 
-| Check | Status | Conclusão |
-|-------|--------|-----------|
+| Check                       | Status    | Conclusão   |
+| --------------------------- | --------- | ----------- |
 | GitGuardian Security Checks | completed | **success** |
-| Kilo Code Review | completed | **failure** |
+| Kilo Code Review            | completed | **failure** |
 
 **GitGuardian**: passou sem mensagem de erro.
 
