@@ -266,7 +266,7 @@ body::before {
   background: var(--pico-background-color);
   color: var(--pico-primary);
 }
-.skip-link:focus {
+.skip-link:focus-visible {
   left: 0.5rem;
   top: 0.5rem;
 }
