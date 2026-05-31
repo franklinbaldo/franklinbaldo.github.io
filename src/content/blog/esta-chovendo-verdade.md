@@ -1,10 +1,10 @@
 ---
 author: franklin
-title: "O Anjo Era o Detalhe"
+title: "Está Chovendo Verdade"
 description: "A Seicho-No-Ie se apresenta como filosofia. Filosofia aceita inspeção. A inspeção veio. Lendo parágrafo por parágrafo a Chuva de Néctar da Verdade à luz das teorias da mente que conheço e não rejeito, descobri que o anjo é moldura — quem faz o trabalho pesado é o argumento. E que talvez tenha sido a seichonoie que me pôs no rumo da racionalidade, mais do que eu queria admitir."
 date: 2026-05-31
 lang: pt
-translationKey: angel-was-the-detail
+translationKey: its-raining-truth
 emoji: "🌧️"
 tags: ["filosofia", "seicho-no-ie", "cultura", "ateísmo", "budismo", "henrich", "rutt", "amazônia"]
 ---

@@ -1,10 +1,10 @@
 ---
 author: franklin
-title: "The Angel Was the Detail"
+title: "It's Raining Truth"
 description: "Seicho-No-Ie presents itself as a philosophy. A philosophy accepts inspection. The inspection came. Reading the Nectarean Shower of Truth line by line, against the theories of mind I know and don't reject, I found that the angel is the frame — the argument does the heavy lifting. And that it may have been Seicho-No-Ie that set me on the path to rationality, more than I'd like to admit."
 date: 2026-05-31
 lang: en
-translationKey: angel-was-the-detail
+translationKey: its-raining-truth
 emoji: "🌧️"
 tags: ["philosophy", "seicho-no-ie", "culture", "atheism", "buddhism", "henrich", "rutt", "amazonia"]
 ---
