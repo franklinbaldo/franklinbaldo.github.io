@@ -11,10 +11,12 @@ O corpo deste relatório foi gerado em `a332d44` e está **desatualizado** (o
 post sofreu o rewrite "version 7" em `7ce0e60`). Re-conferido contra o head
 atual:
 
-- **(a) IBGE/censo** — estava **ausente** no head atual (PT e EN). Aplicado
-  agora: PT "ao católico que não vai à missa **mas ainda se declara no
-  censo**"; EN "the Catholic who doesn't go to Mass **but still checks
-  Catholic on the census**".
+- **(a) IBGE/censo** — estava ausente; aplicado em `e8ee520` (PT "mas ainda
+  se declara no censo" / EN "but still checks Catholic on the census") e
+  depois **removido de propósito** em `9b862f9`, por decisão do autor de não
+  glosar "ateu não praticante" na abertura reescrita ("só coloca lá, o leitor
+  entende"). Estado final intencional: **sem a analogia do censo** no post
+  publicado (PT e EN). _Não restaurar._
 - **(b) Link Delfos/Delphi** — ✅ já presente: PT `[Delfos](/pt/blog/os-tres-imperativos-em-delfos/)`,
   EN `[Delphi](/blog/the-three-imperatives-at-delphi/)`.
 - **(c) Jissô eterno (não "rocha eterna")** — ✅ já correto: PT "no _Jissô_
