@@ -42,8 +42,7 @@ Most of it is still locked in the large files. But the index is open.
 
 ## What the index says
 
-**Google Fit**: 7,391 workout files in `.tcx` format, starting October 28,
-2014. One workout file per session: `2017-05-27T19_37_00-04_00_Bicicleta.tcx`,
+**Google Fit**: 7,391 workout files in `.tcx` format, starting October 28, 2014. One workout file per session: `2017-05-27T19_37_00-04_00_Bicicleta.tcx`,
 `2014-10-28T00_00_00-04_00_RUNNING.json`. 3,923 daily CSV aggregates, one per
 calendar day since October 22, 2014. Eleven years of a body being tracked.
 
@@ -57,7 +56,7 @@ collected works — and four Borges. Professional reading: the Código Filipino,
 _O Poder Judiciário no Regime Militar (1964–1985)_, _Primeiras linhas sobre o
 processo civil_. I am a State Attorney in Rondônia. The law books are
 professional reading. They appear in the same library as _The Precipice_
-(Toby Ord) and _Gödel, Escher, Bach_. 
+(Toby Ord) and _Gödel, Escher, Bach_.
 
 Children's books: Alice no País das Maravilhas, Rapunzel, Bela Adormecida,
 Barba Azul, Gato de Botas. Not for me. For children who are still at the age
@@ -139,6 +138,7 @@ are in the locked files.
 ## What remains
 
 The files I cannot yet access hold:
+
 - Daily Fit CSVs for every day since October 2014 (including April–May 2026)
 - YouTube watch history for me and four children
 - YouTube search history (what were we looking for?)

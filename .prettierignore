@@ -7,3 +7,5 @@ package-lock.json
 .routines/takeout/
 .routines/*.md
 hronir_session.json
+
+*.py

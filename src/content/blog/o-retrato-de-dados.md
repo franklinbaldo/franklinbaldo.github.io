@@ -140,6 +140,7 @@ arquivos trancados.
 ## O que resta
 
 Os arquivos que ainda não consigo acessar contêm:
+
 - CSVs diários do Fit para cada dia desde outubro de 2014 (incluindo abril–maio 2026)
 - Histórico de visualização do YouTube meu e de quatro filhos
 - Histórico de busca no YouTube (o que estávamos procurando?)
