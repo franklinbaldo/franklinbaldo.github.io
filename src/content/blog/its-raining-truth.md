@@ -9,7 +9,7 @@ emoji: "🌧️"
 tags: ["philosophy", "seicho-no-ie", "culture", "atheism", "buddhism", "henrich", "rutt", "amazonia"]
 ---
 
-At fifteen I declared myself an atheist and considered the matter closed. It wasn't a crisis — it was a filing: religion, resolved, next question. And what I was, in practice, was a non-practicing atheist — I used without noticing the category that fits the Catholic who doesn't go to Mass, and it suited me perfectly: a background disbelief, lukewarm, that asked nothing of me. It worked for twenty-five years.
+At fifteen I declared myself an atheist and considered the matter closed. It wasn't a crisis — it was a filing: religion, resolved, next question. And what I was, in practice, was a non-practicing atheist — I used without noticing the category that fits the Catholic who doesn't go to Mass but still checks Catholic on the census, and it suited me perfectly: a background disbelief, lukewarm, that asked nothing of me. It worked for twenty-five years.
 
 Until I became a father.
 
@@ -57,7 +57,7 @@ The best analogy the text offers is cinema. The film itself, the sutra says, is 
 
 There's a point where I diverge, and it's the one that matters most, because it's where the inspection pays for itself. The sutra claims that Reality is eternal, doesn't change, doesn't die — and names this Reality _Jissō_, the True Image, perfect and immutable. That is: after dissolving matter into process, the text retreats and places, beneath everything, a rock that doesn't change. I don't have that rock; I think it's process all the way down, with no eternal floor. And notice the irony: at the point where I most disagree, the sutra is _more_ substantialist than I am, not less. I note the seam that doesn't close — but with less firmness than I'd like, and I'll explain why.
 
-And then, in the Wisdom section, comes the most intelligent line in the text, and almost nobody reads it as what it is. In the doctrines that admit Buddha, the sutra says, this is called delusion; in those that admit God, it is called sin. It's not cheap relativism. It's a thesis about translation: the same referent — disharmony, the fundamental error — receives different names depending on the vocabulary that reads it, and neither name is the final description. It's Quine's indeterminacy of translation. It's the doctrine of the two truths. It sits in a devotional poem dictated by an angel, in a house that recited it without ever discussing it — and it's the line that most rewards the argument.
+And then, in the Wisdom section, comes the most intelligent line in the text, and almost nobody reads it as what it is. In the doctrines that admit Buddha, the sutra says, this is called delusion; in those that admit God, it is called sin. It's not cheap relativism. It's a thesis about translation: the same referent — disharmony, the fundamental error — receives different names depending on the vocabulary that reads it, and neither name is the final description. It's Quine's indeterminacy of translation. It's the Buddhist doctrine of the two truths — the truth in the name, and the truth no name exhausts. It sits in a devotional poem dictated by an angel, in a house that recited it without ever discussing it — and it's the line that most rewards the argument.
 
 ## The Platonism I Rejected at Fifteen
 
