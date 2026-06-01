@@ -5,6 +5,35 @@ Head original do push que disparou o relatório pedido: `a332d44`
 
 ---
 
+## Re-verificação 2026-06-01 (branch `claude/happy-ritchie-6wfLM`, head `7ce0e60`)
+
+O corpo deste relatório foi gerado em `a332d44` e está **desatualizado** (o
+post sofreu o rewrite "version 7" em `7ce0e60`). Re-conferido contra o head
+atual:
+
+- **(a) IBGE/censo** — estava ausente; aplicado em `e8ee520` (PT "mas ainda
+  se declara no censo" / EN "but still checks Catholic on the census") e
+  depois **removido de propósito** em `9b862f9`, por decisão do autor de não
+  glosar "ateu não praticante" na abertura reescrita ("só coloca lá, o leitor
+  entende"). Estado final intencional: **sem a analogia do censo** no post
+  publicado (PT e EN). _Não restaurar._
+- **(b) Link Delfos/Delphi** — ✅ já presente: PT `[Delfos](/pt/blog/os-tres-imperativos-em-delfos/)`,
+  EN `[Delphi](/blog/the-three-imperatives-at-delphi/)`.
+- **(c) Jissô eterno (não "rocha eterna")** — ✅ já correto: PT "no _Jissô_
+  eterno e imutável"; EN "in the eternal and immutable _Jissō_".
+- **Refino da Sabedoria (Tarefa 1)** — glosa de "duas verdades" aplicada em
+  PT e EN, mantendo Quine.
+
+**CI / build**: `npm run build` passa (exit 0) no head atual. Único check
+de CI com falha é o Kilo Code Review, confirmado como no-op de
+infraestrutura (endpoint auth-walled, zero review comments inline).
+
+**Scratch**: `_review/relatorio-208.md` está **fora do content glob**
+(`base: ./src/content/blog`) e fora de `src/` — Astro nunca o emite; não
+aparece em `dist/`. Não vai para produção; mantido no repo.
+
+---
+
 ## CI
 
 Checks rodados no commit `a332d44` (head no momento da falha Kilo):
