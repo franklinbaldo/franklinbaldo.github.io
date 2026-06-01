@@ -26,7 +26,7 @@ const visibleTags = allTags.slice(0, 3);
 const overflowCount = allTags.length - visibleTags.length;
 ---
 
-<article data-post-lang={postLang}>
+<article data-post-lang={postLang} lang={postLang}>
   {heroImage && (
     <a href={href}>
       <Image

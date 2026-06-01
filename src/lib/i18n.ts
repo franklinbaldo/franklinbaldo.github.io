@@ -8,11 +8,13 @@ const UI_KEYS = [
   "nav.archive",
   "nav.tags",
   "nav.projects",
+  "nav.ranking",
   "nav.music",
   "nav.books",
   "nav.search",
   "nav.about",
   "nav.menu",
+  "archive.jumpToYear",
   "post.continueReading",
   "post.minutesRead",
   "post.updated",
@@ -81,6 +83,7 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "nav.archive": "Archive",
       "nav.tags": "Tags",
       "nav.projects": "Projects",
+      "nav.ranking": "Ranking",
       "nav.music": "Music",
       "nav.books": "Books",
       "nav.search": "Search",
@@ -129,6 +132,7 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "og.siteDescription":
         "Essays on AI agency, process metaphysics, and the architecture of legal systems.",
       "og.qrHint": "Scan to read",
+      "archive.jumpToYear": "Jump to year:",
     },
     targets: {
       pt: {
@@ -146,6 +150,7 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "nav.archive": "Arquivo",
       "nav.tags": "Tags",
       "nav.projects": "Projetos",
+      "nav.ranking": "Ranking",
       "nav.music": "Músicas",
       "nav.books": "Livros",
       "nav.search": "Buscar",
@@ -194,6 +199,7 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "og.siteDescription":
         "Ensaios sobre agentes de IA, metafísica do processo e a arquitetura dos sistemas jurídicos.",
       "og.qrHint": "Aponte para ler",
+      "archive.jumpToYear": "Ir para o ano:",
     },
     targets: {
       en: {
