@@ -15,19 +15,18 @@ draft: false
 author: franklin
 translationKey: delegating-to-agents
 previousVersion:
-  uuid: 89fe2121-7090-56d1-a0dd-adea417fea52
+  uuid: 78a1823e-289e-5332-9521-442b7373f11e
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/ef3d2a033d7c5faa5d30a91794447bfa98b1ee16/src/content/blog/the-art-of-delegation.md
-  timestamp: '2026-05-29T13:18:18.176Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/b60e690a4544790bcb3b73d128832a26afe59a69/src/content/blog/the-art-of-delegation.md
+  timestamp: '2026-06-01T13:18:30.836Z'
   msg: >-
-    Expôs a falha honesta da analogia assessor/agente: o assessor tem
-    responsabilidade profissional, o agente não — a assinatura carrega não só a
-    separação minuta/ato mas toda a accountability que o agente estruturalmente
-    não pode carregar. Adicionado incidente do tribunal para ancorar a tese: a
-    explicação ao juízo seria idêntica se fosse IA ou assessor, o que revela
-    onde o peso real da assinatura fica. Nova seção 'A falha honesta da
-    analogia' / 'The analogy's honest flaw'. Meme recaptionou para reconhecer
-    essa limitação.
+    Sharpened ending with circular callback to Feb incident; added rhythm-break
+    paragraph after the honest-flaw section's climax. The post's best
+    observation ('assessor is good' vs 'Jules is good' means different things)
+    was diluted by the section that followed; the new short paragraph lets it
+    land before moving on. New final line returns to the opening's two facts —
+    'the parecer was good' / 'the submission was not filed' — and reassigns each
+    to its proper subject, completing the argument without explaining it.
 ---
 
 The problem with most writing about AI delegation is not that it's wrong. It's that it's set in the wrong room.
@@ -62,6 +61,8 @@ The sandbox is necessary. It is not sufficient for accountability. The signature
 
 I did not see this clearly until I was writing out the analogy and noticed the sentence "the assessor is good" sounded reasonable in a way that "Jules is good" does not, and could not, quite mean the same thing. Both sentences describe capacity. Only one describes a person who can be accountable for anything.
 
+I had been thinking of the signature as a formality. It is a formality. It is also the thing that makes the February mistake mine and not Jules's.
+
 <figure class="meme">
   <img
     src="https://api.memegen.link/images/drake/Micromanaging_the_agent's_prompts/Constraining_the_agent's_sandbox.png?width=500"
@@ -79,7 +80,7 @@ Funes opens pull requests; he does not merge them. He updates memory files; he d
 
 _Reversível → age, irreversível → pergunta._ That is not just a safety heuristic; it is a decision about where accountability concentrates. Every action the agent takes freely is an action whose accountability has been pre-delegated by whoever designed the harness. Every action requiring a signature is an action whose accountability remains explicitly with the human who signs.
 
-The assessor is good. The agent is capable. Neither of those facts changes who signs — or where the accountability lives when the signature turns out to be wrong.
+The _parecer_ was good. That sentence is about the assessor. The submission was not filed. That sentence is about me.
 
 ## For further reading
 

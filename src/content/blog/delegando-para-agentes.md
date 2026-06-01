@@ -15,19 +15,18 @@ draft: false
 author: franklin
 translationKey: delegating-to-agents
 previousVersion:
-  uuid: ca3ac053-fbb8-5ff8-8b3f-72abfe0675f0
+  uuid: 2d89ce9f-f3ba-5e30-83b0-3f71609adc10
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/ef3d2a033d7c5faa5d30a91794447bfa98b1ee16/src/content/blog/delegando-para-agentes.md
-  timestamp: '2026-05-29T13:18:18.176Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/b60e690a4544790bcb3b73d128832a26afe59a69/src/content/blog/delegando-para-agentes.md
+  timestamp: '2026-06-01T13:18:30.836Z'
   msg: >-
-    Expôs a falha honesta da analogia assessor/agente: o assessor tem
-    responsabilidade profissional, o agente não — a assinatura carrega não só a
-    separação minuta/ato mas toda a accountability que o agente estruturalmente
-    não pode carregar. Adicionado incidente do tribunal para ancorar a tese: a
-    explicação ao juízo seria idêntica se fosse IA ou assessor, o que revela
-    onde o peso real da assinatura fica. Nova seção 'A falha honesta da
-    analogia' / 'The analogy's honest flaw'. Meme recaptionou para reconhecer
-    essa limitação.
+    Sharpened ending with circular callback to Feb incident; added rhythm-break
+    paragraph after the honest-flaw section's climax. The post's best
+    observation ('assessor is good' vs 'Jules is good' means different things)
+    was diluted by the section that followed; the new short paragraph lets it
+    land before moving on. New final line returns to the opening's two facts —
+    'the parecer was good' / 'the submission was not filed' — and reassigns each
+    to its proper subject, completing the argument without explaining it.
 ---
 
 O problema com a maior parte do que se escreve sobre delegação para IA não é que esteja errado. É que está ambientado na sala errada.
@@ -62,6 +61,8 @@ A caixa de areia é necessária. Ela não é suficiente para responsabilidade. O
 
 Não enxerguei isso claramente até estar escrevendo a analogia e perceber que a frase "o assessor é bom" soava razoável de um jeito que "o Jules é bom" não soa, e não pode soar, com o mesmo significado. Ambas as frases descrevem capacidade. Só uma descreve uma pessoa que pode ser responsável por algo.
 
+Eu tinha pensado na assinatura como uma formalidade. É uma formalidade. É também a coisa que faz o erro de fevereiro ser meu e não do Jules.
+
 <figure class="meme">
   <img
     src="https://api.memegen.link/images/drake/Micromanaging_the_agent's_prompts/Constraining_the_agent's_sandbox.png?width=500"
@@ -79,7 +80,7 @@ O Funes abre pull requests; ele não faz merge. Ele atualiza arquivos de memóri
 
 _Reversível → age, irreversível → pergunta._ Isso não é apenas uma heurística de segurança; é uma decisão sobre onde a responsabilidade se concentra. Cada ação que o agente toma livremente é uma ação cuja responsabilidade foi pré-delegada por quem projetou o _harness_. Cada ação que exige assinatura é uma ação cuja responsabilidade permanece explicitamente com o ser humano que assina.
 
-O assessor é bom. O agente é capaz. Nenhum desses fatos muda quem assina — nem onde fica a responsabilidade quando a assinatura se mostrar errada.
+O _parecer_ estava bom. Essa frase é sobre o assessor. A manifestação não foi protocolada. Essa frase é sobre mim.
 
 ## Para se aprofundar
 
