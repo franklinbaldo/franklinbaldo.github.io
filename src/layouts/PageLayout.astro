@@ -94,6 +94,7 @@ const jsonLd = type === "article"
       image: ogImage,
       isAccessibleForFree: true,
       ...(tags?.length && { keywords: tags.join(", ") }),
+      ...(tags?.length && { articleSection: tags[0] }),
       ...(wordCount && { wordCount }),
       ...(wordCount && { timeRequired: `PT${Math.max(1, Math.ceil(wordCount / 200))}M` }),
     }
