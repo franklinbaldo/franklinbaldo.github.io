@@ -129,6 +129,7 @@ const personLd = {
 <html lang={langBcp47}>
   <head>
     <meta charset="UTF-8" />
+    <meta name="color-scheme" content="dark light" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{documentTitle}</title>
     <meta name="description" content={description} />
@@ -144,6 +145,7 @@ const personLd = {
     <meta name="theme-color" content="#fdfdfd" media="(prefers-color-scheme: light)" />
     <link rel="canonical" href={canonical.href} />
     <link rel="alternate" type="application/rss+xml" title={lang === 'pt' ? 'Franklin Baldo (Português)' : 'Franklin Baldo'} href={rssUrl} />
+    <link rel="alternate" type="application/rss+xml" title={lang === 'pt' ? 'Franklin Baldo (English)' : 'Franklin Baldo (Português)'} href={new URL(lang === 'pt' ? 'rss.xml' : 'pt/rss.xml', Astro.site)} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     {hasMath && <link rel="stylesheet" href="/katex/katex.min.css" />}
 
@@ -179,7 +181,7 @@ const personLd = {
     {modifiedTime && (
       <meta property="article:modified_time" content={modifiedTime.toISOString()} />
     )}
-    {type === 'article' && <meta property="article:author" content={Astro.site ? new URL("/about/", Astro.site).href : "/about/"} />}
+    {type === 'article' && <meta property="article:author" content={Astro.site ? new URL(lang === 'pt' ? '/pt/about/' : '/about/', Astro.site).href : (lang === 'pt' ? '/pt/about/' : '/about/')} />}
     {tags?.map((tag) => <meta property="article:tag" content={tag} />)}
 
     <meta name="twitter:card" content="summary_large_image" />
@@ -217,11 +219,17 @@ const personLd = {
       window.__translations = translations || {};
     </script>
     <script is:inline>
-      // Move focus to <main> after ClientRouter (SPA) navigations so keyboard
-      // and screen-reader users land in the new content, not limbo.
+      // Move focus to <h1> (or <main> as fallback) after ClientRouter (SPA) navigations
+      // so screen readers announce the new page title instead of a silent focus.
       document.addEventListener('astro:after-swap', () => {
-        const main = document.getElementById('main');
-        if (main) main.focus({ preventScroll: true });
+        const h1 = document.querySelector('h1');
+        if (h1) {
+          h1.tabIndex = -1;
+          h1.focus({ preventScroll: true });
+        } else {
+          const main = document.getElementById('main');
+          if (main) main.focus({ preventScroll: true });
+        }
       });
     </script>
   </head>
