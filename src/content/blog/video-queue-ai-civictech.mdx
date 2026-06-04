@@ -1,10 +1,10 @@
 ---
-title: "35 talks I'm planning to watch: AI agents, civic tech, and digital democracy"
+title: '35 talks I''m planning to watch: AI agents, civic tech, and digital democracy'
 description: >-
   From pelicans on bicycles to Querido Diário, vTaiwan, and Polis — a personal
   queue of 35 videos across AI engineering, govtech, and participatory
   infrastructure.
-date: "2026-05-24"
+date: '2026-05-24'
 lang: en
 translationKey: video-queue-ai-civictech-2026-05
 tags:
@@ -16,16 +16,15 @@ tags:
 draft: false
 emoji: "\U0001F4FA"
 previousVersion:
-  uuid: 45df5f9e-91f6-520f-aae0-eba48ec736a3
+  uuid: 84212fc6-4965-515f-8fae-ae37509f17f8
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/edc19037e34a3de14e345c7c405b8ae1c6ee3e83/src\content\blog\2026-05-24-video-queue-ai-civictech.mdx
-  timestamp: "2026-05-24T20:24:30.975Z"
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/814b9cb0848b8ce3c958a485c09c9194868477e5/src/content/blog/video-queue-ai-civictech.mdx
+  timestamp: '2026-06-04T13:19:07.018Z'
   msg: >-
-    Refatorado o post de watchlists do YouTube para tecer a voz narrativa
-    confessional do Franklin, ligando-o com Porto Velho, Canivete e causaganha.
-    Títulos de seção reescritos para formato evocativo, inserção de diagrama
-    Mermaid de fluxo de civic tech para descanso visual, e fechamento com frase
-    de impacto deadpan.
+    Remove pedagogical scaffolding from closing section; add brief context to AI
+    engineering table for less-known names (MCP, 12-factor agents, IDE-death
+    talk); remove horizontal rule dividers; vary closing line away from
+    deadpan-refusal tic
 ---
 
 I have a habit of accumulating queues because it feels like the cheapest way to simulate progress.
@@ -38,11 +37,9 @@ Most of these are not recommendations. To recommend a talk, you have to have wat
 
 Two clusters. The first is software engineering and AI—mostly from 2025, when the word 'agent' went from a conceptual framework to a CLI tool you could actually run. The second is civic tech and govtech, which I've been calling 'civil tech' in my drafts until Canivete pointed out the term doesn't exist. The name is civic tech, even if the tools often feel like they belong in a museum of good intentions.
 
----
-
 ## Where the code meets the latent space
 
-The AI engineering cluster runs from very practical (how to build reliable agents) to philosophical (what are we actually doing here). Dex Horthy appears twice because his 12-factor agents framing keeps coming up in conversations and I want to read the source, not the second-hand summaries.
+The AI engineering cluster runs from very practical (how to build reliable agents) to philosophical (what are we actually doing here). [Dex Horthy's 12-factor agents](https://github.com/humanlayer/12-factor-agents) — a framework for building reliable LLM applications, borrowing the structure from the twelve-factor app methodology — appears twice because the framing keeps coming up and I want the source, not summaries. MCP is the [Model Context Protocol](https://modelcontextprotocol.io/), the standard that lets language models talk to external tools and data. The IDE-death talk is Steve Yegge and Gene Kim asking what happens to programming environments when AI writes most of the code.
 
 |   # | Talk                                                                                                                            |
 | --: | ------------------------------------------------------------------------------------------------------------------------------- |
@@ -66,8 +63,6 @@ The AI engineering cluster runs from very practical (how to build reliable agent
 |  18 | [Decoding the secrets of life with AI — Mikhail Burtsev](https://www.youtube.com/watch?v=l28WCnZXNNg)                           |
 |  19 | [The Battle of Khasham — The Operations Room](https://www.youtube.com/watch?v=T6Ii45jxsLE)                                      |
 |  20 | [New CSS features to know for 2025 — Kevin Powell](https://www.youtube.com/watch?v=jSCgZqoebsM)                                 |
-
----
 
 ## What civic tech smells like when it's real
 
@@ -109,32 +104,16 @@ This is the cluster I'm more interested in right now. I work in public administr
 
 ```mermaid
 graph TD
-  PDF["The PDF (Graveyard of Data)"] -->|1. OKBR / Querido Diário| API["Searchable Public API"]
-  API -->|2. Brasil.IO / DadosJusBr| Structured["Structured Public Rails"]
-  Structured -->|3. GetCalFresh / Summer EBT| Service["Real Service Delivery"]
-  Structured -->|4. vTaiwan / Decidim / Polis| Deliberation["Deliberative Public Assembly"]
+  PDF["The PDF (Graveyard of Data)"] -->|OKBR / Querido Diário| API["Searchable Public API"]
+  API -->|Brasil.IO / DadosJusBr| Structured["Structured Public Rails"]
+  Structured -->|GetCalFresh / Summer EBT| Service["Real Service Delivery"]
+  Structured -->|vTaiwan / Decidim / Polis| Deliberation["Deliberative Public Assembly"]
 ```
 
----
+The queue is not a database; it is a trajectory — though I haven't convinced myself yet that watching in any particular order changes what you learn. The movement from Brazilian data liberation to service delivery to deliberative infrastructure is a theory, not a lesson plan. It ends at questions I don't know how to answer yet, which is usually a sign the queue is worth the time.
 
-## The path through the thicket
+[causaganha](https://github.com/franklinbaldo/causaganha) has been sitting in my repository for three years — a scraper for Rondônia's official gazette that would do for Rondônia what Querido Diário does for municipalities across Brazil. Every few months I open it, add something, close it again. The moment I stop writing code, the official gazette returns to being a pile of unindexed PDFs.
 
-The queue is not a database; it is a trajectory.
+A pipeline that doesn't run is just steel sitting in the dirt.
 
-If I watch these in isolation, they are just thirty-five people talking in well-lit rooms. The sequence has to argue with itself. I'm starting with the civic tech cluster because that is where the friction lives for me right now. The watch order I'm following is a path from data extraction to actual governance:
-
-1. **Querido Diário API** — Brazilian data liberation, close to home
-2. **Brasil.IO: Dados abertos para mais democracia** — the infrastructure that makes the data usable
-3. **AI Studio: government's PDF problem** — where AI meets public administration concretely
-4. **Summer EBT / GetCalFresh** — benefits delivery as the unit of real civic-tech success
-5. **vTaiwan** — the most complete case study of civic tech that actually changed governance
-6. **Polis / Computational Democracy** — the mathematical infrastructure for deliberation at scale
-7. **Decidim** — the platform layer for participatory processes
-
-That sequence moves from **Brazilian data liberation** → **public-service delivery** → **deliberative and democratic infrastructure**. It ends at questions I don't know how to answer yet, which is usually a sign the queue is worth the time.
-
-The illusion of the queue is that the list itself is an achievement. You annotated it, you sorted it, you formatted the Markdown. It looks like a pipeline.
-
-But a pipeline that doesn't run is just steel sitting in the dirt. I know this because causaganha has been sitting in my repository for three years, and the moment I stop writing code, the official gazette returns to being a pile of unindexed PDFs. The queue will wait. The browser will eventually crash and release the memory.
-
-The list is clean. The code is unwritten. Only one of them survives the weekend.
+The tabs stay open until the machine decides otherwise.
