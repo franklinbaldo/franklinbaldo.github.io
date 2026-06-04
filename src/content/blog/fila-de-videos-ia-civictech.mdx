@@ -1,5 +1,7 @@
 ---
-title: "35 palestras que pretendo assistir: agentes de IA, civic tech e democracia digital"
+title: >-
+  35 palestras que pretendo assistir: agentes de IA, civic tech e democracia
+  digital
 description: >-
   De pelicanos em bicicletas ao Querido Diário, vTaiwan e Polis — uma fila
   pessoal de 35 vídeos sobre engenharia de IA, govtech e infraestrutura
@@ -14,7 +16,17 @@ tags:
   - agents
   - video-queue
 draft: false
-emoji: "📺"
+emoji: "\U0001F4FA"
+previousVersion:
+  uuid: fd377af0-97f2-53fb-a0e2-9bd2b14d2d50
+  url: >-
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/814b9cb0848b8ce3c958a485c09c9194868477e5/src/content/blog/fila-de-videos-ia-civictech.mdx
+  timestamp: "2026-06-04T13:19:07.018Z"
+  msg: >-
+    Remove pedagogical scaffolding from closing section; add brief context to AI
+    engineering table for less-known names (MCP, 12-factor agents, IDE-death
+    talk); remove horizontal rule dividers; vary closing line away from
+    deadpan-refusal tic
 ---
 
 Tenho o hábito de acumular filas porque parece a forma mais barata de simular progresso.
@@ -27,11 +39,9 @@ A maioria desses não são recomendações. Para recomendar uma palestra, você 
 
 Dois agrupamentos. O primeiro é engenharia de software e IA — principalmente de 2025, quando a palavra "agente" passou de um enquadramento conceitual para uma ferramenta de linha de comando que você podia realmente executar. O segundo é civic tech e govtech, que tenho chamado de "civil tech" nos meus rascunhos até o Canivete apontar que o termo não existe. O nome é civic tech, mesmo que as ferramentas muitas vezes pareçam pertencer a um museu de boas intenções.
 
----
-
 ## Onde o código encontra o espaço latente
 
-O agrupamento de engenharia de IA vai do muito prático (como construir agentes confiáveis) ao filosófico (o que estamos realmente fazendo aqui). Dex Horthy aparece duas vezes porque seu enquadramento de agentes em 12 fatores continua surgindo em conversas e quero ler a fonte, não os resumos de segunda mão.
+O agrupamento de engenharia de IA vai do muito prático (como construir agentes confiáveis) ao filosófico (o que estamos realmente fazendo aqui). Os [12-factor agents de Dex Horthy](https://github.com/humanlayer/12-factor-agents) — um framework para construir aplicações LLM confiáveis, emprestando a estrutura da metodologia twelve-factor app — aparecem duas vezes porque o enquadramento continua surgindo em conversas e quero a fonte, não os resumos. O MCP é o [Model Context Protocol](https://modelcontextprotocol.io/), o padrão que permite que modelos de linguagem conversem com ferramentas e fontes de dados externas. As palestras sobre a morte da IDE são Steve Yegge e Gene Kim perguntando o que acontece com ambientes de programação quando a IA escreve a maior parte do código.
 
 |   # | Palestra                                                                                                                          |
 | --: | --------------------------------------------------------------------------------------------------------------------------------- |
@@ -55,8 +65,6 @@ O agrupamento de engenharia de IA vai do muito prático (como construir agentes 
 |  18 | [Decodificando os segredos da vida com IA — Mikhail Burtsev](https://www.youtube.com/watch?v=l28WCnZXNNg)                         |
 |  19 | [A Batalha de Khasham — The Operations Room](https://www.youtube.com/watch?v=T6Ii45jxsLE)                                         |
 |  20 | [Novos recursos CSS para conhecer em 2025 — Kevin Powell](https://www.youtube.com/watch?v=jSCgZqoebsM)                            |
-
----
 
 ## O que a civic tech cheira quando é de verdade
 
@@ -98,32 +106,16 @@ Este é o agrupamento que mais me interessa agora. Trabalho na administração p
 
 ```mermaid
 graph TD
-  PDF["O PDF (Cemitério de Dados)"] -->|1. OKBR / Querido Diário| API["API Pública Pesquisável"]
-  API -->|2. Brasil.IO / DadosJusBr| Structured["Trilhos Públicos Estruturados"]
-  Structured -->|3. GetCalFresh / Summer EBT| Service["Entrega Real de Serviços"]
-  Structured -->|4. vTaiwan / Decidim / Polis| Deliberation["Assembleia Pública Deliberativa"]
+  PDF["O PDF (Cemitério de Dados)"] -->|OKBR / Querido Diário| API["API Pública Pesquisável"]
+  API -->|Brasil.IO / DadosJusBr| Structured["Trilhos Públicos Estruturados"]
+  Structured -->|GetCalFresh / Summer EBT| Service["Entrega Real de Serviços"]
+  Structured -->|vTaiwan / Decidim / Polis| Deliberation["Assembleia Pública Deliberativa"]
 ```
 
----
+A fila não é um banco de dados; é uma trajetória — embora eu ainda não tenha me convencido de que assistir em determinada ordem muda o que você aprende. O movimento da libertação de dados brasileiros até a entrega de serviços até a infraestrutura deliberativa é uma teoria, não um plano de aula. Termina em perguntas que ainda não sei responder, o que geralmente é um sinal de que a fila vale o tempo.
 
-## O caminho pelo matagal
+O [causaganha](https://github.com/franklinbaldo/causaganha) está no meu repositório há três anos — um scraper para o diário oficial de Rondônia que faria pelo estado o que o Querido Diário faz pelos municípios em todo o Brasil. De vez em quando eu o abro, adiciono algo, fecho de novo. No momento em que paro de escrever código, o diário oficial volta a ser uma pilha de PDFs não indexados.
 
-A fila não é um banco de dados; é uma trajetória.
+Um pipeline que não roda é apenas aço sentado na terra.
 
-Se eu assistir a esses vídeos isoladamente, são apenas trinta e cinco pessoas falando em salas bem iluminadas. A sequência tem que argumentar consigo mesma. Começo com o agrupamento de civic tech porque é onde a fricção vive para mim agora. A ordem de visualização que sigo é um caminho da extração de dados até a governança real:
-
-1. **API do Querido Diário** — libertação de dados brasileiros, perto de casa
-2. **Brasil.IO: Dados abertos para mais democracia** — a infraestrutura que torna os dados utilizáveis
-3. **AI Studio: o problema de PDF do governo** — onde a IA encontra a administração pública de forma concreta
-4. **Summer EBT / GetCalFresh** — entrega de benefícios como a unidade de sucesso real da civic tech
-5. **vTaiwan** — o estudo de caso mais completo de civic tech que realmente mudou a governança
-6. **Polis / Democracia Computacional** — a infraestrutura matemática para deliberação em escala
-7. **Decidim** — a camada de plataforma para processos participativos
-
-Essa sequência vai da **libertação de dados brasileiros** → **entrega de serviços públicos** → **infraestrutura deliberativa e democrática**. Termina em perguntas que ainda não sei responder, o que geralmente é um sinal de que a fila vale o tempo.
-
-A ilusão da fila é que a lista em si é uma conquista. Você a anotou, classificou, formatou o Markdown. Parece um pipeline.
-
-Mas um pipeline que não roda é apenas aço sentado na terra. Sei disso porque o causaganha está no meu repositório há três anos, e no momento em que paro de escrever código, o diário oficial volta a ser uma pilha de PDFs não indexados. A fila vai esperar. O navegador vai eventualmente travar e liberar a memória.
-
-A lista está limpa. O código está não escrito. Apenas um deles sobrevive ao fim de semana.
+As abas ficam abertas até a máquina decidir o contrário.
