@@ -215,6 +215,14 @@
     "pt": "/pt/blog/o-que-o-inverno-abre/",
     "en": "/blog/what-winter-opens/"
   },
+  "/pt/blog/o-retrato-de-dados/": {
+    "pt": "/pt/blog/o-retrato-de-dados/",
+    "en": "/blog/the-data-portrait/"
+  },
+  "/blog/the-data-portrait/": {
+    "pt": "/pt/blog/o-retrato-de-dados/",
+    "en": "/blog/the-data-portrait/"
+  },
   "/pt/blog/o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim/": {
     "pt": "/pt/blog/o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim/",
     "en": "/blog/the-intelligible-void-hassabis-and-events/"

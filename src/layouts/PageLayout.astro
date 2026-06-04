@@ -86,12 +86,17 @@ const jsonLd = type === "article"
       description,
       inLanguage: langBcp47,
       author: { "@type": "Person", name: "Franklin Baldo", url: Astro.site?.href },
+      publisher: { "@type": "Person", name: "Franklin Baldo", url: Astro.site?.href },
       datePublished: publishedTime?.toISOString(),
       ...(modifiedTime && { dateModified: modifiedTime.toISOString() }),
       mainEntityOfPage: canonical.href,
+      url: canonical.href,
       image: ogImage,
+      isAccessibleForFree: true,
       ...(tags?.length && { keywords: tags.join(", ") }),
+      ...(tags?.length && { articleSection: tags[0] }),
       ...(wordCount && { wordCount }),
+      ...(wordCount && { timeRequired: `PT${Math.max(1, Math.ceil(wordCount / 200))}M` }),
     }
   : {
       "@context": "https://schema.org",
@@ -164,6 +169,7 @@ const personLd = {
     <meta property="og:locale" content={ogLocale} />
     {alternateOgLocales.map((l) => <meta property="og:locale:alternate" content={l} />)}
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
     <meta property="og:image:alt" content={title} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />

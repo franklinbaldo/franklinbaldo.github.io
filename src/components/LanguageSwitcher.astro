@@ -52,11 +52,70 @@ const ariaTable = Object.fromEntries(
     const pageLang = window.__pageLang || document.documentElement.lang || defaultLang;
     const fromCurrent = targetCopyTable[pageLang] || {};
 
+    // Show a dismissible toast if the user was just auto-redirected to this page.
+    const redirectedFrom = sessionStorage.getItem('lang-redirect-from');
+    if (redirectedFrom) {
+      sessionStorage.removeItem('lang-redirect-from');
+      const backHref = translations[redirectedFrom];
+      if (backHref) {
+        const backCopy = (targetCopyTable[pageLang] || {})[redirectedFrom];
+        const backLabel = (backCopy && backCopy.shortLabel) || redirectedFrom.toUpperCase();
+        const noticeMsg =
+          pageLang === 'pt'
+            ? 'Exibindo em Português conforme sua preferência.'
+            : 'Showing in English based on your preference.';
+        const closeLabel = pageLang === 'pt' ? 'Fechar' : 'Close';
+
+        if (!document.getElementById('lg-toast-style')) {
+          const s = document.createElement('style');
+          s.id = 'lg-toast-style';
+          s.textContent =
+            '#lg-toast{position:fixed;bottom:1.25rem;right:1rem;z-index:100;' +
+            'background:var(--pico-card-background-color,#fdfdfd);' +
+            'border:1px solid var(--pico-muted-border-color,#ccc);' +
+            'border-radius:.5rem;padding:.55rem .9rem;font-size:.82rem;' +
+            'display:flex;align-items:center;gap:.75rem;' +
+            'box-shadow:0 4px 20px rgba(0,0,0,.12);' +
+            'animation:lgIn .25s ease;max-width:calc(100vw - 2rem);}' +
+            '@keyframes lgIn{from{transform:translateY(.5rem);opacity:0}to{transform:translateY(0);opacity:1}}' +
+            '#lg-toast a{white-space:nowrap;font-weight:500;}' +
+            '#lg-toast button{background:none;border:none;cursor:pointer;padding:0 .2rem;' +
+            'color:var(--pico-muted-color);font-size:1.1em;line-height:1;}';
+          document.head.appendChild(s);
+        }
+
+        const toast = document.createElement('div');
+        toast.id = 'lg-toast';
+        toast.setAttribute('role', 'status');
+        toast.setAttribute('aria-live', 'polite');
+
+        const msgEl = document.createElement('span');
+        msgEl.textContent = noticeMsg;
+
+        const linkEl = document.createElement('a');
+        linkEl.href = backHref;
+        linkEl.textContent = backLabel + ' →';
+
+        const closeEl = document.createElement('button');
+        closeEl.setAttribute('aria-label', closeLabel);
+        closeEl.textContent = '×';
+        const removeToast = () => toast.remove();
+        closeEl.addEventListener('click', removeToast);
+
+        toast.appendChild(msgEl);
+        toast.appendChild(linkEl);
+        toast.appendChild(closeEl);
+        document.body.appendChild(toast);
+        setTimeout(removeToast, 7000);
+      }
+    }
+
     // Auto-redirect once if user prefers a different language and a translation exists.
     if (translations[userLang] && pageLang !== userLang) {
       const key = 'visited:' + location.pathname;
       if (!sessionStorage.getItem(key)) {
         sessionStorage.setItem(key, '1');
+        sessionStorage.setItem('lang-redirect-from', pageLang);
         location.href = translations[userLang];
         return;
       }

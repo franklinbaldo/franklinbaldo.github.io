@@ -39,7 +39,7 @@ for (const p of all) {
     lang === "pt"
       ? p
       : all.find((q) => q.data.translationKey === key && (q.data.lang ?? "en") === "pt") ?? p;
-  unrated.push({ slug: preferred.id, title: preferred.data.title });
+  unrated.push({ slug: preferred.id, title: preferred.data.title, lang: preferred.data.lang ?? "pt" });
   seenUnrated.add(key);
 }
 unrated.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
@@ -59,7 +59,7 @@ const itemListLd = {
     "@type": "ListItem",
     position: r.rank,
     name: r.post ? r.post.title : r.key,
-    url: r.post ? `https://franklinbaldo.github.io/blog/${r.post.slug}/` : undefined,
+    url: r.post ? `https://franklinbaldo.github.io/${r.post.lang === "pt" ? "pt/" : ""}blog/${r.post.slug}/` : undefined,
   })).filter((item) => item.url),
 };
 

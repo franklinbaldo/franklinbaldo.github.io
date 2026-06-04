@@ -15,6 +15,7 @@ export interface EnrichedRow extends RankRow {
 export interface UnratedItem {
   slug: string;
   title: string;
+  lang: string;
 }
 
 export interface RankingStrings {
@@ -111,7 +112,8 @@ function postLabel(key: string): string {
 }
 function postHref(key: string): string | null {
   const p = postByKey.get(key);
-  return p ? `/blog/${p.slug}/` : null;
+  if (!p) return null;
+  return p.lang === "pt" ? `/pt/blog/${p.slug}/` : `/blog/${p.slug}/`;
 }
 ---
 
@@ -147,7 +149,11 @@ function postHref(key: string): string | null {
   <section class="rank-podium" aria-label={strings.podiumLabel}>
     {podium.map((r, i) => {
       const meta = podiumMeta[i];
-      const href = r.post ? `/blog/${r.post.slug}/` : null;
+      const href = r.post
+        ? r.post.lang === "pt"
+          ? `/pt/blog/${r.post.slug}/`
+          : `/blog/${r.post.slug}/`
+        : null;
       return (
         <article class={`podium-card podium-${meta.place}`}>
           <header class="podium-head">
@@ -203,7 +209,7 @@ function postHref(key: string): string | null {
               <th scope="row" class="col-rank">{r.rank}</th>
               <td class="col-post">
                 {r.post ? (
-                  <a href={`/blog/${r.post.slug}/`}>{r.post.title}</a>
+                  <a href={r.post.lang === "pt" ? `/pt/blog/${r.post.slug}/` : `/blog/${r.post.slug}/`}>{r.post.title}</a>
                 ) : (
                   <code>{r.key}</code>
                 )}
@@ -236,7 +242,7 @@ function postHref(key: string): string | null {
     <p><small>{strings.unratedBlurb}</small></p>
     <ul>
       {unrated.map((u) => (
-        <li><a href={`/blog/${u.slug}/`}>{u.title}</a></li>
+        <li><a href={u.lang === "pt" ? `/pt/blog/${u.slug}/` : `/blog/${u.slug}/`}>{u.title}</a></li>
       ))}
     </ul>
   </section>
