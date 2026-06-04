@@ -24,19 +24,19 @@ locked door.
 The Goodreads public shelf was always there.
 
 One hundred books, rated over what the date stamps suggest is at least a decade. The
-earliest with a confirmed date: *Cat's Cradle* in July 2014. Twenty-three rated at
+earliest with a confirmed date: _Cat's Cradle_ in July 2014. Twenty-three rated at
 five stars. None of them cited in the six April-May essays. This is the data portrait
 the Takeout was reaching for but couldn't provide: not what was owned, but what was
 actually read and what it was worth.
 
 ## The Gospel That Preceded the Audit
 
-One of the twenty-three five-star ratings: *The Gospel According to Jesus Christ* by
+One of the twenty-three five-star ratings: _The Gospel According to Jesus Christ_ by
 José Saramago.
 
 Saramago's novel imagines Jesus gradually realizing that God had a plan for him that
 involved suffering — and that God knew the cost before the plan began. The novel's
-drama is not the sacrifice. It is the question Jesus eventually asks: *did you know?*
+drama is not the sacrifice. It is the question Jesus eventually asks: _did you know?_
 God's answer is something close to yes. What follows is theology dressed as love,
 not accounting.
 
@@ -61,27 +61,27 @@ it became the instruction of the seventh draft.
 ## The Constellation That Forms No School
 
 Twenty-three books at five stars do not belong to any movement. Someone who gives five
-stars to *Capitalism and Freedom* (Friedman, 1962) and five stars to *Vidas Secas*
+stars to _Capitalism and Freedom_ (Friedman, 1962) and five stars to _Vidas Secas_
 (Graciliano Ramos, 1938) — a novel about a family dying of drought under the same
 economic conditions Friedman celebrates — is not reading for confirmation. The library
 is not a manifesto. It is an accumulated result.
 
-Liu Cixin's trilogy sits there in full, all three books at five stars. *The Three-Body
-Problem*, *The Dark Forest*, *Death's End*. A civilization story in which strategic
+Liu Cixin's trilogy sits there in full, all three books at five stars. _The Three-Body
+Problem_, _The Dark Forest_, _Death's End_. A civilization story in which strategic
 silence destroys everything, then escalating violence destroys what silence left behind,
 then the universe's selection logic completes what the first two couldn't. This trilogy
 has never appeared in the blog. It is the unwritten post the library has been holding
 since it was read.
 
-*The Anthropocene Reviewed* is also five stars. John Green's book gives five-star
+_The Anthropocene Reviewed_ is also five stars. John Green's book gives five-star
 ratings to things — to the sycamore tree, to the common cold, to the feeling of being
 watched by a dog. Each essay is a small audit of something inherited and usually
 unexamined. This is the structural model of what the blog is attempting: essays that
 treat their object with enough seriousness to find out what it actually is. Green built
 the model first; the blog builds on it without acknowledging the debt.
 
-Hermann Hesse appears twice: *Steppenwolf* and *Siddhartha*, both five stars. Kerouac's
-*The Dharma Bums* is four. Together they trace the thread that runs through "It's Raining
+Hermann Hesse appears twice: _Steppenwolf_ and _Siddhartha_, both five stars. Kerouac's
+_The Dharma Bums_ is four. Together they trace the thread that runs through "It's Raining
 Truth" without being named there: the twentieth-century Western encounter with Eastern
 spiritual frameworks, the person who cannot accept inherited cosmology and discovers
 they must build something in its place. The essay did not cite any of them. They
