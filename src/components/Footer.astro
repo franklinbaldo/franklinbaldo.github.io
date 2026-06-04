@@ -35,9 +35,30 @@ const footerNav = [
     <ul>
       <li><small><a href={rssHref}>RSS</a></small></li>
       <li><small><a href="https://github.com/franklinbaldo" rel="me">GitHub</a></small></li>
+      <li id="footer-lang-li" style="display:none">
+        <small><a id="footer-lang-link" href="#" class="secondary"></a></small>
+      </li>
     </ul>
   </nav>
 </footer>
+<script is:inline>
+  (() => {
+    const translations = window.__translations || {};
+    const pageLang = window.__pageLang || document.documentElement.lang || "en";
+    const target = Object.keys(translations).find((k) => k !== pageLang);
+    const li = document.getElementById("footer-lang-li");
+    const link = document.getElementById("footer-lang-link");
+    if (!li || !link || !target) return;
+    link.href = translations[target];
+    link.textContent = target === "pt" ? "Português" : "English";
+    link.setAttribute(
+      "aria-label",
+      target === "pt" ? "Ver em Português" : "View in English"
+    );
+    link.onclick = () => localStorage.setItem("lang", target);
+    li.style.display = "";
+  })();
+</script>
 
 <style>
   @media (max-width: 768px) {

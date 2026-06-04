@@ -1,5 +1,7 @@
 @import "@picocss/pico/css/pico.orange.min.css";
-@import "@fontsource/inter";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
 @import "./tokens.css";
 @import "./typography.css";
 
