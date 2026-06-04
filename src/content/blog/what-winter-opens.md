@@ -99,8 +99,7 @@ The habit of monitoring came back before the habit of training.
 
 The session data from Fit, finally enumerated in this seventh session: 804 cycling
 sessions, 211 runs, 260 recorded sleep sessions across twelve years of history. The
-peak year was 2022, with 2,127 active sessions. In 2025, through the September cutoff:
-265. The decline isn't abandonment — it's redistribution. What used to go into
+peak year was 2022, with 2,127 active sessions. In 2025, through the September cutoff: 265. The decline isn't abandonment — it's redistribution. What used to go into
 tracking went somewhere else.
 
 Four children. A 76-year-old father whose memories I'm preserving via agents. A sutra
