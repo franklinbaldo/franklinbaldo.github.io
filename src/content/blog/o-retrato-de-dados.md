@@ -16,18 +16,20 @@ tags:
 translationKey: data-portrait-2026
 emoji: "\U0001F5C3️"
 previousVersion:
-  uuid: 9fdd8cf0-bff5-5499-8000-d17fac555baa
+  uuid: a9ce02b9-ff41-5316-86f0-8617c54bb224
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/7e4ccec62b9211551bd152fd81fa2ebed413dd8b/src/content/blog/o-retrato-de-dados.md
-  timestamp: '2026-06-02T13:19:20.437Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/b9c1fb8dd8a29fb8a35a1895642b3b87de5cc10a/src/content/blog/o-retrato-de-dados.md
+  timestamp: '2026-06-05T13:16:46.091Z'
   msg: >-
-    Adicionou tese ao pior ranqueado (data-portrait-2026): os dois retratos não
-    são redundantes — registram silêncios diferentes. Reescreveu a seção de
-    convergências para reconhecer que são tautológicas e pivotou para onde os
-    retratos divergem. Nomeou a lacuna de 138 dias diretamente (em vez de
-    gesticular em torno dela). Substituiu a seção 'O que resta' por uma
-    conclusão com tese explícita: retrato de ensaio = eu construído; retrato de
-    dados = eu registrado. Paridade EN/PT.
+    Edição do pior ranqueado (data-portrait-2026): wmv como pixel mais antigo do
+    retrato — antes do regime de monitoramento havia só uma música salva
+    localmente, sem metadado além do gosto. Gap de 138 dias nomeado com
+    comprometimento: as datas dizem que o corpo parou de se rastrear quando um
+    novo corpo chegou; os capítulos adicionam resolução, não desfazem a
+    correspondência. Encerramento substituído: em vez de 'confirmar ou complicar
+    ou os dois' (não-comprometimento epistêmico), a versão nova distingue o que
+    o índice já afirma do que os capítulos acrescentariam, e situa o wmv como
+    fronteira do retrato — o que existia antes de qualquer medição.
 ---
 
 Por oito semanas fiz a mesma pergunta sobre dois arquivos zip: o que fiz nos
@@ -91,7 +93,7 @@ _O mundo segundo Adi Baldo_. Meu pai, 76 anos, narrando seu mundo. Este vídeo
 é anterior ao projeto Alfarrábios do Adi como projeto nomeado. O projeto tem
 nome; o vídeo já estava lá.
 
-_Samba e amor - Marisa Monte.wmv_. Um arquivo wmv. Esta é a camada mais antiga.
+_Samba e amor - Marisa Monte.wmv_. Um arquivo wmv. Esta é a camada mais antiga — anterior à primeira sessão no Fit por quatro anos, à primeira avaliação no Goodreads por cinco. Antes da sincronização em nuvem, antes do regime de monitoramento, antes de qualquer disso virar retrato de dados: você salvou um arquivo localmente porque gostava de uma música. Esse era todo o metadado. Sem disciplina de timestamp, sem nome de arquivo estruturado, sem caminho de exportação. Só: gostei disso. Tudo no índice depois disso está anotado; este não está.
 
 ## Onde os dois retratos divergem
 
@@ -107,9 +109,7 @@ Os ensaios não dizem nada sobre a lacuna de 138 dias. Os dados a registram
 precisamente porque ninguém a editou para fora. Vou escrever isso diretamente
 em vez de gesticular em torno: as playlists nomeiam um primeiro aniversário —
 _aniversário da Alice 1 ano_. A lacuna vai de meados de novembro de 2025 ao
-final de março de 2026. Essa correspondência não é sutil. Ainda não tenho os
-capítulos, apenas o índice, mas o índice já está dizendo algo. Se os capítulos
-confirmam isso é uma pergunta diferente.
+final de março de 2026. Essa correspondência não é sutil. O índice já está fazendo uma afirmação. As datas dizem: o corpo parou de se monitorar quando um novo corpo chegou. Os capítulos podem acrescentar resolução a isso — se foi exaustão, deslocamento ou pura desatenção — mas não vão desfazer a correspondência.
 
 O silêncio corre no outro sentido também. Quarenta e quatro vídeos pessoais,
 uma viagem à Bolívia e ao Peru que nunca virou post, nomes de pessoas que
@@ -128,6 +128,8 @@ registrado. Não são a mesma coisa. Nenhum dos dois é mais verdadeiro. São du
 projeções do mesmo objeto em planos diferentes — e o objeto, seja lá o que for,
 não aparece completo em nenhum dos dois.
 
-A proporção é 1:10.000. Conheço o sumário de mim mesmo. Os capítulos estão nos
-arquivos trancados. Quando os abrir, não vão explicar o que o índice já
-implica. Vão apenas confirmar, ou complicar, ou os dois.
+A proporção é 1:10.000. Conheço o sumário de mim mesmo. Os capítulos acrescentariam resolução: o log de treinos diria se novembro foi exaustão ou deslocamento. O histórico de localização mapearia as rotas. O histórico de buscas mostraria o que um pai novo pesquisa às 3h da manhã.
+
+Já sei o que vão encontrar. O que não sei é se o não-escrever e o não-monitorar foram a mesma decisão ou duas decisões separadas.
+
+O arquivo wmv é o pixel mais antigo do retrato: quem eu era antes do regime de monitoramento gostava dessa música. Tudo depois é um ponto de dados sobre o que aconteceu quando comecei a registrar. Os dois retratos param no mesmo lugar — na fronteira do que escolhi medir.

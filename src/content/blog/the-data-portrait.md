@@ -16,18 +16,20 @@ tags:
 translationKey: data-portrait-2026
 emoji: "\U0001F5C3️"
 previousVersion:
-  uuid: 3933efbc-4e8f-5f32-a4db-9836cf303e32
+  uuid: c2c56d1e-41c7-5a98-ba14-b0593871cb06
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/7e4ccec62b9211551bd152fd81fa2ebed413dd8b/src/content/blog/the-data-portrait.md
-  timestamp: '2026-06-02T13:19:20.437Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/b9c1fb8dd8a29fb8a35a1895642b3b87de5cc10a/src/content/blog/the-data-portrait.md
+  timestamp: '2026-06-05T13:16:46.091Z'
   msg: >-
-    Adicionou tese ao pior ranqueado (data-portrait-2026): os dois retratos não
-    são redundantes — registram silêncios diferentes. Reescreveu a seção de
-    convergências para reconhecer que são tautológicas e pivotou para onde os
-    retratos divergem. Nomeou a lacuna de 138 dias diretamente (em vez de
-    gesticular em torno dela). Substituiu a seção 'O que resta' por uma
-    conclusão com tese explícita: retrato de ensaio = eu construído; retrato de
-    dados = eu registrado. Paridade EN/PT.
+    Edição do pior ranqueado (data-portrait-2026): wmv como pixel mais antigo do
+    retrato — antes do regime de monitoramento havia só uma música salva
+    localmente, sem metadado além do gosto. Gap de 138 dias nomeado com
+    comprometimento: as datas dizem que o corpo parou de se rastrear quando um
+    novo corpo chegou; os capítulos adicionam resolução, não desfazem a
+    correspondência. Encerramento substituído: em vez de 'confirmar ou complicar
+    ou os dois' (não-comprometimento epistêmico), a versão nova distingue o que
+    o índice já afirma do que os capítulos acrescentariam, e situa o wmv como
+    fronteira do retrato — o que existia antes de qualquer medição.
 ---
 
 For eight weeks I asked the same question over two zip files: what did I do
@@ -91,7 +93,7 @@ _O mundo segundo Adi Baldo_. My father, 76, narrating his world. This predates
 the Alfarrábios do Adi project as a named project. The project has a name;
 the video was already there.
 
-_Samba e amor - Marisa Monte.wmv_. A wmv file. This is the oldest layer.
+_Samba e amor - Marisa Monte.wmv_. A wmv file. This is the oldest layer — predating the first Fit session by four years, the first Goodreads rating by five. Before cloud sync, before the tracking regime, before any of this became a data portrait: you saved a file locally because you liked a song. That was all the metadata. No timestamp discipline, no structured filename, no export path. Just: I liked this. Everything in the index after it is annotated; this one isn't.
 
 ## Where the two portraits diverge
 
@@ -106,9 +108,7 @@ The essays say nothing about the 138-day gap. The data records it precisely
 because nobody edited it out. I am going to write this directly instead of
 gesturing at it: the playlists name a first birthday — _aniversário da Alice
 1 ano_. The gap runs from mid-November 2025 through end of March 2026. That
-correspondence is not subtle. I don't have the chapters yet, only the index,
-but the index is already saying something. Whether the chapters confirm it is
-a different question.
+correspondence is not subtle. The index is already making a claim. The dates say: the body stopped tracking when a new body arrived. The chapters might add resolution to that — whether it was exhaustion, displacement, or pure inattention — but they won't undo the correspondence.
 
 The silence runs the other way too. Forty-four personal videos, a trip to
 Bolivia and Peru that never became a post, names of people I know who are not
@@ -126,6 +126,8 @@ that was recorded. They are not the same. Neither is more true. They are two
 projections of the same object onto different planes — and the object,
 whatever it is, appears in full in neither.
 
-The ratio is 1:10,000. I know the table of contents of myself. The chapters
-are in the locked files. When I open them, they will not explain what the
-index already implies. They will only confirm it, or complicate it, or both.
+The ratio is 1:10,000. I know the table of contents of myself. The chapters would add resolution: the training log would say whether November was exhaustion or displacement. The location history would map the routes. The search history would show what a new parent looks up at 3am.
+
+I already know what they will find. What I don't know is whether the not-writing and the not-tracking were the same decision or two separate ones.
+
+The wmv file is the oldest pixel in the portrait: whoever I was before the tracking regime liked this song. Everything after it is a data point about what happened when I started keeping records. Both portraits stop at the same place — the border of what I chose to measure.
