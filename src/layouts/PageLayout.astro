@@ -26,7 +26,7 @@ const raw = Astro.props as LayoutProps;
 const source: Props = raw.frontmatter ?? raw;
 const {
   title,
-  description = "Franklin Baldo's Digital Garden",
+  description: _description,
   image,
   type = "website",
   publishedTime,
@@ -37,6 +37,13 @@ const {
   hasMath,
   wordCount,
 } = source;
+// Language-aware fallback description: derive lang first so PT pages without
+// an explicit description don't fall back to the English copy.
+const description =
+  _description ??
+  (lang === "pt"
+    ? "Jardim Digital de Franklin Baldo"
+    : "Franklin Baldo's Digital Garden");
 
 const documentTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
 
@@ -141,6 +148,7 @@ const personLd = {
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="apple-touch-icon" href="/avatar.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#1f1f1f" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#fdfdfd" media="(prefers-color-scheme: light)" />
     <link rel="canonical" href={canonical.href} />

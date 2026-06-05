@@ -7,7 +7,6 @@ interface Props {
 const { lang = 'en' } = Astro.props;
 const year = new Date().getFullYear();
 const prefix = urlPrefix(lang);
-const rssHref = lang === 'pt' ? '/pt/rss.xml' : '/rss.xml';
 
 const footerNav = [
   { href: `${prefix}/archive/`,  label: lang === 'pt' ? 'Arquivo'   : 'Archive'  },
@@ -33,7 +32,8 @@ const footerNav = [
       ))}
     </ul>
     <ul>
-      <li><small><a href={rssHref}>RSS</a></small></li>
+      <li><small><a href="/rss.xml" aria-label="RSS feed (English)">RSS EN</a></small></li>
+      <li><small><a href="/pt/rss.xml" aria-label="Feed RSS (Português)">RSS PT</a></small></li>
       <li><small><a href="https://github.com/franklinbaldo" rel="me">GitHub</a></small></li>
       <li id="footer-lang-li" style="display:none">
         <small><a id="footer-lang-link" href="#" class="secondary"></a></small>
