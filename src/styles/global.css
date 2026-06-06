@@ -2,7 +2,7 @@
 @import "./tokens.css";
 @import "./typography.css";
 
-/* Inter — latin + latin-ext + greek subsets, font-display: optional (no FOUT) */
+/* Inter — latin + latin-ext + greek-ext + greek subsets, font-display: optional (no FOUT) */
 /* latin */
 @font-face {
   font-family: "Inter";
@@ -71,7 +71,32 @@
     U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
     U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-/* greek — for γνῶθι σεαυτόν, μ/σ in ranking.astro, Delphi post */
+/* greek-ext — polytonic: ῶ, ἄ, ὲ in Delphi post (U+1F00-1FFF) */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-display: optional;
+  font-weight: 400;
+  src: url("/fonts/inter-greek-ext-400-normal.woff2") format("woff2");
+  unicode-range: U+1F00-1FFF;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-display: optional;
+  font-weight: 600;
+  src: url("/fonts/inter-greek-ext-600-normal.woff2") format("woff2");
+  unicode-range: U+1F00-1FFF;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-display: optional;
+  font-weight: 700;
+  src: url("/fonts/inter-greek-ext-700-normal.woff2") format("woff2");
+  unicode-range: U+1F00-1FFF;
+}
+/* greek — for basic Greek: μ/σ in ranking.astro (U+0370-03FF) */
 @font-face {
   font-family: "Inter";
   font-style: normal;
