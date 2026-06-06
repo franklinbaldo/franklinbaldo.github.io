@@ -48,15 +48,15 @@ An index fund is a cheap, clever **sample** of the public market. The anxiety ru
 
 Look at the verb. _Buy._ Even the cleverest version in the room is still sampling — now with the state's checkbook. The government still has to choose what to purchase, find it for sale, agree on a price, and time the market. Every hard part of indexing survives intact; it has merely changed who's holding the wallet. The frame never moves. Everyone is a buyer trying to buy a sample of a population that keeps slipping out of the sampling frame.
 
-<pre class="mermaid">
+```mermaid
 flowchart LR
   E[The whole economy] --> L[Listed companies]
-  E --> P[Private &amp; concentrated]
+  E --> P[Private & concentrated]
   L --> I[Index fund / state purchase]
   P -.escapes.-> X[Out of reach]
   I --> S[You own a SAMPLE]
   X --> S
-</pre>
+```
 
 So stop trying to fix the sample. Stop sampling.
 
