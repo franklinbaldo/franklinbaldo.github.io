@@ -45,6 +45,10 @@ Hegel saw this at the beginning of his Logic: the concept of "pure being" — th
 Nāgārjuna stated more precisely: everything arises depending on conditions (_pratītyasamutpāda_). Everything is _śūnya_ — void of self-nature. But — and this is the crucial move — emptiness itself is not a substance. Treating it as a thing would be, in Nāgārjuna's words, "like a poorly grasped snake": more dangerous than the substantialism it replaces.
 The consequence: what we call an "object" in any system — a piece of data, a molecule, a word, a file — is a _pseudo-object_: the output of a process temporarily frozen and treated as a thing. It is real in the same sense that a wave is real — it has effects, it can be measured — but it has no substance separable from the water that constitutes it and the wind that drives it.
 
+<figure class="meme">
+  <img src="https://api.memegen.link/images/drake/objects_with_intrinsic_essence/tokens_awaiting_their_reader.png?width=500" alt="Drake meme: rejecting 'objects with intrinsic essence', approving 'tokens awaiting their reader'"/>
+</figure>
+
 ## 2. The Autoregressive Cascade: How Complexity Explodes
 
 If there are no pure objects, only processes generating pseudo-objects, then where does the complexity come from? From _readers_ — autoregressive machines that read sequences, apply rules, and produce outputs that feed back into the system.
@@ -64,6 +68,10 @@ Each substrate redescribes the ribosome in its own terms. Each translation works
 This generalizes. Each substrate can redescribe the objects of any other substrate as tokens governed by its own rules. We call this the **Substrate Ouroboros Hypothesis**: every substrate can be replaced by tokens explained by rules in another substrate.
 There is no bottom. There is no top. There is only the circle of mutual redescription — each substrate translating the others, none achieving the final, untranslatable description of what things _really are_.
 Leibniz intuited this structure: each monad mirrors the entire universe from its own perspective, without windows, without direct access to the interior of any other monad. Nāgārjuna formalized it with the doctrine of two truths: conventionally, particles are real; ultimately, they are pseudo-objects. The mistake is not treating them as real within physics. The mistake is to treat physics as the final word — to confuse one arc of the circle with the entire circle.
+
+<figure class="meme">
+  <img src="https://api.memegen.link/images/drake/turtles_all_the_way_down/turtles_all_the_way_up_also.png?width=500" alt="Drake meme: rejecting 'turtles all the way down', approving 'turtles all the way up also'"/>
+</figure>
 
 ## 4. Identity: You Are Not a Thing, You Are the Act of Reading Your Own Story
 

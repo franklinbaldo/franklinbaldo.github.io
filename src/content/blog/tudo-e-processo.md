@@ -45,6 +45,10 @@ Hegel viu isso no início de sua Lógica: o conceito de "ser puro" — o "objeto
 Nāgārjuna afirmou com maior precisão: tudo surge em dependência de condições (_pratītyasamutpāda_). Tudo é _śūnya_ — vazio de natureza própria. Mas — e este é o movimento crucial — a vacuidade ela mesma não é uma substância. Tratá-la como coisa seria, nas palavras de Nāgārjuna, "como uma cobra mal agarrada": mais perigoso que o substancialismo que ela substitui.
 A consequência: o que chamamos de "objeto" em qualquer sistema — um dado, uma molécula, uma palavra, um arquivo — é um _pseudo-objeto_: a saída de um processo temporariamente congelada e tratada como coisa. É real no mesmo sentido que uma onda é real — tem efeitos, pode ser medida — mas não tem substância separável da água que a constitui e do vento que a impulsiona.
 
+<figure class="meme">
+  <img src="https://api.memegen.link/images/drake/objects_with_intrinsic_essence/tokens_awaiting_their_reader.png?width=500" alt="Meme Drake: rejeitando 'objetos com essência intrínseca', aprovando 'tokens aguardando seu leitor'"/>
+</figure>
+
 ## 2. A Cascata Autorregressiva: Como a Complexidade Explode
 
 Se não há objetos puros, apenas processos gerando pseudo-objetos, então de onde vem a complexidade? De _leitores_ — máquinas autorregressivas que leem sequências, aplicam regras e produzem saídas que alimentam de volta o sistema.
@@ -64,6 +68,10 @@ Cada substrato redescreve o ribossomo em seus próprios termos. Cada tradução 
 Isso generaliza. Cada substrato pode redescrever os objetos de qualquer outro substrato como tokens governados por suas próprias regras. A isso chamamos de **Hipótese do Ouroboros de Substratos**: todo substrato pode ser substituído por tokens explicados por regras em outro substrato.
 Não há fundo. Não há topo. Há apenas o círculo de redescrição mútua — cada substrato traduzindo os outros, nenhum alcançando a descrição final e intraduzível do que as coisas _realmente são_.
 Leibniz intuiu essa estrutura: cada mônada espelha o universo inteiro de sua própria perspectiva, sem janelas, sem acesso direto ao interior de nenhuma outra mônada. Nāgārjuna a formalizou com a doutrina das duas verdades: convencionalmente, as partículas são reais; ultimamente, são pseudo-objetos. O erro não é tratá-las como reais dentro da física. O erro é tratar a física como a palavra final — confundir um arco do círculo com o círculo inteiro.
+
+<figure class="meme">
+  <img src="https://api.memegen.link/images/drake/turtles_all_the_way_down/turtles_all_the_way_up_also.png?width=500" alt="Meme Drake: rejeitando 'tartarugas até embaixo', aprovando 'tartarugas até em cima também'"/>
+</figure>
 
 ## 4. Identidade: Você Não É uma Coisa, Você É o Ato de Ler Sua Própria História
 
