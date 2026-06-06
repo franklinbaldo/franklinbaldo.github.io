@@ -4,7 +4,7 @@ slug: font-inter-optional-backlog-restock
 branch: claude/sleepy-pasteur-Jkm3y
 status: pr-open
 issues: [237]
-pr_opened: null
+pr_opened: 252
 pr_merged: null
 ---
 
