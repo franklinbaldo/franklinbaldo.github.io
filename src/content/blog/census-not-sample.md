@@ -131,6 +131,8 @@ A market transaction needs the asset to be for sale, needs a price, needs a will
 
 The market needs an invitation. The tax collector works with an address.
 
+![Three sharp people circled the problem for an hour. Nobody said "tax in shares."](https://api.memegen.link/images/facepalm/Three_sharp_people_circled_it_for_an_hour/nobody_said_tax_in_shares.png?width=500)
+
 That gap between _buying_ and _levying_ is the gap between a sample and a census. And it converts directly into a mechanism.
 
 The proposal is brutally simple: collect the tax in the thing that matters.
@@ -157,9 +159,13 @@ Run the two problems back through it.
 
 **Picking dissolves.** You never choose. The fund holds a slice of the lab that looks unbeatable _and_ the robotics company nobody's heard of, because both issued shares this year and both diluted into the fund. There is no winner to miss, because you are not betting on winners. You are taking a census of capital, not a sample of it.
 
+![The index fund and the share levy shake hands on: never pick a winner](https://api.memegen.link/images/handshake/The_index_fund/The_share_levy/Never_pick_a_winner.png?width=600)
+
 **Access dissolves.** Private versus public stops meaning anything, because the trigger isn't _being listed_ — it's _being a company in the jurisdiction_. Anthropic being private protects it from the share levy exactly as much as being private protects it from the corporate income tax, which is to say, not at all. The room you were locked out of doesn't have a lock anymore; the obligation walks through the wall.
 
 **And the problem that kills wealth taxes — valuation — never even shows up.** You cannot easily tax a billionaire's stake in a private company at 0.5% a year, because nobody knows what it's worth until it sells, and forcing a sale to find out is its own catastrophe. But a levy paid _in shares_ asks for a percentage of _units_, not a percentage of _value_. The fund takes 1% of the shares. It does not need to know what they're worth. It will find out exactly when everyone else does — at exit, on the open market, never. Private company valuation is astrology with Excel until money actually changes hands. This mechanism never needs the astrology.
+
+![Roll Safe: can't misvalue the shares if you never have to value them](https://api.memegen.link/images/rollsafe/Cannot_misvalue_the_shares/if_you_never_have_to_value_them.png?width=500)
 
 Dwarkesh raises the obvious objection: why would I invest in a company if the government keeps diluting my share? But this is dilution, not confiscation. A cash tax reaches into the company's bank account and pulls money out — money that might have built the next data center. A share levy touches no cash at all. The company's operations, its runway, its capex: untouched. What changes is who _owns_ the upside, not whether the upside gets _funded_. The pie is baked exactly as before. A thin, even, predictable slice of every plate goes onto the one table everybody eats at. Uniform dilution doesn't drain operations. It redirects the harvest, not the planting.
 
