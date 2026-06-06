@@ -131,6 +131,8 @@ Uma transação de mercado precisa que o ativo esteja à venda, precisa de um pr
 
 O mercado precisa de convite. O fisco trabalha com endereço.
 
+![Três pessoas afiadas circularam por uma hora. Ninguém disse "tributo em ações".](https://api.memegen.link/images/facepalm/Tr%C3%AAs_pessoas_afiadas_circularam_por_uma_hora/ningu%C3%A9m_disse_tributo_em_a%C3%A7%C3%B5es.png?width=500)
+
 A distância entre _comprar_ e _tributar_ é a distância entre uma amostra e um censo. E ela se converte diretamente em um mecanismo.
 
 A proposta é brutalmente simples: cobre o tributo na coisa que importa.
@@ -145,6 +147,10 @@ A empresa continua respirando. Os donos apenas respiram com um pouco menos do ox
 
 Isso não é uma ideia nova, e a honestidade manda dizer de quem foi. A Suécia tentou uma versão nos anos 1970 — o [plano Meidner](https://en.wikipedia.org/wiki/Wage-earner_funds), fundos de trabalhadores assalariados, emissão anual de ações para fundos coletivos controlados por trabalhadores. Morreu, e morreu pela palavra _controle_: os sindicatos, em algumas décadas, passariam a possuir e administrar as empresas, e essa perspectiva assustou gente suficiente para que a coisa fosse diluída e depois enterrada em 1991. A versão aqui não quer nada disso. Não quer administrar a empresa de ninguém. Quer o oposto do controle — um detentor passivo, votando pouco ou nada, cujo único trabalho é ser o índice por construção e repassar os dividendos. Meidner mirava na propriedade das empresas pelos trabalhadores. Isto mira na propriedade da economia por todos, que é um alvo diferente e mais calmo. É, de fato, o capital básico universal que os economistas disseram que queriam — não um cheque de um político, mas uma ação que você detém por direito. Você é apenas um acionista normal. Ninguém vota para tirá-la.
 
+E no mundo de que trata este ensaio, o fantasma é ainda mais tênue. O que matou Meidner foi o medo de os sindicatos passarem a possuir e administrar as empresas — mas um sindicato pressupõe que é o trabalho humano que cria o valor disputado. Numa economia em que as máquinas fazem a maior parte desse trabalho, o mesmo fato que aposenta o trabalhador aposenta o sindicato do trabalhador. Esse medo sindical específico sobrevive à própria premissa.
+
+E suponha que o pior que os críticos de 1991 imaginaram acontecesse — suponha que isto começasse mesmo a parecer propriedade coletiva das próprias empresas. Ainda assim o alarme estaria errado, porque o capitalismo nunca foi o ponto. É uma tecnologia, não um valor — e, entre as tecnologias, a pior que temos, excetuadas todas as outras que já tentamos. A gente o mantém porque nada o venceu ainda, e o único jeito de achar o que o vence é ir aprimorando o que já se tem. O capital básico universal é um desses aprimoramentos. Então revisar o mecanismo não é a falha; é o mecanismo fazendo aquilo para que sempre serviu. O objetivo sempre foi o desenvolvimento. Capitalismo é só o melhor rascunho até agora.
+
 O índice é uma lista de convidados. O tributo é o censo batendo de porta em porta.
 
 ## O que quebra quando você troca comprar por tributar
@@ -153,9 +159,13 @@ Passe os dois problemas de volta pelo mecanismo.
 
 **Escolher dissolve.** Você nunca escolhe. O fundo detém uma fatia do laboratório que parece imbatível _e_ da empresa de robótica de que ninguém ouviu falar, porque ambas emitiram ações este ano e ambas diluíram para o fundo. Não há vencedor a perder, porque você não está apostando em vencedores. Você está fazendo um censo do capital, não uma amostra dele.
 
+![O fundo de índice e o tributo em ações apertam as mãos em: nunca escolher um vencedor](https://api.memegen.link/images/handshake/O_fundo_de_%C3%ADndice/O_tributo_em_a%C3%A7%C3%B5es/Nunca_escolher_um_vencedor.png?width=600)
+
 **Acesso dissolve.** Privado versus público deixa de significar qualquer coisa, porque o gatilho não é _estar listado_ — é _ser uma empresa na jurisdição_. A Anthropic ser privada a protege da contribuição em ações exatamente tanto quanto ser privada a protege do imposto de renda da pessoa jurídica, ou seja, nada. A sala da qual você estava trancado não tem mais fechadura; a obrigação atravessa a parede.
 
 **E o problema que mata impostos sobre patrimônio — a avaliação — sequer aparece.** Você não consegue facilmente tributar a participação de um bilionário numa empresa privada a 0,5% ao ano, porque ninguém sabe quanto vale até que seja vendida, e forçar uma venda para descobrir é uma catástrofe própria. Mas uma contribuição paga _em ações_ pede um percentual de _unidades_, não um percentual de _valor_. O fundo pega 1% das ações. Não precisa saber quanto valem. Vai descobrir exatamente quando todo mundo descobrir — na saída, no mercado aberto, nunca. Valuation de empresa privada é astrologia com Excel até o dinheiro bater na conta. Este mecanismo nunca precisa da astrologia.
+
+![Roll Safe: não dá pra avaliar errado as ações se você nunca precisa avaliá-las](https://api.memegen.link/images/rollsafe/N%C3%A3o_d%C3%A1_pra_avaliar_errado_as_a%C3%A7%C3%B5es/se_voc%C3%AA_nunca_precisa_avali%C3%A1-las.png?width=500)
 
 Dwarkesh levanta a objeção óbvia: por que eu investiria numa empresa se o governo fica diluindo minha participação? Mas isto é diluição, não confisco. Um imposto em dinheiro entra na conta da empresa e tira dinheiro — dinheiro que poderia ter construído o próximo data center. Uma contribuição em ações não toca em dinheiro nenhum. As operações da empresa, sua pista de decolagem, seu capex: intocados. O que muda é quem _possui_ o upside, não se o upside é _financiado_. A torta é assada exatamente como antes. Uma fatia fina, uniforme e previsível de cada prato vai para a única mesa onde todos comem. Diluição uniforme não drena operações. Redireciona a colheita, não o plantio.
 
