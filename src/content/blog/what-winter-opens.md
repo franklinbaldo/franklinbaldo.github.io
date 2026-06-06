@@ -72,10 +72,9 @@ as a lay preacher, the chairs aligned to the millimeter.
 
 ## The balance autumn left
 
-The [autumn balance post](/blog/autumn-balance-march-may-2026/) already documented the
-arc: twenty-five posts published, Travessia writing itself, Alfarrábios preserving my
-father's memory, the blog jumping from 131 to 341 pages in ten days. What autumn
-closed: the infrastructure.
+The autumn arc is already closed: twenty-five posts published, Travessia writing itself,
+Alfarrábios preserving my father's memory, the blog jumping from 131 to 341 pages in ten
+days. What autumn closed: the infrastructure.
 
 What winter opens is an older question.
 

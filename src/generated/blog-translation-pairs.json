@@ -39,14 +39,6 @@
     "pt": "/pt/blog/a-vitrine-sonora-do-gemeo-digital/",
     "en": "/blog/the-digital-twin-sound-showcase/"
   },
-  "/blog/autumn-balance-march-may-2026/": {
-    "en": "/blog/autumn-balance-march-may-2026/",
-    "pt": "/pt/blog/retrospectiva-marco-maio-2026/"
-  },
-  "/pt/blog/retrospectiva-marco-maio-2026/": {
-    "en": "/blog/autumn-balance-march-may-2026/",
-    "pt": "/pt/blog/retrospectiva-marco-maio-2026/"
-  },
   "/blog/building-funes/": {
     "en": "/blog/building-funes/",
     "pt": "/pt/blog/construindo-funes-como-dei-uma-alma-a-um-agente-de-ia/"
@@ -119,14 +111,6 @@
     "en": "/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/",
     "pt": "/pt/blog/tudo-e-processo/"
   },
-  "/pt/blog/fila-de-videos-ia-civictech/": {
-    "pt": "/pt/blog/fila-de-videos-ia-civictech/",
-    "en": "/blog/video-queue-ai-civictech/"
-  },
-  "/blog/video-queue-ai-civictech/": {
-    "pt": "/pt/blog/fila-de-videos-ia-civictech/",
-    "en": "/blog/video-queue-ai-civictech/"
-  },
   "/blog/funes-soul/": {
     "en": "/blog/funes-soul/",
     "pt": "/pt/blog/soulmd-funes/"
@@ -134,14 +118,6 @@
   "/pt/blog/soulmd-funes/": {
     "en": "/blog/funes-soul/",
     "pt": "/pt/blog/soulmd-funes/"
-  },
-  "/blog/github-a-tour-of-the-repos/": {
-    "en": "/blog/github-a-tour-of-the-repos/",
-    "pt": "/pt/blog/github-um-tour-pelos-repos/"
-  },
-  "/pt/blog/github-um-tour-pelos-repos/": {
-    "en": "/blog/github-a-tour-of-the-repos/",
-    "pt": "/pt/blog/github-um-tour-pelos-repos/"
   },
   "/pt/blog/guia-de-implementao-da-arquitetura-pontifex/": {
     "pt": "/pt/blog/guia-de-implementao-da-arquitetura-pontifex/",
@@ -151,14 +127,6 @@
     "pt": "/pt/blog/guia-de-implementao-da-arquitetura-pontifex/",
     "en": "/blog/pontifex-architecture-implementation-guide/"
   },
-  "/blog/hermes-agent-vs-openclaw-why-my-experience-got-so-much-better/": {
-    "en": "/blog/hermes-agent-vs-openclaw-why-my-experience-got-so-much-better/",
-    "pt": "/pt/blog/hermes-vs-openclaw/"
-  },
-  "/pt/blog/hermes-vs-openclaw/": {
-    "en": "/blog/hermes-agent-vs-openclaw-why-my-experience-got-so-much-better/",
-    "pt": "/pt/blog/hermes-vs-openclaw/"
-  },
   "/blog/inaugural-post-a-glimpse-inside-my-mind/": {
     "en": "/blog/inaugural-post-a-glimpse-inside-my-mind/",
     "pt": "/pt/blog/postagem-inaugural-um-vislumbre-da-minha-mente/"
@@ -166,22 +134,6 @@
   "/pt/blog/postagem-inaugural-um-vislumbre-da-minha-mente/": {
     "en": "/blog/inaugural-post-a-glimpse-inside-my-mind/",
     "pt": "/pt/blog/postagem-inaugural-um-vislumbre-da-minha-mente/"
-  },
-  "/pt/blog/maio-em-sete-rascunhos/": {
-    "pt": "/pt/blog/maio-em-sete-rascunhos/",
-    "en": "/blog/may-in-seven-drafts/"
-  },
-  "/blog/may-in-seven-drafts/": {
-    "pt": "/pt/blog/maio-em-sete-rascunhos/",
-    "en": "/blog/may-in-seven-drafts/"
-  },
-  "/pt/blog/manifold-apostando-em-ideias/": {
-    "pt": "/pt/blog/manifold-apostando-em-ideias/",
-    "en": "/blog/manifold-betting-on-ideas/"
-  },
-  "/blog/manifold-betting-on-ideas/": {
-    "pt": "/pt/blog/manifold-apostando-em-ideias/",
-    "en": "/blog/manifold-betting-on-ideas/"
   },
   "/pt/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/": {
     "pt": "/pt/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/",
@@ -295,14 +247,6 @@
     "en": "/blog/pontifex-novel-architecture-semantic-probing/",
     "pt": "/pt/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/"
   },
-  "/pt/blog/procurando-franklinbaldo/": {
-    "pt": "/pt/blog/procurando-franklinbaldo/",
-    "en": "/blog/searching-franklinbaldo/"
-  },
-  "/blog/searching-franklinbaldo/": {
-    "pt": "/pt/blog/procurando-franklinbaldo/",
-    "en": "/blog/searching-franklinbaldo/"
-  },
   "/pt/blog/quem-o-asterisco-protege/": {
     "pt": "/pt/blog/quem-o-asterisco-protege/",
     "en": "/blog/who-the-asterisk-protects/"
@@ -318,14 +262,6 @@
   "/pt/blog/recuperando-o-harness/": {
     "en": "/blog/reclaiming-the-harness/",
     "pt": "/pt/blog/recuperando-o-harness/"
-  },
-  "/blog/suno-borges-and-the-caipira/": {
-    "en": "/blog/suno-borges-and-the-caipira/",
-    "pt": "/pt/blog/suno-borges-caipira/"
-  },
-  "/pt/blog/suno-borges-caipira/": {
-    "en": "/blog/suno-borges-and-the-caipira/",
-    "pt": "/pt/blog/suno-borges-caipira/"
   },
   "/blog/three-hammers-walk-into-a-bar/": {
     "en": "/blog/three-hammers-walk-into-a-bar/",

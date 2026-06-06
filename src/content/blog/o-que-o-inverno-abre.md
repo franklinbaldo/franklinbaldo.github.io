@@ -73,10 +73,9 @@ minha mãe como preletora, as cadeiras alinhadas ao milímetro.
 
 ## O balanço que o outono deixou
 
-O [balanço de março a maio](/blog/retrospectiva-marco-maio-2026/) já documentou o arco:
-vinte e cinco posts publicados, Travessia escrevendo sozinha, Alfarrábios preservando a
-memória do meu pai, o blog saltando de 131 para 341 páginas em dez dias. O que o outono
-fechou: a infraestrutura.
+O arco do outono já se encerrou: vinte e cinco posts publicados, Travessia escrevendo
+sozinha, Alfarrábios preservando a memória do meu pai, o blog saltando de 131 para 341
+páginas em dez dias. O que o outono fechou: a infraestrutura.
 
 O que o inverno abre é outra pergunta. Mais antiga.
 
