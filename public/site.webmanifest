@@ -1,0 +1,25 @@
+{
+  "name": "Franklin Baldo",
+  "short_name": "Franklin Baldo",
+  "description": "Essays on AI agency, process metaphysics, and legal design.",
+  "start_url": "/",
+  "display": "minimal-ui",
+  "background_color": "#fdfdfd",
+  "theme_color": "#c96a2b",
+  "icons": [
+    {
+      "src": "/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["education", "news"],
+  "related_applications": []
+}

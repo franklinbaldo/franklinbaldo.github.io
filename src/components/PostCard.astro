@@ -45,7 +45,7 @@ const overflowCount = allTags.length - visibleTags.length;
       <p>
         <small>
           <time datetime={date.toISOString()}>{formattedDate}</time>
-          {' · '}{minutesRead} min
+          {' · '}{minutesRead} {t(postLang, 'post.minutesRead')}
           {featured && <> {' · '}<mark>{t(postLang, 'featured.label')}</mark></>}
         </small>
       </p>
