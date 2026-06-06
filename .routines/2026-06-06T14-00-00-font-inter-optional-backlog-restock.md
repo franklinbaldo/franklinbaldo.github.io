@@ -2,7 +2,7 @@
 date: 2026-06-06T14:00:00
 slug: font-inter-optional-backlog-restock
 branch: claude/sleepy-pasteur-Jkm3y
-status: pr-open
+status: pr-open-review-resolved
 issues: [237]
 pr_opened: 252
 pr_merged: null
