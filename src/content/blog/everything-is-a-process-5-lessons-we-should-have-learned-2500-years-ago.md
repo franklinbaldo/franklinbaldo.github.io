@@ -94,4 +94,4 @@ Communication imperfection is not a failure. It is the _generative engine_ of th
 
 The framework is reflexive and I can't step outside it to check. This essay was written partly with the help of a generative AI — which the framework would describe as another autoregressive reader, trained on accumulated pseudo-objects, producing more of the same. I find it slightly uncanny that the ribosome analogy applies without modification. The system did not notice.
 
-You survive as contribution to the cascade, not as enduring substance. I wrote that sentence earlier in this essay and kept it. I'm still not entirely sure whether it's consoling.
+You survive as contribution to the cascade, not as enduring substance. I'm still not entirely sure whether that's consoling.

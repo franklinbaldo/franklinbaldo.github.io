@@ -94,4 +94,4 @@ A imperfeição da comunicação não é uma falha. É o _motor generativo_ do s
 
 O framework é reflexivo e não consigo sair dele para verificar. Este ensaio foi escrito em parte com a ajuda de uma IA generativa — que o próprio framework descreveria como mais um leitor autorregressivo treinado em pseudo-objetos acumulados, produzindo mais do mesmo. Acho ligeiramente perturbador que a analogia com o ribossomo se aplique sem modificação. O sistema não notou.
 
-Você sobrevive como contribuição para a cascata, não como substância duradoura. Escrevi essa frase mais cedo neste ensaio e a mantive. Ainda não tenho certeza se é consoladora.
+Você sobrevive como contribuição para a cascata, não como substância duradoura. Ainda não tenho certeza se isso é consolador.
