@@ -13,27 +13,25 @@ tags:
   - prediction markets
   - speculation
   - science fiction
-replacedVersion: e089414e-5700-5048-9717-d697384c2d8d
-editHistory:
-  - uuid: e089414e-5700-5048-9717-d697384c2d8d
-    timestamp: '2024-07-12T00:00:00.000Z'
-    msg: Versão original publicada
-  - uuid: e089414e-5700-5048-9717-d697384c2d8d
-    timestamp: '2026-05-19T23:59:25.457Z'
-    msg: >-
-      Reescreveu conservation-law eliminando dispersão (cenários, FAQ,
-      call-to-action, marcadores ornamentais). Ancoragem: a aposta concreta no
-      Manifold a 35% com derivação honesta, o argumento de Deutsch desenvolvido
-      como crux real, e a conexão com as duas perguntas de Franklin
-      (distribuições de probabilidade e definição de realidade). O post agora
-      sabe qual é o seu único assunto.
+previousVersion:
+  uuid: 208f9a27-1be3-59a0-bd14-89b8a05a3222
+  url: >-
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/ba11e2060cc35a6e280f0c4343f3bd4b187f1c24/src/content/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050.md
+  timestamp: '2026-06-06T22:24:52.765Z'
+  msg: >-
+    Expõe o autor como pessoa específica (Procurador em Rondônia), troca
+    fechamento genérico pelo custo pessoal da aposta, atualiza citação de Jim
+    Rutt com nota de falecimento (maio 2026). Resolve: comédia decorativa virou
+    âncora identitária, fechamento deixou de deferir para Deutsch e passou a
+    expor o que o autor perde se errar, menção à logística substituída pela
+    confissão real do impulso.
 ---
 
 Lia um artigo sobre redes neurais identificando quantidades conservadas em sistemas dinâmicos quando o resumo mencionou algo que me fez parar: "Nosso sistema identificou três quantidades conservadas até então desconhecidas em uma simulação caótica de plasma".
 
 Três quantidades conservadas desconhecidas. Em plasma. Numa terça-feira.
 
-A questão que se formou era metade física, metade logística: _como alguém aposta nisso?_
+A questão que se formou era metade física, metade embaraçosa: sou Procurador do Estado em Rondônia, e minha primeira reação a descobrir que uma IA encontrou três novas simetrias da natureza foi perguntar se havia um mercado de predição para isso.
 
 Leis de conservação vêm de simetrias — esse é o teorema de Noether em uma frase. O momento linear é conservado porque as leis da física são as mesmas aqui e cinco metros à esquerda. A energia é conservada porque são as mesmas agora e daqui a cinco minutos. Cada lei de conservação corresponde a uma simetria da natureza, e as simetrias que conhecemos são aquelas que físicos humanos encontraram raciocinando a partir de primeiros princípios e comparando com experimentos. A questão não é se a IA consegue encontrar regularidades em sistemas físicos — ela claramente consegue. A questão é se consegue encontrar novas de verdade: não padrões dentro da física conhecida, mas simetrias que ninguém sabia que estavam lá.
 
@@ -61,12 +59,12 @@ O que não consigo parar de pensar é na conexão com minha outra questão — a
 
 A questão de se máquinas conseguem descobrir leis de conservação é, no fundo, a mesma questão sobre o que exigimos da palavra "real".
 
-A aposta está feita. O mercado fecha em 2050. Deutsch provavelmente dirá "eu avisei", e pode estar certo — mas pode estar errado de um jeito filosoficamente interessante.
+A aposta está feita. O mercado fecha em 2050. Se Deutsch estiver certo, terei errado em público por 24 anos — o que é pelo menos uma forma de responsabilidade intelectual que sobrevive à conversa. Se estiver errado, precisarei pensar muito mais sobre o que quero dizer com "real" — e não é a pior forma de passar esses 24 anos.
 
 ## Para se aprofundar
 
 - **Carrasquilla, J. & Melko, R.G., "Machine learning phases of matter"** (_Nature Physics_, 2017) — o experimento que iniciou isso. Rede neural identifica fases topológicas sem conhecimento prévio do hamiltoniano. Vale ler o resumo mesmo que a física seja desconhecida.
 - **Emmy Noether, "Invariante Variationsprobleme"** (1915) — o teorema. Curto. A barra para "lei de conservação" está aqui.
 - **David Deutsch, _The Beginning of Infinity_** — a versão em livro do argumento sobre conhecimento explicativo. O Capítulo 1 explica o critério "difícil de variar". Discordo de algumas implicações, mas o núcleo vale levar a sério.
-- **Jim Rutt, _A Minimum Viable Metaphysics_, v2.0** — relevante porque a questão da lei de conservação é consequência de "por que existe algo em vez de nada?" A tentativa de Rutt de fazer ciência deixando essa questão em aberto.
+- **Jim Rutt, _A Minimum Viable Metaphysics_, v2.0** — relevante porque a questão da lei de conservação é consequência de "por que existe algo em vez de nada?" A tentativa de Rutt de fazer ciência deixando essa questão em aberto. Ele morreu em maio de 2026; soube com atraso, por um grupo de WhatsApp, lavando a louça.
 - **[Duas Perguntas, Em Voz Alta](/blog/duas-perguntas-em-voz-alta/)** — o post onde explico por que essas duas questões são as minhas: distribuições de probabilidade e a definição de realidade. A aposta na lei de conservação é consequência da segunda.
