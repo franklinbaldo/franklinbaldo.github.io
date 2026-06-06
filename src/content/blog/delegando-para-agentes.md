@@ -27,6 +27,7 @@ previousVersion:
     land before moving on. New final line returns to the opening's two facts —
     'the parecer was good' / 'the submission was not filed' — and reassigns each
     to its proper subject, completing the argument without explaining it.
+replacedVersion: "832c5d01-8c16-5d36-891c-0faf120df999"
 ---
 
 O problema com a maior parte do que se escreve sobre delegação para IA não é que esteja errado. É que está ambientado na sala errada.

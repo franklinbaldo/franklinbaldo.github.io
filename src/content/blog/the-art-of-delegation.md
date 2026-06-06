@@ -27,6 +27,7 @@ previousVersion:
     land before moving on. New final line returns to the opening's two facts —
     'the parecer was good' / 'the submission was not filed' — and reassigns each
     to its proper subject, completing the argument without explaining it.
+replacedVersion: "09318476-1009-5abe-bf6a-86e789067dec"
 ---
 
 The problem with most writing about AI delegation is not that it's wrong. It's that it's set in the wrong room.
