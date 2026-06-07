@@ -41,7 +41,11 @@ export interface DuelEntry {
 }
 
 export function parseDuelContent(body?: string): DuelContent {
-  const result: DuelContent = { postAAnalysis: "", postBAnalysis: "", verdict: "" };
+  const result: DuelContent = {
+    postAAnalysis: "",
+    postBAnalysis: "",
+    verdict: "",
+  };
   if (!body) return result;
 
   const parts = body.split(/(?:^|\n)##\s+/);
@@ -134,7 +138,10 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
         : undefined,
       body: content ? String(content).trim() : undefined,
       model: (data as any).model ? String((data as any).model) : undefined,
-      season: typeof (data as any).season === "number" ? (data as any).season : undefined,
+      season:
+        typeof (data as any).season === "number"
+          ? (data as any).season
+          : undefined,
       postAKey: aKey,
       postBKey: bKey,
       parsedContent: content ? parseDuelContent(String(content)) : undefined,
