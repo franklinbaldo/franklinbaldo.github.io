@@ -10,6 +10,7 @@
 A página existe e já é conceitualmente incrível — um sistema de duelos par-a-par com OpenSkill para ranquear posts de blog. Mas a experiência visual não faz jus a essa ideia. Os duelos aparecem como uma lista seca ("Post A venceu Post B · critério"), sem revelar o que realmente aconteceu: o juiz leu os dois posts, escreveu uma análise apaixonada de cada um, e deu um veredito fundamentado. **Esse conteúdo existe nos arquivos `.md` mas nunca é renderizado.**
 
 Pontos de atrito:
+
 - Seção "Últimos duelos" mostra só winner/loser e o critério — nenhuma carne.
 - Não há como filtrar/buscar batalhas por critério, confiança, post específico, ou texto.
 - O pódio tem números mas não tem drama; não convida a clicar.
@@ -21,7 +22,9 @@ Pontos de atrito:
 ## Mudança 1 — Renderizar o conteúdo das batalhas
 
 ### O que existe nos arquivos `.md`
+
 Cada arquivo em `.routines/hronir/` tem:
+
 - Frontmatter: `criterion`, `winner`, `margin`, `confidence`, `model`, `season`
 - Corpo: **análise do Post A**, **análise do Post B**, **veredito** — tudo em markdown, escrito pelo juiz (humano ou modelo).
 
@@ -59,6 +62,7 @@ Substituir a lista de texto plano de "Últimos duelos" por cards visuais:
 ```
 
 Ao expandir:
+
 ```
 │  ## Post A — Crossing Interference                   │
 │  Post de atualização da Travessia: Franklin entra…   │
@@ -74,6 +78,7 @@ Ao expandir:
 ```
 
 Implementação:
+
 - `<details>`/`<summary>` nativo (zero JS, acessível)
 - Markdown do body renderizado com `<Fragment set:html={marked(body)} />`
 - Ou, mais simples: `marked` já é dependência? Se não, usar um split manual em `## ` sections
@@ -95,13 +100,13 @@ Implementar com `<input>` e atributos `data-*` nos cards — filtragem instantâ
 
 **Filtros propostos:**
 
-| Filtro | Tipo | Valores |
-|--------|------|---------|
-| Busca livre | text | título do post, texto do veredito |
-| Critério | multi-select chips | gateway, depth, clarity, etc. |
-| Confiança | pills | alta / média / baixa |
-| Temporada | select | 1, 2, … |
-| Post específico | text/autocomplete | nome do post |
+| Filtro          | Tipo               | Valores                           |
+| --------------- | ------------------ | --------------------------------- |
+| Busca livre     | text               | título do post, texto do veredito |
+| Critério        | multi-select chips | gateway, depth, clarity, etc.     |
+| Confiança       | pills              | alta / média / baixa              |
+| Temporada       | select             | 1, 2, …                           |
+| Post específico | text/autocomplete  | nome do post                      |
 
 **Padrão de implementação (sem framework):**
 
@@ -138,6 +143,7 @@ const cards = document.querySelectorAll('.battle-card');
 ```
 
 **Contador de resultados:**
+
 ```
 Mostrando 12 de 47 batalhas
 ```
@@ -149,6 +155,7 @@ Mostrando 12 de 47 batalhas
 Cada batalha poderia ter sua própria URL: `/pt/ranking/batalhas/crossing-interference-vs-delegating/`
 
 Isso permite:
+
 - OG image gerada com os dois títulos em duelo
 - Link permanente compartilhável
 - JSON-LD com a análise como `Review`
@@ -164,6 +171,7 @@ Isso permite:
 
 Atual: três cards iguais com número.  
 Proposto:
+
 - Card central (1º lugar) mais alto que os laterais — layout de pódio real
 - Animação CSS sutil de entrada (escala + opacity) ao carregar
 - Fundo com gradiente dourado/prata/bronze no topo do card
@@ -180,6 +188,7 @@ Proposto:
 ### 4b. Tabela com quick-expand
 
 Clicar em uma linha da tabela expande um mini-resumo inline:
+
 - Últimas 3 batalhas daquele post
 - Barra de win rate visual
 - Link direto para o post
@@ -196,22 +205,22 @@ Adicionar sparkline de duelos por semana (SVG inline gerado no build, zero runti
 Atual: lista plana.  
 Proposto: framing como "fila de espera" com call-to-action para o leitor:
 
-> *Esses posts ainda não passaram pelo julgamento. Sente que algum deles merecia estar no topo? [Abra uma issue sugerindo um duelo.](link)*
+> _Esses posts ainda não passaram pelo julgamento. Sente que algum deles merecia estar no topo? [Abra uma issue sugerindo um duelo.](link)_
 
 ---
 
 ## Ordem de implementação sugerida
 
-| Prioridade | Item | Esforço | Impacto |
-|-----------|------|---------|---------|
-| 1 | Expor `body` das batalhas em `DuelEntry` | pequeno | alto |
-| 2 | Cards expansíveis com o texto do julgamento | médio | **máximo** |
-| 3 | Filtros de critério + busca livre | médio | alto |
-| 4 | Pódio com layout real (estilo olímpico) | pequeno | médio |
-| 5 | Filtros de confiança + temporada | pequeno | médio |
-| 6 | Stats com sparkline de atividade | médio | médio |
-| 7 | Tabela com quick-expand inline | médio | baixo |
-| 8 | Páginas individuais por batalha | grande | alto (SEO) |
+| Prioridade | Item                                        | Esforço | Impacto    |
+| ---------- | ------------------------------------------- | ------- | ---------- |
+| 1          | Expor `body` das batalhas em `DuelEntry`    | pequeno | alto       |
+| 2          | Cards expansíveis com o texto do julgamento | médio   | **máximo** |
+| 3          | Filtros de critério + busca livre           | médio   | alto       |
+| 4          | Pódio com layout real (estilo olímpico)     | pequeno | médio      |
+| 5          | Filtros de confiança + temporada            | pequeno | médio      |
+| 6          | Stats com sparkline de atividade            | médio   | médio      |
+| 7          | Tabela com quick-expand inline              | médio   | baixo      |
+| 8          | Páginas individuais por batalha             | grande  | alto (SEO) |
 
 ---
 
