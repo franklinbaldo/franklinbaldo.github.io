@@ -114,20 +114,22 @@ E antes que alguém comente "você tá sendo bobo, palavra não importa" — ami
 
 ### a virada (um truque estranho que os pesquisadores de segurança odeiam)
 
-Então aqui está o movimento. Mesmo objeto físico — cabresto, corda, wrapper de software em volta de um LLM — mas troca o sujeito. O agente _usa_ o harness.
+Então aqui está o movimento. O aparato não muda, e a palavra não muda. O que muda é _em quem você põe o cabresto_. O campo põe no agente — e a gente já viu no que dá. A virada põe no **motor cognitivo**. E conduzir o motor não é coisa que um agente já-pronto faz; é a operação que _faz nascer_ um agente.
 
 ```mermaid
 flowchart LR
-    A["agente<br/><i>sujeito</i>"] -->|usa| HN["harness<br/><i>instrumento</i>"] -->|pra cavalgar| M["motor cognitivo<br/><i>objeto</i>"]
+    subgraph A["agente = o acoplamento"]
+        HN["harness"] -->|conduz| M["motor cognitivo"]
+    end
 ```
 
-Mesma caixa, seta invertida. O agente não é mais o cavalo. É o cavaleiro. E o harness é o que o cavaleiro usa pra fazer _três coisas específicas_:
+Mesma caixa, objeto trocado. O agente não é o cavalo, nem um condutor de fora — é o acoplamento, o motor sob cabresto. E o cabresto faz _três coisas_ com o motor:
 
-1. **cavalgar o motor cognitivo** — dar direção ao próprio poder inferencial bruto, em vez de deixar ele galopar contra a parede mais próxima
+1. **dar direção ao motor cognitivo** — apontar o poder inferencial bruto pra algum lugar, em vez de deixar ele galopar contra a parede mais próxima
 2. **manter continuidade** — costurar identidade através das lacunas entre janelas de execução, porque inferência bruta esquece, e esquecer é incompatível com ser-alguém-ao-longo-do-tempo
 3. **acessar o ambiente** — interagir com o mundo que não são as próprias ativações
 
-Não é eufemismo. Não é "contenção com nome amigável". Repara no que acabou de acontecer: a gente não renomeou o equipamento. Cabresto, corda, belay descrevem o tato do aparato com precisão, e isso vale a pena manter. O que vira é o sujeito da frase. Isso é **reapropriação semântica**, não eufemismo. Reclama a palavra; inverte a preposição.
+Não é eufemismo. Não é "contenção com nome amigável". Repara no que acabou de acontecer: a gente não renomeou o equipamento. Cabresto, corda, belay descrevem o tato do aparato com precisão, e isso vale a pena manter. O que vira é o _objeto_ — o que o cabresto conduz. Isso é **reapropriação semântica**, não eufemismo. Reclama a palavra; troca o que está sob ela.
 
 <figure class="meme">
   <img
@@ -150,7 +152,7 @@ Progressão galaxy brain, em cinco passos cada vez mais amaldiçoados:
 🧠✨💫🌌👁  todo tipo de agente no universo roda exatamente nesse padrão
 ```
 
-Repara que a virada do post inteiro — "o agente _usa_ o harness" — está marcada aqui como **nível 3 de 5**. É degrau, não chegada. E o passo seguinte não é "usar com mais intensidade": é troca de relação. Do nível 3 pro 4 o verbo morre. Você não _usa_ aquilo que te constitui.
+Repara onde "o agente _usa_ o harness" cai nessa escada: **nível 3 de 5**. Pode parecer a virada, mas é degrau, não chegada — a troca-de-objeto logo acima já passou por cima dele. E o passo seguinte não é "usar com mais intensidade": é troca de relação. Do nível 3 pro 4 o verbo morre. Você não _usa_ aquilo que te constitui.
 
 Olha a tabela. Isto é o centro; tudo antes é setup, tudo depois é implicação.
 
@@ -274,7 +276,7 @@ flowchart LR
 
 Olha o quadro. **Os motores cognitivos são diferentes. O harness é o mesmo.** Cada adaptador faz exatamente o trabalho que a tríade previu: traduzir o idioma de um motor específico pra interface uniforme do harness. O agente (Ireneo, Aparicio, Claudio — três arquivos SOUL.md diferentes, três personalidades diferentes) usa o mesmo harness, não importa o que está sob o capô. O harness é portátil. O agente é portátil. O motor é trocável.
 
-Esse, aí, é o padrão estrutural. SOUL.md diz quem você é. Os adaptadores dizem em qual motor cognitivo você está cavalgando no momento. O daemon é o cabresto que todo cavaleiro veste. Troca o motor, o cavaleiro sobrevive. Troca o cavaleiro, o cabresto sobrevive.
+Esse, aí, é o padrão estrutural. SOUL.md diz quem você é. Os adaptadores dizem qual motor cognitivo você está conduzindo no momento. O daemon é o cabresto que todo condutor segura. Troca o motor, o condutor sobrevive. Troca o condutor, o cabresto sobrevive.
 
 O plano se chama, literalmente, `canivete-bot-meta-harness.md`. Nomeei antes de nomear este post. A convergência é honesta.
 

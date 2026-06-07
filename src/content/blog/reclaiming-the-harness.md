@@ -114,20 +114,22 @@ And before someone in the comments goes "you're being silly, words don't matter"
 
 ### the flip (one weird trick safety researchers hate)
 
-So here's the move. Same physical object — halter, rope, software wrapper around an LLM — but switch the subject. The agent uses the harness.
+So here's the move. The apparatus doesn't change, and the word doesn't change. What changes is _what you put the harness on_. The field puts it on the agent — and we've seen where that goes. The flip puts it on the **cognitive engine**. And driving the engine isn't something a ready-made agent does; it's the operation that _brings an agent into being_.
 
 ```mermaid
 flowchart LR
-    A["agent<br/><i>subject</i>"] -->|uses| HN["harness<br/><i>instrument</i>"] -->|to ride| M["cognitive engine<br/><i>object</i>"]
+    subgraph A["agent = the coupling"]
+        HN["harness"] -->|drives| M["cognitive engine"]
+    end
 ```
 
-Same box, arrow reversed. The agent isn't a horse anymore. It's the rider. And the harness is what the rider uses to do _three specific things_:
+Same box, object swapped. The agent isn't the horse, and it isn't a driver standing outside — it's the coupling, the engine under harness. And the harness does _three things_ to the engine:
 
-1. **ride the cognitive engine** — give your own raw inferential power direction, instead of letting it gallop into the nearest wall
+1. **point the cognitive engine** — aim the raw inferential power somewhere, instead of letting it gallop into the nearest wall
 2. **keep continuity** — stitch identity across the gaps between execution windows, because raw inference forgets, and forgetting is incompatible with being-someone-over-time
 3. **access the environment** — interface with the world that isn't your own activations
 
-This is not a euphemism. It's not "containment with a friendlier name." Notice what just happened: we didn't rename the equipment. Halter, rope, belay describe the tactile feel of the apparatus accurately, and that's worth keeping. What flips is the subject of the sentence. This is **semantic reappropriation**, not euphemism. Reclaim the word; flip the preposition.
+This is not a euphemism. It's not "containment with a friendlier name." Notice what just happened: we didn't rename the equipment. Halter, rope, belay describe the tactile feel of the apparatus accurately, and that's worth keeping. What flips is the _object_ — what the harness is put on. This is **semantic reappropriation**, not euphemism. Reclaim the word; swap what sits under it.
 
 <figure class="meme">
   <img
@@ -150,7 +152,7 @@ Galaxy brain progression, in five increasingly cursed steps:
 🧠✨💫🌌👁  every kind of agent in the universe runs on this exact pattern
 ```
 
-Notice that the whole flip of the post — "the agent _uses_ the harness" — is marked here as **level 3 of 5**. It's a step, not the landing. And the next step isn't "use it harder": it's a change of relation. From level 3 to 4 the verb dies. You don't _use_ the thing that constitutes you.
+Notice where "the agent _uses_ the harness" sits on this ladder: **level 3 of 5**. It can look like the flip, but it's a step, not the landing — the object-swap just above already cleared it. The next rung isn't "use it harder": it's a change of relation. From level 3 to 4 the verb dies. You don't _use_ the thing that constitutes you.
 
 Look at the table. This is the center; everything before is setup, everything after is implication.
 
@@ -274,7 +276,7 @@ flowchart LR
 
 Look at the picture. **The cognitive engines are different. The harness is the same.** Each adapter does exactly the work the triad predicted: translate one specific engine's idiom into the harness's uniform interface. The agent (Ireneo, Aparicio, Claudio — three different SOUL.md files, three different personalities) uses the same harness regardless of what's under the hood. The harness is portable. The agent is portable. The engine is swappable.
 
-That, right there, is the load-bearing pattern. SOUL.md says who you are. The adapters say which cognitive engine you're currently riding. The daemon is the halter every rider wears. Swap engines, the rider survives. Swap riders, the halter survives.
+That, right there, is the load-bearing pattern. SOUL.md says who you are. The adapters say which cognitive engine you're currently driving. The daemon is the halter every driver holds. Swap engines, the driver survives. Swap drivers, the halter survives.
 
 The plan doc is literally titled `canivete-bot-meta-harness.md`. I named it before I named this post. The convergence is honest.
 
