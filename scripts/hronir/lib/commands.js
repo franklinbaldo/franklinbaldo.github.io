@@ -14,12 +14,13 @@ import {
   findTranslations,
 } from "./posts.js";
 import { listMatchFiles, readMatch, writeMatch, postKey } from "./matches.js";
-import { computeRatings } from "./ranking.js";
+import { computeRatings, getProtectedPosts } from "./ranking.js";
 import {
   pickRandomPerspective,
   loadPerspective,
   listPerspectives,
 } from "./perspectives.js";
+import { pickRandomMood } from "./moods.js";
 
 const MIN_APPEARANCES = 3;
 const STALE_BONUS = 3.0;
@@ -237,7 +238,24 @@ export function init(options = {}) {
 }
 
 function generateNextMatch() {
-  const candidates = listEnglishWithKey();
+  const allCandidates = listEnglishWithKey();
+
+  // Exclude posts that currently lead any per-perspective ranking (≥2 duels).
+  // A post on top in some perspective has already "won" there; keep the pool
+  // moving by giving others a chance to challenge.
+  const protected_ = getProtectedPosts(2);
+  const candidates =
+    protected_.size > 0
+      ? allCandidates.filter((c) => !protected_.has(c.translationKey))
+      : allCandidates;
+  if (protected_.size > 0) {
+    console.log(
+      `(${protected_.size} post(s) protegido(s) — lideram um ranking de perspectiva: ${[...protected_].join(", ")})`
+    );
+  }
+  // Fallback: if protection would leave fewer than 4 candidates, ignore it.
+  const eligible = candidates.length >= 4 ? candidates : allCandidates;
+
   const ranking = computeRatings();
   const ratingByKey = new Map();
   for (const r of ranking) ratingByKey.set(r.key, { mu: r.mu, sigma: r.sigma });
@@ -245,7 +263,7 @@ function generateNextMatch() {
 
   const lastMatchTime = latestMatchTimeByKey();
   const staleByKey = new Map();
-  for (const c of candidates) {
+  for (const c of eligible) {
     const lastMatch = lastMatchTime.get(c.translationKey) || 0;
     if (lastMatch === 0) {
       staleByKey.set(c.translationKey, false);
@@ -257,10 +275,10 @@ function generateNextMatch() {
   const staleBonus = (key) => (staleByKey.get(key) ? STALE_BONUS : 0);
 
   const pairs = [];
-  for (let i = 0; i < candidates.length; i++) {
-    for (let j = i + 1; j < candidates.length; j++) {
-      const a = candidates[i];
-      const b = candidates[j];
+  for (let i = 0; i < eligible.length; i++) {
+    for (let j = i + 1; j < eligible.length; j++) {
+      const a = eligible[i];
+      const b = eligible[j];
       const ra = getRating(a.translationKey);
       const rb = getRating(b.translationKey);
       const [pA] = predictWin([[ra], [rb]]);
@@ -304,6 +322,18 @@ function generateNextMatch() {
   }
 
   const perspective = pickRandomPerspective();
+  const recordedMoods = [];
+  for (const f of listMatchFiles()) {
+    const { data } = readMatch(f);
+    if (
+      data.evaluator_mood_after &&
+      typeof data.evaluator_mood_after === "string" &&
+      data.evaluator_mood_after.trim()
+    ) {
+      recordedMoods.push(data.evaluator_mood_after.trim());
+    }
+  }
+  const evaluatorMood = pickRandomMood(recordedMoods);
 
   console.log(
     `Gerado match ${matchIndex} (active sampling). Perspectiva: ${perspective.name}.`
@@ -323,11 +353,12 @@ function generateNextMatch() {
     agent_id: agentId,
     eval_lang: evalLang,
     perspective_id: perspective.id,
+    evaluator_mood: evaluatorMood,
   };
 }
 
-function perspectiveBanner(perspective) {
-  return [
+function perspectiveBanner(perspective, mood) {
+  const lines = [
     "================================================================================",
     `🎭 PERSPECTIVA DESTE MATCH: ${perspective.name}`,
     `   id: ${perspective.id}`,
@@ -336,8 +367,15 @@ function perspectiveBanner(perspective) {
     "",
     perspective.body,
     "================================================================================",
-    "",
-  ].join("\n");
+  ];
+  if (mood) {
+    lines.push(`🌡️  ESTADO DO AVALIADOR: ${mood}`);
+    lines.push(
+      "================================================================================"
+    );
+  }
+  lines.push("");
+  return lines.join("\n");
 }
 
 export function continueCmd() {
@@ -404,7 +442,8 @@ export function continueCmd() {
     const perspectiveId = session.currentMatch?.perspective_id;
     if (perspectiveId) {
       try {
-        console.log(perspectiveBanner(loadPerspective(perspectiveId)));
+        const mood = session.currentMatch?.evaluator_mood;
+        console.log(perspectiveBanner(loadPerspective(perspectiveId), mood));
       } catch (e) {
         console.error(`Erro ao carregar perspectiva: ${e.message}`);
         process.exit(1);
@@ -459,9 +498,10 @@ export function continueCmd() {
       "- --rate-a / --rate-b: número de 1.00 a 5.00 com até duas casas decimais (proibido empate)",
       "- --review-a / --review-b: mínimo 100 palavras cada, escritas a partir da perspectiva atribuída",
       "- --clash: mínimo 100 palavras, narra o confronto entre os dois posts pela ótica da perspectiva",
+      "- --after-mood: texto livre (máx. 250 chars) sobre seu estado APÓS ler e avaliar ambos os posts (opcional — mas alimenta o pool de moods futuros)",
       "",
       `Para decidir, rode:`,
-      `npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>"`,
+      `npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>" --after-mood "<estado pós-avaliação>"`,
     ];
     nextStep(stepLines.join("\n"));
     return;
@@ -469,7 +509,7 @@ export function continueCmd() {
 
   if (session.state === "deciding") {
     nextStep(
-      `Você precisa decidir o match atual. Rode: npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>"`
+      `Você precisa decidir o match atual. Rode: npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>" --after-mood "<estado pós-avaliação>"`
     );
     return;
   }
@@ -490,7 +530,7 @@ export function next(initOptions = {}) {
 
   if (session.state === "deciding") {
     nextStep(
-      `Decisão pendente. Rode: npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>"`
+      `Decisão pendente. Rode: npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>" --after-mood "<estado pós-avaliação>"`
     );
     return;
   }
@@ -541,6 +581,7 @@ export function decide(args) {
   let reviewB = "";
   let rateA = null;
   let rateB = null;
+  let afterMood = null;
 
   const removedFlags = new Set([
     "--winner",
@@ -580,6 +621,7 @@ export function decide(args) {
     else if (args[i] === "--review-b") reviewB = args[++i];
     else if (args[i] === "--rate-a") rateA = args[++i];
     else if (args[i] === "--rate-b") rateB = args[++i];
+    else if (args[i] === "--after-mood") afterMood = args[++i];
   }
 
   if (!agentId || agentId === "TODO") {
@@ -661,6 +703,10 @@ export function decide(args) {
     season: 1,
     override: null,
     perspective_id: perspective.id,
+    evaluator_mood: currentMatch.evaluator_mood ?? null,
+    evaluator_mood_after: afterMood
+      ? String(afterMood).trim().slice(0, 250) || null
+      : null,
     rate_a: parsedRateA,
     rate_b: parsedRateB,
     clash,
