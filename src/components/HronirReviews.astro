@@ -12,13 +12,6 @@ interface Props {
 const { translationKey, lang = "en" } = Astro.props;
 
 const allDuels = getAllDuels();
-const myDuels = allDuels.filter(
-  (d) => d.postAKey === translationKey || d.postBKey === translationKey
-);
-
-if (myDuels.length === 0) {
-  // nothing to render
-}
 
 const allPosts = await getCollection("blog");
 const postMeta = new Map<string, { title: string; slug: string; lang: string }>();
@@ -50,81 +43,151 @@ function fmtDate(iso: string): string {
   return new Date(iso).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" });
 }
 
-const heading = lang === "pt" ? "Avaliações Hrönir" : "Hrönir Reviews";
+// Precompute card data and filter out duels with no review content
+type CardData = {
+  d: ReturnType<typeof getAllDuels>[number];
+  myReview: string;
+  myRate: number | undefined;
+  won: boolean;
+  opponent: { title: string; slug: string; lang: string } | undefined;
+  opponentUrl: string | null;
+};
+
+const cards: CardData[] = allDuels
+  .filter((d) => d.postAKey === translationKey || d.postBKey === translationKey)
+  .flatMap((d) => {
+    const isPostA = d.postAKey === translationKey;
+    const myReview = isPostA ? d.parsedContent?.postAAnalysis : d.parsedContent?.postBAnalysis;
+    if (!myReview) return [];
+    const opponentKey = isPostA ? d.postBKey : d.postAKey;
+    return [{
+      d,
+      myReview,
+      myRate: isPostA ? d.rateA : d.rateB,
+      won: d.winnerKey === translationKey,
+      opponent: opponentKey ? postMeta.get(opponentKey) : undefined,
+      opponentUrl: opponentKey ? opponentHref(opponentKey) : null,
+    }];
+  });
+
+// Sort: won → rate desc; lost → rate asc; fallback date desc
+const wonCards = cards
+  .filter((c) => c.won)
+  .sort((a, b) => (b.myRate ?? 0) - (a.myRate ?? 0) || b.d.runAt.localeCompare(a.d.runAt));
+
+const lostCards = cards
+  .filter((c) => !c.won)
+  .sort((a, b) => (a.myRate ?? 0) - (b.myRate ?? 0) || b.d.runAt.localeCompare(a.d.runAt));
+
+const heading      = lang === "pt" ? "Avaliações Hrönir" : "Hrönir Reviews";
+const bestHeading  = lang === "pt" ? "Melhores avaliações" : "Best reviews";
+const worstHeading = lang === "pt" ? "Piores avaliações" : "Worst reviews";
 const blurb =
   lang === "pt"
-    ? "Este post foi avaliado em confrontos par-a-par. Abaixo estão as resenhas de cada duelo, escritas a partir de uma perspectiva de leitura sorteada."
-    : "This post has been evaluated in pairwise duels. Below are the reviews from each duel, written from a randomly assigned reader perspective.";
-const wonLabel = lang === "pt" ? "✓ Venceu" : "✓ Won";
-const lostLabel = lang === "pt" ? "✗ Perdeu" : "✗ Lost";
+    ? "Resenhas dos duelos par-a-par, escritas a partir de uma perspectiva de leitura sorteada."
+    : "Reviews from pairwise duels, each written from a randomly assigned reader perspective.";
+const wonLabel     = lang === "pt" ? "✓ Venceu" : "✓ Won";
+const lostLabel    = lang === "pt" ? "✗ Perdeu" : "✗ Lost";
 const verdictLabel = lang === "pt" ? "Veredito do confronto" : "Clash verdict";
-const vsLabel = "vs";
+const vsLabel      = "vs";
 ---
 
-{myDuels.length > 0 && (
+{cards.length > 0 && (
   <section class="hronir-reviews">
     <h3>{heading}</h3>
     <p><small>{blurb}</small></p>
-    {myDuels.map((d) => {
-      const isPostA = d.postAKey === translationKey;
-      const myReview = isPostA
-        ? d.parsedContent?.postAAnalysis
-        : d.parsedContent?.postBAnalysis;
-      if (!myReview) return null;
 
-      const myRate = isPostA ? d.rateA : d.rateB;
-      const won = d.winnerKey === translationKey;
-      const opponentKey = isPostA ? d.postBKey : d.postAKey;
-      const opponent = opponentKey ? postMeta.get(opponentKey) : null;
-      const opponentUrl = opponentKey ? opponentHref(opponentKey) : null;
+    {wonCards.length > 0 && (
+      <div class="hronir-group">
+        <h4 class="group-heading group-best">{bestHeading}</h4>
+        {wonCards.map(({ d, myReview, myRate, won, opponent, opponentUrl }) => (
+          <article class="hronir-card card-won">
+            <header class="hronir-card-header">
+              <div class="hronir-card-meta">
+                <span class="hronir-date">{fmtDate(d.runAt)}</span>
+                {d.perspectiveId && (
+                  <span
+                    class="hronir-tag tag-perspective"
+                    style={`--ph:${perspectiveHue(d.perspectiveId)}`}
+                  >
+                    {d.perspectiveId.replace(/-/g, " ")}
+                  </span>
+                )}
+                {d.agentId && (
+                  <span class="hronir-tag tag-agent">{d.agentId}</span>
+                )}
+              </div>
+              <div class="hronir-card-result">
+                <span class="result-badge badge-won">{wonLabel}</span>
+                {myRate != null && <span class="hronir-rate">{myRate.toFixed(1)}★</span>}
+                {opponent && (
+                  <span class="hronir-opponent">
+                    {vsLabel}{" "}
+                    {opponentUrl
+                      ? <a href={opponentUrl}>{opponent.title}</a>
+                      : <span>{opponent.title}</span>
+                    }
+                  </span>
+                )}
+              </div>
+            </header>
+            <div class="hronir-review" set:html={marked.parse(myReview)} />
+            {d.parsedContent?.verdict && (
+              <details class="hronir-verdict">
+                <summary>{verdictLabel}</summary>
+                <div set:html={marked.parse(d.parsedContent.verdict)} />
+              </details>
+            )}
+          </article>
+        ))}
+      </div>
+    )}
 
-      return (
-        <article class={`hronir-card ${won ? "card-won" : "card-lost"}`}>
-          <header class="hronir-card-header">
-            <div class="hronir-card-meta">
-              <span class="hronir-date">{fmtDate(d.runAt)}</span>
-              {d.perspectiveId && (
-                <span
-                  class="hronir-tag tag-perspective"
-                  style={`--ph:${perspectiveHue(d.perspectiveId)}`}
-                >
-                  {d.perspectiveId.replace(/-/g, " ")}
-                </span>
-              )}
-              {d.agentId && (
-                <span class="hronir-tag tag-agent">{d.agentId}</span>
-              )}
-            </div>
-            <div class="hronir-card-result">
-              <span class={`result-badge ${won ? "badge-won" : "badge-lost"}`}>
-                {won ? wonLabel : lostLabel}
-              </span>
-              {myRate != null && (
-                <span class="hronir-rate">{myRate.toFixed(1)}★</span>
-              )}
-              {opponent && (
-                <span class="hronir-opponent">
-                  {vsLabel}{" "}
-                  {opponentUrl
-                    ? <a href={opponentUrl}>{opponent.title}</a>
-                    : <span>{opponent.title}</span>
-                  }
-                </span>
-              )}
-            </div>
-          </header>
-
-          <div class="hronir-review" set:html={marked.parse(myReview)} />
-
-          {d.parsedContent?.verdict && (
-            <details class="hronir-verdict">
-              <summary>{verdictLabel}</summary>
-              <div set:html={marked.parse(d.parsedContent.verdict)} />
-            </details>
-          )}
-        </article>
-      );
-    })}
+    {lostCards.length > 0 && (
+      <div class="hronir-group">
+        <h4 class="group-heading group-worst">{worstHeading}</h4>
+        {lostCards.map(({ d, myReview, myRate, won, opponent, opponentUrl }) => (
+          <article class="hronir-card card-lost">
+            <header class="hronir-card-header">
+              <div class="hronir-card-meta">
+                <span class="hronir-date">{fmtDate(d.runAt)}</span>
+                {d.perspectiveId && (
+                  <span
+                    class="hronir-tag tag-perspective"
+                    style={`--ph:${perspectiveHue(d.perspectiveId)}`}
+                  >
+                    {d.perspectiveId.replace(/-/g, " ")}
+                  </span>
+                )}
+                {d.agentId && (
+                  <span class="hronir-tag tag-agent">{d.agentId}</span>
+                )}
+              </div>
+              <div class="hronir-card-result">
+                <span class="result-badge badge-lost">{lostLabel}</span>
+                {myRate != null && <span class="hronir-rate">{myRate.toFixed(1)}★</span>}
+                {opponent && (
+                  <span class="hronir-opponent">
+                    {vsLabel}{" "}
+                    {opponentUrl
+                      ? <a href={opponentUrl}>{opponent.title}</a>
+                      : <span>{opponent.title}</span>
+                    }
+                  </span>
+                )}
+              </div>
+            </header>
+            <div class="hronir-review" set:html={marked.parse(myReview)} />
+            {d.parsedContent?.verdict && (
+              <details class="hronir-verdict">
+                <summary>{verdictLabel}</summary>
+                <div set:html={marked.parse(d.parsedContent.verdict)} />
+              </details>
+            )}
+          </article>
+        ))}
+      </div>
+    )}
   </section>
 )}
 
@@ -138,17 +201,32 @@ const vsLabel = "vs";
     margin-bottom: 0.25rem;
   }
   .hronir-reviews > p {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
   }
 
+  .hronir-group {
+    margin-bottom: 1.75rem;
+  }
+  .group-heading {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid var(--pico-muted-border-color);
+  }
+  .group-best  { color: var(--pico-ins-color, #2d9f5d); }
+  .group-worst { color: var(--pico-del-color, #c62828); }
+
   .hronir-card {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
     padding: 1rem 1.25rem;
     border-radius: var(--pico-border-radius);
     border: 1px solid var(--pico-muted-border-color);
     border-left: 3px solid var(--pico-muted-border-color);
   }
-  .card-won { border-left-color: var(--pico-ins-color, #2d9f5d); }
+  .card-won  { border-left-color: var(--pico-ins-color, #2d9f5d); }
   .card-lost { border-left-color: var(--pico-del-color, #c62828); }
 
   .hronir-card-header {
