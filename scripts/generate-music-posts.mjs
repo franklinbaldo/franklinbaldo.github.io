@@ -50,6 +50,10 @@ function fmtDate(isoString) {
 
 function fmtYamlStr(str) {
   if (!str) return '""';
+  // Always quote if the value could be parsed as a non-string (pure numbers, booleans, etc.)
+  if (/^[\d.]+$/.test(str) || /^(true|false|null|yes|no)$/i.test(str)) {
+    return `"${str}"`;
+  }
   // Quote if contains special YAML chars
   if (/[:#\[\]{},|>&*!'"\\]/.test(str) || str.includes("\n")) {
     return `"${str.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
