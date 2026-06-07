@@ -36,8 +36,7 @@ const TITLE_TRANSLATIONS = {
   "O Preço da Saudade": "The Price of Saudade",
   "O Prólogo": "The Prologue",
   "O Regral": "O Regral (The Rulial)",
-  "O Ritual de Abril — Anos de Saudade":
-    "The April Ritual — Years of Longing",
+  "O Ritual de Abril — Anos de Saudade": "The April Ritual — Years of Longing",
   "O Sonhador e o Fogo": "The Dreamer and the Fire",
   "O Telefone da Agonia": "The Phone of Agony",
   "O Tempo": "Time",
@@ -54,7 +53,7 @@ const TITLE_TRANSLATIONS = {
   Xadrez: "Chess",
   "A Primeira Mudança": "The First Change",
   "Entre Rascunho e Apagar": "Between Draft and Erasing",
-  "666": "666",
+  666: "666",
 };
 
 function parseFrontmatter(content) {
@@ -177,7 +176,11 @@ async function main() {
 
     const enFrontmatter = buildEnFrontmatter(newFrontmatter, enTitle, slug);
     const enBody = makeEnBody(body, enTitle);
-    writeFileSync(ptPath.replace(filename, `${slug}-en.mdx`), `---\n${enFrontmatter}\n---\n${enBody}`, "utf8");
+    writeFileSync(
+      ptPath.replace(filename, `${slug}-en.mdx`),
+      `---\n${enFrontmatter}\n---\n${enBody}`,
+      "utf8"
+    );
     console.log(`  created: musicas/${slug}-en.mdx`);
     created++;
   }
