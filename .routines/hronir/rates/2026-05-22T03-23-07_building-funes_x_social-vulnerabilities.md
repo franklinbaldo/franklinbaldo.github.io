@@ -17,7 +17,7 @@ prompt_version: passion-v1
 season: 1
 override: null
 clash: Building Funes vs Patents for Social Vulnerabilities
-winner_defense: >-
+review_a: >-
   Post A 'Building Funes: How I Gave an AI Agent a Soul' perfectly captures the
   requested tone and themes. It bridges literary theory (Borges) with practical
   software engineering (system prompts, agent architectures) in a deeply
@@ -25,7 +25,7 @@ winner_defense: >-
   brilliant piece of process metaphysics applied to AI. It is quintessential
   'franklin': builder-philosopher, avoiding hype, and focusing on the deep
   structure of agents.
-loser_critique: >-
+review_b: >-
   Post B 'Patents For Social Vulnerabilities', while an interesting policy
   thought experiment, lacks the philosophical depth and literary-technical voice
   required for the blog. It reads more like a standard tech policy op-ed or a
@@ -34,3 +34,4 @@ loser_critique: >-
   architecture) and feels out of place compared to the profound narrative of
   Post A.
 ---
+

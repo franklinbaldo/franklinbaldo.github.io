@@ -17,7 +17,7 @@ prompt_version: passion-v1
 season: 1
 override: null
 clash: Jules API Harness vs The Agent That Doesn't Invent Verbs (Part 2)
-winner_defense: >-
+review_a: >-
   Post A 'The Jules API as a Harness Backend' is exactly the kind of post the
   persona demands for technical implementations. It frames the integration of
   the Jules API not as a mere tutorial, but as a shift in agent topology—from
@@ -25,7 +25,7 @@ winner_defense: >-
   hearing in Rondônia grounds the technical reality in the author's specific
   context. It beautifully reinforces the separation between cognitive engine
   (Jules) and identity/harness (Funes/canivete).
-loser_critique: >-
+review_b: >-
   Post B is corrupted. It appears to be the second half of a completely
   different post ('The Agent That Doesn't Invent Verbs') glued onto Portuguese
   metadata instructions. It starts mid-sentence and lacks a coherent beginning.
@@ -33,3 +33,4 @@ loser_critique: >-
   a complete or properly formatted blog post, making Post A the only viable
   winner.
 ---
+

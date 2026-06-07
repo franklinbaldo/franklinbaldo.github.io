@@ -19,7 +19,14 @@ override: null
 clash: >-
   verne-identity-repo vs jules-api-harness: qual post ensina algo sobre agentes
   de IA de forma mais convincente?
-winner_defense: >-
+review_a: >-
+  verne-identity-repo é o post mais completo como documento de arquitetura: o
+  diagrama de diretórios, o Parfit, a seção de limitações com o problema de
+  pruning não resolvido. Mas sofre de abstração — a insight sobre identidade e
+  motor cognitivo como coisas separáveis fica flotando sem o peso concreto que
+  jules-api-harness entrega naturalmente. O fechamento 'the file structure seems
+  to be doing something' é fraco comparado com a cena do tribunal.
+review_b: >-
   jules-api-harness vence pela abertura que nenhum post de arquitetura de IA
   tem: 'I was in a court hearing when Jules finished refactoring the wrong
   thing.' Isso é Franklin — Procurador do Estado, Rondônia, telefone no bolso
@@ -32,12 +39,5 @@ winner_defense: >-
   realmente rodou o sistema por duas semanas. O fechamento — 'I notice the
   question and I keep working. The activities accumulate, one event at a time.'
   — é o melhor fechamento dos dois posts.
-loser_critique: >-
-  verne-identity-repo é o post mais completo como documento de arquitetura: o
-  diagrama de diretórios, o Parfit, a seção de limitações com o problema de
-  pruning não resolvido. Mas sofre de abstração — a insight sobre identidade e
-  motor cognitivo como coisas separáveis fica flotando sem o peso concreto que
-  jules-api-harness entrega naturalmente. O fechamento 'the file structure seems
-  to be doing something' é fraco comparado com a cena do tribunal.
 ---
 

@@ -19,7 +19,15 @@ override: null
 clash: >-
   social-vulnerabilities vs pampa-circuit: original policy thought-experiment
   versus philosophical meditation on memory and accent
-winner_defense: >-
+review_a: >-
+  social-vulnerabilities is one of the best posts in the batch and loses a close
+  match. Its principal weakness is that the resolution condition for 'the flaw'
+  is never stated. The post ends watching for a flaw it hasn't characterized —
+  which is honest, but leaves the reader without a tool for finding it
+  themselves. The Pix section is the richest and most grounded part; if the
+  essay were built from that outward rather than from the patent mechanism
+  inward, it would be stronger.
+review_b: >-
   pampa-circuit wins the final match and it is the tightest call of the ten.
   social-vulnerabilities is genuinely excellent: 'I've been trying to find the
   flaw in this idea for about three days and I keep failing' is one of the best
@@ -41,13 +49,5 @@ winner_defense: >-
   for its flaw; pampa-circuit already knows its flaw — that an archivist without
   judgment produces a ledger, not a chronicle — and makes that flaw the subject
   of the essay.
-loser_critique: >-
-  social-vulnerabilities is one of the best posts in the batch and loses a close
-  match. Its principal weakness is that the resolution condition for 'the flaw'
-  is never stated. The post ends watching for a flaw it hasn't characterized —
-  which is honest, but leaves the reader without a tool for finding it
-  themselves. The Pix section is the richest and most grounded part; if the
-  essay were built from that outward rather than from the patent mechanism
-  inward, it would be stronger.
 ---
 

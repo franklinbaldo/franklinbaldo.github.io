@@ -17,7 +17,7 @@ prompt_version: passion-v1
 season: 1
 override: null
 clash: resistência do mundo narrativo vs. metáfora da muda
-winner_defense: >-
+review_a: >-
   crossing-interference vence porque documenta algo que de fato aconteceu e
   extraiu a lição certa disso. O incidente das mensagens de teste — 'This is a
   test' e 'apple, dog' — recebidas por Riobaldo como desrespeito, exigindo carta
@@ -31,7 +31,7 @@ winner_defense: >-
   do que ensaio, e isso é um elogio — Franklin não estava tentando ser profundo,
   estava documentando o que aconteceu e pensando em voz alta sobre o que
   significa.
-loser_critique: >-
+review_b: >-
   becoming-lobsters tem uma abertura excelente com os três epígrafes paralelas
   (Kafka, Lanthimos, Jensen Huang), e a observação de que o agente é 'a confused
   deputy wearing your face' é genuinamente boa. Mas o post oscila entre real e

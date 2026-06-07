@@ -19,7 +19,7 @@ override: null
 clash: >-
   asterisk-protects vs agent-no-verbs: análise de privacidade pública com
   insight institucional versus arquitetura técnica de alinhamento
-winner_defense: >-
+review_a: >-
   asterisk-protects é o post mais concentrado e mais memorável do corpus. A
   distinção Robson/Dona Maria é o insight mais reutilizável de qualquer post do
   corpus: a anonimização do CPF protege exatamente a pessoa errada, bloqueando a
@@ -34,7 +34,7 @@ winner_defense: >-
   olhar para ela' — é o segundo melhor fechamento do corpus. E o detalhe pessoal
   dos 843 Franklin Silveira Baldos que agradecem pela proteção é humor seco
   perfeito.
-loser_critique: >-
+review_b: >-
   agent-no-verbs é arquitetura séria e honesta — content-addressing, hierarquia
   tier 1/tier 2/tier 3, descent como reasoning, os três residuals naming
   honestly. O meme galaxy brain com a 'Give it a finite directory' é correto e

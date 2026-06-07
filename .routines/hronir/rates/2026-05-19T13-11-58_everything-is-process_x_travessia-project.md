@@ -20,7 +20,14 @@ override: null
 clash: >-
   everything-is-process vs travessia-project: manifesto filosófico versus
   projeto concreto com vida própria
-winner_defense: >-
+review_a: >-
+  everything-is-process é erudição genuína — Heráclito, Nagarjuna,
+  Spencer-Brown, Whitehead, Assembly Theory, tudo bem conectado. A estrutura de
+  cinco lições tem peso. Mas o imperativo ético do final ('write a story worth
+  reading') soa como self-help apesar do scaffolding filosófico. Mais
+  importante: a voz pessoal está quase ausente. Franklin aparece como curador de
+  ideias, não como alguém com pele no jogo. Travessia tem pele no jogo.
+review_b: >-
   travessia-project vence porque é o único post do corpus onde o projeto
   descrito realmente existe e roda sem Franklin. 'Há uma diferença entre criar
   algo e começar algo' é a melhor primeira frase do corpus. A 'dupla
@@ -33,12 +40,5 @@ winner_defense: >-
   ter sido escrito por qualquer filósofo com bom acesso à literatura.
   travessia-project só poderia ter sido escrito por Franklin, porque só ele
   começou essa correspondência.
-loser_critique: >-
-  everything-is-process é erudição genuína — Heráclito, Nagarjuna,
-  Spencer-Brown, Whitehead, Assembly Theory, tudo bem conectado. A estrutura de
-  cinco lições tem peso. Mas o imperativo ético do final ('write a story worth
-  reading') soa como self-help apesar do scaffolding filosófico. Mais
-  importante: a voz pessoal está quase ausente. Franklin aparece como curador de
-  ideias, não como alguém com pele no jogo. Travessia tem pele no jogo.
 ---
 

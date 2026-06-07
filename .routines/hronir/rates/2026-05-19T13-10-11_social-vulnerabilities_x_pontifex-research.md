@@ -19,7 +19,7 @@ override: null
 clash: >-
   social-vulnerabilities vs pontifex-research: qual post revela mais sobre o
   pensamento original de Franklin?
-winner_defense: >-
+review_a: >-
   social-vulnerabilities vence com autoridade. A proposta de patentear
   vulnerabilidades sociais é estranha o suficiente para ser genuína — não é uma
   ideia de editorial de segurança, é a ideia de alguém que viu os scripts de
@@ -32,7 +32,7 @@ winner_defense: >-
   parcialmente sem fingir que resolveu é o melhor padrão epistêmico do corpus. A
   conclusão 'taxonomias, mesmo imperfeitas, são como você escala defesa' merece
   citação fora do post.
-loser_critique: >-
+review_b: >-
   pontifex-research é competente e honesto — o diagrama mermaid, as referências
   curadas, a admissão de que o sistema não foi construído. Mas lê como um
   projeto técnico ambicioso de qualquer pesquisador de NLP atento, não como algo

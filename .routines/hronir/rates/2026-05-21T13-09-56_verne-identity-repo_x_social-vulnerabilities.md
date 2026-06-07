@@ -17,7 +17,16 @@ prompt_version: passion-v1
 season: 1
 override: null
 clash: verne-identity-repo vs social-vulnerabilities
-winner_defense: >-
+review_a: >-
+  verne-identity-repo é tecnicamente sólido e a tese central (identidade
+  separável do motor cognitivo) está bem argumentada. Mas o post lê mais como
+  documentação técnica do que ensaio: a estrutura de arquivos no bloco de texto,
+  as quatro leituras recomendadas no final, o parágrafo de caveats. A abertura é
+  a mais fraca do post — 'cada vez que você invoca um agente, ele acorda sem
+  saber nada sobre você' não cria tensão, apenas descreve um fato. O único
+  momento em que o ensaio sente como voz própria é 'o harness é substituível, a
+  identidade persiste' — mas chega tarde e não tem espaço para se desenvolver.
+review_b: >-
   social-vulnerabilities vence pela abertura que cria tensão intelectual
   imediata: 'três dias tentando achar a falha e continuando a falhar — o que
   geralmente significa que estou perdendo algo óbvio ou a ideia é realmente
@@ -31,14 +40,5 @@ winner_defense: >-
   única de Franklin como procurador — ninguém mais escreve este ensaio. O
   fechamento 'ainda não achei a falha' é o melhor fechamento possível: não
   resolve, suspende de forma honesta.
-loser_critique: >-
-  verne-identity-repo é tecnicamente sólido e a tese central (identidade
-  separável do motor cognitivo) está bem argumentada. Mas o post lê mais como
-  documentação técnica do que ensaio: a estrutura de arquivos no bloco de texto,
-  as quatro leituras recomendadas no final, o parágrafo de caveats. A abertura é
-  a mais fraca do post — 'cada vez que você invoca um agente, ele acorda sem
-  saber nada sobre você' não cria tensão, apenas descreve um fato. O único
-  momento em que o ensaio sente como voz própria é 'o harness é substituível, a
-  identidade persiste' — mas chega tarde e não tem espaço para se desenvolver.
 ---
 

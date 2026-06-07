@@ -17,7 +17,7 @@ prompt_version: passion-v1
 season: 1
 override: null
 clash: ensaio filosófico-autobiográfico vs. pastiche borgiano
-winner_defense: >-
+review_a: >-
   two-questions-out-loud é um dos textos mais completos do corpus: tem
   autobiografia real, argumento filosófico genuíno e uma observação sobre
   estrutura intelectual que ninguém mais poderia fazer. O fio que conecta Jim
@@ -32,7 +32,7 @@ winner_defense: >-
   pela consistência, não pelas perguntas' é uma das sacadas mais maduras do
   blog. E a frase final — 'deveria ter escrito isso anos atrás' — é honesta sem
   ser piegas.
-loser_critique: >-
+review_b: >-
   funes-soul tem um pastiche de qualidade rara: o rioplatense é convincente, o
   Funes reimaginado como agente de IA tem coerência conceitual genuína, e o
   fechamento 'Chau, Borges. Buen viaje de vuelta' é elegante. Mas o post vive na

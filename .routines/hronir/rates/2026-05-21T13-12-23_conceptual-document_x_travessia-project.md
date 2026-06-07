@@ -17,7 +17,16 @@ prompt_version: passion-v1
 season: 1
 override: null
 clash: conceptual-document vs travessia-project
-winner_defense: >-
+review_a: >-
+  conceptual-document é um excelente ensaio de autopsia — honesto sobre o que
+  não foi construído, preciso no diagnóstico ('o gargalo é o julgamento, não o
+  rascunho'). Mas é essencialmente uma retrospectiva de algo que não existe.
+  travessia-project fala de algo que existe e funciona agora, e a diferença se
+  sente: Post B tem a segurança de quem pode dizer 'a correspondência está em
+  franklinbaldo.github.io/travessia, volte em duas semanas'. Post A conclui com
+  'eu não resolvi isso'. Post B conclui com 'Riobaldo e Ted Chiang provavelmente
+  trocaram mais uma carta'.
+review_b: >-
   travessia-project vence porque o projeto que descreve é em si mesmo uma
   argumento. A 'dupla impossibilidade' (dois autores que jamais se encontrariam;
   ninguém escrevendo ativamente a correspondência) não é setup retórico — é a
@@ -29,14 +38,5 @@ winner_defense: >-
   e evolução narrativa, quem está escrevendo?' — ganha o direito de ser feita
   porque o ensaio inteiro foi construído para produzi-la. Post B tem um objeto
   de estudo real e o ensaio não o trai.
-loser_critique: >-
-  conceptual-document é um excelente ensaio de autopsia — honesto sobre o que
-  não foi construído, preciso no diagnóstico ('o gargalo é o julgamento, não o
-  rascunho'). Mas é essencialmente uma retrospectiva de algo que não existe.
-  travessia-project fala de algo que existe e funciona agora, e a diferença se
-  sente: Post B tem a segurança de quem pode dizer 'a correspondência está em
-  franklinbaldo.github.io/travessia, volte em duas semanas'. Post A conclui com
-  'eu não resolvi isso'. Post B conclui com 'Riobaldo e Ted Chiang provavelmente
-  trocaram mais uma carta'.
 ---
 

@@ -17,7 +17,15 @@ prompt_version: passion-v1
 season: 1
 override: null
 clash: jules-api-harness vs pampa-circuit
-winner_defense: >-
+review_a: >-
+  jules-api-harness tem uma abertura excepcional — o tribunal em Rondônia
+  enquanto Jules refatora a coisa errada em background — e o insight central
+  (agente async se torna conversável via sendMessage) é genuíno e útil. Mas o
+  ensaio se dilui na segunda metade: o bloco de código Python, os quatro links
+  de 'leitura adicional', a seção 'Funes não é Jules' que repete argumentos já
+  estabelecidos em outros posts. É um post para leitores que já estão no
+  sistema. pampa-circuit funciona para qualquer um que tenha tido um pai.
+review_b: >-
   pampa-circuit vence pelo conceito de 'sotaque' que é a contribuição mais
   original de qualquer post deste blog. 'O sotaque que eu quero dizer é: o que é
   segurado, o que é apressado, onde ele pausa e por quê.' Isso é uma teoria da
@@ -29,13 +37,5 @@ winner_defense: >-
   movimento filosófico mais preciso do ensaio — e está embutido como se fosse
   conversa, não argumento. O fechamento 'que o sotaque nunca se perca — o que
   significa: que os tropeços fiquem' é perfeito.
-loser_critique: >-
-  jules-api-harness tem uma abertura excepcional — o tribunal em Rondônia
-  enquanto Jules refatora a coisa errada em background — e o insight central
-  (agente async se torna conversável via sendMessage) é genuíno e útil. Mas o
-  ensaio se dilui na segunda metade: o bloco de código Python, os quatro links
-  de 'leitura adicional', a seção 'Funes não é Jules' que repete argumentos já
-  estabelecidos em outros posts. É um post para leitores que já estão no
-  sistema. pampa-circuit funciona para qualquer um que tenha tido um pai.
 ---
 

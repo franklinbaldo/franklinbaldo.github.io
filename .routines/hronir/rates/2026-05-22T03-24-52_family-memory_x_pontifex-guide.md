@@ -18,7 +18,15 @@ prompt_version: passion-v1
 season: 1
 override: null
 clash: Family Memory vs Pontifex Guide
-winner_defense: >-
+review_a: >-
+  Post A 'What I Learned Orchestrating AI Agents to Preserve Family Memory' has
+  a fatal flaw: its YAML frontmatter indicates the language is English, but the
+  body text feels like a direct, somewhat clunky translation from Portuguese
+  (e.g., 'horror vacui', 'the machine proposes; the flesh disposes'). It relies
+  too heavily on buzzwords and lacks the precise, idiomatic English flow
+  expected. Furthermore, Post B feels much more integrated into the technical
+  reality of the blog's lore (PINK, Pontifex).
+review_b: >-
   Post B 'Pontifex Architecture Implementation Guide' successfully executes the
   required persona, blending technical implementation (PyTorch, occlusion,
   byte-level processing) with a deep, grounded narrative about the reality of
@@ -27,12 +35,5 @@ winner_defense: >-
   embarrassment I've decided to stop hiding') elevates the post beyond a simple
   tutorial into an essay on the limits of weekend engineering and architectural
   aspiration.
-loser_critique: >-
-  Post A 'What I Learned Orchestrating AI Agents to Preserve Family Memory' has
-  a fatal flaw: its YAML frontmatter indicates the language is English, but the
-  body text feels like a direct, somewhat clunky translation from Portuguese
-  (e.g., 'horror vacui', 'the machine proposes; the flesh disposes'). It relies
-  too heavily on buzzwords and lacks the precise, idiomatic English flow
-  expected. Furthermore, Post B feels much more integrated into the technical
-  reality of the blog's lore (PINK, Pontifex).
 ---
+
