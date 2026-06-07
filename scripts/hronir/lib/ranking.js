@@ -90,3 +90,93 @@ export function computeRatings() {
   out.sort((x, y) => y.ordinal - x.ordinal || x.key.localeCompare(y.key));
   return out;
 }
+
+// Returns a Map<perspectiveId, Array<{key, ordinal, appearances, wins}>>
+// Each array is sorted ordinal DESC (best first), containing only posts that
+// appeared in at least one duel under that perspective.
+export function computePerPerspectiveRatings() {
+  const byPerspective = new Map(); // perspectiveId → Array<match>
+
+  for (const f of listMatchFiles()) {
+    const { data } = readMatch(f);
+    let winner = data.winner;
+    if (data.override && data.override !== "null") winner = data.override;
+    if (winner === "TODO" || !winner) continue;
+
+    const aKey = postKey(data.post_a);
+    const bKey = postKey(data.post_b);
+    if (!aKey || !bKey) continue;
+    if (winner !== "a" && winner !== "b") continue;
+
+    const perspId = data.perspective_id ? String(data.perspective_id) : null;
+    if (!perspId) continue;
+
+    const rawRunAt = data.run_at ?? data.run_id ?? "";
+    const runAt =
+      rawRunAt instanceof Date ? rawRunAt.toISOString() : String(rawRunAt);
+
+    if (!byPerspective.has(perspId)) byPerspective.set(perspId, []);
+    byPerspective.get(perspId).push({ runAt, aKey, bKey, winner });
+  }
+
+  const result = new Map();
+
+  for (const [perspId, matches] of byPerspective) {
+    matches.sort((x, y) => x.runAt.localeCompare(y.runAt));
+
+    const ratings = new Map();
+    const appearances = new Map();
+    const wins = new Map();
+
+    const ensure = (key) => {
+      if (!ratings.has(key)) ratings.set(key, rating());
+      return ratings.get(key);
+    };
+
+    for (const m of matches) {
+      const aRating = ensure(m.aKey);
+      const bRating = ensure(m.bKey);
+      appearances.set(m.aKey, (appearances.get(m.aKey) || 0) + 1);
+      appearances.set(m.bKey, (appearances.get(m.bKey) || 0) + 1);
+
+      const winnerKey = m.winner === "a" ? m.aKey : m.bKey;
+      const loserKey = m.winner === "a" ? m.bKey : m.aKey;
+      const [[newWinner], [newLoser]] = rate(
+        [[ratings.get(winnerKey)], [ratings.get(loserKey)]]
+      );
+      ratings.set(winnerKey, newWinner);
+      ratings.set(loserKey, newLoser);
+      wins.set(winnerKey, (wins.get(winnerKey) || 0) + 1);
+    }
+
+    const out = [];
+    for (const [key, r] of ratings) {
+      out.push({
+        key,
+        ordinal: ordinal(r),
+        appearances: appearances.get(key) || 0,
+        wins: wins.get(key) || 0,
+      });
+    }
+    out.sort((x, y) => y.ordinal - x.ordinal || x.key.localeCompare(y.key));
+    result.set(perspId, out);
+  }
+
+  return result;
+}
+
+// Returns a Set<string> of post keys that lead at least one perspective
+// ranking (with >= minAppearances duels in that perspective). These posts
+// are "protected" and should be excluded from new match generation.
+export function getProtectedPosts(minAppearances = 2) {
+  const perPerspective = computePerPerspectiveRatings();
+  const protected_ = new Set();
+  for (const [, rows] of perPerspective) {
+    if (rows.length === 0) continue;
+    const top = rows[0];
+    if (top.appearances >= minAppearances) {
+      protected_.add(top.key);
+    }
+  }
+  return protected_;
+}

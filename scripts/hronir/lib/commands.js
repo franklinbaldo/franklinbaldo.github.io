@@ -14,12 +14,13 @@ import {
   findTranslations,
 } from "./posts.js";
 import { listMatchFiles, readMatch, writeMatch, postKey } from "./matches.js";
-import { computeRatings } from "./ranking.js";
+import { computeRatings, getProtectedPosts } from "./ranking.js";
 import {
   pickRandomPerspective,
   loadPerspective,
   listPerspectives,
 } from "./perspectives.js";
+import { pickRandomMood } from "./moods.js";
 
 const MIN_APPEARANCES = 3;
 const STALE_BONUS = 3.0;
@@ -237,7 +238,23 @@ export function init(options = {}) {
 }
 
 function generateNextMatch() {
-  const candidates = listEnglishWithKey();
+  const allCandidates = listEnglishWithKey();
+
+  // Exclude posts that currently lead any per-perspective ranking (≥2 duels).
+  // A post on top in some perspective has already "won" there; keep the pool
+  // moving by giving others a chance to challenge.
+  const protected_ = getProtectedPosts(2);
+  const candidates = protected_.size > 0
+    ? allCandidates.filter((c) => !protected_.has(c.translationKey))
+    : allCandidates;
+  if (protected_.size > 0) {
+    console.log(
+      `(${protected_.size} post(s) protegido(s) — lideram um ranking de perspectiva: ${[...protected_].join(", ")})`
+    );
+  }
+  // Fallback: if protection would leave fewer than 4 candidates, ignore it.
+  const eligible = candidates.length >= 4 ? candidates : allCandidates;
+
   const ranking = computeRatings();
   const ratingByKey = new Map();
   for (const r of ranking) ratingByKey.set(r.key, { mu: r.mu, sigma: r.sigma });
@@ -245,7 +262,7 @@ function generateNextMatch() {
 
   const lastMatchTime = latestMatchTimeByKey();
   const staleByKey = new Map();
-  for (const c of candidates) {
+  for (const c of eligible) {
     const lastMatch = lastMatchTime.get(c.translationKey) || 0;
     if (lastMatch === 0) {
       staleByKey.set(c.translationKey, false);
@@ -257,10 +274,10 @@ function generateNextMatch() {
   const staleBonus = (key) => (staleByKey.get(key) ? STALE_BONUS : 0);
 
   const pairs = [];
-  for (let i = 0; i < candidates.length; i++) {
-    for (let j = i + 1; j < candidates.length; j++) {
-      const a = candidates[i];
-      const b = candidates[j];
+  for (let i = 0; i < eligible.length; i++) {
+    for (let j = i + 1; j < eligible.length; j++) {
+      const a = eligible[i];
+      const b = eligible[j];
       const ra = getRating(a.translationKey);
       const rb = getRating(b.translationKey);
       const [pA] = predictWin([[ra], [rb]]);
@@ -304,6 +321,7 @@ function generateNextMatch() {
   }
 
   const perspective = pickRandomPerspective();
+  const evaluatorMood = pickRandomMood();
 
   console.log(
     `Gerado match ${matchIndex} (active sampling). Perspectiva: ${perspective.name}.`
@@ -323,11 +341,12 @@ function generateNextMatch() {
     agent_id: agentId,
     eval_lang: evalLang,
     perspective_id: perspective.id,
+    evaluator_mood: evaluatorMood,
   };
 }
 
-function perspectiveBanner(perspective) {
-  return [
+function perspectiveBanner(perspective, mood) {
+  const lines = [
     "================================================================================",
     `🎭 PERSPECTIVA DESTE MATCH: ${perspective.name}`,
     `   id: ${perspective.id}`,
@@ -336,8 +355,13 @@ function perspectiveBanner(perspective) {
     "",
     perspective.body,
     "================================================================================",
-    "",
-  ].join("\n");
+  ];
+  if (mood) {
+    lines.push(`🌡️  ESTADO DO AVALIADOR: ${mood}`);
+    lines.push("================================================================================");
+  }
+  lines.push("");
+  return lines.join("\n");
 }
 
 export function continueCmd() {
@@ -404,7 +428,8 @@ export function continueCmd() {
     const perspectiveId = session.currentMatch?.perspective_id;
     if (perspectiveId) {
       try {
-        console.log(perspectiveBanner(loadPerspective(perspectiveId)));
+        const mood = session.currentMatch?.evaluator_mood;
+        console.log(perspectiveBanner(loadPerspective(perspectiveId), mood));
       } catch (e) {
         console.error(`Erro ao carregar perspectiva: ${e.message}`);
         process.exit(1);
@@ -661,6 +686,7 @@ export function decide(args) {
     season: 1,
     override: null,
     perspective_id: perspective.id,
+    evaluator_mood: currentMatch.evaluator_mood ?? null,
     rate_a: parsedRateA,
     rate_b: parsedRateB,
     clash,
