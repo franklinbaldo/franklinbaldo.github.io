@@ -19,6 +19,12 @@ export interface RankRow {
   path: string;
 }
 
+export interface DuelContent {
+  postAAnalysis: string;
+  postBAnalysis: string;
+  verdict: string;
+}
+
 export interface DuelEntry {
   runAt: string;
   winnerKey: string;
@@ -26,6 +32,35 @@ export interface DuelEntry {
   margin?: number;
   confidence?: string;
   criterion?: string;
+  body?: string;
+  model?: string;
+  season?: number;
+  postAKey?: string;
+  postBKey?: string;
+  parsedContent?: DuelContent;
+}
+
+export function parseDuelContent(body?: string): DuelContent {
+  const result: DuelContent = { postAAnalysis: "", postBAnalysis: "", verdict: "" };
+  if (!body) return result;
+
+  const parts = body.split(/(?:^|\n)##\s+/);
+  for (const part of parts) {
+    const trimmed = part.trim();
+    if (!trimmed) continue;
+    const lines = trimmed.split("\n");
+    const header = lines[0].trim().toLowerCase();
+    const content = lines.slice(1).join("\n").trim();
+
+    if (header.startsWith("post a")) {
+      result.postAAnalysis = content;
+    } else if (header.startsWith("post b")) {
+      result.postBAnalysis = content;
+    } else if (header.startsWith("veredito") || header.startsWith("verdict")) {
+      result.verdict = content;
+    }
+  }
+  return result;
 }
 
 export interface RankingStats {
@@ -61,7 +96,7 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
 
   const duels: DuelEntry[] = [];
   for (const f of listMatchFiles()) {
-    const { data } = readMatch(f);
+    const { data, content } = readMatch(f);
     let winner = (data as any).winner;
     if ((data as any).override && (data as any).override !== "null") {
       winner = (data as any).override;
@@ -97,6 +132,12 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
       criterion: (data as any).criterion
         ? String((data as any).criterion)
         : undefined,
+      body: content ? String(content).trim() : undefined,
+      model: (data as any).model ? String((data as any).model) : undefined,
+      season: typeof (data as any).season === "number" ? (data as any).season : undefined,
+      postAKey: aKey,
+      postBKey: bKey,
+      parsedContent: content ? parseDuelContent(String(content)) : undefined,
     });
   }
 
@@ -120,4 +161,8 @@ export function getRankingStats(): RankingStats {
 
 export function getRecentDuels(limit = 8): DuelEntry[] {
   return loadDuelData().recent.slice(0, limit);
+}
+
+export function getAllDuels(): DuelEntry[] {
+  return loadDuelData().recent;
 }

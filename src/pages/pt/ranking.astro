@@ -1,7 +1,7 @@
 ---
 import PageLayout from "../../layouts/PageLayout.astro";
 import { getCollection } from "astro:content";
-import { getRanking, getRankingStats, getRecentDuels } from "../../lib/hronir-rank";
+import { getRanking, getRankingStats, getAllDuels } from "../../lib/hronir-rank";
 import { isPublished } from "../../lib/publish";
 import RankingView, { type RankPostInfo, type UnratedItem, type RankingStrings } from "../../components/RankingView.astro";
 
@@ -45,7 +45,7 @@ for (const p of all) {
 unrated.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
 
 const stats = getRankingStats();
-const recent = getRecentDuels(8);
+const recent = getAllDuels();
 
 const itemListLd = {
   "@context": "https://schema.org",
@@ -82,8 +82,8 @@ const strings: RankingStrings = {
   thConfidence: "confiança",
   unratedHeading: "Ainda sem duelo",
   unratedBlurb: "Posts publicados que ainda não passaram por nenhuma comparação Hrönir.",
-  recentHeading: "Últimos duelos",
-  recentBlurb: "Os confrontos mais recentes que afetaram o ranking.",
+  recentHeading: "Julgamentos e Batalhas",
+  recentBlurb: "Veja a análise e o veredito completo de cada confronto disputado.",
   recentBeats: "venceu",
   emptyState: "Sem posts ranqueados ainda — rode uma rodada Hrönir para popular o ranking.",
   ordinalTip: "Ordinal = μ − 3σ. Combina habilidade estimada com penalidade pela incerteza.",
@@ -96,6 +96,22 @@ const strings: RankingStrings = {
   podiumSilver: "2º lugar",
   podiumBronze: "3º lugar",
   noDate: "—",
+  filterSearchPlaceholder: "Buscar batalhas (título, veredito, modelo...)",
+  filterCriterionAll: "Todos os critérios",
+  filterConfidenceAll: "Todas as confianças",
+  filterSeasonAll: "Todas as temporadas",
+  showingResultsCount: "Mostrando {count} de {total} batalhas",
+  verdictTab: "Veredito",
+  analysisATab: "Análise Post A",
+  analysisBTab: "Análise Post B",
+  emptyFilterState: "Nenhuma batalha corresponde aos filtros selecionados.",
+  modelLabel: "Modelo",
+  seasonLabel: "Temporada",
+  marginLabel: "Margem",
+  marginHigh: "alta",
+  marginMedium: "média",
+  marginLow: "baixa",
+  unratedCTA: "Esses posts ainda não passaram pelo julgamento. Sente que algum deles merecia estar no topo?",
 };
 ---
 
