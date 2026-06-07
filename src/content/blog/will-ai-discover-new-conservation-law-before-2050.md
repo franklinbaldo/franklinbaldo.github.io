@@ -13,27 +13,25 @@ tags:
   - prediction markets
   - speculation
   - science fiction
-replacedVersion: e35feb69-4815-5246-8a93-a8af4a25235b
-editHistory:
-  - uuid: e35feb69-4815-5246-8a93-a8af4a25235b
-    timestamp: '2024-07-12T00:00:00.000Z'
-    msg: Versão original publicada
-  - uuid: e35feb69-4815-5246-8a93-a8af4a25235b
-    timestamp: '2026-05-19T23:59:25.457Z'
-    msg: >-
-      Reescreveu conservation-law eliminando dispersão (cenários, FAQ,
-      call-to-action, marcadores ornamentais). Ancoragem: a aposta concreta no
-      Manifold a 35% com derivação honesta, o argumento de Deutsch desenvolvido
-      como crux real, e a conexão com as duas perguntas de Franklin
-      (distribuições de probabilidade e definição de realidade). O post agora
-      sabe qual é o seu único assunto.
+previousVersion:
+  uuid: 5456e5d9-4762-52fc-986b-f72e21a04681
+  url: >-
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/ba11e2060cc35a6e280f0c4343f3bd4b187f1c24/src/content/blog/will-ai-discover-new-conservation-law-before-2050.md
+  timestamp: '2026-06-06T22:24:52.765Z'
+  msg: >-
+    Expõe o autor como pessoa específica (Procurador em Rondônia), troca
+    fechamento genérico pelo custo pessoal da aposta, atualiza citação de Jim
+    Rutt com nota de falecimento (maio 2026). Resolve: comédia decorativa virou
+    âncora identitária, fechamento deixou de deferir para Deutsch e passou a
+    expor o que o autor perde se errar, menção à logística substituída pela
+    confissão real do impulso.
 ---
 
 I was reading a paper about neural networks identifying conserved quantities in dynamical systems when the abstract mentioned something that made me stop: "Our system identified three previously unknown conserved quantities in a chaotic plasma simulation."
 
 Three unknown conserved quantities. In plasma. On a Tuesday.
 
-The question that formed was half physics, half logistics: _how does one bet on this?_
+The question that formed was half physics, half embarrassing: I'm a public attorney in Rondônia, and my first reaction to discovering that AI found three new symmetries of nature was to wonder whether there was a prediction market for this.
 
 Conservation laws come from symmetries — that's Noether's theorem in one sentence. Momentum is conserved because the laws of physics are the same here and five meters to the left. Energy is conserved because they're the same now and five minutes from now. Every conservation law corresponds to a symmetry of nature, and the symmetries we know about are the ones human physicists found by reasoning from first principles and comparing with experiment. The question isn't whether AI can find regularities in physical systems — it clearly can. The question is whether it can find genuinely new ones: not patterns within known physics, but symmetries nobody knew were there.
 
@@ -61,12 +59,12 @@ What I can't stop thinking about is the connection to my other question — the 
 
 The question of whether machines can discover conservation laws is, underneath, the same question as what we demand of the word "real."
 
-The bet is placed. The market closes in 2050. Deutsch will probably say "I told you so," and he might be right — but he might be wrong in a philosophically interesting way.
+The bet is placed. The market closes in 2050. If Deutsch is right, I'll have been publicly wrong for 24 years, which is at least one form of intellectual accountability that survives the conversation. If he's wrong, I'll need to think much harder about what I mean by "real" — which is not the worst way to spend them.
 
 ## For further reading
 
 - **Carrasquilla, J. & Melko, R.G., "Machine learning phases of matter"** (_Nature Physics_, 2017) — the experiment that started this. Neural network identifies topological phases without prior knowledge of the Hamiltonian. Worth reading the abstract even if the physics is unfamiliar.
 - **Emmy Noether, "Invariante Variationsprobleme"** (1915) — the theorem. Short. The bar for "conservation law" is here.
 - **David Deutsch, _The Beginning of Infinity_** — the book-length version of the explanatory knowledge argument. Chapter 1 explains the "hard to vary" criterion. I disagree with some implications but the core is worth taking seriously.
-- **Jim Rutt, _A Minimum Viable Metaphysics_, v2.0** — relevant because the conservation law question is downstream of "why is there something rather than nothing?" Rutt's attempt to do science while leaving that question open.
+- **Jim Rutt, _A Minimum Viable Metaphysics_, v2.0** — relevant because the conservation law question is downstream of "why is there something rather than nothing?" Rutt's attempt to do science while leaving that question open. He died in May 2026; I found out late, through a group chat, while doing the dishes.
 - **[Two Questions, Out Loud](/blog/two-questions-out-loud/)** — the post where I explain why these two questions are mine: probability distributions and the definition of reality. The conservation law bet is a consequence of the second one.
