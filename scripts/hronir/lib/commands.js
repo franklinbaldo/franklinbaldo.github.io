@@ -1396,15 +1396,23 @@ export function doctor() {
       ) {
         issues.push(`${base}: o campo 'eval_lang' no frontmatter está ausente`);
       }
-      if (!data.winner_defense || data.winner_defense === "TODO") {
-        issues.push(
-          `${base}: o campo 'winner_defense' no frontmatter está ausente ou é 'TODO'`
-        );
-      }
-      if (!data.loser_critique || data.loser_critique === "TODO") {
-        issues.push(
-          `${base}: o campo 'loser_critique' no frontmatter está ausente ou é 'TODO'`
-        );
+      // Accept either the original winner_defense/loser_critique fields OR the
+      // migrated review_a/review_b fields (migrate-passion-to-stars.js converts
+      // passion-v1 files to the stars-v1 field layout while preserving prompt_version).
+      const hasMigratedContent =
+        (data.review_a && data.review_a !== "TODO") ||
+        (data.review_b && data.review_b !== "TODO");
+      if (!hasMigratedContent) {
+        if (!data.winner_defense || data.winner_defense === "TODO") {
+          issues.push(
+            `${base}: o campo 'winner_defense' no frontmatter está ausente ou é 'TODO'`
+          );
+        }
+        if (!data.loser_critique || data.loser_critique === "TODO") {
+          issues.push(
+            `${base}: o campo 'loser_critique' no frontmatter está ausente ou é 'TODO'`
+          );
+        }
       }
     }
 
