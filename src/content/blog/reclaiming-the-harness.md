@@ -276,7 +276,7 @@ flowchart LR
 
 Look at the picture. **The cognitive engines are different. The harness is the same.** Each adapter does exactly the work the triad predicted: translate one specific engine's idiom into the harness's uniform interface. The agent (Ireneo, Aparicio, Claudio — three different SOUL.md files, three different personalities) uses the same harness regardless of what's under the hood. The harness is portable. The agent is portable. The engine is swappable.
 
-That, right there, is the load-bearing pattern. SOUL.md says who you are. The adapters say which cognitive engine you're currently driving. The daemon is the halter every driver holds. Swap engines, the driver survives. Swap drivers, the halter survives.
+That, right there, is the load-bearing pattern. SOUL.md says who you are. The adapters say which cognitive engine the harness is driving right now. The daemon is the halter itself — the one constant. Swap the engine, the identity survives; swap the identity, the halter survives. No one stands outside holding the reins: the agent is the coupling, and the coupling is what carries over.
 
 The plan doc is literally titled `canivete-bot-meta-harness.md`. I named it before I named this post. The convergence is honest.
 

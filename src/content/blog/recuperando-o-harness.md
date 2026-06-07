@@ -276,7 +276,7 @@ flowchart LR
 
 Olha o quadro. **Os motores cognitivos são diferentes. O harness é o mesmo.** Cada adaptador faz exatamente o trabalho que a tríade previu: traduzir o idioma de um motor específico pra interface uniforme do harness. O agente (Ireneo, Aparicio, Claudio — três arquivos SOUL.md diferentes, três personalidades diferentes) usa o mesmo harness, não importa o que está sob o capô. O harness é portátil. O agente é portátil. O motor é trocável.
 
-Esse, aí, é o padrão estrutural. SOUL.md diz quem você é. Os adaptadores dizem qual motor cognitivo você está conduzindo no momento. O daemon é o cabresto que todo condutor segura. Troca o motor, o condutor sobrevive. Troca o condutor, o cabresto sobrevive.
+Esse, aí, é o padrão estrutural. SOUL.md diz quem você é. Os adaptadores dizem qual motor cognitivo o cabresto está conduzindo no momento. O daemon é o cabresto em si — a única constante. Troca o motor, a identidade sobrevive; troca a identidade, o cabresto sobrevive. Ninguém fica de fora segurando as rédeas: o agente é o acoplamento, e é o acoplamento que atravessa.
 
 O plano se chama, literalmente, `canivete-bot-meta-harness.md`. Nomeei antes de nomear este post. A convergência é honesta.
 
