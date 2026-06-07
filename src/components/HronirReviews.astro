@@ -1,0 +1,255 @@
+---
+import { getAllDuels } from "../lib/hronir-rank";
+import { getCollection } from "astro:content";
+import { marked } from "marked";
+import { isPublished } from "../lib/publish";
+
+interface Props {
+  translationKey: string;
+  lang?: string;
+}
+
+const { translationKey, lang = "en" } = Astro.props;
+
+const allDuels = getAllDuels();
+const myDuels = allDuels.filter(
+  (d) => d.postAKey === translationKey || d.postBKey === translationKey
+);
+
+if (myDuels.length === 0) {
+  // nothing to render
+}
+
+const allPosts = await getCollection("blog");
+const postMeta = new Map<string, { title: string; slug: string; lang: string }>();
+for (const p of allPosts) {
+  if (!isPublished(p)) continue;
+  const key = p.data.translationKey;
+  if (!key) continue;
+  const pLang = p.data.lang ?? "en";
+  const existing = postMeta.get(key);
+  if (!existing || pLang === "en") {
+    postMeta.set(key, { title: p.data.title, slug: p.id, lang: pLang });
+  }
+}
+
+function opponentHref(key: string): string | null {
+  const m = postMeta.get(key);
+  if (!m) return null;
+  return m.lang === "pt" ? `/pt/blog/${m.slug}/` : `/blog/${m.slug}/`;
+}
+
+function perspectiveHue(id: string): number {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = ((h << 5) - h + id.charCodeAt(i)) & 0xffff;
+  return Math.abs(h) % 360;
+}
+
+const locale = lang === "pt" ? "pt-BR" : "en-US";
+function fmtDate(iso: string): string {
+  return new Date(iso).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" });
+}
+
+const heading = lang === "pt" ? "Avaliações Hrönir" : "Hrönir Reviews";
+const blurb =
+  lang === "pt"
+    ? "Este post foi avaliado em confrontos par-a-par. Abaixo estão as resenhas de cada duelo, escritas a partir de uma perspectiva de leitura sorteada."
+    : "This post has been evaluated in pairwise duels. Below are the reviews from each duel, written from a randomly assigned reader perspective.";
+const wonLabel = lang === "pt" ? "✓ Venceu" : "✓ Won";
+const lostLabel = lang === "pt" ? "✗ Perdeu" : "✗ Lost";
+const verdictLabel = lang === "pt" ? "Veredito do confronto" : "Clash verdict";
+const vsLabel = "vs";
+---
+
+{myDuels.length > 0 && (
+  <section class="hronir-reviews">
+    <h3>{heading}</h3>
+    <p><small>{blurb}</small></p>
+    {myDuels.map((d) => {
+      const isPostA = d.postAKey === translationKey;
+      const myReview = isPostA
+        ? d.parsedContent?.postAAnalysis
+        : d.parsedContent?.postBAnalysis;
+      if (!myReview) return null;
+
+      const myRate = isPostA ? d.rateA : d.rateB;
+      const won = d.winnerKey === translationKey;
+      const opponentKey = isPostA ? d.postBKey : d.postAKey;
+      const opponent = opponentKey ? postMeta.get(opponentKey) : null;
+      const opponentUrl = opponentKey ? opponentHref(opponentKey) : null;
+
+      return (
+        <article class={`hronir-card ${won ? "card-won" : "card-lost"}`}>
+          <header class="hronir-card-header">
+            <div class="hronir-card-meta">
+              <span class="hronir-date">{fmtDate(d.runAt)}</span>
+              {d.perspectiveId && (
+                <span
+                  class="hronir-tag tag-perspective"
+                  style={`--ph:${perspectiveHue(d.perspectiveId)}`}
+                >
+                  {d.perspectiveId.replace(/-/g, " ")}
+                </span>
+              )}
+              {d.agentId && (
+                <span class="hronir-tag tag-agent">{d.agentId}</span>
+              )}
+            </div>
+            <div class="hronir-card-result">
+              <span class={`result-badge ${won ? "badge-won" : "badge-lost"}`}>
+                {won ? wonLabel : lostLabel}
+              </span>
+              {myRate != null && (
+                <span class="hronir-rate">{myRate.toFixed(1)}★</span>
+              )}
+              {opponent && (
+                <span class="hronir-opponent">
+                  {vsLabel}{" "}
+                  {opponentUrl
+                    ? <a href={opponentUrl}>{opponent.title}</a>
+                    : <span>{opponent.title}</span>
+                  }
+                </span>
+              )}
+            </div>
+          </header>
+
+          <div class="hronir-review" set:html={marked.parse(myReview)} />
+
+          {d.parsedContent?.verdict && (
+            <details class="hronir-verdict">
+              <summary>{verdictLabel}</summary>
+              <div set:html={marked.parse(d.parsedContent.verdict)} />
+            </details>
+          )}
+        </article>
+      );
+    })}
+  </section>
+)}
+
+<style>
+  .hronir-reviews {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--pico-muted-border-color);
+  }
+  .hronir-reviews h3 {
+    margin-bottom: 0.25rem;
+  }
+  .hronir-reviews > p {
+    margin-bottom: 1.25rem;
+  }
+
+  .hronir-card {
+    margin-bottom: 1.25rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--pico-border-radius);
+    border: 1px solid var(--pico-muted-border-color);
+    border-left: 3px solid var(--pico-muted-border-color);
+  }
+  .card-won { border-left-color: var(--pico-ins-color, #2d9f5d); }
+  .card-lost { border-left-color: var(--pico-del-color, #c62828); }
+
+  .hronir-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 1rem;
+    margin-bottom: 0.75rem;
+  }
+  .hronir-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+  }
+  .hronir-date {
+    font-size: 0.78rem;
+    color: var(--pico-muted-color);
+  }
+  .hronir-card-result {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  .result-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+  }
+  .badge-won {
+    background: color-mix(in srgb, var(--pico-ins-color, #2d9f5d) 12%, transparent);
+    color: var(--pico-ins-color, #2d9f5d);
+  }
+  .badge-lost {
+    background: color-mix(in srgb, var(--pico-del-color, #c62828) 12%, transparent);
+    color: var(--pico-del-color, #c62828);
+  }
+
+  .hronir-rate {
+    font-size: 0.8rem;
+    font-family: var(--pico-font-family-monospace);
+    color: var(--pico-muted-color);
+  }
+  .hronir-opponent {
+    font-size: 0.82rem;
+    color: var(--pico-muted-color);
+  }
+  .hronir-opponent a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .hronir-review {
+    font-size: 0.88rem;
+    line-height: 1.65;
+  }
+  .hronir-review :global(p:last-child) { margin-bottom: 0; }
+  .hronir-review :global(p) { margin-bottom: 0.6em; }
+
+  .hronir-verdict {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--pico-muted-border-color);
+    font-size: 0.84rem;
+  }
+  .hronir-verdict > div {
+    margin-top: 0.5rem;
+    padding-left: 0.75rem;
+    border-left: 2px solid var(--pico-muted-border-color);
+  }
+  .hronir-verdict :global(p:last-child) { margin-bottom: 0; }
+
+  .hronir-tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    padding: 0.12rem 0.45rem;
+    border-radius: 999px;
+    font-weight: 500;
+    white-space: nowrap;
+    text-transform: lowercase;
+    letter-spacing: 0.01em;
+  }
+  .tag-perspective {
+    background: hsl(var(--ph, 200), 55%, 88%);
+    color: hsl(var(--ph, 200), 45%, 30%);
+  }
+  .tag-agent {
+    background: var(--pico-card-sectioning-background-color, #f5f5f5);
+    color: var(--pico-muted-color);
+    border: 1px solid var(--pico-muted-border-color);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .tag-perspective {
+      background: hsl(var(--ph, 200), 40%, 20%);
+      color: hsl(var(--ph, 200), 70%, 75%);
+    }
+  }
+</style>

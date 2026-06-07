@@ -73,6 +73,9 @@ export interface RankingStrings {
   agentLabel: string;
   filterAgentAll: string;
   ratesLabel: string;
+  paginationPrev: string;
+  paginationNext: string;
+  paginationPageOf: string;
 }
 
 interface Props {
@@ -506,6 +509,14 @@ agents.sort();
         );
       })}
     </div>
+
+    <nav id="battle-pagination" class="battle-pagination" style="display: none;" aria-label="battles pagination">
+      <button id="prev-page" class="outline secondary">{strings.paginationPrev}</button>
+      <span id="page-indicator" data-template={strings.paginationPageOf}>
+        {strings.paginationPageOf.replace("{n}", "1").replace("{total}", "1")}
+      </span>
+      <button id="next-page" class="outline secondary">{strings.paginationNext}</button>
+    </nav>
 
     <div id="battle-empty" class="rank-empty" style="display: none;">
       <em>{strings.emptyFilterState}</em>
@@ -1069,6 +1080,26 @@ agents.sort();
     border-bottom: 1px dotted var(--pico-muted-color);
     cursor: help;
   }
+
+  .battle-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.25rem 0 0.5rem;
+  }
+  .battle-pagination button {
+    padding: 0.35rem 0.9rem;
+    font-size: 0.85rem;
+    min-width: 7rem;
+    margin-bottom: 0;
+  }
+  #page-indicator {
+    font-size: 0.85rem;
+    color: var(--pico-muted-color);
+    min-width: 8rem;
+    text-align: center;
+  }
 </style>
 
 <script>
@@ -1079,61 +1110,81 @@ agents.sort();
     const confidenceContainer = document.getElementById('filter-confidence');
     const perspectiveContainer = document.getElementById('filter-perspective');
     const criterionContainer = document.querySelector('.filter-row-chips:not(#filter-perspective)');
-    const cards = document.querySelectorAll('.battle-card') as NodeListOf<HTMLElement>;
+    const cards = Array.from(document.querySelectorAll('.battle-card')) as HTMLElement[];
     const countLabel = document.getElementById('filter-count-label');
     const emptyState = document.getElementById('battle-empty');
+    const paginationEl = document.getElementById('battle-pagination') as HTMLElement | null;
+    const prevBtn = document.getElementById('prev-page') as HTMLButtonElement | null;
+    const nextBtn = document.getElementById('next-page') as HTMLButtonElement | null;
+    const pageIndicator = document.getElementById('page-indicator') as HTMLElement | null;
 
     let activeCriterion = 'all';
     let activeConfidence = 'all';
     let activePerspective = 'all';
+    let currentPage = 0;
+    let lastVisible: HTMLElement[] = [];
+
+    const PAGE_SIZE = 15;
 
     if (!searchInput || !cards.length || !countLabel) return;
 
     const countTemplate = countLabel.getAttribute('data-template') || 'Showing {count} of {total}';
+    const pageTemplate = pageIndicator?.getAttribute('data-template') || 'Page {n} of {total}';
+
+    function showPage(page: number) {
+      const totalPages = Math.max(1, Math.ceil(lastVisible.length / PAGE_SIZE));
+      currentPage = Math.max(0, Math.min(page, totalPages - 1));
+
+      const start = currentPage * PAGE_SIZE;
+      const end = start + PAGE_SIZE;
+
+      cards.forEach((card) => { card.style.display = 'none'; });
+      lastVisible.forEach((card, i) => {
+        card.style.display = (i >= start && i < end) ? 'block' : 'none';
+      });
+
+      countLabel!.textContent = countTemplate
+        .replace('{count}', String(lastVisible.length))
+        .replace('{total}', String(cards.length));
+
+      if (emptyState) emptyState.style.display = lastVisible.length === 0 ? 'block' : 'none';
+
+      const showPagination = totalPages > 1;
+      if (paginationEl) paginationEl.style.display = showPagination ? 'flex' : 'none';
+      if (prevBtn) prevBtn.disabled = currentPage === 0;
+      if (nextBtn) nextBtn.disabled = currentPage >= totalPages - 1;
+      if (pageIndicator) {
+        pageIndicator.textContent = pageTemplate
+          .replace('{n}', String(currentPage + 1))
+          .replace('{total}', String(totalPages));
+      }
+    }
 
     function applyFilters() {
-      if (!searchInput || !countLabel) return;
+      if (!searchInput) return;
       const query = searchInput.value.toLowerCase().trim();
       const season = seasonSelect ? seasonSelect.value : 'all';
       const agent = agentSelect ? agentSelect.value : 'all';
 
-      let visibleCount = 0;
-
-      cards.forEach((card) => {
-        const cardCriterion = card.getAttribute('data-criterion') || 'none';
-        const cardConfidence = card.getAttribute('data-confidence') || 'none';
-        const cardSeason = card.getAttribute('data-season') || 'none';
-        const cardPerspective = card.getAttribute('data-perspective') || 'none';
-        const cardAgent = card.getAttribute('data-agent') || 'none';
-        const searchContent = card.getAttribute('data-search') || '';
-
-        const matchesQuery = !query || searchContent.includes(query);
-        const matchesSeason = season === 'all' || cardSeason === season;
-        const matchesAgent = agent === 'all' || cardAgent === agent;
-        const matchesConfidence = activeConfidence === 'all' || cardConfidence === activeConfidence;
-        const matchesCriterion = activeCriterion === 'all' || cardCriterion === activeCriterion;
-        const matchesPerspective = activePerspective === 'all' || cardPerspective === activePerspective;
-
-        if (matchesQuery && matchesSeason && matchesAgent && matchesConfidence && matchesCriterion && matchesPerspective) {
-          card.style.display = 'block';
-          visibleCount++;
-        } else {
-          card.style.display = 'none';
-        }
+      lastVisible = cards.filter((card) => {
+        const matchesQuery = !query || (card.getAttribute('data-search') || '').includes(query);
+        const matchesSeason = season === 'all' || (card.getAttribute('data-season') || '') === season;
+        const matchesAgent = agent === 'all' || (card.getAttribute('data-agent') || '') === agent;
+        const matchesConfidence = activeConfidence === 'all' || (card.getAttribute('data-confidence') || '') === activeConfidence;
+        const matchesCriterion = activeCriterion === 'all' || (card.getAttribute('data-criterion') || '') === activeCriterion;
+        const matchesPerspective = activePerspective === 'all' || (card.getAttribute('data-perspective') || '') === activePerspective;
+        return matchesQuery && matchesSeason && matchesAgent && matchesConfidence && matchesCriterion && matchesPerspective;
       });
 
-      countLabel.textContent = countTemplate
-        .replace('{count}', visibleCount.toString())
-        .replace('{total}', cards.length.toString());
-
-      if (emptyState) {
-        emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
-      }
+      showPage(0);
     }
 
     searchInput.addEventListener('input', applyFilters);
     if (seasonSelect) seasonSelect.addEventListener('change', applyFilters);
     if (agentSelect) agentSelect.addEventListener('change', applyFilters);
+
+    if (prevBtn) prevBtn.addEventListener('click', () => showPage(currentPage - 1));
+    if (nextBtn) nextBtn.addEventListener('click', () => showPage(currentPage + 1));
 
     if (confidenceContainer) {
       const pills = confidenceContainer.querySelectorAll('.pill');
