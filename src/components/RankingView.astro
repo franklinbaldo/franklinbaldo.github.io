@@ -1141,6 +1141,7 @@ seasons.sort((a, b) => a - b);
     const countTemplate = countLabel.getAttribute('data-template') || 'Showing {count} of {total}';
 
     function applyFilters() {
+      if (!searchInput || !countLabel) return;
       const query = searchInput.value.toLowerCase().trim();
       const season = seasonSelect ? seasonSelect.value : 'all';
       
