@@ -1,6 +1,9 @@
 ---
+import { t, DEFAULT_LANG } from '../lib/i18n';
+
 interface Props {
   url: string | URL;
+  lang?: string;
 }
 
 interface Mention {
@@ -16,7 +19,7 @@ interface Mention {
     | "bookmark-of";
 }
 
-const { url } = Astro.props;
+const { url, lang } = Astro.props;
 const target = typeof url === "string" ? url : url.href;
 
 let mentions: Mention[] = [];
@@ -53,22 +56,22 @@ const replies = mentions.filter(
 
 {mentions.length > 0 && (
   <section aria-labelledby="webmentions-heading">
-    <h3 id="webmentions-heading">Mentions across the web</h3>
+    <h3 id="webmentions-heading">{t(lang, 'webmentions.heading')}</h3>
 
     {(likes.length > 0 || reposts.length > 0) && (
       <p>
         <small>
-          {likes.length > 0 && <>{likes.length} {likes.length === 1 ? 'like' : 'likes'}</>}
+          {likes.length > 0 && <>{likes.length} {likes.length === 1 ? t(lang, 'webmentions.like') : t(lang, 'webmentions.likes')}</>}
           {likes.length > 0 && reposts.length > 0 && ' · '}
-          {reposts.length > 0 && <>{reposts.length} {reposts.length === 1 ? 'repost' : 'reposts'}</>}
-          {' from '}
+          {reposts.length > 0 && <>{reposts.length} {reposts.length === 1 ? t(lang, 'webmentions.repost') : t(lang, 'webmentions.reposts')}</>}
+          {' '}{t(lang, 'webmentions.from')}{' '}
           {[...likes, ...reposts].slice(0, 5).map((m, i) => (
             <>
               {i > 0 && ', '}
-              <a href={m.author?.url ?? m.url ?? '#'}>{m.author?.name ?? 'anonymous'}</a>
+              <a href={m.author?.url ?? m.url ?? '#'}>{m.author?.name ?? t(lang, 'webmentions.anonymous')}</a>
             </>
           ))}
-          {likes.length + reposts.length > 5 && <> +{likes.length + reposts.length - 5} more</>}
+          {likes.length + reposts.length > 5 && <> +{likes.length + reposts.length - 5} {t(lang, 'webmentions.more')}</>}
         </small>
       </p>
     )}
@@ -78,10 +81,10 @@ const replies = mentions.filter(
         {replies.map((m) => (
           <li>
             <a href={m.url ?? m.author?.url ?? "#"}>
-              <strong>{m.author?.name ?? "someone"}</strong>
+              <strong>{m.author?.name ?? t(lang, 'webmentions.someone')}</strong>
             </a>
             {m.published && (
-              <small> · <time datetime={m.published}>{new Date(m.published).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "2-digit" })}</time></small>
+              <small> · <time datetime={m.published}>{new Date(m.published).toLocaleDateString(lang === 'pt' ? 'pt-BR' : 'en-US', { year: "numeric", month: "short", day: "2-digit" })}</time></small>
             )}
           </li>
         ))}

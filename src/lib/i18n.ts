@@ -55,6 +55,15 @@ const UI_KEYS = [
   "og.siteEyebrow",
   "og.siteDescription",
   "og.qrHint",
+  "webmentions.heading",
+  "webmentions.like",
+  "webmentions.likes",
+  "webmentions.repost",
+  "webmentions.reposts",
+  "webmentions.from",
+  "webmentions.more",
+  "webmentions.someone",
+  "webmentions.anonymous",
 ] as const;
 
 export type UIKey = (typeof UI_KEYS)[number];
@@ -133,6 +142,15 @@ export const LANGUAGES: Record<string, LangConfig> = {
         "Essays on AI agency, process metaphysics, and the architecture of legal systems.",
       "og.qrHint": "Scan to read",
       "archive.jumpToYear": "Jump to year:",
+      "webmentions.heading": "Mentions across the web",
+      "webmentions.like": "like",
+      "webmentions.likes": "likes",
+      "webmentions.repost": "repost",
+      "webmentions.reposts": "reposts",
+      "webmentions.from": "from",
+      "webmentions.more": "more",
+      "webmentions.someone": "someone",
+      "webmentions.anonymous": "anonymous",
     },
     targets: {
       pt: {
@@ -200,6 +218,15 @@ export const LANGUAGES: Record<string, LangConfig> = {
         "Ensaios sobre agentes de IA, metafísica do processo e a arquitetura dos sistemas jurídicos.",
       "og.qrHint": "Aponte para ler",
       "archive.jumpToYear": "Ir para o ano:",
+      "webmentions.heading": "Menções na web",
+      "webmentions.like": "curtida",
+      "webmentions.likes": "curtidas",
+      "webmentions.repost": "repostagem",
+      "webmentions.reposts": "repostagens",
+      "webmentions.from": "de",
+      "webmentions.more": "mais",
+      "webmentions.someone": "alguém",
+      "webmentions.anonymous": "anônimo",
     },
     targets: {
       en: {

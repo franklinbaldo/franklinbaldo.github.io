@@ -196,7 +196,7 @@ const translationLinks = translationSiblings.map((p) => {
 
       <PostNav prev={prevNav} next={nextNav} lang={lang} />
 
-      <Webmentions url={new URL(Astro.url.pathname, Astro.site!)} />
+      <Webmentions url={new URL(Astro.url.pathname, Astro.site!)} lang={postLang} />
 
       <Comments lang={lang} />
 
