@@ -87,6 +87,7 @@ import SunoPlayer from '../../components/SunoPlayer.astro';
 ## Letra
 
 ```
+
 [Verso 1]
 Primeira estrofe aqui
 Segunda linha
@@ -94,6 +95,7 @@ Segunda linha
 [Refrão]
 O refrão
 que se repete
+
 ```
 
 ## Notas do compositor
@@ -118,12 +120,12 @@ Esse espaço é completamente seu — pode ser um parágrafo ou dez.
 
 ### 2.1 Arquivos novos
 
-| Arquivo | Descrição |
-|---------|-----------|
-| `src/pages/music/[...slug].astro` | Rota EN para post de música |
-| `src/pages/pt/musicas/[...slug].astro` | Rota PT para post de música |
-| `src/layouts/MusicPostLayout.astro` | Layout específico para posts de música |
-| `src/components/SunoPlayer.astro` | Player embutido no post (substitui o inline) |
+| Arquivo                                | Descrição                                    |
+| -------------------------------------- | -------------------------------------------- |
+| `src/pages/music/[...slug].astro`      | Rota EN para post de música                  |
+| `src/pages/pt/musicas/[...slug].astro` | Rota PT para post de música                  |
+| `src/layouts/MusicPostLayout.astro`    | Layout específico para posts de música       |
+| `src/components/SunoPlayer.astro`      | Player embutido no post (substitui o inline) |
 
 ### 2.2 Layout do post de música (`MusicPostLayout.astro`)
 
@@ -147,6 +149,7 @@ O layout herda de `PageLayout.astro` e adiciona:
 ### 2.3 Índice melhorado (`/music/`)
 
 A página existente vira um híbrido:
+
 - Cards das músicas que têm post linkam para `/music/[slug]/`
 - Músicas sem post ainda abrem no Suno
 - Badge visual diferencia "com post" de "só no Suno"
@@ -225,6 +228,7 @@ const audioMap = await fetchAudioMap(); // IDs → URLs de áudio CDN
 ```
 
 O JS do player gerencia:
+
 - `currentIndex` — posição na fila
 - `queue` — lista de IDs na ordem atual (embaralhável)
 - `localStorage['gp-state']` — persiste a música atual e posição entre sessões
@@ -313,6 +317,7 @@ Sprint 4 — Conteúdo (contínuo)
 ## Arquivos a Criar / Modificar
 
 ### Novos
+
 ```
 src/content/music/                        ← nova pasta
 src/content/music/exemplo.mdx             ← primeiro post
@@ -324,6 +329,7 @@ src/components/SunoPlayer.astro           ← player embutido no post
 ```
 
 ### Modificados
+
 ```
 src/content.config.ts          ← adicionar coleção `music`
 src/layouts/PageLayout.astro   ← incluir GlobalMusicPlayer
@@ -333,6 +339,7 @@ astro.config.mjs               ← adicionar /music/* ao sitemap
 ```
 
 ### Aposentados
+
 ```
 src/components/SunoInlinePlayer.astro  ← substituído pelo GlobalMusicPlayer
 ```
@@ -364,6 +371,7 @@ Não é obrigatório ter um post para cada música — você escreve quando quis
 ### SEO dos posts de música
 
 Cada post de música terá:
+
 - `<title>` e `<meta description>` específicos
 - JSON-LD `MusicRecording` (estruturado para Google)
 - URL canônica `/music/nome-da-musica/`
