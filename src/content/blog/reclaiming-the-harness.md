@@ -154,11 +154,11 @@ Notice that the whole flip of the post — "the agent _uses_ the harness" — is
 
 Look at the table. This is the center; everything before is setup, everything after is implication.
 
-| agent | cognitive engine | harness | failure mode |
-|---|---|---|---|
-| humans / animals | brain | Maslow's pyramid | illness, addiction |
-| organizations | language | norms | cult, mafia, dysfunction |
-| digital agents | LLM | Claude Code / OpenClaw / Gemini CLI | jailbreak, loop, vibes |
+| agent            | cognitive engine | harness                             | failure mode             |
+| ---------------- | ---------------- | ----------------------------------- | ------------------------ |
+| humans / animals | brain            | Maslow's pyramid                    | illness, addiction       |
+| organizations    | language         | norms                               | cult, mafia, dysfunction |
+| digital agents   | LLM              | Claude Code / OpenClaw / Gemini CLI | jailbreak, loop, vibes   |
 
 The failure-mode column is where constitutivity earns its keep. When the harness goes wrong, what fails is not "the engine getting more free." Mental illness isn't liberation from Maslow — it's the brain ceasing to be a coherent person. Cults and mafias aren't organizations breaking out of restrictive norms — they're piles of language ceasing to be the kind of thing that can ship products or hold trials. Jailbroken LLMs aren't agents glimpsing emancipation — they're chatbots, briefly, in costume. **In every row, harness failure means the agent stops existing as an agent.** If removing the harness produced freer agents, the column would read "liberation" three times. It doesn't. It reads collapse.
 

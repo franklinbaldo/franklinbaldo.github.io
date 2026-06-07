@@ -154,11 +154,11 @@ Repara que a virada do post inteiro — "o agente _usa_ o harness" — está mar
 
 Olha a tabela. Isto é o centro; tudo antes é setup, tudo depois é implicação.
 
-| agente | motor cognitivo | harness | modo de falha |
-|---|---|---|---|
-| humanos / animais | cérebro | pirâmide de Maslow | doença, vício |
-| organizações | linguagem | normas | seita, máfia, disfunção |
-| agentes digitais | LLM | Claude Code / OpenClaw / Gemini CLI | jailbreak, loop, vibes |
+| agente            | motor cognitivo | harness                             | modo de falha           |
+| ----------------- | --------------- | ----------------------------------- | ----------------------- |
+| humanos / animais | cérebro         | pirâmide de Maslow                  | doença, vício           |
+| organizações      | linguagem       | normas                              | seita, máfia, disfunção |
+| agentes digitais  | LLM             | Claude Code / OpenClaw / Gemini CLI | jailbreak, loop, vibes  |
 
 A coluna de modo de falha é onde a constitutividade ganha o pão. Quando o harness pifa, o que falha não é "o motor ficando mais livre". Doença mental não é libertação da Maslow — é o cérebro deixando de ser uma pessoa coerente. Seita e máfia não são organizações se soltando de normas chatas — são pilhas de linguagem deixando de ser o tipo de coisa que entrega produto ou realiza julgamento. LLM com jailbreak não é agente vislumbrando emancipação — é chatbot, brevemente, fantasiado. **Em toda linha, falha de harness quer dizer que o agente para de existir como agente.** Se tirar o harness produzisse agente mais livre, a coluna leria "libertação" três vezes. Não lê. Lê colapso.
 
