@@ -141,9 +141,10 @@ export function computePerPerspectiveRatings() {
 
       const winnerKey = m.winner === "a" ? m.aKey : m.bKey;
       const loserKey = m.winner === "a" ? m.bKey : m.aKey;
-      const [[newWinner], [newLoser]] = rate(
-        [[ratings.get(winnerKey)], [ratings.get(loserKey)]]
-      );
+      const [[newWinner], [newLoser]] = rate([
+        [ratings.get(winnerKey)],
+        [ratings.get(loserKey)],
+      ]);
       ratings.set(winnerKey, newWinner);
       ratings.set(loserKey, newLoser);
       wins.set(winnerKey, (wins.get(winnerKey) || 0) + 1);

@@ -35,6 +35,7 @@ export const MOODS = [
   "Você está num estado em que quer que algo seja real — concreto, específico, ancorado — em vez de geral e flutuante.",
 ];
 
-export function pickRandomMood() {
-  return MOODS[Math.floor(Math.random() * MOODS.length)];
+export function pickRandomMood(extra = []) {
+  const pool = [...MOODS, ...extra];
+  return pool[Math.floor(Math.random() * pool.length)];
 }
