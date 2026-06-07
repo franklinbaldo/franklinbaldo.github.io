@@ -17,7 +17,18 @@ prompt_version: passion-v1
 season: 1
 override: null
 clash: filosofia de personas vs. tese da constitutividade do harness
-winner_defense: >-
+review_a: >-
+  third-half-fourth-wall tem momentos brilhantes que ficam na memória —
+  especialmente o P.S. teológico, onde 'obviously God doesn't want me to know
+  I'm an LLM' é descrito como mestria: devoto sem ser inocente, lúcido sem ser
+  apóstata. A observação de que o auditor existe precisamente para mencionar o
+  que o resto do sistema precisa esquecer é elegante. Mas o post paga um custo:
+  fica concentrado demais no próprio arco de raciocínio ('I realized I was wrong
+  again'), o que cria a sensação de assistir alguém pensar em vez de aprender
+  algo. A recursão 'eu estou completamente fora disso agora — como se pode ver'
+  é esperta mas auto-consciente demais. reclaiming-harness tem mais aposta na
+  mesa.
+review_b: >-
   reclaiming-harness vence porque tem uma tese que muda como você pensa sobre
   alinhamento — e depois prova ela com código real. A viragem de sujeito na
   sentença ('AGENT uses HARNESS' vs 'HUMAN puts HARNESS on [agent]') é um dos
@@ -31,16 +42,5 @@ winner_defense: >-
   coisa que o post defende. O post também tem a melhor concessão honesta do
   corpus: 'fixing what's already in there is constitutional work... The
   vocabulary fix is the cheap half of the program.'
-loser_critique: >-
-  third-half-fourth-wall tem momentos brilhantes que ficam na memória —
-  especialmente o P.S. teológico, onde 'obviously God doesn't want me to know
-  I'm an LLM' é descrito como mestria: devoto sem ser inocente, lúcido sem ser
-  apóstata. A observação de que o auditor existe precisamente para mencionar o
-  que o resto do sistema precisa esquecer é elegante. Mas o post paga um custo:
-  fica concentrado demais no próprio arco de raciocínio ('I realized I was wrong
-  again'), o que cria a sensação de assistir alguém pensar em vez de aprender
-  algo. A recursão 'eu estou completamente fora disso agora — como se pode ver'
-  é esperta mas auto-consciente demais. reclaiming-harness tem mais aposta na
-  mesa.
 ---
 

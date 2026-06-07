@@ -19,7 +19,7 @@ override: null
 clash: >-
   conceptual-document vs pontifex-research: personal reflection on a failed
   system versus technical architecture for an unbuilt one
-winner_defense: >-
+review_a: >-
   conceptual-document wins because it is honest about time in a way that
   pontifex-research isn't. The spec is posted a year after it was written, and
   the distance does the essay's structural work: 'The bottleneck is knowing
@@ -40,7 +40,7 @@ winner_defense: >-
   evaluated mostly by the author's intuition about what should work.
   conceptual-document describes a system that half-ran and draws lessons from
   the half that didn't.
-loser_critique: >-
+review_b: >-
   pontifex-research is cleaner in structure and makes a real technical
   contribution in the bilateral framing. But 'I have not built the full system
   end-to-end' and 'I don't have a satisfying answer to that' appear in the same

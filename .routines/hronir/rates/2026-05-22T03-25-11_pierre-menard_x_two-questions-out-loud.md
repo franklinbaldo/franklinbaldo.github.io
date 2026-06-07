@@ -17,7 +17,7 @@ prompt_version: passion-v1
 season: 1
 override: null
 clash: TDR vs Rutt Pivot Questions
-winner_defense: >-
+review_a: >-
   Post A 'Test-Driven Research' is an absolutely stellar piece. It perfectly
   distills the 'franklin' persona: builder-philosopher, taking a software
   engineering concept (TDD) and applying it metaphysically and practically to
@@ -25,9 +25,10 @@ winner_defense: >-
   'pre-emptive humility', and the comparison to Wikipedia's hyperstition-driven
   '[citation needed]' aesthetic are profound. It's essayistic, technically
   literate, and deeply personal.
-loser_critique: >-
+review_b: >-
   Post B 'Two Pivot Questions' starts mid-sentence and is clearly a corrupted
   fragment, lacking a title, frontmatter, and a proper beginning. While the
   philosophical content about probability and reality is interesting, it is not
   a complete or valid blog post, making Post A the obvious and deserving winner.
 ---
+

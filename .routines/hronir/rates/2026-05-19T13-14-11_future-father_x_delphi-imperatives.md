@@ -20,7 +20,7 @@ override: null
 clash: >-
   future-father vs delphi-imperatives: projeto autoficcional com recursão
   genuína versus ensaio filosófico sobre Delphi como harness
-winner_defense: >-
+review_a: >-
   future-father vence pela recursão mais vertiginosa do corpus inteiro: Franklin
   usa um sistema de OSINT em seus próprios registros públicos (commits, posts,
   EXPERIENCE.md) para construir um personagem chamado Franklin Silveira Baldo
@@ -33,7 +33,7 @@ winner_defense: >-
   em Actions — o que transforma a especulação ficcional em algo com pele no
   jogo. A conexão com Las Ruinas Circulares de Borges é precisa: o filho-sonho
   que descobre ser ele mesmo sonhado.
-loser_critique: >-
+review_b: >-
   delphi-imperatives tem uma hipótese interessante — Delphi como harness, Apollo
   como modelo que não pode ser acessado diretamente, a Pythia como camada
   intermediária — e a prosa é cuidadosa. As três inscrições (gnōthi seautón,

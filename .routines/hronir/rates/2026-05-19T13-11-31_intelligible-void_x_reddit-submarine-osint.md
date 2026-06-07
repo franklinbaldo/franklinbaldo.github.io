@@ -19,7 +19,15 @@ override: null
 clash: >-
   intelligible-void vs reddit-submarine-osint: filosofia abstrata versus análise
   enraizada na vida real de Franklin
-winner_defense: >-
+review_a: >-
+  intelligible-void tem ambição filosófica genuína e a conexão entre Hassabis e
+  process ontology é interessante. Mas tem um Notes ao final que revela a
+  fabricação — 'Relied on the provided conceptual summary...', 'Exact quotes
+  were cautiously handled' — o que destrói a autenticidade. A voz filosófica é
+  competente mas genérica: 'a calm, terrifying recognition', 'two windowless
+  monads' lê como boa prosa de filosofia pop sem o specific anchoring que os
+  melhores posts do corpus têm. reddit-submarine-osint é mais Franklin.
+review_b: >-
   reddit-submarine-osint é o post que só Franklin poderia ter escrito. A âncora
   de Porto Velho — r/GoogleEarthFinds detectando garimpos ilegais antes do IBAMA
   — transforma uma análise de meme de internet numa observação sobre dinâmica de
@@ -31,13 +39,5 @@ winner_defense: >-
   epistêmica — 'anyone who tells you they do is selling something' — é o tipo de
   admissão que transforma um comentário de internet numa análise séria. O
   parallelo amazônico não é decoração: é o espinha dorsal do argumento.
-loser_critique: >-
-  intelligible-void tem ambição filosófica genuína e a conexão entre Hassabis e
-  process ontology é interessante. Mas tem um Notes ao final que revela a
-  fabricação — 'Relied on the provided conceptual summary...', 'Exact quotes
-  were cautiously handled' — o que destrói a autenticidade. A voz filosófica é
-  competente mas genérica: 'a calm, terrifying recognition', 'two windowless
-  monads' lê como boa prosa de filosofia pop sem o specific anchoring que os
-  melhores posts do corpus têm. reddit-submarine-osint é mais Franklin.
 ---
 

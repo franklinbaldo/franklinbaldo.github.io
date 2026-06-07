@@ -33,37 +33,53 @@ export interface DuelEntry {
   confidence?: string;
   criterion?: string;
   body?: string;
+  /** @deprecated use agentId */
   model?: string;
+  agentId?: string;
   season?: number;
   postAKey?: string;
   postBKey?: string;
+  perspectiveId?: string;
+  rateA?: number;
+  rateB?: number;
   parsedContent?: DuelContent;
 }
 
-export function parseDuelContent(body?: string): DuelContent {
+export function parseDuelContent(
+  body?: string,
+  data?: Record<string, unknown>
+): DuelContent {
   const result: DuelContent = {
     postAAnalysis: "",
     postBAnalysis: "",
     verdict: "",
   };
-  if (!body) return result;
 
-  const parts = body.split(/(?:^|\n)##\s+/);
-  for (const part of parts) {
-    const trimmed = part.trim();
-    if (!trimmed) continue;
-    const lines = trimmed.split("\n");
-    const header = lines[0].trim().toLowerCase();
-    const content = lines.slice(1).join("\n").trim();
-
-    if (header.startsWith("post a")) {
-      result.postAAnalysis = content;
-    } else if (header.startsWith("post b")) {
-      result.postBAnalysis = content;
-    } else if (header.startsWith("veredito") || header.startsWith("verdict")) {
-      result.verdict = content;
+  // Try markdown body first (original format with ## section headers)
+  if (body) {
+    const parts = body.split(/(?:^|\n)##\s+/);
+    for (const part of parts) {
+      const trimmed = part.trim();
+      if (!trimmed) continue;
+      const lines = trimmed.split("\n");
+      const header = lines[0].trim().toLowerCase();
+      const content = lines.slice(1).join("\n").trim();
+      if (header.startsWith("post a")) result.postAAnalysis = content;
+      else if (header.startsWith("post b")) result.postBAnalysis = content;
+      else if (header.startsWith("veredito") || header.startsWith("verdict"))
+        result.verdict = content;
     }
+    if (result.postAAnalysis || result.postBAnalysis || result.verdict)
+      return result;
   }
+
+  // Fall back to frontmatter fields (stars-v1 / migrated passion-v1)
+  if (data) {
+    if (data.clash) result.verdict = String(data.clash);
+    if (data.review_a) result.postAAnalysis = String(data.review_a);
+    if (data.review_b) result.postBAnalysis = String(data.review_b);
+  }
+
   return result;
 }
 
@@ -122,6 +138,10 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
     const winnerKey = winner === "a" ? aKey : bKey;
     const loserKey = winner === "a" ? bKey : aKey;
 
+    const agentId = (data as any).agent_id
+      ? String((data as any).agent_id)
+      : undefined;
+
     duels.push({
       runAt,
       winnerKey,
@@ -137,14 +157,29 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
         ? String((data as any).criterion)
         : undefined,
       body: content ? String(content).trim() : undefined,
-      model: (data as any).model ? String((data as any).model) : undefined,
+      model: agentId,
+      agentId,
       season:
         typeof (data as any).season === "number"
           ? (data as any).season
           : undefined,
       postAKey: aKey,
       postBKey: bKey,
-      parsedContent: content ? parseDuelContent(String(content)) : undefined,
+      perspectiveId: (data as any).perspective_id
+        ? String((data as any).perspective_id)
+        : undefined,
+      rateA:
+        typeof (data as any).rate_a === "number"
+          ? (data as any).rate_a
+          : undefined,
+      rateB:
+        typeof (data as any).rate_b === "number"
+          ? (data as any).rate_b
+          : undefined,
+      parsedContent: parseDuelContent(
+        content ? String(content).trim() : undefined,
+        data as Record<string, unknown>
+      ),
     });
   }
 

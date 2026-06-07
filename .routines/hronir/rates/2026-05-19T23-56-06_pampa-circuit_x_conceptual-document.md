@@ -17,7 +17,7 @@ prompt_version: passion-v1
 season: 1
 override: null
 clash: problema do acento vs. especificação retrospectiva
-winner_defense: >-
+review_a: >-
   pampa-circuit vence porque tem o melhor insight teórico sobre memória digital
   que o corpus produziu, e o articula através de uma voz concreta e memorável.
   'O problema do acento' — o que é sustentado vs. o que é apressado, onde alguém
@@ -29,7 +29,7 @@ winner_defense: >-
   ser inventada, e específica o suficiente para iluminar o princípio geral. O
   fechamento — 'May the prose be long, and may the accent never be lost — which
   means: may the stumbles stay in' — é preciso sem ser pretensioso.
-loser_critique: >-
+review_b: >-
   conceptual-document já perdeu três matches nesta sessão, e cada derrota
   adiciona evidência ao diagnóstico: o post está dividido em dois sem ser
   inteiro em nenhum dos dois. A especificação técnica é competente mas nunca

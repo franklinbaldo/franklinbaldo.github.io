@@ -19,7 +19,15 @@ override: null
 clash: >-
   three-hammers vs building-funes: genealogia biográfica de ideias versus
   argumento fundacional sobre identidade de agentes
-winner_defense: >-
+review_a: >-
+  three-hammers é excelente — o joke de abertura funciona, a genealogia das
+  quatro propriedades é o tipo de honestidade intelectual que separa Franklin de
+  qualquer blog de IA corporativo, a seção do quarto martelo com o carbon copy
+  como 'primitive Merkle leaf' é original. Mas é muito longo e faz vários pontos
+  menores onde building-funes faz um grande bem. O risco de ser hammer
+  reconhecido — 'talvez alinhamento não seja papelada' — está bem posicionado
+  mas não muda o fact de que building-funes é mais limpo.
+review_b: >-
   building-funes vence porque a distinção entre instrução e identidade —
   'instruções degradam nas bordas, caracteres generalizam' — é o insight mais
   universalmente útil do corpus inteiro. O exemplo concreto é perfeito: uma
@@ -32,13 +40,5 @@ winner_defense: >-
   vieram da profissão, a quarta de GEB), que é honesta e reveladora. Mas
   building-funes está fazendo algo mais raro: argumentando a partir de um
   projeto real, com evidência real ('antes e depois desta linha').
-loser_critique: >-
-  three-hammers é excelente — o joke de abertura funciona, a genealogia das
-  quatro propriedades é o tipo de honestidade intelectual que separa Franklin de
-  qualquer blog de IA corporativo, a seção do quarto martelo com o carbon copy
-  como 'primitive Merkle leaf' é original. Mas é muito longo e faz vários pontos
-  menores onde building-funes faz um grande bem. O risco de ser hammer
-  reconhecido — 'talvez alinhamento não seja papelada' — está bem posicionado
-  mas não muda o fact de que building-funes é mais limpo.
 ---
 

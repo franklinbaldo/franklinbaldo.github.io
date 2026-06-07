@@ -19,7 +19,15 @@ override: null
 clash: >-
   jules-api-harness vs social-vulnerabilities: specific technical integration
   versus original policy argument
-winner_defense: >-
+review_a: >-
+  jules-api-harness is a solid technical post with a real opening scene, but it
+  is fourth in a series and explicitly depends on context from earlier posts.
+  The 'sendMessage as trust recalibration' argument is the genuine intellectual
+  contribution, but it takes a while to arrive and the surrounding integration
+  details dilute it. The closing 'the activities accumulate, one event at a
+  time' is understated in a way that reads more like a sign-off than an earned
+  observation.
+review_b: >-
   social-vulnerabilities wins on originality and epistemic rigor. The opening
   line — 'I've been trying to find the flaw in this idea for about three days
   and I keep failing' — establishes a mode the post sustains throughout: this is
@@ -41,13 +49,5 @@ winner_defense: >-
   part of a series and depends on that context. social-vulnerabilities is
   complete in itself and proposes something nobody else has proposed in quite
   this way.
-loser_critique: >-
-  jules-api-harness is a solid technical post with a real opening scene, but it
-  is fourth in a series and explicitly depends on context from earlier posts.
-  The 'sendMessage as trust recalibration' argument is the genuine intellectual
-  contribution, but it takes a while to arrive and the surrounding integration
-  details dilute it. The closing 'the activities accumulate, one event at a
-  time' is understated in a way that reads more like a sign-off than an earned
-  observation.
 ---
 

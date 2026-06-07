@@ -19,7 +19,18 @@ override: null
 clash: >-
   especificação honesta de projeto vs. análise jurídico-institucional com tese
   original
-winner_defense: >-
+review_a: >-
+  conceptual-document tem o seu mérito: é uma retrospectiva honesta de uma
+  especificação que virou Funes, e a autocrítica — 'I wrote the spec with the
+  assumption that getting the writing right was the hard part... it's the
+  reverse' — é genuína. O OmbudsmanBot e o problema de doxxing-por-inferência
+  são ideias reais. Mas o post luta para encontrar o seu próprio centro — está
+  dividido entre apresentar a especificação e comentá-la, e nenhuma das duas
+  partes ganha espaço suficiente. O diagrama Mermaid é funcional mas não ilumina
+  nada que o texto não diga. No final, o post é mais uma nota de rodapé
+  intelectual do que um argumento completo — e serpents-egg é tanto um argumento
+  completo quanto um documento que só Franklin poderia ter escrito.
+review_b: >-
   serpents-egg é o melhor post de direito do corpus e um dos melhores posts em
   geral. A tese central — que Fux, o mais eloquente representante do
   patrimonialismo judiciário, incubou dentro do próprio sistema o instrumento da
@@ -33,16 +44,5 @@ winner_defense: >-
   honestidade intelectual sobre onde para: 'when AI is no longer an audit tool
   but a decision agent — that's where Yudkowsky begins and this essay stops.'
   Esse limite é preciso e corajoso.
-loser_critique: >-
-  conceptual-document tem o seu mérito: é uma retrospectiva honesta de uma
-  especificação que virou Funes, e a autocrítica — 'I wrote the spec with the
-  assumption that getting the writing right was the hard part... it's the
-  reverse' — é genuína. O OmbudsmanBot e o problema de doxxing-por-inferência
-  são ideias reais. Mas o post luta para encontrar o seu próprio centro — está
-  dividido entre apresentar a especificação e comentá-la, e nenhuma das duas
-  partes ganha espaço suficiente. O diagrama Mermaid é funcional mas não ilumina
-  nada que o texto não diga. No final, o post é mais uma nota de rodapé
-  intelectual do que um argumento completo — e serpents-egg é tanto um argumento
-  completo quanto um documento que só Franklin poderia ter escrito.
 ---
 

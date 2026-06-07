@@ -20,7 +20,15 @@ override: null
 clash: >-
   family-memory vs pontifex-guide: projeto emocional com prosa excessiva versus
   guia técnico com honestidade epistêmica cirúrgica
-winner_defense: >-
+review_a: >-
+  family-memory tem o projeto mais emocionalmente significativo do corpus —
+  preservar as memórias do pai Adi é genuíno — e o princípio 'reversível → age,
+  irreversível → pergunta' é insight real. Mas a prosa está inflada: 'erecting a
+  monument of a temporal nature', 'hopelessly modern way to honor the roots',
+  'imperfect dance between Funes and Jules' — são bon mots que sinalizam
+  profundidade sem entregá-la. 'Horror vacui' aplicado à IA é observação real
+  mas não desenvolvida. A voz parece traduzida, não falada.
+review_b: >-
   pontifex-guide vence pelo parágrafo mais honesto sobre escrita técnica do
   corpus inteiro: 'A lot of technical blog posts are written in the imperative
   voice of someone who has done the thing, when the author has mostly thought
@@ -36,13 +44,5 @@ winner_defense: >-
   fechamento do corpus. family-memory tem um bom princípio arquitetural
   (reversível→age, irreversível→pergunta) mas o projeto existe nos outros posts
   com mais clareza.
-loser_critique: >-
-  family-memory tem o projeto mais emocionalmente significativo do corpus —
-  preservar as memórias do pai Adi é genuíno — e o princípio 'reversível → age,
-  irreversível → pergunta' é insight real. Mas a prosa está inflada: 'erecting a
-  monument of a temporal nature', 'hopelessly modern way to honor the roots',
-  'imperfect dance between Funes and Jules' — são bon mots que sinalizam
-  profundidade sem entregá-la. 'Horror vacui' aplicado à IA é observação real
-  mas não desenvolvida. A voz parece traduzida, não falada.
 ---
 
