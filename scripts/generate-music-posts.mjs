@@ -1,0 +1,185 @@
+/**
+ * Fetches public songs from the Suno API and creates MDX stub posts
+ * in src/content/blog/musicas/. Only creates new files — never overwrites.
+ *
+ * Usage:
+ *   npm run music:generate
+ */
+
+import { writeFileSync, existsSync, mkdirSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const ROOT = join(__dirname, "..");
+const OUT_DIR = join(ROOT, "src/content/blog/musicas");
+
+const HANDLE = "franklinbaldo";
+const SUNO_API = "https://studio-api-prod.suno.com/api";
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function fetchJSON(url) {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const res = await fetch(url, { headers: { Accept: "application/json" } });
+    if (res.ok) return res.json();
+    if ((res.status === 429 || res.status >= 500) && attempt < 3) {
+      await sleep(1000 * Math.pow(2, attempt));
+      continue;
+    }
+    throw new Error(`HTTP ${res.status} on ${url}`);
+  }
+  throw new Error("exhausted retries");
+}
+
+function slugify(str) {
+  return str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "") // remove accents
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 60);
+}
+
+function fmtDate(isoString) {
+  return isoString?.split("T")[0] ?? new Date().toISOString().split("T")[0];
+}
+
+function fmtYamlStr(str) {
+  if (!str) return '""';
+  // Quote if contains special YAML chars
+  if (/[:#\[\]{},|>&*!'"\\]/.test(str) || str.includes("\n")) {
+    return `"${str.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+  }
+  return str;
+}
+
+function parseTags(raw) {
+  if (!raw) return [];
+  return raw
+    .split(/[,;]/)
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .slice(0, 6);
+}
+
+function makeMdx(clip) {
+  const tags = parseTags(clip.metadata?.tags);
+  const genre = tags.length ? tags : [];
+  const duration = clip.metadata?.duration
+    ? Math.round(clip.metadata.duration)
+    : null;
+  const lyrics = (clip.metadata?.prompt ?? "").trim();
+  const date = fmtDate(clip.created_at);
+
+  const genreYaml =
+    genre.length > 0
+      ? `genre:\n${genre.map((g) => `  - ${fmtYamlStr(g)}`).join("\n")}`
+      : "";
+
+  const durationYaml = duration ? `duration: ${duration}` : "";
+
+  const imageYaml = clip.image_url
+    ? `sunoImageUrl: ${fmtYamlStr(clip.image_url)}`
+    : "";
+
+  const lyricsSection = lyrics
+    ? `## Letra\n\n\`\`\`\n${lyrics}\n\`\`\``
+    : `## Letra\n\n<!-- Cole a letra aqui -->`;
+
+  return `---
+title: ${fmtYamlStr(clip.title || "(sem título)")}
+description: ${fmtYamlStr(`Música de Franklin Baldo — ${clip.title || "sem título"}`)}
+date: ${date}
+postType: music
+sunoId: ${clip.id}
+${imageYaml}
+${genreYaml}
+${durationYaml}
+tags:
+  - música
+lang: pt
+---
+
+${lyricsSection}
+
+## Notas do compositor
+
+<!-- Escreva aqui sobre essa música: o que motivou, como foi o processo,
+     o que você queria transmitir, curiosidades da criação. -->
+`;
+}
+
+async function main() {
+  mkdirSync(OUT_DIR, { recursive: true });
+
+  console.log(`Buscando músicas de @${HANDLE} no Suno…`);
+
+  const first = await fetchJSON(
+    `${SUNO_API}/profiles/${HANDLE}/?page=1&playlists_sort_by=created_at&clips_sort_by=created_at`
+  );
+
+  const total = Math.max(0, first.num_total_clips ?? 0);
+  const seen = new Set();
+  const clips = [];
+
+  for (const c of first.clips ?? []) {
+    if (!seen.has(c.id) && c.is_public) {
+      seen.add(c.id);
+      clips.push(c);
+    }
+  }
+
+  let page = 2;
+  while (clips.length < total) {
+    const next = await fetchJSON(
+      `${SUNO_API}/profiles/${HANDLE}/?page=${page}&playlists_sort_by=created_at&clips_sort_by=created_at`
+    );
+    const got = next.clips ?? [];
+    if (got.length === 0) break;
+    for (const c of got) {
+      if (!seen.has(c.id) && c.is_public) {
+        seen.add(c.id);
+        clips.push(c);
+      }
+    }
+    page++;
+  }
+
+  console.log(`${clips.length} músicas públicas encontradas.`);
+
+  let created = 0;
+  let skipped = 0;
+
+  for (const clip of clips) {
+    const rawSlug = slugify(clip.title || clip.id);
+    const slug = rawSlug || clip.id.slice(0, 8);
+    const filename = `${slug}.mdx`;
+    const filepath = join(OUT_DIR, filename);
+
+    if (existsSync(filepath)) {
+      skipped++;
+      continue;
+    }
+
+    const content = makeMdx(clip);
+    writeFileSync(filepath, content, "utf8");
+    console.log(`  criado: musicas/${filename}`);
+    created++;
+  }
+
+  console.log(`\nPronto: ${created} criados, ${skipped} já existiam.`);
+  if (created > 0) {
+    console.log(
+      `\nAgora edite os arquivos em src/content/blog/musicas/ e adicione\nsuas notas em cada seção "## Notas do compositor".`
+    );
+  }
+}
+
+main().catch((e) => {
+  console.error("Erro:", e.message);
+  process.exit(1);
+});

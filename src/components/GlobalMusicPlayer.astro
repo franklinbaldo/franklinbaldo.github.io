@@ -1,0 +1,396 @@
+---
+import { fetchAllClips, fetchAudioMap } from "../lib/suno";
+
+interface Song {
+  id: string;
+  title: string;
+  imageUrl: string;
+}
+
+let songs: Song[] = [];
+let audioMap: Record<string, string> = {};
+
+try {
+  const [clips, map] = await Promise.all([fetchAllClips(), fetchAudioMap()]);
+  songs = clips.map((c) => ({
+    id: c.id,
+    title: c.title || "(sem título)",
+    imageUrl: c.image_url || "",
+  }));
+  audioMap = map;
+} catch (e) {
+  console.warn("[GlobalMusicPlayer] failed to load songs:", e);
+}
+---
+
+<div
+  id="gmp"
+  role="region"
+  aria-label="Player de músicas"
+  data-songs={JSON.stringify(songs)}
+  data-audio-map={JSON.stringify(audioMap)}
+  hidden
+  transition:persist
+>
+  <audio id="gmp-audio" preload="none"></audio>
+
+  <img id="gmp-cover" src="" alt="" width="48" height="48" class="gmp-cover" />
+
+  <div class="gmp-info">
+    <span id="gmp-title" class="gmp-title"></span>
+    <div class="gmp-seek-row">
+      <span id="gmp-time" class="gmp-time">0:00</span>
+      <input
+        id="gmp-seek"
+        type="range"
+        min="0"
+        max="100"
+        value="0"
+        step="0.1"
+        aria-label="Posição na música"
+      />
+      <span id="gmp-dur" class="gmp-time">0:00</span>
+    </div>
+  </div>
+
+  <div class="gmp-btns">
+    <button id="gmp-prev" type="button" aria-label="Anterior">⏮</button>
+    <button id="gmp-play" type="button" aria-label="Tocar">▶</button>
+    <button id="gmp-next" type="button" aria-label="Próximo">⏭</button>
+  </div>
+
+  <button id="gmp-close" type="button" class="gmp-close" aria-label="Fechar player"
+    >✕</button
+  >
+</div>
+
+<script>
+  const SONG_RE = /suno\.com\/song\/([0-9a-fA-F-]{36})/;
+
+  function fmt(sec: number): string {
+    if (!isFinite(sec) || sec < 0) return "0:00";
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  }
+
+  function init() {
+    const player = document.getElementById("gmp") as HTMLElement | null;
+    if (!player) return;
+
+    // Re-bind Suno links on every page load (new page content).
+    // Full init only once.
+    const alreadyInit = player.dataset.gmpInit === "1";
+
+    let songs: { id: string; title: string; imageUrl: string }[] = [];
+    let audioMap: Record<string, string> = {};
+    let queue: number[] = [];
+    let currentIdx = 0;
+
+    const audio = document.getElementById("gmp-audio") as HTMLAudioElement;
+    const coverEl = document.getElementById("gmp-cover") as HTMLImageElement;
+    const titleEl = document.getElementById("gmp-title") as HTMLElement;
+    const seekEl = document.getElementById("gmp-seek") as HTMLInputElement;
+    const timeEl = document.getElementById("gmp-time") as HTMLElement;
+    const durEl = document.getElementById("gmp-dur") as HTMLElement;
+    const playBtn = document.getElementById("gmp-play") as HTMLButtonElement;
+    const prevBtn = document.getElementById("gmp-prev") as HTMLButtonElement;
+    const nextBtn = document.getElementById("gmp-next") as HTMLButtonElement;
+    const closeBtn = document.getElementById("gmp-close") as HTMLButtonElement;
+
+    if (
+      !audio ||
+      !coverEl ||
+      !titleEl ||
+      !seekEl ||
+      !timeEl ||
+      !durEl ||
+      !playBtn ||
+      !prevBtn ||
+      !nextBtn ||
+      !closeBtn
+    )
+      return;
+
+    if (!alreadyInit) {
+      player.dataset.gmpInit = "1";
+
+      try {
+        songs = JSON.parse(player.dataset.songs || "[]");
+        audioMap = JSON.parse(player.dataset.audioMap || "{}");
+      } catch {
+        songs = [];
+        audioMap = {};
+      }
+
+      // Build default sequential queue
+      queue = songs.map((_, i) => i);
+
+      function audioSrc(id: string): string {
+        return audioMap[id] || `https://cdn1.suno.ai/${id}.mp3`;
+      }
+
+      function playSong(idx: number) {
+        if (idx < 0 || idx >= queue.length) return;
+        currentIdx = idx;
+        const song = songs[queue[idx]];
+        if (!song) return;
+
+        titleEl.textContent = song.title;
+        coverEl.src = song.imageUrl || "";
+        coverEl.alt = song.title;
+        coverEl.style.display = song.imageUrl ? "" : "none";
+        audio.src = audioSrc(song.id);
+        player.hidden = false;
+        document.body.classList.add("gmp-active");
+        audio.play().catch(() => {});
+        try {
+          localStorage.setItem("gmp-suno-id", song.id);
+        } catch {}
+      }
+
+      function playSunoId(sunoId: string, title?: string) {
+        const idx = songs.findIndex((s) => s.id === sunoId);
+        if (idx !== -1) {
+          const qIdx = queue.indexOf(idx);
+          if (qIdx !== -1) {
+            playSong(qIdx);
+          } else {
+            // Song not in queue — push to front and play
+            queue.unshift(idx);
+            playSong(0);
+          }
+        } else {
+          // Unknown song — play directly without queue
+          titleEl.textContent = title || sunoId;
+          coverEl.style.display = "none";
+          audio.src = audioSrc(sunoId);
+          player.hidden = false;
+          document.body.classList.add("gmp-active");
+          audio.play().catch(() => {});
+        }
+      }
+
+      playBtn.addEventListener("click", () => {
+        if (audio.paused) audio.play().catch(() => {});
+        else audio.pause();
+      });
+
+      prevBtn.addEventListener("click", () => {
+        if (audio.currentTime > 3) {
+          audio.currentTime = 0;
+        } else {
+          playSong((currentIdx - 1 + queue.length) % queue.length);
+        }
+      });
+
+      nextBtn.addEventListener("click", () => {
+        playSong((currentIdx + 1) % queue.length);
+      });
+
+      closeBtn.addEventListener("click", () => {
+        audio.pause();
+        player.hidden = true;
+        document.body.classList.remove("gmp-active");
+      });
+
+      audio.addEventListener("play", () => {
+        playBtn.textContent = "⏸";
+        playBtn.setAttribute("aria-label", "Pausar");
+      });
+
+      audio.addEventListener("pause", () => {
+        playBtn.textContent = "▶";
+        playBtn.setAttribute("aria-label", "Tocar");
+      });
+
+      audio.addEventListener("ended", () => {
+        playSong((currentIdx + 1) % queue.length);
+      });
+
+      audio.addEventListener("timeupdate", () => {
+        if (!audio.duration) return;
+        const pct = (audio.currentTime / audio.duration) * 100;
+        seekEl.value = String(pct);
+        timeEl.textContent = fmt(audio.currentTime);
+        durEl.textContent = fmt(audio.duration);
+      });
+
+      audio.addEventListener("loadedmetadata", () => {
+        durEl.textContent = fmt(audio.duration);
+      });
+
+      seekEl.addEventListener("input", () => {
+        if (!audio.duration) return;
+        audio.currentTime = (Number(seekEl.value) / 100) * audio.duration;
+      });
+
+      // Global event API
+      document.addEventListener("gp:play", (e: Event) => {
+        const { sunoId, title } = (
+          e as CustomEvent<{ sunoId: string; title?: string }>
+        ).detail;
+        if (sunoId) playSunoId(sunoId, title);
+      });
+
+      document.addEventListener("gp:queue", (e: Event) => {
+        const { sunoIds } = (
+          e as CustomEvent<{ sunoIds: string[] }>
+        ).detail;
+        if (!sunoIds?.length) return;
+        const newQueue: number[] = [];
+        for (const id of sunoIds) {
+          const idx = songs.findIndex((s) => s.id === id);
+          if (idx !== -1) newQueue.push(idx);
+        }
+        if (newQueue.length) {
+          queue = newQueue;
+          playSong(0);
+        }
+      });
+    }
+
+    // Bind Suno links on current page (runs every navigation)
+    document
+      .querySelectorAll<HTMLAnchorElement>('a[href*="suno.com/song/"]')
+      .forEach((a) => {
+        if (a.dataset.gmpBound === "1") return;
+        const m = a.href.match(SONG_RE);
+        if (!m) return;
+        a.dataset.gmpBound = "1";
+        a.addEventListener("click", (ev: MouseEvent) => {
+          if (ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey)
+            return;
+          ev.preventDefault();
+          document.dispatchEvent(
+            new CustomEvent("gp:play", {
+              detail: { sunoId: m[1], title: a.textContent?.trim() },
+            })
+          );
+        });
+      });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+  document.addEventListener("astro:page-load", init);
+</script>
+
+<style>
+  #gmp {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: var(--pico-card-background-color, #fff);
+    border-top: 1px solid var(--pico-muted-border-color, #ddd);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.12);
+    z-index: 200;
+    min-height: 72px;
+  }
+
+  .gmp-cover {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
+  .gmp-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .gmp-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .gmp-seek-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .gmp-time {
+    font-size: 0.7rem;
+    color: var(--pico-muted-color);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #gmp-seek {
+    flex: 1;
+    height: 4px;
+    accent-color: var(--pico-primary);
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .gmp-btns {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+  }
+
+  .gmp-btns button {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.95rem;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    color: var(--pico-color);
+  }
+
+  #gmp-play {
+    background: var(--pico-primary) !important;
+    color: var(--pico-primary-inverse, #fff) !important;
+    font-size: 0.85rem;
+  }
+
+  .gmp-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--pico-muted-color);
+    padding: 0.25rem;
+    line-height: 1;
+  }
+
+  @media (max-width: 480px) {
+    .gmp-cover {
+      display: none;
+    }
+    .gmp-time {
+      display: none;
+    }
+  }
+</style>
+
+<style is:global>
+  body.gmp-active {
+    padding-bottom: 80px;
+  }
+</style>
