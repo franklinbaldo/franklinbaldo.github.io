@@ -141,7 +141,7 @@ try {
         coverEl.alt = song.title;
         coverEl.style.display = song.imageUrl ? "" : "none";
         audio.src = audioSrc(song.id);
-        player.hidden = false;
+        player!.hidden = false;
         document.body.classList.add("gmp-active");
         audio.play().catch(() => {});
         try {
@@ -165,7 +165,7 @@ try {
           titleEl.textContent = title || sunoId;
           coverEl.style.display = "none";
           audio.src = audioSrc(sunoId);
-          player.hidden = false;
+          player!.hidden = false;
           document.body.classList.add("gmp-active");
           audio.play().catch(() => {});
         }
