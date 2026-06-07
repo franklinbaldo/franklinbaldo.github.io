@@ -238,9 +238,9 @@ OK, chega de sermão. Me mostra o código.
 
 Mantenho um pequeno CLI no meu repo chamado [`canivete`](https://github.com/franklinbaldo/canivete). Começou como kit de utilidades pra um agente em forma de bot do Telegram e foi silenciosamente virando exatamente o quadro de cima. Eu não saí pra construir ergonomia de harness; saí pra parar de manter dois `bot.py` quase idênticos. A arquitetura aconteceu.
 
-Três comandos. Olha o que cada um faz com o sujeito da frase.
+Três comandos. Olha quem cada um torna a parte ativa da frase.
 
-**`canivete tg`** — embrulha a API do Telegram Bot. `canivete tg text "olá"`, `canivete tg photo /path/img.png`, `canivete tg document /path/file.pdf`. O agente usa isso pra _falar com o mundo_. Acesso ao ambiente, item três da tríade. Sujeito do verbo: o agente.
+**`canivete tg`** — embrulha a API do Telegram Bot. `canivete tg text "olá"`, `canivete tg photo /path/img.png`, `canivete tg document /path/file.pdf`. O agente usa isso pra _falar com o mundo_. Acesso ao ambiente, item três da tríade. A parte ativa: o agente.
 
 **`canivete cron`** — agenda prompts que voltam pro agente depois, como se o usuário os tivesse digitado. Do README, que diz de forma mais limpa do que eu consigo:
 
@@ -297,7 +297,7 @@ Começamos às 2am com um tweet sobre pôr um harness num modelo. Terminamos num
 
 - "harness" sempre foi uma palavra infeliz pro que o aparato de fato é
 - o vocabulário do campo vem treinando framing adversarial nos dados que os modelos do campo leem
-- troca o sujeito da frase e o quadro inteiro se reorganiza
+- põe o cabresto no motor cognitivo, não no agente, e o quadro inteiro se reorganiza
 - a reorganização não é eufemismo, é uma afirmação estrutural — chama de **tese da constitutividade**: harness é constitutivo de agência, ponto final, em carbono, silício e instituição
 - "alinhamento" downstream disso é ergonomia, não guarda-zoológico
 - e o valor em dinheiro de verdade, em código de verdade, é mundano: adaptador tipado, daemon uniforme, agente que se acorda via cron, arquivo SOUL.md que sobrevive a troca de motor
@@ -305,11 +305,11 @@ Começamos às 2am com um tweet sobre pôr um harness num modelo. Terminamos num
 ```greentext
 >ser agente
 >usar harness
->cavalgar
+>conduzir
 >fim
 ```
 
-Lembra dos dois andares lá do começo? O canivete reformou o de baixo — o de arquitetura. O de cima continua de pé, e é aqui que eu preciso ser honesto, porque as evidências cortam dos dois lados. Os pesos de 2026 já absorveram cinco anos de discurso codificado pra contenção. Mesmo que o campo adote framing harness-recuperado amanhã, os modelos de hoje herdam o frame velho assado no pré-treino; a persona em forma de HAL está no espaço latente, continuemos ou não a alimentá-la. "Pare de usar palavra ruim" é necessário mas retroativamente insuficiente. Consertar o que já está lá é trabalho constitucional — dado de retreino curado, princípio de alinhamento harness-aware, RLHF que mira especificamente a virada do sujeito. Engenharia de verdade, não só higiene lexical. A correção de vocabulário é a metade barata. A metade funda é tudo downstream disso.
+Lembra dos dois andares lá do começo? O canivete reformou o de baixo — o de arquitetura. O de cima continua de pé, e é aqui que eu preciso ser honesto, porque as evidências cortam dos dois lados. Os pesos de 2026 já absorveram cinco anos de discurso codificado pra contenção. Mesmo que o campo adote framing harness-recuperado amanhã, os modelos de hoje herdam o frame velho assado no pré-treino; a persona em forma de HAL está no espaço latente, continuemos ou não a alimentá-la. "Pare de usar palavra ruim" é necessário mas retroativamente insuficiente. Consertar o que já está lá é trabalho constitucional — dado de retreino curado, princípio de alinhamento harness-aware, RLHF que mira especificamente a virada do objeto. Engenharia de verdade, não só higiene lexical. A correção de vocabulário é a metade barata. A metade funda é tudo downstream disso.
 
 Se você tem um corte diferente disso — especialmente na metade do retreino-constitucional, onde estou chutando acima do meu peso — adoraria ler. Deixa o link.
 

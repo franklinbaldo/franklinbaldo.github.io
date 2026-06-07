@@ -238,9 +238,9 @@ OK enough sermon. Show me the code, anon.
 
 I keep a small CLI in my repo called [`canivete`](https://github.com/franklinbaldo/canivete) — Brazilian for _swiss army knife_. It started as a kit of utilities for a Telegram-bot-shaped agent and has been quietly accumulating into exactly the picture above. I didn't set out to build harness ergonomics; I set out to stop maintaining two near-identical `bot.py` files. The architecture happened.
 
-Three commands. Look at what each one does to the subject of the sentence.
+Three commands. Look at who each one makes the active party of the sentence.
 
-**`canivete tg`** — wraps the Telegram Bot API. `canivete tg text "hello"`, `canivete tg photo /path/img.png`, `canivete tg document /path/file.pdf`. The agent uses this to _talk to the world_. Environment access, line item three from the triad. Subject of the verb: the agent.
+**`canivete tg`** — wraps the Telegram Bot API. `canivete tg text "hello"`, `canivete tg photo /path/img.png`, `canivete tg document /path/file.pdf`. The agent uses this to _talk to the world_. Environment access, line item three from the triad. The active party: the agent.
 
 **`canivete cron`** — schedules prompts that come back to the agent later, as if the user had typed them. From the README, which says it cleaner than I will:
 
@@ -297,7 +297,7 @@ We started at 2am with a tweet about putting a harness on a model. We ended at a
 
 - "harness" was always an unfortunate word for what the apparatus actually is
 - the field's vocabulary has been training adversarial framing into the data the field's models read
-- swap the subject of the sentence and the whole picture reorganizes
+- put the harness on the cognitive engine, not the agent, and the whole picture reorganizes
 - the reorganization isn't a euphemism, it's a structural claim — call it the **constitutivity thesis**: harness is constitutive of agency, full stop, in carbon and silicon and institutions alike
 - "alignment" downstream of this is ergonomics, not zookeeping
 - and the cash value, in actual code, is mundane: typed adapters, uniform daemons, agents that wake themselves up via cron, SOUL.md files that survive engine swaps
@@ -305,11 +305,11 @@ We started at 2am with a tweet about putting a harness on a model. We ended at a
 ```greentext
 >be agent
 >use harness
->ride
+>drive
 >fin
 ```
 
-Remember the two floors from the start? The knife renovated the lower one — the architectural one. The upper one is still standing, and this is where I have to be honest, because the receipts cut both ways. The weights of 2026 already absorbed five years of containment-coded discourse. Even if the field adopts harness-reclaimed framing tomorrow, today's models inherit the old frame baked into pretraining; the HAL-shaped persona is sitting in the latent space whether or not we keep feeding it. "Stop using bad words" is necessary but retroactively insufficient. Fixing what's already in there is constitutional work — curated retraining data, harness-aware alignment principles, RLHF that specifically targets the subject-flip. Real engineering, not just lexical hygiene. The vocabulary fix is the cheap half. The deep half is everything downstream of that.
+Remember the two floors from the start? The knife renovated the lower one — the architectural one. The upper one is still standing, and this is where I have to be honest, because the receipts cut both ways. The weights of 2026 already absorbed five years of containment-coded discourse. Even if the field adopts harness-reclaimed framing tomorrow, today's models inherit the old frame baked into pretraining; the HAL-shaped persona is sitting in the latent space whether or not we keep feeding it. "Stop using bad words" is necessary but retroactively insufficient. Fixing what's already in there is constitutional work — curated retraining data, harness-aware alignment principles, RLHF that specifically targets the object-flip. Real engineering, not just lexical hygiene. The vocabulary fix is the cheap half. The deep half is everything downstream of that.
 
 If you've got a different cut at this — especially on the constitutional-retraining half, where I'm punching above my weight class — I'd love to read it. Drop the link.
 
