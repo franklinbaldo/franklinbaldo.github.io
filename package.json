@@ -25,7 +25,8 @@
     "hronir:edit-commit": "node scripts/hronir/index.js edit-commit",
     "hronir:end": "node scripts/hronir/index.js end",
     "hronir:migrate": "node scripts/hronir/index.js migrate",
-    "hronir:doctor": "node scripts/hronir/index.js doctor"
+    "hronir:doctor": "node scripts/hronir/index.js doctor",
+    "music:generate": "node scripts/generate-music-posts.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.4",

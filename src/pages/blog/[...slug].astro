@@ -34,7 +34,7 @@ if (post.data.lang === 'pt') {
   return Astro.redirect(`/pt/blog/${post.id}/`);
 }
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
-const { heroImage, heroImageAlt, title, description, date, tags, lang, translationKey, previousVersion } = post.data;
+const { heroImage, heroImageAlt, title, description, date, tags, lang, translationKey, previousVersion, postType, sunoId, genre, duration, sunoImageUrl } = post.data;
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
 const wordCount: number | undefined = minutesRead ? minutesRead * 200 : undefined;
 const hasMath: boolean = !!remarkPluginFrontmatter.hasMath;
@@ -136,7 +136,50 @@ const translationLinks = translationSiblings.map((p) => {
               </small>
             </p>
           </hgroup>
-          {heroImage && (
+          {postType === 'music' && sunoId && (
+            <div class="music-header">
+              {(sunoImageUrl || sunoId) && (
+                <img
+                  class="music-cover"
+                  src={sunoImageUrl || `https://cdn2.suno.ai/${sunoId}_image.jpeg`}
+                  alt={`Capa de ${title}`}
+                  width="200"
+                  height="200"
+                  loading="eager"
+                />
+              )}
+              <div class="music-meta">
+                {genre && genre.length > 0 && (
+                  <p class="music-genres">
+                    {genre.map((g) => <kbd class="genre-pill">{g}</kbd>)}
+                  </p>
+                )}
+                {duration && (
+                  <p class="music-duration">
+                    <small>{Math.floor(duration / 60)}:{String(duration % 60).padStart(2, '0')}</small>
+                  </p>
+                )}
+                <button
+                  class="music-play-btn"
+                  type="button"
+                  data-suno-id={sunoId}
+                  data-suno-title={title}
+                  aria-label={`Tocar ${title}`}
+                >
+                  ▶ Tocar
+                </button>
+                <a
+                  href={`https://suno.com/song/${sunoId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="music-suno-link"
+                >
+                  Ouvir no Suno ↗
+                </a>
+              </div>
+            </div>
+          )}
+          {postType !== 'music' && heroImage && (
             <figure class="hero-figure">
               <Image
                 src={heroImage}
@@ -213,6 +256,24 @@ const translationLinks = translationSiblings.map((p) => {
     date={date}
     lang={lang}
   />
+
+  <script is:inline>
+    (() => {
+      function bindPlayBtns() {
+        document.querySelectorAll('.music-play-btn').forEach((btn) => {
+          if (btn.dataset.bound === '1') return;
+          btn.dataset.bound = '1';
+          btn.addEventListener('click', () => {
+            document.dispatchEvent(new CustomEvent('gp:play', {
+              detail: { sunoId: btn.dataset.sunoId, title: btn.dataset.sunoTitle },
+            }));
+          });
+        });
+      }
+      bindPlayBtns();
+      document.addEventListener('astro:page-load', bindPlayBtns);
+    })();
+  </script>
 
   <script is:inline>
     (() => {
@@ -331,6 +392,69 @@ const translationLinks = translationSiblings.map((p) => {
       background: var(--pico-muted-color);
       opacity: 0.5;
     }
+  }
+
+  .music-header {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    margin: 1.5rem 0 2rem;
+    padding: 1.25rem;
+    background: var(--pico-card-background-color);
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+  }
+  .music-cover {
+    flex-shrink: 0;
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: calc(var(--pico-border-radius) * 0.75);
+  }
+  .music-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+  .music-genres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin: 0;
+  }
+  .genre-pill {
+    font-size: 0.7rem;
+    padding: 0.1em 0.5em;
+  }
+  .music-duration {
+    margin: 0;
+    color: var(--pico-muted-color);
+  }
+  .music-play-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.25rem;
+    background: var(--pico-primary);
+    color: var(--pico-primary-inverse, #fff);
+    border: none;
+    border-radius: var(--pico-border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: fit-content;
+  }
+  .music-suno-link {
+    font-size: 0.85rem;
+    color: var(--pico-muted-color);
+    text-decoration: none;
+  }
+  .music-suno-link:hover { text-decoration: underline; }
+
+  @media (max-width: 480px) {
+    .music-header { flex-direction: column; }
+    .music-cover { width: 120px; height: 120px; }
   }
 
   .hero-figure {

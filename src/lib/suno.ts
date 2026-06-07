@@ -5,6 +5,7 @@ export interface SunoClip {
   id: string;
   title: string;
   audio_url: string;
+  image_url: string;
   is_public: boolean;
 }
 

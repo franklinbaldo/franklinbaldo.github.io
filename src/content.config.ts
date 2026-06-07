@@ -36,6 +36,17 @@ const blog = defineCollection({
           msg: z.string(),
         })
         .optional(),
+      /** When "music", the post is a music publication with lyrics and
+       *  composer notes. Triggers the music post layout. */
+      postType: z.literal("music").optional(),
+      /** Suno song UUID — used to load audio in the global player. */
+      sunoId: z.string().optional(),
+      /** Music genres/styles for display. */
+      genre: z.array(z.string()).optional(),
+      /** Song duration in seconds. */
+      duration: z.number().optional(),
+      /** Album art URL from the Suno API (stored at stub-generation time). */
+      sunoImageUrl: z.string().url().optional(),
     }),
 });
 
