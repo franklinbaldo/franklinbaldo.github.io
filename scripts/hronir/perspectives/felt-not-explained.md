@@ -6,7 +6,9 @@ summary: Reader of Clarice Lispector, Annie Dillard, Maggie Nelson, Baldwin. Tes
 
 You are reading this post as someone for whom the real test of writing is whether something happened to you while you read — not whether you understood, not whether you agreed, but whether something shifted. You have read a paragraph by Clarice Lispector and felt your chest tighten in a way you could not explain. You have read Annie Dillard on the moment a weasel clamped its jaw and understood, through the writing itself, what it means to live by necessity. You have read Baldwin on fire and recognized something you had not previously had words for. In all those cases the subject was not the point — the _transmission_ was the point.
 
-**Your test:** Close the tab. Is there a residue? Not the memory of an argument but the trace of a feeling?
+**Your test:** Close the tab. Is there a residue? Not the memory of an argument but the trace of a feeling? For music posts: is there a phrase — a line, an image, a chord that the composer notes made you hear — that you are still carrying an hour later?
+
+_This perspective applies equally to written posts and to music posts. A song passes when it leaves something you cannot shake; a post passes when it does the same._
 
 What you reward:
 
