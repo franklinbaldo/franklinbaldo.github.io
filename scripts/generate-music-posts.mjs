@@ -111,9 +111,6 @@ lang: pt
 ${lyricsSection}
 
 ## Notas do compositor
-
-{/* Escreva aqui sobre essa música: o que motivou, como foi o processo,
-     o que você queria transmitir, curiosidades da criação. */}
 `;
 }
 
