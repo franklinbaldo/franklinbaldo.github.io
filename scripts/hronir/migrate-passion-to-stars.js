@@ -17,7 +17,8 @@ import matter from "gray-matter";
 const REPO_ROOT = path.resolve(new URL("../..", import.meta.url).pathname);
 const RATES_DIR = path.join(REPO_ROOT, ".routines/hronir/rates");
 
-const files = fs.readdirSync(RATES_DIR)
+const files = fs
+  .readdirSync(RATES_DIR)
   .filter((f) => /_x_.*\.md$/.test(f))
   .map((f) => path.join(RATES_DIR, f));
 
@@ -42,7 +43,9 @@ for (const filePath of files) {
 
   const winner = data.winner;
   if (winner !== "a" && winner !== "b") {
-    console.warn(`Skipping ${path.basename(filePath)}: winner="${winner}" — cannot map`);
+    console.warn(
+      `Skipping ${path.basename(filePath)}: winner="${winner}" — cannot map`
+    );
     skipped++;
     continue;
   }
