@@ -1,0 +1,100 @@
+name: Hrönir Heartbeat
+
+# Liveness guarantee for the Hrönir/Jules loop.
+#
+# The event-driven autopilot (hronir-autopilot.yml) only reacts when a PR
+# arrives. If a session dies without ever opening a PR — or session creation
+# failed — the conveyor would stall. This hourly cron is the safety net: it
+# makes sure at least one Hrönir session exists per hour.
+#
+# Decision (queried from verne, the source of truth):
+#   - No OPEN session at all                  -> create one.
+#   - An OPEN session created < 1h ago        -> skip (one is already in flight).
+#   - An OPEN session but created >= 1h ago    -> create one.
+#
+# Note: until verne exposes `createTime` in `sessions list --json`, the "< 1h"
+# part can't be evaluated, so it safely degrades to "create only when there is
+# NO open session." Add createTime to verne to get the strict hourly cadence.
+
+on:
+  schedule:
+    - cron: "0 * * * *" # hourly
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # Shared with hronir-autopilot.yml so the two never spawn at the same time.
+  group: hronir-session
+  cancel-in-progress: false
+
+env:
+  REPO: ${{ github.repository }}
+  VERNE: "git+https://github.com/franklinbaldo/verne@6c73a589299c70db59549a8e9d8fd03acd6256ca"
+
+jobs:
+  ensure-session:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Ensure a recent open session exists
+        env:
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${JULES_API_KEY:-}" ]; then
+            echo "::warning::JULES_API_KEY not set — cannot run heartbeat."
+            exit 0
+          fi
+
+          SESSIONS=$(uvx --from "$VERNE" verne sessions list --json --page-size 100)
+          NOW=$(date -u +%s)
+
+          # Open = status not terminal.
+          OPEN=$(echo "$SESSIONS" | jq '[.sessions[]
+            | select(((.status // "") | ascii_downcase) as $s
+                | $s != "completed" and $s != "failed" and $s != "cancelled")]')
+          OPEN_COUNT=$(echo "$OPEN" | jq 'length')
+
+          CREATE=0
+          if [ "$OPEN_COUNT" -eq 0 ]; then
+            echo "No open session — will create one."
+            CREATE=1
+          else
+            # Any open session that is recent (< 1h) OR whose createTime is
+            # unknown (verne not yet exposing it) blocks creation.
+            BLOCKERS=$(echo "$OPEN" | jq --argjson now "$NOW" '[ .[]
+              | (.createTime // "")
+              | if . == "" then 1
+                elif ($now - fromdateiso8601) < 3600 then 1
+                else empty end ] | length')
+            if [ "$BLOCKERS" -gt 0 ]; then
+              echo "An open, recent (or unknown-age) session exists — skipping."
+            else
+              echo "Open sessions exist but all are >= 1h old — will create one."
+              CREATE=1
+            fi
+          fi
+
+          if [ "$CREATE" -ne 1 ]; then
+            exit 0
+          fi
+
+          TITLE="hronir session $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          SESSION=$(uvx --from "$VERNE" verne \
+            sessions new "$TITLE" \
+            --source "sources/github/${REPO}" \
+            --prompt-file .github/hronir-session-prompt.md \
+            --branch main \
+            --automation-mode AUTO_CREATE_PR \
+            --json)
+          SESSION_ID=$(echo "$SESSION" | jq -r '.id // (.name | sub("^sessions/"; "")) // empty')
+          if [ -z "$SESSION_ID" ]; then
+            echo "::error::Failed to create Jules session via verne:"; echo "$SESSION"; exit 1
+          fi
+          echo "Created Jules session: $SESSION_ID"
+          echo "https://jules.google.com/task/$SESSION_ID"

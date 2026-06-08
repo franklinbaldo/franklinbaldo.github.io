@@ -1,196 +1,174 @@
 name: Hrönir Autopilot
 
-# Serializes Hrönir/Jules sessions so they never collide on the same posts.
+# Event-driven half of the Hrönir/Jules loop.
 #
-# Each run:
-#   1. Finds open Hrönir session PRs that are green, mergeable, and confined to
-#      the safe paths (.routines/hronir/** and src/content/blog/**).
-#   2. Merges exactly ONE (the oldest) — keeping sessions strictly sequential.
-#   3. Only if NO Hrönir PRs remain open afterwards, kicks off the next Jules
-#      session via the Jules API, starting from the freshly-merged main. Because
-#      the new session branches from up-to-date main, its PR won't conflict.
+# Fires when the "Check" workflow finishes on a PR branch. If that PR is one of
+# OUR Jules sessions (confirmed via verne) and is mergeable + confined to the
+# safe paths, it is merged with a merge commit and the NEXT Jules session is
+# created immediately — in the same run — starting from the freshly-merged main.
+# Because the new session branches from up-to-date main, its PR won't conflict.
 #
-# Draining a backlog: it merges one per run and won't spawn a new session until
-# the queue is empty, so existing PRs flush out one at a time without piling up.
+# Liveness (making sure a session always exists) is handled separately by
+# hronir-heartbeat.yml. This workflow only reacts to PRs that actually arrive.
 #
-# Requires repo secret JULES_API_KEY (the Google Jules API key). Without it the
-# merge half still works; only the "spawn next session" step is skipped.
+# Requires repo secret JULES_API_KEY (the Google Jules API key).
 
 on:
-  schedule:
-    - cron: "0 */6 * * *" # every 6 hours
+  workflow_run:
+    workflows: ["Check"]
+    types: [completed]
   workflow_dispatch:
     inputs:
-      dry_run:
-        description: "List eligible PRs but do not merge or spawn"
-        required: false
-        default: "false"
-        type: boolean
+      pr:
+        description: "PR number to merge + respawn (manual)"
+        required: true
+        type: string
 
 permissions:
   contents: write
   pull-requests: write
 
 concurrency:
-  group: hronir-autopilot
+  # Shared with hronir-heartbeat.yml so merge+spawn and the heartbeat never
+  # spawn sessions concurrently.
+  group: hronir-session
   cancel-in-progress: false
 
 env:
   REPO: ${{ github.repository }}
+  VERNE: "git+https://github.com/franklinbaldo/verne@6c73a589299c70db59549a8e9d8fd03acd6256ca"
   # A PR is a Hrönir session PR when every changed file lives under one of these
   # prefixes AND at least one file is under .routines/hronir/rates/.
   SAFE_PREFIXES: ".routines/hronir/ src/content/blog/"
 
 jobs:
-  autopilot:
+  merge-and-respawn:
     runs-on: ubuntu-latest
+    # Manual dispatch, or a successful Check run on a real PR branch (not main).
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.head_branch != 'main')
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select and merge one eligible Hrönir PR
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Resolve target PR
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            PR="${{ github.event.inputs.pr }}"
+          else
+            BRANCH="${{ github.event.workflow_run.head_branch }}"
+            PR=$(gh pr list --repo "$REPO" --head "$BRANCH" --base main --state open \
+              --json number --jq '.[0].number // empty')
+          fi
+          if [ -z "${PR:-}" ]; then
+            echo "No open PR to act on."
+            echo "pr=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "Target PR: #$PR"
+          echo "pr=$PR" >> "$GITHUB_OUTPUT"
+
+      - name: Authenticate, gate and merge
         id: merge
+        if: steps.resolve.outputs.pr != ''
         env:
           GH_TOKEN: ${{ github.token }}
-          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+          PR: ${{ steps.resolve.outputs.pr }}
         run: |
           set -euo pipefail
 
-          # Returns 0 (eligible) / 1 (not) for a PR number.
-          is_eligible() {
-            local pr="$1"
-            local files
-            files=$(gh pr view "$pr" --repo "$REPO" --json files --jq '.files[].path')
-            [ -n "$files" ] || return 1
+          # 1) Authenticity: the PR must reference a Jules task that verne can
+          #    resolve to a real session in our account.
+          BODY=$(gh pr view "$PR" --repo "$REPO" --json body --jq '.body')
+          TASK=$(printf '%s' "$BODY" | grep -oiE 'jules\.google\.com/task/[A-Za-z0-9_-]+' | head -1 | sed 's#.*/##')
+          if [ -z "${TASK:-}" ]; then
+            echo "PR #$PR has no Jules task link in its body — not ours, skipping."
+            echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if [ -z "${JULES_API_KEY:-}" ]; then
+            echo "::warning::JULES_API_KEY not set — cannot verify session; skipping."
+            echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if ! uvx --from "$VERNE" verne sessions show "$TASK" --json >/dev/null 2>&1; then
+            echo "verne could not resolve session $TASK — not one of ours, skipping."
+            echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "Authenticated PR #$PR as Jules session $TASK."
 
-            local has_rate=0
-            while IFS= read -r f; do
-              [ -n "$f" ] || continue
-              case "$f" in
-                .routines/hronir/rates/*) has_rate=1 ;;
-              esac
-              local ok=1
-              for p in $SAFE_PREFIXES; do
-                case "$f" in "$p"*) ok=0 ;; esac
-              done
-              if [ "$ok" -ne 0 ]; then
-                echo "  PR #$pr touches out-of-scope file: $f" >&2
-                return 1
-              fi
-            done <<< "$files"
-            [ "$has_rate" -eq 1 ] || { echo "  PR #$pr has no rate files" >&2; return 1; }
-            return 0
-          }
-
-          # Oldest-first list of open, non-draft PRs targeting main.
-          mapfile -t prs < <(gh pr list --repo "$REPO" --state open --base main \
-            --json number,isDraft,createdAt \
-            --jq 'sort_by(.createdAt) | .[] | select(.isDraft|not) | .number')
-
-          echo "Open PRs (oldest first): ${prs[*]:-none}"
-
-          target=""
-          for pr in "${prs[@]:-}"; do
-            [ -n "$pr" ] || continue
-            echo "Checking PR #$pr ..."
-
-            if ! is_eligible "$pr"; then
-              echo "  → skip (out of scope)"
-              continue
+          # 2) Path gate: only .routines/hronir/** and src/content/blog/**, with
+          #    at least one rate file.
+          FILES=$(gh pr view "$PR" --repo "$REPO" --json files --jq '.files[].path')
+          HAS_RATE=0
+          while IFS= read -r f; do
+            [ -n "$f" ] || continue
+            case "$f" in .routines/hronir/rates/*) HAS_RATE=1 ;; esac
+            ok=1
+            for p in $SAFE_PREFIXES; do case "$f" in "$p"*) ok=0 ;; esac; done
+            if [ "$ok" -ne 0 ]; then
+              echo "PR #$PR touches out-of-scope file: $f — skipping."
+              echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
             fi
-
-            mergeable=$(gh pr view "$pr" --repo "$REPO" --json mergeable --jq '.mergeable')
-            if [ "$mergeable" != "MERGEABLE" ]; then
-              echo "  → skip (mergeable=$mergeable)"
-              continue
-            fi
-
-            # All required CI checks must have succeeded.
-            state=$(gh pr view "$pr" --repo "$REPO" \
-              --json statusCheckRollup \
-              --jq '[.statusCheckRollup[]? | (.conclusion // .state)] as $c
-                    | if ($c|length)==0 then "NONE"
-                      elif ([$c[] | select(. != "SUCCESS" and . != "NEUTRAL" and . != "SKIPPED")] | length) > 0 then "PENDING_OR_FAILED"
-                      else "SUCCESS" end')
-            if [ "$state" != "SUCCESS" ]; then
-              echo "  → skip (checks=$state)"
-              continue
-            fi
-
-            target="$pr"
-            break
-          done
-
-          if [ -z "$target" ]; then
-            echo "No eligible Hrönir PR to merge this run."
-            echo "merged=" >> "$GITHUB_OUTPUT"
-            exit 0
+          done <<< "$FILES"
+          if [ "$HAS_RATE" -ne 1 ]; then
+            echo "PR #$PR has no rate files — skipping."
+            echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
           fi
 
-          echo "Eligible target: PR #$target"
-          if [ "$DRY_RUN" = "true" ]; then
-            echo "DRY RUN — not merging PR #$target."
-            echo "merged=" >> "$GITHUB_OUTPUT"
-            exit 0
+          # 3) Mergeable + all checks green (defensive; the trigger already
+          #    implies the Check run passed).
+          MERGEABLE=$(gh pr view "$PR" --repo "$REPO" --json mergeable --jq '.mergeable')
+          if [ "$MERGEABLE" != "MERGEABLE" ]; then
+            echo "PR #$PR not mergeable (mergeable=$MERGEABLE) — skipping."
+            echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          STATE=$(gh pr view "$PR" --repo "$REPO" --json statusCheckRollup \
+            --jq '[.statusCheckRollup[]? | (.conclusion // .state)] as $c
+                  | if ($c|length)==0 then "NONE"
+                    elif ([$c[] | select(. != "SUCCESS" and . != "NEUTRAL" and . != "SKIPPED")] | length) > 0 then "PENDING_OR_FAILED"
+                    else "SUCCESS" end')
+          if [ "$STATE" != "SUCCESS" ]; then
+            echo "PR #$PR checks not all green (state=$STATE) — skipping."
+            echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
           fi
 
-          # Merge commit (not squash) — repo preference is to preserve history.
-          gh pr merge "$target" --repo "$REPO" --merge --delete-branch
-          echo "Merged PR #$target."
-          echo "merged=$target" >> "$GITHUB_OUTPUT"
-
-      - name: Count remaining open Hrönir PRs
-        id: remaining
-        if: steps.merge.outputs.merged != ''
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          count=0
-          mapfile -t prs < <(gh pr list --repo "$REPO" --state open --base main \
-            --json number,isDraft --jq '.[] | select(.isDraft|not) | .number')
-          for pr in "${prs[@]:-}"; do
-            [ -n "$pr" ] || continue
-            files=$(gh pr view "$pr" --repo "$REPO" --json files --jq '.files[].path')
-            echo "$files" | grep -q '^\.routines/hronir/rates/' && count=$((count+1)) || true
-          done
-          echo "Remaining open Hrönir-like PRs: $count"
-          echo "count=$count" >> "$GITHUB_OUTPUT"
-
-      - name: Set up uv
-        # Needed to run the verne CLI via uvx. Only when we're about to spawn.
-        if: steps.merge.outputs.merged != '' && steps.remaining.outputs.count == '0'
-        uses: astral-sh/setup-uv@v5
+          # 4) Merge commit (not squash) — repo preference is to preserve history.
+          gh pr merge "$PR" --repo "$REPO" --merge --delete-branch
+          echo "Merged PR #$PR."
+          echo "merged=$PR" >> "$GITHUB_OUTPUT"
 
       - name: Spawn the next Jules session (via verne)
-        # Only when we merged something AND the queue is now empty, so the new
-        # session starts from a clean, up-to-date main.
-        #
-        # Session creation is centralized in franklinbaldo/verne — change the
-        # behavior there, not here. verne reads JULES_API_KEY from the env.
-        if: steps.merge.outputs.merged != '' && steps.remaining.outputs.count == '0'
+        # Right after a merge: the new session starts from the up-to-date main.
+        # Session creation is centralized in franklinbaldo/verne — change it
+        # there, not here. verne reads JULES_API_KEY from the env.
+        if: steps.merge.outputs.merged != ''
         env:
           JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "${JULES_API_KEY:-}" ]; then
-            echo "::warning::JULES_API_KEY not set — skipping session creation. Add it in repo secrets to enable the autopilot loop."
+            echo "::warning::JULES_API_KEY not set — skipping session creation."
             exit 0
           fi
-
           TITLE="hronir session $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          SESSION=$(uvx --from git+https://github.com/franklinbaldo/verne@6c73a589299c70db59549a8e9d8fd03acd6256ca verne \
+          SESSION=$(uvx --from "$VERNE" verne \
             sessions new "$TITLE" \
             --source "sources/github/${REPO}" \
             --prompt-file .github/hronir-session-prompt.md \
             --branch main \
             --automation-mode AUTO_CREATE_PR \
             --json)
-
           SESSION_ID=$(echo "$SESSION" | jq -r '.id // (.name | sub("^sessions/"; "")) // empty')
           if [ -z "$SESSION_ID" ]; then
-            echo "::error::Failed to create Jules session via verne:"
-            echo "$SESSION"
-            exit 1
+            echo "::error::Failed to create Jules session via verne:"; echo "$SESSION"; exit 1
           fi
           echo "Created Jules session: $SESSION_ID"
           echo "https://jules.google.com/task/$SESSION_ID"
