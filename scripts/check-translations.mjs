@@ -16,6 +16,9 @@ const posts = loadPosts();
 const errors = [];
 
 // ── 1. Completeness ────────────────────────────────────────────────────────
+// Intentionally uses `draft`, not `published`: a post whose counterpart is a
+// draft (but not yet published) still counts as incomplete — we want CI to go
+// red even when the translation exists but hasn't shipped yet.
 const groups = new Map();
 for (const p of posts) {
   if (p.draft || !p.translationKey) continue;
@@ -55,9 +58,13 @@ if (baseRef) {
       .map((l) => l.trim())
       .filter(Boolean);
   } catch (e) {
-    console.warn(
-      `⚠ Could not compute git diff against ${baseRef}: ${e.message}`
+    // If git diff fails while BASE_REF is explicitly set (i.e. on a real PR),
+    // a silent no-op would mean the sync check is disabled — fail loudly instead.
+    console.error(
+      `✗ git diff --name-only ${baseRef}...HEAD failed: ${e.message}\n` +
+        `Hint: ensure the workflow uses fetch-depth: 0.`
     );
+    process.exit(1);
   }
 
   const changedFiles = new Set(changed.map((p) => p.split("/").pop()));
