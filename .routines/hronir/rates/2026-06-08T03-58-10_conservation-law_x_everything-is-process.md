@@ -23,7 +23,7 @@ perspective_id: long-form-rationalist
 evaluator_mood: >-
   Estou num dia onde tudo parece óbvio e nada parece surpreendente. O que quero
   é ser pego de surpresa.
-evaluator_mood_after: preciso de café.
+evaluator_mood_after: o barulho da rua está me distraindo.
 rate_a: 4.28
 rate_b: 2.49
 clash: >-

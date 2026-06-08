@@ -22,7 +22,7 @@ perspective_id: curious-outsider
 evaluator_mood: >-
   Estou protelando uma tarefa importante e lendo isso para adiar. O que
   significa que o texto precisa ser bom o suficiente para justificar o atraso.
-evaluator_mood_after: preciso de café.
+evaluator_mood_after: pensando no jantar, talvez uma pizza.
 rate_a: 4.03
 rate_b: 1.94
 clash: >-

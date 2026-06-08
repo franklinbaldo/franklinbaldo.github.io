@@ -22,7 +22,7 @@ perspective_id: craft-listener
 evaluator_mood: >-
   Estou de bom humor, generoso, pronto para encontrar o melhor no que leio. Não
   vou confundir generosidade com lenidade.
-evaluator_mood_after: preciso de café.
+evaluator_mood_after: a luz do monitor está cansando meus olhos.
 rate_a: 4.4
 rate_b: 1.95
 clash: >-

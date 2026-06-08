@@ -22,7 +22,7 @@ perspective_id: returning-reader
 evaluator_mood: >-
   Estou de bom humor, generoso, pronto para encontrar o melhor no que leio. Não
   vou confundir generosidade com lenidade.
-evaluator_mood_after: preciso de café.
+evaluator_mood_after: ouvindo o relógio bater, o tempo voa.
 rate_a: 4.45
 rate_b: 1.73
 clash: >-

@@ -22,7 +22,7 @@ perspective_id: lateral-essayist
 evaluator_mood: >-
   Estou relaxado, com tempo, disposto a ser convencido de qualquer coisa bem
   argumentada.
-evaluator_mood_after: preciso de café.
+evaluator_mood_after: quero apenas deitar um pouco e fechar os olhos.
 rate_a: 4.01
 rate_b: 1.92
 clash: >-

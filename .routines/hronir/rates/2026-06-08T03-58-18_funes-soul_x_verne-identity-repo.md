@@ -22,7 +22,7 @@ perspective_id: comedy-carries-argument
 evaluator_mood: >-
   Estou lendo no intervalo entre dois compromissos chatos. Quero algo que me
   lembre que o mundo é maior do que parece hoje.
-evaluator_mood_after: preciso de café.
+evaluator_mood_after: sinto uma leve brisa entrando pela janela.
 rate_a: 4.58
 rate_b: 2.48
 clash: >-

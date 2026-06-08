@@ -22,7 +22,7 @@ perspective_id: felt-not-explained
 evaluator_mood: >-
   Estou numa fase em que valorizo muito honestidade intelectual e tenho zero
   tolerância para pose.
-evaluator_mood_after: preciso de café.
+evaluator_mood_after: preciso de café fresco agora.
 rate_a: 4.91
 rate_b: 1.76
 clash: >-

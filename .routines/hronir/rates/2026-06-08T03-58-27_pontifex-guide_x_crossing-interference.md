@@ -22,7 +22,7 @@ perspective_id: applied-thinker
 evaluator_mood: >-
   Estou num dia em que tudo parece importante demais. Vou avaliar se este texto
   justifica mais peso na balança.
-evaluator_mood_after: preciso de café.
+evaluator_mood_after: a cadeira está um pouco desconfortável hoje.
 rate_a: 4.15
 rate_b: 1.78
 clash: >-

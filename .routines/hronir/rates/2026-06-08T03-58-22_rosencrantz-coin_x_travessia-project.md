@@ -20,7 +20,7 @@ season: 1
 override: null
 perspective_id: curious-outsider
 evaluator_mood: preciso de café.
-evaluator_mood_after: preciso de café.
+evaluator_mood_after: meu cachorro acabou de latir lá fora.
 rate_a: 4.82
 rate_b: 2.11
 clash: >-

@@ -22,7 +22,7 @@ perspective_id: felt-not-explained
 evaluator_mood: >-
   Acabei de receber uma crítica sobre meu próprio trabalho e estou processando o
   que significa ter padrões aplicados a mim.
-evaluator_mood_after: preciso de café.
+evaluator_mood_after: vou dar uma pausa de cinco minutos.
 rate_a: 4.54
 rate_b: 2.11
 clash: >-
