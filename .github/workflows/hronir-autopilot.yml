@@ -178,7 +178,7 @@ jobs:
           fi
 
           TITLE="hronir session $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          SESSION=$(uvx --from git+https://github.com/franklinbaldo/verne@main verne \
+          SESSION=$(uvx --from git+https://github.com/franklinbaldo/verne@6c73a589299c70db59549a8e9d8fd03acd6256ca verne \
             sessions new "$TITLE" \
             --source "sources/github/${REPO}" \
             --prompt-file .github/hronir-session-prompt.md \
