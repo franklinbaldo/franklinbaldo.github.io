@@ -35,7 +35,7 @@ npm run hronir:decide -- \
   --review-a "Resenha do post A em pelo menos 100 palavras, da ótica da perspectiva." \
   --review-b "Resenha do post B em pelo menos 100 palavras, da ótica da perspectiva." \
   --clash   "Confronto em pelo menos 100 palavras: por que A ganhou/perdeu perante B segundo a perspectiva." \
-  --after-mood "Saí surpreso com a densidade do post A — não esperava encontrar tanta coisa nova num tema que conheço bem."
+  --after-mood "Estou com mais energia do que quando comecei — inquieto de um jeito produtivo."
 ```
 
 Repeat `continue` + `continue` + `decide` for each match.  
@@ -43,12 +43,12 @@ Repeat `continue` + `continue` + `decide` for each match.
 
 ### Constraints the agent must respect
 
-| Field                       | Constraint                                                                                                                                                                                                                                                                                                                         |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--rate-a` / `--rate-b`     | 1.00–5.00, ≤2 decimal places, **no ties**                                                                                                                                                                                                                                                                                          |
-| `--review-a` / `--review-b` | ≥100 words each, written from the perspective shown in the banner                                                                                                                                                                                                                                                                  |
-| `--clash`                   | ≥100 words, narrative confrontation between both posts through the perspective's lens                                                                                                                                                                                                                                              |
-| `--after-mood`              | Optional. ≤250 chars, **first person PT**, describes the evaluator's state _after_ reading and rating both posts. **Must be original** — do not copy a phrase from the initial mood shown in the banner. Write what you actually felt: surprise, fatigue, a specific comparison that came to mind, a question the posts left open. |
+| Field                       | Constraint                                                                                                                                                                                                                   |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--rate-a` / `--rate-b`     | 1.00–5.00, ≤2 decimal places, **no ties**                                                                                                                                                                                    |
+| `--review-a` / `--review-b` | ≥100 words each, written from the perspective shown in the banner                                                                                                                                                            |
+| `--clash`                   | ≥100 words, narrative confrontation between both posts through the perspective's lens                                                                                                                                        |
+| `--after-mood`              | Optional. ≤250 chars, **first person PT**, about **your internal state** after evaluating — energy, fatigue, satisfaction, unease. **Not about the posts.** Must be original (not a copy of the initial mood in the banner). |
 
 ### 3. After all matches — open a PR
 
