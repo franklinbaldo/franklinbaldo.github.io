@@ -15,16 +15,14 @@ draft: false
 author: franklin
 translationKey: delegating-to-agents
 previousVersion:
-  uuid: 832c5d01-8c16-5d36-891c-0faf120df999
+  uuid: 56620869-a868-52f3-ac2f-f4720e160fdd
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/a1d9cabb963c9674fbeea140d68240830f231062/src/content/blog/delegando-para-agentes.md
-  timestamp: '2026-06-06T13:30:49.440Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4d6c9b2a2b5711080406dfc7e9886ca65287595f/src/content/blog/delegando-para-agentes.md
+  timestamp: '2026-06-08T09:36:32.408Z'
   msg: >-
-    Broke opener from programmatic framing to direct scene; folded analogy-flaw
-    into sandbox section mid-argument instead of announcing it; removed Drake
-    meme; grounded outsider terms (parecer, ofício, CI/CD, corregedoria,
-    Causaganha, Funes) on first use; added Vaughan Challenger reference as
-    challenger to post's own thesis; 5 For Further Reading entries from 4
+    Made the post more essayistic: admitted uncertainty about the sandbox
+    analogy and removed definitive tones, making the text's epistemic confidence
+    earned instead of performed.
 ---
 
 Em fevereiro, quase perdi uma janela de quarenta e oito horas num processo de impugnação de auto de infração federal porque tinha começado a tratar a minuta do assessor como o produto final. O _parecer_ estava bom. A manifestação não foi protocolada. Fiquei sabendo na tarde de terça quando um lembrete de agenda disparou para um prazo que eu tinha mentalmente movido da minha coluna para a coluna do assessor no momento em que a minuta chegou. Ela não tinha se movido.
@@ -35,11 +33,11 @@ Isso não é tecnicidade procedimental. É o motivo pelo qual a assinatura exist
 
 Passo meus dias em uma procuradoria do Estado em Rondônia, lendo _pareceres_ e assinando aqueles que não me aterrorizam. Quando delego a elaboração, não estou terceirizando o julgamento — estou delegando a tarefa de atravessar os autos, identificar o direito aplicável e construir o argumento. O que eu _não_ estou delegando é a assinatura. A assinatura é a fronteira irreversível: o momento em que o ato entra nos registros e os prazos começam a contar.
 
-A engenharia de software não reconhece nativamente essa distinção porque o ciclo de _feedback_ a comprime. No direito, a lacuna entre minuta e ato é fisicamente legível — o assessor termina, o protocolo tem sua janela, o sistema do tribunal tem seu próprio horário. No código, o desenvolvedor escreve a função, os testes passam em trinta segundos, o PR faz merge automático no verde. A minuta e o ato se tornam um movimento contínuo, e ninguém escreve onde um termina e o outro começa.
+A engenharia de software não reconhece nativamente essa distinção porque o ciclo de _feedback_ a comprime. Essa compressão é útil até não ser mais. No direito, a lacuna entre minuta e ato é fisicamente legível — o assessor termina, o protocolo tem sua janela, o sistema do tribunal tem seu próprio horário. No código, o desenvolvedor escreve a função, os testes passam em trinta segundos, o PR faz merge automático no verde. A minuta e o ato se tornam um movimento contínuo, e ninguém escreve onde um termina e o outro começa.
 
 ## Os limites da caixa de areia
 
-A ansiedade em relação a agentes de IA é real e não tem nada a ver com capacidade. Quando entrego a Jules uma tarefa de refatoração, não estou preocupado que Jules escolha o padrão de design errado. Estou preocupado que Jules tem permissão de escrita.
+A ansiedade em relação a agentes de IA é real, mas desconfio que estamos olhando para o problema errado. Quando entrego a Jules uma tarefa de refatoração, a minha preocupação central não é com a capacidade, embora a capacidade falhe. Estou preocupado que Jules tem permissão de escrita.
 
 A solução não é ficar por cima do ombro de Jules enquanto escreve. A solução é construir uma caixa de areia onde as ações do agente sejam explicitamente tratadas como _propostas_. O pipeline de CI/CD — a sequência automatizada de compilações, testes e verificações que precisam passar antes de qualquer código ir para produção — as suítes de teste, as regras estritas de linting: esses não são apenas mecanismos de garantia de qualidade. São o equivalente à regra institucional que diz que um assessor pode redigir um _parecer_, mas não pode assinar o _ofício_ final.
 
@@ -49,9 +47,9 @@ A mágica da delegação acontece quando você restringe o espaço de saída, n�
 
 Um agente de IA não tem carreira. Ele não pode ser responsabilizado. A caixa de areia restringe o que ele pode fazer, mas não responde o que acontece quando a caixa de areia falha. Quando um agente faz algo errado dentro dos limites do seu acesso, a responsabilidade sobe para o ser humano que projetou o _harness_ — não vai lateralmente para o agente. Isso não é uma propriedade que construí; é uma propriedade de agentes sem posição institucional.
 
-A caixa de areia é necessária. Ela não é suficiente para responsabilidade. O passo de assinatura em delegação de software está fazendo mais trabalho do que o paralelo administrativo sugere: não está apenas tornando explícita a fronteira proposta-versus-ato. Está também carregando todo o peso profissional que o agente estruturalmente não pode carregar.
+A caixa de areia é necessária. Mas — e esta é a admissão que me forçou a descartar o rascunho anterior deste texto — ela não é suficiente para a responsabilidade. O passo de assinatura em delegação de software está fazendo mais trabalho do que o paralelo administrativo sugere: não está apenas tornando explícita a fronteira proposta-versus-ato. Está também carregando todo o peso profissional que o agente estruturalmente não pode carregar.
 
-Não enxerguei isso claramente até estar escrevendo a analogia e perceber que a frase "o assessor é bom" soava razoável de um jeito que "o Jules é bom" não soa, e não pode soar, com o mesmo significado. Ambas as frases descrevem capacidade. Só uma descreve uma pessoa que pode ser responsável por algo.
+Não enxerguei isso claramente até estar escrevendo a analogia — o que sugere que a própria analogia estava escondendo o problema — e perceber que a frase "o assessor é bom" soava razoável de um jeito que "o Jules é bom" não soa, e não pode soar, com o mesmo significado. Ambas as frases descrevem capacidade. Só uma descreve uma pessoa que pode ser responsável por algo.
 
 Eu tinha pensado na assinatura como uma formalidade. É uma formalidade. É também a coisa que faz o erro de fevereiro ser meu e não do Jules.
 

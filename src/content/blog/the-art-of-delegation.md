@@ -15,16 +15,14 @@ draft: false
 author: franklin
 translationKey: delegating-to-agents
 previousVersion:
-  uuid: 09318476-1009-5abe-bf6a-86e789067dec
+  uuid: af592b0d-035b-5dbe-8ed5-d540b2fe3fa2
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/a1d9cabb963c9674fbeea140d68240830f231062/src/content/blog/the-art-of-delegation.md
-  timestamp: '2026-06-06T13:30:49.440Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4d6c9b2a2b5711080406dfc7e9886ca65287595f/src/content/blog/the-art-of-delegation.md
+  timestamp: '2026-06-08T09:36:32.408Z'
   msg: >-
-    Broke opener from programmatic framing to direct scene; folded analogy-flaw
-    into sandbox section mid-argument instead of announcing it; removed Drake
-    meme; grounded outsider terms (parecer, ofício, CI/CD, corregedoria,
-    Causaganha, Funes) on first use; added Vaughan Challenger reference as
-    challenger to post's own thesis; 5 For Further Reading entries from 4
+    Made the post more essayistic: admitted uncertainty about the sandbox
+    analogy and removed definitive tones, making the text's epistemic confidence
+    earned instead of performed.
 ---
 
 In February, I almost missed a forty-eight-hour window in a federal tax objection because I had begun treating the assessor's draft as the deliverable. The _parecer_ — the formal legal opinion that travels up the chain before anything gets signed — was good. The submission was not filed. I found out Tuesday afternoon when a calendar alert fired for a deadline I had mentally moved from my column to the assessor's column the moment the draft landed. It had not moved.
@@ -35,11 +33,11 @@ That's not a procedural technicality. That is the reason the signature exists.
 
 I spend my days in a state attorney's office in Rondônia, reading _pareceres_ and signing the ones that don't terrify me. When I delegate the drafting, I am not outsourcing judgment — I am delegating the traversal of the case file, the identification of the applicable law, the construction of the argument. What I am _not_ delegating is the signature. The signature is the irreversible boundary: the moment the act enters the record and the deadlines start moving.
 
-Software engineering doesn't natively recognize this distinction because the feedback loop compresses it. In law, the gap between draft and act is physically legible — the assessor finishes, the protocol office has its window, the court has its own schedule. In code, the developer writes the function, the tests pass in thirty seconds, the PR merges on green. Draft and act become one continuous motion, and nobody writes down where one ends and the other begins.
+Software engineering doesn't natively recognize this distinction because the feedback loop compresses it. That compression is useful right up until it isn't. In law, the gap between draft and act is physically legible — the assessor finishes, the protocol office has its window, the court has its own schedule. In code, the developer writes the function, the tests pass in thirty seconds, the PR merges on green. Draft and act become one continuous motion, and nobody writes down where one ends and the other begins.
 
 ## The boundaries of the sandbox
 
-The anxiety about AI agents is real and it has nothing to do with capability. When I hand Jules a refactoring task, I am not worried Jules will choose the wrong design pattern. I am worried Jules has write access.
+The anxiety about AI agents is real, but I suspect we are looking at the wrong problem. When I hand Jules a refactoring task, my central worry is not about capability, though capability fails. I am worried Jules has write access.
 
 The solution is not to stand over Jules's shoulder while it writes. The solution is a sandbox where the agent's actions are explicitly treated as _proposals_. The CI/CD pipeline — the automated sequence of builds, tests, and checks that must pass before any code goes live — the test suites, the strict linting rules: these are not just quality assurance mechanisms. They are the institutional equivalent of the rule that says an assessor can draft a _parecer_, but cannot sign the final _ofício_ (the official dispatch that goes out the door and binds the institution).
 
@@ -49,9 +47,9 @@ This is where the administrative law parallel flatters the software problem. In 
 
 An AI agent has no career. It cannot be disciplined. The sandbox constrains what it can do, but the sandbox doesn't answer what happens when the sandbox fails. When an agent does something wrong inside the bounds of its access, accountability flows upward to the human who designed the harness — not sideways to the agent. That is not a property I built in; it is a property of agents without institutional standing.
 
-The sandbox is necessary. It is not sufficient for accountability. The signature step in software delegation is doing more work than the administrative parallel suggests: it is not just making the proposal-versus-act boundary explicit. It is also carrying all the professional weight that the agent structurally cannot carry.
+The sandbox is necessary. But — and this is the admission that forced me to discard the previous draft of this text — it is not sufficient for accountability. The signature step in software delegation is doing more work than the administrative parallel suggests: it is not just making the proposal-versus-act boundary explicit. It is also carrying all the professional weight that the agent structurally cannot carry.
 
-I did not see this clearly until I was writing out the analogy and noticed the sentence "the assessor is good" sounded reasonable in a way that "Jules is good" does not, and could not, quite mean the same thing. Both sentences describe capacity. Only one describes a person who can be accountable for anything.
+I did not see this clearly until I was writing out the analogy — which suggests the analogy itself was hiding the problem — and noticed the sentence "the assessor is good" sounded reasonable in a way that "Jules is good" does not, and could not, quite mean the same thing. Both sentences describe capacity. Only one describes a person who can be accountable for anything.
 
 I had been thinking of the signature as a formality. It is a formality. It is also the thing that makes the February mistake mine and not Jules's.
 
