@@ -1,0 +1,196 @@
+name: Hrönir Autopilot
+
+# Serializes Hrönir/Jules sessions so they never collide on the same posts.
+#
+# Each run:
+#   1. Finds open Hrönir session PRs that are green, mergeable, and confined to
+#      the safe paths (.routines/hronir/** and src/content/blog/**).
+#   2. Merges exactly ONE (the oldest) — keeping sessions strictly sequential.
+#   3. Only if NO Hrönir PRs remain open afterwards, kicks off the next Jules
+#      session via the Jules API, starting from the freshly-merged main. Because
+#      the new session branches from up-to-date main, its PR won't conflict.
+#
+# Draining a backlog: it merges one per run and won't spawn a new session until
+# the queue is empty, so existing PRs flush out one at a time without piling up.
+#
+# Requires repo secret JULES_API_KEY (the Google Jules API key). Without it the
+# merge half still works; only the "spawn next session" step is skipped.
+
+on:
+  schedule:
+    - cron: "0 */6 * * *" # every 6 hours
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "List eligible PRs but do not merge or spawn"
+        required: false
+        default: "false"
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: hronir-autopilot
+  cancel-in-progress: false
+
+env:
+  REPO: ${{ github.repository }}
+  # A PR is a Hrönir session PR when every changed file lives under one of these
+  # prefixes AND at least one file is under .routines/hronir/rates/.
+  SAFE_PREFIXES: ".routines/hronir/ src/content/blog/"
+
+jobs:
+  autopilot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select and merge one eligible Hrönir PR
+        id: merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+        run: |
+          set -euo pipefail
+
+          # Returns 0 (eligible) / 1 (not) for a PR number.
+          is_eligible() {
+            local pr="$1"
+            local files
+            files=$(gh pr view "$pr" --repo "$REPO" --json files --jq '.files[].path')
+            [ -n "$files" ] || return 1
+
+            local has_rate=0
+            while IFS= read -r f; do
+              [ -n "$f" ] || continue
+              case "$f" in
+                .routines/hronir/rates/*) has_rate=1 ;;
+              esac
+              local ok=1
+              for p in $SAFE_PREFIXES; do
+                case "$f" in "$p"*) ok=0 ;; esac
+              done
+              if [ "$ok" -ne 0 ]; then
+                echo "  PR #$pr touches out-of-scope file: $f" >&2
+                return 1
+              fi
+            done <<< "$files"
+            [ "$has_rate" -eq 1 ] || { echo "  PR #$pr has no rate files" >&2; return 1; }
+            return 0
+          }
+
+          # Oldest-first list of open, non-draft PRs targeting main.
+          mapfile -t prs < <(gh pr list --repo "$REPO" --state open --base main \
+            --json number,isDraft,createdAt \
+            --jq 'sort_by(.createdAt) | .[] | select(.isDraft|not) | .number')
+
+          echo "Open PRs (oldest first): ${prs[*]:-none}"
+
+          target=""
+          for pr in "${prs[@]:-}"; do
+            [ -n "$pr" ] || continue
+            echo "Checking PR #$pr ..."
+
+            if ! is_eligible "$pr"; then
+              echo "  → skip (out of scope)"
+              continue
+            fi
+
+            mergeable=$(gh pr view "$pr" --repo "$REPO" --json mergeable --jq '.mergeable')
+            if [ "$mergeable" != "MERGEABLE" ]; then
+              echo "  → skip (mergeable=$mergeable)"
+              continue
+            fi
+
+            # All required CI checks must have succeeded.
+            state=$(gh pr view "$pr" --repo "$REPO" \
+              --json statusCheckRollup \
+              --jq '[.statusCheckRollup[]? | (.conclusion // .state)] as $c
+                    | if ($c|length)==0 then "NONE"
+                      elif ([$c[] | select(. != "SUCCESS" and . != "NEUTRAL" and . != "SKIPPED")] | length) > 0 then "PENDING_OR_FAILED"
+                      else "SUCCESS" end')
+            if [ "$state" != "SUCCESS" ]; then
+              echo "  → skip (checks=$state)"
+              continue
+            fi
+
+            target="$pr"
+            break
+          done
+
+          if [ -z "$target" ]; then
+            echo "No eligible Hrönir PR to merge this run."
+            echo "merged=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Eligible target: PR #$target"
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "DRY RUN — not merging PR #$target."
+            echo "merged=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          gh pr merge "$target" --repo "$REPO" --squash --delete-branch
+          echo "Merged PR #$target."
+          echo "merged=$target" >> "$GITHUB_OUTPUT"
+
+      - name: Count remaining open Hrönir PRs
+        id: remaining
+        if: steps.merge.outputs.merged != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          count=0
+          mapfile -t prs < <(gh pr list --repo "$REPO" --state open --base main \
+            --json number,isDraft --jq '.[] | select(.isDraft|not) | .number')
+          for pr in "${prs[@]:-}"; do
+            [ -n "$pr" ] || continue
+            files=$(gh pr view "$pr" --repo "$REPO" --json files --jq '.files[].path')
+            echo "$files" | grep -q '^\.routines/hronir/rates/' && count=$((count+1)) || true
+          done
+          echo "Remaining open Hrönir-like PRs: $count"
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Spawn the next Jules session
+        # Only when we merged something AND the queue is now empty, so the new
+        # session starts from a clean, up-to-date main.
+        if: steps.merge.outputs.merged != '' && steps.remaining.outputs.count == '0'
+        env:
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${JULES_API_KEY:-}" ]; then
+            echo "::warning::JULES_API_KEY not set — skipping session creation. Add it in repo secrets to enable the autopilot loop."
+            exit 0
+          fi
+
+          TITLE="hronir session $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          RESPONSE=$(jq -n \
+            --rawfile prompt .github/hronir-session-prompt.md \
+            --arg title "$TITLE" \
+            --arg source "sources/github/${REPO}" \
+            '{
+              prompt: $prompt,
+              title: $title,
+              sourceContext: {
+                source: $source,
+                githubRepoContext: { startingBranch: "main" }
+              },
+              automationMode: "AUTO_CREATE_PR"
+            }' | curl -sS -X POST "https://jules.googleapis.com/v1alpha/sessions" \
+              -H "x-goog-api-key: $JULES_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d @-)
+
+          SESSION_ID=$(echo "$RESPONSE" | jq -r '.id // empty')
+          if [ -z "$SESSION_ID" ]; then
+            echo "::error::Failed to create Jules session:"
+            echo "$RESPONSE"
+            exit 1
+          fi
+          echo "Created Jules session: $SESSION_ID"
+          echo "https://jules.google.com/task/$SESSION_ID"
