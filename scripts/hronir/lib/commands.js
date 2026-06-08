@@ -321,6 +321,18 @@ function generateNextMatch() {
     evalLang = s.evalLang || "pt";
   }
 
+  // For each post, randomly pick which language version to show. The ranking
+  // key is always the translationKey (derived from EN), but the evaluator
+  // reads whichever language is randomly selected.
+  function pickLangVariant(post) {
+    const variants = findTranslations(post.translationKey);
+    if (variants.length <= 1) return { path: post.path, lang: "en" };
+    const v = variants[Math.floor(Math.random() * variants.length)];
+    return { path: v.path, lang: v.lang || "en" };
+  }
+  const aVariant = pickLangVariant(a);
+  const bVariant = pickLangVariant(b);
+
   const perspective = pickRandomPerspective();
   const recordedMoods = [];
   for (const f of listMatchFiles()) {
@@ -336,19 +348,21 @@ function generateNextMatch() {
   const evaluatorMood = pickRandomMood(recordedMoods);
 
   console.log(
-    `Gerado match ${matchIndex} (active sampling). Perspectiva: ${perspective.name}.`
+    `Gerado match ${matchIndex} (active sampling). Perspectiva: ${perspective.name}. Idiomas: ${aVariant.lang}/${bVariant.lang}.`
   );
   return {
     match_index: matchIndex,
     post_a: {
       key: a.translationKey,
-      path: a.path,
-      version: getPostUuid(a.path),
+      path: aVariant.path,
+      display_lang: aVariant.lang,
+      version: getPostUuid(aVariant.path),
     },
     post_b: {
       key: b.translationKey,
-      path: b.path,
-      version: getPostUuid(b.path),
+      path: bVariant.path,
+      display_lang: bVariant.lang,
+      version: getPostUuid(bVariant.path),
     },
     agent_id: agentId,
     eval_lang: evalLang,
@@ -1515,26 +1529,26 @@ export function doctor() {
     }
   }
 
-  // Detect duplicate after-moods across rate files (copy-paste check)
+  // Single dedup pass: duplicate after-moods + duplicate matches
   const seenAfterMoods = new Map(); // normalised text → first filename
+  const seen = new Map(); // run_id::pair → first filepath
   for (const f of listMatchFiles()) {
     const { data } = readMatch(f);
-    if (!data.evaluator_mood_after) continue;
-    const norm = String(data.evaluator_mood_after).trim().toLowerCase();
-    if (!norm) continue;
-    if (seenAfterMoods.has(norm)) {
-      issues.push(
-        `${path.basename(f)}: 'evaluator_mood_after' duplicado (já aparece em ${seenAfterMoods.get(norm)}) — cada mood deve ser único`
-      );
-    } else {
-      seenAfterMoods.set(norm, path.basename(f));
-    }
-  }
+    const base = path.basename(f);
 
-  // Detect duplicate matches (same run_id + unordered pair of keys)
-  const seen = new Map();
-  for (const f of listMatchFiles()) {
-    const { data } = readMatch(f);
+    if (data.evaluator_mood_after) {
+      const norm = String(data.evaluator_mood_after).trim().toLowerCase();
+      if (norm) {
+        if (seenAfterMoods.has(norm)) {
+          issues.push(
+            `${base}: 'evaluator_mood_after' duplicado (já aparece em ${seenAfterMoods.get(norm)}) — cada mood deve ser único`
+          );
+        } else {
+          seenAfterMoods.set(norm, base);
+        }
+      }
+    }
+
     const aKey = data.post_a?.key;
     const bKey = data.post_b?.key;
     if (!aKey || !bKey) continue;
@@ -1542,7 +1556,7 @@ export function doctor() {
     const sig = `${data.run_id}::${pair}`;
     if (seen.has(sig)) {
       issues.push(
-        `duplicate: ${path.basename(seen.get(sig))} e ${path.basename(f)} (mesmo run_id + par)`
+        `duplicate: ${path.basename(seen.get(sig))} e ${base} (mesmo run_id + par)`
       );
     } else {
       seen.set(sig, f);

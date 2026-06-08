@@ -235,13 +235,21 @@ export interface PerspectiveRankRow {
 }
 
 export function getPerspectives(): PerspectiveMeta[] {
-  return (listPerspectives() as PerspectiveMeta[]).map((p) => ({
-    id: p.id,
-    name: p.name,
-    summary: p.summary,
-  }));
+  // listPerspectives() returns {id,name,summary,body,path}[] from JS — we
+  // strip the extra fields here so callers only receive the typed subset.
+  const all = listPerspectives() as unknown as Array<{
+    id: string;
+    name: string;
+    summary: string;
+  }>;
+  return all.map((p) => ({ id: p.id, name: p.name, summary: p.summary }));
 }
 
 export function getPerPerspectiveRankings(): Map<string, PerspectiveRankRow[]> {
-  return computePerPerspectiveRatings() as Map<string, PerspectiveRankRow[]>;
+  // computePerPerspectiveRatings() returns Map<string, {key,ordinal,appearances,wins}[]>
+  // which matches PerspectiveRankRow[] exactly.
+  return computePerPerspectiveRatings() as unknown as Map<
+    string,
+    PerspectiveRankRow[]
+  >;
 }
