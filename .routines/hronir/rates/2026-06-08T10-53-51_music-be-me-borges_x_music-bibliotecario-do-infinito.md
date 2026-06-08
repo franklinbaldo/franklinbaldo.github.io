@@ -20,7 +20,7 @@ season: 1
 override: null
 perspective_id: lyric-as-poem
 evaluator_mood: I am suddenly very aware of the low hum of the refrigerator.
-evaluator_mood_after: 'I need to look at something green. Maybe a plant, or just the trees outside.'
+evaluator_mood_after: 'My hands are cold and I feel like taking a long walk.'
 rate_a: 3.5
 rate_b: 1.2
 clash: >-

@@ -22,7 +22,7 @@ perspective_id: returning-reader
 evaluator_mood: >-
   I am noticing a slight hum from my computer fan, wondering if I should close
   some background tabs.
-evaluator_mood_after: 'I am craving a very sharp, very precise tool. Maybe a new pen.'
+evaluator_mood_after: 'I can hear a dog barking three streets over and it is making me anxious.'
 rate_a: 1.5
 rate_b: 2.5
 clash: >-
