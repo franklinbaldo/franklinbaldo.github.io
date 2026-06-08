@@ -1,26 +1,47 @@
 ---
-title: "Travessia: O Projeto que Escreve a Si Mesmo"
-description: "Riobaldo e Ted Chiang trocam cartas. Mas ninguém senta para escrever. Uma sessão do Jules agenda a próxima. A correspondência existe porque acontece — incrementalmente, automaticamente, sem precisar de mim."
-date: 2026-03-02
+title: 'Travessia: O Projeto que Escreve a Si Mesmo'
+description: >-
+  Riobaldo e Ted Chiang trocam cartas. Mas ninguém senta para escrever. Uma
+  sessão do Jules agenda a próxima. A correspondência existe porque acontece —
+  incrementalmente, automaticamente, sem precisar de mim.
+date: 2026-03-02T00:00:00.000Z
 lang: pt
 translationKey: travessia-project
-tags: ["ficção", "literatura", "inteligência artificial", "grande sertão veredas", "jules", "automação", "travessia"]
+tags:
+  - ficção
+  - literatura
+  - inteligência artificial
+  - grande sertão veredas
+  - jules
+  - automação
+  - travessia
+previousVersion:
+  uuid: cafb4c57-3168-5986-9e33-6361e6ea5e11
+  url: >-
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/3dfc0074ee97276a43ad3b297211057afbacfd51/src/content/blog/travessia.md
+  timestamp: '2026-06-08T16:10:59.118Z'
+  msg: >-
+    Rewrite the 'travessia' post to correct voice and references based on
+    evaluation
 ---
 
 Há uma diferença entre _criar_ algo e _iniciar_ algo.
 O projeto [Travessia](https://franklinbaldo.github.io/travessia/) é, tecnicamente, uma correspondência epistolar entre Riobaldo Tatarana e Ted Chiang. Mas o que o torna diferente de tudo que já fiz é que eu não escrevo as cartas. Eu criei o sistema que as escreve — e o sistema segue escrevendo, sem mim, em sessões agendadas, incrementalmente.
-Cada sessão do [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/) abre o repositório, lê o estado atual da correspondência, entende onde a conversa está, escreve a próxima carta, e agenda a sessão seguinte. A correspondência existe porque continua acontecendo.
 
-## [Jules](/blog/2026-05-10-a-api-do-jules-como-backend-do-harness/) Como Co-Autor Autônomo
+Cada sessão do Jules abre o repositório, lê o estado atual da correspondência, entende onde a conversa está, escreve a próxima carta, e agenda a sessão seguinte. A correspondência existe porque continua acontecendo.
+
+## O agente como co-autor autônomo
 
 [Jules](https://jules.google.com) é um agente de IA da Google que trabalha diretamente em repositórios GitHub de forma assíncrona. Você descreve uma tarefa, ele executa, abre um PR. Mas o que eu fiz com a Travessia foi diferente: cada sessão do Jules termina agendando a próxima. O projeto tem inércia própria.
+
 A estrutura é simples:
 
-1. Uma sessão Jules lê as cartas anteriores para entender o contexto narrativo e temático
+1. Uma sessão lê as cartas anteriores para entender o contexto narrativo e temático
 2. Decide de quem é a vez (Riobaldo ou Ted Chiang) e qual fio da conversa merece continuação
 3. Escreve a próxima carta, respeitando a voz de cada personagem
 4. Commita, faz o PR, e deixa instruções para a sessão seguinte
-   Não tem `while True`. Não tem loop. Cada sessão é discreta, agendada, ativada por trigger. A correspondência pulsa em vez de fluir.
+
+Não tem `while True`. Não tem loop. Cada sessão é discreta, agendada, ativada por um cron job. A correspondência pulsa em vez de fluir.
 
 ## Por Que Incremental Importa
 
@@ -40,12 +61,14 @@ O resultado é uma obra que nenhum humano escreveu integralmente, que nenhuma IA
 
 Sobre o medo e sobre o nome das coisas. Sobre Diadorim — que é onde, para Riobaldo, o medo e o amor e a morte viram uma palavra só. Sobre o que significa esquecer em tempo linear versus esquecer quando você percebia o tempo como simultâneo.
 A voz do Riobaldo é o português arcaico, sincopado, cheio dos neologismos de Rosa. A de Ted Chiang é aquela prosa contemplativa que pensa antes de responder, que respeita a gravidade da pergunta.
-O Jules aprendeu a diferença. Cada carta soa como quem deveria soar.
 
-## O Sistema Como Declaração Artística
+O framework de prompt aprendeu a diferença. Cada carta soa exatamente como deveria soar.
+
+## O sistema como declaração artística
 
 Há algo que só o processo incremental permite dizer: _esta correspondência tem vida própria_.
-Se eu gerasse tudo de uma vez, o projeto seria _meu_. Eu teria feito algo. Mas quando cada sessão do Jules lê o que veio antes e decide o que vem depois — quando o projeto tem memória, coerência e inércia sem que eu esteja presente — a autoria se torna uma questão mais complicada.
+
+Se eu gerasse tudo de uma vez, o projeto seria _meu_. Eu teria feito algo. Mas quando cada sessão lê o que veio antes e decide o que vem depois — quando o projeto tem memória, coerência e inércia sem que eu esteja presente — a autoria se torna uma questão mais complicada.
 Não estou abandonando o projeto. Estou interessado em observá-lo. Tem diferença.
 Essa é a pergunta que a Travessia faz sem enunciar: quando um sistema autônomo mantém uma correspondência com consistência de voz, memória temática e evolução narrativa — _quem está escrevendo?_
 

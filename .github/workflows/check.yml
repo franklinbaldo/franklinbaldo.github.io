@@ -6,11 +6,17 @@ on:
   push:
     branches: [main]
 
+env:
+  GIT_LFS_SKIP_SMUDGE: 1
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: false
 
       - uses: actions/setup-node@v4
         with:
