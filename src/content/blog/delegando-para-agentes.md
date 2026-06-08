@@ -15,16 +15,13 @@ draft: false
 author: franklin
 translationKey: delegating-to-agents
 previousVersion:
-  uuid: 832c5d01-8c16-5d36-891c-0faf120df999
+  uuid: 56620869-a868-52f3-ac2f-f4720e160fdd
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/a1d9cabb963c9674fbeea140d68240830f231062/src/content/blog/delegando-para-agentes.md
-  timestamp: '2026-06-06T13:30:49.440Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4d6c9b2a2b5711080406dfc7e9886ca65287595f/src/content/blog/delegando-para-agentes.md
+  timestamp: '2026-06-08T13:53:28.537Z'
   msg: >-
-    Broke opener from programmatic framing to direct scene; folded analogy-flaw
-    into sandbox section mid-argument instead of announcing it; removed Drake
-    meme; grounded outsider terms (parecer, ofício, CI/CD, corregedoria,
-    Causaganha, Funes) on first use; added Vaughan Challenger reference as
-    challenger to post's own thesis; 5 For Further Reading entries from 4
+    Improve the worst-rated post based on hronir feedback to sharpen the
+    argument and add stakes.
 ---
 
 Em fevereiro, quase perdi uma janela de quarenta e oito horas num processo de impugnação de auto de infração federal porque tinha começado a tratar a minuta do assessor como o produto final. O _parecer_ estava bom. A manifestação não foi protocolada. Fiquei sabendo na tarde de terça quando um lembrete de agenda disparou para um prazo que eu tinha mentalmente movido da minha coluna para a coluna do assessor no momento em que a minuta chegou. Ela não tinha se movido.
@@ -35,7 +32,7 @@ Isso não é tecnicidade procedimental. É o motivo pelo qual a assinatura exist
 
 Passo meus dias em uma procuradoria do Estado em Rondônia, lendo _pareceres_ e assinando aqueles que não me aterrorizam. Quando delego a elaboração, não estou terceirizando o julgamento — estou delegando a tarefa de atravessar os autos, identificar o direito aplicável e construir o argumento. O que eu _não_ estou delegando é a assinatura. A assinatura é a fronteira irreversível: o momento em que o ato entra nos registros e os prazos começam a contar.
 
-A engenharia de software não reconhece nativamente essa distinção porque o ciclo de _feedback_ a comprime. No direito, a lacuna entre minuta e ato é fisicamente legível — o assessor termina, o protocolo tem sua janela, o sistema do tribunal tem seu próprio horário. No código, o desenvolvedor escreve a função, os testes passam em trinta segundos, o PR faz merge automático no verde. A minuta e o ato se tornam um movimento contínuo, e ninguém escreve onde um termina e o outro começa.
+A engenharia de software não reconhece nativamente essa distinção porque o ciclo de _feedback_ a comprime. No direito, a lacuna entre minuta e ato é fisicamente legível — o assessor termina, o protocolo tem sua janela, o sistema do tribunal tem seu próprio horário. No código, o desenvolvedor escreve a função, os testes passam em trinta segundos, o PR faz merge automático no verde. A minuta e o ato se tornam um movimento contínuo, e ninguém escreve onde um termina e o outro começa. É uma eficiência que custa o vocabulário da responsabilidade.
 
 ## Os limites da caixa de areia
 
@@ -53,7 +50,7 @@ A caixa de areia é necessária. Ela não é suficiente para responsabilidade. O
 
 Não enxerguei isso claramente até estar escrevendo a analogia e perceber que a frase "o assessor é bom" soava razoável de um jeito que "o Jules é bom" não soa, e não pode soar, com o mesmo significado. Ambas as frases descrevem capacidade. Só uma descreve uma pessoa que pode ser responsável por algo.
 
-Eu tinha pensado na assinatura como uma formalidade. É uma formalidade. É também a coisa que faz o erro de fevereiro ser meu e não do Jules.
+Eu tinha pensado na assinatura como uma formalidade. É uma formalidade. É também a coisa que faz o erro de fevereiro ser meu e não do assessor. O fato de que a transição para agentes autônomos esconde essa materialidade é exatamente o que torna o _harness_ a verdadeira linha de frente da segurança corporativa e pessoal, não o modelo.
 
 ## O harness como desenho constitucional
 
@@ -63,7 +60,7 @@ O Funes abre pull requests; ele não faz merge. Ele atualiza arquivos de memóri
 
 _Reversível → age, irreversível → pergunta._ Isso não é apenas uma heurística de segurança; é uma decisão sobre onde a responsabilidade se concentra. Cada ação que o agente toma livremente é uma ação cuja responsabilidade foi pré-delegada por quem projetou o _harness_. Cada ação que exige assinatura é uma ação cuja responsabilidade permanece explicitamente com o ser humano que assina.
 
-O _parecer_ estava bom. Essa frase é sobre o assessor. A manifestação não foi protocolada. Essa frase é sobre mim.
+O _parecer_ estava bom. Essa frase é sobre o assessor. A manifestação não foi protocolada. Essa frase é sobre mim. E enquanto não houver um jeito de o agente de IA perder o emprego, qualquer delegação sem assinatura não é engenharia de software; é abdicação.
 
 ## Para se aprofundar
 

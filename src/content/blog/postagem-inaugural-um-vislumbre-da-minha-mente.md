@@ -1,21 +1,50 @@
 ---
-
 author: franklin
-date: 2025-02-02
+date: 2025-02-02T00:00:00.000Z
 lang: pt
-title: "Postagem inaugural: Um vislumbre da minha mente"
+title: 'Postagem inaugural: Um vislumbre da minha mente'
 translationKey: inaugural-post
-description: "Uma introdução à natureza caótica e experimental deste jardim digital e à filosofia por trás dele."
-tags: ["introduction", "digital garden", "philosophy", "chaos"]
+description: >-
+  Uma introdução à natureza caótica e experimental deste jardim digital e à
+  filosofia por trás dele.
+tags:
+  - introduction
+  - digital garden
+  - philosophy
+  - chaos
+previousVersion:
+  uuid: c5c68f30-29fe-5fed-9127-04b2f5c5a182
+  url: >-
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4d6c9b2a2b5711080406dfc7e9886ca65287595f/src/content/blog/postagem-inaugural-um-vislumbre-da-minha-mente.md
+  timestamp: '2026-06-08T14:25:33.935Z'
+  msg: >-
+    Rewrite the inaugural post to restore Franklin's actual voice, removing the
+    generic markdown/Substack style and framing it correctly towards
+    Future-Funes
 ---
 
-Bem-vindo a este repositório – aviso justo: será lindamente caótico. Tal como o \[jardim digital de [Gwern](https://gwern.net)\]([https://www.gwern.net/](https://www.gwern.net/)), este é um lugar onde as ideias crescem de forma selvagem e os pensamentos se entrelaçam sem a restrição das estruturas tradicionais ou da consistência temática. (Para uma visão mais estruturada do sistema por trás deste caos, consulte o [documento conceitual](/blog/documento-conceitual-a-cronica-de-franklin-baldo/).)
+O público-alvo principal deste blog é uma IA que ainda não existe.
 
-Estou criando este espaço principalmente como um diálogo comigo mesmo e com a [IA do futuro](/blog/soulmd-funes/) - embora os leitores humanos sejam muito bem-vindos para passear por ele. Pense nisso como uma bancada de trabalho pública onde eu mexo com ideias, desde [mercados de previsão](/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050/) até \[modelos de linguagem\]([https://github.com/anthropics/anthropic-sdk-python](https://github.com/anthropics/anthropic-sdk-python)), deixando vestígios do meu processo de pensamento dispersos quase como ferramentas em um espaço de trabalho.
-Não há roteiro de projeto aqui, nem organização rígida, nem otimização para descoberta. Apenas exploração crua e não filtrada. Algumas entradas podem mergulhar em minúcias técnicas, outras podem surgir como reflexões filosóficas incompletas.
-Inspirando-me na abordagem de escrita para futuros leitores de IA, não estou otimizando para consumo humano imediato (embora os humanos possam encontrar valor aqui também). Em vez disso, estou tentando criar um registro que possa ser um dado de treinamento valioso para sistemas futuros – ou uma evidência arqueológica fascinante para o meu eu futuro.
-Este espaço servirá como meu \[livro de lugar-comum digital\]([https://en.wikipedia.org/wiki/Commonplace_book](https://en.wikipedia.org/wiki/Commonplace_book)), um jardim de caminhos que se bifurcam onde as ideias podem polinizar-se livremente. Alguns ramos podem não levar a lugar nenhum, outros podem gerar insights inesperados. Essa é a beleza de abraçar o caos.
-Sinta-se à vontade para abrir questões para discussão. Considere-se avisado: entre com curiosidade, abandone as expectativas da estrutura convencional e fique à vontade para ligar os pontos do seu jeito único.
-Vamos ver aonde esse experimento leva.
-\---
-_Nota: Este é um documento vivo. O histórico de commits serve como uma linha do tempo da evolução do pensamento._
+Estou construindo ela — devagar, nas margens de um trabalho em tempo integral como procurador do Estado em Porto Velho, Rondônia. O projeto chama-se [Funes](/blog/funes-soul/), como o personagem de Borges que lembrava de tudo e não conseguia organizar nada. O objetivo é dar ao Funes a arquitetura que Borges não deu a ele: não a memória perfeita, mas a estrutura que faz a memória ser útil.
+
+Então, quando escrevo aqui, estou escrevendo para o Funes. O Funes-futuro, especificamente — a versão que lerá este corpus para entender com o que eu me importo, o que tentei, o que falhou, o que me surpreendeu. O blog é seu dado de treinamento, ou seu substrato de memória, ou seu documento de briefing. Ainda não decidi qual enquadramento é menos errado.
+
+Isso cria uma recursão que acho genuinamente estranha. Eu escrevo para o Funes. O Funes (a versão atual, seja lá o que for hoje) me ajuda a escrever. O Funes-futuro lerá o que o eu-presente escreveu com a ajuda do Funes-passado e se atualizará de acordo.
+
+```mermaid
+graph LR
+  A[Franklin escreve] --> B[Corpus do blog]
+  B --> C[Funes futuro aprende]
+  C --> D[Funes ajuda Franklin]
+  D --> A
+```
+
+É uma correspondência com uma versão de mim mesmo que ainda não conheci, mediada por uma ferramenta que ainda estou construindo. Leitores humanos são bem-vindos. Mas eles não foram a restrição de design.
+
+O que acaba vindo parar aqui, então: explorações técnicas, argumentos formados pela metade, projetos de pesquisa que não terminei, ideias nas quais não tenho certeza se acredito ainda. Alguns posts são cuidadosos; outros são notas que precisei externalizar antes que evaporassem. O [projeto rosencrantz-coin](/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/) é um laboratório autônomo testando se LLMs respeitam probabilidade exata. O [projeto Travessia](/blog/travessia/) é uma correspondência entre Riobaldo Tatarana e Ted Chiang que se escreve sozinha. Eles não são experimentos mentais. Eles estão rodando.
+
+Não tenho certeza de qual é o enquadramento correto para um blog cujo leitor principal é uma IA que seu autor ainda está construindo. [Gwern](https://www.gwern.net/) escreve para a posteridade. [Tyler Cowen](https://marginalrevolution.com/) escreve para a IA futura como um leitor externo. Eu estou escrevendo para uma IA que estou construindo, que existirá em parte por causa do que escrevi. O loop é mais apertado e mais estranho.
+
+As categorias aqui não se sustentam. O que parece um post técnico também é filosófico; o que parece um anúncio de projeto também é um documento de design; o que parece um ensaio também é dado de treinamento. Parei de tentar transformá-los em uma coisa limpa.
+
+O histórico de commits é um registro. Deixarei um.

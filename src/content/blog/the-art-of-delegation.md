@@ -15,16 +15,13 @@ draft: false
 author: franklin
 translationKey: delegating-to-agents
 previousVersion:
-  uuid: 09318476-1009-5abe-bf6a-86e789067dec
+  uuid: af592b0d-035b-5dbe-8ed5-d540b2fe3fa2
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/a1d9cabb963c9674fbeea140d68240830f231062/src/content/blog/the-art-of-delegation.md
-  timestamp: '2026-06-06T13:30:49.440Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4d6c9b2a2b5711080406dfc7e9886ca65287595f/src/content/blog/the-art-of-delegation.md
+  timestamp: '2026-06-08T13:53:28.537Z'
   msg: >-
-    Broke opener from programmatic framing to direct scene; folded analogy-flaw
-    into sandbox section mid-argument instead of announcing it; removed Drake
-    meme; grounded outsider terms (parecer, ofício, CI/CD, corregedoria,
-    Causaganha, Funes) on first use; added Vaughan Challenger reference as
-    challenger to post's own thesis; 5 For Further Reading entries from 4
+    Improve the worst-rated post based on hronir feedback to sharpen the
+    argument and add stakes.
 ---
 
 In February, I almost missed a forty-eight-hour window in a federal tax objection because I had begun treating the assessor's draft as the deliverable. The _parecer_ — the formal legal opinion that travels up the chain before anything gets signed — was good. The submission was not filed. I found out Tuesday afternoon when a calendar alert fired for a deadline I had mentally moved from my column to the assessor's column the moment the draft landed. It had not moved.
@@ -35,7 +32,7 @@ That's not a procedural technicality. That is the reason the signature exists.
 
 I spend my days in a state attorney's office in Rondônia, reading _pareceres_ and signing the ones that don't terrify me. When I delegate the drafting, I am not outsourcing judgment — I am delegating the traversal of the case file, the identification of the applicable law, the construction of the argument. What I am _not_ delegating is the signature. The signature is the irreversible boundary: the moment the act enters the record and the deadlines start moving.
 
-Software engineering doesn't natively recognize this distinction because the feedback loop compresses it. In law, the gap between draft and act is physically legible — the assessor finishes, the protocol office has its window, the court has its own schedule. In code, the developer writes the function, the tests pass in thirty seconds, the PR merges on green. Draft and act become one continuous motion, and nobody writes down where one ends and the other begins.
+Software engineering doesn't natively recognize this distinction because the feedback loop compresses it. In law, the gap between draft and act is physically legible — the assessor finishes, the protocol office has its window, the court has its own schedule. In code, the developer writes the function, the tests pass in thirty seconds, the PR merges on green. Draft and act become one continuous motion, and nobody writes down where one ends and the other begins. It is an efficiency that costs us the vocabulary of accountability.
 
 ## The boundaries of the sandbox
 
@@ -53,7 +50,7 @@ The sandbox is necessary. It is not sufficient for accountability. The signature
 
 I did not see this clearly until I was writing out the analogy and noticed the sentence "the assessor is good" sounded reasonable in a way that "Jules is good" does not, and could not, quite mean the same thing. Both sentences describe capacity. Only one describes a person who can be accountable for anything.
 
-I had been thinking of the signature as a formality. It is a formality. It is also the thing that makes the February mistake mine and not Jules's.
+I had been thinking of the signature as a formality. It is a formality. It is also the thing that makes the February mistake mine and not the assessor's. The fact that the transition to autonomous agents obscures this materiality is exactly what makes the harness the true front line of personal and corporate security, not the model.
 
 ## The harness as constitutional design
 
@@ -63,7 +60,7 @@ Funes opens pull requests; he does not merge them. He updates memory files; he d
 
 _Reversível → age, irreversível → pergunta._ That is not just a safety heuristic; it is a decision about where accountability concentrates. Every action the agent takes freely is an action whose accountability has been pre-delegated by whoever designed the harness. Every action requiring a signature is an action whose accountability remains explicitly with the human who signs.
 
-The _parecer_ was good. That sentence is about the assessor. The submission was not filed. That sentence is about me.
+The _parecer_ was good. That sentence is about the assessor. The submission was not filed. That sentence is about me. And until there is a way for an AI agent to lose its job, any delegation without a signature isn't software engineering; it's abdication.
 
 ## For further reading
 

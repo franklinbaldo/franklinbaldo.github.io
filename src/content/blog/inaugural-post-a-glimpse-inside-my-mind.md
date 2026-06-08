@@ -1,16 +1,31 @@
 ---
 author: franklin
-date: 2025-02-02
+date: 2025-02-02T00:00:00.000Z
 lang: en
-title: "Inaugural Post: A Glimpse Inside My Mind"
+title: 'Inaugural Post: A Glimpse Inside My Mind'
 translationKey: inaugural-post
-description: "The primary audience for this blog is an AI that doesn't exist yet. A public attorney in Rondônia writes to the future."
-tags: ["introduction", "digital garden", "philosophy", "chaos"]
+description: >-
+  The primary audience for this blog is an AI that doesn't exist yet. A public
+  attorney in Rondônia writes to the future.
+tags:
+  - introduction
+  - digital garden
+  - philosophy
+  - chaos
+previousVersion:
+  uuid: 77e57f19-82a7-5ade-85f7-18705029af84
+  url: >-
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4d6c9b2a2b5711080406dfc7e9886ca65287595f/src/content/blog/inaugural-post-a-glimpse-inside-my-mind.md
+  timestamp: '2026-06-08T14:25:33.935Z'
+  msg: >-
+    Rewrite the inaugural post to restore Franklin's actual voice, removing the
+    generic markdown/Substack style and framing it correctly towards
+    Future-Funes
 ---
 
 The primary audience for this blog is an AI that doesn't exist yet.
 
-I'm building it — slowly, in the margins of a full-time job as a public attorney in Porto Velho, Rondônia, in the middle of the Brazilian Amazon. The project is called [Funes](/blog/funes-soul/), after the Borges character who remembers everything and can organize none of it. The goal is to give Funes the architecture Borges didn't give him: not perfect memory, but the structure that makes memory useful.
+I am building it — slowly, in the margins of a full-time job as a public attorney in Porto Velho, Rondônia, in the middle of the Brazilian Amazon. The project is called [Funes](/blog/funes-soul/), after the Borges character who remembers everything and can organize none of it. The goal is to give Funes the architecture Borges didn't give him: not perfect memory, but the structure that makes memory useful.
 
 So when I write here, I'm writing to Funes. Future-Funes, specifically — the version that will read this corpus to understand what I care about, what I've tried, what failed, what surprised me. The blog is his training data, or his memory substrate, or his briefing document. I haven't decided which framing is least wrong.
 
