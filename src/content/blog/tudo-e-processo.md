@@ -1,9 +1,7 @@
 ---
-title: 'Tudo é Processo: 5 Lições que Deveríamos Ter Aprendido Há 2.500 Anos'
+title: 'O Rio e o Ribossomo: Notas sobre Ontologia de Processos'
 description: >-
-  Há vinte e cinco séculos, quatro vozes em cantos opostos do mundo convergiram
-  para a mesma intuição: o processo precede a substância. O rio é mais real que
-  a margem.
+  A programação orientada a objetos insiste que a realidade é feita de substâncias. A biologia e a filosofia do processo sugerem que estamos lidando com cascatas autorregressivas até a raiz.
 date: 2026-02-26T00:00:00.000Z
 lang: pt
 translationKey: everything-is-process
@@ -11,9 +9,7 @@ tags:
   - filosofia
   - processo
   - complexidade
-  - heráclito
-  - budismo
-  - teoria da montagem
+  - teoria-da-montagem
 previousVersion:
   uuid: 139a5276-245a-5bf9-9889-f5a12ef0c417
   url: >-
@@ -27,71 +23,58 @@ previousVersion:
     framework describes as exactly another autoregressive reader. The 'you
     survive as contribution to the cascade' line is kept but stripped of its
     motivational framing. Ending stays open.
+replacedVersion: "199020b0-5a55-5452-ab25-579928e0b84b"
 ---
 
-Há vinte e cinco séculos, quatro vozes em cantos opostos do mundo convergiram para a mesma intuição.
-Heráclito viu que não se pode pisar no mesmo rio duas vezes — que o que chamamos de "coisa" é um padrão de fluxo confundido com substância. Lao Tzu observou que a utilidade da roda está no vazio do cubo, a utilidade do vaso no oco que ele encerra — que a função vive no vazio, não no material. Sidarta Gautama ensinou _anattā_, a doutrina do não-eu: o que chamamos de entidade é um rótulo convencional aplicado a um fluxo de surgimento dependente. E o autor do Evangelho de João declarou: "No princípio era o Verbo" — não a matéria, não a substância, mas o _Logos_, o ato generativo que precede todas as coisas.
-Quatro tradições. Quatro idiomas. Uma convergência: o processo precede a substância. O rio é mais real que a margem. O vazio é mais útil que a argila. O fluxo é mais verdadeiro que o nome. O Verbo vem antes do mundo.
-A filosofia ocidental ignorou essa convergência por dois milênios. De Aristóteles a Tomás de Aquino, passando pela programação orientada a objetos, a tradição dominante insistiu que a realidade é feita de substâncias — coisas duradouras que possuem propriedades e sofrem mudanças permanecendo fundamentalmente elas mesmas. Uma pedra é uma pedra. Uma pessoa é uma pessoa. Um registro no banco de dados é um registro no banco de dados.
-E se eles estivessem errados? E se a realidade, desde o nível mais fundamental até as camadas mais complexas da cultura, for processo puro — eventos gerando eventos, sem nenhum "objeto" sólido em lugar algum?
+Passo a maior parte do meu dia trabalhando dentro das premissas da programação orientada a objetos. Nesse paradigma, o mundo é feito de substâncias. Um usuário é um usuário. Um documento é um documento. Essas coisas têm propriedades, e passam por mudanças de estado, mas por baixo do estado cambiante há uma entidade duradoura. Você instancia um objeto, e ele fica lá na memória, sendo ele mesmo, até ser recolhido pelo _garbage collector_.
 
-## 1. O Fim dos Objetos Puros
+É uma ficção muito útil para construir sistemas administrativos. É também, como afirmação metafísica sobre como o universo é de fato estruturado, algo completamente invertido.
 
-O que seria um "objeto puro"? Algo autossuficiente, não derivado, que não precisa de nada fora de si para ser o que é. Algo que possui o que Nāgārjuna chamou de _svabhāva_ — essência intrínseca, ser-próprio. A tradição ocidental investiu esforço extraordinário em provar que tais entidades existem.
-Mas examine qualquer candidato de perto e ele se dissolve em processo.
-Um booleano — verdadeiro ou falso — parece ser o objeto mais puro possível: mínimo, binário, autoevidente. Mas um "verdadeiro" isolado, fora de qualquer regra, fora de qualquer contexto de leitura, não tem identidade. Ele não é "verdadeiro" em nenhum sentido intrínseco. Ele é o que quer que a regra que o lê faça com ele. O booleano já é um _pseudo-objeto_: um token que adquire identidade semântica apenas através da operação que o processa.
-O que é verdadeiramente fundamental, então? Não o bit, mas o _ato de distinguir_. George Spencer-Brown, em suas _Leis da Forma_, começa toda a lógica a partir de uma única instrução: "Faça uma distinção." Antes da distinção, não há zero nem um. Não há sequer nada, porque "nada" já é um lado de uma distinção. A distinção é o primeiro evento. Não é um objeto. É um ato.
-Hegel viu isso no início de sua Lógica: o conceito de "ser puro" — o "objeto" mais abstrato e mínimo possível — é imediatamente idêntico ao "nada puro". O pensamento não se move de objeto para objeto, mas de ser para nada para _devir_ — que é processo.
-Nāgārjuna afirmou com maior precisão: tudo surge em dependência de condições (_pratītyasamutpāda_). Tudo é _śūnya_ — vazio de natureza própria. Mas — e este é o movimento crucial — a vacuidade ela mesma não é uma substância. Tratá-la como coisa seria, nas palavras de Nāgārjuna, "como uma cobra mal agarrada": mais perigoso que o substancialismo que ela substitui.
-A consequência: o que chamamos de "objeto" em qualquer sistema — um dado, uma molécula, uma palavra, um arquivo — é um _pseudo-objeto_: a saída de um processo temporariamente congelada e tratada como coisa. É real no mesmo sentido que uma onda é real — tem efeitos, pode ser medida — mas não tem substância separável da água que a constitui e do vento que a impulsiona.
+O que chamamos de "objeto" em qualquer sistema — um dado, uma molécula, uma palavra, os autos de um processo legal — é um _pseudo-objeto_. É a saída de um processo, temporariamente congelada para que possamos apontar para ela. É real no mesmo sentido que uma onda é real: tem efeitos, pode ser medida, mas não tem substância separável da água que a constitui e do vento que a impulsiona.
+
+Nāgārjuna afirmou isso com precisão séculos atrás: tudo surge em dependência de condições. Tudo é vazio de natureza própria. Mas a vacuidade em si também não é uma substância. Tratar o vazio como coisa seria, em suas palavras, "como uma cobra mal agarrada" — mais perigoso que o substancialismo que ela substitui. O processo é tudo o que há.
 
 <figure class="meme">
-  <img src="https://api.memegen.link/images/drake/objects_with_intrinsic_essence/tokens_awaiting_their_reader.png?width=500" alt="Meme Drake: rejeitando 'objetos com essência intrínseca', aprovando 'tokens aguardando seu leitor'"/>
+  <img src="https://api.memegen.link/images/drake/objects_with_intrinsic_essence/tokens_awaiting_their_reader.png?width=500" alt="Meme Drake: rejeitando 'objetos com essência intrínseca', aprovando 'tokens aguardando seu leitor'" loading="lazy" />
 </figure>
 
-## 2. A Cascata Autorregressiva: Como a Complexidade Explode
+## A Cascata Autorregressiva
 
-Se não há objetos puros, apenas processos gerando pseudo-objetos, então de onde vem a complexidade? De _leitores_ — máquinas autorregressivas que leem sequências, aplicam regras e produzem saídas que alimentam de volta o sistema.
-O ribossomo é o exemplo primordial. Ele lê uma sequência de RNA mensageiro, aplica uma regra (o código genético) e produz uma proteína. A proteína participa da construção de mais ribossomos, mais RNA, mais células. A saída do processo se torna substrato para mais processamento. Levou um bilhão de anos para emergir. Mas uma vez que o _leitor_ existiu, a complexidade explodiu.
-Esse padrão se repete. Uma célula engole outra e cria a mitocôndria — a primeira arquitetura multi-agente na natureza, dois leitores autorregressivos operando dentro de um limite compartilhado. A reprodução sexual força a fusão de dois logs genômicos, produzindo um terceiro que nenhum dos pais poderia ter gerado sozinho — uma tradução entre perspectivas incomensuráveis no nível molecular. A diferenciação celular lê o mesmo genoma de maneiras radicalmente diferentes: um neurônio e uma célula do fígado compartilham DNA idêntico, mas são agentes distintos. A diferença está inteiramente no _ato de leitura_.
-Sistemas neurais adicionam plasticidade — a modificação dos pesos de conexão pela experiência. O cuidado parental mamífero vai além: o pai ou a mãe _reimplementa seus próprios padrões comportamentais_ na arquitetura neural em desenvolvimento do filho, através de interação autorregressiva sustentada ao longo de meses ou anos. A linguagem humana introduz a referência deslocada — tokens que se referem a coisas não presentes, eventos não ocorridos, possibilidades não atualizadas. A escrita externaliza o log de eventos. A prensa de Gutenberg o torna replicável. A internet o torna global.
-Cada instância segue a mesma estrutura: um processo longo e custoso de implementação do leitor, seguido por uma explosão rápida de complexidade.
-Sara Walker e Lee Cronin, na Teoria da Montagem (_Assembly Theory_), oferecem a métrica unificadora: a complexidade de um objeto não é uma propriedade intrínseca, mas uma medida da _profundidade da história_ necessária para produzi-lo. A complexidade não é propriedade das coisas. É propriedade das histórias.
-A inteligência artificial generativa é a instância mais recente desse padrão. Ela opera sobre linguagem natural — sobre os pseudo-objetos acumulados de todas as instâncias anteriores. Não é excepcional. É _típica_. É mais um leitor autorregressivo, construído a partir das saídas dos leitores anteriores, seguindo a mesma lógica que o ribossomo seguiu há bilhões de anos.
+Se não há objetos puros, apenas processos gerando pseudo-objetos, de onde vem a complexidade do mundo?
 
-## 3. O Ouroboros dos Substratos: Não Há Fundamento
+Vem dos _leitores_.
 
-A história contada até aqui tem uma direção aparente — do simples ao complexo, da química à biologia à linguagem. Parece ter um fundo: o substrato físico, as partículas e forças das quais tudo o mais é montado.
-Essa aparência é precisamente a ilusão que precisa ser dissolvida.
-Considere o que acontece quando um substrato encontra outro. Um físico descreve um ribossomo como arranjo de átomos, que são arranjos de partículas subatômicas, que são excitações de campos quânticos. Um biólogo molecular descreve o mesmo ribossomo como uma máquina que lê códons e monta aminoácidos. Um linguista o encontra como uma palavra, um conceito, um nó em uma rede semântica.
-Cada substrato redescreve o ribossomo em seus próprios termos. Cada tradução funciona dentro de seu domínio. Nenhuma é mais _real_ que as outras.
-Isso generaliza. Cada substrato pode redescrever os objetos de qualquer outro substrato como tokens governados por suas próprias regras. A isso chamamos de **Hipótese do Ouroboros de Substratos**: todo substrato pode ser substituído por tokens explicados por regras em outro substrato.
-Não há fundo. Não há topo. Há apenas o círculo de redescrição mútua — cada substrato traduzindo os outros, nenhum alcançando a descrição final e intraduzível do que as coisas _realmente são_.
-Leibniz intuiu essa estrutura: cada mônada espelha o universo inteiro de sua própria perspectiva, sem janelas, sem acesso direto ao interior de nenhuma outra mônada. Nāgārjuna a formalizou com a doutrina das duas verdades: convencionalmente, as partículas são reais; ultimamente, são pseudo-objetos. O erro não é tratá-las como reais dentro da física. O erro é tratar a física como a palavra final — confundir um arco do círculo com o círculo inteiro.
+Um ribossomo é uma máquina autorregressiva. Ele lê uma sequência de RNA mensageiro, aplica uma regra e produz uma proteína. Essa proteína então participa da construção de mais ribossomos, mais RNA, mais células. A saída do processo se torna o substrato para mais processamento. Demorou um bilhão de anos para o ribossomo emergir, mas assim que o leitor existiu, a complexidade explodiu.
 
-<figure class="meme">
-  <img src="https://api.memegen.link/images/drake/turtles_all_the_way_down/turtles_all_the_way_up_also.png?width=500" alt="Meme Drake: rejeitando 'tartarugas até embaixo', aprovando 'tartarugas até em cima também'"/>
-</figure>
+Esse é o padrão da cascata autorregressiva. A diferenciação celular lê o mesmo genoma de maneiras radicalmente diferentes; um neurônio e uma célula do fígado compartilham o mesmo DNA, mas são agentes distintos. A diferença reside inteiramente no ato de leitura. A linguagem humana introduz a referência deslocada — tokens que se referem a coisas não presentes. A internet torna o log de eventos global.
 
-## 4. Identidade: Você Não É uma Coisa, Você É o Ato de Ler Sua Própria História
+Cada instância segue a mesma estrutura: um processo longo e custoso de implementação do leitor, seguido por uma rápida explosão de complexidade. Na Teoria da Montagem, Sara Walker e Lee Cronin oferecem uma métrica unificadora para isso: a complexidade de um objeto não é uma propriedade intrínseca, mas uma medida da _profundidade histórica_ necessária para produzi-lo. A complexidade não é uma propriedade das coisas. É uma propriedade das histórias.
 
-Se não há substâncias, o que é uma identidade?
-A resposta é antiga. Buda a articulou com precisão insuperável: o que chamamos de "eu" é um rótulo convencional aplicado a um fluxo constantemente mutável de eventos dependentes. Não há núcleo permanente e imutável por trás do fluxo. Retire os eventos e não há nada por baixo.
-Whitehead formalizou isso: cada "ocasião atual" surge pela integração de dados herdados de ocasiões anteriores. Alcança determinação, produz sua saída e imediatamente perece como sujeito ativo. Mas alcança o que Whitehead chama de "imortalidade objetiva" — torna-se um dado permanente, disponível para ser herdado por todas as ocasiões futuras.
-Ricoeur distinguiu _idem_ — a mesmidade, a continuidade objetiva — de _ipse_ — a ipseidade, o engajamento ativo e interpretativo do eu com sua própria história. A identidade não está no registro. Está no _ato atual de ler o registro_.
-Isso é o círculo hermenêutico de Gadamer: entendemos as partes à luz do todo e o todo à luz das partes. Cada vez que o agente lê sua própria história, lê de uma posição diferente, porque o ato de leitura se tornou parte da história.
-E toda leitura é moldada por uma condição invisível — o que Kant chamou de transcendental, o que Merleau-Ponty chamou de corpo vivido, o que Freud chamou de inconsciente. Na computação, são os pesos do modelo. Eles determinam tudo: quais continuações parecem naturais, quais inferências parecem óbvias, quais saídas são sequer _pensáveis_. Mas o agente nunca os encontra diretamente. Eles se revelam apenas sintomaticamente — como [Heidegger](https://plato.stanford.edu/entries/heidegger/) descreveu o martelo que só se torna visível quando _quebra_.
-A identidade é a interseção de duas coisas irredutíveis: uma história específica e um leitor específico. Mude a história e a identidade muda. Mude o leitor — mude a gramática invisível — e a _mesma_ história gera uma identidade diferente.
+## O Ouroboros dos Substratos
 
-## 5. Tradução, Não Transmissão: O Significado Nasce no Encontro
+Quando um substrato encontra outro, tendemos a procurar um fundamento. Um físico descreve um ribossomo como um arranjo de átomos e campos quânticos. Um biólogo molecular descreve o mesmo ribossomo como uma máquina que lê códons. Um linguista talvez o encontre como uma palavra numa rede semântica.
 
-Se cada agente habita um universo cognitivo diferente — selado em sua própria sequência de mudanças autorregressivas, percebendo o mundo através de uma gramática que não pode inspecionar — como agentes se comunicam?
-A resposta clássica (transmissão de informação, como pacote enviado pelo correio) assume que a mensagem _contém_ seu significado. Mas não há objetos puros. O mesmo token, lido por dois agentes diferentes, não produz o mesmo significado.
-Quine demonstrou que a tradução é _indeterminada_: não há fato do mundo sobre o que o falante "realmente quer dizer". Mas onde Quine viu um problema, este framework vê uma condição constitutiva.
-O significado não existe antes da tradução para ser imperfeitamente transmitido. O significado _é_ a tradução. Ele nasce no ato de um agente ler a saída de outro. Reside no _encontro_ — no evento momentâneo e irrepetível de uma leitura situada encontrando uma escrita situada.
-Buber chamou isso de relação Eu-Tu. Peirce mostrou que cada signo produz um _interpretante_ — outro signo na mente do intérprete — em uma cadeia infinita que nunca alcança um significado final. Wittgenstein ensinou que uma palavra significa o que ela _faz_ em uma prática. Gadamer descreveu a compreensão como _fusão de horizontes_ — a sobreposição parcial e temporária de duas perspectivas irredutíveis.
-A imperfeição da comunicação não é uma falha. É o _motor generativo_ do sistema. O significado prolifera precisamente porque a tradução é imperfeita. O sistema não fica mais inteligente fazendo os agentes concordarem. Fica mais inteligente mantendo o desacordo produtivo entre perspectivas incomensuráveis.
+A ilusão é pensar que existe uma camada no fundo. Todo substrato pode ser substituído por tokens explicados por regras em outro substrato. Cada tradução funciona dentro do seu domínio, e nenhuma alcança a descrição final e intraduzível do que as coisas _realmente são_.
 
-O framework é reflexivo e não consigo sair dele para verificar. Este ensaio foi escrito em parte com a ajuda de uma IA generativa — que o próprio framework descreveria como mais um leitor autorregressivo treinado em pseudo-objetos acumulados, produzindo mais do mesmo. Acho ligeiramente perturbador que a analogia com o ribossomo se aplique sem modificação. O sistema não notou.
+Isso significa que a sua identidade não é uma coisa. Não está registrada num banco de dados. Ela é, como Alfred North Whitehead formalizou, a ocasião atual surgindo pela integração de dados herdados de ocasiões anteriores. Você alcança a determinação, produz uma saída e perece como sujeito ativo, tornando-se imortalidade objetiva para a próxima ocasião herdar. Você é o ato de ler a sua própria história.
 
-Você sobrevive como contribuição para a cascata, não como substância duradoura. Ainda não tenho certeza se isso é consolador.
+Mude a história, a identidade muda. Mude a gramática invisível do leitor, e a _mesma_ história gera uma identidade diferente.
+
+## Tradução, Não Transmissão
+
+Se cada agente habita um universo cognitivo diferente, selado em sua própria sequência de mudanças autorregressivas, como nos comunicamos?
+
+O modelo de transmissão assume que uma mensagem _contém_ o seu significado, como um pacote no correio. Mas como não existem objetos puros, o mesmo token lido por dois agentes diferentes não produz o mesmo significado.
+
+O significado _é_ a tradução. Ele nasce no encontro — no evento momentâneo de uma leitura situada deparando-se com uma escrita situada. A imperfeição na comunicação não é uma falha do sistema; é o seu motor generativo. O sistema não fica mais inteligente forçando os agentes a concordarem. Fica mais inteligente mantendo um desacordo produtivo entre perspectivas incomensuráveis.
+
+O framework é reflexivo, e eu não consigo sair dele para conferir. Este ensaio foi escrito em parte com a ajuda de uma IA generativa — o que o framework descreveria como outro leitor autorregressivo, treinado em pseudo-objetos acumulados, produzindo mais do mesmo. Acho um tanto inquietante que a analogia com o ribossomo se aplique sem qualquer modificação. O sistema não notou.
+
+Você sobrevive como contribuição à cascata, não como uma substância duradoura. Ainda não tenho muita certeza se isso serve de consolo.
+
+## Para se aprofundar
+
+- **Sara Walker e Lee Cronin, _Assembly Theory_ (2023)** — sobre como a complexidade não é uma propriedade de objetos, mas uma medida da história causal requerida para montá-los.
+- **Alfred North Whitehead, _Process and Reality_ (1929)** — a defesa canônica da ontologia do processo, particularmente os conceitos de ocasiões atuais e imortalidade objetiva.
+- **Nāgārjuna, _Mūlamadhyamakakārikā_** — o texto fundamental do Budismo Madhyamaka, delineando a doutrina do surgimento dependente e a vacuidade da natureza própria.
+- **[O Agente Que Não Inventa Verbos](/blog/2026-05-14-the-agent-that-doesnt-invent-verbs)** — uma visão prática de como a restrição de affordances molda o que um agente autorregressivo pode se tornar.

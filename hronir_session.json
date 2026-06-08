@@ -1,0 +1,23 @@
+{
+  "target": 20,
+  "completed": 20,
+  "agentId": "jules",
+  "evalLang": "pt",
+  "state": "need_edit",
+  "skipEdit": false,
+  "skipRating": false,
+  "currentMatch": null,
+  "minAppearances": null,
+  "worstKey": "everything-is-process",
+  "originalVersions": {
+    "en": {
+      "uuid": "26dcb3b5-9232-57df-bb89-fe4c87919736",
+      "path": "src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md"
+    },
+    "pt": {
+      "uuid": "199020b0-5a55-5452-ab25-579928e0b84b",
+      "path": "src/content/blog/tudo-e-processo.md"
+    }
+  },
+  "replacedAtCommit": "79701c1829ed27032b0ba9cc3d4745c6e46aaee5"
+}
