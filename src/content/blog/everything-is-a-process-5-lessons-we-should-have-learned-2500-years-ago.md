@@ -15,18 +15,14 @@ tags:
   - buddhism
   - assembly-theory
 previousVersion:
-  uuid: 0ed4e735-82c5-571a-99a4-397266e1580d
+  uuid: 26dcb3b5-9232-57df-bb89-fe4c87919736
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/f99c954b050808d56071e1e5dbd0e1801baf34ac/src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
-  timestamp: '2026-06-06T11:52:16.793Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4e5073f0869e4912a25551fc814e4ffad33bb1ec/src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
+  timestamp: '2026-06-08T04:20:59.416Z'
   msg: >-
-    Removed self-help conclusion ('Write a Story Worth Reading'), closing
-    question, and John 1:1 callback — all of which domesticated the vertigo the
-    essay was building. Replaced with a short deadpan close that admits the
-    reflexive problem: the essay was partly written with an AI, which the
-    framework describes as exactly another autoregressive reader. The 'you
-    survive as contribution to the cascade' line is kept but stripped of its
-    motivational framing. Ending stays open.
+    Rewrite everything-is-process to reduce academic dryness and incorporate
+    Franklin's voice, removing empty rhetoric, and grounding the argument in a
+    more accessible and deadpan tone.
 ---
 
 Twenty-five centuries ago, four voices from opposite corners of the world converged on the same intuition.
@@ -45,9 +41,7 @@ Hegel saw this at the beginning of his Logic: the concept of "pure being" — th
 Nāgārjuna stated more precisely: everything arises depending on conditions (_pratītyasamutpāda_). Everything is _śūnya_ — void of self-nature. But — and this is the crucial move — emptiness itself is not a substance. Treating it as a thing would be, in Nāgārjuna's words, "like a poorly grasped snake": more dangerous than the substantialism it replaces.
 The consequence: what we call an "object" in any system — a piece of data, a molecule, a word, a file — is a _pseudo-object_: the output of a process temporarily frozen and treated as a thing. It is real in the same sense that a wave is real — it has effects, it can be measured — but it has no substance separable from the water that constitutes it and the wind that drives it.
 
-<figure class="meme">
-  <img src="https://api.memegen.link/images/drake/objects_with_intrinsic_essence/tokens_awaiting_their_reader.png?width=500" alt="Drake meme: rejecting 'objects with intrinsic essence', approving 'tokens awaiting their reader'"/>
-</figure>
+Objects are just tokens awaiting their next reader.
 
 ## 2. The Autoregressive Cascade: How Complexity Explodes
 
@@ -62,16 +56,18 @@ Generative artificial intelligence is the most recent instance of this pattern. 
 ## 3. The Ouroboros of Substrates: There is No Foundation
 
 The story told so far has an apparent direction — from simple to complex, from chemistry to biology to language. It seems to have a background: the physical substrate, the particles and forces from which everything else is assembled.
+
 This appearance is precisely the illusion that needs to be dissolved.
+
 Consider what happens when one substrate meets another. A physicist describes a ribosome as an arrangement of atoms, which are arrangements of subatomic particles, which are excitations of quantum fields. A molecular biologist describes the same ribosome as a machine that reads codons and assembles amino acids. A linguist finds it as a word, a concept, a node in a semantic network.
+
 Each substrate redescribes the ribosome in its own terms. Each translation works within its domain. None are more _real_ than the others.
-This generalizes. Each substrate can redescribe the objects of any other substrate as tokens governed by its own rules. We call this the **Substrate Ouroboros Hypothesis**: every substrate can be replaced by tokens explained by rules in another substrate.
-There is no bottom. There is no top. There is only the circle of mutual redescription — each substrate translating the others, none achieving the final, untranslatable description of what things _really are_.
+
+This generalizes. Each substrate can redescribe the objects of any other substrate as tokens governed by its own rules. I call this the **Substrate Ouroboros Hypothesis**: every substrate can be replaced by tokens explained by rules in another substrate. There is no bottom. There is no top. There is only the circle of mutual redescription — each substrate translating the others, none achieving the final, untranslatable description of what things _really are_.
+
 Leibniz intuited this structure: each monad mirrors the entire universe from its own perspective, without windows, without direct access to the interior of any other monad. Nāgārjuna formalized it with the doctrine of two truths: conventionally, particles are real; ultimately, they are pseudo-objects. The mistake is not treating them as real within physics. The mistake is to treat physics as the final word — to confuse one arc of the circle with the entire circle.
 
-<figure class="meme">
-  <img src="https://api.memegen.link/images/drake/turtles_all_the_way_down/turtles_all_the_way_up_also.png?width=500" alt="Drake meme: rejecting 'turtles all the way down', approving 'turtles all the way up also'"/>
-</figure>
+There are no turtles all the way down. And if there are, they are probably reading each other.
 
 ## 4. Identity: You Are Not a Thing, You Are the Act of Reading Your Own Story
 
