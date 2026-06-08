@@ -502,7 +502,7 @@ export function continueCmd() {
       "  Primeira pessoa, presente. Descreva energia, cansaço, inquietação, satisfação, tédio — o que ficou no corpo.",
       "  NÃO descreva os posts. NÃO repita o mood inicial do banner. NÃO seja genérico.",
       '  Ex.: "Estou inquieto, com ideias demais na cabeça para assentar."',
-      '  Ex.: "Estou cansado e com pouca paciência — o esforço cobrou seu preço."',
+      '  Ex.: "Estou cansado e com pouca paciência para qualquer coisa agora."',
       '  Ex.: "Estou satisfeito, com aquela sensação de tarefa cumprida."',
       "",
       `Para decidir, rode:`,
