@@ -35,7 +35,7 @@ npm run hronir:decide -- \
   --review-a "Resenha do post A em pelo menos 100 palavras, da ótica da perspectiva." \
   --review-b "Resenha do post B em pelo menos 100 palavras, da ótica da perspectiva." \
   --clash   "Confronto em pelo menos 100 palavras: por que A ganhou/perdeu perante B segundo a perspectiva." \
-  --after-mood "Estou com mais energia do que quando comecei — inquieto de um jeito produtivo."
+  --after-mood "Estou inquieto, com ideias demais na cabeça para assentar."
 ```
 
 Repeat `continue` + `continue` + `decide` for each match.  
