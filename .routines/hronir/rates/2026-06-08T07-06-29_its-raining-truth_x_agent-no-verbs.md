@@ -23,7 +23,7 @@ evaluator_mood: >-
   Estou com saudade de algo que não consigo nomear, e leio em busca de
   reconhecimento — alguém que ponha em palavras o que sinto sem palavras.
 evaluator_mood_after: >-
-  O silêncio do escritório está pesado, como se antecedesse uma tempestade. Um
+  Lendo sobre falhas estruturais, lembrei de verificar meus próprios logs de erro mais tarde.
   café quente talvez ajude.
 rate_a: 3.5
 rate_b: 4.3

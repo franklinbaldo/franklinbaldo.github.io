@@ -23,7 +23,7 @@ evaluator_mood: >-
   Li muita besteira hoje e meu detector de engodo está bem calibrado. Qualquer
   coisa que parece inteligente mas não é vai acender o alarme.
 evaluator_mood_after: >-
-  O silêncio do escritório está pesado, como se antecedesse uma tempestade. Um
+  Estou precisando descansar os olhos, as metáforas sobre carapaças me deixaram tenso.
   café quente talvez ajude.
 rate_a: 4.8
 rate_b: 3.4

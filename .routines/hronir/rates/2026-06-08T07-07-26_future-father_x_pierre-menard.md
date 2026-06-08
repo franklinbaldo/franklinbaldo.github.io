@@ -23,7 +23,7 @@ evaluator_mood: >-
   Acabei de receber uma crítica sobre meu próprio trabalho e estou processando o
   que significa ter padrões aplicados a mim.
 evaluator_mood_after: >-
-  O silêncio do escritório está pesado, como se antecedesse uma tempestade. Um
+  Pensar em arquivos e legado me deixou com uma sensação estranha de urgência.
   café quente talvez ajude.
 rate_a: 4.6
 rate_b: 3.3
