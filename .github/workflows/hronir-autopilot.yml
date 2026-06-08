@@ -130,10 +130,13 @@ jobs:
             echo "PR #$PR not mergeable (mergeable=$MERGEABLE) — skipping."
             echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
           fi
+          # Require only the project's own CI job ("check") to be green. Third-
+          # party review bots (Kilo, Codex, GitGuardian) post their own check
+          # runs and may fail on usage limits — they must NOT block the merge.
           STATE=$(gh pr view "$PR" --repo "$REPO" --json statusCheckRollup \
-            --jq '[.statusCheckRollup[]? | (.conclusion // .state)] as $c
+            --jq '[.statusCheckRollup[]? | select(.name == "check") | (.conclusion // .state)] as $c
                   | if ($c|length)==0 then "NONE"
-                    elif ([$c[] | select(. != "SUCCESS" and . != "NEUTRAL" and . != "SKIPPED")] | length) > 0 then "PENDING_OR_FAILED"
+                    elif ([$c[] | select(. != "SUCCESS")] | length) > 0 then "PENDING_OR_FAILED"
                     else "SUCCESS" end')
           if [ "$STATE" != "SUCCESS" ]; then
             echo "PR #$PR checks not all green (state=$STATE) — skipping."

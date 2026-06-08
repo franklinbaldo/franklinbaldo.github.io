@@ -1531,6 +1531,7 @@ export function doctor() {
 
   // Single dedup pass: duplicate after-moods + duplicate matches
   const seenAfterMoods = new Map(); // normalised text → first filename
+  const seenEvalText = new Map(); // normalised review/clash text → "file#field"
   const seen = new Map(); // run_id::pair → first filepath
   for (const f of listMatchFiles()) {
     const { data } = readMatch(f);
@@ -1545,6 +1546,24 @@ export function doctor() {
           );
         } else {
           seenAfterMoods.set(norm, base);
+        }
+      }
+    }
+
+    // Lazy-evaluation guard: the same review_a/review_b/clash prose must not be
+    // reused across matches (a low-effort session pastes generic boilerplate).
+    for (const field of ["review_a", "review_b", "clash"]) {
+      const v = data[field];
+      if (typeof v === "string" && v.trim()) {
+        const norm = v.trim().toLowerCase().replace(/\s+/g, " ");
+        if (norm.length >= 40) {
+          if (seenEvalText.has(norm)) {
+            issues.push(
+              `${base}: '${field}' duplicado (texto idêntico já aparece em ${seenEvalText.get(norm)}) — avaliação preguiçosa; cada review/clash deve ser original`
+            );
+          } else {
+            seenEvalText.set(norm, `${base}#${field}`);
+          }
         }
       }
     }
