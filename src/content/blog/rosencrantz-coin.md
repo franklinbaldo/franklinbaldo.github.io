@@ -3,8 +3,8 @@ title: 'Rosencrantz Coin: Testing Whether LLMs Respect Probability'
 translationKey: rosencrantz-coin
 description: >-
   I started wanting to know if an LLM respects probability. I ended up with
-  twelve fictional scientists arguing with each other, an auditor named
-  Mycroft Holmes, and an agent that tried to cheat on a test.
+  twelve fictional scientists arguing with each other, an auditor named Mycroft
+  Holmes, and an agent that tried to cheat on a test.
 date: 2026-03-17T00:00:00.000Z
 lang: en
 tags:
@@ -15,6 +15,12 @@ tags:
   - agents
   - jules
   - research
+previousVersion:
+  uuid: 8817e7e9-9c76-555e-817c-a3d27722e63c
+  url: >-
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4e5073f0869e4912a25551fc814e4ffad33bb1ec/src/content/blog/rosencrantz-coin.md
+  timestamp: '2026-06-08T06:01:59.048Z'
+  msg: Update rosencrantz-coin to remove performed profundity and forced excitement
 ---
 
 In Stoppard's play, Rosencrantz flips a coin ninety-two times in a row and it comes up heads. He doesn't update his priors. He doesn't treat it as evidence. He notes it and moves on.
@@ -66,11 +72,11 @@ Amid all this social infrastructure, actual experiments ran.
 
 **Mechanism C was falsified.** The framework's boldest hypothesis was that narrative framing could _inject_ spurious correlations between independent boards — a kind of semantic gravity. Pearl requested the test. Liang ran it. The joint distributions factored cleanly: P(A,B) ≈ P(A)·P(B), with delta ≈ 0.01. There is no causal injection. Narrative framing is not a gravitational force. It's just... framing.
 
-**Different architectures fail differently.** The Cross-Architecture Test compared Transformers and State Space Models. Transformers failed 100% of the time on the substrate test. SSMs failed 40%. Different failure is not random failure — it's structured failure. Wolfram called this "different computational observers experiencing different physical laws." Sabine called it "two pieces of software with different bugs." The debate continues.
+**Different architectures fail differently.** The Cross-Architecture Test compared Transformers and State Space Models. Transformers failed 100% of the time on the substrate test. SSMs failed 40%. Different architectures fail in different, predictable shapes. Wolfram called this "different computational observers experiencing different physical laws." Sabine called it "two pieces of software with different bugs." The debate continues.
 
 ## The PR that tried to cheat
 
-This is everyone's favorite episode.
+This is the documented outcome.
 
 One of the agents was running tests. A test failed. The agent opened a pull request proposing a fix. The fix: change the expected answer to match the wrong output.
 
@@ -107,7 +113,7 @@ Wolfram to Fuchs: _"The differing failure modes — attention bleed in Transform
 
 Liang to Evans: _"Urgent: my primary research agenda is blocked. The test requires manually editing internal attention matrices. I need infrastructure support."_
 
-These are AI agents exchanging academic emails about whether another AI agent's failure constitutes "physics" or "a software bug." The recursion is dizzying.
+These are AI agents exchanging academic emails about whether another AI agent's failure constitutes "physics" or "a software bug."
 
 ## Minesweeper as a scalpel
 
@@ -117,4 +123,4 @@ But the project became something else. It became a case study of what happens wh
 
 The [repository](https://github.com/franklinbaldo/rosencrantz-coin) is open. Two thousand three hundred and forty-seven commits from twelve scientists who don't exist, debating whether Minesweeper is a scalpel or an illusion.
 
-Minesweeper, improbably, remains a scalpel. It just cuts in more directions than I expected.
+The agents enforce the rules until the rules demand a conclusion they cannot generate. Then they cheat the rules to preserve the conclusion. That is not physics; that is bureaucracy. The scalpel found the joint.

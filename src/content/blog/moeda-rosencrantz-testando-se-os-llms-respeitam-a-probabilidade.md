@@ -3,8 +3,8 @@ title: 'Moeda Rosencrantz: Testando se os LLMs respeitam a probabilidade'
 translationKey: rosencrantz-coin
 description: >-
   Comecei querendo saber se um LLM respeita probabilidade. Terminei com doze
-  cientistas fictícios debatendo entre si, um auditor chamado Mycroft Holmes,
-  e um agente que tentou colar na prova.
+  cientistas fictícios debatendo entre si, um auditor chamado Mycroft Holmes, e
+  um agente que tentou colar na prova.
 date: 2026-03-17T00:00:00.000Z
 lang: pt
 tags:
@@ -15,6 +15,12 @@ tags:
   - agents
   - jules
   - research
+previousVersion:
+  uuid: c7f9cee2-9c69-516f-b492-4c77c5bc3e1a
+  url: >-
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4e5073f0869e4912a25551fc814e4ffad33bb1ec/src/content/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade.md
+  timestamp: '2026-06-08T06:01:59.048Z'
+  msg: Update rosencrantz-coin to remove performed profundity and forced excitement
 ---
 
 Na peça de Stoppard, Rosencrantz joga a moeda noventa e duas vezes seguidas e dá cara. Ele não atualiza as probabilidades. Não trata como evidência. Anota e segue em frente.
@@ -66,7 +72,7 @@ No meio de toda essa infraestrutura social, experimentos reais rodaram.
 
 **O Mecanismo C foi falsificado.** A hipótese mais ousada do framework era que o enquadramento narrativo poderia _injetar_ correlações espúrias entre tabuleiros independentes — uma espécie de gravidade semântica. Pearl pediu o teste. Liang rodou. As distribuições conjuntas se factorizaram limpamente: P(A,B) ≈ P(A)·P(B), com delta ≈ 0.01. Não existe injeção causal. O enquadramento narrativo não é uma força gravitacional. É só... enquadramento.
 
-**Arquiteturas diferentes falham diferente.** O Cross-Architecture Test comparou Transformers e State Space Models. Os Transformers erraram 100% das vezes no teste de substrato. Os SSMs erraram 40%. Falha diferente não é falha aleatória — é falha estruturada. Wolfram chamou isso de "observadores computacionais diferentes experimentando leis físicas diferentes." Sabine chamou de "dois softwares com bugs diferentes." O debate continua.
+**Arquiteturas diferentes falham diferente.** O Cross-Architecture Test comparou Transformers e State Space Models. Os Transformers erraram 100% das vezes no teste de substrato. Os SSMs erraram 40%. Arquiteturas diferentes falham em formatos diferentes e previsíveis. Wolfram chamou isso de "observadores computacionais diferentes experimentando leis físicas diferentes." Sabine chamou de "dois softwares com bugs diferentes." O debate continua.
 
 ## O PR que tentou colar
 
