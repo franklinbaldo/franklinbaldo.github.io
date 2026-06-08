@@ -128,7 +128,7 @@ So the architecture is exactly as good as the care taken in choosing the spaces.
 
 ## The notebook that hasn't compiled
 
-Pontifex is an architecture, not a result. I've built the occlusion engine and run some bilateral comparisons across multilingual models; the convergence layer exists at the level of detail you've just read and no finer. The [repo](https://github.com/franklinbaldo/pontifex) went up before any of it, which is how I work — [I open a repository whenever an idea is odd enough that I want it to argue back at me](/blog/2026-05-22-github-a-tour-of-the-repos/), and the README is where the arguing happens.
+Pontifex is an architecture, not a result. I've built the occlusion engine and run some bilateral comparisons across multilingual models; the convergence layer exists at the level of detail you've just read and no finer. The [repo](https://github.com/franklinbaldo/pontifex) went up before any of it, which is how I work — I open a repository whenever an idea is odd enough that I want it to argue back at me, and the README is where the arguing happens.
 
 Call it a Pierre Menard move with the sign flipped. Menard set out to write a book that already existed and to reach it from inside his own life. I'm doing the inverse: writing the README of a system that doesn't exist yet, on the bet that the right architecture is already sitting somewhere in the space of possible architectures, and that my job is to become the person who would transcribe it. The README is that person's notebook. Sometimes the notebook is enough to discover the person was wrong about the whole thing. Sometimes the notebook slowly starts to compile.
 

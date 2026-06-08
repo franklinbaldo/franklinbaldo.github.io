@@ -13,6 +13,16 @@ try {
   // File not yet generated — sitemap will emit blog posts without hreflang.
 }
 
+/** @type {Record<string, string>} */
+let blogRedirects = {};
+try {
+  blogRedirects = JSON.parse(
+    readFileSync("./src/generated/blog-redirects.json", "utf-8")
+  );
+} catch {
+  // File not yet generated — legacy date-prefixed URLs won't redirect.
+}
+
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import remarkMath from "remark-math";
@@ -83,6 +93,7 @@ export default defineConfig({
   ],
   redirects: {
     "/musicas/": "/music/",
+    ...blogRedirects,
   },
   prefetch: {
     defaultStrategy: "viewport",
