@@ -18,7 +18,7 @@ previousVersion:
   uuid: 199020b0-5a55-5452-ab25-579928e0b84b
   url: >-
     https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4e5073f0869e4912a25551fc814e4ffad33bb1ec/src/content/blog/tudo-e-processo.md
-  timestamp: '2026-06-08T04:38:44.361Z'
+  timestamp: '2026-06-08T05:26:25.434Z'
   msg: >-
     Rewrote to avoid listicle formatting, removed academic tone, and deadpan
     ending
