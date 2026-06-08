@@ -1,8 +1,8 @@
 ---
 title: 'The Art of Delegation: Signatures and Sandboxes'
 description: >-
-  The sandbox separates draft from act. What it doesn't do is answer where the
-  accountability lives when the sandbox fails.
+  The anxiety about autonomous agents isn't about what they know. It's about the
+  fact that, in code, the distance between writing and signing has disappeared.
 date: '2026-03-28'
 lang: en
 tags:
@@ -15,55 +15,57 @@ draft: false
 author: franklin
 translationKey: delegating-to-agents
 previousVersion:
-  uuid: 09318476-1009-5abe-bf6a-86e789067dec
+  uuid: af592b0d-035b-5dbe-8ed5-d540b2fe3fa2
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/a1d9cabb963c9674fbeea140d68240830f231062/src/content/blog/the-art-of-delegation.md
-  timestamp: '2026-06-06T13:30:49.440Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4d6c9b2a2b5711080406dfc7e9886ca65287595f/src/content/blog/the-art-of-delegation.md
+  timestamp: '2026-06-08T10:41:16.435Z'
   msg: >-
-    Broke opener from programmatic framing to direct scene; folded analogy-flaw
-    into sandbox section mid-argument instead of announcing it; removed Drake
-    meme; grounded outsider terms (parecer, ofício, CI/CD, corregedoria,
-    Causaganha, Funes) on first use; added Vaughan Challenger reference as
-    challenger to post's own thesis; 5 For Further Reading entries from 4
+    Revised worst post based on evaluation feedback to give it real stakes and a
+    stronger argument about accountability
 ---
 
-In February, I almost missed a forty-eight-hour window in a federal tax objection because I had begun treating the assessor's draft as the deliverable. The _parecer_ — the formal legal opinion that travels up the chain before anything gets signed — was good. The submission was not filed. I found out Tuesday afternoon when a calendar alert fired for a deadline I had mentally moved from my column to the assessor's column the moment the draft landed. It had not moved.
+In February, a deadline to object to a federal infraction almost closed without a filing because I made the most basic mistake in bureaucracy: I confused who writes with who signs.
 
-The tribunal doesn't ask who proposed the wrong date. It asks who signed.
+The draft was in my inbox, flawless. The deadline was Tuesday. Mentally, I had already dispatched the problem. But the Federal Justice doesn't read drafts. The Federal Justice only reads what has a digital certificate attached to it.
 
-That's not a procedural technicality. That is the reason the signature exists.
+I spend my days reading _pareceres_ (formal legal opinions) in Rondônia. The silent agreement between the attorney and the assessor is that the assessor builds the machine — cross-references jurisprudence, stacks the facts, proposes the conclusion — and the attorney turns the key. The signature isn't a quality control stamp; it's the irreversible act that transforms speculative text into state force.
 
-I spend my days in a state attorney's office in Rondônia, reading _pareceres_ and signing the ones that don't terrify me. When I delegate the drafting, I am not outsourcing judgment — I am delegating the traversal of the case file, the identification of the applicable law, the construction of the argument. What I am _not_ delegating is the signature. The signature is the irreversible boundary: the moment the act enters the record and the deadlines start moving.
+The anxiety surrounding agents like Jules or Devin doesn't come from the fact that they hallucinate libraries. It comes from the fact that the environment in which they operate — the Git repository, the CI/CD pipeline — was built by a culture that erased the distinction between drafting the opinion and signing the dispatch. In software, if the tests pass, the PR merges. The draft _is_ the act.
 
-Software engineering doesn't natively recognize this distinction because the feedback loop compresses it. In law, the gap between draft and act is physically legible — the assessor finishes, the protocol office has its window, the court has its own schedule. In code, the developer writes the function, the tests pass in thirty seconds, the PR merges on green. Draft and act become one continuous motion, and nobody writes down where one ends and the other begins.
+When you put an autonomous agent in that pipe, you aren't just automating writing. You are automating signing. That is what is terrifying.
 
-## The boundaries of the sandbox
+To solve this, the default engineering intuition is to build a sandbox.
 
-The anxiety about AI agents is real and it has nothing to do with capability. When I hand Jules a refactoring task, I am not worried Jules will choose the wrong design pattern. I am worried Jules has write access.
+The sandbox restricts what the machine can see and where it can touch. You create paranoid linting rules, unforgiving tests, and deployment policies that tie the agent's hands. The idea is that, if the box is tight enough, the agent cannot cause irreparable harm. If the tests pass, the agent proposes; the human approves.
 
-The solution is not to stand over Jules's shoulder while it writes. The solution is a sandbox where the agent's actions are explicitly treated as _proposals_. The CI/CD pipeline — the automated sequence of builds, tests, and checks that must pass before any code goes live — the test suites, the strict linting rules: these are not just quality assurance mechanisms. They are the institutional equivalent of the rule that says an assessor can draft a _parecer_, but cannot sign the final _ofício_ (the official dispatch that goes out the door and binds the institution).
+This sounds like a dispatch waiting for the attorney's signature, but it's a false mirror.
 
 The magic of delegation happens when you constrain the output space, not the process. You define the bounds of the sandbox — the schema, the invariants, the tests — and allow the agent to navigate the interior freely. If the tests pass, the proposal is valid. But the _apply_ step — the actual merging of the PR, the deployment to production — that remains a human signature. A CI pipeline that cannot be bypassed is a protocol office: a mandatory processing step between the draft and the act.
 
-This is where the administrative law parallel flatters the software problem. In a _parecer_, the assessor's accountability is professional. Consistently bad legal advice leads to formal review — the _corregedoria_ (the internal oversight body), the professional council, eventually the career. There is a chain from the act to the person who drafted it, and that chain has teeth. The signature doesn't only separate draft from act: it separates whose career is on the line from whose was not.
+In a real administrative structure, the assessor has a career to lose. Drafts that ignore the law lead to internal oversight. There is a structural tension that holds the system up: the person who does not sign the act still answers for the quality of the draft. The chain of accountability has teeth.
 
-An AI agent has no career. It cannot be disciplined. The sandbox constrains what it can do, but the sandbox doesn't answer what happens when the sandbox fails. When an agent does something wrong inside the bounds of its access, accountability flows upward to the human who designed the harness — not sideways to the agent. That is not a property I built in; it is a property of agents without institutional standing.
+An LLM has no career to lose. The "harness" of rules you put around it (the tests, the negative prompts, the sandbox) doesn't create an institutional position; it just creates a harder maze to solve. When the maze fails, and the agent produces a hallucination that passes the unit tests and the human approves without reading the diff carefully, accountability flows entirely upward to the human who designed the sandbox.
 
-The sandbox is necessary. It is not sufficient for accountability. The signature step in software delegation is doing more work than the administrative parallel suggests: it is not just making the proposal-versus-act boundary explicit. It is also carrying all the professional weight that the agent structurally cannot carry.
+There is no lateral accountability. The step of "approving a Pull Request" done by a human in relation to a software agent carries a weight that Administrative Law does not ask the attorney to carry: that of assuming not just the final decision, but the moral authorship of the proposal itself.
 
-I did not see this clearly until I was writing out the analogy and noticed the sentence "the assessor is good" sounded reasonable in a way that "Jules is good" does not, and could not, quite mean the same thing. Both sentences describe capacity. Only one describes a person who can be accountable for anything.
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/custom/the_assessor_is_good/Jules_is_good.jpg?background=https://i.imgflip.com/4/8q5y4u.jpg&width=500"
+    alt="Meme showing two different levels of realization. 'The assessor is good' (calm). 'Jules is good' (panicked)."
+    loading="lazy"
+  />
+  <figcaption>Both sentences describe capacity. Only one describes someone who can be fired.</figcaption>
+</figure>
 
-I had been thinking of the signature as a formality. It is a formality. It is also the thing that makes the February mistake mine and not Jules's.
+This is the boundary the bureaucratic analogy tries to hide. I thought the signature was just what separated proposal from action. It is. But in the world of synthetic agents, the signature is also what hides the fact that there is no one on the other side of the table.
 
-## The harness as constitutional design
+When [Funes](/blog/funes-soul/) writes the draft of an issue and waits for me to publish it, the rule preventing him from posting alone isn't behavioral — the harness simply doesn't have wires connected to the GitHub posting API. The severed wire forces the signature.
 
-This is why the harness matters more than the model. [Funes](/blog/funes-soul/) — the AI agent I've built on top of Claude to handle delegated work across my projects — is not Claude. Funes is Claude wrapped in a specific set of rules, memories, and constraints.
+_Reversível → age, irreversível → pergunta._ (Reversible → act, irreversible → ask.)
 
-Funes opens pull requests; he does not merge them. He updates memory files; he does not send emails on his own. When I asked him to draft a response to an external inquiry about [Causaganha](https://github.com/franklinbaldo/causaganha), my open-source project for parsing Brazil's official gazette decisions, he wrote the draft and created a PR containing it. He did not send the message. Not because a rule said _do not send messages without permission_. Because the harness had no wiring for outbound external messages — the sandbox made the signature step structurally required, not behaviorally enforced.
+But even if he asked, if he generated something catastrophic that I didn't read properly and signed, internal oversight wouldn't go after the Python script. They would come after me. The mistake in February proved that to me. Bureaucracy is built on meat, not tokens.
 
-_Reversível → age, irreversível → pergunta._ That is not just a safety heuristic; it is a decision about where accountability concentrates. Every action the agent takes freely is an action whose accountability has been pre-delegated by whoever designed the harness. Every action requiring a signature is an action whose accountability remains explicitly with the human who signs.
-
-The _parecer_ was good. That sentence is about the assessor. The submission was not filed. That sentence is about me.
+The sandbox works to limit the damage the machine can cause. But it is the signature that reveals who will pay for it.
 
 ## For further reading
 
