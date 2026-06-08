@@ -1,7 +1,9 @@
 ---
 title: 'O Rio e o Ribossomo: Notas sobre Ontologia de Processos'
 description: >-
-  A programação orientada a objetos insiste que a realidade é feita de substâncias. A biologia e a filosofia do processo sugerem que estamos lidando com cascatas autorregressivas até a raiz.
+  A programação orientada a objetos insiste que a realidade é feita de
+  substâncias. A biologia e a filosofia do processo sugerem que estamos lidando
+  com cascatas autorregressivas até a raiz.
 date: 2026-02-26T00:00:00.000Z
 lang: pt
 translationKey: everything-is-process
@@ -11,19 +13,14 @@ tags:
   - complexidade
   - teoria-da-montagem
 previousVersion:
-  uuid: 139a5276-245a-5bf9-9889-f5a12ef0c417
+  uuid: 199020b0-5a55-5452-ab25-579928e0b84b
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/f99c954b050808d56071e1e5dbd0e1801baf34ac/src/content/blog/tudo-e-processo.md
-  timestamp: '2026-06-06T11:52:16.793Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/79701c1829ed27032b0ba9cc3d4745c6e46aaee5/src/content/blog/tudo-e-processo.md
+  timestamp: '2026-06-08T00:42:39.325Z'
   msg: >-
-    Removed self-help conclusion ('Write a Story Worth Reading'), closing
-    question, and John 1:1 callback — all of which domesticated the vertigo the
-    essay was building. Replaced with a short deadpan close that admits the
-    reflexive problem: the essay was partly written with an AI, which the
-    framework describes as exactly another autoregressive reader. The 'you
-    survive as contribution to the cascade' line is kept but stripped of its
-    motivational framing. Ending stays open.
-replacedVersion: "199020b0-5a55-5452-ab25-579928e0b84b"
+    Removed didactic 5-lessons listicle framing. Grounded the opening in OOP vs
+    Process Ontology. Trimmed encyclopedic name-dropping. Added For Further
+    Reading section.
 ---
 
 Passo a maior parte do meu dia trabalhando dentro das premissas da programação orientada a objetos. Nesse paradigma, o mundo é feito de substâncias. Um usuário é um usuário. Um documento é um documento. Essas coisas têm propriedades, e passam por mudanças de estado, mas por baixo do estado cambiante há uma entidade duradoura. Você instancia um objeto, e ele fica lá na memória, sendo ele mesmo, até ser recolhido pelo _garbage collector_.

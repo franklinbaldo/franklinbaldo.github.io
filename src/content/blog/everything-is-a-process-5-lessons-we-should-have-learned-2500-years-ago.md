@@ -1,7 +1,9 @@
 ---
 title: 'The River and the Ribosome: Notes on Process Ontology'
 description: >-
-  Object-oriented programming insists that reality is made of substances. Biology and process philosophy suggest we are dealing with autoregressive cascades all the way down.
+  Object-oriented programming insists that reality is made of substances.
+  Biology and process philosophy suggest we are dealing with autoregressive
+  cascades all the way down.
 date: 2026-02-26T00:00:00.000Z
 lang: en
 translationKey: everything-is-process
@@ -11,19 +13,14 @@ tags:
   - complexity
   - assembly-theory
 previousVersion:
-  uuid: 0ed4e735-82c5-571a-99a4-397266e1580d
+  uuid: 26dcb3b5-9232-57df-bb89-fe4c87919736
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/f99c954b050808d56071e1e5dbd0e1801baf34ac/src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
-  timestamp: '2026-06-06T11:52:16.793Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/79701c1829ed27032b0ba9cc3d4745c6e46aaee5/src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
+  timestamp: '2026-06-08T00:42:39.325Z'
   msg: >-
-    Removed self-help conclusion ('Write a Story Worth Reading'), closing
-    question, and John 1:1 callback — all of which domesticated the vertigo the
-    essay was building. Replaced with a short deadpan close that admits the
-    reflexive problem: the essay was partly written with an AI, which the
-    framework describes as exactly another autoregressive reader. The 'you
-    survive as contribution to the cascade' line is kept but stripped of its
-    motivational framing. Ending stays open.
-replacedVersion: "26dcb3b5-9232-57df-bb89-fe4c87919736"
+    Removed didactic 5-lessons listicle framing. Grounded the opening in OOP vs
+    Process Ontology. Trimmed encyclopedic name-dropping. Added For Further
+    Reading section.
 ---
 
 I spend most of my day working inside the assumptions of object-oriented programming. In this paradigm, the world is made of substances. A user is a user. A document is a document. These things have properties, and they undergo state changes, but underneath the changing state is an enduring entity. You instantiate an object, and it sits there in memory, being itself, until it is garbage collected.
