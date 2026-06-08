@@ -23,6 +23,29 @@ import {
 import { pickRandomMood, MOODS } from "./moods.js";
 
 const MIN_APPEARANCES = 3;
+
+// Word-trigram shingles for near-duplicate detection of review/clash prose.
+function shingleSet(text) {
+  const words = String(text)
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim()
+    .match(/[\p{L}\p{N}]+/gu);
+  const set = new Set();
+  if (!words) return set;
+  for (let i = 0; i + 2 < words.length; i++) {
+    set.add(`${words[i]} ${words[i + 1]} ${words[i + 2]}`);
+  }
+  return set;
+}
+
+function jaccard(a, b) {
+  if (a.size === 0 || b.size === 0) return 0;
+  let inter = 0;
+  const [small, big] = a.size < b.size ? [a, b] : [b, a];
+  for (const s of small) if (big.has(s)) inter++;
+  return inter / (a.size + b.size - inter);
+}
 const STALE_BONUS = 3.0;
 const SKILLS_DIR = "scripts/hronir/skills";
 const ARCHIVE_DIR = path.join(OUT_DIR, "archive");
@@ -1531,6 +1554,7 @@ export function doctor() {
 
   // Single dedup pass: duplicate after-moods + duplicate matches
   const seenAfterMoods = new Map(); // normalised text → first filename
+  const seenEvalText = []; // [{ ref: "file#field", shingles: Set }]
   const seen = new Map(); // run_id::pair → first filepath
   for (const f of listMatchFiles()) {
     const { data } = readMatch(f);
@@ -1545,6 +1569,33 @@ export function doctor() {
           );
         } else {
           seenAfterMoods.set(norm, base);
+        }
+      }
+    }
+
+    // Lazy-evaluation guard: review_a/review_b/clash prose must not be reused
+    // across matches. Catches both verbatim copies and "templated" text where
+    // only post names were swapped (near-duplicates), which a low-effort or
+    // broken session emits in bulk.
+    for (const field of ["review_a", "review_b", "clash"]) {
+      const v = data[field];
+      if (typeof v === "string" && v.trim()) {
+        const shingles = shingleSet(v);
+        if (shingles.size >= 10) {
+          let dupOf = null;
+          for (const prev of seenEvalText) {
+            if (jaccard(shingles, prev.shingles) >= 0.85) {
+              dupOf = prev.ref;
+              break;
+            }
+          }
+          if (dupOf) {
+            issues.push(
+              `${base}: '${field}' quase-idêntico a ${dupOf} — avaliação preguiçosa/templada; cada review/clash deve ser original`
+            );
+          } else {
+            seenEvalText.push({ ref: `${base}#${field}`, shingles });
+          }
         }
       }
     }
