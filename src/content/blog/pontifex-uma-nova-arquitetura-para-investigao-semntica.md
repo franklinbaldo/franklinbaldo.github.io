@@ -132,7 +132,7 @@ Então a arquitetura é exatamente tão boa quanto o cuidado empregado na escolh
 
 ## O caderno que não compilou
 
-Pontifex é uma arquitetura, não um resultado. Eu construí o motor de oclusão e rodei algumas comparações bilaterais em modelos multilíngues; a camada de convergência existe no nível de detalhe que você acabou de ler e não além disso. O [repositório](https://github.com/franklinbaldo/pontifex) foi pro ar antes de qualquer coisa, que é como eu trabalho — [abro um repositório sempre que uma ideia é estranha o bastante pra que eu queira que ela discuta comigo](/blog/2026-05-22-github-um-tour-pelos-repos/), e o README é onde a discussão acontece.
+Pontifex é uma arquitetura, não um resultado. Eu construí o motor de oclusão e rodei algumas comparações bilaterais em modelos multilíngues; a camada de convergência existe no nível de detalhe que você acabou de ler e não além disso. O [repositório](https://github.com/franklinbaldo/pontifex) foi pro ar antes de qualquer coisa, que é como eu trabalho — abro um repositório sempre que uma ideia é estranha o bastante pra que eu queira que ela discuta comigo, e o README é onde a discussão acontece.
 
 Chame de gesto à Pierre Menard com o sinal trocado. Menard partiu pra escrever um livro que já existia e alcançá-lo a partir de dentro da própria vida. Eu estou fazendo o inverso: escrevendo o README de um sistema que ainda não existe, apostando que a arquitetura certa já está em algum lugar do espaço das arquiteturas possíveis, e que meu trabalho é me tornar a pessoa que a transcreveria. O README é o caderno dessa pessoa. Às vezes o caderno basta pra descobrir que a pessoa errou sobre tudo. Às vezes o caderno começa devagar a compilar.
 

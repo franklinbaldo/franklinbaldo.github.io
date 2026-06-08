@@ -2,54 +2,23 @@
 // src/generated/blog-translation-pairs.json — a bidirectional map
 // { "/blog/slug/": { en: "/blog/en-slug/", pt: "/blog/pt-slug/" } }
 // Used by astro.config.mjs to inject hreflang links into the sitemap.
-import { readFileSync, readdirSync, writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { DEFAULT_LANG, LANG_META } from "../src/lib/languages.mjs";
+import { loadPosts } from "./lib/blog-links.mjs";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
-const blogDir = join(__dir, "../src/content/blog");
 const outDir = join(__dir, "../src/generated");
 const outFile = join(outDir, "blog-translation-pairs.json");
 
-const files = readdirSync(blogDir).filter(
-  (f) => f.endsWith(".md") || f.endsWith(".mdx")
-);
-
-const posts = [];
-for (const file of files) {
-  const raw = readFileSync(join(blogDir, file), "utf-8");
-  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!match) continue;
-  const fm = match[1];
-
-  const get = (key) => {
-    const m = fm.match(new RegExp(`^${key}:\\s*([^\r\n]+)$`, "m"));
-    return m ? m[1].trim() : undefined;
-  };
-
-  if (get("draft") === "true") continue;
-
-  const publishDateRaw = get("publishDate");
-  if (publishDateRaw) {
-    const publishDate = new Date(publishDateRaw);
-    if (!Number.isNaN(publishDate.valueOf()) && publishDate > new Date())
-      continue;
-  }
-
-  const key = get("translationKey");
-  if (!key) continue;
-
-  const lang = get("lang") ?? DEFAULT_LANG;
-  const id = file.replace(/\.mdx?$/, "");
-  posts.push({ id, lang, key });
-}
+const eligible = loadPosts().filter((p) => p.published && p.translationKey);
 
 // Group by translationKey → { [lang]: url }
 const grouped = {};
-for (const p of posts) {
-  if (!grouped[p.key]) grouped[p.key] = {};
-  grouped[p.key][p.lang] =
+for (const p of eligible) {
+  if (!grouped[p.translationKey]) grouped[p.translationKey] = {};
+  grouped[p.translationKey][p.lang] =
     p.lang === "pt" ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`;
 }
 
