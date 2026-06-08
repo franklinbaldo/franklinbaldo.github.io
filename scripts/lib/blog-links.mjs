@@ -47,7 +47,6 @@ export function loadPosts() {
       draft,
       published,
       translationKey: get("translationKey"),
-      date: get("date"),
       body,
     };
   });
