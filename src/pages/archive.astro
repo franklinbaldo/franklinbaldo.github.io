@@ -67,9 +67,9 @@ const archiveLd = {
     </nav>
   )}
 
-  {years.map((year) => (
-    <section aria-labelledby={`archive-${year}`} class="archive-year">
-      <h2 id={`archive-${year}`}>{year}</h2>
+  {years.map((year, idx) => (
+    <details id={`archive-${year}`} class="archive-year" open={idx === 0}>
+      <summary class="archive-year-summary">{year} — {byYear.get(year)!.length} posts</summary>
       <table class="striped archive-table">
         <thead>
           <tr>
@@ -111,7 +111,7 @@ const archiveLd = {
           })}
         </tbody>
       </table>
-    </section>
+    </details>
   ))}
 </PageLayout>
 
@@ -138,7 +138,29 @@ const archiveLd = {
     background: color-mix(in srgb, var(--pico-primary) 20%, transparent);
     text-decoration: none;
   }
-  .archive-year { margin-block: calc(var(--pico-spacing) * 1.5); }
+  details.archive-year {
+    margin-block: calc(var(--pico-spacing) * 1.5);
+    border: none;
+    padding: 0;
+  }
+  details.archive-year > summary {
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding-block: 0.3em;
+    color: var(--pico-heading-color, inherit);
+    list-style: none;
+    user-select: none;
+  }
+  details.archive-year > summary::-webkit-details-marker { display: none; }
+  details.archive-year > summary::before {
+    content: "▶ ";
+    font-size: 0.65em;
+    opacity: 0.45;
+    display: inline-block;
+    margin-inline-end: 0.2em;
+  }
+  details.archive-year[open] > summary::before { content: "▼ "; }
   .archive-table { font-size: 0.95rem; }
   .archive-table .col-date {
     width: 6rem;
