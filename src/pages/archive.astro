@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import PageLayout from "../layouts/PageLayout.astro";
 import { isPublished } from "../lib/publish";
 import { t } from "../lib/i18n";
+import { getRankByKey } from "../lib/hronir-rank";
 
 const all = await getCollection("blog");
 
@@ -25,6 +26,8 @@ for (const post of posts) {
   byYear.get(year)!.push(post);
 }
 const years = [...byYear.keys()].sort((a, b) => b - a);
+
+const rankByKey = getRankByKey();
 
 function estMinutes(body: string | undefined): number {
   if (!body) return 1;
@@ -73,6 +76,7 @@ const archiveLd = {
             <th scope="col" class="col-date">Date</th>
             <th scope="col">Title</th>
             <th scope="col" class="col-min" aria-label="Estimated reading time">~min</th>
+            <th scope="col" class="col-rank" aria-label="Hrönir rank">#</th>
             <th scope="col" class="col-pt" aria-label="Portuguese version available">PT</th>
           </tr>
         </thead>
@@ -80,6 +84,7 @@ const archiveLd = {
           {byYear.get(year)!.map((post) => {
             const ptId = post.data.translationKey ? ptByKey.get(post.data.translationKey) : undefined;
             const mins = estMinutes(post.body);
+            const rankInfo = post.data.translationKey ? rankByKey.get(post.data.translationKey) : undefined;
             return (
               <tr>
                 <td class="col-date">
@@ -89,6 +94,13 @@ const archiveLd = {
                 </td>
                 <td><a href={`/blog/${post.id}/`}>{post.data.title}</a></td>
                 <td class="col-min">{mins}</td>
+                <td class="col-rank">
+                  {rankInfo && (
+                    <a class="rank-badge" href="/ranking/" title={`Hrönir rank: #${rankInfo.rank} of ${rankInfo.total} (ordinal ${rankInfo.row.ordinal.toFixed(2)})`}>
+                      #{rankInfo.rank}
+                    </a>
+                  )}
+                </td>
                 <td class="col-pt">
                   {ptId && (
                     <a class="pt-badge" href={`/pt/blog/${ptId}/`} aria-label="Portuguese version available" title="Ler em Português">PT</a>
@@ -142,6 +154,20 @@ const archiveLd = {
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
+  .col-rank {
+    width: 3rem;
+    text-align: right;
+    font-size: 0.78rem;
+    color: var(--pico-muted-color);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  a.rank-badge {
+    color: var(--pico-muted-color);
+    text-decoration: none;
+    font-variant-numeric: tabular-nums;
+  }
+  a.rank-badge:hover { color: var(--pico-primary); text-decoration: underline; }
   .col-pt {
     width: 2.5rem;
     text-align: center;

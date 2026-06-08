@@ -86,10 +86,12 @@ const blurb =
   lang === "pt"
     ? "Resenhas dos duelos par-a-par, escritas a partir de uma perspectiva de leitura sorteada."
     : "Reviews from pairwise duels, each written from a randomly assigned reader perspective.";
-const wonLabel     = lang === "pt" ? "✓ Venceu" : "✓ Won";
-const lostLabel    = lang === "pt" ? "✗ Perdeu" : "✗ Lost";
-const verdictLabel = lang === "pt" ? "Veredito do confronto" : "Clash verdict";
-const vsLabel      = "vs";
+const wonLabel       = lang === "pt" ? "✓ Venceu" : "✓ Won";
+const lostLabel      = lang === "pt" ? "✗ Perdeu" : "✗ Lost";
+const verdictLabel   = lang === "pt" ? "Veredito do confronto" : "Clash verdict";
+const moodBeforeLabel = lang === "pt" ? "Humor inicial" : "Initial mood";
+const moodAfterLabel  = lang === "pt" ? "Humor final" : "After mood";
+const vsLabel        = "vs";
 ---
 
 {cards.length > 0 && (
@@ -138,6 +140,20 @@ const vsLabel      = "vs";
                 <div set:html={marked.parse(d.parsedContent.verdict)} />
               </details>
             )}
+            {(d.evaluatorMood || d.evaluatorMoodAfter) && (
+              <div class="hronir-moods">
+                {d.evaluatorMood && (
+                  <span class="mood-chip mood-before" title={moodBeforeLabel}>
+                    <span class="mood-icon">🌡</span>{d.evaluatorMood}
+                  </span>
+                )}
+                {d.evaluatorMoodAfter && (
+                  <span class="mood-chip mood-after" title={moodAfterLabel}>
+                    <span class="mood-icon">💭</span>{d.evaluatorMoodAfter}
+                  </span>
+                )}
+              </div>
+            )}
           </article>
         ))}
       </div>
@@ -183,6 +199,20 @@ const vsLabel      = "vs";
                 <summary>{verdictLabel}</summary>
                 <div set:html={marked.parse(d.parsedContent.verdict)} />
               </details>
+            )}
+            {(d.evaluatorMood || d.evaluatorMoodAfter) && (
+              <div class="hronir-moods">
+                {d.evaluatorMood && (
+                  <span class="mood-chip mood-before" title={moodBeforeLabel}>
+                    <span class="mood-icon">🌡</span>{d.evaluatorMood}
+                  </span>
+                )}
+                {d.evaluatorMoodAfter && (
+                  <span class="mood-chip mood-after" title={moodAfterLabel}>
+                    <span class="mood-icon">💭</span>{d.evaluatorMoodAfter}
+                  </span>
+                )}
+              </div>
             )}
           </article>
         ))}
@@ -329,5 +359,29 @@ const vsLabel      = "vs";
       background: hsl(var(--ph, 200), 40%, 20%);
       color: hsl(var(--ph, 200), 70%, 75%);
     }
+  }
+
+  .hronir-moods {
+    margin-top: 0.75rem;
+    padding-top: 0.6rem;
+    border-top: 1px dashed var(--pico-muted-border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .mood-chip {
+    font-size: 0.75rem;
+    color: var(--pico-muted-color);
+    line-height: 1.5;
+    display: flex;
+    gap: 0.4rem;
+    align-items: flex-start;
+  }
+  .mood-icon {
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+  .mood-after {
+    font-style: italic;
   }
 </style>

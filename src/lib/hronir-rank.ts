@@ -2,12 +2,16 @@
 // Reads .routines/hronir/*.md, runs OpenSkill, exposes a Map<key, RankRow>
 // keyed by translationKey, plus a sorted array.
 
-import { computeRatings } from "../../scripts/hronir/lib/ranking.js";
+import {
+  computeRatings,
+  computePerPerspectiveRatings,
+} from "../../scripts/hronir/lib/ranking.js";
 import {
   listMatchFiles,
   readMatch,
   postKey,
 } from "../../scripts/hronir/lib/matches.js";
+import { listPerspectives } from "../../scripts/hronir/lib/perspectives.js";
 
 export interface RankRow {
   key: string;
@@ -42,6 +46,8 @@ export interface DuelEntry {
   perspectiveId?: string;
   rateA?: number;
   rateB?: number;
+  evaluatorMood?: string;
+  evaluatorMoodAfter?: string;
   parsedContent?: DuelContent;
 }
 
@@ -176,6 +182,12 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
         typeof (data as any).rate_b === "number"
           ? (data as any).rate_b
           : undefined,
+      evaluatorMood: (data as any).evaluator_mood
+        ? String((data as any).evaluator_mood)
+        : undefined,
+      evaluatorMoodAfter: (data as any).evaluator_mood_after
+        ? String((data as any).evaluator_mood_after)
+        : undefined,
       parsedContent: parseDuelContent(
         content ? String(content).trim() : undefined,
         data as Record<string, unknown>
@@ -207,4 +219,37 @@ export function getRecentDuels(limit = 8): DuelEntry[] {
 
 export function getAllDuels(): DuelEntry[] {
   return loadDuelData().recent;
+}
+
+export interface PerspectiveMeta {
+  id: string;
+  name: string;
+  summary: string;
+}
+
+export interface PerspectiveRankRow {
+  key: string;
+  ordinal: number;
+  appearances: number;
+  wins: number;
+}
+
+export function getPerspectives(): PerspectiveMeta[] {
+  // listPerspectives() returns {id,name,summary,body,path}[] from JS — we
+  // strip the extra fields here so callers only receive the typed subset.
+  const all = listPerspectives() as unknown as Array<{
+    id: string;
+    name: string;
+    summary: string;
+  }>;
+  return all.map((p) => ({ id: p.id, name: p.name, summary: p.summary }));
+}
+
+export function getPerPerspectiveRankings(): Map<string, PerspectiveRankRow[]> {
+  // computePerPerspectiveRatings() returns Map<string, {key,ordinal,appearances,wins}[]>
+  // which matches PerspectiveRankRow[] exactly.
+  return computePerPerspectiveRatings() as unknown as Map<
+    string,
+    PerspectiveRankRow[]
+  >;
 }

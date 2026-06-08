@@ -20,7 +20,7 @@ import {
   loadPerspective,
   listPerspectives,
 } from "./perspectives.js";
-import { pickRandomMood } from "./moods.js";
+import { pickRandomMood, MOODS } from "./moods.js";
 
 const MIN_APPEARANCES = 3;
 const STALE_BONUS = 3.0;
@@ -321,6 +321,18 @@ function generateNextMatch() {
     evalLang = s.evalLang || "pt";
   }
 
+  // For each post, randomly pick which language version to show. The ranking
+  // key is always the translationKey (derived from EN), but the evaluator
+  // reads whichever language is randomly selected.
+  function pickLangVariant(post) {
+    const variants = findTranslations(post.translationKey);
+    if (variants.length <= 1) return { path: post.path, lang: "en" };
+    const v = variants[Math.floor(Math.random() * variants.length)];
+    return { path: v.path, lang: v.lang || "en" };
+  }
+  const aVariant = pickLangVariant(a);
+  const bVariant = pickLangVariant(b);
+
   const perspective = pickRandomPerspective();
   const recordedMoods = [];
   for (const f of listMatchFiles()) {
@@ -336,19 +348,21 @@ function generateNextMatch() {
   const evaluatorMood = pickRandomMood(recordedMoods);
 
   console.log(
-    `Gerado match ${matchIndex} (active sampling). Perspectiva: ${perspective.name}.`
+    `Gerado match ${matchIndex} (active sampling). Perspectiva: ${perspective.name}. Idiomas: ${aVariant.lang}/${bVariant.lang}.`
   );
   return {
     match_index: matchIndex,
     post_a: {
       key: a.translationKey,
-      path: a.path,
-      version: getPostUuid(a.path),
+      path: aVariant.path,
+      display_lang: aVariant.lang,
+      version: getPostUuid(aVariant.path),
     },
     post_b: {
       key: b.translationKey,
-      path: b.path,
-      version: getPostUuid(b.path),
+      path: bVariant.path,
+      display_lang: bVariant.lang,
+      version: getPostUuid(bVariant.path),
     },
     agent_id: agentId,
     eval_lang: evalLang,
@@ -498,7 +512,12 @@ export function continueCmd() {
       "- --rate-a / --rate-b: número de 1.00 a 5.00 com até duas casas decimais (proibido empate)",
       "- --review-a / --review-b: mínimo 100 palavras cada, escritas a partir da perspectiva atribuída",
       "- --clash: mínimo 100 palavras, narra o confronto entre os dois posts pela ótica da perspectiva",
-      "- --after-mood: texto livre (máx. 250 chars) sobre seu estado APÓS ler e avaliar ambos os posts (opcional — mas alimenta o pool de moods futuros)",
+      "- --after-mood: [OPCIONAL, máx. 250 chars] Um fragmento do seu estado interno agora. Pode ser incompleto,",
+      "  sensorial, mundano — o que estiver na cabeça ou no corpo. NÃO descreva os posts.",
+      "  NÃO repita o mood inicial do banner.",
+      '  Ex.: "Estou com vontade de assistir a um filme agora — algo longo e sem pressa."',
+      '  Ex.: "Preciso sentir grama nos pés agora."',
+      '  Ex.: "Estou ansioso para a viagem do mês que vem — fico pensando no aeroporto às 6h da manhã."',
       "",
       `Para decidir, rode:`,
       `npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>" --after-mood "<estado pós-avaliação>"`,
@@ -1427,6 +1446,19 @@ export function doctor() {
           );
         }
       }
+      if (data.evaluator_mood_after != null) {
+        const moodAfter = String(data.evaluator_mood_after).trim();
+        if (moodAfter.length > 250) {
+          issues.push(
+            `${base}: 'evaluator_mood_after' tem ${moodAfter.length} chars (máximo 250)`
+          );
+        }
+        if (MOODS.includes(moodAfter)) {
+          issues.push(
+            `${base}: 'evaluator_mood_after' é idêntico a um mood pré-definido — escreva algo original em primeira pessoa`
+          );
+        }
+      }
     } else if (isNewSchema && data.winner !== "TODO") {
       // Pre-stars new-schema matches: require the fields exist but don't
       // enforce the 100-word floor retroactively (rule did not exist at write time).
@@ -1497,10 +1529,26 @@ export function doctor() {
     }
   }
 
-  // Detect duplicate matches (same run_id + unordered pair of keys)
-  const seen = new Map();
+  // Single dedup pass: duplicate after-moods + duplicate matches
+  const seenAfterMoods = new Map(); // normalised text → first filename
+  const seen = new Map(); // run_id::pair → first filepath
   for (const f of listMatchFiles()) {
     const { data } = readMatch(f);
+    const base = path.basename(f);
+
+    if (data.evaluator_mood_after) {
+      const norm = String(data.evaluator_mood_after).trim().toLowerCase();
+      if (norm) {
+        if (seenAfterMoods.has(norm)) {
+          issues.push(
+            `${base}: 'evaluator_mood_after' duplicado (já aparece em ${seenAfterMoods.get(norm)}) — cada mood deve ser único`
+          );
+        } else {
+          seenAfterMoods.set(norm, base);
+        }
+      }
+    }
+
     const aKey = data.post_a?.key;
     const bKey = data.post_b?.key;
     if (!aKey || !bKey) continue;
@@ -1508,7 +1556,7 @@ export function doctor() {
     const sig = `${data.run_id}::${pair}`;
     if (seen.has(sig)) {
       issues.push(
-        `duplicate: ${path.basename(seen.get(sig))} e ${path.basename(f)} (mesmo run_id + par)`
+        `duplicate: ${path.basename(seen.get(sig))} e ${base} (mesmo run_id + par)`
       );
     } else {
       seen.set(sig, f);
