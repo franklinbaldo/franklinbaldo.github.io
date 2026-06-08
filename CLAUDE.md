@@ -80,6 +80,13 @@ npx prettier --write .    # fix formatting
 npm run build             # Astro static build
 ```
 
+## Git & PR conventions
+
+- **Merge commits, not squash.** Always merge PRs with a real merge commit
+  (`gh pr merge --merge` / GitHub "Create a merge commit"). Do **not** squash —
+  preserving each PR's history is the project preference. The Hrönir autopilot
+  workflow follows this too.
+
 ## Key directories
 
 ```
