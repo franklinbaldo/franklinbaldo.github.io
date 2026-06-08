@@ -1,0 +1,195 @@
+---
+import PageLayout from "../../../layouts/PageLayout.astro";
+import { getCollection } from "astro:content";
+import {
+  getPerspectives,
+  getPerPerspectiveRankings,
+  getRankByKey,
+} from "../../../lib/hronir-rank";
+import { isPublished } from "../../../lib/publish";
+
+export function getStaticPaths() {
+  const perspectives = getPerspectives();
+  return perspectives.map((p) => ({ params: { id: p.id } }));
+}
+
+const { id } = Astro.params;
+const perspectives = getPerspectives();
+const perspective = perspectives.find((p) => p.id === id);
+if (!perspective) return Astro.redirect("/ranking/");
+
+const allRankings = getPerPerspectiveRankings();
+const rows = allRankings.get(id) ?? [];
+
+const allPosts = await getCollection("blog");
+const byKey = new Map<string, { title: string; slug: string; lang: string }>();
+for (const p of allPosts) {
+  if (!isPublished(p)) continue;
+  const key = p.data.translationKey;
+  if (!key) continue;
+  const lang = p.data.lang ?? "en";
+  const existing = byKey.get(key);
+  if (!existing || lang === "en") {
+    byKey.set(key, { title: p.data.title, slug: p.id, lang });
+  }
+}
+
+const globalRankByKey = getRankByKey();
+
+const enriched = rows.map((r, i) => ({
+  rank: i + 1,
+  ...r,
+  post: byKey.get(r.key),
+  globalRank: globalRankByKey.get(r.key),
+}));
+
+function hue(perspId: string): number {
+  let h = 0;
+  for (let i = 0; i < perspId.length; i++)
+    h = ((h << 5) - h + perspId.charCodeAt(i)) & 0xffff;
+  return Math.abs(h) % 360;
+}
+const ph = hue(id);
+---
+
+<PageLayout
+  title={`${perspective.name} — Perspective Ranking | Franklin Baldo`}
+  description={perspective.summary}
+  lang="en"
+>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/ranking/">Ranking</a></li>
+      <li aria-current="page">{perspective.name}</li>
+    </ol>
+  </nav>
+
+  <hgroup>
+    <h1>
+      <span class="persp-badge" style={`--ph:${ph}`}>{perspective.name}</span>
+    </h1>
+    <p>{perspective.summary}</p>
+  </hgroup>
+
+  {enriched.length === 0 ? (
+    <p class="empty-state">No duels recorded for this perspective yet.</p>
+  ) : (
+    <table class="striped persp-table">
+      <caption>Posts ranked under the <em>{perspective.name}</em> perspective, ordered by ordinal (μ − 3σ).</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="col-rank">#</th>
+          <th scope="col">Post</th>
+          <th scope="col" class="col-num">ordinal</th>
+          <th scope="col" class="col-num">W/N</th>
+          <th scope="col" class="col-num">global #</th>
+        </tr>
+      </thead>
+      <tbody>
+        {enriched.map((r) => (
+          <tr class={r.rank === 1 ? "row-leader" : ""}>
+            <td class="col-rank">{r.rank}</td>
+            <td>
+              {r.post ? (
+                <a href={r.post.lang === "pt" ? `/pt/blog/${r.post.slug}/` : `/blog/${r.post.slug}/`}>
+                  {r.post.title}
+                </a>
+              ) : (
+                <code>{r.key}</code>
+              )}
+            </td>
+            <td class="col-num mono">{r.ordinal.toFixed(3)}</td>
+            <td class="col-num mono">{r.wins}/{r.appearances}</td>
+            <td class="col-num">
+              {r.globalRank ? (
+                <a href="/ranking/" title="Global rank">#{r.globalRank.rank}</a>
+              ) : "—"}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+
+  <section class="all-perspectives">
+    <h2>Other perspectives</h2>
+    <ul>
+      {perspectives.filter((p) => p.id !== id).map((p) => (
+        <li>
+          <a href={`/ranking/perspectives/${p.id}/`}>{p.name}</a>
+          <small> — {p.summary}</small>
+        </li>
+      ))}
+    </ul>
+  </section>
+</PageLayout>
+
+<style>
+  .breadcrumb ol {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    font-size: 0.8rem;
+    color: var(--pico-muted-color);
+  }
+  .breadcrumb li + li::before {
+    content: " / ";
+    padding: 0 0.35em;
+  }
+  .breadcrumb a {
+    color: var(--pico-muted-color);
+    text-decoration: none;
+  }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  .persp-badge {
+    display: inline-block;
+    padding: 0.2em 0.6em;
+    border-radius: 999px;
+    font-size: 0.85em;
+    background: hsl(var(--ph, 200), 55%, 88%);
+    color: hsl(var(--ph, 200), 45%, 28%);
+  }
+  @media (prefers-color-scheme: dark) {
+    .persp-badge {
+      background: hsl(var(--ph, 200), 40%, 20%);
+      color: hsl(var(--ph, 200), 70%, 75%);
+    }
+  }
+
+  .empty-state {
+    color: var(--pico-muted-color);
+    font-style: italic;
+    margin: 2rem 0;
+  }
+
+  .persp-table { font-size: 0.93rem; }
+  .col-rank {
+    width: 2.5rem;
+    text-align: right;
+    color: var(--pico-muted-color);
+    font-variant-numeric: tabular-nums;
+  }
+  .col-num {
+    width: 5rem;
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .mono { font-family: var(--pico-font-family-monospace); font-size: 0.82rem; }
+  .row-leader td:first-child::before { content: "🥇 "; }
+
+  .all-perspectives {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--pico-muted-border-color);
+  }
+  .all-perspectives h2 { font-size: 1rem; margin-bottom: 0.75rem; }
+  .all-perspectives ul { list-style: none; padding: 0; }
+  .all-perspectives li { margin-bottom: 0.4rem; font-size: 0.9rem; }
+  .all-perspectives small { color: var(--pico-muted-color); }
+</style>

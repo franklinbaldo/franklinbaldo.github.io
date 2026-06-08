@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
 import { isPublished } from "../../lib/publish";
 import { t } from "../../lib/i18n";
+import { getRankByKey } from "../../lib/hronir-rank";
 
 const all = await getCollection("blog");
 
@@ -17,6 +18,8 @@ const posts = all
   .filter((p) => isPublished(p))
   .filter((p) => (p.data.lang ?? 'en') === 'pt')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const rankByKey = getRankByKey();
 
 function estMinutes(body: string | undefined): number {
   if (!body) return 1;
@@ -79,6 +82,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
             <th scope="col" class="col-date">Data</th>
             <th scope="col">Título</th>
             <th scope="col" class="col-min" aria-label="Tempo estimado de leitura">~min</th>
+            <th scope="col" class="col-rank" aria-label="Ranking Hrönir">#</th>
             <th scope="col" class="col-en" aria-label="Versão em inglês disponível">EN</th>
           </tr>
         </thead>
@@ -86,6 +90,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
           {byYear.get(year)!.map((post) => {
             const enId = post.data.translationKey ? enByKey.get(post.data.translationKey) : undefined;
             const mins = estMinutes(post.body);
+            const rankInfo = post.data.translationKey ? rankByKey.get(post.data.translationKey) : undefined;
             return (
               <tr>
                 <td class="col-date">
@@ -95,6 +100,13 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
                 </td>
                 <td><a href={`/pt/blog/${post.id}/`}>{post.data.title}</a></td>
                 <td class="col-min">{mins}</td>
+                <td class="col-rank">
+                  {rankInfo && (
+                    <a class="rank-badge" href="/pt/ranking/" title={`Ranking Hrönir: #${rankInfo.rank} de ${rankInfo.total} (ordinal ${rankInfo.row.ordinal.toFixed(2)})`}>
+                      #{rankInfo.rank}
+                    </a>
+                  )}
+                </td>
                 <td class="col-en">
                   {enId && (
                     <a class="en-badge" href={`/blog/${enId}/`} aria-label="English version available" title="Read in English">EN</a>
@@ -148,6 +160,20 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
+  .col-rank {
+    width: 3rem;
+    text-align: right;
+    font-size: 0.78rem;
+    color: var(--pico-muted-color);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  a.rank-badge {
+    color: var(--pico-muted-color);
+    text-decoration: none;
+    font-variant-numeric: tabular-nums;
+  }
+  a.rank-badge:hover { color: var(--pico-primary); text-decoration: underline; }
   .col-en {
     width: 2.5rem;
     text-align: center;

@@ -20,7 +20,7 @@ import {
   loadPerspective,
   listPerspectives,
 } from "./perspectives.js";
-import { pickRandomMood } from "./moods.js";
+import { pickRandomMood, MOODS } from "./moods.js";
 
 const MIN_APPEARANCES = 3;
 const STALE_BONUS = 3.0;
@@ -498,7 +498,11 @@ export function continueCmd() {
       "- --rate-a / --rate-b: número de 1.00 a 5.00 com até duas casas decimais (proibido empate)",
       "- --review-a / --review-b: mínimo 100 palavras cada, escritas a partir da perspectiva atribuída",
       "- --clash: mínimo 100 palavras, narra o confronto entre os dois posts pela ótica da perspectiva",
-      "- --after-mood: texto livre (máx. 250 chars) sobre seu estado APÓS ler e avaliar ambos os posts (opcional — mas alimenta o pool de moods futuros)",
+      "- --after-mood: [OPCIONAL, máx. 250 chars] Como ficou seu estado de espírito DEPOIS de ler e avaliar os dois posts?",
+      "  Escreva em primeira pessoa, no presente. Seja específico — o que a comparação deixou aberta, que surpresa surgiu,",
+      "  que sensação ficou. NÃO repita o mood inicial que apareceu no banner. NÃO use frases genéricas.",
+      '  Ex.: "Fiquei surpreso com a densidade do post A — não esperava encontrar tanta coisa nova num tema que conheço bem."',
+      '  Ex.: "Os dois posts me deixaram com vontade de escrever sobre o mesmo tema — mas de um ângulo diferente."',
       "",
       `Para decidir, rode:`,
       `npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>" --after-mood "<estado pós-avaliação>"`,
@@ -1427,6 +1431,19 @@ export function doctor() {
           );
         }
       }
+      if (data.evaluator_mood_after != null) {
+        const moodAfter = String(data.evaluator_mood_after).trim();
+        if (moodAfter.length > 250) {
+          issues.push(
+            `${base}: 'evaluator_mood_after' tem ${moodAfter.length} chars (máximo 250)`
+          );
+        }
+        if (MOODS.includes(moodAfter)) {
+          issues.push(
+            `${base}: 'evaluator_mood_after' é idêntico a um mood pré-definido — escreva algo original em primeira pessoa`
+          );
+        }
+      }
     } else if (isNewSchema && data.winner !== "TODO") {
       // Pre-stars new-schema matches: require the fields exist but don't
       // enforce the 100-word floor retroactively (rule did not exist at write time).
@@ -1494,6 +1511,22 @@ export function doctor() {
           `${base}: publishDate fora da faixa plausível (${pd.toISOString()})`
         );
       }
+    }
+  }
+
+  // Detect duplicate after-moods across rate files (copy-paste check)
+  const seenAfterMoods = new Map(); // normalised text → first filename
+  for (const f of listMatchFiles()) {
+    const { data } = readMatch(f);
+    if (!data.evaluator_mood_after) continue;
+    const norm = String(data.evaluator_mood_after).trim().toLowerCase();
+    if (!norm) continue;
+    if (seenAfterMoods.has(norm)) {
+      issues.push(
+        `${path.basename(f)}: 'evaluator_mood_after' duplicado (já aparece em ${seenAfterMoods.get(norm)}) — cada mood deve ser único`
+      );
+    } else {
+      seenAfterMoods.set(norm, path.basename(f));
     }
   }
 
