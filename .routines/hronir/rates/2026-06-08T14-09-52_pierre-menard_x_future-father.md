@@ -22,7 +22,7 @@ perspective_id: weird-clarity
 evaluator_mood: >-
   Estou relaxado, com tempo, disposto a ser convencido de qualquer coisa bem
   argumentada.
-evaluator_mood_after: Preciso de um café bem forte agora para acordar.
+evaluator_mood_after: Vou abrir a janela para deixar o ar circular.
 rate_a: 4.1
 rate_b: 4.6
 clash: >-

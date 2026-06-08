@@ -22,7 +22,7 @@ perspective_id: lyric-as-poem
 evaluator_mood: >-
   Estou nostálgico, lendo com a sensação de que as coisas já foram mais
   interessantes do que são agora.
-evaluator_mood_after: Preciso de um café bem forte agora para acordar.
+evaluator_mood_after: Estou aliviado que o dia de trabalho está quase no fim.
 rate_a: 4.1
 rate_b: 4.6
 clash: >-

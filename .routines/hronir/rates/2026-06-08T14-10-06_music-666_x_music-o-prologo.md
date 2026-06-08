@@ -22,7 +22,7 @@ perspective_id: returning-reader
 evaluator_mood: >-
   Estou com preguiça de ser convencido. Quero que o texto faça o trabalho de me
   segurar sem que eu precise me esforçar.
-evaluator_mood_after: Preciso de um café bem forte agora para acordar.
+evaluator_mood_after: Sinto a necessidade de esticar as pernas.
 rate_a: 4.1
 rate_b: 4.6
 clash: >-

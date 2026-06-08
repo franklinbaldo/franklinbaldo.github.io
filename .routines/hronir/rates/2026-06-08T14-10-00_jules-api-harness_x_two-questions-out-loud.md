@@ -20,7 +20,7 @@ season: 1
 override: null
 perspective_id: applied-thinker
 evaluator_mood: Preciso de um café bem forte agora para acordar.
-evaluator_mood_after: Preciso de um café bem forte agora para acordar.
+evaluator_mood_after: Uma leve dor de cabeça começa a se manifestar.
 rate_a: 4.1
 rate_b: 4.6
 clash: >-

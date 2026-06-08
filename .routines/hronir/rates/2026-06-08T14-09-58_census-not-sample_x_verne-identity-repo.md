@@ -23,7 +23,7 @@ perspective_id: felt-not-explained
 evaluator_mood: >-
   Estou de bom humor, generoso, pronto para encontrar o melhor no que leio. Não
   vou confundir generosidade com lenidade.
-evaluator_mood_after: Preciso de um café bem forte agora para acordar.
+evaluator_mood_after: Minha cadeira está rangendo toda vez que me movo.
 rate_a: 4.1
 rate_b: 4.6
 clash: >-

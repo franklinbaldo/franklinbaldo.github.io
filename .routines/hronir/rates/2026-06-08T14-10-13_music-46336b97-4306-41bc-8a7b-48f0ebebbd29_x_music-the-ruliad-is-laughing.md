@@ -22,7 +22,7 @@ perspective_id: internet-native
 evaluator_mood: >-
   Estou de bom humor, generoso, pronto para encontrar o melhor no que leio. Não
   vou confundir generosidade com lenidade.
-evaluator_mood_after: Preciso de um café bem forte agora para acordar.
+evaluator_mood_after: Estou com vontade de escutar um álbum antigo.
 rate_a: 4.1
 rate_b: 4.6
 clash: >-

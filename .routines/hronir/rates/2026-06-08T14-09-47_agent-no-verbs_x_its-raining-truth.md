@@ -20,7 +20,7 @@ season: 1
 override: null
 perspective_id: internet-native
 evaluator_mood: Preciso de um café bem forte agora para acordar.
-evaluator_mood_after: Preciso de um café bem forte agora para acordar.
+evaluator_mood_after: A música lá fora está me distraindo um pouco.
 rate_a: 4.1
 rate_b: 4.6
 clash: >-

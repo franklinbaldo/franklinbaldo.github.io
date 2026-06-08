@@ -22,7 +22,7 @@ perspective_id: internet-native
 evaluator_mood: >-
   Estou ansioso com algo não relacionado e busco um texto que seja mais
   interessante do que meus próprios pensamentos.
-evaluator_mood_after: Preciso de um café bem forte agora para acordar.
+evaluator_mood_after: O sol finalmente apareceu por entre as nuvens.
 rate_a: 4.1
 rate_b: 4.6
 clash: >-

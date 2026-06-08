@@ -22,7 +22,7 @@ perspective_id: weird-clarity
 evaluator_mood: >-
   Estou cético em relação a entusiasmo fácil. Qualquer texto que prometa mais do
   que entrega vai cair rápido.
-evaluator_mood_after: Preciso de um café bem forte agora para acordar.
+evaluator_mood_after: O tique-taque do relógio me ajuda a focar.
 rate_a: 4.1
 rate_b: 4.6
 clash: >-

@@ -22,7 +22,7 @@ perspective_id: craft-listener
 evaluator_mood: >-
   Estou num estado em que quero que algo seja real — concreto, específico,
   ancorado — em vez de geral e flutuante.
-evaluator_mood_after: Preciso de um café bem forte agora para acordar.
+evaluator_mood_after: O brilho do monitor está um pouco forte demais.
 rate_a: 4.1
 rate_b: 4.6
 clash: >-

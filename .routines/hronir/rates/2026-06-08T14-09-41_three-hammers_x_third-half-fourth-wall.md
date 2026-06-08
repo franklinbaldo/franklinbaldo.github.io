@@ -22,7 +22,7 @@ perspective_id: felt-not-explained
 evaluator_mood: >-
   Estou protelando uma tarefa importante e lendo isso para adiar. O que
   significa que o texto precisa ser bom o suficiente para justificar o atraso.
-evaluator_mood_after: Preciso de um café bem forte agora para acordar.
+evaluator_mood_after: Preciso de uma xícara de chá agora.
 rate_a: 4.1
 rate_b: 4.6
 clash: >-

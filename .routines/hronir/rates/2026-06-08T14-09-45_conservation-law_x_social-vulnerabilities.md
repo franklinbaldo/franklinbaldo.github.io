@@ -23,7 +23,7 @@ perspective_id: lateral-essayist
 evaluator_mood: >-
   Li algo brilhante ontem e ainda estou sob seu efeito. Comparações inevitáveis
   vão acontecer.
-evaluator_mood_after: Preciso de um café bem forte agora para acordar.
+evaluator_mood_after: Estou com fome, não devia ter pulado o almoço.
 rate_a: 4.1
 rate_b: 4.6
 clash: >-

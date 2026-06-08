@@ -22,7 +22,7 @@ perspective_id: comedy-carries-argument
 evaluator_mood: >-
   Estou num dia em que tudo parece importante demais. Vou avaliar se este texto
   justifica mais peso na balança.
-evaluator_mood_after: Preciso de um café bem forte agora para acordar.
+evaluator_mood_after: O silêncio do ambiente é quase reconfortante.
 rate_a: 4.1
 rate_b: 4.6
 clash: >-
