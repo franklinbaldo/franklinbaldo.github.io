@@ -133,7 +133,8 @@ jobs:
             exit 0
           fi
 
-          gh pr merge "$target" --repo "$REPO" --squash --delete-branch
+          # Merge commit (not squash) — repo preference is to preserve history.
+          gh pr merge "$target" --repo "$REPO" --merge --delete-branch
           echo "Merged PR #$target."
           echo "merged=$target" >> "$GITHUB_OUTPUT"
 
