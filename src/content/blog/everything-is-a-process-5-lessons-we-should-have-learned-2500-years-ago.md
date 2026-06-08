@@ -18,7 +18,7 @@ previousVersion:
   uuid: 26dcb3b5-9232-57df-bb89-fe4c87919736
   url: >-
     https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4e5073f0869e4912a25551fc814e4ffad33bb1ec/src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
-  timestamp: '2026-06-08T03:59:36.913Z'
+  timestamp: '2026-06-08T04:38:44.361Z'
   msg: >-
     Rewrote to avoid listicle formatting, removed academic tone, and deadpan
     ending
