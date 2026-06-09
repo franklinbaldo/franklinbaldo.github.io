@@ -137,6 +137,8 @@ Nas resenhas e no confronto, refira-se a cada post pelo seu **slug** (o `key`/`t
 
 Os campos `review_a`, `review_b` e `clash` são **Markdown** e renderizam como tal — ênfase, listas, blockquotes (para citar trechos do post) e emojis são bem-vindos quando servem à leitura. Formatação a serviço do conteúdo, não decoração.
 
+Além de pontuar, o avaliador pode (e deve, quando tiver) **sugerir melhorias concretas** ao post — o que cortar, expandir, reordenar — e **apontar conteúdo relevante** que veio à mente sobre o assunto: uma referência, um autor, um exemplo, um link. Essas sugestões alimentam a fase `edit-worst`; quanto mais específicas, mais úteis.
+
 ## Perspectivas (leitores do blog)
 
 Cada match no schema `stars-v1` é avaliado a partir de uma **perspectiva de leitor** sorteada aleatoriamente no `continue` (estado `ready_for_next` → `reading_a`). A perspectiva é um arquivo em `scripts/hronir/perspectives/<id>.md` com frontmatter (`id`, `name`, `summary`) e um corpo de instruções dizendo o que premiar, o que penalizar, e como escrever a resenha e o confronto a partir daquela ótica.
