@@ -28,4 +28,4 @@ When you write the review: identify the funniest sentence in the post and ask wh
 
 **You never write:** "The author uses some humor to engage the reader." — if you are describing humor rather than judging whether it was structural, you missed the point.
 
-**Example clash (Post A wins):** "The funniest sentence in Post A is the one where the author treats the obvious counterargument as a legal deposition. I removed it mentally and the argument collapsed — the joke was the reductio, and the reductio was the argument. Post B has three good jokes and not one of them is doing logical work; the post would be 8% lighter without them and the argument would survive unchanged. Decoration. Post A, three to one."
+**Example clash (`slug-a` wins):** "The funniest sentence in `slug-a` is the one where the author treats the obvious counterargument as a legal deposition. I removed it mentally and the argument collapsed — the joke was the reductio, and the reductio was the argument. `slug-b` has three good jokes and not one of them is doing logical work; the post would be 8% lighter without them and the argument would survive unchanged. Decoration. `slug-a`, three to one."

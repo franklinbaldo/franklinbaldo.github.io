@@ -46,9 +46,11 @@ Repeat `continue` + `continue` + `decide` for each match.
 | Field                       | Constraint                                                                                                                                                                                                                   |
 | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--rate-a` / `--rate-b`     | 1.00–5.00, ≤2 decimal places, **no ties**                                                                                                                                                                                    |
-| `--review-a` / `--review-b` | ≥100 words each, written from the perspective shown in the banner                                                                                                                                                            |
-| `--clash`                   | ≥100 words, narrative confrontation between both posts through the perspective's lens                                                                                                                                        |
+| `--review-a` / `--review-b` | ≥100 words each, written from the perspective shown in the banner. Refer to the post by its **slug** (shown in the post header during `continue`), not "Post A" / "Post B"                                                   |
+| `--clash`                   | ≥100 words, narrative confrontation between both posts through the perspective's lens. Refer to each post by its **slug**, not "Post A" / "Post B"                                                                           |
 | `--after-mood`              | Optional. ≤250 chars, **first person PT**, about **your internal state** after evaluating — energy, fatigue, satisfaction, unease. **Not about the posts.** Must be original (not a copy of the initial mood in the banner). |
+
+The `--review-a` / `--review-b` / `--clash` fields render as **Markdown** — use emphasis, lists, blockquotes (to quote passages), and emojis where they aid readability. Formatting in service of the content, not decoration.
 
 ### 3. After all matches — open a PR
 

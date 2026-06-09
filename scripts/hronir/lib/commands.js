@@ -487,7 +487,8 @@ export function continueCmd() {
       }
     }
 
-    console.log("=== PRIMEIRO POST (A) ===\n");
+    const aSlug = session.currentMatch?.post_a?.key || "(slug desconhecido)";
+    console.log(`=== PRIMEIRO POST (A) — slug: ${aSlug} ===\n`);
     console.log(fs.readFileSync(aPath, "utf8"));
     console.log("\n---\n");
 
@@ -514,12 +515,15 @@ export function continueCmd() {
       }
     }
 
-    console.log("=== SEGUNDO POST (B) ===\n");
+    const bSlug = session.currentMatch?.post_b?.key || "(slug desconhecido)";
+    console.log(`=== SEGUNDO POST (B) — slug: ${bSlug} ===\n`);
     console.log(fs.readFileSync(bPath, "utf8"));
     console.log("\n---\n");
 
     session.state = "deciding";
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
+
+    const aSlug = session.currentMatch?.post_a?.key || "(slug desconhecido)";
 
     const perspectiveLine = perspective
       ? `Avalie a partir da perspectiva: ${perspective.name} (id: ${perspectiveId}). A perspectiva é fixa para este match — não há override.`
@@ -528,13 +532,24 @@ export function continueCmd() {
     const stepLines = [
       perspectiveLine,
       "",
+      `Slugs deste match: A = "${aSlug}", B = "${bSlug}".`,
+      "Nas resenhas e no confronto, refira-se a cada post pelo seu slug",
+      '(ex.: "' +
+        aSlug +
+        '"), não por "Post A" / "Post B". Isso mantém os relatos',
+      "legíveis fora do contexto efêmero do match.",
+      "",
       "Atribua estrelas (1.00–5.00) a cada post e escreva uma resenha de cada,",
       "depois um confronto. O vencedor é derivado mecanicamente: quem",
       "tiver mais estrelas. Empates são rejeitados — comprometa-se.",
       "",
+      "As resenhas e o confronto são renderizados como Markdown — pode usar",
+      "ênfase, listas, blockquotes para citar trechos, e emojis quando ajudarem",
+      "a marcar tom ou veredito. Use a formatação a serviço da leitura, sem exagero.",
+      "",
       "- --rate-a / --rate-b: número de 1.00 a 5.00 com até duas casas decimais (proibido empate)",
-      "- --review-a / --review-b: mínimo 100 palavras cada, escritas a partir da perspectiva atribuída",
-      "- --clash: mínimo 100 palavras, narra o confronto entre os dois posts pela ótica da perspectiva",
+      "- --review-a / --review-b: mínimo 100 palavras cada, escritas a partir da perspectiva atribuída, referindo-se ao post pelo slug",
+      "- --clash: mínimo 100 palavras, narra o confronto entre os dois posts (pelos slugs) pela ótica da perspectiva",
       "- --after-mood: [OPCIONAL, máx. 250 chars] Um fragmento do seu estado interno agora. Pode ser incompleto,",
       "  sensorial, mundano — o que estiver na cabeça ou no corpo. NÃO descreva os posts.",
       "  NÃO repita o mood inicial do banner.",
