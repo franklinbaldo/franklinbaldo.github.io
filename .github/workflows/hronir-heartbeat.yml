@@ -17,6 +17,9 @@ on:
   schedule:
     - cron: "*/15 * * * *" # every 15 minutes
   workflow_dispatch:
+  push:
+    branches:
+      - claude/lucid-goodall-3t7aqc
 
 permissions:
   contents: read
