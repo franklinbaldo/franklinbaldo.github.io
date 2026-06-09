@@ -11,7 +11,7 @@
     "check:links": "node scripts/check-links.mjs",
     "check:translations": "node scripts/check-translations.mjs",
     "dev": "astro dev",
-    "build": "astro build && pagefind --site dist",
+    "build": "astro build && node scripts/fix-redirect-html.mjs && pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro",
     "format": "prettier --write .",
