@@ -85,6 +85,50 @@ conjunto" / "folga até o teto"). Os dois eixos são independentes:
 | **nível alto**  | `5.0 × 3.0` ótimo bate decente      | `4.75 × 4.5` dois ótimos, foto-finish    |
 | **nível baixo** | `2.5 × 1.0` medíocre esmaga péssimo | `2.0 × 1.75` dois ruins, indistinguíveis |
 
+### 2.4. Sinais gratuitos já presentes — e como usá-los
+
+Os rate files do schema `stars-v1` carregam três campos que esta RFC ainda não
+explora, mas que têm custo de leitura zero (estão no frontmatter já parseado):
+
+| Campo                                     | O que já existe                                         | Uso futuro natural                                                                                               |
+| ----------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `post_a.version` / `post_b.version`       | UUIDv5 derivado do conteúdo do post no momento do match | Detectar edições sem chamar `git log`: se o UUID mudou entre dois matches, o post foi editado                    |
+| `evaluator_mood` / `evaluator_mood_after` | Humor do avaliador antes/depois do duelo                | Diagnóstico de calibração: avaliar se variância das notas sobe em estados de energia baixa / alta ansiedade      |
+| `perspective_id`                          | Perspectiva de leitor sorteada por match                | `stars_per_perspective`: cada perspectiva tem seu próprio EWMA; detecta posts que só brilham para um leitor-tipo |
+
+**Detecção de edição via `previousVersion` (canônico).**
+O `edit-commit` já grava em cada post editado:
+
+```yaml
+previousVersion:
+  uuid: "22c3fbae-..."   # UUIDv5 do conteúdo ANTES da edição
+  url:  "https://github.com/…/blob/<sha>/<path>"
+  timestamp: "2026-05-18T17:19:55.965Z"
+  msg:  "Reorganizei a estrutura…"
+```
+
+Este campo é o sinal **semântico correto** de "o post foi intencionalmente
+editado pelo fluxo Hrönir". O `stale_bonus` no active sampling atualmente usa
+`gitMtime` (tempo do último commit git do arquivo), que é mais amplo — dispara
+em qualquer mudança de arquivo, incluindo ajustes de frontmatter sem conteúdo
+novo. A padronização **recomendada** para próximas iterações é:
+
+1. **`previousVersion.timestamp`** como âncora de edição para o `stale_bonus` —
+   em vez de `gitMtime`, checar se o post tem `previousVersion` cujo `timestamp`
+   é mais recente que o match mais recente em que ele entrou.
+2. **`post_a.version`** nos rate files como verificação leve de edição sem git:
+   se o UUID atual do post difere do `version` gravado num match passado, o post
+   foi editado desde aquele match.
+
+A `gitMtime` continua válida como _fallback_ (posts que nunca passaram por
+`edit-commit` não têm `previousVersion`), mas não deve ser o caminho primário
+quando o frontmatter já carrega a informação.
+
+> **Nota de escopo:** esses três sinais e a padronização de `previousVersion`
+> ficam fora das Fases 0-2 desta RFC. São registrados aqui para não perder a
+> oportunidade de design — a implementação entra numa RFC subsequente ou como
+> Fase 3.
+
 ---
 
 ## 3. Objetivos e não-objetivos
