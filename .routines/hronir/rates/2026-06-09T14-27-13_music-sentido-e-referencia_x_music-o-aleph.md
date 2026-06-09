@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:27:13Z'
 match_index: 10
 post_a:
   key: music-sentido-e-referencia
-  path: src/content/blog/musicas/sentido-e-referencia.mdx
+  path: src/content/blog/sentido-e-referencia.mdx
   display_lang: pt
   version: 1d59e9a7-11b8-5ba6-8d9a-b700d162fef2
 post_b:
   key: music-o-aleph
-  path: src/content/blog/musicas/o-aleph.mdx
+  path: src/content/blog/o-aleph.mdx
   display_lang: pt
   version: f86efbef-92c8-53cf-9ffe-ffcb93d11bc1
 winner: b

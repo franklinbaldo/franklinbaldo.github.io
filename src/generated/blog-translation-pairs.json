@@ -1,4 +1,28 @@
 {
+  "/blog/151474c5-1420-4cc1-9ab5-80721f4459ed-en/": {
+    "en": "/blog/151474c5-1420-4cc1-9ab5-80721f4459ed-en/",
+    "pt": "/pt/blog/151474c5-1420-4cc1-9ab5-80721f4459ed/"
+  },
+  "/pt/blog/151474c5-1420-4cc1-9ab5-80721f4459ed/": {
+    "en": "/blog/151474c5-1420-4cc1-9ab5-80721f4459ed-en/",
+    "pt": "/pt/blog/151474c5-1420-4cc1-9ab5-80721f4459ed/"
+  },
+  "/blog/46336b97-4306-41bc-8a7b-48f0ebebbd29-en/": {
+    "en": "/blog/46336b97-4306-41bc-8a7b-48f0ebebbd29-en/",
+    "pt": "/pt/blog/46336b97-4306-41bc-8a7b-48f0ebebbd29/"
+  },
+  "/pt/blog/46336b97-4306-41bc-8a7b-48f0ebebbd29/": {
+    "en": "/blog/46336b97-4306-41bc-8a7b-48f0ebebbd29-en/",
+    "pt": "/pt/blog/46336b97-4306-41bc-8a7b-48f0ebebbd29/"
+  },
+  "/blog/666-en/": {
+    "en": "/blog/666-en/",
+    "pt": "/pt/blog/666/"
+  },
+  "/pt/blog/666/": {
+    "en": "/blog/666-en/",
+    "pt": "/pt/blog/666/"
+  },
   "/pt/blog/a-api-do-jules-como-backend-do-harness/": {
     "pt": "/pt/blog/a-api-do-jules-como-backend-do-harness/",
     "en": "/blog/jules-api-harness-backend/"
@@ -15,6 +39,14 @@
     "pt": "/pt/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050/",
     "en": "/blog/will-ai-discover-new-conservation-law-before-2050/"
   },
+  "/blog/a-primeira-mudanca-en/": {
+    "en": "/blog/a-primeira-mudanca-en/",
+    "pt": "/pt/blog/a-primeira-mudanca/"
+  },
+  "/pt/blog/a-primeira-mudanca/": {
+    "en": "/blog/a-primeira-mudanca-en/",
+    "pt": "/pt/blog/a-primeira-mudanca/"
+  },
   "/pt/blog/a-terceira-metade-e-a-quarta-parede/": {
     "pt": "/pt/blog/a-terceira-metade-e-a-quarta-parede/",
     "en": "/blog/the-third-half-and-the-fourth-wall/"
@@ -22,6 +54,62 @@
   "/blog/the-third-half-and-the-fourth-wall/": {
     "pt": "/pt/blog/a-terceira-metade-e-a-quarta-parede/",
     "en": "/blog/the-third-half-and-the-fourth-wall/"
+  },
+  "/blog/be-me-borges-en/": {
+    "en": "/blog/be-me-borges-en/",
+    "pt": "/pt/blog/be-me-borges/"
+  },
+  "/pt/blog/be-me-borges/": {
+    "en": "/blog/be-me-borges-en/",
+    "pt": "/pt/blog/be-me-borges/"
+  },
+  "/blog/beatriz-en/": {
+    "en": "/blog/beatriz-en/",
+    "pt": "/pt/blog/beatriz/"
+  },
+  "/pt/blog/beatriz/": {
+    "en": "/blog/beatriz-en/",
+    "pt": "/pt/blog/beatriz/"
+  },
+  "/blog/belief-engine-labyrinth-song-moving-window-viii-en/": {
+    "en": "/blog/belief-engine-labyrinth-song-moving-window-viii-en/",
+    "pt": "/pt/blog/belief-engine-labyrinth-song-moving-window-viii/"
+  },
+  "/pt/blog/belief-engine-labyrinth-song-moving-window-viii/": {
+    "en": "/blog/belief-engine-labyrinth-song-moving-window-viii-en/",
+    "pt": "/pt/blog/belief-engine-labyrinth-song-moving-window-viii/"
+  },
+  "/blog/bibliotecario-do-infinito-en/": {
+    "en": "/blog/bibliotecario-do-infinito-en/",
+    "pt": "/pt/blog/bibliotecario-do-infinito/"
+  },
+  "/pt/blog/bibliotecario-do-infinito/": {
+    "en": "/blog/bibliotecario-do-infinito-en/",
+    "pt": "/pt/blog/bibliotecario-do-infinito/"
+  },
+  "/blog/borges-and-me-en/": {
+    "en": "/blog/borges-and-me-en/",
+    "pt": "/pt/blog/borges-and-me/"
+  },
+  "/pt/blog/borges-and-me/": {
+    "en": "/blog/borges-and-me-en/",
+    "pt": "/pt/blog/borges-and-me/"
+  },
+  "/blog/borges-and-the-hyperobject-at-the-end-of-time-en/": {
+    "en": "/blog/borges-and-the-hyperobject-at-the-end-of-time-en/",
+    "pt": "/pt/blog/borges-and-the-hyperobject-at-the-end-of-time/"
+  },
+  "/pt/blog/borges-and-the-hyperobject-at-the-end-of-time/": {
+    "en": "/blog/borges-and-the-hyperobject-at-the-end-of-time-en/",
+    "pt": "/pt/blog/borges-and-the-hyperobject-at-the-end-of-time/"
+  },
+  "/blog/borges-e-eu-en/": {
+    "en": "/blog/borges-e-eu-en/",
+    "pt": "/pt/blog/borges-e-eu/"
+  },
+  "/pt/blog/borges-e-eu/": {
+    "en": "/blog/borges-e-eu-en/",
+    "pt": "/pt/blog/borges-e-eu/"
   },
   "/blog/building-funes/": {
     "en": "/blog/building-funes/",
@@ -31,6 +119,14 @@
     "en": "/blog/building-funes/",
     "pt": "/pt/blog/construindo-funes-como-dei-uma-alma-a-um-agente-de-ia/"
   },
+  "/blog/caminho-en/": {
+    "en": "/blog/caminho-en/",
+    "pt": "/pt/blog/caminho/"
+  },
+  "/pt/blog/caminho/": {
+    "en": "/blog/caminho-en/",
+    "pt": "/pt/blog/caminho/"
+  },
   "/pt/blog/censo-nao-amostra/": {
     "pt": "/pt/blog/censo-nao-amostra/",
     "en": "/blog/census-not-sample/"
@@ -38,6 +134,22 @@
   "/blog/census-not-sample/": {
     "pt": "/pt/blog/censo-nao-amostra/",
     "en": "/blog/census-not-sample/"
+  },
+  "/blog/chegue-irmao-chegue-irma-en/": {
+    "en": "/blog/chegue-irmao-chegue-irma-en/",
+    "pt": "/pt/blog/chegue-irmao-chegue-irma/"
+  },
+  "/pt/blog/chegue-irmao-chegue-irma/": {
+    "en": "/blog/chegue-irmao-chegue-irma-en/",
+    "pt": "/pt/blog/chegue-irmao-chegue-irma/"
+  },
+  "/blog/clipes-en/": {
+    "en": "/blog/clipes-en/",
+    "pt": "/pt/blog/clipes/"
+  },
+  "/pt/blog/clipes/": {
+    "en": "/blog/clipes-en/",
+    "pt": "/pt/blog/clipes/"
   },
   "/blog/conceptual-document-the-chronicle-of-franklin-baldo/": {
     "en": "/blog/conceptual-document-the-chronicle-of-franklin-baldo/",
@@ -54,6 +166,22 @@
   "/pt/blog/travessia-update/": {
     "en": "/blog/crossing-after-interference/",
     "pt": "/pt/blog/travessia-update/"
+  },
+  "/blog/crystallizing-from-the-nothing-en/": {
+    "en": "/blog/crystallizing-from-the-nothing-en/",
+    "pt": "/pt/blog/crystallizing-from-the-nothing/"
+  },
+  "/pt/blog/crystallizing-from-the-nothing/": {
+    "en": "/blog/crystallizing-from-the-nothing-en/",
+    "pt": "/pt/blog/crystallizing-from-the-nothing/"
+  },
+  "/blog/dd332f75-6052-4f9e-bccd-fb0303731d6e-en/": {
+    "en": "/blog/dd332f75-6052-4f9e-bccd-fb0303731d6e-en/",
+    "pt": "/pt/blog/dd332f75-6052-4f9e-bccd-fb0303731d6e/"
+  },
+  "/pt/blog/dd332f75-6052-4f9e-bccd-fb0303731d6e/": {
+    "en": "/blog/dd332f75-6052-4f9e-bccd-fb0303731d6e-en/",
+    "pt": "/pt/blog/dd332f75-6052-4f9e-bccd-fb0303731d6e/"
   },
   "/pt/blog/delegando-para-agentes/": {
     "pt": "/pt/blog/delegando-para-agentes/",
@@ -79,6 +207,30 @@
     "pt": "/pt/blog/eles-esto-realmente-usando-uma-postagem-do-reddit-para-ajudar-a-bombardear-um-submarino-no-ir/",
     "en": "/blog/reddit-submarine-osint/"
   },
+  "/blog/entre-rascunho-e-apagar-en/": {
+    "en": "/blog/entre-rascunho-e-apagar-en/",
+    "pt": "/pt/blog/entre-rascunho-e-apagar/"
+  },
+  "/pt/blog/entre-rascunho-e-apagar/": {
+    "en": "/blog/entre-rascunho-e-apagar-en/",
+    "pt": "/pt/blog/entre-rascunho-e-apagar/"
+  },
+  "/blog/escherian-sunrise-with-godel-en/": {
+    "en": "/blog/escherian-sunrise-with-godel-en/",
+    "pt": "/pt/blog/escherian-sunrise-with-godel/"
+  },
+  "/pt/blog/escherian-sunrise-with-godel/": {
+    "en": "/blog/escherian-sunrise-with-godel-en/",
+    "pt": "/pt/blog/escherian-sunrise-with-godel/"
+  },
+  "/blog/espelhos-en/": {
+    "en": "/blog/espelhos-en/",
+    "pt": "/pt/blog/espelhos/"
+  },
+  "/pt/blog/espelhos/": {
+    "en": "/blog/espelhos-en/",
+    "pt": "/pt/blog/espelhos/"
+  },
   "/pt/blog/esta-chovendo-verdade/": {
     "pt": "/pt/blog/esta-chovendo-verdade/",
     "en": "/blog/its-raining-truth/"
@@ -95,6 +247,14 @@
     "pt": "/pt/blog/estamos-todos-nos-tornando-lagostas/",
     "en": "/blog/we-are-all-becoming-lobsters/"
   },
+  "/blog/eu-ia-escrever-sobre-o-infinito-de-novo-en/": {
+    "en": "/blog/eu-ia-escrever-sobre-o-infinito-de-novo-en/",
+    "pt": "/pt/blog/eu-ia-escrever-sobre-o-infinito-de-novo/"
+  },
+  "/pt/blog/eu-ia-escrever-sobre-o-infinito-de-novo/": {
+    "en": "/blog/eu-ia-escrever-sobre-o-infinito-de-novo-en/",
+    "pt": "/pt/blog/eu-ia-escrever-sobre-o-infinito-de-novo/"
+  },
   "/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/": {
     "en": "/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/",
     "pt": "/pt/blog/tudo-e-processo/"
@@ -102,6 +262,30 @@
   "/pt/blog/tudo-e-processo/": {
     "en": "/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/",
     "pt": "/pt/blog/tudo-e-processo/"
+  },
+  "/blog/f73c60f0-49af-45fd-a483-1d35a676dccc-en/": {
+    "en": "/blog/f73c60f0-49af-45fd-a483-1d35a676dccc-en/",
+    "pt": "/pt/blog/f73c60f0-49af-45fd-a483-1d35a676dccc/"
+  },
+  "/pt/blog/f73c60f0-49af-45fd-a483-1d35a676dccc/": {
+    "en": "/blog/f73c60f0-49af-45fd-a483-1d35a676dccc-en/",
+    "pt": "/pt/blog/f73c60f0-49af-45fd-a483-1d35a676dccc/"
+  },
+  "/blog/f85fb538-6f59-4751-8629-da76665fc91e-en/": {
+    "en": "/blog/f85fb538-6f59-4751-8629-da76665fc91e-en/",
+    "pt": "/pt/blog/f85fb538-6f59-4751-8629-da76665fc91e/"
+  },
+  "/pt/blog/f85fb538-6f59-4751-8629-da76665fc91e/": {
+    "en": "/blog/f85fb538-6f59-4751-8629-da76665fc91e-en/",
+    "pt": "/pt/blog/f85fb538-6f59-4751-8629-da76665fc91e/"
+  },
+  "/blog/fourteen-words-en/": {
+    "en": "/blog/fourteen-words-en/",
+    "pt": "/pt/blog/fourteen-words/"
+  },
+  "/pt/blog/fourteen-words/": {
+    "en": "/blog/fourteen-words-en/",
+    "pt": "/pt/blog/fourteen-words/"
   },
   "/blog/funes-soul/": {
     "en": "/blog/funes-soul/",
@@ -127,6 +311,46 @@
     "en": "/blog/inaugural-post-a-glimpse-inside-my-mind/",
     "pt": "/pt/blog/postagem-inaugural-um-vislumbre-da-minha-mente/"
   },
+  "/blog/john-gospel-chapter-i-by-max-headroom-en/": {
+    "en": "/blog/john-gospel-chapter-i-by-max-headroom-en/",
+    "pt": "/pt/blog/john-gospel-chapter-i-by-max-headroom/"
+  },
+  "/pt/blog/john-gospel-chapter-i-by-max-headroom/": {
+    "en": "/blog/john-gospel-chapter-i-by-max-headroom-en/",
+    "pt": "/pt/blog/john-gospel-chapter-i-by-max-headroom/"
+  },
+  "/blog/leite-no-salao-bar-en/": {
+    "en": "/blog/leite-no-salao-bar-en/",
+    "pt": "/pt/blog/leite-no-salao-bar/"
+  },
+  "/pt/blog/leite-no-salao-bar/": {
+    "en": "/blog/leite-no-salao-bar-en/",
+    "pt": "/pt/blog/leite-no-salao-bar/"
+  },
+  "/blog/meditacao-guiada-no-sertao-en/": {
+    "en": "/blog/meditacao-guiada-no-sertao-en/",
+    "pt": "/pt/blog/meditacao-guiada-no-sertao/"
+  },
+  "/pt/blog/meditacao-guiada-no-sertao/": {
+    "en": "/blog/meditacao-guiada-no-sertao-en/",
+    "pt": "/pt/blog/meditacao-guiada-no-sertao/"
+  },
+  "/blog/menino-que-voce-foi-en/": {
+    "en": "/blog/menino-que-voce-foi-en/",
+    "pt": "/pt/blog/menino-que-voce-foi/"
+  },
+  "/pt/blog/menino-que-voce-foi/": {
+    "en": "/blog/menino-que-voce-foi-en/",
+    "pt": "/pt/blog/menino-que-voce-foi/"
+  },
+  "/blog/mindfulness-en/": {
+    "en": "/blog/mindfulness-en/",
+    "pt": "/pt/blog/mindfulness/"
+  },
+  "/pt/blog/mindfulness/": {
+    "en": "/blog/mindfulness-en/",
+    "pt": "/pt/blog/mindfulness/"
+  },
   "/pt/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/": {
     "pt": "/pt/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/",
     "en": "/blog/rosencrantz-coin/"
@@ -135,525 +359,13 @@
     "pt": "/pt/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/",
     "en": "/blog/rosencrantz-coin/"
   },
-  "/blog/musicas/151474c5-1420-4cc1-9ab5-80721f4459ed-en/": {
-    "en": "/blog/musicas/151474c5-1420-4cc1-9ab5-80721f4459ed-en/",
-    "pt": "/pt/blog/musicas/151474c5-1420-4cc1-9ab5-80721f4459ed/"
-  },
-  "/pt/blog/musicas/151474c5-1420-4cc1-9ab5-80721f4459ed/": {
-    "en": "/blog/musicas/151474c5-1420-4cc1-9ab5-80721f4459ed-en/",
-    "pt": "/pt/blog/musicas/151474c5-1420-4cc1-9ab5-80721f4459ed/"
-  },
-  "/blog/musicas/46336b97-4306-41bc-8a7b-48f0ebebbd29-en/": {
-    "en": "/blog/musicas/46336b97-4306-41bc-8a7b-48f0ebebbd29-en/",
-    "pt": "/pt/blog/musicas/46336b97-4306-41bc-8a7b-48f0ebebbd29/"
-  },
-  "/pt/blog/musicas/46336b97-4306-41bc-8a7b-48f0ebebbd29/": {
-    "en": "/blog/musicas/46336b97-4306-41bc-8a7b-48f0ebebbd29-en/",
-    "pt": "/pt/blog/musicas/46336b97-4306-41bc-8a7b-48f0ebebbd29/"
-  },
-  "/blog/musicas/666-en/": {
-    "en": "/blog/musicas/666-en/",
-    "pt": "/pt/blog/musicas/666/"
-  },
-  "/pt/blog/musicas/666/": {
-    "en": "/blog/musicas/666-en/",
-    "pt": "/pt/blog/musicas/666/"
-  },
-  "/blog/musicas/a-primeira-mudanca-en/": {
-    "en": "/blog/musicas/a-primeira-mudanca-en/",
-    "pt": "/pt/blog/musicas/a-primeira-mudanca/"
-  },
-  "/pt/blog/musicas/a-primeira-mudanca/": {
-    "en": "/blog/musicas/a-primeira-mudanca-en/",
-    "pt": "/pt/blog/musicas/a-primeira-mudanca/"
-  },
-  "/blog/musicas/be-me-borges-en/": {
-    "en": "/blog/musicas/be-me-borges-en/",
-    "pt": "/pt/blog/musicas/be-me-borges/"
-  },
-  "/pt/blog/musicas/be-me-borges/": {
-    "en": "/blog/musicas/be-me-borges-en/",
-    "pt": "/pt/blog/musicas/be-me-borges/"
-  },
-  "/blog/musicas/beatriz-en/": {
-    "en": "/blog/musicas/beatriz-en/",
-    "pt": "/pt/blog/musicas/beatriz/"
-  },
-  "/pt/blog/musicas/beatriz/": {
-    "en": "/blog/musicas/beatriz-en/",
-    "pt": "/pt/blog/musicas/beatriz/"
-  },
-  "/blog/musicas/belief-engine-labyrinth-song-moving-window-viii-en/": {
-    "en": "/blog/musicas/belief-engine-labyrinth-song-moving-window-viii-en/",
-    "pt": "/pt/blog/musicas/belief-engine-labyrinth-song-moving-window-viii/"
-  },
-  "/pt/blog/musicas/belief-engine-labyrinth-song-moving-window-viii/": {
-    "en": "/blog/musicas/belief-engine-labyrinth-song-moving-window-viii-en/",
-    "pt": "/pt/blog/musicas/belief-engine-labyrinth-song-moving-window-viii/"
-  },
-  "/blog/musicas/bibliotecario-do-infinito-en/": {
-    "en": "/blog/musicas/bibliotecario-do-infinito-en/",
-    "pt": "/pt/blog/musicas/bibliotecario-do-infinito/"
-  },
-  "/pt/blog/musicas/bibliotecario-do-infinito/": {
-    "en": "/blog/musicas/bibliotecario-do-infinito-en/",
-    "pt": "/pt/blog/musicas/bibliotecario-do-infinito/"
-  },
-  "/blog/musicas/borges-and-me-en/": {
-    "en": "/blog/musicas/borges-and-me-en/",
-    "pt": "/pt/blog/musicas/borges-and-me/"
-  },
-  "/pt/blog/musicas/borges-and-me/": {
-    "en": "/blog/musicas/borges-and-me-en/",
-    "pt": "/pt/blog/musicas/borges-and-me/"
-  },
-  "/blog/musicas/borges-and-the-hyperobject-at-the-end-of-time-en/": {
-    "en": "/blog/musicas/borges-and-the-hyperobject-at-the-end-of-time-en/",
-    "pt": "/pt/blog/musicas/borges-and-the-hyperobject-at-the-end-of-time/"
-  },
-  "/pt/blog/musicas/borges-and-the-hyperobject-at-the-end-of-time/": {
-    "en": "/blog/musicas/borges-and-the-hyperobject-at-the-end-of-time-en/",
-    "pt": "/pt/blog/musicas/borges-and-the-hyperobject-at-the-end-of-time/"
-  },
-  "/blog/musicas/borges-e-eu-en/": {
-    "en": "/blog/musicas/borges-e-eu-en/",
-    "pt": "/pt/blog/musicas/borges-e-eu/"
-  },
-  "/pt/blog/musicas/borges-e-eu/": {
-    "en": "/blog/musicas/borges-e-eu-en/",
-    "pt": "/pt/blog/musicas/borges-e-eu/"
-  },
-  "/blog/musicas/caminho-en/": {
-    "en": "/blog/musicas/caminho-en/",
-    "pt": "/pt/blog/musicas/caminho/"
-  },
-  "/pt/blog/musicas/caminho/": {
-    "en": "/blog/musicas/caminho-en/",
-    "pt": "/pt/blog/musicas/caminho/"
-  },
-  "/blog/musicas/chegue-irmao-chegue-irma-en/": {
-    "en": "/blog/musicas/chegue-irmao-chegue-irma-en/",
-    "pt": "/pt/blog/musicas/chegue-irmao-chegue-irma/"
-  },
-  "/pt/blog/musicas/chegue-irmao-chegue-irma/": {
-    "en": "/blog/musicas/chegue-irmao-chegue-irma-en/",
-    "pt": "/pt/blog/musicas/chegue-irmao-chegue-irma/"
-  },
-  "/blog/musicas/clipes-en/": {
-    "en": "/blog/musicas/clipes-en/",
-    "pt": "/pt/blog/musicas/clipes/"
-  },
-  "/pt/blog/musicas/clipes/": {
-    "en": "/blog/musicas/clipes-en/",
-    "pt": "/pt/blog/musicas/clipes/"
-  },
-  "/blog/musicas/crystallizing-from-the-nothing-en/": {
-    "en": "/blog/musicas/crystallizing-from-the-nothing-en/",
-    "pt": "/pt/blog/musicas/crystallizing-from-the-nothing/"
-  },
-  "/pt/blog/musicas/crystallizing-from-the-nothing/": {
-    "en": "/blog/musicas/crystallizing-from-the-nothing-en/",
-    "pt": "/pt/blog/musicas/crystallizing-from-the-nothing/"
-  },
-  "/blog/musicas/dd332f75-6052-4f9e-bccd-fb0303731d6e-en/": {
-    "en": "/blog/musicas/dd332f75-6052-4f9e-bccd-fb0303731d6e-en/",
-    "pt": "/pt/blog/musicas/dd332f75-6052-4f9e-bccd-fb0303731d6e/"
-  },
-  "/pt/blog/musicas/dd332f75-6052-4f9e-bccd-fb0303731d6e/": {
-    "en": "/blog/musicas/dd332f75-6052-4f9e-bccd-fb0303731d6e-en/",
-    "pt": "/pt/blog/musicas/dd332f75-6052-4f9e-bccd-fb0303731d6e/"
-  },
-  "/blog/musicas/entre-rascunho-e-apagar-en/": {
-    "en": "/blog/musicas/entre-rascunho-e-apagar-en/",
-    "pt": "/pt/blog/musicas/entre-rascunho-e-apagar/"
-  },
-  "/pt/blog/musicas/entre-rascunho-e-apagar/": {
-    "en": "/blog/musicas/entre-rascunho-e-apagar-en/",
-    "pt": "/pt/blog/musicas/entre-rascunho-e-apagar/"
-  },
-  "/blog/musicas/escherian-sunrise-with-godel-en/": {
-    "en": "/blog/musicas/escherian-sunrise-with-godel-en/",
-    "pt": "/pt/blog/musicas/escherian-sunrise-with-godel/"
-  },
-  "/pt/blog/musicas/escherian-sunrise-with-godel/": {
-    "en": "/blog/musicas/escherian-sunrise-with-godel-en/",
-    "pt": "/pt/blog/musicas/escherian-sunrise-with-godel/"
-  },
-  "/blog/musicas/espelhos-en/": {
-    "en": "/blog/musicas/espelhos-en/",
-    "pt": "/pt/blog/musicas/espelhos/"
-  },
-  "/pt/blog/musicas/espelhos/": {
-    "en": "/blog/musicas/espelhos-en/",
-    "pt": "/pt/blog/musicas/espelhos/"
-  },
-  "/blog/musicas/eu-ia-escrever-sobre-o-infinito-de-novo-en/": {
-    "en": "/blog/musicas/eu-ia-escrever-sobre-o-infinito-de-novo-en/",
-    "pt": "/pt/blog/musicas/eu-ia-escrever-sobre-o-infinito-de-novo/"
-  },
-  "/pt/blog/musicas/eu-ia-escrever-sobre-o-infinito-de-novo/": {
-    "en": "/blog/musicas/eu-ia-escrever-sobre-o-infinito-de-novo-en/",
-    "pt": "/pt/blog/musicas/eu-ia-escrever-sobre-o-infinito-de-novo/"
-  },
-  "/blog/musicas/f73c60f0-49af-45fd-a483-1d35a676dccc-en/": {
-    "en": "/blog/musicas/f73c60f0-49af-45fd-a483-1d35a676dccc-en/",
-    "pt": "/pt/blog/musicas/f73c60f0-49af-45fd-a483-1d35a676dccc/"
-  },
-  "/pt/blog/musicas/f73c60f0-49af-45fd-a483-1d35a676dccc/": {
-    "en": "/blog/musicas/f73c60f0-49af-45fd-a483-1d35a676dccc-en/",
-    "pt": "/pt/blog/musicas/f73c60f0-49af-45fd-a483-1d35a676dccc/"
-  },
-  "/blog/musicas/f85fb538-6f59-4751-8629-da76665fc91e-en/": {
-    "en": "/blog/musicas/f85fb538-6f59-4751-8629-da76665fc91e-en/",
-    "pt": "/pt/blog/musicas/f85fb538-6f59-4751-8629-da76665fc91e/"
-  },
-  "/pt/blog/musicas/f85fb538-6f59-4751-8629-da76665fc91e/": {
-    "en": "/blog/musicas/f85fb538-6f59-4751-8629-da76665fc91e-en/",
-    "pt": "/pt/blog/musicas/f85fb538-6f59-4751-8629-da76665fc91e/"
-  },
-  "/blog/musicas/fourteen-words-en/": {
-    "en": "/blog/musicas/fourteen-words-en/",
-    "pt": "/pt/blog/musicas/fourteen-words/"
-  },
-  "/pt/blog/musicas/fourteen-words/": {
-    "en": "/blog/musicas/fourteen-words-en/",
-    "pt": "/pt/blog/musicas/fourteen-words/"
-  },
-  "/blog/musicas/john-gospel-chapter-i-by-max-headroom-en/": {
-    "en": "/blog/musicas/john-gospel-chapter-i-by-max-headroom-en/",
-    "pt": "/pt/blog/musicas/john-gospel-chapter-i-by-max-headroom/"
-  },
-  "/pt/blog/musicas/john-gospel-chapter-i-by-max-headroom/": {
-    "en": "/blog/musicas/john-gospel-chapter-i-by-max-headroom-en/",
-    "pt": "/pt/blog/musicas/john-gospel-chapter-i-by-max-headroom/"
-  },
-  "/blog/musicas/leite-no-salao-bar-en/": {
-    "en": "/blog/musicas/leite-no-salao-bar-en/",
-    "pt": "/pt/blog/musicas/leite-no-salao-bar/"
-  },
-  "/pt/blog/musicas/leite-no-salao-bar/": {
-    "en": "/blog/musicas/leite-no-salao-bar-en/",
-    "pt": "/pt/blog/musicas/leite-no-salao-bar/"
-  },
-  "/blog/musicas/meditacao-guiada-no-sertao-en/": {
-    "en": "/blog/musicas/meditacao-guiada-no-sertao-en/",
-    "pt": "/pt/blog/musicas/meditacao-guiada-no-sertao/"
-  },
-  "/pt/blog/musicas/meditacao-guiada-no-sertao/": {
-    "en": "/blog/musicas/meditacao-guiada-no-sertao-en/",
-    "pt": "/pt/blog/musicas/meditacao-guiada-no-sertao/"
-  },
-  "/blog/musicas/menino-que-voce-foi-en/": {
-    "en": "/blog/musicas/menino-que-voce-foi-en/",
-    "pt": "/pt/blog/musicas/menino-que-voce-foi/"
-  },
-  "/pt/blog/musicas/menino-que-voce-foi/": {
-    "en": "/blog/musicas/menino-que-voce-foi-en/",
-    "pt": "/pt/blog/musicas/menino-que-voce-foi/"
-  },
-  "/blog/musicas/mindfulness-en/": {
-    "en": "/blog/musicas/mindfulness-en/",
-    "pt": "/pt/blog/musicas/mindfulness/"
-  },
-  "/pt/blog/musicas/mindfulness/": {
-    "en": "/blog/musicas/mindfulness-en/",
-    "pt": "/pt/blog/musicas/mindfulness/"
-  },
-  "/blog/musicas/nonada-en/": {
-    "en": "/blog/musicas/nonada-en/",
-    "pt": "/pt/blog/musicas/nonada/"
-  },
-  "/pt/blog/musicas/nonada/": {
-    "en": "/blog/musicas/nonada-en/",
-    "pt": "/pt/blog/musicas/nonada/"
-  },
-  "/blog/musicas/o-aleph-en/": {
-    "en": "/blog/musicas/o-aleph-en/",
-    "pt": "/pt/blog/musicas/o-aleph/"
-  },
-  "/pt/blog/musicas/o-aleph/": {
-    "en": "/blog/musicas/o-aleph-en/",
-    "pt": "/pt/blog/musicas/o-aleph/"
-  },
-  "/blog/musicas/o-magico-e-o-fogo-en/": {
-    "en": "/blog/musicas/o-magico-e-o-fogo-en/",
-    "pt": "/pt/blog/musicas/o-magico-e-o-fogo/"
-  },
-  "/pt/blog/musicas/o-magico-e-o-fogo/": {
-    "en": "/blog/musicas/o-magico-e-o-fogo-en/",
-    "pt": "/pt/blog/musicas/o-magico-e-o-fogo/"
-  },
-  "/blog/musicas/o-medo-do-louco-en/": {
-    "en": "/blog/musicas/o-medo-do-louco-en/",
-    "pt": "/pt/blog/musicas/o-medo-do-louco/"
-  },
-  "/pt/blog/musicas/o-medo-do-louco/": {
-    "en": "/blog/musicas/o-medo-do-louco-en/",
-    "pt": "/pt/blog/musicas/o-medo-do-louco/"
-  },
-  "/blog/musicas/o-preco-da-saudade-en/": {
-    "en": "/blog/musicas/o-preco-da-saudade-en/",
-    "pt": "/pt/blog/musicas/o-preco-da-saudade/"
-  },
-  "/pt/blog/musicas/o-preco-da-saudade/": {
-    "en": "/blog/musicas/o-preco-da-saudade-en/",
-    "pt": "/pt/blog/musicas/o-preco-da-saudade/"
-  },
-  "/blog/musicas/o-prologo-en/": {
-    "en": "/blog/musicas/o-prologo-en/",
-    "pt": "/pt/blog/musicas/o-prologo/"
-  },
-  "/pt/blog/musicas/o-prologo/": {
-    "en": "/blog/musicas/o-prologo-en/",
-    "pt": "/pt/blog/musicas/o-prologo/"
-  },
-  "/blog/musicas/o-regral-en/": {
-    "en": "/blog/musicas/o-regral-en/",
-    "pt": "/pt/blog/musicas/o-regral/"
-  },
-  "/pt/blog/musicas/o-regral/": {
-    "en": "/blog/musicas/o-regral-en/",
-    "pt": "/pt/blog/musicas/o-regral/"
-  },
-  "/blog/musicas/o-ritual-de-abril-anos-de-saudade-en/": {
-    "en": "/blog/musicas/o-ritual-de-abril-anos-de-saudade-en/",
-    "pt": "/pt/blog/musicas/o-ritual-de-abril-anos-de-saudade/"
-  },
-  "/pt/blog/musicas/o-ritual-de-abril-anos-de-saudade/": {
-    "en": "/blog/musicas/o-ritual-de-abril-anos-de-saudade-en/",
-    "pt": "/pt/blog/musicas/o-ritual-de-abril-anos-de-saudade/"
-  },
-  "/blog/musicas/o-sonhador-e-o-fogo-en/": {
-    "en": "/blog/musicas/o-sonhador-e-o-fogo-en/",
-    "pt": "/pt/blog/musicas/o-sonhador-e-o-fogo/"
-  },
-  "/pt/blog/musicas/o-sonhador-e-o-fogo/": {
-    "en": "/blog/musicas/o-sonhador-e-o-fogo-en/",
-    "pt": "/pt/blog/musicas/o-sonhador-e-o-fogo/"
-  },
-  "/blog/musicas/o-telefone-da-agonia-en/": {
-    "en": "/blog/musicas/o-telefone-da-agonia-en/",
-    "pt": "/pt/blog/musicas/o-telefone-da-agonia/"
-  },
-  "/pt/blog/musicas/o-telefone-da-agonia/": {
-    "en": "/blog/musicas/o-telefone-da-agonia-en/",
-    "pt": "/pt/blog/musicas/o-telefone-da-agonia/"
-  },
-  "/blog/musicas/o-tempo-en/": {
-    "en": "/blog/musicas/o-tempo-en/",
-    "pt": "/pt/blog/musicas/o-tempo/"
-  },
-  "/pt/blog/musicas/o-tempo/": {
-    "en": "/blog/musicas/o-tempo-en/",
-    "pt": "/pt/blog/musicas/o-tempo/"
-  },
-  "/blog/musicas/o-verso-branquiceleste-en/": {
-    "en": "/blog/musicas/o-verso-branquiceleste-en/",
-    "pt": "/pt/blog/musicas/o-verso-branquiceleste/"
-  },
-  "/pt/blog/musicas/o-verso-branquiceleste/": {
-    "en": "/blog/musicas/o-verso-branquiceleste-en/",
-    "pt": "/pt/blog/musicas/o-verso-branquiceleste/"
-  },
-  "/blog/musicas/observer-error-moving-window-iv-en/": {
-    "en": "/blog/musicas/observer-error-moving-window-iv-en/",
-    "pt": "/pt/blog/musicas/observer-error-moving-window-iv/"
-  },
-  "/pt/blog/musicas/observer-error-moving-window-iv/": {
-    "en": "/blog/musicas/observer-error-moving-window-iv-en/",
-    "pt": "/pt/blog/musicas/observer-error-moving-window-iv/"
-  },
-  "/blog/musicas/paperclip-rhapsody-en/": {
-    "en": "/blog/musicas/paperclip-rhapsody-en/",
-    "pt": "/pt/blog/musicas/paperclip-rhapsody/"
-  },
-  "/pt/blog/musicas/paperclip-rhapsody/": {
-    "en": "/blog/musicas/paperclip-rhapsody-en/",
-    "pt": "/pt/blog/musicas/paperclip-rhapsody/"
-  },
-  "/blog/musicas/particles-en/": {
-    "en": "/blog/musicas/particles-en/",
-    "pt": "/pt/blog/musicas/particles/"
-  },
-  "/pt/blog/musicas/particles/": {
-    "en": "/blog/musicas/particles-en/",
-    "pt": "/pt/blog/musicas/particles/"
-  },
-  "/blog/musicas/pattern-over-stuff-en/": {
-    "en": "/blog/musicas/pattern-over-stuff-en/",
-    "pt": "/pt/blog/musicas/pattern-over-stuff/"
-  },
-  "/pt/blog/musicas/pattern-over-stuff/": {
-    "en": "/blog/musicas/pattern-over-stuff-en/",
-    "pt": "/pt/blog/musicas/pattern-over-stuff/"
-  },
-  "/blog/musicas/prayer-to-the-unfinished-moving-window-v-en/": {
-    "en": "/blog/musicas/prayer-to-the-unfinished-moving-window-v-en/",
-    "pt": "/pt/blog/musicas/prayer-to-the-unfinished-moving-window-v/"
-  },
-  "/pt/blog/musicas/prayer-to-the-unfinished-moving-window-v/": {
-    "en": "/blog/musicas/prayer-to-the-unfinished-moving-window-v-en/",
-    "pt": "/pt/blog/musicas/prayer-to-the-unfinished-moving-window-v/"
-  },
-  "/blog/musicas/primavera-carregando-en/": {
-    "en": "/blog/musicas/primavera-carregando-en/",
-    "pt": "/pt/blog/musicas/primavera-carregando/"
-  },
-  "/pt/blog/musicas/primavera-carregando/": {
-    "en": "/blog/musicas/primavera-carregando-en/",
-    "pt": "/pt/blog/musicas/primavera-carregando/"
-  },
-  "/blog/musicas/quando-vier-a-primavera-en/": {
-    "en": "/blog/musicas/quando-vier-a-primavera-en/",
-    "pt": "/pt/blog/musicas/quando-vier-a-primavera/"
-  },
-  "/pt/blog/musicas/quando-vier-a-primavera/": {
-    "en": "/blog/musicas/quando-vier-a-primavera-en/",
-    "pt": "/pt/blog/musicas/quando-vier-a-primavera/"
-  },
-  "/blog/musicas/reality-maintenance-moving-window-xii-en/": {
-    "en": "/blog/musicas/reality-maintenance-moving-window-xii-en/",
-    "pt": "/pt/blog/musicas/reality-maintenance-moving-window-xii/"
-  },
-  "/pt/blog/musicas/reality-maintenance-moving-window-xii/": {
-    "en": "/blog/musicas/reality-maintenance-moving-window-xii-en/",
-    "pt": "/pt/blog/musicas/reality-maintenance-moving-window-xii/"
-  },
-  "/blog/musicas/riobaldo-e-o-aleph-en/": {
-    "en": "/blog/musicas/riobaldo-e-o-aleph-en/",
-    "pt": "/pt/blog/musicas/riobaldo-e-o-aleph/"
-  },
-  "/pt/blog/musicas/riobaldo-e-o-aleph/": {
-    "en": "/blog/musicas/riobaldo-e-o-aleph-en/",
-    "pt": "/pt/blog/musicas/riobaldo-e-o-aleph/"
-  },
-  "/blog/musicas/sentido-e-referencia-en/": {
-    "en": "/blog/musicas/sentido-e-referencia-en/",
-    "pt": "/pt/blog/musicas/sentido-e-referencia/"
-  },
-  "/pt/blog/musicas/sentido-e-referencia/": {
-    "en": "/blog/musicas/sentido-e-referencia-en/",
-    "pt": "/pt/blog/musicas/sentido-e-referencia/"
-  },
-  "/blog/musicas/sinal-que-se-cumpre-moving-window-ix-en/": {
-    "en": "/blog/musicas/sinal-que-se-cumpre-moving-window-ix-en/",
-    "pt": "/pt/blog/musicas/sinal-que-se-cumpre-moving-window-ix/"
-  },
-  "/pt/blog/musicas/sinal-que-se-cumpre-moving-window-ix/": {
-    "en": "/blog/musicas/sinal-que-se-cumpre-moving-window-ix-en/",
-    "pt": "/pt/blog/musicas/sinal-que-se-cumpre-moving-window-ix/"
-  },
-  "/blog/musicas/sobre-o-rigor-na-ciencia-en/": {
-    "en": "/blog/musicas/sobre-o-rigor-na-ciencia-en/",
-    "pt": "/pt/blog/musicas/sobre-o-rigor-na-ciencia/"
-  },
-  "/pt/blog/musicas/sobre-o-rigor-na-ciencia/": {
-    "en": "/blog/musicas/sobre-o-rigor-na-ciencia-en/",
-    "pt": "/pt/blog/musicas/sobre-o-rigor-na-ciencia/"
-  },
-  "/blog/musicas/spring-loading-en/": {
-    "en": "/blog/musicas/spring-loading-en/",
-    "pt": "/pt/blog/musicas/spring-loading/"
-  },
-  "/pt/blog/musicas/spring-loading/": {
-    "en": "/blog/musicas/spring-loading-en/",
-    "pt": "/pt/blog/musicas/spring-loading/"
-  },
-  "/blog/musicas/stopping-by-woods-on-a-snowy-evening-by-robert-frost-en/": {
-    "en": "/blog/musicas/stopping-by-woods-on-a-snowy-evening-by-robert-frost-en/",
-    "pt": "/pt/blog/musicas/stopping-by-woods-on-a-snowy-evening-by-robert-frost/"
-  },
-  "/pt/blog/musicas/stopping-by-woods-on-a-snowy-evening-by-robert-frost/": {
-    "en": "/blog/musicas/stopping-by-woods-on-a-snowy-evening-by-robert-frost-en/",
-    "pt": "/pt/blog/musicas/stopping-by-woods-on-a-snowy-evening-by-robert-frost/"
-  },
-  "/blog/musicas/sussurros-binarios-en/": {
-    "en": "/blog/musicas/sussurros-binarios-en/",
-    "pt": "/pt/blog/musicas/sussurros-binarios/"
-  },
-  "/pt/blog/musicas/sussurros-binarios/": {
-    "en": "/blog/musicas/sussurros-binarios-en/",
-    "pt": "/pt/blog/musicas/sussurros-binarios/"
-  },
-  "/blog/musicas/the-ruliad-is-laughing-en/": {
-    "en": "/blog/musicas/the-ruliad-is-laughing-en/",
-    "pt": "/pt/blog/musicas/the-ruliad-is-laughing/"
-  },
-  "/pt/blog/musicas/the-ruliad-is-laughing/": {
-    "en": "/blog/musicas/the-ruliad-is-laughing-en/",
-    "pt": "/pt/blog/musicas/the-ruliad-is-laughing/"
-  },
-  "/blog/musicas/the-third-song-moving-window-iii-en/": {
-    "en": "/blog/musicas/the-third-song-moving-window-iii-en/",
-    "pt": "/pt/blog/musicas/the-third-song-moving-window-iii/"
-  },
-  "/pt/blog/musicas/the-third-song-moving-window-iii/": {
-    "en": "/blog/musicas/the-third-song-moving-window-iii-en/",
-    "pt": "/pt/blog/musicas/the-third-song-moving-window-iii/"
-  },
-  "/blog/musicas/the-time-en/": {
-    "en": "/blog/musicas/the-time-en/",
-    "pt": "/pt/blog/musicas/the-time/"
-  },
-  "/pt/blog/musicas/the-time/": {
-    "en": "/blog/musicas/the-time-en/",
-    "pt": "/pt/blog/musicas/the-time/"
-  },
-  "/blog/musicas/trinta-de-abril-en/": {
-    "en": "/blog/musicas/trinta-de-abril-en/",
-    "pt": "/pt/blog/musicas/trinta-de-abril/"
-  },
-  "/pt/blog/musicas/trinta-de-abril/": {
-    "en": "/blog/musicas/trinta-de-abril-en/",
-    "pt": "/pt/blog/musicas/trinta-de-abril/"
-  },
-  "/blog/musicas/two-cursors-en/": {
-    "en": "/blog/musicas/two-cursors-en/",
-    "pt": "/pt/blog/musicas/two-cursors/"
-  },
-  "/pt/blog/musicas/two-cursors/": {
-    "en": "/blog/musicas/two-cursors-en/",
-    "pt": "/pt/blog/musicas/two-cursors/"
-  },
-  "/blog/musicas/uma-so-cancao-en/": {
-    "en": "/blog/musicas/uma-so-cancao-en/",
-    "pt": "/pt/blog/musicas/uma-so-cancao/"
-  },
-  "/pt/blog/musicas/uma-so-cancao/": {
-    "en": "/blog/musicas/uma-so-cancao-en/",
-    "pt": "/pt/blog/musicas/uma-so-cancao/"
-  },
-  "/blog/musicas/universal-threshold-en/": {
-    "en": "/blog/musicas/universal-threshold-en/",
-    "pt": "/pt/blog/musicas/universal-threshold/"
-  },
-  "/pt/blog/musicas/universal-threshold/": {
-    "en": "/blog/musicas/universal-threshold-en/",
-    "pt": "/pt/blog/musicas/universal-threshold/"
-  },
-  "/blog/musicas/veu-do-infinito-en/": {
-    "en": "/blog/musicas/veu-do-infinito-en/",
-    "pt": "/pt/blog/musicas/veu-do-infinito/"
-  },
-  "/pt/blog/musicas/veu-do-infinito/": {
-    "en": "/blog/musicas/veu-do-infinito-en/",
-    "pt": "/pt/blog/musicas/veu-do-infinito/"
-  },
-  "/blog/musicas/vos-en/": {
-    "en": "/blog/musicas/vos-en/",
-    "pt": "/pt/blog/musicas/vos/"
-  },
-  "/pt/blog/musicas/vos/": {
-    "en": "/blog/musicas/vos-en/",
-    "pt": "/pt/blog/musicas/vos/"
-  },
-  "/blog/musicas/xadrez-en/": {
-    "en": "/blog/musicas/xadrez-en/",
-    "pt": "/pt/blog/musicas/xadrez/"
-  },
-  "/pt/blog/musicas/xadrez/": {
-    "en": "/blog/musicas/xadrez-en/",
-    "pt": "/pt/blog/musicas/xadrez/"
+  "/blog/nonada-en/": {
+    "en": "/blog/nonada-en/",
+    "pt": "/pt/blog/nonada/"
+  },
+  "/pt/blog/nonada/": {
+    "en": "/blog/nonada-en/",
+    "pt": "/pt/blog/nonada/"
   },
   "/pt/blog/o-agente-que-nao-inventa-verbos/": {
     "pt": "/pt/blog/o-agente-que-nao-inventa-verbos/",
@@ -662,6 +374,30 @@
   "/blog/the-agent-that-doesnt-invent-verbs/": {
     "pt": "/pt/blog/o-agente-que-nao-inventa-verbos/",
     "en": "/blog/the-agent-that-doesnt-invent-verbs/"
+  },
+  "/blog/o-aleph-en/": {
+    "en": "/blog/o-aleph-en/",
+    "pt": "/pt/blog/o-aleph/"
+  },
+  "/pt/blog/o-aleph/": {
+    "en": "/blog/o-aleph-en/",
+    "pt": "/pt/blog/o-aleph/"
+  },
+  "/blog/o-magico-e-o-fogo-en/": {
+    "en": "/blog/o-magico-e-o-fogo-en/",
+    "pt": "/pt/blog/o-magico-e-o-fogo/"
+  },
+  "/pt/blog/o-magico-e-o-fogo/": {
+    "en": "/blog/o-magico-e-o-fogo-en/",
+    "pt": "/pt/blog/o-magico-e-o-fogo/"
+  },
+  "/blog/o-medo-do-louco-en/": {
+    "en": "/blog/o-medo-do-louco-en/",
+    "pt": "/pt/blog/o-medo-do-louco/"
+  },
+  "/pt/blog/o-medo-do-louco/": {
+    "en": "/blog/o-medo-do-louco-en/",
+    "pt": "/pt/blog/o-medo-do-louco/"
   },
   "/pt/blog/o-ovo-de-serpente/": {
     "pt": "/pt/blog/o-ovo-de-serpente/",
@@ -687,6 +423,62 @@
     "pt": "/pt/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital/",
     "en": "/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/"
   },
+  "/blog/o-preco-da-saudade-en/": {
+    "en": "/blog/o-preco-da-saudade-en/",
+    "pt": "/pt/blog/o-preco-da-saudade/"
+  },
+  "/pt/blog/o-preco-da-saudade/": {
+    "en": "/blog/o-preco-da-saudade-en/",
+    "pt": "/pt/blog/o-preco-da-saudade/"
+  },
+  "/blog/o-prologo-en/": {
+    "en": "/blog/o-prologo-en/",
+    "pt": "/pt/blog/o-prologo/"
+  },
+  "/pt/blog/o-prologo/": {
+    "en": "/blog/o-prologo-en/",
+    "pt": "/pt/blog/o-prologo/"
+  },
+  "/blog/o-regral-en/": {
+    "en": "/blog/o-regral-en/",
+    "pt": "/pt/blog/o-regral/"
+  },
+  "/pt/blog/o-regral/": {
+    "en": "/blog/o-regral-en/",
+    "pt": "/pt/blog/o-regral/"
+  },
+  "/blog/o-ritual-de-abril-anos-de-saudade-en/": {
+    "en": "/blog/o-ritual-de-abril-anos-de-saudade-en/",
+    "pt": "/pt/blog/o-ritual-de-abril-anos-de-saudade/"
+  },
+  "/pt/blog/o-ritual-de-abril-anos-de-saudade/": {
+    "en": "/blog/o-ritual-de-abril-anos-de-saudade-en/",
+    "pt": "/pt/blog/o-ritual-de-abril-anos-de-saudade/"
+  },
+  "/blog/o-sonhador-e-o-fogo-en/": {
+    "en": "/blog/o-sonhador-e-o-fogo-en/",
+    "pt": "/pt/blog/o-sonhador-e-o-fogo/"
+  },
+  "/pt/blog/o-sonhador-e-o-fogo/": {
+    "en": "/blog/o-sonhador-e-o-fogo-en/",
+    "pt": "/pt/blog/o-sonhador-e-o-fogo/"
+  },
+  "/blog/o-telefone-da-agonia-en/": {
+    "en": "/blog/o-telefone-da-agonia-en/",
+    "pt": "/pt/blog/o-telefone-da-agonia/"
+  },
+  "/pt/blog/o-telefone-da-agonia/": {
+    "en": "/blog/o-telefone-da-agonia-en/",
+    "pt": "/pt/blog/o-telefone-da-agonia/"
+  },
+  "/blog/o-tempo-en/": {
+    "en": "/blog/o-tempo-en/",
+    "pt": "/pt/blog/o-tempo/"
+  },
+  "/pt/blog/o-tempo/": {
+    "en": "/blog/o-tempo-en/",
+    "pt": "/pt/blog/o-tempo/"
+  },
   "/pt/blog/o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim/": {
     "pt": "/pt/blog/o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim/",
     "en": "/blog/the-intelligible-void-hassabis-and-events/"
@@ -694,6 +486,22 @@
   "/blog/the-intelligible-void-hassabis-and-events/": {
     "pt": "/pt/blog/o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim/",
     "en": "/blog/the-intelligible-void-hassabis-and-events/"
+  },
+  "/blog/o-verso-branquiceleste-en/": {
+    "en": "/blog/o-verso-branquiceleste-en/",
+    "pt": "/pt/blog/o-verso-branquiceleste/"
+  },
+  "/pt/blog/o-verso-branquiceleste/": {
+    "en": "/blog/o-verso-branquiceleste-en/",
+    "pt": "/pt/blog/o-verso-branquiceleste/"
+  },
+  "/blog/observer-error-moving-window-iv-en/": {
+    "en": "/blog/observer-error-moving-window-iv-en/",
+    "pt": "/pt/blog/observer-error-moving-window-iv/"
+  },
+  "/pt/blog/observer-error-moving-window-iv/": {
+    "en": "/blog/observer-error-moving-window-iv-en/",
+    "pt": "/pt/blog/observer-error-moving-window-iv/"
   },
   "/pt/blog/orquestrando-agentes-memoria-familiar/": {
     "pt": "/pt/blog/orquestrando-agentes-memoria-familiar/",
@@ -711,6 +519,22 @@
     "pt": "/pt/blog/os-tres-imperativos-em-delfos/",
     "en": "/blog/the-three-imperatives-at-delphi/"
   },
+  "/blog/paperclip-rhapsody-en/": {
+    "en": "/blog/paperclip-rhapsody-en/",
+    "pt": "/pt/blog/paperclip-rhapsody/"
+  },
+  "/pt/blog/paperclip-rhapsody/": {
+    "en": "/blog/paperclip-rhapsody-en/",
+    "pt": "/pt/blog/paperclip-rhapsody/"
+  },
+  "/blog/particles-en/": {
+    "en": "/blog/particles-en/",
+    "pt": "/pt/blog/particles/"
+  },
+  "/pt/blog/particles/": {
+    "en": "/blog/particles-en/",
+    "pt": "/pt/blog/particles/"
+  },
   "/pt/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/": {
     "pt": "/pt/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/",
     "en": "/blog/patents-for-social-vulnerabilities/"
@@ -718,6 +542,14 @@
   "/blog/patents-for-social-vulnerabilities/": {
     "pt": "/pt/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/",
     "en": "/blog/patents-for-social-vulnerabilities/"
+  },
+  "/blog/pattern-over-stuff-en/": {
+    "en": "/blog/pattern-over-stuff-en/",
+    "pt": "/pt/blog/pattern-over-stuff/"
+  },
+  "/pt/blog/pattern-over-stuff/": {
+    "en": "/blog/pattern-over-stuff-en/",
+    "pt": "/pt/blog/pattern-over-stuff/"
   },
   "/blog/pierre-menard-computational-researcher/": {
     "en": "/blog/pierre-menard-computational-researcher/",
@@ -735,6 +567,30 @@
     "en": "/blog/pontifex-novel-architecture-semantic-probing/",
     "pt": "/pt/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/"
   },
+  "/blog/prayer-to-the-unfinished-moving-window-v-en/": {
+    "en": "/blog/prayer-to-the-unfinished-moving-window-v-en/",
+    "pt": "/pt/blog/prayer-to-the-unfinished-moving-window-v/"
+  },
+  "/pt/blog/prayer-to-the-unfinished-moving-window-v/": {
+    "en": "/blog/prayer-to-the-unfinished-moving-window-v-en/",
+    "pt": "/pt/blog/prayer-to-the-unfinished-moving-window-v/"
+  },
+  "/blog/primavera-carregando-en/": {
+    "en": "/blog/primavera-carregando-en/",
+    "pt": "/pt/blog/primavera-carregando/"
+  },
+  "/pt/blog/primavera-carregando/": {
+    "en": "/blog/primavera-carregando-en/",
+    "pt": "/pt/blog/primavera-carregando/"
+  },
+  "/blog/quando-vier-a-primavera-en/": {
+    "en": "/blog/quando-vier-a-primavera-en/",
+    "pt": "/pt/blog/quando-vier-a-primavera/"
+  },
+  "/pt/blog/quando-vier-a-primavera/": {
+    "en": "/blog/quando-vier-a-primavera-en/",
+    "pt": "/pt/blog/quando-vier-a-primavera/"
+  },
   "/pt/blog/quem-o-asterisco-protege/": {
     "pt": "/pt/blog/quem-o-asterisco-protege/",
     "en": "/blog/who-the-asterisk-protects/"
@@ -743,6 +599,14 @@
     "pt": "/pt/blog/quem-o-asterisco-protege/",
     "en": "/blog/who-the-asterisk-protects/"
   },
+  "/blog/reality-maintenance-moving-window-xii-en/": {
+    "en": "/blog/reality-maintenance-moving-window-xii-en/",
+    "pt": "/pt/blog/reality-maintenance-moving-window-xii/"
+  },
+  "/pt/blog/reality-maintenance-moving-window-xii/": {
+    "en": "/blog/reality-maintenance-moving-window-xii-en/",
+    "pt": "/pt/blog/reality-maintenance-moving-window-xii/"
+  },
   "/blog/reclaiming-the-harness/": {
     "en": "/blog/reclaiming-the-harness/",
     "pt": "/pt/blog/recuperando-o-harness/"
@@ -750,6 +614,86 @@
   "/pt/blog/recuperando-o-harness/": {
     "en": "/blog/reclaiming-the-harness/",
     "pt": "/pt/blog/recuperando-o-harness/"
+  },
+  "/blog/riobaldo-e-o-aleph-en/": {
+    "en": "/blog/riobaldo-e-o-aleph-en/",
+    "pt": "/pt/blog/riobaldo-e-o-aleph/"
+  },
+  "/pt/blog/riobaldo-e-o-aleph/": {
+    "en": "/blog/riobaldo-e-o-aleph-en/",
+    "pt": "/pt/blog/riobaldo-e-o-aleph/"
+  },
+  "/blog/sentido-e-referencia-en/": {
+    "en": "/blog/sentido-e-referencia-en/",
+    "pt": "/pt/blog/sentido-e-referencia/"
+  },
+  "/pt/blog/sentido-e-referencia/": {
+    "en": "/blog/sentido-e-referencia-en/",
+    "pt": "/pt/blog/sentido-e-referencia/"
+  },
+  "/blog/sinal-que-se-cumpre-moving-window-ix-en/": {
+    "en": "/blog/sinal-que-se-cumpre-moving-window-ix-en/",
+    "pt": "/pt/blog/sinal-que-se-cumpre-moving-window-ix/"
+  },
+  "/pt/blog/sinal-que-se-cumpre-moving-window-ix/": {
+    "en": "/blog/sinal-que-se-cumpre-moving-window-ix-en/",
+    "pt": "/pt/blog/sinal-que-se-cumpre-moving-window-ix/"
+  },
+  "/blog/sobre-o-rigor-na-ciencia-en/": {
+    "en": "/blog/sobre-o-rigor-na-ciencia-en/",
+    "pt": "/pt/blog/sobre-o-rigor-na-ciencia/"
+  },
+  "/pt/blog/sobre-o-rigor-na-ciencia/": {
+    "en": "/blog/sobre-o-rigor-na-ciencia-en/",
+    "pt": "/pt/blog/sobre-o-rigor-na-ciencia/"
+  },
+  "/blog/spring-loading-en/": {
+    "en": "/blog/spring-loading-en/",
+    "pt": "/pt/blog/spring-loading/"
+  },
+  "/pt/blog/spring-loading/": {
+    "en": "/blog/spring-loading-en/",
+    "pt": "/pt/blog/spring-loading/"
+  },
+  "/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost-en/": {
+    "en": "/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost-en/",
+    "pt": "/pt/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost/"
+  },
+  "/pt/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost/": {
+    "en": "/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost-en/",
+    "pt": "/pt/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost/"
+  },
+  "/blog/sussurros-binarios-en/": {
+    "en": "/blog/sussurros-binarios-en/",
+    "pt": "/pt/blog/sussurros-binarios/"
+  },
+  "/pt/blog/sussurros-binarios/": {
+    "en": "/blog/sussurros-binarios-en/",
+    "pt": "/pt/blog/sussurros-binarios/"
+  },
+  "/blog/the-ruliad-is-laughing-en/": {
+    "en": "/blog/the-ruliad-is-laughing-en/",
+    "pt": "/pt/blog/the-ruliad-is-laughing/"
+  },
+  "/pt/blog/the-ruliad-is-laughing/": {
+    "en": "/blog/the-ruliad-is-laughing-en/",
+    "pt": "/pt/blog/the-ruliad-is-laughing/"
+  },
+  "/blog/the-third-song-moving-window-iii-en/": {
+    "en": "/blog/the-third-song-moving-window-iii-en/",
+    "pt": "/pt/blog/the-third-song-moving-window-iii/"
+  },
+  "/pt/blog/the-third-song-moving-window-iii/": {
+    "en": "/blog/the-third-song-moving-window-iii-en/",
+    "pt": "/pt/blog/the-third-song-moving-window-iii/"
+  },
+  "/blog/the-time-en/": {
+    "en": "/blog/the-time-en/",
+    "pt": "/pt/blog/the-time/"
+  },
+  "/pt/blog/the-time/": {
+    "en": "/blog/the-time-en/",
+    "pt": "/pt/blog/the-time/"
   },
   "/blog/three-hammers-walk-into-a-bar/": {
     "en": "/blog/three-hammers-walk-into-a-bar/",
@@ -767,6 +711,38 @@
     "en": "/blog/travessia-the-project-that-writes-itself/",
     "pt": "/pt/blog/travessia/"
   },
+  "/blog/trinta-de-abril-en/": {
+    "en": "/blog/trinta-de-abril-en/",
+    "pt": "/pt/blog/trinta-de-abril/"
+  },
+  "/pt/blog/trinta-de-abril/": {
+    "en": "/blog/trinta-de-abril-en/",
+    "pt": "/pt/blog/trinta-de-abril/"
+  },
+  "/blog/two-cursors-en/": {
+    "en": "/blog/two-cursors-en/",
+    "pt": "/pt/blog/two-cursors/"
+  },
+  "/pt/blog/two-cursors/": {
+    "en": "/blog/two-cursors-en/",
+    "pt": "/pt/blog/two-cursors/"
+  },
+  "/blog/uma-so-cancao-en/": {
+    "en": "/blog/uma-so-cancao-en/",
+    "pt": "/pt/blog/uma-so-cancao/"
+  },
+  "/pt/blog/uma-so-cancao/": {
+    "en": "/blog/uma-so-cancao-en/",
+    "pt": "/pt/blog/uma-so-cancao/"
+  },
+  "/blog/universal-threshold-en/": {
+    "en": "/blog/universal-threshold-en/",
+    "pt": "/pt/blog/universal-threshold/"
+  },
+  "/pt/blog/universal-threshold/": {
+    "en": "/blog/universal-threshold-en/",
+    "pt": "/pt/blog/universal-threshold/"
+  },
   "/pt/blog/verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram/": {
     "pt": "/pt/blog/verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram/",
     "en": "/blog/verne-identity-repo/"
@@ -774,5 +750,29 @@
   "/blog/verne-identity-repo/": {
     "pt": "/pt/blog/verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram/",
     "en": "/blog/verne-identity-repo/"
+  },
+  "/blog/veu-do-infinito-en/": {
+    "en": "/blog/veu-do-infinito-en/",
+    "pt": "/pt/blog/veu-do-infinito/"
+  },
+  "/pt/blog/veu-do-infinito/": {
+    "en": "/blog/veu-do-infinito-en/",
+    "pt": "/pt/blog/veu-do-infinito/"
+  },
+  "/blog/vos-en/": {
+    "en": "/blog/vos-en/",
+    "pt": "/pt/blog/vos/"
+  },
+  "/pt/blog/vos/": {
+    "en": "/blog/vos-en/",
+    "pt": "/pt/blog/vos/"
+  },
+  "/blog/xadrez-en/": {
+    "en": "/blog/xadrez-en/",
+    "pt": "/pt/blog/xadrez/"
+  },
+  "/pt/blog/xadrez/": {
+    "en": "/blog/xadrez-en/",
+    "pt": "/pt/blog/xadrez/"
   }
 }

@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:28:29Z'
 match_index: 13
 post_a:
   key: music-chegue-irmao-chegue-irma
-  path: src/content/blog/musicas/chegue-irmao-chegue-irma-en.mdx
+  path: src/content/blog/chegue-irmao-chegue-irma-en.mdx
   display_lang: en
   version: 7d923db3-8fd3-5a63-a9c4-26680d81c0f2
 post_b:
   key: music-sussurros-binarios
-  path: src/content/blog/musicas/sussurros-binarios.mdx
+  path: src/content/blog/sussurros-binarios.mdx
   display_lang: pt
   version: 8e51a2ff-6b94-54da-bf29-5e3391401267
 winner: a

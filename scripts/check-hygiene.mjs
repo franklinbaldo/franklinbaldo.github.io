@@ -5,6 +5,8 @@
 //   4. No banned scratch-file patterns.
 //   5. Journal files in .routines/ (top-level only) must follow the
 //      YYYY-MM-DDTHH-MM-SS-slug.md naming convention.
+//   6. No files under src/content/blog/musicas/ — RFC 0006 flattened the
+//      folder; an outdated music generator must not resurrect it.
 import { execSync } from "node:child_process";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -84,6 +86,15 @@ for (const f of tracked) {
   if (!JOURNAL_RE.test(base)) {
     errors.push(
       `Journal name doesn't match YYYY-MM-DDTHH-MM-SS-slug.md: "${f}"`
+    );
+  }
+}
+
+// ── 6. musicas/ stays flattened (RFC 0006) ────────────────────────────────
+for (const f of tracked) {
+  if (f.startsWith("src/content/blog/musicas/")) {
+    errors.push(
+      `Resurrected musicas/ folder: "${f}" — music posts live in src/content/blog/ with postType: music (RFC 0006)`
     );
   }
 }

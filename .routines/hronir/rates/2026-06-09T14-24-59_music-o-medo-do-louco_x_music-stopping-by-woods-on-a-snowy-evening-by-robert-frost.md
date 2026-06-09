@@ -4,13 +4,13 @@ run_at: '2026-06-09T14:24:59Z'
 match_index: 4
 post_a:
   key: music-o-medo-do-louco
-  path: src/content/blog/musicas/o-medo-do-louco.mdx
+  path: src/content/blog/o-medo-do-louco.mdx
   display_lang: pt
   version: 2210da8c-a49d-5070-b984-80ade0f5a098
 post_b:
   key: music-stopping-by-woods-on-a-snowy-evening-by-robert-frost
   path: >-
-    src/content/blog/musicas/stopping-by-woods-on-a-snowy-evening-by-robert-frost-en.mdx
+    src/content/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost-en.mdx
   display_lang: en
   version: d4662af1-8136-5d58-96c9-c6e8ef931b20
 winner: b

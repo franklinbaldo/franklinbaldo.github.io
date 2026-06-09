@@ -11,7 +11,9 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
-const MUSICAS_DIR = join(ROOT, "src/content/blog/musicas");
+// Music posts share src/content/blog/ with regular posts since RFC 0006;
+// postType: music in the frontmatter is what identifies them.
+const BLOG_DIR = join(ROOT, "src/content/blog");
 
 // Known English translations for PT titles
 const TITLE_TRANSLATIONS = {
@@ -129,9 +131,14 @@ function makeEnBody(ptBody, enTitle) {
 }
 
 async function main() {
-  const files = readdirSync(MUSICAS_DIR).filter((f) => f.endsWith(".mdx"));
-  // Skip files that are already EN companions (end with -en.mdx)
-  const ptFiles = files.filter((f) => !f.endsWith("-en.mdx"));
+  const files = readdirSync(BLOG_DIR).filter((f) => f.endsWith(".mdx"));
+  // Skip files that are already EN companions (end with -en.mdx) and any
+  // non-music post sharing the blog root.
+  const ptFiles = files.filter((f) => {
+    if (f.endsWith("-en.mdx")) return false;
+    const raw = readFileSync(join(BLOG_DIR, f), "utf8");
+    return /^postType: music$/m.test(raw);
+  });
 
   console.log(`Found ${ptFiles.length} PT music files to process.`);
 
@@ -141,8 +148,8 @@ async function main() {
 
   for (const filename of ptFiles) {
     const slug = basename(filename, ".mdx");
-    const ptPath = join(MUSICAS_DIR, filename);
-    const enPath = join(MUSICAS_DIR, `${slug}-en.mdx`);
+    const ptPath = join(BLOG_DIR, filename);
+    const enPath = join(BLOG_DIR, `${slug}-en.mdx`);
 
     const content = readFileSync(ptPath, "utf8");
     const parsed = parseFrontmatter(content);
@@ -181,7 +188,7 @@ async function main() {
       `---\n${enFrontmatter}\n---\n${enBody}`,
       "utf8"
     );
-    console.log(`  created: musicas/${slug}-en.mdx`);
+    console.log(`  created: ${slug}-en.mdx`);
     created++;
   }
 

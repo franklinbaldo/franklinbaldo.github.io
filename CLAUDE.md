@@ -120,7 +120,7 @@ check derivam — veja RFC 0004.
 ### Defaults de língua por tipo de conteúdo
 
 - **Blog** (`src/content/blog/*.md`): inglês por padrão; PT marcado com `lang: pt`.
-- **Músicas** (`src/content/blog/musicas/`): português por padrão; EN com sufixo `-en` no nome do arquivo.
+- **Músicas** (`postType: music` no frontmatter, mesmo diretório dos posts — RFC 0006): português por padrão; EN com sufixo `-en` no nome do arquivo.
 
 ### slug = filename = URL
 

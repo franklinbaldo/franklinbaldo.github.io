@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:28:35Z'
 match_index: 17
 post_a:
   key: music-sentido-e-referencia
-  path: src/content/blog/musicas/sentido-e-referencia-en.mdx
+  path: src/content/blog/sentido-e-referencia-en.mdx
   display_lang: en
   version: 3dae6f9e-6427-598d-9033-ff508f855365
 post_b:
   key: music-666
-  path: src/content/blog/musicas/666.mdx
+  path: src/content/blog/666.mdx
   display_lang: pt
   version: fa07161a-ad7f-5fac-9ab4-d4a78813c476
 winner: a

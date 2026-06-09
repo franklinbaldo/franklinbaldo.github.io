@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:24:37Z'
 match_index: 3
 post_a:
   key: music-nonada
-  path: src/content/blog/musicas/nonada.mdx
+  path: src/content/blog/nonada.mdx
   display_lang: pt
   version: 202043f0-3bc2-5017-b8af-c2112ba4a05a
 post_b:
   key: music-o-preco-da-saudade
-  path: src/content/blog/musicas/o-preco-da-saudade-en.mdx
+  path: src/content/blog/o-preco-da-saudade-en.mdx
   display_lang: en
   version: eb3d50e8-ae0a-538c-ad21-7a03af5ae743
 winner: a

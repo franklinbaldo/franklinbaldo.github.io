@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:28:05Z'
 match_index: 12
 post_a:
   key: music-paperclip-rhapsody
-  path: src/content/blog/musicas/paperclip-rhapsody.mdx
+  path: src/content/blog/paperclip-rhapsody.mdx
   display_lang: pt
   version: 867c23af-6338-586c-8622-617338a0187f
 post_b:
   key: music-john-gospel-chapter-i-by-max-headroom
-  path: src/content/blog/musicas/john-gospel-chapter-i-by-max-headroom.mdx
+  path: src/content/blog/john-gospel-chapter-i-by-max-headroom.mdx
   display_lang: pt
   version: e0f9b274-6fa5-5014-95fd-25330d2feeaf
 winner: b

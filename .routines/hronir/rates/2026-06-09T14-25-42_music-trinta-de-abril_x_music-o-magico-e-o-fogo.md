@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:25:42Z'
 match_index: 6
 post_a:
   key: music-trinta-de-abril
-  path: src/content/blog/musicas/trinta-de-abril.mdx
+  path: src/content/blog/trinta-de-abril.mdx
   display_lang: pt
   version: 793620ca-502d-5836-a96b-63fe8fda4342
 post_b:
   key: music-o-magico-e-o-fogo
-  path: src/content/blog/musicas/o-magico-e-o-fogo-en.mdx
+  path: src/content/blog/o-magico-e-o-fogo-en.mdx
   display_lang: en
   version: b0837034-4af4-5c14-a9dd-43cf94c3b49f
 winner: a

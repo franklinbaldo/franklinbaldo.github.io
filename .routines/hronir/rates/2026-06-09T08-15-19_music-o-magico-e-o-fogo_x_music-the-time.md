@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:15:19Z'
 match_index: 8
 post_a:
   key: music-o-magico-e-o-fogo
-  path: src/content/blog/musicas/o-magico-e-o-fogo-en.mdx
+  path: src/content/blog/o-magico-e-o-fogo-en.mdx
   display_lang: en
   version: b0837034-4af4-5c14-a9dd-43cf94c3b49f
 post_b:
   key: music-the-time
-  path: src/content/blog/musicas/the-time.mdx
+  path: src/content/blog/the-time.mdx
   display_lang: pt
   version: 3c0ef4f6-6cbb-5136-84aa-0368cb44d777
 winner: a

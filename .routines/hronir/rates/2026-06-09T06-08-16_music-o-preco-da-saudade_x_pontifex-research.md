@@ -4,7 +4,7 @@ run_at: '2026-06-09T06:08:16Z'
 match_index: 2
 post_a:
   key: music-o-preco-da-saudade
-  path: src/content/blog/musicas/o-preco-da-saudade-en.mdx
+  path: src/content/blog/o-preco-da-saudade-en.mdx
   display_lang: en
   version: eb3d50e8-ae0a-538c-ad21-7a03af5ae743
 post_b:

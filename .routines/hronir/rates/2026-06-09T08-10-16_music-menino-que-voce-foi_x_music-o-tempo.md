@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:10:16Z'
 match_index: 1
 post_a:
   key: music-menino-que-voce-foi
-  path: src/content/blog/musicas/menino-que-voce-foi-en.mdx
+  path: src/content/blog/menino-que-voce-foi-en.mdx
   display_lang: en
   version: b381f6f0-606a-581a-b047-75cfbd350650
 post_b:
   key: music-o-tempo
-  path: src/content/blog/musicas/o-tempo.mdx
+  path: src/content/blog/o-tempo.mdx
   display_lang: pt
   version: 207aa567-da06-5252-bc7c-cd81ccd9ba09
 winner: a
