@@ -19,6 +19,11 @@ interface Props {
   translations?: Record<string, string>;
   hasMath?: boolean;
   wordCount?: number;
+  /** Override <link rel=canonical> (e.g. a version page pointing at the live
+   *  post). Defaults to the current page URL. */
+  canonicalOverride?: string;
+  /** Emit robots noindex,follow — for archive/version pages. */
+  noindex?: boolean;
 }
 
 const SITE_NAME = "Franklin Baldo";
@@ -37,6 +42,8 @@ const {
   translations = {},
   hasMath,
   wordCount,
+  canonicalOverride,
+  noindex,
 } = source;
 // Language-aware fallback description: derive lang first so PT pages without
 // an explicit description don't fall back to the English copy.
@@ -48,7 +55,7 @@ const description =
 
 const documentTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
 
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const canonical = new URL(canonicalOverride ?? Astro.url.pathname, Astro.site);
 const DEFAULT_OG_IMAGE = lang === "pt" ? "/og/home-pt.png" : "/og/home.png";
 const ogImageRaw = image ?? DEFAULT_OG_IMAGE;
 const ogImage = Astro.site ? new URL(ogImageRaw, Astro.site).href : ogImageRaw;
@@ -141,7 +148,7 @@ const personLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{documentTitle}</title>
     <meta name="description" content={description} />
-    <meta name="robots" content="max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="robots" content={noindex ? "noindex, follow" : "max-image-preview:large, max-snippet:-1, max-video-preview:-1"} />
     <meta name="author" content="Franklin Baldo" />
     {type === 'article' && tags?.[0] && <meta property="article:section" content={tags[0]} />}
     {type === 'article' && <link rel="author" href={Astro.site ? new URL(lang === 'pt' ? '/pt/about/' : '/about/', Astro.site).href : '/about/'} />}

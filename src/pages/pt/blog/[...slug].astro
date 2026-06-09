@@ -11,6 +11,7 @@ import TableOfContents from '../../../components/TableOfContents.astro';
 import RelatedPosts from '../../../components/RelatedPosts.astro';
 import AuthorBio from '../../../components/AuthorBio.astro';
 import { getRankByKey } from '../../../lib/hronir-rank';
+import { uuidForId, versionHref } from '../../../lib/versions.mjs';
 import Comments from '../../../components/Comments.astro';
 import SeriesContext from '../../../components/SeriesContext.astro';
 import PostActionBar from '../../../components/PostActionBar.astro';
@@ -54,6 +55,22 @@ const allPosts = await getCollection('blog');
 
 // Prev / next posts in the same language, ordered by date ascending.
 const postLang = lang ?? DEFAULT_LANG;
+// RFC 0003: archived versions of this post, newest first → /pt/blog/<slug>/v/<uuid>.
+const allVersions = await getCollection('blogVersions');
+const postVersions = allVersions
+  .filter((v) => v.id.split('/')[0] === post.id)
+  .map((v) => {
+    const uuid = uuidForId(v.id);
+    return uuid
+      ? {
+          href: versionHref(post.id, uuid, postLang),
+          date: v.data.draftCommittedAt ? new Date(v.data.draftCommittedAt) : v.data.date,
+          msg: v.data.draftMsg,
+        }
+      : null;
+  })
+  .filter((v) => v != null)
+  .sort((a, b) => b.date.valueOf() - a.date.valueOf());
 const sameLangPosts = allPosts
   .filter((p) => isPublished(p) && (p.data.lang ?? DEFAULT_LANG) === postLang)
   .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
@@ -215,6 +232,21 @@ const translationLinks = translationSiblings.map((p) => {
                 <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
               ))}
             </small></p>
+          )}
+          {postVersions.length > 0 && (
+            <details class="version-history">
+              <summary>{postLang === 'pt' ? `Histórico de versões (${postVersions.length})` : `Version history (${postVersions.length})`}</summary>
+              <ul>
+                {postVersions.map((v) => (
+                  <li>
+                    <a href={v.href} rel="nofollow">
+                      <time datetime={v.date.toISOString()}>{v.date.toLocaleDateString(locale, dateOpts)}</time>
+                    </a>
+                    {v.msg && <> — <span class="prev-msg">{v.msg}</span></>}
+                  </li>
+                ))}
+              </ul>
+            </details>
           )}
           {previousVersion && (
             <p><small>

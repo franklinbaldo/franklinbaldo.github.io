@@ -40,6 +40,9 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
+      // RFC 0003: version pages (/blog/<slug>/v/<uuid>) are noindex archives —
+      // keep them out of the sitemap.
+      filter: (page) => !/\/v\/[0-9a-f-]{8,}\/?$/i.test(page),
       serialize(item) {
         const base = "https://franklinbaldo.github.io";
 

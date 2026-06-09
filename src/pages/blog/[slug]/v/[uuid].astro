@@ -1,0 +1,109 @@
+---
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import PageLayout from "../../../../layouts/PageLayout.astro";
+import VersionBanner from "../../../../components/VersionBanner.astro";
+import BackToTop from "../../../../components/BackToTop.astro";
+import { uuidForId, slugOf } from "../../../../lib/versions.mjs";
+
+// RFC 0003: content-addressed version pages. Every non-canonical version file
+// (drafts + superseded canonicals) gets /blog/<slug>/v/<uuid>. A UUID that is
+// *currently* the live canonical redirects to /blog/<slug> so permalinks stay
+// stable across promotion. All version pages are noindex with canonical → live.
+export async function getStaticPaths() {
+  const [versions, canon] = await Promise.all([
+    getCollection("blogVersions"),
+    getCollection("blog"),
+  ]);
+  const paths = [];
+  for (const v of versions) {
+    if ((v.data.lang ?? "en") === "pt") continue;
+    const uuid = uuidForId(v.id);
+    if (!uuid) continue; // file gone / unresolved → skip rather than crash
+    paths.push({
+      params: { slug: slugOf(v.id), uuid },
+      props: { entry: v, redirect: false },
+    });
+  }
+  for (const c of canon) {
+    if ((c.data.lang ?? "en") === "pt") continue;
+    // Only promoted canonicals need a /v/<live-uuid> permalink (their content
+    // was once a draft that may have been linked); skip the rest to avoid bloat.
+    if (!c.data.supersedes) continue;
+    const uuid = uuidForId(c.id);
+    if (!uuid) continue;
+    paths.push({
+      params: { slug: c.id, uuid },
+      props: { entry: c, redirect: true },
+    });
+  }
+  return paths;
+}
+
+type Props = { entry: CollectionEntry<"blogVersions">; redirect: boolean };
+const { entry, redirect } = Astro.props;
+const slug = slugOf(entry.id);
+const live = `/blog/${slug}/`;
+if (redirect) return Astro.redirect(live);
+
+const { title, lang, draftCommittedAt, draftMsg, date } = entry.data;
+const verDate = draftCommittedAt ? new Date(draftCommittedAt) : date;
+const { Content } = await render(entry);
+---
+
+<PageLayout
+  title={`${title} — versão arquivada`}
+  description={entry.data.description}
+  type="article"
+  lang={lang}
+  canonicalOverride={live}
+  noindex={true}
+>
+  <div class="post-grid">
+    <div class="post-body">
+      <nav aria-label="Breadcrumb" class="post-breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li><a href="/archive/">Archive</a></li>
+          <li><a href={live}>{title}</a></li>
+          <li aria-current="page">versão arquivada</li>
+        </ol>
+      </nav>
+
+      <VersionBanner liveHref={live} date={verDate} lang={lang} msg={draftMsg} />
+
+      <article data-pagefind-ignore lang={lang ?? "en"}>
+        <header><h1>{title}</h1></header>
+        <Content />
+      </article>
+
+      <BackToTop />
+    </div>
+  </div>
+</PageLayout>
+
+<style>
+  .post-breadcrumb {
+    margin-bottom: calc(var(--pico-spacing) * 0.75);
+  }
+  .post-breadcrumb ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.8rem;
+    color: var(--pico-muted-color);
+  }
+  .post-breadcrumb li + li::before {
+    content: " / ";
+    padding: 0 0.35em;
+    color: var(--pico-muted-color);
+  }
+  .post-breadcrumb a {
+    color: var(--pico-muted-color);
+    text-decoration: none;
+  }
+  .post-breadcrumb [aria-current="page"] {
+    color: var(--pico-color);
+  }
+</style>
