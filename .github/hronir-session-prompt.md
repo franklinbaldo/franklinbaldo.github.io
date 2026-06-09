@@ -15,6 +15,11 @@ edit-worst phase. Do not skip any step it shows.
 
 **Read each post for real.** Not a skim. Not a summary. Sit with the text.
 
+For **music posts** (`postType: music` in the frontmatter), the audio is
+available at `https://cdn1.suno.ai/<sunoId>.mp3` — download and listen to it
+before writing the review. The text of a music post exists in relation to the
+sound; evaluating one without the other misses the point.
+
 Each match assigns you a **perspective** (a reader persona) and a **mood**. These
 are not decoration — they are the lens through which you must experience the posts.
 Inhabit the perspective fully: its values, its blind spots, what it finds moving or
