@@ -29,29 +29,27 @@ concurrency:
   group: hronir-session
   cancel-in-progress: false
 
-env:
-  REPO: ${{ github.repository }}
-  VERNE: "git+https://github.com/franklinbaldo/verne@6c73a589299c70db59549a8e9d8fd03acd6256ca"
-
 jobs:
   ensure-session:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v5
+      - uses: ./.github/actions/setup-verne
 
       - name: Ensure a recent open session exists
         env:
           JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
         run: |
           set -euo pipefail
+          # Missing key means the conveyor cannot run at all — fail loud (exit 1)
+          # so a removed/expired secret surfaces, instead of an hourly green no-op.
           if [ -z "${JULES_API_KEY:-}" ]; then
-            echo "::warning::JULES_API_KEY not set — cannot run heartbeat."
-            exit 0
+            echo "::error::JULES_API_KEY not set — heartbeat cannot ensure a session. Fix the repo secret."
+            exit 1
           fi
 
-          SESSIONS=$(uvx --from "$VERNE" verne sessions list --json --page-size 100)
+          SESSIONS=$(verne sessions list --json --page-size 100)
           NOW=$(date -u +%s)
 
           # Open = status not terminal.
@@ -84,17 +82,4 @@ jobs:
             exit 0
           fi
 
-          TITLE="hronir session $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          SESSION=$(uvx --from "$VERNE" verne \
-            sessions new "$TITLE" \
-            --source "sources/github/${REPO}" \
-            --prompt-file .github/hronir-session-prompt.md \
-            --branch main \
-            --automation-mode AUTO_CREATE_PR \
-            --json)
-          SESSION_ID=$(echo "$SESSION" | jq -r '.id // (.name | sub("^sessions/"; "")) // empty')
-          if [ -z "$SESSION_ID" ]; then
-            echo "::error::Failed to create Jules session via verne:"; echo "$SESSION"; exit 1
-          fi
-          echo "Created Jules session: $SESSION_ID"
-          echo "https://jules.google.com/task/$SESSION_ID"
+          bash scripts/hronir/spawn-session.sh
