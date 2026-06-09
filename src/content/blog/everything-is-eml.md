@@ -1,0 +1,137 @@
+---
+title: "Everything is eml: One Operator, One Constant, All of Mathematics"
+date: 2026-04-14
+description: "A new arXiv paper shows that every elementary function — every sin, every log, every e, every π, every 2+2=4 — is a binary tree built from the number 1 and a single operator. This is what a process ontology looks like when it ships on arXiv."
+tags:
+  - mathematics
+  - process ontology
+  - events
+  - symbolic-regression
+  - logic
+lang: en
+author: franklin
+---
+
+Somewhere between a prank and a proof, there is a paper that deserves to be read both ways.
+
+Andrzej Odrzywołek recently [uploaded a short, severe little result to arXiv](https://arxiv.org/abs/2603.21852): every elementary function you ever learned — every `sin`, every `cos`, every `log`, every `√`, every `π`, every `e`, every `2+2=4` you ever computed in anger — can be built from the constant `1` and _exactly one_ binary operator.
+
+Just one. No `+`, no `−`, no `×`, no `÷`, no `^`, no `exp`, no `log`, no `sin`. A single operator, applied to itself, nested into binary trees of arbitrary depth.
+
+The operator is:
+
+$$\text{eml}(x, y) = e^x - \ln y$$
+
+That's it. That's the post. Thanks for reading, see you next week.
+
+Fine, fine. A few more words.
+
+---
+
+## The NAND Gate of Math
+
+If you have ever taken a digital logic class, you know that every Boolean circuit ever built — every AND, OR, XOR, every flip-flop, every CPU — can be constructed from a single primitive gate: NAND. NOT is just NAND with its inputs tied together. AND is NAND followed by NOT. From NAND, you get everything. The existence of such a gate is sometimes called **functional completeness**, and it is the reason your laptop can, in principle, be built out of a single reel of identical parts.
+
+Odrzywołek's claim is that eml is the NAND gate of continuous mathematics.
+
+![Expanding brain: plus minus; times divide; NAND; eml](<https://api.memegen.link/images/brain/plus_and_minus/times_and_divide/NAND_gates/exp(x)_-_ln(y).png>)
+
+The grammar he proposes is embarrassingly simple:
+
+```
+S → 1 | eml(S, S)
+```
+
+Two lines of BNF. Any expression is either the literal `1`, or `eml` applied to two subexpressions. Every elementary function — the entire scientific-calculator keyboard — is a binary tree of that shape.
+
+## How to Build the Universe from Nothing But eml
+
+Let's do a few. First, the gentle one. What is `exp(x)`?
+
+$$\text{eml}(x, 1) = e^x - \ln 1 = e^x - 0 = e^x.$$
+
+So `exp(x) = eml(x, 1)`. One node, done.
+
+How about `ln(x)`? This one is a party trick. Try:
+
+$$\text{eml}(1, \text{eml}(\text{eml}(1, x), 1)).$$
+
+Walk it inward. `eml(1, x) = e - ln x`. Then `eml(e - ln x, 1) = exp(e - ln x) = e^e / x`. Then `eml(1, e^e / x) = e - (e - ln x) = ln x`. ✓
+
+Three nested applications. No subtraction, no division, no logarithm defined anywhere. Just three little eml nodes and the number 1 glowing at the leaves.
+
+And once you have `exp` and `ln`, you have everything. Multiplication? `x · y = exp(ln x + ln y)`, and addition inside is reachable from two eml applications because `a + b = -(-a - b)` and subtraction is already baked into the operator. Trig functions? Euler's formula gives them to you as combinations of `exp` on imaginary arguments — and `i` itself, being `exp(iπ/2)`, is a finite tree too. `π` is a tree. `e` is a tree. Your social security number is a tree.
+
+![One does not simply explain what eml actually means](https://api.memegen.link/images/mordor/one_does_not_simply/explain_what_eml_actually_means.png)
+
+This is what is so unnerving about the result. `eml` is not addition. It is not multiplication. It has no physical interpretation. If you ask an engineer what `eml(voltage, capacitance)` computes, the honest answer is "nothing in particular." The operator does not _mean_ anything. It simply happens to be functionally complete over the continuum.
+
+The meaningless operator contains all the meaning. This is exactly the situation NAND is in, and it has apparently been the situation math was in the whole time. We just never noticed because we kept a dozen buttons on the calculator out of politeness.
+
+## The Right Space, Again
+
+If you have been reading along, you already know the punchline. [The Game on the Folded Grid](/blog/jogo-na-grade-dobrada/) opened with the central observation: _the space where a problem seems to live is not the space where it actually lives_. Flat-grid puzzle, curved state space. Escher's blank center, resolved only when you transform into the space where the self-reference is cheap.
+
+The calculator keyboard is another flat grid. Twelve buttons, each labeled with a different "thing": addition, multiplication, sine, logarithm, pi. From the keyboard's perspective these are all distinct primitive operations, and any two of them have about as much in common as two buttons in an elevator.
+
+The space the calculator actually lives in is the space of eml-trees. In that space, `sin` is not a button. It is a _depth_. It is a particular topology of nested applications of the single primitive. The keyboard is the 2D projection. The trees are the real geometry.
+
+![Drake rejecting twelve calculator buttons; Drake approving one operator and the number 1](https://api.memegen.link/images/drake/twelve_buttons_on_your_calculator_keyboard/one_operator_and_the_number_1.png)
+
+What 3Blue1Brown and AlphaPhoenix did for Lights Out, Odrzywołek does for arithmetic: he names the real space. And, as always, the real space is a lot weirder than the projection. A flat calculator is pretending to be an alphabet. The actual object is a grammar.
+
+## Events, All the Way Down, to the Tree
+
+The argument underlying these posts holds that the fundamental unit of reality is not a thing but an event — a transformation, a reading, a happening that produces both its input and its next state at once. [The Gap at the Center of the World](/blog/lacuna-no-centro/) puts it more precisely: the elementary event is a _reading_, and the elementary object is a _Reader_.
+
+Look at `eml` through that lens.
+
+`eml` is not a formula. It is a _reader_. Hand it two numbers; it returns a third. It transforms its inputs the way a synapse transforms a spike. It does not know whether it is being used inside a sine or a logarithm or someone's back-of-envelope compound interest calculation. Like every layer in [the OSI stack](/blog/osi-model-as-manifesto/), it commits to one well-formed event at its interface and remains blind to everything above and below. The operator is a monad with exactly two windows, and both of those windows are just more `eml`.
+
+The functions you thought were objects — `sin`, `exp`, `ln`, the whole periodic parade — are not objects. They are _patterns of eml-events_ that happen to stabilize into something we find legible. `sin(x)` is not a noun. It is a particular whirlpool in the river of `eml`-applications. Swap the water and the whirlpool remains, which is exactly what "being a function" means in the first place.
+
+This is the same move the OSI stack made: meaning is not transmitted, it is _translated_, layer by layer, through agents that can only see their immediate neighbors. Odrzywołek's result says the same thing about mathematics. There is no "meaning" stored inside `sin`. The meaning of `sin` is reconstituted, tree-walk by tree-walk, every time it is evaluated — out of the same blind primitive event, over and over, with different nesting.
+
+![Wait, it's all eml trees? Always has been.](https://api.memegen.link/images/ams/wait_its_all_eml_trees~q/always_has_been.png)
+
+## Gradient Descent on the Manifold of Functions
+
+The part of the paper that makes me laugh out loud is this: Odrzywołek and collaborators don't just prove `eml` is universal. They _train_ it. They treat every eml-tree of depth ≤ 4 as a differentiable circuit and use **Adam** — yes, the same optimizer that powers half of every transformer on arXiv — to do symbolic regression. Given a table of `(x, f(x))` pairs, gradient descent walks the space of eml-trees and recovers closed-form elementary functions from the data.
+
+Stop and appreciate that sentence. The optimizer built to chase cross-entropy gradients through billion-parameter attention stacks is being pointed at a binary tree with five leaves, and it spits back `√x` or `tan(x)` or `e^{-x²}` in closed form.
+
+The [post on asymmetric evolution](/blog/asymmetric-evolution/) made a big deal of the fact that transformer training and biological evolution are both gradient flows on spaces of probability measures — same mathematics, radically different situations. Symbolic regression over eml-trees is yet another instance of the same species: gradient flow on a manifold whose points are functions. Not biological. Not a transformer. A third one. Gradient descent is apparently eating every discipline it can reach. At this point it is less a technique and more a phase of matter.
+
+The twist is that in eml-space the gradient flow stops somewhere interesting. Because the vocabulary is finite (just `1` and `eml`) and the trees are small, an _exact_ closed form is recoverable. No "approximately sin." Actual sin. The flow terminates on a discrete symbolic object that, decoded, reads like something out of a 19th-century calculus textbook.
+
+This is the rare case where optimization does not merely approximate the truth — it _finds_ it, then hands you a receipt.
+
+## The Mousetrap Re-Arms
+
+[The Work That Proves Itself](/blog/the-work-that-proves-itself/) argued that the durable artifacts of civilization — _Hamlet_, the Torah — survive because they are not objects but recursive events. They contain a smaller version of themselves; each reader adds a shell; the mousetrap re-arms forever.
+
+The grammar `S → 1 | eml(S, S)` is literally the same structural shape in two lines. Base case: the number 1. Recursive case: apply the primitive to two existing expressions. Each eml-tree contains smaller eml-trees, down to the leaves. Russian dolls again. The very structure of the result — its recursion, its self-similarity — is the structure the argument keeps pointing at. And when you run gradient descent on one of these trees, you are doing the computational equivalent of a new generation reading _Hamlet_: the outer shell of the doll forms around an inner shell that was already complete.
+
+Mathematics is not a pile of results. It is a grammar that keeps finding new instances of itself. Odrzywołek just showed us the minimal grammar. Two symbols. Infinite outputs. The thing was waiting for someone to run the exhaustive search.
+
+## The Part Where I Admit I'm Slightly Unnerved
+
+There is a reading of this paper that goes: "cute, but computationally useless." eml-trees for real functions blow up fast. Writing `cos(x)` as an eml-tree is not going to replace your calculator. Fine. Nobody has ever claimed NAND-only circuits were a good way to _build_ a CPU either — they are a good way to _think_ about what a CPU is.
+
+There is another reading: something about continuous mathematics got simpler today, and the version that got simpler is the version that most resembles the architecture of modern machine learning. Big stacks of one tiny primitive. Gradient-trained. Finite vocabulary. Compositional semantics. If you squint, an eml-tree and a transformer are the same kind of animal, differing only in the name of the primitive and the scale of the tree.
+
+Which is to say: we didn't invent a new thing this week. We discovered that the old thing — elementary mathematics, the thing in the textbook — was already shaped like the new thing. Always has been.
+
+![This is fine. Everything is eml. This is fine.](https://api.memegen.link/images/fine/everything_you_ever_learned_is_one_operator/this_is_fine.png)
+
+---
+
+The operator has no meaning. The operator contains all the meaning. The functions are not things. The functions are trees. The trees are events. The events are readings. The readings are what happens when `eml` gets two arguments and produces a third.
+
+It's events, all the way down. The calculator keyboard was just the UI.
+
+---
+
+_The paper is [Odrzywołek, "All elementary functions from a single binary operator," arXiv:2603.21852](https://arxiv.org/abs/2603.21852). The code is on Zenodo. The punchline is, as always, that what looked like a cabinet of distinct operations was one continuous grammar wearing twelve costumes._
+
+_P.S. — Yes, I know "eml" is one character away from "email." Every function in your inbox is now technically elementary. Please do not read anything into this._
