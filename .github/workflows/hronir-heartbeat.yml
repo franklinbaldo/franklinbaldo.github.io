@@ -7,10 +7,12 @@ name: Hrönir Heartbeat
 # failed — the conveyor would stall. This hourly cron is the safety net: it
 # makes sure at least one Hrönir session exists per hour.
 #
-# Decision (queried from verne, the source of truth):
-#   - No OPEN session at all                  -> create one.
-#   - An OPEN session created < 1h ago        -> skip (one is already in flight).
-#   - An OPEN session but created >= 1h ago    -> create one.
+# Two-phase logic:
+#   Phase 1 — Unblock: sessions in "awaiting_feedback" (stuck waiting for a
+#     nudge) receive "Please send your PR now." so they resume. These are NOT
+#     counted as blockers for phase 2.
+#   Phase 2 — Ensure: if no truly in-flight session exists after unblocking,
+#     spawn a fresh one.
 #
 # Note: until verne exposes `createTime` in `sessions list --json`, the "< 1h"
 # part can't be evaluated, so it safely degrades to "create only when there is
@@ -37,43 +39,64 @@ jobs:
 
       - uses: ./.github/actions/setup-verne
 
-      - name: Ensure a recent open session exists
+      - name: Unblock awaiting-feedback sessions
         env:
           JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
         run: |
           set -euo pipefail
-          # Missing key means the conveyor cannot run at all — fail loud (exit 1)
-          # so a removed/expired secret surfaces, instead of an hourly green no-op.
           if [ -z "${JULES_API_KEY:-}" ]; then
-            echo "::error::JULES_API_KEY not set — heartbeat cannot ensure a session. Fix the repo secret."
+            echo "::error::JULES_API_KEY not set — heartbeat cannot run. Fix the repo secret."
             exit 1
           fi
 
           SESSIONS=$(verne sessions list --json --page-size 100)
+
+          # Sessions stuck at "awaiting_feedback" — nudge each one.
+          WAITING=$(echo "$SESSIONS" | jq -r '[.sessions[]
+            | select(((.status // "") | ascii_downcase) == "awaiting_feedback")
+            | .id] | .[]')
+
+          COUNT=0
+          for ID in $WAITING; do
+            echo "Nudging session $ID (awaiting_feedback) → 'Please send your PR now.'"
+            verne sessions send "$ID" "Please send your PR now." || true
+            COUNT=$((COUNT + 1))
+          done
+          echo "Nudged $COUNT awaiting-feedback session(s)."
+
+      - name: Ensure a recent in-flight session exists
+        env:
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+        run: |
+          set -euo pipefail
+
+          SESSIONS=$(verne sessions list --json --page-size 100)
           NOW=$(date -u +%s)
 
-          # Open = status not terminal.
-          OPEN=$(echo "$SESSIONS" | jq '[.sessions[]
-            | select(((.status // "") | ascii_downcase) as $s
-                | $s != "completed" and $s != "failed" and $s != "cancelled")]')
-          OPEN_COUNT=$(echo "$OPEN" | jq 'length')
+          # In-flight = open AND not merely awaiting_feedback (those were just nudged).
+          INFLIGHT=$(echo "$SESSIONS" | jq '[.sessions[]
+            | select(
+                ((.status // "") | ascii_downcase) as $s
+                | $s != "completed" and $s != "failed" and $s != "cancelled"
+                  and $s != "awaiting_feedback"
+              )]')
+          INFLIGHT_COUNT=$(echo "$INFLIGHT" | jq 'length')
 
           CREATE=0
-          if [ "$OPEN_COUNT" -eq 0 ]; then
-            echo "No open session — will create one."
+          if [ "$INFLIGHT_COUNT" -eq 0 ]; then
+            echo "No in-flight session — will create one."
             CREATE=1
           else
-            # Any open session that is recent (< 1h) OR whose createTime is
-            # unknown (verne not yet exposing it) blocks creation.
-            BLOCKERS=$(echo "$OPEN" | jq --argjson now "$NOW" '[ .[]
+            # Block only on recent sessions (< 1h). Unknown createTime = treat as recent.
+            BLOCKERS=$(echo "$INFLIGHT" | jq --argjson now "$NOW" '[ .[]
               | (.createTime // "")
               | if . == "" then 1
                 elif ($now - fromdateiso8601) < 3600 then 1
                 else empty end ] | length')
             if [ "$BLOCKERS" -gt 0 ]; then
-              echo "An open, recent (or unknown-age) session exists — skipping."
+              echo "A recent in-flight session exists — skipping spawn."
             else
-              echo "Open sessions exist but all are >= 1h old — will create one."
+              echo "In-flight sessions exist but all are >= 1h old — will create one."
               CREATE=1
             fi
           fi
