@@ -1879,11 +1879,9 @@ export function doctor() {
     )
       .split("\n")
       .filter(Boolean);
-    const modified = execFileSync(
-      "git",
-      ["diff", "--name-only"],
-      { encoding: "utf8" }
-    )
+    const modified = execFileSync("git", ["diff", "--name-only"], {
+      encoding: "utf8",
+    })
       .split("\n")
       .filter(Boolean);
     for (const f of [...new Set([...staged, ...untracked, ...modified])]) {
