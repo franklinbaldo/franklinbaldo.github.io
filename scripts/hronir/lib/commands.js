@@ -294,6 +294,12 @@ function randomMoodGlyph() {
 // sibling draft, so it's a no-op until draft-worst creates one.
 const VERSION_DUEL_PROB = 0.34;
 
+// RFC 0003 follow-up: auto-promotion threshold. `promote --key` only swaps a
+// challenger in when it leads the canonical by at least PROMOTE_MARGIN stars
+// over at least PROMOTE_MIN_DUELS version duels. `--force` bypasses both.
+const PROMOTE_MARGIN = 0.3;
+const PROMOTE_MIN_DUELS = 2;
+
 // Find an eligible canonical that has at least one sibling draft (v-*) and
 // return the duel sides (canonical vs the freshest draft) for that (key, lang).
 function pickVersionDuel(eligible) {
@@ -1283,14 +1289,17 @@ function getRecentlyEditedKeys(limit = 2) {
     const data = readPost(p);
     if (!data.translationKey) continue;
     let latest = 0;
-    const prev = data.previousVersion;
-    if (prev?.timestamp) {
-      latest = Date.parse(String(prev.timestamp)) || 0;
-    } else if (Array.isArray(data.editHistory)) {
-      for (const entry of data.editHistory) {
-        const t = entry?.timestamp ? Date.parse(String(entry.timestamp)) : 0;
-        if (t > latest) latest = t;
-      }
+    const consider = (ts) => {
+      const t = ts ? Date.parse(String(ts)) || 0 : 0;
+      if (t > latest) latest = t;
+    };
+    consider(data.previousVersion?.timestamp);
+    // RFC 0003: a recent draft (or one just promoted) also puts the key on
+    // cooldown, so draft-worst doesn't re-draft the same post every round.
+    consider(data.draftCommittedAt);
+    consider(data.draftCreatedAt);
+    if (Array.isArray(data.editHistory)) {
+      for (const entry of data.editHistory) consider(entry?.timestamp);
     }
     if (!latest) continue;
     const key = String(data.translationKey);
@@ -1352,10 +1361,14 @@ export function editWorst() {
   let worstRow = null;
   for (let i = eligible.length - 1; i >= 0; i--) {
     const row = eligible[i];
-    if (!recentlyEdited.includes(row.key)) {
-      worstRow = row;
-      break;
-    }
+    if (recentlyEdited.includes(row.key)) continue;
+    // RFC 0003: don't pile drafts — skip keys that already have a pending one.
+    const hasDraft = findTranslations(row.key).some((t) =>
+      listVersions(t.path).some((p) => !isCanonical(p))
+    );
+    if (hasDraft) continue;
+    worstRow = row;
+    break;
   }
 
   if (!worstRow) {
@@ -2093,9 +2106,11 @@ export function editCommit(msg) {
 export function promote(args) {
   let draftPath = null;
   let key = null;
+  let force = false;
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--draft") draftPath = args[++i];
     else if (args[i] === "--key") key = args[++i];
+    else if (args[i] === "--force") force = true;
   }
 
   if (draftPath) {
@@ -2133,7 +2148,12 @@ export function promote(args) {
     const scored = listVersions(t.path)
       .map((p) => {
         const vr = versionRatings.get(getPostUuid(p));
-        return { path: p, stars: vr ? vr.stars : null, n: vr ? vr.n : 0 };
+        return {
+          path: p,
+          canonical: isCanonical(p),
+          stars: vr ? vr.stars : null,
+          n: vr ? vr.n : 0,
+        };
       })
       .filter((v) => v.stars !== null);
     if (scored.length === 0) {
@@ -2144,14 +2164,23 @@ export function promote(args) {
     }
     scored.sort((a, b) => b.stars - a.stars);
     const best = scored[0];
-    if (isCanonical(best.path)) {
+    if (best.canonical) {
       console.log(
         `[promote] ${t.lang}: a canônica já é a melhor versão (${best.stars.toFixed(2)}★). Nada a fazer.`
       );
       continue;
     }
+    // Only auto-promote when the challenger clears a margin over enough duels.
+    const canonicalStars = scored.find((v) => v.canonical)?.stars ?? 0;
+    const margin = best.stars - canonicalStars;
+    if (!force && (best.n < PROMOTE_MIN_DUELS || margin < PROMOTE_MARGIN)) {
+      console.log(
+        `[promote] ${t.lang}: ${best.path} lidera por +${margin.toFixed(2)}★ em ${best.n} duelo(s) — abaixo do limiar (margem ≥${PROMOTE_MARGIN}, duelos ≥${PROMOTE_MIN_DUELS}). Use --force para promover assim mesmo.`
+      );
+      continue;
+    }
     console.log(
-      `[promote] ${t.lang}: promovendo ${best.path} (${best.stars.toFixed(2)}★, n=${best.n}).`
+      `[promote] ${t.lang}: promovendo ${best.path} (${best.stars.toFixed(2)}★ vs canônica ${canonicalStars.toFixed(2)}★, +${margin.toFixed(2)}, n=${best.n}).`
     );
     promoteFile(best.path);
     promoted++;

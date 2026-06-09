@@ -79,9 +79,11 @@ init
              └─> continue  # gera match 2, imprime post A
                  ...
                  └─> continue  # após N matches, sessão entra em 'need_edit'
-                     └─> edit-worst   # mostra pior post + contexto, captura HEAD, marca posts
-                         └─> [edição manual em todas as traduções]
-                             └─> edit-commit --msg "..."  # grava previousVersion
+                     └─> draft-worst  # cria <slug>/v-<ts>.md (cópia da canônica); index.md intocada
+                         └─> [edição manual dos RASCUNHOS em todas as traduções]
+                             └─> draft-commit --msg "..."  # valida UUID novo, registra o competidor
+                                 └─> [duelos de versão no sampling decidem]
+                                     └─> promote --key <key>  # vencedora vira index.md (swap)
 ```
 
 A máquina de estados está em `hronir_session.json`: `ready_for_next → reading_a → reading_b → deciding → ready_for_next → … → need_edit → (sessão fechada)`.
