@@ -167,13 +167,23 @@ O `edit-worst` instrui a leitura de **ambas** antes de editar e a escolher a apl
 
 ## Ranking
 
-Ranking via **OpenSkill** (modelo Weng-Lin, atualização bayesiana online de Plackett-Luce). Cada par é tratado como uma partida 1v1; vencedor sobe `mu` e desce `sigma`, perdedor o oposto. Três eixos saem da computação:
+Ranking via **OpenSkill** (modelo Weng-Lin, atualização bayesiana online de Plackett-Luce, `RANKING_MODEL_VERSION=2`). Cada par é tratado como uma partida 1v1; o delta de `mu` é escalado pela margem de estrelas `|rate_a − rate_b| / 4` — blowouts movem o ranking mais que foto-finish.
 
 - **`mu`** — estimativa pontual da "qualidade" do post.
 - **`sigma`** — incerteza sobre `mu`. Não diz que o post é ruim — diz que ainda não sabemos.
 - **`ordinal = mu − 3·sigma`** — score conservador usado para a ordem global. Um post novo com mu alto fica atrás de um post estabelecido com mu um pouco menor.
 
-A ordem da tabela é por `ordinal` descendente, tie-break alfabético por `key`. `worst` retorna o post com menor `ordinal` entre os elegíveis (`appearances >= MIN_APPEARANCES`).
+A saída de `hronir:ranking` é TSV com as colunas:
+
+```
+rank  key  ordinal  mu  sigma  W/N  stars  n  div
+```
+
+- **`stars`** — EWMA das estrelas recebidas pelo post (α=0.3; avaliações recentes dominam). Trilha de qualidade **absoluta**, independente do eixo relativo do OpenSkill.
+- **`n`** — nº de aparições com estrelas (schema `stars-v1`).
+- **`div`** — divergência percentil `p_ord − p_star` entre os posts com `n ≥ MIN_APPEARANCES`. Positivo = "freguesia fraca" (sobe no relativo além do que as estrelas justificam). Negativo = "subnotado" (melhor em absoluto do que o chaveamento sugere). `-` quando a confiança é baixa.
+
+A ordem da tabela é por `ordinal` descendente, tie-break alfabético por `key`. `worst` retorna o post com menor `ordinal` entre os elegíveis (`appearances >= MIN_APPEARANCES`); `worst --absolute` usa `stars` em vez de `ordinal`.
 
 ### Active sampling
 
