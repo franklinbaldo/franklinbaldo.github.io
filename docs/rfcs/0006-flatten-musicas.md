@@ -1,12 +1,12 @@
 # RFC 0006 — Flatten `musicas/` subfolder
 
-|                 |                                                                                                              |
-| --------------- | ------------------------------------------------------------------------------------------------------------ |
-| **Status**      | Draft / Proposed                                                                                             |
-| **Autor**       | Franklin Baldo (proposta assistida)                                                                          |
-| **Criado em**   | 2026-06-09                                                                                                   |
-| **Branch / PR** | `claude/vibrant-volta-3giul0`                                                                                |
-| **Depende de**  | RFC 0004 (higiene e convenções) — em execução                                                                |
+|                 |                                                                                                             |
+| --------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Status**      | Draft / Proposed                                                                                            |
+| **Autor**       | Franklin Baldo (proposta assistida)                                                                         |
+| **Criado em**   | 2026-06-09                                                                                                  |
+| **Branch / PR** | `claude/vibrant-volta-3giul0`                                                                               |
+| **Depende de**  | RFC 0004 (higiene e convenções) — em execução                                                               |
 | **Afeta**       | `src/content/blog/musicas/`, `scripts/generate-music-posts.mjs`, `scripts/generate-music-en-companions.mjs` |
 
 > **Etapa 1 — só o RFC.** Implementação após merge da RFC 0004.
@@ -84,23 +84,23 @@ Verificado: nenhum slug em `musicas/` colide com um slug no nível raiz de
 
 ## 4. Análise de impacto
 
-| Componente                          | Impacto                                                          |
-| ----------------------------------- | ---------------------------------------------------------------- |
-| `src/content/blog/musicas/*.mdx`    | 130 arquivos movidos para `src/content/blog/`                   |
-| `src/pages/blog/[...slug].astro`    | Sem mudança — slug routing já cobre qualquer depth              |
-| `src/pages/pt/blog/[...slug].astro` | Sem mudança                                                      |
-| `src/pages/music.astro`             | Sem mudança — busca Suno API diretamente                         |
-| `src/pages/pt/musicas.astro`        | Sem mudança — busca Suno API diretamente                         |
-| `src/generated/blog-redirects.json` | +130 entradas (EN) + 130 entradas (PT) = +260 redirects         |
-| `src/generated/blog-translation-pairs.json` | Regenerado (sem `musicas/` prefix nos IDs)             |
-| `scripts/generate-music-posts.mjs`  | `OUT_DIR` atualizado para `src/content/blog/`                   |
-| `scripts/generate-music-en-companions.mjs` | `MUSICAS_DIR` atualizado para `src/content/blog/`       |
-| `scripts/check-translations.mjs`   | Comentário de exemplo atualizado (não altera lógica)             |
-| `scripts/lib/content.mjs`          | Comentário de exemplo atualizado (não altera lógica)             |
-| `scripts/hronir/lib/posts.js`      | Sem mudança — `keyForPath` usa `translationKey`, não o path      |
-| `.routines/hronir/rates/*.json`    | Sem mudança — chaves são `translationKey`, não paths             |
-| `astro.config.mjs`                 | Redirects `/music/` e `/musicas/` são para a listagem; sem mudança|
-| `check:hygiene`                    | Adicionar `musicas/` à lista de prefixos banidos em blog         |
+| Componente                                  | Impacto                                                            |
+| ------------------------------------------- | ------------------------------------------------------------------ |
+| `src/content/blog/musicas/*.mdx`            | 130 arquivos movidos para `src/content/blog/`                      |
+| `src/pages/blog/[...slug].astro`            | Sem mudança — slug routing já cobre qualquer depth                 |
+| `src/pages/pt/blog/[...slug].astro`         | Sem mudança                                                        |
+| `src/pages/music.astro`                     | Sem mudança — busca Suno API diretamente                           |
+| `src/pages/pt/musicas.astro`                | Sem mudança — busca Suno API diretamente                           |
+| `src/generated/blog-redirects.json`         | +130 entradas (EN) + 130 entradas (PT) = +260 redirects            |
+| `src/generated/blog-translation-pairs.json` | Regenerado (sem `musicas/` prefix nos IDs)                         |
+| `scripts/generate-music-posts.mjs`          | `OUT_DIR` atualizado para `src/content/blog/`                      |
+| `scripts/generate-music-en-companions.mjs`  | `MUSICAS_DIR` atualizado para `src/content/blog/`                  |
+| `scripts/check-translations.mjs`            | Comentário de exemplo atualizado (não altera lógica)               |
+| `scripts/lib/content.mjs`                   | Comentário de exemplo atualizado (não altera lógica)               |
+| `scripts/hronir/lib/posts.js`               | Sem mudança — `keyForPath` usa `translationKey`, não o path        |
+| `.routines/hronir/rates/*.json`             | Sem mudança — chaves são `translationKey`, não paths               |
+| `astro.config.mjs`                          | Redirects `/music/` e `/musicas/` são para a listagem; sem mudança |
+| `check:hygiene`                             | Adicionar `musicas/` à lista de prefixos banidos em blog           |
 
 ---
 
