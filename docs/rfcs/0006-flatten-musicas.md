@@ -2,7 +2,7 @@
 
 |                 |                                                                                                             |
 | --------------- | ----------------------------------------------------------------------------------------------------------- |
-| **Status**      | Draft / Proposed                                                                                            |
+| **Status**      | Implemented (r1)                                                                                            |
 | **Autor**       | Franklin Baldo (proposta assistida)                                                                         |
 | **Criado em**   | 2026-06-09                                                                                                  |
 | **Branch / PR** | `claude/vibrant-volta-3giul0`                                                                               |
@@ -191,11 +191,19 @@ de redirect.
 
 ## 7. Compatibilidade com o Hrönir
 
-Os rate files armazenados em `.routines/hronir/rates/` usam o campo
-`translationKey` do frontmatter como chave do post (e.g. `music-666`). Esse
-campo não muda com o flatten — a chave de cada post permanece a mesma antes e
-depois da migração. **Não é necessário rodar `hronir:migrate` nem modificar
-nenhum rate file.**
+> **Corrigido na r1.** A versão r0 desta seção afirmava que nenhum rate file
+> precisava mudar. Errado: além de `key` (= `translationKey`, de fato
+> intocada), os rate files guardam `post_a.path` / `post_b.path`, e o
+> `hronir:doctor` valida `fs.existsSync(path)` para cada um. 54 rate files
+> referenciavam paths `musicas/` (51 na forma inline, 3 em block scalar
+> YAML por causa de filenames longos).
+
+A migração: `scripts/oneoff/2026-06-09-flatten-musicas-rate-paths.mjs`
+reescreve `src/content/blog/musicas/<f>.mdx` → `src/content/blog/<f>.mdx`
+nas linhas `path:` (inline e block scalar). Keys e version UUIDs são
+independentes de path (o UUID deriva do corpo normalizado) e não mudam.
+Script preservado em `scripts/oneoff/` conforme o padrão de dados
+persistidos do `CLAUDE.md`.
 
 ---
 
@@ -214,17 +222,18 @@ nenhum rate file.**
 
 ---
 
-## 9. Questões em aberto
+## 9. Questões em aberto (resolvidas na r1)
 
 1. **Redirect PT via `/pt/blog/musicas/<slug>/` ou `/pt/musicas/<slug>/`?**
-   Verificar qual é a URL canônica atual dos posts PT de música. O padrão do
-   site é `/pt/blog/<slug>/` para posts e `/pt/musicas/` para a listagem.
-   _Leaning:_ verificar com `npm run build` e inspecionar o output em `dist/`.
+   _Resolvido:_ `/pt/blog/musicas/<slug>/`. Verificado no build: ambas as
+   rotas `[...slug].astro` geram páginas para **todos** os posts (a versão
+   na língua errada é uma página de redirect), então cada id precisa dos
+   dois redirects — `/blog/musicas/<id>/` e `/pt/blog/musicas/<id>/` —
+   independente do `lang`. Por isso 260 e não 130 entradas.
 
-2. **`npm run music:generate` após o flatten:** Se alguém rodar o gerador com
-   a versão antiga (apontando para `musicas/`), ele vai criar a pasta novamente
-   e silenciosamente reverter o flatten. Solução: fazer o `check:hygiene` da
-   Fase 3 pegar esse caso rapidamente.
+2. **`npm run music:generate` após o flatten:** _Resolvido:_ check 6 do
+   `check:hygiene` falha o CI se qualquer arquivo tracked aparecer em
+   `src/content/blog/musicas/`.
 
 ---
 
@@ -244,3 +253,17 @@ nenhum rate file.**
 
 - **r0** (2026-06-09): versão inicial. Decisão: flatten + redirects 1:1 +
   `postType: music` como único diferenciador; sem `hronir:migrate` necessário.
+- **r1** (2026-06-09): implementada, com três desvios do plano da r0:
+  1. **Fases 0 e 1 num único commit atômico.** Gerar os redirects antes do
+     move colidiria com as páginas vivas em `/blog/musicas/...` (rota e
+     redirect no mesmo path), e o deploy do GitHub Pages é atômico — não
+     existe a janela de deploy incremental que a separação protegeria.
+  2. **Redirects derivados do frontmatter, não da pasta.** O
+     `generate-redirects.mjs` roda no `prebuild` de todo build; uma fonte
+     que escaneia a pasta `musicas/` perderia as entradas no primeiro build
+     pós-move. A regra estável: `postType: music` + guarda de data
+     (`date < 2026-06-10` — posts de música criados depois do flatten nunca
+     tiveram URL `musicas/`).
+  3. **Rate files precisaram de migração** (ver §7 corrigido): 54 arquivos
+     com `path:` apontando para `musicas/`, migrados por script preservado
+     em `scripts/oneoff/`.
