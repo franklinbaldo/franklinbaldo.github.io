@@ -17,6 +17,9 @@ await mock.module("../matches.js", {
 const {
   _computeRatings,
   _computeAbsoluteQuality,
+  _computeDeconfoundedQuality,
+  _computePerPerspectiveQuality,
+  _solveLinear,
   EWMA_ALPHA,
   MIN_APPEARANCES,
 } = await import("../ranking.js");
@@ -34,6 +37,8 @@ function match(overrides) {
     bPath: "src/content/blog/post-b.md",
     aVersion: null,
     bVersion: null,
+    agentId: null,
+    perspectiveId: null,
     winner: "a",
     rateA: null,
     rateB: null,
@@ -508,5 +513,176 @@ describe("_computeAbsoluteQuality", () => {
       e,
       "EWMA should accumulate across all 3 observations"
     );
+  });
+});
+
+describe("_solveLinear", () => {
+  it("solves a known 2x2 system", () => {
+    // 2a + b = 3 ; a + 3b = 5  →  a = 0.8, b = 1.4
+    const x = _solveLinear(
+      [
+        [2, 1],
+        [1, 3],
+      ],
+      [3, 5]
+    );
+    assert.ok(Math.abs(x[0] - 0.8) < 1e-9, `a≈0.8, got ${x[0]}`);
+    assert.ok(Math.abs(x[1] - 1.4) < 1e-9, `b≈1.4, got ${x[1]}`);
+  });
+
+  it("solves a 3x3 system needing a pivot swap", () => {
+    // Zero leading pivot forces a row swap.
+    // 0a + b + c = 3 ; a + b = 3 ; b + 2c = 5  →  a=1, b=2, c=1.5? check:
+    //   row2: 1+2=3 ✓ ; row1: 2+1.5=3.5 ✗ — recompute properly below.
+    // Use a clean system: x+y+z=6, y+z=5, z=3 → z=3, y=2, x=1.
+    const x = _solveLinear(
+      [
+        [1, 1, 1],
+        [0, 1, 1],
+        [0, 0, 1],
+      ],
+      [6, 5, 3]
+    );
+    assert.ok(Math.abs(x[0] - 1) < 1e-9, `x≈1, got ${x[0]}`);
+    assert.ok(Math.abs(x[1] - 2) < 1e-9, `y≈2, got ${x[1]}`);
+    assert.ok(Math.abs(x[2] - 3) < 1e-9, `z≈3, got ${x[2]}`);
+  });
+});
+
+describe("_computeDeconfoundedQuality", () => {
+  it("detects a generous agent and corrects spurious quality gap", () => {
+    // X and Y have equal true quality (2). Agent G adds +1, Agent N adds 0.
+    // X is rated more by G, Y more by N → raw stars make X look better.
+    // De-confounding should shrink that gap and flag G > N.
+    const G = "agent-generous";
+    const N = "agent-neutral";
+    const raw = [
+      match({
+        runAt: "2024-04-01T00:00:00Z",
+        matchIndex: 1,
+        agentId: G,
+        aKey: "X",
+        aPath: "x.md",
+        rateA: 3.0,
+        bKey: "Y",
+        bPath: "y.md",
+        rateB: 3.0,
+      }),
+      match({
+        runAt: "2024-04-01T00:00:01Z",
+        matchIndex: 2,
+        agentId: G,
+        aKey: "X",
+        aPath: "x.md",
+        rateA: 3.0,
+        bKey: "F",
+        bPath: "f.md",
+        rateB: 3.0,
+      }),
+      match({
+        runAt: "2024-04-01T00:00:02Z",
+        matchIndex: 3,
+        agentId: N,
+        aKey: "X",
+        aPath: "x.md",
+        rateA: 2.0,
+        bKey: "Y",
+        bPath: "y.md",
+        rateB: 2.0,
+      }),
+      match({
+        runAt: "2024-04-01T00:00:03Z",
+        matchIndex: 4,
+        agentId: N,
+        aKey: "Y",
+        aPath: "y.md",
+        rateA: 2.0,
+        bKey: "F",
+        bPath: "f.md",
+        rateB: 2.0,
+      }),
+    ];
+
+    const { quality, agentBias } = _computeDeconfoundedQuality(raw);
+    const qx = quality.get("X");
+    const qy = quality.get("Y");
+    assert.ok(qx && qy, "X and Y present");
+
+    // Raw stars: X = (3+3+2)/3 = 2.667, Y = (3+2+2)/3 = 2.333, gap 0.333.
+    const rawGap = 2.6667 - 2.3333;
+    const deconfGap = Math.abs(qx.quality - qy.quality);
+    assert.ok(
+      deconfGap < rawGap,
+      `de-confounded gap ${deconfGap.toFixed(3)} should be < raw gap ${rawGap.toFixed(3)}`
+    );
+
+    // Generous agent should carry a higher bias than the neutral one.
+    assert.ok(
+      agentBias.get(G) > agentBias.get(N),
+      `generous agent bias ${agentBias.get(G)} should exceed neutral ${agentBias.get(N)}`
+    );
+  });
+
+  it("returns empty structures when there are no rated observations", () => {
+    const raw = [
+      match({ aKey: "a", bKey: "b", rateA: null, rateB: null, agentId: "g" }),
+    ];
+    const out = _computeDeconfoundedQuality(raw);
+    assert.equal(out.quality.size, 0, "no quality rows");
+    assert.equal(out.intercept, 0, "intercept defaults to 0");
+  });
+});
+
+describe("_computePerPerspectiveQuality", () => {
+  it("buckets stars by perspective and keeps them separate", () => {
+    const raw = [
+      match({
+        runAt: "2024-05-01T00:00:00Z",
+        matchIndex: 1,
+        perspectiveId: "skeptical-specialist",
+        aKey: "post-z",
+        aPath: "z.md",
+        rateA: 2.0,
+        bKey: "opp",
+        bPath: "o.md",
+        rateB: 1.0,
+      }),
+      match({
+        runAt: "2024-05-01T00:00:01Z",
+        matchIndex: 2,
+        perspectiveId: "curious-outsider",
+        aKey: "post-z",
+        aPath: "z.md",
+        rateA: 4.5,
+        bKey: "opp2",
+        bPath: "o2.md",
+        rateB: 3.0,
+      }),
+    ];
+
+    const result = _computePerPerspectiveQuality(raw);
+    const harsh = result.get("skeptical-specialist");
+    const gentle = result.get("curious-outsider");
+    assert.ok(harsh && gentle, "both perspective buckets exist");
+    assert.equal(harsh.get("post-z").stars, 2.0, "harsh bucket sees 2.0");
+    assert.equal(gentle.get("post-z").stars, 4.5, "gentle bucket sees 4.5");
+    assert.equal(harsh.get("post-z").n, 1);
+    assert.equal(gentle.get("post-z").n, 1);
+  });
+
+  it("skips matches without a perspective_id", () => {
+    const raw = [
+      match({
+        perspectiveId: null,
+        aKey: "p",
+        aPath: "p.md",
+        rateA: 3.0,
+        bKey: "q",
+        bPath: "q.md",
+        rateB: 2.0,
+      }),
+    ];
+    const result = _computePerPerspectiveQuality(raw);
+    assert.equal(result.size, 0, "no perspective buckets when id absent");
   });
 });

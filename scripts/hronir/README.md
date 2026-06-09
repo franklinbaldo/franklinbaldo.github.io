@@ -49,7 +49,8 @@ Todos via npm scripts na raiz:
 | `npm run hronir:continue`                                                                                            | Avança o estado da sessão: imprime a **perspectiva sorteada** + post A; depois imprime post B; depois espera decisão                                                                                                                                                                                                                   |
 | `npm run hronir:decide -- --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "..." --review-b "..." --clash "..."` | Registra a decisão. Cada `--rate-*` é número 1.00–5.00 (até duas decimais, empate proibido). Cada `--review-*` e o `--clash` têm piso de 100 palavras. Vencedor é derivado: quem tem mais estrelas. Agente, perspectiva e idioma são fixos pela sessão (vêm de `init` / sorteio em `continue`). Devolve a sessão para `ready_for_next` |
 | `npm run hronir:ranking`                                                                                             | Score acumulado de todos os matches preenchidos                                                                                                                                                                                                                                                                                        |
-| `npm run hronir:worst`                                                                                               | Imprime translationKey do pior ranqueado                                                                                                                                                                                                                                                                                               |
+| `npm run hronir:worst [-- --absolute]`                                                                               | Imprime translationKey do pior ranqueado (por `ordinal`; `--absolute` usa `stars`)                                                                                                                                                                                                                                                     |
+| `npm run hronir:diagnose`                                                                                            | **Leitura pura.** Qualidade de-confundida (post vs viés de avaliador/perspectiva, ridge-LSQ), `gap` cru−de-confundido, vieses `α`/`π`, líder por perspectiva. Não muda estado. Ver RFC 0002                                                                                                                                            |
 | `npm run hronir:edit-worst`                                                                                          | Pior elegível + top 3 + defesas + crítica acumulada. Captura `git HEAD` na sessão (URL do GitHub pra versão prestes a ser substituída), injeta `replacedVersion` (marker transiente) no frontmatter dos posts, marca a sessão como `need_edit`                                                                                         |
 | `npm run hronir:edit-commit -- --msg "..."`                                                                          | Valida que cada tradução foi efetivamente alterada (UUIDv5 mudou), grava `previousVersion: { uuid, url, timestamp, msg }` no frontmatter (substitui qualquer `replacedVersion`/`editHistory` legados), fecha a sessão                                                                                                                  |
 | `npm run hronir:end -- [--skip-edit\|--force]`                                                                       | Encerra a rodada. Recusa se há matches pendentes ou edição pendente, a menos que `--force`                                                                                                                                                                                                                                             |
@@ -190,14 +191,31 @@ A ordem da tabela é por `ordinal` descendente, tie-break alfabético por `key`.
 Cada chamada de `continue` (não `init` em bloco) gera um match. Para cada par possível, calcula:
 
 ```
-score = -|predictWin(a, b) - 0.5| + sigma_a + sigma_b + stale_bonus(a) + stale_bonus(b)
+score = -|predictWin(a, b) - 0.5| + sigma_a + sigma_b + stale_bonus(a) + stale_bonus(b) + objective_bonus(a, b)
 ```
 
 - `predictWin` próximo de 0.5 → resultado mais incerto → mais informação.
 - `sigma_a + sigma_b` → preferir pares com incerteza ainda alta.
 - `stale_bonus` → `+3.0` se o post foi **editado** depois do match mais recente em que entrou; `0` caso contrário. A âncora de edição é `previousVersion.timestamp` (gravado por `edit-commit`); para posts que nunca passaram por `edit-commit`, cai no tempo do último commit git do arquivo (`gitMtime`).
+- `objective_bonus` → **opt-in, default 0**. Com `HRONIR_OBJECTIVE=refine-top` prefere pares de nível alto (estrelas); com `hunt-worst`, de nível baixo. Peso pequeno (`0.15`): inclina empates sem dominar os termos de informação.
 
 Ordena pares por score descendente (com jitter pra desempate no cold start) e pega o topo, evitando posts já usados no run atual.
+
+### Diagnose — qualidade de-confundida (RFC 0002)
+
+`npm run hronir:diagnose` é um comando de **leitura pura** (não muda estado) que separa a qualidade do post do viés do avaliador e do efeito da perspectiva, via mínimos quadrados com ridge:
+
+```
+rate = μ + q[post] + α[agent] + π[perspective] + ε
+```
+
+A estrela crua é confundida: um post pode ter média alta só porque pegou um avaliador generoso ou uma perspectiva tolerante (o sistema **sorteia perspectivas e injeta humor de propósito**). O modelo torna esses efeitos separáveis. Imprime:
+
+- **qualidade de-confundida** por post (`deconf = μ + q`), com `gap = deconf − cru`: `gap` positivo = **subnotado** (pegou plateia dura), negativo = estrela crua inflada;
+- **viés de avaliador** (`α`) e **viés de perspectiva** (`π`) — ex.: `skeptical-specialist`/`applied-thinker` são estruturalmente severos, `internet-native`/`curious-outsider` generosos;
+- **líder por perspectiva** (EWMA de estrelas dentro de cada perspectiva).
+
+O `ranking` continua intocado e retrocompatível; `diagnose` é um diagnóstico paralelo pra **calibração**, não pra ordenar edição. `DECONFOUND_RIDGE` (λ, default 1.0) é a regularização — ajustável.
 
 ### Por que MIN_APPEARANCES ainda importa com OpenSkill
 
