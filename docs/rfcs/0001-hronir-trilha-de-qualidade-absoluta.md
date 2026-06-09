@@ -18,7 +18,7 @@
 
 Hoje o ranking do Hrönir é **puramente relativo**: cada clash é reduzido a um
 único bit (`winner = a | b`) e alimentado ao OpenSkill. As notas em estrelas
-(`rate_a`, `rate_b`, 1.00–5.00, resolução 0.25) são coletadas, salvas e
+(`rate_a`, `rate_b`, 1.00–5.00, resolução 0.01) são coletadas, salvas e
 validadas, mas **nunca entram em nenhuma métrica de ranqueamento ou
 amostragem**. Estamos jogando fora dois canais de informação independentes:
 
@@ -50,6 +50,11 @@ As notas são persistidas (`commands.js:752-753`), mas `computeRatings`
 **exibição** no fluxo `edit-worst` (`commands.js:835-836, 924-925`) e
 **validação** no `doctor` (`commands.js:1412-1436`) — nenhum deles é sinal de
 ranking.
+
+> **Invariante útil:** o `doctor` (`commands.js:1424-1438`) _deriva_ o `winner`
+> de `rate_a`/`rate_b` e proíbe empate. Logo o `winner` é redundante dado o par
+> de notas, e a margem `|a − b|` é sempre recuperável e consistente com o
+> vencedor gravado — a Fase 2 pode assumir isso sem código defensivo.
 
 ### 2.2. Por que o OpenSkill, sozinho, não basta
 
@@ -159,7 +164,10 @@ retorne Map<key, { stars: Q, n, rawStars }>
   dominar. Parâmetro de decaimento → **questão em aberto** (§8).
 - A trilha é significativa só com amostra suficiente: reaproveitar
   `MIN_APPEARANCES = 3` como piso de confiança. Abaixo disso, exibir mas marcar
-  baixa confiança e **não** disparar flags de divergência.
+  baixa confiança e **não** disparar flags de divergência. **Nota de
+  implementação:** a constante vive hoje em `commands.js:25` e **não é
+  exportada**; a Fase 1 precisa movê-la para um módulo compartilhado
+  (`matches.js`) ou exportá-la para que `ranking.js` a alcance.
 
 **5.2. Métrica de divergência (freguesia fraca / subnotado)**
 
@@ -175,7 +183,10 @@ div    = p_ord − p_star
   absoluta justifica → provavelmente pegou oponentes fracos).
 - `div < −τ` → **↑ subnotado** (melhor em absoluto do que o cartel de duelos
   sugere → azar de chaveamento).
-- `τ` default sugerido `0.25` → **questão em aberto** (§8).
+- A granularidade do percentil com N pequeno é ~`1/N`, então um `τ` fixo é
+  instável. **Decisão (revisão):** na Fase 1, exibir `div` numericamente **sem
+  flag dura**; calibrar `τ` depois contra os dados reais, em unidades de `1/N`
+  (§8 q2).
 
 **5.3. Integração no `ranking()` (`commands.js:778`)**
 
@@ -187,7 +198,8 @@ rank  key  ordinal  mu  sigma  W/N  stars  n  flag
 
 `stars` com 2 casas; `flag` ∈ {``, `freguesia-fraca`, `subnotado`,
 `baixa-confianca`}. Mantém retrocompatível para quem faz parse — só **acrescenta**
-colunas à direita.
+colunas à direita. A seção **Ranking** do `scripts/hronir/README.md` documenta
+essa saída e deve ser atualizada na mesma fase.
 
 **5.4. `worst()` / `edit-worst` cientes do absoluto (`commands.js:792`)**
 
@@ -207,14 +219,18 @@ Usar `|a − b|` para escalar a magnitude do update. Normalizando pela margem
 máxima (4, pois notas ∈ [1,5]):
 
 ```
-m = |a − b| / 4            // m ∈ (0, 1]
+m = |a − b| / 4            // m ∈ [0.0025, 1]  (margem mínima 0.01 ⇒ m mínimo 0.0025)
 weight = W_MIN + (1 − W_MIN) * m
 rate([[winner],[loser]], { weights: [[weight],[weight]] })
 ```
 
 Blowout (`m≈1`) move os ratings mais que um photo-finish (`m≈0`). `W_MIN` →
-**questão em aberto** (§8). Alternativa: tratar margens minúsculas como quase-empate
-via `tau`/draw do OpenSkill (avaliar em §9).
+**questão em aberto** (§8). **Ressalva importante:** em openskill@4.1.1 a opção
+`weights` modela _contribuição / partial-play_, **não** "magnitude do update";
+reaproveitá-la para escalar pela margem é plausível, mas **não garante** escala
+linear do delta de rating — daí a rede de segurança do golden-diff deliberado. A
+alternativa `tau`/draw do OpenSkill é um **candidato sério** (não nota de
+rodapé), avaliada em §8 q5 e §9.
 
 **Reprodutibilidade:** os ratings são **derivados** (recomputados dos rate files
 a cada chamada), então não há estado salvo para migrar — mas os números **vão
@@ -233,7 +249,7 @@ viés_avaliador/humor + efeito_perspectiva + ruído`. A soma `a+b` por clash é 
   _separável_. O sistema **injeta humor de propósito** para descalibrar o
   avaliador, então a média crua carrega esse ruído — a versão rigorosa o remove.
 - **Amostragem ciente do objetivo:** nível previsto (do histórico) orienta o par
-  em `generateNextMatch` (`commands.js:300-325`): refinar o topo → preferir
+  em `generateNextMatch` (`commands.js:263`): refinar o topo → preferir
   nível alto; caçar o pior → preferir nível baixo. Hoje o sampling é agnóstico
   ao objetivo.
 
@@ -263,17 +279,27 @@ viés_avaliador/humor + efeito_perspectiva + ruído`. A soma `a+b` por clash é 
 
 ---
 
-## 8. Questões em aberto
+## 8. Questões em aberto (com decisões da revisão)
 
-1. **Decaimento da EWMA:** meia-vida por nº de aparições? por tempo? ou
-   **reset-on-edit** usando o `gitMtime` que já detectamos? (recomendação
-   inicial: reset/forte decaimento no edit, casando com a staleness existente).
-2. **Limiar de divergência `τ`:** `0.25` é chute inicial; calibrar com os dados
-   reais em `.routines/hronir/`.
-3. **`worst` absoluto vs relativo:** `--absolute` opt-in, ou blend vira default?
-4. **`W_MIN` da Fase 2:** quão pequeno um photo-finish pode mexer no rating?
-5. **Quase-empate:** margem mínima (0.25) deve virar draw via `tau`, ou só
-   weight reduzido?
+> Recomendações da revisão da PR #292 incorporadas como **decisões iniciais** (o
+> autor/revisor é dono do sistema); ainda revisáveis na implementação.
+
+1. **Decaimento da EWMA → decidido:** **reset-on-edit via `gitMtime`** como
+   mecanismo primário (casa com a staleness já existente); meia-vida por **nº de
+   aparições** como fallback — **não** por tempo de relógio. Qualidade é
+   propriedade do texto _atual_; notas pré-edição são stale por definição.
+2. **Limiar `τ` → decidido:** na Fase 1, **exibir `div` numericamente sem flag
+   dura**; calibrar `τ` depois contra `.routines/hronir/`, em unidades de `1/N`
+   (a granularidade do percentil é ~`1/N`, então um valor fixo é instável).
+3. **`worst` absoluto vs blend → decidido:** `--absolute` **opt-in**; **não**
+   mudar o default. Escolha conservadora e aditiva, coerente com o princípio de
+   design (§4). Blend pode virar default depois que a trilha provar valor.
+4. **`W_MIN` → leaning:** escolher de modo que um duelo de margem mínima
+   (`m = 0.0025`) ainda cutuque o rating, mas um blowout domine; começar em
+   ~`0.2–0.3` e validar via golden-diff.
+5. **Quase-empate → decidido:** como o sistema **proíbe** empate na entrada, uma
+   margem de `0.01` é decisão **deliberada** do avaliador; **weight reduzido
+   honra isso melhor que coagir um draw**. Preferir weight-only a `tau`.
 
 ---
 
@@ -299,3 +325,15 @@ viés_avaliador/humor + efeito_perspectiva + ruído`. A soma `a+b` por clash é 
 3. Fase 3 sai do escopo desta PR e vira issue/RFC futuro.
 
 Merge com **merge commit** (não squash), conforme `CLAUDE.md`.
+
+---
+
+## Histórico de revisões
+
+- **r1 (2026-06-09):** correções de fato e decisões nas questões em aberto após a
+  revisão da PR #292 — resolução das notas corrigida de `0.25` para **`0.01`**
+  (com impacto no `m` mínimo da Fase 2, `0.0025`); nota de que `MIN_APPEARANCES`
+  precisa ser exportado de `commands.js:25`; invariante do `doctor` (winner
+  redundante, margem sempre recuperável); ressalva sobre a semântica de `weights`
+  no openskill@4.1.1; compromisso de atualizar a seção Ranking do README;
+  anchor de `generateNextMatch` corrigido para `commands.js:263`.
