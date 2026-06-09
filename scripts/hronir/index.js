@@ -36,6 +36,7 @@ const {
   doctor,
   end,
   editCommit,
+  promote,
   next,
 } = await import("./lib/commands.js");
 
@@ -185,6 +186,9 @@ switch (cmd) {
     editCommit(msg);
     break;
   }
+  case "promote":
+    promote(args);
+    break;
   case "migrate":
     migrate({ dryRun: args.includes("--dry-run") });
     break;

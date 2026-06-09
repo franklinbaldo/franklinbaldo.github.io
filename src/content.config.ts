@@ -25,6 +25,9 @@ const blog = defineCollection({
       lang: z.enum(["en", "pt"]).optional(),
       author: z.string().optional(),
       translationKey: z.string().optional(),
+      /** RFC 0003: content UUID of the version this one superseded when it was
+       *  promoted to canonical. Lineage lives in-repo as sibling version files. */
+      supersedes: z.string().optional(),
       series: z.string().optional(),
       seriesOrder: z.number().optional(),
       featured: z.boolean().optional(),

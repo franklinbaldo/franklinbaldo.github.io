@@ -93,6 +93,10 @@ export function _computeRatings(raw) {
   };
 
   for (const m of sorted) {
+    // RFC 0003: version duels (same essay key, different content version) feed
+    // only the per-version track (computeVersionRatings), never the per-essay
+    // OpenSkill — a team can't play itself.
+    if (m.aKey === m.bKey) continue;
     const aRating = ensure(m.aKey);
     const bRating = ensure(m.bKey);
     if (m.aPath) labels.set(m.aKey, m.aPath);
@@ -197,6 +201,7 @@ export function _computeAbsoluteQuality(raw) {
   };
 
   for (const m of sorted) {
+    if (m.aKey === m.bKey) continue; // RFC 0003: version duels skip the per-essay track
     resetIfEdited(m.aKey, m.aPath, m.aVersion);
     resetIfEdited(m.bKey, m.bPath, m.bVersion);
     applyRating(m.aKey, m.rateA);
@@ -214,6 +219,43 @@ export function _computeAbsoluteQuality(raw) {
 
 export function computeAbsoluteQuality() {
   return _computeAbsoluteQuality(_loadMatchData());
+}
+
+// RFC 0003: per-version quality from version duels (matches where both sides
+// share the essay key but differ in content version). EWMA of the stars each
+// version received, keyed by the content-version UUID. Decides which version
+// to promote to canonical.
+export function _computeVersionRatings(raw) {
+  const sorted = _sortMatchData(raw);
+  const ewma = new Map(); // version-uuid → EWMA stars
+  const count = new Map(); // version-uuid → number of duels rated
+  const meta = new Map(); // version-uuid → { key, path }
+  const apply = (version, key, path, rate) => {
+    if (!version || rate === null) return;
+    ewma.set(
+      version,
+      ewma.has(version)
+        ? EWMA_ALPHA * rate + (1 - EWMA_ALPHA) * ewma.get(version)
+        : rate
+    );
+    count.set(version, (count.get(version) || 0) + 1);
+    meta.set(version, { key, path });
+  };
+  for (const m of sorted) {
+    if (m.aKey !== m.bKey) continue; // only version duels
+    apply(m.aVersion, m.aKey, m.aPath, m.rateA);
+    apply(m.bVersion, m.bKey, m.bPath, m.rateB);
+  }
+  const result = new Map();
+  for (const [version, stars] of ewma) {
+    const { key, path } = meta.get(version) || {};
+    result.set(version, { stars, n: count.get(version) || 0, key, path });
+  }
+  return result;
+}
+
+export function computeVersionRatings() {
+  return _computeVersionRatings(_loadMatchData());
 }
 
 // Solve a symmetric positive-definite linear system A·x = b by Gaussian

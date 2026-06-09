@@ -29,6 +29,7 @@
     "hronir:edit-commit": "node scripts/hronir/index.js edit-commit",
     "hronir:draft-worst": "node scripts/hronir/index.js draft-worst",
     "hronir:draft-commit": "node scripts/hronir/index.js draft-commit",
+    "hronir:promote": "node scripts/hronir/index.js promote",
     "hronir:end": "node scripts/hronir/index.js end",
     "hronir:migrate": "node scripts/hronir/index.js migrate",
     "hronir:doctor": "node scripts/hronir/index.js doctor",

@@ -12,6 +12,8 @@ import {
   listPosts,
   getPostUuid,
   findTranslations,
+  isCanonical,
+  listVersions,
 } from "./posts.js";
 import {
   listMatchFiles,
@@ -23,6 +25,7 @@ import {
 import {
   computeRatings,
   computeAbsoluteQuality,
+  computeVersionRatings,
   computeDeconfoundedQuality,
   computePerPerspectiveQuality,
   getProtectedPosts,
@@ -285,6 +288,31 @@ function randomMoodGlyph() {
   return String.fromCodePoint(cp);
 }
 
+// RFC 0003: probability that a generated match is a version duel (canonical vs
+// one of its own drafts) instead of a cross-essay pair. Small enough to keep
+// most matches cross-essay; only ever fires when a candidate actually has a
+// sibling draft, so it's a no-op until draft-worst creates one.
+const VERSION_DUEL_PROB = 0.34;
+
+// Find an eligible canonical that has at least one sibling draft (v-*) and
+// return the duel sides (canonical vs the freshest draft) for that (key, lang).
+function pickVersionDuel(eligible) {
+  const candidates = [];
+  for (const c of eligible) {
+    const drafts = listVersions(c.path).filter((p) => !isCanonical(p));
+    if (drafts.length === 0) continue;
+    drafts.sort(); // v-<timestamp> names sort chronologically
+    candidates.push({
+      key: c.translationKey,
+      lang: readPost(c.path).lang || "en",
+      canonicalPath: c.path,
+      draftPath: drafts[drafts.length - 1],
+    });
+  }
+  if (candidates.length === 0) return null;
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
 function generateNextMatch() {
   const allCandidates = listEnglishWithKey();
 
@@ -422,23 +450,49 @@ function generateNextMatch() {
   }
   const evaluatorMood = pickRandomMood(recordedMoods);
 
-  console.log(
-    `Gerado match ${matchIndex} (active sampling). Perspectiva: ${perspective.name}. Idiomas: ${aVariant.lang}/${bVariant.lang}.`
-  );
-  return {
-    match_index: matchIndex,
-    post_a: {
+  // RFC 0003: occasionally run a version duel (canonical vs one of its drafts)
+  // so competing versions get rated. Only fires when fresh drafts exist;
+  // otherwise falls back to the cross-essay pair chosen above.
+  const duel =
+    Math.random() < VERSION_DUEL_PROB ? pickVersionDuel(eligible) : null;
+  let postA, postB;
+  if (duel) {
+    postA = {
+      key: duel.key,
+      path: duel.canonicalPath,
+      display_lang: duel.lang,
+      version: getPostUuid(duel.canonicalPath),
+    };
+    postB = {
+      key: duel.key,
+      path: duel.draftPath,
+      display_lang: duel.lang,
+      version: getPostUuid(duel.draftPath),
+    };
+    console.log(
+      `Gerado match ${matchIndex}: DUELO DE VERSÃO (${duel.key}/${duel.lang}) — canônica vs rascunho. Perspectiva: ${perspective.name}.`
+    );
+  } else {
+    postA = {
       key: a.translationKey,
       path: aVariant.path,
       display_lang: aVariant.lang,
       version: getPostUuid(aVariant.path),
-    },
-    post_b: {
+    };
+    postB = {
       key: b.translationKey,
       path: bVariant.path,
       display_lang: bVariant.lang,
       version: getPostUuid(bVariant.path),
-    },
+    };
+    console.log(
+      `Gerado match ${matchIndex} (active sampling). Perspectiva: ${perspective.name}. Idiomas: ${aVariant.lang}/${bVariant.lang}.`
+    );
+  }
+  return {
+    match_index: matchIndex,
+    post_a: postA,
+    post_b: postB,
     agent_id: agentId,
     eval_lang: evalLang,
     perspective_id: perspective.id,
@@ -2029,4 +2083,124 @@ export function editCommit(msg) {
     "competir nos próximos matches. A vencedora pode virar canônica com `npm run hronir:promote`."
   );
   console.log("Commit as alterações com git normalmente.");
+}
+
+// RFC 0003: swap a winning version into <slug>/index.<ext>, archiving the
+// outgoing canonical as a sibling version file. The published URL (the folder
+// name) is preserved. Two modes:
+//   --draft <path>  promote that specific draft (explicit)
+//   --key <key>     auto-pick the best version per lang via version-duel stars
+export function promote(args) {
+  let draftPath = null;
+  let key = null;
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--draft") draftPath = args[++i];
+    else if (args[i] === "--key") key = args[++i];
+  }
+
+  if (draftPath) {
+    if (!fs.existsSync(draftPath)) {
+      console.error(`Erro: rascunho não encontrado: ${draftPath}`);
+      process.exit(1);
+    }
+    if (isCanonical(draftPath)) {
+      console.error(`Erro: ${draftPath} já é a canônica (index.*).`);
+      process.exit(1);
+    }
+    promoteFile(draftPath);
+    nextStep(
+      "Revise o diff e commite. A nova canônica está publicada na mesma URL."
+    );
+    return;
+  }
+
+  if (!key) {
+    console.error(
+      "Erro: informe `--draft <caminho>` (promoção explícita) ou `--key <translationKey>` (melhor versão por duelos)."
+    );
+    process.exit(1);
+  }
+
+  const versionRatings = computeVersionRatings();
+  const translations = findTranslations(key);
+  if (translations.length === 0) {
+    console.error(`Erro: nenhuma canônica encontrada para a chave "${key}".`);
+    process.exit(1);
+  }
+
+  let promoted = 0;
+  for (const t of translations) {
+    const scored = listVersions(t.path)
+      .map((p) => {
+        const vr = versionRatings.get(getPostUuid(p));
+        return { path: p, stars: vr ? vr.stars : null, n: vr ? vr.n : 0 };
+      })
+      .filter((v) => v.stars !== null);
+    if (scored.length === 0) {
+      console.log(
+        `[promote] ${t.lang}: sem dados de duelo de versão — pulando (use --draft).`
+      );
+      continue;
+    }
+    scored.sort((a, b) => b.stars - a.stars);
+    const best = scored[0];
+    if (isCanonical(best.path)) {
+      console.log(
+        `[promote] ${t.lang}: a canônica já é a melhor versão (${best.stars.toFixed(2)}★). Nada a fazer.`
+      );
+      continue;
+    }
+    console.log(
+      `[promote] ${t.lang}: promovendo ${best.path} (${best.stars.toFixed(2)}★, n=${best.n}).`
+    );
+    promoteFile(best.path);
+    promoted++;
+  }
+
+  nextStep(
+    promoted > 0
+      ? `${promoted} versão(ões) promovida(s). Revise o diff e commite.`
+      : "Nenhuma promoção: sem duelos de versão suficientes ou a canônica já lidera. Use `--draft <caminho>` para promover manualmente."
+  );
+}
+
+function promoteFile(draftPath) {
+  const dir = path.dirname(draftPath);
+  const ext = path.extname(draftPath).slice(1) || "md";
+  const indexPath = path.join(dir, `index.${ext}`);
+  if (!fs.existsSync(indexPath)) {
+    console.error(
+      `Erro: canônica ${indexPath} não existe; não dá para promover ${draftPath}.`
+    );
+    process.exit(1);
+  }
+  const oldCanonicalUuid = getPostUuid(indexPath);
+  const { runId } = utcStamp();
+  const archivePath = path.join(dir, `v-${runId}-prev.${ext}`);
+
+  // Archive the outgoing canonical as a sibling version (history preserved).
+  fs.renameSync(indexPath, archivePath);
+
+  // Promote the winner: it becomes index.*, gains a `supersedes` link to the
+  // version it replaced, and sheds the transient draft markers.
+  const parsed = matter(fs.readFileSync(draftPath, "utf8"));
+  parsed.data.supersedes = oldCanonicalUuid;
+  for (const k of [
+    "draftCreatedAt",
+    "draftMsg",
+    "draftCommittedAt",
+    "replacedVersion",
+  ]) {
+    delete parsed.data[k];
+  }
+  fs.writeFileSync(
+    indexPath,
+    matter.stringify(parsed.content, parsed.data),
+    "utf8"
+  );
+  fs.unlinkSync(draftPath);
+
+  console.log(
+    `[promote] ${draftPath} → ${indexPath} (canônica anterior ${oldCanonicalUuid} arquivada em ${archivePath})`
+  );
 }
