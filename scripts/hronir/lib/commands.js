@@ -284,7 +284,14 @@ function generateNextMatch() {
       staleByKey.set(c.translationKey, false);
       continue;
     }
-    const mtime = gitMtime(c.path);
+    // Use previousVersion.timestamp (written by edit-commit) as the canonical
+    // "post was intentionally edited" signal. Fall back to gitMtime for posts
+    // that have never gone through edit-commit.
+    const postData = readPost(c.path);
+    const prevTimestamp = postData?.previousVersion?.timestamp
+      ? Date.parse(String(postData.previousVersion.timestamp)) || 0
+      : 0;
+    const mtime = prevTimestamp > 0 ? prevTimestamp : gitMtime(c.path);
     staleByKey.set(c.translationKey, mtime > lastMatch);
   }
   const staleBonus = (key) => (staleByKey.get(key) ? STALE_BONUS : 0);

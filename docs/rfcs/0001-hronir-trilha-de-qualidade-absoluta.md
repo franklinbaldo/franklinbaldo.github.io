@@ -108,26 +108,25 @@ previousVersion:
 ```
 
 Este campo é o sinal **semântico correto** de "o post foi intencionalmente
-editado pelo fluxo Hrönir". O `stale_bonus` no active sampling atualmente usa
-`gitMtime` (tempo do último commit git do arquivo), que é mais amplo — dispara
-em qualquer mudança de arquivo, incluindo ajustes de frontmatter sem conteúdo
-novo. A padronização **recomendada** para próximas iterações é:
+editado pelo fluxo Hrönir". O `stale_bonus` no active sampling usava `gitMtime`
+(tempo do último commit git do arquivo), que é mais amplo — dispara em qualquer
+mudança de arquivo, incluindo ajustes de frontmatter sem conteúdo novo.
 
-1. **`previousVersion.timestamp`** como âncora de edição para o `stale_bonus` —
-   em vez de `gitMtime`, checar se o post tem `previousVersion` cujo `timestamp`
-   é mais recente que o match mais recente em que ele entrou.
-2. **`post_a.version`** nos rate files como verificação leve de edição sem git:
-   se o UUID atual do post difere do `version` gravado num match passado, o post
-   foi editado desde aquele match.
+**Implementado nesta PR:** `commands.js` agora usa `previousVersion.timestamp`
+como âncora primária do `stale_bonus`, com `gitMtime` como fallback para posts
+que nunca passaram por `edit-commit`:
 
-A `gitMtime` continua válida como _fallback_ (posts que nunca passaram por
-`edit-commit` não têm `previousVersion`), mas não deve ser o caminho primário
-quando o frontmatter já carrega a informação.
+```js
+const prevTimestamp = postData?.previousVersion?.timestamp
+  ? Date.parse(String(postData.previousVersion.timestamp)) || 0
+  : 0;
+const mtime = prevTimestamp > 0 ? prevTimestamp : gitMtime(c.path);
+staleByKey.set(c.translationKey, mtime > lastMatch);
+```
 
-> **Nota de escopo:** esses três sinais e a padronização de `previousVersion`
-> ficam fora das Fases 0-2 desta RFC. São registrados aqui para não perder a
-> oportunidade de design — a implementação entra numa RFC subsequente ou como
-> Fase 3.
+`post_a.version` nos rate files (verificação leve sem git) e os sinais de
+`evaluator_mood` / `perspective_id` ficam como trabalho futuro (Fase 3 /
+RFC subsequente).
 
 ---
 
