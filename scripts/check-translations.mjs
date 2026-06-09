@@ -1,5 +1,5 @@
 // CI guard for the en/pt translation pairing.
-// post.file is a path relative to src/content/blog/ (e.g. "musicas/666-en.mdx"),
+// post.file is a path relative to src/content/blog/ (e.g. "666-en.mdx"),
 // matching how git diff reports changed files after stripping that prefix.
 //
 // Two checks:
