@@ -51,9 +51,13 @@ jobs:
 
           SESSIONS=$(verne sessions list --json --page-size 100)
 
-          # Sessions stuck at "awaiting_feedback" — nudge each one.
+          # Only nudge sessions that belong to this repo+branch:
+          # title must match "hronir session " prefix (set by spawn-session.sh).
           WAITING=$(echo "$SESSIONS" | jq -r '[.sessions[]
-            | select(((.status // "") | ascii_downcase) == "awaiting_feedback")
+            | select(
+                ((.status // "") | ascii_downcase) == "awaiting_feedback"
+                and ((.title // "") | startswith("hronir session "))
+              )
             | .id] | .[]')
 
           COUNT=0
@@ -73,18 +77,19 @@ jobs:
           SESSIONS=$(verne sessions list --json --page-size 100)
           NOW=$(date -u +%s)
 
-          # In-flight = open AND not merely awaiting_feedback (those were just nudged).
+          # In-flight = open, not awaiting_feedback, title matches our pattern.
           INFLIGHT=$(echo "$SESSIONS" | jq '[.sessions[]
             | select(
                 ((.status // "") | ascii_downcase) as $s
                 | $s != "completed" and $s != "failed" and $s != "cancelled"
                   and $s != "awaiting_feedback"
+                  and ((.title // "") | startswith("hronir session "))
               )]')
           INFLIGHT_COUNT=$(echo "$INFLIGHT" | jq 'length')
 
           CREATE=0
           if [ "$INFLIGHT_COUNT" -eq 0 ]; then
-            echo "No in-flight session — will create one."
+            echo "No in-flight hronir session — will create one."
             CREATE=1
           else
             # Block only on recent sessions (< 1h). Unknown createTime = treat as recent.
@@ -94,7 +99,7 @@ jobs:
                 elif ($now - fromdateiso8601) < 3600 then 1
                 else empty end ] | length')
             if [ "$BLOCKERS" -gt 0 ]; then
-              echo "A recent in-flight session exists — skipping spawn."
+              echo "A recent in-flight hronir session exists — skipping spawn."
             else
               echo "In-flight sessions exist but all are >= 1h old — will create one."
               CREATE=1
