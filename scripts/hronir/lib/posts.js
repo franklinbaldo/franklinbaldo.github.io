@@ -49,6 +49,25 @@ export function keyForPath(filePath) {
   return base;
 }
 
+// RFC 0003: the canonical (published) file of each post is index.md(x).
+// Non-canonical versions are sibling drafts named v-<timestamp>.md(x).
+export function isCanonical(filePath) {
+  return /(^|[/\\])index\.mdx?$/.test(filePath);
+}
+
+// All version files (canonical index.* plus draft v-*.md) living in the same
+// post folder as `anyPathInFolder`. Feeds the version-aware ranking/promotion.
+export function listVersions(anyPathInFolder) {
+  const dir = path.dirname(anyPathInFolder);
+  const out = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isFile() && /\.mdx?$/.test(entry.name)) {
+      out.push(path.join(dir, entry.name));
+    }
+  }
+  return out;
+}
+
 export function buildPathIndex() {
   const index = new Map();
   for (const p of listPosts()) {
@@ -62,6 +81,7 @@ export function buildPathIndex() {
 export function listEnglishWithKey() {
   const out = [];
   for (const p of listPosts()) {
+    if (!isCanonical(p)) continue; // RFC 0003: only canonical versions rank
     const data = readPost(p);
     const lang = data.lang || "en";
     if (lang !== "en") continue;
@@ -76,6 +96,7 @@ export function listEnglishWithKey() {
 export function findTranslations(translationKey) {
   const out = [];
   for (const p of listPosts()) {
+    if (!isCanonical(p)) continue; // RFC 0003: drafts aren't translations
     const data = readPost(p);
     if (!data.translationKey) continue;
     if (String(data.translationKey) !== String(translationKey)) continue;

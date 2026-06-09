@@ -682,7 +682,7 @@ export function next(initOptions = {}) {
         `Edição em andamento para "${session.worstKey}". Baseline já registrado — não vou refazer snapshot.`
       );
       nextStep(
-        `Edite os arquivos do post e rode \`npm run hronir:edit-commit -- --msg "<mensagem>"\` para fechar a rodada.`
+        `Edite os rascunhos e rode \`npm run hronir:draft-commit -- --msg "<mensagem>"\` para fechar a rodada.`
       );
       return;
     }
@@ -1316,65 +1316,42 @@ export function editWorst() {
 
   const translationFiles = findTranslations(worstRow.key);
 
-  // Precondition: each target post must match HEAD exactly. The captured
-  // HEAD permalink is what will resolve `previousVersion.url`, and the
-  // stored uuid is computed from the working-tree file. If the working
-  // tree diverges from HEAD, those two would describe different content
-  // and the lineage link would be wrong.
-  const dirty = translationFiles.filter((f) => isFileDirtyAtHead(f.path));
-  if (dirty.length > 0) {
-    console.error(
-      "Erro: edit-worst requer que os arquivos do post estejam limpos em relação a HEAD"
-    );
-    console.error(
-      "(previousVersion.url aponta para HEAD; uuid é derivado do conteúdo no disco — precisam coincidir)."
-    );
-    console.error("Arquivos com mudanças não commitadas:");
-    for (const f of dirty) console.error(`  - ${f.path}`);
-    console.error("Commit ou stash essas mudanças antes de rodar edit-worst.");
-    process.exit(1);
-  }
-
-  const originalVersions = {};
-  const replacedAtCommit = currentHeadSha();
+  // RFC 0003: non-destructive drafting. Instead of editing the canonical
+  // index.md in place (which conflicts when two sessions target the same
+  // worst post), copy each canonical into a sibling draft
+  // <slug>/v-<timestamp>.<ext> for the agent to edit. The canonical stays
+  // untouched; the draft competes with it in later matches, and a future
+  // `promote` swaps the winner in. Lineage lives in-repo via `supersedes`
+  // (the canonical's content UUID), not a git permalink.
+  const { runId: draftStamp } = utcStamp();
+  const draftCreatedAt = new Date().toISOString();
+  const drafts = [];
   for (const fileInfo of translationFiles) {
-    const uuid = getPostUuid(fileInfo.path);
-    if (uuid) {
-      originalVersions[fileInfo.lang] = { uuid, path: fileInfo.path };
-
-      // Inject a transient `replacedVersion` marker so edit-commit knows
-      // the file is mid-edit. The prior version itself lives in git at
-      // ${replacedAtCommit}; we don't snapshot it.
-      const raw = fs.readFileSync(fileInfo.path, "utf8");
-      const replacedRegex = /^replacedVersion:\s*.*$/m;
-      if (replacedRegex.test(raw)) {
-        const updated = raw.replace(
-          replacedRegex,
-          `replacedVersion: "${uuid}"`
-        );
-        fs.writeFileSync(fileInfo.path, updated, "utf8");
-        console.log(
-          `[edit-worst] Updated replacedVersion to "${uuid}" in ${fileInfo.path}`
-        );
-      } else {
-        const parts = raw.split("---");
-        if (parts.length >= 3) {
-          parts[1] = parts[1].trimEnd() + `\nreplacedVersion: "${uuid}"\n`;
-          const updated = parts.join("---");
-          fs.writeFileSync(fileInfo.path, updated, "utf8");
-          console.log(
-            `[edit-worst] Injected replacedVersion: "${uuid}" into ${fileInfo.path}`
-          );
-        }
-      }
-      console.log(
-        `[edit-worst] Prior version of ${fileInfo.path}: ${githubBlobUrl(replacedAtCommit, fileInfo.path)}`
-      );
-    }
+    const canonicalUuid = getPostUuid(fileInfo.path);
+    const dir = path.dirname(fileInfo.path);
+    const ext = path.extname(fileInfo.path).slice(1) || "md";
+    const draftPath = path.join(dir, `v-${draftStamp}.${ext}`);
+    const parsed = matter(fs.readFileSync(fileInfo.path, "utf8"));
+    parsed.data.supersedes = canonicalUuid;
+    parsed.data.draftCreatedAt = draftCreatedAt;
+    fs.writeFileSync(
+      draftPath,
+      matter.stringify(parsed.content, parsed.data),
+      "utf8"
+    );
+    drafts.push({
+      lang: fileInfo.lang,
+      draftPath,
+      canonicalPath: fileInfo.path,
+      canonicalUuid,
+    });
+    console.log(
+      `[draft-worst] Rascunho criado: ${draftPath} (supersedes ${canonicalUuid})`
+    );
   }
 
-  // Persist worstKey/originalVersions so edit-commit can close the loop,
-  // creating a minimal session if edit-worst was invoked standalone.
+  // Persist worstKey/drafts so draft-commit can close the loop, creating a
+  // minimal session if draft-worst was invoked standalone.
   const session = fs.existsSync(SESSION_PATH)
     ? JSON.parse(fs.readFileSync(SESSION_PATH, "utf8"))
     : {
@@ -1390,14 +1367,15 @@ export function editWorst() {
       };
   session.state = "need_edit";
   session.worstKey = worstRow.key;
-  session.originalVersions = originalVersions;
-  session.replacedAtCommit = replacedAtCommit;
+  session.drafts = drafts;
+  delete session.originalVersions;
+  delete session.replacedAtCommit;
   fs.writeFileSync(SESSION_PATH, JSON.stringify(session, null, 2));
 
   console.log(`# Pior ranqueado (≥${minApps} aparições): ${worstRow.key}`);
-  for (const fileInfo of translationFiles) {
+  for (const d of drafts) {
     console.log(
-      `# Path (${fileInfo.lang}): ${fileInfo.path} (UUIDv5: ${originalVersions[fileInfo.lang]?.uuid || "N/A"})`
+      `# [${d.lang}] canônica ${d.canonicalPath} (UUIDv5 ${d.canonicalUuid}) → rascunho ${d.draftPath}`
     );
   }
   console.log(
@@ -1464,17 +1442,18 @@ export function editWorst() {
     "argumentativo-formal (paper-shaped, defesa de tese, citação",
     "acadêmica densa). Em caso de dúvida, blog.",
     "",
-    "Edite o post em TODOS os idiomas listados abaixo (a propriedade 'replacedVersion' já foi injetada automaticamente):",
+    "Edite os RASCUNHOS abaixo (NÃO as canônicas index.md — elas ficam intactas).",
+    "Cada rascunho é uma nova versão que vai conviver e competir com a canônica:",
   ];
-  for (const fileInfo of translationFiles) {
-    stepLines.push(`- [${fileInfo.lang}] ${fileInfo.path}`);
+  for (const d of drafts) {
+    stepLines.push(`- [${d.lang}] ${d.draftPath}`);
   }
   stepLines.push(
     "",
     "Diminua o gap observado entre este post e os melhores, mantendo o espírito do post.",
     "",
-    "Após concluir as edições, registre as alterações e encerre a rodada rodando:",
-    'npm run hronir:edit-commit -- --msg "Sua mensagem explicando o que fez e o porquê"'
+    "Após editar os rascunhos, registre-os e encerre a rodada rodando:",
+    'npm run hronir:draft-commit -- --msg "Sua mensagem explicando o que fez e o porquê"'
   );
   nextStep(stepLines.join("\n"));
 }
@@ -1942,7 +1921,7 @@ export function end(options = {}) {
         "Para registrar suas alterações e encerrar a rodada, rode:"
       );
       console.error(
-        `  npm run hronir:edit-commit -- --msg "Sua mensagem explicando o que fez e o porquê"`
+        `  npm run hronir:draft-commit -- --msg "Sua mensagem explicando o que fez e o porquê"`
       );
       process.exit(1);
     }
@@ -1973,8 +1952,7 @@ export function editCommit(msg) {
   }
 
   const worstKey = session.worstKey;
-  const originalVersions = session.originalVersions || {};
-  const replacedAtCommit = session.replacedAtCommit;
+  const drafts = session.drafts || [];
 
   if (!worstKey) {
     console.error(
@@ -1983,73 +1961,54 @@ export function editCommit(msg) {
     process.exit(1);
   }
 
-  if (!replacedAtCommit) {
+  if (drafts.length === 0) {
     console.error(
-      "Erro: replacedAtCommit não encontrado na sessão. Rode edit-worst novamente."
+      "Erro: nenhum rascunho registrado na sessão. Rode `npm run hronir:draft-worst` novamente."
     );
     process.exit(1);
   }
 
-  const translationFiles = findTranslations(worstKey);
-  if (translationFiles.length === 0) {
-    console.error(
-      `Erro: Nenhum arquivo de post encontrado para a chave "${worstKey}".`
-    );
-    process.exit(1);
-  }
-
+  // Validate that every draft actually diverged from its canonical (the body
+  // UUID changed). An untouched draft means the edit phase wasn't done.
   const timestamp = new Date().toISOString();
-  let anyMissing = false;
-
-  for (const fileInfo of translationFiles) {
-    const original = originalVersions[fileInfo.lang];
-    const currentUuid = getPostUuid(fileInfo.path);
-
-    if (!original) {
-      console.warn(
-        `[Aviso] Versão original não registrada para o idioma "${fileInfo.lang}". Pulando.`
+  let anyUnchanged = false;
+  for (const d of drafts) {
+    if (!fs.existsSync(d.draftPath)) {
+      console.error(
+        `Erro: o rascunho ${d.draftPath} (${d.lang}) não existe mais.`
       );
+      anyUnchanged = true;
       continue;
     }
-
-    if (currentUuid === original.uuid) {
+    if (getPostUuid(d.draftPath) === d.canonicalUuid) {
       console.error(
-        `Erro: O arquivo ${fileInfo.path} (${fileInfo.lang}) não foi modificado.`
+        `Erro: o rascunho ${d.draftPath} (${d.lang}) não foi modificado (UUID igual à canônica).`
       );
-      console.error("Todas as traduções devem ser editadas antes de commitar.");
-      anyMissing = true;
+      anyUnchanged = true;
     }
   }
 
-  if (anyMissing) {
+  if (anyUnchanged) {
+    console.error("Edite TODOS os rascunhos antes de registrar.");
     process.exit(1);
   }
 
-  // Write previousVersion (immediate predecessor only — linked list via git).
-  // Drop the transient replacedVersion marker and legacy editHistory[] in the
-  // same pass so each file's frontmatter carries only the one-hop link.
-  for (const fileInfo of translationFiles) {
-    const original = originalVersions[fileInfo.lang];
-    if (!original) continue;
-
-    const raw = fs.readFileSync(fileInfo.path, "utf8");
-    const parsed = matter(raw);
-
-    parsed.data.previousVersion = {
-      uuid: original.uuid,
-      url: githubBlobUrl(replacedAtCommit, original.path),
-      timestamp,
-      msg,
-    };
+  // Finalize each draft: keep the supersedes link and record the edit message.
+  // The canonical index.md is never touched — the draft coexists with it as a
+  // competing version (promotion happens later via `hronir:promote`).
+  for (const d of drafts) {
+    const parsed = matter(fs.readFileSync(d.draftPath, "utf8"));
+    parsed.data.supersedes = d.canonicalUuid;
+    parsed.data.draftMsg = msg;
+    parsed.data.draftCommittedAt = timestamp;
     delete parsed.data.replacedVersion;
-    delete parsed.data.editHistory;
-
-    const updated = matter.stringify(parsed.content, parsed.data);
-    fs.writeFileSync(fileInfo.path, updated, "utf8");
-
-    const currentUuid = getPostUuid(fileInfo.path);
+    fs.writeFileSync(
+      d.draftPath,
+      matter.stringify(parsed.content, parsed.data),
+      "utf8"
+    );
     console.log(
-      `[edit-commit] Registrado em ${fileInfo.path} (${fileInfo.lang}): uuid anterior ${original.uuid} → novo ${currentUuid}`
+      `[draft-commit] ${d.draftPath} (${d.lang}): canônica ${d.canonicalUuid} → rascunho ${getPostUuid(d.draftPath)}`
     );
   }
 
@@ -2057,12 +2016,17 @@ export function editCommit(msg) {
   fs.unlinkSync(SESSION_PATH);
 
   console.log("");
-  console.log(`✅ Edição registrada com sucesso!`);
+  console.log(`✅ Rascunho(s) registrado(s) com sucesso!`);
   console.log(`   Mensagem: "${msg}"`);
   console.log(`   Timestamp: ${timestamp}`);
   console.log(`   Post: ${worstKey}`);
+  console.log(`   Versões competidoras: ${drafts.length}`);
   console.log("");
   console.log(
-    "Rodada do Hronir encerrada. Commit as alterações com git normalmente."
+    "As versões convivem lado a lado com as canônicas (index.md intactas) e vão"
   );
+  console.log(
+    "competir nos próximos matches. A vencedora pode virar canônica com `npm run hronir:promote`."
+  );
+  console.log("Commit as alterações com git normalmente.");
 }

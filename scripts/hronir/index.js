@@ -152,6 +152,7 @@ switch (cmd) {
     diagnose();
     break;
   case "edit-worst":
+  case "draft-worst":
     editWorst();
     break;
   case "end": {
@@ -161,6 +162,7 @@ switch (cmd) {
     break;
   }
   case "edit-commit":
+  case "draft-commit":
   case "edit": {
     if (cmd === "edit" && args[0] !== "commit") {
       usage();
