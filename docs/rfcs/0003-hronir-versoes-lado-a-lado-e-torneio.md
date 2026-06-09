@@ -1,13 +1,13 @@
 # RFC 0003 — Versões lado a lado e torneio de versões no Hrönir
 
-|                 |                                                                                                                                              |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Draft / Proposed                                                                                                                             |
-| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                          |
-| **Criado em**   | 2026-06-09                                                                                                                                   |
-| **Branch / PR** | `claude/nifty-wright-z96lj3`                                                                                                                 |
-| **Depende de**  | RFC 0001 (trilha de qualidade absoluta), RFC 0002 (de-confounding) — reusa `getPostUuid`, `version` nos rate files, `computeAbsoluteQuality` |
-| **Afeta**       | `src/content.config.ts`, `src/content/blog/**` (migração estrutural), `scripts/hronir/lib/{posts,commands,ranking,matches}.js`, rate files   |
+|                 |                                                                                                                                                                                                                                                                                                        |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Status**      | Draft / Proposed                                                                                                                                                                                                                                                                                       |
+| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                                                                                                    |
+| **Criado em**   | 2026-06-09                                                                                                                                                                                                                                                                                             |
+| **Branch / PR** | `claude/nifty-wright-z96lj3`                                                                                                                                                                                                                                                                           |
+| **Depende de**  | RFC 0001 (trilha de qualidade absoluta), RFC 0002 (de-confounding) — reusa `getPostUuid`, `version` nos rate files, `computeAbsoluteQuality`                                                                                                                                                           |
+| **Afeta**       | `src/content.config.ts`, `src/content/blog/**` (migração estrutural), `scripts/hronir/lib/{posts,commands,ranking,matches}.js`, rate files, **scripts de build** (`blog-links.mjs`, `generate-qrs.mjs`, `generate-music-*.mjs`, `check-translations.mjs` — §5.4), e os pontos de rename do §8 (Fase 1) |
 
 > Este documento é a **etapa 1** da PR: primeiro o RFC, depois a implementação
 > incremental na mesma branch, fase a fase, cada fase verde (build + testes +
@@ -70,7 +70,9 @@ O ranking consolida por `translationKey` (`ranking.js:24-25`, `postKey` →
 `key`), e a página de post trata "mesmo `translationKey`, id diferente" como
 **tradução** (`[...slug].astro:64-79`, "leia em outra língua"). Duas versões do
 **mesmo idioma** apareceriam como uma tradução falsa e seriam **fundidas** no
-ranking.
+ranking. Pior: o `translations` é um Record chaveado por língua
+(`[...slug].astro:67-71`) — uma versão do mesmo idioma sobrescreveria a entrada e
+renderizaria um link "leia em outra língua" apontando para a própria língua.
 
 Ou seja: versão é um **terceiro eixo** que hoje não existe. Precisamos separar:
 
@@ -157,8 +159,12 @@ loader: glob({
 - `v1.md` / `v2.md` **não casam** com `**/index.*` → nunca entram em
   `getCollection('blog')`. Index, RSS, archive, tags, OG, sitemap, related,
   prev/next e a lógica de tradução **automaticamente** ignoram versões, sem
-  precisar de um filtro `isCanonical` espalhado por ~10 arquivos do site. **Esse
-  é o ganho central do Shape B sobre o C** (§10).
+  precisar de um filtro `isCanonical` espalhado pelo site. **Ressalva:** isso vale
+  só para o que passa pelo loader; alguns scripts de build varrem
+  `src/content/blog` direto e precisam da mesma consciência de canônica — §5.4. A
+  superfície ainda é menor que a do Shape C, e o critério por nome (`**/index.*`)
+  é mais robusto que flag de frontmatter. **Esse é o ganho central do Shape B
+  sobre o C** (§10).
 - `generateId` preserva os slugs planos atuais. **A verificar na Fase 0** que o
   glob loader do Astro 6 respeita `generateId` exatamente assim (um snapshot de
   URLs antes/depois trava isso).
@@ -172,7 +178,11 @@ loader: glob({
 - **`listVersions(translationKey, lang)`** → todos os arquivos da pasta.
 - `findTranslations` (`posts.js:73-82`) passa a casar **só canônicas** (senão
   versões do mesmo `translationKey` seriam confundidas com traduções, §2.2).
-- `keyForPath` inalterado (`translationKey` continua vindo do frontmatter).
+- **`keyForPath` (`posts.js:43-47`) precisa de fix.** Seu fallback sem
+  `translationKey` é o basename sem extensão — após a migração **todo** post sem
+  `translationKey` chavearia como `"index"` (colisão). Hoje só 1 post está nessa
+  situação, mas `keyForPath` alimenta `buildPathToKeyIndex`/`migrate`. Correção
+  barata: usar o nome da **pasta** quando o basename é `index`.
 
 ### 5.3. Identidade de versão = UUID de conteúdo (já existe)
 
@@ -187,6 +197,27 @@ supersedes: "22c3fbae-..."     # UUID da versão que esta sucede
 O `previousVersion` legado continua **aceito e lido** como linhagem histórica,
 mas deixa de ser o mecanismo: a linhagem agora vive como **arquivos no repo**, não
 como permalink no git.
+
+### 5.4. Scripts fora do `getCollection` (consciência de canônica)
+
+A alegação "automaticamente ignoram versões" (§5.1) vale **só para o que passa
+pelo loader**. Estes scripts varrem `src/content/blog` direto, com `readdirSync`
+**não-recursivo** e `id`/`slug` = basename — e quebram na migração da Fase 0,
+alguns **silenciosamente**:
+
+| Script                                                    | Quebra na Fase 0                                                                            | Modo de falha                                                                            |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `scripts/lib/blog-links.mjs:31-53` (`loadPosts`)          | alimenta `check-links.mjs` (CI), `generate-redirects.mjs`, `generate-translation-pairs.mjs` | check de links falha **alto** (bom); pares **hreflang** do sitemap somem **em silêncio** |
+| `scripts/generate-qrs.mjs:64-85`                          | `readdirSync` plano, só `.md`                                                               | QRs param de regenerar, cai no QR simples — **silencioso**                               |
+| `scripts/generate-music-posts.mjs` / `-en-companions.mjs` | escrevem `.mdx` **plano** em `musicas/`                                                     | stubs futuros não casam `**/index.*` → **despublicados em silêncio**                     |
+| `scripts/check-translations.mjs:71`                       | casa mudados por `split("/").pop()`                                                         | tudo vira `index.md` → colisão de basename; `v*.md` entram no diff de sync               |
+
+`blog-links.mjs` **já está cego** hoje para os posts aninhados de `musicas/`
+(não-recursivo) — a migração converte um ponto cego parcial em total. A correção
+(Fase 0) é tornar essas varreduras **recursivas e cientes de canônica**
+(`**/index.*`). Isso **não** invalida o §10: a superfície é menor que a do Shape C
+e o critério por nome de arquivo é mais robusto que uma flag de frontmatter — mas
+**não é zero**, e a RFC reconhece isso.
 
 ---
 
@@ -236,6 +267,18 @@ A trilha pública **continua por-ensaio** (retrocompatível). Em paralelo, uma
 - `doctor`: hoje não proíbe `key` igual nos dois lados, mas a consolidação os
   fundiria. Passa a **reconhecer duelos de versão** como válidos quando
   `version_a ≠ version_b`.
+- **A trilha pública por-ensaio PULA duelos de versão.** Um duelo de versão tem
+  `aKey === bKey`; alimentar o OpenSkill por-ensaio com um time contra si mesmo
+  corromperia (ou explodiria) o rating. `computeRatings()` deve **descartar**
+  matches com `aKey === bKey` — eles só alimentam `computeVersionRatings()`.
+- **Trilha de qualidade absoluta (EWMA de estrelas, RFC 0001):** decisão — num
+  duelo de versão, só as estrelas do **lado canônico** entram na EWMA por-ensaio
+  (a nota da versão não-canônica fica restrita à trilha por-versão). Assim a
+  qualidade absoluta pública reflete só o que está publicado.
+- **`path` é informacional; `version` é autoritativo.** Após um `promote`, os
+  rate files antigos com `post_a.path: .../index.md` passam a apontar para outro
+  conteúdo. A identidade de versão é o **UUID** (acertado); o `doctor` resolve por
+  ele e **tolera divergência `path`×`version`** pós-promoção.
 
 ---
 
@@ -251,8 +294,15 @@ fundação travada por testes.
 - `content.config.ts`: glob `**/index.{md,mdx}` + `generateId` (§5.1).
 - Migrar `post_a.path`/`post_b.path` nos rate files (estender o `migrate`, que já
   reescreve paths/keys, `commands.js:1490`).
-- **Critério de aceite:** snapshot de todas as URLs (e dos ids) **idêntico**
-  antes/depois; `npm run build` verde; `doctor` verde; `prettier --check` limpo.
+- **Atualizar os scripts que varrem o FS direto** (§5.4) para serem recursivos e
+  cientes de canônica (`**/index.*`): `blog-links.mjs`, `generate-qrs.mjs`,
+  `check-translations.mjs`, e os geradores de música (passam a escrever
+  `<slug>/index.mdx`). Corrigir o fallback de `keyForPath` (§5.2).
+- **Critério de aceite:** (a) snapshot de todas as URLs (e ids) **idêntico**
+  antes/depois; (b) snapshot do **sitemap com `hreflang`** idêntico; (c) varredura
+  de `scripts/` sem suposições de layout plano remanescentes (`readdirSync`
+  não-recursivo, basename-como-slug); `npm run build` verde; `doctor` verde;
+  `prettier --check` limpo.
 
 ### Fase 1 — Draft não-destrutivo (resolve o conflito git)
 
@@ -260,6 +310,10 @@ fundação travada por testes.
   injeta `replacedVersion`.
 - `draft-commit`: valida UUID novo, grava `revision`/`supersedes`.
 - `posts.js`: `isCanonical`, `listVersions`; `findTranslations` só-canônicas.
+- **O rename `edit-worst`→`draft-worst` toca mais que o CLI:** `package.json`
+  (`hronir:edit-worst`/`-commit`, linhas 27-28), `CLAUDE.md` (3 menções) e
+  `.github/hronir-session-prompt.md` (prompt do autopilot). Manter aliases dos
+  scripts npm antigos por uma versão evita quebrar fluxos externos.
 - **Critério de aceite:** uma rodada de edição gera **só arquivo novo**; dois
   drafts simultâneos do mesmo post **não** conflitam; site inalterado.
 
@@ -306,7 +360,10 @@ fundação travada por testes.
   scan de frontmatter em vez de um `ls`. O Shape B confina o novo a `index.md`
   (Astro só vê a canônica) e a um `generateId` — **trocamos uma migração
   única e roteirizável por uma superfície de filtro permanente e arriscada**.
-  Por isso B refinado vence o C.
+  (Honestidade: B **não** zera o custo — alguns scripts de build precisam da mesma
+  consciência de canônica, §5.4; mas o critério por nome de arquivo é mais robusto
+  que uma flag de frontmatter, e a superfície é menor e estática.) Por isso B
+  refinado vence o C.
 - **Marcar canônica por frontmatter (em vez de `index.md`).** Reintroduz o campo
   mutável compartilhado (conflito) e impede o loader de filtrar por padrão de
   nome — cai no problema de filtragem do Shape C. Rejeitado pelo §4.
@@ -329,7 +386,17 @@ fundação travada por testes.
 4. **Publicar histórico** (`/blog/<slug>/v/<uuid>` + `rel=canonical`): add-on
    aditivo; decidir se entra ou se a linhagem fica só no repo/git.
 5. **`generateId` no Astro 6:** confirmar na Fase 0 que preserva os slugs planos
-   (snapshot de URLs como rede de segurança).
+   (snapshot de URLs como rede de segurança). Nota: `generateId` customizado
+   **desliga a slugificação default** do loader; os filenames atuais já são slugs
+   limpos, então o snapshot pega qualquer exceção.
+6. **`supersedes`/`revision` no schema e na UI de `previousVersion`:** os campos
+   precisam entrar no schema zod de `content.config.ts` (zod descarta campos
+   desconhecidos). E a UI de "versão anterior" (`[...slug].astro:37,218-228`) some
+   para posts promovidos (a nova canônica não tem `previousVersion`): decidir se
+   `promote` grava o equivalente ou se a UI passa a ler `supersedes`.
+7. **`promote` e o `migrate`:** com `version` autoritativo (§7), resta confirmar a
+   tolerância `path`×`version` no `doctor` e se vale um modo de "reescrever paths"
+   no `migrate` após promoções.
 
 ---
 
@@ -350,3 +417,12 @@ Merge com **merge commit** (não squash), conforme `CLAUDE.md`.
 - **r0** (2026-06-09): versão inicial. Decisões do dono: **competição já** (não só
   armazenamento) e **Shape B refinado** (pasta por post, `index.md` canônica) em
   vez de C, pelo argumento de superfície de filtro do §10.
+- **r1** (2026-06-09): emendas após review do dono no PR #306. **Problema 1** —
+  §5.4 nova (scripts fora do `getCollection`: `blog-links.mjs`, `generate-qrs.mjs`,
+  `check-translations.mjs`, geradores de música) + critério de aceite da Fase 0
+  ampliado (snapshot de sitemap/`hreflang`, varredura de `scripts/`); §5.1
+  suavizado; §10 honesto quanto ao custo. **Problema 2** — §7: a trilha pública
+  pula duelos `aKey===bKey`; EWMA absoluta usa só o lado canônico. **Problema 3** —
+  fix do `keyForPath` (colapso para `"index"`) na Fase 0/1. **Problemas 4-6** —
+  `path` informacional/`version` autoritativo (§7); `supersedes` no zod + UI de
+  `previousVersion` (QA 6); pontas do rename `edit-worst`→`draft-worst` (Fase 1).
