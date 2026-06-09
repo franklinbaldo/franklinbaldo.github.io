@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:26:05Z'
 match_index: 7
 post_a:
   key: music-borges-and-me
-  path: src/content/blog/musicas/borges-and-me.mdx
+  path: src/content/blog/borges-and-me.mdx
   display_lang: pt
   version: 4934c5c4-65a0-59bf-8779-ae1d05354c9b
 post_b:
   key: music-two-cursors
-  path: src/content/blog/musicas/two-cursors.mdx
+  path: src/content/blog/two-cursors.mdx
   display_lang: pt
   version: 44ece350-b97f-5a96-934f-b78184dbc0d1
 winner: a

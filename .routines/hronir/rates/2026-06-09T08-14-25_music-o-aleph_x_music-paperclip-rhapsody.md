@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:14:25Z'
 match_index: 5
 post_a:
   key: music-o-aleph
-  path: src/content/blog/musicas/o-aleph-en.mdx
+  path: src/content/blog/o-aleph-en.mdx
   display_lang: en
   version: 440250f2-4c36-5cb2-b65b-0821b8989d97
 post_b:
   key: music-paperclip-rhapsody
-  path: src/content/blog/musicas/paperclip-rhapsody-en.mdx
+  path: src/content/blog/paperclip-rhapsody-en.mdx
   display_lang: en
   version: 74a96a13-97f8-5ce0-b32a-0fd133f10029
 winner: b

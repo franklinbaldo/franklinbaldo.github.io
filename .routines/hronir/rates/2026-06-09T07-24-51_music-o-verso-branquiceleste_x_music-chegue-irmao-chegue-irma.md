@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:24:51Z'
 match_index: 11
 post_a:
   key: music-o-verso-branquiceleste
-  path: src/content/blog/musicas/o-verso-branquiceleste.mdx
+  path: src/content/blog/o-verso-branquiceleste.mdx
   display_lang: pt
   version: ff7e2406-e561-57d4-b1d2-d1d555ffba4a
 post_b:
   key: music-chegue-irmao-chegue-irma
-  path: src/content/blog/musicas/chegue-irmao-chegue-irma.mdx
+  path: src/content/blog/chegue-irmao-chegue-irma.mdx
   display_lang: pt
   version: 0750e2f5-52ce-553c-955e-fad5a57b02d8
 winner: a

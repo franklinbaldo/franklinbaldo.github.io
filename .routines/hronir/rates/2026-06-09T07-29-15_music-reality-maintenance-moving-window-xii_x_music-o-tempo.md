@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:29:15Z'
 match_index: 18
 post_a:
   key: music-reality-maintenance-moving-window-xii
-  path: src/content/blog/musicas/reality-maintenance-moving-window-xii.mdx
+  path: src/content/blog/reality-maintenance-moving-window-xii.mdx
   display_lang: pt
   version: d0d6a634-f848-59b3-8585-d188c98ae6c7
 post_b:
   key: music-o-tempo
-  path: src/content/blog/musicas/o-tempo.mdx
+  path: src/content/blog/o-tempo.mdx
   display_lang: pt
   version: 207aa567-da06-5252-bc7c-cd81ccd9ba09
 winner: b

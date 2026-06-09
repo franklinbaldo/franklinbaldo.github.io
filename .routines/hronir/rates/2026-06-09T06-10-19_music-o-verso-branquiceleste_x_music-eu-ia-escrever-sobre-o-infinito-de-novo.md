@@ -4,12 +4,12 @@ run_at: '2026-06-09T06:10:19Z'
 match_index: 4
 post_a:
   key: music-o-verso-branquiceleste
-  path: src/content/blog/musicas/o-verso-branquiceleste-en.mdx
+  path: src/content/blog/o-verso-branquiceleste-en.mdx
   display_lang: en
   version: c1a69171-1c61-51ff-8615-bf9dc80693ce
 post_b:
   key: music-eu-ia-escrever-sobre-o-infinito-de-novo
-  path: src/content/blog/musicas/eu-ia-escrever-sobre-o-infinito-de-novo.mdx
+  path: src/content/blog/eu-ia-escrever-sobre-o-infinito-de-novo.mdx
   display_lang: pt
   version: f8fcaf20-0686-5d8e-b162-b962fe7a20e8
 winner: b

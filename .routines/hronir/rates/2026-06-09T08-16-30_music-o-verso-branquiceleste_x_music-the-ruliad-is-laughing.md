@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:16:30Z'
 match_index: 12
 post_a:
   key: music-o-verso-branquiceleste
-  path: src/content/blog/musicas/o-verso-branquiceleste-en.mdx
+  path: src/content/blog/o-verso-branquiceleste-en.mdx
   display_lang: en
   version: c1a69171-1c61-51ff-8615-bf9dc80693ce
 post_b:
   key: music-the-ruliad-is-laughing
-  path: src/content/blog/musicas/the-ruliad-is-laughing-en.mdx
+  path: src/content/blog/the-ruliad-is-laughing-en.mdx
   display_lang: en
   version: 274bb067-5707-5001-92e8-87fa2a9ccae6
 winner: b

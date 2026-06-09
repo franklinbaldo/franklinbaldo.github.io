@@ -4,12 +4,12 @@ run_at: '2026-06-09T06:16:24Z'
 match_index: 10
 post_a:
   key: music-reality-maintenance-moving-window-xii
-  path: src/content/blog/musicas/reality-maintenance-moving-window-xii-en.mdx
+  path: src/content/blog/reality-maintenance-moving-window-xii-en.mdx
   display_lang: en
   version: 4b03fae2-8073-5b93-9f91-cf9e58e6bb02
 post_b:
   key: music-borges-and-me
-  path: src/content/blog/musicas/borges-and-me.mdx
+  path: src/content/blog/borges-and-me.mdx
   display_lang: pt
   version: 4934c5c4-65a0-59bf-8779-ae1d05354c9b
 winner: a

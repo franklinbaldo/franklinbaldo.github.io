@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:16:13Z'
 match_index: 11
 post_a:
   key: music-chegue-irmao-chegue-irma
-  path: src/content/blog/musicas/chegue-irmao-chegue-irma-en.mdx
+  path: src/content/blog/chegue-irmao-chegue-irma-en.mdx
   display_lang: en
   version: 7d923db3-8fd3-5a63-a9c4-26680d81c0f2
 post_b:
   key: music-o-telefone-da-agonia
-  path: src/content/blog/musicas/o-telefone-da-agonia.mdx
+  path: src/content/blog/o-telefone-da-agonia.mdx
   display_lang: pt
   version: 83997aa1-f042-57c7-ab42-5315d0d6c1c6
 winner: b

@@ -4,12 +4,12 @@ run_at: '2026-06-09T06:14:24Z'
 match_index: 8
 post_a:
   key: music-nonada
-  path: src/content/blog/musicas/nonada-en.mdx
+  path: src/content/blog/nonada-en.mdx
   display_lang: en
   version: a9632a1a-37c6-5792-ab93-322f07c2764f
 post_b:
   key: music-o-medo-do-louco
-  path: src/content/blog/musicas/o-medo-do-louco-en.mdx
+  path: src/content/blog/o-medo-do-louco-en.mdx
   display_lang: en
   version: 20f474ee-36c4-54e1-a300-3aab84ac76b2
 winner: a

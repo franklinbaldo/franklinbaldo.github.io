@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:27:38Z'
 match_index: 11
 post_a:
   key: music-the-time
-  path: src/content/blog/musicas/the-time.mdx
+  path: src/content/blog/the-time.mdx
   display_lang: pt
   version: 3c0ef4f6-6cbb-5136-84aa-0368cb44d777
 post_b:
   key: music-o-telefone-da-agonia
-  path: src/content/blog/musicas/o-telefone-da-agonia-en.mdx
+  path: src/content/blog/o-telefone-da-agonia-en.mdx
   display_lang: en
   version: f60ab796-0a70-5505-b3cb-3c8dd0f27d2a
 winner: b

@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:13:49Z'
 match_index: 3
 post_a:
   key: music-666
-  path: src/content/blog/musicas/666.mdx
+  path: src/content/blog/666.mdx
   display_lang: pt
   version: fa07161a-ad7f-5fac-9ab4-d4a78813c476
 post_b:
   key: music-a-primeira-mudanca
-  path: src/content/blog/musicas/a-primeira-mudanca-en.mdx
+  path: src/content/blog/a-primeira-mudanca-en.mdx
   display_lang: en
   version: 5bfe245e-231f-5206-9e24-0b36f51ecd47
 winner: b

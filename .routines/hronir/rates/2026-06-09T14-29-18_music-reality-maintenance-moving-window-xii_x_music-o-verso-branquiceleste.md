@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:29:18Z'
 match_index: 15
 post_a:
   key: music-reality-maintenance-moving-window-xii
-  path: src/content/blog/musicas/reality-maintenance-moving-window-xii.mdx
+  path: src/content/blog/reality-maintenance-moving-window-xii.mdx
   display_lang: pt
   version: d0d6a634-f848-59b3-8585-d188c98ae6c7
 post_b:
   key: music-o-verso-branquiceleste
-  path: src/content/blog/musicas/o-verso-branquiceleste-en.mdx
+  path: src/content/blog/o-verso-branquiceleste-en.mdx
   display_lang: en
   version: c1a69171-1c61-51ff-8615-bf9dc80693ce
 winner: a

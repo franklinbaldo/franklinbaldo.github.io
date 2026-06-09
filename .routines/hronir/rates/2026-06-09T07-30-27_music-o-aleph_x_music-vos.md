@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:30:27Z'
 match_index: 20
 post_a:
   key: music-o-aleph
-  path: src/content/blog/musicas/o-aleph.mdx
+  path: src/content/blog/o-aleph.mdx
   display_lang: pt
   version: f86efbef-92c8-53cf-9ffe-ffcb93d11bc1
 post_b:
   key: music-vos
-  path: src/content/blog/musicas/vos.mdx
+  path: src/content/blog/vos.mdx
   display_lang: pt
   version: ae04a48a-527c-5444-8bff-8c0fbe5ccd20
 winner: a

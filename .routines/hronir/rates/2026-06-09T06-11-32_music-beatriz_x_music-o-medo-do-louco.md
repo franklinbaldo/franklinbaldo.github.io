@@ -4,12 +4,12 @@ run_at: '2026-06-09T06:11:32Z'
 match_index: 5
 post_a:
   key: music-beatriz
-  path: src/content/blog/musicas/beatriz-en.mdx
+  path: src/content/blog/beatriz-en.mdx
   display_lang: en
   version: 03f8ec3c-cee8-5bfe-b9cf-8857465be2d2
 post_b:
   key: music-o-medo-do-louco
-  path: src/content/blog/musicas/o-medo-do-louco.mdx
+  path: src/content/blog/o-medo-do-louco.mdx
   display_lang: pt
   version: 2210da8c-a49d-5070-b984-80ade0f5a098
 winner: b

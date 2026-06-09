@@ -50,9 +50,11 @@ export function parseFrontmatter(raw) {
 
 /**
  * Read a post file and return the frontmatter fields most scripts need.
- * `file`  — path relative to BLOG_DIR (e.g. "musicas/666-en.mdx")
- * `id`    — Astro post id / URL slug   (e.g. "musicas/666-en")
- * `lang`  — "en" | "pt" (default "en")
+ * `file`     — path relative to BLOG_DIR (e.g. "666-en.mdx")
+ * `id`       — Astro post id / URL slug   (e.g. "666-en")
+ * `lang`     — "en" | "pt" (default "en")
+ * `postType` — e.g. "music" (undefined for regular posts)
+ * `date`     — raw frontmatter date string (consumers parse as needed)
  * `draft`, `published`, `translationKey`, `body`
  */
 export function readPostMeta(absPath) {
@@ -69,6 +71,8 @@ export function readPostMeta(absPath) {
     file: relative(BLOG_DIR, absPath),
     id: postIdFromPath(absPath),
     lang: get("lang") ?? "en",
+    postType: get("postType"),
+    date: get("date"),
     draft,
     published,
     translationKey: get("translationKey"),

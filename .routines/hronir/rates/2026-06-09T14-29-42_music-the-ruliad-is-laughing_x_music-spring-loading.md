@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:29:42Z'
 match_index: 16
 post_a:
   key: music-the-ruliad-is-laughing
-  path: src/content/blog/musicas/the-ruliad-is-laughing-en.mdx
+  path: src/content/blog/the-ruliad-is-laughing-en.mdx
   display_lang: en
   version: 274bb067-5707-5001-92e8-87fa2a9ccae6
 post_b:
   key: music-spring-loading
-  path: src/content/blog/musicas/spring-loading-en.mdx
+  path: src/content/blog/spring-loading-en.mdx
   display_lang: en
   version: d282c046-0b05-554b-a16d-2ed8a5e3a82b
 winner: b

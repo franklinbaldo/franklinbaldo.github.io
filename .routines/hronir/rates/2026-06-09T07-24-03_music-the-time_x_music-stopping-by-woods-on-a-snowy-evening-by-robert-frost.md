@@ -4,13 +4,13 @@ run_at: '2026-06-09T07:24:03Z'
 match_index: 10
 post_a:
   key: music-the-time
-  path: src/content/blog/musicas/the-time-en.mdx
+  path: src/content/blog/the-time-en.mdx
   display_lang: en
   version: 6e11600b-0938-5a76-9717-8ae122948acc
 post_b:
   key: music-stopping-by-woods-on-a-snowy-evening-by-robert-frost
   path: >-
-    src/content/blog/musicas/stopping-by-woods-on-a-snowy-evening-by-robert-frost.mdx
+    src/content/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost.mdx
   display_lang: pt
   version: 70ee7f3b-fdbd-5412-816e-c1b62045cfb5
 winner: a

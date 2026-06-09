@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:14:42Z'
 match_index: 6
 post_a:
   key: music-spring-loading
-  path: src/content/blog/musicas/spring-loading-en.mdx
+  path: src/content/blog/spring-loading-en.mdx
   display_lang: en
   version: d282c046-0b05-554b-a16d-2ed8a5e3a82b
 post_b:
   key: music-reality-maintenance-moving-window-xii
-  path: src/content/blog/musicas/reality-maintenance-moving-window-xii-en.mdx
+  path: src/content/blog/reality-maintenance-moving-window-xii-en.mdx
   display_lang: en
   version: 4b03fae2-8073-5b93-9f91-cf9e58e6bb02
 winner: b
