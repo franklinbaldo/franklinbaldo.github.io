@@ -1,24 +1,17 @@
 name: Hrönir Heartbeat
 
-# Liveness guarantee for the Hrönir/Jules loop.
+# Liveness for the Hrönir/Jules loop.
 #
 # The event-driven autopilot (hronir-autopilot.yml) only reacts when a PR
-# arrives. If a session dies without ever opening a PR — or session creation
-# failed — the conveyor would stall. This cron (every 15 min) is the safety
-# net: it makes sure stuck sessions are unblocked quickly and a new session
-# is spawned if none is in-flight.
+# arrives. If no session is running, the conveyor stalls. This cron keeps one
+# ACTIVE session alive. Dead-simple, three steps:
 #
-# Two-phase logic:
-#   Phase 1 — Unblock: sessions in "awaiting_feedback" (stuck waiting for a
-#     nudge) receive "Please send your PR now." so they resume. These are NOT
-#     counted as blockers for phase 2.
-#   Phase 2 — Ensure: if no truly in-flight session exists after unblocking,
-#     OR if every in-flight session already has an open PR (meaning the conveyor
-#     is blocked on autopilot, not on Jules), spawn a fresh one.
-#
-# verne sessions list --json now exposes createTime, source, and branch, so
-# this workflow filters sessions by repo+branch for precise targeting and
-# uses createTime for the strict hourly cadence check.
+#   1. List every Jules session via verne (raw output logged for debugging).
+#   2. Count sessions for THIS repo+branch that are actively working — i.e. NOT
+#      terminal (completed/failed/cancelled) and NOT awaiting feedback. Awaiting
+#      sessions do NOT block a spawn; only a genuinely active one does.
+#   3. If an active session exists, do nothing. Otherwise spawn a fresh one and
+#      exit on verne's own result.
 
 on:
   schedule:
@@ -27,7 +20,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
 
 concurrency:
   # Shared with hronir-autopilot.yml so the two never spawn at the same time.
@@ -42,7 +34,7 @@ jobs:
 
       - uses: ./.github/actions/setup-verne
 
-      - name: Unblock awaiting-feedback sessions
+      - name: Spawn a session unless one is already active
         env:
           JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
         run: |
@@ -52,87 +44,33 @@ jobs:
             exit 1
           fi
 
+          SOURCE="sources/github/${GITHUB_REPOSITORY}"
+
+          # 1) List sessions and log the raw output so failures are debuggable.
+          echo "::group::verne sessions list --json"
           SESSIONS=$(verne sessions list --json --page-size 100)
+          echo "$SESSIONS"
+          echo "::endgroup::"
 
-          # Only nudge sessions that belong to this exact repo+branch.
-          # verne now exposes source and branch in --json output.
-          WAITING=$(echo "$SESSIONS" | jq -r '[.sessions[]
+          # 2) Count ACTIVE sessions for this repo+branch. Active = not terminal
+          #    and not awaiting feedback. `contains` (substring, case-folded)
+          #    matches verne's real status spellings — e.g. AWAITING_USER_FEEDBACK
+          #    or COMPLETED — without hard-coding exact enum strings.
+          ACTIVE=$(echo "$SESSIONS" | jq --arg source "$SOURCE" '[.sessions[]
+            | select((.source // "") == $source and (.branch // "") == "main")
+            | ((.status // "") | ascii_downcase)
             | select(
-                ((.status // "") | ascii_downcase) == "awaiting_feedback"
-                and (.source // "") == "sources/github/franklinbaldo/franklinbaldo.github.io"
-                and (.branch // "") == "main"
-              )
-            | .id] | .[]')
+                (contains("complet") or contains("fail") or contains("cancel")
+                 or contains("awaiting") or contains("paused")) | not
+              )] | length')
 
-          COUNT=0
-          for ID in $WAITING; do
-            echo "Nudging session $ID (awaiting_feedback) → 'Please send your PR now.'"
-            verne sessions send "$ID" "Please send your PR now." || true
-            COUNT=$((COUNT + 1))
-          done
-          echo "Nudged $COUNT awaiting-feedback session(s)."
+          echo "Active session(s) for ${SOURCE}@main: ${ACTIVE}"
 
-      - name: Ensure a recent in-flight session exists
-        env:
-          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-
-          SESSIONS=$(verne sessions list --json --page-size 100)
-          NOW=$(date -u +%s)
-
-          # In-flight = open, not awaiting_feedback, belongs to this repo+branch.
-          INFLIGHT=$(echo "$SESSIONS" | jq '[.sessions[]
-            | select(
-                ((.status // "") | ascii_downcase) as $s
-                | $s != "completed" and $s != "failed" and $s != "cancelled"
-                  and $s != "awaiting_feedback"
-                  and (.source // "") == "sources/github/franklinbaldo/franklinbaldo.github.io"
-                  and (.branch // "") == "main"
-              )]')
-          INFLIGHT_COUNT=$(echo "$INFLIGHT" | jq 'length')
-
-          CREATE=0
-          if [ "$INFLIGHT_COUNT" -eq 0 ]; then
-            echo "No in-flight hronir session — will create one."
-            CREATE=1
-          else
-            # Block only on recent sessions (< 1h). Unknown createTime = treat as recent.
-            BLOCKERS=$(echo "$INFLIGHT" | jq --argjson now "$NOW" '[ .[]
-              | (.createTime // "")
-              | if . == "" then 1
-                elif ($now - (gsub("\\.[0-9]+Z$"; "Z") | fromdateiso8601)) < 3600 then 1
-                else empty end ] | length')
-            if [ "$BLOCKERS" -gt 0 ]; then
-              # Recent in-flight sessions exist. Check whether ALL of them have
-              # already opened a PR — if so, Jules is done and the conveyor is
-              # just waiting for autopilot. Spawn a new session so work continues.
-              INFLIGHT_IDS=$(echo "$INFLIGHT" | jq -r '.[].id')
-              OPEN_BODIES=$(gh pr list --repo "$GITHUB_REPOSITORY" --state open \
-                --json body --jq '[.[].body] | join("\n")')
-
-              ALL_COVERED=1
-              for SID in $INFLIGHT_IDS; do
-                if ! printf '%s' "$OPEN_BODIES" | grep -qF "$SID"; then
-                  ALL_COVERED=0
-                  echo "Session $SID has no open PR yet — conveyor is alive, skipping spawn."
-                  break
-                fi
-              done
-
-              if [ "$ALL_COVERED" -eq 1 ]; then
-                echo "All $INFLIGHT_COUNT in-flight session(s) already have open PRs — will create a new session."
-                CREATE=1
-              fi
-            else
-              echo "In-flight sessions exist but all are >= 1h old — will create one."
-              CREATE=1
-            fi
-          fi
-
-          if [ "$CREATE" -ne 1 ]; then
+          # 3) Spawn only when nothing is actively working.
+          if [ "$ACTIVE" -gt 0 ]; then
+            echo "A session is already active — nothing to do."
             exit 0
           fi
 
+          echo "No active session — spawning one."
           bash scripts/hronir/spawn-session.sh

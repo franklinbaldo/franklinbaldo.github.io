@@ -12,6 +12,8 @@ set -euo pipefail
 REPO="${GITHUB_REPOSITORY:?GITHUB_REPOSITORY not set}"
 TITLE="hronir session $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
+# `set -e` propagates a non-zero exit from verne itself (the workflow then fails
+# on verne's own result, as intended). A 0 exit with no id is caught below.
 SESSION=$(verne sessions new "$TITLE" \
   --source "sources/github/${REPO}" \
   --prompt-file .github/hronir-session-prompt.md \
@@ -19,10 +21,13 @@ SESSION=$(verne sessions new "$TITLE" \
   --automation-mode AUTO_CREATE_PR \
   --json)
 
+# Always log whatever verne returned, success or not.
+echo "verne sessions new returned:"
+echo "$SESSION"
+
 SESSION_ID=$(echo "$SESSION" | jq -r '.id // (.name | sub("^sessions/"; "")) // empty')
 if [ -z "$SESSION_ID" ]; then
-  echo "::error::Failed to create Jules session via verne:"
-  echo "$SESSION"
+  echo "::error::Failed to create Jules session via verne (no id in the response above)."
   exit 1
 fi
 
