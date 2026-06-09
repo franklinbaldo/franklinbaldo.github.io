@@ -11,6 +11,25 @@ After init, **follow the NEXT STEP instructions the CLI prints at each stage.**
 The CLI guides you through the full loop (read → read → decide) and into the
 edit-worst phase. Do not skip any step it shows.
 
+## How to evaluate — this is the most important part
+
+**Read each post for real.** Not a skim. Not a summary. Sit with the text.
+
+Each match assigns you a **perspective** (a reader persona) and a **mood**. These
+are not decoration — they are the lens through which you must experience the posts.
+Inhabit the perspective fully: its values, its blind spots, what it finds moving or
+irritating. Your reviews and clash must come from inside that perspective, not from
+above it.
+
+The **clash** is not a comparison table. It is a confrontation — something was at
+stake between these two posts when read through this lens, and you must say what it
+was and how it resolved. Write it as someone who was genuinely affected.
+
+Mechanical evaluations (templated phrases, generic praise, "Post A handles X well
+while Post B focuses on Y") will produce bad rate files and a broken ranking. The
+whole point of Hrönir is that the signal comes from a real subjective encounter
+with the text. If you phone it in, the system degrades.
+
 ## Before opening the PR
 
 ```bash
