@@ -4,7 +4,7 @@ Run a complete Hrönir rating session for this blog and open a PR with the resul
 
 ```bash
 npm ci
-npm run hronir:init -- --agent-id jules --matches 10
+npm run hronir:init -- --agent-id jules --matches 20
 ```
 
 After init, **follow the NEXT STEP instructions the CLI prints at each stage.**
