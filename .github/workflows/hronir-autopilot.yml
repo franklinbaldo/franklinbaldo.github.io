@@ -94,7 +94,9 @@ jobs:
           TASK=$(printf '%s' "$BODY" | grep -oiE 'jules\.google\.com/task/[A-Za-z0-9_-]+' | head -1 | sed 's#.*/##' || true)
           if [ -z "${TASK:-}" ]; then
             echo "PR #$PR has no Jules task link in its body — not ours, skipping."
-            echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
+            echo "merged=" >> "$GITHUB_OUTPUT"
+            echo "is_ours=" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
           # Missing key is a config error, not a skip: a non-Jules PR already
           # exited above, so reaching here with no key means the secret is gone.
@@ -112,9 +114,13 @@ jobs:
           if ! VERNE_OUT=$(verne sessions show "$TASK" --json 2>&1); then
             echo "verne could not resolve session $TASK — treating as not-ours, skipping. verne said:"
             echo "$VERNE_OUT"
-            echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
+            echo "merged=" >> "$GITHUB_OUTPUT"
+            echo "is_ours=" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
           echo "Authenticated PR #$PR as Jules session $TASK."
+          # Mark as ours so the spawn step runs regardless of merge outcome.
+          echo "is_ours=$PR" >> "$GITHUB_OUTPUT"
 
           # 2) Path gate: only .routines/hronir/** and src/content/blog/**, with
           #    at least one rate file.
@@ -161,10 +167,11 @@ jobs:
           echo "merged=$PR" >> "$GITHUB_OUTPUT"
 
       - name: Spawn the next Jules session (via verne)
-        # Right after a merge: the new session starts from the up-to-date main.
-        # Session config is shared with the heartbeat in
-        # scripts/hronir/spawn-session.sh. verne reads JULES_API_KEY from the env.
-        if: steps.merge.outputs.merged != ''
+        # Fires whenever the PR is confirmed as ours (authenticated), whether or
+        # not merge succeeded. A PR arriving means the current session is done —
+        # the conveyor must not stall waiting for a clean merge.
+        # Session config is in scripts/hronir/spawn-session.sh.
+        if: steps.merge.outputs.is_ours != ''
         env:
           JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
         run: |

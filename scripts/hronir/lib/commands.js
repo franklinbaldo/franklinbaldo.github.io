@@ -1861,6 +1861,42 @@ export function doctor() {
     }
   }
 
+  // Check for staged or modified files outside the safe commit paths.
+  // Jules sometimes creates temp artefacts (decide_args*.json, rewrite_*.mjs,
+  // etc.) that must be deleted before staging — the autopilot rejects PRs that
+  // touch files outside .routines/hronir/ and src/content/blog/.
+  try {
+    const SAFE_RE = /^(\.routines\/hronir\/|src\/content\/blog\/)/;
+    const staged = execFileSync("git", ["diff", "--cached", "--name-only"], {
+      encoding: "utf8",
+    })
+      .split("\n")
+      .filter(Boolean);
+    const untracked = execFileSync(
+      "git",
+      ["ls-files", "--others", "--exclude-standard"],
+      { encoding: "utf8" }
+    )
+      .split("\n")
+      .filter(Boolean);
+    const modified = execFileSync(
+      "git",
+      ["diff", "--name-only"],
+      { encoding: "utf8" }
+    )
+      .split("\n")
+      .filter(Boolean);
+    for (const f of [...new Set([...staged, ...untracked, ...modified])]) {
+      if (!SAFE_RE.test(f)) {
+        issues.push(
+          `Arquivo fora dos caminhos permitidos: ${f} — delete ou mova antes de commitar (o autopilot rejeita PRs que tocam arquivos fora de .routines/hronir/ e src/content/blog/).`
+        );
+      }
+    }
+  } catch {
+    // git not available or not a repo — skip silently
+  }
+
   if (issues.length === 0) {
     console.log("doctor: 0 inconsistências.");
     return 0;
