@@ -14,9 +14,9 @@ name: Hrönir Heartbeat
 #   Phase 2 — Ensure: if no truly in-flight session exists after unblocking,
 #     spawn a fresh one.
 #
-# Note: until verne exposes `createTime` in `sessions list --json`, the "< 1h"
-# part can't be evaluated, so it safely degrades to "create only when there is
-# NO open session." Add createTime to verne to get the strict hourly cadence.
+# verne sessions list --json now exposes createTime, source, and branch, so
+# this workflow filters sessions by repo+branch for precise targeting and
+# uses createTime for the strict hourly cadence check.
 
 on:
   schedule:
@@ -51,12 +51,13 @@ jobs:
 
           SESSIONS=$(verne sessions list --json --page-size 100)
 
-          # Only nudge sessions that belong to this repo+branch:
-          # title must match "hronir session " prefix (set by spawn-session.sh).
+          # Only nudge sessions that belong to this exact repo+branch.
+          # verne now exposes source and branch in --json output.
           WAITING=$(echo "$SESSIONS" | jq -r '[.sessions[]
             | select(
                 ((.status // "") | ascii_downcase) == "awaiting_feedback"
-                and ((.title // "") | startswith("hronir session "))
+                and (.source // "") == "sources/github/franklinbaldo/franklinbaldo.github.io"
+                and (.branch // "") == "main"
               )
             | .id] | .[]')
 
@@ -77,13 +78,14 @@ jobs:
           SESSIONS=$(verne sessions list --json --page-size 100)
           NOW=$(date -u +%s)
 
-          # In-flight = open, not awaiting_feedback, title matches our pattern.
+          # In-flight = open, not awaiting_feedback, belongs to this repo+branch.
           INFLIGHT=$(echo "$SESSIONS" | jq '[.sessions[]
             | select(
                 ((.status // "") | ascii_downcase) as $s
                 | $s != "completed" and $s != "failed" and $s != "cancelled"
                   and $s != "awaiting_feedback"
-                  and ((.title // "") | startswith("hronir session "))
+                  and (.source // "") == "sources/github/franklinbaldo/franklinbaldo.github.io"
+                  and (.branch // "") == "main"
               )]')
           INFLIGHT_COUNT=$(echo "$INFLIGHT" | jq 'length')
 
