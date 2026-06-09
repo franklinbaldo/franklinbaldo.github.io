@@ -13,16 +13,27 @@ import {
   getPostUuid,
   findTranslations,
 } from "./posts.js";
-import { listMatchFiles, readMatch, writeMatch, postKey } from "./matches.js";
-import { computeRatings, getProtectedPosts } from "./ranking.js";
+import {
+  listMatchFiles,
+  readMatch,
+  writeMatch,
+  postKey,
+  gitMtime,
+} from "./matches.js";
+import {
+  computeRatings,
+  computeAbsoluteQuality,
+  computeDeconfoundedQuality,
+  computePerPerspectiveQuality,
+  getProtectedPosts,
+  MIN_APPEARANCES,
+} from "./ranking.js";
 import {
   pickRandomPerspective,
   loadPerspective,
   listPerspectives,
 } from "./perspectives.js";
 import { pickRandomMood, MOODS } from "./moods.js";
-
-const MIN_APPEARANCES = 3;
 
 // Word-trigram shingles for near-duplicate detection of review/clash prose.
 function shingleSet(text) {
@@ -47,6 +58,12 @@ function jaccard(a, b) {
   return inter / (a.size + b.size - inter);
 }
 const STALE_BONUS = 3.0;
+// Phase 3 (opt-in): objective-aware sampling. When HRONIR_OBJECTIVE is set,
+// nudge pair selection toward high-level posts (refine the top) or low-level
+// posts (hunt the worst). Default-off → identical behavior to before. The
+// weight is deliberately small so it tilts ties without overriding the
+// information terms (sigma, stale_bonus).
+const OBJECTIVE_WEIGHT = 0.15;
 const SKILLS_DIR = "scripts/hronir/skills";
 const ARCHIVE_DIR = path.join(OUT_DIR, "archive");
 const EDITS_DIR = path.join(OUT_DIR, "edits");
@@ -128,23 +145,6 @@ function isValidRate(n) {
   // accept up to two decimals (allow small float drift)
   const scaled = n * 100;
   return Math.abs(scaled - Math.round(scaled)) < 1e-6;
-}
-
-function gitMtime(filePath) {
-  try {
-    const out = execFileSync(
-      "git",
-      ["log", "-1", "--format=%ct", "--", filePath],
-      {
-        stdio: ["ignore", "pipe", "ignore"],
-      }
-    )
-      .toString()
-      .trim();
-    return out ? Number(out) * 1000 : 0;
-  } catch {
-    return 0;
-  }
 }
 
 function latestMatchTimeByKey() {
@@ -317,10 +317,36 @@ function generateNextMatch() {
       staleByKey.set(c.translationKey, false);
       continue;
     }
-    const mtime = gitMtime(c.path);
+    // Use previousVersion.timestamp (written by edit-commit) as the canonical
+    // "post was intentionally edited" signal. Fall back to gitMtime for posts
+    // that have never gone through edit-commit.
+    const postData = readPost(c.path);
+    const prevTimestamp = postData?.previousVersion?.timestamp
+      ? Date.parse(String(postData.previousVersion.timestamp)) || 0
+      : 0;
+    const mtime = prevTimestamp > 0 ? prevTimestamp : gitMtime(c.path);
     staleByKey.set(c.translationKey, mtime > lastMatch);
   }
   const staleBonus = (key) => (staleByKey.get(key) ? STALE_BONUS : 0);
+
+  // Phase 3 (opt-in): objective-aware sampling. `refine-top` prefers high-level
+  // pairs, `hunt-worst` prefers low-level pairs. Level = absolute stars EWMA;
+  // posts without stars yet get a neutral 3.0 so they're neither chased nor
+  // avoided. Default (env unset) leaves the score untouched.
+  const objective = process.env.HRONIR_OBJECTIVE || "";
+  const objectiveSign =
+    objective === "refine-top" ? 1 : objective === "hunt-worst" ? -1 : 0;
+  const levelByKey = new Map();
+  if (objectiveSign !== 0) {
+    for (const [key, q] of computeAbsoluteQuality())
+      levelByKey.set(key, q.stars);
+    console.log(`(objetivo de amostragem: ${objective})`);
+  }
+  const level = (key) => levelByKey.get(key) ?? 3.0;
+  const objectiveBonus = (a, b) =>
+    objectiveSign === 0
+      ? 0
+      : OBJECTIVE_WEIGHT * objectiveSign * (level(a) + level(b));
 
   const pairs = [];
   for (let i = 0; i < eligible.length; i++) {
@@ -335,7 +361,8 @@ function generateNextMatch() {
         ra.sigma +
         rb.sigma +
         staleBonus(a.translationKey) +
-        staleBonus(b.translationKey);
+        staleBonus(b.translationKey) +
+        objectiveBonus(a.translationKey, b.translationKey);
       pairs.push({
         a,
         b,
@@ -845,11 +872,53 @@ function fmt(n, w = 6) {
 
 export function ranking() {
   const rows = computeRatings();
-  console.log(`rank\tkey\tordinal\tmu\tsigma\tW/N`);
+  const quality = computeAbsoluteQuality();
+
+  // Compute divergence: only for posts with n >= MIN_APPEARANCES in quality map.
+  // p = 1 - rank/(N-1) where rank is 0-based position in eligible-subset ordering.
+  const eligible = rows.filter((r) => {
+    const q = quality.get(r.key);
+    return q && q.n >= MIN_APPEARANCES;
+  });
+  const N = eligible.length;
+
+  // ordinal rank within eligible (rows is already sorted ordinal DESC)
+  const ordinalRankMap = new Map();
+  for (let i = 0; i < eligible.length; i++) {
+    ordinalRankMap.set(eligible[i].key, i);
+  }
+
+  // stars rank within eligible (sort stars DESC, lower index = better = lower rank)
+  const byStars = [...eligible].sort((a, b) => {
+    const qa = quality.get(a.key);
+    const qb = quality.get(b.key);
+    return (qb?.stars ?? 0) - (qa?.stars ?? 0) || a.key.localeCompare(b.key);
+  });
+  const starsRankMap = new Map();
+  for (let i = 0; i < byStars.length; i++) {
+    starsRankMap.set(byStars[i].key, i);
+  }
+
+  console.log(`rank\tkey\tordinal\tmu\tsigma\tW/N\tstars\tn\tdiv`);
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i];
+    const q = quality.get(r.key);
+
+    const starsStr = q ? q.stars.toFixed(2) : "-";
+    const nStr = q ? String(q.n) : "0";
+
+    let divStr = "-";
+    if (q && q.n >= MIN_APPEARANCES && N > 1) {
+      const ordRank = ordinalRankMap.get(r.key);
+      const starRank = starsRankMap.get(r.key);
+      const pOrd = 1 - ordRank / (N - 1);
+      const pStar = 1 - starRank / (N - 1);
+      const div = pOrd - pStar;
+      divStr = (div >= 0 ? "+" : "") + div.toFixed(2);
+    }
+
     console.log(
-      `${i + 1}\t${r.key}\t${fmt(r.ordinal)}\t${fmt(r.mu)}\t${fmt(r.sigma)}\t${r.wins}/${r.appearances}`
+      `${i + 1}\t${r.key}\t${fmt(r.ordinal)}\t${fmt(r.mu)}\t${fmt(r.sigma)}\t${r.wins}/${r.appearances}\t${starsStr}\t${nStr}\t${divStr}`
     );
   }
   nextStep(
@@ -857,7 +926,32 @@ export function ranking() {
   );
 }
 
-export function worst() {
+export function worst(options = {}) {
+  if (options.absolute) {
+    // Absolute mode: lowest stars EWMA among posts with n >= MIN_APPEARANCES
+    const quality = computeAbsoluteQuality();
+    const eligible = [...quality.entries()].filter(
+      ([, q]) => q.n >= MIN_APPEARANCES
+    );
+    if (eligible.length === 0) {
+      console.error(
+        `Sem posts com n >= ${MIN_APPEARANCES} aparições avaliadas.`
+      );
+      process.exit(1);
+    }
+    // Sort by stars ascending (worst first)
+    eligible.sort(
+      (a, b) => a[1].stars - b[1].stars || a[0].localeCompare(b[0])
+    );
+    const [key, q] = eligible[0];
+    console.log(key);
+    console.error(
+      `(stars: ${q.stars.toFixed(3)}, n: ${q.n}, rawStars: ${q.rawStars.toFixed(3)})`
+    );
+    return;
+  }
+
+  // Default mode: lowest ordinal among posts with appearances >= MIN_APPEARANCES
   const rows = computeRatings();
   const eligible = rows.filter((r) => r.appearances >= MIN_APPEARANCES);
   if (eligible.length === 0) {
@@ -868,6 +962,91 @@ export function worst() {
   console.log(w.key);
   console.error(
     `(path: ${w.path}, wins: ${w.wins}/${w.appearances}, ordinal: ${w.ordinal.toFixed(3)}, mu: ${w.mu.toFixed(3)}, sigma: ${w.sigma.toFixed(3)})`
+  );
+}
+
+// Phase 3 diagnostics: de-confounded quality + evaluator/perspective biases +
+// per-perspective leaders. Read-only; never mutates state. Posts below
+// MIN_APPEARANCES are shown but flagged low-confidence.
+export function diagnose() {
+  const { quality, agentBias, perspectiveBias, intercept } =
+    computeDeconfoundedQuality();
+  const absolute = computeAbsoluteQuality();
+
+  if (quality.size === 0) {
+    console.log("Sem observações com estrelas (schema stars-v1) para modelar.");
+    nextStep("nenhum. Rode alguns matches com rate_a/rate_b primeiro.");
+    return;
+  }
+
+  // Rows sorted by de-confounded quality DESC. `gap` = de-confounded − raw
+  // EWMA: negative means the raw stars were inflated by generous evaluators or
+  // perspectives (the post got an easy crowd); positive means deflated.
+  const rows = [...quality.entries()]
+    .map(([key, q]) => {
+      const raw = absolute.get(key);
+      const rawStars = raw ? raw.stars : null;
+      return {
+        key,
+        deconf: q.quality,
+        rawStars,
+        gap: rawStars === null ? null : q.quality - rawStars,
+        n: q.n,
+      };
+    })
+    .sort((a, b) => b.deconf - a.deconf || a.key.localeCompare(b.key));
+
+  console.log(`# de-confounded quality (intercept μ=${intercept.toFixed(3)})`);
+  console.log(`rank\tkey\tdeconf\traw\tgap\tn`);
+  rows.forEach((r, i) => {
+    const conf = r.n >= MIN_APPEARANCES ? "" : "\t(baixa-confiança)";
+    const rawStr = r.rawStars === null ? "-" : r.rawStars.toFixed(2);
+    const gapStr =
+      r.gap === null ? "-" : (r.gap >= 0 ? "+" : "") + r.gap.toFixed(2);
+    console.log(
+      `${i + 1}\t${r.key}\t${r.deconf.toFixed(2)}\t${rawStr}\t${gapStr}\t${r.n}${conf}`
+    );
+  });
+
+  // Evaluator bias: who rates systematically high/low, net of which posts and
+  // perspectives they happened to draw.
+  const agents = [...agentBias.entries()].sort((a, b) => b[1] - a[1]);
+  if (agents.length > 0) {
+    console.log(`\n# evaluator bias (α — alto = avalia generoso)`);
+    for (const [id, bias] of agents) {
+      console.log(`${(bias >= 0 ? "+" : "") + bias.toFixed(3)}\t${id}`);
+    }
+  }
+
+  // Perspective bias: which reader personas are structurally harsh/generous.
+  const persps = [...perspectiveBias.entries()].sort((a, b) => b[1] - a[1]);
+  if (persps.length > 0) {
+    console.log(`\n# perspective bias (π — alto = perspectiva generosa)`);
+    for (const [id, bias] of persps) {
+      console.log(`${(bias >= 0 ? "+" : "") + bias.toFixed(3)}\t${id}`);
+    }
+  }
+
+  // Per-perspective leaders: the top post in each perspective's own stars EWMA.
+  const perPersp = computePerPerspectiveQuality();
+  if (perPersp.size > 0) {
+    console.log(`\n# líder por perspectiva (stars EWMA dentro da perspectiva)`);
+    const ids = [...perPersp.keys()].sort();
+    for (const id of ids) {
+      const inner = perPersp.get(id);
+      const top = [...inner.entries()].sort(
+        (a, b) => b[1].stars - a[1].stars || a[0].localeCompare(b[0])
+      )[0];
+      if (top) {
+        console.log(
+          `${id}\t→ ${top[0]} (${top[1].stars.toFixed(2)}, n=${top[1].n})`
+        );
+      }
+    }
+  }
+
+  nextStep(
+    "nenhum. `diagnose` é só leitura — use os vieses pra calibrar, não muda estado."
   );
 }
 
