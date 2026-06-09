@@ -23,6 +23,7 @@
     "hronir:decide": "node scripts/hronir/index.js decide",
     "hronir:ranking": "node scripts/hronir/index.js ranking",
     "hronir:worst": "node scripts/hronir/index.js worst",
+    "hronir:diagnose": "node scripts/hronir/index.js diagnose",
     "hronir:edit-worst": "node scripts/hronir/index.js edit-worst",
     "hronir:edit-commit": "node scripts/hronir/index.js edit-commit",
     "hronir:end": "node scripts/hronir/index.js end",
