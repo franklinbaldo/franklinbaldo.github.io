@@ -1,0 +1,23 @@
+{
+  "target": 0,
+  "completed": 0,
+  "agentId": "human",
+  "evalLang": null,
+  "state": "need_edit",
+  "skipEdit": false,
+  "skipRating": true,
+  "currentMatch": null,
+  "minAppearances": 3,
+  "worstKey": "music-151474c5-1420-4cc1-9ab5-80721f4459ed",
+  "originalVersions": {
+    "en": {
+      "uuid": "0e481a98-2a6c-576b-b7b7-0651ddeeea05",
+      "path": "src/content/blog/musicas/151474c5-1420-4cc1-9ab5-80721f4459ed-en.mdx"
+    },
+    "pt": {
+      "uuid": "481ca1ca-e210-5bbd-9673-507fad525256",
+      "path": "src/content/blog/musicas/151474c5-1420-4cc1-9ab5-80721f4459ed.mdx"
+    }
+  },
+  "replacedAtCommit": "9f2c7c77278491b910a076bebd6a63e6f47eef71"
+}
