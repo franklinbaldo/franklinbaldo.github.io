@@ -98,7 +98,7 @@ jobs:
             BLOCKERS=$(echo "$INFLIGHT" | jq --argjson now "$NOW" '[ .[]
               | (.createTime // "")
               | if . == "" then 1
-                elif ($now - fromdateiso8601) < 3600 then 1
+                elif ($now - (gsub("\\.[0-9]+Z$"; "Z") | fromdateiso8601)) < 3600 then 1
                 else empty end ] | length')
             if [ "$BLOCKERS" -gt 0 ]; then
               echo "A recent in-flight hronir session exists — skipping spawn."
