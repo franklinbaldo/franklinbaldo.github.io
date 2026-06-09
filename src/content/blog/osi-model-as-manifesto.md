@@ -25,7 +25,7 @@ Before diving in — if you have never seen the OSI model explained, two videos 
   <iframe src="https://www.youtube.com/watch?v=AW1lMmeRKak" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
 </div>
 
-Computerphile is more conceptual, asking *why* we design networks in layers at all:
+Computerphile is more conceptual, asking _why_ we design networks in layers at all:
 
 <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:1.5rem 0;">
   <iframe src="https://www.youtube.com/watch?v=eelvWAURfdI" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
@@ -61,7 +61,7 @@ The central organizing principle of the OSI model is almost aggressively simple:
 
 The Physical layer handles pulses of electricity or light. It does not know what those pulses mean. The Network layer routes packets. It does not know whether those packets carry cat videos or ransomware. The Application layer handles HTTP. It genuinely does not care if it is running over fiber optic cable or a [series of tubes](https://en.wikipedia.org/wiki/Series_of_tubes).
 
-Each layer communicates *only* with the layers immediately above and below, through a precisely defined interface. And that interface consists entirely of **events** — requests passed down, responses passed up, signals that something happened.
+Each layer communicates _only_ with the layers immediately above and below, through a precisely defined interface. And that interface consists entirely of **events** — requests passed down, responses passed up, signals that something happened.
 
 If you have been following these posts, you recognize the structure. Events all the way down. Not metaphorically. Architecturally.
 
@@ -75,23 +75,23 @@ Engineers, being engineers, quickly noticed a gap in the model. All seven layers
 └──────────────────────────────────┘
 ```
 
-**Layer 8** is the unofficial layer — the human. Also known as **PEBKAC** (*Problem Exists Between Keyboard And Chair*) or the **ID-10-T error** (say it out loud).
+**Layer 8** is the unofficial layer — the human. Also known as **PEBKAC** (_Problem Exists Between Keyboard And Chair_) or the **ID-10-T error** (say it out loud).
 
-The joke is real but the philosophy is more interesting: the OSI model, when fully extended, describes a stack that reaches from electrons all the way up to *meaning*. Layer 8 is where interpretation happens — where the bits become a Google search, a video call, a love letter, or a support ticket that says "it stopped working and I didn't do anything."
+The joke is real but the philosophy is more interesting: the OSI model, when fully extended, describes a stack that reaches from electrons all the way up to _meaning_. Layer 8 is where interpretation happens — where the bits become a Google search, a video call, a love letter, or a support ticket that says "it stopped working and I didn't do anything."
 
 The model doesn't explain Layer 8. It can't. And that's exactly the point.
 
-## What a Layer Actually *Is*
+## What a Layer Actually _Is_
 
 Consider what happens when you load a web page.
 
 Your browser constructs an HTTP request — an **event**. It passes this down to TLS (Presentation), which encrypts it — a transformation, another event. This goes to Session (connection management), then Transport (TCP, which breaks data into segments and ensures they arrive in order — imagine a very anxious mail carrier who sends 47 copies of every letter and then apologizes for duplicates), then Network (IP routing across potentially dozens of machines), then Data Link (local addressing), then Physical.
 
-At each step, the layer below receives what looks like, from its perspective, just *data*. It does not look inside. It does not ask questions. It applies its own rules and passes something on.
+At each step, the layer below receives what looks like, from its perspective, just _data_. It does not look inside. It does not ask questions. It applies its own rules and passes something on.
 
 The Network layer, when routing a packet, does not know whether the original HTTP request was asking for a recipe or a bank statement. The Physical layer, when firing a pulse, does not know whether the bit is part of a declaration of war or a meme about cats.
 
-They *cannot* know this. The architecture forbids it.
+They _cannot_ know this. The architecture forbids it.
 
 And yet the page loads.
 
@@ -101,7 +101,7 @@ The philosopher Leibniz, three centuries before the OSI model, proposed that rea
 
 How does the world cohere? How do things happen in concert if nothing can directly influence anything else?
 
-Leibniz needed *God* to answer this. God pre-established the harmony — wound up each monad like a clock so that they would all tick together.
+Leibniz needed _God_ to answer this. God pre-established the harmony — wound up each monad like a clock so that they would all tick together.
 
 The OSI model offers a different answer, and it requires no theology: the layers coordinate through **carefully designed interfaces that define what events will pass between them**. No shared understanding required. No windows. No peeking. Just: here's the event, here's the format, here's what you commit to producing in response.
 
@@ -115,7 +115,7 @@ Go to the bottom. Layer 1: Physical. This is where abstract protocol finally bec
 
 What is the physical layer actually doing?
 
-It is detecting and generating **differences**. A 1 is a high voltage. A 0 is a low voltage. A bit is not a thing — it is a *distinction*. It is the event of a measurable difference occurring at a measurable time.
+It is detecting and generating **differences**. A 1 is a high voltage. A 0 is a low voltage. A bit is not a thing — it is a _distinction_. It is the event of a measurable difference occurring at a measurable time.
 
 There is nothing below this layer. You cannot go further down and find some more fundamental substrate that "explains" the bit. The bit is the event. The event is the atom.
 
@@ -135,11 +135,11 @@ Here is what the OSI model actually says about communication, if you read it as 
 
 Information does not **pass through** the stack. It **translates** through the stack.
 
-When the Application layer passes data to the Presentation layer, it does not send its *meaning*. The Presentation layer has no concept of meaning at the application level. It receives a sequence of bytes, applies its own rules (encryption, encoding), and produces a different sequence to pass further down. Each layer performs a translation — taking the events it receives, interpreting them according to its own logic, producing new events.
+When the Application layer passes data to the Presentation layer, it does not send its _meaning_. The Presentation layer has no concept of meaning at the application level. It receives a sequence of bytes, applies its own rules (encryption, encoding), and produces a different sequence to pass further down. Each layer performs a translation — taking the events it receives, interpreting them according to its own logic, producing new events.
 
-By the time a bit leaves the physical layer on one machine and is received by the physical layer on another, it has been translated through the entire stack *twice*. The meaning of the original request is not "in" the signal. It is reconstructed, layer by layer, on the receiving end.
+By the time a bit leaves the physical layer on one machine and is received by the physical layer on another, it has been translated through the entire stack _twice_. The meaning of the original request is not "in" the signal. It is reconstructed, layer by layer, on the receiving end.
 
-This is not a bug. It is not a limitation to be engineered away. It is the *architecture*.
+This is not a bug. It is not a limitation to be engineered away. It is the _architecture_.
 
 The practical consequence: information cannot be "securely transmitted" in an absolute sense — only "securely translated." The TLS layer encrypts, but TLS doesn't understand what it's protecting. The application layer understands, but the application doesn't know about the wire. The security is distributed across the stack. The meaning is distributed across the stack. There is no single point where the message "lives."
 
@@ -180,4 +180,4 @@ We just forgot to read it as philosophy.
 
 ---
 
-*P.S. — If any of your systems are broken right now, it's probably a Layer 8 issue. It's always a Layer 8 issue.*
+_P.S. — If any of your systems are broken right now, it's probably a Layer 8 issue. It's always a Layer 8 issue._

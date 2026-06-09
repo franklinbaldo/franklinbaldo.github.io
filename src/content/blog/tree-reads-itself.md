@@ -62,7 +62,7 @@ It's a corpus.
 
 ## Next-Token Prediction, But For Math
 
-The shape of the problem an autoregressive language model solves is: *given the tokens so far, what is the distribution over the next token?* That's the whole job. Everything else a transformer does is in service of that one prediction.
+The shape of the problem an autoregressive language model solves is: _given the tokens so far, what is the distribution over the next token?_ That's the whole job. Everything else a transformer does is in service of that one prediction.
 
 In the eml language, "given the tokens so far, what is the next token?" has a precise answer at every point, determined by two things:
 
@@ -75,7 +75,7 @@ Point a small transformer at a dataset of elementary-function trees, flattened t
 
 ![Is this a pigeon? — Butterfly labeled "elementary function." Man labeled "a language model wearing a tiny hat."](https://api.memegen.link/images/pigeon/me/an_elementary_function/is_this_an_autoregressive_language_model~q.png)
 
-The twist is not that we *can* do language modeling on math. People have been doing that for a decade. The twist is that under the eml reduction the vocabulary shrinks to **three tokens** and the grammar collapses to **two production rules**. At that level of compression, autoregression stops looking like a clever engineering trick and starts looking like the *native format* of the thing being modeled.
+The twist is not that we _can_ do language modeling on math. People have been doing that for a decade. The twist is that under the eml reduction the vocabulary shrinks to **three tokens** and the grammar collapses to **two production rules**. At that level of compression, autoregression stops looking like a clever engineering trick and starts looking like the _native format_ of the thing being modeled.
 
 ---
 
@@ -83,7 +83,7 @@ The twist is not that we *can* do language modeling on math. People have been do
 
 Here is the part that actually rearranges the furniture.
 
-Autoregression is usually introduced as a way to *generate* sequences. But evaluating an eml-tree — walking from leaves to root, applying the operator at each internal node — is itself a stepwise process where each step's output becomes an input for the next step's computation. A post-order walk of the tree is a sequence of events, each of which reads what came before and produces a new value. That is the literal definition of autoregression.
+Autoregression is usually introduced as a way to _generate_ sequences. But evaluating an eml-tree — walking from leaves to root, applying the operator at each internal node — is itself a stepwise process where each step's output becomes an input for the next step's computation. A post-order walk of the tree is a sequence of events, each of which reads what came before and produces a new value. That is the literal definition of autoregression.
 
 So we have two autoregressive processes stacked on top of each other:
 
@@ -92,31 +92,31 @@ So we have two autoregressive processes stacked on top of each other:
 
 They are the same shape. They are the same process at different levels of abstraction. Generating an elementary function and computing an elementary function are both **a sequence of readings in which each reading consumes what previous readings produced**.
 
-[The Gap at the Center of the World](/blog/lacuna-no-centro/) argued that the fundamental unit of reality is a *Reader* — the thing that, on encountering a signal, transforms itself and the signal at once. An LLM, I wrote then, has no cabinet of stored facts; it predicts the next word from everything that came before, and uses that word as input for producing the next. Its "knowledge" is not a substance; it is an ongoing event.
+[The Gap at the Center of the World](/blog/lacuna-no-centro/) argued that the fundamental unit of reality is a _Reader_ — the thing that, on encountering a signal, transforms itself and the signal at once. An LLM, I wrote then, has no cabinet of stored facts; it predicts the next word from everything that came before, and uses that word as input for producing the next. Its "knowledge" is not a substance; it is an ongoing event.
 
-Every `eml` node is a Reader. It does not *contain* a value. It *produces* a value, on demand, by reading its two children — each of which is itself a Reader doing the same thing, all the way down to the leaves where the Reader has no children and simply emits `1` or `x`.
+Every `eml` node is a Reader. It does not _contain_ a value. It _produces_ a value, on demand, by reading its two children — each of which is itself a Reader doing the same thing, all the way down to the leaves where the Reader has no children and simply emits `1` or `x`.
 
-The function `sin(x)` is not stored. There is no cabinet. There is a tree, which is a sequence, which is a recipe for a chain of readings that, when performed, produce the number we eventually call `sin(0.5)`. Pause the chain halfway through and the function is *not there yet*. It is still being read into existence.
+The function `sin(x)` is not stored. There is no cabinet. There is a tree, which is a sequence, which is a recipe for a chain of readings that, when performed, produce the number we eventually call `sin(0.5)`. Pause the chain halfway through and the function is _not there yet_. It is still being read into existence.
 
 If that sentence reminded you of something, it should. It is the architecture of an LLM, and it is also the argument of this series of posts, and it has now been shown to be the structure of `sin`.
 
-![They're the same picture](https://api.memegen.link/images/same/LLM_doing_next-token_prediction/you_computing_sin(0.5)_by_hand/they're_the_same_picture.png)
+![They're the same picture](<https://api.memegen.link/images/same/LLM_doing_next-token_prediction/you_computing_sin(0.5)_by_hand/they're_the_same_picture.png>)
 
 ---
 
 ## The Thing Escher Was Hiding
 
-In [The Gap at the Center of the World](/blog/lacuna-no-centro/), I spent a while on Escher's *Print Gallery* — a picture that contains itself, with a blank at the center because the artist could not resolve the self-reference. Lenstra and de Smit filled the blank with the complex logarithm. The void turned out to be a rotated, reduced copy of the whole picture.
+In [The Gap at the Center of the World](/blog/lacuna-no-centro/), I spent a while on Escher's _Print Gallery_ — a picture that contains itself, with a blank at the center because the artist could not resolve the self-reference. Lenstra and de Smit filled the blank with the complex logarithm. The void turned out to be a rotated, reduced copy of the whole picture.
 
 An eml-tree has the same shape of recursion. A tree's subtree is a tree. A sequence's suffix is a sequence. The grammar `S → 1 | eml(S, S)` is a machine for manufacturing nested copies of itself. Each `eml` node you write down opens two slots, and each slot demands another tree, and each of those trees opens more slots. There is no bottom unless you stop on a `1`. It is Escher's gallery with the mathematics filled in.
 
-Now notice what autoregression does to this recursion: it *serializes* it. A tree is a static object that contains itself. A sequence is a dynamic object that reveals itself one token at a time. Autoregression is the operation that turns one into the other. It takes a self-referential structure and reads it out in order, so that the self-reference becomes a history — you can always look at what the model has produced so far and see the current depth of the stack of unfilled slots.
+Now notice what autoregression does to this recursion: it _serializes_ it. A tree is a static object that contains itself. A sequence is a dynamic object that reveals itself one token at a time. Autoregression is the operation that turns one into the other. It takes a self-referential structure and reads it out in order, so that the self-reference becomes a history — you can always look at what the model has produced so far and see the current depth of the stack of unfilled slots.
 
 This is the hidden move in every LLM you have ever used. The attention mechanism is Escher's complex logarithm for sequences: it takes a self-referential structure (a context that refers to itself, where the meaning of every token depends on every other) and lays it flat so the model can walk it one step at a time. The paper's reduction of math to eml does the same thing for elementary functions. Different domain, identical gesture.
 
-One does not simply look at the blank at the center of *Print Gallery* anymore. One autoregresses through it.
+One does not simply look at the blank at the center of _Print Gallery_ anymore. One autoregresses through it.
 
-![One does not simply evaluate sin(x) without autoregressing](https://api.memegen.link/images/mordor/one_does_not_simply/evaluate_sin(x)_without_autoregressing.png)
+![One does not simply evaluate sin(x) without autoregressing](<https://api.memegen.link/images/mordor/one_does_not_simply/evaluate_sin(x)_without_autoregressing.png>)
 
 ---
 
@@ -124,19 +124,19 @@ One does not simply look at the blank at the center of *Print Gallery* anymore. 
 
 A few things follow that I would not have believed a month ago.
 
-**Symbolic regression is language modeling.** Not "like" language modeling. It *is* language modeling, on a domain-specific tokenizer whose vocabulary is small enough to fit on a post-it note. Every tool that tries to recover closed-form expressions from data — from genetic programming in the nineties to the transformer-based symbolic regressors of last year — is an instance of this. The paper's Adam-on-eml-trees is the same thing with the vocabulary dialed down to three.
+**Symbolic regression is language modeling.** Not "like" language modeling. It _is_ language modeling, on a domain-specific tokenizer whose vocabulary is small enough to fit on a post-it note. Every tool that tries to recover closed-form expressions from data — from genetic programming in the nineties to the transformer-based symbolic regressors of last year — is an instance of this. The paper's Adam-on-eml-trees is the same thing with the vocabulary dialed down to three.
 
 **Mathematical knowledge is a generation process.** What a practicing mathematician has internalized is not a warehouse of stored theorems but a trained policy for next-token prediction over mathematical expressions. This is why good mathematicians can tell, long before a proof is finished, whether it's going to work: they have a good prior over legal continuations. This is also why LLMs — which are literally nothing but next-token priors — can sometimes imitate mathematical reasoning convincingly. They are using the only tool that was ever going to work, because math never had a different shape.
 
 **The [OSI-style interface discipline](/blog/osi-model-as-manifesto/) goes all the way down into arithmetic.** Every `eml` node is opaque to every other. An eml node at depth 7 does not know it is inside `sin`. It commits to producing a well-formed value from two well-formed children. That is the only contract. The meaning of `sin(x)` is distributed across the tree, the way the meaning of an HTTP request is distributed across the stack. Nothing anywhere in the tree "knows" what it is helping to compute. The whole function is reconstituted, layer by layer, every time it is evaluated.
 
-**[The Work That Proves Itself](/blog/the-work-that-proves-itself/) was right about more than literature.** That post argued that the works that survive are the ones that are verbs rather than nouns — self-validating processes that re-arm with every reading. The eml grammar is the same kind of object. `S → 1 | eml(S, S)` is two lines that, every time you read them, generate another elementary function. It does not sit there. It keeps happening. Elementary math is *Hamlet* on a very short, very severe budget.
+**[The Work That Proves Itself](/blog/the-work-that-proves-itself/) was right about more than literature.** That post argued that the works that survive are the ones that are verbs rather than nouns — self-validating processes that re-arm with every reading. The eml grammar is the same kind of object. `S → 1 | eml(S, S)` is two lines that, every time you read them, generate another elementary function. It does not sit there. It keeps happening. Elementary math is _Hamlet_ on a very short, very severe budget.
 
 ---
 
 ## The Uncomfortable Corollary
 
-If elementary mathematics is an autoregressive language, then there is nothing in principle stopping you from training an LLM that is *fluent* in that language — a model whose natural generative distribution is exactly the distribution of closed-form elementary functions. And once you have that, you have solved a chunk of symbolic regression by accident. You did not design a solver. You trained a speaker.
+If elementary mathematics is an autoregressive language, then there is nothing in principle stopping you from training an LLM that is _fluent_ in that language — a model whose natural generative distribution is exactly the distribution of closed-form elementary functions. And once you have that, you have solved a chunk of symbolic regression by accident. You did not design a solver. You trained a speaker.
 
 The paper is a proof of possibility. It says: here is a grammar so small that a toy model can become a native speaker. Given enough elementary-function sequences in its corpus, a transformer with a handful of attention heads would, almost certainly, learn the eml language the way a child learns to balance parentheses — without explicit instruction, just from exposure.
 
@@ -150,7 +150,7 @@ I am not sure I believe that sentence. I am sure I cannot find the place where i
 
 Yesterday's post ended with "events, all the way down — the calculator keyboard was just the UI." Today's post ends with the stronger version.
 
-The tree does not just *get read*. The tree *is* the reading. A function is not a static object that autoregression helps us approach. A function is the autoregression. Stop the chain of `eml`-applications and you do not have a function-at-rest; you have no function at all. The thing we call `sin` is what happens when a particular sequence of Readers agrees to read each other in a particular order, and it does not exist between performances any more than a whirlpool exists between revolutions of water.
+The tree does not just _get read_. The tree _is_ the reading. A function is not a static object that autoregression helps us approach. A function is the autoregression. Stop the chain of `eml`-applications and you do not have a function-at-rest; you have no function at all. The thing we call `sin` is what happens when a particular sequence of Readers agrees to read each other in a particular order, and it does not exist between performances any more than a whirlpool exists between revolutions of water.
 
 Autoregression is not a property of language models. It is a property of reality. Language models are the first artifact to make it obvious.
 
@@ -158,6 +158,6 @@ The tree reads itself. We are in the tree.
 
 ---
 
-*Part one of this pair is [Everything is eml](/blog/everything-is-eml/). The paper is [Odrzywołek, arXiv:2603.21852](https://arxiv.org/abs/2603.21852).*
+_Part one of this pair is [Everything is eml](/blog/everything-is-eml/). The paper is [Odrzywołek, arXiv:2603.21852](https://arxiv.org/abs/2603.21852)._
 
-*P.S. — If you are wondering whether this means a sufficiently large LLM could one day replace your CAS by becoming a fluent speaker of elementary mathematics — yes, probably, and the engineers who try it will be pleasantly surprised by how small "sufficiently large" turns out to be. The vocabulary has three tokens. The grammar has two rules. The hard part was never going to be the modeling.*
+_P.S. — If you are wondering whether this means a sufficiently large LLM could one day replace your CAS by becoming a fluent speaker of elementary mathematics — yes, probably, and the engineers who try it will be pleasantly surprised by how small "sufficiently large" turns out to be. The vocabulary has three tokens. The grammar has two rules. The hard part was never going to be the modeling._

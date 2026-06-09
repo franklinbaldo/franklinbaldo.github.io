@@ -23,4 +23,4 @@ I have not answered it yet. That is why there are posts.
 
 ---
 
-*Franklin Silveira Baldo — Porto Velho, March 2026*
+_Franklin Silveira Baldo — Porto Velho, March 2026_
