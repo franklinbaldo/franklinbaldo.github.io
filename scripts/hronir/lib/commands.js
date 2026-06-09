@@ -585,6 +585,9 @@ export function continueCmd() {
         moodGlyph.codePointAt(0).toString(16).toUpperCase().padStart(4, "0")
       : null;
     const initialMood = session.currentMatch?.evaluator_mood ?? null;
+    const evalLang =
+      session.currentMatch?.eval_lang || session.evalLang || "pt";
+    const evalLangLabel = evalLang === "pt" ? "português" : evalLang;
 
     const perspectiveLine = perspective
       ? `Avalie a partir da perspectiva: ${perspective.name} (id: ${perspectiveId}). A perspectiva é fixa para este match — não há override.`
@@ -624,6 +627,8 @@ export function continueCmd() {
       "(o que cortar, expandir, reordenar) e apontar conteúdo relevante que veio",
       "à mente sobre o assunto — uma referência, um autor, um exemplo, um link.",
       "Essas sugestões alimentam a fase de edição; quanto mais específicas, melhor.",
+      "",
+      `🌐 LÍNGUA DE AVALIAÇÃO: ${evalLangLabel} (eval_lang: ${evalLang}). Escreva --review-a, --review-b e --clash nessa língua. O post pode estar em outra língua — não importa: a avaliação é sempre em ${evalLangLabel}.`,
       "",
       "- --after-mood: [PRIMEIRA flag; máx. 250 chars] Seu estado interno agora, em",
       "  primeira pessoa, decidido a partir do glifo + mood inicial + o que o match",
@@ -1861,10 +1866,11 @@ export function doctor() {
     }
   }
 
-  // Check for staged or modified files outside the safe commit paths.
+  // Check for staged files outside the safe commit paths.
+  // Only staged files matter — untracked/modified may be build artefacts.
   // Jules sometimes creates temp artefacts (decide_args*.json, rewrite_*.mjs,
-  // etc.) that must be deleted before staging — the autopilot rejects PRs that
-  // touch files outside .routines/hronir/ and src/content/blog/.
+  // etc.) that must NOT be staged — the autopilot rejects PRs that touch files
+  // outside .routines/hronir/ and src/content/blog/.
   try {
     const SAFE_RE = /^(\.routines\/hronir\/|src\/content\/blog\/)/;
     const staged = execFileSync("git", ["diff", "--cached", "--name-only"], {
@@ -1872,22 +1878,10 @@ export function doctor() {
     })
       .split("\n")
       .filter(Boolean);
-    const untracked = execFileSync(
-      "git",
-      ["ls-files", "--others", "--exclude-standard"],
-      { encoding: "utf8" }
-    )
-      .split("\n")
-      .filter(Boolean);
-    const modified = execFileSync("git", ["diff", "--name-only"], {
-      encoding: "utf8",
-    })
-      .split("\n")
-      .filter(Boolean);
-    for (const f of [...new Set([...staged, ...untracked, ...modified])]) {
+    for (const f of staged) {
       if (!SAFE_RE.test(f)) {
         issues.push(
-          `Arquivo fora dos caminhos permitidos: ${f} — delete ou mova antes de commitar (o autopilot rejeita PRs que tocam arquivos fora de .routines/hronir/ e src/content/blog/).`
+          `Arquivo fora dos caminhos permitidos está staged: ${f} — faça \`git restore --staged ${f}\` antes de commitar (o autopilot rejeita PRs que tocam arquivos fora de .routines/hronir/ e src/content/blog/).`
         );
       }
     }
