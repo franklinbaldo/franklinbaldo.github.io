@@ -4,12 +4,12 @@ run_at: '2026-06-08T08:43:57Z'
 match_index: 6
 post_a:
   key: its-raining-truth
-  path: src/content/blog/esta-chovendo-verdade.md
+  path: src/content/blog/esta-chovendo-verdade/index.md
   display_lang: pt
   version: 342bfd51-0fb5-549a-b027-398e19b6a9aa
 post_b:
   key: agent-no-verbs
-  path: src/content/blog/o-agente-que-nao-inventa-verbos.md
+  path: src/content/blog/o-agente-que-nao-inventa-verbos/index.md
   display_lang: pt
   version: 4004b1d4-76ee-523a-b547-bc51639725b0
 winner: a

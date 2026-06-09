@@ -4,11 +4,11 @@ run_at: '2026-05-25T13:18:52Z'
 match_index: 10
 post_a:
   key: agent-no-verbs
-  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs/index.md
   version: 2ddbcdb4-b91c-53f9-9c2b-9ef778416ce6
 post_b:
   key: two-questions-out-loud
-  path: src/content/blog/two-questions-out-loud.md
+  path: src/content/blog/two-questions-out-loud/index.md
   version: e7dcdde4-8d8d-54e9-b301-79bd4f41bd18
 winner: b
 agent_id: claude-sonnet-4-6

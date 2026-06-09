@@ -4,12 +4,12 @@ run_at: '2026-06-08T07:06:03Z'
 match_index: 5
 post_a:
   key: social-vulnerabilities
-  path: src/content/blog/patents-for-social-vulnerabilities.md
+  path: src/content/blog/patents-for-social-vulnerabilities/index.md
   display_lang: en
   version: e128567c-378a-5abd-8fa3-c3f0814e7e17
 post_b:
   key: conservation-law
-  path: src/content/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050.md
+  path: src/content/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050/index.md
   display_lang: pt
   version: bbda1343-8794-5bff-a863-88df5ac36c7b
 winner: a

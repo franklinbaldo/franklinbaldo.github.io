@@ -4,12 +4,12 @@ run_at: '2026-06-09T06:13:27Z'
 match_index: 7
 post_a:
   key: music-the-ruliad-is-laughing
-  path: src/content/blog/the-ruliad-is-laughing-en.mdx
+  path: src/content/blog/the-ruliad-is-laughing-en/index.mdx
   display_lang: en
   version: 274bb067-5707-5001-92e8-87fa2a9ccae6
 post_b:
   key: music-reality-maintenance-moving-window-xii
-  path: src/content/blog/reality-maintenance-moving-window-xii.mdx
+  path: src/content/blog/reality-maintenance-moving-window-xii/index.mdx
   display_lang: pt
   version: d0d6a634-f848-59b3-8585-d188c98ae6c7
 winner: a

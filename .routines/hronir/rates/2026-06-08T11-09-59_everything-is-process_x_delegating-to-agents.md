@@ -4,12 +4,12 @@ run_at: '2026-06-08T11:09:59Z'
 match_index: 7
 post_a:
   key: everything-is-process
-  path: src/content/blog/tudo-e-processo.md
+  path: src/content/blog/tudo-e-processo/index.md
   display_lang: pt
   version: 19ae7ff2-138c-5074-b91a-262791170a02
 post_b:
   key: delegating-to-agents
-  path: src/content/blog/the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation/index.md
   display_lang: en
   version: af592b0d-035b-5dbe-8ed5-d540b2fe3fa2
 winner: b

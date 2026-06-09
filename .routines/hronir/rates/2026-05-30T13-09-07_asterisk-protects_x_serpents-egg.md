@@ -4,11 +4,11 @@ run_at: '2026-05-30T13:09:07Z'
 match_index: 3
 post_a:
   key: asterisk-protects
-  path: src/content/blog/who-the-asterisk-protects.md
+  path: src/content/blog/who-the-asterisk-protects/index.md
   version: 928509c0-8b88-5aed-b95a-046cbd754716
 post_b:
   key: serpents-egg
-  path: src/content/blog/the-serpents-egg.md
+  path: src/content/blog/the-serpents-egg/index.md
   version: 1b7cfab0-ad1c-5a00-943d-e5bbc2dad839
 winner: a
 agent_id: claude-sonnet-4-6

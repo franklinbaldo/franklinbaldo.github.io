@@ -4,12 +4,12 @@ run_at: '2026-06-08T06:44:44Z'
 match_index: 3
 post_a:
   key: third-half-fourth-wall
-  path: src/content/blog/the-third-half-and-the-fourth-wall.md
+  path: src/content/blog/the-third-half-and-the-fourth-wall/index.md
   display_lang: en
   version: c571e755-cc9d-5d33-ae7f-69cecf870f93
 post_b:
   key: three-hammers
-  path: src/content/blog/three-hammers-walk-into-a-bar.md
+  path: src/content/blog/three-hammers-walk-into-a-bar/index.md
   display_lang: en
   version: 5c53e34c-d7cd-5b59-aa3f-c25ec6754687
 winner: a

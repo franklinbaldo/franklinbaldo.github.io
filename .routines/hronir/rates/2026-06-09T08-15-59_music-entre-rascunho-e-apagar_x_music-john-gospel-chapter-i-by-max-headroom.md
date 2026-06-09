@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:15:59Z'
 match_index: 10
 post_a:
   key: music-entre-rascunho-e-apagar
-  path: src/content/blog/entre-rascunho-e-apagar.mdx
+  path: src/content/blog/entre-rascunho-e-apagar/index.mdx
   display_lang: pt
   version: 322907c8-69a1-527e-b36c-459d69927485
 post_b:
   key: music-john-gospel-chapter-i-by-max-headroom
-  path: src/content/blog/john-gospel-chapter-i-by-max-headroom.mdx
+  path: src/content/blog/john-gospel-chapter-i-by-max-headroom/index.mdx
   display_lang: pt
   version: e0f9b274-6fa5-5014-95fd-25330d2feeaf
 winner: b

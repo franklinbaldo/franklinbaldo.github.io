@@ -5,11 +5,11 @@ match_index: 10
 post_a:
   key: everything-is-process
   path: >-
-    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
+    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/index.md
   version: 26dcb3b5-9232-57df-bb89-fe4c87919736
 post_b:
   key: delegating-to-agents
-  path: src/content/blog/the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation/index.md
   version: 09318476-1009-5abe-bf6a-86e789067dec
 winner: b
 agent_id: claude-sonnet-4-6

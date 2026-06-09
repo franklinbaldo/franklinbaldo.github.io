@@ -4,13 +4,13 @@ run_at: '2026-06-08T10:27:42Z'
 match_index: 5
 post_a:
   key: conservation-law
-  path: src/content/blog/will-ai-discover-new-conservation-law-before-2050.md
+  path: src/content/blog/will-ai-discover-new-conservation-law-before-2050/index.md
   display_lang: en
   version: 6e94c525-9702-5890-8078-5443243b8b99
 post_b:
   key: social-vulnerabilities
   path: >-
-    src/content/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores.md
+    src/content/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/index.md
   display_lang: pt
   version: 98710b19-4cff-57a1-9eb8-b86da1df5e7c
 winner: a

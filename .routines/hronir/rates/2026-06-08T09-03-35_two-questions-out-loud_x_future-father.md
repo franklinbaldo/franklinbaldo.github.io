@@ -4,13 +4,13 @@ run_at: '2026-06-08T09:03:35Z'
 match_index: 12
 post_a:
   key: two-questions-out-loud
-  path: src/content/blog/duas-perguntas-em-voz-alta.md
+  path: src/content/blog/duas-perguntas-em-voz-alta/index.md
   display_lang: pt
   version: 8e4064e4-a229-5d8c-8835-2315ccd8fc03
 post_b:
   key: future-father
   path: >-
-    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md
+    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents/index.md
   display_lang: en
   version: b5c85777-369f-5c2d-ba8e-2bfce7b0b824
 winner: a

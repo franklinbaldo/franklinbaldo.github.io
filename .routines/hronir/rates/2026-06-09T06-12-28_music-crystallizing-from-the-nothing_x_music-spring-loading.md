@@ -4,12 +4,12 @@ run_at: '2026-06-09T06:12:28Z'
 match_index: 6
 post_a:
   key: music-crystallizing-from-the-nothing
-  path: src/content/blog/crystallizing-from-the-nothing-en.mdx
+  path: src/content/blog/crystallizing-from-the-nothing-en/index.mdx
   display_lang: en
   version: fba24bcc-45e1-562d-aa9d-df2a6ef30d5b
 post_b:
   key: music-spring-loading
-  path: src/content/blog/spring-loading-en.mdx
+  path: src/content/blog/spring-loading-en/index.mdx
   display_lang: en
   version: d282c046-0b05-554b-a16d-2ed8a5e3a82b
 winner: b

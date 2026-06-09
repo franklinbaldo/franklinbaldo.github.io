@@ -4,11 +4,11 @@ run_at: '2026-05-26T13:18:27Z'
 match_index: 8
 post_a:
   key: building-funes
-  path: src/content/blog/building-funes.md
+  path: src/content/blog/building-funes/index.md
   version: f3fabcd1-3889-561a-ad4f-67aecd34fd09
 post_b:
   key: pierre-menard
-  path: src/content/blog/pierre-menard-computational-researcher.md
+  path: src/content/blog/pierre-menard-computational-researcher/index.md
   version: 9e4135ad-ef47-5286-88fd-655075161694
 winner: b
 agent_id: claude-sonnet-4-6

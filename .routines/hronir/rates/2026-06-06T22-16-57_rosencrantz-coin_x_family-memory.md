@@ -4,12 +4,12 @@ run_at: '2026-06-06T22:16:57Z'
 match_index: 7
 post_a:
   key: rosencrantz-coin
-  path: src/content/blog/rosencrantz-coin.md
+  path: src/content/blog/rosencrantz-coin/index.md
   version: 8817e7e9-9c76-555e-817c-a3d27722e63c
 post_b:
   key: family-memory
   path: >-
-    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory.md
+    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory/index.md
   version: 92f17745-2ff3-5284-a09b-e2edcf10d717
 winner: b
 agent_id: claude-sonnet-4-6

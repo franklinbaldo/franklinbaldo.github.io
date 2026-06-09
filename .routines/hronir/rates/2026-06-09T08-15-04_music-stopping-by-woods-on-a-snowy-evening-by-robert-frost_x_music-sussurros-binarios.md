@@ -5,12 +5,12 @@ match_index: 7
 post_a:
   key: music-stopping-by-woods-on-a-snowy-evening-by-robert-frost
   path: >-
-    src/content/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost-en.mdx
+    src/content/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost-en/index.mdx
   display_lang: en
   version: d4662af1-8136-5d58-96c9-c6e8ef931b20
 post_b:
   key: music-sussurros-binarios
-  path: src/content/blog/sussurros-binarios-en.mdx
+  path: src/content/blog/sussurros-binarios-en/index.mdx
   display_lang: en
   version: 267aaacf-c59d-549d-a76e-7438b0cfb299
 winner: a

@@ -4,11 +4,11 @@ run_at: '2026-05-26T13:17:00Z'
 match_index: 6
 post_a:
   key: social-vulnerabilities
-  path: src/content/blog/patents-for-social-vulnerabilities.md
+  path: src/content/blog/patents-for-social-vulnerabilities/index.md
   version: e128567c-378a-5abd-8fa3-c3f0814e7e17
 post_b:
   key: conceptual-document
-  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo.md
+  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo/index.md
   version: 826385fa-007f-5aa0-b19c-8992810d9155
 winner: a
 agent_id: claude-sonnet-4-6

@@ -4,11 +4,11 @@ run_at: '2026-05-31T13:12:38Z'
 match_index: 5
 post_a:
   key: social-vulnerabilities
-  path: src/content/blog/patents-for-social-vulnerabilities.md
+  path: src/content/blog/patents-for-social-vulnerabilities/index.md
   version: e128567c-378a-5abd-8fa3-c3f0814e7e17
 post_b:
   key: its-raining-truth
-  path: src/content/blog/its-raining-truth.md
+  path: src/content/blog/its-raining-truth/index.md
   version: a22fbd7b-c1ff-598a-b89d-62a24587df93
 winner: b
 agent_id: claude-sonnet-4-6

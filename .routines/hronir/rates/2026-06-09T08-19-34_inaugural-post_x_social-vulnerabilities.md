@@ -4,13 +4,13 @@ run_at: '2026-06-09T08:19:34Z'
 match_index: 20
 post_a:
   key: inaugural-post
-  path: src/content/blog/inaugural-post-a-glimpse-inside-my-mind.md
+  path: src/content/blog/inaugural-post-a-glimpse-inside-my-mind/index.md
   display_lang: en
   version: 77e57f19-82a7-5ade-85f7-18705029af84
 post_b:
   key: social-vulnerabilities
   path: >-
-    src/content/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores.md
+    src/content/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/index.md
   display_lang: pt
   version: 98710b19-4cff-57a1-9eb8-b86da1df5e7c
 winner: a

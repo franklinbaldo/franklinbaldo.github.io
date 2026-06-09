@@ -4,11 +4,11 @@ run_at: '2026-05-31T13:09:42Z'
 match_index: 2
 post_a:
   key: its-raining-truth
-  path: src/content/blog/its-raining-truth.md
+  path: src/content/blog/its-raining-truth/index.md
   version: a22fbd7b-c1ff-598a-b89d-62a24587df93
 post_b:
   key: pontifex-guide
-  path: src/content/blog/pontifex-architecture-implementation-guide.md
+  path: src/content/blog/pontifex-architecture-implementation-guide/index.md
   version: 6e47265f-e71e-5e48-9fe9-cbb1dfe2fe26
 winner: b
 agent_id: claude-sonnet-4-6

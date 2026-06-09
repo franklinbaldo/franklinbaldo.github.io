@@ -4,11 +4,11 @@ run_at: '2026-05-30T13:11:29Z'
 match_index: 6
 post_a:
   key: travessia-project
-  path: src/content/blog/travessia-the-project-that-writes-itself.md
+  path: src/content/blog/travessia-the-project-that-writes-itself/index.md
   version: d114f8bb-e09a-5ba8-b50a-48cdc01b5c34
 post_b:
   key: verne-identity-repo
-  path: src/content/blog/verne-identity-repo.md
+  path: src/content/blog/verne-identity-repo/index.md
   version: d6fb456a-8667-5ab5-b4f3-528eab5af463
 winner: b
 agent_id: claude-sonnet-4-6

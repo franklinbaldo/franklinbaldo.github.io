@@ -4,12 +4,12 @@ run_at: '2026-06-08T11:37:29Z'
 match_index: 9
 post_a:
   key: becoming-lobsters
-  path: src/content/blog/estamos-todos-nos-tornando-lagostas.md
+  path: src/content/blog/estamos-todos-nos-tornando-lagostas/index.md
   display_lang: pt
   version: 622871ed-4c38-5830-8df2-49d1817c1fcf
 post_b:
   key: funes-soul
-  path: src/content/blog/soulmd-funes.md
+  path: src/content/blog/soulmd-funes/index.md
   display_lang: pt
   version: 434bfc2c-b22d-5db3-8407-03c568909384
 winner: a

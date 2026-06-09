@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:25:20Z'
 match_index: 5
 post_a:
   key: music-entre-rascunho-e-apagar
-  path: src/content/blog/entre-rascunho-e-apagar.mdx
+  path: src/content/blog/entre-rascunho-e-apagar/index.mdx
   display_lang: pt
   version: 322907c8-69a1-527e-b36c-459d69927485
 post_b:
   key: music-espelhos
-  path: src/content/blog/espelhos-en.mdx
+  path: src/content/blog/espelhos-en/index.mdx
   display_lang: en
   version: 038b5bd3-e28c-54b2-aa19-40bd9574acfc
 winner: b

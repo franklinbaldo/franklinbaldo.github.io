@@ -4,12 +4,12 @@ run_at: '2026-06-08T04:14:16Z'
 match_index: 10
 post_a:
   key: agent-no-verbs
-  path: src/content/blog/o-agente-que-nao-inventa-verbos.md
+  path: src/content/blog/o-agente-que-nao-inventa-verbos/index.md
   display_lang: pt
   version: 4004b1d4-76ee-523a-b547-bc51639725b0
 post_b:
   key: conceptual-document
-  path: src/content/blog/documento-conceitual-a-cronica-de-franklin-baldo.md
+  path: src/content/blog/documento-conceitual-a-cronica-de-franklin-baldo/index.md
   display_lang: pt
   version: adf71917-4658-50e6-b07a-0a3f954575c6
 winner: a

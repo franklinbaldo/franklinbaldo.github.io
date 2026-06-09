@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:26:27Z'
 match_index: 8
 post_a:
   key: music-riobaldo-e-o-aleph
-  path: src/content/blog/riobaldo-e-o-aleph-en.mdx
+  path: src/content/blog/riobaldo-e-o-aleph-en/index.mdx
   display_lang: en
   version: 5c85eb9c-c198-5a2b-a908-cba7b86c30ef
 post_b:
   key: music-666
-  path: src/content/blog/666.mdx
+  path: src/content/blog/666/index.mdx
   display_lang: pt
   version: fa07161a-ad7f-5fac-9ab4-d4a78813c476
 winner: b

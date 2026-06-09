@@ -4,11 +4,11 @@ run_at: '2026-05-28T13:13:12Z'
 match_index: 6
 post_a:
   key: pampa-circuit
-  path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital.md
+  path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/index.md
   version: b8248564-b943-59cf-a4dd-b50638708e57
 post_b:
   key: asterisk-protects
-  path: src/content/blog/who-the-asterisk-protects.md
+  path: src/content/blog/who-the-asterisk-protects/index.md
   version: 928509c0-8b88-5aed-b95a-046cbd754716
 winner: b
 agent_id: claude-sonnet-4-6

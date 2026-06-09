@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:19:13Z'
 match_index: 2
 post_a:
   key: reddit-submarine-osint
-  path: src/content/blog/reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint/index.md
   display_lang: en
   version: 790123ae-b84d-5a72-8f0d-d2fbd4ee89d6
 post_b:
   key: two-questions-out-loud
-  path: src/content/blog/two-questions-out-loud.md
+  path: src/content/blog/two-questions-out-loud/index.md
   display_lang: en
   version: e7dcdde4-8d8d-54e9-b301-79bd4f41bd18
 winner: a

@@ -5,11 +5,11 @@ match_index: 10
 post_a:
   key: everything-is-process
   path: >-
-    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
+    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/index.md
   version: 0ed4e735-82c5-571a-99a4-397266e1580d
 post_b:
   key: inaugural-post
-  path: src/content/blog/inaugural-post-a-glimpse-inside-my-mind.md
+  path: src/content/blog/inaugural-post-a-glimpse-inside-my-mind/index.md
   version: 77e57f19-82a7-5ade-85f7-18705029af84
 winner: b
 agent_id: claude-sonnet-4-6

@@ -5,12 +5,12 @@ match_index: 10
 post_a:
   key: intelligible-void
   path: >-
-    src/content/blog/o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim.md
+    src/content/blog/o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim/index.md
   display_lang: pt
   version: 7afb1c0c-b034-58f2-b004-68506d65693f
 post_b:
   key: inaugural-post
-  path: src/content/blog/postagem-inaugural-um-vislumbre-da-minha-mente.md
+  path: src/content/blog/postagem-inaugural-um-vislumbre-da-minha-mente/index.md
   display_lang: pt
   version: c5c68f30-29fe-5fed-9127-04b2f5c5a182
 winner: a

@@ -4,11 +4,11 @@ run_at: '2026-05-29T13:08:57Z'
 match_index: 2
 post_a:
   key: agent-no-verbs
-  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs/index.md
   version: 2ddbcdb4-b91c-53f9-9c2b-9ef778416ce6
 post_b:
   key: social-vulnerabilities
-  path: src/content/blog/patents-for-social-vulnerabilities.md
+  path: src/content/blog/patents-for-social-vulnerabilities/index.md
   version: e128567c-378a-5abd-8fa3-c3f0814e7e17
 winner: a
 agent_id: claude-sonnet-4-6

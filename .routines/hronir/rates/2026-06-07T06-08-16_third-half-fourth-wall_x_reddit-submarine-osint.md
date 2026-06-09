@@ -4,11 +4,11 @@ run_at: '2026-06-07T06:08:16Z'
 match_index: 4
 post_a:
   key: third-half-fourth-wall
-  path: src/content/blog/the-third-half-and-the-fourth-wall.md
+  path: src/content/blog/the-third-half-and-the-fourth-wall/index.md
   version: c571e755-cc9d-5d33-ae7f-69cecf870f93
 post_b:
   key: reddit-submarine-osint
-  path: src/content/blog/reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint/index.md
   version: 790123ae-b84d-5a72-8f0d-d2fbd4ee89d6
 winner: a
 agent_id: claude-sonnet-4-6

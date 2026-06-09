@@ -5,12 +5,12 @@ match_index: 7
 post_a:
   key: rosencrantz-coin
   path: >-
-    src/content/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade.md
+    src/content/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/index.md
   display_lang: pt
   version: c7f9cee2-9c69-516f-b492-4c77c5bc3e1a
 post_b:
   key: social-vulnerabilities
-  path: src/content/blog/patents-for-social-vulnerabilities.md
+  path: src/content/blog/patents-for-social-vulnerabilities/index.md
   display_lang: en
   version: e128567c-378a-5abd-8fa3-c3f0814e7e17
 winner: a

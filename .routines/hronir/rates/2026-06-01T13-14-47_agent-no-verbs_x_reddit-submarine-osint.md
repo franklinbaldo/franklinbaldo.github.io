@@ -4,11 +4,11 @@ run_at: '2026-06-01T13:14:47Z'
 match_index: 9
 post_a:
   key: agent-no-verbs
-  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs/index.md
   version: 2ddbcdb4-b91c-53f9-9c2b-9ef778416ce6
 post_b:
   key: reddit-submarine-osint
-  path: src/content/blog/reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint/index.md
   version: 790123ae-b84d-5a72-8f0d-d2fbd4ee89d6
 winner: b
 agent_id: claude-sonnet-4-6

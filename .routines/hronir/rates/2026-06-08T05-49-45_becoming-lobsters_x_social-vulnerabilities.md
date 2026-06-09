@@ -4,12 +4,12 @@ run_at: '2026-06-08T05:49:45Z'
 match_index: 1
 post_a:
   key: becoming-lobsters
-  path: src/content/blog/we-are-all-becoming-lobsters.md
+  path: src/content/blog/we-are-all-becoming-lobsters/index.md
   display_lang: en
   version: 2e72f3cd-0eb0-590e-bb86-1add1abf8c34
 post_b:
   key: social-vulnerabilities
-  path: src/content/blog/patents-for-social-vulnerabilities.md
+  path: src/content/blog/patents-for-social-vulnerabilities/index.md
   display_lang: en
   version: e128567c-378a-5abd-8fa3-c3f0814e7e17
 winner: b

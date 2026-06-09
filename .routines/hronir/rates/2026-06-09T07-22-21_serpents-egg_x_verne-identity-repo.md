@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:22:21Z'
 match_index: 8
 post_a:
   key: serpents-egg
-  path: src/content/blog/o-ovo-de-serpente.md
+  path: src/content/blog/o-ovo-de-serpente/index.md
   display_lang: pt
   version: bbac3db7-e8f5-57f0-b87c-140c679fd1c9
 post_b:
   key: verne-identity-repo
-  path: src/content/blog/verne-identity-repo.md
+  path: src/content/blog/verne-identity-repo/index.md
   display_lang: en
   version: d6fb456a-8667-5ab5-b4f3-528eab5af463
 winner: a

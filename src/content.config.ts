@@ -2,7 +2,16 @@ import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
 
 const blog = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/blog" }),
+  // RFC 0003: each post lives in its own folder <slug>/, where the canonical
+  // (published) version is index.md(x). Non-canonical versions are sibling
+  // files (v-<timestamp>.md) that don't match this glob → invisible to Astro.
+  // generateId strips the trailing /index so the id stays the flat slug,
+  // preserving every existing URL.
+  loader: glob({
+    pattern: "**/index.{md,mdx}",
+    base: "./src/content/blog",
+    generateId: ({ entry }) => entry.replace(/\/index\.mdx?$/, ""),
+  }),
   schema: ({ image }) =>
     z.object({
       title: z.string(),
@@ -16,6 +25,9 @@ const blog = defineCollection({
       lang: z.enum(["en", "pt"]).optional(),
       author: z.string().optional(),
       translationKey: z.string().optional(),
+      /** RFC 0003: content UUID of the version this one superseded when it was
+       *  promoted to canonical. Lineage lives in-repo as sibling version files. */
+      supersedes: z.string().optional(),
       series: z.string().optional(),
       seriesOrder: z.number().optional(),
       featured: z.boolean().optional(),

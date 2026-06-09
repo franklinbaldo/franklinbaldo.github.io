@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:17:07Z'
 match_index: 14
 post_a:
   key: building-funes
-  path: src/content/blog/building-funes.md
+  path: src/content/blog/building-funes/index.md
   display_lang: en
   version: f3fabcd1-3889-561a-ad4f-67aecd34fd09
 post_b:
   key: two-questions-out-loud
-  path: src/content/blog/two-questions-out-loud.md
+  path: src/content/blog/two-questions-out-loud/index.md
   display_lang: en
   version: e7dcdde4-8d8d-54e9-b301-79bd4f41bd18
 winner: a

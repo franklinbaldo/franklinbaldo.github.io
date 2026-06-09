@@ -4,12 +4,12 @@ run_at: '2026-06-08T05:37:54Z'
 match_index: 6
 post_a:
   key: conceptual-document
-  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo.md
+  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo/index.md
   display_lang: en
   version: 826385fa-007f-5aa0-b19c-8992810d9155
 post_b:
   key: pontifex-research
-  path: src/content/blog/pontifex-novel-architecture-semantic-probing.md
+  path: src/content/blog/pontifex-novel-architecture-semantic-probing/index.md
   display_lang: en
   version: 12779a84-9f7b-569b-89e7-83f547051444
 winner: b

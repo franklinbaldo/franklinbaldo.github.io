@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:32:49Z'
 match_index: 20
 post_a:
   key: pontifex-research
-  path: src/content/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica.md
+  path: src/content/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/index.md
   display_lang: pt
   version: 8e6caae0-2519-5011-af85-0ac99a930920
 post_b:
   key: third-half-fourth-wall
-  path: src/content/blog/a-terceira-metade-e-a-quarta-parede.md
+  path: src/content/blog/a-terceira-metade-e-a-quarta-parede/index.md
   display_lang: pt
   version: c9adda61-5ea6-52f8-bd70-90b216bb802e
 winner: b

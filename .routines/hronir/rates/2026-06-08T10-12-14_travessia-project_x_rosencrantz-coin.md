@@ -4,13 +4,13 @@ run_at: '2026-06-08T10:12:14Z'
 match_index: 1
 post_a:
   key: travessia-project
-  path: src/content/blog/travessia.md
+  path: src/content/blog/travessia/index.md
   display_lang: pt
   version: cafb4c57-3168-5986-9e33-6361e6ea5e11
 post_b:
   key: rosencrantz-coin
   path: >-
-    src/content/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade.md
+    src/content/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/index.md
   display_lang: pt
   version: c7f9cee2-9c69-516f-b492-4c77c5bc3e1a
 winner: b

@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:18:23Z'
 match_index: 18
 post_a:
   key: crossing-interference
-  path: src/content/blog/crossing-after-interference.md
+  path: src/content/blog/crossing-after-interference/index.md
   display_lang: en
   version: fb42f337-befb-5de1-8e65-d25256a81da6
 post_b:
   key: three-hammers
-  path: src/content/blog/three-hammers-walk-into-a-bar.md
+  path: src/content/blog/three-hammers-walk-into-a-bar/index.md
   display_lang: en
   version: 5c53e34c-d7cd-5b59-aa3f-c25ec6754687
 winner: a

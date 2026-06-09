@@ -4,11 +4,11 @@ run_at: '2026-05-26T13:14:09Z'
 match_index: 2
 post_a:
   key: conservation-law
-  path: src/content/blog/will-ai-discover-new-conservation-law-before-2050.md
+  path: src/content/blog/will-ai-discover-new-conservation-law-before-2050/index.md
   version: 5456e5d9-4762-52fc-986b-f72e21a04681
 post_b:
   key: intelligible-void
-  path: src/content/blog/the-intelligible-void-hassabis-and-events.md
+  path: src/content/blog/the-intelligible-void-hassabis-and-events/index.md
   version: f3040109-a12f-5764-b401-8275d00309cf
 winner: a
 agent_id: claude-sonnet-4-6

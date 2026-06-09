@@ -4,12 +4,12 @@ run_at: '2026-06-09T06:07:13Z'
 match_index: 1
 post_a:
   key: music-universal-threshold
-  path: src/content/blog/universal-threshold-en.mdx
+  path: src/content/blog/universal-threshold-en/index.mdx
   display_lang: en
   version: 7816636c-d9d0-5414-82a1-815f3ad2c7fc
 post_b:
   key: music-veu-do-infinito
-  path: src/content/blog/veu-do-infinito.mdx
+  path: src/content/blog/veu-do-infinito/index.mdx
   display_lang: pt
   version: edf0f6f7-9009-561f-b677-d80e6b264f1d
 winner: a

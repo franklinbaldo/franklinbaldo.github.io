@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:18:48Z'
 match_index: 1
 post_a:
   key: building-funes
-  path: src/content/blog/construindo-funes-como-dei-uma-alma-a-um-agente-de-ia.md
+  path: src/content/blog/construindo-funes-como-dei-uma-alma-a-um-agente-de-ia/index.md
   display_lang: pt
   version: e5849882-a6e5-5138-99ec-cd40a9de0dc8
 post_b:
   key: asterisk-protects
-  path: src/content/blog/who-the-asterisk-protects.md
+  path: src/content/blog/who-the-asterisk-protects/index.md
   display_lang: en
   version: 928509c0-8b88-5aed-b95a-046cbd754716
 winner: a

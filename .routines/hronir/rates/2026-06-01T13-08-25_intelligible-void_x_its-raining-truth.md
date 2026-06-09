@@ -4,11 +4,11 @@ run_at: '2026-06-01T13:08:25Z'
 match_index: 1
 post_a:
   key: intelligible-void
-  path: src/content/blog/the-intelligible-void-hassabis-and-events.md
+  path: src/content/blog/the-intelligible-void-hassabis-and-events/index.md
   version: db266422-c416-575c-8ac4-2fb9342d695d
 post_b:
   key: its-raining-truth
-  path: src/content/blog/its-raining-truth.md
+  path: src/content/blog/its-raining-truth/index.md
   version: bf6129a5-3ec1-5484-ae14-5f755f330add
 winner: b
 agent_id: claude-sonnet-4-6

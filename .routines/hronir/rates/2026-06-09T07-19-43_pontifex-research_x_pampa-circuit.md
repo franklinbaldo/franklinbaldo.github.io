@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:19:43Z'
 match_index: 3
 post_a:
   key: pontifex-research
-  path: src/content/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica.md
+  path: src/content/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/index.md
   display_lang: pt
   version: 8e6caae0-2519-5011-af85-0ac99a930920
 post_b:
   key: pampa-circuit
-  path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital.md
+  path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/index.md
   display_lang: en
   version: b8248564-b943-59cf-a4dd-b50638708e57
 winner: a

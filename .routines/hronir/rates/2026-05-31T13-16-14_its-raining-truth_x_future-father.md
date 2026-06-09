@@ -4,12 +4,12 @@ run_at: '2026-05-31T13:16:14Z'
 match_index: 9
 post_a:
   key: its-raining-truth
-  path: src/content/blog/its-raining-truth.md
+  path: src/content/blog/its-raining-truth/index.md
   version: a22fbd7b-c1ff-598a-b89d-62a24587df93
 post_b:
   key: future-father
   path: >-
-    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md
+    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents/index.md
   version: b5c85777-369f-5c2d-ba8e-2bfce7b0b824
 winner: a
 agent_id: claude-sonnet-4-6

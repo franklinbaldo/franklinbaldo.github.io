@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:14:09Z'
 match_index: 4
 post_a:
   key: music-trinta-de-abril
-  path: src/content/blog/trinta-de-abril-en.mdx
+  path: src/content/blog/trinta-de-abril-en/index.mdx
   display_lang: en
   version: 8e58516e-1ca0-57f5-b13a-ee6c69027415
 post_b:
   key: music-sentido-e-referencia
-  path: src/content/blog/sentido-e-referencia.mdx
+  path: src/content/blog/sentido-e-referencia/index.mdx
   display_lang: pt
   version: 1d59e9a7-11b8-5ba6-8d9a-b700d162fef2
 winner: a

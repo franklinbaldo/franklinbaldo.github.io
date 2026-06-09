@@ -36,6 +36,7 @@ const {
   doctor,
   end,
   editCommit,
+  promote,
   next,
 } = await import("./lib/commands.js");
 
@@ -152,6 +153,7 @@ switch (cmd) {
     diagnose();
     break;
   case "edit-worst":
+  case "draft-worst":
     editWorst();
     break;
   case "end": {
@@ -161,6 +163,7 @@ switch (cmd) {
     break;
   }
   case "edit-commit":
+  case "draft-commit":
   case "edit": {
     if (cmd === "edit" && args[0] !== "commit") {
       usage();
@@ -183,6 +186,9 @@ switch (cmd) {
     editCommit(msg);
     break;
   }
+  case "promote":
+    promote(args);
+    break;
   case "migrate":
     migrate({ dryRun: args.includes("--dry-run") });
     break;

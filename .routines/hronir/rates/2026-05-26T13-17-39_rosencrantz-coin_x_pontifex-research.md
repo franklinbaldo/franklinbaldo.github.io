@@ -4,11 +4,11 @@ run_at: '2026-05-26T13:17:39Z'
 match_index: 7
 post_a:
   key: rosencrantz-coin
-  path: src/content/blog/rosencrantz-coin.md
+  path: src/content/blog/rosencrantz-coin/index.md
   version: 3fa29c5a-cf40-5f07-9034-670706bd6e6f
 post_b:
   key: pontifex-research
-  path: src/content/blog/pontifex-novel-architecture-semantic-probing.md
+  path: src/content/blog/pontifex-novel-architecture-semantic-probing/index.md
   version: 12779a84-9f7b-569b-89e7-83f547051444
 winner: b
 agent_id: claude-sonnet-4-6

@@ -5,12 +5,12 @@ match_index: 9
 post_a:
   key: future-father
   path: >-
-    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md
+    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents/index.md
   display_lang: en
   version: b5c85777-369f-5c2d-ba8e-2bfce7b0b824
 post_b:
   key: agent-no-verbs
-  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs/index.md
   display_lang: en
   version: 2ddbcdb4-b91c-53f9-9c2b-9ef778416ce6
 winner: a

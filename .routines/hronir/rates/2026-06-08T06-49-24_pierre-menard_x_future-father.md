@@ -4,12 +4,12 @@ run_at: '2026-06-08T06:49:24Z'
 match_index: 8
 post_a:
   key: pierre-menard
-  path: src/content/blog/pierre-menard-pesquisador-computacional.md
+  path: src/content/blog/pierre-menard-pesquisador-computacional/index.md
   display_lang: pt
   version: 5f5fb2a8-cb12-5696-88ce-ae0f542f3b75
 post_b:
   key: future-father
-  path: src/content/blog/o-pai-do-futuro.md
+  path: src/content/blog/o-pai-do-futuro/index.md
   display_lang: pt
   version: a34b3e8a-5f1d-5376-9886-029e5c28878b
 winner: b

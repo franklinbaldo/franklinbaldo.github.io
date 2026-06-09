@@ -4,12 +4,12 @@ run_at: '2026-06-09T06:09:20Z'
 match_index: 3
 post_a:
   key: music-borges-and-me
-  path: src/content/blog/borges-and-me.mdx
+  path: src/content/blog/borges-and-me/index.mdx
   display_lang: pt
   version: 4934c5c4-65a0-59bf-8779-ae1d05354c9b
 post_b:
   key: music-caminho
-  path: src/content/blog/caminho.mdx
+  path: src/content/blog/caminho/index.mdx
   display_lang: pt
   version: 0d94c9a1-1966-5577-b430-d98f2b793d92
 winner: b

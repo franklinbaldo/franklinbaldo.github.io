@@ -4,11 +4,11 @@ run_at: '2026-06-03T13:11:38Z'
 match_index: 4
 post_a:
   key: crossing-interference
-  path: src/content/blog/crossing-after-interference.md
+  path: src/content/blog/crossing-after-interference/index.md
   version: fb42f337-befb-5de1-8e65-d25256a81da6
 post_b:
   key: delphi-imperatives
-  path: src/content/blog/the-three-imperatives-at-delphi.md
+  path: src/content/blog/the-three-imperatives-at-delphi/index.md
   version: a296becb-eff7-5546-b101-978854cb6204
 winner: b
 agent_id: claude-sonnet-4-6

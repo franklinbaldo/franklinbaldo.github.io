@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:18:07Z'
 match_index: 17
 post_a:
   key: third-half-fourth-wall
-  path: src/content/blog/a-terceira-metade-e-a-quarta-parede.md
+  path: src/content/blog/a-terceira-metade-e-a-quarta-parede/index.md
   display_lang: pt
   version: c9adda61-5ea6-52f8-bd70-90b216bb802e
 post_b:
   key: delphi-imperatives
-  path: src/content/blog/the-three-imperatives-at-delphi.md
+  path: src/content/blog/the-three-imperatives-at-delphi/index.md
   display_lang: en
   version: a296becb-eff7-5546-b101-978854cb6204
 winner: b

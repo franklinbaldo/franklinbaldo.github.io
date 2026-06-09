@@ -4,12 +4,12 @@ run_at: '2026-06-08T10:29:03Z'
 match_index: 6
 post_a:
   key: its-raining-truth
-  path: src/content/blog/its-raining-truth.md
+  path: src/content/blog/its-raining-truth/index.md
   display_lang: en
   version: 6b1d78d5-939c-50b5-bb38-a86b6576a386
 post_b:
   key: agent-no-verbs
-  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs/index.md
   display_lang: en
   version: 2ddbcdb4-b91c-53f9-9c2b-9ef778416ce6
 winner: b

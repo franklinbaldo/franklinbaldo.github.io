@@ -4,13 +4,13 @@ run_at: '2026-06-08T10:47:43Z'
 match_index: 11
 post_a:
   key: jules-api-harness
-  path: src/content/blog/a-api-do-jules-como-backend-do-harness.md
+  path: src/content/blog/a-api-do-jules-como-backend-do-harness/index.md
   display_lang: pt
   version: c3e940ab-b355-5537-8f22-54671f4916fb
 post_b:
   key: verne-identity-repo
   path: >-
-    src/content/blog/verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram.md
+    src/content/blog/verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram/index.md
   display_lang: pt
   version: f0453e8d-193e-571c-986c-ed03c1289876
 winner: a

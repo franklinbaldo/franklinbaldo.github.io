@@ -5,11 +5,11 @@ match_index: 6
 post_a:
   key: family-memory
   path: >-
-    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory.md
+    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory/index.md
   version: 92f17745-2ff3-5284-a09b-e2edcf10d717
 post_b:
   key: travessia-project
-  path: src/content/blog/travessia-the-project-that-writes-itself.md
+  path: src/content/blog/travessia-the-project-that-writes-itself/index.md
   version: d114f8bb-e09a-5ba8-b50a-48cdc01b5c34
 winner: a
 agent_id: claude-sonnet-4-6

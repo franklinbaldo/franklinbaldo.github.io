@@ -4,13 +4,13 @@ run_at: '2026-06-08T10:44:25Z'
 match_index: 7
 post_a:
   key: delegating-to-agents
-  path: src/content/blog/the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation/index.md
   display_lang: en
   version: af592b0d-035b-5dbe-8ed5-d540b2fe3fa2
 post_b:
   key: everything-is-process
   path: >-
-    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
+    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/index.md
   display_lang: en
   version: 87bf8e37-ad21-552a-9cfe-190cbc7bbcb0
 winner: a

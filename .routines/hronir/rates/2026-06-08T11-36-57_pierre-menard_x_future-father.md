@@ -4,13 +4,13 @@ run_at: '2026-06-08T11:36:57Z'
 match_index: 8
 post_a:
   key: pierre-menard
-  path: src/content/blog/pierre-menard-pesquisador-computacional.md
+  path: src/content/blog/pierre-menard-pesquisador-computacional/index.md
   display_lang: pt
   version: 5f5fb2a8-cb12-5696-88ce-ae0f542f3b75
 post_b:
   key: future-father
   path: >-
-    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md
+    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents/index.md
   display_lang: en
   version: b5c85777-369f-5c2d-ba8e-2bfce7b0b824
 winner: b

@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:20:49Z'
 match_index: 5
 post_a:
   key: travessia-project
-  path: src/content/blog/travessia-the-project-that-writes-itself.md
+  path: src/content/blog/travessia-the-project-that-writes-itself/index.md
   display_lang: en
   version: d114f8bb-e09a-5ba8-b50a-48cdc01b5c34
 post_b:
   key: becoming-lobsters
-  path: src/content/blog/estamos-todos-nos-tornando-lagostas.md
+  path: src/content/blog/estamos-todos-nos-tornando-lagostas/index.md
   display_lang: pt
   version: 622871ed-4c38-5830-8df2-49d1817c1fcf
 winner: a

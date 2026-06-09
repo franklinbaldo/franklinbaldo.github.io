@@ -4,11 +4,11 @@ run_at: '2026-05-29T13:09:44Z'
 match_index: 3
 post_a:
   key: three-hammers
-  path: src/content/blog/three-hammers-walk-into-a-bar.md
+  path: src/content/blog/three-hammers-walk-into-a-bar/index.md
   version: 5c53e34c-d7cd-5b59-aa3f-c25ec6754687
 post_b:
   key: reclaiming-harness
-  path: src/content/blog/reclaiming-the-harness.md
+  path: src/content/blog/reclaiming-the-harness/index.md
   version: 2ccaa892-3525-5fe2-a223-fecd03131149
 winner: b
 agent_id: claude-sonnet-4-6
