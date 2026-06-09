@@ -59,24 +59,27 @@ jobs:
           #    and not awaiting feedback. `contains` (substring, case-folded)
           #    matches verne's real status spellings — e.g. AWAITING_USER_FEEDBACK
           #    or COMPLETED — without hard-coding exact enum strings.
-          ACTIVE_IDS=$(echo "$SESSIONS" | jq -r --arg source "$SOURCE" '[.sessions[]
+          # Emit one "id|status" line per active session so we can see both.
+          ACTIVE_ENTRIES=$(echo "$SESSIONS" | jq -r --arg source "$SOURCE" '[.sessions[]
             | select((.source // "") == $source and (.branch // "") == "main")
             | select(
                 ((.status // "") | ascii_downcase)
                 | (contains("complet") or contains("fail") or contains("cancel")
-                   or contains("awaiting") or contains("paused")) | not
+                   or contains("awaiting") or contains("waiting") or contains("paused")) | not
               )
-            | (.id // (.name | sub("^sessions/"; "")) // "unknown")]
+            | ((.id // (.name | sub("^sessions/"; "")) // "unknown") + "|" + (.status // "null"))]
             | .[]')
 
-          ACTIVE=$(echo "$ACTIVE_IDS" | grep -c '\S' || true)
+          ACTIVE=$(echo "$ACTIVE_ENTRIES" | grep -c '\S' || true)
 
           echo "Active session(s) for ${SOURCE}@main: ${ACTIVE}"
-          if [ -n "$ACTIVE_IDS" ]; then
-            while IFS= read -r sid; do
-              [ -z "$sid" ] && continue
-              echo "  Active: $sid → https://jules.google.com/task/$sid"
-            done <<< "$ACTIVE_IDS"
+          if [ -n "$ACTIVE_ENTRIES" ]; then
+            while IFS= read -r entry; do
+              [ -z "$entry" ] && continue
+              sid="${entry%%|*}"
+              sts="${entry##*|}"
+              echo "  Active: $sid (status=$sts) → https://jules.google.com/task/$sid"
+            done <<< "$ACTIVE_ENTRIES"
           fi
 
           # 3) Spawn only when nothing is actively working.
