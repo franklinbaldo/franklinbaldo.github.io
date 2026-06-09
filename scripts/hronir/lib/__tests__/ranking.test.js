@@ -32,6 +32,8 @@ function match(overrides) {
     bKey: "post-b",
     aPath: "src/content/blog/post-a.md",
     bPath: "src/content/blog/post-b.md",
+    aVersion: null,
+    bVersion: null,
     winner: "a",
     rateA: null,
     rateB: null,
@@ -371,5 +373,77 @@ describe("_computeAbsoluteQuality", () => {
   // Test: MIN_APPEARANCES is exported and equals 3
   it("MIN_APPEARANCES is exported and equals 3", () => {
     assert.equal(MIN_APPEARANCES, 3, "MIN_APPEARANCES should be 3");
+  });
+
+  // Test: reset-on-edit — version change discards pre-edit EWMA
+  it("reset-on-edit: version change resets EWMA to post-edit observations only", () => {
+    const raw = [
+      match({
+        runAt: "2024-03-01T00:00:00Z",
+        matchIndex: 1,
+        aKey: "post-edited",
+        bKey: "post-other",
+        winner: "b",
+        rateA: 2.0,
+        rateB: 4.0,
+        aVersion: "uuid-v1",
+      }),
+      // Same post, different version (edited) → EWMA resets
+      match({
+        runAt: "2024-03-01T00:00:01Z",
+        matchIndex: 2,
+        aKey: "post-edited",
+        bKey: "post-other2",
+        winner: "a",
+        rateA: 5.0,
+        rateB: 3.0,
+        aVersion: "uuid-v2",
+      }),
+    ];
+
+    const quality = _computeAbsoluteQuality(raw);
+    const qa = quality.get("post-edited");
+    assert.ok(qa, "post-edited should be in quality map");
+    // After reset, only the post-edit observation counts: stars = 5.0, n = 1
+    assert.equal(
+      qa.stars,
+      5.0,
+      "EWMA should equal post-edit rate (reset occurred)"
+    );
+    assert.equal(qa.n, 1, "n should be 1 after reset");
+  });
+
+  // Test: no reset when version unchanged
+  it("no-reset: same version across matches accumulates normally", () => {
+    const raw = [
+      match({
+        runAt: "2024-03-02T00:00:00Z",
+        matchIndex: 1,
+        aKey: "post-stable",
+        bKey: "post-other",
+        winner: "a",
+        rateA: 4.0,
+        rateB: 3.0,
+        aVersion: "uuid-stable",
+      }),
+      match({
+        runAt: "2024-03-02T00:00:01Z",
+        matchIndex: 2,
+        aKey: "post-stable",
+        bKey: "post-other2",
+        winner: "a",
+        rateA: 2.0,
+        rateB: 1.0,
+        aVersion: "uuid-stable",
+      }),
+    ];
+
+    const quality = _computeAbsoluteQuality(raw);
+    const qa = quality.get("post-stable");
+    assert.ok(qa, "post-stable should be in quality map");
+    // No reset: EWMA = ALPHA*2.0 + (1-ALPHA)*4.0
+    const expected = EWMA_ALPHA * 2.0 + (1 - EWMA_ALPHA) * 4.0;
+    assert.equal(qa.stars, expected, "EWMA should accumulate without reset");
+    assert.equal(qa.n, 2, "n should be 2 (no reset)");
   });
 });

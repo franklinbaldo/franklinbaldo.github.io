@@ -46,6 +46,8 @@ function _loadMatchData() {
       bKey,
       aPath: data.post_a?.path || "",
       bPath: data.post_b?.path || "",
+      aVersion: data.post_a?.version ?? null,
+      bVersion: data.post_b?.version ?? null,
       winner,
       rateA,
       rateB,
@@ -149,14 +151,32 @@ export function computeRatings() {
 // Pure function: compute EWMA-based absolute quality map from raw match data.
 // Returns Map<key, { stars: ewmaValue, n: ratedCount, rawStars: simpleAvg }>
 // Only posts that appear in at least one rated match are included.
+// Edit detection: when post_a.version / post_b.version changes between
+// consecutive matches, the post was edited — pre-edit ratings are stale
+// and the EWMA resets to the first post-edit observation.
 export function _computeAbsoluteQuality(raw) {
   const sorted = _sortMatchData(raw);
 
   const ewma = new Map(); // key → current EWMA value
-  const count = new Map(); // key → number of rated appearances
+  const count = new Map(); // key → number of rated appearances (post-last-edit)
   const sum = new Map(); // key → sum of raw star values (for rawStars)
+  const lastVersion = new Map(); // key → version string from last match
+
+  const resetIfEdited = (key, version) => {
+    if (version === null) return;
+    const prev = lastVersion.get(key);
+    if (prev !== undefined && prev !== version) {
+      ewma.delete(key);
+      count.delete(key);
+      sum.delete(key);
+    }
+    lastVersion.set(key, version);
+  };
 
   for (const m of sorted) {
+    resetIfEdited(m.aKey, m.aVersion);
+    resetIfEdited(m.bKey, m.bVersion);
+
     // Update post A if rated
     if (m.rateA !== null) {
       const key = m.aKey;

@@ -327,10 +327,11 @@ viés_avaliador/humor + efeito_perspectiva + ruído`. A soma `a+b` por clash é 
 > Recomendações da revisão da PR #292 incorporadas como **decisões iniciais** (o
 > autor/revisor é dono do sistema); ainda revisáveis na implementação.
 
-1. **Decaimento da EWMA → decidido:** **reset-on-edit via `gitMtime`** como
-   mecanismo primário (casa com a staleness já existente); meia-vida por **nº de
-   aparições** como fallback — **não** por tempo de relógio. Qualidade é
-   propriedade do texto _atual_; notas pré-edição são stale por definição.
+1. **Decaimento da EWMA → implementado:** reset quando `post_a.version` /
+   `post_b.version` muda entre matches consecutivos do mesmo post — detecção
+   puramente baseada nos rate files, sem git. Quando versão ausente (schema
+   antigo), acumula sem reset. Qualidade é propriedade do texto _atual_; notas
+   pré-edição são stale por definição.
 2. **Limiar `τ` → decidido:** na Fase 1, **exibir `div` numericamente sem flag
    dura**; calibrar `τ` depois contra `.routines/hronir/`, em unidades de `1/N`
    (a granularidade do percentil é ~`1/N`, então um valor fixo é instável).
