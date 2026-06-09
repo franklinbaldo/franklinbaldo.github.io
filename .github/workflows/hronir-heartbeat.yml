@@ -17,6 +17,9 @@ on:
   schedule:
     - cron: "*/15 * * * *" # every 15 minutes
   workflow_dispatch:
+  push:
+    branches:
+      - claude/lucid-goodall-3t7aqc
 
 permissions:
   contents: read
@@ -52,19 +55,32 @@ jobs:
           echo "$SESSIONS"
           echo "::endgroup::"
 
-          # 2) Count ACTIVE sessions for this repo+branch. Active = not terminal
+          # 2) Find ACTIVE sessions for this repo+branch. Active = not terminal
           #    and not awaiting feedback. `contains` (substring, case-folded)
           #    matches verne's real status spellings — e.g. AWAITING_USER_FEEDBACK
           #    or COMPLETED — without hard-coding exact enum strings.
-          ACTIVE=$(echo "$SESSIONS" | jq --arg source "$SOURCE" '[.sessions[]
+          # Emit one "id|status" line per active session so we can see both.
+          ACTIVE_ENTRIES=$(echo "$SESSIONS" | jq -r --arg source "$SOURCE" '[.sessions[]
             | select((.source // "") == $source and (.branch // "") == "main")
-            | ((.status // "") | ascii_downcase)
             | select(
-                (contains("complet") or contains("fail") or contains("cancel")
-                 or contains("awaiting") or contains("paused")) | not
-              )] | length')
+                ((.status // "") | ascii_downcase)
+                | (contains("complet") or contains("fail") or contains("cancel")
+                   or contains("awaiting") or contains("waiting") or contains("paused")) | not
+              )
+            | ((.id // (.name | sub("^sessions/"; "")) // "unknown") + "|" + (.status // "null"))]
+            | .[]')
+
+          ACTIVE=$(echo "$ACTIVE_ENTRIES" | grep -c '\S' || true)
 
           echo "Active session(s) for ${SOURCE}@main: ${ACTIVE}"
+          if [ -n "$ACTIVE_ENTRIES" ]; then
+            while IFS= read -r entry; do
+              [ -z "$entry" ] && continue
+              sid="${entry%%|*}"
+              sts="${entry##*|}"
+              echo "  Active: $sid (status=$sts) → https://jules.google.com/task/$sid"
+            done <<< "$ACTIVE_ENTRIES"
+          fi
 
           # 3) Spawn only when nothing is actively working.
           if [ "$ACTIVE" -gt 0 ]; then
