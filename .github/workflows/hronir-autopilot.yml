@@ -97,12 +97,22 @@ jobs:
             echo "PR #$PR has no Jules task link in its body — not ours, skipping."
             echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
           fi
+          # Missing key is a config error, not a skip: a non-Jules PR already
+          # exited above, so reaching here with no key means the secret is gone.
+          # Fail loud (exit 1) instead of going green and stalling the conveyor.
           if [ -z "${JULES_API_KEY:-}" ]; then
-            echo "::warning::JULES_API_KEY not set — cannot verify session; skipping."
-            echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
+            echo "::error::JULES_API_KEY not set — cannot verify the session. Fix the repo secret."
+            exit 1
           fi
-          if ! uvx --from "$VERNE" verne sessions show "$TASK" --json >/dev/null 2>&1; then
-            echo "verne could not resolve session $TASK — not one of ours, skipping."
+          # Conservative: any verne failure is treated as "not ours" and we skip
+          # (exit 0) rather than merge unverified. But capture and print verne's
+          # output so an infra failure (verne/network down) is visible, not
+          # silent — if the conveyor stalls on legit PRs, this is where to look.
+          # Telling "session not found" apart from "verne unavailable" needs
+          # verne to expose distinct exit codes; until then we stay conservative.
+          if ! VERNE_OUT=$(uvx --from "$VERNE" verne sessions show "$TASK" --json 2>&1); then
+            echo "verne could not resolve session $TASK — treating as not-ours, skipping. verne said:"
+            echo "$VERNE_OUT"
             echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
           fi
           echo "Authenticated PR #$PR as Jules session $TASK."
@@ -161,8 +171,8 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${JULES_API_KEY:-}" ]; then
-            echo "::warning::JULES_API_KEY not set — skipping session creation."
-            exit 0
+            echo "::error::JULES_API_KEY not set — cannot create the next session. Fix the repo secret."
+            exit 1
           fi
           TITLE="hronir session $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           SESSION=$(uvx --from "$VERNE" verne \

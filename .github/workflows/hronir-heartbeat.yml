@@ -46,9 +46,11 @@ jobs:
           JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
         run: |
           set -euo pipefail
+          # Missing key means the conveyor cannot run at all — fail loud (exit 1)
+          # so a removed/expired secret surfaces, instead of an hourly green no-op.
           if [ -z "${JULES_API_KEY:-}" ]; then
-            echo "::warning::JULES_API_KEY not set — cannot run heartbeat."
-            exit 0
+            echo "::error::JULES_API_KEY not set — heartbeat cannot ensure a session. Fix the repo secret."
+            exit 1
           fi
 
           SESSIONS=$(uvx --from "$VERNE" verne sessions list --json --page-size 100)
