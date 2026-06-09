@@ -1,5 +1,15 @@
 # Hrönir
 
+> **⚠ RFC 0003 (implementada, Fases 0–2) mudou a fase de edição.** Cada post
+> agora vive em `src/content/blog/<slug>/index.md`; a edição **não reescreve a
+> canônica no lugar** — `draft-worst` cria uma nova versão `<slug>/v-<ts>.md` que
+> convive lado a lado e **compete** com a canônica (duelos de versão no sampling),
+> e `promote` troca a vencedora para `index.md`. Os comandos `edit-worst`/
+> `edit-commit` continuam como **aliases** de `draft-worst`/`draft-commit`. As
+> seções abaixo que descrevem edição-no-lugar e `previousVersion` (linked list via
+> git) refletem o fluxo **legado**; a fonte canônica do novo fluxo é
+> `docs/rfcs/0003-*.md`.
+
 Sistema de avaliação par-a-par de posts do blog. Cada rodada gera N partidas (default 10) por **active sampling**. Para cada partida o Hrönir sorteia uma **perspectiva de leitor** (ver `perspectives/`) e o avaliador, identificando-se obrigatoriamente, atribui estrelas (1.00–5.00) a cada post junto com uma resenha de cada e um confronto. O vencedor é derivado mecanicamente: quem tem mais estrelas. Ao final, o post pior ranqueado recebe uma edição — registrada como `previousVersion` no próprio frontmatter do post (linked list de uma aresta apontando para a versão anterior no GitHub).
 
 > **Este CLI é não-interativo por design** (rodado por Claude Code).

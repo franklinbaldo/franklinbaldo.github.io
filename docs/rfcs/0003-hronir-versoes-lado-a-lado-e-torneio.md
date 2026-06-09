@@ -2,7 +2,7 @@
 
 |                 |                                                                                                                                                                                                                                                                                                                                                                                                        |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Status**      | Draft / Proposed                                                                                                                                                                                                                                                                                                                                                                                       |
+| **Status**      | Implemented (Fases 0–2)                                                                                                                                                                                                                                                                                                                                                                                |
 | **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                                                                                                                                                                                                    |
 | **Criado em**   | 2026-06-09                                                                                                                                                                                                                                                                                                                                                                                             |
 | **Branch / PR** | `claude/nifty-wright-z96lj3`                                                                                                                                                                                                                                                                                                                                                                           |
@@ -465,3 +465,13 @@ Merge com **merge commit** (não squash), conforme `CLAUDE.md`.
   `check-hygiene §6`); novo box "pasta-por-post ≠ pasta-de-categoria" deixa
   explícito que o princípio da 0006 **endossa** o Shape B. Coordenação com a
   **RFC 0005** (Hrönir→TS, _downstream_ desta) anotada.
+- **r4** (2026-06-09): **Fases 0–2 implementadas** na PR #306. Fase 0: migração
+  203 posts → `<slug>/index.md`, loader `**/index.*` + `generateId`,
+  `content.mjs` e paths dos rate files atualizados — URLs idênticas. Fase 1:
+  `draft-worst` cria `<slug>/v-<ts>.md` (canônica intocada), `draft-commit`
+  valida/registra; `posts.js` ganha `isCanonical`/`listVersions` e
+  `findTranslations` vira canônica-only. Fase 2: guard `aKey===bKey` nas trilhas
+  públicas, `computeVersionRatings`, duelo de versão no `generateNextMatch`, e o
+  comando `promote` (swap com `supersedes`; `supersedes` entra no schema zod).
+  Aliases `edit-worst`/`edit-commit` mantidos. Verde: build, doctor, golden
+  20/20, check:links/translations/hygiene.
