@@ -1,0 +1,30 @@
+{
+  "target": 20,
+  "completed": 0,
+  "agentId": "jules",
+  "evalLang": "pt",
+  "state": "deciding",
+  "skipEdit": false,
+  "skipRating": false,
+  "currentMatch": {
+    "match_index": 1,
+    "post_a": {
+      "key": "music-xadrez",
+      "path": "src/content/blog/musicas/xadrez-en.mdx",
+      "display_lang": "en",
+      "version": "9359e39a-9bd6-5bde-845d-180dcb7f600b"
+    },
+    "post_b": {
+      "key": "music-f73c60f0-49af-45fd-a483-1d35a676dccc",
+      "path": "src/content/blog/musicas/f73c60f0-49af-45fd-a483-1d35a676dccc-en.mdx",
+      "display_lang": "en",
+      "version": "075f2c3d-6e78-5b37-9b1e-f4b662474f85"
+    },
+    "agent_id": "jules",
+    "eval_lang": "pt",
+    "perspective_id": "skeptical-specialist",
+    "evaluator_mood": "O vento começou a bater mais forte na janela, e me lembrei que preciso regar as plantas da varanda antes que a terra seque de vez.",
+    "mood_glyph": "ω"
+  },
+  "minAppearances": null
+}
