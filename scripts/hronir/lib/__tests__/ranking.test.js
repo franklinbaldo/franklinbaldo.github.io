@@ -375,24 +375,26 @@ describe("_computeAbsoluteQuality", () => {
     assert.equal(MIN_APPEARANCES, 3, "MIN_APPEARANCES should be 3");
   });
 
-  // Test: reset-on-edit — version change discards pre-edit EWMA
+  // Test: reset-on-edit — same language file, version change discards pre-edit EWMA
   it("reset-on-edit: version change resets EWMA to post-edit observations only", () => {
     const raw = [
       match({
         runAt: "2024-03-01T00:00:00Z",
         matchIndex: 1,
         aKey: "post-edited",
+        aPath: "src/content/blog/post-edited.md",
         bKey: "post-other",
         winner: "b",
         rateA: 2.0,
         rateB: 4.0,
         aVersion: "uuid-v1",
       }),
-      // Same post, different version (edited) → EWMA resets
+      // Same post, SAME path, different version (real edit) → EWMA resets
       match({
         runAt: "2024-03-01T00:00:01Z",
         matchIndex: 2,
         aKey: "post-edited",
+        aPath: "src/content/blog/post-edited.md",
         bKey: "post-other2",
         winner: "a",
         rateA: 5.0,
@@ -445,5 +447,66 @@ describe("_computeAbsoluteQuality", () => {
     const expected = EWMA_ALPHA * 2.0 + (1 - EWMA_ALPHA) * 4.0;
     assert.equal(qa.stars, expected, "EWMA should accumulate without reset");
     assert.equal(qa.n, 2, "n should be 2 (no reset)");
+  });
+
+  // Test: language alternation must NOT reset (key shared, paths/versions differ)
+  // Regression guard: a multilingual post's version alternates EN↔PT every match
+  // because the generator picks a language variant at random. Tracking the reset
+  // by `key` would wipe the EWMA on each switch; tracking by `path` must not.
+  it("no-reset: same key, different language files/versions, no edit → accumulates", () => {
+    const EN = "src/content/blog/the-art-of-delegation.md";
+    const PT = "src/content/blog/delegando-para-agentes.md";
+    const raw = [
+      match({
+        runAt: "2024-03-03T00:00:00Z",
+        matchIndex: 1,
+        aKey: "multiling",
+        aPath: EN,
+        aVersion: "en-hash",
+        bKey: "opp1",
+        winner: "a",
+        rateA: 4.0,
+        rateB: 3.0,
+      }),
+      // Next match the generator picked PT for the same key — different path AND
+      // version, but NOT an edit. Must not reset.
+      match({
+        runAt: "2024-03-03T00:00:01Z",
+        matchIndex: 2,
+        aKey: "multiling",
+        aPath: PT,
+        aVersion: "pt-hash",
+        bKey: "opp2",
+        winner: "a",
+        rateA: 2.0,
+        rateB: 1.0,
+      }),
+      // Back to EN, same EN version as before — still no edit.
+      match({
+        runAt: "2024-03-03T00:00:02Z",
+        matchIndex: 3,
+        aKey: "multiling",
+        aPath: EN,
+        aVersion: "en-hash",
+        bKey: "opp3",
+        winner: "a",
+        rateA: 3.0,
+        rateB: 1.0,
+      }),
+    ];
+
+    const quality = _computeAbsoluteQuality(raw);
+    const qa = quality.get("multiling");
+    assert.ok(qa, "multiling should be in quality map");
+    assert.equal(qa.n, 3, "n should be 3 — no reset on language alternation");
+    // EWMA over [4.0, 2.0, 3.0] with no reset
+    let e = 4.0;
+    e = EWMA_ALPHA * 2.0 + (1 - EWMA_ALPHA) * e;
+    e = EWMA_ALPHA * 3.0 + (1 - EWMA_ALPHA) * e;
+    assert.equal(
+      qa.stars,
+      e,
+      "EWMA should accumulate across all 3 observations"
+    );
   });
 });

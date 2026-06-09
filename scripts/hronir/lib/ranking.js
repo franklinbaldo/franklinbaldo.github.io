@@ -151,55 +151,49 @@ export function computeRatings() {
 // Pure function: compute EWMA-based absolute quality map from raw match data.
 // Returns Map<key, { stars: ewmaValue, n: ratedCount, rawStars: simpleAvg }>
 // Only posts that appear in at least one rated match are included.
-// Edit detection: when post_a.version / post_b.version changes between
-// consecutive matches, the post was edited — pre-edit ratings are stale
-// and the EWMA resets to the first post-edit observation.
+// Edit detection: when a SPECIFIC language file's content version changes
+// between matches (a real edit), the post's pre-edit ratings are stale and
+// the EWMA resets. Tracking is keyed by `path` (the language file), NOT by
+// `key` (the translationKey): a key is shared across translations and the
+// match generator picks a language variant at random per match, so keying the
+// reset on `key` would fire on every EN↔PT alternation and wipe the EWMA for
+// multilingual posts (n would rarely reach MIN_APPEARANCES).
 export function _computeAbsoluteQuality(raw) {
   const sorted = _sortMatchData(raw);
 
   const ewma = new Map(); // key → current EWMA value
   const count = new Map(); // key → number of rated appearances (post-last-edit)
   const sum = new Map(); // key → sum of raw star values (for rawStars)
-  const lastVersion = new Map(); // key → version string from last match
+  const lastVersionByPath = new Map(); // path → last-seen content version
 
-  const resetIfEdited = (key, version) => {
-    if (version === null) return;
-    const prev = lastVersion.get(key);
+  const resetIfEdited = (key, path, version) => {
+    if (version === null || !path) return;
+    const prev = lastVersionByPath.get(path);
     if (prev !== undefined && prev !== version) {
       ewma.delete(key);
       count.delete(key);
       sum.delete(key);
     }
-    lastVersion.set(key, version);
+    lastVersionByPath.set(path, version);
+  };
+
+  const applyRating = (key, rate) => {
+    if (rate === null) return;
+    ewma.set(
+      key,
+      ewma.has(key)
+        ? EWMA_ALPHA * rate + (1 - EWMA_ALPHA) * ewma.get(key)
+        : rate
+    );
+    count.set(key, (count.get(key) || 0) + 1);
+    sum.set(key, (sum.get(key) || 0) + rate);
   };
 
   for (const m of sorted) {
-    resetIfEdited(m.aKey, m.aVersion);
-    resetIfEdited(m.bKey, m.bVersion);
-
-    // Update post A if rated
-    if (m.rateA !== null) {
-      const key = m.aKey;
-      if (!ewma.has(key)) {
-        ewma.set(key, m.rateA);
-      } else {
-        ewma.set(key, EWMA_ALPHA * m.rateA + (1 - EWMA_ALPHA) * ewma.get(key));
-      }
-      count.set(key, (count.get(key) || 0) + 1);
-      sum.set(key, (sum.get(key) || 0) + m.rateA);
-    }
-
-    // Update post B if rated
-    if (m.rateB !== null) {
-      const key = m.bKey;
-      if (!ewma.has(key)) {
-        ewma.set(key, m.rateB);
-      } else {
-        ewma.set(key, EWMA_ALPHA * m.rateB + (1 - EWMA_ALPHA) * ewma.get(key));
-      }
-      count.set(key, (count.get(key) || 0) + 1);
-      sum.set(key, (sum.get(key) || 0) + m.rateB);
-    }
+    resetIfEdited(m.aKey, m.aPath, m.aVersion);
+    resetIfEdited(m.bKey, m.bPath, m.bVersion);
+    applyRating(m.aKey, m.rateA);
+    applyRating(m.bKey, m.rateB);
   }
 
   const result = new Map();
