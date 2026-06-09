@@ -1,13 +1,13 @@
 # RFC 0003 — Versões lado a lado e torneio de versões no Hrönir
 
-|                 |                                                                                                                                                                                                                                                                                                  |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Status**      | Draft / Proposed                                                                                                                                                                                                                                                                                 |
-| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                                                                                              |
-| **Criado em**   | 2026-06-09                                                                                                                                                                                                                                                                                       |
-| **Branch / PR** | `claude/nifty-wright-z96lj3`                                                                                                                                                                                                                                                                     |
-| **Depende de**  | RFC 0001 (trilha de qualidade absoluta), RFC 0002 (de-confounding) — reusa `getPostUuid`, `version` nos rate files, `computeAbsoluteQuality`. **Bloqueante: RFC 0004 (#307)** — consolida a descoberta de posts em `scripts/lib/content.mjs`; deve ser mergeada antes da Fase 0 (ver §5.4 e §12) |
-| **Afeta**       | `src/content.config.ts`, `src/content/blog/**` (migração estrutural), `scripts/hronir/lib/{posts,commands,ranking,matches}.js`, rate files, `scripts/lib/content.mjs` (módulo único de descoberta de posts, provido pela RFC 0004 — §5.4), e os pontos de rename do §8 (Fase 1)                  |
+|                 |                                                                                                                                                                                                                                                                                                                                                                                                        |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Status**      | Draft / Proposed                                                                                                                                                                                                                                                                                                                                                                                       |
+| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                                                                                                                                                                                                    |
+| **Criado em**   | 2026-06-09                                                                                                                                                                                                                                                                                                                                                                                             |
+| **Branch / PR** | `claude/nifty-wright-z96lj3`                                                                                                                                                                                                                                                                                                                                                                           |
+| **Depende de**  | RFC 0001 (trilha de qualidade absoluta), RFC 0002 (de-confounding) — reusa `getPostUuid`, `version` nos rate files, `computeAbsoluteQuality`. **RFC 0004 (#307), já mergeada** — consolidou a descoberta de posts em `scripts/lib/content.mjs` (ver §5.4 e §12). **Coordena com:** RFC 0006 (mergeada, achatou `musicas/` — §2.1/§5) e RFC 0005 (Hrönir→TS, _downstream_: depende da Fase 0 desta RFC) |
+| **Afeta**       | `src/content.config.ts`, `src/content/blog/**` (migração estrutural), `scripts/hronir/lib/{posts,commands,ranking,matches}.js`, rate files, `scripts/lib/content.mjs` (módulo único de descoberta de posts, provido pela RFC 0004 — §5.4), e os pontos de rename do §8 (Fase 1)                                                                                                                        |
 
 > Este documento é a **etapa 1** da PR: primeiro o RFC, depois a implementação
 > incremental na mesma branch, fase a fase, cada fase verde (build + testes +
@@ -58,11 +58,13 @@ via `isPublished` (`src/lib/publish.ts`), com a URL derivada do id do arquivo
 loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/blog" }),
 ```
 
-Posts aninhados já existem (`src/content/blog/musicas/666-en.mdx` → id
-`musicas/666-en` → `/blog/musicas/666-en`). Logo: **se versões forem irmãs soltas
-no diretório, todas publicam** — conteúdo duplicado, canibalização de SEO, e
+O id é o caminho relativo sem extensão — um arquivo aninhado vira id `sub/arquivo`
+(o glob loader recorre `**/*`). Logo: **se versões forem irmãs soltas no
+diretório, todas publicam** — conteúdo duplicado, canibalização de SEO, e
 index/RSS/archive/tags/OG/sitemap listando cada versão. Qualquer desenho precisa
-garantir que **só a canônica** apareça para o Astro.
+garantir que **só a canônica** apareça para o Astro. (A RFC 0006 acabou de achatar
+`src/content/blog/musicas/`, que era o único aninhamento vivo; o Shape B
+reintroduz aninhamento, mas **por post**, não por categoria — §5.)
 
 ### 2.2. `translationKey` hoje consolida _tudo_
 
@@ -139,10 +141,20 @@ src/content/blog/
     v2.md             # ← rascunho competidor (invisível ao Astro)
   censo-nao-amostra/  # tradução PT é OUTRO post publicado → pasta própria
     index.md
-  musicas/
-    666-en/
-      index.mdx
+  666-en/             # post de música (postType: music) na RAIZ — pós-RFC 0006
+    index.mdx         # NÃO recriar musicas/ (check-hygiene §6 a bane)
 ```
+
+> **Pasta-por-post ≠ pasta-de-categoria (relação com a RFC 0006).** A RFC 0006
+> achatou `musicas/` porque era uma **pasta de categoria** — agrupava 130 posts
+> sem função no Astro, com o único diferenciador (`postType: music`) já no
+> frontmatter. O Shape B é o oposto: **uma pasta por post**, que carrega função
+> real (o eixo de versão — `index.md` + `v*.md` da _mesma_ obra). O princípio da
+> 0006 ("pasta tem que carregar função") **endossa** o Shape B. E a trava é
+> específica: `check-hygiene.mjs §6` bane só `src/content/blog/musicas/`, não
+> subpastas em geral — então o Shape B fica desbloqueado, desde que os posts de
+> música (agora na raiz) recebam suas pastas `<slug>/` também na raiz, sem
+> ressuscitar `musicas/`.
 
 ### 5.1. O loader passa a globar só a canônica
 
@@ -224,9 +236,11 @@ e o critério por nome de arquivo é mais robusto que uma flag de frontmatter �
 > **Resolvido pela RFC 0004 (#307).** A 0004 consolida toda a descoberta de posts
 > num módulo único `scripts/lib/content.mjs` (com `postIdFromPath`) e adiciona
 > `check:hygiene` no CI (allowlist da raiz, `musicas/` no `check:links`+hreflang,
-> id morto em `src/lib/paths.ts` corrigido). Depois que a 0004 mergear, a Fase 0
+> id morto em `src/lib/paths.ts` corrigido). Com a 0004 **já mergeada**, a Fase 0
 > da 0003 troca **uma função** (`postIdFromPath`) em vez de corrigir os cinco
-> scripts acima um a um. A tabela permanece como **diagnóstico** do que estava
+> scripts acima um a um. A RFC 0006 (mergeada) também já achatou `musicas/`, então
+> os geradores de música escrevem na raiz — suas pastas de versão `<slug>/` ficam
+> na raiz (§5), nunca sob `musicas/`. A tabela permanece como **diagnóstico** do que estava
 > frágil; a correção mora na 0004.
 
 ---
@@ -413,9 +427,9 @@ fundação travada por testes.
 ## 12. Plano de execução da PR
 
 1. **Commit 1 (este):** RFC `0003`.
-2. **Dependência:** mergear a **RFC 0004 (#307)** primeiro; depois **rebasear esta
-   branch** sobre ela (rebase limpo — a 0004 só toca `scripts/lib/`, `check.yml`,
-   raiz e o hardening de `keyForPath` em `posts.js`, fora das mudanças da 0003).
+2. **Feito:** RFC 0004 (#307) **mergeada** na `main`; esta branch **rebaseada**
+   sobre ela (limpo). A descoberta de posts já está em `scripts/lib/content.mjs`;
+   a Fase 0 implementa sobre ele.
 3. Após revisão: **Fase 0** (migração + `generateId`, comportamento preservado) →
    **Fase 1** (draft não-destrutivo) → **Fase 2** (competição + promoção), cada
    fase em commit próprio, build/testes/`prettier --check` verdes.
@@ -445,3 +459,9 @@ Merge com **merge commit** (não squash), conforme `CLAUDE.md`.
   RFC 0004"; Fase 0 passa a **rebasear sobre a 0004** e trocar `postIdFromPath` em
   vez de corrigir script a script; `keyForPath` e o check sitemap+`hreflang`
   (`check:hygiene`) delegados à 0004 (não duplicar); §12 ganha a ordem de merge.
+- **r3** (2026-06-09): branch **rebaseada** sobre `main` (RFC 0004/#307 já
+  mergeada). Reconciliação com a **RFC 0006** (mergeada, achatou `musicas/`): o
+  exemplo do §5 e o §2.1 deixam de usar caminhos `musicas/` (que hoje quebram o
+  `check-hygiene §6`); novo box "pasta-por-post ≠ pasta-de-categoria" deixa
+  explícito que o princípio da 0006 **endossa** o Shape B. Coordenação com a
+  **RFC 0005** (Hrönir→TS, _downstream_ desta) anotada.
