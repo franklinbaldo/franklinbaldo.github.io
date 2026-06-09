@@ -1,7 +1,9 @@
----
-title: Universal Threshold
-description: Música de Franklin Baldo — Universal Threshold
-date: 2025-09-29T00:00:00.000Z
+import fs from "fs";
+
+const content = `---
+title: "Universal Threshold"
+description: "Music by Franklin Baldo — Universal Threshold"
+date: 2025-09-29
 postType: music
 sunoId: 22f399f7-5c2b-4a43-8262-5a5fb8b48cf0
 sunoImageUrl: "https://cdn2.suno.ai/image_22f399f7-5c2b-4a43-8262-5a5fb8b48cf0.jpeg"
@@ -11,33 +13,18 @@ genre:
   - melancholic—ethereal synth layers
   - subtle piano arpeggios
   - tango-infused strings
-  - >-
-    fractal echoes in percussion. Borges-inspired narration: spoken-word verses
-    blending poetic recitation with soft vocals
+  - "fractal echoes in percussion. Borges-inspired narration: spoken-word verses blending poetic recitation with soft vocals"
 duration: 480
 tags:
-  - música
-lang: pt
+  - music
+lang: en
 translationKey: music-universal-threshold
-previousVersion:
-  uuid: c0773b7a-b29f-5ef7-a527-701c91a1422f
-  url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/f05e0041412aa2c733f4f284a430072f4ba0fc3a/src/content/blog/musicas/universal-threshold.mdx
-  timestamp: "2026-06-09T04:41:53.298Z"
-  msg: >-
-    Rewrite composer notes for Universal Threshold to fix tonal drift and
-    generic competence. The original notes leaned too heavily on unanchored
-    philosophical jargon ('dialectic dance', 'universal portal') and read like a
-    generic analysis rather than a situated reflection. I rewrote both pt and en
-    versions to anchor the text in the specific mechanical tension of Borges's
-    Aleph (the compression problem of finite bandwidth vs infinite input) and to
-    own the song's structural overload as a deliberate attempt (and failure) to
-    avoid making the ontological 'cut'.
+replacedVersion: "57bc37e1-86c4-5cdd-a21f-bf7c9bb03acf"
 ---
 
-## Letra
+## Lyrics
 
-```
+\`\`\`
 [Verse 1: Portal's Unveil]
 In the hush of the infinite, where sight pierces the veil,
 Aleph unfolds—a total, universal portal,
@@ -138,14 +125,20 @@ In this boundless behold, we stand, understand:
 The universe uttered in one sacred call,
 A symphony silent, a vista unmanned,
 Aleph's embrace: the all in the infinitesimal.
-```
+\`\`\`
 
-## Notas do compositor
+## Composer Notes
 
-O Aleph de Borges é frequentemente lido como um dispositivo narrativo para a maravilha, mas na prática do conto ele opera muito mais como um problema de compressão. O narrador desce ao porão de uma casa na Rua Garay e vê um ponto no espaço que contém todos os outros pontos — sem sobreposição, sem transparência. A visão é total, mas a linguagem é sucessiva. O conto é, no fundo, sobre o desespero de ter largura de banda finita diante de um input infinito.
+Borges's Aleph is often read as a narrative device for wonder, but in the machinery of the story, it operates much more like a compression problem. The narrator descends into the basement of a house on Calle Garay and sees a point in space that contains all other points—without superposition, without transparency. The vision is total, but language is successive. The story is, at bottom, about the despair of having finite bandwidth in the face of infinite input.
 
-Pedi ao Suno algo que soasse como uma tentativa de resolver esse problema por força bruta. A métrica rígida, a rima insistente, a estrutura arquitetônica de seis versos e múltiplas pontes — "Universal Threshold" não tenta mimetizar a fluidez da visão borgiana. Tenta enquadrá-la. O resultado, admito, beira o barão de Münchhausen tentando se puxar pelo próprio cabelo. As letras empilham vocabulário ("macro, micro", "radial, axial grid", "nullity hums") com uma ansiedade visível, tentando nomear a vastidão antes que o espaço acabe.
+I asked Suno for something that sounded like an attempt to solve this problem by brute force. The rigid meter, the insistent rhyme, the architectural structure of six verses and multiple bridges—"Universal Threshold" doesn't try to mimic the fluidity of the Borgesian vision. It tries to box it in. The result, I admit, borders on Baron von Münchhausen trying to pull himself up by his own hair. The lyrics stack vocabulary ("macro, micro", "radial, axial grid", "nullity hums") with a visible anxiety, trying to name the vastness before the space runs out.
 
-Há um momento no meio da faixa onde o projeto quase colapsa sob o próprio peso, e é exatamente aí que ele funciona. O "Chorus Variation: Café's Lament" abandona momentaneamente a geometria cósmica e foca na rua de Buenos Aires — o piano, o tango, o requiem. O Aleph não é apenas uma anomalia topológica; é o lugar onde você vê as cartas de Beatriz para Carlos Argentino. A totalidade não tem filtro. Ela inclui o que você não queria saber.
+There is a moment in the middle of the track where the project nearly collapses under its own weight, and that is exactly where it works. The "Chorus Variation: Café's Lament" temporarily abandons cosmic geometry and focuses on a street in Buenos Aires—the piano, the tango, the requiem. The Aleph is not just a topological anomaly; it is the place where you see Beatriz's letters to Carlos Argentino. Totality has no filter. It includes what you did not want to know.
 
-Essa é a tensão que me interessa manter quando escrevo sobre processo ontológico. O Ruliad — o espaço de todas as computações possíveis, que é o parente matemático do Aleph — não é transcendente. É puramente descritivo. "The all in the infinitesimal", como diz o último refrão, soa como misticismo, mas é apenas a constatação de que qualquer ponto de observação é um corte que colapsa a infinitude num mundo habitável. A música soa sobrecarregada porque está tentando tocar no arquivo sem fazer o corte. A sobrecarga, nesse caso, não é um defeito de execução. É o diagnóstico.
+That is the tension I am interested in maintaining when writing about process ontology. The Ruliad—the space of all possible computations, which is the mathematical relative of the Aleph—is not transcendent. It is purely descriptive. "The all in the infinitesimal," as the final chorus puts it, sounds like mysticism, but it is merely the observation that any point of view is a cut that collapses infinity into a habitable world. The music sounds overloaded because it is trying to touch the archive without making the cut. The overload, in this case, is not a flaw in execution. It is the diagnosis.
+`;
+
+fs.writeFileSync(
+  "src/content/blog/musicas/universal-threshold-en.mdx",
+  content
+);

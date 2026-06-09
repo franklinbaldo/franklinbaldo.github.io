@@ -1,7 +1,9 @@
----
+import fs from "fs";
+
+const content = `---
 title: Universal Threshold
 description: Música de Franklin Baldo — Universal Threshold
-date: 2025-09-29T00:00:00.000Z
+date: 2025-09-29
 postType: music
 sunoId: 22f399f7-5c2b-4a43-8262-5a5fb8b48cf0
 sunoImageUrl: "https://cdn2.suno.ai/image_22f399f7-5c2b-4a43-8262-5a5fb8b48cf0.jpeg"
@@ -11,33 +13,18 @@ genre:
   - melancholic—ethereal synth layers
   - subtle piano arpeggios
   - tango-infused strings
-  - >-
-    fractal echoes in percussion. Borges-inspired narration: spoken-word verses
-    blending poetic recitation with soft vocals
+  - "fractal echoes in percussion. Borges-inspired narration: spoken-word verses blending poetic recitation with soft vocals"
 duration: 480
 tags:
   - música
 lang: pt
 translationKey: music-universal-threshold
-previousVersion:
-  uuid: c0773b7a-b29f-5ef7-a527-701c91a1422f
-  url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/f05e0041412aa2c733f4f284a430072f4ba0fc3a/src/content/blog/musicas/universal-threshold.mdx
-  timestamp: "2026-06-09T04:41:53.298Z"
-  msg: >-
-    Rewrite composer notes for Universal Threshold to fix tonal drift and
-    generic competence. The original notes leaned too heavily on unanchored
-    philosophical jargon ('dialectic dance', 'universal portal') and read like a
-    generic analysis rather than a situated reflection. I rewrote both pt and en
-    versions to anchor the text in the specific mechanical tension of Borges's
-    Aleph (the compression problem of finite bandwidth vs infinite input) and to
-    own the song's structural overload as a deliberate attempt (and failure) to
-    avoid making the ontological 'cut'.
+replacedVersion: "c0773b7a-b29f-5ef7-a527-701c91a1422f"
 ---
 
 ## Letra
 
-```
+\`\`\`
 [Verse 1: Portal's Unveil]
 In the hush of the infinite, where sight pierces the veil,
 Aleph unfolds—a total, universal portal,
@@ -138,7 +125,7 @@ In this boundless behold, we stand, understand:
 The universe uttered in one sacred call,
 A symphony silent, a vista unmanned,
 Aleph's embrace: the all in the infinitesimal.
-```
+\`\`\`
 
 ## Notas do compositor
 
@@ -149,3 +136,6 @@ Pedi ao Suno algo que soasse como uma tentativa de resolver esse problema por fo
 Há um momento no meio da faixa onde o projeto quase colapsa sob o próprio peso, e é exatamente aí que ele funciona. O "Chorus Variation: Café's Lament" abandona momentaneamente a geometria cósmica e foca na rua de Buenos Aires — o piano, o tango, o requiem. O Aleph não é apenas uma anomalia topológica; é o lugar onde você vê as cartas de Beatriz para Carlos Argentino. A totalidade não tem filtro. Ela inclui o que você não queria saber.
 
 Essa é a tensão que me interessa manter quando escrevo sobre processo ontológico. O Ruliad — o espaço de todas as computações possíveis, que é o parente matemático do Aleph — não é transcendente. É puramente descritivo. "The all in the infinitesimal", como diz o último refrão, soa como misticismo, mas é apenas a constatação de que qualquer ponto de observação é um corte que colapsa a infinitude num mundo habitável. A música soa sobrecarregada porque está tentando tocar no arquivo sem fazer o corte. A sobrecarga, nesse caso, não é um defeito de execução. É o diagnóstico.
+`;
+
+fs.writeFileSync("src/content/blog/musicas/universal-threshold.mdx", content);
