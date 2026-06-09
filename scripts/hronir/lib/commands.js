@@ -585,6 +585,9 @@ export function continueCmd() {
         moodGlyph.codePointAt(0).toString(16).toUpperCase().padStart(4, "0")
       : null;
     const initialMood = session.currentMatch?.evaluator_mood ?? null;
+    const evalLang =
+      session.currentMatch?.eval_lang || session.evalLang || "pt";
+    const evalLangLabel = evalLang === "pt" ? "português" : evalLang;
 
     const perspectiveLine = perspective
       ? `Avalie a partir da perspectiva: ${perspective.name} (id: ${perspectiveId}). A perspectiva é fixa para este match — não há override.`
@@ -624,6 +627,8 @@ export function continueCmd() {
       "(o que cortar, expandir, reordenar) e apontar conteúdo relevante que veio",
       "à mente sobre o assunto — uma referência, um autor, um exemplo, um link.",
       "Essas sugestões alimentam a fase de edição; quanto mais específicas, melhor.",
+      "",
+      `🌐 LÍNGUA DE AVALIAÇÃO: ${evalLangLabel} (eval_lang: ${evalLang}). Escreva --review-a, --review-b e --clash nessa língua. O post pode estar em outra língua — não importa: a avaliação é sempre em ${evalLangLabel}.`,
       "",
       "- --after-mood: [PRIMEIRA flag; máx. 250 chars] Seu estado interno agora, em",
       "  primeira pessoa, decidido a partir do glifo + mood inicial + o que o match",
