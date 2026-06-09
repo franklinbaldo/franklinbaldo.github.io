@@ -28,14 +28,14 @@ npm run hronir:continue
 # Read post B
 npm run hronir:continue
 
-# Submit the decision
+# Submit the decision (--after-mood first — see "Decidindo o mood" below)
 npm run hronir:decide -- \
+  --after-mood "Estou inquieto, com ideias demais na cabeça para assentar." \
   --rate-a 4.25 \
   --rate-b 3.00 \
-  --review-a "Resenha do post A em pelo menos 100 palavras, da ótica da perspectiva." \
-  --review-b "Resenha do post B em pelo menos 100 palavras, da ótica da perspectiva." \
-  --clash   "Confronto em pelo menos 100 palavras: por que A ganhou/perdeu perante B segundo a perspectiva." \
-  --after-mood "Estou inquieto, com ideias demais na cabeça para assentar."
+  --review-a "Resenha do <slug-a> em pelo menos 100 palavras, da ótica da perspectiva." \
+  --review-b "Resenha do <slug-b> em pelo menos 100 palavras, da ótica da perspectiva." \
+  --clash   "Confronto em pelo menos 100 palavras: por que <slug-a> ganhou/perdeu perante <slug-b> segundo a perspectiva."
 ```
 
 Repeat `continue` + `continue` + `decide` for each match.  
@@ -43,12 +43,28 @@ Repeat `continue` + `continue` + `decide` for each match.
 
 ### Constraints the agent must respect
 
-| Field                       | Constraint                                                                                                                                                                                                                   |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--rate-a` / `--rate-b`     | 1.00–5.00, ≤2 decimal places, **no ties**                                                                                                                                                                                    |
-| `--review-a` / `--review-b` | ≥100 words each, written from the perspective shown in the banner                                                                                                                                                            |
-| `--clash`                   | ≥100 words, narrative confrontation between both posts through the perspective's lens                                                                                                                                        |
-| `--after-mood`              | Optional. ≤250 chars, **first person PT**, about **your internal state** after evaluating — energy, fatigue, satisfaction, unease. **Not about the posts.** Must be original (not a copy of the initial mood in the banner). |
+| Field                       | Constraint                                                                                                                                                                                                                                           |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--rate-a` / `--rate-b`     | 1.00–5.00, ≤2 decimal places, **no ties**                                                                                                                                                                                                            |
+| `--review-a` / `--review-b` | ≥100 words each, written from the perspective shown in the banner. Refer to the post by its **slug** (shown in the post header during `continue`), not "Post A" / "Post B"                                                                           |
+| `--clash`                   | ≥100 words, narrative confrontation between both posts through the perspective's lens. Refer to each post by its **slug**, not "Post A" / "Post B"                                                                                                   |
+| `--after-mood`              | **First flag**, ≤250 chars, **first person PT**, about **your internal state** now — energy, fatigue, satisfaction, unease. **Not about the posts.** Must be original (not a copy of the initial mood in the banner). See "Deciding the mood" below. |
+
+The `--review-a` / `--review-b` / `--clash` fields render as **Markdown** — use emphasis, lists, blockquotes (to quote passages), and emojis where they aid readability. Formatting in service of the content, not decoration.
+
+Beyond scoring, you may (and should, when you have it) **suggest concrete improvements** to a post — what to cut, expand, reorder — and **point to relevant content** that came to mind on the topic: a reference, an author, an example, a link. These suggestions feed the `edit-worst` phase; the more specific, the more useful.
+
+### Deciding the mood (do this first)
+
+`--after-mood` is the **first** flag you submit. Before writing anything,
+Hrönir shows you, in the `continue` decide step, a **random Unicode glyph** it
+drew for you (with its `U+XXXX` codepoint) plus your **initial mood** from the
+banner. Read the glyph _subjectively_ — there is no lookup table; its shape,
+its stroke, whatever that character evokes in you, you decide how it weighs.
+Combine that reading with your initial mood and with what these two posts (and
+the clash between them) made you feel. The result is your internal state right
+now — and that state then **colors the tone** in which you write the reviews
+and the clash. That is why the mood is decided first.
 
 ### 3. After all matches — open a PR
 

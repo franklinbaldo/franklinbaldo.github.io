@@ -260,6 +260,31 @@ export function init(options = {}) {
   continueCmd();
 }
 
+// Curated ranges of generally-visible, assigned Unicode (skips control chars,
+// surrogates, and the unassigned wastelands). The evaluator reads whatever
+// glyph comes out subjectively — a letter, an arrow, a kanji, a dingbat — and
+// lets its shape/feel nudge the mood. Hronir rolls it so the agent can't fake it.
+const MOOD_GLYPH_RANGES = [
+  [0x21, 0x7e], // ASCII punctuation, digits, letters
+  [0xa1, 0x24f], // Latin-1 supplement + Latin Extended-A/B
+  [0x370, 0x3ff], // Greek and Coptic
+  [0x400, 0x4ff], // Cyrillic
+  [0x2190, 0x21ff], // Arrows
+  [0x2200, 0x22ff], // Mathematical operators
+  [0x2600, 0x26ff], // Miscellaneous symbols
+  [0x2700, 0x27bf], // Dingbats
+  [0x3041, 0x3096], // Hiragana
+  [0x30a1, 0x30fa], // Katakana
+  [0x4e00, 0x9fff], // CJK unified ideographs
+];
+
+function randomMoodGlyph() {
+  const [lo, hi] =
+    MOOD_GLYPH_RANGES[Math.floor(Math.random() * MOOD_GLYPH_RANGES.length)];
+  const cp = lo + Math.floor(Math.random() * (hi - lo + 1));
+  return String.fromCodePoint(cp);
+}
+
 function generateNextMatch() {
   const allCandidates = listEnglishWithKey();
 
@@ -418,6 +443,9 @@ function generateNextMatch() {
     eval_lang: evalLang,
     perspective_id: perspective.id,
     evaluator_mood: evaluatorMood,
+    // Random Unicode glyph the evaluator reads subjectively (together with the
+    // initial mood and what the match made them feel) to shape the after-mood.
+    mood_glyph: randomMoodGlyph(),
   };
 }
 
@@ -514,7 +542,8 @@ export function continueCmd() {
       }
     }
 
-    console.log("=== PRIMEIRO POST (A) ===\n");
+    const aSlug = session.currentMatch?.post_a?.key || "(slug desconhecido)";
+    console.log(`=== PRIMEIRO POST (A) — slug: ${aSlug} ===\n`);
     console.log(fs.readFileSync(aPath, "utf8"));
     console.log("\n---\n");
 
@@ -541,12 +570,21 @@ export function continueCmd() {
       }
     }
 
-    console.log("=== SEGUNDO POST (B) ===\n");
+    const bSlug = session.currentMatch?.post_b?.key || "(slug desconhecido)";
+    console.log(`=== SEGUNDO POST (B) — slug: ${bSlug} ===\n`);
     console.log(fs.readFileSync(bPath, "utf8"));
     console.log("\n---\n");
 
     session.state = "deciding";
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
+
+    const aSlug = session.currentMatch?.post_a?.key || "(slug desconhecido)";
+    const moodGlyph = session.currentMatch?.mood_glyph ?? null;
+    const moodGlyphCp = moodGlyph
+      ? "U+" +
+        moodGlyph.codePointAt(0).toString(16).toUpperCase().padStart(4, "0")
+      : null;
+    const initialMood = session.currentMatch?.evaluator_mood ?? null;
 
     const perspectiveLine = perspective
       ? `Avalie a partir da perspectiva: ${perspective.name} (id: ${perspectiveId}). A perspectiva é fixa para este match — não há override.`
@@ -555,22 +593,51 @@ export function continueCmd() {
     const stepLines = [
       perspectiveLine,
       "",
+      "================================================================================",
+      `🔣 SEU GLIFO (Unicode aleatório): ${moodGlyph ?? "—"}  (${moodGlyphCp ?? "—"})`,
+      `🌡️  SEU MOOD INICIAL: ${initialMood ?? "—"}`,
+      "================================================================================",
+      "PRIMEIRO, antes de tudo, decida o seu --after-mood. O Hronir sorteou o",
+      "glifo acima por você — leia-o subjetivamente (não há tabela: a forma, o",
+      "traço, o que aquele caractere evoca em você, decida como pesa). Combine",
+      "essa leitura com o seu mood inicial e com o que estes dois posts e o",
+      "confronto entre eles te fizeram sentir. Desse caldo sai o seu estado",
+      "interno agora — e é ele que vai colorir o tom com que você escreve as",
+      "resenhas e o clash a seguir. Por isso o --after-mood é a PRIMEIRA flag.",
+      "",
+      `Slugs deste match: A = "${aSlug}", B = "${bSlug}".`,
+      "Nas resenhas e no confronto, refira-se a cada post pelo seu slug",
+      '(ex.: "' +
+        aSlug +
+        '"), não por "Post A" / "Post B". Isso mantém os relatos',
+      "legíveis fora do contexto efêmero do match.",
+      "",
       "Atribua estrelas (1.00–5.00) a cada post e escreva uma resenha de cada,",
       "depois um confronto. O vencedor é derivado mecanicamente: quem",
       "tiver mais estrelas. Empates são rejeitados — comprometa-se.",
       "",
-      "- --rate-a / --rate-b: número de 1.00 a 5.00 com até duas casas decimais (proibido empate)",
-      "- --review-a / --review-b: mínimo 100 palavras cada, escritas a partir da perspectiva atribuída",
-      "- --clash: mínimo 100 palavras, narra o confronto entre os dois posts pela ótica da perspectiva",
-      "- --after-mood: [OPCIONAL, máx. 250 chars] Um fragmento do seu estado interno agora. Pode ser incompleto,",
-      "  sensorial, mundano — o que estiver na cabeça ou no corpo. NÃO descreva os posts.",
-      "  NÃO repita o mood inicial do banner.",
+      "As resenhas e o confronto são renderizados como Markdown — pode usar",
+      "ênfase, listas, blockquotes para citar trechos, e emojis quando ajudarem",
+      "a marcar tom ou veredito. Use a formatação a serviço da leitura, sem exagero.",
+      "",
+      "Além de avaliar, fique à vontade para sugerir melhorias concretas ao post",
+      "(o que cortar, expandir, reordenar) e apontar conteúdo relevante que veio",
+      "à mente sobre o assunto — uma referência, um autor, um exemplo, um link.",
+      "Essas sugestões alimentam a fase de edição; quanto mais específicas, melhor.",
+      "",
+      "- --after-mood: [PRIMEIRA flag; máx. 250 chars] Seu estado interno agora, em",
+      "  primeira pessoa, decidido a partir do glifo + mood inicial + o que o match",
+      "  te fez sentir. Pode ser incompleto, sensorial, mundano — o que estiver na",
+      "  cabeça ou no corpo. NÃO descreva os posts. NÃO repita o mood inicial do banner.",
       '  Ex.: "Estou com vontade de assistir a um filme agora — algo longo e sem pressa."',
       '  Ex.: "Preciso sentir grama nos pés agora."',
       '  Ex.: "Estou ansioso para a viagem do mês que vem — fico pensando no aeroporto às 6h da manhã."',
+      "- --rate-a / --rate-b: número de 1.00 a 5.00 com até duas casas decimais (proibido empate)",
+      "- --review-a / --review-b: mínimo 100 palavras cada, escritas a partir da perspectiva atribuída, referindo-se ao post pelo slug",
+      "- --clash: mínimo 100 palavras, narra o confronto entre os dois posts (pelos slugs) pela ótica da perspectiva",
       "",
-      `Para decidir, rode:`,
-      `npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>" --after-mood "<estado pós-avaliação>"`,
+      `Para decidir, rode (--after-mood primeiro):`,
+      `npm run hronir:decide --after-mood "<estado interno agora>" --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>"`,
     ];
     nextStep(stepLines.join("\n"));
     return;
@@ -578,7 +645,7 @@ export function continueCmd() {
 
   if (session.state === "deciding") {
     nextStep(
-      `Você precisa decidir o match atual. Rode: npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>" --after-mood "<estado pós-avaliação>"`
+      `Você precisa decidir o match atual. Rode (--after-mood primeiro): npm run hronir:decide --after-mood "<estado interno agora>" --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>"`
     );
     return;
   }
@@ -599,7 +666,7 @@ export function next(initOptions = {}) {
 
   if (session.state === "deciding") {
     nextStep(
-      `Decisão pendente. Rode: npm run hronir:decide --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>" --after-mood "<estado pós-avaliação>"`
+      `Decisão pendente. Rode (--after-mood primeiro): npm run hronir:decide --after-mood "<estado interno agora>" --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>"`
     );
     return;
   }
@@ -773,6 +840,7 @@ export function decide(args) {
     override: null,
     perspective_id: perspective.id,
     evaluator_mood: currentMatch.evaluator_mood ?? null,
+    mood_glyph: currentMatch.mood_glyph ?? null,
     evaluator_mood_after: afterMood
       ? String(afterMood).trim().slice(0, 250) || null
       : null,
