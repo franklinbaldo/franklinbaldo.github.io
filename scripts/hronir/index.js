@@ -145,7 +145,7 @@ switch (cmd) {
     ranking();
     break;
   case "worst":
-    worst();
+    worst({ absolute: args.includes("--absolute") });
     break;
   case "edit-worst":
     editWorst();
