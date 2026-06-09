@@ -3,7 +3,7 @@ import { listMatchFiles, readMatch, postKey } from "./matches.js";
 
 export const MIN_APPEARANCES = 3;
 export const RANKING_MODEL_VERSION = 2;
-export const EWMA_ALPHA = 0.5;
+export const EWMA_ALPHA = 0.3;
 export const MARGIN_W_MIN = 0.1;
 
 // Internal: load and normalize all match data from disk.

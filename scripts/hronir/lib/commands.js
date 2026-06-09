@@ -13,7 +13,13 @@ import {
   getPostUuid,
   findTranslations,
 } from "./posts.js";
-import { listMatchFiles, readMatch, writeMatch, postKey } from "./matches.js";
+import {
+  listMatchFiles,
+  readMatch,
+  writeMatch,
+  postKey,
+  gitMtime,
+} from "./matches.js";
 import {
   computeRatings,
   computeAbsoluteQuality,
@@ -131,23 +137,6 @@ function isValidRate(n) {
   // accept up to two decimals (allow small float drift)
   const scaled = n * 100;
   return Math.abs(scaled - Math.round(scaled)) < 1e-6;
-}
-
-function gitMtime(filePath) {
-  try {
-    const out = execFileSync(
-      "git",
-      ["log", "-1", "--format=%ct", "--", filePath],
-      {
-        stdio: ["ignore", "pipe", "ignore"],
-      }
-    )
-      .toString()
-      .trim();
-    return out ? Number(out) * 1000 : 0;
-  } catch {
-    return 0;
-  }
 }
 
 function latestMatchTimeByKey() {
