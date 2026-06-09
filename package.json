@@ -8,6 +8,7 @@
   "scripts": {
     "prebuild": "node scripts/copy-katex.mjs && node scripts/generate-translation-pairs.mjs && node scripts/generate-redirects.mjs",
     "predev": "node scripts/copy-katex.mjs && node scripts/generate-translation-pairs.mjs && node scripts/generate-redirects.mjs",
+    "check:hygiene": "node scripts/check-hygiene.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check:translations": "node scripts/check-translations.mjs",
     "dev": "astro dev",
