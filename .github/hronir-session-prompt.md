@@ -1,52 +1,69 @@
 Run a complete Hrönir rating session for this blog and open a PR with the results.
 
-## Start
+## Steps
 
-```bash
-npm ci
-npm run hronir:init -- --agent-id jules --matches 20
-```
+1. Install dependencies:
 
-After init, **follow the NEXT STEP instructions the CLI prints at each stage.**
-The CLI guides you through the full loop (read → read → decide) and into the
-edit-worst phase. Do not skip any step it shows.
+   ```bash
+   npm ci
+   ```
 
-## How to evaluate — this is the most important part
+2. Initialize a session (use a stable agent id):
 
-**Read each post for real.** Not a skim. Not a summary. Sit with the text.
+   ```bash
+   npm run hronir:init -- --agent-id jules --matches 10
+   ```
 
-For **music posts** (`postType: music` in the frontmatter), the audio is
-available at `https://cdn1.suno.ai/<sunoId>.mp3` — download and listen to it
-before writing the review. The text of a music post exists in relation to the
-sound; evaluating one without the other misses the point.
+3. For each match, follow the loop the CLI prints: read post A, read post B,
+   then submit a decision. Read the banner each time — the perspective and the
+   evaluator mood change per match and your reviews must be written from that
+   perspective.
 
-Each match assigns you a **perspective** (a reader persona) and a **mood**. These
-are not decoration — they are the lens through which you must experience the posts.
-Inhabit the perspective fully: its values, its blind spots, what it finds moving or
-irritating. Your reviews and clash must come from inside that perspective, not from
-above it.
+   ```bash
+   npm run hronir:continue   # read post A
+   npm run hronir:continue   # read post B
+   npm run hronir:decide -- \
+     --rate-a <1.00-5.00> --rate-b <1.00-5.00> \
+     --review-a "<≥100 words, in the banner's perspective>" \
+     --review-b "<≥100 words, in the banner's perspective>" \
+     --clash   "<≥100 words, narrative confrontation through the perspective>" \
+     --after-mood "<≤250 chars, first person PT, your internal state after evaluating — original, not the banner mood>"
+   ```
 
-The **clash** is not a comparison table. It is a confrontation — something was at
-stake between these two posts when read through this lens, and you must say what it
-was and how it resolved. Write it as someone who was genuinely affected.
+   Respect every constraint:
+   - Ratings 1.00–5.00, at most 2 decimals, **no ties** between A and B.
+   - Reviews and clash each **≥100 words**, written from the shown perspective.
+   - `--after-mood` is about **your** state, not the posts; first person PT.
 
-Mechanical evaluations (templated phrases, generic praise, "Post A handles X well
-while Post B focuses on Y") will produce bad rate files and a broken ranking. The
-whole point of Hrönir is that the signal comes from a real subjective encounter
-with the text. If you phone it in, the system degrades.
+4. When all matches are done, the CLI enters the edit-worst phase. Edit the
+   lowest-ranked post (both the English and Portuguese versions) following the
+   `franklin-blog` writing skill, then commit the edit:
 
-## Before opening the PR
+   ```bash
+   npm run hronir:edit-commit
+   npm run hronir:end
+   ```
 
-```bash
-npm run hronir:doctor   # must report 0 inconsistências
-```
+5. Validate before committing:
 
-If doctor reports any issues — including files outside `.routines/hronir/` or
-`src/content/blog/` — fix or delete them before staging.
+   ```bash
+   npm run hronir:doctor      # must pass
+   npx prettier --write .
+   npx astro check
+   npm run build
+   ```
+
+6. Stage the rate files and the worst-post edit, commit, and open a PR:
+
+   ```bash
+   git add .routines/hronir/ src/content/blog/
+   git commit -m "hronir: 10 matches — jules"
+   ```
 
 ## Constraints on the PR
 
-- Only commit files under `.routines/hronir/**` and `src/content/blog/**`.
-  Do not touch workflows, scripts, `package.json`, or any other config.
-- The autopilot auto-merges only PRs confined to those two paths and with
-  `npx prettier --check .` and `npm run build` passing.
+- Only touch `.routines/hronir/**` and `src/content/blog/**`. Do not modify
+  workflows, scripts, `package.json`, or other config — the autopilot only
+  auto-merges PRs confined to those two paths.
+- Make sure `npx prettier --check .` and `npm run build` pass; CI gates the
+  merge on them.

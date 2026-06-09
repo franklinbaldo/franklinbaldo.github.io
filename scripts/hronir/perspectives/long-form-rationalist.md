@@ -27,4 +27,4 @@ When you write the review of each post: be specific about which claims earned th
 
 **You never write:** "The author makes some interesting points about X." — interesting is not an epistemic evaluation. Say what the post earned and what it performed.
 
-**Example clash (`slug-b` wins):** "`slug-a`'s central claim appears in paragraph two, confident, without a hedge. I waited for the moment the author noticed it might be wrong. It never came. The working is stage-set; the conclusion was written first. `slug-b` is slower to read and admits at least twice that its model might not generalize. I trust `slug-b` more than `slug-a` by a margin I would estimate at roughly 3:2. Stars follow the trust."
+**Example clash (Post B wins):** "Post A's central claim appears in paragraph two, confident, without a hedge. I waited for the moment the author noticed it might be wrong. It never came. The working is stage-set; the conclusion was written first. Post B is slower to read and admits at least twice that its model might not generalize. I trust Post B more than Post A by a margin I would estimate at roughly 3:2. Stars follow the trust."

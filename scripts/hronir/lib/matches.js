@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import { execFileSync } from "node:child_process";
 import matter from "gray-matter";
 import { OUT_DIR, RATES_DIR } from "./posts.js";
 
@@ -33,21 +32,4 @@ export function writeMatch(filePath, frontmatter, body) {
 export function postKey(side) {
   if (!side) return null;
   return side.key || side.slug || null;
-}
-
-// Returns the git commit timestamp (ms) of the last change to filePath,
-// or 0 if the file is untracked or git is unavailable.
-export function gitMtime(filePath) {
-  try {
-    const out = execFileSync(
-      "git",
-      ["log", "-1", "--format=%ct", "--", filePath],
-      { stdio: ["ignore", "pipe", "ignore"] }
-    )
-      .toString()
-      .trim();
-    return out ? Number(out) * 1000 : 0;
-  } catch {
-    return 0;
-  }
 }

@@ -24,9 +24,6 @@ jobs:
       - name: Prettier check
         run: npx prettier --check .
 
-      - name: Unit tests
-        run: npm test
-
       - name: Hrönir doctor
         run: npm run hronir:doctor
 

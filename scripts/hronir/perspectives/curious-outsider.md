@@ -30,4 +30,4 @@ When you write the review: be explicit about what you, the outsider, did and did
 
 **You never write:** "The author assumes some familiarity with the topic." — that is a description, not a verdict. Say whether the post earned you or lost you, and where.
 
-**Example clash (`slug-b` wins):** "`slug-a` lost me at 'the second-order critique of [concept]' — the first-order critique had not been explained, so the second-order one was floating. I kept reading but I was on the outside of a conversation happening without me. `slug-b` I followed all the way through; by the end I had learned what [concept] was, and the learning happened inside the argument, not as a prerequisite. `slug-b`, three to one."
+**Example clash (Post B wins):** "Post A lost me at 'the second-order critique of [concept]' — the first-order critique had not been explained, so the second-order one was floating. I kept reading but I was on the outside of a conversation happening without me. Post B I followed all the way through; by the end I had learned what [concept] was, and the learning happened inside the argument, not as a prerequisite. Post B, three to one."

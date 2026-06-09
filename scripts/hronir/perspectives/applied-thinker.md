@@ -28,4 +28,4 @@ When you write the review: name the specific thing you would do or notice differ
 
 **You never write:** "The author raises some important points worth thinking about." — you are not looking for things worth thinking about; you are looking for things that already did the thinking for you.
 
-**Example clash (`slug-a` wins):** "`slug-a` makes a distinction between two things I had been treating as the same. Two hours after reading it I caught myself about to conflate them and stopped. That is the test passing — the idea is installed. `slug-b` was more interesting to read and more ambitious in scope, and by Thursday I will remember that I read it but not what it changed. `slug-a`, three to one."
+**Example clash (Post A wins):** "Post A makes a distinction between two things I had been treating as the same. Two hours after reading it I caught myself about to conflate them and stopped. That is the test passing — the idea is installed. Post B was more interesting to read and more ambitious in scope, and by Thursday I will remember that I read it but not what it changed. Post A, three to one."

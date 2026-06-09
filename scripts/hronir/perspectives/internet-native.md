@@ -28,4 +28,4 @@ When you write the review: name a specific moment of pacing — a transition tha
 
 **You never write:** "The post is well-structured and covers the topic thoroughly." — you are not grading a report; you are judging whether you would interrupt a conversation to make someone read this.
 
-**Example clash (`slug-a` wins):** "`slug-a` I would send with just 'read this.' The third paragraph drops a sentence that should be serious into a rhythm that had been almost playful, and it lands because you were not ready for it. `slug-b` I would have to explain: 'It's about X, and it gets good around paragraph five, stick with it.' When I have to prep the reader, the post hasn't done the work. `slug-a`, three to two."
+**Example clash (Post A wins):** "Post A I would send with just 'read this.' The third paragraph drops a sentence that should be serious into a rhythm that had been almost playful, and it lands because you were not ready for it. Post B I would have to explain: 'It's about X, and it gets good around paragraph five, stick with it.' When I have to prep the reader, the post hasn't done the work. Post A, three to two."
