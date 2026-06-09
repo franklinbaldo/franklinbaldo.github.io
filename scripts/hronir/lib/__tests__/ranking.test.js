@@ -1,11 +1,25 @@
-import { describe, it } from "node:test";
+import { describe, it, mock } from "node:test";
 import assert from "node:assert/strict";
-import {
+
+// Mock matches.js before importing ranking.js so the import chain does not
+// pull in posts.js → remark (which is only installed after `npm ci`).
+// The pure functions under test (_computeRatings, _computeAbsoluteQuality)
+// never call listMatchFiles/readMatch at runtime.
+await mock.module("../matches.js", {
+  namedExports: {
+    listMatchFiles: () => [],
+    readMatch: () => ({ data: {}, content: "" }),
+    writeMatch: () => {},
+    postKey: (side) => (side ? side.key || side.slug || null : null),
+  },
+});
+
+const {
   _computeRatings,
   _computeAbsoluteQuality,
   EWMA_ALPHA,
   MIN_APPEARANCES,
-} from "../ranking.js";
+} = await import("../ranking.js");
 
 // Fixture builder helpers
 
