@@ -43,7 +43,10 @@ export function readPost(filePath) {
 export function keyForPath(filePath) {
   const data = readPost(filePath);
   if (data.translationKey) return String(data.translationKey);
-  return path.basename(filePath).replace(/\.mdx?$/, "");
+  const base = path.basename(filePath).replace(/\.mdx?$/, "");
+  // After RFC 0003, canonical files are named index.md — use the folder name.
+  if (base === "index") return path.basename(path.dirname(filePath));
+  return base;
 }
 
 export function buildPathIndex() {

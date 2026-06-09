@@ -1,4 +1,6 @@
 // CI guard for the en/pt translation pairing.
+// post.file is a path relative to src/content/blog/ (e.g. "musicas/666-en.mdx"),
+// matching how git diff reports changed files after stripping that prefix.
 //
 // Two checks:
 //   1. Completeness (always): every non-draft post that carries a
@@ -67,7 +69,12 @@ if (baseRef) {
     process.exit(1);
   }
 
-  const changedFiles = new Set(changed.map((p) => p.split("/").pop()));
+  const BLOG_PREFIX = "src/content/blog/";
+  const changedFiles = new Set(
+    changed
+      .filter((p) => p.startsWith(BLOG_PREFIX))
+      .map((p) => p.slice(BLOG_PREFIX.length))
+  );
   const byKey = new Map();
   for (const p of posts) {
     if (!p.translationKey) continue;

@@ -7,49 +7,13 @@
 // date-prefixed form and silently 404'd. This module is the single source of
 // truth for both the CI link check (scripts/check-links.mjs) and the redirect
 // generator (scripts/generate-redirects.mjs).
-import { readFileSync, readdirSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { listPostFiles, readPostMeta, BLOG_DIR } from "./content.mjs";
 
-const __dir = dirname(fileURLToPath(import.meta.url));
-export const BLOG_DIR = join(__dir, "../../src/content/blog");
-
-function parseFrontmatter(raw) {
-  const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!m) return { get: () => undefined, body: raw };
-  const fmBlock = m[1];
-  const body = raw.slice(m[0].length);
-  const get = (key) => {
-    const mm = fmBlock.match(new RegExp(`^${key}:\\s*([^\r\n]+)$`, "m"));
-    if (!mm) return undefined;
-    return mm[1].trim().replace(/^['"]|['"]$/g, "");
-  };
-  return { get, body };
-}
+export { BLOG_DIR };
 
 /** Load every blog post with the frontmatter fields the checks care about. */
 export function loadPosts() {
-  const files = readdirSync(BLOG_DIR).filter((f) => /\.mdx?$/.test(f));
-  return files.map((file) => {
-    const raw = readFileSync(join(BLOG_DIR, file), "utf-8");
-    const { get, body } = parseFrontmatter(raw);
-    const draft = get("draft") === "true";
-    let published = !draft;
-    const publishDateRaw = get("publishDate");
-    if (published && publishDateRaw) {
-      const d = new Date(publishDateRaw);
-      if (!Number.isNaN(d.valueOf()) && d > new Date()) published = false;
-    }
-    return {
-      file,
-      id: file.replace(/\.mdx?$/, ""),
-      lang: get("lang") ?? "en",
-      draft,
-      published,
-      translationKey: get("translationKey"),
-      body,
-    };
-  });
+  return listPostFiles().map((absPath) => readPostMeta(absPath));
 }
 
 /** Strip anchor/query and force a single trailing slash. */
