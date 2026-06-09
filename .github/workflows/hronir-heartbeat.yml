@@ -4,8 +4,9 @@ name: Hrönir Heartbeat
 #
 # The event-driven autopilot (hronir-autopilot.yml) only reacts when a PR
 # arrives. If a session dies without ever opening a PR — or session creation
-# failed — the conveyor would stall. This hourly cron is the safety net: it
-# makes sure at least one Hrönir session exists per hour.
+# failed — the conveyor would stall. This cron (every 15 min) is the safety
+# net: it makes sure stuck sessions are unblocked quickly and a new session
+# is spawned if none is in-flight.
 #
 # Two-phase logic:
 #   Phase 1 — Unblock: sessions in "awaiting_feedback" (stuck waiting for a
@@ -21,7 +22,7 @@ name: Hrönir Heartbeat
 
 on:
   schedule:
-    - cron: "0 * * * *" # hourly
+    - cron: "*/15 * * * *" # every 15 minutes
   workflow_dispatch:
 
 permissions:
