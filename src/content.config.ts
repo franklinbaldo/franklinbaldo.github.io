@@ -1,10 +1,10 @@
-import { defineCollection, z } from "astro:content";
+import { defineCollection, z, type SchemaContext } from "astro:content";
 import { glob } from "astro/loaders";
 
 // Shared schema for canonical posts (blog) and their non-canonical versions
 // (blogVersions). RFC 0003: a version file is a frozen copy of a canonical, so
 // it satisfies the same shape plus a few draft-lifecycle markers.
-const postSchema = ({ image }: { image: () => z.ZodTypeAny }) =>
+const postSchema = ({ image }: SchemaContext) =>
   z.object({
     title: z.string(),
     description: z.string(),
