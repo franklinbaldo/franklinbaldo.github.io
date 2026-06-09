@@ -4,11 +4,11 @@ run_at: '2026-06-06T13:13:23Z'
 match_index: 6
 post_a:
   key: census-not-sample
-  path: src/content/blog/census-not-sample.md
+  path: src/content/blog/census-not-sample/index.md
   version: bc022ad8-48c1-5285-956e-515fc6a0fd27
 post_b:
   key: pontifex-guide
-  path: src/content/blog/pontifex-architecture-implementation-guide.md
+  path: src/content/blog/pontifex-architecture-implementation-guide/index.md
   version: 6e47265f-e71e-5e48-9fe9-cbb1dfe2fe26
 winner: b
 agent_id: claude-sonnet-4-6

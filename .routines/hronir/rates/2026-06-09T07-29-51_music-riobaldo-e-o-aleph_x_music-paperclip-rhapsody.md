@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:29:51Z'
 match_index: 19
 post_a:
   key: music-riobaldo-e-o-aleph
-  path: src/content/blog/riobaldo-e-o-aleph.mdx
+  path: src/content/blog/riobaldo-e-o-aleph/index.mdx
   display_lang: pt
   version: 6ec21569-bf69-5459-87fb-5ef93f825ab2
 post_b:
   key: music-paperclip-rhapsody
-  path: src/content/blog/paperclip-rhapsody-en.mdx
+  path: src/content/blog/paperclip-rhapsody-en/index.mdx
   display_lang: en
   version: 74a96a13-97f8-5ce0-b32a-0fd133f10029
 winner: b

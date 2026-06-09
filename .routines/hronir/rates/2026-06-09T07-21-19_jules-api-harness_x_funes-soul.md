@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:21:19Z'
 match_index: 6
 post_a:
   key: jules-api-harness
-  path: src/content/blog/a-api-do-jules-como-backend-do-harness.md
+  path: src/content/blog/a-api-do-jules-como-backend-do-harness/index.md
   display_lang: pt
   version: c3e940ab-b355-5537-8f22-54671f4916fb
 post_b:
   key: funes-soul
-  path: src/content/blog/soulmd-funes.md
+  path: src/content/blog/soulmd-funes/index.md
   display_lang: pt
   version: 434bfc2c-b22d-5db3-8407-03c568909384
 winner: b

@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:24:14Z'
 match_index: 2
 post_a:
   key: music-caminho
-  path: src/content/blog/caminho.mdx
+  path: src/content/blog/caminho/index.mdx
   display_lang: pt
   version: 0d94c9a1-1966-5577-b430-d98f2b793d92
 post_b:
   key: music-eu-ia-escrever-sobre-o-infinito-de-novo
-  path: src/content/blog/eu-ia-escrever-sobre-o-infinito-de-novo-en.mdx
+  path: src/content/blog/eu-ia-escrever-sobre-o-infinito-de-novo-en/index.mdx
   display_lang: en
   version: a8b86ccc-835c-541f-b224-26863adf37b8
 winner: b

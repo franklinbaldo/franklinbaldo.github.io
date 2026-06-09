@@ -4,11 +4,11 @@ run_at: '2026-05-25T13:16:52Z'
 match_index: 8
 post_a:
   key: asterisk-protects
-  path: src/content/blog/who-the-asterisk-protects.md
+  path: src/content/blog/who-the-asterisk-protects/index.md
   version: 928509c0-8b88-5aed-b95a-046cbd754716
 post_b:
   key: reclaiming-harness
-  path: src/content/blog/reclaiming-the-harness.md
+  path: src/content/blog/reclaiming-the-harness/index.md
   version: 2ccaa892-3525-5fe2-a223-fecd03131149
 winner: a
 agent_id: claude-sonnet-4-6

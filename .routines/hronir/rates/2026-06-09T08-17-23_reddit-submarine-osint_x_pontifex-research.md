@@ -5,12 +5,12 @@ match_index: 15
 post_a:
   key: reddit-submarine-osint
   path: >-
-    src/content/blog/eles-esto-realmente-usando-uma-postagem-do-reddit-para-ajudar-a-bombardear-um-submarino-no-ir.md
+    src/content/blog/eles-esto-realmente-usando-uma-postagem-do-reddit-para-ajudar-a-bombardear-um-submarino-no-ir/index.md
   display_lang: pt
   version: 9d2202f2-7966-561d-aa8a-f82703711cdf
 post_b:
   key: pontifex-research
-  path: src/content/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica.md
+  path: src/content/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/index.md
   display_lang: pt
   version: 8e6caae0-2519-5011-af85-0ac99a930920
 winner: b

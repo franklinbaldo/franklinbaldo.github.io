@@ -4,11 +4,11 @@ run_at: '2026-06-06T13:14:14Z'
 match_index: 7
 post_a:
   key: pierre-menard
-  path: src/content/blog/pierre-menard-computational-researcher.md
+  path: src/content/blog/pierre-menard-computational-researcher/index.md
   version: 9e4135ad-ef47-5286-88fd-655075161694
 post_b:
   key: reddit-submarine-osint
-  path: src/content/blog/reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint/index.md
   version: 790123ae-b84d-5a72-8f0d-d2fbd4ee89d6
 winner: b
 agent_id: claude-sonnet-4-6

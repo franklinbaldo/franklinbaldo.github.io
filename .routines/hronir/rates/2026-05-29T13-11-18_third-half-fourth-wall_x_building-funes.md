@@ -4,11 +4,11 @@ run_at: '2026-05-29T13:11:18Z'
 match_index: 5
 post_a:
   key: third-half-fourth-wall
-  path: src/content/blog/the-third-half-and-the-fourth-wall.md
+  path: src/content/blog/the-third-half-and-the-fourth-wall/index.md
   version: c571e755-cc9d-5d33-ae7f-69cecf870f93
 post_b:
   key: building-funes
-  path: src/content/blog/building-funes.md
+  path: src/content/blog/building-funes/index.md
   version: f3fabcd1-3889-561a-ad4f-67aecd34fd09
 winner: b
 agent_id: claude-sonnet-4-6

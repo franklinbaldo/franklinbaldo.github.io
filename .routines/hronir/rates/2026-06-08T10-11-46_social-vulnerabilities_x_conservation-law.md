@@ -4,12 +4,12 @@ run_at: '2026-06-08T10:11:46Z'
 match_index: 5
 post_a:
   key: social-vulnerabilities
-  path: src/content/blog/patents-for-social-vulnerabilities.md
+  path: src/content/blog/patents-for-social-vulnerabilities/index.md
   display_lang: en
   version: e128567c-378a-5abd-8fa3-c3f0814e7e17
 post_b:
   key: conservation-law
-  path: src/content/blog/will-ai-discover-new-conservation-law-before-2050.md
+  path: src/content/blog/will-ai-discover-new-conservation-law-before-2050/index.md
   display_lang: en
   version: 6e94c525-9702-5890-8078-5443243b8b99
 winner: b

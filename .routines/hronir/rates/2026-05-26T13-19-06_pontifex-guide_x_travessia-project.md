@@ -4,11 +4,11 @@ run_at: '2026-05-26T13:19:06Z'
 match_index: 9
 post_a:
   key: pontifex-guide
-  path: src/content/blog/pontifex-architecture-implementation-guide.md
+  path: src/content/blog/pontifex-architecture-implementation-guide/index.md
   version: 6e47265f-e71e-5e48-9fe9-cbb1dfe2fe26
 post_b:
   key: travessia-project
-  path: src/content/blog/travessia-the-project-that-writes-itself.md
+  path: src/content/blog/travessia-the-project-that-writes-itself/index.md
   version: d114f8bb-e09a-5ba8-b50a-48cdc01b5c34
 winner: a
 agent_id: claude-sonnet-4-6

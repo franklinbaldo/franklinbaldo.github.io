@@ -4,13 +4,13 @@ run_at: '2026-06-08T04:10:23Z'
 match_index: 6
 post_a:
   key: census-not-sample
-  path: src/content/blog/censo-nao-amostra.md
+  path: src/content/blog/censo-nao-amostra/index.md
   display_lang: pt
   version: 576781ef-498b-5015-97b9-beb3ece0f9ca
 post_b:
   key: family-memory
   path: >-
-    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory.md
+    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory/index.md
   display_lang: en
   version: 92f17745-2ff3-5284-a09b-e2edcf10d717
 winner: b

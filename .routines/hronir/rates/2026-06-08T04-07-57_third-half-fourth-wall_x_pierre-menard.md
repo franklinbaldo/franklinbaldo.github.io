@@ -4,12 +4,12 @@ run_at: '2026-06-08T04:07:57Z'
 match_index: 3
 post_a:
   key: third-half-fourth-wall
-  path: src/content/blog/a-terceira-metade-e-a-quarta-parede.md
+  path: src/content/blog/a-terceira-metade-e-a-quarta-parede/index.md
   display_lang: pt
   version: c9adda61-5ea6-52f8-bd70-90b216bb802e
 post_b:
   key: pierre-menard
-  path: src/content/blog/pierre-menard-pesquisador-computacional.md
+  path: src/content/blog/pierre-menard-pesquisador-computacional/index.md
   display_lang: pt
   version: 5f5fb2a8-cb12-5696-88ce-ae0f542f3b75
 winner: b

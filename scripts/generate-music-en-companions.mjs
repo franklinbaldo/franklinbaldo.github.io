@@ -5,7 +5,8 @@
  *   node scripts/generate-music-en-companions.mjs
  */
 
-import { readFileSync, writeFileSync, existsSync, readdirSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { listPostFiles, postIdFromPath } from "./lib/content.mjs";
 import { join, dirname, basename } from "path";
 import { fileURLToPath } from "url";
 
@@ -131,13 +132,12 @@ function makeEnBody(ptBody, enTitle) {
 }
 
 async function main() {
-  const files = readdirSync(BLOG_DIR).filter((f) => f.endsWith(".mdx"));
-  // Skip files that are already EN companions (end with -en.mdx) and any
-  // non-music post sharing the blog root.
-  const ptFiles = files.filter((f) => {
-    if (f.endsWith("-en.mdx")) return false;
-    const raw = readFileSync(join(BLOG_DIR, f), "utf8");
-    return /^postType: music$/m.test(raw);
+  // RFC 0003: posts live in <slug>/index.mdx. Discover canonical music posts
+  // (postType: music, slug not already an -en companion) recursively.
+  const ptFiles = listPostFiles().filter((abs) => {
+    if (!abs.endsWith(".mdx")) return false;
+    if (postIdFromPath(abs).endsWith("-en")) return false;
+    return /^postType: music$/m.test(readFileSync(abs, "utf8"));
   });
 
   console.log(`Found ${ptFiles.length} PT music files to process.`);
@@ -146,15 +146,15 @@ async function main() {
   let updated = 0;
   let skipped = 0;
 
-  for (const filename of ptFiles) {
-    const slug = basename(filename, ".mdx");
-    const ptPath = join(BLOG_DIR, filename);
-    const enPath = join(BLOG_DIR, `${slug}-en.mdx`);
+  for (const ptPath of ptFiles) {
+    const slug = postIdFromPath(ptPath);
+    const enDir = join(BLOG_DIR, `${slug}-en`);
+    const enPath = join(enDir, "index.mdx");
 
     const content = readFileSync(ptPath, "utf8");
     const parsed = parseFrontmatter(content);
     if (!parsed) {
-      console.warn(`  skip (no frontmatter): ${filename}`);
+      console.warn(`  skip (no frontmatter): ${ptPath}`);
       skipped++;
       continue;
     }
@@ -183,12 +183,9 @@ async function main() {
 
     const enFrontmatter = buildEnFrontmatter(newFrontmatter, enTitle, slug);
     const enBody = makeEnBody(body, enTitle);
-    writeFileSync(
-      ptPath.replace(filename, `${slug}-en.mdx`),
-      `---\n${enFrontmatter}\n---\n${enBody}`,
-      "utf8"
-    );
-    console.log(`  created: ${slug}-en.mdx`);
+    mkdirSync(enDir, { recursive: true });
+    writeFileSync(enPath, `---\n${enFrontmatter}\n---\n${enBody}`, "utf8");
+    console.log(`  created: ${slug}-en/index.mdx`);
     created++;
   }
 

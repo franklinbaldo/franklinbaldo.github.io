@@ -4,11 +4,11 @@ run_at: '2026-05-24T13:05:50Z'
 match_index: 3
 post_a:
   key: verne-identity-repo
-  path: src/content/blog/verne-identity-repo.md
+  path: src/content/blog/verne-identity-repo/index.md
   version: d6fb456a-8667-5ab5-b4f3-528eab5af463
 post_b:
   key: reddit-submarine-osint
-  path: src/content/blog/reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint/index.md
   version: 790123ae-b84d-5a72-8f0d-d2fbd4ee89d6
 winner: b
 agent_id: claude-sonnet-4-6

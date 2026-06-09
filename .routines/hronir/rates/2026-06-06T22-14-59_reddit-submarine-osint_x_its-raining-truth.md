@@ -4,11 +4,11 @@ run_at: '2026-06-06T22:14:59Z'
 match_index: 5
 post_a:
   key: reddit-submarine-osint
-  path: src/content/blog/reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint/index.md
   version: 790123ae-b84d-5a72-8f0d-d2fbd4ee89d6
 post_b:
   key: its-raining-truth
-  path: src/content/blog/its-raining-truth.md
+  path: src/content/blog/its-raining-truth/index.md
   version: 6b1d78d5-939c-50b5-bb38-a86b6576a386
 winner: a
 agent_id: claude-sonnet-4-6

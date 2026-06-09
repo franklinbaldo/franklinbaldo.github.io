@@ -159,24 +159,26 @@ async function main() {
   for (const clip of clips) {
     const rawSlug = slugify(clip.title || clip.id);
     const slug = rawSlug || clip.id.slice(0, 8);
-    const filename = `${slug}.mdx`;
-    const filepath = join(OUT_DIR, filename);
+    // RFC 0003: each post is a folder <slug>/ whose canonical file is index.mdx.
+    const dir = join(OUT_DIR, slug);
+    const filepath = join(dir, "index.mdx");
 
     if (existsSync(filepath)) {
       skipped++;
       continue;
     }
     // The blog root is shared with regular posts; a song titled like an
-    // existing .md essay would otherwise produce a duplicate Astro id.
-    if (existsSync(join(OUT_DIR, `${slug}.md`))) {
-      console.warn(`  conflito com post existente, pulado: ${slug}.md`);
+    // existing essay would otherwise produce a duplicate Astro id.
+    if (existsSync(join(dir, "index.md"))) {
+      console.warn(`  conflito com post existente, pulado: ${slug}/index.md`);
       skipped++;
       continue;
     }
 
+    mkdirSync(dir, { recursive: true });
     const content = makeMdx(clip);
     writeFileSync(filepath, content, "utf8");
-    console.log(`  criado: ${filename}`);
+    console.log(`  criado: ${slug}/index.mdx`);
     created++;
   }
 

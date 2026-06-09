@@ -4,11 +4,11 @@ run_at: '2026-05-30T13:08:13Z'
 match_index: 2
 post_a:
   key: crossing-interference
-  path: src/content/blog/crossing-after-interference.md
+  path: src/content/blog/crossing-after-interference/index.md
   version: fb42f337-befb-5de1-8e65-d25256a81da6
 post_b:
   key: conceptual-document
-  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo.md
+  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo/index.md
   version: 826385fa-007f-5aa0-b19c-8992810d9155
 winner: b
 agent_id: claude-sonnet-4-6

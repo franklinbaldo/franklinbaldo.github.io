@@ -4,12 +4,12 @@ run_at: '2026-06-06T11:42:34Z'
 match_index: 3
 post_a:
   key: census-not-sample
-  path: src/content/blog/census-not-sample.md
+  path: src/content/blog/census-not-sample/index.md
   version: bc022ad8-48c1-5285-956e-515fc6a0fd27
 post_b:
   key: everything-is-process
   path: >-
-    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
+    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/index.md
   version: 0ed4e735-82c5-571a-99a4-397266e1580d
 winner: a
 agent_id: claude-sonnet-4-6

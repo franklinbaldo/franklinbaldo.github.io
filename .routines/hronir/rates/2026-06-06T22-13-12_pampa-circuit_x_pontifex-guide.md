@@ -4,11 +4,11 @@ run_at: '2026-06-06T22:13:12Z'
 match_index: 3
 post_a:
   key: pampa-circuit
-  path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital.md
+  path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/index.md
   version: b8248564-b943-59cf-a4dd-b50638708e57
 post_b:
   key: pontifex-guide
-  path: src/content/blog/pontifex-architecture-implementation-guide.md
+  path: src/content/blog/pontifex-architecture-implementation-guide/index.md
   version: 6e47265f-e71e-5e48-9fe9-cbb1dfe2fe26
 winner: a
 agent_id: claude-sonnet-4-6

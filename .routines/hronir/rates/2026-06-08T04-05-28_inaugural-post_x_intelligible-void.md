@@ -4,12 +4,12 @@ run_at: '2026-06-08T04:05:28Z'
 match_index: 1
 post_a:
   key: inaugural-post
-  path: src/content/blog/postagem-inaugural-um-vislumbre-da-minha-mente.md
+  path: src/content/blog/postagem-inaugural-um-vislumbre-da-minha-mente/index.md
   display_lang: pt
   version: c5c68f30-29fe-5fed-9127-04b2f5c5a182
 post_b:
   key: intelligible-void
-  path: src/content/blog/the-intelligible-void-hassabis-and-events.md
+  path: src/content/blog/the-intelligible-void-hassabis-and-events/index.md
   display_lang: en
   version: db266422-c416-575c-8ac4-2fb9342d695d
 winner: b

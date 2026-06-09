@@ -4,11 +4,11 @@ run_at: '2026-06-03T13:17:30Z'
 match_index: 10
 post_a:
   key: reclaiming-harness
-  path: src/content/blog/reclaiming-the-harness.md
+  path: src/content/blog/reclaiming-the-harness/index.md
   version: 2ccaa892-3525-5fe2-a223-fecd03131149
 post_b:
   key: serpents-egg
-  path: src/content/blog/the-serpents-egg.md
+  path: src/content/blog/the-serpents-egg/index.md
   version: 1b7cfab0-ad1c-5a00-943d-e5bbc2dad839
 winner: b
 agent_id: claude-sonnet-4-6

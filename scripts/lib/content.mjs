@@ -10,14 +10,19 @@ import { fileURLToPath } from "node:url";
 const __dir = dirname(fileURLToPath(import.meta.url));
 export const BLOG_DIR = join(__dir, "../../src/content/blog");
 
-/** Recursively list every .md/.mdx file under dir. Returns absolute paths. */
+/**
+ * Recursively list the canonical file of every blog post. Returns absolute
+ * paths. RFC 0003: each post is a folder <slug>/ whose canonical (published)
+ * version is index.md(x); non-canonical versions (v-<timestamp>.md) are
+ * skipped here, mirroring the Astro loader that globs only **\/index.{md,mdx}.
+ */
 export function listPostFiles(dir = BLOG_DIR) {
   const out = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const full = join(dir, entry.name);
     if (entry.isDirectory()) {
       out.push(...listPostFiles(full));
-    } else if (/\.mdx?$/.test(entry.name)) {
+    } else if (/^index\.mdx?$/.test(entry.name)) {
       out.push(full);
     }
   }
@@ -26,12 +31,11 @@ export function listPostFiles(dir = BLOG_DIR) {
 
 /**
  * Derive the Astro post id (= URL slug) from an absolute file path.
- * Today: relative path from BLOG_DIR, extension stripped.
- * RFC 0003 Fase 0 will change this to strip the trailing /index segment
- * so that <slug>/index.md produces the id <slug>.
+ * RFC 0003: canonical files are <slug>/index.md(x), so the id is the folder
+ * path (URL-preserving) — strip the trailing /index.<ext>.
  */
 export function postIdFromPath(absPath) {
-  return relative(BLOG_DIR, absPath).replace(/\.mdx?$/, "");
+  return relative(BLOG_DIR, absPath).replace(/\/index\.mdx?$/, "");
 }
 
 /** Parse YAML frontmatter from a raw markdown string (no dependencies). */

@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:27:22Z'
 match_index: 15
 post_a:
   key: music-two-cursors
-  path: src/content/blog/two-cursors.mdx
+  path: src/content/blog/two-cursors/index.mdx
   display_lang: pt
   version: 44ece350-b97f-5a96-934f-b78184dbc0d1
 post_b:
   key: music-entre-rascunho-e-apagar
-  path: src/content/blog/entre-rascunho-e-apagar-en.mdx
+  path: src/content/blog/entre-rascunho-e-apagar-en/index.mdx
   display_lang: en
   version: 2065fc6e-499f-5541-a562-80d912406d6a
 winner: b

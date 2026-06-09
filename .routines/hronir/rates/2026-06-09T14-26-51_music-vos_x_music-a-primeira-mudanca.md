@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:26:51Z'
 match_index: 9
 post_a:
   key: music-vos
-  path: src/content/blog/vos-en.mdx
+  path: src/content/blog/vos-en/index.mdx
   display_lang: en
   version: 481b3e69-8b27-5d54-a9f8-86f7c2957d57
 post_b:
   key: music-a-primeira-mudanca
-  path: src/content/blog/a-primeira-mudanca.mdx
+  path: src/content/blog/a-primeira-mudanca/index.mdx
   display_lang: pt
   version: 78c9d268-5b30-5d79-8c65-07ae8c92ee92
 winner: b

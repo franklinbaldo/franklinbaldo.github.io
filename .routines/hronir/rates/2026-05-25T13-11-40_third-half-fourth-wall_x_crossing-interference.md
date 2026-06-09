@@ -4,11 +4,11 @@ run_at: '2026-05-25T13:11:40Z'
 match_index: 2
 post_a:
   key: third-half-fourth-wall
-  path: src/content/blog/the-third-half-and-the-fourth-wall.md
+  path: src/content/blog/the-third-half-and-the-fourth-wall/index.md
   version: c571e755-cc9d-5d33-ae7f-69cecf870f93
 post_b:
   key: crossing-interference
-  path: src/content/blog/crossing-after-interference.md
+  path: src/content/blog/crossing-after-interference/index.md
   version: fb42f337-befb-5de1-8e65-d25256a81da6
 winner: a
 agent_id: claude-sonnet-4-6

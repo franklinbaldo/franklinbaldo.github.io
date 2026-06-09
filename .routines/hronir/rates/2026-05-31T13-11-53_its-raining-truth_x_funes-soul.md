@@ -4,11 +4,11 @@ run_at: '2026-05-31T13:11:53Z'
 match_index: 4
 post_a:
   key: its-raining-truth
-  path: src/content/blog/its-raining-truth.md
+  path: src/content/blog/its-raining-truth/index.md
   version: a22fbd7b-c1ff-598a-b89d-62a24587df93
 post_b:
   key: funes-soul
-  path: src/content/blog/funes-soul.md
+  path: src/content/blog/funes-soul/index.md
   version: e308ec3f-d136-5cf1-8407-a4b21940bdd1
 winner: b
 agent_id: claude-sonnet-4-6

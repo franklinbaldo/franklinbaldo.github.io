@@ -4,11 +4,11 @@ run_at: '2026-06-06T22:17:49Z'
 match_index: 8
 post_a:
   key: pontifex-guide
-  path: src/content/blog/pontifex-architecture-implementation-guide.md
+  path: src/content/blog/pontifex-architecture-implementation-guide/index.md
   version: 6e47265f-e71e-5e48-9fe9-cbb1dfe2fe26
 post_b:
   key: pontifex-research
-  path: src/content/blog/pontifex-novel-architecture-semantic-probing.md
+  path: src/content/blog/pontifex-novel-architecture-semantic-probing/index.md
   version: 12779a84-9f7b-569b-89e7-83f547051444
 winner: b
 agent_id: claude-sonnet-4-6

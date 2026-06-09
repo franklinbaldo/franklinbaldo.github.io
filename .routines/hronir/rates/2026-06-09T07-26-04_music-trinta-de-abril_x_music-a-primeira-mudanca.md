@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:26:04Z'
 match_index: 13
 post_a:
   key: music-trinta-de-abril
-  path: src/content/blog/trinta-de-abril.mdx
+  path: src/content/blog/trinta-de-abril/index.mdx
   display_lang: pt
   version: 793620ca-502d-5836-a96b-63fe8fda4342
 post_b:
   key: music-a-primeira-mudanca
-  path: src/content/blog/a-primeira-mudanca.mdx
+  path: src/content/blog/a-primeira-mudanca/index.mdx
   display_lang: pt
   version: 78c9d268-5b30-5d79-8c65-07ae8c92ee92
 winner: a

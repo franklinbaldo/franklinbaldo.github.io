@@ -5,12 +5,12 @@ match_index: 11
 post_a:
   key: verne-identity-repo
   path: >-
-    src/content/blog/verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram.md
+    src/content/blog/verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram/index.md
   display_lang: pt
   version: f0453e8d-193e-571c-986c-ed03c1289876
 post_b:
   key: census-not-sample
-  path: src/content/blog/census-not-sample.md
+  path: src/content/blog/census-not-sample/index.md
   display_lang: en
   version: d15754e1-5860-5641-9cb3-f0c6d5834384
 winner: b

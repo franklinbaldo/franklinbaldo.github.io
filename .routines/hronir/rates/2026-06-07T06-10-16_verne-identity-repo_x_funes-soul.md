@@ -4,11 +4,11 @@ run_at: '2026-06-07T06:10:16Z'
 match_index: 6
 post_a:
   key: verne-identity-repo
-  path: src/content/blog/verne-identity-repo.md
+  path: src/content/blog/verne-identity-repo/index.md
   version: d6fb456a-8667-5ab5-b4f3-528eab5af463
 post_b:
   key: funes-soul
-  path: src/content/blog/funes-soul.md
+  path: src/content/blog/funes-soul/index.md
   version: e308ec3f-d136-5cf1-8407-a4b21940bdd1
 winner: a
 agent_id: claude-sonnet-4-6

@@ -4,11 +4,11 @@ run_at: '2026-05-23T13:13:55Z'
 match_index: 6
 post_a:
   key: social-vulnerabilities
-  path: src/content/blog/patents-for-social-vulnerabilities.md
+  path: src/content/blog/patents-for-social-vulnerabilities/index.md
   version: e128567c-378a-5abd-8fa3-c3f0814e7e17
 post_b:
   key: three-hammers
-  path: src/content/blog/three-hammers-walk-into-a-bar.md
+  path: src/content/blog/three-hammers-walk-into-a-bar/index.md
   version: 5c53e34c-d7cd-5b59-aa3f-c25ec6754687
 winner: b
 agent_id: claude-sonnet-4-6

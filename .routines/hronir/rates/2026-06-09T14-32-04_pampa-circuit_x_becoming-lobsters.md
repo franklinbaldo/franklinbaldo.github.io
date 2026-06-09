@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:32:04Z'
 match_index: 19
 post_a:
   key: pampa-circuit
-  path: src/content/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital.md
+  path: src/content/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital/index.md
   display_lang: pt
   version: dbb05f0a-9156-5657-b86b-961d626d9555
 post_b:
   key: becoming-lobsters
-  path: src/content/blog/we-are-all-becoming-lobsters.md
+  path: src/content/blog/we-are-all-becoming-lobsters/index.md
   display_lang: en
   version: 2e72f3cd-0eb0-590e-bb86-1add1abf8c34
 winner: a

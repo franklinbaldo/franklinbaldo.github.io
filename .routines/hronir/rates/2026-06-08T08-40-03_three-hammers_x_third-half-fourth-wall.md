@@ -4,12 +4,12 @@ run_at: '2026-06-08T08:40:03Z'
 match_index: 3
 post_a:
   key: three-hammers
-  path: src/content/blog/tres-martelos-entram-num-bar.md
+  path: src/content/blog/tres-martelos-entram-num-bar/index.md
   display_lang: pt
   version: 7484e48e-59d1-5f87-91ac-76bca26dedee
 post_b:
   key: third-half-fourth-wall
-  path: src/content/blog/the-third-half-and-the-fourth-wall.md
+  path: src/content/blog/the-third-half-and-the-fourth-wall/index.md
   display_lang: en
   version: c571e755-cc9d-5d33-ae7f-69cecf870f93
 winner: b

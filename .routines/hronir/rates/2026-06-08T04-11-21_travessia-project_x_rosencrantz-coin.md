@@ -4,12 +4,12 @@ run_at: '2026-06-08T04:11:21Z'
 match_index: 7
 post_a:
   key: travessia-project
-  path: src/content/blog/travessia.md
+  path: src/content/blog/travessia/index.md
   display_lang: pt
   version: cafb4c57-3168-5986-9e33-6361e6ea5e11
 post_b:
   key: rosencrantz-coin
-  path: src/content/blog/rosencrantz-coin.md
+  path: src/content/blog/rosencrantz-coin/index.md
   display_lang: en
   version: 8817e7e9-9c76-555e-817c-a3d27722e63c
 winner: a

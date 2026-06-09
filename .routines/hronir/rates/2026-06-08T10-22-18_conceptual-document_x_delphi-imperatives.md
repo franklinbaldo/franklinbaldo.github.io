@@ -4,12 +4,12 @@ run_at: '2026-06-08T10:22:18Z'
 match_index: 2
 post_a:
   key: conceptual-document
-  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo.md
+  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo/index.md
   display_lang: en
   version: 826385fa-007f-5aa0-b19c-8992810d9155
 post_b:
   key: delphi-imperatives
-  path: src/content/blog/the-three-imperatives-at-delphi.md
+  path: src/content/blog/the-three-imperatives-at-delphi/index.md
   display_lang: en
   version: a296becb-eff7-5546-b101-978854cb6204
 winner: b

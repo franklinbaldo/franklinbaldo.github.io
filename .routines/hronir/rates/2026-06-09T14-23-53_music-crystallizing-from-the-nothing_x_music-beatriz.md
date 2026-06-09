@@ -4,12 +4,12 @@ run_at: '2026-06-09T14:23:53Z'
 match_index: 1
 post_a:
   key: music-crystallizing-from-the-nothing
-  path: src/content/blog/crystallizing-from-the-nothing-en.mdx
+  path: src/content/blog/crystallizing-from-the-nothing-en/index.mdx
   display_lang: en
   version: fba24bcc-45e1-562d-aa9d-df2a6ef30d5b
 post_b:
   key: music-beatriz
-  path: src/content/blog/beatriz-en.mdx
+  path: src/content/blog/beatriz-en/index.mdx
   display_lang: en
   version: 03f8ec3c-cee8-5bfe-b9cf-8857465be2d2
 winner: b

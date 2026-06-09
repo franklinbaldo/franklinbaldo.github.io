@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:20:10Z'
 match_index: 4
 post_a:
   key: three-hammers
-  path: src/content/blog/three-hammers-walk-into-a-bar.md
+  path: src/content/blog/three-hammers-walk-into-a-bar/index.md
   display_lang: en
   version: 5c53e34c-d7cd-5b59-aa3f-c25ec6754687
 post_b:
   key: delphi-imperatives
-  path: src/content/blog/the-three-imperatives-at-delphi.md
+  path: src/content/blog/the-three-imperatives-at-delphi/index.md
   display_lang: en
   version: a296becb-eff7-5546-b101-978854cb6204
 winner: a

@@ -5,12 +5,12 @@ match_index: 5
 post_a:
   key: social-vulnerabilities
   path: >-
-    src/content/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores.md
+    src/content/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/index.md
   display_lang: pt
   version: 98710b19-4cff-57a1-9eb8-b86da1df5e7c
 post_b:
   key: conservation-law
-  path: src/content/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050.md
+  path: src/content/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050/index.md
   display_lang: pt
   version: bbda1343-8794-5bff-a863-88df5ac36c7b
 winner: b

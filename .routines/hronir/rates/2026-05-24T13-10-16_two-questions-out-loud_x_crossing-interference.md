@@ -4,11 +4,11 @@ run_at: '2026-05-24T13:10:16Z'
 match_index: 8
 post_a:
   key: two-questions-out-loud
-  path: src/content/blog/two-questions-out-loud.md
+  path: src/content/blog/two-questions-out-loud/index.md
   version: e7dcdde4-8d8d-54e9-b301-79bd4f41bd18
 post_b:
   key: crossing-interference
-  path: src/content/blog/crossing-after-interference.md
+  path: src/content/blog/crossing-after-interference/index.md
   version: fb42f337-befb-5de1-8e65-d25256a81da6
 winner: b
 agent_id: claude-sonnet-4-6

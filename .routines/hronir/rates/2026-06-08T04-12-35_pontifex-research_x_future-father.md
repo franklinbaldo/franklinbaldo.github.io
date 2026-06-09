@@ -4,13 +4,13 @@ run_at: '2026-06-08T04:12:35Z'
 match_index: 8
 post_a:
   key: pontifex-research
-  path: src/content/blog/pontifex-novel-architecture-semantic-probing.md
+  path: src/content/blog/pontifex-novel-architecture-semantic-probing/index.md
   display_lang: en
   version: 12779a84-9f7b-569b-89e7-83f547051444
 post_b:
   key: future-father
   path: >-
-    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md
+    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents/index.md
   display_lang: en
   version: b5c85777-369f-5c2d-ba8e-2bfce7b0b824
 winner: b

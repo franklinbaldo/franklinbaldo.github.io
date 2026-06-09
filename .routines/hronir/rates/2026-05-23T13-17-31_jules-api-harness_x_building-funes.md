@@ -4,11 +4,11 @@ run_at: '2026-05-23T13:17:31Z'
 match_index: 9
 post_a:
   key: jules-api-harness
-  path: src/content/blog/jules-api-harness-backend.md
+  path: src/content/blog/jules-api-harness-backend/index.md
   version: 2d3349b4-e811-5acd-994b-47df4ebbaca5
 post_b:
   key: building-funes
-  path: src/content/blog/building-funes.md
+  path: src/content/blog/building-funes/index.md
   version: f3fabcd1-3889-561a-ad4f-67aecd34fd09
 winner: a
 agent_id: claude-sonnet-4-6

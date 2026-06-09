@@ -4,12 +4,12 @@ run_at: '2026-06-08T11:34:36Z'
 match_index: 2
 post_a:
   key: delphi-imperatives
-  path: src/content/blog/os-tres-imperativos-em-delfos.md
+  path: src/content/blog/os-tres-imperativos-em-delfos/index.md
   display_lang: pt
   version: 9517a12a-bf39-5bde-a04e-eec4c2c21f3b
 post_b:
   key: conceptual-document
-  path: src/content/blog/documento-conceitual-a-cronica-de-franklin-baldo.md
+  path: src/content/blog/documento-conceitual-a-cronica-de-franklin-baldo/index.md
   display_lang: pt
   version: adf71917-4658-50e6-b07a-0a3f954575c6
 winner: a

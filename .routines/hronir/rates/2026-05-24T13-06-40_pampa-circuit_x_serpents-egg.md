@@ -4,11 +4,11 @@ run_at: '2026-05-24T13:06:40Z'
 match_index: 4
 post_a:
   key: pampa-circuit
-  path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital.md
+  path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/index.md
   version: b8248564-b943-59cf-a4dd-b50638708e57
 post_b:
   key: serpents-egg
-  path: src/content/blog/the-serpents-egg.md
+  path: src/content/blog/the-serpents-egg/index.md
   version: 1b7cfab0-ad1c-5a00-943d-e5bbc2dad839
 winner: b
 agent_id: claude-sonnet-4-6

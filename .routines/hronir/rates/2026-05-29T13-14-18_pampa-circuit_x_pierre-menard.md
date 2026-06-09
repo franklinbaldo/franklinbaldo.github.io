@@ -4,11 +4,11 @@ run_at: '2026-05-29T13:14:18Z'
 match_index: 9
 post_a:
   key: pampa-circuit
-  path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital.md
+  path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/index.md
   version: b8248564-b943-59cf-a4dd-b50638708e57
 post_b:
   key: pierre-menard
-  path: src/content/blog/pierre-menard-computational-researcher.md
+  path: src/content/blog/pierre-menard-computational-researcher/index.md
   version: 9e4135ad-ef47-5286-88fd-655075161694
 winner: b
 agent_id: claude-sonnet-4-6

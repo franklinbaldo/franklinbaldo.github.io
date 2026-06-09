@@ -4,12 +4,12 @@ run_at: '2026-06-08T05:40:10Z'
 match_index: 10
 post_a:
   key: crossing-interference
-  path: src/content/blog/travessia-update.md
+  path: src/content/blog/travessia-update/index.md
   display_lang: pt
   version: 39835613-c3df-5ced-baf6-f3b366a073b6
 post_b:
   key: pontifex-guide
-  path: src/content/blog/pontifex-architecture-implementation-guide.md
+  path: src/content/blog/pontifex-architecture-implementation-guide/index.md
   display_lang: en
   version: 6e47265f-e71e-5e48-9fe9-cbb1dfe2fe26
 winner: b

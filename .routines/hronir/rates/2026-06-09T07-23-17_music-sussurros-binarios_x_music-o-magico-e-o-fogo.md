@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:23:17Z'
 match_index: 9
 post_a:
   key: music-sussurros-binarios
-  path: src/content/blog/sussurros-binarios.mdx
+  path: src/content/blog/sussurros-binarios/index.mdx
   display_lang: pt
   version: 8e51a2ff-6b94-54da-bf29-5e3391401267
 post_b:
   key: music-o-magico-e-o-fogo
-  path: src/content/blog/o-magico-e-o-fogo-en.mdx
+  path: src/content/blog/o-magico-e-o-fogo-en/index.mdx
   display_lang: en
   version: b0837034-4af4-5c14-a9dd-43cf94c3b49f
 winner: b

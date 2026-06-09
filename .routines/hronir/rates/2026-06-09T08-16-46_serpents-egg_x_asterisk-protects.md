@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:16:46Z'
 match_index: 13
 post_a:
   key: serpents-egg
-  path: src/content/blog/o-ovo-de-serpente.md
+  path: src/content/blog/o-ovo-de-serpente/index.md
   display_lang: pt
   version: bbac3db7-e8f5-57f0-b87c-140c679fd1c9
 post_b:
   key: asterisk-protects
-  path: src/content/blog/who-the-asterisk-protects.md
+  path: src/content/blog/who-the-asterisk-protects/index.md
   display_lang: en
   version: 928509c0-8b88-5aed-b95a-046cbd754716
 winner: b

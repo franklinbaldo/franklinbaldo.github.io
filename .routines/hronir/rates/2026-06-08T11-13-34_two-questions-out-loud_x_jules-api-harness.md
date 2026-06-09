@@ -4,12 +4,12 @@ run_at: '2026-06-08T11:13:34Z'
 match_index: 12
 post_a:
   key: two-questions-out-loud
-  path: src/content/blog/duas-perguntas-em-voz-alta.md
+  path: src/content/blog/duas-perguntas-em-voz-alta/index.md
   display_lang: pt
   version: 8e4064e4-a229-5d8c-8835-2315ccd8fc03
 post_b:
   key: jules-api-harness
-  path: src/content/blog/a-api-do-jules-como-backend-do-harness.md
+  path: src/content/blog/a-api-do-jules-como-backend-do-harness/index.md
   display_lang: pt
   version: c3e940ab-b355-5537-8f22-54671f4916fb
 winner: a

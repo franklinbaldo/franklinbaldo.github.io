@@ -4,12 +4,12 @@ run_at: '2026-06-09T07:26:40Z'
 match_index: 14
 post_a:
   key: music-o-telefone-da-agonia
-  path: src/content/blog/o-telefone-da-agonia-en.mdx
+  path: src/content/blog/o-telefone-da-agonia-en/index.mdx
   display_lang: en
   version: f60ab796-0a70-5505-b3cb-3c8dd0f27d2a
 post_b:
   key: music-the-ruliad-is-laughing
-  path: src/content/blog/the-ruliad-is-laughing-en.mdx
+  path: src/content/blog/the-ruliad-is-laughing-en/index.mdx
   display_lang: en
   version: 274bb067-5707-5001-92e8-87fa2a9ccae6
 winner: b

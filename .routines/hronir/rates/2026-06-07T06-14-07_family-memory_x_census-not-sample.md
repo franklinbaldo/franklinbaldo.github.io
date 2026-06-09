@@ -5,11 +5,11 @@ match_index: 10
 post_a:
   key: family-memory
   path: >-
-    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory.md
+    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory/index.md
   version: 92f17745-2ff3-5284-a09b-e2edcf10d717
 post_b:
   key: census-not-sample
-  path: src/content/blog/census-not-sample.md
+  path: src/content/blog/census-not-sample/index.md
   version: d15754e1-5860-5641-9cb3-f0c6d5834384
 winner: b
 agent_id: claude-sonnet-4-6

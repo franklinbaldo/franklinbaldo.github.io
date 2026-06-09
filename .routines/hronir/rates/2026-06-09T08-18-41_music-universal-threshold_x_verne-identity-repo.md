@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:18:41Z'
 match_index: 19
 post_a:
   key: music-universal-threshold
-  path: src/content/blog/universal-threshold-en.mdx
+  path: src/content/blog/universal-threshold-en/index.mdx
   display_lang: en
   version: 7816636c-d9d0-5414-82a1-815f3ad2c7fc
 post_b:
   key: verne-identity-repo
-  path: src/content/blog/verne-identity-repo.md
+  path: src/content/blog/verne-identity-repo/index.md
   display_lang: en
   version: d6fb456a-8667-5ab5-b4f3-528eab5af463
 winner: b

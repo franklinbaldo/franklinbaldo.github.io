@@ -4,12 +4,12 @@ run_at: '2026-06-08T10:22:20Z'
 match_index: 9
 post_a:
   key: becoming-lobsters
-  path: src/content/blog/we-are-all-becoming-lobsters.md
+  path: src/content/blog/we-are-all-becoming-lobsters/index.md
   display_lang: en
   version: 2e72f3cd-0eb0-590e-bb86-1add1abf8c34
 post_b:
   key: funes-soul
-  path: src/content/blog/funes-soul.md
+  path: src/content/blog/funes-soul/index.md
   display_lang: en
   version: e308ec3f-d136-5cf1-8407-a4b21940bdd1
 winner: b

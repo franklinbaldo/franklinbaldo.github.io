@@ -4,12 +4,12 @@ run_at: '2026-06-08T05:36:44Z'
 match_index: 4
 post_a:
   key: jules-api-harness
-  path: src/content/blog/jules-api-harness-backend.md
+  path: src/content/blog/jules-api-harness-backend/index.md
   display_lang: en
   version: 2d3349b4-e811-5acd-994b-47df4ebbaca5
 post_b:
   key: pampa-circuit
-  path: src/content/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital.md
+  path: src/content/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital/index.md
   display_lang: pt
   version: 6aca0ace-4889-5349-9b74-fe9369ac89e6
 winner: a

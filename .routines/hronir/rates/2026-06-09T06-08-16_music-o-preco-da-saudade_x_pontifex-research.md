@@ -4,12 +4,12 @@ run_at: '2026-06-09T06:08:16Z'
 match_index: 2
 post_a:
   key: music-o-preco-da-saudade
-  path: src/content/blog/o-preco-da-saudade-en.mdx
+  path: src/content/blog/o-preco-da-saudade-en/index.mdx
   display_lang: en
   version: eb3d50e8-ae0a-538c-ad21-7a03af5ae743
 post_b:
   key: pontifex-research
-  path: src/content/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica.md
+  path: src/content/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/index.md
   display_lang: pt
   version: 8e6caae0-2519-5011-af85-0ac99a930920
 winner: b

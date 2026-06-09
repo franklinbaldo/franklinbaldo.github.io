@@ -5,12 +5,12 @@ match_index: 1
 post_a:
   key: rosencrantz-coin
   path: >-
-    src/content/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade.md
+    src/content/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/index.md
   display_lang: pt
   version: c7f9cee2-9c69-516f-b492-4c77c5bc3e1a
 post_b:
   key: travessia-project
-  path: src/content/blog/travessia-the-project-that-writes-itself.md
+  path: src/content/blog/travessia-the-project-that-writes-itself/index.md
   display_lang: en
   version: d114f8bb-e09a-5ba8-b50a-48cdc01b5c34
 winner: a

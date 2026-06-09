@@ -4,12 +4,12 @@ run_at: '2026-06-08T05:35:43Z'
 match_index: 2
 post_a:
   key: everything-is-process
-  path: src/content/blog/tudo-e-processo.md
+  path: src/content/blog/tudo-e-processo/index.md
   display_lang: pt
   version: 199020b0-5a55-5452-ab25-579928e0b84b
 post_b:
   key: conservation-law
-  path: src/content/blog/will-ai-discover-new-conservation-law-before-2050.md
+  path: src/content/blog/will-ai-discover-new-conservation-law-before-2050/index.md
   display_lang: en
   version: 6e94c525-9702-5890-8078-5443243b8b99
 winner: b

@@ -4,12 +4,12 @@ run_at: '2026-06-09T08:17:46Z'
 match_index: 16
 post_a:
   key: becoming-lobsters
-  path: src/content/blog/estamos-todos-nos-tornando-lagostas.md
+  path: src/content/blog/estamos-todos-nos-tornando-lagostas/index.md
   display_lang: pt
   version: 622871ed-4c38-5830-8df2-49d1817c1fcf
 post_b:
   key: pampa-circuit
-  path: src/content/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital.md
+  path: src/content/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital/index.md
   display_lang: pt
   version: 6aca0ace-4889-5349-9b74-fe9369ac89e6
 winner: a

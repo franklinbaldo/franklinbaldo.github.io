@@ -4,12 +4,12 @@ run_at: '2026-06-08T11:34:56Z'
 match_index: 3
 post_a:
   key: third-half-fourth-wall
-  path: src/content/blog/a-terceira-metade-e-a-quarta-parede.md
+  path: src/content/blog/a-terceira-metade-e-a-quarta-parede/index.md
   display_lang: pt
   version: c9adda61-5ea6-52f8-bd70-90b216bb802e
 post_b:
   key: three-hammers
-  path: src/content/blog/tres-martelos-entram-num-bar.md
+  path: src/content/blog/tres-martelos-entram-num-bar/index.md
   display_lang: pt
   version: 7484e48e-59d1-5f87-91ac-76bca26dedee
 winner: a

@@ -4,12 +4,12 @@ run_at: '2026-06-06T22:19:47Z'
 match_index: 10
 post_a:
   key: social-vulnerabilities
-  path: src/content/blog/patents-for-social-vulnerabilities.md
+  path: src/content/blog/patents-for-social-vulnerabilities/index.md
   version: e128567c-378a-5abd-8fa3-c3f0814e7e17
 post_b:
   key: family-memory
   path: >-
-    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory.md
+    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory/index.md
   version: 92f17745-2ff3-5284-a09b-e2edcf10d717
 winner: b
 agent_id: claude-sonnet-4-6

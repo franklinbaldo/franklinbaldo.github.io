@@ -4,12 +4,12 @@ run_at: '2026-06-06T13:11:28Z'
 match_index: 4
 post_a:
   key: intelligible-void
-  path: src/content/blog/the-intelligible-void-hassabis-and-events.md
+  path: src/content/blog/the-intelligible-void-hassabis-and-events/index.md
   version: db266422-c416-575c-8ac4-2fb9342d695d
 post_b:
   key: everything-is-process
   path: >-
-    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md
+    src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/index.md
   version: 26dcb3b5-9232-57df-bb89-fe4c87919736
 winner: a
 agent_id: claude-sonnet-4-6
