@@ -103,6 +103,69 @@ npm run build             # Astro static build
   preserving each PR's history is the project preference. The Hrönir autopilot
   workflow follows this too.
 
+## Convenções do repo
+
+Estas são as convenções load-bearing. Todas são enforçadas por CI (check:hygiene,
+prettier, astro check, doctor) ou documentadas aqui. Convenções em prosa sem
+check derivam — veja RFC 0004.
+
+### Línguas
+
+- **Código e identificadores**: inglês (variáveis, funções, comentários inline).
+- **Docs, RFCs, prosa de processo** (`docs/`, `CLAUDE.md`, mensagens de commit): português.
+- **Reviews e clash nos rate files**: o mesmo idioma do post avaliado (`lang` do frontmatter).
+  Posts em EN → review em EN. Posts em PT → review em PT.
+- **`--after-mood`**: sempre português, primeira pessoa.
+
+### Defaults de língua por tipo de conteúdo
+
+- **Blog** (`src/content/blog/*.md`): inglês por padrão; PT marcado com `lang: pt`.
+- **Músicas** (`src/content/blog/musicas/`): português por padrão; EN com sufixo `-en` no nome do arquivo.
+
+### slug = filename = URL
+
+O id de um post é o nome do arquivo sem extensão. A URL é `/blog/<id>/`. Não há
+mapeamento extra — mudar o filename muda a URL. Redirects legados (prefixo de
+data `YYYY-MM-DD-`) vivem em `src/generated/blog-redirects.json`, gerado por
+`scripts/generate-redirects.mjs`.
+
+### Commits
+
+Formato frouxo mas nomeado:
+
+- Site/infra: `tipo(escopo): resumo` — ex. `feat(ranking): add perspective filter`
+- Sessões Hrönir: `hronir: <N> matches — <agent-id>`
+- Docs/RFCs: `docs(rfc): RFC NNNN — título`
+
+### `.ts` vs `.mjs` em `src/lib/`
+
+- `.mjs`: arquivos importáveis por scripts Node e por `astro.config.mjs` (sem transpile).
+- `.ts`: código que só o site Astro importa (transpilado pelo build).
+
+### Processo de RFC
+
+`docs/rfcs/NNNN-kebab.md` com tabela de status, história de revisões, e
+implementação faseada na mesma branch (cada fase verde antes da próxima).
+Merge com merge commit, nunca squash.
+
+### Padrão para dados persistidos
+
+Schema versionado (ex. `stars-v1`) + script de migração preservado + validação
+no `hronir:doctor`. Qualquer dado novo (ex. versões de posts da RFC 0003)
+declara conformidade com este padrão em vez de reinventar.
+
+### Higiene da raiz
+
+Enforçada por `check:hygiene` (passo no CI). Raiz tem exatamente 11 arquivos
+permitidos; um único lockfile (`package-lock.json`); sem `package.json` aninhado;
+padrões de scratch (`decide_args*.json`, `rewrite_*.mjs`) são banidos.
+
+### Journals de sessão
+
+Journals de agente vivem em `.routines/YYYY-MM-DDTHH-MM-SS-slug.md` com
+frontmatter mínimo: `date` (ISO), `branch`, `status` (`open`/`merged`/`closed`).
+O `check:hygiene` valida o nome.
+
 ## Key directories
 
 ```
@@ -113,5 +176,10 @@ scripts/hronir/           Hrönir CLI and rating engine
   lib/                    Core modules (commands, ranking, moods, perspectives, matches, posts)
   perspectives/           Reader perspective files (.md)
   skills/                 Writing skills for edit-worst phase
+scripts/lib/              Shared helpers consumidos por múltiplos scripts
+  content.mjs             Fonte única de descoberta de posts (listPostFiles, readPostMeta)
+  blog-links.mjs          Validação e redirects de links internos
 .routines/hronir/         Rate files produced by sessions (committed to git)
+docs/rfcs/                RFCs do projeto (0001…)
+docs/plans/               Planos e documentos de planejamento
 ```
