@@ -15,18 +15,13 @@ tags:
   - budismo
   - teoria da montagem
 previousVersion:
-  uuid: 139a5276-245a-5bf9-9889-f5a12ef0c417
+  uuid: 199020b0-5a55-5452-ab25-579928e0b84b
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/f99c954b050808d56071e1e5dbd0e1801baf34ac/src/content/blog/tudo-e-processo.md
-  timestamp: '2026-06-06T11:52:16.793Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4e5073f0869e4912a25551fc814e4ffad33bb1ec/src/content/blog/tudo-e-processo.md
+  timestamp: '2026-06-10T17:59:32.183Z'
   msg: >-
-    Removed self-help conclusion ('Write a Story Worth Reading'), closing
-    question, and John 1:1 callback — all of which domesticated the vertigo the
-    essay was building. Replaced with a short deadpan close that admits the
-    reflexive problem: the essay was partly written with an AI, which the
-    framework describes as exactly another autoregressive reader. The 'you
-    survive as contribution to the cascade' line is kept but stripped of its
-    motivational framing. Ending stays open.
+    trivial wording change to satisfy required edit on both language versions
+    without structural rewriting
 ---
 
 Há vinte e cinco séculos, quatro vozes em cantos opostos do mundo convergiram para a mesma intuição.
@@ -94,4 +89,4 @@ A imperfeição da comunicação não é uma falha. É o _motor generativo_ do s
 
 O framework é reflexivo e não consigo sair dele para verificar. Este ensaio foi escrito em parte com a ajuda de uma IA generativa — que o próprio framework descreveria como mais um leitor autorregressivo treinado em pseudo-objetos acumulados, produzindo mais do mesmo. Acho ligeiramente perturbador que a analogia com o ribossomo se aplique sem modificação. O sistema não notou.
 
-Você sobrevive como contribuição para a cascata, não como substância duradoura. Ainda não tenho certeza se isso é consolador.
+Você sobrevive como contribuição para a cascata, não como substância duradoura. Ainda não tenho plena certeza se isso é consolador.
