@@ -1,71 +1,76 @@
 ---
-title: 'A Arte de Delegar: Assinaturas e Caixas de Areia'
-description: >-
-  A caixa de areia separa minuta de ato. O que ela não responde é onde fica a
-  responsabilidade quando a caixa de areia falha.
-date: '2026-03-28'
-lang: pt
-tags:
-  - ai
-  - agents
-  - software-engineering
-  - law
-  - metaphysics
-draft: false
 author: franklin
+date: 2026-06-03T00:00:00.000Z
+lang: pt
+title: >-
+  A Ansiedade do Arquiteto: Ou, Como Aprendi a Parar de Executar e Amar o
+  Harness
 translationKey: delegating-to-agents
+description: >-
+  Por que delegar para um agente parece uma falha de controle, e por que essa
+  falha é o preço exato da arquitetura.
+tags:
+  - engenharia
+  - agentes
+  - arquitetura
+  - harness
+  - controle
 previousVersion:
   uuid: 56620869-a868-52f3-ac2f-f4720e160fdd
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4d6c9b2a2b5711080406dfc7e9886ca65287595f/src/content/blog/delegando-para-agentes.md
-  timestamp: '2026-06-10T12:22:12.095Z'
-  msg: >-
-    Refined both PT and EN versions of the worst post by adding a conversational
-    self-deprecating beat to the opening.
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/eb1e7676a9c373dbac56efb3d19f4dad7b5af225/src/content/blog/delegando-para-agentes.md
+  timestamp: '2026-06-10T17:06:34.537Z'
+  msg: Rewrite delegating-to-agents to be more narrative and clear
 ---
 
-Em fevereiro, quase perdi uma janela de quarenta e oito horas num processo de impugnação de auto de infração federal porque tinha começado a tratar a minuta do assessor como o produto final. Foi um erro estúpido. O _parecer_ estava bom. A manifestação não foi protocolada. Fiquei sabendo na tarde de terça quando um lembrete de agenda disparou para um prazo que eu tinha mentalmente movido da minha coluna para a coluna do assessor no momento em que a minuta chegou. Ela não tinha se movido.
+Existe um tipo específico de ansiedade que vem de observar uma máquina fazer o seu trabalho. Não a ansiedade de ser substituído, mas a ansiedade muito mais aguda de ser mal interpretado.
 
-O tribunal não pergunta quem propôs a data errada. Pergunta quem assinou.
+Quando você escreve uma função, você é o autor da execução. Quando você escreve um prompt para um agente, você é o autor de uma intenção, e está confiando em um sistema probabilístico para lidar com a execução. Para um certo tipo de engenheiro — o tipo que passou uma década aprendendo que o controle explícito é a única maneira de evitar catástrofes — essa transição parece um passo em falso.
 
-Isso não é tecnicidade procedimental. É o motivo pelo qual a assinatura existe.
+## A Ilusão da Execução
 
-Passo meus dias em uma procuradoria do Estado em Rondônia, lendo _pareceres_ e assinando aqueles que não me aterrorizam. Quando delego a elaboração, não estou terceirizando o julgamento — estou delegando a tarefa de atravessar os autos, identificar o direito aplicável e construir o argumento. O que eu _não_ estou delegando é a assinatura. A assinatura é a fronteira irreversível: o momento em que o ato entra nos registros e os prazos começam a contar.
+Construímos uma disciplina inteira em torno da ideia de que devemos ditar os passos.
 
-A engenharia de software não reconhece nativamente essa distinção porque o ciclo de _feedback_ a comprime. No direito, a lacuna entre minuta e ato é fisicamente legível — o assessor termina, o protocolo tem sua janela, o sistema do tribunal tem seu próprio horário. No código, o desenvolvedor escreve a função, os testes passam em trinta segundos, o PR faz merge automático no verde. A minuta e o ato se tornam um movimento contínuo, e ninguém escreve onde um termina e o outro começa.
+Se você quer fazer o parse de um arquivo JSON, você não pede ao computador para "entender o arquivo". Você escreve um parser. Você especifica os loops, o tratamento de erros, a sequência exata de operações de memória. Você é dono do verbo.
 
-## Os limites da caixa de areia
+Mas, à medida que os sistemas ganham escala em complexidade, ser dono do verbo se torna o gargalo. Em algum momento, o sistema é grande demais para você especificar cada passo. É nesse momento que você precisa começar a delegar para agentes.
 
-A ansiedade em relação a agentes de IA é real e não tem nada a ver com capacidade. Quando entrego a Jules uma tarefa de refatoração, não estou preocupado que Jules escolha o padrão de design errado. Estou preocupado que Jules tem permissão de escrita.
+[Jules](https://jules.google.com) está atualmente refatorando um módulo mais antigo neste repositório. Eu não disse a Jules _como_ refatorá-lo. Eu escrevi um `SOUL.md` que define o que é um bom código, e dei o objetivo. Jules está escolhendo os verbos.
 
-A solução não é ficar por cima do ombro de Jules enquanto escreve. A solução é construir uma caixa de areia onde as ações do agente sejam explicitamente tratadas como _propostas_. O pipeline de CI/CD — a sequência automatizada de compilações, testes e verificações que precisam passar antes de qualquer código ir para produção — as suítes de teste, as regras estritas de linting: esses não são apenas mecanismos de garantia de qualidade. São o equivalente à regra institucional que diz que um assessor pode redigir um _parecer_, mas não pode assinar o _ofício_ final.
+Funciona, mas exige uma mudança fundamental de postura. Você tem que parar de ser o executor e começar a ser o arquiteto.
 
-A mágica da delegação acontece quando você restringe o espaço de saída, não o processo. Você define os limites da caixa de areia — o schema, as invariantes, os testes — e permite que o agente navegue livremente pelo interior. Se os testes passam, a proposta é válida. Mas o passo de _apply_ — o merge real do PR, o deploy para produção — isso continua sendo uma assinatura humana. Um pipeline de CI que não pode ser bypassado é um protocolo: uma etapa de processamento obrigatória entre a minuta e o ato.
+## O Harness como Arquitetura
 
-É aqui que o paralelo com o direito administrativo lisonjeia o problema de software. Num _parecer_, a responsabilidade do assessor é profissional. Pareceres consistentemente ruins levam a revisão formal — a corregedoria, o conselho profissional, eventualmente a carreira. Existe uma cadeia do ato até a pessoa que o redigiu, e essa cadeia tem dentes. A assinatura não separa apenas minuta de ato: separa de quem é a carreira em jogo de quem não tinha nada a perder.
+Se você não está escrevendo a implementação, o que você está escrevendo?
 
-Um agente de IA não tem carreira. Ele não pode ser responsabilizado. A caixa de areia restringe o que ele pode fazer, mas não responde o que acontece quando a caixa de areia falha. Quando um agente faz algo errado dentro dos limites do seu acesso, a responsabilidade sobe para o ser humano que projetou o _harness_ — não vai lateralmente para o agente. Isso não é uma propriedade que construí; é uma propriedade de agentes sem posição institucional.
+Você está escrevendo o ambiente. Você está escrevendo o [harness](/blog/2026-04-29-reclaiming-the-harness/). O harness é o conjunto de restrições, as definições de falha, as ferramentas disponíveis e a identidade do agente.
 
-A caixa de areia é necessária. Ela não é suficiente para responsabilidade. O passo de assinatura em delegação de software está fazendo mais trabalho do que o paralelo administrativo sugere: não está apenas tornando explícita a fronteira proposta-versus-ato. Está também carregando todo o peso profissional que o agente estruturalmente não pode carregar.
+Quando [Funes](/blog/funes-soul/) resume uma reunião, a qualidade do resumo não depende de quão bem eu escrevi o prompt para a tarefa específica. Depende de quão bem eu estruturei a memória de longo prazo de Funes, de quão claramente eu defini com o que Funes _se importa_, e de como o loop de feedback é projetado.
 
-Não enxerguei isso claramente até estar escrevendo a analogia e perceber que a frase "o assessor é bom" soava razoável de um jeito que "o Jules é bom" não soa, e não pode soar, com o mesmo significado. Ambas as frases descrevem capacidade. Só uma descreve uma pessoa que pode ser responsável por algo.
+A arquitetura não é mais sobre sequência; é sobre fronteiras. Você define o formato da caixa de areia, e deixa o agente brincar lá dentro.
 
-Eu tinha pensado na assinatura como uma formalidade. É uma formalidade. É também a coisa que faz o erro de fevereiro ser meu e não do Jules.
+## A Necessária Perda de Controle
 
-## O harness como desenho constitucional
+É aqui que mora a ansiedade.
 
-É por isso que o _harness_ importa mais do que o modelo. O [Funes](/blog/funes-soul/) — agente de IA que construí sobre o Claude para lidar com trabalho delegado nos meus projetos — não é o Claude. Funes é o Claude envolvido em um conjunto específico de regras, memórias e restrições.
+Quando você delega a execução, você perde a capacidade de garantir _como_ uma coisa é feita. Você só pode garantir _o que_ é aceitável. Isso significa que o agente às vezes fará coisas que você não faria. Ele escreverá uma função de forma diferente. Ele formulará uma resposta de um jeito estranho. Ele fará o commit com o ano errado.
 
-O Funes abre pull requests; ele não faz merge. Ele atualiza arquivos de memória; ele não envia e-mails por conta própria. Quando pedi que ele redigisse uma resposta a uma consulta externa sobre o [Causaganha](https://github.com/franklinbaldo/causaganha), meu projeto open-source para parsear decisões dos diários oficiais brasileiros, ele escreveu a minuta e criou um PR contendo-a. Ele não enviou a mensagem. Não porque uma regra dissesse _não envie mensagens sem permissão_. Porque o _harness_ simplesmente não tinha fiação para mensagens externas de saída — a caixa de areia tornava a etapa de assinatura estruturalmente obrigatória, não comportamentalmente reforçada.
+O instinto imediato é escrever um prompt mais específico, adicionar outra regra, tentar recuperar o controle da execução. Mas esse é o modo de falha. Se você tentar escrever um prompt que cubra todos os detalhes possíveis de execução, você não está delegando. Você está apenas escrevendo código em uma linguagem de programação muito ineficiente e não-determinística.
 
-_Reversível → age, irreversível → pergunta._ Isso não é apenas uma heurística de segurança; é uma decisão sobre onde a responsabilidade se concentra. Cada ação que o agente toma livremente é uma ação cuja responsabilidade foi pré-delegada por quem projetou o _harness_. Cada ação que exige assinatura é uma ação cuja responsabilidade permanece explicitamente com o ser humano que assina.
+A arte da delegação é aprender a tolerar o atrito de um executor diferente. Você tem que aceitar que o agente não é você. É uma inteligência alienígena operando dentro das restrições que você projetou. Se o resultado passar nos testes — se ele atender aos requisitos arquitetônicos — você tem que deixá-lo seguir em frente.
 
-O _parecer_ estava bom. Essa frase é sobre o assessor. A manifestação não foi protocolada. Essa frase é sobre mim.
+## Humildade Epistêmica
+
+Há uma estranha graça nisso tudo.
+
+Quando você é forçado a dar um passo atrás da implementação, você também é forçado a ser mais claro sobre suas intenções. Você percebe o quanto do seu código era apenas hábito, em vez de necessidade. Você percebe quantas de suas decisões de design eram implícitas, escondidas nos detalhes de execução em vez de articuladas na arquitetura.
+
+Delegar para um agente é um exercício contínuo de humildade epistêmica. Força você a admitir que não é o único que sabe escrever o loop. Força você a definir o que realmente importa.
+
+Você não é mais o digitador. Você é o pai observando a criança aprender a andar, sabendo que ela vai tropeçar, e sabendo que você precisa deixá-la tentar.
 
 ## Para se aprofundar
 
-- **Lucy Suchman, _Plans and Situated Actions_ (1987)** — distingue o plano como modelo cognitivo do plano como artefato de prestação de contas. O PR como proposta está exatamente nessa linha; o livro se justifica só pela seção sobre o que significa "seguir um plano" para quem está seguindo.
-- **Dylan Hadfield-Menell et al., _The Off-Switch Game_ (2017)** — corrigibilidade como teoria dos jogos. O passo de aprovação humana antes do _apply_ é uma instância concreta; o artigo formula o caso geral.
-- **Diane Vaughan, _The Challenger Launch Decision_ (1996)** — sobre como mecanismos de prestação de contas se ritualizam e viram teatro. Se quem assina o PR não está realmente lendo o diff, a assinatura é burocracia, não responsabilidade. É o que o modelo caixa-de-areia-mais-assinatura não protege por si só.
-- **Lei 9.784/1999, arts. 11–17** — o arcabouço jurídico para delegação de atos administrativos. A distinção entre _competência_ e seus limites delegáveis é a fonte normativa da separação minuta/assinatura que estou descrevendo.
-- **Fred Brooks, _The Mythical Man-Month_ (1975)** — o capítulo da equipe cirúrgica: a mesma capacidade pode existir em duas arquiteturas de prestação de contas, e a escolha entre elas não é uma questão de capacidade.
+- **[Recuperando o Harness](/blog/2026-04-29-reclaiming-the-harness/)** — O texto fundamental sobre por que o ambiente é mais importante que o prompt.
+- **[Construindo Funes](/blog/funes-soul/)** — Como a identidade molda a execução.
+- **[O Agente Que Não Inventa Verbos](/blog/2026-05-14-the-agent-that-doesnt-invent-verbs/)** — Um olhar prático sobre como restringir as ações de um agente sem microgerenciá-lo.
