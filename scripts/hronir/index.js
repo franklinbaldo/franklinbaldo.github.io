@@ -38,7 +38,7 @@ const {
   editCommit,
   promote,
   next,
-} = await import("./lib/commands.js");
+} = await import("../../src/hronir/commands.js");
 
 const [, , cmd, ...args] = process.argv;
 
