@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T07-01-53
 run_at: '2026-06-10T07:01:53Z'
-match_index: 11
 post_a:
   key: music-o-tempo
   path: src/content/blog/o-tempo-en/index.mdx

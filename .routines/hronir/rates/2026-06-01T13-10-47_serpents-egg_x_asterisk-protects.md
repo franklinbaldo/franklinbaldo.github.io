@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-01T13-10-47
 run_at: '2026-06-01T13:10:47Z'
-match_index: 4
 post_a:
   key: serpents-egg
   path: src/content/blog/the-serpents-egg/index.md

@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T15-03-32
 run_at: '2026-06-10T15:03:32Z'
-match_index: 20
 post_a:
   key: music-spring-loading
   path: src/content/blog/spring-loading/index.mdx

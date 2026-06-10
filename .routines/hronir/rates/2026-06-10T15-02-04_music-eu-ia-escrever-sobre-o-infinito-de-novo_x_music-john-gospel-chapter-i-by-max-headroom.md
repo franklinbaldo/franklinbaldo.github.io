@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T15-02-04
 run_at: '2026-06-10T15:02:04Z'
-match_index: 1
 post_a:
   key: music-eu-ia-escrever-sobre-o-infinito-de-novo
   path: src/content/blog/eu-ia-escrever-sobre-o-infinito-de-novo/index.mdx

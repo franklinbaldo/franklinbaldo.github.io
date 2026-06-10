@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T10-12-14
 run_at: '2026-06-08T10:12:14Z'
-match_index: 1
 post_a:
   key: travessia-project
   path: src/content/blog/travessia/index.md

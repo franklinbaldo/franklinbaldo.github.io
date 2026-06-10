@@ -1,7 +1,6 @@
 ---
 run_id: 2026-05-23T13-10-56
 run_at: '2026-05-23T13:10:56Z'
-match_index: 3
 post_a:
   key: travessia-project
   path: src/content/blog/travessia-the-project-that-writes-itself/index.md

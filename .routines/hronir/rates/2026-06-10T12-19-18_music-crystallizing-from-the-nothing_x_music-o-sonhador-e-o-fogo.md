@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T12-19-18
 run_at: '2026-06-10T12:19:18Z'
-match_index: 12
 post_a:
   key: music-crystallizing-from-the-nothing
   path: src/content/blog/crystallizing-from-the-nothing-en/index.mdx

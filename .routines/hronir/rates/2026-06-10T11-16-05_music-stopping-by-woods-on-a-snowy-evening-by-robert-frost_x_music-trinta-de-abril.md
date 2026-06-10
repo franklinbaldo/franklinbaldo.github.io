@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T11-16-05
 run_at: '2026-06-10T11:16:05Z'
-match_index: 1
 post_a:
   key: music-stopping-by-woods-on-a-snowy-evening-by-robert-frost
   path: >-

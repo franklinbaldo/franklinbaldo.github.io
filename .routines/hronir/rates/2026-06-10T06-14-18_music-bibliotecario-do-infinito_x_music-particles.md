@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T06-14-18
 run_at: '2026-06-10T06:14:18Z'
-match_index: 7
 post_a:
   key: music-bibliotecario-do-infinito
   path: src/content/blog/bibliotecario-do-infinito/index.mdx

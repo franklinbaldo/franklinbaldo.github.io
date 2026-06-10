@@ -1,7 +1,6 @@
 ---
 run_id: 2026-05-24T13-05-50
 run_at: '2026-05-24T13:05:50Z'
-match_index: 3
 post_a:
   key: verne-identity-repo
   path: src/content/blog/verne-identity-repo/index.md

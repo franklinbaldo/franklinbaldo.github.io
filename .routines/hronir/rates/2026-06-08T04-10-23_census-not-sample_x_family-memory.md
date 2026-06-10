@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T04-10-23
 run_at: '2026-06-08T04:10:23Z'
-match_index: 6
 post_a:
   key: census-not-sample
   path: src/content/blog/censo-nao-amostra/index.md

@@ -1,7 +1,6 @@
 ---
 run_id: 2026-05-30T13-09-07
 run_at: '2026-05-30T13:09:07Z'
-match_index: 3
 post_a:
   key: asterisk-protects
   path: src/content/blog/who-the-asterisk-protects/index.md

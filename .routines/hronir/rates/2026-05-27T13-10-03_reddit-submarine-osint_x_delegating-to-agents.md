@@ -1,7 +1,6 @@
 ---
 run_id: 2026-05-27T13-10-03
 run_at: '2026-05-27T13:10:03Z'
-match_index: 3
 post_a:
   key: reddit-submarine-osint
   path: src/content/blog/reddit-submarine-osint/index.md

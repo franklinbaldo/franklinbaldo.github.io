@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T06-11-00
 run_at: '2026-06-10T06:11:00Z'
-match_index: 4
 post_a:
   key: music-belief-engine-labyrinth-song-moving-window-viii
   path: src/content/blog/belief-engine-labyrinth-song-moving-window-viii/index.mdx

@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T08-27-44
 run_at: '2026-06-10T08:27:44Z'
-match_index: 7
 post_a:
   key: music-john-gospel-chapter-i-by-max-headroom
   path: src/content/blog/john-gospel-chapter-i-by-max-headroom/index.mdx

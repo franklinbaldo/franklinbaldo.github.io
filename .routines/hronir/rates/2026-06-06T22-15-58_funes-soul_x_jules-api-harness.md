@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-06T22-15-58
 run_at: '2026-06-06T22:15:58Z'
-match_index: 6
 post_a:
   key: funes-soul
   path: src/content/blog/funes-soul/index.md

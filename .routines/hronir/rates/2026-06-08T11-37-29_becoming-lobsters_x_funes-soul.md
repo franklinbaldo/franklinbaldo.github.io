@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T11-37-29
 run_at: '2026-06-08T11:37:29Z'
-match_index: 9
 post_a:
   key: becoming-lobsters
   path: src/content/blog/estamos-todos-nos-tornando-lagostas/index.md

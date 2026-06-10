@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T11-21-37
 run_at: '2026-06-10T11:21:37Z'
-match_index: 12
 post_a:
   key: music-666
   path: src/content/blog/666/index.mdx

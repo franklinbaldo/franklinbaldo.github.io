@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T08-32-08
 run_at: '2026-06-10T08:32:08Z'
-match_index: 4
 post_a:
   key: music-o-prologo
   path: src/content/blog/o-prologo-en/index.mdx

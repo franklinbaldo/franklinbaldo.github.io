@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T04-09-39
 run_at: '2026-06-08T04:09:39Z'
-match_index: 5
 post_a:
   key: verne-identity-repo
   path: >-

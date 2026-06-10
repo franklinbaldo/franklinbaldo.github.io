@@ -1,7 +1,6 @@
 ---
 run_id: 2026-05-29T13-09-44
 run_at: '2026-05-29T13:09:44Z'
-match_index: 3
 post_a:
   key: three-hammers
   path: src/content/blog/three-hammers-walk-into-a-bar/index.md

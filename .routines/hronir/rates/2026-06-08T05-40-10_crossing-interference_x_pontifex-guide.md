@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T05-40-10
 run_at: '2026-06-08T05:40:10Z'
-match_index: 10
 post_a:
   key: crossing-interference
   path: src/content/blog/travessia-update/index.md

@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T06-57-24
 run_at: '2026-06-10T06:57:24Z'
-match_index: 4
 post_a:
   key: music-o-sonhador-e-o-fogo
   path: src/content/blog/o-sonhador-e-o-fogo/index.mdx

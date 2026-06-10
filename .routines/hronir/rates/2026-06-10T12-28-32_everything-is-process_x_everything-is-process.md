@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T12-28-32
 run_at: '2026-06-10T12:28:32Z'
-match_index: 20
 post_a:
   key: everything-is-process
   path: >-

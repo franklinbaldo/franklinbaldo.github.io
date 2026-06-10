@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T11-06-51
 run_at: '2026-06-08T11:06:51Z'
-match_index: 2
 post_a:
   key: conceptual-document
   path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo/index.md

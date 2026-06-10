@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T08-33-54
 run_at: '2026-06-10T08:33:54Z'
-match_index: 6
 post_a:
   key: music-pattern-over-stuff
   path: src/content/blog/pattern-over-stuff-en/index.mdx

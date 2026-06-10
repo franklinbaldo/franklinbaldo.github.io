@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T12-37-01
 run_at: '2026-06-10T12:37:01Z'
-match_index: 15
 post_a:
   key: music-o-medo-do-louco
   path: src/content/blog/o-medo-do-louco/index.mdx
