@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-03T13-10-43
 run_at: '2026-06-03T13:10:43Z'
-match_index: 3
 post_a:
   key: pontifex-research
   path: src/content/blog/pontifex-novel-architecture-semantic-probing/index.md

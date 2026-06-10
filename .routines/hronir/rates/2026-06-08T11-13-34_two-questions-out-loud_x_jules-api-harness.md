@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T11-13-34
 run_at: '2026-06-08T11:13:34Z'
-match_index: 12
 post_a:
   key: two-questions-out-loud
   path: src/content/blog/duas-perguntas-em-voz-alta/index.md

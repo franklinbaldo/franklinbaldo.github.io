@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T08-29-46
 run_at: '2026-06-10T08:29:46Z'
-match_index: 11
 post_a:
   key: music-o-regral
   path: src/content/blog/o-regral-en/index.mdx

@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T15-02-22
 run_at: '2026-06-10T15:02:22Z'
-match_index: 5
 post_a:
   key: everything-is-process
   path: >-
@@ -46,20 +45,7 @@ clash: >-
   requires attention to details and the tone adopted throughout the sections.
   The final balance reveals unique strengths and weaknesses in both approaches.
   I find that one of them succeeds where the other merely attempts.
-review_a: >-
-  A detailed analysis of everything-is-process from the perspective of
-  'weird-clarity'. I was drawn to the following passage: 'outside of any reading
-  context, has no identity. It is not 'true' in any intrinsic sense. He is
-  whatever the rule that reads him does to him. The Boolean is already a
-  _pseudo-object_: a token that acquires semantic identity only through the
-  operation that processes it. What is truly fundamental, then? Not the bit, but
-  the _act of distinguishing_. George'. This excerpt is quite emblematic of the
-  author's style and the broader themes addressed in the work. As a reader, I
-  feel that the construction of the argument relies heavily on how these ideas
-  are introduced across the paragraphs. The rhythm and density of the writing
-  contribute to the overall effectiveness of the text, although there is always
-  room for more robust clarity and contextualization to anchor the main
-  metaphors and logical thread. The progression is steady and deliberate.
+review_a: null
 review_b: >-
   A detailed analysis of everything-is-process from the perspective of
   'weird-clarity'. I was drawn to the following passage: 'by all future

@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T07-07-26
 run_at: '2026-06-08T07:07:26Z'
-match_index: 8
 post_a:
   key: future-father
   path: src/content/blog/o-pai-do-futuro/index.md

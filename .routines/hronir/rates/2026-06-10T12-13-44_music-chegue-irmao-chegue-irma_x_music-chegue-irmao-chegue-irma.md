@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T12-13-44
 run_at: '2026-06-10T12:13:44Z'
-match_index: 8
 post_a:
   key: music-chegue-irmao-chegue-irma
   path: src/content/blog/chegue-irmao-chegue-irma-en/index.mdx

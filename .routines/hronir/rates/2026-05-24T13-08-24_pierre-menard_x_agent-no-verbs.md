@@ -1,7 +1,6 @@
 ---
 run_id: 2026-05-24T13-08-24
 run_at: '2026-05-24T13:08:24Z'
-match_index: 6
 post_a:
   key: pierre-menard
   path: src/content/blog/pierre-menard-computational-researcher/index.md

@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T09-11-01
 run_at: '2026-06-10T09:11:01Z'
-match_index: 4
 post_a:
   key: music-meditacao-guiada-no-sertao
   path: src/content/blog/meditacao-guiada-no-sertao/index.mdx

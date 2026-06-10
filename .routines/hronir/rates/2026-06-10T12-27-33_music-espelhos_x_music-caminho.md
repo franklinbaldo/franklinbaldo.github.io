@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T12-27-33
 run_at: '2026-06-10T12:27:33Z'
-match_index: 19
 post_a:
   key: music-espelhos
   path: src/content/blog/espelhos-en/index.mdx

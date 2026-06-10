@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T07-04-25
 run_at: '2026-06-10T07:04:25Z'
-match_index: 16
 post_a:
   key: music-o-magico-e-o-fogo
   path: src/content/blog/o-magico-e-o-fogo/index.mdx

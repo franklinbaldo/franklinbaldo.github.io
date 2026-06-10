@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T05-35-43
 run_at: '2026-06-08T05:35:43Z'
-match_index: 2
 post_a:
   key: everything-is-process
   path: src/content/blog/tudo-e-processo/index.md

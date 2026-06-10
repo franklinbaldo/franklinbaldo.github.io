@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T11-17-45
 run_at: '2026-06-10T11:17:45Z'
-match_index: 4
 post_a:
   key: music-riobaldo-e-o-aleph
   path: src/content/blog/riobaldo-e-o-aleph-en/index.mdx

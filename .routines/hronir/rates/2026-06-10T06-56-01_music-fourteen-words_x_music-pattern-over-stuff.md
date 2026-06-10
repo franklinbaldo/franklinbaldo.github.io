@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T06-56-01
 run_at: '2026-06-10T06:56:01Z'
-match_index: 2
 post_a:
   key: music-fourteen-words
   path: src/content/blog/fourteen-words-en/index.mdx

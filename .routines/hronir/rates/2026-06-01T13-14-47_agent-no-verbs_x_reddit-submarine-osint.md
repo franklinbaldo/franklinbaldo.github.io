@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-01T13-14-47
 run_at: '2026-06-01T13:14:47Z'
-match_index: 9
 post_a:
   key: agent-no-verbs
   path: src/content/blog/the-agent-that-doesnt-invent-verbs/index.md

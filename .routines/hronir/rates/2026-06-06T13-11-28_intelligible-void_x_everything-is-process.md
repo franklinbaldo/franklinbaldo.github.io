@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-06T13-11-28
 run_at: '2026-06-06T13:11:28Z'
-match_index: 4
 post_a:
   key: intelligible-void
   path: src/content/blog/the-intelligible-void-hassabis-and-events/index.md

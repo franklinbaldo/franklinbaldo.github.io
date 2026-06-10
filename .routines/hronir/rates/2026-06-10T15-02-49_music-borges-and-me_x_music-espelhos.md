@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T15-02-49
 run_at: '2026-06-10T15:02:49Z'
-match_index: 11
 post_a:
   key: music-borges-and-me
   path: src/content/blog/borges-and-me/index.mdx

@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T06-57-05
 run_at: '2026-06-10T06:57:05Z'
-match_index: 3
 post_a:
   key: music-vos
   path: src/content/blog/vos-en/index.mdx
