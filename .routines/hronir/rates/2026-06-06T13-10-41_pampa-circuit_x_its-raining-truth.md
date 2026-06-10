@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-06T13-10-41
 run_at: '2026-06-06T13:10:41Z'
-match_index: 3
 post_a:
   key: pampa-circuit
-  path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital.md
+  path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/index.md
   version: b8248564-b943-59cf-a4dd-b50638708e57
 post_b:
   key: its-raining-truth
-  path: src/content/blog/its-raining-truth.md
+  path: src/content/blog/its-raining-truth/index.md
   version: 6b1d78d5-939c-50b5-bb38-a86b6576a386
 winner: b
 agent_id: claude-sonnet-4-6

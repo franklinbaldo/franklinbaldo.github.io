@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-07T06-05-53
 run_at: '2026-06-07T06:05:53Z'
-match_index: 1
 post_a:
   key: reclaiming-harness
-  path: src/content/blog/reclaiming-the-harness.md
+  path: src/content/blog/reclaiming-the-harness/index.md
   version: ce9fbf1e-5121-5f53-9866-d2dd45bf7f50
 post_b:
   key: conservation-law
-  path: src/content/blog/will-ai-discover-new-conservation-law-before-2050.md
+  path: src/content/blog/will-ai-discover-new-conservation-law-before-2050/index.md
   version: 6e94c525-9702-5890-8078-5443243b8b99
 winner: b
 agent_id: claude-sonnet-4-6

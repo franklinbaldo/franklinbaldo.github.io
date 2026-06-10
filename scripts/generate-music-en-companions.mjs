@@ -5,13 +5,16 @@
  *   node scripts/generate-music-en-companions.mjs
  */
 
-import { readFileSync, writeFileSync, existsSync, readdirSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { listPostFiles, postIdFromPath } from "./lib/content.mjs";
 import { join, dirname, basename } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
-const MUSICAS_DIR = join(ROOT, "src/content/blog/musicas");
+// Music posts share src/content/blog/ with regular posts since RFC 0006;
+// postType: music in the frontmatter is what identifies them.
+const BLOG_DIR = join(ROOT, "src/content/blog");
 
 // Known English translations for PT titles
 const TITLE_TRANSLATIONS = {
@@ -129,9 +132,13 @@ function makeEnBody(ptBody, enTitle) {
 }
 
 async function main() {
-  const files = readdirSync(MUSICAS_DIR).filter((f) => f.endsWith(".mdx"));
-  // Skip files that are already EN companions (end with -en.mdx)
-  const ptFiles = files.filter((f) => !f.endsWith("-en.mdx"));
+  // RFC 0003: posts live in <slug>/index.mdx. Discover canonical music posts
+  // (postType: music, slug not already an -en companion) recursively.
+  const ptFiles = listPostFiles().filter((abs) => {
+    if (!abs.endsWith(".mdx")) return false;
+    if (postIdFromPath(abs).endsWith("-en")) return false;
+    return /^postType: music$/m.test(readFileSync(abs, "utf8"));
+  });
 
   console.log(`Found ${ptFiles.length} PT music files to process.`);
 
@@ -139,15 +146,15 @@ async function main() {
   let updated = 0;
   let skipped = 0;
 
-  for (const filename of ptFiles) {
-    const slug = basename(filename, ".mdx");
-    const ptPath = join(MUSICAS_DIR, filename);
-    const enPath = join(MUSICAS_DIR, `${slug}-en.mdx`);
+  for (const ptPath of ptFiles) {
+    const slug = postIdFromPath(ptPath);
+    const enDir = join(BLOG_DIR, `${slug}-en`);
+    const enPath = join(enDir, "index.mdx");
 
     const content = readFileSync(ptPath, "utf8");
     const parsed = parseFrontmatter(content);
     if (!parsed) {
-      console.warn(`  skip (no frontmatter): ${filename}`);
+      console.warn(`  skip (no frontmatter): ${ptPath}`);
       skipped++;
       continue;
     }
@@ -176,12 +183,9 @@ async function main() {
 
     const enFrontmatter = buildEnFrontmatter(newFrontmatter, enTitle, slug);
     const enBody = makeEnBody(body, enTitle);
-    writeFileSync(
-      ptPath.replace(filename, `${slug}-en.mdx`),
-      `---\n${enFrontmatter}\n---\n${enBody}`,
-      "utf8"
-    );
-    console.log(`  created: musicas/${slug}-en.mdx`);
+    mkdirSync(enDir, { recursive: true });
+    writeFileSync(enPath, `---\n${enFrontmatter}\n---\n${enBody}`, "utf8");
+    console.log(`  created: ${slug}-en/index.mdx`);
     created++;
   }
 

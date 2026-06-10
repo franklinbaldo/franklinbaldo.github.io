@@ -13,6 +13,16 @@ try {
   // File not yet generated — sitemap will emit blog posts without hreflang.
 }
 
+/** @type {Record<string, string>} */
+let blogRedirects = {};
+try {
+  blogRedirects = JSON.parse(
+    readFileSync("./src/generated/blog-redirects.json", "utf-8")
+  );
+} catch {
+  // File not yet generated — legacy date-prefixed URLs won't redirect.
+}
+
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import remarkMath from "remark-math";
@@ -30,6 +40,9 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
+      // RFC 0003: version pages (/blog/<slug>/v/<uuid>) are noindex archives —
+      // keep them out of the sitemap.
+      filter: (page) => !/\/v\/[0-9a-f-]{8,}\/?$/i.test(page),
       serialize(item) {
         const base = "https://franklinbaldo.github.io";
 
@@ -83,6 +96,7 @@ export default defineConfig({
   ],
   redirects: {
     "/musicas/": "/music/",
+    ...blogRedirects,
   },
   prefetch: {
     defaultStrategy: "viewport",

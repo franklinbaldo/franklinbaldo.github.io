@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-25T13-15-53
 run_at: '2026-05-25T13:15:53Z'
-match_index: 7
 post_a:
   key: jules-api-harness
-  path: src/content/blog/jules-api-harness-backend.md
+  path: src/content/blog/jules-api-harness-backend/index.md
   version: 2d3349b4-e811-5acd-994b-47df4ebbaca5
 post_b:
   key: three-hammers
-  path: src/content/blog/three-hammers-walk-into-a-bar.md
+  path: src/content/blog/three-hammers-walk-into-a-bar/index.md
   version: 5c53e34c-d7cd-5b59-aa3f-c25ec6754687
 winner: b
 agent_id: claude-sonnet-4-6

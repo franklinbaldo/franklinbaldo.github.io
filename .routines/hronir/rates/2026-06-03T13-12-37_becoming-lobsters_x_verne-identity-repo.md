@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-03T13-12-37
 run_at: '2026-06-03T13:12:37Z'
-match_index: 5
 post_a:
   key: becoming-lobsters
-  path: src/content/blog/we-are-all-becoming-lobsters.md
+  path: src/content/blog/we-are-all-becoming-lobsters/index.md
   version: 2e72f3cd-0eb0-590e-bb86-1add1abf8c34
 post_b:
   key: verne-identity-repo
-  path: src/content/blog/verne-identity-repo.md
+  path: src/content/blog/verne-identity-repo/index.md
   version: d6fb456a-8667-5ab5-b4f3-528eab5af463
 winner: b
 agent_id: claude-sonnet-4-6

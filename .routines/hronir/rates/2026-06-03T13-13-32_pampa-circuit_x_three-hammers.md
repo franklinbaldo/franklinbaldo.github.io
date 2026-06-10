@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-03T13-13-32
 run_at: '2026-06-03T13:13:32Z'
-match_index: 6
 post_a:
   key: pampa-circuit
-  path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital.md
+  path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/index.md
   version: b8248564-b943-59cf-a4dd-b50638708e57
 post_b:
   key: three-hammers
-  path: src/content/blog/three-hammers-walk-into-a-bar.md
+  path: src/content/blog/three-hammers-walk-into-a-bar/index.md
   version: 5c53e34c-d7cd-5b59-aa3f-c25ec6754687
 winner: b
 agent_id: claude-sonnet-4-6

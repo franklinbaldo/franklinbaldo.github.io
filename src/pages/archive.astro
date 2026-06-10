@@ -35,6 +35,15 @@ function estMinutes(body: string | undefined): number {
   return Math.max(1, Math.round(words / 200));
 }
 
+// Collect type counts for filter buttons
+const typeOrder = ["essay", "technical", "fiction", "letter", "dialogue"] as const;
+type PostType = (typeof typeOrder)[number];
+const typeCounts = new Map<PostType | "other", number>();
+for (const p of posts) {
+  const pt = (p.data.type as PostType | undefined) ?? "other";
+  typeCounts.set(pt, (typeCounts.get(pt) ?? 0) + 1);
+}
+
 const archiveLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
@@ -57,6 +66,19 @@ const archiveLd = {
     <h1>Archive</h1>
     <p><small>{posts.length} essays</small></p>
   </hgroup>
+
+  <div class="type-filter" role="group" aria-label={t("en", "archive.filterType")}>
+    <small>{t("en", "archive.filterType")}</small>
+    <button class="type-btn active" data-type-filter="all" aria-pressed="true">{t("en", "archive.filterAll")} <span class="count">({posts.length})</span></button>
+    {typeOrder.filter(tp => typeCounts.has(tp)).map(tp => {
+      const labelKey = `post.type${tp.charAt(0).toUpperCase()}${tp.slice(1)}` as import("../lib/i18n").UIKey;
+      return (
+        <button class="type-btn" data-type-filter={tp} aria-pressed="false">
+          {t("en", labelKey)} <span class="count">({typeCounts.get(tp)})</span>
+        </button>
+      );
+    })}
+  </div>
 
   {years.length > 1 && (
     <nav class="year-jump" aria-label="Jump to year">
@@ -86,7 +108,7 @@ const archiveLd = {
             const mins = estMinutes(post.body);
             const rankInfo = post.data.translationKey ? rankByKey.get(post.data.translationKey) : undefined;
             return (
-              <tr>
+              <tr data-type={post.data.type ?? "other"}>
                 <td class="col-date">
                   <time datetime={post.data.date.toISOString()}>
                     {post.data.date.toLocaleDateString("en-US", { month: "short", day: "2-digit" })}
@@ -214,4 +236,56 @@ const archiveLd = {
   @media (max-width: 480px) {
     .col-min { display: none; }
   }
+  .type-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-bottom: calc(var(--pico-spacing) * 1.5);
+    color: var(--pico-muted-color);
+  }
+  .type-btn {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.2em 0.65em;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--pico-muted-color);
+    border: 1px solid var(--pico-muted-border-color);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .type-btn:hover {
+    background: color-mix(in srgb, var(--pico-primary) 10%, transparent);
+    color: var(--pico-primary);
+    border-color: color-mix(in srgb, var(--pico-primary) 30%, transparent);
+  }
+  .type-btn.active, .type-btn[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--pico-primary) 15%, transparent);
+    color: var(--pico-primary);
+    border-color: color-mix(in srgb, var(--pico-primary) 40%, transparent);
+  }
+  .type-btn .count { font-weight: 400; opacity: 0.7; }
 </style>
+<script is:inline>
+  (function () {
+    const buttons = document.querySelectorAll('[data-type-filter]');
+    const rows = document.querySelectorAll('tr[data-type]');
+    const sections = document.querySelectorAll('.archive-year');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var type = btn.getAttribute('data-type-filter');
+        buttons.forEach(function (b) { b.setAttribute('aria-pressed', 'false'); b.classList.remove('active'); });
+        btn.setAttribute('aria-pressed', 'true');
+        btn.classList.add('active');
+        rows.forEach(function (row) {
+          row.style.display = (type === 'all' || row.getAttribute('data-type') === type) ? '' : 'none';
+        });
+        sections.forEach(function (sec) {
+          var hasVisible = Array.from(sec.querySelectorAll('tr[data-type]')).some(function (r) { return r.style.display !== 'none'; });
+          sec.style.display = hasVisible ? '' : 'none';
+        });
+      });
+    });
+  })();
+</script>

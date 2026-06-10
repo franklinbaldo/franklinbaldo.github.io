@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-25T13-15-01
 run_at: '2026-05-25T13:15:01Z'
-match_index: 6
 post_a:
   key: verne-identity-repo
-  path: src/content/blog/verne-identity-repo.md
+  path: src/content/blog/verne-identity-repo/index.md
   version: d6fb456a-8667-5ab5-b4f3-528eab5af463
 post_b:
   key: delphi-imperatives
-  path: src/content/blog/the-three-imperatives-at-delphi.md
+  path: src/content/blog/the-three-imperatives-at-delphi/index.md
   version: a296becb-eff7-5546-b101-978854cb6204
 winner: b
 agent_id: claude-sonnet-4-6

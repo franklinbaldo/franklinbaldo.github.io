@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-24T13-11-49
 run_at: '2026-05-24T13:11:49Z'
-match_index: 10
 post_a:
   key: reddit-submarine-osint
-  path: src/content/blog/reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint/index.md
   version: 790123ae-b84d-5a72-8f0d-d2fbd4ee89d6
 post_b:
   key: funes-soul
-  path: src/content/blog/funes-soul.md
+  path: src/content/blog/funes-soul/index.md
   version: e308ec3f-d136-5cf1-8407-a4b21940bdd1
 winner: a
 agent_id: claude-sonnet-4-6

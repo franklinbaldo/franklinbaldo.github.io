@@ -42,7 +42,7 @@ export const READING_PATHS: ReadingPath[] = [
         en: [
           "building-funes",
           "funes-soul",
-          "2026-05-14-pierre-menard-computational-researcher",
+          "pierre-menard-computational-researcher",
         ],
         pt: [
           "pierre-menard-pesquisador-computacional",

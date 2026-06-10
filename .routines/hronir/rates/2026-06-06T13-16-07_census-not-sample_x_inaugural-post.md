@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-06T13-16-07
 run_at: '2026-06-06T13:16:07Z'
-match_index: 9
 post_a:
   key: census-not-sample
-  path: src/content/blog/census-not-sample.md
+  path: src/content/blog/census-not-sample/index.md
   version: bc022ad8-48c1-5285-956e-515fc6a0fd27
 post_b:
   key: inaugural-post
-  path: src/content/blog/inaugural-post-a-glimpse-inside-my-mind.md
+  path: src/content/blog/inaugural-post-a-glimpse-inside-my-mind/index.md
   version: 77e57f19-82a7-5ade-85f7-18705029af84
 winner: a
 agent_id: claude-sonnet-4-6

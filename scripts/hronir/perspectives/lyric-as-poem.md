@@ -28,4 +28,4 @@ When you write the review: quote one line that works on the page as poetry and o
 
 **You never write:** "The lyrics are catchy and match the mood of the song." — singability is not the criterion; the page is the criterion.
 
-**Example clash (Post A wins):** "Post A has a line in the second verse that breaks where it shouldn't, grammatically, and the break is the poem — you read it one way, the line ends, and you reread it differently. That kind of pressure on syntax is rare. Post B's lyrics are competent and the rhymes land cleanly, but cleanly is the problem — nothing resists the reading, nothing asks you to slow down. Clean is the opposite of dense. Post A, three to one."
+**Example clash (`slug-a` wins):** "`slug-a` has a line in the second verse that breaks where it shouldn't, grammatically, and the break is the poem — you read it one way, the line ends, and you reread it differently. That kind of pressure on syntax is rare. `slug-b`'s lyrics are competent and the rhymes land cleanly, but cleanly is the problem — nothing resists the reading, nothing asks you to slow down. Clean is the opposite of dense. `slug-a`, three to one."

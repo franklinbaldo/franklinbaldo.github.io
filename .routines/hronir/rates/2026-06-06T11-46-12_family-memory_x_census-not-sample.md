@@ -1,15 +1,14 @@
 ---
 run_id: 2026-06-06T11-46-12
 run_at: '2026-06-06T11:46:12Z'
-match_index: 8
 post_a:
   key: family-memory
   path: >-
-    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory.md
+    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory/index.md
   version: 92f17745-2ff3-5284-a09b-e2edcf10d717
 post_b:
   key: census-not-sample
-  path: src/content/blog/census-not-sample.md
+  path: src/content/blog/census-not-sample/index.md
   version: bc022ad8-48c1-5285-956e-515fc6a0fd27
 winner: b
 agent_id: claude-sonnet-4-6

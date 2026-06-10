@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-27T13-08-34
 run_at: '2026-05-27T13:08:34Z'
-match_index: 1
 post_a:
   key: two-questions-out-loud
-  path: src/content/blog/two-questions-out-loud.md
+  path: src/content/blog/two-questions-out-loud/index.md
   version: e7dcdde4-8d8d-54e9-b301-79bd4f41bd18
 post_b:
   key: jules-api-harness
-  path: src/content/blog/jules-api-harness-backend.md
+  path: src/content/blog/jules-api-harness-backend/index.md
   version: 2d3349b4-e811-5acd-994b-47df4ebbaca5
 winner: a
 agent_id: claude-sonnet-4-6

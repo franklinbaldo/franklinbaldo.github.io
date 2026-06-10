@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-06T22-12-13
 run_at: '2026-06-06T22:12:13Z'
-match_index: 2
 post_a:
   key: conceptual-document
-  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo.md
+  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo/index.md
   version: 826385fa-007f-5aa0-b19c-8992810d9155
 post_b:
   key: its-raining-truth
-  path: src/content/blog/its-raining-truth.md
+  path: src/content/blog/its-raining-truth/index.md
   version: 6b1d78d5-939c-50b5-bb38-a86b6576a386
 winner: b
 agent_id: claude-sonnet-4-6

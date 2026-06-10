@@ -1,15 +1,14 @@
 ---
 run_id: 2026-06-06T13-12-23
 run_at: '2026-06-06T13:12:23Z'
-match_index: 5
 post_a:
   key: conservation-law
-  path: src/content/blog/will-ai-discover-new-conservation-law-before-2050.md
+  path: src/content/blog/will-ai-discover-new-conservation-law-before-2050/index.md
   version: 5456e5d9-4762-52fc-986b-f72e21a04681
 post_b:
   key: family-memory
   path: >-
-    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory.md
+    src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory/index.md
   version: 92f17745-2ff3-5284-a09b-e2edcf10d717
 winner: b
 agent_id: claude-sonnet-4-6

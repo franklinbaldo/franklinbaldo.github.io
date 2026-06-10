@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-24T13-05-01
 run_at: '2026-05-24T13:05:01Z'
-match_index: 2
 post_a:
   key: funes-soul
-  path: src/content/blog/funes-soul.md
+  path: src/content/blog/funes-soul/index.md
   version: e308ec3f-d136-5cf1-8407-a4b21940bdd1
 post_b:
   key: agent-no-verbs
-  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs/index.md
   version: 2ddbcdb4-b91c-53f9-9c2b-9ef778416ce6
 winner: b
 agent_id: claude-sonnet-4-6

@@ -57,10 +57,12 @@ const isCurrent = (href: string) => {
           </a>
         </li>
       ))}
+      <li><button id="nav-music-btn" class="nav-music-btn secondary outline" type="button" aria-label="Tocar música" title="Tocar música">♪</button></li>
       <li><LanguageSwitcher /></li>
       <li><ThemeToggle /></li>
     </ul>
     <ul class="nav-burger">
+      <li><button id="nav-music-btn-mobile" class="nav-music-btn secondary outline" type="button" aria-label="Tocar música" title="Tocar música">♪</button></li>
       <li><LanguageSwitcher /></li>
       <li><ThemeToggle /></li>
       <li>
@@ -81,6 +83,74 @@ const isCurrent = (href: string) => {
   </nav>
 </header>
 
+<script>
+  function syncMusicBtn(audio: HTMLAudioElement | null) {
+    const btns = document.querySelectorAll<HTMLButtonElement>('.nav-music-btn');
+    btns.forEach((btn) => {
+      if (!audio || audio.paused) {
+        btn.textContent = '♪';
+        btn.setAttribute('aria-label', 'Tocar música');
+        btn.classList.remove('playing');
+      } else {
+        btn.textContent = '⏸';
+        btn.setAttribute('aria-label', 'Pausar música');
+        btn.classList.add('playing');
+      }
+    });
+  }
+
+  function initMusicBtn() {
+    const btns = document.querySelectorAll<HTMLButtonElement>('.nav-music-btn');
+    if (!btns.length) return;
+
+    const audio = document.getElementById('gmp-audio') as HTMLAudioElement | null;
+
+    // Sync initial state
+    syncMusicBtn(audio);
+
+    if (audio && audio.dataset.navBound !== '1') {
+      audio.dataset.navBound = '1';
+      audio.addEventListener('play', () => syncMusicBtn(audio));
+      audio.addEventListener('pause', () => syncMusicBtn(audio));
+      audio.addEventListener('ended', () => syncMusicBtn(audio));
+    }
+
+    btns.forEach((btn) => {
+      if (btn.dataset.musicBound === '1') return;
+      btn.dataset.musicBound = '1';
+      btn.addEventListener('click', () => {
+        const a = document.getElementById('gmp-audio') as HTMLAudioElement | null;
+        const player = document.getElementById('gmp') as HTMLElement | null;
+
+        if (a && !a.paused) {
+          // Playing → pause
+          a.pause();
+        } else if (a && a.src && player && !player.hidden) {
+          // Paused but has a track → resume
+          a.play().catch(() => {});
+        } else {
+          // Nothing playing → start first song from player's queue
+          const gmp = document.getElementById('gmp') as HTMLElement | null;
+          let songs: { id: string; title: string }[] = [];
+          try { songs = JSON.parse(gmp?.dataset.songs || '[]'); } catch {}
+          if (songs[0]) {
+            document.dispatchEvent(new CustomEvent('gp:play', {
+              detail: { sunoId: songs[0].id, title: songs[0].title },
+            }));
+          }
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMusicBtn);
+  } else {
+    initMusicBtn();
+  }
+  document.addEventListener('astro:page-load', initMusicBtn);
+</script>
+
 <style>
   .nav-burger { display: none; }
   @media (max-width: 768px) {
@@ -93,5 +163,19 @@ const isCurrent = (href: string) => {
     right: 0;
     left: auto;
     min-width: 12rem;
+  }
+  .nav-music-btn {
+    padding: 0.25rem 0.6rem;
+    font-size: 1rem;
+    line-height: 1;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .nav-music-btn.playing {
+    background: var(--pico-primary) !important;
+    color: var(--pico-primary-inverse, #fff) !important;
+    border-color: var(--pico-primary) !important;
   }
 </style>

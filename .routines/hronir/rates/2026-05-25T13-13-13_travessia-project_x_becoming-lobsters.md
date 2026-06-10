@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-25T13-13-13
 run_at: '2026-05-25T13:13:13Z'
-match_index: 4
 post_a:
   key: travessia-project
-  path: src/content/blog/travessia-the-project-that-writes-itself.md
+  path: src/content/blog/travessia-the-project-that-writes-itself/index.md
   version: d114f8bb-e09a-5ba8-b50a-48cdc01b5c34
 post_b:
   key: becoming-lobsters
-  path: src/content/blog/we-are-all-becoming-lobsters.md
+  path: src/content/blog/we-are-all-becoming-lobsters/index.md
   version: 2e72f3cd-0eb0-590e-bb86-1add1abf8c34
 winner: b
 agent_id: claude-sonnet-4-6

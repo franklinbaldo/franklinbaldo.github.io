@@ -1,15 +1,14 @@
 ---
 run_id: 2026-05-22T13-11-50
 run_at: '2026-05-22T13:11:50Z'
-match_index: 3
 post_a:
   key: future-father
   path: >-
-    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md
+    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents/index.md
   version: b5c85777-369f-5c2d-ba8e-2bfce7b0b824
 post_b:
   key: travessia-project
-  path: src/content/blog/travessia-the-project-that-writes-itself.md
+  path: src/content/blog/travessia-the-project-that-writes-itself/index.md
   version: d114f8bb-e09a-5ba8-b50a-48cdc01b5c34
 winner: a
 agent_id: claude-sonnet-4-6

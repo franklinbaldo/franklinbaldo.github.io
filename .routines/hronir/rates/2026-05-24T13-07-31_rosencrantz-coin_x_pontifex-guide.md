@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-24T13-07-31
 run_at: '2026-05-24T13:07:31Z'
-match_index: 5
 post_a:
   key: rosencrantz-coin
-  path: src/content/blog/rosencrantz-coin.md
+  path: src/content/blog/rosencrantz-coin/index.md
   version: 3fa29c5a-cf40-5f07-9034-670706bd6e6f
 post_b:
   key: pontifex-guide
-  path: src/content/blog/pontifex-architecture-implementation-guide.md
+  path: src/content/blog/pontifex-architecture-implementation-guide/index.md
   version: 6e47265f-e71e-5e48-9fe9-cbb1dfe2fe26
 winner: b
 agent_id: claude-sonnet-4-6

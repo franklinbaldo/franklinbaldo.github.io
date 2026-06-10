@@ -11,19 +11,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - run: npm ci
 
+      - name: Repo hygiene
+        run: npm run check:hygiene
+
       - name: Prettier check
         run: npx prettier --check .
 
+      - name: Unit tests
+        run: npm test
+
       - name: Hrönir doctor
         run: npm run hronir:doctor
+
+      - name: Internal link check
+        run: npm run check:links
+
+      - name: Translation pairing check
+        run: npm run check:translations
+        env:
+          BASE_REF: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || '' }}
 
       - name: Astro type check
         run: npx astro check

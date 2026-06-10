@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-29T13-12-48
 run_at: '2026-05-29T13:12:48Z'
-match_index: 7
 post_a:
   key: conservation-law
-  path: src/content/blog/will-ai-discover-new-conservation-law-before-2050.md
+  path: src/content/blog/will-ai-discover-new-conservation-law-before-2050/index.md
   version: 5456e5d9-4762-52fc-986b-f72e21a04681
 post_b:
   key: inaugural-post
-  path: src/content/blog/inaugural-post-a-glimpse-inside-my-mind.md
+  path: src/content/blog/inaugural-post-a-glimpse-inside-my-mind/index.md
   version: 77e57f19-82a7-5ade-85f7-18705029af84
 winner: a
 agent_id: claude-sonnet-4-6

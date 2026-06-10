@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-27T13-10-03
 run_at: '2026-05-27T13:10:03Z'
-match_index: 3
 post_a:
   key: reddit-submarine-osint
-  path: src/content/blog/reddit-submarine-osint.md
+  path: src/content/blog/reddit-submarine-osint/index.md
   version: 790123ae-b84d-5a72-8f0d-d2fbd4ee89d6
 post_b:
   key: delegating-to-agents
-  path: src/content/blog/the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation/index.md
   version: 89fe2121-7090-56d1-a0dd-adea417fea52
 winner: a
 agent_id: claude-sonnet-4-6

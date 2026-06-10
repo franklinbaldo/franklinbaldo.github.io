@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-01T13-12-03
 run_at: '2026-06-01T13:12:03Z'
-match_index: 5
 post_a:
   key: reclaiming-harness
-  path: src/content/blog/reclaiming-the-harness.md
+  path: src/content/blog/reclaiming-the-harness/index.md
   version: 2ccaa892-3525-5fe2-a223-fecd03131149
 post_b:
   key: pierre-menard
-  path: src/content/blog/pierre-menard-computational-researcher.md
+  path: src/content/blog/pierre-menard-computational-researcher/index.md
   version: 9e4135ad-ef47-5286-88fd-655075161694
 winner: a
 agent_id: claude-sonnet-4-6

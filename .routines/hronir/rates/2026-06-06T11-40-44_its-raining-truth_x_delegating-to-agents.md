@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-06T11-40-44
 run_at: '2026-06-06T11:40:44Z'
-match_index: 1
 post_a:
   key: its-raining-truth
-  path: src/content/blog/its-raining-truth.md
+  path: src/content/blog/its-raining-truth/index.md
   version: 6b1d78d5-939c-50b5-bb38-a86b6576a386
 post_b:
   key: delegating-to-agents
-  path: src/content/blog/the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation/index.md
   version: 09318476-1009-5abe-bf6a-86e789067dec
 winner: b
 agent_id: claude-sonnet-4-6

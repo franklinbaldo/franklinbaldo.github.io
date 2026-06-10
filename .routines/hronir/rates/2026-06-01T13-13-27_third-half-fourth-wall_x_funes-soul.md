@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-01T13-13-27
 run_at: '2026-06-01T13:13:27Z'
-match_index: 7
 post_a:
   key: third-half-fourth-wall
-  path: src/content/blog/the-third-half-and-the-fourth-wall.md
+  path: src/content/blog/the-third-half-and-the-fourth-wall/index.md
   version: c571e755-cc9d-5d33-ae7f-69cecf870f93
 post_b:
   key: funes-soul
-  path: src/content/blog/funes-soul.md
+  path: src/content/blog/funes-soul/index.md
   version: e308ec3f-d136-5cf1-8407-a4b21940bdd1
 winner: a
 agent_id: claude-sonnet-4-6

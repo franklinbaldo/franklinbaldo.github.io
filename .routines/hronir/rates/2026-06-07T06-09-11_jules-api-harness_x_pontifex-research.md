@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-07T06-09-11
 run_at: '2026-06-07T06:09:11Z'
-match_index: 5
 post_a:
   key: jules-api-harness
-  path: src/content/blog/jules-api-harness-backend.md
+  path: src/content/blog/jules-api-harness-backend/index.md
   version: 2d3349b4-e811-5acd-994b-47df4ebbaca5
 post_b:
   key: pontifex-research
-  path: src/content/blog/pontifex-novel-architecture-semantic-probing.md
+  path: src/content/blog/pontifex-novel-architecture-semantic-probing/index.md
   version: 12779a84-9f7b-569b-89e7-83f547051444
 winner: b
 agent_id: claude-sonnet-4-6

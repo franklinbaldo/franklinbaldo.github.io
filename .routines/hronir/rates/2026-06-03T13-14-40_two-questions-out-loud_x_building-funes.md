@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-03T13-14-40
 run_at: '2026-06-03T13:14:40Z'
-match_index: 7
 post_a:
   key: two-questions-out-loud
-  path: src/content/blog/two-questions-out-loud.md
+  path: src/content/blog/two-questions-out-loud/index.md
   version: e7dcdde4-8d8d-54e9-b301-79bd4f41bd18
 post_b:
   key: building-funes
-  path: src/content/blog/building-funes.md
+  path: src/content/blog/building-funes/index.md
   version: f3fabcd1-3889-561a-ad4f-67aecd34fd09
 winner: b
 agent_id: claude-sonnet-4-6

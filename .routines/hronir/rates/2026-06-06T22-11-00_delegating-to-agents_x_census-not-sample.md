@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-06T22-11-00
 run_at: '2026-06-06T22:11:00Z'
-match_index: 1
 post_a:
   key: delegating-to-agents
-  path: src/content/blog/the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation/index.md
   version: af592b0d-035b-5dbe-8ed5-d540b2fe3fa2
 post_b:
   key: census-not-sample
-  path: src/content/blog/census-not-sample.md
+  path: src/content/blog/census-not-sample/index.md
   version: d15754e1-5860-5641-9cb3-f0c6d5834384
 winner: b
 agent_id: claude-sonnet-4-6

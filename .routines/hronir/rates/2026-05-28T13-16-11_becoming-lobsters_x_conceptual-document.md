@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-28T13-16-11
 run_at: '2026-05-28T13:16:11Z'
-match_index: 10
 post_a:
   key: becoming-lobsters
-  path: src/content/blog/we-are-all-becoming-lobsters.md
+  path: src/content/blog/we-are-all-becoming-lobsters/index.md
   version: 2e72f3cd-0eb0-590e-bb86-1add1abf8c34
 post_b:
   key: conceptual-document
-  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo.md
+  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo/index.md
   version: 826385fa-007f-5aa0-b19c-8992810d9155
 winner: b
 agent_id: claude-sonnet-4-6

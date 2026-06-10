@@ -10,6 +10,11 @@ import { isPublished } from "../../../lib/publish";
 
 export function getStaticPaths() {
   const perspectives = getPerspectives();
+  if (perspectives.length === 0) {
+    throw new Error(
+      "getStaticPaths: getPerspectives() returned empty — check PERSPECTIVES_DIR resolution and scripts/hronir/perspectives/*.md files."
+    );
+  }
   return perspectives.map((p) => ({ params: { id: p.id } }));
 }
 

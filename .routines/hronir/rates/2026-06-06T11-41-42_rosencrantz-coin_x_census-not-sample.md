@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-06T11-41-42
 run_at: '2026-06-06T11:41:42Z'
-match_index: 2
 post_a:
   key: rosencrantz-coin
-  path: src/content/blog/rosencrantz-coin.md
+  path: src/content/blog/rosencrantz-coin/index.md
   version: 8817e7e9-9c76-555e-817c-a3d27722e63c
 post_b:
   key: census-not-sample
-  path: src/content/blog/census-not-sample.md
+  path: src/content/blog/census-not-sample/index.md
   version: bc022ad8-48c1-5285-956e-515fc6a0fd27
 winner: a
 agent_id: claude-sonnet-4-6

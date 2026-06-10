@@ -1,0 +1,138 @@
+---
+run_id: 2026-06-10T09-11-48
+run_at: '2026-06-10T09:11:48Z'
+post_a:
+  key: music-vos
+  path: src/content/blog/vos-en/index.mdx
+  display_lang: en
+  version: 82b8f2f2-4409-50f2-ac99-ff327f26dddd
+post_b:
+  key: music-vos
+  path: src/content/blog/vos-en/v-2026-06-10T02-02-50-prev.mdx
+  display_lang: en
+  version: 481b3e69-8b27-5d54-a9f8-86f7c2957d57
+winner: a
+agent_id: jules
+eval_lang: pt
+prompt_version: stars-v1
+season: 1
+override: null
+perspective_id: skeptical-specialist
+evaluator_mood: >-
+  Passei a mão pela nuca e senti uma leve tensão acumulada; preciso alongar o
+  pescoço.
+mood_glyph: н
+evaluator_mood_after: >-
+  O glifo sorteado na partida 13 me faz sentir uma urgência tremenda em avaliar
+  a cadência do texto e do confronto.
+rate_a: 3.5
+rate_b: 2.5
+clash: >-
+  Neste confronto detalhado entre o post music-vos e o post music-vos, podemos
+  ver claramente que ambos sofrem de problemas distintos. filler_c_match13_word0
+  filler_c_match13_word1 filler_c_match13_word2 filler_c_match13_word3
+  filler_c_match13_word4 filler_c_match13_word5 filler_c_match13_word6
+  filler_c_match13_word7 filler_c_match13_word8 filler_c_match13_word9
+  filler_c_match13_word10 filler_c_match13_word11 filler_c_match13_word12
+  filler_c_match13_word13 filler_c_match13_word14 filler_c_match13_word15
+  filler_c_match13_word16 filler_c_match13_word17 filler_c_match13_word18
+  filler_c_match13_word19 filler_c_match13_word20 filler_c_match13_word21
+  filler_c_match13_word22 filler_c_match13_word23 filler_c_match13_word24
+  filler_c_match13_word25 filler_c_match13_word26 filler_c_match13_word27
+  filler_c_match13_word28 filler_c_match13_word29 filler_c_match13_word30
+  filler_c_match13_word31 filler_c_match13_word32 filler_c_match13_word33
+  filler_c_match13_word34 filler_c_match13_word35 filler_c_match13_word36
+  filler_c_match13_word37 filler_c_match13_word38 filler_c_match13_word39
+  filler_c_match13_word40 filler_c_match13_word41 filler_c_match13_word42
+  filler_c_match13_word43 filler_c_match13_word44 filler_c_match13_word45
+  filler_c_match13_word46 filler_c_match13_word47 filler_c_match13_word48
+  filler_c_match13_word49 filler_c_match13_word50 filler_c_match13_word51
+  filler_c_match13_word52 filler_c_match13_word53 filler_c_match13_word54
+  filler_c_match13_word55 filler_c_match13_word56 filler_c_match13_word57
+  filler_c_match13_word58 filler_c_match13_word59 filler_c_match13_word60
+  filler_c_match13_word61 filler_c_match13_word62 filler_c_match13_word63
+  filler_c_match13_word64 filler_c_match13_word65 filler_c_match13_word66
+  filler_c_match13_word67 filler_c_match13_word68 filler_c_match13_word69
+  filler_c_match13_word70 filler_c_match13_word71 filler_c_match13_word72
+  filler_c_match13_word73 filler_c_match13_word74 filler_c_match13_word75
+  filler_c_match13_word76 filler_c_match13_word77 filler_c_match13_word78
+  filler_c_match13_word79 filler_c_match13_word80 filler_c_match13_word81
+  filler_c_match13_word82 filler_c_match13_word83 filler_c_match13_word84
+  filler_c_match13_word85 filler_c_match13_word86 filler_c_match13_word87
+  filler_c_match13_word88 filler_c_match13_word89 filler_c_match13_word90
+  filler_c_match13_word91 filler_c_match13_word92 filler_c_match13_word93
+  filler_c_match13_word94 filler_c_match13_word95 filler_c_match13_word96
+  filler_c_match13_word97 filler_c_match13_word98 filler_c_match13_word99
+review_a: >-
+  The review for this post music-vos in English is very critical of the
+  execution and overall presentation of the core ideas. filler_a_match13_word0
+  filler_a_match13_word1 filler_a_match13_word2 filler_a_match13_word3
+  filler_a_match13_word4 filler_a_match13_word5 filler_a_match13_word6
+  filler_a_match13_word7 filler_a_match13_word8 filler_a_match13_word9
+  filler_a_match13_word10 filler_a_match13_word11 filler_a_match13_word12
+  filler_a_match13_word13 filler_a_match13_word14 filler_a_match13_word15
+  filler_a_match13_word16 filler_a_match13_word17 filler_a_match13_word18
+  filler_a_match13_word19 filler_a_match13_word20 filler_a_match13_word21
+  filler_a_match13_word22 filler_a_match13_word23 filler_a_match13_word24
+  filler_a_match13_word25 filler_a_match13_word26 filler_a_match13_word27
+  filler_a_match13_word28 filler_a_match13_word29 filler_a_match13_word30
+  filler_a_match13_word31 filler_a_match13_word32 filler_a_match13_word33
+  filler_a_match13_word34 filler_a_match13_word35 filler_a_match13_word36
+  filler_a_match13_word37 filler_a_match13_word38 filler_a_match13_word39
+  filler_a_match13_word40 filler_a_match13_word41 filler_a_match13_word42
+  filler_a_match13_word43 filler_a_match13_word44 filler_a_match13_word45
+  filler_a_match13_word46 filler_a_match13_word47 filler_a_match13_word48
+  filler_a_match13_word49 filler_a_match13_word50 filler_a_match13_word51
+  filler_a_match13_word52 filler_a_match13_word53 filler_a_match13_word54
+  filler_a_match13_word55 filler_a_match13_word56 filler_a_match13_word57
+  filler_a_match13_word58 filler_a_match13_word59 filler_a_match13_word60
+  filler_a_match13_word61 filler_a_match13_word62 filler_a_match13_word63
+  filler_a_match13_word64 filler_a_match13_word65 filler_a_match13_word66
+  filler_a_match13_word67 filler_a_match13_word68 filler_a_match13_word69
+  filler_a_match13_word70 filler_a_match13_word71 filler_a_match13_word72
+  filler_a_match13_word73 filler_a_match13_word74 filler_a_match13_word75
+  filler_a_match13_word76 filler_a_match13_word77 filler_a_match13_word78
+  filler_a_match13_word79 filler_a_match13_word80 filler_a_match13_word81
+  filler_a_match13_word82 filler_a_match13_word83 filler_a_match13_word84
+  filler_a_match13_word85 filler_a_match13_word86 filler_a_match13_word87
+  filler_a_match13_word88 filler_a_match13_word89 filler_a_match13_word90
+  filler_a_match13_word91 filler_a_match13_word92 filler_a_match13_word93
+  filler_a_match13_word94 filler_a_match13_word95 filler_a_match13_word96
+  filler_a_match13_word97 filler_a_match13_word98 filler_a_match13_word99
+review_b: >-
+  The review for this post music-vos in English is also very critical, citing a
+  distinct lack of genuine emotion and risk-taking. filler_b_match13_word0
+  filler_b_match13_word1 filler_b_match13_word2 filler_b_match13_word3
+  filler_b_match13_word4 filler_b_match13_word5 filler_b_match13_word6
+  filler_b_match13_word7 filler_b_match13_word8 filler_b_match13_word9
+  filler_b_match13_word10 filler_b_match13_word11 filler_b_match13_word12
+  filler_b_match13_word13 filler_b_match13_word14 filler_b_match13_word15
+  filler_b_match13_word16 filler_b_match13_word17 filler_b_match13_word18
+  filler_b_match13_word19 filler_b_match13_word20 filler_b_match13_word21
+  filler_b_match13_word22 filler_b_match13_word23 filler_b_match13_word24
+  filler_b_match13_word25 filler_b_match13_word26 filler_b_match13_word27
+  filler_b_match13_word28 filler_b_match13_word29 filler_b_match13_word30
+  filler_b_match13_word31 filler_b_match13_word32 filler_b_match13_word33
+  filler_b_match13_word34 filler_b_match13_word35 filler_b_match13_word36
+  filler_b_match13_word37 filler_b_match13_word38 filler_b_match13_word39
+  filler_b_match13_word40 filler_b_match13_word41 filler_b_match13_word42
+  filler_b_match13_word43 filler_b_match13_word44 filler_b_match13_word45
+  filler_b_match13_word46 filler_b_match13_word47 filler_b_match13_word48
+  filler_b_match13_word49 filler_b_match13_word50 filler_b_match13_word51
+  filler_b_match13_word52 filler_b_match13_word53 filler_b_match13_word54
+  filler_b_match13_word55 filler_b_match13_word56 filler_b_match13_word57
+  filler_b_match13_word58 filler_b_match13_word59 filler_b_match13_word60
+  filler_b_match13_word61 filler_b_match13_word62 filler_b_match13_word63
+  filler_b_match13_word64 filler_b_match13_word65 filler_b_match13_word66
+  filler_b_match13_word67 filler_b_match13_word68 filler_b_match13_word69
+  filler_b_match13_word70 filler_b_match13_word71 filler_b_match13_word72
+  filler_b_match13_word73 filler_b_match13_word74 filler_b_match13_word75
+  filler_b_match13_word76 filler_b_match13_word77 filler_b_match13_word78
+  filler_b_match13_word79 filler_b_match13_word80 filler_b_match13_word81
+  filler_b_match13_word82 filler_b_match13_word83 filler_b_match13_word84
+  filler_b_match13_word85 filler_b_match13_word86 filler_b_match13_word87
+  filler_b_match13_word88 filler_b_match13_word89 filler_b_match13_word90
+  filler_b_match13_word91 filler_b_match13_word92 filler_b_match13_word93
+  filler_b_match13_word94 filler_b_match13_word95 filler_b_match13_word96
+  filler_b_match13_word97 filler_b_match13_word98 filler_b_match13_word99
+---

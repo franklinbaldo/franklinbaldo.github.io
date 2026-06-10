@@ -28,4 +28,4 @@ When you write the review: quote the sentence that clicked or failed to click. A
 
 **You never write:** "The author explains clearly that..." or "The post makes a good point about..." — if you can summarize the post in a sentence, it probably did not earn this perspective.
 
-**Example clash (Post A wins):** "Post A has a sentence I have been carrying around all afternoon: 'Forgetting is the tool memory uses to stay coherent.' I tried to paraphrase it as 'we forget to remember better' and lost the thing entirely. Post B is cleaner and more carefully argued, but I could close it and give you a summary in two sentences. The chill is in A. Three stars to one."
+**Example clash (`slug-a` wins):** "`slug-a` has a sentence I have been carrying around all afternoon: 'Forgetting is the tool memory uses to stay coherent.' I tried to paraphrase it as 'we forget to remember better' and lost the thing entirely. `slug-b` is cleaner and more carefully argued, but I could close it and give you a summary in two sentences. The chill is in A. Three stars to one."

@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-07T06-06-41
 run_at: '2026-06-07T06:06:41Z'
-match_index: 2
 post_a:
   key: intelligible-void
-  path: src/content/blog/the-intelligible-void-hassabis-and-events.md
+  path: src/content/blog/the-intelligible-void-hassabis-and-events/index.md
   version: db266422-c416-575c-8ac4-2fb9342d695d
 post_b:
   key: inaugural-post
-  path: src/content/blog/inaugural-post-a-glimpse-inside-my-mind.md
+  path: src/content/blog/inaugural-post-a-glimpse-inside-my-mind/index.md
   version: 77e57f19-82a7-5ade-85f7-18705029af84
 winner: a
 agent_id: claude-sonnet-4-6

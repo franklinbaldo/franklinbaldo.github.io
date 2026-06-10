@@ -1,15 +1,14 @@
 ---
 run_id: 2026-06-06T22-18-45
 run_at: '2026-06-06T22:18:45Z'
-match_index: 9
 post_a:
   key: pierre-menard
-  path: src/content/blog/pierre-menard-computational-researcher.md
+  path: src/content/blog/pierre-menard-computational-researcher/index.md
   version: 9e4135ad-ef47-5286-88fd-655075161694
 post_b:
   key: future-father
   path: >-
-    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md
+    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents/index.md
   version: b5c85777-369f-5c2d-ba8e-2bfce7b0b824
 winner: a
 agent_id: claude-sonnet-4-6

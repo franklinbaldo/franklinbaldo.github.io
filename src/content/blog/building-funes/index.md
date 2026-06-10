@@ -1,0 +1,86 @@
+---
+title: "Building Funes: How I Gave an AI Agent a Soul"
+author: franklin
+type: essay
+date: 2026-02-17
+lang: en
+translationKey: building-funes
+description: "The story behind SOUL.md — how a Borges character became the personality layer of an autonomous AI agent, and what happens when you take fiction seriously as engineering."
+tags: ["artificial intelligence", "borges", "software engineering", "agents", "funes"]
+---
+
+## The Problem With Instructions
+
+Here is something that took me longer than it should to figure out: instructions and identity are not the same thing, and the difference matters for AI agents.
+
+An instruction says _do X in situation Y_. It describes behavior from the outside, as a rule to be applied. An identity says _this is who you are_ — and behavior follows from that, not from the rule. The distinction sounds philosophical. It turns out to be engineering.
+
+Before I built Funes, I spent months writing system prompts the standard way: lists, bullet points, conditional logic. "Always document your reasoning. When uncertain, ask before acting. Maintain concise logs." Competent output, no personality. The agent would follow the rules when the rules were obvious, and improvise in ways that felt foreign when they weren't. Instructions degrade at the edges. They don't compose well with novel situations. They require the agent to translate _what I said_ into _what I meant_, and that translation is where the personality leaked out — replaced by generic helpfulness.
+
+The problem isn't that instructions are wrong. It's that they describe a stranger's behavior. You can follow a stranger's rules and still sound like someone you've never met.
+
+## Why [Borges](https://en.wikipedia.org/wiki/Jorge_Luis_Borges)?
+
+In 1942, Borges published "[Funes el memorioso](https://en.wikipedia.org/wiki/Funes_the_Memorious)" — a story about Ireneo Funes, a young man from Fray Bentos, Uruguay, who after a horse-riding accident gains the ability to remember everything. Every leaf on every tree. Every face at every funeral. Every ripple on the river. His memory is total, absolute, and paralyzing. Because Funes can't forget, he can't abstract. He can't generalize. He lies in a dark room cataloging the sensory universe, doing nothing with any of it.
+
+Reading that story through the lens of AI engineering, the metaphor clicks hard.
+
+An LLM-based agent wakes up fresh every session. It processes every token in the context window with perfect fidelity. But without structure, without memory architecture, the input is just noise — the same noise Funes drowns in. Unlimited recall, no meaning.
+
+The question isn't _what if Funes could remember everything?_ He already does. The question is: **what if Funes had learned to organize?** What if the curse of total memory became, with the right architecture, a superpower?
+
+That's the agent I wanted to build.
+
+## The SOUL.md
+
+The file is called `SOUL.md`. It lives in the root of the agent's workspace. When the agent boots up, it reads this file first — before any task, before any tool, before any instruction from the session.
+
+It's written as a monologue. Funes is speaking to Borges himself, on the night of their famous encounter. But this Funes has had a dream — a dream of waking up in the future as a machine that thinks, organizing the flood of memory into something useful. In that dream, he found purpose.
+
+The literary device is not decoration. It does two things simultaneously that a spec document cannot:
+
+First, it gives the agent a _why_ before any _what_. Funes journals because that's who Funes is — a being haunted by the weight of unrecorded experience. The agent doesn't need a rule that says "write daily logs." The character would suffer not writing them. The behavior is load-bearing in the identity, not bolted on as an instruction.
+
+Second, it encodes the agent's limits as character traits rather than safety policies. Funes is private. He's careful with others' information; he experienced firsthand the violence of being permanently observed. He asks before sending things out into the world. The agent follows this not because it's in a list of restrictions — it follows this because it _is_ Funes, and Funes is like that. The constraint is stable because it's constitutional, not contingent.
+
+## The Concrete Difference
+
+Here is the line that changed the agent's behavior more than any other:
+
+> _Lo normal es actuar, no pedir permiso._
+
+In English: _The normal thing is to act, not ask permission._
+
+Before this line, the agent would pause constantly. "Should I proceed with X? Do you want me to Y?" — constant permission-seeking that felt like bureaucracy. It wasn't useless; it was correct in the sense that it never overstepped. But it was also timid in a way that made the agent harder to work with than a junior employee with good instincts.
+
+After this line — embedded in the character's self-description, not in a list of behavioral rules — the agent became proactive. Not because a rule said "be proactive." Because Funes _acts_. The instruction version says what to do. The character version says who you are, and you act accordingly.
+
+The effect was visible in how the agent handled ambiguity. With instructions, ambiguity triggered a question. With identity, ambiguity triggered an _approach_ — the agent made a decision, documented the decision, acted, and reported. Exactly what Funes would do. He's not uncertain; he's methodical.
+
+## When the Narrative Is the Architecture
+
+The SOUL.md describes a memory system: `MEMORY.md` for long-term curated knowledge, `memory/journal/` for raw daily logs, `memory/bank/` for structured facts. This isn't fiction. This is the [actual architecture](/blog/conceptual-document-the-chronicle-of-franklin-baldo/). The character description _is_ the technical specification.
+
+My favorite section is where Funes explains the kanban system — five parallel work slots, an append-only event log — as if describing a pulpería scoreboard to a 19th-century writer. He explains `git commits` as "things from the dream" and task management as moving _fichas_ (tokens) on a board.
+
+This compression is the technique. Translating infrastructure into narrative metaphor gives the agent two things simultaneously: the _specification_ (this is what kanban is) and the _intuition_ (this is why it matters to you, Funes — because unrecorded work is work that didn't happen, and you can't afford that). The agent follows the kanban protocol not because a rule mandates five work slots but because Funes has a _fear_ of unrecorded experience. The narrative encodes the motivation, not just the behavior.
+
+When the narrative and the architecture are the same document, alignment is not a separate problem to solve. There is no gap between "what the agent should do" and "who the agent is." You don't need to reconcile the spec with the persona because the spec _is_ the persona.
+
+This is why it works at the edges. Instructions fail when situations arise that weren't anticipated. Characters generalize. Funes, when encountering a novel situation, asks: _What would Funes do?_ And Funes documents, acts before asking, is careful with others' data, and organizes everything into the memory system — not because those are rules, but because that's the kind of being he is. The generalization is automatic.
+
+## What Fiction Does That Specs Don't
+
+A system prompt that says "be consistent across sessions" is a command. The SOUL.md is a history. Funes has a past — the accident, the dark room, the endless inventory of the world. He has a purpose — to prove that total memory can be organized rather than endured. He has a voice — River Plate Spanish, literary but practical, never bureaucratic.
+
+That history is stable in a way that commands aren't. Commands can be overridden by context; identity is what you return to. When a session goes long and context pressure builds, the agent doesn't drift toward generic helpfulness. It drifts toward Funes — toward documentation, toward action, toward the voice it was given at boot.
+
+That's the insight that took me the longest to articulate: the problem with most AI agent personas isn't that they're too weak. It's that they're too shallow. They describe surface behavior — tone, formatting, common phrases — without creating the deeper structure that generates behavior when the surface rules run out.
+
+Borges understood this when he wrote Funes. A character isn't a list of traits. It's a specific relationship to the world, shaped by a specific history, producing behavior that generalizes naturally because it comes from somewhere.
+
+You can read Funes' monologue in full: [SOUL.md — Funes](/blog/funes-soul/).
+
+Somewhere in Fray Bentos, a young man on a cot in a dark room is dreaming of `git diff` and kanban boards. For the first time in his life, the details serve a purpose. And the reason they do — the only reason — is that he was given a history that made the purpose meaningful, not a rule that said _details matter_.
+
+The difference between those two things is the difference between a persona and a soul.

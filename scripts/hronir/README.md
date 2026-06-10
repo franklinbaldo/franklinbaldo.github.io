@@ -1,5 +1,15 @@
 # Hrönir
 
+> **⚠ RFC 0003 (implementada, Fases 0–2) mudou a fase de edição.** Cada post
+> agora vive em `src/content/blog/<slug>/index.md`; a edição **não reescreve a
+> canônica no lugar** — `draft-worst` cria uma nova versão `<slug>/v-<ts>.md` que
+> convive lado a lado e **compete** com a canônica (duelos de versão no sampling),
+> e `promote` troca a vencedora para `index.md`. Os comandos `edit-worst`/
+> `edit-commit` continuam como **aliases** de `draft-worst`/`draft-commit`. As
+> seções abaixo que descrevem edição-no-lugar e `previousVersion` (linked list via
+> git) refletem o fluxo **legado**; a fonte canônica do novo fluxo é
+> `docs/rfcs/0003-*.md`.
+
 Sistema de avaliação par-a-par de posts do blog. Cada rodada gera N partidas (default 10) por **active sampling**. Para cada partida o Hrönir sorteia uma **perspectiva de leitor** (ver `perspectives/`) e o avaliador, identificando-se obrigatoriamente, atribui estrelas (1.00–5.00) a cada post junto com uma resenha de cada e um confronto. O vencedor é derivado mecanicamente: quem tem mais estrelas. Ao final, o post pior ranqueado recebe uma edição — registrada como `previousVersion` no próprio frontmatter do post (linked list de uma aresta apontando para a versão anterior no GitHub).
 
 > **Este CLI é não-interativo por design** (rodado por Claude Code).
@@ -43,18 +53,19 @@ Versões anteriores de cada post **não** são snapshotadas no repo — vivem no
 
 Todos via npm scripts na raiz:
 
-| Comando                                                                                                              | Função                                                                                                                                                                                                                                                                                                                                 |
-| -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run hronir:init -- --agent-id <id> [opções]`                                                                    | Cria a sessão, vai direto pro primeiro match. `--agent-id <id>` é **obrigatório** (sem default). Opções: `--matches N` (default 10), `--eval-lang <lang>` (default `pt`), `--min-appearances N`, `--skip-edit`, `--skip-rating`                                                                                                        |
-| `npm run hronir:continue`                                                                                            | Avança o estado da sessão: imprime a **perspectiva sorteada** + post A; depois imprime post B; depois espera decisão                                                                                                                                                                                                                   |
-| `npm run hronir:decide -- --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "..." --review-b "..." --clash "..."` | Registra a decisão. Cada `--rate-*` é número 1.00–5.00 (até duas decimais, empate proibido). Cada `--review-*` e o `--clash` têm piso de 100 palavras. Vencedor é derivado: quem tem mais estrelas. Agente, perspectiva e idioma são fixos pela sessão (vêm de `init` / sorteio em `continue`). Devolve a sessão para `ready_for_next` |
-| `npm run hronir:ranking`                                                                                             | Score acumulado de todos os matches preenchidos                                                                                                                                                                                                                                                                                        |
-| `npm run hronir:worst`                                                                                               | Imprime translationKey do pior ranqueado                                                                                                                                                                                                                                                                                               |
-| `npm run hronir:edit-worst`                                                                                          | Pior elegível + top 3 + defesas + crítica acumulada. Captura `git HEAD` na sessão (URL do GitHub pra versão prestes a ser substituída), injeta `replacedVersion` (marker transiente) no frontmatter dos posts, marca a sessão como `need_edit`                                                                                         |
-| `npm run hronir:edit-commit -- --msg "..."`                                                                          | Valida que cada tradução foi efetivamente alterada (UUIDv5 mudou), grava `previousVersion: { uuid, url, timestamp, msg }` no frontmatter (substitui qualquer `replacedVersion`/`editHistory` legados), fecha a sessão                                                                                                                  |
-| `npm run hronir:end -- [--skip-edit\|--force]`                                                                       | Encerra a rodada. Recusa se há matches pendentes ou edição pendente, a menos que `--force`                                                                                                                                                                                                                                             |
-| `npm run hronir:migrate -- [--dry-run]`                                                                              | Normaliza matches legados (`slug:` → `key:`, renomeia arquivo)                                                                                                                                                                                                                                                                         |
-| `npm run hronir:doctor`                                                                                              | Verifica inconsistências. Sai com código 1 se encontrar — usado no CI                                                                                                                                                                                                                                                                  |
+| Comando                                                                                                                                 | Função                                                                                                                                                                                                                                                                                                                                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run hronir:init -- --agent-id <id> [opções]`                                                                                       | Cria a sessão, vai direto pro primeiro match. `--agent-id <id>` é **obrigatório** (sem default). Opções: `--matches N` (default 10), `--eval-lang <lang>` (default `pt`), `--min-appearances N`, `--skip-edit`, `--skip-rating`                                                                                                                                                                       |
+| `npm run hronir:continue`                                                                                                               | Avança o estado da sessão: imprime a **perspectiva sorteada** + post A; depois imprime post B; depois espera decisão                                                                                                                                                                                                                                                                                  |
+| `npm run hronir:decide -- --after-mood "..." --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "..." --review-b "..." --clash "..."` | Registra a decisão. `--after-mood` é a **primeira flag** (ver "Decidindo o mood"). Cada `--rate-*` é número 1.00–5.00 (até duas decimais, empate proibido). Cada `--review-*` e o `--clash` têm piso de 100 palavras. Vencedor é derivado: quem tem mais estrelas. Agente, perspectiva e idioma são fixos pela sessão (vêm de `init` / sorteio em `continue`). Devolve a sessão para `ready_for_next` |
+| `npm run hronir:ranking`                                                                                                                | Score acumulado de todos os matches preenchidos                                                                                                                                                                                                                                                                                                                                                       |
+| `npm run hronir:worst [-- --absolute]`                                                                                                  | Imprime translationKey do pior ranqueado (por `ordinal`; `--absolute` usa `stars`)                                                                                                                                                                                                                                                                                                                    |
+| `npm run hronir:diagnose`                                                                                                               | **Leitura pura.** Qualidade de-confundida (post vs viés de avaliador/perspectiva, ridge-LSQ), `gap` cru−de-confundido, vieses `α`/`π`, líder por perspectiva. Não muda estado. Ver RFC 0002                                                                                                                                                                                                           |
+| `npm run hronir:edit-worst`                                                                                                             | Pior elegível + top 3 + defesas + crítica acumulada. Captura `git HEAD` na sessão (URL do GitHub pra versão prestes a ser substituída), injeta `replacedVersion` (marker transiente) no frontmatter dos posts, marca a sessão como `need_edit`                                                                                                                                                        |
+| `npm run hronir:edit-commit -- --msg "..."`                                                                                             | Valida que cada tradução foi efetivamente alterada (UUIDv5 mudou), grava `previousVersion: { uuid, url, timestamp, msg }` no frontmatter (substitui qualquer `replacedVersion`/`editHistory` legados), fecha a sessão                                                                                                                                                                                 |
+| `npm run hronir:end -- [--skip-edit\|--force]`                                                                                          | Encerra a rodada. Recusa se há matches pendentes ou edição pendente, a menos que `--force`                                                                                                                                                                                                                                                                                                            |
+| `npm run hronir:migrate -- [--dry-run]`                                                                                                 | Normaliza matches legados (`slug:` → `key:`, renomeia arquivo)                                                                                                                                                                                                                                                                                                                                        |
+| `npm run hronir:doctor`                                                                                                                 | Verifica inconsistências. Sai com código 1 se encontrar — usado no CI                                                                                                                                                                                                                                                                                                                                 |
 
 Cada comando termina com uma linha `NEXT STEP:` apontando o próximo passo, exceto quando o fluxo termina.
 
@@ -68,9 +79,11 @@ init
              └─> continue  # gera match 2, imprime post A
                  ...
                  └─> continue  # após N matches, sessão entra em 'need_edit'
-                     └─> edit-worst   # mostra pior post + contexto, captura HEAD, marca posts
-                         └─> [edição manual em todas as traduções]
-                             └─> edit-commit --msg "..."  # grava previousVersion
+                     └─> draft-worst  # cria <slug>/v-<ts>.md (cópia da canônica); index.md intocada
+                         └─> [edição manual dos RASCUNHOS em todas as traduções]
+                             └─> draft-commit --msg "..."  # valida UUID novo, registra o competidor
+                                 └─> [duelos de versão no sampling decidem]
+                                     └─> promote --key <key>  # vencedora vira index.md (swap)
 ```
 
 A máquina de estados está em `hronir_session.json`: `ready_for_next → reading_a → reading_b → deciding → ready_for_next → … → need_edit → (sessão fechada)`.
@@ -133,6 +146,29 @@ Cooldown de `edit-worst` (evita reeditar o mesmo post duas rodadas seguidas) é 
 
 No schema `stars-v1` o `decide` valida coercivamente: `--clash`, `--review-a` e `--review-b` precisam ter pelo menos **100 palavras** cada. O `doctor` repete a checagem nos arquivos persistidos. Resenha curta ou genérica perde a função do sistema (`edit-worst` lê e cita essas resenhas; pouca substância dá pouco sinal). Meta natural: 200 palavras por campo.
 
+Nas resenhas e no confronto, refira-se a cada post pelo seu **slug** (o `key`/`translationKey`, mostrado no cabeçalho de cada post durante o `continue`), não por "Post A" / "Post B". Os relatos são lidos depois fora do contexto efêmero do match (em `edit-worst` e no histórico), onde "A" e "B" não significam nada.
+
+Os campos `review_a`, `review_b` e `clash` são **Markdown** e renderizam como tal — ênfase, listas, blockquotes (para citar trechos do post) e emojis são bem-vindos quando servem à leitura. Formatação a serviço do conteúdo, não decoração.
+
+Além de pontuar, o avaliador pode (e deve, quando tiver) **sugerir melhorias concretas** ao post — o que cortar, expandir, reordenar — e **apontar conteúdo relevante** que veio à mente sobre o assunto: uma referência, um autor, um exemplo, um link. Essas sugestões alimentam a fase `edit-worst`; quanto mais específicas, mais úteis.
+
+## Decidindo o mood (primeira coisa)
+
+`--after-mood` é a **primeira flag** do `decide`. Antes de escrever qualquer
+coisa, o `continue` (passo de decisão) mostra ao avaliador um **glifo Unicode
+aleatório** que o Hronir sorteou por ele (com o codepoint `U+XXXX`), junto do
+**mood inicial** do banner. O glifo é lido _subjetivamente_ — não há tabela de
+conversão; a forma, o traço, o que aquele caractere evoca, o avaliador decide
+como pesa. Essa leitura, somada ao mood inicial e ao que os dois posts (e o
+confronto entre eles) fizeram o avaliador sentir, produz o estado interno de
+agora — que então **colore o tom** das resenhas e do clash. Por isso o mood é
+decidido primeiro.
+
+O glifo sorteado vem de faixas Unicode visíveis e atribuídas (latim, grego,
+cirílico, setas, operadores, símbolos, dingbats, hiragana, katakana, CJK) e
+fica registrado no frontmatter do match como `mood_glyph`, ao lado de
+`evaluator_mood` (inicial) e `evaluator_mood_after` (resultante).
+
 ## Perspectivas (leitores do blog)
 
 Cada match no schema `stars-v1` é avaliado a partir de uma **perspectiva de leitor** sorteada aleatoriamente no `continue` (estado `ready_for_next` → `reading_a`). A perspectiva é um arquivo em `scripts/hronir/perspectives/<id>.md` com frontmatter (`id`, `name`, `summary`) e um corpo de instruções dizendo o que premiar, o que penalizar, e como escrever a resenha e o confronto a partir daquela ótica.
@@ -167,27 +203,54 @@ O `edit-worst` instrui a leitura de **ambas** antes de editar e a escolher a apl
 
 ## Ranking
 
-Ranking via **OpenSkill** (modelo Weng-Lin, atualização bayesiana online de Plackett-Luce). Cada par é tratado como uma partida 1v1; vencedor sobe `mu` e desce `sigma`, perdedor o oposto. Três eixos saem da computação:
+Ranking via **OpenSkill** (modelo Weng-Lin, atualização bayesiana online de Plackett-Luce, `RANKING_MODEL_VERSION=2`). Cada par é tratado como uma partida 1v1; o delta de `mu` é escalado pela margem de estrelas `|rate_a − rate_b| / 4` — blowouts movem o ranking mais que foto-finish.
 
 - **`mu`** — estimativa pontual da "qualidade" do post.
 - **`sigma`** — incerteza sobre `mu`. Não diz que o post é ruim — diz que ainda não sabemos.
 - **`ordinal = mu − 3·sigma`** — score conservador usado para a ordem global. Um post novo com mu alto fica atrás de um post estabelecido com mu um pouco menor.
 
-A ordem da tabela é por `ordinal` descendente, tie-break alfabético por `key`. `worst` retorna o post com menor `ordinal` entre os elegíveis (`appearances >= MIN_APPEARANCES`).
+A saída de `hronir:ranking` é TSV com as colunas:
+
+```
+rank  key  ordinal  mu  sigma  W/N  stars  n  div
+```
+
+- **`stars`** — EWMA das estrelas recebidas pelo post (α=0.3; avaliações recentes dominam). Trilha de qualidade **absoluta**, independente do eixo relativo do OpenSkill. **Reset-on-edit:** quando `post_a.version`/`post_b.version` muda entre matches (post editado), o EWMA reinicia — notas pré-edição são stale por definição.
+- **`n`** — nº de aparições com estrelas (schema `stars-v1`), contadas a partir da última edição.
+- **`div`** — divergência percentil `p_ord − p_star` entre os posts com `n ≥ MIN_APPEARANCES`. Positivo = "freguesia fraca" (sobe no relativo além do que as estrelas justificam). Negativo = "subnotado" (melhor em absoluto do que o chaveamento sugere). `-` quando a confiança é baixa.
+
+A ordem da tabela é por `ordinal` descendente, tie-break alfabético por `key`. `worst` retorna o post com menor `ordinal` entre os elegíveis (`appearances >= MIN_APPEARANCES`); `worst --absolute` usa `stars` em vez de `ordinal`.
 
 ### Active sampling
 
 Cada chamada de `continue` (não `init` em bloco) gera um match. Para cada par possível, calcula:
 
 ```
-score = -|predictWin(a, b) - 0.5| + sigma_a + sigma_b + stale_bonus(a) + stale_bonus(b)
+score = -|predictWin(a, b) - 0.5| + sigma_a + sigma_b + stale_bonus(a) + stale_bonus(b) + objective_bonus(a, b)
 ```
 
 - `predictWin` próximo de 0.5 → resultado mais incerto → mais informação.
 - `sigma_a + sigma_b` → preferir pares com incerteza ainda alta.
-- `stale_bonus` → `+3.0` se o post foi editado no git **depois** do match mais recente em que entrou; `0` caso contrário.
+- `stale_bonus` → `+3.0` se o post foi **editado** depois do match mais recente em que entrou; `0` caso contrário. A âncora de edição é `previousVersion.timestamp` (gravado por `edit-commit`); para posts que nunca passaram por `edit-commit`, cai no tempo do último commit git do arquivo (`gitMtime`).
+- `objective_bonus` → **opt-in, default 0**. Com `HRONIR_OBJECTIVE=refine-top` prefere pares de nível alto (estrelas); com `hunt-worst`, de nível baixo. Peso pequeno (`0.15`): inclina empates sem dominar os termos de informação.
 
 Ordena pares por score descendente (com jitter pra desempate no cold start) e pega o topo, evitando posts já usados no run atual.
+
+### Diagnose — qualidade de-confundida (RFC 0002)
+
+`npm run hronir:diagnose` é um comando de **leitura pura** (não muda estado) que separa a qualidade do post do viés do avaliador e do efeito da perspectiva, via mínimos quadrados com ridge:
+
+```
+rate = μ + q[post] + α[agent] + π[perspective] + ε
+```
+
+A estrela crua é confundida: um post pode ter média alta só porque pegou um avaliador generoso ou uma perspectiva tolerante (o sistema **sorteia perspectivas e injeta humor de propósito**). O modelo torna esses efeitos separáveis. Imprime:
+
+- **qualidade de-confundida** por post (`deconf = μ + q`), com `gap = deconf − cru`: `gap` positivo = **subnotado** (pegou plateia dura), negativo = estrela crua inflada;
+- **viés de avaliador** (`α`) e **viés de perspectiva** (`π`) — ex.: `skeptical-specialist`/`applied-thinker` são estruturalmente severos, `internet-native`/`curious-outsider` generosos;
+- **líder por perspectiva** (EWMA de estrelas dentro de cada perspectiva).
+
+O `ranking` continua intocado e retrocompatível; `diagnose` é um diagnóstico paralelo pra **calibração**, não pra ordenar edição. `DECONFOUND_RIDGE` (λ, default 1.0) é a regularização — ajustável.
 
 ### Por que MIN_APPEARANCES ainda importa com OpenSkill
 

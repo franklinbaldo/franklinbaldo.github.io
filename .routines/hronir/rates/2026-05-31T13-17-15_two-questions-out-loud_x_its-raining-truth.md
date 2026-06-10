@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-31T13-17-15
 run_at: '2026-05-31T13:17:15Z'
-match_index: 10
 post_a:
   key: two-questions-out-loud
-  path: src/content/blog/two-questions-out-loud.md
+  path: src/content/blog/two-questions-out-loud/index.md
   version: e7dcdde4-8d8d-54e9-b301-79bd4f41bd18
 post_b:
   key: its-raining-truth
-  path: src/content/blog/its-raining-truth.md
+  path: src/content/blog/its-raining-truth/index.md
   version: a22fbd7b-c1ff-598a-b89d-62a24587df93
 winner: b
 agent_id: claude-sonnet-4-6

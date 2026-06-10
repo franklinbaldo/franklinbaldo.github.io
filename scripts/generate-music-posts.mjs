@@ -1,6 +1,7 @@
 /**
  * Fetches public songs from the Suno API and creates MDX stub posts
- * in src/content/blog/musicas/. Only creates new files — never overwrites.
+ * in src/content/blog/. Only creates new files — never overwrites.
+ * Music posts are identified by postType: music (RFC 0006).
  *
  * Usage:
  *   npm run music:generate
@@ -12,7 +13,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
-const OUT_DIR = join(ROOT, "src/content/blog/musicas");
+const OUT_DIR = join(ROOT, "src/content/blog");
 
 const HANDLE = "franklinbaldo";
 const SUNO_API = "https://studio-api-prod.suno.com/api";
@@ -158,24 +159,33 @@ async function main() {
   for (const clip of clips) {
     const rawSlug = slugify(clip.title || clip.id);
     const slug = rawSlug || clip.id.slice(0, 8);
-    const filename = `${slug}.mdx`;
-    const filepath = join(OUT_DIR, filename);
+    // RFC 0003: each post is a folder <slug>/ whose canonical file is index.mdx.
+    const dir = join(OUT_DIR, slug);
+    const filepath = join(dir, "index.mdx");
 
     if (existsSync(filepath)) {
       skipped++;
       continue;
     }
+    // The blog root is shared with regular posts; a song titled like an
+    // existing essay would otherwise produce a duplicate Astro id.
+    if (existsSync(join(dir, "index.md"))) {
+      console.warn(`  conflito com post existente, pulado: ${slug}/index.md`);
+      skipped++;
+      continue;
+    }
 
+    mkdirSync(dir, { recursive: true });
     const content = makeMdx(clip);
     writeFileSync(filepath, content, "utf8");
-    console.log(`  criado: musicas/${filename}`);
+    console.log(`  criado: ${slug}/index.mdx`);
     created++;
   }
 
   console.log(`\nPronto: ${created} criados, ${skipped} já existiam.`);
   if (created > 0) {
     console.log(
-      `\nAgora edite os arquivos em src/content/blog/musicas/ e adicione\nsuas notas em cada seção "## Notas do compositor".`
+      `\nAgora edite os novos arquivos em src/content/blog/ e adicione\nsuas notas em cada seção "## Notas do compositor".`
     );
   }
 }

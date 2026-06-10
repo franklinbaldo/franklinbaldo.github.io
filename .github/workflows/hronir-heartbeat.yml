@@ -1,0 +1,111 @@
+name: Hrönir Heartbeat
+
+# Pool keeper for the Hrönir/Jules loop.
+#
+# Maintains TARGET_SESSIONS concurrent Jules sessions at all times.
+# With ~2h per session and TARGET_SESSIONS=10, this produces ~120 sessions/day.
+#
+# Steps:
+#   1. List every Jules session via verne (raw output logged for debugging).
+#   2. Unlock any sessions stuck in AWAITING state with "siga em frente".
+#   3. Count sessions for THIS repo+branch that are actively working — i.e. NOT
+#      terminal (completed/failed/cancelled) and NOT awaiting feedback.
+#   4. Spawn (TARGET_SESSIONS - ACTIVE) new sessions to fill the pool.
+#
+# The autopilot (hronir-autopilot.yml) also spawns one session after each merge.
+# Between the two, the pool stays full continuously.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *" # every 15 minutes
+  workflow_dispatch:
+  push:
+    branches:
+      - claude/lucid-goodall-3t7aqc
+      - claude/vibrant-albattani-znjq7z
+
+permissions:
+  contents: read
+
+concurrency:
+  # Own group — independent from autopilot's merge serialization.
+  group: hronir-heartbeat
+  cancel-in-progress: false
+
+jobs:
+  fill-pool:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-verne
+
+      - name: Spawn sessions to fill the pool
+        env:
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+          TARGET_SESSIONS: "10"
+        run: |
+          set -euo pipefail
+          if [ -z "${JULES_API_KEY:-}" ]; then
+            echo "::error::JULES_API_KEY not set — heartbeat cannot run. Fix the repo secret."
+            exit 1
+          fi
+
+          SOURCE="sources/github/${GITHUB_REPOSITORY}"
+
+          # 1) List sessions and log the raw output so failures are debuggable.
+          echo "::group::verne sessions list --json"
+          SESSIONS=$(verne sessions list --json --page-size 100)
+          echo "$SESSIONS"
+          echo "::endgroup::"
+
+          # 2) Unlock sessions stuck waiting for user feedback.
+          #    --json output includes "unlocked" count; extract it to avoid over-spawning.
+          UNLOCK_OUT=$(verne sessions unlock-all \
+            --source "$SOURCE" \
+            --branch main \
+            --json 2>&1) || true
+          echo "$UNLOCK_OUT"
+          UNLOCKED=$(echo "$UNLOCK_OUT" | jq -r '.unlocked // 0' 2>/dev/null || echo 0)
+
+          # 3) Find ACTIVE sessions for this repo+branch. Active = not terminal
+          #    and not awaiting feedback. `contains` (substring, case-folded)
+          #    matches verne's real status spellings — e.g. AWAITING_USER_FEEDBACK
+          #    or COMPLETED — without hard-coding exact enum strings.
+          # Emit one "id|status" line per active session so we can see both.
+          ACTIVE_ENTRIES=$(echo "$SESSIONS" | jq -r --arg source "$SOURCE" '[.sessions[]
+            | select((.source // "") == $source and (.branch // "") == "main")
+            | select(
+                ((.status // "") | ascii_downcase)
+                | (contains("complet") or contains("fail") or contains("cancel")
+                   or contains("awaiting") or contains("waiting") or contains("paused")) | not
+              )
+            | ((.id // (.name | sub("^sessions/"; "")) // "unknown") + "|" + (.status // "null"))]
+            | .[]')
+
+          ACTIVE=$(echo "$ACTIVE_ENTRIES" | grep -c '\S' || true)
+
+          echo "Active session(s) for ${SOURCE}@main: ${ACTIVE}/${TARGET_SESSIONS} (+ ${UNLOCKED} just unlocked)"
+          if [ -n "$ACTIVE_ENTRIES" ]; then
+            while IFS= read -r entry; do
+              [ -z "$entry" ] && continue
+              sid="${entry%%|*}"
+              sts="${entry##*|}"
+              echo "  Active: $sid (status=$sts) → https://jules.google.com/task/$sid"
+            done <<< "$ACTIVE_ENTRIES"
+          fi
+
+          # 4) Spawn enough sessions to reach the target pool size.
+          #    Unlocked sessions count toward the pool — subtract them so we don't
+          #    over-spawn before they reappear as active in the next snapshot.
+          TO_SPAWN=$((TARGET_SESSIONS - ACTIVE - UNLOCKED))
+          if [ "$TO_SPAWN" -le 0 ]; then
+            echo "Pool is at capacity — active=$ACTIVE unlocked=$UNLOCKED target=$TARGET_SESSIONS — nothing to do."
+            exit 0
+          fi
+
+          echo "Spawning $TO_SPAWN session(s) to reach target of $TARGET_SESSIONS..."
+          for i in $(seq 1 "$TO_SPAWN"); do
+            echo "--- Spawning session $i/$TO_SPAWN ---"
+            bash scripts/hronir/spawn-session.sh
+          done

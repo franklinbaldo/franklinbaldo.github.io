@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-24T13-08-24
 run_at: '2026-05-24T13:08:24Z'
-match_index: 6
 post_a:
   key: pierre-menard
-  path: src/content/blog/pierre-menard-computational-researcher.md
+  path: src/content/blog/pierre-menard-computational-researcher/index.md
   version: 9e4135ad-ef47-5286-88fd-655075161694
 post_b:
   key: agent-no-verbs
-  path: src/content/blog/the-agent-that-doesnt-invent-verbs.md
+  path: src/content/blog/the-agent-that-doesnt-invent-verbs/index.md
   version: 2ddbcdb4-b91c-53f9-9c2b-9ef778416ce6
 winner: a
 agent_id: claude-sonnet-4-6

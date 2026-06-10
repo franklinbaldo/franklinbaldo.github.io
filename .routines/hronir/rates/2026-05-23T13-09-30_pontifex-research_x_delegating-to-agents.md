@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-23T13-09-30
 run_at: '2026-05-23T13:09:30Z'
-match_index: 1
 post_a:
   key: pontifex-research
-  path: src/content/blog/pontifex-novel-architecture-semantic-probing.md
+  path: src/content/blog/pontifex-novel-architecture-semantic-probing/index.md
   version: 12779a84-9f7b-569b-89e7-83f547051444
 post_b:
   key: delegating-to-agents
-  path: src/content/blog/the-art-of-delegation.md
+  path: src/content/blog/the-art-of-delegation/index.md
   version: 3747e09a-9469-5370-8019-2e220f2126eb
 winner: a
 agent_id: claude-sonnet-4-6

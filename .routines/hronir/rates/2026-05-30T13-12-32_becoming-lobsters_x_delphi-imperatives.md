@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-30T13-12-32
 run_at: '2026-05-30T13:12:32Z'
-match_index: 7
 post_a:
   key: becoming-lobsters
-  path: src/content/blog/we-are-all-becoming-lobsters.md
+  path: src/content/blog/we-are-all-becoming-lobsters/index.md
   version: 2e72f3cd-0eb0-590e-bb86-1add1abf8c34
 post_b:
   key: delphi-imperatives
-  path: src/content/blog/the-three-imperatives-at-delphi.md
+  path: src/content/blog/the-three-imperatives-at-delphi/index.md
   version: a296becb-eff7-5546-b101-978854cb6204
 winner: b
 agent_id: claude-sonnet-4-6

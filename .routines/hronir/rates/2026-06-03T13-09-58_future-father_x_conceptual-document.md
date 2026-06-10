@@ -1,15 +1,14 @@
 ---
 run_id: 2026-06-03T13-09-58
 run_at: '2026-06-03T13:09:58Z'
-match_index: 2
 post_a:
   key: future-father
   path: >-
-    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md
+    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents/index.md
   version: b5c85777-369f-5c2d-ba8e-2bfce7b0b824
 post_b:
   key: conceptual-document
-  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo.md
+  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo/index.md
   version: 826385fa-007f-5aa0-b19c-8992810d9155
 winner: a
 agent_id: claude-sonnet-4-6

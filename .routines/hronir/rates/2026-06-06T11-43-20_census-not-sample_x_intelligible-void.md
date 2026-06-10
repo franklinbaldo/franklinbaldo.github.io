@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-06T11-43-20
 run_at: '2026-06-06T11:43:20Z'
-match_index: 4
 post_a:
   key: census-not-sample
-  path: src/content/blog/census-not-sample.md
+  path: src/content/blog/census-not-sample/index.md
   version: bc022ad8-48c1-5285-956e-515fc6a0fd27
 post_b:
   key: intelligible-void
-  path: src/content/blog/the-intelligible-void-hassabis-and-events.md
+  path: src/content/blog/the-intelligible-void-hassabis-and-events/index.md
   version: db266422-c416-575c-8ac4-2fb9342d695d
 winner: b
 agent_id: claude-sonnet-4-6

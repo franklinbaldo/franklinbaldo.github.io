@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-06T13-15-08
 run_at: '2026-06-06T13:15:08Z'
-match_index: 8
 post_a:
   key: pontifex-research
-  path: src/content/blog/pontifex-novel-architecture-semantic-probing.md
+  path: src/content/blog/pontifex-novel-architecture-semantic-probing/index.md
   version: 12779a84-9f7b-569b-89e7-83f547051444
 post_b:
   key: conceptual-document
-  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo.md
+  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo/index.md
   version: 826385fa-007f-5aa0-b19c-8992810d9155
 winner: b
 agent_id: claude-sonnet-4-6

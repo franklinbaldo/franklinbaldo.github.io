@@ -1,14 +1,13 @@
 ---
 run_id: 2026-05-22T13-13-08
 run_at: '2026-05-22T13:13:08Z'
-match_index: 4
 post_a:
   key: delphi-imperatives
-  path: src/content/blog/the-three-imperatives-at-delphi.md
+  path: src/content/blog/the-three-imperatives-at-delphi/index.md
   version: a296becb-eff7-5546-b101-978854cb6204
 post_b:
   key: conceptual-document
-  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo.md
+  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo/index.md
   version: 826385fa-007f-5aa0-b19c-8992810d9155
 winner: b
 agent_id: claude-sonnet-4-6

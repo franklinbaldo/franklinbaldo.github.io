@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-06T11-47-12
 run_at: '2026-06-06T11:47:12Z'
-match_index: 9
 post_a:
   key: conceptual-document
-  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo.md
+  path: src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo/index.md
   version: 826385fa-007f-5aa0-b19c-8992810d9155
 post_b:
   key: census-not-sample
-  path: src/content/blog/census-not-sample.md
+  path: src/content/blog/census-not-sample/index.md
   version: bc022ad8-48c1-5285-956e-515fc6a0fd27
 winner: a
 agent_id: claude-sonnet-4-6

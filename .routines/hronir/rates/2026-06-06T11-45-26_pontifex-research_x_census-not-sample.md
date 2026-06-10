@@ -1,14 +1,13 @@
 ---
 run_id: 2026-06-06T11-45-26
 run_at: '2026-06-06T11:45:26Z'
-match_index: 7
 post_a:
   key: pontifex-research
-  path: src/content/blog/pontifex-novel-architecture-semantic-probing.md
+  path: src/content/blog/pontifex-novel-architecture-semantic-probing/index.md
   version: 12779a84-9f7b-569b-89e7-83f547051444
 post_b:
   key: census-not-sample
-  path: src/content/blog/census-not-sample.md
+  path: src/content/blog/census-not-sample/index.md
   version: bc022ad8-48c1-5285-956e-515fc6a0fd27
 winner: a
 agent_id: claude-sonnet-4-6

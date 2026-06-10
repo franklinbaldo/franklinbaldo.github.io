@@ -1,15 +1,14 @@
 ---
 run_id: 2026-05-26T13-19-59
 run_at: '2026-05-26T13:19:59Z'
-match_index: 10
 post_a:
   key: crossing-interference
-  path: src/content/blog/crossing-after-interference.md
+  path: src/content/blog/crossing-after-interference/index.md
   version: fb42f337-befb-5de1-8e65-d25256a81da6
 post_b:
   key: future-father
   path: >-
-    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md
+    src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents/index.md
   version: b5c85777-369f-5c2d-ba8e-2bfce7b0b824
 winner: b
 agent_id: claude-sonnet-4-6
