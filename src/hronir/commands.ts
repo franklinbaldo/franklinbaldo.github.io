@@ -1696,12 +1696,29 @@ export function doctor() {
     const bKey = postB.key as string | undefined;
     const aPath = postA.path as string | undefined;
     const bPath = postB.path as string | undefined;
+    const aVersion = postA.version as string | undefined;
+    const bVersion = postB.version as string | undefined;
+
+    // RFC 0003 §7: path é informacional, version é autoritativo. Após um
+    // promote (rascunho v-*.md vira index.*) ou um prune (v-*.md removido),
+    // o path gravado no rate file deixa de existir; tolerar enquanto a pasta
+    // do post existir e o lado carregar o UUID de versão.
+    const tolerableGone = (
+      p: string | undefined,
+      version: string | undefined
+    ) =>
+      Boolean(
+        p &&
+        version &&
+        /^v-/.test(path.basename(p)) &&
+        fs.existsSync(path.dirname(p))
+      );
 
     if (!aKey) issues.push(`${base}: post_a.key ausente`);
     if (!bKey) issues.push(`${base}: post_b.key ausente`);
-    if (!aPath || !fs.existsSync(aPath))
+    if ((!aPath || !fs.existsSync(aPath)) && !tolerableGone(aPath, aVersion))
       issues.push(`${base}: post_a.path inexistente (${aPath})`);
-    if (!bPath || !fs.existsSync(bPath))
+    if ((!bPath || !fs.existsSync(bPath)) && !tolerableGone(bPath, bVersion))
       issues.push(`${base}: post_b.path inexistente (${bPath})`);
 
     if (aPath && fs.existsSync(aPath)) {

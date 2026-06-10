@@ -162,4 +162,3 @@ jobs:
           gh pr merge "$PR" --repo "$REPO" --merge --delete-branch
           echo "Merged PR #$PR."
           echo "merged=$PR" >> "$GITHUB_OUTPUT"
-
