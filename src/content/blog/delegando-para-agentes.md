@@ -39,21 +39,19 @@ A engenharia de software não reconhece nativamente essa distinção porque o ci
 
 ## Os limites da caixa de areia
 
-A ansiedade em relação a agentes de IA é real e não tem nada a ver com capacidade. Quando entrego a Jules uma tarefa de refatoração, não estou preocupado que Jules escolha o padrão de design errado. Estou preocupado que Jules tem permissão de escrita.
+A ansiedade em relação a agentes de IA é real e não tem nada a ver com capacidade. Quando entrego a um agente uma tarefa de refatoração, não estou preocupado que ele escolha o padrão de design errado. Estou preocupado que ele tem permissão de escrita.
 
-A solução não é ficar por cima do ombro de Jules enquanto escreve. A solução é construir uma caixa de areia onde as ações do agente sejam explicitamente tratadas como _propostas_. O pipeline de CI/CD — a sequência automatizada de compilações, testes e verificações que precisam passar antes de qualquer código ir para produção — as suítes de teste, as regras estritas de linting: esses não são apenas mecanismos de garantia de qualidade. São o equivalente à regra institucional que diz que um assessor pode redigir um _parecer_, mas não pode assinar o _ofício_ final.
+A solução não é tratar o agente como um desenvolvedor júnior ou uma criança aprendendo a programar. É um erro antropomorfizar um processo estocástico. A solução é encarar a interação como desenho constitucional. O pipeline de CI/CD — a sequência automatizada de compilações, testes e verificações que precisam passar antes de qualquer código ir para produção — não é um mecanismo de garantia de qualidade. É o equivalente à regra institucional que diz que um assessor pode redigir um _parecer_, mas não pode assinar o _ofício_ final.
 
-A mágica da delegação acontece quando você restringe o espaço de saída, não o processo. Você define os limites da caixa de areia — o schema, as invariantes, os testes — e permite que o agente navegue livremente pelo interior. Se os testes passam, a proposta é válida. Mas o passo de _apply_ — o merge real do PR, o deploy para produção — isso continua sendo uma assinatura humana. Um pipeline de CI que não pode ser bypassado é um protocolo: uma etapa de processamento obrigatória entre a minuta e o ato.
+A delegação funciona quando você restringe o espaço de saída estruturalmente, sem tentar instruir o processo interno. Você define a caixa de areia — o schema, as invariantes, os testes — e permite que o agente navegue livremente pelo interior. Se os testes passam, a proposta é válida. Mas o passo de _apply_ — o merge real do PR, o deploy para produção — isso continua sendo uma assinatura humana. Um pipeline de CI que não pode ser bypassado é um protocolo: uma etapa de processamento obrigatória entre a minuta e o ato.
 
-É aqui que o paralelo com o direito administrativo lisonjeia o problema de software. Num _parecer_, a responsabilidade do assessor é profissional. Pareceres consistentemente ruins levam a revisão formal — a corregedoria, o conselho profissional, eventualmente a carreira. Existe uma cadeia do ato até a pessoa que o redigiu, e essa cadeia tem dentes. A assinatura não separa apenas minuta de ato: separa de quem é a carreira em jogo de quem não tinha nada a perder.
+Num _parecer_, a responsabilidade do assessor é profissional. Pareceres consistentemente ruins levam a revisão formal — a corregedoria, o conselho profissional, eventualmente a carreira. Existe uma cadeia do ato até a pessoa que o redigiu, e essa cadeia tem dentes. A assinatura separa minuta de ato, mas também separa de quem é a carreira em jogo de quem não tinha nada a perder.
 
-Um agente de IA não tem carreira. Ele não pode ser responsabilizado. A caixa de areia restringe o que ele pode fazer, mas não responde o que acontece quando a caixa de areia falha. Quando um agente faz algo errado dentro dos limites do seu acesso, a responsabilidade sobe para o ser humano que projetou o _harness_ — não vai lateralmente para o agente. Isso não é uma propriedade que construí; é uma propriedade de agentes sem posição institucional.
+Um agente de IA não tem carreira. Ele não pode ser responsabilizado. Quando um agente faz algo errado dentro dos limites do seu acesso, a responsabilidade sobe para o ser humano que projetou o _harness_ — não vai lateralmente para o agente. Isso não é uma propriedade que construí; é um fato estrutural de lidar com entidades sem posição institucional.
 
-A caixa de areia é necessária. Ela não é suficiente para responsabilidade. O passo de assinatura em delegação de software está fazendo mais trabalho do que o paralelo administrativo sugere: não está apenas tornando explícita a fronteira proposta-versus-ato. Está também carregando todo o peso profissional que o agente estruturalmente não pode carregar.
+O passo de assinatura em delegação de software está fazendo mais trabalho do que o paralelo administrativo sugere. Ele carrega todo o peso profissional que o agente estruturalmente não pode carregar.
 
-Não enxerguei isso claramente até estar escrevendo a analogia e perceber que a frase "o assessor é bom" soava razoável de um jeito que "o Jules é bom" não soa, e não pode soar, com o mesmo significado. Ambas as frases descrevem capacidade. Só uma descreve uma pessoa que pode ser responsável por algo.
-
-Eu tinha pensado na assinatura como uma formalidade. É uma formalidade. É também a coisa que faz o erro de fevereiro ser meu e não do Jules.
+Eu tinha pensado na assinatura como uma formalidade. É uma formalidade. É também a coisa que faz o erro ser meu.
 
 ## O harness como desenho constitucional
 

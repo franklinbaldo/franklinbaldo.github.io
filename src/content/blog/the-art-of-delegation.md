@@ -37,23 +37,21 @@ I spend my days in a state attorney's office in Rondônia, reading _pareceres_ a
 
 Software engineering doesn't natively recognize this distinction because the feedback loop compresses it. In law, the gap between draft and act is physically legible — the assessor finishes, the protocol office has its window, the court has its own schedule. In code, the developer writes the function, the tests pass in thirty seconds, the PR merges on green. Draft and act become one continuous motion, and nobody writes down where one ends and the other begins.
 
-## The boundaries of the sandbox
+## The Boundaries of the Sandbox
 
-The anxiety about AI agents is real and it has nothing to do with capability. When I hand Jules a refactoring task, I am not worried Jules will choose the wrong design pattern. I am worried Jules has write access.
+The anxiety about AI agents is real and it has nothing to do with capability. When I hand an agent a refactoring task, I am not worried it will choose the wrong design pattern. I am worried it has write access.
 
-The solution is not to stand over Jules's shoulder while it writes. The solution is a sandbox where the agent's actions are explicitly treated as _proposals_. The CI/CD pipeline — the automated sequence of builds, tests, and checks that must pass before any code goes live — the test suites, the strict linting rules: these are not just quality assurance mechanisms. They are the institutional equivalent of the rule that says an assessor can draft a _parecer_, but cannot sign the final _ofício_ (the official dispatch that goes out the door and binds the institution).
+The solution is not to treat the agent like a junior developer or a child learning to code. It is an error to anthropomorphize a stochastic process. The solution is to view the interaction as constitutional design. The CI/CD pipeline — the automated sequence of builds, tests, and checks that must pass before any code goes live — is not a quality assurance mechanism. It is the institutional equivalent of the rule that says an assessor can draft a _parecer_, but cannot sign the final _ofício_ (the official dispatch that goes out the door and binds the institution).
 
-The magic of delegation happens when you constrain the output space, not the process. You define the bounds of the sandbox — the schema, the invariants, the tests — and allow the agent to navigate the interior freely. If the tests pass, the proposal is valid. But the _apply_ step — the actual merging of the PR, the deployment to production — that remains a human signature. A CI pipeline that cannot be bypassed is a protocol office: a mandatory processing step between the draft and the act.
+Delegation succeeds when it bounds the output space structurally, without trying to instruct the internal process. You define the sandbox — the schema, the invariants, the tests — and allow the agent to navigate the interior freely. If the tests pass, the proposal is valid. But the _apply_ step — the actual merging of the PR, the deployment to production — that remains a human signature. A CI pipeline that cannot be bypassed is a protocol office: a mandatory processing step between the draft and the act.
 
-This is where the administrative law parallel flatters the software problem. In a _parecer_, the assessor's accountability is professional. Consistently bad legal advice leads to formal review — the _corregedoria_ (the internal oversight body), the professional council, eventually the career. There is a chain from the act to the person who drafted it, and that chain has teeth. The signature doesn't only separate draft from act: it separates whose career is on the line from whose was not.
+In a _parecer_, the assessor's accountability is professional. Consistently bad advice leads to formal review — the _corregedoria_ (the internal oversight body), the professional council, eventually the career. There is a chain from the act to the person who drafted it, and that chain has teeth. The signature separates draft from act, but it also separates whose career is on the line from whose was not.
 
-An AI agent has no career. It cannot be disciplined. The sandbox constrains what it can do, but the sandbox doesn't answer what happens when the sandbox fails. When an agent does something wrong inside the bounds of its access, accountability flows upward to the human who designed the harness — not sideways to the agent. That is not a property I built in; it is a property of agents without institutional standing.
+An AI agent has no career. It cannot be disciplined. When an agent does something wrong inside the bounds of its access, accountability flows upward to the human who designed the harness — not sideways to the agent. That is not a property I built in; it is a structural fact of dealing with entities lacking institutional standing.
 
-The sandbox is necessary. It is not sufficient for accountability. The signature step in software delegation is doing more work than the administrative parallel suggests: it is not just making the proposal-versus-act boundary explicit. It is also carrying all the professional weight that the agent structurally cannot carry.
+The signature step in software delegation is doing more work than the administrative parallel suggests. It carries all the professional weight that the agent structurally cannot carry.
 
-I did not see this clearly until I was writing out the analogy and noticed the sentence "the assessor is good" sounded reasonable in a way that "Jules is good" does not, and could not, quite mean the same thing. Both sentences describe capacity. Only one describes a person who can be accountable for anything.
-
-I had been thinking of the signature as a formality. It is a formality. It is also the thing that makes the February mistake mine and not Jules's.
+I had been thinking of the signature as a formality. It is a formality. It is also the thing that makes the error mine.
 
 ## The harness as constitutional design
 
