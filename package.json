@@ -30,6 +30,7 @@
     "hronir:draft-worst": "node --import tsx/esm scripts/hronir/index.js draft-worst",
     "hronir:draft-commit": "node --import tsx/esm scripts/hronir/index.js draft-commit",
     "hronir:promote": "node --import tsx/esm scripts/hronir/index.js promote",
+    "hronir:prune": "node --import tsx/esm scripts/hronir/index.js prune",
     "hronir:end": "node --import tsx/esm scripts/hronir/index.js end",
     "hronir:migrate": "node --import tsx/esm scripts/hronir/index.js migrate",
     "hronir:doctor": "node --import tsx/esm scripts/hronir/index.js doctor",

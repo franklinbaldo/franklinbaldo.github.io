@@ -37,6 +37,7 @@ const {
   end,
   editCommit,
   promote,
+  prune,
   next,
 } = await import("../../src/hronir/commands.js");
 
@@ -44,7 +45,7 @@ const [, , cmd, ...args] = process.argv;
 
 function usage() {
   console.error(
-    "Uso: hronir {next --agent-id <id> [init-opts]|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--min-appearances N]|continue|decide --after-mood <text> --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text>|ranking|worst [--absolute]|diagnose|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force]}"
+    "Uso: hronir {next --agent-id <id> [init-opts]|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--min-appearances N]|continue|decide --after-mood <text> --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text>|ranking|worst [--absolute]|diagnose|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force]|promote --draft <path>|--key <key>|--all [--force]|prune [--dry-run]}"
   );
   process.exit(1);
 }
@@ -188,6 +189,9 @@ switch (cmd) {
   }
   case "promote":
     promote(args);
+    break;
+  case "prune":
+    prune({ dryRun: args.includes("--dry-run") });
     break;
   case "migrate":
     migrate({ dryRun: args.includes("--dry-run") });
