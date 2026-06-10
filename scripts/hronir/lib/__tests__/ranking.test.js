@@ -1,11 +1,13 @@
 import { describe, it, mock } from "node:test";
 import assert from "node:assert/strict";
 
-// Mock matches.js before importing ranking.js so the import chain does not
-// pull in posts.js → remark (which is only installed after `npm ci`).
+// Mock matches module before importing ranking so the import chain does not
+// pull in posts.ts → remark (which is only installed after `npm ci`).
 // The pure functions under test (_computeRatings, _computeAbsoluteQuality)
 // never call listMatchFiles/readMatch at runtime.
-await mock.module("../matches.js", {
+// After RFC 0005 Fase 1, the real implementations live in src/hronir/;
+// mock those directly so ranking.ts sees the mock.
+await mock.module("../../../../src/hronir/matches.js", {
   namedExports: {
     listMatchFiles: () => [],
     readMatch: () => ({ data: {}, content: "" }),
@@ -22,7 +24,7 @@ const {
   _solveLinear,
   EWMA_ALPHA,
   MIN_APPEARANCES,
-} = await import("../ranking.js");
+} = await import("../../../../src/hronir/ranking.js");
 
 // Fixture builder helpers
 
