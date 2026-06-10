@@ -2,10 +2,10 @@
 
 |                 |                                                                                                                                                                                           |
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Proposta (r0)                                                                                                                                                                             |
+| **Status**      | Proposta (r1)                                                                                                                                                                             |
 | **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                       |
 | **Criado em**   | 2026-06-10                                                                                                                                                                                |
-| **Branch / PR** | —                                                                                                                                                                                         |
+| **Branch / PR** | `claude/laughing-mayer-qzcms4` / #350                                                                                                                                                     |
 | **Depende de**  | RFC 0006 (flatten musicas — implementado)                                                                                                                                                 |
 | **Afeta**       | `src/components/GlobalMusicPlayer.astro`, `src/pages/music.astro`, `src/pages/pt/musicas.astro`, `src/pages/blog/[...slug].astro`, `src/pages/pt/blog/[...slug].astro`, `src/lib/suno.ts` |
 
@@ -39,9 +39,12 @@ navegação (Fase 2), estado persistido e histórico (Fase 3).
 ### D1. Nenhum link do player para o post
 
 O `GlobalMusicPlayer` exibe o título da música mas ele não é clicável.
-O campo `slug` do post (derivável do `sunoId` pelo mapa construído em
-`src/lib/hronir-rank.ts`) não é passado para o player. O ouvinte não tem
-como ir da barra de reprodução para a letra, história ou contexto da música.
+O campo `slug` do post não é incluído no array `songs` que alimenta o
+player. O array é construído inline no frontmatter de
+`GlobalMusicPlayer.astro` (linhas 50–57): `musicPosts` já está em escopo
+(carregado na linha 23), mas só `id`, `title` e `imageUrl` são mapeados
+para cada item — falta o `slug`. O ouvinte não tem como ir da barra de
+reprodução para a letra, história ou contexto da música.
 
 ```html
 <!-- estado atual: título estático, sem link -->
@@ -68,11 +71,18 @@ com `<audio controls>` nativo. Não há:
 - Destaque visual do card que está tocando agora.
 - Sort alternativo (por data, por rating, por duração).
 
-### D4. Sem navegação entre posts de música
+### D4. Navegação entre posts não é música-específica
 
-Nos posts de blog comuns há padrão de "post anterior / próximo". Nos posts
-de música (`postType: music`) não existe navegação equivalente. O ouvinte
-que termina de ler a letra não tem caminho óbvio para a próxima música.
+Posts de música já recebem o componente `PostNav` — `[...slug].astro:275`
+renderiza-o incondicionalmente, e `sameLangPosts` (linhas 75–77) filtra
+por `isPublished` + idioma sem excluir `postType: music`. O nav existe.
+
+O gap real: a navegação é cronológica entre **todos** os posts do idioma,
+não só entre músicas. O ouvinte que termina de ler uma letra pode receber
+como "próximo" um post de texto, sem contexto auditivo. A Fase 2.3 precisa
+decidir se o nav música-específico **substitui** o `PostNav` nos posts de
+música (remove a navegação geral) ou **coexiste** como segundo bloco — o
+que resultaria em dois navs prev/next na mesma página e deve ser evitado.
 
 ### D5. Sem link de volta do post para a galeria
 
@@ -116,10 +126,11 @@ O array `songs` já passado via `data-songs` no `GlobalMusicPlayer` inclui
 
 **Proposta:**
 
-1. Em `src/lib/hronir-rank.ts`, a função `getRankedMusicSongs()` (ou
-   equivalente que alimenta o player) passa a incluir o campo `slug` em cada
-   item — derivado do mapa `sunoId → slug` que já existe para os posts de
-   música.
+1. Em `GlobalMusicPlayer.astro`, no bloco de frontmatter que já carrega
+   `musicPosts` (linha 23), adicionar o campo `slug` ao mapa de `songs`
+   (linha 53): `slug: musicPost?.id ?? ""` — onde `musicPost` é o item de
+   `musicPosts` cujo `sunoId` coincide com o clip. Nenhuma mudança em
+   `hronir-rank.ts` ou `suno.ts` é necessária.
 2. No `GlobalMusicPlayer.astro`, o elemento `#gmp-title` vira um `<a>`
    cujo `href` é atualizado via JS para `/blog/{slug}/` (EN) ou
    `/pt/blog/{slug}/` (PT) a cada troca de música. Fallback: se o slug for
@@ -149,9 +160,11 @@ value="1">` à barra do player.
 #### 1.2 Shuffle
 
 - Botão ícone shuffle (`⇌`) com estado ativo/inativo (`aria-pressed`).
-- Quando ativo, a fila é permutada (Fisher-Yates) na montagem e a cada
-  "próxima música". A fila embaralhada é armazenada em memória (não em
-  localStorage) — reload reinicia.
+- Quando ativo, a fila é permutada (Fisher-Yates) **uma única vez** no
+  momento do toggle ou ao receber uma nova fila via `gp:queue` — não a cada
+  "próxima música", o que causaria repetições antes de esgotar a fila e
+  tornaria o prev inconsistente. A fila embaralhada é armazenada em memória
+  (não em localStorage) — reload reinicia.
 - Ícone recebe classe `.active` + cor primária quando ativo.
 
 #### 1.3 Repeat
@@ -216,21 +229,29 @@ destacada e ícone de onda.
 
 #### 2.3 Navegação prev/next entre posts de música
 
-- Em `src/pages/blog/[...slug].astro` e `src/pages/pt/blog/[...slug].astro`,
-  quando `postType === 'music'`, gerar listas `prevMusic` e `nextMusic` no
-  `getStaticPaths` — posts de música adjacentes na ordem cronológica.
-- Renderizar links de navegação abaixo do conteúdo, estilizados de forma
-  consistente com a `music-header`:
+Posts de música já têm `PostNav` (navegação geral entre todos os posts).
+A Fase 2.3 **substitui** o `PostNav` nos posts de música por um nav
+música-específico — posts de `postType !== 'music'` continuam usando o
+`PostNav` original sem alteração.
+
+- No corpo da página de `[...slug].astro`, quando `postType === 'music'`,
+  calcular `prevMusic` e `nextMusic` com o mesmo padrão do `prevPost`/
+  `nextPost` atual (linhas 75–82), mas filtrando `sameLangPosts` para
+  incluir só posts com `postType === 'music'`.
+- Renderizar abaixo do conteúdo, consistente com `music-header`:
 
 ```html
 <nav class="music-post-nav" aria-label="Navegação entre músicas">
+  <a href="/music/" rel="index">← Todas as músicas</a>
   <a href="/blog/{prevSlug}/" rel="prev">← {prevTitle}</a>
   <a href="/blog/{nextSlug}/" rel="next">{nextTitle} →</a>
 </nav>
 ```
 
+- Ao substituir o `PostNav`, remover a renderização de `<PostNav>` para
+  posts de música — sem duplicação de bloco de navegação.
 - Link "← Todas as músicas" (`/music/` ou `/pt/musicas/` conforme `lang`)
-  no mesmo bloco de navegação — resolve D5.
+  resolve D5.
 
 **Critério de aceite:** chips de gênero filtram e acumulam com query param
 preservado; sort funciona client-side; posts de música têm prev/next e
@@ -288,7 +309,7 @@ com o tempo correto; queue drawer abre/fecha e navega entre músicas.
 | `src/pages/pt/musicas.astro`                 | Idem (versão PT)                                                                      |
 | `src/pages/blog/[...slug].astro`             | 2 (prev/next música, link para galeria)                                               |
 | `src/pages/pt/blog/[...slug].astro`          | Idem (versão PT)                                                                      |
-| `src/lib/hronir-rank.ts` / `src/lib/suno.ts` | 0 (incluir `slug` no array de songs)                                                  |
+| `src/lib/hronir-rank.ts` / `src/lib/suno.ts` | Sem mudança                                                                           |
 | `localStorage` (chaves novas)                | 1 (`gmp-volume`, `gmp-repeat`), 3 (`gmp-favorites`, `gmp-history`)                    |
 | Build (getStaticPaths)                       | 2 (prev/next calculado no build)                                                      |
 | Scripts de geração / CLI Hrönir              | Sem mudança                                                                           |
@@ -338,9 +359,11 @@ Tempo: 72 BPM. Mood: Introspective"`). A Fase 2 vai requerer uma camada
    de normalização (split, trim, deduplicate) para chips úteis. Definir
    esse pipeline de limpeza antes de implementar.
 5. **Volume no iOS Safari:** `audioEl.volume` é somente-leitura no iOS
-   (sistema ignora e usa hardware). O slider deve ser ocultado também em
-   iOS (detecção via `navigator.platform` ou feature flag) para evitar
-   confusão.
+   (sistema ignora e usa hardware). O slider deve ser ocultado. Detecção
+   via feature flag: setar `audioEl.volume` para um valor de teste e ler
+   de volta — se não mudou, o browser não suporta controle de volume por
+   JS e o slider é ocultado. `navigator.platform` está deprecado e não
+   deve ser usado.
 
 ---
 
@@ -364,3 +387,11 @@ Tempo: 72 BPM. Mood: Introspective"`). A Fase 2 vai requerer uma camada
   de `GlobalMusicPlayer.astro`, `music.astro` e `[...slug].astro`.
   Quatro fases propostas: link ao post (0), controles + galeria ativa (1),
   filtros + navegação (2), persistência + histórico (3).
+- **r1** (2026-06-10): revisão após review do Franklin (#350). Correções:
+  D1 — ponteiro corrigido para `GlobalMusicPlayer.astro` frontmatter (não
+  `hronir-rank.ts`); D4 — reformulado como "navegação existe mas mistura
+  todos os posts"; Fase 2.3 — decide substituir `PostNav` em posts de
+  música (não coexistir); Fase 1.2 shuffle — permutação uma vez por toggle
+  (não a cada next); Q5 — feature detection de volume por JS em vez de
+  `navigator.platform` deprecado; tabela de impacto atualizada; Branch/PR
+  preenchidos.
