@@ -47,7 +47,9 @@ const showUpdated = lastModified && lastModified.valueOf() - date.valueOf() > MS
 const rankInfo = translationKey ? getRankByKey().get(translationKey) : undefined;
 const postLang: string = lang ?? DEFAULT_LANG;
 const rankLabel = postLang === 'pt' ? 'ranking Hrönir' : 'Hrönir rank';
-const rankHref = postLang === 'pt' ? '/pt/ranking/' : '/ranking/';
+const rankHref = translationKey
+  ? `/ranking/posts/${translationKey}/`
+  : postLang === 'pt' ? '/pt/ranking/' : '/ranking/';
 const series = await getSeriesContext(post, { lang: postLang });
 const locale = localeFor(lang);
 const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
