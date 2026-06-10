@@ -316,7 +316,18 @@ try {
           const item = document.createElement("button");
           item.type = "button";
           item.className = "gmp-drawer-item" + (qIdx === currentIdx ? " active" : "");
-          item.textContent = song.title;
+          if (song.imageUrl) {
+            const thumb = document.createElement("img");
+            thumb.src = song.imageUrl;
+            thumb.alt = "";
+            thumb.width = 36;
+            thumb.height = 36;
+            thumb.className = "gmp-drawer-thumb";
+            item.appendChild(thumb);
+          }
+          const label = document.createElement("span");
+          label.textContent = song.title;
+          item.appendChild(label);
           item.addEventListener("click", () => {
             playSong(qIdx);
             drawerEl.hidden = true;
@@ -799,25 +810,35 @@ try {
   }
 
   .gmp-drawer-item {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
     width: 100%;
     text-align: left;
-    padding: 0.6rem 1rem;
+    padding: 0.45rem 0.75rem;
     background: none;
     border: none;
     border-bottom: 1px solid var(--pico-muted-border-color, #eee);
     cursor: pointer;
     font-size: 0.85rem;
     color: var(--pico-color);
-    white-space: nowrap;
+  }
+  .gmp-drawer-item span {
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
   }
-
+  .gmp-drawer-thumb {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
   .gmp-drawer-item:hover {
     background: var(--pico-secondary-background, #f5f5f5);
   }
-
   .gmp-drawer-item.active {
     font-weight: 700;
     color: var(--pico-primary);
