@@ -80,6 +80,15 @@ const prevPost = postIdx > 0 ? sameLangPosts[postIdx - 1] : null;
 const nextPost = postIdx < sameLangPosts.length - 1 ? sameLangPosts[postIdx + 1] : null;
 const prevNav = prevPost ? { href: (prevPost.data.lang ?? DEFAULT_LANG) === 'pt' ? `/pt/blog/${prevPost.id}/` : `/blog/${prevPost.id}/`, title: prevPost.data.title, date: prevPost.data.date } : null;
 const nextNav = nextPost ? { href: (nextPost.data.lang ?? DEFAULT_LANG) === 'pt' ? `/pt/blog/${nextPost.id}/` : `/blog/${nextPost.id}/`, title: nextPost.data.title, date: nextPost.data.date } : null;
+// Music-specific navigation: replaces PostNav for music posts
+const musicSameLangPosts = postType === 'music'
+  ? sameLangPosts.filter((p) => p.data.postType === 'music')
+  : [];
+const musicIdx = postType === 'music' ? musicSameLangPosts.findIndex((p) => p.id === post.id) : -1;
+const prevMusicPost = musicIdx > 0 ? musicSameLangPosts[musicIdx - 1] : null;
+const nextMusicPost = musicIdx !== -1 && musicIdx < musicSameLangPosts.length - 1 ? musicSameLangPosts[musicIdx + 1] : null;
+const prevMusicNav = prevMusicPost ? { href: `/blog/${prevMusicPost.id}/`, title: prevMusicPost.data.title } : null;
+const nextMusicNav = nextMusicPost ? { href: `/blog/${nextMusicPost.id}/`, title: nextMusicPost.data.title } : null;
 const translationSiblings = translationKey
   ? allPosts.filter((p) => p.data.translationKey === translationKey && p.id !== post.id)
   : [];
@@ -272,7 +281,17 @@ const translationLinks = translationSiblings.map((p) => {
 
       {series && <SeriesContext series={series} lang={lang ?? DEFAULT_LANG} variant="nav" />}
 
-      <PostNav prev={prevNav} next={nextNav} lang={lang} />
+      {postType === 'music' ? (
+        <nav class="music-post-nav" aria-label="Music navigation">
+          <a href="/music/">← All music</a>
+          <div class="music-post-nav-adjacent">
+            {prevMusicNav && <a href={prevMusicNav.href} rel="prev">← {prevMusicNav.title}</a>}
+            {nextMusicNav && <a href={nextMusicNav.href} rel="next">{nextMusicNav.title} →</a>}
+          </div>
+        </nav>
+      ) : (
+        <PostNav prev={prevNav} next={nextNav} lang={lang} />
+      )}
 
       <Webmentions url={new URL(Astro.url.pathname, Astro.site!)} lang={postLang} />
 
@@ -489,6 +508,26 @@ const translationLinks = translationSiblings.map((p) => {
   @media (max-width: 480px) {
     .music-header { flex-direction: column; }
     .music-cover { width: 120px; height: 120px; }
+  }
+
+  .music-post-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 2rem 0 1rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    font-size: 0.9rem;
+  }
+  .music-post-nav a { text-decoration: none; color: var(--pico-primary); }
+  .music-post-nav a:hover { text-decoration: underline; }
+  .music-post-nav-adjacent {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
   }
 
   .hero-figure {

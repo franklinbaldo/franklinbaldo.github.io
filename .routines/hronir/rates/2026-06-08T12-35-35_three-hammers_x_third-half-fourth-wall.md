@@ -4,12 +4,12 @@ run_at: '2026-06-08T12:35:35Z'
 match_index: 3
 post_a:
   key: three-hammers
-  path: src/content/blog/three-hammers-walk-into-a-bar.md
+  path: src/content/blog/three-hammers-walk-into-a-bar/index.md
   display_lang: en
   version: 5c53e34c-d7cd-5b59-aa3f-c25ec6754687
 post_b:
   key: third-half-fourth-wall
-  path: src/content/blog/a-terceira-metade-e-a-quarta-parede.md
+  path: src/content/blog/a-terceira-metade-e-a-quarta-parede/index.md
   display_lang: pt
   version: c9adda61-5ea6-52f8-bd70-90b216bb802e
 winner: a

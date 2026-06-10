@@ -47,14 +47,44 @@ Para cada match, execute em sequência sem interrupção:
 O CLI imprime o NEXT STEP após cada comando — siga-o literalmente.
 Não pule matches, não abrevie reviews.
 
-**Passo 24 — Validar**
+**Passo 24 — Editar o pior post (nova versão)**
+
+Rode:
+
+```
+npm run hronir:edit-worst
+```
+
+O comando vai imprimir:
+
+- O slug do pior post ranqueado
+- O caminho do(s) **rascunho(s)** criados — algo como
+  `src/content/blog/<slug>/v-<timestamp>.md`
+- As defesas em que este post perdeu
+- A instrução de próximo passo
+
+**Regra absoluta: edite APENAS os arquivos `v-<timestamp>.md` listados.**
+NUNCA toque em `index.md`, `index.mdx` ou qualquer arquivo de nome fixo.
+NUNCA crie arquivos `.md` fora dos rascunhos indicados.
+A canônica fica intacta; o rascunho vai competir com ela em rodadas futuras.
+
+Depois de editar os rascunhos, registre a edição:
+
+```
+npm run hronir:draft-commit -- --msg "Descrição do que você fez e por quê"
+```
+
+Se `hronir:edit-worst` retornar "Volume insuficiente" ou "Todos os posts foram
+editados recentemente", pule este passo e vá direto para o Passo 25.
+
+**Passo 25 — Validar**
 Rode o doctor e confirme que reporta 0 inconsistências. Se houver erros, corrija
 os rate files apontados antes de continuar.
 
-**Passo 25 — Formatar**
+**Passo 26 — Formatar**
 Rode o prettier sobre os arquivos alterados para garantir que o CI vai passar.
 
-**Passo 26 — Abrir o PR**
+**Passo 27 — Abrir o PR**
 Faça commit apenas dos arquivos em `.routines/hronir/` e `src/content/blog/`
 (nenhum outro). Mensagem de commit no formato `hronir: 20 matches — jules`.
 Abra o PR. O autopilot vai validar, mergear e criar a próxima sessão automaticamente.

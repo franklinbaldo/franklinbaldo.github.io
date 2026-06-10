@@ -4,12 +4,12 @@ run_at: '2026-06-10T17:28:19Z'
 match_index: 20
 post_a:
   key: music-xadrez
-  path: src/content/blog/musicas/xadrez-en.mdx
+  path: src/content/blog/xadrez-en/index.mdx
   display_lang: en
   version: 9359e39a-9bd6-5bde-845d-180dcb7f600b
 post_b:
   key: music-nonada
-  path: src/content/blog/musicas/nonada.mdx
+  path: src/content/blog/nonada/index.mdx
   display_lang: pt
   version: 202043f0-3bc2-5017-b8af-c2112ba4a05a
 winner: a

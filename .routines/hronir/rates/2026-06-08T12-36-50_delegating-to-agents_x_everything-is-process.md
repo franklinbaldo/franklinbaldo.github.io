@@ -9,7 +9,7 @@ post_a:
   version: 56620869-a868-52f3-ac2f-f4720e160fdd
 post_b:
   key: everything-is-process
-  path: src/content/blog/tudo-e-processo.md
+  path: src/content/blog/tudo-e-processo/index.md
   display_lang: pt
   version: 19ae7ff2-138c-5074-b91a-262791170a02
 winner: a

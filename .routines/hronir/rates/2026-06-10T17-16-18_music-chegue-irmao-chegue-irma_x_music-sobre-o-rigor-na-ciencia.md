@@ -4,12 +4,12 @@ run_at: '2026-06-10T17:16:18Z'
 match_index: 10
 post_a:
   key: music-chegue-irmao-chegue-irma
-  path: src/content/blog/musicas/chegue-irmao-chegue-irma-en.mdx
+  path: src/content/blog/chegue-irmao-chegue-irma-en/index.mdx
   display_lang: en
   version: 7d923db3-8fd3-5a63-a9c4-26680d81c0f2
 post_b:
   key: music-sobre-o-rigor-na-ciencia
-  path: src/content/blog/musicas/sobre-o-rigor-na-ciencia.mdx
+  path: src/content/blog/sobre-o-rigor-na-ciencia/index.mdx
   display_lang: pt
   version: fd074ad7-68fe-5bd8-a47c-158afb231464
 winner: b

@@ -4,12 +4,12 @@ run_at: '2026-06-08T12:41:41Z'
 match_index: 17
 post_a:
   key: music-clipes
-  path: src/content/blog/musicas/clipes.mdx
+  path: src/content/blog/clipes/index.mdx
   display_lang: pt
   version: 3a9f5902-d0e2-547b-883d-aebb9031f167
 post_b:
   key: music-the-third-song-moving-window-iii
-  path: src/content/blog/musicas/the-third-song-moving-window-iii.mdx
+  path: src/content/blog/the-third-song-moving-window-iii/index.mdx
   display_lang: pt
   version: e01290b9-b49b-586d-af61-2783905708fa
 winner: b

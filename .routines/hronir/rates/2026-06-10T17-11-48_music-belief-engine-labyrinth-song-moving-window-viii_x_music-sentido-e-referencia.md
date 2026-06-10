@@ -4,12 +4,12 @@ run_at: '2026-06-10T17:11:48Z'
 match_index: 7
 post_a:
   key: music-belief-engine-labyrinth-song-moving-window-viii
-  path: src/content/blog/musicas/belief-engine-labyrinth-song-moving-window-viii.mdx
+  path: src/content/blog/belief-engine-labyrinth-song-moving-window-viii/index.mdx
   display_lang: pt
   version: ea6275b0-a71a-5c73-b233-2a5102b04535
 post_b:
   key: music-sentido-e-referencia
-  path: src/content/blog/musicas/sentido-e-referencia.mdx
+  path: src/content/blog/sentido-e-referencia/index.mdx
   display_lang: pt
   version: 1d59e9a7-11b8-5ba6-8d9a-b700d162fef2
 winner: b

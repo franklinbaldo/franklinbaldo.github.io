@@ -4,12 +4,12 @@ run_at: '2026-06-08T12:35:52Z'
 match_index: 4
 post_a:
   key: crossing-interference
-  path: src/content/blog/crossing-after-interference.md
+  path: src/content/blog/crossing-after-interference/index.md
   display_lang: en
   version: fb42f337-befb-5de1-8e65-d25256a81da6
 post_b:
   key: pontifex-guide
-  path: src/content/blog/pontifex-architecture-implementation-guide.md
+  path: src/content/blog/pontifex-architecture-implementation-guide/index.md
   display_lang: en
   version: 6e47265f-e71e-5e48-9fe9-cbb1dfe2fe26
 winner: a

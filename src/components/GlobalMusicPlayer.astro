@@ -7,6 +7,7 @@ interface Song {
   id: string;
   title: string;
   imageUrl: string;
+  postUrl: string;
 }
 
 let songs: Song[] = [];
@@ -16,18 +17,26 @@ try {
   const [clips, map] = await Promise.all([fetchAllClips(), fetchAudioMap()]);
   audioMap = map;
 
-  // Build sunoId → clip map
   const clipById = new Map(clips.map((c) => [c.id, c]));
 
-  // Build translationKey → sunoId from music posts
-  const musicPosts = await getCollection("blog", (e) => e.data.postType === "music" && !!e.data.sunoId);
+  const musicPosts = await getCollection(
+    "blog",
+    (e) => e.data.postType === "music" && !!e.data.sunoId,
+  );
   const keyToSunoId = new Map<string, string>(
     musicPosts
       .filter((p) => p.data.translationKey)
-      .map((p) => [p.data.translationKey!, p.data.sunoId!])
+      .map((p) => [p.data.translationKey!, p.data.sunoId!]),
+  );
+  // sunoId → post URL (language-aware)
+  const sunoIdToPostUrl = new Map<string, string>(
+    musicPosts.map((p) => {
+      const lang = p.data.lang ?? "en";
+      const url = lang === "pt" ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`;
+      return [p.data.sunoId!, url];
+    }),
   );
 
-  // Ranked sunoIds (best first), filtered to public clips
   const ranking = getRanking();
   const rankedIds: string[] = [];
   const seen = new Set<string>();
@@ -39,7 +48,6 @@ try {
     }
   }
 
-  // Append any remaining public clips not yet ranked
   for (const c of clips) {
     if (!seen.has(c.id)) {
       rankedIds.push(c.id);
@@ -54,6 +62,7 @@ try {
       id: c!.id,
       title: c!.title || "(sem título)",
       imageUrl: c!.image_url || "",
+      postUrl: sunoIdToPostUrl.get(c!.id) || "",
     }));
 } catch (e) {
   console.warn("[GlobalMusicPlayer] failed to load songs:", e);
@@ -71,10 +80,15 @@ try {
 >
   <audio id="gmp-audio" preload="none"></audio>
 
-  <img id="gmp-cover" src="" alt="" width="48" height="48" class="gmp-cover" />
+  <a id="gmp-cover-link" href="" tabindex="-1" aria-hidden="true">
+    <img id="gmp-cover" src="" alt="" width="48" height="48" class="gmp-cover" />
+  </a>
 
   <div class="gmp-info">
-    <span id="gmp-title" class="gmp-title"></span>
+    <div class="gmp-title-row">
+      <a id="gmp-title" class="gmp-title" href=""></a>
+      <button id="gmp-fav" type="button" aria-label="Adicionar aos favoritos" aria-pressed="false" class="gmp-icon-btn gmp-fav">♡</button>
+    </div>
     <div class="gmp-seek-row">
       <span id="gmp-time" class="gmp-time">0:00</span>
       <input
@@ -90,10 +104,24 @@ try {
     </div>
   </div>
 
+  <input
+    id="gmp-volume"
+    type="range"
+    min="0"
+    max="1"
+    step="0.05"
+    value="1"
+    aria-label="Volume"
+    class="gmp-volume"
+  />
+
   <div class="gmp-btns">
+    <button id="gmp-shuffle" type="button" aria-label="Embaralhar" aria-pressed="false" class="gmp-icon-btn">⇌</button>
     <button id="gmp-prev" type="button" aria-label="Anterior">⏮</button>
     <button id="gmp-play" type="button" aria-label="Tocar">▶</button>
     <button id="gmp-next" type="button" aria-label="Próximo">⏭</button>
+    <button id="gmp-repeat" type="button" aria-label="Sem repetição" class="gmp-icon-btn">🔁</button>
+    <button id="gmp-queue-btn" type="button" aria-label="Ver fila" class="gmp-icon-btn">≡</button>
   </div>
 
   <button id="gmp-close" type="button" class="gmp-close" aria-label="Fechar player"
@@ -101,8 +129,19 @@ try {
   >
 </div>
 
+<div id="gmp-drawer" hidden role="dialog" aria-label="Fila de reprodução">
+  <div class="gmp-drawer-header">
+    <span>Fila</span>
+    <button id="gmp-drawer-close" type="button" aria-label="Fechar fila">✕</button>
+  </div>
+  <div id="gmp-drawer-list"></div>
+</div>
+
 <script>
   const SONG_RE = /suno\.com\/song\/([0-9a-fA-F-]{36})/;
+  const REPEAT_OFF = "off";
+  const REPEAT_ALL = "all";
+  const REPEAT_ONE = "one";
 
   function fmt(sec: number): string {
     if (!isFinite(sec) || sec < 0) return "0:00";
@@ -111,41 +150,54 @@ try {
     return `${m}:${s.toString().padStart(2, "0")}`;
   }
 
+  function shuffle<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
   function init() {
     const player = document.getElementById("gmp") as HTMLElement | null;
     if (!player) return;
 
-    // Re-bind Suno links on every page load (new page content).
-    // Full init only once.
     const alreadyInit = player.dataset.gmpInit === "1";
 
-    let songs: { id: string; title: string; imageUrl: string }[] = [];
+    let songs: { id: string; title: string; imageUrl: string; postUrl: string }[] = [];
     let audioMap: Record<string, string> = {};
     let queue: number[] = [];
+    let originalQueue: number[] = [];
     let currentIdx = 0;
+    let shuffleActive = false;
+    let repeatMode = REPEAT_ALL;
 
     const audio = document.getElementById("gmp-audio") as HTMLAudioElement;
+    const coverLinkEl = document.getElementById("gmp-cover-link") as HTMLAnchorElement;
     const coverEl = document.getElementById("gmp-cover") as HTMLImageElement;
-    const titleEl = document.getElementById("gmp-title") as HTMLElement;
+    const titleEl = document.getElementById("gmp-title") as HTMLAnchorElement;
     const seekEl = document.getElementById("gmp-seek") as HTMLInputElement;
     const timeEl = document.getElementById("gmp-time") as HTMLElement;
     const durEl = document.getElementById("gmp-dur") as HTMLElement;
     const playBtn = document.getElementById("gmp-play") as HTMLButtonElement;
     const prevBtn = document.getElementById("gmp-prev") as HTMLButtonElement;
     const nextBtn = document.getElementById("gmp-next") as HTMLButtonElement;
+    const shuffleBtn = document.getElementById("gmp-shuffle") as HTMLButtonElement;
+    const repeatBtn = document.getElementById("gmp-repeat") as HTMLButtonElement;
+    const volumeEl = document.getElementById("gmp-volume") as HTMLInputElement;
+    const favBtn = document.getElementById("gmp-fav") as HTMLButtonElement;
+    const queueBtn = document.getElementById("gmp-queue-btn") as HTMLButtonElement;
+    const drawerEl = document.getElementById("gmp-drawer") as HTMLElement;
+    const drawerList = document.getElementById("gmp-drawer-list") as HTMLElement;
+    const drawerCloseBtn = document.getElementById("gmp-drawer-close") as HTMLButtonElement;
     const closeBtn = document.getElementById("gmp-close") as HTMLButtonElement;
 
     if (
-      !audio ||
-      !coverEl ||
-      !titleEl ||
-      !seekEl ||
-      !timeEl ||
-      !durEl ||
-      !playBtn ||
-      !prevBtn ||
-      !nextBtn ||
-      !closeBtn
+      !audio || !coverLinkEl || !coverEl || !titleEl || !seekEl ||
+      !timeEl || !durEl || !playBtn || !prevBtn || !nextBtn ||
+      !shuffleBtn || !repeatBtn || !volumeEl || !favBtn || !queueBtn ||
+      !drawerEl || !drawerList || !drawerCloseBtn || !closeBtn
     )
       return;
 
@@ -160,40 +212,117 @@ try {
         audioMap = {};
       }
 
-      // Build default sequential queue
-      queue = songs.map((_, i) => i);
+      originalQueue = songs.map((_, i) => i);
+      queue = [...originalQueue];
 
-      // Restore last session: show player paused at saved position
+      // Restore repeat mode
       try {
-        const savedId = localStorage.getItem("gmp-suno-id");
-        const savedTime = Number(localStorage.getItem("gmp-time") || "0");
-        if (savedId) {
-          const songIdx = songs.findIndex((s) => s.id === savedId);
-          if (songIdx !== -1) {
-            const qIdx = queue.indexOf(songIdx);
-            currentIdx = qIdx !== -1 ? qIdx : 0;
-            const song = songs[songIdx];
-            titleEl.textContent = song.title;
-            coverEl.src = song.imageUrl || "";
-            coverEl.alt = song.title;
-            coverEl.style.display = song.imageUrl ? "" : "none";
-            audio.src = audioSrc(savedId);
-            audio.preload = "metadata";
-            if (savedTime > 0) {
-              audio.addEventListener(
-                "loadedmetadata",
-                () => { audio.currentTime = savedTime; },
-                { once: true }
-              );
-            }
-            player.hidden = false;
-            document.body.classList.add("gmp-active");
+        const saved = localStorage.getItem("gmp-repeat");
+        if (saved === REPEAT_OFF || saved === REPEAT_ALL || saved === REPEAT_ONE) {
+          repeatMode = saved;
+          updateRepeatUI();
+        }
+      } catch {}
+
+      // Detect iOS volume control support and hide slider if unsupported
+      try {
+        const testAudio = document.createElement("audio");
+        const orig = testAudio.volume;
+        testAudio.volume = orig === 0 ? 0.5 : 0;
+        if (testAudio.volume === orig) volumeEl.style.display = "none";
+      } catch {}
+
+      // Restore volume
+      try {
+        const savedVol = localStorage.getItem("gmp-volume");
+        if (savedVol !== null) {
+          const v = parseFloat(savedVol);
+          if (isFinite(v)) {
+            audio.volume = v;
+            volumeEl.value = String(v);
           }
         }
       } catch {}
 
       function audioSrc(id: string): string {
         return audioMap[id] || `https://cdn1.suno.ai/${id}.mp3`;
+      }
+
+      function updateSongLink(postUrl: string) {
+        if (postUrl) {
+          titleEl.href = postUrl;
+          titleEl.removeAttribute("tabindex");
+          coverLinkEl.href = postUrl;
+          coverLinkEl.removeAttribute("aria-hidden");
+          coverLinkEl.removeAttribute("tabindex");
+        } else {
+          titleEl.removeAttribute("href");
+          titleEl.setAttribute("tabindex", "-1");
+          coverLinkEl.removeAttribute("href");
+          coverLinkEl.setAttribute("aria-hidden", "true");
+          coverLinkEl.setAttribute("tabindex", "-1");
+        }
+      }
+
+      function updateRepeatUI() {
+        if (repeatMode === REPEAT_OFF) {
+          repeatBtn.setAttribute("aria-label", "Sem repetição");
+          repeatBtn.classList.remove("active");
+          repeatBtn.style.opacity = "0.4";
+        } else if (repeatMode === REPEAT_ALL) {
+          repeatBtn.setAttribute("aria-label", "Repetir tudo");
+          repeatBtn.classList.add("active");
+          repeatBtn.style.opacity = "1";
+        } else {
+          repeatBtn.setAttribute("aria-label", "Repetir esta música");
+          repeatBtn.classList.add("active");
+          repeatBtn.style.opacity = "1";
+          repeatBtn.textContent = "🔂";
+        }
+        if (repeatMode !== REPEAT_ONE) repeatBtn.textContent = "🔁";
+      }
+
+      function getFavorites(): string[] {
+        try { return JSON.parse(localStorage.getItem("gmp-favorites") || "[]"); } catch { return []; }
+      }
+
+      function updateFavBtn(songId: string) {
+        const isFav = getFavorites().includes(songId);
+        favBtn.textContent = isFav ? "♥" : "♡";
+        favBtn.setAttribute("aria-pressed", String(isFav));
+        favBtn.setAttribute("aria-label", isFav ? "Remover dos favoritos" : "Adicionar aos favoritos");
+        favBtn.classList.toggle("active", isFav);
+      }
+
+      function addToHistory(songId: string) {
+        try {
+          const hist = JSON.parse(localStorage.getItem("gmp-history") || "[]") as string[];
+          const filtered = hist.filter((id) => id !== songId);
+          filtered.unshift(songId);
+          localStorage.setItem("gmp-history", JSON.stringify(filtered.slice(0, 50)));
+        } catch {}
+      }
+
+      function exposeState() {
+        player!.dataset.queueIds = queue.map((i) => songs[i]?.id ?? "").filter(Boolean).join(",");
+        player!.dataset.favorites = getFavorites().join(",");
+      }
+
+      function renderDrawer() {
+        drawerList.innerHTML = "";
+        queue.forEach((songIdx, qIdx) => {
+          const song = songs[songIdx];
+          if (!song) return;
+          const item = document.createElement("button");
+          item.type = "button";
+          item.className = "gmp-drawer-item" + (qIdx === currentIdx ? " active" : "");
+          item.textContent = song.title;
+          item.addEventListener("click", () => {
+            playSong(qIdx);
+            drawerEl.hidden = true;
+          });
+          drawerList.appendChild(item);
+        });
       }
 
       function playSong(idx: number) {
@@ -203,12 +332,17 @@ try {
         if (!song) return;
 
         titleEl.textContent = song.title;
+        updateSongLink(song.postUrl);
         coverEl.src = song.imageUrl || "";
         coverEl.alt = song.title;
         coverEl.style.display = song.imageUrl ? "" : "none";
         audio.src = audioSrc(song.id);
         player!.hidden = false;
         document.body.classList.add("gmp-active");
+        player!.dataset.playingId = song.id;
+        updateFavBtn(song.id);
+        addToHistory(song.id);
+        exposeState();
         audio.play().catch(() => {});
         try {
           localStorage.setItem("gmp-suno-id", song.id);
@@ -223,13 +357,13 @@ try {
           if (qIdx !== -1) {
             playSong(qIdx);
           } else {
-            // Song not in queue — push to front and play
             queue.unshift(idx);
+            originalQueue.unshift(idx);
             playSong(0);
           }
         } else {
-          // Unknown song — play directly without queue
           titleEl.textContent = title || sunoId;
+          updateSongLink("");
           coverEl.style.display = "none";
           audio.src = audioSrc(sunoId);
           player!.hidden = false;
@@ -237,6 +371,41 @@ try {
           audio.play().catch(() => {});
         }
       }
+
+      // Restore last session
+      try {
+        const savedId = localStorage.getItem("gmp-suno-id");
+        const savedTime = Number(localStorage.getItem("gmp-time") || "0");
+        if (savedId) {
+          const songIdx = songs.findIndex((s) => s.id === savedId);
+          if (songIdx !== -1) {
+            const qIdx = queue.indexOf(songIdx);
+            currentIdx = qIdx !== -1 ? qIdx : 0;
+            const song = songs[songIdx];
+            titleEl.textContent = song.title;
+            updateSongLink(song.postUrl);
+            coverEl.src = song.imageUrl || "";
+            coverEl.alt = song.title;
+            coverEl.style.display = song.imageUrl ? "" : "none";
+            audio.src = audioSrc(savedId);
+            audio.preload = "metadata";
+            player!.dataset.playingId = savedId;
+            updateFavBtn(savedId);
+            exposeState();
+            if (savedTime > 0) {
+              audio.addEventListener(
+                "loadedmetadata",
+                () => {
+                  audio.currentTime = savedTime;
+                },
+                { once: true },
+              );
+            }
+            player.hidden = false;
+            document.body.classList.add("gmp-active");
+          }
+        }
+      } catch {}
 
       playBtn.addEventListener("click", () => {
         if (audio.paused) audio.play().catch(() => {});
@@ -255,9 +424,74 @@ try {
         playSong((currentIdx + 1) % queue.length);
       });
 
+      shuffleBtn.addEventListener("click", () => {
+        shuffleActive = !shuffleActive;
+        shuffleBtn.setAttribute("aria-pressed", String(shuffleActive));
+        shuffleBtn.classList.toggle("active", shuffleActive);
+        if (shuffleActive) {
+          const currentSongIdx = queue[currentIdx];
+          const rest = queue.filter((_, i) => i !== currentIdx);
+          queue = [currentSongIdx, ...shuffle(rest)];
+          currentIdx = 0;
+        } else {
+          const currentSongIdx = queue[currentIdx];
+          queue = [...originalQueue];
+          currentIdx = queue.indexOf(currentSongIdx);
+          if (currentIdx === -1) currentIdx = 0;
+        }
+      });
+
+      repeatBtn.addEventListener("click", () => {
+        if (repeatMode === REPEAT_OFF) repeatMode = REPEAT_ALL;
+        else if (repeatMode === REPEAT_ALL) repeatMode = REPEAT_ONE;
+        else repeatMode = REPEAT_OFF;
+        updateRepeatUI();
+        try {
+          localStorage.setItem("gmp-repeat", repeatMode);
+        } catch {}
+      });
+
+      volumeEl.addEventListener("input", () => {
+        audio.volume = Number(volumeEl.value);
+        try {
+          localStorage.setItem("gmp-volume", volumeEl.value);
+        } catch {}
+      });
+
+      favBtn.addEventListener("click", () => {
+        const currentSong = songs[queue[currentIdx]];
+        if (!currentSong) return;
+        try {
+          const favs = getFavorites();
+          const i = favs.indexOf(currentSong.id);
+          if (i === -1) favs.push(currentSong.id);
+          else favs.splice(i, 1);
+          localStorage.setItem("gmp-favorites", JSON.stringify(favs));
+        } catch {}
+        updateFavBtn(currentSong.id);
+        exposeState();
+      });
+
+      queueBtn.addEventListener("click", () => {
+        renderDrawer();
+        drawerEl.hidden = !drawerEl.hidden;
+      });
+
+      drawerCloseBtn.addEventListener("click", () => {
+        drawerEl.hidden = true;
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!drawerEl.hidden && !drawerEl.contains(e.target as Node) && e.target !== queueBtn) {
+          drawerEl.hidden = true;
+        }
+      });
+
       closeBtn.addEventListener("click", () => {
         audio.pause();
         player.hidden = true;
+        drawerEl.hidden = true;
+        player.removeAttribute("data-playing-id");
         document.body.classList.remove("gmp-active");
       });
 
@@ -272,7 +506,13 @@ try {
       });
 
       audio.addEventListener("ended", () => {
-        playSong((currentIdx + 1) % queue.length);
+        if (repeatMode === REPEAT_ONE) {
+          audio.currentTime = 0;
+          audio.play().catch(() => {});
+        } else if (repeatMode === REPEAT_ALL || currentIdx < queue.length - 1) {
+          playSong((currentIdx + 1) % queue.length);
+        }
+        // REPEAT_OFF at end of queue: do nothing (stop)
       });
 
       let _saveTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -287,7 +527,10 @@ try {
             _saveTimeout = null;
             try {
               if (audio.currentTime > 0)
-                localStorage.setItem("gmp-time", String(Math.floor(audio.currentTime)));
+                localStorage.setItem(
+                  "gmp-time",
+                  String(Math.floor(audio.currentTime)),
+                );
             } catch {}
           }, 5000);
         }
@@ -302,7 +545,6 @@ try {
         audio.currentTime = (Number(seekEl.value) / 100) * audio.duration;
       });
 
-      // Global event API
       document.addEventListener("gp:play", (e: Event) => {
         const { sunoId, title } = (
           e as CustomEvent<{ sunoId: string; title?: string }>
@@ -311,19 +553,18 @@ try {
       });
 
       document.addEventListener("gp:queue", (e: Event) => {
-        const { sunoIds } = (
-          e as CustomEvent<{ sunoIds: string[] }>
-        ).detail;
+        const { sunoIds } = (e as CustomEvent<{ sunoIds: string[] }>).detail;
         if (!sunoIds?.length) return;
         const newQueue: number[] = [];
         for (const id of sunoIds) {
           const idx = songs.findIndex((s) => s.id === id);
           if (idx !== -1) newQueue.push(idx);
         }
-        if (newQueue.length) {
-          queue = newQueue;
-          playSong(0);
-        }
+        if (!newQueue.length) return;
+        originalQueue = newQueue;
+        queue = shuffleActive ? shuffle(newQueue) : [...newQueue];
+        playSong(0);
+        exposeState();
       });
     }
 
@@ -336,13 +577,19 @@ try {
         if (!m) return;
         a.dataset.gmpBound = "1";
         a.addEventListener("click", (ev: MouseEvent) => {
-          if (ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey)
+          if (
+            ev.button !== 0 ||
+            ev.metaKey ||
+            ev.ctrlKey ||
+            ev.shiftKey ||
+            ev.altKey
+          )
             return;
           ev.preventDefault();
           document.dispatchEvent(
             new CustomEvent("gp:play", {
               detail: { sunoId: m[1], title: a.textContent?.trim() },
-            })
+            }),
           );
         });
       });
@@ -373,12 +620,19 @@ try {
     min-height: 72px;
   }
 
-  .gmp-cover {
+  #gmp-cover-link {
     flex-shrink: 0;
+    display: block;
+    border-radius: 4px;
+    overflow: hidden;
+    line-height: 0;
+  }
+
+  .gmp-cover {
     width: 48px;
     height: 48px;
-    border-radius: 4px;
     object-fit: cover;
+    display: block;
   }
 
   .gmp-info {
@@ -389,12 +643,32 @@ try {
     gap: 0.25rem;
   }
 
+  .gmp-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
   .gmp-title {
     font-weight: 600;
     font-size: 0.9rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: inherit;
+    text-decoration: none;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .gmp-title:hover {
+    text-decoration: underline;
+  }
+
+  .gmp-fav {
+    font-size: 1rem;
+    flex-shrink: 0;
   }
 
   .gmp-seek-row {
@@ -415,6 +689,14 @@ try {
     height: 4px;
     accent-color: var(--pico-primary);
     margin: 0;
+    cursor: pointer;
+  }
+
+  .gmp-volume {
+    width: 5rem;
+    flex-shrink: 0;
+    accent-color: var(--pico-primary);
+    height: 4px;
     cursor: pointer;
   }
 
@@ -445,6 +727,16 @@ try {
     font-size: 0.85rem;
   }
 
+  .gmp-icon-btn {
+    opacity: 0.4;
+    transition: opacity 0.15s;
+  }
+
+  .gmp-icon-btn.active {
+    opacity: 1;
+    color: var(--pico-primary);
+  }
+
   .gmp-close {
     flex-shrink: 0;
     background: none;
@@ -457,17 +749,109 @@ try {
   }
 
   @media (max-width: 480px) {
-    .gmp-cover {
+    #gmp-cover-link {
       display: none;
     }
-    .gmp-time {
+    .gmp-time,
+    .gmp-volume,
+    #gmp-shuffle,
+    #gmp-repeat {
       display: none;
     }
   }
 </style>
 
 <style is:global>
+  #gmp-drawer {
+    position: fixed;
+    bottom: 72px;
+    left: 0;
+    right: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    background: var(--pico-card-background-color, #fff);
+    border-top: 1px solid var(--pico-muted-border-color, #ddd);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
+    z-index: 199;
+  }
+
+  .gmp-drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--pico-muted-border-color, #ddd);
+    position: sticky;
+    top: 0;
+    background: var(--pico-card-background-color, #fff);
+  }
+
+  .gmp-drawer-header button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--pico-muted-color);
+    padding: 0.25rem;
+    line-height: 1;
+  }
+
+  .gmp-drawer-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.6rem 1rem;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--pico-muted-border-color, #eee);
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--pico-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .gmp-drawer-item:hover {
+    background: var(--pico-secondary-background, #f5f5f5);
+  }
+
+  .gmp-drawer-item.active {
+    font-weight: 700;
+    color: var(--pico-primary);
+  }
+
+  .gmp-drawer-item.active::before {
+    content: "▶ ";
+  }
+
   body.gmp-active {
     padding-bottom: 80px;
+  }
+
+  .song-card.is-playing {
+    outline: 2px solid var(--pico-primary);
+    outline-offset: 2px;
+    border-radius: var(--pico-border-radius);
+  }
+
+  .song-card.is-playing .cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent 60%,
+      rgba(0, 0, 0, 0.4)
+    );
+    border-radius: var(--pico-border-radius);
+    pointer-events: none;
+  }
+
+  .song-card .cover {
+    position: relative;
+    display: block;
   }
 </style>

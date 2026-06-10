@@ -4,12 +4,12 @@ run_at: '2026-06-10T17:21:09Z'
 match_index: 14
 post_a:
   key: music-quando-vier-a-primavera
-  path: src/content/blog/musicas/quando-vier-a-primavera-en.mdx
+  path: src/content/blog/quando-vier-a-primavera-en/index.mdx
   display_lang: en
   version: 0faadc0a-5566-55c8-b01a-74539f1e6578
 post_b:
   key: music-mindfulness
-  path: src/content/blog/musicas/mindfulness-en.mdx
+  path: src/content/blog/mindfulness-en/index.mdx
   display_lang: en
   version: 8f049910-7849-587c-88d3-8c7a74e79ac2
 winner: a

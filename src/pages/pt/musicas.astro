@@ -1,6 +1,7 @@
 ---
 import PageLayout from "../../layouts/PageLayout.astro";
 import { sleep } from "../../lib/suno";
+import { getCollection } from "astro:content";
 
 const HANDLE = "franklinbaldo";
 const SUNO_API = "https://studio-api-prod.suno.com/api";
@@ -145,6 +146,18 @@ const musicJsonLd = {
     "duration": c.metadata?.duration ? `PT${Math.floor(c.metadata.duration / 60)}M${Math.round(c.metadata.duration % 60)}S` : undefined,
   })).filter((t) => t.name),
 };
+
+const musicBlogPosts = await getCollection(
+  "blog",
+  (e) => e.data.postType === "music" && !!e.data.sunoId && (e.data.genre?.length ?? 0) > 0,
+);
+const sunoIdToGenres = new Map<string, string[]>(
+  musicBlogPosts.map((p) => [
+    p.data.sunoId!,
+    (p.data.genre ?? []).map((g) => g.toLowerCase().trim()).filter(Boolean),
+  ]),
+);
+const allGenres = [...new Set([...sunoIdToGenres.values()].flat())].sort();
 ---
 
 <PageLayout
@@ -217,19 +230,58 @@ const musicJsonLd = {
     )
   }
 
+  <section id="favorites-section" hidden>
+    <h2>Favoritas</h2>
+    <div class="songs-grid" id="favorites-grid"></div>
+  </section>
+
+  <section id="history-section" hidden>
+    <h2>Ouvidas recentemente</h2>
+    <div class="history-rail" id="history-rail"></div>
+  </section>
+
   {
     clips.length > 0 && (
       <section>
-        <h2>
-          Todas as músicas <small>({clips.length})</small>
-        </h2>
-        <div class="songs-grid">
+        {allGenres.length > 0 && (
+          <div class="genre-chips" id="genre-chips" role="group" aria-label="Filtrar por gênero">
+            <button class="genre-chip active" data-genre="all" type="button">Todos</button>
+            {allGenres.map((g) => (
+              <button class="genre-chip" data-genre={g} type="button">{g}</button>
+            ))}
+          </div>
+        )}
+        <div class="songs-header">
+          <h2>
+            Todas as músicas <small>({clips.length})</small>
+          </h2>
+          <div class="songs-controls">
+            <button id="gmp-play-all" type="button" data-ids={clips.map((c) => c.id).join(",")}>▶ Tocar tudo</button>
+            <button id="gmp-shuffle-all" type="button" data-ids={clips.map((c) => c.id).join(",")}>⇌ Embaralhar</button>
+            <select id="sort-songs" aria-label="Ordenar por">
+              <option value="newest">Mais recentes</option>
+              <option value="oldest">Mais antigas</option>
+              <option value="duration-desc">Mais longas</option>
+              <option value="duration-asc">Mais curtas</option>
+            </select>
+          </div>
+        </div>
+        <div class="songs-grid" id="songs-grid">
           {clips.map((c) => {
             const tags = parseTags(c.metadata?.tags);
             const duration = fmtDuration(c.metadata?.duration);
             const lyrics = c.metadata?.prompt ?? "";
             return (
-              <article class="song-card" id={c.id}>
+              <article
+                class="song-card"
+                id={c.id}
+                data-suno-id={c.id}
+                data-date={c.created_at}
+                data-duration={String(c.metadata?.duration || 0)}
+                data-genres={(sunoIdToGenres.get(c.id) ?? []).join(",")}
+                data-title={c.title || "(sem título)"}
+                data-image={c.image_url || ""}
+              >
                 <a href={`https://suno.com/song/${c.id}`} class="cover">
                   <img
                     src={c.image_url}
@@ -265,9 +317,16 @@ const musicJsonLd = {
                 )}
 
                 <footer>
-                  <small>
-                    ▶ {c.play_count ?? 0} · ♥ {c.upvote_count ?? 0}
-                  </small>
+                  <div class="card-footer-row">
+                    <small>▶ {c.play_count ?? 0} · ♥ {c.upvote_count ?? 0}</small>
+                    <button
+                      class="fav-btn"
+                      type="button"
+                      data-suno-id={c.id}
+                      aria-label="Adicionar aos favoritos"
+                      aria-pressed="false"
+                    >♡</button>
+                  </div>
                   {lyrics.trim() && (
                     <details>
                       <summary>
@@ -286,7 +345,249 @@ const musicJsonLd = {
   }
 </PageLayout>
 
+<script>
+  function getFavs(): string[] {
+    try { return JSON.parse(localStorage.getItem("gmp-favorites") || "[]"); } catch { return []; }
+  }
+  function getHistory(): string[] {
+    try { return JSON.parse(localStorage.getItem("gmp-history") || "[]"); } catch { return []; }
+  }
+  function allCards(): HTMLElement[] {
+    return Array.from(document.querySelectorAll<HTMLElement>("#songs-grid .song-card"));
+  }
+  function cardById(id: string): HTMLElement | null {
+    return document.querySelector<HTMLElement>(`#songs-grid .song-card[data-suno-id="${id}"]`);
+  }
+
+  function refreshFavButtons() {
+    const favs = getFavs();
+    document.querySelectorAll<HTMLButtonElement>(".fav-btn").forEach((btn) => {
+      const id = btn.dataset.sunoId || "";
+      const active = favs.includes(id);
+      btn.textContent = active ? "♥" : "♡";
+      btn.setAttribute("aria-pressed", String(active));
+      btn.setAttribute("aria-label", active ? "Remover dos favoritos" : "Adicionar aos favoritos");
+      btn.classList.toggle("active", active);
+    });
+  }
+
+  function renderFavoritesSection() {
+    const section = document.getElementById("favorites-section") as HTMLElement | null;
+    const grid = document.getElementById("favorites-grid") as HTMLElement | null;
+    if (!section || !grid) return;
+    const favs = getFavs();
+    const currentId = localStorage.getItem("gmp-suno-id") || "";
+    if (!favs.length) { section.hidden = true; return; }
+    section.hidden = false;
+    grid.innerHTML = "";
+    favs.slice(0, 12).forEach((id) => {
+      const source = cardById(id);
+      if (!source) return;
+      const mini = document.createElement("article");
+      mini.className = "song-card mini-card" + (id === currentId ? " is-playing" : "");
+      mini.dataset.sunoId = id;
+      const img = document.createElement("img");
+      img.src = source.dataset.image || "";
+      img.alt = source.dataset.title || "";
+      img.width = 80; img.height = 80;
+      img.style.cssText = "width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:var(--pico-border-radius);cursor:pointer";
+      img.addEventListener("click", () =>
+        document.dispatchEvent(new CustomEvent("gp:play", { detail: { sunoId: id, title: source.dataset.title } }))
+      );
+      const title = document.createElement("p");
+      title.style.cssText = "font-size:0.8rem;margin:0.25rem 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
+      title.textContent = source.dataset.title || "";
+      mini.appendChild(img);
+      mini.appendChild(title);
+      grid.appendChild(mini);
+    });
+  }
+
+  function renderHistorySection() {
+    const section = document.getElementById("history-section") as HTMLElement | null;
+    const rail = document.getElementById("history-rail") as HTMLElement | null;
+    if (!section || !rail) return;
+    const history = getHistory().slice(0, 8);
+    const currentId = localStorage.getItem("gmp-suno-id") || "";
+    if (!history.length) { section.hidden = true; return; }
+    section.hidden = false;
+    rail.innerHTML = "";
+    history.forEach((id) => {
+      const source = cardById(id);
+      if (!source) return;
+      const item = document.createElement("div");
+      item.className = "history-item" + (id === currentId ? " is-playing" : "");
+      item.dataset.sunoId = id;
+      const img = document.createElement("img");
+      img.src = source.dataset.image || "";
+      img.alt = source.dataset.title || "";
+      img.style.cssText = "width:56px;height:56px;object-fit:cover;border-radius:var(--pico-border-radius);cursor:pointer;flex-shrink:0";
+      img.addEventListener("click", () =>
+        document.dispatchEvent(new CustomEvent("gp:play", { detail: { sunoId: id, title: source.dataset.title } }))
+      );
+      item.appendChild(img);
+      rail.appendChild(item);
+      if (id === currentId) {
+        const badge = document.createElement("small");
+        badge.style.cssText = "display:block;font-size:0.65rem;text-align:center;margin-top:2px;color:var(--pico-primary)";
+        badge.textContent = "▶ Continuar";
+        item.appendChild(badge);
+      }
+    });
+  }
+
+  function initGallery() {
+    const playAllBtn = document.getElementById("gmp-play-all") as HTMLButtonElement | null;
+    const shuffleAllBtn = document.getElementById("gmp-shuffle-all") as HTMLButtonElement | null;
+    const sortSelect = document.getElementById("sort-songs") as HTMLSelectElement | null;
+    const grid = document.getElementById("songs-grid") as HTMLElement | null;
+    const chipsContainer = document.getElementById("genre-chips") as HTMLElement | null;
+    const gmp = document.getElementById("gmp");
+
+    function getVisibleIds(): string[] {
+      if (!grid) return [];
+      return Array.from(grid.querySelectorAll<HTMLElement>(".song-card:not([hidden])"))
+        .map((el) => el.dataset.sunoId || "").filter(Boolean);
+    }
+
+    if (playAllBtn) {
+      playAllBtn.addEventListener("click", () =>
+        document.dispatchEvent(new CustomEvent("gp:queue", { detail: { sunoIds: getVisibleIds() } }))
+      );
+    }
+    if (shuffleAllBtn) {
+      shuffleAllBtn.addEventListener("click", () => {
+        const shuffled = [...getVisibleIds()].sort(() => Math.random() - 0.5);
+        document.dispatchEvent(new CustomEvent("gp:queue", { detail: { sunoIds: shuffled } }));
+      });
+    }
+
+    if (sortSelect && grid) {
+      sortSelect.addEventListener("change", () => {
+        const cards = Array.from(grid.querySelectorAll<HTMLElement>(".song-card"));
+        cards.sort((a, b) => {
+          const val = sortSelect.value;
+          if (val === "newest" || val === "oldest") {
+            const da = new Date(a.dataset.date || "").valueOf();
+            const db = new Date(b.dataset.date || "").valueOf();
+            return val === "newest" ? db - da : da - db;
+          }
+          const da = Number(a.dataset.duration || "0");
+          const db = Number(b.dataset.duration || "0");
+          return val === "duration-desc" ? db - da : da - db;
+        });
+        cards.forEach((c) => grid.appendChild(c));
+      });
+    }
+
+    if (chipsContainer && grid) {
+      chipsContainer.addEventListener("click", (e) => {
+        const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-genre]");
+        if (!btn) return;
+        const genre = btn.dataset.genre || "all";
+        chipsContainer.querySelectorAll(".genre-chip").forEach((c) => c.classList.remove("active"));
+        btn.classList.add("active");
+        allCards().forEach((card) => {
+          if (genre === "all") { card.hidden = false; return; }
+          const genres = (card.dataset.genres || "").split(",");
+          card.hidden = !genres.includes(genre);
+        });
+        const url = new URL(location.href);
+        if (genre === "all") url.searchParams.delete("genre");
+        else url.searchParams.set("genre", genre);
+        history.replaceState({}, "", url);
+      });
+      const urlGenre = new URL(location.href).searchParams.get("genre");
+      if (urlGenre) {
+        const chip = chipsContainer.querySelector<HTMLButtonElement>(`[data-genre="${urlGenre}"]`);
+        if (chip) chip.click();
+      }
+    }
+
+    document.querySelectorAll<HTMLButtonElement>(".fav-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.sunoId || "";
+        if (!id) return;
+        const favs = getFavs();
+        const i = favs.indexOf(id);
+        if (i === -1) favs.push(id);
+        else favs.splice(i, 1);
+        try { localStorage.setItem("gmp-favorites", JSON.stringify(favs)); } catch {}
+        refreshFavButtons();
+        renderFavoritesSection();
+        if (gmp) gmp.dataset.favorites = favs.join(",");
+      });
+    });
+    refreshFavButtons();
+    renderFavoritesSection();
+    renderHistorySection();
+
+    if (!gmp || !grid) return;
+    function updateHighlight() {
+      const playingId = gmp!.dataset.playingId || "";
+      allCards().forEach((card) => card.classList.toggle("is-playing", card.dataset.sunoId === playingId));
+    }
+    updateHighlight();
+    const obs = new MutationObserver((mutations) => {
+      updateHighlight();
+      for (const m of mutations) {
+        if (m.attributeName === "data-playing-id" || m.attributeName === "data-favorites") {
+          refreshFavButtons();
+          renderFavoritesSection();
+          renderHistorySection();
+        }
+      }
+    });
+    obs.observe(gmp, { attributes: true, attributeFilter: ["data-playing-id", "data-favorites", "data-queue-ids"] });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initGallery);
+  } else {
+    initGallery();
+  }
+  document.addEventListener("astro:page-load", initGallery);
+</script>
+
 <style>
+  .songs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .songs-header h2 { margin: 0; }
+  .songs-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .songs-controls button {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.85rem;
+    border-radius: var(--pico-border-radius);
+    cursor: pointer;
+    border: 1px solid var(--pico-muted-border-color);
+    background: var(--pico-card-background-color);
+    color: var(--pico-color);
+  }
+  .songs-controls button:hover {
+    background: var(--pico-primary);
+    color: var(--pico-primary-inverse, #fff);
+    border-color: var(--pico-primary);
+  }
+  .songs-controls select {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.85rem;
+    border-radius: var(--pico-border-radius);
+    border: 1px solid var(--pico-muted-border-color);
+    background: var(--pico-card-background-color);
+    color: var(--pico-color);
+    cursor: pointer;
+  }
   .playlists-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -346,5 +647,66 @@ const musicJsonLd = {
     background: var(--pico-code-background-color);
     padding: 0.75rem;
     border-radius: var(--pico-border-radius);
+  }
+  .card-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+  }
+  .fav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0.1rem 0.3rem;
+    line-height: 1;
+    color: var(--pico-muted-color);
+    transition: color 0.15s;
+  }
+  .fav-btn.active {
+    color: #e53e3e;
+  }
+  .fav-btn:hover {
+    color: #e53e3e;
+  }
+  .genre-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+  .genre-chip {
+    padding: 0.2rem 0.65rem;
+    font-size: 0.78rem;
+    border-radius: 999px;
+    border: 1px solid var(--pico-muted-border-color);
+    background: var(--pico-card-background-color);
+    color: var(--pico-muted-color);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .genre-chip.active,
+  .genre-chip:hover {
+    background: var(--pico-primary);
+    color: var(--pico-primary-inverse, #fff);
+    border-color: var(--pico-primary);
+  }
+  .history-rail {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  .history-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
   }
 </style>

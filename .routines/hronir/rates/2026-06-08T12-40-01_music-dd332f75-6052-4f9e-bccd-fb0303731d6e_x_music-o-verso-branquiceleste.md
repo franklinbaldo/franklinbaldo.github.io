@@ -4,12 +4,12 @@ run_at: '2026-06-08T12:40:01Z'
 match_index: 15
 post_a:
   key: music-dd332f75-6052-4f9e-bccd-fb0303731d6e
-  path: src/content/blog/musicas/dd332f75-6052-4f9e-bccd-fb0303731d6e-en.mdx
+  path: src/content/blog/dd332f75-6052-4f9e-bccd-fb0303731d6e-en/index.mdx
   display_lang: en
   version: 357d76a5-8878-58e0-a050-eac48eb2961e
 post_b:
   key: music-o-verso-branquiceleste
-  path: src/content/blog/musicas/o-verso-branquiceleste-en.mdx
+  path: src/content/blog/o-verso-branquiceleste-en/index.mdx
   display_lang: en
   version: c1a69171-1c61-51ff-8615-bf9dc80693ce
 winner: b

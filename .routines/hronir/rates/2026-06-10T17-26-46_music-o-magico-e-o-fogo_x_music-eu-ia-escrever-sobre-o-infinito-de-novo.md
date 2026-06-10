@@ -4,12 +4,12 @@ run_at: '2026-06-10T17:26:46Z'
 match_index: 19
 post_a:
   key: music-o-magico-e-o-fogo
-  path: src/content/blog/musicas/o-magico-e-o-fogo.mdx
+  path: src/content/blog/o-magico-e-o-fogo/index.mdx
   display_lang: pt
   version: 437b5b75-8b08-5b86-a420-4c9fadbe76a1
 post_b:
   key: music-eu-ia-escrever-sobre-o-infinito-de-novo
-  path: src/content/blog/musicas/eu-ia-escrever-sobre-o-infinito-de-novo.mdx
+  path: src/content/blog/eu-ia-escrever-sobre-o-infinito-de-novo/index.mdx
   display_lang: pt
   version: f8fcaf20-0686-5d8e-b162-b962fe7a20e8
 winner: b

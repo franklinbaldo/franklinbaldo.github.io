@@ -4,12 +4,12 @@ run_at: '2026-06-10T17:04:37Z'
 match_index: 2
 post_a:
   key: music-the-ruliad-is-laughing
-  path: src/content/blog/musicas/the-ruliad-is-laughing-en.mdx
+  path: src/content/blog/the-ruliad-is-laughing-en/index.mdx
   display_lang: en
   version: 274bb067-5707-5001-92e8-87fa2a9ccae6
 post_b:
   key: music-trinta-de-abril
-  path: src/content/blog/musicas/trinta-de-abril-en.mdx
+  path: src/content/blog/trinta-de-abril-en/index.mdx
   display_lang: en
   version: 8e58516e-1ca0-57f5-b13a-ee6c69027415
 winner: a

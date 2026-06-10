@@ -4,12 +4,12 @@ run_at: '2026-06-10T17:20:03Z'
 match_index: 13
 post_a:
   key: music-o-regral
-  path: src/content/blog/musicas/o-regral-en.mdx
+  path: src/content/blog/o-regral-en/index.mdx
   display_lang: en
   version: aaec2441-64bf-5133-89a1-e51f63f272c9
 post_b:
   key: music-be-me-borges
-  path: src/content/blog/musicas/be-me-borges-en.mdx
+  path: src/content/blog/be-me-borges-en/index.mdx
   display_lang: en
   version: 93a2db83-dae6-5e60-9737-4b306d284902
 winner: b

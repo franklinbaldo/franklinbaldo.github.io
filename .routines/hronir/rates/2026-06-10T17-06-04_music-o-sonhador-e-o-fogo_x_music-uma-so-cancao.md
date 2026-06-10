@@ -4,12 +4,12 @@ run_at: '2026-06-10T17:06:04Z'
 match_index: 3
 post_a:
   key: music-o-sonhador-e-o-fogo
-  path: src/content/blog/musicas/o-sonhador-e-o-fogo.mdx
+  path: src/content/blog/o-sonhador-e-o-fogo/index.mdx
   display_lang: pt
   version: c666f8ee-d927-512f-b85c-bfdce5aa2979
 post_b:
   key: music-uma-so-cancao
-  path: src/content/blog/musicas/uma-so-cancao-en.mdx
+  path: src/content/blog/uma-so-cancao-en/index.mdx
   display_lang: en
   version: ed43a79c-ea0e-5375-8179-f3a11c22fff0
 winner: b
