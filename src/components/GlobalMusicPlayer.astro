@@ -1,5 +1,7 @@
 ---
 import { fetchAllClips, fetchAudioMap } from "../lib/suno";
+import { getRanking } from "../lib/hronir-rank";
+import { getCollection } from "astro:content";
 
 interface Song {
   id: string;
@@ -12,12 +14,47 @@ let audioMap: Record<string, string> = {};
 
 try {
   const [clips, map] = await Promise.all([fetchAllClips(), fetchAudioMap()]);
-  songs = clips.map((c) => ({
-    id: c.id,
-    title: c.title || "(sem título)",
-    imageUrl: c.image_url || "",
-  }));
   audioMap = map;
+
+  // Build sunoId → clip map
+  const clipById = new Map(clips.map((c) => [c.id, c]));
+
+  // Build translationKey → sunoId from music posts
+  const musicPosts = await getCollection("blog", (e) => e.data.postType === "music" && !!e.data.sunoId);
+  const keyToSunoId = new Map<string, string>(
+    musicPosts
+      .filter((p) => p.data.translationKey)
+      .map((p) => [p.data.translationKey!, p.data.sunoId!])
+  );
+
+  // Ranked sunoIds (best first), filtered to public clips
+  const ranking = getRanking();
+  const rankedIds: string[] = [];
+  const seen = new Set<string>();
+  for (const row of ranking) {
+    const sid = keyToSunoId.get(row.key);
+    if (sid && clipById.has(sid) && !seen.has(sid)) {
+      rankedIds.push(sid);
+      seen.add(sid);
+    }
+  }
+
+  // Append any remaining public clips not yet ranked
+  for (const c of clips) {
+    if (!seen.has(c.id)) {
+      rankedIds.push(c.id);
+      seen.add(c.id);
+    }
+  }
+
+  songs = rankedIds
+    .map((id) => clipById.get(id))
+    .filter(Boolean)
+    .map((c) => ({
+      id: c!.id,
+      title: c!.title || "(sem título)",
+      imageUrl: c!.image_url || "",
+    }));
 } catch (e) {
   console.warn("[GlobalMusicPlayer] failed to load songs:", e);
 }
