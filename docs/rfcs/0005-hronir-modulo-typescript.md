@@ -2,15 +2,12 @@
 
 |                 |                                                                                                                                |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| **Status**      | Draft / Proposed                                                                                                               |
+| **Status**      | Implementado (r1)                                                                                                              |
 | **Autor**       | Franklin Baldo (proposta assistida)                                                                                            |
 | **Criado em**   | 2026-06-09                                                                                                                     |
 | **Branch / PR** | `claude/vibrant-volta-3giul0`                                                                                                  |
-| **Depende de**  | RFC 0003 (migração de layout) — a Fase 0 da 0003 reescreve `posts.js`; migrar direto para `.ts` evita conversão dupla          |
+| **Depende de**  | RFC 0003 (mergeada em #306) — implementada antes desta RFC                                                                     |
 | **Afeta**       | `scripts/hronir/lib/*.js`, `src/lib/hronir-rank.ts`, `src/content.config.ts` (tipos), `package.json` (runner), `tsconfig.json` |
-
-> Este documento é a **etapa 1**: só o RFC. Implementação após o merge da RFC 0003.
-> Mesmo padrão das RFCs anteriores.
 
 ---
 
@@ -66,11 +63,14 @@ mudança no schema exige atualizar dois lugares — sem nada que aponte o segund
 mesmos arquivos com propósitos sobrepostos. Em TypeScript, um único módulo
 `src/hronir/posts.ts` poderia exportar para ambos os consumidores.
 
-### 2.3. O timing perfeito é pós-RFC 0003
+### 2.3. Timing: RFC 0003 já foi implementada em JS
 
-A Fase 0 da RFC 0003 reescreve `posts.js` de qualquer forma (nova lógica de
-`listPosts`, `keyForPath`, `isCanonical`). Fazer essa reescrita diretamente em
-TypeScript custa o mesmo e evita uma segunda conversão.
+> **Corrigido na r1.** A r0 desta seção previa converter `posts.js` direto para
+> TypeScript durante a Fase 0 da RFC 0003, evitando "conversão dupla". A RFC 0003
+> foi implementada por outra sessão — em JavaScript (PR #306). O
+> argumento de timing caducou; o custo é a conversão de uma base já madura, não
+> de uma reescrita em andamento. Os demais argumentos (tipos duplicados, bugs
+> silenciosos, `commands.js` não refatorável com segurança) continuam inteiros.
 
 ---
 
@@ -109,13 +109,18 @@ TypeScript custa o mesmo e evita uma segunda conversão.
 
 ```
 src/hronir/
-  types.ts          Schema dos rate files (stars-v1), RankEntry, PostMeta, MatchData
-  posts.ts          listPosts, keyForPath, isCanonical, getPostUuid, readPost
+  types.ts          Schema dos rate files (stars-v1), RankRow, PostMeta, MatchData
+  posts.ts          listPosts, keyForPath, isCanonical, getPostUuid, readPost,
+                    listVersions, buildPathIndex, listEnglishWithKey, findTranslations
   matches.ts        listMatchFiles, readMatch, writeMatch, postKey, gitMtime
-  ranking.ts        computeRatings, computeVersionRatings, ordinal, EWMA
+  ranking.ts        computeRatings, computeVersionRatings, computeAbsoluteQuality,
+                    computeDeconfoundedQuality, computePerPerspectiveQuality,
+                    getProtectedPosts, ordinal, EWMA
   moods.ts          randomMood, moodGlyph
   perspectives.ts   listPerspectives, readPerspective
-  commands.ts       init, continue, decide, editWorst, draftCommit, promote, doctor, migrate…
+  commands.ts       init, continueCmd, next, decide, ranking, worst, diagnose,
+                    editWorst (RFC 0003: draftWorst/draftCommit), promote (RFC 0003),
+                    doctor, migrate, end — cooldown e auto-promoção com limiar (RFC 0003)
   index.ts          CLI entry — re-exports para o site + main() para o CLI
 
 scripts/hronir/
@@ -162,17 +167,19 @@ export interface RateFile {
   // ...
 }
 
-export interface RankEntry {
+// Matches the RankRow interface currently duplicated in src/lib/hronir-rank.ts
+export interface RankRow {
   key: string;
   mu: number;
   sigma: number;
   ordinal: number;
   appearances: number;
-  ewmaStars?: number;
+  wins: number;
+  path: string;
 }
 ```
 
-`src/lib/hronir-rank.ts` passa a importar `RankEntry` de `src/hronir/types.ts`
+`src/lib/hronir-rank.ts` passa a importar `RankRow` de `src/hronir/types.ts`
 e apaga sua cópia local.
 
 ---
@@ -241,29 +248,36 @@ da própria RFC 0003 (cada grupo de comandos verde antes do próximo):
   do site (bom) mas exige build step extra e um `tsconfig` adicional. E o
   problema central (tipos duplicados com `src/lib/`) não é resolvido. Rejeitado
   em favor de `src/hronir/`.
-- **Mover depois da RFC 0003 vs. antes.** Mover antes exige duas reescritas de
-  `posts.js` (JS→TS agora, depois TS de novo para a nova lógica de paths). Mover
-  depois é uma reescrita só: TS + nova lógica juntos. **Decisão: depois.**
+- **Mover depois da RFC 0003 vs. antes.** _(r0)_ Mover antes exigiria duas
+  reescritas de `posts.js`. A RFC 0003 foi implementada em JS antes desta RFC;
+  o custo agora é converter código estável, não uma reescrita em andamento.
+  A conclusão não muda — vale a pena — mas o argumento de custo é diferente.
 
 ---
 
-## 9. Questões em aberto
+## 9. Questões em aberto (resolvidas na r1)
 
-1. **Runner:** `tsx` (recomendado) ou `ts-node`? Testar compatibilidade ESM
-   no Node 22 na Fase 0.
-2. **`scripts/lib/content.mjs` pós-migração:** absorver em `src/hronir/posts.ts`
-   ou manter como adaptador? Se a RFC 0003 já reutiliza `content.mjs` nos
-   scripts de build (não-hronir), manter faz sentido.
-3. **Testes:** migrar `ranking.test.js` para `.ts` junto com a Fase 1 ou na
-   Fase 3? _Leaning:_ junto com a Fase 1 (pois o teste usa os tipos diretamente).
+1. **Runner:** `tsx` (recomendado) ou `ts-node`?
+   _Resolvido:_ `tsx` — zero configuração adicional, ESM-nativo, não exige
+   `tsconfig` separado. `ts-node` em modo ESM no Node 22 tem quirks documentados.
+
+2. **`scripts/lib/content.mjs` pós-migração:** absorver ou manter?
+   _Resolvido:_ manter como adaptador leve. `content.mjs` é usado pelos scripts
+   de build não-Hrönir (`check-translations.mjs`, `generate-redirects.mjs`,
+   `blog-links.mjs`). Absorver quebraria esses consumidores. `src/hronir/posts.ts`
+   e `scripts/lib/content.mjs` ficam lado a lado; a sobreposição é tolerada.
+
+3. **Testes:** migrar `ranking.test.js` junto com a Fase 1?
+   _Resolvido:_ sim — o teste usa os mesmos tipos de `ranking.js`, então a
+   migração conjunta na Fase 1 é natural e garante que os tipos estão corretos.
 
 ---
 
 ## 10. Plano de execução da PR
 
-1. **Commit 1 (este):** RFC `0005`.
-2. Após merge da RFC 0003: **Fase 0** → **Fase 1** → **Fase 2** → **Fase 3**,
-   cada fase em commit próprio, verde antes de avançar.
+1. **Commit 1 (RFC r1):** esta revisão.
+2. **Fase 0** → **Fase 1** → **Fase 2** → **Fase 3**, cada fase em commit
+   próprio, verde antes de avançar.
 3. Merge com **merge commit**, conforme `CLAUDE.md`.
 
 ---
@@ -272,3 +286,10 @@ da própria RFC 0003 (cada grupo de comandos verde antes do próximo):
 
 - **r0** (2026-06-09): versão inicial. Decisão: `src/hronir/` como localização
   do módulo; `tsx` como runner; timing pós-RFC 0003.
+- **r1** (2026-06-10): reconcilia com o estado real do repo pós-RFC 0003
+  (mergeada em JS antes desta RFC). Três ajustes: (1) §2.3 atualizado —
+  argumento de "conversão dupla" caducou, demais motivos intactos; (2) §5
+  estrutura proposta expandida com as funções novas de `posts.js` e o escopo
+  completo de `commands.ts` pós-RFC 0003 (promote, version duel, cooldown,
+  auto-promoção); (3) §9 questões em aberto resolvidas (`tsx` confirmado,
+  `content.mjs` mantido como adaptador, testes migram na Fase 1).

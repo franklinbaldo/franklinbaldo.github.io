@@ -12,44 +12,23 @@ import {
   postKey,
 } from "../../scripts/hronir/lib/matches.js";
 import { listPerspectives } from "../../scripts/hronir/lib/perspectives.js";
+import type {
+  RankRow,
+  DuelContent,
+  DuelEntry,
+  RankingStats,
+  PerspectiveMeta,
+  PerspectiveRankRow,
+} from "../hronir/types.js";
 
-export interface RankRow {
-  key: string;
-  mu: number;
-  sigma: number;
-  ordinal: number;
-  appearances: number;
-  wins: number;
-  path: string;
-}
-
-export interface DuelContent {
-  postAAnalysis: string;
-  postBAnalysis: string;
-  verdict: string;
-}
-
-export interface DuelEntry {
-  runAt: string;
-  winnerKey: string;
-  loserKey: string;
-  margin?: number;
-  confidence?: string;
-  criterion?: string;
-  body?: string;
-  /** @deprecated use agentId */
-  model?: string;
-  agentId?: string;
-  season?: number;
-  postAKey?: string;
-  postBKey?: string;
-  perspectiveId?: string;
-  rateA?: number;
-  rateB?: number;
-  evaluatorMood?: string;
-  evaluatorMoodAfter?: string;
-  parsedContent?: DuelContent;
-}
+export type {
+  RankRow,
+  DuelContent,
+  DuelEntry,
+  RankingStats,
+  PerspectiveMeta,
+  PerspectiveRankRow,
+};
 
 export function parseDuelContent(
   body?: string,
@@ -87,13 +66,6 @@ export function parseDuelContent(
   }
 
   return result;
-}
-
-export interface RankingStats {
-  totalDuels: number;
-  totalRated: number;
-  lastDuelAt: string | null;
-  firstDuelAt: string | null;
 }
 
 let _cache: RankRow[] | null = null;
@@ -219,19 +191,6 @@ export function getRecentDuels(limit = 8): DuelEntry[] {
 
 export function getAllDuels(): DuelEntry[] {
   return loadDuelData().recent;
-}
-
-export interface PerspectiveMeta {
-  id: string;
-  name: string;
-  summary: string;
-}
-
-export interface PerspectiveRankRow {
-  key: string;
-  ordinal: number;
-  appearances: number;
-  wins: number;
 }
 
 export function getPerspectives(): PerspectiveMeta[] {
