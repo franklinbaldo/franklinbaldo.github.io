@@ -4,12 +4,12 @@ run_at: '2026-06-10T17:24:20Z'
 match_index: 17
 post_a:
   key: music-reality-maintenance-moving-window-xii
-  path: src/content/blog/musicas/reality-maintenance-moving-window-xii-en.mdx
+  path: src/content/blog/reality-maintenance-moving-window-xii-en/index.mdx
   display_lang: en
   version: 4b03fae2-8073-5b93-9f91-cf9e58e6bb02
 post_b:
   key: music-prayer-to-the-unfinished-moving-window-v
-  path: src/content/blog/musicas/prayer-to-the-unfinished-moving-window-v.mdx
+  path: src/content/blog/prayer-to-the-unfinished-moving-window-v/index.mdx
   display_lang: pt
   version: 35eb5d34-5f18-5643-8b86-4aa7df3516f4
 winner: a

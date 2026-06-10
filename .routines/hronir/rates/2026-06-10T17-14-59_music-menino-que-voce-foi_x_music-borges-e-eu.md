@@ -4,12 +4,12 @@ run_at: '2026-06-10T17:14:59Z'
 match_index: 9
 post_a:
   key: music-menino-que-voce-foi
-  path: src/content/blog/musicas/menino-que-voce-foi-en.mdx
+  path: src/content/blog/menino-que-voce-foi-en/index.mdx
   display_lang: en
   version: b381f6f0-606a-581a-b047-75cfbd350650
 post_b:
   key: music-borges-e-eu
-  path: src/content/blog/musicas/borges-e-eu.mdx
+  path: src/content/blog/borges-e-eu/index.mdx
   display_lang: pt
   version: 157fd2be-6c94-55fc-a341-721562148785
 winner: b

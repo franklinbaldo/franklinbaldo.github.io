@@ -4,12 +4,12 @@ run_at: '2026-06-08T12:38:21Z'
 match_index: 11
 post_a:
   key: verne-identity-repo
-  path: src/content/blog/verne-identity-repo.md
+  path: src/content/blog/verne-identity-repo/index.md
   display_lang: en
   version: d6fb456a-8667-5ab5-b4f3-528eab5af463
 post_b:
   key: jules-api-harness
-  path: src/content/blog/a-api-do-jules-como-backend-do-harness.md
+  path: src/content/blog/a-api-do-jules-como-backend-do-harness/index.md
   display_lang: pt
   version: c3e940ab-b355-5537-8f22-54671f4916fb
 winner: a

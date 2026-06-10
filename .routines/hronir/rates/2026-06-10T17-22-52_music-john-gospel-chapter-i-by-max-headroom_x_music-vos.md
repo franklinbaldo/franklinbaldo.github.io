@@ -4,12 +4,12 @@ run_at: '2026-06-10T17:22:52Z'
 match_index: 16
 post_a:
   key: music-john-gospel-chapter-i-by-max-headroom
-  path: src/content/blog/musicas/john-gospel-chapter-i-by-max-headroom.mdx
+  path: src/content/blog/john-gospel-chapter-i-by-max-headroom/index.mdx
   display_lang: pt
   version: e0f9b274-6fa5-5014-95fd-25330d2feeaf
 post_b:
   key: music-vos
-  path: src/content/blog/musicas/vos.mdx
+  path: src/content/blog/vos/index.mdx
   display_lang: pt
   version: ae04a48a-527c-5444-8bff-8c0fbe5ccd20
 winner: a

@@ -4,12 +4,12 @@ run_at: '2026-06-10T17:25:26Z'
 match_index: 18
 post_a:
   key: music-sinal-que-se-cumpre-moving-window-ix
-  path: src/content/blog/musicas/sinal-que-se-cumpre-moving-window-ix-en.mdx
+  path: src/content/blog/sinal-que-se-cumpre-moving-window-ix-en/index.mdx
   display_lang: en
   version: 403d0d6e-6edd-53de-aefc-64d7b6be4ec1
 post_b:
   key: music-primavera-carregando
-  path: src/content/blog/musicas/primavera-carregando-en.mdx
+  path: src/content/blog/primavera-carregando-en/index.mdx
   display_lang: en
   version: 7d81b34f-1526-54dd-ade7-e9792cbc4976
 winner: a

@@ -4,12 +4,12 @@ run_at: '2026-06-10T17:21:46Z'
 match_index: 15
 post_a:
   key: music-riobaldo-e-o-aleph
-  path: src/content/blog/musicas/riobaldo-e-o-aleph.mdx
+  path: src/content/blog/riobaldo-e-o-aleph/index.mdx
   display_lang: pt
   version: 6ec21569-bf69-5459-87fb-5ef93f825ab2
 post_b:
   key: music-escherian-sunrise-with-godel
-  path: src/content/blog/musicas/escherian-sunrise-with-godel-en.mdx
+  path: src/content/blog/escherian-sunrise-with-godel-en/index.mdx
   display_lang: en
   version: 681cb802-617a-5014-9920-1f24165584f5
 winner: b

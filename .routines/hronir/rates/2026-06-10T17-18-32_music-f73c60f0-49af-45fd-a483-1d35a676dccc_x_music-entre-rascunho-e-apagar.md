@@ -4,12 +4,12 @@ run_at: '2026-06-10T17:18:32Z'
 match_index: 12
 post_a:
   key: music-f73c60f0-49af-45fd-a483-1d35a676dccc
-  path: src/content/blog/musicas/f73c60f0-49af-45fd-a483-1d35a676dccc-en.mdx
+  path: src/content/blog/f73c60f0-49af-45fd-a483-1d35a676dccc-en/index.mdx
   display_lang: en
   version: 075f2c3d-6e78-5b37-9b1e-f4b662474f85
 post_b:
   key: music-entre-rascunho-e-apagar
-  path: src/content/blog/musicas/entre-rascunho-e-apagar-en.mdx
+  path: src/content/blog/entre-rascunho-e-apagar-en/index.mdx
   display_lang: en
   version: 2065fc6e-499f-5541-a562-80d912406d6a
 winner: b

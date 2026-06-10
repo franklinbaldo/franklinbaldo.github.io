@@ -4,12 +4,12 @@ run_at: '2026-06-08T12:40:27Z'
 match_index: 16
 post_a:
   key: music-universal-threshold
-  path: src/content/blog/musicas/universal-threshold-en.mdx
+  path: src/content/blog/universal-threshold-en/index.mdx
   display_lang: en
   version: 57bc37e1-86c4-5cdd-a21f-bf7c9bb03acf
 post_b:
   key: music-the-time
-  path: src/content/blog/musicas/the-time-en.mdx
+  path: src/content/blog/the-time-en/index.mdx
   display_lang: en
   version: 6e11600b-0938-5a76-9717-8ae122948acc
 winner: b

@@ -4,12 +4,12 @@ run_at: '2026-06-08T12:42:12Z'
 match_index: 18
 post_a:
   key: music-o-ritual-de-abril-anos-de-saudade
-  path: src/content/blog/musicas/o-ritual-de-abril-anos-de-saudade.mdx
+  path: src/content/blog/o-ritual-de-abril-anos-de-saudade/index.mdx
   display_lang: pt
   version: 141e57dd-1807-5ca4-a1d6-11ef61cb0f8b
 post_b:
   key: music-borges-and-me
-  path: src/content/blog/musicas/borges-and-me-en.mdx
+  path: src/content/blog/borges-and-me-en/index.mdx
   display_lang: en
   version: cdff529d-c15e-5b7c-bea6-3c8e43754bbc
 winner: a
