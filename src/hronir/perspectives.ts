@@ -1,13 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 import type { PerspectiveMeta } from "./types.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-// perspectives/ lives in scripts/hronir/ — two dirs up from src/hronir/
-const ROOT = path.resolve(__dirname, "../..");
-const PERSPECTIVES_DIR = path.join(ROOT, "scripts/hronir/perspectives");
+// Build always runs from repo root; using cwd is stable across vite chunk relocation.
+const PERSPECTIVES_DIR = path.join(
+  process.cwd(),
+  "scripts/hronir/perspectives"
+);
 
 export interface Perspective extends PerspectiveMeta {
   body: string;

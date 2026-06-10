@@ -2,6 +2,9 @@
 // Reads .routines/hronir/*.md, runs OpenSkill, exposes a Map<key, RankRow>
 // keyed by translationKey, plus a sorted array.
 
+import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 import {
   computeRatings,
   computePerPerspectiveRatings,
@@ -15,6 +18,8 @@ import type {
   RankingStats,
   PerspectiveMeta,
   PerspectiveRankRow,
+  PerspectiveGridItem,
+  RankingSnapshot,
 } from "../hronir/types.js";
 
 export type {
@@ -24,7 +29,20 @@ export type {
   RankingStats,
   PerspectiveMeta,
   PerspectiveRankRow,
+  PerspectiveGridItem,
+  RankingSnapshot,
 };
+
+export function duelId(
+  d: Pick<DuelEntry, "postAKey" | "postBKey" | "runAt">
+): string {
+  const canonical = [d.postAKey ?? "", d.postBKey ?? "", d.runAt].join("|");
+  return crypto
+    .createHash("sha256")
+    .update(canonical)
+    .digest("hex")
+    .slice(0, 8);
+}
 
 export function parseDuelContent(
   body?: string,
@@ -116,7 +134,8 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
       ? String((data as any).agent_id)
       : undefined;
 
-    duels.push({
+    const entry: DuelEntry = {
+      id: "",
       runAt,
       winnerKey,
       loserKey,
@@ -160,7 +179,9 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
         content ? String(content).trim() : undefined,
         data as Record<string, unknown>
       ),
-    });
+    };
+    entry.id = duelId(entry);
+    duels.push(entry);
   }
 
   duels.sort((a, b) => b.runAt.localeCompare(a.runAt));
@@ -207,4 +228,73 @@ export function getPerPerspectiveRankings(): Map<string, PerspectiveRankRow[]> {
     string,
     PerspectiveRankRow[]
   >;
+}
+
+export function getDuelById(id: string): DuelEntry | undefined {
+  return getAllDuels().find((d) => d.id === id);
+}
+
+export function getPostDuelHistory(key: string): DuelEntry[] {
+  return getAllDuels().filter((d) => d.postAKey === key || d.postBKey === key);
+}
+
+const SNAPSHOT_PATH = path.join(
+  process.cwd(),
+  "src/generated/ranking-snapshot.json"
+);
+
+let _snapshotCache: RankingSnapshot | null | undefined = undefined;
+
+export function loadSnapshot(): RankingSnapshot | null {
+  if (_snapshotCache !== undefined) return _snapshotCache;
+  try {
+    const raw = fs.readFileSync(SNAPSHOT_PATH, "utf8");
+    _snapshotCache = JSON.parse(raw) as RankingSnapshot;
+  } catch {
+    _snapshotCache = null;
+  }
+  return _snapshotCache;
+}
+
+export function getSnapshotDelta(key: string): number | null {
+  const snapshot = loadSnapshot();
+  if (!snapshot) return null;
+  const prev = snapshot.keys[key];
+  if (!prev) return null;
+  const current = getRankByKey().get(key);
+  if (!current) return null;
+  return prev.rank - current.rank;
+}
+
+function perspectiveHue(id: string): number {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) {
+    h = ((h << 5) - h + id.charCodeAt(i)) & 0xffff;
+  }
+  return Math.abs(h) % 360;
+}
+
+export function buildPerspectivesGrid(
+  postByKey: Map<string, { title: string; slug: string; lang: string }>
+): PerspectiveGridItem[] {
+  const perspectives = getPerspectives();
+  const perPerspective = getPerPerspectiveRankings();
+  return perspectives.map((p) => {
+    const rows = perPerspective.get(p.id) ?? [];
+    const leaderKey = rows[0]?.key;
+    const leaderPost = leaderKey ? postByKey.get(leaderKey) : undefined;
+    const leaderHref = leaderPost
+      ? leaderPost.lang === "pt"
+        ? `/pt/blog/${leaderPost.slug}/`
+        : `/blog/${leaderPost.slug}/`
+      : null;
+    return {
+      id: p.id,
+      name: p.name,
+      summary: p.summary,
+      leaderTitle: leaderPost?.title ?? null,
+      leaderHref,
+      hue: perspectiveHue(p.id),
+    };
+  });
 }

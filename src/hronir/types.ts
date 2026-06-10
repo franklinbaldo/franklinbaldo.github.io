@@ -57,6 +57,8 @@ export interface DuelContent {
 }
 
 export interface DuelEntry {
+  /** 8-char SHA-256 hash of postAKey|postBKey|runAt — stable URL identifier. */
+  id: string;
   runAt: string;
   winnerKey: string;
   loserKey: string;
@@ -98,4 +100,22 @@ export interface PerspectiveRankRow {
   ordinal: number;
   appearances: number;
   wins: number;
+}
+
+export interface PerspectiveGridItem {
+  id: string;
+  name: string;
+  summary: string;
+  leaderTitle: string | null;
+  leaderHref: string | null;
+  hue: number;
+}
+
+export interface RankingSnapshot {
+  _meta: {
+    generatedAt: string | null;
+    basis: "build" | "season";
+    totalDuels: number;
+  };
+  keys: Record<string, { rank: number; ordinal: number }>;
 }

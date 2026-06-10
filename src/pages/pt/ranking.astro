@@ -1,9 +1,19 @@
 ---
 import PageLayout from "../../layouts/PageLayout.astro";
 import { getCollection } from "astro:content";
-import { getRanking, getRankingStats, getAllDuels } from "../../lib/hronir-rank";
+import {
+  getRanking,
+  getRankingStats,
+  getRecentDuels,
+  buildPerspectivesGrid,
+  loadSnapshot,
+} from "../../lib/hronir-rank";
 import { isPublished } from "../../lib/publish";
-import RankingView, { type RankPostInfo, type UnratedItem, type RankingStrings } from "../../components/RankingView.astro";
+import RankingView, {
+  type RankPostInfo,
+  type UnratedItem,
+  type RankingStrings,
+} from "../../components/RankingView.astro";
 
 const all = await getCollection("blog");
 const byKey = new Map<string, RankPostInfo>();
@@ -13,7 +23,6 @@ for (const p of all) {
   if (!key) continue;
   const existing = byKey.get(key);
   const lang = p.data.lang ?? "en";
-  // Prefer PT entry on this page; otherwise fall back to anything.
   if (!existing || lang === "pt") {
     byKey.set(key, { slug: p.id, title: p.data.title, lang });
   }
@@ -33,19 +42,24 @@ for (const p of all) {
   if (!isPublished(p)) continue;
   const key = p.data.translationKey;
   if (!key || ratedKeys.has(key) || seenUnrated.has(key)) continue;
-  // Prefer PT title for this page.
   const lang = p.data.lang ?? "en";
   const preferred =
     lang === "pt"
       ? p
       : all.find((q) => q.data.translationKey === key && (q.data.lang ?? "en") === "pt") ?? p;
-  unrated.push({ slug: preferred.id, title: preferred.data.title, lang: preferred.data.lang ?? "pt" });
+  unrated.push({
+    slug: preferred.id,
+    title: preferred.data.title,
+    lang: preferred.data.lang ?? "pt",
+  });
   seenUnrated.add(key);
 }
 unrated.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
 
 const stats = getRankingStats();
-const recent = getAllDuels();
+const recent = getRecentDuels(10);
+const perspectivesGrid = buildPerspectivesGrid(byKey);
+const snapshot = loadSnapshot();
 
 const itemListLd = {
   "@context": "https://schema.org",
@@ -55,18 +69,26 @@ const itemListLd = {
   inLanguage: "pt-BR",
   url: "https://franklinbaldo.github.io/pt/ranking/",
   numberOfItems: enriched.length,
-  itemListElement: enriched.map((r) => ({
-    "@type": "ListItem",
-    position: r.rank,
-    name: r.post ? r.post.title : r.key,
-    url: r.post ? `https://franklinbaldo.github.io/${r.post.lang === "pt" ? "pt/" : ""}blog/${r.post.slug}/` : undefined,
-  })).filter((item) => item.url),
+  itemListElement: enriched
+    .map((r) => ({
+      "@type": "ListItem",
+      position: r.rank,
+      name: r.post ? r.post.title : r.key,
+      url: r.post
+        ? `https://franklinbaldo.github.io/${r.post.lang === "pt" ? "pt/" : ""}blog/${r.post.slug}/`
+        : undefined,
+    }))
+    .filter((item) => item.url),
 };
 
 const strings: RankingStrings = {
-  subtitle: "Posts ordenados pelo ordinal do OpenSkill (μ − 3σ). Maior é melhor. Atualizado a cada build a partir de .routines/hronir/.",
-  intro:
-    "O sistema Hrönir confronta posts em duelos par-a-par. Um avaliador (às vezes eu, às vezes um modelo) escolhe um vencedor e escreve uma defesa apaixonada. O OpenSkill transforma esses duelos num ranking contínuo com incerteza explícita (σ): posts com poucas aparições têm σ maior e portanto ordinal mais baixo mesmo com μ alto.",
+  subtitle:
+    "Posts ordenados pelo ordinal do OpenSkill (μ − 3σ). Maior é melhor. Atualizado a cada build a partir de .routines/hronir/.",
+  plainLangHeading: "Como isso funciona",
+  plainLangBody:
+    "Cada post compete contra outro num duelo par-a-par. Um leitor (às vezes eu, às vezes um modelo de IA) lê os dois e escolhe o melhor — depois escreve uma defesa breve dessa escolha. Quanto mais duelos um post vence, mais ele sobe. Posts com menos duelos têm incerteza maior e por isso ficam mais baixos até acumular mais confrontos.",
+  technicalViewLabel: "Visão técnica",
+  standardViewLabel: "Visão padrão",
   podiumLabel: "Pódio",
   statsTotalDuels: "duelos disputados",
   statsTotalRated: "posts no ranking",
@@ -80,12 +102,16 @@ const strings: RankingStrings = {
   thSigma: "σ",
   thRecord: "V/N",
   thConfidence: "confiança",
+  thWinRate: "vitórias%",
+  thDelta: "Δ",
   unratedHeading: "Ainda sem duelo",
   unratedBlurb: "Posts publicados que ainda não passaram por nenhuma comparação Hrönir.",
-  recentHeading: "Julgamentos e Batalhas",
-  recentBlurb: "Veja a análise e o veredito completo de cada confronto disputado.",
+  recentHeading: "Batalhas recentes",
+  recentBlurb:
+    "Os confrontos mais recentes — clique em qualquer card para ler a análise e o veredito completo.",
   recentBeats: "venceu",
-  emptyState: "Sem posts ranqueados ainda — rode uma rodada Hrönir para popular o ranking.",
+  emptyState:
+    "Sem posts ranqueados ainda — rode uma rodada Hrönir para popular o ranking.",
   ordinalTip: "Ordinal = μ − 3σ. Combina habilidade estimada com penalidade pela incerteza.",
   muTip: "μ (mu): habilidade média estimada pelo OpenSkill.",
   sigmaTip: "σ (sigma): incerteza da estimativa. Cai à medida que o post acumula duelos.",
@@ -96,30 +122,15 @@ const strings: RankingStrings = {
   podiumSilver: "2º lugar",
   podiumBronze: "3º lugar",
   noDate: "—",
-  filterSearchPlaceholder: "Buscar batalhas (título, veredito, modelo...)",
-  filterCriterionAll: "Todos os critérios",
-  filterConfidenceAll: "Todas as confianças",
-  filterSeasonAll: "Todas as temporadas",
-  showingResultsCount: "Mostrando {count} de {total} batalhas",
-  verdictTab: "Veredito",
-  analysisATab: "Análise Post A",
-  analysisBTab: "Análise Post B",
-  emptyFilterState: "Nenhuma batalha corresponde aos filtros selecionados.",
-  modelLabel: "Modelo",
-  seasonLabel: "Temporada",
-  marginLabel: "Margem",
-  marginHigh: "alta",
-  marginMedium: "média",
-  marginLow: "baixa",
-  unratedCTA: "Esses posts ainda não passaram pelo julgamento. Sente que algum deles merecia estar no topo?",
-  perspectiveLabel: "Perspectiva",
-  filterPerspectiveAll: "Todas as perspectivas",
-  agentLabel: "Agente",
-  filterAgentAll: "Todos os agentes",
-  ratesLabel: "Notas",
-  paginationPrev: "← Anterior",
-  paginationNext: "Próximo →",
-  paginationPageOf: "Página {n} de {total}",
+  unratedCTA:
+    "Esses posts ainda não passaram pelo julgamento. Sente que algum deles merecia estar no topo?",
+  perspectivesHeading: "Explorar por perspectiva",
+  perspectivesBlurb:
+    "Cada perspectiva é uma lente diferente para avaliar os posts — curiosidade, clareza, memorabilidade e mais.",
+  perspectivesLeaderLabel: "Líder:",
+  perspectivesViewAllLink: "→ Ver todos os rankings por perspectiva",
+  allBattlesLinkText: "→ Ver todas as {count} batalhas",
+  readAnalysisLinkLabel: "Ler análise",
 };
 ---
 
@@ -139,5 +150,7 @@ const strings: RankingStrings = {
     stats={stats}
     postByKey={byKey}
     strings={strings}
+    perspectivesGrid={perspectivesGrid}
+    snapshot={snapshot}
   />
 </PageLayout>

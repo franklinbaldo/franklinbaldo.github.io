@@ -1,6 +1,11 @@
 ---
-import type { RankRow, DuelEntry, RankingStats } from "../lib/hronir-rank";
-import { marked } from "marked";
+import type {
+  RankRow,
+  DuelEntry,
+  RankingStats,
+  PerspectiveGridItem,
+  RankingSnapshot,
+} from "../lib/hronir-rank";
 
 export interface RankPostInfo {
   slug: string;
@@ -20,9 +25,11 @@ export interface UnratedItem {
 }
 
 export interface RankingStrings {
-  /** small grey label below H1 */
   subtitle: string;
-  intro: string;
+  plainLangHeading: string;
+  plainLangBody: string;
+  technicalViewLabel: string;
+  standardViewLabel: string;
   podiumLabel: string;
   statsTotalDuels: string;
   statsTotalRated: string;
@@ -34,13 +41,15 @@ export interface RankingStrings {
   thOrdinal: string;
   thMu: string;
   thSigma: string;
-  thRecord: string; // V/N or W/N
+  thRecord: string;
   thConfidence: string;
+  thWinRate: string;
+  thDelta: string;
   unratedHeading: string;
   unratedBlurb: string;
   recentHeading: string;
   recentBlurb: string;
-  recentBeats: string; // e.g. "venceu" / "beat"
+  recentBeats: string;
   emptyState: string;
   ordinalTip: string;
   muTip: string;
@@ -52,30 +61,13 @@ export interface RankingStrings {
   podiumSilver: string;
   podiumBronze: string;
   noDate: string;
-  filterSearchPlaceholder: string;
-  filterCriterionAll: string;
-  filterConfidenceAll: string;
-  filterSeasonAll: string;
-  showingResultsCount: string;
-  verdictTab: string;
-  analysisATab: string;
-  analysisBTab: string;
-  emptyFilterState: string;
-  modelLabel: string;
-  seasonLabel: string;
-  marginLabel: string;
-  marginHigh: string;
-  marginMedium: string;
-  marginLow: string;
   unratedCTA: string;
-  perspectiveLabel: string;
-  filterPerspectiveAll: string;
-  agentLabel: string;
-  filterAgentAll: string;
-  ratesLabel: string;
-  paginationPrev: string;
-  paginationNext: string;
-  paginationPageOf: string;
+  perspectivesHeading: string;
+  perspectivesBlurb: string;
+  perspectivesLeaderLabel: string;
+  perspectivesViewAllLink: string;
+  allBattlesLinkText: string;
+  readAnalysisLinkLabel: string;
 }
 
 interface Props {
@@ -86,9 +78,21 @@ interface Props {
   stats: RankingStats;
   postByKey: Map<string, RankPostInfo>;
   strings: RankingStrings;
+  perspectivesGrid?: PerspectiveGridItem[];
+  snapshot?: RankingSnapshot | null;
 }
 
-const { rows, unrated, recent, stats, postByKey, strings, lang } = Astro.props as Props;
+const {
+  rows,
+  unrated,
+  recent,
+  stats,
+  postByKey,
+  strings,
+  lang,
+  perspectivesGrid,
+  snapshot,
+} = Astro.props as Props;
 
 const locale = lang === "pt" ? "pt-BR" : "en-US";
 
@@ -132,7 +136,6 @@ function perspectiveHue(id: string): number {
 }
 
 const podium = rows.slice(0, 3);
-const rest = rows.slice(3);
 
 const podiumMeta = [
   { label: strings.podiumGold, place: 1 },
@@ -152,19 +155,14 @@ function postHref(key: string): string | null {
   return p.lang === "pt" ? `/pt/blog/${p.slug}/` : `/blog/${p.slug}/`;
 }
 
-const criteria = Array.from(new Set(recent.map((d) => d.criterion).filter(Boolean))) as string[];
-const seasons = Array.from(new Set(recent.map((d) => d.season).filter((s) => typeof s === "number"))) as number[];
-seasons.sort((a, b) => a - b);
-
-const perspectives = Array.from(
-  new Set(recent.map((d) => d.perspectiveId).filter(Boolean))
-) as string[];
-perspectives.sort();
-
-const agents = Array.from(
-  new Set(recent.map((d) => d.agentId).filter(Boolean))
-) as string[];
-agents.sort();
+function snapshotDelta(key: string): number | null {
+  if (!snapshot) return null;
+  const prev = snapshot.keys[key];
+  if (!prev) return null;
+  const current = rows.find((r) => r.key === key);
+  if (!current) return null;
+  return prev.rank - current.rank;
+}
 ---
 
 <hgroup>
@@ -172,7 +170,10 @@ agents.sort();
   <p><small>{strings.subtitle}</small></p>
 </hgroup>
 
-<p class="rank-intro">{strings.intro}</p>
+<details class="plain-lang-explain">
+  <summary>{strings.plainLangHeading}</summary>
+  <p>{strings.plainLangBody}</p>
+</details>
 
 {rows.length > 0 && (
   <section class="rank-stats" aria-label={strings.statsTotalDuels}>
@@ -230,36 +231,49 @@ agents.sort();
 )}
 
 {rows.length > 0 && (
+  <div class="rank-table-header">
+    <p class="rank-caption">{strings.tableCaption}</p>
+    <button class="view-toggle" id="view-toggle" type="button">
+      {strings.technicalViewLabel}
+    </button>
+  </div>
   <div class="overflow-table rank-table-wrap">
-    <table class="rank-table">
-      <caption class="rank-caption">{strings.tableCaption}</caption>
+    <table class="rank-table" id="rank-table">
       <thead>
         <tr>
           <th scope="col" class="col-rank">{strings.thRank}</th>
           <th scope="col" class="col-post">{strings.thPost}</th>
-          <th scope="col" class="col-ordinal">
+          <th scope="col" class="col-winrate">{strings.thWinRate}</th>
+          {snapshot && <th scope="col" class="col-delta">{strings.thDelta}</th>}
+          <th scope="col" class="col-confidence">{strings.thConfidence}</th>
+          <th scope="col" class="col-ordinal tech-col">
             <abbr title={strings.ordinalTip}>{strings.thOrdinal}</abbr>
           </th>
-          <th scope="col" class="col-mu">
+          <th scope="col" class="col-mu tech-col">
             <abbr title={strings.muTip}>{strings.thMu}</abbr>
           </th>
-          <th scope="col" class="col-sigma">
+          <th scope="col" class="col-sigma tech-col">
             <abbr title={strings.sigmaTip}>{strings.thSigma}</abbr>
           </th>
-          <th scope="col" class="col-record">{strings.thRecord}</th>
-          <th scope="col" class="col-confidence">{strings.thConfidence}</th>
+          <th scope="col" class="col-record tech-col">{strings.thRecord}</th>
         </tr>
       </thead>
       <tbody>
-        {rest.map((r) => {
+        {rows.map((r) => {
           const conf = confidenceLevel(r.sigma, r.appearances);
-          const winRate = r.appearances > 0 ? Math.round((r.wins / r.appearances) * 100) : 0;
+          const winRatePct = r.appearances > 0 ? Math.round((r.wins / r.appearances) * 100) : 0;
+          const delta = snapshotDelta(r.key);
+          const href = r.post
+            ? r.post.lang === "pt"
+              ? `/pt/blog/${r.post.slug}/`
+              : `/blog/${r.post.slug}/`
+            : null;
           return (
             <tr>
               <th scope="row" class="col-rank">{r.rank}</th>
               <td class="col-post">
-                {r.post ? (
-                  <a href={r.post.lang === "pt" ? `/pt/blog/${r.post.slug}/` : `/blog/${r.post.slug}/`}>{r.post.title}</a>
+                {href ? (
+                  <a href={href}>{r.post!.title}</a>
                 ) : (
                   <code>{r.key}</code>
                 )}
@@ -267,13 +281,23 @@ agents.sort();
                   <span style={`width:${barPct(r.ordinal)}%`}></span>
                 </div>
               </td>
-              <td class="col-ordinal num"><strong>{r.ordinal.toFixed(2)}</strong></td>
-              <td class="col-mu num">{r.mu.toFixed(2)}</td>
-              <td class="col-sigma num">{r.sigma.toFixed(2)}</td>
-              <td class="col-record num" title={`${winRate}%`}>{r.wins}/{r.appearances}</td>
+              <td class="col-winrate num">{winRatePct}%</td>
+              {snapshot && (
+                <td class="col-delta num">
+                  {delta === null ? "—" : delta === 0 ? "·" : (
+                    <span class={delta > 0 ? "delta-up" : "delta-down"}>
+                      {delta > 0 ? `+${delta}` : `${delta}`}
+                    </span>
+                  )}
+                </td>
+              )}
               <td class="col-confidence">
                 <span class={`conf-badge conf-${conf.level}`}>{conf.label}</span>
               </td>
+              <td class="col-ordinal num tech-col"><strong>{r.ordinal.toFixed(2)}</strong></td>
+              <td class="col-mu num tech-col">{r.mu.toFixed(2)}</td>
+              <td class="col-sigma num tech-col">{r.sigma.toFixed(2)}</td>
+              <td class="col-record num tech-col" title={`${winRatePct}%`}>{r.wins}/{r.appearances}</td>
             </tr>
           );
         })}
@@ -284,6 +308,103 @@ agents.sort();
 
 {rows.length === 0 && (
   <p class="rank-empty"><em>{strings.emptyState}</em></p>
+)}
+
+{perspectivesGrid && perspectivesGrid.length > 0 && (
+  <section class="perspectives-grid-section">
+    <h2>{strings.perspectivesHeading}</h2>
+    <p><small>{strings.perspectivesBlurb}</small></p>
+    <div class="perspectives-grid">
+      {perspectivesGrid.map((p) => (
+        <a href={`/ranking/perspectives/${p.id}/`} class="persp-card" style={`--ph:${p.hue}`}>
+          <header class="persp-card-head">
+            <span class="persp-name">{p.name}</span>
+          </header>
+          <p class="persp-summary">{p.summary}</p>
+          {p.leaderTitle && (
+            <p class="persp-leader">
+              <span class="persp-leader-label">{strings.perspectivesLeaderLabel}</span>
+              <span class="persp-leader-title">{p.leaderTitle}</span>
+            </p>
+          )}
+        </a>
+      ))}
+    </div>
+    <p class="persp-view-all">
+      <a href="/ranking/perspectives/">{strings.perspectivesViewAllLink}</a>
+    </p>
+  </section>
+)}
+
+{recent.length > 0 && (
+  <section class="rank-recent">
+    <h2>{strings.recentHeading}</h2>
+    <p><small>{strings.recentBlurb}</small></p>
+
+    <div class="battle-list-light">
+      {recent.map((d) => {
+        const winnerHref = postHref(d.winnerKey);
+        const loserHref = postHref(d.loserKey);
+        const winnerName = postLabel(d.winnerKey);
+        const loserName = postLabel(d.loserKey);
+
+        const winnerIsA = d.postAKey === d.winnerKey;
+        const winnerRate = d.rateA != null && d.rateB != null
+          ? (winnerIsA ? d.rateA : d.rateB)
+          : null;
+        const loserRate = d.rateA != null && d.rateB != null
+          ? (winnerIsA ? d.rateB : d.rateA)
+          : null;
+        const tensionPct = winnerRate != null && loserRate != null
+          ? Math.round(winnerRate / (winnerRate + loserRate) * 100)
+          : 62;
+        const hasRates = winnerRate != null && loserRate != null;
+
+        return (
+          <a
+            href={d.id ? `/ranking/battles/${d.id}/` : "/ranking/battles/"}
+            class="bcl-card"
+          >
+            <div class="bcl-meta">
+              <span class="bcl-date">{fmtDate(d.runAt)}</span>
+              {d.perspectiveId && (
+                <span
+                  class="bcl-tag bcl-tag-persp"
+                  style={`--ph:${perspectiveHue(d.perspectiveId)}`}
+                >
+                  {formatPerspective(d.perspectiveId)}
+                </span>
+              )}
+              {d.agentId && (
+                <span class="bcl-tag bcl-tag-agent">{d.agentId}</span>
+              )}
+            </div>
+            <div class="bcl-versus">
+              <span class="bcl-winner">{winnerName}</span>
+              {hasRates && (
+                <span class="bcl-rates">
+                  {winnerRate!.toFixed(1)} · {loserRate!.toFixed(1)}
+                </span>
+              )}
+              <span class="bcl-vs">{strings.recentBeats}</span>
+              <span class="bcl-loser">{loserName}</span>
+            </div>
+            <div class="bcl-tension">
+              <div class="bcl-fill win" style={`width:${tensionPct}%`}></div>
+              <div class="bcl-fill loss" style={`width:${100 - tensionPct}%`}></div>
+            </div>
+            <span class="bcl-read">{strings.readAnalysisLinkLabel} →</span>
+          </a>
+        );
+      })}
+    </div>
+
+    <p class="all-battles-link">
+      <a href="/ranking/battles/">
+        {strings.allBattlesLinkText.replace("{count}", String(stats.totalDuels))}
+      </a>
+    </p>
+  </section>
 )}
 
 {unrated.length > 0 && (
@@ -301,231 +422,28 @@ agents.sort();
   </section>
 )}
 
-{recent.length > 0 && (
-  <section class="rank-recent">
-    <h2>{strings.recentHeading}</h2>
-    <p><small>{strings.recentBlurb}</small></p>
-
-    <!-- Interactive Filter controls -->
-    <div class="battle-filters" id="battle-filters">
-      <div class="filter-row-main">
-        <input type="search" id="battle-search" placeholder={strings.filterSearchPlaceholder} aria-label={strings.filterSearchPlaceholder} />
-      </div>
-      <div class="filter-row-meta">
-        <div class="filter-group">
-          <label for="filter-season">{strings.seasonLabel}</label>
-          <select id="filter-season">
-            <option value="all">{strings.filterSeasonAll}</option>
-            {seasons.map((s) => (
-              <option value={s}>{s}</option>
-            ))}
-          </select>
-        </div>
-        {agents.length > 0 && (
-          <div class="filter-group">
-            <label for="filter-agent">{strings.agentLabel}</label>
-            <select id="filter-agent">
-              <option value="all">{strings.filterAgentAll}</option>
-              {agents.map((a) => (
-                <option value={a}>{a}</option>
-              ))}
-            </select>
-          </div>
-        )}
-        <div class="filter-group">
-          <label>{strings.thConfidence}</label>
-          <div class="filter-pills" id="filter-confidence">
-            <button data-value="all" class="pill active">{strings.filterConfidenceAll}</button>
-            <button data-value="high" class="pill">{strings.confidenceHigh}</button>
-            <button data-value="medium" class="pill">{strings.confidenceMedium}</button>
-            <button data-value="low" class="pill">{strings.confidenceLow}</button>
-          </div>
-        </div>
-      </div>
-      {perspectives.length > 0 && (
-        <div class="filter-row-chips" id="filter-perspective">
-          <button data-perspective="all" class="chip active">{strings.filterPerspectiveAll}</button>
-          {perspectives.map((p) => (
-            <button
-              data-perspective={p}
-              class="chip"
-              style={`--ph:${perspectiveHue(p)}`}
-            >
-              {formatPerspective(p)}
-            </button>
-          ))}
-        </div>
-      )}
-      {criteria.length > 0 && (
-        <div class="filter-row-chips">
-          <button data-criterion="all" class="chip active">{strings.filterCriterionAll}</button>
-          {criteria.map((c) => (
-            <button data-criterion={c} class="chip">{c}</button>
-          ))}
-        </div>
-      )}
-      <div class="filter-status">
-        <span id="filter-count-label" data-template={strings.showingResultsCount}>
-          {strings.showingResultsCount.replace("{count}", String(recent.length)).replace("{total}", String(recent.length))}
-        </span>
-      </div>
-    </div>
-
-    <!-- Battle Cards -->
-    <div class="battle-list" id="battle-list">
-      {recent.map((d) => {
-        const winnerHref = postHref(d.winnerKey);
-        const loserHref = postHref(d.loserKey);
-        const winnerName = postLabel(d.winnerKey);
-        const loserName = postLabel(d.loserKey);
-        const parsed = d.parsedContent;
-        const searchString = [
-          winnerName,
-          loserName,
-          d.perspectiveId ?? "",
-          d.agentId ?? "",
-          d.criterion ?? "",
-          parsed?.verdict ?? "",
-          parsed?.postAAnalysis ?? "",
-          parsed?.postBAnalysis ?? "",
-        ].join(" ").toLowerCase();
-
-        const postAName = d.postAKey ? postLabel(d.postAKey) : "Post A";
-        const postBName = d.postBKey ? postLabel(d.postBKey) : "Post B";
-
-        // Tension bar: use actual rates when available
-        const winnerIsA = d.postAKey === d.winnerKey;
-        const winnerRate = d.rateA != null && d.rateB != null
-          ? (winnerIsA ? d.rateA : d.rateB)
-          : null;
-        const loserRate = d.rateA != null && d.rateB != null
-          ? (winnerIsA ? d.rateB : d.rateA)
-          : null;
-        const tensionPct = winnerRate != null && loserRate != null
-          ? Math.round(winnerRate / (winnerRate + loserRate) * 100)
-          : 65;
-
-        const hasRates = d.rateA != null && d.rateB != null;
-        const rateWinner = winnerRate?.toFixed(1) ?? "";
-        const rateLoser = loserRate?.toFixed(1) ?? "";
-
-        return (
-          <article
-            class="battle-card"
-            data-criterion={d.criterion || "none"}
-            data-confidence={d.confidence || "none"}
-            data-season={d.season !== undefined ? String(d.season) : "none"}
-            data-perspective={d.perspectiveId || "none"}
-            data-agent={d.agentId || "none"}
-            data-search={searchString}
-          >
-            <details class="battle-details">
-              <summary class="battle-header">
-                <div class="battle-meta">
-                  <span class="battle-date">{fmtDate(d.runAt)}</span>
-                  {d.season !== undefined && (
-                    <span class="battle-tag tag-season">{strings.seasonLabel} {d.season}</span>
-                  )}
-                  {d.perspectiveId && (
-                    <span
-                      class="battle-tag tag-perspective"
-                      style={`--ph:${perspectiveHue(d.perspectiveId)}`}
-                      title={`${strings.perspectiveLabel}: ${formatPerspective(d.perspectiveId)}`}
-                    >
-                      {formatPerspective(d.perspectiveId)}
-                    </span>
-                  )}
-                  {d.agentId && (
-                    <span class="battle-tag tag-agent">{d.agentId}</span>
-                  )}
-                  {d.confidence && (
-                    <span class={`battle-tag tag-confidence conf-${d.confidence}`}>{d.confidence}</span>
-                  )}
-                </div>
-                <div class="battle-versus">
-                  <div class="versus-side winner">
-                    {winnerHref ? (
-                      <a href={winnerHref} class="post-title-link">{winnerName}</a>
-                    ) : (
-                      <span class="post-title-text">{winnerName}</span>
-                    )}
-                    <span class="versus-medal" title="Winner" aria-hidden="true">🏆</span>
-                    {hasRates && <span class="versus-rate">{rateWinner}</span>}
-                  </div>
-                  <div class="versus-divider">
-                    <span class="versus-vs">VS</span>
-                  </div>
-                  <div class="versus-side loser">
-                    {loserHref ? (
-                      <a href={loserHref} class="post-title-link">{loserName}</a>
-                    ) : (
-                      <span class="post-title-text">{loserName}</span>
-                    )}
-                    {hasRates && <span class="versus-rate loser-rate">{rateLoser}</span>}
-                  </div>
-                </div>
-                <div class="battle-tension-bar">
-                  <div class="tension-fill winner" style={`width: ${tensionPct}%;`}></div>
-                  <div class="tension-fill loser" style={`width: ${100 - tensionPct}%;`}></div>
-                </div>
-                <div class="battle-expand-indicator">
-                  <span class="expand-icon" aria-hidden="true">▼</span>
-                </div>
-              </summary>
-
-              <div class="battle-body">
-                {parsed ? (
-                  <div class="battle-tabs">
-                    {parsed.verdict && (
-                      <div class="battle-section verdict-section">
-                        <h5>{strings.verdictTab}</h5>
-                        <div class="section-content" set:html={marked.parse(parsed.verdict)} />
-                      </div>
-                    )}
-
-                    <div class="battle-sides-grid">
-                      {parsed.postAAnalysis && (
-                        <div class="battle-section side-section">
-                          <h6>{strings.analysisATab} — {postAName}</h6>
-                          <div class="section-content" set:html={marked.parse(parsed.postAAnalysis)} />
-                        </div>
-                      )}
-                      {parsed.postBAnalysis && (
-                        <div class="battle-section side-section">
-                          <h6>{strings.analysisBTab} — {postBName}</h6>
-                          <div class="section-content" set:html={marked.parse(parsed.postBAnalysis)} />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  <div class="battle-section">
-                    <div class="section-content" set:html={d.body ? marked.parse(d.body) : ""} />
-                  </div>
-                )}
-              </div>
-            </details>
-          </article>
-        );
-      })}
-    </div>
-
-    <nav id="battle-pagination" class="battle-pagination" style="display: none;" aria-label="battles pagination">
-      <button id="prev-page" class="outline secondary">{strings.paginationPrev}</button>
-      <span id="page-indicator" data-template={strings.paginationPageOf}>
-        {strings.paginationPageOf.replace("{n}", "1").replace("{total}", "1")}
-      </span>
-      <button id="next-page" class="outline secondary">{strings.paginationNext}</button>
-    </nav>
-
-    <div id="battle-empty" class="rank-empty" style="display: none;">
-      <em>{strings.emptyFilterState}</em>
-    </div>
-  </section>
-)}
-
 <style>
-  .rank-intro {
+  /* Plain language explain ---------------------------------------- */
+  .plain-lang-explain {
+    margin: 0 0 1.5rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    padding: 0.6rem 0.9rem;
+    background: var(--pico-card-sectioning-background-color);
+  }
+  .plain-lang-explain summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--pico-muted-color);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .plain-lang-explain p {
+    margin: 0.6rem 0 0;
+    font-size: 0.88rem;
+    color: var(--pico-color);
     max-width: 38rem;
   }
 
@@ -585,12 +503,10 @@ agents.sort();
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     animation: fadeInUp 0.5s ease-out both;
   }
-
   @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(15px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-
   .podium-1 {
     border-top-color: #d4a017;
     background: linear-gradient(180deg, rgba(212, 160, 23, 0.04) 0%, var(--pico-card-background-color) 40%);
@@ -609,12 +525,7 @@ agents.sort();
     order: 3;
     animation-delay: 0.25s;
   }
-
-  .podium-head {
-    display: flex;
-    align-items: baseline;
-    gap: 0.6rem;
-  }
+  .podium-head { display: flex; align-items: baseline; gap: 0.6rem; }
   .podium-medal {
     font-family: var(--pico-font-family-monospace);
     font-size: 1.6rem;
@@ -631,11 +542,7 @@ agents.sort();
     letter-spacing: 0.08em;
     color: var(--pico-muted-color);
   }
-  .podium-title {
-    font-size: 1.02rem;
-    line-height: 1.3;
-    margin: 0;
-  }
+  .podium-title { font-size: 1.02rem; line-height: 1.3; margin: 0; }
   .podium-title a { text-decoration: none; }
   .podium-title a:hover { text-decoration: underline; }
   .podium-stats {
@@ -659,13 +566,11 @@ agents.sort();
     font-weight: 600;
     margin: 0;
   }
-
   @media (min-width: 600px) {
     .podium-1 { transform: scale(1.06); z-index: 2; box-shadow: 0 10px 25px rgba(212, 160, 23, 0.1); }
     .podium-1:hover { transform: scale(1.08); box-shadow: 0 12px 30px rgba(212, 160, 23, 0.16); }
     .podium-2:hover, .podium-3:hover { transform: scale(1.03); }
   }
-
   @media (max-width: 599px) {
     .rank-podium { flex-direction: column; align-items: stretch; }
     .podium-1 { order: 1; }
@@ -674,14 +579,44 @@ agents.sort();
   }
 
   /* Table ----------------------------------------------------------- */
-  .rank-table-wrap { margin-top: 0.5rem; }
+  .rank-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.3rem;
+    flex-wrap: wrap;
+  }
   .rank-caption {
     text-align: left;
     font-size: 0.78rem;
     color: var(--pico-muted-color);
-    margin-bottom: 0.4rem;
-    caption-side: top;
+    margin: 0;
   }
+  .view-toggle {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.7rem;
+    margin: 0;
+    border-radius: var(--pico-border-radius);
+    background: transparent;
+    border: 1px solid var(--pico-muted-border-color);
+    color: var(--pico-muted-color);
+    cursor: pointer;
+    line-height: 1.3;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .view-toggle:hover {
+    background: var(--pico-card-sectioning-background-color);
+    border-color: var(--pico-primary);
+    color: var(--pico-primary);
+  }
+  .view-toggle.active {
+    background: var(--pico-primary);
+    border-color: var(--pico-primary);
+    color: var(--pico-primary-inverse);
+  }
+  .rank-table-wrap { margin-top: 0; }
   .rank-table {
     width: 100%;
     border-collapse: collapse;
@@ -715,7 +650,9 @@ agents.sort();
   .rank-table th.col-ordinal,
   .rank-table th.col-mu,
   .rank-table th.col-sigma,
-  .rank-table th.col-record { text-align: right; }
+  .rank-table th.col-record,
+  .rank-table th.col-winrate,
+  .rank-table th.col-delta { text-align: right; }
   .rank-table .col-rank {
     width: 2.5rem;
     text-align: right;
@@ -725,6 +662,8 @@ agents.sort();
   }
   .rank-table .col-post a { text-decoration: none; }
   .rank-table .col-post a:hover { text-decoration: underline; }
+  .rank-table .col-delta { width: 3.5rem; }
+  .rank-table .col-winrate { width: 4rem; }
   .ord-bar {
     margin-top: 0.4rem;
     height: 3px;
@@ -738,6 +677,15 @@ agents.sort();
     background: var(--pico-primary);
     opacity: 0.55;
   }
+
+  /* Technical columns: hidden by default, shown when table has data-view="technical" */
+  .tech-col { display: none; }
+  #rank-table[data-view="technical"] .tech-col { display: table-cell; }
+
+  .delta-up { color: #2d6a4f; font-weight: 600; }
+  .delta-down { color: #c0392b; font-weight: 600; }
+  [data-theme="dark"] .delta-up { color: #74c69d; }
+  [data-theme="dark"] .delta-down { color: #e57373; }
 
   .conf-badge {
     display: inline-block;
@@ -756,15 +704,198 @@ agents.sort();
   [data-theme="dark"] .conf-high { color: #74c69d; border-color: #74c69d55; background: #74c69d12; }
   [data-theme="dark"] .conf-medium { color: #f1c453; border-color: #f1c45355; background: #f1c45312; }
 
-  @media (max-width: 720px) {
-    .rank-table .col-mu,
-    .rank-table .col-sigma,
+  @media (max-width: 680px) {
     .rank-table .col-confidence { display: none; }
   }
 
+  /* Perspectives grid -------------------------------------------- */
+  .perspectives-grid-section {
+    margin-top: 3.5rem;
+  }
+  .perspectives-grid-section h2 {
+    font-size: 1.15rem;
+    margin-bottom: 0.2rem;
+  }
+  .perspectives-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  .persp-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1rem 1.1rem 0.9rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-left: 4px solid hsl(var(--ph, 200), 55%, 55%);
+    border-radius: var(--pico-border-radius);
+    background: var(--pico-card-background-color);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .persp-card:hover {
+    border-left-color: hsl(var(--ph, 200), 65%, 45%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  .persp-card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .persp-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: hsl(var(--ph, 200), 45%, 32%);
+  }
+  [data-theme="dark"] .persp-name {
+    color: hsl(var(--ph, 200), 65%, 72%);
+  }
+  .persp-summary {
+    font-size: 0.82rem;
+    color: var(--pico-muted-color);
+    margin: 0;
+    line-height: 1.4;
+  }
+  .persp-leader {
+    font-size: 0.78rem;
+    margin: 0.2rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .persp-leader-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--pico-muted-color);
+  }
+  .persp-leader-title {
+    color: var(--pico-color);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  .persp-view-all {
+    margin-top: 0.5rem;
+    font-size: 0.88rem;
+  }
+
+  /* Recent battles (light cards) -------------------------------- */
+  .rank-recent { margin-top: 3.5rem; }
+  .rank-recent h2 { font-size: 1.15rem; margin-bottom: 0.2rem; }
+
+  .battle-list-light {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin: 1rem 0;
+  }
+  .bcl-card {
+    display: block;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    background: var(--pico-card-background-color);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .bcl-card:hover {
+    border-color: var(--pico-primary);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  }
+  .bcl-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+    margin-bottom: 0.45rem;
+  }
+  .bcl-date {
+    font-family: var(--pico-font-family-monospace);
+    font-size: 0.72rem;
+    color: var(--pico-muted-color);
+  }
+  .bcl-tag {
+    font-size: 0.64rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    border: 1px solid var(--pico-muted-border-color);
+    color: var(--pico-muted-color);
+  }
+  .bcl-tag-persp {
+    background: hsl(var(--ph, 200), 28%, 92%);
+    color: hsl(var(--ph, 200), 45%, 32%);
+    border-color: hsl(var(--ph, 200), 38%, 72%);
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.7rem;
+  }
+  [data-theme="dark"] .bcl-tag-persp {
+    background: hsl(var(--ph, 200), 22%, 18%);
+    color: hsl(var(--ph, 200), 52%, 70%);
+    border-color: hsl(var(--ph, 200), 32%, 38%);
+  }
+  .bcl-tag-agent {
+    font-family: var(--pico-font-family-monospace);
+    background: rgba(100, 100, 200, 0.05);
+    border-color: rgba(100, 100, 200, 0.15);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .bcl-versus {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    font-size: 0.93rem;
+    margin-bottom: 0.4rem;
+  }
+  .bcl-winner { font-weight: 600; }
+  .bcl-loser { color: var(--pico-muted-color); }
+  .bcl-vs {
+    font-size: 0.72rem;
+    color: var(--pico-muted-color);
+    background: var(--pico-muted-border-color);
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .bcl-rates {
+    font-family: var(--pico-font-family-monospace);
+    font-size: 0.72rem;
+    color: var(--pico-muted-color);
+    flex-shrink: 0;
+  }
+  .bcl-tension {
+    height: 3px;
+    background: var(--pico-muted-border-color);
+    border-radius: 2px;
+    overflow: hidden;
+    display: flex;
+    margin: 0 0 0.4rem;
+  }
+  .bcl-fill.win { background: var(--pico-primary); opacity: 0.6; }
+  .bcl-fill.loss { background: var(--pico-muted-border-color); opacity: 0.35; }
+  .bcl-read {
+    font-size: 0.75rem;
+    color: var(--pico-muted-color);
+    display: block;
+    text-align: right;
+  }
+  .bcl-card:hover .bcl-read { color: var(--pico-primary); }
+
+  .all-battles-link {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+  }
+
   /* Unrated --------------------------------------------------------- */
-  .rank-unrated, .rank-recent { margin-top: 3rem; }
-  .rank-unrated h2, .rank-recent h2 { font-size: 1.15rem; margin-bottom: 0.2rem; }
+  .rank-unrated { margin-top: 3rem; }
+  .rank-unrated h2 { font-size: 1.15rem; margin-bottom: 0.2rem; }
   .rank-unrated ul {
     list-style: none;
     padding: 0;
@@ -775,297 +906,6 @@ agents.sort();
   }
   .rank-unrated li::before { content: "·"; color: var(--pico-muted-color); margin-right: 0.4rem; }
   .unrated-cta { margin-top: 0.8rem; font-size: 0.88rem; color: var(--pico-muted-color); }
-
-  /* Filters ----------------------------------------------------------- */
-  .battle-filters {
-    background: var(--pico-card-sectioning-background-color);
-    border: 1px solid var(--pico-muted-border-color);
-    border-radius: var(--pico-border-radius);
-    padding: 1.1rem;
-    margin: 1.2rem 0 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.9rem;
-  }
-  .filter-row-main input[type="search"] { margin: 0; width: 100%; }
-  .filter-row-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    align-items: flex-end;
-  }
-  .filter-group { display: flex; flex-direction: column; gap: 0.3rem; }
-  .filter-group label {
-    margin: 0;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--pico-muted-color);
-  }
-  .filter-group select {
-    margin: 0;
-    min-width: 8rem;
-    padding: 0.3rem 0.5rem;
-    height: auto;
-    font-size: 0.88rem;
-  }
-  .filter-pills { display: flex; gap: 0.35rem; }
-  .filter-pills .pill {
-    padding: 0.3rem 0.7rem;
-    font-size: 0.8rem;
-    margin: 0;
-    border-radius: var(--pico-border-radius);
-    background: transparent;
-    border: 1px solid var(--pico-muted-border-color);
-    color: var(--pico-muted-color);
-    cursor: pointer;
-    line-height: 1.2;
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-  }
-  .filter-pills .pill.active,
-  .filter-pills .pill:hover {
-    background: var(--pico-primary);
-    border-color: var(--pico-primary);
-    color: var(--pico-primary-inverse);
-  }
-
-  .filter-row-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    padding-top: 0.6rem;
-    border-top: 1px dashed var(--pico-muted-border-color);
-  }
-  .filter-row-chips .chip {
-    padding: 0.2rem 0.6rem;
-    font-size: 0.76rem;
-    margin: 0;
-    border-radius: 999px;
-    background: transparent;
-    border: 1px solid var(--pico-muted-border-color);
-    color: var(--pico-muted-color);
-    cursor: pointer;
-    line-height: 1.2;
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-  }
-  .filter-row-chips .chip.active,
-  .filter-row-chips .chip:hover {
-    background: var(--pico-primary);
-    border-color: var(--pico-primary);
-    color: var(--pico-primary-inverse);
-  }
-  /* Perspective chips use their hue when active */
-  #filter-perspective .chip[data-perspective]:not([data-perspective="all"]):not(.active):hover {
-    background: hsl(var(--ph, 200), 30%, 88%);
-    border-color: hsl(var(--ph, 200), 40%, 65%);
-    color: hsl(var(--ph, 200), 45%, 28%);
-  }
-  [data-theme="dark"] #filter-perspective .chip[data-perspective]:not([data-perspective="all"]):not(.active):hover {
-    background: hsl(var(--ph, 200), 25%, 22%);
-    border-color: hsl(var(--ph, 200), 35%, 45%);
-    color: hsl(var(--ph, 200), 55%, 75%);
-  }
-
-  .filter-status { font-size: 0.76rem; color: var(--pico-muted-color); text-align: right; }
-
-  /* Battle Cards ----------------------------------------------------- */
-  .battle-list { display: flex; flex-direction: column; gap: 0.85rem; }
-  .battle-card {
-    border: 1px solid var(--pico-muted-border-color);
-    border-radius: var(--pico-border-radius);
-    background: var(--pico-card-background-color);
-    overflow: hidden;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-  .battle-card:hover { border-color: var(--pico-primary); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); }
-
-  .battle-details { margin: 0; padding: 0; }
-  .battle-header {
-    padding: 1rem 1.1rem;
-    list-style: none;
-    cursor: pointer;
-    position: relative;
-    user-select: none;
-  }
-  .battle-header::-webkit-details-marker { display: none; }
-
-  .battle-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    padding-right: 1.5rem;
-  }
-  .battle-date {
-    font-family: var(--pico-font-family-monospace);
-    font-size: 0.72rem;
-    color: var(--pico-muted-color);
-    margin-right: 0.3rem;
-  }
-  .battle-tag {
-    font-size: 0.64rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.1rem 0.4rem;
-    border-radius: 4px;
-    border: 1px solid var(--pico-muted-border-color);
-    color: var(--pico-muted-color);
-    line-height: 1.1;
-  }
-  /* Perspective tag uses computed hue */
-  .tag-perspective {
-    background: hsl(var(--ph, 200), 28%, 92%);
-    color: hsl(var(--ph, 200), 45%, 32%);
-    border-color: hsl(var(--ph, 200), 38%, 72%);
-    text-transform: none;
-    letter-spacing: 0;
-    font-size: 0.7rem;
-  }
-  [data-theme="dark"] .tag-perspective {
-    background: hsl(var(--ph, 200), 22%, 18%);
-    color: hsl(var(--ph, 200), 52%, 70%);
-    border-color: hsl(var(--ph, 200), 32%, 38%);
-  }
-  /* Agent tag */
-  .tag-agent {
-    font-family: var(--pico-font-family-monospace);
-    background: rgba(100, 100, 200, 0.05);
-    color: var(--pico-muted-color);
-    border-color: rgba(100, 100, 200, 0.15);
-    text-transform: none;
-    letter-spacing: 0;
-  }
-  [data-theme="dark"] .tag-agent {
-    background: rgba(150, 150, 255, 0.07);
-    border-color: rgba(150, 150, 255, 0.2);
-  }
-  .tag-season { background: rgba(0, 0, 0, 0.03); }
-  .tag-confidence.conf-high { background: rgba(45, 106, 79, 0.04); color: #2d6a4f; border-color: rgba(45, 106, 79, 0.12); }
-  [data-theme="dark"] .tag-confidence.conf-high { color: #74c69d; border-color: rgba(116, 198, 157, 0.2); }
-  .tag-confidence.conf-medium { background: rgba(176, 131, 0, 0.04); color: #a07800; border-color: rgba(176, 131, 0, 0.12); }
-  [data-theme="dark"] .tag-confidence.conf-medium { color: #f1c453; border-color: rgba(241, 196, 83, 0.2); }
-
-  .battle-versus {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 0.85rem;
-    align-items: center;
-    margin-bottom: 0.6rem;
-    padding-right: 1.5rem;
-  }
-  .versus-side {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    font-size: 0.96rem;
-  }
-  .versus-side.winner { font-weight: 600; }
-  .versus-side.loser { color: var(--pico-muted-color); }
-  .versus-side.winner .post-title-link { color: var(--pico-color); text-decoration: none; }
-  .versus-side.winner .post-title-link:hover { text-decoration: underline; }
-  .versus-side.loser .post-title-link {
-    color: var(--pico-muted-color);
-    text-decoration: line-through;
-    text-decoration-color: var(--pico-muted-border-color);
-  }
-  .versus-side.loser .post-title-link:hover { color: var(--pico-color); text-decoration: underline; text-decoration-color: var(--pico-primary); }
-  .versus-medal { font-size: 0.9rem; flex-shrink: 0; }
-  .versus-rate {
-    font-family: var(--pico-font-family-monospace);
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--pico-primary);
-    flex-shrink: 0;
-  }
-  .versus-rate.loser-rate { color: var(--pico-muted-color); font-weight: 400; }
-
-  .versus-divider {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .versus-vs {
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: var(--pico-muted-color);
-    background: var(--pico-muted-border-color);
-    padding: 0.1rem 0.3rem;
-    border-radius: 4px;
-    line-height: 1;
-  }
-
-  .battle-tension-bar {
-    height: 3px;
-    background: var(--pico-muted-border-color);
-    border-radius: 2px;
-    overflow: hidden;
-    display: flex;
-    margin-top: 0.4rem;
-    width: calc(100% - 1.5rem);
-  }
-  .tension-fill.winner { background: var(--pico-primary); opacity: 0.6; }
-  .tension-fill.loser { background: var(--pico-muted-border-color); opacity: 0.35; }
-
-  .battle-expand-indicator {
-    position: absolute;
-    right: 1.1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.72rem;
-    color: var(--pico-muted-color);
-    transition: transform 0.25s ease;
-  }
-  details[open] .battle-expand-indicator { transform: translateY(-50%) rotate(180deg); }
-
-  .battle-body {
-    padding: 1.1rem;
-    border-top: 1px dashed var(--pico-muted-border-color);
-    background: var(--pico-card-sectioning-background-color);
-  }
-
-  .battle-section { margin-top: 0.8rem; }
-  .battle-section h5,
-  .battle-section h6 {
-    margin-bottom: 0.4rem;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--pico-muted-color);
-  }
-  .verdict-section {
-    border-left: 3px solid var(--pico-primary);
-    padding-left: 0.7rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-  .section-content { font-size: 0.9rem; line-height: 1.5; }
-  .section-content p:last-child { margin-bottom: 0; }
-
-  .battle-sides-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-    gap: 1rem;
-    border-top: 1px dashed var(--pico-muted-border-color);
-    padding-top: 0.8rem;
-  }
-  .side-section { margin-top: 0; }
-
-  @media (max-width: 680px) {
-    .battle-versus {
-      grid-template-columns: 1fr;
-      gap: 0.3rem;
-      text-align: center;
-      padding-right: 0;
-      width: 100%;
-    }
-    .versus-side { justify-content: center; }
-    .versus-divider { flex-direction: row; gap: 0.35rem; }
-    .battle-tension-bar { width: 100%; }
-    .battle-meta { padding-right: 0; }
-  }
 
   .rank-empty {
     padding: 2rem 1rem;
@@ -1080,151 +920,41 @@ agents.sort();
     border-bottom: 1px dotted var(--pico-muted-color);
     cursor: help;
   }
-
-  .battle-pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    margin: 1.25rem 0 0.5rem;
-  }
-  .battle-pagination button {
-    padding: 0.35rem 0.9rem;
-    font-size: 0.85rem;
-    min-width: 7rem;
-    margin-bottom: 0;
-  }
-  #page-indicator {
-    font-size: 0.85rem;
-    color: var(--pico-muted-color);
-    min-width: 8rem;
-    text-align: center;
-  }
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('battle-search') as HTMLInputElement | null;
-    const seasonSelect = document.getElementById('filter-season') as HTMLSelectElement | null;
-    const agentSelect = document.getElementById('filter-agent') as HTMLSelectElement | null;
-    const confidenceContainer = document.getElementById('filter-confidence');
-    const perspectiveContainer = document.getElementById('filter-perspective');
-    const criterionContainer = document.querySelector('.filter-row-chips:not(#filter-perspective)');
-    const cards = Array.from(document.querySelectorAll('.battle-card')) as HTMLElement[];
-    const countLabel = document.getElementById('filter-count-label');
-    const emptyState = document.getElementById('battle-empty');
-    const paginationEl = document.getElementById('battle-pagination') as HTMLElement | null;
-    const prevBtn = document.getElementById('prev-page') as HTMLButtonElement | null;
-    const nextBtn = document.getElementById('next-page') as HTMLButtonElement | null;
-    const pageIndicator = document.getElementById('page-indicator') as HTMLElement | null;
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById("view-toggle") as HTMLButtonElement | null;
+    const table = document.getElementById("rank-table") as HTMLTableElement | null;
+    if (!toggleBtn || !table) return;
 
-    let activeCriterion = 'all';
-    let activeConfidence = 'all';
-    let activePerspective = 'all';
-    let currentPage = 0;
-    let lastVisible: HTMLElement[] = [];
+    // Read initial state from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const isTechnical = urlParams.get("view") === "technical";
+    if (isTechnical) {
+      table.dataset.view = "technical";
+      toggleBtn.classList.add("active");
+    }
 
-    const PAGE_SIZE = 15;
-
-    if (!searchInput || !cards.length || !countLabel) return;
-
-    const countTemplate = countLabel.getAttribute('data-template') || 'Showing {count} of {total}';
-    const pageTemplate = pageIndicator?.getAttribute('data-template') || 'Page {n} of {total}';
-
-    function showPage(page: number) {
-      const totalPages = Math.max(1, Math.ceil(lastVisible.length / PAGE_SIZE));
-      currentPage = Math.max(0, Math.min(page, totalPages - 1));
-
-      const start = currentPage * PAGE_SIZE;
-      const end = start + PAGE_SIZE;
-
-      cards.forEach((card) => { card.style.display = 'none'; });
-      lastVisible.forEach((card, i) => {
-        card.style.display = (i >= start && i < end) ? 'block' : 'none';
-      });
-
-      countLabel!.textContent = countTemplate
-        .replace('{count}', String(lastVisible.length))
-        .replace('{total}', String(cards.length));
-
-      if (emptyState) emptyState.style.display = lastVisible.length === 0 ? 'block' : 'none';
-
-      const showPagination = totalPages > 1;
-      if (paginationEl) paginationEl.style.display = showPagination ? 'flex' : 'none';
-      if (prevBtn) prevBtn.disabled = currentPage === 0;
-      if (nextBtn) nextBtn.disabled = currentPage >= totalPages - 1;
-      if (pageIndicator) {
-        pageIndicator.textContent = pageTemplate
-          .replace('{n}', String(currentPage + 1))
-          .replace('{total}', String(totalPages));
+    toggleBtn.addEventListener("click", () => {
+      const current = table.dataset.view === "technical";
+      if (current) {
+        delete table.dataset.view;
+        toggleBtn.classList.remove("active");
+        const params = new URLSearchParams(window.location.search);
+        params.delete("view");
+        const newUrl =
+          window.location.pathname +
+          (params.toString() ? "?" + params.toString() : "") +
+          window.location.hash;
+        history.replaceState(null, "", newUrl);
+      } else {
+        table.dataset.view = "technical";
+        toggleBtn.classList.add("active");
+        const params = new URLSearchParams(window.location.search);
+        params.set("view", "technical");
+        history.replaceState(null, "", window.location.pathname + "?" + params.toString() + window.location.hash);
       }
-    }
-
-    function applyFilters() {
-      if (!searchInput) return;
-      const query = searchInput.value.toLowerCase().trim();
-      const season = seasonSelect ? seasonSelect.value : 'all';
-      const agent = agentSelect ? agentSelect.value : 'all';
-
-      lastVisible = cards.filter((card) => {
-        const matchesQuery = !query || (card.getAttribute('data-search') || '').includes(query);
-        const matchesSeason = season === 'all' || (card.getAttribute('data-season') || '') === season;
-        const matchesAgent = agent === 'all' || (card.getAttribute('data-agent') || '') === agent;
-        const matchesConfidence = activeConfidence === 'all' || (card.getAttribute('data-confidence') || '') === activeConfidence;
-        const matchesCriterion = activeCriterion === 'all' || (card.getAttribute('data-criterion') || '') === activeCriterion;
-        const matchesPerspective = activePerspective === 'all' || (card.getAttribute('data-perspective') || '') === activePerspective;
-        return matchesQuery && matchesSeason && matchesAgent && matchesConfidence && matchesCriterion && matchesPerspective;
-      });
-
-      showPage(0);
-    }
-
-    searchInput.addEventListener('input', applyFilters);
-    if (seasonSelect) seasonSelect.addEventListener('change', applyFilters);
-    if (agentSelect) agentSelect.addEventListener('change', applyFilters);
-
-    if (prevBtn) prevBtn.addEventListener('click', () => showPage(currentPage - 1));
-    if (nextBtn) nextBtn.addEventListener('click', () => showPage(currentPage + 1));
-
-    if (confidenceContainer) {
-      const pills = confidenceContainer.querySelectorAll('.pill');
-      pills.forEach((pill) => {
-        pill.addEventListener('click', (e) => {
-          pills.forEach((p) => p.classList.remove('active'));
-          const target = e.currentTarget as HTMLElement;
-          target.classList.add('active');
-          activeConfidence = target.getAttribute('data-value') || 'all';
-          applyFilters();
-        });
-      });
-    }
-
-    if (perspectiveContainer) {
-      const chips = perspectiveContainer.querySelectorAll('.chip');
-      chips.forEach((chip) => {
-        chip.addEventListener('click', (e) => {
-          chips.forEach((c) => c.classList.remove('active'));
-          const target = e.currentTarget as HTMLElement;
-          target.classList.add('active');
-          activePerspective = target.getAttribute('data-perspective') || 'all';
-          applyFilters();
-        });
-      });
-    }
-
-    if (criterionContainer) {
-      const chips = criterionContainer.querySelectorAll('.chip');
-      chips.forEach((chip) => {
-        chip.addEventListener('click', (e) => {
-          chips.forEach((c) => c.classList.remove('active'));
-          const target = e.currentTarget as HTMLElement;
-          target.classList.add('active');
-          activeCriterion = target.getAttribute('data-criterion') || 'all';
-          applyFilters();
-        });
-      });
-    }
-
-    applyFilters();
+    });
   });
 </script>

@@ -1,0 +1,516 @@
+---
+import PageLayout from "../../../layouts/PageLayout.astro";
+import { getCollection } from "astro:content";
+import {
+  getRanking,
+  getPostDuelHistory,
+  getPerPerspectiveRankings,
+  getPerspectives,
+  getSnapshotDelta,
+} from "../../../lib/hronir-rank";
+import { isPublished } from "../../../lib/publish";
+
+export function getStaticPaths() {
+  const ranking = getRanking();
+  return ranking.map((r) => ({ params: { key: r.key } }));
+}
+
+const { key } = Astro.params;
+const ranking = getRanking();
+const rankIndex = ranking.findIndex((r) => r.key === key);
+if (rankIndex < 0) return Astro.redirect("/ranking/");
+const rankEntry = ranking[rankIndex];
+const currentRank = rankIndex + 1;
+
+const allPosts = await getCollection("blog");
+const postsByKey = new Map<string, { title: string; slug: string; lang: string }>();
+for (const p of allPosts) {
+  if (!isPublished(p)) continue;
+  const k = p.data.translationKey;
+  if (!k) continue;
+  const lang = p.data.lang ?? "en";
+  const existing = postsByKey.get(k);
+  if (!existing || lang === "en") {
+    postsByKey.set(k, { title: p.data.title, slug: p.id, lang });
+  }
+}
+
+const postInfo = postsByKey.get(key);
+const title = postInfo?.title ?? key;
+const postHref = postInfo
+  ? postInfo.lang === "pt"
+    ? `/pt/blog/${postInfo.slug}/`
+    : `/blog/${postInfo.slug}/`
+  : null;
+
+const duels = getPostDuelHistory(key);
+
+// Per-perspective rankings
+const perPerspective = getPerPerspectiveRankings();
+const perspectives = getPerspectives();
+const perspectiveRanks: { id: string; name: string; rank: number; ordinal: number }[] = [];
+for (const p of perspectives) {
+  const rows = perPerspective.get(p.id) ?? [];
+  const idx = rows.findIndex((r) => r.key === key);
+  if (idx >= 0) {
+    perspectiveRanks.push({ id: p.id, name: p.name, rank: idx + 1, ordinal: rows[idx].ordinal });
+  }
+}
+perspectiveRanks.sort((a, b) => a.rank - b.rank);
+
+const delta = getSnapshotDelta(key);
+const overallWins = duels.filter((d) => d.winnerKey === key).length;
+const winRate = duels.length > 0 ? Math.round((overallWins / duels.length) * 100) : 0;
+
+// Sparkline: chronological order (duels are newest-first)
+const chronological = [...duels].reverse();
+
+function buildSparkline(pts: { won: boolean }[]): string {
+  if (pts.length < 2) return "";
+  const W = 200, H = 36;
+  return pts
+    .map((_pt, i) => {
+      const wins = pts.slice(0, i + 1).filter((p) => p.won).length;
+      const rate = wins / (i + 1);
+      const x = (i / (pts.length - 1)) * W;
+      const y = H - rate * H;
+      return `${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
+    })
+    .join(" ");
+}
+
+const sparklinePts = chronological.map((d) => ({ won: d.winnerKey === key }));
+const sparklinePath = buildSparkline(sparklinePts);
+
+function hue(id: string): number {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = ((h << 5) - h + id.charCodeAt(i)) & 0xffff;
+  return Math.abs(h) % 360;
+}
+
+function fmtDate(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.valueOf())) return "—";
+  return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+}
+---
+
+<PageLayout
+  title={`${title} — Dossier | Franklin Baldo`}
+  description={`Ranking history and duel record for "${title}" in the Hrönir system.`}
+  lang="en"
+>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/ranking/">Ranking</a></li>
+      <li aria-current="page">{title}</li>
+    </ol>
+  </nav>
+
+  <hgroup>
+    <h1>{title}</h1>
+    {postHref && <p><a href={postHref}>Read post →</a></p>}
+  </hgroup>
+
+  <div class="dossier-stats">
+    <div class="doss-stat">
+      <span class="doss-val">#{currentRank}</span>
+      <span class="doss-lbl">global rank</span>
+    </div>
+    {delta !== null && delta !== 0 && (
+      <div class="doss-stat">
+        <span class={`doss-val ${delta > 0 ? "delta-up" : "delta-down"}`}>
+          {delta > 0 ? `+${delta}` : `${delta}`}
+        </span>
+        <span class="doss-lbl">rank change</span>
+      </div>
+    )}
+    <div class="doss-stat">
+      <span class="doss-val">{winRate}%</span>
+      <span class="doss-lbl">win rate</span>
+    </div>
+    <div class="doss-stat">
+      <span class="doss-val">{overallWins}/{duels.length}</span>
+      <span class="doss-lbl">wins / duels</span>
+    </div>
+    <div class="doss-stat">
+      <span class="doss-val">{rankEntry.ordinal.toFixed(3)}</span>
+      <span class="doss-lbl">ordinal</span>
+    </div>
+  </div>
+
+  {sparklinePath && (
+    <div class="sparkline-wrap">
+      <p class="sparkline-caption">Win rate over time (each point = one duel, chronological)</p>
+      <svg viewBox="0 0 200 36" class="sparkline" aria-hidden="true">
+        <line x1="0" y1="18" x2="200" y2="18" class="spark-ref" />
+        <path d={sparklinePath} class="spark-path" />
+        {sparklinePts.map((pt, i) => {
+          const wins = sparklinePts.slice(0, i + 1).filter((p) => p.won).length;
+          const rate = wins / (i + 1);
+          const x = (i / (sparklinePts.length - 1)) * 200;
+          const y = 36 - rate * 36;
+          return (
+            <circle
+              cx={x.toFixed(1)}
+              cy={y.toFixed(1)}
+              r={pt.won ? 2.5 : 1.5}
+              class={pt.won ? "spark-dot win" : "spark-dot loss"}
+            />
+          );
+        })}
+      </svg>
+    </div>
+  )}
+
+  {perspectiveRanks.length > 0 && (
+    <section class="persp-ranks">
+      <h2>Perspective rankings</h2>
+      <ul class="persp-list">
+        {perspectiveRanks.map((pr) => (
+          <li>
+            <a href={`/ranking/perspectives/${pr.id}/`}>
+              <span class="persp-badge" style={`--ph:${hue(pr.id)}`}>{pr.name}</span>
+            </a>
+            <span class="persp-rank-num">#{pr.rank}</span>
+            <span class="persp-ordinal">({pr.ordinal.toFixed(3)})</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <section class="duel-history">
+    <h2>Duel history <small>({duels.length} total)</small></h2>
+    {duels.length === 0 ? (
+      <p class="empty">No duels recorded yet.</p>
+    ) : (
+      <ol class="duel-list">
+        {duels.map((d) => {
+          const won = d.winnerKey === key;
+          const opponentKey = won ? d.loserKey : d.winnerKey;
+          const opponent = postsByKey.get(opponentKey);
+          const opponentHref = opponent
+            ? opponent.lang === "pt"
+              ? `/pt/blog/${opponent.slug}/`
+              : `/blog/${opponent.slug}/`
+            : null;
+          const opponentTitle = opponent?.title ?? opponentKey;
+          const myRate = d.postAKey === key ? d.rateA : d.rateB;
+          const oppRate = d.postAKey === key ? d.rateB : d.rateA;
+          return (
+            <li class={won ? "duel-won" : "duel-lost"}>
+              <div class="duel-row">
+                <span class="duel-outcome" aria-label={won ? "Won" : "Lost"}>{won ? "W" : "L"}</span>
+                <div class="duel-content">
+                  <div class="duel-opponent">
+                    <span class="vs-label">vs</span>
+                    {opponentHref ? (
+                      <a href={opponentHref}>{opponentTitle}</a>
+                    ) : (
+                      <code>{opponentKey}</code>
+                    )}
+                  </div>
+                  <div class="duel-meta-row">
+                    <span class="duel-date">{fmtDate(d.runAt)}</span>
+                    {myRate != null && oppRate != null && (
+                      <span class="duel-rates">{myRate.toFixed(1)} / {oppRate.toFixed(1)}</span>
+                    )}
+                    {d.perspectiveId && (
+                      <a
+                        href={`/ranking/perspectives/${d.perspectiveId}/`}
+                        class="duel-perspective"
+                        style={`--ph:${hue(d.perspectiveId)}`}
+                      >
+                        {d.perspectiveId.replace(/-/g, " ")}
+                      </a>
+                    )}
+                  </div>
+                </div>
+                {d.id && (
+                  <a
+                    href={`/ranking/battles/${d.id}/`}
+                    class="duel-analysis-link"
+                    title="Read full analysis"
+                  >
+                    analysis →
+                  </a>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    )}
+  </section>
+</PageLayout>
+
+<style>
+  .breadcrumb ol {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    font-size: 0.8rem;
+    color: var(--pico-muted-color);
+  }
+  .breadcrumb li + li::before {
+    content: " / ";
+    padding: 0 0.35em;
+  }
+  .breadcrumb a {
+    color: var(--pico-muted-color);
+    text-decoration: none;
+  }
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .dossier-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    margin: 1.5rem 0 2rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    background: var(--pico-card-sectioning-background-color);
+  }
+  .doss-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .doss-val {
+    font-family: var(--pico-font-family-monospace);
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+  .doss-lbl {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--pico-muted-color);
+  }
+  .delta-up {
+    color: #2d6a4f;
+  }
+  .delta-down {
+    color: #c0392b;
+  }
+  [data-theme="dark"] .delta-up {
+    color: #74c69d;
+  }
+  [data-theme="dark"] .delta-down {
+    color: #e57373;
+  }
+
+  .sparkline-wrap {
+    margin: 0 0 2.5rem;
+    padding: 1rem 1.2rem 0.8rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    background: var(--pico-card-sectioning-background-color);
+  }
+  .sparkline-caption {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--pico-muted-color);
+    margin: 0 0 0.6rem;
+  }
+  .sparkline {
+    width: 100%;
+    height: 36px;
+    display: block;
+    overflow: visible;
+  }
+  .spark-ref {
+    stroke: var(--pico-muted-border-color);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+  }
+  .spark-path {
+    fill: none;
+    stroke: var(--pico-primary);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .spark-dot {
+    fill: var(--pico-primary);
+  }
+  .spark-dot.loss {
+    fill: var(--pico-muted-color);
+    opacity: 0.5;
+  }
+
+  .persp-ranks {
+    margin: 0 0 2rem;
+  }
+  .persp-ranks h2 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  .persp-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+  }
+  .persp-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .persp-badge {
+    display: inline-block;
+    padding: 0.15em 0.55em;
+    border-radius: 999px;
+    font-size: 0.82em;
+    background: hsl(var(--ph, 200), 55%, 88%);
+    color: hsl(var(--ph, 200), 45%, 28%);
+    text-decoration: none;
+  }
+  @media (prefers-color-scheme: dark) {
+    .persp-badge {
+      background: hsl(var(--ph, 200), 40%, 20%);
+      color: hsl(var(--ph, 200), 70%, 75%);
+    }
+  }
+  .persp-rank-num {
+    font-family: var(--pico-font-family-monospace);
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .persp-ordinal {
+    font-size: 0.75rem;
+    color: var(--pico-muted-color);
+    font-family: var(--pico-font-family-monospace);
+  }
+
+  .duel-history {
+    margin-top: 2rem;
+  }
+  .duel-history h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+  .duel-history h2 small {
+    font-weight: 400;
+    font-size: 0.85em;
+    color: var(--pico-muted-color);
+  }
+  .duel-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .duel-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-left-width: 3px;
+    border-radius: var(--pico-border-radius);
+    background: var(--pico-card-background-color);
+  }
+  .duel-won .duel-row {
+    border-left-color: #2d6a4f;
+  }
+  .duel-lost .duel-row {
+    border-left-color: var(--pico-muted-border-color);
+  }
+  [data-theme="dark"] .duel-won .duel-row {
+    border-left-color: #74c69d;
+  }
+  .duel-outcome {
+    font-family: var(--pico-font-family-monospace);
+    font-size: 0.72rem;
+    font-weight: 700;
+    width: 1.2rem;
+    flex-shrink: 0;
+    text-align: center;
+    padding-top: 0.15rem;
+  }
+  .duel-won .duel-outcome {
+    color: #2d6a4f;
+  }
+  .duel-lost .duel-outcome {
+    color: var(--pico-muted-color);
+  }
+  [data-theme="dark"] .duel-won .duel-outcome {
+    color: #74c69d;
+  }
+  .duel-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .duel-opponent {
+    font-size: 0.92rem;
+  }
+  .duel-opponent a {
+    text-decoration: none;
+  }
+  .duel-opponent a:hover {
+    text-decoration: underline;
+  }
+  .vs-label {
+    color: var(--pico-muted-color);
+    font-size: 0.78rem;
+    margin-right: 0.3rem;
+  }
+  .duel-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+    align-items: center;
+  }
+  .duel-date {
+    font-size: 0.72rem;
+    color: var(--pico-muted-color);
+    font-family: var(--pico-font-family-monospace);
+  }
+  .duel-rates {
+    font-size: 0.72rem;
+    color: var(--pico-muted-color);
+    font-family: var(--pico-font-family-monospace);
+  }
+  .duel-perspective {
+    font-size: 0.68rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 999px;
+    text-decoration: none;
+    background: hsl(var(--ph, 200), 55%, 88%);
+    color: hsl(var(--ph, 200), 45%, 28%);
+  }
+  @media (prefers-color-scheme: dark) {
+    .duel-perspective {
+      background: hsl(var(--ph, 200), 40%, 20%);
+      color: hsl(var(--ph, 200), 70%, 75%);
+    }
+  }
+  .duel-analysis-link {
+    font-size: 0.78rem;
+    color: var(--pico-muted-color);
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding-top: 0.15rem;
+  }
+  .duel-analysis-link:hover {
+    color: var(--pico-primary);
+  }
+  .empty {
+    color: var(--pico-muted-color);
+    font-style: italic;
+  }
+</style>

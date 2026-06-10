@@ -1,0 +1,168 @@
+---
+import PageLayout from "../../../layouts/PageLayout.astro";
+import { getCollection } from "astro:content";
+import { getPerspectives, getPerPerspectiveRankings } from "../../../lib/hronir-rank";
+import { isPublished } from "../../../lib/publish";
+
+const perspectives = getPerspectives();
+const perPerspective = getPerPerspectiveRankings();
+
+const allPosts = await getCollection("blog");
+const byKey = new Map<string, { title: string; slug: string; lang: string }>();
+for (const p of allPosts) {
+  if (!isPublished(p)) continue;
+  const key = p.data.translationKey;
+  if (!key) continue;
+  const lang = p.data.lang ?? "en";
+  const existing = byKey.get(key);
+  if (!existing || lang === "en") {
+    byKey.set(key, { title: p.data.title, slug: p.id, lang });
+  }
+}
+
+function hue(id: string): number {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = ((h << 5) - h + id.charCodeAt(i)) & 0xffff;
+  return Math.abs(h) % 360;
+}
+
+const enriched = perspectives.map((p) => {
+  const rows = perPerspective.get(p.id) ?? [];
+  const leaderKey = rows[0]?.key;
+  const leader = leaderKey ? byKey.get(leaderKey) : undefined;
+  const leaderHref = leader
+    ? leader.lang === "pt"
+      ? `/pt/blog/${leader.slug}/`
+      : `/blog/${leader.slug}/`
+    : null;
+  return {
+    ...p,
+    hue: hue(p.id),
+    duelCount: rows.reduce((sum, r) => sum + r.appearances, 0) / 2,
+    leaderTitle: leader?.title ?? null,
+    leaderHref,
+    postsRanked: rows.length,
+  };
+});
+---
+
+<PageLayout
+  title="Perspectives — Ranking | Franklin Baldo"
+  description="Browse all evaluation perspectives used in the Hrönir ranking system."
+  lang="en"
+>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/ranking/">Ranking</a></li>
+      <li aria-current="page">Perspectives</li>
+    </ol>
+  </nav>
+
+  <hgroup>
+    <h1>Ranking perspectives</h1>
+    <p>Each perspective is a different lens for judging a post — curiosity, clarity, writing quality, and more. A post can rank differently under each lens.</p>
+  </hgroup>
+
+  <div class="persp-grid">
+    {enriched.map((p) => (
+      <a href={`/ranking/perspectives/${p.id}/`} class="persp-card" style={`--ph:${p.hue}`}>
+        <header class="persp-card-head">
+          <span class="persp-name">{p.name}</span>
+          <span class="persp-count">{p.postsRanked} posts</span>
+        </header>
+        <p class="persp-summary">{p.summary}</p>
+        {p.leaderTitle && (
+          <div class="persp-leader">
+            <span class="persp-leader-label">Leader</span>
+            <span class="persp-leader-title">{p.leaderTitle}</span>
+          </div>
+        )}
+      </a>
+    ))}
+  </div>
+</PageLayout>
+
+<style>
+  .breadcrumb ol {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    font-size: 0.8rem;
+    color: var(--pico-muted-color);
+  }
+  .breadcrumb li + li::before { content: " / "; padding: 0 0.35em; }
+  .breadcrumb a { color: var(--pico-muted-color); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  .persp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    gap: 1.1rem;
+    margin-top: 1.5rem;
+  }
+  .persp-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.1rem 1.2rem 1rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-left: 4px solid hsl(var(--ph, 200), 55%, 55%);
+    border-radius: var(--pico-border-radius);
+    background: var(--pico-card-background-color);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .persp-card:hover {
+    border-left-color: hsl(var(--ph, 200), 65%, 45%);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  }
+  .persp-card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .persp-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: hsl(var(--ph, 200), 45%, 32%);
+  }
+  [data-theme="dark"] .persp-name {
+    color: hsl(var(--ph, 200), 65%, 72%);
+  }
+  .persp-count {
+    font-size: 0.72rem;
+    color: var(--pico-muted-color);
+    font-family: var(--pico-font-family-monospace);
+    white-space: nowrap;
+  }
+  .persp-summary {
+    font-size: 0.85rem;
+    color: var(--pico-muted-color);
+    margin: 0;
+    line-height: 1.45;
+  }
+  .persp-leader {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding-top: 0.4rem;
+    border-top: 1px dashed var(--pico-muted-border-color);
+  }
+  .persp-leader-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--pico-muted-color);
+  }
+  .persp-leader-title {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--pico-color);
+  }
+</style>

@@ -1,0 +1,330 @@
+---
+import PageLayout from "../../../layouts/PageLayout.astro";
+import { getCollection } from "astro:content";
+import { getAllDuels, getRankByKey } from "../../../lib/hronir-rank";
+import { isPublished } from "../../../lib/publish";
+import { marked } from "marked";
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection("blog");
+  const byKey = new Map<string, { title: string; slug: string; lang: string }>();
+  for (const p of allPosts) {
+    if (!isPublished(p)) continue;
+    const key = p.data.translationKey;
+    if (!key) continue;
+    const lang = p.data.lang ?? "en";
+    const existing = byKey.get(key);
+    if (!existing || lang === "en") byKey.set(key, { title: p.data.title, slug: p.id, lang });
+  }
+
+  const duels = getAllDuels();
+  return duels.map((duel, i) => ({
+    params: { id: duel.id },
+    props: {
+      duel,
+      prevId: i + 1 < duels.length ? duels[i + 1].id : null,
+      nextId: i > 0 ? duels[i - 1].id : null,
+      prevPage: i + 1 < duels.length ? Math.floor((i + 1) / 20) + 1 : null,
+      postAInfo: byKey.get(duel.postAKey ?? ""),
+      postBInfo: byKey.get(duel.postBKey ?? ""),
+    },
+  }));
+}
+
+const { duel, prevId, nextId, prevPage, postAInfo, postBInfo } = Astro.props;
+
+function postHref(info: { slug: string; lang: string } | undefined) {
+  if (!info) return null;
+  return info.lang === "pt" ? `/pt/blog/${info.slug}/` : `/blog/${info.slug}/`;
+}
+
+function dossierHref(key: string | undefined) {
+  if (!key) return null;
+  return `/ranking/posts/${key}/`;
+}
+
+const winnerIsA = duel.postAKey === duel.winnerKey;
+const winnerInfo = winnerIsA ? postAInfo : postBInfo;
+const loserInfo = winnerIsA ? postBInfo : postAInfo;
+const winnerKey = duel.winnerKey;
+const loserKey = duel.loserKey;
+const winnerTitle = winnerInfo?.title ?? winnerKey;
+const loserTitle = loserInfo?.title ?? loserKey;
+const winnerHref = postHref(winnerInfo);
+const loserHref = postHref(loserInfo);
+
+const rateWinner = winnerIsA ? duel.rateA : duel.rateB;
+const rateLoser = winnerIsA ? duel.rateB : duel.rateA;
+const hasRates = rateWinner != null && rateLoser != null;
+const tensionPct = hasRates
+  ? Math.round((rateWinner! / (rateWinner! + rateLoser!)) * 100)
+  : null;
+
+function fmtDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+}
+
+function perspectiveHue(id: string): number {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = ((h << 5) - h + id.charCodeAt(i)) & 0xffff;
+  return Math.abs(h) % 360;
+}
+
+const pageTitle = `${winnerTitle} vs ${loserTitle}`;
+const pageDesc = `Hrönir duel: ${winnerTitle} beat ${loserTitle}${duel.perspectiveId ? ` under the ${duel.perspectiveId} perspective` : ""}.`;
+
+const rankByKey = getRankByKey();
+const winnerRank = rankByKey.get(winnerKey);
+const loserRank = rankByKey.get(loserKey);
+---
+
+<PageLayout title={`${pageTitle} | Ranking Battles`} description={pageDesc} lang="en">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/ranking/">Ranking</a></li>
+      <li><a href="/ranking/battles/">All battles</a></li>
+      <li aria-current="page">{winnerTitle} vs {loserTitle}</li>
+    </ol>
+  </nav>
+
+  <hgroup>
+    <h1>Battle Report</h1>
+    <p><small>{fmtDate(duel.runAt)}</small></p>
+  </hgroup>
+
+  <div class="battle-tags">
+    {duel.season !== undefined && <span class="tag tag-season">Season {duel.season}</span>}
+    {duel.perspectiveId && (
+      <span class="tag tag-perspective" style={`--ph:${perspectiveHue(duel.perspectiveId)}`}>
+        <a href={`/ranking/perspectives/${duel.perspectiveId}/`}>{duel.perspectiveId.replace(/-/g, " ")}</a>
+      </span>
+    )}
+    {duel.agentId && <span class="tag tag-agent">{duel.agentId}</span>}
+    {duel.confidence && <span class={`tag tag-confidence conf-${duel.confidence}`}>{duel.confidence} confidence</span>}
+  </div>
+
+  <section class="versus-section" aria-label="Versus">
+    <div class="versus-grid">
+      <div class="versus-side winner">
+        <div class="versus-label">Winner 🏆</div>
+        <div class="versus-title">
+          {winnerHref
+            ? <a href={winnerHref}>{winnerTitle}</a>
+            : <span>{winnerTitle}</span>}
+        </div>
+        {hasRates && <div class="versus-rate">{rateWinner!.toFixed(2)}</div>}
+        {winnerRank && (
+          <div class="versus-rank">
+            <a href={dossierHref(winnerKey) ?? "/ranking/"}>#{winnerRank.rank}/{winnerRank.total}</a>
+          </div>
+        )}
+      </div>
+
+      <div class="versus-center">
+        <span class="vs-badge">VS</span>
+      </div>
+
+      <div class="versus-side loser">
+        <div class="versus-label">Challenger</div>
+        <div class="versus-title">
+          {loserHref
+            ? <a href={loserHref}>{loserTitle}</a>
+            : <span>{loserTitle}</span>}
+        </div>
+        {hasRates && <div class="versus-rate loser-rate">{rateLoser!.toFixed(2)}</div>}
+        {loserRank && (
+          <div class="versus-rank">
+            <a href={dossierHref(loserKey) ?? "/ranking/"}>#{loserRank.rank}/{loserRank.total}</a>
+          </div>
+        )}
+      </div>
+    </div>
+
+    {tensionPct !== null ? (
+      <div class="tension-bar" role="meter" aria-label={`Win rate split: ${tensionPct}% / ${100 - tensionPct}%`} aria-valuenow={tensionPct} aria-valuemin={0} aria-valuemax={100}>
+        <div class="tension-fill winner-fill" style={`width:${tensionPct}%`}></div>
+        <div class="tension-fill loser-fill" style={`width:${100 - tensionPct}%`}></div>
+      </div>
+    ) : (
+      <div class="tension-bar-absent" aria-label="Tension data not available">—</div>
+    )}
+  </section>
+
+  {duel.parsedContent?.verdict && (
+    <section class="content-section verdict-section">
+      <h2>Verdict</h2>
+      <div class="prose" set:html={marked.parse(duel.parsedContent.verdict)} />
+    </section>
+  )}
+
+  {(duel.parsedContent?.postAAnalysis || duel.parsedContent?.postBAnalysis) && (
+    <div class="analyses-grid">
+      {duel.parsedContent.postAAnalysis && (
+        <section class="content-section">
+          <h3>Analysis — {postAInfo?.title ?? duel.postAKey}</h3>
+          <div class="prose" set:html={marked.parse(duel.parsedContent.postAAnalysis)} />
+        </section>
+      )}
+      {duel.parsedContent.postBAnalysis && (
+        <section class="content-section">
+          <h3>Analysis — {postBInfo?.title ?? duel.postBKey}</h3>
+          <div class="prose" set:html={marked.parse(duel.parsedContent.postBAnalysis)} />
+        </section>
+      )}
+    </div>
+  )}
+
+  {(duel.evaluatorMood || duel.evaluatorMoodAfter) && (
+    <section class="content-section mood-section">
+      <h2>Evaluator State</h2>
+      {duel.evaluatorMood && (
+        <blockquote lang="pt">
+          <small>Before: </small>"{duel.evaluatorMood}"
+        </blockquote>
+      )}
+      {duel.evaluatorMoodAfter && (
+        <blockquote lang="pt">
+          <small>After: </small>"{duel.evaluatorMoodAfter}"
+        </blockquote>
+      )}
+    </section>
+  )}
+
+  <nav class="battle-nav" aria-label="Battle navigation">
+    {nextId ? (
+      <a href={`/ranking/battles/${nextId}/`} class="nav-btn prev-btn">← Newer battle</a>
+    ) : <span class="nav-btn nav-disabled">← Newest</span>}
+    {prevPage && (
+      <a href={`/ranking/battles/#page-${prevPage}`} class="nav-btn archive-btn">
+        Back to archive
+      </a>
+    )}
+    {prevId ? (
+      <a href={`/ranking/battles/${prevId}/`} class="nav-btn next-btn">Older battle →</a>
+    ) : <span class="nav-btn nav-disabled">Oldest →</span>}
+  </nav>
+</PageLayout>
+
+<style>
+  .breadcrumb ol {
+    list-style: none; padding: 0; margin: 0 0 1rem;
+    display: flex; flex-wrap: wrap; gap: 0;
+    font-size: 0.8rem; color: var(--pico-muted-color);
+  }
+  .breadcrumb li + li::before { content: " / "; padding: 0 0.35em; }
+  .breadcrumb a { color: var(--pico-muted-color); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  .battle-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
+  .tag {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 0.15rem 0.5rem; border-radius: 4px;
+    border: 1px solid var(--pico-muted-border-color); color: var(--pico-muted-color);
+  }
+  .tag-perspective {
+    background: hsl(var(--ph,200), 28%, 92%); color: hsl(var(--ph,200), 45%, 32%);
+    border-color: hsl(var(--ph,200), 38%, 72%);
+    text-transform: none; letter-spacing: 0;
+  }
+  [data-theme="dark"] .tag-perspective {
+    background: hsl(var(--ph,200),22%,18%); color: hsl(var(--ph,200),52%,70%);
+    border-color: hsl(var(--ph,200),32%,38%);
+  }
+  .tag-perspective a { color: inherit; text-decoration: none; }
+  .tag-perspective a:hover { text-decoration: underline; }
+  .tag-agent { font-family: var(--pico-font-family-monospace); text-transform: none; letter-spacing: 0; }
+  .tag-confidence.conf-high { color: #2d6a4f; border-color: #2d6a4f55; background: #2d6a4f12; }
+  [data-theme="dark"] .tag-confidence.conf-high { color: #74c69d; border-color: #74c69d55; }
+  .tag-confidence.conf-medium { color: #b08300; border-color: #b0830044; background: #b0830012; }
+  [data-theme="dark"] .tag-confidence.conf-medium { color: #f1c453; border-color: #f1c45355; }
+
+  .versus-section { margin: 2rem 0; }
+  .versus-grid {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    gap: 1rem; align-items: center;
+    padding: 1.5rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    background: var(--pico-card-background-color);
+  }
+  .versus-side { display: flex; flex-direction: column; gap: 0.4rem; }
+  .versus-side.winner { border-left: 3px solid var(--pico-primary); padding-left: 0.75rem; }
+  .versus-side.loser { text-align: right; border-right: 3px solid var(--pico-muted-border-color); padding-right: 0.75rem; }
+  .versus-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--pico-muted-color); }
+  .versus-title { font-size: 1.05rem; font-weight: 600; }
+  .versus-side.loser .versus-title { color: var(--pico-muted-color); }
+  .versus-title a { text-decoration: none; color: inherit; }
+  .versus-title a:hover { text-decoration: underline; }
+  .versus-rate { font-family: var(--pico-font-family-monospace); font-size: 1.4rem; font-weight: 700; color: var(--pico-primary); }
+  .versus-rate.loser-rate { color: var(--pico-muted-color); }
+  .versus-rank { font-size: 0.78rem; color: var(--pico-muted-color); }
+  .versus-rank a { color: inherit; text-decoration: none; }
+  .versus-rank a:hover { text-decoration: underline; }
+  .versus-center { display: flex; align-items: center; justify-content: center; }
+  .vs-badge {
+    font-size: 0.75rem; font-weight: 700; color: var(--pico-muted-color);
+    background: var(--pico-muted-border-color);
+    padding: 0.2rem 0.4rem; border-radius: 4px;
+  }
+  .tension-bar {
+    height: 6px; border-radius: 3px; overflow: hidden; display: flex;
+    margin-top: 0.75rem;
+  }
+  .tension-fill { height: 100%; }
+  .winner-fill { background: var(--pico-primary); opacity: 0.7; }
+  .loser-fill { background: var(--pico-muted-border-color); opacity: 0.5; }
+  .tension-bar-absent {
+    height: 6px; line-height: 6px;
+    font-size: 0.72rem; color: var(--pico-muted-color);
+    text-align: center; margin-top: 0.75rem;
+  }
+
+  @media (max-width: 580px) {
+    .versus-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+    .versus-side.winner { border-left: none; border-bottom: 2px solid var(--pico-primary); padding-left: 0; padding-bottom: 0.75rem; }
+    .versus-side.loser { text-align: left; border-right: none; border-top: 2px solid var(--pico-muted-border-color); padding-right: 0; padding-top: 0.75rem; }
+  }
+
+  .content-section { margin: 2rem 0; }
+  .content-section h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--pico-muted-color); margin-bottom: 0.5rem; }
+  .content-section h3 { font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--pico-muted-color); margin-bottom: 0.5rem; }
+  .verdict-section { border-left: 3px solid var(--pico-primary); padding-left: 1rem; }
+  .prose { font-size: 0.93rem; line-height: 1.6; }
+  .prose p:last-child { margin-bottom: 0; }
+
+  .analyses-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: 1.5rem; margin: 2rem 0;
+  }
+  .analyses-grid .content-section {
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    padding: 1rem; margin: 0;
+  }
+
+  .mood-section blockquote {
+    font-style: italic; color: var(--pico-muted-color);
+    border-left: 3px solid var(--pico-muted-border-color);
+    padding-left: 0.75rem; margin: 0.5rem 0;
+  }
+  .mood-section small { font-style: normal; }
+
+  .battle-nav {
+    display: flex; gap: 1rem; align-items: center; justify-content: space-between;
+    margin-top: 3rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--pico-muted-border-color);
+    flex-wrap: wrap;
+  }
+  .nav-btn {
+    padding: 0.4rem 0.9rem; font-size: 0.85rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    text-decoration: none; color: var(--pico-color);
+    background: var(--pico-card-background-color);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .nav-btn:hover { border-color: var(--pico-primary); background: var(--pico-card-sectioning-background-color); }
+  .nav-disabled { color: var(--pico-muted-color); border-color: transparent; background: transparent; cursor: default; }
+  .archive-btn { border-style: dashed; }
+</style>
