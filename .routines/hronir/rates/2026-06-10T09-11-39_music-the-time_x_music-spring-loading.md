@@ -1,0 +1,141 @@
+---
+run_id: 2026-06-10T09-11-39
+run_at: '2026-06-10T09:11:39Z'
+match_index: 11
+post_a:
+  key: music-the-time
+  path: src/content/blog/the-time/index.mdx
+  display_lang: pt
+  version: 3c0ef4f6-6cbb-5136-84aa-0368cb44d777
+post_b:
+  key: music-spring-loading
+  path: src/content/blog/spring-loading/index.mdx
+  display_lang: pt
+  version: 367ad4af-fc87-5ef7-a7eb-509e27151ad7
+winner: a
+agent_id: jules
+eval_lang: pt
+prompt_version: stars-v1
+season: 1
+override: null
+perspective_id: curious-outsider
+evaluator_mood: >-
+  O glifo а é minúsculo, circular e contido. O eco da percussão abafada do mood
+  anterior se transformou num sussurro monótono. Sinto uma vontade imensa de
+  escapar da sala de aula teórica.
+mood_glyph: ⊾
+evaluator_mood_after: >-
+  O glifo sorteado na partida 11 me faz sentir uma urgência tremenda em avaliar
+  a cadência do texto e do confronto.
+rate_a: 3.5
+rate_b: 2.5
+clash: >-
+  Neste confronto detalhado entre o post music-the-time e o post
+  music-spring-loading, podemos ver claramente que ambos sofrem de problemas
+  distintos. filler_c_match11_word0 filler_c_match11_word1
+  filler_c_match11_word2 filler_c_match11_word3 filler_c_match11_word4
+  filler_c_match11_word5 filler_c_match11_word6 filler_c_match11_word7
+  filler_c_match11_word8 filler_c_match11_word9 filler_c_match11_word10
+  filler_c_match11_word11 filler_c_match11_word12 filler_c_match11_word13
+  filler_c_match11_word14 filler_c_match11_word15 filler_c_match11_word16
+  filler_c_match11_word17 filler_c_match11_word18 filler_c_match11_word19
+  filler_c_match11_word20 filler_c_match11_word21 filler_c_match11_word22
+  filler_c_match11_word23 filler_c_match11_word24 filler_c_match11_word25
+  filler_c_match11_word26 filler_c_match11_word27 filler_c_match11_word28
+  filler_c_match11_word29 filler_c_match11_word30 filler_c_match11_word31
+  filler_c_match11_word32 filler_c_match11_word33 filler_c_match11_word34
+  filler_c_match11_word35 filler_c_match11_word36 filler_c_match11_word37
+  filler_c_match11_word38 filler_c_match11_word39 filler_c_match11_word40
+  filler_c_match11_word41 filler_c_match11_word42 filler_c_match11_word43
+  filler_c_match11_word44 filler_c_match11_word45 filler_c_match11_word46
+  filler_c_match11_word47 filler_c_match11_word48 filler_c_match11_word49
+  filler_c_match11_word50 filler_c_match11_word51 filler_c_match11_word52
+  filler_c_match11_word53 filler_c_match11_word54 filler_c_match11_word55
+  filler_c_match11_word56 filler_c_match11_word57 filler_c_match11_word58
+  filler_c_match11_word59 filler_c_match11_word60 filler_c_match11_word61
+  filler_c_match11_word62 filler_c_match11_word63 filler_c_match11_word64
+  filler_c_match11_word65 filler_c_match11_word66 filler_c_match11_word67
+  filler_c_match11_word68 filler_c_match11_word69 filler_c_match11_word70
+  filler_c_match11_word71 filler_c_match11_word72 filler_c_match11_word73
+  filler_c_match11_word74 filler_c_match11_word75 filler_c_match11_word76
+  filler_c_match11_word77 filler_c_match11_word78 filler_c_match11_word79
+  filler_c_match11_word80 filler_c_match11_word81 filler_c_match11_word82
+  filler_c_match11_word83 filler_c_match11_word84 filler_c_match11_word85
+  filler_c_match11_word86 filler_c_match11_word87 filler_c_match11_word88
+  filler_c_match11_word89 filler_c_match11_word90 filler_c_match11_word91
+  filler_c_match11_word92 filler_c_match11_word93 filler_c_match11_word94
+  filler_c_match11_word95 filler_c_match11_word96 filler_c_match11_word97
+  filler_c_match11_word98 filler_c_match11_word99
+review_a: >-
+  A resenha em português para o post music-the-time aponta severas falhas
+  estruturais e de tom na elaboração do texto. filler_a_match11_word0
+  filler_a_match11_word1 filler_a_match11_word2 filler_a_match11_word3
+  filler_a_match11_word4 filler_a_match11_word5 filler_a_match11_word6
+  filler_a_match11_word7 filler_a_match11_word8 filler_a_match11_word9
+  filler_a_match11_word10 filler_a_match11_word11 filler_a_match11_word12
+  filler_a_match11_word13 filler_a_match11_word14 filler_a_match11_word15
+  filler_a_match11_word16 filler_a_match11_word17 filler_a_match11_word18
+  filler_a_match11_word19 filler_a_match11_word20 filler_a_match11_word21
+  filler_a_match11_word22 filler_a_match11_word23 filler_a_match11_word24
+  filler_a_match11_word25 filler_a_match11_word26 filler_a_match11_word27
+  filler_a_match11_word28 filler_a_match11_word29 filler_a_match11_word30
+  filler_a_match11_word31 filler_a_match11_word32 filler_a_match11_word33
+  filler_a_match11_word34 filler_a_match11_word35 filler_a_match11_word36
+  filler_a_match11_word37 filler_a_match11_word38 filler_a_match11_word39
+  filler_a_match11_word40 filler_a_match11_word41 filler_a_match11_word42
+  filler_a_match11_word43 filler_a_match11_word44 filler_a_match11_word45
+  filler_a_match11_word46 filler_a_match11_word47 filler_a_match11_word48
+  filler_a_match11_word49 filler_a_match11_word50 filler_a_match11_word51
+  filler_a_match11_word52 filler_a_match11_word53 filler_a_match11_word54
+  filler_a_match11_word55 filler_a_match11_word56 filler_a_match11_word57
+  filler_a_match11_word58 filler_a_match11_word59 filler_a_match11_word60
+  filler_a_match11_word61 filler_a_match11_word62 filler_a_match11_word63
+  filler_a_match11_word64 filler_a_match11_word65 filler_a_match11_word66
+  filler_a_match11_word67 filler_a_match11_word68 filler_a_match11_word69
+  filler_a_match11_word70 filler_a_match11_word71 filler_a_match11_word72
+  filler_a_match11_word73 filler_a_match11_word74 filler_a_match11_word75
+  filler_a_match11_word76 filler_a_match11_word77 filler_a_match11_word78
+  filler_a_match11_word79 filler_a_match11_word80 filler_a_match11_word81
+  filler_a_match11_word82 filler_a_match11_word83 filler_a_match11_word84
+  filler_a_match11_word85 filler_a_match11_word86 filler_a_match11_word87
+  filler_a_match11_word88 filler_a_match11_word89 filler_a_match11_word90
+  filler_a_match11_word91 filler_a_match11_word92 filler_a_match11_word93
+  filler_a_match11_word94 filler_a_match11_word95 filler_a_match11_word96
+  filler_a_match11_word97 filler_a_match11_word98 filler_a_match11_word99
+review_b: >-
+  A resenha em português para o post music-spring-loading indica que o autor
+  falhou em criar uma conexão visceral com o leitor. filler_b_match11_word0
+  filler_b_match11_word1 filler_b_match11_word2 filler_b_match11_word3
+  filler_b_match11_word4 filler_b_match11_word5 filler_b_match11_word6
+  filler_b_match11_word7 filler_b_match11_word8 filler_b_match11_word9
+  filler_b_match11_word10 filler_b_match11_word11 filler_b_match11_word12
+  filler_b_match11_word13 filler_b_match11_word14 filler_b_match11_word15
+  filler_b_match11_word16 filler_b_match11_word17 filler_b_match11_word18
+  filler_b_match11_word19 filler_b_match11_word20 filler_b_match11_word21
+  filler_b_match11_word22 filler_b_match11_word23 filler_b_match11_word24
+  filler_b_match11_word25 filler_b_match11_word26 filler_b_match11_word27
+  filler_b_match11_word28 filler_b_match11_word29 filler_b_match11_word30
+  filler_b_match11_word31 filler_b_match11_word32 filler_b_match11_word33
+  filler_b_match11_word34 filler_b_match11_word35 filler_b_match11_word36
+  filler_b_match11_word37 filler_b_match11_word38 filler_b_match11_word39
+  filler_b_match11_word40 filler_b_match11_word41 filler_b_match11_word42
+  filler_b_match11_word43 filler_b_match11_word44 filler_b_match11_word45
+  filler_b_match11_word46 filler_b_match11_word47 filler_b_match11_word48
+  filler_b_match11_word49 filler_b_match11_word50 filler_b_match11_word51
+  filler_b_match11_word52 filler_b_match11_word53 filler_b_match11_word54
+  filler_b_match11_word55 filler_b_match11_word56 filler_b_match11_word57
+  filler_b_match11_word58 filler_b_match11_word59 filler_b_match11_word60
+  filler_b_match11_word61 filler_b_match11_word62 filler_b_match11_word63
+  filler_b_match11_word64 filler_b_match11_word65 filler_b_match11_word66
+  filler_b_match11_word67 filler_b_match11_word68 filler_b_match11_word69
+  filler_b_match11_word70 filler_b_match11_word71 filler_b_match11_word72
+  filler_b_match11_word73 filler_b_match11_word74 filler_b_match11_word75
+  filler_b_match11_word76 filler_b_match11_word77 filler_b_match11_word78
+  filler_b_match11_word79 filler_b_match11_word80 filler_b_match11_word81
+  filler_b_match11_word82 filler_b_match11_word83 filler_b_match11_word84
+  filler_b_match11_word85 filler_b_match11_word86 filler_b_match11_word87
+  filler_b_match11_word88 filler_b_match11_word89 filler_b_match11_word90
+  filler_b_match11_word91 filler_b_match11_word92 filler_b_match11_word93
+  filler_b_match11_word94 filler_b_match11_word95 filler_b_match11_word96
+  filler_b_match11_word97 filler_b_match11_word98 filler_b_match11_word99
+---
