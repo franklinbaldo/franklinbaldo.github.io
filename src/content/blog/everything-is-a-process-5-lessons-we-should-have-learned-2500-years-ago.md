@@ -27,6 +27,7 @@ previousVersion:
     framework describes as exactly another autoregressive reader. The 'you
     survive as contribution to the cascade' line is kept but stripped of its
     motivational framing. Ending stays open.
+replacedVersion: "26dcb3b5-9232-57df-bb89-fe4c87919736"
 ---
 
 Twenty-five centuries ago, four voices from opposite corners of the world converged on the same intuition.
