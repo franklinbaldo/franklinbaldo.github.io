@@ -15,16 +15,14 @@ draft: false
 author: franklin
 translationKey: delegating-to-agents
 previousVersion:
-  uuid: 09318476-1009-5abe-bf6a-86e789067dec
+  uuid: af592b0d-035b-5dbe-8ed5-d540b2fe3fa2
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/a1d9cabb963c9674fbeea140d68240830f231062/src/content/blog/the-art-of-delegation.md
-  timestamp: '2026-06-06T13:30:49.440Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/f112e51997b6dea94fbe5b3a71ad3c3e03fcb439/src/content/blog/the-art-of-delegation.md
+  timestamp: '2026-06-10T18:26:59.622Z'
   msg: >-
-    Broke opener from programmatic framing to direct scene; folded analogy-flaw
-    into sandbox section mid-argument instead of announcing it; removed Drake
-    meme; grounded outsider terms (parecer, ofício, CI/CD, corregedoria,
-    Causaganha, Funes) on first use; added Vaughan Challenger reference as
-    challenger to post's own thesis; 5 For Further Reading entries from 4
+    Improve worst post: Add missing thesis statement 'A responsabilidade não
+    compila' / 'Accountability does not compile' and a Mermaid diagram to
+    provide visual rest according to franklin-blog style rules.
 ---
 
 In February, I almost missed a forty-eight-hour window in a federal tax objection because I had begun treating the assessor's draft as the deliverable. The _parecer_ — the formal legal opinion that travels up the chain before anything gets signed — was good. The submission was not filed. I found out Tuesday afternoon when a calendar alert fired for a deadline I had mentally moved from my column to the assessor's column the moment the draft landed. It had not moved.
@@ -45,9 +43,19 @@ The solution is not to stand over Jules's shoulder while it writes. The solution
 
 The magic of delegation happens when you constrain the output space, not the process. You define the bounds of the sandbox — the schema, the invariants, the tests — and allow the agent to navigate the interior freely. If the tests pass, the proposal is valid. But the _apply_ step — the actual merging of the PR, the deployment to production — that remains a human signature. A CI pipeline that cannot be bypassed is a protocol office: a mandatory processing step between the draft and the act.
 
+```mermaid
+flowchart LR
+    A[Agent] -->|Draft| B(Sandbox)
+    B -->|Tests| C{Signature}
+    C -->|Approves| D[Production]
+    C -.->|Fails| E[Accountability]
+    style C stroke:var(--color-border),stroke-width:2px
+    style E fill:transparent,stroke:var(--color-text),stroke-width:1px,stroke-dasharray: 5 5
+```
+
 This is where the administrative law parallel flatters the software problem. In a _parecer_, the assessor's accountability is professional. Consistently bad legal advice leads to formal review — the _corregedoria_ (the internal oversight body), the professional council, eventually the career. There is a chain from the act to the person who drafted it, and that chain has teeth. The signature doesn't only separate draft from act: it separates whose career is on the line from whose was not.
 
-An AI agent has no career. It cannot be disciplined. The sandbox constrains what it can do, but the sandbox doesn't answer what happens when the sandbox fails. When an agent does something wrong inside the bounds of its access, accountability flows upward to the human who designed the harness — not sideways to the agent. That is not a property I built in; it is a property of agents without institutional standing.
+An AI agent has no career. It cannot be disciplined. The sandbox constrains what it can do, but the sandbox doesn't answer what happens when the sandbox fails. Accountability does not compile. It is not a technical property that can be verified by a linter; it is a continuous structural exposure. When an agent does something wrong inside the bounds of its access, accountability flows upward to the human who designed the harness — not sideways to the agent. That is not a property I built in; it is a property of agents without institutional standing, a principle of irreversible delegation.
 
 The sandbox is necessary. It is not sufficient for accountability. The signature step in software delegation is doing more work than the administrative parallel suggests: it is not just making the proposal-versus-act boundary explicit. It is also carrying all the professional weight that the agent structurally cannot carry.
 

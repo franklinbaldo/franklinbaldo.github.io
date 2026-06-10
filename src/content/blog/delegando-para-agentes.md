@@ -15,16 +15,14 @@ draft: false
 author: franklin
 translationKey: delegating-to-agents
 previousVersion:
-  uuid: 832c5d01-8c16-5d36-891c-0faf120df999
+  uuid: 56620869-a868-52f3-ac2f-f4720e160fdd
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/a1d9cabb963c9674fbeea140d68240830f231062/src/content/blog/delegando-para-agentes.md
-  timestamp: '2026-06-06T13:30:49.440Z'
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/f112e51997b6dea94fbe5b3a71ad3c3e03fcb439/src/content/blog/delegando-para-agentes.md
+  timestamp: '2026-06-10T18:26:59.622Z'
   msg: >-
-    Broke opener from programmatic framing to direct scene; folded analogy-flaw
-    into sandbox section mid-argument instead of announcing it; removed Drake
-    meme; grounded outsider terms (parecer, ofício, CI/CD, corregedoria,
-    Causaganha, Funes) on first use; added Vaughan Challenger reference as
-    challenger to post's own thesis; 5 For Further Reading entries from 4
+    Improve worst post: Add missing thesis statement 'A responsabilidade não
+    compila' / 'Accountability does not compile' and a Mermaid diagram to
+    provide visual rest according to franklin-blog style rules.
 ---
 
 Em fevereiro, quase perdi uma janela de quarenta e oito horas num processo de impugnação de auto de infração federal porque tinha começado a tratar a minuta do assessor como o produto final. O _parecer_ estava bom. A manifestação não foi protocolada. Fiquei sabendo na tarde de terça quando um lembrete de agenda disparou para um prazo que eu tinha mentalmente movido da minha coluna para a coluna do assessor no momento em que a minuta chegou. Ela não tinha se movido.
@@ -45,9 +43,19 @@ A solução não é ficar por cima do ombro de Jules enquanto escreve. A soluç�
 
 A mágica da delegação acontece quando você restringe o espaço de saída, não o processo. Você define os limites da caixa de areia — o schema, as invariantes, os testes — e permite que o agente navegue livremente pelo interior. Se os testes passam, a proposta é válida. Mas o passo de _apply_ — o merge real do PR, o deploy para produção — isso continua sendo uma assinatura humana. Um pipeline de CI que não pode ser bypassado é um protocolo: uma etapa de processamento obrigatória entre a minuta e o ato.
 
+```mermaid
+flowchart LR
+    A[Agente] -->|Minuta| B(Caixa de Areia)
+    B -->|Testes| C{Assinatura}
+    C -->|Aprova| D[Produção]
+    C -.->|Falha| E[Responsabilidade]
+    style C stroke:var(--color-border),stroke-width:2px
+    style E fill:transparent,stroke:var(--color-text),stroke-width:1px,stroke-dasharray: 5 5
+```
+
 É aqui que o paralelo com o direito administrativo lisonjeia o problema de software. Num _parecer_, a responsabilidade do assessor é profissional. Pareceres consistentemente ruins levam a revisão formal — a corregedoria, o conselho profissional, eventualmente a carreira. Existe uma cadeia do ato até a pessoa que o redigiu, e essa cadeia tem dentes. A assinatura não separa apenas minuta de ato: separa de quem é a carreira em jogo de quem não tinha nada a perder.
 
-Um agente de IA não tem carreira. Ele não pode ser responsabilizado. A caixa de areia restringe o que ele pode fazer, mas não responde o que acontece quando a caixa de areia falha. Quando um agente faz algo errado dentro dos limites do seu acesso, a responsabilidade sobe para o ser humano que projetou o _harness_ — não vai lateralmente para o agente. Isso não é uma propriedade que construí; é uma propriedade de agentes sem posição institucional.
+Um agente de IA não tem carreira. Ele não pode ser responsabilizado. A caixa de areia restringe o que ele pode fazer, mas não responde o que acontece quando a caixa de areia falha. A responsabilidade não compila. Ela não é uma propriedade técnica que pode ser verificada por um _linter_; é uma exposição estrutural contínua. Quando um agente faz algo errado dentro dos limites do seu acesso, a responsabilidade sobe para o ser humano que projetou o _harness_ — não vai lateralmente para o agente. Isso não é uma propriedade que construí; é uma propriedade de agentes sem posição institucional, um princípio de delegação irreversível.
 
 A caixa de areia é necessária. Ela não é suficiente para responsabilidade. O passo de assinatura em delegação de software está fazendo mais trabalho do que o paralelo administrativo sugere: não está apenas tornando explícita a fronteira proposta-versus-ato. Está também carregando todo o peso profissional que o agente estruturalmente não pode carregar.
 
