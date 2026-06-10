@@ -2,7 +2,7 @@
 
 |                 |                                                                                                                                                                                        |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Proposta (r0)                                                                                                                                                                          |
+| **Status**      | Proposta (r1)                                                                                                                                                                          |
 | **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                    |
 | **Criado em**   | 2026-06-10                                                                                                                                                                             |
 | **Branch / PR** | `claude/sweet-hypatia-1joz7o`                                                                                                                                                          |
@@ -168,6 +168,38 @@ exibição.
 
 ---
 
+## 3.1 Fluxo primário de leitura
+
+Mapeamento do caminho happy-path de um leitor que chega pela primeira vez e
+lê um duelo completo. Identifica dois becos que precisam de solução antes das
+Fases 1–4 irem a merge:
+
+```
+/ranking/
+  → tabela (vê post #1)
+  → clica no título → /blog/<slug>/                ← link bidirecional (Fase 4)
+  → clica em "ver dossiê" → /ranking/posts/<key>/
+    breadcrumb: Home / Ranking / Dossiê            ← Fase 1 (obrigatório)
+  → vê histórico, clica em duelo → /ranking/battles/<id>/
+    breadcrumb: Home / Ranking / Batalhas / <id>   ← Fase 1 (obrigatório)
+  → lê resenhas, clica "próximo duelo"             ← [FALTANDO]
+  → volta ao arquivo → /ranking/battles/1/         ← [FALTANDO]
+```
+
+Os dois marcadores **[FALTANDO]** são requisitos obrigatórios da Fase 1:
+
+- **Prev/next entre duelos**: botões "← duelo anterior" / "próximo duelo →" na
+  página de batalha individual, na ordem cronológica inversa do arquivo.
+  Implementado sem JS: cada página recebe `{prevId, nextId}` como props do
+  `getStaticPaths`.
+- **Link "voltar ao arquivo"**: link na página de batalha que retorna para a
+  página do arquivo onde o duelo está (ex.: duelo na página 3 do arquivo →
+  link para `/ranking/battles/3/`). Calculado no build.
+
+Sem esses dois elementos a Fase 1 cria mais becos do que resolve.
+
+---
+
 ## 4. Proposta por fases
 
 ### Fase 0 — Correções imediatas (bugs, sem mudança de design)
@@ -179,10 +211,18 @@ exibição.
    `getPerspectives()` vier vazio — o build quebra alto em vez de emitir
    silenciosamente zero páginas.
 2. **i18n da CTA (D6):** mover o texto do link para `RankingStrings.unratedCTALink`.
-3. **Barra de tensão honesta (D7):** sem rates, não renderizar a barra.
-4. **A11y básica (D8):** `aria-pressed` nos chips/pills, `aria-live="polite"`
-   no contador, `type="button"` nos botões de filtro.
-5. **Limpeza (D9):** remover `ratesLabel` morto.
+3. **Barra de tensão honesta (D7):** sem `rate_a`/`rate_b`, substituir a barra
+   por um traço visual neutro (`—`) com `aria-label="tensão não disponível"`,
+   mantendo o espaço alocado no layout do card.
+4. **A11y básica (D8):** padrões ARIA por grupo de filtro:
+   - Chips de seleção exclusiva (perspectiva, critério, confiança, season,
+     agente): `role="radiogroup"` no container + `role="radio"` em cada chip.
+     `aria-pressed` seria errado aqui — exclusividade é o padrão semântico
+     correto de `radiogroup`. Se algum grupo se tornar multi-select no futuro,
+     migrar para `aria-pressed` nesse grupo específico.
+   - `aria-live="polite"` no contador de resultados.
+   - `type="button"` em todos os botões de filtro.
+5. **Limpeza (D9):** remover `ratesLabel` morto de `RankingStrings`.
 
 **Critério de aceite:** `dist/ranking/perspectives/<id>/index.html` existe
 para as 12 perspectivas; curl em produção retorna 200 após deploy;
@@ -201,23 +241,44 @@ página só.
    página, mais recente primeiro), gerada no build via `getStaticPaths` —
    paginação real, por URL, sem JS obrigatório.
 3. **`/ranking/battles/<id>/`:** página por duelo com o conteúdo completo
-   (veredito, resenhas A/B, mood do avaliador — D9), usando identificador
-   estável derivado do rate file. Os cards nas listagens carregam só o
-   cabeçalho (data, tags, versus, rates) e linkam para a página do duelo —
-   o corpo sai do HTML das listagens, e `<details>` deixa de ser o container
-   do conteúdo pesado.
+   (veredito, resenhas A/B, mood do avaliador — D9). Os cards nas listagens
+   carregam só o cabeçalho (data, tags, versus, rates) e linkam para a
+   página do duelo — o corpo sai do HTML das listagens, e `<details>` deixa
+   de ser o container do conteúdo pesado.
 4. **Busca via Pagefind (substitui `data-search`):** as páginas de duelo
    entram no índice Pagefind que o site já usa (`pagefind --site dist` já
    roda no build). A caixa de busca de batalhas passa a consultar o índice —
    busca melhor (stemming, ranking) e elimina a duplicação de texto nos
    atributos.
+5. **Identificador público do duelo (Q1 — resolvido):** hash dos primeiros 8
+   caracteres do SHA-256 do conteúdo canônico do duelo (chave A + chave B +
+   `run_at` normalizado). Opaco, estável se a convenção de nomes dos rate
+   files mudar, suficientemente curto para URL legível.
+   Ex.: `/ranking/battles/a3f7c91b/`. A função de derivação fica em
+   `src/lib/hronir-rank.ts`, versionada. O nome do arquivo do rate file
+   **não** é usado como URL pública — exporia a convenção interna de
+   nomenclatura e quebraria se ela mudar.
+6. **Navegação (ver §3.1 — obrigatório antes de merge da Fase 1):**
+   - Breadcrumb em todas as páginas novas (Home / Ranking / …).
+   - Botões prev/next cronológicos na página de batalha individual.
+   - Link "voltar ao arquivo (pág N)" calculado no build.
+7. **Estados vazios:**
+   - Post com 0 duelos: **sem dossiê** — página não é emitida; link no
+     rodapé do post só aparece se ≥1 duelo existir.
+   - Post com 1 único duelo: dossiê emitido, sparkline substituída por texto
+     ("1 duelo — histórico insuficiente para trajetória").
+   - Perspectiva sem duelos: card no grid exibe "sem duelos ainda" em vez de
+     líder; link para a página de perspectiva mantido.
+   - Duelo sem corpo (rate file sem body): exibir cabeçalho + nota "resenhas
+     não disponíveis para este duelo".
 
 Os filtros estruturados (season, agente, perspectiva, confiança, critério)
 continuam client-side, mas operando sobre os cabeçalhos leves da página
 corrente do arquivo.
 
 **Critério de aceite:** `dist/ranking/index.html` ≤ 300 KB; soma de páginas
-do arquivo cobre 100% dos duelos válidos; cada duelo tem URL própria estável;
+do arquivo cobre 100% dos duelos válidos; cada duelo tem URL própria com hash
+de 8 chars; breadcrumb + prev/next presentes em todas as páginas de batalha;
 busca encontra texto que hoje só existe no corpo das resenhas.
 
 ### Fase 2 — Estado na URL
@@ -225,8 +286,8 @@ busca encontra texto que hoje só existe no corpo das resenhas.
 1. Filtros e página refletidos em query params
    (`?q=…&season=2&perspective=curious-outsider`), aplicados na carga e
    atualizados via `history.replaceState`.
-2. Anchors nos cards (`id` = identificador do duelo) para deep-link dentro
-   de uma página do arquivo.
+2. Anchors nos cards (`id` = hash do duelo) para deep-link dentro de uma
+   página do arquivo.
 
 **Critério de aceite:** colar uma URL filtrada reproduz exatamente a visão;
 back/forward não perde estado; sem JS, as URLs continuam resolvendo (filtros
@@ -239,41 +300,64 @@ são progressive enhancement).
    estimada e incerteza") + `<details>` "como funciona o ranking" com a
    explicação completa de μ/σ/ordinal — substitui os tooltips `abbr@title`
    como canal principal (D4).
-2. **Tabela com modos:** por padrão, colunas Post / ★ posição / vitórias
-   (win rate visível, D4) / confiança; μ, σ e ordinal ficam atrás de um
-   toggle "detalhes técnicos" (persistido em `localStorage`). Top-3 também
-   listado na tabela, com destaque.
+2. **Tabela com modos:** por padrão, colunas Post / # posição / win rate /
+   confiança / Δ; μ, σ e ordinal ficam atrás de um toggle. Spec do toggle:
+   - **Affordance**: botão pequeno "⚙ detalhes técnicos" na legenda da tabela
+     (`<caption>`), alinhado à direita; texto muda para "ocultar detalhes"
+     quando ativo.
+   - **Linkabilidade**: estado refletido em query param `?view=technical` —
+     não em `localStorage`, para que URLs compartilhadas preservem o contexto
+     do remetente. `localStorage` seria contraditório com o objetivo de D3.
+   - **Top-3 na tabela**: linhas 1–3 recebem fundo tênue (paleta ouro/prata/
+     bronze do pódio) e `aria-label="1º lugar"` etc. O pódio de cards
+     permanece acima como destaque visual; a tabela começa no #1 sem
+     repetição de conteúdo — os dois componentes coexistem em alturas
+     diferentes da página.
+   - **Mobile** (< 640 px): colunas win rate e confiança visíveis; Δ e
+     posição numérica colapsam num badge sobreposto ao nome do post.
+     Toggle de detalhes técnicos mantido, oculta os mesmos campos que em
+     desktop (μ, σ, ordinal).
 3. **Movimento (Δ):** persistir snapshot do ranking por build em
-   `src/generated/ranking-snapshot.json` (schema versionado + validação no
-   `hronir:doctor`, conforme o padrão de dados persistidos do `CLAUDE.md`) e
-   exibir ▲/▼/— por linha comparando com o snapshot anterior.
+   `src/generated/ranking-snapshot.json` (schema versionado com campo `basis`
+   `"build" | "season"`, validação no `hronir:doctor`). Exibir ▲/▼/— por
+   linha comparando com o snapshot anterior.
 4. **Seção de perspectivas:** grid de cards (nome, resumo de uma linha,
    líder atual) linkando para `/ranking/perspectives/<id>/` — resolve a
    descobribilidade de D2. Os chips de filtro continuam com papel separado.
+   - **Mobile**: 1 coluna em < 480 px, 2 colunas em 480–768 px, 3+ em
+     desktop. Altura mínima de 5rem por card para affordance de toque.
 
 **Critério de aceite:** nenhum jargão estatístico visível sem interação;
-win rate legível na tabela; perspectivas alcançáveis em 1 clique da
-`/ranking/`.
+win rate e Δ legíveis na tabela; perspectivas alcançáveis em 1 clique da
+`/ranking/`; URL com `?view=technical` reproduz modo técnico ao ser colada.
 
 ### Fase 4 — Dossiê por post e ligação bidirecional
 
 1. **`/ranking/posts/<key>/`:** página por post ranqueado com posição atual
    (global e por perspectiva), histórico de duelos com links para as páginas
    de batalha, e trajetória do ordinal como sparkline SVG gerado no build
-   (sem JS).
-2. **Link no post:** rodapé dos posts ranqueados ganha uma linha discreta
-   ("**#12** no ranking Hrönir · 7 duelos · ver dossiê") — fecha o ciclo
-   leitor → post → ranking → resenhas (D5).
-3. A coluna Post da tabela linka título → post e um ícone/posição → dossiê.
+   (sem JS). Thresholds:
+   - 0 duelos: página não emitida (ver estados vazios em Fase 1).
+   - 1 duelo: dossiê emitido, sparkline substituída por texto.
+   - ≥2 duelos: sparkline SVG com dimensões mínimas de 120 × 32 px (legível
+     em mobile); pontos com `aria-label` contendo valor e data.
+2. **Link no post:** rodapé dos posts ranqueados (com ≥1 duelo) ganha linha
+   discreta ("**#12** no ranking Hrönir · 7 duelos · ver dossiê") — fecha o
+   ciclo leitor → post → ranking → resenhas (D5).
+3. A coluna Post da tabela linka título → post e ícone/posição → dossiê.
 
 **Critério de aceite:** todo post com ≥1 duelo tem dossiê; post linka dossiê
-e vice-versa; sparkline renderiza sem JS.
+e vice-versa; sparkline renderiza sem JS; link no rodapé do post ausente se
+0 duelos.
 
 ### Fase 5 — Narrativa (opcional, pode ser cortada)
 
 1. Exibir `evaluatorMood` → `evaluatorMoodAfter` na página do duelo como
-   citação curta ("estado do avaliador antes/depois") — é o material mais
-   idiossincrático do sistema e hoje é invisível (D9).
+   citação curta ("estado do avaliador"). **Nota de idioma:** `--after-mood`
+   é sempre escrito em PT (restrição do `CLAUDE.md`). Exibir com atributo
+   `lang="pt"` explícito na marcação e prefixo de idioma visível nas páginas
+   EN ("Evaluator state (PT):") — mistura declarada é melhor que mistura
+   oculta.
 2. Ordenação client-side da tabela por coluna (vitórias, duelos, Δ) como
    progressive enhancement sem dependências.
 
@@ -287,10 +371,10 @@ e vice-versa; sparkline renderiza sem JS.
 | `src/pages/ranking/perspectives/[id].astro`    | Fase 0 — guarda contra `getStaticPaths` vazio; Fase 3 — versão PT (questão aberta) |
 | `src/components/RankingView.astro`             | Fases 0–3 — emagrece: perde corpo dos duelos e `data-search`                       |
 | `src/pages/ranking.astro` / `pt/ranking.astro` | Fases 1–3 — novas strings, menos dados passados                                    |
-| `src/pages/ranking/battles/…` (novo)           | Fase 1 — listagem paginada + página por duelo                                      |
+| `src/pages/ranking/battles/…` (novo)           | Fase 1 — listagem paginada + página por duelo + breadcrumb + prev/next             |
 | `src/pages/ranking/posts/…` (novo)             | Fase 4 — dossiê por post                                                           |
-| `src/lib/hronir-rank.ts`                       | Fases 1/3/4 — id estável de duelo, snapshot Δ, trajetória por post                 |
-| `src/generated/ranking-snapshot.json` (novo)   | Fase 3 — schema versionado + validação no doctor                                   |
+| `src/lib/hronir-rank.ts`                       | Fases 1/3/4 — função de hash de 8 chars, snapshot Δ, trajetória por post           |
+| `src/generated/ranking-snapshot.json` (novo)   | Fase 3 — schema versionado (`basis` field) + validação no doctor                   |
 | `scripts/hronir/`                              | Sem mudança no CLI/engine                                                          |
 | `.routines/hronir/rates/*`                     | Sem mudança de schema                                                              |
 | Pagefind                                       | Fase 1 — páginas de duelo entram no índice existente                               |
@@ -319,34 +403,46 @@ e vice-versa; sparkline renderiza sem JS.
   acopla a UI ao motor. O snapshot por build é mais simples e auditável.
   Escolhido snapshot; replay fica como fallback se o snapshot se provar
   ruidoso.
+- **ID de duelo = nome do rate file (sem extensão).** Estável, legível —
+  mas expõe a convenção interna de nomenclatura (`YYYY-MM-DD…`) e quebraria
+  se ela mudar. Rejeitado em favor do hash de 8 chars.
+- **Toggle de tabela persistido em `localStorage`** em vez de query param.
+  Não é compartilhável: usuário A no modo técnico envia URL para usuário B
+  que vê modo simples — contradiz o objetivo de D3. Rejeitado.
 
 ---
 
 ## 7. Questões em aberto
 
-1. **Identificador público do duelo:** derivar do nome do rate file (estável,
-   mas expõe o timestamp/convention interna) ou de um hash curto do conteúdo?
-   Proposta r0: nome do arquivo sem extensão — já é estável e legível.
-2. **Versão PT das páginas de perspectiva e de duelo:** o conteúdo dos duelos
-   é misto (resenha na língua do post avaliado). r0 propõe páginas únicas
-   (sem par PT/EN) com `lang` do chrome herdado da seção — confirmar se isso
-   convive bem com o padrão hreflang do sitemap.
-3. **Granularidade do snapshot de Δ:** por build pode gerar ▲▼ ruidoso quando
-   várias sessões mergeiam no mesmo dia. Alternativa: snapshot por season.
-   Decidir na Fase 3 com dados reais.
+1. ~~**Identificador público do duelo**~~ — **resolvido na r1**: hash dos
+   primeiros 8 chars do SHA-256 do conteúdo canônico (ver Fase 1, item 5).
+2. **Versão PT das páginas de perspectiva e de duelo:** r1 propõe páginas
+   únicas (sem par PT/EN) com `lang` do chrome herdado da seção — confirmar
+   se convive com o padrão hreflang do sitemap antes de Fase 1.
+3. **Granularidade do snapshot de Δ:** snapshot por build pode gerar ▲▼
+   ruidoso quando várias sessões mergeiam no mesmo dia. Alternativa: snapshot
+   por season. O schema reserva o campo `basis: "build" | "season"` para
+   suportar ambos; decidir na Fase 3 com dados reais.
 4. **Onde mora a CTA de "sugerir duelo"** depois da Fase 1 — na `/ranking/`,
-   no arquivo de batalhas, ou em ambos.
+   no arquivo de batalhas, ou em ambos. Decidir na Fase 1.
+5. **Pagefind e idioma misto:** páginas de duelo têm conteúdo misto (resenha
+   na língua do post avaliado). Avaliar se isso causa ruído nos resultados de
+   busca PT — pode requerer `data-pagefind-filter="language:en"` nas páginas
+   de duelo.
 
 ---
 
 ## 8. Plano de execução da PR
 
-1. **Commit 1 (este):** RFC 0007.
-2. Após merge: Fase 0 em PR própria (pequena, só bugs — pode sair antes das
+1. **Commit 1 (RFC r0):** versão inicial.
+2. **Commit 2 (RFC r1, este):** incorpora review do Franklin — resolve ID
+   de URL, navegação entre duelos, estados vazios, ARIA patterns, toggle
+   de tabela, mobile constraints, mood/idioma.
+3. Após merge: Fase 0 em PR própria (pequena, só bugs — pode sair antes das
    demais). Fases 1–4 em PRs separadas, cada uma verde
    (`build` + `astro check` + `prettier` + `hronir:doctor`) antes da próxima.
-3. Fase 5 só se as anteriores não revelarem custo inesperado.
-4. Merge sempre com **merge commit**, conforme `CLAUDE.md`.
+4. Fase 5 só se as anteriores não revelarem custo inesperado.
+5. Merge sempre com **merge commit**, conforme `CLAUDE.md`.
 
 ---
 
@@ -357,3 +453,12 @@ e vice-versa; sparkline renderiza sem JS.
   `import.meta.url` vs cwd). Decisões: arquivo de batalhas como rotas
   estáticas paginadas + página por duelo; busca via Pagefind; jargão atrás
   de progressive disclosure; snapshot versionado para Δ.
+- **r1** (2026-06-10): revisão após review do Franklin (PR #326). Resoluções:
+  URL ID = hash de 8 chars SHA-256 (Q1 fechado); ARIA pattern corrigido para
+  `radiogroup`/`radio` em grupos de seleção exclusiva; toggle de tabela
+  refletido em `?view=technical` em vez de `localStorage`; prev/next +
+  breadcrumb adicionados como requisito obrigatório da Fase 1 (§3.1); estados
+  vazios definidos por componente (sparkline ≥2 duelos, dossiê ≥1 duelo);
+  barra de tensão ausente → traço neutro com `aria-label`; constraints mobile
+  adicionadas à Fase 3 (tabela, grid de perspectivas) e Fase 4 (sparkline);
+  mood em páginas EN com `lang="pt"` explícito e prefixo de atribuição.
