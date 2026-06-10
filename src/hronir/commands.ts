@@ -206,8 +206,8 @@ function latestMatchTimeByKey(): Map<string, number> {
 function utcStamp() {
   const iso = new Date().toISOString();
   return {
-    runId: iso.replace(/[:.]/g, "-").replace(/-\d+Z$/, ""),
-    runAt: iso.replace(/\.\d+Z$/, "Z"),
+    runId: iso.replace(/[:.]/g, "-").replace(/Z$/, ""),
+    runAt: iso,
   };
 }
 
