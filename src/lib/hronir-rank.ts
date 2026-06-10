@@ -5,13 +5,9 @@
 import {
   computeRatings,
   computePerPerspectiveRatings,
-} from "../../scripts/hronir/lib/ranking.js";
-import {
-  listMatchFiles,
-  readMatch,
-  postKey,
-} from "../../scripts/hronir/lib/matches.js";
-import { listPerspectives } from "../../scripts/hronir/lib/perspectives.js";
+} from "../hronir/ranking.js";
+import { listMatchFiles, readMatch, postKey } from "../hronir/matches.js";
+import { listPerspectives } from "../hronir/perspectives.js";
 import type {
   RankRow,
   DuelContent,
