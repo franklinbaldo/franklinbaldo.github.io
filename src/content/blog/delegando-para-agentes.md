@@ -18,10 +18,8 @@ previousVersion:
   uuid: 56620869-a868-52f3-ac2f-f4720e160fdd
   url: >-
     https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4d6c9b2a2b5711080406dfc7e9886ca65287595f/src/content/blog/delegando-para-agentes.md
-  timestamp: '2026-06-10T12:18:47.226Z'
-  msg: >-
-    Improve the worst evaluated post by tightening sentences and removing
-    wordiness around accountability
+  timestamp: '2026-06-10T12:17:35.978Z'
+  msg: Improve worst post with institutional critique via franklin-essay skill
 ---
 
 Em fevereiro, quase perdi uma janela de quarenta e oito horas num processo de impugnação de auto de infração federal porque tinha começado a tratar a minuta do assessor como o produto final. O _parecer_ estava bom. A manifestação não foi protocolada. Fiquei sabendo na tarde de terça quando um lembrete de agenda disparou para um prazo que eu tinha mentalmente movido da minha coluna para a coluna do assessor no momento em que a minuta chegou. Ela não tinha se movido.
@@ -36,9 +34,9 @@ A engenharia de software não reconhece nativamente essa distinção porque o ci
 
 ## Os limites da caixa de areia
 
-A ansiedade em relação a agentes de IA é real e não tem nada a ver com capacidade. Quando entrego a Jules uma tarefa de refatoração, não estou preocupado que Jules escolha o padrão de design errado. Estou preocupado que Jules tem permissão de escrita.
+A ansiedade em relação a agentes de IA é real e não tem nada a ver com capacidade. Quando entrego a Jules uma tarefa de refatoração, não estou preocupado que Jules escolha o padrão de design errado. Estou preocupado que Jules tem permissão de escrita. A capacidade escala; a responsabilidade não.
 
-A solução não é ficar por cima do ombro de Jules enquanto escreve. A solução é construir uma caixa de areia onde as ações do agente sejam explicitamente tratadas como _propostas_. O pipeline de CI/CD — a sequência automatizada de compilações, testes e verificações que precisam passar antes de qualquer código ir para produção — as suítes de teste, as regras estritas de linting: esses não são apenas mecanismos de garantia de qualidade. São o equivalente à regra institucional que diz que um assessor pode redigir um _parecer_, mas não pode assinar o _ofício_ final.
+A solução não é ficar por cima do ombro de Jules enquanto escreve. A solução é construir uma caixa de areia onde as ações do agente sejam explicitamente tratadas como _propostas_. Mas precisamos ser cuidadosos aqui: tratar uma ação como proposta é uma escolha arquitetural, não comportamental. Um sistema onde um agente pode commitar código mas é educadamente instruído a não fazer o merge é um sistema implorando para ser violado. A restrição deve ser estrutural. O pipeline de CI/CD — a sequência automatizada de compilações, testes e verificações que precisam passar antes de qualquer código ir para produção — as suítes de teste, as regras estritas de linting: esses não são apenas mecanismos de garantia de qualidade. São o equivalente à regra institucional que diz que um assessor pode redigir um _parecer_, mas não pode assinar o _ofício_ final.
 
 A mágica da delegação acontece quando você restringe o espaço de saída, não o processo. Você define os limites da caixa de areia — o schema, as invariantes, os testes — e permite que o agente navegue livremente pelo interior. Se os testes passam, a proposta é válida. Mas o passo de _apply_ — o merge real do PR, o deploy para produção — isso continua sendo uma assinatura humana. Um pipeline de CI que não pode ser bypassado é um protocolo: uma etapa de processamento obrigatória entre a minuta e o ato.
 
@@ -46,11 +44,11 @@ A mágica da delegação acontece quando você restringe o espaço de saída, n�
 
 Um agente de IA não tem carreira. Ele não pode ser responsabilizado. A caixa de areia restringe o que ele pode fazer, mas não responde o que acontece quando a caixa de areia falha. Quando um agente faz algo errado dentro dos limites do seu acesso, a responsabilidade sobe para o ser humano que projetou o _harness_ — não vai lateralmente para o agente. Isso não é uma propriedade que construí; é uma propriedade de agentes sem posição institucional.
 
-A caixa de areia é necessária, mas não produz responsabilidade. O passo de assinatura na delegação de software faz mais do que o paralelo administrativo sugere: não apenas explicita a fronteira entre proposta e ato, mas também suporta o peso profissional que o agente é estruturalmente incapaz de carregar.
+A caixa de areia é necessária. Ela não é suficiente para responsabilidade. O passo de assinatura em delegação de software está fazendo mais trabalho do que o paralelo administrativo sugere: não está apenas tornando explícita a fronteira proposta-versus-ato. Está também carregando todo o peso profissional que o agente estruturalmente não pode carregar.
 
-Isso ficou nítido quando percebi que a frase "o assessor é bom" carrega um peso moral que "o Jules é bom" não pode ter. Uma descreve a capacidade atrelada à responsabilidade; a outra, apenas a capacidade de execução.
+Não enxerguei isso claramente até estar escrevendo a analogia e perceber que a frase "o assessor é bom" soava razoável de um jeito que "o Jules é bom" não soa, e não pode soar, com o mesmo significado. Ambas as frases descrevem capacidade. Só uma descreve uma pessoa que pode ser responsável por algo.
 
-Por muito tempo vi a assinatura como formalidade. E ela é. Mas é também o mecanismo que define que o erro de fevereiro foi inteiramente meu, e não do Jules.
+A assinatura nunca foi apenas um ritual formal. É a fronteira arquitetural onde a capacidade técnica termina e o risco institucional começa. O erro de fevereiro foi presumir que a fronteira poderia ser automatizada. Não pode. A automação acelera a fase de minuta; ela não pode absorver a responsabilidade da fase do ato. Uma assinatura é um mecanismo de alocação de responsabilidade.
 
 ## O harness como desenho constitucional
 
@@ -58,9 +56,9 @@ Por muito tempo vi a assinatura como formalidade. E ela é. Mas é também o mec
 
 O Funes abre pull requests; ele não faz merge. Ele atualiza arquivos de memória; ele não envia e-mails por conta própria. Quando pedi que ele redigisse uma resposta a uma consulta externa sobre o [Causaganha](https://github.com/franklinbaldo/causaganha), meu projeto open-source para parsear decisões dos diários oficiais brasileiros, ele escreveu a minuta e criou um PR contendo-a. Ele não enviou a mensagem. Não porque uma regra dissesse _não envie mensagens sem permissão_. Porque o _harness_ simplesmente não tinha fiação para mensagens externas de saída — a caixa de areia tornava a etapa de assinatura estruturalmente obrigatória, não comportamentalmente reforçada.
 
-_Reversível → age, irreversível → pergunta._ Isso não é apenas uma heurística de segurança; é uma decisão sobre onde a responsabilidade se concentra. Cada ação que o agente toma livremente é uma ação cuja responsabilidade foi pré-delegada por quem projetou o _harness_. Cada ação que exige assinatura é uma ação cuja responsabilidade permanece explicitamente com o ser humano que assina.
+_Reversível → age, irreversível → pergunta._ Isso não é apenas uma heurística de segurança; é uma decisão sobre onde a responsabilidade se concentra. Cada ação que o agente toma livremente é uma ação cuja responsabilidade foi pré-delegada por quem projetou o _harness_. Cada ação que exige assinatura é uma ação cuja responsabilidade permanece explicitamente com o ser humano que assina. O harness é a constituição que distribui essa responsabilidade.
 
-O _parecer_ estava bom. Essa frase é sobre o assessor. A manifestação não foi protocolada. Essa frase é sobre mim.
+O _parecer_ estava bom. Isso descreve a capacidade do agente. A manifestação não foi protocolada. Isso descreve a minha falha na fronteira.
 
 ## Para se aprofundar
 
