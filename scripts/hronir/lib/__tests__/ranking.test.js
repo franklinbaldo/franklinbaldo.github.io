@@ -31,7 +31,6 @@ const {
 function match(overrides) {
   return {
     runAt: "2024-01-01T00:00:00Z",
-    matchIndex: 1,
     filename: "match.md",
     aKey: "post-a",
     bKey: "post-b",
@@ -54,28 +53,24 @@ describe("_computeRatings", () => {
     const raw = [
       match({
         runAt: "2024-01-01T00:00:00Z",
-        matchIndex: 1,
         aKey: "post-a",
         bKey: "post-b",
         winner: "a",
       }),
       match({
         runAt: "2024-01-01T00:00:01Z",
-        matchIndex: 2,
         aKey: "post-a",
         bKey: "post-b",
         winner: "a",
       }),
       match({
         runAt: "2024-01-01T00:00:02Z",
-        matchIndex: 3,
         aKey: "post-b",
         bKey: "post-c",
         winner: "a",
       }),
       match({
         runAt: "2024-01-01T00:00:03Z",
-        matchIndex: 4,
         aKey: "post-b",
         bKey: "post-c",
         winner: "a",
@@ -106,7 +101,6 @@ describe("_computeRatings", () => {
       // But we can verify: pass two valid matches and check only those keys appear.
       match({
         runAt: "2024-01-02T00:00:00Z",
-        matchIndex: 1,
         aKey: "post-x",
         bKey: "post-y",
         winner: "a",
@@ -128,14 +122,12 @@ describe("_computeRatings", () => {
     const raw = [
       match({
         runAt: "2024-01-03T00:00:00Z",
-        matchIndex: 1,
         aKey: "post-x",
         bKey: "post-y",
         winner: "a", // already resolved from override
       }),
       match({
         runAt: "2024-01-03T00:00:01Z",
-        matchIndex: 2,
         aKey: "post-x",
         bKey: "post-y",
         winner: "a",
@@ -148,45 +140,12 @@ describe("_computeRatings", () => {
     assert.ok(ox > oy, "overridden winner post-x should rank above post-y");
   });
 
-  // Test 4: Sort determinism — two matches same runAt, different matchIndex → lower matchIndex first
-  it("sort determinism: same runAt, different matchIndex → lower matchIndex processed first", () => {
-    // With same runAt, matchIndex=1 should be processed before matchIndex=2.
-    // We can verify ordering is consistent by checking wins count.
-    const raw = [
-      match({
-        runAt: "2024-01-04T00:00:00Z",
-        matchIndex: 2,
-        filename: "b.md",
-        aKey: "post-p",
-        bKey: "post-q",
-        winner: "a",
-      }),
-      match({
-        runAt: "2024-01-04T00:00:00Z",
-        matchIndex: 1,
-        filename: "a.md",
-        aKey: "post-p",
-        bKey: "post-q",
-        winner: "b",
-      }),
-    ];
-
-    // When matchIndex=1 is processed first: post-q wins first, then post-p wins.
-    // End result: post-p and post-q each have 1 win.
-    const result = _computeRatings(raw);
-    const p = result.find((r) => r.key === "post-p");
-    const q = result.find((r) => r.key === "post-q");
-    assert.equal(p?.wins, 1, "post-p should have 1 win");
-    assert.equal(q?.wins, 1, "post-q should have 1 win");
-  });
-
   // Test 5: Determinism — same input → same output on repeat call
   it("determinism: same input produces identical output on repeated calls", () => {
     const raw = [
-      match({ runAt: "2024-01-05T00:00:00Z", matchIndex: 1, winner: "a" }),
+      match({ runAt: "2024-01-05T00:00:00Z", winner: "a" }),
       match({
         runAt: "2024-01-05T00:00:01Z",
-        matchIndex: 2,
         aKey: "post-b",
         bKey: "post-c",
         winner: "a",
@@ -213,7 +172,6 @@ describe("_computeRatings", () => {
     const blowoutRaw = [
       match({
         runAt: "2024-01-09T00:00:00Z",
-        matchIndex: 1,
         aKey: "winner-blow",
         bKey: "loser-blow",
         winner: "a",
@@ -226,7 +184,6 @@ describe("_computeRatings", () => {
     const photoRaw = [
       match({
         runAt: "2024-01-09T00:00:01Z",
-        matchIndex: 1,
         aKey: "winner-photo",
         bKey: "loser-photo",
         winner: "a",
@@ -261,7 +218,6 @@ describe("_computeAbsoluteQuality", () => {
     const raw = [
       match({
         runAt: "2024-02-01T00:00:00Z",
-        matchIndex: 1,
         aKey: "post-ewma",
         bKey: "post-other",
         winner: "a",
@@ -281,7 +237,6 @@ describe("_computeAbsoluteQuality", () => {
     const raw = [
       match({
         runAt: "2024-02-02T00:00:00Z",
-        matchIndex: 1,
         aKey: "post-ewma2",
         bKey: "post-other2",
         winner: "a",
@@ -290,7 +245,6 @@ describe("_computeAbsoluteQuality", () => {
       }),
       match({
         runAt: "2024-02-02T00:00:01Z",
-        matchIndex: 2,
         aKey: "post-ewma2",
         bKey: "post-other3",
         winner: "a",
@@ -319,7 +273,6 @@ describe("_computeAbsoluteQuality", () => {
     const raw = [
       match({
         runAt: "2024-02-03T00:00:00Z",
-        matchIndex: 1,
         aKey: "post-no-rate-a",
         bKey: "post-no-rate-b",
         winner: "a",
@@ -351,7 +304,6 @@ describe("_computeAbsoluteQuality", () => {
     const raw = [
       match({
         runAt: "2024-02-04T00:00:00Z",
-        matchIndex: 1,
         aKey: "post-raw",
         bKey: "post-rawother",
         winner: "a",
@@ -360,7 +312,6 @@ describe("_computeAbsoluteQuality", () => {
       }),
       match({
         runAt: "2024-02-04T00:00:01Z",
-        matchIndex: 2,
         aKey: "post-raw",
         bKey: "post-rawother2",
         winner: "a",
@@ -387,7 +338,6 @@ describe("_computeAbsoluteQuality", () => {
     const raw = [
       match({
         runAt: "2024-03-01T00:00:00Z",
-        matchIndex: 1,
         aKey: "post-edited",
         aPath: "src/content/blog/post-edited.md",
         bKey: "post-other",
@@ -399,7 +349,6 @@ describe("_computeAbsoluteQuality", () => {
       // Same post, SAME path, different version (real edit) → EWMA resets
       match({
         runAt: "2024-03-01T00:00:01Z",
-        matchIndex: 2,
         aKey: "post-edited",
         aPath: "src/content/blog/post-edited.md",
         bKey: "post-other2",
@@ -427,7 +376,6 @@ describe("_computeAbsoluteQuality", () => {
     const raw = [
       match({
         runAt: "2024-03-02T00:00:00Z",
-        matchIndex: 1,
         aKey: "post-stable",
         bKey: "post-other",
         winner: "a",
@@ -437,7 +385,6 @@ describe("_computeAbsoluteQuality", () => {
       }),
       match({
         runAt: "2024-03-02T00:00:01Z",
-        matchIndex: 2,
         aKey: "post-stable",
         bKey: "post-other2",
         winner: "a",
@@ -466,7 +413,6 @@ describe("_computeAbsoluteQuality", () => {
     const raw = [
       match({
         runAt: "2024-03-03T00:00:00Z",
-        matchIndex: 1,
         aKey: "multiling",
         aPath: EN,
         aVersion: "en-hash",
@@ -479,7 +425,6 @@ describe("_computeAbsoluteQuality", () => {
       // version, but NOT an edit. Must not reset.
       match({
         runAt: "2024-03-03T00:00:01Z",
-        matchIndex: 2,
         aKey: "multiling",
         aPath: PT,
         aVersion: "pt-hash",
@@ -491,7 +436,6 @@ describe("_computeAbsoluteQuality", () => {
       // Back to EN, same EN version as before — still no edit.
       match({
         runAt: "2024-03-03T00:00:02Z",
-        matchIndex: 3,
         aKey: "multiling",
         aPath: EN,
         aVersion: "en-hash",
@@ -561,7 +505,6 @@ describe("_computeDeconfoundedQuality", () => {
     const raw = [
       match({
         runAt: "2024-04-01T00:00:00Z",
-        matchIndex: 1,
         agentId: G,
         aKey: "X",
         aPath: "x.md",
@@ -572,7 +515,6 @@ describe("_computeDeconfoundedQuality", () => {
       }),
       match({
         runAt: "2024-04-01T00:00:01Z",
-        matchIndex: 2,
         agentId: G,
         aKey: "X",
         aPath: "x.md",
@@ -583,7 +525,6 @@ describe("_computeDeconfoundedQuality", () => {
       }),
       match({
         runAt: "2024-04-01T00:00:02Z",
-        matchIndex: 3,
         agentId: N,
         aKey: "X",
         aPath: "x.md",
@@ -594,7 +535,6 @@ describe("_computeDeconfoundedQuality", () => {
       }),
       match({
         runAt: "2024-04-01T00:00:03Z",
-        matchIndex: 4,
         agentId: N,
         aKey: "Y",
         aPath: "y.md",
@@ -640,7 +580,6 @@ describe("_computePerPerspectiveQuality", () => {
     const raw = [
       match({
         runAt: "2024-05-01T00:00:00Z",
-        matchIndex: 1,
         perspectiveId: "skeptical-specialist",
         aKey: "post-z",
         aPath: "z.md",
@@ -651,7 +590,6 @@ describe("_computePerPerspectiveQuality", () => {
       }),
       match({
         runAt: "2024-05-01T00:00:01Z",
-        matchIndex: 2,
         perspectiveId: "curious-outsider",
         aKey: "post-z",
         aPath: "z.md",

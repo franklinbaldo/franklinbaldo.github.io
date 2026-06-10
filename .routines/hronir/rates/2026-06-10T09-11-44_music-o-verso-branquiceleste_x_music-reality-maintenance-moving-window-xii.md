@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T09-11-44
 run_at: '2026-06-10T09:11:44Z'
-match_index: 12
 post_a:
   key: music-o-verso-branquiceleste
   path: src/content/blog/o-verso-branquiceleste-en/index.mdx

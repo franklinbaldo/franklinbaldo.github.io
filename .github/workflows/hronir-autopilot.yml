@@ -2,14 +2,18 @@ name: Hrönir Autopilot
 
 # Merge machine for the Hrönir/Jules loop.
 #
-# Fires when the "Check" workflow finishes on a PR branch. If that PR is one of
-# OUR Jules sessions (confirmed via verne) and is mergeable + confined to the
-# safe paths, it is merged with a merge commit.
+# Fires when the "Check" workflow finishes on a PR branch. If that PR
+# touches only the safe paths (rate files required) and CI is green,
+# it is merged with a merge commit and a replacement session is spawned.
 #
-# Session spawning is handled entirely by hronir-heartbeat.yml, which maintains
-# a pool of TARGET_SESSIONS concurrent sessions. This workflow only merges PRs.
+# Gate: path check + CI green. No external API verification needed —
+# the safe-path constraint is sufficient: only hronir sessions produce
+# rate files under .routines/hronir/rates/.
 #
-# Requires repo secret JULES_API_KEY (the Google Jules API key).
+# hronir-heartbeat.yml maintains the pool as a backstop (every 15 min).
+# This workflow provides the reactive path: merge → immediately spawn.
+#
+# Requires repo secret JULES_API_KEY (the Google Jules API key, for spawn).
 
 on:
   workflow_run:
@@ -49,8 +53,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ./.github/actions/setup-verne
-
       - name: Resolve target PR
         id: resolve
         env:
@@ -72,55 +74,18 @@ jobs:
           echo "Target PR: #$PR"
           echo "pr=$PR" >> "$GITHUB_OUTPUT"
 
-      - name: Authenticate, gate and merge
+      - name: Gate and merge
         id: merge
         if: steps.resolve.outputs.pr != ''
         env:
           GH_TOKEN: ${{ github.token }}
-          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
           PR: ${{ steps.resolve.outputs.pr }}
         run: |
           set -euo pipefail
 
-          # 1) Authenticity: the PR must reference a Jules task that verne can
-          #    resolve to a real session in our account.
-          BODY=$(gh pr view "$PR" --repo "$REPO" --json body --jq '.body')
-          # `|| true`: under `set -euo pipefail`, a no-match grep exits 1 and
-          # pipefail would abort the whole step before the `-z` check below —
-          # silently red instead of a clean skip. Keep the pipeline non-fatal.
-          TASK=$(printf '%s' "$BODY" | grep -oiE 'jules\.google\.com/task/[A-Za-z0-9_-]+' | head -1 | sed 's#.*/##' || true)
-          if [ -z "${TASK:-}" ]; then
-            echo "PR #$PR has no Jules task link in its body — not ours, skipping."
-            echo "merged=" >> "$GITHUB_OUTPUT"
-            echo "is_ours=" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          # Missing key is a config error, not a skip: a non-Jules PR already
-          # exited above, so reaching here with no key means the secret is gone.
-          # Fail loud (exit 1) instead of going green and stalling the conveyor.
-          if [ -z "${JULES_API_KEY:-}" ]; then
-            echo "::error::JULES_API_KEY not set — cannot verify the session. Fix the repo secret."
-            exit 1
-          fi
-          # Conservative: any verne failure is treated as "not ours" and we skip
-          # (exit 0) rather than merge unverified. But capture and print verne's
-          # output so an infra failure (verne/network down) is visible, not
-          # silent — if the conveyor stalls on legit PRs, this is where to look.
-          # Telling "session not found" apart from "verne unavailable" needs
-          # verne to expose distinct exit codes; until then we stay conservative.
-          if ! VERNE_OUT=$(verne sessions show "$TASK" --json 2>&1); then
-            echo "verne could not resolve session $TASK — treating as not-ours, skipping. verne said:"
-            echo "$VERNE_OUT"
-            echo "merged=" >> "$GITHUB_OUTPUT"
-            echo "is_ours=" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          echo "Authenticated PR #$PR as Jules session $TASK."
-          # Mark as ours so the spawn step runs regardless of merge outcome.
-          echo "is_ours=$PR" >> "$GITHUB_OUTPUT"
-
-          # 2) Path gate: only .routines/hronir/** and src/content/blog/**, with
-          #    at least one rate file.
+          # 1) Path gate: only .routines/hronir/** and src/content/blog/**, with
+          #    at least one rate file. This is the sole identity check — only
+          #    hronir sessions produce rate files under .routines/hronir/rates/.
           FILES=$(gh pr view "$PR" --repo "$REPO" --json files --jq '.files[].path')
           HAS_RATE=0
           while IFS= read -r f; do
@@ -138,8 +103,8 @@ jobs:
             echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
           fi
 
-          # 3) Mergeable + all checks green (defensive; the trigger already
-          #    implies the Check run passed).
+          # 2) Mergeable + CI green (defensive; the trigger already implies
+          #    the Check run passed, but double-check for safety).
           MERGEABLE=$(gh pr view "$PR" --repo "$REPO" --json mergeable --jq '.mergeable')
           if [ "$MERGEABLE" != "MERGEABLE" ]; then
             echo "PR #$PR not mergeable (mergeable=$MERGEABLE) — skipping."
@@ -158,7 +123,16 @@ jobs:
             echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
           fi
 
-          # 4) Merge commit (not squash) — repo preference is to preserve history.
+          # 3) Merge commit (not squash) — repo preference is to preserve history.
           gh pr merge "$PR" --repo "$REPO" --merge --delete-branch
           echo "Merged PR #$PR."
           echo "merged=$PR" >> "$GITHUB_OUTPUT"
+
+      - name: Respawn session after merge
+        if: steps.merge.outputs.merged != ''
+        env:
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+        run: |
+          set -euo pipefail
+          echo "Spawning replacement session for merged PR #${{ steps.merge.outputs.merged }}..."
+          bash scripts/hronir/spawn-session.sh

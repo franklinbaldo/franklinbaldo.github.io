@@ -7,9 +7,10 @@ name: Hrönir Heartbeat
 #
 # Steps:
 #   1. List every Jules session via verne (raw output logged for debugging).
-#   2. Count sessions for THIS repo+branch that are actively working — i.e. NOT
+#   2. Unlock any sessions stuck in AWAITING state with "siga em frente".
+#   3. Count sessions for THIS repo+branch that are actively working — i.e. NOT
 #      terminal (completed/failed/cancelled) and NOT awaiting feedback.
-#   3. Spawn (TARGET_SESSIONS - ACTIVE) new sessions to fill the pool.
+#   4. Spawn (TARGET_SESSIONS - ACTIVE) new sessions to fill the pool.
 #
 # The autopilot (hronir-autopilot.yml) also spawns one session after each merge.
 # Between the two, the pool stays full continuously.
@@ -21,6 +22,7 @@ on:
   push:
     branches:
       - claude/lucid-goodall-3t7aqc
+      - claude/vibrant-albattani-znjq7z
 
 permissions:
   contents: read
@@ -57,7 +59,16 @@ jobs:
           echo "$SESSIONS"
           echo "::endgroup::"
 
-          # 2) Find ACTIVE sessions for this repo+branch. Active = not terminal
+          # 2) Unlock sessions stuck waiting for user feedback.
+          #    --json output includes "unlocked" count; extract it to avoid over-spawning.
+          UNLOCK_OUT=$(verne sessions unlock-all \
+            --source "$SOURCE" \
+            --branch main \
+            --json 2>&1) || true
+          echo "$UNLOCK_OUT"
+          UNLOCKED=$(echo "$UNLOCK_OUT" | jq -r '.unlocked // 0' 2>/dev/null || echo 0)
+
+          # 3) Find ACTIVE sessions for this repo+branch. Active = not terminal
           #    and not awaiting feedback. `contains` (substring, case-folded)
           #    matches verne's real status spellings — e.g. AWAITING_USER_FEEDBACK
           #    or COMPLETED — without hard-coding exact enum strings.
@@ -74,7 +85,7 @@ jobs:
 
           ACTIVE=$(echo "$ACTIVE_ENTRIES" | grep -c '\S' || true)
 
-          echo "Active session(s) for ${SOURCE}@main: ${ACTIVE}/${TARGET_SESSIONS}"
+          echo "Active session(s) for ${SOURCE}@main: ${ACTIVE}/${TARGET_SESSIONS} (+ ${UNLOCKED} just unlocked)"
           if [ -n "$ACTIVE_ENTRIES" ]; then
             while IFS= read -r entry; do
               [ -z "$entry" ] && continue
@@ -84,10 +95,12 @@ jobs:
             done <<< "$ACTIVE_ENTRIES"
           fi
 
-          # 3) Spawn enough sessions to reach the target pool size.
-          TO_SPAWN=$((TARGET_SESSIONS - ACTIVE))
+          # 4) Spawn enough sessions to reach the target pool size.
+          #    Unlocked sessions count toward the pool — subtract them so we don't
+          #    over-spawn before they reappear as active in the next snapshot.
+          TO_SPAWN=$((TARGET_SESSIONS - ACTIVE - UNLOCKED))
           if [ "$TO_SPAWN" -le 0 ]; then
-            echo "Pool is full ($ACTIVE/$TARGET_SESSIONS) — nothing to do."
+            echo "Pool is at capacity — active=$ACTIVE unlocked=$UNLOCKED target=$TARGET_SESSIONS — nothing to do."
             exit 0
           fi
 

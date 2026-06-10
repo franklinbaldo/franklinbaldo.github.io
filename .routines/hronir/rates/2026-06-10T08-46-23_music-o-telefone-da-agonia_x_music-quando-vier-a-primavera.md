@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T08-46-23
 run_at: '2026-06-10T08:46:23Z'
-match_index: 17
 post_a:
   key: music-o-telefone-da-agonia
   path: src/content/blog/o-telefone-da-agonia-en/index.mdx

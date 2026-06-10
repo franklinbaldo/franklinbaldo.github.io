@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-06T11-42-34
 run_at: '2026-06-06T11:42:34Z'
-match_index: 3
 post_a:
   key: census-not-sample
   path: src/content/blog/census-not-sample/index.md

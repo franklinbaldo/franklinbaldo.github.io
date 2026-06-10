@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-06T22-17-49
 run_at: '2026-06-06T22:17:49Z'
-match_index: 8
 post_a:
   key: pontifex-guide
   path: src/content/blog/pontifex-architecture-implementation-guide/index.md

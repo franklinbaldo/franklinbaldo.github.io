@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T09-11-58
 run_at: '2026-06-10T09:11:58Z'
-match_index: 15
 post_a:
   key: music-a-primeira-mudanca
   path: src/content/blog/a-primeira-mudanca-en/index.mdx

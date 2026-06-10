@@ -14,7 +14,6 @@ export const DECONFOUND_RIDGE = 1.0;
 
 interface RawMatch {
   runAt: string;
-  matchIndex: number;
   filename: string;
   aKey: string;
   bKey: string;
@@ -61,9 +60,6 @@ function _loadMatchData(): RawMatch[] {
 
     raw.push({
       runAt,
-      matchIndex: Number.isFinite(data.match_index)
-        ? (data.match_index as number)
-        : 0,
       filename: f,
       aKey,
       bKey,
@@ -85,7 +81,6 @@ function _sortMatchData(raw: RawMatch[]): RawMatch[] {
   return [...raw].sort((x, y) => {
     const cmp = x.runAt.localeCompare(y.runAt);
     if (cmp !== 0) return cmp;
-    if (x.matchIndex !== y.matchIndex) return x.matchIndex - y.matchIndex;
     return x.filename.localeCompare(y.filename);
   });
 }

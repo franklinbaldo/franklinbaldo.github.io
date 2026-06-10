@@ -7,7 +7,7 @@ inputs:
   ref:
     description: "uv/pip requirement for verne (a git URL pinned to a commit SHA)."
     required: false
-    default: "git+https://github.com/franklinbaldo/verne@7fbcf4be05fda139f7cd860903a3b2dcfcbd053b"
+    default: "git+https://github.com/franklinbaldo/verne@4f4d9bb8b7e7926c0fb3323acb5ad9e2786141e3"
 
 runs:
   using: composite

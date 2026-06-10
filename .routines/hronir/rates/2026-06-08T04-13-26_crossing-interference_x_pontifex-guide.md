@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T04-13-26
 run_at: '2026-06-08T04:13:26Z'
-match_index: 9
 post_a:
   key: crossing-interference
   path: src/content/blog/crossing-after-interference/index.md

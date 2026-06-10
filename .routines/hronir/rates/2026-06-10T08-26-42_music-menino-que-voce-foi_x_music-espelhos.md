@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T08-26-42
 run_at: '2026-06-10T08:26:42Z'
-match_index: 5
 post_a:
   key: music-menino-que-voce-foi
   path: src/content/blog/menino-que-voce-foi/index.mdx

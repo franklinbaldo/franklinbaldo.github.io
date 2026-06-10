@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T09-12-07
 run_at: '2026-06-10T09:12:07Z'
-match_index: 17
 post_a:
   key: music-two-cursors
   path: src/content/blog/two-cursors-en/index.mdx

@@ -206,8 +206,8 @@ function latestMatchTimeByKey(): Map<string, number> {
 function utcStamp() {
   const iso = new Date().toISOString();
   return {
-    runId: iso.replace(/[:.]/g, "-").replace(/-\d+Z$/, ""),
-    runAt: iso.replace(/\.\d+Z$/, "Z"),
+    runId: iso.replace(/[:.]/g, "-").replace(/Z$/, ""),
+    runAt: iso,
   };
 }
 
@@ -458,12 +458,10 @@ function generateNextMatch() {
   if (Math.random() < 0.5) [a, b] = [b, a];
 
   const sessionPath = SESSION_PATH;
-  let matchIndex = 1;
   let agentId = "TODO";
   let evalLang = "pt";
   if (fs.existsSync(sessionPath)) {
     const s = JSON.parse(fs.readFileSync(sessionPath, "utf8"));
-    matchIndex = s.completed + 1;
     agentId = s.agentId || "TODO";
     evalLang = s.evalLang || "pt";
   }
@@ -514,7 +512,7 @@ function generateNextMatch() {
       version: getPostUuid(duel.draftPath),
     };
     console.log(
-      `Gerado match ${matchIndex}: DUELO DE VERSÃO (${duel.key}/${duel.lang}) — canônica vs rascunho. Perspectiva: ${perspective.name}.`
+      `Gerado match: DUELO DE VERSÃO (${duel.key}/${duel.lang}) — canônica vs rascunho. Perspectiva: ${perspective.name}.`
     );
   } else {
     postA = {
@@ -530,11 +528,10 @@ function generateNextMatch() {
       version: getPostUuid(bVariant.path),
     };
     console.log(
-      `Gerado match ${matchIndex} (active sampling). Perspectiva: ${perspective.name}. Idiomas: ${aVariant.lang}/${bVariant.lang}.`
+      `Gerado match (active sampling). Perspectiva: ${perspective.name}. Idiomas: ${aVariant.lang}/${bVariant.lang}.`
     );
   }
   return {
-    match_index: matchIndex,
     post_a: postA,
     post_b: postB,
     agent_id: agentId,
@@ -935,7 +932,6 @@ export function decide(args: string[]) {
   const data = {
     run_id: runId,
     run_at: runAt,
-    match_index: currentMatch.match_index,
     post_a: currentMatch.post_a,
     post_b: currentMatch.post_b,
     winner,
@@ -1986,9 +1982,14 @@ export function doctor() {
   // outside .routines/hronir/ and src/content/blog/.
   try {
     const SAFE_RE = /^(\.routines\/hronir\/|src\/content\/blog\/)/;
-    const staged = execFileSync("git", ["diff", "--cached", "--name-only"], {
-      encoding: "utf8",
-    })
+    // --diff-filter=ACMR: only flag Added, Copied, Modified, Renamed — not Deleted (D).
+    // Deletions of out-of-scope files are legitimate cleanup; the autopilot only
+    // rejects PRs that *add or modify* content outside the safe prefixes.
+    const staged = execFileSync(
+      "git",
+      ["diff", "--cached", "--name-only", "--diff-filter=ACMR"],
+      { encoding: "utf8" }
+    )
       .split("\n")
       .filter(Boolean);
     for (const f of staged) {

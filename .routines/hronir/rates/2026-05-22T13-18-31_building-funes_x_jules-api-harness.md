@@ -1,7 +1,6 @@
 ---
 run_id: 2026-05-22T13-18-31
 run_at: '2026-05-22T13:18:31Z'
-match_index: 9
 post_a:
   key: building-funes
   path: src/content/blog/building-funes/index.md

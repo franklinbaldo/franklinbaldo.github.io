@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T08-58-30
 run_at: '2026-06-10T08:58:30Z'
-match_index: 20
 post_a:
   key: music-trinta-de-abril
   path: src/content/blog/trinta-de-abril/index.mdx

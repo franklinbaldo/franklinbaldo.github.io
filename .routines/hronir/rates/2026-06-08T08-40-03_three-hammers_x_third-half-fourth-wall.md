@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T08-40-03
 run_at: '2026-06-08T08:40:03Z'
-match_index: 3
 post_a:
   key: three-hammers
   path: src/content/blog/tres-martelos-entram-num-bar/index.md

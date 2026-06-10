@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T08-31-17
 run_at: '2026-06-10T08:31:17Z'
-match_index: 14
 post_a:
   key: music-entre-rascunho-e-apagar
   path: src/content/blog/entre-rascunho-e-apagar/index.mdx

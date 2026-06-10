@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T09-12-17
 run_at: '2026-06-10T09:12:17Z'
-match_index: 19
 post_a:
   key: music-sussurros-binarios
   path: src/content/blog/sussurros-binarios-en/index.mdx

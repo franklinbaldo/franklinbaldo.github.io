@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T10-34-51
 run_at: '2026-06-08T10:34:51Z'
-match_index: 1
 post_a:
   key: rosencrantz-coin
   path: >-

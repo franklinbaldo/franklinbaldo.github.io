@@ -1,7 +1,6 @@
 ---
 run_id: 2026-05-24T13-07-31
 run_at: '2026-05-24T13:07:31Z'
-match_index: 5
 post_a:
   key: rosencrantz-coin
   path: src/content/blog/rosencrantz-coin/index.md
