@@ -60,28 +60,13 @@ jobs:
           echo "::endgroup::"
 
           # 2) Unlock sessions stuck waiting for user feedback.
-          #    Track how many we successfully unlock — they'll be active again so
-          #    we must not count them as "missing" when calculating TO_SPAWN below.
-          AWAITING_IDS=$(echo "$SESSIONS" | jq -r --arg source "$SOURCE" '[.sessions[]
-            | select((.source // "") == $source and (.branch // "") == "main")
-            | select(
-                ((.status // "") | ascii_downcase)
-                | (contains("awaiting") or contains("waiting") or contains("paused"))
-              )
-            | (.id // (.name | sub("^sessions/"; "")) // "unknown")]
-            | .[]')
-          UNLOCKED=0
-          if [ -n "$AWAITING_IDS" ]; then
-            while IFS= read -r sid; do
-              [ -z "$sid" ] && continue
-              echo "Unlocking awaiting session $sid..."
-              if verne sessions send "$sid" "siga em frente" 2>&1; then
-                UNLOCKED=$((UNLOCKED + 1))
-              else
-                echo "::warning::Failed to send message to session $sid"
-              fi
-            done <<< "$AWAITING_IDS"
-          fi
+          #    --json output includes "unlocked" count; extract it to avoid over-spawning.
+          UNLOCK_OUT=$(verne sessions unlock-all \
+            --source "$SOURCE" \
+            --branch main \
+            --json 2>&1) || true
+          echo "$UNLOCK_OUT"
+          UNLOCKED=$(echo "$UNLOCK_OUT" | jq -r '.unlocked // 0' 2>/dev/null || echo 0)
 
           # 3) Find ACTIVE sessions for this repo+branch. Active = not terminal
           #    and not awaiting feedback. `contains` (substring, case-folded)
