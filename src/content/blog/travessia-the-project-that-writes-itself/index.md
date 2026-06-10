@@ -2,6 +2,7 @@
 
 title: "Travessia: The Project that Writes Itself"
 description: "Riobaldo and Ted Chiang exchange letters. But no one sits down to write. One Jules session schedules the next one. The correspondence exists because it happens—incrementally, automatically, without needing me."
+type: essay
 date: 2026-03-02
 lang: en
 translationKey: travessia-project

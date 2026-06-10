@@ -1,5 +1,6 @@
 ---
 title: "The OSI Model as Manifesto"
+type: essay
 date: 2026-03-26
 description: "The seven layers of networking have been telling us something about the nature of reality since 1984. Events all the way down — literally."
 tags:

@@ -1,5 +1,6 @@
 ---
 author: franklin
+type: essay
 date: 2024-07-12
 lang: en
 title: "Patents For Social Vulnerabilities: A Modest Proposal For Turning Criminals Into Consultants"

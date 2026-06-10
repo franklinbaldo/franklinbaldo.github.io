@@ -4,6 +4,7 @@ translationKey: family-memory
 description: >-
   Meu pai grava histórias no celular. Jules commitou o ano errado. É isso que
   construí a partir daí.
+type: essay
 date: 2026-03-30T00:00:00.000Z
 lang: pt
 tags:

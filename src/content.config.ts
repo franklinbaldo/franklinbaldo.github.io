@@ -43,6 +43,11 @@ const postSchema = ({ image }: SchemaContext) =>
         msg: z.string(),
       })
       .optional(),
+    /** Document taxonomy: essay, letter, fiction, technical, or dialogue.
+     *  Optional — posts without a type remain valid and appear unfiltered. */
+    type: z
+      .enum(["essay", "letter", "fiction", "technical", "dialogue"])
+      .optional(),
     /** When "music", the post is a music publication with lyrics and
      *  composer notes. Triggers the music post layout. */
     postType: z.literal("music").optional(),

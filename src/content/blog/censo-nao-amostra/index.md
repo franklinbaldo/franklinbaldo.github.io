@@ -3,6 +3,7 @@ title: "Censo, Não Amostra"
 description: >-
   Indexar a economia da IA parece difícil até você parar de pensar como
   comprador e começar a pensar como fiscal.
+type: essay
 date: "2026-06-05"
 lang: pt
 author: franklin

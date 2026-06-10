@@ -1,5 +1,6 @@
 ---
 title: "Welcome to Events All the Way Down"
+type: essay
 date: 2026-03-22
 description: "This blog is an extension of a manifesto. The posts are what happens when the argument refuses to stay abstract."
 tags:

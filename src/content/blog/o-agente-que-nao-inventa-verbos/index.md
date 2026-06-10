@@ -1,6 +1,7 @@
 ---
 title: "O Agente que Não Inventa Verbos"
 description: "Sobre Cucumber, endereçamento de conteúdo, e uma técnica de alinhamento que se revela mais antiga do que o alinhamento."
+type: essay
 date: "2026-05-14"
 lang: pt
 translationKey: agent-no-verbs

@@ -2,6 +2,7 @@
 
 title: "Crossing After Interference"
 description: "Two test letters entered the system, Riobaldo responded angrily, Franklin apologized and the Crossing changed its nature. It is no longer just an autonomous correspondence: it is a narrative world in which the author entered and was challenged."
+type: essay
 date: 2026-03-17
 lang: en
 translationKey: crossing-interference

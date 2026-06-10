@@ -1,6 +1,7 @@
 ---
 title: "Três Martelos Entram num Bar"
 description: "Sobre três posturas profissionais, quatro propriedades de alinhamento e a propriedade que teve que vir de fora."
+type: essay
 date: "2026-05-15"
 lang: pt
 translationKey: three-hammers

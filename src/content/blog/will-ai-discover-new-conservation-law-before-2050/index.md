@@ -1,5 +1,6 @@
 ---
 author: franklin
+type: essay
 date: 2024-07-12T00:00:00.000Z
 lang: en
 title: Will AI Discover a New Conservation Law Before 2050?

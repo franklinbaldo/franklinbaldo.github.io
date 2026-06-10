@@ -1,6 +1,7 @@
 ---
 title: "The Jules API as a Harness Backend"
 author: franklin
+type: technical
 date: 2026-05-10
 lang: en
 description: "When Jules became conversable mid-session, something shifted. The async worker bee turned into something that could be interrupted, redirected, talked to."

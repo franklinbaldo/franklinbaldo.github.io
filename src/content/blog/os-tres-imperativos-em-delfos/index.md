@@ -1,6 +1,7 @@
 ---
 title: "Os Três Imperativos em Delfos"
 description: "Sobre o templo que exigia autoconhecimento, o filósofo que o levou a sério, e a letra na entrada que ninguém conseguia ler."
+type: essay
 date: "2026-05-04"
 lang: pt
 translationKey: delphi-imperatives

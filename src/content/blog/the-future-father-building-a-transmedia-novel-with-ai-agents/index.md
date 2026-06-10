@@ -1,6 +1,7 @@
 ---
 
 author: franklin
+type: essay
 date: 2026-03-22
 lang: en
 translationKey: future-father

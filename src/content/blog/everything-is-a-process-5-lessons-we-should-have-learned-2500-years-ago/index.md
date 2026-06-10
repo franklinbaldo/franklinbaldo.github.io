@@ -3,6 +3,7 @@ title: 'Events All the Way Down: Notes on Process Architecture'
 description: >-
   If there are no pure objects, only processes generating pseudo-objects, what
   does that change in how we design systems and read our own history?
+type: essay
 date: 2026-02-26T00:00:00.000Z
 lang: en
 translationKey: everything-is-process

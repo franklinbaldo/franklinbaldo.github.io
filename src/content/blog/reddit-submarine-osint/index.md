@@ -1,6 +1,7 @@
 ---
 title: "Are they really using a Reddit post to help bomb a submarine in Iran?"
 author: franklin
+type: essay
 date: 2026-03-22
 lang: en
 translationKey: reddit-submarine-osint

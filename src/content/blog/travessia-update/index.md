@@ -1,6 +1,7 @@
 ---
 title: "Travessia Depois da Interferência"
 description: "Duas cartas de teste entraram no sistema, Riobaldo respondeu com raiva, Franklin pediu desculpas e a Travessia mudou de natureza. Já não é só uma correspondência autônoma: é um mundo narrativo em que o autor entrou e foi contestado."
+type: essay
 date: 2026-03-17
 lang: pt
 translationKey: crossing-interference

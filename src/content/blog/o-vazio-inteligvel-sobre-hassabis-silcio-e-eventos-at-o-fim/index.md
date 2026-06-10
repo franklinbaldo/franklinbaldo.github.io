@@ -1,5 +1,6 @@
 ---
 author: franklin
+type: essay
 date: 2026-03-21T00:00:00.000Z
 lang: pt
 title: 'O vazio inteligível: sobre Hassabis, silício e eventos até o fim'

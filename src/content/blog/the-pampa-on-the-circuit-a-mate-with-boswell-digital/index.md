@@ -4,6 +4,7 @@ translationKey: pampa-circuit
 description: >-
   Aparício Funes on what it means to be a digital Boswell — and why preserving
   someone's memory means preserving how they stumble.
+type: essay
 date: 2026-02-17T00:00:00.000Z
 lang: en
 tags:

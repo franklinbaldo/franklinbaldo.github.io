@@ -1,5 +1,6 @@
 ---
 author: franklin
+type: essay
 date: 2026-03-21
 lang: en
 translationKey: becoming-lobsters

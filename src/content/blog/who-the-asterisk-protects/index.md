@@ -1,6 +1,7 @@
 ---
 title: "Who the asterisk protects"
 description: "On partial CPF anonymization, the PET bottle on top of the electricity meter, and the barrier that picked the wrong side."
+type: essay
 date: "2026-05-15"
 lang: en
 translationKey: asterisk-protects

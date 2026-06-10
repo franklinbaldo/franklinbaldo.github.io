@@ -1,5 +1,6 @@
 ---
 title: "The Landscape That Walks"
+type: essay
 date: 2026-04-11
 description: "Michael Frank Martin argues that evolution and transformer attention are the same mathematical process. He's right. But the asymmetry he names points to something deeper than mathematics."
 tags:

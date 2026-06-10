@@ -3,6 +3,7 @@ title: 'Eventos Até o Fim: Notas Sobre a Arquitetura de Processos'
 description: >-
   Se não existem objetos puros, apenas processos gerando pseudo-objetos, o que
   isso muda na forma como projetamos sistemas e lemos nossa própria história?
+type: essay
 date: 2026-02-26T00:00:00.000Z
 lang: pt
 translationKey: everything-is-process

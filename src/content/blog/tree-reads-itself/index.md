@@ -1,5 +1,6 @@
 ---
 title: "The Tree Reads Itself: On the Autoregressive Life of eml"
+type: essay
 date: 2026-04-15
 description: "A companion post to 'Everything is eml.' If every elementary function is a tree of one operator, then every elementary function is also a sentence — and evaluating it is next-token prediction. Autoregression is not a property of LLMs. It is the shape the math was in the whole time."
 tags:

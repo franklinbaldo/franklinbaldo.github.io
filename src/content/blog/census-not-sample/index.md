@@ -3,6 +3,7 @@ title: "Census, Not Sample"
 description: >-
   Indexing the AI economy looks hard until you stop thinking like a buyer and
   start thinking like a tax collector.
+type: essay
 date: "2026-06-05"
 lang: en
 author: franklin

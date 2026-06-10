@@ -1,5 +1,6 @@
 ---
 author: franklin
+type: essay
 date: 2024-07-12
 lang: pt
 title: "Documento Conceitual: A Crônica de Franklin Baldo"

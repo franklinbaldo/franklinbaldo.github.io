@@ -3,6 +3,7 @@ title: 'The Art of Delegation: Signatures and Sandboxes'
 description: >-
   The sandbox separates draft from act. What it doesn't do is answer where the
   accountability lives when the sandbox fails.
+type: essay
 date: '2026-03-28'
 lang: en
 tags:

@@ -1,6 +1,7 @@
 ---
 title: "Three Hammers Walk Into a Bar"
 description: "On three professional postures, four alignment properties, and the one property that had to come from elsewhere."
+type: essay
 date: "2026-05-15"
 lang: en
 translationKey: three-hammers

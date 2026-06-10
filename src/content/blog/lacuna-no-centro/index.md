@@ -1,5 +1,6 @@
 ---
 title: "The Gap at the Center of the World: Why Everything is an Event"
+type: essay
 date: 2026-03-22
 description: "On Escher's gallery, the mathematics of self-reference, and why the fundamental unit of existence is not a thing but a reading."
 tags:

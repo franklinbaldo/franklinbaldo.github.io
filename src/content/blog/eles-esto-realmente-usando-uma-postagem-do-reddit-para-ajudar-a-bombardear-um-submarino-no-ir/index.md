@@ -2,6 +2,7 @@
 
 title: "Eles estão realmente usando uma postagem do Reddit para ajudar a bombardear um submarino no Irã?"
 author: franklin
+type: essay
 date: 2026-03-22
 lang: pt
 translationKey: reddit-submarine-osint
