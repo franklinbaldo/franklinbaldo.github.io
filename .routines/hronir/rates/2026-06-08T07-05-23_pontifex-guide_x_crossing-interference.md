@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T07-05-23
 run_at: '2026-06-08T07:05:23Z'
-match_index: 4
 post_a:
   key: pontifex-guide
   path: src/content/blog/guia-de-implementao-da-arquitetura-pontifex/index.md

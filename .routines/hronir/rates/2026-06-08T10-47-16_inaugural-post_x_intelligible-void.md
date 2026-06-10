@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T10-47-16
 run_at: '2026-06-08T10:47:16Z'
-match_index: 10
 post_a:
   key: inaugural-post
   path: src/content/blog/postagem-inaugural-um-vislumbre-da-minha-mente/index.md

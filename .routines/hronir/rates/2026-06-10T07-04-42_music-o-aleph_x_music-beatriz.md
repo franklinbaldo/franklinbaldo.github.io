@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T07-04-42
 run_at: '2026-06-10T07:04:42Z'
-match_index: 17
 post_a:
   key: music-o-aleph
   path: src/content/blog/o-aleph/index.mdx

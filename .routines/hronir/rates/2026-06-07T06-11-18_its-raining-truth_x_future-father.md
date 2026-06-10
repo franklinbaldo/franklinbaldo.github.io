@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-07T06-11-18
 run_at: '2026-06-07T06:11:18Z'
-match_index: 7
 post_a:
   key: its-raining-truth
   path: src/content/blog/its-raining-truth/index.md

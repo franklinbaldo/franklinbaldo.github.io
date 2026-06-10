@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T11-19-56
 run_at: '2026-06-10T11:19:56Z'
-match_index: 8
 post_a:
   key: music-f85fb538-6f59-4751-8629-da76665fc91e
   path: src/content/blog/f85fb538-6f59-4751-8629-da76665fc91e/index.mdx

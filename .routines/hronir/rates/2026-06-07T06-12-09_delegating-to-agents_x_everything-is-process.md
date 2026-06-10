@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-07T06-12-09
 run_at: '2026-06-07T06:12:09Z'
-match_index: 8
 post_a:
   key: delegating-to-agents
   path: src/content/blog/the-art-of-delegation/index.md

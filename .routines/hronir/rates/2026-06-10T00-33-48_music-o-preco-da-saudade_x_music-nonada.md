@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T00-33-48
 run_at: '2026-06-10T00:33:48Z'
-match_index: 4
 post_a:
   key: music-o-preco-da-saudade
   path: src/content/blog/o-preco-da-saudade-en/index.mdx

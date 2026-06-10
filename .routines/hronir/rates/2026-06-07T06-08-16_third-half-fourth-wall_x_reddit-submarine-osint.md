@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-07T06-08-16
 run_at: '2026-06-07T06:08:16Z'
-match_index: 4
 post_a:
   key: third-half-fourth-wall
   path: src/content/blog/the-third-half-and-the-fourth-wall/index.md

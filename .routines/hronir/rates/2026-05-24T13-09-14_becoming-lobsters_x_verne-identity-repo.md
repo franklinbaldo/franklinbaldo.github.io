@@ -1,7 +1,6 @@
 ---
 run_id: 2026-05-24T13-09-14
 run_at: '2026-05-24T13:09:14Z'
-match_index: 7
 post_a:
   key: becoming-lobsters
   path: src/content/blog/we-are-all-becoming-lobsters/index.md

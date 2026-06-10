@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T11-08-43
 run_at: '2026-06-08T11:08:43Z'
-match_index: 5
 post_a:
   key: social-vulnerabilities
   path: >-

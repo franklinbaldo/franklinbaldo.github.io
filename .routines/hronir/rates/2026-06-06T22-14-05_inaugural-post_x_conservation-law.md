@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-06T22-14-05
 run_at: '2026-06-06T22:14:05Z'
-match_index: 4
 post_a:
   key: inaugural-post
   path: src/content/blog/inaugural-post-a-glimpse-inside-my-mind/index.md

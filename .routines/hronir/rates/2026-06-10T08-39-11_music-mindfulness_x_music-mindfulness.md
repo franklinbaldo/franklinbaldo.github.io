@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T08-39-11
 run_at: '2026-06-10T08:39:11Z'
-match_index: 12
 post_a:
   key: music-mindfulness
   path: src/content/blog/mindfulness-en/index.mdx

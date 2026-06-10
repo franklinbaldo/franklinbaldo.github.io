@@ -1,7 +1,6 @@
 ---
 run_id: 2026-05-31T13-12-38
 run_at: '2026-05-31T13:12:38Z'
-match_index: 5
 post_a:
   key: social-vulnerabilities
   path: src/content/blog/patents-for-social-vulnerabilities/index.md

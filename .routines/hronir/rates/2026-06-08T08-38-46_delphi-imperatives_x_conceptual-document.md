@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T08-38-46
 run_at: '2026-06-08T08:38:46Z'
-match_index: 2
 post_a:
   key: delphi-imperatives
   path: src/content/blog/os-tres-imperativos-em-delfos/index.md

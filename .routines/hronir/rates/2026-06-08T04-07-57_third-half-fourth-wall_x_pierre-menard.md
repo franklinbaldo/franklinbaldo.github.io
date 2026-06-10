@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T04-07-57
 run_at: '2026-06-08T04:07:57Z'
-match_index: 3
 post_a:
   key: third-half-fourth-wall
   path: src/content/blog/a-terceira-metade-e-a-quarta-parede/index.md

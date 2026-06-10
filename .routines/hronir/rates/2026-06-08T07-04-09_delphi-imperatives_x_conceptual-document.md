@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T07-04-09
 run_at: '2026-06-08T07:04:09Z'
-match_index: 2
 post_a:
   key: delphi-imperatives
   path: src/content/blog/the-three-imperatives-at-delphi/index.md

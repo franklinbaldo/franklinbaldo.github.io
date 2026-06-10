@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T12-21-28
 run_at: '2026-06-10T12:21:28Z'
-match_index: 16
 post_a:
   key: music-caminho
   path: src/content/blog/caminho/index.mdx

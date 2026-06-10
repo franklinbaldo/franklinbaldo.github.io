@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T00-32-09
 run_at: '2026-06-10T00:32:09Z'
-match_index: 1
 post_a:
   key: music-quando-vier-a-primavera
   path: src/content/blog/quando-vier-a-primavera-en/index.mdx

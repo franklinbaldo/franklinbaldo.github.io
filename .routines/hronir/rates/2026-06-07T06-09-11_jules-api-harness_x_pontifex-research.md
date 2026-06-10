@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-07T06-09-11
 run_at: '2026-06-07T06:09:11Z'
-match_index: 5
 post_a:
   key: jules-api-harness
   path: src/content/blog/jules-api-harness-backend/index.md

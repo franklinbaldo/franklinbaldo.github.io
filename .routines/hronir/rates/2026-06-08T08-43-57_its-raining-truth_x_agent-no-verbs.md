@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T08-43-57
 run_at: '2026-06-08T08:43:57Z'
-match_index: 6
 post_a:
   key: its-raining-truth
   path: src/content/blog/esta-chovendo-verdade/index.md

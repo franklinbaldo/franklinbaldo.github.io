@@ -1,7 +1,6 @@
 ---
 run_id: 2026-05-26T13-16-20
 run_at: '2026-05-26T13:16:20Z'
-match_index: 5
 post_a:
   key: pampa-circuit
   path: src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/index.md

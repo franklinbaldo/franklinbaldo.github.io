@@ -1,7 +1,6 @@
 ---
 run_id: 2026-05-31T13-17-15
 run_at: '2026-05-31T13:17:15Z'
-match_index: 10
 post_a:
   key: two-questions-out-loud
   path: src/content/blog/two-questions-out-loud/index.md

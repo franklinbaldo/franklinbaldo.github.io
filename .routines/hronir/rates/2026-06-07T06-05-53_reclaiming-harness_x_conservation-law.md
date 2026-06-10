@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-07T06-05-53
 run_at: '2026-06-07T06:05:53Z'
-match_index: 1
 post_a:
   key: reclaiming-harness
   path: src/content/blog/reclaiming-the-harness/index.md

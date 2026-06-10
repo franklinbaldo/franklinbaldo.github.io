@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T15-02-44
 run_at: '2026-06-10T15:02:44Z'
-match_index: 10
 post_a:
   key: music-beatriz
   path: src/content/blog/beatriz-en/index.mdx

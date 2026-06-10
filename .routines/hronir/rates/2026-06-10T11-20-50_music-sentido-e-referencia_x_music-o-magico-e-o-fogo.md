@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T11-20-50
 run_at: '2026-06-10T11:20:50Z'
-match_index: 10
 post_a:
   key: music-sentido-e-referencia
   path: src/content/blog/sentido-e-referencia-en/index.mdx

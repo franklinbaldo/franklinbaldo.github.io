@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T08-27-10
 run_at: '2026-06-10T08:27:10Z'
-match_index: 6
 post_a:
   key: music-nonada
   path: src/content/blog/nonada-en/index.mdx

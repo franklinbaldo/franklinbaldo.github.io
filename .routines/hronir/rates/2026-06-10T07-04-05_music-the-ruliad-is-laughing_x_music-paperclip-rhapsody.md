@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T07-04-05
 run_at: '2026-06-10T07:04:05Z'
-match_index: 15
 post_a:
   key: music-the-ruliad-is-laughing
   path: src/content/blog/the-ruliad-is-laughing/index.mdx

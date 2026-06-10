@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T06-08-42
 run_at: '2026-06-10T06:08:42Z'
-match_index: 2
 post_a:
   key: serpents-egg
   path: src/content/blog/o-ovo-de-serpente/index.md

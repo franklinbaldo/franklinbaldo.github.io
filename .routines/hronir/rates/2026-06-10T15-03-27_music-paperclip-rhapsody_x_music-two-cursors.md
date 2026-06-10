@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-10T15-03-27
 run_at: '2026-06-10T15:03:27Z'
-match_index: 19
 post_a:
   key: music-paperclip-rhapsody
   path: src/content/blog/paperclip-rhapsody-en/index.mdx

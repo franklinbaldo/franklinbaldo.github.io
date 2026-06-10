@@ -1,7 +1,6 @@
 ---
 run_id: 2026-06-08T06-50-14
 run_at: '2026-06-08T06:50:14Z'
-match_index: 10
 post_a:
   key: intelligible-void
   path: >-
