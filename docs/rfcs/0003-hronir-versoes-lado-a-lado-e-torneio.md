@@ -2,7 +2,7 @@
 
 |                 |                                                                                                                                                                                                                                                                                                                                                                                                        |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Status**      | Implemented (Fases 0–2)                                                                                                                                                                                                                                                                                                                                                                                |
+| **Status**      | Implemented (Fases 0–3)                                                                                                                                                                                                                                                                                                                                                                                |
 | **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                                                                                                                                                                                                    |
 | **Criado em**   | 2026-06-09                                                                                                                                                                                                                                                                                                                                                                                             |
 | **Branch / PR** | `claude/nifty-wright-z96lj3`                                                                                                                                                                                                                                                                                                                                                                           |
@@ -475,3 +475,8 @@ Merge com **merge commit** (não squash), conforme `CLAUDE.md`.
   comando `promote` (swap com `supersedes`; `supersedes` entra no schema zod).
   Aliases `edit-worst`/`edit-commit` mantidos. Verde: build, doctor, golden
   20/20, check:links/translations/hygiene.
+- **r5** (2026-06-10): **Fase 3 implementada**. `promote --all` varre todas as
+  chaves canonicais e auto-promove as que cruzaram o limiar (margem ≥0.3★,
+  n≥2 duelos). `prune [--dry-run]` remove versões que perderam para a canônica
+  por ≥0.5★ em ≥3 duelos. `npm run hronir:prune` adicionado ao `package.json`.
+  RFC 0003 status atualizado para "Implemented (Fases 0–3)".

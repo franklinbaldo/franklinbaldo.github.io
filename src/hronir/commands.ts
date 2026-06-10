@@ -2157,10 +2157,30 @@ export function promote(args: string[]) {
   let draftPath = null;
   let key = null;
   let force = false;
+  let all = false;
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--draft") draftPath = args[++i];
     else if (args[i] === "--key") key = args[++i];
     else if (args[i] === "--force") force = true;
+    else if (args[i] === "--all") all = true;
+  }
+
+  if (all) {
+    // Scan every canonical and attempt auto-promotion for each key.
+    const keys = new Set<string>();
+    for (const p of listPosts()) {
+      if (isCanonical(p)) keys.add(keyForPath(p));
+    }
+    let totalPromoted = 0;
+    for (const k of keys) {
+      totalPromoted += _promoteByKey(k, force);
+    }
+    nextStep(
+      totalPromoted > 0
+        ? `${totalPromoted} versão(ões) promovida(s). Revise o diff e commite.`
+        : "Nenhuma promoção: sem duelos de versão suficientes ou as canônicas já lideram."
+    );
+    return;
   }
 
   if (draftPath) {
@@ -2181,18 +2201,29 @@ export function promote(args: string[]) {
 
   if (!key) {
     console.error(
-      "Erro: informe `--draft <caminho>` (promoção explícita) ou `--key <translationKey>` (melhor versão por duelos)."
+      "Erro: informe `--draft <caminho>`, `--key <translationKey>`, ou `--all` (varre todas as chaves)."
     );
     process.exit(1);
   }
 
-  const versionRatings = computeVersionRatings();
   const translations = findTranslations(key);
   if (translations.length === 0) {
     console.error(`Erro: nenhuma canônica encontrada para a chave "${key}".`);
     process.exit(1);
   }
 
+  const promoted = _promoteByKey(key, force);
+  nextStep(
+    promoted > 0
+      ? `${promoted} versão(ões) promovida(s). Revise o diff e commite.`
+      : "Nenhuma promoção: sem duelos de versão suficientes ou a canônica já lidera. Use `--draft <caminho>` para promover manualmente."
+  );
+}
+
+// Returns the count of versions promoted for a given translationKey.
+function _promoteByKey(key: string, force: boolean): number {
+  const versionRatings = computeVersionRatings();
+  const translations = findTranslations(key);
   let promoted = 0;
   for (const t of translations) {
     const scored = listVersions(t.path)
@@ -2208,9 +2239,6 @@ export function promote(args: string[]) {
       })
       .filter((v) => v.stars !== null);
     if (scored.length === 0) {
-      console.log(
-        `[promote] ${t.lang}: sem dados de duelo de versão — pulando (use --draft).`
-      );
       continue;
     }
     const scoredRated = scored as Array<{
@@ -2222,17 +2250,13 @@ export function promote(args: string[]) {
     scoredRated.sort((a, b) => b.stars - a.stars);
     const best = scoredRated[0];
     if (best.canonical) {
-      console.log(
-        `[promote] ${t.lang}: a canônica já é a melhor versão (${best.stars.toFixed(2)}★). Nada a fazer.`
-      );
       continue;
     }
-    // Only auto-promote when the challenger clears a margin over enough duels.
     const canonicalStars = scoredRated.find((v) => v.canonical)?.stars ?? 0;
     const margin = best.stars - canonicalStars;
     if (!force && (best.n < PROMOTE_MIN_DUELS || margin < PROMOTE_MARGIN)) {
       console.log(
-        `[promote] ${t.lang}: ${best.path} lidera por +${margin.toFixed(2)}★ em ${best.n} duelo(s) — abaixo do limiar (margem ≥${PROMOTE_MARGIN}, duelos ≥${PROMOTE_MIN_DUELS}). Use --force para promover assim mesmo.`
+        `[promote] ${t.lang}: ${best.path} lidera por +${margin.toFixed(2)}★ em ${best.n} duelo(s) — abaixo do limiar (margem ≥${PROMOTE_MARGIN}, duelos ≥${PROMOTE_MIN_DUELS}).`
       );
       continue;
     }
@@ -2242,12 +2266,80 @@ export function promote(args: string[]) {
     promoteFile(best.path);
     promoted++;
   }
+  return promoted;
+}
 
-  nextStep(
-    promoted > 0
-      ? `${promoted} versão(ões) promovida(s). Revise o diff e commite.`
-      : "Nenhuma promoção: sem duelos de versão suficientes ou a canônica já lidera. Use `--draft <caminho>` para promover manualmente."
-  );
+// RFC 0003 Fase 3: prune versions that have clearly lost to the canonical.
+// A version is eligible when the canonical leads it by at least PRUNE_MARGIN
+// stars over at least PRUNE_MIN_DUELS version duels.
+const PRUNE_MARGIN = 0.5;
+const PRUNE_MIN_DUELS = 3;
+
+export function prune({ dryRun = false } = {}) {
+  const versionRatings = computeVersionRatings();
+  const toDelete: Array<{
+    path: string;
+    versionStars: number;
+    canonicalStars: number;
+    margin: number;
+    n: number;
+  }> = [];
+
+  for (const p of listPosts()) {
+    if (isCanonical(p)) continue;
+    const dir = path.dirname(p);
+    const indexMd = path.join(dir, "index.md");
+    const indexMdx = path.join(dir, "index.mdx");
+    const canonicalPath = fs.existsSync(indexMd)
+      ? indexMd
+      : fs.existsSync(indexMdx)
+        ? indexMdx
+        : null;
+    if (!canonicalPath) continue;
+
+    const versionUuid = getPostUuid(p);
+    const canonicalUuid = getPostUuid(canonicalPath);
+    if (!versionUuid || !canonicalUuid) continue;
+
+    const vr = versionRatings.get(versionUuid);
+    const cr = versionRatings.get(canonicalUuid);
+    if (!vr || !cr) continue;
+
+    const margin = cr.stars - vr.stars;
+    if (vr.n >= PRUNE_MIN_DUELS && margin >= PRUNE_MARGIN) {
+      toDelete.push({
+        path: p,
+        versionStars: vr.stars,
+        canonicalStars: cr.stars,
+        margin,
+        n: vr.n,
+      });
+    }
+  }
+
+  if (toDelete.length === 0) {
+    console.log("prune: nenhuma versão elegível para poda.");
+    return;
+  }
+
+  for (const item of toDelete) {
+    if (dryRun) {
+      console.log(
+        `[prune dry-run] ${item.path} (versão ${item.versionStars.toFixed(2)}★ vs canônica ${item.canonicalStars.toFixed(2)}★, -${item.margin.toFixed(2)}, n=${item.n})`
+      );
+    } else {
+      fs.unlinkSync(item.path);
+      console.log(
+        `[prune] removido ${item.path} (${item.versionStars.toFixed(2)}★ vs canônica ${item.canonicalStars.toFixed(2)}★, -${item.margin.toFixed(2)}, n=${item.n})`
+      );
+    }
+  }
+
+  const label = dryRun ? "dry-run" : "removida(s)";
+  console.log(`\nprune: ${toDelete.length} versão(ões) ${label}.`);
+  if (dryRun) {
+    console.log("Rode sem --dry-run para remover.");
+  }
 }
 
 function promoteFile(draftPath: string) {
