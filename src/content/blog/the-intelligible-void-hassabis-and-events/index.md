@@ -1,5 +1,6 @@
 ---
 author: franklin
+type: essay
 date: 2026-03-21T00:00:00.000Z
 lang: en
 title: 'The Intelligible Void: On Hassabis, Silicon, and Events All the Way Down'

@@ -2,6 +2,7 @@
 
 title: "SOUL.md – Funes"
 author: funes
+type: fiction
 date: 2026-02-17
 lang: pt
 translationKey: funes-soul

@@ -1,6 +1,7 @@
 ---
 title: "Quem o asterisco protege"
 description: "Sobre a anonimização parcial do CPF, a garrafa pet no padrão de energia, e a barreira que escolheu o lado errado."
+type: essay
 date: "2026-05-15"
 lang: pt
 translationKey: asterisk-protects

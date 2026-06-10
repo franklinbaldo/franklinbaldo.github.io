@@ -1,14 +1,14 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
-import { t, locale, DEFAULT_LANG } from '../lib/i18n';
+import { t, locale, DEFAULT_LANG, type UIKey } from '../lib/i18n';
 
 interface Props {
   post: CollectionEntry<'blog'>;
 }
 
 const { post } = Astro.props;
-const { title, date, lang, heroImage, heroImageAlt, featured, description, tags } = post.data;
+const { title, date, lang, heroImage, heroImageAlt, featured, description, tags, type } = post.data;
 
 const postLang = lang ?? DEFAULT_LANG;
 const formattedDate = date.toLocaleDateString(locale(postLang), {
@@ -20,6 +20,9 @@ const wordCount = (post.body ?? '').trim().split(/\s+/).filter(Boolean).length;
 const minutesRead = Math.max(1, Math.round(wordCount / 220));
 
 const href = postLang === 'pt' ? `/pt/blog/${post.id}/` : `/blog/${post.id}/`;
+const typeLabel = type
+  ? t(postLang, `post.type${type.charAt(0).toUpperCase()}${type.slice(1)}` as UIKey)
+  : undefined;
 const tagsPrefix = postLang === 'pt' ? '/pt/tags' : '/tags';
 const allTags = tags ?? [];
 const visibleTags = allTags.slice(0, 3);
@@ -47,6 +50,7 @@ const overflowCount = allTags.length - visibleTags.length;
           <time datetime={date.toISOString()}>{formattedDate}</time>
           {' · '}{minutesRead} {t(postLang, 'post.minutesRead')}
           {featured && <> {' · '}<mark>{t(postLang, 'featured.label')}</mark></>}
+          {typeLabel && <> {' · '}<span class="type-badge" data-type={type}>{typeLabel}</span></>}
         </small>
       </p>
     </hgroup>
@@ -86,6 +90,18 @@ const overflowCount = allTags.length - visibleTags.length;
   .card-tag:hover {
     background: color-mix(in srgb, var(--pico-secondary) 22%, transparent);
     text-decoration: none;
+  }
+  .type-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--pico-muted-color) 12%, transparent);
+    color: var(--pico-muted-color);
+    border: 1px solid color-mix(in srgb, var(--pico-muted-color) 25%, transparent);
+    text-transform: uppercase;
+    vertical-align: middle;
   }
   .card-tag-overflow {
     font-size: 0.72rem;

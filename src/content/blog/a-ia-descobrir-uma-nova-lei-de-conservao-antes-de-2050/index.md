@@ -1,5 +1,6 @@
 ---
 author: franklin
+type: essay
 date: 2024-07-12T00:00:00.000Z
 lang: pt
 title: A IA descobrirá uma nova lei de conservação antes de 2050?

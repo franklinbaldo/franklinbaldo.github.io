@@ -1,5 +1,6 @@
 ---
 title: "Everything is eml: One Operator, One Constant, All of Mathematics"
+type: essay
 date: 2026-04-14
 description: "A new arXiv paper shows that every elementary function — every sin, every log, every e, every π, every 2+2=4 — is a binary tree built from the number 1 and a single operator. This is what a process ontology looks like when it ships on arXiv."
 tags:

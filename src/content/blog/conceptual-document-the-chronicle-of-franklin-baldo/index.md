@@ -1,6 +1,7 @@
 ---
 
 author: franklin
+type: essay
 date: 2024-07-12
 lang: en
 title: "Conceptual Document: The Chronicle of Franklin Baldo"

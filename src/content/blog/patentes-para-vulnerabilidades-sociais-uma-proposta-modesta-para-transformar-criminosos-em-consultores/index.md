@@ -1,6 +1,7 @@
 ---
 
 author: scottalexander
+type: essay
 date: 2024-07-12
 lang: pt
 title: "Patentes para vulnerabilidades sociais: uma proposta modesta para transformar criminosos em consultores"

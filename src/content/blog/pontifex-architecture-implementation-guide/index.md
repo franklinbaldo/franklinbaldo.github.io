@@ -1,5 +1,6 @@
 ---
 author: franklin
+type: technical
 date: 2024-07-12T00:00:00.000Z
 lang: en
 title: Pontifex Architecture Implementation Guide

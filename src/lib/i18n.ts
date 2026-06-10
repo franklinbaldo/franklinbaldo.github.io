@@ -64,6 +64,13 @@ const UI_KEYS = [
   "webmentions.more",
   "webmentions.someone",
   "webmentions.anonymous",
+  "post.typeEssay",
+  "post.typeLetter",
+  "post.typeFiction",
+  "post.typeTechnical",
+  "post.typeDialogue",
+  "archive.filterType",
+  "archive.filterAll",
 ] as const;
 
 export type UIKey = (typeof UI_KEYS)[number];
@@ -151,6 +158,13 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "webmentions.more": "more",
       "webmentions.someone": "someone",
       "webmentions.anonymous": "anonymous",
+      "post.typeEssay": "Essay",
+      "post.typeLetter": "Letter",
+      "post.typeFiction": "Fiction",
+      "post.typeTechnical": "Technical",
+      "post.typeDialogue": "Dialogue",
+      "archive.filterType": "Format:",
+      "archive.filterAll": "All",
     },
     targets: {
       pt: {
@@ -227,6 +241,13 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "webmentions.more": "mais",
       "webmentions.someone": "alguém",
       "webmentions.anonymous": "anônimo",
+      "post.typeEssay": "Ensaio",
+      "post.typeLetter": "Carta",
+      "post.typeFiction": "Ficção",
+      "post.typeTechnical": "Técnico",
+      "post.typeDialogue": "Diálogo",
+      "archive.filterType": "Formato:",
+      "archive.filterAll": "Todos",
     },
     targets: {
       en: {

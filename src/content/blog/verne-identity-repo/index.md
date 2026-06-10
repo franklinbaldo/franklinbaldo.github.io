@@ -1,5 +1,6 @@
 ---
 author: franklin
+type: essay
 date: 2026-03-18
 lang: en
 translationKey: verne-identity-repo

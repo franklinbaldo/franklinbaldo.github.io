@@ -2,6 +2,7 @@
 author: franklin
 title: "The Serpent's Egg"
 description: "The duty of rationality is incompatible with judicial patrimonialism. Article 489 of the Brazilian Civil Procedure Code of 2015 is that serpent's egg — incubated inside the patrimonial system, by the hands of its most eloquent representative, without him realizing what he was hatching."
+type: essay
 date: 2026-05-10
 lang: en
 tags: ["law", "cpc", "patrimonialism", "reasoning", "judicial-discretion"]

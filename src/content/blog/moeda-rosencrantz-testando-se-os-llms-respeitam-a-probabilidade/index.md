@@ -5,6 +5,7 @@ description: >-
   Comecei querendo saber se um LLM respeita probabilidade. Terminei com doze
   cientistas fictícios debatendo entre si, um auditor chamado Mycroft Holmes,
   e um agente que tentou colar na prova.
+type: technical
 date: 2026-03-17T00:00:00.000Z
 lang: pt
 tags:

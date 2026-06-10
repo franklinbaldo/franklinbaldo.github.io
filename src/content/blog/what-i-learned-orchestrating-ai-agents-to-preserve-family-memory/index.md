@@ -4,6 +4,7 @@ translationKey: family-memory
 description: >-
   My father records stories on his phone. Jules committed the wrong year. This
   is what I built from that.
+type: essay
 date: 2026-03-30T00:00:00.000Z
 lang: en
 tags:

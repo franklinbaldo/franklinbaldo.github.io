@@ -2,6 +2,7 @@
 author: franklin
 title: "It's Raining Truth"
 description: "Seicho-No-Ie calls itself a philosophy. I decided to inspect it seriously — and see what the gesture does to it, and to me."
+type: essay
 date: 2026-05-31
 lang: en
 translationKey: its-raining-truth

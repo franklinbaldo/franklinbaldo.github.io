@@ -1,6 +1,7 @@
 ---
 title: "Recuperando o Harness"
 description: "Como uma única palavra tem invocado Waluigis silenciosamente por meia década, e o que o canivete no meu bolso tem a ver com isso."
+type: technical
 date: 2026-04-29
 lang: pt
 tags: [ai, alignment, agents, harness, waluigi, canivete, philosophy]

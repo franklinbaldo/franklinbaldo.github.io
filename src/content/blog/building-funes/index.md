@@ -1,6 +1,7 @@
 ---
 title: "Building Funes: How I Gave an AI Agent a Soul"
 author: franklin
+type: essay
 date: 2026-02-17
 lang: en
 translationKey: building-funes

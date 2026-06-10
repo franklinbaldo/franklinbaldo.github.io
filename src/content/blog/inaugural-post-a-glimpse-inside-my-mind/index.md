@@ -1,5 +1,6 @@
 ---
 author: franklin
+type: essay
 date: 2025-02-02
 lang: en
 title: "Inaugural Post: A Glimpse Inside My Mind"

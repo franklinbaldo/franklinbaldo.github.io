@@ -2,6 +2,7 @@
 author: franklin
 title: "Está Chovendo Verdade"
 description: "A Seicho-No-Ie se diz filosofia. Resolvi inspecioná-la a sério — e ver o que o gesto faz com ela, e comigo."
+type: essay
 date: 2026-05-31
 lang: pt
 translationKey: its-raining-truth

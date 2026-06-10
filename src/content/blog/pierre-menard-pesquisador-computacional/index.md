@@ -1,6 +1,7 @@
 ---
 title: "Pierre Menard, Pesquisador Computacional"
 description: "Sobre escrever o artigo antes de fazer a pesquisa, e outras práticas de engenharia que deveriam nos envergonhar menos do que envergonham."
+type: essay
 date: "2026-05-14"
 lang: pt
 translationKey: pierre-menard

@@ -1,6 +1,7 @@
 ---
 title: "Pierre Menard, Computational Researcher"
 description: "On writing the paper before doing the research, and other engineering practices that should embarrass us less than they do."
+type: essay
 date: "2026-05-14"
 lang: en
 translationKey: pierre-menard

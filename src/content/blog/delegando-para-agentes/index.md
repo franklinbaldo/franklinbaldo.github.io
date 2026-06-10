@@ -3,6 +3,7 @@ title: 'A Arte de Delegar: Assinaturas e Caixas de Areia'
 description: >-
   A caixa de areia separa minuta de ato. O que ela não responde é onde fica a
   responsabilidade quando a caixa de areia falha.
+type: essay
 date: '2026-03-28'
 lang: pt
 tags:
