@@ -15,16 +15,11 @@ draft: false
 author: franklin
 translationKey: delegating-to-agents
 previousVersion:
-  uuid: 09318476-1009-5abe-bf6a-86e789067dec
+  uuid: af592b0d-035b-5dbe-8ed5-d540b2fe3fa2
   url: >-
-    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/a1d9cabb963c9674fbeea140d68240830f231062/src/content/blog/the-art-of-delegation.md
-  timestamp: '2026-06-06T13:30:49.440Z'
-  msg: >-
-    Broke opener from programmatic framing to direct scene; folded analogy-flaw
-    into sandbox section mid-argument instead of announcing it; removed Drake
-    meme; grounded outsider terms (parecer, ofício, CI/CD, corregedoria,
-    Causaganha, Funes) on first use; added Vaughan Challenger reference as
-    challenger to post's own thesis; 5 For Further Reading entries from 4
+    https://github.com/franklinbaldo/franklinbaldo.github.io/blob/4d6c9b2a2b5711080406dfc7e9886ca65287595f/src/content/blog/the-art-of-delegation.md
+  timestamp: '2026-06-10T12:17:35.978Z'
+  msg: Improve worst post with institutional critique via franklin-essay skill
 ---
 
 In February, I almost missed a forty-eight-hour window in a federal tax objection because I had begun treating the assessor's draft as the deliverable. The _parecer_ — the formal legal opinion that travels up the chain before anything gets signed — was good. The submission was not filed. I found out Tuesday afternoon when a calendar alert fired for a deadline I had mentally moved from my column to the assessor's column the moment the draft landed. It had not moved.
@@ -39,9 +34,9 @@ Software engineering doesn't natively recognize this distinction because the fee
 
 ## The boundaries of the sandbox
 
-The anxiety about AI agents is real and it has nothing to do with capability. When I hand Jules a refactoring task, I am not worried Jules will choose the wrong design pattern. I am worried Jules has write access.
+The anxiety about AI agents is real and it has nothing to do with capability. When I hand Jules a refactoring task, I am not worried Jules will choose the wrong design pattern. I am worried Jules has write access. Capability scales; accountability does not.
 
-The solution is not to stand over Jules's shoulder while it writes. The solution is a sandbox where the agent's actions are explicitly treated as _proposals_. The CI/CD pipeline — the automated sequence of builds, tests, and checks that must pass before any code goes live — the test suites, the strict linting rules: these are not just quality assurance mechanisms. They are the institutional equivalent of the rule that says an assessor can draft a _parecer_, but cannot sign the final _ofício_ (the official dispatch that goes out the door and binds the institution).
+The solution is not to stand over Jules's shoulder while it writes. The solution is a sandbox where the agent's actions are explicitly treated as _proposals_. But we must be careful here: treating an action as a proposal is an architectural choice, not a behavioral one. A system where an agent can commit code but is asked nicely not to merge it is a system begging to be breached. The constraint must be structural. The CI/CD pipeline — the automated sequence of builds, tests, and checks that must pass before any code goes live — the test suites, the strict linting rules: these are not just quality assurance mechanisms. They are the institutional equivalent of the rule that says an assessor can draft a _parecer_, but cannot sign the final _ofício_ (the official dispatch that goes out the door and binds the institution).
 
 The magic of delegation happens when you constrain the output space, not the process. You define the bounds of the sandbox — the schema, the invariants, the tests — and allow the agent to navigate the interior freely. If the tests pass, the proposal is valid. But the _apply_ step — the actual merging of the PR, the deployment to production — that remains a human signature. A CI pipeline that cannot be bypassed is a protocol office: a mandatory processing step between the draft and the act.
 
@@ -53,7 +48,7 @@ The sandbox is necessary. It is not sufficient for accountability. The signature
 
 I did not see this clearly until I was writing out the analogy and noticed the sentence "the assessor is good" sounded reasonable in a way that "Jules is good" does not, and could not, quite mean the same thing. Both sentences describe capacity. Only one describes a person who can be accountable for anything.
 
-I had been thinking of the signature as a formality. It is a formality. It is also the thing that makes the February mistake mine and not Jules's.
+The signature was never just a formal ritual. It is the architectural boundary where technical capacity stops and institutional risk begins. The mistake in February was assuming the boundary could be automated. It cannot. Automation accelerates the drafting phase; it cannot absorb the liability of the act phase. A signature is a mechanism for assigning liability.
 
 ## The harness as constitutional design
 
@@ -61,9 +56,9 @@ This is why the harness matters more than the model. [Funes](/blog/funes-soul/) 
 
 Funes opens pull requests; he does not merge them. He updates memory files; he does not send emails on his own. When I asked him to draft a response to an external inquiry about [Causaganha](https://github.com/franklinbaldo/causaganha), my open-source project for parsing Brazil's official gazette decisions, he wrote the draft and created a PR containing it. He did not send the message. Not because a rule said _do not send messages without permission_. Because the harness had no wiring for outbound external messages — the sandbox made the signature step structurally required, not behaviorally enforced.
 
-_Reversível → age, irreversível → pergunta._ That is not just a safety heuristic; it is a decision about where accountability concentrates. Every action the agent takes freely is an action whose accountability has been pre-delegated by whoever designed the harness. Every action requiring a signature is an action whose accountability remains explicitly with the human who signs.
+_Reversível → age, irreversível → pergunta._ That is not just a safety heuristic; it is a decision about where accountability concentrates. Every action the agent takes freely is an action whose liability has been pre-delegated by whoever designed the harness. Every action requiring a signature is an action whose liability remains explicitly with the human who signs. The harness is the constitution that distributes this liability.
 
-The _parecer_ was good. That sentence is about the assessor. The submission was not filed. That sentence is about me.
+The _parecer_ was good. That describes the agent's capacity. The submission was not filed. That describes my failure at the boundary.
 
 ## For further reading
 
