@@ -1,12 +1,12 @@
 # RFC 0008 — Music Player: UX e novas funcionalidades
 
-|                 |                                                                                                                                                                                          |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Proposta (r0)                                                                                                                                                                            |
-| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                      |
-| **Criado em**   | 2026-06-10                                                                                                                                                                               |
-| **Branch / PR** | —                                                                                                                                                                                        |
-| **Depende de**  | RFC 0006 (flatten musicas — implementado)                                                                                                                                                |
+|                 |                                                                                                                                                                                           |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**      | Proposta (r0)                                                                                                                                                                             |
+| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                       |
+| **Criado em**   | 2026-06-10                                                                                                                                                                                |
+| **Branch / PR** | —                                                                                                                                                                                         |
+| **Depende de**  | RFC 0006 (flatten musicas — implementado)                                                                                                                                                 |
 | **Afeta**       | `src/components/GlobalMusicPlayer.astro`, `src/pages/music.astro`, `src/pages/pt/musicas.astro`, `src/pages/blog/[...slug].astro`, `src/pages/pt/blog/[...slug].astro`, `src/lib/suno.ts` |
 
 > **Etapa 1 — só o RFC.** Implementação faseada após merge, cada fase verde
@@ -140,7 +140,7 @@ atual sem errar; `astro check` + `prettier` verdes.
 #### 1.1 Volume
 
 - Adicionar `<input type="range" id="gmp-volume" min="0" max="1" step="0.01"
-  value="1">` à barra do player.
+value="1">` à barra do player.
 - Conectar ao `audioEl.volume` via `input` event.
 - Persistir em `localStorage` chave `gmp-volume` (restaurar na montagem).
 - Mobile (< 480 px): ocultar o slider de volume (o SO controla o volume por
@@ -281,18 +281,18 @@ com o tempo correto; queue drawer abre/fecha e navega entre músicas.
 
 ## 5. Análise de impacto
 
-| Componente                                          | Fases afetadas                                                       |
-| --------------------------------------------------- | -------------------------------------------------------------------- |
-| `src/components/GlobalMusicPlayer.astro`            | 0 (link), 1 (volume/shuffle/repeat/data-playing-id), 3 (queue drawer, favorito ativo) |
-| `src/pages/music.astro`                             | 1 (tocar tudo, destaque), 2 (filtros, sort, link nav), 3 (favoritos, histórico) |
-| `src/pages/pt/musicas.astro`                        | Idem (versão PT)                                                     |
-| `src/pages/blog/[...slug].astro`                    | 2 (prev/next música, link para galeria)                              |
-| `src/pages/pt/blog/[...slug].astro`                 | Idem (versão PT)                                                     |
-| `src/lib/hronir-rank.ts` / `src/lib/suno.ts`        | 0 (incluir `slug` no array de songs)                                 |
-| `localStorage` (chaves novas)                       | 1 (`gmp-volume`, `gmp-repeat`), 3 (`gmp-favorites`, `gmp-history`) |
-| Build (getStaticPaths)                              | 2 (prev/next calculado no build)                                     |
-| Scripts de geração / CLI Hrönir                     | Sem mudança                                                          |
-| Schema de rate files / `.routines/hronir/`          | Sem mudança                                                          |
+| Componente                                   | Fases afetadas                                                                        |
+| -------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `src/components/GlobalMusicPlayer.astro`     | 0 (link), 1 (volume/shuffle/repeat/data-playing-id), 3 (queue drawer, favorito ativo) |
+| `src/pages/music.astro`                      | 1 (tocar tudo, destaque), 2 (filtros, sort, link nav), 3 (favoritos, histórico)       |
+| `src/pages/pt/musicas.astro`                 | Idem (versão PT)                                                                      |
+| `src/pages/blog/[...slug].astro`             | 2 (prev/next música, link para galeria)                                               |
+| `src/pages/pt/blog/[...slug].astro`          | Idem (versão PT)                                                                      |
+| `src/lib/hronir-rank.ts` / `src/lib/suno.ts` | 0 (incluir `slug` no array de songs)                                                  |
+| `localStorage` (chaves novas)                | 1 (`gmp-volume`, `gmp-repeat`), 3 (`gmp-favorites`, `gmp-history`)                    |
+| Build (getStaticPaths)                       | 2 (prev/next calculado no build)                                                      |
+| Scripts de geração / CLI Hrönir              | Sem mudança                                                                           |
+| Schema de rate files / `.routines/hronir/`   | Sem mudança                                                                           |
 
 ---
 
@@ -334,7 +334,7 @@ com o tempo correto; queue drawer abre/fecha e navega entre músicas.
    atual: substituir fila (como `gp:queue` já faz).
 4. **Filtros de gênero — granularidade dos tags:** os `metadata.tags` do
    Suno são strings livres (ex. `"Genre: Atmospheric Indie Folk/Electronic.
-   Tempo: 72 BPM. Mood: Introspective"`). A Fase 2 vai requerer uma camada
+Tempo: 72 BPM. Mood: Introspective"`). A Fase 2 vai requerer uma camada
    de normalização (split, trim, deduplicate) para chips úteis. Definir
    esse pipeline de limpeza antes de implementar.
 5. **Volume no iOS Safari:** `audioEl.volume` é somente-leitura no iOS
