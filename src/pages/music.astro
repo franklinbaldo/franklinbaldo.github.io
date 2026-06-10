@@ -190,14 +190,32 @@ const musicJsonLd = {
 
   {clips.length > 0 && (
     <section>
-      <h2>All songs <small>({clips.length})</small></h2>
-      <div class="songs-grid">
+      <div class="songs-header">
+        <h2>All songs <small>({clips.length})</small></h2>
+        <div class="songs-controls">
+          <button id="gmp-play-all" type="button" data-ids={clips.map((c) => c.id).join(",")}>▶ Play all</button>
+          <button id="gmp-shuffle-all" type="button" data-ids={clips.map((c) => c.id).join(",")}>⇌ Shuffle</button>
+          <select id="sort-songs" aria-label="Sort by">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="duration-desc">Longest</option>
+            <option value="duration-asc">Shortest</option>
+          </select>
+        </div>
+      </div>
+      <div class="songs-grid" id="songs-grid">
         {clips.map((c) => {
           const tags = parseTags(c.metadata?.tags);
           const duration = fmtDuration(c.metadata?.duration);
           const lyrics = c.metadata?.prompt ?? "";
           return (
-            <article class="song-card" id={c.id}>
+            <article
+              class="song-card"
+              id={c.id}
+              data-suno-id={c.id}
+              data-date={c.created_at}
+              data-duration={String(c.metadata?.duration || 0)}
+            >
               <a href={`https://suno.com/song/${c.id}`} class="cover">
                 <img
                   src={c.image_url}
@@ -249,7 +267,117 @@ const musicJsonLd = {
   )}
 </PageLayout>
 
+<script>
+  function initGallery() {
+    const playAllBtn = document.getElementById("gmp-play-all") as HTMLButtonElement | null;
+    const shuffleAllBtn = document.getElementById("gmp-shuffle-all") as HTMLButtonElement | null;
+    const sortSelect = document.getElementById("sort-songs") as HTMLSelectElement | null;
+    const grid = document.getElementById("songs-grid") as HTMLElement | null;
+
+    if (playAllBtn) {
+      playAllBtn.addEventListener("click", () => {
+        const ids = getVisibleIds();
+        document.dispatchEvent(new CustomEvent("gp:queue", { detail: { sunoIds: ids } }));
+      });
+    }
+
+    if (shuffleAllBtn) {
+      shuffleAllBtn.addEventListener("click", () => {
+        const ids = getVisibleIds();
+        const shuffled = [...ids].sort(() => Math.random() - 0.5);
+        document.dispatchEvent(new CustomEvent("gp:queue", { detail: { sunoIds: shuffled } }));
+      });
+    }
+
+    function getVisibleIds(): string[] {
+      if (!grid) return [];
+      return Array.from(grid.querySelectorAll<HTMLElement>(".song-card:not([hidden])"))
+        .map((el) => el.dataset.sunoId || "")
+        .filter(Boolean);
+    }
+
+    if (sortSelect && grid) {
+      sortSelect.addEventListener("change", () => {
+        const cards = Array.from(grid.querySelectorAll<HTMLElement>(".song-card"));
+        cards.sort((a, b) => {
+          const val = sortSelect.value;
+          if (val === "newest" || val === "oldest") {
+            const da = new Date(a.dataset.date || "").valueOf();
+            const db = new Date(b.dataset.date || "").valueOf();
+            return val === "newest" ? db - da : da - db;
+          } else {
+            const da = Number(a.dataset.duration || "0");
+            const db = Number(b.dataset.duration || "0");
+            return val === "duration-desc" ? db - da : da - db;
+          }
+        });
+        cards.forEach((c) => grid.appendChild(c));
+      });
+    }
+
+    // Highlight active card based on data-playing-id on #gmp
+    const gmp = document.getElementById("gmp");
+    if (!gmp || !grid) return;
+
+    function updateHighlight() {
+      const playingId = gmp!.dataset.playingId || "";
+      grid!.querySelectorAll<HTMLElement>(".song-card").forEach((card) => {
+        card.classList.toggle("is-playing", card.dataset.sunoId === playingId);
+      });
+    }
+
+    updateHighlight();
+    const obs = new MutationObserver(updateHighlight);
+    obs.observe(gmp, { attributes: true, attributeFilter: ["data-playing-id"] });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initGallery);
+  } else {
+    initGallery();
+  }
+  document.addEventListener("astro:page-load", initGallery);
+</script>
+
 <style>
+  .songs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .songs-header h2 { margin: 0; }
+  .songs-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .songs-controls button {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.85rem;
+    border-radius: var(--pico-border-radius);
+    cursor: pointer;
+    border: 1px solid var(--pico-muted-border-color);
+    background: var(--pico-card-background-color);
+    color: var(--pico-color);
+  }
+  .songs-controls button:hover {
+    background: var(--pico-primary);
+    color: var(--pico-primary-inverse, #fff);
+    border-color: var(--pico-primary);
+  }
+  .songs-controls select {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.85rem;
+    border-radius: var(--pico-border-radius);
+    border: 1px solid var(--pico-muted-border-color);
+    background: var(--pico-card-background-color);
+    color: var(--pico-color);
+    cursor: pointer;
+  }
   .playlists-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
