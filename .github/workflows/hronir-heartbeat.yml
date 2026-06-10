@@ -115,7 +115,7 @@ jobs:
           #    over-spawn before they reappear as active in the next snapshot.
           TO_SPAWN=$((TARGET_SESSIONS - ACTIVE - UNLOCKED))
           if [ "$TO_SPAWN" -le 0 ]; then
-            echo "Pool is full ($ACTIVE/$TARGET_SESSIONS) — nothing to do."
+            echo "Pool is at capacity — active=$ACTIVE unlocked=$UNLOCKED target=$TARGET_SESSIONS — nothing to do."
             exit 0
           fi
 
