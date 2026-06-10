@@ -26,6 +26,17 @@ export function readMatch(filePath: string): {
 } {
   const raw = fs.readFileSync(filePath, "utf8");
   const parsed = matter(raw);
+  // Rate files written on Windows carry backslash separators in
+  // post_a/b.path; normalize to POSIX so existsSync and key lookups work
+  // on Linux CI. decide() re-persists via writeMatch, so files self-heal.
+  for (const sideName of ["post_a", "post_b"]) {
+    const side = (parsed.data as Record<string, unknown>)[sideName] as
+      | { path?: unknown }
+      | undefined;
+    if (side && typeof side.path === "string") {
+      side.path = side.path.replace(/\\/g, "/");
+    }
+  }
   return { ...parsed, filePath };
 }
 

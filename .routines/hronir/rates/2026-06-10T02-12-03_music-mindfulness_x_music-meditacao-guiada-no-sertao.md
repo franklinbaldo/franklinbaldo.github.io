@@ -4,12 +4,12 @@ run_at: '2026-06-10T02:12:03Z'
 match_index: 4
 post_a:
   key: music-mindfulness
-  path: src\content\blog\mindfulness-en\index.mdx
+  path: src/content/blog/mindfulness-en/index.mdx
   display_lang: en
   version: 8f049910-7849-587c-88d3-8c7a74e79ac2
 post_b:
   key: music-meditacao-guiada-no-sertao
-  path: src\content\blog\meditacao-guiada-no-sertao-en\index.mdx
+  path: src/content/blog/meditacao-guiada-no-sertao-en/index.mdx
   display_lang: en
   version: b241c85c-a3b5-55ad-bb4f-354d8c916ab9
 winner: b

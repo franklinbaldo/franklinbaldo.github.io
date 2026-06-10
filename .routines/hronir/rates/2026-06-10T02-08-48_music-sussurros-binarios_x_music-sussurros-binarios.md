@@ -4,12 +4,12 @@ run_at: '2026-06-10T02:08:48Z'
 match_index: 1
 post_a:
   key: music-sussurros-binarios
-  path: src\content\blog\sussurros-binarios-en\index.mdx
+  path: src/content/blog/sussurros-binarios-en/index.mdx
   display_lang: en
   version: 267aaacf-c59d-549d-a76e-7438b0cfb299
 post_b:
   key: music-sussurros-binarios
-  path: src\content\blog\sussurros-binarios-en\v-2026-06-10T00-16-09.mdx
+  path: src/content/blog/sussurros-binarios-en/v-2026-06-10T00-16-09.mdx
   display_lang: en
   version: 267aaacf-c59d-549d-a76e-7438b0cfb299
 winner: a

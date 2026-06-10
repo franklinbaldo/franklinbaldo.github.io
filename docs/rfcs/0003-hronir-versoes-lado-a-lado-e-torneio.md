@@ -420,7 +420,18 @@ fundação travada por testes.
    `promote` grava o equivalente ou se a UI passa a ler `supersedes`.
 7. **`promote` e o `migrate`:** com `version` autoritativo (§7), resta confirmar a
    tolerância `path`×`version` no `doctor` e se vale um modo de "reescrever paths"
-   no `migrate` após promoções.
+   no `migrate` após promoções. _Resolvido na PR #321:_ o `doctor` tolera path
+   `v-*` ausente quando o lado tem UUID de versão e a pasta do post existe
+   (promote renomeia o rascunho; prune remove o arquivo); reescrever paths no
+   `migrate` foi dispensado — o path gravado é registro histórico fiel.
+8. **Promoção × sincronia bilíngue (descoberto na primeira promoção real,
+   PR #321):** a trilha por-versão é por-língua, mas o `check:translations`
+   exige que o par PT/EN evolua **junto** no mesmo PR. Quando só um lado
+   acumula duelos suficientes (o sorteio é independente por língua), o
+   `promote --all` promove um lado e quebra o CI. Workaround atual: promover o
+   espelho manualmente via `promote --draft` (os rascunhos nascem em par pelo
+   `draft-worst`). Fix candidato: `promote` tratar o par como unidade — quando
+   qualquer língua cruza o limiar, promover os espelhos do mesmo round juntos.
 
 ---
 
@@ -480,3 +491,11 @@ Merge com **merge commit** (não squash), conforme `CLAUDE.md`.
   n≥2 duelos). `prune [--dry-run]` remove versões que perderam para a canônica
   por ≥0.5★ em ≥3 duelos. `npm run hronir:prune` adicionado ao `package.json`.
   RFC 0003 status atualizado para "Implemented (Fases 0–3)".
+- **r6** (2026-06-10): erratum pós **primeira promoção real** (PR #321,
+  `music-vos`: rascunho EN venceu por +1.63★ em 3 duelos). Dois achados de
+  produção: (a) o `doctor` exigia que `post_a/b.path` existissem, mas
+  promote/prune apagam o path gravado — tolerância do §7 implementada (QA 7
+  resolvida); (b) **gap novo**: promoção por-língua × `check:translations`,
+  que exige o par PT/EN evoluindo junto — registrado como QA 8, com fix
+  candidato (promover espelhos do mesmo round como unidade). Workaround
+  aplicado na #321: `promote --draft` do espelho PT.
