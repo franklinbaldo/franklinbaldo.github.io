@@ -2,7 +2,7 @@
 
 |                 |                                                                                                                                                                                    |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Draft / Proposed                                                                                                                                                                   |
+| **Status**      | Implemented (PR #307)                                                                                                                                                              |
 | **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                |
 | **Criado em**   | 2026-06-09                                                                                                                                                                         |
 | **Branch / PR** | `claude/vibrant-volta-3giul0`                                                                                                                                                      |
@@ -369,3 +369,8 @@ E a consolidação de fontes:
 - **r0** (2026-06-09): versão inicial. Decisões do dono: aplicar **antes** da
   RFC 0003; abordagem convenção-como-check (sem commitlint/ESLint); incorporar
   os achados do review do PR #306 como motivação.
+- **r1** (2026-06-10): atualização de status para **Implemented (PR #307)** —
+  registro retroativo. As quatro entregas estão na `main`: `check:hygiene` no
+  CI, descoberta de posts consolidada em `scripts/lib/content.mjs`, seção
+  "Convenções do repo" no `CLAUDE.md`, e a limpeza da raiz. A RFC 0003 rebaseou
+  e implementou sobre este terreno, como planejado.

@@ -2,7 +2,7 @@
 
 |                 |                                                                                                       |
 | --------------- | ----------------------------------------------------------------------------------------------------- |
-| **Status**      | Draft / Proposed                                                                                      |
+| **Status**      | Implemented (Fases 0–2)                                                                               |
 | **Autor**       | Franklin Baldo (proposta assistida)                                                                   |
 | **Criado em**   | 2026-06-09                                                                                            |
 | **Branch / PR** | `claude/friendly-archimedes-clsv9r`                                                                   |
@@ -381,3 +381,9 @@ Merge com **merge commit** (não squash), conforme `CLAUDE.md`.
   redundante, margem sempre recuperável); ressalva sobre a semântica de `weights`
   no openskill@4.1.1; compromisso de atualizar a seção Ranking do README;
   anchor de `generateNextMatch` corrigido para `commands.js:263`.
+- **r2 (2026-06-10):** atualização de status para **Implemented (Fases 0–2)** —
+  registro retroativo. Fase 0 (golden tests determinísticos), Fase 1 (trilha
+  EWMA de qualidade absoluta, `computeAbsoluteQuality`, `worst --absolute`) e
+  Fase 2 (update do OpenSkill ponderado pela margem, `MARGIN_W_MIN` em
+  `ranking`) estão no código desde a PR #292; hoje vivem em `src/hronir/`
+  (TypeScript, RFC 0005). A Fase 3 segue como esboço futuro.

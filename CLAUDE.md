@@ -86,6 +86,10 @@ npm run hronir:worst            # print the lowest-ranked post key
 npm run hronir:draft-worst      # RFC 0003: cria uma NOVA versão (rascunho) do pior post
 npm run hronir:draft-commit -- --msg "..."  # registra o rascunho (canônica intocada)
 npm run hronir:promote -- --draft <path>    # promove uma versão a canônica (swap de arquivos)
+npm run hronir:promote -- --key <key>       # auto-promove a melhor versão da chave (margem ≥0.3★, n≥2 duelos)
+npm run hronir:promote -- --all             # varre todas as chaves e auto-promove as elegíveis
+npm run hronir:prune -- --dry-run           # lista versões perdedoras elegíveis para poda (≥0.5★ abaixo, n≥3)
+npm run hronir:prune            # remove as versões perdedoras elegíveis
 npm run hronir:edit-worst       # alias legado de draft-worst (edição não-destrutiva)
 npm run hronir:end -- --force   # discard an in-progress session
 ```
