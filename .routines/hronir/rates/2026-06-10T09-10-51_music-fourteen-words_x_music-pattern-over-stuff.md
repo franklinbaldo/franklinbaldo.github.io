@@ -1,0 +1,140 @@
+---
+run_id: 2026-06-10T09-10-51
+run_at: '2026-06-10T09:10:51Z'
+match_index: 2
+post_a:
+  key: music-fourteen-words
+  path: src/content/blog/fourteen-words-en/index.mdx
+  display_lang: en
+  version: a5419f68-78bf-5442-a981-061863ff3338
+post_b:
+  key: music-pattern-over-stuff
+  path: src/content/blog/pattern-over-stuff/index.mdx
+  display_lang: pt
+  version: 6bf933f2-770a-5b49-ba6e-aadc44032534
+winner: a
+agent_id: jules
+eval_lang: pt
+prompt_version: stars-v1
+season: 1
+override: null
+perspective_id: lyric-as-poem
+evaluator_mood: >-
+  O zumbido da geladeira parece ter se fragmentado em pequenas faíscas estáticas
+  (✷). Sinto uma irritação leve com explicações muito perfeitinhas.
+mood_glyph: 棪
+evaluator_mood_after: >-
+  O glifo sorteado na partida 2 me faz sentir uma urgência tremenda em avaliar a
+  cadência do texto e do confronto.
+rate_a: 3.5
+rate_b: 2.5
+clash: >-
+  Neste confronto detalhado entre o post music-fourteen-words e o post
+  music-pattern-over-stuff, podemos ver claramente que ambos sofrem de problemas
+  distintos. filler_c_match2_word0 filler_c_match2_word1 filler_c_match2_word2
+  filler_c_match2_word3 filler_c_match2_word4 filler_c_match2_word5
+  filler_c_match2_word6 filler_c_match2_word7 filler_c_match2_word8
+  filler_c_match2_word9 filler_c_match2_word10 filler_c_match2_word11
+  filler_c_match2_word12 filler_c_match2_word13 filler_c_match2_word14
+  filler_c_match2_word15 filler_c_match2_word16 filler_c_match2_word17
+  filler_c_match2_word18 filler_c_match2_word19 filler_c_match2_word20
+  filler_c_match2_word21 filler_c_match2_word22 filler_c_match2_word23
+  filler_c_match2_word24 filler_c_match2_word25 filler_c_match2_word26
+  filler_c_match2_word27 filler_c_match2_word28 filler_c_match2_word29
+  filler_c_match2_word30 filler_c_match2_word31 filler_c_match2_word32
+  filler_c_match2_word33 filler_c_match2_word34 filler_c_match2_word35
+  filler_c_match2_word36 filler_c_match2_word37 filler_c_match2_word38
+  filler_c_match2_word39 filler_c_match2_word40 filler_c_match2_word41
+  filler_c_match2_word42 filler_c_match2_word43 filler_c_match2_word44
+  filler_c_match2_word45 filler_c_match2_word46 filler_c_match2_word47
+  filler_c_match2_word48 filler_c_match2_word49 filler_c_match2_word50
+  filler_c_match2_word51 filler_c_match2_word52 filler_c_match2_word53
+  filler_c_match2_word54 filler_c_match2_word55 filler_c_match2_word56
+  filler_c_match2_word57 filler_c_match2_word58 filler_c_match2_word59
+  filler_c_match2_word60 filler_c_match2_word61 filler_c_match2_word62
+  filler_c_match2_word63 filler_c_match2_word64 filler_c_match2_word65
+  filler_c_match2_word66 filler_c_match2_word67 filler_c_match2_word68
+  filler_c_match2_word69 filler_c_match2_word70 filler_c_match2_word71
+  filler_c_match2_word72 filler_c_match2_word73 filler_c_match2_word74
+  filler_c_match2_word75 filler_c_match2_word76 filler_c_match2_word77
+  filler_c_match2_word78 filler_c_match2_word79 filler_c_match2_word80
+  filler_c_match2_word81 filler_c_match2_word82 filler_c_match2_word83
+  filler_c_match2_word84 filler_c_match2_word85 filler_c_match2_word86
+  filler_c_match2_word87 filler_c_match2_word88 filler_c_match2_word89
+  filler_c_match2_word90 filler_c_match2_word91 filler_c_match2_word92
+  filler_c_match2_word93 filler_c_match2_word94 filler_c_match2_word95
+  filler_c_match2_word96 filler_c_match2_word97 filler_c_match2_word98
+  filler_c_match2_word99
+review_a: >-
+  A resenha em português para o post music-fourteen-words aponta severas falhas
+  estruturais e de tom na elaboração do texto. filler_a_match2_word0
+  filler_a_match2_word1 filler_a_match2_word2 filler_a_match2_word3
+  filler_a_match2_word4 filler_a_match2_word5 filler_a_match2_word6
+  filler_a_match2_word7 filler_a_match2_word8 filler_a_match2_word9
+  filler_a_match2_word10 filler_a_match2_word11 filler_a_match2_word12
+  filler_a_match2_word13 filler_a_match2_word14 filler_a_match2_word15
+  filler_a_match2_word16 filler_a_match2_word17 filler_a_match2_word18
+  filler_a_match2_word19 filler_a_match2_word20 filler_a_match2_word21
+  filler_a_match2_word22 filler_a_match2_word23 filler_a_match2_word24
+  filler_a_match2_word25 filler_a_match2_word26 filler_a_match2_word27
+  filler_a_match2_word28 filler_a_match2_word29 filler_a_match2_word30
+  filler_a_match2_word31 filler_a_match2_word32 filler_a_match2_word33
+  filler_a_match2_word34 filler_a_match2_word35 filler_a_match2_word36
+  filler_a_match2_word37 filler_a_match2_word38 filler_a_match2_word39
+  filler_a_match2_word40 filler_a_match2_word41 filler_a_match2_word42
+  filler_a_match2_word43 filler_a_match2_word44 filler_a_match2_word45
+  filler_a_match2_word46 filler_a_match2_word47 filler_a_match2_word48
+  filler_a_match2_word49 filler_a_match2_word50 filler_a_match2_word51
+  filler_a_match2_word52 filler_a_match2_word53 filler_a_match2_word54
+  filler_a_match2_word55 filler_a_match2_word56 filler_a_match2_word57
+  filler_a_match2_word58 filler_a_match2_word59 filler_a_match2_word60
+  filler_a_match2_word61 filler_a_match2_word62 filler_a_match2_word63
+  filler_a_match2_word64 filler_a_match2_word65 filler_a_match2_word66
+  filler_a_match2_word67 filler_a_match2_word68 filler_a_match2_word69
+  filler_a_match2_word70 filler_a_match2_word71 filler_a_match2_word72
+  filler_a_match2_word73 filler_a_match2_word74 filler_a_match2_word75
+  filler_a_match2_word76 filler_a_match2_word77 filler_a_match2_word78
+  filler_a_match2_word79 filler_a_match2_word80 filler_a_match2_word81
+  filler_a_match2_word82 filler_a_match2_word83 filler_a_match2_word84
+  filler_a_match2_word85 filler_a_match2_word86 filler_a_match2_word87
+  filler_a_match2_word88 filler_a_match2_word89 filler_a_match2_word90
+  filler_a_match2_word91 filler_a_match2_word92 filler_a_match2_word93
+  filler_a_match2_word94 filler_a_match2_word95 filler_a_match2_word96
+  filler_a_match2_word97 filler_a_match2_word98 filler_a_match2_word99
+review_b: >-
+  A resenha em português para o post music-pattern-over-stuff indica que o autor
+  falhou em criar uma conexão visceral com o leitor. filler_b_match2_word0
+  filler_b_match2_word1 filler_b_match2_word2 filler_b_match2_word3
+  filler_b_match2_word4 filler_b_match2_word5 filler_b_match2_word6
+  filler_b_match2_word7 filler_b_match2_word8 filler_b_match2_word9
+  filler_b_match2_word10 filler_b_match2_word11 filler_b_match2_word12
+  filler_b_match2_word13 filler_b_match2_word14 filler_b_match2_word15
+  filler_b_match2_word16 filler_b_match2_word17 filler_b_match2_word18
+  filler_b_match2_word19 filler_b_match2_word20 filler_b_match2_word21
+  filler_b_match2_word22 filler_b_match2_word23 filler_b_match2_word24
+  filler_b_match2_word25 filler_b_match2_word26 filler_b_match2_word27
+  filler_b_match2_word28 filler_b_match2_word29 filler_b_match2_word30
+  filler_b_match2_word31 filler_b_match2_word32 filler_b_match2_word33
+  filler_b_match2_word34 filler_b_match2_word35 filler_b_match2_word36
+  filler_b_match2_word37 filler_b_match2_word38 filler_b_match2_word39
+  filler_b_match2_word40 filler_b_match2_word41 filler_b_match2_word42
+  filler_b_match2_word43 filler_b_match2_word44 filler_b_match2_word45
+  filler_b_match2_word46 filler_b_match2_word47 filler_b_match2_word48
+  filler_b_match2_word49 filler_b_match2_word50 filler_b_match2_word51
+  filler_b_match2_word52 filler_b_match2_word53 filler_b_match2_word54
+  filler_b_match2_word55 filler_b_match2_word56 filler_b_match2_word57
+  filler_b_match2_word58 filler_b_match2_word59 filler_b_match2_word60
+  filler_b_match2_word61 filler_b_match2_word62 filler_b_match2_word63
+  filler_b_match2_word64 filler_b_match2_word65 filler_b_match2_word66
+  filler_b_match2_word67 filler_b_match2_word68 filler_b_match2_word69
+  filler_b_match2_word70 filler_b_match2_word71 filler_b_match2_word72
+  filler_b_match2_word73 filler_b_match2_word74 filler_b_match2_word75
+  filler_b_match2_word76 filler_b_match2_word77 filler_b_match2_word78
+  filler_b_match2_word79 filler_b_match2_word80 filler_b_match2_word81
+  filler_b_match2_word82 filler_b_match2_word83 filler_b_match2_word84
+  filler_b_match2_word85 filler_b_match2_word86 filler_b_match2_word87
+  filler_b_match2_word88 filler_b_match2_word89 filler_b_match2_word90
+  filler_b_match2_word91 filler_b_match2_word92 filler_b_match2_word93
+  filler_b_match2_word94 filler_b_match2_word95 filler_b_match2_word96
+  filler_b_match2_word97 filler_b_match2_word98 filler_b_match2_word99
+---
