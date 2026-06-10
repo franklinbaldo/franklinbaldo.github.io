@@ -1,17 +1,18 @@
 name: Hrönir Heartbeat
 
-# Liveness for the Hrönir/Jules loop.
+# Pool keeper for the Hrönir/Jules loop.
 #
-# The event-driven autopilot (hronir-autopilot.yml) only reacts when a PR
-# arrives. If no session is running, the conveyor stalls. This cron keeps one
-# ACTIVE session alive. Dead-simple, three steps:
+# Maintains TARGET_SESSIONS concurrent Jules sessions at all times.
+# With ~2h per session and TARGET_SESSIONS=10, this produces ~120 sessions/day.
 #
+# Steps:
 #   1. List every Jules session via verne (raw output logged for debugging).
 #   2. Count sessions for THIS repo+branch that are actively working — i.e. NOT
-#      terminal (completed/failed/cancelled) and NOT awaiting feedback. Awaiting
-#      sessions do NOT block a spawn; only a genuinely active one does.
-#   3. If an active session exists, do nothing. Otherwise spawn a fresh one and
-#      exit on verne's own result.
+#      terminal (completed/failed/cancelled) and NOT awaiting feedback.
+#   3. Spawn (TARGET_SESSIONS - ACTIVE) new sessions to fill the pool.
+#
+# The autopilot (hronir-autopilot.yml) also spawns one session after each merge.
+# Between the two, the pool stays full continuously.
 
 on:
   schedule:
@@ -25,21 +26,22 @@ permissions:
   contents: read
 
 concurrency:
-  # Shared with hronir-autopilot.yml so the two never spawn at the same time.
-  group: hronir-session
+  # Own group — independent from autopilot's merge serialization.
+  group: hronir-heartbeat
   cancel-in-progress: false
 
 jobs:
-  ensure-session:
+  fill-pool:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: ./.github/actions/setup-verne
 
-      - name: Spawn a session unless one is already active
+      - name: Spawn sessions to fill the pool
         env:
           JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+          TARGET_SESSIONS: "10"
         run: |
           set -euo pipefail
           if [ -z "${JULES_API_KEY:-}" ]; then
@@ -72,7 +74,7 @@ jobs:
 
           ACTIVE=$(echo "$ACTIVE_ENTRIES" | grep -c '\S' || true)
 
-          echo "Active session(s) for ${SOURCE}@main: ${ACTIVE}"
+          echo "Active session(s) for ${SOURCE}@main: ${ACTIVE}/${TARGET_SESSIONS}"
           if [ -n "$ACTIVE_ENTRIES" ]; then
             while IFS= read -r entry; do
               [ -z "$entry" ] && continue
@@ -82,11 +84,15 @@ jobs:
             done <<< "$ACTIVE_ENTRIES"
           fi
 
-          # 3) Spawn only when nothing is actively working.
-          if [ "$ACTIVE" -gt 0 ]; then
-            echo "A session is already active — nothing to do."
+          # 3) Spawn enough sessions to reach the target pool size.
+          TO_SPAWN=$((TARGET_SESSIONS - ACTIVE))
+          if [ "$TO_SPAWN" -le 0 ]; then
+            echo "Pool is full ($ACTIVE/$TARGET_SESSIONS) — nothing to do."
             exit 0
           fi
 
-          echo "No active session — spawning one."
-          bash scripts/hronir/spawn-session.sh
+          echo "Spawning $TO_SPAWN session(s) to reach target of $TARGET_SESSIONS..."
+          for i in $(seq 1 "$TO_SPAWN"); do
+            echo "--- Spawning session $i/$TO_SPAWN ---"
+            bash scripts/hronir/spawn-session.sh
+          done

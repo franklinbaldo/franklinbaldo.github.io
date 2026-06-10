@@ -1,15 +1,13 @@
 name: Hrönir Autopilot
 
-# Event-driven half of the Hrönir/Jules loop.
+# Merge machine for the Hrönir/Jules loop.
 #
 # Fires when the "Check" workflow finishes on a PR branch. If that PR is one of
 # OUR Jules sessions (confirmed via verne) and is mergeable + confined to the
-# safe paths, it is merged with a merge commit and the NEXT Jules session is
-# created immediately — in the same run — starting from the freshly-merged main.
-# Because the new session branches from up-to-date main, its PR won't conflict.
+# safe paths, it is merged with a merge commit.
 #
-# Liveness (making sure a session always exists) is handled separately by
-# hronir-heartbeat.yml. This workflow only reacts to PRs that actually arrive.
+# Session spawning is handled entirely by hronir-heartbeat.yml, which maintains
+# a pool of TARGET_SESSIONS concurrent sessions. This workflow only merges PRs.
 #
 # Requires repo secret JULES_API_KEY (the Google Jules API key).
 
@@ -29,9 +27,8 @@ permissions:
   pull-requests: write
 
 concurrency:
-  # Shared with hronir-heartbeat.yml so merge+spawn and the heartbeat never
-  # spawn sessions concurrently.
-  group: hronir-session
+  # Serializes merges so two autopilot runs never merge simultaneously.
+  group: hronir-merge
   cancel-in-progress: false
 
 env:
@@ -166,18 +163,3 @@ jobs:
           echo "Merged PR #$PR."
           echo "merged=$PR" >> "$GITHUB_OUTPUT"
 
-      - name: Spawn the next Jules session (via verne)
-        # Fires whenever the PR is confirmed as ours (authenticated), whether or
-        # not merge succeeded. A PR arriving means the current session is done —
-        # the conveyor must not stall waiting for a clean merge.
-        # Session config is in scripts/hronir/spawn-session.sh.
-        if: steps.merge.outputs.is_ours != ''
-        env:
-          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
-        run: |
-          set -euo pipefail
-          if [ -z "${JULES_API_KEY:-}" ]; then
-            echo "::error::JULES_API_KEY not set — cannot create the next session. Fix the repo secret."
-            exit 1
-          fi
-          bash scripts/hronir/spawn-session.sh
