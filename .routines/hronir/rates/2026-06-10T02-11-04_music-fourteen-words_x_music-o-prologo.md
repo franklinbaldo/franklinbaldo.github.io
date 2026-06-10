@@ -4,12 +4,12 @@ run_at: '2026-06-10T02:11:04Z'
 match_index: 3
 post_a:
   key: music-fourteen-words
-  path: src\content\blog\fourteen-words\index.mdx
+  path: src/content/blog/fourteen-words/index.mdx
   display_lang: pt
   version: 000574f0-2a07-5606-bb76-371c2aa939b2
 post_b:
   key: music-o-prologo
-  path: src\content\blog\o-prologo\index.mdx
+  path: src/content/blog/o-prologo/index.mdx
   display_lang: pt
   version: c60ff045-f64a-54e9-9aa9-7f1edac71952
 winner: a
