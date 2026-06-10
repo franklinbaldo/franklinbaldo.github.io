@@ -38,14 +38,47 @@ import {
 } from "./perspectives.js";
 import { pickRandomMood, MOODS } from "./moods.js";
 
+type PostSideRaw = { key?: string; slug?: string } | null | undefined;
+
+interface InitOptions {
+  skipEdit?: boolean;
+  skipRating?: boolean;
+  agentId?: string;
+  evalLang?: string;
+  minAppearances?: number;
+  matches?: number;
+}
+
+interface WorstOptions {
+  absolute?: boolean;
+  full?: boolean;
+}
+
+interface EndOptions {
+  force?: boolean;
+  skipEdit?: boolean;
+  agentId?: string;
+}
+
+interface PromoteArgs {
+  key?: string;
+  draft?: string;
+  force?: boolean;
+}
+
+interface DiagnoseMatchEntry {
+  timestamp?: number;
+  [key: string]: unknown;
+}
+
 // Word-trigram shingles for near-duplicate detection of review/clash prose.
-function shingleSet(text) {
+function shingleSet(text: unknown): Set<string> {
   const words = String(text)
     .toLowerCase()
     .replace(/\s+/g, " ")
     .trim()
     .match(/[\p{L}\p{N}]+/gu);
-  const set = new Set();
+  const set = new Set<string>();
   if (!words) return set;
   for (let i = 0; i + 2 < words.length; i++) {
     set.add(`${words[i]} ${words[i + 1]} ${words[i + 2]}`);
@@ -53,7 +86,7 @@ function shingleSet(text) {
   return set;
 }
 
-function jaccard(a, b) {
+function jaccard(a: Set<string>, b: Set<string>): number {
   if (a.size === 0 || b.size === 0) return 0;
   let inter = 0;
   const [small, big] = a.size < b.size ? [a, b] : [b, a];
@@ -82,7 +115,7 @@ function currentHeadSha() {
   }).trim();
 }
 
-function githubBlobUrl(sha, filepath) {
+function githubBlobUrl(sha: string, filepath: string): string {
   return `${GITHUB_BLOB_BASE}/${sha}/${filepath}`;
 }
 
@@ -91,7 +124,7 @@ function githubBlobUrl(sha, filepath) {
 // content of a target post diverges from the version that the captured
 // HEAD permalink will resolve to — otherwise the stored (uuid, url) pair
 // in previousVersion would describe two different files.
-function isFileDirtyAtHead(filepath) {
+function isFileDirtyAtHead(filepath: string): boolean {
   try {
     execFileSync("git", ["diff", "--quiet", "HEAD", "--", filepath], {
       stdio: ["ignore", "ignore", "ignore"],
@@ -113,12 +146,12 @@ function isFileDirtyAtHead(filepath) {
   return false;
 }
 
-function wordCount(s) {
+function wordCount(s: unknown): number {
   if (!s || typeof s !== "string") return 0;
   return s.trim().split(/\s+/).filter(Boolean).length;
 }
 
-function parseRate(raw, flagName) {
+function parseRate(raw: unknown, flagName: string): number {
   if (raw == null || String(raw).trim() === "") {
     console.error(`Erro: ${flagName} é obrigatório.`);
     process.exit(1);
@@ -142,7 +175,7 @@ function parseRate(raw, flagName) {
   return Math.round(n * 100) / 100;
 }
 
-function isValidRate(n) {
+function isValidRate(n: unknown): boolean {
   if (typeof n !== "number" || !Number.isFinite(n)) return false;
   if (n < 1 || n > 5) return false;
   // accept up to two decimals (allow small float drift)
@@ -150,12 +183,12 @@ function isValidRate(n) {
   return Math.abs(scaled - Math.round(scaled)) < 1e-6;
 }
 
-function latestMatchTimeByKey() {
-  const out = new Map();
+function latestMatchTimeByKey(): Map<string, number> {
+  const out = new Map<string, number>();
   for (const f of listMatchFiles()) {
     const { data } = readMatch(f);
-    const aKey = postKey(data.post_a);
-    const bKey = postKey(data.post_b);
+    const aKey = postKey(data.post_a as PostSideRaw);
+    const bKey = postKey(data.post_b as PostSideRaw);
     const ts =
       data.run_at instanceof Date
         ? data.run_at.getTime()
@@ -178,7 +211,7 @@ function utcStamp() {
   };
 }
 
-function nextStep(text) {
+function nextStep(text: string): void {
   console.log("");
   console.log(
     "================================================================================"
@@ -193,7 +226,7 @@ function nextStep(text) {
   );
 }
 
-export function init(options = {}) {
+export function init(options: InitOptions = {}) {
   console.log(
     `\n\n████████████████████████████████████████████████████████████████████████████████\n█                                                                              █\n█                    🎬 INÍCIO DE UMA NOVA SESSÃO DO HRONIR                     █\n█                                                                              █\n████████████████████████████████████████████████████████████████████████████████\n`
   );
@@ -302,7 +335,9 @@ const PROMOTE_MIN_DUELS = 2;
 
 // Find an eligible canonical that has at least one sibling draft (v-*) and
 // return the duel sides (canonical vs the freshest draft) for that (key, lang).
-function pickVersionDuel(eligible) {
+function pickVersionDuel(
+  eligible: Array<{ path: string; translationKey: string }>
+) {
   const candidates = [];
   for (const c of eligible) {
     const drafts = listVersions(c.path).filter((p) => !isCanonical(p));
@@ -341,7 +376,7 @@ function generateNextMatch() {
   const ranking = computeRatings();
   const ratingByKey = new Map();
   for (const r of ranking) ratingByKey.set(r.key, { mu: r.mu, sigma: r.sigma });
-  const getRating = (key) => ratingByKey.get(key) ?? rating();
+  const getRating = (key: string) => ratingByKey.get(key) ?? rating();
 
   const lastMatchTime = latestMatchTimeByKey();
   const staleByKey = new Map();
@@ -355,13 +390,16 @@ function generateNextMatch() {
     // "post was intentionally edited" signal. Fall back to gitMtime for posts
     // that have never gone through edit-commit.
     const postData = readPost(c.path);
-    const prevTimestamp = postData?.previousVersion?.timestamp
-      ? Date.parse(String(postData.previousVersion.timestamp)) || 0
+    const prevVersion = postData?.previousVersion as
+      | { timestamp?: string }
+      | undefined;
+    const prevTimestamp = prevVersion?.timestamp
+      ? Date.parse(String(prevVersion.timestamp)) || 0
       : 0;
     const mtime = prevTimestamp > 0 ? prevTimestamp : gitMtime(c.path);
     staleByKey.set(c.translationKey, mtime > lastMatch);
   }
-  const staleBonus = (key) => (staleByKey.get(key) ? STALE_BONUS : 0);
+  const staleBonus = (key: string) => (staleByKey.get(key) ? STALE_BONUS : 0);
 
   // Phase 3 (opt-in): objective-aware sampling. `refine-top` prefers high-level
   // pairs, `hunt-worst` prefers low-level pairs. Level = absolute stars EWMA;
@@ -376,8 +414,8 @@ function generateNextMatch() {
       levelByKey.set(key, q.stars);
     console.log(`(objetivo de amostragem: ${objective})`);
   }
-  const level = (key) => levelByKey.get(key) ?? 3.0;
-  const objectiveBonus = (a, b) =>
+  const level = (key: string) => levelByKey.get(key) ?? 3.0;
+  const objectiveBonus = (a: string, b: string) =>
     objectiveSign === 0
       ? 0
       : OBJECTIVE_WEIGHT * objectiveSign * (level(a) + level(b));
@@ -433,7 +471,7 @@ function generateNextMatch() {
   // For each post, randomly pick which language version to show. The ranking
   // key is always the translationKey (derived from EN), but the evaluator
   // reads whichever language is randomly selected.
-  function pickLangVariant(post) {
+  function pickLangVariant(post: { path: string; translationKey: string }) {
     const variants = findTranslations(post.translationKey);
     if (variants.length <= 1) return { path: post.path, lang: "en" };
     const v = variants[Math.floor(Math.random() * variants.length)];
@@ -509,7 +547,10 @@ function generateNextMatch() {
   };
 }
 
-function perspectiveBanner(perspective, mood) {
+function perspectiveBanner(
+  perspective: { name: string; id: string; summary: string; body: string },
+  mood: string | null | undefined
+): string {
   const lines = [
     "================================================================================",
     `🎭 PERSPECTIVA DESTE MATCH: ${perspective.name}`,
@@ -596,8 +637,8 @@ export function continueCmd() {
       try {
         const mood = session.currentMatch?.evaluator_mood;
         console.log(perspectiveBanner(loadPerspective(perspectiveId), mood));
-      } catch (e) {
-        console.error(`Erro ao carregar perspectiva: ${e.message}`);
+      } catch (e: unknown) {
+        console.error(`Erro ao carregar perspectiva: ${(e as Error).message}`);
         process.exit(1);
       }
     }
@@ -624,8 +665,8 @@ export function continueCmd() {
         console.log(
           `🎭 Lembrete da perspectiva: ${perspective.name} — ${perspective.summary}\n`
         );
-      } catch (e) {
-        console.error(`Erro ao carregar perspectiva: ${e.message}`);
+      } catch (e: unknown) {
+        console.error(`Erro ao carregar perspectiva: ${(e as Error).message}`);
         process.exit(1);
       }
     }
@@ -753,7 +794,7 @@ export function next(initOptions = {}) {
   continueCmd();
 }
 
-export function decide(args) {
+export function decide(args: string[]) {
   const sessionPath = SESSION_PATH;
   if (!fs.existsSync(sessionPath)) {
     console.error("Erro: Nenhuma sessão ativa. Não é possível decidir.");
@@ -879,8 +920,8 @@ export function decide(args) {
   let perspective;
   try {
     perspective = loadPerspective(perspectiveId);
-  } catch (e) {
-    console.error(`Erro: ${e.message}`);
+  } catch (e: unknown) {
+    console.error(`Erro: ${(e as Error).message}`);
     process.exit(1);
   }
 
@@ -931,7 +972,7 @@ export function decide(args) {
   nextStep("Rode `npm run hronir:continue` para ir para o próximo passo.");
 }
 
-function fmt(n, w = 6) {
+function fmt(n: number, w = 6) {
   return n.toFixed(3).padStart(w);
 }
 
@@ -991,7 +1032,7 @@ export function ranking() {
   );
 }
 
-export function worst(options = {}) {
+export function worst(options: WorstOptions = {}) {
   if (options.absolute) {
     // Absolute mode: lowest stars EWMA among posts with n >= MIN_APPEARANCES
     const quality = computeAbsoluteQuality();
@@ -1098,7 +1139,7 @@ export function diagnose() {
     console.log(`\n# líder por perspectiva (stars EWMA dentro da perspectiva)`);
     const ids = [...perPersp.keys()].sort();
     for (const id of ids) {
-      const inner = perPersp.get(id);
+      const inner = perPersp.get(id)!;
       const top = [...inner.entries()].sort(
         (a, b) => b[1].stars - a[1].stars || a[0].localeCompare(b[0])
       )[0];
@@ -1115,7 +1156,7 @@ export function diagnose() {
   );
 }
 
-function collectDefensesForLoser(loserKey, limit = 5) {
+function collectDefensesForLoser(loserKey: string, limit = 5) {
   const out = [];
   for (const f of listMatchFiles()) {
     const { data, content } = readMatch(f);
@@ -1123,8 +1164,8 @@ function collectDefensesForLoser(loserKey, limit = 5) {
     if (data.override && data.override !== "null") winner = data.override;
     if (winner === "TODO" || !winner) continue;
 
-    const aKey = postKey(data.post_a);
-    const bKey = postKey(data.post_b);
+    const aKey = postKey(data.post_a as PostSideRaw);
+    const bKey = postKey(data.post_b as PostSideRaw);
     const loserSide = winner === "a" ? "b" : "a";
     const loserSideKey = loserSide === "a" ? aKey : bKey;
     const winnerSideKey = winner === "a" ? aKey : bKey;
@@ -1210,7 +1251,7 @@ function collectDefensesForLoser(loserKey, limit = 5) {
   return out.slice(0, limit);
 }
 
-function collectDefensesForWinners(winnerKeys, limit = 5) {
+function collectDefensesForWinners(winnerKeys: string[], limit = 5) {
   const set = new Set(winnerKeys);
   const out = [];
   for (const f of listMatchFiles()) {
@@ -1219,11 +1260,11 @@ function collectDefensesForWinners(winnerKeys, limit = 5) {
     if (data.override && data.override !== "null") winner = data.override;
     if (winner === "TODO" || !winner) continue;
 
-    const aKey = postKey(data.post_a);
-    const bKey = postKey(data.post_b);
+    const aKey = postKey(data.post_a as PostSideRaw);
+    const bKey = postKey(data.post_b as PostSideRaw);
     const winnerSideKey = winner === "a" ? aKey : bKey;
     const loserSideKey = winner === "a" ? bKey : aKey;
-    if (!set.has(winnerSideKey)) continue;
+    if (!winnerSideKey || !set.has(winnerSideKey)) continue;
 
     let body;
     const perspectiveLabel = data.perspective_id
@@ -1278,7 +1319,7 @@ function collectDefensesForWinners(winnerKeys, limit = 5) {
   return out.slice(0, limit);
 }
 
-function getRecentlyEditedKeys(limit = 2) {
+function getRecentlyEditedKeys(limit = 2): string[] {
   // Cooldown is derived from previousVersion.timestamp on each post's
   // frontmatter (linked-list of edits, only the immediate predecessor is
   // stored per file). Legacy posts still using editHistory[] are honored
@@ -1289,17 +1330,20 @@ function getRecentlyEditedKeys(limit = 2) {
     const data = readPost(p);
     if (!data.translationKey) continue;
     let latest = 0;
-    const consider = (ts) => {
+    const consider = (ts: unknown) => {
       const t = ts ? Date.parse(String(ts)) || 0 : 0;
       if (t > latest) latest = t;
     };
-    consider(data.previousVersion?.timestamp);
+    consider(
+      (data.previousVersion as Record<string, unknown> | undefined)?.timestamp
+    );
     // RFC 0003: a recent draft (or one just promoted) also puts the key on
     // cooldown, so draft-worst doesn't re-draft the same post every round.
     consider(data.draftCommittedAt);
     consider(data.draftCreatedAt);
     if (Array.isArray(data.editHistory)) {
-      for (const entry of data.editHistory) consider(entry?.timestamp);
+      for (const entry of data.editHistory as Array<Record<string, unknown>>)
+        consider(entry?.timestamp);
     }
     if (!latest) continue;
     const key = String(data.translationKey);
@@ -1543,8 +1587,8 @@ export function migrate({ dryRun = false } = {}) {
 
   for (const f of files) {
     const { data, content } = readMatch(f);
-    const aPath = data.post_a?.path;
-    const bPath = data.post_b?.path;
+    const aPath = (data.post_a as PostSideRaw & { path?: string })?.path;
+    const bPath = (data.post_b as PostSideRaw & { path?: string })?.path;
     if (!aPath || !bPath) {
       warnings.push(`${f}: post_a.path / post_b.path ausente`);
       skipped++;
@@ -1558,10 +1602,10 @@ export function migrate({ dryRun = false } = {}) {
       continue;
     }
 
-    const oldKeyA = postKey(data.post_a);
-    const oldKeyB = postKey(data.post_b);
-    const hadSlugA = "slug" in (data.post_a || {});
-    const hadSlugB = "slug" in (data.post_b || {});
+    const oldKeyA = postKey(data.post_a as PostSideRaw);
+    const oldKeyB = postKey(data.post_b as PostSideRaw);
+    const hadSlugA = "slug" in ((data.post_a as object) || {});
+    const hadSlugB = "slug" in ((data.post_b as object) || {});
     const fmChanged =
       oldKeyA !== aKey || oldKeyB !== bKey || hadSlugA || hadSlugB;
 
@@ -1628,8 +1672,8 @@ export function doctor() {
         `scripts/hronir/perspectives/: nenhum arquivo de perspectiva encontrado.`
       );
     }
-  } catch (e) {
-    issues.push(`scripts/hronir/perspectives/: ${e.message}`);
+  } catch (e: unknown) {
+    issues.push(`scripts/hronir/perspectives/: ${(e as Error).message}`);
   }
 
   for (const f of listMatchFiles()) {
@@ -1642,14 +1686,16 @@ export function doctor() {
       continue;
     }
 
-    if (data.post_a.slug || data.post_b.slug) {
+    const postA = data.post_a as Record<string, unknown>;
+    const postB = data.post_b as Record<string, unknown>;
+    if (postA.slug || postB.slug) {
       issues.push(`${base}: ainda usa 'slug' (formato legado)`);
     }
 
-    const aKey = data.post_a.key;
-    const bKey = data.post_b.key;
-    const aPath = data.post_a.path;
-    const bPath = data.post_b.path;
+    const aKey = postA.key as string | undefined;
+    const bKey = postB.key as string | undefined;
+    const aPath = postA.path as string | undefined;
+    const bPath = postB.path as string | undefined;
 
     if (!aKey) issues.push(`${base}: post_a.key ausente`);
     if (!bKey) issues.push(`${base}: post_b.key ausente`);
@@ -1723,8 +1769,8 @@ export function doctor() {
         // Compare at the two-decimal-rounded integer level so drifted floats
         // (e.g. 4.25000001 vs 4.25) are caught as ties, matching how
         // parseRate stores values and how isValidRate tolerates drift.
-        const ra100 = Math.round(ra * 100);
-        const rb100 = Math.round(rb * 100);
+        const ra100 = Math.round((ra as number) * 100);
+        const rb100 = Math.round((rb as number) * 100);
         if (ra100 === rb100) {
           issues.push(`${base}: rate_a == rate_b (${ra}); empate proibido`);
         } else {
@@ -1761,7 +1807,7 @@ export function doctor() {
       } else {
         try {
           loadPerspective(String(data.perspective_id));
-        } catch (e) {
+        } catch (e: unknown) {
           issues.push(
             `${base}: perspective_id "${data.perspective_id}" não corresponde a nenhum arquivo em scripts/hronir/perspectives/`
           );
@@ -1831,7 +1877,7 @@ export function doctor() {
     const data = readPost(p);
     const base = path.basename(p);
     if (data.publishDate != null) {
-      const pd = new Date(data.publishDate);
+      const pd = new Date(data.publishDate as string | number | Date);
       if (Number.isNaN(pd.valueOf())) {
         issues.push(`${base}: publishDate inválido (${data.publishDate})`);
         continue;
@@ -1898,8 +1944,12 @@ export function doctor() {
       }
     }
 
-    const aKey = data.post_a?.key;
-    const bKey = data.post_b?.key;
+    const aKey = (data.post_a as Record<string, unknown>)?.key as
+      | string
+      | undefined;
+    const bKey = (data.post_b as Record<string, unknown>)?.key as
+      | string
+      | undefined;
     if (!aKey || !bKey) continue;
     const pair = [aKey, bKey].sort().join("|");
     const sig = `${data.run_id}::${pair}`;
@@ -1946,7 +1996,7 @@ export function doctor() {
   return issues.length;
 }
 
-export function end(options = {}) {
+export function end(options: EndOptions = {}) {
   const sessionPath = SESSION_PATH;
 
   if (options.force) {
@@ -2001,7 +2051,7 @@ export function end(options = {}) {
   console.log("\n✅ Sucesso! Rodada do Hronir finalizada.");
 }
 
-export function editCommit(msg) {
+export function editCommit(msg: string) {
   if (!fs.existsSync(SESSION_PATH)) {
     console.error(
       "Erro: Nenhuma sessão do Hronir ativa. Rode 'npm run hronir:init' primeiro."
@@ -2103,7 +2153,7 @@ export function editCommit(msg) {
 // name) is preserved. Two modes:
 //   --draft <path>  promote that specific draft (explicit)
 //   --key <key>     auto-pick the best version per lang via version-duel stars
-export function promote(args) {
+export function promote(args: string[]) {
   let draftPath = null;
   let key = null;
   let force = false;
@@ -2147,7 +2197,8 @@ export function promote(args) {
   for (const t of translations) {
     const scored = listVersions(t.path)
       .map((p) => {
-        const vr = versionRatings.get(getPostUuid(p));
+        const uuid = getPostUuid(p);
+        const vr = uuid ? versionRatings.get(uuid) : undefined;
         return {
           path: p,
           canonical: isCanonical(p),
@@ -2162,8 +2213,14 @@ export function promote(args) {
       );
       continue;
     }
-    scored.sort((a, b) => b.stars - a.stars);
-    const best = scored[0];
+    const scoredRated = scored as Array<{
+      path: string;
+      canonical: boolean;
+      stars: number;
+      n: number;
+    }>;
+    scoredRated.sort((a, b) => b.stars - a.stars);
+    const best = scoredRated[0];
     if (best.canonical) {
       console.log(
         `[promote] ${t.lang}: a canônica já é a melhor versão (${best.stars.toFixed(2)}★). Nada a fazer.`
@@ -2171,7 +2228,7 @@ export function promote(args) {
       continue;
     }
     // Only auto-promote when the challenger clears a margin over enough duels.
-    const canonicalStars = scored.find((v) => v.canonical)?.stars ?? 0;
+    const canonicalStars = scoredRated.find((v) => v.canonical)?.stars ?? 0;
     const margin = best.stars - canonicalStars;
     if (!force && (best.n < PROMOTE_MIN_DUELS || margin < PROMOTE_MARGIN)) {
       console.log(
@@ -2193,7 +2250,7 @@ export function promote(args) {
   );
 }
 
-function promoteFile(draftPath) {
+function promoteFile(draftPath: string) {
   const dir = path.dirname(draftPath);
   const ext = path.extname(draftPath).slice(1) || "md";
   const indexPath = path.join(dir, `index.${ext}`);

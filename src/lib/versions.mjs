@@ -2,7 +2,7 @@
 // uses the same identity as the ranking and `supersedes` (RFC 0003). RFC 0005
 // will fold the Hrönir lib into TS; until then this .mjs avoids a JS↔TS gap.
 import { existsSync } from "node:fs";
-import { getPostUuid } from "../../scripts/hronir/lib/posts.js";
+import { getPostUuid } from "../hronir/posts.js";
 
 const BLOG_DIR = "src/content/blog";
 

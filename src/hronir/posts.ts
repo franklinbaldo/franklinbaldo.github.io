@@ -8,10 +8,9 @@ export const POSTS_DIR = "src/content/blog";
 export const OUT_DIR = ".routines/hronir";
 export const RATES_DIR = path.join(OUT_DIR, "rates");
 
-// Stable namespace for hronir post-version UUIDs. Generated once; do not change.
 const HRONIR_NAMESPACE = "6f8a3c1e-2b94-5d7f-9e10-a4c8f2b6d031";
 
-function uuidv5(name, namespace) {
+function uuidv5(name: string, namespace: string): string {
   const nsBytes = Buffer.from(namespace.replace(/-/g, ""), "hex");
   const hash = crypto.createHash("sha1").update(nsBytes).update(name).digest();
   const bytes = Buffer.from(hash.slice(0, 16));
@@ -21,8 +20,8 @@ function uuidv5(name, namespace) {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
-export function listPosts(dir = POSTS_DIR) {
-  const out = [];
+export function listPosts(dir: string = POSTS_DIR): string[] {
+  const out: string[] = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
@@ -34,32 +33,27 @@ export function listPosts(dir = POSTS_DIR) {
   return out;
 }
 
-export function readPost(filePath) {
+export function readPost(filePath: string): Record<string, unknown> {
   const raw = fs.readFileSync(filePath, "utf8");
   const { data } = matter(raw);
   return data;
 }
 
-export function keyForPath(filePath) {
+export function keyForPath(filePath: string): string {
   const data = readPost(filePath);
   if (data.translationKey) return String(data.translationKey);
   const base = path.basename(filePath).replace(/\.mdx?$/, "");
-  // After RFC 0003, canonical files are named index.md — use the folder name.
   if (base === "index") return path.basename(path.dirname(filePath));
   return base;
 }
 
-// RFC 0003: the canonical (published) file of each post is index.md(x).
-// Non-canonical versions are sibling drafts named v-<timestamp>.md(x).
-export function isCanonical(filePath) {
+export function isCanonical(filePath: string): boolean {
   return /(^|[/\\])index\.mdx?$/.test(filePath);
 }
 
-// All version files (canonical index.* plus draft v-*.md) living in the same
-// post folder as `anyPathInFolder`. Feeds the version-aware ranking/promotion.
-export function listVersions(anyPathInFolder) {
+export function listVersions(anyPathInFolder: string): string[] {
   const dir = path.dirname(anyPathInFolder);
-  const out = [];
+  const out: string[] = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     if (entry.isFile() && /\.mdx?$/.test(entry.name)) {
       out.push(path.join(dir, entry.name));
@@ -68,22 +62,35 @@ export function listVersions(anyPathInFolder) {
   return out;
 }
 
-export function buildPathIndex() {
-  const index = new Map();
+export function buildPathIndex(): Map<
+  string,
+  { path: string; lang: string | null; translationKey: string | null }
+> {
+  const index = new Map<
+    string,
+    { path: string; lang: string | null; translationKey: string | null }
+  >();
   for (const p of listPosts()) {
     const data = readPost(p);
     const key = data.translationKey ? String(data.translationKey) : null;
-    index.set(p, { path: p, lang: data.lang || null, translationKey: key });
+    index.set(p, {
+      path: p,
+      lang: data.lang ? String(data.lang) : null,
+      translationKey: key,
+    });
   }
   return index;
 }
 
-export function listEnglishWithKey() {
-  const out = [];
+export function listEnglishWithKey(): Array<{
+  path: string;
+  translationKey: string;
+}> {
+  const out: Array<{ path: string; translationKey: string }> = [];
   for (const p of listPosts()) {
-    if (!isCanonical(p)) continue; // RFC 0003: only canonical versions rank
+    if (!isCanonical(p)) continue;
     const data = readPost(p);
-    const lang = data.lang || "en";
+    const lang = data.lang ? String(data.lang) : "en";
     if (lang !== "en") continue;
     if (!data.translationKey) continue;
     out.push({ path: p, translationKey: String(data.translationKey) });
@@ -91,24 +98,21 @@ export function listEnglishWithKey() {
   return out;
 }
 
-// Returns every translation file for a given translationKey, regardless of
-// how many languages exist. No bilingual assumption.
-export function findTranslations(translationKey) {
-  const out = [];
+export function findTranslations(
+  translationKey: string
+): Array<{ path: string; lang: string }> {
+  const out: Array<{ path: string; lang: string }> = [];
   for (const p of listPosts()) {
-    if (!isCanonical(p)) continue; // RFC 0003: drafts aren't translations
+    if (!isCanonical(p)) continue;
     const data = readPost(p);
     if (!data.translationKey) continue;
     if (String(data.translationKey) !== String(translationKey)) continue;
-    out.push({ path: p, lang: data.lang || "en" });
+    out.push({ path: p, lang: data.lang ? String(data.lang) : "en" });
   }
   return out;
 }
 
-// Content-derived UUIDv5: stable identifier for the current body of a post.
-// Frontmatter is stripped and the body is normalized through remark so that
-// metadata churn and cosmetic formatting drift do not change the UUID.
-export function getPostUuid(filePath) {
+export function getPostUuid(filePath: string): string | null {
   if (!fs.existsSync(filePath)) return null;
   const raw = fs.readFileSync(filePath, "utf8");
   const { content } = matter(raw);

@@ -4,9 +4,9 @@ import { execFileSync } from "node:child_process";
 import matter from "gray-matter";
 import { OUT_DIR, RATES_DIR } from "./posts.js";
 
-export function listMatchFiles() {
-  const out = [];
-  const seen = new Set();
+export function listMatchFiles(): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
   for (const dir of [OUT_DIR, RATES_DIR]) {
     if (!fs.existsSync(dir)) continue;
     for (const f of fs.readdirSync(dir)) {
@@ -19,25 +19,33 @@ export function listMatchFiles() {
   return out;
 }
 
-export function readMatch(filePath) {
+export function readMatch(filePath: string): {
+  data: Record<string, unknown>;
+  content: string;
+  filePath: string;
+} {
   const raw = fs.readFileSync(filePath, "utf8");
   const parsed = matter(raw);
   return { ...parsed, filePath };
 }
 
-export function writeMatch(filePath, frontmatter, body) {
+export function writeMatch(
+  filePath: string,
+  frontmatter: Record<string, unknown>,
+  body: string
+): void {
   const out = matter.stringify(body, frontmatter);
   fs.writeFileSync(filePath, out);
 }
 
-export function postKey(side) {
+export function postKey(
+  side: { key?: string; slug?: string } | null | undefined
+): string | null {
   if (!side) return null;
   return side.key || side.slug || null;
 }
 
-// Returns the git commit timestamp (ms) of the last change to filePath,
-// or 0 if the file is untracked or git is unavailable.
-export function gitMtime(filePath) {
+export function gitMtime(filePath: string): number {
   try {
     const out = execFileSync(
       "git",

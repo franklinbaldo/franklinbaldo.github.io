@@ -2,7 +2,7 @@
 // Written in PT (first person). Short, specific enough to genuinely color
 // the reading without overriding the perspective's criteria.
 
-export const MOODS = [
+export const MOODS: string[] = [
   "Dormi mal e estou com pouca paciência para enrolação. Qualquer parágrafo que não justifique sua existência vai cair rápido.",
   "Acabei de terminar algo muito bom e meu padrão está involuntariamente alto. Não é injusto — é o custo de ter lido bem.",
   "Estou protelando uma tarefa importante e lendo isso para adiar. O que significa que o texto precisa ser bom o suficiente para justificar o atraso.",
@@ -35,7 +35,7 @@ export const MOODS = [
   "Estou num estado em que quero que algo seja real — concreto, específico, ancorado — em vez de geral e flutuante.",
 ];
 
-export function pickRandomMood(extra = []) {
+export function pickRandomMood(extra: string[] = []): string {
   const pool = [...MOODS, ...extra];
   return pool[Math.floor(Math.random() * pool.length)];
 }
