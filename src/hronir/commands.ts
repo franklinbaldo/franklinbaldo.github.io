@@ -1982,9 +1982,14 @@ export function doctor() {
   // outside .routines/hronir/ and src/content/blog/.
   try {
     const SAFE_RE = /^(\.routines\/hronir\/|src\/content\/blog\/)/;
-    const staged = execFileSync("git", ["diff", "--cached", "--name-only"], {
-      encoding: "utf8",
-    })
+    // --diff-filter=ACMR: only flag Added, Copied, Modified, Renamed — not Deleted (D).
+    // Deletions of out-of-scope files are legitimate cleanup; the autopilot only
+    // rejects PRs that *add or modify* content outside the safe prefixes.
+    const staged = execFileSync(
+      "git",
+      ["diff", "--cached", "--name-only", "--diff-filter=ACMR"],
+      { encoding: "utf8" }
+    )
       .split("\n")
       .filter(Boolean);
     for (const f of staged) {
