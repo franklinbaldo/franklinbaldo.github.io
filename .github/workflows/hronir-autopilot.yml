@@ -4,10 +4,10 @@ name: Hrönir Autopilot
 #
 # Fires when the "Check" workflow finishes on a PR branch. If that PR is one of
 # OUR Jules sessions (confirmed via verne) and is mergeable + confined to the
-# safe paths, it is merged with a merge commit.
+# safe paths, it is merged with a merge commit and a replacement session is spawned.
 #
-# Session spawning is handled entirely by hronir-heartbeat.yml, which maintains
-# a pool of TARGET_SESSIONS concurrent sessions. This workflow only merges PRs.
+# hronir-heartbeat.yml maintains the pool as a backstop (every 15 min). This
+# workflow provides the reactive path: merge → immediately spawn.
 #
 # Requires repo secret JULES_API_KEY (the Google Jules API key).
 
@@ -162,3 +162,12 @@ jobs:
           gh pr merge "$PR" --repo "$REPO" --merge --delete-branch
           echo "Merged PR #$PR."
           echo "merged=$PR" >> "$GITHUB_OUTPUT"
+
+      - name: Respawn session after merge
+        if: steps.merge.outputs.merged != ''
+        env:
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+        run: |
+          set -euo pipefail
+          echo "Spawning replacement session for merged PR #${{ steps.merge.outputs.merged }}..."
+          bash scripts/hronir/spawn-session.sh
