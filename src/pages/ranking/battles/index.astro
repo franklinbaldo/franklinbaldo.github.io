@@ -296,8 +296,13 @@ const agents = [...new Set(duels.map((d) => d.agentId).filter(Boolean) as string
 </style>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+  function initBattles() {
     const searchInput = document.getElementById("battle-search") as HTMLInputElement | null;
+    if (!searchInput) return;
+
+    if (searchInput.dataset.hasListener) return;
+    searchInput.dataset.hasListener = "true";
+
     const seasonSelect = document.getElementById("filter-season") as HTMLSelectElement | null;
     const agentSelect = document.getElementById("filter-agent") as HTMLSelectElement | null;
     const confContainer = document.getElementById("filter-confidence");
@@ -310,7 +315,7 @@ const agents = [...new Set(duels.map((d) => d.agentId).filter(Boolean) as string
     const nextBtn = document.getElementById("next-page") as HTMLButtonElement | null;
     const pageIndicator = document.getElementById("page-indicator") as HTMLElement | null;
 
-    if (!searchInput || !cards.length) return;
+    if (!cards.length) return;
 
     const PAGE_SIZE = 20;
     const total = cards.length;
@@ -427,5 +432,12 @@ const agents = [...new Set(duels.map((d) => d.agentId).filter(Boolean) as string
 
     applyFilters();
     if (urlPage > 1) showPage(urlPage - 1);
-  });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initBattles);
+  } else {
+    initBattles();
+  }
+  document.addEventListener("astro:page-load", initBattles);
 </script>
