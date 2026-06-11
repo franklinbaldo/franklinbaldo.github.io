@@ -35,7 +35,8 @@ export function listPostFiles(dir = BLOG_DIR) {
  * path (URL-preserving) — strip the trailing /index.<ext>.
  */
 export function postIdFromPath(absPath) {
-  return relative(BLOG_DIR, absPath).replace(/\/index\.mdx?$/, "");
+  const rel = relative(BLOG_DIR, absPath).replace(/\\/g, "/");
+  return rel.replace(/\/index\.mdx?$/, "");
 }
 
 /** Parse YAML frontmatter from a raw markdown string (no dependencies). */
@@ -72,7 +73,7 @@ export function readPostMeta(absPath) {
     if (!Number.isNaN(d.valueOf()) && d > new Date()) published = false;
   }
   return {
-    file: relative(BLOG_DIR, absPath),
+    file: relative(BLOG_DIR, absPath).replace(/\\/g, "/"),
     id: postIdFromPath(absPath),
     lang: get("lang") ?? "en",
     postType: get("postType"),
