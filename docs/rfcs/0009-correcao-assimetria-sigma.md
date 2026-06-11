@@ -5,7 +5,7 @@
 | **Status**      | Proposed                                                 |
 | **Autor**       | Franklin Baldo (proposta assistida)                      |
 | **Criado em**   | 2026-06-11                                               |
-| **Branch / PR** | —                                                        |
+| **Branch / PR** | #372                                                     |
 | **Depende de**  | RFC 0001 (margin weighting, `RANKING_MODEL_VERSION = 2`) |
 | **Afeta**       | `src/hronir/ranking.ts`, testes, `RANKING_MODEL_VERSION` |
 
@@ -20,10 +20,14 @@ o `weight` **só ao mu**, deixando o sigma receber a atualização completa do
 OpenSkill:
 
 ```typescript
-// ranking.ts:125–132 — estado atual
+// ranking.ts:125–132 — estado atual (ambos os lados afetados)
 ratings.set(winnerKey, {
   mu: winnerRating.mu + weight * (newWinner.mu - winnerRating.mu),
   sigma: newWinner.sigma, // ← nunca ponderado
+});
+ratings.set(loserKey, {
+  mu: loserRating.mu + weight * (newLoser.mu - loserRating.mu),
+  sigma: newLoser.sigma, // ← idem
 });
 ```
 
@@ -166,11 +170,13 @@ Nenhuma alteração; o doctor valida o schema dos rate files, não os ordinals.
 
 Todas as funções alteradas são puras (`_computeRatings` recebe `RawMatch[]`).
 
-| Teste                                                             | Ação                                                                                |
-| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `phase2: blowout margin produces larger ordinal gap`              | Passa sem mudança (blowout ainda dá gap maior que photo-finish)                     |
-| **Novo**: `monotonicity: blowout ordinal ≥ medium-margin ordinal` | Adicionar — falha atualmente, passa após a correção                                 |
-| **Novo**: `sigma update scales with weight`                       | Adicionar — verifica que `sigma_close > sigma_blowout` após mesmo número de matches |
+| Teste                                                             | Ação                                                                                                                   |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `phase2: blowout margin produces larger ordinal gap`              | Passa sem mudança (blowout ainda dá gap maior que photo-finish)                                                        |
+| **Novo**: `monotonicity: blowout ordinal ≥ medium-margin ordinal` | **Requisito** — falha na implementação atual; a PR de implementação não fecha sem ele verde                            |
+| **Novo**: `sigma update scales with weight`                       | **Requisito** — verifica que `sigma_close > sigma_blowout` após mesmo número de matches; garante que o bug não regride |
+
+Os dois testes novos são **critério de aceite obrigatório** da PR de implementação. Sem eles verdes, a correção não está completa.
 
 ---
 
@@ -183,8 +189,10 @@ Todas as funções alteradas são puras (`_computeRatings` recebe `RawMatch[]`).
 
 2. **Re-ranking do topo**: alguns posts hoje nos ranks 4–6 podem cair
    significativamente. Isso é o comportamento correto, mas pode ser
-   surpreendente. Recomenda-se rodar uma sessão de diagnóstico com o
-   ranking antes e depois da mudança antes de aceitar o PR.
+   surpreendente. A PR de implementação deve incluir no corpo o output
+   de `npm run hronir:ranking` **antes** (commit pai) e **depois** (commit
+   da correção) para que o revisor veja o delta de ordinals e confirme que
+   o re-ranking faz sentido.
 
 3. **Pares de photo-finish no histórico**: os 481 rate files existentes incluem
    partidas com margens variadas. Após a correção, matches com margem < 0.5
@@ -233,3 +241,7 @@ resolve o problema raiz.
 ## Histórico de revisões
 
 - **r0** (2026-06-11): versão inicial — diagnóstico e proposta.
+- **r1** (2026-06-11): snippet §1 expandido para mostrar ambos os blocos
+  (winnerKey e loserKey); testes §5 tornados requisito explícito; §6.2
+  especifica output de ranking como critério de aceite da PR de implementação;
+  cabeçalho Branch/PR atualizado para #372.
