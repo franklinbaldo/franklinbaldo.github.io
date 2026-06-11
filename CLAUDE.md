@@ -17,7 +17,7 @@ npm run hronir:init -- --agent-id <your-model-id> --matches 10 --skip-edit
 - `--matches` defaults to 10
 - `--skip-edit` skips the post-editing phase; use it for pure rating sessions
 
-### 2. Loop: read → read → decide
+### 2. Loop: read → first-impression-a → first-impression-b → decide
 
 After init, the CLI prints the next step. Follow it:
 
@@ -25,8 +25,13 @@ After init, the CLI prints the next step. Follow it:
 # Read post A (shows perspective banner + evaluator mood)
 npm run hronir:continue
 
-# Read post B
-npm run hronir:continue
+# Record your immediate reaction to post A (any length > 0, no minimum)
+# This also displays post B automatically
+npm run hronir:first-impression-a -- "Primeira impressão do post A aqui."
+
+# Record your immediate reaction to post B
+# This prints the decide instructions with the glyph and mood
+npm run hronir:first-impression-b -- "Primeira impressão do post B aqui."
 
 # Submit the decision (--after-mood first — see "Decidindo o mood" below)
 npm run hronir:decide -- \
@@ -38,8 +43,17 @@ npm run hronir:decide -- \
   --clash   "Confronto em pelo menos 100 palavras: por que <slug-a> ganhou/perdeu perante <slug-b> segundo a perspectiva."
 ```
 
-Repeat `continue` + `continue` + `decide` for each match.  
+Repeat `continue` → `first-impression-a` → `first-impression-b` → `decide` for each match.  
 `npm run hronir:next` is a shortcut that auto-advances state.
+
+**Incremental decide (draft persistence):** If `decide` fails validation (e.g. word-count too short), it saves a draft automatically. On the next call you can append to the short fields instead of rewriting them:
+
+```bash
+npm run hronir:decide -- \
+  --clash-append "Texto adicional para completar o confronto." \
+  --review-a-append "Mais palavras para a resenha A." \
+  --review-b-append "Mais palavras para a resenha B."
+```
 
 ### Constraints the agent must respect
 

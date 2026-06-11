@@ -153,30 +153,6 @@ function wordCount(s: unknown): number {
 
 function parseRate(raw: unknown, flagName: string): number {
   if (raw == null || String(raw).trim() === "") {
-    console.error(`Erro: ${flagName} é obrigatório.`);
-    process.exit(1);
-  }
-  const s = String(raw).trim();
-  // up to two decimal places, mandatory digit before/after the point if dotted
-  if (!/^\d+(\.\d{1,2})?$/.test(s)) {
-    console.error(
-      `Erro: ${flagName} deve ser um número entre 1.00 e 5.00 com no máximo duas casas decimais (recebido: ${JSON.stringify(raw)}).`
-    );
-    process.exit(1);
-  }
-  const n = Number(s);
-  if (!Number.isFinite(n) || n < 1 || n > 5) {
-    console.error(
-      `Erro: ${flagName} deve estar entre 1.00 e 5.00 (recebido: ${JSON.stringify(raw)}).`
-    );
-    process.exit(1);
-  }
-  // round to two decimals to avoid float drift in stored data
-  return Math.round(n * 100) / 100;
-}
-
-function tryParseRate(raw: unknown, flagName: string): number {
-  if (raw == null || String(raw).trim() === "") {
     throw new Error(`Erro: ${flagName} é obrigatório.`);
   }
   const s = String(raw).trim();
@@ -660,9 +636,9 @@ export function continueCmd() {
     const aParsed = matter(aContent);
     const aSunoId = aParsed.data.sunoId;
 
-    console.log(
-      `📄 PRIMEIRO POST (A) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`
-    );
+    const border = "━".repeat(80);
+    const aHeader = "📄 PRIMEIRO POST (A) ";
+    console.log(aHeader + "━".repeat(Math.max(0, 80 - aHeader.length)));
     console.log(`Slug: ${aSlug}`);
     if (aSunoId) {
       console.log(`🎵 Suno Song Page: https://suno.com/song/${aSunoId}`);
@@ -673,13 +649,9 @@ export function continueCmd() {
         `💡 Agente multimodal: você pode baixar/ouvir o MP3 acima para informar sua avaliação.`
       );
     }
-    console.log(
-      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`
-    );
+    console.log(`${border}\n`);
     console.log(aContent);
-    console.log(
-      "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-    );
+    console.log(`\n${border}\n`);
 
     session.state = "waiting_impression_a";
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
@@ -736,15 +708,13 @@ export function firstImpressionA(args: string[]) {
   }
 
   session.currentMatch.impression_a = text;
-  session.state = "reading_b";
-  fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
   const bPath = session.currentMatch?.post_b?.path;
   const perspectiveId = session.currentMatch?.perspective_id;
+  const border = "━".repeat(80);
   if (perspectiveId) {
     try {
       const perspective = loadPerspective(perspectiveId);
-      const border = "━".repeat(80);
       console.log(`\n${border}`);
       console.log(
         `🎭 Lembrete da perspectiva: ${perspective.name}\n${perspective.summary}`
@@ -761,9 +731,8 @@ export function firstImpressionA(args: string[]) {
   const bParsed = matter(bContent);
   const bSunoId = bParsed.data.sunoId;
 
-  console.log(
-    `📄 SEGUNDO POST (B) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`
-  );
+  const bHeader = "📄 SEGUNDO POST (B) ";
+  console.log(bHeader + "━".repeat(Math.max(0, 80 - bHeader.length)));
   console.log(`Slug: ${bSlug}`);
   if (bSunoId) {
     console.log(`🎵 Suno Song Page: https://suno.com/song/${bSunoId}`);
@@ -774,13 +743,9 @@ export function firstImpressionA(args: string[]) {
       `💡 Agente multimodal: você pode baixar/ouvir o MP3 acima para informar sua avaliação.`
     );
   }
-  console.log(
-    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`
-  );
+  console.log(`${border}\n`);
   console.log(bContent);
-  console.log(
-    "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-  );
+  console.log(`\n${border}\n`);
 
   session.state = "waiting_impression_b";
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
@@ -1062,7 +1027,7 @@ export function decide(args: string[]) {
   let parsedRateA: number;
   let parsedRateB: number;
   try {
-    parsedRateA = tryParseRate(rateA, "--rate-a");
+    parsedRateA = parseRate(rateA, "--rate-a");
   } catch (err: any) {
     saveDraft();
     console.error(err.message);
@@ -1073,7 +1038,7 @@ export function decide(args: string[]) {
   }
 
   try {
-    parsedRateB = tryParseRate(rateB, "--rate-b");
+    parsedRateB = parseRate(rateB, "--rate-b");
   } catch (err: any) {
     saveDraft();
     console.error(err.message);
