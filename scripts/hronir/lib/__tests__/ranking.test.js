@@ -208,6 +208,61 @@ describe("_computeRatings", () => {
       `blowout gap (${blowoutGap.toFixed(6)}) should exceed photo-finish gap (${photoGap.toFixed(6)})`
     );
   });
+
+  // RFC 0009: monotonicity — blowout ordinal must exceed medium-margin ordinal
+  // (same win-rate, same number of matches). Fails before the sigma fix.
+  it("monotonicity: blowout ordinal exceeds medium-margin ordinal (same win-rate)", () => {
+    // Build 3 matches where every win/loss has the same outcome but different margins.
+    // Blowout: winner 5.0 vs loser 1.0 → weight = 1.0
+    // Medium:  winner 3.5 vs loser 1.5 → margin = 2/4 = 0.5 → weight = 0.55
+    const makeMatches = (rateA, rateB) =>
+      [
+        { runAt: "2024-02-01T00:00:00Z", aKey: "w", bKey: "x", winner: "a" },
+        { runAt: "2024-02-01T00:00:01Z", aKey: "w", bKey: "y", winner: "a" },
+        { runAt: "2024-02-01T00:00:02Z", aKey: "z", bKey: "w", winner: "a" },
+      ].map((m, i) =>
+        match({ ...m, runAt: `2024-02-01T00:00:0${i}Z`, rateA, rateB })
+      );
+
+    const blowoutRows = _computeRatings(makeMatches(5.0, 1.0));
+    const mediumRows = _computeRatings(makeMatches(3.5, 1.5));
+
+    const blowoutOrdinal = blowoutRows.find((r) => r.key === "w").ordinal;
+    const mediumOrdinal = mediumRows.find((r) => r.key === "w").ordinal;
+
+    assert.ok(
+      blowoutOrdinal > mediumOrdinal,
+      `blowout ordinal (${blowoutOrdinal.toFixed(4)}) should exceed medium-margin ordinal (${mediumOrdinal.toFixed(4)})`
+    );
+  });
+
+  // RFC 0009: sigma scales with weight — after equal number of matches, a post
+  // that only faced close matches must retain higher sigma than one that faced
+  // blowouts (close matches convey less information → more residual uncertainty).
+  it("sigma scales with weight: close-match sigma > blowout sigma after same matches", () => {
+    const makeMatches = (rateA, rateB) =>
+      [0, 1, 2, 3, 4].map((i) =>
+        match({
+          runAt: `2024-03-01T00:00:0${i}Z`,
+          aKey: "post",
+          bKey: `opp${i}`,
+          winner: "a",
+          rateA,
+          rateB,
+        })
+      );
+
+    const closeRows = _computeRatings(makeMatches(3.01, 3.0)); // weight ≈ 0.1
+    const blowoutRows = _computeRatings(makeMatches(5.0, 1.0)); // weight = 1.0
+
+    const closeSigma = closeRows.find((r) => r.key === "post").sigma;
+    const blowoutSigma = blowoutRows.find((r) => r.key === "post").sigma;
+
+    assert.ok(
+      closeSigma > blowoutSigma,
+      `close-match sigma (${closeSigma.toFixed(4)}) should exceed blowout sigma (${blowoutSigma.toFixed(4)})`
+    );
+  });
 });
 
 // Absolute quality tests
