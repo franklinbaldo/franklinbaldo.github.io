@@ -124,7 +124,8 @@ export function _computeRatings(raw: RawMatch[]): RankRow[] {
 
     ratings.set(winnerKey, {
       mu: winnerRating.mu + weight * (newWinner.mu - winnerRating.mu),
-      sigma: winnerRating.sigma + weight * (newWinner.sigma - winnerRating.sigma),
+      sigma:
+        winnerRating.sigma + weight * (newWinner.sigma - winnerRating.sigma),
     } as ReturnType<typeof rating>);
     ratings.set(loserKey, {
       mu: loserRating.mu + weight * (newLoser.mu - loserRating.mu),
