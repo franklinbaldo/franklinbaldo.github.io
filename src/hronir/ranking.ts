@@ -3,7 +3,7 @@ import { listMatchFiles, readMatch, postKey } from "./matches.js";
 import type { RankRow, PerspectiveRankRow } from "./types.js";
 
 export const MIN_APPEARANCES = 3;
-export const RANKING_MODEL_VERSION = 2;
+export const RANKING_MODEL_VERSION = 3;
 export const EWMA_ALPHA = 0.3;
 export const MARGIN_W_MIN = 0.1;
 // Ridge (L2) penalty for the de-confounding least-squares solve. Shrinks
@@ -124,11 +124,12 @@ export function _computeRatings(raw: RawMatch[]): RankRow[] {
 
     ratings.set(winnerKey, {
       mu: winnerRating.mu + weight * (newWinner.mu - winnerRating.mu),
-      sigma: newWinner.sigma,
+      sigma:
+        winnerRating.sigma + weight * (newWinner.sigma - winnerRating.sigma),
     } as ReturnType<typeof rating>);
     ratings.set(loserKey, {
       mu: loserRating.mu + weight * (newLoser.mu - loserRating.mu),
-      sigma: newLoser.sigma,
+      sigma: loserRating.sigma + weight * (newLoser.sigma - loserRating.sigma),
     } as ReturnType<typeof rating>);
     wins.set(winnerKey, (wins.get(winnerKey) || 0) + 1);
   }

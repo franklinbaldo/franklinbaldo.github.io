@@ -203,7 +203,7 @@ O `edit-worst` instrui a leitura de **ambas** antes de editar e a escolher a apl
 
 ## Ranking
 
-Ranking via **OpenSkill** (modelo Weng-Lin, atualização bayesiana online de Plackett-Luce, `RANKING_MODEL_VERSION=2`). Cada par é tratado como uma partida 1v1; o delta de `mu` é escalado pela margem de estrelas `|rate_a − rate_b| / 4` — blowouts movem o ranking mais que foto-finish.
+Ranking via **OpenSkill** (modelo Weng-Lin, atualização bayesiana online de Plackett-Luce, `RANKING_MODEL_VERSION=3`). Cada par é tratado como uma partida 1v1; os deltas de `mu` **e `sigma`** são escalados pela margem de estrelas `|rate_a − rate_b| / 4` — blowouts movem o ranking mais que foto-finish, e partidas apertadas preservam mais incerteza proporcionalmente (RFC 0009).
 
 - **`mu`** — estimativa pontual da "qualidade" do post.
 - **`sigma`** — incerteza sobre `mu`. Não diz que o post é ruim — diz que ainda não sabemos.
