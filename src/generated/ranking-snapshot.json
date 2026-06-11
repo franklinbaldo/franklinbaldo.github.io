@@ -1,313 +1,385 @@
 {
   "_meta": {
-    "generatedAt": "2026-06-10T19:19:00.940Z",
+    "generatedAt": "2026-06-11T00:51:13.654Z",
     "basis": "build",
-    "totalDuels": 518
+    "totalDuels": 481
   },
   "keys": {
-    "pontifex-research": {
+    "conservation-law": {
       "rank": 1,
-      "ordinal": 14.5805
+      "ordinal": 12.9314
     },
-    "music-john-gospel-chapter-i-by-max-headroom": {
+    "delphi-imperatives": {
       "rank": 2,
-      "ordinal": 13.1709
+      "ordinal": 12.8419
     },
-    "third-half-fourth-wall": {
+    "pontifex-research": {
       "rank": 3,
-      "ordinal": 12.6506
+      "ordinal": 12.7563
     },
     "its-raining-truth": {
       "rank": 4,
       "ordinal": 12.4578
     },
-    "reddit-submarine-osint": {
-      "rank": 5,
-      "ordinal": 12.1811
-    },
     "pierre-menard": {
-      "rank": 6,
+      "rank": 5,
       "ordinal": 12.0799
     },
     "future-father": {
-      "rank": 7,
+      "rank": 6,
       "ordinal": 12.0235
     },
-    "conservation-law": {
-      "rank": 8,
-      "ordinal": 12.0223
-    },
-    "delphi-imperatives": {
-      "rank": 9,
-      "ordinal": 11.9149
-    },
-    "three-hammers": {
-      "rank": 10,
-      "ordinal": 11.7933
+    "music-quando-vier-a-primavera": {
+      "rank": 7,
+      "ordinal": 11.5374
     },
     "intelligible-void": {
-      "rank": 11,
+      "rank": 8,
       "ordinal": 11.1288
     },
-    "crossing-interference": {
-      "rank": 12,
-      "ordinal": 10.6362
+    "third-half-fourth-wall": {
+      "rank": 9,
+      "ordinal": 10.9891
     },
-    "music-o-tempo": {
-      "rank": 13,
-      "ordinal": 10.4114
+    "crossing-interference": {
+      "rank": 10,
+      "ordinal": 10.8772
+    },
+    "three-hammers": {
+      "rank": 11,
+      "ordinal": 10.7999
+    },
+    "verne-identity-repo": {
+      "rank": 12,
+      "ordinal": 10.4909
     },
     "agent-no-verbs": {
-      "rank": 14,
+      "rank": 13,
       "ordinal": 10.2745
+    },
+    "delegating-to-agents": {
+      "rank": 14,
+      "ordinal": 9.8868
     },
     "music-eu-ia-escrever-sobre-o-infinito-de-novo": {
       "rank": 15,
-      "ordinal": 10.2349
+      "ordinal": 9.5445
     },
-    "music-stopping-by-woods-on-a-snowy-evening-by-robert-frost": {
+    "reddit-submarine-osint": {
       "rank": 16,
-      "ordinal": 9.9081
-    },
-    "music-a-primeira-mudanca": {
-      "rank": 17,
-      "ordinal": 9.4489
+      "ordinal": 9.4943
     },
     "family-memory": {
-      "rank": 18,
+      "rank": 17,
       "ordinal": 9.3255
     },
-    "music-trinta-de-abril": {
+    "census-not-sample": {
+      "rank": 18,
+      "ordinal": 8.7541
+    },
+    "two-questions-out-loud": {
       "rank": 19,
-      "ordinal": 9.3224
+      "ordinal": 8.3462
     },
-    "verne-identity-repo": {
+    "music-beatriz": {
       "rank": 20,
-      "ordinal": 9.1422
+      "ordinal": 8.333
     },
-    "music-pattern-over-stuff": {
+    "rosencrantz-coin": {
       "rank": 21,
-      "ordinal": 9.0902
+      "ordinal": 8.2138
     },
     "music-meditacao-guiada-no-sertao": {
       "rank": 22,
-      "ordinal": 9.0619
+      "ordinal": 8.0819
     },
-    "asterisk-protects": {
+    "music-john-gospel-chapter-i-by-max-headroom": {
       "rank": 23,
-      "ordinal": 8.9652
-    },
-    "delegating-to-agents": {
-      "rank": 24,
-      "ordinal": 8.9254
-    },
-    "music-o-medo-do-louco": {
-      "rank": 25,
-      "ordinal": 8.8268
-    },
-    "census-not-sample": {
-      "rank": 26,
-      "ordinal": 8.7541
-    },
-    "rosencrantz-coin": {
-      "rank": 27,
-      "ordinal": 8.5678
-    },
-    "music-o-prologo": {
-      "rank": 28,
-      "ordinal": 8.5462
+      "ordinal": 7.8769
     },
     "funes-soul": {
-      "rank": 29,
-      "ordinal": 8.2068
+      "rank": 24,
+      "ordinal": 7.7835
     },
-    "music-paperclip-rhapsody": {
-      "rank": 30,
-      "ordinal": 8.1287
+    "music-pattern-over-stuff": {
+      "rank": 25,
+      "ordinal": 7.6594
     },
-    "music-quando-vier-a-primavera": {
-      "rank": 31,
-      "ordinal": 7.9903
+    "asterisk-protects": {
+      "rank": 26,
+      "ordinal": 7.3821
     },
-    "serpents-egg": {
-      "rank": 32,
-      "ordinal": 7.8469
+    "music-o-prologo": {
+      "rank": 27,
+      "ordinal": 7.25
     },
-    "music-beatriz": {
-      "rank": 33,
-      "ordinal": 7.8061
-    },
-    "music-o-preco-da-saudade": {
-      "rank": 34,
-      "ordinal": 7.7442
-    },
-    "two-questions-out-loud": {
-      "rank": 35,
-      "ordinal": 7.6725
-    },
-    "music-entre-rascunho-e-apagar": {
-      "rank": 36,
-      "ordinal": 7.4402
+    "music-trinta-de-abril": {
+      "rank": 28,
+      "ordinal": 7.1505
     },
     "conceptual-document": {
-      "rank": 37,
-      "ordinal": 7.3557
-    },
-    "music-caminho": {
-      "rank": 38,
-      "ordinal": 7.2861
-    },
-    "music-espelhos": {
-      "rank": 39,
-      "ordinal": 7.2704
-    },
-    "music-nonada": {
-      "rank": 40,
-      "ordinal": 6.938
-    },
-    "music-o-verso-branquiceleste": {
-      "rank": 41,
-      "ordinal": 6.7959
-    },
-    "music-fourteen-words": {
-      "rank": 42,
-      "ordinal": 6.7825
-    },
-    "building-funes": {
-      "rank": 43,
-      "ordinal": 6.6414
-    },
-    "music-menino-que-voce-foi": {
-      "rank": 44,
-      "ordinal": 6.4755
-    },
-    "music-o-telefone-da-agonia": {
-      "rank": 45,
-      "ordinal": 6.1524
-    },
-    "jules-api-harness": {
-      "rank": 46,
-      "ordinal": 6.0267
-    },
-    "music-sentido-e-referencia": {
-      "rank": 47,
-      "ordinal": 5.9315
-    },
-    "music-the-ruliad-is-laughing": {
-      "rank": 48,
-      "ordinal": 5.541
-    },
-    "music-666": {
-      "rank": 49,
-      "ordinal": 5.313
+      "rank": 29,
+      "ordinal": 7.0996
     },
     "music-reality-maintenance-moving-window-xii": {
-      "rank": 50,
-      "ordinal": 5.2886
+      "rank": 30,
+      "ordinal": 6.9003
     },
-    "pontifex-guide": {
-      "rank": 51,
-      "ordinal": 5.2029
-    },
-    "inaugural-post": {
-      "rank": 52,
-      "ordinal": 5.1093
-    },
-    "music-o-aleph": {
-      "rank": 53,
-      "ordinal": 5.0977
-    },
-    "music-o-magico-e-o-fogo": {
-      "rank": 54,
-      "ordinal": 4.7853
-    },
-    "travessia-project": {
-      "rank": 55,
-      "ordinal": 4.7785
-    },
-    "music-spring-loading": {
-      "rank": 56,
-      "ordinal": 4.5889
-    },
-    "music-o-regral": {
-      "rank": 57,
-      "ordinal": 4.4448
-    },
-    "social-vulnerabilities": {
-      "rank": 58,
-      "ordinal": 4.4427
-    },
-    "music-chegue-irmao-chegue-irma": {
-      "rank": 59,
-      "ordinal": 4.2557
+    "music-a-primeira-mudanca": {
+      "rank": 31,
+      "ordinal": 6.6904
     },
     "music-borges-and-me": {
-      "rank": 60,
-      "ordinal": 4.2528
+      "rank": 32,
+      "ordinal": 6.3827
     },
-    "reclaiming-harness": {
-      "rank": 61,
-      "ordinal": 4.115
+    "jules-api-harness": {
+      "rank": 33,
+      "ordinal": 6.3776
     },
-    "music-o-sonhador-e-o-fogo": {
-      "rank": 62,
-      "ordinal": 3.4151
+    "music-espelhos": {
+      "rank": 34,
+      "ordinal": 6.1306
+    },
+    "music-nonada": {
+      "rank": 35,
+      "ordinal": 6.118
+    },
+    "building-funes": {
+      "rank": 36,
+      "ordinal": 5.7111
+    },
+    "music-the-ruliad-is-laughing": {
+      "rank": 37,
+      "ordinal": 5.6954
     },
     "music-crystallizing-from-the-nothing": {
-      "rank": 63,
-      "ordinal": 3.2879
+      "rank": 38,
+      "ordinal": 5.6525
     },
-    "pampa-circuit": {
-      "rank": 64,
-      "ordinal": 2.897
+    "music-spring-loading": {
+      "rank": 39,
+      "ordinal": 5.6454
     },
-    "becoming-lobsters": {
-      "rank": 65,
-      "ordinal": 2.8018
+    "social-vulnerabilities": {
+      "rank": 40,
+      "ordinal": 5.343
     },
-    "music-the-time": {
-      "rank": 66,
-      "ordinal": 2.567
+    "serpents-egg": {
+      "rank": 41,
+      "ordinal": 5.3019
+    },
+    "music-the-third-song-moving-window-iii": {
+      "rank": 42,
+      "ordinal": 5.0781
+    },
+    "music-o-preco-da-saudade": {
+      "rank": 43,
+      "ordinal": 5.028
+    },
+    "pontifex-guide": {
+      "rank": 44,
+      "ordinal": 4.9231
+    },
+    "music-fourteen-words": {
+      "rank": 45,
+      "ordinal": 4.8167
+    },
+    "music-o-verso-branquiceleste": {
+      "rank": 46,
+      "ordinal": 4.8006
+    },
+    "music-666": {
+      "rank": 47,
+      "ordinal": 4.6959
+    },
+    "music-o-aleph": {
+      "rank": 48,
+      "ordinal": 4.6905
     },
     "music-two-cursors": {
-      "rank": 67,
-      "ordinal": 2.1834
+      "rank": 49,
+      "ordinal": 4.6045
     },
-    "music-universal-threshold": {
+    "music-xadrez": {
+      "rank": 50,
+      "ordinal": 4.5992
+    },
+    "music-entre-rascunho-e-apagar": {
+      "rank": 51,
+      "ordinal": 4.5594
+    },
+    "music-o-ritual-de-abril-anos-de-saudade": {
+      "rank": 52,
+      "ordinal": 4.3068
+    },
+    "reclaiming-harness": {
+      "rank": 53,
+      "ordinal": 4.115
+    },
+    "inaugural-post": {
+      "rank": 54,
+      "ordinal": 3.9166
+    },
+    "music-paperclip-rhapsody": {
+      "rank": 55,
+      "ordinal": 3.8427
+    },
+    "music-the-time": {
+      "rank": 56,
+      "ordinal": 3.7744
+    },
+    "music-particles": {
+      "rank": 57,
+      "ordinal": 3.7211
+    },
+    "music-o-telefone-da-agonia": {
+      "rank": 58,
+      "ordinal": 3.6347
+    },
+    "music-sentido-e-referencia": {
+      "rank": 59,
+      "ordinal": 3.6206
+    },
+    "music-o-magico-e-o-fogo": {
+      "rank": 60,
+      "ordinal": 3.5961
+    },
+    "music-caminho": {
+      "rank": 61,
+      "ordinal": 3.5489
+    },
+    "music-46336b97-4306-41bc-8a7b-48f0ebebbd29": {
+      "rank": 62,
+      "ordinal": 3.3982
+    },
+    "travessia-project": {
+      "rank": 63,
+      "ordinal": 3.277
+    },
+    "music-leite-no-salao-bar": {
+      "rank": 64,
+      "ordinal": 3.2633
+    },
+    "music-o-medo-do-louco": {
+      "rank": 65,
+      "ordinal": 2.5557
+    },
+    "music-escherian-sunrise-with-godel": {
+      "rank": 66,
+      "ordinal": 2.4935
+    },
+    "music-stopping-by-woods-on-a-snowy-evening-by-robert-frost": {
+      "rank": 67,
+      "ordinal": 2.4598
+    },
+    "becoming-lobsters": {
       "rank": 68,
-      "ordinal": 1.8711
+      "ordinal": 2.4533
+    },
+    "music-chegue-irmao-chegue-irma": {
+      "rank": 69,
+      "ordinal": 2.4329
+    },
+    "music-sobre-o-rigor-na-ciencia": {
+      "rank": 70,
+      "ordinal": 2.4081
+    },
+    "music-be-me-borges": {
+      "rank": 71,
+      "ordinal": 2.3999
+    },
+    "music-o-regral": {
+      "rank": 72,
+      "ordinal": 2.3168
+    },
+    "music-uma-so-cancao": {
+      "rank": 73,
+      "ordinal": 2.0467
+    },
+    "music-o-tempo": {
+      "rank": 74,
+      "ordinal": 2.0262
+    },
+    "pampa-circuit": {
+      "rank": 75,
+      "ordinal": 1.9416
+    },
+    "music-borges-e-eu": {
+      "rank": 76,
+      "ordinal": 1.9337
     },
     "music-f85fb538-6f59-4751-8629-da76665fc91e": {
-      "rank": 69,
-      "ordinal": 1.1955
+      "rank": 77,
+      "ordinal": 1.913
+    },
+    "music-sinal-que-se-cumpre-moving-window-ix": {
+      "rank": 78,
+      "ordinal": 1.8901
+    },
+    "music-bibliotecario-do-infinito": {
+      "rank": 79,
+      "ordinal": 1.5227
     },
     "music-mindfulness": {
-      "rank": 70,
-      "ordinal": 0.8471
+      "rank": 80,
+      "ordinal": 1.0963
     },
-    "everything-is-process": {
-      "rank": 71,
-      "ordinal": 0.3436
-    },
-    "music-veu-do-infinito": {
-      "rank": 72,
-      "ordinal": 0.0953
+    "music-clipes": {
+      "rank": 81,
+      "ordinal": 1.0134
     },
     "music-vos": {
-      "rank": 73,
-      "ordinal": 0.0723
+      "rank": 82,
+      "ordinal": 0.9694
     },
-    "music-riobaldo-e-o-aleph": {
-      "rank": 74,
-      "ordinal": -0.1067
+    "music-dd332f75-6052-4f9e-bccd-fb0303731d6e": {
+      "rank": 83,
+      "ordinal": 0.6523
     },
-    "music-151474c5-1420-4cc1-9ab5-80721f4459ed": {
-      "rank": 75,
-      "ordinal": -0.2012
+    "music-f73c60f0-49af-45fd-a483-1d35a676dccc": {
+      "rank": 84,
+      "ordinal": 0.5892
     },
     "music-sussurros-binarios": {
-      "rank": 76,
-      "ordinal": -2.0643
+      "rank": 85,
+      "ordinal": 0.5785
+    },
+    "music-menino-que-voce-foi": {
+      "rank": 86,
+      "ordinal": 0.0789
+    },
+    "everything-is-process": {
+      "rank": 87,
+      "ordinal": 0.0078
+    },
+    "music-primavera-carregando": {
+      "rank": 88,
+      "ordinal": -0.4015
+    },
+    "music-prayer-to-the-unfinished-moving-window-v": {
+      "rank": 89,
+      "ordinal": -0.5585
+    },
+    "music-151474c5-1420-4cc1-9ab5-80721f4459ed": {
+      "rank": 90,
+      "ordinal": -0.5852
+    },
+    "music-universal-threshold": {
+      "rank": 91,
+      "ordinal": -0.717
+    },
+    "music-belief-engine-labyrinth-song-moving-window-viii": {
+      "rank": 92,
+      "ordinal": -0.7513
+    },
+    "music-riobaldo-e-o-aleph": {
+      "rank": 93,
+      "ordinal": -0.9424
+    },
+    "music-o-sonhador-e-o-fogo": {
+      "rank": 94,
+      "ordinal": -1.4405
     }
   }
 }
