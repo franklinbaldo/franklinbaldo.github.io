@@ -923,10 +923,13 @@ function snapshotDelta(key: string): number | null {
 </style>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+  function setupViewToggle() {
     const toggleBtn = document.getElementById("view-toggle") as HTMLButtonElement | null;
     const table = document.getElementById("rank-table") as HTMLTableElement | null;
     if (!toggleBtn || !table) return;
+
+    if (toggleBtn.dataset.hasListener) return;
+    toggleBtn.dataset.hasListener = "true";
 
     // Read initial state from URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -956,5 +959,12 @@ function snapshotDelta(key: string): number | null {
         history.replaceState(null, "", window.location.pathname + "?" + params.toString() + window.location.hash);
       }
     });
-  });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupViewToggle);
+  } else {
+    setupViewToggle();
+  }
+  document.addEventListener("astro:page-load", setupViewToggle);
 </script>
