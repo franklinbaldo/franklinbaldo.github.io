@@ -53,13 +53,13 @@ O ordinal do OpenSkill é `μ − 3σ`. Com o weight aplicado só ao mu:
 
 O efeito se acumula em 10 vitórias + 5 derrotas (win-rate 67%):
 
-| weight | mu     | sigma | ordinal | interpretação              |
-| ------ | ------ | ----- | ------- | -------------------------- |
-| 0.10   | 26.208 | 5.897 | 8.517   | muito apertado             |
-| 0.25   | 27.540 | 5.919 | 9.782   |                            |
-| **0.50**   | **28.711** | **5.977** | **10.779** | ← **pico — margem média**  |
-| 0.75   | 28.895 | 6.046 | 10.757  |                            |
-| 1.00   | 28.378 | 6.115 | 10.034  | blowout total              |
+| weight   | mu         | sigma     | ordinal    | interpretação             |
+| -------- | ---------- | --------- | ---------- | ------------------------- |
+| 0.10     | 26.208     | 5.897     | 8.517      | muito apertado            |
+| 0.25     | 27.540     | 5.919     | 9.782      |                           |
+| **0.50** | **28.711** | **5.977** | **10.779** | ← **pico — margem média** |
+| 0.75     | 28.895     | 6.046     | 10.757     |                           |
+| 1.00     | 28.378     | 6.115     | 10.034     | blowout total             |
 
 O pico de ordinal está em weight ≈ 0.5, não em weight = 1.0. Um post que
 destrói rivais por 4 estrelas ranka **abaixo** de um post que ganha por 2
@@ -166,11 +166,11 @@ Nenhuma alteração; o doctor valida o schema dos rate files, não os ordinals.
 
 Todas as funções alteradas são puras (`_computeRatings` recebe `RawMatch[]`).
 
-| Teste                                                      | Ação     |
-| ---------------------------------------------------------- | -------- |
-| `phase2: blowout margin produces larger ordinal gap`       | Passa sem mudança (blowout ainda dá gap maior que photo-finish) |
-| **Novo**: `monotonicity: blowout ordinal ≥ medium-margin ordinal` | Adicionar — falha atualmente, passa após a correção |
-| **Novo**: `sigma update scales with weight`                | Adicionar — verifica que `sigma_close > sigma_blowout` após mesmo número de matches |
+| Teste                                                             | Ação                                                                                |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `phase2: blowout margin produces larger ordinal gap`              | Passa sem mudança (blowout ainda dá gap maior que photo-finish)                     |
+| **Novo**: `monotonicity: blowout ordinal ≥ medium-margin ordinal` | Adicionar — falha atualmente, passa após a correção                                 |
+| **Novo**: `sigma update scales with weight`                       | Adicionar — verifica que `sigma_close > sigma_blowout` após mesmo número de matches |
 
 ---
 
