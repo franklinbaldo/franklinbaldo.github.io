@@ -62,6 +62,12 @@ export interface DuelEntry {
   runAt: string;
   winnerKey: string;
   loserKey: string;
+  /** Which side won, after override resolution. In version duels both sides
+   *  share the same key, so winnerKey alone cannot identify the side. */
+  winnerSide?: "a" | "b";
+  /** True when both sides are versions of the same post (post_a.key ===
+   *  post_b.key). Excluded from essay rankings but kept in the archive. */
+  isVersionDuel?: boolean;
   margin?: number;
   confidence?: string;
   criterion?: string;

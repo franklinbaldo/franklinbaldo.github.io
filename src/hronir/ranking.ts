@@ -327,6 +327,7 @@ export function _computeDeconfoundedQuality(
   const obs: Obs[] = [];
   const postN = new Map<string, number>();
   for (const m of raw) {
+    if (m.aKey === m.bKey) continue;
     const add = (key: string, rateVal: number | null) => {
       if (rateVal === null || !key) return;
       const pi = idxFor(postIdx, key);
@@ -429,6 +430,7 @@ export function _computePerPerspectiveQuality(
 
   for (const m of sorted) {
     if (!m.perspectiveId) continue;
+    if (m.aKey === m.bKey) continue;
     const b = bucket(m.perspectiveId);
 
     const resetIfEdited = (
@@ -508,6 +510,7 @@ export function computePerPerspectiveRatings(): Map<
     const bKey = postKey(data.post_b as { key?: string; slug?: string } | null);
     if (!aKey || !bKey) continue;
     if (winner !== "a" && winner !== "b") continue;
+    if (aKey === bKey) continue;
 
     const perspId = data.perspective_id ? String(data.perspective_id) : null;
     if (!perspId) continue;
@@ -537,6 +540,7 @@ export function computePerPerspectiveRatings(): Map<
     };
 
     for (const m of matches) {
+      if (m.aKey === m.bKey) continue;
       const aRating = ensure(m.aKey);
       const bRating = ensure(m.bKey);
       appearances.set(m.aKey, (appearances.get(m.aKey) || 0) + 1);

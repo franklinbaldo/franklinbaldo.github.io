@@ -139,6 +139,8 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
       runAt,
       winnerKey,
       loserKey,
+      winnerSide: winner as "a" | "b",
+      isVersionDuel: aKey === bKey,
       margin:
         typeof (data as any).margin === "number"
           ? (data as any).margin

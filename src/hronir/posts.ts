@@ -82,6 +82,17 @@ export function buildPathIndex(): Map<
   return index;
 }
 
+// Publication predicate shared by match sampling: a post is publishable
+// unless it is marked draft or has a publishDate in the future.
+export function isPublishedData(data: Record<string, unknown>): boolean {
+  if (data.draft === true) return false;
+  if (data.publishDate) {
+    const pub = new Date(String(data.publishDate));
+    if (!isNaN(pub.getTime()) && pub > new Date()) return false;
+  }
+  return true;
+}
+
 export function listEnglishWithKey(): Array<{
   path: string;
   translationKey: string;
@@ -93,13 +104,15 @@ export function listEnglishWithKey(): Array<{
     const lang = data.lang ? String(data.lang) : "en";
     if (lang !== "en") continue;
     if (!data.translationKey) continue;
+    if (!isPublishedData(data)) continue;
     out.push({ path: p, translationKey: String(data.translationKey) });
   }
   return out;
 }
 
 export function findTranslations(
-  translationKey: string
+  translationKey: string,
+  { publishedOnly = false }: { publishedOnly?: boolean } = {}
 ): Array<{ path: string; lang: string }> {
   const out: Array<{ path: string; lang: string }> = [];
   for (const p of listPosts()) {
@@ -107,6 +120,7 @@ export function findTranslations(
     const data = readPost(p);
     if (!data.translationKey) continue;
     if (String(data.translationKey) !== String(translationKey)) continue;
+    if (publishedOnly && !isPublishedData(data)) continue;
     out.push({ path: p, lang: data.lang ? String(data.lang) : "en" });
   }
   return out;

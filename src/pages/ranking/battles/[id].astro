@@ -43,7 +43,9 @@ function dossierHref(key: string | undefined) {
   return `/ranking/posts/${key}/`;
 }
 
-const winnerIsA = duel.postAKey === duel.winnerKey;
+const winnerIsA = duel.winnerSide
+  ? duel.winnerSide === "a"
+  : duel.postAKey === duel.winnerKey;
 const winnerInfo = winnerIsA ? postAInfo : postBInfo;
 const loserInfo = winnerIsA ? postBInfo : postAInfo;
 const winnerKey = duel.winnerKey;
@@ -95,6 +97,7 @@ const loserRank = rankByKey.get(loserKey);
 
   <div class="battle-tags">
     {duel.season !== undefined && <span class="tag tag-season">Season {duel.season}</span>}
+    {duel.isVersionDuel && <span class="tag">version duel</span>}
     {duel.perspectiveId && (
       <span class="tag tag-perspective" style={`--ph:${perspectiveHue(duel.perspectiveId)}`}>
         <a href={`/ranking/perspectives/${duel.perspectiveId}/`}>{duel.perspectiveId.replace(/-/g, " ")}</a>

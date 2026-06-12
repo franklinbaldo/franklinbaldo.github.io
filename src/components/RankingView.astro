@@ -348,7 +348,9 @@ function snapshotDelta(key: string): number | null {
         const winnerName = postLabel(d.winnerKey);
         const loserName = postLabel(d.loserKey);
 
-        const winnerIsA = d.postAKey === d.winnerKey;
+        const winnerIsA = d.winnerSide
+          ? d.winnerSide === "a"
+          : d.postAKey === d.winnerKey;
         const winnerRate = d.rateA != null && d.rateB != null
           ? (winnerIsA ? d.rateA : d.rateB)
           : null;
@@ -367,6 +369,7 @@ function snapshotDelta(key: string): number | null {
           >
             <div class="bcl-meta">
               <span class="bcl-date">{fmtDate(d.runAt)}</span>
+              {d.isVersionDuel && <span class="bcl-tag">version duel</span>}
               {d.perspectiveId && (
                 <span
                   class="bcl-tag bcl-tag-persp"
