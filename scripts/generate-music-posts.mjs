@@ -159,26 +159,27 @@ async function main() {
   for (const clip of clips) {
     const rawSlug = slugify(clip.title || clip.id);
     const slug = rawSlug || clip.id.slice(0, 8);
-    // RFC 0003: each post is a folder <slug>/ whose canonical file is index.mdx.
+    // RFC 0010: each post is a folder <slug>/ of peer version files; new
+    // posts start as a single v-<timestamp>.mdx that `hronir:select` picks
+    // up as the debut selection on its next run.
     const dir = join(OUT_DIR, slug);
-    const filepath = join(dir, "index.mdx");
 
-    if (existsSync(filepath)) {
-      skipped++;
-      continue;
-    }
     // The blog root is shared with regular posts; a song titled like an
     // existing essay would otherwise produce a duplicate Astro id.
-    if (existsSync(join(dir, "index.md"))) {
-      console.warn(`  conflito com post existente, pulado: ${slug}/index.md`);
+    if (existsSync(dir)) {
       skipped++;
       continue;
     }
 
+    const stamp = new Date()
+      .toISOString()
+      .replace(/\.\d+Z$/, "")
+      .replace(/:/g, "-");
+    const filepath = join(dir, `v-${stamp}.mdx`);
     mkdirSync(dir, { recursive: true });
     const content = makeMdx(clip);
     writeFileSync(filepath, content, "utf8");
-    console.log(`  criado: ${slug}/index.mdx`);
+    console.log(`  criado: ${slug}/v-${stamp}.mdx`);
     created++;
   }
 
@@ -186,6 +187,9 @@ async function main() {
   if (created > 0) {
     console.log(
       `\nAgora edite os novos arquivos em src/content/blog/ e adicione\nsuas notas em cada seção "## Notas do compositor".`
+    );
+    console.log(
+      `\nDepois rode \`npm run hronir:select\` para registrar os novos posts\nem src/generated/versions-selected.json (o build também roda isso).`
     );
   }
 }

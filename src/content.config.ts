@@ -1,5 +1,23 @@
+import { existsSync, readFileSync } from "node:fs";
 import { defineCollection, z, type SchemaContext } from "astro:content";
 import { glob } from "astro/loaders";
+
+// RFC 0010: the published version of each post is whatever
+// versions-selected.json points at — selection is a generated, committed
+// artifact (written by `hronir:select`), not a privileged filename.
+const selectedFiles: string[] = [];
+if (existsSync("./src/generated/versions-selected.json")) {
+  // Present-but-unparseable must fail the build: silently falling back to
+  // the index.* glob would publish an empty (or wrong) blog collection.
+  const sel = JSON.parse(
+    readFileSync("./src/generated/versions-selected.json", "utf-8")
+  ) as Record<string, { file?: string }>;
+  for (const [slug, entry] of Object.entries(sel)) {
+    if (slug === "_meta" || !entry?.file) continue;
+    selectedFiles.push(entry.file);
+  }
+}
+// Absent file = pre-migration tree: fall back to the RFC 0003 index.* layout.
 
 // Shared schema for canonical posts (blog) and their non-canonical versions
 // (blogVersions). RFC 0003: a version file is a frozen copy of a canonical, so
@@ -62,25 +80,24 @@ const postSchema = ({ image }: SchemaContext) =>
   });
 
 const blog = defineCollection({
-  // RFC 0003: each post lives in its own folder <slug>/, where the canonical
-  // (published) version is index.md(x). Non-canonical versions are sibling
-  // files (v-<timestamp>.md) that don't match this glob → invisible here.
-  // generateId strips the trailing /index so the id stays the flat slug,
-  // preserving every existing URL.
+  // RFC 0010: each post lives in its own folder <slug>/ holding peer version
+  // files (v-<timestamp>.md). The collection loads exactly the version that
+  // versions-selected.json picks per slug. generateId strips the version
+  // filename so the id stays the flat slug, preserving every existing URL.
   loader: glob({
-    pattern: "**/index.{md,mdx}",
+    pattern: selectedFiles.length > 0 ? selectedFiles : "**/index.{md,mdx}",
     base: "./src/content/blog",
-    generateId: ({ entry }) => entry.replace(/\/index\.mdx?$/, ""),
+    generateId: ({ entry }) => entry.replace(/\/(v-[^/]+|index)\.mdx?$/, ""),
   }),
   schema: postSchema,
 });
 
-// RFC 0003: the non-canonical versions of every post (drafts + superseded
-// canonicals). Served at /blog/<slug>/v/<uuid> (noindex, canonical → live).
-// The id keeps the folder path so the post slug = dirname(id).
+// RFC 0010: every non-selected version (challengers + ex-selected). Served at
+// /blog/<slug>/v/<uuid> (noindex, canonical → live). The id keeps the folder
+// path so the post slug = dirname(id).
 const blogVersions = defineCollection({
   loader: glob({
-    pattern: "**/v-*.{md,mdx}",
+    pattern: ["**/v-*.{md,mdx}", ...selectedFiles.map((f) => `!${f}`)],
     base: "./src/content/blog",
     generateId: ({ entry }) => entry.replace(/\.mdx?$/, ""),
   }),

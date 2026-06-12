@@ -99,10 +99,9 @@ npm run hronir:doctor           # validate all rate files
 npm run hronir:worst            # print the lowest-ranked post key
 npm run hronir:draft-worst      # RFC 0003: cria uma NOVA versão (rascunho) do pior post
 npm run hronir:draft-commit -- --msg "..."  # registra o rascunho (canônica intocada)
-npm run hronir:promote -- --draft <path>    # promove uma versão a canônica (swap de arquivos)
-npm run hronir:promote -- --key <key>       # auto-promove a melhor versão da chave (margem ≥0.3★, n≥2 duelos)
-npm run hronir:promote -- --all             # varre todas as chaves e auto-promove as elegíveis
-npm run hronir:prune -- --dry-run           # lista versões perdedoras elegíveis para poda (≥0.5★ abaixo, n≥3)
+npm run hronir:select           # RFC 0010: atualiza versions-selected.json (seleção de versões)
+npm run hronir:select -- --dry-run  # mostra o que seria selecionado sem gravar
+npm run hronir:prune -- --dry-run   # lista versões perdedoras elegíveis para poda (≥0.5★ abaixo, n≥3)
 npm run hronir:prune            # remove as versões perdedoras elegíveis
 npm run hronir:edit-worst       # alias legado de draft-worst (edição não-destrutiva)
 npm run hronir:end -- --force   # discard an in-progress session
@@ -193,13 +192,15 @@ O `check:hygiene` valida o nome.
 src/content/blog/         Blog posts (markdown + frontmatter)
 src/components/           Astro components
 src/lib/                  Build-time TypeScript helpers
-scripts/hronir/           Hrönir CLI and rating engine
-  lib/                    Core modules (commands, ranking, moods, perspectives, matches, posts)
+src/hronir/               Hrönir core modules (commands, ranking, matches, posts, selection)
+  __tests__/              Unit tests (node:test)
+scripts/hronir/           Hrönir CLI entry point and perspectives/skills
   perspectives/           Reader perspective files (.md)
   skills/                 Writing skills for edit-worst phase
 scripts/lib/              Shared helpers consumidos por múltiplos scripts
   content.mjs             Fonte única de descoberta de posts (listPostFiles, readPostMeta)
   blog-links.mjs          Validação e redirects de links internos
+src/generated/            Artefatos gerados e commitados (selection, redirects, sitemap data)
 .routines/hronir/         Rate files produced by sessions (committed to git)
 docs/rfcs/                RFCs do projeto (0001…)
 docs/plans/               Planos e documentos de planejamento

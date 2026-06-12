@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig } from "astro/config";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { DEFAULT_LANG, LANG_META } from "./src/lib/languages.mjs";
 
 /** @type {Record<string, Record<string, string>>} */
@@ -21,6 +21,40 @@ try {
   );
 } catch {
   // File not yet generated — legacy date-prefixed URLs won't redirect.
+}
+
+// RFC 0010 §4.4: pruned versions keep their public permalinks as redirects
+// to the live post — `hronir:prune` registers every removed slug@uuid here.
+// Absent registry = nothing pruned yet. A present-but-malformed registry
+// must fail the build: completing without these redirects would 404 every
+// pruned permalink, and the source files are already gone.
+if (existsSync("./src/generated/versions-pruned.json")) {
+  const pruned = JSON.parse(
+    readFileSync("./src/generated/versions-pruned.json", "utf-8")
+  );
+  if (pruned?._meta?.schema !== "pruned-v1" || !Array.isArray(pruned.pruned)) {
+    throw new Error(
+      "versions-pruned.json fora do schema pruned-v1 (_meta.schema + array 'pruned') — repare o registro antes de buildar."
+    );
+  }
+  for (const e of pruned.pruned) {
+    // registerPruned (the only writer) always emits these fields; anything
+    // else is a damaged entry that would generate /blog/undefined/... or
+    // silently drop a permalink.
+    if (
+      typeof e?.slug !== "string" ||
+      typeof e?.uuid !== "string" ||
+      typeof e?.lang !== "string"
+    ) {
+      throw new Error(
+        `versions-pruned.json: entrada inválida ${JSON.stringify(e)} (esperado {slug, uuid, lang}) — repare o registro antes de buildar.`
+      );
+    }
+    const base = e.lang === "pt" ? `/pt/blog/${e.slug}` : `/blog/${e.slug}`;
+    for (const uuid of new Set([e.uuid, e.legacyUuid].filter(Boolean))) {
+      blogRedirects[`${base}/v/${uuid}/`] = `${base}/`;
+    }
+  }
 }
 
 import mdx from "@astrojs/mdx";

@@ -1,5 +1,10 @@
 import { rating, rate, ordinal } from "openskill";
-import { listMatchFiles, readMatch, postKey } from "./matches.js";
+import {
+  listMatchFiles,
+  readMatch,
+  postKey,
+  matchesDataVersion,
+} from "./matches.js";
 import type { RankRow, PerspectiveRankRow } from "./types.js";
 
 export const MIN_APPEARANCES = 3;
@@ -28,7 +33,14 @@ interface RawMatch {
   rateB: number | null;
 }
 
+// RFC 0010 §4.7 (E1): one pass over the rate files per command, not one per
+// compute*. Memoized against matchesDataVersion so a writeMatch in the same
+// process (decide, migrate) invalidates the snapshot.
+let _rawCache: { version: number; raw: RawMatch[] } | null = null;
+
 function _loadMatchData(): RawMatch[] {
+  const version = matchesDataVersion();
+  if (_rawCache && _rawCache.version === version) return _rawCache.raw;
   const raw: RawMatch[] = [];
   for (const f of listMatchFiles()) {
     const { data } = readMatch(f);
@@ -74,6 +86,7 @@ function _loadMatchData(): RawMatch[] {
       rateB,
     });
   }
+  _rawCache = { version, raw };
   return raw;
 }
 
@@ -83,6 +96,16 @@ function _sortMatchData(raw: RawMatch[]): RawMatch[] {
     if (cmp !== 0) return cmp;
     return x.filename.localeCompare(y.filename);
   });
+}
+
+// Stable per-post identity for edit detection: peers of the same post live in
+// the same directory (RFC 0010), so strip the version filename. Legacy flat
+// paths (pre-folder layout) and legacy index.* paths normalize to the same
+// id as their migrated v-* successors' directory, keeping continuity across
+// the migration. A UUID change under the same id means the content the key
+// is being judged on changed — selection swap or in-place edit alike.
+function versionTrackId(pathStr: string): string {
+  return pathStr.replace(/\/(?:index|v-[^/]+)\.mdx?$/, "");
 }
 
 export function _computeRatings(raw: RawMatch[]): RankRow[] {
@@ -168,7 +191,7 @@ export function _computeAbsoluteQuality(
   const ewma = new Map<string, number>();
   const count = new Map<string, number>();
   const sum = new Map<string, number>();
-  const lastVersionByPath = new Map<string, string>();
+  const lastVersionByPost = new Map<string, string>();
 
   const resetIfEdited = (
     key: string,
@@ -176,13 +199,14 @@ export function _computeAbsoluteQuality(
     version: string | null
   ) => {
     if (version === null || !pathStr) return;
-    const prev = lastVersionByPath.get(pathStr);
+    const trackId = versionTrackId(pathStr);
+    const prev = lastVersionByPost.get(trackId);
     if (prev !== undefined && prev !== version) {
       ewma.delete(key);
       count.delete(key);
       sum.delete(key);
     }
-    lastVersionByPath.set(pathStr, version);
+    lastVersionByPost.set(trackId, version);
   };
 
   const applyRating = (key: string, rateVal: number | null) => {
@@ -412,7 +436,7 @@ export function _computePerPerspectiveQuality(
     ewma: Map<string, number>;
     count: Map<string, number>;
     sum: Map<string, number>;
-    lastVersionByPath: Map<string, string>;
+    lastVersionByPost: Map<string, string>;
   }
   const byPersp = new Map<string, Bucket>();
 
@@ -422,7 +446,7 @@ export function _computePerPerspectiveQuality(
         ewma: new Map(),
         count: new Map(),
         sum: new Map(),
-        lastVersionByPath: new Map(),
+        lastVersionByPost: new Map(),
       });
     }
     return byPersp.get(perspId)!;
@@ -439,13 +463,14 @@ export function _computePerPerspectiveQuality(
       version: string | null
     ) => {
       if (version === null || !pathStr) return;
-      const prev = b.lastVersionByPath.get(pathStr);
+      const trackId = versionTrackId(pathStr);
+      const prev = b.lastVersionByPost.get(trackId);
       if (prev !== undefined && prev !== version) {
         b.ewma.delete(key);
         b.count.delete(key);
         b.sum.delete(key);
       }
-      b.lastVersionByPath.set(pathStr, version);
+      b.lastVersionByPost.set(trackId, version);
     };
     const applyRating = (key: string, rateVal: number | null) => {
       if (rateVal === null) return;

@@ -132,8 +132,9 @@ function makeEnBody(ptBody, enTitle) {
 }
 
 async function main() {
-  // RFC 0003: posts live in <slug>/index.mdx. Discover canonical music posts
-  // (postType: music, slug not already an -en companion) recursively.
+  // RFC 0010: posts live in <slug>/v-<timestamp>.mdx; listPostFiles returns
+  // the selected version of each. Discover music posts (postType: music,
+  // slug not already an -en companion).
   const ptFiles = listPostFiles().filter((abs) => {
     if (!abs.endsWith(".mdx")) return false;
     if (postIdFromPath(abs).endsWith("-en")) return false;
@@ -149,7 +150,11 @@ async function main() {
   for (const ptPath of ptFiles) {
     const slug = postIdFromPath(ptPath);
     const enDir = join(BLOG_DIR, `${slug}-en`);
-    const enPath = join(enDir, "index.mdx");
+    const stamp = new Date()
+      .toISOString()
+      .replace(/\.\d+Z$/, "")
+      .replace(/:/g, "-");
+    const enPath = join(enDir, `v-${stamp}.mdx`);
 
     const content = readFileSync(ptPath, "utf8");
     const parsed = parseFrontmatter(content);
@@ -175,8 +180,8 @@ async function main() {
       updated++;
     }
 
-    // Create EN companion (never overwrite)
-    if (existsSync(enPath)) {
+    // Create EN companion (never overwrite an existing companion dir)
+    if (existsSync(enDir)) {
       skipped++;
       continue;
     }
@@ -185,7 +190,7 @@ async function main() {
     const enBody = makeEnBody(body, enTitle);
     mkdirSync(enDir, { recursive: true });
     writeFileSync(enPath, `---\n${enFrontmatter}\n---\n${enBody}`, "utf8");
-    console.log(`  created: ${slug}-en/index.mdx`);
+    console.log(`  created: ${slug}-en/v-${stamp}.mdx`);
     created++;
   }
 

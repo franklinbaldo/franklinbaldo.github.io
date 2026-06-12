@@ -10,6 +10,19 @@ export const RATES_DIR = path.join(OUT_DIR, "rates");
 
 const HRONIR_NAMESPACE = "6f8a3c1e-2b94-5d7f-9e10-a4c8f2b6d031";
 
+// RFC 0010 §4.3: lifecycle and publication-control fields are excluded from
+// the version UUID so that migration stamps, draft-commit metadata and
+// publish/unpublish toggles never change a version's identity.
+const UUID_EXCLUDED_FIELDS = new Set([
+  "draftCreatedAt",
+  "draftCommittedAt",
+  "draftMsg",
+  "supersedes",
+  "previousVersion",
+  "draft",
+  "publishDate",
+]);
+
 function uuidv5(name: string, namespace: string): string {
   const nsBytes = Buffer.from(namespace.replace(/-/g, ""), "hex");
   const hash = crypto.createHash("sha1").update(nsBytes).update(name).digest();
@@ -43,12 +56,10 @@ export function keyForPath(filePath: string): string {
   const data = readPost(filePath);
   if (data.translationKey) return String(data.translationKey);
   const base = path.basename(filePath).replace(/\.mdx?$/, "");
-  if (base === "index") return path.basename(path.dirname(filePath));
+  if (base === "index" || base.startsWith("v-")) {
+    return path.basename(path.dirname(filePath));
+  }
   return base;
-}
-
-export function isCanonical(filePath: string): boolean {
-  return /(^|[/\\])index\.mdx?$/.test(filePath);
 }
 
 export function listVersions(anyPathInFolder: string): string[] {
@@ -62,26 +73,6 @@ export function listVersions(anyPathInFolder: string): string[] {
   return out;
 }
 
-export function buildPathIndex(): Map<
-  string,
-  { path: string; lang: string | null; translationKey: string | null }
-> {
-  const index = new Map<
-    string,
-    { path: string; lang: string | null; translationKey: string | null }
-  >();
-  for (const p of listPosts()) {
-    const data = readPost(p);
-    const key = data.translationKey ? String(data.translationKey) : null;
-    index.set(p, {
-      path: p,
-      lang: data.lang ? String(data.lang) : null,
-      translationKey: key,
-    });
-  }
-  return index;
-}
-
 // Publication predicate shared by match sampling: a post is publishable
 // unless it is marked draft or has a publishDate in the future.
 export function isPublishedData(data: Record<string, unknown>): boolean {
@@ -93,47 +84,63 @@ export function isPublishedData(data: Record<string, unknown>): boolean {
   return true;
 }
 
-export function listEnglishWithKey(): Array<{
-  path: string;
-  translationKey: string;
-}> {
-  const out: Array<{ path: string; translationKey: string }> = [];
-  for (const p of listPosts()) {
-    if (!isCanonical(p)) continue;
-    const data = readPost(p);
-    const lang = data.lang ? String(data.lang) : "en";
-    if (lang !== "en") continue;
-    if (!data.translationKey) continue;
-    if (!isPublishedData(data)) continue;
-    out.push({ path: p, translationKey: String(data.translationKey) });
-  }
-  return out;
+// RFC 0010 §4.7: the remark pipeline is the UUID hotspot — listDirVersions
+// recomputes identities for every version file, several times per command.
+// Both UUIDs share the normalized body, so one parse + one remark run yields
+// both; the entry is keyed by (mtime, size) so an edited file recomputes.
+interface UuidCacheEntry {
+  mtimeMs: number;
+  size: number;
+  uuid: string;
+  legacyUuid: string;
 }
+const _uuidCache = new Map<string, UuidCacheEntry>();
 
-export function findTranslations(
-  translationKey: string,
-  { publishedOnly = false }: { publishedOnly?: boolean } = {}
-): Array<{ path: string; lang: string }> {
-  const out: Array<{ path: string; lang: string }> = [];
-  for (const p of listPosts()) {
-    if (!isCanonical(p)) continue;
-    const data = readPost(p);
-    if (!data.translationKey) continue;
-    if (String(data.translationKey) !== String(translationKey)) continue;
-    if (publishedOnly && !isPublishedData(data)) continue;
-    out.push({ path: p, lang: data.lang ? String(data.lang) : "en" });
+function uuidsFor(filePath: string): UuidCacheEntry | null {
+  let st: fs.Stats;
+  try {
+    st = fs.statSync(filePath);
+  } catch {
+    return null;
   }
-  return out;
-}
+  const hit = _uuidCache.get(filePath);
+  if (hit && hit.mtimeMs === st.mtimeMs && hit.size === st.size) return hit;
 
-export function getPostUuid(filePath: string): string | null {
-  if (!fs.existsSync(filePath)) return null;
   const raw = fs.readFileSync(filePath, "utf8");
-  const { content } = matter(raw);
-  const normalized = remark()
+  const { data, content } = matter(raw);
+  const body = remark()
     .processSync(content)
     .toString()
     .replace(/\r\n/g, "\n")
     .trim();
-  return uuidv5(normalized, HRONIR_NAMESPACE);
+  const meta: Record<string, unknown> = {};
+  for (const k of Object.keys(data).sort()) {
+    if (UUID_EXCLUDED_FIELDS.has(k)) continue;
+    const v = data[k];
+    meta[k] = v instanceof Date ? v.toISOString() : v;
+  }
+  const entry: UuidCacheEntry = {
+    mtimeMs: st.mtimeMs,
+    size: st.size,
+    uuid: uuidv5(body + "\n\u0000" + JSON.stringify(meta), HRONIR_NAMESPACE),
+    legacyUuid: uuidv5(body, HRONIR_NAMESPACE),
+  };
+  _uuidCache.set(filePath, entry);
+  return entry;
+}
+
+/** Version identity (RFC 0010 §4.3): UUIDv5 over the normalized body plus the
+ *  version-relevant frontmatter, excluding lifecycle/publication-control
+ *  fields. Two versions that differ only in title/description/etc. get
+ *  distinct UUIDs; stamping draftCommittedAt or toggling draft does not
+ *  change identity. */
+export function getPostUuid(filePath: string): string | null {
+  return uuidsFor(filePath)?.uuid ?? null;
+}
+
+/** Pre-RFC-0010 identity: UUIDv5 over the normalized body only. Rate files
+ *  written under stars-v1 carry this value in post_a/b.version; readers fall
+ *  back to it when the current UUID has no recorded duels. */
+export function getPostUuidLegacy(filePath: string): string | null {
+  return uuidsFor(filePath)?.legacyUuid ?? null;
 }
