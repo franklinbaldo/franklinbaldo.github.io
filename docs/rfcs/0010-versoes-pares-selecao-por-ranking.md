@@ -279,6 +279,18 @@ versões em falta. Diretórios sem nenhuma versão (tradução ainda não criada
 não fazem parte do grupo para fins de acoplamento. Resultado: as línguas de um
 ensaio **sempre avançam juntas** ou não avançam — sem divergência parcial.
 
+O acoplamento vale também para o **fallback por seleção inválida** (exceção da
+regra 1 do §4.2): quando a seleção de um diretório é descartada por deixar de
+ser publicável, a reseleção não escolhe cegamente a mais recente — escolhe a
+versão publicável mais recente **cujo `draftCreatedAt` (ou revisão de
+migração) tenha contraparte publicável em todos os irmãos com versões**, e
+move o grupo inteiro para essa revisão. Só se nenhuma revisão comum publicável
+existir é que o diretório cai sozinho para sua versão publicável mais recente
+— publicar conteúdo válido tem precedência sobre paridade de línguas — e nesse
+caso o `hronir:doctor` passa a reportar o grupo como **divergente**, para que
+a próxima rodada de `draft-worst`/`select` o reconvirja em vez de a divergência
+ficar invisível.
+
 `prune` sobrevive, simplificado: remove versões **não-selecionadas** com
 n ≥ 3 duelos de versão e ≥ 0.5★ abaixo da selecionada — nunca a selecionada,
 nunca a última do diretório. Sem categoria "arquivo `-prev`": a ex-exibida é
@@ -371,12 +383,22 @@ Script one-off preservado em `scripts/oneoff/` (padrão do repo):
 
 1. Para cada `index.{md,mdx}` em `src/content/blog/**`: renomear para
    `v-<timestamp do último commit do arquivo>.<ext>` via `git mv` (preserva
-   história).
+   história), e gravar no frontmatter um `draftCreatedAt` **compartilhado por
+   grupo de tradução**: todas as ex-canônicas de um mesmo `translationKey`
+   recebem o mesmo valor (e.g. o timestamp da migração). É esse identificador
+   que o §4.4 usa para casar contrapartes — **valores ausentes nunca casam
+   entre si** (dois arquivos sem `draftCreatedAt` não são tratados como par).
 2. Gerar `versions-selected.json` inicial apontando cada slug para o arquivo
    renomeado (a seleção inicial = estado publicado de hoje; zero mudança
    visível no site).
-3. Arquivos `v-*-prev` existentes (`vos`, `vos-en`): viram versões comuns —
-   nenhuma ação além de validar que não são as selecionadas.
+3. Arquivos `v-*-prev` existentes (`vos`, `vos-en`): viram versões comuns.
+   Quando a história de promoção permitir identificar as contrapartes (via
+   `supersedes` da então-canônica e a mesma rodada de promoção), o script
+   grava nelas um `draftCreatedAt` compartilhado; quando não, cada uma fica
+   **sem** identificador de pareamento — continuam reselecionáveis pela regra
+   1 dentro do próprio diretório, mas nunca participam de avanço acoplado
+   (a regra "ausente nunca casa" impede parear versões não relacionadas).
+   Validar que não são as selecionadas.
 4. Rate files antigos referenciam paths `index.*` que deixarão de existir: o
    leitor normalizado resolve paths históricos via key (que não muda), e o
    doctor trata `index.*` ausente como tolerável **apenas** em matches
