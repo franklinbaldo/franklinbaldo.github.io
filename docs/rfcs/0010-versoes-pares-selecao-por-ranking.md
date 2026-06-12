@@ -232,9 +232,13 @@ colidem. Não é teórico: `riobaldo-e-o-aleph/index.mdx` e
 ambíguas para `computeVersionRatings`, para a seleção e para as rotas
 `/v/<uuid>`. O UUID de versão passa a ser UUIDv5 sobre o corpo normalizado
 **mais o frontmatter relevante à versão** (título, descrição, heroImage, lang
-etc.), **excluindo os campos de ciclo de vida** (`draftCreatedAt`,
-`draftCommittedAt`, `draftMsg`, `supersedes`, `previousVersion`) — para que a
-migração e o `draft-commit` possam carimbar metadados sem mudar a identidade.
+etc.), **excluindo os campos de ciclo de vida e de controle de publicação**
+(`draftCreatedAt`, `draftCommittedAt`, `draftMsg`, `supersedes`,
+`previousVersion`, `draft`, `publishDate`) — para que a migração, o
+`draft-commit` e um despublicar/reagendar possam carimbar metadados sem mudar
+a identidade (alternar `draft`/`publishDate` dispara o fallback da regra 1 do
+§4.2; se isso mudasse o UUID, órfã exatamente as refs `slug@uuid` no momento em
+que o fallback roda).
 Complementos:
 
 - o doctor **proíbe** duas versões no mesmo diretório com o mesmo UUID
@@ -355,6 +359,18 @@ ficar invisível.
 n ≥ 3 duelos de versão e ≥ 0.5★ abaixo da selecionada — nunca a selecionada,
 nunca a última do diretório. Sem categoria "arquivo `-prev`": a ex-exibida é
 só mais uma versão, elegível a poda pelos mesmos critérios de todas.
+
+**Permalinks de versões podadas não viram 404.** A rota `/blog/<slug>/v/<uuid>`
+só existe enquanto o arquivo existe (a collection `blogVersions` gera rotas do
+que está em disco), então deletar o arquivo mataria um permalink já publicado —
+e a recuperabilidade via git não socorre o site estático. O `prune` registra
+cada `slug@uuid` removido num arquivo gerado e commitado
+(`src/generated/versions-pruned.json`, schema `pruned-v1`), e o build emite
+para cada entrada um **redirect** `/blog/<slug>/v/<uuid>/` → `/blog/<slug>/`
+— a mesma maquinaria dos redirects legados de
+`src/generated/blog-redirects.json`. Precisão sobre a promessa do §4.3: as
+referências **internas** (`slug@uuid` em rate files) seguem válidas após a
+poda; o permalink **público** degrada para redirect à versão viva, nunca para 404. O doctor valida que todo uuid podado está no registro.
 
 ### 4.5. Sessão robusta e idempotente (corrige S1–S6)
 
