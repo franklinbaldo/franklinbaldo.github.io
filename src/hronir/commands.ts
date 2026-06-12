@@ -1108,8 +1108,12 @@ export function decide(args: string[]) {
   if (afterMood !== null) {
     const moodStr = String(afterMood).trim();
     if (moodStr.length > 250) {
+      saveDraft();
       console.error(
         `Erro: --after-mood excede 250 caracteres (recebido: ${moodStr.length}). Seja mais conciso.`
+      );
+      console.error(
+        `Nota: Rascunho salvo. Repita o decide apenas com um --after-mood mais curto; os demais campos serão recuperados do rascunho.`
       );
       process.exit(1);
     }
