@@ -76,26 +76,25 @@ function readFlagValue(args, indices) {
 
 function parseMatches(raw) {
   if (raw == null) return 10;
-  const n = parseInt(raw, 10);
-  if (!Number.isFinite(n) || n < 0) {
+  if (!/^\d+$/.test(String(raw).trim())) {
     console.error(
       `Erro: --matches deve ser um inteiro não-negativo (recebido: ${JSON.stringify(raw)}).`
     );
     process.exit(1);
   }
-  return n;
+  return Number(String(raw).trim());
 }
 
 function parseMinAppearances(raw) {
   if (raw == null) return null;
-  const n = parseInt(raw, 10);
-  if (!Number.isFinite(n) || n < 1) {
+  const s = String(raw).trim();
+  if (!/^\d+$/.test(s) || Number(s) < 1) {
     console.error(
       `Erro: --min-appearances deve ser um inteiro positivo (recebido: ${JSON.stringify(raw)}).`
     );
     process.exit(1);
   }
-  return n;
+  return Number(s);
 }
 
 function parseInitOptions(args) {

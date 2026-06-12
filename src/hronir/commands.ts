@@ -436,9 +436,13 @@ function generateNextMatch() {
 
   // For each post, randomly pick which language version to show. The ranking
   // key is always the translationKey (derived from EN), but the evaluator
-  // reads whichever language is randomly selected.
+  // reads whichever language is randomly selected. Only publishable variants
+  // enter the draw — a draft or scheduled translation must not be evaluated
+  // and affect the shared key's ranking.
   function pickLangVariant(post: { path: string; translationKey: string }) {
-    const variants = findTranslations(post.translationKey);
+    const variants = findTranslations(post.translationKey, {
+      publishedOnly: true,
+    });
     if (variants.length <= 1) return { path: post.path, lang: "en" };
     const v = variants[Math.floor(Math.random() * variants.length)];
     return { path: v.path, lang: v.lang || "en" };
