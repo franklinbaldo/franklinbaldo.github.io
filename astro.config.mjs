@@ -32,12 +32,24 @@ if (existsSync("./src/generated/versions-pruned.json")) {
   const pruned = JSON.parse(
     readFileSync("./src/generated/versions-pruned.json", "utf-8")
   );
-  if (!Array.isArray(pruned?.pruned)) {
+  if (pruned?._meta?.schema !== "pruned-v1" || !Array.isArray(pruned.pruned)) {
     throw new Error(
-      "versions-pruned.json sem o array 'pruned' esperado (schema pruned-v1) — repare o registro antes de buildar."
+      "versions-pruned.json fora do schema pruned-v1 (_meta.schema + array 'pruned') — repare o registro antes de buildar."
     );
   }
   for (const e of pruned.pruned) {
+    // registerPruned (the only writer) always emits these fields; anything
+    // else is a damaged entry that would generate /blog/undefined/... or
+    // silently drop a permalink.
+    if (
+      typeof e?.slug !== "string" ||
+      typeof e?.uuid !== "string" ||
+      typeof e?.lang !== "string"
+    ) {
+      throw new Error(
+        `versions-pruned.json: entrada inválida ${JSON.stringify(e)} (esperado {slug, uuid, lang}) — repare o registro antes de buildar.`
+      );
+    }
     const base = e.lang === "pt" ? `/pt/blog/${e.slug}` : `/blog/${e.slug}`;
     for (const uuid of new Set([e.uuid, e.legacyUuid].filter(Boolean))) {
       blogRedirects[`${base}/v/${uuid}/`] = `${base}/`;
