@@ -12,8 +12,9 @@ import {
 // RFC 0010: content-addressed version pages. Every non-selected version file
 // gets /blog/<slug>/v/<uuid>. A UUID that is *currently* the selected version
 // redirects to /blog/<slug> so permalinks stay stable across selection swaps.
-// Pre-RFC-0010 permalinks used the body-only legacy UUID — those get a
-// redirect too. All version pages are noindex with canonical → live.
+// For non-selected versions, the pre-RFC-0010 body-only legacy UUID renders
+// the same archived content (not a redirect) — only selected/pruned versions
+// redirect. All version pages are noindex with canonical → live.
 export async function getStaticPaths() {
   const [versions, canon] = await Promise.all([
     getCollection("blogVersions"),
@@ -38,7 +39,7 @@ export async function getStaticPaths() {
     push(slug, uuid, { entry: v, redirect: false });
     const legacy = legacyUuidForId(v.id);
     if (legacy && legacy !== uuid) {
-      push(slug, legacy, { entry: v, redirect: true });
+      push(slug, legacy, { entry: v, redirect: false });
     }
   }
   for (const c of canon) {

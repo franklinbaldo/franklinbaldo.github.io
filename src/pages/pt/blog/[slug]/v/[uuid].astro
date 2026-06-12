@@ -11,8 +11,9 @@ import {
 
 // RFC 0010: PT mirror of the version route. Every PT non-selected version
 // gets /pt/blog/<slug>/v/<uuid>; the selected PT version's UUID redirects to
-// /pt/blog/<slug>, as do pre-RFC-0010 body-only legacy UUIDs. noindex with
-// canonical → the live PT post.
+// /pt/blog/<slug>. For non-selected versions, the legacy body-only UUID also
+// renders the archived content (not a redirect — only selected/pruned versions
+// redirect). noindex with canonical → the live PT post.
 export async function getStaticPaths() {
   const [versions, canon] = await Promise.all([
     getCollection("blogVersions"),
@@ -37,7 +38,7 @@ export async function getStaticPaths() {
     push(slug, uuid, { entry: v, redirect: false });
     const legacy = legacyUuidForId(v.id);
     if (legacy && legacy !== uuid) {
-      push(slug, legacy, { entry: v, redirect: true });
+      push(slug, legacy, { entry: v, redirect: false });
     }
   }
   for (const c of canon) {
