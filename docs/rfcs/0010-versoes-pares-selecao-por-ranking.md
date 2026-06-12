@@ -188,8 +188,9 @@ versão exibida não ficar oscilando):
    que **ambos os lados tenham rating** (corrige V2: sem rating dos dois
    lados, não há troca).
 2. Diretório novo ou sem nenhum duelo de versão: vence a versão **mais
-   recente** (timestamp do nome do arquivo). Desempate determinístico pelo
-   nome.
+   recente** (timestamp do nome do arquivo) **que passe em `isPublished`**
+   (`draft: true` e `publishDate` futuro ficam de fora — sem publicável,
+   o slug não entra no JSON). Desempate determinístico pelo nome.
 3. A seleção nunca aponta para arquivo inexistente — `hronir:doctor` valida.
 
 No Astro, a collection `blog` troca o glob `**/index.{md,mdx}` por um **loader
@@ -203,6 +204,12 @@ commits é a história das trocas de versão — mesmo padrão do
 `ranking-snapshot.json`). Conformidade com o padrão de dados persistidos do
 repo: schema `selection-v1`, script de migração preservado em
 `scripts/oneoff/`, validação no doctor.
+
+`hronir:select` é **idempotente**: antes de gravar, compara o novo mapeamento
+(`slug → file`) com o conteúdo atual do JSON ignorando `_meta.generatedAt`; se
+o mapeamento é idêntico, não escreve nada — o arquivo não é dirtied e o build
+é estritamente reprodutível. `generatedAt` só avança quando pelo menos uma
+seleção muda.
 
 ### 4.3. Um único leitor de matches (corrige V1, V6, C1)
 
@@ -357,7 +364,13 @@ Script one-off preservado em `scripts/oneoff/` (padrão do repo):
    leitor normalizado resolve paths históricos via key (que não muda), e o
    doctor trata `index.*` ausente como tolerável **apenas** em matches
    anteriores à data da migração.
-5. `npm run build` antes/depois deve produzir o mesmo conjunto de URLs
+5. Atualizar `src/lib/versions.mjs` (`fileForId`/`uuidForId`): atualmente
+   resolve IDs de entradas `blog` para `<slug>/index.{md,mdx}`; após a
+   migração, deve ler `versions-selected.json` para obter o path real da
+   versão selecionada. Sem esta atualização, `uuidForId(c.id)` retorna `null`
+   para toda entrada e os permalinks `/blog/<slug>/v/<uuid>/` perdem o redirect
+   para a versão canônica vigente (404s para URLs previamente publicadas).
+6. `npm run build` antes/depois deve produzir o mesmo conjunto de URLs
    (checado no CI da fase).
 
 Rollback: a migração é um commit de renames + um JSON; reverter o merge
