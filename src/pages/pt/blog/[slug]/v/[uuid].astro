@@ -43,8 +43,9 @@ export async function getStaticPaths() {
   }
   for (const c of canon) {
     if (c.data.lang !== "pt") continue;
-    // Only selected versions with lineage need a /v/<live-uuid> permalink.
-    if (!c.data.supersedes) continue;
+    // Every selected version keeps its /v/<uuid> permalink as a redirect:
+    // any peer may have served an archived page under these UUIDs before
+    // winning selection, and selection swaps must not 404 old links.
     push(c.id, uuidForId(c.id), { entry: c, redirect: true });
     push(c.id, legacyUuidForId(c.id), { entry: c, redirect: true });
   }

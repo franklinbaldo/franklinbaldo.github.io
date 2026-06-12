@@ -600,6 +600,35 @@ function perspectiveBanner(
   return lines.join("\n");
 }
 
+// RFC 0010 §4.3: the cached path in an in-flight match is a hint; the stable
+// address is ref = slug@uuid. If the file moved between match generation and
+// evaluation (rename, prune), find the peer with the same UUID — current or
+// legacy — in the slug's directory. Exits with a clear message when the
+// content is gone for good instead of crashing on readFileSync.
+function resolveSidePath(
+  side: { path?: string; ref?: string; key?: string } | null | undefined,
+  label: string
+): string {
+  if (side?.path && fs.existsSync(side.path)) return side.path;
+  const ref = side?.ref;
+  if (ref && ref.includes("@")) {
+    const at = ref.lastIndexOf("@");
+    const slug = ref.slice(0, at);
+    const uuid = ref.slice(at + 1);
+    const hit = listDirVersions(slug).find(
+      (v) => v.uuid === uuid || v.legacyUuid === uuid
+    );
+    if (hit) return hit.path;
+  }
+  console.error(
+    `Erro: o post ${label} do match atual não existe mais (path=${side?.path ?? "?"}, ref=${ref ?? "—"}).`
+  );
+  console.error(
+    "A versão foi removida ou renomeada após a geração do match. Rode `npm run hronir:end -- --force` e inicie nova sessão."
+  );
+  process.exit(1);
+}
+
 export function continueCmd() {
   const sessionPath = SESSION_PATH;
   if (!fs.existsSync(sessionPath)) {
@@ -651,7 +680,7 @@ export function continueCmd() {
   }
 
   if (session.state === "reading_a") {
-    const aPath = session.currentMatch?.post_a?.path;
+    const aPath = resolveSidePath(session.currentMatch?.post_a, "A");
     // Backfill perspective for in-flight sessions created before stars-v1:
     // pick one now and persist so the rest of the flow has a stable lens.
     if (session.currentMatch && !session.currentMatch.perspective_id) {
@@ -751,7 +780,7 @@ export function firstImpressionA(args: string[]) {
 
   session.currentMatch.impression_a = text;
 
-  const bPath = session.currentMatch?.post_b?.path;
+  const bPath = resolveSidePath(session.currentMatch?.post_b, "B");
   const perspectiveId = session.currentMatch?.perspective_id;
   const border = "━".repeat(80);
   if (perspectiveId) {
