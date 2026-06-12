@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 // never call listMatchFiles/readMatch at runtime.
 // After RFC 0005 Fase 1, the real implementations live in src/hronir/;
 // mock those directly so ranking.ts sees the mock.
-await mock.module("../../../../src/hronir/matches.js", {
+await mock.module("../matches.js", {
   namedExports: {
     listMatchFiles: () => [],
     readMatch: () => ({ data: {}, content: "" }),
@@ -25,7 +25,7 @@ const {
   _solveLinear,
   EWMA_ALPHA,
   MIN_APPEARANCES,
-} = await import("../../../../src/hronir/ranking.js");
+} = await import("../ranking.js");
 
 // Fixture builder helpers
 
@@ -424,7 +424,7 @@ describe("_computeAbsoluteQuality", () => {
       5.0,
       "EWMA should equal post-edit rate (reset occurred)"
     );
-    assert.equal(qa.n, 1, "n should be 1 after reset");
+    assert.equal(qa.n, 1, "n after reset");
   });
 
   // Test: no reset when version unchanged
