@@ -113,7 +113,9 @@ const agents = [...new Set(duels.map((d) => d.agentId).filter(Boolean) as string
     {duels.map((d) => {
       const winnerName = postLabel(d.winnerKey);
       const loserName = postLabel(d.loserKey);
-      const winnerIsA = d.postAKey === d.winnerKey;
+      const winnerIsA = d.winnerSide
+        ? d.winnerSide === "a"
+        : d.postAKey === d.winnerKey;
       const rateWinner = winnerIsA ? d.rateA : d.rateB;
       const rateLoser = winnerIsA ? d.rateB : d.rateA;
       const hasRates = rateWinner != null && rateLoser != null;
@@ -132,6 +134,7 @@ const agents = [...new Set(duels.map((d) => d.agentId).filter(Boolean) as string
             <div class="battle-meta">
               <span class="battle-date">{fmtDate(d.runAt)}</span>
               {d.season !== undefined && <span class="tag tag-season">S{d.season}</span>}
+              {d.isVersionDuel && <span class="tag">version duel</span>}
               {d.perspectiveId && (
                 <span class="tag tag-perspective" style={`--ph:${perspectiveHue(d.perspectiveId)}`}>
                   {d.perspectiveId.replace(/-/g, " ")}
