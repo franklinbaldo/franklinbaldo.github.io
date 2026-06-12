@@ -34,15 +34,23 @@ function lastModified(filePath) {
       const lines = block.trim().split("\n").filter(Boolean);
       if (lines.length === 0) continue;
       const [iso, ...statuses] = lines;
-      // R100 = identical content (bare rename). The RFC 0010 migration
-      // also stamps draftCreatedAt on every file, dropping similarity to
-      // R080–R099. Treat any high-similarity rename (≥80%) as lifecycle-only
-      // so that stamp doesn't override the real last-modified date.
+      // Skip commits where every changed entry is either:
+      // - R100: identical content (pure rename, no edits), or
+      // - RFC 0010 migration pattern: index.* → v-* rename that also stamped
+      //   draftCreatedAt (reducing similarity to ~R080–R099). Detected by the
+      //   specific old→new path shapes, so future renames with small edits are
+      //   still captured as content modifications.
       const pureRename =
         statuses.length > 0 &&
         statuses.every((l) => {
           if (!l.startsWith("R")) return false;
-          return parseInt(l.slice(1), 10) >= 80;
+          if (l.startsWith("R100")) return true;
+          const parts = l.split("\t");
+          return (
+            parts.length >= 3 &&
+            /\/index\.mdx?$/.test(parts[1]) &&
+            /\/v-[^/]+\.mdx?$/.test(parts[2])
+          );
         });
       if (!pureRename) return iso.trim() || null;
     }
