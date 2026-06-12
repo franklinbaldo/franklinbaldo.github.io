@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { defineCollection, z, type SchemaContext } from "astro:content";
 import { glob } from "astro/loaders";
 
@@ -6,7 +6,9 @@ import { glob } from "astro/loaders";
 // versions-selected.json points at — selection is a generated, committed
 // artifact (written by `hronir:select`), not a privileged filename.
 const selectedFiles: string[] = [];
-try {
+if (existsSync("./src/generated/versions-selected.json")) {
+  // Present-but-unparseable must fail the build: silently falling back to
+  // the index.* glob would publish an empty (or wrong) blog collection.
   const sel = JSON.parse(
     readFileSync("./src/generated/versions-selected.json", "utf-8")
   ) as Record<string, { file?: string }>;
@@ -14,9 +16,8 @@ try {
     if (slug === "_meta" || !entry?.file) continue;
     selectedFiles.push(entry.file);
   }
-} catch {
-  // Pre-migration tree (or missing file): fall back to the RFC 0003 layout.
 }
+// Absent file = pre-migration tree: fall back to the RFC 0003 index.* layout.
 
 // Shared schema for canonical posts (blog) and their non-canonical versions
 // (blogVersions). RFC 0003: a version file is a frozen copy of a canonical, so

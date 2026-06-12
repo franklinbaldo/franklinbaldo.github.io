@@ -10,6 +10,7 @@ import {
   readPost,
   listPosts,
   getPostUuid,
+  getPostUuidLegacy,
 } from "./posts.js";
 import {
   SELECTION_PATH,
@@ -609,22 +610,38 @@ function resolveSidePath(
   side: { path?: string; ref?: string; key?: string } | null | undefined,
   label: string
 ): string {
-  if (side?.path && fs.existsSync(side.path)) return side.path;
   const ref = side?.ref;
+  let slug: string | null = null;
+  let uuid: string | null = null;
   if (ref && ref.includes("@")) {
     const at = ref.lastIndexOf("@");
-    const slug = ref.slice(0, at);
-    const uuid = ref.slice(at + 1);
+    slug = ref.slice(0, at);
+    uuid = ref.slice(at + 1);
+  }
+  if (side?.path && fs.existsSync(side.path)) {
+    // Pre-stars-v2 session without ref: the path is all we have.
+    if (!uuid) return side.path;
+    // The path is only authoritative while it still carries the duelled
+    // content — an in-place edit mid-session would otherwise attribute the
+    // evaluation to the old UUID over the new text.
+    if (
+      getPostUuid(side.path) === uuid ||
+      getPostUuidLegacy(side.path) === uuid
+    ) {
+      return side.path;
+    }
+  }
+  if (slug && uuid) {
     const hit = listDirVersions(slug).find(
       (v) => v.uuid === uuid || v.legacyUuid === uuid
     );
     if (hit) return hit.path;
   }
   console.error(
-    `Erro: o post ${label} do match atual não existe mais (path=${side?.path ?? "?"}, ref=${ref ?? "—"}).`
+    `Erro: o conteúdo do post ${label} do match atual não existe mais (path=${side?.path ?? "?"}, ref=${ref ?? "—"}).`
   );
   console.error(
-    "A versão foi removida ou renomeada após a geração do match. Rode `npm run hronir:end -- --force` e inicie nova sessão."
+    "A versão foi removida, renomeada ou editada após a geração do match. Rode `npm run hronir:end -- --force` e inicie nova sessão."
   );
   process.exit(1);
 }

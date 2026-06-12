@@ -10,14 +10,15 @@ let _selection = null;
 function selection() {
   if (_selection) return _selection;
   _selection = {};
-  try {
+  // Absent file = pre-migration tree (fileForId falls back to
+  // <slug>/index.*). A present-but-unparseable file must fail the build —
+  // silently ignoring it would drop every version permalink.
+  if (existsSync(SELECTION_PATH)) {
     const parsed = JSON.parse(readFileSync(SELECTION_PATH, "utf-8"));
     for (const [slug, entry] of Object.entries(parsed)) {
       if (slug === "_meta" || !entry?.file) continue;
       _selection[slug] = entry;
     }
-  } catch {
-    // Pre-migration tree — fileForId falls back to <slug>/index.*.
   }
   return _selection;
 }

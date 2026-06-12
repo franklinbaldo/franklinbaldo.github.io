@@ -30,11 +30,19 @@ let _selectionCache: SelectionEntries | null = null;
 export function readSelection(): SelectionEntries {
   if (_selectionCache) return _selectionCache;
   if (!fs.existsSync(SELECTION_PATH)) return {};
+  // Only a genuinely absent (pre-migration) file means "empty selection".
+  // A present-but-unparseable file (merge conflict, partial write) must
+  // abort: returning {} would make select() treat every post as a debut
+  // and overwrite the ranking-driven selection with newest-publishable
+  // picks, hiding the corruption.
   let parsed: Record<string, unknown>;
   try {
     parsed = JSON.parse(fs.readFileSync(SELECTION_PATH, "utf8"));
-  } catch {
-    return {};
+  } catch (e) {
+    throw new Error(
+      `${SELECTION_PATH} existe mas não parseia (${(e as Error).message}). ` +
+        "Resolva o conflito/corrupção manualmente antes de rodar comandos hronir."
+    );
   }
   const entries: SelectionEntries = {};
   for (const [slug, v] of Object.entries(parsed)) {
