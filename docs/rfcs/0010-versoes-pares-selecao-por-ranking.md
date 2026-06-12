@@ -182,19 +182,18 @@ Novo comando `hronir:select` computa, por diretório, a versão exibida:
 Regra de seleção (mantém os limiares da RFC 0003 como **histerese**, para a
 versão exibida não ficar oscilando):
 
-1. A versão atualmente selecionada só perde o posto se uma rival tiver
-   `stars` maior por **margem ≥ 0.3★ com n ≥ 2 duelos de versão** — os mesmos
-   `PROMOTE_MARGIN`/`PROMOTE_MIN_DUELS` de hoje, mas agora a comparação exige
-   que **ambos os lados tenham rating** (corrige V2: sem rating dos dois
-   lados, não há troca). **Exceção:** se a versão atualmente selecionada
-   não passar em `isPublished` (foi marcada `draft: true` ou ganhou
-   `publishDate` futuro após a seleção), ela é descartada e a regra 2 é
-   aplicada imediatamente — sem esperar histerese.
-2. Diretório novo, sem seleção atual válida, ou sem nenhum duelo de versão:
-   vence a versão **mais recente** (timestamp do nome do arquivo) **que passe
-   em `isPublished`** (`draft: true` e `publishDate` futuro ficam de fora —
-   sem publicável, o slug não entra no JSON). Desempate determinístico pelo
-   nome.
+1. **Há seleção válida:** a versão atualmente selecionada é mantida, a menos
+   que uma rival tenha `stars` maior por **margem ≥ 0.3★ com n ≥ 2 duelos de
+   versão** — ambos os lados devem ter rating (corrige V2). Versões recém
+   criadas pelo `draft-worst` (sem duelos, não marcadas `draft: true`) **não
+   disparam esta regra**: a ausência de duelos nunca substitui uma seleção
+   existente. **Exceção:** se a versão selecionada não passar em `isPublished`
+   (foi marcada `draft: true` ou ganhou `publishDate` futuro pós-seleção),
+   ela é descartada e a regra 2 é aplicada imediatamente.
+2. **Sem seleção válida** (diretório estreando no JSON, ou seleção anterior
+   descartada pela exceção acima): vence a versão **mais recente por timestamp
+   de nome** que passe em `isPublished`. Sem publicável, o slug fica fora do
+   JSON. Desempate determinístico pelo nome.
 3. A seleção nunca aponta para arquivo inexistente — `hronir:doctor` valida.
 
 No Astro, a collection `blog` troca o glob `**/index.{md,mdx}` por um **loader
@@ -266,19 +265,19 @@ recente). A avaliação segue a convenção de língua do repo: review na língu
 post (`lang` do frontmatter), que agora vale por construção porque o duelo é
 sempre dentro de um diretório monolíngue.
 
-**Seleção acoplada entre traduções.** Permitir que EN e PT selecionem
-independentemente reabre a divergência de conteúdo que era o V5 original:
-o EN pode cruzar o limiar de histerese enquanto o PT acumula poucos duelos e
-fica na versão antiga — ou nunca tem versões suficientes para duelar. Para
-evitar isso, `hronir:select` trata as traduções de um mesmo `translationKey`
-como **unidade**: quando a versão selecionada muda em um diretório, o comando
-busca nos diretórios irmãos (mesmo `translationKey`) a versão com o mesmo
+**Seleção acoplada entre traduções (atômica).** Permitir que EN e PT
+selecionem independentemente reabre a divergência de conteúdo que era o V5
+original. Para evitar isso, `hronir:select` trata o grupo de traduções de um
+mesmo `translationKey` como **unidade atômica**: quando a regra 1 qualifica
+uma troca em qualquer diretório do grupo, o comando verifica se **todos** os
+diretórios irmãos que contêm versões possuem uma versão publicável com o mesmo
 `draftCreatedAt` (campo gravado pelo `draft-worst` em todas as traduções da
-mesma rodada) e a seleciona também — desde que passe em `isPublished`. Se o
-diretório irmão não tiver uma versão com o `draftCreatedAt` correspondente
-(e.g. tradução PT ainda não foi criada para esta revisão), ele mantém a seleção
-atual. Resultado: as línguas de um ensaio avançam juntas ou não avançam — sem
-divergência silenciosa.
+mesma rodada). Se algum irmão com versões não tiver a contraparte
+correspondente publicável, **nenhum** membro do grupo avança — o grupo inteiro
+fica inalterado até que a próxima rodada de `draft-worst` crie e ranqueie as
+versões em falta. Diretórios sem nenhuma versão (tradução ainda não criada)
+não fazem parte do grupo para fins de acoplamento. Resultado: as línguas de um
+ensaio **sempre avançam juntas** ou não avançam — sem divergência parcial.
 
 `prune` sobrevive, simplificado: remove versões **não-selecionadas** com
 n ≥ 3 duelos de versão e ≥ 0.5★ abaixo da selecionada — nunca a selecionada,
