@@ -1,5 +1,10 @@
 import { rating, rate, ordinal } from "openskill";
-import { listMatchFiles, readMatch, postKey } from "./matches.js";
+import {
+  listMatchFiles,
+  readMatch,
+  postKey,
+  matchesDataVersion,
+} from "./matches.js";
 import type { RankRow, PerspectiveRankRow } from "./types.js";
 
 export const MIN_APPEARANCES = 3;
@@ -28,7 +33,14 @@ interface RawMatch {
   rateB: number | null;
 }
 
+// RFC 0010 §4.7 (E1): one pass over the rate files per command, not one per
+// compute*. Memoized against matchesDataVersion so a writeMatch in the same
+// process (decide, migrate) invalidates the snapshot.
+let _rawCache: { version: number; raw: RawMatch[] } | null = null;
+
 function _loadMatchData(): RawMatch[] {
+  const version = matchesDataVersion();
+  if (_rawCache && _rawCache.version === version) return _rawCache.raw;
   const raw: RawMatch[] = [];
   for (const f of listMatchFiles()) {
     const { data } = readMatch(f);
@@ -74,6 +86,7 @@ function _loadMatchData(): RawMatch[] {
       rateB,
     });
   }
+  _rawCache = { version, raw };
   return raw;
 }
 

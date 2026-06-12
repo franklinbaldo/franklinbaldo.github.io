@@ -13,6 +13,7 @@ await mock.module("../../../../src/hronir/matches.js", {
     readMatch: () => ({ data: {}, content: "" }),
     writeMatch: () => {},
     postKey: (side) => (side ? side.key || side.slug || null : null),
+    matchesDataVersion: () => 0,
   },
 });
 
