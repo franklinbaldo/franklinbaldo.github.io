@@ -1,14 +1,17 @@
 # Hrönir
 
-> **⚠ RFC 0003 (implementada, Fases 0–2) mudou a fase de edição.** Cada post
-> agora vive em `src/content/blog/<slug>/index.md`; a edição **não reescreve a
-> canônica no lugar** — `draft-worst` cria uma nova versão `<slug>/v-<ts>.md` que
-> convive lado a lado e **compete** com a canônica (duelos de versão no sampling),
-> e `promote` troca a vencedora para `index.md`. Os comandos `edit-worst`/
-> `edit-commit` continuam como **aliases** de `draft-worst`/`draft-commit`. As
-> seções abaixo que descrevem edição-no-lugar e `previousVersion` (linked list via
-> git) refletem o fluxo **legado**; a fonte canônica do novo fluxo é
-> `docs/rfcs/0003-*.md`.
+> **⚠ RFC 0010 (implementada) tornou as versões pares.** Cada post vive em
+> `src/content/blog/<slug>/` como um conjunto de arquivos `v-<timestamp>.md`
+> **sem filename privilegiado** — a versão publicada é a que
+> `src/generated/versions-selected.json` aponta, recomputada por
+> `hronir:select` a partir do ranking (com histerese: margem ≥0.3★, n≥2
+> duelos). Não existe mais `promote` nem swap de arquivos; a edição
+> (`draft-worst`) cria um `v-*` novo que convive e **compete** com a
+> selecionada nos duelos de versão do sampling. `edit-worst`/`edit-commit`
+> continuam como **aliases** de `draft-worst`/`draft-commit`. Seções abaixo
+> que descrevem edição-no-lugar, `index.md` ou `previousVersion` (linked list
+> via git) refletem fluxos **legados**; a fonte canônica é
+> `docs/rfcs/0010-*.md` (que substitui o mecanismo de promoção/poda da 0003).
 
 Sistema de avaliação par-a-par de posts do blog. Cada rodada gera N partidas (default 10) por **active sampling**. Para cada partida o Hrönir sorteia uma **perspectiva de leitor** (ver `perspectives/`) e o avaliador, identificando-se obrigatoriamente, atribui estrelas (1.00–5.00) a cada post junto com uma resenha de cada e um confronto. O vencedor é derivado mecanicamente: quem tem mais estrelas. Ao final, o post pior ranqueado recebe uma edição — registrada como `previousVersion` no próprio frontmatter do post (linked list de uma aresta apontando para a versão anterior no GitHub).
 
@@ -37,15 +40,19 @@ A solução é **i18n completa, sem assumir bilinguismo**: `edit-worst` e `edit-
   critiques/<key>.md                  # crítica em prosa (registro)
   <run_id>_..._x_....md               # matches legados (continuam suportados)
 hronir_session.json                   # estado da rodada ativa (commitado)
+src/hronir/                           # módulos core (commands, ranking, matches, posts, selection)
+  __tests__/                          # testes unitários (node:test)
+src/generated/
+  versions-selected.json              # seleção de versões (escrito só por hronir:select)
+  versions-pruned.json                # registro de podas (redirects de permalinks)
 scripts/hronir/
   index.js                            # CLI entrypoint
-  lib/                                # comandos
   skills/                             # skills versionadas (blog / essay)
   perspectives/                       # personas de leitor sorteadas por match
   README.md                           # este arquivo
 ```
 
-Versões anteriores de cada post **não** são snapshotadas no repo — vivem no git. `edit-commit` grava `previousVersion: { uuid, url, timestamp, msg }` no frontmatter, onde `url` é um permalink GitHub (`blob/<sha>/<path>`) para o arquivo no commit imediatamente antes da edição. Para reconstruir a linhagem completa, abra o `url`: a versão anterior tem seu próprio `previousVersion`, e assim por diante até a primeira versão.
+Versões de cada post **convivem no repo** como arquivos `v-<timestamp>.md` irmãos dentro de `src/content/blog/<slug>/` (RFC 0010). Cada versão tem um UUID de conteúdo (UUIDv5 sobre corpo + frontmatter relevante) e é endereçável publicamente em `/blog/<slug>/v/<uuid>` (noindex, canonical → versão viva). Versões perdedoras elegíveis são removidas por `hronir:prune`, que registra o par `slug@uuid` em `versions-pruned.json` para o build emitir redirects.
 
 `hronir_session.json` é tracked de propósito: ele sinaliza que uma rodada está em andamento (e `doctor` reclama quando existe), evitando commits parciais.
 
@@ -63,6 +70,9 @@ Todos via npm scripts na raiz:
 | `npm run hronir:diagnose`                                                                                                               | **Leitura pura.** Qualidade de-confundida (post vs viés de avaliador/perspectiva, ridge-LSQ), `gap` cru−de-confundido, vieses `α`/`π`, líder por perspectiva. Não muda estado. Ver RFC 0002                                                                                                                                                                                                           |
 | `npm run hronir:edit-worst`                                                                                                             | Pior elegível + top 3 + defesas + crítica acumulada. Captura `git HEAD` na sessão (URL do GitHub pra versão prestes a ser substituída), injeta `replacedVersion` (marker transiente) no frontmatter dos posts, marca a sessão como `need_edit`                                                                                                                                                        |
 | `npm run hronir:edit-commit -- --msg "..."`                                                                                             | Valida que cada tradução foi efetivamente alterada (UUIDv5 mudou), grava `previousVersion: { uuid, url, timestamp, msg }` no frontmatter (substitui qualquer `replacedVersion`/`editHistory` legados), fecha a sessão                                                                                                                                                                                 |
+| `npm run hronir:draft-worst` / `hronir:draft-commit -- --msg "..."`                                                                     | Fluxo atual de edição (RFC 0003/0010): `draft-worst` cria `v-<ts>.md` novo por tradução (selecionada intocada); `draft-commit` valida que o UUID mudou e registra o competidor. `edit-worst`/`edit-commit` são aliases                                                                                                                                                                                |
+| `npm run hronir:select [-- --dry-run]`                                                                                                  | RFC 0010: recomputa `versions-selected.json` a partir do ranking de versões, com histerese (margem ≥0.3★, n≥2 duelos; grupo de tradução troca junto). Único escritor do manifesto; roda também no `prebuild`                                                                                                                                                                                          |
+| `npm run hronir:prune [-- --dry-run]`                                                                                                   | Remove versões perdedoras elegíveis (≥0.5★ abaixo da selecionada, n≥3) e registra `slug@uuid` em `versions-pruned.json` (permalinks viram redirects)                                                                                                                                                                                                                                                  |
 | `npm run hronir:end -- [--skip-edit\|--force]`                                                                                          | Encerra a rodada. Recusa se há matches pendentes ou edição pendente, a menos que `--force`                                                                                                                                                                                                                                                                                                            |
 | `npm run hronir:migrate -- [--dry-run]`                                                                                                 | Normaliza matches legados (`slug:` → `key:`, renomeia arquivo)                                                                                                                                                                                                                                                                                                                                        |
 | `npm run hronir:doctor`                                                                                                                 | Verifica inconsistências. Sai com código 1 se encontrar — usado no CI                                                                                                                                                                                                                                                                                                                                 |
@@ -79,11 +89,11 @@ init
              └─> continue  # gera match 2, imprime post A
                  ...
                  └─> continue  # após N matches, sessão entra em 'need_edit'
-                     └─> draft-worst  # cria <slug>/v-<ts>.md (cópia da canônica); index.md intocada
+                     └─> draft-worst  # cria <slug>/v-<ts>.md (cópia da selecionada, intocada)
                          └─> [edição manual dos RASCUNHOS em todas as traduções]
                              └─> draft-commit --msg "..."  # valida UUID novo, registra o competidor
                                  └─> [duelos de versão no sampling decidem]
-                                     └─> promote --key <key>  # vencedora vira index.md (swap)
+                                     └─> select  # recomputa versions-selected.json (histerese ≥0.3★, n≥2)
 ```
 
 A máquina de estados está em `hronir_session.json`: `ready_for_next → reading_a → reading_b → deciding → ready_for_next → … → need_edit → (sessão fechada)`.

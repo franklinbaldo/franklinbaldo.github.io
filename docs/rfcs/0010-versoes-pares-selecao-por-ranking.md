@@ -2,7 +2,7 @@
 
 |                 |                                                                                                                                                                                                                                                                                                                                 |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Proposed                                                                                                                                                                                                                                                                                                                        |
+| **Status**      | Implemented (Fases 0–4, PR #451)                                                                                                                                                                                                                                                                                                |
 | **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                                                                                                                             |
 | **Criado em**   | 2026-06-12                                                                                                                                                                                                                                                                                                                      |
 | **Branch / PR** | `claude/festive-hawking-a0ccne`                                                                                                                                                                                                                                                                                                 |
@@ -18,10 +18,11 @@
 
 ## Histórico de revisões
 
-| Data       | Mudança                                                                                                                                                       |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-06-12 | Versão inicial.                                                                                                                                               |
-| 2026-06-12 | Review (Codex + autor): seleção idempotente, fallback publicável e acoplado, acoplamento atômico com qualificação de contrapartes, endereçamento `slug@uuid`. |
+| Data       | Mudança                                                                                                                                                                                              |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-12 | Versão inicial.                                                                                                                                                                                      |
+| 2026-06-12 | Review (Codex + autor): seleção idempotente, fallback publicável e acoplado, acoplamento atômico com qualificação de contrapartes, endereçamento `slug@uuid`.                                        |
+| 2026-06-12 | Fases 0–4 implementadas (PR #451): migração `index.*` → `v-*`, seleção via JSON com histerese, caches de fase 3, limpeza §4.8 (teste em `src/hronir/__tests__/`, `collectDefenses` unificado, docs). |
 
 ---
 

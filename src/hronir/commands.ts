@@ -1479,7 +1479,15 @@ export function diagnose() {
   );
 }
 
-function collectDefensesForLoser(loserKey: string, limit = 5) {
+// RFC 0010 §4.8: single defense collector for both sides. `side` picks which
+// end of each match must hit `keys`; the loser's review surfaces as `critique`
+// (callers for winners simply ignore it).
+function collectDefenses(
+  keys: string[],
+  side: "winner" | "loser",
+  { limit = 5 } = {}
+) {
+  const set = new Set(keys);
   const out = [];
   for (const f of listMatchFiles()) {
     const { data, content } = readMatch(f);
@@ -1489,12 +1497,12 @@ function collectDefensesForLoser(loserKey: string, limit = 5) {
 
     const aKey = postKey(data.post_a as PostSideRaw);
     const bKey = postKey(data.post_b as PostSideRaw);
-    const loserSide = winner === "a" ? "b" : "a";
-    const loserSideKey = loserSide === "a" ? aKey : bKey;
     const winnerSideKey = winner === "a" ? aKey : bKey;
-    if (loserSideKey !== loserKey) continue;
+    const loserSideKey = winner === "a" ? bKey : aKey;
+    const sideKey = side === "winner" ? winnerSideKey : loserSideKey;
+    if (!sideKey || !set.has(sideKey)) continue;
 
-    // Stars-schema matches (post-#stars-v1) carry symmetric review_a/review_b;
+    // Stars-schema matches (stars-v1+) carry symmetric review_a/review_b;
     // older new-schema matches use winner_defense/loser_critique; legacy
     // matches keep prose in the body.
     let body = "";
@@ -1566,74 +1574,6 @@ function collectDefensesForLoser(loserKey: string, limit = 5) {
       loser: loserSideKey,
       body,
       critique: parsedCritique,
-    });
-  }
-  out.sort((a, b) =>
-    String(b.runAt || b.runId).localeCompare(String(a.runAt || a.runId))
-  );
-  return out.slice(0, limit);
-}
-
-function collectDefensesForWinners(winnerKeys: string[], limit = 5) {
-  const set = new Set(winnerKeys);
-  const out = [];
-  for (const f of listMatchFiles()) {
-    const { data, content } = readMatch(f);
-    let winner = data.winner;
-    if (data.override && data.override !== "null") winner = data.override;
-    if (winner === "TODO" || !winner) continue;
-
-    const aKey = postKey(data.post_a as PostSideRaw);
-    const bKey = postKey(data.post_b as PostSideRaw);
-    const winnerSideKey = winner === "a" ? aKey : bKey;
-    const loserSideKey = winner === "a" ? bKey : aKey;
-    if (!winnerSideKey || !set.has(winnerSideKey)) continue;
-
-    let body;
-    const perspectiveLabel = data.perspective_id
-      ? `[Perspectiva]: ${data.perspective_id}\n\n`
-      : "";
-    if (data.review_a || data.review_b) {
-      const c = data.clash && data.clash !== "TODO" ? data.clash : "";
-      const winnerReview =
-        winner === "a" ? data.review_a || "" : data.review_b || "";
-      const rateWinner = winner === "a" ? data.rate_a : data.rate_b;
-      const rateLoser = winner === "a" ? data.rate_b : data.rate_a;
-      const starsLine =
-        rateWinner != null && rateLoser != null
-          ? `[Estrelas] vencedor ${rateWinner}★ vs perdedor ${rateLoser}★\n\n`
-          : "";
-      body = `${perspectiveLabel}${starsLine}[Confronto]\n${c}\n\n[Resenha do vencedor]\n${winnerReview}`;
-    } else if (data.clash || data.winner_defense) {
-      const c = data.clash && data.clash !== "TODO" ? data.clash : "";
-      const w =
-        data.winner_defense && data.winner_defense !== "TODO"
-          ? data.winner_defense
-          : "";
-      body = `${perspectiveLabel}[Confronto]\n${c}\n\n[Defesa]\n${w}`;
-    } else {
-      body = (content || "").replace(/^\s*<!--\s*TODO\s*-->\s*$/m, "").trim();
-      if (!body) continue;
-      const clashMatch = body.match(
-        /# O Confronto\s*\n([\s\S]*?)(?=# O Vencedor|# O Perdedor|$)/i
-      );
-      const winnerMatch = body.match(
-        /# O Vencedor\s*\n([\s\S]*?)(?=# O Confronto|# O Perdedor|$)/i
-      );
-      if (clashMatch || winnerMatch) {
-        const parsedClash = clashMatch ? clashMatch[1].trim() : "";
-        const parsedWinner = winnerMatch ? winnerMatch[1].trim() : "";
-        body = `[Confronto]\n${parsedClash}\n\n[Defesa]\n${parsedWinner}`;
-      }
-    }
-
-    out.push({
-      file: path.basename(f),
-      runId: data.run_id || "",
-      runAt: data.run_at || "",
-      winner: winnerSideKey,
-      loser: loserSideKey,
-      body,
     });
   }
   out.sort((a, b) =>
@@ -1852,7 +1792,7 @@ export function editWorst() {
   console.log("");
   console.log("=== DEFESAS EM QUE ESTE POST PERDEU ===");
   console.log("");
-  const losses = collectDefensesForLoser(worstRow.key, 5);
+  const losses = collectDefenses([worstRow.key], "loser", { limit: 5 });
   if (losses.length === 0) {
     console.log("(nenhuma defesa textual encontrada em derrotas)");
   } else {
@@ -1872,7 +1812,7 @@ export function editWorst() {
 
   console.log("=== DEFESAS DE POSTS QUE VENCERAM (top 3) ===");
   console.log("");
-  const wins = collectDefensesForWinners(topKeys, 5);
+  const wins = collectDefenses(topKeys, "winner", { limit: 5 });
   if (wins.length === 0) {
     console.log("(nenhuma defesa textual encontrada para o top 3)");
   } else {
