@@ -2579,6 +2579,11 @@ export function select({ dryRun = false } = {}) {
         versions.find((v) => v.file === entry.file) ??
         versions.find((v) => v.uuid === entry.uuid) ??
         null;
+      // Unpublishable (draft or future publishDate) → rule 2 fallback to an
+      // older peer, deliberately: selection is duel-driven, so publishDate
+      // only schedules *debuting* posts (no selection yet). A future date on
+      // a selected version demotes it to challenger — it returns by winning
+      // duels, not by the calendar.
       if (selected && !selected.published) selected = null;
       if (!selected) invalidSelection = true;
     }
