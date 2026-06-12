@@ -21,6 +21,8 @@
     "hronir:next": "node --import tsx/esm scripts/hronir/index.js next",
     "hronir:init": "node --import tsx/esm scripts/hronir/index.js init",
     "hronir:continue": "node --import tsx/esm scripts/hronir/index.js continue",
+    "hronir:first-impression-a": "node --import tsx/esm scripts/hronir/index.js first-impression-a",
+    "hronir:first-impression-b": "node --import tsx/esm scripts/hronir/index.js first-impression-b",
     "hronir:decide": "node --import tsx/esm scripts/hronir/index.js decide",
     "hronir:ranking": "node --import tsx/esm scripts/hronir/index.js ranking",
     "hronir:worst": "node --import tsx/esm scripts/hronir/index.js worst",

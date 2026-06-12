@@ -153,23 +153,20 @@ function wordCount(s: unknown): number {
 
 function parseRate(raw: unknown, flagName: string): number {
   if (raw == null || String(raw).trim() === "") {
-    console.error(`Erro: ${flagName} é obrigatório.`);
-    process.exit(1);
+    throw new Error(`Erro: ${flagName} é obrigatório.`);
   }
   const s = String(raw).trim();
   // up to two decimal places, mandatory digit before/after the point if dotted
   if (!/^\d+(\.\d{1,2})?$/.test(s)) {
-    console.error(
+    throw new Error(
       `Erro: ${flagName} deve ser um número entre 1.00 e 5.00 com no máximo duas casas decimais (recebido: ${JSON.stringify(raw)}).`
     );
-    process.exit(1);
   }
   const n = Number(s);
   if (!Number.isFinite(n) || n < 1 || n > 5) {
-    console.error(
+    throw new Error(
       `Erro: ${flagName} deve estar entre 1.00 e 5.00 (recebido: ${JSON.stringify(raw)}).`
     );
-    process.exit(1);
   }
   // round to two decimals to avoid float drift in stored data
   return Math.round(n * 100) / 100;
@@ -212,18 +209,13 @@ function utcStamp() {
 }
 
 function nextStep(text: string): void {
+  const border = "━".repeat(80);
   console.log("");
-  console.log(
-    "================================================================================"
-  );
-  console.log("👉 NEXT STEP:");
-  console.log(
-    "================================================================================"
-  );
+  console.log(border);
+  console.log("👉 PRÓXIMO PASSO / NEXT STEP:");
+  console.log(border);
   console.log(text);
-  console.log(
-    "================================================================================"
-  );
+  console.log(border);
 }
 
 export function init(options: InitOptions = {}) {
@@ -548,21 +540,19 @@ function perspectiveBanner(
   perspective: { name: string; id: string; summary: string; body: string },
   mood: string | null | undefined
 ): string {
+  const border = "━".repeat(80);
   const lines = [
-    "================================================================================",
-    `🎭 PERSPECTIVA DESTE MATCH: ${perspective.name}`,
-    `   id: ${perspective.id}`,
-    "================================================================================",
+    border,
+    `🎭 PERSPECTIVA DESTE MATCH: ${perspective.name} (${perspective.id})`,
+    border,
     perspective.summary,
     "",
     perspective.body,
-    "================================================================================",
+    border,
   ];
   if (mood) {
-    lines.push(`🌡️  ESTADO DO AVALIADOR: ${mood}`);
-    lines.push(
-      "================================================================================"
-    );
+    lines.push(`🌡️  ESTADO INICIAL DO AVALIADOR:\n${mood}`);
+    lines.push(border);
   }
   lines.push("");
   return lines.join("\n");
@@ -602,15 +592,16 @@ export function continueCmd() {
           `Sessão de matches concluída! (${session.target} matches avaliados).`
         );
         nextStep(
-          "rode `npm run hronir:edit-worst` para iniciar a etapa de edição do pior post."
+          "rode `npm run hronir:edit-worst` para ver os detalhes ou `npm run hronir:end --skip-edit` para ignorar."
         );
       }
       return;
     }
 
-    console.log(
-      `\n=== MATCH ${session.completed + 1} DE ${session.target} ===\n`
-    );
+    const title = ` MATCH ${session.completed + 1} DE ${session.target} `;
+    const padding = Math.max(0, Math.floor((80 - title.length) / 2));
+    const padStr = "━".repeat(padding);
+    console.log(`\n${padStr}${title}${padStr}\n`);
     const match = generateNextMatch();
     session.currentMatch = match;
     session.state = "reading_a";
@@ -641,108 +632,47 @@ export function continueCmd() {
     }
 
     const aSlug = session.currentMatch?.post_a?.key || "(slug desconhecido)";
-    console.log(`=== PRIMEIRO POST (A) — slug: ${aSlug} ===\n`);
-    console.log(fs.readFileSync(aPath, "utf8"));
-    console.log("\n---\n");
+    const aContent = fs.readFileSync(aPath, "utf8");
+    const aParsed = matter(aContent);
+    const aSunoId = aParsed.data.sunoId;
 
-    session.state = "reading_b";
+    const border = "━".repeat(80);
+    const aHeader = "📄 PRIMEIRO POST (A) ";
+    console.log(aHeader + "━".repeat(Math.max(0, 80 - aHeader.length)));
+    console.log(`Slug: ${aSlug}`);
+    if (aSunoId) {
+      console.log(`🎵 Suno Song Page: https://suno.com/song/${aSunoId}`);
+      console.log(
+        `🔊 Direct Audio URL (MP3): https://cdn1.suno.ai/${aSunoId}.mp3`
+      );
+      console.log(
+        `💡 Agente multimodal: você pode baixar/ouvir o MP3 acima para informar sua avaliação.`
+      );
+    }
+    console.log(`${border}\n`);
+    console.log(aContent);
+    console.log(`\n${border}\n`);
+
+    session.state = "waiting_impression_a";
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
-    nextStep(`rode \`npm run hronir:continue\` para ler o SEGUNDO POST.`);
+    nextStep(
+      `Rode para registrar a primeira impressão do Post A: npm run hronir:first-impression-a "<texto>"`
+    );
     return;
   }
 
-  if (session.state === "reading_b") {
-    const bPath = session.currentMatch?.post_b?.path;
-    const perspectiveId = session.currentMatch?.perspective_id;
-    let perspective = null;
-    if (perspectiveId) {
-      try {
-        perspective = loadPerspective(perspectiveId);
-        console.log(
-          `🎭 Lembrete da perspectiva: ${perspective.name} — ${perspective.summary}\n`
-        );
-      } catch (e: unknown) {
-        console.error(`Erro ao carregar perspectiva: ${(e as Error).message}`);
-        process.exit(1);
-      }
-    }
+  if (session.state === "waiting_impression_a") {
+    nextStep(
+      `Aguardando primeira impressão do Post A. Rode: npm run hronir:first-impression-a "<texto>"`
+    );
+    return;
+  }
 
-    const bSlug = session.currentMatch?.post_b?.key || "(slug desconhecido)";
-    console.log(`=== SEGUNDO POST (B) — slug: ${bSlug} ===\n`);
-    console.log(fs.readFileSync(bPath, "utf8"));
-    console.log("\n---\n");
-
-    session.state = "deciding";
-    fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
-
-    const aSlug = session.currentMatch?.post_a?.key || "(slug desconhecido)";
-    const moodGlyph = session.currentMatch?.mood_glyph ?? null;
-    const moodGlyphCp = moodGlyph
-      ? "U+" +
-        moodGlyph.codePointAt(0).toString(16).toUpperCase().padStart(4, "0")
-      : null;
-    const initialMood = session.currentMatch?.evaluator_mood ?? null;
-    const evalLang =
-      session.currentMatch?.eval_lang || session.evalLang || "pt";
-    const evalLangLabel = evalLang === "pt" ? "português" : evalLang;
-
-    const perspectiveLine = perspective
-      ? `Avalie a partir da perspectiva: ${perspective.name} (id: ${perspectiveId}). A perspectiva é fixa para este match — não há override.`
-      : "(sem perspectiva atribuída — sessão inconsistente; rode novamente `npm run hronir:continue`)";
-
-    const stepLines = [
-      perspectiveLine,
-      "",
-      "================================================================================",
-      `🔣 SEU GLIFO (Unicode aleatório): ${moodGlyph ?? "—"}  (${moodGlyphCp ?? "—"})`,
-      `🌡️  SEU MOOD INICIAL: ${initialMood ?? "—"}`,
-      "================================================================================",
-      "PRIMEIRO, antes de tudo, decida o seu --after-mood. O Hronir sorteou o",
-      "glifo acima por você — leia-o subjetivamente (não há tabela: a forma, o",
-      "traço, o que aquele caractere evoca em você, decida como pesa). Combine",
-      "essa leitura com o seu mood inicial e com o que estes dois posts e o",
-      "confronto entre eles te fizeram sentir. Desse caldo sai o seu estado",
-      "interno agora — e é ele que vai colorir o tom com que você escreve as",
-      "resenhas e o clash a seguir. Por isso o --after-mood é a PRIMEIRA flag.",
-      "",
-      `Slugs deste match: A = "${aSlug}", B = "${bSlug}".`,
-      "Nas resenhas e no confronto, refira-se a cada post pelo seu slug",
-      '(ex.: "' +
-        aSlug +
-        '"), não por "Post A" / "Post B". Isso mantém os relatos',
-      "legíveis fora do contexto efêmero do match.",
-      "",
-      "Atribua estrelas (1.00–5.00) a cada post e escreva uma resenha de cada,",
-      "depois um confronto. O vencedor é derivado mecanicamente: quem",
-      "tiver mais estrelas. Empates são rejeitados — comprometa-se.",
-      "",
-      "As resenhas e o confronto são renderizados como Markdown — pode usar",
-      "ênfase, listas, blockquotes para citar trechos, e emojis quando ajudarem",
-      "a marcar tom ou veredito. Use a formatação a serviço da leitura, sem exagero.",
-      "",
-      "Além de avaliar, fique à vontade para sugerir melhorias concretas ao post",
-      "(o que cortar, expandir, reordenar) e apontar conteúdo relevante que veio",
-      "à mente sobre o assunto — uma referência, um autor, um exemplo, um link.",
-      "Essas sugestões alimentam a fase de edição; quanto mais específicas, melhor.",
-      "",
-      `🌐 LÍNGUA DE AVALIAÇÃO: ${evalLangLabel} (eval_lang: ${evalLang}). Escreva --review-a, --review-b e --clash nessa língua. O post pode estar em outra língua — não importa: a avaliação é sempre em ${evalLangLabel}.`,
-      "",
-      "- --after-mood: [PRIMEIRA flag; máx. 250 chars] Seu estado interno agora, em",
-      "  primeira pessoa, decidido a partir do glifo + mood inicial + o que o match",
-      "  te fez sentir. Pode ser incompleto, sensorial, mundano — o que estiver na",
-      "  cabeça ou no corpo. NÃO descreva os posts. NÃO repita o mood inicial do banner.",
-      '  Ex.: "Estou com vontade de assistir a um filme agora — algo longo e sem pressa."',
-      '  Ex.: "Preciso sentir grama nos pés agora."',
-      '  Ex.: "Estou ansioso para a viagem do mês que vem — fico pensando no aeroporto às 6h da manhã."',
-      "- --rate-a / --rate-b: número de 1.00 a 5.00 com até duas casas decimais (proibido empate)",
-      "- --review-a / --review-b: mínimo 100 palavras cada, escritas a partir da perspectiva atribuída, referindo-se ao post pelo slug",
-      "- --clash: mínimo 100 palavras, narra o confronto entre os dois posts (pelos slugs) pela ótica da perspectiva",
-      "",
-      `Para decidir, rode (--after-mood primeiro):`,
-      `npm run hronir:decide --after-mood "<estado interno agora>" --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>"`,
-    ];
-    nextStep(stepLines.join("\n"));
+  if (session.state === "waiting_impression_b") {
+    nextStep(
+      `Aguardando primeira impressão do Post B. Rode: npm run hronir:first-impression-b "<texto>"`
+    );
     return;
   }
 
@@ -752,6 +682,187 @@ export function continueCmd() {
     );
     return;
   }
+}
+
+export function firstImpressionA(args: string[]) {
+  const sessionPath = SESSION_PATH;
+  if (!fs.existsSync(sessionPath)) {
+    console.error("Erro: Nenhuma sessão ativa.");
+    process.exit(1);
+  }
+
+  const session = JSON.parse(fs.readFileSync(sessionPath, "utf8"));
+  if (session.state !== "waiting_impression_a") {
+    console.error(
+      `Erro: Estado atual é '${session.state}', esperado 'waiting_impression_a'.`
+    );
+    process.exit(1);
+  }
+
+  const text = args.join(" ").trim();
+  if (!text) {
+    console.error(
+      "Erro: Você deve fornecer o texto da sua primeira impressão do Post A."
+    );
+    process.exit(1);
+  }
+
+  session.currentMatch.impression_a = text;
+
+  const bPath = session.currentMatch?.post_b?.path;
+  const perspectiveId = session.currentMatch?.perspective_id;
+  const border = "━".repeat(80);
+  if (perspectiveId) {
+    try {
+      const perspective = loadPerspective(perspectiveId);
+      console.log(`\n${border}`);
+      console.log(
+        `🎭 Lembrete da perspectiva: ${perspective.name}\n${perspective.summary}`
+      );
+      console.log(`${border}\n`);
+    } catch (e: unknown) {
+      console.error(`Erro ao carregar perspectiva: ${(e as Error).message}`);
+      process.exit(1);
+    }
+  }
+
+  const bSlug = session.currentMatch?.post_b?.key || "(slug desconhecido)";
+  const bContent = fs.readFileSync(bPath, "utf8");
+  const bParsed = matter(bContent);
+  const bSunoId = bParsed.data.sunoId;
+
+  const bHeader = "📄 SEGUNDO POST (B) ";
+  console.log(bHeader + "━".repeat(Math.max(0, 80 - bHeader.length)));
+  console.log(`Slug: ${bSlug}`);
+  if (bSunoId) {
+    console.log(`🎵 Suno Song Page: https://suno.com/song/${bSunoId}`);
+    console.log(
+      `🔊 Direct Audio URL (MP3): https://cdn1.suno.ai/${bSunoId}.mp3`
+    );
+    console.log(
+      `💡 Agente multimodal: você pode baixar/ouvir o MP3 acima para informar sua avaliação.`
+    );
+  }
+  console.log(`${border}\n`);
+  console.log(bContent);
+  console.log(`\n${border}\n`);
+
+  session.state = "waiting_impression_b";
+  fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
+
+  nextStep(
+    `Rode para registrar a primeira impressão do Post B: npm run hronir:first-impression-b "<texto>"`
+  );
+}
+
+export function firstImpressionB(args: string[]) {
+  const sessionPath = SESSION_PATH;
+  if (!fs.existsSync(sessionPath)) {
+    console.error("Erro: Nenhuma sessão ativa.");
+    process.exit(1);
+  }
+
+  const session = JSON.parse(fs.readFileSync(sessionPath, "utf8"));
+  if (session.state !== "waiting_impression_b") {
+    console.error(
+      `Erro: Estado atual é '${session.state}', esperado 'waiting_impression_b'.`
+    );
+    process.exit(1);
+  }
+
+  const text = args.join(" ").trim();
+  if (!text) {
+    console.error(
+      "Erro: Você deve fornecer o texto da sua primeira impressão do Post B."
+    );
+    process.exit(1);
+  }
+
+  session.currentMatch.impression_b = text;
+  session.state = "deciding";
+  fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
+
+  const currentMatch = session.currentMatch;
+  const perspectiveId = currentMatch.perspective_id;
+  let perspective = null;
+  if (perspectiveId) {
+    try {
+      perspective = loadPerspective(perspectiveId);
+    } catch (e: unknown) {
+      console.error(`Erro ao carregar perspectiva: ${(e as Error).message}`);
+      process.exit(1);
+    }
+  }
+
+  const aSlug = currentMatch.post_a?.key || "(slug desconhecido)";
+  const bSlug = currentMatch.post_b?.key || "(slug desconhecido)";
+  const moodGlyph = currentMatch.mood_glyph ?? null;
+  const moodGlyphCp = moodGlyph
+    ? "U+" +
+      moodGlyph.codePointAt(0).toString(16).toUpperCase().padStart(4, "0")
+    : null;
+  const initialMood = currentMatch.evaluator_mood ?? null;
+  const evalLang = currentMatch.eval_lang || session.evalLang || "pt";
+  const evalLangLabel = evalLang === "pt" ? "português" : evalLang;
+
+  const perspectiveLine = perspective
+    ? `Avalie a partir da perspectiva: ${perspective.name} (id: ${perspectiveId}). A perspectiva é fixa para este match — não há override.`
+    : "(sem perspectiva atribuída — sessão inconsistente; rode novamente `npm run hronir:continue`)";
+
+  const border = "━".repeat(80);
+  const stepLines = [
+    perspectiveLine,
+    "",
+    border,
+    `🔣 SEU GLIFO (Unicode aleatório): ${moodGlyph ?? "—"}  (${moodGlyphCp ?? "—"})`,
+    `🌡️  SEU MOOD INICIAL: ${initialMood ?? "—"}`,
+    border,
+    "PRIMEIRO, antes de tudo, decida o seu --after-mood. O Hronir sorteou o",
+    "glifo acima por você — leia-o subjetivamente. Combine essa leitura com",
+    "o seu mood inicial e com o que estes dois posts e o",
+    "confronto entre eles te fizeram sentir. Desse caldo sai o seu estado",
+    "interno agora — e é ele que vai colorir o tom com que você escreve as",
+    "resenhas e o clash a seguir. Por isso o --after-mood é a PRIMEIRA flag.",
+    "",
+    `Slugs deste match: A = "${aSlug}", B = "${bSlug}".`,
+    "Nas resenhas e no confronto, refira-se a cada post pelo seu slug",
+    '(ex.: "' +
+      aSlug +
+      '"), não por "Post A" / "Post B". Isso mantém os relatos',
+    "legíveis fora do contexto efêmero do match.",
+    "",
+    "Atribua estrelas (1.00–5.00) a cada post e escreva uma resenha de cada,",
+    "depois um confronto. O vencedor é derivado mecanicamente: quem",
+    "tiver mais estrelas. Empates são rejeitados — comprometa-se.",
+    "",
+    "As resenhas e o confronto são renderizados como Markdown — pode usar",
+    "ênfase, listas, blockquotes para citar trechos, e emojis quando ajudarem",
+    "a marcar tom ou veredito. Use a formatação a serviço da leitura, sem exagero.",
+    "",
+    "Além de avaliar, fique à vontade para sugerir melhorias concretas ao post",
+    "(o que cortar, expandir, reordenar) e apontar conteúdo relevante que veio",
+    "à mente sobre o assunto — uma referência, um autor, um exemplo, um link.",
+    "Essas sugestões alimentam a fase de edição; quanto mais específicas, melhor.",
+    "",
+    `🌐 LÍNGUA DE AVALIAÇÃO: ${evalLangLabel} (eval_lang: ${evalLang}). Escreva --review-a, --review-b e --clash nessa língua. O post pode estar em outra língua — não importa: a avaliação é sempre em ${evalLangLabel}.`,
+    "",
+    "- --after-mood: [PRIMEIRA flag; máx. 250 chars] Seu estado interno agora, em",
+    "  primeira pessoa, decidido a partir do glifo + mood inicial + o que o match",
+    "  te fez sentir. Pode ser incompleto, sensorial, mundano — o que estiver na",
+    "  cabeça ou no corpo. NÃO descreva os posts. NÃO repita o mood inicial do banner.",
+    '  Ex.: "Estou com vontade de assistir a um filme agora — algo longo e sem pressa."',
+    '  Ex.: "Preciso sentir grama nos pés agora."',
+    '  Ex.: "Estou ansioso para a viagem do mês que vem — fico pensando no aeroporto às 6h da manhã."',
+    "- --rate-a / --rate-b: número de 1.00 a 5.00 com até duas casas decimais (proibido empate)",
+    "- --review-a / --review-b: mínimo 100 palavras cada, escritas a partir da perspectiva atribuída, referindo-se ao post pelo slug",
+    "- --clash: mínimo 100 palavras, narra o confronto entre os dois posts (pelos slugs) pela ótica da perspectiva",
+    "",
+    border,
+    `Para decidir, rode (--after-mood primeiro):`,
+    `npm run hronir:decide --after-mood "<estado interno agora>" --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>"`,
+    border,
+  ];
+  nextStep(stepLines.join("\n"));
 }
 
 export function next(initOptions = {}) {
@@ -814,13 +925,42 @@ export function decide(args: string[]) {
     process.exit(1);
   }
 
+  const draft = session.draftDecision || {};
   let agentId = session.agentId || "TODO";
-  let clash = "";
-  let reviewA = "";
-  let reviewB = "";
-  let rateA = null;
-  let rateB = null;
-  let afterMood = null;
+  let clash = draft.clash || "";
+  let reviewA = draft.review_a || "";
+  let reviewB = draft.review_b || "";
+  let rateA =
+    draft.rate_a !== undefined && draft.rate_a !== null
+      ? String(draft.rate_a)
+      : null;
+  let rateB =
+    draft.rate_b !== undefined && draft.rate_b !== null
+      ? String(draft.rate_b)
+      : null;
+  let afterMood =
+    draft.evaluator_mood_after !== undefined &&
+    draft.evaluator_mood_after !== null
+      ? String(draft.evaluator_mood_after)
+      : null;
+
+  let clashAppend = "";
+  let reviewAAppend = "";
+  let reviewBAppend = "";
+
+  const saveDraft = () => {
+    session.draftDecision = {
+      clash,
+      review_a: reviewA,
+      review_b: reviewB,
+      rate_a:
+        rateA !== null ? (isNaN(Number(rateA)) ? rateA : Number(rateA)) : null,
+      rate_b:
+        rateB !== null ? (isNaN(Number(rateB)) ? rateB : Number(rateB)) : null,
+      evaluator_mood_after: afterMood,
+    };
+    fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
+  };
 
   const removedFlags = new Set([
     "--winner",
@@ -858,9 +998,22 @@ export function decide(args: string[]) {
     else if (args[i] === "--clash") clash = args[++i];
     else if (args[i] === "--review-a") reviewA = args[++i];
     else if (args[i] === "--review-b") reviewB = args[++i];
+    else if (args[i] === "--clash-append") clashAppend = args[++i];
+    else if (args[i] === "--review-a-append") reviewAAppend = args[++i];
+    else if (args[i] === "--review-b-append") reviewBAppend = args[++i];
     else if (args[i] === "--rate-a") rateA = args[++i];
     else if (args[i] === "--rate-b") rateB = args[++i];
     else if (args[i] === "--after-mood") afterMood = args[++i];
+  }
+
+  if (clashAppend) {
+    clash = (clash ? clash + " " : "") + clashAppend;
+  }
+  if (reviewAAppend) {
+    reviewA = (reviewA ? reviewA + " " : "") + reviewAAppend;
+  }
+  if (reviewBAppend) {
+    reviewB = (reviewB ? reviewB + " " : "") + reviewBAppend;
   }
 
   if (!agentId || agentId === "TODO") {
@@ -870,9 +1023,32 @@ export function decide(args: string[]) {
     process.exit(1);
   }
 
-  const parsedRateA = parseRate(rateA, "--rate-a");
-  const parsedRateB = parseRate(rateB, "--rate-b");
+  let parsedRateA: number;
+  let parsedRateB: number;
+  try {
+    parsedRateA = parseRate(rateA, "--rate-a");
+  } catch (err: any) {
+    saveDraft();
+    console.error(err.message);
+    console.error(
+      `Nota: Seus dados parciais foram salvos no rascunho de decisão.`
+    );
+    process.exit(1);
+  }
+
+  try {
+    parsedRateB = parseRate(rateB, "--rate-b");
+  } catch (err: any) {
+    saveDraft();
+    console.error(err.message);
+    console.error(
+      `Nota: Seus dados parciais foram salvos no rascunho de decisão.`
+    );
+    process.exit(1);
+  }
+
   if (parsedRateA === parsedRateB) {
+    saveDraft();
     console.error(
       `Erro: --rate-a e --rate-b não podem ser iguais (${parsedRateA.toFixed(2)} x ${parsedRateB.toFixed(2)}). Comprometa-se.`
     );
@@ -882,21 +1058,34 @@ export function decide(args: string[]) {
   const wcClash = wordCount(clash);
   const wcReviewA = wordCount(reviewA);
   const wcReviewB = wordCount(reviewB);
+
   if (wcClash < MIN_WORDS) {
+    saveDraft();
     console.error(
       `Erro: --clash precisa ter pelo menos ${MIN_WORDS} palavras (recebido: ${wcClash}).`
+    );
+    console.error(
+      `Nota: Rascunho salvo. Você pode complementar usando a flag: --clash-append "<confronto complementar>"`
     );
     process.exit(1);
   }
   if (wcReviewA < MIN_WORDS) {
+    saveDraft();
     console.error(
       `Erro: --review-a precisa ter pelo menos ${MIN_WORDS} palavras (recebido: ${wcReviewA}).`
+    );
+    console.error(
+      `Nota: Rascunho salvo. Você pode complementar usando a flag: --review-a-append "<resenha A complementar>"`
     );
     process.exit(1);
   }
   if (wcReviewB < MIN_WORDS) {
+    saveDraft();
     console.error(
       `Erro: --review-b precisa ter pelo menos ${MIN_WORDS} palavras (recebido: ${wcReviewB}).`
+    );
+    console.error(
+      `Nota: Rascunho salvo. Você pode complementar usando a flag: --review-b-append "<resenha B complementar>"`
     );
     process.exit(1);
   }
@@ -946,6 +1135,8 @@ export function decide(args: string[]) {
     evaluator_mood_after: afterMood
       ? String(afterMood).trim().slice(0, 250) || null
       : null,
+    impression_a: currentMatch.impression_a ?? null,
+    impression_b: currentMatch.impression_b ?? null,
     rate_a: parsedRateA,
     rate_b: parsedRateB,
     clash,
@@ -963,6 +1154,7 @@ export function decide(args: string[]) {
   session.completed += 1;
   session.state = "ready_for_next";
   session.currentMatch = null;
+  delete session.draftDecision;
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
   nextStep("Rode `npm run hronir:continue` para ir para o próximo passo.");
