@@ -18,9 +18,10 @@
 
 ## Histórico de revisões
 
-| Data       | Mudança         |
-| ---------- | --------------- |
-| 2026-06-12 | Versão inicial. |
+| Data       | Mudança                                                                                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-12 | Versão inicial.                                                                                                                                               |
+| 2026-06-12 | Review (Codex + autor): seleção idempotente, fallback publicável e acoplado, acoplamento atômico com qualificação de contrapartes, endereçamento `slug@uuid`. |
 
 ---
 
@@ -214,12 +215,46 @@ o mapeamento é idêntico, não escreve nada — o arquivo não é dirtied e o b
 é estritamente reprodutível. `generatedAt` só avança quando pelo menos uma
 seleção muda.
 
-### 4.3. Um único leitor de matches (corrige V1, V6, C1)
+### 4.3. Endereçamento `slug@uuid` e um único leitor de matches (corrige V1, V6, C1)
 
-Hoje há **quatro** parsers independentes de rate file (`_loadMatchData`,
-`computePerPerspectiveRatings` inline, `hronir-rank.ts loadDuelData`,
-`latestMatchTimeByKey`) — e o guard de duelo de versão existe em só um deles.
-A RFC consolida num único normalizador em `matches.ts`:
+**Referências estáveis.** Sessões e rate files novos referenciam versões por
+`slug@uuid` — e.g. `vos@3f2a9c1e-...` — em vez de path de arquivo:
+
+- `slug` = nome da pasta = identidade da URL (estável por construção);
+- `uuid` = UUID de conteúdo (`getPostUuid`, já gravado hoje em cada match como
+  `post_a.version`) = identidade da versão, imutável porque arquivos de versão
+  são cópias congeladas.
+
+O path do arquivo deixa de ser identidade e vira **cache de resolução**: o
+leitor resolve `slug@uuid` varrendo as versões do diretório (UUIDs memoizados,
+§4.7). Isso elimina a classe inteira de problemas de path quebrado:
+
+- versão **podada** não quebra referência histórica — o `slug@uuid` continua
+  nomeando exatamente aquele conteúdo (recuperável do git); o doctor para de
+  precisar do hack `tolerableGone`;
+- a migração §6 não invalida rate files antigos (o passo 4 vira só uma regra
+  de leitura para o formato legado, não uma tolerância de erro);
+- renomear/mover arquivos de versão deixa de ser uma operação perigosa.
+
+Separador `@` (e não `#`): `#` não-quotado inicia comentário em YAML — os rate
+files são frontmatter YAML, e `vos#3f2a` seria truncado para `vos` em
+silêncio. `@` segue a convenção `pacote@versão` (npm) / `image@digest`
+(Docker) e não colide com nada nos formatos do repo.
+
+Os rate files novos gravam `post_a.ref: "slug@uuid"` (schema `stars-v2`,
+conforme o padrão de dados persistidos: schema versionado + migração + check
+no doctor); os campos legados (`path`, `key`, `version`) continuam legíveis
+pelo normalizador abaixo — rate files antigos nunca são reescritos. O
+`versions-selected.json` usa a mesma identidade (o `uuid` de cada entrada é a
+seleção; `file` é cache). A sessão (`currentMatch`) também passa a guardar
+`ref_a`/`ref_b`.
+
+**Leitor único.** Hoje há **quatro** parsers independentes de rate file
+(`_loadMatchData`, `computePerPerspectiveRatings` inline, `hronir-rank.ts
+loadDuelData`, `latestMatchTimeByKey`) — e o guard de duelo de versão existe
+em só um deles. A RFC consolida num único normalizador em `matches.ts`, que
+também é o único lugar que entende os dois formatos (`stars-v1` por
+path/key/version; `stars-v2` por `ref`):
 
 ```ts
 export type NormalizedMatch = {
@@ -270,14 +305,20 @@ selecionem independentemente reabre a divergência de conteúdo que era o V5
 original. Para evitar isso, `hronir:select` trata o grupo de traduções de um
 mesmo `translationKey` como **unidade atômica**: quando a regra 1 qualifica
 uma troca em qualquer diretório do grupo, o comando verifica se **todos** os
-diretórios irmãos que contêm versões possuem uma versão publicável com o mesmo
-`draftCreatedAt` (campo gravado pelo `draft-worst` em todas as traduções da
-mesma rodada). Se algum irmão com versões não tiver a contraparte
-correspondente publicável, **nenhum** membro do grupo avança — o grupo inteiro
-fica inalterado até que a próxima rodada de `draft-worst` crie e ranqueie as
-versões em falta. Diretórios sem nenhuma versão (tradução ainda não criada)
-não fazem parte do grupo para fins de acoplamento. Resultado: as línguas de um
-ensaio **sempre avançam juntas** ou não avançam — sem divergência parcial.
+diretórios irmãos que contêm versões possuem uma contraparte da mesma revisão
+(mesmo `draftCreatedAt`, campo gravado pelo `draft-worst` em todas as
+traduções da mesma rodada) que **também se qualifica**: publicável, com
+**n ≥ 2 duelos de versão** e `stars` **não inferiores** aos da versão
+atualmente selecionada naquele diretório. A contraparte não precisa repetir a
+margem de 0.3★ — o ônus da histerese é da língua que disparou a troca — mas
+precisa de evidência própria de não-regressão: existir não basta, senão uma
+vitória em PT publicaria um EN com zero duelos (ou pior que a seleção EN
+vigente). Se alguma contraparte não se qualificar, **nenhum** membro do grupo
+avança; para destravar rápido, o `pickVersionDuel` **prioriza** contrapartes
+sub-dueladas de revisões já qualificadas em outra língua. Diretórios sem
+nenhuma versão (tradução ainda não criada) não fazem parte do grupo para fins
+de acoplamento. Resultado: as línguas de um ensaio **sempre avançam juntas** ou
+não avançam — sem divergência parcial e sem regressão carona.
 
 O acoplamento vale também para o **fallback por seleção inválida** (exceção da
 regra 1 do §4.2): quando a seleção de um diretório é descartada por deixar de
@@ -399,10 +440,11 @@ Script one-off preservado em `scripts/oneoff/` (padrão do repo):
    1 dentro do próprio diretório, mas nunca participam de avanço acoplado
    (a regra "ausente nunca casa" impede parear versões não relacionadas).
    Validar que não são as selecionadas.
-4. Rate files antigos referenciam paths `index.*` que deixarão de existir: o
-   leitor normalizado resolve paths históricos via key (que não muda), e o
-   doctor trata `index.*` ausente como tolerável **apenas** em matches
-   anteriores à data da migração.
+4. Rate files antigos (`stars-v1`) referenciam paths `index.*` que deixarão
+   de existir: o leitor normalizado (§4.3) resolve o formato legado via
+   key + `version` (UUID), que não mudam — é regra de leitura, não tolerância
+   de erro. Rate files novos usam `ref: slug@uuid` (`stars-v2`) e são imunes a
+   renames por construção.
 5. Atualizar `src/lib/versions.mjs` (`fileForId`/`uuidForId`): atualmente
    resolve IDs de entradas `blog` para `<slug>/index.{md,mdx}`; após a
    migração, deve ler `versions-selected.json` para obter o path real da
