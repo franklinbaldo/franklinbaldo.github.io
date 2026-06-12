@@ -1588,9 +1588,22 @@ function getRecentlyEditedKeys(limit = 2): string[] {
   // stored per file). Legacy posts still using editHistory[] are honored
   // via fallback. The most recent edit timestamp across all translations
   // of a key wins.
+  const posts = listPosts().map((p) => ({ path: p, data: readPost(p) }));
+  // The RFC 0010 migration stamped every migrated file with one shared
+  // draftCreatedAt. A stamp that appears under more than one translationKey
+  // is that batch marker, not an individual edit — draft-worst stamps all
+  // translations of a *single* key per run — so it never counts toward
+  // cooldown (it would park two arbitrary migrated keys there forever).
+  const keysByDraftStamp = new Map<string, Set<string>>();
+  for (const { data } of posts) {
+    if (!data.translationKey || !data.draftCreatedAt) continue;
+    const stamp = String(data.draftCreatedAt);
+    let keys = keysByDraftStamp.get(stamp);
+    if (!keys) keysByDraftStamp.set(stamp, (keys = new Set()));
+    keys.add(String(data.translationKey));
+  }
   const latestByKey = new Map();
-  for (const p of listPosts()) {
-    const data = readPost(p);
+  for (const { data } of posts) {
     if (!data.translationKey) continue;
     let latest = 0;
     const consider = (ts: unknown) => {
@@ -1603,7 +1616,10 @@ function getRecentlyEditedKeys(limit = 2): string[] {
     // RFC 0003: a recent draft (or one just promoted) also puts the key on
     // cooldown, so draft-worst doesn't re-draft the same post every round.
     consider(data.draftCommittedAt);
-    consider(data.draftCreatedAt);
+    const draftStamp = data.draftCreatedAt ? String(data.draftCreatedAt) : null;
+    if (draftStamp && keysByDraftStamp.get(draftStamp)!.size === 1) {
+      consider(draftStamp);
+    }
     if (Array.isArray(data.editHistory)) {
       for (const entry of data.editHistory as Array<Record<string, unknown>>)
         consider(entry?.timestamp);

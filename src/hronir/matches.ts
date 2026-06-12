@@ -92,16 +92,47 @@ function loadGitMtimes(): Map<string, number> {
   try {
     const out = execFileSync(
       "git",
-      ["log", "--format=%x00%ct", "--name-only", "--", "src/content/blog"],
+      [
+        "log",
+        "--format=%x00%ct",
+        "--name-status",
+        "-M",
+        "--",
+        "src/content/blog",
+      ],
       { stdio: ["ignore", "pipe", "ignore"], maxBuffer: 64 * 1024 * 1024 }
     ).toString();
+    // Maps a historical path to the present-day path it became, so commits
+    // older than a rename keep crediting the file that exists now (git log
+    // walks newest -> oldest, so aliases are in place before older blocks).
+    const alias = new Map<string, string>();
+    const finalName = (p: string) => alias.get(p) ?? p;
     for (const block of out.split("\u0000")) {
       const lines = block.trim().split("\n").filter(Boolean);
       if (lines.length < 2) continue;
       const ts = Number(lines[0]) * 1000;
       if (!Number.isFinite(ts) || ts <= 0) continue;
       for (let i = 1; i < lines.length; i++) {
-        if (!m.has(lines[i])) m.set(lines[i], ts);
+        const parts = lines[i].split("\t");
+        const status = parts[0];
+        if (status.startsWith("R") && parts.length >= 3) {
+          const from = parts[1];
+          const to = parts[2];
+          const target = finalName(to);
+          alias.set(from, target);
+          // The RFC 0010 migration renamed index.* -> v-* adding only a
+          // lifecycle frontmatter stamp (git reports R09x). Like a pure
+          // R100 rename, that is not a content edit: skipping the stamp
+          // here lets older commits on the former name carry the real
+          // mtime, instead of marking the whole archive freshly edited.
+          const pureRename =
+            status === "R100" ||
+            (/\/index\.mdx?$/.test(from) && /\/v-[^/]+\.mdx?$/.test(to));
+          if (!pureRename && !m.has(target)) m.set(target, ts);
+        } else {
+          const target = finalName(parts[parts.length - 1]);
+          if (!m.has(target)) m.set(target, ts);
+        }
       }
     }
   } catch {
