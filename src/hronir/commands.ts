@@ -2018,6 +2018,35 @@ export function doctor() {
     issues.push(`scripts/hronir/perspectives/: ${(e as Error).message}`);
   }
 
+  // UUIDs vivos por slug (atual + legacy de cada peer), lazy por diretório,
+  // e o conjunto slug@uuid do registro de podas — base da checagem estrita
+  // de versões-fantasma em rate files stars-v2.
+  const dirUuidsBySlug = new Map<string, Set<string>>();
+  const dirUuids = (slug: string): Set<string> => {
+    let s = dirUuidsBySlug.get(slug);
+    if (!s) {
+      s = new Set();
+      for (const v of listDirVersions(slug)) {
+        s.add(v.uuid);
+        s.add(v.legacyUuid);
+      }
+      dirUuidsBySlug.set(slug, s);
+    }
+    return s;
+  };
+  const prunedUuids = new Set<string>();
+  if (fs.existsSync(PRUNED_PATH)) {
+    try {
+      const reg = JSON.parse(fs.readFileSync(PRUNED_PATH, "utf8"));
+      for (const e of reg.pruned ?? []) {
+        if (e.uuid) prunedUuids.add(`${e.slug}@${e.uuid}`);
+        if (e.legacyUuid) prunedUuids.add(`${e.slug}@${e.legacyUuid}`);
+      }
+    } catch (e: unknown) {
+      issues.push(`${PRUNED_PATH}: não parseia (${(e as Error).message})`);
+    }
+  }
+
   for (const f of listMatchFiles()) {
     const { data } = readMatch(f);
     const base = path.basename(f);
@@ -2043,12 +2072,24 @@ export function doctor() {
 
     // RFC 0010 §4.3: path é cache de resolução, version (UUID) é identidade.
     // Após a migração (index.* → v-*), um select ou um prune, o path gravado
-    // no rate file pode deixar de existir; tolerar enquanto a pasta do post
-    // existir e o lado carregar o UUID de versão.
+    // no rate file pode deixar de existir. Para stars-v2 o UUID precisa
+    // resolver de verdade: um peer atual (uuid ou legacy) ou uma entrada no
+    // registro de podas — senão é versão-fantasma (typo, deleção acidental).
+    // stars-v1 gravou o UUID body-only da época do duelo; edições in-place
+    // posteriores tornam esse hash irrecuperável, então basta a pasta do
+    // post existir.
+    const isStarsV2 = String(data.prompt_version) === "stars-v2";
     const tolerableGone = (
       p: string | undefined,
       version: string | undefined
-    ) => Boolean(p && version && fs.existsSync(path.dirname(p)));
+    ) => {
+      if (!p || !version || !fs.existsSync(path.dirname(p))) return false;
+      if (!isStarsV2) return true;
+      const slug = path.basename(path.dirname(p));
+      return (
+        dirUuids(slug).has(version) || prunedUuids.has(`${slug}@${version}`)
+      );
+    };
 
     if (!aKey) issues.push(`${base}: post_a.key ausente`);
     if (!bKey) issues.push(`${base}: post_b.key ausente`);

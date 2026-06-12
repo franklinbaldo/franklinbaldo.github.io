@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig } from "astro/config";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { DEFAULT_LANG, LANG_META } from "./src/lib/languages.mjs";
 
 /** @type {Record<string, Record<string, string>>} */
@@ -25,18 +25,24 @@ try {
 
 // RFC 0010 §4.4: pruned versions keep their public permalinks as redirects
 // to the live post — `hronir:prune` registers every removed slug@uuid here.
-try {
+// Absent registry = nothing pruned yet. A present-but-malformed registry
+// must fail the build: completing without these redirects would 404 every
+// pruned permalink, and the source files are already gone.
+if (existsSync("./src/generated/versions-pruned.json")) {
   const pruned = JSON.parse(
     readFileSync("./src/generated/versions-pruned.json", "utf-8")
   );
-  for (const e of pruned.pruned ?? []) {
+  if (!Array.isArray(pruned?.pruned)) {
+    throw new Error(
+      "versions-pruned.json sem o array 'pruned' esperado (schema pruned-v1) — repare o registro antes de buildar."
+    );
+  }
+  for (const e of pruned.pruned) {
     const base = e.lang === "pt" ? `/pt/blog/${e.slug}` : `/blog/${e.slug}`;
     for (const uuid of new Set([e.uuid, e.legacyUuid].filter(Boolean))) {
       blogRedirects[`${base}/v/${uuid}/`] = `${base}/`;
     }
   }
-} catch {
-  // No pruned-version registry yet — nothing to redirect.
 }
 
 import mdx from "@astrojs/mdx";
