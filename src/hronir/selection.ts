@@ -44,11 +44,28 @@ export function readSelection(): SelectionEntries {
         "Resolva o conflito/corrupção manualmente antes de rodar comandos hronir."
     );
   }
+  // The same goes for parseable schema corruption: writeSelection (the only
+  // writer) always emits _meta.schema and complete {file, uuid} entries, so
+  // anything else is a damaged manifest — silently dropping an entry would
+  // make select() treat that slug as a debut and swap live content.
+  const meta = parsed._meta as { schema?: unknown } | undefined;
+  if (meta?.schema !== SELECTION_SCHEMA) {
+    throw new Error(
+      `${SELECTION_PATH}: _meta.schema esperado "${SELECTION_SCHEMA}", encontrado ${JSON.stringify(meta?.schema)}. ` +
+        "Repare o manifesto manualmente antes de rodar comandos hronir."
+    );
+  }
   const entries: SelectionEntries = {};
   for (const [slug, v] of Object.entries(parsed)) {
     if (slug === "_meta") continue;
     const e = v as SelectionEntry;
-    if (e && typeof e.file === "string") entries[slug] = e;
+    if (!e || typeof e.file !== "string" || typeof e.uuid !== "string") {
+      throw new Error(
+        `${SELECTION_PATH}: entrada inválida para "${slug}" (esperado {file, uuid}). ` +
+          "Repare o manifesto manualmente antes de rodar comandos hronir."
+      );
+    }
+    entries[slug] = e;
   }
   _selectionCache = entries;
   return entries;
