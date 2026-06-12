@@ -93,6 +93,11 @@ export function listEnglishWithKey(): Array<{
     const lang = data.lang ? String(data.lang) : "en";
     if (lang !== "en") continue;
     if (!data.translationKey) continue;
+    if (data.draft === true) continue;
+    if (data.publishDate) {
+      const pub = new Date(String(data.publishDate));
+      if (!isNaN(pub.getTime()) && pub > new Date()) continue;
+    }
     out.push({ path: p, translationKey: String(data.translationKey) });
   }
   return out;

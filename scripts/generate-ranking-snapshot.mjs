@@ -14,7 +14,8 @@ const duels = listMatchFiles()
   .filter((m) => {
     const w = m.data?.winner;
     const ov = m.data?.override;
-    return w && w !== "TODO" && (!ov || ov === "null");
+    const resolvedWinner = ov && ov !== "null" ? ov : w;
+    return resolvedWinner && resolvedWinner !== "TODO";
   });
 
 const keys = {};

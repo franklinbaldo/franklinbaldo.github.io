@@ -72,75 +72,64 @@ function readFlagValue(args, indices) {
   return null;
 }
 
-switch (cmd) {
-  case "init": {
-    const matchesRaw = readFlagValue(args, [args.indexOf("--matches")]);
-    let matchesOpt = matchesRaw != null ? parseInt(matchesRaw, 10) || 10 : 10;
-    const skipEdit = args.includes("--skip-edit");
-    const skipRating = args.includes("--skip-rating");
-    if (skipRating) {
-      matchesOpt = 0;
-    }
-    const agentId = readFlagValue(args, [
-      args.indexOf("--agent-id"),
-      args.indexOf("--agent"),
-    ]);
-    const evalLangRaw = readFlagValue(args, [
-      args.indexOf("--eval-lang"),
-      args.indexOf("--lang"),
-    ]);
-    const evalLang = evalLangRaw || "pt";
-    const minAppRaw = readFlagValue(args, [
-      args.indexOf("--min-appearances"),
-      args.indexOf("--min-app"),
-    ]);
-    const minAppearances =
-      minAppRaw != null ? parseInt(minAppRaw, 10) || null : null;
-    init({
-      matches: matchesOpt,
-      skipEdit,
-      skipRating,
-      agentId,
-      evalLang,
-      minAppearances,
-    });
-    break;
+function parseMatches(raw) {
+  if (raw == null) return 10;
+  const n = parseInt(raw, 10);
+  if (!Number.isFinite(n) || n < 0) {
+    console.error(
+      `Erro: --matches deve ser um inteiro não-negativo (recebido: ${JSON.stringify(raw)}).`
+    );
+    process.exit(1);
   }
+  return n;
+}
+
+function parseMinAppearances(raw) {
+  if (raw == null) return null;
+  const n = parseInt(raw, 10);
+  if (!Number.isFinite(n) || n < 1) {
+    console.error(
+      `Erro: --min-appearances deve ser um inteiro positivo (recebido: ${JSON.stringify(raw)}).`
+    );
+    process.exit(1);
+  }
+  return n;
+}
+
+function parseInitOptions(args) {
+  const matchesRaw = readFlagValue(args, [args.indexOf("--matches")]);
+  const skipEdit = args.includes("--skip-edit");
+  const skipRating = args.includes("--skip-rating");
+  const agentId = readFlagValue(args, [
+    args.indexOf("--agent-id"),
+    args.indexOf("--agent"),
+  ]);
+  const evalLangRaw = readFlagValue(args, [
+    args.indexOf("--eval-lang"),
+    args.indexOf("--lang"),
+  ]);
+  const evalLang = evalLangRaw || "pt";
+  const minAppRaw = readFlagValue(args, [
+    args.indexOf("--min-appearances"),
+    args.indexOf("--min-app"),
+  ]);
+  let matches = parseMatches(matchesRaw);
+  if (skipRating) matches = 0;
+  const minAppearances = parseMinAppearances(minAppRaw);
+  return { matches, skipEdit, skipRating, agentId, evalLang, minAppearances };
+}
+
+switch (cmd) {
+  case "init":
+    init(parseInitOptions(args));
+    break;
   case "continue":
     continueCmd();
     break;
   case "next":
-  case "auto": {
-    const matchesRaw = readFlagValue(args, [args.indexOf("--matches")]);
-    let matchesOpt = matchesRaw != null ? parseInt(matchesRaw, 10) || 10 : 10;
-    const skipEdit = args.includes("--skip-edit");
-    const skipRating = args.includes("--skip-rating");
-    if (skipRating) matchesOpt = 0;
-    const agentId = readFlagValue(args, [
-      args.indexOf("--agent-id"),
-      args.indexOf("--agent"),
-    ]);
-    const evalLangRaw = readFlagValue(args, [
-      args.indexOf("--eval-lang"),
-      args.indexOf("--lang"),
-    ]);
-    const evalLang = evalLangRaw || "pt";
-    const minAppRaw = readFlagValue(args, [
-      args.indexOf("--min-appearances"),
-      args.indexOf("--min-app"),
-    ]);
-    const minAppearances =
-      minAppRaw != null ? parseInt(minAppRaw, 10) || null : null;
-    next({
-      matches: matchesOpt,
-      skipEdit,
-      skipRating,
-      agentId,
-      evalLang,
-      minAppearances,
-    });
+  case "auto":
+    next(parseInitOptions(args));
     break;
-  }
   case "decide":
     decide(args);
     break;

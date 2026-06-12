@@ -118,6 +118,7 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
     const bKey = postKey((data as any).post_b);
     if (!aKey || !bKey) continue;
     if (winner !== "a" && winner !== "b") continue;
+    if (aKey === bKey) continue;
 
     const rawRunAt = (data as any).run_at ?? (data as any).run_id ?? "";
     const runAt =

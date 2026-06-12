@@ -101,50 +101,9 @@ const STALE_BONUS = 3.0;
 // information terms (sigma, stale_bonus).
 const OBJECTIVE_WEIGHT = 0.15;
 const SKILLS_DIR = "scripts/hronir/skills";
-const ARCHIVE_DIR = path.join(OUT_DIR, "archive");
-const EDITS_DIR = path.join(OUT_DIR, "edits");
 const SESSION_PATH = "hronir_session.json";
 const MIN_WORDS = 100;
 const PROMPT_VERSION = "stars-v1";
-const GITHUB_BLOB_BASE =
-  "https://github.com/franklinbaldo/franklinbaldo.github.io/blob";
-
-function currentHeadSha() {
-  return execFileSync("git", ["rev-parse", "HEAD"], {
-    encoding: "utf8",
-  }).trim();
-}
-
-function githubBlobUrl(sha: string, filepath: string): string {
-  return `${GITHUB_BLOB_BASE}/${sha}/${filepath}`;
-}
-
-// True if `filepath` has staged or unstaged changes against HEAD, or is
-// untracked. Used by edit-worst to refuse running when the working-tree
-// content of a target post diverges from the version that the captured
-// HEAD permalink will resolve to — otherwise the stored (uuid, url) pair
-// in previousVersion would describe two different files.
-function isFileDirtyAtHead(filepath: string): boolean {
-  try {
-    execFileSync("git", ["diff", "--quiet", "HEAD", "--", filepath], {
-      stdio: ["ignore", "ignore", "ignore"],
-    });
-  } catch {
-    return true;
-  }
-  try {
-    execFileSync(
-      "git",
-      ["diff", "--quiet", "--cached", "HEAD", "--", filepath],
-      {
-        stdio: ["ignore", "ignore", "ignore"],
-      }
-    );
-  } catch {
-    return true;
-  }
-  return false;
-}
 
 function wordCount(s: unknown): number {
   if (!s || typeof s !== "string") return 0;
@@ -247,6 +206,23 @@ export function init(options: InitOptions = {}) {
   const evalLang = options.evalLang || "pt";
   const sessionPath = SESSION_PATH;
 
+  if (fs.existsSync(sessionPath)) {
+    let existing: Record<string, unknown> | null = null;
+    try {
+      existing = JSON.parse(fs.readFileSync(sessionPath, "utf8"));
+    } catch {
+      // corrupt session file — let init overwrite it
+    }
+    if (existing && existing.state !== "done") {
+      console.error(
+        `Erro: sessão em andamento detectada (estado: '${existing.state}'). ` +
+          "Termine com `npm run hronir:end` antes de iniciar uma nova, " +
+          "ou force o descarte com `npm run hronir:end -- --force`."
+      );
+      process.exit(1);
+    }
+  }
+
   if (skipRating) {
     const session = {
       target: 0,
@@ -273,7 +249,7 @@ export function init(options: InitOptions = {}) {
     process.exit(1);
   }
 
-  const matchesOpt = options.matches || 10;
+  const matchesOpt = options.matches != null ? options.matches : 10;
   const session = {
     target: matchesOpt,
     completed: 0,
@@ -832,6 +808,21 @@ export function decide(args: string[]) {
     "--eval-lang",
     "--lang",
   ]);
+  function readDecideFlag(flagName: string, idx: number): string {
+    const v = args[idx + 1];
+    if (v == null) {
+      console.error(`Erro: ${flagName} exige um valor.`);
+      process.exit(1);
+    }
+    if (v.startsWith("--")) {
+      console.error(
+        `Erro: ${flagName} exige um valor, mas recebeu outra flag (${v}).`
+      );
+      process.exit(1);
+    }
+    return v;
+  }
+
   for (let i = 0; i < args.length; i++) {
     if (removedFlags.has(args[i])) {
       if (args[i] === "--perspective") {
@@ -853,14 +844,28 @@ export function decide(args: string[]) {
       args[i] === "--agent-id" ||
       args[i] === "--agent" ||
       args[i] === "--model"
-    )
-      agentId = args[++i];
-    else if (args[i] === "--clash") clash = args[++i];
-    else if (args[i] === "--review-a") reviewA = args[++i];
-    else if (args[i] === "--review-b") reviewB = args[++i];
-    else if (args[i] === "--rate-a") rateA = args[++i];
-    else if (args[i] === "--rate-b") rateB = args[++i];
-    else if (args[i] === "--after-mood") afterMood = args[++i];
+    ) {
+      agentId = readDecideFlag(args[i], i);
+      i++;
+    } else if (args[i] === "--clash") {
+      clash = readDecideFlag(args[i], i);
+      i++;
+    } else if (args[i] === "--review-a") {
+      reviewA = readDecideFlag(args[i], i);
+      i++;
+    } else if (args[i] === "--review-b") {
+      reviewB = readDecideFlag(args[i], i);
+      i++;
+    } else if (args[i] === "--rate-a") {
+      rateA = readDecideFlag(args[i], i);
+      i++;
+    } else if (args[i] === "--rate-b") {
+      rateB = readDecideFlag(args[i], i);
+      i++;
+    } else if (args[i] === "--after-mood") {
+      afterMood = readDecideFlag(args[i], i);
+      i++;
+    }
   }
 
   if (!agentId || agentId === "TODO") {
@@ -899,6 +904,16 @@ export function decide(args: string[]) {
       `Erro: --review-b precisa ter pelo menos ${MIN_WORDS} palavras (recebido: ${wcReviewB}).`
     );
     process.exit(1);
+  }
+
+  if (afterMood !== null) {
+    const moodStr = String(afterMood).trim();
+    if (moodStr.length > 250) {
+      console.error(
+        `Erro: --after-mood excede 250 caracteres (recebido: ${moodStr.length}). Seja mais conciso.`
+      );
+      process.exit(1);
+    }
   }
 
   // Pre-PR sessions can land in state=deciding with no perspective_id on
@@ -943,9 +958,7 @@ export function decide(args: string[]) {
     perspective_id: perspective.id,
     evaluator_mood: currentMatch.evaluator_mood ?? null,
     mood_glyph: currentMatch.mood_glyph ?? null,
-    evaluator_mood_after: afterMood
-      ? String(afterMood).trim().slice(0, 250) || null
-      : null,
+    evaluator_mood_after: afterMood ? String(afterMood).trim() || null : null,
     rate_a: parsedRateA,
     rate_b: parsedRateB,
     clash,
@@ -1403,8 +1416,11 @@ export function editWorst() {
     const row = eligible[i];
     if (recentlyEdited.includes(row.key)) continue;
     // RFC 0003: don't pile drafts — skip keys that already have a pending one.
+    // Exclude v-*-prev.* archive files (created by promote) — they are not drafts.
     const hasDraft = findTranslations(row.key).some((t) =>
-      listVersions(t.path).some((p) => !isCanonical(p))
+      listVersions(t.path).some(
+        (p) => !isCanonical(p) && !/-prev\.[^/]+$/.test(p)
+      )
     );
     if (hasDraft) continue;
     worstRow = row;
@@ -1421,7 +1437,16 @@ export function editWorst() {
   const topRows = eligible.filter((r) => r.key !== worstRow.key).slice(0, 3);
   const topKeys = topRows.map((r) => r.key);
 
-  const translationFiles = findTranslations(worstRow.key);
+  const translationFiles = findTranslations(worstRow.key).filter((t) =>
+    fs.existsSync(t.path)
+  );
+  if (translationFiles.length === 0) {
+    console.error(
+      `Erro: nenhum arquivo encontrado para o post '${worstRow.key}'. ` +
+        "O post pode ter sido deletado. Rode `npm run hronir:doctor` para diagnóstico."
+    );
+    process.exit(1);
+  }
 
   // RFC 0003: non-destructive drafting. Instead of editing the canonical
   // index.md in place (which conflicts when two sessions target the same
