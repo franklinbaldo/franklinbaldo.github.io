@@ -2835,10 +2835,23 @@ function registerPruned(entries: PrunedEntry[]) {
     pruned: [],
   };
   if (fs.existsSync(PRUNED_PATH)) {
+    // A malformed registry (merge conflict, partial write) must abort the
+    // prune: rebuilding from scratch would silently drop every previously
+    // registered permalink — and their source files are already gone, so
+    // the redirects would be unrecoverable.
     try {
       registry = JSON.parse(fs.readFileSync(PRUNED_PATH, "utf8"));
-    } catch {
-      // corrupt registry — rebuild from scratch with the new entries
+    } catch (e) {
+      throw new Error(
+        `${PRUNED_PATH} existe mas não parseia (${(e as Error).message}). ` +
+          "Repare o registro manualmente antes de podar."
+      );
+    }
+    if (!Array.isArray(registry?.pruned)) {
+      throw new Error(
+        `${PRUNED_PATH} sem o array "pruned" esperado (schema pruned-v1). ` +
+          "Repare o registro manualmente antes de podar."
+      );
     }
   }
   const seen = new Set(registry.pruned.map((e) => `${e.slug}@${e.uuid}`));
@@ -2886,19 +2899,10 @@ export function prune({ dryRun = false } = {}) {
     return;
   }
 
-  for (const { v, margin, n } of removed) {
-    if (dryRun) {
-      console.log(
-        `[prune dry-run] ${v.path} (-${margin.toFixed(2)}★ vs selecionada, n=${n})`
-      );
-    } else {
-      fs.unlinkSync(v.path);
-      console.log(
-        `[prune] removido ${v.path} (-${margin.toFixed(2)}★ vs selecionada, n=${n}) — permalink registrado em ${PRUNED_PATH}`
-      );
-    }
-  }
-
+  // Register permalinks BEFORE deleting: registerPruned aborts on a
+  // malformed registry, and at that point nothing has been removed yet. A
+  // crash between the write and the unlinks leaves at worst a redirect for
+  // a still-existing version, which the next prune run cleans up.
   if (!dryRun) {
     const prunedAt = new Date().toISOString();
     registerPruned(
@@ -2910,6 +2914,19 @@ export function prune({ dryRun = false } = {}) {
         prunedAt,
       }))
     );
+  }
+
+  for (const { v, margin, n } of removed) {
+    if (dryRun) {
+      console.log(
+        `[prune dry-run] ${v.path} (-${margin.toFixed(2)}★ vs selecionada, n=${n})`
+      );
+    } else {
+      fs.unlinkSync(v.path);
+      console.log(
+        `[prune] removido ${v.path} (-${margin.toFixed(2)}★ vs selecionada, n=${n}) — permalink registrado em ${PRUNED_PATH}`
+      );
+    }
   }
 
   const label = dryRun ? "dry-run" : "removida(s)";
