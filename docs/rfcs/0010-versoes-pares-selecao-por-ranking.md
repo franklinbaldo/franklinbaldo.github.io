@@ -186,11 +186,15 @@ versão exibida não ficar oscilando):
    `stars` maior por **margem ≥ 0.3★ com n ≥ 2 duelos de versão** — os mesmos
    `PROMOTE_MARGIN`/`PROMOTE_MIN_DUELS` de hoje, mas agora a comparação exige
    que **ambos os lados tenham rating** (corrige V2: sem rating dos dois
-   lados, não há troca).
-2. Diretório novo ou sem nenhum duelo de versão: vence a versão **mais
-   recente** (timestamp do nome do arquivo) **que passe em `isPublished`**
-   (`draft: true` e `publishDate` futuro ficam de fora — sem publicável,
-   o slug não entra no JSON). Desempate determinístico pelo nome.
+   lados, não há troca). **Exceção:** se a versão atualmente selecionada
+   não passar em `isPublished` (foi marcada `draft: true` ou ganhou
+   `publishDate` futuro após a seleção), ela é descartada e a regra 2 é
+   aplicada imediatamente — sem esperar histerese.
+2. Diretório novo, sem seleção atual válida, ou sem nenhum duelo de versão:
+   vence a versão **mais recente** (timestamp do nome do arquivo) **que passe
+   em `isPublished`** (`draft: true` e `publishDate` futuro ficam de fora —
+   sem publicável, o slug não entra no JSON). Desempate determinístico pelo
+   nome.
 3. A seleção nunca aponta para arquivo inexistente — `hronir:doctor` valida.
 
 No Astro, a collection `blog` troca o glob `**/index.{md,mdx}` por um **loader
@@ -253,7 +257,7 @@ A semântica do guard que a RFC 0003 §7 pedia ("mesma key dos dois lados
 corrompe o OpenSkill") passa a ser **estrutural**: o tipo separa os dois
 universos, e nenhum consumidor novo precisa redescobrir a regra.
 
-### 4.4. Duelos de versão para todas as línguas (corrige V5)
+### 4.4. Duelos de versão para todas as línguas e seleção acoplada (corrige V5)
 
 `pickVersionDuel` deixa de partir de `listEnglishWithKey()` e passa a iterar
 **todos os diretórios com ≥ 2 versões**, qualquer língua (PT, EN, músicas). O
@@ -261,6 +265,20 @@ desafiante é a versão não-selecionada com menos duelos (desempate: mais
 recente). A avaliação segue a convenção de língua do repo: review na língua do
 post (`lang` do frontmatter), que agora vale por construção porque o duelo é
 sempre dentro de um diretório monolíngue.
+
+**Seleção acoplada entre traduções.** Permitir que EN e PT selecionem
+independentemente reabre a divergência de conteúdo que era o V5 original:
+o EN pode cruzar o limiar de histerese enquanto o PT acumula poucos duelos e
+fica na versão antiga — ou nunca tem versões suficientes para duelar. Para
+evitar isso, `hronir:select` trata as traduções de um mesmo `translationKey`
+como **unidade**: quando a versão selecionada muda em um diretório, o comando
+busca nos diretórios irmãos (mesmo `translationKey`) a versão com o mesmo
+`draftCreatedAt` (campo gravado pelo `draft-worst` em todas as traduções da
+mesma rodada) e a seleciona também — desde que passe em `isPublished`. Se o
+diretório irmão não tiver uma versão com o `draftCreatedAt` correspondente
+(e.g. tradução PT ainda não foi criada para esta revisão), ele mantém a seleção
+atual. Resultado: as línguas de um ensaio avançam juntas ou não avançam — sem
+divergência silenciosa.
 
 `prune` sobrevive, simplificado: remove versões **não-selecionadas** com
 n ≥ 3 duelos de versão e ≥ 0.5★ abaixo da selecionada — nunca a selecionada,
