@@ -35,6 +35,7 @@ export async function GET(context) {
       "Lawyer and State Attorney. Exploring the intersections of process metaphysics, AI agency, and the architecture of legal systems.",
     site: context.site,
     items,
-    customData: "<language>en-us</language>",
+    xmlns: { atom: "http://www.w3.org/2005/Atom" },
+    customData: `<language>en-us</language><atom:link href="${context.site}rss.xml" rel="self" type="application/rss+xml" />`,
   });
 }

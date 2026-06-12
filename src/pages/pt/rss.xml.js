@@ -35,6 +35,7 @@ export async function GET(context) {
       "Advogado e Procurador do Estado. Explorando as interseções entre metafísica do processo, agentes de IA e a arquitetura dos sistemas jurídicos.",
     site: context.site,
     items,
-    customData: "<language>pt-br</language>",
+    xmlns: { atom: "http://www.w3.org/2005/Atom" },
+    customData: `<language>pt-br</language><atom:link href="${context.site}pt/rss.xml" rel="self" type="application/rss+xml" />`,
   });
 }
