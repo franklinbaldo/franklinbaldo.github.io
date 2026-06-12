@@ -3,38 +3,51 @@ import { type CollectionEntry, getCollection, render } from "astro:content";
 import PageLayout from "../../../../layouts/PageLayout.astro";
 import VersionBanner from "../../../../components/VersionBanner.astro";
 import BackToTop from "../../../../components/BackToTop.astro";
-import { uuidForId, slugOf } from "../../../../lib/versions.mjs";
+import {
+  uuidForId,
+  legacyUuidForId,
+  slugOf,
+} from "../../../../lib/versions.mjs";
 
-// RFC 0003: content-addressed version pages. Every non-canonical version file
-// (drafts + superseded canonicals) gets /blog/<slug>/v/<uuid>. A UUID that is
-// *currently* the live canonical redirects to /blog/<slug> so permalinks stay
-// stable across promotion. All version pages are noindex with canonical → live.
+// RFC 0010: content-addressed version pages. Every non-selected version file
+// gets /blog/<slug>/v/<uuid>. A UUID that is *currently* the selected version
+// redirects to /blog/<slug> so permalinks stay stable across selection swaps.
+// Pre-RFC-0010 permalinks used the body-only legacy UUID — those get a
+// redirect too. All version pages are noindex with canonical → live.
 export async function getStaticPaths() {
   const [versions, canon] = await Promise.all([
     getCollection("blogVersions"),
     getCollection("blog"),
   ]);
-  const paths = [];
+  const paths: Array<{
+    params: { slug: string; uuid: string };
+    props: { entry: CollectionEntry<"blogVersions"> | CollectionEntry<"blog">; redirect: boolean };
+  }> = [];
+  const seen = new Set<string>();
+  const push = (slug: string, uuid: string | null | undefined, props: { entry: CollectionEntry<"blogVersions"> | CollectionEntry<"blog">; redirect: boolean }) => {
+    const k = `${slug}/${uuid}`;
+    if (!uuid || seen.has(k)) return;
+    seen.add(k);
+    paths.push({ params: { slug, uuid }, props });
+  };
   for (const v of versions) {
     if ((v.data.lang ?? "en") === "pt") continue;
+    const slug = slugOf(v.id);
     const uuid = uuidForId(v.id);
     if (!uuid) continue; // file gone / unresolved → skip rather than crash
-    paths.push({
-      params: { slug: slugOf(v.id), uuid },
-      props: { entry: v, redirect: false },
-    });
+    push(slug, uuid, { entry: v, redirect: false });
+    const legacy = legacyUuidForId(v.id);
+    if (legacy && legacy !== uuid) {
+      push(slug, legacy, { entry: v, redirect: true });
+    }
   }
   for (const c of canon) {
     if ((c.data.lang ?? "en") === "pt") continue;
-    // Only promoted canonicals need a /v/<live-uuid> permalink (their content
-    // was once a draft that may have been linked); skip the rest to avoid bloat.
+    // Only selected versions with lineage need a /v/<live-uuid> permalink
+    // (their content was once a draft that may have been linked).
     if (!c.data.supersedes) continue;
-    const uuid = uuidForId(c.id);
-    if (!uuid) continue;
-    paths.push({
-      params: { slug: c.id, uuid },
-      props: { entry: c, redirect: true },
-    });
+    push(c.id, uuidForId(c.id), { entry: c, redirect: true });
+    push(c.id, legacyUuidForId(c.id), { entry: c, redirect: true });
   }
   return paths;
 }

@@ -3,40 +3,59 @@
 // of rolling their own readdirSync/glob logic. This is the one place the
 // RFC 0003 migration will update (postIdFromPath) when the layout changes
 // from flat files to per-post directories.
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join, relative, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 export const BLOG_DIR = join(__dir, "../../src/content/blog");
+const SELECTION_PATH = join(
+  __dir,
+  "../../src/generated/versions-selected.json"
+);
 
 /**
- * Recursively list the canonical file of every blog post. Returns absolute
- * paths. RFC 0003: each post is a folder <slug>/ whose canonical (published)
- * version is index.md(x); non-canonical versions (v-<timestamp>.md) are
- * skipped here, mirroring the Astro loader that globs only **\/index.{md,mdx}.
+ * List the published file of every blog post. Returns absolute paths.
+ * RFC 0010: each post is a folder <slug>/ of peer version files; the
+ * published one is whatever versions-selected.json points at — mirroring the
+ * Astro loader. Falls back to the RFC 0003 <slug>/index.* layout when the
+ * selection file is absent (pre-migration tree).
  */
-export function listPostFiles(dir = BLOG_DIR) {
-  const out = [];
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    const full = join(dir, entry.name);
-    if (entry.isDirectory()) {
-      out.push(...listPostFiles(full));
-    } else if (/^index\.mdx?$/.test(entry.name)) {
-      out.push(full);
+export function listPostFiles() {
+  if (existsSync(SELECTION_PATH)) {
+    const out = [];
+    const parsed = JSON.parse(readFileSync(SELECTION_PATH, "utf-8"));
+    for (const [slug, entry] of Object.entries(parsed)) {
+      if (slug === "_meta" || !entry?.file) continue;
+      const abs = join(BLOG_DIR, entry.file);
+      if (existsSync(abs)) out.push(abs);
     }
+    return out.sort();
   }
-  return out;
+  const walk = (dir) => {
+    const out = [];
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name);
+      if (entry.isDirectory()) {
+        out.push(...walk(full));
+      } else if (/^index\.mdx?$/.test(entry.name)) {
+        out.push(full);
+      }
+    }
+    return out;
+  };
+  return walk(BLOG_DIR);
 }
 
 /**
  * Derive the Astro post id (= URL slug) from an absolute file path.
- * RFC 0003: canonical files are <slug>/index.md(x), so the id is the folder
- * path (URL-preserving) — strip the trailing /index.<ext>.
+ * RFC 0010: post files are <slug>/v-<timestamp>.md(x) (or legacy
+ * <slug>/index.md(x)), so the id is the folder path (URL-preserving) —
+ * strip the trailing filename.
  */
 export function postIdFromPath(absPath) {
   const rel = relative(BLOG_DIR, absPath).replace(/\\/g, "/");
-  return rel.replace(/\/index\.mdx?$/, "");
+  return rel.replace(/\/(v-[^/]+|index)\.mdx?$/, "");
 }
 
 /** Parse YAML frontmatter from a raw markdown string (no dependencies). */

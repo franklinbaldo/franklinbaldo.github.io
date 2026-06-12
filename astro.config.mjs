@@ -23,6 +23,22 @@ try {
   // File not yet generated — legacy date-prefixed URLs won't redirect.
 }
 
+// RFC 0010 §4.4: pruned versions keep their public permalinks as redirects
+// to the live post — `hronir:prune` registers every removed slug@uuid here.
+try {
+  const pruned = JSON.parse(
+    readFileSync("./src/generated/versions-pruned.json", "utf-8")
+  );
+  for (const e of pruned.pruned ?? []) {
+    const base = e.lang === "pt" ? `/pt/blog/${e.slug}` : `/blog/${e.slug}`;
+    for (const uuid of new Set([e.uuid, e.legacyUuid].filter(Boolean))) {
+      blogRedirects[`${base}/v/${uuid}/`] = `${base}/`;
+    }
+  }
+} catch {
+  // No pruned-version registry yet — nothing to redirect.
+}
+
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import remarkMath from "remark-math";

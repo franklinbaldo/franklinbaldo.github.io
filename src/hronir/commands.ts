@@ -6,15 +6,22 @@ import { rating, predictWin } from "openskill";
 import {
   OUT_DIR,
   RATES_DIR,
-  listEnglishWithKey,
   keyForPath,
   readPost,
   listPosts,
   getPostUuid,
-  findTranslations,
-  isCanonical,
-  listVersions,
 } from "./posts.js";
+import {
+  SELECTION_PATH,
+  readSelection,
+  writeSelection,
+  listDirVersions,
+  listVersionSlugs,
+  listEnglishWithKey,
+  findTranslations,
+  type SelectionEntries,
+  type VersionInfo,
+} from "./selection.js";
 import {
   listMatchFiles,
   readMatch,
@@ -103,7 +110,10 @@ const OBJECTIVE_WEIGHT = 0.15;
 const SKILLS_DIR = "scripts/hronir/skills";
 const SESSION_PATH = "hronir_session.json";
 const MIN_WORDS = 100;
-const PROMPT_VERSION = "stars-v1";
+// RFC 0010: stars-v2 adds post_a/b.ref ("slug@uuid") to each side. stars-v1
+// files (path/key/version fields) remain readable and are never rewritten.
+const PROMPT_VERSION = "stars-v2";
+const STARS_SCHEMAS = new Set(["stars-v1", "stars-v2"]);
 
 function wordCount(s: unknown): number {
   if (!s || typeof s !== "string") return 0;
@@ -289,37 +299,96 @@ function randomMoodGlyph() {
   return String.fromCodePoint(cp);
 }
 
-// RFC 0003: probability that a generated match is a version duel (canonical vs
-// one of its own drafts) instead of a cross-essay pair. Small enough to keep
-// most matches cross-essay; only ever fires when a candidate actually has a
-// sibling draft, so it's a no-op until draft-worst creates one.
+// RFC 0010: probability that a generated match is a version duel (the
+// selected version vs a sibling challenger) instead of a cross-essay pair.
+// Small enough to keep most matches cross-essay; only ever fires when some
+// directory actually has a non-selected version.
 const VERSION_DUEL_PROB = 0.34;
 
-// RFC 0003 follow-up: auto-promotion threshold. `promote --key` only swaps a
-// challenger in when it leads the canonical by at least PROMOTE_MARGIN stars
-// over at least PROMOTE_MIN_DUELS version duels. `--force` bypasses both.
-const PROMOTE_MARGIN = 0.3;
-const PROMOTE_MIN_DUELS = 2;
+// RFC 0010 §4.2: selection hysteresis. A challenger only displaces the
+// selected version when it leads by at least SELECT_MARGIN stars over at
+// least SELECT_MIN_DUELS version duels — and both sides must have a rating.
+const SELECT_MARGIN = 0.3;
+const SELECT_MIN_DUELS = 2;
 
-// Find an eligible canonical that has at least one sibling draft (v-*) and
-// return the duel sides (canonical vs the freshest draft) for that (key, lang).
-function pickVersionDuel(
-  eligible: Array<{ path: string; translationKey: string }>
-) {
-  const candidates = [];
-  for (const c of eligible) {
-    const drafts = listVersions(c.path).filter((p) => !isCanonical(p));
-    if (drafts.length === 0) continue;
-    drafts.sort(); // v-<timestamp> names sort chronologically
+// Stars + duel count for a version, looking up the rating map by the RFC 0010
+// UUID first and the legacy body-only UUID (stars-v1 rate files) second.
+function versionStars(
+  ratings: Map<string, { stars: number; n: number }>,
+  v: VersionInfo
+): { stars: number; n: number } | null {
+  return ratings.get(v.uuid) ?? ratings.get(v.legacyUuid) ?? null;
+}
+
+// RFC 0010 §4.4: version duels run in every directory with at least two
+// versions, any language. The challenger is the non-selected publishable
+// version with the fewest duels (tiebreak: newest). Candidates whose revision
+// (draftCreatedAt) already qualified in a sibling language are prioritized so
+// coupled selections unblock fast.
+function pickVersionDuel() {
+  const ratings = computeVersionRatings();
+  const candidates: Array<{
+    key: string;
+    lang: string;
+    selectedPath: string;
+    challengerPath: string;
+    priority: boolean;
+  }> = [];
+
+  // Revisions (draftCreatedAt) whose challenger already cleared the
+  // hysteresis bar in some directory.
+  const qualifiedRevisions = new Set<string>();
+  const dirVersions = new Map<string, VersionInfo[]>();
+  for (const slug of Object.keys(readSelection())) {
+    const versions = listDirVersions(slug);
+    dirVersions.set(slug, versions);
+    const selected = versions.find((v) => v.selected);
+    if (!selected) continue;
+    const selStars = versionStars(ratings, selected);
+    for (const v of versions) {
+      if (v.selected || !v.draftCreatedAt) continue;
+      const vs = versionStars(ratings, v);
+      if (
+        vs &&
+        selStars &&
+        vs.n >= SELECT_MIN_DUELS &&
+        vs.stars - selStars.stars >= SELECT_MARGIN
+      ) {
+        qualifiedRevisions.add(v.draftCreatedAt);
+      }
+    }
+  }
+
+  for (const [slug, versions] of dirVersions) {
+    const selected = versions.find((v) => v.selected);
+    if (!selected) continue;
+    const challengers = versions.filter((v) => !v.selected && v.published);
+    if (challengers.length === 0) continue;
+    challengers.sort((a, b) => {
+      const na = versionStars(ratings, a)?.n ?? 0;
+      const nb = versionStars(ratings, b)?.n ?? 0;
+      if (na !== nb) return na - nb;
+      return b.file.localeCompare(a.file); // newest first
+    });
+    const challenger = challengers[0];
     candidates.push({
-      key: c.translationKey,
-      lang: readPost(c.path).lang || "en",
-      canonicalPath: c.path,
-      draftPath: drafts[drafts.length - 1],
+      key: selected.translationKey ?? slug,
+      lang: selected.lang,
+      selectedPath: selected.path,
+      challengerPath: challenger.path,
+      priority: Boolean(
+        challenger.draftCreatedAt &&
+        qualifiedRevisions.has(challenger.draftCreatedAt) &&
+        (versionStars(ratings, challenger)?.n ?? 0) < SELECT_MIN_DUELS
+      ),
     });
   }
+
   if (candidates.length === 0) return null;
-  return candidates[Math.floor(Math.random() * candidates.length)];
+  const pool = candidates.some((c) => c.priority)
+    ? candidates.filter((c) => c.priority)
+    : candidates;
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 function generateNextMatch() {
@@ -464,41 +533,34 @@ function generateNextMatch() {
   }
   const evaluatorMood = pickRandomMood(recordedMoods);
 
-  // RFC 0003: occasionally run a version duel (canonical vs one of its drafts)
-  // so competing versions get rated. Only fires when fresh drafts exist;
-  // otherwise falls back to the cross-essay pair chosen above.
-  const duel =
-    Math.random() < VERSION_DUEL_PROB ? pickVersionDuel(eligible) : null;
+  // RFC 0010 §4.3: stable version addressing. slug = folder name, uuid =
+  // content identity; together they survive renames, selection swaps and
+  // pruning.
+  const refFor = (p: string) =>
+    `${path.basename(path.dirname(p))}@${getPostUuid(p)}`;
+  const sideFor = (key: string, p: string, lang: string) => ({
+    key,
+    path: p,
+    display_lang: lang,
+    version: getPostUuid(p),
+    ref: refFor(p),
+  });
+
+  // RFC 0010: occasionally run a version duel (the selected version vs a
+  // sibling challenger, any language) so competing versions get rated. Only
+  // fires when some directory has a challenger; otherwise falls back to the
+  // cross-essay pair chosen above.
+  const duel = Math.random() < VERSION_DUEL_PROB ? pickVersionDuel() : null;
   let postA, postB;
   if (duel) {
-    postA = {
-      key: duel.key,
-      path: duel.canonicalPath,
-      display_lang: duel.lang,
-      version: getPostUuid(duel.canonicalPath),
-    };
-    postB = {
-      key: duel.key,
-      path: duel.draftPath,
-      display_lang: duel.lang,
-      version: getPostUuid(duel.draftPath),
-    };
+    postA = sideFor(duel.key, duel.selectedPath, duel.lang);
+    postB = sideFor(duel.key, duel.challengerPath, duel.lang);
     console.log(
-      `Gerado match: DUELO DE VERSÃO (${duel.key}/${duel.lang}) — canônica vs rascunho. Perspectiva: ${perspective.name}.`
+      `Gerado match: DUELO DE VERSÃO (${duel.key}/${duel.lang}) — selecionada vs desafiante. Perspectiva: ${perspective.name}.`
     );
   } else {
-    postA = {
-      key: a.translationKey,
-      path: aVariant.path,
-      display_lang: aVariant.lang,
-      version: getPostUuid(aVariant.path),
-    };
-    postB = {
-      key: b.translationKey,
-      path: bVariant.path,
-      display_lang: bVariant.lang,
-      version: getPostUuid(bVariant.path),
-    };
+    postA = sideFor(a.translationKey, aVariant.path, aVariant.lang);
+    postB = sideFor(b.translationKey, bVariant.path, bVariant.lang);
     console.log(
       `Gerado match (active sampling). Perspectiva: ${perspective.name}. Idiomas: ${aVariant.lang}/${bVariant.lang}.`
     );
@@ -1617,17 +1679,25 @@ export function editWorst() {
   // rows are sorted by ordinal DESC (best first); worst eligible is the last.
   // We skip posts that were edited in the last two edit cycles.
   const recentlyEdited = getRecentlyEditedKeys(2);
+  const duelRatings = computeVersionRatings();
   let worstRow = null;
   for (let i = eligible.length - 1; i >= 0; i--) {
     const row = eligible[i];
     if (recentlyEdited.includes(row.key)) continue;
-    // RFC 0003: don't pile drafts — skip keys that already have a pending one.
-    // Exclude v-*-prev.* archive files (created by promote) — they are not drafts.
-    const hasDraft = findTranslations(row.key).some((t) =>
-      listVersions(t.path).some(
-        (p) => !isCanonical(p) && !/-prev\.[^/]+$/.test(p)
-      )
-    );
+    // RFC 0010: don't pile drafts — skip keys that still have a pending
+    // challenger (a non-selected publishable version awaiting its duels).
+    // A version that already duelled enough and didn't win is a settled
+    // loser (prune candidate), not a pending draft — it must not block
+    // draft-worst forever the way the old v-*-prev archive did (bug V4).
+    const hasDraft = findTranslations(row.key).some((t) => {
+      const slug = path.basename(path.dirname(t.path));
+      return listDirVersions(slug).some(
+        (v) =>
+          !v.selected &&
+          v.published &&
+          (versionStars(duelRatings, v)?.n ?? 0) < SELECT_MIN_DUELS
+      );
+    });
     if (hasDraft) continue;
     worstRow = row;
     break;
@@ -1654,13 +1724,12 @@ export function editWorst() {
     process.exit(1);
   }
 
-  // RFC 0003: non-destructive drafting. Instead of editing the canonical
-  // index.md in place (which conflicts when two sessions target the same
-  // worst post), copy each canonical into a sibling draft
-  // <slug>/v-<timestamp>.<ext> for the agent to edit. The canonical stays
-  // untouched; the draft competes with it in later matches, and a future
-  // `promote` swaps the winner in. Lineage lives in-repo via `supersedes`
-  // (the canonical's content UUID), not a git permalink.
+  // RFC 0010: non-destructive drafting. Copy each selected version into a
+  // sibling draft <slug>/v-<timestamp>.<ext> for the agent to edit. The
+  // selected version stays untouched; the draft competes with it in later
+  // version duels, and `hronir:select` swaps the winner in when it clears
+  // the hysteresis bar. Lineage lives in-repo via `supersedes` (the
+  // selected version's content UUID).
   const { runId: draftStamp } = utcStamp();
   const draftCreatedAt = new Date().toISOString();
   const drafts = [];
@@ -1780,8 +1849,8 @@ export function editWorst() {
     "argumentativo-formal (paper-shaped, defesa de tese, citação",
     "acadêmica densa). Em caso de dúvida, blog.",
     "",
-    "Edite os RASCUNHOS abaixo (NÃO as canônicas index.md — elas ficam intactas).",
-    "Cada rascunho é uma nova versão que vai conviver e competir com a canônica:",
+    "Edite os RASCUNHOS abaixo (NÃO as versões selecionadas — elas ficam intactas).",
+    "Cada rascunho é uma nova versão que vai conviver e competir com a selecionada:",
   ];
   for (const d of drafts) {
     stepLines.push(`- [${d.lang}] ${d.draftPath}`);
@@ -1926,20 +1995,14 @@ export function doctor() {
     const aVersion = postA.version as string | undefined;
     const bVersion = postB.version as string | undefined;
 
-    // RFC 0003 §7: path é informacional, version é autoritativo. Após um
-    // promote (rascunho v-*.md vira index.*) ou um prune (v-*.md removido),
-    // o path gravado no rate file deixa de existir; tolerar enquanto a pasta
-    // do post existir e o lado carregar o UUID de versão.
+    // RFC 0010 §4.3: path é cache de resolução, version (UUID) é identidade.
+    // Após a migração (index.* → v-*), um select ou um prune, o path gravado
+    // no rate file pode deixar de existir; tolerar enquanto a pasta do post
+    // existir e o lado carregar o UUID de versão.
     const tolerableGone = (
       p: string | undefined,
       version: string | undefined
-    ) =>
-      Boolean(
-        p &&
-        version &&
-        /^v-/.test(path.basename(p)) &&
-        fs.existsSync(path.dirname(p))
-      );
+    ) => Boolean(p && version && fs.existsSync(path.dirname(p)));
 
     if (!aKey) issues.push(`${base}: post_a.key ausente`);
     if (!bKey) issues.push(`${base}: post_b.key ausente`);
@@ -1971,7 +2034,7 @@ export function doctor() {
     //     hand-edited legacy match doesn't get retroactively reclassified.
     //   - new-schema (pre-stars): `agent_id` set, prose in frontmatter.
     //   - legacy: neither marker — accepted as-is for historical compatibility.
-    const isStarsSchema = data.prompt_version === PROMPT_VERSION;
+    const isStarsSchema = STARS_SCHEMAS.has(String(data.prompt_version));
     const isNewSchema = !!data.agent_id || isStarsSchema;
 
     // Stars-schema invariants are independent of agent_id presence: a match
@@ -2110,6 +2173,77 @@ export function doctor() {
       issues.push(
         `${base}: nome de arquivo difere do esperado (${expectedName})`
       );
+    }
+  }
+
+  // RFC 0010: selection-v1 validation. Every entry must point at an existing
+  // file whose UUID matches; no two versions in a directory may share a UUID;
+  // every directory with a publishable version must be selected; selected
+  // versions of a translation group should sit on the same revision.
+  {
+    const selection = readSelection();
+    if (Object.keys(selection).length === 0) {
+      issues.push(
+        `${SELECTION_PATH}: ausente ou vazio — rode \`npm run hronir:select\`.`
+      );
+    }
+    for (const [slug, entry] of Object.entries(selection)) {
+      const p = path.join("src/content/blog", entry.file);
+      if (!fs.existsSync(p)) {
+        issues.push(
+          `${SELECTION_PATH}: ${slug} aponta para arquivo inexistente (${entry.file})`
+        );
+        continue;
+      }
+      const uuid = getPostUuid(p);
+      if (uuid !== entry.uuid) {
+        issues.push(
+          `${SELECTION_PATH}: ${slug} uuid divergente (registrado ${entry.uuid}, arquivo ${uuid}) — rode \`npm run hronir:select\``
+        );
+      }
+    }
+    const groupRevisions = new Map<string, Map<string, string[]>>();
+    for (const slug of listVersionSlugs()) {
+      const versions = listDirVersions(slug);
+      const byUuid = new Map<string, string[]>();
+      for (const v of versions) {
+        if (!byUuid.has(v.uuid)) byUuid.set(v.uuid, []);
+        byUuid.get(v.uuid)!.push(v.file);
+      }
+      for (const [uuid, files] of byUuid) {
+        if (files.length > 1) {
+          issues.push(
+            `${slug}/: versões com UUID duplicado (${uuid}): ${files.join(", ")} — estado degenerado, remova as cópias`
+          );
+        }
+      }
+      if (!selection[slug] && versions.some((v) => v.published)) {
+        issues.push(
+          `${slug}/: tem versão publicável mas não está em ${SELECTION_PATH} — rode \`npm run hronir:select\``
+        );
+      }
+      // Divergence report (§4.4): selected versions of a translation group
+      // should share a revision; null draftCreatedAt never pairs, so groups
+      // containing them are skipped (no false positives for new posts).
+      const sel = versions.find((v) => v.selected);
+      if (sel?.translationKey && sel.draftCreatedAt) {
+        if (!groupRevisions.has(sel.translationKey)) {
+          groupRevisions.set(sel.translationKey, new Map());
+        }
+        const revs = groupRevisions.get(sel.translationKey)!;
+        if (!revs.has(sel.draftCreatedAt)) revs.set(sel.draftCreatedAt, []);
+        revs.get(sel.draftCreatedAt)!.push(slug);
+      }
+    }
+    for (const [key, revs] of groupRevisions) {
+      if (revs.size > 1) {
+        const detail = [...revs.entries()]
+          .map(([rev, slugs]) => `${slugs.join("+")}=${rev}`)
+          .join(" vs ");
+        issues.push(
+          `grupo "${key}" divergente entre línguas (${detail}) — próxima rodada de draft-worst/select deve reconvergir`
+        );
+      }
     }
   }
 
@@ -2360,8 +2494,8 @@ export function editCommit(msg: string) {
   }
 
   // Finalize each draft: keep the supersedes link and record the edit message.
-  // The canonical index.md is never touched — the draft coexists with it as a
-  // competing version (promotion happens later via `hronir:promote`).
+  // The selected version is never touched — the draft coexists with it as a
+  // competing version (`hronir:select` swaps it in if it wins its duels).
   for (const d of drafts) {
     const parsed = matter(fs.readFileSync(d.draftPath, "utf8"));
     parsed.data.supersedes = d.canonicalUuid;
@@ -2389,245 +2523,347 @@ export function editCommit(msg: string) {
   console.log(`   Versões competidoras: ${drafts.length}`);
   console.log("");
   console.log(
-    "As versões convivem lado a lado com as canônicas (index.md intactas) e vão"
+    "As versões convivem lado a lado com as selecionadas (intactas) e vão"
   );
   console.log(
-    "competir nos próximos matches. A vencedora pode virar canônica com `npm run hronir:promote`."
+    "competir nos próximos duelos. `npm run hronir:select` troca a exibida quando uma vencer."
   );
   console.log("Commit as alterações com git normalmente.");
 }
 
-// RFC 0003: swap a winning version into <slug>/index.<ext>, archiving the
-// outgoing canonical as a sibling version file. The published URL (the folder
-// name) is preserved. Two modes:
-//   --draft <path>  promote that specific draft (explicit)
-//   --key <key>     auto-pick the best version per lang via version-duel stars
-export function promote(args: string[]) {
-  let draftPath = null;
-  let key = null;
-  let force = false;
-  let all = false;
-  for (let i = 0; i < args.length; i++) {
-    if (args[i] === "--draft") draftPath = args[++i];
-    else if (args[i] === "--key") key = args[++i];
-    else if (args[i] === "--force") force = true;
-    else if (args[i] === "--all") all = true;
-  }
+// ── RFC 0010 §4.2/§4.4: ranking-driven selection with hysteresis ────────────
 
-  if (all) {
-    // Scan every canonical and attempt auto-promotion for each key.
-    const keys = new Set<string>();
-    for (const p of listPosts()) {
-      if (isCanonical(p)) keys.add(keyForPath(p));
-    }
-    let totalPromoted = 0;
-    for (const k of keys) {
-      totalPromoted += _promoteByKey(k, force);
-    }
-    nextStep(
-      totalPromoted > 0
-        ? `${totalPromoted} versão(ões) promovida(s). Revise o diff e commite.`
-        : "Nenhuma promoção: sem duelos de versão suficientes ou as canônicas já lideram."
-    );
-    return;
-  }
-
-  if (draftPath) {
-    if (!fs.existsSync(draftPath)) {
-      console.error(`Erro: rascunho não encontrado: ${draftPath}`);
-      process.exit(1);
-    }
-    if (isCanonical(draftPath)) {
-      console.error(`Erro: ${draftPath} já é a canônica (index.*).`);
-      process.exit(1);
-    }
-    promoteFile(draftPath);
-    nextStep(
-      "Revise o diff e commite. A nova canônica está publicada na mesma URL."
-    );
-    return;
-  }
-
-  if (!key) {
-    console.error(
-      "Erro: informe `--draft <caminho>`, `--key <translationKey>`, ou `--all` (varre todas as chaves)."
-    );
-    process.exit(1);
-  }
-
-  const translations = findTranslations(key);
-  if (translations.length === 0) {
-    console.error(`Erro: nenhuma canônica encontrada para a chave "${key}".`);
-    process.exit(1);
-  }
-
-  const promoted = _promoteByKey(key, force);
-  nextStep(
-    promoted > 0
-      ? `${promoted} versão(ões) promovida(s). Revise o diff e commite.`
-      : "Nenhuma promoção: sem duelos de versão suficientes ou a canônica já lidera. Use `--draft <caminho>` para promover manualmente."
-  );
-}
-
-// Returns the count of versions promoted for a given translationKey.
-function _promoteByKey(key: string, force: boolean): number {
-  const versionRatings = computeVersionRatings();
-  const translations = findTranslations(key);
-  let promoted = 0;
-  for (const t of translations) {
-    const scored = listVersions(t.path)
-      .map((p) => {
-        const uuid = getPostUuid(p);
-        const vr = uuid ? versionRatings.get(uuid) : undefined;
-        return {
-          path: p,
-          canonical: isCanonical(p),
-          stars: vr ? vr.stars : null,
-          n: vr ? vr.n : 0,
-        };
-      })
-      .filter((v) => v.stars !== null);
-    if (scored.length === 0) {
-      continue;
-    }
-    const scoredRated = scored as Array<{
-      path: string;
-      canonical: boolean;
-      stars: number;
-      n: number;
-    }>;
-    scoredRated.sort((a, b) => b.stars - a.stars);
-    const best = scoredRated[0];
-    if (best.canonical) {
-      continue;
-    }
-    const canonicalStars = scoredRated.find((v) => v.canonical)?.stars ?? 0;
-    const margin = best.stars - canonicalStars;
-    if (!force && (best.n < PROMOTE_MIN_DUELS || margin < PROMOTE_MARGIN)) {
-      console.log(
-        `[promote] ${t.lang}: ${best.path} lidera por +${margin.toFixed(2)}★ em ${best.n} duelo(s) — abaixo do limiar (margem ≥${PROMOTE_MARGIN}, duelos ≥${PROMOTE_MIN_DUELS}).`
-      );
-      continue;
-    }
-    console.log(
-      `[promote] ${t.lang}: promovendo ${best.path} (${best.stars.toFixed(2)}★ vs canônica ${canonicalStars.toFixed(2)}★, +${margin.toFixed(2)}, n=${best.n}).`
-    );
-    promoteFile(best.path);
-    promoted++;
-  }
-  return promoted;
-}
-
-// RFC 0003 Fase 3: prune versions that have clearly lost to the canonical.
-// A version is eligible when the canonical leads it by at least PRUNE_MARGIN
-// stars over at least PRUNE_MIN_DUELS version duels.
+const PRUNED_PATH = "src/generated/versions-pruned.json";
 const PRUNE_MARGIN = 0.5;
 const PRUNE_MIN_DUELS = 3;
 
-export function prune({ dryRun = false } = {}) {
-  const versionRatings = computeVersionRatings();
-  const toDelete: Array<{
-    path: string;
-    versionStars: number;
-    canonicalStars: number;
-    margin: number;
-    n: number;
-  }> = [];
+interface DirState {
+  slug: string;
+  versions: VersionInfo[];
+  /** Currently selected version, when the selection entry is valid and
+   *  publishable. */
+  selected: VersionInfo | null;
+  /** True when a selection entry exists but points at a missing or
+   *  unpublishable version (§4.2 rule-1 exception → rule 2). */
+  invalidSelection: boolean;
+  /** True when the slug has no selection entry yet (debuting directory). */
+  isNew: boolean;
+}
 
-  for (const p of listPosts()) {
-    if (isCanonical(p)) continue;
-    const dir = path.dirname(p);
-    const indexMd = path.join(dir, "index.md");
-    const indexMdx = path.join(dir, "index.mdx");
-    const canonicalPath = fs.existsSync(indexMd)
-      ? indexMd
-      : fs.existsSync(indexMdx)
-        ? indexMdx
-        : null;
-    if (!canonicalPath) continue;
+function newestPublished(d: DirState): VersionInfo | null {
+  for (let i = d.versions.length - 1; i >= 0; i--) {
+    if (d.versions[i].published) return d.versions[i];
+  }
+  return null;
+}
 
-    const versionUuid = getPostUuid(p);
-    const canonicalUuid = getPostUuid(canonicalPath);
-    if (!versionUuid || !canonicalUuid) continue;
+// RFC 0010 §4.2/§4.4: recompute versions-selected.json from the version-duel
+// ranking. Hysteresis: the selected version is only displaced by a challenger
+// with stars ≥ selected + SELECT_MARGIN over n ≥ SELECT_MIN_DUELS — both
+// sides rated. Translation groups advance atomically: every sibling
+// directory must hold a publishable counterpart of the same revision
+// (draftCreatedAt) that independently qualifies, or nobody moves.
+export function select({ dryRun = false } = {}) {
+  const ratings = computeVersionRatings();
+  const selection = readSelection();
 
-    const vr = versionRatings.get(versionUuid);
-    const cr = versionRatings.get(canonicalUuid);
-    if (!vr || !cr) continue;
+  const dirs = new Map<string, DirState>();
+  for (const slug of listVersionSlugs()) {
+    const versions = listDirVersions(slug);
+    if (versions.length === 0) continue;
+    const entry = selection[slug];
+    let selected: VersionInfo | null = null;
+    let invalidSelection = false;
+    if (entry) {
+      selected =
+        versions.find((v) => v.file === entry.file) ??
+        versions.find((v) => v.uuid === entry.uuid) ??
+        null;
+      if (selected && !selected.published) selected = null;
+      if (!selected) invalidSelection = true;
+    }
+    dirs.set(slug, {
+      slug,
+      versions,
+      selected,
+      invalidSelection,
+      isNew: !entry,
+    });
+  }
 
-    const margin = cr.stars - vr.stars;
-    if (vr.n >= PRUNE_MIN_DUELS && margin >= PRUNE_MARGIN) {
-      toDelete.push({
-        path: p,
-        versionStars: vr.stars,
-        canonicalStars: cr.stars,
-        margin,
-        n: vr.n,
-      });
+  // Translation groups (slugs sharing a translationKey). Directories without
+  // a key form trivial single-member groups.
+  const groups = new Map<string, string[]>();
+  for (const d of dirs.values()) {
+    const key =
+      d.versions.find((v) => v.translationKey)?.translationKey ??
+      `__solo__${d.slug}`;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(d.slug);
+  }
+
+  const result: SelectionEntries = {};
+  const setResult = (slug: string, v: VersionInfo) => {
+    result[slug] = { file: v.file, uuid: v.uuid };
+  };
+
+  // Baseline: keep every valid current selection.
+  for (const d of dirs.values()) {
+    if (d.selected) setResult(d.slug, d.selected);
+  }
+
+  for (const [, slugs] of groups) {
+    const members = slugs.map((s) => dirs.get(s)!);
+    const hasInvalid = members.some((d) => d.invalidSelection);
+
+    if (hasInvalid) {
+      // §4.4 coupled fallback: move the whole group to the newest revision
+      // that has a publishable counterpart in every member directory.
+      const invalids = members.filter((d) => d.invalidSelection);
+      const candidateRevisions: string[] = [];
+      for (const d of invalids) {
+        for (let i = d.versions.length - 1; i >= 0; i--) {
+          const v = d.versions[i];
+          if (v.published && v.draftCreatedAt) {
+            candidateRevisions.push(v.draftCreatedAt);
+          }
+        }
+      }
+      let moved = false;
+      for (const rev of candidateRevisions) {
+        const counterparts = members.map((d) =>
+          d.versions.find((v) => v.published && v.draftCreatedAt === rev)
+        );
+        if (counterparts.every(Boolean)) {
+          members.forEach((d, i) => {
+            setResult(d.slug, counterparts[i]!);
+            console.log(
+              `[select] ${d.slug}: grupo movido para revisão ${rev} (${counterparts[i]!.file})`
+            );
+          });
+          moved = true;
+          break;
+        }
+      }
+      if (!moved) {
+        // No common publishable revision: each invalid directory falls back
+        // alone (publishing valid content beats language parity); doctor
+        // reports the group as divergent.
+        for (const d of invalids) {
+          const np = newestPublished(d);
+          if (np) {
+            setResult(d.slug, np);
+            console.log(
+              `[select] ${d.slug}: fallback solo para ${np.file} (grupo sem revisão comum publicável — divergência reportada pelo doctor)`
+            );
+          } else {
+            delete result[d.slug];
+            console.log(
+              `[select] ${d.slug}: sem versão publicável — slug fora da seleção`
+            );
+          }
+        }
+      }
+      continue;
+    }
+
+    // §4.2 rule 1: ranked challengers, atomically coupled (§4.4).
+    let proposal: {
+      dir: DirState;
+      challenger: VersionInfo;
+      margin: number;
+    } | null = null;
+    for (const d of members) {
+      if (!d.selected) continue;
+      const selStars = versionStars(ratings, d.selected);
+      if (!selStars) continue; // both sides must be rated (fixes V2)
+      for (const v of d.versions) {
+        if (v.selected || !v.published) continue;
+        const vs = versionStars(ratings, v);
+        if (!vs || vs.n < SELECT_MIN_DUELS) continue;
+        const margin = vs.stars - selStars.stars;
+        if (margin < SELECT_MARGIN) continue;
+        if (!proposal || margin > proposal.margin) {
+          proposal = { dir: d, challenger: v, margin };
+        }
+      }
+    }
+    if (!proposal) continue;
+
+    const rev = proposal.challenger.draftCreatedAt;
+    const withVersions = members; // every member dir has ≥1 version here
+    if (!rev && withVersions.length > 1) {
+      console.log(
+        `[select] ${proposal.dir.slug}: desafiante ${proposal.challenger.file} qualifica (+${proposal.margin.toFixed(2)}★) mas não tem draftCreatedAt — avanço acoplado impossível, grupo mantido`
+      );
+      continue;
+    }
+
+    // Each sibling needs a counterpart of the same revision that
+    // independently qualifies: publishable, n ≥ SELECT_MIN_DUELS, stars not
+    // inferior to that directory's current selection.
+    const switches: Array<{ dir: DirState; to: VersionInfo }> = [];
+    let blocked = false;
+    for (const d of withVersions) {
+      const counterpart =
+        d.slug === proposal.dir.slug
+          ? proposal.challenger
+          : d.versions.find((v) => v.published && v.draftCreatedAt === rev);
+      if (!counterpart) {
+        console.log(
+          `[select] grupo de ${proposal.dir.slug}: ${d.slug} sem contraparte publicável da revisão ${rev} — ninguém avança`
+        );
+        blocked = true;
+        break;
+      }
+      if (counterpart.selected) {
+        // Sibling is already on this revision — nothing to switch there.
+        continue;
+      }
+      const cs = versionStars(ratings, counterpart);
+      if (!cs || cs.n < SELECT_MIN_DUELS) {
+        console.log(
+          `[select] grupo de ${proposal.dir.slug}: contraparte ${counterpart.file} tem ${cs?.n ?? 0} duelo(s) (mínimo ${SELECT_MIN_DUELS}) — ninguém avança`
+        );
+        blocked = true;
+        break;
+      }
+      const curStars = d.selected ? versionStars(ratings, d.selected) : null;
+      if (curStars && cs.stars < curStars.stars) {
+        console.log(
+          `[select] grupo de ${proposal.dir.slug}: contraparte ${counterpart.file} (${cs.stars.toFixed(2)}★) regrediria vs seleção atual (${curStars.stars.toFixed(2)}★) — ninguém avança`
+        );
+        blocked = true;
+        break;
+      }
+      switches.push({ dir: d, to: counterpart });
+    }
+    if (blocked) continue;
+
+    for (const s of switches) {
+      setResult(s.dir.slug, s.to);
+      console.log(
+        `[select] ${s.dir.slug}: ${s.dir.selected?.file ?? "(nenhuma)"} → ${s.to.file} (+${proposal.margin.toFixed(2)}★ na língua disparadora, n=${versionStars(ratings, proposal.challenger)?.n})`
+      );
     }
   }
 
-  if (toDelete.length === 0) {
+  // §4.2 rule 2 for debuting directories: newest publishable version.
+  for (const d of dirs.values()) {
+    if (!d.isNew || result[d.slug]) continue;
+    const np = newestPublished(d);
+    if (np) {
+      setResult(d.slug, np);
+      console.log(`[select] ${d.slug}: estreia — ${np.file}`);
+    }
+  }
+
+  if (dryRun) {
+    console.log("select: dry-run — nada gravado.");
+    return;
+  }
+  const wrote = writeSelection(result);
+  console.log(
+    wrote
+      ? `select: seleção atualizada (${Object.keys(result).length} slugs) em ${SELECTION_PATH}.`
+      : `select: nenhuma mudança — ${SELECTION_PATH} intacto.`
+  );
+}
+
+interface PrunedEntry {
+  slug: string;
+  uuid: string;
+  legacyUuid: string;
+  lang: string;
+  prunedAt: string;
+}
+
+function registerPruned(entries: PrunedEntry[]) {
+  let registry: { _meta: { schema: string }; pruned: PrunedEntry[] } = {
+    _meta: { schema: "pruned-v1" },
+    pruned: [],
+  };
+  if (fs.existsSync(PRUNED_PATH)) {
+    try {
+      registry = JSON.parse(fs.readFileSync(PRUNED_PATH, "utf8"));
+    } catch {
+      // corrupt registry — rebuild from scratch with the new entries
+    }
+  }
+  const seen = new Set(registry.pruned.map((e) => `${e.slug}@${e.uuid}`));
+  for (const e of entries) {
+    if (seen.has(`${e.slug}@${e.uuid}`)) continue;
+    registry.pruned.push(e);
+    seen.add(`${e.slug}@${e.uuid}`);
+  }
+  registry.pruned.sort((a, b) =>
+    `${a.slug}@${a.uuid}`.localeCompare(`${b.slug}@${b.uuid}`)
+  );
+  fs.mkdirSync(path.dirname(PRUNED_PATH), { recursive: true });
+  fs.writeFileSync(PRUNED_PATH, JSON.stringify(registry, null, 2) + "\n");
+}
+
+// RFC 0010 §4.4: prune non-selected versions that have clearly lost — the
+// selected version leads by ≥ PRUNE_MARGIN stars over ≥ PRUNE_MIN_DUELS
+// version duels. Never the selected version, never the last file in a
+// directory. Every removed slug@uuid is registered in versions-pruned.json so
+// the build emits a redirect for its public permalink (no 404s).
+export function prune({ dryRun = false } = {}) {
+  const ratings = computeVersionRatings();
+  const selection = readSelection();
+  const removed: Array<{ v: VersionInfo; margin: number; n: number }> = [];
+
+  for (const slug of Object.keys(selection)) {
+    const versions = listDirVersions(slug);
+    const selected = versions.find((v) => v.selected);
+    if (!selected) continue;
+    const selStars = versionStars(ratings, selected);
+    if (!selStars) continue;
+    for (const v of versions) {
+      if (v.selected) continue;
+      const vs = versionStars(ratings, v);
+      if (!vs) continue;
+      const margin = selStars.stars - vs.stars;
+      if (vs.n >= PRUNE_MIN_DUELS && margin >= PRUNE_MARGIN) {
+        removed.push({ v, margin, n: vs.n });
+      }
+    }
+  }
+
+  if (removed.length === 0) {
     console.log("prune: nenhuma versão elegível para poda.");
     return;
   }
 
-  for (const item of toDelete) {
+  for (const { v, margin, n } of removed) {
     if (dryRun) {
       console.log(
-        `[prune dry-run] ${item.path} (versão ${item.versionStars.toFixed(2)}★ vs canônica ${item.canonicalStars.toFixed(2)}★, -${item.margin.toFixed(2)}, n=${item.n})`
+        `[prune dry-run] ${v.path} (-${margin.toFixed(2)}★ vs selecionada, n=${n})`
       );
     } else {
-      fs.unlinkSync(item.path);
+      fs.unlinkSync(v.path);
       console.log(
-        `[prune] removido ${item.path} (${item.versionStars.toFixed(2)}★ vs canônica ${item.canonicalStars.toFixed(2)}★, -${item.margin.toFixed(2)}, n=${item.n})`
+        `[prune] removido ${v.path} (-${margin.toFixed(2)}★ vs selecionada, n=${n}) — permalink registrado em ${PRUNED_PATH}`
       );
     }
   }
 
+  if (!dryRun) {
+    const prunedAt = new Date().toISOString();
+    registerPruned(
+      removed.map(({ v }) => ({
+        slug: v.slug,
+        uuid: v.uuid,
+        legacyUuid: v.legacyUuid,
+        lang: v.lang,
+        prunedAt,
+      }))
+    );
+  }
+
   const label = dryRun ? "dry-run" : "removida(s)";
-  console.log(`\nprune: ${toDelete.length} versão(ões) ${label}.`);
+  console.log(`\nprune: ${removed.length} versão(ões) ${label}.`);
   if (dryRun) {
     console.log("Rode sem --dry-run para remover.");
   }
-}
-
-function promoteFile(draftPath: string) {
-  const dir = path.dirname(draftPath);
-  const ext = path.extname(draftPath).slice(1) || "md";
-  const indexPath = path.join(dir, `index.${ext}`);
-  if (!fs.existsSync(indexPath)) {
-    console.error(
-      `Erro: canônica ${indexPath} não existe; não dá para promover ${draftPath}.`
-    );
-    process.exit(1);
-  }
-  const oldCanonicalUuid = getPostUuid(indexPath);
-  const { runId } = utcStamp();
-  const archivePath = path.join(dir, `v-${runId}-prev.${ext}`);
-
-  // Archive the outgoing canonical as a sibling version (history preserved).
-  fs.renameSync(indexPath, archivePath);
-
-  // Promote the winner: it becomes index.*, gains a `supersedes` link to the
-  // version it replaced, and sheds the transient draft markers.
-  const parsed = matter(fs.readFileSync(draftPath, "utf8"));
-  parsed.data.supersedes = oldCanonicalUuid;
-  for (const k of [
-    "draftCreatedAt",
-    "draftMsg",
-    "draftCommittedAt",
-    "replacedVersion",
-  ]) {
-    delete parsed.data[k];
-  }
-  fs.writeFileSync(
-    indexPath,
-    matter.stringify(parsed.content, parsed.data),
-    "utf8"
-  );
-  fs.unlinkSync(draftPath);
-
-  console.log(
-    `[promote] ${draftPath} → ${indexPath} (canônica anterior ${oldCanonicalUuid} arquivada em ${archivePath})`
-  );
 }
