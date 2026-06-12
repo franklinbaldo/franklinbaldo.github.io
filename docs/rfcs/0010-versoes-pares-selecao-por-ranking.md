@@ -221,9 +221,28 @@ seleção muda.
 `slug@uuid` — e.g. `vos@3f2a9c1e-...` — em vez de path de arquivo:
 
 - `slug` = nome da pasta = identidade da URL (estável por construção);
-- `uuid` = UUID de conteúdo (`getPostUuid`, já gravado hoje em cada match como
-  `post_a.version`) = identidade da versão, imutável porque arquivos de versão
-  são cópias congeladas.
+- `uuid` = UUID de conteúdo = identidade da versão, imutável porque arquivos
+  de versão são cópias congeladas.
+
+**Definição do UUID (corrigida).** O `getPostUuid` atual hasheia **só o corpo**
+markdown — duas versões que diferem apenas no frontmatter (título, descrição)
+colidem. Não é teórico: `riobaldo-e-o-aleph/index.mdx` e
+`v-2026-06-10T12-09-24.mdx` têm hoje o mesmo UUID
+(`fd4bbbbe-…`) — pós-migração seriam duas versões-pares com a mesma ref,
+ambíguas para `computeVersionRatings`, para a seleção e para as rotas
+`/v/<uuid>`. O UUID de versão passa a ser UUIDv5 sobre o corpo normalizado
+**mais o frontmatter relevante à versão** (título, descrição, heroImage, lang
+etc.), **excluindo os campos de ciclo de vida** (`draftCreatedAt`,
+`draftCommittedAt`, `draftMsg`, `supersedes`, `previousVersion`) — para que a
+migração e o `draft-commit` possam carimbar metadados sem mudar a identidade.
+Complementos:
+
+- o doctor **proíbe** duas versões no mesmo diretório com o mesmo UUID
+  (arquivos de fato idênticos são um estado degenerado — a migração colapsa
+  duplicatas exatas como o caso `riobaldo` acima, mantendo a mais antiga);
+- o UUID legado (só-corpo), gravado nos rate files `stars-v1` como
+  `post_a.version`, continua resolvível pelo leitor normalizado; a ambiguidade
+  residual dele é limitação dos dados históricos, não do esquema novo.
 
 O path do arquivo deixa de ser identidade e vira **cache de resolução**: o
 leitor resolve `slug@uuid` varrendo as versões do diretório (UUIDs memoizados,
