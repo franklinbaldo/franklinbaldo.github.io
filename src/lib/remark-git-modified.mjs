@@ -34,8 +34,16 @@ function lastModified(filePath) {
       const lines = block.trim().split("\n").filter(Boolean);
       if (lines.length === 0) continue;
       const [iso, ...statuses] = lines;
+      // R100 = identical content (bare rename). The RFC 0010 migration
+      // also stamps draftCreatedAt on every file, dropping similarity to
+      // R080–R099. Treat any high-similarity rename (≥80%) as lifecycle-only
+      // so that stamp doesn't override the real last-modified date.
       const pureRename =
-        statuses.length > 0 && statuses.every((l) => l.startsWith("R100"));
+        statuses.length > 0 &&
+        statuses.every((l) => {
+          if (!l.startsWith("R")) return false;
+          return parseInt(l.slice(1), 10) >= 80;
+        });
       if (!pureRename) return iso.trim() || null;
     }
     return null;
