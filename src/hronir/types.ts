@@ -120,8 +120,12 @@ export interface PerspectiveGridItem {
 export interface RankingSnapshot {
   _meta: {
     generatedAt: string | null;
+    schema?: string;
     basis: "build" | "season";
     totalDuels: number;
   };
-  keys: Record<string, { rank: number; ordinal: number }>;
+  keys: Record<
+    string,
+    { rank: number; ordinal: number; elo?: number; eloPeak?: number }
+  >;
 }
