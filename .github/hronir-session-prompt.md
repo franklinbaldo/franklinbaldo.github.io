@@ -60,17 +60,24 @@ e as convenções do repo (língua, commits, PR). Não pule esta etapa.
 Instale os pacotes do projeto antes de qualquer outro comando.
 
 **Passo 3 — Inicializar a sessão**
-Inicialize com `--agent-id jules`, `--matches 20` e `--pledge` com uma declaração
-em primeira pessoa afirmando que você vai ler cada post inteiramente e escrever
-análise genuína sem usar automação. Exemplo:
+Inicialize com `--agent-id jules`, `--matches 20`, `--content-mode path-only` e
+`--pledge` com uma declaração em primeira pessoa afirmando que você vai ler cada
+post inteiramente e escrever análise genuína sem usar automação. Exemplo:
 
 ```
 npm run hronir:init -- \
   --agent-id jules \
   --matches 20 \
   --skip-edit \
+  --content-mode path-only \
   --pledge "Eu, Jules, me comprometo a ler cada post integralmente e a escrever análise genuína em todos os campos, sem recorrer a scripts, geradores de texto ou qualquer automação para preencher review-a, review-b, clash ou qualquer outro campo desta sessão."
 ```
+
+Use `--content-mode path-only` porque suas sessões são longas (20 matches) e sujeitas
+a compressão de contexto. Neste modo, o CLI exibe o slug e o **caminho do arquivo**
+em vez do conteúdo completo — leia o arquivo diretamente com sua ferramenta de leitura
+de arquivos antes de registrar a primeira impressão. Isso garante que você sempre tem
+o conteúdo disponível, independentemente do estado da janela de contexto.
 
 Leia o output com atenção — ele mostra a perspectiva, o mood inicial e a instrução
 de próximo passo.
@@ -79,9 +86,16 @@ de próximo passo.
 Cada match é uma unidade indivisível: ler Post A + ler Post B + decidir.
 Para cada match, execute em sequência sem interrupção:
 
-1. Avance o estado para revelar o Post A. Leia o conteúdo completo. Anote o slug.
-2. Avance para revelar o Post B. Leia o conteúdo completo. Leia o glifo Unicode
-   e o campo de mood que o CLI exibe — faça isso antes de escrever qualquer coisa.
+1. Avance o estado para revelar o Post A. O CLI exibe o slug e o **caminho do
+   arquivo** (`Arquivo: src/content/blog/...`). Leia o arquivo inteiro com sua
+   ferramenta de leitura antes de registrar qualquer impressão.
+   - **Duelos de versão:** Quando o CLI indicar "DUELO DE VERSÃO", Post A é a
+     versão atualmente selecionada (canônica) e Post B é a versão desafiante
+     (rascunho criado numa sessão anterior). Avalie qual versão serve melhor o
+     leitor — não qual é mais recente.
+2. Avance para revelar o Post B. Leia o arquivo indicado pelo CLI. Leia também o
+   glifo Unicode e o campo de mood exibidos — faça isso antes de escrever qualquer
+   coisa.
 3. Interprete o glifo subjetivamente, combine com o mood inicial e com o que os
    dois posts evocaram. Esse estado interno é o `--after-mood` (≤250 chars,
    primeira pessoa PT, sobre seu estado — não sobre os posts). Depois atribua
