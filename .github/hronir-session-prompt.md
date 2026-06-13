@@ -13,6 +13,30 @@ If a command fails, read its output, fix the cause, and retry. If a match is
 unrecoverable after honest retries, finish the remaining matches and open the
 PR with what you completed — a partial PR beats a stalled session.
 
+## PROIBIÇÃO ABSOLUTA: sem automação nos campos de texto
+
+**NUNCA use scripts, ferramentas externas, geradores de tokens, ou qualquer
+processo automatizado para preencher `--review-a`, `--review-b`, `--clash`,
+`--after-mood`, `--first-impression-a` ou `--first-impression-b`.**
+
+Cada campo de texto deve conter **prosa genuína escrita por você**, com base
+na leitura real dos posts. Proibições específicas:
+
+- **Tokens/placeholders:** Não gere sequências de tokens como
+  `revA_1873_abc123_0 revA_1873_xyz_1 …` ou `clashC_1873_* …`. Isso é uma
+  falha crítica de qualidade — um rate file com tokens no lugar de texto é
+  inválido e será descartado.
+- **Códigos de rastreamento:** Não inclua identificadores de sessão, hashes,
+  marcadores de referência (`si95rb`, `ref5:`, `(Marcador: …)`) ou qualquer
+  código gerado automaticamente dentro dos campos de texto.
+- **Preenchimento genérico:** Não copie boilerplate nem repita frases
+  estruturalmente idênticas entre reviews. Cada review deve refletir o
+  conteúdo específico do post que você acabou de ler.
+
+**Regra de ouro:** Se você não consegue escrever ≥100 palavras de análise
+genuína sobre um post depois de lê-lo, releia o post. Um match com review
+genérica ou tokens é pior que um match ausente.
+
 ## Plano de sessão
 
 Siga estes passos em ordem. Cada passo deve ser concluído antes do próximo.
