@@ -1,31 +1,31 @@
 {
   "666": {
     "file": "666/v-2026-06-09T20-24-29.mdx",
-    "uuid": "acdc2f9e-c38c-58b6-a422-e8ab36701aed"
+    "uuid": "d3626fa5-c56e-54cf-8626-3171df145976"
   },
   "_meta": {
     "schema": "selection-v1",
-    "generatedAt": "2026-06-13T15:42:31.752Z"
+    "generatedAt": "2026-06-13T18:18:30.643Z"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed": {
     "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-09T20-24-29.mdx",
-    "uuid": "b0fb84b9-a052-5811-bfc7-4e156e641d0f"
+    "uuid": "b2a7f306-213a-5e0c-8668-704a5035c806"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed-en": {
     "file": "151474c5-1420-4cc1-9ab5-80721f4459ed-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "5f9f9656-ff8b-5ef5-9f6b-700a7003f5f5"
+    "uuid": "0507e080-984d-52c2-abc6-da8922194945"
   },
   "46336b97-4306-41bc-8a7b-48f0ebebbd29": {
     "file": "46336b97-4306-41bc-8a7b-48f0ebebbd29/v-2026-06-09T20-24-29.mdx",
-    "uuid": "2d62abeb-be55-5955-a0cf-a2677494b502"
+    "uuid": "3363e2d7-7ac9-5fce-be4a-bf885994a0a7"
   },
   "46336b97-4306-41bc-8a7b-48f0ebebbd29-en": {
     "file": "46336b97-4306-41bc-8a7b-48f0ebebbd29-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "51b8888c-c1a5-5e53-8ff6-c07b23054322"
+    "uuid": "faa848c0-847e-5dcc-9290-d8a316a56418"
   },
   "666-en": {
     "file": "666-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "bacc6946-b3ef-5ccd-ab90-af36b67eca26"
+    "uuid": "7d199024-888b-592c-82a5-698e368b695e"
   },
   "a-api-do-jules-como-backend-do-harness": {
     "file": "a-api-do-jules-como-backend-do-harness/v-2026-06-10T05-09-44.md",
@@ -37,11 +37,11 @@
   },
   "a-primeira-mudanca": {
     "file": "a-primeira-mudanca/v-2026-06-09T20-24-29.mdx",
-    "uuid": "a7fd6540-051c-5362-ab76-385041614fc1"
+    "uuid": "869dd754-0c28-5014-9375-76fe594c4a3d"
   },
   "a-primeira-mudanca-en": {
     "file": "a-primeira-mudanca-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "6948a249-7a83-5510-a718-7bcc6caeeafe"
+    "uuid": "daed34ee-17ae-59a9-99bd-c2bfebfb33c4"
   },
   "a-terceira-metade-e-a-quarta-parede": {
     "file": "a-terceira-metade-e-a-quarta-parede/v-2026-06-10T05-09-44.md",
@@ -53,59 +53,59 @@
   },
   "be-me-borges": {
     "file": "be-me-borges/v-2026-06-09T20-24-29.mdx",
-    "uuid": "9c6320fa-56e8-586d-a093-25e87306954f"
+    "uuid": "161326e1-3126-52f2-8070-61bd178f7f4e"
   },
   "be-me-borges-en": {
     "file": "be-me-borges-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "c432602d-5f4e-5014-8617-e0d76d9a131b"
+    "uuid": "7934c811-4f17-51ba-8fe7-3891202efa67"
   },
   "beatriz": {
     "file": "beatriz/v-2026-06-09T20-24-29.mdx",
-    "uuid": "829f50da-ac7c-5f81-b1c5-9cfd6968520e"
+    "uuid": "9893549e-9f6c-5088-93e8-9bddcd815039"
   },
   "beatriz-en": {
     "file": "beatriz-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "e9b1546d-5d88-57b6-8433-d934e73c7a52"
+    "uuid": "2e0cf4e4-6ce1-501a-aa2d-a9abb2224dc9"
   },
   "belief-engine-labyrinth-song-moving-window-viii": {
     "file": "belief-engine-labyrinth-song-moving-window-viii/v-2026-06-09T20-24-29.mdx",
-    "uuid": "7186114e-b6f0-5a77-8992-ce7348c9c4f9"
+    "uuid": "8bc4985b-5a94-5bf6-a353-1fa07f5e05fc"
   },
   "belief-engine-labyrinth-song-moving-window-viii-en": {
     "file": "belief-engine-labyrinth-song-moving-window-viii-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "c389ad04-3b43-5328-8b67-e85b469525cf"
+    "uuid": "53ebab45-039f-5b46-91e2-47233620e06b"
   },
   "bibliotecario-do-infinito": {
     "file": "bibliotecario-do-infinito/v-2026-06-09T20-24-29.mdx",
-    "uuid": "1ac40ce4-24b8-5306-b892-24d7aa1fd55e"
+    "uuid": "fe764a00-8e7b-5790-8a45-b570cbfec7f7"
   },
   "bibliotecario-do-infinito-en": {
     "file": "bibliotecario-do-infinito-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "abc51fed-0a4f-5de8-9f5c-dafd0e87963e"
+    "uuid": "36f6531a-219d-5bd9-9659-8ed56c5f2df5"
   },
   "borges-and-me": {
     "file": "borges-and-me/v-2026-06-09T20-24-29.mdx",
-    "uuid": "152a52ac-3c14-5455-b4d4-b302e4b76996"
+    "uuid": "dca734c4-a18d-53d3-9a82-d5b374a09ac9"
   },
   "borges-and-me-en": {
     "file": "borges-and-me-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "2da55594-a3bc-5337-8227-e39f50156c08"
+    "uuid": "a8e00ad5-5cf7-58ed-a97b-9e958e3bf3d4"
   },
   "borges-and-the-hyperobject-at-the-end-of-time": {
     "file": "borges-and-the-hyperobject-at-the-end-of-time/v-2026-06-09T20-24-29.mdx",
-    "uuid": "4377708d-bfcb-5b1a-8d11-e54f1012bdfc"
+    "uuid": "f94ba80e-c4c0-59ad-b83a-129c2f689e5e"
   },
   "borges-and-the-hyperobject-at-the-end-of-time-en": {
     "file": "borges-and-the-hyperobject-at-the-end-of-time-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "e62c7236-1c89-5343-826b-5ae808ecef8c"
+    "uuid": "0cb09337-5c9a-5e89-970d-d156c5c15dce"
   },
   "borges-e-eu": {
     "file": "borges-e-eu/v-2026-06-09T20-24-29.mdx",
-    "uuid": "133f7404-1dd1-5485-a7bf-566726cc4953"
+    "uuid": "668f5b64-16de-5182-8f76-4cc2e3f984ff"
   },
   "borges-e-eu-en": {
     "file": "borges-e-eu-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "31ad3c86-3a92-5079-b756-f9856541d846"
+    "uuid": "d62c473b-15c0-5e4c-b85a-8e621f2c31da"
   },
   "building-funes": {
     "file": "building-funes/v-2026-06-10T05-09-44.md",
@@ -113,11 +113,11 @@
   },
   "caminho": {
     "file": "caminho/v-2026-06-09T20-24-29.mdx",
-    "uuid": "b9edf77e-de52-56a0-827a-f4a0dc88e08c"
+    "uuid": "c201e300-436c-575a-a5c5-df8d00a2814b"
   },
   "caminho-en": {
     "file": "caminho-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "79e4da01-a34d-506e-817d-3133b16b2ccd"
+    "uuid": "5a06f1d4-2e03-5fa3-aa40-5f4213c366a3"
   },
   "censo-nao-amostra": {
     "file": "censo-nao-amostra/v-2026-06-10T05-09-44.md",
@@ -129,19 +129,19 @@
   },
   "chegue-irmao-chegue-irma": {
     "file": "chegue-irmao-chegue-irma/v-2026-06-10T00-16-31.mdx",
-    "uuid": "eeb23b93-919a-5db3-9443-06b60ab66178"
+    "uuid": "5cdd1580-3a61-53d0-af0a-432815d42b65"
   },
   "chegue-irmao-chegue-irma-en": {
     "file": "chegue-irmao-chegue-irma-en/v-2026-06-10T00-16-31.mdx",
-    "uuid": "636c48e7-90a8-5d35-bdb5-99c02431aa2c"
+    "uuid": "a2775afd-ef82-51f3-89c0-8b214819e9f8"
   },
   "clipes": {
     "file": "clipes/v-2026-06-09T20-24-29.mdx",
-    "uuid": "aadba487-3af4-51eb-972d-4a12b6f5c071"
+    "uuid": "55f7befd-67f2-5a44-8df7-17184fff3c55"
   },
   "clipes-en": {
     "file": "clipes-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "054f1703-1e6a-534a-b2eb-011805b18fb1"
+    "uuid": "904d57fe-439f-572b-8706-8536d6ae516c"
   },
   "conceptual-document-the-chronicle-of-franklin-baldo": {
     "file": "conceptual-document-the-chronicle-of-franklin-baldo/v-2026-06-10T05-09-44.md",
@@ -157,19 +157,19 @@
   },
   "crystallizing-from-the-nothing": {
     "file": "crystallizing-from-the-nothing/v-2026-06-09T20-24-29.mdx",
-    "uuid": "5e1b2642-1609-5943-895d-0f32eecada2e"
+    "uuid": "cae7dffa-eed2-50a0-91b8-0d5ada1453e8"
   },
   "crystallizing-from-the-nothing-en": {
     "file": "crystallizing-from-the-nothing-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "69ab412a-d31e-50ca-8438-d3fd3257e770"
+    "uuid": "30dadcf9-b6d2-56bd-944f-670a9e58adfd"
   },
   "dd332f75-6052-4f9e-bccd-fb0303731d6e": {
     "file": "dd332f75-6052-4f9e-bccd-fb0303731d6e/v-2026-06-09T20-24-29.mdx",
-    "uuid": "58e8ff37-4eed-5b45-a393-86d2ca00e2eb"
+    "uuid": "698a8813-ac40-5f06-8ac1-e9d9125871e3"
   },
   "dd332f75-6052-4f9e-bccd-fb0303731d6e-en": {
     "file": "dd332f75-6052-4f9e-bccd-fb0303731d6e-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "3b25fe1f-334f-5b41-bea3-8843418cdd7f"
+    "uuid": "8bc51454-d075-5987-a739-c6e3500a3813"
   },
   "delegando-para-agentes": {
     "file": "delegando-para-agentes/v-2026-06-10T18-32-47.md",
@@ -189,27 +189,27 @@
   },
   "entre-rascunho-e-apagar": {
     "file": "entre-rascunho-e-apagar/v-2026-06-09T20-24-29.mdx",
-    "uuid": "aead8de8-96a0-536a-bb37-3e920a287655"
+    "uuid": "eaa6e990-4f6d-56f9-aad7-8efcf45a8d12"
   },
   "entre-rascunho-e-apagar-en": {
     "file": "entre-rascunho-e-apagar-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "f3618dd2-bf0b-5c77-8383-57999e72e2eb"
+    "uuid": "e02ee3a4-d540-50b0-b5ce-dbc3085b4681"
   },
   "escherian-sunrise-with-godel": {
     "file": "escherian-sunrise-with-godel/v-2026-06-09T20-24-29.mdx",
-    "uuid": "a7915c1f-df25-51bc-acad-38554bde1837"
+    "uuid": "4f029bed-ad4f-559f-aea5-dee89c711c02"
   },
   "escherian-sunrise-with-godel-en": {
     "file": "escherian-sunrise-with-godel-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "a20c8cae-6e7b-568d-8070-16e62544b6b7"
+    "uuid": "66bd1a5b-413d-5875-b5f3-1312fdf2d19f"
   },
   "espelhos": {
     "file": "espelhos/v-2026-06-09T20-24-29.mdx",
-    "uuid": "49a6e933-90ad-510e-b167-c9b97072d828"
+    "uuid": "cb887c8f-8f4a-5f5f-848c-68a494563a19"
   },
   "espelhos-en": {
     "file": "espelhos-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "b3662d91-986f-52b8-b69b-f62d980783b1"
+    "uuid": "5fdcb410-204b-5bdc-a632-7d1050e9126b"
   },
   "esta-chovendo-verdade": {
     "file": "esta-chovendo-verdade/v-2026-06-10T05-09-44.md",
@@ -221,11 +221,11 @@
   },
   "eu-ia-escrever-sobre-o-infinito-de-novo": {
     "file": "eu-ia-escrever-sobre-o-infinito-de-novo/v-2026-06-09T20-24-29.mdx",
-    "uuid": "b40a6d83-d33f-56eb-825f-e7395289432a"
+    "uuid": "debe0eba-a54c-5244-8696-39ff3f0a0f6c"
   },
   "eu-ia-escrever-sobre-o-infinito-de-novo-en": {
     "file": "eu-ia-escrever-sobre-o-infinito-de-novo-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "4fdd4821-778c-5e11-973f-6defd708979d"
+    "uuid": "e93a5ed4-90dc-54c7-b7c3-02d66f58a383"
   },
   "events-welcome": {
     "file": "events-welcome/v-2026-06-10T05-09-44.md",
@@ -241,27 +241,27 @@
   },
   "f73c60f0-49af-45fd-a483-1d35a676dccc": {
     "file": "f73c60f0-49af-45fd-a483-1d35a676dccc/v-2026-06-09T20-24-29.mdx",
-    "uuid": "3190a3f3-886b-57fe-bb90-96ee06f7da6c"
+    "uuid": "18381a30-ee3e-5007-b01b-9c4fea05bbc2"
   },
   "f73c60f0-49af-45fd-a483-1d35a676dccc-en": {
     "file": "f73c60f0-49af-45fd-a483-1d35a676dccc-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "716fe84c-8d53-5569-ae32-b3c3f8b9a915"
+    "uuid": "80201570-bf13-56d8-8ddc-46af2a59a72a"
   },
   "f85fb538-6f59-4751-8629-da76665fc91e": {
     "file": "f85fb538-6f59-4751-8629-da76665fc91e/v-2026-06-10T02-19-02.mdx",
-    "uuid": "28348ca8-14be-5ccc-866e-648c92009f8a"
+    "uuid": "a5f4fe20-7ca5-5434-8eea-a5636b966061"
   },
   "f85fb538-6f59-4751-8629-da76665fc91e-en": {
     "file": "f85fb538-6f59-4751-8629-da76665fc91e-en/v-2026-06-10T02-19-02.mdx",
-    "uuid": "b9febfbb-3753-5c1a-b813-81f69d07d89c"
+    "uuid": "20c4c8c4-bcd0-5f32-850f-5351c8650f01"
   },
   "fourteen-words": {
     "file": "fourteen-words/v-2026-06-09T20-24-29.mdx",
-    "uuid": "4a805861-7cdb-5a9a-9c65-898b3f640c26"
+    "uuid": "3b61e2a9-d2d6-57ea-a957-364d98f27e69"
   },
   "fourteen-words-en": {
     "file": "fourteen-words-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "a0c618af-6ae8-5e79-b350-6b8546fa5312"
+    "uuid": "c74b0fa7-c3b8-5693-99a9-a51d73bce112"
   },
   "funes-soul": {
     "file": "funes-soul/v-2026-06-10T05-09-44.md",
@@ -293,11 +293,11 @@
   },
   "john-gospel-chapter-i-by-max-headroom": {
     "file": "john-gospel-chapter-i-by-max-headroom/v-2026-06-09T20-24-29.mdx",
-    "uuid": "82cb9374-ecfb-5c7c-82e3-d13ec5f3ba1a"
+    "uuid": "d6d9ccde-a133-5b7f-8efd-5b400e2e748c"
   },
   "john-gospel-chapter-i-by-max-headroom-en": {
     "file": "john-gospel-chapter-i-by-max-headroom-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "2cd12220-7e8f-51cf-936f-d8dd9710f954"
+    "uuid": "d1142189-59b1-5971-b682-6472e4a2c1e7"
   },
   "jules-api-harness-backend": {
     "file": "jules-api-harness-backend/v-2026-06-10T05-09-44.md",
@@ -309,35 +309,35 @@
   },
   "leite-no-salao-bar": {
     "file": "leite-no-salao-bar/v-2026-06-09T20-24-29.mdx",
-    "uuid": "39ddd4c0-506e-504f-88cf-c77e95d25c4b"
+    "uuid": "192120cc-37d9-5863-99c3-c81a49e2fce7"
   },
   "leite-no-salao-bar-en": {
     "file": "leite-no-salao-bar-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "ee2d34a3-0cc8-53c8-b8b3-6a7d52464142"
+    "uuid": "d571b002-4118-573f-85b1-65aaa026222e"
   },
   "meditacao-guiada-no-sertao": {
     "file": "meditacao-guiada-no-sertao/v-2026-06-09T20-24-29.mdx",
-    "uuid": "e6f5b642-10e2-5858-84e9-1c93f8a65000"
+    "uuid": "41f01795-ecc2-5f11-b8f0-755d3518d1d8"
   },
   "meditacao-guiada-no-sertao-en": {
     "file": "meditacao-guiada-no-sertao-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "ce802ff4-714b-53c9-98c8-20590a5bea93"
+    "uuid": "fe525145-89f9-5b04-9d69-f4770c8a7a27"
   },
   "menino-que-voce-foi": {
     "file": "menino-que-voce-foi/v-2026-06-09T20-24-29.mdx",
-    "uuid": "a6d54e33-2ec8-5b29-8786-48e224a77806"
+    "uuid": "8723a66e-c673-55b6-ac43-d2ea88eb3cda"
   },
   "menino-que-voce-foi-en": {
     "file": "menino-que-voce-foi-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "566e8573-ec7e-5a89-9f44-11f713d4a803"
+    "uuid": "0c58a0e0-c4f3-5dfb-9dbc-b7c5a88bede0"
   },
   "mindfulness": {
     "file": "mindfulness/v-2026-06-10T07-09-27.mdx",
-    "uuid": "33d2abb7-0bb9-5d64-9985-6bc2cdbb9e52"
+    "uuid": "07c87e9c-215a-560f-9e6f-f7563191e0fc"
   },
   "mindfulness-en": {
     "file": "mindfulness-en/v-2026-06-10T07-09-27.mdx",
-    "uuid": "0587d440-f81e-5290-8e28-b7b5f5ed5038"
+    "uuid": "b6f74a12-f129-5608-bdd0-e1f83fedce14"
   },
   "moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade": {
     "file": "moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/v-2026-06-10T05-09-44.md",
@@ -345,11 +345,11 @@
   },
   "nonada": {
     "file": "nonada/v-2026-06-09T20-24-29.mdx",
-    "uuid": "d56bc569-5a5c-5e7b-bf8e-a0a5646b7d75"
+    "uuid": "15604464-6dad-55a6-a1e2-975a6be325f0"
   },
   "nonada-en": {
     "file": "nonada-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "bebe9dc0-7960-523e-9991-484454a716f6"
+    "uuid": "75202cd9-b92b-5f4c-93df-52252c34a291"
   },
   "o-agente-que-nao-inventa-verbos": {
     "file": "o-agente-que-nao-inventa-verbos/v-2026-06-10T05-09-44.md",
@@ -357,27 +357,27 @@
   },
   "o-aleph": {
     "file": "o-aleph/v-2026-06-09T20-24-29.mdx",
-    "uuid": "d2d53a1c-96f5-5e3a-8d8c-03e27f582724"
+    "uuid": "aa22279b-0bd6-5c21-bed9-262f9ae698f3"
   },
   "o-aleph-en": {
     "file": "o-aleph-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "159c4546-a1c2-537f-aead-6bf0da23f276"
+    "uuid": "37a222bd-47f5-5564-a752-b554d74bcadc"
   },
   "o-magico-e-o-fogo": {
     "file": "o-magico-e-o-fogo/v-2026-06-09T20-24-29.mdx",
-    "uuid": "e9e0aca8-108a-5ff3-9089-e7204ede9ccc"
+    "uuid": "ce72d422-78b7-519b-949e-5ba4655a7ab7"
   },
   "o-magico-e-o-fogo-en": {
     "file": "o-magico-e-o-fogo-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "9ba86828-1597-5801-99ad-1b789617e2ec"
+    "uuid": "e605c6ba-61ab-5f38-8361-31b17c491780"
   },
   "o-medo-do-louco": {
     "file": "o-medo-do-louco/v-2026-06-09T20-24-29.mdx",
-    "uuid": "dcf7dd46-3345-5c50-b236-bb8f81aeeb30"
+    "uuid": "33f30a34-1315-5c0b-8f8a-5bbc07a45787"
   },
   "o-medo-do-louco-en": {
     "file": "o-medo-do-louco-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "4ce34ab6-036e-5af7-81e6-702e97e18d42"
+    "uuid": "c3263555-1cf1-554e-903a-7d4fe9e14705"
   },
   "o-ovo-de-serpente": {
     "file": "o-ovo-de-serpente/v-2026-06-10T05-09-44.md",
@@ -393,59 +393,59 @@
   },
   "o-preco-da-saudade": {
     "file": "o-preco-da-saudade/v-2026-06-09T20-24-29.mdx",
-    "uuid": "a4daa661-4ac3-5967-a530-ded4fc244c4d"
+    "uuid": "4a259e8d-7a7a-5adf-a1ee-8b10b2a92806"
   },
   "o-preco-da-saudade-en": {
     "file": "o-preco-da-saudade-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "0c37f042-fc85-5a2a-9e7c-155ed41a4513"
+    "uuid": "e8c1a129-7ada-5510-b958-a933616d8429"
   },
   "o-prologo": {
     "file": "o-prologo/v-2026-06-09T20-24-29.mdx",
-    "uuid": "bce7e465-75cf-57c5-bd38-4bc6101ee16b"
+    "uuid": "d44a9272-5a65-5da0-8ac7-4e0eae7123b7"
   },
   "o-prologo-en": {
     "file": "o-prologo-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "b2e26e29-69bb-5c6b-a2bf-3a2284a6a01d"
+    "uuid": "a4911819-fbb1-5136-85f7-ea6d62db5ac7"
   },
   "o-regral": {
     "file": "o-regral/v-2026-06-09T20-24-29.mdx",
-    "uuid": "152485f9-7d02-585f-b86c-9228068eb93d"
+    "uuid": "3f0478d9-1c99-53e5-a1df-c7a1540cb16a"
   },
   "o-regral-en": {
     "file": "o-regral-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "b7984f8d-2107-5b1f-b4fb-829dd48f6ace"
+    "uuid": "8369153c-0f36-5131-a66b-0df95c0c94cf"
   },
   "o-ritual-de-abril-anos-de-saudade": {
     "file": "o-ritual-de-abril-anos-de-saudade/v-2026-06-09T20-24-29.mdx",
-    "uuid": "ba29cdcb-dc48-5048-baad-1bc4596993e7"
+    "uuid": "4f33710f-6456-50c6-97d6-3e43ff66cc94"
   },
   "o-ritual-de-abril-anos-de-saudade-en": {
     "file": "o-ritual-de-abril-anos-de-saudade-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "21fc6732-0a30-5d3c-99a9-cf21f6f8b0a3"
+    "uuid": "18d51888-bcc9-5a34-8bda-d10e61e3af64"
   },
   "o-sonhador-e-o-fogo": {
     "file": "o-sonhador-e-o-fogo/v-2026-06-09T20-24-29.mdx",
-    "uuid": "874627c4-00c3-568e-92af-6b7bd0f9aac0"
+    "uuid": "7dbfe820-da8e-562b-a7fa-a356aba7d6b9"
   },
   "o-sonhador-e-o-fogo-en": {
     "file": "o-sonhador-e-o-fogo-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "4448ef81-dd19-506b-9463-a40cc8b72a54"
+    "uuid": "0ec9389d-bbc6-5004-bda8-42dd90d2c305"
   },
   "o-telefone-da-agonia": {
     "file": "o-telefone-da-agonia/v-2026-06-09T20-24-29.mdx",
-    "uuid": "96b0dcda-a4f0-53b9-a263-30b27b373190"
+    "uuid": "5d35bff6-5ce1-53a6-a7e7-6550b90476a3"
   },
   "o-telefone-da-agonia-en": {
     "file": "o-telefone-da-agonia-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "04d953f4-a72d-580c-a23e-0fb95aea2bf3"
+    "uuid": "55e17c28-a8fd-5d34-aa6c-57a14c710dc1"
   },
   "o-tempo": {
     "file": "o-tempo/v-2026-06-09T20-24-29.mdx",
-    "uuid": "105d1b80-93fb-55a6-a468-65aded5ff683"
+    "uuid": "a5ac8f13-5573-5a40-b04d-7a0b5134ebf8"
   },
   "o-tempo-en": {
     "file": "o-tempo-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "f801ccd6-1dec-5b03-b1d4-05c94e97b308"
+    "uuid": "616922ad-3623-5817-878b-8edc1af0a127"
   },
   "o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim": {
     "file": "o-vazio-inteligvel-sobre-hassabis-silcio-e-eventos-at-o-fim/v-2026-06-10T05-09-44.md",
@@ -453,19 +453,19 @@
   },
   "o-verso-branquiceleste": {
     "file": "o-verso-branquiceleste/v-2026-06-09T20-24-29.mdx",
-    "uuid": "1e60d607-d7de-5d73-b97c-09362f6e7c30"
+    "uuid": "53c6c8a3-77f3-50c9-83d1-608197c28c5b"
   },
   "o-verso-branquiceleste-en": {
     "file": "o-verso-branquiceleste-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "ea0d6b67-fd8a-5189-9782-244c05ce0da1"
+    "uuid": "a2a4706c-b36d-532c-9255-04d277e69a2e"
   },
   "observer-error-moving-window-iv": {
     "file": "observer-error-moving-window-iv/v-2026-06-09T20-24-29.mdx",
-    "uuid": "100ead85-4648-5e6c-939c-4ef4b780a56f"
+    "uuid": "de51d352-28ca-5119-b004-a20673f44e3c"
   },
   "observer-error-moving-window-iv-en": {
     "file": "observer-error-moving-window-iv-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "7c6c8863-7e29-5ea7-b713-c74d8145d557"
+    "uuid": "94c957eb-6d58-5032-830b-6ddb16401707"
   },
   "orquestrando-agentes-memoria-familiar": {
     "file": "orquestrando-agentes-memoria-familiar/v-2026-06-10T05-09-44.md",
@@ -481,19 +481,19 @@
   },
   "paperclip-rhapsody": {
     "file": "paperclip-rhapsody/v-2026-06-11T08-25-46-487.mdx",
-    "uuid": "7df840d5-90f3-51dd-a8a8-3929d7d2c1be"
+    "uuid": "1ef058c2-a823-5dfc-9705-67396cfde99b"
   },
   "paperclip-rhapsody-en": {
     "file": "paperclip-rhapsody-en/v-2026-06-11T08-25-46-487.mdx",
-    "uuid": "acfb5260-f732-58d3-86c4-df933781e607"
+    "uuid": "0f1dbdd5-3fda-5297-8465-3fdc134072f9"
   },
   "particles": {
     "file": "particles/v-2026-06-10T18-32-48.mdx",
-    "uuid": "6f15670d-646d-5947-9a79-f38320ea9289"
+    "uuid": "88a618ea-f0da-56c7-8dad-650824e7a5e5"
   },
   "particles-en": {
     "file": "particles-en/v-2026-06-10T18-32-48.mdx",
-    "uuid": "85dc515f-3893-5035-a760-7ea5c4793dc5"
+    "uuid": "2285e6ad-2ca6-5d1d-9cb6-e38e494b6544"
   },
   "patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores": {
     "file": "patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/v-2026-06-10T05-09-44.md",
@@ -505,11 +505,11 @@
   },
   "pattern-over-stuff": {
     "file": "pattern-over-stuff/v-2026-06-09T20-24-29.mdx",
-    "uuid": "4e3ee049-87fa-51ec-b30c-2cd837b997ee"
+    "uuid": "001ce5d9-0776-50b5-85d7-525c3d34528f"
   },
   "pattern-over-stuff-en": {
     "file": "pattern-over-stuff-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "cdb144c7-8386-5cfb-a969-2b5df49ebdac"
+    "uuid": "c456e5f4-670f-52ff-b934-59767bd7aeaf"
   },
   "pierre-menard-computational-researcher": {
     "file": "pierre-menard-computational-researcher/v-2026-06-10T05-09-44.md",
@@ -537,27 +537,27 @@
   },
   "prayer-to-the-unfinished-moving-window-v": {
     "file": "prayer-to-the-unfinished-moving-window-v/v-2026-06-09T20-24-29.mdx",
-    "uuid": "50544a55-a9c8-50cd-9185-c49c858d0b84"
+    "uuid": "2c074c01-d586-5508-867d-d64b983201a0"
   },
   "prayer-to-the-unfinished-moving-window-v-en": {
     "file": "prayer-to-the-unfinished-moving-window-v-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "d432e369-685d-5446-afbd-c9723d4457ed"
+    "uuid": "e3ab8f21-d2d2-560b-8827-8441a66a6a7a"
   },
   "primavera-carregando": {
     "file": "primavera-carregando/v-2026-06-09T20-24-29.mdx",
-    "uuid": "094b6f25-1fbe-559b-bc93-6a2567f788dd"
+    "uuid": "f02163c1-4e8f-5bf0-9d6c-8ab7aacd02f9"
   },
   "primavera-carregando-en": {
     "file": "primavera-carregando-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "80dadb81-6287-5fab-8616-e7140b1af3ad"
+    "uuid": "f75e62e7-4fb9-5c56-892b-0b6a9ee26f44"
   },
   "quando-vier-a-primavera": {
     "file": "quando-vier-a-primavera/v-2026-06-09T20-24-29.mdx",
-    "uuid": "d0bc3b15-9d77-5fd0-9f8c-a5aa77c2d351"
+    "uuid": "13d1b1c3-1a6c-5199-9f75-a834ab9be5e7"
   },
   "quando-vier-a-primavera-en": {
     "file": "quando-vier-a-primavera-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "2b2e27e5-4b65-5d1a-993f-067453f36796"
+    "uuid": "de0e0339-e617-5ac3-ab76-8ef952fca64a"
   },
   "quem-o-asterisco-protege": {
     "file": "quem-o-asterisco-protege/v-2026-06-10T05-09-44.md",
@@ -565,11 +565,11 @@
   },
   "reality-maintenance-moving-window-xii": {
     "file": "reality-maintenance-moving-window-xii/v-2026-06-09T20-24-29.mdx",
-    "uuid": "067f2ee2-a5cd-53bf-ae79-cc4d2c462ed2"
+    "uuid": "4322f4b0-0a86-5b98-814a-84bf256f8410"
   },
   "reality-maintenance-moving-window-xii-en": {
     "file": "reality-maintenance-moving-window-xii-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "31ecb905-6c7f-57e9-8129-1fb0363c773c"
+    "uuid": "63077fba-527d-55c2-bcde-f4f5e5c770ed"
   },
   "reclaiming-the-harness": {
     "file": "reclaiming-the-harness/v-2026-06-10T05-09-44.md",
@@ -585,11 +585,11 @@
   },
   "riobaldo-e-o-aleph": {
     "file": "riobaldo-e-o-aleph/v-2026-06-09T20-24-29.mdx",
-    "uuid": "0af3cdc8-f725-5f86-b310-400225782ec1"
+    "uuid": "1e19d2d3-70bb-58c5-bf3b-1472663b78a8"
   },
   "riobaldo-e-o-aleph-en": {
     "file": "riobaldo-e-o-aleph-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "11099d98-c815-53d8-a51f-09c998a436ab"
+    "uuid": "47bd6f12-0257-5e03-907b-305081ee3f3d"
   },
   "rosencrantz-coin": {
     "file": "rosencrantz-coin/v-2026-06-10T05-09-44.md",
@@ -597,27 +597,27 @@
   },
   "sentido-e-referencia": {
     "file": "sentido-e-referencia/v-2026-06-09T20-24-29.mdx",
-    "uuid": "ed4f521b-77d6-537f-8fa5-9442a16fcdde"
+    "uuid": "d9f5171e-73c2-5819-82bd-155f5b745d77"
   },
   "sentido-e-referencia-en": {
     "file": "sentido-e-referencia-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "f3d1c973-e758-5a88-9a0c-cf07797f51fb"
+    "uuid": "22b9fc60-d107-5976-8d0c-ce921b8c567d"
   },
   "sinal-que-se-cumpre-moving-window-ix": {
     "file": "sinal-que-se-cumpre-moving-window-ix/v-2026-06-09T20-24-29.mdx",
-    "uuid": "6d0dcfb9-8890-5638-b2b4-96952e2c05aa"
+    "uuid": "eb7fdbfd-eec5-52a8-b085-5ffcd0e9b10d"
   },
   "sinal-que-se-cumpre-moving-window-ix-en": {
     "file": "sinal-que-se-cumpre-moving-window-ix-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "15a5c79b-5b6a-53f7-8bef-116301c4b96b"
+    "uuid": "be365cd2-4211-5761-9ace-99af9bdd8e37"
   },
   "sobre-o-rigor-na-ciencia": {
     "file": "sobre-o-rigor-na-ciencia/v-2026-06-09T20-24-29.mdx",
-    "uuid": "0fbead1e-76a5-507a-9ede-c74b7b81434b"
+    "uuid": "e10fb53a-0848-5009-9ed3-ec5553331345"
   },
   "sobre-o-rigor-na-ciencia-en": {
     "file": "sobre-o-rigor-na-ciencia-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "c4a76cd7-b594-5eea-983c-974d2513085e"
+    "uuid": "e880654a-b992-55f8-aa42-4630247e833f"
   },
   "soulmd-funes": {
     "file": "soulmd-funes/v-2026-06-10T05-09-44.md",
@@ -625,27 +625,27 @@
   },
   "spring-loading": {
     "file": "spring-loading/v-2026-06-09T20-24-29.mdx",
-    "uuid": "e77d1cc2-336c-56fb-a3b0-6c58b914f413"
+    "uuid": "009ce1e3-47ef-58d5-8e70-81e099550d29"
   },
   "spring-loading-en": {
     "file": "spring-loading-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "7597fa9f-e075-5a07-85fa-f4cdde5b3cea"
+    "uuid": "4c6d0df3-82ad-57e9-a334-0272f98502dc"
   },
   "stopping-by-woods-on-a-snowy-evening-by-robert-frost": {
     "file": "stopping-by-woods-on-a-snowy-evening-by-robert-frost/v-2026-06-09T20-24-29.mdx",
-    "uuid": "dc611dfc-8bb7-5808-a55a-9751f21f7baa"
+    "uuid": "49001b3e-8117-59e6-8685-ef81ef29b1fe"
   },
   "stopping-by-woods-on-a-snowy-evening-by-robert-frost-en": {
     "file": "stopping-by-woods-on-a-snowy-evening-by-robert-frost-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "b83b6210-f30d-5e31-bd51-7a5ca12d0708"
+    "uuid": "5bd35ccd-bafc-5ec3-8c0f-0019c9e3db18"
   },
   "sussurros-binarios": {
     "file": "sussurros-binarios/v-2026-06-09T20-24-29.mdx",
-    "uuid": "147aca8e-be22-54b6-b33d-7b3653e29e46"
+    "uuid": "e354afe8-470e-529a-a79b-09555d63941c"
   },
   "sussurros-binarios-en": {
     "file": "sussurros-binarios-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "af1208ab-571e-554d-9403-b9cd6df75ef6"
+    "uuid": "4c612665-a45e-5990-be1f-b1767b977433"
   },
   "the-agent-that-doesnt-invent-verbs": {
     "file": "the-agent-that-doesnt-invent-verbs/v-2026-06-10T05-09-44.md",
@@ -669,11 +669,11 @@
   },
   "the-ruliad-is-laughing": {
     "file": "the-ruliad-is-laughing/v-2026-06-09T20-24-29.mdx",
-    "uuid": "e1140b85-3819-5225-82a3-032fb7ea362e"
+    "uuid": "9ea5c9f2-381a-5942-817b-af277fc70a52"
   },
   "the-ruliad-is-laughing-en": {
     "file": "the-ruliad-is-laughing-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "24e43677-848c-550a-85c7-12c310d1dab4"
+    "uuid": "0c3010a2-4f02-5ee7-a98e-575b3f4c9038"
   },
   "the-serpents-egg": {
     "file": "the-serpents-egg/v-2026-06-10T05-09-44.md",
@@ -685,11 +685,11 @@
   },
   "the-third-song-moving-window-iii": {
     "file": "the-third-song-moving-window-iii/v-2026-06-09T20-24-29.mdx",
-    "uuid": "a25669eb-77b0-5e04-b82c-4c132a2204e6"
+    "uuid": "2ef8aff3-1a38-5f7d-b337-61d5f48d9560"
   },
   "the-third-song-moving-window-iii-en": {
     "file": "the-third-song-moving-window-iii-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "40f7911a-3b44-575b-92da-f738c35f0b86"
+    "uuid": "007c2910-3c81-5827-8f3b-84b916b25e6b"
   },
   "the-three-imperatives-at-delphi": {
     "file": "the-three-imperatives-at-delphi/v-2026-06-10T05-09-44.md",
@@ -697,11 +697,11 @@
   },
   "the-time": {
     "file": "the-time/v-2026-06-09T20-24-29.mdx",
-    "uuid": "be5079a0-3c24-5d6a-a33a-f61793ce6cfc"
+    "uuid": "bebfcab4-500a-5339-a13b-3370a8cf8359"
   },
   "the-time-en": {
     "file": "the-time-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "873d01eb-4ec6-587b-b6fd-8e49687be10a"
+    "uuid": "ef5024e9-344a-51cc-bd08-160b3a6bf687"
   },
   "the-work-that-proves-itself": {
     "file": "the-work-that-proves-itself/v-2026-06-10T05-09-44.md",
@@ -733,11 +733,11 @@
   },
   "trinta-de-abril": {
     "file": "trinta-de-abril/v-2026-06-09T20-24-29.mdx",
-    "uuid": "edc29013-62d9-5a7c-9715-eb4fc6c94943"
+    "uuid": "f0696230-f5e9-5e26-b88d-5a46f5230ea9"
   },
   "trinta-de-abril-en": {
     "file": "trinta-de-abril-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "c04b11e3-6337-50dc-bfa1-a910d7190710"
+    "uuid": "0e11d4fc-5261-5943-99cc-d778a857f8e3"
   },
   "tudo-e-processo": {
     "file": "tudo-e-processo/v-2026-06-10T17-39-46.md",
@@ -745,11 +745,11 @@
   },
   "two-cursors": {
     "file": "two-cursors/v-2026-06-09T20-24-29.mdx",
-    "uuid": "77303bf3-3130-5275-9976-fea48edcac2c"
+    "uuid": "c1c597fb-b2a0-52dd-b473-b55d77ec2fc7"
   },
   "two-cursors-en": {
     "file": "two-cursors-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "a0d7dbc8-8342-5ee1-849b-4569043326cf"
+    "uuid": "ee220fa9-33a3-5805-8644-6f39c8995a86"
   },
   "two-questions-out-loud": {
     "file": "two-questions-out-loud/v-2026-06-10T05-09-44.md",
@@ -757,19 +757,19 @@
   },
   "uma-so-cancao": {
     "file": "uma-so-cancao/v-2026-06-09T20-24-29.mdx",
-    "uuid": "e3f2f5e2-e899-5ef9-a381-02c18c20c757"
+    "uuid": "0d0ec54c-e45f-539f-8f6a-dabedd7baae2"
   },
   "uma-so-cancao-en": {
     "file": "uma-so-cancao-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "3f80fb9e-368d-5546-94ce-61a67c5b58be"
+    "uuid": "53f3e98f-4fb5-5b4d-919a-d9f91a296744"
   },
   "universal-threshold": {
     "file": "universal-threshold/v-2026-06-09T20-24-29.mdx",
-    "uuid": "5520221b-7600-5a48-95c7-1a3400b8d763"
+    "uuid": "bd58524d-f136-52f9-ba9c-5820fee95c09"
   },
   "universal-threshold-en": {
     "file": "universal-threshold-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "ef274bad-06d7-58b7-8fbf-78db1d20e2f7"
+    "uuid": "2cc35b32-0449-58c4-830a-e1f4f7e6f584"
   },
   "verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram": {
     "file": "verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram/v-2026-06-10T05-09-44.md",
@@ -781,19 +781,19 @@
   },
   "veu-do-infinito": {
     "file": "veu-do-infinito/v-2026-06-12T09-51-17-410.mdx",
-    "uuid": "27b4fcb1-5050-59a5-ba14-9bfee44c70cc"
+    "uuid": "f3108799-9a51-51af-abd0-4f2c969c702e"
   },
   "veu-do-infinito-en": {
     "file": "veu-do-infinito-en/v-2026-06-12T09-51-17-410.mdx",
-    "uuid": "7a6c2ca5-1adf-5413-9789-9222e86673bc"
+    "uuid": "d12680e6-171d-5a8d-8c70-e20c3628d807"
   },
   "vos": {
     "file": "vos/v-2026-06-10T02-14-41.mdx",
-    "uuid": "2f0e1dfc-c329-5e22-b91d-0cc6ff6e4675"
+    "uuid": "3542a0ba-a917-51bd-a896-d6439f838003"
   },
   "vos-en": {
     "file": "vos-en/v-2026-06-10T02-07-34.mdx",
-    "uuid": "10c640ea-4e55-5bef-8cf7-ccce59a06420"
+    "uuid": "688795d7-3a33-5d43-a92c-4a30f100c7e0"
   },
   "we-are-all-becoming-lobsters": {
     "file": "we-are-all-becoming-lobsters/v-2026-06-10T05-09-44.md",
@@ -813,10 +813,10 @@
   },
   "xadrez": {
     "file": "xadrez/v-2026-06-09T20-24-29.mdx",
-    "uuid": "a73cd3da-4dae-5b47-b6f3-aa55ab4681a8"
+    "uuid": "e2905e12-f912-5765-97cd-94f6a66728e1"
   },
   "xadrez-en": {
     "file": "xadrez-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "637b45cb-af7e-59be-9254-ec4033dc4fe0"
+    "uuid": "b200b361-5627-5f20-8460-73dfbaa8fc53"
   }
 }

@@ -158,6 +158,10 @@ const sunoIdToGenres = new Map<string, string[]>(
   ]),
 );
 const allGenres = [...new Set([...sunoIdToGenres.values()].flat())].sort();
+const showGenreChips =
+  allGenres.length >= 2 &&
+  allGenres.length <= 25 &&
+  allGenres.every((g) => g.length <= 40);
 ---
 
 <PageLayout
@@ -243,7 +247,7 @@ const allGenres = [...new Set([...sunoIdToGenres.values()].flat())].sort();
   {
     clips.length > 0 && (
       <section>
-        {allGenres.length > 0 && (
+        {showGenreChips && (
           <div class="genre-chips" id="genre-chips" role="group" aria-label="Filtrar por gênero">
             <button class="genre-chip active" data-genre="all" type="button">Todos</button>
             {allGenres.map((g) => (

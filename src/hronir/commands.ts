@@ -2439,6 +2439,51 @@ export function doctor() {
     }
   }
 
+  // RFC 0011: warn about genre field violations in music posts.
+  // Warnings (not errors): won't block hronir sessions; guide content cleanup.
+  {
+    const GENRE_PROMPT_RE = /[:;,]/;
+    const selection = readSelection();
+    const genreWarnings: string[] = [];
+    for (const [slug, entry] of Object.entries(selection)) {
+      const p = path.join("src/content/blog", entry.file);
+      if (!fs.existsSync(p)) continue;
+      const raw = fs.readFileSync(p, "utf-8");
+      if (!raw.includes("postType") || !raw.includes("music")) continue;
+      const fmMatch = raw.match(/^---\n([\s\S]*?)\n---/);
+      if (!fmMatch) continue;
+      const fm = fmMatch[1];
+      // Extract genre array items (simple list parsing)
+      const genreBlock = fm.match(/^genre:\n((?:  -.+\n?)*)/m);
+      if (!genreBlock) continue;
+      const items = [...genreBlock[1].matchAll(/  - (.+)/g)].map((m) =>
+        m[1].replace(/^["']|["']$/g, "").trim()
+      );
+      if (items.length > 5) {
+        genreWarnings.push(
+          `${slug}: genre tem ${items.length} items (máx 5) — rode a migração RFC 0011`
+        );
+      }
+      for (const item of items) {
+        if (item.length > 40) {
+          genreWarnings.push(
+            `${slug}: genre label muito longo (${item.length} chars): "${item.slice(0, 60)}..." — use sunoStyle para descrições longas`
+          );
+          break;
+        }
+        if (GENRE_PROMPT_RE.test(item)) {
+          genreWarnings.push(
+            `${slug}: genre label parece prompt Suno ("${item.slice(0, 60)}"...) — mova para sunoStyle`
+          );
+          break;
+        }
+      }
+    }
+    for (const w of genreWarnings) {
+      console.warn(`  [warn] ${w}`);
+    }
+  }
+
   // Check for staged files outside the safe commit paths.
   // Only staged files matter — untracked/modified may be build artefacts.
   // Jules sometimes creates temp artefacts (decide_args*.json, rewrite_*.mjs,

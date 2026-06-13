@@ -71,8 +71,14 @@ const postSchema = ({ image }: SchemaContext) =>
     postType: z.literal("music").optional(),
     /** Suno song UUID — used to load audio in the global player. */
     sunoId: z.string().optional(),
-    /** Music genres/styles for display. */
-    genre: z.array(z.string()).optional(),
+    /** RFC 0011: short canonical genre labels (max 40 chars, max 5 items).
+     *  Use sunoStyle for the full Suno prompt description. */
+    genre: z
+      .array(z.string().max(40, "genre label deve ter no máximo 40 caracteres"))
+      .max(5, "máximo 5 gêneros por post")
+      .optional(),
+    /** RFC 0011: full Suno style/prompt description, free-form text. */
+    sunoStyle: z.string().optional(),
     /** Song duration in seconds. */
     duration: z.number().optional(),
     /** Album art URL from the Suno API (stored at stub-generation time). */
