@@ -473,6 +473,10 @@ body::before {
   body::before {
     display: none;
   }
+  body {
+    font-size: 11pt;
+    max-width: 100%;
+  }
   #read-progress,
   .share-fab,
   .back-to-top,
@@ -484,7 +488,10 @@ body::before {
   .post-breadcrumb,
   .author-bio,
   .post-nav,
-  .related-posts {
+  .related-posts,
+  .home-rail,
+  section[aria-labelledby="webmentions-heading"],
+  section[aria-labelledby="comments-heading"] {
     display: none !important;
   }
   .post-grid,
@@ -494,6 +501,7 @@ body::before {
   .post-body > article {
     box-shadow: none;
   }
+  /* Show full URL after external links; skip anchor-only links. */
   a[href^="http"]::after {
     content: " (" attr(href) ")";
     font-size: 0.8em;
