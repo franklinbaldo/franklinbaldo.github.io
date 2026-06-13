@@ -56,6 +56,7 @@ interface InitOptions {
   minAppearances?: number;
   matches?: number;
   pledge?: string;
+  contentMode?: "inline" | "path-only";
 }
 
 interface WorstOptions {
@@ -266,6 +267,8 @@ export function init(options: InitOptions = {}) {
 
   const matchesOpt = options.matches != null ? options.matches : 10;
   const pledge = options.pledge?.trim() || null;
+  const contentMode =
+    options.contentMode === "path-only" ? "path-only" : "inline";
   const session = {
     target: matchesOpt,
     completed: 0,
@@ -277,6 +280,7 @@ export function init(options: InitOptions = {}) {
     currentMatch: null,
     minAppearances: options.minAppearances || null,
     pledge,
+    contentMode,
   };
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
@@ -748,11 +752,13 @@ export function continueCmd() {
     const aContent = fs.readFileSync(aPath, "utf8");
     const aParsed = matter(aContent);
     const aSunoId = aParsed.data.sunoId;
+    const pathOnly = session.contentMode === "path-only";
 
     const border = "━".repeat(80);
     const aHeader = "📄 PRIMEIRO POST (A) ";
     console.log(aHeader + "━".repeat(Math.max(0, 80 - aHeader.length)));
     console.log(`Slug: ${aSlug}`);
+    console.log(`Arquivo: ${aPath}`);
     if (aSunoId) {
       console.log(`🎵 Suno Song Page: https://suno.com/song/${aSunoId}`);
       console.log(
@@ -763,8 +769,13 @@ export function continueCmd() {
       );
     }
     console.log(`${border}\n`);
-    console.log(aContent);
-    console.log(`\n${border}\n`);
+    if (!pathOnly) {
+      console.log(aContent);
+      console.log(`\n${border}\n`);
+    } else {
+      console.log(`[content-mode: path-only — leia o arquivo em: ${aPath}]`);
+      console.log(`\n${border}\n`);
+    }
 
     session.state = "waiting_impression_a";
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
@@ -843,10 +854,12 @@ export function firstImpressionA(args: string[]) {
   const bContent = fs.readFileSync(bPath, "utf8");
   const bParsed = matter(bContent);
   const bSunoId = bParsed.data.sunoId;
+  const pathOnly = session.contentMode === "path-only";
 
   const bHeader = "📄 SEGUNDO POST (B) ";
   console.log(bHeader + "━".repeat(Math.max(0, 80 - bHeader.length)));
   console.log(`Slug: ${bSlug}`);
+  console.log(`Arquivo: ${bPath}`);
   if (bSunoId) {
     console.log(`🎵 Suno Song Page: https://suno.com/song/${bSunoId}`);
     console.log(
@@ -857,8 +870,13 @@ export function firstImpressionA(args: string[]) {
     );
   }
   console.log(`${border}\n`);
-  console.log(bContent);
-  console.log(`\n${border}\n`);
+  if (!pathOnly) {
+    console.log(bContent);
+    console.log(`\n${border}\n`);
+  } else {
+    console.log(`[content-mode: path-only — leia o arquivo em: ${bPath}]`);
+    console.log(`\n${border}\n`);
+  }
 
   session.state = "waiting_impression_b";
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
@@ -1287,6 +1305,7 @@ export function decide(args: string[]) {
     post_b: currentMatch.post_b,
     winner,
     agent_id: agentId,
+    content_mode: session.contentMode ?? "inline",
     eval_lang: currentMatch.eval_lang || session.evalLang || "pt",
     prompt_version: PROMPT_VERSION,
     season: 1,

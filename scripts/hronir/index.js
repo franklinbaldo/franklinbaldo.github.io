@@ -47,7 +47,7 @@ const [, , cmd, ...args] = process.argv;
 
 function usage() {
   console.error(
-    "Uso: hronir {next --agent-id <id> [init-opts]|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--min-appearances N] [--pledge <text>]|continue|first-impression-a <texto>|first-impression-b <texto>|decide --after-mood <text> --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text> [--clash-append <text>] [--review-a-append <text>] [--review-b-append <text>]|ranking|worst [--absolute]|diagnose|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force] [--attest <text>]|select [--dry-run]|prune [--dry-run]}"
+    "Uso: hronir {next --agent-id <id> [init-opts]|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--min-appearances N] [--pledge <text>] [--content-mode inline|path-only]|continue|first-impression-a <texto>|first-impression-b <texto>|decide --after-mood <text> --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text> [--clash-append <text>] [--review-a-append <text>] [--review-b-append <text>]|ranking|worst [--absolute]|diagnose|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force] [--attest <text>]|select [--dry-run]|prune [--dry-run]}"
   );
   process.exit(1);
 }
@@ -115,6 +115,11 @@ function parseInitOptions(args) {
     args.indexOf("--min-app"),
   ]);
   const pledge = readFlagValue(args, [args.indexOf("--pledge")]);
+  const contentModeRaw = readFlagValue(args, [args.indexOf("--content-mode")]);
+  const contentMode =
+    contentModeRaw === "path-only" || contentModeRaw === "inline"
+      ? contentModeRaw
+      : undefined;
   let matches = parseMatches(matchesRaw);
   if (skipRating) matches = 0;
   const minAppearances = parseMinAppearances(minAppRaw);
@@ -126,6 +131,7 @@ function parseInitOptions(args) {
     evalLang,
     minAppearances,
     pledge,
+    contentMode,
   };
 }
 
