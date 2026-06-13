@@ -1,13 +1,13 @@
 # RFC 0007 — Ranking: UI e UX de leitura
 
-|                 |                                                                                                                                                                                        |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Proposta (r1)                                                                                                                                                                          |
-| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                    |
-| **Criado em**   | 2026-06-10                                                                                                                                                                             |
-| **Branch / PR** | `claude/sweet-hypatia-1joz7o`                                                                                                                                                          |
-| **Depende de**  | —                                                                                                                                                                                      |
-| **Afeta**       | `src/pages/ranking.astro`, `src/pages/pt/ranking.astro`, `src/components/RankingView.astro`, `src/pages/ranking/perspectives/`, `src/hronir/perspectives.ts`, `src/lib/hronir-rank.ts` |
+|                 |                                                                                                                                                                                                                            |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**      | Parcialmente implementado (r2) — Fases 0/3-parcial via PR #504/517; Fases 1–2, 4–6 em proposta                                                                                                                            |
+| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                        |
+| **Criado em**   | 2026-06-10                                                                                                                                                                                                                 |
+| **Branch / PR** | `claude/sweet-hypatia-1joz7o`                                                                                                                                                                                              |
+| **Depende de**  | —                                                                                                                                                                                                                          |
+| **Afeta**       | `src/pages/ranking.astro`, `src/pages/pt/ranking.astro`, `src/components/RankingView.astro`, `src/pages/ranking/perspectives/`, `src/hronir/perspectives.ts`, `src/lib/hronir-rank.ts`, `src/generated/ranking-snapshot.json` |
 
 > **Etapa 1 — só o RFC.** Implementação faseada após merge, cada fase verde
 > antes da próxima, conforme o padrão das RFCs anteriores.
@@ -361,24 +361,165 @@ e vice-versa; sparkline renderiza sem JS; link no rodapé do post ausente se
 2. Ordenação client-side da tabela por coluna (vitórias, duelos, Δ) como
    progressive enhancement sem dependências.
 
+### Fase 6 — Elo como pontuação complementar
+
+O OpenSkill é o motor de ranking — é o que determina a posição de cada post.
+Mas μ − 3σ não é legível para quem não conhece o sistema Bayesiano: o leitor
+casual vê `2.31` e não tem referência. O Elo resolve isso: parte de 1000,
+sobe e desce com vitórias e derrotas, e qualquer pessoa que já jogou xadrez
+ou conhece a classificação do FIFA entende intuitivamente o que `1243`
+significa.
+
+Esta fase adiciona o Elo como **pontuação complementar** na visão técnica —
+o OpenSkill continua como chave de ordenação; o Elo é uma segunda lente sobre
+os mesmos dados.
+
+#### 6.1 Especificação do cálculo
+
+O Elo do Hrönir segue a fórmula padrão (FIDE, sem modificações):
+
+```
+expected_A = 1 / (1 + 10^((elo_B − elo_A) / 400))
+new_elo_A  = elo_A + K × (actual_A − expected_A)
+```
+
+- **Ponto de partida:** 1000 para todos os posts.
+- **K = 32** (constante única; não há divisão por nível, pois todos os posts
+  estão sempre "em desenvolvimento").
+- **`actual`:** 1.0 para vitória, 0.0 para derrota. **Empates não são
+  possíveis no Hrönir** (restrição `--rate-a ≠ --rate-b` do CLI).
+- **Ordem de processamento:** rate files ordenados por `run_at` crescente
+  (cronológico). Posts estreantes num duelo entram com Elo 1000 naquele
+  ponto da linha do tempo.
+- **Duelos de versão:** usam o Elo da versão específica (identificada por
+  `post_a.version`/`post_b.version`), não o Elo da key genérica. O Elo da
+  key no ranking é o Elo da versão atualmente selecionada.
+- **Perspectivas:** o Elo global acumula todos os duelos; o Elo por
+  perspectiva acumula apenas os duelos dessa perspectiva (análogo ao
+  OpenSkill por perspectiva).
+
+O cálculo é **determinístico e reprodutível**: dado o conjunto de rate files
+e sua ordem cronológica, o Elo de qualquer post em qualquer ponto do tempo
+é único. Isso o torna auditável — ao contrário do μ/σ do OpenSkill (que
+depende do número de aparições e da variância do oponente), o Elo pode ser
+recalculado à mão duelo a duelo.
+
+#### 6.2 Onde persiste
+
+O Elo é adicionado ao `ranking-snapshot.json` (schema já versionado, Fase 3):
+
+```jsonc
+// src/generated/ranking-snapshot.json (schema estendido)
+{
+  "_meta": { "schema": "snapshot-v2", "generatedAt": "..." },
+  "global": [
+    {
+      "key": "vos",
+      "mu": 3.21,
+      "sigma": 0.42,
+      "ordinal": 1.95,
+      "wins": 14,
+      "total": 18,
+      "elo": 1187          // ← novo campo
+    }
+    // ...
+  ]
+}
+```
+
+Versão do schema: `snapshot-v1` → `snapshot-v2`. O `hronir:doctor` valida
+que todo post com `ordinal` também tem `elo`. O script
+`scripts/generate-ranking-snapshot.mjs` computa o Elo após processar os
+rate files na mesma passada que já calcula o OpenSkill.
+
+Não há arquivo separado para o Elo: o snapshot já é o artefato commitado que
+serve de base para o build. Adicionar o campo ao mesmo JSON mantém os dois
+ratings sincronizados e elimina a necessidade de leitura de dois arquivos no
+build do Astro.
+
+#### 6.3 Apresentação na tabela
+
+O Elo aparece **apenas na visão técnica** (o `?view=technical` / botão
+"Standard view" da Fase 3). Na visão padrão o leitor vê posição, win rate,
+e confiança — o Elo ficaria redundante sem o contexto técnico.
+
+Na visão técnica, a ordem das colunas é:
+
+| Pos | Post | Elo | μ | σ | Ordinal | W/N | Confiança | Δ |
+|-----|------|-----|---|---|---------|-----|-----------|---|
+
+Racional da posição:
+- **Elo antes de μ/σ** porque é mais legível — serve de âncora intuitiva
+  antes de mergulhar nos parâmetros Bayesianos.
+- **Cor relativa ao 1000:** Elo > 1000 recebe `color: var(--pico-color-green)`,
+  Elo < 1000 recebe `color: var(--pico-color-red)`, Elo = 1000 fica neutro.
+  Sem gradiente contínuo — threshold único e legível.
+- **Tooltip com tendência:** `title="Elo atual: 1187 (+143 desde 1000)"` —
+  mostra quanto o post subiu ou desceu desde o ponto de partida, sem precisar
+  de coluna extra para o delta.
+- **Mobile (< 640 px):** coluna Elo incluída no collapse da visão técnica
+  (mesmas colunas que μ/σ ocultam). A visão padrão em mobile não muda.
+
+O Elo **não é usado para ordenar** a tabela — a ordenação continua por
+`ordinal` (μ − 3σ). A razão: o ordinal penaliza incerteza, tornando posts
+bem-testados mais estáveis no ranking. O Elo puro sem suavização pode
+inflar posts que venceram oponentes fracos no início, quando todos estavam
+em 1000. As duas métricas coexistem, cada uma com seu papel.
+
+#### 6.4 Apresentação no dossiê do post (Fase 4)
+
+A página `/ranking/posts/<key>/` recebe uma linha nova no bloco de stats:
+
+```
+Elo: 1187   (+187 desde o início · pico: 1204)
+```
+
+Pico = Elo máximo registrado em qualquer ponto da linha do tempo. Para isso,
+o `generate-ranking-snapshot.mjs` registra também `eloPeak` e `eloStart`
+(sempre 1000; o campo existe para tornar o diff legível).
+
+#### 6.5 Trajetória de Elo (opcional, vinculada à Fase 4)
+
+Se a sparkline da Fase 4 for implementada para `ordinal`, pode ser
+estendida para Elo como segunda linha no mesmo SVG — duas linhas normalizadas
+ao range do post:
+
+- Linha sólida: ordinal (chave primária de ranking)
+- Linha tracejada: Elo normalizado
+
+Implementar apenas se a sparkline SVG da Fase 4 existir; não bloqueia esta
+fase.
+
+#### 6.6 Critério de aceite
+
+- `generate-ranking-snapshot.mjs` calcula Elo cronologicamente e escreve
+  `elo` em cada entrada de `global` e de cada perspectiva.
+- `hronir:doctor` valida campo `elo` presente e numérico para todo post
+  ranqueado; schema `snapshot-v2` declarado no `_meta`.
+- Visão técnica da `/ranking/` exibe coluna Elo com cor relativa ao 1000
+  e tooltip com delta desde o início.
+- Visão padrão não exibe coluna Elo.
+- `npm run build` + `npx astro check` + `npx prettier --check .` verdes.
+
 ---
 
 ## 5. Análise de impacto
 
-| Componente                                     | Impacto                                                                            |
-| ---------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `src/hronir/perspectives.ts`                   | Fase 0 — resolução de caminho via cwd                                              |
-| `src/pages/ranking/perspectives/[id].astro`    | Fase 0 — guarda contra `getStaticPaths` vazio; Fase 3 — versão PT (questão aberta) |
-| `src/components/RankingView.astro`             | Fases 0–3 — emagrece: perde corpo dos duelos e `data-search`                       |
-| `src/pages/ranking.astro` / `pt/ranking.astro` | Fases 1–3 — novas strings, menos dados passados                                    |
-| `src/pages/ranking/battles/…` (novo)           | Fase 1 — listagem paginada + página por duelo + breadcrumb + prev/next             |
-| `src/pages/ranking/posts/…` (novo)             | Fase 4 — dossiê por post                                                           |
-| `src/lib/hronir-rank.ts`                       | Fases 1/3/4 — função de hash de 8 chars, snapshot Δ, trajetória por post           |
-| `src/generated/ranking-snapshot.json` (novo)   | Fase 3 — schema versionado (`basis` field) + validação no doctor                   |
-| `scripts/hronir/`                              | Sem mudança no CLI/engine                                                          |
-| `.routines/hronir/rates/*`                     | Sem mudança de schema                                                              |
-| Pagefind                                       | Fase 1 — páginas de duelo entram no índice existente                               |
-| OG images                                      | Sem mudança                                                                        |
+| Componente                                          | Impacto                                                                                         |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `src/hronir/perspectives.ts`                        | Fase 0 — resolução de caminho via cwd                                                           |
+| `src/pages/ranking/perspectives/[id].astro`         | Fase 0 — guarda contra `getStaticPaths` vazio; Fase 3 — versão PT (questão aberta)              |
+| `src/components/RankingView.astro`                  | Fases 0–3 — emagrece; Fase 6 — coluna Elo na visão técnica                                     |
+| `src/pages/ranking.astro` / `pt/ranking.astro`      | Fases 1–3 — novas strings, menos dados passados                                                 |
+| `src/pages/ranking/battles/…` (novo)                | Fase 1 — listagem paginada + página por duelo + breadcrumb + prev/next                          |
+| `src/pages/ranking/posts/…` (novo)                  | Fase 4 — dossiê por post; Fase 6 — linha Elo com pico                                          |
+| `src/lib/hronir-rank.ts`                            | Fases 1/3/4 — função de hash de 8 chars, snapshot Δ, trajetória por post                       |
+| `src/generated/ranking-snapshot.json`               | Fase 3 — schema `snapshot-v1` com `basis`; Fase 6 — schema `snapshot-v2` com `elo`/`eloPeak`   |
+| `scripts/generate-ranking-snapshot.mjs`             | Fase 6 — cálculo cronológico do Elo (K=32, start=1000) na mesma passada do OpenSkill           |
+| `scripts/hronir/`                                   | Sem mudança no CLI/engine                                                                       |
+| `.routines/hronir/rates/*`                          | Sem mudança de schema                                                                           |
+| Pagefind                                            | Fase 1 — páginas de duelo entram no índice existente                                            |
+| OG images                                          | Sem mudança                                                                                     |
 
 ---
 
@@ -462,3 +603,11 @@ e vice-versa; sparkline renderiza sem JS; link no rodapé do post ausente se
   barra de tensão ausente → traço neutro com `aria-label`; constraints mobile
   adicionadas à Fase 3 (tabela, grid de perspectivas) e Fase 4 (sparkline);
   mood em páginas EN com `lang="pt"` explícito e prefixo de atribuição.
+- **r2** (2026-06-13): incorpora Elo como pontuação complementar (Fase 6).
+  Adicionados: especificação do cálculo (K=32, start=1000, ordem cronológica
+  por `run_at`, duelos de versão por `post_a.version`); esquema de persistência
+  `snapshot-v2` com campos `elo` e `eloPeak`; apresentação como coluna na
+  visão técnica (cor relativa a 1000, tooltip com delta, sem reordenação —
+  ordinal continua chave de sort); linha de Elo no dossiê da Fase 4 com pico;
+  sparkline de duas linhas opcional. Status atualizado para refletir Fases 0/3
+  parcialmente implementadas via PR #504/517.
