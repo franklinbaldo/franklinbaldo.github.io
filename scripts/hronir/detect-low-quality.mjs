@@ -22,7 +22,8 @@ import jsYaml from "js-yaml";
 const { load: parseYaml } = jsYaml;
 
 const VERBOSE = process.argv.includes("--verbose");
-const sinceArg = process.argv.find((a) => a.startsWith("--since="))?.slice(8) ||
+const sinceArg =
+  process.argv.find((a) => a.startsWith("--since="))?.slice(8) ||
   (process.argv.includes("--since") &&
     process.argv[process.argv.indexOf("--since") + 1]);
 
@@ -85,7 +86,8 @@ function analyseField(text) {
   if (ng >= 4) flags.push(`4-GRAM_MAX=${ng} (≥4)`);
 
   const dom = dominantWordFraction(text);
-  if (dom !== null && dom > 0.12) flags.push(`DOM=${(dom * 100).toFixed(1)}% (>12%)`);
+  if (dom !== null && dom > 0.12)
+    flags.push(`DOM=${(dom * 100).toFixed(1)}% (>12%)`);
 
   return flags;
 }
