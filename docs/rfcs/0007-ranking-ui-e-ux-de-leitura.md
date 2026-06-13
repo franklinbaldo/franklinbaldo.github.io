@@ -2,7 +2,7 @@
 
 |                 |                                                                                                                                                                                                                               |
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Parcialmente implementado (r2) — Fases 0/3-parcial via PR #504/517; Fases 1–2, 4–6 em proposta                                                                                                                                |
+| **Status**      | Implementado (r2) — todas as fases concluídas: PR #504/517 (Fases 0/3-parcial), #520 (Fase 6), #523 (Fase 1), #524 (Fase 2), #526 (Fases 3/4/5)                                                                               |
 | **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                           |
 | **Criado em**   | 2026-06-10                                                                                                                                                                                                                    |
 | **Branch / PR** | `claude/sweet-hypatia-1joz7o`                                                                                                                                                                                                 |
@@ -612,3 +612,8 @@ fase.
   ordinal continua chave de sort); linha de Elo no dossiê da Fase 4 com pico;
   sparkline de duas linhas opcional. Status atualizado para refletir Fases 0/3
   parcialmente implementadas via PR #504/517.
+- **r3** (2026-06-13): implementação completa. Fases restantes executadas:
+  Fase 1 — arquivo paginado (PR #523, 105 KB vs 1,3 MB anterior);
+  Fase 2 — anchors de deep-link nos cards de batalha (PR #524);
+  Fases 3/4/5 — destaque top-3, rank#→dossiê, ordenação de colunas (PR #526).
+  Todos os critérios de aceite de todas as fases verificados.

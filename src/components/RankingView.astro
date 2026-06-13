@@ -269,10 +269,10 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
         <tr>
           <th scope="col" class="col-rank">{strings.thRank}</th>
           <th scope="col" class="col-post">{strings.thPost}</th>
-          <th scope="col" class="col-winrate">{strings.thWinRate}</th>
-          {snapshot && <th scope="col" class="col-delta">{strings.thDelta}</th>}
+          <th scope="col" class="col-winrate sortable" data-sort="winrate" aria-sort="none" tabindex="0">{strings.thWinRate}</th>
+          {snapshot && <th scope="col" class="col-delta sortable" data-sort="delta" aria-sort="none" tabindex="0">{strings.thDelta}</th>}
           <th scope="col" class="col-confidence">{strings.thConfidence}</th>
-          <th scope="col" class="col-elo tech-col">{strings.thElo}</th>
+          <th scope="col" class="col-elo tech-col sortable" data-sort="elo" aria-sort="none" tabindex="0">{strings.thElo}</th>
           <th scope="col" class="col-mu tech-col">
             <abbr title={strings.muTip}>{strings.thMu}</abbr>
           </th>
@@ -282,7 +282,7 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
           <th scope="col" class="col-ordinal tech-col">
             <abbr title={strings.ordinalTip}>{strings.thOrdinal}</abbr>
           </th>
-          <th scope="col" class="col-record tech-col">{strings.thRecord}</th>
+          <th scope="col" class="col-record tech-col sortable" data-sort="record" aria-sort="none" tabindex="0">{strings.thRecord}</th>
         </tr>
       </thead>
       <tbody>
@@ -299,9 +299,21 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
           const eloClass = eloData == null ? "" : eloData.elo > 1000 ? "elo-up" : eloData.elo < 1000 ? "elo-down" : "";
           const eloDelta = eloData ? eloData.elo - 1000 : 0;
           const eloTitle = eloData ? `Elo: ${eloData.elo} (${eloDelta >= 0 ? "+" : ""}${eloDelta} since 1000 · peak: ${eloData.peak})` : "";
+          const podiumClass = r.rank === 1 ? "row-gold" : r.rank === 2 ? "row-silver" : r.rank === 3 ? "row-bronze" : "";
+          const podiumLabel = r.rank === 1 ? "1st place" : r.rank === 2 ? "2nd place" : r.rank === 3 ? "3rd place" : undefined;
+          const eloVal = snapshotElo(r.key)?.elo ?? 0;
           return (
-            <tr>
-              <th scope="row" class="col-rank">{r.rank}</th>
+            <tr
+              class={podiumClass || undefined}
+              aria-label={podiumLabel}
+              data-sort-winrate={winRatePct}
+              data-sort-delta={delta ?? 0}
+              data-sort-elo={eloVal}
+              data-sort-record={r.appearances}
+            >
+              <th scope="row" class="col-rank">
+                <a href={`/ranking/posts/${r.key}/`} class="rank-link" title={`Dossier: ${r.post?.title ?? r.key}`}>{r.rank}</a>
+              </th>
               <td class="col-post">
                 {href ? (
                   <a href={href}>{r.post!.title}</a>
@@ -658,6 +670,12 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
     vertical-align: top;
   }
   .rank-table tbody tr:hover { background: var(--pico-card-sectioning-background-color); }
+  .rank-table .row-gold  { background: #fdf6dc; }
+  .rank-table .row-silver { background: #f4f4f4; }
+  .rank-table .row-bronze { background: #fdf0e6; }
+  [data-theme="dark"] .rank-table .row-gold   { background: #2a2414; }
+  [data-theme="dark"] .rank-table .row-silver { background: #1e1e1e; }
+  [data-theme="dark"] .rank-table .row-bronze { background: #261c10; }
   .rank-table .num {
     font-family: var(--pico-font-family-monospace);
     text-align: right;
@@ -678,6 +696,12 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
   }
   .rank-table .col-post a { text-decoration: none; }
   .rank-table .col-post a:hover { text-decoration: underline; }
+  .rank-table .rank-link { text-decoration: none; color: var(--pico-muted-color); }
+  .rank-table .rank-link:hover { color: var(--pico-primary); }
+  .rank-table th.sortable { cursor: pointer; user-select: none; }
+  .rank-table th.sortable:hover { color: var(--pico-primary); }
+  .rank-table th[aria-sort="ascending"]::after  { content: " ↑"; font-size: 0.7em; }
+  .rank-table th[aria-sort="descending"]::after { content: " ↓"; font-size: 0.7em; }
   .rank-table .col-delta { width: 3.5rem; }
   .rank-table .col-winrate { width: 4rem; }
   .ord-bar {
@@ -959,4 +983,56 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
     setupViewToggle();
   }
   document.addEventListener("astro:page-load", setupViewToggle);
+
+  function setupTableSort() {
+    const table = document.getElementById("rank-table") as HTMLTableElement | null;
+    if (!table || table.dataset.sortListener) return;
+    table.dataset.sortListener = "true";
+
+    const headers = Array.from(table.querySelectorAll("th.sortable")) as HTMLElement[];
+    const tbody = table.querySelector("tbody");
+    if (!tbody) return;
+
+    let currentKey = "";
+    let ascending = false;
+
+    function sortBy(key: string) {
+      const rows = Array.from(tbody!.querySelectorAll("tr")) as HTMLElement[];
+      const flip = currentKey === key ? !ascending : false;
+      ascending = flip;
+      currentKey = key;
+
+      rows.sort((a, b) => {
+        const av = parseFloat(a.getAttribute(`data-sort-${key}`) ?? "0");
+        const bv = parseFloat(b.getAttribute(`data-sort-${key}`) ?? "0");
+        return ascending ? av - bv : bv - av;
+      });
+
+      rows.forEach((r) => tbody!.appendChild(r));
+
+      headers.forEach((h) => {
+        if (h.getAttribute("data-sort") === key) {
+          h.setAttribute("aria-sort", ascending ? "ascending" : "descending");
+        } else {
+          h.setAttribute("aria-sort", "none");
+        }
+      });
+    }
+
+    headers.forEach((h) => {
+      const key = h.getAttribute("data-sort");
+      if (!key) return;
+      h.addEventListener("click", () => sortBy(key));
+      h.addEventListener("keydown", (e: KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); sortBy(key); }
+      });
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupTableSort);
+  } else {
+    setupTableSort();
+  }
+  document.addEventListener("astro:page-load", setupTableSort);
 </script>
