@@ -124,6 +124,7 @@ const agents = [...new Set(allDuels.map((d) => d.agentId).filter(Boolean) as str
       const searchString = [winnerName, loserName, d.perspectiveId ?? "", d.agentId ?? "", d.criterion ?? ""].join(" ").toLowerCase();
       return (
         <article
+          id={d.id}
           class="battle-card"
           data-confidence={d.confidence || "none"}
           data-season={d.season !== undefined ? String(d.season) : "none"}
