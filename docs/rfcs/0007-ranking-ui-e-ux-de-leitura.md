@@ -1,12 +1,12 @@
 # RFC 0007 — Ranking: UI e UX de leitura
 
-|                 |                                                                                                                                                                                                                            |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Parcialmente implementado (r2) — Fases 0/3-parcial via PR #504/517; Fases 1–2, 4–6 em proposta                                                                                                                            |
-| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                        |
-| **Criado em**   | 2026-06-10                                                                                                                                                                                                                 |
-| **Branch / PR** | `claude/sweet-hypatia-1joz7o`                                                                                                                                                                                              |
-| **Depende de**  | —                                                                                                                                                                                                                          |
+|                 |                                                                                                                                                                                                                               |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**      | Parcialmente implementado (r2) — Fases 0/3-parcial via PR #504/517; Fases 1–2, 4–6 em proposta                                                                                                                                |
+| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                           |
+| **Criado em**   | 2026-06-10                                                                                                                                                                                                                    |
+| **Branch / PR** | `claude/sweet-hypatia-1joz7o`                                                                                                                                                                                                 |
+| **Depende de**  | —                                                                                                                                                                                                                             |
 | **Afeta**       | `src/pages/ranking.astro`, `src/pages/pt/ranking.astro`, `src/components/RankingView.astro`, `src/pages/ranking/perspectives/`, `src/hronir/perspectives.ts`, `src/lib/hronir-rank.ts`, `src/generated/ranking-snapshot.json` |
 
 > **Etapa 1 — só o RFC.** Implementação faseada após merge, cada fase verde
@@ -445,10 +445,11 @@ e confiança — o Elo ficaria redundante sem o contexto técnico.
 
 Na visão técnica, a ordem das colunas é:
 
-| Pos | Post | Elo | μ | σ | Ordinal | W/N | Confiança | Δ |
-|-----|------|-----|---|---|---------|-----|-----------|---|
+| Pos | Post | Elo | μ   | σ   | Ordinal | W/N | Confiança | Δ   |
+| --- | ---- | --- | --- | --- | ------- | --- | --------- | --- |
 
 Racional da posição:
+
 - **Elo antes de μ/σ** porque é mais legível — serve de âncora intuitiva
   antes de mergulhar nos parâmetros Bayesianos.
 - **Cor relativa ao 1000:** Elo > 1000 recebe `color: var(--pico-color-green)`,
@@ -505,21 +506,21 @@ fase.
 
 ## 5. Análise de impacto
 
-| Componente                                          | Impacto                                                                                         |
-| --------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `src/hronir/perspectives.ts`                        | Fase 0 — resolução de caminho via cwd                                                           |
-| `src/pages/ranking/perspectives/[id].astro`         | Fase 0 — guarda contra `getStaticPaths` vazio; Fase 3 — versão PT (questão aberta)              |
-| `src/components/RankingView.astro`                  | Fases 0–3 — emagrece; Fase 6 — coluna Elo na visão técnica                                     |
-| `src/pages/ranking.astro` / `pt/ranking.astro`      | Fases 1–3 — novas strings, menos dados passados                                                 |
-| `src/pages/ranking/battles/…` (novo)                | Fase 1 — listagem paginada + página por duelo + breadcrumb + prev/next                          |
-| `src/pages/ranking/posts/…` (novo)                  | Fase 4 — dossiê por post; Fase 6 — linha Elo com pico                                          |
-| `src/lib/hronir-rank.ts`                            | Fases 1/3/4 — função de hash de 8 chars, snapshot Δ, trajetória por post                       |
-| `src/generated/ranking-snapshot.json`               | Fase 3 — schema `snapshot-v1` com `basis`; Fase 6 — schema `snapshot-v2` com `elo`/`eloPeak`   |
-| `scripts/generate-ranking-snapshot.mjs`             | Fase 6 — cálculo cronológico do Elo (K=32, start=1000) na mesma passada do OpenSkill           |
-| `scripts/hronir/`                                   | Sem mudança no CLI/engine                                                                       |
-| `.routines/hronir/rates/*`                          | Sem mudança de schema                                                                           |
-| Pagefind                                            | Fase 1 — páginas de duelo entram no índice existente                                            |
-| OG images                                          | Sem mudança                                                                                     |
+| Componente                                     | Impacto                                                                                      |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `src/hronir/perspectives.ts`                   | Fase 0 — resolução de caminho via cwd                                                        |
+| `src/pages/ranking/perspectives/[id].astro`    | Fase 0 — guarda contra `getStaticPaths` vazio; Fase 3 — versão PT (questão aberta)           |
+| `src/components/RankingView.astro`             | Fases 0–3 — emagrece; Fase 6 — coluna Elo na visão técnica                                   |
+| `src/pages/ranking.astro` / `pt/ranking.astro` | Fases 1–3 — novas strings, menos dados passados                                              |
+| `src/pages/ranking/battles/…` (novo)           | Fase 1 — listagem paginada + página por duelo + breadcrumb + prev/next                       |
+| `src/pages/ranking/posts/…` (novo)             | Fase 4 — dossiê por post; Fase 6 — linha Elo com pico                                        |
+| `src/lib/hronir-rank.ts`                       | Fases 1/3/4 — função de hash de 8 chars, snapshot Δ, trajetória por post                     |
+| `src/generated/ranking-snapshot.json`          | Fase 3 — schema `snapshot-v1` com `basis`; Fase 6 — schema `snapshot-v2` com `elo`/`eloPeak` |
+| `scripts/generate-ranking-snapshot.mjs`        | Fase 6 — cálculo cronológico do Elo (K=32, start=1000) na mesma passada do OpenSkill         |
+| `scripts/hronir/`                              | Sem mudança no CLI/engine                                                                    |
+| `.routines/hronir/rates/*`                     | Sem mudança de schema                                                                        |
+| Pagefind                                       | Fase 1 — páginas de duelo entram no índice existente                                         |
+| OG images                                      | Sem mudança                                                                                  |
 
 ---
 
