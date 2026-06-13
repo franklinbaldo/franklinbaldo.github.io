@@ -18,20 +18,25 @@ export async function getStaticPaths() {
   }
 
   const duels = getAllDuels();
-  return duels.map((duel, i) => ({
-    params: { id: duel.id },
-    props: {
-      duel,
-      prevId: i + 1 < duels.length ? duels[i + 1].id : null,
-      nextId: i > 0 ? duels[i - 1].id : null,
-      prevPage: i + 1 < duels.length ? Math.floor((i + 1) / 20) + 1 : null,
-      postAInfo: byKey.get(duel.postAKey ?? ""),
-      postBInfo: byKey.get(duel.postBKey ?? ""),
-    },
-  }));
+  const PER_PAGE = 20;
+  return duels.map((duel, i) => {
+    const archivePage = Math.floor(i / PER_PAGE) + 1;
+    const archiveHref = archivePage === 1 ? "/ranking/battles/" : `/ranking/battles/page/${archivePage}/`;
+    return {
+      params: { id: duel.id },
+      props: {
+        duel,
+        prevId: i + 1 < duels.length ? duels[i + 1].id : null,
+        nextId: i > 0 ? duels[i - 1].id : null,
+        archiveHref,
+        postAInfo: byKey.get(duel.postAKey ?? ""),
+        postBInfo: byKey.get(duel.postBKey ?? ""),
+      },
+    };
+  });
 }
 
-const { duel, prevId, nextId, prevPage, postAInfo, postBInfo } = Astro.props;
+const { duel, prevId, nextId, archiveHref, postAInfo, postBInfo } = Astro.props;
 
 function postHref(info: { slug: string; lang: string } | undefined) {
   if (!info) return null;
@@ -198,11 +203,7 @@ const loserRank = rankByKey.get(loserKey);
     {nextId ? (
       <a href={`/ranking/battles/${nextId}/`} class="nav-btn prev-btn">← Newer battle</a>
     ) : <span class="nav-btn nav-disabled">← Newest</span>}
-    {prevPage && (
-      <a href={`/ranking/battles/#page-${prevPage}`} class="nav-btn archive-btn">
-        Back to archive
-      </a>
-    )}
+    <a href={archiveHref} class="nav-btn archive-btn">Back to archive</a>
     {prevId ? (
       <a href={`/ranking/battles/${prevId}/`} class="nav-btn next-btn">Older battle →</a>
     ) : <span class="nav-btn nav-disabled">Oldest →</span>}
