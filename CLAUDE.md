@@ -16,6 +16,9 @@ npm run hronir:init -- --agent-id <your-model-id> --matches 10 --skip-edit
 - `--agent-id` is **required** — use a stable identifier like `claude-opus-4-8` or `franklin`
 - `--matches` defaults to 10
 - `--skip-edit` skips the post-editing phase; use it for pure rating sessions
+- `--content-mode inline|path-only` — controls how post content is delivered:
+  - `inline` (default): CLI prints the full post content in its output
+  - `path-only`: CLI prints only the slug, file path, and Suno URLs; the agent reads the file directly. Recommended for agents with long sessions or context compression (e.g. Jules with 20 matches). The chosen mode is saved in `session.json` and recorded in each rate file as `content_mode`.
 
 ### 2. Loop: read → first-impression-a → first-impression-b → decide
 
