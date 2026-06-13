@@ -5,7 +5,7 @@
   },
   "_meta": {
     "schema": "selection-v1",
-    "generatedAt": "2026-06-13T05:03:53.876Z"
+    "generatedAt": "2026-06-13T14:49:16.479Z"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed": {
     "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-09T20-24-29.mdx",
@@ -128,12 +128,12 @@
     "uuid": "8bc365bb-b99f-5832-b05d-63ac0a87ede5"
   },
   "chegue-irmao-chegue-irma": {
-    "file": "chegue-irmao-chegue-irma/v-2026-06-09T20-24-29.mdx",
-    "uuid": "e2b2f98d-168e-5b02-a4ca-bc9b81898d3f"
+    "file": "chegue-irmao-chegue-irma/v-2026-06-10T00-16-31.mdx",
+    "uuid": "eeb23b93-919a-5db3-9443-06b60ab66178"
   },
   "chegue-irmao-chegue-irma-en": {
-    "file": "chegue-irmao-chegue-irma-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "0cdacfe9-253a-57de-8a13-9f6af669949c"
+    "file": "chegue-irmao-chegue-irma-en/v-2026-06-10T00-16-31.mdx",
+    "uuid": "636c48e7-90a8-5d35-bdb5-99c02431aa2c"
   },
   "clipes": {
     "file": "clipes/v-2026-06-09T20-24-29.mdx",
@@ -188,12 +188,12 @@
     "uuid": "9e3bcf3a-c10d-58e8-b3f3-3ea8b0bd5e8b"
   },
   "entre-rascunho-e-apagar": {
-    "file": "entre-rascunho-e-apagar/v-2026-06-12T02-34-18-383.mdx",
-    "uuid": "0e26a00d-3bad-5fd3-a8d7-af9e758a2b06"
+    "file": "entre-rascunho-e-apagar/v-2026-06-09T20-24-29.mdx",
+    "uuid": "aead8de8-96a0-536a-bb37-3e920a287655"
   },
   "entre-rascunho-e-apagar-en": {
-    "file": "entre-rascunho-e-apagar-en/v-2026-06-12T02-34-18-383.mdx",
-    "uuid": "b2803d0d-ff60-5b67-b1c7-213e632f96fc"
+    "file": "entre-rascunho-e-apagar-en/v-2026-06-09T20-24-29.mdx",
+    "uuid": "f3618dd2-bf0b-5c77-8383-57999e72e2eb"
   },
   "escherian-sunrise-with-godel": {
     "file": "escherian-sunrise-with-godel/v-2026-06-09T20-24-29.mdx",
@@ -472,12 +472,12 @@
     "uuid": "2cf788c3-85ab-5d68-b768-a4acc63b9120"
   },
   "paperclip-rhapsody": {
-    "file": "paperclip-rhapsody/v-2026-06-09T20-24-29.mdx",
-    "uuid": "69792981-fa9d-5518-9eed-bd31da0d6b0b"
+    "file": "paperclip-rhapsody/v-2026-06-11T08-25-46-487.mdx",
+    "uuid": "7df840d5-90f3-51dd-a8a8-3929d7d2c1be"
   },
   "paperclip-rhapsody-en": {
-    "file": "paperclip-rhapsody-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "e6d28ac1-a6c9-5410-a0de-93cde0e88702"
+    "file": "paperclip-rhapsody-en/v-2026-06-11T08-25-46-487.mdx",
+    "uuid": "acfb5260-f732-58d3-86c4-df933781e607"
   },
   "particles": {
     "file": "particles/v-2026-06-10T18-32-48.mdx",
