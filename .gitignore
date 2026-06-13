@@ -26,3 +26,6 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 .claude/
+
+# Hrönir transient session state (never committed)
+hronir_session.json
