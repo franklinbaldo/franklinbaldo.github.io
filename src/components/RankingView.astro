@@ -38,6 +38,7 @@ export interface RankingStrings {
   tableCaption: string;
   thRank: string;
   thPost: string;
+  thElo: string;
   thOrdinal: string;
   thMu: string;
   thSigma: string;
@@ -163,6 +164,13 @@ function snapshotDelta(key: string): number | null {
   if (!current) return null;
   return prev.rank - current.rank;
 }
+
+function snapshotElo(key: string): { elo: number; peak: number } | null {
+  if (!snapshot) return null;
+  const entry = snapshot.keys[key];
+  if (!entry || entry.elo == null) return null;
+  return { elo: entry.elo, peak: entry.eloPeak ?? entry.elo };
+}
 ---
 
 <hgroup>
@@ -246,14 +254,15 @@ function snapshotDelta(key: string): number | null {
           <th scope="col" class="col-winrate">{strings.thWinRate}</th>
           {snapshot && <th scope="col" class="col-delta">{strings.thDelta}</th>}
           <th scope="col" class="col-confidence">{strings.thConfidence}</th>
-          <th scope="col" class="col-ordinal tech-col">
-            <abbr title={strings.ordinalTip}>{strings.thOrdinal}</abbr>
-          </th>
+          <th scope="col" class="col-elo tech-col">{strings.thElo}</th>
           <th scope="col" class="col-mu tech-col">
             <abbr title={strings.muTip}>{strings.thMu}</abbr>
           </th>
           <th scope="col" class="col-sigma tech-col">
             <abbr title={strings.sigmaTip}>{strings.thSigma}</abbr>
+          </th>
+          <th scope="col" class="col-ordinal tech-col">
+            <abbr title={strings.ordinalTip}>{strings.thOrdinal}</abbr>
           </th>
           <th scope="col" class="col-record tech-col">{strings.thRecord}</th>
         </tr>
@@ -263,11 +272,15 @@ function snapshotDelta(key: string): number | null {
           const conf = confidenceLevel(r.sigma, r.appearances);
           const winRatePct = r.appearances > 0 ? Math.round((r.wins / r.appearances) * 100) : 0;
           const delta = snapshotDelta(r.key);
+          const eloData = snapshotElo(r.key);
           const href = r.post
             ? r.post.lang === "pt"
               ? `/pt/blog/${r.post.slug}/`
               : `/blog/${r.post.slug}/`
             : null;
+          const eloClass = eloData == null ? "" : eloData.elo > 1000 ? "elo-up" : eloData.elo < 1000 ? "elo-down" : "";
+          const eloDelta = eloData ? eloData.elo - 1000 : 0;
+          const eloTitle = eloData ? `Elo: ${eloData.elo} (${eloDelta >= 0 ? "+" : ""}${eloDelta} since 1000 · peak: ${eloData.peak})` : "";
           return (
             <tr>
               <th scope="row" class="col-rank">{r.rank}</th>
@@ -294,9 +307,12 @@ function snapshotDelta(key: string): number | null {
               <td class="col-confidence">
                 <span class={`conf-badge conf-${conf.level}`}>{conf.label}</span>
               </td>
-              <td class="col-ordinal num tech-col"><strong>{r.ordinal.toFixed(2)}</strong></td>
+              <td class={`col-elo num tech-col ${eloClass}`} title={eloTitle}>
+                {eloData ? eloData.elo : "—"}
+              </td>
               <td class="col-mu num tech-col">{r.mu.toFixed(2)}</td>
               <td class="col-sigma num tech-col">{r.sigma.toFixed(2)}</td>
+              <td class="col-ordinal num tech-col"><strong>{r.ordinal.toFixed(2)}</strong></td>
               <td class="col-record num tech-col" title={`${winRatePct}%`}>{r.wins}/{r.appearances}</td>
             </tr>
           );
@@ -689,6 +705,13 @@ function snapshotDelta(key: string): number | null {
   .delta-down { color: #c0392b; font-weight: 600; }
   [data-theme="dark"] .delta-up { color: #74c69d; }
   [data-theme="dark"] .delta-down { color: #e57373; }
+
+  .col-elo { width: 4rem; }
+  .rank-table th.col-elo { text-align: right; }
+  .elo-up { color: #2d6a4f; font-weight: 600; }
+  .elo-down { color: #c0392b; }
+  [data-theme="dark"] .elo-up { color: #74c69d; }
+  [data-theme="dark"] .elo-down { color: #e57373; }
 
   .conf-badge {
     display: inline-block;
