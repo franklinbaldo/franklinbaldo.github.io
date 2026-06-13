@@ -21,7 +21,8 @@ export async function getStaticPaths() {
   const PER_PAGE = 20;
   return duels.map((duel, i) => {
     const archivePage = Math.floor(i / PER_PAGE) + 1;
-    const archiveHref = archivePage === 1 ? "/ranking/battles/" : `/ranking/battles/page/${archivePage}/`;
+    const archiveBase = archivePage === 1 ? "/ranking/battles/" : `/ranking/battles/page/${archivePage}/`;
+    const archiveHref = `${archiveBase}#${duel.id}`;
     return {
       params: { id: duel.id },
       props: {
