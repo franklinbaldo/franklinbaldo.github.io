@@ -62,6 +62,7 @@ export interface RankingStrings {
   podiumBronze: string;
   noDate: string;
   unratedCTA: string;
+  unratedCTALink: string;
   perspectivesHeading: string;
   perspectivesBlurb: string;
   perspectivesLeaderLabel: string;
@@ -351,7 +352,7 @@ function snapshotDelta(key: string): number | null {
           : null;
         const tensionPct = winnerRate != null && loserRate != null
           ? Math.round(winnerRate / (winnerRate + loserRate) * 100)
-          : 62;
+          : null;
         const hasRates = winnerRate != null && loserRate != null;
 
         return (
@@ -384,10 +385,14 @@ function snapshotDelta(key: string): number | null {
               <span class="bcl-vs">{strings.recentBeats}</span>
               <span class="bcl-loser">{loserName}</span>
             </div>
-            <div class="bcl-tension">
-              <div class="bcl-fill win" style={`width:${tensionPct}%`}></div>
-              <div class="bcl-fill loss" style={`width:${100 - tensionPct}%`}></div>
-            </div>
+            {tensionPct != null ? (
+              <div class="bcl-tension">
+                <div class="bcl-fill win" style={`width:${tensionPct}%`}></div>
+                <div class="bcl-fill loss" style={`width:${100 - tensionPct}%`}></div>
+              </div>
+            ) : (
+              <div class="bcl-tension bcl-tension-none" aria-label="tension not available"></div>
+            )}
             <span class="bcl-read">{strings.readAnalysisLinkLabel} →</span>
           </a>
         );
@@ -412,7 +417,7 @@ function snapshotDelta(key: string): number | null {
       ))}
     </ul>
     <p class="unrated-cta">
-      {strings.unratedCTA} <a href="https://github.com/franklinbaldo/franklinbaldo.github.io/issues/new" target="_blank" rel="noopener noreferrer">Abra uma issue sugerindo um duelo.</a>
+      {strings.unratedCTA} <a href="https://github.com/franklinbaldo/franklinbaldo.github.io/issues/new" target="_blank" rel="noopener noreferrer">{strings.unratedCTALink}</a>
     </p>
   </section>
 )}
@@ -841,6 +846,7 @@ function snapshotDelta(key: string): number | null {
   }
   .bcl-fill.win { background: var(--pico-primary); opacity: 0.6; }
   .bcl-fill.loss { background: var(--pico-muted-border-color); opacity: 0.35; }
+  .bcl-tension-none { background: var(--pico-muted-border-color); opacity: 0.2; }
   .bcl-read {
     font-size: 0.75rem;
     color: var(--pico-muted-color);
