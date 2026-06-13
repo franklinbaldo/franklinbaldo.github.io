@@ -1,8 +1,29 @@
 ---
-import PageLayout from "../../../layouts/PageLayout.astro";
+import PageLayout from "../../../../layouts/PageLayout.astro";
 import { getCollection } from "astro:content";
-import { getAllDuels } from "../../../lib/hronir-rank";
-import { isPublished } from "../../../lib/publish";
+import { getAllDuels } from "../../../../lib/hronir-rank";
+import { isPublished } from "../../../../lib/publish";
+
+export function getStaticPaths() {
+  const allDuels = getAllDuels();
+  const PER_PAGE = 20;
+  const totalPages = Math.ceil(allDuels.length / PER_PAGE);
+  // Only generate pages 2+ (page 1 is battles/index.astro)
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => {
+    const page = i + 2;
+    return {
+      params: { n: String(page) },
+      props: {
+        page,
+        totalPages,
+        duels: allDuels.slice((page - 1) * PER_PAGE, page * PER_PAGE),
+        allDuelsCount: allDuels.length,
+      },
+    };
+  });
+}
+
+const { page, totalPages, duels, allDuelsCount } = Astro.props;
 
 const allPosts = await getCollection("blog");
 const byKey = new Map<string, { title: string; slug: string; lang: string }>();
@@ -15,18 +36,8 @@ for (const p of allPosts) {
   if (!existing || lang === "en") byKey.set(key, { title: p.data.title, slug: p.id, lang });
 }
 
-const allDuels = getAllDuels();
-const PER_PAGE = 20;
-const totalPages = Math.ceil(allDuels.length / PER_PAGE);
-const duels = allDuels.slice(0, PER_PAGE);
-
 function postLabel(key: string) {
   return byKey.get(key)?.title ?? key;
-}
-function postHref(key: string) {
-  const p = byKey.get(key);
-  if (!p) return null;
-  return p.lang === "pt" ? `/pt/blog/${p.slug}/` : `/blog/${p.slug}/`;
 }
 
 function fmtDate(iso: string) {
@@ -39,13 +50,13 @@ function perspectiveHue(id: string): number {
   return Math.abs(h) % 360;
 }
 
-const seasons = [...new Set(allDuels.map((d) => d.season).filter((s): s is number => typeof s === "number"))].sort((a, b) => a - b);
-const perspectives = [...new Set(allDuels.map((d) => d.perspectiveId).filter(Boolean) as string[])].sort();
-const agents = [...new Set(allDuels.map((d) => d.agentId).filter(Boolean) as string[])].sort();
+const seasons = [...new Set(duels.map((d) => d.season).filter((s): s is number => typeof s === "number"))].sort((a, b) => a - b);
+const perspectives = [...new Set(duels.map((d) => d.perspectiveId).filter(Boolean) as string[])].sort();
+const agents = [...new Set(duels.map((d) => d.agentId).filter(Boolean) as string[])].sort();
 ---
 
 <PageLayout
-  title="Battle Archive | Ranking | Franklin Baldo"
+  title={`Battle Archive — Page ${page} | Ranking | Franklin Baldo`}
   description="All Hrönir duels — the full battle history with verdicts, analyses, and rates."
   lang="en"
 >
@@ -53,13 +64,14 @@ const agents = [...new Set(allDuels.map((d) => d.agentId).filter(Boolean) as str
     <ol>
       <li><a href="/">Home</a></li>
       <li><a href="/ranking/">Ranking</a></li>
-      <li aria-current="page">All Battles</li>
+      <li><a href="/ranking/battles/">All Battles</a></li>
+      <li aria-current="page">Page {page}</li>
     </ol>
   </nav>
 
   <hgroup>
     <h1>Battle Archive</h1>
-    <p><small>{allDuels.length} duels · click any battle to read the full analysis and verdict</small></p>
+    <p><small>{allDuelsCount} total duels · page {page} of {totalPages}</small></p>
   </hgroup>
 
   <div class="battle-filters" id="battle-filters">
@@ -175,10 +187,12 @@ const agents = [...new Set(allDuels.map((d) => d.agentId).filter(Boolean) as str
     <div class="empty-state"><em>No battles yet.</em></div>
   )}
   <nav class="page-nav" aria-label="Archive pages">
-    <span class="nav-btn nav-disabled" aria-disabled="true">← Newer</span>
-    <span class="page-info">Page 1 of {totalPages}</span>
-    {totalPages > 1
-      ? <a href="/ranking/battles/page/2/" class="nav-btn">Older →</a>
+    {page > 2
+      ? <a href={`/ranking/battles/page/${page - 1}/`} class="nav-btn">← Newer</a>
+      : <a href="/ranking/battles/" class="nav-btn">← Newer</a>}
+    <span class="page-info">Page {page} of {totalPages}</span>
+    {page < totalPages
+      ? <a href={`/ranking/battles/page/${page + 1}/`} class="nav-btn">Older →</a>
       : <span class="nav-btn nav-disabled" aria-disabled="true">Older →</span>}
   </nav>
 
