@@ -230,11 +230,28 @@ function snapshotDelta(key: string): number | null {
   </section>
 )}
 
+{perspectivesGrid && perspectivesGrid.length > 0 && (
+  <nav class="persp-tabs" aria-label={strings.perspectivesHeading}>
+    <a href={lang === "pt" ? "/pt/ranking/" : "/ranking/"} class="persp-tab persp-tab-all">
+      All
+    </a>
+    {perspectivesGrid.map((p) => (
+      <a
+        href={`/ranking/perspectives/${p.id}/`}
+        class="persp-tab"
+        style={`--ph:${p.hue}`}
+      >
+        {p.name}
+      </a>
+    ))}
+  </nav>
+)}
+
 {rows.length > 0 && (
   <div class="rank-table-header">
     <p class="rank-caption">{strings.tableCaption}</p>
     <button class="view-toggle" id="view-toggle" type="button">
-      {strings.technicalViewLabel}
+      {strings.standardViewLabel}
     </button>
   </div>
   <div class="overflow-table rank-table-wrap">
@@ -310,31 +327,6 @@ function snapshotDelta(key: string): number | null {
   <p class="rank-empty"><em>{strings.emptyState}</em></p>
 )}
 
-{perspectivesGrid && perspectivesGrid.length > 0 && (
-  <section class="perspectives-grid-section">
-    <h2>{strings.perspectivesHeading}</h2>
-    <p><small>{strings.perspectivesBlurb}</small></p>
-    <div class="perspectives-grid">
-      {perspectivesGrid.map((p) => (
-        <a href={`/ranking/perspectives/${p.id}/`} class="persp-card" style={`--ph:${p.hue}`}>
-          <header class="persp-card-head">
-            <span class="persp-name">{p.name}</span>
-          </header>
-          <p class="persp-summary">{p.summary}</p>
-          {p.leaderTitle && (
-            <p class="persp-leader">
-              <span class="persp-leader-label">{strings.perspectivesLeaderLabel}</span>
-              <span class="persp-leader-title">{p.leaderTitle}</span>
-            </p>
-          )}
-        </a>
-      ))}
-    </div>
-    <p class="persp-view-all">
-      <a href="/ranking/perspectives/">{strings.perspectivesViewAllLink}</a>
-    </p>
-  </section>
-)}
 
 {recent.length > 0 && (
   <section class="rank-recent">
@@ -681,9 +673,9 @@ function snapshotDelta(key: string): number | null {
     opacity: 0.55;
   }
 
-  /* Technical columns: hidden by default, shown when table has data-view="technical" */
-  .tech-col { display: none; }
-  #rank-table[data-view="technical"] .tech-col { display: table-cell; }
+  /* Technical columns: visible by default, hidden when table has data-view="standard" */
+  .tech-col { display: table-cell; }
+  #rank-table[data-view="standard"] .tech-col { display: none; }
 
   .delta-up { color: #2d6a4f; font-weight: 600; }
   .delta-down { color: #c0392b; font-weight: 600; }
@@ -711,77 +703,43 @@ function snapshotDelta(key: string): number | null {
     .rank-table .col-confidence { display: none; }
   }
 
-  /* Perspectives grid -------------------------------------------- */
-  .perspectives-grid-section {
-    margin-top: 3.5rem;
-  }
-  .perspectives-grid-section h2 {
-    font-size: 1.15rem;
-    margin-bottom: 0.2rem;
-  }
-  .perspectives-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-    gap: 1rem;
-    margin: 1rem 0;
-  }
-  .persp-card {
+  /* Perspective tabs -------------------------------------------- */
+  .persp-tabs {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 0.4rem;
-    padding: 1rem 1.1rem 0.9rem;
+    margin: 0 0 1.5rem;
+  }
+  .persp-tab {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
     border: 1px solid var(--pico-muted-border-color);
-    border-left: 4px solid hsl(var(--ph, 200), 55%, 55%);
-    border-radius: var(--pico-border-radius);
-    background: var(--pico-card-background-color);
+    color: var(--pico-muted-color);
     text-decoration: none;
-    color: inherit;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    background: transparent;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    white-space: nowrap;
   }
-  .persp-card:hover {
-    border-left-color: hsl(var(--ph, 200), 65%, 45%);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  }
-  .persp-card-head {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .persp-name {
-    font-weight: 600;
-    font-size: 0.95rem;
+  .persp-tab:hover {
+    border-color: hsl(var(--ph, 200), 55%, 55%);
     color: hsl(var(--ph, 200), 45%, 32%);
+    background: hsl(var(--ph, 200), 55%, 96%);
+    text-decoration: none;
   }
-  [data-theme="dark"] .persp-name {
-    color: hsl(var(--ph, 200), 65%, 72%);
-  }
-  .persp-summary {
-    font-size: 0.82rem;
-    color: var(--pico-muted-color);
-    margin: 0;
-    line-height: 1.4;
-  }
-  .persp-leader {
-    font-size: 0.78rem;
-    margin: 0.2rem 0 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-  }
-  .persp-leader-label {
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: var(--pico-muted-color);
-  }
-  .persp-leader-title {
-    color: var(--pico-color);
-    font-size: 0.8rem;
+  .persp-tab-all {
     font-weight: 500;
+    color: var(--pico-color);
+    border-color: var(--pico-color);
   }
-  .persp-view-all {
-    margin-top: 0.5rem;
-    font-size: 0.88rem;
+  .persp-tab-all:hover {
+    background: var(--pico-card-sectioning-background-color);
+    color: var(--pico-color);
+    border-color: var(--pico-color);
+  }
+  [data-theme="dark"] .persp-tab:hover {
+    color: hsl(var(--ph, 200), 65%, 72%);
+    background: hsl(var(--ph, 200), 30%, 15%);
   }
 
   /* Recent battles (light cards) -------------------------------- */
@@ -934,17 +892,18 @@ function snapshotDelta(key: string): number | null {
     if (toggleBtn.dataset.hasListener) return;
     toggleBtn.dataset.hasListener = "true";
 
-    // Read initial state from URL
+    // Technical view is the default. URL param "view=standard" switches to simplified.
     const urlParams = new URLSearchParams(window.location.search);
-    const isTechnical = urlParams.get("view") === "technical";
-    if (isTechnical) {
-      table.dataset.view = "technical";
+    const isStandard = urlParams.get("view") === "standard";
+    if (isStandard) {
+      table.dataset.view = "standard";
       toggleBtn.classList.add("active");
     }
 
     toggleBtn.addEventListener("click", () => {
-      const current = table.dataset.view === "technical";
+      const current = table.dataset.view === "standard";
       if (current) {
+        // Switch back to technical (default)
         delete table.dataset.view;
         toggleBtn.classList.remove("active");
         const params = new URLSearchParams(window.location.search);
@@ -955,10 +914,11 @@ function snapshotDelta(key: string): number | null {
           window.location.hash;
         history.replaceState(null, "", newUrl);
       } else {
-        table.dataset.view = "technical";
+        // Switch to standard (simplified)
+        table.dataset.view = "standard";
         toggleBtn.classList.add("active");
         const params = new URLSearchParams(window.location.search);
-        params.set("view", "technical");
+        params.set("view", "standard");
         history.replaceState(null, "", window.location.pathname + "?" + params.toString() + window.location.hash);
       }
     });
