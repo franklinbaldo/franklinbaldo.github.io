@@ -55,6 +55,7 @@ interface InitOptions {
   evalLang?: string;
   minAppearances?: number;
   matches?: number;
+  pledge?: string;
 }
 
 interface WorstOptions {
@@ -66,6 +67,7 @@ interface EndOptions {
   force?: boolean;
   skipEdit?: boolean;
   agentId?: string;
+  attest?: string;
 }
 
 interface PromoteArgs {
@@ -119,6 +121,16 @@ const STARS_SCHEMAS = new Set(["stars-v1", "stars-v2"]);
 function wordCount(s: unknown): number {
   if (!s || typeof s !== "string") return 0;
   return s.trim().split(/\s+/).filter(Boolean).length;
+}
+
+// Detects automated token-stuffing in text fields.
+// Pattern: words matching PREFIX_DIGITS3+_ALPHANUM_DIGITS (e.g. revA_1873_abc123_0)
+// appearing 5+ times signals that a script generated the field instead of prose.
+function hasTokenStuffing(s: unknown): boolean {
+  if (!s || typeof s !== "string") return false;
+  const tokenPattern = /\b[A-Za-z]+_\d{3,}_[A-Za-z0-9]{4,}_\d+\b/g;
+  const matches = s.match(tokenPattern);
+  return (matches?.length ?? 0) >= 5;
 }
 
 function parseRate(raw: unknown, flagName: string): number {
@@ -253,6 +265,7 @@ export function init(options: InitOptions = {}) {
   }
 
   const matchesOpt = options.matches != null ? options.matches : 10;
+  const pledge = options.pledge?.trim() || null;
   const session = {
     target: matchesOpt,
     completed: 0,
@@ -263,12 +276,24 @@ export function init(options: InitOptions = {}) {
     skipRating: false,
     currentMatch: null,
     minAppearances: options.minAppearances || null,
+    pledge,
   };
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
   console.log(
     `Sessão iniciada para ${matchesOpt} matches com agente "${agentId}" e avaliações em "${evalLang}".`
   );
+  if (pledge) {
+    const border = "═".repeat(80);
+    console.log("");
+    console.log(border);
+    console.log("📜 DECLARAÇÃO DE COMPROMISSO DO AVALIADOR");
+    console.log(border);
+    console.log(`"${pledge}"`);
+    console.log(`— ${agentId}`);
+    console.log(border);
+    console.log("");
+  }
   if (skipEdit) {
     console.log("Fase de edição do pior post será pulada (--skip-edit ativo).");
   }
@@ -2095,6 +2120,10 @@ export function doctor() {
         issues.push(
           `${base}: 'clash' tem ${wordCount(data.clash)} palavras (mínimo ${MIN_WORDS})`
         );
+      } else if (hasTokenStuffing(data.clash)) {
+        issues.push(
+          `${base}: 'clash' contém tokens de automação (campo gerado por script, não por prosa genuína)`
+        );
       }
       if (
         !data.eval_lang ||
@@ -2140,6 +2169,10 @@ export function doctor() {
         issues.push(
           `${base}: 'review_a' tem ${wordCount(data.review_a)} palavras (mínimo ${MIN_WORDS})`
         );
+      } else if (hasTokenStuffing(data.review_a)) {
+        issues.push(
+          `${base}: 'review_a' contém tokens de automação (campo gerado por script, não por prosa genuína)`
+        );
       }
       if (!data.review_b || data.review_b === "TODO") {
         issues.push(
@@ -2148,6 +2181,10 @@ export function doctor() {
       } else if (wordCount(data.review_b) < MIN_WORDS) {
         issues.push(
           `${base}: 'review_b' tem ${wordCount(data.review_b)} palavras (mínimo ${MIN_WORDS})`
+        );
+      } else if (hasTokenStuffing(data.review_b)) {
+        issues.push(
+          `${base}: 'review_b' contém tokens de automação (campo gerado por script, não por prosa genuína)`
         );
       }
       if (!data.perspective_id) {
@@ -2469,7 +2506,25 @@ export function end(options: EndOptions = {}) {
       process.exit(1);
     }
 
+    const attest = options.attest?.trim() || null;
+    const pledgeFromSession = (session.pledge as string | null) || null;
     fs.unlinkSync(sessionPath);
+
+    if (attest || pledgeFromSession) {
+      const border = "═".repeat(80);
+      console.log("");
+      console.log(border);
+      console.log("📜 ENCERRAMENTO DA SESSÃO — DECLARAÇÕES DO AVALIADOR");
+      console.log(border);
+      if (pledgeFromSession) {
+        console.log(`Compromisso inicial: "${pledgeFromSession}"`);
+      }
+      if (attest) {
+        console.log(`Atestado final:      "${attest}"`);
+      }
+      console.log(border);
+      console.log("");
+    }
   }
   if (options.skipEdit) {
     console.log("Fase de edição do pior post pulada (--skip-edit ativa).");
