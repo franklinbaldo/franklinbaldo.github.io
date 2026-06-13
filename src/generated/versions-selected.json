@@ -5,7 +5,7 @@
   },
   "_meta": {
     "schema": "selection-v1",
-    "generatedAt": "2026-06-13T15:40:21.561Z"
+    "generatedAt": "2026-06-13T15:42:31.752Z"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed": {
     "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-09T20-24-29.mdx",
@@ -270,6 +270,10 @@
   "guia-de-implementao-da-arquitetura-pontifex": {
     "file": "guia-de-implementao-da-arquitetura-pontifex/v-2026-06-10T05-09-44.md",
     "uuid": "b5752a77-07b2-5227-b8ad-e65402192d37"
+  },
+  "hronir-encyclopedia-protocol": {
+    "file": "hronir-encyclopedia-protocol/v-2026-06-13T15-00-00.md",
+    "uuid": "09c3ccd9-5b64-50bd-a5de-64a9f2eb3c02"
   },
   "hronir-phantom-critic": {
     "file": "hronir-phantom-critic/v-2026-06-13T13-00-00.md",
