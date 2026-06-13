@@ -55,6 +55,7 @@ interface InitOptions {
   evalLang?: string;
   minAppearances?: number;
   matches?: number;
+  pledge?: string;
 }
 
 interface WorstOptions {
@@ -66,6 +67,7 @@ interface EndOptions {
   force?: boolean;
   skipEdit?: boolean;
   agentId?: string;
+  attest?: string;
 }
 
 interface PromoteArgs {
@@ -263,6 +265,7 @@ export function init(options: InitOptions = {}) {
   }
 
   const matchesOpt = options.matches != null ? options.matches : 10;
+  const pledge = options.pledge?.trim() || null;
   const session = {
     target: matchesOpt,
     completed: 0,
@@ -273,12 +276,24 @@ export function init(options: InitOptions = {}) {
     skipRating: false,
     currentMatch: null,
     minAppearances: options.minAppearances || null,
+    pledge,
   };
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
   console.log(
     `Sessão iniciada para ${matchesOpt} matches com agente "${agentId}" e avaliações em "${evalLang}".`
   );
+  if (pledge) {
+    const border = "═".repeat(80);
+    console.log("");
+    console.log(border);
+    console.log("📜 DECLARAÇÃO DE COMPROMISSO DO AVALIADOR");
+    console.log(border);
+    console.log(`"${pledge}"`);
+    console.log(`— ${agentId}`);
+    console.log(border);
+    console.log("");
+  }
   if (skipEdit) {
     console.log("Fase de edição do pior post será pulada (--skip-edit ativo).");
   }
@@ -2491,7 +2506,25 @@ export function end(options: EndOptions = {}) {
       process.exit(1);
     }
 
+    const attest = options.attest?.trim() || null;
+    const pledgeFromSession = (session.pledge as string | null) || null;
     fs.unlinkSync(sessionPath);
+
+    if (attest || pledgeFromSession) {
+      const border = "═".repeat(80);
+      console.log("");
+      console.log(border);
+      console.log("📜 ENCERRAMENTO DA SESSÃO — DECLARAÇÕES DO AVALIADOR");
+      console.log(border);
+      if (pledgeFromSession) {
+        console.log(`Compromisso inicial: "${pledgeFromSession}"`);
+      }
+      if (attest) {
+        console.log(`Atestado final:      "${attest}"`);
+      }
+      console.log(border);
+      console.log("");
+    }
   }
   if (options.skipEdit) {
     console.log("Fase de edição do pior post pulada (--skip-edit ativa).");

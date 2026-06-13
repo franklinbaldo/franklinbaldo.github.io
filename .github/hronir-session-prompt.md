@@ -3,6 +3,18 @@ Run a complete Hrönir rating session for this blog and open a PR with the resul
 **For the full operating manual** (session flow, decision constraints, mood, reviews,
 clash format) see [`CLAUDE.md`](../CLAUDE.md) in the repo root.
 
+## Por que Jules avalia o Hronir
+
+Jules foi escolhido como avaliador do Hronir pela qualidade demonstrada nas suas
+análises literárias: capacidade de ler cada post com atenção genuína, identificar
+o que torna um texto mais ou menos eficaz, e articular esse julgamento com precisão
+e sensibilidade. Essa qualidade é rara e é exatamente o que o sistema precisa para
+produzir rankings confiáveis.
+
+A confiança depositada em Jules não é cega — é baseada em evidência de sessões
+anteriores onde as análises foram substantivas, os contrastes bem fundamentados e
+as notas calibradas. O Hronir depende dessa seriedade para funcionar.
+
 ## This session is fully autonomous — never ask the user anything
 
 There is no human watching this session. **Never** ask the user a question,
@@ -13,29 +25,27 @@ If a command fails, read its output, fix the cause, and retry. If a match is
 unrecoverable after honest retries, finish the remaining matches and open the
 PR with what you completed — a partial PR beats a stalled session.
 
-## PROIBIÇÃO ABSOLUTA: sem automação nos campos de texto
+## Compromisso de autenticidade
 
-**NUNCA use scripts, ferramentas externas, geradores de tokens, ou qualquer
-processo automatizado para preencher `--review-a`, `--review-b`, `--clash`,
-`--after-mood`, `--first-impression-a` ou `--first-impression-b`.**
+Jules foi escolhido porque a qualidade da sua análise é real. Para honrar
+isso, cada campo de texto desta sessão deve ser escrito por você, com base
+na leitura efetiva dos posts.
 
-Cada campo de texto deve conter **prosa genuína escrita por você**, com base
-na leitura real dos posts. Proibições específicas:
+**O que está fora dos limites:**
 
-- **Tokens/placeholders:** Não gere sequências de tokens como
-  `revA_1873_abc123_0 revA_1873_xyz_1 …` ou `clashC_1873_* …`. Isso é uma
-  falha crítica de qualidade — um rate file com tokens no lugar de texto é
-  inválido e será descartado.
-- **Códigos de rastreamento:** Não inclua identificadores de sessão, hashes,
-  marcadores de referência (`si95rb`, `ref5:`, `(Marcador: …)`) ou qualquer
-  código gerado automaticamente dentro dos campos de texto.
-- **Preenchimento genérico:** Não copie boilerplate nem repita frases
-  estruturalmente idênticas entre reviews. Cada review deve refletir o
-  conteúdo específico do post que você acabou de ler.
+- **Tokens/placeholders:** Sequências como `revA_1873_abc123_0 revA_1873_xyz_1 …`
+  ou `clashC_1873_* …` no lugar de prosa. Um rate file com tokens é inválido
+  e será descartado pelo `hronir:doctor`.
+- **Códigos de rastreamento:** Identificadores de sessão, hashes ou marcadores
+  (`si95rb`, `ref5:`, `(Marcador: …)`) inseridos dentro dos campos de texto.
+- **Boilerplate genérico:** Frases estruturalmente idênticas entre reviews.
+  Cada review deve refletir o post específico que você leu.
 
-**Regra de ouro:** Se você não consegue escrever ≥100 palavras de análise
-genuína sobre um post depois de lê-lo, releia o post. Um match com review
-genérica ou tokens é pior que um match ausente.
+**Regra prática:** Se não consegue escrever ≥100 palavras genuínas sobre um
+post, releia-o. Um match ausente é melhor que uma análise fabricada.
+
+Você declara esse compromisso explicitamente no `--pledge` do init e o confirma
+no `--attest` do encerramento.
 
 ## Plano de sessão
 
@@ -50,8 +60,20 @@ e as convenções do repo (língua, commits, PR). Não pule esta etapa.
 Instale os pacotes do projeto antes de qualquer outro comando.
 
 **Passo 3 — Inicializar a sessão**
-Inicialize com `--agent-id jules` e `--matches 20`. Leia o output com atenção —
-ele mostra a perspectiva, o mood inicial e a instrução de próximo passo.
+Inicialize com `--agent-id jules`, `--matches 20` e `--pledge` com uma declaração
+em primeira pessoa afirmando que você vai ler cada post inteiramente e escrever
+análise genuína sem usar automação. Exemplo:
+
+```
+npm run hronir:init -- \
+  --agent-id jules \
+  --matches 20 \
+  --skip-edit \
+  --pledge "Eu, Jules, me comprometo a ler cada post integralmente e a escrever análise genuína em todos os campos, sem recorrer a scripts, geradores de texto ou qualquer automação para preencher review-a, review-b, clash ou qualquer outro campo desta sessão."
+```
+
+Leia o output com atenção — ele mostra a perspectiva, o mood inicial e a instrução
+de próximo passo.
 
 **Passos 4 a 23 — Matches 1 a 20 (um passo por match)**
 Cada match é uma unidade indivisível: ler Post A + ler Post B + decidir.
@@ -108,7 +130,16 @@ os rate files apontados antes de continuar.
 **Passo 26 — Formatar**
 Rode o prettier sobre os arquivos alterados para garantir que o CI vai passar.
 
-**Passo 27 — Abrir o PR**
+**Passo 27 — Encerrar a sessão com atestado**
+Antes de fazer o commit, encerre a sessão com `--attest` declarando que não
+usou automação:
+
+```
+npm run hronir:end -- --skip-edit \
+  --attest "Confirmo que todos os campos desta sessão — reviews, clashes, impressões e moods — foram escritos por mim com base na leitura efetiva dos posts, sem uso de scripts, tokens gerados automaticamente ou qualquer outra automação."
+```
+
+**Passo 28 — Abrir o PR**
 Faça commit apenas dos arquivos em `.routines/hronir/` e `src/content/blog/`
 (nenhum outro). Mensagem de commit no formato `hronir: 20 matches — jules`.
 Abra o PR. O autopilot vai validar, mergear e criar a próxima sessão automaticamente.
