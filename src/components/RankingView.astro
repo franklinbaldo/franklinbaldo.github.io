@@ -299,8 +299,10 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
           const eloClass = eloData == null ? "" : eloData.elo > 1000 ? "elo-up" : eloData.elo < 1000 ? "elo-down" : "";
           const eloDelta = eloData ? eloData.elo - 1000 : 0;
           const eloTitle = eloData ? `Elo: ${eloData.elo} (${eloDelta >= 0 ? "+" : ""}${eloDelta} since 1000 · peak: ${eloData.peak})` : "";
+          const podiumClass = r.rank === 1 ? "row-gold" : r.rank === 2 ? "row-silver" : r.rank === 3 ? "row-bronze" : "";
+          const podiumLabel = r.rank === 1 ? "1st place" : r.rank === 2 ? "2nd place" : r.rank === 3 ? "3rd place" : undefined;
           return (
-            <tr>
+            <tr class={podiumClass || undefined} aria-label={podiumLabel}>
               <th scope="row" class="col-rank">{r.rank}</th>
               <td class="col-post">
                 {href ? (
@@ -658,6 +660,12 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
     vertical-align: top;
   }
   .rank-table tbody tr:hover { background: var(--pico-card-sectioning-background-color); }
+  .rank-table .row-gold  { background: #fdf6dc; }
+  .rank-table .row-silver { background: #f4f4f4; }
+  .rank-table .row-bronze { background: #fdf0e6; }
+  [data-theme="dark"] .rank-table .row-gold   { background: #2a2414; }
+  [data-theme="dark"] .rank-table .row-silver { background: #1e1e1e; }
+  [data-theme="dark"] .rank-table .row-bronze { background: #261c10; }
   .rank-table .num {
     font-family: var(--pico-font-family-monospace);
     text-align: right;
