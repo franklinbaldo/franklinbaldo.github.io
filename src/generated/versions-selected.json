@@ -5,7 +5,7 @@
   },
   "_meta": {
     "schema": "selection-v1",
-    "generatedAt": "2026-06-12T12:07:08.992Z"
+    "generatedAt": "2026-06-13T05:03:53.876Z"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed": {
     "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-09T20-24-29.mdx",
@@ -188,12 +188,12 @@
     "uuid": "9e3bcf3a-c10d-58e8-b3f3-3ea8b0bd5e8b"
   },
   "entre-rascunho-e-apagar": {
-    "file": "entre-rascunho-e-apagar/v-2026-06-09T20-24-29.mdx",
-    "uuid": "aead8de8-96a0-536a-bb37-3e920a287655"
+    "file": "entre-rascunho-e-apagar/v-2026-06-12T02-34-18-383.mdx",
+    "uuid": "0e26a00d-3bad-5fd3-a8d7-af9e758a2b06"
   },
   "entre-rascunho-e-apagar-en": {
-    "file": "entre-rascunho-e-apagar-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "f3618dd2-bf0b-5c77-8383-57999e72e2eb"
+    "file": "entre-rascunho-e-apagar-en/v-2026-06-12T02-34-18-383.mdx",
+    "uuid": "b2803d0d-ff60-5b67-b1c7-213e632f96fc"
   },
   "escherian-sunrise-with-godel": {
     "file": "escherian-sunrise-with-godel/v-2026-06-09T20-24-29.mdx",
@@ -232,8 +232,8 @@
     "uuid": "c7de2172-9eba-5141-bc17-c637b02311ef"
   },
   "everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago": {
-    "file": "everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/v-2026-06-10T18-32-48.md",
-    "uuid": "e2b6de07-42c9-5dec-bb3d-272f848ca2e6"
+    "file": "everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/v-2026-06-10T17-39-46.md",
+    "uuid": "58a61095-57cb-5851-82d1-b2e0d7793eeb"
   },
   "everything-is-eml": {
     "file": "everything-is-eml/v-2026-06-10T05-09-44.md",
@@ -324,12 +324,12 @@
     "uuid": "566e8573-ec7e-5a89-9f44-11f713d4a803"
   },
   "mindfulness": {
-    "file": "mindfulness/v-2026-06-09T20-24-29.mdx",
-    "uuid": "927c82a2-d23e-54c9-bc19-381fa38270e1"
+    "file": "mindfulness/v-2026-06-10T07-09-27.mdx",
+    "uuid": "33d2abb7-0bb9-5d64-9985-6bc2cdbb9e52"
   },
   "mindfulness-en": {
-    "file": "mindfulness-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "e2443f4a-0833-5cf3-9663-836c2942328e"
+    "file": "mindfulness-en/v-2026-06-10T07-09-27.mdx",
+    "uuid": "0587d440-f81e-5290-8e28-b7b5f5ed5038"
   },
   "moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade": {
     "file": "moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/v-2026-06-10T05-09-44.md",
@@ -732,8 +732,8 @@
     "uuid": "c04b11e3-6337-50dc-bfa1-a910d7190710"
   },
   "tudo-e-processo": {
-    "file": "tudo-e-processo/v-2026-06-10T18-32-48.md",
-    "uuid": "7f042640-7d76-5bbd-a376-75317053ce9d"
+    "file": "tudo-e-processo/v-2026-06-10T17-39-46.md",
+    "uuid": "c19b8fbc-3d53-5b6a-9a30-14d217eedaec"
   },
   "two-cursors": {
     "file": "two-cursors/v-2026-06-09T20-24-29.mdx",
@@ -772,12 +772,12 @@
     "uuid": "fbe94cfa-7115-56fd-ba1c-7c09caa719eb"
   },
   "veu-do-infinito": {
-    "file": "veu-do-infinito/v-2026-06-09T20-24-29.mdx",
-    "uuid": "bd84afad-2193-5325-a88e-2459b5a87f8b"
+    "file": "veu-do-infinito/v-2026-06-12T09-51-17-410.mdx",
+    "uuid": "27b4fcb1-5050-59a5-ba14-9bfee44c70cc"
   },
   "veu-do-infinito-en": {
-    "file": "veu-do-infinito-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "ac725b78-6183-556a-82b2-86373633bac5"
+    "file": "veu-do-infinito-en/v-2026-06-12T09-51-17-410.mdx",
+    "uuid": "7a6c2ca5-1adf-5413-9789-9222e86673bc"
   },
   "vos": {
     "file": "vos/v-2026-06-10T02-14-41.mdx",
