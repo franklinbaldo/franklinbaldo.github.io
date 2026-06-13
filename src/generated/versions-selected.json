@@ -5,11 +5,7 @@
   },
   "_meta": {
     "schema": "selection-v1",
-<<<<<<< HEAD
     "generatedAt": "2026-06-13T15:42:31.752Z"
-=======
-    "generatedAt": "2026-06-13T14:49:16.479Z"
->>>>>>> 32863b9 (chore: update versions-selected.json after build)
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed": {
     "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-09T20-24-29.mdx",
