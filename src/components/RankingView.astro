@@ -303,7 +303,9 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
           const podiumLabel = r.rank === 1 ? "1st place" : r.rank === 2 ? "2nd place" : r.rank === 3 ? "3rd place" : undefined;
           return (
             <tr class={podiumClass || undefined} aria-label={podiumLabel}>
-              <th scope="row" class="col-rank">{r.rank}</th>
+              <th scope="row" class="col-rank">
+                <a href={`/ranking/posts/${r.key}/`} class="rank-link" title={`Dossier: ${r.post?.title ?? r.key}`}>{r.rank}</a>
+              </th>
               <td class="col-post">
                 {href ? (
                   <a href={href}>{r.post!.title}</a>
@@ -686,6 +688,8 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
   }
   .rank-table .col-post a { text-decoration: none; }
   .rank-table .col-post a:hover { text-decoration: underline; }
+  .rank-table .rank-link { text-decoration: none; color: var(--pico-muted-color); }
+  .rank-table .rank-link:hover { color: var(--pico-primary); }
   .rank-table .col-delta { width: 3.5rem; }
   .rank-table .col-winrate { width: 4rem; }
   .ord-bar {
