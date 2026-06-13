@@ -2,7 +2,7 @@
 
 |                 |                                                                                                                                                                                                                               |
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Implementado (r2) — todas as fases concluídas: PR #504/517 (Fases 0/3-parcial), #520 (Fase 6), #523 (Fase 1), #524 (Fase 2), #526 (Fases 3/4/5)                                                                              |
+| **Status**      | Implementado (r2) — todas as fases concluídas: PR #504/517 (Fases 0/3-parcial), #520 (Fase 6), #523 (Fase 1), #524 (Fase 2), #526 (Fases 3/4/5)                                                                               |
 | **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                           |
 | **Criado em**   | 2026-06-10                                                                                                                                                                                                                    |
 | **Branch / PR** | `claude/sweet-hypatia-1joz7o`                                                                                                                                                                                                 |
