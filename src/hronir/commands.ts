@@ -125,13 +125,40 @@ function wordCount(s: unknown): number {
 }
 
 // Detects automated token-stuffing in text fields.
-// Pattern: words matching PREFIX_DIGITS3+_ALPHANUM_DIGITS (e.g. revA_1873_abc123_0)
-// appearing 5+ times signals that a script generated the field instead of prose.
+// Catches several Jules/script-generated patterns:
+//   1. Underscored ID tokens (revA_1873_abc123_0 — original heuristic)
+//   2. Database artifact ref tags embedded in prose ([ref:a1b2c3d4])
+//   3. Known Jules session boilerplate prefixes
+//   4. Dense random 8-char alphanumeric tokens (≥30% of words, ≥20-word field)
 function hasTokenStuffing(s: unknown): boolean {
   if (!s || typeof s !== "string") return false;
-  const tokenPattern = /\b[A-Za-z]+_\d{3,}_[A-Za-z0-9]{4,}_\d+\b/g;
-  const matches = s.match(tokenPattern);
-  return (matches?.length ?? 0) >= 5;
+  // Pattern 1: underscored token IDs
+  const pattern1 = /\b[A-Za-z]+_\d{3,}_[A-Za-z0-9]{4,}_\d+\b/g;
+  if ((s.match(pattern1)?.length ?? 0) >= 5) return true;
+  // Pattern 2: database artifact ref tags ([ref:a1b2c3d4])
+  if (/\[ref:[a-f0-9]{8}\]/.test(s)) return true;
+  // Pattern 3: Jules boilerplate framing phrases
+  const boilerplates = [
+    "Evaluating this English post, uniquely identified as",
+    "Clashing these English posts, uniquely identified as",
+    "Nesta leitura sob a ótica da perspectiva, notamos o seguinte:",
+    "A close reading reveals the following fundamental characteristics:",
+    "Reading this through the lens of our perspective, we find:",
+    "Comparando ambas as obras através das lentes da nossa perspectiva.",
+    "In this direct clash, the differences become evident.",
+  ];
+  for (const bp of boilerplates) {
+    if (s.includes(bp)) return true;
+  }
+  // Pattern 4: dense random alphanumeric tokens (7–9 chars, mixed letter+digit)
+  const words = s.trim().split(/\s+/).filter(Boolean);
+  if (words.length >= 20) {
+    const tokenCount = words.filter(
+      (w) => /^[a-z0-9]{7,9}$/.test(w) && /[a-z]/.test(w) && /[0-9]/.test(w)
+    ).length;
+    if (tokenCount / words.length >= 0.3) return true;
+  }
+  return false;
 }
 
 function parseRate(raw: unknown, flagName: string): number {
@@ -2231,6 +2258,25 @@ export function doctor() {
             `${base}: 'evaluator_mood_after' é idêntico a um mood pré-definido — escreva algo original em primeira pessoa`
           );
         }
+      }
+      // Impression stub detection: Jules used "-- Impression A for [slug] under [perspective]"
+      // as a placeholder comment. Real first-impressions are actual prose.
+      const STUB_IMPRESSION_RE = /^-- Impression [AB] for /;
+      if (
+        data.impression_a != null &&
+        STUB_IMPRESSION_RE.test(String(data.impression_a))
+      ) {
+        issues.push(
+          `${base}: 'impression_a' é um stub de template, não uma impressão real`
+        );
+      }
+      if (
+        data.impression_b != null &&
+        STUB_IMPRESSION_RE.test(String(data.impression_b))
+      ) {
+        issues.push(
+          `${base}: 'impression_b' é um stub de template, não uma impressão real`
+        );
       }
     } else if (isNewSchema && data.winner !== "TODO") {
       // Pre-stars new-schema matches: require the fields exist but don't
