@@ -2,7 +2,7 @@
 
 |                 |                                                                                                                                         |
 | --------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Proposta (r1)                                                                                                                           |
+| **Status**      | Implementado (r1) — Fases 0–3 concluídas via PR #525; 280 posts migrados, 23 gêneros canônicos, doctor validando                        |
 | **Autor**       | Franklin Baldo (proposta assistida)                                                                                                     |
 | **Criado em**   | 2026-06-13                                                                                                                              |
 | **Branch / PR** | `claude/modest-euler-27ofmr` / #525                                                                                                     |
@@ -17,9 +17,10 @@
 
 ## Histórico de revisões
 
-| Data       | Mudança         |
-| ---------- | --------------- |
-| 2026-06-13 | Versão inicial. |
+| Data       | Mudança                                                                                      |
+| ---------- | -------------------------------------------------------------------------------------------- |
+| 2026-06-13 | Versão inicial.                                                                              |
+| 2026-06-13 | Implementação completa: Fases 0–3 concluídas em PR #525 (schema, migração, gêneros, doctor). |
 
 ---
 
