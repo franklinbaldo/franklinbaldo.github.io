@@ -68,6 +68,26 @@ import { remarkGitModified } from "./src/lib/remark-git-modified.mjs";
 import { remarkHasMath } from "./src/lib/remark-has-math.mjs";
 import { rehypeWrapTables } from "./src/lib/rehype-wrap-tables.mjs";
 
+/** Adds loading="lazy" to all img elements rendered from markdown. */
+function rehypeLazyImages() {
+  /** @param {any} tree */
+  return function (tree) {
+    /** @param {any} node */
+    function visit(node) {
+      if (node.type === "element" && node.tagName === "img") {
+        node.properties ??= {};
+        if (!node.properties.loading) {
+          node.properties.loading = "lazy";
+        }
+      }
+      if (Array.isArray(node.children)) {
+        node.children.forEach(visit);
+      }
+    }
+    visit(tree);
+  };
+}
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://franklinbaldo.github.io",
@@ -190,6 +210,7 @@ export default defineConfig({
         },
       ],
       rehypeWrapTables,
+      rehypeLazyImages,
     ],
   },
 });
