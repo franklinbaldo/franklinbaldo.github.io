@@ -5,7 +5,7 @@
   },
   "_meta": {
     "schema": "selection-v1",
-    "generatedAt": "2026-06-13T18:18:30.643Z"
+    "generatedAt": "2026-06-14T00:25:35.234Z"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed": {
     "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-09T20-24-29.mdx",
@@ -696,12 +696,12 @@
     "uuid": "f72d737e-ae4f-5e9c-9b2f-813c069b1526"
   },
   "the-time": {
-    "file": "the-time/v-2026-06-09T20-24-29.mdx",
-    "uuid": "bebfcab4-500a-5339-a13b-3370a8cf8359"
+    "file": "the-time/v-2026-06-10T12-29-24.mdx",
+    "uuid": "7080304c-d83a-56ef-b7cf-7f032b0f2131"
   },
   "the-time-en": {
-    "file": "the-time-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "ef5024e9-344a-51cc-bd08-160b3a6bf687"
+    "file": "the-time-en/v-2026-06-10T12-29-24.mdx",
+    "uuid": "7b515d64-6f64-56f9-b201-c24df94b8c12"
   },
   "the-work-that-proves-itself": {
     "file": "the-work-that-proves-itself/v-2026-06-10T05-09-44.md",
