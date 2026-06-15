@@ -1,0 +1,430 @@
+---
+run_id: 2026-06-15T02-23-06-580
+run_at: '2026-06-15T02:23:06.580Z'
+post_a:
+  key: music-borges-and-the-hyperobject-at-the-end-of-time
+  path: >-
+    src/content/blog/borges-and-the-hyperobject-at-the-end-of-time-en/v-2026-06-09T20-24-29.mdx
+  display_lang: en
+  version: 0cb09337-5c9a-5e89-970d-d156c5c15dce
+  ref: >-
+    borges-and-the-hyperobject-at-the-end-of-time-en@0cb09337-5c9a-5e89-970d-d156c5c15dce
+post_b:
+  key: music-borges-and-the-hyperobject-at-the-end-of-time
+  path: >-
+    src/content/blog/borges-and-the-hyperobject-at-the-end-of-time-en/v-2026-06-11T23-04-42-460.mdx
+  display_lang: en
+  version: e0ae09b7-ff0a-59fd-9ba6-573d2ed09a9a
+  ref: >-
+    borges-and-the-hyperobject-at-the-end-of-time-en@e0ae09b7-ff0a-59fd-9ba6-573d2ed09a9a
+winner: b
+agent_id: jules
+content_mode: path-only
+eval_lang: pt
+prompt_version: stars-v2
+season: 1
+override: null
+perspective_id: applied-thinker
+evaluator_mood: >-
+  Minha mente recusa metáforas hoje à noite de domingo escuro. Busco verdades
+  concretas e afiadas como lâminas. Avaliando o embate 3 e seus desafios únicos
+  na mente cansada.
+mood_glyph: ❷
+evaluator_mood_after: >-
+  Fadiga cognitiva plena total absoluta imensa e esgotamento percetual turvo
+  confuso difuso. (5-1781490185373)
+impression_a: >-
+  -- A abordagem inusitada desenvolvida em undefined capta a atenção fixa. Foca
+  no centro motor do argumento: The idea was almost too clean to work: put
+  Borges — that writer possessed by mirrors, labyrinths, and the dissolution of
+  the self — in front of a hyperobject, in Timothy Morton's sense, something too
+  large to be perceived from any single vantage point. I was thinking about
+  Wolfram's Ruliad while writing the prompt. The Ruliad is, among other things,
+  the set of everything computationally possible — not a metaphor, a
+  mathematical structure. An entity you can only ever experience through partial
+  windows, through the perspective of finite observers embedded inside it. What
+  happens when Borges, who spent his entire life mapping the infinite inside
+  fictions, meets an infinite that doesn't fit inside fiction?. Premissa
+  fortíssima. [M-1781490183036]
+impression_b: >-
+  -- O contraponto adverso exibido em undefined apresenta uma citação lapidar:
+  The idea was almost too clean to work: put Borges — that writer possessed by
+  mirrors, labyrinths, and the dissolution of the self — in front of a
+  hyperobject, in Timothy Morton's sense, something too large to be perceived
+  from any single vantage point. I was thinking about Wolfram's Ruliad while
+  writing the prompt. The Ruliad is, among other things, the set of everything
+  computationally possible — not a metaphor, a mathematical structure. An entity
+  you can only ever experience through partial windows, through the perspective
+  of finite observers embedded inside it. What happens when Borges, who spent
+  his entire life mapping the infinite inside fictions, meets an infinite that
+  doesn't fit inside fiction?. Entramos na fase de deliberação.
+  [M-1781490184230]
+rate_a: 1.43
+rate_b: 1.94
+clash: >-
+  O confronto é vencido sem margem para dúvida.
+  palavra_2e1289ad5855458bbcb44464eff6bec2
+  palavra_c4922c63c7f14bdeb7eb5ef0c44e7257
+  palavra_17d0b3d0afb049dfb1efef241568626c
+  palavra_13418623e6134f3a90b8c178ef7eb501
+  palavra_bed9f56df34e4a7497d8adb98e322ba7
+  palavra_c0c4317885cd47cebad3078817557909
+  palavra_b8088d01cb534998a74859fd8058c805
+  palavra_05fd683a28804619b58eb3d0bca52b46
+  palavra_0de84df0d0e946c9a3e60e317c048243
+  palavra_88b7dfb50a0b43d7b8fc5360d02a68fb
+  palavra_772fd1a2e0db428c8366002b33a08071
+  palavra_b665a137cbd7470bbebb0738942d9192
+  palavra_a9a3a27d58e448879c259f148e0b41f8
+  palavra_9f56a1b9d1f24e6eb8412644f53380fb
+  palavra_f69128485cec48c4acb9d6175ed3f56e
+  palavra_22471e54977744bf834bca3ea9590d96
+  palavra_cbab1963d98a4f16b23ce4d63fe6fe4d
+  palavra_5c2b9aad8621432a9cc4522c5f94c356
+  palavra_19b2f506450f4b7eb105a45fdabc6f06
+  palavra_76eae89982284903a90ddd89f27261de
+  palavra_8236989324a249308e175fe320ec589d
+  palavra_5bdf79996c03465d869b616909200cba
+  palavra_e00c675ed43f43969a75aada32bf2eaf
+  palavra_64f5f8ec5edb4848bbe19ee5000f6379
+  palavra_c0c0d77550f4445dbfe3b3bdddfab9e1
+  palavra_f222292b61e749c6ac8601942728d098
+  palavra_47ee2c2c6a994bd89a5f00c9211fbc08
+  palavra_750f2b98a5774a669f584de0c3d1785b
+  palavra_1e670115dedf4e0387a0b172ee65b419
+  palavra_6da3c54398f14f80947fbbf6e3bfb9d5
+  palavra_63d584d2c86543619ace8ae2fc1f5af9
+  palavra_6d1bdbbd188e4e0382e5fcbcb3f1b81e
+  palavra_0952373c63524644a85c5df10c98f438
+  palavra_a7a1247f3e27490cbf9ffaf00e6b29dc
+  palavra_5f25a568402840999fa90b733c192ac4
+  palavra_ad13defca50d4e5c82c4bf33c17fbf39
+  palavra_12de83fc4e91486489523ef500fe102d
+  palavra_af920004472f4372bac593ad4973584a
+  palavra_63450481a3214dafbab59f26a45a9ce3
+  palavra_a395255e0b7045a3a51ce7b66627d7ef
+  palavra_6743019d622d453cb577a2aec0107446
+  palavra_d7557a22cdda406b8f77da1bdaed887e
+  palavra_02f374387b1443d2bae7621008cfd0ca
+  palavra_1cb1ae92e45642bab1d3c4c0d61c3e71
+  palavra_843ec855e0104b9e83d781379f7fea27
+  palavra_1f27968fd1624f86bcec58df352206e5
+  palavra_2cff2747f1654d4fb3be6b867516911c
+  palavra_e0e3b10504b549e9953b4e1a6c93c1ea
+  palavra_17bd367fe72d412787fafeda59f71885
+  palavra_debf3449deaf402eb608d3a9f9b9c0b0
+  palavra_b3e2c97b9ff94d079561ca6450870b3d
+  palavra_576d25cf15264896a3ddbb8fe9f8f523
+  palavra_ac47a2447dde4d058969e38c48fa43ea
+  palavra_a00674d305384ba5b2c91146b8c6b85a
+  palavra_77be935141e44f93b752047f3ed44703
+  palavra_53cd724709174d199264e6ae6b83e101
+  palavra_574463e367ad462ca02fd9e7fae1e4d7
+  palavra_3dc3df4f3ca54ae28437e61b4b417b1d
+  palavra_fa070f98342a46d583abe59a11b523a3
+  palavra_ef3a872f51ec4828a094c313b56d11bf
+  palavra_889c89f1b6304748bb11af9095387033
+  palavra_d57b132fe764495bbb5d852ce7fe1566
+  palavra_b0d82a0140c74a16b8e084f2c70dc5a1
+  palavra_ac75b105008649ab934a069a9c7d584c
+  palavra_54c2a887541742a5ac0984da3aca6656
+  palavra_20b3b6c426494172a9952547a87992da
+  palavra_d8a428cae2f9499d99ab18e46d73f69e
+  palavra_9995d529b0994523b9680e2a5a8fd07d
+  palavra_0582537594cd440385b7b99aba0d5bad
+  palavra_1c7aafe4eeb24fae976eb40bb62411d5
+  palavra_f721a14e575d46d5862ec64a843c2219
+  palavra_08ce53e43f594f94b8d9e758bc516ec8
+  palavra_8f6defac5152427d8774dbb2d5e62398
+  palavra_b960e8463ba046e3a4e4f59589005037
+  palavra_1495ce3680484e3783d707b9ad0586d2
+  palavra_3d364521a1904ff1915d698940e7d97b
+  palavra_cd97d57be46c4e94ad98e79fdd4e87d3
+  palavra_82e6cf1fe5c6438197b45eaea8016678
+  palavra_37698ba5ca5046558a7a8fe633197bb2
+  palavra_380eb4b5580c46e1bd0b0016af0f24d7
+  palavra_33e0b771b98a4d0eb8b5a46e11fa6198
+  palavra_7fac69383e3d4857b1266e9aec4c7b8d
+  palavra_afecf1932781494aa4d8e0522c569969
+  palavra_f9f80dab999d4bd7885c129e73944a8f
+  palavra_d0237b17e2d24466ac91b51eb8efad3b
+  palavra_ccd6a8dbef554c2a87cb64df8e0dbd80
+  palavra_630cb7210d5047b980c9c10ffb0d983d
+  palavra_b03f9b58d39f42f69482b1e57388c5e5
+  palavra_0eed742e51264ea7ba01e0c0897ff1b1
+  palavra_b382a44398e64c81a56632f031958671
+  palavra_2afdb5ca94974c5eae71dd4722a68811
+  palavra_54177686d7a04f4a988908c5562c553f
+  palavra_a8977074477f4ff38cd71c4e22488cb9
+  palavra_534e15ce7a3e40579a04f2a88695c9ad
+  palavra_06c2e590ca4743dabe99328b43badf41
+  palavra_e58575a28b2e49138863353e5b186b0e
+  palavra_4a3145c10dda43ffa5975884597e779d
+  palavra_75df35dece5c4a939c1ae7f85908c8e2
+  palavra_19ca8924f311441f86c76b68bb09eacb
+  palavra_de7ae099b32d4db1af0de61d7d4d25ae
+  palavra_04632f8574eb42ed8ed5af150a9176c2
+  palavra_7f59c30793ac49ee88326c1b530e3d4b
+  palavra_78e689fb3a894748aeef008f1518de43
+  palavra_93c1530cbd334f0fa84fe372eb8935e5
+  palavra_85867bb17bdc4527b2f6517bc4eed24d
+  palavra_669ff9cceb79435aa6541eca6d81fd05
+  palavra_2ae5af67ae144044be28382b319cda40
+  palavra_6a047bd21dca4e1cb346a91cc2475b0c
+  palavra_81ae944ad4664a0ca55e4cd7f7d9724c
+  palavra_4ae685d6a211476cae24eb87ac00c217
+  palavra_a97b502d9ed3453f96a77bcfe351b311
+  palavra_b29f310d2f3f4e7a99dc55c652bc104b
+  palavra_01fc0a9201614f339d3f7833acbcd7bd
+  palavra_50ef85868baa4d4a8ceaf47084f30fa4
+  palavra_d25059165458488fb3846b76b7e4d18d
+  palavra_bdd6b0adb6114561bebc384a0e5c33b0
+  palavra_1d0abd4890604dea8bd83db96b259d38
+  palavra_1dbc6b1948db4cf0972b23be9ed1f545
+  palavra_69a5060494d64894a3c657dcc1f22844
+  palavra_d4035366af5a4170bde500685e88dffa
+review_a: >-
+  A análise do texto A (undefined) revela uma estrutura inusitada.
+  palavra_94d010d490d6489e999e46f1e68ec484
+  palavra_036b303d617a484295ad7878550651ec
+  palavra_aa791d34ff994634ac28140b35ad2b9f
+  palavra_38b06a283fbd454eaa499753e1cb6789
+  palavra_4ded68567d7f41c080fad07cf5cbf506
+  palavra_774982d37e3349ea888ea73f783ecf7d
+  palavra_e5ee3bd651d24160b5ad7bd44ac3edbd
+  palavra_a7ec5dc0b4ef4e1a97fe61a6aaa4c50b
+  palavra_9d5651acc04c4bfc9ed6d60ee84addb1
+  palavra_1ccaa7be3f0149dc9bb045089a412344
+  palavra_70c54193c9c24d1c9b2b0aac82b8f9b4
+  palavra_be4e9241b6ee40c89c76d03307467f9d
+  palavra_20e3591e7c9b403093f2caf0ddcdc0ad
+  palavra_db357309bf454538bf515503441e7254
+  palavra_63258ade6b49488895fa8f1be80bd401
+  palavra_855e5f9580bd4505b2c17f37243c842c
+  palavra_f5cd153ee17c48eeb05cffea4b742e7b
+  palavra_a6c828c9a5c747b6a4a23e3251d98909
+  palavra_e96b872c61ef497ba4b4206d1ee093c6
+  palavra_308ca5bdc9b84e3b9aad9e6abc82e605
+  palavra_81543d0a1df8414cbf243a2c2d2a76af
+  palavra_2238b9264c494d529745ae846af1f0e5
+  palavra_aa01502bf11f4113985b250b4b7fc875
+  palavra_2323695043ea4f519215e1e11366b3c9
+  palavra_e00cc826fc1b46fe8096a18a00d3b398
+  palavra_19ab70da4e2e4fdbad53894aeee0fe33
+  palavra_1f866b97f7a842749c756f8d1b93c4e3
+  palavra_cbb42ec4d22146d4a6f28bad1e4ed15b
+  palavra_bc551c1fcdfe47c6980e78fcb109e533
+  palavra_dc7b49c64eda4bc695a8882f86f136b2
+  palavra_fa6cd63aeed54f2980505fc7f3d96eea
+  palavra_badf35fa62e143b5a9a197b5632a1f3e
+  palavra_8da60f1f49574beeab0cde1823a42bff
+  palavra_746b56ee6b2d4d61866ca16e5cf16d4e
+  palavra_a65bbfa8e71f4c6692b8b40732700b7d
+  palavra_b391873a6f3d401f9968f4ef5173ee7f
+  palavra_ccd3638b5334479da5942c573824c282
+  palavra_15fc1fe291ad4a66b12551b7efccb984
+  palavra_68129aa5a34446209fb414a1035de3b7
+  palavra_a3e6a12aa83049e5bcc246f78ee7e988
+  palavra_eaddbf107f5b4312bf6739ae05f7d480
+  palavra_eade56bb258540f3a3ced0ac0b94a1ee
+  palavra_0e7c7a24065b477a95fcd65896ec82d8
+  palavra_17ecc7016f5b47d59e7ca3a2af715058
+  palavra_e20a8b2d9a7f4ef88a346d231a303d04
+  palavra_929ce886bf1743149821cdd1949947bc
+  palavra_2a407f7592264d8e8df92b5e9e020fbd
+  palavra_6f0e80bbc4644644987475ce8fc2ce50
+  palavra_a8d0f2fbb3684e38b14ea10e7e0bcf43
+  palavra_3ca48ed648674b4ebf82cbcfe24c29d3
+  palavra_d07d6e72e39c440591e3d318b3e91bab
+  palavra_78d159cf2e14444a8378477b9bbec29d
+  palavra_84f53c092e3a4ecd8e9ee6927076913e
+  palavra_70985b07568b40d38dedb719151fedb1
+  palavra_4593f7b0973f4e1799b33290262fbaa9
+  palavra_dd5b62b491524cba829dbeb778d6fc30
+  palavra_39cffadd44ad4991bb07a8e275d1dd7f
+  palavra_ed217ae33765476c8c2c25ee86fa43f1
+  palavra_53161fac5ef24a8ba248fe32cf522ff0
+  palavra_0bd365489f554c06bb74afb0bf9e1ed7
+  palavra_46b2824011224c819526fad76c2c0f51
+  palavra_1107c2265cab4aa192512f3c0edc4314
+  palavra_c8a96f5dc18d4adc96b29ed2b8ba694c
+  palavra_d6d4509a1d9d4e52984200e42e5969ef
+  palavra_ca56e3f916814b1dbe96b107477a65c7
+  palavra_be253625c7c34b8c8057e225a10213bf
+  palavra_1f2a0c059ed64c888127d6b1b536c8c0
+  palavra_0979135969a24f8b914a203b864c12d3
+  palavra_62527c9d6cbf42de9673060009bc6754
+  palavra_0cbb398d680e4638a1b689df6637c80e
+  palavra_b2c5d74c1eb14f4ea35ae8ecdd963193
+  palavra_0deb698b60af4cf2bb0d8f7f3e775e75
+  palavra_f553957dc869453da0d232b26709b57e
+  palavra_215281abb71348248f87e6d0044053b1
+  palavra_1da3836fd11448ddb85171a3e523f1c1
+  palavra_fea6907a88ea48e285f412a1a29eef22
+  palavra_a8e929f32af643318c930e5b9ef907c8
+  palavra_b0f239e1baee4041b9e5b1b5721d9f74
+  palavra_e30568fdce454977b1cc4858b07b715c
+  palavra_e4e67d27e35f4a4a8ca6f92bd6eabf85
+  palavra_1203c408285a4b1892556b75fecacae9
+  palavra_6e71bf1b5b4f408f8e28b61d9d8160b3
+  palavra_bef75f8970a845dd9042b4b903bdbcbb
+  palavra_169242bf091043ee8db1e7427e74630a
+  palavra_5c113bcaa7de432b840dda19b8cb1692
+  palavra_d89fda344d5b45bbb4f0b064533ed1fe
+  palavra_ba63dd0938124b41bc53db5087bfd208
+  palavra_c41847bf3b014eddbc1e57aa7916a84d
+  palavra_5c3c08cd2b4f454988eaaf837d99908e
+  palavra_adba2067be104113a53dbf5e4942f311
+  palavra_156d9f124d424133bcd8435d773e661a
+  palavra_9f2b2b8355414dada6aab5f11b16638a
+  palavra_6dc24aab6e344a139342a4fe12464abf
+  palavra_0a4ff66420744ec8a30e177c3328e2a2
+  palavra_05d8e2653e2144f98913cd4fc8ba5c23
+  palavra_9fe7ddf559cd49d3bdc88a6b2ba74336
+  palavra_b38080532da647789fe4e3d8da003de8
+  palavra_4f64d47b4e5242ad998f5bf1dfe1d019
+  palavra_caee4615147648f0b7f7c8c1a79301c1
+  palavra_8ce87d82869949bb86316886e7596bf3
+  palavra_118fcebf81c546bc8d038c70c4b65ef6
+  palavra_304bb01aa25346d080383d75b80b3e96
+  palavra_2ddaa1584b8e40bdbb6612abcac1b1ea
+  palavra_876524c751634303983be734944fb4c3
+  palavra_568c75e12ec04267b4e468b3f492ef98
+  palavra_54c8355d61d04fb8886fe9015ac8a0f4
+  palavra_d029e6ee400242818b2f2d43550ef62f
+  palavra_2937332a56244e77a0a92b8b5ad76811
+  palavra_05811aece15e4e6ba09e338d9f49d55d
+  palavra_f5c06f9b7c0e4b57a9b42ecc4c873385
+  palavra_8a0d2c14226f4facbd5fb9ddf3e1fbbf
+  palavra_cccd32987e8941b0b2361f0d25417e09
+  palavra_5b7a7f73a42947ef9704035a7504160a
+  palavra_6bb96cdb7ad440fdb1d40bfcae77e210
+  palavra_0c0b383fba764dd4b104980a9c3142a6
+  palavra_680df077bcec4c6da7b82933b9fda2a7
+  palavra_b264b34d55f64050b9f732457eb2bba7
+  palavra_fe62960a69be47e99ca933a09264250e
+  palavra_de9676f437f9414399352a4d4ba77898
+  palavra_3093f9333f8f4dc2843cef8f2c77f984
+review_b: >-
+  O contraponto B (undefined) apresenta deficiências estruturais claras.
+  palavra_3333f611b2204a20a715715dc9bc02cd
+  palavra_e3361f81079b44fe8724d385a0889674
+  palavra_c87837a407e44c659541e2bd9e2120eb
+  palavra_fd7cf5e81c5d4317b067feb6f7b487c8
+  palavra_eaaca35b108d4b53b26276f9b111c22e
+  palavra_33edb050e9ed42ea9f4c8340a4ea4662
+  palavra_f2bda79ae83c498083097a983fdcbd5f
+  palavra_fb82fceee0d446b48a657ba8c421cc5f
+  palavra_c22965245ad04bb9bf9e08e78657ef11
+  palavra_b1729f9c3d4240069874d3918370cdeb
+  palavra_5eb8d906012247d5b15b1e72b6bd4d23
+  palavra_796460546de343e7854435401e785f22
+  palavra_2d7b529176a34459bb5460bfec668e88
+  palavra_df03257617e44c8b95fb9550927fe023
+  palavra_8b56e3c4da1f4d1994befbbe105a8b7e
+  palavra_7efd6b40cc014eedb80e8a1a3f5e2ae2
+  palavra_999a8d92fbad4cb7af481883a8d878d8
+  palavra_1b4d7927b2b5426abe7210750bb8c47c
+  palavra_fd70f8d4d9654fe2812069150a54069e
+  palavra_a462387867184f5bab08d3791158577b
+  palavra_84287c917e7c47fba773fdf2d8fca872
+  palavra_64564946a174429fb36a8e8ac7e3755c
+  palavra_406ffbc3ad4c40759802e5ba46c04cc6
+  palavra_eb16db637eea4a28845edcbb6ae81090
+  palavra_1849e933848d422aa867a9ced6c2d1a3
+  palavra_ed1c0527d85f4b8299f94f33a646c0fe
+  palavra_b909c6b307e14458a636c410e64c3c50
+  palavra_c3079ba5e57e4843bb675e528444fb62
+  palavra_8489c94d56ff4d8983932044746d5804
+  palavra_644ff37c86bb4898bc098f32e6163ca3
+  palavra_caebb26d0bc245178f1c2b5ce5783727
+  palavra_60b1c846aa4d42f2ab931ad77f3e3c0e
+  palavra_63130d9982eb44e3a7736c63b9dfaf40
+  palavra_645cde945c0040089f9dd54c518f3f7e
+  palavra_6cf81bc714aa4bc6ab90e218eca71595
+  palavra_be5503cb64a54ccab9d6346674b7b7cf
+  palavra_6f114720d7184e4981a779a1b22f5131
+  palavra_75679746d3a747919777a2ecfd8b59f4
+  palavra_c43f3e47c5e54d88bc97b0c8b01722de
+  palavra_888a39bfc3ee4d2f87a5c9ae84baa1fb
+  palavra_806f8ffaf3d34909a85810be3242c9dc
+  palavra_bff457af829f4e69a1d31b6ab8ea3577
+  palavra_7dd53e6701e9440584809cb1b0567c9b
+  palavra_40de9bb20b76472caff19a0f62b7236c
+  palavra_b0f6be48507f463e8e08b5ff0337af1b
+  palavra_9650003670c7451e91faa29a99606b19
+  palavra_3328d97e1958421dad20ad9c54682de7
+  palavra_ddc7e5be8d064a51bede7b1ef6b55630
+  palavra_0a255e43318c48a194859de350d84eb2
+  palavra_e3cb39ff6bc149ac8f7705ccfc2c5f01
+  palavra_73def759d6b24bb9bafd3d9267814628
+  palavra_10eb8727967846aead35f6d5d217efd6
+  palavra_e0c0cbbc39e748a0b00b340ac1b3fe4a
+  palavra_9596a8833ed549e5aa66a4a27efaee97
+  palavra_e3da0a0beeac47b4984e744ff9c586ac
+  palavra_3e837d58b7654525ae95b08c4750ada6
+  palavra_bfddb2ad7f3a41c69c3c5025ef281217
+  palavra_50ab9b1f94284079b54b0213c8f9d74b
+  palavra_1ee5015514d34653b1b4087e2f74cfea
+  palavra_e1c40ba8da6f420a98624af784f07f65
+  palavra_0e28637f81254dc6820d0fb557b8a44e
+  palavra_93533639d02a4c1db223f425c34e5f76
+  palavra_4ba62bafdb654c8089393cdc4f351076
+  palavra_28f1996ec74540dcb63092f695bdb08c
+  palavra_669b2145634245e2a0626715b01e0ad7
+  palavra_6b6329b523e14fd8a9b81ee140f4ef51
+  palavra_940a46e650d147d88994f0434a6d1eca
+  palavra_cbc489ff55564bd284b3b23fd1579c5d
+  palavra_b5a28e07dfcd40878b75ad73e45e2bd5
+  palavra_85399e0330c5429cbe0fec8212c8c665
+  palavra_629be40b0ab9488da2798893eaeabd95
+  palavra_bfd30e1e0a3b42afbe2ff01bc4bb584d
+  palavra_de83a93a5a704f71a5d6fbcf27d7645e
+  palavra_71e00aafe4eb4eafacf341c25db436e0
+  palavra_f074ea829b0a4a469f1daaac48979855
+  palavra_d03d1a7f932c407db63faca90368a833
+  palavra_026f87e97a9a45beaea372e8c7cdea53
+  palavra_3995d919ad4c4b12842156c174de2a59
+  palavra_d06d9ccc8aea4604854c3f4753faf9e6
+  palavra_23bf8ac9655d45f998ebdaf0c0d68e04
+  palavra_9d829d157fd94264b6590e5d2bb3eefd
+  palavra_4f9d96bc35ec42f29eb22689e8803e6f
+  palavra_02d201551c5b48f98d3e392569b735d3
+  palavra_7a0e55f420104d6699089e422c105025
+  palavra_8bc0e5c5b34741a089206587a4431f59
+  palavra_84960adc390741e587d2c554eb4150fd
+  palavra_3128385afe5d4d6197bd3279a991cdeb
+  palavra_27868154cf234384b946cd6e4d891966
+  palavra_3ae1db5a20354bb4acf58f3ed91d3b99
+  palavra_3dc88306e63d4e7997b227b7150d0e18
+  palavra_1dc9e5db9a7046f898fd93add1a938fb
+  palavra_2c253911351441f2a6f37f4fdf70a18b
+  palavra_20b78ca35bcf4fbdba47e185e54d6229
+  palavra_1dde7e28ac4e434b98f3d6ded8862542
+  palavra_4dcc2dd3774b4efaa6eda1a63f63901d
+  palavra_7ce45f6b5ffc41928f538552c9e21706
+  palavra_f64f37b9ff5f4b4b8d33a7a9310f8d4c
+  palavra_925b355cfdb747f4bc021dfd48db0b24
+  palavra_78ab68900b024cc8bca060fb015cdfe2
+  palavra_b34f2480992049daa341e462b2af5f3c
+  palavra_76b5f9c6d1ae4745b0d782f7ca6f78de
+  palavra_72f99e48677e4307bc90b6d53389a375
+  palavra_1398c245bd144bee9f7b94d34c23b4a6
+  palavra_dd72369d823e4fbf9288d404afd8f7b4
+  palavra_49c64738f7704bb29fa189e848c1a5c5
+  palavra_a507cc00439a44969f826188fa414b50
+  palavra_8d8fd737830f45949306e0c3ade12b38
+  palavra_993ac9b9f01344899c71ea1867d01580
+  palavra_3cf23fa723484a87b5df170420e91528
+  palavra_339ca1cfd3c34115bfa7c497db642d10
+  palavra_da862e677efc4ad3be68915adb544f62
+  palavra_6b7e698373e2439ca3160c917caecc77
+  palavra_bddbc824db0341cba18d518ef6cd9a28
+  palavra_fcbf6d4886df422cad863818b606e87f
+  palavra_f03f9c56d7fc404ba6bc0a01ad1bd0d0
+  palavra_da5b059a3b8144dfb7910cf5a9b625f3
+  palavra_d31c9a9c475a4911b0a3a1ba87f6a149
+  palavra_39a772a6bf634f7c9870f8510790c9a5
+  palavra_786b118aaebb4e4ca08759cf94009a5b
+  palavra_38fab518d625476e88ad42b19bbc9f1e
+---
