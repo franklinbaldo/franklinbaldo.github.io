@@ -51,6 +51,36 @@ export const READING_PATHS: ReadingPath[] = [
       },
     },
   },
+  {
+    slug: "law-and-ai",
+    title: {
+      en: "Law and AI",
+      pt: "Direito e IA",
+    },
+    blurb: {
+      en: "A state attorney's journey into AI agents: delegation, memory, and what changes when the clerk never forgets — seen from someone who builds at night and argues in court by day.",
+      pt: "A jornada de um procurador do estado pelo mundo dos agentes de IA: delegação, memória, e o que muda quando o escrivão nunca esquece — pelo olhar de quem constrói à noite e argumenta no tribunal de dia.",
+    },
+    source: {
+      type: "manual",
+      posts: {
+        en: [
+          "the-art-of-delegation",
+          "census-not-sample",
+          "conceptual-document-the-chronicle-of-franklin-baldo",
+          "building-funes",
+          "funes-soul",
+        ],
+        pt: [
+          "delegando-para-agentes",
+          "censo-nao-amostra",
+          "documento-conceitual-a-cronica-de-franklin-baldo",
+          "construindo-funes-como-dei-uma-alma-a-um-agente-de-ia",
+          "soulmd-funes",
+        ],
+      },
+    },
+  },
 ];
 
 export function getReadingPath(slug: string): ReadingPath | undefined {
