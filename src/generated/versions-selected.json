@@ -5,7 +5,7 @@
   },
   "_meta": {
     "schema": "selection-v1",
-    "generatedAt": "2026-06-14T00:25:35.234Z"
+    "generatedAt": "2026-06-14T16:32:00.392Z"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed": {
     "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-09T20-24-29.mdx",
@@ -392,12 +392,12 @@
     "uuid": "1838c7fa-04e8-51ad-8903-cc75b91aced8"
   },
   "o-preco-da-saudade": {
-    "file": "o-preco-da-saudade/v-2026-06-09T20-24-29.mdx",
-    "uuid": "4a259e8d-7a7a-5adf-a1ee-8b10b2a92806"
+    "file": "o-preco-da-saudade/v-2026-06-12T11-41-44-358.mdx",
+    "uuid": "d94c6dcc-b399-58a4-9bdc-6d5795e4397c"
   },
   "o-preco-da-saudade-en": {
-    "file": "o-preco-da-saudade-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "e8c1a129-7ada-5510-b958-a933616d8429"
+    "file": "o-preco-da-saudade-en/v-2026-06-12T11-41-44-358.mdx",
+    "uuid": "7ebefed1-bdfc-5405-8ed9-bc549f90bd50"
   },
   "o-prologo": {
     "file": "o-prologo/v-2026-06-09T20-24-29.mdx",
@@ -424,12 +424,12 @@
     "uuid": "18d51888-bcc9-5a34-8bda-d10e61e3af64"
   },
   "o-sonhador-e-o-fogo": {
-    "file": "o-sonhador-e-o-fogo/v-2026-06-09T20-24-29.mdx",
-    "uuid": "7dbfe820-da8e-562b-a7fa-a356aba7d6b9"
+    "file": "o-sonhador-e-o-fogo/v-2026-06-11T05-15-50-982.mdx",
+    "uuid": "f6335407-c2bc-54b3-8011-50485d93a00c"
   },
   "o-sonhador-e-o-fogo-en": {
-    "file": "o-sonhador-e-o-fogo-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "0ec9389d-bbc6-5004-bda8-42dd90d2c305"
+    "file": "o-sonhador-e-o-fogo-en/v-2026-06-11T05-15-50-982.mdx",
+    "uuid": "4041b29e-ee55-511d-84ef-22fb4434c1c9"
   },
   "o-telefone-da-agonia": {
     "file": "o-telefone-da-agonia/v-2026-06-09T20-24-29.mdx",
