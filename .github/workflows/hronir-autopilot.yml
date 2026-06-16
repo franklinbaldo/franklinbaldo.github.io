@@ -139,11 +139,13 @@ jobs:
           echo "Merged PR #$PR."
           echo "merged=$PR" >> "$GITHUB_OUTPUT"
 
-      - name: Respawn session after merge
-        if: steps.merge.outputs.merged != ''
-        env:
-          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
-        run: |
-          set -euo pipefail
-          echo "Spawning replacement session for merged PR #${{ steps.merge.outputs.merged }}..."
-          bash scripts/hronir/spawn-session.sh
+      # Respawn disabled — Jules substituído por outro agente.
+      # Para reativar: descomentar o step abaixo e restaurar JULES_API_KEY.
+      # - name: Respawn session after merge
+      #   if: steps.merge.outputs.merged != ''
+      #   env:
+      #     JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+      #   run: |
+      #     set -euo pipefail
+      #     echo "Spawning replacement session..."
+      #     bash scripts/hronir/spawn-session.sh
