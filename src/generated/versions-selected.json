@@ -5,15 +5,15 @@
   },
   "_meta": {
     "schema": "selection-v1",
-    "generatedAt": "2026-06-16T22:10:00.061Z"
+    "generatedAt": "2026-06-16T05:24:27.361Z"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed": {
-    "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-09T20-24-29.mdx",
-    "uuid": "b2a7f306-213a-5e0c-8668-704a5035c806"
+    "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-12T08-00-12-612.mdx",
+    "uuid": "d3135b89-7fd2-51a7-b5b1-bcd25489ecef"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed-en": {
-    "file": "151474c5-1420-4cc1-9ab5-80721f4459ed-en/v-2026-06-09T20-24-29.mdx",
-    "uuid": "0507e080-984d-52c2-abc6-da8922194945"
+    "file": "151474c5-1420-4cc1-9ab5-80721f4459ed-en/v-2026-06-12T08-00-12-612.mdx",
+    "uuid": "d92be255-b0c8-5600-984d-e7d0a0c1c05f"
   },
   "46336b97-4306-41bc-8a7b-48f0ebebbd29": {
     "file": "46336b97-4306-41bc-8a7b-48f0ebebbd29/v-2026-06-09T20-24-29.mdx",
@@ -29,7 +29,7 @@
   },
   "a-api-do-jules-como-backend-do-harness": {
     "file": "a-api-do-jules-como-backend-do-harness/v-2026-06-10T05-09-44.md",
-    "uuid": "0fbd4d60-7f59-5a0f-84fb-bdb6d59319cf"
+    "uuid": "ca6fcd23-f0d3-5655-b8d2-b0706f3640a1"
   },
   "a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050": {
     "file": "a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050/v-2026-06-10T05-09-44.md",
@@ -49,7 +49,7 @@
   },
   "asymmetric-evolution": {
     "file": "asymmetric-evolution/v-2026-06-10T05-09-44.md",
-    "uuid": "fd59598a-6384-58e4-8ebd-ad1eaa2469ef"
+    "uuid": "f96915b0-4cc5-5acf-9c82-d2f8ce7f4777"
   },
   "be-me-borges": {
     "file": "be-me-borges/v-2026-06-09T20-24-29.mdx",
@@ -109,7 +109,7 @@
   },
   "building-funes": {
     "file": "building-funes/v-2026-06-10T05-09-44.md",
-    "uuid": "a96c838e-0fc6-5215-bcc9-e72bb607c0d8"
+    "uuid": "c6e0c4d2-0f6c-5c5d-9ca8-b91a6204083b"
   },
   "caminho": {
     "file": "caminho/v-2026-06-09T20-24-29.mdx",
@@ -149,11 +149,11 @@
   },
   "construindo-funes-como-dei-uma-alma-a-um-agente-de-ia": {
     "file": "construindo-funes-como-dei-uma-alma-a-um-agente-de-ia/v-2026-06-10T05-09-44.md",
-    "uuid": "c8589463-e430-5a30-a6eb-e1b06621860f"
+    "uuid": "b920c793-3136-5daf-a944-2456f64a9dc7"
   },
   "crossing-after-interference": {
     "file": "crossing-after-interference/v-2026-06-10T05-09-44.md",
-    "uuid": "741e5803-4cf6-5253-b45f-4bef7a0c2034"
+    "uuid": "f724b7f3-797d-5854-9457-36ea9570c7a5"
   },
   "crystallizing-from-the-nothing": {
     "file": "crystallizing-from-the-nothing/v-2026-06-09T20-24-29.mdx",
@@ -232,12 +232,12 @@
     "uuid": "c7de2172-9eba-5141-bc17-c637b02311ef"
   },
   "everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago": {
-    "file": "everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/v-2026-06-10T18-32-48.md",
-    "uuid": "e2b6de07-42c9-5dec-bb3d-272f848ca2e6"
+    "file": "everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/v-2026-06-10T17-39-46.md",
+    "uuid": "58a61095-57cb-5851-82d1-b2e0d7793eeb"
   },
   "everything-is-eml": {
     "file": "everything-is-eml/v-2026-06-10T05-09-44.md",
-    "uuid": "7cf97563-17f4-5d48-8170-ba7100c21754"
+    "uuid": "7d5c87b1-d713-564f-9341-e5b3952e6411"
   },
   "f73c60f0-49af-45fd-a483-1d35a676dccc": {
     "file": "f73c60f0-49af-45fd-a483-1d35a676dccc/v-2026-06-09T20-24-29.mdx",
@@ -273,11 +273,11 @@
   },
   "hronir-encyclopedia-protocol": {
     "file": "hronir-encyclopedia-protocol/v-2026-06-13T15-00-00.md",
-    "uuid": "09c3ccd9-5b64-50bd-a5de-64a9f2eb3c02"
+    "uuid": "def9b086-160e-5a47-8a1e-310035a017d5"
   },
   "hronir-phantom-critic": {
     "file": "hronir-phantom-critic/v-2026-06-13T13-00-00.md",
-    "uuid": "34968c1d-7a28-504e-be09-e8d5b3a6871f"
+    "uuid": "781d2ca3-a091-5969-8c99-48da4e05289d"
   },
   "inaugural-post-a-glimpse-inside-my-mind": {
     "file": "inaugural-post-a-glimpse-inside-my-mind/v-2026-06-10T05-09-44.md",
@@ -289,7 +289,7 @@
   },
   "jogo-na-grade-dobrada": {
     "file": "jogo-na-grade-dobrada/v-2026-06-10T05-09-44.md",
-    "uuid": "6e0a507c-aaa7-5daa-8081-1bfcb9473b2d"
+    "uuid": "c8456e20-f96e-58ba-b9e2-e0a5f9f95396"
   },
   "john-gospel-chapter-i-by-max-headroom": {
     "file": "john-gospel-chapter-i-by-max-headroom/v-2026-06-09T20-24-29.mdx",
@@ -341,7 +341,7 @@
   },
   "moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade": {
     "file": "moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/v-2026-06-10T05-09-44.md",
-    "uuid": "ee37771d-80b1-5fae-ad10-8a2b53c08e59"
+    "uuid": "2e17bb7f-a101-5b1b-a0d1-78d59073ba6d"
   },
   "nonada": {
     "file": "nonada/v-2026-06-09T20-24-29.mdx",
@@ -381,11 +381,11 @@
   },
   "o-ovo-de-serpente": {
     "file": "o-ovo-de-serpente/v-2026-06-10T05-09-44.md",
-    "uuid": "9e6269c3-e805-5784-8e07-c11966e80d10"
+    "uuid": "1a634a19-669d-5982-912a-52f28b55a0b8"
   },
   "o-pai-do-futuro": {
     "file": "o-pai-do-futuro/v-2026-06-10T05-09-44.md",
-    "uuid": "b8addd10-b422-5ec2-be7f-be106f38f82d"
+    "uuid": "cbf2d904-9856-5cfb-9e85-cf70abfc3a23"
   },
   "o-pampa-no-circuito-um-mate-com-o-boswell-digital": {
     "file": "o-pampa-no-circuito-um-mate-com-o-boswell-digital/v-2026-06-10T05-09-44.md",
@@ -581,7 +581,7 @@
   },
   "reddit-submarine-osint": {
     "file": "reddit-submarine-osint/v-2026-06-10T05-09-44.md",
-    "uuid": "559aefb0-2c57-5dbe-ac21-bf156af5e117"
+    "uuid": "bb65fe4d-ad79-525c-968b-26f6528ff806"
   },
   "riobaldo-e-o-aleph": {
     "file": "riobaldo-e-o-aleph/v-2026-06-09T20-24-29.mdx",
@@ -593,7 +593,7 @@
   },
   "rosencrantz-coin": {
     "file": "rosencrantz-coin/v-2026-06-10T05-09-44.md",
-    "uuid": "e0c3ebcb-fbad-5db6-a39d-e52e13585945"
+    "uuid": "bc542b21-9571-5c5d-bba8-a9b4a85a1677"
   },
   "sentido-e-referencia": {
     "file": "sentido-e-referencia/v-2026-06-09T20-24-29.mdx",
@@ -657,7 +657,7 @@
   },
   "the-future-father-building-a-transmedia-novel-with-ai-agents": {
     "file": "the-future-father-building-a-transmedia-novel-with-ai-agents/v-2026-06-10T05-09-44.md",
-    "uuid": "e4af0126-9116-5117-8e7a-f98106e6c300"
+    "uuid": "f8409f72-71d4-5e5b-b262-60ae2081cc0d"
   },
   "the-intelligible-void-hassabis-and-events": {
     "file": "the-intelligible-void-hassabis-and-events/v-2026-06-10T05-09-44.md",
@@ -677,7 +677,7 @@
   },
   "the-serpents-egg": {
     "file": "the-serpents-egg/v-2026-06-10T05-09-44.md",
-    "uuid": "89826618-5ad6-5e21-b64a-d78db564698e"
+    "uuid": "2c4e33c4-50be-514d-a444-c0a082f0df54"
   },
   "the-third-half-and-the-fourth-wall": {
     "file": "the-third-half-and-the-fourth-wall/v-2026-06-10T05-09-44.md",
@@ -713,19 +713,19 @@
   },
   "travessia": {
     "file": "travessia/v-2026-06-10T05-09-44.md",
-    "uuid": "a630ed42-7a0f-5fdb-9045-0630bbf46cab"
+    "uuid": "51676241-9793-5181-8bbc-81e0153934b0"
   },
   "travessia-the-project-that-writes-itself": {
     "file": "travessia-the-project-that-writes-itself/v-2026-06-10T05-09-44.md",
-    "uuid": "e07f52cb-8988-5adc-8bb0-ba1d0204000e"
+    "uuid": "90c005b5-73ff-5ed5-b63b-891a619c90dc"
   },
   "travessia-update": {
     "file": "travessia-update/v-2026-06-10T05-09-44.md",
-    "uuid": "4c0a33a5-2a20-53e7-a151-d5c4b1bb1064"
+    "uuid": "c19bd301-774d-5486-90ca-6fc318d6099f"
   },
   "tree-reads-itself": {
     "file": "tree-reads-itself/v-2026-06-10T05-09-44.md",
-    "uuid": "b01aa713-199a-5c95-9ce3-ba4c9bbefc7c"
+    "uuid": "aa7630ca-4f3f-56c9-a7f9-75ae50507406"
   },
   "tres-martelos-entram-num-bar": {
     "file": "tres-martelos-entram-num-bar/v-2026-06-10T05-09-44.md",
@@ -740,8 +740,8 @@
     "uuid": "0e11d4fc-5261-5943-99cc-d778a857f8e3"
   },
   "tudo-e-processo": {
-    "file": "tudo-e-processo/v-2026-06-10T18-32-48.md",
-    "uuid": "7f042640-7d76-5bbd-a376-75317053ce9d"
+    "file": "tudo-e-processo/v-2026-06-10T17-39-46.md",
+    "uuid": "c19b8fbc-3d53-5b6a-9a30-14d217eedaec"
   },
   "two-cursors": {
     "file": "two-cursors/v-2026-06-09T20-24-29.mdx",
@@ -773,11 +773,11 @@
   },
   "verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram": {
     "file": "verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram/v-2026-06-10T05-09-44.md",
-    "uuid": "859cb3a2-0c05-5fdc-bf97-c5ce10fc5512"
+    "uuid": "2c225dfe-c289-52b5-b15d-ad38638b7bd6"
   },
   "verne-identity-repo": {
     "file": "verne-identity-repo/v-2026-06-10T05-09-44.md",
-    "uuid": "fbe94cfa-7115-56fd-ba1c-7c09caa719eb"
+    "uuid": "5ffdf050-b298-58b7-a539-2d5179b954cf"
   },
   "veu-do-infinito": {
     "file": "veu-do-infinito/v-2026-06-12T09-51-17-410.mdx",
