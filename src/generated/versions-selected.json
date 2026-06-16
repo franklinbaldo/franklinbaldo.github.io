@@ -5,15 +5,15 @@
   },
   "_meta": {
     "schema": "selection-v1",
-    "generatedAt": "2026-06-16T05:02:10.871Z"
+    "generatedAt": "2026-06-16T22:10:00.061Z"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed": {
-    "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-12T08-00-12-612.mdx",
-    "uuid": "d3135b89-7fd2-51a7-b5b1-bcd25489ecef"
+    "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-09T20-24-29.mdx",
+    "uuid": "b2a7f306-213a-5e0c-8668-704a5035c806"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed-en": {
-    "file": "151474c5-1420-4cc1-9ab5-80721f4459ed-en/v-2026-06-12T08-00-12-612.mdx",
-    "uuid": "d92be255-b0c8-5600-984d-e7d0a0c1c05f"
+    "file": "151474c5-1420-4cc1-9ab5-80721f4459ed-en/v-2026-06-09T20-24-29.mdx",
+    "uuid": "0507e080-984d-52c2-abc6-da8922194945"
   },
   "46336b97-4306-41bc-8a7b-48f0ebebbd29": {
     "file": "46336b97-4306-41bc-8a7b-48f0ebebbd29/v-2026-06-09T20-24-29.mdx",
@@ -232,8 +232,8 @@
     "uuid": "c7de2172-9eba-5141-bc17-c637b02311ef"
   },
   "everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago": {
-    "file": "everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/v-2026-06-10T17-39-46.md",
-    "uuid": "58a61095-57cb-5851-82d1-b2e0d7793eeb"
+    "file": "everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/v-2026-06-10T18-32-48.md",
+    "uuid": "e2b6de07-42c9-5dec-bb3d-272f848ca2e6"
   },
   "everything-is-eml": {
     "file": "everything-is-eml/v-2026-06-10T05-09-44.md",
@@ -740,8 +740,8 @@
     "uuid": "0e11d4fc-5261-5943-99cc-d778a857f8e3"
   },
   "tudo-e-processo": {
-    "file": "tudo-e-processo/v-2026-06-10T17-39-46.md",
-    "uuid": "c19b8fbc-3d53-5b6a-9a30-14d217eedaec"
+    "file": "tudo-e-processo/v-2026-06-10T18-32-48.md",
+    "uuid": "7f042640-7d76-5bbd-a376-75317053ce9d"
   },
   "two-cursors": {
     "file": "two-cursors/v-2026-06-09T20-24-29.mdx",
