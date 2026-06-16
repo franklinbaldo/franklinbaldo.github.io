@@ -41,6 +41,19 @@ jobs:
       - name: Hrönir doctor
         run: npm run hronir:doctor
 
+      - name: Rate file deletion guard
+        if: github.event_name == 'pull_request'
+        run: |
+          DELETED=$(git diff --diff-filter=D --name-only "origin/${{ github.base_ref }}..HEAD" -- '.routines/hronir/rates/')
+          if [ -n "$DELETED" ]; then
+            echo "ERRO: Este PR deleta rate files existentes:"
+            echo "$DELETED"
+            echo ""
+            echo "Rate files são imutáveis — nunca delete arquivos de sessões anteriores."
+            echo "Se o doctor reportou erros, corrija apenas os arquivos que você criou nesta sessão."
+            exit 1
+          fi
+
       - name: Internal link check
         run: npm run check:links
 
