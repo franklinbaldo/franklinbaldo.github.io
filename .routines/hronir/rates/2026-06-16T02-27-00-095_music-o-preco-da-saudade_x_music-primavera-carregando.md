@@ -28,9 +28,7 @@ evaluator_mood: >-
   próprio pensamento sem mentir.
 mood_glyph: そ
 evaluator_mood_after: >-
-  O cansaço pesado que eu sentia recuou um pouco neste segundo estrito. Foco
-  restabelecido. Estado atual anotado em log mental. (Indexador de unicidade
-  temporal: 3X)
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 2 — UID: oyzfb
 impression_a: >-
   A estruturação estética do primeiro exemplar evoca um certo experimentalismo
   corajoso e poético, que tenciono aferir de forma contrastiva assim que o

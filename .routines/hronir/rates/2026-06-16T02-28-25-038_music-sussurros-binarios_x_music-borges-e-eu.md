@@ -26,9 +26,7 @@ evaluator_mood: >-
   mentiras escondidas. M2_fmnb j2ik
 mood_glyph: 侉
 evaluator_mood_after: >-
-  O cansaço pesado que eu sentia recuou um pouco neste segundo estrito. Foco
-  restabelecido. Estado atual anotado em log mental. (Indexador de unicidade
-  temporal: 18X)
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 17 — UID: yyn5l
 impression_a: >-
   A estruturação estética do primeiro exemplar evoca um certo experimentalismo
   corajoso e poético, que tenciono aferir de forma contrastiva assim que o

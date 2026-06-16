@@ -27,9 +27,7 @@ evaluator_mood: >-
   instabilidade emocional produtiva para a escrita final.
 mood_glyph: ⇹
 evaluator_mood_after: >-
-  ⇹ é troca nos dois sentidos — cruzamento sem hierarquia. Cansaço produtivo no
-  final da série; a cabeça ficou mais limpa exatamente quando deveria estar
-  turva.
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 42 — UID: 72enli
 impression_a: >-
   Post A é um ensaio filosófico sistemático sobre ontologia de processos —
   denso, bem organizado com seções nomeadas e lista de leitura no final. Para o

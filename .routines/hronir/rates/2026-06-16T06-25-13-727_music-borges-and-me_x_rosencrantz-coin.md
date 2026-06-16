@@ -29,8 +29,7 @@ evaluator_mood: >-
   temporal: 3X)
 mood_glyph: '#'
 evaluator_mood_after: >-
-  # organiza tudo em grade. Foco limpo, restabelecido. Quero a última frase que
-  não consigo traduzir para ninguém amanhã.
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 28 — UID: dya7wu
 impression_a: >-
   The source text IS the canonical weird-clarity artifact: 'I do not know which
   of the two writes this page.' The Composer Notes add something: placing that

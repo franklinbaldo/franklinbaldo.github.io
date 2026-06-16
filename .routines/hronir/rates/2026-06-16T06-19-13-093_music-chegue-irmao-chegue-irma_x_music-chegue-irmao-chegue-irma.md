@@ -26,9 +26,7 @@ evaluator_mood: >-
   duração analítica poética rigorosa metódica.
 mood_glyph: ぞ
 evaluator_mood_after: >-
-  ぞ — pesado, com aquele ponto dakuten que diz que há mais ali. Sinto um cansaço
-  honesto. A meditação funcionou? Estou menos certo do que estava antes de
-  começar a ler.
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 25 — UID: h7quhg
 impression_a: >-
   The Composer Notes name the appropriation question directly — that's good. But
   the final rhetorical question ('if the peace we feel is real, does it matter

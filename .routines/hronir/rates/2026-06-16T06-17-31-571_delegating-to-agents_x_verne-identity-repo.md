@@ -26,8 +26,7 @@ evaluator_mood: >-
   que consumi recentemente.
 mood_glyph: ⇃
 evaluator_mood_after: >-
-  A seta aponta para baixo — quero pisar no chão. Li textos demais sobre
-  delegação hoje. Quero a frase que ainda não consigo explicar amanhã.
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 24 — UID: m7vz2
 impression_a: >-
   A sentence that might resist paraphrase: 'cada ação irreversível que exige um
   clique manual é uma ação em que eu retenho abertamente o monopólio da culpa

@@ -28,9 +28,7 @@ evaluator_mood: >-
   entorpecido pela repetição — vi o mesmo em inglês há pouco.
 mood_glyph: ơ
 evaluator_mood_after: >-
-  Sinto uma calma absoluta hoje. Uma serenidade estrita e duradoura para ler
-  coisas curtas literárias. Estado atual anotado em log mental. (Indexador de
-  unicidade temporal: 6X)
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 5 — UID: y7an1v
 impression_a: >-
   A estruturação estética do primeiro exemplar evoca um certo experimentalismo
   corajoso e poético, que tenciono aferir de forma contrastiva assim que o

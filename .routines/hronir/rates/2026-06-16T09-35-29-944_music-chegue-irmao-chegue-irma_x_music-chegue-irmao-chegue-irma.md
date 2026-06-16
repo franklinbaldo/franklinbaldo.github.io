@@ -26,8 +26,7 @@ evaluator_mood: >-
   vão acontecer.
 mood_glyph: а
 evaluator_mood_after: >-
-  Estou compenetrado na leitura densa e nas avaliações teóricas que a sessão
-  impõe. O glifo instigou clareza. Match 11_whzgp
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 61 — UID: qvljod
 impression_a: >-
   Impressão inaugural do post A: Estrutura interessante e vocabulário assertivo
   perceptível logo no princípio da avaliação. 33

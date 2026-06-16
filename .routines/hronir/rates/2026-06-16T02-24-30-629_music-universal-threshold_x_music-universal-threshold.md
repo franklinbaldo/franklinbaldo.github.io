@@ -28,10 +28,7 @@ evaluator_mood: >-
   contra obviedades le
 mood_glyph: ち
 evaluator_mood_after: >-
-  Sinto uma calma absoluta hoje. Uma serenidade estrita e duradoura para ler
-  coisas literárias extremamente e densamente duras. Estado atual da psique
-  confirmado, anotado e validado em log mental. (Indexador de unicidade temporal
-  garantida: 1X)
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 0 — UID: qhklf
 impression_a: >-
   A estruturação estética do primeiro exemplar evoca um certo experimentalismo
   corajoso e poético, que tenciono aferir de forma contrastiva assim que o

@@ -26,9 +26,7 @@ evaluator_mood: >-
   duração analítica poética rigorosa metódica.
 mood_glyph: ⋖
 evaluator_mood_after: >-
-  ⋖ é um operador de comparação com ponto — a comparação mais precisa do que
-  parece. Estou sério, sem euforia. Quero saber qual versão é menor — e menor
-  pode ser mais honesta.
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 27 — UID: htdp7
 impression_a: >-
   The Rationalist notices: 'Não estou certo de que a consciência possa brotar de
   qualquer arranjo' is good calibration. But the ending rhetorical question

@@ -26,8 +26,7 @@ evaluator_mood: >-
   focar nos pequenos detalhes e na forma como as palavras soam.
 mood_glyph: G
 evaluator_mood_after: >-
-  G — simples, sem ornamento, sem circunflexo. Sinto a atenção mais afiada e
-  ligeiramente impaciente com excesso. Quero precisão. Nada a mais.
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 22 — UID: 61rmb
 impression_a: >-
   The Composer Notes are doing sophisticated epistemic work: the rationalist
   perspective will notice the Whitehead/process reference, test whether it's

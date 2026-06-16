@@ -29,9 +29,7 @@ evaluator_mood: >-
   passa. [Ref:9_1781453909213]
 mood_glyph: ペ
 evaluator_mood_after: >-
-  ペ parece alguém chegando de fora num script que não é o seu. Estou pensando em
-  ser estrangeiro num mundo construído sem você. A tarde chuvosa virou
-  impaciência discreta com portas fechadas.
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 23 — UID: 9ziotn
 impression_a: >-
   The essay earns its premise in the first paragraph — surveillance asymmetry
   doesn't require knowing the film to understand it. The Borges invocation has a

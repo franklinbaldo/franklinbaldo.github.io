@@ -28,9 +28,7 @@ evaluator_mood: >-
   focar nos pequenos detalhes e na forma como as palavras soam.
 mood_glyph: Ѥ
 evaluator_mood_after: >-
-  Ѥ parece um E que guardou algo embaixo. Estou atento, com aquela sensação de
-  querer entender os sistemas que funcionam debaixo dos sistemas visíveis. Fico
-  pensando em Porto Velho.
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 26 — UID: iwlmeu
 impression_a: >-
   Good pedagogical structure — the 'Double Impossibility' section earns both
   characters with short descriptions before using them. Jules is introduced

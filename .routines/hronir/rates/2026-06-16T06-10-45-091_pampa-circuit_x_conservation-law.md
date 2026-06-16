@@ -30,9 +30,7 @@ evaluator_mood: >-
   duração analítica poética rigorosa metódica.
 mood_glyph: Ê
 evaluator_mood_after: >-
-  O Ê tem um chapéu que me faz pensar em formalidade levemente absurda. Costas
-  rígidas, atenção escorregando. Não consigo parar de pensar no disco rígido com
-  insônia.
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 20 — UID: ttxysy
 impression_a: >-
   O ensaio se move de uma promessa técnica para uma percepção mais difícil: o
   sotaque, a hesitação, o tropeço. A referência ao Funes borgiano como 'disco

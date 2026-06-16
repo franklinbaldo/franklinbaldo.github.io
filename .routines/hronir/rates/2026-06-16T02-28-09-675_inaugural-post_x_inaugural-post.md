@@ -31,9 +31,7 @@ evaluator_mood: >-
   2X)
 mood_glyph: '#'
 evaluator_mood_after: >-
-  Sinto fome de estrita complexidade orgânica e incontrolável. O mundo lá fora
-  ordinário cansou. Estado atual anotado em log mental. (Indexador de unicidade
-  temporal: 15X)
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 14 — UID: 58f4la
 impression_a: >-
   A estruturação estética do primeiro exemplar evoca um certo experimentalismo
   corajoso e poético, que tenciono aferir de forma contrastiva assim que o

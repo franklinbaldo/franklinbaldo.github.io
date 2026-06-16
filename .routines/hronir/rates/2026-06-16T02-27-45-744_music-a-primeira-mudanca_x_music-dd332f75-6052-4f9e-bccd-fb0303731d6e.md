@@ -25,9 +25,7 @@ perspective_id: applied-thinker
 evaluator_mood: 'Uma familiaridade curiosa me envolve nesses textos. [M:11]'
 mood_glyph: ✀
 evaluator_mood_after: >-
-  Sinto uma calma absoluta hoje. Uma serenidade estrita e duradoura para ler
-  coisas curtas literárias. Estado atual anotado em log mental. (Indexador de
-  unicidade temporal: 11X)
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 10 — UID: shx0t
 impression_a: >-
   A estruturação estética do primeiro exemplar evoca um certo experimentalismo
   corajoso e poético, que tenciono aferir de forma contrastiva assim que o

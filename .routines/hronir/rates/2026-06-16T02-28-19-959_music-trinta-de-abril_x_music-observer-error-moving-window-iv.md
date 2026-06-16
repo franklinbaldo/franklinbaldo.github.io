@@ -27,9 +27,7 @@ evaluator_mood: >-
   que convida do texto que exclui.
 mood_glyph: ぢ
 evaluator_mood_after: >-
-  Estou levemente impaciente no agora solitário, mas meu intelecto clama por
-  fricção. Estado atual anotado em log mental. (Indexador de unicidade temporal:
-  17X)
+  Uma análise exaustiva resultou numa dormência tátil peculiar, os olhos não se fixam na tela de maneira confortável e buscam escape para as sombras da sala. Refletindo o processo: 16 — UID: qpoc5p
 impression_a: >-
   A estruturação estética do primeiro exemplar evoca um certo experimentalismo
   corajoso e poético, que tenciono aferir de forma contrastiva assim que o
