@@ -33,8 +33,8 @@ export const READING_PATHS: ReadingPath[] = [
       pt: "Memória e Funes",
     },
     blurb: {
-      en: "On total recall, Pierre Menard, and what Borges saw before anyone else about the cost of perfect memory.",
-      pt: "Sobre lembrança total, Pierre Menard, e o que Borges enxergou antes de todos sobre o custo da memória perfeita.",
+      en: "On total recall, Pierre Menard, and what Borges saw before anyone else. From building Funes to preserving family voices: the cost of perfect memory and the architecture that makes it survivable.",
+      pt: "Sobre lembrança total, Pierre Menard, e o que Borges viu antes de todos. De construir Funes a preservar vozes da família: o custo da memória perfeita e a arquitetura que a torna suportável.",
     },
     source: {
       type: "manual",
@@ -42,11 +42,16 @@ export const READING_PATHS: ReadingPath[] = [
         en: [
           "building-funes",
           "funes-soul",
+          "verne-identity-repo",
+          "what-i-learned-orchestrating-ai-agents-to-preserve-family-memory",
           "pierre-menard-computational-researcher",
         ],
         pt: [
-          "pierre-menard-pesquisador-computacional",
+          "construindo-funes-como-dei-uma-alma-a-um-agente-de-ia",
+          "soulmd-funes",
+          "verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram",
           "orquestrando-agentes-memoria-familiar",
+          "pierre-menard-pesquisador-computacional",
         ],
       },
     },
