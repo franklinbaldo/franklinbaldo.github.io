@@ -72,10 +72,11 @@ const alternateOgLocales = alternateEntries
   .map(([code]) => LANGUAGES[code]?.locale.replace("-", "_"))
   .filter((v): v is string => !!v);
 
-// x-default hreflang: point to EN version (current page if EN, else translation to EN).
+// x-default hreflang: EN version if available; EN homepage fallback for PT-only pages.
+const enHomepageHref = Astro.site ? new URL("/", Astro.site).href : null;
 const xDefaultHref = lang === DEFAULT_LANG
   ? canonical.href
-  : (translations[DEFAULT_LANG] ? new URL(translations[DEFAULT_LANG], Astro.site).href : null);
+  : (translations[DEFAULT_LANG] ? new URL(translations[DEFAULT_LANG], Astro.site).href : enHomepageHref);
 
 const breadcrumbLd = type === "article"
   ? {
