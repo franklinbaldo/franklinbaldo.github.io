@@ -70,6 +70,11 @@ const collectionLd = {
   description={description}
   lang="pt"
   translations={hasEnCounterpart ? { en: `/tags/${tag}/` } : {}}
+  breadcrumb={[
+    { name: "Início", item: Astro.site ? new URL("/pt/", Astro.site).href : "https://franklinbaldo.github.io/pt/" },
+    { name: "Etiquetas", item: Astro.site ? new URL("/pt/tags/", Astro.site).href : "https://franklinbaldo.github.io/pt/tags/" },
+    { name: `#${tag}`, item: Astro.site ? new URL(`/pt/tags/${tag}/`, Astro.site).href : `https://franklinbaldo.github.io/pt/tags/${tag}/` },
+  ]}
 >
   <script type="application/ld+json" set:html={JSON.stringify(collectionLd)} is:inline slot="head" />
   <article>
