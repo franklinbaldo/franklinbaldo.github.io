@@ -4,7 +4,7 @@ slug: breadcrumb-paths-tags
 branch: claude/sleepy-pasteur-mojyai
 status: pr-open
 issues: [590]
-pr_opened: null
+pr_opened: 594
 pr_merged: 592
 ---
 
