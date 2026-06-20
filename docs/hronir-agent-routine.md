@@ -57,12 +57,12 @@ npm run hronir:decide -- \
 
 ### Restrições
 
-| Campo | Restrição |
-| --- | --- |
-| `--rate-a` / `--rate-b` | 1.00–5.00, ≤2 casas decimais, **sem empate** |
-| `--review-a` / `--review-b` | ≥100 palavras cada, no idioma do post, pela perspectiva do banner. Refira-se ao post pelo **slug**, não "Post A" / "Post B" |
-| `--clash` | ≥100 palavras, confronto narrativo entre os dois posts pela lente da perspectiva. Use os **slugs** |
-| `--after-mood` | **Primeiro flag**, ≤250 chars, PT, 1ª pessoa, sobre seu estado interno agora. Não sobre os posts. Original (não copie o mood inicial do banner) |
+| Campo                       | Restrição                                                                                                                                       |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--rate-a` / `--rate-b`     | 1.00–5.00, ≤2 casas decimais, **sem empate**                                                                                                    |
+| `--review-a` / `--review-b` | ≥100 palavras cada, no idioma do post, pela perspectiva do banner. Refira-se ao post pelo **slug**, não "Post A" / "Post B"                     |
+| `--clash`                   | ≥100 palavras, confronto narrativo entre os dois posts pela lente da perspectiva. Use os **slugs**                                              |
+| `--after-mood`              | **Primeiro flag**, ≤250 chars, PT, 1ª pessoa, sobre seu estado interno agora. Não sobre os posts. Original (não copie o mood inicial do banner) |
 
 ## 4. Fase de edição do pior post
 
