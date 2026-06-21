@@ -53,6 +53,7 @@ interface InitOptions {
   skipRating?: boolean;
   agentId?: string;
   evalLang?: string;
+  reviewLang?: string;
   minAppearances?: number;
   matches?: number;
   pledge?: string;
@@ -116,8 +117,14 @@ const SESSION_PATH = "hronir_session.json";
 const MIN_WORDS = 100;
 // RFC 0010: stars-v2 adds post_a/b.ref ("slug@uuid") to each side. stars-v1
 // files (path/key/version fields) remain readable and are never rewritten.
-const PROMPT_VERSION = "stars-v2";
-const STARS_SCHEMAS = new Set(["stars-v1", "stars-v2"]);
+// RFC 0012 §4.2: stars-v3 adds review_lang + per-side content_lang. Older
+// schemas stay valid and classified `legacy`; only stars-v3 is validated for
+// the new language fields.
+const PROMPT_VERSION = "stars-v3";
+const STARS_SCHEMAS = new Set(["stars-v1", "stars-v2", "stars-v3"]);
+// Schemas that carry slug@uuid refs and therefore require strict version-uuid
+// resolution in the doctor (RFC 0010 §4.3).
+const REF_SCHEMAS = new Set(["stars-v2", "stars-v3"]);
 
 function wordCount(s: unknown): number {
   if (!s || typeof s !== "string") return 0;
@@ -247,6 +254,8 @@ export function init(options: InitOptions = {}) {
     process.exit(1);
   }
   const evalLang = options.evalLang || "pt";
+  // RFC 0012 §6: review_lang defaults to the evaluation language when not given.
+  const reviewLang = options.reviewLang || evalLang;
   const sessionPath = SESSION_PATH;
 
   if (fs.existsSync(sessionPath)) {
@@ -272,6 +281,7 @@ export function init(options: InitOptions = {}) {
       completed: 0,
       agentId,
       evalLang,
+      reviewLang,
       state: "need_edit",
       skipEdit: false,
       skipRating: true,
@@ -301,6 +311,7 @@ export function init(options: InitOptions = {}) {
     completed: 0,
     agentId,
     evalLang,
+    reviewLang,
     state: "ready_for_next",
     skipEdit,
     skipRating: false,
@@ -599,6 +610,7 @@ function generateNextMatch() {
     key,
     path: p,
     display_lang: lang,
+    content_lang: lang, // RFC 0012 §6: explicit language of this side's text
     version: getPostUuid(p),
     ref: refFor(p),
   });
@@ -1325,15 +1337,41 @@ export function decide(args: string[]) {
   const bKey = currentMatch.post_b.key;
   const matchFile = path.join(RATES_DIR, `${runId}_${aKey}_x_${bKey}.md`);
 
+  // RFC 0012 §6: review_lang is the session language for editorial (work)
+  // duels; for a version duel both sides are the same linguistic version, so
+  // the critique is written in that content language (rule 3).
+  const evalLangValue = currentMatch.eval_lang || session.evalLang || "pt";
+  const contentLangA =
+    currentMatch.post_a.content_lang ||
+    currentMatch.post_a.display_lang ||
+    null;
+  const reviewLang =
+    aKey === bKey
+      ? contentLangA || session.reviewLang || evalLangValue
+      : session.reviewLang || evalLangValue;
+
+  // RFC 0012 §4.2: stars-v3 requires per-side content_lang. Sessions started
+  // before this field existed carry sides with only display_lang, so backfill
+  // it here — otherwise a session spanning the upgrade would write a stars-v3
+  // file the doctor rejects.
+  const withContentLang = (side: Record<string, unknown>) => ({
+    ...side,
+    content_lang:
+      (side.content_lang as string) ||
+      (side.display_lang as string) ||
+      evalLangValue,
+  });
+
   const data = {
     run_id: runId,
     run_at: runAt,
-    post_a: currentMatch.post_a,
-    post_b: currentMatch.post_b,
+    post_a: withContentLang(currentMatch.post_a),
+    post_b: withContentLang(currentMatch.post_b),
     winner,
     agent_id: agentId,
     content_mode: session.contentMode ?? "inline",
-    eval_lang: currentMatch.eval_lang || session.evalLang || "pt",
+    eval_lang: evalLangValue,
+    review_lang: reviewLang,
     prompt_version: PROMPT_VERSION,
     season: 1,
     override: null,
@@ -2105,13 +2143,13 @@ export function doctor() {
     // stars-v1 gravou o UUID body-only da época do duelo; edições in-place
     // posteriores tornam esse hash irrecuperável, então basta a pasta do
     // post existir.
-    const isStarsV2 = String(data.prompt_version) === "stars-v2";
+    const isRefSchema = REF_SCHEMAS.has(String(data.prompt_version));
     const tolerableGone = (
       p: string | undefined,
       version: string | undefined
     ) => {
       if (!p || !version || !fs.existsSync(path.dirname(p))) return false;
-      if (!isStarsV2) return true;
+      if (!isRefSchema) return true;
       const slug = path.basename(path.dirname(p));
       return (
         dirUuids(slug).has(version) || prunedUuids.has(`${slug}@${version}`)
@@ -2177,6 +2215,42 @@ export function doctor() {
         !data.eval_lang.trim()
       ) {
         issues.push(`${base}: o campo 'eval_lang' no frontmatter está ausente`);
+      }
+      // RFC 0012 §6: stars-v3 carries explicit language provenance. Validated
+      // only for stars-v3 — older files stay legacy and are not reproved.
+      if (String(data.prompt_version) === "stars-v3") {
+        const reviewLang = data.review_lang;
+        const aContentLang = (data.post_a as Record<string, unknown> | null)
+          ?.content_lang as string | undefined;
+        const bContentLang = (data.post_b as Record<string, unknown> | null)
+          ?.content_lang as string | undefined;
+        if (
+          !reviewLang ||
+          typeof reviewLang !== "string" ||
+          !reviewLang.trim()
+        ) {
+          issues.push(`${base}: stars-v3 sem 'review_lang'`);
+        }
+        if (!aContentLang) {
+          issues.push(`${base}: stars-v3 sem 'post_a.content_lang'`);
+        }
+        if (!bContentLang) {
+          issues.push(`${base}: stars-v3 sem 'post_b.content_lang'`);
+        }
+        // Version duel: both sides are the same linguistic version, so the
+        // critique must be written in that content language (RFC 0012 §6 rule 3).
+        if (
+          aKey &&
+          bKey &&
+          aKey === bKey &&
+          typeof reviewLang === "string" &&
+          aContentLang &&
+          reviewLang !== aContentLang
+        ) {
+          issues.push(
+            `${base}: duelo de versão stars-v3 com review_lang≠content_lang (${reviewLang}≠${aContentLang})`
+          );
+        }
       }
       const ra = data.rate_a;
       const rb = data.rate_b;
