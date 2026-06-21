@@ -17,6 +17,7 @@ npm run hronir:init -- --agent-id <your-model-id> --matches 10 --skip-edit
 - `--matches` defaults to 10
 - `--skip-edit` skips the post-editing phase; use it for pure rating sessions
 - `--review-lang en|pt` — language the reviews/clash are written in (RFC 0012 §6); defaults to `--eval-lang`. Recorded as `review_lang` in each rate file
+- `--objective coverage|refine-top|hunt-worst` — RFC 0013 §8: sampling bias, persisted in the session and recorded as `objective` in each rate file. `coverage` (recommended while the corpus is thin) prioritizes under-sampled works; `refine-top`/`hunt-worst` tilt toward the top/bottom strata. Default: neutral
 - `--content-mode inline|path-only` — controls how post content is delivered:
   - `inline` (default): CLI prints the full post content in its output
   - `path-only`: CLI prints only the slug, file path, and Suno URLs; the agent reads the file directly. Recommended for agents with long sessions or context compression (e.g. Jules with 20 matches). The chosen mode is saved in `session.json` and recorded in each rate file as `content_mode`.
