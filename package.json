@@ -36,6 +36,7 @@
     "hronir:end": "node --import tsx/esm scripts/hronir/index.js end",
     "hronir:migrate": "node --import tsx/esm scripts/hronir/index.js migrate",
     "hronir:doctor": "node --import tsx/esm scripts/hronir/index.js doctor",
+    "hronir:diagnose-corpus": "node --import tsx/esm scripts/hronir/diagnose-corpus.mjs",
     "hronir:detect-stuffing": "node scripts/hronir/detect-token-stuffing.mjs",
     "music:generate": "node scripts/generate-music-posts.mjs",
     "test": "node --import tsx/esm --experimental-test-module-mocks --test \"src/hronir/__tests__/*.test.js\""
