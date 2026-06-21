@@ -76,9 +76,9 @@ for (const t of trials) {
   note(t.postAVersion, t.postARef, t.postAPath, aWon);
   note(t.postBVersion, t.postBRef, t.postBPath, !aWon);
 }
-const versionList = [...versions.values()].sort(
-  (a, b) => b.wins - a.wins || a.ref.localeCompare(b.ref)
-);
+const versionList = [...versions.values()]
+  .sort((a, b) => b.wins - a.wins || a.ref.localeCompare(b.ref))
+  .map((v) => ({ ...v, src: sourceHref(v.path) }));
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -118,7 +118,7 @@ function fmtDate(iso: string) {
         <li class="ver-item">
           <code>{v.ref}</code>
           <span class="ver-tally">{v.wins}W / {v.losses}L</span>
-          {sourceHref(v.path) && <a href={sourceHref(v.path)!}>source →</a>}
+          {v.src && <a href={v.src}>source →</a>}
         </li>
       ))}
     </ul>

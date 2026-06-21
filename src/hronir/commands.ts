@@ -1350,11 +1350,23 @@ export function decide(args: string[]) {
       ? contentLangA || session.reviewLang || evalLangValue
       : session.reviewLang || evalLangValue;
 
+  // RFC 0012 §4.2: stars-v3 requires per-side content_lang. Sessions started
+  // before this field existed carry sides with only display_lang, so backfill
+  // it here — otherwise a session spanning the upgrade would write a stars-v3
+  // file the doctor rejects.
+  const withContentLang = (side: Record<string, unknown>) => ({
+    ...side,
+    content_lang:
+      (side.content_lang as string) ||
+      (side.display_lang as string) ||
+      evalLangValue,
+  });
+
   const data = {
     run_id: runId,
     run_at: runAt,
-    post_a: currentMatch.post_a,
-    post_b: currentMatch.post_b,
+    post_a: withContentLang(currentMatch.post_a),
+    post_b: withContentLang(currentMatch.post_b),
     winner,
     agent_id: agentId,
     content_mode: session.contentMode ?? "inline",
