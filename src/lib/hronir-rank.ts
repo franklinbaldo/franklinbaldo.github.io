@@ -2,14 +2,13 @@
 // Reads .routines/hronir/*.md, runs OpenSkill, exposes a Map<key, RankRow>
 // keyed by translationKey, plus a sorted array.
 
-import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import {
   computeRatings,
   computePerPerspectiveRatings,
 } from "../hronir/ranking.js";
-import { listMatchFiles, readMatch, postKey } from "../hronir/matches.js";
+import { loadMatches, matchId } from "../hronir/matches.js";
 import { listPerspectives } from "../hronir/perspectives.js";
 import type {
   RankRow,
@@ -36,12 +35,9 @@ export type {
 export function duelId(
   d: Pick<DuelEntry, "postAKey" | "postBKey" | "runAt">
 ): string {
-  const canonical = [d.postAKey ?? "", d.postBKey ?? "", d.runAt].join("|");
-  return crypto
-    .createHash("sha256")
-    .update(canonical)
-    .digest("hex")
-    .slice(0, 8);
+  // RFC 0012: id generation lives in matches.matchId so the duel list and the
+  // normalizer agree on the value byte-for-byte.
+  return matchId(d.postAKey ?? "", d.postBKey ?? "", d.runAt);
 }
 
 export function parseDuelContent(
@@ -107,83 +103,58 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
   if (_statsCache) return _statsCache;
 
   const duels: DuelEntry[] = [];
-  for (const f of listMatchFiles()) {
-    const { data, content } = readMatch(f);
-    let winner = (data as any).winner;
-    if ((data as any).override && (data as any).override !== "null") {
-      winner = (data as any).override;
-    }
-    if (winner === "TODO" || !winner) continue;
-    const aKey = postKey((data as any).post_a);
-    const bKey = postKey((data as any).post_b);
-    if (!aKey || !bKey) continue;
-    if (winner !== "a" && winner !== "b") continue;
-
-    const rawRunAt = (data as any).run_at ?? (data as any).run_id ?? "";
-    const runAt =
-      rawRunAt instanceof Date ? rawRunAt.toISOString() : String(rawRunAt);
+  // RFC 0012 §4.1: built from the single normalizer. Structural decisions
+  // (winner side, keys, work/version kind, id, runAt) come from the normalized
+  // record; passthrough display fields are still read straight off the raw
+  // frontmatter so the rendered duel is byte-for-byte what it was before.
+  for (const lm of loadMatches()) {
+    const n = lm.norm;
+    const runAt = lm.runAtRaw;
     // Skip matches without a parseable timestamp: an empty runAt would
     // sort ahead of every real duel in the "Latest duels" list and
     // render with a placeholder date, which is worse than not showing it.
     if (!runAt) continue;
 
-    const winnerKey = winner === "a" ? aKey : bKey;
-    const loserKey = winner === "a" ? bKey : aKey;
+    const data = lm.data as any;
+    const content = lm.content;
+    const aKey = n.postA.key;
+    const bKey = n.postB.key;
+    const winnerKey = n.winnerSide === "a" ? aKey : bKey;
+    const loserKey = n.winnerSide === "a" ? bKey : aKey;
+    const agentId = data.agent_id ? String(data.agent_id) : undefined;
 
-    const agentId = (data as any).agent_id
-      ? String((data as any).agent_id)
-      : undefined;
-
-    const entry: DuelEntry = {
-      id: "",
+    duels.push({
+      id: n.id,
       runAt,
       winnerKey,
       loserKey,
-      winnerSide: winner as "a" | "b",
-      isVersionDuel: aKey === bKey,
-      margin:
-        typeof (data as any).margin === "number"
-          ? (data as any).margin
-          : undefined,
-      confidence: (data as any).confidence
-        ? String((data as any).confidence)
-        : undefined,
-      criterion: (data as any).criterion
-        ? String((data as any).criterion)
-        : undefined,
+      winnerSide: n.winnerSide,
+      isVersionDuel: n.kind === "version",
+      margin: typeof data.margin === "number" ? data.margin : undefined,
+      confidence: data.confidence ? String(data.confidence) : undefined,
+      criterion: data.criterion ? String(data.criterion) : undefined,
       body: content ? String(content).trim() : undefined,
       model: agentId,
       agentId,
-      season:
-        typeof (data as any).season === "number"
-          ? (data as any).season
-          : undefined,
+      season: typeof data.season === "number" ? data.season : undefined,
       postAKey: aKey,
       postBKey: bKey,
-      perspectiveId: (data as any).perspective_id
-        ? String((data as any).perspective_id)
+      perspectiveId: data.perspective_id
+        ? String(data.perspective_id)
         : undefined,
-      rateA:
-        typeof (data as any).rate_a === "number"
-          ? (data as any).rate_a
-          : undefined,
-      rateB:
-        typeof (data as any).rate_b === "number"
-          ? (data as any).rate_b
-          : undefined,
-      evaluatorMood: (data as any).evaluator_mood
-        ? String((data as any).evaluator_mood)
+      rateA: typeof data.rate_a === "number" ? data.rate_a : undefined,
+      rateB: typeof data.rate_b === "number" ? data.rate_b : undefined,
+      evaluatorMood: data.evaluator_mood
+        ? String(data.evaluator_mood)
         : undefined,
-      evaluatorMoodAfter: (data as any).evaluator_mood_after
-        ? String((data as any).evaluator_mood_after)
+      evaluatorMoodAfter: data.evaluator_mood_after
+        ? String(data.evaluator_mood_after)
         : undefined,
       parsedContent: parseDuelContent(
         content ? String(content).trim() : undefined,
         data as Record<string, unknown>
       ),
-    };
-    entry.id = duelId(entry);
-    duels.push(entry);
+    });
   }
 
   duels.sort((a, b) => b.runAt.localeCompare(a.runAt));
@@ -210,6 +181,21 @@ export function getRecentDuels(limit = 8): DuelEntry[] {
 
 export function getAllDuels(): DuelEntry[] {
   return loadDuelData().recent;
+}
+
+// RFC 0012 §6.4: the canonical duel accessor. `kind` is required — there is no
+// ambiguous default. "work" = editorial battles between distinct posts;
+// "version" = revision trials of one post; "all" = the raw archive. Fase 2
+// migrates the public surfaces (battles, dossiers, stats) onto this so they
+// stop mixing the two universes.
+export function getDuels(opts: {
+  kind: "work" | "version" | "all";
+}): DuelEntry[] {
+  const all = loadDuelData().recent;
+  if (opts.kind === "all") return all;
+  return all.filter(
+    (d) => (d.isVersionDuel ? "version" : "work") === opts.kind
+  );
 }
 
 export function getPerspectives(): PerspectiveMeta[] {
