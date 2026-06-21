@@ -47,7 +47,7 @@ const [, , cmd, ...args] = process.argv;
 
 function usage() {
   console.error(
-    "Uso: hronir {next --agent-id <id> [init-opts]|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--review-lang <lang>] [--min-appearances N] [--pledge <text>] [--content-mode inline|path-only]|continue|first-impression-a <texto>|first-impression-b <texto>|decide --after-mood <text> --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text> [--clash-append <text>] [--review-a-append <text>] [--review-b-append <text>]|ranking|worst [--absolute]|diagnose|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force] [--attest <text>]|select [--dry-run]|prune [--dry-run]}"
+    "Uso: hronir {next --agent-id <id> [init-opts]|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--review-lang <lang>] [--objective coverage|refine-top|hunt-worst] [--min-appearances N] [--pledge <text>] [--content-mode inline|path-only]|continue|first-impression-a <texto>|first-impression-b <texto>|decide --after-mood <text> --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text> [--clash-append <text>] [--review-a-append <text>] [--review-b-append <text>]|ranking|worst [--absolute]|diagnose|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force] [--attest <text>]|select [--dry-run]|prune [--dry-run]}"
   );
   process.exit(1);
 }
@@ -114,6 +114,9 @@ function parseInitOptions(args) {
   // evaluation language for back-compat; persisted explicitly.
   const reviewLangRaw = readFlagValue(args, [args.indexOf("--review-lang")]);
   const reviewLang = reviewLangRaw || undefined;
+  // RFC 0013 §8.2: persisted sampling objective (coverage|refine-top|hunt-worst).
+  const objective =
+    readFlagValue(args, [args.indexOf("--objective")]) || undefined;
   const minAppRaw = readFlagValue(args, [
     args.indexOf("--min-appearances"),
     args.indexOf("--min-app"),
@@ -134,6 +137,7 @@ function parseInitOptions(args) {
     agentId,
     evalLang,
     reviewLang,
+    objective,
     minAppearances,
     pledge,
     contentMode,
