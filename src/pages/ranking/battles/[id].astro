@@ -112,6 +112,17 @@ function perspectiveHue(id: string): number {
   return Math.abs(h) % 360;
 }
 
+// RFC 0012 §6 rule 4: discrete language chips. Content can differ per side in
+// a work duel; collapse to one chip when both sides share a language.
+const contentLangs = [
+  ...new Set(
+    [duel.postAContentLang, duel.postBContentLang]
+      .filter((l): l is string => Boolean(l))
+      .map((l) => l.toUpperCase())
+  ),
+].join("/");
+const critiqueLang = duel.reviewLang ? duel.reviewLang.toUpperCase() : null;
+
 const pageTitle = isVersion
   ? `Version trial — ${postTitle}`
   : `${winnerTitle} vs ${loserTitle}`;
@@ -154,6 +165,8 @@ const loserRank = isVersion ? undefined : rankByKey.get(loserKey);
     )}
     {duel.agentId && <span class="tag tag-agent">{duel.agentId}</span>}
     {duel.confidence && <span class={`tag tag-confidence conf-${duel.confidence}`}>{duel.confidence} confidence</span>}
+    {contentLangs && <span class="tag tag-lang">content: {contentLangs}</span>}
+    {critiqueLang && <span class="tag tag-lang">critique: {critiqueLang}</span>}
   </div>
 
   {isVersion && (
@@ -285,6 +298,7 @@ const loserRank = isVersion ? undefined : rankByKey.get(loserKey);
 
   .battle-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
   .version-note { font-size: 0.85rem; color: var(--pico-muted-color); margin: 0 0 1.5rem; }
+  .tag-lang { font-family: var(--pico-font-family-monospace); text-transform: none; letter-spacing: 0; }
   .versus-title code { font-size: 0.82rem; word-break: break-all; }
   .tag {
     font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em;

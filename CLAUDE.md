@@ -16,6 +16,7 @@ npm run hronir:init -- --agent-id <your-model-id> --matches 10 --skip-edit
 - `--agent-id` is **required** — use a stable identifier like `claude-opus-4-8` or `franklin`
 - `--matches` defaults to 10
 - `--skip-edit` skips the post-editing phase; use it for pure rating sessions
+- `--review-lang en|pt` — language the reviews/clash are written in (RFC 0012 §6); defaults to `--eval-lang`. Recorded as `review_lang` in each rate file
 - `--content-mode inline|path-only` — controls how post content is delivered:
   - `inline` (default): CLI prints the full post content in its output
   - `path-only`: CLI prints only the slug, file path, and Suno URLs; the agent reads the file directly. Recommended for agents with long sessions or context compression (e.g. Jules with 20 matches). The chosen mode is saved in `session.json` and recorded in each rate file as `content_mode`.
@@ -134,8 +135,13 @@ check derivam — veja RFC 0004.
 
 - **Código e identificadores**: inglês (variáveis, funções, comentários inline).
 - **Docs, RFCs, prosa de processo** (`docs/`, `CLAUDE.md`, mensagens de commit): português.
-- **Reviews e clash nos rate files**: o mesmo idioma do post avaliado (`lang` do frontmatter).
-  Posts em EN → review em EN. Posts em PT → review em PT.
+- **Reviews e clash nos rate files** (RFC 0012 §6): escritos na `review_lang`,
+  um campo explícito do rate file — não mais inferido do post. A `review_lang`
+  é a língua de avaliação da sessão (`--review-lang`, default = `--eval-lang`).
+  Em **duelo de versões** (mesma `key` dos dois lados) ambos os lados são a
+  mesma versão linguística, então `review_lang === content_lang`. Cada lado
+  grava sua própria `content_lang`. A UI exibe chips `content: EN/PT` e
+  `critique: PT`.
 - **`--after-mood`**: sempre português, primeira pessoa.
 
 ### Defaults de língua por tipo de conteúdo

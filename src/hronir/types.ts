@@ -141,6 +141,10 @@ export interface DuelEntry {
    *  exact content judged in a version trial. */
   postAPath?: string | null;
   postBPath?: string | null;
+  /** RFC 0012 §6: languages, for the discrete UI chips (content / critique). */
+  reviewLang?: string | null;
+  postAContentLang?: string | null;
+  postBContentLang?: string | null;
   perspectiveId?: string;
   rateA?: number;
   rateB?: number;

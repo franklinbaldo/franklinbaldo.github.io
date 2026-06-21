@@ -53,6 +53,7 @@ interface InitOptions {
   skipRating?: boolean;
   agentId?: string;
   evalLang?: string;
+  reviewLang?: string;
   minAppearances?: number;
   matches?: number;
   pledge?: string;
@@ -247,6 +248,8 @@ export function init(options: InitOptions = {}) {
     process.exit(1);
   }
   const evalLang = options.evalLang || "pt";
+  // RFC 0012 §6: review_lang defaults to the evaluation language when not given.
+  const reviewLang = options.reviewLang || evalLang;
   const sessionPath = SESSION_PATH;
 
   if (fs.existsSync(sessionPath)) {
@@ -272,6 +275,7 @@ export function init(options: InitOptions = {}) {
       completed: 0,
       agentId,
       evalLang,
+      reviewLang,
       state: "need_edit",
       skipEdit: false,
       skipRating: true,
@@ -301,6 +305,7 @@ export function init(options: InitOptions = {}) {
     completed: 0,
     agentId,
     evalLang,
+    reviewLang,
     state: "ready_for_next",
     skipEdit,
     skipRating: false,
@@ -599,6 +604,7 @@ function generateNextMatch() {
     key,
     path: p,
     display_lang: lang,
+    content_lang: lang, // RFC 0012 §6: explicit language of this side's text
     version: getPostUuid(p),
     ref: refFor(p),
   });
@@ -1325,6 +1331,19 @@ export function decide(args: string[]) {
   const bKey = currentMatch.post_b.key;
   const matchFile = path.join(RATES_DIR, `${runId}_${aKey}_x_${bKey}.md`);
 
+  // RFC 0012 §6: review_lang is the session language for editorial (work)
+  // duels; for a version duel both sides are the same linguistic version, so
+  // the critique is written in that content language (rule 3).
+  const evalLangValue = currentMatch.eval_lang || session.evalLang || "pt";
+  const contentLangA =
+    currentMatch.post_a.content_lang ||
+    currentMatch.post_a.display_lang ||
+    null;
+  const reviewLang =
+    aKey === bKey
+      ? contentLangA || session.reviewLang || evalLangValue
+      : session.reviewLang || evalLangValue;
+
   const data = {
     run_id: runId,
     run_at: runAt,
@@ -1333,7 +1352,8 @@ export function decide(args: string[]) {
     winner,
     agent_id: agentId,
     content_mode: session.contentMode ?? "inline",
-    eval_lang: currentMatch.eval_lang || session.evalLang || "pt",
+    eval_lang: evalLangValue,
+    review_lang: reviewLang,
     prompt_version: PROMPT_VERSION,
     season: 1,
     override: null,

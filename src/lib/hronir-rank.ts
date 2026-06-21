@@ -145,6 +145,9 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
       postBVersion: n.postB.version,
       postAPath: n.postA.path,
       postBPath: n.postB.path,
+      reviewLang: n.reviewLang,
+      postAContentLang: n.postA.contentLang,
+      postBContentLang: n.postB.contentLang,
       perspectiveId: data.perspective_id
         ? String(data.perspective_id)
         : undefined,
