@@ -8,11 +8,23 @@ export interface PostSide {
   path: string;
   display_lang?: "en" | "pt";
   version?: string;
+  /** RFC 0012 §4.2: language of this side's text. Written in stars-v3;
+   *  derived from the post frontmatter / `display_lang` for older files. */
+  content_lang?: "en" | "pt";
 }
 
 export interface RateFile {
+  // RFC 0012 §4.2: stars-v1/v2 stay valid and are classified `legacy`; new
+  // sessions write stars-v3. `schema` is historically only ever "stars-v1";
+  // the active marker is `prompt_version`.
   schema?: "stars-v1";
   prompt_version?: string;
+  /** RFC 0012 §4.1: redundant with `aKey === bKey`, validated against it,
+   *  never trusted in isolation. Written for human inspection in stars-v3. */
+  match_kind?: MatchKind;
+  /** RFC 0012 §6: language the review/clash was written in. Supersedes the
+   *  ambiguous `eval_lang` for stars-v3 files. */
+  review_lang?: "en" | "pt";
   agent_id?: string;
   run_at?: string | Date;
   season?: number;
@@ -34,6 +46,47 @@ export interface RateFile {
   margin?: number;
   confidence?: string;
   criterion?: string;
+}
+
+// ── Normalized match (RFC 0012) ─────────────────────────────────────────────
+
+// RFC 0012 §4.1: a match is `version` when both sides judge versions of the
+// same post (post_a.key === post_b.key) and `work` otherwise. The distinction
+// is structural — derivable from the rate file alone — not a regime of
+// evaluation (those live in RFC 0013). The classification is computed at load
+// time so every consumer (ranking, UI, snapshot, doctor) shares one source of
+// truth instead of re-deriving `aKey === bKey` ad hoc.
+export type MatchKind = "work" | "version";
+
+export interface NormalizedMatchSide {
+  key: string;
+  /** slug@uuid — the exact version judged. Null when no version is recorded. */
+  ref: string | null;
+  /** Cached file path; convenience for the UI, never an identity. */
+  path: string | null;
+  version: string | null;
+  contentLang: string | null;
+}
+
+// RFC 0012 §4.1. The single normalized shape the Fase 1 normalizer will emit;
+// declared here in Fase 0 so types land before any consumer migrates. It does
+// NOT carry an evaluation `mode` — regimes of evaluation are RFC 0013 and are
+// asserted (not derived), so they must not ride on this structural record.
+export interface NormalizedMatch {
+  id: string;
+  kind: MatchKind;
+  winnerSide: "a" | "b";
+  runAt: Date | null;
+  postA: NormalizedMatchSide;
+  postB: NormalizedMatchSide;
+  /** Language the review/clash was written in (RFC 0012 §6). */
+  reviewLang: string | null;
+  agentId: string | null;
+  perspectiveId: string | null;
+  rateA: number | null;
+  rateB: number | null;
+  evaluatorMood: string | null;
+  evaluatorMoodAfter: string | null;
 }
 
 // ── Ranking ────────────────────────────────────────────────────────────────

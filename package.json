@@ -38,7 +38,7 @@
     "hronir:doctor": "node --import tsx/esm scripts/hronir/index.js doctor",
     "hronir:detect-stuffing": "node scripts/hronir/detect-token-stuffing.mjs",
     "music:generate": "node scripts/generate-music-posts.mjs",
-    "test": "node --import tsx/esm --experimental-test-module-mocks --test src/hronir/__tests__/ranking.test.js"
+    "test": "node --import tsx/esm --experimental-test-module-mocks --test \"src/hronir/__tests__/*.test.js\""
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.4",
