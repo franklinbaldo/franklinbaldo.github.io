@@ -4,7 +4,7 @@ slug: a11y-skip-link-nav-label
 branch: claude/sleepy-pasteur-tw13in
 status: pr-open
 issues: [583, 495]
-pr_opened: null
+pr_opened: 601
 pr_merged: null
 ---
 
