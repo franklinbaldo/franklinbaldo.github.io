@@ -1,7 +1,7 @@
 ---
 import PageLayout from "../../../layouts/PageLayout.astro";
 import { getCollection } from "astro:content";
-import { getAllDuels, getRankByKey } from "../../../lib/hronir-rank";
+import { getDuels, getRankByKey } from "../../../lib/hronir-rank";
 import { isPublished } from "../../../lib/publish";
 import { marked } from "marked";
 
@@ -17,27 +17,49 @@ export async function getStaticPaths() {
     if (!existing || lang === "en") byKey.set(key, { title: p.data.title, slug: p.id, lang });
   }
 
-  const duels = getAllDuels();
+  // RFC 0012: editorial (work) and version trials are distinct universes. Each
+  // duel detail navigates within its own kind, with its own archive backlink.
   const PER_PAGE = 20;
-  return duels.map((duel, i) => {
+  const work = getDuels({ kind: "work" });
+  const versions = getDuels({ kind: "version" });
+
+  const workPaths = work.map((duel, i) => {
     const archivePage = Math.floor(i / PER_PAGE) + 1;
     const archiveBase = archivePage === 1 ? "/ranking/battles/" : `/ranking/battles/page/${archivePage}/`;
-    const archiveHref = `${archiveBase}#${duel.id}`;
     return {
       params: { id: duel.id },
       props: {
         duel,
-        prevId: i + 1 < duels.length ? duels[i + 1].id : null,
-        nextId: i > 0 ? duels[i - 1].id : null,
-        archiveHref,
+        prevId: i + 1 < work.length ? work[i + 1].id : null,
+        nextId: i > 0 ? work[i - 1].id : null,
+        archiveHref: `${archiveBase}#${duel.id}`,
+        archiveLabel: "All battles",
         postAInfo: byKey.get(duel.postAKey ?? ""),
         postBInfo: byKey.get(duel.postBKey ?? ""),
       },
     };
   });
+
+  const versionPaths = versions.map((duel, i) => ({
+    params: { id: duel.id },
+    props: {
+      duel,
+      prevId: i + 1 < versions.length ? versions[i + 1].id : null,
+      nextId: i > 0 ? versions[i - 1].id : null,
+      archiveHref: `/ranking/versions/${duel.postAKey ?? ""}/`,
+      archiveLabel: "Version trials",
+      postAInfo: byKey.get(duel.postAKey ?? ""),
+      postBInfo: byKey.get(duel.postBKey ?? ""),
+    },
+  }));
+
+  return [...workPaths, ...versionPaths];
 }
 
-const { duel, prevId, nextId, archiveHref, postAInfo, postBInfo } = Astro.props;
+const { duel, prevId, nextId, archiveHref, archiveLabel, postAInfo, postBInfo } =
+  Astro.props;
+
+const isVersion = duel.isVersionDuel === true;
 
 function postHref(info: { slug: string; lang: string } | undefined) {
   if (!info) return null;
@@ -47,6 +69,11 @@ function postHref(info: { slug: string; lang: string } | undefined) {
 function dossierHref(key: string | undefined) {
   if (!key) return null;
   return `/ranking/posts/${key}/`;
+}
+
+const REPO = "https://github.com/franklinbaldo/franklinbaldo.github.io";
+function sourceHref(path: string | null | undefined) {
+  return path ? `${REPO}/blob/main/${path}` : null;
 }
 
 const winnerIsA = duel.winnerSide
@@ -60,6 +87,13 @@ const winnerTitle = winnerInfo?.title ?? winnerKey;
 const loserTitle = loserInfo?.title ?? loserKey;
 const winnerHref = postHref(winnerInfo);
 const loserHref = postHref(loserInfo);
+
+// Version trials: both sides share the post; the identity is the slug@uuid ref.
+const postTitle = postAInfo?.title ?? duel.postAKey ?? "";
+const winnerRef = winnerIsA ? duel.postARef : duel.postBRef;
+const loserRef = winnerIsA ? duel.postBRef : duel.postARef;
+const winnerSrc = sourceHref(winnerIsA ? duel.postAPath : duel.postBPath);
+const loserSrc = sourceHref(winnerIsA ? duel.postBPath : duel.postAPath);
 
 const rateWinner = winnerIsA ? duel.rateA : duel.rateB;
 const rateLoser = winnerIsA ? duel.rateB : duel.rateA;
@@ -78,12 +112,17 @@ function perspectiveHue(id: string): number {
   return Math.abs(h) % 360;
 }
 
-const pageTitle = `${winnerTitle} vs ${loserTitle}`;
-const pageDesc = `Hrönir duel: ${winnerTitle} beat ${loserTitle}${duel.perspectiveId ? ` under the ${duel.perspectiveId} perspective` : ""}.`;
+const pageTitle = isVersion
+  ? `Version trial — ${postTitle}`
+  : `${winnerTitle} vs ${loserTitle}`;
+const pageDesc = isVersion
+  ? `Hrönir version trial for "${postTitle}": ${winnerRef} beat ${loserRef}.`
+  : `Hrönir duel: ${winnerTitle} beat ${loserTitle}${duel.perspectiveId ? ` under the ${duel.perspectiveId} perspective` : ""}.`;
 
+// Global rank is editorial-only; a version trial never carries one.
 const rankByKey = getRankByKey();
-const winnerRank = rankByKey.get(winnerKey);
-const loserRank = rankByKey.get(loserKey);
+const winnerRank = isVersion ? undefined : rankByKey.get(winnerKey);
+const loserRank = isVersion ? undefined : rankByKey.get(loserKey);
 ---
 
 <PageLayout title={`${pageTitle} | Ranking Battles`} description={pageDesc} lang="en">
@@ -91,19 +130,23 @@ const loserRank = rankByKey.get(loserKey);
     <ol>
       <li><a href="/">Home</a></li>
       <li><a href="/ranking/">Ranking</a></li>
-      <li><a href="/ranking/battles/">All battles</a></li>
-      <li aria-current="page">{winnerTitle} vs {loserTitle}</li>
+      <li><a href={archiveHref}>{archiveLabel}</a></li>
+      <li aria-current="page">{pageTitle}</li>
     </ol>
   </nav>
 
   <hgroup>
-    <h1>Battle Report</h1>
+    <h1>{isVersion ? "Version Trial" : "Battle Report"}</h1>
     <p><small>{fmtDate(duel.runAt)}</small></p>
   </hgroup>
 
   <div class="battle-tags">
     {duel.season !== undefined && <span class="tag tag-season">Season {duel.season}</span>}
-    {duel.isVersionDuel && <span class="tag">version duel</span>}
+    {isVersion && (
+      <span class="tag">
+        <a href={`/ranking/versions/${duel.postAKey}/`}>version trial</a>
+      </span>
+    )}
     {duel.perspectiveId && (
       <span class="tag tag-perspective" style={`--ph:${perspectiveHue(duel.perspectiveId)}`}>
         <a href={`/ranking/perspectives/${duel.perspectiveId}/`}>{duel.perspectiveId.replace(/-/g, " ")}</a>
@@ -113,21 +156,34 @@ const loserRank = rankByKey.get(loserKey);
     {duel.confidence && <span class={`tag tag-confidence conf-${duel.confidence}`}>{duel.confidence} confidence</span>}
   </div>
 
+  {isVersion && (
+    <p class="version-note">
+      A revision trial of <a href={`/ranking/versions/${duel.postAKey}/`}>{postTitle}</a> —
+      two versions of the same post compared. This does not affect the editorial ranking.
+    </p>
+  )}
+
   <section class="versus-section" aria-label="Versus">
     <div class="versus-grid">
       <div class="versus-side winner">
         <div class="versus-label">Winner 🏆</div>
         <div class="versus-title">
-          {winnerHref
-            ? <a href={winnerHref}>{winnerTitle}</a>
-            : <span>{winnerTitle}</span>}
+          {isVersion
+            ? <code>{winnerRef}</code>
+            : winnerHref
+              ? <a href={winnerHref}>{winnerTitle}</a>
+              : <span>{winnerTitle}</span>}
         </div>
         {hasRates && <div class="versus-rate">{rateWinner!.toFixed(2)}</div>}
-        {winnerRank && (
-          <div class="versus-rank">
-            <a href={dossierHref(winnerKey) ?? "/ranking/"}>#{winnerRank.rank}/{winnerRank.total}</a>
-          </div>
-        )}
+        {isVersion
+          ? winnerSrc && (
+              <div class="versus-rank"><a href={winnerSrc}>read source →</a></div>
+            )
+          : winnerRank && (
+              <div class="versus-rank">
+                <a href={dossierHref(winnerKey) ?? "/ranking/"}>#{winnerRank.rank}/{winnerRank.total}</a>
+              </div>
+            )}
       </div>
 
       <div class="versus-center">
@@ -135,18 +191,24 @@ const loserRank = rankByKey.get(loserKey);
       </div>
 
       <div class="versus-side loser">
-        <div class="versus-label">Challenger</div>
+        <div class="versus-label">{isVersion ? "Challenger version" : "Challenger"}</div>
         <div class="versus-title">
-          {loserHref
-            ? <a href={loserHref}>{loserTitle}</a>
-            : <span>{loserTitle}</span>}
+          {isVersion
+            ? <code>{loserRef}</code>
+            : loserHref
+              ? <a href={loserHref}>{loserTitle}</a>
+              : <span>{loserTitle}</span>}
         </div>
         {hasRates && <div class="versus-rate loser-rate">{rateLoser!.toFixed(2)}</div>}
-        {loserRank && (
-          <div class="versus-rank">
-            <a href={dossierHref(loserKey) ?? "/ranking/"}>#{loserRank.rank}/{loserRank.total}</a>
-          </div>
-        )}
+        {isVersion
+          ? loserSrc && (
+              <div class="versus-rank"><a href={loserSrc}>read source →</a></div>
+            )
+          : loserRank && (
+              <div class="versus-rank">
+                <a href={dossierHref(loserKey) ?? "/ranking/"}>#{loserRank.rank}/{loserRank.total}</a>
+              </div>
+            )}
       </div>
     </div>
 
@@ -222,6 +284,8 @@ const loserRank = rankByKey.get(loserKey);
   .breadcrumb a:hover { text-decoration: underline; }
 
   .battle-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
+  .version-note { font-size: 0.85rem; color: var(--pico-muted-color); margin: 0 0 1.5rem; }
+  .versus-title code { font-size: 0.82rem; word-break: break-all; }
   .tag {
     font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em;
     padding: 0.15rem 0.5rem; border-radius: 4px;

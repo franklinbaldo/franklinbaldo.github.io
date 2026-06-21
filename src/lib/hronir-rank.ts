@@ -139,6 +139,12 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
       season: typeof data.season === "number" ? data.season : undefined,
       postAKey: aKey,
       postBKey: bKey,
+      postARef: n.postA.ref,
+      postBRef: n.postB.ref,
+      postAVersion: n.postA.version,
+      postBVersion: n.postB.version,
+      postAPath: n.postA.path,
+      postBPath: n.postB.path,
       perspectiveId: data.perspective_id
         ? String(data.perspective_id)
         : undefined,
@@ -159,12 +165,15 @@ function loadDuelData(): { stats: RankingStats; recent: DuelEntry[] } {
 
   duels.sort((a, b) => b.runAt.localeCompare(a.runAt));
 
+  // RFC 0012 §6.1: editorial stats count only work duels. Version trials have
+  // their own surface and must not inflate "duels run".
+  const work = duels.filter((d) => !d.isVersionDuel);
   const rated = getRanking();
   const stats: RankingStats = {
-    totalDuels: duels.length,
+    totalDuels: work.length,
     totalRated: rated.length,
-    lastDuelAt: duels.length > 0 ? duels[0].runAt : null,
-    firstDuelAt: duels.length > 0 ? duels[duels.length - 1].runAt : null,
+    lastDuelAt: work.length > 0 ? work[0].runAt : null,
+    firstDuelAt: work.length > 0 ? work[work.length - 1].runAt : null,
   };
 
   _statsCache = { stats, recent: duels };
@@ -175,12 +184,25 @@ export function getRankingStats(): RankingStats {
   return loadDuelData().stats;
 }
 
+// RFC 0012 §6.1: "recent battles" on the ranking home are editorial only.
 export function getRecentDuels(limit = 8): DuelEntry[] {
-  return loadDuelData().recent.slice(0, limit);
+  return getDuels({ kind: "work" }).slice(0, limit);
 }
 
+// The raw archive (every duel, both kinds). Used by id resolution; public
+// listings should call getDuels({ kind }) with an explicit kind instead.
 export function getAllDuels(): DuelEntry[] {
   return loadDuelData().recent;
+}
+
+// RFC 0012 §6.2: all version trials, newest first.
+export function getVersionTrials(): DuelEntry[] {
+  return getDuels({ kind: "version" });
+}
+
+// Version trials for one post key (both sides share the key).
+export function getPostVersionTrials(key: string): DuelEntry[] {
+  return getDuels({ kind: "version" }).filter((d) => d.postAKey === key);
 }
 
 // RFC 0012 §6.4: the canonical duel accessor. `kind` is required — there is no
@@ -222,8 +244,12 @@ export function getDuelById(id: string): DuelEntry | undefined {
   return getAllDuels().find((d) => d.id === id);
 }
 
+// RFC 0012 §6.3: a post's editorial record is work duels only. Version trials
+// live in the dossier's "Edit history" section via getPostVersionTrials.
 export function getPostDuelHistory(key: string): DuelEntry[] {
-  return getAllDuels().filter((d) => d.postAKey === key || d.postBKey === key);
+  return getDuels({ kind: "work" }).filter(
+    (d) => d.postAKey === key || d.postBKey === key
+  );
 }
 
 const SNAPSHOT_PATH = path.join(

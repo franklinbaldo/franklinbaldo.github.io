@@ -131,6 +131,16 @@ export interface DuelEntry {
   season?: number;
   postAKey?: string;
   postBKey?: string;
+  /** RFC 0012 §6.2: slug@uuid of each side — the exact version judged. Equal
+   *  keys on both sides (a version duel) still resolve to two distinct refs. */
+  postARef?: string | null;
+  postBRef?: string | null;
+  postAVersion?: string | null;
+  postBVersion?: string | null;
+  /** Source file path of each side's version — used to build permalinks to the
+   *  exact content judged in a version trial. */
+  postAPath?: string | null;
+  postBPath?: string | null;
   perspectiveId?: string;
   rateA?: number;
   rateB?: number;
