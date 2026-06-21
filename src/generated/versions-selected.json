@@ -5,7 +5,7 @@
   },
   "_meta": {
     "schema": "selection-v1",
-    "generatedAt": "2026-06-19T05:06:11.871Z"
+    "generatedAt": "2026-06-21T00:25:54.807Z"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed": {
     "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-09T20-24-29.mdx",
@@ -480,12 +480,12 @@
     "uuid": "2cf788c3-85ab-5d68-b768-a4acc63b9120"
   },
   "paperclip-rhapsody": {
-    "file": "paperclip-rhapsody/v-2026-06-11T08-25-46-487.mdx",
-    "uuid": "1ef058c2-a823-5dfc-9705-67396cfde99b"
+    "file": "paperclip-rhapsody/v-2026-06-09T20-24-29.mdx",
+    "uuid": "276eba96-1e07-5abf-b031-2750b53bfadd"
   },
   "paperclip-rhapsody-en": {
-    "file": "paperclip-rhapsody-en/v-2026-06-11T08-25-46-487.mdx",
-    "uuid": "0f1dbdd5-3fda-5297-8465-3fdc134072f9"
+    "file": "paperclip-rhapsody-en/v-2026-06-09T20-24-29.mdx",
+    "uuid": "12838392-65af-5659-baef-db52d407f2d0"
   },
   "particles": {
     "file": "particles/v-2026-06-10T18-32-48.mdx",
