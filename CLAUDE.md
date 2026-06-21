@@ -69,8 +69,6 @@ npm run hronir:decide -- \
 
 The `--review-a` / `--review-b` / `--clash` fields render as **Markdown** — use emphasis, lists, blockquotes (to quote passages), and emojis where they aid readability. Formatting in service of the content, not decoration.
 
-Beyond scoring, you may (and should, when you have it) **suggest concrete improvements** to a post — what to cut, expand, reorder — and **point to relevant content** that came to mind on the topic: a reference, an author, an example, a link. These suggestions feed the `edit-worst` phase; the more specific, the more useful.
-
 ### Deciding the mood (do this first)
 
 `--after-mood` is the **first** flag you submit. Before writing anything,
