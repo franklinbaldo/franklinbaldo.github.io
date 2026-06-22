@@ -1,5 +1,6 @@
 ---
 import { t, urlPrefix } from '../lib/i18n';
+import { fetchGoodreadsBooks, recentBooks } from '../lib/goodreads';
 
 interface Props {
   lang?: string;
@@ -9,6 +10,9 @@ const { lang } = Astro.props;
 const homeAbout = `${urlPrefix(lang)}/about/`;
 const homeSearch = `${urlPrefix(lang)}/search/`;
 const rssHref = lang === "pt" ? "/pt/rss.xml" : "/rss.xml";
+const booksHref = lang === "pt" ? "/pt/livros/" : "/books/";
+
+const recent = await fetchGoodreadsBooks().then((b) => recentBooks(b, 3)).catch(() => []);
 ---
 
 <aside class="home-author-rail" aria-label={t(lang, 'author.aboutEyebrow')}>
@@ -21,6 +25,26 @@ const rssHref = lang === "pt" ? "/pt/rss.xml" : "/rss.xml";
   <p class="rail-more">
     <a href={homeAbout}>{t(lang, 'author.aboutMore')}</a>
   </p>
+
+  {recent.length > 0 && (
+    <>
+      <hr class="rail-divider" />
+      <p class="rail-eyebrow"><small>{lang === 'pt' ? 'Lendo recentemente' : 'Recently read'}</small></p>
+      <ul class="rail-books">
+        {recent.map((book) => (
+          <li>
+            <a href={book.link} target="_blank" rel="noopener noreferrer" title={`${book.title} — ${book.author_name}`}>
+              {book.book_image_url
+                ? <img src={book.book_image_url} alt={book.title} width="40" height="60" loading="lazy" decoding="async" />
+                : <span class="rail-book-fallback" aria-hidden="true">📖</span>
+              }
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="rail-books-more"><a href={booksHref}><small>{lang === 'pt' ? 'Ver todos os livros →' : 'All books →'}</small></a></p>
+    </>
+  )}
 
   <hr class="rail-divider" />
 
@@ -111,6 +135,51 @@ const rssHref = lang === "pt" ? "/pt/rss.xml" : "/rss.xml";
     color: var(--pico-primary);
     flex-shrink: 0;
   }
+
+  .rail-books {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .rail-books li { margin: 0; }
+  .rail-books a {
+    display: block;
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid var(--pico-muted-border-color);
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .rail-books a:hover {
+    transform: translateY(-2px);
+    border-color: var(--pico-primary);
+  }
+  .rail-books img {
+    display: block;
+    width: 40px;
+    height: 60px;
+    object-fit: cover;
+  }
+  .rail-book-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 60px;
+    font-size: 1.25rem;
+    background: var(--pico-card-background-color);
+  }
+  .rail-books-more {
+    margin: 0 0 0;
+    font-size: 0.82rem;
+  }
+  .rail-books-more a {
+    color: var(--pico-muted-color);
+    text-decoration: none;
+  }
+  .rail-books-more a:hover { color: var(--pico-primary); }
 
   /* Compact horizontal layout on mobile/tablet */
   @media (max-width: 1099px) {

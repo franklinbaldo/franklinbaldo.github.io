@@ -29,3 +29,6 @@ pnpm-debug.log*
 
 # Hrönir transient session state (never committed)
 hronir_session.json
+
+# Hrönir version selection (rebuilt by prebuild/hronir:select before each CI step that needs it)
+src/generated/versions-selected.json

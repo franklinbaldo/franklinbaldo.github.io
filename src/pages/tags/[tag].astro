@@ -70,6 +70,11 @@ const collectionLd = {
   description={description}
   lang="en"
   translations={hasPtCounterpart ? { pt: `/pt/tags/${tag}/` } : {}}
+  breadcrumb={[
+    { name: "Home", item: Astro.site ? new URL("/", Astro.site).href : "https://franklinbaldo.github.io/" },
+    { name: "Tags", item: Astro.site ? new URL("/tags/", Astro.site).href : "https://franklinbaldo.github.io/tags/" },
+    { name: `#${tag}`, item: Astro.site ? new URL(`/tags/${tag}/`, Astro.site).href : `https://franklinbaldo.github.io/tags/${tag}/` },
+  ]}
 >
   <script type="application/ld+json" set:html={JSON.stringify(collectionLd)} is:inline slot="head" />
   <article>

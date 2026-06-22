@@ -1,8 +1,14 @@
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import { execFileSync } from "node:child_process";
 import matter from "gray-matter";
 import { OUT_DIR, RATES_DIR } from "./posts.js";
+import type {
+  MatchKind,
+  NormalizedMatch,
+  NormalizedMatchSide,
+} from "./types.js";
 
 export function listMatchFiles(): string[] {
   const out: string[] = [];
@@ -80,6 +86,138 @@ export function postKey(
 ): string | null {
   if (!side) return null;
   return side.key || side.slug || null;
+}
+
+// ── Single normalizer (RFC 0012 §4.1) ───────────────────────────────────────
+//
+// Before RFC 0012 three readers (ranking._loadMatchData,
+// ranking.computePerPerspectiveRatings, hronir-rank.loadDuelData) each parsed
+// the rate files and re-derived winner/override resolution, keys, runAt and the
+// work-vs-version distinction by hand. This is the one place that does it, so
+// every consumer shares the same classification instead of re-deriving
+// `aKey === bKey` ad hoc.
+
+/** RFC 0012 §4.1: structural, derivable from the rate file alone. */
+export function classifyKind(aKey: string, bKey: string): MatchKind {
+  return aKey === bKey ? "version" : "work";
+}
+
+/** Stable 8-char duel id — hash of postAKey|postBKey|runAt. Single source for
+ *  the value hronir-rank.duelId used to compute inline. */
+export function matchId(aKey: string, bKey: string, runAt: string): string {
+  return crypto
+    .createHash("sha256")
+    .update([aKey, bKey, runAt].join("|"))
+    .digest("hex")
+    .slice(0, 8);
+}
+
+/** A normalized match plus the raw material consumers still need: the exact
+ *  original runAt string (Date round-tripping would corrupt `run_id`-only
+ *  timestamps), the source filename, and the untouched frontmatter/body for
+ *  passthrough display fields (margin, confidence, parsed clash, …). */
+export interface LoadedMatch {
+  norm: NormalizedMatch;
+  filename: string;
+  runAtRaw: string;
+  data: Record<string, unknown>;
+  content: string;
+}
+
+function asString(v: unknown): string | null {
+  return v == null ? null : String(v);
+}
+
+function asFiniteNumber(v: unknown): number | null {
+  return typeof v === "number" && Number.isFinite(v) ? v : null;
+}
+
+function normalizeSide(
+  raw: Record<string, unknown> | null | undefined,
+  key: string
+): NormalizedMatchSide {
+  const version = (raw?.version as string) ?? null;
+  const contentLang =
+    (raw?.content_lang as string) ?? (raw?.display_lang as string) ?? null;
+  return {
+    key,
+    ref: version ? `${key}@${version}` : null,
+    path: (raw?.path as string) || null,
+    version,
+    contentLang,
+  };
+}
+
+/** Pure: turns one parsed rate file into a LoadedMatch, or null when the file
+ *  carries no usable verdict (no winner, missing keys, TODO). Same filters the
+ *  three legacy readers applied, in one place. */
+export function normalizeMatch(
+  data: Record<string, unknown>,
+  content: string,
+  filePath: string
+): LoadedMatch | null {
+  let winner = data.winner as string;
+  if (data.override && data.override !== "null")
+    winner = data.override as string;
+  if (winner === "TODO" || !winner) return null;
+  if (winner !== "a" && winner !== "b") return null;
+
+  const aKey = postKey(data.post_a as { key?: string; slug?: string } | null);
+  const bKey = postKey(data.post_b as { key?: string; slug?: string } | null);
+  if (!aKey || !bKey) return null;
+
+  const rawRunAt = (data.run_at ?? data.run_id ?? "") as string | Date;
+  const runAtRaw =
+    rawRunAt instanceof Date ? rawRunAt.toISOString() : String(rawRunAt);
+  const parsed = runAtRaw ? new Date(runAtRaw) : null;
+  const runAt = parsed && !Number.isNaN(parsed.getTime()) ? parsed : null;
+
+  const postA = data.post_a as Record<string, unknown> | null;
+  const postB = data.post_b as Record<string, unknown> | null;
+
+  const norm: NormalizedMatch = {
+    id: matchId(aKey, bKey, runAtRaw),
+    kind: classifyKind(aKey, bKey),
+    winnerSide: winner,
+    runAt,
+    postA: normalizeSide(postA, aKey),
+    postB: normalizeSide(postB, bKey),
+    reviewLang:
+      (data.review_lang as string) ?? (data.eval_lang as string) ?? null,
+    agentId: asString(data.agent_id),
+    perspectiveId: asString(data.perspective_id),
+    rateA: asFiniteNumber(data.rate_a),
+    rateB: asFiniteNumber(data.rate_b),
+    evaluatorMood: asString(data.evaluator_mood),
+    evaluatorMoodAfter: asString(data.evaluator_mood_after),
+  };
+
+  return { norm, filename: filePath, runAtRaw, data, content };
+}
+
+// RFC 0010 §4.7 (E1): memoized against matchesDataVersion so a writeMatch in
+// the same process (decide, migrate) invalidates the snapshot.
+let _normCache: { version: number; matches: LoadedMatch[] } | null = null;
+
+/** The single parse pass over the rate files. Consumers map this to their own
+ *  shape (RawMatch, DuelEntry) instead of reading the files again. */
+export function loadMatches(): LoadedMatch[] {
+  const version = matchesDataVersion();
+  if (_normCache && _normCache.version === version) return _normCache.matches;
+  const out: LoadedMatch[] = [];
+  for (const f of listMatchFiles()) {
+    const { data, content } = readMatch(f);
+    const lm = normalizeMatch(data as Record<string, unknown>, content, f);
+    if (lm) out.push(lm);
+  }
+  _normCache = { version, matches: out };
+  return out;
+}
+
+/** RFC 0012 §4.1 public API: the normalized matches without the raw passthrough
+ *  material. */
+export function loadNormalizedMatches(): NormalizedMatch[] {
+  return loadMatches().map((m) => m.norm);
 }
 
 // RFC 0010 §4.7 (E3): one `git log --name-only` walk builds a last-commit-time
