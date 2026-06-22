@@ -38,6 +38,9 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      - name: Generate version selection
+        run: npm run hronir:select
+
       - name: Hrönir doctor
         run: npm run hronir:doctor
 
