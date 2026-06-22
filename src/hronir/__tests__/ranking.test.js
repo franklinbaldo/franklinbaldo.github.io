@@ -14,6 +14,8 @@ await mock.module("../matches.js", {
     writeMatch: () => {},
     postKey: (side) => (side ? side.key || side.slug || null : null),
     matchesDataVersion: () => 0,
+    loadMatches: () => [],
+    loadNormalizedMatches: () => [],
   },
 });
 

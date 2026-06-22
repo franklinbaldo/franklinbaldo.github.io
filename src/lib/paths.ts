@@ -33,8 +33,8 @@ export const READING_PATHS: ReadingPath[] = [
       pt: "Memória e Funes",
     },
     blurb: {
-      en: "On total recall, Pierre Menard, and what Borges saw before anyone else about the cost of perfect memory.",
-      pt: "Sobre lembrança total, Pierre Menard, e o que Borges enxergou antes de todos sobre o custo da memória perfeita.",
+      en: "On total recall, Pierre Menard, and what Borges saw before anyone else. From building Funes to preserving family voices: the cost of perfect memory and the architecture that makes it survivable.",
+      pt: "Sobre lembrança total, Pierre Menard, e o que Borges viu antes de todos. De construir Funes a preservar vozes da família: o custo da memória perfeita e a arquitetura que a torna suportável.",
     },
     source: {
       type: "manual",
@@ -42,11 +42,46 @@ export const READING_PATHS: ReadingPath[] = [
         en: [
           "building-funes",
           "funes-soul",
+          "verne-identity-repo",
+          "what-i-learned-orchestrating-ai-agents-to-preserve-family-memory",
           "pierre-menard-computational-researcher",
         ],
         pt: [
-          "pierre-menard-pesquisador-computacional",
+          "construindo-funes-como-dei-uma-alma-a-um-agente-de-ia",
+          "soulmd-funes",
+          "verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram",
           "orquestrando-agentes-memoria-familiar",
+          "pierre-menard-pesquisador-computacional",
+        ],
+      },
+    },
+  },
+  {
+    slug: "law-and-ai",
+    title: {
+      en: "Law and AI",
+      pt: "Direito e IA",
+    },
+    blurb: {
+      en: "A state attorney's journey into AI agents: delegation, memory, and what changes when the clerk never forgets — seen from someone who builds at night and argues in court by day.",
+      pt: "A jornada de um procurador do estado pelo mundo dos agentes de IA: delegação, memória, e o que muda quando o escrivão nunca esquece — pelo olhar de quem constrói à noite e argumenta no tribunal de dia.",
+    },
+    source: {
+      type: "manual",
+      posts: {
+        en: [
+          "the-art-of-delegation",
+          "census-not-sample",
+          "conceptual-document-the-chronicle-of-franklin-baldo",
+          "building-funes",
+          "funes-soul",
+        ],
+        pt: [
+          "delegando-para-agentes",
+          "censo-nao-amostra",
+          "documento-conceitual-a-cronica-de-franklin-baldo",
+          "construindo-funes-como-dei-uma-alma-a-um-agente-de-ia",
+          "soulmd-funes",
         ],
       },
     },

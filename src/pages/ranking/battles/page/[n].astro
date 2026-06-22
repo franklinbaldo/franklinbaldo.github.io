@@ -1,11 +1,11 @@
 ---
 import PageLayout from "../../../../layouts/PageLayout.astro";
 import { getCollection } from "astro:content";
-import { getAllDuels } from "../../../../lib/hronir-rank";
+import { getDuels } from "../../../../lib/hronir-rank";
 import { isPublished } from "../../../../lib/publish";
 
 export function getStaticPaths() {
-  const allDuels = getAllDuels();
+  const allDuels = getDuels({ kind: "work" });
   const PER_PAGE = 20;
   const totalPages = Math.ceil(allDuels.length / PER_PAGE);
   // Only generate pages 2+ (page 1 is battles/index.astro)
@@ -148,7 +148,6 @@ const agents = [...new Set(duels.map((d) => d.agentId).filter(Boolean) as string
             <div class="battle-meta">
               <span class="battle-date">{fmtDate(d.runAt)}</span>
               {d.season !== undefined && <span class="tag tag-season">S{d.season}</span>}
-              {d.isVersionDuel && <span class="tag">version duel</span>}
               {d.perspectiveId && (
                 <span class="tag tag-perspective" style={`--ph:${perspectiveHue(d.perspectiveId)}`}>
                   {d.perspectiveId.replace(/-/g, " ")}

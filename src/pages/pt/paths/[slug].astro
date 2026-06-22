@@ -21,6 +21,10 @@ const translations: Record<string, string> = enHasPosts ? { en: `/paths/${path.s
   description={path.blurb.pt}
   lang="pt"
   translations={translations}
+  breadcrumb={[
+    { name: "Início", item: Astro.site ? new URL("/pt/", Astro.site).href : "https://franklinbaldo.github.io/pt/" },
+    { name: path.title.pt, item: Astro.site ? new URL(`/pt/paths/${path.slug}/`, Astro.site).href : `https://franklinbaldo.github.io/pt/paths/${path.slug}/` },
+  ]}
 >
   <hgroup>
     <p><small><a href="/pt/">← Início</a> · <em>Caminho de leitura</em></small></p>

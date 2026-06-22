@@ -1,0 +1,253 @@
+---
+import PageLayout from "../../../layouts/PageLayout.astro";
+import { getCollection } from "astro:content";
+import {
+  getVersionTrials,
+  getPostVersionTrials,
+} from "../../../lib/hronir-rank";
+import { isPublished } from "../../../lib/publish";
+
+// RFC 0012 §6.2: genealogy of one post's revisions — every version trial, the
+// distinct versions seen, and permalinks to the exact content judged.
+export async function getStaticPaths() {
+  const keys = new Set(
+    getVersionTrials()
+      .map((t) => t.postAKey)
+      .filter((k): k is string => Boolean(k))
+  );
+
+  const allPosts = await getCollection("blog");
+  const byKey = new Map<string, { title: string; slug: string; lang: string }>();
+  for (const p of allPosts) {
+    if (!isPublished(p)) continue;
+    const key = p.data.translationKey;
+    if (!key) continue;
+    const lang = p.data.lang ?? "en";
+    const existing = byKey.get(key);
+    if (!existing || lang === "en")
+      byKey.set(key, { title: p.data.title, slug: p.id, lang });
+  }
+
+  return [...keys].map((key) => ({
+    params: { key },
+    props: { key, info: byKey.get(key) ?? null },
+  }));
+}
+
+const { key, info } = Astro.props;
+const trials = getPostVersionTrials(key);
+const title = info?.title ?? key;
+const postHref = info
+  ? info.lang === "pt"
+    ? `/pt/blog/${info.slug}/`
+    : `/blog/${info.slug}/`
+  : null;
+
+const REPO = "https://github.com/franklinbaldo/franklinbaldo.github.io";
+function sourceHref(path: string | null | undefined) {
+  return path ? `${REPO}/blob/main/${path}` : null;
+}
+
+// Distinct versions seen across all trials, with their source paths and a
+// win/loss tally — a lightweight genealogy.
+const versions = new Map<
+  string,
+  { ref: string; path: string | null; wins: number; losses: number }
+>();
+function note(
+  version: string | null | undefined,
+  ref: string | null | undefined,
+  path: string | null | undefined,
+  won: boolean
+) {
+  if (!version) return;
+  const v = versions.get(version) ?? {
+    ref: ref ?? version,
+    path: path ?? null,
+    wins: 0,
+    losses: 0,
+  };
+  if (won) v.wins += 1;
+  else v.losses += 1;
+  versions.set(version, v);
+}
+for (const t of trials) {
+  const aWon = t.winnerSide === "a";
+  note(t.postAVersion, t.postARef, t.postAPath, aWon);
+  note(t.postBVersion, t.postBRef, t.postBPath, !aWon);
+}
+const versionList = [...versions.values()]
+  .sort((a, b) => b.wins - a.wins || a.ref.localeCompare(b.ref))
+  .map((v) => ({ ...v, src: sourceHref(v.path) }));
+
+function fmtDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+---
+
+<PageLayout
+  title={`${title} — Version genealogy | Franklin Baldo`}
+  description={`Version trials and revision genealogy for "${title}".`}
+  lang="en"
+>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/ranking/">Ranking</a></li>
+      <li><a href="/ranking/version-trials/">Version trials</a></li>
+      <li aria-current="page">{title}</li>
+    </ol>
+  </nav>
+
+  <hgroup>
+    <h1>{title}</h1>
+    <p class="links">
+      {postHref && <a href={postHref}>Read published version →</a>}
+      <a href={`/ranking/posts/${key}/`}>Dossier →</a>
+    </p>
+  </hgroup>
+
+  <section class="genealogy">
+    <h2>Versions <small>({versionList.length})</small></h2>
+    <ul class="ver-list">
+      {versionList.map((v) => (
+        <li class="ver-item">
+          <code>{v.ref}</code>
+          <span class="ver-tally">{v.wins}W / {v.losses}L</span>
+          {v.src && <a href={v.src}>source →</a>}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="trials">
+    <h2>Trials <small>({trials.length})</small></h2>
+    <ol class="trial-list">
+      {trials.map((t) => {
+        const wRef = t.winnerSide === "a" ? t.postARef : t.postBRef;
+        const lRef = t.winnerSide === "a" ? t.postBRef : t.postARef;
+        const wRate = t.winnerSide === "a" ? t.rateA : t.rateB;
+        const lRate = t.winnerSide === "a" ? t.rateB : t.rateA;
+        return (
+          <li>
+            <div class="trial-row">
+              <span class="trial-date">{fmtDate(t.runAt)}</span>
+              <code class="trial-win">{wRef}</code>
+              <span class="trial-beat">beat</span>
+              <code class="trial-lose">{lRef}</code>
+              {wRate != null && lRate != null && (
+                <span class="trial-rates">{wRate.toFixed(1)} / {lRate.toFixed(1)}</span>
+              )}
+              {t.id && <a class="trial-link" href={`/ranking/battles/${t.id}/`}>analysis →</a>}
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  </section>
+</PageLayout>
+
+<style>
+  .breadcrumb ol {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    font-size: 0.8rem;
+    color: var(--pico-muted-color);
+  }
+  .breadcrumb li + li::before {
+    content: " / ";
+    padding: 0 0.35em;
+  }
+  .breadcrumb a {
+    color: var(--pico-muted-color);
+    text-decoration: none;
+  }
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.85rem;
+  }
+  .genealogy,
+  .trials {
+    margin-top: 2rem;
+  }
+  .genealogy h2,
+  .trials h2 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--pico-muted-color);
+  }
+  .ver-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .ver-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.84rem;
+  }
+  .ver-item code {
+    font-size: 0.76rem;
+    word-break: break-all;
+  }
+  .ver-tally {
+    font-family: var(--pico-font-family-monospace);
+    font-size: 0.72rem;
+    color: var(--pico-muted-color);
+  }
+  .trial-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .trial-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+  }
+  .trial-date {
+    font-family: var(--pico-font-family-monospace);
+    font-size: 0.7rem;
+    color: var(--pico-muted-color);
+  }
+  .trial-row code {
+    font-size: 0.74rem;
+    word-break: break-all;
+  }
+  .trial-win {
+    color: var(--pico-primary);
+  }
+  .trial-beat,
+  .trial-rates {
+    color: var(--pico-muted-color);
+    font-size: 0.72rem;
+  }
+  .trial-link {
+    margin-left: auto;
+    font-size: 0.78rem;
+  }
+</style>
