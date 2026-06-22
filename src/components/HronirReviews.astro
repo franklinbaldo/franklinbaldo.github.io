@@ -1,5 +1,5 @@
 ---
-import { getAllDuels } from "../lib/hronir-rank";
+import { getDuels } from "../lib/hronir-rank";
 import { getCollection } from "astro:content";
 import { marked } from "marked";
 import { isPublished } from "../lib/publish";
@@ -11,7 +11,8 @@ interface Props {
 
 const { translationKey, lang = "en" } = Astro.props;
 
-const allDuels = getAllDuels();
+// RFC 0012 §6.1: a post's reviews are its editorial duels, not version trials.
+const allDuels = getDuels({ kind: "work" });
 
 const allPosts = await getCollection("blog");
 const postMeta = new Map<string, { title: string; slug: string; lang: string }>();
@@ -45,7 +46,7 @@ function fmtDate(iso: string): string {
 
 // Precompute card data and filter out duels with no review content
 type CardData = {
-  d: ReturnType<typeof getAllDuels>[number];
+  d: ReturnType<typeof getDuels>[number];
   myReview: string;
   myRate: number | undefined;
   won: boolean;

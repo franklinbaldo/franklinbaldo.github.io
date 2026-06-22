@@ -141,6 +141,15 @@ editados recentemente", pule este passo e vá direto para o Passo 25.
 Rode o doctor e confirme que reporta 0 inconsistências. Se houver erros, corrija
 os rate files apontados antes de continuar.
 
+> **REGRA CRÍTICA — nunca delete rate files de outras sessões.**
+> Rate files são imutáveis depois de commitados. Se o doctor reportar erros,
+> corrija **apenas** os arquivos cujo `run_id` corresponde à sua sessão atual
+> (iniciada no Passo 3). Jamais delete arquivos com `run_id` de sessões
+> anteriores — eles pertencem ao histórico permanente do ranking. Deletar esses
+> arquivos faz os duelos diminuírem ao invés de aumentar e é o problema que esta
+> regra existe para evitar. Se o doctor reportar erro em arquivo de outra sessão,
+> relate o problema no PR mas NÃO delete o arquivo.
+
 **Passo 26 — Formatar**
 Rode o prettier sobre os arquivos alterados para garantir que o CI vai passar.
 

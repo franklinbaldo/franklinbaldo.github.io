@@ -1,10 +1,5 @@
 import { rating, rate, ordinal } from "openskill";
-import {
-  listMatchFiles,
-  readMatch,
-  postKey,
-  matchesDataVersion,
-} from "./matches.js";
+import { loadMatches, matchesDataVersion } from "./matches.js";
 import type { RankRow, PerspectiveRankRow } from "./types.js";
 
 export const MIN_APPEARANCES = 3;
@@ -41,51 +36,27 @@ let _rawCache: { version: number; raw: RawMatch[] } | null = null;
 function _loadMatchData(): RawMatch[] {
   const version = matchesDataVersion();
   if (_rawCache && _rawCache.version === version) return _rawCache.raw;
-  const raw: RawMatch[] = [];
-  for (const f of listMatchFiles()) {
-    const { data } = readMatch(f);
-    let winner = data.winner as string;
-    if (data.override && data.override !== "null")
-      winner = data.override as string;
-    if (winner === "TODO" || !winner) continue;
-
-    const aKey = postKey(data.post_a as { key?: string; slug?: string } | null);
-    const bKey = postKey(data.post_b as { key?: string; slug?: string } | null);
-    if (!aKey || !bKey) continue;
-    if (winner !== "a" && winner !== "b") continue;
-
-    const rawRunAt = (data.run_at ?? data.run_id ?? "") as string | Date;
-    const runAt =
-      rawRunAt instanceof Date ? rawRunAt.toISOString() : String(rawRunAt);
-
-    const rateA =
-      typeof data.rate_a === "number" && Number.isFinite(data.rate_a)
-        ? (data.rate_a as number)
-        : null;
-    const rateB =
-      typeof data.rate_b === "number" && Number.isFinite(data.rate_b)
-        ? (data.rate_b as number)
-        : null;
-
-    const postA = data.post_a as Record<string, unknown> | null;
-    const postB = data.post_b as Record<string, unknown> | null;
-
-    raw.push({
-      runAt,
-      filename: f,
-      aKey,
-      bKey,
-      aPath: (postA?.path as string) || "",
-      bPath: (postB?.path as string) || "",
-      aVersion: (postA?.version as string) ?? null,
-      bVersion: (postB?.version as string) ?? null,
-      agentId: data.agent_id ? String(data.agent_id) : null,
-      perspectiveId: data.perspective_id ? String(data.perspective_id) : null,
-      winner: winner as "a" | "b",
-      rateA,
-      rateB,
-    });
-  }
+  // RFC 0012 §4.1: one normalizer feeds every reader. RawMatch is just a flat
+  // projection of the normalized record (version duels included — _computeRatings
+  // skips same-key pairs, _computeVersionRatings keeps only those).
+  const raw: RawMatch[] = loadMatches().map((lm) => {
+    const n = lm.norm;
+    return {
+      runAt: lm.runAtRaw,
+      filename: lm.filename,
+      aKey: n.postA.key,
+      bKey: n.postB.key,
+      aPath: n.postA.path || "",
+      bPath: n.postB.path || "",
+      aVersion: n.postA.version,
+      bVersion: n.postB.version,
+      agentId: n.agentId,
+      perspectiveId: n.perspectiveId,
+      winner: n.winnerSide,
+      rateA: n.rateA,
+      rateB: n.rateB,
+    };
+  });
   _rawCache = { version, raw };
   return raw;
 }
@@ -524,30 +495,18 @@ export function computePerPerspectiveRatings(): Map<
     }>
   >();
 
-  for (const f of listMatchFiles()) {
-    const { data } = readMatch(f);
-    let winner = data.winner as string;
-    if (data.override && data.override !== "null")
-      winner = data.override as string;
-    if (winner === "TODO" || !winner) continue;
-
-    const aKey = postKey(data.post_a as { key?: string; slug?: string } | null);
-    const bKey = postKey(data.post_b as { key?: string; slug?: string } | null);
-    if (!aKey || !bKey) continue;
-    if (winner !== "a" && winner !== "b") continue;
-    if (aKey === bKey) continue;
-
-    const perspId = data.perspective_id ? String(data.perspective_id) : null;
-    if (!perspId) continue;
-
-    const rawRunAt = (data.run_at ?? data.run_id ?? "") as string | Date;
-    const runAt =
-      rawRunAt instanceof Date ? rawRunAt.toISOString() : String(rawRunAt);
-
-    if (!byPerspective.has(perspId)) byPerspective.set(perspId, []);
-    byPerspective
-      .get(perspId)!
-      .push({ runAt, aKey, bKey, winner: winner as "a" | "b" });
+  for (const lm of loadMatches()) {
+    const n = lm.norm;
+    if (n.kind === "version") continue; // RFC 0012: version duels never rank works
+    if (!n.perspectiveId) continue;
+    if (!byPerspective.has(n.perspectiveId))
+      byPerspective.set(n.perspectiveId, []);
+    byPerspective.get(n.perspectiveId)!.push({
+      runAt: lm.runAtRaw,
+      aKey: n.postA.key,
+      bKey: n.postB.key,
+      winner: n.winnerSide,
+    });
   }
 
   const result = new Map<string, PerspectiveRankRow[]>();
