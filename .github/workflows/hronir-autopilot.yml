@@ -103,6 +103,17 @@ jobs:
             echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
           fi
 
+          # 1b) Rate file deletion guard: reject PRs that delete existing rate files.
+          # Deletions cause the duel count to shrink instead of grow. Rate files are
+          # immutable once committed — sessions may only add, never remove.
+          DELETED_RATES=$(gh pr view "$PR" --repo "$REPO" --json files \
+            --jq '[.files[] | select(.status == "removed") | select(.path | startswith(".routines/hronir/rates/"))] | length')
+          if [ "${DELETED_RATES:-0}" -gt 0 ]; then
+            echo "PR #$PR deleta ${DELETED_RATES} rate file(s) — bloqueado pelo autopilot."
+            echo "Rate files são imutáveis. Nunca delete arquivos de sessões anteriores."
+            echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+
           # 2) Mergeable + CI green (defensive; the trigger already implies
           #    the Check run passed, but double-check for safety).
           MERGEABLE=$(gh pr view "$PR" --repo "$REPO" --json mergeable --jq '.mergeable')
@@ -128,11 +139,13 @@ jobs:
           echo "Merged PR #$PR."
           echo "merged=$PR" >> "$GITHUB_OUTPUT"
 
-      - name: Respawn session after merge
-        if: steps.merge.outputs.merged != ''
-        env:
-          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
-        run: |
-          set -euo pipefail
-          echo "Spawning replacement session for merged PR #${{ steps.merge.outputs.merged }}..."
-          bash scripts/hronir/spawn-session.sh
+      # Respawn disabled — Jules substituído por outro agente.
+      # Para reativar: descomentar o step abaixo e restaurar JULES_API_KEY.
+      # - name: Respawn session after merge
+      #   if: steps.merge.outputs.merged != ''
+      #   env:
+      #     JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+      #   run: |
+      #     set -euo pipefail
+      #     echo "Spawning replacement session..."
+      #     bash scripts/hronir/spawn-session.sh

@@ -24,6 +24,10 @@ interface Props {
   canonicalOverride?: string;
   /** Emit robots noindex,follow — for archive/version pages. */
   noindex?: boolean;
+  /** BreadcrumbList items for list/taxonomy pages (paths, tags). Each item becomes
+   *  a ListItem in a BreadcrumbList JSON-LD block. Does not affect article pages
+   *  (those use the built-in breadcrumb derived from type="article"). */
+  breadcrumb?: Array<{ name: string; item: string }>;
 }
 
 const SITE_NAME = "Franklin Baldo";
@@ -44,6 +48,7 @@ const {
   wordCount,
   canonicalOverride,
   noindex,
+  breadcrumb,
 } = source;
 // Language-aware fallback description: derive lang first so PT pages without
 // an explicit description don't fall back to the English copy.
@@ -72,10 +77,11 @@ const alternateOgLocales = alternateEntries
   .map(([code]) => LANGUAGES[code]?.locale.replace("-", "_"))
   .filter((v): v is string => !!v);
 
-// x-default hreflang: point to EN version (current page if EN, else translation to EN).
+// x-default hreflang: EN version if available; EN homepage fallback for PT-only pages.
+const enHomepageHref = Astro.site ? new URL("/", Astro.site).href : null;
 const xDefaultHref = lang === DEFAULT_LANG
   ? canonical.href
-  : (translations[DEFAULT_LANG] ? new URL(translations[DEFAULT_LANG], Astro.site).href : null);
+  : (translations[DEFAULT_LANG] ? new URL(translations[DEFAULT_LANG], Astro.site).href : enHomepageHref);
 
 const breadcrumbLd = type === "article"
   ? {
@@ -86,6 +92,19 @@ const breadcrumbLd = type === "article"
         { "@type": "ListItem", position: 2, name: lang === "pt" ? "Arquivo" : "Blog", item: Astro.site ? new URL(lang === "pt" ? "/pt/archive/" : "/archive/", Astro.site).href : "/archive/" },
         { "@type": "ListItem", position: 3, name: title, item: canonical.href },
       ],
+    }
+  : null;
+
+const listBreadcrumbLd = breadcrumb?.length
+  ? {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: breadcrumb.map((crumb, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: crumb.name,
+        item: crumb.item,
+      })),
     }
   : null;
 
@@ -211,6 +230,7 @@ const personLd = {
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
     <script type="application/ld+json" set:html={JSON.stringify(personLd)} is:inline />
     {breadcrumbLd && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} is:inline />}
+    {listBreadcrumbLd && <script type="application/ld+json" set:html={JSON.stringify(listBreadcrumbLd)} is:inline />}
     <slot name="head" />
 
     <script is:inline>
@@ -250,7 +270,7 @@ const personLd = {
     </script>
   </head>
   <body>
-    <a href="#main" class="skip-link">Skip to content</a>
+    <a href="#main" class="skip-link">{lang === 'pt' ? 'Ir para o conteúdo' : 'Skip to content'}</a>
     <Header lang={lang} />
 
     <main id="main" tabindex="-1" class="container">

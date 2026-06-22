@@ -15,14 +15,18 @@ name: Hrönir Heartbeat
 # The autopilot (hronir-autopilot.yml) also spawns one session after each merge.
 # Between the two, the pool stays full continuously.
 
+# Heartbeat desabilitado — Jules substituído por outro agente.
+# Para reativar: restaurar o bloco `on:` original abaixo.
+# on:
+#   schedule:
+#     - cron: "*/15 * * * *"
+#   workflow_dispatch:
+#   push:
+#     branches:
+#       - claude/lucid-goodall-3t7aqc
+#       - claude/vibrant-albattani-znjq7z
 on:
-  schedule:
-    - cron: "*/15 * * * *" # every 15 minutes
   workflow_dispatch:
-  push:
-    branches:
-      - claude/lucid-goodall-3t7aqc
-      - claude/vibrant-albattani-znjq7z
 
 permissions:
   contents: read

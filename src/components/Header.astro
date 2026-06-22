@@ -45,7 +45,7 @@ const isCurrent = (href: string) => {
 ---
 
 <header class="container">
-  <nav>
+  <nav aria-label={lang === 'pt' ? 'Navegação principal' : 'Main navigation'}>
     <ul>
       <li><strong><a href={homeHref} class="contrast" aria-current={here === homeHref ? 'page' : undefined}>Franklin Baldo</a></strong></li>
     </ul>
