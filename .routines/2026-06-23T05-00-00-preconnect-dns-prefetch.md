@@ -4,7 +4,7 @@ slug: preconnect-dns-prefetch
 branch: claude/sleepy-pasteur-9vyk9u
 status: pr-open
 issues: [589]
-pr_opened: null
+pr_opened: 681
 pr_merged: 642
 ---
 
