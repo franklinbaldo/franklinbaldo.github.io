@@ -13,6 +13,14 @@ The **Hrönir** system (`scripts/hronir/`) runs pairwise comparisons between pos
 npm run hronir:init -- --agent-id 'this is my id' --matches 10 --skip-edit
 ```
 
+The `--` after `hronir:init` is npm's "end of npm options" marker — without it
+npm swallows `--agent-id` as its own flag. To skip the `--`, use the `bin/hronir`
+wrapper, which calls the CLI directly (`bin/hronir <subcommand> <flags>`):
+
+```bash
+bin/hronir init --agent-id 'this is my id' --matches 10 --skip-edit
+```
+
 - `--agent-id` is **required** — a stable identifier for the evaluator. It can be
   a slug (`claude-opus-4-8`, `franklin`) or a quoted human-readable phrase
   (`--agent-id 'this is my id'`); spaces are allowed. Because the value flows
