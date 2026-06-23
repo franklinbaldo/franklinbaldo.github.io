@@ -19,7 +19,6 @@ directly. It is registered as the `hronir` bin in `package.json`, so any of thes
 work without the separator:
 
 ```bash
-bin/hronir init --agent-id 'this is my id' --matches 10 --skip-edit  # path
 npx hronir init --agent-id 'this is my id' --matches 10 --skip-edit  # via node_modules/.bin
 # or `npm link` once, then `hronir init ...` from anywhere
 ```
