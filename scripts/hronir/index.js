@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env -S node --import tsx/esm
 import { createRequire } from "node:module";
 
 function preflight() {
@@ -39,6 +39,9 @@ const {
   select,
   prune,
   next,
+  generateMatch,
+  getGlipho,
+  submitEval,
   firstImpressionA,
   firstImpressionB,
 } = await import("../../src/hronir/commands.js");
@@ -47,7 +50,7 @@ const [, , cmd, ...args] = process.argv;
 
 function usage() {
   console.error(
-    "Uso: hronir {next --agent-id <id> [init-opts]|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--review-lang <lang>] [--objective coverage|refine-top|hunt-worst] [--min-appearances N] [--pledge <text>] [--content-mode inline|path-only]|continue|first-impression-a <texto>|first-impression-b <texto>|decide --after-mood <text> --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text> [--clash-append <text>] [--review-a-append <text>] [--review-b-append <text>]|ranking|worst [--absolute]|diagnose|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force] [--attest <text>]|select [--dry-run]|prune [--dry-run]}"
+    "Uso: hronir {generate-match --agent-id <id> [init-opts]|get-glipho|submit-eval [--impression-a <t>] [--impression-b <t>] <decide-flags>|get-ranking|next --agent-id <id> [init-opts]|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--review-lang <lang>] [--objective coverage|refine-top|hunt-worst] [--min-appearances N] [--pledge <text>] [--content-mode inline|path-only]|continue|first-impression-a <texto>|first-impression-b <texto>|decide --after-mood <text> --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text> [--clash-append <text>] [--review-a-append <text>] [--review-b-append <text>]|ranking|worst [--absolute]|diagnose|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force] [--attest <text>]|select [--dry-run]|prune [--dry-run]}"
   );
   process.exit(1);
 }
@@ -160,6 +163,20 @@ switch (cmd) {
   case "next":
   case "auto":
     next(parseInitOptions(args));
+    break;
+  // Minimal one-shot API (RFC: agent self-service). The glyph is shown inline
+  // by generate-match; submit-eval/get-ranking are thin aliases of decide/ranking.
+  case "generate-match":
+    generateMatch(parseInitOptions(args));
+    break;
+  case "get-glipho":
+    getGlipho();
+    break;
+  case "submit-eval":
+    submitEval(args);
+    break;
+  case "get-ranking":
+    ranking();
     break;
   case "decide":
     decide(args);

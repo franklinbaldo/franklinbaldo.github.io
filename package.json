@@ -5,6 +5,9 @@
   "engines": {
     "node": ">=22.12.0"
   },
+  "bin": {
+    "hronir": "scripts/hronir/index.js"
+  },
   "scripts": {
     "prebuild": "node scripts/copy-katex.mjs && node --import tsx/esm scripts/hronir/index.js select && node scripts/generate-translation-pairs.mjs && node scripts/generate-redirects.mjs",
     "predev": "node scripts/copy-katex.mjs && node --import tsx/esm scripts/hronir/index.js select && node scripts/generate-translation-pairs.mjs && node scripts/generate-redirects.mjs",
@@ -19,6 +22,10 @@
     "format:check": "prettier --check .",
     "hronir": "node --import tsx/esm scripts/hronir/index.js",
     "hronir:next": "node --import tsx/esm scripts/hronir/index.js next",
+    "hronir:generate-match": "node --import tsx/esm scripts/hronir/index.js generate-match",
+    "hronir:get-glipho": "node --import tsx/esm scripts/hronir/index.js get-glipho",
+    "hronir:submit-eval": "node --import tsx/esm scripts/hronir/index.js submit-eval",
+    "hronir:get-ranking": "node --import tsx/esm scripts/hronir/index.js get-ranking",
     "hronir:init": "node --import tsx/esm scripts/hronir/index.js init",
     "hronir:continue": "node --import tsx/esm scripts/hronir/index.js continue",
     "hronir:first-impression-a": "node --import tsx/esm scripts/hronir/index.js first-impression-a",
