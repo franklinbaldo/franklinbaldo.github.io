@@ -5,7 +5,7 @@
   },
   "_meta": {
     "schema": "selection-v1",
-    "generatedAt": "2026-06-22T18:13:26.103Z"
+    "generatedAt": "2026-06-23T08:20:41.687Z"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed": {
     "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-12T08-00-12-612.mdx",
@@ -744,12 +744,12 @@
     "uuid": "7f042640-7d76-5bbd-a376-75317053ce9d"
   },
   "two-cursors": {
-    "file": "two-cursors/v-2026-06-13T12-00-09-262.mdx",
-    "uuid": "613d126a-1e18-5d78-9aec-2248e78a12a6"
+    "file": "two-cursors/v-2026-06-09T20-24-29.mdx",
+    "uuid": "c1c597fb-b2a0-52dd-b473-b55d77ec2fc7"
   },
   "two-cursors-en": {
-    "file": "two-cursors-en/v-2026-06-13T12-00-09-262.mdx",
-    "uuid": "8313db94-9ed1-5660-a7eb-a7e62106b05b"
+    "file": "two-cursors-en/v-2026-06-09T20-24-29.mdx",
+    "uuid": "ee220fa9-33a3-5805-8644-6f39c8995a86"
   },
   "two-questions-out-loud": {
     "file": "two-questions-out-loud/v-2026-06-12T15-28-51-540.md",
