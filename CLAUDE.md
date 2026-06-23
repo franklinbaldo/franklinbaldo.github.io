@@ -87,7 +87,7 @@ and the clash. That is why the mood is decided first.
 
 ```bash
 git add .routines/hronir/
-git commit -m "hronir: <N> matches — <agent-id>"
+git commit -m "hronir: <N> matches <agent-id>"
 # push and open a PR
 ```
 
@@ -162,7 +162,7 @@ data `YYYY-MM-DD-`) vivem em `src/generated/blog-redirects.json`, gerado por
 Formato frouxo mas nomeado:
 
 - Site/infra: `tipo(escopo): resumo` — ex. `feat(ranking): add perspective filter`
-- Sessões Hrönir: `hronir: <N> matches — <agent-id>`
+- Sessões Hrönir: `hronir: <N> matches <agent-id>`
 - Docs/RFCs: `docs(rfc): RFC NNNN — título`
 
 ### `.ts` vs `.mjs` em `src/lib/`
