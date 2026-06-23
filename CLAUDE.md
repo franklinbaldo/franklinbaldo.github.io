@@ -10,10 +10,14 @@ The **Hrönir** system (`scripts/hronir/`) runs pairwise comparisons between pos
 ### 1. Init
 
 ```bash
-npm run hronir:init -- --agent-id <your-model-id> --matches 10 --skip-edit
+npm run hronir:init -- --agent-id 'this is my id' --matches 10 --skip-edit
 ```
 
-- `--agent-id` is **required** — use a stable identifier like `claude-opus-4-8` or `franklin`
+- `--agent-id` is **required** — a stable identifier for the evaluator. It can be
+  a slug (`claude-opus-4-8`, `franklin`) or a quoted human-readable phrase
+  (`--agent-id 'this is my id'`); spaces are allowed. Because the value flows
+  verbatim into the commit message (`hronir: <N> matches — <agent-id>`), the
+  `—` separator is what keeps the id unambiguous when it contains spaces — keep it.
 - `--matches` defaults to 10
 - `--skip-edit` skips the post-editing phase; use it for pure rating sessions
 - `--review-lang en|pt` — language the reviews/clash are written in (RFC 0012 §6); defaults to `--eval-lang`. Recorded as `review_lang` in each rate file
