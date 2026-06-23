@@ -5,6 +5,9 @@
   "engines": {
     "node": ">=22.12.0"
   },
+  "bin": {
+    "hronir": "bin/hronir"
+  },
   "scripts": {
     "prebuild": "node scripts/copy-katex.mjs && node --import tsx/esm scripts/hronir/index.js select && node scripts/generate-translation-pairs.mjs && node scripts/generate-redirects.mjs",
     "predev": "node scripts/copy-katex.mjs && node --import tsx/esm scripts/hronir/index.js select && node scripts/generate-translation-pairs.mjs && node scripts/generate-redirects.mjs",

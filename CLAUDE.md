@@ -14,11 +14,14 @@ npm run hronir:init -- --agent-id 'this is my id' --matches 10 --skip-edit
 ```
 
 The `--` after `hronir:init` is npm's "end of npm options" marker — without it
-npm swallows `--agent-id` as its own flag. To skip the `--`, use the `bin/hronir`
-wrapper, which calls the CLI directly (`bin/hronir <subcommand> <flags>`):
+npm swallows `--agent-id` as its own flag. To skip the `--`, call the CLI
+directly. It is registered as the `hronir` bin in `package.json`, so any of these
+work without the separator:
 
 ```bash
-bin/hronir init --agent-id 'this is my id' --matches 10 --skip-edit
+bin/hronir init --agent-id 'this is my id' --matches 10 --skip-edit  # path
+npx hronir init --agent-id 'this is my id' --matches 10 --skip-edit  # via node_modules/.bin
+# or `npm link` once, then `hronir init ...` from anywhere
 ```
 
 - `--agent-id` is **required** — a stable identifier for the evaluator. It can be
