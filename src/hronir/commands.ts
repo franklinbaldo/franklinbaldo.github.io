@@ -59,6 +59,9 @@ interface InitOptions {
   matches?: number;
   pledge?: string;
   contentMode?: "inline" | "path-only";
+  // When true, init creates the session but does NOT auto-call continueCmd
+  // (used by generate-match, which drives the display itself, quietly).
+  skipAutoContinue?: boolean;
 }
 
 interface WorstOptions {
@@ -354,7 +357,7 @@ export function init(options: InitOptions = {}) {
   if (skipEdit) {
     console.log("Fase de edição do pior post será pulada (--skip-edit ativo).");
   }
-  continueCmd();
+  if (!options.skipAutoContinue) continueCmd();
 }
 
 // Curated ranges of generally-visible, assigned Unicode (skips control chars,
@@ -739,7 +742,43 @@ function resolveSidePath(
   process.exit(1);
 }
 
-export function continueCmd() {
+// Render one side (A or B) of the current match: header, slug, file path,
+// optional Suno links, and the content (or a path-only pointer). Shared by
+// `continue` (post A), `first-impression-a` (post B) and `generate-match`.
+function printSidePost(session: any, side: "A" | "B") {
+  const match = session.currentMatch;
+  const post = side === "A" ? match?.post_a : match?.post_b;
+  const p = resolveSidePath(post, side);
+  const slug = post?.key || "(slug desconhecido)";
+  const content = fs.readFileSync(p, "utf8");
+  const sunoId = matter(content).data.sunoId;
+  const pathOnly = session.contentMode === "path-only";
+  const border = "━".repeat(80);
+  const header =
+    side === "A" ? "📄 PRIMEIRO POST (A) " : "📄 SEGUNDO POST (B) ";
+  console.log(header + "━".repeat(Math.max(0, 80 - header.length)));
+  console.log(`Slug: ${slug}`);
+  console.log(`Arquivo: ${p}`);
+  if (sunoId) {
+    console.log(`🎵 Suno Song Page: https://suno.com/song/${sunoId}`);
+    console.log(
+      `🔊 Direct Audio URL (MP3): https://cdn1.suno.ai/${sunoId}.mp3`
+    );
+    console.log(
+      `💡 Agente multimodal: você pode baixar/ouvir o MP3 acima para informar sua avaliação.`
+    );
+  }
+  console.log(`${border}\n`);
+  if (!pathOnly) {
+    console.log(content);
+    console.log(`\n${border}\n`);
+  } else {
+    console.log(`[content-mode: path-only — leia o arquivo em: ${p}]`);
+    console.log(`\n${border}\n`);
+  }
+}
+
+export function continueCmd(opts: { quiet?: boolean } = {}) {
   const sessionPath = SESSION_PATH;
   if (!fs.existsSync(sessionPath)) {
     console.log("Nenhuma sessão ativa encontrada.");
@@ -790,7 +829,6 @@ export function continueCmd() {
   }
 
   if (session.state === "reading_a") {
-    const aPath = resolveSidePath(session.currentMatch?.post_a, "A");
     // Backfill perspective for in-flight sessions created before stars-v1:
     // pick one now and persist so the rest of the flow has a stable lens.
     if (session.currentMatch && !session.currentMatch.perspective_id) {
@@ -812,41 +850,19 @@ export function continueCmd() {
       }
     }
 
-    const aSlug = session.currentMatch?.post_a?.key || "(slug desconhecido)";
-    const aContent = fs.readFileSync(aPath, "utf8");
-    const aParsed = matter(aContent);
-    const aSunoId = aParsed.data.sunoId;
-    const pathOnly = session.contentMode === "path-only";
-
-    const border = "━".repeat(80);
-    const aHeader = "📄 PRIMEIRO POST (A) ";
-    console.log(aHeader + "━".repeat(Math.max(0, 80 - aHeader.length)));
-    console.log(`Slug: ${aSlug}`);
-    console.log(`Arquivo: ${aPath}`);
-    if (aSunoId) {
-      console.log(`🎵 Suno Song Page: https://suno.com/song/${aSunoId}`);
-      console.log(
-        `🔊 Direct Audio URL (MP3): https://cdn1.suno.ai/${aSunoId}.mp3`
-      );
-      console.log(
-        `💡 Agente multimodal: você pode baixar/ouvir o MP3 acima para informar sua avaliação.`
-      );
-    }
-    console.log(`${border}\n`);
-    if (!pathOnly) {
-      console.log(aContent);
-      console.log(`\n${border}\n`);
-    } else {
-      console.log(`[content-mode: path-only — leia o arquivo em: ${aPath}]`);
-      console.log(`\n${border}\n`);
-    }
+    printSidePost(session, "A");
 
     session.state = "waiting_impression_a";
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
-    nextStep(
-      `Rode para registrar a primeira impressão do Post A: npm run hronir:first-impression-a "<texto>"`
-    );
+    // generate-match drives its own flow (post B + decide prompt) right after
+    // this, so it suppresses the first-impression-a hint that the legacy flow
+    // prints here.
+    if (!opts.quiet) {
+      nextStep(
+        `Rode para registrar a primeira impressão do Post A: npm run hronir:first-impression-a "<texto>"`
+      );
+    }
     return;
   }
 
@@ -897,7 +913,6 @@ export function firstImpressionA(args: string[]) {
 
   session.currentMatch.impression_a = text;
 
-  const bPath = resolveSidePath(session.currentMatch?.post_b, "B");
   const perspectiveId = session.currentMatch?.perspective_id;
   const border = "━".repeat(80);
   if (perspectiveId) {
@@ -914,33 +929,7 @@ export function firstImpressionA(args: string[]) {
     }
   }
 
-  const bSlug = session.currentMatch?.post_b?.key || "(slug desconhecido)";
-  const bContent = fs.readFileSync(bPath, "utf8");
-  const bParsed = matter(bContent);
-  const bSunoId = bParsed.data.sunoId;
-  const pathOnly = session.contentMode === "path-only";
-
-  const bHeader = "📄 SEGUNDO POST (B) ";
-  console.log(bHeader + "━".repeat(Math.max(0, 80 - bHeader.length)));
-  console.log(`Slug: ${bSlug}`);
-  console.log(`Arquivo: ${bPath}`);
-  if (bSunoId) {
-    console.log(`🎵 Suno Song Page: https://suno.com/song/${bSunoId}`);
-    console.log(
-      `🔊 Direct Audio URL (MP3): https://cdn1.suno.ai/${bSunoId}.mp3`
-    );
-    console.log(
-      `💡 Agente multimodal: você pode baixar/ouvir o MP3 acima para informar sua avaliação.`
-    );
-  }
-  console.log(`${border}\n`);
-  if (!pathOnly) {
-    console.log(bContent);
-    console.log(`\n${border}\n`);
-  } else {
-    console.log(`[content-mode: path-only — leia o arquivo em: ${bPath}]`);
-    console.log(`\n${border}\n`);
-  }
+  printSidePost(session, "B");
 
   session.state = "waiting_impression_b";
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
@@ -977,6 +966,13 @@ export function firstImpressionB(args: string[]) {
   session.state = "deciding";
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
+  printDecidePrompt(session);
+}
+
+// Print the decide instructions for the current match: perspective line,
+// glyph + initial mood, slugs, formatting/length rules and the example
+// command. Shared by `first-impression-b` and `generate-match`.
+function printDecidePrompt(session: any) {
   const currentMatch = session.currentMatch;
   const perspectiveId = currentMatch.perspective_id;
   let perspective = null;
@@ -1095,6 +1091,64 @@ export function next(initOptions = {}) {
   }
 
   continueCmd();
+}
+
+// Minimal one-shot API (no separate `init`, no first-impression steps).
+// `generate-match` starts a fresh 1-match session (skip-edit, so the single
+// `submit-eval` closes the round), prints BOTH posts, the glyph + initial mood,
+// and the decide instructions, leaving the session in `deciding`. If a session
+// is already in progress it just advances it, like `next`.
+export function generateMatch(initOptions = {}) {
+  if (!fs.existsSync(SESSION_PATH)) {
+    // Create the session without init's auto-continue, then drive the display
+    // ourselves (quietly, no first-impression hint).
+    init({
+      ...initOptions,
+      matches: 1,
+      skipEdit: true,
+      skipAutoContinue: true,
+    });
+  }
+  // Advance ready_for_next → perspective banner + post A (or report the current
+  // state for a resumed session).
+  continueCmd({ quiet: true });
+  const session = JSON.parse(fs.readFileSync(SESSION_PATH, "utf8"));
+  // Only the fresh-read state has a post B left to show + a decide prompt to
+  // print. Any other state (resume mid-decide, completed, need_edit) was
+  // already handled by continueCmd above.
+  if (session.state !== "waiting_impression_a") return;
+  // First impressions are skipped in this API (they carry no downstream use);
+  // impression_a/b stay null unless passed to `submit-eval`.
+  printSidePost(session, "B");
+  session.state = "deciding";
+  fs.writeFileSync(SESSION_PATH, JSON.stringify(session, null, 2));
+  printDecidePrompt(session);
+}
+
+// Reprint the glyph (with its U+ codepoint) and the initial mood for the
+// current match. The glyph is also shown by `generate-match`; this is for
+// re-reading it without regenerating.
+export function getGlipho() {
+  if (!fs.existsSync(SESSION_PATH)) {
+    console.error(
+      "Erro: Nenhuma sessão ativa. Rode `npx hronir generate-match` primeiro."
+    );
+    process.exit(1);
+  }
+  const session = JSON.parse(fs.readFileSync(SESSION_PATH, "utf8"));
+  const match = session.currentMatch;
+  if (!match) {
+    console.error(
+      "Erro: nenhum match ativo. Rode `npx hronir generate-match` primeiro."
+    );
+    process.exit(1);
+  }
+  const glyph = match.mood_glyph ?? null;
+  const cp = glyph
+    ? "U+" + glyph.codePointAt(0).toString(16).toUpperCase().padStart(4, "0")
+    : "—";
+  console.log(`🔣 SEU GLIFO (Unicode aleatório): ${glyph ?? "—"}  (${cp})`);
+  console.log(`🌡️  SEU MOOD INICIAL: ${match.evaluator_mood ?? "—"}`);
 }
 
 export function decide(args: string[]) {
@@ -1232,6 +1286,14 @@ export function decide(args: string[]) {
       i++;
     } else if (args[i] === "--after-mood") {
       afterMood = readDecideFlag(args[i], i);
+      i++;
+    } else if (args[i] === "--impression-a") {
+      // Optional: first impressions carry no downstream use, but `submit-eval`
+      // may still record them. Written straight onto the match for the rate file.
+      session.currentMatch.impression_a = readDecideFlag(args[i], i);
+      i++;
+    } else if (args[i] === "--impression-b") {
+      session.currentMatch.impression_b = readDecideFlag(args[i], i);
       i++;
     }
   }
@@ -1428,6 +1490,24 @@ export function decide(args: string[]) {
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
   nextStep("Rode `npm run hronir:continue` para ir para o próximo passo.");
+}
+
+// `submit-eval` is `decide` plus auto-finalize. In the one-shot API the single
+// match completes the round, so advance once (continueCmd) to close the session
+// — instead of leaving it at `ready_for_next` waiting for a manual `continue`.
+// Only finalizes a *completed* round; a still-incomplete multi-match session is
+// left untouched (no surprise auto-generation of the next match).
+export function submitEval(args: string[]) {
+  decide(args);
+  // decide exits the process on validation failure; reaching here means success.
+  if (!fs.existsSync(SESSION_PATH)) return;
+  const session = JSON.parse(fs.readFileSync(SESSION_PATH, "utf8"));
+  if (
+    session.state === "ready_for_next" &&
+    (session.completed ?? 0) >= (session.target ?? 0)
+  ) {
+    continueCmd();
+  }
 }
 
 function fmt(n: number, w = 6) {

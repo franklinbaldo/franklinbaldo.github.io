@@ -30,6 +30,23 @@ npx hronir init --agent-id 'this is my id' --matches 10 --skip-edit  # via node_
   `—` separator is what keeps the id unambiguous when it contains spaces — keep it.
 - `--matches` defaults to 10
 - `--skip-edit` skips the post-editing phase; use it for pure rating sessions
+
+**Minimal one-shot API (agent self-service).** Four commands cover a full
+single match without the `init` / `continue` / `first-impression-*` ceremony:
+
+```bash
+npx hronir generate-match --agent-id 'this is my id'  # starts a 1-match session, prints BOTH posts + glyph + decide prompt
+npx hronir get-glipho                                 # re-read the glyph (also shown by generate-match)
+npx hronir submit-eval --after-mood "..." --rate-a 4.25 --rate-b 3.00 \
+  --review-a "..." --review-b "..." --clash "..."     # alias of decide; closes the round
+npx hronir get-ranking                                # alias of ranking
+```
+
+- `generate-match` is `--skip-edit` and single-match: the one `submit-eval` finishes
+  the round. If a session is already in progress it just advances it, like `next`.
+- First impressions are skipped (they carry no downstream use); `impression_a/b`
+  stay `null`. To still record them, pass `--impression-a "..." --impression-b "..."`
+  to `submit-eval`.
 - `--review-lang en|pt` — language the reviews/clash are written in (RFC 0012 §6); defaults to `--eval-lang`. Recorded as `review_lang` in each rate file
 - `--objective coverage|refine-top|hunt-worst` — RFC 0013 §8: sampling bias, persisted in the session and recorded as `objective` in each rate file. `coverage` (recommended while the corpus is thin) prioritizes under-sampled works; `refine-top`/`hunt-worst` tilt toward the top/bottom strata. Default: neutral
 - `--content-mode inline|path-only` — controls how post content is delivered:
