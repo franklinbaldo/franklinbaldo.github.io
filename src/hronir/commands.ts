@@ -62,6 +62,9 @@ interface InitOptions {
   // When true, init creates the session but does NOT auto-call continueCmd
   // (used by generate-match, which drives the display itself, quietly).
   skipAutoContinue?: boolean;
+  // When true, a missing --agent-id is allowed and stored as "TODO"; the
+  // evaluator is named later at submit-eval (used by generate-match).
+  deferAgentId?: boolean;
 }
 
 interface WorstOptions {
@@ -260,12 +263,16 @@ export function init(options: InitOptions = {}) {
 
   const skipEdit = !!options.skipEdit;
   const skipRating = !!options.skipRating;
-  const agentId = options.agentId;
+  let agentId = options.agentId;
   if (!agentId || agentId === "TODO") {
-    console.error(
-      "Erro: --agent-id é obrigatório. Identifique o avaliador explicitamente (ex.: --agent-id claude-opus-4-7 ou --agent-id franklin)."
-    );
-    process.exit(1);
+    if (!options.deferAgentId) {
+      console.error(
+        "Erro: --agent-id é obrigatório. Identifique o avaliador explicitamente (ex.: --agent-id claude-opus-4-7 ou --agent-id franklin)."
+      );
+      process.exit(1);
+    }
+    // Deferred identity (generate-match): the evaluator is named at submit-eval.
+    agentId = "TODO";
   }
   const evalLang = options.evalLang || "pt";
   // RFC 0012 §6: review_lang defaults to the evaluation language when not given.
@@ -340,8 +347,10 @@ export function init(options: InitOptions = {}) {
   };
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
+  const agentLabel =
+    agentId === "TODO" ? "(a definir em submit-eval)" : agentId;
   console.log(
-    `Sessão iniciada para ${matchesOpt} matches com agente "${agentId}" e avaliações em "${evalLang}".`
+    `Sessão iniciada para ${matchesOpt} matches com agente "${agentLabel}" e avaliações em "${evalLang}".`
   );
   if (pledge) {
     const border = "═".repeat(80);
@@ -1101,12 +1110,14 @@ export function next(initOptions = {}) {
 export function generateMatch(initOptions = {}) {
   if (!fs.existsSync(SESSION_PATH)) {
     // Create the session without init's auto-continue, then drive the display
-    // ourselves (quietly, no first-impression hint).
+    // ourselves (quietly, no first-impression hint). --agent-id is optional
+    // here; the evaluator is named at submit-eval (deferAgentId).
     init({
       ...initOptions,
       matches: 1,
       skipEdit: true,
       skipAutoContinue: true,
+      deferAgentId: true,
     });
   }
   // Advance ready_for_next → perspective banner + post A (or report the current
@@ -1310,7 +1321,7 @@ export function decide(args: string[]) {
 
   if (!agentId || agentId === "TODO") {
     console.error(
-      "Erro: --agent-id deve ser especificado ou definido no init."
+      "Erro: --agent-id é obrigatório. Passe-o aqui (ex.: submit-eval --agent-id 'this is my id' ...) ou defina no init."
     );
     process.exit(1);
   }

@@ -35,13 +35,19 @@ npx hronir init --agent-id 'this is my id' --matches 10 --skip-edit  # via node_
 single match without the `init` / `continue` / `first-impression-*` ceremony:
 
 ```bash
-npx hronir generate-match --agent-id 'this is my id'  # starts a 1-match session, prints BOTH posts + glyph + decide prompt
+npx hronir generate-match                             # starts a 1-match session, prints BOTH posts + glyph + decide prompt
 npx hronir get-glipho                                 # re-read the glyph (also shown by generate-match)
-npx hronir submit-eval --after-mood "..." --rate-a 4.25 --rate-b 3.00 \
+npx hronir submit-eval --agent-id 'this is my id' \
+  --after-mood "..." --rate-a 4.25 --rate-b 3.00 \
   --review-a "..." --review-b "..." --clash "..."     # alias of decide; closes the round
 npx hronir get-ranking                                # alias of ranking
 ```
 
+- `--agent-id` belongs on **`submit-eval`**, not `generate-match`: generating a
+  match is identity-agnostic; the evaluator is named only when the evaluation is
+  recorded. `generate-match` stores `agentId: "TODO"` and `submit-eval` requires
+  `--agent-id` (it errors otherwise). You may still pass `--agent-id` to
+  `generate-match` to pin it early, but it is optional there.
 - `generate-match` is `--skip-edit` and single-match: the one `submit-eval` finishes
   the round. If a session is already in progress it just advances it, like `next`.
 - First impressions are skipped (they carry no downstream use); `impression_a/b`
