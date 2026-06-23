@@ -21,6 +21,7 @@ const errors = [];
 
 // ── 1. Root-level allowlist ────────────────────────────────────────────────
 const ROOT_ALLOWLIST = new Set([
+  "MANAGER-INTEL.md",
   ".git-blame-ignore-revs",
   ".gitattributes",
   ".gitignore",
