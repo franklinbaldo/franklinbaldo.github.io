@@ -2,9 +2,25 @@
 interface Props {
   title: string;
   url?: string;
+  lang?: string;
 }
-const { title, url } = Astro.props;
+const { title, url, lang = "en" } = Astro.props;
 const href = url ?? Astro.url.href;
+
+const strings =
+  lang === "pt"
+    ? {
+        ariaLabel: "Compartilhar este post",
+        label: "Compartilhar",
+        copied: "Link copiado",
+        error: "Não foi possível copiar",
+      }
+    : {
+        ariaLabel: "Share this post",
+        label: "Share",
+        copied: "Link copied",
+        error: "Couldn't copy",
+      };
 ---
 
 <button
@@ -12,13 +28,15 @@ const href = url ?? Astro.url.href;
   class="outline secondary share-button"
   data-title={title}
   data-url={href}
-  aria-label="Share this post"
+  data-default-label={strings.label}
+  data-copied={strings.copied}
+  data-error={strings.error}
+  aria-label={strings.ariaLabel}
 >
-  ↗ <span class="share-label">Share</span>
+  ↗ <span class="share-label">{strings.label}</span>
 </button>
 
 <script>
-  const DEFAULT_LABEL = "Share";
   const buttonState = new WeakMap<HTMLButtonElement, { timer?: number; inFlight: boolean }>();
 
   function flash(button: HTMLButtonElement, text: string) {
@@ -28,7 +46,7 @@ const href = url ?? Astro.url.href;
     if (state.timer !== undefined) window.clearTimeout(state.timer);
     label.textContent = text;
     state.timer = window.setTimeout(() => {
-      label.textContent = DEFAULT_LABEL;
+      label.textContent = button.dataset.defaultLabel ?? "Share";
       state.timer = undefined;
     }, 1800);
     buttonState.set(button, state);
@@ -60,9 +78,9 @@ const href = url ?? Astro.url.href;
 
       try {
         await navigator.clipboard.writeText(url);
-        flash(button, "Link copied");
+        flash(button, button.dataset.copied ?? "Link copied");
       } catch {
-        flash(button, "Couldn't copy");
+        flash(button, button.dataset.error ?? "Couldn't copy");
       }
     } finally {
       const s = buttonState.get(button);
