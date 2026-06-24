@@ -5,7 +5,7 @@
   },
   "_meta": {
     "schema": "selection-v1",
-    "generatedAt": "2026-06-23T08:20:41.687Z"
+    "generatedAt": "2026-06-24T05:05:16.239Z"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed": {
     "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-12T08-00-12-612.mdx",
@@ -16,12 +16,12 @@
     "uuid": "d92be255-b0c8-5600-984d-e7d0a0c1c05f"
   },
   "46336b97-4306-41bc-8a7b-48f0ebebbd29": {
-    "file": "46336b97-4306-41bc-8a7b-48f0ebebbd29/v-2026-06-14T22-37-59-293.mdx",
-    "uuid": "d2c174fd-5a54-5f54-9521-8acdaa5ac8f0"
+    "file": "46336b97-4306-41bc-8a7b-48f0ebebbd29/v-2026-06-09T20-24-29.mdx",
+    "uuid": "3363e2d7-7ac9-5fce-be4a-bf885994a0a7"
   },
   "46336b97-4306-41bc-8a7b-48f0ebebbd29-en": {
-    "file": "46336b97-4306-41bc-8a7b-48f0ebebbd29-en/v-2026-06-14T22-37-59-293.mdx",
-    "uuid": "6c81a3a8-897b-533c-a78d-9276f395ba5a"
+    "file": "46336b97-4306-41bc-8a7b-48f0ebebbd29-en/v-2026-06-09T20-24-29.mdx",
+    "uuid": "faa848c0-847e-5dcc-9290-d8a316a56418"
   },
   "666-en": {
     "file": "666-en/v-2026-06-09T20-24-29.mdx",
@@ -504,12 +504,12 @@
     "uuid": "a109fe0f-de01-5286-8193-fa010b691837"
   },
   "pattern-over-stuff": {
-    "file": "pattern-over-stuff/v-2026-06-12T04-39-56-878.mdx",
-    "uuid": "1314c277-9c38-5ea3-99c2-850f1248125c"
+    "file": "pattern-over-stuff/v-2026-06-09T20-24-29.mdx",
+    "uuid": "001ce5d9-0776-50b5-85d7-525c3d34528f"
   },
   "pattern-over-stuff-en": {
-    "file": "pattern-over-stuff-en/v-2026-06-12T04-39-56-878.mdx",
-    "uuid": "14d2d999-fb40-5d5a-988f-7a02ad178721"
+    "file": "pattern-over-stuff-en/v-2026-06-09T20-24-29.mdx",
+    "uuid": "c456e5f4-670f-52ff-b934-59767bd7aeaf"
   },
   "pierre-menard-computational-researcher": {
     "file": "pierre-menard-computational-researcher/v-2026-06-17T01-01-30-151.md",
