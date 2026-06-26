@@ -27,7 +27,7 @@ override: null
 perspective_id: weird-clarity
 evaluator_mood: Chegada próxima.
 mood_glyph: ⚳
-evaluator_mood_after: Final
+evaluator_mood_after: Rodada encerrada. Clareza permanece como critério e como descoberta.
 impression_a: final eval
 impression_b: final eval
 rate_a: 4
