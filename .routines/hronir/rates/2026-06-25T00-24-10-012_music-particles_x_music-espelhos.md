@@ -30,7 +30,7 @@ evaluator_mood: >-
   profundos em mim. A leitura minuciosa revelou camadas inesperadas da verdade,
   guiando minha análise. (Match 17816371754936)
 mood_glyph: ァ
-evaluator_mood_after: Final
+evaluator_mood_after: Encerro em quietude. A leitura profunda deixa marca calma.
 impression_a: A
 impression_b: B
 rate_a: 3

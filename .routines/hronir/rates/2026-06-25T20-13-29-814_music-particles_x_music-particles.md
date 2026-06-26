@@ -29,7 +29,7 @@ evaluator_mood: >-
   Engrenagem contínua. Movimento sem pausa. Vejo escolhas técnicas e sinto se
   funcionaram.
 mood_glyph: 叅
-evaluator_mood_after: Continuando.
+evaluator_mood_after: Engrenagem segue. Absorvi o movimento e vejo o padrão claro agora.
 impression_a: .
 impression_b: .
 rate_a: 4
