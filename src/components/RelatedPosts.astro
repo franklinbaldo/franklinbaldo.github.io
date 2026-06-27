@@ -12,28 +12,32 @@ interface Props {
 const { currentId, tags, lang } = Astro.props;
 const currentLang = lang ?? DEFAULT_LANG;
 
+const locale = currentLang === 'pt' ? 'pt-BR' : 'en';
+const dateOpts: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+
 const related = tags.length === 0 ? [] : (await getCollection('blog'))
   .filter(p => isPublished(p) && p.id !== currentId && (p.data.lang ?? DEFAULT_LANG) === currentLang)
   .map(p => ({
     post: p,
-    shared: (p.data.tags ?? []).filter(t => tags.includes(t)).length,
+    sharedTags: (p.data.tags ?? []).filter(tag => tags.includes(tag)),
   }))
-  .filter(({ shared }) => shared > 0)
-  .sort((a, b) => b.shared - a.shared || b.post.data.date.valueOf() - a.post.data.date.valueOf())
-  .slice(0, 3)
-  .map(({ post }) => post);
+  .filter(({ sharedTags }) => sharedTags.length > 0)
+  .sort((a, b) => b.sharedTags.length - a.sharedTags.length || b.post.data.date.valueOf() - a.post.data.date.valueOf())
+  .slice(0, 3);
 
 const heading = t(lang, 'related.heading');
 const headingId = 'related-posts-heading';
 ---
 
-{related.length > 0 && (
+{related.length >= 2 && (
   <section aria-labelledby={headingId}>
     <h3 id={headingId}>{heading}</h3>
-    {related.map(p => (
+    {related.map(({ post: p, sharedTags }) => (
       <article>
         <h4><a href={(p.data.lang ?? DEFAULT_LANG) === 'pt' ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`}>{p.data.title}</a></h4>
-        {p.data.description && <p><small>{p.data.description}</small></p>}
+        <p><small><time datetime={p.data.date.toISOString()}>{p.data.date.toLocaleDateString(locale, dateOpts)}</time></small></p>
+        {p.data.description && <p><small>{p.data.description.length > 120 ? p.data.description.slice(0, 120) + '…' : p.data.description}</small></p>}
+        <p><small>{sharedTags.map(tag => `#${tag}`).join(' ')}</small></p>
       </article>
     ))}
   </section>
