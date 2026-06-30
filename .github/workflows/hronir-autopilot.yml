@@ -86,6 +86,10 @@ jobs:
           # 1) Path gate: only .routines/hronir/** and src/content/blog/**, with
           #    at least one rate file. This is the sole identity check — only
           #    hronir sessions produce rate files under .routines/hronir/rates/.
+          #    Every session also writes a top-level journal file directly under
+          #    .routines/ (see CLAUDE.md "Journals de sessão"); that file isn't
+          #    under .routines/hronir/, so it gets its own exception below —
+          #    subdirs other than hronir/ (e.g. .routines/takeout/) stay excluded.
           FILES=$(gh pr view "$PR" --repo "$REPO" --json files --jq '.files[].path')
           HAS_RATE=0
           while IFS= read -r f; do
@@ -93,6 +97,12 @@ jobs:
             case "$f" in .routines/hronir/rates/*) HAS_RATE=1 ;; esac
             ok=1
             for p in $SAFE_PREFIXES; do case "$f" in "$p"*) ok=0 ;; esac; done
+            if [ "$ok" -ne 0 ]; then
+              case "$f" in
+                .routines/*/*) ;;
+                .routines/*.md) ok=0 ;;
+              esac
+            fi
             if [ "$ok" -ne 0 ]; then
               echo "PR #$PR touches out-of-scope file: $f — skipping."
               echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
