@@ -51,8 +51,8 @@ clash: >-
   mais honesto sobre os limites do gênero meditação — e saiu do teste com uma
   nota de moodboard, não uma ferramenta.
 review_a: >-
-  O 'quando-vier-a-primavera' instala um movimento operacional específico: a
-  alegria enorme de Caeiro diante da própria irrelevância não é resignação
+  O 'quando-vier-a-primavera' instala um movimento operacional específico:
+  a alegria enorme de Caeiro diante da própria irrelevância não é resignação
   performática, é uma posição que o Applied Thinker pode tentar ocupar. Na
   semana seguinte, ao perceber que estou inflando a importância das minhas
   preferências ou calculando meu legado, tenho um contra-movimento disponível —
@@ -80,4 +80,3 @@ review_b: >-
   atrito da lembrança') é uma recategorização real. Mas a música não carrega
   esse insight; ele fica preso nas notas, fora do alcance de quem apenas ouviu.
 ---
-

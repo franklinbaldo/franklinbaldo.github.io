@@ -98,4 +98,3 @@ review_b: >-
   perspectiva adicional bem recebida. Valor complementar e perspectiva adicional
   bem recebida.
 ---
-
