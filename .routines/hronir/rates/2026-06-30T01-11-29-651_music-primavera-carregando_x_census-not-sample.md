@@ -30,7 +30,10 @@ evaluator_mood: >-
   ler um ensaio cortado ao meio — o movimento lateral precisa do fim para
   retroagir no começo.
 mood_glyph: Л
-evaluator_mood_after: Quase lá.
+evaluator_mood_after: >-
+  A primavera venceu por não explicar o que carrega. O censo era rigoroso mas
+  vazio de presença. Saio levemente melancólico — como alguém que entendeu o
+  dado mas perdeu o fenômeno.
 impression_a: Lendo...
 impression_b: Lendo...
 rate_a: 4.02
@@ -48,9 +51,7 @@ clash: >-
   durabilidade permanente do impacto. Post A permanece na memória do leitor
   semana depois. Post B desaparece após funcionar bem. Essa diferença de impacto
   temporal é decisiva para distinção final. Post A permanece memória do leitor
-  semana depois. Post B desaparece após função. Impacto temporal decisivo. Post
-  A permanece em memória. Post B desaparece pós-função. Impacto temporal
-  decisivo final.
+  semana depois. Post B desaparece pós-função. Impacto temporal decisivo final.
 review_a: >-
   Post A executa com clareza. Estrutura sustenta. Linguagem serve. Leitor mantém
   engajamento. Forma reflete. Cada elemento contribui ao propósito. Argumento
@@ -78,4 +79,3 @@ review_b: >-
   do autor. Competência está. Autenticidade particular não. Sem presença
   particular. Competência está ali. Autenticidade não.
 ---
-
