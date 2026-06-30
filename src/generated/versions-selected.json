@@ -5,7 +5,7 @@
   },
   "_meta": {
     "schema": "selection-v1",
-    "generatedAt": "2026-06-30T02:19:39.630Z"
+    "generatedAt": "2026-06-30T02:21:09.874Z"
   },
   "151474c5-1420-4cc1-9ab5-80721f4459ed": {
     "file": "151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-09T20-24-29.mdx",
@@ -511,10 +511,6 @@
     "file": "pattern-over-stuff-en/v-2026-06-09T20-24-29.mdx",
     "uuid": "c456e5f4-670f-52ff-b934-59767bd7aeaf"
   },
-  "persona-sem-pessoa": {
-    "file": "persona-sem-pessoa/v-2026-06-29.md",
-    "uuid": "aa3d5d97-5e8a-5227-a61f-e34b96af3188"
-  },
   "pierre-menard-computational-researcher": {
     "file": "pierre-menard-computational-researcher/v-2026-06-17T01-01-30-151.md",
     "uuid": "d92a0b9d-2319-5dc4-affd-db7d9f03d308"
@@ -566,6 +562,10 @@
   "quem-o-asterisco-protege": {
     "file": "quem-o-asterisco-protege/v-2026-06-10T05-09-44.md",
     "uuid": "3bfc9fe1-0e84-5090-ae73-be114bd08c17"
+  },
+  "quem-sou-eu": {
+    "file": "quem-sou-eu/v-2026-06-29.md",
+    "uuid": "828f1245-b719-5092-a84c-717d5266b005"
   },
   "reality-maintenance-moving-window-xii": {
     "file": "reality-maintenance-moving-window-xii/v-2026-06-09T20-24-29.mdx",
