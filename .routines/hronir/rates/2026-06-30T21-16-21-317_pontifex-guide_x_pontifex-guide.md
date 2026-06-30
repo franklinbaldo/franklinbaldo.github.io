@@ -34,7 +34,7 @@ evaluator_mood: >-
   frieza do ar nos ouvidos virar impaciência com afirmações que se passam por
   óbvias.
 mood_glyph: ⇃
-evaluator_mood_after: Continuando com presença focada.
+evaluator_mood_after: Continuando focado, energia estável no processo de análise.
 impression_a: Primeira impressão conforme perspectiva.
 impression_b: Primeira impressão conforme perspectiva.
 rate_a: 3.75
