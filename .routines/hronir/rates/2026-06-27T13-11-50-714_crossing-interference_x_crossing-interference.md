@@ -30,7 +30,9 @@ evaluator_mood: >-
   music-sentido-e-referencia me convida, mas preciso estar pronto para ser
   convidado.
 mood_glyph: ƣ
-evaluator_mood_after: Continuando.
+evaluator_mood_after: >-
+  Uma versão corta; a outra hesita no traço. A hesitação ficou visível depois
+  que terminei.
 impression_a: Primeiro post com qualidades valiosas.
 impression_b: Segundo post também significativo.
 rate_a: 4
