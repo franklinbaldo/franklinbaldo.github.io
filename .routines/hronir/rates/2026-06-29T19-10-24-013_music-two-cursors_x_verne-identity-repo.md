@@ -30,7 +30,10 @@ evaluator_mood: >-
   Duas faces do mesmo Carlos Argentino; uma conta o pedágio, outra grita pelo
   Aleph. Clareza fria.
 mood_glyph: ǈ
-evaluator_mood_after: Estado.
+evaluator_mood_after: >-
+  Saio com o critério mais nítido: o que distingue ferramenta de mera narração.
+  Verne instala algo operável; Dois Cursores apenas descreve. Sinto a distinção
+  endurecida, quase física.
 impression_a: Post A evaluation
 impression_b: Post B evaluation
 rate_a: 3.75
@@ -84,4 +87,3 @@ review_b: >-
   throughout while exploring implications more thoroughly and completely than
   Post A does.
 ---
-
