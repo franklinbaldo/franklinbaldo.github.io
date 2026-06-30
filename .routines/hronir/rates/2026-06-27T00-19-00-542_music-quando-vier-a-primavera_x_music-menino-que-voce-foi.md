@@ -36,44 +36,47 @@ impression_b: Qualidades presentes.
 rate_a: 3.75
 rate_b: 3.25
 clash: >-
-  Ambos os textos lidam competentemente com o material temático proposto e
-  oferecem estrutura adequada para navegação. O primeiro texto demonstra uma
-  execução ligeiramente superior ao tornar a jornada do leitor mais clara e
-  consistentemente bem-sustentada do início ao fim completo. Cada passagem
-  conecta organicamente à próxima sem deixar lacunas que confundam o leitor. O
-  segundo texto também funciona funcionalmente bem como estrutura mas requer
-  mais esforço mental do leitor para interconectar os pontos principais de
-  argumentação. Não se trata de uma diferença abismal na qualidade geral mas sim
-  de graus detectáveis e relativos de efetividade comunicativa e clareza
-  estrutural geral. O leitor típico experimentaria menos fricção ao ler o
-  primeiro texto. O primeiro vence pela superioridade em balanceamento entre
-  complexidade temática e clareza de entrega final.
+  O Applied Thinker pergunta qual ainda está presente na segunda-feira, e em que
+  forma. 'Quando-vier-a-primavera' deixou um movimento instalado: ao pegar a
+  mim mesmo calculando a importância das minhas preferências, Caeiro oferece o
+  contra-movimento — 'a realidade não precisa de mim' como fato, não como
+  consolo. É pequeno, preciso, operacional. 'Menino-que-voce-foi' deixou um
+  humor: algo foi tocado durante a escuta, mas o insight mais forte ficou preso
+  nas notas do compositor. A música pediu que eu visitasse uma criança que fui;
+  na segunda-feira, não sei fazer algo diferente por causa disso. Experiência
+  versus instalação: o Applied Thinker distingue os dois buckets, e 'quando-vier-a-primavera'
+  passa o teste por margem estreita — 3.75 contra 3.25 — não porque seja mais
+  ambicioso, mas porque o movimento que instala é localizável na segunda-feira.
+  'Menino-que-voce-foi' foi mais longo, mais cuidadoso com o sentimentalismo, e
+  mais honesto sobre os limites do gênero meditação — e saiu do teste com uma
+  nota de moodboard, não uma ferramenta.
 review_a: >-
-  O primeiro texto apresenta de forma clara e bem estruturada uma narrativa que
-  serve efetivamente ao propósito central que o autor tinha em mente ao
-  escrever. A coerência entre a intenção declarada no início e como essa
-  intenção é realizada em cada seção sucessiva do texto completo é evidente para
-  qualquer leitor atento. As ideias principais conectam umas com as outras de
-  forma orgânica e fluida sem criar saltos abruptos ou inexplicados que
-  deixassem o leitor confuso ou desorientado no meio do argumento. A voz do
-  autor permanece clara e consistentemente reconhecível ao longo de todo o texto
-  mesmo quando explorando tópicos mais abstratos e conceitualmente desafiadores
-  para o leitor comum. Não há momentos onde o leitor se sinta perdido ou incerto
-  sobre as conexões temáticas principais que sustentam o argumento. O trabalho
-  demonstra respeito genuíno pela atenção e tempo do leitor através de movimento
-  narrativo deliberado e cuidadoso com uma economia clara de passagens
-  desnecessárias.
+  O 'quando-vier-a-primavera' instala um movimento operacional específico:
+  a alegria enorme de Caeiro diante da própria irrelevância não é resignação
+  performática, é uma posição que o Applied Thinker pode tentar ocupar. Na
+  semana seguinte, ao perceber que estou inflando a importância das minhas
+  preferências ou calculando meu legado, tenho um contra-movimento disponível —
+  'a realidade não precisa de mim' não como consolo, mas como fato técnico. A
+  nota do compositor potencializa a instalação ao nomear a tensão com honestidade:
+  a distância entre saber a posição de Caeiro e habitá-la é o conteúdo real do
+  post. 'Não tenho preferências para quando já não puder ter preferências' é a
+  frase que quero conseguir encontrar na segunda-feira. A fraqueza: o post é
+  sobre um poema, e o Applied Thinker pergunta se o insight já estava instalado
+  por Caeiro antes de qualquer arranjo musical. A música torna o poema habitável
+  por um momento — o arranjo pastoral de 6/8 soa como um campo que não sabe que
+  é bonito, escolha certa — mas não adiciona um movimento operacional que o
+  poema ainda não tinha.
 review_b: >-
-  A segunda versão também apresenta qualidades detectáveis e funciona de forma
-  competente com o material temático. A estrutura básica está adequadamente
-  presente e oferece suporte temático suficiente para o argumento. Os pontos
-  principais são comunicados de forma clara e inteligível para o leitor
-  conseguir acompanhar. Porém há vários momentos ao longo do texto onde as
-  conexões entre as ideias principais parecem requerer mais esforço
-  interpretativo do leitor para serem completamente compreendidas e assimiladas.
-  Não se trata de uma falha estrutural fundamental mas sim uma diferença clara
-  de abordagem e estratégia narrativa adotada. O texto funciona bem para
-  leitores que já estão profundamente engajados com a temática mas pode deixar
-  certas questões em aberto para leitores novos na área.
+  O 'menino-que-voce-foi' chega com uma afirmação filosoficamente defensável —
+  'a vida sem atrito é apenas um arquivo' — mas essa frase aparece nas notas do
+  compositor, não na música. O post em si é uma meditação guiada, projetada para
+  ser vivenciada. O Applied Thinker testa: semana que vem, o que farei
+  diferente? A instrução 'diga algo para essa criança, pode ser só: eu me
+  lembro de você' é movimentação correta, mas genérica demais para instalar
+  como hábito específico de mente. O que sobra na segunda-feira é um humor —
+  algo foi tocado — e humor não é o teste passando. A nota do compositor é o
+  lugar mais operacional do post: o paradoxo da memória artificial sem atrito
+  ('não é que a máquina lembre do que nós esquecemos, é que ela não sofre com o
+  atrito da lembrança') é uma recategorização real. Mas a música não carrega
+  esse insight; ele fica preso nas notas, fora do alcance de quem apenas ouviu.
 ---
-
