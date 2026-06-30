@@ -25,6 +25,7 @@ const ROOT_ALLOWLIST = new Set([
   ".git-blame-ignore-revs",
   ".gitattributes",
   ".gitignore",
+  ".lighthouserc.cjs",
   ".prettierignore",
   ".prettierrc.json",
   "CLAUDE.md",
