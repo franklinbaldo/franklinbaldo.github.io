@@ -36,8 +36,18 @@ mood_glyph: '='
 evaluator_mood_after: >-
   Equação balanceando: honestidade sobre fracasso pesa mais que perfeição de
   história.
-impression_a: A
-impression_b: B
+impression_a: >-
+  Borges adaptation as folk spoken word (guitar, fire crackling). Narrative
+  structure is intimate and accessible — wizard dreams a boy into existence,
+  discovers he's also dreamed. Dissonance between bedtime-story tone and
+  infinite regress. The levity feels atmospheric; the story's metaphysical weight
+  doesn't depend on jokes.
+impression_b: >-
+  Opens with corporate-prose irony: "Franklin Baldo's stream of digital public
+  activities" is self-aware absurdity. The author is mocking the premise from
+  sentence one. Spec format gives way to reflection — what looked like automation
+  failure becomes clarity about where the real problem lies (judgment, not
+  drafting). Self-mockery drives the whole argument, not decoration.
 rate_a: 2.75
 rate_b: 4.5
 clash: >-
