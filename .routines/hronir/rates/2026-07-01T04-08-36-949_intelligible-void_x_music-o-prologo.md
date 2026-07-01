@@ -56,7 +56,7 @@ impression_b: >-
   The lyrics follow a Borges episode: a comic humiliation where Carlos Argentino
   asks the narrator to fetch a prologue writer, not realizing (or ignoring) that
   he's asking the narrator to say 'no' to himself. Read cold on the page, the
-  compression is sharp and selective. 'Débedi um leite, ali, lado a lado / Mas o
+  compression is sharp and selective. 'Bebemos um leite, ali, lado a lado / Mas o
   gole desceu... meio atravessado' — two lines that show social discomfort
   through the body, through the milk. And 'O Álvaro é o ouro da mina / E eu sou
   a poeira da esquina!' uses rhyme as pure image, a visual slap. But then the
@@ -103,7 +103,7 @@ review_a: >-
   um 'corte' em cada frase importante.
 review_b: >-
   **music-o-prologo** narra um episódio de Borges com ritmo de farsa. Há
-  momentos onde a compressão funciona: 'Débedi um leite, ali, lado a lado / Mas
+  momentos onde a compressão funciona: 'Bebemos um leite, ali, lado a lado / Mas
   o gole desceu... meio atravessado' mostra constrangimento via corpo, via leite
   — duas linhas que são mínimas e visuais. A rima 'O Álvaro é o ouro da mina / E
   eu sou a poeira da esquina!' também funciona, porque a imagem é pura. Mas
