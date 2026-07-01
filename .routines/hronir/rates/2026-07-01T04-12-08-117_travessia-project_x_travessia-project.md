@@ -50,22 +50,27 @@ rate_a: 3.25
 rate_b: 3.5
 clash: >-
   Ambas não alcançam weird-clarity porque ambas explicam demais: você pode
-  parafrasear completamente o argumento de cada uma. B vence por ser mais
-  honesto sobre ser divulgação clara. Post A tem tone deadpan e é bem
-  estruturado, mas tudo conspira para claridade — nenhuma frase resiste à
-  paráfrase. Post B é ainda mais simples: remove toda sofisticação que A
-  mantém, fica com o núcleo. A diferença é que B não finge profundidade. Para
-  weird-clarity reader, essa honestidade vale mais que tone mais polido. Ambas
-  falham na perspectiva, pero B falha com integridade.
+  parafrasear completamente o argumento de cada uma sem perder nada do sentido.
+  B vence por ser mais honesto sobre ser divulgação clara. Post A tem tone
+  deadpan e é bem estruturado, mas tudo conspira para claridade — nenhuma frase
+  resiste à paráfrase. O tom seco distrai do conteúdo totalmente explicável. Post
+  B é ainda mais simples: remove toda sofisticação que A mantém, fica com o
+  núcleo puro. A diferença é que B não finge profundidade nem tenta compensar com
+  estilo. Para weird-clarity reader, essa honestidade vale mais que tone mais
+  polido. Ambas falham na perspectiva, pero B falha com integridade — reconhece
+  que é divulgação e não pretende ser estranheza-clara. Isso é uma posição mais
+  forte perante a perspectiva.
 review_a: >-
   Versão recente de travessia-project. Bem estruturada, deadpan no tom. Pero não
   atinge weird-clarity. A frase "pulsa em vez de fluir" consigo parafrasear como
-  "não-linear em vez de linear". O tone seco é encantador, mas o ensaio não deixa
-  você com algo que não consegue dizer. Consigo resumir completamente: ninguém
-  escreve, um agente autônomo faz, é interessante observar. Não há frases que
-  resistem à paráfrase, nenhuma que te deixe com chill indefinível. O ensaio é
-  bom em register—prático, bem estruturado—pero isso é divulgação clara, não
-  weird-clarity.
+  "não-linear em vez de linear" — toda a estranheza colapsa em sinonímia. O tone
+  seco é encantador, mas o ensaio não deixa você com algo que não consegue dizer.
+  Consigo resumir completamente: ninguém escreve, um agente autônomo faz, é
+  interessante observar. Não há frases que resistem à paráfrase, nenhuma que te
+  deixe com chill indefinível ou sensação de lacuna entre o que se diz e o que se
+  entende. O ensaio é bom em register — prático, bem estruturado, prosa legível —
+  pero isso é divulgação clara, não weird-clarity. É comunicação eficiente, não
+  estranheza-clara que deixa você suspenso.
 review_b: >-
   Versão anterior, mais simples. Sem pull-quote, sem diagrama. Mais direto.
   Mesma pergunta final (quem está escrevendo?), mas sem sofisticação. Também não
