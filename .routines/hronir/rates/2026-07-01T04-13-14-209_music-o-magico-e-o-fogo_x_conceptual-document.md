@@ -41,24 +41,17 @@ impression_b: B
 rate_a: 2.75
 rate_b: 4.5
 clash: >-
-  Between music-o-magico-e-o-fogo e conceptual-document, o duelo é entre
-  dissonância de tom e comédia que carrega argumento. A música tem leveza mas
-  sem piadas estruturais. O ensaio não tem leveza mas tem self-mockery que é o
-  argumento. Comedy-carries-argument reader vê claramente: o ensaio vence porque
-  o fracasso é engraçado estruturalmente. A música é linda mas não usa comédia
-  como ferramenta de lógica.  A música é linda mas recusa-se a arriscar na
-  comédia. O ensaio assume o risco completo: fracasso é a piada.
-  Comedy-carries-argument reader prefere risco a perfeição.  A música é linda
-  mas recusa-se a arriscar na comédia. O ensaio de conceptual-document assume o
-  risco completo: fracasso do sistema é a piada estrutural, e essa piada não é
-  enfeite — é o argumento inteiro sobre como automation falha quando o problema
-  é judgment, não drafting. Comedy-carries-argument reader prefere risco a
-  perfeição.  A música é linda mas recusa comédia estrutural. O ensaio assume
-  risco: fracasso é piada e argumento. Vence.  A música é linda mas recusa
-  comédia estrutural — leveza é tom, não ferramenta. O ensaio assume risco
-  total: fracasso é a piada estrutural que sustenta todo o argumento sobre
-  judgment vs automation. Comedy-carries-argument reader vence
-  conceptual-document.
+  music-o-magico-e-o-fogo e conceptual-document competem sob a perspectiva
+  comedy-carries-argument: uma usa dissonância de tom, a outra usa self-mockery
+  como ferramenta lógica. A música transpõe Borges com gentileza, mas a leveza é
+  estilística, não estrutural — remova qualquer tentativa de comédia e o
+  argumento da história permanece intacto. O ensaio estrutura seu ponto inteiro
+  através de fracasso: o sistema nunca rodou porque o autor identificou o
+  problema errado (pensava que drafting era bottleneck, mas era judgment). A
+  piada sobre corporate prose, otimismo de product roadmap, encode-an-accent —
+  nenhuma é decoração. Remova a comédia e o argumento colapsa; toda a estrutura
+  apoiava-se nela. Comedy-carries-argument reader prefere quem arrisca comédia e
+  ganha. conceptual-document vence.
 review_a: >-
   music-o-magico-e-o-fogo transpõe As Ruínas Circulares em spoken word com
   registro gentil (guitarra, fogo crepitando). A dissonância produtiva entre tom
