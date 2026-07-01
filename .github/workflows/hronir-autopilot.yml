@@ -3,12 +3,14 @@ name: Hrönir Autopilot
 # Merge machine for the Hrönir/Jules loop.
 #
 # Fires when the "Check" workflow finishes on a PR branch. If that PR
-# touches only the safe paths (rate files required) and CI is green,
-# it is merged with a merge commit and a replacement session is spawned.
+# touches only the safe paths (rate files or draft version files required)
+# and CI is green, it is merged with a merge commit and a replacement
+# session is spawned.
 #
-# Gate: path check + CI green. No external API verification needed —
-# the safe-path constraint is sufficient: only hronir sessions produce
-# rate files under .routines/hronir/rates/.
+# Gate: path check + CI green. No external API verification needed — the
+# safe-path constraint is sufficient: only hronir sessions produce rate
+# files under .routines/hronir/rates/ (hourly matches routine) or v-*
+# draft files under src/content/blog/ (daily edit-worst routine).
 #
 # hronir-heartbeat.yml maintains the pool as a backstop (every 15 min).
 # This workflow provides the reactive path: merge → immediately spawn.
@@ -84,17 +86,23 @@ jobs:
           set -euo pipefail
 
           # 1) Path gate: only .routines/hronir/** and src/content/blog/**, with
-          #    at least one rate file. This is the sole identity check — only
-          #    hronir sessions produce rate files under .routines/hronir/rates/.
+          #    at least one rate file OR one draft/version file. This is the
+          #    sole identity check — only hronir sessions produce rate files
+          #    under .routines/hronir/rates/ (the hourly matches routine) or
+          #    v-<timestamp> draft files under src/content/blog/ (the daily
+          #    edit-worst routine, which runs no matches and so has no rate
+          #    file to show — see docs/hronir-edit-worst-routine.md).
           #    Every session also writes a top-level journal file directly under
           #    .routines/ (see CLAUDE.md "Journals de sessão"); that file isn't
           #    under .routines/hronir/, so it gets its own exception below —
           #    subdirs other than hronir/ (e.g. .routines/takeout/) stay excluded.
           FILES=$(gh pr view "$PR" --repo "$REPO" --json files --jq '.files[].path')
           HAS_RATE=0
+          HAS_DRAFT=0
           while IFS= read -r f; do
             [ -n "$f" ] || continue
             case "$f" in .routines/hronir/rates/*) HAS_RATE=1 ;; esac
+            case "$f" in src/content/blog/*/v-*.md | src/content/blog/*/v-*.mdx) HAS_DRAFT=1 ;; esac
             ok=1
             for p in $SAFE_PREFIXES; do case "$f" in "$p"*) ok=0 ;; esac; done
             if [ "$ok" -ne 0 ]; then
@@ -108,8 +116,8 @@ jobs:
               echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
             fi
           done <<< "$FILES"
-          if [ "$HAS_RATE" -ne 1 ]; then
-            echo "PR #$PR has no rate files — skipping."
+          if [ "$HAS_RATE" -ne 1 ] && [ "$HAS_DRAFT" -ne 1 ]; then
+            echo "PR #$PR has no rate files and no draft version files — skipping."
             echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
           fi
 

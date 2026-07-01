@@ -1,6 +1,6 @@
-# Rotina de agente Hrönir
+# Rotina de agente Hrönir — avaliação de matches
 
-Execute uma rodada completa do sistema Hrönir.
+Execute uma rodada de avaliação Hrönir: só matches (comparações par a par), sem editar posts. A fase de edição do pior post é responsabilidade de uma rotina **separada** — `docs/hronir-edit-worst-routine.md` — que roda uma vez por dia, não a cada hora.
 
 ## Antes de começar
 
@@ -32,18 +32,23 @@ git checkout -b "$BRANCH"
 npm run hronir:init -- \
   --agent-id <seu-model-id> \
   --matches 10 \
-  --content-mode path-only
+  --content-mode path-only \
+  --skip-edit
 ```
 
 - `--agent-id` é **obrigatório** — use um identificador estável do seu modelo.
 - `--content-mode path-only` recomendado para agentes: o CLI imprime apenas slug e caminho; o agente lê o arquivo diretamente.
+- `--skip-edit` é **obrigatório** nesta rotina — a fase de edição do pior post roda separada, com outro modelo e cadência diária. Com essa flag, a sessão se fecha sozinha ao completar os matches, sem nunca sinalizar `need_edit`.
 
 ## 3. Loop de avaliação
 
-Repita até o CLI indicar que todos os matches foram completados. Se o contexto/tempo estiver se esgotando antes de completar os 10 matches, **não deixe um `decide` pela metade** — complete o match em andamento, então feche a sessão explicitamente antes de seguir para o passo 5, já que `hronir:doctor` reporta qualquer `hronir_session.json` ativo como inconsistência:
+Repita até o CLI indicar que todos os matches foram completados. Se o contexto/tempo estiver se esgotando antes de completar os 10 matches, **não deixe um `decide` pela metade** — complete o match em andamento, então feche a sessão explicitamente antes de seguir para o passo 4, já que `hronir:doctor` reporta qualquer `hronir_session.json` ativo como inconsistência:
 
-- Se ainda houver matches pendentes (estado normal, não `need_edit`): `npm run hronir:end -- --force` — os rate files já commitados por cada `decide` **não são afetados**, isso só encerra o rastreamento da sessão.
-- Se já estiver em `need_edit` mas sem tempo para a fase de edição: `npm run hronir:end -- --skip-edit`.
+```bash
+npm run hronir:end -- --force
+```
+
+Os rate files já commitados por cada `decide` **não são afetados** — isso só encerra o rastreamento da sessão. (Com `--skip-edit`, a sessão nunca fica em `need_edit`, então esse é o único caso de saída antecipada aqui.)
 
 Uma sessão de 3-6 matches bem avaliados vale mais que uma de 10 apressados.
 
@@ -80,25 +85,10 @@ npm run hronir:decide -- \
 
 **Atingir a contagem mínima de palavras não é o objetivo — o objetivo é uma leitura real.** O contador de palavras não distingue uma resenha específica de texto genérico repetido até bater 100 palavras. Cada resenha e o clash devem citar ou parafrasear algo concreto e específico de cada post (uma ideia, uma imagem, uma escolha estrutural) — não frases-clichê intercambiáveis entre quaisquer dois posts. Se uma frase da sua resenha serviria, sem alteração, para qualquer outro par de posts, reescreva-a.
 
-## 4. Fase de edição do pior post
-
-Quando todos os matches terminam, o CLI sinaliza `need_edit`.
+## 4. Validar, criar journal e commitar
 
 ```bash
-npm run hronir:draft-worst
-```
-
-Edite os arquivos de rascunho criados (`src/content/blog/<slug>/v-<timestamp>.md`) com base nas defesas e contexto impresso pelo comando.
-
-```bash
-npm run hronir:draft-commit -- --msg "<justificativa da edição>"
 npm run hronir:select
-npm run hronir:end
-```
-
-## 5. Validar, criar journal e commitar
-
-```bash
 npm run hronir:doctor
 
 TIMESTAMP="$(date -u +"%Y-%m-%dT%H-%M-%S")"
@@ -111,11 +101,13 @@ status: open
 EOF
 
 git add .routines/ src/generated/versions-selected.json
-git commit -m "hronir: 10 matches + edit-worst — <agent-id>"
+git commit -m "hronir: N matches — <agent-id>"
 git push -u origin HEAD
 ```
 
-## 6. Abrir PR e habilitar auto-merge
+`src/generated/versions-selected.json` pode mudar mesmo numa rodada só de matches — alguns matches são duelos de versão (a mesma `key` dos dois lados), e se um lado limpar o número mínimo de duelos e vencer, `hronir:select` promove a nova versão. Por isso ele roda aqui explicitamente, antes do commit.
+
+## 5. Abrir PR e habilitar auto-merge
 
 Via MCP:
 
@@ -123,7 +115,7 @@ Via MCP:
 mcp__github__create_pull_request:
   owner: franklinbaldo
   repo: franklinbaldo.github.io
-  title: "hronir: 10 matches + edit-worst — <agent-id>"
+  title: "hronir: N matches — <agent-id>"
   head: <BRANCH>
   base: main
 
