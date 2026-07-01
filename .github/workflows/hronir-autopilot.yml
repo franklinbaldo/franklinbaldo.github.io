@@ -96,6 +96,11 @@ jobs:
           #    .routines/ (see CLAUDE.md "Journals de sessão"); that file isn't
           #    under .routines/hronir/, so it gets its own exception below —
           #    subdirs other than hronir/ (e.g. .routines/takeout/) stay excluded.
+          #    src/generated/versions-selected.json is gitignored (recomputed
+          #    fresh from rate files + version files by prebuild/hronir:select,
+          #    no memory of any prior selection — see RFC 0010 amendment
+          #    2026-07-01 and docs/hronir-agent-routine.md), so it never
+          #    appears in a session PR's file list and needs no exception here.
           FILES=$(gh pr view "$PR" --repo "$REPO" --json files --jq '.files[].path')
           HAS_RATE=0
           HAS_DRAFT=0

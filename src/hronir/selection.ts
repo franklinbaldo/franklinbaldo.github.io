@@ -8,9 +8,15 @@ import {
   isPublishedData,
 } from "./posts.js";
 
-// RFC 0010 §4.2: the published version of each post is not a privileged
-// filename but an entry in this generated, committed JSON. The site loader
-// and every script read it; `hronir:select` is the only writer.
+// RFC 0010 §4.2 (amended 2026-07-01): the published version of each post is
+// not a privileged filename but an entry in this generated JSON. Gitignored,
+// not committed — select() is a pure function of rate files + version files
+// (no hysteresis, no memory of any prior selection), so `prebuild` can
+// regenerate it deterministically before every build. It must also be
+// regenerated locally (uncommitted) before any other hronir command in a
+// fresh checkout, since e.g. `hronir:init` reads it via
+// listEnglishWithKey(). The site loader and every script read it;
+// `hronir:select` is the only writer.
 export const SELECTION_PATH = "src/generated/versions-selected.json";
 export const SELECTION_SCHEMA = "selection-v1";
 

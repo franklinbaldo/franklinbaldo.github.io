@@ -139,7 +139,7 @@ npm run hronir:doctor           # validate all rate files
 npm run hronir:worst            # print the lowest-ranked post key
 npm run hronir:draft-worst      # RFC 0003: cria uma NOVA versão (rascunho) do pior post
 npm run hronir:draft-commit -- --msg "..."  # registra o rascunho (canônica intocada)
-npm run hronir:select           # RFC 0010: atualiza versions-selected.json (seleção de versões)
+npm run hronir:select           # RFC 0010 (amendment 2026-07-01): recalcula versions-selected.json — função pura de rate files + versões, sem histerese; gitignorado, regenerado pelo prebuild antes de cada build; rode localmente antes de qualquer outro comando hronir num checkout novo
 npm run hronir:select -- --dry-run  # mostra o que seria selecionado sem gravar
 npm run hronir:prune -- --dry-run   # lista versões perdedoras elegíveis para poda (≥0.5★ abaixo, n≥3)
 npm run hronir:prune            # remove as versões perdedoras elegíveis
@@ -245,7 +245,7 @@ scripts/hronir/           Hrönir CLI entry point and perspectives/skills
 scripts/lib/              Shared helpers consumidos por múltiplos scripts
   content.mjs             Fonte única de descoberta de posts (listPostFiles, readPostMeta)
   blog-links.mjs          Validação e redirects de links internos
-src/generated/            Artefatos gerados e commitados (selection, redirects, sitemap data)
+src/generated/            Artefatos gerados; redirects e sitemap data são commitados, versions-selected.json é gitignorado (regenerado pelo prebuild)
 .routines/hronir/         Rate files produced by sessions (committed to git)
 docs/rfcs/                RFCs do projeto (0001…)
 docs/plans/               Planos e documentos de planejamento

@@ -26,7 +26,23 @@ BRANCH="hronir/run-$(date -u +"%Y-%m-%dT%H-%M-%S")"
 git checkout -b "$BRANCH"
 ```
 
-## 2. Inicializar sessão
+## 2. Recomputar a seleção de versões (local, não commitada)
+
+```bash
+npm run hronir:select
+```
+
+`src/generated/versions-selected.json` é **gitignorado** — nunca é commitado
+por uma sessão. É uma função pura de rate files + arquivos de versão
+(amendment RFC 0010, 2026-07-01: sem histerese, sem memória de seleção
+anterior — vence sempre a versão mais bem avaliada com evidência
+suficiente), regenerado deterministicamente pelo `prebuild` antes de cada
+build. Mas o CLI depende dele já em `hronir:init`
+(`listEnglishWithKey()` monta o pool de pares a partir dele): num checkout
+novo o arquivo não existe, e pular este passo faz o `init` falhar com "mínimo
+4 posts para formar pares". Rode `select` aqui, localmente, antes de tudo.
+
+## 3. Inicializar sessão
 
 ```bash
 npm run hronir:init -- \
@@ -40,9 +56,9 @@ npm run hronir:init -- \
 - `--content-mode path-only` recomendado para agentes: o CLI imprime apenas slug e caminho; o agente lê o arquivo diretamente.
 - `--skip-edit` é **obrigatório** nesta rotina — a fase de edição do pior post roda separada, com outro modelo e cadência diária. Com essa flag, a sessão se fecha sozinha ao completar os matches, sem nunca sinalizar `need_edit`.
 
-## 3. Loop de avaliação
+## 4. Loop de avaliação
 
-Repita até o CLI indicar que todos os matches foram completados. Se o contexto/tempo estiver se esgotando antes de completar os 10 matches, **não deixe um `decide` pela metade** — complete o match em andamento, então feche a sessão explicitamente antes de seguir para o passo 4, já que `hronir:doctor` reporta qualquer `hronir_session.json` ativo como inconsistência:
+Repita até o CLI indicar que todos os matches foram completados. Se o contexto/tempo estiver se esgotando antes de completar os 10 matches, **não deixe um `decide` pela metade** — complete o match em andamento, então feche a sessão explicitamente antes de seguir para o passo 5, já que `hronir:doctor` reporta qualquer `hronir_session.json` ativo como inconsistência:
 
 ```bash
 npm run hronir:end -- --force
@@ -85,7 +101,7 @@ npm run hronir:decide -- \
 
 **Atingir a contagem mínima de palavras não é o objetivo — o objetivo é uma leitura real.** O contador de palavras não distingue uma resenha específica de texto genérico repetido até bater 100 palavras. Cada resenha e o clash devem citar ou parafrasear algo concreto e específico de cada post (uma ideia, uma imagem, uma escolha estrutural) — não frases-clichê intercambiáveis entre quaisquer dois posts. Se uma frase da sua resenha serviria, sem alteração, para qualquer outro par de posts, reescreva-a.
 
-## 4. Validar, criar journal e commitar
+## 5. Validar, criar journal e commitar
 
 ```bash
 npm run hronir:select
@@ -100,14 +116,17 @@ status: open
 ---
 EOF
 
-git add .routines/ src/generated/versions-selected.json
+git add .routines/
 git commit -m "hronir: N matches — <agent-id>"
 git push -u origin HEAD
 ```
 
-`src/generated/versions-selected.json` pode mudar mesmo numa rodada só de matches — alguns matches são duelos de versão (a mesma `key` dos dois lados), e se um lado limpar o número mínimo de duelos e vencer, `hronir:select` promove a nova versão. Por isso ele roda aqui explicitamente, antes do commit.
+Rode `hronir:select` de novo aqui — alguns matches são duelos de versão (a
+mesma `key` dos dois lados), e o `doctor` valida contra a seleção atual. O
+arquivo **não entra no `git add`**: é gitignorado, e quem regenera a versão
+definitiva é o `prebuild` do próximo build/deploy.
 
-## 5. Abrir PR e habilitar auto-merge
+## 6. Abrir PR e habilitar auto-merge
 
 Via MCP:
 
