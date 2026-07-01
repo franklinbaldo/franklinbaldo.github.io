@@ -49,31 +49,23 @@ impression_b: >-
 rate_a: 3.25
 rate_b: 3.5
 clash: >-
-  Ambas não alcançam weird-clarity porque ambas são explicáveis. B vence por ser
-  mais direto: a sofisticação de A (pull-quote, diagrama) é ornamento que se
-  afasta da estranheza. Weird-clarity prefere simplicidade radical.  O
-  weird-clarity reader se sente frustrado com ambas: nenhuma deixa você com algo
-  que não consegue dizer. A diferença é que B admite isso — é mais honesto sobre
-  ser divulgação clara. A tenta sofisticação (pull-quote, diagrama) que sugere
-  profundidade mas não entrega estranheza-clara. Então B vence por humildade,
-  não por virtude. Ambas falham na perspectiva.  O weird-clarity reader se sente
-  frustrado: nenhuma alcança a estranheza-clara desejada. Ambas explicam demais,
-  ambas deixam você com compreensão, não com chill inefável. B vence porque é
-  mais honesto — não tenta sofisticação (pull-quote, diagrama Mermaid) que
-  sugere profundidade sem entregar. A ocupa-se em parecer profundo. B admite que
-  é divulgação clara. Para weird-clarity, a honestidade sobre fracasso vale mais
-  que sofisticação falhada.
+  Ambas não alcançam weird-clarity porque ambas explicam demais: você pode
+  parafrasear completamente o argumento de cada uma. B vence por ser mais
+  honesto sobre ser divulgação clara. Post A tem tone deadpan e é bem
+  estruturado, mas tudo conspira para claridade — nenhuma frase resiste à
+  paráfrase. Post B é ainda mais simples: remove toda sofisticação que A
+  mantém, fica com o núcleo. A diferença é que B não finge profundidade. Para
+  weird-clarity reader, essa honestidade vale mais que tone mais polido. Ambas
+  falham na perspectiva, pero B falha com integridade.
 review_a: >-
-  Versão polida de travessia-project. Bem estruturada, claro. Pero não atinge
-  weird-clarity. A frase pulsa em vez de fluir consigo parafrasear. Pull-quote
-  em blockquote é sofisticação. Diagrama Mermaid é funcional, não revelador. Não
-  há frases que deixem você com chill indefinível.  As frases-chave (pulsa em
-  vez de fluir, quem está escrevendo) poderiam resistir à paráfrase se fossem
-  pressionadas. Mas não são — o ensaio explicita demais o ponto. A pull-quote em
-  blockquote é elemento que suaviza o impacto, deixa a leitura protegida. O
-  diagrama Mermaid é visual, funcional, mas não misterioso. Tudo conspira para
-  claridade. Weird-clarity quer oposição: frase simples mas impossível de
-  traduzir. Aqui tudo é traduzível.
+  Versão recente de travessia-project. Bem estruturada, deadpan no tom. Pero não
+  atinge weird-clarity. A frase "pulsa em vez de fluir" consigo parafrasear como
+  "não-linear em vez de linear". O tone seco é encantador, mas o ensaio não deixa
+  você com algo que não consegue dizer. Consigo resumir completamente: ninguém
+  escreve, um agente autônomo faz, é interessante observar. Não há frases que
+  resistem à paráfrase, nenhuma que te deixe com chill indefinível. O ensaio é
+  bom em register—prático, bem estruturado—pero isso é divulgação clara, não
+  weird-clarity.
 review_b: >-
   Versão anterior, mais simples. Sem pull-quote, sem diagrama. Mais direto.
   Mesma pergunta final (quem está escrevendo?), mas sem sofisticação. Também não
