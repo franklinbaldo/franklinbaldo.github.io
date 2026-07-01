@@ -6,6 +6,9 @@ import { getPostUuid, getPostUuidLegacy } from "../hronir/posts.js";
 const BLOG_DIR = "src/content/blog";
 const SELECTION_PATH = "src/generated/versions-selected.json";
 
+export const GITHUB_REPO = "franklinbaldo/franklinbaldo.github.io";
+export const GITHUB_BRANCH = "main";
+
 let _selection = null;
 function selection() {
   if (_selection) return _selection;
@@ -76,4 +79,23 @@ export function versionHref(slug, uuid, lang) {
   return lang === "pt"
     ? `/pt/blog/${slug}/v/${uuid}/`
     : `/blog/${slug}/v/${uuid}/`;
+}
+
+/** Raw GitHub URL for a content entry's on-disk file. Archived version pages
+ * fetch their body from here client-side instead of paying the MDX/remark/
+ * rehype/Shiki render pipeline at build time for every superseded draft. */
+export function rawContentUrl(id) {
+  const p = fileForId(id);
+  return p
+    ? `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/${p}`
+    : null;
+}
+
+/** GitHub blob URL (human-facing) for a content entry's on-disk file, used
+ * as the fallback link when the client-side raw fetch fails. */
+export function githubBlobUrl(id) {
+  const p = fileForId(id);
+  return p
+    ? `https://github.com/${GITHUB_REPO}/blob/${GITHUB_BRANCH}/${p}`
+    : null;
 }

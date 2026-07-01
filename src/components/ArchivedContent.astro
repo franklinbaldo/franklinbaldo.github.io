@@ -1,0 +1,56 @@
+---
+// RFC 0010 perf: archived version pages (/blog/<slug>/v/<uuid>) don't run
+// the MDX/remark/rehype/Shiki pipeline at build time — there are hundreds
+// of superseded drafts and they're noindex, low-traffic archival pages.
+// Instead this ships a placeholder and fetches the raw markdown straight
+// from GitHub client-side, rendering it in the browser with `marked`.
+interface Props {
+  rawUrl: string | null;
+  githubUrl: string;
+  lang?: string;
+}
+const { rawUrl, githubUrl, lang } = Astro.props;
+const isPt = lang === "pt";
+---
+
+<div
+  class="archived-content"
+  data-raw-url={rawUrl}
+  data-github-url={githubUrl}
+  data-lang={lang ?? "en"}
+>
+  <p><em>{isPt ? "Carregando conteúdo arquivado…" : "Loading archived content…"}</em></p>
+</div>
+
+<script>
+  import { marked } from "marked";
+
+  async function loadArchivedContent(container: HTMLElement) {
+    const rawUrl = container.dataset.rawUrl;
+    const githubUrl = container.dataset.githubUrl || "";
+    const isPt = container.dataset.lang === "pt";
+    if (!rawUrl) return;
+    try {
+      const res = await fetch(rawUrl);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const raw = await res.text();
+      const body = raw.replace(/^---\n[\s\S]*?\n---\n?/, "");
+      container.innerHTML = await marked.parse(body);
+    } catch {
+      const fallback = isPt
+        ? `Não foi possível carregar o conteúdo arquivado agora. <a href="${githubUrl}">Ver no GitHub</a>.`
+        : `Couldn't load the archived content right now. <a href="${githubUrl}">View on GitHub</a>.`;
+      container.innerHTML = `<p><em>${fallback}</em></p>`;
+    }
+  }
+
+  document
+    .querySelectorAll<HTMLElement>(".archived-content")
+    .forEach(loadArchivedContent);
+</script>
+
+<style>
+  .archived-content :global(pre) {
+    overflow-x: auto;
+  }
+</style>

@@ -1,12 +1,15 @@
 ---
-import { type CollectionEntry, getCollection, render } from "astro:content";
+import { type CollectionEntry, getCollection } from "astro:content";
 import PageLayout from "../../../../layouts/PageLayout.astro";
 import VersionBanner from "../../../../components/VersionBanner.astro";
+import ArchivedContent from "../../../../components/ArchivedContent.astro";
 import BackToTop from "../../../../components/BackToTop.astro";
 import {
   uuidForId,
   legacyUuidForId,
   slugOf,
+  rawContentUrl,
+  githubBlobUrl,
 } from "../../../../lib/versions.mjs";
 
 // RFC 0010: content-addressed version pages. Every non-selected version file
@@ -61,7 +64,8 @@ if (redirect) return Astro.redirect(live);
 
 const { title, lang, draftCommittedAt, draftMsg, date } = entry.data;
 const verDate = draftCommittedAt ? new Date(draftCommittedAt) : date;
-const { Content } = await render(entry);
+const rawUrl = rawContentUrl(entry.id);
+const githubUrl = githubBlobUrl(entry.id) ?? `https://github.com/franklinbaldo/franklinbaldo.github.io`;
 ---
 
 <PageLayout
@@ -87,7 +91,7 @@ const { Content } = await render(entry);
 
       <article data-pagefind-ignore lang={lang ?? "en"}>
         <header><h1>{title}</h1></header>
-        <Content />
+        <ArchivedContent rawUrl={rawUrl} githubUrl={githubUrl} lang={lang} />
       </article>
 
       <BackToTop />
