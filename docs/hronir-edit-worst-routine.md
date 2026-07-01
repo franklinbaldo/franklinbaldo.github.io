@@ -28,7 +28,22 @@ BRANCH="hronir/edit-worst-$(date -u +"%Y-%m-%dT%H-%M-%S")"
 git checkout -b "$BRANCH"
 ```
 
-## 2. Escolher e rascunhar o pior post
+## 2. Recomputar a seleção de versões (local, não commitada)
+
+```bash
+npm run hronir:select
+```
+
+`src/generated/versions-selected.json` é **gitignorado** — nunca é commitado
+por uma sessão. É uma função pura de rate files + arquivos de versão
+(amendment RFC 0010, 2026-07-01: sem histerese — vence sempre a versão mais
+bem avaliada com evidência suficiente), regenerado deterministicamente pelo
+`prebuild` antes de cada build. Mas `draft-worst` depende dele para saber qual
+versão é a canônica a copiar como base do rascunho: num checkout novo o
+arquivo não existe, e pular este passo faz `draft-worst` tratar todo post
+como sem seleção. Rode `select` aqui, localmente, antes de tudo.
+
+## 3. Escolher e rascunhar o pior post
 
 ```bash
 npm run hronir:draft-worst
@@ -38,7 +53,7 @@ Esse comando já escolhe o post pior-ranqueado elegível — pulando os recém-e
 
 Se não houver candidato elegível, o comando avisa e termina sem erro ("Volume insuficiente para edit-worst", ou lista os pulados por falta de arquivo). **Não force nada nesse caso** — não há trabalho de edição para fazer hoje; finalize sem abrir PR.
 
-## 3. Editar
+## 4. Editar
 
 Leia AS DUAS skills antes de editar:
 
@@ -51,7 +66,7 @@ Edite os **rascunhos** impressos pelo comando anterior — nunca as versões sel
 
 Isso é o ponto principal desta rotina: leia de verdade as críticas e defesas acumuladas nos matches anteriores (o comando imprime o contexto) antes de editar. Um polimento superficial que não responde às críticas registradas não cumpre o propósito da rotina.
 
-## 4. Registrar e finalizar
+## 5. Registrar e finalizar
 
 ```bash
 npm run hronir:draft-commit -- --msg "<justificativa da edição, referenciando as críticas que motivaram>"
@@ -60,7 +75,11 @@ npm run hronir:end
 npm run hronir:doctor
 ```
 
-## 5. Journal e commit
+`hronir:select` roda de novo aqui — o novo rascunho entra no cômputo, e o
+`doctor` valida contra a seleção fresca. O arquivo segue gitignorado — não
+commitado por sessão, regenerado pelo `prebuild` no próximo build/deploy.
+
+## 6. Journal e commit
 
 ```bash
 TIMESTAMP="$(date -u +"%Y-%m-%dT%H-%M-%S")"
@@ -72,12 +91,12 @@ status: open
 ---
 EOF
 
-git add .routines/ src/content/blog/ src/generated/versions-selected.json
+git add .routines/ src/content/blog/
 git commit -m "hronir: edição do pior post — <agent-id>"
 git push -u origin HEAD
 ```
 
-## 6. Abrir PR e habilitar auto-merge
+## 7. Abrir PR e habilitar auto-merge
 
 Via MCP:
 

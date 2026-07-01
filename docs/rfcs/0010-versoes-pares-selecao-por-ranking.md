@@ -18,11 +18,12 @@
 
 ## Histórico de revisões
 
-| Data       | Mudança                                                                                                                                                                                              |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-06-12 | Versão inicial.                                                                                                                                                                                      |
-| 2026-06-12 | Review (Codex + autor): seleção idempotente, fallback publicável e acoplado, acoplamento atômico com qualificação de contrapartes, endereçamento `slug@uuid`.                                        |
-| 2026-06-12 | Fases 0–4 implementadas (PR #451): migração `index.*` → `v-*`, seleção via JSON com histerese, caches de fase 3, limpeza §4.8 (teste em `src/hronir/__tests__/`, `collectDefenses` unificado, docs). |
+| Data       | Mudança                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-12 | Versão inicial.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| 2026-06-12 | Review (Codex + autor): seleção idempotente, fallback publicável e acoplado, acoplamento atômico com qualificação de contrapartes, endereçamento `slug@uuid`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| 2026-06-12 | Fases 0–4 implementadas (PR #451): migração `index.*` → `v-*`, seleção via JSON com histerese, caches de fase 3, limpeza §4.8 (teste em `src/hronir/__tests__/`, `collectDefenses` unificado, docs).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| 2026-07-01 | Amendment (PR #862): `versions-selected.json` deixa de ser commitado (gitignorado, como `hronir_session.json`) e `select()` deixa de ter histerese. A regra 1 antiga ("mantém a seleção atual a menos que o desafiante vença por margem") dependia de memória entre execuções — inviável sem commit. Nova regra: por diretório, vence a versão publicável com mais estrelas entre as que já têm `n ≥ SELECT_MIN_DUELS` (piso estatístico, mantido); sem nenhuma candidata qualificada, cai para a mais recente publicável (regra 2, inalterada). `SELECT_MARGIN` deixa de valer para a seleção exibida — sobrevive só como heurística de agendamento em `pickVersionDuel` (prioriza testar num idioma a revisão que já lidera no outro). O acoplamento de grupos de tradução (§4.4) é mantido, mas avaliado do zero a cada chamada em vez de incrementalmente: se nenhuma revisão comum publicável qualifica, cada idioma decide sozinho e o `doctor` reporta o grupo como divergente — isso passou a aparecer com mais frequência do que antes (a histerese represava esse avanço independente; sem ela, um idioma com evidência suficiente publica sua melhor versão na hora, mesmo que o par ainda não tenha alcançado). `hronir:select` roda localmente (sem commit) logo no início de qualquer sessão, antes do primeiro comando que lê a seleção (`hronir:init` via `listEnglishWithKey()`, `hronir:draft-worst`) — um checkout novo não tem o arquivo. |
 
 ---
 
@@ -129,9 +130,13 @@ em `scripts/hronir/lib/__tests__/` (CLAUDE.md ainda documenta módulos lá).
 
 > **Não há canônica. Toda versão é um arquivo `v-*` par das outras; o que o
 > site publica em `/blog/<slug>/` é a versão selecionada pelo ranking.** A
-> seleção é um artefato gerado e commitado (`versions-selected.json`), não um
-> nome de arquivo privilegiado. Mudar a versão exibida é mudar uma linha num
-> JSON — atômico, reversível, com diff legível — nunca um swap de arquivos.
+> seleção é um artefato gerado (`versions-selected.json`), não um nome de
+> arquivo privilegiado. Mudar a versão exibida é mudar uma linha num JSON —
+> atômico, reversível — nunca um swap de arquivos. Diferente de outros
+> artefatos gerados do repo, este não é commitado (amendment 2026-07-01):
+> `select()` é uma função pura de rate files + arquivos de versão, sem
+> memória de execuções passadas, então o `prebuild` recomputa o resultado
+> correto do zero a cada build.
 
 Consequências diretas:
 
@@ -181,22 +186,24 @@ Novo comando `hronir:select` computa, por diretório, a versão exibida:
 }
 ```
 
-Regra de seleção (mantém os limiares da RFC 0003 como **histerese**, para a
-versão exibida não ficar oscilando):
+Regra de seleção (amendment 2026-07-01: sem histerese — função pura do
+ranking atual, recomputada do zero a cada chamada, sem depender de qual
+versão estava selecionada antes):
 
-1. **Há seleção válida:** a versão atualmente selecionada é mantida, a menos
-   que uma rival tenha `stars` maior por **margem ≥ 0.3★ com n ≥ 2 duelos de
-   versão** — ambos os lados devem ter rating (corrige V2). Versões recém
-   criadas pelo `draft-worst` (sem duelos, não marcadas `draft: true`) **não
-   disparam esta regra**: a ausência de duelos nunca substitui uma seleção
-   existente. **Exceção:** se a versão selecionada não passar em `isPublished`
-   (foi marcada `draft: true` ou ganhou `publishDate` futuro pós-seleção),
-   ela é descartada e a regra 2 é aplicada imediatamente.
-2. **Sem seleção válida** (diretório estreando no JSON, ou seleção anterior
-   descartada pela exceção acima): vence a versão **mais recente por timestamp
-   de nome** que passe em `isPublished`. Sem publicável, o slug fica fora do
-   JSON. Desempate determinístico pelo nome.
+1. **Vence a versão com mais estrelas entre as candidatas qualificadas**
+   (publicáveis, com **n ≥ 2 duelos de versão** — piso estatístico contra
+   promover uma versão nova por um único duelo de sorte). Empate desfeito por
+   mais duelos, depois pelo arquivo mais novo.
+2. **Sem nenhuma candidata qualificada** (diretório estreando, ou nenhuma
+   versão publicável ainda acumulou duelos suficientes): vence a versão
+   **mais recente por timestamp de nome** que passe em `isPublished`. Sem
+   publicável, o slug fica fora do JSON. Desempate determinístico pelo nome.
 3. A seleção nunca aponta para arquivo inexistente — `hronir:doctor` valida.
+
+Grupos de tradução (§4.4) continuam preferindo uma revisão comum entre os
+idiomas quando ela existe e qualifica; se nenhuma revisão comum qualificar,
+cada idioma decide sozinho (regra 1/2 acima) e o `doctor` reporta o grupo
+como divergente.
 
 No Astro, a collection `blog` troca o glob `**/index.{md,mdx}` por um **loader
 custom** que lê `versions-selected.json` e carrega exatamente um arquivo por
@@ -204,11 +211,14 @@ slug (id = nome da pasta, preservando todas as URLs). A collection
 `blogVersions` (histórico em `/blog/<slug>/v/<uuid>`, noindex) passa a listar
 todas as versões **exceto** a selecionada.
 
-O arquivo é **commitado** (build reprodutível a partir do git; o diff entre
-commits é a história das trocas de versão — mesmo padrão do
-`ranking-snapshot.json`). Conformidade com o padrão de dados persistidos do
-repo: schema `selection-v1`, script de migração preservado em
-`scripts/oneoff/`, validação no doctor.
+O arquivo **não é commitado** (amendment 2026-07-01: gitignorado, como
+`hronir_session.json`). O build é reprodutível a partir dos rate files e dos
+arquivos de versão, ambos commitados — `select()` é puro e determinístico,
+sem I/O externo, então o JSON em si não carrega informação que não esteja já
+no resto do repo. Ainda segue o padrão de dados persistidos do repo onde faz
+sentido — schema `selection-v1`, validação no doctor — mas sem script de
+migração e sem histórico via `git log` (não há commits para um arquivo
+gitignorado).
 
 `hronir:select` é **idempotente**: antes de gravar, compara o novo mapeamento
 (`slug → file`) com o conteúdo atual do JSON ignorando `_meta.generatedAt`; se
@@ -449,8 +459,11 @@ atualizado (diretórios, comandos `promote`/`draft-commit` substituídos por
 | `hronir:edit-worst`/aliases          | Mantidos como aliases.                                                                     |
 | `hronir:doctor`                      | Ganha: validação `selection-v1`, pares duplicados por sessão, `after-mood` obrigatório.    |
 
-Workflow de build: `hronir:select` roda antes do `astro build` (junto do
-`generate-ranking-snapshot`); se o JSON mudar, o diff vai no commit da sessão.
+Workflow de build: `hronir:select` roda antes do `astro build` via
+`prebuild` (junto do `generate-translation-pairs`/`generate-redirects`); o
+JSON gerado não é commitado (amendment 2026-07-01, ver histórico de
+revisões) — sessões rodam `select` localmente para o próprio CLI e o
+`doctor` funcionarem, mas o resultado fica de fora do `git add`.
 
 ---
 

@@ -400,9 +400,14 @@ function randomMoodGlyph() {
 // directory actually has a non-selected version.
 const VERSION_DUEL_PROB = 0.34;
 
-// RFC 0010 §4.2: selection hysteresis. A challenger only displaces the
-// selected version when it leads by at least SELECT_MARGIN stars over at
-// least SELECT_MIN_DUELS version duels — and both sides must have a rating.
+// Statistical floor: a version needs at least SELECT_MIN_DUELS version
+// duels before it's trusted to compete for display at all (§4.2, amended
+// 2026-07-01 — selection is stateless now, see select() below).
+// SELECT_MARGIN is no longer used for display (no more hysteresis); it
+// still biases which version duel pickVersionDuel() schedules next — a
+// revision that already leads by this margin in one language is
+// prioritized for testing in its siblings, to unblock coupled selection
+// faster (§4.4).
 const SELECT_MARGIN = 0.3;
 const SELECT_MIN_DUELS = 2;
 
@@ -2208,6 +2213,11 @@ export function migrate({ dryRun = false } = {}) {
 export function doctor() {
   const pathToKey = buildPathToKeyIndex();
   const issues = [];
+  // Non-blocking findings: expected, self-healing states that shouldn't fail
+  // CI (e.g. a translation group temporarily on different revisions — see
+  // RFC 0010 §4.4 amendment 2026-07-01, common now that selection has no
+  // hysteresis to hold languages back while a sibling catches up).
+  const warnings: string[] = [];
 
   if (fs.existsSync(SESSION_PATH)) {
     issues.push(
@@ -2604,7 +2614,7 @@ export function doctor() {
         const detail = [...revs.entries()]
           .map(([rev, slugs]) => `${slugs.join("+")}=${rev}`)
           .join(" vs ");
-        issues.push(
+        warnings.push(
           `grupo "${key}" divergente entre línguas (${detail}) — próxima rodada de draft-worst/select deve reconvergir`
         );
       }
@@ -2775,6 +2785,11 @@ export function doctor() {
     }
   } catch {
     // git not available or not a repo — skip silently
+  }
+
+  if (warnings.length > 0) {
+    console.log(`doctor: ${warnings.length} aviso(s) (não bloqueiam):`);
+    for (const w of warnings) console.log("  - " + w);
   }
 
   if (issues.length === 0) {
@@ -2958,80 +2973,70 @@ export function editCommit(msg: string) {
   console.log("Commit as alterações com git normalmente.");
 }
 
-// ── RFC 0010 §4.2/§4.4: ranking-driven selection with hysteresis ────────────
+// ── RFC 0010 §4.2/§4.4: ranking-driven selection (amended 2026-07-01) ───────
 
 const PRUNED_PATH = "src/generated/versions-pruned.json";
 const PRUNE_MARGIN = 0.5;
 const PRUNE_MIN_DUELS = 3;
 
-interface DirState {
-  slug: string;
-  versions: VersionInfo[];
-  /** Currently selected version, when the selection entry is valid and
-   *  publishable. */
-  selected: VersionInfo | null;
-  /** True when a selection entry exists but points at a missing or
-   *  unpublishable version (§4.2 rule-1 exception → rule 2). */
-  invalidSelection: boolean;
-  /** True when the slug has no selection entry yet (debuting directory). */
-  isNew: boolean;
-}
-
-function newestPublished(d: DirState): VersionInfo | null {
-  for (let i = d.versions.length - 1; i >= 0; i--) {
-    if (d.versions[i].published) return d.versions[i];
+function newestPublished(versions: VersionInfo[]): VersionInfo | null {
+  for (let i = versions.length - 1; i >= 0; i--) {
+    if (versions[i].published) return versions[i];
   }
   return null;
 }
 
-// RFC 0010 §4.2/§4.4: recompute versions-selected.json from the version-duel
-// ranking. Hysteresis: the selected version is only displaced by a challenger
-// with stars ≥ selected + SELECT_MARGIN over n ≥ SELECT_MIN_DUELS — both
-// sides rated. Translation groups advance atomically: every sibling
-// directory must hold a publishable counterpart of the same revision
-// (draftCreatedAt) that independently qualifies, or nobody moves.
+// Highest-rated publishable candidate among `versions` (n ≥ SELECT_MIN_DUELS
+// required to compete at all — an untested draft doesn't win on a fluke).
+// Ties broken by more duels, then newest file. Null when nobody has enough
+// evidence yet — the caller falls back to newestPublished (§4.2 rule 2).
+function pickHighestRated(
+  ratings: Map<string, { stars: number; n: number }>,
+  versions: VersionInfo[]
+): VersionInfo | null {
+  const rated = versions.filter((v) => {
+    if (!v.published) return false;
+    const vs = versionStars(ratings, v);
+    return vs != null && vs.n >= SELECT_MIN_DUELS;
+  });
+  if (rated.length === 0) return null;
+  return rated.reduce((best, v) => {
+    const bs = versionStars(ratings, best)!;
+    const vs = versionStars(ratings, v)!;
+    if (vs.stars !== bs.stars) return vs.stars > bs.stars ? v : best;
+    if (vs.n !== bs.n) return vs.n > bs.n ? v : best;
+    return v.file > best.file ? v : best;
+  });
+}
+
+// RFC 0010 §4.2/§4.4 (amended 2026-07-01): recompute versions-selected.json
+// as a pure function of the version-duel ranking and the version files
+// currently on disk — no memory of any prior selection (hysteresis was
+// dropped; see revision history). For each directory the highest-rated
+// publishable version with n ≥ SELECT_MIN_DUELS wins outright; directories
+// with no rated candidate yet fall back to the newest publishable version.
+// Translation groups (§4.4) prefer a revision (draftCreatedAt) that has a
+// publishable counterpart in every sibling, so languages tend to advance
+// together; when no such revision exists each sibling decides alone and
+// hronir:doctor reports the group as divergent.
 export function select({ dryRun = false } = {}) {
   const ratings = computeVersionRatings();
-  const selection = readSelection();
 
-  const dirs = new Map<string, DirState>();
+  const dirs = new Map<string, VersionInfo[]>();
   for (const slug of listVersionSlugs()) {
     const versions = listDirVersions(slug);
-    if (versions.length === 0) continue;
-    const entry = selection[slug];
-    let selected: VersionInfo | null = null;
-    let invalidSelection = false;
-    if (entry) {
-      selected =
-        versions.find((v) => v.file === entry.file) ??
-        versions.find((v) => v.uuid === entry.uuid) ??
-        null;
-      // Unpublishable (draft or future publishDate) → rule 2 fallback to an
-      // older peer, deliberately: selection is duel-driven, so publishDate
-      // only schedules *debuting* posts (no selection yet). A future date on
-      // a selected version demotes it to challenger — it returns by winning
-      // duels, not by the calendar.
-      if (selected && !selected.published) selected = null;
-      if (!selected) invalidSelection = true;
-    }
-    dirs.set(slug, {
-      slug,
-      versions,
-      selected,
-      invalidSelection,
-      isNew: !entry,
-    });
+    if (versions.length > 0) dirs.set(slug, versions);
   }
 
   // Translation groups (slugs sharing a translationKey). Directories without
   // a key form trivial single-member groups.
   const groups = new Map<string, string[]>();
-  for (const d of dirs.values()) {
+  for (const [slug, versions] of dirs) {
     const key =
-      d.versions.find((v) => v.translationKey)?.translationKey ??
-      `__solo__${d.slug}`;
+      versions.find((v) => v.translationKey)?.translationKey ??
+      `__solo__${slug}`;
     if (!groups.has(key)) groups.set(key, []);
-    groups.get(key)!.push(d.slug);
+    groups.get(key)!.push(slug);
   }
 
   const result: SelectionEntries = {};
@@ -3039,154 +3044,50 @@ export function select({ dryRun = false } = {}) {
     result[slug] = { file: v.file, uuid: v.uuid };
   };
 
-  // Baseline: keep every valid current selection.
-  for (const d of dirs.values()) {
-    if (d.selected) setResult(d.slug, d.selected);
-  }
-
   for (const [, slugs] of groups) {
-    const members = slugs.map((s) => dirs.get(s)!);
-    const hasInvalid = members.some((d) => d.invalidSelection);
+    const members = slugs.map((s) => ({ slug: s, versions: dirs.get(s)! }));
 
-    if (hasInvalid) {
-      // §4.4 coupled fallback: move the whole group to the newest revision
-      // that has a publishable counterpart in every member directory.
-      const invalids = members.filter((d) => d.invalidSelection);
-      const candidateRevisions: string[] = [];
-      for (const d of invalids) {
-        for (let i = d.versions.length - 1; i >= 0; i--) {
-          const v = d.versions[i];
-          if (v.published && v.draftCreatedAt) {
-            candidateRevisions.push(v.draftCreatedAt);
-          }
-        }
-      }
-      let moved = false;
-      for (const rev of candidateRevisions) {
-        const counterparts = members.map((d) =>
-          d.versions.find((v) => v.published && v.draftCreatedAt === rev)
+    if (members.length > 1) {
+      // §4.4: revisions with a publishable counterpart in every member.
+      const revisionCoverage = new Map<string, number>();
+      for (const m of members) {
+        const revs = new Set(
+          m.versions
+            .filter((v) => v.published && v.draftCreatedAt)
+            .map((v) => v.draftCreatedAt!)
         );
-        if (counterparts.every(Boolean)) {
-          members.forEach((d, i) => {
-            setResult(d.slug, counterparts[i]!);
-            console.log(
-              `[select] ${d.slug}: grupo movido para revisão ${rev} (${counterparts[i]!.file})`
-            );
-          });
-          moved = true;
-          break;
+        for (const r of revs) {
+          revisionCoverage.set(r, (revisionCoverage.get(r) ?? 0) + 1);
         }
       }
-      if (!moved) {
-        // No common publishable revision: each invalid directory falls back
-        // alone (publishing valid content beats language parity); doctor
-        // reports the group as divergent.
-        for (const d of invalids) {
-          const np = newestPublished(d);
-          if (np) {
-            setResult(d.slug, np);
-            console.log(
-              `[select] ${d.slug}: fallback solo para ${np.file} (grupo sem revisão comum publicável — divergência reportada pelo doctor)`
-            );
-          } else {
-            delete result[d.slug];
-            console.log(
-              `[select] ${d.slug}: sem versão publicável — slug fora da seleção`
-            );
-          }
-        }
-      }
-      continue;
-    }
-
-    // §4.2 rule 1: ranked challengers, atomically coupled (§4.4).
-    let proposal: {
-      dir: DirState;
-      challenger: VersionInfo;
-      margin: number;
-    } | null = null;
-    for (const d of members) {
-      if (!d.selected) continue;
-      const selStars = versionStars(ratings, d.selected);
-      if (!selStars) continue; // both sides must be rated (fixes V2)
-      for (const v of d.versions) {
-        if (v.selected || !v.published) continue;
-        const vs = versionStars(ratings, v);
-        if (!vs || vs.n < SELECT_MIN_DUELS) continue;
-        const margin = vs.stars - selStars.stars;
-        if (margin < SELECT_MARGIN) continue;
-        if (!proposal || margin > proposal.margin) {
-          proposal = { dir: d, challenger: v, margin };
-        }
-      }
-    }
-    if (!proposal) continue;
-
-    const rev = proposal.challenger.draftCreatedAt;
-    const withVersions = members; // every member dir has ≥1 version here
-    if (!rev && withVersions.length > 1) {
-      console.log(
-        `[select] ${proposal.dir.slug}: desafiante ${proposal.challenger.file} qualifica (+${proposal.margin.toFixed(2)}★) mas não tem draftCreatedAt — avanço acoplado impossível, grupo mantido`
+      const commonRevisions = new Set(
+        [...revisionCoverage]
+          .filter(([, n]) => n === members.length)
+          .map(([r]) => r)
       );
-      continue;
-    }
-
-    // Each sibling needs a counterpart of the same revision that
-    // independently qualifies: publishable, n ≥ SELECT_MIN_DUELS, stars not
-    // inferior to that directory's current selection.
-    const switches: Array<{ dir: DirState; to: VersionInfo }> = [];
-    let blocked = false;
-    for (const d of withVersions) {
-      const counterpart =
-        d.slug === proposal.dir.slug
-          ? proposal.challenger
-          : d.versions.find((v) => v.published && v.draftCreatedAt === rev);
-      if (!counterpart) {
-        console.log(
-          `[select] grupo de ${proposal.dir.slug}: ${d.slug} sem contraparte publicável da revisão ${rev} — ninguém avança`
-        );
-        blocked = true;
-        break;
-      }
-      if (counterpart.selected) {
-        // Sibling is already on this revision — nothing to switch there.
+      if (commonRevisions.size > 0) {
+        for (const m of members) {
+          const pool = m.versions.filter(
+            (v) =>
+              v.published &&
+              v.draftCreatedAt &&
+              commonRevisions.has(v.draftCreatedAt)
+          );
+          const winner =
+            pickHighestRated(ratings, pool) ?? newestPublished(pool);
+          if (winner) setResult(m.slug, winner);
+        }
         continue;
       }
-      const cs = versionStars(ratings, counterpart);
-      if (!cs || cs.n < SELECT_MIN_DUELS) {
-        console.log(
-          `[select] grupo de ${proposal.dir.slug}: contraparte ${counterpart.file} tem ${cs?.n ?? 0} duelo(s) (mínimo ${SELECT_MIN_DUELS}) — ninguém avança`
-        );
-        blocked = true;
-        break;
-      }
-      const curStars = d.selected ? versionStars(ratings, d.selected) : null;
-      if (curStars && cs.stars < curStars.stars) {
-        console.log(
-          `[select] grupo de ${proposal.dir.slug}: contraparte ${counterpart.file} (${cs.stars.toFixed(2)}★) regrediria vs seleção atual (${curStars.stars.toFixed(2)}★) — ninguém avança`
-        );
-        blocked = true;
-        break;
-      }
-      switches.push({ dir: d, to: counterpart });
-    }
-    if (blocked) continue;
-
-    for (const s of switches) {
-      setResult(s.dir.slug, s.to);
       console.log(
-        `[select] ${s.dir.slug}: ${s.dir.selected?.file ?? "(nenhuma)"} → ${s.to.file} (+${proposal.margin.toFixed(2)}★ na língua disparadora, n=${versionStars(ratings, proposal.challenger)?.n})`
+        `[select] grupo de ${members.map((m) => m.slug).join(", ")}: contraparte não se qualifica — cada língua decide sozinha (divergência possível, doctor reporta)`
       );
     }
-  }
 
-  // §4.2 rule 2 for debuting directories: newest publishable version.
-  for (const d of dirs.values()) {
-    if (!d.isNew || result[d.slug]) continue;
-    const np = newestPublished(d);
-    if (np) {
-      setResult(d.slug, np);
-      console.log(`[select] ${d.slug}: estreia — ${np.file}`);
+    for (const m of members) {
+      const winner =
+        pickHighestRated(ratings, m.versions) ?? newestPublished(m.versions);
+      if (winner) setResult(m.slug, winner);
     }
   }
 

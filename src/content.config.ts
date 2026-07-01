@@ -2,9 +2,11 @@ import { existsSync, readFileSync } from "node:fs";
 import { defineCollection, z, type SchemaContext } from "astro:content";
 import { glob } from "astro/loaders";
 
-// RFC 0010: the published version of each post is whatever
-// versions-selected.json points at — selection is a generated, committed
-// artifact (written by `hronir:select`), not a privileged filename.
+// RFC 0010 (amended 2026-07-01): the published version of each post is
+// whatever versions-selected.json points at — selection is a generated
+// artifact (written by `hronir:select`, run via `prebuild`), not a
+// privileged filename. The file is gitignored, not committed — select() is
+// a pure function of rate files + version files, no hysteresis.
 const selectedFiles: string[] = [];
 if (existsSync("./src/generated/versions-selected.json")) {
   // Present-but-unparseable must fail the build: silently falling back to

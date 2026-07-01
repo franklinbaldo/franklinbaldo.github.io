@@ -599,6 +599,14 @@
     "pt": "/pt/blog/quem-o-asterisco-protege/",
     "en": "/blog/who-the-asterisk-protects/"
   },
+  "/blog/quem-sou-eu-en/": {
+    "en": "/blog/quem-sou-eu-en/",
+    "pt": "/pt/blog/quem-sou-eu/"
+  },
+  "/pt/blog/quem-sou-eu/": {
+    "en": "/blog/quem-sou-eu-en/",
+    "pt": "/pt/blog/quem-sou-eu/"
+  },
   "/blog/reality-maintenance-moving-window-xii-en/": {
     "en": "/blog/reality-maintenance-moving-window-xii-en/",
     "pt": "/pt/blog/reality-maintenance-moving-window-xii/"
