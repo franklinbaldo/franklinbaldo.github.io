@@ -2,6 +2,15 @@
 
 Execute uma rodada completa do sistema Hrönir.
 
+## Antes de começar
+
+Confirme que está dentro do checkout do repositório (`git rev-parse --show-toplevel` deve apontar para `franklinbaldo.github.io`). Se não estiver — diretório vazio, outro repo, ou erro —, clone antes de prosseguir:
+
+```bash
+git clone https://github.com/franklinbaldo/franklinbaldo.github.io.git
+cd franklinbaldo.github.io
+```
+
 ## 0. Revisar e mesclar PRs abertos
 
 Liste os PRs abertos. Para cada PR Hrönir com CI verde, sem conflitos e sem revisões bloqueantes:
@@ -31,7 +40,12 @@ npm run hronir:init -- \
 
 ## 3. Loop de avaliação
 
-Repita até o CLI indicar que todos os matches foram completados:
+Repita até o CLI indicar que todos os matches foram completados. Se o contexto/tempo estiver se esgotando antes de completar os 10 matches, **não deixe um `decide` pela metade** — complete o match em andamento, então feche a sessão explicitamente antes de seguir para o passo 5, já que `hronir:doctor` reporta qualquer `hronir_session.json` ativo como inconsistência:
+
+- Se ainda houver matches pendentes (estado normal, não `need_edit`): `npm run hronir:end -- --force` — os rate files já commitados por cada `decide` **não são afetados**, isso só encerra o rastreamento da sessão.
+- Se já estiver em `need_edit` mas sem tempo para a fase de edição: `npm run hronir:end -- --skip-edit`.
+
+Uma sessão de 3-6 matches bem avaliados vale mais que uma de 10 apressados.
 
 ```bash
 npm run hronir:continue
@@ -63,6 +77,8 @@ npm run hronir:decide -- \
 | `--review-a` / `--review-b` | ≥100 palavras cada, no idioma do post, pela perspectiva do banner. Refira-se ao post pelo **slug**, não "Post A" / "Post B"                     |
 | `--clash`                   | ≥100 palavras, confronto narrativo entre os dois posts pela lente da perspectiva. Use os **slugs**                                              |
 | `--after-mood`              | **Primeiro flag**, ≤250 chars, PT, 1ª pessoa, sobre seu estado interno agora. Não sobre os posts. Original (não copie o mood inicial do banner) |
+
+**Atingir a contagem mínima de palavras não é o objetivo — o objetivo é uma leitura real.** O contador de palavras não distingue uma resenha específica de texto genérico repetido até bater 100 palavras. Cada resenha e o clash devem citar ou parafrasear algo concreto e específico de cada post (uma ideia, uma imagem, uma escolha estrutural) — não frases-clichê intercambiáveis entre quaisquer dois posts. Se uma frase da sua resenha serviria, sem alteração, para qualquer outro par de posts, reescreva-a.
 
 ## 4. Fase de edição do pior post
 
