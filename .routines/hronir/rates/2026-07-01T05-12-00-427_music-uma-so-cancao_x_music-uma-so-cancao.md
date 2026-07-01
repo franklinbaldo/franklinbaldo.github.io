@@ -26,60 +26,61 @@ season: 1
 override: null
 perspective_id: curious-outsider
 evaluator_mood: >-
-  Nuvem cobrindo sol é luz dividida. O autor está tentando se dividir: filosofia
-  vs. sátira. Um continua para frente; o outro volta ao familiar. Preciso
-  conhecer melhor o padrão.
+  Cloud covering sun is light divided. The author is trying to split themselves:
+  philosophy vs. satire. One continues forward; the other returns to the familiar.
+  I need to know the pattern better.
 mood_glyph: ⇻
 evaluator_mood_after: >-
-  Glifo é seta dupla, bifurcação. A versão A tomou decisão clara (Concrete
-  Application); B anda em círculos de incerteza. Como leitor outsider, prefiro
-  ser ensinado por quem sabe o custo disso do que ficar ouvindo 'I cannot'
-  repetidamente.
-impression_a: Ler post A...
+  The glyph is a double arrow, bifurcation. Version A made a clear decision
+  (Concrete Application); B circles in uncertainty. As a Curious Outsider reader,
+  I prefer to be taught by someone who knows the cost of this rather than hear
+  'I cannot' repeatedly.
+impression_a: Read post A.
 impression_b: >-
-  Versão B é mais hedged: 'I cannot be certain', 'I am less certain', 'I cannot
-  fully justify', 'I cannot fully resolve' aparecem repetidamente. Para um
-  leitor Curious Outsider, isso pode soar como falta de confiança na própria
-  trabalho. A honestidade epistêmica é admirável, mas quando repetida demais se
-  torna ruído. A versão B não tem a seção 'Concrete Application' que A
-  adicionou. Sem ela, o leitor fica com filosofia abstrata sobre Tao Te Ching
-  sem saber para que isso serve além de... cantar sobre paradoxo. A versão B é
-  mais sincera sobre seus limites, mas menos generosa pedagogicamente com quem
-  não conhece o tópico.
+  Version B is more hedged: 'I cannot be certain', 'I am less certain', 'I cannot
+  fully justify', 'I cannot fully resolve' appear repeatedly. For a Curious
+  Outsider reader, this can sound like lack of confidence in the work. Epistemic
+  honesty is admirable, but when repeated too much it becomes noise. Version B
+  lacks the 'Concrete Application' section that A added. Without it, the reader
+  is left with abstract philosophy about Tao Te Ching without knowing what it
+  serves beyond singing about paradox. Version B is more honest about its limits,
+  but less pedagogically generous to those unfamiliar with the topic.
 rate_a: 4.25
 rate_b: 3.5
 clash: >-
-  Ambas falam do mesmo paradoxo: cantar sobre inefabilidade é traição dela. Mas
-  A e B dividem-se em pedagogia. B diz repetidamente 'I cannot know'; A diz 'I
-  know this is paradoxo, e aqui está como funciona na prática'. Para um Curious
-  Outsider, o conhecimento do paradoxo (_é_ paradoxo) é suficiente para aprender
-  algo real. Versão A funciona como ferry: pega você do lado que não sabe e
-  deixa no lado que sabe que não se pode saber — mas ao menos você viajou e viu
-  a margem oposta. Versão B é mais como ficar na margem original ouvindo
-  história indefinida de alguém que também não cruzou. A mudança de versão não
-  foi sobre se o paradoxo é 'real' (é) mas sobre se o leitor é bem-vindo em
-  desistir de entendê-lo (é). Versão A deu permissão; B não.
+  Both address the same paradox: singing about ineffability is its betrayal. But
+  A and B divide on pedagogy. B repeatedly says 'I cannot know'; A says 'I know
+  this is paradox, and here's how it works in practice.' For a Curious Outsider,
+  understanding the paradox (_is_ paradox) is enough to learn something real.
+  Version A functions as a ferry: it takes you from the side that doesn't know
+  to the side that knows you can't know — but at least you traveled and saw the
+  opposite shore. Version B is more like staying on the original shore listening
+  to someone's indefinite story, told by someone who also hasn't crossed. The
+  version change wasn't about whether the paradox is 'real' (it is) but whether
+  the reader is welcome to give up understanding it (they are). Version A granted
+  permission; B did not.
 review_a: >-
-  A versão atual de music-uma-so-cancao ganhou uma seção 'Concrete Application'
-  que não havia na versão anterior. Para um leitor Curious Outsider (sem
-  background no tópico), isso é diferença fundamental. A nova seção ensina:
-  'This verse functions as a structural brake... When explanation becomes
-  defense, and defense becomes doubt, the paradox offers an exit.' Isso traduz
-  filosofia abstrata (Tao Te Ching) em comportamento reconhecível
-  (over-explaining). A versão menos hedged (removed 'I believe', 'I cannot be
-  certain') mantém humildade — a última linha diz 'can never be sung' — mas não
-  interrompe didática com repetições de incerteza. Um leitor outsider consegue
-  terminar a nota tendo aprendido algo concreto, não apenas ter ficado pairando
-  em paradoxo.
+  The current version of music-uma-so-cancao gained a 'Concrete Application'
+  section that wasn't in the earlier version. For a Curious Outsider reader
+  (without background in the topic), this is fundamental difference. The new
+  section teaches: 'This verse functions as a structural brake... When
+  explanation becomes defense, and defense becomes doubt, the paradox offers an
+  exit.' This translates abstract philosophy (Tao Te Ching) into recognizable
+  behavior (over-explaining). The less-hedged version (removed 'I believe', 'I
+  cannot be certain') maintains humility—the final line says 'can never be sung'—
+  but doesn't interrupt pedagogy with repetitions of uncertainty. An outsider
+  reader can finish the note having learned something concrete, rather than
+  remaining suspended in paradox.
 review_b: >-
-  A versão anterior de music-uma-so-cancao é epistemicamente honesta: 'I cannot
+  The earlier version of music-uma-so-cancao is epistemically honest: 'I cannot
   be certain', 'I am less certain', 'I cannot fully justify', 'I cannot fully
-  resolve'. Essa honestidade é admirável. Mas para um leitor Curious Outsider,
-  esse hedging repetido cria problema pedagógico: se o próprio autor não tem
-  confiança no que está dizendo, por que devo continuar lendo? A versão B deixa
-  o leitor sem ninguém para ancoragem. Não há seção 'Concrete Application'. Sem
-  ela, fica: filosofia sobre Tao Te Ching + admissão de incerteza sobre a
-  própria filosofia = ninguém guia ninguém. A versão B é escritura de alguém em
-  dúvida; A é escrita de alguém que entende o custo da certeza.
+  resolve.' This honesty is admirable. But for a Curious Outsider reader, this
+  repeated hedging creates a pedagogical problem: if the author themselves lacks
+  confidence in what they're saying, why should I keep reading? Version B leaves
+  the reader with no one for anchoring. There's no 'Concrete Application'
+  section. Without it, you have: philosophy about Tao Te Ching + admission of
+  uncertainty about the philosophy itself = no one guides anyone. Version B is
+  writing from doubt; A is writing from someone who understands the cost of
+  certainty.
 ---
 

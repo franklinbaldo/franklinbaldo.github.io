@@ -26,56 +26,57 @@ season: 1
 override: null
 perspective_id: lateral-essayist
 evaluator_mood: >-
-  O glifo aponta para cima em duas direções simultaneamente. Sinto menos rigidez
-  e mais circulação de energia. Estes posts falam da mesma coisa: como
-  estruturas bem-intencionadas contêm as sementes de sua própria transformação.
+  The glyph points upward in two directions simultaneously. I feel less rigidity
+  and more energy circulation. These posts discuss the same thing: how
+  well-intentioned structures contain the seeds of their own transformation.
 mood_glyph: ξ
 evaluator_mood_after: >-
-  O xi grego parece respiração em duas direções — absorve e expele. Estou mais
-  claro agora: uma coisa é estar presa numa estrutura; outra é estar viva dentro
-  dela.
+  The Greek xi looks like breathing in two directions—inhale and exhale. I'm
+  clearer now: one thing is being trapped in a structure; another is being alive
+  within it.
 impression_a: >-
-  Movimento de fora para dentro: Rutt → porque me importa → quem sou → minhas
-  questões → como se interrogam. Não é lista com quebras de parágrafo. A ordem
-  importa porque o leitor tem que estar convencido primeiro de que isso é
-  pessoal para chegar à biografia.
+  Movement from outside to inside: Rutt → why it matters to me → who I am → my
+  questions → how they interrogate each other. It's not a list with paragraph
+  breaks. The order matters because the reader must first be convinced this is
+  personal before reaching the biography.
 impression_b: >-
-  Versão praticamente idêntica. Mesma estrutura, mesmo movimento. Única
-  diferença é metadata. Se há edição, ela é mínima — não afeta o ritmo ou a
-  ordem. Duel?. Para Lateral Essayist, se a ordem e o ritmo são idênticos, não
-  há diferença de movimento.
+  Nearly identical version. Same structure, same movement. Only difference is
+  metadata. If there's editing, it's minimal—doesn't affect rhythm or order.
+  A duel? For a Lateral Essayist, if order and rhythm are identical, there's no
+  difference in movement.
 rate_a: 4.6
 rate_b: 4.45
 clash: >-
-  Em duelo de versão, um Lateral Essayist vê o que importa: ordem, ritmo,
-  movimento. Ambas as versões de two-questions-out-loud têm ordem idêntica,
-  ritmo idêntico, estrutura que não poderia ser reshuffled sem morte. São
-  estruturalmente gemêas. A versão desafiante (B) alega 'improved structural
-  cohesion' mas não o demonstra. Isso cria dois problemas: ou a reclamação era
-  falsa (B não tinha o que melhorar, então por que editar?) ou B falhou em fazer
-  o que prometeu (editar estruturalmente sem mudar estrutura é contraditório). A
-  versão selecionada (A) é honesta: não pretende ter sido melhorada, apenas foi
-  selecionada. Honestidade estrutural bate promessa vazia. A (selected), 2 a 1.
+  In a version duel, a Lateral Essayist sees what matters: order, rhythm,
+  movement. Both versions of two-questions-out-loud have identical order,
+  identical rhythm, structure that couldn't be reshuffled without death. They're
+  structurally twin. The challenger version (B) claims 'improved structural
+  cohesion' but doesn't demonstrate it. This creates two problems: either the
+  complaint was false (B had nothing to improve, so why edit?) or B failed to
+  deliver what it promised (editing structurally while keeping structure
+  unchanged is contradictory). The selected version (A) is honest: it doesn't
+  claim improvement, it was simply selected. Structural honesty beats empty
+  promise. A (selected), two to one.
 review_a: >-
-  two-questions-out-loud (versão selecionada) funciona como ensaio lateral
-  porque a ordem é inevitável. Começa em Rutt, torna-se pessoal, explica a
-  biografia, revela as questões, mostra como elas se interrogam. Mover a seção
-  sobre crescimento na Amazônia para cima destruiria o ensaio — o leitor ainda
-  não estaria investido em saber _por que_ isso importa. A estrutura não é
-  ornamental; é load-bearing. O ensaio é vivo porque cada trecho justifica sua
-  posição através do anterior. Não é passível de resumo sem morte. Cada trecho
-  justifica-se pelo anterior porque não há escapatória lógica. O ensaio
-  sobrevive como totalidade ou morre como dispersão. Isso é o ensaio lateral.
-  Nem sempre fácil; sempre necessário.
+  two-questions-out-loud (selected version) works as a lateral essay because the
+  order is inevitable. It begins with Rutt, becomes personal, explains the
+  biography, reveals the questions, shows how they interrogate each other. Moving
+  the section about growing up in Amazonia earlier would destroy the essay—the
+  reader wouldn't yet be invested in why it matters. The structure isn't
+  ornamental; it's load-bearing. The essay is alive because each section
+  justifies its position through the one before it. It can't be summarized
+  without death. Each section justifies itself because there's no logical escape.
+  The essay survives as totality or dies as dispersal. That is the lateral essay.
+  Not always easy; always necessary.
 review_b: >-
-  two-questions-out-loud (versão desafiante) apresenta-se como 'improved
-  structural cohesion as suggested by reviews'. O problema: estruturalmente, é
-  idêntica. Se houve melhoria de coesão estrutural, não é visível ao nível da
-  ordem, das transições ou do ritmo. Ou a edição foi apenas de palavras (o que
-  não altera movimento), ou a reclamação de falta de coesão na versão anterior
-  não era fundamentada. Para um Lateral Essayist, se a ordem e o ritmo são os
-  mesmos, a aliveness é a mesma. A versão desafiante fracassa por prometer
-  melhoria estrutural e não entregar—ou é honesta em que não há melhoria
-  estrutural a ser feita (nesse caso, por que editar?). Impasse.
+  two-questions-out-loud (challenger version) presents itself as 'improved
+  structural cohesion as suggested by reviews'. The problem: structurally, it's
+  identical. If there was improvement in structural cohesion, it's not visible at
+  the level of order, transitions, or rhythm. Either the editing was only of
+  words (which doesn't alter movement), or the complaint about lack of cohesion
+  in the earlier version was unfounded. For a Lateral Essayist, if order and
+  rhythm are the same, aliveness is the same. The challenger version fails by
+  promising structural improvement and not delivering—or is honest that there's
+  no structural improvement to be made (in which case, why edit?). Impasse.
 ---
 
