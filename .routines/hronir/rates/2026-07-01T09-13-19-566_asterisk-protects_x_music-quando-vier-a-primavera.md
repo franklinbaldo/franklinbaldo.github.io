@@ -55,44 +55,7 @@ impression_b: >-
   sobra vazio. Não há estrutura cômica aqui porque não há necessidade cômica. A
   música não dramatiza — é certo, é a voz certa para Caeiro. Mas é exatamente
   isso: não há work a ser feito por humor. O trabalho é de transparência, não de
-  inversão. --rate-a 4.50 --rate-b 2.75 --review-a asterisk-protects carrega seu
-  argumento inteiro através do humor estrutural. A piada-pivô — 'Não é security
-  theater. É theater de security theater' — remove-a e toda a análise sobre
-  ritual, PET bottle e audience cai. O texto não é engraçado para ser engraçado;
-  é engraçado porque a engraçadez é como se diz coisas sérias. 'The math is
-  mathing' é simples e estrutural. 'Ahem ahem IPERON' reconhece o absurdo com
-  gesto. Os 843 Franklin Silveira Baldos são autoironia que carrega todo o peso
-  da futilidade. A comparação entre Robson (consegue em 10 minutos) e Dona Maria
-  (paralisa nos asteriscos) não é piada, mas é donde vem toda a moralidade. O
-  humor não se afasta do argumento; o humor É o argumento — é como você percebe
-  o absurdo. Remove tudo que é engraçado e o post fica correto mas perde
-  transmissão emocional do estranho da situação. --review-b
-  music-quando-vier-a-primavera é uma configuração das palavras de Alberto
-  Caeiro de Pessoa — 'realidade não precisa de mim' — em music. Caeiro não traz
-  piada. Traz lógica e aceitação. 'Não tenho preferências para quando já não
-  puder ter preferências' é quase absurdo-lógico, e há uma elegância nisso, mas
-  não é humor que carrega argumento. É claridade que carrega paz. O argumento é:
-  minha morte é irrelevante e sinto alegria nesse pensamento. Se você tira
-  qualquer momento que possa ser lido como cômico, sobra o mesmo argumento
-  intacto. Não há trabalho estrutural sendo feito pelo humor porque não há
-  necessidade estrutural de humor aqui. A música (6/8, violão arpejado,
-  percussion suave) escolheu não dramatizar — é correto, é a voz que Caeiro
-  requer. Mas isso significa que não há load-bearing cômico. O trabalho é de
-  transparência pura, aceitação pura. Caeiro rejeita ironia. A música honra
-  isso. --clash asterisk-protects depende inteiramente de humor para dizer
-  coisas que humor é o único jeito de dizer. A piada não é decoration; é a forma
-  de articular o absurdo da situação. Tirar o humor deixa o post sem sua
-  ferramenta central de transmissão — você percebe logicamente que o asterisk
-  não funciona, mas não percebe emocionalmente que é estranho até rir do
-  absurdo. music-quando-vier-a-primavera rejeita humor porque seu assunto
-  (aceitação, irrelevância, paz) exige uma outra qualidade: transparência sem
-  ironia. Caeiro pode fazer uma piada sobre lógica ('Não tenho preferências para
-  quando não puder ter') mas não faz, porque a piada quebraria a aceitação pura
-  que é o ponto. A diferença é entre humor-como-ferramenta-necessária versus
-  humor-como-irrelevância. Para um leitor que valoriza humor como leveragem de
-  argumento, asterisk-protects é estruturalmente corajoso. Para um leitor de
-  Caeiro, a rejeição de humor é igualmente estrutural — a música que não
-  dramatiza é exatamente certa. Quatro pra um. --review-lang pt
+  inversão.
 rate_a: 4.5
 rate_b: 2.75
 clash: >-
