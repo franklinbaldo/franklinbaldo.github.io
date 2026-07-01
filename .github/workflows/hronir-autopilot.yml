@@ -96,6 +96,10 @@ jobs:
           #    .routines/ (see CLAUDE.md "Journals de sessão"); that file isn't
           #    under .routines/hronir/, so it gets its own exception below —
           #    subdirs other than hronir/ (e.g. .routines/takeout/) stay excluded.
+          #    Both routine docs also instruct `npm run hronir:select` before the
+          #    commit, which can rewrite src/generated/versions-selected.json —
+          #    that exact file gets its own exception too (not all of
+          #    src/generated/, to keep the gate narrow).
           FILES=$(gh pr view "$PR" --repo "$REPO" --json files --jq '.files[].path')
           HAS_RATE=0
           HAS_DRAFT=0
@@ -109,6 +113,7 @@ jobs:
               case "$f" in
                 .routines/*/*) ;;
                 .routines/*.md) ok=0 ;;
+                src/generated/versions-selected.json) ok=0 ;;
               esac
             fi
             if [ "$ok" -ne 0 ]; then
