@@ -40,7 +40,12 @@ npm run hronir:init -- \
 
 ## 3. Loop de avaliação
 
-Repita até o CLI indicar que todos os matches foram completados. Se o contexto/tempo estiver se esgotando antes de completar os 10 matches, **não deixe um `decide` pela metade** — pare no match atual já concluído, pule para o passo 5 (ou 4, se `need_edit` já tiver sido sinalizado) e finalize a sessão parcial normalmente. Uma sessão de 3-6 matches bem avaliados vale mais que uma de 10 apressados.
+Repita até o CLI indicar que todos os matches foram completados. Se o contexto/tempo estiver se esgotando antes de completar os 10 matches, **não deixe um `decide` pela metade** — complete o match em andamento, então feche a sessão explicitamente antes de seguir para o passo 5, já que `hronir:doctor` reporta qualquer `hronir_session.json` ativo como inconsistência:
+
+- Se ainda houver matches pendentes (estado normal, não `need_edit`): `npm run hronir:end -- --force` — os rate files já commitados por cada `decide` **não são afetados**, isso só encerra o rastreamento da sessão.
+- Se já estiver em `need_edit` mas sem tempo para a fase de edição: `npm run hronir:end -- --skip-edit`.
+
+Uma sessão de 3-6 matches bem avaliados vale mais que uma de 10 apressados.
 
 ```bash
 npm run hronir:continue
