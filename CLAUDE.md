@@ -201,6 +201,11 @@ Formato frouxo mas nomeado:
 - Site/infra: `tipo(escopo): resumo` — ex. `feat(ranking): add perspective filter`
 - Sessões Hrönir: `hronir: <N> matches — <agent-id>`
 - Docs/RFCs: `docs(rfc): RFC NNNN — título`
+- Remoção justificada de rate files: `hronir: remove <motivo>` — único caso em que
+  o guardrail de imutabilidade (`.github/workflows/check.yml`, "Rate file deletion
+  guard") permite deletar arquivos de `.routines/hronir/rates/`. Use só quando os
+  rates avaliaram uma versão publicada por engano (ex. um stub/placeholder), não
+  para "corrigir" avaliações legítimas de que você discorda.
 
 ### `.ts` vs `.mjs` em `src/lib/`
 
