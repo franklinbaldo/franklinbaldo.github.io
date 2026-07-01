@@ -32,9 +32,8 @@ evaluator_mood: >-
 mood_glyph: ⇻
 evaluator_mood_after: >-
   The glyph is a double arrow, bifurcation. Version A made a clear decision
-  (Concrete Application); B circles in uncertainty. As a Curious Outsider reader,
-  I prefer to be taught by someone who knows the cost of this rather than hear
-  'I cannot' repeatedly.
+  (Concrete Application); B circles in uncertainty. I prefer to be taught by
+  someone who knows the cost of this rather than hear 'I cannot' repeatedly.
 impression_a: Read post A.
 impression_b: >-
   Version B is more hedged: 'I cannot be certain', 'I am less certain', 'I cannot
