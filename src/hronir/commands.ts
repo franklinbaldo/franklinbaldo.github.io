@@ -495,7 +495,7 @@ function pickVersionDuel() {
     ? candidates.filter((c) => c.priority)
     : candidates;
   // Fewest duels first (spread coverage), then newest draft first (a
-  // just-created rascunho shouldn't wait behind a backlog of stale ones),
+  // just-created draft shouldn't wait behind a backlog of stale ones),
   // jitter only breaks true ties.
   pool.sort((a, b) => {
     if (a.duelsN !== b.duelsN) return a.duelsN - b.duelsN;

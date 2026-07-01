@@ -3,14 +3,15 @@ import { type CollectionEntry, getCollection } from "astro:content";
 import PageLayout from "../../../../layouts/PageLayout.astro";
 import VersionBanner from "../../../../components/VersionBanner.astro";
 import ArchivedContent from "../../../../components/ArchivedContent.astro";
+import MermaidEnhancer from "../../../../components/MermaidEnhancer.astro";
 import BackToTop from "../../../../components/BackToTop.astro";
 import {
   uuidForId,
   legacyUuidForId,
   slugOf,
-  rawContentUrl,
-  githubBlobUrl,
-} from "../../../../lib/versions.mjs";
+  archivedContentUrls,
+  GITHUB_REPO,
+} from "../../../../lib/versions.js";
 
 // RFC 0010: content-addressed version pages. Every non-selected version file
 // gets /blog/<slug>/v/<uuid>. A UUID that is *currently* the selected version
@@ -64,8 +65,9 @@ if (redirect) return Astro.redirect(live);
 
 const { title, lang, draftCommittedAt, draftMsg, date } = entry.data;
 const verDate = draftCommittedAt ? new Date(draftCommittedAt) : date;
-const rawUrl = rawContentUrl(entry.id);
-const githubUrl = githubBlobUrl(entry.id) ?? `https://github.com/franklinbaldo/franklinbaldo.github.io`;
+const urls = archivedContentUrls(entry.id);
+const rawUrl = urls.rawUrl;
+const githubUrl = urls.githubUrl ?? `https://github.com/${GITHUB_REPO}`;
 ---
 
 <PageLayout
@@ -94,6 +96,7 @@ const githubUrl = githubBlobUrl(entry.id) ?? `https://github.com/franklinbaldo/f
         <ArchivedContent rawUrl={rawUrl} githubUrl={githubUrl} lang={lang} />
       </article>
 
+      <MermaidEnhancer />
       <BackToTop />
     </div>
   </div>

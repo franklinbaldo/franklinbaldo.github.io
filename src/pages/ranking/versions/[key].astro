@@ -6,6 +6,7 @@ import {
   getPostVersionTrials,
 } from "../../../lib/hronir-rank";
 import { isPublished } from "../../../lib/publish";
+import { GITHUB_REPO } from "../../../lib/versions.js";
 
 // RFC 0012 §6.2: genealogy of one post's revisions — every version trial, the
 // distinct versions seen, and permalinks to the exact content judged.
@@ -43,7 +44,7 @@ const postHref = info
     : `/blog/${info.slug}/`
   : null;
 
-const REPO = "https://github.com/franklinbaldo/franklinbaldo.github.io";
+const REPO = `https://github.com/${GITHUB_REPO}`;
 function sourceHref(path: string | null | undefined) {
   return path ? `${REPO}/blob/main/${path}` : null;
 }
