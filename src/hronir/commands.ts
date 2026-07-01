@@ -432,6 +432,8 @@ function pickVersionDuel() {
     lang: string;
     selectedPath: string;
     challengerPath: string;
+    duelsN: number;
+    createdAt: number;
     priority: boolean;
   }> = [];
 
@@ -476,6 +478,10 @@ function pickVersionDuel() {
       lang: selected.lang,
       selectedPath: selected.path,
       challengerPath: challenger.path,
+      duelsN: versionStars(ratings, challenger)?.n ?? 0,
+      createdAt: challenger.draftCreatedAt
+        ? Date.parse(challenger.draftCreatedAt)
+        : 0,
       priority: Boolean(
         challenger.draftCreatedAt &&
         qualifiedRevisions.has(challenger.draftCreatedAt) &&
@@ -488,7 +494,15 @@ function pickVersionDuel() {
   const pool = candidates.some((c) => c.priority)
     ? candidates.filter((c) => c.priority)
     : candidates;
-  return pool[Math.floor(Math.random() * pool.length)];
+  // Fewest duels first (spread coverage), then newest draft first (a
+  // just-created draft shouldn't wait behind a backlog of stale ones),
+  // jitter only breaks true ties.
+  pool.sort((a, b) => {
+    if (a.duelsN !== b.duelsN) return a.duelsN - b.duelsN;
+    if (a.createdAt !== b.createdAt) return b.createdAt - a.createdAt;
+    return Math.random() - 0.5;
+  });
+  return pool[0];
 }
 
 function generateNextMatch(sessionObjective?: string) {

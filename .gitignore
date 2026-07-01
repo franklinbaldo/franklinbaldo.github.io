@@ -6,6 +6,9 @@ dist/
 # copied at build time from node_modules/katex by scripts/copy-katex.mjs
 public/katex/
 
+# copied at build time from node_modules/highlight.js by scripts/copy-katex.mjs
+public/hljs/
+
 # dependencies
 node_modules/
 

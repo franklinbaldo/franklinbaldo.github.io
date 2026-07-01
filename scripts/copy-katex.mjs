@@ -16,3 +16,15 @@ await cp(`${src}/katex.min.css`, `${dest}/katex.min.css`);
 await cp(`${src}/fonts`, `${dest}/fonts`, { recursive: true });
 
 console.log(`[copy-katex] copied katex.min.css + fonts to ${dest}`);
+
+// Same deal for highlight.js's theme: ArchivedContent.astro lazily <link>s
+// this for archived version pages, since a dynamic `import()` of a raw .css
+// file isn't reliably bundled by Vite inside a hoisted client <script>.
+const hljsSrc = resolve(
+  root,
+  "node_modules/highlight.js/styles/github-dark.css"
+);
+const hljsDest = resolve(root, "public/hljs/github-dark.css");
+await mkdir(dirname(hljsDest), { recursive: true });
+await cp(hljsSrc, hljsDest);
+console.log(`[copy-katex] copied highlight.js github-dark.css to ${hljsDest}`);

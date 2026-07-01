@@ -1,12 +1,13 @@
 ---
 import { t, DEFAULT_LANG } from '../lib/i18n';
+import { GITHUB_REPO } from '../lib/versions.js';
 
 interface Props {
   lang?: string;
 }
 const { lang } = Astro.props;
 
-const GISCUS_REPO = 'franklinbaldo/franklinbaldo.github.io';
+const GISCUS_REPO = GITHUB_REPO;
 const GISCUS_REPO_ID = 'REPLACE_WITH_REPO_ID';
 const GISCUS_CATEGORY = 'Comments';
 const GISCUS_CATEGORY_ID = 'REPLACE_WITH_CATEGORY_ID';
