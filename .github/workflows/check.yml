@@ -49,12 +49,21 @@ jobs:
         run: |
           DELETED=$(git diff --diff-filter=D --name-only "origin/${{ github.base_ref }}..HEAD" -- '.routines/hronir/rates/')
           if [ -n "$DELETED" ]; then
-            echo "ERRO: Este PR deleta rate files existentes:"
+            JUSTIFIED=$(git log --format=%s "origin/${{ github.base_ref }}..HEAD" | grep -c '^hronir: remove ' || true)
+            if [ "$JUSTIFIED" -eq 0 ]; then
+              echo "ERRO: Este PR deleta rate files existentes:"
+              echo "$DELETED"
+              echo ""
+              echo "Rate files são imutáveis — nunca delete arquivos de sessões anteriores."
+              echo "Se o doctor reportou erros, corrija apenas os arquivos que você criou nesta sessão."
+              echo ""
+              echo "Exceção: remoções justificadas (ex. rates contra uma versão publicada por"
+              echo "engano) são permitidas se ao menos um commit do PR começar com 'hronir: remove '"
+              echo "explicando o motivo."
+              exit 1
+            fi
+            echo "Deleção de rate files justificada por commit 'hronir: remove ...':"
             echo "$DELETED"
-            echo ""
-            echo "Rate files são imutáveis — nunca delete arquivos de sessões anteriores."
-            echo "Se o doctor reportou erros, corrija apenas os arquivos que você criou nesta sessão."
-            exit 1
           fi
 
       - name: Internal link check
