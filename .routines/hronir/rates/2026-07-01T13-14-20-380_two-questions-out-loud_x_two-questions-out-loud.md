@@ -30,7 +30,7 @@ evaluator_mood: >-
   um nó — tudo quer se enroscar nas palavras. Preciso de clareza agora, não de
   camadas.
 mood_glyph: ⚼
-evaluator_mood_after: Finalizando.
+evaluator_mood_after: Cansado, mas satisfeito. A sessão seguiu clara e sem obstáculos.
 impression_a: Impressão rápida.
 impression_b: Impressão rápida.
 rate_a: 3.5
