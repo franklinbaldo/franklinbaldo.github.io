@@ -1905,10 +1905,15 @@ export function editWorst() {
   }
 
   // rows are sorted by ordinal DESC (best first); worst eligible is the last.
-  // We skip posts that were edited in the last two edit cycles.
+  // We skip posts that were edited in the last two edit cycles, posts with a
+  // pending draft, and posts with no surviving file (rated in the past but
+  // since deleted from src/content/blog/ — the rating history outlives the
+  // file, and computeRatings() has no way to know that).
   const recentlyEdited = getRecentlyEditedKeys(2);
   const duelRatings = computeVersionRatings();
+  const missingFileKeys: string[] = [];
   let worstRow = null;
+  let worstRowFiles: ReturnType<typeof findTranslations> = [];
   for (let i = eligible.length - 1; i >= 0; i--) {
     const row = eligible[i];
     if (recentlyEdited.includes(row.key)) continue;
@@ -1927,30 +1932,53 @@ export function editWorst() {
       );
     });
     if (hasDraft) continue;
+    const translationFiles = findTranslations(row.key).filter((t) =>
+      fs.existsSync(t.path)
+    );
+    if (translationFiles.length === 0) {
+      missingFileKeys.push(row.key);
+      continue;
+    }
     worstRow = row;
+    worstRowFiles = translationFiles;
     break;
   }
 
   if (!worstRow) {
     console.log(
-      "Aviso: Todos os posts elegíveis foram editados recentemente. Usando o pior colocado absoluto."
+      "Aviso: Todos os posts elegíveis foram editados recentemente, têm rascunho pendente, ou não têm arquivo correspondente. Usando o pior colocado absoluto com arquivo válido."
     );
-    worstRow = eligible[eligible.length - 1];
+    for (let i = eligible.length - 1; i >= 0; i--) {
+      const row = eligible[i];
+      const translationFiles = findTranslations(row.key).filter((t) =>
+        fs.existsSync(t.path)
+      );
+      if (translationFiles.length > 0) {
+        worstRow = row;
+        worstRowFiles = translationFiles;
+        break;
+      }
+    }
+  }
+
+  if (missingFileKeys.length > 0) {
+    console.log(
+      `Aviso: post(s) com histórico de avaliação mas sem arquivo (deletados sem atualizar o ranking), pulados: ${missingFileKeys.join(", ")}. Rode \`npm run hronir:doctor\` para diagnóstico.`
+    );
+  }
+
+  if (!worstRow) {
+    console.error(
+      "Erro: nenhum post elegível tem arquivo correspondente em src/content/blog/. " +
+        "Rode `npm run hronir:doctor` para diagnóstico."
+    );
+    process.exit(1);
   }
 
   const topRows = eligible.filter((r) => r.key !== worstRow.key).slice(0, 3);
   const topKeys = topRows.map((r) => r.key);
 
-  const translationFiles = findTranslations(worstRow.key).filter((t) =>
-    fs.existsSync(t.path)
-  );
-  if (translationFiles.length === 0) {
-    console.error(
-      `Erro: nenhum arquivo encontrado para o post '${worstRow.key}'. ` +
-        "O post pode ter sido deletado. Rode `npm run hronir:doctor` para diagnóstico."
-    );
-    process.exit(1);
-  }
+  const translationFiles = worstRowFiles;
 
   // RFC 0010: non-destructive drafting. Copy each selected version into a
   // sibling draft <slug>/v-<timestamp>.<ext> for the agent to edit. The
