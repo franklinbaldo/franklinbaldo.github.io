@@ -19,6 +19,7 @@ const translations: Record<string, string> = ptHasPosts ? { pt: `/pt/paths/${pat
 <PageLayout
   title={`${path.title.en} | Reading path`}
   description={path.blurb.en}
+  image={`/og/path-${path.slug}.png`}
   lang="en"
   translations={translations}
   breadcrumb={[
