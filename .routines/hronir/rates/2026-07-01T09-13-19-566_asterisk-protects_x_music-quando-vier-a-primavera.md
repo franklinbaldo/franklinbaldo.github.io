@@ -68,12 +68,8 @@ clash: >-
   humor-como-ferramenta-necessária versus humor-como-irrelevância. Para leitor
   que valoriza humor como leverage, asterisk-protects é estruturalmente
   corajoso. Para leitor de Caeiro, rejeição de humor é igualmente estrutural.
-  Quatro pra um.  Para o leitor que valoriza humor como ferramenta estrutural,
-  asterisk-protects é corajoso. Para o leitor de Caeiro, rejeição de humor é
-  igualmente estrutural — música que não dramatiza é exatamente certa. O que
-  difere é em qual tradição o post pensa estar.  Para leitor que valoriza humor
-  como ferramenta estrutural, asterisk-protects é corajoso. Para leitor de
-  Caeiro, rejeição de humor é igualmente estrutural. Quatro pra um.
+  A verdade é que a estrutura certa de cada forma é diferente, e cada post
+  honra sua estrutura. Quatro pra um.
 review_a: >-
   asterisk-protects carrega seu argumento inteiro através de humor estrutural. A
   piada-pivô — 'Não é security theater. É theater de security theater' —
