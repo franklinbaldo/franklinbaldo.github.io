@@ -2,6 +2,7 @@
 import { defineConfig } from "astro/config";
 import { existsSync, readFileSync } from "node:fs";
 import { DEFAULT_LANG, LANG_META } from "./src/lib/languages.mjs";
+import { READING_PATHS } from "./src/lib/reading-paths-data.mjs";
 
 /** @type {Record<string, Record<string, string>>} */
 let blogPairs = {};
@@ -128,10 +129,27 @@ export default defineConfig({
           Object.entries(staticPairs).map(([en, pt]) => [pt, en])
         );
 
+        // Reading paths (/paths/[slug]/ ↔ /pt/paths/[slug]/) aren't blog
+        // posts and aren't in staticPairs — derive their pairs from the same
+        // READING_PATHS list the pages themselves are built from.
+        const pathPairs = Object.fromEntries(
+          READING_PATHS.map((p) => [
+            base + "/paths/" + p.slug + "/",
+            base + "/pt/paths/" + p.slug + "/",
+          ])
+        );
+        const pathToEn = Object.fromEntries(
+          Object.entries(pathPairs).map(([en, pt]) => [pt, en])
+        );
+
         if (staticPairs[item.url]) {
           item.links = makeLinks({ en: item.url, pt: staticPairs[item.url] });
         } else if (ptToEn[item.url]) {
           item.links = makeLinks({ en: ptToEn[item.url], pt: item.url });
+        } else if (pathPairs[item.url]) {
+          item.links = makeLinks({ en: item.url, pt: pathPairs[item.url] });
+        } else if (pathToEn[item.url]) {
+          item.links = makeLinks({ en: pathToEn[item.url], pt: item.url });
         } else {
           // Blog post pairs — look up pre-generated bidirectional map.
           const path = item.url.replace(base, "");
