@@ -4,7 +4,7 @@ slug: sitemap-paths-hreflang
 branch: claude/sleepy-pasteur-62kliq
 status: pr-open
 issues: [888]
-pr_opened: null
+pr_opened: 892
 pr_merged: 864
 ---
 
