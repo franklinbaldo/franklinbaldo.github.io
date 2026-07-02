@@ -30,7 +30,7 @@ evaluator_mood: >-
   algo que persiste quando tudo muda. Assistindo o mesmo poema duas vezes,
   percebo onde o silêncio faz falta.
 mood_glyph: ϳ
-evaluator_mood_after: Claro.
+evaluator_mood_after: Pé no chão agora.
 impression_a: Brief impression.
 impression_b: Brief impression.
 rate_a: 4
