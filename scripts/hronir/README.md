@@ -183,18 +183,23 @@ fica registrado no frontmatter do match como `mood_glyph`, ao lado de
 
 Cada match no schema `stars-v1` é avaliado a partir de uma **perspectiva de leitor** sorteada aleatoriamente no `continue` (estado `ready_for_next` → `reading_a`). A perspectiva é um arquivo em `scripts/hronir/perspectives/<id>.md` com frontmatter (`id`, `name`, `summary`) e um corpo de instruções dizendo o que premiar, o que penalizar, e como escrever a resenha e o confronto a partir daquela ótica.
 
-As 8 perspectivas atuais derivam das categorias de leitores descritas em `skills/franklin-blog/SKILL.md`:
+As perspectivas atuais derivam das categorias de leitores descritas em `skills/franklin-blog/SKILL.md`:
 
-| id                        | leitor                                                                                               |
-| ------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `long-form-rationalist`   | Reader de Scott Alexander, Robin Hanson, Zvi, Gwern. Testa calibração epistêmica.                    |
-| `lateral-essayist`        | Reader de Didion, Calvino, Pessoa, Sebald. Lê para estrutura-como-movimento.                         |
-| `weird-clarity`           | Reader de Borges, Wittgenstein, Ted Chiang. Quer o frio de uma sentença clara que resiste paráfrase. |
-| `internet-native`         | Viewer de Hbomberguy, Folding Ideas. Tolera digressão se o ritmo a paga.                             |
-| `skeptical-specialist`    | Leitor adversarial bem-informado (do `franklin-essay`). Caça a alegação mais fraca.                  |
-| `curious-outsider`        | Leitor inteligente sem contexto do tópico. Testa generosidade pedagógica.                            |
-| `returning-reader`        | Leitor habitual do blog. Conhece os tiques; vigia auto-repetição entre posts recentes.               |
-| `comedy-carries-argument` | Reader de Lem, Monterroso, Nelson Rodrigues. Testa se a piada é alavanca ou decoração.               |
+| id                        | leitor                                                                                                    |
+| ------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `long-form-rationalist`   | Reader de Scott Alexander, Robin Hanson, Zvi, Gwern. Testa calibração epistêmica.                         |
+| `lateral-essayist`        | Reader de Didion, Calvino, Pessoa, Sebald. Lê para estrutura-como-movimento.                              |
+| `weird-clarity`           | Reader de Borges, Wittgenstein, Ted Chiang. Quer o frio de uma sentença clara que resiste paráfrase.      |
+| `internet-native`         | Viewer de Hbomberguy, Folding Ideas. Tolera digressão se o ritmo a paga.                                  |
+| `skeptical-specialist`    | Leitor adversarial bem-informado (do `franklin-essay`). Caça a alegação mais fraca.                       |
+| `curious-outsider`        | Leitor inteligente sem contexto do tópico. Testa generosidade pedagógica.                                 |
+| `returning-reader`        | Leitor habitual do blog. Conhece os tiques; vigia auto-repetição entre posts recentes.                    |
+| `comedy-carries-argument` | Reader de Lem, Monterroso, Nelson Rodrigues. Testa se a piada é alavanca ou decoração.                    |
+| `craft-listener`          | Ouvinte técnico (letra/música). Testa se a forma carrega o conteúdo.                                      |
+| `felt-not-explained`      | Leitor que testa se o post mostra ou apenas explica o que deveria ser sentido.                            |
+| `lyric-as-poem`           | Leitor de letras como poesia. Testa se a linguagem resiste à paráfrase.                                   |
+| `applied-thinker`         | Reader de Paul Graham, Derek Sivers, Tyler Cowen. Testa se o post muda o que você faz na semana seguinte. |
+| `fact-checker`            | Verifica datas, números, citações e causalidade. Testa precisão factual, não qualidade do argumento.      |
 
 A perspectiva é sorteada por match no `continue` e **imposta** ao avaliador via banner antes da decisão — não há flag para sobrescrever. As resenhas (`review_a`, `review_b`) e o confronto (`clash`) devem ser escritos **a partir da perspectiva sorteada**, não em registro neutro.
 
