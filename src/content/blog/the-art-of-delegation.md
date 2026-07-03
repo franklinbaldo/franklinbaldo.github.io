@@ -1,4 +1,5 @@
 ---
+type: Blog Post
 title: 'The Art of Delegation: Signatures and Sandboxes'
 description: >-
   The sandbox separates draft from act. What it doesn't do is answer where the

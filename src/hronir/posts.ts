@@ -12,8 +12,26 @@ const HRONIR_NAMESPACE = "6f8a3c1e-2b94-5d7f-9e10-a4c8f2b6d031";
 
 // RFC 0010 §4.3: lifecycle and publication-control fields are excluded from
 // the version UUID so that migration stamps, draft-commit metadata and
-// publish/unpublish toggles never change a version's identity.
+// publish/unpublish toggles never change a version's identity. RFC 0014
+// adds `type` (OKF concept type) and `docType` (renamed document taxonomy,
+// formerly `type`) to the exclusion — they're classification, not
+// version-defining content, and excluding them keeps future edits to either
+// field from churning identity again.
 const UUID_EXCLUDED_FIELDS = new Set([
+  "draftCreatedAt",
+  "draftCommittedAt",
+  "draftMsg",
+  "supersedes",
+  "previousVersion",
+  "draft",
+  "publishDate",
+  "type",
+  "docType",
+]);
+
+// Pre-RFC-0014 exclusion set (without type/docType), used to reconstruct
+// the identity hash exactly as it was computed before that migration.
+const PRE_OKF_EXCLUDED_FIELDS = new Set([
   "draftCreatedAt",
   "draftCommittedAt",
   "draftMsg",
@@ -93,8 +111,40 @@ interface UuidCacheEntry {
   size: number;
   uuid: string;
   legacyUuid: string;
+  preOkfUuid: string;
 }
 const _uuidCache = new Map<string, UuidCacheEntry>();
+
+function buildMeta(
+  data: Record<string, unknown>,
+  excluded: Set<string>
+): Record<string, unknown> {
+  const meta: Record<string, unknown> = {};
+  for (const k of Object.keys(data).sort()) {
+    if (excluded.has(k)) continue;
+    const v = data[k];
+    meta[k] = v instanceof Date ? v.toISOString() : v;
+  }
+  return meta;
+}
+
+// RFC 0014: reconstructs the frontmatter exactly as it stood before that
+// migration — drops the new `type` (OKF concept type) and restores the
+// renamed `docType` back to its original key `type` — so
+// PRE_OKF_EXCLUDED_FIELDS (which never excluded `type`) reproduces the
+// identical historical meta object, key order included.
+function preOkfData(data: Record<string, unknown>): Record<string, unknown> {
+  const restored: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(data)) {
+    if (k === "type") continue;
+    if (k === "docType") {
+      restored.type = v;
+      continue;
+    }
+    restored[k] = v;
+  }
+  return restored;
+}
 
 function uuidsFor(filePath: string): UuidCacheEntry | null {
   let st: fs.Stats;
@@ -113,17 +163,17 @@ function uuidsFor(filePath: string): UuidCacheEntry | null {
     .toString()
     .replace(/\r\n/g, "\n")
     .trim();
-  const meta: Record<string, unknown> = {};
-  for (const k of Object.keys(data).sort()) {
-    if (UUID_EXCLUDED_FIELDS.has(k)) continue;
-    const v = data[k];
-    meta[k] = v instanceof Date ? v.toISOString() : v;
-  }
+  const meta = buildMeta(data, UUID_EXCLUDED_FIELDS);
+  const preOkfMeta = buildMeta(preOkfData(data), PRE_OKF_EXCLUDED_FIELDS);
   const entry: UuidCacheEntry = {
     mtimeMs: st.mtimeMs,
     size: st.size,
     uuid: uuidv5(body + "\n\u0000" + JSON.stringify(meta), HRONIR_NAMESPACE),
     legacyUuid: uuidv5(body, HRONIR_NAMESPACE),
+    preOkfUuid: uuidv5(
+      body + "\n\u0000" + JSON.stringify(preOkfMeta),
+      HRONIR_NAMESPACE
+    ),
   };
   _uuidCache.set(filePath, entry);
   return entry;
@@ -143,4 +193,13 @@ export function getPostUuid(filePath: string): string | null {
  *  back to it when the current UUID has no recorded duels. */
 export function getPostUuidLegacy(filePath: string): string | null {
   return uuidsFor(filePath)?.legacyUuid ?? null;
+}
+
+/** Pre-RFC-0014 identity: UUIDv5 as computed before the OKF `type`/`docType`
+ *  migration (§ RFC 0014) — reconstructs the historical frontmatter (drops
+ *  `type`, restores `docType` to `type`) so rate files recorded before that
+ *  migration still resolve. Readers fall back to it when neither the
+ *  current UUID nor the legacy UUID has recorded duels. */
+export function getPostUuidPreOkfType(filePath: string): string | null {
+  return uuidsFor(filePath)?.preOkfUuid ?? null;
 }

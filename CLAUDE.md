@@ -224,6 +224,16 @@ Schema versionado (ex. `stars-v1`) + script de migração preservado + validaç�
 no `hronir:doctor`. Qualquer dado novo (ex. versões de posts da RFC 0003)
 declara conformidade com este padrão em vez de reinventar.
 
+### Campo `type` (OKF, RFC 0014)
+
+Todo post em `src/content/blog/**` tem `type: Blog Post | Music Post`
+(obrigatório) — a classificação OKF, não confundir com `docType` (opcional;
+a antiga taxonomia editorial: essay/letter/fiction/technical/dialogue). Todo
+rate file em `.routines/hronir/rates/**` tem `type: Rate File`. Ambos os
+campos são **excluídos** do hash de identidade de versão
+(`UUID_EXCLUDED_FIELDS` em `src/hronir/posts.ts`) — editá-los não muda a
+identidade de uma versão. Ver `docs/okf/` e RFC 0014 §7.
+
 ### Higiene da raiz
 
 Enforçada por `check:hygiene` (passo no CI). Raiz tem exatamente 11 arquivos
@@ -254,4 +264,5 @@ src/generated/            Artefatos gerados; redirects e sitemap data são commi
 .routines/hronir/         Rate files produced by sessions (committed to git)
 docs/rfcs/                RFCs do projeto (0001…)
 docs/plans/               Planos e documentos de planejamento
+docs/okf/                 Bundle Open Knowledge Format (RFC 0014) — conceitos do Hrönir navegáveis por agente
 ```

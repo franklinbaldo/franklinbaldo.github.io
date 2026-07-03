@@ -11,6 +11,7 @@ import {
   listPosts,
   getPostUuid,
   getPostUuidLegacy,
+  getPostUuidPreOkfType,
 } from "./posts.js";
 import {
   SELECTION_PATH,
@@ -412,12 +413,18 @@ const SELECT_MARGIN = 0.3;
 const SELECT_MIN_DUELS = 2;
 
 // Stars + duel count for a version, looking up the rating map by the RFC 0010
-// UUID first and the legacy body-only UUID (stars-v1 rate files) second.
+// UUID first, the legacy body-only UUID (stars-v1 rate files) second, and the
+// pre-RFC-0014 UUID (recorded before the OKF type/docType migration) third.
 function versionStars(
   ratings: Map<string, { stars: number; n: number }>,
   v: VersionInfo
 ): { stars: number; n: number } | null {
-  return ratings.get(v.uuid) ?? ratings.get(v.legacyUuid) ?? null;
+  return (
+    ratings.get(v.uuid) ??
+    ratings.get(v.legacyUuid) ??
+    ratings.get(v.preOkfUuid) ??
+    null
+  );
 }
 
 // RFC 0010 §4.4: version duels run in every directory with at least two
@@ -750,14 +757,15 @@ function resolveSidePath(
     // evaluation to the old UUID over the new text.
     if (
       getPostUuid(side.path) === uuid ||
-      getPostUuidLegacy(side.path) === uuid
+      getPostUuidLegacy(side.path) === uuid ||
+      getPostUuidPreOkfType(side.path) === uuid
     ) {
       return side.path;
     }
   }
   if (slug && uuid) {
     const hit = listDirVersions(slug).find(
-      (v) => v.uuid === uuid || v.legacyUuid === uuid
+      (v) => v.uuid === uuid || v.legacyUuid === uuid || v.preOkfUuid === uuid
     );
     if (hit) return hit.path;
   }
@@ -1480,6 +1488,7 @@ export function decide(args: string[]) {
   });
 
   const data = {
+    type: "Rate File",
     run_id: runId,
     run_at: runAt,
     post_a: withContentLang(currentMatch.post_a),
@@ -2263,6 +2272,7 @@ export function doctor() {
       for (const v of listDirVersions(slug)) {
         s.add(v.uuid);
         s.add(v.legacyUuid);
+        s.add(v.preOkfUuid);
       }
       dirUuidsBySlug.set(slug, s);
     }
@@ -3157,6 +3167,7 @@ interface PrunedEntry {
   slug: string;
   uuid: string;
   legacyUuid: string;
+  preOkfUuid: string;
   lang: string;
   prunedAt: string;
 }
@@ -3242,6 +3253,7 @@ export function prune({ dryRun = false } = {}) {
         slug: v.slug,
         uuid: v.uuid,
         legacyUuid: v.legacyUuid,
+        preOkfUuid: v.preOkfUuid,
         lang: v.lang,
         prunedAt,
       }))

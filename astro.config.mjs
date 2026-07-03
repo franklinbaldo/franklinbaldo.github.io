@@ -52,7 +52,9 @@ if (existsSync("./src/generated/versions-pruned.json")) {
       );
     }
     const base = e.lang === "pt" ? `/pt/blog/${e.slug}` : `/blog/${e.slug}`;
-    for (const uuid of new Set([e.uuid, e.legacyUuid].filter(Boolean))) {
+    for (const uuid of new Set(
+      [e.uuid, e.legacyUuid, e.preOkfUuid].filter(Boolean)
+    )) {
       blogRedirects[`${base}/v/${uuid}/`] = `${base}/`;
     }
   }

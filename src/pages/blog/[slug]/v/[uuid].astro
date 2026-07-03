@@ -8,6 +8,7 @@ import BackToTop from "../../../../components/BackToTop.astro";
 import {
   uuidForId,
   legacyUuidForId,
+  preOkfUuidForId,
   slugOf,
   archivedContentUrls,
   GITHUB_REPO,
@@ -45,6 +46,10 @@ export async function getStaticPaths() {
     if (legacy && legacy !== uuid) {
       push(slug, legacy, { entry: v, redirect: false });
     }
+    const preOkf = preOkfUuidForId(v.id);
+    if (preOkf && preOkf !== uuid && preOkf !== legacy) {
+      push(slug, preOkf, { entry: v, redirect: false });
+    }
   }
   for (const c of canon) {
     if ((c.data.lang ?? "en") === "pt") continue;
@@ -53,6 +58,7 @@ export async function getStaticPaths() {
     // winning selection, and selection swaps must not 404 old links.
     push(c.id, uuidForId(c.id), { entry: c, redirect: true });
     push(c.id, legacyUuidForId(c.id), { entry: c, redirect: true });
+    push(c.id, preOkfUuidForId(c.id), { entry: c, redirect: true });
   }
   return paths;
 }

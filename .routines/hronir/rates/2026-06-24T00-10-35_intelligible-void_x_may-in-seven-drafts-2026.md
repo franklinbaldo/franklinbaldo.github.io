@@ -1,4 +1,5 @@
 ---
+type: Rate File
 run_id: 2026-06-24T00-10-35
 run_at: '2026-06-24T00:10:35Z'
 match_index: 9
