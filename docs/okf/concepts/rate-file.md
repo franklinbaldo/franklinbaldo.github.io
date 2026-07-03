@@ -18,10 +18,15 @@ persistidos"). Rate files são **imutáveis** por convenção: o guardrail de CI
 ("Rate file deletion guard") bloqueia deleção, exceto para remover uma
 avaliação de uma versão publicada por engano.
 
+Desde a RFC 0014 (r1), todo rate file carrega literalmente `type: Rate File`
+no front-matter — o campo obrigatório do OKF, escrito pelo CLI em toda
+decisão nova e retroagido aos 1764 arquivos já existentes.
+
 ## Campos principais
 
 | Campo                                     | Descrição                                                                                             |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `type`                                    | `"Rate File"` — classificação OKF (RFC 0014).                                                         |
 | `run_id`, `run_at`                        | Identidade e timestamp da rodada.                                                                     |
 | `post_a` / `post_b`                       | `key`, `path`, `display_lang`, `content_lang`, `version` (UUIDv5), `ref`.                             |
 | `winner`                                  | `"a"` ou `"b"` — derivado das estrelas, não escolhido diretamente.                                    |

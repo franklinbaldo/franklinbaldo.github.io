@@ -64,10 +64,15 @@ const postSchema = ({ image }: SchemaContext) =>
       })
       .optional(),
     /** Document taxonomy: essay, letter, fiction, technical, or dialogue.
-     *  Optional — posts without a type remain valid and appear unfiltered. */
-    type: z
+     *  Optional — posts without a docType remain valid and appear unfiltered. */
+    docType: z
       .enum(["essay", "letter", "fiction", "technical", "dialogue"])
       .optional(),
+    /** OKF (RFC 0014) concept type — every post is either a Blog Post or a
+     *  Music Post. Excluded from the version-identity hash (posts.ts
+     *  UUID_EXCLUDED_FIELDS), same as docType: it's a classification, not
+     *  version-defining content. */
+    type: z.enum(["Blog Post", "Music Post"]),
     /** When "music", the post is a music publication with lyrics and
      *  composer notes. Triggers the music post layout. */
     postType: z.literal("music").optional(),

@@ -40,7 +40,7 @@ const typeOrder = ["essay", "technical", "fiction", "letter", "dialogue"] as con
 type PostType = (typeof typeOrder)[number];
 const typeCounts = new Map<PostType | "other", number>();
 for (const p of posts) {
-  const pt = (p.data.type as PostType | undefined) ?? "other";
+  const pt = (p.data.docType as PostType | undefined) ?? "other";
   typeCounts.set(pt, (typeCounts.get(pt) ?? 0) + 1);
 }
 
@@ -108,7 +108,7 @@ const archiveLd = {
             const mins = estMinutes(post.body);
             const rankInfo = post.data.translationKey ? rankByKey.get(post.data.translationKey) : undefined;
             return (
-              <tr data-type={post.data.type ?? "other"}>
+              <tr data-type={post.data.docType ?? "other"}>
                 <td class="col-date">
                   <time datetime={post.data.date.toISOString()}>
                     {post.data.date.toLocaleDateString("en-US", { month: "short", day: "2-digit" })}

@@ -11,4 +11,7 @@ aos READMEs de operação.
 Comece por [`index.md`](./index.md).
 
 Ver [RFC 0014](../rfcs/0014-adocao-open-knowledge-format.md) para a decisão
-de adotar o formato e o desenho do bundle.
+de adotar o formato e o desenho do bundle. Desde a RFC 0014 (r1), a adoção
+não é só documental: os posts em `src/content/blog/**` e os rate files em
+`.routines/hronir/rates/**` carregam literalmente o campo `type` do OKF —
+ver [Post](./concepts/post.md) e [Rate file](./concepts/rate-file.md).

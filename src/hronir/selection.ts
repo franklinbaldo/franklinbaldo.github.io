@@ -5,6 +5,7 @@ import {
   readPost,
   getPostUuid,
   getPostUuidLegacy,
+  getPostUuidPreOkfType,
   isPublishedData,
 } from "./posts.js";
 
@@ -124,6 +125,7 @@ export interface VersionInfo {
   file: string;
   uuid: string;
   legacyUuid: string;
+  preOkfUuid: string;
   selected: boolean;
   published: boolean;
   draftCreatedAt: string | null;
@@ -148,6 +150,7 @@ export function listDirVersions(slug: string): VersionInfo[] {
       file: `${slug}/${entry.name}`,
       uuid: getPostUuid(p)!,
       legacyUuid: getPostUuidLegacy(p)!,
+      preOkfUuid: getPostUuidPreOkfType(p)!,
       selected: selectedFile === `${slug}/${entry.name}`,
       published: isPublishedData(data),
       draftCreatedAt: data.draftCreatedAt ? String(data.draftCreatedAt) : null,

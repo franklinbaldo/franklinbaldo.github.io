@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, date, lang, heroImage, heroImageAlt, featured, description, tags, type } = post.data;
+const { title, date, lang, heroImage, heroImageAlt, featured, description, tags, docType: type } = post.data;
 
 const postLang = lang ?? DEFAULT_LANG;
 const formattedDate = date.toLocaleDateString(locale(postLang), {

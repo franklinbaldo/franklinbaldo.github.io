@@ -1,13 +1,13 @@
 # RFC 0014 — Adoção do Open Knowledge Format (OKF) para o conhecimento interno do Hrönir
 
-|                 |                                                                                                                                                                |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Draft — implementação faseada nesta mesma branch                                                                                                               |
-| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                            |
-| **Criado em**   | 2026-07-03                                                                                                                                                     |
-| **Branch / PR** | `claude/open-knowledge-format-spec-tnvtkv`                                                                                                                     |
-| **Referência**  | [Open Knowledge Format](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing) (Google Cloud, jun/2026) |
-| **Afeta**       | novo diretório `docs/okf/`, `CLAUDE.md`                                                                                                                        |
+|                 |                                                                                                                                                                                                                                                                                                                                               |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**      | Draft — implementação faseada nesta mesma branch                                                                                                                                                                                                                                                                                              |
+| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                                                                                                                                           |
+| **Criado em**   | 2026-07-03                                                                                                                                                                                                                                                                                                                                    |
+| **Branch / PR** | `claude/open-knowledge-format-spec-tnvtkv`                                                                                                                                                                                                                                                                                                    |
+| **Referência**  | [Open Knowledge Format](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing) (Google Cloud, jun/2026)                                                                                                                                                                                |
+| **Afeta**       | `docs/okf/`, `CLAUDE.md`, `src/content.config.ts`, `src/hronir/{posts,commands,selection}.ts`, `src/lib/versions.ts`, `src/pages/**/v/[uuid].astro`, `astro.config.mjs`, `src/pages/{archive,pt/archive}.astro`, `src/components/PostCard.astro`, todo `src/content/blog/**` (503 arquivos), todo `.routines/hronir/rates/**` (1764 arquivos) |
 
 > Mesmo padrão das RFCs anteriores: primeiro o documento, depois a
 > implementação faseada, cada fase verde antes da próxima. Merge com merge
@@ -17,9 +17,10 @@
 
 ## Histórico de revisões
 
-| Data       | Mudança         |
-| ---------- | --------------- |
-| 2026-07-03 | Versão inicial. |
+| Data       | Mudança                                                                                                                                        |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-07-03 | Versão inicial — bundle `docs/okf/` descrevendo os conceitos do Hrönir.                                                                        |
+| 2026-07-03 | r1 — escopo ampliado: os posts e os rate files passam a carregar literalmente o campo `type` do OKF (não só o bundle de documentação). Ver §7. |
 
 ---
 
@@ -175,7 +176,95 @@ a spec exige.
 
 ## 6. Questões em aberto
 
-| ID  | Questão                                                                             | Decisão proposta                                                                                |
-| --- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Q1  | O bundle deve ganhar um script de validação (`check:okf`) análogo ao `check:links`? | Fora do escopo desta RFC — reavaliar se o bundle crescer além dos 9 arquivos iniciais.          |
-| Q2  | Vale a pena rodar o visualizador HTML de referência do OKF sobre este bundle?       | Não agora — nenhuma necessidade de UI de grafo para 9 conceitos; reavaliar se o bundle crescer. |
+| ID  | Questão                                                                                                 | Decisão proposta                                                                                  |
+| --- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Q1  | O bundle deve ganhar um script de validação (`check:okf`) análogo ao `check:links`?                     | Fora do escopo desta RFC — reavaliar se o bundle crescer além dos 9 arquivos iniciais.            |
+| Q2  | Vale a pena rodar o visualizador HTML de referência do OKF sobre este bundle?                           | Não agora — nenhuma necessidade de UI de grafo para 9 conceitos; reavaliar se o bundle crescer.   |
+| Q3  | Os 16 arquivos com histórico de duelo já órfão **antes** desta RFC (§7.2) merecem investigação própria? | Fora do escopo — pré-existente, não introduzido aqui; abrir issue/RFC separada se for investigar. |
+
+---
+
+## 7. r1 — conteúdo real conformante ao OKF (não só o bundle de docs)
+
+A versão inicial desta RFC (§1–6) só descrevia o Hrönir _sobre_ o formato
+OKF, em `docs/okf/`. O dono pediu um passo além: que os posts do blog e os
+rate files **eles mesmos** carreguem o campo `type` do OKF — a diferença
+entre documentar o formato e efetivamente adotá-lo nos dados.
+
+### 7.1. Conflito de nome: `type` já existia em posts
+
+`src/content.config.ts` já definia `type` como a taxonomia de documento
+(`essay | letter | fiction | technical | dialogue`), sem relação com o
+`type` do OKF (que classifica o _tipo de concept_ — aqui, "Blog Post" ou
+"Music Post"). Resolução: a taxonomia existente foi renomeada para
+`docType`, liberando `type` para o OKF. `docType` some de ~150 arquivos
+(mantendo a semântica idêntica) e reaparece com o valor idêntico sob o novo
+nome; código consumidor (`src/pages/{archive,pt/archive}.astro`,
+`src/components/PostCard.astro`) foi atualizado para ler `docType`.
+
+Rate files não tinham conflito — ganharam `type: "Rate File"` diretamente.
+
+### 7.2. Risco descoberto: `type`/`docType` mexem no hash de identidade de versão
+
+`src/hronir/posts.ts` calcula a identidade de cada versão (`getPostUuid`)
+como um UUIDv5 sobre o corpo normalizado **mais o front-matter**, exceto um
+conjunto de campos de lifecycle (`UUID_EXCLUDED_FIELDS`, RFC 0010 §4.3).
+`type`/`docType` não estavam nessa lista — logo, adicionar ou renomear esses
+campos muda a identidade de toda versão que os carrega, órfãos do histórico
+de duelos registrado nos rate files (`select()` passaria a tratá-los como
+estreantes).
+
+Verificado empiricamente antes de tocar em qualquer arquivo real:
+
+1. **Fix 1 — excluir os dois campos do hash** (`UUID_EXCLUDED_FIELDS` ganha
+   `"type"` e `"docType"`): impede que edições _futuras_ a esses campos
+   voltem a causar essa churn. Insuficiente sozinho: o histórico gravado
+   **antes** desta mudança já contava com `type: essay` (não excluído
+   quando foi escrito), então renomear a chave ainda quebra a correspondência
+   para os posts que já tinham a taxonomia preenchida.
+2. **Fix 2 — terceiro fallback de UUID** (`getPostUuidPreOkfType`,
+   mesmo padrão que `getPostUuidLegacy` já usa para a transição da RFC 0010):
+   reconstrói o front-matter exatamente como estava antes desta migração
+   (descarta o novo `type`, devolve `docType` para o nome original `type`) e
+   aplica o conjunto de exclusão **anterior** (sem `type`/`docType`) —
+   reproduzindo bit a bit o hash histórico. `versionStars()`,
+   `resolveSidePath()`, o checker de versões-fantasma do `doctor`, o registro
+   de poda (`PrunedEntry`) e as rotas `/v/[uuid].astro` (permalinks públicos)
+   passam a tentar `uuid ?? legacyUuid ?? preOkfUuid` nessa ordem.
+
+Verificação: dos 3498 pares post↔rate-file com duelo de versão existentes
+no corpus, **3458 casam via um dos três UUIDs** após a migração completa
+(zero regressão introduzida por esta RFC); os 16 remanescentes já estavam
+órfãos **antes** de qualquer mudança desta sessão (drift de front-matter
+pré-existente, não relacionado ao OKF — confirmado recomputando o UUID a
+partir do conteúdo em `HEAD`, antes de qualquer commit desta RFC).
+
+### 7.3. Migração aplicada
+
+- **Posts** (`scripts/migrate-okf-post-type.mjs`): edição textual do bloco
+  de front-matter (sem re-serializar YAML via `gray-matter` — verificado que
+  isso reformataria aspas/scalars em 84/101 arquivos amostrados). Para cada
+  um dos 503 arquivos (`.md`/`.mdx`) em `src/content/blog/`: insere
+  `type: Blog Post` ou `type: Music Post` (conforme `postType: music`) como
+  primeira linha; renomeia `type: <taxonomia>` → `docType: <taxonomia>` onde
+  presente. Diff: exatamente 653 inserções (503 `type:` + 150 `docType:`
+  renomeados), 150 remoções (as linhas `type:` originais) — nada mais.
+- **Rate files** (`scripts/migrate-okf-rate-type.mjs`): mesma técnica
+  (inserção textual, não `gray-matter.stringify` — que reformataria ~80/1764
+  arquivos). Insere `type: Rate File` como primeira linha em cada um dos
+  1764 arquivos em `.routines/hronir/rates/`. Diff: exatamente 1764 inserções,
+  zero remoções.
+- **`type` vira campo obrigatório** em `postSchema` (não mais `.optional()`)
+  — os 503 arquivos já cobrem 100% do schema; `astro check` confirma 0 erros.
+- **Escrita futura**: `scripts/generate-music-posts.mjs` grava `type: Music
+Post` em posts novos; `src/hronir/commands.ts` (comando `decide`/
+  `submit-eval`) grava `type: "Rate File"` em todo rate file novo — verificado
+  com uma rodada real (`generate-match` + `submit-eval`, revertida após
+  confirmar o campo).
+
+### 7.4. Verificação
+
+`prettier --check`, `check:hygiene`, `astro check` (0 erros), `npm test`
+(39/39), `npm run build` (3855 páginas), `hronir:doctor` (0 inconsistências,
+mesmos 15 avisos pré-existentes) e `hronir:select` (206 slugs, seleção
+idêntica à anterior à migração) — todos verdes antes e depois da migração.

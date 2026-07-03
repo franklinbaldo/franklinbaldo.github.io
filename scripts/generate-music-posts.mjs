@@ -96,6 +96,7 @@ function makeMdx(clip) {
     : `## Letra\n\n<!-- Cole a letra aqui -->`;
 
   return `---
+type: Music Post
 title: ${fmtYamlStr(clip.title || "(sem título)")}
 description: ${fmtYamlStr(`Música de Franklin Baldo — ${clip.title || "sem título"}`)}
 date: ${date}

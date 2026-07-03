@@ -10,6 +10,7 @@ timestamp: 2026-07-03T00:00:00Z
 # Conceitos do Hrönir
 
 - [Sessão](./session.md)
+- [Post](./post.md)
 - [Match](./match.md)
 - [Rate file](./rate-file.md)
 - [Ranking](./ranking.md)

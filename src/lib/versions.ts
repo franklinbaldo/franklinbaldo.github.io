@@ -1,7 +1,11 @@
 // Bridges the site build to the Hrönir content-UUID so /blog/<slug>/v/<uuid>
 // uses the same identity as the ranking and `supersedes` (RFC 0003/0010).
 import { existsSync, readFileSync } from "node:fs";
-import { getPostUuid, getPostUuidLegacy } from "../hronir/posts.js";
+import {
+  getPostUuid,
+  getPostUuidLegacy,
+  getPostUuidPreOkfType,
+} from "../hronir/posts.js";
 
 const BLOG_DIR = "src/content/blog";
 const SELECTION_PATH = "src/generated/versions-selected.json";
@@ -71,6 +75,15 @@ export function uuidForId(id: string): string | null {
 export function legacyUuidForId(id: string): string | null {
   const p = fileForId(id);
   return p ? getPostUuidLegacy(p) : null;
+}
+
+/** Pre-RFC-0014 UUID (before the OKF type/docType migration) — old /v/<uuid>
+ *  permalinks for posts that carried the renamed document-taxonomy field
+ *  used this value, so version routes emit a redirect for it when it
+ *  differs from the current UUID. */
+export function preOkfUuidForId(id: string): string | null {
+  const p = fileForId(id);
+  return p ? getPostUuidPreOkfType(p) : null;
 }
 
 /** Public URL of the live (selected) post in the given language. */
