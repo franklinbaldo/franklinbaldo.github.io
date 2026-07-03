@@ -32,7 +32,7 @@ evaluator_mood: >-
   curioso: quantos posts mais usam riso como ferramenta estrutural de argumento,
   não como temperinho?
 mood_glyph: わ
-evaluator_mood_after: Finalizando.
+evaluator_mood_after: Satisfeito com o trabalho editorial comparado — senso de clareza mantido.
 impression_a: Excelente.
 impression_b: Muito bom.
 rate_a: 3.4
