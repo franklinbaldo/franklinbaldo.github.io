@@ -254,4 +254,5 @@ src/generated/            Artefatos gerados; redirects e sitemap data são commi
 .routines/hronir/         Rate files produced by sessions (committed to git)
 docs/rfcs/                RFCs do projeto (0001…)
 docs/plans/               Planos e documentos de planejamento
+docs/okf/                 Bundle Open Knowledge Format (RFC 0014) — conceitos do Hrönir navegáveis por agente
 ```
