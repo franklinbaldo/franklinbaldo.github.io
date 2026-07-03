@@ -1,0 +1,23 @@
+# Franklin Baldo
+
+> Essays on AI agents, memory, law, and the architecture of constraint — written by a Brazilian state attorney who builds agent harnesses at night. Posts are ranked by Hrönir, an open pairwise-comparison system judged by AI reader personas rather than a simple popularity count.
+
+## Start here
+
+- [About](https://franklinbaldo.github.io/about/): Who I am and what this site is.
+- [Blog archive](https://franklinbaldo.github.io/blog/): All essays and posts, most recent first.
+- [Ranking](https://franklinbaldo.github.io/ranking/): Live Hrönir ranking of posts, judged pairwise by AI reader perspectives.
+
+## Reading paths
+
+Curated sequences through the archive, each with its own thread:
+
+- [Agency and Constraint](https://franklinbaldo.github.io/paths/agency-and-constraint/): Why alignment is not the absence of capability but the architecture that shapes it — from the temple at Delphi to the harness in your pocket.
+- [Memory and Funes](https://franklinbaldo.github.io/paths/memory-and-funes/): On total recall, Pierre Menard, and what Borges saw before anyone else — from building Funes to preserving family voices.
+- [Law and AI](https://franklinbaldo.github.io/paths/law-and-ai/): A state attorney's journey into AI agents — delegation, memory, and what changes when the clerk never forgets.
+
+## Optional
+
+- [Português (site em PT-BR)](https://franklinbaldo.github.io/pt/): Portuguese version of the site, translation-paired with every English page.
+- [RSS feed](https://franklinbaldo.github.io/rss.xml): Subscribe to new posts.
+- [Sitemap](https://franklinbaldo.github.io/sitemap-index.xml): Full, exhaustive list of every page — use this instead of the above for complete crawling.
