@@ -5,6 +5,7 @@ import VersionBanner from "../../../../components/VersionBanner.astro";
 import ArchivedContent from "../../../../components/ArchivedContent.astro";
 import MermaidEnhancer from "../../../../components/MermaidEnhancer.astro";
 import BackToTop from "../../../../components/BackToTop.astro";
+import Breadcrumbs from "../../../../components/Breadcrumbs.astro";
 import {
   uuidForId,
   legacyUuidForId,
@@ -86,14 +87,15 @@ const githubUrl = urls.githubUrl ?? `https://github.com/${GITHUB_REPO}`;
 >
   <div class="post-grid">
     <div class="post-body">
-      <nav aria-label="Breadcrumb" class="post-breadcrumb">
-        <ol>
-          <li><a href="/">Home</a></li>
-          <li><a href="/archive/">Archive</a></li>
-          <li><a href={live}>{title}</a></li>
-          <li aria-current="page">versão arquivada</li>
-        </ol>
-      </nav>
+      <Breadcrumbs
+        lang={lang}
+        items={[
+          { name: "Home", href: "/" },
+          { name: "Archive", href: "/archive/" },
+          { name: title, href: live },
+          { name: "versão arquivada", href: Astro.url.pathname },
+        ]}
+      />
 
       <VersionBanner liveHref={live} date={verDate} lang={lang} msg={draftMsg} />
 
@@ -108,29 +110,3 @@ const githubUrl = urls.githubUrl ?? `https://github.com/${GITHUB_REPO}`;
   </div>
 </PageLayout>
 
-<style>
-  .post-breadcrumb {
-    margin-bottom: calc(var(--pico-spacing) * 0.75);
-  }
-  .post-breadcrumb ol {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    font-size: 0.8rem;
-    color: var(--pico-muted-color);
-  }
-  .post-breadcrumb li + li::before {
-    content: " / ";
-    padding: 0 0.35em;
-    color: var(--pico-muted-color);
-  }
-  .post-breadcrumb a {
-    color: var(--pico-muted-color);
-    text-decoration: none;
-  }
-  .post-breadcrumb [aria-current="page"] {
-    color: var(--pico-color);
-  }
-</style>

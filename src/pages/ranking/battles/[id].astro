@@ -1,5 +1,7 @@
 ---
 import PageLayout from "../../../layouts/PageLayout.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import { toBreadcrumbLd } from "../../../lib/breadcrumbs";
 import { getCollection } from "astro:content";
 import { getDuels, getRankByKey } from "../../../lib/hronir-rank";
 import { isPublished } from "../../../lib/publish";
@@ -135,17 +137,22 @@ const pageDesc = isVersion
 const rankByKey = getRankByKey();
 const winnerRank = isVersion ? undefined : rankByKey.get(winnerKey);
 const loserRank = isVersion ? undefined : rankByKey.get(loserKey);
+
+const crumbs = [
+  { name: "Home", href: "/" },
+  { name: "Ranking", href: "/ranking/" },
+  { name: archiveLabel, href: archiveHref },
+  { name: pageTitle, href: `/ranking/battles/${duel.id}/` },
+];
 ---
 
-<PageLayout title={`${pageTitle} | Ranking Battles`} description={pageDesc} lang="en">
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <ol>
-      <li><a href="/">Home</a></li>
-      <li><a href="/ranking/">Ranking</a></li>
-      <li><a href={archiveHref}>{archiveLabel}</a></li>
-      <li aria-current="page">{pageTitle}</li>
-    </ol>
-  </nav>
+<PageLayout
+  title={`${pageTitle} | Ranking Battles`}
+  description={pageDesc}
+  lang="en"
+  breadcrumb={toBreadcrumbLd(crumbs, Astro.site)}
+>
+  <Breadcrumbs items={crumbs} lang="en" />
 
   <hgroup>
     <h1>{isVersion ? "Version Trial" : "Battle Report"}</h1>
@@ -288,15 +295,6 @@ const loserRank = isVersion ? undefined : rankByKey.get(loserKey);
 </PageLayout>
 
 <style>
-  .breadcrumb ol {
-    list-style: none; padding: 0; margin: 0 0 1rem;
-    display: flex; flex-wrap: wrap; gap: 0;
-    font-size: 0.8rem; color: var(--pico-muted-color);
-  }
-  .breadcrumb li + li::before { content: " / "; padding: 0 0.35em; }
-  .breadcrumb a { color: var(--pico-muted-color); text-decoration: none; }
-  .breadcrumb a:hover { text-decoration: underline; }
-
   .battle-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
   .version-note { font-size: 0.85rem; color: var(--pico-muted-color); margin: 0 0 1.5rem; }
   .tag-lang { font-family: var(--pico-font-family-monospace); text-transform: none; letter-spacing: 0; }

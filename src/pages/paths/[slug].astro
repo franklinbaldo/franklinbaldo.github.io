@@ -1,7 +1,9 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import PostCard from '../../components/PostCard.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { READING_PATHS, getPathPosts } from '../../lib/paths';
+import { toBreadcrumbLd } from '../../lib/breadcrumbs';
 
 export async function getStaticPaths() {
   return READING_PATHS.map((path) => ({
@@ -14,6 +16,10 @@ const { path } = Astro.props;
 const posts = await getPathPosts(path.slug, 'en');
 const ptHasPosts = (await getPathPosts(path.slug, 'pt')).length > 0;
 const translations: Record<string, string> = ptHasPosts ? { pt: `/pt/paths/${path.slug}/` } : {};
+const crumbs = [
+  { name: "Home", href: "/" },
+  { name: path.title.en, href: `/paths/${path.slug}/` },
+];
 ---
 
 <PageLayout
@@ -22,11 +28,9 @@ const translations: Record<string, string> = ptHasPosts ? { pt: `/pt/paths/${pat
   image={`/og/path-${path.slug}.png`}
   lang="en"
   translations={translations}
-  breadcrumb={[
-    { name: "Home", item: Astro.site ? new URL("/", Astro.site).href : "https://franklinbaldo.github.io/" },
-    { name: path.title.en, item: Astro.site ? new URL(`/paths/${path.slug}/`, Astro.site).href : `https://franklinbaldo.github.io/paths/${path.slug}/` },
-  ]}
+  breadcrumb={toBreadcrumbLd(crumbs, Astro.site)}
 >
+  <Breadcrumbs items={crumbs} lang="en" />
   <hgroup>
     <p><small><a href="/">← Home</a> · <em>Reading path</em></small></p>
     <h1>{path.title.en}</h1>

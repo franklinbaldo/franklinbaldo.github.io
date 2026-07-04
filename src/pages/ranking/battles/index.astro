@@ -1,5 +1,7 @@
 ---
 import PageLayout from "../../../layouts/PageLayout.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import { toBreadcrumbLd } from "../../../lib/breadcrumbs";
 import { getCollection } from "astro:content";
 import { getDuels } from "../../../lib/hronir-rank";
 import { isPublished } from "../../../lib/publish";
@@ -43,20 +45,21 @@ function perspectiveHue(id: string): number {
 const seasons = [...new Set(allDuels.map((d) => d.season).filter((s): s is number => typeof s === "number"))].sort((a, b) => a - b);
 const perspectives = [...new Set(allDuels.map((d) => d.perspectiveId).filter(Boolean) as string[])].sort();
 const agents = [...new Set(allDuels.map((d) => d.agentId).filter(Boolean) as string[])].sort();
+
+const crumbs = [
+  { name: "Home", href: "/" },
+  { name: "Ranking", href: "/ranking/" },
+  { name: "All Battles", href: "/ranking/battles/" },
+];
 ---
 
 <PageLayout
   title="Battle Archive | Ranking | Franklin Baldo"
   description="All Hrönir duels — the full battle history with verdicts, analyses, and rates."
   lang="en"
+  breadcrumb={toBreadcrumbLd(crumbs, Astro.site)}
 >
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <ol>
-      <li><a href="/">Home</a></li>
-      <li><a href="/ranking/">Ranking</a></li>
-      <li aria-current="page">All Battles</li>
-    </ol>
-  </nav>
+  <Breadcrumbs items={crumbs} lang="en" />
 
   <hgroup>
     <h1>Battle Archive</h1>
@@ -190,15 +193,6 @@ const agents = [...new Set(allDuels.map((d) => d.agentId).filter(Boolean) as str
 </PageLayout>
 
 <style>
-  .breadcrumb ol {
-    list-style: none; padding: 0; margin: 0 0 1rem;
-    display: flex; flex-wrap: wrap; gap: 0;
-    font-size: 0.8rem; color: var(--pico-muted-color);
-  }
-  .breadcrumb li + li::before { content: " / "; padding: 0 0.35em; }
-  .breadcrumb a { color: var(--pico-muted-color); text-decoration: none; }
-  .breadcrumb a:hover { text-decoration: underline; }
-
   .battle-filters {
     background: var(--pico-card-sectioning-background-color);
     border: 1px solid var(--pico-muted-border-color);

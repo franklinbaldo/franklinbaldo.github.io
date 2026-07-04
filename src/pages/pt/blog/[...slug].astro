@@ -10,6 +10,7 @@ import Webmentions from '../../../components/Webmentions.astro';
 import TableOfContents from '../../../components/TableOfContents.astro';
 import RelatedPosts from '../../../components/RelatedPosts.astro';
 import AuthorBio from '../../../components/AuthorBio.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import { getRankByKey } from '../../../lib/hronir-rank';
 import { uuidForId, versionHref } from '../../../lib/versions.js';
 import Comments from '../../../components/Comments.astro';
@@ -136,13 +137,14 @@ const translationLinks = translationSiblings.map((p) => {
     </aside>
 
     <div class="post-body">
-      <nav aria-label={lang === 'pt' ? 'Navegação' : 'Breadcrumb'} class="post-breadcrumb">
-        <ol>
-          <li><a href={`${urlPrefix(lang)}/`}>{t(lang, 'nav.home')}</a></li>
-          <li><a href={`${urlPrefix(lang)}/archive/`}>{t(lang, 'nav.archive')}</a></li>
-          <li aria-current="page">{title}</li>
-        </ol>
-      </nav>
+      <Breadcrumbs
+        lang={lang}
+        items={[
+          { name: t(lang, 'nav.home'), href: `${urlPrefix(lang)}/` },
+          { name: t(lang, 'nav.archive'), href: `${urlPrefix(lang)}/archive/` },
+          { name: title, href: Astro.url.pathname },
+        ]}
+      />
 
       <article data-pagefind-body data-pagefind-filter={`lang:${lang}`} lang={lang ?? 'pt'}>
         <header>
@@ -362,40 +364,6 @@ const translationLinks = translationSiblings.map((p) => {
 </PageLayout>
 
 <style>
-  .post-breadcrumb {
-    margin-bottom: calc(var(--pico-spacing) * 0.75);
-  }
-  .post-breadcrumb ol {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0;
-    font-size: 0.8rem;
-    color: var(--pico-muted-color);
-  }
-  .post-breadcrumb li + li::before {
-    content: " / ";
-    padding: 0 0.35em;
-    color: var(--pico-muted-color);
-  }
-  .post-breadcrumb a {
-    color: var(--pico-muted-color);
-    text-decoration: none;
-  }
-  .post-breadcrumb a:hover {
-    color: var(--pico-primary);
-    text-decoration: underline;
-  }
-  .post-breadcrumb [aria-current="page"] {
-    color: var(--pico-color);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 40ch;
-  }
-
   /* Native <progress> styled to fit the editorial palette. Uses
      accent-color so Pico's primary token drives both the fill and the
      focus ring. Stays fixed to the top of the viewport while reading. */

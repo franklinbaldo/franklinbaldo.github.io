@@ -1,5 +1,7 @@
 ---
 import PageLayout from "../../../layouts/PageLayout.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import { toBreadcrumbLd } from "../../../lib/breadcrumbs";
 import { getCollection } from "astro:content";
 import {
   getRanking,
@@ -84,6 +86,12 @@ function buildSparkline(pts: { won: boolean }[]): string {
 const sparklinePts = chronological.map((d) => ({ won: d.winnerKey === key }));
 const sparklinePath = buildSparkline(sparklinePts);
 
+const crumbs = [
+  { name: "Home", href: "/" },
+  { name: "Ranking", href: "/ranking/" },
+  { name: title, href: `/ranking/posts/${key}/` },
+];
+
 function hue(id: string): number {
   let h = 0;
   for (let i = 0; i < id.length; i++) h = ((h << 5) - h + id.charCodeAt(i)) & 0xffff;
@@ -101,14 +109,9 @@ function fmtDate(iso: string): string {
   title={`${title} — Dossier | Franklin Baldo`}
   description={`Ranking history and duel record for "${title}" in the Hrönir system.`}
   lang="en"
+  breadcrumb={toBreadcrumbLd(crumbs, Astro.site)}
 >
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <ol>
-      <li><a href="/">Home</a></li>
-      <li><a href="/ranking/">Ranking</a></li>
-      <li aria-current="page">{title}</li>
-    </ol>
-  </nav>
+  <Breadcrumbs items={crumbs} lang="en" />
 
   <hgroup>
     <h1>{title}</h1>
@@ -277,28 +280,6 @@ function fmtDate(iso: string): string {
 </PageLayout>
 
 <style>
-  .breadcrumb ol {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0;
-    font-size: 0.8rem;
-    color: var(--pico-muted-color);
-  }
-  .breadcrumb li + li::before {
-    content: " / ";
-    padding: 0 0.35em;
-  }
-  .breadcrumb a {
-    color: var(--pico-muted-color);
-    text-decoration: none;
-  }
-  .breadcrumb a:hover {
-    text-decoration: underline;
-  }
-
   .dossier-stats {
     display: flex;
     flex-wrap: wrap;

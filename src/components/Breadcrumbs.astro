@@ -1,0 +1,56 @@
+---
+import type { BreadcrumbItem } from '../lib/breadcrumbs';
+
+interface Props {
+  items: BreadcrumbItem[];
+  lang?: string;
+}
+
+const { items, lang = 'en' } = Astro.props;
+---
+
+<nav class="breadcrumbs" aria-label={lang === 'pt' ? 'Trilha' : 'Breadcrumb'}>
+  <ol>
+    {items.map((item, i) => (
+      <li>
+        {i === items.length - 1 ? (
+          <span aria-current="page">{item.name}</span>
+        ) : (
+          <a href={item.href}>{item.name}</a>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs ol {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    font-size: 0.8rem;
+    color: var(--pico-muted-color);
+  }
+  .breadcrumbs li + li::before {
+    content: ' / ';
+    padding: 0 0.35em;
+  }
+  .breadcrumbs a {
+    color: var(--pico-muted-color);
+    text-decoration: none;
+  }
+  .breadcrumbs a:hover {
+    color: var(--pico-primary);
+    text-decoration: underline;
+  }
+  .breadcrumbs [aria-current='page'] {
+    color: var(--pico-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 40ch;
+  }
+</style>
