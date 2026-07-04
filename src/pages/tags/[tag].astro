@@ -2,7 +2,9 @@
 import { type CollectionEntry, getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
 import PostCard from "../../components/PostCard.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import { isPublished } from "../../lib/publish";
+import { toBreadcrumbLd } from "../../lib/breadcrumbs";
 
 export async function getStaticPaths() {
   const all = (await getCollection("blog")).filter((p) => isPublished(p));
@@ -49,6 +51,12 @@ const relatedTags = [...coTags.entries()]
   .map(([t]) => t);
 const description = `${count} ${count === 1 ? "essay" : "essays"} tagged #${tag} — Franklin Baldo's digital garden on AI, law, and process.`;
 
+const crumbs = [
+  { name: "Home", href: "/" },
+  { name: "Tags", href: "/tags/" },
+  { name: `#${tag}`, href: `/tags/${tag}/` },
+];
+
 const collectionLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
@@ -70,14 +78,11 @@ const collectionLd = {
   description={description}
   lang="en"
   translations={hasPtCounterpart ? { pt: `/pt/tags/${tag}/` } : {}}
-  breadcrumb={[
-    { name: "Home", item: Astro.site ? new URL("/", Astro.site).href : "https://franklinbaldo.github.io/" },
-    { name: "Tags", item: Astro.site ? new URL("/tags/", Astro.site).href : "https://franklinbaldo.github.io/tags/" },
-    { name: `#${tag}`, item: Astro.site ? new URL(`/tags/${tag}/`, Astro.site).href : `https://franklinbaldo.github.io/tags/${tag}/` },
-  ]}
+  breadcrumb={toBreadcrumbLd(crumbs, Astro.site)}
 >
   <script type="application/ld+json" set:html={JSON.stringify(collectionLd)} is:inline slot="head" />
   <article>
+    <Breadcrumbs items={crumbs} lang="en" />
     <header>
       <hgroup>
         <h1>#{tag}</h1>

@@ -1,5 +1,7 @@
 ---
 import PageLayout from "../../../layouts/PageLayout.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import { toBreadcrumbLd } from "../../../lib/breadcrumbs";
 import { getCollection } from "astro:content";
 import {
   getVersionTrials,
@@ -88,21 +90,22 @@ function fmtDate(iso: string) {
     day: "numeric",
   });
 }
+
+const crumbs = [
+  { name: "Home", href: "/" },
+  { name: "Ranking", href: "/ranking/" },
+  { name: "Version trials", href: "/ranking/version-trials/" },
+  { name: title, href: `/ranking/versions/${key}/` },
+];
 ---
 
 <PageLayout
   title={`${title} — Version genealogy | Franklin Baldo`}
   description={`Version trials and revision genealogy for "${title}".`}
   lang="en"
+  breadcrumb={toBreadcrumbLd(crumbs, Astro.site)}
 >
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <ol>
-      <li><a href="/">Home</a></li>
-      <li><a href="/ranking/">Ranking</a></li>
-      <li><a href="/ranking/version-trials/">Version trials</a></li>
-      <li aria-current="page">{title}</li>
-    </ol>
-  </nav>
+  <Breadcrumbs items={crumbs} lang="en" />
 
   <hgroup>
     <h1>{title}</h1>
@@ -153,27 +156,6 @@ function fmtDate(iso: string) {
 </PageLayout>
 
 <style>
-  .breadcrumb ol {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0;
-    font-size: 0.8rem;
-    color: var(--pico-muted-color);
-  }
-  .breadcrumb li + li::before {
-    content: " / ";
-    padding: 0 0.35em;
-  }
-  .breadcrumb a {
-    color: var(--pico-muted-color);
-    text-decoration: none;
-  }
-  .breadcrumb a:hover {
-    text-decoration: underline;
-  }
   .links {
     display: flex;
     flex-wrap: wrap;
