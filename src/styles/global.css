@@ -131,8 +131,12 @@
 
 /* Smooth scroll with offset for the sticky header so anchors land visible. */
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: 4.5rem;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 /*
