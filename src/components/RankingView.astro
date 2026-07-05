@@ -528,7 +528,11 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
     gap: 0.6rem;
     flex: 1 1 14rem;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    animation: fadeInUp 0.5s ease-out both;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .podium-card {
+      animation: fadeInUp 0.5s ease-out both;
+    }
   }
   @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(15px); }

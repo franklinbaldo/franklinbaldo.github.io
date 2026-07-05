@@ -78,6 +78,7 @@ const ariaTable = Object.fromEntries(
             'box-shadow:0 4px 20px rgba(0,0,0,.12);' +
             'animation:lgIn .25s ease;max-width:calc(100vw - 2rem);}' +
             '@keyframes lgIn{from{transform:translateY(.5rem);opacity:0}to{transform:translateY(0);opacity:1}}' +
+            '@media (prefers-reduced-motion: reduce){#lg-toast{animation:none}}' +
             '#lg-toast a{white-space:nowrap;font-weight:500;}' +
             '#lg-toast button{background:none;border:none;cursor:pointer;padding:0 .2rem;' +
             'color:var(--pico-muted-color);font-size:1.1em;line-height:1;}';

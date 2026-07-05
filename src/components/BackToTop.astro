@@ -21,10 +21,12 @@
   }
 
   /* Show only after the user has scrolled past the first viewport. */
-  .back-to-top {
-    animation: fade-in linear both;
-    animation-timeline: scroll(root);
-    animation-range: 100vh 110vh;
+  @media (prefers-reduced-motion: no-preference) {
+    .back-to-top {
+      animation: fade-in linear both;
+      animation-timeline: scroll(root);
+      animation-range: 100vh 110vh;
+    }
   }
 
   @keyframes fade-in {
@@ -38,11 +40,13 @@
 <script>
   // JS fallback for browsers that don't support scroll-driven animations
   // (mainly Safari < 17 and any narrow-viewport context where the CSS
-  // animation-timeline rule may not fire).
+  // animation-timeline rule may not fire) — also used when the user prefers
+  // reduced motion, since the scroll-driven animation is skipped above.
   function initBackToTop() {
     const el = document.querySelector<HTMLAnchorElement>('.back-to-top');
     if (!el) return;
-    if (CSS.supports('animation-timeline', 'scroll(root)')) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduceMotion && CSS.supports('animation-timeline', 'scroll(root)')) return;
     const update = () => {
       const show = window.scrollY > window.innerHeight;
       el.style.opacity = show ? '0.85' : '0';
