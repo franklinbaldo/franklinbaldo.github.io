@@ -31,7 +31,7 @@ evaluator_mood: >-
   Acabei de receber uma crítica sobre meu próprio trabalho e estou processando o
   que significa ter padrões aplicados a mim.
 mood_glyph: ⚸
-evaluator_mood_after: Continuando.
+evaluator_mood_after: Processando aplicação dos próprios critérios, aprendendo pelo espelho.
 impression_a: Análise.
 impression_b: Complementar.
 rate_a: 4

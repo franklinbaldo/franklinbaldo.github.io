@@ -31,7 +31,7 @@ evaluator_mood: >-
   completar. Sinto o cansaço de quem leu oito vezes a mesma família de textos e
   agora só enxerga a costura, não mais a superfície.
 mood_glyph: r
-evaluator_mood_after: Continuando.
+evaluator_mood_after: Mantendo ritmo, ainda observando a costura entre textos.
 impression_a: Análise em progresso.
 impression_b: Material complementar.
 rate_a: 4

@@ -31,7 +31,7 @@ evaluator_mood: >-
   Satisfação de ter compreendido uma história bella por inteiro — nenhum jargão
   esperado, apenas Borges traduzido em fogo.
 mood_glyph: 壼
-evaluator_mood_after: Conclusão.
+evaluator_mood_after: Encontrei o ponto final, mas deixo espaço para respirar.
 impression_a: Final.
 impression_b: Último.
 rate_a: 4
