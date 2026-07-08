@@ -5,19 +5,30 @@
  * file just shifts the background and text away from neutral grey toward the
  * cream/ink palette the mockups asked for. Adjusted via Pico CSS variables so
  * every component inherits the change automatically.
+ *
+ * Selector note: Pico scopes its light palette under
+ * `:root:not([data-theme=dark])` (specificity 0,2,0), so a bare `:root`
+ * (0,1,0) never wins against it. The light block below matches Pico's
+ * specificity and relies on import order (tokens.css comes after Pico) to
+ * take precedence.
  */
 
-:root {
+:root:not([data-theme="dark"]) {
   --pico-background-color: #f4ecdc;
   --pico-color: #2a241d;
   --pico-muted-color: #6b6258;
-  --pico-muted-border-color: #d4c8b0;
+  --pico-muted-border-color: #ddd1b8;
   --pico-border-color: #c2b59a;
   --pico-card-background-color: #faf3e2;
   --pico-card-sectioning-background-color: #efe5d0;
   --pico-code-background-color: #ebe1c8;
   --pico-mark-background-color: #fae1c0;
   --pico-mark-color: #2a241d;
+  /* Paper-grain drop shadow used by cards and the reading column. */
+  --paper-shadow:
+    0 1px 0 var(--pico-muted-border-color),
+    0 24px 48px -32px rgba(42, 36, 29, 0.18);
+  --cobogo-opacity: 0.05;
 }
 
 [data-theme="dark"] {
@@ -31,4 +42,12 @@
   --pico-code-background-color: #251e17;
   --pico-mark-background-color: #4a3320;
   --pico-mark-color: #ede4d3;
+  --paper-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.4), 0 24px 48px -32px rgba(0, 0, 0, 0.5);
+  --cobogo-opacity: 0.04;
+}
+
+:root {
+  /* Slightly softer corners than Pico's default 0.25rem. */
+  --pico-border-radius: 0.375rem;
 }
