@@ -131,7 +131,7 @@
 
 /* Smooth scroll with offset for the sticky header so anchors land visible. */
 html {
-  scroll-padding-top: 4.5rem;
+  scroll-padding-top: 5.5rem;
 }
 @media (prefers-reduced-motion: no-preference) {
   html {
@@ -143,7 +143,9 @@ html {
  * Cobogó motif as a subtle background — a single tile from /cobogo.svg
  * repeated and rendered at low opacity so it reads as architecture, not
  * noise. The accent color is inherited via `currentColor` in the SVG, so
- * the tile follows the theme.
+ * the tile follows the theme. A vertical mask fades the pattern out as it
+ * approaches the reading area so it frames the page instead of sitting
+ * under every paragraph.
  */
 body {
   position: relative;
@@ -157,9 +159,23 @@ body::before {
   background-image: url("/cobogo.svg");
   background-size: 240px 240px;
   background-repeat: repeat;
-  opacity: 0.08;
+  opacity: var(--cobogo-opacity, 0.05);
   color: var(--pico-muted-color);
   pointer-events: none;
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0,
+    rgba(0, 0, 0, 0.35) 22rem,
+    rgba(0, 0, 0, 0.35) calc(100% - 18rem),
+    rgba(0, 0, 0, 1) 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0,
+    rgba(0, 0, 0, 0.35) 22rem,
+    rgba(0, 0, 0, 0.35) calc(100% - 18rem),
+    rgba(0, 0, 0, 1) 100%
+  );
 }
 
 /*
@@ -189,8 +205,8 @@ body::before {
   .toc-col {
     display: block;
     position: sticky;
-    top: 4.5rem;
-    max-height: calc(100vh - 6rem);
+    top: 5.5rem;
+    max-height: calc(100vh - 7rem);
     overflow-y: auto;
     padding-top: 0.25rem;
   }
@@ -202,9 +218,7 @@ body::before {
 
   /* Reading article gets a faint paper-grain shadow on wide screens. */
   .post-body > article {
-    box-shadow:
-      0 1px 0 var(--pico-muted-border-color),
-      0 24px 48px -32px rgba(42, 36, 29, 0.15);
+    box-shadow: var(--paper-shadow);
     border-radius: 2px;
   }
 }
@@ -484,7 +498,7 @@ body::before {
   #read-progress,
   .share-fab,
   .back-to-top,
-  header.container,
+  .site-header,
   footer.container,
   .toc-col,
   .toc-inline,

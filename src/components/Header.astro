@@ -44,10 +44,10 @@ const isCurrent = (href: string) => {
 };
 ---
 
-<header class="container">
-  <nav aria-label={lang === 'pt' ? 'Navegação principal' : 'Main navigation'}>
+<header class="site-header">
+  <nav class="container" aria-label={lang === 'pt' ? 'Navegação principal' : 'Main navigation'}>
     <ul>
-      <li><strong><a href={homeHref} class="contrast" aria-current={here === homeHref ? 'page' : undefined}>Franklin Baldo</a></strong></li>
+      <li><a href={homeHref} class="brand contrast" aria-current={here === homeHref ? 'page' : undefined}>Franklin Baldo<span class="brand-dot" aria-hidden="true">.</span></a></li>
     </ul>
     <ul class="nav-inline">
       {navLinks.map((l) => (
@@ -152,6 +152,55 @@ const isCurrent = (href: string) => {
 </script>
 
 <style>
+  /*
+   * Sticky translucent masthead. The 5.5rem offsets used by the sticky
+   * rails and scroll-padding-top in global.css assume this bar is pinned
+   * and no taller than ~5rem; keep its height under that.
+   */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    /* Pico gives `body > header` a tall block padding — flatten it so the
+       masthead stays under the 4.5rem offset the sticky rails assume. */
+    padding-block: 0;
+    /* Pico's nav <li> block padding is 1.25rem — too tall for a pinned bar. */
+    --pico-nav-element-spacing-vertical: 0.5rem;
+    /* Solid paper background — translucency + backdrop blur gets mangled
+       by the CSS minifier (it drops the unprefixed backdrop-filter), and a
+       see-through bar without blur lets article text show through. */
+    background: var(--pico-background-color);
+    border-bottom: 1px solid var(--pico-muted-border-color);
+  }
+  .site-header > nav {
+    padding-block: 0.25rem;
+  }
+
+  .brand {
+    font-family: var(--pico-font-family-serif);
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+  .brand:hover {
+    color: var(--pico-primary);
+  }
+  .brand-dot {
+    color: var(--pico-primary);
+  }
+
+  .nav-inline a:not(.nav-music-btn) {
+    font-size: 0.92rem;
+    text-decoration: none;
+  }
+  .nav-inline a[aria-current="page"] {
+    color: var(--pico-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.45em;
+    text-decoration-thickness: 2px;
+  }
+
   .nav-burger { display: none; }
   @media (max-width: 768px) {
     .nav-inline { display: none; }

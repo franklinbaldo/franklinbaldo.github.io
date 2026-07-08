@@ -20,8 +20,7 @@ const footerNav = [
 ];
 ---
 
-<footer class="container">
-  <hr />
+<footer class="container site-footer">
   <nav class="footer-nav">
     <ul>
       <li><small>© {year} Franklin Baldo</small></li>
@@ -61,6 +60,20 @@ const footerNav = [
 </script>
 
 <style>
+  .site-footer {
+    margin-top: calc(var(--pico-spacing) * 2);
+    padding-block: calc(var(--pico-spacing) * 1.25);
+    border-top: 1px solid var(--pico-muted-border-color);
+    color: var(--pico-muted-color);
+  }
+  .site-footer a {
+    text-decoration: none;
+  }
+  .site-footer a:hover {
+    color: var(--pico-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
   @media (max-width: 768px) {
     .footer-nav {
       flex-direction: column;
