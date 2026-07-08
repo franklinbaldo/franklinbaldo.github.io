@@ -27,13 +27,27 @@ ao vivo e do histórico de decisão do próprio repo:
   20 com 4, 8 com 5, 6 com 6 (ex.: `f85fb538-6f59-4751-8629-da76665fc91e/`).
 - Dois slugs (`delegando-para-agentes`, `the-art-of-delegation`) têm, além da
   pasta `<slug>/` versionada normalmente, um arquivo `<slug>.md` solto na raiz
-  de `src/content/blog/` — resíduo inerte: nem o loader do Astro (que segue
-  `versions-selected.json`) nem `listDirVersions` (que só varre diretórios) o
-  leem. Não é um terceiro modelo de conteúdo ativo, é housekeeping fora do
-  escopo deste documento.
-- `npm run hronir:prune -- --dry-run` nesta data: **zero** versões elegíveis
-  para poda. A dispersão observada não é lixo acumulado por falta de limpeza —
-  é competição em aberto, ainda não decidida.
+  de `src/content/blog/`. Nem o loader do Astro (que segue
+  `versions-selected.json`) nem `listDirVersions`/a seleção por-versão os leem
+  — mas não são totalmente inertes: `listPosts()` (`posts.ts`) varre
+  recursivamente todo `.md`/`.mdx` sob `src/content/blog/`, incluindo esses
+  dois, e alimenta `getRecentlyEditedKeys` (cooldown do `draft-worst`), o scan
+  do `doctor` e o índice de `migrate` — hoje sem efeito prático só porque o
+  `previousVersion.timestamp` de cada um coincide com o do irmão versionado.
+  Arrumação fora do escopo deste documento, mas não tão inerte quanto uma
+  primeira leitura sugere.
+- `npm run hronir:prune -- --dry-run` **depende de `versions-selected.json`
+  já existir** (gerado por um `hronir:select` real, não `--dry-run` — um
+  checkout novo não tem esse arquivo, gitignorado); sem ele, `prune` itera
+  `Object.keys(readSelection())` vazio e reporta "nenhuma versão elegível"
+  **silenciosamente**, não porque não há backlog. Rodando na ordem certa
+  (`hronir:select` de verdade, depois `prune --dry-run`): **54** versões
+  elegíveis para poda agora, em ~30 diretórios (ex.:
+  `postagem-inaugural-um-vislumbre-da-minha-mente` a -1.87★ n=5,
+  `universal-threshold` a -1.63★ n=4). A dispersão observada é uma
+  **mistura**: parte é competição genuinamente em aberto (ainda sem
+  margem/duelos suficientes), parte é backlog real de perdedores já
+  decididos que simplesmente nunca foram removidos.
 - A pergunta "por que não só a versão atual + git" **já foi feita e respondida
   duas vezes** neste repo: a RFC 0003 nasceu justamente abandonando o modelo
   "edita no lugar, linhagem só no git" (era a arquitetura _anterior_), e a RFC
@@ -45,9 +59,9 @@ ao vivo e do histórico de decisão do próprio repo:
 **Parecer:** não recomendo a substituição integral pelos motivos do §3. Só que
 o dono pediu o desenho mesmo assim — o resto deste documento é esse desenho,
 incluindo os pontos que ele quebra e como cada um teria que ser compensado.
-O §5 registra uma causa-raiz precisa para o incômodo original (dispersão de
-arquivos) e uma correção que resolve o mesmo problema por uma fração do custo,
-achada durante este desenho.
+O §5 registra as causas-raiz precisas para o incômodo original (dispersão de
+arquivos) — são duas, não uma — e correções que resolvem o mesmo problema por
+uma fração do custo, achadas durante este desenho.
 
 ---
 
@@ -73,9 +87,11 @@ ela quebra. (`versions-pruned.json` **não** entra nessa lista — §3.3 mostra
 que um manifesto equivalente teria que sobreviver.)
 
 > Nota sobre a pasta-por-post: com um único arquivo, a pasta `<slug>/` deixa de
-> carregar função (o próprio critério da RFC 0006 que já achatou `musicas/`:
-> "pasta tem que carregar função"). Migração completa flertaria com voltar a
-> `<slug>.mdx` na raiz da collection, não `<slug>/post.mdx`.
+> carregar função — o mesmo motivo pelo qual a RFC 0006 achatou `musicas/`
+> ("a pasta adiciona complexidade sem adicionar informação", RFC 0006 §2.1;
+> "pasta tem que carregar função" é a paráfrase que a RFC 0003 §5 fez desse
+> princípio, não uma citação literal da 0006). Migração completa flertaria com
+> voltar a `<slug>.mdx` na raiz da collection, não `<slug>/post.mdx`.
 
 ---
 
@@ -104,8 +120,8 @@ escrever um arquivo de rascunho temporário e garantir que nenhuma sessão o
 um subprocesso `git log` **por candidato** (`gitMtime`) porque custava ~200
 subprocessos por partida gerada — substituído por uma chamada `git log`
 batelada. Ler conteúdo de blob (`git show`) é a mesma classe de custo; sem a
-mesma disciplina de batching, o duelo reintroduz exatamente o problema que a
-0010 acabou de resolver.
+mesma disciplina de processamento em lote, o duelo reintroduz exatamente o
+problema que a 0010 acabou de resolver.
 
 ### 3.2. Janela de rascunho em edição — o motivo original da RFC 0003
 
@@ -126,6 +142,15 @@ Uma nova implementação precisaria resolver essa atomicidade de novo, com
 cuidado (escrever-depois-renomear sobre o path canônico, `git rm` do irmão no
 mesmo commit).
 
+**Lacuna não resolvida:** este desenho cobre só **um** desafiante por vez. Os
+dados do §1 mostram que hoje 144/208 diretórios (69%) têm **2 a 6** versões
+concorrentes simultâneas — múltiplos desafiantes é a norma, não a exceção.
+Como nomear, guardar e fazer N desafiantes concorrentes duelarem entre si (não
+só contra o canônico) sob "um arquivo por slug" fica em aberto; sem resolver
+isso, o desenho ou limita a concorrência a 1 desafiante por vez (mudança de
+comportamento não reconhecida em nenhum outro lugar deste documento) ou
+precisa de mais um mecanismo não esboçado aqui.
+
 ### 3.3. Permalinks públicos `/blog/<slug>/v/<uuid>/`
 
 Rota real, **já publicada hoje** — confirmado em
@@ -138,9 +163,11 @@ cada um via `git show` no momento do build.
 
 Isso torna o build **dependente de ter o histórico completo do git
 disponível e rápido**. `check.yml` já usa `fetch-depth: 0` (build de CI
-seguro); mas `hronir-autopilot.yml` e `hronir-heartbeat.yml` usam checkout
-raso (padrão), e qualquer clone raso — local ou de agente — falharia em
-silêncio ao resolver blobs antigos. É uma classe de fragilidade nova: um
+seguro). `hronir-autopilot.yml` usa checkout raso (padrão), mas hoje só faz
+merge/gate — não roda `hronir` nem lê blob (§5) — então não é afetado por
+este risco específico. Qualquer clone raso que vier a rodar comandos hronir,
+porém — local, de agente, ou um workflow futuro — falharia em silêncio ao
+resolver blobs antigos. É uma classe de fragilidade nova: um
 arquivo em disco não liga para profundidade de clone, squash-merge ou
 reescrita de histórico; uma referência `slug@sha` liga. A convenção "merge
 commits, não squash" do `CLAUDE.md` — hoje preferência de estilo — viraria
@@ -191,30 +218,42 @@ redirecionamento.
 
 1. **Fase 0 — congelar:** rodar `hronir:select` uma última vez, o resultado
    vira o ponto de partida da migração.
-2. **Fase 1 — achatar:** para cada uma das 208 pastas de post (excluindo
-   `images/`, que não é um post),
-   `git mv <slug>/<arquivo-selecionado> <slug>.mdx`; as demais ~296 versões
-   não-selecionadas de hoje saem do working tree (recuperáveis só via
-   `git log -- <slug>/<arquivo-antigo>` a partir do commit de migração). Os
-   dois slugs com arquivo solto órfão (§1) precisariam de triagem manual
-   antes desta fase — fora do escopo deste esboço.
+2. **Fase 1 — achatar:** `hronir:select` real produz **207** entradas
+   publicáveis, não 208 — `the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life/`
+   fica fora porque sua única versão é `draft: true` (mesma regra 2 do RFC
+   0010 §4.2). Para cada uma das 207, `git mv <slug>/<arquivo-selecionado>
+<slug>.mdx`; as demais ~297 versões não-selecionadas de hoje saem do
+   working tree (recuperáveis só via `git log -- <slug>/<arquivo-antigo>` a
+   partir do commit de migração). Três diretórios precisariam de triagem
+   manual antes desta fase — fora do escopo deste esboço: os dois slugs com
+   arquivo solto órfão (§1) e este diretório sem versão publicável.
 3. **Fase 2 — índice uuid→sha:** script que popula o índice inicial varrendo
    `git log --follow` de cada slug e hasheando cada blob com a mesma função
-   de `getPostUuid`.
+   de `getPostUuid`. **Não esboçado aqui:** manutenção contínua pós-backfill —
+   §3.4 já observa que o índice precisa ser "mantido/estendido a cada mudança
+   de conteúdo"; um commit que toque um post fora dos caminhos do CLI
+   reescritos (edição direta, hotfix) dessincronizaria o índice do HEAD sem
+   nada para detectar isso.
 4. **Fase 3 — reescrever consumidores:** `computeVersionRatings`/
    `pickVersionDuel` (leitura de blob), `draft-worst`/`draft-commit` (irmão
-   temporário + fold atômico, §3.2), loader de `blogVersions` (materializa a
-   partir do índice), `doctor` (checks de alcançabilidade).
+   temporário + fold atômico, §3.2 — inclui decidir o fork `inline`/arquivo
+   descartável do modo `path-only`, §3.1, e atualizar a documentação desse
+   modo no `CLAUDE.md`), loader de `blogVersions` (materializa a partir do
+   índice), `doctor` (checks de alcançabilidade).
 5. **Fase 4 — CI:** `fetch-depth: 0` em todo workflow que roda comandos
-   hronir ou build (hoje só `check.yml` tem isso).
+   hronir ou build (hoje só `check.yml` tem isso). Sozinho não basta para o
+   requisito de corretude do §3.3 ("merge commits, não squash") — precisaria
+   também de proteção de branch ou de desabilitar squash-merge no GitHub.
 
 Critério de aceite, no mesmo padrão de 0003/0010: snapshot de URLs idêntico
 antes/depois, build e doctor verdes, golden tests dos duelos de versão
-passando lendo blobs em vez de arquivos.
+passando lendo blobs em vez de arquivos, **e** um teste de regressão de
+subprocessos `git` por partida — sem ele, nada detecta o duelo reintroduzindo
+o achado E3 que a 0010 já corrigiu (§3.1).
 
 **Rollback:** ao contrário da migração da RFC 0010 (só renomes + um JSON
 gerado, reversível de graça), esta é **destrutiva no working tree** — remove
-~296 arquivos (mesmo que recuperáveis via git). Reverter o merge desfaz os
+~297 arquivos (mesmo que recuperáveis via git). Reverter o merge desfaz os
 renomes, mas exige recomputar o índice uuid→sha do zero.
 
 ---
@@ -222,11 +261,12 @@ renomes, mas exige recomputar o índice uuid→sha do zero.
 ## 5. Alternativa mais barata — achada durante este desenho
 
 Investigando por que 144 pastas acumulam 2-6 versões **mesmo com** um guard
-explícito contra empilhar rascunhos, achei a causa raiz exata:
+explícito contra empilhar rascunhos, achei duas causas distintas — não uma:
 
+**Causa 1 (por que novos desafiantes continuam sendo criados).**
 `draft-worst` já tenta não empilhar — `commands.ts:1948-1962` pula uma key
-que ainda tem "um desafiante pendente" definido como versão não-selecionada
-com `n < SELECT_MIN_DUELS` (= **2**). Mas `prune` só remove uma versão com
+que ainda tem "um desafiante pendente" definido como versão não-selecionada,
+**publicável**, com `n < SELECT_MIN_DUELS` (= **2**). Mas `prune` só remove uma versão com
 `n ≥ PRUNE_MIN_DUELS` (= **3**) **e** margem `≥ PRUNE_MARGIN` (= **0.5★**)
 abaixo da selecionada. Ou seja: assim que um rascunho acumula 2 duelos
 inconclusivos, ele **para de contar como "pendente"** para fins do guard
@@ -240,22 +280,35 @@ mesma key pode ganhar um irmão novo a cada ciclo, indefinidamente, sempre que
 nenhuma versão perde pela margem cheia (plausível para revisões de qualidade
 parecida). Esse é o mecanismo preciso por trás das pastas com 4-6 arquivos.
 
-**Correção:** subir a barra do guard "não empilhar" para acompanhar a barra
-do `prune`, não a barra estatística do `select` — pular a key enquanto
-existir uma versão não-selecionada publicável ainda não elegível para poda
-(em vez de `n < SELECT_MIN_DUELS`). Uma cláusula de guard em `commands.ts`
-(~linha 1953-1961), zero mudança de schema, zero mudança em duelos,
-permalinks ou seleção. Combinar com agendar `hronir:prune` (sem `--dry-run`)
-periodicamente, para que perdedores resolvidos sejam de fato removidos em vez
-de esperar alguém lembrar de rodar o comando manualmente — fecha o laço que o
-guard sozinho não fecha (o guard para o empilhamento novo; o agendamento
-limpa o que já empilhou). **Correção de fato:** `hronir-heartbeat.yml` existe
-mas seu `cron` está comentado/desabilitado hoje ("Heartbeat desabilitado —
-Jules substituído por outro agente") e, mesmo ativo, nunca invocou comandos
-hronir (era só refil do pool de sessões Jules) — não há cadência pronta para
-anexar `prune`. Viável do mesmo jeito (reativar o cron do heartbeat para essa
-finalidade, ou um novo workflow agendado pequeno), só não é reaproveitar
-infraestrutura já rodando.
+**Causa 2 (por que o que já foi decidido não some).** `prune` é manual
+(`npm run hronir:prune`) e ninguém necessariamente roda. Confirmado ao vivo
+nesta investigação (§1): com `versions-selected.json` gerado corretamente,
+`prune --dry-run` reporta **54** versões já resolvidas — perderam por margem
+e duelos suficientes — que continuam ocupando o diretório só porque o comando
+não foi executado. Essa causa é independente da Causa 1: mesmo que o guard do
+`draft-worst` fosse perfeito, esses 54 arquivos continuariam lá até alguém
+rodar `prune` de verdade.
+
+**Correção 1 (Causa 1):** subir a barra do guard "não empilhar" para
+acompanhar a barra do `prune`, não a barra estatística do `select` — pular a
+key enquanto existir uma versão não-selecionada publicável ainda não elegível
+para poda (em vez de `n < SELECT_MIN_DUELS`). Uma cláusula de guard em
+`commands.ts` (~linha 1953-1961), zero mudança de schema, zero mudança em
+duelos, permalinks ou seleção.
+
+**Correção 2 (Causa 2):** agendar `hronir:select && hronir:prune` (sem
+`--dry-run`) periodicamente, para que perdedores resolvidos sejam de fato
+removidos em vez de esperar alguém lembrar de rodar os comandos manualmente —
+fecha o laço que a Correção 1 sozinha não fecha (ela para o empilhamento
+novo; o agendamento limpa o que já empilhou). Esta parte não depende de
+código novo — é imediata e independente do resto desta RFC: rodar os dois
+comandos manualmente agora já removeria as 54 versões decididas. `hronir-heartbeat.yml`
+existe mas seu `cron` está comentado/desabilitado hoje ("Heartbeat
+desabilitado — Jules substituído por outro agente") e, mesmo ativo, nunca
+invocou comandos hronir (era só refil do pool de sessões Jules) — não há
+cadência pronta para anexar `prune`. Viável do mesmo jeito (reativar o cron
+do heartbeat para essa finalidade, ou um novo workflow agendado pequeno), só
+não é reaproveitar infraestrutura já rodando.
 
 Isso ataca exatamente o incômodo original ("o blog dispersa demais") sem
 tocar no mecanismo de torneio, na feature de permalink, ou introduzir git
@@ -266,15 +319,19 @@ como dependência de runtime para resolver conteúdo.
 ## 6. Recomendação
 
 Não recomendo a substituição integral: o custo (duelos precisam materializar
-blobs com disciplina de batching para não reabrir o achado E3 da 0010, a
-janela de rascunho reintroduz o swap não-atômico que a 0010 já corrigiu como
-achado V3 (§3.2), permalinks passam a depender de histórico completo e de
-nunca squashar, `doctor` ganha uma classe de falha nova, uuid→sha não é mais
-simples que o manifesto atual) supera o ganho (eliminar
-`versions-selected.json` e a recomputação sem histerese do `select()` — não
-`versions-pruned.json`, que sobrevive, §3.3), principalmente porque o §5
-entrega o mesmo alívio prático por uma fração do risco — uma cláusula de
-guard, sem RFC nem migração.
+blobs com disciplina de processamento em lote para não reabrir o achado E3 da
+0010, e quebram o modo `path-only` que o `CLAUDE.md` recomenda justo para
+agentes de sessão longa, §3.1; a janela de rascunho reintroduz o swap
+não-atômico que a 0010 já corrigiu como achado V3 e não cobre múltiplos
+desafiantes concorrentes — a norma hoje, §3.2; permalinks passam a depender
+de histórico completo e de nunca squashar, sem mecanismo de CI que imponha
+isso, §3.3; `doctor` ganha uma classe de falha nova, §3.5; uuid→sha não é
+mais simples que o manifesto atual e precisa de manutenção contínua não
+esboçada, §3.4) supera o ganho (eliminar `versions-selected.json` e a
+recomputação sem histerese do `select()` — não `versions-pruned.json`, que
+sobrevive, §3.3), principalmente porque o §5 entrega o mesmo alívio prático
+por uma fração do risco — uma cláusula de guard e dois comandos já
+existentes rodados na ordem certa, sem RFC nem migração.
 
 Se a decisão for seguir com este documento mesmo assim, ele é o ponto de
 partida para fases reais (com testes de aceite e PR incremental, no padrão
@@ -300,4 +357,29 @@ partida para fases reais (com testes de aceite e PR incremental, no padrão
   chave de memoização do UUID; `hronir-heartbeat.yml` citado como cadência
   "já existente" para `prune` quando seu cron está de fato desabilitado; e o
   custo de atomicidade do §3.2 (swap tipo `promote`, achado V3) faltando no
-  tally do §6. Sem mudança na recomendação.
+  balanço do §6. Sem mudança na recomendação.
+- **r2** (2026-07-08): segunda revisão adversarial (5 agentes independentes,
+  sem contexto da r1). Achado mais significativo: a alegação "`prune --dry-run`:
+  zero elegíveis" (§1) media contra um `versions-selected.json` **ausente**
+  (checkout sem `hronir:select` real rodado antes — a própria r0/r1 caiu
+  nessa armadilha). Reproduzido nesta revisão: na ordem certa, são **54**
+  versões elegíveis para poda agora. §1 reescrito para refletir isso; §5
+  reestruturado em duas causas-raiz distintas (guard vs. `prune` nunca
+  rodado) com correções separadas. Também corrigidos: os arquivos órfãos do
+  §1 não são totalmente inertes (lidos por consumidores baseados em
+  `listPosts()` — cooldown do `draft-worst`, `doctor`, `migrate`);
+  `hronir:select` real produz 207 entradas publicáveis, não 208 (~297
+  arquivos sobrariam na Fase 1, não ~296, e um terceiro diretório — sem
+  versão publicável — precisa da mesma triagem manual dos dois órfãos); §3.3
+  ainda citava `hronir-heartbeat.yml` como exposto ao risco de clone raso
+  depois do §5 já ter estabelecido que ele não roda comandos hronir; a
+  citação "pasta tem que carregar função" corrigida — é paráfrase da RFC
+  0003 sobre a RFC 0006, não citação literal; §5 (guard também exige
+  `v.published`) e §3.2/§4/§6 ganharam as lacunas que faltavam (múltiplos
+  desafiantes concorrentes não resolvidos; fork do `path-only` sem fase
+  atribuída; manutenção contínua do índice uuid→sha não esboçada;
+  "não-squash" sem enforcement de CI; critério de aceite sem teste de
+  regressão de subprocessos; custo do `path-only` ausente do §6); três
+  palavras em inglês soltas na prosa (`housekeeping`, `batching`, `tally`)
+  traduzidas. Sem mudança na recomendação — o achado dos 54 reforça a
+  Correção 2 do §5, não o desenho git-only.
