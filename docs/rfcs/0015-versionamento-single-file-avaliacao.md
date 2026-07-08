@@ -2,7 +2,7 @@
 
 |                 |                                                                                                                                                                                                                                                          |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Avaliação — parecer técnico contrário registrado em §1; documento mantido como desenho de referência a pedido do dono. **Não implementado**, foge da "implementação faseada" padrão do processo de RFC porque a conclusão é não prosseguir (§6).         |
+| **Status**      | Avaliação — parecer técnico contrário registrado em §1; documento mantido como desenho de referência a pedido do dono. **Não implementado**, foge do padrão de "implementação faseada" do processo de RFC porque a conclusão é não prosseguir (§6).      |
 | **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                                                      |
 | **Criado em**   | 2026-07-08                                                                                                                                                                                                                                               |
 | **Branch / PR** | `claude/blog-versioning-strategy-n1aw5d`                                                                                                                                                                                                                 |
@@ -50,7 +50,10 @@ ao vivo e do histórico de decisão do próprio repo:
   `universal-threshold` a -1.63★ n=4). A dispersão observada é uma
   **mistura**: parte é competição genuinamente em aberto (ainda sem
   margem/duelos suficientes), parte é acúmulo real de perdedores já
-  decididos que simplesmente nunca foram removidos.
+  decididos que simplesmente nunca foram removidos — e uma fatia da própria
+  parte "em aberto" não é maturação orgânica: o §5 (Causa 1) mostra um
+  mecanismo de guard que deixa a mesma key ganhar um desafiante novo a cada
+  ciclo, indefinidamente, antes de qualquer decisão por margem.
 - A pergunta "por que não só a versão atual + git" **já foi feita e respondida
   duas vezes** neste repo: a RFC 0003 nasceu justamente abandonando o modelo
   "edita no lugar, linhagem só no git" (era a arquitetura _anterior_), e a RFC
@@ -173,8 +176,16 @@ Isso torna o build **dependente de ter o histórico completo do git
 disponível e rápido**. `check.yml` já usa `fetch-depth: 0` (build de CI
 seguro). `hronir-autopilot.yml` usa checkout raso (padrão), mas hoje só faz
 merge/gate (confirmado lendo o workflow) — não roda `hronir` nem lê blob —
-então não é afetado por este risco específico. Qualquer clone raso que vier a rodar comandos hronir,
-porém — local, de agente, ou um workflow futuro — falharia em silêncio ao
+então não é afetado por este risco específico. **`deploy.yml` já é afetado
+hoje, não é hipotético:** usa checkout raso (sem `fetch-depth`) e roda
+`npm run build`, que dispara o hook `prebuild` do `package.json`
+(`node ... scripts/hronir/index.js select`) antes do Astro buildar —
+confirmado rodando `npm run build` neste checkout e observando os logs de
+`[select]` disparar. É o workflow que de fato publica o site
+(`actions/deploy-pages`, gatilho em todo push a `main` e cron diário às
+06h) — ao contrário do `hronir-autopilot.yml`, que só mescla e nunca lê
+conteúdo. Fora dele, qualquer outro clone raso que vier a rodar comandos
+hronir — local, de agente, ou um workflow futuro — falharia em silêncio ao
 resolver blobs antigos. É uma classe de fragilidade nova: um
 arquivo em disco não liga para profundidade de clone, squash-merge ou
 reescrita de histórico; uma referência `slug@sha` liga. A convenção "merge
@@ -243,7 +254,11 @@ redirecionamento.
    registrados em §1).
 3. **Fase 2 — índice uuid→sha:** script que popula o índice inicial varrendo
    `git log --follow` de cada slug e hasheando cada blob com a mesma função
-   de `getPostUuid`. **Não esboçado aqui:** manutenção contínua pós-backfill —
+   de `getPostUuid`. Isso cobre, por construção, todo UUID que uma rate file
+   já commitada referencia — era conteúdo de algum arquivo em algum commit
+   histórico, então `git log --follow` alcança; mas nada nesta fase confirma
+   isso automaticamente, ficaria a cargo do `doctor` reescrito (§3.5)
+   verificar. **Não esboçado aqui:** manutenção contínua pós-backfill —
    §3.4 já observa que o índice precisa ser "mantido/estendido a cada mudança
    de conteúdo"; um commit que toque um post fora dos caminhos do CLI
    reescritos (edição direta, correção urgente) dessincronizaria o índice do
@@ -259,9 +274,28 @@ redirecionamento.
    que nenhuma versão anterior deste plano listou), loader de `blogVersions`
    (materializa a partir do índice), `doctor` (checks de alcançabilidade).
 5. **Fase 4 — CI:** `fetch-depth: 0` em todo workflow que roda comandos
-   hronir ou build (hoje só `check.yml` tem isso). Sozinho não basta para o
-   requisito de corretude do §3.3 ("merge commits, não squash") — precisaria
-   também de proteção de branch ou de desabilitar squash-merge no GitHub.
+   hronir ou build (hoje só `check.yml` tem isso — `deploy.yml` também
+   builda, portanto também dispara `hronir:select` via `prebuild`, §3.3, e
+   hoje não tem `fetch-depth: 0`; precisaria do mesmo tratamento). Sozinho
+   não basta para o requisito de corretude do §3.3 ("merge commits, não
+   squash") — precisaria também de proteção de branch ou de desabilitar
+   squash-merge no GitHub. Clones locais/de agente (§3.3) ficam fora do
+   alcance de qualquer mudança de CI — nenhuma fase deste esboço os cobre.
+
+**Lacuna na própria ordenação das fases:** como listada acima, a Fase 1
+(`git mv` + remoção de ~297 arquivos-irmãos) roda antes da Fase 3 (reescrita
+de `pickVersionDuel`/`computeVersionRatings` e do loader de `blogVersions`
+para ler blobs via o índice). Isso quebra a convenção que este próprio
+documento invoca para o critério de aceite ("no mesmo padrão de 0003/0010" —
+processo de RFC do `CLAUDE.md`: cada fase verde antes da próxima): entre o
+fim da Fase 1 e o fim da Fase 3, os arquivos-irmãos que os duelos e o loader
+de `blogVersions` hoje leem ("lê arquivos irmãos de verdade", §3.3) já não
+existem no working tree, e o código que leria blobs no lugar deles ainda não
+foi escrito — duelos e permalinks `/v/<uuid>/` ficariam quebrados nesse
+intervalo, não apenas mais lentos. Uma ordenação real precisaria intercalar
+as fases (ex.: índice e reescrita de leitura antes de qualquer remoção de
+arquivo) em vez da lista plana numerada acima — este esboço não resolve essa
+dependência, só a numera incorretamente.
 
 Critério de aceite, no mesmo padrão de 0003/0010: snapshot de URLs idêntico
 antes/depois, build e doctor verdes, golden tests dos duelos de versão
@@ -275,10 +309,11 @@ contrário do teste de subprocessos (que estende infraestrutura existente),
 não há teste de injeção de falha em `src/hronir/__tests__/` para copiar, e a
 0010 nunca escreveu um teste assim para V3 — ela eliminou o path de código,
 não testou em volta dele (ver §6). Esta lista também não é exaustiva: §3.2
-(múltiplos desafiantes), §3.4 (dessincronia do índice fora do CLI) e
-§3.3/Fase 4 (squash-merge sem imposição de CI) são riscos de regressão
-igualmente reais sem critério de aceite correspondente — um plano de
-implementação real precisaria fechá-los, não só E3/V3.
+(múltiplos desafiantes), §3.4 (dessincronia do índice fora do CLI), §3.3/Fase
+4 (squash-merge sem imposição de CI, e clones locais/de agente que nenhuma
+fase de CI alcança) e a ordenação Fase 1/Fase 3 acima são riscos de
+regressão igualmente reais sem critério de aceite correspondente — um plano
+de implementação real precisaria fechá-los, não só E3/V3.
 
 **Rollback:** ao contrário da migração da RFC 0010 (só renomes + um JSON
 gerado, reversível de graça), esta é **destrutiva no working tree** — remove
@@ -300,7 +335,7 @@ que ainda tem "um desafiante pendente" definido como versão não-selecionada,
 abaixo da selecionada. Ou seja: assim que um rascunho acumula 2 duelos
 inconclusivos, ele **para de contar como "pendente"** para fins do guard
 ("uma versão que já duelou o suficiente e não venceu é uma perdedora
-assentada... não pode bloquear o draft-worst para sempre" — comentário
+assentada... não pode bloquear o `draft-worst` para sempre" — comentário
 correto para o bug que resolvia, a `-prev` fantasma da 0003/V4) — mas
 continua existindo como arquivo até acumular o duelo extra **e** a margem
 de 0.5★ que o `prune` exige. Como partidas rodam a cada hora e `draft-worst`
@@ -329,22 +364,39 @@ duelos, permalinks ou seleção.
 ser confundidas.
 
 A **limpeza pontual** — rodar `hronir:select && hronir:prune` (sem
-`--dry-run`) manualmente agora — é de fato imediata e não depende de código
-novo: uma sessão comum (ou o próprio dono) roda os dois comandos e abre PR
-como qualquer outra sessão hronir, já removeria as 54 versões decididas.
+`--dry-run`) manualmente agora — é barata em esforço (dois comandos, zero
+código novo), mas **não é "abre PR como qualquer outra sessão hronir"** sem
+ressalva: um `prune` de verdade também grava
+`src/generated/versions-pruned.json` (`registerPruned`,
+`commands.ts:3175-3210`, chamada por `prune()` antes de deletar,
+`commands.ts:3251`) — e, ao contrário de `versions-selected.json`, esse
+arquivo **não é gitignorado** nem cai em nenhum `SAFE_PREFIXES` do
+`hronir-autopilot.yml` (`.routines/hronir/`, `src/content/blog/`) nem nas
+exceções de `.routines/*`. O gate por-arquivo do autopilot trata
+`src/generated/versions-pruned.json` como arquivo fora de escopo e pula a PR
+**inteira** — não só esse arquivo — silenciosamente (só no log do Actions,
+nada visível na PR). As 54 deleções de versão em si não são o problema
+(batem com `src/content/blog/`); é o manifesto novo que barra o merge
+automático. A limpeza continua barata de executar, mas precisa de merge
+manual (ou de estender o gate do autopilot) — não é tão automática quanto
+"qualquer outra sessão hronir" sugere.
 (Nota: fazer isso antes de reler o §4 deixa desatualizados o "504 arquivos"
-do §1 e o "~297" que §4 deriva dele — são uma fotografia de hoje, não um
-valor fixo; recontar antes de usá-los para dimensionar uma migração real.)
+e o "144 (69%)" do §1 e o "~297" que §4 deriva de "504" — reconferido nesta
+rodada: uma poda real deixaria 450 arquivos, com dirs em 2+ versões caindo
+de 144 (69%) para 125 (60%) e a distribuição "20 com 4, 8 com 5, 6 com 6"
+encolhendo para 17/5/3. São uma fotografia de hoje, não um valor fixo;
+recontar antes de usá-los para dimensionar uma migração real.)
 
-Já o **agendamento** — rodar isso periodicamente sem intervenção, pra fechar
-o laço que a Correção 1 sozinha não fecha (ela para o empilhamento novo; o
-agendamento limpa o que já empilhou) — não é tão simples quanto "achar um
-cron pra anexar". `hronir-heartbeat.yml` existe, mas seu `cron` está
-comentado/desabilitado hoje ("Heartbeat desabilitado — Jules substituído por
-outro agente"), nunca invocou comandos hronir (era só reabastecimento do
-conjunto de sessões Jules), e roda hoje com `permissions: contents: read` —
-reativá-lo pra isso não é só descomentar o cron, é decidir elevar um
-workflow ocioso e só-leitura para escrita/push na branch padrão. **Esse é o
+Já o **agendamento** — rodar isso periodicamente sem intervenção, para
+fechar o laço que a Correção 1 sozinha não fecha (ela para o empilhamento
+novo; o agendamento limpa o que já empilhou) — não é tão simples quanto
+"achar um cron para anexar". `hronir-heartbeat.yml` existe, mas seu `cron`
+está comentado/desabilitado hoje ("Heartbeat desabilitado — Jules
+substituído por outro agente"), nunca invocou comandos hronir (era só
+reabastecimento do conjunto de sessões Jules), e roda hoje com
+`permissions: contents: read` — reativá-lo para isso não é só descomentar o
+cron, é decidir elevar um workflow ocioso e só-leitura para escrita/push na
+branch padrão. **Esse é o
 ponto central do §6**: automatizar significa `prune` apagando arquivos
 direto em `main`, sem PR e sem revisão — desenho de segurança que este
 documento não resolve, só aponta.
@@ -360,6 +412,16 @@ E a Correção 2 sozinha não é permanente: sem agendar de verdade
 `select`/`prune` (reativar o cron do heartbeat ou criar um workflow novo,
 como já dito acima), o acúmulo da Causa 2 volta a se formar — rodar os
 comandos manualmente uma vez limpa o estoque atual, não fecha o problema.
+A dependência também corre no sentido inverso: o novo limiar da Correção 1
+("ainda não elegível para poda") é definido em termos da própria
+elegibilidade de poda — assim que um irmão perdedor cruza
+`n ≥ PRUNE_MIN_DUELS` e a margem `≥ PRUNE_MARGIN`, o guard libera um
+desafiante novo mesmo que ninguém tenha rodado `prune` ainda. As duas
+causas são independentes no sentido que este documento já registra (um
+guard perfeito não faz os 54 arquivos existentes sumirem sozinho), mas não
+no sentido oposto: sem a Correção 2 rodando com regularidade, a Correção 1
+não elimina o empilhamento — só o limita ao ritmo em que `prune` atrasa, de
+"indefinido" (hoje) para "até o próximo `prune`", não para zero.
 
 ---
 
@@ -377,7 +439,9 @@ passam a depender
 de histórico completo e de nunca squashar, sem mecanismo de CI que imponha
 isso, §3.3; uuid→sha não é mais simples que o manifesto atual e precisa de
 manutenção contínua não esboçada, §3.4; `doctor` ganha uma classe de falha
-nova, §3.5) supera o ganho (eliminar `versions-selected.json` e a
+nova, §3.5; e a migração em si é destrutiva no working tree e cara de
+reverter, ao contrário do precedente "reversível de graça" da 0010, §4)
+supera o ganho (eliminar `versions-selected.json` e a
 recomputação sem histerese do `select()` — não `versions-pruned.json`, que
 sobrevive, §3.3), principalmente porque o §5 ataca o componente evitável do
 mesmo incômodo por uma fração do risco — não o componente inerente ao
@@ -387,7 +451,7 @@ de um cron novo ou reativado — e, ao contrário do resto da automação hronir
 (`hronir-autopilot.yml`, que só mescla depois de gate de PR + CI, com um
 guard explícito contra deletar rate files), esse cron rodaria `prune`
 **sem PR e sem revisão**, apagando arquivos de conteúdo direto na branch
-default — um desenho de permissão e segurança que este documento não
+padrão — um desenho de permissão e segurança que este documento não
 resolve, só aponta.
 
 Se a decisão for seguir com este documento mesmo assim, ele é o ponto de
@@ -518,7 +582,7 @@ acima antes de virar automação — não é tão pequena quanto parece.
   a correção da Causa 2 "é imediata... não depende de código novo", mas essa
   frase descreve só a limpeza pontual — o desenho de segurança do
   agendamento (cron sem PR/revisão apagando conteúdo na branch padrão) só
-  aparecia três seções depois, em §6, nunca qualificando a alegação de §5
+  aparecia na seção seguinte (§6), nunca qualificando a alegação de §5
   onde o leitor de fato agiria. Reescrito: Correção 2 agora separa
   explicitamente "limpeza pontual" (de fato imediata) de "agendamento" (não
   trivial, remete ao desenho de segurança do §6, cita
@@ -526,7 +590,7 @@ acima antes de virar automação — não é tão pequena quanto parece.
   descrevia a técnica de dobra atômica ("com cuidado") sem registrar que não
   há nenhum precedente no repo para validá-la — nem teste de injeção de
   falha existente para copiar, nem a própria 0010 testou esse caso (só
-  eliminou o path de código) — adicionado como hedge explícito. Mais
+  eliminou o path de código) — adicionado como ressalva explícita. Mais
   anglicismos traduzidos: `fault-injection` (reintroduzido pela própria r5
   no texto que ela mesma adicionou, escapando da varredura de anglicismos
   daquela rodada) e `branch default` ×2. Dois erros achados na própria
@@ -538,3 +602,64 @@ acima antes de virar automação — não é tão pequena quanto parece.
   soltas) no texto que ela mesma escreve — proporcional ao volume de prosa
   nova, não um poço de erros antigos que se renova sozinho; consistente com
   a leitura de "sinal misto" da r5. Sem mudança na recomendação.
+- **r7** (2026-07-08): sétima revisão adversarial (5 agentes independentes,
+  desta vez com lentes deliberadamente diferentes das rodadas 1-6: fact-check
+  ao vivo, consistência interna, completude/lacunas, convenções, e uma
+  passada de "leitor novo" fazendo o walkthrough de execução do §4 em vez de
+  só checar fatos). Ao contrário do sinal de convergência da r6, esta rodada
+  achou problemas mais numerosos e mais graves — a mudança de lente importou
+  mais do que mais uma rodada do mesmo método.
+
+  **Novos e substanciais:** (1) `deploy.yml` — o workflow que de fato publica
+  o site — usa checkout raso e já dispara `hronir:select` via `prebuild`
+  antes de todo `npm run build` (confirmado rodando o comando); §3.3/§4 só
+  discutiam `check.yml` e `hronir-autopilot.yml`, tratando qualquer outro
+  caso como hipotético — não é. (2) A "limpeza pontual" da Correção 2 (§5,
+  reescrita na r6) alegava abrir PR "como qualquer outra sessão hronir", mas
+  um `prune` de verdade também grava `versions-pruned.json`, que não é
+  gitignorado nem cai em nenhum `SAFE_PREFIXES` do `hronir-autopilot.yml` —
+  o gate rejeitaria a PR inteira, silenciosamente. (3) A ordenação das fases
+  do §4 está quebrada: a Fase 1 remove os arquivos-irmãos que duelos e o
+  loader de `blogVersions` leem hoje antes da Fase 3 reescrever esses
+  consumidores para ler blobs — entre as duas fases, duelos e permalinks
+  ficariam quebrados, não só mais lentos, violando a própria convenção
+  "cada fase verde antes da próxima" que o documento invoca para seu
+  critério de aceite. (4) Uma terceira ocorrência de "branch default" (a
+  original, introduzida pela r5 no corpo do §6) sobreviveu à correção da r6
+  porque o texto-fonte quebra "branch" e "default" em duas linhas do
+  markdown — a busca literal de linha única da r6 nunca podia encontrá-la;
+  dois agentes independentes desta rodada a acharam com busca tolerante a
+  quebra de linha.
+
+  **Convergente entre 2 agentes** (mesmo padrão da r6): o balanço de custo do
+  §6 nunca incluía o achado do §4 de que a migração é destrutiva no working
+  tree e cara de reverter — adicionado à enumeração.
+
+  **Também corrigidos:** a Correção 1 (§5) não é totalmente independente da
+  Correção 2 no sentido inverso — seu novo limiar libera assim que um irmão
+  cruza elegibilidade de poda, mesmo sem `prune` ter rodado, então sozinha
+  ela limita o empilhamento, não o elimina; a leitura "competição
+  genuinamente em aberto" do §1 ganhou ressalva de que uma fatia dessa parte
+  também é artefato do mesmo guard da Causa 1, não maturação orgânica; a
+  nota de números desatualizados do §5 não cobria "144 (69%)" — expandida
+  com os números reconferidos ao vivo desta rodada (cairia para 125/60%,
+  distribuição 17/5/3); Fase 2 ganhou uma frase confirmando que o backfill
+  cobre por construção todo UUID de rate file já commitada; a lista "não
+  exaustiva" do critério de aceite ganhou clones locais/de agente como
+  lacuna própria. Anglicismo novo (`hedge`, introduzido pela própria entrada
+  da r6 no changelog); a mesma entrada da r6 também errava "três seções
+  depois" para uma alegação que na verdade está na seção seguinte (§5→§6 são
+  adjacentes); calque sintático na linha de Status, sobrevivendo desde a r1
+  ("da 'implementação faseada' padrão" → "do padrão de 'implementação
+  faseada'"); um `draft-worst` sem backtick; três "pra" substituídos por
+  "para" no parágrafo de agendamento.
+
+  Sem mudança na recomendação — nenhum achado torna o desenho git-only mais
+  barato; a maioria reforça riscos já listados ou expõe que a Correção 2 e o
+  próprio esboço de migração do §4 tinham menos acabamento do que pareciam.
+  Diferente da leitura de convergência da r6: esta rodada mostra que
+  fact-checking e consistência interna (o método das rodadas 1-6) chegam a
+  um teto real, mas outras lentes sobre o mesmo texto — "isso funcionaria se
+  alguém executasse?", "este comando real dispara este workflow real?" —
+  continuam achando problemas de fundo. Convergência do documento como um
+  todo permanece em aberto.
