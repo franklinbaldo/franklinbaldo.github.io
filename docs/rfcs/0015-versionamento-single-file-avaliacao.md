@@ -63,8 +63,10 @@ ao vivo e do histórico de decisão do próprio repo:
 o dono pediu o desenho mesmo assim — o resto deste documento é esse desenho,
 incluindo os pontos que ele quebra e como cada um teria que ser compensado.
 O §5 registra as causas-raiz precisas para o incômodo original (dispersão de
-arquivos) — são duas, não uma — e correções que resolvem o mesmo problema por
-uma fração do custo, achadas durante este desenho.
+arquivos) — são duas, não uma — e correções que atacam **o componente evitável**
+desse incômodo (pilhas e podas nunca executadas) por uma fração do custo,
+achadas durante este desenho. Não eliminam o componente inerente ao desenho
+do torneio — as 208 pastas continuam existindo (§5 detalha a distinção).
 
 ---
 
@@ -212,8 +214,8 @@ desapareceriam de fato — "publicada" deixa de ser artefato calculado e volta a
 ser "o que está no HEAD". Esse é o argumento mais forte a favor da proposta.
 Os limiares de `prune` (`PRUNE_MARGIN`, `PRUNE_MIN_DUELS`) encolhem **só**
 no caso que este desenho efetivamente cobre — 1 desafiante por vez, nada
-para podar quando duelo e fold-back terminam com um único arquivo em
-repouso. Mas §3.2 já registra que múltiplos desafiantes concorrentes são o
+para podar quando o duelo e a dobra de volta terminam com um único arquivo
+em repouso. Mas §3.2 já registra que múltiplos desafiantes concorrentes são o
 caso mais frequente **hoje** (69% dos diretórios), e esse caso não tem
 solução esboçada — para ele os limiares de `prune` ficam em aberto junto,
 não encolhidos. `versions-pruned.json` não encolhe de jeito nenhum em
@@ -250,7 +252,7 @@ redirecionamento.
    aberto, e decidir entre `inline`/arquivo descartável para o modo
    `path-only`, §3.1, atualizando a documentação desse modo no `CLAUDE.md`),
    `prune` (§3.3/§3.6 já estabelecem que `versions-pruned.json` sobrevive
-   como manifesto de redirect — esta fase precisa gerá-lo e mantê-lo, tarefa
+   como manifesto de redirecionamento — esta fase precisa gerá-lo e mantê-lo, tarefa
    que nenhuma versão anterior deste plano listou), loader de `blogVersions`
    (materializa a partir do índice), `doctor` (checks de alcançabilidade).
 5. **Fase 4 — CI:** `fetch-depth: 0` em todo workflow que roda comandos
@@ -263,9 +265,17 @@ antes/depois, build e doctor verdes, golden tests dos duelos de versão
 passando lendo blobs em vez de arquivos, um teste de regressão de
 subprocessos `git` por partida — sem ele, nada detecta o duelo reintroduzindo
 o achado E3 que a 0010 já corrigiu (§3.1) —, **e** um teste que force um
-crash no meio do fold-back de `draft-worst`/`draft-commit` (§3.2) e confirme
-que nenhum slug fica sem canônica nem com UUID duplicado — sem ele, nada
-detecta o mesmo desenho reintroduzindo o achado V3.
+crash no meio da dobra de `draft-worst`/`draft-commit` (§3.2) e confirme que
+nenhum slug fica sem canônica nem com UUID duplicado — sem ele, nada detecta
+o mesmo desenho reintroduzindo o achado V3. **Sem precedente no repo:** ao
+contrário do teste de subprocessos (que estende infraestrutura existente),
+não há teste de fault-injection em `src/hronir/__tests__/` para copiar, e a
+0010 nunca escreveu um teste assim para V3 — ela eliminou o path de código,
+não testou em volta dele (ver §6). Esta lista também não é exaustiva: §3.2
+(múltiplos desafiantes), §3.4 (dessincronia do índice fora do CLI) e
+§3.3/Fase 4 (squash-merge sem imposição de CI) são riscos de regressão
+igualmente reais sem critério de aceite correspondente — um plano de
+implementação real precisaria fechá-los, não só E3/V3.
 
 **Rollback:** ao contrário da migração da RFC 0010 (só renomes + um JSON
 gerado, reversível de graça), esta é **destrutiva no working tree** — remove
@@ -331,7 +341,7 @@ agendado pequeno), só não é reaproveitar infraestrutura já rodando.
 
 Isso ataca o componente evitável da dispersão — pilhas de 4-6 arquivos por
 diretório e podas já decididas nunca executadas — sem tocar no mecanismo de
-torneio, na feature de permalink, ou introduzir git como dependência de
+torneio, na funcionalidade de permalink, ou introduzir git como dependência de
 runtime para resolver conteúdo. Não elimina o componente inerente ao
 desenho: as 208 pastas continuam existindo, e qualquer diretório em
 competição ativa ainda terá 2 arquivos por definição (a versão selecionada +
@@ -349,21 +359,32 @@ Não recomendo a substituição integral: o custo (duelos precisam materializar
 blobs com disciplina de processamento em lote para não reabrir o achado E3 da
 0010, e quebram o modo `path-only` que o `CLAUDE.md` recomenda justo para
 agentes de sessão longa, §3.1; a janela de rascunho reintroduz o swap
-não-atômico que a 0010 já corrigiu como achado V3 e não cobre múltiplos
-desafiantes concorrentes — a norma hoje, §3.2; permalinks passam a depender
+não-atômico que a 0010 **eliminou removendo o mecanismo** (achado V3 —
+`promote`/`promoteFile` deixaram de existir, não foram corrigidos; a 0010
+nunca escreveu um teste para esse caso, só o path de código inteiro) e não
+cobre múltiplos desafiantes concorrentes — a norma hoje, §3.2; permalinks
+passam a depender
 de histórico completo e de nunca squashar, sem mecanismo de CI que imponha
 isso, §3.3; uuid→sha não é mais simples que o manifesto atual e precisa de
 manutenção contínua não esboçada, §3.4; `doctor` ganha uma classe de falha
 nova, §3.5) supera o ganho (eliminar `versions-selected.json` e a
 recomputação sem histerese do `select()` — não `versions-pruned.json`, que
-sobrevive, §3.3), principalmente porque o §5 entrega o mesmo alívio prático
-por uma fração do risco — uma cláusula de guard e um agendamento de dois
-comandos já existentes (precisa de um cron novo ou reativado, não é só rodar
-os comandos uma vez, §5), sem RFC nem migração.
+sobrevive, §3.3), principalmente porque o §5 ataca o componente evitável do
+mesmo incômodo por uma fração do risco — não o componente inerente ao
+torneio, que nenhuma das duas propostas remove (§5). A Correção 1 (cláusula
+de guard) é de fato barata. A Correção 2 (agendar `select`/`prune`) precisa
+de um cron novo ou reativado — e, ao contrário do resto da automação hronir
+(`hronir-autopilot.yml`, que só mescla depois de gate de PR + CI, com um
+guard explícito contra deletar rate files), esse cron rodaria `prune`
+**sem PR e sem revisão**, apagando arquivos de conteúdo direto na branch
+default — um desenho de permissão e segurança que este documento não
+resolve, só aponta.
 
 Se a decisão for seguir com este documento mesmo assim, ele é o ponto de
 partida para fases reais (com testes de aceite e PR incremental, no padrão
-0003/0010/0014). Se a escolha for o §5, é uma PR pequena e dispensa RFC.
+0003/0010/0014). Se a escolha for o §5, a Correção 1 é uma PR pequena e
+dispensa RFC; a Correção 2 precisa do desenho de segurança do parágrafo
+acima antes de virar automação — não é tão pequena quanto parece.
 
 ---
 
@@ -374,7 +395,7 @@ partida para fases reais (com testes de aceite e PR incremental, no padrão
   contrário registrado em conversa (§1); dono pediu o desenho de qualquer
   forma. Levantamento de dados ao vivo (208 pastas, 504 arquivos, 144 com
   2+ versões, 0 elegíveis para poda) e diagnóstico de causa raiz do
-  empilhamento (§5, gap entre `SELECT_MIN_DUELS` e `PRUNE_MIN_DUELS`) feitos
+  empilhamento (§5, lacuna entre `SELECT_MIN_DUELS` e `PRUNE_MIN_DUELS`) feitos
   nesta mesma sessão.
 - **r1** (2026-07-08): revisão adversarial (5 agentes de verificação de
   fatos + consistência interna) achou e corrigiu: contagem de pastas
@@ -454,4 +475,30 @@ partida para fases reais (com testes de aceite e PR incremental, no padrão
   anglicismos traduzidos (`matches` de novo — a própria r3 alegava tê-lo
   corrigido —, `performance`, `typo`, `hotfix`) e dois dentro da entrada
   do r1, nunca revisitada até agora (`fact-check`, `off-by-one`). Sem
+  mudança na recomendação.
+- **r5** (2026-07-08): quinta revisão adversarial (5 agentes independentes).
+  Achado mais significativo: §6 dizia que a RFC 0010 "já corrigiu" o achado
+  V3, mas a 0010 na verdade eliminou o mecanismo (`promote`/`promoteFile`
+  deixaram de existir) sem nunca escrever um teste para o caso — o próprio
+  §3.2 já usava a redação certa ("identificou como não-atômica"), só §6
+  mischaracterizava, sobrevivendo desde a r1. Isso também explica por que o
+  critério de aceite para V3 (adicionado na r4) não tinha precedente para
+  copiar — corrigido, com nota explícita sobre a ausência de teste de
+  fault-injection no repo e reconhecimento de que a lista de critérios
+  ainda não é exaustiva (múltiplos desafiantes, dessincronia do índice,
+  squash-merge também carecem de critério, não só E3/V3). Achado 2: a
+  honestidade que o §5 ganhou na r4 (componente evitável vs. inerente) não
+  tinha sido propagada para §1 e §6, que ainda alegavam resolução completa
+  — corrigido nos três lugares. Achado 3: §6 nunca precificava o que a
+  Correção 2 realmente exige — um cron rodando `prune` sem PR/revisão,
+  apagando conteúdo direto na branch default, sem os gates que o resto da
+  automação hronir usa para esse tipo de escrita — adicionado como
+  desenho de segurança em aberto, não resolvido por este documento. Mais
+  seis anglicismos traduzidos (`fold-back` ×2, `manifesto de redirect`,
+  `feature`, `gap`, um novo `enforcement` que a própria correção deste
+  parágrafo reintroduziu e teve que ser corrigido de novo). Avaliação
+  honesta de dois agentes independentes: a dimensão de tradução/prosa
+  convergiu (achados cada vez menores, alta taxa de falso-positivo em
+  candidatos), mas a dimensão de completude técnica ainda achava coisas
+  reais nesta rodada — sinal misto, não uma convergência limpa. Sem
   mudança na recomendação.
