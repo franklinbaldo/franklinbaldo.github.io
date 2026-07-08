@@ -4,7 +4,7 @@ slug: events-welcome-pt-translation
 branch: claude/sleepy-pasteur-0hvh2x
 status: pr-open
 issues: [1014]
-pr_opened: null
+pr_opened: 1015
 pr_merged: 994
 ---
 
