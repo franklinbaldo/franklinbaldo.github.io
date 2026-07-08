@@ -1,13 +1,13 @@
 # RFC 0015 — Versionamento single-file com histórico via git (avaliação)
 
-|                 |                                                                                                                                                                                                                                                  |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Status**      | Avaliação — parecer técnico contrário registrado em §1; documento mantido como desenho de referência a pedido do dono. **Não implementado.**                                                                                                     |
-| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                                              |
-| **Criado em**   | 2026-07-08                                                                                                                                                                                                                                       |
-| **Branch / PR** | `claude/blog-versioning-strategy-n1aw5d`                                                                                                                                                                                                         |
-| **Depende de**  | RFC 0003 (introduziu versões-pares) e RFC 0010 (Implemented, Fases 0–4 — modelo atual). Esta RFC avalia **substituir** o modelo de versões-pares da 0010 por arquivo único + histórico via git; §7 lista o que seria revertido.                  |
-| **Afeta**       | `src/content/blog/**` (achataria `<slug>/v-*.*` → `<slug>.*`), `src/hronir/{posts,selection,commands,matches}.ts`, `src/content.config.ts`, `src/pages/blog/[slug]/v/[uuid].astro` (+ `pt/`), `.github/workflows/*` (fetch-depth), CLI do Hrönir |
+|                 |                                                                                                                                                                                                                                                          |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**      | Avaliação — parecer técnico contrário registrado em §1; documento mantido como desenho de referência a pedido do dono. **Não implementado**, foge da "implementação faseada" padrão do processo de RFC porque a conclusão é não prosseguir (§6).         |
+| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                                                      |
+| **Criado em**   | 2026-07-08                                                                                                                                                                                                                                               |
+| **Branch / PR** | `claude/blog-versioning-strategy-n1aw5d`                                                                                                                                                                                                                 |
+| **Depende de**  | RFC 0003 (introduziu versões-pares) e RFC 0010 (Implemented, Fases 0–4 — modelo atual). Esta RFC avalia **substituir** o modelo de versões-pares da 0010 por arquivo único + histórico via git; §2 e §3.6 listam o que seria eliminado, §3 o que quebra. |
+| **Afeta**       | `src/content/blog/**` (achataria `<slug>/v-*.*` → `<slug>.*`), `src/hronir/{posts,selection,commands,matches}.ts`, `src/content.config.ts`, `src/pages/blog/[slug]/v/[uuid].astro` (+ `pt/`), `.github/workflows/*` (fetch-depth), CLI do Hrönir         |
 
 ---
 
@@ -20,9 +20,17 @@ recente por post, usando o histórico do git como registro das anteriores.
 Antes de responder, este documento foi precedido de uma investigação dos dados
 ao vivo e do histórico de decisão do próprio repo:
 
-- **209** pastas de post, **504** arquivos `v-*` hoje.
-- **145** pastas (69%) têm **2 ou mais** versões concorrentes ao mesmo tempo —
+- **208** pastas de post, **504** arquivos `v-*` hoje (`find src/content/blog
+-mindepth 1 -maxdepth 1 -type d` retorna 209, mas uma delas, `images/`, é
+  assets de hero image, não um post).
+- **144** pastas (69%) têm **2 ou mais** versões concorrentes ao mesmo tempo —
   20 com 4, 8 com 5, 6 com 6 (ex.: `f85fb538-6f59-4751-8629-da76665fc91e/`).
+- Dois slugs (`delegando-para-agentes`, `the-art-of-delegation`) têm, além da
+  pasta `<slug>/` versionada normalmente, um arquivo `<slug>.md` solto na raiz
+  de `src/content/blog/` — resíduo inerte: nem o loader do Astro (que segue
+  `versions-selected.json`) nem `listDirVersions` (que só varre diretórios) o
+  leem. Não é um terceiro modelo de conteúdo ativo, é housekeeping fora do
+  escopo deste documento.
 - `npm run hronir:prune -- --dry-run` nesta data: **zero** versões elegíveis
   para poda. A dispersão observada não é lixo acumulado por falta de limpeza —
   é competição em aberto, ainda não decidida.
@@ -37,7 +45,7 @@ ao vivo e do histórico de decisão do próprio repo:
 **Parecer:** não recomendo a substituição integral pelos motivos do §3. Só que
 o dono pediu o desenho mesmo assim — o resto deste documento é esse desenho,
 incluindo os pontos que ele quebra e como cada um teria que ser compensado.
-O §6 registra uma causa-raiz precisa para o incômodo original (dispersão de
+O §5 registra uma causa-raiz precisa para o incômodo original (dispersão de
 arquivos) e uma correção que resolve o mesmo problema por uma fração do custo,
 achada durante este desenho.
 
@@ -57,11 +65,12 @@ O endereçamento de versão passa de `slug@uuid` (resolvido varrendo os arquivos
 irmãos do diretório, RFC 0010 §4.3) para `slug@<sha>` ou `slug@uuid` resolvido
 via um índice uuid→commit (§3.4).
 
-Isso **eliminaria de fato** `versions-selected.json`, a lógica de seleção sem
-histerese do `hronir:select` (RFC 0010 §4.2, amendment 2026-07-01),
-`versions-pruned.json` e os limiares de `prune` — "publicada" volta a ser
-"o que está no HEAD", sem artefato gerado no meio. Esse é o ganho real da
-proposta, e é justo reconhecê-lo antes de listar o que ela quebra.
+Isso **eliminaria de fato** `versions-selected.json` e a lógica de seleção sem
+histerese do `hronir:select` (RFC 0010 §4.2, amendment 2026-07-01) —
+"publicada" volta a ser "o que está no HEAD", sem artefato gerado no meio.
+Esse é o ganho real da proposta, e é justo reconhecê-lo antes de listar o que
+ela quebra. (`versions-pruned.json` **não** entra nessa lista — §3.3 mostra
+que um manifesto equivalente teria que sobreviver.)
 
 > Nota sobre a pasta-por-post: com um único arquivo, a pasta `<slug>/` deixa de
 > carregar função (o próprio critério da RFC 0006 que já achatou `musicas/`:
@@ -102,8 +111,9 @@ mesma disciplina de batching, o duelo reintroduz exatamente o problema que a
 
 Editar precisa de um lugar para o conteúdo em progresso conviver com o
 original ainda vivo — senão volta a ser edição-no-lugar, e duas sessões
-mirando o mesmo "pior post" colidem no merge (era exatamente o **problema 1**
-que a RFC 0003 resolveu). Desenho de compensação: `draft-worst` continuaria
+mirando o mesmo "pior post" colidem no merge (era exatamente o item
+"Conflito de git" da RFC 0003 §1 que motivou aquela RFC). Desenho de
+compensação: `draft-worst` continuaria
 criando um irmão temporário (`<slug>.draft.mdx` ou algo em
 `.routines/hronir/drafts/`) que existe só durante a janela contestada;
 resolver o duelo dobra de volta para um arquivo só — vitória: sobrescreve
@@ -147,7 +157,9 @@ seja mantido de qualquer forma.
 ### 3.4. Identidade de versão (uuid → commit)
 
 Hoje o uuid é computado sob demanda do conteúdo de um arquivo vivo, memoizado
-por `(mtime, size)` (RFC 0010 §4.7). Sem arquivos-por-versão, responder "qual
+por `(mtimeMs, size)` (`posts.ts`, cache por arquivo — RFC 0010 §4.7 descreve
+a memoização como `(path, mtime)`, uma simplificação da mesma ideia). Sem
+arquivos-por-versão, responder "qual
 commit tem o conteúdo do uuid X" sem re-hashear todo blob histórico a cada
 consulta exige um índice persistido uuid→sha, mantido/estendido a cada
 mudança de conteúdo — ou seja, reinventar um manifesto, só que sobre
@@ -165,11 +177,13 @@ porque arquivos não têm "alcançabilidade".
 
 ### 3.6. O que de fato fica mais simples (justo reconhecer)
 
-`versions-selected.json`, toda a recomputação sem histerese do `select()`,
-`versions-pruned.json` e os limiares de `prune` (`PRUNE_MARGIN`,
-`PRUNE_MIN_DUELS`) encolheriam ou desapareceriam — "publicada" deixa de ser
-artefato calculado e volta a ser "o que está no HEAD". Esse é o argumento
-mais forte a favor da proposta.
+Ver §2: `versions-selected.json` e a recomputação sem histerese do `select()`
+desapareceriam de fato — "publicada" deixa de ser artefato calculado e volta a
+ser "o que está no HEAD". Esse é o argumento mais forte a favor da proposta.
+Os limiares de `prune` (`PRUNE_MARGIN`, `PRUNE_MIN_DUELS`) encolhem junto
+(nada para podar quando só existe um arquivo em repouso, §3.2), mas
+`versions-pruned.json` não — §3.3 mostra que sobrevive como manifesto de
+redirecionamento.
 
 ---
 
@@ -177,10 +191,13 @@ mais forte a favor da proposta.
 
 1. **Fase 0 — congelar:** rodar `hronir:select` uma última vez, o resultado
    vira o ponto de partida da migração.
-2. **Fase 1 — achatar:** para cada uma das 209 pastas,
-   `git mv <slug>/<arquivo-selecionado> <slug>.mdx`; as demais ~295 versões
+2. **Fase 1 — achatar:** para cada uma das 208 pastas de post (excluindo
+   `images/`, que não é um post),
+   `git mv <slug>/<arquivo-selecionado> <slug>.mdx`; as demais ~296 versões
    não-selecionadas de hoje saem do working tree (recuperáveis só via
-   `git log -- <slug>/<arquivo-antigo>` a partir do commit de migração).
+   `git log -- <slug>/<arquivo-antigo>` a partir do commit de migração). Os
+   dois slugs com arquivo solto órfão (§1) precisariam de triagem manual
+   antes desta fase — fora do escopo deste esboço.
 3. **Fase 2 — índice uuid→sha:** script que popula o índice inicial varrendo
    `git log --follow` de cada slug e hasheando cada blob com a mesma função
    de `getPostUuid`.
@@ -197,14 +214,14 @@ passando lendo blobs em vez de arquivos.
 
 **Rollback:** ao contrário da migração da RFC 0010 (só renomes + um JSON
 gerado, reversível de graça), esta é **destrutiva no working tree** — remove
-~295 arquivos (mesmo que recuperáveis via git). Reverter o merge desfaz os
+~296 arquivos (mesmo que recuperáveis via git). Reverter o merge desfaz os
 renomes, mas exige recomputar o índice uuid→sha do zero.
 
 ---
 
 ## 5. Alternativa mais barata — achada durante este desenho
 
-Investigando por que 145 pastas acumulam 2-6 versões **mesmo com** um guard
+Investigando por que 144 pastas acumulam 2-6 versões **mesmo com** um guard
 explícito contra empilhar rascunhos, achei a causa raiz exata:
 
 `draft-worst` já tenta não empilhar — `commands.ts:1948-1962` pula uma key
@@ -229,10 +246,16 @@ existir uma versão não-selecionada publicável ainda não elegível para poda
 (em vez de `n < SELECT_MIN_DUELS`). Uma cláusula de guard em `commands.ts`
 (~linha 1953-1961), zero mudança de schema, zero mudança em duelos,
 permalinks ou seleção. Combinar com agendar `hronir:prune` (sem `--dry-run`)
-na cadência que já existe em `hronir-heartbeat.yml`, para que perdedores
-resolvidos sejam de fato removidos em vez de esperar alguém lembrar de rodar
-o comando manualmente — fecha o laço que o guard sozinho não fecha (o guard
-para o empilhamento novo; o agendamento limpa o que já empilhou).
+periodicamente, para que perdedores resolvidos sejam de fato removidos em vez
+de esperar alguém lembrar de rodar o comando manualmente — fecha o laço que o
+guard sozinho não fecha (o guard para o empilhamento novo; o agendamento
+limpa o que já empilhou). **Correção de fato:** `hronir-heartbeat.yml` existe
+mas seu `cron` está comentado/desabilitado hoje ("Heartbeat desabilitado —
+Jules substituído por outro agente") e, mesmo ativo, nunca invocou comandos
+hronir (era só refil do pool de sessões Jules) — não há cadência pronta para
+anexar `prune`. Viável do mesmo jeito (reativar o cron do heartbeat para essa
+finalidade, ou um novo workflow agendado pequeno), só não é reaproveitar
+infraestrutura já rodando.
 
 Isso ataca exatamente o incômodo original ("o blog dispersa demais") sem
 tocar no mecanismo de torneio, na feature de permalink, ou introduzir git
@@ -243,12 +266,15 @@ como dependência de runtime para resolver conteúdo.
 ## 6. Recomendação
 
 Não recomendo a substituição integral: o custo (duelos precisam materializar
-blobs com disciplina de batching para não reabrir o achado E3 da 0010,
-permalinks passam a depender de histórico completo e de nunca squashar,
-`doctor` ganha uma classe de falha nova, uuid→sha não é mais simples que o
-manifesto atual) supera o ganho (eliminar `versions-selected.json`/`prune`),
-principalmente porque o §5 entrega o mesmo alívio prático por uma fração do
-risco — uma cláusula de guard, sem RFC nem migração.
+blobs com disciplina de batching para não reabrir o achado E3 da 0010, a
+janela de rascunho reintroduz o swap não-atômico que a 0010 já corrigiu como
+achado V3 (§3.2), permalinks passam a depender de histórico completo e de
+nunca squashar, `doctor` ganha uma classe de falha nova, uuid→sha não é mais
+simples que o manifesto atual) supera o ganho (eliminar
+`versions-selected.json` e a recomputação sem histerese do `select()` — não
+`versions-pruned.json`, que sobrevive, §3.3), principalmente porque o §5
+entrega o mesmo alívio prático por uma fração do risco — uma cláusula de
+guard, sem RFC nem migração.
 
 Se a decisão for seguir com este documento mesmo assim, ele é o ponto de
 partida para fases reais (com testes de aceite e PR incremental, no padrão
@@ -261,7 +287,17 @@ partida para fases reais (com testes de aceite e PR incremental, no padrão
 - **r0** (2026-07-08): rascunho inicial. Motivado por pergunta do dono sobre
   dispersão de arquivos de versão em `src/content/blog/`; parecer técnico
   contrário registrado em conversa (§1); dono pediu o desenho de qualquer
-  forma. Levantamento de dados ao vivo (209 pastas, 504 arquivos, 145 com
+  forma. Levantamento de dados ao vivo (208 pastas, 504 arquivos, 144 com
   2+ versões, 0 elegíveis para poda) e diagnóstico de causa raiz do
   empilhamento (§5, gap entre `SELECT_MIN_DUELS` e `PRUNE_MIN_DUELS`) feitos
   nesta mesma sessão.
+- **r1** (2026-07-08): revisão adversarial (5 agentes de fact-check +
+  consistência interna) achou e corrigiu: contagem de pastas inflada por
+  `images/` (209→208, 145→144 com 2+ versões, com nota sobre dois slugs com
+  arquivo órfão solto na raiz); referência quebrada a um inexistente "§7";
+  off-by-one "§6" → "§5"; contradição entre §2/§3.6 (alegava eliminar
+  `versions-pruned.json`, que §3.3 já mostrava sobreviver); citação errada da
+  chave de memoização do UUID; `hronir-heartbeat.yml` citado como cadência
+  "já existente" para `prune` quando seu cron está de fato desabilitado; e o
+  custo de atomicidade do §3.2 (swap tipo `promote`, achado V3) faltando no
+  tally do §6. Sem mudança na recomendação.
