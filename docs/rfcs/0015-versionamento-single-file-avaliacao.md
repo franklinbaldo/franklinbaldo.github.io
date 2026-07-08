@@ -145,7 +145,10 @@ rename/escreve/unlink que a RFC 0010 já identificou como **não-atômica**
 (achado V3: "crash no meio deixa o post sem canônica ou com UUID duplicado").
 Uma nova implementação precisaria resolver essa atomicidade de novo, com
 cuidado (escrever-depois-renomear sobre o path canônico, `git rm` do irmão no
-mesmo commit).
+mesmo commit) — **sem nenhum precedente no repo para validar a técnica**: a
+0010 nunca testou esse caso, só eliminou o path de código (§4, §6); não há
+teste de injeção de falha em `src/hronir/__tests__/` para copiar. "Com
+cuidado" aqui é uma promessa, não uma técnica verificada.
 
 **Lacuna não resolvida:** este desenho cobre só **um** desafiante por vez. Os
 dados do §1 mostram que hoje 144/208 diretórios (69%) têm **2 a 6** versões
@@ -269,7 +272,7 @@ crash no meio da dobra de `draft-worst`/`draft-commit` (§3.2) e confirme que
 nenhum slug fica sem canônica nem com UUID duplicado — sem ele, nada detecta
 o mesmo desenho reintroduzindo o achado V3. **Sem precedente no repo:** ao
 contrário do teste de subprocessos (que estende infraestrutura existente),
-não há teste de fault-injection em `src/hronir/__tests__/` para copiar, e a
+não há teste de injeção de falha em `src/hronir/__tests__/` para copiar, e a
 0010 nunca escreveu um teste assim para V3 — ela eliminou o path de código,
 não testou em volta dele (ver §6). Esta lista também não é exaustiva: §3.2
 (múltiplos desafiantes), §3.4 (dessincronia do índice fora do CLI) e
@@ -322,22 +325,29 @@ para poda (em vez de `n < SELECT_MIN_DUELS`). Uma cláusula de guard em
 `commands.ts` (~linha 1953-1961), zero mudança de schema, zero mudança em
 duelos, permalinks ou seleção.
 
-**Correção 2 (Causa 2):** agendar `hronir:select && hronir:prune` (sem
-`--dry-run`) periodicamente, para que perdedores resolvidos sejam de fato
-removidos em vez de esperar alguém lembrar de rodar os comandos manualmente —
-fecha o laço que a Correção 1 sozinha não fecha (ela para o empilhamento
-novo; o agendamento limpa o que já empilhou). Esta parte não depende de
-código novo — é imediata e independente do resto desta RFC: rodar os dois
-comandos manualmente agora já removeria as 54 versões decididas. (Nota:
-fazer isso antes de reler o §4 deixa desatualizados o "504 arquivos" do §1 e
-o "~297" que §4 deriva dele — são uma fotografia de hoje, não um valor fixo;
-recontar antes de usá-los para dimensionar uma migração real.) `hronir-heartbeat.yml`
-existe mas seu `cron` está comentado/desabilitado hoje ("Heartbeat
-desabilitado — Jules substituído por outro agente") e, mesmo ativo, nunca
-invocou comandos hronir (era só reabastecimento do conjunto de sessões
-Jules) — não há cadência pronta para anexar `prune`. Viável do mesmo jeito
-(reativar o cron do heartbeat para essa finalidade, ou um novo workflow
-agendado pequeno), só não é reaproveitar infraestrutura já rodando.
+**Correção 2 (Causa 2):** duas partes de custo bem diferente, que não devem
+ser confundidas.
+
+A **limpeza pontual** — rodar `hronir:select && hronir:prune` (sem
+`--dry-run`) manualmente agora — é de fato imediata e não depende de código
+novo: uma sessão comum (ou o próprio dono) roda os dois comandos e abre PR
+como qualquer outra sessão hronir, já removeria as 54 versões decididas.
+(Nota: fazer isso antes de reler o §4 deixa desatualizados o "504 arquivos"
+do §1 e o "~297" que §4 deriva dele — são uma fotografia de hoje, não um
+valor fixo; recontar antes de usá-los para dimensionar uma migração real.)
+
+Já o **agendamento** — rodar isso periodicamente sem intervenção, pra fechar
+o laço que a Correção 1 sozinha não fecha (ela para o empilhamento novo; o
+agendamento limpa o que já empilhou) — não é tão simples quanto "achar um
+cron pra anexar". `hronir-heartbeat.yml` existe, mas seu `cron` está
+comentado/desabilitado hoje ("Heartbeat desabilitado — Jules substituído por
+outro agente"), nunca invocou comandos hronir (era só reabastecimento do
+conjunto de sessões Jules), e roda hoje com `permissions: contents: read` —
+reativá-lo pra isso não é só descomentar o cron, é decidir elevar um
+workflow ocioso e só-leitura para escrita/push na branch padrão. **Esse é o
+ponto central do §6**: automatizar significa `prune` apagando arquivos
+direto em `main`, sem PR e sem revisão — desenho de segurança que este
+documento não resolve, só aponta.
 
 Isso ataca o componente evitável da dispersão — pilhas de 4-6 arquivos por
 diretório e podas já decididas nunca executadas — sem tocar no mecanismo de
@@ -481,17 +491,17 @@ acima antes de virar automação — não é tão pequena quanto parece.
   V3, mas a 0010 na verdade eliminou o mecanismo (`promote`/`promoteFile`
   deixaram de existir) sem nunca escrever um teste para o caso — o próprio
   §3.2 já usava a redação certa ("identificou como não-atômica"), só §6
-  mischaracterizava, sobrevivendo desde a r1. Isso também explica por que o
+  estava errado, sobrevivendo desde a r1. Isso também explica por que o
   critério de aceite para V3 (adicionado na r4) não tinha precedente para
   copiar — corrigido, com nota explícita sobre a ausência de teste de
-  fault-injection no repo e reconhecimento de que a lista de critérios
+  injeção de falha no repo e reconhecimento de que a lista de critérios
   ainda não é exaustiva (múltiplos desafiantes, dessincronia do índice,
   squash-merge também carecem de critério, não só E3/V3). Achado 2: a
   honestidade que o §5 ganhou na r4 (componente evitável vs. inerente) não
   tinha sido propagada para §1 e §6, que ainda alegavam resolução completa
-  — corrigido nos três lugares. Achado 3: §6 nunca precificava o que a
+  — corrigidos §1 e §6 (§5 já estava certo desde a r4). Achado 3: §6 nunca precificava o que a
   Correção 2 realmente exige — um cron rodando `prune` sem PR/revisão,
-  apagando conteúdo direto na branch default, sem os gates que o resto da
+  apagando conteúdo direto na branch padrão, sem os gates que o resto da
   automação hronir usa para esse tipo de escrita — adicionado como
   desenho de segurança em aberto, não resolvido por este documento. Mais
   seis anglicismos traduzidos (`fold-back` ×2, `manifesto de redirect`,
@@ -502,3 +512,29 @@ acima antes de virar automação — não é tão pequena quanto parece.
   candidatos), mas a dimensão de completude técnica ainda achava coisas
   reais nesta rodada — sinal misto, não uma convergência limpa. Sem
   mudança na recomendação.
+- **r6** (2026-07-08): sexta revisão adversarial (5 agentes independentes).
+  Achado mais significativo, convergente entre dois agentes independentes
+  (leitura "olhos frescos" e completude técnica): §5/Correção 2 afirmava que
+  a correção da Causa 2 "é imediata... não depende de código novo", mas essa
+  frase descreve só a limpeza pontual — o desenho de segurança do
+  agendamento (cron sem PR/revisão apagando conteúdo na branch padrão) só
+  aparecia três seções depois, em §6, nunca qualificando a alegação de §5
+  onde o leitor de fato agiria. Reescrito: Correção 2 agora separa
+  explicitamente "limpeza pontual" (de fato imediata) de "agendamento" (não
+  trivial, remete ao desenho de segurança do §6, cita
+  `permissions: contents: read` do `hronir-heartbeat.yml`). Achado 2: §3.2
+  descrevia a técnica de dobra atômica ("com cuidado") sem registrar que não
+  há nenhum precedente no repo para validá-la — nem teste de injeção de
+  falha existente para copiar, nem a própria 0010 testou esse caso (só
+  eliminou o path de código) — adicionado como hedge explícito. Mais
+  anglicismos traduzidos: `fault-injection` (reintroduzido pela própria r5
+  no texto que ela mesma adicionou, escapando da varredura de anglicismos
+  daquela rodada) e `branch default` ×2. Dois erros achados na própria
+  entrada da r5 deste changelog, não no corpo do documento: "mischaracterizava"
+  (palavra em inglês) → "estava errado"; "corrigido nos três lugares"
+  imprecisava a contagem real (era §1 e §6 — §5 já estava certo desde a r4)
+  → corrigido para refletir isso. Padrão notado por um dos agentes: cada
+  rodada introduz uma taxa pequena de erros novos (anglicismos, referências
+  soltas) no texto que ela mesma escreve — proporcional ao volume de prosa
+  nova, não um poço de erros antigos que se renova sozinho; consistente com
+  a leitura de "sinal misto" da r5. Sem mudança na recomendação.
