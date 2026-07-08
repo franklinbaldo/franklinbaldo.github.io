@@ -21,10 +21,10 @@ Antes de responder, este documento foi precedido de uma investigação dos dados
 ao vivo e do histórico de decisão do próprio repo:
 
 - **208** pastas de post, **504** arquivos `v-*` hoje (`find src/content/blog
--mindepth 1 -maxdepth 1 -type d` retorna 209, mas uma delas, `images/`, é
-  assets de hero image, não um post).
+-mindepth 1 -maxdepth 1 -type d` retorna 209, mas uma delas, `images/`, guarda
+  imagens de capa — `heroImage` —, não é um post).
 - **144** pastas (69%) têm **2 ou mais** versões concorrentes ao mesmo tempo —
-  20 com 4, 8 com 5, 6 com 6 (ex.: `f85fb538-6f59-4751-8629-da76665fc91e/`).
+  20 com 4, 8 com 5, 6 com 6 (ex.: `vos/`).
 - Dois slugs (`delegando-para-agentes`, `the-art-of-delegation`) têm, além da
   pasta `<slug>/` versionada normalmente, um arquivo `<slug>.md` solto na raiz
   de `src/content/blog/`. Nem o loader do Astro (que segue
@@ -40,13 +40,13 @@ ao vivo e do histórico de decisão do próprio repo:
   já existir** (gerado por um `hronir:select` real, não `--dry-run` — um
   checkout novo não tem esse arquivo, gitignorado); sem ele, `prune` itera
   `Object.keys(readSelection())` vazio e reporta "nenhuma versão elegível"
-  **silenciosamente**, não porque não há backlog. Rodando na ordem certa
-  (`hronir:select` de verdade, depois `prune --dry-run`): **54** versões
-  elegíveis para poda agora, em ~30 diretórios (ex.:
+  **silenciosamente**, não porque não há acúmulo pendente. Rodando na ordem
+  certa (`hronir:select` de verdade, depois `prune --dry-run`): **54** versões
+  elegíveis para poda agora, em **46** diretórios (ex.:
   `postagem-inaugural-um-vislumbre-da-minha-mente` a -1.87★ n=5,
   `universal-threshold` a -1.63★ n=4). A dispersão observada é uma
   **mistura**: parte é competição genuinamente em aberto (ainda sem
-  margem/duelos suficientes), parte é backlog real de perdedores já
+  margem/duelos suficientes), parte é acúmulo real de perdedores já
   decididos que simplesmente nunca foram removidos.
 - A pergunta "por que não só a versão atual + git" **já foi feita e respondida
   duas vezes** neste repo: a RFC 0003 nasceu justamente abandonando o modelo
@@ -164,8 +164,8 @@ cada um via `git show` no momento do build.
 Isso torna o build **dependente de ter o histórico completo do git
 disponível e rápido**. `check.yml` já usa `fetch-depth: 0` (build de CI
 seguro). `hronir-autopilot.yml` usa checkout raso (padrão), mas hoje só faz
-merge/gate — não roda `hronir` nem lê blob (§5) — então não é afetado por
-este risco específico. Qualquer clone raso que vier a rodar comandos hronir,
+merge/gate (confirmado lendo o workflow) — não roda `hronir` nem lê blob —
+então não é afetado por este risco específico. Qualquer clone raso que vier a rodar comandos hronir,
 porém — local, de agente, ou um workflow futuro — falharia em silêncio ao
 resolver blobs antigos. É uma classe de fragilidade nova: um
 arquivo em disco não liga para profundidade de clone, squash-merge ou
@@ -176,8 +176,8 @@ commits, não squash" do `CLAUDE.md` — hoje preferência de estilo — viraria
 Adicionalmente: hoje `prune` apaga o arquivo perdedor mas grava
 `versions-pruned.json` para o permalink degradar a redirect, não a 404 (RFC
 0010 §4.4, "a recuperabilidade via git não socorre o site estático"). Num
-modelo git-only, nada é "podado" do git (histórico é append-only) — sem esse
-registro, cada revisão testada em duelo continuaria pedindo uma página
+modelo git-only, nada é "podado" do git (histórico só cresce, nunca é
+reescrito) — sem esse registro, cada revisão testada em duelo continuaria pedindo uma página
 gerada para sempre, a menos que o mesmo tipo de manifesto de redirecionamento
 seja mantido de qualquer forma.
 
@@ -207,9 +207,12 @@ porque arquivos não têm "alcançabilidade".
 Ver §2: `versions-selected.json` e a recomputação sem histerese do `select()`
 desapareceriam de fato — "publicada" deixa de ser artefato calculado e volta a
 ser "o que está no HEAD". Esse é o argumento mais forte a favor da proposta.
-Os limiares de `prune` (`PRUNE_MARGIN`, `PRUNE_MIN_DUELS`) encolhem junto
-(nada para podar quando só existe um arquivo em repouso, §3.2), mas
-`versions-pruned.json` não — §3.3 mostra que sobrevive como manifesto de
+Os limiares de `prune` (`PRUNE_MARGIN`, `PRUNE_MIN_DUELS`) encolhem no caso
+comum de 1 desafiante por vez (nada para podar quando só existe um arquivo em
+repouso) — mas §3.2 já registra que múltiplos desafiantes concorrentes, o
+caso mais frequente hoje, não têm solução esboçada; para esse caso os
+limiares de `prune` ficam em aberto junto. `versions-pruned.json` não
+encolhe de jeito nenhum — §3.3 mostra que sobrevive como manifesto de
 redirecionamento.
 
 ---
@@ -236,10 +239,12 @@ redirecionamento.
    nada para detectar isso.
 4. **Fase 3 — reescrever consumidores:** `computeVersionRatings`/
    `pickVersionDuel` (leitura de blob), `draft-worst`/`draft-commit` (irmão
-   temporário + fold atômico, §3.2 — inclui decidir o fork `inline`/arquivo
-   descartável do modo `path-only`, §3.1, e atualizar a documentação desse
-   modo no `CLAUDE.md`), loader de `blogVersions` (materializa a partir do
-   índice), `doctor` (checks de alcançabilidade).
+   temporário + dobra atômica de volta a um arquivo, §3.2 — inclui resolver a
+   lacuna de múltiplos desafiantes concorrentes que o próprio §3.2 deixa em
+   aberto, e decidir entre `inline`/arquivo descartável para o modo
+   `path-only`, §3.1, atualizando a documentação desse modo no `CLAUDE.md`),
+   loader de `blogVersions` (materializa a partir do índice), `doctor`
+   (checks de alcançabilidade).
 5. **Fase 4 — CI:** `fetch-depth: 0` em todo workflow que roda comandos
    hronir ou build (hoje só `check.yml` tem isso). Sozinho não basta para o
    requisito de corretude do §3.3 ("merge commits, não squash") — precisaria
@@ -274,7 +279,7 @@ inconclusivos, ele **para de contar como "pendente"** para fins do guard
 assentada... não pode bloquear o draft-worst para sempre" — comentário
 correto para o bug que resolvia, a `-prev` fantasma da 0003/V4) — mas
 continua existindo como arquivo até acumular o duelo extra **e** a margem
-de 0.5★ que o `prune` exige. Como matches rodam a cada hora e `draft-worst`
+de 0.5★ que o `prune` exige. Como partidas rodam a cada hora e `draft-worst`
 uma vez por dia, qualquer rascunho ultrapassa `n ≥ 2` bem dentro de 24h — a
 mesma key pode ganhar um irmão novo a cada ciclo, indefinidamente, sempre que
 nenhuma versão perde pela margem cheia (plausível para revisões de qualidade
@@ -302,13 +307,16 @@ removidos em vez de esperar alguém lembrar de rodar os comandos manualmente —
 fecha o laço que a Correção 1 sozinha não fecha (ela para o empilhamento
 novo; o agendamento limpa o que já empilhou). Esta parte não depende de
 código novo — é imediata e independente do resto desta RFC: rodar os dois
-comandos manualmente agora já removeria as 54 versões decididas. `hronir-heartbeat.yml`
+comandos manualmente agora já removeria as 54 versões decididas. (Nota:
+fazer isso antes de reler o §4 deixa os números "504 arquivos"/"~297"
+citados lá desatualizados — são uma fotografia de hoje, não um valor fixo;
+recontar antes de usá-los para dimensionar uma migração real.) `hronir-heartbeat.yml`
 existe mas seu `cron` está comentado/desabilitado hoje ("Heartbeat
 desabilitado — Jules substituído por outro agente") e, mesmo ativo, nunca
-invocou comandos hronir (era só refil do pool de sessões Jules) — não há
-cadência pronta para anexar `prune`. Viável do mesmo jeito (reativar o cron
-do heartbeat para essa finalidade, ou um novo workflow agendado pequeno), só
-não é reaproveitar infraestrutura já rodando.
+invocou comandos hronir (era só reabastecimento do conjunto de sessões
+Jules) — não há cadência pronta para anexar `prune`. Viável do mesmo jeito
+(reativar o cron do heartbeat para essa finalidade, ou um novo workflow
+agendado pequeno), só não é reaproveitar infraestrutura já rodando.
 
 Isso ataca exatamente o incômodo original ("o blog dispersa demais") sem
 tocar no mecanismo de torneio, na feature de permalink, ou introduzir git
@@ -325,9 +333,9 @@ agentes de sessão longa, §3.1; a janela de rascunho reintroduz o swap
 não-atômico que a 0010 já corrigiu como achado V3 e não cobre múltiplos
 desafiantes concorrentes — a norma hoje, §3.2; permalinks passam a depender
 de histórico completo e de nunca squashar, sem mecanismo de CI que imponha
-isso, §3.3; `doctor` ganha uma classe de falha nova, §3.5; uuid→sha não é
-mais simples que o manifesto atual e precisa de manutenção contínua não
-esboçada, §3.4) supera o ganho (eliminar `versions-selected.json` e a
+isso, §3.3; uuid→sha não é mais simples que o manifesto atual e precisa de
+manutenção contínua não esboçada, §3.4; `doctor` ganha uma classe de falha
+nova, §3.5) supera o ganho (eliminar `versions-selected.json` e a
 recomputação sem histerese do `select()` — não `versions-pruned.json`, que
 sobrevive, §3.3), principalmente porque o §5 entrega o mesmo alívio prático
 por uma fração do risco — uma cláusula de guard e dois comandos já
@@ -376,10 +384,29 @@ partida para fases reais (com testes de aceite e PR incremental, no padrão
   citação "pasta tem que carregar função" corrigida — é paráfrase da RFC
   0003 sobre a RFC 0006, não citação literal; §5 (guard também exige
   `v.published`) e §3.2/§4/§6 ganharam as lacunas que faltavam (múltiplos
-  desafiantes concorrentes não resolvidos; fork do `path-only` sem fase
-  atribuída; manutenção contínua do índice uuid→sha não esboçada;
-  "não-squash" sem enforcement de CI; critério de aceite sem teste de
+  desafiantes concorrentes não resolvidos; decisão do modo `path-only` sem
+  fase atribuída; manutenção contínua do índice uuid→sha não esboçada;
+  "não-squash" sem imposição de CI; critério de aceite sem teste de
   regressão de subprocessos; custo do `path-only` ausente do §6); três
   palavras em inglês soltas na prosa (`housekeeping`, `batching`, `tally`)
   traduzidas. Sem mudança na recomendação — o achado dos 54 reforça a
   Correção 2 do §5, não o desenho git-only.
+- **r3** (2026-07-08): terceira revisão adversarial (5 agentes independentes).
+  Dois erros factuais tinham sobrevivido às duas rodadas anteriores: o
+  exemplo de "6 com 6" (§1) apontava para `f85fb538-.../`, que na verdade
+  tem 5 versões (corrigido para `vos/`, que tem 6 de fato) — erro do r0,
+  nunca verificado nas rodadas seguintes; e "~30 diretórios" para as 54
+  versões podáveis (achado do r2) nunca tinha sido contado de verdade —
+  são **46**. Também corrigida uma referência que a própria correção do r2
+  deixou pela metade: §3.3 trocou a citação de `hronir-heartbeat.yml` para
+  `hronir-autopilot.yml`, mas manteve um "(§5)" que só sustenta a alegação
+  para o workflow errado — removida a citação, mantido o fato (verificado
+  direto no arquivo do workflow). §3.6 e §4/Fase 3 passaram a reconhecer
+  que a lacuna de múltiplos desafiantes concorrentes do §3.2 também deixa
+  os limiares de `prune` e a fase de reescrita em aberto, não só o desenho
+  do irmão temporário. §5/Correção 2 ganhou uma nota: rodar a correção
+  antes de reler o §4 deixa os números "504"/"~297" desatualizados. Seis
+  anglicismos a mais traduzidos (`matches`, `backlog` ×2, `pool`, `fork` ×2,
+  `enforcement`, `append-only`) — dois deles dentro da própria entrada do
+  r2 que alegava ter corrigido todos os anglicismos. Sem mudança na
+  recomendação.
