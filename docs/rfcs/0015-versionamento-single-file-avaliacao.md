@@ -22,7 +22,10 @@ ao vivo e do histórico de decisão do próprio repo:
 
 - **208** pastas de post, **504** arquivos `v-*` hoje (`find src/content/blog
 -mindepth 1 -maxdepth 1 -type d` retorna 209, mas uma delas, `images/`, guarda
-  imagens de capa — `heroImage` —, não é um post).
+  imagens de capa — `heroImage` —, não é um post). Dessas 208, apenas 207 têm
+  versão publicável hoje —
+  `the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life/` tem
+  uma única versão marcada `draft: true` (§4 detalha).
 - **144** pastas (69%) têm **2 ou mais** versões concorrentes ao mesmo tempo —
   20 com 4, 8 com 5, 6 com 6 (ex.: `vos/`).
 - Dois slugs (`delegando-para-agentes`, `the-art-of-delegation`) têm, além da
@@ -109,14 +112,14 @@ descartável para o modo `path-only`.
 
 Isso **quebra path-only conceitualmente**: `CLAUDE.md` documenta esse modo
 como "recomendado para agentes com sessões longas ou compressão de contexto
-(ex. Jules com 20 matches)" porque a CLI imprime só o path e o agente lê o
+(ex. Jules com 20 partidas)" porque a CLI imprime só o path e o agente lê o
 arquivo direto. Um lado histórico não tem path real no working tree — a
 alternativa é forçar `inline` para lados históricos (anula o motivo de existir
 o modo, justo para os agentes de sessão longa que mais precisam dele) ou
 escrever um arquivo de rascunho temporário e garantir que nenhuma sessão o
 `git add` por engano.
 
-**Custo de performance:** a RFC 0010 §4.7 (achado E3) eliminou especificamente
+**Custo de eficiência:** a RFC 0010 §4.7 (achado E3) eliminou especificamente
 um subprocesso `git log` **por candidato** (`gitMtime`) porque custava ~200
 subprocessos por partida gerada — substituído por uma chamada `git log`
 batelada. Ler conteúdo de blob (`git show`) é a mesma classe de custo; sem a
@@ -158,7 +161,7 @@ Rota real, **já publicada hoje** — confirmado em
 collection `blogVersions`, que lê arquivos irmãos de verdade. Sem arquivos,
 o build precisaria de um loader que enumere todo UUID historicamente
 testado em duelo (não todo commit — a maioria dos commits que tocam um post
-é frontmatter/typo, não uma "versão" pelo critério de hoje) e materialize
+é frontmatter/erro de digitação, não uma "versão" pelo critério de hoje) e materialize
 cada um via `git show` no momento do build.
 
 Isso torna o build **dependente de ter o histórico completo do git
@@ -207,12 +210,14 @@ porque arquivos não têm "alcançabilidade".
 Ver §2: `versions-selected.json` e a recomputação sem histerese do `select()`
 desapareceriam de fato — "publicada" deixa de ser artefato calculado e volta a
 ser "o que está no HEAD". Esse é o argumento mais forte a favor da proposta.
-Os limiares de `prune` (`PRUNE_MARGIN`, `PRUNE_MIN_DUELS`) encolhem no caso
-comum de 1 desafiante por vez (nada para podar quando só existe um arquivo em
-repouso) — mas §3.2 já registra que múltiplos desafiantes concorrentes, o
-caso mais frequente hoje, não têm solução esboçada; para esse caso os
-limiares de `prune` ficam em aberto junto. `versions-pruned.json` não
-encolhe de jeito nenhum — §3.3 mostra que sobrevive como manifesto de
+Os limiares de `prune` (`PRUNE_MARGIN`, `PRUNE_MIN_DUELS`) encolhem **só**
+no caso que este desenho efetivamente cobre — 1 desafiante por vez, nada
+para podar quando duelo e fold-back terminam com um único arquivo em
+repouso. Mas §3.2 já registra que múltiplos desafiantes concorrentes são o
+caso mais frequente **hoje** (69% dos diretórios), e esse caso não tem
+solução esboçada — para ele os limiares de `prune` ficam em aberto junto,
+não encolhidos. `versions-pruned.json` não encolhe de jeito nenhum em
+nenhum dos dois casos — §3.3 mostra que sobrevive como manifesto de
 redirecionamento.
 
 ---
@@ -229,22 +234,25 @@ redirecionamento.
    working tree (recuperáveis só via `git log -- <slug>/<arquivo-antigo>` a
    partir do commit de migração). Três diretórios precisariam de triagem
    manual antes desta fase — fora do escopo deste esboço: os dois slugs com
-   arquivo solto órfão (§1) e este diretório sem versão publicável.
+   arquivo solto órfão e este diretório sem versão publicável (ambos
+   registrados em §1).
 3. **Fase 2 — índice uuid→sha:** script que popula o índice inicial varrendo
    `git log --follow` de cada slug e hasheando cada blob com a mesma função
    de `getPostUuid`. **Não esboçado aqui:** manutenção contínua pós-backfill —
    §3.4 já observa que o índice precisa ser "mantido/estendido a cada mudança
    de conteúdo"; um commit que toque um post fora dos caminhos do CLI
-   reescritos (edição direta, hotfix) dessincronizaria o índice do HEAD sem
-   nada para detectar isso.
+   reescritos (edição direta, correção urgente) dessincronizaria o índice do
+   HEAD sem nada para detectar isso.
 4. **Fase 3 — reescrever consumidores:** `computeVersionRatings`/
    `pickVersionDuel` (leitura de blob), `draft-worst`/`draft-commit` (irmão
    temporário + dobra atômica de volta a um arquivo, §3.2 — inclui resolver a
    lacuna de múltiplos desafiantes concorrentes que o próprio §3.2 deixa em
    aberto, e decidir entre `inline`/arquivo descartável para o modo
    `path-only`, §3.1, atualizando a documentação desse modo no `CLAUDE.md`),
-   loader de `blogVersions` (materializa a partir do índice), `doctor`
-   (checks de alcançabilidade).
+   `prune` (§3.3/§3.6 já estabelecem que `versions-pruned.json` sobrevive
+   como manifesto de redirect — esta fase precisa gerá-lo e mantê-lo, tarefa
+   que nenhuma versão anterior deste plano listou), loader de `blogVersions`
+   (materializa a partir do índice), `doctor` (checks de alcançabilidade).
 5. **Fase 4 — CI:** `fetch-depth: 0` em todo workflow que roda comandos
    hronir ou build (hoje só `check.yml` tem isso). Sozinho não basta para o
    requisito de corretude do §3.3 ("merge commits, não squash") — precisaria
@@ -252,9 +260,12 @@ redirecionamento.
 
 Critério de aceite, no mesmo padrão de 0003/0010: snapshot de URLs idêntico
 antes/depois, build e doctor verdes, golden tests dos duelos de versão
-passando lendo blobs em vez de arquivos, **e** um teste de regressão de
+passando lendo blobs em vez de arquivos, um teste de regressão de
 subprocessos `git` por partida — sem ele, nada detecta o duelo reintroduzindo
-o achado E3 que a 0010 já corrigiu (§3.1).
+o achado E3 que a 0010 já corrigiu (§3.1) —, **e** um teste que force um
+crash no meio do fold-back de `draft-worst`/`draft-commit` (§3.2) e confirme
+que nenhum slug fica sem canônica nem com UUID duplicado — sem ele, nada
+detecta o mesmo desenho reintroduzindo o achado V3.
 
 **Rollback:** ao contrário da migração da RFC 0010 (só renomes + um JSON
 gerado, reversível de graça), esta é **destrutiva no working tree** — remove
@@ -308,8 +319,8 @@ fecha o laço que a Correção 1 sozinha não fecha (ela para o empilhamento
 novo; o agendamento limpa o que já empilhou). Esta parte não depende de
 código novo — é imediata e independente do resto desta RFC: rodar os dois
 comandos manualmente agora já removeria as 54 versões decididas. (Nota:
-fazer isso antes de reler o §4 deixa os números "504 arquivos"/"~297"
-citados lá desatualizados — são uma fotografia de hoje, não um valor fixo;
+fazer isso antes de reler o §4 deixa desatualizados o "504 arquivos" do §1 e
+o "~297" que §4 deriva dele — são uma fotografia de hoje, não um valor fixo;
 recontar antes de usá-los para dimensionar uma migração real.) `hronir-heartbeat.yml`
 existe mas seu `cron` está comentado/desabilitado hoje ("Heartbeat
 desabilitado — Jules substituído por outro agente") e, mesmo ativo, nunca
@@ -318,9 +329,17 @@ Jules) — não há cadência pronta para anexar `prune`. Viável do mesmo jeito
 (reativar o cron do heartbeat para essa finalidade, ou um novo workflow
 agendado pequeno), só não é reaproveitar infraestrutura já rodando.
 
-Isso ataca exatamente o incômodo original ("o blog dispersa demais") sem
-tocar no mecanismo de torneio, na feature de permalink, ou introduzir git
-como dependência de runtime para resolver conteúdo.
+Isso ataca o componente evitável da dispersão — pilhas de 4-6 arquivos por
+diretório e podas já decididas nunca executadas — sem tocar no mecanismo de
+torneio, na feature de permalink, ou introduzir git como dependência de
+runtime para resolver conteúdo. Não elimina o componente inerente ao
+desenho: as 208 pastas continuam existindo, e qualquer diretório em
+competição ativa ainda terá 2 arquivos por definição (a versão selecionada +
+um desafiante) — isso é o preço de manter o torneio, não um bug a corrigir.
+E a Correção 2 sozinha não é permanente: sem agendar de verdade
+`select`/`prune` (reativar o cron do heartbeat ou criar um workflow novo,
+como já dito acima), o acúmulo da Causa 2 volta a se formar — rodar os
+comandos manualmente uma vez limpa o estoque atual, não fecha o problema.
 
 ---
 
@@ -338,8 +357,9 @@ manutenção contínua não esboçada, §3.4; `doctor` ganha uma classe de falha
 nova, §3.5) supera o ganho (eliminar `versions-selected.json` e a
 recomputação sem histerese do `select()` — não `versions-pruned.json`, que
 sobrevive, §3.3), principalmente porque o §5 entrega o mesmo alívio prático
-por uma fração do risco — uma cláusula de guard e dois comandos já
-existentes rodados na ordem certa, sem RFC nem migração.
+por uma fração do risco — uma cláusula de guard e um agendamento de dois
+comandos já existentes (precisa de um cron novo ou reativado, não é só rodar
+os comandos uma vez, §5), sem RFC nem migração.
 
 Se a decisão for seguir com este documento mesmo assim, ele é o ponto de
 partida para fases reais (com testes de aceite e PR incremental, no padrão
@@ -356,11 +376,12 @@ partida para fases reais (com testes de aceite e PR incremental, no padrão
   2+ versões, 0 elegíveis para poda) e diagnóstico de causa raiz do
   empilhamento (§5, gap entre `SELECT_MIN_DUELS` e `PRUNE_MIN_DUELS`) feitos
   nesta mesma sessão.
-- **r1** (2026-07-08): revisão adversarial (5 agentes de fact-check +
-  consistência interna) achou e corrigiu: contagem de pastas inflada por
-  `images/` (209→208, 145→144 com 2+ versões, com nota sobre dois slugs com
-  arquivo órfão solto na raiz); referência quebrada a um inexistente "§7";
-  off-by-one "§6" → "§5"; contradição entre §2/§3.6 (alegava eliminar
+- **r1** (2026-07-08): revisão adversarial (5 agentes de verificação de
+  fatos + consistência interna) achou e corrigiu: contagem de pastas
+  inflada por `images/` (209→208, 145→144 com 2+ versões, com nota sobre
+  dois slugs com arquivo órfão solto na raiz); referência quebrada a um
+  inexistente "§7"; erro de um-a-mais "§6" → "§5"; contradição entre §2/§3.6
+  (alegava eliminar
   `versions-pruned.json`, que §3.3 já mostrava sobreviver); citação errada da
   chave de memoização do UUID; `hronir-heartbeat.yml` citado como cadência
   "já existente" para `prune` quando seu cron está de fato desabilitado; e o
@@ -410,3 +431,27 @@ partida para fases reais (com testes de aceite e PR incremental, no padrão
   `enforcement`, `append-only`) — dois deles dentro da própria entrada do
   r2 que alegava ter corrigido todos os anglicismos. Sem mudança na
   recomendação.
+- **r4** (2026-07-08): quarta revisão adversarial (5 agentes independentes).
+  Achados desta vez foram sobre completude e precisão, não mais números
+  errados — os dados voltaram a bater exatamente (208/504/144/54/46/207
+  reconfirmados ao vivo). Uma lacuna real sobreviveu às três rodadas
+  anteriores apesar do fato-base ter sido citado três vezes em seções
+  diferentes: §4 nunca atribuía a nenhuma fase a geração/manutenção de
+  `versions-pruned.json`, mesmo §3.3/§3.6/§6 já estabelecendo que ele
+  sobrevive — corrigido, adicionado à Fase 3. §5 fechava com "ataca
+  exatamente o incômodo original", alegação forte demais: as 208 pastas
+  continuam existindo e qualquer diretório em competição ativa ainda terá 2
+  arquivos por definição — reescrito para separar o componente evitável
+  (pilhas e podas não executadas) do componente inerente ao desenho do
+  torneio. §6 não custava a infraestrutura de agendamento que a própria
+  Correção 2 exige; critério de aceite não tinha teste para o achado V3
+  (só para o E3); terceiro diretório sem versão publicável (§4) nunca
+  citado em §1, quebrando o padrão dos outros dois casos especiais; nota
+  do §5 sobre números desatualizados atribuía "504" a §4 quando esse
+  número só aparece em §1; §3.6 lia como autocontradição ("caso comum" vs.
+  "caso mais frequente hoje" para o mesmo cenário) — reescrito para deixar
+  claro que são o mesmo caso, descrito de dois jeitos. Mais quatro
+  anglicismos traduzidos (`matches` de novo — a própria r3 alegava tê-lo
+  corrigido —, `performance`, `typo`, `hotfix`) e dois dentro da entrada
+  do r1, nunca revisitada até agora (`fact-check`, `off-by-one`). Sem
+  mudança na recomendação.
