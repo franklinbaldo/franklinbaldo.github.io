@@ -135,6 +135,42 @@ describe("legacy layout (unchanged behavior)", () => {
       "legacy-slug"
     );
   });
+
+  it("a root-level orphan file does not shadow a real legacy directory (regression: two real repo slugs hit this)", () => {
+    // src/content/blog/delegando-para-agentes.md and
+    // src/content/blog/the-art-of-delegation.md predate the version system
+    // and sit at the content root *alongside* a real
+    // src/content/blog/<slug>/v-*.md directory — a pre-existing, documented
+    // artifact (RFC 0015 §1), not something flattening created. Naively
+    // treating the root file as "the" flat canonical would make
+    // listSlugVersions (and therefore select()) silently ignore the real
+    // versioned content and drop the slug from versions-selected.json
+    // entirely — caught live: `select` went from 207 to 205 slugs before
+    // this fix.
+    fs.mkdirSync("src/content/blog/orphaned-slug", { recursive: true });
+    fs.writeFileSync(
+      "src/content/blog/orphaned-slug/v-2026-01-01T00-00-00.md",
+      FRONTMATTER()
+    );
+    fs.writeFileSync(
+      "src/content/blog/orphaned-slug.md",
+      FRONTMATTER().replace("Body text.", "Unrelated orphan content.")
+    );
+
+    assert.equal(
+      sel.flatCanonicalPath("orphaned-slug"),
+      null,
+      "a slug with a real legacy directory must never be treated as flat"
+    );
+
+    const versions = sel.listSlugVersions("orphaned-slug");
+    assert.equal(versions.length, 1);
+    assert.equal(
+      versions[0].path,
+      "src/content/blog/orphaned-slug/v-2026-01-01T00-00-00.md",
+      "must resolve to the real versioned file, not the root-level orphan"
+    );
+  });
 });
 
 describe("listAllVersionSlugs unions both layouts", () => {

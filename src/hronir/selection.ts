@@ -199,8 +199,28 @@ export function listVersionSlugs(): string[] {
 // moment something moves its file, and every reader here picks that up
 // automatically, no coordinated flag day required.
 
-/** The flat canonical file for `slug`, or null if it isn't flattened yet. */
+/** True when `slug` has a legacy versioned directory with at least one real
+ *  version file in it — as opposed to a loose orphan file that merely
+ *  happens to share a slug's name. Two slugs in this repo predate the
+ *  version system entirely (RFC 0015 §1: `delegando-para-agentes.md`,
+ *  `the-art-of-delegation.md` sit at the content root *alongside* their
+ *  real `<slug>/v-*.md` directory — neither the old Astro loader nor
+ *  `listDirVersions` ever read them). A slug can only be legitimately flat
+ *  if it has no such directory to conflict with. */
+function hasLegacyDir(slug: string): boolean {
+  const dir = path.join(POSTS_DIR, slug);
+  if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) return false;
+  return fs
+    .readdirSync(dir)
+    .some((f) => /\.mdx?$/.test(f) && /^(v-|index\.)/.test(f));
+}
+
+/** The flat canonical file for `slug`, or null if it isn't flattened yet —
+ *  or if a root-level file merely collides with a still-versioned legacy
+ *  directory (see `hasLegacyDir`), in which case the directory always
+ *  wins: a slug is flat only once nothing else claims to version it. */
 export function flatCanonicalPath(slug: string): string | null {
+  if (hasLegacyDir(slug)) return null;
   for (const ext of [".mdx", ".md"]) {
     const p = path.join(POSTS_DIR, `${slug}${ext}`);
     if (fs.existsSync(p) && fs.statSync(p).isFile()) return p;
@@ -360,7 +380,7 @@ export function findTranslations(
 // unlink) that proves this — RFC 0015 §3.2/§4 flagged this repo as having
 // no precedent for that kind of test; this is that precedent.
 
-function historyEntryFor(v: VersionInfo, sha: string): HistoryEntry {
+export function historyEntryFor(v: VersionInfo, sha: string): HistoryEntry {
   const data = readPost(v.path);
   return {
     slug: v.slug,

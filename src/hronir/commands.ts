@@ -6,12 +6,14 @@ import { rating, predictWin } from "openskill";
 import {
   OUT_DIR,
   RATES_DIR,
+  DRAFTS_DIR,
   keyForPath,
   readPost,
   listPosts,
   getPostUuid,
   getPostUuidLegacy,
   getPostUuidPreOkfType,
+  blobShaForPath,
 } from "./posts.js";
 import {
   SELECTION_PATH,
@@ -19,11 +21,18 @@ import {
   writeSelection,
   listDirVersions,
   listVersionSlugs,
+  listSlugVersions,
+  listAllVersionSlugs,
+  slugForContentPath,
+  flatCanonicalPath,
+  foldBack,
+  historyEntryFor,
   listEnglishWithKey,
   findTranslations,
   type SelectionEntries,
   type VersionInfo,
 } from "./selection.js";
+import { registerHistory, historyKeySet, HISTORY_PATH } from "./history.js";
 import {
   listMatchFiles,
   readMatch,
@@ -448,8 +457,8 @@ function pickVersionDuel() {
   // hysteresis bar in some directory.
   const qualifiedRevisions = new Set<string>();
   const dirVersions = new Map<string, VersionInfo[]>();
-  for (const slug of Object.keys(readSelection())) {
-    const versions = listDirVersions(slug);
+  for (const slug of listAllVersionSlugs()) {
+    const versions = listSlugVersions(slug);
     dirVersions.set(slug, versions);
     const selected = versions.find((v) => v.selected);
     if (!selected) continue;
@@ -667,8 +676,7 @@ function generateNextMatch(sessionObjective?: string) {
   // RFC 0010 §4.3: stable version addressing. slug = folder name, uuid =
   // content identity; together they survive renames, selection swaps and
   // pruning.
-  const refFor = (p: string) =>
-    `${path.basename(path.dirname(p))}@${getPostUuid(p)}`;
+  const refFor = (p: string) => `${slugForContentPath(p)}@${getPostUuid(p)}`;
   const sideFor = (key: string, p: string, lang: string) => ({
     key,
     path: p,
@@ -764,7 +772,7 @@ function resolveSidePath(
     }
   }
   if (slug && uuid) {
-    const hit = listDirVersions(slug).find(
+    const hit = listSlugVersions(slug).find(
       (v) => v.uuid === uuid || v.legacyUuid === uuid || v.preOkfUuid === uuid
     );
     if (hit) return hit.path;
@@ -1951,8 +1959,8 @@ export function editWorst() {
     // loser (prune candidate), not a pending draft — it must not block
     // draft-worst forever the way the old v-*-prev archive did (bug V4).
     const hasDraft = findTranslations(row.key).some((t) => {
-      const slug = path.basename(path.dirname(t.path));
-      return listDirVersions(slug).some(
+      const slug = slugForContentPath(t.path);
+      return listSlugVersions(slug).some(
         (v) =>
           !v.selected &&
           v.published &&
@@ -2262,14 +2270,14 @@ export function doctor() {
   }
 
   // UUIDs vivos por slug (atual + legacy de cada peer), lazy por diretório,
-  // e o conjunto slug@uuid do registro de podas — base da checagem estrita
-  // de versões-fantasma em rate files stars-v2.
+  // e o conjunto slug@uuid arquivado (pruned + fold-back) — base da
+  // checagem estrita de versões-fantasma em rate files stars-v2.
   const dirUuidsBySlug = new Map<string, Set<string>>();
   const dirUuids = (slug: string): Set<string> => {
     let s = dirUuidsBySlug.get(slug);
     if (!s) {
       s = new Set();
-      for (const v of listDirVersions(slug)) {
+      for (const v of listSlugVersions(slug)) {
         s.add(v.uuid);
         s.add(v.legacyUuid);
         s.add(v.preOkfUuid);
@@ -2278,7 +2286,11 @@ export function doctor() {
     }
     return s;
   };
-  const prunedUuids = new Set<string>();
+  // RFC 0015: historyKeySet() covers flat-layout fold-back/prune archives;
+  // PRUNED_PATH covers legacy-layout prunes. A slug is in exactly one
+  // layout at a time, so the union is unambiguous — no key can mean two
+  // different things.
+  const prunedUuids = historyKeySet();
   if (fs.existsSync(PRUNED_PATH)) {
     try {
       const reg = JSON.parse(fs.readFileSync(PRUNED_PATH, "utf8"));
@@ -2329,7 +2341,7 @@ export function doctor() {
     ) => {
       if (!p || !version || !fs.existsSync(path.dirname(p))) return false;
       if (!isRefSchema) return true;
-      const slug = path.basename(path.dirname(p));
+      const slug = slugForContentPath(p);
       return (
         dirUuids(slug).has(version) || prunedUuids.has(`${slug}@${version}`)
       );
@@ -2580,7 +2592,11 @@ export function doctor() {
   // versions of a translation group should sit on the same revision.
   {
     const selection = readSelection();
-    if (Object.keys(selection).length === 0) {
+    // RFC 0015: a flat slug needs no selection.json entry at all — its
+    // canonical IS the file, by construction. "Nobody ran select" is only
+    // a real problem when NEITHER mechanism has published anything.
+    const anyFlat = listAllVersionSlugs().some((s) => flatCanonicalPath(s));
+    if (Object.keys(selection).length === 0 && !anyFlat) {
       issues.push(
         `${SELECTION_PATH}: ausente ou vazio — rode \`npm run hronir:select\`.`
       );
@@ -2601,8 +2617,8 @@ export function doctor() {
       }
     }
     const groupRevisions = new Map<string, Map<string, string[]>>();
-    for (const slug of listVersionSlugs()) {
-      const versions = listDirVersions(slug);
+    for (const slug of listAllVersionSlugs()) {
+      const versions = listSlugVersions(slug);
       const byUuid = new Map<string, string[]>();
       for (const v of versions) {
         if (!byUuid.has(v.uuid)) byUuid.set(v.uuid, []);
@@ -2615,7 +2631,13 @@ export function doctor() {
           );
         }
       }
-      if (!selection[slug] && versions.some((v) => v.published)) {
+      // A flat slug's canonical is always "selected" by construction — the
+      // pointer-based check below only makes sense for a legacy slug.
+      if (
+        !flatCanonicalPath(slug) &&
+        !selection[slug] &&
+        versions.some((v) => v.published)
+      ) {
         issues.push(
           `${slug}/: tem versão publicável mas não está em ${SELECTION_PATH} — rode \`npm run hronir:select\``
         );
@@ -2742,10 +2764,11 @@ export function doctor() {
   // Warnings (not errors): won't block hronir sessions; guide content cleanup.
   {
     const GENRE_PROMPT_RE = /[:;,]/;
-    const selection = readSelection();
     const genreWarnings: string[] = [];
-    for (const [slug, entry] of Object.entries(selection)) {
-      const p = path.join("src/content/blog", entry.file);
+    for (const slug of listAllVersionSlugs()) {
+      const canonical = listSlugVersions(slug).find((v) => v.selected);
+      if (!canonical) continue;
+      const p = canonical.path;
       if (!fs.existsSync(p)) continue;
       const raw = fs.readFileSync(p, "utf-8");
       if (!raw.includes("postType") || !raw.includes("music")) continue;
@@ -3055,12 +3078,20 @@ function pickHighestRated(
 // qualified (n ≥ SELECT_MIN_DUELS) — an untested pair must never win by
 // default either. Otherwise each sibling decides alone and hronir:doctor
 // reports the group as divergent.
+//
+// RFC 0015 (single-file model): the decision logic below is identical for
+// both layouts — only *how a winner becomes live* differs, decided
+// per-slug. A legacy slug still gets a versions-selected.json pointer
+// (setResult/writeSelection, unchanged). A flat slug has no pointer to
+// write — the winner's content is physically folded into `<slug>.mdx`
+// (foldBack) instead. dryRun must stay a true no-op for both, so flat
+// winners are only queued, and foldBack only runs after the dryRun check.
 export function select({ dryRun = false } = {}) {
   const ratings = computeVersionRatings();
 
   const dirs = new Map<string, VersionInfo[]>();
-  for (const slug of listVersionSlugs()) {
-    const versions = listDirVersions(slug);
+  for (const slug of listAllVersionSlugs()) {
+    const versions = listSlugVersions(slug);
     if (versions.length > 0) dirs.set(slug, versions);
   }
 
@@ -3076,7 +3107,12 @@ export function select({ dryRun = false } = {}) {
   }
 
   const result: SelectionEntries = {};
+  const foldQueue: VersionInfo[] = [];
   const setResult = (slug: string, v: VersionInfo) => {
+    if (flatCanonicalPath(slug)) {
+      if (!v.selected) foldQueue.push(v);
+      return;
+    }
     result[slug] = { file: v.file, uuid: v.uuid };
   };
 
@@ -3153,14 +3189,23 @@ export function select({ dryRun = false } = {}) {
 
   if (dryRun) {
     console.log("select: dry-run — nada gravado.");
+    if (foldQueue.length > 0) {
+      console.log(
+        `select: dry-run — ${foldQueue.length} slug(s) achatado(s) teriam sido dobrados: ${foldQueue.map((v) => v.slug).join(", ")}.`
+      );
+    }
     return;
   }
   const wrote = writeSelection(result);
   console.log(
     wrote
-      ? `select: seleção atualizada (${Object.keys(result).length} slugs) em ${SELECTION_PATH}.`
-      : `select: nenhuma mudança — ${SELECTION_PATH} intacto.`
+      ? `select: seleção atualizada (${Object.keys(result).length} slugs legados) em ${SELECTION_PATH}.`
+      : `select: nenhuma mudança na seleção legada — ${SELECTION_PATH} intacto.`
   );
+  for (const v of foldQueue) {
+    foldBack(v.slug, v);
+    console.log(`[select] ${v.slug}: dobrado (${v.file} → canônica)`);
+  }
 }
 
 interface PrunedEntry {
@@ -3213,26 +3258,38 @@ function registerPruned(entries: PrunedEntry[]) {
 // RFC 0010 §4.4: prune non-selected versions that have clearly lost — the
 // selected version leads by ≥ PRUNE_MARGIN stars over ≥ PRUNE_MIN_DUELS
 // version duels. Never the selected version, never the last file in a
-// directory. Every removed slug@uuid is registered in versions-pruned.json so
-// the build emits a redirect for its public permalink (no 404s).
+// directory.
+//
+// RFC 0015: dual-mode by slug. A legacy slug prunes exactly as before — a
+// non-selected sibling, registered in versions-pruned.json (registerPruned)
+// so the build emits a redirect instead of a 404. A flat slug has no
+// sibling to prune; its losing challengers live in
+// .routines/hronir/drafts/<slug>/, registered in versions-history.json
+// (registerHistory, the same archive foldBack uses) instead — same
+// "register before delete" discipline either way.
 export function prune({ dryRun = false } = {}) {
   const ratings = computeVersionRatings();
-  const selection = readSelection();
-  const removed: Array<{ v: VersionInfo; margin: number; n: number }> = [];
+  const removed: Array<{
+    v: VersionInfo;
+    margin: number;
+    n: number;
+    flat: boolean;
+  }> = [];
 
-  for (const slug of Object.keys(selection)) {
-    const versions = listDirVersions(slug);
+  for (const slug of listAllVersionSlugs()) {
+    const versions = listSlugVersions(slug);
     const selected = versions.find((v) => v.selected);
     if (!selected) continue;
     const selStars = versionStars(ratings, selected);
     if (!selStars) continue;
+    const isFlat = Boolean(flatCanonicalPath(slug));
     for (const v of versions) {
       if (v.selected) continue;
       const vs = versionStars(ratings, v);
       if (!vs) continue;
       const margin = selStars.stars - vs.stars;
       if (vs.n >= PRUNE_MIN_DUELS && margin >= PRUNE_MARGIN) {
-        removed.push({ v, margin, n: vs.n });
+        removed.push({ v, margin, n: vs.n, flat: isFlat });
       }
     }
   }
@@ -3242,25 +3299,35 @@ export function prune({ dryRun = false } = {}) {
     return;
   }
 
-  // Register permalinks BEFORE deleting: registerPruned aborts on a
-  // malformed registry, and at that point nothing has been removed yet. A
-  // crash between the write and the unlinks leaves at worst a redirect for
-  // a still-existing version, which the next prune run cleans up.
+  // Register permalinks BEFORE deleting anything, for both mechanisms:
+  // registerPruned/registerHistory abort on a malformed registry, and at
+  // that point nothing has been removed yet. A crash between a write and
+  // its unlinks leaves at worst a redirect for a still-existing version,
+  // which the next prune run cleans up.
   if (!dryRun) {
-    const prunedAt = new Date().toISOString();
-    registerPruned(
-      removed.map(({ v }) => ({
-        slug: v.slug,
-        uuid: v.uuid,
-        legacyUuid: v.legacyUuid,
-        preOkfUuid: v.preOkfUuid,
-        lang: v.lang,
-        prunedAt,
-      }))
-    );
+    const legacy = removed.filter((r) => !r.flat);
+    const flat = removed.filter((r) => r.flat);
+    if (legacy.length > 0) {
+      const prunedAt = new Date().toISOString();
+      registerPruned(
+        legacy.map(({ v }) => ({
+          slug: v.slug,
+          uuid: v.uuid,
+          legacyUuid: v.legacyUuid,
+          preOkfUuid: v.preOkfUuid,
+          lang: v.lang,
+          prunedAt,
+        }))
+      );
+    }
+    if (flat.length > 0) {
+      registerHistory(
+        flat.map(({ v }) => historyEntryFor(v, blobShaForPath(v.path)))
+      );
+    }
   }
 
-  for (const { v, margin, n } of removed) {
+  for (const { v, margin, n, flat } of removed) {
     if (dryRun) {
       console.log(
         `[prune dry-run] ${v.path} (-${margin.toFixed(2)}★ vs selecionada, n=${n})`
@@ -3268,7 +3335,7 @@ export function prune({ dryRun = false } = {}) {
     } else {
       fs.unlinkSync(v.path);
       console.log(
-        `[prune] removido ${v.path} (-${margin.toFixed(2)}★ vs selecionada, n=${n}) — permalink registrado em ${PRUNED_PATH}`
+        `[prune] removido ${v.path} (-${margin.toFixed(2)}★ vs selecionada, n=${n}) — permalink registrado em ${flat ? HISTORY_PATH : PRUNED_PATH}`
       );
     }
   }
