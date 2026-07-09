@@ -3,6 +3,19 @@ import { relative, resolve } from "node:path";
 
 const ROOT = process.cwd();
 
+function isShallowRepo() {
+  try {
+    const out = execFileSync("git", ["rev-parse", "--is-shallow-repository"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+      timeout: 5_000,
+    });
+    return out.trim() === "true";
+  } catch {
+    return false;
+  }
+}
+
 function lastModified(filePath) {
   try {
     const rel = relative(ROOT, resolve(filePath));
@@ -63,9 +76,16 @@ function lastModified(filePath) {
 /**
  * Sets `lastModified` (ISO string) on each post's frontmatter, derived
  * from `git log`. Falls back silently when git isn't available.
+ *
+ * On a shallow clone, `git log --follow` can only see the single fetched
+ * commit, so every file would falsely report that commit as its last
+ * modification — the field is skipped entirely rather than emit a made-up
+ * date (checked once per build, not per file).
  */
 export function remarkGitModified() {
+  const shallow = isShallowRepo();
   return (_tree, file) => {
+    if (shallow) return;
     const path = file.history?.[0] ?? file.path;
     if (!path) return;
     const iso = lastModified(path);
