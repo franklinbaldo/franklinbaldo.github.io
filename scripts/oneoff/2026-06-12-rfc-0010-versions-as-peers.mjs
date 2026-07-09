@@ -77,7 +77,7 @@ console.log(`renomeados: ${renames.length} index.* → v-*`);
 
 // ── 2. collapse exact duplicates per directory ─────────────────────────────
 let collapsed = 0;
-for (const { slug, abs } of renames) {
+for (const { abs } of renames) {
   const dir = path.dirname(abs);
   const byUuid = new Map();
   for (const f of fs.readdirSync(dir).sort()) {

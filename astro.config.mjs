@@ -216,7 +216,7 @@ export default defineConfig({
       transformers: [
         {
           name: "greentext-line-marker",
-          line(node, line) {
+          line(node, _line) {
             if (this.options.lang !== "greentext") return;
             const text = node.children
               .map((c) => {

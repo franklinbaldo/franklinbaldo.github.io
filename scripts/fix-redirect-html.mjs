@@ -2,7 +2,7 @@
 // element so pagefind can parse them without "has no <html> element" warnings.
 // Redirect stubs are detected by the presence of http-equiv="refresh" and the
 // absence of an <html> tag — a side-effect of Astro.redirect() in static builds.
-import { readdirSync, readFileSync, writeFileSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 function* walkHtml(dir) {

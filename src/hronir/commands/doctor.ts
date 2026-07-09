@@ -360,7 +360,7 @@ export function doctor() {
       } else {
         try {
           loadPerspective(String(data.perspective_id));
-        } catch (e: unknown) {
+        } catch {
           issues.push(
             `${base}: perspective_id "${data.perspective_id}" não corresponde a nenhum arquivo em scripts/hronir/perspectives/`
           );

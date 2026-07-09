@@ -27,6 +27,7 @@ const ROOT_ALLOWLIST = new Set([
   ".gitignore",
   ".lighthouserc.cjs",
   ".nvmrc",
+  ".oxlintrc.json",
   ".prettierignore",
   ".prettierrc.json",
   "CLAUDE.md",

@@ -101,9 +101,9 @@ const isPt = lang === "pt";
       link.dataset.katexCss = "true";
       document.head.appendChild(link);
     }
-    const [{ default: renderMathInElement }] = await Promise.all([
-      import("katex/contrib/auto-render"),
-    ]);
+    const { default: renderMathInElement } = await import(
+      "katex/contrib/auto-render"
+    );
     renderMathInElement(container, {
       delimiters: [
         { left: "$$", right: "$$", display: true },
