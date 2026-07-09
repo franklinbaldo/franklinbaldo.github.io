@@ -9,8 +9,8 @@
     "hronir": "scripts/hronir/index.js"
   },
   "scripts": {
-    "prebuild": "node scripts/copy-katex.mjs && node --import tsx/esm scripts/hronir/index.js select && node scripts/generate-translation-pairs.mjs && node scripts/generate-redirects.mjs",
-    "predev": "node scripts/copy-katex.mjs && node --import tsx/esm scripts/hronir/index.js select && node scripts/generate-translation-pairs.mjs && node scripts/generate-redirects.mjs",
+    "prebuild": "node scripts/pregen.mjs",
+    "predev": "node scripts/pregen.mjs",
     "check:hygiene": "node scripts/check-hygiene.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check:translations": "node scripts/check-translations.mjs",
@@ -45,7 +45,6 @@
     "hronir:migrate": "node --import tsx/esm scripts/hronir/index.js migrate",
     "hronir:doctor": "node --import tsx/esm scripts/hronir/index.js doctor",
     "hronir:diagnose-corpus": "node --import tsx/esm scripts/hronir/diagnose-corpus.mjs",
-    "hronir:detect-stuffing": "node scripts/hronir/detect-token-stuffing.mjs",
     "music:generate": "node scripts/generate-music-posts.mjs",
     "test": "node --import tsx/esm --experimental-test-module-mocks --test --test-concurrency=1 \"src/**/*.test.{js,ts}\""
   },
