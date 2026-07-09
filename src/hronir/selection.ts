@@ -2,12 +2,15 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   POSTS_DIR,
+  DRAFTS_DIR,
   readPost,
   getPostUuid,
   getPostUuidLegacy,
   getPostUuidPreOkfType,
   isPublishedData,
+  blobShaForPath,
 } from "./posts.js";
+import { registerHistory, type HistoryEntry } from "./history.js";
 
 // RFC 0010 §4.2 (amended 2026-07-01): the published version of each post is
 // not a privileged filename but an entry in this generated JSON. Gitignored,
@@ -163,7 +166,9 @@ export function listDirVersions(slug: string): VersionInfo[] {
   return out;
 }
 
-/** All post directories (slugs) that contain at least one version file. */
+/** All post directories (slugs) that contain at least one version file.
+ *  Legacy layout only — a flattened slug (single `<slug>.mdx` file, RFC
+ *  0015) has no directory to find here. See `listAllVersionSlugs`. */
 export function listVersionSlugs(): string[] {
   if (!fs.existsSync(POSTS_DIR)) return [];
   const out: string[] = [];
@@ -178,6 +183,153 @@ export function listVersionSlugs(): string[] {
   return out.sort();
 }
 
+// ── RFC 0015 single-file model: dual-layout reads ────────────────────────────
+//
+// A slug is in exactly one of two layouts at any time:
+//   - legacy: src/content/blog/<slug>/{v-*,index}.{md,mdx} + an entry in
+//     versions-selected.json says which sibling is canonical.
+//   - flat: src/content/blog/<slug>.{md,mdx} IS the canonical, directly —
+//     no selection entry needed. Open challengers (RFC 0015 §3.2/§5) live
+//     outside the content collection, in .routines/hronir/drafts/<slug>/,
+//     so an active competition never adds a file under POSTS_DIR.
+//
+// Every function below handles both without the caller needing to know
+// which one a given slug is in — this is what lets consumer rewrites (Fase
+// 3) ship independently of flattening (Fase 1): a slug becomes flat the
+// moment something moves its file, and every reader here picks that up
+// automatically, no coordinated flag day required.
+
+/** True when `slug` has a legacy versioned directory with at least one real
+ *  version file in it — as opposed to a loose orphan file that merely
+ *  happens to share a slug's name. Two slugs in this repo predate the
+ *  version system entirely (RFC 0015 §1: `delegando-para-agentes.md`,
+ *  `the-art-of-delegation.md` sit at the content root *alongside* their
+ *  real `<slug>/v-*.md` directory — neither the old Astro loader nor
+ *  `listDirVersions` ever read them). A slug can only be legitimately flat
+ *  if it has no such directory to conflict with. */
+function hasLegacyDir(slug: string): boolean {
+  const dir = path.join(POSTS_DIR, slug);
+  if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) return false;
+  return fs
+    .readdirSync(dir)
+    .some((f) => /\.mdx?$/.test(f) && /^(v-|index\.)/.test(f));
+}
+
+/** The flat canonical file for `slug`, or null if it isn't flattened yet —
+ *  or if a root-level file merely collides with a still-versioned legacy
+ *  directory (see `hasLegacyDir`), in which case the directory always
+ *  wins: a slug is flat only once nothing else claims to version it. */
+export function flatCanonicalPath(slug: string): string | null {
+  if (hasLegacyDir(slug)) return null;
+  for (const ext of [".mdx", ".md"]) {
+    const p = path.join(POSTS_DIR, `${slug}${ext}`);
+    if (fs.existsSync(p) && fs.statSync(p).isFile()) return p;
+  }
+  return null;
+}
+
+function toVersionInfo(
+  slug: string,
+  p: string,
+  file: string,
+  selected: boolean
+): VersionInfo {
+  const data = readPost(p);
+  return {
+    slug,
+    path: p,
+    file,
+    uuid: getPostUuid(p)!,
+    legacyUuid: getPostUuidLegacy(p)!,
+    preOkfUuid: getPostUuidPreOkfType(p)!,
+    selected,
+    published: isPublishedData(data),
+    draftCreatedAt: data.draftCreatedAt ? String(data.draftCreatedAt) : null,
+    translationKey: data.translationKey ? String(data.translationKey) : null,
+    lang: data.lang ? String(data.lang) : "en",
+  };
+}
+
+/** Every open challenger for a flattened slug — files in
+ *  .routines/hronir/drafts/<slug>/, the flat-layout equivalent of the
+ *  non-selected siblings a legacy directory holds.
+ *
+ *  Self-healing: a draft whose uuid now matches `canonicalUuid` is a stray
+ *  left behind by a `foldBack` that crashed after its atomic rename but
+ *  before it removed the draft (see `foldBack`) — by definition it already
+ *  "won" (its content IS the canonical now), so it's deleted on sight
+ *  instead of being surfaced as a live competitor. This is what makes
+ *  foldBack's crash window safe to leave unhandled inside foldBack itself:
+ *  every reader of this list independently converges the state. */
+function listDraftsForSlug(slug: string, canonicalUuid: string): VersionInfo[] {
+  const dir = path.join(DRAFTS_DIR, slug);
+  if (!fs.existsSync(dir)) return [];
+  const out: VersionInfo[] = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (!entry.isFile() || !/\.mdx?$/.test(entry.name)) continue;
+    const p = path.join(dir, entry.name);
+    const v = toVersionInfo(slug, p, `${slug}/${entry.name}`, false);
+    if (v.uuid === canonicalUuid) {
+      fs.unlinkSync(p);
+      continue;
+    }
+    out.push(v);
+  }
+  out.sort((a, b) => a.file.localeCompare(b.file));
+  return out;
+}
+
+/** Dual-mode replacement for `listDirVersions`: every version of `slug`
+ *  (canonical + open challengers) regardless of which layout it's in. */
+export function listSlugVersions(slug: string): VersionInfo[] {
+  const flat = flatCanonicalPath(slug);
+  if (flat) {
+    const canonical = toVersionInfo(slug, flat, path.basename(flat), true);
+    return [canonical, ...listDraftsForSlug(slug, canonical.uuid)];
+  }
+  return listDirVersions(slug);
+}
+
+/** Dual-mode replacement for `listVersionSlugs`: every slug with at least
+ *  one version, flat or legacy. */
+export function listAllVersionSlugs(): string[] {
+  const out = new Set(listVersionSlugs());
+  if (fs.existsSync(POSTS_DIR)) {
+    for (const entry of fs.readdirSync(POSTS_DIR, { withFileTypes: true })) {
+      if (!entry.isFile() || !/\.mdx?$/.test(entry.name)) continue;
+      out.add(entry.name.replace(/\.mdx?$/, ""));
+    }
+  }
+  return [...out].sort();
+}
+
+/** Slug that owns a content path, for either layout: a flat canonical
+ *  (`src/content/blog/<slug>.mdx`), a draft
+ *  (`.routines/hronir/drafts/<slug>/v-....mdx`), or a legacy sibling
+ *  (`src/content/blog/<slug>/v-....mdx`). Replaces the
+ *  `path.basename(path.dirname(p))` pattern, which only ever gave the right
+ *  answer for the legacy/draft shapes — for a flat canonical it returns the
+ *  containing directory name ("blog"), not the slug. */
+export function slugForContentPath(p: string): string {
+  const norm = p.split(path.sep).join("/");
+  if (norm.startsWith(POSTS_DIR + "/")) {
+    const rel = norm.slice(POSTS_DIR.length + 1);
+    if (!rel.includes("/")) return rel.replace(/\.mdx?$/, ""); // flat canonical
+  }
+  return path.basename(path.dirname(p)); // draft or legacy sibling
+}
+
+/** Every slug's canonical version, dual-mode (flat file directly, or
+ *  whichever legacy sibling versions-selected.json currently names). */
+function allCanonicals(): VersionInfo[] {
+  const out: VersionInfo[] = [];
+  for (const slug of listAllVersionSlugs()) {
+    const canonical = listSlugVersions(slug).find((v) => v.selected);
+    if (canonical) out.push(canonical);
+  }
+  return out;
+}
+
 /** Selected, published EN posts with a translationKey — the cross-essay
  *  tournament pool (RFC 0010 §4.6). */
 export function listEnglishWithKey(): Array<{
@@ -185,15 +337,11 @@ export function listEnglishWithKey(): Array<{
   translationKey: string;
 }> {
   const out: Array<{ path: string; translationKey: string }> = [];
-  for (const [slug, e] of Object.entries(readSelection())) {
-    const p = path.join(POSTS_DIR, e.file);
-    if (!fs.existsSync(p)) continue;
-    const data = readPost(p);
-    const lang = data.lang ? String(data.lang) : "en";
-    if (lang !== "en") continue;
-    if (!data.translationKey) continue;
-    if (!isPublishedData(data)) continue;
-    out.push({ path: p, translationKey: String(data.translationKey) });
+  for (const v of allCanonicals()) {
+    if (v.lang !== "en") continue;
+    if (!v.translationKey) continue;
+    if (!v.published) continue;
+    out.push({ path: v.path, translationKey: v.translationKey });
   }
   return out;
 }
@@ -204,14 +352,107 @@ export function findTranslations(
   { publishedOnly = false }: { publishedOnly?: boolean } = {}
 ): Array<{ path: string; lang: string }> {
   const out: Array<{ path: string; lang: string }> = [];
-  for (const e of Object.values(readSelection())) {
-    const p = path.join(POSTS_DIR, e.file);
-    if (!fs.existsSync(p)) continue;
-    const data = readPost(p);
-    if (!data.translationKey) continue;
-    if (String(data.translationKey) !== String(translationKey)) continue;
-    if (publishedOnly && !isPublishedData(data)) continue;
-    out.push({ path: p, lang: data.lang ? String(data.lang) : "en" });
+  for (const v of allCanonicals()) {
+    if (!v.translationKey) continue;
+    if (v.translationKey !== String(translationKey)) continue;
+    if (publishedOnly && !v.published) continue;
+    out.push({ path: v.path, lang: v.lang });
   }
   return out;
+}
+
+// ── Fold-back: the atomic winner-replaces-canonical swap ────────────────────
+//
+// RFC 0010's `promote`/`promoteFile` did rename-then-write-then-unlink; a
+// crash between steps could leave a slug with no canonical file at all, or
+// with two files claiming the same UUID (achado V3 — RFC 0010 §4.7). RFC
+// 0010 sidestepped the whole problem by never physically swapping content
+// (selection is just a pointer in versions-selected.json). The flat layout
+// has no pointer to swap — the canonical's identity IS its path — so this
+// is the one place the single-file model needs a mechanism RFC 0010 could
+// avoid needing at all.
+//
+// The fix: write-then-atomic-rename, register-before-mutate. At every point
+// during and after a crash, `<slug>.mdx` exists and has *some* valid
+// version's content — the file is simply never absent, which is the
+// specific failure achado V3 described. See __tests__/fold-back.test.js for
+// the crash-injection test (kill the write, kill the rename, kill the
+// unlink) that proves this — RFC 0015 §3.2/§4 flagged this repo as having
+// no precedent for that kind of test; this is that precedent.
+
+export function historyEntryFor(v: VersionInfo, sha: string): HistoryEntry {
+  const data = readPost(v.path);
+  return {
+    slug: v.slug,
+    uuid: v.uuid,
+    legacyUuid: v.legacyUuid,
+    preOkfUuid: v.preOkfUuid,
+    lang: v.lang,
+    sha,
+    path: v.path,
+    title: data.title ? String(data.title) : "",
+    description: data.description ? String(data.description) : "",
+    date: data.date ? String(data.date) : null,
+    draftCommittedAt: data.draftCommittedAt
+      ? String(data.draftCommittedAt)
+      : null,
+    draftMsg: data.draftMsg ? String(data.draftMsg) : null,
+    commitSha: null,
+    archivedAt: new Date().toISOString(),
+  };
+}
+
+/** Atomically replaces `slug`'s flat canonical with `winner`'s content,
+ *  archives the outgoing canonical to history, and removes the winning
+ *  draft file. `winner` must come from `listSlugVersions(slug)` (a live
+ *  draft) — `winner.selected === true` is treated as an idempotent no-op
+ *  (already canonical, nothing to do), not an error, so callers don't need
+ *  to special-case "the current leader is already in front". Throws if
+ *  `slug` isn't flattened yet (fold-back only makes sense once there's a
+ *  single canonical path to swap into — a legacy directory has no such
+ *  target). */
+export function foldBack(slug: string, winner: VersionInfo): void {
+  if (winner.slug !== slug) {
+    throw new Error(
+      `foldBack: winner.slug (${winner.slug}) !== slug (${slug})`
+    );
+  }
+  if (winner.selected) return;
+
+  const canonicalPath = flatCanonicalPath(slug);
+  if (!canonicalPath) {
+    throw new Error(
+      `foldBack: "${slug}" ainda não está achatado (sem ${POSTS_DIR}/${slug}.md(x)).`
+    );
+  }
+
+  // Register BEFORE mutating anything (same discipline `prune()` already
+  // uses, RFC 0010 §4.4): a crash after this line at worst leaves an
+  // unused history entry lying around. A crash before it, with the swap
+  // half-done, would leave a version archived nowhere.
+  const outgoing = toVersionInfo(
+    slug,
+    canonicalPath,
+    path.basename(canonicalPath),
+    true
+  );
+  const outgoingSha = blobShaForPath(canonicalPath);
+  registerHistory([historyEntryFor(outgoing, outgoingSha)]);
+
+  // Write-then-rename: `canonicalPath` holds valid content (old or new)
+  // at every instant, including mid-crash — `rename` is atomic when both
+  // paths are on the same filesystem, which same-directory always is.
+  const winnerRaw = fs.readFileSync(winner.path, "utf8");
+  const tmpPath = path.join(
+    path.dirname(canonicalPath),
+    `.${path.basename(canonicalPath)}.tmp-${process.pid}-${Date.now()}`
+  );
+  fs.writeFileSync(tmpPath, winnerRaw);
+  fs.renameSync(tmpPath, canonicalPath);
+
+  // Only reachable after the rename committed — a crash here leaves a
+  // stray draft whose uuid now equals the canonical's; listDraftsForSlug's
+  // self-heal check cleans it up on the next read, so this line failing to
+  // run isn't a correctness problem, only a tidiness one.
+  fs.unlinkSync(winner.path);
 }

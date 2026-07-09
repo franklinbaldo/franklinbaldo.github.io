@@ -1,12 +1,17 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import { execFileSync } from "node:child_process";
 import matter from "gray-matter";
 import { remark } from "remark";
 
 export const POSTS_DIR = "src/content/blog";
 export const OUT_DIR = ".routines/hronir";
 export const RATES_DIR = path.join(OUT_DIR, "rates");
+// RFC 0015 (single-file model): where active, not-yet-decided challengers
+// live once a slug has flattened to `<slug>.mdx` — outside the content
+// collection, so an open competition never adds a file under POSTS_DIR.
+export const DRAFTS_DIR = path.join(OUT_DIR, "drafts");
 
 const HRONIR_NAMESPACE = "6f8a3c1e-2b94-5d7f-9e10-a4c8f2b6d031";
 
@@ -146,6 +151,30 @@ function preOkfData(data: Record<string, unknown>): Record<string, unknown> {
   return restored;
 }
 
+/** Core identity computation, shared by the file-backed path (uuidsFor,
+ *  memoized by mtime/size) and the blob-backed path (uuidsForBlob, for
+ *  content read via git plumbing instead of the filesystem — RFC 0015
+ *  single-file model, where a version that lost its duel only survives as a
+ *  git blob, not a file). */
+function uuidsFromRaw(raw: string): Omit<UuidCacheEntry, "mtimeMs" | "size"> {
+  const { data, content } = matter(raw);
+  const body = remark()
+    .processSync(content)
+    .toString()
+    .replace(/\r\n/g, "\n")
+    .trim();
+  const meta = buildMeta(data, UUID_EXCLUDED_FIELDS);
+  const preOkfMeta = buildMeta(preOkfData(data), PRE_OKF_EXCLUDED_FIELDS);
+  return {
+    uuid: uuidv5(body + "\n\u0000" + JSON.stringify(meta), HRONIR_NAMESPACE),
+    legacyUuid: uuidv5(body, HRONIR_NAMESPACE),
+    preOkfUuid: uuidv5(
+      body + "\n\u0000" + JSON.stringify(preOkfMeta),
+      HRONIR_NAMESPACE
+    ),
+  };
+}
+
 function uuidsFor(filePath: string): UuidCacheEntry | null {
   let st: fs.Stats;
   try {
@@ -157,26 +186,75 @@ function uuidsFor(filePath: string): UuidCacheEntry | null {
   if (hit && hit.mtimeMs === st.mtimeMs && hit.size === st.size) return hit;
 
   const raw = fs.readFileSync(filePath, "utf8");
-  const { data, content } = matter(raw);
-  const body = remark()
-    .processSync(content)
-    .toString()
-    .replace(/\r\n/g, "\n")
-    .trim();
-  const meta = buildMeta(data, UUID_EXCLUDED_FIELDS);
-  const preOkfMeta = buildMeta(preOkfData(data), PRE_OKF_EXCLUDED_FIELDS);
   const entry: UuidCacheEntry = {
     mtimeMs: st.mtimeMs,
     size: st.size,
-    uuid: uuidv5(body + "\n\u0000" + JSON.stringify(meta), HRONIR_NAMESPACE),
-    legacyUuid: uuidv5(body, HRONIR_NAMESPACE),
-    preOkfUuid: uuidv5(
-      body + "\n\u0000" + JSON.stringify(preOkfMeta),
-      HRONIR_NAMESPACE
-    ),
+    ...uuidsFromRaw(raw),
   };
   _uuidCache.set(filePath, entry);
   return entry;
+}
+
+// ── Git-blob-backed reads (RFC 0015 single-file model) ──────────────────────
+//
+// Once a slug flattens to `<slug>.mdx`, a version that lost its duel stops
+// being a file — its content only survives as a git blob. These mirror the
+// file-backed primitives above but take a blob sha instead of a path.
+
+const _blobCache = new Map<string, Omit<UuidCacheEntry, "mtimeMs" | "size">>();
+
+/** Blob sha for the file at `filePath`, and — critically — persists that
+ *  blob into `.git/objects/` right now (`-w`), not just computes the hash.
+ *  Plain `git hash-object` (no `-w`) only prints what the sha *would* be; it
+ *  writes nothing. For a file whose content was already committed earlier
+ *  (the normal case — fold-back/prune only touch already-duel-tested
+ *  versions), the object already exists and this is a no-op re-hash. But
+ *  relying on that is fragile — a version's blob is only *guaranteed*
+ *  retrievable later via `readBlob` if something actually wrote it, and
+ *  `-w` makes that true unconditionally instead of "true unless the file
+ *  was somehow never committed as this exact content." */
+export function blobShaForPath(filePath: string): string {
+  return execFileSync("git", ["hash-object", "-w", filePath], {
+    stdio: ["ignore", "pipe", "ignore"],
+  })
+    .toString()
+    .trim();
+}
+
+/** Raw content of a git blob (`git cat-file -p`). Throws if `sha` isn't a
+ *  reachable object — callers register a blob's sha only right after
+ *  hashing it from a real file, so an unreadable blob means repo corruption
+ *  or a shallow clone missing the object, not a normal "not found" case. */
+export function readBlob(sha: string): string {
+  return execFileSync("git", ["cat-file", "-p", sha], {
+    stdio: ["ignore", "pipe", "ignore"],
+    maxBuffer: 16 * 1024 * 1024,
+  }).toString();
+}
+
+/** Parsed frontmatter of a git blob, same shape `readPost` returns for a
+ *  file. */
+export function readPostFromBlob(sha: string): Record<string, unknown> {
+  const { data } = matter(readBlob(sha));
+  return data;
+}
+
+function uuidsForBlob(sha: string): Omit<UuidCacheEntry, "mtimeMs" | "size"> {
+  const hit = _blobCache.get(sha);
+  if (hit) return hit;
+  const entry = uuidsFromRaw(readBlob(sha));
+  _blobCache.set(sha, entry);
+  return entry;
+}
+
+export function getPostUuidFromBlob(sha: string): string {
+  return uuidsForBlob(sha).uuid;
+}
+export function getPostUuidLegacyFromBlob(sha: string): string {
+  return uuidsForBlob(sha).legacyUuid;
+}
+export function getPostUuidPreOkfTypeFromBlob(sha: string): string {
+  return uuidsForBlob(sha).preOkfUuid;
 }
 
 /** Version identity (RFC 0010 §4.3): UUIDv5 over the normalized body plus the

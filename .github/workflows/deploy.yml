@@ -22,6 +22,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # RFC 0015: prebuild runs hronir:select, and a flattened slug's
+      # history (blobs for folded-back/pruned versions) is resolved via
+      # git plumbing — a shallow clone would silently fail to find them.
+      # This workflow already builds the site (and therefore already runs
+      # hronir:select through the `prebuild` npm hook), so it needs full
+      # history regardless of whether any slug is flat yet.
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0

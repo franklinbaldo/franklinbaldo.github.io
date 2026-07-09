@@ -38,6 +38,7 @@ const {
   editCommit,
   select,
   prune,
+  flatten,
   next,
   generateMatch,
   getGlipho,
@@ -50,7 +51,7 @@ const [, , cmd, ...args] = process.argv;
 
 function usage() {
   console.error(
-    "Uso: hronir {generate-match --agent-id <id> [init-opts]|get-glipho|submit-eval [--impression-a <t>] [--impression-b <t>] <decide-flags>|get-ranking|next --agent-id <id> [init-opts]|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--review-lang <lang>] [--objective coverage|refine-top|hunt-worst] [--min-appearances N] [--pledge <text>] [--content-mode inline|path-only]|continue|first-impression-a <texto>|first-impression-b <texto>|decide --after-mood <text> --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text> [--clash-append <text>] [--review-a-append <text>] [--review-b-append <text>]|ranking|worst [--absolute]|diagnose|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force] [--attest <text>]|select [--dry-run]|prune [--dry-run]}"
+    "Uso: hronir {generate-match --agent-id <id> [init-opts]|get-glipho|submit-eval [--impression-a <t>] [--impression-b <t>] <decide-flags>|get-ranking|next --agent-id <id> [init-opts]|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--review-lang <lang>] [--objective coverage|refine-top|hunt-worst] [--min-appearances N] [--pledge <text>] [--content-mode inline|path-only]|continue|first-impression-a <texto>|first-impression-b <texto>|decide --after-mood <text> --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text> [--clash-append <text>] [--review-a-append <text>] [--review-b-append <text>]|ranking|worst [--absolute]|diagnose|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force] [--attest <text>]|select [--dry-run]|prune [--dry-run]|flatten [--slug <slug>] [--dry-run]}"
   );
   process.exit(1);
 }
@@ -231,6 +232,11 @@ switch (cmd) {
   case "prune":
     prune({ dryRun: args.includes("--dry-run") });
     break;
+  case "flatten": {
+    const slugArg = readFlagValue(args, [args.indexOf("--slug")]);
+    flatten(slugArg, { dryRun: args.includes("--dry-run") });
+    break;
+  }
   case "migrate":
     migrate({ dryRun: args.includes("--dry-run") });
     break;
