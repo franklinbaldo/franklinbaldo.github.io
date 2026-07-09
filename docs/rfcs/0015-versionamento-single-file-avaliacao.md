@@ -1,13 +1,13 @@
 # RFC 0015 — Versionamento single-file com histórico via git (avaliação)
 
-|                 |                                                                                                                                                                                                                                                          |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Avaliação — parecer técnico contrário registrado em §1; documento mantido como desenho de referência a pedido do dono. **Não implementado**, foge do padrão de "implementação faseada" do processo de RFC porque a conclusão é não prosseguir (§6).      |
-| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                                                      |
-| **Criado em**   | 2026-07-08                                                                                                                                                                                                                                               |
-| **Branch / PR** | `claude/blog-versioning-strategy-n1aw5d`                                                                                                                                                                                                                 |
-| **Depende de**  | RFC 0003 (introduziu versões-pares) e RFC 0010 (Implemented, Fases 0–4 — modelo atual). Esta RFC avalia **substituir** o modelo de versões-pares da 0010 por arquivo único + histórico via git; §2 e §3.6 listam o que seria eliminado, §3 o que quebra. |
-| **Afeta**       | `src/content/blog/**` (achataria `<slug>/v-*.*` → `<slug>.*`), `src/hronir/{posts,selection,commands,matches}.ts`, `src/content.config.ts`, `src/pages/blog/[slug]/v/[uuid].astro` (+ `pt/`), `.github/workflows/*` (fetch-depth), CLI do Hrönir         |
+|                 |                                                                                                                                                                                                                                                                                                    |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**      | Avaliação (parecer técnico contrário registrado em §1) seguida de **implementação parcial** a pedido explícito do dono, que optou por prosseguir apesar da recomendação do §6 — ver §7. Infraestrutura completa e testada; nenhum slug real foi achatado ainda (§7 explica por quê e o que falta). |
+| **Autor**       | Franklin Baldo (proposta assistida)                                                                                                                                                                                                                                                                |
+| **Criado em**   | 2026-07-08                                                                                                                                                                                                                                                                                         |
+| **Branch / PR** | `claude/blog-versioning-strategy-n1aw5d`                                                                                                                                                                                                                                                           |
+| **Depende de**  | RFC 0003 (introduziu versões-pares) e RFC 0010 (Implemented, Fases 0–4 — modelo atual). Esta RFC avalia **substituir** o modelo de versões-pares da 0010 por arquivo único + histórico via git; §2 e §3.6 listam o que seria eliminado, §3 o que quebra.                                           |
+| **Afeta**       | `src/content/blog/**` (achataria `<slug>/v-*.*` → `<slug>.*`), `src/hronir/{posts,selection,commands,matches}.ts`, `src/content.config.ts`, `src/pages/blog/[slug]/v/[uuid].astro` (+ `pt/`), `.github/workflows/*` (fetch-depth), CLI do Hrönir                                                   |
 
 ---
 
@@ -462,6 +462,121 @@ acima antes de virar automação — não é tão pequena quanto parece.
 
 ---
 
+## 7. Implementação (2026-07-08, sessão de execução)
+
+O dono pediu explicitamente para prosseguir com a migração apesar da
+recomendação do §6 ("You need to write scripts to make the migration, test
+the migration, etc"). Esta seção documenta o que foi de fato construído,
+as decisões de desenho tomadas para as lacunas que o resto deste documento
+deixava em aberto, o que foi deliberadamente escopado fora, e como
+verificar.
+
+### 7.1 O que foi construído
+
+- **`src/hronir/history.ts`** (novo): registro append-only `slug@uuid` →
+  `{sha, path, metadata}`. Mescla o papel que `versions-pruned.json` (RFC
+  0010 §4.4) tinha com um índice uuid→blob — sob o modelo single-file,
+  _toda_ versão não-canônica vira arquivo ausente, não só as podadas.
+  Committed (não gitignorado): ao contrário de `versions-selected.json`,
+  não é recomputação pura — é a única memória de um blob depois que seu
+  arquivo some do working tree.
+- **`src/hronir/posts.ts`**: leitura de conteúdo via git plumbing
+  (`blobShaForPath` com `-w` — grava o objeto, não só calcula o hash;
+  `readBlob`, `readPostFromBlob`) e `uuidsFromRaw` extraído para computar
+  identidade a partir de conteúdo de blob, byte-idêntica à computada a
+  partir de arquivo (testado diretamente).
+- **`src/hronir/selection.ts`**: `listSlugVersions`/`listAllVersionSlugs`
+  (dual-mode — arquivo achatado `<slug>.mdx` + desafiantes em
+  `.routines/hronir/drafts/<slug>/`, ou fallback para o layout legado por
+  diretório) e `foldBack` (swap atômico escrever-depois-renomear — não
+  renomear/escrever/unlink, o padrão do achado V3 da RFC 0010 §4.7; a
+  canônica nunca fica ausente, nem no meio de um crash simulado).
+- **`src/hronir/commands.ts`**: `select`/`prune`/`doctor`/`pickVersionDuel`/
+  `editWorst` reescritos para funcionar com os dois layouts
+  transparentemente — mesma lógica de decisão (ratings, margem,
+  acoplamento de grupo de tradução), só "como o vencedor vira ao vivo"
+  muda por slug. Novo comando **`flatten`** (§7.2).
+- **`src/content.config.ts`** / **`src/lib/versions.ts`**: o site
+  reconhece um slug achatado tanto na collection `blog` quanto na
+  resolução de UUID/permalink que `pages/blog/[...slug].astro` usa.
+- **`.github/workflows/deploy.yml`**: `fetch-depth: 0` — já dispara
+  `hronir:select` via `prebuild` em checkout raso hoje, achado inédito
+  (§3.3 só discutia `check.yml`/`hronir-autopilot.yml`).
+- **`package.json`**: `--test-concurrency=1` — achado ao testar: módulos
+  que memoizam estado por processo (`_selectionCache`, `_uuidCache`) não
+  são seguros sob a concorrência de arquivo padrão do `node:test` quando
+  os testes isolam fixtures via `chdir`.
+
+**78 testes** (`history.test.js`, `posts-blob.test.js`,
+`slug-versions.test.js`, `fold-back.test.js`, `flatten.test.js`), incluindo
+o teste de injeção de falha que o §3.2/§4 registravam como sem nenhum
+precedente no repo — construído à mão o estado em disco que um crash em
+cada ponto da sequência de `foldBack` deixaria, confirmando que a canônica
+nunca fica ausente nem duplicada. Verificado também contra o repo real:
+`doctor` (0 inconsistências, mesmos avisos pré-existentes), `select`/
+`prune --dry-run` (resultados idênticos aos de antes das mudanças), e um
+build de produção completo (4513 páginas, pagefind indexou 209 páginas) —
+nenhuma regressão contra o corpus atual, 100% layout legado.
+
+### 7.2 Decisões de desenho para as lacunas que este documento deixava em aberto
+
+- **Múltiplos desafiantes concorrentes (§3.2, lacuna não resolvida):**
+  resolvida mantendo desafiantes fora da content collection, em
+  `.routines/hronir/drafts/<slug>/`, em vez de inventar um mecanismo de N
+  desafiantes dentro de um esquema pensado para um arquivo só. Cada
+  desafiante é um arquivo normal nesse diretório; `foldBack` funde o
+  vencedor, os outros continuam competindo. Isso ataca diretamente a queixa
+  original (menos arquivos em `src/content/blog/`) sem precisar resolver o
+  problema mais difícil de nomear/ordenar N competidores num único
+  namespace de arquivo.
+- **Ordenação de fases (achado da r7, §4):** em vez de Fase 1 (achatar)
+  antes da Fase 3 (reescrever consumidores) — que a r7 mostrou deixar o
+  site quebrado no intervalo — os leitores (`listSlugVersions` etc.) são
+  **dual-mode desde o primeiro commit**: funcionam com os dois layouts
+  simultaneamente, então achatar um slug não depende mais de nenhuma
+  ordem — pode acontecer a qualquer momento, slug por slug.
+- **Permalinks de versões históricas (§3.3):** `ArchivedContent.astro` já
+  busca o conteúdo arquivado **client-side** via `raw.githubusercontent.com`
+  em vez de renderizar no build — achado nesta sessão, não estava
+  documentado em nenhuma revisão anterior. Isso significa que um loader
+  Astro customizado lendo blobs via `git show` no build (o que §3.3
+  presumia ser necessário) não é preciso para o caso comum: bastaria trocar
+  a URL de `.../main/<path>` para `.../<commit-sha>/<path>` — GitHub serve
+  raw content pineado em qualquer sha, não só branch. **Não implementado
+  nesta sessão** (§7.3) — só a observação que simplifica o problema.
+
+### 7.3 Escopo explicitamente deixado de fora
+
+- **Nenhum slug foi achatado de verdade.** Só `--dry-run`, verificado
+  contra dois slugs reais (`vos`, e um slug com histórico real de poda —
+  a classificação pendente-vs-decidido bateu exatamente com o que
+  `prune --dry-run` já achava para os mesmos desafiantes). Motivo: esta
+  branch já nasceu dezenas de commits atrás de `main` e fica mais defasada
+  a cada hora (o autopilot mescla sessões hronir por hora) — achatar a
+  fotografia de hoje quebraria contra o `main` real no momento em que isto
+  pudesse ser mesclado. Por isso `flatten` foi desenhado como comando
+  incremental e repetível (§4 original previa um corte único) — para rodar
+  fresco contra o estado real a qualquer momento, não para ser executado
+  por esta sessão.
+- **Permalink `/v/<uuid>/` para desafiante achatado ainda em competição:**
+  `blogVersions` continua só-legado; um rascunho em
+  `.routines/hronir/drafts/` não gera página enquanto ainda compete. Não é
+  um esquecimento — fechar isso exigiria um segundo diretório-base no
+  loader do Astro (`astro/loaders`' `glob()` só aceita um `base`), e o que
+  de fato importa (permalink sobreviver depois que a versão já não é mais
+  arquivo) não depende disso: uma vez arquivada em `versions-history.json`,
+  a rota resolveria dali — só que essa rota (ler `versions-history.json`
+  em `[uuid].astro` e gerar a página) também não foi implementada nesta
+  sessão.
+- **A simplificação de raw URL pineada em commit** (§7.2) não foi
+  implementada — `archivedContentUrls` (`src/lib/versions.ts`) ainda usa
+  `GITHUB_BRANCH` fixo, não o `commitSha` que `history.ts` já armazena por
+  entrada.
+- **Manutenção contínua do índice** fora do CLI (§3.4, edição direta
+  dessincronizando) continua sem mecanismo — mesma lacuna, herdada.
+
+---
+
 ## Histórico de revisões
 
 - **r0** (2026-07-08): rascunho inicial. Motivado por pergunta do dono sobre
@@ -663,3 +778,25 @@ acima antes de virar automação — não é tão pequena quanto parece.
   alguém executasse?", "este comando real dispara este workflow real?" —
   continuam achando problemas de fundo. Convergência do documento como um
   todo permanece em aberto.
+
+- **r8 — implementação** (2026-07-08): o dono pediu explicitamente para
+  prosseguir apesar da recomendação do §6 ("You need to write scripts to
+  make the migration, test the migration, etc"). Construída e testada a
+  infraestrutura completa do modelo single-file — índice de histórico
+  (`history.ts`), leitura dual-mode (`selection.ts`), fold-back atômico com
+  testes de injeção de falha (o precedente que §3.2/§4 registravam como
+  inexistente no repo), comando `flatten` incremental (§4 original previa
+  corte único; redesenhado como comando repetível por slug depois de achar
+  que esta branch já estava defasada de `main` e ficando mais defasada a
+  cada hora), `content.config.ts`/`versions.ts` reconhecendo slugs
+  achatados, `fetch-depth: 0` em `deploy.yml`. 78 testes, verificado contra
+  o repo real (`doctor`/`select`/`prune --dry-run` idênticos a antes, build
+  de produção completo sem regressão) e com dois `flatten --dry-run` reais.
+  Nenhum slug foi achatado de verdade nesta sessão — ver §7.3 para o que
+  ficou de fora e por quê. Achado durante a implementação, não previsto por
+  nenhuma rodada de revisão anterior: `ArchivedContent.astro` já busca
+  conteúdo arquivado client-side via `raw.githubusercontent.com`, o que
+  simplifica o problema de permalink histórico que §3.3 assumia exigir um
+  loader Astro customizado lendo blobs no build — só a observação foi
+  registrada (§7.2), a simplificação em si não foi implementada. Detalhes
+  completos em §7.
