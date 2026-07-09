@@ -12,12 +12,6 @@ import { loadPerspective } from "../perspectives.js";
 
 export type PostSideRaw = { key?: string; slug?: string } | null | undefined;
 
-interface PromoteArgs {
-  key?: string;
-  draft?: string;
-  force?: boolean;
-}
-
 export const SESSION_PATH = "hronir_session.json";
 
 export const MIN_WORDS = 100;

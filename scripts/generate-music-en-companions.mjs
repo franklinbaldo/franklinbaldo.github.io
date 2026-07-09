@@ -7,7 +7,7 @@
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { listPostFiles, postIdFromPath } from "./lib/content.mjs";
-import { join, dirname, basename } from "path";
+import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -65,18 +65,6 @@ function parseFrontmatter(content) {
   return { frontmatter: match[1], body: match[2] };
 }
 
-function slugify(str) {
-  return str
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .slice(0, 60);
-}
-
 function getEnTitle(ptTitle) {
   if (!ptTitle) return ptTitle;
   // If title looks already English (no PT-specific chars), keep it
@@ -124,7 +112,7 @@ function buildEnFrontmatter(ptFrontmatter, enTitle, slug) {
   return fm;
 }
 
-function makeEnBody(ptBody, enTitle) {
+function makeEnBody(ptBody, _enTitle) {
   // Replace "## Letra" with "## Lyrics" and "## Notas do compositor" with "## Composer Notes"
   return ptBody
     .replace(/^## Letra$/m, "## Lyrics")

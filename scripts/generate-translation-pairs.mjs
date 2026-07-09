@@ -5,7 +5,7 @@
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { DEFAULT_LANG, LANG_META } from "../src/lib/languages.mjs";
+import { LANG_META } from "../src/lib/languages.mjs";
 import { loadPosts } from "./lib/blog-links.mjs";
 
 const __dir = dirname(fileURLToPath(import.meta.url));

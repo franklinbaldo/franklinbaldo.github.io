@@ -6,11 +6,6 @@ import {
 } from "../ranking.js";
 import { nextStep } from "./_shared.js";
 
-interface DiagnoseMatchEntry {
-  timestamp?: number;
-  [key: string]: unknown;
-}
-
 // Phase 3 diagnostics: de-confounded quality + evaluator/perspective biases +
 // per-perspective leaders. Read-only; never mutates state. Posts below
 // MIN_APPEARANCES are shown but flagged low-confidence.

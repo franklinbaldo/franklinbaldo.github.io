@@ -56,7 +56,7 @@ function fmtYamlStr(str) {
     return `"${str}"`;
   }
   // Quote if contains special YAML chars
-  if (/[:#\[\]{},|>&*!'"\\]/.test(str) || str.includes("\n")) {
+  if (/[:#[\]{},|>&*!'"\\]/.test(str) || str.includes("\n")) {
     return `"${str.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
   }
   return str;

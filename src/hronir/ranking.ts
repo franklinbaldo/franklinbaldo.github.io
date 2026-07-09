@@ -94,8 +94,8 @@ export function _computeRatings(raw: RawMatch[]): RankRow[] {
 
   for (const m of sorted) {
     if (m.aKey === m.bKey) continue;
-    const aRating = ensure(m.aKey);
-    const bRating = ensure(m.bKey);
+    ensure(m.aKey);
+    ensure(m.bKey);
     if (m.aPath) labels.set(m.aKey, m.aPath);
     if (m.bPath) labels.set(m.bKey, m.bPath);
     appearances.set(m.aKey, (appearances.get(m.aKey) || 0) + 1);
@@ -284,7 +284,7 @@ export function _solveLinear(A: number[][], b: number[]): number[] {
       b[r] -= factor * b[col];
     }
   }
-  const x = new Array(n).fill(0) as number[];
+  const x = Array.from({ length: n }, () => 0);
   for (let row = n - 1; row >= 0; row--) {
     let s = b[row];
     for (let c = row + 1; c < n; c++) s -= A[row][c] * x[c];
@@ -355,9 +355,9 @@ export function _computeDeconfoundedQuality(
   const pOff = 1 + P + A;
 
   const XtX = Array.from({ length: nParams }, () =>
-    new Array<number>(nParams).fill(0)
+    Array.from({ length: nParams }, () => 0)
   );
-  const Xty = new Array<number>(nParams).fill(0);
+  const Xty = Array.from({ length: nParams }, () => 0);
 
   for (const o of obs) {
     const cols = [0, qOff + o.post];
@@ -525,8 +525,8 @@ export function computePerPerspectiveRatings(): Map<
 
     for (const m of matches) {
       if (m.aKey === m.bKey) continue;
-      const aRating = ensure(m.aKey);
-      const bRating = ensure(m.bKey);
+      ensure(m.aKey);
+      ensure(m.bKey);
       appearances.set(m.aKey, (appearances.get(m.aKey) || 0) + 1);
       appearances.set(m.bKey, (appearances.get(m.bKey) || 0) + 1);
 
