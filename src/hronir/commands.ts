@@ -3373,7 +3373,10 @@ export function prune({ dryRun = false } = {}) {
 // andamento. Um desafiante já decidido é arquivado direto (registerHistory
 // + unlink) em vez de migrado só para o próximo `prune()` remover de
 // qualquer forma.
-export function flatten(slugArg, { dryRun = false } = {}) {
+export function flatten(
+  slugArg: string | null,
+  { dryRun = false }: { dryRun?: boolean } = {}
+) {
   const ratings = computeVersionRatings();
   const targets = slugArg ? [slugArg] : listVersionSlugs();
   let flattened = 0;
