@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
+import type { RateFile } from "../types.js";
 
 // RFC 0012 Fase 0 — golden snapshot.
 //
@@ -14,15 +15,18 @@ import matter from "gray-matter";
 // classification rule (kind = aKey === bKey ? "version" : "work") against the
 // on-disk rate-file fixtures the normalizer will consume.
 
-// Mock matches before importing ranking (same reason as ranking.test.js: avoid
+// Mock matches before importing ranking (same reason as ranking.test.ts: avoid
 // pulling posts.ts → remark, which is only present after `npm ci`). The pure
 // _compute* functions under test take their raw array as an argument.
-await mock.module("../matches.js", {
+// mock.module() is synchronous (returns a MockModuleContext, not a Promise);
+// no await needed before the subsequent import() below.
+mock.module("../matches.js", {
   namedExports: {
     listMatchFiles: () => [],
     readMatch: () => ({ data: {}, content: "" }),
     writeMatch: () => {},
-    postKey: (side) => (side ? side.key || side.slug || null : null),
+    postKey: (side: { key?: string; slug?: string } | null | undefined) =>
+      side ? side.key || side.slug || null : null,
     matchesDataVersion: () => 0,
     loadMatches: () => [],
     loadNormalizedMatches: () => [],
@@ -32,7 +36,9 @@ await mock.module("../matches.js", {
 const { _computeRatings, _computeVersionRatings } =
   await import("../ranking.js");
 
-function match(overrides) {
+type RawMatch = Parameters<typeof _computeRatings>[0][number];
+
+function match(overrides: Partial<RawMatch> = {}): RawMatch {
   return {
     runAt: "2024-01-01T00:00:00Z",
     filename: "match.md",
@@ -115,7 +121,7 @@ const VERSION_DUELS = [
   }),
 ];
 
-const orderOf = (rows) =>
+const orderOf = (rows: ReturnType<typeof _computeRatings>) =>
   [...rows].sort((a, b) => b.ordinal - a.ordinal).map((r) => r.key);
 
 describe("RFC 0012 golden — work/version separation", () => {
@@ -142,9 +148,12 @@ describe("RFC 0012 golden — work/version separation", () => {
   it("version ratings rank the better-rated UUID higher, by key", () => {
     const v = _computeVersionRatings([...WORK_CORPUS, ...VERSION_DUELS]);
     assert.deepEqual([...v.keys()].sort(), ["v-new", "v-old"]);
-    assert.ok(v.get("v-new").stars > v.get("v-old").stars);
-    assert.equal(v.get("v-new").key, "alpha-essay");
-    assert.equal(v.get("v-old").key, "alpha-essay");
+    const vNew = v.get("v-new");
+    const vOld = v.get("v-old");
+    assert.ok(vNew && vOld, "both v-new and v-old ratings must exist");
+    assert.ok(vNew.stars > vOld.stars);
+    assert.equal(vNew.key, "alpha-essay");
+    assert.equal(vOld.key, "alpha-essay");
   });
 });
 
@@ -154,9 +163,9 @@ const FIXdir = path.join(
   "fixtures",
   "rate-files"
 );
-const readFixture = (name) =>
-  matter(fs.readFileSync(path.join(FIXdir, name), "utf8")).data;
-const kindOf = (data) =>
+const readFixture = (name: string): RateFile =>
+  matter(fs.readFileSync(path.join(FIXdir, name), "utf8")).data as RateFile;
+const kindOf = (data: RateFile) =>
   data.post_a.key === data.post_b.key ? "version" : "work";
 
 describe("RFC 0012 golden — fixture classification & schema", () => {
