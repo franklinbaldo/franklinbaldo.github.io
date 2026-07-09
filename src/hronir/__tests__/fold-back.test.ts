@@ -20,10 +20,12 @@ import path from "node:path";
 // unambiguous, non-duplicated version set (the other half: "ou com UUID
 // duplicado").
 
-let sel, history;
-let tmpDir, realCwd;
+let sel: typeof import("../selection.ts");
+let history: typeof import("../history.ts");
+let tmpDir: string;
+let realCwd: string;
 
-const post = (title, extra = "") => `---
+const post = (title: string, extra: string = "") => `---
 title: "${title}"
 description: "D"
 date: 2026-01-01
@@ -54,7 +56,7 @@ afterEach(() => {
   fs.rmSync(tmpDir, { recursive: true, force: true });
 });
 
-function assertCanonicalIsWellFormed(slug, expectTitle) {
+function assertCanonicalIsWellFormed(slug: string, expectTitle?: string) {
   const p = sel.flatCanonicalPath(slug);
   assert.ok(
     p,
@@ -69,7 +71,7 @@ function assertCanonicalIsWellFormed(slug, expectTitle) {
   if (expectTitle) assert.match(raw, new RegExp(`title: "${expectTitle}"`));
 }
 
-function assertNoDuplicateUuids(slug) {
+function assertNoDuplicateUuids(slug: string) {
   const versions = sel.listSlugVersions(slug);
   const uuids = versions.map((v) => v.uuid);
   assert.equal(
@@ -87,9 +89,10 @@ function assertNoDuplicateUuids(slug) {
 describe("foldBack — happy path", () => {
   it("winner's content becomes canonical, old canonical is archived, draft is gone", () => {
     const winner = sel.listSlugVersions("hello").find((v) => !v.selected);
-    const oldCanonicalUuid = sel
-      .listSlugVersions("hello")
-      .find((v) => v.selected).uuid;
+    assert.ok(winner, "hello must have a non-canonical (draft) version");
+    const oldCanonical = sel.listSlugVersions("hello").find((v) => v.selected);
+    assert.ok(oldCanonical, "hello must have a canonical version");
+    const oldCanonicalUuid = oldCanonical.uuid;
 
     sel.foldBack("hello", winner);
 
@@ -108,6 +111,7 @@ describe("foldBack — happy path", () => {
 
   it("is idempotent when winner is already selected (no-op, not an error)", () => {
     const canonical = sel.listSlugVersions("hello").find((v) => v.selected);
+    assert.ok(canonical, "hello must have a canonical version");
     assert.doesNotThrow(() => sel.foldBack("hello", canonical));
     assertCanonicalIsWellFormed("hello", "old canonical");
   });
@@ -191,6 +195,7 @@ describe("foldBack — crash-injected intermediate states", () => {
     // Hand-construct: history already recorded the outgoing canonical
     // (first mutation in foldBack), but the write/rename never happened.
     const oldCanonical = sel.listSlugVersions("hello").find((v) => v.selected);
+    assert.ok(oldCanonical, "hello must have a canonical version");
     const sha = "0".repeat(40);
     history.registerHistory([
       {
@@ -219,6 +224,7 @@ describe("foldBack — crash-injected intermediate states", () => {
     // (registerHistory is append-only-dedup, so re-registering the same
     // slug@uuid is a harmless no-op, not a duplicate or an error).
     const winner = sel.listSlugVersions("hello").find((v) => !v.selected);
+    assert.ok(winner, "hello must have a non-canonical (draft) version");
     assert.doesNotThrow(() => sel.foldBack("hello", winner));
     assertCanonicalIsWellFormed("hello", "new winner");
     assertNoDuplicateUuids("hello");
@@ -235,6 +241,7 @@ describe("foldBack — multiple concurrent drafts (RFC 0015 §3.2 gap)", () => {
     assert.equal(versionsBefore.length, 3);
 
     const winner = versionsBefore.find((v) => v.file.includes("2026-01-02"));
+    assert.ok(winner, "expected a draft version with the 2026-01-02 filename");
     sel.foldBack("hello", winner);
 
     const versionsAfter = sel.listSlugVersions("hello");
@@ -245,6 +252,7 @@ describe("foldBack — multiple concurrent drafts (RFC 0015 §3.2 gap)", () => {
     );
     assertNoDuplicateUuids("hello");
     const remaining = versionsAfter.find((v) => !v.selected);
+    assert.ok(remaining, "expected a remaining non-canonical version");
     assert.match(fs.readFileSync(remaining.path, "utf8"), /second challenger/);
   });
 });

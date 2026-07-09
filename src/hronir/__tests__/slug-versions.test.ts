@@ -9,8 +9,9 @@ import path from "node:path";
 // identically from the caller's perspective — that equivalence is what lets
 // consumer rewrites ship independently of flattening.
 
-let sel;
-let tmpDir, realCwd;
+let sel: typeof import("../selection.ts");
+let tmpDir: string;
+let realCwd: string;
 
 const FRONTMATTER = (overrides = "") => `---
 title: "T"
@@ -124,6 +125,7 @@ describe("legacy layout (unchanged behavior)", () => {
     const versions = sel.listSlugVersions("legacy-slug");
     assert.equal(versions.length, 2);
     const canonical = versions.find((v) => v.selected);
+    assert.ok(canonical, "legacy-slug must have a canonical version");
     assert.equal(canonical.file, "legacy-slug/v-2026-01-01T00-00-00.mdx");
   });
 

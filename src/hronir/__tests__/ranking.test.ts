@@ -7,12 +7,15 @@ import assert from "node:assert/strict";
 // never call listMatchFiles/readMatch at runtime.
 // After RFC 0005 Fase 1, the real implementations live in src/hronir/;
 // mock those directly so ranking.ts sees the mock.
-await mock.module("../matches.js", {
+// mock.module() is synchronous (returns a MockModuleContext, not a Promise);
+// no await needed before the subsequent import() below.
+mock.module("../matches.js", {
   namedExports: {
     listMatchFiles: () => [],
     readMatch: () => ({ data: {}, content: "" }),
     writeMatch: () => {},
-    postKey: (side) => (side ? side.key || side.slug || null : null),
+    postKey: (side: { key?: string; slug?: string } | null | undefined) =>
+      side ? side.key || side.slug || null : null,
     matchesDataVersion: () => 0,
     loadMatches: () => [],
     loadNormalizedMatches: () => [],
@@ -31,7 +34,9 @@ const {
 
 // Fixture builder helpers
 
-function match(overrides) {
+type RawMatch = Parameters<typeof _computeRatings>[0][number];
+
+function match(overrides: Partial<RawMatch> = {}): RawMatch {
   return {
     runAt: "2024-01-01T00:00:00Z",
     filename: "match.md",
@@ -48,6 +53,19 @@ function match(overrides) {
     rateB: null,
     ...overrides,
   };
+}
+
+// Looks up a rating row by key, asserting (rather than silently returning
+// undefined) that it exists — every call site below relies on the row being
+// present, so a missing key should fail loudly with a clear message instead
+// of surfacing as "Cannot read properties of undefined" deep in an assertion.
+function findRow(
+  rows: ReturnType<typeof _computeRatings>,
+  key: string
+): ReturnType<typeof _computeRatings>[number] {
+  const row = rows.find((r) => r.key === key);
+  assert.ok(row, `expected a rating row for key "${key}"`);
+  return row;
 }
 
 // Test 1: Ordering — A beats B twice, B beats C twice → ordinal A > B > C
@@ -81,7 +99,7 @@ describe("_computeRatings", () => {
     ];
 
     const result = _computeRatings(raw);
-    const ordinalOf = (key) => result.find((r) => r.key === key)?.ordinal;
+    const ordinalOf = (key: string) => findRow(result, key).ordinal;
 
     assert.ok(
       ordinalOf("post-a") > ordinalOf("post-b"),
@@ -138,8 +156,8 @@ describe("_computeRatings", () => {
     ];
 
     const result = _computeRatings(raw);
-    const ox = result.find((r) => r.key === "post-x")?.ordinal;
-    const oy = result.find((r) => r.key === "post-y")?.ordinal;
+    const ox = findRow(result, "post-x").ordinal;
+    const oy = findRow(result, "post-y").ordinal;
     assert.ok(ox > oy, "overridden winner post-x should rank above post-y");
   });
 
@@ -199,12 +217,12 @@ describe("_computeRatings", () => {
     const photo = _computeRatings(photoRaw);
 
     const blowoutGap =
-      blowout.find((r) => r.key === "winner-blow").ordinal -
-      blowout.find((r) => r.key === "loser-blow").ordinal;
+      findRow(blowout, "winner-blow").ordinal -
+      findRow(blowout, "loser-blow").ordinal;
 
     const photoGap =
-      photo.find((r) => r.key === "winner-photo").ordinal -
-      photo.find((r) => r.key === "loser-photo").ordinal;
+      findRow(photo, "winner-photo").ordinal -
+      findRow(photo, "loser-photo").ordinal;
 
     assert.ok(
       blowoutGap > photoGap,
@@ -218,11 +236,26 @@ describe("_computeRatings", () => {
     // Build 3 matches where every win/loss has the same outcome but different margins.
     // Blowout: winner 5.0 vs loser 1.0 → weight = 1.0
     // Medium:  winner 3.5 vs loser 1.5 → margin = 2/4 = 0.5 → weight = 0.55
-    const makeMatches = (rateA, rateB) =>
+    const makeMatches = (rateA: number, rateB: number) =>
       [
-        { runAt: "2024-02-01T00:00:00Z", aKey: "w", bKey: "x", winner: "a" },
-        { runAt: "2024-02-01T00:00:01Z", aKey: "w", bKey: "y", winner: "a" },
-        { runAt: "2024-02-01T00:00:02Z", aKey: "z", bKey: "w", winner: "a" },
+        {
+          runAt: "2024-02-01T00:00:00Z",
+          aKey: "w",
+          bKey: "x",
+          winner: "a" as const,
+        },
+        {
+          runAt: "2024-02-01T00:00:01Z",
+          aKey: "w",
+          bKey: "y",
+          winner: "a" as const,
+        },
+        {
+          runAt: "2024-02-01T00:00:02Z",
+          aKey: "z",
+          bKey: "w",
+          winner: "a" as const,
+        },
       ].map((m, i) =>
         match({ ...m, runAt: `2024-02-01T00:00:0${i}Z`, rateA, rateB })
       );
@@ -230,8 +263,8 @@ describe("_computeRatings", () => {
     const blowoutRows = _computeRatings(makeMatches(5.0, 1.0));
     const mediumRows = _computeRatings(makeMatches(3.5, 1.5));
 
-    const blowoutOrdinal = blowoutRows.find((r) => r.key === "w").ordinal;
-    const mediumOrdinal = mediumRows.find((r) => r.key === "w").ordinal;
+    const blowoutOrdinal = findRow(blowoutRows, "w").ordinal;
+    const mediumOrdinal = findRow(mediumRows, "w").ordinal;
 
     assert.ok(
       blowoutOrdinal > mediumOrdinal,
@@ -243,7 +276,7 @@ describe("_computeRatings", () => {
   // that only faced close matches must retain higher sigma than one that faced
   // blowouts (close matches convey less information → more residual uncertainty).
   it("sigma scales with weight: close-match sigma > blowout sigma after same matches", () => {
-    const makeMatches = (rateA, rateB) =>
+    const makeMatches = (rateA: number, rateB: number) =>
       [0, 1, 2, 3, 4].map((i) =>
         match({
           runAt: `2024-03-01T00:00:0${i}Z`,
@@ -258,8 +291,8 @@ describe("_computeRatings", () => {
     const closeRows = _computeRatings(makeMatches(3.01, 3.0)); // weight ≈ 0.1
     const blowoutRows = _computeRatings(makeMatches(5.0, 1.0)); // weight = 1.0
 
-    const closeSigma = closeRows.find((r) => r.key === "post").sigma;
-    const blowoutSigma = blowoutRows.find((r) => r.key === "post").sigma;
+    const closeSigma = findRow(closeRows, "post").sigma;
+    const blowoutSigma = findRow(blowoutRows, "post").sigma;
 
     assert.ok(
       closeSigma > blowoutSigma,
@@ -617,9 +650,15 @@ describe("_computeDeconfoundedQuality", () => {
     );
 
     // Generous agent should carry a higher bias than the neutral one.
+    const biasG = agentBias.get(G);
+    const biasN = agentBias.get(N);
     assert.ok(
-      agentBias.get(G) > agentBias.get(N),
-      `generous agent bias ${agentBias.get(G)} should exceed neutral ${agentBias.get(N)}`
+      biasG !== undefined && biasN !== undefined,
+      "both agents must have a bias entry"
+    );
+    assert.ok(
+      biasG > biasN,
+      `generous agent bias ${biasG} should exceed neutral ${biasN}`
     );
   });
 
@@ -662,10 +701,13 @@ describe("_computePerPerspectiveQuality", () => {
     const harsh = result.get("skeptical-specialist");
     const gentle = result.get("curious-outsider");
     assert.ok(harsh && gentle, "both perspective buckets exist");
-    assert.equal(harsh.get("post-z").stars, 2.0, "harsh bucket sees 2.0");
-    assert.equal(gentle.get("post-z").stars, 4.5, "gentle bucket sees 4.5");
-    assert.equal(harsh.get("post-z").n, 1);
-    assert.equal(gentle.get("post-z").n, 1);
+    const harshZ = harsh.get("post-z");
+    const gentleZ = gentle.get("post-z");
+    assert.ok(harshZ && gentleZ, "post-z present in both perspective buckets");
+    assert.equal(harshZ.stars, 2.0, "harsh bucket sees 2.0");
+    assert.equal(gentleZ.stars, 4.5, "gentle bucket sees 4.5");
+    assert.equal(harshZ.n, 1);
+    assert.equal(gentleZ.n, 1);
   });
 
   it("skips matches without a perspective_id", () => {

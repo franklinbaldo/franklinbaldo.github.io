@@ -48,7 +48,8 @@ describe("blob-backed identity matches file-backed identity", () => {
     const sha = blobShaForPath(REAL_FILE);
     const data = readPostFromBlob(sha);
     assert.equal(typeof data.title, "string");
-    assert.ok(data.title.length > 0);
+    const title = data.title as string;
+    assert.ok(title.length > 0);
   });
 });
 

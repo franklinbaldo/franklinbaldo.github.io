@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, afterEach, mock } from "node:test";
+import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -7,9 +7,11 @@ import path from "node:path";
 // from every other test file's module cache: history.ts memoizes its read
 // in a module-level variable, so re-importing with a fresh query string
 // forces a fresh module instance (and fresh cache) per test.
-let historyMod;
-let tmpDir;
-let realCwd;
+let historyMod: typeof import("../history.ts");
+let tmpDir: string;
+let realCwd: string;
+
+type HistoryEntry = import("../history.ts").HistoryEntry;
 
 beforeEach(async () => {
   tmpDir = fs.mkdtempSync(path.join(process.cwd(), ".tmp-history-test-"));
@@ -23,7 +25,7 @@ afterEach(() => {
   fs.rmSync(tmpDir, { recursive: true, force: true });
 });
 
-const entry = (overrides = {}) => ({
+const entry = (overrides: Partial<HistoryEntry> = {}): HistoryEntry => ({
   slug: "some-slug",
   uuid: "11111111-1111-5111-8111-111111111111",
   legacyUuid: "22222222-2222-5222-8222-222222222222",
@@ -122,6 +124,7 @@ describe("history.ts", () => {
     const second = all.find(
       (e) => e.uuid === "44444444-4444-5444-8444-444444444444"
     );
+    assert.ok(first && second, "both entries must be present");
     // The first entry's commit must not be overwritten by the second stamp.
     assert.equal(first.commitSha, "deadbeef".repeat(5));
     assert.equal(second.commitSha, "cafebabe".repeat(5));

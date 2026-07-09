@@ -4,7 +4,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
-import { normalizeMatch, classifyKind, matchId } from "../matches.js";
+import {
+  normalizeMatch,
+  classifyKind,
+  matchId,
+  type LoadedMatch,
+} from "../matches.js";
 
 // RFC 0012 Fase 1 — the single normalizer. These exercise the real
 // normalizeMatch (no module mock; this file runs in its own test process) so
@@ -16,11 +21,13 @@ const FIXdir = path.join(
   "fixtures",
   "rate-files"
 );
-const load = (name) => {
+const load = (name: string): LoadedMatch => {
   const { data, content } = matter(
     fs.readFileSync(path.join(FIXdir, name), "utf8")
   );
-  return normalizeMatch(data, content, name);
+  const lm = normalizeMatch(data, content, name);
+  assert.ok(lm, `normalizeMatch returned null for fixture ${name}`);
+  return lm;
 };
 
 describe("classifyKind", () => {
@@ -93,6 +100,7 @@ describe("normalizeMatch — validity filters", () => {
 
   it("override flips the resolved winner", () => {
     const lm = normalizeMatch({ ...base, override: "b" }, "", "x");
+    assert.ok(lm, "expected a normalized match");
     assert.equal(lm.norm.winnerSide, "b");
   });
 
@@ -109,6 +117,7 @@ describe("normalizeMatch — validity filters", () => {
       "",
       "x"
     );
+    assert.ok(lm, "expected a normalized match");
     assert.equal(lm.runAtRaw, "2024-01-01T00-00-00-000");
     assert.equal(lm.norm.runAt, null);
   });

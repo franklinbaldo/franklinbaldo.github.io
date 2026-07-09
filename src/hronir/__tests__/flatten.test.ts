@@ -12,10 +12,12 @@ import path from "node:path";
 // against zero rate files just returns an empty map, which correctly
 // classifies every challenger as pending (n=0 never clears PRUNE_MIN_DUELS).
 
-let cmds, sel, history;
-let tmpDir, realCwd;
+let cmds: typeof import("../commands.ts");
+let sel: typeof import("../selection.ts");
+let tmpDir: string;
+let realCwd: string;
 
-const post = (title, extra = "") => `---
+const post = (title: string, extra: string = "") => `---
 title: "${title}"
 description: "D"
 date: 2026-01-01
@@ -32,7 +34,6 @@ beforeEach(async () => {
   const bust = `?t=${Date.now()}-${Math.random()}`;
   cmds = await import(`../commands.ts${bust}`);
   sel = await import(`../selection.ts${bust}`);
-  history = await import(`../history.ts${bust}`);
   fs.mkdirSync("src/content/blog", { recursive: true });
 });
 
@@ -120,6 +121,7 @@ describe("flatten — pending vs. already-decided challengers", () => {
       "pending challenger must survive, not be deleted"
     );
     const draft = after.find((v) => !v.selected);
+    assert.ok(draft, "expected a non-canonical (draft) version");
     assert.equal(
       draft.path,
       ".routines/hronir/drafts/hello/v-2026-01-02T00-00-00.mdx"
