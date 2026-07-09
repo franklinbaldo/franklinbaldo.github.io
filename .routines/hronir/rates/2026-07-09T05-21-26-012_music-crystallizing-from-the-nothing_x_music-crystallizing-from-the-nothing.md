@@ -28,9 +28,9 @@ override: null
 perspective_id: lyric-as-poem
 evaluator_mood: Continuando observação atenta.
 mood_glyph: ➸
-evaluator_mood_after: M9
-impression_a: M9
-impression_b: M9
+evaluator_mood_after: Observação precisa sedimenta em clareza técnica.
+impression_a: null
+impression_b: null
 rate_a: 3.7
 rate_b: 3.3
 clash: >-
