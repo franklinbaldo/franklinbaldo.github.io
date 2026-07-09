@@ -1,621 +1,627 @@
 {
   "_meta": {
     "schema": "snapshot-v2",
-    "generatedAt": "2026-07-06T05:11:12.156Z",
+    "generatedAt": "2026-07-09T16:29:22.530Z",
     "basis": "build",
-    "totalDuels": 1440
+    "totalDuels": 1699
   },
   "keys": {
     "third-half-fourth-wall": {
       "rank": 1,
-      "ordinal": 15.9534,
-      "elo": 1205,
+      "ordinal": 16.7394,
+      "elo": 1202,
       "eloPeak": 1205
     },
-    "three-hammers": {
+    "asterisk-protects": {
       "rank": 2,
-      "ordinal": 14.9748,
-      "elo": 1154,
+      "ordinal": 15.8484,
+      "elo": 1221,
+      "eloPeak": 1221
+    },
+    "three-hammers": {
+      "rank": 3,
+      "ordinal": 14.7161,
+      "elo": 1130,
       "eloPeak": 1190
     },
-    "serpents-egg": {
-      "rank": 3,
-      "ordinal": 13.6648,
-      "elo": 1144,
-      "eloPeak": 1176
-    },
-    "asterisk-protects": {
+    "reddit-submarine-osint": {
       "rank": 4,
-      "ordinal": 13.2481,
+      "ordinal": 14.3783,
+      "elo": 1121,
+      "eloPeak": 1123
+    },
+    "rosencrantz-coin": {
+      "rank": 5,
+      "ordinal": 13.4323,
+      "elo": 1105,
+      "eloPeak": 1134
+    },
+    "its-raining-truth": {
+      "rank": 6,
+      "ordinal": 13.3664,
+      "elo": 1086,
+      "eloPeak": 1086
+    },
+    "music-the-third-song-moving-window-iii": {
+      "rank": 7,
+      "ordinal": 13.0022,
       "elo": 1150,
       "eloPeak": 1150
     },
+    "pampa-circuit": {
+      "rank": 8,
+      "ordinal": 12.4206,
+      "elo": 1117,
+      "eloPeak": 1130
+    },
+    "serpents-egg": {
+      "rank": 9,
+      "ordinal": 12.3946,
+      "elo": 1091,
+      "eloPeak": 1176
+    },
     "music-primavera-carregando": {
-      "rank": 5,
-      "ordinal": 13.2368,
-      "elo": 1142,
+      "rank": 10,
+      "ordinal": 11.9473,
+      "elo": 1090,
       "eloPeak": 1142
     },
-    "reddit-submarine-osint": {
-      "rank": 6,
-      "ordinal": 12.145,
-      "elo": 1081,
-      "eloPeak": 1123
+    "reclaiming-harness": {
+      "rank": 11,
+      "ordinal": 11.763,
+      "elo": 1114,
+      "eloPeak": 1114
     },
     "pontifex-research": {
-      "rank": 7,
-      "ordinal": 12.0719,
-      "elo": 1119,
+      "rank": 12,
+      "ordinal": 11.5813,
+      "elo": 1104,
       "eloPeak": 1119
     },
     "two-questions-out-loud": {
-      "rank": 8,
-      "ordinal": 11.7548,
-      "elo": 1082,
+      "rank": 13,
+      "ordinal": 11.4367,
+      "elo": 1056,
       "eloPeak": 1150
     },
-    "rosencrantz-coin": {
-      "rank": 9,
-      "ordinal": 11.6188,
-      "elo": 1087,
-      "eloPeak": 1134
-    },
-    "music-eu-ia-escrever-sobre-o-infinito-de-novo": {
-      "rank": 10,
-      "ordinal": 11.4261,
-      "elo": 1119,
-      "eloPeak": 1119
-    },
-    "pampa-circuit": {
-      "rank": 11,
-      "ordinal": 10.9898,
-      "elo": 1068,
-      "eloPeak": 1130
-    },
-    "music-the-third-song-moving-window-iii": {
-      "rank": 12,
-      "ordinal": 10.8074,
-      "elo": 1107,
-      "eloPeak": 1108
-    },
-    "its-raining-truth": {
-      "rank": 13,
-      "ordinal": 10.76,
-      "elo": 1048,
-      "eloPeak": 1071
-    },
-    "music-riobaldo-e-o-aleph": {
+    "delegating-to-agents": {
       "rank": 14,
-      "ordinal": 10.7339,
-      "elo": 1072,
-      "eloPeak": 1108
+      "ordinal": 11.3797,
+      "elo": 1091,
+      "eloPeak": 1091
     },
-    "quem-sou-eu": {
+    "crossing-interference": {
       "rank": 15,
-      "ordinal": 10.5465,
-      "elo": 1067,
-      "eloPeak": 1088
+      "ordinal": 11.0471,
+      "elo": 1085,
+      "eloPeak": 1086
     },
     "delphi-imperatives": {
       "rank": 16,
-      "ordinal": 9.7875,
-      "elo": 1069,
-      "eloPeak": 1072
+      "ordinal": 11.0014,
+      "elo": 1084,
+      "eloPeak": 1103
     },
-    "music-observer-error-moving-window-iv": {
+    "music-eu-ia-escrever-sobre-o-infinito-de-novo": {
       "rank": 17,
-      "ordinal": 9.2324,
-      "elo": 1097,
-      "eloPeak": 1097
-    },
-    "reclaiming-harness": {
-      "rank": 18,
-      "ordinal": 9.0722,
-      "elo": 1067,
-      "eloPeak": 1084
-    },
-    "music-quando-vier-a-primavera": {
-      "rank": 19,
-      "ordinal": 9.0214,
-      "elo": 1100,
-      "eloPeak": 1126
+      "ordinal": 10.9038,
+      "elo": 1084,
+      "eloPeak": 1119
     },
     "agent-no-verbs": {
-      "rank": 20,
-      "ordinal": 8.9854,
-      "elo": 1087,
-      "eloPeak": 1087
+      "rank": 18,
+      "ordinal": 10.4366,
+      "elo": 1099,
+      "eloPeak": 1099
     },
     "music-nonada": {
-      "rank": 21,
-      "ordinal": 8.9615,
-      "elo": 1033,
+      "rank": 19,
+      "ordinal": 10.3271,
+      "elo": 1087,
       "eloPeak": 1115
     },
+    "quem-sou-eu": {
+      "rank": 20,
+      "ordinal": 10.1655,
+      "elo": 1039,
+      "eloPeak": 1088
+    },
     "music-o-medo-do-louco": {
-      "rank": 22,
-      "ordinal": 8.7059,
-      "elo": 1064,
+      "rank": 21,
+      "ordinal": 9.8729,
+      "elo": 1078,
       "eloPeak": 1089
     },
-    "crossing-interference": {
-      "rank": 23,
-      "ordinal": 8.606,
-      "elo": 1050,
-      "eloPeak": 1073
+    "becoming-lobsters": {
+      "rank": 22,
+      "ordinal": 9.7697,
+      "elo": 1077,
+      "eloPeak": 1077
     },
-    "music-o-preco-da-saudade": {
+    "music-clipes": {
+      "rank": 23,
+      "ordinal": 9.7034,
+      "elo": 1085,
+      "eloPeak": 1085
+    },
+    "music-quando-vier-a-primavera": {
       "rank": 24,
-      "ordinal": 8.4349,
-      "elo": 1062,
-      "eloPeak": 1096
+      "ordinal": 9.5903,
+      "elo": 1080,
+      "eloPeak": 1126
+    },
+    "music-riobaldo-e-o-aleph": {
+      "rank": 25,
+      "ordinal": 9.2831,
+      "elo": 1042,
+      "eloPeak": 1108
+    },
+    "social-vulnerabilities": {
+      "rank": 26,
+      "ordinal": 9.1497,
+      "elo": 1046,
+      "eloPeak": 1065
+    },
+    "music-pattern-over-stuff": {
+      "rank": 27,
+      "ordinal": 8.9577,
+      "elo": 1036,
+      "eloPeak": 1064
+    },
+    "music-prayer-to-the-unfinished-moving-window-v": {
+      "rank": 28,
+      "ordinal": 8.8132,
+      "elo": 1051,
+      "eloPeak": 1068
+    },
+    "funes-soul": {
+      "rank": 29,
+      "ordinal": 8.5943,
+      "elo": 1038,
+      "eloPeak": 1059
+    },
+    "music-observer-error-moving-window-iv": {
+      "rank": 30,
+      "ordinal": 8.5244,
+      "elo": 1056,
+      "eloPeak": 1127
+    },
+    "future-father": {
+      "rank": 31,
+      "ordinal": 8.5236,
+      "elo": 1008,
+      "eloPeak": 1054
+    },
+    "music-reality-maintenance-moving-window-xii": {
+      "rank": 32,
+      "ordinal": 8.4596,
+      "elo": 1036,
+      "eloPeak": 1049
     },
     "family-memory": {
-      "rank": 25,
+      "rank": 33,
       "ordinal": 8.4256,
       "elo": 1055,
       "eloPeak": 1070
     },
-    "music-pattern-over-stuff": {
-      "rank": 26,
-      "ordinal": 8.3716,
-      "elo": 1043,
-      "eloPeak": 1064
-    },
-    "social-vulnerabilities": {
-      "rank": 27,
-      "ordinal": 8.0216,
-      "elo": 1044,
-      "eloPeak": 1065
-    },
-    "music-prayer-to-the-unfinished-moving-window-v": {
-      "rank": 28,
-      "ordinal": 8.0164,
-      "elo": 1033,
-      "eloPeak": 1068
-    },
-    "music-clipes": {
-      "rank": 29,
-      "ordinal": 7.9387,
-      "elo": 1038,
-      "eloPeak": 1040
-    },
-    "census-not-sample": {
-      "rank": 30,
-      "ordinal": 7.8346,
-      "elo": 1035,
-      "eloPeak": 1102
-    },
     "music-fourteen-words": {
-      "rank": 31,
-      "ordinal": 7.821,
-      "elo": 1052,
-      "eloPeak": 1073
+      "rank": 34,
+      "ordinal": 8.3979,
+      "elo": 1046,
+      "eloPeak": 1079
     },
-    "becoming-lobsters": {
-      "rank": 32,
-      "ordinal": 7.8185,
-      "elo": 1043,
-      "eloPeak": 1060
+    "music-o-preco-da-saudade": {
+      "rank": 35,
+      "ordinal": 8.3421,
+      "elo": 1058,
+      "eloPeak": 1096
     },
-    "delegating-to-agents": {
-      "rank": 33,
-      "ordinal": 7.7481,
-      "elo": 1031,
+    "music-666": {
+      "rank": 36,
+      "ordinal": 7.9481,
+      "elo": 1001,
+      "eloPeak": 1020
+    },
+    "music-o-tempo": {
+      "rank": 37,
+      "ordinal": 7.935,
+      "elo": 1018,
+      "eloPeak": 1048
+    },
+    "music-sinal-que-se-cumpre-moving-window-ix": {
+      "rank": 38,
+      "ordinal": 7.7806,
+      "elo": 1009,
+      "eloPeak": 1048
+    },
+    "intelligible-void": {
+      "rank": 39,
+      "ordinal": 7.7419,
+      "elo": 1004,
+      "eloPeak": 1032
+    },
+    "music-spring-loading": {
+      "rank": 40,
+      "ordinal": 7.5864,
+      "elo": 1020,
       "eloPeak": 1046
     },
-    "pierre-menard": {
-      "rank": 34,
-      "ordinal": 7.5474,
-      "elo": 1032,
-      "eloPeak": 1084
+    "census-not-sample": {
+      "rank": 41,
+      "ordinal": 7.537,
+      "elo": 1028,
+      "eloPeak": 1102
+    },
+    "music-xadrez": {
+      "rank": 42,
+      "ordinal": 7.5291,
+      "elo": 1006,
+      "eloPeak": 1021
+    },
+    "music-espelhos": {
+      "rank": 43,
+      "ordinal": 7.4431,
+      "elo": 1001,
+      "eloPeak": 1063
     },
     "music-trinta-de-abril": {
-      "rank": 35,
-      "ordinal": 7.5104,
-      "elo": 1019,
+      "rank": 44,
+      "ordinal": 7.2033,
+      "elo": 1020,
       "eloPeak": 1063
     },
     "music-a-primeira-mudanca": {
-      "rank": 36,
-      "ordinal": 7.4989,
-      "elo": 1048,
+      "rank": 45,
+      "ordinal": 7.2033,
+      "elo": 1014,
       "eloPeak": 1082
     },
-    "funes-soul": {
-      "rank": 37,
-      "ordinal": 7.3656,
-      "elo": 1043,
-      "eloPeak": 1043
-    },
-    "future-father": {
-      "rank": 38,
-      "ordinal": 7.3281,
-      "elo": 999,
-      "eloPeak": 1054
-    },
-    "music-xadrez": {
-      "rank": 39,
-      "ordinal": 7.1943,
-      "elo": 1016,
-      "eloPeak": 1016
-    },
-    "music-borges-e-eu": {
-      "rank": 40,
-      "ordinal": 6.8992,
-      "elo": 1024,
-      "eloPeak": 1057
-    },
     "music-o-aleph": {
-      "rank": 41,
-      "ordinal": 6.8253,
+      "rank": 46,
+      "ordinal": 7.2027,
       "elo": 1042,
       "eloPeak": 1089
     },
-    "music-espelhos": {
-      "rank": 42,
-      "ordinal": 6.7627,
-      "elo": 1017,
-      "eloPeak": 1063
-    },
-    "music-be-me-borges": {
-      "rank": 43,
-      "ordinal": 6.688,
-      "elo": 994,
-      "eloPeak": 1025
-    },
-    "music-sinal-que-se-cumpre-moving-window-ix": {
-      "rank": 44,
-      "ordinal": 6.5416,
-      "elo": 1002,
-      "eloPeak": 1048
-    },
-    "music-leite-no-salao-bar": {
-      "rank": 45,
-      "ordinal": 6.3404,
-      "elo": 974,
-      "eloPeak": 1048
-    },
-    "music-the-ruliad-is-laughing": {
-      "rank": 46,
-      "ordinal": 6.1277,
-      "elo": 1050,
-      "eloPeak": 1077
-    },
-    "music-f85fb538-6f59-4751-8629-da76665fc91e": {
+    "music-sobre-o-rigor-na-ciencia": {
       "rank": 47,
-      "ordinal": 6.0824,
-      "elo": 994,
-      "eloPeak": 1073
+      "ordinal": 6.9907,
+      "elo": 982,
+      "eloPeak": 1029
     },
-    "music-reality-maintenance-moving-window-xii": {
+    "music-borges-e-eu": {
       "rank": 48,
-      "ordinal": 6.034,
-      "elo": 1006,
-      "eloPeak": 1049
+      "ordinal": 6.9644,
+      "elo": 1017,
+      "eloPeak": 1057
     },
     "music-paperclip-rhapsody": {
       "rank": 49,
-      "ordinal": 5.9846,
-      "elo": 1012,
-      "eloPeak": 1016
-    },
-    "intelligible-void": {
-      "rank": 50,
-      "ordinal": 5.755,
-      "elo": 969,
-      "eloPeak": 1032
-    },
-    "music-o-regral": {
-      "rank": 51,
-      "ordinal": 5.7536,
-      "elo": 994,
-      "eloPeak": 1073
-    },
-    "music-666": {
-      "rank": 52,
-      "ordinal": 5.6038,
-      "elo": 964,
-      "eloPeak": 1020
-    },
-    "music-sentido-e-referencia": {
-      "rank": 53,
-      "ordinal": 5.5225,
-      "elo": 975,
-      "eloPeak": 1033
+      "ordinal": 6.9395,
+      "elo": 1021,
+      "eloPeak": 1042
     },
     "conservation-law": {
-      "rank": 54,
-      "ordinal": 5.4738,
-      "elo": 1041,
-      "eloPeak": 1060
+      "rank": 50,
+      "ordinal": 6.7469,
+      "elo": 1002,
+      "eloPeak": 1071
     },
-    "music-sobre-o-rigor-na-ciencia": {
-      "rank": 55,
-      "ordinal": 5.3895,
-      "elo": 961,
-      "eloPeak": 1029
+    "pierre-menard": {
+      "rank": 51,
+      "ordinal": 6.7467,
+      "elo": 999,
+      "eloPeak": 1084
     },
-    "music-escherian-sunrise-with-godel": {
-      "rank": 56,
-      "ordinal": 5.0187,
-      "elo": 982,
-      "eloPeak": 1037
-    },
-    "music-the-time": {
-      "rank": 57,
-      "ordinal": 4.9478,
-      "elo": 1010,
-      "eloPeak": 1016
-    },
-    "music-entre-rascunho-e-apagar": {
-      "rank": 58,
-      "ordinal": 4.8416,
-      "elo": 990,
-      "eloPeak": 1035
-    },
-    "music-john-gospel-chapter-i-by-max-headroom": {
-      "rank": 59,
-      "ordinal": 4.8196,
-      "elo": 979,
-      "eloPeak": 1002
-    },
-    "music-stopping-by-woods-on-a-snowy-evening-by-robert-frost": {
-      "rank": 60,
-      "ordinal": 4.7782,
-      "elo": 984,
-      "eloPeak": 1048
-    },
-    "music-o-magico-e-o-fogo": {
-      "rank": 61,
-      "ordinal": 4.745,
-      "elo": 984,
-      "eloPeak": 1047
-    },
-    "everything-is-process": {
-      "rank": 62,
-      "ordinal": 4.7305,
-      "elo": 939,
-      "eloPeak": 1023
-    },
-    "music-belief-engine-labyrinth-song-moving-window-viii": {
-      "rank": 63,
-      "ordinal": 4.5452,
-      "elo": 915,
-      "eloPeak": 1000
-    },
-    "music-particles": {
-      "rank": 64,
-      "ordinal": 4.5341,
-      "elo": 1015,
-      "eloPeak": 1040
-    },
-    "music-spring-loading": {
-      "rank": 65,
-      "ordinal": 4.2822,
-      "elo": 951,
-      "eloPeak": 1046
-    },
-    "music-beatriz": {
-      "rank": 66,
-      "ordinal": 3.9413,
-      "elo": 991,
-      "eloPeak": 1039
-    },
-    "music-46336b97-4306-41bc-8a7b-48f0ebebbd29": {
-      "rank": 67,
-      "ordinal": 3.8713,
-      "elo": 958,
-      "eloPeak": 1015
-    },
-    "building-funes": {
-      "rank": 68,
-      "ordinal": 3.8311,
-      "elo": 952,
-      "eloPeak": 1091
-    },
-    "music-caminho": {
-      "rank": 69,
-      "ordinal": 3.7685,
-      "elo": 997,
-      "eloPeak": 1016
+    "music-sentido-e-referencia": {
+      "rank": 52,
+      "ordinal": 6.6189,
+      "elo": 995,
+      "eloPeak": 1033
     },
     "music-o-telefone-da-agonia": {
-      "rank": 70,
-      "ordinal": 3.7516,
-      "elo": 926,
+      "rank": 53,
+      "ordinal": 6.5575,
+      "elo": 983,
       "eloPeak": 1000
     },
-    "inaugural-post": {
-      "rank": 71,
-      "ordinal": 3.7145,
-      "elo": 976,
-      "eloPeak": 1001
+    "music-the-time": {
+      "rank": 54,
+      "ordinal": 6.466,
+      "elo": 1019,
+      "eloPeak": 1055
     },
-    "music-uma-so-cancao": {
-      "rank": 72,
-      "ordinal": 3.4423,
-      "elo": 962,
-      "eloPeak": 1000
+    "music-leite-no-salao-bar": {
+      "rank": 55,
+      "ordinal": 6.4514,
+      "elo": 925,
+      "eloPeak": 1048
     },
-    "music-chegue-irmao-chegue-irma": {
-      "rank": 73,
-      "ordinal": 3.2097,
-      "elo": 969,
-      "eloPeak": 1026
+    "music-the-ruliad-is-laughing": {
+      "rank": 56,
+      "ordinal": 6.2082,
+      "elo": 1024,
+      "eloPeak": 1077
+    },
+    "music-be-me-borges": {
+      "rank": 57,
+      "ordinal": 6.0661,
+      "elo": 951,
+      "eloPeak": 1025
     },
     "music-meditacao-guiada-no-sertao": {
-      "rank": 74,
-      "ordinal": 3.0959,
-      "elo": 969,
+      "rank": 58,
+      "ordinal": 5.9694,
+      "elo": 1016,
       "eloPeak": 1043
     },
-    "music-crystallizing-from-the-nothing": {
-      "rank": 75,
-      "ordinal": 3.0008,
-      "elo": 948,
-      "eloPeak": 1059
+    "music-stopping-by-woods-on-a-snowy-evening-by-robert-frost": {
+      "rank": 59,
+      "ordinal": 5.794,
+      "elo": 998,
+      "eloPeak": 1048
+    },
+    "music-o-sonhador-e-o-fogo": {
+      "rank": 60,
+      "ordinal": 5.7041,
+      "elo": 977,
+      "eloPeak": 1000
+    },
+    "music-f85fb538-6f59-4751-8629-da76665fc91e": {
+      "rank": 61,
+      "ordinal": 5.5736,
+      "elo": 978,
+      "eloPeak": 1073
+    },
+    "music-beatriz": {
+      "rank": 62,
+      "ordinal": 5.3842,
+      "elo": 973,
+      "eloPeak": 1039
+    },
+    "music-escherian-sunrise-with-godel": {
+      "rank": 63,
+      "ordinal": 5.309,
+      "elo": 979,
+      "eloPeak": 1037
+    },
+    "music-chegue-irmao-chegue-irma": {
+      "rank": 64,
+      "ordinal": 5.1824,
+      "elo": 1009,
+      "eloPeak": 1027
     },
     "jules-api-harness": {
-      "rank": 76,
-      "ordinal": 2.7376,
-      "elo": 956,
+      "rank": 65,
+      "ordinal": 5.1543,
+      "elo": 987,
       "eloPeak": 1006
     },
-    "music-menino-que-voce-foi": {
-      "rank": 77,
-      "ordinal": 2.7016,
-      "elo": 922,
-      "eloPeak": 1043
-    },
     "conceptual-document": {
-      "rank": 78,
-      "ordinal": 2.5245,
-      "elo": 949,
+      "rank": 66,
+      "ordinal": 4.8142,
+      "elo": 978,
       "eloPeak": 1036
     },
+    "music-entre-rascunho-e-apagar": {
+      "rank": 67,
+      "ordinal": 4.6752,
+      "elo": 957,
+      "eloPeak": 1035
+    },
+    "everything-is-process": {
+      "rank": 68,
+      "ordinal": 4.657,
+      "elo": 917,
+      "eloPeak": 1023
+    },
     "music-o-verso-branquiceleste": {
-      "rank": 79,
-      "ordinal": 2.4444,
-      "elo": 934,
+      "rank": 69,
+      "ordinal": 4.6437,
+      "elo": 963,
       "eloPeak": 1001
     },
-    "music-vos": {
+    "music-particles": {
+      "rank": 70,
+      "ordinal": 4.5617,
+      "elo": 979,
+      "eloPeak": 1060
+    },
+    "music-john-gospel-chapter-i-by-max-headroom": {
+      "rank": 71,
+      "ordinal": 4.514,
+      "elo": 964,
+      "eloPeak": 1002
+    },
+    "building-funes": {
+      "rank": 72,
+      "ordinal": 4.2165,
+      "elo": 956,
+      "eloPeak": 1091
+    },
+    "music-o-regral": {
+      "rank": 73,
+      "ordinal": 4.1873,
+      "elo": 944,
+      "eloPeak": 1073
+    },
+    "music-o-magico-e-o-fogo": {
+      "rank": 74,
+      "ordinal": 4.0534,
+      "elo": 932,
+      "eloPeak": 1047
+    },
+    "music-uma-so-cancao": {
+      "rank": 75,
+      "ordinal": 3.9869,
+      "elo": 981,
+      "eloPeak": 1000
+    },
+    "music-caminho": {
+      "rank": 76,
+      "ordinal": 3.9689,
+      "elo": 994,
+      "eloPeak": 1016
+    },
+    "music-o-prologo": {
+      "rank": 77,
+      "ordinal": 3.649,
+      "elo": 937,
+      "eloPeak": 1031
+    },
+    "inaugural-post": {
+      "rank": 78,
+      "ordinal": 3.1911,
+      "elo": 944,
+      "eloPeak": 1001
+    },
+    "music-belief-engine-labyrinth-song-moving-window-viii": {
+      "rank": 79,
+      "ordinal": 2.8177,
+      "elo": 859,
+      "eloPeak": 1000
+    },
+    "music-o-ritual-de-abril-anos-de-saudade": {
       "rank": 80,
+      "ordinal": 2.5222,
+      "elo": 955,
+      "eloPeak": 1032
+    },
+    "music-mindfulness": {
+      "rank": 81,
+      "ordinal": 2.4272,
+      "elo": 980,
+      "eloPeak": 1000
+    },
+    "music-vos": {
+      "rank": 82,
       "ordinal": 2.4038,
       "elo": 957,
       "eloPeak": 1064
     },
-    "music-o-ritual-de-abril-anos-de-saudade": {
-      "rank": 81,
-      "ordinal": 2.2944,
-      "elo": 959,
-      "eloPeak": 1032
-    },
-    "music-o-tempo": {
-      "rank": 82,
-      "ordinal": 2.15,
-      "elo": 977,
+    "music-46336b97-4306-41bc-8a7b-48f0ebebbd29": {
+      "rank": 83,
+      "ordinal": 2.0314,
+      "elo": 881,
       "eloPeak": 1015
     },
-    "music-o-sonhador-e-o-fogo": {
-      "rank": 83,
-      "ordinal": 1.9605,
-      "elo": 889,
-      "eloPeak": 1000
+    "music-two-cursors": {
+      "rank": 84,
+      "ordinal": 1.9523,
+      "elo": 891,
+      "eloPeak": 1017
     },
     "data-portrait-2026": {
-      "rank": 84,
+      "rank": 85,
       "ordinal": 1.8463,
       "elo": 1019,
       "eloPeak": 1026
     },
+    "music-sussurros-binarios": {
+      "rank": 86,
+      "ordinal": 1.7233,
+      "elo": 906,
+      "eloPeak": 1000
+    },
+    "music-151474c5-1420-4cc1-9ab5-80721f4459ed": {
+      "rank": 87,
+      "ordinal": 1.6472,
+      "elo": 967,
+      "eloPeak": 1031
+    },
     "manifold-betting-ideas": {
-      "rank": 85,
+      "rank": 88,
       "ordinal": 1.6218,
       "elo": 1015,
       "eloPeak": 1015
     },
-    "music-mindfulness": {
-      "rank": 86,
-      "ordinal": 1.6188,
-      "elo": 971,
-      "eloPeak": 1000
-    },
-    "music-o-prologo": {
-      "rank": 87,
-      "ordinal": 1.4898,
-      "elo": 901,
-      "eloPeak": 1031
+    "music-menino-que-voce-foi": {
+      "rank": 89,
+      "ordinal": 1.372,
+      "elo": 894,
+      "eloPeak": 1043
     },
     "pontifex-guide": {
-      "rank": 88,
-      "ordinal": 1.1811,
-      "elo": 942,
+      "rank": 90,
+      "ordinal": 1.2441,
+      "elo": 937,
       "eloPeak": 1032
     },
-    "travessia-project": {
-      "rank": 89,
-      "ordinal": 0.7827,
-      "elo": 890,
-      "eloPeak": 1001
-    },
-    "music-borges-and-me": {
-      "rank": 90,
-      "ordinal": 0.7676,
-      "elo": 880,
-      "eloPeak": 1047
-    },
-    "music-151474c5-1420-4cc1-9ab5-80721f4459ed": {
+    "music-crystallizing-from-the-nothing": {
       "rank": 91,
-      "ordinal": 0.4373,
-      "elo": 950,
-      "eloPeak": 1031
-    },
-    "music-veu-do-infinito": {
-      "rank": 92,
-      "ordinal": 0.2292,
-      "elo": 896,
-      "eloPeak": 1001
-    },
-    "music-two-cursors": {
-      "rank": 93,
-      "ordinal": -0.1504,
-      "elo": 849,
-      "eloPeak": 1017
+      "ordinal": 1.1428,
+      "elo": 886,
+      "eloPeak": 1059
     },
     "music-borges-and-the-hyperobject-at-the-end-of-time": {
-      "rank": 94,
-      "ordinal": -0.1824,
-      "elo": 878,
+      "rank": 92,
+      "ordinal": 0.7988,
+      "elo": 896,
       "eloPeak": 1049
     },
-    "autumn-balance-2026": {
+    "music-borges-and-me": {
+      "rank": 93,
+      "ordinal": 0.7738,
+      "elo": 858,
+      "eloPeak": 1047
+    },
+    "verne-identity-repo": {
+      "rank": 94,
+      "ordinal": 0.5683,
+      "elo": 890,
+      "eloPeak": 1017
+    },
+    "music-veu-do-infinito": {
       "rank": 95,
+      "ordinal": -0.2141,
+      "elo": 864,
+      "eloPeak": 1001
+    },
+    "autumn-balance-2026": {
+      "rank": 96,
       "ordinal": -0.4099,
       "elo": 984,
       "eloPeak": 1000
     },
-    "music-f73c60f0-49af-45fd-a483-1d35a676dccc": {
-      "rank": 96,
-      "ordinal": -1.0619,
-      "elo": 898,
+    "travessia-project": {
+      "rank": 97,
+      "ordinal": -0.4403,
+      "elo": 848,
+      "eloPeak": 1001
+    },
+    "music-universal-threshold": {
+      "rank": 98,
+      "ordinal": -1.2641,
+      "elo": 892,
       "eloPeak": 1000
     },
-    "verne-identity-repo": {
-      "rank": 97,
-      "ordinal": -1.1855,
-      "elo": 878,
-      "eloPeak": 1017
-    },
     "music-dd332f75-6052-4f9e-bccd-fb0303731d6e": {
-      "rank": 98,
-      "ordinal": -1.6798,
-      "elo": 846,
+      "rank": 99,
+      "ordinal": -1.6221,
+      "elo": 818,
       "eloPeak": 1016
     },
-    "music-sussurros-binarios": {
-      "rank": 99,
-      "ordinal": -1.751,
-      "elo": 840,
+    "music-f73c60f0-49af-45fd-a483-1d35a676dccc": {
+      "rank": 100,
+      "ordinal": -1.8103,
+      "elo": 878,
       "eloPeak": 1000
     },
     "may-in-seven-drafts-2026": {
-      "rank": 100,
+      "rank": 101,
       "ordinal": -3.0818,
       "elo": 917,
       "eloPeak": 1016
     },
-    "music-universal-threshold": {
-      "rank": 101,
-      "ordinal": -3.2653,
-      "elo": 874,
-      "eloPeak": 1000
-    },
     "music-bibliotecario-do-infinito": {
       "rank": 102,
-      "ordinal": -5.7619,
-      "elo": 810,
+      "ordinal": -3.324,
+      "elo": 826,
+      "eloPeak": 1000
+    },
+    "events-welcome": {
+      "rank": 103,
+      "ordinal": -6.3802,
+      "elo": 794,
       "eloPeak": 1000
     }
   }
