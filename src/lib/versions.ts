@@ -6,6 +6,7 @@ import {
   getPostUuidLegacy,
   getPostUuidPreOkfType,
 } from "../hronir/posts.js";
+import { flatCanonicalPath } from "../hronir/selection.js";
 
 const BLOG_DIR = "src/content/blog";
 const SELECTION_PATH = "src/generated/versions-selected.json";
@@ -42,9 +43,16 @@ export function slugOf(id: string): string {
 
 /** Resolve the on-disk file for a content id. RFC 0010: a bare "<slug>" id
  *  resolves through versions-selected.json (the selected version); a version
- *  id "<slug>/v-<ts>" resolves to that file directly. */
+ *  id "<slug>/v-<ts>" resolves to that file directly. RFC 0015: a flat
+ *  slug (single `<slug>.mdx`, no selection entry) resolves directly via
+ *  flatCanonicalPath — checked first since it's cheap and, unlike the
+ *  legacy branches below, unambiguous by construction (flatCanonicalPath
+ *  itself refuses to return a path when a real legacy directory exists for
+ *  the same slug, so this can never race the selection.json branch). */
 export function fileForId(id: string): string | null {
   if (!id.includes("/")) {
+    const flat = flatCanonicalPath(id);
+    if (flat) return flat;
     const entry = selection()[id];
     if (entry) {
       const p = `${BLOG_DIR}/${entry.file}`;

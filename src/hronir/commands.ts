@@ -2017,17 +2017,26 @@ export function editWorst() {
   const translationFiles = worstRowFiles;
 
   // RFC 0010: non-destructive drafting. Copy each selected version into a
-  // sibling draft <slug>/v-<timestamp>.<ext> for the agent to edit. The
-  // selected version stays untouched; the draft competes with it in later
-  // version duels, and `hronir:select` swaps the winner in when it clears
-  // the hysteresis bar. Lineage lives in-repo via `supersedes` (the
-  // selected version's content UUID).
+  // draft <slug>/v-<timestamp>.<ext> for the agent to edit. The selected
+  // version stays untouched; the draft competes with it in later version
+  // duels, and `hronir:select` swaps the winner in when it clears the
+  // hysteresis bar. Lineage lives in-repo via `supersedes` (the selected
+  // version's content UUID).
+  //
+  // RFC 0015: where the draft lives depends on the slug's layout — a
+  // legacy slug still gets a sibling in its own directory; a flat slug's
+  // draft goes to .routines/hronir/drafts/<slug>/ instead, since there's
+  // no directory to be a sibling *in* once there's only `<slug>.mdx`.
   const { runId: draftStamp } = utcStamp();
   const draftCreatedAt = new Date().toISOString();
   const drafts = [];
   for (const fileInfo of translationFiles) {
     const canonicalUuid = getPostUuid(fileInfo.path);
-    const dir = path.dirname(fileInfo.path);
+    const slug = slugForContentPath(fileInfo.path);
+    const dir = flatCanonicalPath(slug)
+      ? path.join(DRAFTS_DIR, slug)
+      : path.dirname(fileInfo.path);
+    fs.mkdirSync(dir, { recursive: true });
     const ext = path.extname(fileInfo.path).slice(1) || "md";
     const draftPath = path.join(dir, `v-${draftStamp}.${ext}`);
     const parsed = matter(fs.readFileSync(fileInfo.path, "utf8"));

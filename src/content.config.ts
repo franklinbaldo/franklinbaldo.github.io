@@ -1,12 +1,13 @@
 import { existsSync, readFileSync } from "node:fs";
 import { defineCollection, z, type SchemaContext } from "astro:content";
 import { glob } from "astro/loaders";
+import { listAllVersionSlugs, flatCanonicalPath } from "./hronir/selection.js";
 
-// RFC 0010 (amended 2026-07-01): the published version of each post is
-// whatever versions-selected.json points at — selection is a generated
-// artifact (written by `hronir:select`, run via `prebuild`), not a
-// privileged filename. The file is gitignored, not committed — select() is
-// a pure function of rate files + version files, no hysteresis.
+// RFC 0010 (amended 2026-07-01): the published version of a *legacy*-layout
+// post is whatever versions-selected.json points at — selection is a
+// generated artifact (written by `hronir:select`, run via `prebuild`), not
+// a privileged filename. The file is gitignored, not committed — select()
+// is a pure function of rate files + version files, no hysteresis.
 const selectedFiles: string[] = [];
 if (existsSync("./src/generated/versions-selected.json")) {
   // Present-but-unparseable must fail the build: silently falling back to
@@ -20,6 +21,21 @@ if (existsSync("./src/generated/versions-selected.json")) {
   }
 }
 // Absent file = pre-migration tree: fall back to the RFC 0003 index.* layout.
+
+// RFC 0015 (single-file model): a flattened slug's canonical IS
+// `<slug>.mdx` directly — it never appears in versions-selected.json
+// (select() skips it; see commands.ts). Reusing flatCanonicalPath here
+// instead of a bare `*.{md,mdx}` glob matters: two pre-existing slugs
+// (delegando-para-agentes, the-art-of-delegation) have an orphan loose
+// file at the content root *alongside* their real legacy directory (RFC
+// 0015 §1) — a naive root-level glob would wrongly publish that stale
+// orphan instead of the real, still-versioned content. flatCanonicalPath
+// already resolves that ambiguity (a real legacy directory always wins),
+// so this list can never collide with `selectedFiles` above.
+const flatFiles = listAllVersionSlugs()
+  .map((slug) => flatCanonicalPath(slug))
+  .filter((p): p is string => p !== null)
+  .map((p) => p.replace(/^src\/content\/blog\//, ""));
 
 // Shared schema for canonical posts (blog) and their non-canonical versions
 // (blogVersions). RFC 0003: a version file is a frozen copy of a canonical, so
@@ -92,22 +108,40 @@ const postSchema = ({ image }: SchemaContext) =>
     sunoImageUrl: z.string().url().optional(),
   });
 
+const publishedPattern =
+  selectedFiles.length + flatFiles.length > 0
+    ? [...selectedFiles, ...flatFiles]
+    : ["**/index.{md,mdx}"];
+
 const blog = defineCollection({
-  // RFC 0010: each post lives in its own folder <slug>/ holding peer version
-  // files (v-<timestamp>.md). The collection loads exactly the version that
-  // versions-selected.json picks per slug. generateId strips the version
-  // filename so the id stays the flat slug, preserving every existing URL.
+  // A legacy slug lives in its own folder <slug>/ holding peer version
+  // files (v-<timestamp>.md); the collection loads exactly the version
+  // versions-selected.json picks (RFC 0010). A flat slug (RFC 0015) is a
+  // single `<slug>.mdx` at the content root — already the right id, no
+  // selection lookup needed. generateId strips the version filename for
+  // the legacy case and is a no-op for the flat case, so the id is the
+  // flat slug either way, preserving every existing URL.
   loader: glob({
-    pattern: selectedFiles.length > 0 ? selectedFiles : "**/index.{md,mdx}",
+    pattern: publishedPattern,
     base: "./src/content/blog",
     generateId: ({ entry }) => entry.replace(/\/(v-[^/]+|index)\.mdx?$/, ""),
   }),
   schema: postSchema,
 });
 
-// RFC 0010: every non-selected version (challengers + ex-selected). Served at
-// /blog/<slug>/v/<uuid> (noindex, canonical → live). The id keeps the folder
-// path so the post slug = dirname(id).
+// RFC 0010: every non-selected legacy-layout version (challengers +
+// ex-selected). Served at /blog/<slug>/v/<uuid> (noindex, canonical →
+// live). The id keeps the folder path so the post slug = dirname(id).
+//
+// RFC 0015: a flat slug's open challengers (.routines/hronir/drafts/) are
+// deliberately NOT in this collection — they don't get a live permalink
+// page while still competing (a real gap vs. legacy behavior, not an
+// oversight: closing it needs a second base directory, astro/loaders'
+// glob() only takes one). Once a flat-slug version is folded back or
+// pruned, it's archived in versions-history.json and the /v/<uuid> route
+// resolves it from there directly (see [uuid].astro), no collection entry
+// required — that's the path that actually matters (permalinks must
+// survive after the fact; mid-competition drafts don't need to).
 const blogVersions = defineCollection({
   loader: glob({
     pattern: ["**/v-*.{md,mdx}", ...selectedFiles.map((f) => `!${f}`)],
