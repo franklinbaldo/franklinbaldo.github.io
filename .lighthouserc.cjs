@@ -30,11 +30,22 @@
 //
 // If a page legitimately regresses, re-measure locally and move these
 // numbers — don't just bump them blindly to make CI pass.
+//
+// numberOfRuns is 3 here (not the 1 used for local calibration above): the
+// very first CI run of this config failed /404.html's performance assertion
+// at 0.76 — 23pt below both the 0.88 threshold and the 0.99 measured
+// locally, on a PR that touches no application/build code, only CI config.
+// That gap is CI-runner noise (shared/throttled GH Actions VMs are known to
+// produce noisy single-sample Lighthouse performance runs), not a real
+// regression. lhci scores each URL from the *median* run when
+// numberOfRuns > 1, which is the documented mitigation for exactly this —
+// a single unlucky sample no longer trips the assertion by itself. The
+// category thresholds themselves are untouched.
 module.exports = {
   ci: {
     collect: {
       staticDistDir: "./dist",
-      numberOfRuns: 1,
+      numberOfRuns: 3,
     },
     assert: {
       assertions: {
