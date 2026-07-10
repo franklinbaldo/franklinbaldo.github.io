@@ -10,6 +10,54 @@ interface Song {
   postUrl: string;
 }
 
+interface Props {
+  lang?: string;
+}
+const { lang = "en" } = Astro.props;
+
+const L =
+  lang === "pt"
+    ? {
+        region: "Player de músicas",
+        favAdd: "Adicionar aos favoritos",
+        favRemove: "Remover dos favoritos",
+        seekPosition: "Posição na música",
+        volume: "Volume",
+        shuffle: "Embaralhar",
+        prev: "Anterior",
+        play: "Tocar",
+        pause: "Pausar",
+        next: "Próximo",
+        repeatOff: "Sem repetição",
+        repeatAll: "Repetir tudo",
+        repeatOne: "Repetir esta música",
+        queue: "Ver fila",
+        close: "Fechar player",
+        queueDialog: "Fila de reprodução",
+        queueLabel: "Fila",
+        closeQueue: "Fechar fila",
+      }
+    : {
+        region: "Music player",
+        favAdd: "Add to favorites",
+        favRemove: "Remove from favorites",
+        seekPosition: "Song position",
+        volume: "Volume",
+        shuffle: "Shuffle",
+        prev: "Previous",
+        play: "Play",
+        pause: "Pause",
+        next: "Next",
+        repeatOff: "No repeat",
+        repeatAll: "Repeat all",
+        repeatOne: "Repeat this song",
+        queue: "View queue",
+        close: "Close player",
+        queueDialog: "Playback queue",
+        queueLabel: "Queue",
+        closeQueue: "Close queue",
+      };
+
 let songs: Song[] = [];
 let audioMap: Record<string, string> = {};
 
@@ -72,7 +120,7 @@ try {
 <div
   id="gmp"
   role="region"
-  aria-label="Player de músicas"
+  aria-label={L.region}
   data-songs={JSON.stringify(songs)}
   data-audio-map={JSON.stringify(audioMap)}
   hidden
@@ -87,7 +135,7 @@ try {
   <div class="gmp-info">
     <div class="gmp-title-row">
       <a id="gmp-title" class="gmp-title" href=""></a>
-      <button id="gmp-fav" type="button" aria-label="Adicionar aos favoritos" aria-pressed="false" class="gmp-icon-btn gmp-fav">♡</button>
+      <button id="gmp-fav" type="button" aria-label={L.favAdd} aria-pressed="false" class="gmp-icon-btn gmp-fav">♡</button>
     </div>
     <div class="gmp-seek-row">
       <span id="gmp-time" class="gmp-time">0:00</span>
@@ -98,7 +146,7 @@ try {
         max="100"
         value="0"
         step="0.1"
-        aria-label="Posição na música"
+        aria-label={L.seekPosition}
       />
       <span id="gmp-dur" class="gmp-time">0:00</span>
     </div>
@@ -111,28 +159,28 @@ try {
     max="1"
     step="0.05"
     value="1"
-    aria-label="Volume"
+    aria-label={L.volume}
     class="gmp-volume"
   />
 
   <div class="gmp-btns">
-    <button id="gmp-shuffle" type="button" aria-label="Embaralhar" aria-pressed="false" class="gmp-icon-btn">⇌</button>
-    <button id="gmp-prev" type="button" aria-label="Anterior">⏮</button>
-    <button id="gmp-play" type="button" aria-label="Tocar">▶</button>
-    <button id="gmp-next" type="button" aria-label="Próximo">⏭</button>
-    <button id="gmp-repeat" type="button" aria-label="Sem repetição" class="gmp-icon-btn">🔁</button>
-    <button id="gmp-queue-btn" type="button" aria-label="Ver fila" class="gmp-icon-btn">≡</button>
+    <button id="gmp-shuffle" type="button" aria-label={L.shuffle} aria-pressed="false" class="gmp-icon-btn">⇌</button>
+    <button id="gmp-prev" type="button" aria-label={L.prev}>⏮</button>
+    <button id="gmp-play" type="button" aria-label={L.play}>▶</button>
+    <button id="gmp-next" type="button" aria-label={L.next}>⏭</button>
+    <button id="gmp-repeat" type="button" aria-label={L.repeatOff} class="gmp-icon-btn">🔁</button>
+    <button id="gmp-queue-btn" type="button" aria-label={L.queue} class="gmp-icon-btn">≡</button>
   </div>
 
-  <button id="gmp-close" type="button" class="gmp-close" aria-label="Fechar player"
+  <button id="gmp-close" type="button" class="gmp-close" aria-label={L.close}
     >✕</button
   >
 </div>
 
-<div id="gmp-drawer" hidden role="dialog" aria-label="Fila de reprodução">
+<div id="gmp-drawer" hidden role="dialog" aria-label={L.queueDialog}>
   <div class="gmp-drawer-header">
-    <span>Fila</span>
-    <button id="gmp-drawer-close" type="button" aria-label="Fechar fila">✕</button>
+    <span>{L.queueLabel}</span>
+    <button id="gmp-drawer-close" type="button" aria-label={L.closeQueue}>✕</button>
   </div>
   <div id="gmp-drawer-list"></div>
 </div>
@@ -142,6 +190,52 @@ try {
   const REPEAT_OFF = "off";
   const REPEAT_ALL = "all";
   const REPEAT_ONE = "one";
+
+  // #gmp uses transition:persist (it must, to keep the audio playing across
+  // navigations), so Astro's ClientRouter never re-renders it after the
+  // first page load — its data-* attributes can't carry per-page state like
+  // `lang`. <html lang> isn't part of that persisted subtree and does get
+  // updated on every navigation, so read the language from there instead.
+  const GMP_LABELS = {
+    en: {
+      region: "Music player",
+      favAdd: "Add to favorites",
+      favRemove: "Remove from favorites",
+      seekPosition: "Song position",
+      volume: "Volume",
+      shuffle: "Shuffle",
+      prev: "Previous",
+      play: "Play",
+      pause: "Pause",
+      next: "Next",
+      repeatOff: "No repeat",
+      repeatAll: "Repeat all",
+      repeatOne: "Repeat this song",
+      queue: "View queue",
+      close: "Close player",
+    },
+    pt: {
+      region: "Player de músicas",
+      favAdd: "Adicionar aos favoritos",
+      favRemove: "Remover dos favoritos",
+      seekPosition: "Posição na música",
+      volume: "Volume",
+      shuffle: "Embaralhar",
+      prev: "Anterior",
+      play: "Tocar",
+      pause: "Pausar",
+      next: "Próximo",
+      repeatOff: "Sem repetição",
+      repeatAll: "Repetir tudo",
+      repeatOne: "Repetir esta música",
+      queue: "Ver fila",
+      close: "Fechar player",
+    },
+  } as const;
+
+  function currentLabels() {
+    return document.documentElement.lang === "pt-BR" ? GMP_LABELS.pt : GMP_LABELS.en;
+  }
 
   function fmt(sec: number): string {
     if (!isFinite(sec) || sec < 0) return "0:00";
@@ -200,6 +294,35 @@ try {
       !drawerEl || !drawerList || !drawerCloseBtn || !closeBtn
     )
       return;
+
+    // Runs on every navigation (unlike the block below, which only runs
+    // once) so labels stay in sync with the current page's language even
+    // though #gmp itself is never re-rendered after the first load.
+    const gmpLabels = currentLabels();
+    player.setAttribute("aria-label", gmpLabels.region);
+    seekEl.setAttribute("aria-label", gmpLabels.seekPosition);
+    volumeEl.setAttribute("aria-label", gmpLabels.volume);
+    shuffleBtn.setAttribute("aria-label", gmpLabels.shuffle);
+    prevBtn.setAttribute("aria-label", gmpLabels.prev);
+    nextBtn.setAttribute("aria-label", gmpLabels.next);
+    queueBtn.setAttribute("aria-label", gmpLabels.queue);
+    closeBtn.setAttribute("aria-label", gmpLabels.close);
+    playBtn.setAttribute("aria-label", audio.paused ? gmpLabels.play : gmpLabels.pause);
+    favBtn.setAttribute(
+      "aria-label",
+      favBtn.getAttribute("aria-pressed") === "true" ? gmpLabels.favRemove : gmpLabels.favAdd,
+    );
+    {
+      const mode = repeatBtn.classList.contains("active")
+        ? repeatBtn.textContent === "🔂"
+          ? REPEAT_ONE
+          : REPEAT_ALL
+        : REPEAT_OFF;
+      repeatBtn.setAttribute(
+        "aria-label",
+        mode === REPEAT_OFF ? gmpLabels.repeatOff : mode === REPEAT_ONE ? gmpLabels.repeatOne : gmpLabels.repeatAll,
+      );
+    }
 
     if (!alreadyInit) {
       player.dataset.gmpInit = "1";
@@ -265,16 +388,17 @@ try {
       }
 
       function updateRepeatUI() {
+        const gmpLabels = currentLabels();
         if (repeatMode === REPEAT_OFF) {
-          repeatBtn.setAttribute("aria-label", "Sem repetição");
+          repeatBtn.setAttribute("aria-label", gmpLabels.repeatOff);
           repeatBtn.classList.remove("active");
           repeatBtn.style.opacity = "0.4";
         } else if (repeatMode === REPEAT_ALL) {
-          repeatBtn.setAttribute("aria-label", "Repetir tudo");
+          repeatBtn.setAttribute("aria-label", gmpLabels.repeatAll);
           repeatBtn.classList.add("active");
           repeatBtn.style.opacity = "1";
         } else {
-          repeatBtn.setAttribute("aria-label", "Repetir esta música");
+          repeatBtn.setAttribute("aria-label", gmpLabels.repeatOne);
           repeatBtn.classList.add("active");
           repeatBtn.style.opacity = "1";
           repeatBtn.textContent = "🔂";
@@ -290,7 +414,8 @@ try {
         const isFav = getFavorites().includes(songId);
         favBtn.textContent = isFav ? "♥" : "♡";
         favBtn.setAttribute("aria-pressed", String(isFav));
-        favBtn.setAttribute("aria-label", isFav ? "Remover dos favoritos" : "Adicionar aos favoritos");
+        const gmpLabels = currentLabels();
+        favBtn.setAttribute("aria-label", isFav ? gmpLabels.favRemove : gmpLabels.favAdd);
         favBtn.classList.toggle("active", isFav);
       }
 
@@ -508,12 +633,12 @@ try {
 
       audio.addEventListener("play", () => {
         playBtn.textContent = "⏸";
-        playBtn.setAttribute("aria-label", "Pausar");
+        playBtn.setAttribute("aria-label", currentLabels().pause);
       });
 
       audio.addEventListener("pause", () => {
         playBtn.textContent = "▶";
-        playBtn.setAttribute("aria-label", "Tocar");
+        playBtn.setAttribute("aria-label", currentLabels().play);
       });
 
       audio.addEventListener("ended", () => {

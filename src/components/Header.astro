@@ -20,6 +20,8 @@ const projectsHref = `${prefix}/projects/`;
 const rankingHref  = `${prefix}/ranking/`;
 
 const menuLabel = t(lang, 'nav.menu');
+const playMusicLabel = lang === 'pt' ? 'Tocar música' : 'Play music';
+const pauseMusicLabel = lang === 'pt' ? 'Pausar música' : 'Pause music';
 
 const navLinks = [
   { href: archiveHref,  label: t(lang, 'nav.archive') },
@@ -57,12 +59,12 @@ const isCurrent = (href: string) => {
           </a>
         </li>
       ))}
-      <li><button id="nav-music-btn" class="nav-music-btn secondary outline" type="button" aria-label="Tocar música" title="Tocar música">♪</button></li>
+      <li><button id="nav-music-btn" class="nav-music-btn secondary outline" type="button" aria-label={playMusicLabel} title={playMusicLabel} data-play-label={playMusicLabel} data-pause-label={pauseMusicLabel}>♪</button></li>
       <li><LanguageSwitcher /></li>
       <li><ThemeToggle /></li>
     </ul>
     <ul class="nav-burger">
-      <li><button id="nav-music-btn-mobile" class="nav-music-btn secondary outline" type="button" aria-label="Tocar música" title="Tocar música">♪</button></li>
+      <li><button id="nav-music-btn-mobile" class="nav-music-btn secondary outline" type="button" aria-label={playMusicLabel} title={playMusicLabel} data-play-label={playMusicLabel} data-pause-label={pauseMusicLabel}>♪</button></li>
       <li><LanguageSwitcher /></li>
       <li><ThemeToggle /></li>
       <li>
@@ -89,11 +91,11 @@ const isCurrent = (href: string) => {
     btns.forEach((btn) => {
       if (!audio || audio.paused) {
         btn.textContent = '♪';
-        btn.setAttribute('aria-label', 'Tocar música');
+        btn.setAttribute('aria-label', btn.dataset.playLabel || 'Play music');
         btn.classList.remove('playing');
       } else {
         btn.textContent = '⏸';
-        btn.setAttribute('aria-label', 'Pausar música');
+        btn.setAttribute('aria-label', btn.dataset.pauseLabel || 'Pause music');
         btn.classList.add('playing');
       }
     });
