@@ -1,6 +1,7 @@
 ---
 import PageLayout from "../../../layouts/PageLayout.astro";
 import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import HronirExplainer from "../../../components/HronirExplainer.astro";
 import { toBreadcrumbLd } from "../../../lib/breadcrumbs";
 import { getCollection } from "astro:content";
 import { getDuels, getRankByKey } from "../../../lib/hronir-rank";
@@ -150,6 +151,7 @@ const crumbs = [
   title={`${pageTitle} | Ranking Battles`}
   description={pageDesc}
   lang="en"
+  noindex
   breadcrumb={toBreadcrumbLd(crumbs, Astro.site)}
 >
   <Breadcrumbs items={crumbs} lang="en" />
@@ -158,6 +160,8 @@ const crumbs = [
     <h1>{isVersion ? "Version Trial" : "Battle Report"}</h1>
     <p><small>{fmtDate(duel.runAt)}</small></p>
   </hgroup>
+
+  <HronirExplainer lang="en" />
 
   <div class="battle-tags">
     {duel.season !== undefined && <span class="tag tag-season">Season {duel.season}</span>}

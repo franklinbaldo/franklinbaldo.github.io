@@ -1,6 +1,7 @@
 ---
 import PageLayout from "../../../layouts/PageLayout.astro";
 import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import HronirExplainer from "../../../components/HronirExplainer.astro";
 import { toBreadcrumbLd } from "../../../lib/breadcrumbs";
 import { getCollection } from "astro:content";
 import {
@@ -70,6 +71,7 @@ const crumbs = [
   title={`${perspective.name} — Perspective Ranking | Franklin Baldo`}
   description={perspective.summary}
   lang="en"
+  noindex
   breadcrumb={toBreadcrumbLd(crumbs, Astro.site)}
 >
   <Breadcrumbs items={crumbs} lang="en" />
@@ -80,6 +82,8 @@ const crumbs = [
     </h1>
     <p>{perspective.summary}</p>
   </hgroup>
+
+  <HronirExplainer lang="en" />
 
   {enriched.length === 0 ? (
     <p class="empty-state">No duels recorded for this perspective yet.</p>
