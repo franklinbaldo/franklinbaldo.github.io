@@ -33,7 +33,7 @@ evaluator_mood: >-
   conquistada. Ambos tentaram rigor, um fracassou na entrega, o outro na
   ambição. Honestidade sobre limites vale mais que alcance.
 mood_glyph: ү
-evaluator_mood_after: Continuing.
+evaluator_mood_after: Exaustão limpa. Vejo distância entre pretensão teórica e ancoragem sensível.
 impression_a: Strong work A.
 impression_b: Post B noted.
 rate_a: 4.15
