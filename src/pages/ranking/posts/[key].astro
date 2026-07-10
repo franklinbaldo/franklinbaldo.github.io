@@ -1,6 +1,7 @@
 ---
 import PageLayout from "../../../layouts/PageLayout.astro";
 import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import HronirExplainer from "../../../components/HronirExplainer.astro";
 import { toBreadcrumbLd } from "../../../lib/breadcrumbs";
 import { getCollection } from "astro:content";
 import {
@@ -109,6 +110,7 @@ function fmtDate(iso: string): string {
   title={`${title} — Dossier | Franklin Baldo`}
   description={`Ranking history and duel record for "${title}" in the Hrönir system.`}
   lang="en"
+  noindex
   breadcrumb={toBreadcrumbLd(crumbs, Astro.site)}
 >
   <Breadcrumbs items={crumbs} lang="en" />
@@ -117,6 +119,8 @@ function fmtDate(iso: string): string {
     <h1>{title}</h1>
     {postHref && <p><a href={postHref}>Read post →</a></p>}
   </hgroup>
+
+  <HronirExplainer lang="en" />
 
   <div class="dossier-stats">
     <div class="doss-stat">

@@ -124,7 +124,14 @@ export default defineConfig({
     sitemap({
       // RFC 0003: version pages (/blog/<slug>/v/<uuid>) are noindex archives —
       // keep them out of the sitemap.
-      filter: (page) => !/\/v\/[0-9a-f-]{8,}\/?$/i.test(page),
+      // Issue #1042: Hrönir detail pages (one per battle/perspective/version/
+      // post-dossier — thousands of them) are jargon-dense process artifacts,
+      // not landing pages; they're noindex too, so exclude them the same way.
+      filter: (page) =>
+        !/\/v\/[0-9a-f-]{8,}\/?$/i.test(page) &&
+        !/\/ranking\/(battles|perspectives|versions|posts)\/[^/]+\/?$/i.test(
+          page
+        ),
       serialize(item) {
         const base = "https://franklinbaldo.github.io";
 
