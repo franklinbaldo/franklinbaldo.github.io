@@ -123,7 +123,6 @@ try {
   aria-label={L.region}
   data-songs={JSON.stringify(songs)}
   data-audio-map={JSON.stringify(audioMap)}
-  data-labels={JSON.stringify(L)}
   hidden
   transition:persist
 >
@@ -192,6 +191,52 @@ try {
   const REPEAT_ALL = "all";
   const REPEAT_ONE = "one";
 
+  // #gmp uses transition:persist (it must, to keep the audio playing across
+  // navigations), so Astro's ClientRouter never re-renders it after the
+  // first page load — its data-* attributes can't carry per-page state like
+  // `lang`. <html lang> isn't part of that persisted subtree and does get
+  // updated on every navigation, so read the language from there instead.
+  const GMP_LABELS = {
+    en: {
+      region: "Music player",
+      favAdd: "Add to favorites",
+      favRemove: "Remove from favorites",
+      seekPosition: "Song position",
+      volume: "Volume",
+      shuffle: "Shuffle",
+      prev: "Previous",
+      play: "Play",
+      pause: "Pause",
+      next: "Next",
+      repeatOff: "No repeat",
+      repeatAll: "Repeat all",
+      repeatOne: "Repeat this song",
+      queue: "View queue",
+      close: "Close player",
+    },
+    pt: {
+      region: "Player de músicas",
+      favAdd: "Adicionar aos favoritos",
+      favRemove: "Remover dos favoritos",
+      seekPosition: "Posição na música",
+      volume: "Volume",
+      shuffle: "Embaralhar",
+      prev: "Anterior",
+      play: "Tocar",
+      pause: "Pausar",
+      next: "Próximo",
+      repeatOff: "Sem repetição",
+      repeatAll: "Repetir tudo",
+      repeatOne: "Repetir esta música",
+      queue: "Ver fila",
+      close: "Fechar player",
+    },
+  } as const;
+
+  function currentLabels() {
+    return document.documentElement.lang === "pt-BR" ? GMP_LABELS.pt : GMP_LABELS.en;
+  }
+
   function fmt(sec: number): string {
     if (!isFinite(sec) || sec < 0) return "0:00";
     const m = Math.floor(sec / 60);
@@ -216,7 +261,6 @@ try {
 
     let songs: { id: string; title: string; imageUrl: string; postUrl: string }[] = [];
     let audioMap: Record<string, string> = {};
-    let labels: Record<string, string> = {};
     let queue: number[] = [];
     let originalQueue: number[] = [];
     let currentIdx = 0;
@@ -251,6 +295,35 @@ try {
     )
       return;
 
+    // Runs on every navigation (unlike the block below, which only runs
+    // once) so labels stay in sync with the current page's language even
+    // though #gmp itself is never re-rendered after the first load.
+    const gmpLabels = currentLabels();
+    player.setAttribute("aria-label", gmpLabels.region);
+    seekEl.setAttribute("aria-label", gmpLabels.seekPosition);
+    volumeEl.setAttribute("aria-label", gmpLabels.volume);
+    shuffleBtn.setAttribute("aria-label", gmpLabels.shuffle);
+    prevBtn.setAttribute("aria-label", gmpLabels.prev);
+    nextBtn.setAttribute("aria-label", gmpLabels.next);
+    queueBtn.setAttribute("aria-label", gmpLabels.queue);
+    closeBtn.setAttribute("aria-label", gmpLabels.close);
+    playBtn.setAttribute("aria-label", audio.paused ? gmpLabels.play : gmpLabels.pause);
+    favBtn.setAttribute(
+      "aria-label",
+      favBtn.getAttribute("aria-pressed") === "true" ? gmpLabels.favRemove : gmpLabels.favAdd,
+    );
+    {
+      const mode = repeatBtn.classList.contains("active")
+        ? repeatBtn.textContent === "🔂"
+          ? REPEAT_ONE
+          : REPEAT_ALL
+        : REPEAT_OFF;
+      repeatBtn.setAttribute(
+        "aria-label",
+        mode === REPEAT_OFF ? gmpLabels.repeatOff : mode === REPEAT_ONE ? gmpLabels.repeatOne : gmpLabels.repeatAll,
+      );
+    }
+
     if (!alreadyInit) {
       player.dataset.gmpInit = "1";
 
@@ -260,11 +333,6 @@ try {
       } catch {
         songs = [];
         audioMap = {};
-      }
-      try {
-        labels = JSON.parse(player.dataset.labels || "{}");
-      } catch {
-        labels = {};
       }
 
       originalQueue = songs.map((_, i) => i);
@@ -320,16 +388,17 @@ try {
       }
 
       function updateRepeatUI() {
+        const gmpLabels = currentLabels();
         if (repeatMode === REPEAT_OFF) {
-          repeatBtn.setAttribute("aria-label", labels.repeatOff || "No repeat");
+          repeatBtn.setAttribute("aria-label", gmpLabels.repeatOff);
           repeatBtn.classList.remove("active");
           repeatBtn.style.opacity = "0.4";
         } else if (repeatMode === REPEAT_ALL) {
-          repeatBtn.setAttribute("aria-label", labels.repeatAll || "Repeat all");
+          repeatBtn.setAttribute("aria-label", gmpLabels.repeatAll);
           repeatBtn.classList.add("active");
           repeatBtn.style.opacity = "1";
         } else {
-          repeatBtn.setAttribute("aria-label", labels.repeatOne || "Repeat this song");
+          repeatBtn.setAttribute("aria-label", gmpLabels.repeatOne);
           repeatBtn.classList.add("active");
           repeatBtn.style.opacity = "1";
           repeatBtn.textContent = "🔂";
@@ -345,10 +414,8 @@ try {
         const isFav = getFavorites().includes(songId);
         favBtn.textContent = isFav ? "♥" : "♡";
         favBtn.setAttribute("aria-pressed", String(isFav));
-        favBtn.setAttribute(
-          "aria-label",
-          isFav ? labels.favRemove || "Remove from favorites" : labels.favAdd || "Add to favorites",
-        );
+        const gmpLabels = currentLabels();
+        favBtn.setAttribute("aria-label", isFav ? gmpLabels.favRemove : gmpLabels.favAdd);
         favBtn.classList.toggle("active", isFav);
       }
 
@@ -566,12 +633,12 @@ try {
 
       audio.addEventListener("play", () => {
         playBtn.textContent = "⏸";
-        playBtn.setAttribute("aria-label", labels.pause || "Pause");
+        playBtn.setAttribute("aria-label", currentLabels().pause);
       });
 
       audio.addEventListener("pause", () => {
         playBtn.textContent = "▶";
-        playBtn.setAttribute("aria-label", labels.play || "Play");
+        playBtn.setAttribute("aria-label", currentLabels().play);
       });
 
       audio.addEventListener("ended", () => {
