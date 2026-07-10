@@ -4,7 +4,7 @@ import PageLayout from "../layouts/PageLayout.astro";
 import { isPublished } from "../lib/publish";
 
 const recent = (await getCollection("blog"))
-  .filter((p) => isPublished(p))
+  .filter((p) => isPublished(p) && (p.data.lang ?? "en") === "en")
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 5);
 ---
