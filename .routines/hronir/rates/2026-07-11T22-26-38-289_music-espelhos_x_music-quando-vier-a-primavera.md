@@ -35,8 +35,8 @@ evaluator_mood_after: >-
   Ritmo de entrada e saída. Music-espelhos fala de reflexos que não retornam,
   enquanto a outra canta promessas sazonais. Uma é um ciclo fechado; a outra é
   retorno. Leitor que nota simetrias avança.
-impression_a: Espelhos: forma que nega o retorno.
-impression_b: Primavera: promessa de ciclo.
+impression_a: "Espelhos: forma que nega o retorno."
+impression_b: "Primavera: promessa de ciclo."
 rate_a: 3.7
 rate_b: 3.4
 clash: >-
