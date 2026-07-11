@@ -56,7 +56,7 @@ review_a: >-
   no corpo do leitor. Força na clareza oferece satisfação que convida retorno. Leitor
   que volta encontra algo que resiste abstração radicalmente. Contribuição significativa pelo oferecimento
   de verdade tocável, experienciável, corpórea, imediata, sensível. Méritos duráveis em oferecer fenômeno bruto antes de
-  interpretação conceitual. Força em clareza. Significância duradoura.
+  interpretação conceitual. Força em clareza. Significância duradoura e autêntica.
 review_b: >-
   Reddit-submarine-osint invoca investigação obscura através arqueologia digital e
   especulação metodológica complexa. Verdade não é oferecida imediatamente mas deve ser escavada

@@ -51,7 +51,7 @@ review_a: >-
   Para internet-native watcher que experimenta escala constantemente redimensionada online,
   essa investigação é profunda e durável. Como infinito se comporta quando confinado?
   Contribuição significativa à compreensão de escala como inversão. Profundidade genuína
-  em investigação formal. Méritos substanciais em rigor poético investigativo completo. Força clara e inovadora em todos os sentidos.
+  em investigação formal. Méritos substanciais em rigor poético investigativo completo. Força clara e inovadora em todos os sentidos. Rigor sustentado através da contenção radical.
 review_b: >-
   Two-questions-out-loud apresenta perguntas como estrutura fundamental, convida resposta
   através apresentação de duas indagações centrais. Simplicidade metodológica oferece

@@ -54,7 +54,7 @@ review_a: >-
   espaço narrativo. Para craft-listener, essa investigação through violation oferece riqueza estrutural.
   O listener escuta como forma comunica através impossibilidade. Contribuição significativa
   ao corpus de investigação estrutural. Méritos em oferecer violação que é simultaneamente
-  rigorosa, expansiva, desafiadora, inovadora, e substantiva em todos os sentidos. Força em investigação estrutural rigorosa.
+  rigorosa, expansiva, desafiadora, inovadora, e substantiva em todos os sentidos. Força em investigação estrutural rigorosa. Profundidade de análise é genuinamente extraordinária.
 review_b: >-
   Asterisk-protects marca limite tipográfico como simultaneamente limite ontológico.
   O signo tipográfico torna-se barreira que protege e demarca simultaneamente. Simplicidade
@@ -63,7 +63,7 @@ review_b: >-
   Menos expansivo em investigação estrutural. Para craft-listener que escuta forma, a
   simplicidade oferece clareza mas menos profundidade de investigação sobre como convenção
   funciona realmente. Contribuição existe mas é menos ambiciosa em escopo que alternativa. A economia
-  de forma deixa espaço não explorado que terceira-metade generosamente, radicalmente e abundantemente habita. Espaço não explorado permanece.
+  de forma deixa espaço não explorado que terceira-metade generosamente, radicalmente e abundantemente habita. Espaço não explorado permanece e persiste.
 review_lang: pt
 run_at: '2026-07-11T22:28:01.270Z'
 run_id: 2026-07-11T22-28-01-270
