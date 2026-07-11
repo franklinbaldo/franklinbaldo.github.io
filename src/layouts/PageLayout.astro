@@ -112,6 +112,8 @@ const listBreadcrumbLd = breadcrumb?.length
 const langBcp47 = lang === "pt" ? "pt-BR" : "en";
 const hreflangFor = (code: string) => code === "pt" ? "pt-BR" : code;
 
+const personId = Astro.site ? `${Astro.site.href}#person` : "#person";
+
 const jsonLd = type === "article"
   ? {
       "@context": "https://schema.org",
@@ -119,8 +121,8 @@ const jsonLd = type === "article"
       headline: title,
       description,
       inLanguage: langBcp47,
-      author: { "@type": "Person", name: "Franklin Baldo", url: Astro.site?.href },
-      publisher: { "@type": "Person", name: "Franklin Baldo", url: Astro.site?.href },
+      author: { "@id": personId },
+      publisher: { "@id": personId },
       datePublished: publishedTime?.toISOString(),
       ...(modifiedTime && { dateModified: modifiedTime.toISOString() }),
       mainEntityOfPage: canonical.href,
@@ -151,7 +153,7 @@ const jsonLd = type === "article"
 const personLd = {
   "@context": "https://schema.org",
   "@type": "Person",
-  "@id": Astro.site ? `${Astro.site.href}#person` : "#person",
+  "@id": personId,
   name: "Franklin Baldo",
   url: Astro.site?.href,
   image: Astro.site ? new URL("/avatar.png", Astro.site).href : "/avatar.png",
