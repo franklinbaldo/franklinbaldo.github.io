@@ -28,7 +28,7 @@ override: null
 perspective_id: weird-clarity
 evaluator_mood: Fim próximo.
 mood_glyph: ミ
-evaluator_mood_after: Última avaliação.
+evaluator_mood_after: Encerrada. Perspectiva exaurida.
 impression_a: Strong work.
 impression_b: Capable work.
 rate_a: 4.2

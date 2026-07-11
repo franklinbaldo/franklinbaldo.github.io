@@ -30,7 +30,7 @@ evaluator_mood: >-
   Cruzei o limiar. Agoraclaramente aprecio a diferença: ordem que transforma vs
   ordem que acumula.
 mood_glyph: ≛
-evaluator_mood_after: Concluindo.
+evaluator_mood_after: Fim de jornada. Satisfeito com a conclusão.
 impression_a: Strong.
 impression_b: Capable.
 rate_a: 4.2
