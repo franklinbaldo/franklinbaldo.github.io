@@ -151,6 +151,7 @@ const jsonLd = type === "article"
 const personLd = {
   "@context": "https://schema.org",
   "@type": "Person",
+  "@id": Astro.site ? `${Astro.site.href}#person` : "#person",
   name: "Franklin Baldo",
   url: Astro.site?.href,
   image: Astro.site ? new URL("/avatar.png", Astro.site).href : "/avatar.png",

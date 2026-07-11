@@ -1,6 +1,13 @@
 ---
 import PageLayout from "../../layouts/PageLayout.astro";
 
+const profileLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "@id": Astro.site ? new URL("/pt/about/#profile", Astro.site).href : "/pt/about/#profile",
+  mainEntity: { "@id": Astro.site ? `${Astro.site.href}#person` : "#person" },
+};
+
 const faqLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -48,6 +55,7 @@ const faqLd = {
   lang="pt"
   translations={{ en: "/about/" }}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(profileLd)} is:inline slot="head" />
   <script type="application/ld+json" set:html={JSON.stringify(faqLd)} is:inline slot="head" />
   <article data-pagefind-body>
     <h1>Sobre</h1>
