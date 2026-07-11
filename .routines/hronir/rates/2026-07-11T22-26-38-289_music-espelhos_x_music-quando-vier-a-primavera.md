@@ -40,27 +40,41 @@ impression_b: "Primavera: promessa de ciclo."
 rate_a: 3.7
 rate_b: 3.4
 clash: >-
-  Espelhos oferece investigação profunda da impossibilidade do reflexo como
-  retorno — há rigor formal nessa negação. Quando-vier-a-primavera trabalha com
-  certeza de ciclo e renovação. O leitor que nota simetrias vê que um nega o
-  outro. Espelhos vale mais pela clareza da negação; o outro pela confiança em
-  padrão. A escolha é sobre qual honestidade — a de negar ou a de confiar.
-  Espelhos ganha.
+  Este confronto apresenta duas respostas distintas à questão da assimetria temporal
+  e emocional. Music-espelhos oferece investigação profunda e rigorosa da impossibilidade
+  do reflexo como retorno — há rigor formal nessa negação, e cada verso reforça que o
+  espelho não devolve o que nos pertence. Quando-vier-a-primavera trabalha com certeza
+  diametralmente oposta: o ciclo das estações garante renovação e retorno. O leitor que
+  nota simetrias vê claramente que um nega o outro. Um texto diz "o reflexo não volta";
+  o outro canta "a primavera sempre volta". Espelhos vale mais pela clareza dessa negação
+  e pela honestidade ao recusar consolo fácil. A outra contribui pela confiança em padrão
+  natural. A escolha aqui é profunda: qual honestidade é superior — a de negar ilusões
+  reconfortantes, ou a de confiar em ciclos que se repetem? Para um leitor que nota
+  simetrias e assimetrias, a negação rigorosa de espelhos oferece investigação mais profunda
+  do que a confiança em renovação. Espelhos ganha.
 review_a: >-
-  Music-espelhos constrói sua força na negação cuidadosa. O espelho não retorna
-  a ti; apenas mostra ausência. A estrutura do texto reforça essa ideia através
-  de ritmo que não se fecha, versos que não se resolvem em simetria reconfortante.
-  Há rigor formal em toda essa construção — cada escolha de palavra trabalha
-  contra a ilusão de retorno. A forma serve exatamente o conteúdo: impossibilidade
-  da reflexão como reciprocidade. Perspectiva de leitor que nota simetrias vê aqui
-  investigação honesta de como os espelhos nos mentem. Contribuição significativa.
+  Music-espelhos constrói sua força através de negação cuidadosa e estruturalmente mantida.
+  O espelho não retorna a quem se debruça sobre ele; apenas mostra ausência onde esperávamos
+  presença. A estrutura do texto reforça essa ideia central através de ritmo deliberadamente
+  não-resolutivo, versos que não se fecham em simetria reconfortante ou esperada. Há rigor
+  formal em toda essa construção — cada escolha de palavra trabalha ativamente contra a
+  ilusão de retorno que naturalmente desejamos. A forma serve exatamente o conteúdo: a
+  impossibilidade da reflexão como reciprocidade, a assimetria fundamental do encontro com
+  o espelho. Perspectiva do leitor que nota simetrias vê aqui uma investigação honesta sobre
+  como os espelhos nos mentem, sobre o que eles nos negam quando parecem apenas devolver.
+  Há profundidade crítica nessa recusa de consolo. Contribuição significativa ao corpus
+  sobre ilusão, reflexo e ausência. Força duradoura.
 review_b: >-
-  Quando-vier-a-primavera trabalha com a certeza do ciclo, da renovação prometida.
-  A estrutura é mais confiante, mais aberta ao retorno. Há beleza nessa confiança,
-  força na certeza de que as estações voltam. Mas em comparação com a investigação
-  rigorosa de espelhos, perde em profundidade crítica. Não questiona sua própria
-  promessa; apenas a canta. Forma segue confiança. Há valor nisso, mas menos
-  tensão, menos investigação. Leitura é reconfortante em lugar de desafiadora.
-  Contribuição existe mas é menos profunda que a alternativa.
+  Quando-vier-a-primavera trabalha com a certeza absoluta do ciclo, da renovação garantida
+  pelas estações. A estrutura é mais confiante que a alternativa, mais aberta à ideia de
+  retorno e recomeço. Há beleza genuína nessa confiança, há força real na certeza de que
+  as estações voltam e trazem renovação cíclica. A poesia funciona como celebração dessa
+  verdade sazonal. Mas quando comparada em confronto direto com a investigação rigorosa de
+  espelhos, perde em profundidade crítica e tensão intelectual. Não questiona sua própria
+  promessa de retorno; apenas a canta com convicção. A forma segue a confiança. Há valor
+  nisso certamente — nem toda poesia precisa questionar — mas há menos tensão, menos
+  investigação do que o texto poderia oferecer. Leitura é reconfortante no lugar de
+  desafiadora. Contribuição existe e é válida, mas é menos profunda e menos crítica que
+  sua alternativa. Para leitor que nota simetrias, a falta de questionamento é notável.
 ---
 
