@@ -126,7 +126,7 @@ const musicLd = postType === 'music' && sunoId
       embedUrl: `https://suno.com/embed/${sunoId}`,
       ...(sunoImageUrl && { image: sunoImageUrl }),
       ...(genre?.length && { genre }),
-      ...(duration && { duration: `PT${Math.floor(duration / 60)}M${duration % 60}S` }),
+      ...(duration && duration > 0 && { duration: `PT${Math.floor(duration / 60)}M${duration % 60}S` }),
     }
   : null;
 ---
