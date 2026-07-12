@@ -106,6 +106,29 @@ const translationLinks = translationSiblings.map((p) => {
     label: targetCopy(lang, targetLang).invitation,
   };
 });
+
+// RFC 0006 / issue #678: MusicRecording rich result for music posts.
+const musicLd = postType === 'music' && sunoId
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'MusicRecording',
+      name: title,
+      url: Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname,
+      byArtist: {
+        '@type': 'Person',
+        name: 'Franklin Baldo',
+        url: Astro.site ? new URL('/about/', Astro.site).href : '/about/',
+      },
+      recordingOf: {
+        '@type': 'MusicComposition',
+        name: title,
+      },
+      embedUrl: `https://suno.com/embed/${sunoId}`,
+      ...(sunoImageUrl && { image: sunoImageUrl }),
+      ...(genre?.length && { genre }),
+      ...(duration && duration > 0 && { duration: `PT${Math.floor(duration / 60)}M${duration % 60}S` }),
+    }
+  : null;
 ---
 
 <PageLayout
@@ -121,6 +144,10 @@ const translationLinks = translationSiblings.map((p) => {
   hasMath={hasMath}
   wordCount={wordCount}
 >
+  {musicLd && (
+    <script type="application/ld+json" set:html={JSON.stringify(musicLd)} is:inline slot="head" />
+  )}
+
   <progress
     id="read-progress"
     max="100"
