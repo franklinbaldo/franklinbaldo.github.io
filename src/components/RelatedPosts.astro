@@ -15,8 +15,10 @@ const currentLang = lang ?? DEFAULT_LANG;
 const locale = currentLang === 'pt' ? 'pt-BR' : 'en';
 const dateOpts: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
 
-const related = tags.length === 0 ? [] : (await getCollection('blog'))
-  .filter(p => isPublished(p) && p.id !== currentId && (p.data.lang ?? DEFAULT_LANG) === currentLang)
+const sameLangPosts = (await getCollection('blog'))
+  .filter(p => isPublished(p) && p.id !== currentId && (p.data.lang ?? DEFAULT_LANG) === currentLang);
+
+const byTag = tags.length === 0 ? [] : sameLangPosts
   .map(p => ({
     post: p,
     sharedTags: (p.data.tags ?? []).filter(tag => tags.includes(tag)),
@@ -25,7 +27,19 @@ const related = tags.length === 0 ? [] : (await getCollection('blog'))
   .sort((a, b) => b.sharedTags.length - a.sharedTags.length || b.post.data.date.valueOf() - a.post.data.date.valueOf())
   .slice(0, 3);
 
-const heading = t(lang, 'related.heading');
+const usedFallback = byTag.length < 2;
+const related = usedFallback
+  ? [
+      ...byTag,
+      ...sameLangPosts
+        .filter(p => !byTag.some(({ post }) => post.id === p.id))
+        .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+        .slice(0, 3 - byTag.length)
+        .map(post => ({ post, sharedTags: [] as string[] })),
+    ]
+  : byTag;
+
+const heading = t(lang, usedFallback ? 'related.headingFallback' : 'related.heading');
 const headingId = 'related-posts-heading';
 ---
 
@@ -37,7 +51,7 @@ const headingId = 'related-posts-heading';
         <h4><a href={(p.data.lang ?? DEFAULT_LANG) === 'pt' ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`}>{p.data.title}</a></h4>
         <p><small><time datetime={p.data.date.toISOString()}>{p.data.date.toLocaleDateString(locale, dateOpts)}</time></small></p>
         {p.data.description && <p><small>{p.data.description.length > 120 ? p.data.description.slice(0, 120) + '…' : p.data.description}</small></p>}
-        <p><small>{sharedTags.map(tag => `#${tag}`).join(' ')}</small></p>
+        {sharedTags.length > 0 && <p><small>{sharedTags.map(tag => `#${tag}`).join(' ')}</small></p>}
       </article>
     ))}
   </section>

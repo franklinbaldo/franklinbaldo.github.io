@@ -5,6 +5,7 @@ import PostCard from "../../components/PostCard.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import { isPublished } from "../../lib/publish";
 import { toBreadcrumbLd } from "../../lib/breadcrumbs";
+import { tagDescriptions } from "../../lib/tagDescriptions";
 
 export async function getStaticPaths() {
   const all = (await getCollection("blog")).filter((p) => isPublished(p));
@@ -49,7 +50,10 @@ const relatedTags = [...coTags.entries()]
   .sort((a, b) => b[1] - a[1])
   .slice(0, 6)
   .map(([t]) => t);
-const description = `${count} ${count === 1 ? "essay" : "essays"} tagged #${tag} — Franklin Baldo's digital garden on AI, law, and process.`;
+const curatedDescription = tagDescriptions[tag];
+const description =
+  curatedDescription ??
+  `${count} ${count === 1 ? "essay" : "essays"} tagged #${tag} — Franklin Baldo's digital garden on AI, law, and process.`;
 
 const crumbs = [
   { name: "Home", href: "/" },
@@ -95,6 +99,7 @@ const collectionLd = {
           </small>
         </p>
       </hgroup>
+      {curatedDescription && <p class="tag-description">{curatedDescription}</p>}
     </header>
     {relatedTags.length > 0 && (
       <p class="related-tags">
@@ -111,6 +116,10 @@ const collectionLd = {
 </PageLayout>
 
 <style>
+  .tag-description {
+    color: var(--pico-muted-color);
+    max-width: 60ch;
+  }
   .lang-badge {
     display: inline-block;
     font-size: 0.68rem;
