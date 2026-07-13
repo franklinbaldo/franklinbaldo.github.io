@@ -102,9 +102,9 @@ function resolveSidePath(
   process.exit(1);
 }
 
-// Render one side (A or B) of the current match: header, slug, file path,
-// optional Suno links, and the content (or a path-only pointer). Shared by
-// `continue` (post A), `first-impression-a` (post B) and `generate-match`.
+// Render one side (A or B) of the current match: header, slug, file path and
+// optional Suno links. RFC 0016: path-only is the only mode — the content is
+// never printed inline; the evaluator reads the file directly.
 export function printSidePost(session: any, side: "A" | "B") {
   const match = session.currentMatch;
   const post = side === "A" ? match?.post_a : match?.post_b;
@@ -112,7 +112,6 @@ export function printSidePost(session: any, side: "A" | "B") {
   const slug = post?.key || "(slug desconhecido)";
   const content = fs.readFileSync(p, "utf8");
   const sunoId = matter(content).data.sunoId;
-  const pathOnly = session.contentMode === "path-only";
   const border = "━".repeat(80);
   const header =
     side === "A" ? "📄 PRIMEIRO POST (A) " : "📄 SEGUNDO POST (B) ";
@@ -129,18 +128,13 @@ export function printSidePost(session: any, side: "A" | "B") {
     );
   }
   console.log(`${border}\n`);
-  if (!pathOnly) {
-    console.log(content);
-    console.log(`\n${border}\n`);
-  } else {
-    console.log(`[content-mode: path-only — leia o arquivo em: ${p}]`);
-    console.log(`\n${border}\n`);
-  }
+  console.log(`[leia o arquivo em: ${p}]`);
+  console.log(`\n${border}\n`);
 }
 
 // Print the decide instructions for the current match: perspective line,
 // glyph + initial mood, slugs, formatting/length rules and the example
-// command. Shared by `first-impression-b` and `generate-match`.
+// command. Shared by `continue` and (via it) `generate-match`.
 export function printDecidePrompt(session: any) {
   const currentMatch = session.currentMatch;
   const perspectiveId = currentMatch.perspective_id;
@@ -219,7 +213,7 @@ export function printDecidePrompt(session: any) {
     "",
     border,
     `Para decidir, rode (--after-mood primeiro):`,
-    `npm run hronir:decide --after-mood "<estado interno agora>" --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>"`,
+    `npx hronir submit-eval --agent-id '<seu id estável>' --after-mood "<estado interno agora>" --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>"`,
     border,
   ];
   nextStep(stepLines.join("\n"));

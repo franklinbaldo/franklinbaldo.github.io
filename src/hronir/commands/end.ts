@@ -5,7 +5,6 @@ interface EndOptions {
   force?: boolean;
   skipEdit?: boolean;
   agentId?: string;
-  attest?: string;
 }
 
 export function end(options: EndOptions = {}) {
@@ -24,9 +23,14 @@ export function end(options: EndOptions = {}) {
     const session = JSON.parse(fs.readFileSync(sessionPath, "utf8"));
 
     const matchesPending = (session.target ?? 0) > (session.completed ?? 0);
-    const midMatch = ["reading_a", "reading_b", "deciding"].includes(
-      session.state
-    );
+    // "deciding" is the only mid-match state since RFC 0016; the others are
+    // legacy in-flight states from pre-upgrade sessions.
+    const midMatch = [
+      "deciding",
+      "reading_a",
+      "waiting_impression_a",
+      "waiting_impression_b",
+    ].includes(session.state);
     if (midMatch || matchesPending) {
       console.error("Erro: A rodada ainda não foi concluída.");
       console.error(
@@ -55,25 +59,7 @@ export function end(options: EndOptions = {}) {
       process.exit(1);
     }
 
-    const attest = options.attest?.trim() || null;
-    const pledgeFromSession = (session.pledge as string | null) || null;
     fs.unlinkSync(sessionPath);
-
-    if (attest || pledgeFromSession) {
-      const border = "═".repeat(80);
-      console.log("");
-      console.log(border);
-      console.log("📜 ENCERRAMENTO DA SESSÃO — DECLARAÇÕES DO AVALIADOR");
-      console.log(border);
-      if (pledgeFromSession) {
-        console.log(`Compromisso inicial: "${pledgeFromSession}"`);
-      }
-      if (attest) {
-        console.log(`Atestado final:      "${attest}"`);
-      }
-      console.log(border);
-      console.log("");
-    }
   }
   if (options.skipEdit) {
     console.log("Fase de edição do pior post pulada (--skip-edit ativa).");

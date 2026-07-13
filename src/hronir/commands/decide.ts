@@ -108,6 +108,8 @@ export function decide(args: string[]) {
     "--perspective",
     "--eval-lang",
     "--lang",
+    "--impression-a",
+    "--impression-b",
   ]);
   function readDecideFlag(flagName: string, idx: number): string {
     const v = args[idx + 1];
@@ -129,6 +131,10 @@ export function decide(args: string[]) {
       if (args[i] === "--perspective") {
         console.error(
           "Erro: --perspective não é uma flag de decide. A perspectiva é sorteada e fixada em `continue`; o avaliador a recebe via banner antes de decidir, sem poder sobrescrever."
+        );
+      } else if (args[i] === "--impression-a" || args[i] === "--impression-b") {
+        console.error(
+          `Erro: a flag ${args[i]} foi removida (RFC 0016) — first impressions não são mais registradas.`
         );
       } else if (args[i] === "--eval-lang" || args[i] === "--lang") {
         console.error(
@@ -174,14 +180,6 @@ export function decide(args: string[]) {
       i++;
     } else if (args[i] === "--after-mood") {
       afterMood = readDecideFlag(args[i], i);
-      i++;
-    } else if (args[i] === "--impression-a") {
-      // Optional: first impressions carry no downstream use, but `submit-eval`
-      // may still record them. Written straight onto the match for the rate file.
-      session.currentMatch.impression_a = readDecideFlag(args[i], i);
-      i++;
-    } else if (args[i] === "--impression-b") {
-      session.currentMatch.impression_b = readDecideFlag(args[i], i);
       i++;
     }
   }
@@ -345,7 +343,9 @@ export function decide(args: string[]) {
     post_b: withContentLang(currentMatch.post_b),
     winner,
     agent_id: agentId,
-    content_mode: session.contentMode ?? "inline",
+    // RFC 0016: path-only is the only content mode now; the field stays for
+    // schema stability (older files legitimately carry "inline").
+    content_mode: "path-only",
     objective: session.objective || null,
     eval_lang: evalLangValue,
     review_lang: reviewLang,
@@ -356,8 +356,9 @@ export function decide(args: string[]) {
     evaluator_mood: currentMatch.evaluator_mood ?? null,
     mood_glyph: currentMatch.mood_glyph ?? null,
     evaluator_mood_after: afterMood ? String(afterMood).trim() || null : null,
-    impression_a: currentMatch.impression_a ?? null,
-    impression_b: currentMatch.impression_b ?? null,
+    // RFC 0016: first impressions removed; kept as null for schema stability.
+    impression_a: null,
+    impression_b: null,
     rate_a: parsedRateA,
     rate_b: parsedRateB,
     clash,

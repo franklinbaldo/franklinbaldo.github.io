@@ -24,6 +24,7 @@ import {
   versionStars,
   SELECT_MIN_DUELS,
   printSidePost,
+  printDecidePrompt,
   nextStep,
 } from "./_shared.js";
 
@@ -413,12 +414,12 @@ function perspectiveBanner(
   return lines.join("\n");
 }
 
-export function continueCmd(opts: { quiet?: boolean } = {}) {
+export function continueCmd() {
   const sessionPath = SESSION_PATH;
   if (!fs.existsSync(sessionPath)) {
     console.log("Nenhuma sessão ativa encontrada.");
     nextStep(
-      "rode `npm run hronir:init` para começar uma rodada ou `npm run hronir:edit-worst`."
+      "rode `npx hronir generate-match` para um match avulso, `npm run hronir:init` para uma rodada, ou `npm run hronir:draft-worst`."
     );
     return;
   }
@@ -428,7 +429,7 @@ export function continueCmd(opts: { quiet?: boolean } = {}) {
   if (session.state === "need_edit") {
     console.log("Fase de matches concluída. Você precisa editar o pior post.");
     nextStep(
-      "rode `npm run hronir:edit-worst` para ver os detalhes ou `npm run hronir:end --skip-edit` para ignorar."
+      "rode `npm run hronir:draft-worst` para ver os detalhes ou `npm run hronir:end --skip-edit` para ignorar."
     );
     return;
   }
@@ -447,7 +448,7 @@ export function continueCmd(opts: { quiet?: boolean } = {}) {
           `Sessão de matches concluída! (${session.target} matches avaliados).`
         );
         nextStep(
-          "rode `npm run hronir:edit-worst` para ver os detalhes ou `npm run hronir:end --skip-edit` para ignorar."
+          "rode `npm run hronir:draft-worst` para ver os detalhes ou `npm run hronir:end --skip-edit` para ignorar."
         );
       }
       return;
@@ -459,13 +460,28 @@ export function continueCmd(opts: { quiet?: boolean } = {}) {
     console.log(`\n${padStr}${title}${padStr}\n`);
     const match = generateNextMatch(session.objective);
     session.currentMatch = match;
-    session.state = "reading_a";
+    session.state = "deciding";
     fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
+
+    const mood = session.currentMatch?.evaluator_mood;
+    try {
+      console.log(
+        perspectiveBanner(loadPerspective(match.perspective_id), mood)
+      );
+    } catch (e: unknown) {
+      console.error(`Erro ao carregar perspectiva: ${(e as Error).message}`);
+      process.exit(1);
+    }
+    printSidePost(session, "A");
+    printSidePost(session, "B");
+    printDecidePrompt(session);
+    return;
   }
 
-  if (session.state === "reading_a") {
-    // Backfill perspective for in-flight sessions created before stars-v1:
-    // pick one now and persist so the rest of the flow has a stable lens.
+  // Legacy in-flight states (reading_a / waiting_impression_*) no longer
+  // exist (RFC 0016); a session stranded in one of them predates the upgrade.
+  if (session.state === "deciding") {
+    // Backfill perspective for sessions created before stars-v1.
     if (session.currentMatch && !session.currentMatch.perspective_id) {
       const picked = pickRandomPerspective();
       session.currentMatch.perspective_id = picked.id;
@@ -474,51 +490,12 @@ export function continueCmd(opts: { quiet?: boolean } = {}) {
         `(perspectiva sorteada para sessão em andamento: ${picked.name})`
       );
     }
-    const perspectiveId = session.currentMatch?.perspective_id;
-    if (perspectiveId) {
-      try {
-        const mood = session.currentMatch?.evaluator_mood;
-        console.log(perspectiveBanner(loadPerspective(perspectiveId), mood));
-      } catch (e: unknown) {
-        console.error(`Erro ao carregar perspectiva: ${(e as Error).message}`);
-        process.exit(1);
-      }
-    }
-
-    printSidePost(session, "A");
-
-    session.state = "waiting_impression_a";
-    fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
-
-    // generate-match drives its own flow (post B + decide prompt) right after
-    // this, so it suppresses the first-impression-a hint that the legacy flow
-    // prints here.
-    if (!opts.quiet) {
-      nextStep(
-        `Rode para registrar a primeira impressão do Post A: npm run hronir:first-impression-a "<texto>"`
-      );
-    }
+    printDecidePrompt(session);
     return;
   }
 
-  if (session.state === "waiting_impression_a") {
-    nextStep(
-      `Aguardando primeira impressão do Post A. Rode: npm run hronir:first-impression-a "<texto>"`
-    );
-    return;
-  }
-
-  if (session.state === "waiting_impression_b") {
-    nextStep(
-      `Aguardando primeira impressão do Post B. Rode: npm run hronir:first-impression-b "<texto>"`
-    );
-    return;
-  }
-
-  if (session.state === "deciding") {
-    nextStep(
-      `Você precisa decidir o match atual. Rode (--after-mood primeiro): npm run hronir:decide --after-mood "<estado interno agora>" --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a "<resenha A>" --review-b "<resenha B>" --clash "<confronto>"`
-    );
-    return;
-  }
+  console.error(
+    `Erro: estado '${session.state}' não existe mais (RFC 0016). Rode \`npm run hronir:end -- --force\` e inicie uma sessão nova.`
+  );
+  process.exit(1);
 }

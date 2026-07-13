@@ -15,8 +15,6 @@ interface InitOptions {
   objective?: string;
   minAppearances?: number;
   matches?: number;
-  pledge?: string;
-  contentMode?: "inline" | "path-only";
   // When true, init creates the session but does NOT auto-call continueCmd
   // (used by generate-match, which drives the display itself, quietly).
   skipAutoContinue?: boolean;
@@ -100,9 +98,6 @@ export function init(options: InitOptions = {}) {
   }
 
   const matchesOpt = options.matches != null ? options.matches : 10;
-  const pledge = options.pledge?.trim() || null;
-  const contentMode =
-    options.contentMode === "path-only" ? "path-only" : "inline";
   const session = {
     target: matchesOpt,
     completed: 0,
@@ -115,8 +110,6 @@ export function init(options: InitOptions = {}) {
     skipRating: false,
     currentMatch: null,
     minAppearances: options.minAppearances || null,
-    pledge,
-    contentMode,
   };
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
 
@@ -125,17 +118,6 @@ export function init(options: InitOptions = {}) {
   console.log(
     `Sessão iniciada para ${matchesOpt} matches com agente "${agentLabel}" e avaliações em "${evalLang}".`
   );
-  if (pledge) {
-    const border = "═".repeat(80);
-    console.log("");
-    console.log(border);
-    console.log("📜 DECLARAÇÃO DE COMPROMISSO DO AVALIADOR");
-    console.log(border);
-    console.log(`"${pledge}"`);
-    console.log(`— ${agentId}`);
-    console.log(border);
-    console.log("");
-  }
   if (skipEdit) {
     console.log("Fase de edição do pior post será pulada (--skip-edit ativo).");
   }
