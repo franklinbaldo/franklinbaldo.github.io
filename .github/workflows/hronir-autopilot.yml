@@ -40,8 +40,10 @@ concurrency:
 env:
   REPO: ${{ github.repository }}
   # A PR is a Hrönir session PR when every changed file lives under one of these
-  # prefixes AND at least one file is under .routines/hronir/rates/.
-  SAFE_PREFIXES: ".routines/hronir/ src/content/blog/"
+  # prefixes AND at least one file is a rate file or a draft (see the gate).
+  # The two src/generated manifests are RFC 0015 outputs of prune/flatten —
+  # committed, session-produced, and safe by the same argument as rate files.
+  SAFE_PREFIXES: ".routines/hronir/ src/content/blog/ src/generated/versions-pruned.json src/generated/versions-history.json"
 
 jobs:
   merge-and-respawn:
@@ -107,7 +109,9 @@ jobs:
           while IFS= read -r f; do
             [ -n "$f" ] || continue
             case "$f" in .routines/hronir/rates/*) HAS_RATE=1 ;; esac
-            case "$f" in src/content/blog/*/v-*.md | src/content/blog/*/v-*.mdx) HAS_DRAFT=1 ;; esac
+            # Drafts: legacy sibling v-* files, or RFC 0015 drafts for
+            # flattened slugs (edit-worst writes them under drafts/).
+            case "$f" in src/content/blog/*/v-*.md | src/content/blog/*/v-*.mdx | .routines/hronir/drafts/*) HAS_DRAFT=1 ;; esac
             ok=1
             for p in $SAFE_PREFIXES; do case "$f" in "$p"*) ok=0 ;; esac; done
             if [ "$ok" -ne 0 ]; then

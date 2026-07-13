@@ -14,6 +14,13 @@ import {
   archivedContentUrls,
   GITHUB_REPO,
 } from "../../../../lib/versions.js";
+import {
+  type HistoryEntry,
+  listHistoryEntries,
+  historyUuids,
+  historyRawPath,
+  historyGithubUrl,
+} from "../../../../lib/history-pages.js";
 
 // RFC 0010: content-addressed version pages. Every non-selected version file
 // gets /blog/<slug>/v/<uuid>. A UUID that is *currently* the selected version
@@ -21,6 +28,24 @@ import {
 // For non-selected versions, the pre-RFC-0010 body-only legacy UUID renders
 // the same archived content (not a redirect) — only selected/pruned versions
 // redirect. All version pages are noindex with canonical → live.
+//
+// RFC 0015: versions archived in versions-history.json (flattened slugs — no
+// file on disk) also keep their permalinks: their pages resolve metadata from
+// the history entry and fetch the body from the blob-backed raw.txt endpoint.
+type PageProps =
+  | {
+      entry: CollectionEntry<"blogVersions"> | CollectionEntry<"blog">;
+      redirect: boolean;
+      archived?: undefined;
+      rawUrl?: undefined;
+    }
+  | {
+      entry?: undefined;
+      redirect?: false;
+      archived: HistoryEntry;
+      rawUrl: string | null;
+    };
+
 export async function getStaticPaths() {
   const [versions, canon] = await Promise.all([
     getCollection("blogVersions"),
@@ -28,10 +53,14 @@ export async function getStaticPaths() {
   ]);
   const paths: Array<{
     params: { slug: string; uuid: string };
-    props: { entry: CollectionEntry<"blogVersions"> | CollectionEntry<"blog">; redirect: boolean };
+    props: PageProps;
   }> = [];
   const seen = new Set<string>();
-  const push = (slug: string, uuid: string | null | undefined, props: { entry: CollectionEntry<"blogVersions"> | CollectionEntry<"blog">; redirect: boolean }) => {
+  const push = (
+    slug: string,
+    uuid: string | null | undefined,
+    props: PageProps
+  ) => {
     const k = `${slug}/${uuid}`;
     if (!uuid || seen.has(k)) return;
     seen.add(k);
@@ -61,25 +90,57 @@ export async function getStaticPaths() {
     push(c.id, legacyUuidForId(c.id), { entry: c, redirect: true });
     push(c.id, preOkfUuidForId(c.id), { entry: c, redirect: true });
   }
+  // RFC 0015: archived versions with no file left on disk. Collections win —
+  // a uuid already emitted above (live redirect or legacy version file)
+  // keeps its current behavior; only the gone ones resolve from history.
+  for (const h of listHistoryEntries()) {
+    if ((h.lang || "en") === "pt") continue;
+    const rawUrl = historyRawPath(h); // null when the blob is unreachable
+    for (const uuid of historyUuids(h)) {
+      push(h.slug, uuid, { archived: h, rawUrl, redirect: false });
+    }
+  }
   return paths;
 }
 
-type Props = { entry: CollectionEntry<"blogVersions">; redirect: boolean };
-const { entry, redirect } = Astro.props;
-const slug = slugOf(entry.id);
+type Props = PageProps;
+const { entry, redirect, archived } = Astro.props;
+const slug = archived ? archived.slug : slugOf(entry!.id);
 const live = `/blog/${slug}/`;
 if (redirect) return Astro.redirect(live);
 
-const { title, lang, draftCommittedAt, draftMsg, date } = entry.data;
-const verDate = draftCommittedAt ? new Date(draftCommittedAt) : date;
-const urls = archivedContentUrls(entry.id);
-const rawUrl = urls.rawUrl;
-const githubUrl = urls.githubUrl ?? `https://github.com/${GITHUB_REPO}`;
+let title: string;
+let description: string | undefined;
+let lang: string | undefined;
+let verDate: Date | undefined;
+let msg: string | undefined;
+let rawUrl: string | null;
+let githubUrl: string;
+if (archived) {
+  title = archived.title || slug;
+  description = archived.description || undefined;
+  lang = archived.lang || "en";
+  const dateStr = archived.draftCommittedAt ?? archived.date;
+  verDate = dateStr ? new Date(dateStr) : undefined;
+  msg = archived.draftMsg ?? undefined;
+  rawUrl = Astro.props.rawUrl ?? null;
+  githubUrl = historyGithubUrl(archived);
+} else {
+  const data = entry!.data;
+  title = data.title;
+  description = data.description;
+  lang = data.lang;
+  verDate = data.draftCommittedAt ? new Date(data.draftCommittedAt) : data.date;
+  msg = data.draftMsg;
+  const urls = archivedContentUrls(entry!.id);
+  rawUrl = urls.rawUrl;
+  githubUrl = urls.githubUrl ?? `https://github.com/${GITHUB_REPO}`;
+}
 ---
 
 <PageLayout
   title={`${title} — versão arquivada`}
-  description={entry.data.description}
+  description={description}
   type="article"
   lang={lang}
   canonicalOverride={live}
@@ -97,7 +158,7 @@ const githubUrl = urls.githubUrl ?? `https://github.com/${GITHUB_REPO}`;
         ]}
       />
 
-      <VersionBanner liveHref={live} date={verDate} lang={lang} msg={draftMsg} />
+      <VersionBanner liveHref={live} date={verDate} lang={lang} msg={msg} />
 
       <article data-pagefind-ignore lang={lang ?? "en"}>
         <header><h1>{title}</h1></header>
@@ -109,4 +170,3 @@ const githubUrl = urls.githubUrl ?? `https://github.com/${GITHUB_REPO}`;
     </div>
   </div>
 </PageLayout>
-

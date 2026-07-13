@@ -577,6 +577,46 @@ nenhuma regressão contra o corpus atual, 100% layout legado.
 
 ---
 
+## 8. Retomada (2026-07-13, RFC 0016 fase 3)
+
+A pedido do dono, a implementação foi retomada como fase final da
+simplificação da RFC 0016. Fechadas três das lacunas do §7.3, na ordem
+recomendada pelo relatório de escopo (rota histórica antes de qualquer
+achatamento real):
+
+- **Rota de permalink histórica (Fase A).** `src/lib/history-pages.ts`
+  materializa blobs do histórico no build (`git cat-file blob`, memoizado,
+  aviso + skip quando o objeto é inalcançável — nunca quebra o build). Um
+  endpoint estático `/blog/<slug>/v/<uuid>/raw.txt` serve o corpo bruto de
+  cada entrada de `versions-history.json`, e `[uuid].astro` (EN e PT) emite
+  páginas arquivadas para todo uuid do histórico (uuid atual + aliases
+  legacy/pre-OKF) que as collections não cobrem — collections sempre vencem.
+  `archivedContentUrls` aceita pin opcional de `commitSha` (default `main`
+  para arquivos vivos). Blob inalcançável degrada para a página sem
+  `rawUrl` (link de fallback do GitHub), preservando o permalink.
+  Verificado: build sem histórico é byte-idêntico ao atual; build com
+  histórico sintético (blob real + sha inexistente) emite as páginas e o
+  `raw.txt` corretos e degrada o caso quebrado sem falhar.
+- **Gate do autopilot (Fase B).** `SAFE_PREFIXES` agora inclui
+  `src/generated/versions-pruned.json` e `versions-history.json` (outputs
+  commitados de prune/flatten), e drafts de slug achatado
+  (`.routines/hronir/drafts/**`) contam como draft para o gate — sem isso,
+  toda PR de sessão pós-achatamento seria barrada em silêncio.
+- **Wiring do flatten (Fase C).** `npm run hronir:flatten` (alias que
+  faltava). O teste de contagem de subprocessos git por match (critério E3
+  do §4) segue não implementado — o desenho atual não materializa via
+  `git show` em caminho de match (pendentes viram arquivos em `drafts/`),
+  então não há regressão a guardar ainda.
+
+**Segue de fora (Fase D):** nenhum slug real foi achatado. O runbook é o do
+relatório de escopo: rodar `hronir:select` real contra `main` fresco, depois
+`npm run hronir:flatten -- --slug <um-slug>` começando por um slug simples
+(sem desafiantes pendentes, sem grupo de tradução), PR pequeno, conferir
+permalinks e build, repetir. Os dois slugs órfãos do §1 são triagem manual.
+`stampHistoryCommit` continua não ligado a fluxo de commit (`commitSha`
+fica `null` → fallback de link para a raiz do repo) — aceitável até o
+primeiro achatamento real exigir melhor.
+
 ## Histórico de revisões
 
 - **r0** (2026-07-08): rascunho inicial. Motivado por pergunta do dono sobre

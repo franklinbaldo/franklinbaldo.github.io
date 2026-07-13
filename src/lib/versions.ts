@@ -106,19 +106,35 @@ export function versionHref(slug: string, uuid: string, lang?: string): string {
     : `/blog/${slug}/v/${uuid}/`;
 }
 
+/** Raw + human-facing GitHub URLs for a repo-relative path at a given ref.
+ * Defaults to the live branch; pass a commit sha to pin an archived path
+ * (RFC 0015: the file no longer exists on main, only at the commit that
+ * removed it). */
+export function contentUrlsForPath(
+  p: string,
+  commitSha?: string | null
+): { rawUrl: string; githubUrl: string } {
+  const ref = commitSha ?? GITHUB_BRANCH;
+  return {
+    rawUrl: `https://raw.githubusercontent.com/${GITHUB_REPO}/${ref}/${p}`,
+    githubUrl: `https://github.com/${GITHUB_REPO}/blob/${ref}/${p}`,
+  };
+}
+
 /** Raw GitHub + human-facing blob URLs for a content entry's on-disk file,
  * resolving the path once. Archived version pages fetch their body from the
  * raw URL client-side instead of paying the MDX/remark/rehype/Shiki render
  * pipeline at build time for every superseded draft; the blob URL is the
- * fallback link when that fetch fails. */
-export function archivedContentUrls(id: string): {
+ * fallback link when that fetch fails. An optional commitSha pins the URLs
+ * to that commit (archived case); the default stays the live branch. */
+export function archivedContentUrls(
+  id: string,
+  commitSha?: string | null
+): {
   rawUrl: string | null;
   githubUrl: string | null;
 } {
   const p = fileForId(id);
   if (!p) return { rawUrl: null, githubUrl: null };
-  return {
-    rawUrl: `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/${p}`,
-    githubUrl: `https://github.com/${GITHUB_REPO}/blob/${GITHUB_BRANCH}/${p}`,
-  };
+  return contentUrlsForPath(p, commitSha);
 }

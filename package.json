@@ -33,6 +33,7 @@
     "hronir:draft-commit": "node --import tsx/esm scripts/hronir/index.js draft-commit",
     "hronir:select": "node --import tsx/esm scripts/hronir/index.js select",
     "hronir:prune": "node --import tsx/esm scripts/hronir/index.js prune",
+    "hronir:flatten": "node --import tsx/esm scripts/hronir/index.js flatten",
     "hronir:end": "node --import tsx/esm scripts/hronir/index.js end",
     "hronir:migrate": "node --import tsx/esm scripts/hronir/index.js migrate",
     "hronir:doctor": "node --import tsx/esm scripts/hronir/index.js doctor",
