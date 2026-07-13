@@ -7,16 +7,17 @@ interface Props {
   currentId: string;
   tags: string[];
   lang?: string;
+  postType?: 'music';
 }
 
-const { currentId, tags, lang } = Astro.props;
+const { currentId, tags, lang, postType } = Astro.props;
 const currentLang = lang ?? DEFAULT_LANG;
 
 const locale = currentLang === 'pt' ? 'pt-BR' : 'en';
 const dateOpts: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
 
 const sameLangPosts = (await getCollection('blog'))
-  .filter(p => isPublished(p) && p.id !== currentId && (p.data.lang ?? DEFAULT_LANG) === currentLang);
+  .filter(p => isPublished(p) && p.id !== currentId && (p.data.lang ?? DEFAULT_LANG) === currentLang && p.data.postType === postType);
 
 const byTag = tags.length === 0 ? [] : sameLangPosts
   .map(p => ({
@@ -28,11 +29,12 @@ const byTag = tags.length === 0 ? [] : sameLangPosts
   .slice(0, 3);
 
 const usedFallback = byTag.length < 2;
+const usedIds = new Set(byTag.map(({ post }) => post.id));
 const related = usedFallback
   ? [
       ...byTag,
       ...sameLangPosts
-        .filter(p => !byTag.some(({ post }) => post.id === p.id))
+        .filter(p => !usedIds.has(p.id))
         .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
         .slice(0, 3 - byTag.length)
         .map(post => ({ post, sharedTags: [] as string[] })),
@@ -51,7 +53,7 @@ const headingId = 'related-posts-heading';
         <h4><a href={(p.data.lang ?? DEFAULT_LANG) === 'pt' ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`}>{p.data.title}</a></h4>
         <p><small><time datetime={p.data.date.toISOString()}>{p.data.date.toLocaleDateString(locale, dateOpts)}</time></small></p>
         {p.data.description && <p><small>{p.data.description.length > 120 ? p.data.description.slice(0, 120) + '…' : p.data.description}</small></p>}
-        {sharedTags.length > 0 && <p><small>{sharedTags.map(tag => `#${tag}`).join(' ')}</small></p>}
+        {!usedFallback && sharedTags.length > 0 && <p><small>{sharedTags.map(tag => `#${tag}`).join(' ')}</small></p>}
       </article>
     ))}
   </section>

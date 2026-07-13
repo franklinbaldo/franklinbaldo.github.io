@@ -50,7 +50,7 @@ const relatedTags = [...coTags.entries()]
   .sort((a, b) => b[1] - a[1])
   .slice(0, 6)
   .map(([t]) => t);
-const curatedDescription = tagDescriptions[tag];
+const curatedDescription = tagDescriptions[tag]?.en;
 const description =
   curatedDescription ??
   `${count} ${count === 1 ? "essay" : "essays"} tagged #${tag} — Franklin Baldo's digital garden on AI, law, and process.`;

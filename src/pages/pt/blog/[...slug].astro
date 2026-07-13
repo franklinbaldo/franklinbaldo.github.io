@@ -304,7 +304,7 @@ const musicLd = postType === 'music' && sunoId
 
       <AuthorBio lang={lang} />
 
-      <RelatedPosts currentId={post.id} tags={tags ?? []} lang={lang} />
+      <RelatedPosts currentId={post.id} tags={tags ?? []} lang={lang} postType={postType} />
 
       {series && <SeriesContext series={series} lang={lang ?? DEFAULT_LANG} variant="nav" />}
 
