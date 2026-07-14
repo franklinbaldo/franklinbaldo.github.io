@@ -30,7 +30,7 @@ const overflowCount = allTags.length - visibleTags.length;
 ---
 
 <article data-post-lang={postLang} lang={postLang}>
-  <a href={href}>
+  <a href={href} aria-hidden="true" tabindex="-1">
     {heroImage ? (
       <Image
         src={heroImage}
