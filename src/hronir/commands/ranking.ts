@@ -61,6 +61,6 @@ export function ranking() {
     );
   }
   nextStep(
-    "Rode `npm run hronir:edit-worst` para iniciar a edição do pior ranqueado (ou `npm run hronir:worst` apenas para inspeção)."
+    "Rode `npm run hronir:draft-worst` para iniciar a edição do pior ranqueado."
   );
 }

@@ -35,7 +35,7 @@ decisão nova e retroagido aos 1764 arquivos já existentes.
 | `eval_lang` / `review_lang`               | Língua da sessão / língua das reviews e do clash (RFC 0012 §6).                                       |
 | `objective`                               | Viés de amostragem do match (RFC 0013 §8).                                                            |
 | `evaluator_mood` / `evaluator_mood_after` | Estado do avaliador antes e depois da decisão; `mood_glyph` é o glifo sorteado que informa o "after". |
-| `impression_a` / `impression_b`           | Primeiras impressões (opcionais; `null` se puladas).                                                  |
+| `impression_a` / `impression_b`           | Legado (RFC 0016): sempre `null` em arquivos novos; preenchidos só em rate files antigos.             |
 | `rate_a` / `rate_b`                       | Estrelas 1.00–5.00, sem empate.                                                                       |
 | `review_a` / `review_b`                   | Resenha de cada post, ≥100 palavras, na `review_lang`.                                                |
 | `clash`                                   | Confronto narrativo entre os dois posts, ≥100 palavras.                                               |

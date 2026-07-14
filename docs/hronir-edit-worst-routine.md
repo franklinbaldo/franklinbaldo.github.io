@@ -13,6 +13,14 @@ git clone https://github.com/franklinbaldo/franklinbaldo.github.io.git
 cd franklinbaldo.github.io
 ```
 
+Depois, instale as dependências — todo comando `hronir` roda via `tsx` e falha sem `node_modules/`:
+
+```bash
+npm ci
+```
+
+(Num checkout já existente, rode `npm ci` só se `node_modules/` não existir.)
+
 ## 0. Revisar e mesclar PRs abertos
 
 Liste os PRs abertos. Para cada PR Hrönir com CI verde, sem conflitos e sem revisões bloqueantes:

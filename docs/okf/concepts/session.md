@@ -19,7 +19,7 @@ existir uma sessão aberta sem trabalho recente.
 ## Máquina de estados
 
 ```
-ready_for_next → reading_a → reading_b → deciding → ready_for_next → …
+ready_for_next → deciding → ready_for_next → …
   → need_edit → (sessão fechada)
 ```
 

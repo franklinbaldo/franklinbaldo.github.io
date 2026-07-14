@@ -17,11 +17,12 @@ lê `stdin` nem pede confirmação em tela.
 
 | Comando                        | Função                                                                                             |
 | ------------------------------ | -------------------------------------------------------------------------------------------------- |
-| `init`                         | Cria a [sessão](../concepts/session.md); `--agent-id` obrigatório.                                 |
-| `continue`                     | Avança o estado: imprime post A, depois post B de um [match](../concepts/match.md).                |
+| `generate-match`               | Fluxo canônico (RFC 0016): sessão de 1 match; imprime perspectiva, posts, glifo e prompt.          |
+| `submit-eval`                  | `decide` + auto-fechamento; produz um [rate file](../concepts/rate-file.md).                       |
+| `init`                         | [Sessão](../concepts/session.md) multi-match (uso humano); `--agent-id` obrigatório.               |
+| `continue`                     | Gera e exibe o próximo [match](../concepts/match.md) inteiro (posts A e B + prompt).               |
 | `decide`                       | Registra a decisão; produz um [rate file](../concepts/rate-file.md).                               |
 | `ranking`                      | Score acumulado — ver [ranking](../concepts/ranking.md).                                           |
-| `worst`                        | Post pior ranqueado (por `ordinal`, ou `--absolute` para `stars`).                                 |
 | `diagnose`                     | Leitura pura: de-confounding, vieses `α`/`π`, líder por [perspectiva](../concepts/perspective.md). |
 | `draft-worst` / `draft-commit` | Cria e registra uma nova versão do post pior ranqueado (RFC 0010).                                 |
 | `select`                       | Recomputa a [seleção de versões](../concepts/selection.md); único escritor do manifesto.           |
@@ -33,7 +34,9 @@ Lista completa e flags em `scripts/hronir/README.md` e `CLAUDE.md`.
 ## Fluxo de uma sessão
 
 ```
-init → continue → continue → decide → continue → … → need_edit
+generate-match → [ler posts] → submit-eval        # canônico, um match por sessão
+
+init → continue → decide → continue → … → need_edit   # multi-match (humano)
   → draft-worst → [edição manual] → draft-commit → select
 ```
 

@@ -29,7 +29,6 @@ const {
   continueCmd,
   decide,
   ranking,
-  worst,
   diagnose,
   editWorst,
   migrate,
@@ -39,19 +38,15 @@ const {
   select,
   prune,
   flatten,
-  next,
   generateMatch,
-  getGlipho,
   submitEval,
-  firstImpressionA,
-  firstImpressionB,
 } = await import("../../src/hronir/commands.js");
 
 const [, , cmd, ...args] = process.argv;
 
 function usage() {
   console.error(
-    "Uso: hronir {generate-match --agent-id <id> [init-opts]|get-glipho|submit-eval [--impression-a <t>] [--impression-b <t>] <decide-flags>|get-ranking|next --agent-id <id> [init-opts]|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--review-lang <lang>] [--objective coverage|refine-top|hunt-worst] [--min-appearances N] [--pledge <text>] [--content-mode inline|path-only]|continue|first-impression-a <texto>|first-impression-b <texto>|decide --after-mood <text> --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text> [--clash-append <text>] [--review-a-append <text>] [--review-b-append <text>]|ranking|worst [--absolute]|diagnose|edit-worst|edit-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force] [--attest <text>]|select [--dry-run]|prune [--dry-run]|flatten [--slug <slug>] [--dry-run]}"
+    "Uso: hronir {generate-match [init-opts]|submit-eval --agent-id <id> <decide-flags>|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--review-lang <lang>] [--objective coverage|refine-top|hunt-worst] [--min-appearances N]|continue|decide --after-mood <text> --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text> [--clash-append <text>] [--review-a-append <text>] [--review-b-append <text>]|ranking|diagnose|draft-worst|draft-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force]|select [--dry-run]|prune [--dry-run]|flatten [--slug <slug>] [--dry-run]}"
   );
   process.exit(1);
 }
@@ -125,12 +120,6 @@ function parseInitOptions(args) {
     args.indexOf("--min-appearances"),
     args.indexOf("--min-app"),
   ]);
-  const pledge = readFlagValue(args, [args.indexOf("--pledge")]);
-  const contentModeRaw = readFlagValue(args, [args.indexOf("--content-mode")]);
-  const contentMode =
-    contentModeRaw === "path-only" || contentModeRaw === "inline"
-      ? contentModeRaw
-      : undefined;
   let matches = parseMatches(matchesRaw);
   if (skipRating) matches = 0;
   const minAppearances = parseMinAppearances(minAppRaw);
@@ -143,8 +132,6 @@ function parseInitOptions(args) {
     reviewLang,
     objective,
     minAppearances,
-    pledge,
-    contentMode,
   };
 }
 
@@ -155,29 +142,13 @@ switch (cmd) {
   case "continue":
     continueCmd();
     break;
-  case "first-impression-a":
-    firstImpressionA(args);
-    break;
-  case "first-impression-b":
-    firstImpressionB(args);
-    break;
-  case "next":
-  case "auto":
-    next(parseInitOptions(args));
-    break;
-  // Minimal one-shot API (RFC: agent self-service). The glyph is shown inline
-  // by generate-match; submit-eval/get-ranking are thin aliases of decide/ranking.
+  // One-shot API (RFC 0016), the canonical agent flow: generate-match prints
+  // both posts + glyph + decide prompt; submit-eval is decide + auto-close.
   case "generate-match":
     generateMatch(parseInitOptions(args));
     break;
-  case "get-glipho":
-    getGlipho();
-    break;
   case "submit-eval":
     submitEval(args);
-    break;
-  case "get-ranking":
-    ranking();
     break;
   case "decide":
     decide(args);
@@ -185,37 +156,24 @@ switch (cmd) {
   case "ranking":
     ranking();
     break;
-  case "worst":
-    worst({ absolute: args.includes("--absolute") });
-    break;
   case "diagnose":
     diagnose();
     break;
-  case "edit-worst":
   case "draft-worst":
     editWorst();
     break;
   case "end": {
     const skipEdit = args.includes("--skip-edit");
     const force = args.includes("--force");
-    const attest = readFlagValue(args, [args.indexOf("--attest")]);
-    end({ skipEdit, force, attest });
+    end({ skipEdit, force });
     break;
   }
-  case "edit-commit":
-  case "draft-commit":
-  case "edit": {
-    if (cmd === "edit" && args[0] !== "commit") {
-      usage();
-    }
-    const remaining = cmd === "edit" ? args.slice(1) : args;
+  case "draft-commit": {
     let msg = "";
     const msgIdx =
-      remaining.indexOf("--msg") !== -1
-        ? remaining.indexOf("--msg")
-        : remaining.indexOf("-m");
-    if (msgIdx !== -1 && remaining[msgIdx + 1]) {
-      msg = remaining[msgIdx + 1];
+      args.indexOf("--msg") !== -1 ? args.indexOf("--msg") : args.indexOf("-m");
+    if (msgIdx !== -1 && args[msgIdx + 1]) {
+      msg = args[msgIdx + 1];
     }
     if (!msg) {
       console.error(

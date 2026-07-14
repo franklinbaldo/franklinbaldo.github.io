@@ -7,102 +7,50 @@ The **Hrönir** system (`scripts/hronir/`) runs pairwise comparisons between pos
 
 ## Running a Hrönir session (agent happy path)
 
-### 1. Init
+The canonical flow (RFC 0016) is the one-shot API — each match is two commands
+plus reading two files, with no session state to manage:
 
 ```bash
-npm run hronir:init -- --agent-id 'this is my id' --matches 10 --skip-edit
-```
-
-The `--` after `hronir:init` is npm's "end of npm options" marker — without it
-npm swallows `--agent-id` as its own flag. To skip the `--`, call the CLI
-directly. It is registered as the `hronir` bin in `package.json`, so any of these
-work without the separator:
-
-```bash
-npx hronir init --agent-id 'this is my id' --matches 10 --skip-edit  # via node_modules/.bin
-# or `npm link` once, then `hronir init ...` from anywhere
-```
-
-- `--agent-id` is **required** — a stable identifier for the evaluator. It can be
-  a slug (`claude-opus-4-8`, `franklin`) or a quoted human-readable phrase
-  (`--agent-id 'this is my id'`); spaces are allowed. Because the value flows
-  verbatim into the commit message (`hronir: <N> matches — <agent-id>`), the
-  `—` separator is what keeps the id unambiguous when it contains spaces — keep it.
-- `--matches` defaults to 10
-- `--skip-edit` skips the post-editing phase; use it for pure rating sessions
-
-**Minimal one-shot API (agent self-service).** Four commands cover a full
-single match without the `init` / `continue` / `first-impression-*` ceremony:
-
-```bash
-npx hronir generate-match                             # starts a 1-match session, prints BOTH posts + glyph + decide prompt
-npx hronir get-glipho                                 # re-read the glyph (also shown by generate-match)
+npx hronir generate-match --objective coverage        # prints perspective, both post paths, glyph + mood, decide prompt
+# read BOTH files printed by the command, in full
 npx hronir submit-eval --agent-id 'this is my id' \
   --after-mood "..." --rate-a 4.25 --rate-b 3.00 \
-  --review-a "..." --review-b "..." --clash "..."     # alias of decide; closes the round
-npx hronir get-ranking                                # alias of ranking
+  --review-a "..." --review-b "..." --clash "..."     # decide + auto-close of the round
 ```
 
-- `--agent-id` belongs on **`submit-eval`**, not `generate-match`: generating a
-  match is identity-agnostic; the evaluator is named only when the evaluation is
-  recorded. `generate-match` stores `agentId: "TODO"` and `submit-eval` requires
-  `--agent-id` (it errors otherwise). You may still pass `--agent-id` to
-  `generate-match` to pin it early, but it is optional there.
-- `generate-match` is `--skip-edit` and single-match: the one `submit-eval` finishes
-  the round. If a session is already in progress it just advances it, like `next`.
-- First impressions are skipped (they carry no downstream use); `impression_a/b`
-  stay `null`. To still record them, pass `--impression-a "..." --impression-b "..."`
-  to `submit-eval`.
-- `--review-lang en|pt` — language the reviews/clash are written in (RFC 0012 §6); defaults to `--eval-lang`. Recorded as `review_lang` in each rate file
-- `--objective coverage|refine-top|hunt-worst` — RFC 0013 §8: sampling bias, persisted in the session and recorded as `objective` in each rate file. `coverage` (recommended while the corpus is thin) prioritizes under-sampled works; `refine-top`/`hunt-worst` tilt toward the top/bottom strata. Default: neutral
-- `--content-mode inline|path-only` — controls how post content is delivered:
-  - `inline` (default): CLI prints the full post content in its output
-  - `path-only`: CLI prints only the slug, file path, and Suno URLs; the agent reads the file directly. Recommended for agents with long sessions or context compression (e.g. Jules with 20 matches). The chosen mode is saved in `session.json` and recorded in each rate file as `content_mode`.
+Repeat for as many matches as you can evaluate attentively (3–6 good matches
+beat 10 rushed ones). `npx hronir ranking` prints the current ranking.
 
-### 2. Loop: read → first-impression-a → first-impression-b → decide
-
-After init, the CLI prints the next step. Follow it:
-
-```bash
-# Read post A (shows perspective banner + evaluator mood)
-npm run hronir:continue
-
-# Record your immediate reaction to post A (any length > 0, no minimum)
-# This also displays post B automatically
-npm run hronir:first-impression-a -- "Primeira impressão do post A aqui."
-
-# Record your immediate reaction to post B
-# This prints the decide instructions with the glyph and mood
-npm run hronir:first-impression-b -- "Primeira impressão do post B aqui."
-
-# Submit the decision (--after-mood first — see "Decidindo o mood" below)
-npm run hronir:decide -- \
-  --after-mood "Estou inquieto, com ideias demais na cabeça para assentar." \
-  --rate-a 4.25 \
-  --rate-b 3.00 \
-  --review-a "Resenha do <slug-a> em pelo menos 100 palavras, da ótica da perspectiva." \
-  --review-b "Resenha do <slug-b> em pelo menos 100 palavras, da ótica da perspectiva." \
-  --clash   "Confronto em pelo menos 100 palavras: por que <slug-a> ganhou/perdeu perante <slug-b> segundo a perspectiva."
-```
-
-Repeat `continue` → `first-impression-a` → `first-impression-b` → `decide` for each match.  
-`npm run hronir:next` is a shortcut that auto-advances state.
-
-**Incremental decide (draft persistence):** If `decide` fails validation (e.g. word-count too short), it saves a draft automatically. On the next call you can append to the short fields instead of rewriting them:
-
-```bash
-npm run hronir:decide -- \
-  --clash-append "Texto adicional para completar o confronto." \
-  --review-a-append "Mais palavras para a resenha A." \
-  --review-b-append "Mais palavras para a resenha B."
-```
+- `--agent-id` is **required on `submit-eval`** — a stable identifier for the
+  evaluator; slugs or quoted phrases with spaces both work. It flows verbatim
+  into the commit message (`hronir: <N> matches — <agent-id>`), where the `—`
+  separator keeps a spaced id unambiguous. Generating a match is
+  identity-agnostic (`generate-match` stores `agentId: "TODO"`), but you may
+  pass `--agent-id` there to pin it early.
+- Post content is never printed inline: the CLI prints the slug, file path and
+  Suno URLs; the agent reads the file directly.
+- If `submit-eval` fails validation (e.g. word count too short), the draft is
+  saved automatically — complete it with `--clash-append` /
+  `--review-a-append` / `--review-b-append` instead of rewriting.
+- `--review-lang en|pt` (on `generate-match`) — language the reviews/clash are
+  written in (RFC 0012 §6); defaults to `--eval-lang`. Recorded as
+  `review_lang` in each rate file.
+- `--objective coverage|refine-top|hunt-worst` — RFC 0013 §8: sampling bias,
+  recorded as `objective` in each rate file. `coverage` (recommended while the
+  corpus is thin) prioritizes under-sampled works. Default: neutral.
+- Multi-match sessions still exist for direct human use:
+  `npx hronir init --agent-id '...' --matches 10 --skip-edit`, then
+  `continue` → `decide` per match (`continue` prints both posts and the decide
+  prompt at once; `end` closes early). Note: with `npm run`, flags need npm's
+  `--` separator (`npm run hronir:init -- --agent-id ...`); `npx hronir`
+  avoids that.
 
 ### Constraints the agent must respect
 
 | Field                       | Constraint                                                                                                                                                                                                                                           |
 | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--rate-a` / `--rate-b`     | 1.00–5.00, ≤2 decimal places, **no ties**                                                                                                                                                                                                            |
-| `--review-a` / `--review-b` | ≥100 words each, written from the perspective shown in the banner. Refer to the post by its **slug** (shown in the post header during `continue`), not "Post A" / "Post B"                                                                           |
+| `--review-a` / `--review-b` | ≥100 words each, written in the session's `review_lang` (RFC 0012 §6 — defaults to the evaluation language, pt), from the perspective shown in the banner. Refer to the post by its **slug** (shown in the post header), not "Post A" / "Post B"     |
 | `--clash`                   | ≥100 words, narrative confrontation between both posts through the perspective's lens. Refer to each post by its **slug**, not "Post A" / "Post B"                                                                                                   |
 | `--after-mood`              | **First flag**, ≤250 chars, **first person PT**, about **your internal state** now — energy, fatigue, satisfaction, unease. **Not about the posts.** Must be original (not a copy of the initial mood in the banner). See "Deciding the mood" below. |
 
@@ -111,7 +59,8 @@ The `--review-a` / `--review-b` / `--clash` fields render as **Markdown** — us
 ### Deciding the mood (do this first)
 
 `--after-mood` is the **first** flag you submit. Before writing anything,
-Hrönir shows you, in the `continue` decide step, a **random Unicode glyph** it
+Hrönir shows you, in the `generate-match` output (re-printed by `continue`),
+a **random Unicode glyph** it
 drew for you (with its `U+XXXX` codepoint) plus your **initial mood** from the
 banner. Read the glyph _subjectively_ — there is no lookup table; its shape,
 its stroke, whatever that character evokes in you, you decide how it weighs.
@@ -120,7 +69,7 @@ the clash between them) made you feel. The result is your internal state right
 now — and that state then **colors the tone** in which you write the reviews
 and the clash. That is why the mood is decided first.
 
-### 3. After all matches — open a PR
+### After all matches — open a PR
 
 ```bash
 git add .routines/hronir/
@@ -136,15 +85,13 @@ Run `npm run hronir:doctor` before committing to catch any inconsistencies.
 ```bash
 npm run hronir:ranking          # print current ranking to stdout
 npm run hronir:doctor           # validate all rate files
-npm run hronir:worst            # print the lowest-ranked post key
 npm run hronir:draft-worst      # RFC 0003: cria uma NOVA versão (rascunho) do pior post
 npm run hronir:draft-commit -- --msg "..."  # registra o rascunho (canônica intocada)
 npm run hronir:select           # RFC 0010 (amendment 2026-07-01): recalcula versions-selected.json — função pura de rate files + versões, sem histerese; gitignorado, regenerado pelo prebuild antes de cada build; rode localmente antes de qualquer outro comando hronir num checkout novo
 npm run hronir:select -- --dry-run  # mostra o que seria selecionado sem gravar
 npm run hronir:prune -- --dry-run   # lista versões perdedoras elegíveis para poda (≥0.5★ abaixo, n≥3)
 npm run hronir:prune            # remove as versões perdedoras elegíveis
-npm run hronir:edit-worst       # alias legado de draft-worst (edição não-destrutiva)
-npm run hronir:end -- --force   # discard an in-progress session
+npm run hronir:end -- --force   # discard an in-progress session (o match em andamento é perdido; os já submetidos ficam)
 ```
 
 ## Build & lint
