@@ -1,21 +1,18 @@
 name: Hrönir Autopilot
 
-# Merge machine for the Hrönir/Jules loop.
+# Merge machine for Hrönir session PRs.
 #
 # Fires when the "Check" workflow finishes on a PR branch. If that PR
-# touches only the safe paths (rate files or draft version files required)
-# and CI is green, it is merged with a merge commit and a replacement
-# session is spawned.
+# touches only the safe paths (rate files or draft version files required),
+# CI is green and no review blocks it, it is merged with a merge commit.
+# Sessions themselves are spawned externally (agent routines) — this
+# workflow only merges.
 #
-# Gate: path check + CI green. No external API verification needed — the
-# safe-path constraint is sufficient: only hronir sessions produce rate
-# files under .routines/hronir/rates/ (hourly matches routine) or v-*
-# draft files under src/content/blog/ (daily edit-worst routine).
-#
-# hronir-heartbeat.yml maintains the pool as a backstop (every 15 min).
-# This workflow provides the reactive path: merge → immediately spawn.
-#
-# Requires repo secret JULES_API_KEY (the Google Jules API key, for spawn).
+# Gate: path check + CI green + no blocking review. No external API
+# verification needed — the safe-path constraint is sufficient: only hronir
+# sessions produce rate files under .routines/hronir/rates/ (hourly matches
+# routine) or v-* draft files under src/content/blog/ (daily edit-worst
+# routine).
 
 on:
   workflow_run:
@@ -24,7 +21,7 @@ on:
   workflow_dispatch:
     inputs:
       pr:
-        description: "PR number to merge + respawn (manual)"
+        description: "PR number to merge (manual)"
         required: true
         type: string
 
@@ -46,7 +43,7 @@ env:
   SAFE_PREFIXES: ".routines/hronir/ src/content/blog/ src/generated/versions-pruned.json src/generated/versions-history.json"
 
 jobs:
-  merge-and-respawn:
+  merge:
     runs-on: ubuntu-latest
     # Manual dispatch, or a successful Check run on a real PR branch (not main).
     if: >
@@ -103,7 +100,8 @@ jobs:
           #    no memory of any prior selection — see RFC 0010 amendment
           #    2026-07-01 and docs/hronir-agent-routine.md), so it never
           #    appears in a session PR's file list and needs no exception here.
-          FILES=$(gh pr view "$PR" --repo "$REPO" --json files --jq '.files[].path')
+          FILES_JSON=$(gh pr view "$PR" --repo "$REPO" --json files)
+          FILES=$(echo "$FILES_JSON" | jq -r '.files[].path')
           HAS_RATE=0
           HAS_DRAFT=0
           while IFS= read -r f; do
@@ -133,26 +131,50 @@ jobs:
           # 1b) Rate file deletion guard: reject PRs that delete existing rate files.
           # Deletions cause the duel count to shrink instead of grow. Rate files are
           # immutable once committed — sessions may only add, never remove.
-          DELETED_RATES=$(gh pr view "$PR" --repo "$REPO" --json files \
-            --jq '[.files[] | select(.status == "removed") | select(.path | startswith(".routines/hronir/rates/"))] | length')
+          # Reuses FILES_JSON from the path gate above — same PR, same field, no
+          # need for a second API round-trip.
+          DELETED_RATES=$(echo "$FILES_JSON" | jq \
+            '[.files[] | select(.status == "removed") | select(.path | startswith(".routines/hronir/rates/"))] | length')
           if [ "${DELETED_RATES:-0}" -gt 0 ]; then
             echo "PR #$PR deleta ${DELETED_RATES} rate file(s) — bloqueado pelo autopilot."
             echo "Rate files são imutáveis. Nunca delete arquivos de sessões anteriores."
             echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
           fi
 
-          # 2) Mergeable + CI green (defensive; the trigger already implies
-          #    the Check run passed, but double-check for safety).
-          MERGEABLE=$(gh pr view "$PR" --repo "$REPO" --json mergeable --jq '.mergeable')
+          # 2) Mergeable + blocking review + CI green — one combined lookup
+          #    (defensive on CI; the trigger already implies the Check run
+          #    passed, but double-check for safety).
+          DETAILS_JSON=$(gh pr view "$PR" --repo "$REPO" --json mergeable,reviews,statusCheckRollup)
+          MERGEABLE=$(echo "$DETAILS_JSON" | jq -r '.mergeable')
           if [ "$MERGEABLE" != "MERGEABLE" ]; then
             echo "PR #$PR not mergeable (mergeable=$MERGEABLE) — skipping."
+            echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          # 2b) Blocking review: the routines skip PRs with blocking reviews;
+          #     the autopilot must respect the same signal. `reviewDecision`
+          #     is NOT used here — GitHub only populates it when the base
+          #     branch has "require pull request reviews" branch protection
+          #     enabled, which this repo's whole auto-merge model precludes;
+          #     it would silently resolve to null and make the gate a no-op.
+          #     Instead, take each reviewer's most recent APPROVED/
+          #     CHANGES_REQUESTED review (a later approval or an explicit
+          #     dismissal clears an earlier CHANGES_REQUESTED) and block if
+          #     any reviewer's latest state is still CHANGES_REQUESTED.
+          BLOCKING=$(echo "$DETAILS_JSON" | jq \
+            '[.reviews[] | select(.state == "APPROVED" or .state == "CHANGES_REQUESTED")]
+             | group_by(.author.login)
+             | map(sort_by(.submittedAt) | last)
+             | map(select(.state == "CHANGES_REQUESTED"))
+             | length')
+          if [ "${BLOCKING:-0}" -gt 0 ]; then
+            echo "PR #$PR has a blocking review (unresolved CHANGES_REQUESTED) — skipping."
             echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
           fi
           # Require only the project's own CI job ("check") to be green. Third-
           # party review bots (Kilo, Codex, GitGuardian) post their own check
           # runs and may fail on usage limits — they must NOT block the merge.
-          STATE=$(gh pr view "$PR" --repo "$REPO" --json statusCheckRollup \
-            --jq '[.statusCheckRollup[]? | select(.name == "check") | (.conclusion // .state)] as $c
+          STATE=$(echo "$DETAILS_JSON" | jq -r \
+            '[.statusCheckRollup[]? | select(.name == "check") | (.conclusion // .state)] as $c
                   | if ($c|length)==0 then "NONE"
                     elif ([$c[] | select(. != "SUCCESS")] | length) > 0 then "PENDING_OR_FAILED"
                     else "SUCCESS" end')
@@ -165,14 +187,3 @@ jobs:
           gh pr merge "$PR" --repo "$REPO" --merge --delete-branch
           echo "Merged PR #$PR."
           echo "merged=$PR" >> "$GITHUB_OUTPUT"
-
-      # Respawn disabled — Jules substituído por outro agente.
-      # Para reativar: descomentar o step abaixo e restaurar JULES_API_KEY.
-      # - name: Respawn session after merge
-      #   if: steps.merge.outputs.merged != ''
-      #   env:
-      #     JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
-      #   run: |
-      #     set -euo pipefail
-      #     echo "Spawning replacement session..."
-      #     bash scripts/hronir/spawn-session.sh

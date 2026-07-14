@@ -390,13 +390,14 @@ recontar antes de usá-los para dimensionar uma migração real.)
 Já o **agendamento** — rodar isso periodicamente sem intervenção, para
 fechar o laço que a Correção 1 sozinha não fecha (ela para o empilhamento
 novo; o agendamento limpa o que já empilhou) — não é tão simples quanto
-"achar um cron para anexar". `hronir-heartbeat.yml` existe, mas seu `cron`
-está comentado/desabilitado hoje ("Heartbeat desabilitado — Jules
-substituído por outro agente"), nunca invocou comandos hronir (era só
-reabastecimento do conjunto de sessões Jules), e roda hoje com
-`permissions: contents: read` — reativá-lo para isso não é só descomentar o
-cron, é decidir elevar um workflow ocioso e só-leitura para escrita/push na
-branch padrão. **Esse é o
+"achar um cron para anexar". `hronir-heartbeat.yml` chegou a existir com
+esse propósito em mente, mas seu `cron` já estava comentado/desabilitado
+("Heartbeat desabilitado — Jules substituído por outro agente"), nunca
+invocou comandos hronir (era só reabastecimento do conjunto de sessões
+Jules), e rodava só com `permissions: contents: read` — a RFC 0016 (fase de
+poda de CI) removeu o arquivo por inteiro, código morto. Agendar
+`select`/`prune` de verdade hoje significa criar um workflow novo do zero,
+decidindo elevá-lo de leitura para escrita/push na branch padrão. **Esse é o
 ponto central do §6**: automatizar significa `prune` apagando arquivos
 direto em `main`, sem PR e sem revisão — desenho de segurança que este
 documento não resolve, só aponta.
@@ -409,9 +410,10 @@ desenho: as 208 pastas continuam existindo, e qualquer diretório em
 competição ativa ainda terá 2 arquivos por definição (a versão selecionada +
 um desafiante) — isso é o preço de manter o torneio, não um bug a corrigir.
 E a Correção 2 sozinha não é permanente: sem agendar de verdade
-`select`/`prune` (reativar o cron do heartbeat ou criar um workflow novo,
-como já dito acima), o acúmulo da Causa 2 volta a se formar — rodar os
-comandos manualmente uma vez limpa o estoque atual, não fecha o problema.
+`select`/`prune` (criar um workflow novo, como já dito acima —
+`hronir-heartbeat.yml` não existe mais para reaproveitar), o acúmulo da
+Causa 2 volta a se formar — rodar os comandos manualmente uma vez limpa o
+estoque atual, não fecha o problema.
 A dependência também corre no sentido inverso: o novo limiar da Correção 1
 ("ainda não elegível para poda") é definido em termos da própria
 elegibilidade de poda — assim que um irmão perdedor cruza
