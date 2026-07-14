@@ -15,11 +15,35 @@ const SELECTION_PATH = join(
 );
 
 /**
+ * Flat slugs (RFC 0015): a single `<slug>.md(x)` directly at BLOG_DIR root,
+ * with no peer directory of the same name. A slug can't be in both layouts
+ * at once — `flatten` always rmdir's the legacy folder when it flattens a
+ * slug — except for two pre-existing orphans (RFC 0015 §1) that carry a
+ * loose root file *alongside* their still-versioned directory; the
+ * directory always wins for those (mirrors flatCanonicalPath's tie-break in
+ * src/hronir/selection.ts), so this never double-counts with the
+ * versions-selected.json branch below.
+ */
+function listFlatSlugFiles() {
+  const out = [];
+  for (const entry of readdirSync(BLOG_DIR, { withFileTypes: true })) {
+    if (entry.isDirectory() || !/\.mdx?$/.test(entry.name)) continue;
+    const slug = entry.name.replace(/\.mdx?$/, "");
+    if (existsSync(join(BLOG_DIR, slug))) continue; // orphan — dir wins
+    out.push(join(BLOG_DIR, entry.name));
+  }
+  return out;
+}
+
+/**
  * List the published file of every blog post. Returns absolute paths.
- * RFC 0010: each post is a folder <slug>/ of peer version files; the
- * published one is whatever versions-selected.json points at — mirroring the
- * Astro loader. Falls back to the RFC 0003 <slug>/index.* layout when the
- * selection file is absent (pre-migration tree).
+ * RFC 0010: a legacy-layout slug is a folder <slug>/ of peer version
+ * files; the published one is whatever versions-selected.json points at —
+ * mirroring the Astro loader. RFC 0015: a flattened slug never appears in
+ * versions-selected.json (select() skips it), so its flat file is added
+ * separately via listFlatSlugFiles(). Falls back to the RFC 0003
+ * <slug>/index.* layout when the selection file itself is absent
+ * (pre-migration tree).
  */
 export function listPostFiles() {
   if (existsSync(SELECTION_PATH)) {
@@ -30,6 +54,7 @@ export function listPostFiles() {
       const abs = join(BLOG_DIR, entry.file);
       if (existsSync(abs)) out.push(abs);
     }
+    out.push(...listFlatSlugFiles());
     return out.sort();
   }
   const walk = (dir) => {
@@ -49,13 +74,20 @@ export function listPostFiles() {
 
 /**
  * Derive the Astro post id (= URL slug) from an absolute file path.
- * RFC 0010: post files are <slug>/v-<timestamp>.md(x) (or legacy
- * <slug>/index.md(x)), so the id is the folder path (URL-preserving) —
- * strip the trailing filename.
+ * RFC 0010: a legacy post is <slug>/v-<timestamp>.md(x) (or
+ * <slug>/index.md(x)) — the id is the folder path, stripping the trailing
+ * filename. RFC 0015: a flat post is `<slug>.md(x)` directly — no
+ * directory to strip, just the extension. Mirrors generateBlogId in
+ * src/lib/blog-id.ts (kept as a plain-JS duplicate here since this file
+ * runs under bare `node`, not tsx, and can't import that TS module): the
+ * optional group only matches the legacy case (it requires a leading
+ * "/"), so a flat id like "666.mdx" still loses its extension via the
+ * unconditional tail instead of staying "666.mdx" — which would have
+ * built/linked the wrong URL.
  */
 export function postIdFromPath(absPath) {
   const rel = relative(BLOG_DIR, absPath).replace(/\\/g, "/");
-  return rel.replace(/\/(v-[^/]+|index)\.mdx?$/, "");
+  return rel.replace(/(\/(v-[^/]+|index))?\.mdx?$/, "");
 }
 
 /** Parse YAML frontmatter from a raw markdown string (no dependencies). */

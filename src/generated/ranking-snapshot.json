@@ -1,9 +1,9 @@
 {
   "_meta": {
     "schema": "snapshot-v2",
-    "generatedAt": "2026-07-14T05:06:55.587Z",
+    "generatedAt": "2026-07-14T09:26:52.128Z",
     "basis": "build",
-    "totalDuels": 2007
+    "totalDuels": 2014
   },
   "keys": {
     "asterisk-protects": {
@@ -24,17 +24,17 @@
       "elo": 1152,
       "eloPeak": 1167
     },
-    "reddit-submarine-osint": {
-      "rank": 4,
-      "ordinal": 14.9201,
-      "elo": 1111,
-      "eloPeak": 1137
-    },
     "family-memory": {
+      "rank": 4,
+      "ordinal": 15.3255,
+      "elo": 1172,
+      "eloPeak": 1172
+    },
+    "reddit-submarine-osint": {
       "rank": 5,
-      "ordinal": 14.8457,
-      "elo": 1158,
-      "eloPeak": 1158
+      "ordinal": 14.6369,
+      "elo": 1097,
+      "eloPeak": 1137
     },
     "three-hammers": {
       "rank": 6,
@@ -54,29 +54,29 @@
       "elo": 1144,
       "eloPeak": 1144
     },
-    "rosencrantz-coin": {
-      "rank": 9,
-      "ordinal": 12.9339,
-      "elo": 1065,
-      "eloPeak": 1134
-    },
     "quem-sou-eu": {
-      "rank": 10,
-      "ordinal": 12.919,
-      "elo": 1108,
-      "eloPeak": 1108
+      "rank": 9,
+      "ordinal": 13.4901,
+      "elo": 1122,
+      "eloPeak": 1122
     },
     "serpents-egg": {
-      "rank": 11,
+      "rank": 10,
       "ordinal": 12.7885,
       "elo": 1097,
       "eloPeak": 1176
     },
     "two-questions-out-loud": {
-      "rank": 12,
+      "rank": 11,
       "ordinal": 12.7625,
       "elo": 1068,
       "eloPeak": 1150
+    },
+    "rosencrantz-coin": {
+      "rank": 12,
+      "ordinal": 12.5907,
+      "elo": 1051,
+      "eloPeak": 1134
     },
     "reclaiming-harness": {
       "rank": 13,
@@ -96,23 +96,23 @@
       "elo": 1106,
       "eloPeak": 1124
     },
-    "music-primavera-carregando": {
+    "crossing-interference": {
       "rank": 16,
+      "ordinal": 11.8044,
+      "elo": 1074,
+      "eloPeak": 1102
+    },
+    "music-primavera-carregando": {
+      "rank": 17,
       "ordinal": 11.6489,
       "elo": 1064,
       "eloPeak": 1142
     },
     "delegating-to-agents": {
-      "rank": 17,
-      "ordinal": 11.5976,
-      "elo": 1103,
-      "eloPeak": 1103
-    },
-    "crossing-interference": {
       "rank": 18,
-      "ordinal": 11.3724,
-      "elo": 1056,
-      "eloPeak": 1102
+      "ordinal": 11.3368,
+      "elo": 1085,
+      "eloPeak": 1103
     },
     "pontifex-research": {
       "rank": 19,
@@ -198,35 +198,35 @@
       "elo": 1073,
       "eloPeak": 1082
     },
-    "future-father": {
+    "music-observer-error-moving-window-iv": {
       "rank": 33,
+      "ordinal": 9.3249,
+      "elo": 1054,
+      "eloPeak": 1127
+    },
+    "future-father": {
+      "rank": 34,
       "ordinal": 9.305,
       "elo": 1032,
       "eloPeak": 1054
     },
     "music-espelhos": {
-      "rank": 34,
+      "rank": 35,
       "ordinal": 9.2843,
       "elo": 1024,
       "eloPeak": 1063
     },
-    "music-observer-error-moving-window-iv": {
-      "rank": 35,
-      "ordinal": 8.8737,
-      "elo": 1038,
-      "eloPeak": 1127
+    "music-clipes": {
+      "rank": 36,
+      "ordinal": 8.825,
+      "elo": 1048,
+      "eloPeak": 1085
     },
     "music-the-time": {
-      "rank": 36,
+      "rank": 37,
       "ordinal": 8.7849,
       "elo": 1045,
       "eloPeak": 1055
-    },
-    "becoming-lobsters": {
-      "rank": 37,
-      "ordinal": 8.7529,
-      "elo": 1029,
-      "eloPeak": 1077
     },
     "music-f85fb538-6f59-4751-8629-da76665fc91e": {
       "rank": 38,
@@ -240,29 +240,29 @@
       "elo": 1041,
       "eloPeak": 1043
     },
-    "music-prayer-to-the-unfinished-moving-window-v": {
+    "becoming-lobsters": {
       "rank": 40,
+      "ordinal": 8.4853,
+      "elo": 1013,
+      "eloPeak": 1077
+    },
+    "music-prayer-to-the-unfinished-moving-window-v": {
+      "rank": 41,
       "ordinal": 8.3797,
       "elo": 1001,
       "eloPeak": 1068
     },
-    "music-clipes": {
-      "rank": 41,
-      "ordinal": 8.3751,
-      "elo": 1032,
-      "eloPeak": 1085
-    },
-    "music-paperclip-rhapsody": {
-      "rank": 42,
-      "ordinal": 8.277,
-      "elo": 1032,
-      "eloPeak": 1042
-    },
     "music-xadrez": {
-      "rank": 43,
+      "rank": 42,
       "ordinal": 8.2474,
       "elo": 1021,
       "eloPeak": 1037
+    },
+    "music-paperclip-rhapsody": {
+      "rank": 43,
+      "ordinal": 8.0076,
+      "elo": 1016,
+      "eloPeak": 1042
     },
     "music-chegue-irmao-chegue-irma": {
       "rank": 44,
@@ -276,65 +276,65 @@
       "elo": 993,
       "eloPeak": 1025
     },
-    "conservation-law": {
+    "music-borges-e-eu": {
       "rank": 46,
+      "ordinal": 7.7115,
+      "elo": 1035,
+      "eloPeak": 1057
+    },
+    "conservation-law": {
+      "rank": 47,
       "ordinal": 7.6139,
       "elo": 1011,
       "eloPeak": 1071
     },
     "music-o-aleph": {
-      "rank": 47,
+      "rank": 48,
       "ordinal": 7.5435,
       "elo": 1037,
       "eloPeak": 1089
     },
     "music-fourteen-words": {
-      "rank": 48,
+      "rank": 49,
       "ordinal": 7.5405,
       "elo": 1000,
       "eloPeak": 1079
     },
     "census-not-sample": {
-      "rank": 49,
+      "rank": 50,
       "ordinal": 7.537,
       "elo": 1028,
       "eloPeak": 1102
     },
     "music-leite-no-salao-bar": {
-      "rank": 50,
+      "rank": 51,
       "ordinal": 7.4021,
       "elo": 941,
       "eloPeak": 1048
     },
     "music-escherian-sunrise-with-godel": {
-      "rank": 51,
+      "rank": 52,
       "ordinal": 7.3595,
       "elo": 991,
       "eloPeak": 1037
     },
     "music-quando-vier-a-primavera": {
-      "rank": 52,
+      "rank": 53,
       "ordinal": 7.1806,
       "elo": 952,
       "eloPeak": 1126
     },
     "intelligible-void": {
-      "rank": 53,
+      "rank": 54,
       "ordinal": 7.1778,
       "elo": 991,
       "eloPeak": 1032
     },
     "music-o-regral": {
-      "rank": 54,
+      "rank": 55,
       "ordinal": 7.1766,
       "elo": 1006,
       "eloPeak": 1073
-    },
-    "music-borges-e-eu": {
-      "rank": 55,
-      "ordinal": 7.1628,
-      "elo": 1019,
-      "eloPeak": 1057
     },
     "jules-api-harness": {
       "rank": 56,
@@ -342,17 +342,17 @@
       "elo": 1033,
       "eloPeak": 1033
     },
-    "music-the-ruliad-is-laughing": {
-      "rank": 57,
-      "ordinal": 7.0753,
-      "elo": 1029,
-      "eloPeak": 1077
-    },
     "music-stopping-by-woods-on-a-snowy-evening-by-robert-frost": {
-      "rank": 58,
+      "rank": 57,
       "ordinal": 7.0639,
       "elo": 995,
       "eloPeak": 1048
+    },
+    "music-the-ruliad-is-laughing": {
+      "rank": 58,
+      "ordinal": 6.7486,
+      "elo": 1013,
+      "eloPeak": 1077
     },
     "pierre-menard": {
       "rank": 59,
@@ -420,35 +420,35 @@
       "elo": 922,
       "eloPeak": 1029
     },
-    "music-two-cursors": {
+    "music-john-gospel-chapter-i-by-max-headroom": {
       "rank": 70,
+      "ordinal": 5.2726,
+      "elo": 976,
+      "eloPeak": 1002
+    },
+    "music-two-cursors": {
+      "rank": 71,
       "ordinal": 5.14,
       "elo": 926,
       "eloPeak": 1017
     },
     "conceptual-document": {
-      "rank": 71,
+      "rank": 72,
       "ordinal": 5.0615,
       "elo": 970,
       "eloPeak": 1036
     },
     "music-o-sonhador-e-o-fogo": {
-      "rank": 72,
+      "rank": 73,
       "ordinal": 4.9405,
       "elo": 923,
       "eloPeak": 1000
     },
     "music-beatriz": {
-      "rank": 73,
-      "ordinal": 4.9001,
-      "elo": 958,
-      "eloPeak": 1039
-    },
-    "music-john-gospel-chapter-i-by-max-headroom": {
       "rank": 74,
-      "ordinal": 4.6937,
-      "elo": 961,
-      "eloPeak": 1002
+      "ordinal": 4.5551,
+      "elo": 942,
+      "eloPeak": 1039
     },
     "music-entre-rascunho-e-apagar": {
       "rank": 75,

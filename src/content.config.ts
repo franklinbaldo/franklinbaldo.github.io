@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { defineCollection, z, type SchemaContext } from "astro:content";
 import { glob } from "astro/loaders";
 import { listAllVersionSlugs, flatCanonicalPath } from "./hronir/selection.js";
+import { generateBlogId } from "./lib/blog-id.js";
 
 // RFC 0010 (amended 2026-07-01): the published version of a *legacy*-layout
 // post is whatever versions-selected.json points at — selection is a
@@ -114,17 +115,13 @@ const publishedPattern =
     : ["**/index.{md,mdx}"];
 
 const blog = defineCollection({
-  // A legacy slug lives in its own folder <slug>/ holding peer version
-  // files (v-<timestamp>.md); the collection loads exactly the version
-  // versions-selected.json picks (RFC 0010). A flat slug (RFC 0015) is a
-  // single `<slug>.mdx` at the content root — already the right id, no
-  // selection lookup needed. generateId strips the version filename for
-  // the legacy case and is a no-op for the flat case, so the id is the
-  // flat slug either way, preserving every existing URL.
+  // See generateBlogId (src/lib/blog-id.ts) for what this strips and why —
+  // legacy folder-per-slug vs. RFC 0015 flat-file both need to end up as
+  // the bare slug, extension-free.
   loader: glob({
     pattern: publishedPattern,
     base: "./src/content/blog",
-    generateId: ({ entry }) => entry.replace(/\/(v-[^/]+|index)\.mdx?$/, ""),
+    generateId: ({ entry }) => generateBlogId(entry),
   }),
   schema: postSchema,
 });
