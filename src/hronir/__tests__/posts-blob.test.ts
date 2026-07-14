@@ -22,7 +22,10 @@ import {
 
 // Any already-committed content file works — the invariant doesn't depend on
 // which one. Picking a small, stable existing post keeps the test fast.
-const REAL_FILE = "src/content/blog/events-welcome/v-2026-06-10T05-09-44.md";
+// RFC 0015: flat file, not a legacy version file — flattened posts are the
+// resting state (no further rename expected), so this path is more stable
+// against Fase D's incremental rollout than a legacy `<slug>/v-*.md` path.
+const REAL_FILE = "src/content/blog/events-welcome.md";
 
 describe("blob-backed identity matches file-backed identity", () => {
   it("uuid/legacyUuid/preOkfUuid agree for a real committed file", () => {
