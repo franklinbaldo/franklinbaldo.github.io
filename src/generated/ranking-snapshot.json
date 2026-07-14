@@ -1,9 +1,9 @@
 {
   "_meta": {
     "schema": "snapshot-v2",
-    "generatedAt": "2026-07-14T10:24:17.091Z",
+    "generatedAt": "2026-07-14T12:58:20.649Z",
     "basis": "build",
-    "totalDuels": 2014
+    "totalDuels": 2015
   },
   "keys": {
     "asterisk-protects": {
@@ -20,8 +20,8 @@
     },
     "its-raining-truth": {
       "rank": 3,
-      "ordinal": 15.9273,
-      "elo": 1152,
+      "ordinal": 16.2134,
+      "elo": 1164,
       "eloPeak": 1167
     },
     "family-memory": {
@@ -72,17 +72,17 @@
       "elo": 1068,
       "eloPeak": 1150
     },
-    "rosencrantz-coin": {
-      "rank": 12,
-      "ordinal": 12.5907,
-      "elo": 1051,
-      "eloPeak": 1134
-    },
     "reclaiming-harness": {
-      "rank": 13,
+      "rank": 12,
       "ordinal": 12.465,
       "elo": 1079,
       "eloPeak": 1114
+    },
+    "rosencrantz-coin": {
+      "rank": 13,
+      "ordinal": 12.4351,
+      "elo": 1040,
+      "eloPeak": 1134
     },
     "pampa-circuit": {
       "rank": 14,
