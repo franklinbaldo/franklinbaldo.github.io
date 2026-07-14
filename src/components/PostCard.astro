@@ -30,8 +30,8 @@ const overflowCount = allTags.length - visibleTags.length;
 ---
 
 <article data-post-lang={postLang} lang={postLang}>
-  {heroImage && (
-    <a href={href}>
+  <a href={href}>
+    {heroImage ? (
       <Image
         src={heroImage}
         alt={heroImageAlt ?? ''}
@@ -40,8 +40,16 @@ const overflowCount = allTags.length - visibleTags.length;
         format="webp"
         loading="lazy"
       />
-    </a>
-  )}
+    ) : (
+      <img
+        src={`/og/${post.id}.png`}
+        alt=""
+        width="1200"
+        height="630"
+        loading="lazy"
+      />
+    )}
+  </a>
   <header>
     <hgroup>
       <h2><a href={href}>{title}</a></h2>
