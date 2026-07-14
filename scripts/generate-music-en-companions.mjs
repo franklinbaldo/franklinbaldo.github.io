@@ -138,6 +138,10 @@ async function main() {
   for (const ptPath of ptFiles) {
     const slug = postIdFromPath(ptPath);
     const enDir = join(BLOG_DIR, `${slug}-en`);
+    // RFC 0015: a flattened companion has no directory at all — check the
+    // flat file too, or a flattened slug's existing companion looks
+    // "missing" and this script creates a duplicate legacy-layout one.
+    const enFlatPath = join(BLOG_DIR, `${slug}-en.mdx`);
     const stamp = new Date()
       .toISOString()
       .replace(/\.\d+Z$/, "")
@@ -168,8 +172,8 @@ async function main() {
       updated++;
     }
 
-    // Create EN companion (never overwrite an existing companion dir)
-    if (existsSync(enDir)) {
+    // Create EN companion (never overwrite an existing companion, flat or dir)
+    if (existsSync(enDir) || existsSync(enFlatPath)) {
       skipped++;
       continue;
     }

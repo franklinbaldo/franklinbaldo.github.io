@@ -3,7 +3,7 @@
 // of rolling their own readdirSync/glob logic. This is the one place the
 // RFC 0003 migration will update (postIdFromPath) when the layout changes
 // from flat files to per-post directories.
-import { readFileSync, readdirSync, existsSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import { join, relative, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -15,22 +15,46 @@ const SELECTION_PATH = join(
 );
 
 /**
+ * True when `slug` has a legacy versioned directory with at least one real
+ * version file in it — as opposed to a loose orphan file that merely
+ * happens to share a slug's name (e.g. src/content/blog/images/, which
+ * holds cover art, not posts), or a directory that doesn't exist at all.
+ * Plain-JS mirror of hasLegacyDir in src/hronir/selection.ts (that module
+ * is TS, unimportable from this bare-node file — see postIdFromPath below).
+ */
+function hasLegacyDir(slug) {
+  const dir = join(BLOG_DIR, slug);
+  if (!existsSync(dir) || !statSync(dir).isDirectory()) return false;
+  return readdirSync(dir).some(
+    (f) => /\.mdx?$/.test(f) && /^(v-|index\.)/.test(f)
+  );
+}
+
+/**
  * Flat slugs (RFC 0015): a single `<slug>.md(x)` directly at BLOG_DIR root,
  * with no peer directory of the same name. A slug can't be in both layouts
  * at once — `flatten` always rmdir's the legacy folder when it flattens a
  * slug — except for two pre-existing orphans (RFC 0015 §1) that carry a
  * loose root file *alongside* their still-versioned directory; the
  * directory always wins for those (mirrors flatCanonicalPath's tie-break in
- * src/hronir/selection.ts), so this never double-counts with the
- * versions-selected.json branch below.
+ * src/hronir/selection.ts — including its .mdx-over-.md extension
+ * preference, so a stray same-slug .md/.mdx pair never double-counts
+ * either), so this never double-counts with the versions-selected.json
+ * branch below.
  */
 function listFlatSlugFiles() {
-  const out = [];
+  const bySlug = new Map(); // slug -> preferred extension (".mdx" wins)
   for (const entry of readdirSync(BLOG_DIR, { withFileTypes: true })) {
-    if (entry.isDirectory() || !/\.mdx?$/.test(entry.name)) continue;
-    const slug = entry.name.replace(/\.mdx?$/, "");
-    if (existsSync(join(BLOG_DIR, slug))) continue; // orphan — dir wins
-    out.push(join(BLOG_DIR, entry.name));
+    if (entry.isDirectory()) continue;
+    const m = entry.name.match(/^(.+)(\.mdx?)$/);
+    if (!m) continue;
+    const [, slug, ext] = m;
+    if (bySlug.get(slug) !== ".mdx") bySlug.set(slug, ext);
+  }
+  const out = [];
+  for (const [slug, ext] of bySlug) {
+    if (hasLegacyDir(slug)) continue; // orphan — dir wins
+    out.push(join(BLOG_DIR, `${slug}${ext}`));
   }
   return out;
 }

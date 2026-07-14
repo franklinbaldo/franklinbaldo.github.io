@@ -6,7 +6,8 @@ import { toBreadcrumbLd } from "../../../lib/breadcrumbs";
 import { getCollection } from "astro:content";
 import { getDuels, getRankByKey } from "../../../lib/hronir-rank";
 import { isPublished } from "../../../lib/publish";
-import { GITHUB_REPO } from "../../../lib/versions.js";
+import { GITHUB_REPO, fileForId } from "../../../lib/versions.js";
+import { slugForContentPath } from "../../../hronir/selection.js";
 import { marked } from "marked";
 
 export async function getStaticPaths() {
@@ -76,8 +77,14 @@ function dossierHref(key: string | undefined) {
 }
 
 const REPO = `https://github.com/${GITHUB_REPO}`;
+// See the same helper in ../versions/[key].astro: `path` on a rate file is
+// a resolution cache from duel time, not a durable pointer — RFC 0015
+// flatten (and eventually prune) moves/removes files, so re-resolve via
+// the slug (fileForId is dual-mode) instead of trusting the stored path.
 function sourceHref(path: string | null | undefined) {
-  return path ? `${REPO}/blob/main/${path}` : null;
+  if (!path) return null;
+  const live = fileForId(slugForContentPath(path));
+  return live ? `${REPO}/blob/main/${live}` : null;
 }
 
 const winnerIsA = duel.winnerSide
