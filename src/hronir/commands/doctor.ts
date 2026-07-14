@@ -183,19 +183,30 @@ export function doctor() {
 
     // RFC 0010 §4.3: path é cache de resolução, version (UUID) é identidade.
     // Após a migração (index.* → v-*), um select ou um prune, o path gravado
-    // no rate file pode deixar de existir. Para stars-v2 o UUID precisa
+    // no rate file pode deixar de existir. Para stars-v2+ o UUID precisa
     // resolver de verdade: um peer atual (uuid ou legacy) ou uma entrada no
-    // registro de podas — senão é versão-fantasma (typo, deleção acidental).
-    // stars-v1 gravou o UUID body-only da época do duelo; edições in-place
-    // posteriores tornam esse hash irrecuperável, então basta a pasta do
-    // post existir.
+    // registro de podas/histórico — senão é versão-fantasma (typo, deleção
+    // acidental). stars-v1 gravou o UUID body-only da época do duelo;
+    // edições in-place posteriores tornam esse hash irrecuperável, então
+    // basta a pasta do post existir.
+    //
+    // RFC 0015: um flatten com zero desafiantes renomeia o arquivo E faz
+    // rmdir do diretório `<slug>/` — path.dirname(p) deixa de existir mesmo
+    // quando o slug segue perfeitamente vivo (agora achatado). Por isso a
+    // checagem ref-schema NUNCA testa `fs.existsSync(path.dirname(p))`:
+    // slugForContentPath(p) é parsing puro de string (não depende do
+    // diretório ainda existir) e dirUuids(slug) é dual-mode (acha o arquivo
+    // achatado OU o irmão legado). O ramo stars-v1 abaixo mantém o teste de
+    // diretório original de propósito — apertar esse ramo também expõe
+    // dívida antiga não relacionada (matches stars-v1 apontando pra slugs
+    // renomeados antes da RFC 0010 nem existir), fora do escopo daqui.
     const isRefSchema = REF_SCHEMAS.has(String(data.prompt_version));
     const tolerableGone = (
       p: string | undefined,
       version: string | undefined
     ) => {
-      if (!p || !version || !fs.existsSync(path.dirname(p))) return false;
-      if (!isRefSchema) return true;
+      if (!p || !version) return false;
+      if (!isRefSchema) return fs.existsSync(path.dirname(p));
       const slug = slugForContentPath(p);
       return (
         dirUuids(slug).has(version) || prunedUuids.has(`${slug}@${version}`)

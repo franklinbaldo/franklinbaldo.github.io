@@ -9,7 +9,8 @@ import {
   getPostVersionTrials,
 } from "../../../lib/hronir-rank";
 import { isPublished } from "../../../lib/publish";
-import { GITHUB_REPO } from "../../../lib/versions.js";
+import { GITHUB_REPO, fileForId } from "../../../lib/versions.js";
+import { slugForContentPath } from "../../../hronir/selection.js";
 
 // RFC 0012 §6.2: genealogy of one post's revisions — every version trial, the
 // distinct versions seen, and permalinks to the exact content judged.
@@ -48,8 +49,17 @@ const postHref = info
   : null;
 
 const REPO = `https://github.com/${GITHUB_REPO}`;
+// The `path` recorded on a rate file is a resolution cache from duel time,
+// not a durable pointer — the RFC 0015 flatten (and, eventually, prune)
+// moves/removes files, so a raw historical path can 404 on `main` long
+// after the duel. Re-resolve via the slug (fileForId is dual-mode: flat
+// file or legacy sibling, whichever is current) instead of trusting the
+// stored path directly — mirrors how doctor.ts treats path as cache,
+// version+slug as identity.
 function sourceHref(path: string | null | undefined) {
-  return path ? `${REPO}/blob/main/${path}` : null;
+  if (!path) return null;
+  const live = fileForId(slugForContentPath(path));
+  return live ? `${REPO}/blob/main/${live}` : null;
 }
 
 // Distinct versions seen across all trials, with their source paths and a
