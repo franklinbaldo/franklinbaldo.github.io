@@ -13,6 +13,17 @@ name: Hrönir Autopilot
 # sessions produce rate files under .routines/hronir/rates/ (hourly matches
 # routine) or v-* draft files under src/content/blog/ (daily edit-worst
 # routine).
+#
+# `workflow_run: workflows: ["Check"]` fires on EVERY PR's Check completion
+# repo-wide — Dependabot bumps, manual infra PRs, anything — not just
+# Hrönir session PRs. The path gate below already rejects those correctly,
+# but only after a full checkout + several `gh` API calls per irrelevant PR
+# (confirmed in practice: e.g. run 29319125165 spent a full job on PR #1055,
+# a Dependabot workflow-file bump, before hitting "touches out-of-scope
+# file"). The job-level `if` below adds a branch-prefix check so those never
+# get past "Set up job" — every legitimate Hrönir branch (routine sessions,
+# edit-worst, flatten pilots/batches) uses the `hronir/` prefix by
+# convention (see docs/hronir-agent-routine.md, docs/hronir-edit-worst-routine.md).
 
 on:
   workflow_run:
@@ -45,12 +56,15 @@ env:
 jobs:
   merge:
     runs-on: ubuntu-latest
-    # Manual dispatch, or a successful Check run on a real PR branch (not main).
+    # Manual dispatch, or a successful Check run on a hronir/* PR branch.
+    # The branch-prefix check is what keeps every non-Hrönir PR (Dependabot
+    # bumps, manual infra/content PRs) from even reaching "Set up job" — see
+    # the comment above SAFE_PREFIXES.
     if: >
       github.event_name == 'workflow_dispatch' ||
       (github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.head_branch != 'main')
+      startsWith(github.event.workflow_run.head_branch, 'hronir/'))
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
