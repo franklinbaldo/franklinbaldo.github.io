@@ -21,7 +21,26 @@ jobs:
 
       - run: npm ci
 
+      # PRs da rotina horária tocam só .routines/** (rate files + journal):
+      # mudam dados de ranking, não a performance das páginas — o Lighthouse
+      # não tem o que pegar nelas (ver o gate no passo Lighthouse).
+      - name: Classify PR scope
+        id: scope
+        if: github.event_name == 'pull_request'
+        run: |
+          CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          if [ -n "$CHANGED" ] && ! echo "$CHANGED" | grep -qv '^\.routines/'; then
+            echo "routines_only=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "routines_only=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Build e cache só em PR: no push a main o Deploy builda o mesmo commit
+      # em seguida — buildar aqui de novo só duplica custo. O cache também é
+      # condicionado para não gravar um .astro vazio sob a key exata do sha,
+      # o que roubaria do Deploy o restore-keys de um build anterior quente.
       - name: Cache Astro build state
+        if: github.event_name == 'pull_request'
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: .astro
@@ -110,9 +129,13 @@ jobs:
         run: npx astro check
 
       - name: Build
+        if: github.event_name == 'pull_request'
         run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Lighthouse lê ./dist (staticDistDir), então só roda quando o Build
+      # rodou — e é pulado em PRs que só tocam .routines/** (ver Classify).
       - name: Lighthouse CI
+        if: github.event_name == 'pull_request' && steps.scope.outputs.routines_only != 'true'
         run: npx lhci autorun --config=.lighthouserc.cjs

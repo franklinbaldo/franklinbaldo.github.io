@@ -1,21 +1,18 @@
 name: Hrönir Autopilot
 
-# Merge machine for the Hrönir/Jules loop.
+# Merge machine for Hrönir session PRs.
 #
 # Fires when the "Check" workflow finishes on a PR branch. If that PR
-# touches only the safe paths (rate files or draft version files required)
-# and CI is green, it is merged with a merge commit and a replacement
-# session is spawned.
+# touches only the safe paths (rate files or draft version files required),
+# CI is green and no review blocks it, it is merged with a merge commit.
+# Sessions themselves are spawned externally (agent routines) — this
+# workflow only merges.
 #
-# Gate: path check + CI green. No external API verification needed — the
-# safe-path constraint is sufficient: only hronir sessions produce rate
-# files under .routines/hronir/rates/ (hourly matches routine) or v-*
-# draft files under src/content/blog/ (daily edit-worst routine).
-#
-# hronir-heartbeat.yml maintains the pool as a backstop (every 15 min).
-# This workflow provides the reactive path: merge → immediately spawn.
-#
-# Requires repo secret JULES_API_KEY (the Google Jules API key, for spawn).
+# Gate: path check + CI green + no blocking review. No external API
+# verification needed — the safe-path constraint is sufficient: only hronir
+# sessions produce rate files under .routines/hronir/rates/ (hourly matches
+# routine) or v-* draft files under src/content/blog/ (daily edit-worst
+# routine).
 
 on:
   workflow_run:
@@ -24,7 +21,7 @@ on:
   workflow_dispatch:
     inputs:
       pr:
-        description: "PR number to merge + respawn (manual)"
+        description: "PR number to merge (manual)"
         required: true
         type: string
 
@@ -46,7 +43,7 @@ env:
   SAFE_PREFIXES: ".routines/hronir/ src/content/blog/ src/generated/versions-pruned.json src/generated/versions-history.json"
 
 jobs:
-  merge-and-respawn:
+  merge:
     runs-on: ubuntu-latest
     # Manual dispatch, or a successful Check run on a real PR branch (not main).
     if: >
@@ -148,6 +145,13 @@ jobs:
             echo "PR #$PR not mergeable (mergeable=$MERGEABLE) — skipping."
             echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
           fi
+          # 2b) Blocking review: the routines skip PRs with blocking reviews;
+          #     the autopilot must respect the same signal.
+          REVIEW=$(gh pr view "$PR" --repo "$REPO" --json reviewDecision --jq '.reviewDecision // ""')
+          if [ "$REVIEW" = "CHANGES_REQUESTED" ]; then
+            echo "PR #$PR has a blocking review (reviewDecision=$REVIEW) — skipping."
+            echo "merged=" >> "$GITHUB_OUTPUT"; exit 0
+          fi
           # Require only the project's own CI job ("check") to be green. Third-
           # party review bots (Kilo, Codex, GitGuardian) post their own check
           # runs and may fail on usage limits — they must NOT block the merge.
@@ -165,14 +169,3 @@ jobs:
           gh pr merge "$PR" --repo "$REPO" --merge --delete-branch
           echo "Merged PR #$PR."
           echo "merged=$PR" >> "$GITHUB_OUTPUT"
-
-      # Respawn disabled — Jules substituído por outro agente.
-      # Para reativar: descomentar o step abaixo e restaurar JULES_API_KEY.
-      # - name: Respawn session after merge
-      #   if: steps.merge.outputs.merged != ''
-      #   env:
-      #     JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
-      #   run: |
-      #     set -euo pipefail
-      #     echo "Spawning replacement session..."
-      #     bash scripts/hronir/spawn-session.sh
