@@ -1,7 +1,13 @@
 ---
+interface Props {
+  lang?: string;
+}
+const { lang = 'en' } = Astro.props;
+const label = lang === 'pt' ? 'Voltar ao topo' : 'Back to top';
+const text = lang === 'pt' ? '↑ Topo' : '↑ Top';
 ---
 
-<a href="#main" class="back-to-top" aria-label="Back to top">↑ Top</a>
+<a href="#main" class="back-to-top" aria-label={label}>{text}</a>
 
 <style>
   .back-to-top {
