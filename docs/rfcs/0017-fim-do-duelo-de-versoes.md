@@ -244,16 +244,25 @@ manifesto auditável temporário denominado
 `src/generated/migration-0017-survivors.json` (raiz do repo tem allowlist
 fechada — `check:hygiene` — daí viver em `src/generated/` como os outros
 artefatos de migração), que deve ser mantido no repositório durante as PRs
-de migração (podendo ser removido na última fase). O manifesto deve
-registrar, para cada slug, um objeto no seguinte formato:
+de migração (podendo ser removido na última fase). Gerado por
+`scripts/oneoff/2026-07-15-rfc-0017-fase1-flatten.mjs` — script preservado
+(padrão de dados persistidos, `CLAUDE.md`), reexecutável a qualquer momento
+para migrar o que restar de diretórios legados. Schema
+`migration-0017-survivors-v1`, mesma convenção de `_meta.schema` dos outros
+artefatos gerados (`versions-selected.json`, `ranking-snapshot.json`):
 
 ```json
 {
-  "slug": "nome-da-obra",
-  "lang": "pt",
-  "kept": "src/content/blog/nome-da-obra.mdx",
-  "reason": "selected",
-  "removed": ["src/content/blog/nome-da-obra/v-....mdx"]
+  "_meta": { "schema": "migration-0017-survivors-v1" },
+  "entries": [
+    {
+      "slug": "nome-da-obra",
+      "lang": "pt",
+      "kept": "src/content/blog/nome-da-obra.mdx",
+      "reason": "selected",
+      "removed": ["src/content/blog/nome-da-obra/v-....mdx"]
+    }
+  ]
 }
 ```
 

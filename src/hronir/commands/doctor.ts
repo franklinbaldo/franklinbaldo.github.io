@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { listPosts, readPost, getPostUuid } from "../posts.js";
+import { listPosts, readPost, getPostUuid, keyForPath } from "../posts.js";
 import {
   SELECTION_PATH,
   readSelection,
@@ -91,6 +91,12 @@ function isValidRate(n: unknown): boolean {
 
 export function doctor() {
   const pathToKey = buildPathToKeyIndex();
+  // Obras vivas por key (RFC 0017: identidade de obra, não de versão) —
+  // usado para pegar um post_a/post_b.key corrompido ou digitado errado em
+  // matches ainda sendo gerados (select/prune/draft-worst continuam ativos
+  // até a Fase 3), sem reviver a máquina de tolerância de path/UUID que a
+  // Fase 1 tornou obsoleta.
+  const validKeys = new Set(listPosts().map((p) => keyForPath(p)));
   const issues = [];
   // Non-blocking findings: expected, self-healing states that shouldn't fail
   // CI (e.g. a translation group temporarily on different revisions — see
@@ -138,31 +144,44 @@ export function doctor() {
     const aPath = postA.path as string | undefined;
     const bPath = postB.path as string | undefined;
 
-    // RFC 0017: path é cache de resolução, não identidade — e desde a
-    // eliminação do duelo `version`, um path desatualizado num rate file
-    // histórico (arquivo movido/removido por draft-worst/draft-commit ou
-    // pela migração de achatamento) deixou de ser algo a sinalizar: não há
-    // mais seleção/poda/histórico de versão para tolerá-lo contra, porque
-    // não há mais nada que o path precise continuar resolvendo. O rate file
-    // em si permanece legível como registro histórico (CLAUDE.md — rate
-    // files são imutáveis); só a checagem de existência do path foi
-    // removida, não o arquivo.
+    // RFC 0017 Fase 1: path deixou de ser validado contra o disco aqui — a
+    // Fase 1 já apaga versões perdedoras sem registrar nada (decisão 5),
+    // então um path histórico desatualizado é esperado e não é mais
+    // sinalizável por existência de arquivo. Mas `select`/`prune`/
+    // `draft-worst`/`pickVersionDuel` continuam ativos até a Fase 3 (ainda
+    // não implementada) — então `key` continua precisando resolver a uma
+    // obra real: sem essa checagem, um `key` corrompido ou digitado errado
+    // num match recém-gerado passaria por `doctor` sem aviso e
+    // contaminaria silenciosamente `computeAbsoluteQuality`/
+    // `computeDeconfoundedQuality` (ranking.ts), que confiam em
+    // key/version vindos do rate file sem verificação independente.
+    // `key` ausente é sempre erro de schema (bloqueia). `key` presente mas
+    // sem obra correspondente vira aviso, não erro: matches antigos
+    // (stars-v1, ~16 encontrados de 2026-06-24) referenciam posts que já
+    // não existem sob nenhum nome atual — dívida de dados anterior a esta
+    // RFC, não algo a bloquear commits novos; o objetivo aqui é sinalizar
+    // key corrompido em matches futuros, não reprovar retroativamente o
+    // acervo histórico.
     if (!aKey) issues.push(`${base}: post_a.key ausente`);
+    else if (!validKeys.has(aKey))
+      warnings.push(
+        `${base}: post_a.key=${aKey} não corresponde a nenhuma obra existente`
+      );
     if (!bKey) issues.push(`${base}: post_b.key ausente`);
+    else if (!validKeys.has(bKey))
+      warnings.push(
+        `${base}: post_b.key=${bKey} não corresponde a nenhuma obra existente`
+      );
 
-    if (aPath && fs.existsSync(aPath)) {
-      const expected = pathToKey.get(aPath);
-      if (expected && aKey && expected !== aKey) {
+    for (const [p, key, label] of [
+      [aPath, aKey, "post_a"],
+      [bPath, bKey, "post_b"],
+    ] as const) {
+      if (!p || !fs.existsSync(p)) continue;
+      const expected = pathToKey.get(p);
+      if (expected && key && expected !== key) {
         issues.push(
-          `${base}: post_a.key=${aKey} mas translationKey real é ${expected}`
-        );
-      }
-    }
-    if (bPath && fs.existsSync(bPath)) {
-      const expected = pathToKey.get(bPath);
-      if (expected && bKey && expected !== bKey) {
-        issues.push(
-          `${base}: post_b.key=${bKey} mas translationKey real é ${expected}`
+          `${base}: ${label}.key=${key} mas translationKey real é ${expected}`
         );
       }
     }
