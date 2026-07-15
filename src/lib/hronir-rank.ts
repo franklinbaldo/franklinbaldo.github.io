@@ -198,16 +198,6 @@ export function getAllDuels(): DuelEntry[] {
   return loadDuelData().recent;
 }
 
-// RFC 0012 §6.2: all version trials, newest first.
-export function getVersionTrials(): DuelEntry[] {
-  return getDuels({ kind: "version" });
-}
-
-// Version trials for one post key (both sides share the key).
-export function getPostVersionTrials(key: string): DuelEntry[] {
-  return getDuels({ kind: "version" }).filter((d) => d.postAKey === key);
-}
-
 // RFC 0012 §6.4: the canonical duel accessor. `kind` is required — there is no
 // ambiguous default. "work" = editorial battles between distinct posts;
 // "version" = revision trials of one post; "all" = the raw archive. Fase 2
@@ -247,8 +237,8 @@ export function getDuelById(id: string): DuelEntry | undefined {
   return getAllDuels().find((d) => d.id === id);
 }
 
-// RFC 0012 §6.3: a post's editorial record is work duels only. Version trials
-// live in the dossier's "Edit history" section via getPostVersionTrials.
+// RFC 0012 §6.3: a post's editorial record is work duels only — version
+// trials no longer have a public surface (RFC 0017).
 export function getPostDuelHistory(key: string): DuelEntry[] {
   return getDuels({ kind: "work" }).filter(
     (d) => d.postAKey === key || d.postBKey === key

@@ -6,10 +6,13 @@ import { toBreadcrumbLd } from "../../../lib/breadcrumbs";
 import { getCollection } from "astro:content";
 import { getDuels, getRankByKey } from "../../../lib/hronir-rank";
 import { isPublished } from "../../../lib/publish";
-import { GITHUB_REPO, fileForId } from "../../../lib/versions.js";
-import { slugForContentPath } from "../../../hronir/selection.js";
 import { marked } from "marked";
 
+// RFC 0017: o duelo `version` foi eliminado — esta página só gera detalhe
+// para duelos `work` (comparação editorial entre obras diferentes).
+// Duelos `version` históricos continuam legíveis diretamente nos rate
+// files (.routines/hronir/rates/), mas não alimentam mais nenhuma página
+// pública (decisão 8 da RFC 0017).
 export async function getStaticPaths() {
   const allPosts = await getCollection("blog");
   const byKey = new Map<string, { title: string; slug: string; lang: string }>();
@@ -22,13 +25,10 @@ export async function getStaticPaths() {
     if (!existing || lang === "en") byKey.set(key, { title: p.data.title, slug: p.id, lang });
   }
 
-  // RFC 0012: editorial (work) and version trials are distinct universes. Each
-  // duel detail navigates within its own kind, with its own archive backlink.
   const PER_PAGE = 20;
   const work = getDuels({ kind: "work" });
-  const versions = getDuels({ kind: "version" });
 
-  const workPaths = work.map((duel, i) => {
+  return work.map((duel, i) => {
     const archivePage = Math.floor(i / PER_PAGE) + 1;
     const archiveBase = archivePage === 1 ? "/ranking/battles/" : `/ranking/battles/page/${archivePage}/`;
     return {
@@ -44,27 +44,10 @@ export async function getStaticPaths() {
       },
     };
   });
-
-  const versionPaths = versions.map((duel, i) => ({
-    params: { id: duel.id },
-    props: {
-      duel,
-      prevId: i + 1 < versions.length ? versions[i + 1].id : null,
-      nextId: i > 0 ? versions[i - 1].id : null,
-      archiveHref: `/ranking/versions/${duel.postAKey ?? ""}/`,
-      archiveLabel: "Version trials",
-      postAInfo: byKey.get(duel.postAKey ?? ""),
-      postBInfo: byKey.get(duel.postBKey ?? ""),
-    },
-  }));
-
-  return [...workPaths, ...versionPaths];
 }
 
 const { duel, prevId, nextId, archiveHref, archiveLabel, postAInfo, postBInfo } =
   Astro.props;
-
-const isVersion = duel.isVersionDuel === true;
 
 function postHref(info: { slug: string; lang: string } | undefined) {
   if (!info) return null;
@@ -74,17 +57,6 @@ function postHref(info: { slug: string; lang: string } | undefined) {
 function dossierHref(key: string | undefined) {
   if (!key) return null;
   return `/ranking/posts/${key}/`;
-}
-
-const REPO = `https://github.com/${GITHUB_REPO}`;
-// See the same helper in ../versions/[key].astro: `path` on a rate file is
-// a resolution cache from duel time, not a durable pointer — RFC 0015
-// flatten (and eventually prune) moves/removes files, so re-resolve via
-// the slug (fileForId is dual-mode) instead of trusting the stored path.
-function sourceHref(path: string | null | undefined) {
-  if (!path) return null;
-  const live = fileForId(slugForContentPath(path));
-  return live ? `${REPO}/blob/main/${live}` : null;
 }
 
 const winnerIsA = duel.winnerSide
@@ -98,13 +70,6 @@ const winnerTitle = winnerInfo?.title ?? winnerKey;
 const loserTitle = loserInfo?.title ?? loserKey;
 const winnerHref = postHref(winnerInfo);
 const loserHref = postHref(loserInfo);
-
-// Version trials: both sides share the post; the identity is the slug@uuid ref.
-const postTitle = postAInfo?.title ?? duel.postAKey ?? "";
-const winnerRef = winnerIsA ? duel.postARef : duel.postBRef;
-const loserRef = winnerIsA ? duel.postBRef : duel.postARef;
-const winnerSrc = sourceHref(winnerIsA ? duel.postAPath : duel.postBPath);
-const loserSrc = sourceHref(winnerIsA ? duel.postBPath : duel.postAPath);
 
 const rateWinner = winnerIsA ? duel.rateA : duel.rateB;
 const rateLoser = winnerIsA ? duel.rateB : duel.rateA;
@@ -134,17 +99,12 @@ const contentLangs = [
 ].join("/");
 const critiqueLang = duel.reviewLang ? duel.reviewLang.toUpperCase() : null;
 
-const pageTitle = isVersion
-  ? `Version trial — ${postTitle}`
-  : `${winnerTitle} vs ${loserTitle}`;
-const pageDesc = isVersion
-  ? `Hrönir version trial for "${postTitle}": ${winnerRef} beat ${loserRef}.`
-  : `Hrönir duel: ${winnerTitle} beat ${loserTitle}${duel.perspectiveId ? ` under the ${duel.perspectiveId} perspective` : ""}.`;
+const pageTitle = `${winnerTitle} vs ${loserTitle}`;
+const pageDesc = `Hrönir duel: ${winnerTitle} beat ${loserTitle}${duel.perspectiveId ? ` under the ${duel.perspectiveId} perspective` : ""}.`;
 
-// Global rank is editorial-only; a version trial never carries one.
 const rankByKey = getRankByKey();
-const winnerRank = isVersion ? undefined : rankByKey.get(winnerKey);
-const loserRank = isVersion ? undefined : rankByKey.get(loserKey);
+const winnerRank = rankByKey.get(winnerKey);
+const loserRank = rankByKey.get(loserKey);
 
 const crumbs = [
   { name: "Home", href: "/" },
@@ -164,7 +124,7 @@ const crumbs = [
   <Breadcrumbs items={crumbs} lang="en" />
 
   <hgroup>
-    <h1>{isVersion ? "Version Trial" : "Battle Report"}</h1>
+    <h1>Battle Report</h1>
     <p><small>{fmtDate(duel.runAt)}</small></p>
   </hgroup>
 
@@ -172,11 +132,6 @@ const crumbs = [
 
   <div class="battle-tags">
     {duel.season !== undefined && <span class="tag tag-season">Season {duel.season}</span>}
-    {isVersion && (
-      <span class="tag">
-        <a href={`/ranking/versions/${duel.postAKey}/`}>version trial</a>
-      </span>
-    )}
     {duel.perspectiveId && (
       <span class="tag tag-perspective" style={`--ph:${perspectiveHue(duel.perspectiveId)}`}>
         <a href={`/ranking/perspectives/${duel.perspectiveId}/`}>{duel.perspectiveId.replace(/-/g, " ")}</a>
@@ -188,34 +143,21 @@ const crumbs = [
     {critiqueLang && <span class="tag tag-lang">critique: {critiqueLang}</span>}
   </div>
 
-  {isVersion && (
-    <p class="version-note">
-      A revision trial of <a href={`/ranking/versions/${duel.postAKey}/`}>{postTitle}</a> —
-      two versions of the same post compared. This does not affect the editorial ranking.
-    </p>
-  )}
-
   <section class="versus-section" aria-label="Versus">
     <div class="versus-grid">
       <div class="versus-side winner">
         <div class="versus-label">Winner 🏆</div>
         <div class="versus-title">
-          {isVersion
-            ? <code>{winnerRef}</code>
-            : winnerHref
-              ? <a href={winnerHref}>{winnerTitle}</a>
-              : <span>{winnerTitle}</span>}
+          {winnerHref
+            ? <a href={winnerHref}>{winnerTitle}</a>
+            : <span>{winnerTitle}</span>}
         </div>
         {hasRates && <div class="versus-rate">{rateWinner!.toFixed(2)}</div>}
-        {isVersion
-          ? winnerSrc && (
-              <div class="versus-rank"><a href={winnerSrc}>read source →</a></div>
-            )
-          : winnerRank && (
-              <div class="versus-rank">
-                <a href={dossierHref(winnerKey) ?? "/ranking/"}>#{winnerRank.rank}/{winnerRank.total}</a>
-              </div>
-            )}
+        {winnerRank && (
+          <div class="versus-rank">
+            <a href={dossierHref(winnerKey) ?? "/ranking/"}>#{winnerRank.rank}/{winnerRank.total}</a>
+          </div>
+        )}
       </div>
 
       <div class="versus-center">
@@ -223,24 +165,18 @@ const crumbs = [
       </div>
 
       <div class="versus-side loser">
-        <div class="versus-label">{isVersion ? "Challenger version" : "Challenger"}</div>
+        <div class="versus-label">Challenger</div>
         <div class="versus-title">
-          {isVersion
-            ? <code>{loserRef}</code>
-            : loserHref
-              ? <a href={loserHref}>{loserTitle}</a>
-              : <span>{loserTitle}</span>}
+          {loserHref
+            ? <a href={loserHref}>{loserTitle}</a>
+            : <span>{loserTitle}</span>}
         </div>
         {hasRates && <div class="versus-rate loser-rate">{rateLoser!.toFixed(2)}</div>}
-        {isVersion
-          ? loserSrc && (
-              <div class="versus-rank"><a href={loserSrc}>read source →</a></div>
-            )
-          : loserRank && (
-              <div class="versus-rank">
-                <a href={dossierHref(loserKey) ?? "/ranking/"}>#{loserRank.rank}/{loserRank.total}</a>
-              </div>
-            )}
+        {loserRank && (
+          <div class="versus-rank">
+            <a href={dossierHref(loserKey) ?? "/ranking/"}>#{loserRank.rank}/{loserRank.total}</a>
+          </div>
+        )}
       </div>
     </div>
 
@@ -307,9 +243,7 @@ const crumbs = [
 
 <style>
   .battle-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
-  .version-note { font-size: 0.85rem; color: var(--pico-muted-color); margin: 0 0 1.5rem; }
   .tag-lang { font-family: var(--pico-font-family-monospace); text-transform: none; letter-spacing: 0; }
-  .versus-title code { font-size: 0.82rem; word-break: break-all; }
   .tag {
     font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em;
     padding: 0.15rem 0.5rem; border-radius: 4px;

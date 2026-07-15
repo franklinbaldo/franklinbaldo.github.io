@@ -51,8 +51,4 @@
 
   render();
   document.addEventListener("astro:page-load", render);
-  // Archived version pages (ArchivedContent.astro) insert their article body
-  // asynchronously, well after astro:page-load already fired — they dispatch
-  // this event once their fetched markdown is rendered into the DOM.
-  document.addEventListener("archived-content:loaded", render);
 </script>

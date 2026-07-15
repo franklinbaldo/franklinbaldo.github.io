@@ -120,6 +120,10 @@ check derivam — veja RFC 0004.
 
 - **Código e identificadores**: inglês (variáveis, funções, comentários inline).
 - **Docs, RFCs, prosa de processo** (`docs/`, `CLAUDE.md`, mensagens de commit): português.
+- **Exceção — `changelog/`**: entradas de changelog (`changelog/<versão>.md`)
+  são em **inglês**, formatadas como markdown OKF (`type` obrigatório, aqui
+  `Changelog Entry` — ver `docs/okf/README.md`). Decisão deliberada do
+  dono, não um erro a "corrigir" de volta para português.
 - **Reviews e clash nos rate files** (RFC 0012 §6): escritos na `review_lang`,
   um campo explícito do rate file — não mais inferido do post. A `review_lang`
   é a língua de avaliação da sessão (`--review-lang`, default = `--eval-lang`).

@@ -7,7 +7,6 @@ import { getCollection } from "astro:content";
 import {
   getRanking,
   getPostDuelHistory,
-  getPostVersionTrials,
   getPerPerspectiveRankings,
   getPerspectives,
   getSnapshotDelta,
@@ -48,7 +47,6 @@ const postHref = postInfo
   : null;
 
 const duels = getPostDuelHistory(key);
-const versionTrials = getPostVersionTrials(key);
 
 // Per-perspective rankings
 const perPerspective = getPerPerspectiveRankings();
@@ -254,33 +252,6 @@ function fmtDate(iso: string): string {
     )}
   </section>
 
-  {versionTrials.length > 0 && (
-    <section class="edit-history">
-      <h2>Edit history <small>({versionTrials.length} version {versionTrials.length === 1 ? "trial" : "trials"})</small></h2>
-      <p class="edit-blurb">
-        Revisions of this post compared head-to-head. These trials decide which
-        version is published; they do not affect the editorial ranking above.
-        <a href={`/ranking/versions/${key}/`}>See full genealogy →</a>
-      </p>
-      <ol class="trial-list">
-        {versionTrials.slice(0, 5).map((t) => {
-          const wRef = t.winnerSide === "a" ? t.postARef : t.postBRef;
-          const lRef = t.winnerSide === "a" ? t.postBRef : t.postARef;
-          return (
-            <li>
-              <div class="trial-row">
-                <span class="trial-date">{fmtDate(t.runAt)}</span>
-                <code class="trial-win">{wRef}</code>
-                <span class="trial-beat">beat</span>
-                <code class="trial-lose">{lRef}</code>
-                {t.id && <a class="trial-link" href={`/ranking/battles/${t.id}/`}>analysis →</a>}
-              </div>
-            </li>
-          );
-        })}
-      </ol>
-    </section>
-  )}
 </PageLayout>
 
 <style>
@@ -527,54 +498,5 @@ function fmtDate(iso: string): string {
   .empty {
     color: var(--pico-muted-color);
     font-style: italic;
-  }
-  .edit-history {
-    margin-top: 2.5rem;
-  }
-  .edit-history h2 {
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--pico-muted-color);
-  }
-  .edit-blurb {
-    font-size: 0.82rem;
-    color: var(--pico-muted-color);
-    margin: 0 0 0.75rem;
-  }
-  .trial-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-  .trial-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.82rem;
-  }
-  .trial-date {
-    font-family: var(--pico-font-family-monospace);
-    font-size: 0.7rem;
-    color: var(--pico-muted-color);
-  }
-  .trial-row code {
-    font-size: 0.74rem;
-    word-break: break-all;
-  }
-  .trial-win {
-    color: var(--pico-primary);
-  }
-  .trial-beat {
-    color: var(--pico-muted-color);
-    font-size: 0.72rem;
-  }
-  .trial-link {
-    margin-left: auto;
-    font-size: 0.78rem;
   }
 </style>

@@ -38,9 +38,11 @@ const flatFiles = listAllVersionSlugs()
   .filter((p): p is string => p !== null)
   .map((p) => p.replace(/^src\/content\/blog\//, ""));
 
-// Shared schema for canonical posts (blog) and their non-canonical versions
-// (blogVersions). RFC 0003: a version file is a frozen copy of a canonical, so
-// it satisfies the same shape plus a few draft-lifecycle markers.
+// Schema for the `blog` collection. Draft-lifecycle fields (supersedes,
+// draftCreatedAt, draftCommittedAt, draftMsg, previousVersion) are legacy
+// from the retired version-duel model (RFC 0003/0010) — no longer written,
+// kept optional so already-published posts still validate (RFC 0017
+// decision 5; removed from the schema in Fase 2).
 const postSchema = ({ image }: SchemaContext) =>
   z.object({
     title: z.string(),
@@ -126,26 +128,9 @@ const blog = defineCollection({
   schema: postSchema,
 });
 
-// RFC 0010: every non-selected legacy-layout version (challengers +
-// ex-selected). Served at /blog/<slug>/v/<uuid> (noindex, canonical →
-// live). The id keeps the folder path so the post slug = dirname(id).
-//
-// RFC 0015: a flat slug's open challengers (.routines/hronir/drafts/) are
-// deliberately NOT in this collection — they don't get a live permalink
-// page while still competing (a real gap vs. legacy behavior, not an
-// oversight: closing it needs a second base directory, astro/loaders'
-// glob() only takes one). Once a flat-slug version is folded back or
-// pruned, it's archived in versions-history.json and the /v/<uuid> route
-// resolves it from there directly (see [uuid].astro), no collection entry
-// required — that's the path that actually matters (permalinks must
-// survive after the fact; mid-competition drafts don't need to).
-const blogVersions = defineCollection({
-  loader: glob({
-    pattern: ["**/v-*.{md,mdx}", ...selectedFiles.map((f) => `!${f}`)],
-    base: "./src/content/blog",
-    generateId: ({ entry }) => entry.replace(/\.mdx?$/, ""),
-  }),
-  schema: postSchema,
-});
-
-export const collections = { blog, blogVersions };
+// RFC 0017: o duelo `version` foi eliminado — não há mais versão
+// concorrente a servir, nem permalink `/blog/<slug>/v/<uuid>/`. A coleção
+// `blogVersions` (RFC 0010/0015) e sua rota foram removidas; enquanto
+// restarem diretórios legados não achatados (Fase 1 parcial — ver RFC 0017
+// §7), `selectedFiles` acima já cobre o que deve ser publicado.
+export const collections = { blog };
