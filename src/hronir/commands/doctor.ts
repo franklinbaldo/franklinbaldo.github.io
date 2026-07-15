@@ -580,44 +580,90 @@ export function doctor() {
   {
     const GENRE_PROMPT_RE = /[:;,]/;
     const genreWarnings: string[] = [];
-    for (const slug of listAllVersionSlugs()) {
-      const canonical = listSlugVersions(slug).find((v) => v.selected);
-      if (!canonical) continue;
-      const p = canonical.path;
-      if (!fs.existsSync(p)) continue;
-      const raw = fs.readFileSync(p, "utf-8");
-      if (!raw.includes("postType") || !raw.includes("music")) continue;
-      const fmMatch = raw.match(/^---\n([\s\S]*?)\n---/);
-      if (!fmMatch) continue;
-      const fm = fmMatch[1];
-      // Extract genre array items (simple list parsing)
-      const genreBlock = fm.match(/^genre:\n((?:  -.+\n?)*)/m);
-      if (!genreBlock) continue;
-      const items = [...genreBlock[1].matchAll(/  - (.+)/g)].map((m) =>
-        m[1].replace(/^["']|["']$/g, "").trim()
-      );
-      if (items.length > 5) {
+    const sameFileDupeWarnings: string[] = [];
+    // sunoId → translationKeys it appears in (primary or tracks[]). A pt/en
+    // pair shares one translationKey and is expected to share a sunoId (same
+    // song, two language descriptions) — only flag a sunoId that leaks
+    // across two DIFFERENT works, since GlobalMusicPlayer resolves sunoId →
+    // post URL globally and a genuine cross-work reuse would silently make
+    // the last-processed post win, misdirecting an unrelated Suno clip.
+    const sunoIdToKeys = new Map<string, Set<string>>();
+    // Lints one genre array — reused for the top-level `genre:` and for
+    // each `tracks[].genre` (a post can carry more than one Suno rendition
+    // via `tracks`).
+    const lintGenreItems = (label: string, items: unknown[]) => {
+      const clean = items
+        .filter((g): g is string => typeof g === "string")
+        .map((g) => g.trim());
+      if (clean.length > 5) {
         genreWarnings.push(
-          `${slug}: genre tem ${items.length} items (máx 5) — rode a migração RFC 0011`
+          `${label}: genre tem ${clean.length} items (máx 5) — rode a migração RFC 0011`
         );
       }
-      for (const item of items) {
+      for (const item of clean) {
         if (item.length > 40) {
           genreWarnings.push(
-            `${slug}: genre label muito longo (${item.length} chars): "${item.slice(0, 60)}..." — use sunoStyle para descrições longas`
+            `${label}: genre label muito longo (${item.length} chars): "${item.slice(0, 60)}..." — use sunoStyle para descrições longas`
           );
           break;
         }
         if (GENRE_PROMPT_RE.test(item)) {
           genreWarnings.push(
-            `${slug}: genre label parece prompt Suno ("${item.slice(0, 60)}"...) — mova para sunoStyle`
+            `${label}: genre label parece prompt Suno ("${item.slice(0, 60)}"...) — mova para sunoStyle`
           );
           break;
         }
       }
+    };
+    for (const slug of listAllVersionSlugs()) {
+      const canonical = listSlugVersions(slug).find((v) => v.selected);
+      if (!canonical) continue;
+      const p = canonical.path;
+      if (!fs.existsSync(p)) continue;
+      // readPost (gray-matter) instead of hand-rolled indentation-anchored
+      // regexes: immune to YAML formatting drift (flow-style arrays,
+      // different indent width) and correlates each track's own genre/
+      // sunoId by real array index instead of by regex-match order.
+      const data = readPost(p);
+      if (data.postType !== "music") continue;
+      if (Array.isArray(data.genre)) {
+        lintGenreItems(slug, data.genre);
+      }
+      const tracks = Array.isArray(data.tracks) ? data.tracks : [];
+      tracks.forEach((tr: any, i: number) => {
+        if (Array.isArray(tr?.genre)) {
+          lintGenreItems(`${slug} (tracks[${i}])`, tr.genre);
+        }
+      });
+      const sunoIds: string[] = [];
+      if (typeof data.sunoId === "string") sunoIds.push(data.sunoId);
+      for (const tr of tracks) {
+        if (typeof tr?.sunoId === "string") sunoIds.push(tr.sunoId);
+      }
+      if (sunoIds.length !== new Set(sunoIds).size) {
+        sameFileDupeWarnings.push(
+          `${slug}: sunoId duplicado dentro do próprio post (tracks[] repete um id)`
+        );
+      }
+      const key =
+        typeof data.translationKey === "string" ? data.translationKey : slug;
+      for (const id of sunoIds) {
+        if (!sunoIdToKeys.has(id)) sunoIdToKeys.set(id, new Set());
+        sunoIdToKeys.get(id)!.add(key);
+      }
     }
     for (const w of genreWarnings) {
       console.warn(`  [warn] ${w}`);
+    }
+    for (const w of sameFileDupeWarnings) {
+      console.warn(`  [warn] ${w}`);
+    }
+    for (const [id, keys] of sunoIdToKeys) {
+      if (keys.size > 1) {
+        console.warn(
+          `  [warn] sunoId duplicado (${id}) em: ${[...keys].join(", ")} — GlobalMusicPlayer só resolve o último`
+        );
+      }
     }
   }
 

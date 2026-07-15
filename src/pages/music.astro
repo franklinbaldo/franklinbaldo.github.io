@@ -140,17 +140,30 @@ const musicJsonLd = {
   })).filter((t) => t.name),
 };
 
-// Genre data from blog post frontmatter (clean tags)
+// Genre data from blog post frontmatter (clean tags). A post can carry
+// more than one Suno rendition via `tracks` — each track's own genre
+// list applies to its own sunoId, independent of the primary track's.
 const musicBlogPosts = await getCollection(
   "blog",
-  (e) => e.data.postType === "music" && !!e.data.sunoId && (e.data.genre?.length ?? 0) > 0,
+  (e) => e.data.postType === "music",
 );
-const sunoIdToGenres = new Map<string, string[]>(
-  musicBlogPosts.map((p) => [
-    p.data.sunoId!,
-    (p.data.genre ?? []).map((g) => g.toLowerCase().trim()).filter(Boolean),
-  ]),
-);
+const sunoIdToGenres = new Map<string, string[]>();
+for (const p of musicBlogPosts) {
+  if (p.data.sunoId && (p.data.genre?.length ?? 0) > 0) {
+    sunoIdToGenres.set(
+      p.data.sunoId,
+      p.data.genre!.map((g) => g.toLowerCase().trim()).filter(Boolean),
+    );
+  }
+  for (const tr of p.data.tracks ?? []) {
+    if (tr.genre?.length) {
+      sunoIdToGenres.set(
+        tr.sunoId,
+        tr.genre.map((g) => g.toLowerCase().trim()).filter(Boolean),
+      );
+    }
+  }
+}
 const allGenres = [...new Set([...sunoIdToGenres.values()].flat())].sort();
 const showGenreChips =
   allGenres.length >= 2 &&

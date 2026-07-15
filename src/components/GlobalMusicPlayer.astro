@@ -69,30 +69,44 @@ try {
 
   const musicPosts = await getCollection(
     "blog",
-    (e) => e.data.postType === "music" && !!e.data.sunoId,
+    (e) =>
+      e.data.postType === "music" &&
+      (!!e.data.sunoId || (e.data.tracks?.length ?? 0) > 0),
   );
-  const keyToSunoId = new Map<string, string>(
-    musicPosts
-      .filter((p) => p.data.translationKey)
-      .map((p) => [p.data.translationKey!, p.data.sunoId!]),
-  );
-  // sunoId → post URL (language-aware)
-  const sunoIdToPostUrl = new Map<string, string>(
-    musicPosts.map((p) => {
-      const lang = p.data.lang ?? "en";
-      const url = lang === "pt" ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`;
-      return [p.data.sunoId!, url];
-    }),
-  );
+  // translationKey → every sunoId the post carries (primary + tracks), in
+  // the order they should appear once that post's ranked slot is reached.
+  const keyToSunoIds = new Map<string, string[]>();
+  // sunoId → post URL (language-aware). A post can carry more than one
+  // Suno rendition via `tracks` — every track's sunoId resolves back to
+  // the same post URL as the primary sunoId.
+  const sunoIdToPostUrl = new Map<string, string>();
+  for (const p of musicPosts) {
+    const lang = p.data.lang ?? "en";
+    const url = lang === "pt" ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`;
+    const ids = [p.data.sunoId, ...(p.data.tracks ?? []).map((tr) => tr.sunoId)]
+      .filter((id): id is string => !!id);
+    for (const id of ids) {
+      sunoIdToPostUrl.set(id, url);
+    }
+    if (p.data.translationKey && ids.length > 0) {
+      // A pt/en pair shares one translationKey; merge (don't overwrite) so
+      // that if the two language posts' tracks[] ever diverge, both sides'
+      // ids still land at this post's ranked queue position instead of the
+      // later-processed post silently discarding the other's.
+      const key = p.data.translationKey;
+      keyToSunoIds.set(key, [...(keyToSunoIds.get(key) ?? []), ...ids]);
+    }
+  }
 
   const ranking = getRanking();
   const rankedIds: string[] = [];
   const seen = new Set<string>();
   for (const row of ranking) {
-    const sid = keyToSunoId.get(row.key);
-    if (sid && clipById.has(sid) && !seen.has(sid)) {
-      rankedIds.push(sid);
-      seen.add(sid);
+    for (const sid of keyToSunoIds.get(row.key) ?? []) {
+      if (clipById.has(sid) && !seen.has(sid)) {
+        rankedIds.push(sid);
+        seen.add(sid);
+      }
     }
   }
 

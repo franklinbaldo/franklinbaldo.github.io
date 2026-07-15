@@ -109,6 +109,28 @@ const postSchema = ({ image }: SchemaContext) =>
     duration: z.number().optional(),
     /** Album art URL from the Suno API (stored at stub-generation time). */
     sunoImageUrl: z.string().url().optional(),
+    /** Additional Suno renditions of the same music post, beyond the
+     *  primary sunoId/genre/sunoStyle/duration/sunoImageUrl above — for a
+     *  post that sets the same text to music more than once. Each entry
+     *  renders its own player block on the post page and resolves to this
+     *  post's URL from the global player. */
+    tracks: z
+      .array(
+        z.object({
+          label: z.string(),
+          sunoId: z.string(),
+          sunoImageUrl: z.string().url().optional(),
+          duration: z.number().optional(),
+          genre: z
+            .array(
+              z.string().max(40, "genre label deve ter no máximo 40 caracteres")
+            )
+            .max(5, "máximo 5 gêneros por track")
+            .optional(),
+          sunoStyle: z.string().optional(),
+        })
+      )
+      .optional(),
   });
 
 const publishedPattern =
