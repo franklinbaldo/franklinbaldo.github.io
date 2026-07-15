@@ -128,9 +128,27 @@ const blog = defineCollection({
   schema: postSchema,
 });
 
+// One entry per release, `changelog/<version>.md` — OKF markdown (`type` is
+// the only required field; here always `"Changelog Entry"`). English by
+// deliberate exception to the "docs em português" convention (CLAUDE.md
+// "Línguas" — dono decidiu, não é engano a corrigir).
+const changelog = defineCollection({
+  loader: glob({
+    pattern: "*.md",
+    base: "./changelog",
+  }),
+  schema: z.object({
+    type: z.literal("Changelog Entry"),
+    version: z.string(),
+    date: z.coerce.date(),
+    description: z.string(),
+    tags: z.array(z.string()).optional(),
+  }),
+});
+
 // RFC 0017: o duelo `version` foi eliminado — não há mais versão
 // concorrente a servir, nem permalink `/blog/<slug>/v/<uuid>/`. A coleção
 // `blogVersions` (RFC 0010/0015) e sua rota foram removidas; enquanto
 // restarem diretórios legados não achatados (Fase 1 parcial — ver RFC 0017
 // §7), `selectedFiles` acima já cobre o que deve ser publicado.
-export const collections = { blog };
+export const collections = { blog, changelog };

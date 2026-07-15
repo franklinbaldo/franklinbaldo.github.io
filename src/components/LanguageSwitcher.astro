@@ -17,7 +17,7 @@ const ariaTable = Object.fromEntries(
 
 <button
   type="button"
-  class="contrast outline"
+  class="secondary outline lang-switcher-btn"
   data-lang-switcher
   aria-label="Switch language"
   hidden
@@ -26,6 +26,14 @@ const ariaTable = Object.fromEntries(
 </button>
 
 <style>
+  /* Matches .nav-music-btn's chip treatment (Header.astro) so the two
+     button-style nav widgets read as the same affordance system. */
+  .lang-switcher-btn {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.95rem;
+    line-height: 1;
+    border-radius: 6px;
+  }
   /* In a cramped flex row (mobile burger controls) this button can shrink
      below its label's natural width; overflow-wrap: anywhere inherited
      from the containing <li> (see global.css) would then split "PT"

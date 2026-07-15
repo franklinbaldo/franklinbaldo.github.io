@@ -15,9 +15,11 @@ const tagsHref     = `${prefix}/tags/`;
 const musicHref    = lang === 'pt' ? `${prefix}/musicas/` : '/music/';
 const booksHref    = lang === 'pt' ? `${prefix}/livros/` : '/books/';
 const searchHref   = `${prefix}/search/`;
-const aboutHref    = `${prefix}/about/`;
 const projectsHref = `${prefix}/projects/`;
 const rankingHref  = `${prefix}/ranking/`;
+// Changelog content is English-only by deliberate exception (CLAUDE.md
+// "Línguas") — one page serves both languages, no /pt/ prefix.
+const changelogHref = '/changelog/';
 
 const menuLabel = t(lang, 'nav.menu');
 const playMusicLabel = lang === 'pt' ? 'Tocar música' : 'Play music';
@@ -31,7 +33,7 @@ const navLinks = [
   { href: musicHref,    label: t(lang, 'nav.music') },
   { href: booksHref,    label: t(lang, 'nav.books') },
   { href: searchHref,   label: t(lang, 'nav.search') },
-  { href: aboutHref,    label: t(lang, 'nav.about') },
+  { href: changelogHref, label: 'Changelog' },
 ];
 
 // Pico styles aria-current="page" distinctly; flag the link whose path
@@ -199,6 +201,11 @@ const isCurrent = (href: string) => {
   .nav-inline a:not(.nav-music-btn) {
     font-size: 0.92rem;
     text-decoration: none;
+    /* Override global.css's "wrap anywhere" prose policy: nav labels are
+       short, fixed UI strings — mid-word breaks here are always a bug, not
+       a narrow-viewport accommodation (that's what the burger menu is for). */
+    overflow-wrap: normal;
+    word-break: normal;
     white-space: nowrap;
   }
   .nav-inline a[aria-current="page"] {
@@ -209,10 +216,12 @@ const isCurrent = (href: string) => {
   }
 
   .nav-burger { display: none; }
-  /* Pico's .container is capped at 950px for the whole 1024–1279px range
-     (it only steps up to 1200px at the 1280px breakpoint) — too narrow for
-     8 nav links plus the music/lang/theme controls, which used to wrap and
-     break mid-word. Keep the burger menu until there's actually room. */
+  /* 1279px, not 768px: Pico's own .container steps from max-width 950px to
+     1200px at the 1280px breakpoint. Below 1280px the inline nav (8 links +
+     music button + language switcher + theme toggle) doesn't fit that 950px
+     — the flex row shrinks each item past its natural width and, combined
+     with the overflow-wrap policy above, words split mid-word ("Archiv/e").
+     Measured: nav-inline needs ~960px alone, unwrapped, plus the brand. */
   @media (max-width: 1279px) {
     .nav-inline { display: none; }
     .nav-burger { display: flex; }
