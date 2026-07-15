@@ -111,7 +111,9 @@ export function printSidePost(session: any, side: "A" | "B") {
   const p = resolveSidePath(post, side);
   const slug = post?.key || "(slug desconhecido)";
   const content = fs.readFileSync(p, "utf8");
-  const sunoId = matter(content).data.sunoId;
+  const data = matter(content).data;
+  const sunoId = data.sunoId;
+  const tracks: Array<{ label: string; sunoId: string }> = data.tracks ?? [];
   const border = "━".repeat(80);
   const header =
     side === "A" ? "📄 PRIMEIRO POST (A) " : "📄 SEGUNDO POST (B) ";
@@ -123,8 +125,16 @@ export function printSidePost(session: any, side: "A" | "B") {
     console.log(
       `🔊 Direct Audio URL (MP3): https://cdn1.suno.ai/${sunoId}.mp3`
     );
+  }
+  for (const tr of tracks) {
+    console.log(`🎵 ${tr.label}: https://suno.com/song/${tr.sunoId}`);
     console.log(
-      `💡 Agente multimodal: você pode baixar/ouvir o MP3 acima para informar sua avaliação.`
+      `🔊 Direct Audio URL (MP3): https://cdn1.suno.ai/${tr.sunoId}.mp3`
+    );
+  }
+  if (sunoId || tracks.length > 0) {
+    console.log(
+      `💡 Agente multimodal: você pode baixar/ouvir o(s) MP3(s) acima para informar sua avaliação.`
     );
   }
   console.log(`${border}\n`);

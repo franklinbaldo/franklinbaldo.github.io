@@ -73,8 +73,10 @@ const UI_KEYS = [
   "archive.filterType",
   "archive.filterAll",
   "post.play",
+  "post.playAriaLabel",
   "post.listenOnSuno",
   "post.otherVersions",
+  "post.coverAlt",
 ] as const;
 
 export type UIKey = (typeof UI_KEYS)[number];
@@ -171,8 +173,10 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "archive.filterType": "Format:",
       "archive.filterAll": "All",
       "post.play": "▶ Play",
+      "post.playAriaLabel": "Play",
       "post.listenOnSuno": "Listen on Suno ↗",
       "post.otherVersions": "Other versions",
+      "post.coverAlt": "Cover of",
     },
     targets: {
       pt: {
@@ -258,8 +262,10 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "archive.filterType": "Formato:",
       "archive.filterAll": "Todos",
       "post.play": "▶ Tocar",
+      "post.playAriaLabel": "Tocar",
       "post.listenOnSuno": "Ouvir no Suno ↗",
       "post.otherVersions": "Outras versões",
+      "post.coverAlt": "Capa de",
     },
     targets: {
       en: {

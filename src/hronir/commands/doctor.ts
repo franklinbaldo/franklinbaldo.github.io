@@ -580,6 +580,13 @@ export function doctor() {
   {
     const GENRE_PROMPT_RE = /[:;,]/;
     const genreWarnings: string[] = [];
+    // sunoId → translationKeys it appears in (primary or tracks[]). A pt/en
+    // pair shares one translationKey and is expected to share a sunoId (same
+    // song, two language descriptions) — only flag a sunoId that leaks
+    // across two DIFFERENT works, since GlobalMusicPlayer resolves sunoId →
+    // post URL globally and a genuine cross-work reuse would silently make
+    // the last-processed post win, misdirecting an unrelated Suno clip.
+    const sunoIdToKeys = new Map<string, Set<string>>();
     for (const slug of listAllVersionSlugs()) {
       const canonical = listSlugVersions(slug).find((v) => v.selected);
       if (!canonical) continue;
@@ -590,34 +597,69 @@ export function doctor() {
       const fmMatch = raw.match(/^---\n([\s\S]*?)\n---/);
       if (!fmMatch) continue;
       const fm = fmMatch[1];
-      // Extract genre array items (simple list parsing)
+      // Extract genre array items (simple list parsing) and lint them —
+      // reused for the top-level `genre:` and for each `tracks[].genre`
+      // (a post can carry more than one Suno rendition via `tracks`).
+      const lintGenreItems = (label: string, items: string[]) => {
+        if (items.length > 5) {
+          genreWarnings.push(
+            `${label}: genre tem ${items.length} items (máx 5) — rode a migração RFC 0011`
+          );
+        }
+        for (const item of items) {
+          if (item.length > 40) {
+            genreWarnings.push(
+              `${label}: genre label muito longo (${item.length} chars): "${item.slice(0, 60)}..." — use sunoStyle para descrições longas`
+            );
+            break;
+          }
+          if (GENRE_PROMPT_RE.test(item)) {
+            genreWarnings.push(
+              `${label}: genre label parece prompt Suno ("${item.slice(0, 60)}"...) — mova para sunoStyle`
+            );
+            break;
+          }
+        }
+      };
       const genreBlock = fm.match(/^genre:\n((?:  -.+\n?)*)/m);
-      if (!genreBlock) continue;
-      const items = [...genreBlock[1].matchAll(/  - (.+)/g)].map((m) =>
-        m[1].replace(/^["']|["']$/g, "").trim()
-      );
-      if (items.length > 5) {
-        genreWarnings.push(
-          `${slug}: genre tem ${items.length} items (máx 5) — rode a migração RFC 0011`
+      if (genreBlock) {
+        const items = [...genreBlock[1].matchAll(/  - (.+)/g)].map((m) =>
+          m[1].replace(/^["']|["']$/g, "").trim()
         );
+        lintGenreItems(slug, items);
       }
-      for (const item of items) {
-        if (item.length > 40) {
-          genreWarnings.push(
-            `${slug}: genre label muito longo (${item.length} chars): "${item.slice(0, 60)}..." — use sunoStyle para descrições longas`
-          );
-          break;
-        }
-        if (GENRE_PROMPT_RE.test(item)) {
-          genreWarnings.push(
-            `${slug}: genre label parece prompt Suno ("${item.slice(0, 60)}"...) — mova para sunoStyle`
-          );
-          break;
-        }
+      const trackGenreBlocks = fm.matchAll(/^ {4}genre:\n((?: {6}-.+\n?)*)/gm);
+      let trackIdx = 0;
+      for (const trackBlock of trackGenreBlocks) {
+        trackIdx++;
+        const items = [...trackBlock[1].matchAll(/ {6}- (.+)/g)].map((m) =>
+          m[1].replace(/^["']|["']$/g, "").trim()
+        );
+        lintGenreItems(`${slug} (tracks[${trackIdx - 1}])`, items);
+      }
+      const sunoIds: string[] = [];
+      const primaryId = fm.match(/^sunoId: (\S+)/m);
+      if (primaryId) sunoIds.push(primaryId[1]);
+      for (const m of fm.matchAll(/^ {4}sunoId: (\S+)/gm)) {
+        sunoIds.push(m[1]);
+      }
+      const keyMatch = fm.match(/^translationKey: (\S+)/m);
+      const key = keyMatch ? keyMatch[1] : slug;
+      for (const id of sunoIds) {
+        if (!sunoIdToKeys.has(id)) sunoIdToKeys.set(id, new Set());
+        sunoIdToKeys.get(id)!.add(key);
       }
     }
     for (const w of genreWarnings) {
       console.warn(`  [warn] ${w}`);
+    }
+    for (const [id, keys] of sunoIdToKeys) {
+      if (keys.size > 1) {
+        const slugs = [...keys];
+        console.warn(
+          `  [warn] sunoId duplicado (${id}) em: ${slugs.join(", ")} — GlobalMusicPlayer só resolve o último`
+        );
+      }
     }
   }
 

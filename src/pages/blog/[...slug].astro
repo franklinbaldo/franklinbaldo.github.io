@@ -91,6 +91,13 @@ const translationLinks = translationSiblings.map((p) => {
 });
 
 // RFC 0006 / issue #678: MusicRecording rich result for music posts.
+// Rounds once before deriving minutes/seconds so a non-integer duration
+// can't push the seconds term across a minute boundary the floored
+// minutes term didn't cross (e.g. 119.6 → "1M0S" instead of "2M0S").
+function isoDuration(seconds: number): string {
+  const d = Math.round(seconds);
+  return `PT${Math.floor(d / 60)}M${d % 60}S`;
+}
 const musicLd = postType === 'music' && sunoId
   ? {
       '@context': 'https://schema.org',
@@ -109,7 +116,7 @@ const musicLd = postType === 'music' && sunoId
       embedUrl: `https://suno.com/embed/${sunoId}`,
       ...(sunoImageUrl && { image: sunoImageUrl }),
       ...(genre?.length && { genre }),
-      ...(duration && duration > 0 && { duration: `PT${Math.floor(duration / 60)}M${duration % 60}S` }),
+      ...(duration && duration > 0 && { duration: isoDuration(duration) }),
     }
   : null;
 const extraMusicLd = postType === 'music' && tracks?.length
@@ -130,7 +137,7 @@ const extraMusicLd = postType === 'music' && tracks?.length
       embedUrl: `https://suno.com/embed/${tr.sunoId}`,
       ...(tr.sunoImageUrl && { image: tr.sunoImageUrl }),
       ...(tr.genre?.length && { genre: tr.genre }),
-      ...(tr.duration && tr.duration > 0 && { duration: `PT${Math.floor(tr.duration / 60)}M${Math.round(tr.duration) % 60}S` }),
+      ...(tr.duration && tr.duration > 0 && { duration: isoDuration(tr.duration) }),
     }))
   : [];
 ---
@@ -206,7 +213,7 @@ const extraMusicLd = postType === 'music' && tracks?.length
                 <img
                   class="music-cover"
                   src={sunoImageUrl || `https://cdn2.suno.ai/${sunoId}_image.jpeg`}
-                  alt={`Capa de ${title}`}
+                  alt={`${t(lang, 'post.coverAlt')} ${title}`}
                   width="200"
                   height="200"
                   loading="eager"
@@ -228,7 +235,7 @@ const extraMusicLd = postType === 'music' && tracks?.length
                   type="button"
                   data-suno-id={sunoId}
                   data-suno-title={title}
-                  aria-label={`${t(lang, 'post.play').replace(/^\W+\s*/, '')} ${title}`}
+                  aria-label={`${t(lang, 'post.playAriaLabel')} ${title}`}
                 >
                   {t(lang, 'post.play')}
                 </button>
@@ -246,12 +253,14 @@ const extraMusicLd = postType === 'music' && tracks?.length
           {postType === 'music' && tracks && tracks.length > 0 && (
             <div class="music-extra-tracks">
               <p class="music-extra-tracks-label"><small>{t(lang, 'post.otherVersions')}</small></p>
-              {tracks.map((tr) => (
+              {tracks.map((tr) => {
+                const trDuration = tr.duration ? Math.round(tr.duration) : undefined;
+                return (
                 <div class="music-header is-track">
                   <img
                     class="music-cover"
                     src={tr.sunoImageUrl || `https://cdn2.suno.ai/${tr.sunoId}_image.jpeg`}
-                    alt={`Capa de ${tr.label}`}
+                    alt={`${t(lang, 'post.coverAlt')} ${tr.label}`}
                     width="96"
                     height="96"
                     loading="lazy"
@@ -263,9 +272,9 @@ const extraMusicLd = postType === 'music' && tracks?.length
                         {tr.genre.map((g) => <kbd class="genre-pill">{g}</kbd>)}
                       </p>
                     )}
-                    {tr.duration && (
+                    {trDuration && (
                       <p class="music-duration">
-                        <small>{Math.floor(tr.duration / 60)}:{String(Math.round(tr.duration) % 60).padStart(2, '0')}</small>
+                        <small>{Math.floor(trDuration / 60)}:{String(trDuration % 60).padStart(2, '0')}</small>
                       </p>
                     )}
                     <button
@@ -273,7 +282,7 @@ const extraMusicLd = postType === 'music' && tracks?.length
                       type="button"
                       data-suno-id={tr.sunoId}
                       data-suno-title={tr.label}
-                      aria-label={`${t(lang, 'post.play').replace(/^\W+\s*/, '')} ${tr.label}`}
+                      aria-label={`${t(lang, 'post.playAriaLabel')} ${tr.label}`}
                     >
                       {t(lang, 'post.play')}
                     </button>
@@ -287,7 +296,8 @@ const extraMusicLd = postType === 'music' && tracks?.length
                     </a>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
           {postType !== 'music' && heroImage && (
