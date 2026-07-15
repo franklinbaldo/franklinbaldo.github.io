@@ -75,8 +75,11 @@ diretório, ou nenhum dos dois):
    existente da obra não tiver sido alterado, salvo justificativa explícita.
    A verificação baseia-se nos seguintes invariantes de migração:
    - Todo post sobrevivente possui `lang` explícito.
-   - Toda obra bilíngue possui um identificador comum explícito, preferencialmente `translationKey`.
-   - Existe no máximo um arquivo para cada par `(translationKey, lang)`.
+   - Toda obra bilíngue possui `translationKey` explícito e compartilhado
+     entre seus idiomas.
+   - Existe no máximo um arquivo para cada par `(key, lang)` — `key` é a
+     identidade de obra definida em §1 (`translationKey` quando presente,
+     senão o fallback de path), não só o caso com tradução.
    - O `doctor` reprova duplicidade ou tradução órfã não deliberada.
    - A sessão de revisão registra todos os caminhos (paths) encontrados para aquela obra.
 5. **Sem backcompat desnecessária.** Não preservamos:
@@ -108,11 +111,14 @@ diretório, ou nenhum dos dois):
    **não** assume a inversão; trata o esquema de idioma padrão como
    ortogonal e a ser decidido separadamente (§5 documenta o mecanismo atual
    sem alterá-lo).
-7. **Padronização dos nomes físicos dos arquivos.** Como fase final e para evitar
-   uma arqueologia enganosa, arquivos sobreviventes que mantêm nomes legados (ex:
-   `<slug>/v-timestamp.mdx`) serão padronizados no formato único `src/content/blog/<slug>.mdx`
-   (ou `src/content/blog/<slug>/index.mdx` caso existam recursos de mídia locais
-   associados). Isso garante a transição completa para o layout simplificado.
+7. **Padronização dos nomes físicos dos arquivos.** Para evitar uma
+   arqueologia enganosa (um nome `v-<timestamp>.mdx` sobrevivente sugerindo
+   que ainda há concorrência quando não há mais), todo arquivo sobrevivente
+   é renomeado para o formato único `src/content/blog/<slug>.mdx` (ou
+   `src/content/blog/<slug>/index.mdx` quando existirem recursos de mídia
+   locais associados) — parte da Fase 1 (§7), não uma fase própria: escolha
+   do sobrevivente, remoção dos demais e renomeação são a mesma operação de
+   unicidade física.
 
 ### 2.1. Consequências aceitas
 
@@ -228,23 +234,43 @@ fresco → `versions-selected.json` final, autoritativo para os 154 diretórios
 ainda no layout legado (o rollout incremental do `hronir:flatten` da RFC
 0015 para **agora** — resolvia um problema que deixa de existir).
 
-**Fase 1 — unicidade física.** Para cada diretório legado, realiza-se a deleção de todo arquivo-versão exceto o selecionado. Para garantir auditoria completa, a migração exige a geração de um manifesto auditável temporário denominado `migration-0017-survivors.json`, que deve ser mantido no repositório durante as PRs de migração (podendo ser removido na última fase). O manifesto deve registrar, para cada slug, um objeto no seguinte formato:
+**Fase 1 — unicidade física.** Para cada diretório legado: deleta todo
+arquivo-versão exceto o selecionado, depois `git mv` o sobrevivente para
+`src/content/blog/<slug>.mdx` (ou `src/content/blog/<slug>/index.mdx` quando
+há recursos de mídia locais associados — decisão 7). Escolha, remoção e
+renomeação são a mesma operação de unicidade física, feita de uma vez por
+slug. Para garantir auditoria completa, a migração exige a geração de um
+manifesto auditável temporário denominado `migration-0017-survivors.json`,
+que deve ser mantido no repositório durante as PRs de migração (podendo ser
+removido na última fase). O manifesto deve registrar, para cada slug, um
+objeto no seguinte formato:
 
 ```json
 {
   "slug": "nome-da-obra",
   "lang": "pt",
-  "kept": "src/content/blog/.../v-....mdx",
-  "reason": "selected", // "selected", "single-publishable" ou "manual"
-  "removed": [
-    "src/content/blog/.../v-....mdx"
-  ]
+  "kept": "src/content/blog/nome-da-obra.mdx",
+  "reason": "selected",
+  "removed": ["src/content/blog/nome-da-obra/v-....mdx"]
 }
 ```
 
-A regra de escolha operacional para seleção deve ser executada de forma estrita: sem seleção prévia, exatamente um arquivo publicável deve existir. Zero ou múltiplos candidatos candidatos interrompem automaticamente a migração e exigem resolução manual. Realiza-se também a triagem manual dos dois slugs órfãos já sinalizados por `flatten.ts:52-67` (`delegando-para-agentes`, `the-art-of-delegation`) e do diretório sem versão publicável (`the-art-of-delegating-...`, RFC 0015 §1).
+`reason` é um de `"selected"` (havia seleção prévia via
+`versions-selected.json`), `"single-publishable"` (sem seleção, mas só um
+arquivo publicável existia) ou `"manual"` (triagem manual, ver abaixo).
+`kept` já reflete o path pós-`git mv`, não o path legado pré-renomeação.
 
-Ao final: um arquivo por (slug, idioma) em todo `src/content/blog/`, sem exceção. `git rm` nos três JSONs originais gerados de versão.
+A regra de escolha operacional para seleção deve ser executada de forma
+estrita: sem seleção prévia, exatamente um arquivo publicável deve existir.
+Zero ou múltiplos candidatos interrompem automaticamente a migração e
+exigem resolução manual. Realiza-se também a triagem manual dos dois slugs
+órfãos já sinalizados por `flatten.ts:52-67` (`delegando-para-agentes`,
+`the-art-of-delegation`) e do diretório sem versão publicável
+(`the-art-of-delegating-...`, RFC 0015 §1).
+
+Ao final: um arquivo por (slug, idioma) em todo `src/content/blog/`, sem
+exceção, todos no formato padronizado da decisão 7. `git rm` nos três JSONs
+originais gerados de versão.
 
 **Fase 2 — poda de schema e frontmatter.** Remove os campos de lifecycle de
 versão do `postSchema` (§3) e dos arquivos sobreviventes (decisão 5 — sem
