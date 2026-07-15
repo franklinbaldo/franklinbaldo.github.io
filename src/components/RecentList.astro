@@ -17,14 +17,19 @@ const minRead = (body: string | undefined) => {
 ---
 
 <ul class="recent-list">
-  {posts.map((post) => {
-    const { title, date, tags } = post.data;
+  {posts.map((post, index) => {
+    const { title, description, date, tags } = post.data;
     const href = post.data.lang === 'pt' ? `/pt/blog/${post.id}/` : `/blog/${post.id}/`;
     const tag = tags?.[0];
+    // Second-tier emphasis: the featured card above already covers the
+    // single latest post, so this list's own first row (the runner-up)
+    // gets a size/blurb bump instead of reading as 8+ identical rows.
+    const isLead = index === 0;
     return (
-      <li class="recent-row">
+      <li class:list={['recent-row', { 'recent-row--lead': isLead }]}>
         <a class="recent-link" href={href}>
           <span class="recent-title">{title}</span>
+          {isLead && description && <span class="recent-blurb">{description}</span>}
           <span class="recent-meta">
             <time datetime={date.toISOString()}>{date.toLocaleDateString(loc, dateOpts)}</time>
             <span class="recent-dot" aria-hidden="true">·</span>
@@ -70,6 +75,18 @@ const minRead = (body: string | undefined) => {
     font-family: var(--pico-font-family-serif);
     font-size: 1.1rem;
     line-height: 1.3;
+  }
+  /* The runner-up gets a size bump + blurb — a secondary tier between the
+     hero featured card above and the plain rows below, instead of every
+     row in the list reading with identical weight. */
+  .recent-row--lead .recent-title {
+    font-size: 1.3rem;
+  }
+  .recent-blurb {
+    grid-column: 1 / -1;
+    color: var(--pico-muted-color);
+    font-size: 0.92rem;
+    line-height: 1.5;
   }
   .recent-meta {
     display: inline-flex;

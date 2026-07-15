@@ -15,7 +15,6 @@ const tagsHref     = `${prefix}/tags/`;
 const musicHref    = lang === 'pt' ? `${prefix}/musicas/` : '/music/';
 const booksHref    = lang === 'pt' ? `${prefix}/livros/` : '/books/';
 const searchHref   = `${prefix}/search/`;
-const aboutHref    = `${prefix}/about/`;
 const projectsHref = `${prefix}/projects/`;
 const rankingHref  = `${prefix}/ranking/`;
 // Changelog content is English-only by deliberate exception (CLAUDE.md
@@ -34,7 +33,6 @@ const navLinks = [
   { href: musicHref,    label: t(lang, 'nav.music') },
   { href: booksHref,    label: t(lang, 'nav.books') },
   { href: searchHref,   label: t(lang, 'nav.search') },
-  { href: aboutHref,    label: t(lang, 'nav.about') },
   { href: changelogHref, label: 'Changelog' },
 ];
 

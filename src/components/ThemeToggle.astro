@@ -58,6 +58,12 @@ const themeLabel = lang === 'pt' ? 'Modo escuro' : 'Dark mode';
     align-items: center;
     gap: 0.4rem;
     margin: 0;
+    /* Matches .nav-music-btn / .lang-switcher-btn's chip treatment (padding,
+       radius, border) so all three nav widgets read as one affordance
+       system instead of three different button styles. */
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--pico-form-element-border-color, var(--pico-muted-border-color));
+    border-radius: 6px;
     cursor: pointer;
     user-select: none;
   }
