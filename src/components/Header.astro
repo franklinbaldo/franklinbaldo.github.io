@@ -18,6 +18,9 @@ const searchHref   = `${prefix}/search/`;
 const aboutHref    = `${prefix}/about/`;
 const projectsHref = `${prefix}/projects/`;
 const rankingHref  = `${prefix}/ranking/`;
+// Changelog content is English-only by deliberate exception (CLAUDE.md
+// "Línguas") — one page serves both languages, no /pt/ prefix.
+const changelogHref = '/changelog/';
 
 const menuLabel = t(lang, 'nav.menu');
 const playMusicLabel = lang === 'pt' ? 'Tocar música' : 'Play music';
@@ -32,6 +35,7 @@ const navLinks = [
   { href: booksHref,    label: t(lang, 'nav.books') },
   { href: searchHref,   label: t(lang, 'nav.search') },
   { href: aboutHref,    label: t(lang, 'nav.about') },
+  { href: changelogHref, label: 'Changelog' },
 ];
 
 // Pico styles aria-current="page" distinctly; flag the link whose path

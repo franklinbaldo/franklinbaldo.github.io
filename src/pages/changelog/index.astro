@@ -1,0 +1,107 @@
+---
+import { getCollection, render } from "astro:content";
+import PageLayout from "../../layouts/PageLayout.astro";
+
+// Changelog entries are English-only by deliberate exception (CLAUDE.md
+// "Línguas") — a single page serves both EN and PT readers, no /pt/ route.
+const entries = await getCollection("changelog");
+entries.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const rendered = await Promise.all(
+  entries.map(async (entry) => ({ entry, Content: (await render(entry)).Content }))
+);
+
+const fmt = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<PageLayout
+  title="Changelog | Franklin Baldo"
+  description="Release notes for this repo — what changed, version by version."
+  lang="en"
+>
+  <hgroup>
+    <h1>Changelog</h1>
+    <p>
+      <small>
+        One entry per version, as
+        <a href="https://github.com/franklinbaldo/franklinbaldo.github.io/blob/main/docs/okf/README.md"
+          >OKF</a
+        > markdown — see
+        <a href="https://github.com/franklinbaldo/franklinbaldo.github.io/tree/main/changelog"
+          >changelog/</a
+        > for the raw files.
+      </small>
+    </p>
+  </hgroup>
+
+  {
+    rendered.map(({ entry, Content }) => (
+      <article id={entry.data.version} class="changelog-entry">
+        <header>
+          <hgroup>
+            <h2>
+              <a href={`#${entry.data.version}`}>{entry.data.version}</a>
+            </h2>
+            <p>
+              <small>
+                <time datetime={entry.data.date.toISOString()}>
+                  {fmt.format(entry.data.date)}
+                </time>
+              </small>
+            </p>
+          </hgroup>
+          {entry.data.tags && entry.data.tags.length > 0 && (
+            <p class="changelog-tags">
+              {entry.data.tags.map((tag) => (
+                <span class="tag-pill">#{tag}</span>
+              ))}
+            </p>
+          )}
+        </header>
+        <div class="prose">
+          <Content />
+        </div>
+      </article>
+    ))
+  }
+</PageLayout>
+
+<style>
+  .changelog-entry {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--pico-muted-border-color);
+  }
+  .changelog-entry:last-child {
+    border-bottom: none;
+  }
+  .changelog-entry h2 {
+    margin-bottom: 0.25rem;
+  }
+  .changelog-entry h2 a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .changelog-entry h2 a:hover {
+    color: var(--pico-primary);
+  }
+  .changelog-tags {
+    margin: 0.25rem 0 1rem;
+  }
+  .tag-pill {
+    display: inline-block;
+    font-size: 0.72rem;
+    color: var(--pico-muted-color);
+    margin-right: 0.5rem;
+  }
+  .prose :global(h2) {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--pico-muted-color);
+  }
+</style>
