@@ -2,9 +2,14 @@
 // Semantic switch element instead of a button — Pico styles
 // [role="switch"] with the same pill-toggle UI and assistive tech
 // announces the on/off state correctly ("Dark mode: on").
+interface Props {
+  lang?: string;
+}
+const { lang = 'en' } = Astro.props;
+const themeLabel = lang === 'pt' ? 'Modo escuro' : 'Dark mode';
 ---
 
-<label class="theme-toggle" aria-label="Dark mode">
+<label class="theme-toggle" aria-label={themeLabel}>
   <input type="checkbox" role="switch" data-theme-toggle />
   <span class="theme-icon" data-icon aria-hidden="true">🌑</span>
 </label>
