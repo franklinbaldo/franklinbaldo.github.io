@@ -10,7 +10,7 @@ tags:
   - llm
   - alignment
   - process
-heroImage: ../quem-sou-eu/observer.png
+heroImage: ./quem-sou-eu/observer.png
 heroImageAlt: >-
   Observer — Rozzi Roomian. A golden mask being peeled back like a page,
   revealing a valley with a river and a monarch butterfly. In the dark

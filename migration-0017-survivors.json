@@ -1,0 +1,1472 @@
+[
+  {
+    "slug": "151474c5-1420-4cc1-9ab5-80721f4459ed",
+    "lang": "pt",
+    "kept": "src/content/blog/151474c5-1420-4cc1-9ab5-80721f4459ed.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/151474c5-1420-4cc1-9ab5-80721f4459ed/v-2026-06-12T08-00-12-612.mdx"
+    ]
+  },
+  {
+    "slug": "151474c5-1420-4cc1-9ab5-80721f4459ed-en",
+    "lang": "en",
+    "kept": "src/content/blog/151474c5-1420-4cc1-9ab5-80721f4459ed-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/151474c5-1420-4cc1-9ab5-80721f4459ed-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/151474c5-1420-4cc1-9ab5-80721f4459ed-en/v-2026-06-12T08-00-12-612.mdx"
+    ]
+  },
+  {
+    "slug": "46336b97-4306-41bc-8a7b-48f0ebebbd29",
+    "lang": "pt",
+    "kept": "src/content/blog/46336b97-4306-41bc-8a7b-48f0ebebbd29.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/46336b97-4306-41bc-8a7b-48f0ebebbd29/v-2026-06-14T22-37-59-293.mdx"
+    ]
+  },
+  {
+    "slug": "46336b97-4306-41bc-8a7b-48f0ebebbd29-en",
+    "lang": "en",
+    "kept": "src/content/blog/46336b97-4306-41bc-8a7b-48f0ebebbd29-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/46336b97-4306-41bc-8a7b-48f0ebebbd29-en/v-2026-06-14T22-37-59-293.mdx"
+    ]
+  },
+  {
+    "slug": "a-api-do-jules-como-backend-do-harness",
+    "lang": "pt",
+    "kept": "src/content/blog/a-api-do-jules-como-backend-do-harness.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/a-api-do-jules-como-backend-do-harness/v-2026-06-10T05-09-44.md",
+      "src/content/blog/a-api-do-jules-como-backend-do-harness/v-2026-06-12T03-33-38-532.md"
+    ]
+  },
+  {
+    "slug": "a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050",
+    "lang": "pt",
+    "kept": "src/content/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/a-ia-descobrir-uma-nova-lei-de-conservao-antes-de-2050/v-2026-06-10T05-09-44.md"
+    ]
+  },
+  {
+    "slug": "a-terceira-metade-e-a-quarta-parede",
+    "lang": "pt",
+    "kept": "src/content/blog/a-terceira-metade-e-a-quarta-parede.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/a-terceira-metade-e-a-quarta-parede/v-2026-06-10T05-09-44.md"
+    ]
+  },
+  {
+    "slug": "be-me-borges",
+    "lang": "pt",
+    "kept": "src/content/blog/be-me-borges.mdx",
+    "reason": "selected",
+    "removed": ["src/content/blog/be-me-borges/v-2026-06-12T03-26-27-255.mdx"]
+  },
+  {
+    "slug": "be-me-borges-en",
+    "lang": "en",
+    "kept": "src/content/blog/be-me-borges-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/be-me-borges-en/v-2026-06-12T03-26-27-255.mdx"
+    ]
+  },
+  {
+    "slug": "belief-engine-labyrinth-song-moving-window-viii",
+    "lang": "pt",
+    "kept": "src/content/blog/belief-engine-labyrinth-song-moving-window-viii.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/belief-engine-labyrinth-song-moving-window-viii/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/belief-engine-labyrinth-song-moving-window-viii/v-2026-06-12T21-30-27-353.mdx"
+    ]
+  },
+  {
+    "slug": "belief-engine-labyrinth-song-moving-window-viii-en",
+    "lang": "en",
+    "kept": "src/content/blog/belief-engine-labyrinth-song-moving-window-viii-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/belief-engine-labyrinth-song-moving-window-viii-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/belief-engine-labyrinth-song-moving-window-viii-en/v-2026-06-12T21-30-27-353.mdx"
+    ]
+  },
+  {
+    "slug": "bibliotecario-do-infinito",
+    "lang": "pt",
+    "kept": "src/content/blog/bibliotecario-do-infinito.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/bibliotecario-do-infinito/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/bibliotecario-do-infinito/v-2026-06-14T20-31-23-516.mdx",
+      "src/content/blog/bibliotecario-do-infinito/v-2026-06-14T20-33-15-276.mdx"
+    ]
+  },
+  {
+    "slug": "bibliotecario-do-infinito-en",
+    "lang": "en",
+    "kept": "src/content/blog/bibliotecario-do-infinito-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/bibliotecario-do-infinito-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/bibliotecario-do-infinito-en/v-2026-06-14T20-31-23-516.mdx",
+      "src/content/blog/bibliotecario-do-infinito-en/v-2026-06-14T20-33-15-276.mdx"
+    ]
+  },
+  {
+    "slug": "borges-and-me",
+    "lang": "pt",
+    "kept": "src/content/blog/borges-and-me.mdx",
+    "reason": "selected",
+    "removed": ["src/content/blog/borges-and-me/v-2026-06-09T20-24-29.mdx"]
+  },
+  {
+    "slug": "borges-and-me-en",
+    "lang": "en",
+    "kept": "src/content/blog/borges-and-me-en.mdx",
+    "reason": "selected",
+    "removed": ["src/content/blog/borges-and-me-en/v-2026-06-09T20-24-29.mdx"]
+  },
+  {
+    "slug": "borges-and-the-hyperobject-at-the-end-of-time",
+    "lang": "pt",
+    "kept": "src/content/blog/borges-and-the-hyperobject-at-the-end-of-time.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/borges-and-the-hyperobject-at-the-end-of-time/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/borges-and-the-hyperobject-at-the-end-of-time/v-2026-06-11T21-34-27-555.mdx",
+      "src/content/blog/borges-and-the-hyperobject-at-the-end-of-time/v-2026-06-11T21-38-58-279.mdx",
+      "src/content/blog/borges-and-the-hyperobject-at-the-end-of-time/v-2026-06-12T10-02-15-018.mdx"
+    ]
+  },
+  {
+    "slug": "borges-and-the-hyperobject-at-the-end-of-time-en",
+    "lang": "en",
+    "kept": "src/content/blog/borges-and-the-hyperobject-at-the-end-of-time-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/borges-and-the-hyperobject-at-the-end-of-time-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/borges-and-the-hyperobject-at-the-end-of-time-en/v-2026-06-11T21-34-27-555.mdx",
+      "src/content/blog/borges-and-the-hyperobject-at-the-end-of-time-en/v-2026-06-11T21-38-58-279.mdx",
+      "src/content/blog/borges-and-the-hyperobject-at-the-end-of-time-en/v-2026-06-12T10-02-15-018.mdx"
+    ]
+  },
+  {
+    "slug": "borges-e-eu",
+    "lang": "pt",
+    "kept": "src/content/blog/borges-e-eu.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/borges-e-eu/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/borges-e-eu/v-2026-06-14T06-57-00-274.mdx"
+    ]
+  },
+  {
+    "slug": "borges-e-eu-en",
+    "lang": "en",
+    "kept": "src/content/blog/borges-e-eu-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/borges-e-eu-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/borges-e-eu-en/v-2026-06-14T06-57-00-274.mdx"
+    ]
+  },
+  {
+    "slug": "building-funes",
+    "lang": "en",
+    "kept": "src/content/blog/building-funes.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/building-funes/v-2026-06-10T05-09-44.md",
+      "src/content/blog/building-funes/v-2026-06-16T21-01-23-354.md"
+    ]
+  },
+  {
+    "slug": "caminho",
+    "lang": "pt",
+    "kept": "src/content/blog/caminho.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/caminho/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/caminho/v-2026-06-12T14-37-54-301.mdx"
+    ]
+  },
+  {
+    "slug": "caminho-en",
+    "lang": "en",
+    "kept": "src/content/blog/caminho-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/caminho-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/caminho-en/v-2026-06-12T14-37-54-301.mdx"
+    ]
+  },
+  {
+    "slug": "censo-nao-amostra",
+    "lang": "pt",
+    "kept": "src/content/blog/censo-nao-amostra.md",
+    "reason": "selected",
+    "removed": ["src/content/blog/censo-nao-amostra/v-2026-06-10T05-09-44.md"]
+  },
+  {
+    "slug": "census-not-sample",
+    "lang": "en",
+    "kept": "src/content/blog/census-not-sample.md",
+    "reason": "selected",
+    "removed": ["src/content/blog/census-not-sample/v-2026-06-10T05-09-44.md"]
+  },
+  {
+    "slug": "chegue-irmao-chegue-irma",
+    "lang": "pt",
+    "kept": "src/content/blog/chegue-irmao-chegue-irma.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/chegue-irmao-chegue-irma/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/chegue-irmao-chegue-irma/v-2026-06-10T00-16-31.mdx",
+      "src/content/blog/chegue-irmao-chegue-irma/v-2026-06-26T05-14-11-080.mdx",
+      "src/content/blog/chegue-irmao-chegue-irma/v-2026-06-26T12-14-33-109.mdx"
+    ]
+  },
+  {
+    "slug": "chegue-irmao-chegue-irma-en",
+    "lang": "en",
+    "kept": "src/content/blog/chegue-irmao-chegue-irma-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/chegue-irmao-chegue-irma-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/chegue-irmao-chegue-irma-en/v-2026-06-10T00-16-31.mdx",
+      "src/content/blog/chegue-irmao-chegue-irma-en/v-2026-06-26T05-14-11-080.mdx",
+      "src/content/blog/chegue-irmao-chegue-irma-en/v-2026-06-26T12-14-33-109.mdx"
+    ]
+  },
+  {
+    "slug": "clipes",
+    "lang": "pt",
+    "kept": "src/content/blog/clipes.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/clipes/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/clipes/v-2026-06-13T21-28-34-141.mdx",
+      "src/content/blog/clipes/v-2026-06-14T00-23-13-555.mdx"
+    ]
+  },
+  {
+    "slug": "clipes-en",
+    "lang": "en",
+    "kept": "src/content/blog/clipes-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/clipes-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/clipes-en/v-2026-06-13T21-28-34-141.mdx",
+      "src/content/blog/clipes-en/v-2026-06-14T00-23-13-555.mdx"
+    ]
+  },
+  {
+    "slug": "conceptual-document-the-chronicle-of-franklin-baldo",
+    "lang": "en",
+    "kept": "src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/conceptual-document-the-chronicle-of-franklin-baldo/v-2026-06-10T05-09-44.md"
+    ]
+  },
+  {
+    "slug": "construindo-funes-como-dei-uma-alma-a-um-agente-de-ia",
+    "lang": "pt",
+    "kept": "src/content/blog/construindo-funes-como-dei-uma-alma-a-um-agente-de-ia.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/construindo-funes-como-dei-uma-alma-a-um-agente-de-ia/v-2026-06-10T05-09-44.md",
+      "src/content/blog/construindo-funes-como-dei-uma-alma-a-um-agente-de-ia/v-2026-06-16T21-01-23-354.md"
+    ]
+  },
+  {
+    "slug": "crossing-after-interference",
+    "lang": "en",
+    "kept": "src/content/blog/crossing-after-interference.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/crossing-after-interference/v-2026-06-10T05-09-44.md"
+    ]
+  },
+  {
+    "slug": "crystallizing-from-the-nothing",
+    "lang": "pt",
+    "kept": "src/content/blog/crystallizing-from-the-nothing.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/crystallizing-from-the-nothing/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/crystallizing-from-the-nothing/v-2026-06-10T00-35-36.mdx"
+    ]
+  },
+  {
+    "slug": "crystallizing-from-the-nothing-en",
+    "lang": "en",
+    "kept": "src/content/blog/crystallizing-from-the-nothing-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/crystallizing-from-the-nothing-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/crystallizing-from-the-nothing-en/v-2026-06-10T00-35-36.mdx"
+    ]
+  },
+  {
+    "slug": "dd332f75-6052-4f9e-bccd-fb0303731d6e",
+    "lang": "pt",
+    "kept": "src/content/blog/dd332f75-6052-4f9e-bccd-fb0303731d6e.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/dd332f75-6052-4f9e-bccd-fb0303731d6e/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/dd332f75-6052-4f9e-bccd-fb0303731d6e/v-2026-06-13T04-36-49-037.mdx"
+    ]
+  },
+  {
+    "slug": "dd332f75-6052-4f9e-bccd-fb0303731d6e-en",
+    "lang": "en",
+    "kept": "src/content/blog/dd332f75-6052-4f9e-bccd-fb0303731d6e-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/dd332f75-6052-4f9e-bccd-fb0303731d6e-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/dd332f75-6052-4f9e-bccd-fb0303731d6e-en/v-2026-06-13T04-36-49-037.mdx"
+    ]
+  },
+  {
+    "slug": "documento-conceitual-a-cronica-de-franklin-baldo",
+    "lang": "pt",
+    "kept": "src/content/blog/documento-conceitual-a-cronica-de-franklin-baldo.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/documento-conceitual-a-cronica-de-franklin-baldo/v-2026-06-10T05-09-44.md"
+    ]
+  },
+  {
+    "slug": "duas-perguntas-em-voz-alta",
+    "lang": "pt",
+    "kept": "src/content/blog/duas-perguntas-em-voz-alta.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/duas-perguntas-em-voz-alta/v-2026-06-12T14-20-55-459.md",
+      "src/content/blog/duas-perguntas-em-voz-alta/v-2026-06-12T15-28-51-540.md"
+    ]
+  },
+  {
+    "slug": "eles-esto-realmente-usando-uma-postagem-do-reddit-para-ajudar-a-bombardear-um-submarino-no-ir",
+    "lang": "pt",
+    "kept": "src/content/blog/eles-esto-realmente-usando-uma-postagem-do-reddit-para-ajudar-a-bombardear-um-submarino-no-ir.md",
+    "reason": "selected",
+    "removed": []
+  },
+  {
+    "slug": "entre-rascunho-e-apagar",
+    "lang": "pt",
+    "kept": "src/content/blog/entre-rascunho-e-apagar.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/entre-rascunho-e-apagar/v-2026-06-09T20-24-29.mdx"
+    ]
+  },
+  {
+    "slug": "entre-rascunho-e-apagar-en",
+    "lang": "en",
+    "kept": "src/content/blog/entre-rascunho-e-apagar-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/entre-rascunho-e-apagar-en/v-2026-06-09T20-24-29.mdx"
+    ]
+  },
+  {
+    "slug": "espelhos",
+    "lang": "pt",
+    "kept": "src/content/blog/espelhos.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/espelhos/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/espelhos/v-2026-06-13T08-27-59-139.mdx"
+    ]
+  },
+  {
+    "slug": "espelhos-en",
+    "lang": "en",
+    "kept": "src/content/blog/espelhos-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/espelhos-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/espelhos-en/v-2026-06-13T08-27-59-139.mdx"
+    ]
+  },
+  {
+    "slug": "estamos-todos-nos-tornando-lagostas",
+    "lang": "pt",
+    "kept": "src/content/blog/estamos-todos-nos-tornando-lagostas.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/estamos-todos-nos-tornando-lagostas/v-2026-06-10T05-09-44.md",
+      "src/content/blog/estamos-todos-nos-tornando-lagostas/v-2026-06-11T09-53-41-269.md"
+    ]
+  },
+  {
+    "slug": "everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago",
+    "lang": "en",
+    "kept": "src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/v-2026-06-10T13-23-04.md",
+      "src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/v-2026-06-10T17-39-46.md",
+      "src/content/blog/everything-is-a-process-5-lessons-we-should-have-learned-2500-years-ago/v-2026-06-10T18-32-48.md"
+    ]
+  },
+  {
+    "slug": "f73c60f0-49af-45fd-a483-1d35a676dccc",
+    "lang": "pt",
+    "kept": "src/content/blog/f73c60f0-49af-45fd-a483-1d35a676dccc.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/f73c60f0-49af-45fd-a483-1d35a676dccc/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/f73c60f0-49af-45fd-a483-1d35a676dccc/v-2026-06-23T18-20-27-943.mdx"
+    ]
+  },
+  {
+    "slug": "f73c60f0-49af-45fd-a483-1d35a676dccc-en",
+    "lang": "en",
+    "kept": "src/content/blog/f73c60f0-49af-45fd-a483-1d35a676dccc-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/f73c60f0-49af-45fd-a483-1d35a676dccc-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/f73c60f0-49af-45fd-a483-1d35a676dccc-en/v-2026-06-23T18-20-27-943.mdx"
+    ]
+  },
+  {
+    "slug": "f85fb538-6f59-4751-8629-da76665fc91e",
+    "lang": "pt",
+    "kept": "src/content/blog/f85fb538-6f59-4751-8629-da76665fc91e.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/f85fb538-6f59-4751-8629-da76665fc91e/v-2026-06-10T02-19-02.mdx",
+      "src/content/blog/f85fb538-6f59-4751-8629-da76665fc91e/v-2026-06-13T02-08-52-069.mdx",
+      "src/content/blog/f85fb538-6f59-4751-8629-da76665fc91e/v-2026-06-13T04-44-10-609.mdx",
+      "src/content/blog/f85fb538-6f59-4751-8629-da76665fc91e/v-2026-06-13T07-45-00-613.mdx"
+    ]
+  },
+  {
+    "slug": "f85fb538-6f59-4751-8629-da76665fc91e-en",
+    "lang": "en",
+    "kept": "src/content/blog/f85fb538-6f59-4751-8629-da76665fc91e-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/f85fb538-6f59-4751-8629-da76665fc91e-en/v-2026-06-10T02-19-02.mdx",
+      "src/content/blog/f85fb538-6f59-4751-8629-da76665fc91e-en/v-2026-06-13T02-08-52-069.mdx",
+      "src/content/blog/f85fb538-6f59-4751-8629-da76665fc91e-en/v-2026-06-13T04-44-10-609.mdx",
+      "src/content/blog/f85fb538-6f59-4751-8629-da76665fc91e-en/v-2026-06-13T07-45-00-613.mdx"
+    ]
+  },
+  {
+    "slug": "funes-soul",
+    "lang": "en",
+    "kept": "src/content/blog/funes-soul.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/funes-soul/v-2026-06-12T18-00-49-035.md",
+      "src/content/blog/funes-soul/v-2026-06-12T18-02-22-568.md"
+    ]
+  },
+  {
+    "slug": "guia-de-implementao-da-arquitetura-pontifex",
+    "lang": "pt",
+    "kept": "src/content/blog/guia-de-implementao-da-arquitetura-pontifex.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/guia-de-implementao-da-arquitetura-pontifex/v-2026-06-10T05-09-44.md",
+      "src/content/blog/guia-de-implementao-da-arquitetura-pontifex/v-2026-06-11T17-38-21-327.md"
+    ]
+  },
+  {
+    "slug": "inaugural-post-a-glimpse-inside-my-mind",
+    "lang": "en",
+    "kept": "src/content/blog/inaugural-post-a-glimpse-inside-my-mind.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/inaugural-post-a-glimpse-inside-my-mind/v-2026-06-10T05-09-44.md",
+      "src/content/blog/inaugural-post-a-glimpse-inside-my-mind/v-2026-06-11T14-34-07-292.md",
+      "src/content/blog/inaugural-post-a-glimpse-inside-my-mind/v-2026-06-11T15-52-42-412.md",
+      "src/content/blog/inaugural-post-a-glimpse-inside-my-mind/v-2026-06-11T16-15-03-369.md"
+    ]
+  },
+  {
+    "slug": "jules-api-harness-backend",
+    "lang": "en",
+    "kept": "src/content/blog/jules-api-harness-backend.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/jules-api-harness-backend/v-2026-06-10T05-09-44.md",
+      "src/content/blog/jules-api-harness-backend/v-2026-06-12T03-33-38-532.md"
+    ]
+  },
+  {
+    "slug": "leite-no-salao-bar",
+    "lang": "pt",
+    "kept": "src/content/blog/leite-no-salao-bar.mdx",
+    "reason": "selected",
+    "removed": ["src/content/blog/leite-no-salao-bar/v-2026-06-09T20-24-29.mdx"]
+  },
+  {
+    "slug": "leite-no-salao-bar-en",
+    "lang": "en",
+    "kept": "src/content/blog/leite-no-salao-bar-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/leite-no-salao-bar-en/v-2026-06-09T20-24-29.mdx"
+    ]
+  },
+  {
+    "slug": "menino-que-voce-foi",
+    "lang": "pt",
+    "kept": "src/content/blog/menino-que-voce-foi.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/menino-que-voce-foi/v-2026-06-12T17-47-27-031.mdx",
+      "src/content/blog/menino-que-voce-foi/v-2026-06-12T19-12-49-666.mdx"
+    ]
+  },
+  {
+    "slug": "menino-que-voce-foi-en",
+    "lang": "en",
+    "kept": "src/content/blog/menino-que-voce-foi-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/menino-que-voce-foi-en/v-2026-06-12T17-47-27-031.mdx",
+      "src/content/blog/menino-que-voce-foi-en/v-2026-06-12T19-12-49-666.mdx"
+    ]
+  },
+  {
+    "slug": "mindfulness",
+    "lang": "pt",
+    "kept": "src/content/blog/mindfulness.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/mindfulness/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/mindfulness/v-2026-06-10T07-09-27.mdx"
+    ]
+  },
+  {
+    "slug": "mindfulness-en",
+    "lang": "en",
+    "kept": "src/content/blog/mindfulness-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/mindfulness-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/mindfulness-en/v-2026-06-10T07-09-27.mdx"
+    ]
+  },
+  {
+    "slug": "moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade",
+    "lang": "pt",
+    "kept": "src/content/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/v-2026-06-12T15-09-34-342.md",
+      "src/content/blog/moeda-rosencrantz-testando-se-os-llms-respeitam-a-probabilidade/v-2026-06-12T15-37-10-405.md"
+    ]
+  },
+  {
+    "slug": "o-agente-que-nao-inventa-verbos",
+    "lang": "pt",
+    "kept": "src/content/blog/o-agente-que-nao-inventa-verbos.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-agente-que-nao-inventa-verbos/v-2026-06-10T05-09-44.md"
+    ]
+  },
+  {
+    "slug": "o-magico-e-o-fogo",
+    "lang": "pt",
+    "kept": "src/content/blog/o-magico-e-o-fogo.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-magico-e-o-fogo/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/o-magico-e-o-fogo/v-2026-06-13T01-53-43-890.mdx"
+    ]
+  },
+  {
+    "slug": "o-magico-e-o-fogo-en",
+    "lang": "en",
+    "kept": "src/content/blog/o-magico-e-o-fogo-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-magico-e-o-fogo-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/o-magico-e-o-fogo-en/v-2026-06-13T01-53-43-890.mdx"
+    ]
+  },
+  {
+    "slug": "o-medo-do-louco",
+    "lang": "pt",
+    "kept": "src/content/blog/o-medo-do-louco.mdx",
+    "reason": "selected",
+    "removed": ["src/content/blog/o-medo-do-louco/v-2026-06-09T20-24-29.mdx"]
+  },
+  {
+    "slug": "o-medo-do-louco-en",
+    "lang": "en",
+    "kept": "src/content/blog/o-medo-do-louco-en.mdx",
+    "reason": "selected",
+    "removed": ["src/content/blog/o-medo-do-louco-en/v-2026-06-09T20-24-29.mdx"]
+  },
+  {
+    "slug": "o-pai-do-futuro",
+    "lang": "pt",
+    "kept": "src/content/blog/o-pai-do-futuro.md",
+    "reason": "selected",
+    "removed": []
+  },
+  {
+    "slug": "o-pampa-no-circuito-um-mate-com-o-boswell-digital",
+    "lang": "pt",
+    "kept": "src/content/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital/v-2026-06-10T05-09-44.md",
+      "src/content/blog/o-pampa-no-circuito-um-mate-com-o-boswell-digital/v-2026-06-12T21-06-39-072.md"
+    ]
+  },
+  {
+    "slug": "o-preco-da-saudade",
+    "lang": "pt",
+    "kept": "src/content/blog/o-preco-da-saudade.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-preco-da-saudade/v-2026-06-12T11-32-47-304.mdx",
+      "src/content/blog/o-preco-da-saudade/v-2026-06-12T11-41-44-358.mdx"
+    ]
+  },
+  {
+    "slug": "o-preco-da-saudade-en",
+    "lang": "en",
+    "kept": "src/content/blog/o-preco-da-saudade-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-preco-da-saudade-en/v-2026-06-12T11-32-47-304.mdx",
+      "src/content/blog/o-preco-da-saudade-en/v-2026-06-12T11-41-44-358.mdx"
+    ]
+  },
+  {
+    "slug": "o-prologo",
+    "lang": "pt",
+    "kept": "src/content/blog/o-prologo.mdx",
+    "reason": "selected",
+    "removed": ["src/content/blog/o-prologo/v-2026-06-16T19-17-39-928.mdx"]
+  },
+  {
+    "slug": "o-prologo-en",
+    "lang": "en",
+    "kept": "src/content/blog/o-prologo-en.mdx",
+    "reason": "selected",
+    "removed": ["src/content/blog/o-prologo-en/v-2026-06-16T19-17-39-928.mdx"]
+  },
+  {
+    "slug": "o-regral",
+    "lang": "pt",
+    "kept": "src/content/blog/o-regral.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-regral/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/o-regral/v-2026-06-11T11-48-54-479.mdx",
+      "src/content/blog/o-regral/v-2026-06-11T14-41-19-701.mdx"
+    ]
+  },
+  {
+    "slug": "o-regral-en",
+    "lang": "en",
+    "kept": "src/content/blog/o-regral-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-regral-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/o-regral-en/v-2026-06-11T11-48-54-479.mdx",
+      "src/content/blog/o-regral-en/v-2026-06-11T14-41-19-701.mdx"
+    ]
+  },
+  {
+    "slug": "o-ritual-de-abril-anos-de-saudade",
+    "lang": "pt",
+    "kept": "src/content/blog/o-ritual-de-abril-anos-de-saudade.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-ritual-de-abril-anos-de-saudade/v-2026-07-01T03-10-28-372.mdx"
+    ]
+  },
+  {
+    "slug": "o-ritual-de-abril-anos-de-saudade-en",
+    "lang": "en",
+    "kept": "src/content/blog/o-ritual-de-abril-anos-de-saudade-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-ritual-de-abril-anos-de-saudade-en/v-2026-07-01T03-10-28-372.mdx"
+    ]
+  },
+  {
+    "slug": "o-sonhador-e-o-fogo",
+    "lang": "pt",
+    "kept": "src/content/blog/o-sonhador-e-o-fogo.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-sonhador-e-o-fogo/v-2026-06-11T00-11-33-042.mdx",
+      "src/content/blog/o-sonhador-e-o-fogo/v-2026-06-11T00-34-11-317.mdx",
+      "src/content/blog/o-sonhador-e-o-fogo/v-2026-06-11T00-43-34-675.mdx",
+      "src/content/blog/o-sonhador-e-o-fogo/v-2026-06-11T03-19-06-351.mdx",
+      "src/content/blog/o-sonhador-e-o-fogo/v-2026-06-11T05-15-50-982.mdx"
+    ]
+  },
+  {
+    "slug": "o-sonhador-e-o-fogo-en",
+    "lang": "en",
+    "kept": "src/content/blog/o-sonhador-e-o-fogo-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-sonhador-e-o-fogo-en/v-2026-06-11T00-11-33-042.mdx",
+      "src/content/blog/o-sonhador-e-o-fogo-en/v-2026-06-11T00-34-11-317.mdx",
+      "src/content/blog/o-sonhador-e-o-fogo-en/v-2026-06-11T00-43-34-675.mdx",
+      "src/content/blog/o-sonhador-e-o-fogo-en/v-2026-06-11T03-19-06-351.mdx",
+      "src/content/blog/o-sonhador-e-o-fogo-en/v-2026-06-11T05-15-50-982.mdx"
+    ]
+  },
+  {
+    "slug": "o-tempo",
+    "lang": "pt",
+    "kept": "src/content/blog/o-tempo.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-tempo/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/o-tempo/v-2026-06-11T22-25-17-165.mdx"
+    ]
+  },
+  {
+    "slug": "o-tempo-en",
+    "lang": "en",
+    "kept": "src/content/blog/o-tempo-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-tempo-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/o-tempo-en/v-2026-06-11T22-25-17-165.mdx"
+    ]
+  },
+  {
+    "slug": "o-verso-branquiceleste",
+    "lang": "pt",
+    "kept": "src/content/blog/o-verso-branquiceleste.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-verso-branquiceleste/v-2026-06-09T20-24-29.mdx"
+    ]
+  },
+  {
+    "slug": "o-verso-branquiceleste-en",
+    "lang": "en",
+    "kept": "src/content/blog/o-verso-branquiceleste-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/o-verso-branquiceleste-en/v-2026-06-09T20-24-29.mdx"
+    ]
+  },
+  {
+    "slug": "observer-error-moving-window-iv",
+    "lang": "pt",
+    "kept": "src/content/blog/observer-error-moving-window-iv.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/observer-error-moving-window-iv/v-2026-06-11T22-29-46-022.mdx"
+    ]
+  },
+  {
+    "slug": "observer-error-moving-window-iv-en",
+    "lang": "en",
+    "kept": "src/content/blog/observer-error-moving-window-iv-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/observer-error-moving-window-iv-en/v-2026-06-11T22-29-46-022.mdx"
+    ]
+  },
+  {
+    "slug": "orquestrando-agentes-memoria-familiar",
+    "lang": "pt",
+    "kept": "src/content/blog/orquestrando-agentes-memoria-familiar.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/orquestrando-agentes-memoria-familiar/v-2026-06-10T05-09-44.md"
+    ]
+  },
+  {
+    "slug": "paperclip-rhapsody",
+    "lang": "pt",
+    "kept": "src/content/blog/paperclip-rhapsody.mdx",
+    "reason": "selected",
+    "removed": ["src/content/blog/paperclip-rhapsody/v-2026-06-09T20-24-29.mdx"]
+  },
+  {
+    "slug": "paperclip-rhapsody-en",
+    "lang": "en",
+    "kept": "src/content/blog/paperclip-rhapsody-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/paperclip-rhapsody-en/v-2026-06-09T20-24-29.mdx"
+    ]
+  },
+  {
+    "slug": "particles",
+    "lang": "pt",
+    "kept": "src/content/blog/particles.mdx",
+    "reason": "selected",
+    "removed": ["src/content/blog/particles/v-2026-06-10T18-32-48.mdx"]
+  },
+  {
+    "slug": "particles-en",
+    "lang": "en",
+    "kept": "src/content/blog/particles-en.mdx",
+    "reason": "selected",
+    "removed": ["src/content/blog/particles-en/v-2026-06-10T18-32-48.mdx"]
+  },
+  {
+    "slug": "patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores",
+    "lang": "pt",
+    "kept": "src/content/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/v-2026-06-10T05-09-44.md",
+      "src/content/blog/patentes-para-vulnerabilidades-sociais-uma-proposta-modesta-para-transformar-criminosos-em-consultores/v-2026-06-11T20-06-22-146.md"
+    ]
+  },
+  {
+    "slug": "patents-for-social-vulnerabilities",
+    "lang": "en",
+    "kept": "src/content/blog/patents-for-social-vulnerabilities.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/patents-for-social-vulnerabilities/v-2026-06-10T05-09-44.md",
+      "src/content/blog/patents-for-social-vulnerabilities/v-2026-06-11T20-06-22-146.md"
+    ]
+  },
+  {
+    "slug": "pattern-over-stuff",
+    "lang": "pt",
+    "kept": "src/content/blog/pattern-over-stuff.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/pattern-over-stuff/v-2026-06-12T04-39-56-878.mdx"
+    ]
+  },
+  {
+    "slug": "pattern-over-stuff-en",
+    "lang": "en",
+    "kept": "src/content/blog/pattern-over-stuff-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/pattern-over-stuff-en/v-2026-06-12T04-39-56-878.mdx"
+    ]
+  },
+  {
+    "slug": "pierre-menard-computational-researcher",
+    "lang": "en",
+    "kept": "src/content/blog/pierre-menard-computational-researcher.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/pierre-menard-computational-researcher/v-2026-06-16T22-11-51-632.md",
+      "src/content/blog/pierre-menard-computational-researcher/v-2026-06-17T01-01-30-151.md"
+    ]
+  },
+  {
+    "slug": "pierre-menard-pesquisador-computacional",
+    "lang": "pt",
+    "kept": "src/content/blog/pierre-menard-pesquisador-computacional.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/pierre-menard-pesquisador-computacional/v-2026-06-16T22-11-51-632.md",
+      "src/content/blog/pierre-menard-pesquisador-computacional/v-2026-06-17T01-01-30-151.md"
+    ]
+  },
+  {
+    "slug": "pontifex-architecture-implementation-guide",
+    "lang": "en",
+    "kept": "src/content/blog/pontifex-architecture-implementation-guide.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/pontifex-architecture-implementation-guide/v-2026-06-10T05-09-44.md",
+      "src/content/blog/pontifex-architecture-implementation-guide/v-2026-06-11T17-38-21-327.md"
+    ]
+  },
+  {
+    "slug": "postagem-inaugural-um-vislumbre-da-minha-mente",
+    "lang": "pt",
+    "kept": "src/content/blog/postagem-inaugural-um-vislumbre-da-minha-mente.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/postagem-inaugural-um-vislumbre-da-minha-mente/v-2026-06-10T05-09-44.md",
+      "src/content/blog/postagem-inaugural-um-vislumbre-da-minha-mente/v-2026-06-11T14-34-07-292.md",
+      "src/content/blog/postagem-inaugural-um-vislumbre-da-minha-mente/v-2026-06-11T15-52-42-412.md",
+      "src/content/blog/postagem-inaugural-um-vislumbre-da-minha-mente/v-2026-06-11T16-15-03-369.md"
+    ]
+  },
+  {
+    "slug": "prayer-to-the-unfinished-moving-window-v",
+    "lang": "pt",
+    "kept": "src/content/blog/prayer-to-the-unfinished-moving-window-v.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/prayer-to-the-unfinished-moving-window-v/v-2026-06-09T20-24-29.mdx"
+    ]
+  },
+  {
+    "slug": "prayer-to-the-unfinished-moving-window-v-en",
+    "lang": "en",
+    "kept": "src/content/blog/prayer-to-the-unfinished-moving-window-v-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/prayer-to-the-unfinished-moving-window-v-en/v-2026-06-09T20-24-29.mdx"
+    ]
+  },
+  {
+    "slug": "primavera-carregando",
+    "lang": "pt",
+    "kept": "src/content/blog/primavera-carregando.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/primavera-carregando/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/primavera-carregando/v-2026-06-11T06-41-53-366.mdx"
+    ]
+  },
+  {
+    "slug": "primavera-carregando-en",
+    "lang": "en",
+    "kept": "src/content/blog/primavera-carregando-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/primavera-carregando-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/primavera-carregando-en/v-2026-06-11T06-41-53-366.mdx"
+    ]
+  },
+  {
+    "slug": "quem-sou-eu",
+    "lang": "pt",
+    "kept": "src/content/blog/quem-sou-eu/index.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/quem-sou-eu/v-2026-06-29.md",
+      "src/content/blog/quem-sou-eu/v-2026-07-08T17-32-08-182.md",
+      "src/content/blog/quem-sou-eu/v-2026-07-11T00-00-00-000.md",
+      "src/content/blog/quem-sou-eu/v-2026-07-11T02-30-00-000.md"
+    ]
+  },
+  {
+    "slug": "quem-sou-eu-en",
+    "lang": "en",
+    "kept": "src/content/blog/quem-sou-eu-en.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/quem-sou-eu-en/v-2026-06-29.md",
+      "src/content/blog/quem-sou-eu-en/v-2026-07-08T17-32-08-182.md",
+      "src/content/blog/quem-sou-eu-en/v-2026-07-11T00-00-00-000.md",
+      "src/content/blog/quem-sou-eu-en/v-2026-07-11T02-30-00-000.md"
+    ]
+  },
+  {
+    "slug": "reclaiming-the-harness",
+    "lang": "en",
+    "kept": "src/content/blog/reclaiming-the-harness.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/reclaiming-the-harness/v-2026-06-10T05-09-44.md",
+      "src/content/blog/reclaiming-the-harness/v-2026-06-11T17-26-09-005.md",
+      "src/content/blog/reclaiming-the-harness/v-2026-06-13T10-43-53-939.md"
+    ]
+  },
+  {
+    "slug": "recuperando-o-harness",
+    "lang": "pt",
+    "kept": "src/content/blog/recuperando-o-harness.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/recuperando-o-harness/v-2026-06-10T05-09-44.md",
+      "src/content/blog/recuperando-o-harness/v-2026-06-11T17-26-09-005.md",
+      "src/content/blog/recuperando-o-harness/v-2026-06-13T10-43-53-939.md"
+    ]
+  },
+  {
+    "slug": "reddit-submarine-osint",
+    "lang": "en",
+    "kept": "src/content/blog/reddit-submarine-osint.md",
+    "reason": "selected",
+    "removed": []
+  },
+  {
+    "slug": "riobaldo-e-o-aleph",
+    "lang": "pt",
+    "kept": "src/content/blog/riobaldo-e-o-aleph.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/riobaldo-e-o-aleph/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/riobaldo-e-o-aleph/v-2026-06-10T00-51-23.mdx",
+      "src/content/blog/riobaldo-e-o-aleph/v-2026-06-10T09-20-27.mdx"
+    ]
+  },
+  {
+    "slug": "riobaldo-e-o-aleph-en",
+    "lang": "en",
+    "kept": "src/content/blog/riobaldo-e-o-aleph-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/riobaldo-e-o-aleph-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/riobaldo-e-o-aleph-en/v-2026-06-10T00-51-23.mdx",
+      "src/content/blog/riobaldo-e-o-aleph-en/v-2026-06-10T09-20-27.mdx"
+    ]
+  },
+  {
+    "slug": "rosencrantz-coin",
+    "lang": "en",
+    "kept": "src/content/blog/rosencrantz-coin.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/rosencrantz-coin/v-2026-06-12T15-09-34-342.md",
+      "src/content/blog/rosencrantz-coin/v-2026-06-12T15-37-10-405.md"
+    ]
+  },
+  {
+    "slug": "sentido-e-referencia",
+    "lang": "pt",
+    "kept": "src/content/blog/sentido-e-referencia.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/sentido-e-referencia/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/sentido-e-referencia/v-2026-06-11T19-23-01-125.mdx",
+      "src/content/blog/sentido-e-referencia/v-2026-06-11T19-26-09-611.mdx"
+    ]
+  },
+  {
+    "slug": "sentido-e-referencia-en",
+    "lang": "en",
+    "kept": "src/content/blog/sentido-e-referencia-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/sentido-e-referencia-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/sentido-e-referencia-en/v-2026-06-11T19-23-01-125.mdx",
+      "src/content/blog/sentido-e-referencia-en/v-2026-06-11T19-26-09-611.mdx"
+    ]
+  },
+  {
+    "slug": "sinal-que-se-cumpre-moving-window-ix",
+    "lang": "pt",
+    "kept": "src/content/blog/sinal-que-se-cumpre-moving-window-ix.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/sinal-que-se-cumpre-moving-window-ix/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/sinal-que-se-cumpre-moving-window-ix/v-2026-06-22T16-19-20-677.mdx"
+    ]
+  },
+  {
+    "slug": "sinal-que-se-cumpre-moving-window-ix-en",
+    "lang": "en",
+    "kept": "src/content/blog/sinal-que-se-cumpre-moving-window-ix-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/sinal-que-se-cumpre-moving-window-ix-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/sinal-que-se-cumpre-moving-window-ix-en/v-2026-06-22T16-19-20-677.mdx"
+    ]
+  },
+  {
+    "slug": "soulmd-funes",
+    "lang": "pt",
+    "kept": "src/content/blog/soulmd-funes.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/soulmd-funes/v-2026-06-12T18-00-49-035.md",
+      "src/content/blog/soulmd-funes/v-2026-06-12T18-02-22-568.md"
+    ]
+  },
+  {
+    "slug": "spring-loading",
+    "lang": "pt",
+    "kept": "src/content/blog/spring-loading.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/spring-loading/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/spring-loading/v-2026-06-16T06-28-51-619.mdx",
+      "src/content/blog/spring-loading/v-2026-06-16T09-36-17-700.mdx"
+    ]
+  },
+  {
+    "slug": "spring-loading-en",
+    "lang": "en",
+    "kept": "src/content/blog/spring-loading-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/spring-loading-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/spring-loading-en/v-2026-06-16T06-28-51-619.mdx",
+      "src/content/blog/spring-loading-en/v-2026-06-16T09-36-17-700.mdx"
+    ]
+  },
+  {
+    "slug": "stopping-by-woods-on-a-snowy-evening-by-robert-frost",
+    "lang": "pt",
+    "kept": "src/content/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost/v-2026-06-11T18-36-27-377.mdx",
+      "src/content/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost/v-2026-06-11T18-37-11-886.mdx"
+    ]
+  },
+  {
+    "slug": "stopping-by-woods-on-a-snowy-evening-by-robert-frost-en",
+    "lang": "en",
+    "kept": "src/content/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost-en/v-2026-06-11T18-36-27-377.mdx",
+      "src/content/blog/stopping-by-woods-on-a-snowy-evening-by-robert-frost-en/v-2026-06-11T18-37-11-886.mdx"
+    ]
+  },
+  {
+    "slug": "sussurros-binarios",
+    "lang": "pt",
+    "kept": "src/content/blog/sussurros-binarios.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/sussurros-binarios/v-2026-06-12T22-27-34-547.mdx",
+      "src/content/blog/sussurros-binarios/v-2026-06-13T01-28-26-957.mdx"
+    ]
+  },
+  {
+    "slug": "sussurros-binarios-en",
+    "lang": "en",
+    "kept": "src/content/blog/sussurros-binarios-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/sussurros-binarios-en/v-2026-06-12T22-27-34-547.mdx",
+      "src/content/blog/sussurros-binarios-en/v-2026-06-13T01-28-26-957.mdx"
+    ]
+  },
+  {
+    "slug": "the-agent-that-doesnt-invent-verbs",
+    "lang": "en",
+    "kept": "src/content/blog/the-agent-that-doesnt-invent-verbs.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/the-agent-that-doesnt-invent-verbs/v-2026-06-10T05-09-44.md"
+    ]
+  },
+  {
+    "slug": "the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life",
+    "lang": "en",
+    "kept": "src/content/blog/the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life.md",
+    "reason": "manual",
+    "removed": []
+  },
+  {
+    "slug": "the-future-father-building-a-transmedia-novel-with-ai-agents",
+    "lang": "en",
+    "kept": "src/content/blog/the-future-father-building-a-transmedia-novel-with-ai-agents.md",
+    "reason": "selected",
+    "removed": []
+  },
+  {
+    "slug": "the-pampa-on-the-circuit-a-mate-with-boswell-digital",
+    "lang": "en",
+    "kept": "src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/v-2026-06-10T05-09-44.md",
+      "src/content/blog/the-pampa-on-the-circuit-a-mate-with-boswell-digital/v-2026-06-12T21-06-39-072.md"
+    ]
+  },
+  {
+    "slug": "the-ruliad-is-laughing",
+    "lang": "pt",
+    "kept": "src/content/blog/the-ruliad-is-laughing.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/the-ruliad-is-laughing/v-2026-06-15T17-48-05-129.mdx",
+      "src/content/blog/the-ruliad-is-laughing/v-2026-06-15T18-12-02-224.mdx"
+    ]
+  },
+  {
+    "slug": "the-ruliad-is-laughing-en",
+    "lang": "en",
+    "kept": "src/content/blog/the-ruliad-is-laughing-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/the-ruliad-is-laughing-en/v-2026-06-15T17-48-05-129.mdx",
+      "src/content/blog/the-ruliad-is-laughing-en/v-2026-06-15T18-12-02-224.mdx"
+    ]
+  },
+  {
+    "slug": "the-third-half-and-the-fourth-wall",
+    "lang": "en",
+    "kept": "src/content/blog/the-third-half-and-the-fourth-wall.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/the-third-half-and-the-fourth-wall/v-2026-06-10T05-09-44.md"
+    ]
+  },
+  {
+    "slug": "the-third-song-moving-window-iii",
+    "lang": "pt",
+    "kept": "src/content/blog/the-third-song-moving-window-iii.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/the-third-song-moving-window-iii/v-2026-06-09T20-24-29.mdx"
+    ]
+  },
+  {
+    "slug": "the-third-song-moving-window-iii-en",
+    "lang": "en",
+    "kept": "src/content/blog/the-third-song-moving-window-iii-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/the-third-song-moving-window-iii-en/v-2026-06-09T20-24-29.mdx"
+    ]
+  },
+  {
+    "slug": "the-time",
+    "lang": "pt",
+    "kept": "src/content/blog/the-time.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/the-time/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/the-time/v-2026-06-10T12-29-24.mdx"
+    ]
+  },
+  {
+    "slug": "the-time-en",
+    "lang": "en",
+    "kept": "src/content/blog/the-time-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/the-time-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/the-time-en/v-2026-06-10T12-29-24.mdx"
+    ]
+  },
+  {
+    "slug": "travessia",
+    "lang": "pt",
+    "kept": "src/content/blog/travessia.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/travessia/v-2026-06-10T05-09-44.md",
+      "src/content/blog/travessia/v-2026-06-11T12-47-42-181.md"
+    ]
+  },
+  {
+    "slug": "travessia-the-project-that-writes-itself",
+    "lang": "en",
+    "kept": "src/content/blog/travessia-the-project-that-writes-itself.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/travessia-the-project-that-writes-itself/v-2026-06-10T05-09-44.md",
+      "src/content/blog/travessia-the-project-that-writes-itself/v-2026-06-11T12-47-42-181.md",
+      "src/content/blog/travessia-the-project-that-writes-itself/v-2026-07-14T08-18-44-000.md"
+    ]
+  },
+  {
+    "slug": "travessia-update",
+    "lang": "pt",
+    "kept": "src/content/blog/travessia-update.md",
+    "reason": "selected",
+    "removed": ["src/content/blog/travessia-update/v-2026-06-10T05-09-44.md"]
+  },
+  {
+    "slug": "tudo-e-processo",
+    "lang": "pt",
+    "kept": "src/content/blog/tudo-e-processo.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/tudo-e-processo/v-2026-06-10T13-23-04.md",
+      "src/content/blog/tudo-e-processo/v-2026-06-10T17-39-46.md",
+      "src/content/blog/tudo-e-processo/v-2026-06-10T18-32-48.md"
+    ]
+  },
+  {
+    "slug": "two-cursors",
+    "lang": "pt",
+    "kept": "src/content/blog/two-cursors.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/two-cursors/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/two-cursors/v-2026-06-13T12-00-09-262.mdx"
+    ]
+  },
+  {
+    "slug": "two-cursors-en",
+    "lang": "en",
+    "kept": "src/content/blog/two-cursors-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/two-cursors-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/two-cursors-en/v-2026-06-13T12-00-09-262.mdx"
+    ]
+  },
+  {
+    "slug": "two-questions-out-loud",
+    "lang": "en",
+    "kept": "src/content/blog/two-questions-out-loud.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/two-questions-out-loud/v-2026-06-12T14-20-55-459.md",
+      "src/content/blog/two-questions-out-loud/v-2026-06-12T15-28-51-540.md"
+    ]
+  },
+  {
+    "slug": "uma-so-cancao",
+    "lang": "pt",
+    "kept": "src/content/blog/uma-so-cancao.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/uma-so-cancao/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/uma-so-cancao/v-2026-06-21T23-14-15-537.mdx",
+      "src/content/blog/uma-so-cancao/v-2026-06-22T08-22-02-768.mdx",
+      "src/content/blog/uma-so-cancao/v-2026-06-22T11-18-44-898.mdx",
+      "src/content/blog/uma-so-cancao/v-2026-06-22T13-15-11-742.mdx"
+    ]
+  },
+  {
+    "slug": "uma-so-cancao-en",
+    "lang": "en",
+    "kept": "src/content/blog/uma-so-cancao-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/uma-so-cancao-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/uma-so-cancao-en/v-2026-06-21T23-14-15-537.mdx",
+      "src/content/blog/uma-so-cancao-en/v-2026-06-22T08-22-02-768.mdx",
+      "src/content/blog/uma-so-cancao-en/v-2026-06-22T11-18-44-898.mdx",
+      "src/content/blog/uma-so-cancao-en/v-2026-06-22T13-15-11-742.mdx"
+    ]
+  },
+  {
+    "slug": "universal-threshold",
+    "lang": "pt",
+    "kept": "src/content/blog/universal-threshold.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/universal-threshold/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/universal-threshold/v-2026-06-11T02-23-36-143.mdx",
+      "src/content/blog/universal-threshold/v-2026-06-16T02-29-40-196.mdx"
+    ]
+  },
+  {
+    "slug": "universal-threshold-en",
+    "lang": "en",
+    "kept": "src/content/blog/universal-threshold-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/universal-threshold-en/v-2026-06-09T20-24-29.mdx",
+      "src/content/blog/universal-threshold-en/v-2026-06-11T02-23-36-143.mdx",
+      "src/content/blog/universal-threshold-en/v-2026-06-16T02-29-40-196.mdx"
+    ]
+  },
+  {
+    "slug": "verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram",
+    "lang": "pt",
+    "kept": "src/content/blog/verne-e-o-padro-identity-repo-como-os-agentes-de-ia-se-lembram.md",
+    "reason": "selected",
+    "removed": []
+  },
+  {
+    "slug": "verne-identity-repo",
+    "lang": "en",
+    "kept": "src/content/blog/verne-identity-repo.md",
+    "reason": "selected",
+    "removed": []
+  },
+  {
+    "slug": "veu-do-infinito",
+    "lang": "pt",
+    "kept": "src/content/blog/veu-do-infinito.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/veu-do-infinito/v-2026-06-12T09-51-17-410.mdx",
+      "src/content/blog/veu-do-infinito/v-2026-06-12T21-41-03-919.mdx"
+    ]
+  },
+  {
+    "slug": "veu-do-infinito-en",
+    "lang": "en",
+    "kept": "src/content/blog/veu-do-infinito-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/veu-do-infinito-en/v-2026-06-12T09-51-17-410.mdx",
+      "src/content/blog/veu-do-infinito-en/v-2026-06-12T21-41-03-919.mdx"
+    ]
+  },
+  {
+    "slug": "vos",
+    "lang": "pt",
+    "kept": "src/content/blog/vos.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/vos/v-2026-06-10T02-12-45-prev.mdx",
+      "src/content/blog/vos/v-2026-06-10T02-14-41.mdx",
+      "src/content/blog/vos/v-2026-06-12T12-43-16-985.mdx",
+      "src/content/blog/vos/v-2026-06-12T12-47-16-475.mdx",
+      "src/content/blog/vos/v-2026-06-12T12-47-58-150.mdx"
+    ]
+  },
+  {
+    "slug": "vos-en",
+    "lang": "en",
+    "kept": "src/content/blog/vos-en.mdx",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/vos-en/v-2026-06-10T02-02-50-prev.mdx",
+      "src/content/blog/vos-en/v-2026-06-10T02-07-34.mdx",
+      "src/content/blog/vos-en/v-2026-06-12T12-43-16-985.mdx",
+      "src/content/blog/vos-en/v-2026-06-12T12-47-16-475.mdx",
+      "src/content/blog/vos-en/v-2026-06-12T12-47-58-150.mdx"
+    ]
+  },
+  {
+    "slug": "we-are-all-becoming-lobsters",
+    "lang": "en",
+    "kept": "src/content/blog/we-are-all-becoming-lobsters.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/we-are-all-becoming-lobsters/v-2026-06-10T05-09-44.md",
+      "src/content/blog/we-are-all-becoming-lobsters/v-2026-06-11T09-53-41-269.md"
+    ]
+  },
+  {
+    "slug": "what-i-learned-orchestrating-ai-agents-to-preserve-family-memory",
+    "lang": "en",
+    "kept": "src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/what-i-learned-orchestrating-ai-agents-to-preserve-family-memory/v-2026-06-10T05-09-44.md"
+    ]
+  },
+  {
+    "slug": "will-ai-discover-new-conservation-law-before-2050",
+    "lang": "en",
+    "kept": "src/content/blog/will-ai-discover-new-conservation-law-before-2050.md",
+    "reason": "selected",
+    "removed": [
+      "src/content/blog/will-ai-discover-new-conservation-law-before-2050/v-2026-06-10T05-09-44.md"
+    ]
+  },
+  {
+    "slug": "xadrez",
+    "lang": "pt",
+    "kept": "src/content/blog/xadrez.mdx",
+    "reason": "selected",
+    "removed": ["src/content/blog/xadrez/v-2026-06-09T20-24-29.mdx"]
+  },
+  {
+    "slug": "xadrez-en",
+    "lang": "en",
+    "kept": "src/content/blog/xadrez-en.mdx",
+    "reason": "selected",
+    "removed": ["src/content/blog/xadrez-en/v-2026-06-09T20-24-29.mdx"]
+  }
+]

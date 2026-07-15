@@ -7,10 +7,8 @@ import {
   readSelection,
   listSlugVersions,
   listAllVersionSlugs,
-  slugForContentPath,
   flatCanonicalPath,
 } from "../selection.js";
-import { historyKeySet } from "../history.js";
 import { listMatchFiles, readMatch } from "../matches.js";
 import { listPerspectives, loadPerspective } from "../perspectives.js";
 import { MOODS } from "../moods.js";
@@ -19,7 +17,6 @@ import {
   MIN_WORDS,
   wordCount,
   buildPathToKeyIndex,
-  PRUNED_PATH,
 } from "./_shared.js";
 
 // Word-trigram shingles for near-duplicate detection of review/clash prose.
@@ -46,10 +43,6 @@ function jaccard(a: Set<string>, b: Set<string>): number {
 }
 
 const STARS_SCHEMAS = new Set(["stars-v1", "stars-v2", "stars-v3"]);
-
-// Schemas that carry slug@uuid refs and therefore require strict version-uuid
-// resolution in the doctor (RFC 0010 §4.3).
-const REF_SCHEMAS = new Set(["stars-v2", "stars-v3"]);
 
 // Detects automated token-stuffing in text fields.
 // Catches several Jules/script-generated patterns:
@@ -124,40 +117,6 @@ export function doctor() {
     issues.push(`scripts/hronir/perspectives/: ${(e as Error).message}`);
   }
 
-  // UUIDs vivos por slug (atual + legacy de cada peer), lazy por diretório,
-  // e o conjunto slug@uuid arquivado (pruned + fold-back) — base da
-  // checagem estrita de versões-fantasma em rate files stars-v2.
-  const dirUuidsBySlug = new Map<string, Set<string>>();
-  const dirUuids = (slug: string): Set<string> => {
-    let s = dirUuidsBySlug.get(slug);
-    if (!s) {
-      s = new Set();
-      for (const v of listSlugVersions(slug)) {
-        s.add(v.uuid);
-        s.add(v.legacyUuid);
-        s.add(v.preOkfUuid);
-      }
-      dirUuidsBySlug.set(slug, s);
-    }
-    return s;
-  };
-  // RFC 0015: historyKeySet() covers flat-layout fold-back/prune archives;
-  // PRUNED_PATH covers legacy-layout prunes. A slug is in exactly one
-  // layout at a time, so the union is unambiguous — no key can mean two
-  // different things.
-  const prunedUuids = historyKeySet();
-  if (fs.existsSync(PRUNED_PATH)) {
-    try {
-      const reg = JSON.parse(fs.readFileSync(PRUNED_PATH, "utf8"));
-      for (const e of reg.pruned ?? []) {
-        if (e.uuid) prunedUuids.add(`${e.slug}@${e.uuid}`);
-        if (e.legacyUuid) prunedUuids.add(`${e.slug}@${e.legacyUuid}`);
-      }
-    } catch (e: unknown) {
-      issues.push(`${PRUNED_PATH}: não parseia (${(e as Error).message})`);
-    }
-  }
-
   for (const f of listMatchFiles()) {
     const { data } = readMatch(f);
     const base = path.basename(f);
@@ -178,47 +137,18 @@ export function doctor() {
     const bKey = postB.key as string | undefined;
     const aPath = postA.path as string | undefined;
     const bPath = postB.path as string | undefined;
-    const aVersion = postA.version as string | undefined;
-    const bVersion = postB.version as string | undefined;
 
-    // RFC 0010 §4.3: path é cache de resolução, version (UUID) é identidade.
-    // Após a migração (index.* → v-*), um select ou um prune, o path gravado
-    // no rate file pode deixar de existir. Para stars-v2+ o UUID precisa
-    // resolver de verdade: um peer atual (uuid ou legacy) ou uma entrada no
-    // registro de podas/histórico — senão é versão-fantasma (typo, deleção
-    // acidental). stars-v1 gravou o UUID body-only da época do duelo;
-    // edições in-place posteriores tornam esse hash irrecuperável, então
-    // basta a pasta do post existir.
-    //
-    // RFC 0015: um flatten com zero desafiantes renomeia o arquivo E faz
-    // rmdir do diretório `<slug>/` — path.dirname(p) deixa de existir mesmo
-    // quando o slug segue perfeitamente vivo (agora achatado). Por isso a
-    // checagem ref-schema NUNCA testa `fs.existsSync(path.dirname(p))`:
-    // slugForContentPath(p) é parsing puro de string (não depende do
-    // diretório ainda existir) e dirUuids(slug) é dual-mode (acha o arquivo
-    // achatado OU o irmão legado). O ramo stars-v1 abaixo mantém o teste de
-    // diretório original de propósito — apertar esse ramo também expõe
-    // dívida antiga não relacionada (matches stars-v1 apontando pra slugs
-    // renomeados antes da RFC 0010 nem existir), fora do escopo daqui.
-    const isRefSchema = REF_SCHEMAS.has(String(data.prompt_version));
-    const tolerableGone = (
-      p: string | undefined,
-      version: string | undefined
-    ) => {
-      if (!p || !version) return false;
-      if (!isRefSchema) return fs.existsSync(path.dirname(p));
-      const slug = slugForContentPath(p);
-      return (
-        dirUuids(slug).has(version) || prunedUuids.has(`${slug}@${version}`)
-      );
-    };
-
+    // RFC 0017: path é cache de resolução, não identidade — e desde a
+    // eliminação do duelo `version`, um path desatualizado num rate file
+    // histórico (arquivo movido/removido por draft-worst/draft-commit ou
+    // pela migração de achatamento) deixou de ser algo a sinalizar: não há
+    // mais seleção/poda/histórico de versão para tolerá-lo contra, porque
+    // não há mais nada que o path precise continuar resolvendo. O rate file
+    // em si permanece legível como registro histórico (CLAUDE.md — rate
+    // files são imutáveis); só a checagem de existência do path foi
+    // removida, não o arquivo.
     if (!aKey) issues.push(`${base}: post_a.key ausente`);
     if (!bKey) issues.push(`${base}: post_b.key ausente`);
-    if ((!aPath || !fs.existsSync(aPath)) && !tolerableGone(aPath, aVersion))
-      issues.push(`${base}: post_a.path inexistente (${aPath})`);
-    if ((!bPath || !fs.existsSync(bPath)) && !tolerableGone(bPath, bVersion))
-      issues.push(`${base}: post_b.path inexistente (${bPath})`);
 
     if (aPath && fs.existsSync(aPath)) {
       const expected = pathToKey.get(aPath);
