@@ -11,7 +11,7 @@ const all = await getCollection("blog");
 const enByKey = new Map(
   all
     .filter((p) => isPublished(p) && (p.data.lang ?? 'en') === 'en' && p.data.translationKey)
-    .map((p) => [p.data.translationKey!, p.id])
+    .map((p) => [p.data.translationKey!, p.data.slug ?? p.id])
 );
 
 const posts = all
@@ -46,7 +46,7 @@ const archiveLd = {
   hasPart: posts.map((p) => ({
     "@type": "BlogPosting",
     headline: p.data.title,
-    url: Astro.site ? new URL(`/pt/blog/${p.id}/`, Astro.site).href : `/pt/blog/${p.id}/`,
+    url: Astro.site ? new URL(`/pt/blog/${p.data.slug ?? p.id}/`, Astro.site).href : `/pt/blog/${p.data.slug ?? p.id}/`,
     datePublished: p.data.date.toISOString(),
   })),
 };
@@ -120,7 +120,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
                     {post.data.date.toLocaleDateString("pt-BR", { month: "short", day: "2-digit" })}
                   </time>
                 </td>
-                <td><a href={`/pt/blog/${post.id}/`}>{post.data.title}</a></td>
+                <td><a href={`/pt/blog/${post.data.slug ?? post.id}/`}>{post.data.title}</a></td>
                 <td class="col-min">{mins}</td>
                 <td class="col-rank">
                   {rankInfo && (

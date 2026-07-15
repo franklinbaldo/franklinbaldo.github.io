@@ -30,8 +30,8 @@ export function validTargets(posts) {
   const set = new Set();
   for (const p of posts) {
     if (!p.published) continue;
-    set.add(`/blog/${p.id}/`);
-    set.add(`/pt/blog/${p.id}/`);
+    set.add(`/blog/${p.slug ?? p.id}/`);
+    set.add(`/pt/blog/${p.slug ?? p.id}/`);
   }
   return set;
 }

@@ -25,15 +25,24 @@ import { isoDuration } from '../../lib/suno';
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.filter((post) => isPublished(post)).map((post) => ({
-    params: { slug: post.id },
+    params: { slug: post.data.slug ?? post.id },
     props: post,
   }));
 }
 type Props = CollectionEntry<'blog'>;
 
+// Public URL for any post — `slug` overrides the file-derived `id` when
+// present. Every internal link on this page should go through this, not
+// build `/blog/${p.id}/` directly.
+function postUrl(p: CollectionEntry<'blog'>): string {
+  const l = p.data.lang ?? DEFAULT_LANG;
+  const s = p.data.slug ?? p.id;
+  return l === 'pt' ? `/pt/blog/${s}/` : `/blog/${s}/`;
+}
+
 const post = Astro.props;
 if (post.data.lang === 'pt') {
-  return Astro.redirect(`/pt/blog/${post.id}/`);
+  return Astro.redirect(postUrl(post));
 }
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const { heroImage, heroImageAlt, title, description, date, tags, lang, translationKey, previousVersion, postType, sunoId, genre, duration, sunoImageUrl, tracks } = post.data;
@@ -63,8 +72,8 @@ const sameLangPosts = allPosts
 const postIdx = sameLangPosts.findIndex((p) => p.id === post.id);
 const prevPost = postIdx > 0 ? sameLangPosts[postIdx - 1] : null;
 const nextPost = postIdx < sameLangPosts.length - 1 ? sameLangPosts[postIdx + 1] : null;
-const prevNav = prevPost ? { href: (prevPost.data.lang ?? DEFAULT_LANG) === 'pt' ? `/pt/blog/${prevPost.id}/` : `/blog/${prevPost.id}/`, title: prevPost.data.title, date: prevPost.data.date } : null;
-const nextNav = nextPost ? { href: (nextPost.data.lang ?? DEFAULT_LANG) === 'pt' ? `/pt/blog/${nextPost.id}/` : `/blog/${nextPost.id}/`, title: nextPost.data.title, date: nextPost.data.date } : null;
+const prevNav = prevPost ? { href: postUrl(prevPost), title: prevPost.data.title, date: prevPost.data.date } : null;
+const nextNav = nextPost ? { href: postUrl(nextPost), title: nextPost.data.title, date: nextPost.data.date } : null;
 // Music-specific navigation: replaces PostNav for music posts
 const musicSameLangPosts = postType === 'music'
   ? sameLangPosts.filter((p) => p.data.postType === 'music')
@@ -72,71 +81,54 @@ const musicSameLangPosts = postType === 'music'
 const musicIdx = postType === 'music' ? musicSameLangPosts.findIndex((p) => p.id === post.id) : -1;
 const prevMusicPost = musicIdx > 0 ? musicSameLangPosts[musicIdx - 1] : null;
 const nextMusicPost = musicIdx !== -1 && musicIdx < musicSameLangPosts.length - 1 ? musicSameLangPosts[musicIdx + 1] : null;
-const prevMusicNav = prevMusicPost ? { href: `/blog/${prevMusicPost.id}/`, title: prevMusicPost.data.title } : null;
-const nextMusicNav = nextMusicPost ? { href: `/blog/${nextMusicPost.id}/`, title: nextMusicPost.data.title } : null;
+const prevMusicNav = prevMusicPost ? { href: postUrl(prevMusicPost), title: prevMusicPost.data.title } : null;
+const nextMusicNav = nextMusicPost ? { href: postUrl(nextMusicPost), title: nextMusicPost.data.title } : null;
 const translationSiblings = translationKey
   ? allPosts.filter((p) => p.data.translationKey === translationKey && p.id !== post.id)
   : [];
 const translations: Record<string, string> = Object.fromEntries(
-  translationSiblings.map((p) => {
-    const targetLang = p.data.lang ?? DEFAULT_LANG;
-    return [targetLang, targetLang === 'pt' ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`];
-  }),
+  translationSiblings.map((p) => [p.data.lang ?? DEFAULT_LANG, postUrl(p)]),
 );
 const translationLinks = translationSiblings.map((p) => {
   const targetLang = p.data.lang ?? DEFAULT_LANG;
   return {
-    href: targetLang === 'pt' ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`,
+    href: postUrl(p),
     label: targetCopy(lang, targetLang).invitation,
   };
 });
 
 // RFC 0006 / issue #678: MusicRecording rich result for music posts.
-// Rounded once, shared with the visible duration badges below, so the
-// display and the JSON-LD can't disagree for a non-integer duration.
-const displayDuration = duration ? Math.round(duration) : undefined;
-const musicLd = postType === 'music' && sunoId
-  ? {
-      '@context': 'https://schema.org',
-      '@type': 'MusicRecording',
-      name: title,
-      url: Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname,
-      byArtist: {
-        '@type': 'Person',
-        name: 'Franklin Baldo',
-        url: Astro.site ? new URL('/about/', Astro.site).href : '/about/',
-      },
-      recordingOf: {
-        '@type': 'MusicComposition',
-        name: title,
-      },
-      embedUrl: `https://suno.com/embed/${sunoId}`,
-      ...(sunoImageUrl && { image: sunoImageUrl }),
-      ...(genre?.length && { genre }),
-      ...(duration && duration > 0 && { duration: isoDuration(duration) }),
-    }
-  : null;
-const extraMusicLd = postType === 'music' && tracks?.length
-  ? tracks.map((tr) => ({
-      '@context': 'https://schema.org',
-      '@type': 'MusicRecording',
-      name: tr.label,
-      url: Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname,
-      byArtist: {
-        '@type': 'Person',
-        name: 'Franklin Baldo',
-        url: Astro.site ? new URL('/about/', Astro.site).href : '/about/',
-      },
-      recordingOf: {
-        '@type': 'MusicComposition',
-        name: tr.label,
-      },
-      embedUrl: `https://suno.com/embed/${tr.sunoId}`,
-      ...(tr.sunoImageUrl && { image: tr.sunoImageUrl }),
-      ...(tr.genre?.length && { genre: tr.genre }),
-      ...(tr.duration && tr.duration > 0 && { duration: isoDuration(tr.duration) }),
-    }))
+// A post is a flat playlist — the legacy singular sunoId/genre/duration/
+// sunoStyle/sunoImageUrl fields (kept for the ~150 posts that only ever had
+// one Suno rendition) are folded into the same list as `tracks[]`, with no
+// primary/secondary distinction. Duration is rounded once here so the
+// visible badges below and the JSON-LD can't disagree for a non-integer
+// value.
+const allTracks = postType === 'music'
+  ? [
+      ...(sunoId ? [{ label: title, sunoId, sunoImageUrl, genre, duration }] : []),
+      ...(tracks ?? []),
+    ].map((tr) => ({ ...tr, duration: tr.duration ? Math.round(tr.duration) : undefined }))
   : [];
+const musicRecordings = allTracks.map((tr) => ({
+  '@context': 'https://schema.org',
+  '@type': 'MusicRecording',
+  name: tr.label,
+  url: Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname,
+  byArtist: {
+    '@type': 'Person',
+    name: 'Franklin Baldo',
+    url: Astro.site ? new URL('/about/', Astro.site).href : '/about/',
+  },
+  recordingOf: {
+    '@type': 'MusicComposition',
+    name: tr.label,
+  },
+  embedUrl: `https://suno.com/embed/${tr.sunoId}`,
+  ...(tr.sunoImageUrl && { image: tr.sunoImageUrl }),
+  ...(tr.genre?.length && { genre: tr.genre }),
+  ...(tr.duration && tr.duration > 0 && { duration: isoDuration(tr.duration) }),
+}));
 ---
 
 <PageLayout
@@ -152,10 +144,7 @@ const extraMusicLd = postType === 'music' && tracks?.length
   hasMath={hasMath}
   wordCount={wordCount}
 >
-  {musicLd && (
-    <script type="application/ld+json" set:html={JSON.stringify(musicLd)} is:inline slot="head" />
-  )}
-  {extraMusicLd.map((ld) => (
+  {musicRecordings.map((ld) => (
     <script type="application/ld+json" set:html={JSON.stringify(ld)} is:inline slot="head" />
   ))}
 
@@ -204,62 +193,16 @@ const extraMusicLd = postType === 'music' && tracks?.length
               </small>
             </p>
           </hgroup>
-          {postType === 'music' && sunoId && (
-            <div class="music-header">
-              {(sunoImageUrl || sunoId) && (
-                <img
-                  class="music-cover"
-                  src={sunoImageUrl || `https://cdn2.suno.ai/${sunoId}_image.jpeg`}
-                  alt={`${t(lang, 'post.coverAlt')} ${title}`}
-                  width="200"
-                  height="200"
-                  loading="eager"
-                />
-              )}
-              <div class="music-meta">
-                {genre && genre.length > 0 && (
-                  <p class="music-genres">
-                    {genre.map((g) => <kbd class="genre-pill">{g}</kbd>)}
-                  </p>
-                )}
-                {duration && (
-                  <p class="music-duration">
-                    <small>{Math.floor(displayDuration! / 60)}:{String(displayDuration! % 60).padStart(2, '0')}</small>
-                  </p>
-                )}
-                <button
-                  class="music-play-btn"
-                  type="button"
-                  data-suno-id={sunoId}
-                  data-suno-title={title}
-                  aria-label={`${t(lang, 'post.playAriaLabel')} ${title}`}
-                >
-                  {t(lang, 'post.play')}
-                </button>
-                <a
-                  href={`https://suno.com/song/${sunoId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="music-suno-link"
-                >
-                  {t(lang, 'post.listenOnSuno')}
-                </a>
-              </div>
-            </div>
-          )}
-          {postType === 'music' && tracks && tracks.length > 0 && (
-            <div class="music-extra-tracks">
-              <p class="music-extra-tracks-label"><small>{t(lang, 'post.otherVersions')}</small></p>
-              {tracks.map((tr) => {
-                const trDuration = tr.duration ? Math.round(tr.duration) : undefined;
-                return (
-                <div class="music-header is-track">
+          {postType === 'music' && allTracks.length > 0 && (
+            <div class="music-playlist">
+              {allTracks.map((tr) => (
+                <div class="music-header">
                   <img
                     class="music-cover"
                     src={tr.sunoImageUrl || `https://cdn2.suno.ai/${tr.sunoId}_image.jpeg`}
                     alt={`${t(lang, 'post.coverAlt')} ${tr.label}`}
-                    width="96"
-                    height="96"
+                    width="120"
+                    height="120"
                     loading="lazy"
                   />
                   <div class="music-meta">
@@ -271,7 +214,7 @@ const extraMusicLd = postType === 'music' && tracks?.length
                     )}
                     {tr.duration && (
                       <p class="music-duration">
-                        <small>{Math.floor(trDuration! / 60)}:{String(trDuration! % 60).padStart(2, '0')}</small>
+                        <small>{Math.floor(tr.duration / 60)}:{String(tr.duration % 60).padStart(2, '0')}</small>
                       </p>
                     )}
                     <button
@@ -293,8 +236,7 @@ const extraMusicLd = postType === 'music' && tracks?.length
                     </a>
                   </div>
                 </div>
-                );
-              })}
+              ))}
             </div>
           )}
           {postType !== 'music' && heroImage && (
@@ -489,20 +431,26 @@ const extraMusicLd = postType === 'music' && tracks?.length
     }
   }
 
+  .music-playlist {
+    margin: 1.5rem 0 2rem;
+  }
   .music-header {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     align-items: flex-start;
-    margin: 1.5rem 0 2rem;
-    padding: 1.25rem;
+    padding: 1rem;
+    margin: 0 0 0.75rem;
     background: var(--pico-card-background-color);
     border: 1px solid var(--pico-muted-border-color);
     border-radius: var(--pico-border-radius);
   }
+  .music-header:last-child {
+    margin-bottom: 0;
+  }
   .music-cover {
     flex-shrink: 0;
-    width: 160px;
-    height: 160px;
+    width: 120px;
+    height: 120px;
     object-fit: cover;
     border-radius: calc(var(--pico-border-radius) * 0.75);
   }
@@ -511,6 +459,9 @@ const extraMusicLd = postType === 'music' && tracks?.length
     flex-direction: column;
     gap: 0.5rem;
     justify-content: center;
+  }
+  .music-track-label {
+    margin: 0;
   }
   .music-genres {
     display: flex;
@@ -549,29 +500,7 @@ const extraMusicLd = postType === 'music' && tracks?.length
 
   @media (max-width: 480px) {
     .music-header { flex-direction: column; }
-    .music-cover { width: 120px; height: 120px; }
-  }
-
-  .music-extra-tracks {
-    margin-top: 1rem;
-  }
-  .music-extra-tracks-label {
-    margin: 0 0 0.4rem;
-    color: var(--pico-muted-color);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .music-header.is-track {
-    padding: 0.75rem 1rem;
-    margin: 0 0 0.6rem;
-    gap: 1rem;
-  }
-  .music-header.is-track .music-cover {
-    width: 96px;
-    height: 96px;
-  }
-  .music-track-label {
-    margin: 0;
+    .music-cover { width: 96px; height: 96px; }
   }
 
   .music-post-nav {

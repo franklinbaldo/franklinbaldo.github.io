@@ -18,7 +18,7 @@ for (const p of allPosts) {
   const lang = p.data.lang ?? "en";
   const existing = byKey.get(key);
   if (!existing || lang === "en") {
-    byKey.set(key, { title: p.data.title, slug: p.id, lang });
+    byKey.set(key, { title: p.data.title, slug: p.data.slug ?? p.id, lang });
   }
 }
 

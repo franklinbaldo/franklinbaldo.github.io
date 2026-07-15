@@ -32,6 +32,7 @@ const UUID_EXCLUDED_FIELDS = new Set([
   "publishDate",
   "type",
   "docType",
+  "slug",
 ]);
 
 // Pre-RFC-0014 exclusion set (without type/docType), used to reconstruct

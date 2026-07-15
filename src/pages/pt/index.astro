@@ -14,7 +14,7 @@ const all = (await getCollection("blog"))
 const latest = all[0];
 // O card de destaque mostra o ensaio mais recente; a lista começa no segundo.
 const recent = all.slice(1, 13);
-const latestHref = latest ? `/pt/blog/${latest.id}/` : "/pt/archive/";
+const latestHref = latest ? `/pt/blog/${latest.data.slug ?? latest.id}/` : "/pt/archive/";
 const latestWords = (latest?.body ?? '').trim().split(/\s+/).filter(Boolean).length;
 const latestMinutes = Math.max(1, Math.round(latestWords / 220));
 const latestDate = latest?.data.date.toLocaleDateString('pt-BR', {

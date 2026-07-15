@@ -56,6 +56,13 @@ const postSchema = ({ image }: SchemaContext) =>
     lang: z.enum(["en", "pt"]).optional(),
     author: z.string().optional(),
     translationKey: z.string().optional(),
+    /** Public URL override — the post's id (filename-derived, see
+     *  generateBlogId) is always the content-collection identity used by
+     *  Hrönir/ranking, but the public URL is `slug ?? id`. Lets a
+     *  translated post get a real localized slug without renaming its file
+     *  (which would also be fine — this exists so translation-only edits
+     *  don't require a rename+redirect for a slug fix). */
+    slug: z.string().optional(),
     /** RFC 0003: content UUID of the version this one superseded when it was
      *  promoted to canonical. Lineage lives in-repo as sibling version files. */
     supersedes: z.string().optional(),

@@ -74,7 +74,6 @@ const UI_KEYS = [
   "post.play",
   "post.playAriaLabel",
   "post.listenOnSuno",
-  "post.otherVersions",
   "post.coverAlt",
 ] as const;
 
@@ -173,7 +172,6 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "post.play": "▶ Play",
       "post.playAriaLabel": "Play",
       "post.listenOnSuno": "Listen on Suno ↗",
-      "post.otherVersions": "Other versions",
       "post.coverAlt": "Cover of",
     },
     targets: {
@@ -261,7 +259,6 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "post.play": "▶ Tocar",
       "post.playAriaLabel": "Tocar",
       "post.listenOnSuno": "Ouvir no Suno ↗",
-      "post.otherVersions": "Outras versões",
       "post.coverAlt": "Capa de",
     },
     targets: {

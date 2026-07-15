@@ -150,6 +150,7 @@ export function readPostMeta(absPath) {
   return {
     file: relative(BLOG_DIR, absPath).replace(/\\/g, "/"),
     id: postIdFromPath(absPath),
+    slug: get("slug"),
     lang: get("lang") ?? "en",
     postType: get("postType"),
     date: get("date"),

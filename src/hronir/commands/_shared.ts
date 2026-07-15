@@ -112,30 +112,28 @@ export function printSidePost(session: any, side: "A" | "B") {
   const slug = post?.key || "(slug desconhecido)";
   const content = fs.readFileSync(p, "utf8");
   const data = matter(content).data;
-  const sunoId = data.sunoId;
-  const tracks: Array<{ label: string; sunoId: string }> = data.tracks ?? [];
+  // A post's songs are one flat playlist — the legacy singular sunoId and
+  // tracks[] are just two places the same kind of entry can live in
+  // frontmatter, with no primary/secondary distinction.
+  const songs: Array<{ label: string; sunoId: string }> = [
+    ...(data.sunoId
+      ? [{ label: data.title ?? slug, sunoId: data.sunoId }]
+      : []),
+    ...(data.tracks ?? []),
+  ];
   const border = "━".repeat(80);
   const header =
     side === "A" ? "📄 PRIMEIRO POST (A) " : "📄 SEGUNDO POST (B) ";
   console.log(header + "━".repeat(Math.max(0, 80 - header.length)));
   console.log(`Slug: ${slug}`);
   console.log(`Arquivo: ${p}`);
-  if (sunoId) {
-    const label = tracks.length > 0 ? " (principal)" : "";
-    console.log(`🎵 Suno Song Page${label}: https://suno.com/song/${sunoId}`);
+  for (const song of songs) {
+    console.log(`🎵 ${song.label}: https://suno.com/song/${song.sunoId}`);
     console.log(
-      `🔊 Direct Audio URL (MP3): https://cdn1.suno.ai/${sunoId}.mp3`
+      `🔊 Direct Audio URL (MP3): https://cdn1.suno.ai/${song.sunoId}.mp3`
     );
   }
-  for (const tr of tracks) {
-    console.log(
-      `🎵 ${tr.label} (versão adicional): https://suno.com/song/${tr.sunoId}`
-    );
-    console.log(
-      `🔊 Direct Audio URL (MP3): https://cdn1.suno.ai/${tr.sunoId}.mp3`
-    );
-  }
-  if (sunoId || tracks.length > 0) {
+  if (songs.length > 0) {
     console.log(
       `💡 Agente multimodal: você pode baixar/ouvir o(s) MP3(s) acima para informar sua avaliação.`
     );

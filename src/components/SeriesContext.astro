@@ -24,7 +24,7 @@ const { series, lang, variant = 'aside' } = Astro.props;
           <li>
             {i === series.index
               ? <><strong>{p.data.title}</strong> <em>({t(lang, 'post.thisPost')})</em></>
-              : <a href={`/blog/${p.id}/`}>{p.data.title}</a>}
+              : <a href={p.data.lang === 'pt' ? `/pt/blog/${p.data.slug ?? p.id}/` : `/blog/${p.data.slug ?? p.id}/`}>{p.data.title}</a>}
           </li>
         ))}
       </ol>
@@ -36,10 +36,10 @@ const { series, lang, variant = 'aside' } = Astro.props;
   <nav aria-label={t(lang, 'series.navLabel')} class="series-nav">
     <ul>
       {series.prev && (
-        <li><a href={`/blog/${series.prev.id}/`} rel="prev">← {series.prev.data.title}</a></li>
+        <li><a href={series.prev.data.lang === 'pt' ? `/pt/blog/${series.prev.data.slug ?? series.prev.id}/` : `/blog/${series.prev.data.slug ?? series.prev.id}/`} rel="prev">← {series.prev.data.title}</a></li>
       )}
       {series.next && (
-        <li><a href={`/blog/${series.next.id}/`} rel="next">{series.next.data.title} →</a></li>
+        <li><a href={series.next.data.lang === 'pt' ? `/pt/blog/${series.next.data.slug ?? series.next.id}/` : `/blog/${series.next.data.slug ?? series.next.id}/`} rel="next">{series.next.data.title} →</a></li>
       )}
     </ul>
   </nav>

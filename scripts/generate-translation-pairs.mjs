@@ -19,7 +19,9 @@ const grouped = {};
 for (const p of eligible) {
   if (!grouped[p.translationKey]) grouped[p.translationKey] = {};
   grouped[p.translationKey][p.lang] =
-    p.lang === "pt" ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`;
+    p.lang === "pt"
+      ? `/pt/blog/${p.slug ?? p.id}/`
+      : `/blog/${p.slug ?? p.id}/`;
 }
 
 // Build bidirectional lookup: each URL maps to the full { [lang]: url } pair.
