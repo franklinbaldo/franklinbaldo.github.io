@@ -240,10 +240,12 @@ arquivo-versão exceto o selecionado, depois `git mv` o sobrevivente para
 há recursos de mídia locais associados — decisão 7). Escolha, remoção e
 renomeação são a mesma operação de unicidade física, feita de uma vez por
 slug. Para garantir auditoria completa, a migração exige a geração de um
-manifesto auditável temporário denominado `migration-0017-survivors.json`,
-que deve ser mantido no repositório durante as PRs de migração (podendo ser
-removido na última fase). O manifesto deve registrar, para cada slug, um
-objeto no seguinte formato:
+manifesto auditável temporário denominado
+`src/generated/migration-0017-survivors.json` (raiz do repo tem allowlist
+fechada — `check:hygiene` — daí viver em `src/generated/` como os outros
+artefatos de migração), que deve ser mantido no repositório durante as PRs
+de migração (podendo ser removido na última fase). O manifesto deve
+registrar, para cada slug, um objeto no seguinte formato:
 
 ```json
 {
