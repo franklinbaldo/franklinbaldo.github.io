@@ -28,7 +28,9 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
-.claude/
+# Claude Code local state — except versioned agent skills
+.claude/*
+!.claude/skills/
 
 # Hrönir transient session state (never committed)
 hronir_session.json
