@@ -186,6 +186,10 @@ const isCurrent = (href: string) => {
     font-weight: 600;
     letter-spacing: -0.01em;
     text-decoration: none;
+    /* Override the global overflow-wrap: anywhere (global.css) — in the
+       cramped flex header it would otherwise split "Franklin"/"Baldo."
+       mid-word on narrow phones instead of wrapping at the space. */
+    overflow-wrap: normal;
   }
   .brand:hover {
     color: var(--pico-primary);

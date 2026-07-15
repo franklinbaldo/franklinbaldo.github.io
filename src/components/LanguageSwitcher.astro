@@ -34,6 +34,17 @@ const ariaTable = Object.fromEntries(
     line-height: 1;
     border-radius: 6px;
   }
+  /* In a cramped flex row (mobile burger controls) this button can shrink
+     below its label's natural width; overflow-wrap: anywhere inherited
+     from the containing <li> (see global.css) would then split "PT"
+     across two lines. Keep the label on one line and let the row scroll
+     or wrap at the item level instead. */
+  [data-lang-switcher] {
+    flex-shrink: 0;
+  }
+  [data-lang-switcher] [data-label] {
+    white-space: nowrap;
+  }
 </style>
 
 <script
@@ -41,8 +52,14 @@ const ariaTable = Object.fromEntries(
   define:vars={{ supported, navMatch, targetCopyTable, ariaTable, defaultLang: DEFAULT_LANG }}
 >
   (() => {
-    const btn = document.querySelector('[data-lang-switcher]');
-    if (!btn) return;
+    // This component is rendered more than once per page (desktop nav +
+    // burger menu) with an is:inline script per instance. Scope to the
+    // button that immediately precedes THIS script, not the first
+    // [data-lang-switcher] in the document — otherwise every instance's
+    // script would fight over the same (first) button and the rest would
+    // stay hidden forever.
+    const btn = document.currentScript.previousElementSibling;
+    if (!btn || !btn.hasAttribute('data-lang-switcher')) return;
     const label = btn.querySelector('[data-label]');
 
     const detect = () => {
