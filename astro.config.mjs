@@ -202,6 +202,12 @@ export default defineConfig({
   ],
   redirects: {
     "/musicas/": "/music/",
+    // be-me-borges + borges-and-me merged into borges-e-eu as extra `tracks`
+    // (four Suno renditions of the same "Borges y yo" essay, one post).
+    "/pt/blog/be-me-borges/": "/pt/blog/borges-e-eu/",
+    "/blog/be-me-borges-en/": "/blog/borges-e-eu-en/",
+    "/pt/blog/borges-and-me/": "/pt/blog/borges-e-eu/",
+    "/blog/borges-and-me-en/": "/blog/borges-e-eu-en/",
     ...blogRedirects,
   },
   prefetch: {

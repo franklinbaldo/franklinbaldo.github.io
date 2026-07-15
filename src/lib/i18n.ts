@@ -72,6 +72,9 @@ const UI_KEYS = [
   "post.typeDialogue",
   "archive.filterType",
   "archive.filterAll",
+  "post.play",
+  "post.listenOnSuno",
+  "post.otherVersions",
 ] as const;
 
 export type UIKey = (typeof UI_KEYS)[number];
@@ -167,6 +170,9 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "post.typeDialogue": "Dialogue",
       "archive.filterType": "Format:",
       "archive.filterAll": "All",
+      "post.play": "▶ Play",
+      "post.listenOnSuno": "Listen on Suno ↗",
+      "post.otherVersions": "Other versions",
     },
     targets: {
       pt: {
@@ -251,6 +257,9 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "post.typeDialogue": "Diálogo",
       "archive.filterType": "Formato:",
       "archive.filterAll": "Todos",
+      "post.play": "▶ Tocar",
+      "post.listenOnSuno": "Ouvir no Suno ↗",
+      "post.otherVersions": "Outras versões",
     },
     targets: {
       en: {

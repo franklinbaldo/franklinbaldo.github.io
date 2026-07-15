@@ -76,14 +76,18 @@ try {
       .filter((p) => p.data.translationKey)
       .map((p) => [p.data.translationKey!, p.data.sunoId!]),
   );
-  // sunoId → post URL (language-aware)
-  const sunoIdToPostUrl = new Map<string, string>(
-    musicPosts.map((p) => {
-      const lang = p.data.lang ?? "en";
-      const url = lang === "pt" ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`;
-      return [p.data.sunoId!, url];
-    }),
-  );
+  // sunoId → post URL (language-aware). A post can carry more than one
+  // Suno rendition via `tracks` — every track's sunoId resolves back to
+  // the same post URL as the primary sunoId.
+  const sunoIdToPostUrl = new Map<string, string>();
+  for (const p of musicPosts) {
+    const lang = p.data.lang ?? "en";
+    const url = lang === "pt" ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`;
+    sunoIdToPostUrl.set(p.data.sunoId!, url);
+    for (const tr of p.data.tracks ?? []) {
+      sunoIdToPostUrl.set(tr.sunoId, url);
+    }
+  }
 
   const ranking = getRanking();
   const rankedIds: string[] = [];

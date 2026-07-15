@@ -1,9 +1,9 @@
 {
   "_meta": {
     "schema": "snapshot-v2",
-    "generatedAt": "2026-07-15T18:12:51.258Z",
+    "generatedAt": "2026-07-15T19:37:24.877Z",
     "basis": "build",
-    "totalDuels": 2060
+    "totalDuels": 2062
   },
   "keys": {
     "asterisk-protects": {
@@ -252,29 +252,29 @@
       "elo": 1030,
       "eloPeak": 1055
     },
-    "music-xadrez": {
+    "music-borges-e-eu": {
       "rank": 42,
+      "ordinal": 8.2853,
+      "elo": 1050,
+      "eloPeak": 1057
+    },
+    "music-xadrez": {
+      "rank": 43,
       "ordinal": 8.2474,
       "elo": 1021,
       "eloPeak": 1037
     },
     "becoming-lobsters": {
-      "rank": 43,
+      "rank": 44,
       "ordinal": 8.1896,
       "elo": 999,
       "eloPeak": 1077
     },
     "music-leite-no-salao-bar": {
-      "rank": 44,
+      "rank": 45,
       "ordinal": 7.9736,
       "elo": 960,
       "eloPeak": 1048
-    },
-    "music-escherian-sunrise-with-godel": {
-      "rank": 45,
-      "ordinal": 7.928,
-      "elo": 1005,
-      "eloPeak": 1037
     },
     "music-chegue-irmao-chegue-irma": {
       "rank": 46,
@@ -282,29 +282,29 @@
       "elo": 1031,
       "eloPeak": 1031
     },
-    "music-borges-e-eu": {
-      "rank": 47,
-      "ordinal": 7.7115,
-      "elo": 1035,
-      "eloPeak": 1057
-    },
     "jules-api-harness": {
-      "rank": 48,
+      "rank": 47,
       "ordinal": 7.6956,
       "elo": 1048,
       "eloPeak": 1048
     },
     "music-stopping-by-woods-on-a-snowy-evening-by-robert-frost": {
-      "rank": 49,
+      "rank": 48,
       "ordinal": 7.638,
       "elo": 1011,
       "eloPeak": 1048
     },
     "conservation-law": {
-      "rank": 50,
+      "rank": 49,
       "ordinal": 7.6139,
       "elo": 1011,
       "eloPeak": 1071
+    },
+    "music-escherian-sunrise-with-godel": {
+      "rank": 50,
+      "ordinal": 7.5855,
+      "elo": 990,
+      "eloPeak": 1037
     },
     "music-the-ruliad-is-laughing": {
       "rank": 51,
@@ -396,17 +396,17 @@
       "elo": 942,
       "eloPeak": 1017
     },
-    "music-o-telefone-da-agonia": {
+    "music-john-gospel-chapter-i-by-max-headroom": {
       "rank": 66,
+      "ordinal": 5.8451,
+      "elo": 991,
+      "eloPeak": 1002
+    },
+    "music-o-telefone-da-agonia": {
+      "rank": 67,
       "ordinal": 5.6024,
       "elo": 917,
       "eloPeak": 1000
-    },
-    "building-funes": {
-      "rank": 67,
-      "ordinal": 5.4572,
-      "elo": 952,
-      "eloPeak": 1091
     },
     "conceptual-document": {
       "rank": 68,
@@ -414,17 +414,17 @@
       "elo": 984,
       "eloPeak": 1036
     },
-    "music-john-gospel-chapter-i-by-max-headroom": {
-      "rank": 69,
-      "ordinal": 5.2726,
-      "elo": 976,
-      "eloPeak": 1002
-    },
     "music-sentido-e-referencia": {
-      "rank": 70,
+      "rank": 69,
       "ordinal": 5.1561,
       "elo": 921,
       "eloPeak": 1033
+    },
+    "building-funes": {
+      "rank": 70,
+      "ordinal": 5.1168,
+      "elo": 937,
+      "eloPeak": 1091
     },
     "music-o-ritual-de-abril-anos-de-saudade": {
       "rank": 71,

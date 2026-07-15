@@ -35,7 +35,7 @@ if (post.data.lang === 'pt') {
   return Astro.redirect(`/pt/blog/${post.id}/`);
 }
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
-const { heroImage, heroImageAlt, title, description, date, tags, lang, translationKey, previousVersion, postType, sunoId, genre, duration, sunoImageUrl } = post.data;
+const { heroImage, heroImageAlt, title, description, date, tags, lang, translationKey, previousVersion, postType, sunoId, genre, duration, sunoImageUrl, tracks } = post.data;
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
 const wordCount: number | undefined = minutesRead ? minutesRead * 200 : undefined;
 const hasMath: boolean = !!remarkPluginFrontmatter.hasMath;
@@ -112,6 +112,27 @@ const musicLd = postType === 'music' && sunoId
       ...(duration && duration > 0 && { duration: `PT${Math.floor(duration / 60)}M${duration % 60}S` }),
     }
   : null;
+const extraMusicLd = postType === 'music' && tracks?.length
+  ? tracks.map((tr) => ({
+      '@context': 'https://schema.org',
+      '@type': 'MusicRecording',
+      name: tr.label,
+      url: Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname,
+      byArtist: {
+        '@type': 'Person',
+        name: 'Franklin Baldo',
+        url: Astro.site ? new URL('/about/', Astro.site).href : '/about/',
+      },
+      recordingOf: {
+        '@type': 'MusicComposition',
+        name: tr.label,
+      },
+      embedUrl: `https://suno.com/embed/${tr.sunoId}`,
+      ...(tr.sunoImageUrl && { image: tr.sunoImageUrl }),
+      ...(tr.genre?.length && { genre: tr.genre }),
+      ...(tr.duration && tr.duration > 0 && { duration: `PT${Math.floor(tr.duration / 60)}M${Math.round(tr.duration) % 60}S` }),
+    }))
+  : [];
 ---
 
 <PageLayout
@@ -130,6 +151,9 @@ const musicLd = postType === 'music' && sunoId
   {musicLd && (
     <script type="application/ld+json" set:html={JSON.stringify(musicLd)} is:inline slot="head" />
   )}
+  {extraMusicLd.map((ld) => (
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} is:inline slot="head" />
+  ))}
 
   <progress
     id="read-progress"
@@ -204,9 +228,9 @@ const musicLd = postType === 'music' && sunoId
                   type="button"
                   data-suno-id={sunoId}
                   data-suno-title={title}
-                  aria-label={`Tocar ${title}`}
+                  aria-label={`${t(lang, 'post.play').replace(/^\W+\s*/, '')} ${title}`}
                 >
-                  ▶ Tocar
+                  {t(lang, 'post.play')}
                 </button>
                 <a
                   href={`https://suno.com/song/${sunoId}`}
@@ -214,9 +238,56 @@ const musicLd = postType === 'music' && sunoId
                   rel="noopener noreferrer"
                   class="music-suno-link"
                 >
-                  Ouvir no Suno ↗
+                  {t(lang, 'post.listenOnSuno')}
                 </a>
               </div>
+            </div>
+          )}
+          {postType === 'music' && tracks && tracks.length > 0 && (
+            <div class="music-extra-tracks">
+              <p class="music-extra-tracks-label"><small>{t(lang, 'post.otherVersions')}</small></p>
+              {tracks.map((tr) => (
+                <div class="music-header is-track">
+                  <img
+                    class="music-cover"
+                    src={tr.sunoImageUrl || `https://cdn2.suno.ai/${tr.sunoId}_image.jpeg`}
+                    alt={`Capa de ${tr.label}`}
+                    width="96"
+                    height="96"
+                    loading="lazy"
+                  />
+                  <div class="music-meta">
+                    <p class="music-track-label"><strong>{tr.label}</strong></p>
+                    {tr.genre && tr.genre.length > 0 && (
+                      <p class="music-genres">
+                        {tr.genre.map((g) => <kbd class="genre-pill">{g}</kbd>)}
+                      </p>
+                    )}
+                    {tr.duration && (
+                      <p class="music-duration">
+                        <small>{Math.floor(tr.duration / 60)}:{String(Math.round(tr.duration) % 60).padStart(2, '0')}</small>
+                      </p>
+                    )}
+                    <button
+                      class="music-play-btn"
+                      type="button"
+                      data-suno-id={tr.sunoId}
+                      data-suno-title={tr.label}
+                      aria-label={`${t(lang, 'post.play').replace(/^\W+\s*/, '')} ${tr.label}`}
+                    >
+                      {t(lang, 'post.play')}
+                    </button>
+                    <a
+                      href={`https://suno.com/song/${tr.sunoId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="music-suno-link"
+                    >
+                      {t(lang, 'post.listenOnSuno')}
+                    </a>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
           {postType !== 'music' && heroImage && (
@@ -472,6 +543,28 @@ const musicLd = postType === 'music' && sunoId
   @media (max-width: 480px) {
     .music-header { flex-direction: column; }
     .music-cover { width: 120px; height: 120px; }
+  }
+
+  .music-extra-tracks {
+    margin-top: 1rem;
+  }
+  .music-extra-tracks-label {
+    margin: 0 0 0.4rem;
+    color: var(--pico-muted-color);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .music-header.is-track {
+    padding: 0.75rem 1rem;
+    margin: 0 0 0.6rem;
+    gap: 1rem;
+  }
+  .music-header.is-track .music-cover {
+    width: 96px;
+    height: 96px;
+  }
+  .music-track-label {
+    margin: 0;
   }
 
   .music-post-nav {
