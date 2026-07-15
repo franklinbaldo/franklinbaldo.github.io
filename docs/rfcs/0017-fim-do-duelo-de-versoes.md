@@ -67,8 +67,18 @@ diretório, ou nenhum dos dois):
    juntos no gatilho de `draft-worst` (`edit-worst.ts:255`), mas sem a
    divergência temporal que o `select()` atual permite entre o pt e o en de
    um mesmo grupo (RFC 0010 §4.4 — hoje cada idioma vence seus duelos de
-   versão em ritmos diferentes; sem duelo de versão, a atomicidade do commit
-   git resolve isso de graça).
+   versão em ritmos diferentes). O Git fornece a fronteira transacional para
+   a revisão bilíngue: os arquivos alterados podem ser publicados no mesmo
+   commit. A sincronização semântica continua sendo uma regra editorial,
+   verificada pelo fluxo de revisão na medida do possível. Em mudanças
+   conceituais, `draft-commit` deve falhar ou emitir erro quando algum idioma
+   existente da obra não tiver sido alterado, salvo justificativa explícita.
+   A verificação baseia-se nos seguintes invariantes de migração:
+   - Todo post sobrevivente possui `lang` explícito.
+   - Toda obra bilíngue possui um identificador comum explícito, preferencialmente `translationKey`.
+   - Existe no máximo um arquivo para cada par `(translationKey, lang)`.
+   - O `doctor` reprova duplicidade ou tradução órfã não deliberada.
+   - A sessão de revisão registra todos os caminhos (paths) encontrados para aquela obra.
 5. **Sem backcompat desnecessária.** Não preservamos:
    - as variantes legacy/pré-OKF/blob de UUID em `posts.ts` (só serviam para
      resolver rate files de versão contra um manifesto de seleção que deixa
@@ -98,6 +108,19 @@ diretório, ou nenhum dos dois):
    **não** assume a inversão; trata o esquema de idioma padrão como
    ortogonal e a ser decidido separadamente (§5 documenta o mecanismo atual
    sem alterá-lo).
+7. **Padronização dos nomes físicos dos arquivos.** Como fase final e para evitar
+   uma arqueologia enganosa, arquivos sobreviventes que mantêm nomes legados (ex:
+   `<slug>/v-timestamp.mdx`) serão padronizados no formato único `src/content/blog/<slug>.mdx`
+   (ou `src/content/blog/<slug>/index.mdx` caso existam recursos de mídia locais
+   associados). Isso garante a transição completa para o layout simplificado.
+
+### 2.1. Consequências aceitas
+
+- **Perda de concorrência entre revisões:** Revisões concorrentes da mesma obra
+  deixam de coexistir como objetos independentes do Hrönir. Passam a ser branches
+  Git comuns e podem exigir rebase ou resolução de conflito. Essa perda é deliberada:
+  conflitos ocasionais são considerados menos custosos que manter um sistema
+  permanente de versões concorrentes.
 
 ## 3. O que sai
 
@@ -122,16 +145,13 @@ Confirmado por leitura direta do código (arquivo → motivo):
 | Variantes legacy/pré-OKF/blob de UUID em `posts.ts:198-283` (`getPostUuidLegacy*`, `getPostUuidPreOkfType*`, `*FromBlob`, `blobShaForPath`, `readBlob`, `_blobCache`) | Só serviam para resolver rate files de versão contra conteúdo arquivado.                                                                                               |
 | Passo `select` em `scripts/pregen.mjs:21`                                                                                                                             | Chamada de build à seleção.                                                                                                                                            |
 | Campos `supersedes`/`draftCreatedAt`/`draftCommittedAt`/`draftMsg`/`previousVersion` do `postSchema` (`content.config.ts:56-82`)                                      | Ver decisão 5 — removidos do schema, não deixados opcionais.                                                                                                           |
+| `pages/ranking/battles/[id].astro`                                                                                                                                    | Deixa de gerar `versionPaths` e passa a servir apenas duelos `work`; removem-se seus imports e renderizações específicos de versão. Rate files históricos `version` permanecem acessíveis somente no repositório. |
 
 ## 4. O que fica / muda
 
 - **Identidade de obra:** `keyForPath()`/`translationKey` (`posts.ts:78-86`)
   — puramente conceito de pareamento do duelo `work`, intocado.
-- **`getPostUuid`** (variante atual, sem fallbacks) — continua existindo:
-  `computeAbsoluteQuality`/`computeDeconfoundedQuality` (`ranking.ts`) usam
-  o UUID do post para resetar a EWMA de qualidade quando o conteúdo muda
-  entre dois duelos `work` — isso é exatamente o sinal que detecta "o
-  canônico foi reescrito" no novo fluxo, sem nenhuma mudança de código.
+- **`getPostUuid`** (variante atual, sem fallbacks) — o UUID deixa de ser identidade de domínio, endereço público ou chave de seleção. Permanece apenas como fingerprint de conteúdo gravado nos dados de avaliação, usado para detectar que uma obra foi reescrita entre avaliações e reiniciar a EWMA de qualidade em `computeAbsoluteQuality`/`computeDeconfoundedQuality` (`ranking.ts`).
 - **`findTranslations()`/`listEnglishWithKey()`** — realocados de
   `selection.ts` para `posts.ts` (ou um `translations.ts` novo), reescritos
   para depender só de `listPosts()`/`keyForPath()`/`isPublishedData()`, sem
@@ -208,13 +228,23 @@ fresco → `versions-selected.json` final, autoritativo para os 154 diretórios
 ainda no layout legado (o rollout incremental do `hronir:flatten` da RFC
 0015 para **agora** — resolvia um problema que deixa de existir).
 
-**Fase 1 — unicidade física.** Para cada diretório legado, `git rm` todo
-arquivo-versão exceto o selecionado pela Fase 0 (ou o único publicável, nos
-casos sem seleção). Triagem manual dos dois slugs órfãos já sinalizados por
-`flatten.ts:52-67` (`delegando-para-agentes`, `the-art-of-delegation`) e do
-diretório sem versão publicável (`the-art-of-delegating-...`, RFC 0015 §1).
-Ao final: um arquivo por (slug, idioma) em todo `src/content/blog/`, sem
-exceção. `git rm` os três JSONs gerados de versão.
+**Fase 1 — unicidade física.** Para cada diretório legado, realiza-se a deleção de todo arquivo-versão exceto o selecionado. Para garantir auditoria completa, a migração exige a geração de um manifesto auditável temporário denominado `migration-0017-survivors.json`, que deve ser mantido no repositório durante as PRs de migração (podendo ser removido na última fase). O manifesto deve registrar, para cada slug, um objeto no seguinte formato:
+
+```json
+{
+  "slug": "nome-da-obra",
+  "lang": "pt",
+  "kept": "src/content/blog/.../v-....mdx",
+  "reason": "selected", // "selected", "single-publishable" ou "manual"
+  "removed": [
+    "src/content/blog/.../v-....mdx"
+  ]
+}
+```
+
+A regra de escolha operacional para seleção deve ser executada de forma estrita: sem seleção prévia, exatamente um arquivo publicável deve existir. Zero ou múltiplos candidatos candidatos interrompem automaticamente a migração e exigem resolução manual. Realiza-se também a triagem manual dos dois slugs órfãos já sinalizados por `flatten.ts:52-67` (`delegando-para-agentes`, `the-art-of-delegation`) e do diretório sem versão publicável (`the-art-of-delegating-...`, RFC 0015 §1).
+
+Ao final: um arquivo por (slug, idioma) em todo `src/content/blog/`, sem exceção. `git rm` nos três JSONs originais gerados de versão.
 
 **Fase 2 — poda de schema e frontmatter.** Remove os campos de lifecycle de
 versão do `postSchema` (§3) e dos arquivos sobreviventes (decisão 5 — sem
