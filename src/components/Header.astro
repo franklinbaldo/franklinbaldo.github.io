@@ -184,6 +184,10 @@ const isCurrent = (href: string) => {
     font-weight: 600;
     letter-spacing: -0.01em;
     text-decoration: none;
+    /* Override the global overflow-wrap: anywhere (global.css) — in the
+       cramped flex header it would otherwise split "Franklin"/"Baldo."
+       mid-word on narrow phones instead of wrapping at the space. */
+    overflow-wrap: normal;
   }
   .brand:hover {
     color: var(--pico-primary);
@@ -195,6 +199,7 @@ const isCurrent = (href: string) => {
   .nav-inline a:not(.nav-music-btn) {
     font-size: 0.92rem;
     text-decoration: none;
+    white-space: nowrap;
   }
   .nav-inline a[aria-current="page"] {
     color: var(--pico-primary);
@@ -204,7 +209,11 @@ const isCurrent = (href: string) => {
   }
 
   .nav-burger { display: none; }
-  @media (max-width: 768px) {
+  /* Pico's .container is capped at 950px for the whole 1024–1279px range
+     (it only steps up to 1200px at the 1280px breakpoint) — too narrow for
+     8 nav links plus the music/lang/theme controls, which used to wrap and
+     break mid-word. Keep the burger menu until there's actually room. */
+  @media (max-width: 1279px) {
     .nav-inline { display: none; }
     .nav-burger { display: flex; }
   }
