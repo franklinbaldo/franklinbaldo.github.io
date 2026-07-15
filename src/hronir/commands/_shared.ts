@@ -121,13 +121,16 @@ export function printSidePost(session: any, side: "A" | "B") {
   console.log(`Slug: ${slug}`);
   console.log(`Arquivo: ${p}`);
   if (sunoId) {
-    console.log(`🎵 Suno Song Page: https://suno.com/song/${sunoId}`);
+    const label = tracks.length > 0 ? " (principal)" : "";
+    console.log(`🎵 Suno Song Page${label}: https://suno.com/song/${sunoId}`);
     console.log(
       `🔊 Direct Audio URL (MP3): https://cdn1.suno.ai/${sunoId}.mp3`
     );
   }
   for (const tr of tracks) {
-    console.log(`🎵 ${tr.label}: https://suno.com/song/${tr.sunoId}`);
+    console.log(
+      `🎵 ${tr.label} (versão adicional): https://suno.com/song/${tr.sunoId}`
+    );
     console.log(
       `🔊 Direct Audio URL (MP3): https://cdn1.suno.ai/${tr.sunoId}.mp3`
     );

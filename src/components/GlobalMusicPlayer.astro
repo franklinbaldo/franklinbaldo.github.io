@@ -89,7 +89,12 @@ try {
       sunoIdToPostUrl.set(id, url);
     }
     if (p.data.translationKey && ids.length > 0) {
-      keyToSunoIds.set(p.data.translationKey, ids);
+      // A pt/en pair shares one translationKey; merge (don't overwrite) so
+      // that if the two language posts' tracks[] ever diverge, both sides'
+      // ids still land at this post's ranked queue position instead of the
+      // later-processed post silently discarding the other's.
+      const key = p.data.translationKey;
+      keyToSunoIds.set(key, [...(keyToSunoIds.get(key) ?? []), ...ids]);
     }
   }
 

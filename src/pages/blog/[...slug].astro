@@ -20,6 +20,7 @@ import PostNav from '../../components/PostNav.astro';
 import { getSeriesContext } from '../../lib/series';
 import { isPublished } from '../../lib/publish';
 import { t, targetCopy, locale as localeFor, urlPrefix, DEFAULT_LANG } from '../../lib/i18n';
+import { isoDuration } from '../../lib/suno';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -91,13 +92,9 @@ const translationLinks = translationSiblings.map((p) => {
 });
 
 // RFC 0006 / issue #678: MusicRecording rich result for music posts.
-// Rounds once before deriving minutes/seconds so a non-integer duration
-// can't push the seconds term across a minute boundary the floored
-// minutes term didn't cross (e.g. 119.6 → "1M0S" instead of "2M0S").
-function isoDuration(seconds: number): string {
-  const d = Math.round(seconds);
-  return `PT${Math.floor(d / 60)}M${d % 60}S`;
-}
+// Rounded once, shared with the visible duration badges below, so the
+// display and the JSON-LD can't disagree for a non-integer duration.
+const displayDuration = duration ? Math.round(duration) : undefined;
 const musicLd = postType === 'music' && sunoId
   ? {
       '@context': 'https://schema.org',
@@ -227,7 +224,7 @@ const extraMusicLd = postType === 'music' && tracks?.length
                 )}
                 {duration && (
                   <p class="music-duration">
-                    <small>{Math.floor(duration / 60)}:{String(duration % 60).padStart(2, '0')}</small>
+                    <small>{Math.floor(displayDuration! / 60)}:{String(displayDuration! % 60).padStart(2, '0')}</small>
                   </p>
                 )}
                 <button
@@ -272,9 +269,9 @@ const extraMusicLd = postType === 'music' && tracks?.length
                         {tr.genre.map((g) => <kbd class="genre-pill">{g}</kbd>)}
                       </p>
                     )}
-                    {trDuration && (
+                    {tr.duration && (
                       <p class="music-duration">
-                        <small>{Math.floor(trDuration / 60)}:{String(trDuration % 60).padStart(2, '0')}</small>
+                        <small>{Math.floor(trDuration! / 60)}:{String(trDuration! % 60).padStart(2, '0')}</small>
                       </p>
                     )}
                     <button

@@ -17,6 +17,15 @@ interface ProfileResponse {
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export { sleep };
 
+// RFC 0006 / issue #678: MusicRecording rich result for music posts.
+// Rounds once before deriving minutes/seconds so a non-integer duration
+// can't push the seconds term across a minute boundary the floored
+// minutes term didn't cross (e.g. 119.6 → "1M0S" instead of "2M0S").
+export function isoDuration(seconds: number): string {
+  const d = Math.round(seconds);
+  return `PT${Math.floor(d / 60)}M${d % 60}S`;
+}
+
 async function fetchJSON<T>(url: string): Promise<T> {
   for (let attempt = 0; attempt < 4; attempt++) {
     const res = await fetch(url, {
