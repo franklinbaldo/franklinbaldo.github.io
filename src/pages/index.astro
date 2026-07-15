@@ -14,7 +14,7 @@ const all = (await getCollection("blog"))
 const latest = all[0];
 // The featured card shows the latest essay, so the list starts at the second.
 const recent = all.slice(1, 13);
-const latestHref = latest ? `/blog/${latest.id}/` : "/archive/";
+const latestHref = latest ? `/blog/${latest.data.slug ?? latest.id}/` : "/archive/";
 const latestWords = (latest?.body ?? '').trim().split(/\s+/).filter(Boolean).length;
 const latestMinutes = Math.max(1, Math.round(latestWords / 220));
 const latestDate = latest?.data.date.toLocaleDateString('en-US', {

@@ -19,7 +19,7 @@ const blurb = description;
 const wordCount = (post.body ?? '').trim().split(/\s+/).filter(Boolean).length;
 const minutesRead = Math.max(1, Math.round(wordCount / 220));
 
-const href = postLang === 'pt' ? `/pt/blog/${post.id}/` : `/blog/${post.id}/`;
+const href = postLang === 'pt' ? `/pt/blog/${post.data.slug ?? post.id}/` : `/blog/${post.data.slug ?? post.id}/`;
 const typeLabel = type
   ? t(postLang, `post.type${type.charAt(0).toUpperCase()}${type.slice(1)}` as UIKey)
   : undefined;

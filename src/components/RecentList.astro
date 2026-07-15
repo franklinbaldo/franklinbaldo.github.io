@@ -19,7 +19,7 @@ const minRead = (body: string | undefined) => {
 <ul class="recent-list">
   {posts.map((post, index) => {
     const { title, description, date, tags } = post.data;
-    const href = post.data.lang === 'pt' ? `/pt/blog/${post.id}/` : `/blog/${post.id}/`;
+    const href = post.data.lang === 'pt' ? `/pt/blog/${post.data.slug ?? post.id}/` : `/blog/${post.data.slug ?? post.id}/`;
     const tag = tags?.[0];
     // Second-tier emphasis: the featured card above already covers the
     // single latest post, so this list's own first row (the runner-up)

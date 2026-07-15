@@ -16,7 +16,9 @@ export async function getStaticPaths() {
       tags: post.data.tags ?? [],
       lang: post.data.lang ?? "en",
       path:
-        post.data.lang === "pt" ? `/pt/blog/${post.id}/` : `/blog/${post.id}/`,
+        post.data.lang === "pt"
+          ? `/pt/blog/${post.data.slug ?? post.id}/`
+          : `/blog/${post.data.slug ?? post.id}/`,
     },
   }));
 }

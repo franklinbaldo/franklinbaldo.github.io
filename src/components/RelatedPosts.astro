@@ -50,7 +50,7 @@ const headingId = 'related-posts-heading';
     <h3 id={headingId}>{heading}</h3>
     {related.map(({ post: p, sharedTags }) => (
       <article>
-        <h4><a href={(p.data.lang ?? DEFAULT_LANG) === 'pt' ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`}>{p.data.title}</a></h4>
+        <h4><a href={(p.data.lang ?? DEFAULT_LANG) === 'pt' ? `/pt/blog/${p.data.slug ?? p.id}/` : `/blog/${p.data.slug ?? p.id}/`}>{p.data.title}</a></h4>
         <p><small><time datetime={p.data.date.toISOString()}>{p.data.date.toLocaleDateString(locale, dateOpts)}</time></small></p>
         {p.data.description && <p><small>{p.data.description.length > 120 ? p.data.description.slice(0, 120) + '…' : p.data.description}</small></p>}
         {!usedFallback && sharedTags.length > 0 && <p><small>{sharedTags.map(tag => `#${tag}`).join(' ')}</small></p>}

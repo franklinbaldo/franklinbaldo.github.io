@@ -23,7 +23,7 @@ for (const p of all) {
   if (!key) continue;
   const existing = byKey.get(key);
   if (!existing || (p.data.lang ?? "en") === "en") {
-    byKey.set(key, { slug: p.id, title: p.data.title, lang: p.data.lang ?? "en" });
+    byKey.set(key, { slug: p.data.slug ?? p.id, title: p.data.title, lang: p.data.lang ?? "en" });
   }
 }
 

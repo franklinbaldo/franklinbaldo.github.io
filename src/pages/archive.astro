@@ -11,7 +11,7 @@ const all = await getCollection("blog");
 const ptByKey = new Map(
   all
     .filter((p) => isPublished(p) && p.data.lang === 'pt' && p.data.translationKey)
-    .map((p) => [p.data.translationKey!, p.id])
+    .map((p) => [p.data.translationKey!, p.data.slug ?? p.id])
 );
 
 const posts = all
@@ -54,7 +54,7 @@ const archiveLd = {
   hasPart: posts.map((p) => ({
     "@type": "BlogPosting",
     headline: p.data.title,
-    url: Astro.site ? new URL(`/blog/${p.id}/`, Astro.site).href : `/blog/${p.id}/`,
+    url: Astro.site ? new URL(`/blog/${p.data.slug ?? p.id}/`, Astro.site).href : `/blog/${p.data.slug ?? p.id}/`,
     datePublished: p.data.date.toISOString(),
   })),
 };
@@ -114,7 +114,7 @@ const archiveLd = {
                     {post.data.date.toLocaleDateString("en-US", { month: "short", day: "2-digit" })}
                   </time>
                 </td>
-                <td><a href={`/blog/${post.id}/`}>{post.data.title}</a></td>
+                <td><a href={`/blog/${post.data.slug ?? post.id}/`}>{post.data.title}</a></td>
                 <td class="col-min">{mins}</td>
                 <td class="col-rank">
                   {rankInfo && (

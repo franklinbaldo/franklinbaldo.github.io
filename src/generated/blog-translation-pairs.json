@@ -87,6 +87,14 @@
     "en": "/blog/bibliotecario-do-infinito-en/",
     "pt": "/pt/blog/bibliotecario-do-infinito/"
   },
+  "/blog/borges-and-i/": {
+    "en": "/blog/borges-and-i/",
+    "pt": "/pt/blog/borges-e-eu/"
+  },
+  "/pt/blog/borges-e-eu/": {
+    "en": "/blog/borges-and-i/",
+    "pt": "/pt/blog/borges-e-eu/"
+  },
   "/blog/borges-and-the-hyperobject-at-the-end-of-time-en/": {
     "en": "/blog/borges-and-the-hyperobject-at-the-end-of-time-en/",
     "pt": "/pt/blog/borges-and-the-hyperobject-at-the-end-of-time/"
@@ -94,14 +102,6 @@
   "/pt/blog/borges-and-the-hyperobject-at-the-end-of-time/": {
     "en": "/blog/borges-and-the-hyperobject-at-the-end-of-time-en/",
     "pt": "/pt/blog/borges-and-the-hyperobject-at-the-end-of-time/"
-  },
-  "/blog/borges-e-eu-en/": {
-    "en": "/blog/borges-e-eu-en/",
-    "pt": "/pt/blog/borges-e-eu/"
-  },
-  "/pt/blog/borges-e-eu/": {
-    "en": "/blog/borges-e-eu-en/",
-    "pt": "/pt/blog/borges-e-eu/"
   },
   "/blog/building-funes/": {
     "en": "/blog/building-funes/",

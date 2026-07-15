@@ -204,10 +204,14 @@ export default defineConfig({
     "/musicas/": "/music/",
     // be-me-borges + borges-and-me merged into borges-e-eu as extra `tracks`
     // (four Suno renditions of the same "Borges y yo" essay, one post).
+    // The EN side later moved from the untranslated "borges-e-eu-en" slug to
+    // a real English slug, "borges-and-i" — every prior EN redirect target
+    // updated to match, plus one more hop for the retired slug itself.
     "/pt/blog/be-me-borges/": "/pt/blog/borges-e-eu/",
-    "/blog/be-me-borges-en/": "/blog/borges-e-eu-en/",
+    "/blog/be-me-borges-en/": "/blog/borges-and-i/",
     "/pt/blog/borges-and-me/": "/pt/blog/borges-e-eu/",
-    "/blog/borges-and-me-en/": "/blog/borges-e-eu-en/",
+    "/blog/borges-and-me-en/": "/blog/borges-and-i/",
+    "/blog/borges-e-eu-en/": "/blog/borges-and-i/",
     ...blogRedirects,
   },
   prefetch: {

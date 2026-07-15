@@ -32,7 +32,7 @@ const recent = (await getCollection("blog"))
     <ul>
       {recent.map((post) => (
         <li>
-          <a href={`/pt/blog/${post.id}/`}>{post.data.title}</a>
+          <a href={`/pt/blog/${post.data.slug ?? post.id}/`}>{post.data.title}</a>
           {' — '}
           <small>
             <time datetime={post.data.date.toISOString()}>

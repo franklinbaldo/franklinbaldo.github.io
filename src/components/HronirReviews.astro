@@ -23,7 +23,7 @@ for (const p of allPosts) {
   const pLang = p.data.lang ?? "en";
   const existing = postMeta.get(key);
   if (!existing || pLang === "en") {
-    postMeta.set(key, { title: p.data.title, slug: p.id, lang: pLang });
+    postMeta.set(key, { title: p.data.title, slug: p.data.slug ?? p.id, lang: pLang });
   }
 }
 

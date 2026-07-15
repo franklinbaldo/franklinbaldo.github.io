@@ -26,8 +26,9 @@ for (const p of posts) {
   if (p.postType !== "music") continue;
   if (!p.date || new Date(p.date) >= MUSICAS_FLATTEN_DATE) continue;
   const bareId = p.id.replace(/^musicas\//, "");
-  redirects[`/blog/musicas/${bareId}/`] = `/blog/${bareId}/`;
-  redirects[`/pt/blog/musicas/${bareId}/`] = `/pt/blog/${bareId}/`;
+  const finalId = p.slug ?? p.id;
+  redirects[`/blog/musicas/${bareId}/`] = `/blog/${finalId}/`;
+  redirects[`/pt/blog/musicas/${bareId}/`] = `/pt/blog/${finalId}/`;
 }
 
 const sorted = Object.fromEntries(

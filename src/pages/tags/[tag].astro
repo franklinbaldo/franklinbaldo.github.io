@@ -71,7 +71,7 @@ const collectionLd = {
   hasPart: posts.map((p) => ({
     "@type": "BlogPosting",
     headline: p.data.title,
-    url: Astro.site ? new URL(`/blog/${p.id}/`, Astro.site).href : `/blog/${p.id}/`,
+    url: Astro.site ? new URL(`/blog/${p.data.slug ?? p.id}/`, Astro.site).href : `/blog/${p.data.slug ?? p.id}/`,
     datePublished: p.data.date.toISOString(),
   })),
 };

@@ -82,7 +82,7 @@ try {
   const sunoIdToPostUrl = new Map<string, string>();
   for (const p of musicPosts) {
     const lang = p.data.lang ?? "en";
-    const url = lang === "pt" ? `/pt/blog/${p.id}/` : `/blog/${p.id}/`;
+    const url = lang === "pt" ? `/pt/blog/${p.data.slug ?? p.id}/` : `/blog/${p.data.slug ?? p.id}/`;
     const ids = [p.data.sunoId, ...(p.data.tracks ?? []).map((tr) => tr.sunoId)]
       .filter((id): id is string => !!id);
     for (const id of ids) {
@@ -718,9 +718,14 @@ try {
       });
     }
 
-    // Bind Suno links on current page (runs every navigation)
+    // Bind Suno links on current page (runs every navigation). Anchors that
+    // declare target="_blank" (e.g. the explicit "Listen on Suno ↗" link on
+    // a post page) are meant to navigate to Suno itself, not play in-page —
+    // skip those so preventDefault() below doesn't defeat their own intent.
     document
-      .querySelectorAll<HTMLAnchorElement>('a[href*="suno.com/song/"]')
+      .querySelectorAll<HTMLAnchorElement>(
+        'a[href*="suno.com/song/"]:not([target="_blank"])',
+      )
       .forEach((a) => {
         if (a.dataset.gmpBound === "1") return;
         const m = a.href.match(SONG_RE);
