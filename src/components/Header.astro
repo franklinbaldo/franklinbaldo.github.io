@@ -61,12 +61,12 @@ const isCurrent = (href: string) => {
       ))}
       <li><button id="nav-music-btn" class="nav-music-btn secondary outline" type="button" aria-label={playMusicLabel} title={playMusicLabel} data-play-label={playMusicLabel} data-pause-label={pauseMusicLabel}>♪</button></li>
       <li><LanguageSwitcher /></li>
-      <li><ThemeToggle /></li>
+      <li><ThemeToggle lang={lang} /></li>
     </ul>
     <ul class="nav-burger">
       <li><button id="nav-music-btn-mobile" class="nav-music-btn secondary outline" type="button" aria-label={playMusicLabel} title={playMusicLabel} data-play-label={playMusicLabel} data-pause-label={pauseMusicLabel}>♪</button></li>
       <li><LanguageSwitcher /></li>
-      <li><ThemeToggle /></li>
+      <li><ThemeToggle lang={lang} /></li>
       <li>
         <details class="dropdown burger-menu">
           <summary aria-label={menuLabel}>☰</summary>
