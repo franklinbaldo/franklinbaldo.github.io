@@ -39,7 +39,7 @@
     "hronir:migrate": "node --import tsx/esm scripts/hronir/index.js migrate",
     "hronir:doctor": "node --import tsx/esm scripts/hronir/index.js doctor",
     "hronir:diagnose-corpus": "node --import tsx/esm scripts/hronir/diagnose-corpus.mjs",
-    "music:generate": "node scripts/generate-music-posts.mjs",
+    "music:sync": "node scripts/sync-suno-catalog.mjs",
     "test": "node --import tsx/esm --experimental-test-module-mocks --test --test-concurrency=1 \"src/**/*.test.{js,ts}\""
   },
   "dependencies": {

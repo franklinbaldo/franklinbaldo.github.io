@@ -1,8 +1,83 @@
 import { existsSync, readFileSync } from "node:fs";
 import { defineCollection, z, type SchemaContext } from "astro:content";
-import { glob } from "astro/loaders";
+import { glob, type Loader } from "astro/loaders";
 import { listAllVersionSlugs, flatCanonicalPath } from "./hronir/selection.js";
 import { generateBlogId } from "./lib/blog-id.js";
+import { slugFor, parseTags } from "./lib/suno-music.js";
+
+type SunoCatalogRecord = {
+  id: string;
+  title: string;
+  lyricsPrompt: string;
+  styleTags: string;
+  durationSeconds: number | null;
+  imageUrl: string | null;
+  isPublic: boolean;
+  createdAt: string | null;
+};
+
+// Music posts are pure derived data: raw Suno API responses live in
+// data/suno-catalog.jsonl (synced daily by scripts/sync-suno-catalog.mjs)
+// and are rendered into blog-collection entries here, at build time — they
+// never touch disk as .mdx. This sidesteps an entire class of bug: there's
+// no generated MDX to have invalid syntax in the first place. It also
+// means these entries are invisible to src/hronir/selection.ts (which
+// walks the filesystem directly), so music posts fall outside Hrönir's
+// versioning/ranking system by construction — no filter needed anywhere
+// in Hrönir's code for that. A dedicated music-only ranking system (audio
+// comparison via Gemini) is planned separately, much later; this loader
+// intentionally has no hook for it yet.
+const musicLoader: Loader = {
+  name: "suno-music-jsonl",
+  load: async (context) => {
+    const path = "./data/suno-catalog.jsonl";
+    if (!existsSync(path)) return;
+    const raw = readFileSync(path, "utf-8");
+    for (const line of raw.split("\n")) {
+      if (!line.trim()) continue;
+      const clip = JSON.parse(line) as SunoCatalogRecord;
+      // Nothing else in this codebase gates on sunoPrivate — this is the
+      // one place a private/unpublished Suno song is kept out of the
+      // published site. Filtering here, before parseData, means a private
+      // clip never even becomes a schema-valid entry, let alone a page.
+      if (!clip.isPublic) continue;
+      // createdAt is required by postSchema's date field (no default) —
+      // a record missing it would otherwise throw and abort the whole
+      // collection load for every other entry. Suno always sets this on a
+      // real clip; skip and log rather than crash the build if it's ever
+      // absent (e.g. a malformed sync).
+      if (!clip.createdAt) {
+        context.logger.warn(`Suno clip ${clip.id} has no createdAt, skipping`);
+        continue;
+      }
+
+      const id = slugFor(clip);
+      const lyrics = clip.lyricsPrompt.trim();
+      const lyricsMd = lyrics
+        ? `## Letra\n\n\`\`\`\n${lyrics}\n\`\`\``
+        : `## Letra`;
+      const rendered = await context.renderMarkdown(lyricsMd);
+
+      const data = await context.parseData({
+        id,
+        data: {
+          type: "Music Post",
+          postType: "music",
+          title: clip.title || "(sem título)",
+          description: `Música de Franklin Baldo — ${clip.title || "sem título"}`,
+          date: clip.createdAt,
+          sunoId: clip.id,
+          genre: parseTags(clip.styleTags),
+          duration: clip.durationSeconds ?? undefined,
+          sunoImageUrl: clip.imageUrl ?? undefined,
+          tags: ["música"],
+          lang: "pt",
+        },
+      });
+      context.store.set({ id, data, rendered, digest: context.generateDigest(line) });
+    }
+  },
+};
 
 // RFC 0010 (amended 2026-07-01): the published version of a *legacy*-layout
 // post is whatever versions-selected.json points at — selection is a
@@ -99,8 +174,8 @@ const postSchema = ({ image }: SchemaContext) =>
      *  UUID_EXCLUDED_FIELDS), same as docType: it's a classification, not
      *  version-defining content. */
     type: z.enum(["Blog Post", "Music Post"]),
-    /** When "music", the post is a music publication with lyrics and
-     *  composer notes. Triggers the music post layout. */
+    /** When "music", the post is a music publication with lyrics.
+     *  Triggers the music post layout. */
     postType: z.literal("music").optional(),
     /** Suno song UUID — used to load audio in the global player. */
     sunoId: z.string().optional(),
@@ -114,12 +189,8 @@ const postSchema = ({ image }: SchemaContext) =>
     sunoStyle: z.string().optional(),
     /** Song duration in seconds. */
     duration: z.number().optional(),
-    /** Album art URL from the Suno API (stored at stub-generation time). */
+    /** Album art URL from the Suno API. */
     sunoImageUrl: z.string().url().optional(),
-    /** True when the source Suno clip was private/unpublished at
-     *  mirror-time (--include-private). Marks the stub so a private song
-     *  is never indistinguishable from an intentional public mirror. */
-    sunoPrivate: z.boolean().optional(),
     /** Additional Suno renditions of the same music post, beyond the
      *  primary sunoId/genre/sunoStyle/duration/sunoImageUrl above — for a
      *  post that sets the same text to music more than once. Each entry
@@ -149,15 +220,27 @@ const publishedPattern =
     ? [...selectedFiles, ...flatFiles]
     : ["**/index.{md,mdx}"];
 
+// See generateBlogId (src/lib/blog-id.ts) for what this strips and why —
+// legacy folder-per-slug vs. RFC 0015 flat-file both need to end up as
+// the bare slug, extension-free.
+const globLoader = glob({
+  pattern: publishedPattern,
+  base: "./src/content/blog",
+  generateId: ({ entry }) => generateBlogId(entry),
+});
+
 const blog = defineCollection({
-  // See generateBlogId (src/lib/blog-id.ts) for what this strips and why —
-  // legacy folder-per-slug vs. RFC 0015 flat-file both need to end up as
-  // the bare slug, extension-free.
-  loader: glob({
-    pattern: publishedPattern,
-    base: "./src/content/blog",
-    generateId: ({ entry }) => generateBlogId(entry),
-  }),
+  // glob()'s return value already satisfies the Loader interface
+  // ({name, load}), so it can be driven directly alongside musicLoader —
+  // this is how Music Posts join the same collection as file-backed posts
+  // without ever being files themselves.
+  loader: {
+    name: "blog-with-music",
+    load: async (context) => {
+      await globLoader.load(context);
+      await musicLoader.load(context);
+    },
+  },
   schema: postSchema,
 });
 

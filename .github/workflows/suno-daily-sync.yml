@@ -1,0 +1,89 @@
+name: Suno Daily Sync
+
+# Daily: fetch the full Suno catalog (public + private — see
+# scripts/sync-suno-catalog.mjs's --include-private) and overwrite
+# data/suno-catalog.jsonl with exactly what Suno currently reports. Music
+# posts are synthesized from that file at build time (src/content.config.ts)
+# — this workflow only updates the raw data, never writes to
+# src/content/blog/. Commits straight to main with no human review step —
+# a deliberate choice (see PR discussion), not the repo's usual PR-based
+# flow. `npm run build` still runs first as an automated safety net: if the
+# new catalog fails schema validation, nothing is committed, rather than
+# pushing broken content live.
+#
+# A push to main from this workflow triggers deploy.yml normally — no
+# separate deploy step needed here.
+
+on:
+  schedule:
+    - cron: "0 5 * * *" # 05:00 UTC, ahead of deploy.yml's 06:00 UTC cron
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: suno-daily-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Sync Suno catalog
+        env:
+          SUNO_CLERK_COOKIE: ${{ secrets.SUNO_CLERK_COOKIE }}
+        run: node scripts/sync-suno-catalog.mjs --include-private
+
+      - name: Check for catalog changes
+        id: changes
+        run: |
+          if git status --porcelain data/suno-catalog.jsonl | grep -q .; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "No catalog changes today."
+          fi
+
+      # Safety net, not a review gate: catches schema-invalid entries or
+      # anything else that would break the live site before it's
+      # committed, without requiring a human in the loop. If this fails,
+      # nothing gets pushed — today's run is simply skipped, not retried
+      # with partial data.
+      - name: Validate build
+        if: steps.changes.outputs.has_changes == 'true'
+        run: npm run build
+
+      # This repo has near-continuous automated activity (hourly Hrönir
+      # matches, edit-worst runs, other PRs merging via the autopilot) — a
+      # direct push to main can easily land behind origin by the time this
+      # job finishes its multi-minute catalog fetch. Rebase-and-retry
+      # rather than fail the whole run over an ordinary race.
+      - name: Commit and push
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/suno-catalog.jsonl src/generated/blog-redirects.json
+          git commit -m "feat(music): daily Suno sync — $(date -u +%Y-%m-%d)"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/3), rebasing onto latest main..."
+            git fetch origin main
+            git rebase origin/main
+          done
+          echo "Push failed after 3 attempts." >&2
+          exit 1
