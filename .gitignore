@@ -29,6 +29,11 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 .claude/
+.agents/
+
+# Materialized agent-skill content — regenerate from skills-lock.json with
+# `npx skills experimental_install`. Only the lock file is tracked, same
+# relationship as package-lock.json to node_modules/.
 
 # Hrönir transient session state (never committed)
 hronir_session.json

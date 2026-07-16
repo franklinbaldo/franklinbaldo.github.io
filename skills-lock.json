@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "suno-curator": {
+      "source": "franklinbaldo/skills",
+      "sourceType": "github",
+      "skillPath": "suno-curator/SKILL.md",
+      "computedHash": "239a8efc99482c6eda77908bc42b0da92f6c9dad0fceac1848144bfb4b501532"
+    },
+    "suno-profile": {
+      "source": "franklinbaldo/skills",
+      "sourceType": "github",
+      "skillPath": "suno-profile/SKILL.md",
+      "computedHash": "096a8d1a6a9db7b97bfa04ec481d0d81089feabaf75e9418a5cb651594901eba"
+    }
+  }
+}
