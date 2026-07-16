@@ -101,6 +101,20 @@ jobs:
         env:
           BASE_REF: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || '' }}
 
+      # `astro check` roda seu próprio `sync()` (regeneração do content
+      # layer) antes de tipar. Restaura (sem salvar — quem salva é o job
+      # `build`, que já grava sob a mesma key) o mesmo cache `.astro/` do
+      # job `build` pra esse sync não começar sempre frio; a cache do
+      # Actions é remota por key, não por filesystem do runner, então os
+      # dois jobs conseguem ler o mesmo blob mesmo rodando em paralelo.
+      - name: Restore Astro build state
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .astro
+          key: ${{ runner.os }}-astro-v24-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-astro-v24-
+
       - name: Astro type check
         run: npx astro check
 
