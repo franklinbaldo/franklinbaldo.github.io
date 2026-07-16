@@ -74,7 +74,12 @@ const musicLoader: Loader = {
           lang: "pt",
         },
       });
-      context.store.set({ id, data, rendered, digest: context.generateDigest(line) });
+      context.store.set({
+        id,
+        data,
+        rendered,
+        digest: context.generateDigest(line),
+      });
     }
   },
 };

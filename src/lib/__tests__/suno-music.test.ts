@@ -3,7 +3,10 @@ import assert from "node:assert/strict";
 import { slugFor, parseTags } from "../suno-music.js";
 
 test("slugFor: always suffixes with the clip id, even with no title collision", () => {
-  assert.equal(slugFor({ id: "abcdef12-3456-7890", title: "Xadrez" }), "xadrez-abcdef12");
+  assert.equal(
+    slugFor({ id: "abcdef12-3456-7890", title: "Xadrez" }),
+    "xadrez-abcdef12"
+  );
 });
 
 test("slugFor: two clips with the same title get different slugs", () => {
@@ -13,11 +16,18 @@ test("slugFor: two clips with the same title get different slugs", () => {
 });
 
 test("slugFor: empty title falls back to sem-titulo", () => {
-  assert.equal(slugFor({ id: "abcdef12-0000", title: "" }), "sem-titulo-abcdef12");
+  assert.equal(
+    slugFor({ id: "abcdef12-0000", title: "" }),
+    "sem-titulo-abcdef12"
+  );
 });
 
 test("parseTags: splits on commas, semicolons, and newlines", () => {
-  assert.deepEqual(parseTags("rock, folk;\nfast tempo"), ["rock", "folk", "fast tempo"]);
+  assert.deepEqual(parseTags("rock, folk;\nfast tempo"), [
+    "rock",
+    "folk",
+    "fast tempo",
+  ]);
 });
 
 test("parseTags: drops entries longer than 40 chars (RFC 0011)", () => {
