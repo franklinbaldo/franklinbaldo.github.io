@@ -135,16 +135,6 @@ async function fetchAllClipsIncludingPrivate(jwt) {
   return clips;
 }
 
-// feed/v3's clip objects don't carry lyrics/caption/full metadata — same
-// gap the paginated profile listing has (see franklinbaldo/skills'
-// suno-profile/references/write-api.md, "Reading the profile"). Detail
-// needs its own per-clip GET, authenticated.
-async function fetchClipDetail(id, jwt) {
-  return fetchJSON(`${SUNO_API}/clip/${id}/`, {
-    headers: { Authorization: `Bearer ${jwt}` },
-  });
-}
-
 // Raw Suno clip -> the trimmed shape we persist. Kept close to the API but
 // normalized enough that the build-time loader doesn't need to know about
 // Suno's response shape at all.
@@ -172,28 +162,12 @@ async function main() {
       `Buscando TODAS as músicas (públicas e privadas) de @${HANDLE} no Suno…`
     );
     const jwt = await mintBearerToken();
-    const basics = await fetchAllClipsIncludingPrivate(jwt);
-    console.log(`${basics.length} música(s) encontradas. Buscando detalhes…`);
-    clips = [];
-    for (const c of basics) {
-      try {
-        const detail = await fetchClipDetail(c.id, jwt);
-        clips.push({
-          ...c,
-          metadata: detail.metadata ?? c.metadata,
-          is_public: detail.is_public ?? c.is_public,
-        });
-      } catch (e) {
-        // One clip's detail fetch failing (deleted clip, transient error)
-        // shouldn't abort the whole sync and lose every other clip's
-        // progress — keep the basic record without the detail fields.
-        console.error(
-          `  aviso: falha ao buscar detalhes de ${c.id}: ${e.message}`
-        );
-        clips.push(c);
-      }
-      await sleep(150);
-    }
+    // feed/v3's list items already carry full metadata (prompt/lyrics,
+    // tags, duration) identical to the separate per-clip detail endpoint
+    // — confirmed by diffing both responses for the same clip live
+    // (2026-07-17). No second request per clip needed.
+    clips = await fetchAllClipsIncludingPrivate(jwt);
+    console.log(`${clips.length} música(s) encontradas.`);
   } else {
     console.log(`Buscando músicas públicas de @${HANDLE} no Suno…`);
     clips = await fetchPublicClips();
