@@ -1,9 +1,8 @@
 // Budgets are calibrated against this site's own measured state, not generic
 // aspirational targets. Measured 2026-07-09 on a production build (`npm run
 // build`) of main (ba52d4e), Lighthouse run locally (numberOfRuns: 1) against
-// the 5 pages `staticDistDir` autodiscovers (/, /404, /about, /archive, and
-// one /blog/<slug> post — lhci's default `maxAutodiscoverUrls`), two runs to
-// check for noise:
+// 5 pages — /, /404, /about, /archive, and one /blog/<slug> post — two runs
+// to check for noise:
 //
 //   page             performance  accessibility  best-practices  seo
 //   /404.html            0.99          1.00           1.00      1.00
@@ -41,11 +40,29 @@
 // numberOfRuns > 1, which is the documented mitigation for exactly this —
 // a single unlucky sample no longer trips the assertion by itself. The
 // category thresholds themselves are untouched.
+//
+// `url` below is an explicit, pinned list — not `staticDistDir`'s
+// autodiscovery. Every PT post has a same-id "shadow" page under /blog/ (the
+// wrong language prefix — see scripts/lib/blog-links.mjs's validTargets)
+// that immediately redirects to the real /pt/blog/ page, which then
+// auto-redirects again client-side to the EN translation for any visitor
+// (real or headless) whose browser language isn't PT (LanguageSwitcher.astro).
+// dist/'s legacy date-prefixed redirect stubs (scripts/generate-redirects.mjs)
+// and any UUID-prefixed post id sort ahead of every real letter-starting
+// slug, so autodiscovery's alphabetical directory walk deterministically —
+// not randomly — picked one of these multi-hop redirect chains as its "one
+// representative /blog/<post>" sample on 2026-07-16, and its legitimately
+// wide run-to-run variance (2 extra client-side navigations before content
+// paints) tripped the performance assertion on an unrelated PR. A blocklist
+// entry would only chase the next stub in alphabetical order (there are many
+// — every legacy date-prefixed URL is one); pinning the sample page sidesteps
+// discovery order entirely.
 module.exports = {
   ci: {
     collect: {
       staticDistDir: "./dist",
       numberOfRuns: 3,
+      url: ["/", "/404.html", "/about/", "/archive/", "/blog/the-amanuensis/"],
     },
     assert: {
       assertions: {

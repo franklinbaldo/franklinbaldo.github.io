@@ -1,9 +1,9 @@
 {
   "_meta": {
     "schema": "snapshot-v2",
-    "generatedAt": "2026-07-15T23:06:13.318Z",
+    "generatedAt": "2026-07-16T01:17:23.651Z",
     "basis": "build",
-    "totalDuels": 2074
+    "totalDuels": 2077
   },
   "keys": {
     "asterisk-protects": {
@@ -72,41 +72,41 @@
       "elo": 1103,
       "eloPeak": 1176
     },
-    "pontifex-research": {
+    "reclaiming-harness": {
       "rank": 12,
+      "ordinal": 13.0307,
+      "elo": 1093,
+      "eloPeak": 1114
+    },
+    "pontifex-research": {
+      "rank": 13,
       "ordinal": 12.8194,
       "elo": 1095,
       "eloPeak": 1161
     },
     "music-primavera-carregando": {
-      "rank": 13,
+      "rank": 14,
       "ordinal": 12.6824,
       "elo": 1081,
       "eloPeak": 1142
     },
-    "reclaiming-harness": {
-      "rank": 14,
-      "ordinal": 12.465,
-      "elo": 1079,
-      "eloPeak": 1114
-    },
-    "rosencrantz-coin": {
-      "rank": 15,
-      "ordinal": 12.4351,
-      "elo": 1040,
-      "eloPeak": 1134
-    },
     "pampa-circuit": {
-      "rank": 16,
+      "rank": 15,
       "ordinal": 12.3874,
       "elo": 1081,
       "eloPeak": 1147
     },
     "social-vulnerabilities": {
-      "rank": 17,
+      "rank": 16,
       "ordinal": 12.3136,
       "elo": 1123,
       "eloPeak": 1124
+    },
+    "rosencrantz-coin": {
+      "rank": 17,
+      "ordinal": 12.0993,
+      "elo": 1026,
+      "eloPeak": 1134
     },
     "agent-no-verbs": {
       "rank": 18,
@@ -240,17 +240,17 @@
       "elo": 1017,
       "eloPeak": 1054
     },
-    "music-the-time": {
+    "music-borges-e-eu": {
       "rank": 40,
+      "ordinal": 8.7294,
+      "elo": 1064,
+      "eloPeak": 1064
+    },
+    "music-the-time": {
+      "rank": 41,
       "ordinal": 8.2972,
       "elo": 1030,
       "eloPeak": 1055
-    },
-    "music-borges-e-eu": {
-      "rank": 41,
-      "ordinal": 8.2853,
-      "elo": 1050,
-      "eloPeak": 1057
     },
     "music-xadrez": {
       "rank": 42,
@@ -258,23 +258,23 @@
       "elo": 1021,
       "eloPeak": 1037
     },
-    "becoming-lobsters": {
-      "rank": 43,
-      "ordinal": 8.1896,
-      "elo": 999,
-      "eloPeak": 1077
-    },
     "music-prayer-to-the-unfinished-moving-window-v": {
-      "rank": 44,
+      "rank": 43,
       "ordinal": 8.0489,
       "elo": 988,
       "eloPeak": 1068
     },
     "music-leite-no-salao-bar": {
-      "rank": 45,
+      "rank": 44,
       "ordinal": 7.9736,
       "elo": 960,
       "eloPeak": 1048
+    },
+    "becoming-lobsters": {
+      "rank": 45,
+      "ordinal": 7.9245,
+      "elo": 985,
+      "eloPeak": 1077
     },
     "music-chegue-irmao-chegue-irma": {
       "rank": 46,
@@ -456,17 +456,17 @@
       "elo": 941,
       "eloPeak": 1060
     },
-    "music-caminho": {
+    "pontifex-guide": {
       "rank": 76,
+      "ordinal": 4.2277,
+      "elo": 987,
+      "eloPeak": 1032
+    },
+    "music-caminho": {
+      "rank": 77,
       "ordinal": 4.1458,
       "elo": 990,
       "eloPeak": 1016
-    },
-    "music-belief-engine-labyrinth-song-moving-window-viii": {
-      "rank": 77,
-      "ordinal": 3.9703,
-      "elo": 893,
-      "eloPeak": 1000
     },
     "music-uma-so-cancao": {
       "rank": 78,
@@ -474,11 +474,11 @@
       "elo": 970,
       "eloPeak": 1000
     },
-    "pontifex-guide": {
+    "music-belief-engine-labyrinth-song-moving-window-viii": {
       "rank": 79,
-      "ordinal": 3.7768,
-      "elo": 975,
-      "eloPeak": 1032
+      "ordinal": 3.6988,
+      "elo": 880,
+      "eloPeak": 1000
     },
     "music-menino-que-voce-foi": {
       "rank": 80,
