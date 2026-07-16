@@ -35,6 +35,7 @@ const ROOT_ALLOWLIST = new Set([
   "astro.config.mjs",
   "package-lock.json",
   "package.json",
+  "skills-lock.json",
   "tsconfig.json",
 ]);
 
@@ -98,7 +99,7 @@ for (const f of tracked) {
 for (const f of tracked) {
   if (f.startsWith("src/content/blog/musicas/")) {
     errors.push(
-      `Resurrected musicas/ folder: "${f}" — music posts live in src/content/blog/ with postType: music (RFC 0006)`
+      `Resurrected musicas/ folder: "${f}" — music posts are synthesized at build time from data/suno-catalog.jsonl (see src/content.config.ts's musicLoader), never written under src/content/blog/`
     );
   }
 }

@@ -217,3 +217,21 @@ docs/rfcs/                RFCs do projeto (0001…)
 docs/plans/               Planos e documentos de planejamento
 docs/okf/                 Bundle Open Knowledge Format (RFC 0014) — conceitos do Hrönir navegáveis por agente
 ```
+
+## Agent skills
+
+Skills from `franklinbaldo/skills` are managed via the `skills` CLI, not
+committed directly — `skills-lock.json` (tracked) pins which skills/versions
+are in use; `.agents/skills/` and `.claude/skills/` (both gitignored) hold
+the materialized content, symlinked per-agent. To pick up a fresh checkout,
+or after `skills-lock.json` changes:
+
+```bash
+npx skills experimental_install   # materialize from skills-lock.json
+npx skills add franklinbaldo/skills -s suno-curator -s suno-profile -y   # add/update specific skills
+```
+
+Currently in use: `suno-curator` (blog-side Suno sync — mirroring public
+songs into music posts) and `suno-profile` (Suno profile/catalog curation
+tooling — bio, playlists, captions; not used by this repo's own scripts,
+but kept alongside `suno-curator` since both cover the same Suno catalog).
