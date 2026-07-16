@@ -35,6 +35,7 @@ const ROOT_ALLOWLIST = new Set([
   "astro.config.mjs",
   "package-lock.json",
   "package.json",
+  "skills-lock.json",
   "tsconfig.json",
 ]);
 

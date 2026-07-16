@@ -116,6 +116,10 @@ const postSchema = ({ image }: SchemaContext) =>
     duration: z.number().optional(),
     /** Album art URL from the Suno API (stored at stub-generation time). */
     sunoImageUrl: z.string().url().optional(),
+    /** True when the source Suno clip was private/unpublished at
+     *  mirror-time (--include-private). Marks the stub so a private song
+     *  is never indistinguishable from an intentional public mirror. */
+    sunoPrivate: z.boolean().optional(),
     /** Additional Suno renditions of the same music post, beyond the
      *  primary sunoId/genre/sunoStyle/duration/sunoImageUrl above — for a
      *  post that sets the same text to music more than once. Each entry
