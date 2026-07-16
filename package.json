@@ -12,6 +12,7 @@
     "prebuild": "node scripts/pregen.mjs",
     "predev": "node scripts/pregen.mjs",
     "check:hygiene": "node scripts/check-hygiene.mjs",
+    "check:changelog": "node scripts/check-changelog.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check:translations": "node scripts/check-translations.mjs",
     "dev": "astro dev",
