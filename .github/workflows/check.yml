@@ -21,46 +21,11 @@ jobs:
 
       - run: npm ci
 
-      # PRs da rotina horária tocam só .routines/** (rate files + journal):
-      # mudam dados de ranking, não a performance das páginas — nem o build
-      # nem o Lighthouse têm o que pegar nelas (ver os gates abaixo). Usa
-      # `...` (merge-base diff, isolando só os commits desta PR) de propósito
-      # — não `..`, usado pelo passo "Rate file deletion guard" mais abaixo
-      # para um propósito diferente (deleção contra o main atual). Nota:
-      # esta checagem é deliberadamente mais estreita que o SAFE_PREFIXES do
-      # hronir-autopilot.yml — PRs de draft de edição (src/content/blog/**)
-      # continuam de propósito fora daqui, porque mudam conteúdo real de
-      # página e o Lighthouse deve auditá-las.
-      - name: Classify PR scope
-        id: scope
-        if: github.event_name == 'pull_request'
-        run: |
-          CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
-          if [ -n "$CHANGED" ] && ! echo "$CHANGED" | grep -qv '^\.routines/'; then
-            echo "routines_only=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "routines_only=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      # Build e cache só em PR (no push a main o Deploy builda o mesmo commit
-      # em seguida — buildar aqui de novo só duplica custo) e pulados também
-      # em PRs que só tocam .routines/** — hronir:doctor/select/astro check
-      # já validam esses arquivos; o build completo (astro build + pagefind +
-      # ranking snapshot) não audita nada que essas outras etapas não cubram.
-      # O cache é condicionado junto para não gravar um .astro vazio sob a
-      # key exata do sha, o que roubaria do Deploy o restore-keys de um
-      # build anterior quente.
-      - name: Cache Astro build state
-        if: github.event_name == 'pull_request' && steps.scope.outputs.routines_only != 'true'
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        with:
-          path: .astro
-          key: ${{ runner.os }}-astro-v24-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-astro-v24-
-
       - name: Repo hygiene
         run: npm run check:hygiene
+
+      - name: Changelog and version check
+        run: npm run check:changelog
 
       # Guards against phantom dependencies (imported but undeclared — works
       # today only because some other package pulls it in transitively and
@@ -139,8 +104,64 @@ jobs:
       - name: Astro type check
         run: npx astro check
 
+  # Roda em paralelo ao job `check` acima (não depende dele) — build + pagefind
+  # + Lighthouse são, de longe, a parte mais lenta do pipeline (~2min de build
+  # sozinho localmente; bem mais no runner do CI, mais o Lighthouse em cima).
+  # Rodavam em série no fim do job `check`, então PRs pagavam a soma dos dois;
+  # como um não depende do resultado do outro, rodar em paralelo corta o
+  # tempo de espera para o máximo dos dois em vez da soma. O trade-off: numa
+  # PR que falha em lint/prettier/etc, o build/Lighthouse ainda roda até o
+  # fim (antes era abortado cedo) — aceitável aqui porque minutos de Actions
+  # são de graça em repo público; o que importa é o tempo de espera.
+  build:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # PRs da rotina horária tocam só .routines/** (rate files + journal):
+      # mudam dados de ranking, não a performance das páginas — nem o build
+      # nem o Lighthouse têm o que pegar nelas (ver os gates abaixo). Usa
+      # `...` (merge-base diff, isolando só os commits desta PR) de propósito
+      # — não `..`, usado pelo passo "Rate file deletion guard" do job `check`
+      # para um propósito diferente (deleção contra o main atual). Nota:
+      # esta checagem é deliberadamente mais estreita que o SAFE_PREFIXES do
+      # hronir-autopilot.yml — PRs de draft de edição (src/content/blog/**)
+      # continuam de propósito fora daqui, porque mudam conteúdo real de
+      # página e o Lighthouse deve auditá-las.
+      - name: Classify PR scope
+        id: scope
+        run: |
+          CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          if [ -n "$CHANGED" ] && ! echo "$CHANGED" | grep -qv '^\.routines/'; then
+            echo "routines_only=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "routines_only=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Cache condicionado ao scope para não gravar um .astro vazio sob a
+      # key exata do sha, o que roubaria do Deploy o restore-keys de um
+      # build anterior quente.
+      - name: Cache Astro build state
+        if: steps.scope.outputs.routines_only != 'true'
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .astro
+          key: ${{ runner.os }}-astro-v24-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-astro-v24-
+
       - name: Build
-        if: github.event_name == 'pull_request' && steps.scope.outputs.routines_only != 'true'
+        if: steps.scope.outputs.routines_only != 'true'
         run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -149,5 +170,5 @@ jobs:
       # Build acima (ver Classify) — sem isso, rodaria contra um dist/ velho
       # ou inexistente em PRs que só tocam .routines/**.
       - name: Lighthouse CI
-        if: github.event_name == 'pull_request' && steps.scope.outputs.routines_only != 'true'
+        if: steps.scope.outputs.routines_only != 'true'
         run: npx lhci autorun --config=.lighthouserc.cjs
