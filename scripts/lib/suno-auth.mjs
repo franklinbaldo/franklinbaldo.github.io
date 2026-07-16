@@ -24,7 +24,9 @@ export async function mintBearerToken(cookie = process.env.SUNO_CLERK_COOKIE) {
   const session = body?.response?.sessions?.[0];
   const jwt = session?.last_active_token?.jwt;
   if (!jwt) {
-    throw new Error("No active session/token in Clerk response — cookie may be invalid or expired.");
+    throw new Error(
+      "No active session/token in Clerk response — cookie may be invalid or expired."
+    );
   }
   return jwt;
 }

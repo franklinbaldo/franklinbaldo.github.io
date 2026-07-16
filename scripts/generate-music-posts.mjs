@@ -9,10 +9,18 @@
  *                                                 songs, needs SUNO_CLERK_COOKIE
  */
 
-import { writeFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync } from "fs";
+import {
+  writeFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+} from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { mintBearerToken } from "./lib/suno-auth.mjs";
+import { parseFrontmatter } from "./lib/content.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -83,20 +91,22 @@ function fmtYamlStr(str) {
 
 function parseTags(raw) {
   if (!raw) return [];
-  return raw
-    .split(/[,;\n]/) // some style prompts use newlines as the real separator
-    // between clauses (e.g. "Genre: X\nTempo: Y\nInstruments: Z"), not just
-    // commas — splitting on comma alone leaves multi-line fragments that
-    // blow past RFC 0011's 40-char genre-label limit.
-    .map((t) => t.trim())
-    .filter(Boolean)
-    // RFC 0011 / content.config.ts: genre labels max 40 chars each — drop
-    // anything longer instead of writing frontmatter the Zod schema will
-    // reject at build time.
-    .filter((t) => t.length <= 40)
-    // RFC 0011 / content.config.ts: max 5 genres per post (not 6 — the
-    // schema's actual cap).
-    .slice(0, 5);
+  return (
+    raw
+      .split(/[,;\n]/) // some style prompts use newlines as the real separator
+      // between clauses (e.g. "Genre: X\nTempo: Y\nInstruments: Z"), not just
+      // commas — splitting on comma alone leaves multi-line fragments that
+      // blow past RFC 0011's 40-char genre-label limit.
+      .map((t) => t.trim())
+      .filter(Boolean)
+      // RFC 0011 / content.config.ts: genre labels max 40 chars each — drop
+      // anything longer instead of writing frontmatter the Zod schema will
+      // reject at build time.
+      .filter((t) => t.length <= 40)
+      // RFC 0011 / content.config.ts: max 5 genres per post (not 6 — the
+      // schema's actual cap).
+      .slice(0, 5)
+  );
 }
 
 function makeMdx(clip) {
@@ -119,6 +129,12 @@ function makeMdx(clip) {
     ? `sunoImageUrl: ${fmtYamlStr(clip.image_url)}`
     : "";
 
+  // Only written when a clip is known-private (--include-private): marks
+  // the mirrored stub so a private/unpublished Suno song is never
+  // indistinguishable, in the committed file itself, from an intentional
+  // public mirror.
+  const privateYaml = clip.is_public === false ? `sunoPrivate: true` : "";
+
   const lyricsSection = lyrics
     ? `## Letra\n\n\`\`\`\n${lyrics}\n\`\`\``
     : `## Letra\n\n<!-- Cole a letra aqui -->`;
@@ -131,6 +147,7 @@ date: ${date}
 postType: music
 sunoId: ${clip.id}
 ${imageYaml}
+${privateYaml}
 ${genreYaml}
 ${durationYaml}
 tags:
@@ -156,8 +173,8 @@ function findMirroredSunoIds() {
   const ids = new Set();
   const scanFile = (path) => {
     const raw = readFileSync(path, "utf8");
-    const m = raw.match(/^sunoId:\s*([^\r\n]+)$/m);
-    if (m) ids.add(m[1].trim());
+    const sunoId = parseFrontmatter(raw).get("sunoId");
+    if (sunoId) ids.add(sunoId);
   };
   for (const entry of readdirSync(OUT_DIR, { withFileTypes: true })) {
     const full = join(OUT_DIR, entry.name);
@@ -212,7 +229,10 @@ async function fetchPublicClips() {
 // sees. /api/feed/v3 (cursor-paginated, POST) is the actual "my library"
 // feed, returning every generation regardless of visibility.
 async function fetchAllClipsIncludingPrivate(jwt) {
-  const auth = { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" };
+  const auth = {
+    Authorization: `Bearer ${jwt}`,
+    "Content-Type": "application/json",
+  };
   const clips = [];
   const seen = new Set();
   let cursor = null;
@@ -251,16 +271,44 @@ async function fetchClipDetail(id, jwt) {
 async function main() {
   mkdirSync(OUT_DIR, { recursive: true });
 
+  const alreadyMirrored = findMirroredSunoIds();
+  let created = 0;
+  let skipped = 0;
+
   let clips;
   if (INCLUDE_PRIVATE) {
-    console.log(`Buscando TODAS as músicas (públicas e privadas) de @${HANDLE} no Suno…`);
+    console.log(
+      `Buscando TODAS as músicas (públicas e privadas) de @${HANDLE} no Suno…`
+    );
     const jwt = await mintBearerToken();
     const basics = await fetchAllClipsIncludingPrivate(jwt);
-    console.log(`${basics.length} músicas encontradas (biblioteca completa). Buscando detalhes…`);
+    // Filter already-mirrored clips out before the per-clip detail fetch
+    // below — it's a real network round trip + sleep per clip, and
+    // re-fetching detail for clips that will just be skipped afterward
+    // wastes more work on every re-run as the mirrored set grows.
+    const unmirrored = basics.filter((c) => !alreadyMirrored.has(c.id));
+    skipped += basics.length - unmirrored.length;
+    console.log(
+      `${basics.length} música(s) encontradas (biblioteca completa), ${unmirrored.length} ainda não espelhadas. Buscando detalhes…`
+    );
     clips = [];
-    for (const c of basics) {
-      const detail = await fetchClipDetail(c.id, jwt);
-      clips.push({ ...c, metadata: detail.metadata ?? c.metadata, is_public: detail.is_public ?? c.is_public });
+    for (const c of unmirrored) {
+      try {
+        const detail = await fetchClipDetail(c.id, jwt);
+        clips.push({
+          ...c,
+          metadata: detail.metadata ?? c.metadata,
+          is_public: detail.is_public ?? c.is_public,
+        });
+      } catch (e) {
+        // One clip's detail fetch failing (deleted clip, transient error)
+        // shouldn't abort the whole batch and lose every other clip's
+        // progress — skip it and keep going.
+        console.error(
+          `  aviso: falha ao buscar detalhes de ${c.id}: ${e.message}`
+        );
+        skipped++;
+      }
       await sleep(150);
     }
   } else {
@@ -269,10 +317,6 @@ async function main() {
   }
 
   console.log(`${clips.length} música(s) para considerar.`);
-
-  const alreadyMirrored = findMirroredSunoIds();
-  let created = 0;
-  let skipped = 0;
 
   for (const clip of clips) {
     if (alreadyMirrored.has(clip.id)) {
@@ -308,12 +352,14 @@ async function main() {
     mkdirSync(dir, { recursive: true });
     const content = makeMdx(clip);
     writeFileSync(filepath, content, "utf8");
-    console.log(`  criado: ${slug}/v-${stamp}.mdx${clip.is_public ? "" : " (privado no Suno)"}`);
+    console.log(
+      `  criado: ${slug}/v-${stamp}.mdx${clip.is_public === false ? " (privado no Suno)" : ""}`
+    );
     created++;
   }
 
   console.log(`\nPronto: ${created} criados, ${skipped} já existiam.`);
-  if (created > 0 && !INCLUDE_PRIVATE) {
+  if (created > 0) {
     console.log(
       `\nAgora edite os novos arquivos em src/content/blog/ e adicione\nsuas notas em cada seção "## Notas do compositor".`
     );
