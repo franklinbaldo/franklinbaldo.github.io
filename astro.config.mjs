@@ -3,6 +3,7 @@ import { defineConfig } from "astro/config";
 import { existsSync, readFileSync } from "node:fs";
 import { DEFAULT_LANG, LANG_META } from "./src/lib/languages.mjs";
 import { READING_PATHS } from "./src/lib/reading-paths-data.mjs";
+import { loadPosts } from "./scripts/lib/blog-links.mjs";
 
 /** @type {Record<string, Record<string, string>>} */
 let blogPairs = {};
@@ -58,6 +59,41 @@ if (existsSync("./src/generated/versions-pruned.json")) {
       blogRedirects[`${base}/v/${uuid}/`] = `${base}/`;
     }
   }
+}
+
+// Every redirect this config declares — the merged map is needed both to
+// configure `redirects` below and to keep its stub pages (whose whole
+// purpose is to bounce elsewhere) out of the sitemap. A redirect stub isn't
+// a landing page: indexing it is pointless, and Lighthouse CI's sitemap-based
+// "one representative /blog/<post> page" autodiscovery landing on one adds a
+// real extra hop before content paints, which isn't a meaningful perf sample.
+/** @type {Record<string, string>} */
+const allRedirects = {
+  "/musicas/": "/music/",
+  // be-me-borges + borges-and-me merged into borges-e-eu as extra `tracks`
+  // (four Suno renditions of the same "Borges y yo" essay, one post).
+  // The EN side later moved from the untranslated "borges-e-eu-en" slug to
+  // a real English slug, "borges-and-i" — every prior EN redirect target
+  // updated to match, plus one more hop for the retired slug itself.
+  "/pt/blog/be-me-borges/": "/pt/blog/borges-e-eu/",
+  "/blog/be-me-borges-en/": "/blog/borges-and-i/",
+  "/pt/blog/borges-and-me/": "/pt/blog/borges-e-eu/",
+  "/blog/borges-and-me-en/": "/blog/borges-and-i/",
+  "/blog/borges-e-eu-en/": "/blog/borges-and-i/",
+  ...blogRedirects,
+};
+
+// Both `/blog/<id-or-slug>/` and `/pt/blog/<id-or-slug>/` resolve for every
+// published post (src/pages/blog/[...slug].astro and its pt/ mirror both
+// iterate every post regardless of language, redirecting the wrong-language
+// route to the real one — see scripts/lib/blog-links.mjs's validTargets).
+// That wrong-language route is a stub exactly like the ones above; exclude
+// it from the sitemap for the same reason.
+const crossLangShadowUrls = new Set();
+for (const p of loadPosts()) {
+  if (!p.published) continue;
+  const s = p.slug ?? p.id;
+  crossLangShadowUrls.add(p.lang === "pt" ? `/blog/${s}/` : `/pt/blog/${s}/`);
 }
 
 import mdx from "@astrojs/mdx";
@@ -127,11 +163,19 @@ export default defineConfig({
       // Issue #1042: Hrönir detail pages (one per battle/perspective/version/
       // post-dossier — thousands of them) are jargon-dense process artifacts,
       // not landing pages; they're noindex too, so exclude them the same way.
-      filter: (page) =>
-        !/\/v\/[0-9a-f-]{8,}\/?$/i.test(page) &&
-        !/\/ranking\/(battles|perspectives|versions|posts)\/[^/]+\/?$/i.test(
-          page
-        ),
+      // Redirect stubs (allRedirects' keys + the cross-language shadow
+      // routes) are excluded too — see the comments where those are built.
+      filter: (page) => {
+        const path = page.replace("https://franklinbaldo.github.io", "");
+        return (
+          !/\/v\/[0-9a-f-]{8,}\/?$/i.test(page) &&
+          !/\/ranking\/(battles|perspectives|versions|posts)\/[^/]+\/?$/i.test(
+            page
+          ) &&
+          !allRedirects[path] &&
+          !crossLangShadowUrls.has(path)
+        );
+      },
       serialize(item) {
         const base = "https://franklinbaldo.github.io";
 
@@ -200,20 +244,7 @@ export default defineConfig({
       },
     }),
   ],
-  redirects: {
-    "/musicas/": "/music/",
-    // be-me-borges + borges-and-me merged into borges-e-eu as extra `tracks`
-    // (four Suno renditions of the same "Borges y yo" essay, one post).
-    // The EN side later moved from the untranslated "borges-e-eu-en" slug to
-    // a real English slug, "borges-and-i" — every prior EN redirect target
-    // updated to match, plus one more hop for the retired slug itself.
-    "/pt/blog/be-me-borges/": "/pt/blog/borges-e-eu/",
-    "/blog/be-me-borges-en/": "/blog/borges-and-i/",
-    "/pt/blog/borges-and-me/": "/pt/blog/borges-e-eu/",
-    "/blog/borges-and-me-en/": "/blog/borges-and-i/",
-    "/blog/borges-e-eu-en/": "/blog/borges-and-i/",
-    ...blogRedirects,
-  },
+  redirects: allRedirects,
   prefetch: {
     defaultStrategy: "viewport",
   },
