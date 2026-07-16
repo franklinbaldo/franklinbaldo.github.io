@@ -10,15 +10,16 @@
 //      leaves its counterpart untouched, the check fails — turning the PR
 //      check red. Deploy is a separate workflow, so a red check never blocks
 //      a merge; it's a visible nudge to mirror the edit. Exempted: a change
-//      confined to PRESENTATION_ONLY_FIELDS (title/description) — those are
-//      inherently per-language translations, not content to mirror as-is
-//      onto the other side (translating a title *is* the mirrored form).
+//      confined to PRESENTATION_ONLY_FIELDS (title/description/slug) — those
+//      are inherently per-language translations, not content to mirror as-is
+//      onto the other side (translating a title *is* the mirrored form; a
+//      `slug` override is a per-language URL, not shared content).
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import matter from "gray-matter";
 import { loadPosts } from "./lib/blog-links.mjs";
 
-const PRESENTATION_ONLY_FIELDS = new Set(["title", "description"]);
+const PRESENTATION_ONLY_FIELDS = new Set(["title", "description", "slug"]);
 
 // Returns the set of changed frontmatter keys if the post's body is
 // unchanged since baseRef, or null if the body changed (or the file didn't
