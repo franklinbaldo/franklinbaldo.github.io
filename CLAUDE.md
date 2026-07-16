@@ -208,6 +208,7 @@ src/hronir/               Hrönir core modules (commands, ranking, matches, post
 scripts/hronir/           Hrönir CLI entry point and perspectives/skills
   perspectives/           Reader perspective files (.md)
   skills/                 Writing skills for edit-worst phase
+.claude/skills/           Agent skills — suno-curator (curadoria do perfil Suno no blog)
 scripts/lib/              Shared helpers consumidos por múltiplos scripts
   content.mjs             Fonte única de descoberta de posts (listPostFiles, readPostMeta)
   blog-links.mjs          Validação e redirects de links internos
