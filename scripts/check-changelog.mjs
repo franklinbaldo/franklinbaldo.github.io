@@ -10,21 +10,22 @@
 //      filename and carries the required OKF fields (RFC 0014 §7:
 //      `type` is the only field OKF itself requires; `version`/`date`/
 //      `description` are this convention's own requirements on top of that).
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const CHANGELOG_DIR = join(ROOT, "changelog");
-const VERSION_FILE_RE = /^(\d+)\.(\d+)\.(\d+)\.md$/;
+const SEMVER_RE = /^(\d+)\.(\d+)\.(\d+)$/;
+const VERSION_FILE_RE = /^(\d+\.\d+\.\d+)\.md$/;
 const REQUIRED_FIELDS = ["type", "version", "date", "description"];
 
 const errors = [];
 
 const pkg = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf-8"));
 const currentVersion = pkg.version;
-const currentMatch = /^(\d+)\.(\d+)\.(\d+)$/.exec(currentVersion);
+const currentMatch = SEMVER_RE.exec(currentVersion);
 if (!currentMatch) {
   errors.push(`package.json version "${currentVersion}" is not semver x.y.z`);
 }
@@ -37,13 +38,37 @@ function compareParts(a, b) {
   return 0;
 }
 
-const entryFiles = readdirSync(CHANGELOG_DIR).filter((f) =>
-  VERSION_FILE_RE.test(f)
-);
+if (!existsSync(CHANGELOG_DIR)) {
+  console.error(
+    `\n✗ check-changelog: changelog/ directory not found (expected at ${CHANGELOG_DIR})\n`
+  );
+  process.exit(1);
+}
+
+// Every *.md file must match "<major>.<minor>.<patch>.md" exactly. A file
+// that doesn't (typo, prerelease-style suffix, ...) is flagged here rather
+// than silently skipped — otherwise it would bypass every check below,
+// including the ahead-of-version guard.
+const entries = [];
+for (const file of readdirSync(CHANGELOG_DIR)) {
+  if (!file.endsWith(".md")) continue;
+  const match = VERSION_FILE_RE.exec(file);
+  if (!match) {
+    errors.push(
+      `changelog/${file}: filename doesn't match the "<major>.<minor>.<patch>.md" convention`
+    );
+    continue;
+  }
+  entries.push({
+    file,
+    versionString: match[1],
+    parts: match[1].split(".").map(Number),
+  });
+}
 
 if (currentParts) {
   const currentEntryFile = `${currentVersion}.md`;
-  if (!entryFiles.includes(currentEntryFile)) {
+  if (!entries.some((e) => e.file === currentEntryFile)) {
     errors.push(
       `package.json version is "${currentVersion}" but changelog/${currentEntryFile} doesn't exist — ` +
         `add a changelog entry for it (or revert the version bump if this PR isn't a release).`
@@ -51,9 +76,8 @@ if (currentParts) {
   }
 }
 
-for (const file of entryFiles) {
+for (const { file, versionString, parts } of entries) {
   const path = join(CHANGELOG_DIR, file);
-  const expectedVersion = file.replace(/\.md$/, "");
   const { data } = matter(readFileSync(path, "utf-8"));
 
   for (const field of REQUIRED_FIELDS) {
@@ -68,21 +92,30 @@ for (const file of entryFiles) {
       `changelog/${file}: type is "${data.type}", expected "Changelog Entry"`
     );
   }
-  if (data.version && String(data.version) !== expectedVersion) {
+  if (data.version && String(data.version) !== versionString) {
     errors.push(
-      `changelog/${file}: frontmatter version "${data.version}" doesn't match filename (expected "${expectedVersion}")`
+      `changelog/${file}: frontmatter version "${data.version}" doesn't match filename (expected "${versionString}")`
     );
   }
-
-  if (currentParts) {
-    const entryMatch = VERSION_FILE_RE.exec(file);
-    const entryParts = entryMatch.slice(1).map(Number);
-    if (compareParts(entryParts, currentParts) > 0) {
+  // Mirrors the astro:content collection schema's `z.coerce.date()` (see
+  // src/content.config.ts) so a bad date fails here, with an actionable
+  // message, instead of surfacing later as a generic Zod error from
+  // `astro check` for the same file.
+  if (data.date) {
+    const dateValue =
+      data.date instanceof Date ? data.date : new Date(data.date);
+    if (Number.isNaN(dateValue.valueOf())) {
       errors.push(
-        `changelog/${file} describes version ${expectedVersion}, ahead of package.json's current version "${currentVersion}" — ` +
-          `bump package.json's version to match.`
+        `changelog/${file}: frontmatter date "${data.date}" isn't a valid date`
       );
     }
+  }
+
+  if (currentParts && compareParts(parts, currentParts) > 0) {
+    errors.push(
+      `changelog/${file} describes version ${versionString}, ahead of package.json's current version "${currentVersion}" — ` +
+        `bump package.json's version to match.`
+    );
   }
 }
 
@@ -93,5 +126,5 @@ if (errors.length > 0) {
 }
 
 console.log(
-  `✔ check-changelog: package.json version "${currentVersion}" has a matching changelog entry; ${entryFiles.length} entr${entryFiles.length === 1 ? "y" : "ies"} valid.`
+  `✔ check-changelog: package.json version "${currentVersion}" has a matching changelog entry; ${entries.length} entr${entries.length === 1 ? "y" : "ies"} valid.`
 );
