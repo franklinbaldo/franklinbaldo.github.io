@@ -1,9 +1,12 @@
 // Emits src/generated/blog-redirects.json — a { [oldUrl]: canonicalUrl } map
-// for legacy blog URLs. Two sources:
+// for legacy blog URLs. Three sources:
 //   1. date-prefixed URLs (e.g. /blog/2026-05-10-jules-api-harness-backend/
 //      → /blog/jules-api-harness-backend/), derived from links in post bodies;
 //   2. pre-RFC-0006 music URLs (/blog/musicas/<id>/ → /blog/<id>/), derived
-//      from postType: music in the frontmatter of current posts.
+//      from postType: music in the frontmatter of current posts;
+//   3. posts with a `slug` frontmatter override (src/content.config.ts) —
+//      the id-based URL the post used to live at before the override was
+//      added redirects to the new slug-based URL.
 // astro.config.mjs spreads this into its `redirects` so old links and
 // external bookmarks keep resolving.
 import { writeFileSync, mkdirSync } from "node:fs";
@@ -29,6 +32,15 @@ for (const p of posts) {
   const finalId = p.slug ?? p.id;
   redirects[`/blog/musicas/${bareId}/`] = `/blog/${finalId}/`;
   redirects[`/pt/blog/musicas/${bareId}/`] = `/pt/blog/${finalId}/`;
+}
+
+// Any post with a `slug` override redirects from its old id-based URL to
+// the new slug-based one — covers both this migration and any future post
+// that gets a slug override without a file rename.
+for (const p of posts) {
+  if (!p.slug || p.slug === p.id) continue;
+  const prefix = p.lang === "pt" ? "/pt/blog/" : "/blog/";
+  redirects[`${prefix}${p.id}/`] = `${prefix}${p.slug}/`;
 }
 
 const sorted = Object.fromEntries(
