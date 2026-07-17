@@ -536,6 +536,10 @@ const showGenreChips =
 </script>
 
 <style>
+  /* src/styles/music.css overrides most of these rules for real (it wins
+     on CSS specificity via a `:has(#songs-grid)` selector) — this block is
+     the pre-redesign fallback styling, kept as-is. If a change here has no
+     visible effect, check music.css first. */
   .songs-header {
     display: flex;
     align-items: center;

@@ -759,6 +759,10 @@ try {
 </script>
 
 <style>
+  /* src/styles/music.css redefines most of #gmp's layout/appearance for
+     real (it wins on CSS specificity via a `body:has(#gmp)` selector) —
+     this block is the pre-redesign fallback styling, kept as-is. If a
+     change here has no visible effect, check music.css first. */
   #gmp {
     position: fixed;
     bottom: 0;

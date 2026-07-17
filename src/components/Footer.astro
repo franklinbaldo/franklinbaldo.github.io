@@ -1,5 +1,5 @@
 ---
-import { urlPrefix } from '../lib/i18n';
+import { t, urlPrefix } from '../lib/i18n';
 
 interface Props {
   lang?: string;
@@ -8,17 +8,22 @@ const { lang = 'en' } = Astro.props;
 const year = new Date().getFullYear();
 const prefix = urlPrefix(lang);
 
+// Same grouping/order as Header.astro's primaryLinks + secondaryLinks
+// (essays/projects/about/search, then music/books/ranking/tags/changelog)
+// so the header and footer agree on how the site's sections are organized
+// — they used to both be one flat list; keep them in sync now that the
+// header groups the second half under "More".
 const footerNav = [
-  { href: `${prefix}/archive/`,  label: lang === 'pt' ? 'Arquivo'   : 'Archive'  },
-  { href: `${prefix}/tags/`,     label: 'Tags'                                   },
-  { href: lang === 'pt' ? `${prefix}/musicas/` : '/music/', label: lang === 'pt' ? 'Músicas' : 'Music' },
-  { href: lang === 'pt' ? `${prefix}/livros/` : '/books/', label: lang === 'pt' ? 'Livros' : 'Books' },
-  { href: `${prefix}/ranking/`,  label: lang === 'pt' ? 'Ranking'   : 'Ranking'  },
-  { href: `${prefix}/projects/`, label: lang === 'pt' ? 'Projetos'  : 'Projects' },
-  { href: `${prefix}/search/`,   label: lang === 'pt' ? 'Buscar'    : 'Search'   },
-  { href: `${prefix}/about/`,    label: lang === 'pt' ? 'Sobre'     : 'About'    },
+  { href: `${prefix}/archive/`, label: t(lang, 'nav.archive') },
+  { href: `${prefix}/projects/`, label: t(lang, 'nav.projects') },
+  { href: `${prefix}/about/`, label: t(lang, 'nav.about') },
+  { href: `${prefix}/search/`, label: t(lang, 'nav.search') },
+  { href: lang === 'pt' ? `${prefix}/musicas/` : '/music/', label: t(lang, 'nav.music') },
+  { href: lang === 'pt' ? `${prefix}/livros/` : '/books/', label: t(lang, 'nav.books') },
+  { href: `${prefix}/ranking/`, label: t(lang, 'nav.ranking') },
+  { href: `${prefix}/tags/`, label: t(lang, 'nav.tags') },
   // English-only by deliberate exception (CLAUDE.md "Línguas") — no /pt/ prefix.
-  { href: '/changelog/',         label: 'Changelog' },
+  { href: '/changelog/', label: 'Changelog' },
 ];
 ---
 
