@@ -1,4 +1,7 @@
 ---
+import { t } from "../lib/i18n";
+import { formatDuration } from "../lib/suno";
+
 interface Track {
   label: string;
   sunoId: string;
@@ -32,32 +35,23 @@ const {
 } = Astro.props;
 
 const primary = tracks[0];
+// Suno's actual CDN pattern is `image_<id>.jpeg` (prefix, not suffix) --
+// confirmed against live data in data/suno-catalog.jsonl. This fallback
+// carried forward a pre-existing bug from the old inline music-post
+// markup (src/pages/[pt/]blog/[...slug].astro, both had the same wrong
+// `<id>_image.jpeg` pattern) that only ever mattered when sunoImageUrl was
+// unset.
 const cover =
   primary?.sunoImageUrl ??
-  (primary ? `https://cdn2.suno.ai/${primary.sunoId}_image.jpeg` : undefined);
-const copy =
-  lang === "pt"
-    ? {
-        eyebrow: "Canção",
-        play: "Ouvir agora",
-        playAria: "Reproduzir",
-        variants: "Versões desta composição",
-        onSuno: "Abrir no Suno",
-        coverAlt: "Capa de",
-      }
-    : {
-        eyebrow: "Song",
-        play: "Listen now",
-        playAria: "Play",
-        variants: "Versions of this composition",
-        onSuno: "Open on Suno",
-        coverAlt: "Cover for",
-      };
-
-const formatDuration = (seconds?: number) =>
-  seconds
-    ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
-    : undefined;
+  (primary ? `https://cdn2.suno.ai/image_${primary.sunoId}.jpeg` : undefined);
+const copy = {
+  eyebrow: t(lang, "music.eyebrow"),
+  play: t(lang, "music.play"),
+  playAria: t(lang, "music.playAria"),
+  variants: t(lang, "music.variants"),
+  onSuno: t(lang, "music.onSuno"),
+  coverAlt: t(lang, "music.coverAlt"),
+};
 ---
 
 <section class="music-post-layout">
@@ -148,6 +142,8 @@ const formatDuration = (seconds?: number) =>
       }
     </div>
   </header>
+
+  <slot name="series" />
 
   {
     tracks.length > 1 && (

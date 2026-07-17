@@ -1,6 +1,6 @@
 ---
 import PageLayout from "../../layouts/PageLayout.astro";
-import { sleep } from "../../lib/suno";
+import { sleep, formatDuration } from "../../lib/suno";
 import { getCollection } from "astro:content";
 
 const HANDLE = "franklinbaldo";
@@ -112,14 +112,6 @@ const fmtDate = new Intl.DateTimeFormat("pt-BR", {
   month: "short",
   day: "2-digit",
 });
-
-function fmtDuration(sec?: number | null): string {
-  if (!sec || sec <= 0) return "";
-  const total = Math.round(sec);
-  const m = Math.floor(total / 60);
-  const s = total % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
-}
 
 function parseTags(raw?: string): string[] {
   if (!raw) return [];
@@ -235,7 +227,7 @@ const showGenreChips =
               <footer>
                 <small>
                   {p.song_count} {p.song_count === 1 ? "música" : "músicas"}
-                  {p.total_duration ? ` · ${fmtDuration(p.total_duration)}` : ""}
+                  {p.total_duration ? ` · ${formatDuration(p.total_duration)}` : ""}
                 </small>
               </footer>
             </article>
@@ -284,7 +276,7 @@ const showGenreChips =
         <div class="songs-grid" id="songs-grid">
           {clips.map((c) => {
             const tags = parseTags(c.metadata?.tags);
-            const duration = fmtDuration(c.metadata?.duration);
+            const duration = formatDuration(c.metadata?.duration);
             const lyrics = c.metadata?.prompt ?? "";
             return (
               <article
