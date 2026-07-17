@@ -23,17 +23,21 @@ const aboutHref = `${prefix}/about/`;
 const changelogHref = '/changelog/';
 
 const menuLabel = t(lang, 'nav.menu');
-const moreLabel = lang === 'pt' ? 'Mais' : 'More';
-const essaysLabel = lang === 'pt' ? 'Ensaios' : 'Essays';
-const aboutLabel = lang === 'pt' ? 'Sobre' : 'About';
-const collectionLabel = lang === 'pt' ? 'Coleções e laboratório' : 'Collections & lab';
+const moreLabel = t(lang, 'nav.more');
+const collectionLabel = t(lang, 'nav.collections');
 const playMusicLabel = lang === 'pt' ? 'Tocar música' : 'Play music';
 const pauseMusicLabel = lang === 'pt' ? 'Pausar música' : 'Pause music';
 
+// Label kept as t(lang, 'nav.archive') ("Archive"/"Arquivo"), not a rebrand
+// like "Essays" — the /archive/ page's own <h1> and the breadcrumb on every
+// post (src/pages/[pt/]blog/[...slug].astro) both still say "Archive", and
+// a nav label that disagrees with the page it links to reads as a broken
+// link. Rename all three together in one PR if the "Essays" language is
+// wanted.
 const primaryLinks = [
-  { href: archiveHref, label: essaysLabel },
+  { href: archiveHref, label: t(lang, 'nav.archive') },
   { href: projectsHref, label: t(lang, 'nav.projects') },
-  { href: aboutHref, label: aboutLabel },
+  { href: aboutHref, label: t(lang, 'nav.about') },
   { href: searchHref, label: t(lang, 'nav.search') },
 ];
 
@@ -93,7 +97,7 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
             {moreLabel}
           </summary>
           <ul>
-            <li class="menu-section" aria-hidden="true">{collectionLabel}</li>
+            <li class="menu-section">{collectionLabel}</li>
             {
               secondaryLinks.map((link) => (
                 <li>
@@ -153,7 +157,7 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
                 </li>
               ))
             }
-            <li class="menu-section" aria-hidden="true">{collectionLabel}</li>
+            <li class="menu-section">{collectionLabel}</li>
             {
               secondaryLinks.map((link) => (
                 <li>
@@ -317,6 +321,14 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
   .nav-burger {
     display: none;
   }
+  /* Unverified: this replaced a previous 1279px cutoff that had a specific
+     measured justification (Pico's own .container breakpoint, plus a
+     measured ~960px width need for the old 8-link flat nav — see git
+     history). This value has not been re-measured against the current
+     content (4 primaryLinks + the "More" summary + music button + language
+     switcher + theme toggle, longest in pt: "Ensaios"/"Projetos"/"Sobre"/
+     "Buscar"/"Mais"). Check in a real browser between ~899px and ~1280px
+     before trusting this, especially in pt. */
   @media (max-width: 899px) {
     .nav-inline {
       display: none;

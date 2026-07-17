@@ -5,6 +5,17 @@
  * names. Keep the HTML and playback behaviour stable; this layer changes the
  * information hierarchy so covers, titles and listening actions lead, while
  * metadata and lyrics remain available without dominating the catalogue.
+ *
+ * How the override works: every selector below is scoped under
+ * `main:has(#songs-grid)` or `body:has(#gmp)`. Because `:has(#id)` carries
+ * ID-level CSS specificity, these rules always win over the same selectors
+ * in src/pages/music.astro's, src/pages/pt/musicas.astro's, and
+ * src/components/GlobalMusicPlayer.astro's own scoped <style> blocks —
+ * editing a rule in one of those files for `.song-card`, `.playlist-card`,
+ * `#gmp`, etc. will silently have no visible effect, because this file wins.
+ * If you're changing the music catalogue's or player's visuals, this is the
+ * file to edit; those components' own <style> blocks are the styling that
+ * shipped before this redesign, kept as-is rather than deleted.
  */
 
 main:has(#songs-grid) {
