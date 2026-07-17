@@ -1,0 +1,220 @@
+---
+import PageLayout from "../../../layouts/PageLayout.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import { toBreadcrumbLd } from "../../../lib/breadcrumbs";
+import { getCollection } from "astro:content";
+import { getSongRanking, getDuels } from "../../../lib/suno-rank-read";
+import { isPublished } from "../../../lib/publish";
+
+// A ranked song may already have a live mirrored post (postType: music,
+// matching sunoId) — link to that when it exists, fall back to the raw
+// Suno song page otherwise. Built here (not in suno-rank-read.ts) since it
+// needs astro:content, which that module deliberately stays free of — see
+// docs/rfcs/0018-hronir-de-musica.md.
+const allPosts = await getCollection("blog");
+const postUrlBySunoId = new Map<string, string>();
+for (const p of allPosts) {
+  if (!isPublished(p)) continue;
+  if (p.data.postType !== "music" || !p.data.sunoId) continue;
+  const lang = p.data.lang ?? "en";
+  const slug = p.data.slug ?? p.id;
+  postUrlBySunoId.set(p.data.sunoId, lang === "pt" ? `/pt/blog/${slug}/` : `/blog/${slug}/`);
+}
+
+const rows = getSongRanking();
+const duels = getDuels();
+
+function songHref(songId: string | undefined): string | null {
+  if (!songId) return null;
+  return postUrlBySunoId.get(songId) ?? `https://suno.com/song/${songId}`;
+}
+
+const crumbs = [
+  { name: "Home", href: "/" },
+  { name: "Ranking", href: "/ranking/" },
+  { name: "Songs", href: "/ranking/songs/" },
+];
+
+const itemListLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Song Ranking — Franklin Baldo",
+  description: "Songs ranked by Gemini-judged pairwise audio comparisons.",
+  inLanguage: "en-US",
+  url: "https://franklinbaldo.github.io/ranking/songs/",
+  numberOfItems: rows.length,
+  itemListElement: rows
+    .map((r) => ({
+      "@type": "ListItem",
+      position: r.rank,
+      name: r.song?.title ?? r.key,
+      url: songHref(r.key) ?? undefined,
+    }))
+    .filter((item) => item.url),
+};
+---
+
+<PageLayout
+  title="Song Ranking | Franklin Baldo"
+  description="Songs ranked by pairwise audio comparisons judged by Gemini, scored with OpenSkill."
+  lang="en"
+  breadcrumb={toBreadcrumbLd(crumbs, Astro.site)}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(itemListLd)} slot="head" is:inline />
+  <Breadcrumbs items={crumbs} lang="en" />
+
+  <hgroup>
+    <h1>Song ranking</h1>
+    <p>
+      Songs ordered by OpenSkill ordinal (μ − 3σ), from head-to-head duels judged by Gemini
+      listening to both tracks. See <a href="/ranking/">the text ranking</a> for how the same
+      idea works for blog posts —
+      <a href="https://github.com/franklinbaldo/franklinbaldo.github.io/blob/main/docs/rfcs/0018-hronir-de-musica.md"
+        >RFC 0018</a
+      > covers what is deliberately different here (no human reviewers, a single automated judge).
+    </p>
+  </hgroup>
+
+  {
+    rows.length === 0 ? (
+      <p class="song-rank-empty">
+        No songs ranked yet — run <code>npx suno-rank round</code> to record the first duels.
+      </p>
+    ) : (
+      <table class="song-rank-table" role="table">
+        <caption>Full ranking, ordered by descending ordinal.</caption>
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Song</th>
+            <th scope="col">ordinal</th>
+            <th scope="col">W/N</th>
+            <th scope="col">win%</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => {
+            const href = songHref(r.key);
+            const winRate = r.appearances > 0 ? Math.round((r.wins / r.appearances) * 100) : 0;
+            return (
+              <tr>
+                <td>{r.rank}</td>
+                <td>
+                  <div class="song-rank-cell">
+                    {r.song?.imageUrl && (
+                      <img src={r.song.imageUrl} alt="" loading="lazy" width="40" height="40" />
+                    )}
+                    {href ? (
+                      <a href={href}>{r.song?.title ?? r.key}</a>
+                    ) : (
+                      <span>{r.song?.title ?? r.key}</span>
+                    )}
+                  </div>
+                </td>
+                <td>{r.ordinal.toFixed(2)}</td>
+                <td>
+                  {r.wins}/{r.appearances}
+                </td>
+                <td>{winRate}%</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    )
+  }
+
+  {
+    duels.length > 0 && (
+      <>
+        <h2>Recent duels</h2>
+        <p class="song-rank-blurb">
+          The latest Gemini-judged comparisons — each one lists which lens the judge listened
+          through and its rationale for the verdict.
+        </p>
+        <ul class="song-duel-list">
+          {duels.slice(0, 15).map((d) => {
+            const winnerSong = d.winner === "a" ? d.songA : d.songB;
+            const loserSong = d.winner === "a" ? d.songB : d.songA;
+            return (
+              <li class="song-duel-card">
+                <div class="song-duel-head">
+                  <strong>{winnerSong?.title ?? (d.winner === "a" ? d.aKey : d.bKey)}</strong>
+                  <span class="song-duel-beat">beat</span>
+                  <span>{loserSong?.title ?? (d.winner === "a" ? d.bKey : d.aKey)}</span>
+                </div>
+                <p class="song-duel-rationale">{d.rationale}</p>
+                <div class="song-duel-meta">
+                  {d.perspectiveId && <span class="song-duel-lens">lens: {d.perspectiveId}</span>}
+                  <span>{new Date(d.runAt).toLocaleDateString("en-US")}</span>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </>
+    )
+  }
+</PageLayout>
+
+<style>
+  .song-rank-empty {
+    color: var(--pico-muted-color);
+  }
+  .song-rank-table {
+    width: 100%;
+    margin-top: 1.5rem;
+  }
+  .song-rank-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .song-rank-cell img {
+    border-radius: var(--pico-border-radius);
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .song-rank-blurb {
+    color: var(--pico-muted-color);
+    font-size: 0.9rem;
+  }
+  .song-duel-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .song-duel-card {
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    background: var(--pico-card-background-color);
+  }
+  .song-duel-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .song-duel-beat {
+    color: var(--pico-muted-color);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .song-duel-rationale {
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
+    color: var(--pico-color);
+  }
+  .song-duel-meta {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--pico-muted-color);
+    font-family: var(--pico-font-family-monospace);
+  }
+</style>

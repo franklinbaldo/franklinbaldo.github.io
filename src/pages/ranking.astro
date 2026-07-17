@@ -141,6 +141,7 @@ const strings: RankingStrings = {
   translations={{ pt: "/pt/ranking/" }}
 >
   <script type="application/ld+json" set:html={JSON.stringify(itemListLd)} slot="head" is:inline />
+  <p><a href="/ranking/songs/">→ See the song ranking</a> — the same idea, applied to music, judged by Gemini listening to the audio instead of a human/agent reading prose.</p>
   <RankingView
     lang="en"
     rows={enriched}
