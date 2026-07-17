@@ -148,6 +148,10 @@ function toRecord(clip) {
       ? Math.round(clip.metadata.duration)
       : null,
     imageUrl: clip.image_url ?? null,
+    // For the music-ranking system's Gemini judge (src/suno-rank/) — the
+    // audio it needs to fetch per duel. Already present on every feed/v3
+    // item, no extra request.
+    audioUrl: clip.audio_url ?? null,
     isPublic: clip.is_public === true,
     createdAt: clip.created_at ?? null,
   };

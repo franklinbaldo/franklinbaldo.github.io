@@ -1,0 +1,31 @@
+{
+  "schema": "duel-v1",
+  "runId": "2026-07-17T01-21-02-559",
+  "runAt": "2026-07-17T01:21:02.559Z",
+  "aKey": "3e9b935a-eb5a-4526-b09d-a4eb6d2d0a2b",
+  "bKey": "bec57669-72c0-4744-95cf-f764b9590b73",
+  "winner": "b",
+  "rateA": 4.5,
+  "rateB": 4.65,
+  "rationale": "Song B's intricate narrative and biting social commentary resonate deeply with the persona's appreciation for lyrics as compressed poetry. The authentic viola caipira and characterful vocals perfectly earn the words, enhancing their ironic edge and cultural depth, aligning with the wit found in Chico Buarque or Tom Zé. While Song A offers a beautiful, faithful adaptation of Frost's poem, its gentle reflection, though pristine, offers less of the layered wit and challenging perspective cherished by the specified reader.",
+  "axisScores": {
+    "production": {
+      "a": 4.6,
+      "b": 4.5
+    },
+    "songwriting": {
+      "a": 4.7,
+      "b": 4.8
+    },
+    "vocals": {
+      "a": 4.3,
+      "b": 4.6
+    },
+    "emotionalImpact": {
+      "a": 4.4,
+      "b": 4.7
+    }
+  },
+  "perspectiveId": "lyric-as-poem",
+  "model": "gemini-2.5-flash"
+}

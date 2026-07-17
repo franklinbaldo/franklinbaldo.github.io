@@ -1,0 +1,31 @@
+{
+  "schema": "duel-v1",
+  "runId": "2026-07-17T01-22-29-229",
+  "runAt": "2026-07-17T01:22:29.229Z",
+  "aKey": "39255e95-3cda-4b59-8cda-dfced12f1a71",
+  "bKey": "7d49db72-d9fa-470c-a98d-253f6a71c632",
+  "winner": "b",
+  "rateA": 4.5,
+  "rateB": 4.75,
+  "rationale": "Song B masterfully weaves a chilling narrative through its unique instrumentation, with the mournful Rabeca and deep acoustic tones perfectly earning the lyrics' tale of dread and vulnerability. The vocal delivery, from suspicious narration to panicked whispers, creates a deeply immersive experience that elevates the raw, human fear conveyed. While Song A offers a clever concept with an evolving electronic soundscape, Song B's profound emotional impact and poetic integration of music and words stand out as a more visceral and lasting artistic achievement.",
+  "axisScores": {
+    "production": {
+      "a": 4.5,
+      "b": 4.7
+    },
+    "songwriting": {
+      "a": 4.6,
+      "b": 4.8
+    },
+    "vocals": {
+      "a": 4.5,
+      "b": 4.7
+    },
+    "emotionalImpact": {
+      "a": 4.4,
+      "b": 4.8
+    }
+  },
+  "perspectiveId": "lyric-as-poem",
+  "model": "gemini-2.5-flash"
+}

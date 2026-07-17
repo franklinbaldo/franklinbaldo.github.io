@@ -6,7 +6,8 @@
     "node": ">=24.0.0"
   },
   "bin": {
-    "hronir": "scripts/hronir/index.js"
+    "hronir": "scripts/hronir/index.js",
+    "suno-rank": "scripts/suno-rank/index.js"
   },
   "scripts": {
     "prebuild": "node scripts/pregen.mjs",
@@ -40,6 +41,10 @@
     "hronir:doctor": "node --import tsx/esm scripts/hronir/index.js doctor",
     "hronir:diagnose-corpus": "node --import tsx/esm scripts/hronir/diagnose-corpus.mjs",
     "music:sync": "node scripts/sync-suno-catalog.mjs",
+    "suno-rank": "node --import tsx/esm scripts/suno-rank/index.js",
+    "suno-rank:round": "node --import tsx/esm scripts/suno-rank/index.js round",
+    "suno-rank:ranking": "node --import tsx/esm scripts/suno-rank/index.js ranking",
+    "suno-rank:doctor": "node --import tsx/esm scripts/suno-rank/index.js doctor",
     "test": "node --import tsx/esm --experimental-test-module-mocks --test --test-concurrency=1 \"src/**/*.test.{js,ts}\""
   },
   "dependencies": {
