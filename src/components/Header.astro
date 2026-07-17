@@ -9,77 +9,163 @@ interface Props {
 const { lang = 'en' } = Astro.props;
 
 const prefix = urlPrefix(lang);
-const homeHref     = `${prefix}/`;
-const archiveHref  = `${prefix}/archive/`;
-const tagsHref     = `${prefix}/tags/`;
-const musicHref    = lang === 'pt' ? `${prefix}/musicas/` : '/music/';
-const booksHref    = lang === 'pt' ? `${prefix}/livros/` : '/books/';
-const searchHref   = `${prefix}/search/`;
+const homeHref = `${prefix}/`;
+const archiveHref = `${prefix}/archive/`;
+const tagsHref = `${prefix}/tags/`;
+const musicHref = lang === 'pt' ? `${prefix}/musicas/` : '/music/';
+const booksHref = lang === 'pt' ? `${prefix}/livros/` : '/books/';
+const searchHref = `${prefix}/search/`;
 const projectsHref = `${prefix}/projects/`;
-const rankingHref  = `${prefix}/ranking/`;
+const rankingHref = `${prefix}/ranking/`;
+const aboutHref = `${prefix}/about/`;
 // Changelog content is English-only by deliberate exception (CLAUDE.md
 // "Línguas") — one page serves both languages, no /pt/ prefix.
 const changelogHref = '/changelog/';
 
 const menuLabel = t(lang, 'nav.menu');
+const moreLabel = lang === 'pt' ? 'Mais' : 'More';
+const essaysLabel = lang === 'pt' ? 'Ensaios' : 'Essays';
+const aboutLabel = lang === 'pt' ? 'Sobre' : 'About';
+const collectionLabel = lang === 'pt' ? 'Coleções e laboratório' : 'Collections & lab';
 const playMusicLabel = lang === 'pt' ? 'Tocar música' : 'Play music';
 const pauseMusicLabel = lang === 'pt' ? 'Pausar música' : 'Pause music';
 
-const navLinks = [
-  { href: archiveHref,  label: t(lang, 'nav.archive') },
-  { href: tagsHref,     label: t(lang, 'nav.tags') },
+const primaryLinks = [
+  { href: archiveHref, label: essaysLabel },
   { href: projectsHref, label: t(lang, 'nav.projects') },
-  { href: rankingHref,  label: t(lang, 'nav.ranking') },
-  { href: musicHref,    label: t(lang, 'nav.music') },
-  { href: booksHref,    label: t(lang, 'nav.books') },
-  { href: searchHref,   label: t(lang, 'nav.search') },
+  { href: aboutHref, label: aboutLabel },
+  { href: searchHref, label: t(lang, 'nav.search') },
+];
+
+const secondaryLinks = [
+  { href: musicHref, label: t(lang, 'nav.music') },
+  { href: booksHref, label: t(lang, 'nav.books') },
+  { href: rankingHref, label: t(lang, 'nav.ranking') },
+  { href: tagsHref, label: t(lang, 'nav.tags') },
   { href: changelogHref, label: 'Changelog' },
 ];
 
-// Pico styles aria-current="page" distinctly; flag the link whose path
-// the reader is currently on. Treat exact match and prefix match (so a
-// post under /blog/... highlights nothing — that's fine; nav stays
-// inert on per-post pages).
 const here = Astro.url.pathname.replace(/\/$/, '') + '/';
 const isCurrent = (href: string) => {
   const h = href.replace(/\/$/, '') + '/';
   if (h === '/' || h === `${prefix}/`) return here === h;
   return here === h;
 };
+const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
 ---
 
 <header class="site-header">
-  <nav class="container" aria-label={lang === 'pt' ? 'Navegação principal' : 'Main navigation'}>
+  <nav
+    class="container"
+    aria-label={lang === 'pt' ? 'Navegação principal' : 'Main navigation'}
+  >
     <ul>
-      <li><a href={homeHref} class="brand contrast" aria-current={here === homeHref ? 'page' : undefined}>Franklin Baldo<span class="brand-dot" aria-hidden="true">.</span></a></li>
+      <li>
+        <a
+          href={homeHref}
+          class="brand contrast"
+          aria-current={here === homeHref ? 'page' : undefined}
+        >
+          Franklin Baldo<span class="brand-dot" aria-hidden="true">.</span>
+        </a>
+      </li>
     </ul>
     <ul class="nav-inline">
-      {navLinks.map((l) => (
-        <li>
-          <a href={l.href} class="secondary" aria-current={isCurrent(l.href) ? 'page' : undefined}>
-            {l.label}
-          </a>
-        </li>
-      ))}
-      <li><button id="nav-music-btn" class="nav-music-btn secondary outline" type="button" aria-label={playMusicLabel} title={playMusicLabel} data-play-label={playMusicLabel} data-pause-label={pauseMusicLabel}>♪</button></li>
+      {
+        primaryLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="secondary"
+              aria-current={isCurrent(link.href) ? 'page' : undefined}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <details class="dropdown more-menu">
+          <summary
+            class="secondary"
+            aria-current={secondaryCurrent ? 'page' : undefined}
+          >
+            {moreLabel}
+          </summary>
+          <ul>
+            <li class="menu-section" aria-hidden="true">{collectionLabel}</li>
+            {
+              secondaryLinks.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    aria-current={isCurrent(link.href) ? 'page' : undefined}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </details>
+      </li>
+      <li>
+        <button
+          id="nav-music-btn"
+          class="nav-music-btn secondary outline"
+          type="button"
+          aria-label={playMusicLabel}
+          title={playMusicLabel}
+          data-play-label={playMusicLabel}
+          data-pause-label={pauseMusicLabel}
+        >♪</button>
+      </li>
       <li><LanguageSwitcher /></li>
       <li><ThemeToggle lang={lang} /></li>
     </ul>
     <ul class="nav-burger">
-      <li><button id="nav-music-btn-mobile" class="nav-music-btn secondary outline" type="button" aria-label={playMusicLabel} title={playMusicLabel} data-play-label={playMusicLabel} data-pause-label={pauseMusicLabel}>♪</button></li>
+      <li>
+        <button
+          id="nav-music-btn-mobile"
+          class="nav-music-btn secondary outline"
+          type="button"
+          aria-label={playMusicLabel}
+          title={playMusicLabel}
+          data-play-label={playMusicLabel}
+          data-pause-label={pauseMusicLabel}
+        >♪</button>
+      </li>
       <li><LanguageSwitcher /></li>
       <li><ThemeToggle lang={lang} /></li>
       <li>
         <details class="dropdown burger-menu">
           <summary aria-label={menuLabel}>☰</summary>
           <ul>
-            {navLinks.map((l) => (
-              <li>
-                <a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>
-                  {l.label}
-                </a>
-              </li>
-            ))}
+            {
+              primaryLinks.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    aria-current={isCurrent(link.href) ? 'page' : undefined}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))
+            }
+            <li class="menu-section" aria-hidden="true">{collectionLabel}</li>
+            {
+              secondaryLinks.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    aria-current={isCurrent(link.href) ? 'page' : undefined}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))
+            }
           </ul>
         </details>
       </li>
@@ -136,11 +222,15 @@ const isCurrent = (href: string) => {
           // Nothing playing → start first song from player's queue
           const gmp = document.getElementById('gmp') as HTMLElement | null;
           let songs: { id: string; title: string }[] = [];
-          try { songs = JSON.parse(gmp?.dataset.songs || '[]'); } catch {}
+          try {
+            songs = JSON.parse(gmp?.dataset.songs || '[]');
+          } catch {}
           if (songs[0]) {
-            document.dispatchEvent(new CustomEvent('gp:play', {
-              detail: { sunoId: songs[0].id, title: songs[0].title },
-            }));
+            document.dispatchEvent(
+              new CustomEvent('gp:play', {
+                detail: { sunoId: songs[0].id, title: songs[0].title },
+              }),
+            );
           }
         }
       });
@@ -157,22 +247,16 @@ const isCurrent = (href: string) => {
 
 <style>
   /*
-   * Sticky translucent masthead. The 5.5rem offsets used by the sticky
-   * rails and scroll-padding-top in global.css assume this bar is pinned
-   * and no taller than ~5rem; keep its height under that.
+   * Sticky paper masthead. With the secondary collection links grouped under
+   * More, the primary navigation can remain visible on laptop widths instead
+   * of collapsing almost everywhere.
    */
   .site-header {
     position: sticky;
     top: 0;
     z-index: 50;
-    /* Pico gives `body > header` a tall block padding — flatten it so the
-       masthead stays under the 4.5rem offset the sticky rails assume. */
     padding-block: 0;
-    /* Pico's nav <li> block padding is 1.25rem — too tall for a pinned bar. */
     --pico-nav-element-spacing-vertical: 0.5rem;
-    /* Solid paper background — translucency + backdrop blur gets mangled
-       by the CSS minifier (it drops the unprefixed backdrop-filter), and a
-       see-through bar without blur lets article text show through. */
     background: var(--pico-background-color);
     border-bottom: 1px solid var(--pico-muted-border-color);
   }
@@ -186,9 +270,6 @@ const isCurrent = (href: string) => {
     font-weight: 600;
     letter-spacing: -0.01em;
     text-decoration: none;
-    /* Override the global overflow-wrap: anywhere (global.css) — in the
-       cramped flex header it would otherwise split "Franklin"/"Baldo."
-       mid-word on narrow phones instead of wrapping at the space. */
     overflow-wrap: normal;
   }
   .brand:hover {
@@ -198,48 +279,74 @@ const isCurrent = (href: string) => {
     color: var(--pico-primary);
   }
 
-  .nav-inline a:not(.nav-music-btn) {
+  .nav-inline a,
+  .nav-inline summary {
     font-size: 0.92rem;
     text-decoration: none;
-    /* Override global.css's "wrap anywhere" prose policy: nav labels are
-       short, fixed UI strings — mid-word breaks here are always a bug, not
-       a narrow-viewport accommodation (that's what the burger menu is for). */
     overflow-wrap: normal;
     word-break: normal;
     white-space: nowrap;
   }
-  .nav-inline a[aria-current="page"] {
+  .nav-inline a[aria-current='page'],
+  .nav-inline summary[aria-current='page'] {
     color: var(--pico-primary);
     text-decoration: underline;
     text-underline-offset: 0.45em;
     text-decoration-thickness: 2px;
   }
 
-  .nav-burger { display: none; }
-  /* 1279px, not 768px: Pico's own .container steps from max-width 950px to
-     1200px at the 1280px breakpoint. Below 1280px the inline nav (8 links +
-     music button + language switcher + theme toggle) doesn't fit that 950px
-     — the flex row shrinks each item past its natural width and, combined
-     with the overflow-wrap policy above, words split mid-word ("Archiv/e").
-     Measured: nav-inline needs ~960px alone, unwrapped, plus the brand. */
-  @media (max-width: 1279px) {
-    .nav-inline { display: none; }
-    .nav-burger { display: flex; }
+  .more-menu > summary {
+    padding-inline: 0.5rem;
+    cursor: pointer;
   }
-  /* Right-align the dropdown panel so it doesn't overflow the viewport. */
-  .burger-menu > summary { padding-inline: 0.5rem; }
+  .more-menu > ul {
+    right: 0;
+    left: auto;
+    min-width: 13rem;
+  }
+  .menu-section {
+    padding: 0.45rem 0.75rem 0.25rem;
+    color: var(--pico-muted-color);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  .nav-burger {
+    display: none;
+  }
+  @media (max-width: 899px) {
+    .nav-inline {
+      display: none;
+    }
+    .nav-burger {
+      display: flex;
+    }
+  }
+  .burger-menu > summary {
+    padding-inline: 0.5rem;
+  }
   .burger-menu > ul {
     right: 0;
     left: auto;
-    min-width: 12rem;
+    min-width: 13rem;
   }
+  .burger-menu .menu-section {
+    border-top: 1px solid var(--pico-muted-border-color);
+    margin-top: 0.25rem;
+  }
+
   .nav-music-btn {
     padding: 0.25rem 0.6rem;
     font-size: 1rem;
     line-height: 1;
     border-radius: 6px;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
+    transition:
+      background 0.15s,
+      color 0.15s;
     white-space: nowrap;
   }
   .nav-music-btn.playing {
