@@ -5,25 +5,30 @@ interface Props {
   lang?: string;
 }
 const { lang = "en" } = Astro.props;
-const labels =
-  lang === "pt"
-    ? { copy: "Copiar", copied: "Copiado!", failed: "Falhou", ariaCopy: "Copiar código" }
-    : { copy: "Copy", copied: "Copied!", failed: "Failed", ariaCopy: "Copy code" };
+const copyLabel = lang === "pt" ? "Copiar" : "Copy";
+const copiedLabel = lang === "pt" ? "Copiado!" : "Copied!";
+const failedLabel = lang === "pt" ? "Falhou" : "Failed";
+const ariaCopyLabel = lang === "pt" ? "Copiar código" : "Copy code";
 ---
 
-<span id="code-copy-labels" data-labels={JSON.stringify(labels)} hidden></span>
+<span
+  id="code-copy-labels"
+  data-copy-label={copyLabel}
+  data-copied-label={copiedLabel}
+  data-failed-label={failedLabel}
+  data-aria-copy-label={ariaCopyLabel}
+  hidden
+></span>
 
 <script>
-  const DEFAULT_LABELS = { copy: "Copy", copied: "Copied!", failed: "Failed", ariaCopy: "Copy code" };
-
   function getLabels() {
     const el = document.getElementById("code-copy-labels");
-    if (!el?.dataset.labels) return DEFAULT_LABELS;
-    try {
-      return { ...DEFAULT_LABELS, ...JSON.parse(el.dataset.labels) };
-    } catch {
-      return DEFAULT_LABELS;
-    }
+    return {
+      copy: el?.dataset.copyLabel || "Copy",
+      copied: el?.dataset.copiedLabel || "Copied!",
+      failed: el?.dataset.failedLabel || "Failed",
+      ariaCopy: el?.dataset.ariaCopyLabel || "Copy code",
+    };
   }
 
   function enhance() {
