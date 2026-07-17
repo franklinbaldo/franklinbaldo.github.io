@@ -1,0 +1,31 @@
+{
+  "schema": "duel-v1",
+  "runId": "2026-07-17T01-21-52-934",
+  "runAt": "2026-07-17T01:21:52.934Z",
+  "aKey": "2509efa2-b655-4340-830f-294567cbc2bb",
+  "bKey": "319e0bfa-aa9d-42b7-95e7-4c047340e3f8",
+  "winner": "a",
+  "rateA": 4.575,
+  "rateB": 4.55,
+  "rationale": "Song A excels in presenting its profound lyrical poetry with subtle, modern production that perfectly earns its words. The exploration of finding the infinite in the intimate, and the philosophical concepts presented through spoken word, are exceptionally crafted. While Song B delivers a deeply impactful narrative of grief with powerful vocals and traditional instrumentation, Song A's layered lyrical depth and thoughtful arrangement give it a slight edge in poetic sophistication and emotional resonance for the specified lens.",
+  "axisScores": {
+    "production": {
+      "a": 4.5,
+      "b": 4.2
+    },
+    "songwriting": {
+      "a": 4.8,
+      "b": 4.7
+    },
+    "vocals": {
+      "a": 4.3,
+      "b": 4.5
+    },
+    "emotionalImpact": {
+      "a": 4.7,
+      "b": 4.8
+    }
+  },
+  "perspectiveId": "lyric-as-poem",
+  "model": "gemini-2.5-flash"
+}

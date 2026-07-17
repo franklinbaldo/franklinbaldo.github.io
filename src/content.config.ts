@@ -12,6 +12,7 @@ type SunoCatalogRecord = {
   styleTags: string;
   durationSeconds: number | null;
   imageUrl: string | null;
+  audioUrl: string | null;
   isPublic: boolean;
   createdAt: string | null;
 };
