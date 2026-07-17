@@ -1,12 +1,38 @@
 ---
 // Wraps every <pre> on the page with a "Copy" button.
 // Client-only, deferred. No-op if scripting is disabled.
+interface Props {
+  lang?: string;
+}
+const { lang = "en" } = Astro.props;
+const copyLabel = lang === "pt" ? "Copiar" : "Copy";
+const copiedLabel = lang === "pt" ? "Copiado!" : "Copied!";
+const failedLabel = lang === "pt" ? "Falhou" : "Failed";
+const ariaCopyLabel = lang === "pt" ? "Copiar código" : "Copy code";
 ---
 
+<span
+  id="code-copy-labels"
+  data-copy-label={copyLabel}
+  data-copied-label={copiedLabel}
+  data-failed-label={failedLabel}
+  data-aria-copy-label={ariaCopyLabel}
+  hidden
+></span>
+
 <script>
-  const DEFAULT_LABEL = "Copy";
+  function getLabels() {
+    const el = document.getElementById("code-copy-labels");
+    return {
+      copy: el?.dataset.copyLabel || "Copy",
+      copied: el?.dataset.copiedLabel || "Copied!",
+      failed: el?.dataset.failedLabel || "Failed",
+      ariaCopy: el?.dataset.ariaCopyLabel || "Copy code",
+    };
+  }
 
   function enhance() {
+    const labels = getLabels();
     document.querySelectorAll<HTMLPreElement>("article pre").forEach((pre) => {
       if (pre.parentElement?.classList.contains("code-block")) return;
 
@@ -20,8 +46,8 @@
       const button = document.createElement("button");
       button.type = "button";
       button.className = "code-copy";
-      button.textContent = DEFAULT_LABEL;
-      button.setAttribute("aria-label", "Copy code");
+      button.textContent = labels.copy;
+      button.setAttribute("aria-label", labels.ariaCopy);
 
       let resetTimer: number | undefined;
       let inFlight = false;
@@ -30,7 +56,7 @@
         button.textContent = text;
         if (resetTimer !== undefined) window.clearTimeout(resetTimer);
         resetTimer = window.setTimeout(() => {
-          button.textContent = DEFAULT_LABEL;
+          button.textContent = labels.copy;
           resetTimer = undefined;
         }, 1500);
       };
@@ -41,9 +67,9 @@
         try {
           const code = pre.querySelector("code")?.innerText ?? pre.innerText;
           await navigator.clipboard.writeText(code);
-          flash("Copied!");
+          flash(labels.copied);
         } catch {
-          flash("Failed");
+          flash(labels.failed);
         } finally {
           inFlight = false;
         }
