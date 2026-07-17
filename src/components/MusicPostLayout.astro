@@ -1,0 +1,423 @@
+---
+interface Track {
+  label: string;
+  sunoId: string;
+  sunoImageUrl?: string;
+  genre?: string[];
+  duration?: number;
+}
+
+interface Props {
+  title: string;
+  description?: string;
+  date: Date;
+  locale: string;
+  lang: "en" | "pt";
+  tracks: Track[];
+  rankHref?: string;
+  rankLabel?: string;
+  rankTitle?: string;
+}
+
+const {
+  title,
+  description,
+  date,
+  locale,
+  lang,
+  tracks,
+  rankHref,
+  rankLabel,
+  rankTitle,
+} = Astro.props;
+
+const primary = tracks[0];
+const cover =
+  primary?.sunoImageUrl ??
+  (primary ? `https://cdn2.suno.ai/${primary.sunoId}_image.jpeg` : undefined);
+const copy =
+  lang === "pt"
+    ? {
+        eyebrow: "Canção",
+        play: "Ouvir agora",
+        playAria: "Reproduzir",
+        variants: "Versões desta composição",
+        onSuno: "Abrir no Suno",
+        coverAlt: "Capa de",
+      }
+    : {
+        eyebrow: "Song",
+        play: "Listen now",
+        playAria: "Play",
+        variants: "Versions of this composition",
+        onSuno: "Open on Suno",
+        coverAlt: "Cover for",
+      };
+
+const formatDuration = (seconds?: number) =>
+  seconds
+    ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
+    : undefined;
+---
+
+<section class="music-post-layout">
+  <header class="music-post-hero">
+    {
+      cover && (
+        <div class="music-post-artwork">
+          <img
+            src={cover}
+            alt={`${copy.coverAlt} ${title}`}
+            width="640"
+            height="640"
+            loading="eager"
+            fetchpriority="high"
+          />
+          {primary && (
+            <button
+              class="music-play-btn music-cover-play"
+              type="button"
+              data-suno-id={primary.sunoId}
+              data-suno-title={primary.label}
+              aria-label={`${copy.playAria} ${primary.label}`}
+            >
+              <span aria-hidden="true">▶</span>
+            </button>
+          )}
+        </div>
+      )
+    }
+
+    <div class="music-post-intro">
+      <p class="music-post-eyebrow">{copy.eyebrow}</p>
+      <h1>{title}</h1>
+      {description && <p class="music-post-description">{description}</p>}
+
+      <p class="music-post-byline">
+        <time datetime={date.toISOString()}>
+          {
+            date.toLocaleDateString(locale, {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })
+          }
+        </time>
+        {
+          rankHref && rankLabel && (
+            <>
+              <span aria-hidden="true"> · </span>
+              <a href={rankHref} title={rankTitle}>{rankLabel}</a>
+            </>
+          )
+        }
+      </p>
+
+      {
+        primary && (
+          <div class="music-post-actions">
+            <button
+              class="music-play-btn music-primary-action"
+              type="button"
+              data-suno-id={primary.sunoId}
+              data-suno-title={primary.label}
+              aria-label={`${copy.playAria} ${primary.label}`}
+            >
+              <span aria-hidden="true">▶</span> {copy.play}
+            </button>
+            <a
+              href={`https://suno.com/song/${primary.sunoId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {copy.onSuno} ↗
+            </a>
+          </div>
+        )
+      }
+
+      {
+        primary && (
+          <div class="music-post-meta">
+            {primary.genre?.map((item) => <span>{item}</span>)}
+            {formatDuration(primary.duration) && (
+              <span>{formatDuration(primary.duration)}</span>
+            )}
+          </div>
+        )
+      }
+    </div>
+  </header>
+
+  {
+    tracks.length > 1 && (
+      <section class="music-versions" aria-labelledby="music-versions-title">
+        <h2 id="music-versions-title">{copy.variants}</h2>
+        <ol>
+          {tracks.map((track, index) => (
+            <li>
+              <button
+                class="music-play-btn music-version-play"
+                type="button"
+                data-suno-id={track.sunoId}
+                data-suno-title={track.label}
+                aria-label={`${copy.playAria} ${track.label}`}
+              >
+                <span class="music-version-number" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span class="music-version-title">{track.label}</span>
+                {formatDuration(track.duration) && (
+                  <span class="music-version-duration">
+                    {formatDuration(track.duration)}
+                  </span>
+                )}
+                <span aria-hidden="true">▶</span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )
+  }
+
+  <div class="music-post-copy">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .music-post-layout {
+    --music-art-size: clamp(15rem, 34vw, 25rem);
+    margin-top: 1rem;
+  }
+
+  .music-post-hero {
+    display: grid;
+    grid-template-columns: minmax(14rem, var(--music-art-size)) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: center;
+    margin: 0 0 clamp(2.5rem, 7vw, 5rem);
+  }
+
+  .music-post-artwork {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1;
+    border-radius: 0.4rem;
+    background: var(--pico-card-background-color);
+    box-shadow: 0 1.4rem 3.5rem rgba(20, 16, 12, 0.18);
+  }
+
+  .music-post-artwork img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .music-cover-play {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--pico-primary) 92%, black);
+    color: var(--pico-primary-inverse);
+    box-shadow: 0 0.7rem 1.8rem rgba(0, 0, 0, 0.28);
+    cursor: pointer;
+  }
+
+  .music-cover-play span {
+    transform: translateX(0.08em);
+  }
+
+  .music-post-intro h1 {
+    max-width: 14ch;
+    margin: 0.25rem 0 1rem;
+    font-size: clamp(2.4rem, 6vw, 5.4rem);
+    line-height: 0.96;
+    text-wrap: balance;
+  }
+
+  .music-post-eyebrow {
+    margin: 0;
+    color: var(--pico-primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .music-post-description {
+    max-width: 42rem;
+    margin: 0 0 1rem;
+    color: var(--pico-muted-color);
+    font-family: var(--pico-font-family-serif);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    line-height: 1.55;
+  }
+
+  .music-post-byline {
+    margin: 0 0 1.5rem;
+    color: var(--pico-muted-color);
+    font-size: 0.86rem;
+  }
+
+  .music-post-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem 1.2rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .music-primary-action {
+    display: inline-flex;
+    gap: 0.55rem;
+    align-items: center;
+    width: auto;
+    margin: 0;
+    padding: 0.7rem 1.1rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--pico-primary);
+    color: var(--pico-primary-inverse);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .music-post-actions a {
+    font-size: 0.9rem;
+  }
+
+  .music-post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .music-post-meta span {
+    padding: 0.22rem 0.62rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: 999px;
+    color: var(--pico-muted-color);
+    font-size: 0.72rem;
+  }
+
+  .music-versions {
+    max-width: 52rem;
+    margin: -1rem auto 3.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--pico-muted-border-color);
+  }
+
+  .music-versions h2 {
+    margin-bottom: 0.8rem;
+    color: var(--pico-muted-color);
+    font-size: 0.76rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .music-versions ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .music-version-play {
+    display: grid;
+    grid-template-columns: 2.4rem minmax(0, 1fr) auto auto;
+    gap: 0.8rem;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+    padding: 0.8rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--pico-muted-border-color);
+    border-radius: 0;
+    background: transparent;
+    color: var(--pico-color);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .music-version-number,
+  .music-version-duration {
+    color: var(--pico-muted-color);
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .music-version-title {
+    overflow: hidden;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .music-post-copy {
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+
+  .music-post-copy :global(h2) {
+    margin-top: 3.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--pico-muted-border-color);
+  }
+
+  .music-post-copy :global(pre) {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    white-space: pre-wrap;
+  }
+
+  .music-post-copy :global(pre code) {
+    padding: 0;
+    background: transparent;
+    color: var(--pico-color);
+    font-family: var(--pico-font-family-serif);
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    line-height: 1.8;
+    white-space: pre-wrap;
+  }
+
+  @media (max-width: 760px) {
+    .music-post-hero {
+      grid-template-columns: 1fr;
+      gap: 1.4rem;
+    }
+
+    .music-post-artwork {
+      width: min(100%, 28rem);
+      margin-inline: auto;
+    }
+
+    .music-post-intro h1 {
+      max-width: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .music-cover-play,
+    .music-primary-action,
+    .music-version-play {
+      transition:
+        transform 150ms ease,
+        opacity 150ms ease;
+    }
+
+    .music-cover-play:hover,
+    .music-primary-action:hover {
+      transform: translateY(-2px);
+    }
+  }
+</style>
