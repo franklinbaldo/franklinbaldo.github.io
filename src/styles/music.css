@@ -158,11 +158,7 @@ main:has(#songs-grid) .genre-chips {
   overflow-x: auto;
   flex-wrap: nowrap;
   scrollbar-width: thin;
-  background: color-mix(
-    in srgb,
-    var(--pico-background-color) 92%,
-    transparent
-  );
+  background: color-mix(in srgb, var(--pico-background-color) 92%, transparent);
   border-block: 1px solid var(--pico-muted-border-color);
   backdrop-filter: blur(12px);
 }
@@ -279,11 +275,7 @@ main:has(#songs-grid) .song-card .cover::before {
   translate: -50% -45%;
   scale: 0.9;
   border-radius: 50%;
-  background: color-mix(
-    in srgb,
-    var(--pico-background-color) 86%,
-    transparent
-  );
+  background: color-mix(in srgb, var(--pico-background-color) 86%, transparent);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
   color: var(--pico-primary);
   opacity: 0;
