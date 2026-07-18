@@ -12,6 +12,7 @@ import RelatedPosts from '../../../components/RelatedPosts.astro';
 import AuthorBio from '../../../components/AuthorBio.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import { getRankByKey } from '../../../lib/hronir-rank';
+import HronirReviews from '../../../components/HronirReviews.astro';
 import Comments from '../../../components/Comments.astro';
 import SeriesContext from '../../../components/SeriesContext.astro';
 import PostActionBar from '../../../components/PostActionBar.astro';
@@ -291,6 +292,8 @@ const musicRecordings = allTracks.map((tr) => ({
       </article>
 
       <AuthorBio lang={lang} />
+
+      {translationKey && <HronirReviews translationKey={translationKey} lang={lang} />}
 
       <RelatedPosts currentId={post.id} tags={tags ?? []} lang={lang} postType={postType} />
 
