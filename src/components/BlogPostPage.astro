@@ -23,6 +23,7 @@ import { isPublished } from '../lib/publish';
 import {
   DEFAULT_LANG,
   locale as localeFor,
+  postUrl,
   t,
   targetCopy,
   urlPrefix,
@@ -54,6 +55,7 @@ const {
 } = post.data;
 
 const postLang = (lang ?? DEFAULT_LANG) as 'en' | 'pt';
+const isMusic = postType === 'music';
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
 const wordCount: number | undefined = minutesRead ? minutesRead * 200 : undefined;
 const hasMath: boolean = !!remarkPluginFrontmatter.hasMath;
@@ -63,14 +65,8 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const showUpdated =
   lastModified && lastModified.valueOf() - date.valueOf() > MS_PER_DAY;
 
-function postUrl(entry: CollectionEntry<'blog'>): string {
-  const entryLang = entry.data.lang ?? DEFAULT_LANG;
-  const slug = entry.data.slug ?? entry.id;
-  return entryLang === 'pt' ? `/pt/blog/${slug}/` : `/blog/${slug}/`;
-}
-
 const rankInfo = translationKey ? getRankByKey().get(translationKey) : undefined;
-const rankLabel = postLang === 'pt' ? 'ranking Hrönir' : 'Hrönir rank';
+const rankLabel = t(postLang, 'post.rankLabel');
 const rankHref =
   postLang === 'pt'
     ? '/pt/ranking/'
@@ -93,10 +89,15 @@ const sameLangPosts = allPosts
       (entry.data.lang ?? DEFAULT_LANG) === postLang,
   )
   .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
-const postIdx = sameLangPosts.findIndex((entry) => entry.id === post.id);
-const prevPost = postIdx > 0 ? sameLangPosts[postIdx - 1] : null;
+const nonMusicSameLangPosts = sameLangPosts.filter(
+  (entry) => entry.data.postType !== 'music',
+);
+const postIdx = nonMusicSameLangPosts.findIndex((entry) => entry.id === post.id);
+const prevPost = postIdx > 0 ? nonMusicSameLangPosts[postIdx - 1] : null;
 const nextPost =
-  postIdx < sameLangPosts.length - 1 ? sameLangPosts[postIdx + 1] : null;
+  postIdx < nonMusicSameLangPosts.length - 1
+    ? nonMusicSameLangPosts[postIdx + 1]
+    : null;
 const prevNav = prevPost
   ? { href: postUrl(prevPost), title: prevPost.data.title, date: prevPost.data.date }
   : null;
@@ -104,14 +105,12 @@ const nextNav = nextPost
   ? { href: postUrl(nextPost), title: nextPost.data.title, date: nextPost.data.date }
   : null;
 
-const musicSameLangPosts =
-  postType === 'music'
-    ? sameLangPosts.filter((entry) => entry.data.postType === 'music')
-    : [];
-const musicIdx =
-  postType === 'music'
-    ? musicSameLangPosts.findIndex((entry) => entry.id === post.id)
-    : -1;
+const musicSameLangPosts = isMusic
+  ? sameLangPosts.filter((entry) => entry.data.postType === 'music')
+  : [];
+const musicIdx = isMusic
+  ? musicSameLangPosts.findIndex((entry) => entry.id === post.id)
+  : -1;
 const prevMusicPost = musicIdx > 0 ? musicSameLangPosts[musicIdx - 1] : null;
 const nextMusicPost =
   musicIdx !== -1 && musicIdx < musicSameLangPosts.length - 1
@@ -144,7 +143,7 @@ const translationLinks = translationSiblings.map((entry) => {
 });
 
 const allTracks =
-  postType === 'music'
+  isMusic
     ? [
         ...(sunoId
           ? [{ label: title, sunoId, sunoImageUrl, genre, duration }]
@@ -185,7 +184,7 @@ const musicRecordings = allTracks.map((track) => ({
 }));
 
 const musicIndexHref = postLang === 'pt' ? '/pt/musicas/' : '/music/';
-const musicIndexLabel = postLang === 'pt' ? 'Música' : 'Music';
+const musicIndexLabel = t(postLang, 'music.indexLabel');
 ---
 
 <PageLayout
@@ -213,31 +212,27 @@ const musicIndexLabel = postLang === 'pt' ? 'Música' : 'Music';
   }
 
   {
-    postType !== 'music' && (
+    !isMusic && (
       <progress
         id="read-progress"
         max="100"
         value="0"
-        aria-label={postLang === 'pt' ? 'Progresso de leitura' : 'Reading progress'}
+        aria-label={t(postLang, 'post.readingProgress')}
       />
     )
   }
 
   {
-    postType !== 'music' && (
+    !isMusic && (
       <aside class="border-rail" aria-hidden="true">
-        <span>
-          {postLang === 'pt'
-            ? 'NOTAS · DA · FRONTEIRA'
-            : 'NOTES · FROM · THE · BORDER'}
-        </span>
+        <span>{t(postLang, 'post.borderRailText')}</span>
       </aside>
     )
   }
 
-  <div class:list={['post-grid', { 'music-post-grid': postType === 'music' }]}>
+  <div class:list={[isMusic ? 'music-post-grid' : 'post-grid']}>
     {
-      postType !== 'music' && (
+      !isMusic && (
         <aside class="toc-col" aria-label={t(postLang, 'toc.label')}>
           <TableOfContents headings={headings} lang={postLang} sidebar />
         </aside>
@@ -249,7 +244,7 @@ const musicIndexLabel = postLang === 'pt' ? 'Música' : 'Music';
         lang={postLang}
         items={[
           { name: t(postLang, 'nav.home'), href: `${urlPrefix(postLang)}/` },
-          postType === 'music'
+          isMusic
             ? { name: musicIndexLabel, href: musicIndexHref }
             : {
                 name: t(postLang, 'nav.archive'),
@@ -260,18 +255,17 @@ const musicIndexLabel = postLang === 'pt' ? 'Música' : 'Music';
       />
 
       <article
-        class:list={{ 'music-post-article': postType === 'music' }}
+        class:list={{ 'music-post-article': isMusic }}
         data-pagefind-body
         data-pagefind-filter={`lang:${postLang}`}
         lang={postLang}
       >
         {
-          postType === 'music' ? (
+          isMusic ? (
             <MusicPostLayout
               title={title}
               description={description}
               date={date}
-              locale={locale}
               lang={postLang}
               tracks={allTracks}
               rankHref={rankInfo ? rankHref : undefined}
@@ -445,14 +439,9 @@ const musicIndexLabel = postLang === 'pt' ? 'Música' : 'Music';
       }
 
       {
-        postType === 'music' ? (
-          <nav
-            class="music-post-nav"
-            aria-label={postLang === 'pt' ? 'Navegação musical' : 'Music navigation'}
-          >
-            <a href={musicIndexHref}>
-              ← {postLang === 'pt' ? 'Todas as músicas' : 'All music'}
-            </a>
+        isMusic ? (
+          <nav class="music-post-nav" aria-label={t(postLang, 'music.navLabel')}>
+            <a href={musicIndexHref}>← {t(postLang, 'music.allMusic')}</a>
             <div class="music-post-nav-adjacent">
               {prevMusicNav && (
                 <a href={prevMusicNav.href} rel="prev">
@@ -550,7 +539,7 @@ const musicIndexLabel = postLang === 'pt' ? 'Música' : 'Music';
 
 <style>
   :global(.music-post-grid) {
-    display: block !important;
+    display: block;
     max-width: 76rem;
     margin-inline: auto;
   }
