@@ -1,5 +1,5 @@
 ---
-import { t } from "../lib/i18n";
+import { locale as localeFor, t } from "../lib/i18n";
 import { formatDuration } from "../lib/suno";
 
 interface Track {
@@ -14,7 +14,6 @@ interface Props {
   title: string;
   description?: string;
   date: Date;
-  locale: string;
   lang: "en" | "pt";
   tracks: Track[];
   rankHref?: string;
@@ -26,7 +25,6 @@ const {
   title,
   description,
   date,
-  locale,
   lang,
   tracks,
   rankHref,
@@ -34,6 +32,7 @@ const {
   rankTitle,
 } = Astro.props;
 
+const locale = localeFor(lang);
 const primary = tracks[0];
 // Suno's actual CDN pattern is `image_<id>.jpeg` (prefix, not suffix) --
 // confirmed against live data in data/suno-catalog.jsonl. This fallback

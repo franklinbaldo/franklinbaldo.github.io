@@ -1,7 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BlogPostPage from '../../../components/BlogPostPage.astro';
-import { DEFAULT_LANG } from '../../../lib/i18n';
+import { DEFAULT_LANG, postUrl } from '../../../lib/i18n';
 import { isPublished } from '../../../lib/publish';
 
 export async function getStaticPaths() {
@@ -15,12 +15,6 @@ export async function getStaticPaths() {
 }
 
 type Props = CollectionEntry<'blog'>;
-
-function postUrl(post: CollectionEntry<'blog'>): string {
-  const lang = post.data.lang ?? DEFAULT_LANG;
-  const slug = post.data.slug ?? post.id;
-  return lang === 'pt' ? `/pt/blog/${slug}/` : `/blog/${slug}/`;
-}
 
 const post = Astro.props;
 if ((post.data.lang ?? DEFAULT_LANG) !== 'pt') {
