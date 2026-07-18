@@ -1,3 +1,4 @@
+import type { CollectionEntry } from "astro:content";
 import { DEFAULT_LANG as _DEFAULT_LANG, LANG_META } from "./languages.mjs";
 
 export { DEFAULT_LANG } from "./languages.mjs";
@@ -16,6 +17,18 @@ const UI_KEYS = [
   "nav.about",
   "nav.more",
   "nav.collections",
+  "music.eyebrow",
+  "music.play",
+  "music.playAria",
+  "music.variants",
+  "music.onSuno",
+  "music.coverAlt",
+  "music.indexLabel",
+  "music.navLabel",
+  "music.allMusic",
+  "post.rankLabel",
+  "post.readingProgress",
+  "post.borderRailText",
   "archive.jumpToYear",
   "post.continueReading",
   "post.minutesRead",
@@ -114,6 +127,18 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "nav.about": "About",
       "nav.more": "More",
       "nav.collections": "Collections & lab",
+      "music.eyebrow": "Song",
+      "music.play": "Listen now",
+      "music.playAria": "Play",
+      "music.variants": "Versions of this composition",
+      "music.onSuno": "Open on Suno",
+      "music.coverAlt": "Cover for",
+      "music.indexLabel": "Music",
+      "music.navLabel": "Music navigation",
+      "music.allMusic": "All music",
+      "post.rankLabel": "Hrönir rank",
+      "post.readingProgress": "Reading progress",
+      "post.borderRailText": "NOTES · FROM · THE · BORDER",
       "post.continueReading": "Continue reading →",
       "post.minutesRead": "min read",
       "post.updated": "updated",
@@ -204,6 +229,18 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "nav.about": "Sobre",
       "nav.more": "Mais",
       "nav.collections": "Coleções e laboratório",
+      "music.eyebrow": "Canção",
+      "music.play": "Ouvir agora",
+      "music.playAria": "Reproduzir",
+      "music.variants": "Versões desta composição",
+      "music.onSuno": "Abrir no Suno",
+      "music.coverAlt": "Capa de",
+      "music.indexLabel": "Música",
+      "music.navLabel": "Navegação musical",
+      "music.allMusic": "Todas as músicas",
+      "post.rankLabel": "ranking Hrönir",
+      "post.readingProgress": "Progresso de leitura",
+      "post.borderRailText": "NOTAS · DA · FRONTEIRA",
       "post.continueReading": "Continuar lendo →",
       "post.minutesRead": "min de leitura",
       "post.updated": "atualizado",
@@ -314,6 +351,12 @@ export function locale(lang: string | undefined): string {
 
 export function urlPrefix(lang: string | undefined): string {
   return configFor(lang).urlPrefix;
+}
+
+export function postUrl(entry: CollectionEntry<"blog">): string {
+  const lang = entry.data.lang ?? _DEFAULT_LANG;
+  const slug = entry.data.slug ?? entry.id;
+  return `${urlPrefix(lang)}/blog/${slug}/`;
 }
 
 export function supportedLangs(): string[] {

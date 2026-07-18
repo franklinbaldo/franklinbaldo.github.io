@@ -26,6 +26,15 @@ export function isoDuration(seconds: number): string {
   return `PT${Math.floor(d / 60)}M${d % 60}S`;
 }
 
+// "M:SS" display format, shared by the music catalogue pages and
+// MusicPostLayout.astro -- previously three separately-maintained copies
+// of this exact logic. Rounds first for the same reason isoDuration does.
+export function formatDuration(seconds?: number | null): string | undefined {
+  if (!seconds || seconds <= 0) return undefined;
+  const total = Math.round(seconds);
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
+}
+
 async function fetchJSON<T>(url: string): Promise<T> {
   for (let attempt = 0; attempt < 4; attempt++) {
     const res = await fetch(url, {

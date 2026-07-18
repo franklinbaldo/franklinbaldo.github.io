@@ -1,0 +1,662 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import PageLayout from '../layouts/PageLayout.astro';
+import BackToTop from './BackToTop.astro';
+import ShareButton from './ShareButton.astro';
+import CodeCopyEnhancer from './CodeCopyEnhancer.astro';
+import MermaidEnhancer from './MermaidEnhancer.astro';
+import Webmentions from './Webmentions.astro';
+import TableOfContents from './TableOfContents.astro';
+import RelatedPosts from './RelatedPosts.astro';
+import AuthorBio from './AuthorBio.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import HronirReviews from './HronirReviews.astro';
+import Comments from './Comments.astro';
+import SeriesContext from './SeriesContext.astro';
+import PostActionBar from './PostActionBar.astro';
+import PostNav from './PostNav.astro';
+import MusicPostLayout from './MusicPostLayout.astro';
+import { getRankByKey } from '../lib/hronir-rank';
+import { getSeriesContext } from '../lib/series';
+import { isPublished } from '../lib/publish';
+import {
+  DEFAULT_LANG,
+  locale as localeFor,
+  postUrl,
+  t,
+  targetCopy,
+  urlPrefix,
+} from '../lib/i18n';
+import { isoDuration } from '../lib/suno';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { Content, headings, remarkPluginFrontmatter } = await render(post);
+const {
+  heroImage,
+  heroImageAlt,
+  title,
+  description,
+  date,
+  tags,
+  lang,
+  translationKey,
+  previousVersion,
+  postType,
+  sunoId,
+  genre,
+  duration,
+  sunoImageUrl,
+  tracks,
+} = post.data;
+
+const postLang = (lang ?? DEFAULT_LANG) as 'en' | 'pt';
+const isMusic = postType === 'music';
+const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
+const wordCount: number | undefined = minutesRead ? minutesRead * 200 : undefined;
+const hasMath: boolean = !!remarkPluginFrontmatter.hasMath;
+const lastModifiedISO: string | undefined = remarkPluginFrontmatter.lastModified;
+const lastModified = lastModifiedISO ? new Date(lastModifiedISO) : undefined;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const showUpdated =
+  lastModified && lastModified.valueOf() - date.valueOf() > MS_PER_DAY;
+
+const rankInfo = translationKey ? getRankByKey().get(translationKey) : undefined;
+const rankLabel = t(postLang, 'post.rankLabel');
+const rankHref =
+  postLang === 'pt'
+    ? '/pt/ranking/'
+    : translationKey
+      ? `/ranking/posts/${translationKey}/`
+      : '/ranking/';
+const rankTitle = rankInfo
+  ? `μ ${rankInfo.row.mu.toFixed(2)}, σ ${rankInfo.row.sigma.toFixed(2)}, ${rankInfo.row.wins}/${rankInfo.row.appearances}`
+  : undefined;
+const series = await getSeriesContext(post, { lang: postLang });
+const locale = localeFor(postLang);
+const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
+const tagsPrefix = `${urlPrefix(postLang)}/tags`;
+
+const allPosts = await getCollection('blog');
+const sameLangPosts = allPosts
+  .filter(
+    (entry) =>
+      isPublished(entry) &&
+      (entry.data.lang ?? DEFAULT_LANG) === postLang,
+  )
+  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+const nonMusicSameLangPosts = sameLangPosts.filter(
+  (entry) => entry.data.postType !== 'music',
+);
+const postIdx = nonMusicSameLangPosts.findIndex((entry) => entry.id === post.id);
+const prevPost = postIdx > 0 ? nonMusicSameLangPosts[postIdx - 1] : null;
+const nextPost =
+  postIdx < nonMusicSameLangPosts.length - 1
+    ? nonMusicSameLangPosts[postIdx + 1]
+    : null;
+const prevNav = prevPost
+  ? { href: postUrl(prevPost), title: prevPost.data.title, date: prevPost.data.date }
+  : null;
+const nextNav = nextPost
+  ? { href: postUrl(nextPost), title: nextPost.data.title, date: nextPost.data.date }
+  : null;
+
+const musicSameLangPosts = isMusic
+  ? sameLangPosts.filter((entry) => entry.data.postType === 'music')
+  : [];
+const musicIdx = isMusic
+  ? musicSameLangPosts.findIndex((entry) => entry.id === post.id)
+  : -1;
+const prevMusicPost = musicIdx > 0 ? musicSameLangPosts[musicIdx - 1] : null;
+const nextMusicPost =
+  musicIdx !== -1 && musicIdx < musicSameLangPosts.length - 1
+    ? musicSameLangPosts[musicIdx + 1]
+    : null;
+const prevMusicNav = prevMusicPost
+  ? { href: postUrl(prevMusicPost), title: prevMusicPost.data.title }
+  : null;
+const nextMusicNav = nextMusicPost
+  ? { href: postUrl(nextMusicPost), title: nextMusicPost.data.title }
+  : null;
+
+const translationSiblings = translationKey
+  ? allPosts.filter(
+      (entry) => entry.data.translationKey === translationKey && entry.id !== post.id,
+    )
+  : [];
+const translations: Record<string, string> = Object.fromEntries(
+  translationSiblings.map((entry) => [
+    entry.data.lang ?? DEFAULT_LANG,
+    postUrl(entry),
+  ]),
+);
+const translationLinks = translationSiblings.map((entry) => {
+  const targetLang = entry.data.lang ?? DEFAULT_LANG;
+  return {
+    href: postUrl(entry),
+    label: targetCopy(postLang, targetLang).invitation,
+  };
+});
+
+const allTracks =
+  isMusic
+    ? [
+        ...(sunoId
+          ? [{ label: title, sunoId, sunoImageUrl, genre, duration }]
+          : []),
+        ...(tracks ?? []),
+      ].map((track) => ({
+        ...track,
+        duration: track.duration ? Math.round(track.duration) : undefined,
+      }))
+    : [];
+
+const musicRecordings = allTracks.map((track) => ({
+  '@context': 'https://schema.org',
+  '@type': 'MusicRecording',
+  name: track.label,
+  url: Astro.site
+    ? new URL(Astro.url.pathname, Astro.site).href
+    : Astro.url.pathname,
+  byArtist: {
+    '@type': 'Person',
+    name: 'Franklin Baldo',
+    url: Astro.site
+      ? new URL(postLang === 'pt' ? '/pt/about/' : '/about/', Astro.site).href
+      : postLang === 'pt'
+        ? '/pt/about/'
+        : '/about/',
+  },
+  recordingOf: {
+    '@type': 'MusicComposition',
+    name: track.label,
+  },
+  embedUrl: `https://suno.com/embed/${track.sunoId}`,
+  ...(track.sunoImageUrl && { image: track.sunoImageUrl }),
+  ...(track.genre?.length && { genre: track.genre }),
+  ...(track.duration && track.duration > 0 && {
+    duration: isoDuration(track.duration),
+  }),
+}));
+
+const musicIndexHref = postLang === 'pt' ? '/pt/musicas/' : '/music/';
+const musicIndexLabel = t(postLang, 'music.indexLabel');
+---
+
+<PageLayout
+  title={title}
+  description={description}
+  image={heroImage?.src ?? `/og/${post.id}.png`}
+  type="article"
+  publishedTime={date}
+  modifiedTime={lastModified}
+  tags={tags}
+  lang={postLang}
+  translations={translations}
+  hasMath={hasMath}
+  wordCount={wordCount}
+>
+  {
+    musicRecordings.map((recording) => (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify(recording)}
+        is:inline
+        slot="head"
+      />
+    ))
+  }
+
+  {
+    !isMusic && (
+      <progress
+        id="read-progress"
+        max="100"
+        value="0"
+        aria-label={t(postLang, 'post.readingProgress')}
+      />
+    )
+  }
+
+  {
+    !isMusic && (
+      <aside class="border-rail" aria-hidden="true">
+        <span>{t(postLang, 'post.borderRailText')}</span>
+      </aside>
+    )
+  }
+
+  <div class:list={[isMusic ? 'music-post-grid' : 'post-grid']}>
+    {
+      !isMusic && (
+        <aside class="toc-col" aria-label={t(postLang, 'toc.label')}>
+          <TableOfContents headings={headings} lang={postLang} sidebar />
+        </aside>
+      )
+    }
+
+    <div class="post-body">
+      <Breadcrumbs
+        lang={postLang}
+        items={[
+          { name: t(postLang, 'nav.home'), href: `${urlPrefix(postLang)}/` },
+          isMusic
+            ? { name: musicIndexLabel, href: musicIndexHref }
+            : {
+                name: t(postLang, 'nav.archive'),
+                href: `${urlPrefix(postLang)}/archive/`,
+              },
+          { name: title, href: Astro.url.pathname },
+        ]}
+      />
+
+      <article
+        class:list={{ 'music-post-article': isMusic }}
+        data-pagefind-body
+        data-pagefind-filter={`lang:${postLang}`}
+        lang={postLang}
+      >
+        {
+          isMusic ? (
+            <MusicPostLayout
+              title={title}
+              description={description}
+              date={date}
+              lang={postLang}
+              tracks={allTracks}
+              rankHref={rankInfo ? rankHref : undefined}
+              rankLabel={
+                rankInfo
+                  ? `${rankLabel} #${rankInfo.rank}/${rankInfo.total}`
+                  : undefined
+              }
+              rankTitle={rankTitle}
+            >
+              {series && (
+                <SeriesContext
+                  series={series}
+                  lang={postLang}
+                  variant="aside"
+                  slot="series"
+                />
+              )}
+              <Content />
+            </MusicPostLayout>
+          ) : (
+            <>
+              <header>
+                <hgroup>
+                  <h1>{title}</h1>
+                  <p>
+                    <small>
+                      <time datetime={date.toISOString()}>
+                        {date.toLocaleDateString(locale, dateOpts)}
+                      </time>
+                      {minutesRead && (
+                        <>
+                          {' · '}
+                          <span class="reading-badge">
+                            {minutesRead} {t(postLang, 'post.minutesRead')}
+                          </span>
+                        </>
+                      )}
+                      {showUpdated && lastModified && (
+                        <>
+                          {' · '}
+                          {t(postLang, 'post.updated')}{' '}
+                          <time datetime={lastModified.toISOString()}>
+                            {lastModified.toLocaleDateString(locale, dateOpts)}
+                          </time>
+                        </>
+                      )}
+                      {rankInfo && (
+                        <>
+                          {' · '}
+                          <a href={rankHref} title={rankTitle}>
+                            {rankLabel} #{rankInfo.rank}/{rankInfo.total}
+                          </a>
+                        </>
+                      )}
+                    </small>
+                  </p>
+                </hgroup>
+                {heroImage && (
+                  <figure class="hero-figure">
+                    <Image
+                      src={heroImage}
+                      alt={heroImageAlt ?? ''}
+                      widths={[480, 800, 1200]}
+                      sizes="(max-width: 800px) 100vw, 800px"
+                      format="webp"
+                      loading="eager"
+                      fetchpriority="high"
+                    />
+                    {heroImageAlt && <figcaption>{heroImageAlt}</figcaption>}
+                  </figure>
+                )}
+              </header>
+
+              {series && (
+                <SeriesContext
+                  series={series}
+                  lang={postLang}
+                  variant="aside"
+                />
+              )}
+
+              <TableOfContents headings={headings} lang={postLang} />
+              <Content />
+            </>
+          )
+        }
+
+        <footer>
+          {
+            tags && tags.length > 0 && (
+              <p>
+                <small>
+                  {t(postLang, 'post.tags')}{' '}
+                  {tags.map((tag, index) => (
+                    <>
+                      {index > 0 && ' '}
+                      <a class="tag-pill" href={`${tagsPrefix}/${tag}/`}>
+                        #{tag}
+                      </a>
+                    </>
+                  ))}
+                </small>
+              </p>
+            )
+          }
+          {
+            translationLinks.length > 0 && (
+              <p>
+                <small>
+                  {translationLinks.map((link, index) => (
+                    <>
+                      {index > 0 && ' · '}
+                      <a href={link.href}>{link.label}</a>
+                    </>
+                  ))}
+                </small>
+              </p>
+            )
+          }
+          {
+            previousVersion && (
+              <p>
+                <small>
+                  {t(postLang, 'post.previousVersion')}:{' '}
+                  <a
+                    href={previousVersion.url}
+                    rel="external nofollow"
+                    title={previousVersion.msg}
+                  >
+                    <time datetime={previousVersion.timestamp}>
+                      {new Date(previousVersion.timestamp).toLocaleDateString(
+                        locale,
+                        dateOpts,
+                      )}
+                    </time>
+                  </a>
+                  {previousVersion.msg && (
+                    <>
+                      {' — '}
+                      <span class="prev-msg">{previousVersion.msg}</span>
+                    </>
+                  )}
+                </small>
+              </p>
+            )
+          }
+          <ShareButton title={title} lang={postLang} />
+        </footer>
+      </article>
+
+      <AuthorBio lang={postLang} />
+
+      {
+        translationKey && (
+          <HronirReviews translationKey={translationKey} lang={postLang} />
+        )
+      }
+
+      <RelatedPosts
+        currentId={post.id}
+        tags={tags ?? []}
+        lang={postLang}
+        postType={postType}
+      />
+
+      {
+        series && (
+          <SeriesContext series={series} lang={postLang} variant="nav" />
+        )
+      }
+
+      {
+        isMusic ? (
+          <nav class="music-post-nav" aria-label={t(postLang, 'music.navLabel')}>
+            <a href={musicIndexHref}>← {t(postLang, 'music.allMusic')}</a>
+            <div class="music-post-nav-adjacent">
+              {prevMusicNav && (
+                <a href={prevMusicNav.href} rel="prev">
+                  ← {prevMusicNav.title}
+                </a>
+              )}
+              {nextMusicNav && (
+                <a href={nextMusicNav.href} rel="next">
+                  {nextMusicNav.title} →
+                </a>
+              )}
+            </div>
+          </nav>
+        ) : (
+          <PostNav prev={prevNav} next={nextNav} lang={postLang} />
+        )
+      }
+
+      <Webmentions
+        url={new URL(Astro.url.pathname, Astro.site!)}
+        lang={postLang}
+      />
+      <Comments lang={postLang} />
+
+      <BackToTop lang={postLang} />
+      <CodeCopyEnhancer lang={postLang} />
+      <MermaidEnhancer />
+    </div>
+  </div>
+
+  <PostActionBar
+    title={title}
+    url={new URL(Astro.url.pathname, Astro.site!).href}
+    date={date}
+    lang={postLang}
+  />
+
+  <script is:inline>
+    (() => {
+      function bindPlayBtns() {
+        document.querySelectorAll('.music-play-btn').forEach((btn) => {
+          if (btn.dataset.bound === '1') return;
+          btn.dataset.bound = '1';
+          btn.addEventListener('click', () => {
+            document.dispatchEvent(
+              new CustomEvent('gp:play', {
+                detail: {
+                  sunoId: btn.dataset.sunoId,
+                  title: btn.dataset.sunoTitle,
+                },
+              }),
+            );
+          });
+        });
+      }
+      bindPlayBtns();
+      document.addEventListener('astro:page-load', bindPlayBtns);
+    })();
+  </script>
+
+  <script is:inline>
+    (() => {
+      function applyDropCap() {
+        const article = document.querySelector(
+          '.post-body > article:not(.music-post-article)',
+        );
+        if (!article) return;
+        const firstP = article.querySelector(':scope > p');
+        if (!firstP) return;
+        if ((firstP.textContent ?? '').trim().length >= 80) {
+          firstP.setAttribute('data-dropcap', '');
+        }
+      }
+      applyDropCap();
+      document.addEventListener('astro:page-load', applyDropCap);
+    })();
+  </script>
+
+  <script is:inline>
+    (() => {
+      const bar = document.getElementById('read-progress');
+      if (!bar) return;
+      const update = () => {
+        const html = document.documentElement;
+        const max = html.scrollHeight - html.clientHeight;
+        const pct = max > 0 ? Math.round((html.scrollTop / max) * 100) : 0;
+        bar.value = pct;
+      };
+      update();
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+    })();
+  </script>
+</PageLayout>
+
+<style>
+  :global(.music-post-grid) {
+    display: block;
+    max-width: 76rem;
+    margin-inline: auto;
+  }
+
+  .music-post-article {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .music-post-article > footer {
+    max-width: 48rem;
+    margin: 2.5rem auto 0;
+  }
+
+  progress#read-progress {
+    position: fixed;
+    z-index: 50;
+    inset: 0 0 auto;
+    width: 100%;
+    height: 3px;
+    border: 0;
+    appearance: none;
+    background: transparent;
+    accent-color: var(--pico-primary);
+    pointer-events: none;
+  }
+
+  progress#read-progress::-webkit-progress-bar {
+    background: transparent;
+  }
+
+  progress#read-progress::-webkit-progress-value {
+    background: var(--pico-primary);
+  }
+
+  progress#read-progress::-moz-progress-bar {
+    background: var(--pico-primary);
+  }
+
+  .border-rail {
+    display: none;
+  }
+
+  .music-post-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: space-between;
+    margin: 2rem 0 1rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    font-size: 0.9rem;
+  }
+
+  .music-post-nav a {
+    color: var(--pico-primary);
+    text-decoration: none;
+  }
+
+  .music-post-nav a:hover {
+    text-decoration: underline;
+  }
+
+  .music-post-nav-adjacent {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .hero-figure {
+    margin: 1.5rem 0 2rem;
+    text-align: center;
+  }
+
+  .hero-figure img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+
+  .hero-figure figcaption {
+    margin-top: 0.5rem;
+    color: var(--pico-muted-color);
+    font-family: var(--pico-font-family-serif);
+    font-size: 0.85rem;
+    font-style: italic;
+  }
+
+  @media (min-width: 1400px) {
+    .border-rail {
+      position: fixed;
+      top: 50%;
+      left: 1.25rem;
+      display: block;
+      color: var(--pico-muted-color);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.32em;
+      writing-mode: vertical-rl;
+      transform: translateY(-50%) rotate(180deg);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .border-rail span::after {
+      display: inline-block;
+      width: 1px;
+      height: 2.5rem;
+      margin-top: 0.75rem;
+      background: var(--pico-muted-color);
+      content: '';
+      opacity: 0.5;
+    }
+  }
+</style>
