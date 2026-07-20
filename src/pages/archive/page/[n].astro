@@ -1,0 +1,350 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "../../../layouts/PageLayout.astro";
+import { isPublished } from "../../../lib/publish";
+import { t } from "../../../lib/i18n";
+import { getRankByKey } from "../../../lib/hronir-rank";
+import { ARCHIVE_PER_PAGE } from "../../../lib/archive";
+
+export async function getStaticPaths() {
+  const all = await getCollection("blog");
+  const allPosts = all
+    .filter((p) => isPublished(p))
+    .filter((p) => (p.data.lang ?? 'en') === 'en')
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  const totalPages = Math.max(1, Math.ceil(allPosts.length / ARCHIVE_PER_PAGE));
+  // Only generate pages 2+ (page 1 is archive/index.astro)
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => {
+    const page = i + 2;
+    return { params: { n: String(page) } };
+  });
+}
+
+const { n } = Astro.params;
+const page = Number(n);
+
+const all = await getCollection("blog");
+
+const ptByKey = new Map(
+  all
+    .filter((p) => isPublished(p) && p.data.lang === 'pt' && p.data.translationKey)
+    .map((p) => [p.data.translationKey!, p.data.slug ?? p.id])
+);
+
+const allPosts = all
+  .filter((p) => isPublished(p))
+  .filter((p) => (p.data.lang ?? 'en') === 'en')
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const totalPages = Math.max(1, Math.ceil(allPosts.length / ARCHIVE_PER_PAGE));
+const posts = allPosts.slice((page - 1) * ARCHIVE_PER_PAGE, page * ARCHIVE_PER_PAGE);
+
+// PT may paginate into a different number of pages — only link to a PT page
+// that actually exists, else fall back to the PT archive's first page.
+const ptCount = all.filter((p) => isPublished(p) && (p.data.lang ?? 'en') === 'pt').length;
+const ptTotalPages = Math.max(1, Math.ceil(ptCount / ARCHIVE_PER_PAGE));
+const ptHref = page <= ptTotalPages ? `/pt/archive/page/${page}/` : "/pt/archive/";
+
+const byYear = new Map<number, typeof posts>();
+for (const post of posts) {
+  const year = post.data.date.getFullYear();
+  if (!byYear.has(year)) byYear.set(year, []);
+  byYear.get(year)!.push(post);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
+
+const rankByKey = getRankByKey();
+
+function estMinutes(body: string | undefined): number {
+  if (!body) return 1;
+  const words = body.trim().split(/\s+/).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
+const typeOrder = ["essay", "technical", "fiction", "letter", "dialogue"] as const;
+type PostType = (typeof typeOrder)[number];
+const typeCounts = new Map<PostType | "other", number>();
+for (const p of posts) {
+  const pt = (p.data.docType as PostType | undefined) ?? "other";
+  typeCounts.set(pt, (typeCounts.get(pt) ?? 0) + 1);
+}
+
+const archiveLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: `Archive — Page ${page} — Franklin Baldo`,
+  description: "All essays by Franklin Baldo, organized by year.",
+  inLanguage: "en-US",
+  url: Astro.site ? new URL(`/archive/page/${page}/`, Astro.site).href : `/archive/page/${page}/`,
+  hasPart: posts.map((p) => ({
+    "@type": "BlogPosting",
+    headline: p.data.title,
+    url: Astro.site ? new URL(`/blog/${p.data.slug ?? p.id}/`, Astro.site).href : `/blog/${p.data.slug ?? p.id}/`,
+    datePublished: p.data.date.toISOString(),
+  })),
+};
+---
+
+<PageLayout title={`Archive — Page ${page} | Franklin Baldo`} description="All essays, by year." lang="en" translations={{ pt: ptHref }} image="/og/archive.png">
+  <script type="application/ld+json" set:html={JSON.stringify(archiveLd)} is:inline slot="head" />
+  <hgroup>
+    <h1>Archive</h1>
+    <p><small>{posts.length} {t("en", "post.of")} {allPosts.length} essays · {t("en", "archive.page")} {page} {t("en", "post.of")} {totalPages}</small></p>
+  </hgroup>
+
+  <div class="type-filter" role="group" aria-label={t("en", "archive.filterType")}>
+    <small>{t("en", "archive.filterType")}</small>
+    <button class="type-btn active" data-type-filter="all" aria-pressed="true">{t("en", "archive.filterAll")} <span class="count">({posts.length})</span></button>
+    {typeOrder.filter(tp => typeCounts.has(tp)).map(tp => {
+      const labelKey = `post.type${tp.charAt(0).toUpperCase()}${tp.slice(1)}` as import("../../../lib/i18n").UIKey;
+      return (
+        <button class="type-btn" data-type-filter={tp} aria-pressed="false">
+          {t("en", labelKey)} <span class="count">({typeCounts.get(tp)})</span>
+        </button>
+      );
+    })}
+  </div>
+
+  {years.length > 1 && (
+    <nav class="year-jump" aria-label="Jump to year">
+      <small>{t("en", "archive.jumpToYear")}</small>
+      {years.map((year) => (
+        <a href={`#archive-${year}`}>{year}</a>
+      ))}
+    </nav>
+  )}
+
+  {years.map((year, idx) => (
+    <details id={`archive-${year}`} class="archive-year" open={idx === 0}>
+      <summary class="archive-year-summary">{year} — {byYear.get(year)!.length} posts</summary>
+      <table class="striped archive-table">
+        <thead>
+          <tr>
+            <th scope="col" class="col-date">Date</th>
+            <th scope="col">Title</th>
+            <th scope="col" class="col-min" aria-label="Estimated reading time">~min</th>
+            <th scope="col" class="col-rank" aria-label="Hrönir rank">#</th>
+            <th scope="col" class="col-pt" aria-label="Portuguese version available">PT</th>
+          </tr>
+        </thead>
+        <tbody>
+          {byYear.get(year)!.map((post) => {
+            const ptId = post.data.translationKey ? ptByKey.get(post.data.translationKey) : undefined;
+            const mins = estMinutes(post.body);
+            const rankInfo = post.data.translationKey ? rankByKey.get(post.data.translationKey) : undefined;
+            return (
+              <tr data-type={post.data.docType ?? "other"}>
+                <td class="col-date">
+                  <time datetime={post.data.date.toISOString()}>
+                    {post.data.date.toLocaleDateString("en-US", { month: "short", day: "2-digit" })}
+                  </time>
+                </td>
+                <td><a href={`/blog/${post.data.slug ?? post.id}/`}>{post.data.title}</a></td>
+                <td class="col-min">{mins}</td>
+                <td class="col-rank">
+                  {rankInfo && (
+                    <a class="rank-badge" href="/ranking/" title={`Hrönir rank: #${rankInfo.rank} of ${rankInfo.total} (ordinal ${rankInfo.row.ordinal.toFixed(2)})`}>
+                      #{rankInfo.rank}
+                    </a>
+                  )}
+                </td>
+                <td class="col-pt">
+                  {ptId && (
+                    <a class="pt-badge" href={`/pt/blog/${ptId}/`} aria-label="Portuguese version available" title="Ler em Português">PT</a>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </details>
+  ))}
+
+  <nav class="page-nav" aria-label="Archive pages">
+    {page > 2
+      ? <a href={`/archive/page/${page - 1}/`} class="nav-btn">{t("en", "archive.newer")}</a>
+      : <a href="/archive/" class="nav-btn">{t("en", "archive.newer")}</a>}
+    <span class="page-info">{t("en", "archive.page")} {page} {t("en", "post.of")} {totalPages}</span>
+    {page < totalPages
+      ? <a href={`/archive/page/${page + 1}/`} class="nav-btn">{t("en", "archive.older")}</a>
+      : <span class="nav-btn nav-disabled" aria-disabled="true">{t("en", "archive.older")}</span>}
+  </nav>
+</PageLayout>
+
+<style>
+  .year-jump {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: calc(var(--pico-spacing) * 1.5);
+    color: var(--pico-muted-color);
+  }
+  .year-jump a {
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.15em 0.5em;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--pico-primary) 10%, transparent);
+    color: var(--pico-primary);
+    border: 1px solid color-mix(in srgb, var(--pico-primary) 25%, transparent);
+    text-decoration: none;
+  }
+  .year-jump a:hover {
+    background: color-mix(in srgb, var(--pico-primary) 20%, transparent);
+    text-decoration: none;
+  }
+  details.archive-year {
+    margin-block: calc(var(--pico-spacing) * 1.5);
+    border: none;
+    padding: 0;
+  }
+  details.archive-year > summary {
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding-block: 0.3em;
+    color: var(--pico-heading-color, inherit);
+    list-style: none;
+    user-select: none;
+  }
+  details.archive-year > summary::-webkit-details-marker { display: none; }
+  details.archive-year > summary::before {
+    content: "▶ ";
+    font-size: 0.65em;
+    opacity: 0.45;
+    display: inline-block;
+    margin-inline-end: 0.2em;
+  }
+  details.archive-year[open] > summary::before { content: "▼ "; }
+  .archive-table { font-size: 0.95rem; }
+  .archive-table .col-date {
+    width: 6rem;
+    color: var(--pico-muted-color);
+    white-space: nowrap;
+  }
+  .archive-table th { font-weight: 600; }
+  .col-min {
+    width: 3.5rem;
+    text-align: right;
+    color: var(--pico-muted-color);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .col-rank {
+    width: 3rem;
+    text-align: right;
+    font-size: 0.78rem;
+    color: var(--pico-muted-color);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  a.rank-badge {
+    color: var(--pico-muted-color);
+    text-decoration: none;
+    font-variant-numeric: tabular-nums;
+  }
+  a.rank-badge:hover { color: var(--pico-primary); text-decoration: underline; }
+  .col-pt {
+    width: 2.5rem;
+    text-align: center;
+  }
+  a.pt-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--pico-primary) 15%, transparent);
+    color: var(--pico-primary);
+    border: 1px solid color-mix(in srgb, var(--pico-primary) 35%, transparent);
+    vertical-align: middle;
+    text-decoration: none;
+  }
+  a.pt-badge:hover {
+    background: color-mix(in srgb, var(--pico-primary) 25%, transparent);
+    text-decoration: underline;
+  }
+  @media (max-width: 480px) {
+    .col-min { display: none; }
+  }
+  .type-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-bottom: calc(var(--pico-spacing) * 1.5);
+    color: var(--pico-muted-color);
+  }
+  .type-btn {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.2em 0.65em;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--pico-muted-color);
+    border: 1px solid var(--pico-muted-border-color);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .type-btn:hover {
+    background: color-mix(in srgb, var(--pico-primary) 10%, transparent);
+    color: var(--pico-primary);
+    border-color: color-mix(in srgb, var(--pico-primary) 30%, transparent);
+  }
+  .type-btn.active, .type-btn[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--pico-primary) 15%, transparent);
+    color: var(--pico-primary);
+    border-color: color-mix(in srgb, var(--pico-primary) 40%, transparent);
+  }
+  .type-btn .count { font-weight: 400; opacity: 0.7; }
+  .page-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 1.5rem 0 0.5rem;
+  }
+  .page-info { font-size: 0.85rem; color: var(--pico-muted-color); }
+  .nav-btn {
+    padding: 0.35rem 0.9rem;
+    font-size: 0.85rem;
+    min-width: 7rem;
+    margin-bottom: 0;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    text-decoration: none;
+    color: var(--pico-color);
+    text-align: center;
+    display: inline-block;
+    background: var(--pico-card-background-color);
+    transition: border-color 0.15s;
+  }
+  .nav-btn:hover:not(.nav-disabled) { border-color: var(--pico-primary); }
+  .nav-disabled { color: var(--pico-muted-color); cursor: default; border-color: transparent; background: transparent; }
+</style>
+<script is:inline>
+  (function () {
+    const buttons = document.querySelectorAll('[data-type-filter]');
+    const rows = document.querySelectorAll('tr[data-type]');
+    const sections = document.querySelectorAll('.archive-year');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var type = btn.getAttribute('data-type-filter');
+        buttons.forEach(function (b) { b.setAttribute('aria-pressed', 'false'); b.classList.remove('active'); });
+        btn.setAttribute('aria-pressed', 'true');
+        btn.classList.add('active');
+        rows.forEach(function (row) {
+          row.style.display = (type === 'all' || row.getAttribute('data-type') === type) ? '' : 'none';
+        });
+        sections.forEach(function (sec) {
+          var hasVisible = Array.from(sec.querySelectorAll('tr[data-type]')).some(function (r) { return r.style.display !== 'none'; });
+          sec.style.display = hasVisible ? '' : 'none';
+        });
+      });
+    });
+  })();
+</script>

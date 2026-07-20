@@ -1,9 +1,10 @@
 ---
 import { getCollection } from "astro:content";
-import PageLayout from "../../layouts/PageLayout.astro";
-import { isPublished } from "../../lib/publish";
-import { t } from "../../lib/i18n";
-import { getRankByKey } from "../../lib/hronir-rank";
+import PageLayout from "../../../layouts/PageLayout.astro";
+import { isPublished } from "../../../lib/publish";
+import { t } from "../../../lib/i18n";
+import { getRankByKey } from "../../../lib/hronir-rank";
+import { ARCHIVE_PER_PAGE } from "../../../lib/archive";
 
 const all = await getCollection("blog");
 
@@ -14,14 +15,18 @@ const enByKey = new Map(
     .map((p) => [p.data.translationKey!, p.data.slug ?? p.id])
 );
 
-const posts = all
+const allPosts = all
   .filter((p) => isPublished(p))
   .filter((p) => (p.data.lang ?? 'en') === 'pt')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
+const totalPages = Math.max(1, Math.ceil(allPosts.length / ARCHIVE_PER_PAGE));
+const page = 1;
+const posts = allPosts.slice(0, ARCHIVE_PER_PAGE);
+
 const rankByKey = getRankByKey();
 
-// Collect type counts for filter buttons
+// Collect type counts for filter buttons (scoped to this page's posts)
 const typeOrder = ["essay", "technical", "fiction", "letter", "dialogue"] as const;
 type PostType = (typeof typeOrder)[number];
 const typeCounts = new Map<PostType | "other", number>();
@@ -70,14 +75,16 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
   <script type="application/ld+json" set:html={JSON.stringify(archiveLd)} is:inline slot="head" />
   <hgroup>
     <h1>Arquivo</h1>
-    <p><small>{posts.length} ensaios</small></p>
+    <p><small>{totalPages > 1
+      ? <>{posts.length} {t("pt", "post.of")} {allPosts.length} ensaios · {t("pt", "archive.page")} {page} {t("pt", "post.of")} {totalPages}</>
+      : <>{allPosts.length} ensaios</>}</small></p>
   </hgroup>
 
   <div class="type-filter" role="group" aria-label={t("pt", "archive.filterType")}>
     <small>{t("pt", "archive.filterType")}</small>
     <button class="type-btn active" data-type-filter="all" aria-pressed="true">{t("pt", "archive.filterAll")} <span class="count">({posts.length})</span></button>
     {typeOrder.filter(tp => typeCounts.has(tp)).map(tp => {
-      const labelKey = `post.type${tp.charAt(0).toUpperCase()}${tp.slice(1)}` as import("../../lib/i18n").UIKey;
+      const labelKey = `post.type${tp.charAt(0).toUpperCase()}${tp.slice(1)}` as import("../../../lib/i18n").UIKey;
       return (
         <button class="type-btn" data-type-filter={tp} aria-pressed="false">
           {t("pt", labelKey)} <span class="count">({typeCounts.get(tp)})</span>
@@ -141,6 +148,14 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
       </table>
     </details>
   ))}
+
+  {totalPages > 1 && (
+    <nav class="page-nav" aria-label="Páginas do arquivo">
+      <span class="nav-btn nav-disabled" aria-disabled="true">{t("pt", "archive.newer")}</span>
+      <span class="page-info">{t("pt", "archive.page")} {page} {t("pt", "post.of")} {totalPages}</span>
+      <a href="/pt/archive/page/2/" class="nav-btn">{t("pt", "archive.older")}</a>
+    </nav>
+  )}
 </PageLayout>
 
 <style>
@@ -272,6 +287,30 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
     border-color: color-mix(in srgb, var(--pico-primary) 40%, transparent);
   }
   .type-btn .count { font-weight: 400; opacity: 0.7; }
+  .page-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 1.5rem 0 0.5rem;
+  }
+  .page-info { font-size: 0.85rem; color: var(--pico-muted-color); }
+  .nav-btn {
+    padding: 0.35rem 0.9rem;
+    font-size: 0.85rem;
+    min-width: 7rem;
+    margin-bottom: 0;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    text-decoration: none;
+    color: var(--pico-color);
+    text-align: center;
+    display: inline-block;
+    background: var(--pico-card-background-color);
+    transition: border-color 0.15s;
+  }
+  .nav-btn:hover:not(.nav-disabled) { border-color: var(--pico-primary); }
+  .nav-disabled { color: var(--pico-muted-color); cursor: default; border-color: transparent; background: transparent; }
 </style>
 <script is:inline>
   (function () {
