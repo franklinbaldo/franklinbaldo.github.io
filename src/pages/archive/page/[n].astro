@@ -4,15 +4,15 @@ import PageLayout from "../../../layouts/PageLayout.astro";
 import { isPublished } from "../../../lib/publish";
 import { t } from "../../../lib/i18n";
 import { getRankByKey } from "../../../lib/hronir-rank";
+import { ARCHIVE_PER_PAGE } from "../../../lib/archive";
 
 export async function getStaticPaths() {
-  const PER_PAGE = 50;
   const all = await getCollection("blog");
   const allPosts = all
     .filter((p) => isPublished(p))
     .filter((p) => (p.data.lang ?? 'en') === 'en')
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-  const totalPages = Math.max(1, Math.ceil(allPosts.length / PER_PAGE));
+  const totalPages = Math.max(1, Math.ceil(allPosts.length / ARCHIVE_PER_PAGE));
   // Only generate pages 2+ (page 1 is archive/index.astro)
   return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => {
     const page = i + 2;
@@ -36,9 +36,14 @@ const allPosts = all
   .filter((p) => (p.data.lang ?? 'en') === 'en')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const PER_PAGE = 50;
-const totalPages = Math.max(1, Math.ceil(allPosts.length / PER_PAGE));
-const posts = allPosts.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+const totalPages = Math.max(1, Math.ceil(allPosts.length / ARCHIVE_PER_PAGE));
+const posts = allPosts.slice((page - 1) * ARCHIVE_PER_PAGE, page * ARCHIVE_PER_PAGE);
+
+// PT may paginate into a different number of pages — only link to a PT page
+// that actually exists, else fall back to the PT archive's first page.
+const ptCount = all.filter((p) => isPublished(p) && (p.data.lang ?? 'en') === 'pt').length;
+const ptTotalPages = Math.max(1, Math.ceil(ptCount / ARCHIVE_PER_PAGE));
+const ptHref = page <= ptTotalPages ? `/pt/archive/page/${page}/` : "/pt/archive/";
 
 const byYear = new Map<number, typeof posts>();
 for (const post of posts) {
@@ -80,11 +85,11 @@ const archiveLd = {
 };
 ---
 
-<PageLayout title={`Archive — Page ${page} | Franklin Baldo`} description="All essays, by year." lang="en" translations={{ pt: `/pt/archive/page/${page}/` }} image="/og/archive.png">
+<PageLayout title={`Archive — Page ${page} | Franklin Baldo`} description="All essays, by year." lang="en" translations={{ pt: ptHref }} image="/og/archive.png">
   <script type="application/ld+json" set:html={JSON.stringify(archiveLd)} is:inline slot="head" />
   <hgroup>
     <h1>Archive</h1>
-    <p><small>{allPosts.length} essays · {t("en", "archive.page")} {page} {t("en", "post.of")} {totalPages}</small></p>
+    <p><small>{posts.length} {t("en", "post.of")} {allPosts.length} essays · {t("en", "archive.page")} {page} {t("en", "post.of")} {totalPages}</small></p>
   </hgroup>
 
   <div class="type-filter" role="group" aria-label={t("en", "archive.filterType")}>

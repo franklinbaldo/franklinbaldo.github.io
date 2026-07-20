@@ -4,6 +4,7 @@ import PageLayout from "../../../layouts/PageLayout.astro";
 import { isPublished } from "../../../lib/publish";
 import { t } from "../../../lib/i18n";
 import { getRankByKey } from "../../../lib/hronir-rank";
+import { ARCHIVE_PER_PAGE } from "../../../lib/archive";
 
 const all = await getCollection("blog");
 
@@ -19,10 +20,9 @@ const allPosts = all
   .filter((p) => (p.data.lang ?? 'en') === 'pt')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const PER_PAGE = 50;
-const totalPages = Math.max(1, Math.ceil(allPosts.length / PER_PAGE));
+const totalPages = Math.max(1, Math.ceil(allPosts.length / ARCHIVE_PER_PAGE));
 const page = 1;
-const posts = allPosts.slice(0, PER_PAGE);
+const posts = allPosts.slice(0, ARCHIVE_PER_PAGE);
 
 const rankByKey = getRankByKey();
 
@@ -75,7 +75,9 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
   <script type="application/ld+json" set:html={JSON.stringify(archiveLd)} is:inline slot="head" />
   <hgroup>
     <h1>Arquivo</h1>
-    <p><small>{allPosts.length} ensaios{totalPages > 1 && <> · {t("pt", "archive.page")} {page} {t("pt", "post.of")} {totalPages}</>}</small></p>
+    <p><small>{totalPages > 1
+      ? <>{posts.length} {t("pt", "post.of")} {allPosts.length} ensaios · {t("pt", "archive.page")} {page} {t("pt", "post.of")} {totalPages}</>
+      : <>{allPosts.length} ensaios</>}</small></p>
   </hgroup>
 
   <div class="type-filter" role="group" aria-label={t("pt", "archive.filterType")}>

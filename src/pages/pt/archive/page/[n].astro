@@ -4,15 +4,15 @@ import PageLayout from "../../../../layouts/PageLayout.astro";
 import { isPublished } from "../../../../lib/publish";
 import { t } from "../../../../lib/i18n";
 import { getRankByKey } from "../../../../lib/hronir-rank";
+import { ARCHIVE_PER_PAGE } from "../../../../lib/archive";
 
 export async function getStaticPaths() {
-  const PER_PAGE = 50;
   const all = await getCollection("blog");
   const allPosts = all
     .filter((p) => isPublished(p))
     .filter((p) => (p.data.lang ?? 'en') === 'pt')
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-  const totalPages = Math.max(1, Math.ceil(allPosts.length / PER_PAGE));
+  const totalPages = Math.max(1, Math.ceil(allPosts.length / ARCHIVE_PER_PAGE));
   // Only generate pages 2+ (page 1 is pt/archive/index.astro)
   return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => {
     const page = i + 2;
@@ -36,9 +36,14 @@ const allPosts = all
   .filter((p) => (p.data.lang ?? 'en') === 'pt')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const PER_PAGE = 50;
-const totalPages = Math.max(1, Math.ceil(allPosts.length / PER_PAGE));
-const posts = allPosts.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+const totalPages = Math.max(1, Math.ceil(allPosts.length / ARCHIVE_PER_PAGE));
+const posts = allPosts.slice((page - 1) * ARCHIVE_PER_PAGE, page * ARCHIVE_PER_PAGE);
+
+// EN may paginate into a different number of pages — only link to an EN page
+// that actually exists, else fall back to the EN archive's first page.
+const enCount = all.filter((p) => isPublished(p) && (p.data.lang ?? 'en') === 'en').length;
+const enTotalPages = Math.max(1, Math.ceil(enCount / ARCHIVE_PER_PAGE));
+const enHref = page <= enTotalPages ? `/archive/page/${page}/` : "/archive/";
 
 const rankByKey = getRankByKey();
 
@@ -84,13 +89,13 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
   title={`Arquivo — Página ${page} | Franklin Baldo`}
   description="Todos os ensaios, por ano."
   lang="pt"
-  translations={{ en: `/archive/page/${page}/` }}
+  translations={{ en: enHref }}
   image="/og/archive-pt.png"
 >
   <script type="application/ld+json" set:html={JSON.stringify(archiveLd)} is:inline slot="head" />
   <hgroup>
     <h1>Arquivo</h1>
-    <p><small>{allPosts.length} ensaios · {t("pt", "archive.page")} {page} {t("pt", "post.of")} {totalPages}</small></p>
+    <p><small>{posts.length} {t("pt", "post.of")} {allPosts.length} ensaios · {t("pt", "archive.page")} {page} {t("pt", "post.of")} {totalPages}</small></p>
   </hgroup>
 
   <div class="type-filter" role="group" aria-label={t("pt", "archive.filterType")}>
