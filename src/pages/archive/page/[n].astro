@@ -1,23 +1,44 @@
 ---
 import { getCollection } from "astro:content";
-import PageLayout from "../layouts/PageLayout.astro";
-import { isPublished } from "../lib/publish";
-import { t } from "../lib/i18n";
-import { getRankByKey } from "../lib/hronir-rank";
+import PageLayout from "../../../layouts/PageLayout.astro";
+import { isPublished } from "../../../lib/publish";
+import { t } from "../../../lib/i18n";
+import { getRankByKey } from "../../../lib/hronir-rank";
+
+export async function getStaticPaths() {
+  const PER_PAGE = 50;
+  const all = await getCollection("blog");
+  const allPosts = all
+    .filter((p) => isPublished(p))
+    .filter((p) => (p.data.lang ?? 'en') === 'en')
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  const totalPages = Math.max(1, Math.ceil(allPosts.length / PER_PAGE));
+  // Only generate pages 2+ (page 1 is archive/index.astro)
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => {
+    const page = i + 2;
+    return { params: { n: String(page) } };
+  });
+}
+
+const { n } = Astro.params;
+const page = Number(n);
 
 const all = await getCollection("blog");
 
-// Build map: translationKey → PT post id (for badge links)
 const ptByKey = new Map(
   all
     .filter((p) => isPublished(p) && p.data.lang === 'pt' && p.data.translationKey)
     .map((p) => [p.data.translationKey!, p.data.slug ?? p.id])
 );
 
-const posts = all
+const allPosts = all
   .filter((p) => isPublished(p))
   .filter((p) => (p.data.lang ?? 'en') === 'en')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const PER_PAGE = 50;
+const totalPages = Math.max(1, Math.ceil(allPosts.length / PER_PAGE));
+const posts = allPosts.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
 const byYear = new Map<number, typeof posts>();
 for (const post of posts) {
@@ -35,7 +56,6 @@ function estMinutes(body: string | undefined): number {
   return Math.max(1, Math.round(words / 200));
 }
 
-// Collect type counts for filter buttons
 const typeOrder = ["essay", "technical", "fiction", "letter", "dialogue"] as const;
 type PostType = (typeof typeOrder)[number];
 const typeCounts = new Map<PostType | "other", number>();
@@ -47,10 +67,10 @@ for (const p of posts) {
 const archiveLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  name: "Archive — Franklin Baldo",
+  name: `Archive — Page ${page} — Franklin Baldo`,
   description: "All essays by Franklin Baldo, organized by year.",
   inLanguage: "en-US",
-  url: Astro.site ? new URL("/archive/", Astro.site).href : "/archive/",
+  url: Astro.site ? new URL(`/archive/page/${page}/`, Astro.site).href : `/archive/page/${page}/`,
   hasPart: posts.map((p) => ({
     "@type": "BlogPosting",
     headline: p.data.title,
@@ -60,18 +80,18 @@ const archiveLd = {
 };
 ---
 
-<PageLayout title="Archive | Franklin Baldo" description="All essays, by year." lang="en" translations={{ pt: "/pt/archive/" }} image="/og/archive.png">
+<PageLayout title={`Archive — Page ${page} | Franklin Baldo`} description="All essays, by year." lang="en" translations={{ pt: `/pt/archive/page/${page}/` }} image="/og/archive.png">
   <script type="application/ld+json" set:html={JSON.stringify(archiveLd)} is:inline slot="head" />
   <hgroup>
     <h1>Archive</h1>
-    <p><small>{posts.length} essays</small></p>
+    <p><small>{allPosts.length} essays · {t("en", "archive.page")} {page} {t("en", "post.of")} {totalPages}</small></p>
   </hgroup>
 
   <div class="type-filter" role="group" aria-label={t("en", "archive.filterType")}>
     <small>{t("en", "archive.filterType")}</small>
     <button class="type-btn active" data-type-filter="all" aria-pressed="true">{t("en", "archive.filterAll")} <span class="count">({posts.length})</span></button>
     {typeOrder.filter(tp => typeCounts.has(tp)).map(tp => {
-      const labelKey = `post.type${tp.charAt(0).toUpperCase()}${tp.slice(1)}` as import("../lib/i18n").UIKey;
+      const labelKey = `post.type${tp.charAt(0).toUpperCase()}${tp.slice(1)}` as import("../../../lib/i18n").UIKey;
       return (
         <button class="type-btn" data-type-filter={tp} aria-pressed="false">
           {t("en", labelKey)} <span class="count">({typeCounts.get(tp)})</span>
@@ -135,6 +155,16 @@ const archiveLd = {
       </table>
     </details>
   ))}
+
+  <nav class="page-nav" aria-label="Archive pages">
+    {page > 2
+      ? <a href={`/archive/page/${page - 1}/`} class="nav-btn">{t("en", "archive.newer")}</a>
+      : <a href="/archive/" class="nav-btn">{t("en", "archive.newer")}</a>}
+    <span class="page-info">{t("en", "archive.page")} {page} {t("en", "post.of")} {totalPages}</span>
+    {page < totalPages
+      ? <a href={`/archive/page/${page + 1}/`} class="nav-btn">{t("en", "archive.older")}</a>
+      : <span class="nav-btn nav-disabled" aria-disabled="true">{t("en", "archive.older")}</span>}
+  </nav>
 </PageLayout>
 
 <style>
@@ -266,6 +296,30 @@ const archiveLd = {
     border-color: color-mix(in srgb, var(--pico-primary) 40%, transparent);
   }
   .type-btn .count { font-weight: 400; opacity: 0.7; }
+  .page-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 1.5rem 0 0.5rem;
+  }
+  .page-info { font-size: 0.85rem; color: var(--pico-muted-color); }
+  .nav-btn {
+    padding: 0.35rem 0.9rem;
+    font-size: 0.85rem;
+    min-width: 7rem;
+    margin-bottom: 0;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    text-decoration: none;
+    color: var(--pico-color);
+    text-align: center;
+    display: inline-block;
+    background: var(--pico-card-background-color);
+    transition: border-color 0.15s;
+  }
+  .nav-btn:hover:not(.nav-disabled) { border-color: var(--pico-primary); }
+  .nav-disabled { color: var(--pico-muted-color); cursor: default; border-color: transparent; background: transparent; }
 </style>
 <script is:inline>
   (function () {
