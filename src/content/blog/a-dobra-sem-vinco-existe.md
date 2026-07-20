@@ -1,7 +1,7 @@
 ---
 type: Blog Post
 title: "A dobra sem vinco existe"
-description: "No dia em que a Conjectura Jacobiana caiu em dimensão 3, um mapa polinomial mostrou como três lugares podem virar um sem qualquer singularidade local."
+description: "Uma conversa sobre a imagem impossível, interrompida horas depois pela chegada do próprio polinômio."
 docType: essay
 date: 2026-07-20
 lang: pt
@@ -14,7 +14,7 @@ tags:
 emoji: "🌀"
 ---
 
-Hoje de manhã eu estava conversando com uma IA sobre problemas matemáticos com implicações filosóficas. Chegamos à Conjectura Jacobiana, e a pergunta que ficou foi esta: se ela fosse falsa, daria para fazer uma imagem que só passaria a fazer sentido depois que alguém encontrasse um contraexemplo polinomial de verdade?
+Hoje, 20 de julho de 2026,<sup><a href="#nota-1" aria-label="Ver nota 1">1</a></sup> de manhã eu estava conversando com uma IA sobre problemas matemáticos com implicações filosóficas. Chegamos à Conjectura Jacobiana, e a pergunta que ficou foi esta: se ela fosse falsa, daria para fazer uma imagem que só passaria a fazer sentido depois que alguém encontrasse um contraexemplo polinomial de verdade?
 
 A resposta parecia segura: dava para desenhar analogias — uma malha que se enrola, duas folhas que se sobrepõem, o mapa exponencial —, mas a imagem decisiva teria que esperar. A conjectura continuava aberta havia mais de um século. Sem o polinômio, todo “dobramento sem vinco” seria metáfora.
 
@@ -66,7 +66,7 @@ $$
 F:\mathbb R^3\to\mathbb R^3.
 $$
 
-Isso permite desenhar o fenômeno exato, e não um substituto exponencial. A projeção usada abaixo é apenas a velha projeção de três dimensões para a tela; os pontos, as matrizes jacobianas e as igualdades são os do mapa polinomial.
+Isso permite desenhar o fenômeno exato, e não um substituto exponencial. A projeção usada abaixo é apenas a velha projeção de três dimensões para a tela; os pontos, as matrizes jacobianas e as igualdades são os do mapa polinomial. As setas entre domínio e imagem indicam a relação $F$, não trajetórias percorridas pelos pontos.
 
 <div style="margin:1.75rem 0;border:1px solid var(--pico-muted-border-color);border-radius:1rem;overflow:hidden;background:#09090b;">
   <iframe
@@ -122,10 +122,8 @@ Caiu a Conjectura Jacobiana como afirmação para todas as dimensões. Caiu tamb
 
 Não caiu o teorema da função inversa: ele continua garantindo precisamente o que sempre garantiu, uma inversa local. Não caiu automaticamente o caso $\mathbb C^2\to\mathbb C^2$. E não surgiu uma contradição na matemática: surgiu um objeto que a conjectura dizia não poder existir.
 
+<p id="nota-1"><small><sup>1</sup> O mapa foi <a href="https://x.com/__alpoge__/status/2079028340955197566">divulgado por Levent Alpöge</a>, que atribuiu a pergunta a Akhil e a produção do exemplo a Fable. A fórmula recebeu <a href="https://zzhang-iu.github.io/papers/direct-consequences-jacobian/">verificação pública independente</a>, mas a história da descoberta, a atribuição completa e uma apresentação acadêmica formal ainda estão sendo consolidadas. Este texto se apoia somente nas identidades algébricas diretamente verificáveis: $\det JF=-2$ e $F(A)=F(B)=F(C)$.</small></p>
+
 Há uma ironia boa nisso tudo. A pergunta filosófica era se o todo poderia esconder uma ambiguidade ausente de cada parte local. A resposta chegou não como ensaio, mas como três pontos e um determinante:
 
 > Não existe local do crime. Existe apenas o crime global.
-
-## Nota sobre o momento da publicação
-
-O mapa foi divulgado publicamente em 20 de julho de 2026 por Levent Alpöge, que atribuiu a pergunta a Akhil e a produção do exemplo a Fable. A fórmula já recebeu verificações públicas independentes, mas a história da descoberta, a atribuição completa e uma apresentação acadêmica formal ainda estão sendo consolidadas. Este post se apoia somente nas duas identidades algébricas que podem ser conferidas diretamente: $\det JF=-2$ e $F(A)=F(B)=F(C)$.
