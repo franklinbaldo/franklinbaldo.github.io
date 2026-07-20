@@ -57,7 +57,7 @@ function addAxes(svg, origin, scale, opacity = 0.45) {
         stroke: "#71717a",
         "stroke-width": 1,
         "stroke-opacity": opacity,
-      }),
+      })
     );
     svg.append(
       el(
@@ -68,8 +68,8 @@ function addAxes(svg, origin, scale, opacity = 0.45) {
           fill: "#71717a",
           "font-size": 10,
         },
-        label,
-      ),
+        label
+      )
     );
   });
 }
@@ -88,8 +88,8 @@ function drawCollision() {
         "font-size": 13,
         "text-anchor": "middle",
       },
-      "DOMÍNIO  ℝ³",
-    ),
+      "DOMÍNIO  ℝ³"
+    )
   );
   collisionSvg.append(
     el(
@@ -101,8 +101,8 @@ function drawCollision() {
         "font-size": 13,
         "text-anchor": "middle",
       },
-      "IMAGEM  ℝ³",
-    ),
+      "IMAGEM  ℝ³"
+    )
   );
   collisionSvg.append(
     el("line", {
@@ -112,7 +112,7 @@ function drawCollision() {
       y2: 405,
       stroke: "#2b2b31",
       "stroke-dasharray": "5 7",
-    }),
+    })
   );
 
   const domainOrigin = [190, 345];
@@ -137,7 +137,7 @@ function drawCollision() {
         "stroke-opacity": 0.5,
         "stroke-dasharray": "5 5",
         "marker-end": `url(#arrow-${index})`,
-      }),
+      })
     );
     collisionSvg.append(
       el("circle", {
@@ -145,7 +145,7 @@ function drawCollision() {
         cy: domainPoint[1],
         r: 10,
         fill: colors[index],
-      }),
+      })
     );
     collisionSvg.append(
       el(
@@ -158,8 +158,8 @@ function drawCollision() {
           "font-weight": 800,
           "text-anchor": "middle",
         },
-        item.name,
-      ),
+        item.name
+      )
     );
     collisionSvg.append(
       el(
@@ -171,8 +171,8 @@ function drawCollision() {
           "font-size": 11,
           "text-anchor": "middle",
         },
-        item.text,
-      ),
+        item.text
+      )
     );
   });
 
@@ -200,7 +200,7 @@ function drawCollision() {
       fill: "#fbbf2422",
       stroke: "#fbbf24",
       "stroke-width": 2,
-    }),
+    })
   );
   collisionSvg.append(
     el(
@@ -213,8 +213,8 @@ function drawCollision() {
         "font-weight": 800,
         "text-anchor": "middle",
       },
-      "T",
-    ),
+      "T"
+    )
   );
   collisionSvg.append(
     el(
@@ -226,8 +226,8 @@ function drawCollision() {
         "font-size": 13,
         "text-anchor": "middle",
       },
-      "F(A)=F(B)=F(C)=(−1/4, 0, 0)",
-    ),
+      "F(A)=F(B)=F(C)=(−1/4, 0, 0)"
+    )
   );
   collisionSvg.append(
     el(
@@ -239,8 +239,8 @@ function drawCollision() {
         "font-size": 11,
         "text-anchor": "middle",
       },
-      "setas = relação F, não trajetória",
-    ),
+      "setas = relação F, não trajetória"
+    )
   );
 }
 
@@ -282,7 +282,7 @@ function drawCurve() {
   const panelHeight = (height - pad.top - pad.bottom - panelGap * 2) / 3;
   const ts = Array.from(
     { length: 321 },
-    (_, index) => -1.35 + (index * 2.7) / 320,
+    (_, index) => -1.35 + (index * 2.7) / 320
   );
   const values = ts.map(mapCurve);
   const names = ["P(γ(t))", "Q(γ(t))", "R(γ(t))"];
@@ -308,7 +308,7 @@ function drawCurve() {
         rx: 8,
         fill: "#09090b66",
         stroke: "#27272a",
-      }),
+      })
     );
 
     const reference = collisionValues[coordinate];
@@ -321,7 +321,7 @@ function drawCurve() {
           y2: scaleY(reference),
           stroke: "#52525b",
           "stroke-width": 1,
-        }),
+        })
       );
     }
 
@@ -335,14 +335,14 @@ function drawCurve() {
           stroke: "#fbbf24",
           "stroke-dasharray": "4 5",
           "stroke-opacity": 0.62,
-        }),
+        })
       );
     });
 
     const polyline = values
       .map(
         (value, index) =>
-          `${scaleX(ts[index]).toFixed(2)},${scaleY(value[coordinate]).toFixed(2)}`,
+          `${scaleX(ts[index]).toFixed(2)},${scaleY(value[coordinate]).toFixed(2)}`
       )
       .join(" ");
     curveSvg.append(
@@ -352,7 +352,7 @@ function drawCurve() {
         stroke: colors[coordinate],
         "stroke-width": 2,
         "stroke-linejoin": "round",
-      }),
+      })
     );
 
     [-1, 0, 1].forEach((t) => {
@@ -365,7 +365,7 @@ function drawCurve() {
           fill: colors[coordinate],
           stroke: "#09090b",
           "stroke-width": 1.5,
-        }),
+        })
       );
     });
 
@@ -379,8 +379,8 @@ function drawCurve() {
           "font-size": 12,
           "font-weight": 700,
         },
-        name,
-      ),
+        name
+      )
     );
     curveSvg.append(
       el(
@@ -392,8 +392,8 @@ function drawCurve() {
           "font-size": 9,
           "text-anchor": "end",
         },
-        formatTick(maximum),
-      ),
+        formatTick(maximum)
+      )
     );
     curveSvg.append(
       el(
@@ -405,8 +405,8 @@ function drawCurve() {
           "font-size": 9,
           "text-anchor": "end",
         },
-        formatTick(minimum),
-      ),
+        formatTick(minimum)
+      )
     );
     curveSvg.append(
       el(
@@ -418,8 +418,8 @@ function drawCurve() {
           "font-size": 9,
           "text-anchor": "end",
         },
-        coordinate === 0 ? "−1/4" : "0",
-      ),
+        coordinate === 0 ? "−1/4" : "0"
+      )
     );
   });
 
@@ -434,8 +434,8 @@ function drawCurve() {
           "font-size": 11,
           "text-anchor": "middle",
         },
-        `t=${t}`,
-      ),
+        `t=${t}`
+      )
     );
   });
   curveSvg.append(
@@ -448,8 +448,8 @@ function drawCurve() {
         "font-size": 9,
         "text-anchor": "middle",
       },
-      "cada painel tem escala vertical própria; nenhum valor foi truncado",
-    ),
+      "cada painel tem escala vertical própria; nenhum valor foi truncado"
+    )
   );
 }
 
@@ -457,7 +457,7 @@ drawCurve();
 
 function matVec(matrix, vector) {
   return matrix.map(
-    (row) => row[0] * vector[0] + row[1] * vector[1] + row[2] * vector[2],
+    (row) => row[0] * vector[0] + row[1] * vector[1] + row[2] * vector[2]
   );
 }
 
@@ -480,7 +480,7 @@ function wireframe(svg, matrix, color) {
       const distance = vertices[first].reduce(
         (sum, value, coordinate) =>
           sum + Math.abs(value - vertices[second][coordinate]),
-        0,
+        0
       );
       if (distance === 2) edges.push([first, second]);
     }
@@ -496,8 +496,8 @@ function wireframe(svg, matrix, color) {
         stroke: color,
         "stroke-width": 1.8,
         "stroke-opacity": 0.85,
-      }),
-    ),
+      })
+    )
   );
   svg.append(
     el("circle", {
@@ -505,7 +505,7 @@ function wireframe(svg, matrix, color) {
       cy: origin[1],
       r: 3,
       fill: "#fbbf24",
-    }),
+    })
   );
 }
 
@@ -534,5 +534,5 @@ document.querySelectorAll(".tab").forEach((button) =>
       .forEach((item) => item.classList.remove("active"));
     button.classList.add("active");
     document.getElementById(button.dataset.view).classList.add("active");
-  }),
+  })
 );
