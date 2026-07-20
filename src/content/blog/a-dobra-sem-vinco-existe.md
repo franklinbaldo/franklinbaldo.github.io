@@ -5,6 +5,7 @@ description: "Uma conversa sobre a imagem impossível, interrompida horas depois
 docType: essay
 date: 2026-07-20
 lang: pt
+translationKey: the-crease-free-fold-exists
 tags:
   - matemática
   - conjectura jacobiana
