@@ -1,0 +1,41 @@
+name: Prettier debug
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Prettier — experiment HTML
+        run: npx prettier --check public/experimentos/dobra-sem-vinco/index.html
+
+      - name: Prettier — experiment CSS
+        run: npx prettier --check public/experimentos/dobra-sem-vinco/styles.css
+
+      - name: Prettier — experiment JavaScript
+        run: npx prettier --check public/experimentos/dobra-sem-vinco/app.js
+
+      - name: Prettier — blog post
+        run: npx prettier --check src/content/blog/a-dobra-sem-vinco-existe.md
+
+      - name: Prettier — repository remainder
+        run: |
+          cp .prettierignore /tmp/prettierignore
+          cat >> /tmp/prettierignore <<'EOF'
+          public/experimentos/dobra-sem-vinco/index.html
+          public/experimentos/dobra-sem-vinco/styles.css
+          public/experimentos/dobra-sem-vinco/app.js
+          src/content/blog/a-dobra-sem-vinco-existe.md
+          EOF
+          npx prettier --check . --ignore-path /tmp/prettierignore
