@@ -139,10 +139,10 @@ const booksJsonLd = {
       <>
         <div class="books-controls">
           <div class="filter-pills" role="group" aria-label={ui.ariaFilter}>
-            <button class="pill active" data-filter="liked">
+            <button class="pill active" data-filter="liked" aria-pressed="true">
               {ui.filterFavorites} <span class="pill-count">{likedCount}</span>
             </button>
-            <button class="pill" data-filter="all">
+            <button class="pill" data-filter="all" aria-pressed="false">
               {ui.filterAll} <span class="pill-count">{books.length}</span>
             </button>
           </div>
@@ -259,8 +259,12 @@ const booksJsonLd = {
 
   pills.forEach((pill) => {
     pill.addEventListener("click", () => {
-      pills.forEach((p) => p.classList.remove("active"));
+      pills.forEach((p) => {
+        p.classList.remove("active");
+        p.setAttribute("aria-pressed", "false");
+      });
       pill.classList.add("active");
+      pill.setAttribute("aria-pressed", "true");
       currentFilter = pill.dataset.filter ?? "liked";
       applyFilterAndSort();
     });
