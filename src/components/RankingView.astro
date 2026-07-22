@@ -70,6 +70,9 @@ export interface RankingStrings {
   perspectivesViewAllLink: string;
   allBattlesLinkText: string;
   readAnalysisLinkLabel: string;
+  allPerspectivesLabel: string;
+  tensionUnavailable: string;
+  eloTooltip: string;
 }
 
 interface Props {
@@ -242,7 +245,7 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
 {perspectivesGrid && perspectivesGrid.length > 0 && (
   <nav class="persp-tabs" aria-label={strings.perspectivesHeading}>
     <a href={lang === "pt" ? "/pt/ranking/" : "/ranking/"} class="persp-tab persp-tab-all">
-      All
+      {strings.allPerspectivesLabel}
     </a>
     {perspectivesGrid.map((p) => (
       <a
@@ -298,9 +301,14 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
             : null;
           const eloClass = eloData == null ? "" : eloData.elo > 1000 ? "elo-up" : eloData.elo < 1000 ? "elo-down" : "";
           const eloDelta = eloData ? eloData.elo - 1000 : 0;
-          const eloTitle = eloData ? `Elo: ${eloData.elo} (${eloDelta >= 0 ? "+" : ""}${eloDelta} since 1000 · peak: ${eloData.peak})` : "";
+          const eloTitle = eloData
+            ? strings.eloTooltip
+                .replace("{elo}", String(eloData.elo))
+                .replace("{delta}", `${eloDelta >= 0 ? "+" : ""}${eloDelta}`)
+                .replace("{peak}", String(eloData.peak))
+            : "";
           const podiumClass = r.rank === 1 ? "row-gold" : r.rank === 2 ? "row-silver" : r.rank === 3 ? "row-bronze" : "";
-          const podiumLabel = r.rank === 1 ? "1st place" : r.rank === 2 ? "2nd place" : r.rank === 3 ? "3rd place" : undefined;
+          const podiumLabel = r.rank === 1 ? strings.podiumGold : r.rank === 2 ? strings.podiumSilver : r.rank === 3 ? strings.podiumBronze : undefined;
           const eloVal = snapshotElo(r.key)?.elo ?? 0;
           return (
             <tr
@@ -418,7 +426,7 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
                 <div class="bcl-fill loss" style={`width:${100 - tensionPct}%`}></div>
               </div>
             ) : (
-              <div class="bcl-tension bcl-tension-none" aria-label="tension not available"></div>
+              <div class="bcl-tension bcl-tension-none" aria-label={strings.tensionUnavailable}></div>
             )}
             <span class="bcl-read">{strings.readAnalysisLinkLabel} →</span>
           </a>

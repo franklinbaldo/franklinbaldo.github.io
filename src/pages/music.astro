@@ -225,9 +225,9 @@ const showGenreChips =
     <section>
       {showGenreChips && (
         <div class="genre-chips" id="genre-chips" role="group" aria-label="Filter by genre">
-          <button class="genre-chip active" data-genre="all" type="button">All</button>
+          <button class="genre-chip active" data-genre="all" type="button" aria-pressed="true">All</button>
           {allGenres.map((g) => (
-            <button class="genre-chip" data-genre={g} type="button">{g}</button>
+            <button class="genre-chip" data-genre={g} type="button" aria-pressed="false">{g}</button>
           ))}
         </div>
       )}
@@ -460,8 +460,12 @@ const showGenreChips =
         const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-genre]");
         if (!btn) return;
         const genre = btn.dataset.genre || "all";
-        chipsContainer.querySelectorAll(".genre-chip").forEach((c) => c.classList.remove("active"));
+        chipsContainer.querySelectorAll(".genre-chip").forEach((c) => {
+          c.classList.remove("active");
+          c.setAttribute("aria-pressed", "false");
+        });
         btn.classList.add("active");
+        btn.setAttribute("aria-pressed", "true");
         allCards().forEach((card) => {
           if (genre === "all") { card.hidden = false; return; }
           const genres = (card.dataset.genres || "").split(",");
