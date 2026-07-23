@@ -339,8 +339,10 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
     const sections = document.querySelectorAll('.archive-year');
     function openHashSection() {
       if (!location.hash) return;
-      var target = document.querySelector(location.hash);
-      if (target && target.tagName === 'DETAILS') target.open = true;
+      try {
+        var target = document.querySelector(location.hash);
+        if (target && target.tagName === 'DETAILS') target.open = true;
+      } catch (e) {}
     }
     openHashSection();
     window.addEventListener('hashchange', openHashSection);
