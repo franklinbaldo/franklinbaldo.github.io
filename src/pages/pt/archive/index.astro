@@ -317,6 +317,13 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
     const buttons = document.querySelectorAll('[data-type-filter]');
     const rows = document.querySelectorAll('tr[data-type]');
     const sections = document.querySelectorAll('.archive-year');
+    function openHashSection() {
+      if (!location.hash) return;
+      var target = document.querySelector(location.hash);
+      if (target && target.tagName === 'DETAILS') target.open = true;
+    }
+    openHashSection();
+    window.addEventListener('hashchange', openHashSection);
     buttons.forEach(function (btn) {
       btn.addEventListener('click', function () {
         var type = btn.getAttribute('data-type-filter');
