@@ -10,6 +10,8 @@ interface Props {
 
 const { title, url, lang } = Astro.props;
 const shareLabel = t(lang, "post.share");
+const copiedLabel = t(lang, "post.copied");
+const errorLabel = t(lang, "post.copyError");
 ---
 
 <button
@@ -17,6 +19,9 @@ const shareLabel = t(lang, "post.share");
   class="share-fab share-button"
   data-title={title}
   data-url={url}
+  data-default-label=""
+  data-copied={copiedLabel}
+  data-error={errorLabel}
   aria-label={shareLabel}
   title={shareLabel}
 >
@@ -25,6 +30,7 @@ const shareLabel = t(lang, "post.share");
     <path d="M16 6l-4-4-4 4"/>
     <line x1="12" y1="2" x2="12" y2="15"/>
   </svg>
+  <span class="share-label sr-only" aria-live="polite"></span>
 </button>
 
 <style>
@@ -53,6 +59,17 @@ const shareLabel = t(lang, "post.share");
   .share-fab svg {
     width: 20px;
     height: 20px;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
   /* Stack the share FAB above the BackToTop pill so they don't overlap. */
   @media (min-width: 600px) {
