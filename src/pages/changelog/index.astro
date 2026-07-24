@@ -15,93 +15,210 @@ const fmt = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
   month: "long",
   day: "numeric",
+  timeZone: "UTC",
 });
+
+const repositoryUrl = "https://github.com/franklinbaldo/franklinbaldo.github.io";
 ---
 
 <PageLayout
   title="Changelog | Franklin Baldo"
-  description="Release notes for this repo — what changed, version by version."
+  description="Release notes for the site and Hrönir, listed version by version."
   lang="en"
+  breadcrumb={[
+    { name: "Home", item: new URL("/", Astro.site).href },
+    { name: "Changelog", item: new URL("/changelog/", Astro.site).href },
+  ]}
 >
-  <hgroup>
+  <header class="changelog-intro">
     <h1>Changelog</h1>
-    <p>
-      <small>
-        One entry per version, as
-        <a href="https://github.com/franklinbaldo/franklinbaldo.github.io/blob/main/docs/okf/README.md"
-          >OKF</a
-        > markdown — see
-        <a href="https://github.com/franklinbaldo/franklinbaldo.github.io/tree/main/changelog"
-          >changelog/</a
-        > for the raw files.
-      </small>
-    </p>
-  </hgroup>
+    <p>Release notes for the site and Hrönir, newest first.</p>
+    <nav class="changelog-resources" aria-label="Changelog resources">
+      <a href={`${repositoryUrl}/tree/main/changelog`}>Source files</a>
+      <span aria-hidden="true">·</span>
+      <a href={`${repositoryUrl}/blob/main/docs/okf/README.md`}>Changelog format</a>
+    </nav>
+  </header>
 
-  {
-    rendered.map(({ entry, Content }) => (
-      <article id={entry.data.version} class="changelog-entry">
-        <header>
-          <hgroup>
-            <h2>
-              <a href={`#${entry.data.version}`}>{entry.data.version}</a>
-            </h2>
-            <p>
-              <small>
-                <time datetime={entry.data.date.toISOString()}>
-                  {fmt.format(entry.data.date)}
-                </time>
-              </small>
-            </p>
-          </hgroup>
-          {entry.data.tags && entry.data.tags.length > 0 && (
-            <p class="changelog-tags">
-              {entry.data.tags.map((tag) => (
-                <span class="tag-pill">#{tag}</span>
-              ))}
-            </p>
-          )}
-        </header>
-        <div class="prose">
-          <Content />
-        </div>
-      </article>
-    ))
-  }
+  <div class="changelog-list">
+    {
+      rendered.map(({ entry, Content }) => {
+        const anchor = `version-${entry.data.version}`;
+
+        return (
+          <article id={anchor} class="changelog-entry">
+            <header class="release-header">
+              <div>
+                <p class="release-label">Release</p>
+                <h2>
+                  <a
+                    href={`#${anchor}`}
+                    aria-label={`Permanent link to version ${entry.data.version}`}
+                  >
+                    <span aria-hidden="true">v</span>
+                    {entry.data.version}
+                  </a>
+                </h2>
+              </div>
+              <time datetime={entry.data.date.toISOString()}>
+                {fmt.format(entry.data.date)}
+              </time>
+            </header>
+
+            <p class="release-summary">{entry.data.description}</p>
+
+            {entry.data.tags && entry.data.tags.length > 0 && (
+              <ul class="changelog-tags" aria-label="Release tags">
+                {entry.data.tags.map((tag) => (
+                  <li>#{tag}</li>
+                ))}
+              </ul>
+            )}
+
+            <div class="prose">
+              <Content />
+            </div>
+          </article>
+        );
+      })
+    }
+  </div>
 </PageLayout>
 
 <style>
+  .changelog-intro {
+    max-width: 46rem;
+    margin-bottom: 3rem;
+  }
+
+  .changelog-intro h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .changelog-intro > p {
+    margin-bottom: 0.65rem;
+    color: var(--pico-muted-color);
+    font-size: 1.05rem;
+  }
+
+  .changelog-resources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-items: center;
+    font-size: 0.85rem;
+  }
+
+  .changelog-list {
+    max-width: 52rem;
+  }
+
   .changelog-entry {
-    margin-bottom: 2.5rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--pico-muted-border-color);
+    position: relative;
+    padding: 0 0 3rem 2rem;
+    border-left: 1px solid var(--pico-muted-border-color);
   }
+
+  .changelog-entry::before {
+    position: absolute;
+    top: 0.55rem;
+    left: -0.36rem;
+    width: 0.68rem;
+    height: 0.68rem;
+    border: 2px solid var(--pico-background-color);
+    border-radius: 50%;
+    background: var(--pico-primary);
+    content: "";
+  }
+
   .changelog-entry:last-child {
-    border-bottom: none;
+    padding-bottom: 0;
   }
-  .changelog-entry h2 {
-    margin-bottom: 0.25rem;
+
+  .release-header {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
   }
-  .changelog-entry h2 a {
-    text-decoration: none;
+
+  .release-label {
+    margin: 0 0 0.1rem;
+    color: var(--pico-muted-color);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .release-header h2 {
+    margin: 0;
+    font-size: clamp(1.45rem, 4vw, 1.9rem);
+  }
+
+  .release-header h2 a {
     color: inherit;
+    text-decoration: none;
   }
-  .changelog-entry h2 a:hover {
+
+  .release-header h2 a:hover {
     color: var(--pico-primary);
   }
+
+  .release-header time {
+    padding-top: 0.35rem;
+    color: var(--pico-muted-color);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .release-summary {
+    max-width: 48rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.05rem;
+  }
+
   .changelog-tags {
-    margin: 0.25rem 0 1rem;
-  }
-  .tag-pill {
-    display: inline-block;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.75rem;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    color: var(--pico-muted-color);
     font-size: 0.72rem;
-    color: var(--pico-muted-color);
-    margin-right: 0.5rem;
+    list-style: none;
   }
-  .prose :global(h2) {
-    font-size: 1rem;
+
+  .prose :global(h3) {
+    margin-top: 1.75rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
     color: var(--pico-muted-color);
+  }
+
+  .prose :global(li + li) {
+    margin-top: 0.85rem;
+  }
+
+  .prose :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 34rem) {
+    .changelog-entry {
+      padding-left: 1.35rem;
+    }
+
+    .release-header {
+      display: block;
+    }
+
+    .release-header time {
+      display: block;
+      padding-top: 0.35rem;
+    }
   }
 </style>
