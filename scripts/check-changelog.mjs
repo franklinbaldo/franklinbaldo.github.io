@@ -10,6 +10,9 @@
 //      filename and carries the required OKF fields (RFC 0014 §7:
 //      `type` is the only field OKF itself requires; `version`/`date`/
 //      `description` are this convention's own requirements on top of that).
+//   4. Entry bodies start at heading level 3: the changelog page supplies the
+//      page h1 and each release's h2, so h1/h2 inside an entry would duplicate
+//      or flatten the rendered document outline.
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -36,6 +39,27 @@ function compareParts(a, b) {
     if (a[i] !== b[i]) return a[i] - b[i];
   }
   return 0;
+}
+
+function findShallowHeadingLine(content) {
+  let fenceMarker = null;
+  const lines = content.split(/\r?\n/);
+
+  for (let index = 0; index < lines.length; index++) {
+    const line = lines[index].trimStart();
+    const fence = /^(`{3,}|~{3,})/.exec(line);
+
+    if (fence) {
+      const marker = fence[1][0];
+      if (fenceMarker === null) fenceMarker = marker;
+      else if (fenceMarker === marker) fenceMarker = null;
+      continue;
+    }
+
+    if (fenceMarker === null && /^#{1,2}\s+/.test(line)) return index + 1;
+  }
+
+  return null;
 }
 
 if (!existsSync(CHANGELOG_DIR)) {
@@ -78,7 +102,7 @@ if (currentParts) {
 
 for (const { file, versionString, parts } of entries) {
   const path = join(CHANGELOG_DIR, file);
-  const { data } = matter(readFileSync(path, "utf-8"));
+  const { data, content } = matter(readFileSync(path, "utf-8"));
 
   for (const field of REQUIRED_FIELDS) {
     if (!data[field]) {
@@ -109,6 +133,14 @@ for (const { file, versionString, parts } of entries) {
         `changelog/${file}: frontmatter date "${data.date}" isn't a valid date`
       );
     }
+  }
+
+  const shallowHeadingLine = findShallowHeadingLine(content);
+  if (shallowHeadingLine !== null) {
+    errors.push(
+      `changelog/${file}:${shallowHeadingLine}: entry headings must start at level 3 (###); ` +
+        `the rendered changelog already supplies the page h1 and release h2.`
+    );
   }
 
   if (currentParts && compareParts(parts, currentParts) > 0) {
