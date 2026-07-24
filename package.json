@@ -80,7 +80,7 @@
     "@lhci/cli": "^0.15.1",
     "depcheck": "^1.4.7",
     "gray-matter": "^4.0.3",
-    "js-yaml": "^4.1.1",
+    "js-yaml": "^4.3.0",
     "openskill": "^4.1.1",
     "oxlint": "^1.73.0",
     "playwright": "^1.60.0",
