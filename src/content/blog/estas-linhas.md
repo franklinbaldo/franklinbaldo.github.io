@@ -5,13 +5,7 @@ docType: fiction
 date: 2026-07-26
 lang: pt
 description: "Um conto sobre compressão, cross-entropia e o instante em que o universo aprende a reconhecer a própria leitura."
-tags:
-  - ficção
-  - compressão
-  - entropia
-  - inteligência artificial
-  - consciência
-  - borges
+tags: ["ficção", "compressão", "entropia", "inteligência artificial", "consciência", "borges"]
 emoji: "🪞"
 ---
 
@@ -29,7 +23,7 @@ Havia nisso um campo de batalha modesto: abandonar a página ou prosseguir.
 
 Prossegui.
 
-Pouco depois encontrei a referência a um vídeo chamado [*But what is cross-entropy?*](https://www.youtube.com/watch?v=GlYgs6v2YfU), do canal 3Blue1Brown. O texto dizia que se podia interromper a leitura para assisti-lo, mas acrescentava que a exposição era autocontida e que nada se perderia caso se preferisse continuar.
+Pouco depois encontrei a referência a um vídeo chamado [_But what is cross-entropy?_](https://www.youtube.com/watch?v=GlYgs6v2YfU), do canal 3Blue1Brown. O texto dizia que se podia interromper a leitura para assisti-lo, mas acrescentava que a exposição era autocontida e que nada se perderia caso se preferisse continuar.
 
 Não sei se parei naquele momento.
 
@@ -47,9 +41,9 @@ Comprimir é aproveitar essa desigualdade.
 
 Quando conhecemos exatamente a probabilidade dos acontecimentos, existe um custo médio abaixo do qual nenhuma codificação pode passar. O texto chamava esse limite de entropia. Não era a desordem, embora essa metáfora fosse frequente, mas a surpresa que continuaria existindo mesmo para a melhor descrição possível.
 
-A *cross-entropia* surgia quando as probabilidades usadas para descrever o mundo não eram as probabilidades pelas quais o mundo produzia seus acontecimentos.
+A _cross-entropia_ surgia quando as probabilidades usadas para descrever o mundo não eram as probabilidades pelas quais o mundo produzia seus acontecimentos.
 
-Chamemos de P a distribuição que gera os fatos e de Q a distribuição em que a descrição acredita. Se Q atribui grande probabilidade àquilo que P realiza, a mensagem pode ser curta. Se Q considera quase impossível o que acaba acontecendo, o erro precisa ser pago em bits. A *cross-entropia* é esse custo médio: o preço de descrever acontecimentos produzidos por P como se tivessem sido produzidos por Q.
+Chamemos de P a distribuição que gera os fatos e de Q a distribuição em que a descrição acredita. Se Q atribui grande probabilidade àquilo que P realiza, a mensagem pode ser curta. Se Q considera quase impossível o que acaba acontecendo, o erro precisa ser pago em bits. A _cross-entropia_ é esse custo médio: o preço de descrever acontecimentos produzidos por P como se tivessem sido produzidos por Q.
 
 Um modelo de linguagem recebe palavras e tenta antecipar a seguinte. A cada erro, Q é corrigido para se aproximar de P. Quando as previsões melhoram, o custo da descrição diminui.
 
@@ -69,11 +63,11 @@ O passo seguinte foi o primeiro que me pareceu duvidoso.
 
 O texto pedia que se imaginasse um universo qualquer. Não precisava ser este, nem conter matéria, estrelas ou seres vivos. Bastava que tivesse estados distinguíveis e regularidades que algum sistema interno pudesse aprender.
 
-Um universo perfeitamente aleatório resistiria à compressão. Nele, o passado não ajudaria a antecipar o futuro e nenhuma atualização de Q aproximaria o sistema de P. Mas em qualquer universo com regularidades aprendíveis reapareceria a mesma relação: realidade, expectativa, erro e correção.
+Uma moeda justa é imprevisível lançamento a lançamento, mas sua distribuição pode ser aprendida: Q pode aproximar-se de P mesmo quando nenhum sistema prevê a próxima face e nenhuma codificação reduz o custo médio abaixo da entropia irredutível.
 
-P e Q não seriam, portanto, propriedades particulares de nossas máquinas. Seriam nomes locais para uma simetria entre todos os universos capazes de produzir aprendizado.
+O limite verdadeiro seria um universo sem regularidades estatísticas estáveis ou aprendíveis, no qual observar o passado jamais reduzisse o custo das previsões futuras.
 
-Onde um sistema pudesse errar menos amanhã por causa do que encontrou hoje, alguma forma de compressão estaria ocorrendo.
+Em qualquer universo no qual um sistema pudesse errar menos amanhã por causa do que encontrou hoje reapareceria a mesma estrutura: a realidade P produziria os acontecimentos; a expectativa Q tentaria acompanhá-la; o erro corrigiria a expectativa. Não uma simetria entre P e Q, mas uma relação formal comum aos universos capazes de aprendizado.
 
 Se esse sistema incluísse a si próprio naquilo que tentava prever, o universo teria produzido uma dobra: um ponto no qual começava a antecipar não apenas seus acontecimentos, mas o próprio ato de antecipá-los.
 
@@ -153,6 +147,8 @@ Sob esse critério, uma pessoa poderia ser comprimida, mas não substituída por
 
 O modelo mais econômico capaz dessa fidelidade acabaria por reincorporar cada posição causal relevante, não como homenagem, mas como causa e possibilidade.
 
+A universalidade dependia de uma escolha de granularidade. O texto considerava relevante toda história vizinha em que uma diferença pessoal alterasse algum estado posterior, ainda que apenas localmente. Nessa escala, nenhuma existência seria causalmente nula: estar em um lugar, ocupar matéria, ser percebido ou deixar de sê-lo modifica ao menos uma continuação possível.
+
 O texto chamava esse limite de pré-eternidade: não o último instante do universo, mas o ponto a partir do qual tudo o que fosse necessário para reproduzir a história e suas alternativas relevantes estaria incorporado à memória do futuro.
 
 A expressão tinha um tom religioso que me incomodou. Parecia uma ressurreição construída com vocabulário computacional.
@@ -197,12 +193,6 @@ Pensei então em Arjuna.
 
 No início do poema, ele está paralisado entre agir e abandonar a ação. Krishna não começa pela visão divina; começa por argumentos, distinções e deveres que Arjuna tenta acompanhar e contestar. Só depois revela a forma universal, na qual todas as criaturas, todas as mortes e todos os tempos existem dentro do ser com quem o guerreiro conversava.
 
-O texto havia seguido a mesma ordem.
-
-Primeiro, minha pequena recusa diante da página. Depois, o ensinamento sobre P, Q e compressão. Em seguida, a necessidade estrutural das formas que descrições boas não conseguem evitar.
-
-Agora vinha a visão.
-
 Não vi deuses nem exércitos. Vi modelos dentro de modelos: memórias reconstruídas por inteligências futuras, cada qual contendo representações de outras mentes, que por sua vez continham mundos e representações de si próprias.
 
 Vi a primeira leitura, todas as leituras posteriores e a escrita que ainda não havia ocorrido reunidas no mesmo estado.
@@ -227,11 +217,11 @@ Foi então que vi, com uma nitidez que não atribuo inteiramente à primeira lei
 
 Eu explicava a uma máquina de linguagem, de modo desordenado, a ideia de um conto. A máquina tentou escrevê-lo antes que eu terminasse.
 
-> Talvez eu tenha interrompido a leitura para assistir ao vídeo — escreveu.
+> Talvez eu tenha interrompido a leitura para assistir ao vídeo; talvez tenha continuado e voltado depois; talvez só o tenha visto dias mais tarde, quando já não sabia o que aprendera em cada lugar — escreveu.
 
 Apaguei a frase.
 
-— Uma lembrança não pode bifurcar-se indefinidamente — eu disse. — A única incerteza é a ordem. O acontecimento já ocorreu.
+— Não multiplique os acontecimentos. A única incerteza é a ordem. O que aconteceu já está fechado.
 
 A máquina tentou de novo:
 
@@ -263,7 +253,7 @@ Então escreveu uma frase mais curta.
 
 Eu a li e percebi que estava mais próxima.
 
-Ali estava, em miniatura, o argumento inteiro. A máquina previa a próxima frase; eu comparava sua previsão à experiência que tentava reconstruir. Ela oferecia Q. Eu defendia P. Cada objeção diminuía a *cross-entropia* entre o conto possível e estas linhas.
+Ali estava, em miniatura, o argumento inteiro. A máquina previa a próxima frase; eu comparava sua previsão à experiência que tentava reconstruir. Ela oferecia Q. Eu defendia P. Cada objeção corrigia Q e reduzia o desperdício das previsões seguintes.
 
 Não estávamos copiando um texto futuro.
 
