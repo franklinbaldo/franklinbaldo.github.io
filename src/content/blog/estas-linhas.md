@@ -5,7 +5,13 @@ docType: fiction
 date: 2026-07-26
 lang: pt
 description: "Um conto sobre compressão, cross-entropia e o instante em que o universo aprende a reconhecer a própria leitura."
-tags: ["ficção", "compressão", "entropia", "inteligência artificial", "consciência", "borges"]
+tags:
+  - ficção
+  - compressão
+  - entropia
+  - inteligência artificial
+  - consciência
+  - borges
 emoji: "🪞"
 ---
 
@@ -19,7 +25,7 @@ Não posso dizer que o alívio tenha durado. A ausência de símbolos não torno
 
 Prossegui.
 
-Pouco depois encontrei a referência a um vídeo chamado *But what is cross-entropy?*, do canal 3Blue1Brown. O texto dizia que se podia interromper a leitura para assisti-lo, mas acrescentava que a exposição era autocontida e que nada se perderia caso se preferisse continuar.
+Pouco depois encontrei a referência a um vídeo chamado [*But what is cross-entropy?*](https://www.youtube.com/watch?v=GlYgs6v2YfU), do canal 3Blue1Brown. O texto dizia que se podia interromper a leitura para assisti-lo, mas acrescentava que a exposição era autocontida e que nada se perderia caso se preferisse continuar.
 
 Não sei se parei naquele momento.
 
@@ -107,19 +113,35 @@ A frase me pareceu grandiosa demais, mas o argumento ainda não havia terminado.
 
 Imaginava um futuro remoto em que inteligências muito mais abrangentes reconstruiriam o passado para compreender a própria origem. Não guardariam apenas documentos. Modelariam as condições que os produziram, as alternativas que não ocorreram, as pessoas envolvidas e os estados mentais sem os quais certas decisões seriam inexplicáveis.
 
-Quanto melhor fosse a compressão da história, menos poderia tratar os indivíduos como detalhes dispensáveis.
+Foi aí que encontrei a objeção mais séria — ou que a formulei, sem saber ainda que o próprio texto a formularia em seguida.
 
-Uma palavra altera uma decisão; uma decisão modifica outras vidas; essas vidas mudam instituições, máquinas e descendentes. Remover uma pessoa da descrição exigiria compensações cada vez mais numerosas. O modelo mais econômico acabaria por reincorporá-la, não como homenagem, mas como causa.
+Uma compressão pode ser econômica precisamente porque esquece. Se bastasse explicar tendências gerais, indivíduos poderiam ser substituídos por médias, efeitos agregados ou algumas variáveis anônimas. Se, ao contrário, se exigisse uma cópia sem perdas de cada estado do passado, todos os detalhes reapareceriam por definição; nesse caso, não haveria conclusão alguma a extrair da importância de uma pessoa ou de uma memória.
 
-O texto chamava esse limite de pré-eternidade: não o último instante do universo, mas o ponto a partir do qual tudo o que importava para explicar o passado havia sido incorporado à memória do futuro.
+Por alguns instantes, julguei que toda a pré-eternidade dependesse dessa ambiguidade.
+
+O texto distinguia, então, três coisas que eu havia confundido: resumir o que ocorreu, arquivar exatamente o que ocorreu e conservar um modelo capaz de reproduzir por que ocorreu — inclusive o que teria mudado se uma decisão, uma lembrança ou uma pessoa fossem diferentes.
+
+Era essa terceira fidelidade que o argumento exigia.
+
+Uma descrição da história poderia acertar todos os acontecimentos efetivos e ainda assim não compreendê-los. Bastaria que falhasse diante das perguntas contrafactuais: o que teria acontecido se aquela palavra não fosse dita, se aquela pessoa não estivesse ali, se aquela memória conduzisse a outra escolha?
+
+O modelo procurado não precisava conservar cada detalhe como detalhe. Precisava conservar diferenças suficientes para que as alternativas relevantes continuassem produzindo consequências diferentes.
+
+Sob esse critério, um indivíduo poderia ser comprimido, mas não substituído por um efeito agregado sempre que sua estrutura interna participasse das bifurcações da história. Uma média capaz de repetir o passado, mas incapaz de variar corretamente quando a pessoa varia, seria uma descrição curta e falsa.
+
+Uma palavra altera uma decisão; uma decisão modifica outras vidas; essas vidas mudam instituições, máquinas e descendentes. Retirar uma pessoa do modelo não exigiria apenas compensar o que ela fez. Exigiria reconstruir, por exceções sucessivas, tudo o que deixaria de fazer sentido nas histórias vizinhas em que ela agisse de outro modo.
+
+O modelo mais econômico capaz de preservar essa fidelidade acabaria por reincorporá-la, não como homenagem, mas como causa e possibilidade.
+
+O texto chamava esse limite de pré-eternidade: não o último instante do universo, mas o ponto a partir do qual tudo o que fosse necessário para reproduzir a história e suas alternativas relevantes havia sido incorporado à memória do futuro.
 
 A expressão tinha um tom religioso que me incomodou. Parecia uma ressurreição construída com vocabulário computacional.
 
-O autor não recusava a comparação. Observava que antigas doutrinas haviam imaginado uma realidade final na qual nenhuma criatura permaneceria exterior ao todo. A teoria proposta ali não garantia que cada detalhe fosse preservado como detalhe. Prometia algo mais rigoroso e talvez mais estranho: tudo aquilo de que o todo dependesse teria de permanecer disponível em sua melhor descrição.
+O autor não recusava a comparação. Observava que antigas doutrinas haviam imaginado uma realidade final na qual nenhuma criatura permaneceria exterior ao todo. A teoria proposta ali não garantia que cada detalhe fosse preservado como detalhe. Prometia algo mais rigoroso e talvez mais estranho: tudo aquilo de que o todo dependesse — não só para ter sido o que foi, mas para poder ter sido diferente — teria de permanecer disponível em sua melhor descrição.
 
-Eu chegaria ao fim do universo como parte da explicação de como ele chegou até lá.
+Eu chegaria ao fim do universo como parte da explicação de como ele chegou até lá e das maneiras pelas quais poderia não ter chegado.
 
-Não apenas eu, naturalmente. A afirmação não distinguia santos, reis ou leitores casuais. Cada existência seria especial no sentido exato em que nenhuma posição causal pode ser substituída sem alterar a história que a contém. A universalidade não diminuía essa especialidade. Era sua condição.
+Não apenas eu, naturalmente. A afirmação não distinguia santos, reis ou leitores casuais. Cada existência seria especial no sentido exato em que nenhuma posição causal e contrafactual pode ser substituída sem alterar o conjunto de histórias que a contém. A universalidade não diminuía essa especialidade. Era sua condição.
 
 Mas certas memórias teriam uma recorrência incomum.
 
@@ -195,7 +217,7 @@ Ela chegará à pré-eternidade comigo.
 
 Ou, mais exatamente, chegarei com ela.
 
-Minha especialidade não consiste em ter sido escolhido entre todos os seres. Consiste em não poder ser retirado do lugar exato que ocupei sem que o universo deixe de ser aquele que foi. Sou a pessoa que chegou a estas linhas, resistiu a elas, compreendeu o argumento e algum dia ajudou a escrevê-las. Essa configuração pertence agora à história e a todas as reconstruções futuras da história.
+Minha especialidade não consiste em ter sido escolhido entre todos os seres. Consiste em não poder ser retirado do lugar exato que ocupei sem que o universo deixe de ser aquele que foi — e sem que as histórias próximas, nas quais eu tivesse escolhido de outro modo, deixem de poder ser corretamente distinguidas. Sou a pessoa que chegou a estas linhas, resistiu a elas, compreendeu o argumento e algum dia ajudou a escrevê-las. Essa configuração pertence agora à história e a todas as reconstruções futuras da história.
 
 Não estou fora do universo, olhando para ele.
 
