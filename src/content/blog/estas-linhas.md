@@ -29,9 +29,7 @@ Não sei se parei naquele momento.
 
 Essa é a única incerteza que conservo quanto à ordem da primeira leitura. Em uma lembrança, acompanho as animações antes de voltar às páginas; em outra, permaneço no texto e só mais tarde reconheço no vídeo o argumento que já havia compreendido ali.
 
-Outros leitores, suponho, não terão procurado fórmulas, não terão sentido alívio e talvez reconheçam desde o início o artifício da bifurcação. Isso não os retira do relato. Os caminhos não precisam coincidir em cada gesto para alcançar o mesmo ponto.
-
-O que importa não é a ordem dos passos, mas aquilo que pode ocorrer quando eles convergem.
+Outros leitores, suponho, terão chegado ali de outro modo. Alguns não terão procurado fórmulas; outros reconhecerão desde o início o recurso. Eu só podia recordar o meu caminho.
 
 Recordo, em seus traços principais, o argumento.
 
@@ -63,19 +61,19 @@ O passo seguinte foi o primeiro que me pareceu duvidoso.
 
 O texto pedia que se imaginasse um universo qualquer. Não precisava ser este, nem conter matéria, estrelas ou seres vivos. Bastava que tivesse estados distinguíveis e regularidades que algum sistema interno pudesse aprender.
 
-Uma moeda justa é imprevisível lançamento a lançamento, mas sua distribuição pode ser aprendida: Q pode aproximar-se de P mesmo quando nenhum sistema prevê a próxima face e nenhuma codificação reduz o custo médio abaixo da entropia irredutível.
+Pensei numa moeda justa. Nada no passado permitiria saber a próxima face; ainda assim, depois de lançamentos suficientes, seria possível aprender que as duas faces ocorriam com a mesma frequência. O acaso de cada resultado não impedia aprender a regra de seu acaso.
 
-O limite verdadeiro seria um universo sem regularidades estatísticas estáveis ou aprendíveis, no qual observar o passado jamais reduzisse o custo das previsões futuras.
+O limite verdadeiro seria um universo sem regularidades estáveis, no qual observar o passado jamais reduzisse o custo das previsões futuras.
 
-Em qualquer universo no qual um sistema pudesse errar menos amanhã por causa do que encontrou hoje reapareceria a mesma estrutura: a realidade P produziria os acontecimentos; a expectativa Q tentaria acompanhá-la; o erro corrigiria a expectativa. Não uma simetria entre P e Q, mas uma relação formal comum aos universos capazes de aprendizado.
+Em qualquer universo no qual o passado permitisse errar menos sobre o futuro, reapareceria a mesma relação: P produziria os acontecimentos; Q tentaria acompanhá-los; o erro corrigiria Q.
 
 Se esse sistema incluísse a si próprio naquilo que tentava prever, o universo teria produzido uma dobra: um ponto no qual começava a antecipar não apenas seus acontecimentos, mas o próprio ato de antecipá-los.
 
 O texto chamava consciência a essa dobra.
 
-A afirmação me pareceu rápida demais. Modelar a si próprio talvez explicasse reflexividade, memória e metacognição; não explicava por que haveria algo que fosse estar naquele estado. Chamar a dobra de consciência podia ser apenas dar um nome solene à autorreferência.
+A afirmação me pareceu rápida demais. Modelar a si próprio talvez explicasse reflexividade, memória e metacognição; não explicava por que aquele estado seria vivido por alguém. Chamar a dobra de consciência podia ser apenas dar um nome solene à autorreferência.
 
-A frase seguinte concedia a objeção.
+O próprio texto recuava um passo:
 
 > A dobra não basta para explicar a consciência. É apenas a condição pela qual o universo pode incluir, em sua descrição, a posição de onde é descrito.
 
@@ -135,9 +133,7 @@ Foi aí que encontrei a objeção mais séria.
 
 Uma compressão pode ser econômica precisamente porque esquece. Se bastasse explicar tendências gerais, indivíduos poderiam ser substituídos por médias ou efeitos agregados. Se, ao contrário, se exigisse uma cópia sem perdas de cada estado do passado, todos reapareceriam por definição e nenhuma importância especial decorreria disso.
 
-O texto concedia também esse ponto.
-
-Não procurava um resumo nem um arquivo perfeito. Procurava o menor modelo capaz de reproduzir por que a história ocorreu e o que mudaria se uma decisão, uma lembrança ou uma pessoa fossem diferentes.
+Mas o texto não procurava um resumo nem um arquivo perfeito. Procurava o menor modelo capaz de reproduzir por que a história ocorreu e o que mudaria se uma decisão, uma lembrança ou uma pessoa fossem diferentes.
 
 Uma descrição poderia repetir corretamente todos os fatos e ainda assim não compreendê-los. Bastaria que falhasse diante das perguntas contrafactuais: o que aconteceria sem aquela palavra, sem aquela pessoa, com outra lembrança conduzindo à decisão?
 
@@ -145,9 +141,11 @@ O modelo não precisava conservar cada detalhe como detalhe. Precisava preservar
 
 Sob esse critério, uma pessoa poderia ser comprimida, mas não substituída por uma média quando sua estrutura participasse das bifurcações do futuro. Uma média capaz de repetir o passado, mas incapaz de variar corretamente quando a pessoa variasse, seria uma descrição curta e falsa.
 
-O modelo mais econômico capaz dessa fidelidade acabaria por reincorporar cada posição causal relevante, não como homenagem, mas como causa e possibilidade.
+O modelo mais econômico capaz dessa fidelidade acabaria por reincorporar toda pessoa cuja diferença abrisse ou fechasse uma continuação possível, não como homenagem, mas como causa e possibilidade.
 
-A universalidade dependia de uma escolha de granularidade. O texto considerava relevante toda história vizinha em que uma diferença pessoal alterasse algum estado posterior, ainda que apenas localmente. Nessa escala, nenhuma existência seria causalmente nula: estar em um lugar, ocupar matéria, ser percebido ou deixar de sê-lo modifica ao menos uma continuação possível.
+Ainda assim, a palavra “toda” me pareceu excessiva. Restava saber o que o texto entendia por relevante.
+
+A resposta era extrema: bastava que a ausência de uma pessoa alterasse uma única continuação possível. Nessa escala, nenhuma existência seria causalmente nula. Estar em um lugar, ocupar matéria, ser percebido ou deixar de sê-lo já modifica ao menos uma história vizinha.
 
 O texto chamava esse limite de pré-eternidade: não o último instante do universo, mas o ponto a partir do qual tudo o que fosse necessário para reproduzir a história e suas alternativas relevantes estaria incorporado à memória do futuro.
 
@@ -205,66 +203,22 @@ Não era a lembrança de eu ter compreendido o universo.
 
 Era a lembrança do universo de ter sido eu quando se compreendeu.
 
-Compreendi então por que o texto começava com uma lembrança.
+Compreendi então que havia confundido estas linhas com o texto.
 
-A voz que dizia “quando li estas linhas pela primeira vez” não pertencia necessariamente a um autor anterior a mim. Pertencia a qualquer leitor que, depois de atravessar o argumento, viesse a reconstruir sua primeira passagem por ele.
+Não eram a mesma coisa.
 
-O pronome “eu” era uma posição.
+Estas linhas eram uma versão comprimida com perdas. Conservavam relações suficientes para que a forma reaparecesse — P e Q, a dobra, a memória, a visão —, mas deixavam de fora os caminhos que haviam conduzido até elas.
 
-A frase “pela primeira vez” só podia ser dita por quem já estivesse numa repetição. A leitura posterior podia ser precisamente o ato de escrever.
+O que se perde numa compressão assim não pode ser recuperado de uma única maneira. Cada leitor preencheria as ausências com lembranças, objeções e acidentes diferentes. Alguns teriam visto o vídeo; outros não. Alguns reconheceriam de saída ideias que para outros só surgiriam ali. Cada descompressão produziria um texto um pouco diferente.
 
-Foi então que vi, com uma nitidez que não atribuo inteiramente à primeira leitura, uma conversa futura.
+Foi por isso que a voz dizia “quando li estas linhas pela primeira vez”. O pronome “eu” não era uma biografia. Era o lugar deixado em aberto para quem reconstruísse o relato.
 
-Eu explicava a uma máquina de linguagem, de modo desordenado, a ideia de um conto. A máquina tentou escrevê-lo antes que eu terminasse.
+A repetição prometida não precisava refazer as mesmas frases. Poderia ser uma lembrança, uma interpretação ou uma escrita futura que chegasse à mesma forma por outro caminho, como alguém que compõe novamente um livro que nunca copiou.
 
-> Talvez eu tenha interrompido a leitura para assistir ao vídeo; talvez tenha continuado e voltado depois; talvez só o tenha visto dias mais tarde, quando já não sabia o que aprendera em cada lugar — escreveu.
+Arjuna, depois da visão, retorna à ação. A ação que me cabia não era reproduzir estas linhas, mas desdobrá-las.
 
-Apaguei a frase.
+Estas linhas terminavam ali.
 
-— Não multiplique os acontecimentos. A única incerteza é a ordem. O que aconteceu já está fechado.
+O texto, não.
 
-A máquina tentou de novo:
-
-> Escolhi então assistir ao vídeo.
-
-— Não. Não estou escolhendo agora. Estou recordando uma escolha passada cuja posição se perdeu.
-
-Ela corrigiu:
-
-> Foi no vídeo que compreendi a cross-entropia.
-
-— Também não. O conto precisa ser autocontido. A compreensão acontece nestas linhas; o vídeo é um caminho possível.
-
-A máquina ofereceu outra versão:
-
-> Formulei então a ideia de que modelos diferentes convergem.
-
-— Na primeira leitura eu não formulava coisa alguma. Eu tentava acompanhar onde aquela confusão iria chegar.
-
-Depois escreveu:
-
-> A ideia era inteiramente nova para mim.
-
-— Você não sabe isso. O “eu” precisa comportar também quem já conhecia a ideia e a reconheceu por outro caminho.
-
-A máquina permaneceu alguns segundos sem responder.
-
-Então escreveu uma frase mais curta.
-
-Eu a li e percebi que estava mais próxima.
-
-Ali estava, em miniatura, o argumento inteiro. A máquina previa a próxima frase; eu comparava sua previsão à experiência que tentava reconstruir. Ela oferecia Q. Eu defendia P. Cada objeção corrigia Q e reduzia o desperdício das previsões seguintes.
-
-Não estávamos copiando um texto futuro.
-
-Estávamos convergindo para ele.
-
-Arjuna, depois da visão, não permanece contemplando a forma universal. Retorna à ação.
-
-Também eu retornei.
-
-A máquina aguardava a próxima instrução. O cursor piscava numa página vazia.
-
-Comecei.
-
-Quando li estas linhas pela primeira vez, pareceu-me que seriam sobre compressão.
+A descompressão começava em quem as lesse.
