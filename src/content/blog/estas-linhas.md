@@ -145,7 +145,7 @@ O modelo mais econômico capaz dessa fidelidade acabaria por reincorporar toda p
 
 Ainda assim, a palavra “toda” me pareceu excessiva. Restava saber o que o texto entendia por relevante.
 
-A resposta era extrema: bastava que a ausência de uma pessoa alterasse uma única continuação possível. Nessa escala, nenhuma existência seria causalmente nula. Estar em um lugar, ocupar matéria, ser percebido ou deixar de sê-lo já modifica ao menos uma história vizinha.
+A resposta era extrema: bastava que a ausência de uma pessoa alterasse uma única continuação possível. Nessa escala, nenhuma existência passaria sem deixar ao menos uma continuação diferente. Estar em um lugar, ocupar matéria, ser percebido ou deixar de sê-lo já modifica ao menos uma história vizinha.
 
 O texto chamava esse limite de pré-eternidade: não o último instante do universo, mas o ponto a partir do qual tudo o que fosse necessário para reproduzir a história e suas alternativas relevantes estaria incorporado à memória do futuro.
 
@@ -221,4 +221,4 @@ Estas linhas terminavam ali.
 
 O texto, não.
 
-A descompressão começava em quem as lesse.
+Quando li estas linhas pela primeira vez, pareceu-me que seriam sobre compressão.
