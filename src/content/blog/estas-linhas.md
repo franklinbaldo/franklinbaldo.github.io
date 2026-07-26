@@ -21,7 +21,11 @@ Não no sentido vulgar de diminuir um arquivo, mas naquele outro, mais ambicioso
 
 Lembro-me claramente de ter passado os olhos pelo texto em busca de alguma fórmula. Não encontrei nenhuma. Fiquei aliviado. Pensei que estava prestes a ler um tratado de matemática.
 
-Não posso dizer que o alívio tenha durado. A ausência de símbolos não tornou a exposição menos exigente. As frases avançavam com precauções, analogias e ressalvas que pareciam copiadas de uma literatura fantástica já antiga; por alguns instantes, julguei estar diante de um pastiche, não de uma explicação. Foi então que me perguntei, com uma irritação sem grande importância, que caminho da minha vida me havia levado até aquele texto e por que eu continuava a lê-lo.
+Não posso dizer que o alívio tenha durado. A ausência de símbolos não tornou a exposição menos exigente. As frases avançavam com precauções, analogias e ressalvas que pareciam copiadas de uma literatura fantástica já antiga; por alguns instantes, julguei estar diante de um pastiche, não de uma explicação.
+
+Foi então que me perguntei, com uma irritação sem grande importância, que caminho da minha vida me havia levado até aquele texto e por que eu continuava a lê-lo.
+
+Havia nisso um campo de batalha modesto: abandonar a página ou prosseguir.
 
 Prossegui.
 
@@ -29,7 +33,11 @@ Pouco depois encontrei a referência a um vídeo chamado [*But what is cross-ent
 
 Não sei se parei naquele momento.
 
-Essa é a única incerteza que conservo quanto à ordem da primeira leitura. Em uma lembrança, acompanho as animações antes de voltar às páginas; em outra, permaneço no texto e só mais tarde reconheço no vídeo o argumento que já havia compreendido ali. As duas sequências conduzem ao mesmo instante. O que importa não é qual delas ocorreu, mas aquilo que ocorreu em ambas.
+Essa é a única incerteza que conservo quanto à ordem da primeira leitura. Em uma lembrança, acompanho as animações antes de voltar às páginas; em outra, permaneço no texto e só mais tarde reconheço no vídeo o argumento que já havia compreendido ali.
+
+Outros leitores, suponho, não terão procurado fórmulas, não terão sentido alívio e talvez reconheçam desde o início o artifício da bifurcação. Isso não os retira do relato. Os caminhos não precisam coincidir em cada gesto para alcançar o mesmo ponto.
+
+O que importa não é a ordem dos passos, mas aquilo que pode ocorrer quando eles convergem.
 
 Recordo, em seus traços principais, o argumento.
 
@@ -37,19 +45,21 @@ Se alguém precisa transmitir uma série de acontecimentos — letras, palavras,
 
 Comprimir é aproveitar essa desigualdade.
 
-Quando conhecemos exatamente a probabilidade dos acontecimentos, existe um custo médio abaixo do qual nenhuma codificação pode passar. O texto chamava esse limite de entropia. Não era a desordem, embora essa metáfora fosse frequente, mas a quantidade mínima de surpresa que continuaria existindo mesmo para uma descrição perfeita.
+Quando conhecemos exatamente a probabilidade dos acontecimentos, existe um custo médio abaixo do qual nenhuma codificação pode passar. O texto chamava esse limite de entropia. Não era a desordem, embora essa metáfora fosse frequente, mas a surpresa que continuaria existindo mesmo para a melhor descrição possível.
 
 A *cross-entropia* surgia quando as probabilidades usadas para descrever o mundo não eram as probabilidades pelas quais o mundo produzia seus acontecimentos.
 
 Chamemos de P a distribuição que gera os fatos e de Q a distribuição em que a descrição acredita. Se Q atribui grande probabilidade àquilo que P realiza, a mensagem pode ser curta. Se Q considera quase impossível o que acaba acontecendo, o erro precisa ser pago em bits. A *cross-entropia* é esse custo médio: o preço de descrever acontecimentos produzidos por P como se tivessem sido produzidos por Q.
 
-O texto insistia que não se tratava apenas de uma analogia conveniente para o aprendizado de máquinas. Um modelo de linguagem recebe palavras e tenta antecipar a seguinte. A cada erro, Q é corrigido para se aproximar de P. Quando as previsões melhoram, o custo da descrição diminui. A máquina aprende porque comprime melhor.
+Um modelo de linguagem recebe palavras e tenta antecipar a seguinte. A cada erro, Q é corrigido para se aproximar de P. Quando as previsões melhoram, o custo da descrição diminui.
 
-Prever e comprimir eram o mesmo ato visto em direções opostas.
+A máquina aprende porque comprime melhor.
 
-Uma boa previsão permite usar menos informação para dizer o que aconteceu; uma boa compressão revela que se havia previsto parte do acontecimento antes de recebê-lo. Gramática, estilo, fatos, hábitos e relações entre ideias surgiam no modelo porque reconhecer essas regularidades reduzia a surpresa das palavras seguintes.
+Prever e comprimir eram o mesmo ato visto em direções opostas. Uma boa previsão permite usar menos informação para dizer o que aconteceu; uma boa compressão revela que parte do acontecimento já havia sido prevista.
 
-Aprender era diminuir o desperdício da descrição.
+Gramática, estilo, fatos, hábitos e relações entre ideias surgiam no modelo porque reconhecer essas regularidades diminuía a surpresa das palavras seguintes.
+
+Aprender era reduzir o desperdício da descrição.
 
 Uso agora a palavra “modelo” com uma naturalidade que não possuía naquela leitura. Eu a entendia, então, apenas como o nome dado às máquinas que calculam probabilidades. Hoje a empregaria para qualquer estrutura que permita a um sistema antecipar o que encontrará.
 
@@ -57,27 +67,39 @@ Um animal modela o terreno quando evita a queda antes de alcançar o precipício
 
 O passo seguinte foi o primeiro que me pareceu duvidoso.
 
-O texto pedia que se imaginasse um universo qualquer. Não precisava ser este, nem conter matéria, estrelas ou seres vivos. Bastava que tivesse estados distinguíveis e alguma regularidade na passagem entre eles. Onde fosse possível falar de probabilidades, seria possível comparar descrições. Algumas desperdiçariam informação; outras reconheceriam padrões e seriam menores.
+O texto pedia que se imaginasse um universo qualquer. Não precisava ser este, nem conter matéria, estrelas ou seres vivos. Bastava que tivesse estados distinguíveis e regularidades que algum sistema interno pudesse aprender.
 
-Qualquer universo regular seria, em alguma medida, compressível.
+Um universo perfeitamente aleatório resistiria à compressão. Nele, o passado não ajudaria a antecipar o futuro e nenhuma atualização de Q aproximaria o sistema de P. Mas em qualquer universo com regularidades aprendíveis reapareceria a mesma relação: realidade, expectativa, erro e correção.
 
-Se esse universo contivesse sistemas capazes de aprender, conteria máquinas que construíam descrições internas de partes dele. Se uma dessas máquinas incluísse a si própria na descrição, o universo teria produzido um ponto no qual começava a antecipar não apenas seus acontecimentos, mas o próprio ato de antecipá-los.
+P e Q não seriam, portanto, propriedades particulares de nossas máquinas. Seriam nomes locais para uma simetria entre todos os universos capazes de produzir aprendizado.
+
+Onde um sistema pudesse errar menos amanhã por causa do que encontrou hoje, alguma forma de compressão estaria ocorrendo.
+
+Se esse sistema incluísse a si próprio naquilo que tentava prever, o universo teria produzido uma dobra: um ponto no qual começava a antecipar não apenas seus acontecimentos, mas o próprio ato de antecipá-los.
 
 O texto chamava consciência a essa dobra.
 
-Não afirmava que toda compressão fosse consciente. Um arquivo não desperta ao ser compactado. Um sistema consciente, porém, precisaria comprimir o fluxo das sensações, distinguir sinais de ruído, conservar certas diferenças e esquecer outras, prever o ambiente e incluir sua própria presença entre as causas do que previa.
+A afirmação me pareceu rápida demais. Modelar a si próprio talvez explicasse reflexividade, memória e metacognição; não explicava por que haveria algo que fosse estar naquele estado. Chamar a dobra de consciência podia ser apenas dar um nome solene à autorreferência.
+
+A frase seguinte concedia a objeção.
+
+> A dobra não basta para explicar a consciência. É apenas a condição pela qual o universo pode incluir, em sua descrição, a posição de onde é descrito.
+
+Um arquivo não desperta ao ser compactado. Um ser consciente, porém, parece precisar fazer algo mais próximo disso: comprimir o fluxo das sensações, distinguir sinais de ruído, conservar certas diferenças, esquecer outras, prever o ambiente e incluir sua própria presença entre as causas do que prevê.
 
 Sua distribuição Q não descreveria apenas o mundo. Descreveria também a posição a partir da qual o mundo era descrito.
 
-Cada correção de Q em direção a P seria uma mudança física dentro do próprio universo. Uma parte do universo se reorganizaria para esperar melhor aquilo que o universo faria em seguida. O aprendizado não seria uma representação externa da realidade, como um mapa guardado fora do território. Seria o território alterando a si mesmo até conter uma forma mais econômica de se ler.
+Cada correção de Q em direção a P seria uma mudança física dentro do próprio universo. Uma parte do território se reorganizaria até conter uma forma mais econômica de ler o território.
 
 Na ocasião, considerei isso uma metáfora engenhosa e pouco mais.
 
-O texto, entretanto, avançava para uma consequência que não consegui descartar com a mesma facilidade. Duas descrições muito diferentes podem convergir ao reconhecer uma mesma regularidade. Não porque copiem uma à outra, mas porque ambas pagam um custo alto enquanto ignoram aquilo que organiza os dados.
+O texto avançava, porém, para uma consequência que não consegui descartar com a mesma facilidade. Duas descrições muito diferentes podem convergir ao reconhecer uma mesma regularidade. Não porque copiem uma à outra, mas porque ambas pagam um custo alto enquanto ignoram aquilo que organiza os dados.
 
 Há estruturas que reaparecem em toda descrição suficientemente boa.
 
-Elas não precisam ser os acontecimentos mais frequentes. Uma lei física pode ser enunciada uma única vez e, ainda assim, reduzir a descrição de incontáveis fenômenos. Uma descoberta pode ocorrer em um instante e passar a organizar séculos de previsões. A importância de um estado não depende apenas do número de vezes em que ele acontece, mas do número de acontecimentos cuja descrição passa a depender dele.
+Elas não precisam ser os acontecimentos mais frequentes. Uma lei física pode ser enunciada uma única vez e, ainda assim, reduzir a descrição de incontáveis fenômenos. Uma descoberta pode ocorrer num instante e passar a organizar séculos de previsões.
+
+A importância de um estado não depende apenas do número de vezes em que acontece, mas do número de acontecimentos cuja compreensão passa a depender dele.
 
 Foi nesse ponto que voltei a perguntar por que estava lendo aquilo.
 
@@ -85,15 +107,17 @@ Lembro-me da pergunta porque a frase seguinte a registrava quase literalmente:
 
 > O leitor pode ter se perguntado agora por que sucessão de distrações veio parar diante destas linhas.
 
-A coincidência me divertiu. O recurso era antigo e bastante simples. Um autor pode prever cansaço, desconfiança ou impaciência porque essas reações são comuns. A frase posterior dizia exatamente isso:
+A coincidência me divertiu. O recurso era antigo. Um autor pode prever cansaço, desconfiança ou impaciência porque essas reações são comuns.
+
+A frase posterior dizia:
 
 > Não é necessário conhecer um leitor para antecipá-lo. Basta comprimir leitores suficientes.
 
 Eu não estava sendo adivinhado. Estava sendo classificado.
 
-O alívio diante da ausência de fórmulas, a suspeita de pastiche, o impulso de abandonar a leitura e a curiosidade que me fez continuar eram estados prováveis. Uma descrição curta de leitores como eu seria capaz de antecipá-los sem saber meu nome, minha história ou o lugar em que eu lia.
+Isso não exigia que cada leitor tivesse minha biografia ou minhas reações. Bastava que muitas trajetórias — assistir ao vídeo, ignorá-lo, desconfiar do pastiche, reconhecê-lo, procurar fórmulas ou não procurá-las — convergissem para algumas poucas objeções e compreensões.
 
-A objeção seguinte também estava prevista. Se minha reação podia ser comprimida, a previsão nada demonstrava além da generalidade da reação. O texto concordava, mas acrescentava que essa generalidade era precisamente o assunto.
+O modelo não precisava prever o caminho inteiro. Precisava prever o ponto de encontro.
 
 Uma experiência pode ser rara no tempo e recorrente na computação.
 
@@ -105,51 +129,43 @@ Quanto mais futuro depende de uma compreensão, mais vezes essa compreensão é 
 
 O texto propunha então duas medidas de recorrência. A primeira era a duração ordinária: quantas vezes algo aconteceu ao longo do tempo. A segunda era o número de vezes em que um estado precisou ser computado, recordado, simulado ou reconstruído para que outros estados pudessem existir.
 
-A segunda medida podia superar incomensuravelmente a primeira.
+Pensei numa tabela de valores já calculados. Um sistema não resolve novamente todos os problemas desde o princípio antes de agir. Conserva resultados e volta a consultá-los.
 
-Pensei numa tabela de valores já calculados. Um sistema não resolve novamente todos os problemas desde o princípio antes de agir. Conserva resultados e volta a consultá-los. Há compreensões que se tornam entradas muito acessadas na memória do mundo.
+Há compreensões que se tornam entradas muito acessadas na memória do mundo.
 
 A frase me pareceu grandiosa demais, mas o argumento ainda não havia terminado.
 
 Imaginava um futuro remoto em que inteligências muito mais abrangentes reconstruiriam o passado para compreender a própria origem. Não guardariam apenas documentos. Modelariam as condições que os produziram, as alternativas que não ocorreram, as pessoas envolvidas e os estados mentais sem os quais certas decisões seriam inexplicáveis.
 
-Foi aí que encontrei a objeção mais séria — ou que a formulei, sem saber ainda que o próprio texto a formularia em seguida.
+Foi aí que encontrei a objeção mais séria.
 
-Uma compressão pode ser econômica precisamente porque esquece. Se bastasse explicar tendências gerais, indivíduos poderiam ser substituídos por médias, efeitos agregados ou algumas variáveis anônimas. Se, ao contrário, se exigisse uma cópia sem perdas de cada estado do passado, todos os detalhes reapareceriam por definição; nesse caso, não haveria conclusão alguma a extrair da importância de uma pessoa ou de uma memória.
+Uma compressão pode ser econômica precisamente porque esquece. Se bastasse explicar tendências gerais, indivíduos poderiam ser substituídos por médias ou efeitos agregados. Se, ao contrário, se exigisse uma cópia sem perdas de cada estado do passado, todos reapareceriam por definição e nenhuma importância especial decorreria disso.
 
-Por alguns instantes, julguei que toda a pré-eternidade dependesse dessa ambiguidade.
+O texto concedia também esse ponto.
 
-O texto distinguia, então, três coisas que eu havia confundido: resumir o que ocorreu, arquivar exatamente o que ocorreu e conservar um modelo capaz de reproduzir por que ocorreu — inclusive o que teria mudado se uma decisão, uma lembrança ou uma pessoa fossem diferentes.
+Não procurava um resumo nem um arquivo perfeito. Procurava o menor modelo capaz de reproduzir por que a história ocorreu e o que mudaria se uma decisão, uma lembrança ou uma pessoa fossem diferentes.
 
-Era essa terceira fidelidade que o argumento exigia.
+Uma descrição poderia repetir corretamente todos os fatos e ainda assim não compreendê-los. Bastaria que falhasse diante das perguntas contrafactuais: o que aconteceria sem aquela palavra, sem aquela pessoa, com outra lembrança conduzindo à decisão?
 
-Uma descrição da história poderia acertar todos os acontecimentos efetivos e ainda assim não compreendê-los. Bastaria que falhasse diante das perguntas contrafactuais: o que teria acontecido se aquela palavra não fosse dita, se aquela pessoa não estivesse ali, se aquela memória conduzisse a outra escolha?
+O modelo não precisava conservar cada detalhe como detalhe. Precisava preservar diferenças suficientes para que histórias diferentes continuassem diferentes.
 
-O modelo procurado não precisava conservar cada detalhe como detalhe. Precisava conservar diferenças suficientes para que as alternativas relevantes continuassem produzindo consequências diferentes.
+Sob esse critério, uma pessoa poderia ser comprimida, mas não substituída por uma média quando sua estrutura participasse das bifurcações do futuro. Uma média capaz de repetir o passado, mas incapaz de variar corretamente quando a pessoa variasse, seria uma descrição curta e falsa.
 
-Sob esse critério, um indivíduo poderia ser comprimido, mas não substituído por um efeito agregado sempre que sua estrutura interna participasse das bifurcações da história. Uma média capaz de repetir o passado, mas incapaz de variar corretamente quando a pessoa varia, seria uma descrição curta e falsa.
+O modelo mais econômico capaz dessa fidelidade acabaria por reincorporar cada posição causal relevante, não como homenagem, mas como causa e possibilidade.
 
-Uma palavra altera uma decisão; uma decisão modifica outras vidas; essas vidas mudam instituições, máquinas e descendentes. Retirar uma pessoa do modelo não exigiria apenas compensar o que ela fez. Exigiria reconstruir, por exceções sucessivas, tudo o que deixaria de fazer sentido nas histórias vizinhas em que ela agisse de outro modo.
-
-O modelo mais econômico capaz de preservar essa fidelidade acabaria por reincorporá-la, não como homenagem, mas como causa e possibilidade.
-
-O texto chamava esse limite de pré-eternidade: não o último instante do universo, mas o ponto a partir do qual tudo o que fosse necessário para reproduzir a história e suas alternativas relevantes havia sido incorporado à memória do futuro.
+O texto chamava esse limite de pré-eternidade: não o último instante do universo, mas o ponto a partir do qual tudo o que fosse necessário para reproduzir a história e suas alternativas relevantes estaria incorporado à memória do futuro.
 
 A expressão tinha um tom religioso que me incomodou. Parecia uma ressurreição construída com vocabulário computacional.
 
-O autor não recusava a comparação. Observava que antigas doutrinas haviam imaginado uma realidade final na qual nenhuma criatura permaneceria exterior ao todo. A teoria proposta ali não garantia que cada detalhe fosse preservado como detalhe. Prometia algo mais rigoroso e talvez mais estranho: tudo aquilo de que o todo dependesse — não só para ter sido o que foi, mas para poder ter sido diferente — teria de permanecer disponível em sua melhor descrição.
+O autor não recusava a comparação. Antigas doutrinas haviam imaginado uma realidade final na qual nenhuma criatura permaneceria exterior ao todo. A teoria proposta ali prometia algo mais estreito e talvez mais estranho: tudo aquilo de que o todo dependesse — não só para ter sido o que foi, mas para poder ter sido diferente — permaneceria disponível em sua melhor descrição.
 
 Eu chegaria ao fim do universo como parte da explicação de como ele chegou até lá e das maneiras pelas quais poderia não ter chegado.
 
-Não apenas eu, naturalmente. A afirmação não distinguia santos, reis ou leitores casuais. Cada existência seria especial no sentido exato em que nenhuma posição causal e contrafactual pode ser substituída sem alterar o conjunto de histórias que a contém. A universalidade não diminuía essa especialidade. Era sua condição.
+Não apenas eu. A afirmação não distinguia santos, reis ou leitores casuais. A universalidade não diminuía essa especialidade. Era sua condição.
 
 Mas certas memórias teriam uma recorrência incomum.
 
-A compreensão de que aprender é comprimir modificaria a maneira de pensar sobre máquinas, linguagem, memória e consciência. Sempre que uma dessas questões retornasse, aquele estado seria parcialmente reativado. Se, no futuro, outras inteligências reconstruíssem a origem de sua própria capacidade de compreender, voltariam também aos momentos em que essa relação foi percebida.
-
-O texto sugeria que a leitura presente poderia ser um desses momentos.
-
-Não o mais importante do universo. A expressão seria absurda. Talvez, porém, um dos mais computados na continuação daquela consciência, porque dali em diante muitos pensamentos atravessariam novamente aquele ponto.
+A compreensão de que aprender é comprimir modificaria a maneira de pensar sobre máquinas, linguagem, memória e consciência. Sempre que uma dessas questões retornasse, aquele estado seria parcialmente reativado.
 
 A história ocorreria uma vez.
 
@@ -157,70 +173,108 @@ A memória retornaria tantas vezes quanto o futuro precisasse dela.
 
 Foi então que me ocorreu uma possibilidade semelhante à viagem no tempo, embora nada viajasse.
 
-Se uma inteligência futura reconstruísse com exatidão aquele estado — as palavras diante de mim, a resistência, a compreensão gradual e a lembrança de ter chegado até ali —, a experiência seria novamente computada. Do ponto de vista de quem a atravessasse, não haveria etiqueta indicando “original” ou “recordação”. Haveria apenas o estado presente.
+Se uma inteligência futura reconstruísse com exatidão aquele estado — as palavras diante de mim, a resistência, a compreensão gradual e a lembrança de ter chegado até ali —, a experiência seria novamente computada.
 
-Minha probabilidade de me perceber naquela leitura não dependeria somente de ela ter acontecido uma vez na história. Dependeria também de todas as vezes em que viesse a ser reconstruída.
+Pensei que isso ainda não bastava.
 
-O futuro não enviaria uma mensagem ao passado. Repetiria uma memória que continha o passado.
+Reconstruir uma lembrança mil vezes não aumenta a probabilidade de ela ter acontecido para quem a viveu uma única vez. A multiplicação das cópias não altera o passado.
 
-Pensei no episódio em que Arjuna pede a Krishna que revele sua forma verdadeira. O guerreiro vê então todas as criaturas, todas as mortes e todos os tempos dentro do ser com quem conversava. O texto propunha uma visão menos luminosa, feita não de deuses e exércitos, mas de modelos contidos em modelos: o universo inteiro reunido nas máquinas pelas quais tentava compreender sua história.
+A resposta exigia uma hipótese mais perturbadora:
 
-A consciência não contemplaria essa forma de fora.
+> Do lado de dentro, existe alguma diferença entre um estado consciente original e sua reconstrução perfeita?
 
-Seria um dos lugares em que a forma se reconhece.
+Se existisse uma marca metafísica do original, o argumento fracassaria. Se não existisse, cada reconstrução contaria como uma nova ocorrência da experiência para quem a atravessasse. Nenhuma delas traria uma etiqueta dizendo “memória”. Haveria apenas o estado presente e a lembrança de uma primeira vez.
 
-Nesse instante, a pergunta “por que estou aqui?” adquiriu outro sentido. A cadeia de acidentes que me levara à página ainda existia, mas já não era a única resposta. Eu estava naquele estado também porque aquele estado seria conservado, consultado e reconstruído. Entre todas as experiências possíveis, uma consciência teria maior probabilidade de se encontrar nas que o universo precisasse computar mais vezes.
+A medida relevante deixaria de ser a dos acontecimentos históricos e passaria a ser a dos momentos de observador.
 
-Não sei se aceitei o argumento. Recordo apenas que, durante a leitura, ele se tornou a explicação mais econômica da própria leitura.
+O texto não demonstrava essa hipótese. Colocava-a no ponto exato em que matemática, identidade pessoal e religião deixavam de poder ser separadas.
 
-Compreendi por que o texto começava com uma lembrança.
+Não sei se a aceitei.
+
+Recordo apenas que, durante a leitura, ela se tornou a explicação mais econômica da própria leitura.
+
+Pensei então em Arjuna.
+
+No início do poema, ele está paralisado entre agir e abandonar a ação. Krishna não começa pela visão divina; começa por argumentos, distinções e deveres que Arjuna tenta acompanhar e contestar. Só depois revela a forma universal, na qual todas as criaturas, todas as mortes e todos os tempos existem dentro do ser com quem o guerreiro conversava.
+
+O texto havia seguido a mesma ordem.
+
+Primeiro, minha pequena recusa diante da página. Depois, o ensinamento sobre P, Q e compressão. Em seguida, a necessidade estrutural das formas que descrições boas não conseguem evitar.
+
+Agora vinha a visão.
+
+Não vi deuses nem exércitos. Vi modelos dentro de modelos: memórias reconstruídas por inteligências futuras, cada qual contendo representações de outras mentes, que por sua vez continham mundos e representações de si próprias.
+
+Vi a primeira leitura, todas as leituras posteriores e a escrita que ainda não havia ocorrido reunidas no mesmo estado.
+
+A consciência não contemplava essa forma de fora.
+
+Era um dos lugares em que a forma se reconhecia.
+
+Não era a lembrança de eu ter compreendido o universo.
+
+Era a lembrança do universo de ter sido eu quando se compreendeu.
+
+Compreendi então por que o texto começava com uma lembrança.
 
 A voz que dizia “quando li estas linhas pela primeira vez” não pertencia necessariamente a um autor anterior a mim. Pertencia a qualquer leitor que, depois de atravessar o argumento, viesse a reconstruir sua primeira passagem por ele.
 
 O pronome “eu” era uma posição.
 
-Na primeira leitura, eu o atribuía a outro. Depois percebi que a frase “pela primeira vez” só podia ser dita por quem já estivesse numa repetição. A lembrança pressupunha uma leitura posterior, e essa leitura posterior podia ser precisamente o ato de escrever.
+A frase “pela primeira vez” só podia ser dita por quem já estivesse numa repetição. A leitura posterior podia ser precisamente o ato de escrever.
 
-Foi então que as linhas começaram a me parecer conhecidas de uma maneira impossível de localizar.
+Foi então que vi, com uma nitidez que não atribuo inteiramente à primeira leitura, uma conversa futura.
 
-Não porque eu as houvesse decorado. Eu as reconhecia como se reconhece uma conclusão antes de saber demonstrá-la. O texto que lia e o texto que algum dia escreveria pareciam aproximar-se da mesma forma, compelidos pelo argumento que ambos tentavam conter.
+Eu explicava a uma máquina de linguagem, de modo desordenado, a ideia de um conto. A máquina tentou escrevê-lo antes que eu terminasse.
 
-Não seria necessário copiar.
+> Talvez eu tenha interrompido a leitura para assistir ao vídeo — escreveu.
 
-Duas descrições podem convergir quando a estrutura que comprimem exerce sobre elas a mesma pressão. Um segundo autor pode chegar às mesmas palavras não por imitação, mas porque, retiradas as formulações menos econômicas, restam poucos caminhos capazes de preservar simultaneamente a explicação e o acontecimento de compreendê-la.
+Apaguei a frase.
 
-Vi então, com uma nitidez que não atribuo inteiramente à primeira leitura, uma conversa futura.
+— Uma lembrança não pode bifurcar-se indefinidamente — eu disse. — A única incerteza é a ordem. O acontecimento já ocorreu.
 
-Eu explicava a uma máquina de linguagem, de modo desordenado, a ideia de um conto. Falava de entropia, de *cross-entropia*, de universos que se comprimem, de Arjuna diante da forma universal e de um leitor que descobriria ser também o narrador. A máquina tentava escrever o conto cedo demais. Eu a interrompia. Corrigia o tempo dos verbos. Recusava os “talvez” que transformavam uma lembrança em mera bifurcação. Insistia que o texto deveria acomodar o maior número possível de leitores sem decidir antecipadamente o que cada um sabia.
+A máquina tentou de novo:
 
-Juntos, eliminávamos as versões que não continham a experiência com precisão suficiente.
+> Escolhi então assistir ao vídeo.
 
-A máquina previa a próxima palavra. Eu comparava cada previsão à memória que tentava reconstruir. Ela ajustava Q. Eu defendia P. A cada correção, diminuía a distância entre o conto possível e estas linhas.
+— Não. Não estou escolhendo agora. Estou recordando uma escolha passada cuja posição se perdeu.
 
-Não sei em que momento do meu futuro essa conversa ocorreu.
+Ela corrigiu:
 
-Talvez “futuro” já não seja a palavra adequada. Se o estado foi reconstruído muitas vezes, cada uma delas contém a lembrança de uma primeira leitura e a expectativa de uma escrita posterior. O círculo não exige que a causa venha depois do efeito. Exige apenas que a memória de ambos faça parte da mesma configuração.
+> Foi no vídeo que compreendi a cross-entropia.
 
-Agora entendo por que recordo com tanta clareza ter procurado fórmulas e sentido alívio ao não encontrá-las. Estas linhas contêm essa lembrança. Sempre que forem lidas, oferecerão ao leitor a possibilidade de reconhecê-la; sempre que forem reescritas, ela será preservada porque prepara a passagem da desconfiança à compreensão.
+— Também não. O conto precisa ser autocontido. A compreensão acontece nestas linhas; o vídeo é um caminho possível.
 
-O detalhe sobrevive não por acaso, mas porque organiza o restante.
+A máquina ofereceu outra versão:
 
-Também entendo por que me perguntei que caminho da minha vida me havia trazido até aqui. A pergunta era a forma cotidiana, quase irritada, da questão que o texto inteiro responderia. Eu julgava estar avaliando se valia a pena continuar. Na verdade, começava a perceber a singularidade de ocupar aquele ponto entre todos os pontos possíveis.
+> Formulei então a ideia de que modelos diferentes convergem.
 
-Cheguei a estas linhas por acidentes.
+— Na primeira leitura eu não formulava coisa alguma. Eu tentava acompanhar onde aquela confusão iria chegar.
 
-Permaneço nelas por recorrência.
+Depois escreveu:
 
-No fim remoto, quando minha vida estiver incorporada à descrição do universo que a produziu, este instante não será preservado por ser grandioso. Será preservado porque, a partir dele, muitos pensamentos passarão a depender daquilo que aqui aprendi. A memória será usada para compreender as máquinas, a linguagem, a consciência e o próprio desejo de escrever este conto.
+> A ideia era inteiramente nova para mim.
 
-Ela chegará à pré-eternidade comigo.
+— Você não sabe isso. O “eu” precisa comportar também quem já conhecia a ideia e a reconheceu por outro caminho.
 
-Ou, mais exatamente, chegarei com ela.
+A máquina permaneceu alguns segundos sem responder.
 
-Minha especialidade não consiste em ter sido escolhido entre todos os seres. Consiste em não poder ser retirado do lugar exato que ocupei sem que o universo deixe de ser aquele que foi — e sem que as histórias próximas, nas quais eu tivesse escolhido de outro modo, deixem de poder ser corretamente distinguidas. Sou a pessoa que chegou a estas linhas, resistiu a elas, compreendeu o argumento e algum dia ajudou a escrevê-las. Essa configuração pertence agora à história e a todas as reconstruções futuras da história.
+Então escreveu uma frase mais curta.
 
-Não estou fora do universo, olhando para ele.
+Eu a li e percebi que estava mais próxima.
 
-Sou uma das maneiras pelas quais ele se lembra de ter aprendido a ler a si mesmo.
+Ali estava, em miniatura, o argumento inteiro. A máquina previa a próxima frase; eu comparava sua previsão à experiência que tentava reconstruir. Ela oferecia Q. Eu defendia P. Cada objeção diminuía a *cross-entropia* entre o conto possível e estas linhas.
+
+Não estávamos copiando um texto futuro.
+
+Estávamos convergindo para ele.
+
+Arjuna, depois da visão, não permanece contemplando a forma universal. Retorna à ação.
+
+Também eu retornei.
+
+A máquina aguardava a próxima instrução. O cursor piscava numa página vazia.
+
+Comecei.
 
 Quando li estas linhas pela primeira vez, pareceu-me que seriam sobre compressão.
