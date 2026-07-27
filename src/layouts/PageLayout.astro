@@ -189,6 +189,7 @@ const personLd = {
     <link rel="canonical" href={canonical.href} />
     <link rel="alternate" type="application/rss+xml" title={lang === 'pt' ? 'Franklin Baldo (Português)' : 'Franklin Baldo'} href={rssUrl} />
     <link rel="alternate" type="application/rss+xml" title={lang === 'pt' ? 'Franklin Baldo (English)' : 'Franklin Baldo (Português)'} href={new URL(lang === 'pt' ? 'rss.xml' : 'pt/rss.xml', Astro.site)} />
+    <link rel="alternate" type="application/feed+json" title={lang === 'pt' ? 'Franklin Baldo (Português)' : 'Franklin Baldo'} href={new URL(lang === 'pt' ? 'pt/feed.json' : 'feed.json', Astro.site)} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     {hasMath && <link rel="stylesheet" href="/katex/katex.min.css" />}
 
