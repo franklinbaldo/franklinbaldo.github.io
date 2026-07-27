@@ -4,6 +4,7 @@ title: "Estas linhas"
 docType: fiction
 date: 2026-07-26
 lang: pt
+translationKey: these-lines
 description: "Um conto sobre compressão, cross-entropia e o instante em que o universo aprende a reconhecer a própria leitura."
 tags: ["ficção", "compressão", "entropia", "inteligência artificial", "consciência", "borges"]
 emoji: "🪞"
