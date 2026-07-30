@@ -52,9 +52,7 @@
 :root {
   /* Slightly softer corners than Pico's default 0.25rem. */
   --pico-border-radius: 0.375rem;
-}
 
-:root {
   /*
    * Shared stacking offsets for the fixed bottom-right widgets that can
    * appear together on a post (BackToTop pill, PostActionBar share FAB,
