@@ -98,7 +98,7 @@ const ariaTable = Object.fromEntries(
           const s = document.createElement('style');
           s.id = 'lg-toast-style';
           s.textContent =
-            '#lg-toast{position:fixed;bottom:1.25rem;right:1rem;z-index:100;' +
+            '#lg-toast{position:fixed;bottom:var(--fixed-stack-bottom-toast);right:var(--fixed-stack-right);z-index:100;' +
             'background:var(--pico-card-background-color,#fdfdfd);' +
             'border:1px solid var(--pico-muted-border-color,#ccc);' +
             'border-radius:.5rem;padding:.55rem .9rem;font-size:.82rem;' +
@@ -107,6 +107,7 @@ const ariaTable = Object.fromEntries(
             'animation:lgIn .25s ease;max-width:calc(100vw - 2rem);}' +
             '@keyframes lgIn{from{transform:translateY(.5rem);opacity:0}to{transform:translateY(0);opacity:1}}' +
             '@media (prefers-reduced-motion: reduce){#lg-toast{animation:none}}' +
+            '@media (min-width: 600px){#lg-toast{right:var(--fixed-stack-right-wide)}}' +
             '#lg-toast a{white-space:nowrap;font-weight:500;}' +
             '#lg-toast button{background:none;border:none;cursor:pointer;padding:0 .2rem;' +
             'color:var(--pico-muted-color);font-size:1.1em;line-height:1;}';

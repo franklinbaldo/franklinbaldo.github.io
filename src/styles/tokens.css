@@ -52,4 +52,17 @@
 :root {
   /* Slightly softer corners than Pico's default 0.25rem. */
   --pico-border-radius: 0.375rem;
+
+  /*
+   * Shared stacking offsets for the fixed bottom-right widgets that can
+   * appear together on a post (BackToTop pill, PostActionBar share FAB,
+   * LanguageSwitcher redirect toast). Bottom-to-top order: back-to-top,
+   * share FAB, toast — kept in sync with each component's z-index so the
+   * three never overlap, at any viewport width (see issue #1404).
+   */
+  --fixed-stack-right: 1rem;
+  --fixed-stack-right-wide: 1.5rem;
+  --fixed-stack-bottom-back-to-top: 1.5rem;
+  --fixed-stack-bottom-share-fab: 4.25rem;
+  --fixed-stack-bottom-toast: 7.5rem;
 }
