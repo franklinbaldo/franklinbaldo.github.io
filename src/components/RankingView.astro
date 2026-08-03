@@ -262,7 +262,14 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
 {rows.length > 0 && (
   <div class="rank-table-header">
     <p class="rank-caption">{strings.tableCaption}</p>
-    <button class="view-toggle" id="view-toggle" type="button">
+    <button
+      class="view-toggle"
+      id="view-toggle"
+      type="button"
+      aria-pressed="false"
+      data-technical-label={strings.technicalViewLabel}
+      data-standard-label={strings.standardViewLabel}
+    >
       {strings.standardViewLabel}
     </button>
   </div>
@@ -277,13 +284,13 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
           <th scope="col" class="col-confidence">{strings.thConfidence}</th>
           <th scope="col" class="col-elo tech-col sortable" data-sort="elo" aria-sort="none" tabindex="0">{strings.thElo}</th>
           <th scope="col" class="col-mu tech-col">
-            <abbr title={strings.muTip}>{strings.thMu}</abbr>
+            <abbr title={strings.muTip} data-tooltip={strings.muTip} tabindex="0">{strings.thMu}</abbr>
           </th>
           <th scope="col" class="col-sigma tech-col">
-            <abbr title={strings.sigmaTip}>{strings.thSigma}</abbr>
+            <abbr title={strings.sigmaTip} data-tooltip={strings.sigmaTip} tabindex="0">{strings.thSigma}</abbr>
           </th>
           <th scope="col" class="col-ordinal tech-col">
-            <abbr title={strings.ordinalTip}>{strings.thOrdinal}</abbr>
+            <abbr title={strings.ordinalTip} data-tooltip={strings.ordinalTip} tabindex="0">{strings.thOrdinal}</abbr>
           </th>
           <th scope="col" class="col-record tech-col sortable" data-sort="record" aria-sort="none" tabindex="0">{strings.thRecord}</th>
         </tr>
@@ -956,6 +963,13 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
     if (toggleBtn.dataset.hasListener) return;
     toggleBtn.dataset.hasListener = "true";
 
+    const technicalLabel = toggleBtn.dataset.technicalLabel ?? toggleBtn.textContent ?? "";
+    const standardLabel = toggleBtn.dataset.standardLabel ?? toggleBtn.textContent ?? "";
+    const applyState = (isStandard: boolean) => {
+      toggleBtn.setAttribute("aria-pressed", String(isStandard));
+      toggleBtn.textContent = isStandard ? technicalLabel : standardLabel;
+    };
+
     // Technical view is the default. URL param "view=standard" switches to simplified.
     const urlParams = new URLSearchParams(window.location.search);
     const isStandard = urlParams.get("view") === "standard";
@@ -963,6 +977,7 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
       table.dataset.view = "standard";
       toggleBtn.classList.add("active");
     }
+    applyState(isStandard);
 
     toggleBtn.addEventListener("click", () => {
       const current = table.dataset.view === "standard";
@@ -970,6 +985,7 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
         // Switch back to technical (default)
         delete table.dataset.view;
         toggleBtn.classList.remove("active");
+        applyState(false);
         const params = new URLSearchParams(window.location.search);
         params.delete("view");
         const newUrl =
@@ -981,6 +997,7 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
         // Switch to standard (simplified)
         table.dataset.view = "standard";
         toggleBtn.classList.add("active");
+        applyState(true);
         const params = new URLSearchParams(window.location.search);
         params.set("view", "standard");
         history.replaceState(null, "", window.location.pathname + "?" + params.toString() + window.location.hash);
