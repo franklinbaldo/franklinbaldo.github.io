@@ -7,7 +7,7 @@
 ---
 
 <script>
-  let initialized = false;
+  let initializedTheme: string | undefined;
 
   async function render() {
     // Astro's default Shiki pipeline emits mermaid blocks as
@@ -33,14 +33,15 @@
     if (targets.length === 0) return;
 
     const { default: mermaid } = await import("mermaid");
-    if (!initialized) {
-      const dark = document.documentElement.dataset.theme === "dark";
+    const dark = document.documentElement.dataset.theme === "dark";
+    const theme = dark ? "dark" : "neutral";
+    if (initializedTheme !== theme) {
       mermaid.initialize({
         startOnLoad: false,
-        theme: dark ? "dark" : "neutral",
+        theme,
         securityLevel: "strict",
       });
-      initialized = true;
+      initializedTheme = theme;
     }
     try {
       await mermaid.run({ nodes: targets });
