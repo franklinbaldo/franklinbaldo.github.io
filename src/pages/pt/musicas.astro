@@ -378,6 +378,21 @@ const showGenreChips =
     });
   }
 
+  function bindPlayTrigger(el: HTMLElement, sunoId: string, title: string) {
+    el.tabIndex = 0;
+    el.setAttribute("role", "button");
+    el.setAttribute("aria-label", `Tocar ${title}`);
+    const trigger = () =>
+      document.dispatchEvent(new CustomEvent("gp:play", { detail: { sunoId, title } }));
+    el.addEventListener("click", trigger);
+    el.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        trigger();
+      }
+    });
+  }
+
   function renderFavoritesSection() {
     const section = document.getElementById("favorites-section") as HTMLElement | null;
     const grid = document.getElementById("favorites-grid") as HTMLElement | null;
@@ -398,9 +413,7 @@ const showGenreChips =
       img.alt = source.dataset.title || "";
       img.width = 80; img.height = 80;
       img.style.cssText = "width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:var(--pico-border-radius);cursor:pointer";
-      img.addEventListener("click", () =>
-        document.dispatchEvent(new CustomEvent("gp:play", { detail: { sunoId: id, title: source.dataset.title } }))
-      );
+      bindPlayTrigger(img, id, source.dataset.title || "");
       const title = document.createElement("p");
       title.style.cssText = "font-size:0.8rem;margin:0.25rem 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
       title.textContent = source.dataset.title || "";
@@ -429,9 +442,7 @@ const showGenreChips =
       img.src = source.dataset.image || "";
       img.alt = source.dataset.title || "";
       img.style.cssText = "width:56px;height:56px;object-fit:cover;border-radius:var(--pico-border-radius);cursor:pointer;flex-shrink:0";
-      img.addEventListener("click", () =>
-        document.dispatchEvent(new CustomEvent("gp:play", { detail: { sunoId: id, title: source.dataset.title } }))
-      );
+      bindPlayTrigger(img, id, source.dataset.title || "");
       item.appendChild(img);
       rail.appendChild(item);
       if (id === currentId) {
