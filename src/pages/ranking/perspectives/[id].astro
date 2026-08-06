@@ -147,11 +147,9 @@ const crumbs = [
     background: hsl(var(--ph, 200), 55%, 88%);
     color: hsl(var(--ph, 200), 45%, 28%);
   }
-  @media (prefers-color-scheme: dark) {
-    .persp-badge {
-      background: hsl(var(--ph, 200), 40%, 20%);
-      color: hsl(var(--ph, 200), 70%, 75%);
-    }
+  [data-theme="dark"] .persp-badge {
+    background: hsl(var(--ph, 200), 40%, 20%);
+    color: hsl(var(--ph, 200), 70%, 75%);
   }
 
   .empty-state {

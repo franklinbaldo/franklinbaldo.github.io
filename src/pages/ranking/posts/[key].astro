@@ -362,11 +362,9 @@ function fmtDate(iso: string): string {
     color: hsl(var(--ph, 200), 45%, 28%);
     text-decoration: none;
   }
-  @media (prefers-color-scheme: dark) {
-    .persp-badge {
-      background: hsl(var(--ph, 200), 40%, 20%);
-      color: hsl(var(--ph, 200), 70%, 75%);
-    }
+  [data-theme="dark"] .persp-badge {
+    background: hsl(var(--ph, 200), 40%, 20%);
+    color: hsl(var(--ph, 200), 70%, 75%);
   }
   .persp-rank-num {
     font-family: var(--pico-font-family-monospace);
@@ -478,11 +476,9 @@ function fmtDate(iso: string): string {
     background: hsl(var(--ph, 200), 55%, 88%);
     color: hsl(var(--ph, 200), 45%, 28%);
   }
-  @media (prefers-color-scheme: dark) {
-    .duel-perspective {
-      background: hsl(var(--ph, 200), 40%, 20%);
-      color: hsl(var(--ph, 200), 70%, 75%);
-    }
+  [data-theme="dark"] .duel-perspective {
+    background: hsl(var(--ph, 200), 40%, 20%);
+    color: hsl(var(--ph, 200), 70%, 75%);
   }
   .duel-analysis-link {
     font-size: 0.78rem;

@@ -355,11 +355,9 @@ const vsLabel        = "vs";
     border: 1px solid var(--pico-muted-border-color);
   }
 
-  @media (prefers-color-scheme: dark) {
-    .tag-perspective {
-      background: hsl(var(--ph, 200), 40%, 20%);
-      color: hsl(var(--ph, 200), 70%, 75%);
-    }
+  [data-theme="dark"] .tag-perspective {
+    background: hsl(var(--ph, 200), 40%, 20%);
+    color: hsl(var(--ph, 200), 70%, 75%);
   }
 
   .hronir-moods {
