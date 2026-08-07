@@ -623,8 +623,13 @@ try {
       });
 
       queueBtn.addEventListener("click", () => {
+        const wasHidden = drawerEl.hidden;
         renderDrawer();
         drawerEl.hidden = !drawerEl.hidden;
+        if (wasHidden && !drawerEl.hidden) {
+          const firstItem = drawerList.querySelector<HTMLButtonElement>(".gmp-drawer-item");
+          (firstItem ?? drawerCloseBtn).focus();
+        }
       });
 
       drawerCloseBtn.addEventListener("click", () => {
@@ -634,6 +639,13 @@ try {
       document.addEventListener("click", (e) => {
         if (!drawerEl.hidden && !drawerEl.contains(e.target as Node) && e.target !== queueBtn) {
           drawerEl.hidden = true;
+        }
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !drawerEl.hidden) {
+          drawerEl.hidden = true;
+          queueBtn.focus();
         }
       });
 

@@ -17,7 +17,7 @@ const recent = await fetchGoodreadsBooks().then((b) => recentBooks(b, 3)).catch(
 
 <aside class="home-author-rail" aria-label={t(lang, 'author.aboutEyebrow')}>
   <div class="rail-avatar" data-tooltip="Franklin Baldo" data-placement="bottom">
-    <img src="/avatar.png" alt="Franklin Baldo" width="96" height="96" loading="lazy" decoding="async" />
+    <img src="/avatar.png" alt="Franklin Baldo" width="96" height="96" loading="eager" fetchpriority="high" decoding="async" />
   </div>
 
   <p class="rail-eyebrow"><small>{t(lang, 'author.aboutEyebrow')}</small></p>
