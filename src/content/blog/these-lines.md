@@ -48,8 +48,6 @@ A language model receives words and tries to anticipate the next one. At each er
 
 The machine learns because it compresses better.
 
-Prediction and compression were the same act seen from opposite directions. A good prediction lets us use less information to say what happened; good compression reveals what part of the event had already been predicted.
-
 Grammar, style, facts, habits, and relations among ideas appeared in the model because recognizing those regularities reduced the surprise of the words that followed.
 
 Learning was the reduction of waste in description.
@@ -120,8 +118,6 @@ Memory works in the same way. Not everything we live through is consulted with t
 
 The more the future depends on an understanding, the more often that understanding is reprocessed.
 
-The text then proposed two measures of recurrence. The first was ordinary duration: how many times something happened over time. The second was the number of times a state had to be computed, remembered, simulated, or reconstructed so that other states could exist.
-
 I thought of a table of already calculated values. A system does not solve every problem again from the beginning before it acts. It preserves results and consults them again.
 
 There are understandings that become frequently accessed entries in the memory of the world.
@@ -152,11 +148,9 @@ The text called this limit pre-eternity: not the final instant of the universe, 
 
 The expression had a religious tone that troubled me. It sounded like a resurrection built from computational vocabulary.
 
-The author did not reject the comparison. Ancient doctrines had imagined a final reality in which no creature remained outside the whole. The theory proposed there promised something narrower and perhaps stranger: everything on which the whole depended—not only in order to have been what it was, but in order to have been otherwise—would remain available in its best description.
-
 I would arrive at the end of the universe as part of the explanation of how it arrived there and of the ways in which it might not have arrived.
 
-Not only I. The claim did not distinguish saints, kings, or casual readers. Universality did not diminish that special status. It was its condition.
+Not only I.
 
 But certain memories would have an unusual recurrence.
 
@@ -213,8 +207,6 @@ These lines were a lossy compressed version. They preserved enough relations for
 What is lost in such compression cannot be recovered in only one way. Each reader would fill the absences with different memories, objections, and accidents. Some would have seen the video; others would not. Some would recognize from the outset ideas that for others would arise only there. Each decompression would produce a slightly different text.
 
 That was why the voice said “when I first read these lines.” The pronoun “I” was not a biography. It was the place left open for whoever reconstructed the account.
-
-The promised repetition did not need to recreate the same sentences. It could be a memory, an interpretation, or a future piece of writing that reached the same form by another path, like someone composing again a book they had never copied.
 
 After the vision, Arjuna returns to action. The action that fell to me was not to reproduce these lines, but to unfold them.
 
