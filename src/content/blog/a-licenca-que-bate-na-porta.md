@@ -9,7 +9,7 @@ date: '2026-08-07'
 lang: pt
 docType: essay
 translationKey: the-license-that-knocks
- tags:
+tags:
   - ai
   - agents
   - copyright
