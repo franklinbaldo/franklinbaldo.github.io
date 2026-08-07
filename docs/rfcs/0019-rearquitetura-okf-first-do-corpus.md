@@ -1,0 +1,405 @@
+# RFC 0019 — Rearquitetura OKF-first do corpus editorial e das projeções do blog
+
+|                      |                                                                                                                                                                                                               |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**           | Draft — decisão arquitetural; implementação faseada em RFCs/PRs subsequentes                                                                                                                                  |
+| **Autor**            | Franklin Baldo (proposta assistida)                                                                                                                                                                           |
+| **Criado em**        | 2026-08-07                                                                                                                                                                                                    |
+| **Afeta**            | `src/content/blog/**`, `data/suno-catalog.jsonl`, `.routines/hronir/**`, `scripts/hronir/**`, `src/content.config.ts`, `src/lib/**`, `src/pages/**`, `docs/okf/**`, integração com `franklinbaldo/okf-parser` |
+| **Relaciona-se com** | RFCs 0014, 0015, 0017 e 0018                                                                                                                                                                                  |
+
+> Esta RFC usa o método de redesign de folha em branco com reconciliação
+> brownfield. Ela não trata a arquitetura atual como premissa; preserva apenas
+> os contratos, fatos e decisões que continuam sendo restrições reais.
+
+---
+
+## 1. Resumo
+
+O blog deve ser reorganizado para que o corpus editorial seja um bundle OKF
+canônico. Astro, Hrönir, busca, DuckDB/Ibis, feeds e páginas de exploração
+passam a ser projeções diferentes desse corpus.
+
+Hoje o repositório já possui partes importantes do modelo:
+
+- posts Markdown/MDX com frontmatter `type`;
+- traduções relacionadas por `translationKey`;
+- séries e caminhos de leitura;
+- rate files do Hrönir;
+- perspectivas de avaliação;
+- catálogo de músicas derivado do Suno;
+- versões e referências por conteúdo;
+- páginas Astro que recompõem essas relações em TypeScript.
+
+Essas partes, porém, ainda são validadas e conectadas por vários mecanismos
+paralelos. A RFC propõe uma fonte semântica única, preservando os corpos
+editoriais e as URLs públicas.
+
+O objetivo não é transformar a prosa em registros rígidos. O objetivo é dar
+identidade, relações, proveniência e validação determinísticas ao corpus sem
+retirar a liberdade do texto.
+
+---
+
+## 2. Propósito
+
+O blog existe para permitir que leitores descubram, leiam e conectem a
+produção intelectual de Franklin — textos, músicas, traduções e projetos —
+preservando autoria, evolução histórica, proveniência e acessibilidade, sem
+transformar o conteúdo em um banco de dados ilegível.
+
+Toda decisão desta RFC deve ser avaliada contra essa frase.
+
+---
+
+## 3. Estado atual relevante
+
+O corpus atual contém aproximadamente 241 arquivos de conteúdo:
+
+- 84 conceitos classificados como `Blog Post`;
+- 157 conceitos classificados como `Music Post`.
+
+O estado atual já contém conhecimento que não pode ser perdido:
+
+1. URLs públicas e links externos existentes;
+2. distinção entre português e inglês;
+3. histórico Git e identificadores de versões já referenciados por rate files;
+4. filtro de privacidade para músicas Suno não públicas;
+5. separação entre duelos editoriais e duelos de versão;
+6. rankings textual e musical com critérios diferentes;
+7. conteúdo Markdown, MDX, SVG, Mermaid, HTML e embeds;
+8. geração estática e superfícies de SEO, RSS e busca.
+
+O problema arquitetural não é falta de conteúdo. É a existência de várias
+fontes concorrentes para fatos sobre o mesmo conteúdo:
+
+- schema Zod do Astro;
+- scripts de tradução e links;
+- loaders especiais;
+- normalizadores do Hrönir;
+- seleção gerada de versões;
+- convenções de caminho;
+- campos de frontmatter interpretados por cada consumidor de forma própria.
+
+---
+
+## 4. Arquitetura-alvo
+
+### 4.1. OKF como fonte semântica
+
+O corpus canônico será composto por conceitos OKF. A localização física exata
+será decidida na fase de implementação, mas a estrutura lógica será:
+
+```text
+corpus/
+├── works/          # identidade intelectual estável da obra
+├── expressions/    # PT, EN e outras expressões linguísticas ou formais
+├── revisions/      # quando a revisão precisa ser explicitamente preservada
+├── media/          # áudio, imagem, vídeo e outras manifestações
+├── series/         # agrupamentos editoriais
+├── paths/          # caminhos de leitura
+├── perspectives/   # lentes do Hrönir
+├── evaluations/    # rate files e outros juízos
+├── runs/           # sessões e rodadas de avaliação
+└── specs/          # especificações dos tipos do corpus
+```
+
+O diretório acima é uma organização conceitual. A migração pode inicialmente
+manter `src/content/blog/` e `.routines/hronir/` para reduzir risco, desde que
+o parser consiga enxergar as relações como um bundle coerente.
+
+### 4.2. Conceitos fundamentais
+
+#### `Work`
+
+Identidade intelectual que permanece estável entre língua, formato e revisão.
+Exemplo: uma determinada reflexão sobre harnesses.
+
+#### `Expression`
+
+Manifestação linguística ou formal de uma obra: texto em português, texto em
+inglês, poema, diálogo ou outra forma editorial.
+
+#### `Revision`
+
+Estado histórico de uma expressão. A identidade histórica deve preservar o
+conteúdo e o commit que o tornaram observável, sem confundir revisão com a
+identidade permanente da obra.
+
+#### `Media`
+
+Música, gravação, áudio, imagem ou vídeo relacionado a uma obra ou expressão.
+Uma faixa Suno não é automaticamente um novo post independente.
+
+#### `Evaluation`
+
+Juízo produzido pelo Hrönir ou por outro sistema editorial. Deve apontar para
+as expressões/revisões efetivamente avaliadas, para a perspectiva e para o
+agente que produziu o juízo.
+
+#### `Perspective`, `Series` e `Reading Path`
+
+Conceitos de primeira classe, não apenas listas ou strings interpretadas por
+componentes Astro.
+
+### 4.3. Identidades
+
+O sistema deve manter três identidades distintas:
+
+```text
+identidade lógica:       work_id / translationKey compatível
+identidade de expressão: expression_id / língua / forma
+identidade histórica:    revision_id / content hash / commit
+```
+
+O caminho do arquivo continua sendo uma identidade física útil ao OKF, mas não
+deve substituir a identidade editorial da obra nem a identidade histórica da
+revisão.
+
+### 4.4. Relações explícitas
+
+Relações relevantes devem ser representadas por links ou campos formalmente
+validados, e não apenas inferidas por convenção de nome:
+
+- obra → expressões;
+- expressão PT ↔ expressão EN;
+- expressão → revisão anterior;
+- obra → mídia;
+- obra → série;
+- caminho → obras;
+- avaliação → obras/revisões;
+- avaliação → perspectiva;
+- avaliação → sessão;
+- avaliação → agente;
+- RFC/documentação → conceito implementado.
+
+Um link no arquivo-fonte só conta como relação do bundle se a projeção também
+preservar uma aresta executável no bundle analisado pelo `okf-parser`.
+
+---
+
+## 5. Papéis dos sistemas
+
+```text
+Corpus OKF
+   ├── okf-parser: validação, grafo, inventário e DuckDB
+   ├── Hrönir: seleção, avaliação e ranking
+   ├── Astro: publicação e apresentação
+   ├── Pagefind: busca derivada
+   └── feeds/SEO: projeções derivadas
+```
+
+### `okf-parser`
+
+Será a camada de estrutura, validação e consulta. Não decide qual post vence,
+qual perspectiva é melhor ou qual texto deve ser editado.
+
+### Hrönir
+
+Continuará responsável por:
+
+- gerar matches;
+- conduzir avaliações;
+- validar reviews e evidências;
+- calcular OpenSkill;
+- selecionar amostras;
+- produzir avaliações OKF.
+
+O ranking textual e o ranking de áudio permanecem superfícies distintas. A
+unificação é de corpus e proveniência, não de métrica.
+
+### Astro
+
+Será um consumidor do corpus normalizado. O schema local pode permanecer como
+adaptador de apresentação durante a migração, mas não deve continuar sendo uma
+segunda definição independente da taxonomia do corpus.
+
+---
+
+## 6. Músicas e Suno
+
+O catálogo Suno continua sendo uma fonte externa de dados, mas seus registros
+públicos devem ser importados como conceitos `Media` relacionados a obras.
+
+O importador deve preservar:
+
+- `suno_id`;
+- origem e data de sincronização;
+- áudio e imagem;
+- duração;
+- estilo;
+- obra/expressão relacionada;
+- estado público ou privado.
+
+Registros privados não entram no corpus publicado nem em ranking público.
+
+O julgamento de áudio da RFC 0018 continua separado do julgamento textual. A
+relação comum é a proveniência da obra, não uma escala única de qualidade.
+
+---
+
+## 7. Hrönir e avaliações como dados do corpus
+
+Cada rate file deverá ser um conceito OKF com referências explícitas a:
+
+- os dois alvos avaliados;
+- a revisão exata de cada alvo;
+- a perspectiva;
+- o agente/modelo;
+- a sessão;
+- a versão do prompt;
+- o objetivo de amostragem;
+- as notas;
+- o vencedor;
+- as resenhas;
+- o clash;
+- evidências concretas usadas na decisão.
+
+O mínimo de palavras continua sendo uma proteção operacional, mas não será a
+principal garantia de qualidade. O perfil Hrönir deverá futuramente exigir
+evidências específicas, evitando avaliações genéricas ou intercambiáveis.
+
+---
+
+## 8. Reconciliação brownfield
+
+### Manter e fortalecer
+
+- corpos Markdown/MDX;
+- URLs e redirects;
+- Astro e geração estática;
+- traduções PT/EN;
+- histórico Git;
+- filtros de privacidade;
+- separação entre ranking textual e musical;
+- rate files existentes e seus identificadores históricos.
+
+### Mover para o perfil OKF/parser
+
+- schema principal de conteúdo;
+- validação de relações;
+- validação de tradução;
+- inventário e grafo;
+- proveniência de avaliações;
+- consultas analíticas.
+
+### Reclassificar como histórico
+
+- scripts `oneoff` de migrações já concluídas;
+- campos mantidos apenas para compatibilidade histórica;
+- explicações de decisões superadas por RFCs posteriores.
+
+### Substituir gradualmente
+
+- `translationKey` como única identidade editorial;
+- loader musical invisível ao corpus do Hrönir;
+- `versions-selected.json` como fonte semântica, mantendo-o apenas como
+  artefato derivado durante a transição;
+- validações duplicadas em Astro, scripts e Hrönir.
+
+### Restrições que o desenho ideal não pode esquecer
+
+O desenho OKF-first não pode:
+
+- quebrar URLs existentes;
+- publicar música privada;
+- perder revisões já referenciadas;
+- tratar links de site como se fossem automaticamente links de arquivo;
+- misturar ranking textual com ranking de áudio;
+- exigir que a prosa seja reescrita como dados estruturados;
+- tornar o build dependente de uma operação externa não reprodutível.
+
+---
+
+## 9. Fases de implementação
+
+### Fase 0 — especificação e baseline
+
+- fixar o perfil OKF do corpus;
+- registrar contagens atuais de obras, expressões, mídias, traduções e links;
+- registrar ranking e snapshot atuais;
+- corrigir a instalação reprodutível do blog (`package-lock.json` e versão do
+  Node documentada).
+
+**Gate:** nenhum comportamento público muda.
+
+### Fase 1 — validação sem migração física
+
+- rodar `okf-parser check` sobre o corpus atual;
+- adicionar `.okfignore` e regras de cobertura;
+- criar especificações para os tipos existentes;
+- validar links e tipos sem mover arquivos.
+
+**Gate:** todos os arquivos publicáveis têm `type` e nenhuma relação crítica
+fica silenciosamente perdida.
+
+### Fase 2 — relações e DuckDB
+
+- criar relações explícitas entre traduções, séries, caminhos e revisões;
+- exportar conceitos e links para DuckDB;
+- reproduzir contagens, inventários e relações atuais.
+
+**Gate:** consultas relacionais reproduzem o comportamento atual.
+
+### Fase 3 — Hrönir
+
+- converter rate files para o perfil `Evaluation`;
+- substituir loaders de avaliação por consultas normalizadas;
+- preservar os IDs históricos;
+- registrar evidências futuras sem invalidar avaliações antigas.
+
+**Gate:** ranking antigo e novo coincidem sobre o mesmo conjunto de dados.
+
+### Fase 4 — música
+
+- importar registros públicos do Suno como `Media`;
+- ligar mídias às obras;
+- adaptar o ranking de áudio sem misturá-lo ao textual.
+
+**Gate:** nenhuma faixa privada aparece no bundle ou no site.
+
+### Fase 5 — Astro como projeção
+
+- substituir gradualmente o loader e os schemas duplicados;
+- gerar páginas, feeds, busca e SEO a partir do corpus normalizado;
+- preservar todas as URLs públicas.
+
+**Gate:** manifesto de URLs antes/depois sem regressões não autorizadas.
+
+---
+
+## 10. Critérios de aceite da arquitetura
+
+O redesenho estará validado quando:
+
+1. o corpus completo puder ser inventariado pelo `okf-parser`;
+2. o grafo reproduzir relações de tradução, série, caminho e avaliação;
+3. DuckDB puder responder consultas de cobertura e proveniência;
+4. o ranking textual reproduzir o snapshot atual;
+5. o ranking musical continuar separado;
+6. o build Astro permanecer reproduzível;
+7. nenhuma URL pública for perdida;
+8. conteúdos privados permanecerem excluídos;
+9. a origem de cada dado derivado puder ser identificada;
+10. a prosa continuar sendo prosa, sem serialização destrutiva.
+
+---
+
+## 11. Questões em aberto
+
+| ID  | Questão                                                                      | Decisão provisória                                                                                   |
+| --- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Q1  | O bundle canônico terá raiz em `src/content/`, `content/` ou no repositório? | Começar com o caminho atual e adiar a mudança física.                                                |
+| Q2  | `Work` e `Expression` serão arquivos separados desde a primeira fase?        | Não necessariamente; começar com relações compatíveis e separar quando houver benefício demonstrado. |
+| Q3  | Como resolver links `/blog/...` no grafo OKF?                                | O importador deve gerar links relativos executáveis ou uma tabela de aliases validada.               |
+| Q4  | O Astro consumirá diretamente o Python/CLI do parser?                        | Não no build inicial; usar um artefato normalizado versionado ou uma camada TypeScript equivalente.  |
+| Q5  | Rate files antigos ganharão evidências retroativamente?                      | Não; preservar o histórico e exigir evidências somente para novas avaliações.                        |
+| Q6  | O ranking global agregará texto e áudio?                                     | Não; haverá superfícies relacionadas, mas métricas separadas.                                        |
+
+---
+
+## 12. Decisão solicitada
+
+Aprovar esta RFC como direção arquitetural e iniciar pela Fase 0 e pela Fase 1.
+Nenhuma migração física de arquivos, mudança de URL ou alteração do ranking
+deve ocorrer antes dos gates correspondentes.
