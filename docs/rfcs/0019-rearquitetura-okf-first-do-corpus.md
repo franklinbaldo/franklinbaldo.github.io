@@ -54,10 +54,23 @@ Toda decisão desta RFC deve ser avaliada contra essa frase.
 
 ## 3. Estado atual relevante
 
-O corpus atual contém aproximadamente 241 arquivos de conteúdo:
+A coleção Astro materializa atualmente aproximadamente 241 entradas:
 
-- 84 conceitos classificados como `Blog Post`;
-- 157 conceitos classificados como `Music Post`.
+- 84 entradas classificadas como `Blog Post`;
+- 157 entradas classificadas como `Music Post`.
+
+Esses números descrevem entidades da coleção, não arquivos físicos. Parte das
+entradas musicais é produzida em memória pelo loader de
+`data/suno-catalog.jsonl`, enquanto também existem documentos musicais
+editoriais no corpus. O baseline da migração deve separar, sem somar categorias
+heterogêneas:
+
+- arquivos editoriais authored `.md` e `.mdx`;
+- conceitos editoriais por tipo;
+- registros Suno totais, públicos, privados e inválidos;
+- entradas públicas derivadas pelo loader;
+- `Work`, `Expression`, `Revision` e `Media`;
+- sobreposições ou colisões entre documentos authored e registros derivados.
 
 O estado atual já contém conhecimento que não pode ser perdido:
 
@@ -87,8 +100,9 @@ fontes concorrentes para fatos sobre o mesmo conteúdo:
 
 ### 4.1. OKF como fonte semântica
 
-O corpus canônico será composto por conceitos OKF. A localização física exata
-será decidida na fase de implementação, mas a estrutura lógica será:
+O corpus canônico será composto por conceitos OKF em Markdown `.md`. A
+localização física exata será decidida na fase de implementação, mas a estrutura
+lógica será:
 
 ```text
 corpus/
@@ -104,9 +118,21 @@ corpus/
 └── specs/          # especificações dos tipos do corpus
 ```
 
-O diretório acima é uma organização conceitual. A migração pode inicialmente
-manter `src/content/blog/` e `.routines/hronir/` para reduzir risco, desde que
-o parser consiga enxergar as relações como um bundle coerente.
+O diretório acima é uma organização conceitual. As raízes atuais
+`src/content/blog/` e `.routines/hronir/` podem ser mantidas inicialmente,
+mas os documentos editoriais `.mdx` devem ser normalizados para `.md` antes
+de o bundle ser declarado canônico.
+
+A Fase 0 inventariará construções específicas de MDX. A Fase 1 aplicará uma
+transformação determinística que preserve frontmatter, prosa, links, blocos
+protegidos, recursos e renderização. Construções realmente executáveis serão
+extraídas para componentes ou adaptadores de apresentação explicitamente
+relacionados ao conceito. Não haverá uma projeção-sombra permanente em `.md`
+para um `.mdx` canônico: o Markdown OKF será a fonte editorial.
+
+Durante a transição, uma catraca independente do discovery do parser enumerará
+todos os `.md` e `.mdx` publicáveis e provará correspondência 1:1 com o
+inventário OKF. `.okfignore` não poderá ocultar conteúdo publicável.
 
 ### 4.2. Conceitos fundamentais
 
@@ -123,8 +149,9 @@ inglês, poema, diálogo ou outra forma editorial.
 #### `Revision`
 
 Estado histórico de uma expressão. A identidade histórica deve preservar o
-conteúdo e o commit que o tornaram observável, sem confundir revisão com a
-identidade permanente da obra.
+conteúdo normalizado exato e sua proveniência Git, sem confundir revisão com a
+identidade permanente da obra. Um mesmo estado pode ser observado em mais de um
+commit; portanto, commit não é a identidade exclusiva da revisão.
 
 #### `Media`
 
@@ -149,12 +176,28 @@ O sistema deve manter três identidades distintas:
 ```text
 identidade lógica:       work_id / translationKey compatível
 identidade de expressão: expression_id / língua / forma
-identidade histórica:    revision_id / content hash / commit
+identidade histórica:    revision_id / normalized content hash / blob OID
 ```
 
 O caminho do arquivo continua sendo uma identidade física útil ao OKF, mas não
 deve substituir a identidade editorial da obra nem a identidade histórica da
 revisão.
+
+Para avaliações históricas, a resolução seguirá o contrato:
+
+```text
+(path_at_run, legacy_uuid, run_at)
+    → revision_id
+    → normalized_content_hash
+    → blob_oid
+    → observed_in_commits[]
+    → introduced_by_commit, quando determinável
+```
+
+O UUID histórico permanece como fingerprint e alias de migração, não como
+substituto do `revision_id`. O mesmo blob ou conteúdo pode aparecer em vários
+commits ou caminhos. A resolução deve suportar os algoritmos de UUID atual,
+legacy e pré-OKF e nunca pode apontar silenciosamente para a versão corrente.
 
 ### 4.4. Relações explícitas
 
@@ -214,6 +257,11 @@ Será um consumidor do corpus normalizado. O schema local pode permanecer como
 adaptador de apresentação durante a migração, mas não deve continuar sendo uma
 segunda definição independente da taxonomia do corpus.
 
+Astro consumirá exclusivamente o pacote TypeScript oficial do `okf-parser` ou
+um artefato gerado por uma implementação oficial do parser. É proibida uma
+implementação independente do parsing, do perfil, da taxonomia ou das regras de
+validação OKF.
+
 ---
 
 ## 6. Músicas e Suno
@@ -265,14 +313,16 @@ evidências específicas, evitando avaliações genéricas ou intercambiáveis.
 
 ### Manter e fortalecer
 
-- corpos Markdown/MDX;
+- conteúdo, prosa e comportamento de renderização dos corpos Markdown/MDX,
+  mesmo quando a extensão canônica migrar para `.md`;
 - URLs e redirects;
 - Astro e geração estática;
 - traduções PT/EN;
 - histórico Git;
 - filtros de privacidade;
 - separação entre ranking textual e musical;
-- rate files existentes e seus identificadores históricos.
+- rate files existentes e seus identificadores históricos;
+- manifesto congelado de resolução histórica e ledger explícito de órfãos.
 
 ### Mover para o perfil OKF/parser
 
@@ -313,25 +363,42 @@ O desenho OKF-first não pode:
 
 ## 9. Fases de implementação
 
-### Fase 0 — especificação e baseline
+### Fase 0 — especificação, baseline e proveniência histórica
 
 - fixar o perfil OKF do corpus;
-- registrar contagens atuais de obras, expressões, mídias, traduções e links;
+- enumerar independentemente todos os `.md` e `.mdx` publicáveis;
+- inventariar as construções específicas de MDX e definir sua normalização;
+- registrar separadamente arquivos authored, conceitos editoriais, entradas
+  derivadas e registros Suno totais, públicos, privados e inválidos;
+- registrar contagens atuais de obras, expressões, revisões, mídias, traduções e
+  links;
+- gerar e congelar o manifesto
+  `(path_at_run, legacy_uuid, run_at) → revision_id → blob_oid → commits[]`
+  para todos os UUIDs citados por rate files;
+- registrar em ledger imutável somente os órfãos históricos que não puderem ser
+  resolvidos após busca pelos algoritmos atual, legacy e pré-OKF;
 - registrar ranking e snapshot atuais;
 - corrigir a instalação reprodutível do blog (`package-lock.json` e versão do
   Node documentada).
 
-**Gate:** nenhum comportamento público muda.
+**Gate:** nenhum comportamento público muda; 100% dos alvos históricos resolvem
+para conteúdo exato ou constam no ledger explícito de órfãos; o baseline
+distingue conteúdo authored, derivado, público e privado.
 
-### Fase 1 — validação sem migração física
+### Fase 1 — cobertura OKF e migração editorial
 
-- rodar `okf-parser check` sobre o corpus atual;
-- adicionar `.okfignore` e regras de cobertura;
+- normalizar deterministicamente os documentos editoriais `.mdx` para `.md`;
+- provar paridade de frontmatter, prosa, links, recursos, renderização e URL;
+- executar uma catraca independente que enumere todo `.md` e `.mdx`
+  publicável e prove correspondência 1:1 com os conceitos inventariados;
+- rodar `okf-parser check` sobre o corpus completo;
+- adicionar `.okfignore` apenas para artefatos realmente não publicáveis;
 - criar especificações para os tipos existentes;
-- validar links e tipos sem mover arquivos.
+- validar links e tipos.
 
-**Gate:** todos os arquivos publicáveis têm `type` e nenhuma relação crítica
-fica silenciosamente perdida.
+**Gate:** todos os arquivos publicáveis têm `type`, todos aparecem no
+inventário OKF, nenhuma relação crítica fica silenciosamente perdida e não
+resta `.mdx` editorial fora de um ledger explícito de exceções temporárias.
 
 ### Fase 2 — relações e DuckDB
 
@@ -372,34 +439,39 @@ fica silenciosamente perdida.
 
 O redesenho estará validado quando:
 
-1. o corpus completo puder ser inventariado pelo `okf-parser`;
-2. o grafo reproduzir relações de tradução, série, caminho e avaliação;
-3. DuckDB puder responder consultas de cobertura e proveniência;
-4. o ranking textual reproduzir o snapshot atual;
-5. o ranking musical continuar separado;
-6. o build Astro permanecer reproduzível;
-7. nenhuma URL pública for perdida;
-8. conteúdos privados permanecerem excluídos;
-9. a origem de cada dado derivado puder ser identificada;
-10. a prosa continuar sendo prosa, sem serialização destrutiva.
+1. todo arquivo editorial authored e toda entrada pública derivada estiverem
+   contabilizados separadamente;
+2. o corpus completo puder ser inventariado pelo `okf-parser`, com cobertura
+   independente 1:1 dos `.md` e `.mdx` publicáveis durante a transição;
+3. todo alvo histórico de Evaluation resolver para a revisão exata ou para um
+   órfão explicitamente registrado;
+4. o grafo reproduzir relações de tradução, série, caminho e avaliação;
+5. DuckDB puder responder consultas de cobertura e proveniência;
+6. o ranking textual reproduzir o snapshot atual;
+7. o ranking musical continuar separado;
+8. o build Astro permanecer reproduzível;
+9. nenhuma URL pública for perdida;
+10. conteúdos privados permanecerem excluídos;
+11. a origem de cada dado derivado puder ser identificada;
+12. a prosa continuar sendo prosa, sem serialização destrutiva.
 
 ---
 
 ## 11. Questões em aberto
 
-| ID  | Questão                                                                      | Decisão provisória                                                                                   |
-| --- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Q1  | O bundle canônico terá raiz em `src/content/`, `content/` ou no repositório? | Começar com o caminho atual e adiar a mudança física.                                                |
-| Q2  | `Work` e `Expression` serão arquivos separados desde a primeira fase?        | Não necessariamente; começar com relações compatíveis e separar quando houver benefício demonstrado. |
-| Q3  | Como resolver links `/blog/...` no grafo OKF?                                | O importador deve gerar links relativos executáveis ou uma tabela de aliases validada.               |
-| Q4  | O Astro consumirá diretamente o Python/CLI do parser?                        | Não no build inicial; usar um artefato normalizado versionado ou uma camada TypeScript equivalente.  |
-| Q5  | Rate files antigos ganharão evidências retroativamente?                      | Não; preservar o histórico e exigir evidências somente para novas avaliações.                        |
-| Q6  | O ranking global agregará texto e áudio?                                     | Não; haverá superfícies relacionadas, mas métricas separadas.                                        |
+| ID  | Questão                                                                      | Decisão provisória                                                                                                                       |
+| --- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Q1  | O bundle canônico terá raiz em `src/content/`, `content/` ou no repositório? | Começar com o caminho atual e adiar a mudança física.                                                                                    |
+| Q2  | `Work` e `Expression` serão arquivos separados desde a primeira fase?        | Não necessariamente; começar com relações compatíveis e separar quando houver benefício demonstrado.                                     |
+| Q3  | Como resolver links `/blog/...` no grafo OKF?                                | O importador deve gerar links relativos executáveis ou uma tabela de aliases validada.                                                   |
+| Q4  | Como Astro consumirá o contrato OKF?                                         | Pelo pacote TypeScript oficial do `okf-parser` ou por artefato gerado por implementação oficial; nunca por reimplementação independente. |
+| Q5  | Rate files antigos ganharão evidências retroativamente?                      | Não; preservar o histórico e exigir evidências somente para novas avaliações.                                                            |
+| Q6  | O ranking global agregará texto e áudio?                                     | Não; haverá superfícies relacionadas, mas métricas separadas.                                                                            |
 
 ---
 
 ## 12. Decisão solicitada
 
-Aprovar esta RFC como direção arquitetural e iniciar pela Fase 0 e pela Fase 1.
-Nenhuma migração física de arquivos, mudança de URL ou alteração do ranking
-deve ocorrer antes dos gates correspondentes.
+Aprovar esta RFC como direção arquitetural e iniciar pela Fase 0. A migração
+física controlada de `.mdx` para `.md` integra a Fase 1; nenhuma outra mudança
+de URL, publicação ou ranking deve ocorrer antes dos gates correspondentes.
