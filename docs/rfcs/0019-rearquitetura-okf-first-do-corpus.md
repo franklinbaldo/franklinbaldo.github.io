@@ -100,7 +100,8 @@ fontes concorrentes para fatos sobre o mesmo conteúdo:
 
 ### 4.1. OKF como fonte semântica
 
-O corpus canônico será composto por conceitos OKF em Markdown `.md`. A
+O corpus canônico será composto por conceitos OKF em Markdown `.md` e MDX
+`.mdx`, tratados como dialetos explícitos do mesmo modelo documental. A
 localização física exata será decidida na fase de implementação, mas a estrutura
 lógica será:
 
@@ -119,20 +120,21 @@ corpus/
 ```
 
 O diretório acima é uma organização conceitual. As raízes atuais
-`src/content/blog/` e `.routines/hronir/` podem ser mantidas inicialmente,
-mas os documentos editoriais `.mdx` devem ser normalizados para `.md` antes
-de o bundle ser declarado canônico.
+`src/content/blog/` e `.routines/hronir/` podem ser mantidas inicialmente.
+Não haverá conversão física obrigatória de `.mdx` para `.md`: ambos poderão
+ser fontes canônicas quando o parser suportar MDX como dialeto de primeira
+classe.
 
-A Fase 0 inventariará construções específicas de MDX. A Fase 1 aplicará uma
-transformação determinística que preserve frontmatter, prosa, links, blocos
-protegidos, recursos e renderização. Construções realmente executáveis serão
-extraídas para componentes ou adaptadores de apresentação explicitamente
-relacionados ao conceito. Não haverá uma projeção-sombra permanente em `.md`
-para um `.mdx` canônico: o Markdown OKF será a fonte editorial.
+Esse suporte deve preservar o frontmatter e o corpo exato, extrair headings e
+links estáticos com semântica MDX, tornar imports, componentes e expressões
+dinâmicas inspecionáveis e nunca executar JavaScript ou JSX. Conversões
+individuais para `.md` continuam possíveis como limpeza editorial, mas não são
+pré-requisito nem podem criar uma projeção-sombra concorrente.
 
-Durante a transição, uma catraca independente do discovery do parser enumerará
-todos os `.md` e `.mdx` publicáveis e provará correspondência 1:1 com o
-inventário OKF. `.okfignore` não poderá ocultar conteúdo publicável.
+Até essa capacidade existir no `okf-parser`, a Fase 1 não pode ser declarada
+concluída. Uma catraca independente do discovery do parser enumerará todos os
+`.md` e `.mdx` publicáveis e provará correspondência 1:1 com o inventário
+OKF. `.okfignore` não poderá ocultar conteúdo publicável.
 
 ### 4.2. Conceitos fundamentais
 
@@ -237,6 +239,19 @@ Corpus OKF
 Será a camada de estrutura, validação e consulta. Não decide qual post vence,
 qual perspectiva é melhor ou qual texto deve ser editado.
 
+Dependências e extensões upstream relevantes:
+
+- `okf-parser#53`: digests de revisão e índice opcional de proveniência Git;
+- `okf-parser#54`: suporte de primeira classe ao dialeto MDX;
+- `okf-parser#55`: tipo default explícito e observável;
+- `okf-parser#56`: adapter GraphQL opcional para consumidores;
+- `okf-parser#57`: avaliação de um core Rust compartilhado, sem bloquear o
+  cronograma do blog.
+
+A Fase 1 depende funcionalmente da #54. As demais podem ser consumidas quando
+estiverem maduras ou substituídas temporariamente por artefatos locais estreitos
+e explicitamente derivados, sem criar uma segunda implementação do parser.
+
 ### Hrönir
 
 Continuará responsável por:
@@ -313,8 +328,8 @@ evidências específicas, evitando avaliações genéricas ou intercambiáveis.
 
 ### Manter e fortalecer
 
-- conteúdo, prosa e comportamento de renderização dos corpos Markdown/MDX,
-  mesmo quando a extensão canônica migrar para `.md`;
+- conteúdo, prosa, dialeto e comportamento de renderização dos corpos
+  Markdown/MDX, sem exigir migração de extensão;
 - URLs e redirects;
 - Astro e geração estática;
 - traduções PT/EN;
@@ -367,7 +382,10 @@ O desenho OKF-first não pode:
 
 - fixar o perfil OKF do corpus;
 - enumerar independentemente todos os `.md` e `.mdx` publicáveis;
-- inventariar as construções específicas de MDX e definir sua normalização;
+- inventariar as construções específicas de MDX e classificá-las como
+  Markdown compatível, JSX estático ou expressão dinâmica;
+- registrar quais documentos omitem `type` e definir, se necessário, uma
+  política explícita e observável de tipo default;
 - registrar separadamente arquivos authored, conceitos editoriais, entradas
   derivadas e registros Suno totais, públicos, privados e inválidos;
 - registrar contagens atuais de obras, expressões, revisões, mídias, traduções e
@@ -385,20 +403,23 @@ O desenho OKF-first não pode:
 para conteúdo exato ou constam no ledger explícito de órfãos; o baseline
 distingue conteúdo authored, derivado, público e privado.
 
-### Fase 1 — cobertura OKF e migração editorial
+### Fase 1 — cobertura OKF de Markdown e MDX
 
-- normalizar deterministicamente os documentos editoriais `.mdx` para `.md`;
-- provar paridade de frontmatter, prosa, links, recursos, renderização e URL;
+- fixar uma versão do `okf-parser` com suporte explícito ao dialeto MDX;
+- validar frontmatter, headings, links estáticos e construções dinâmicas sem
+  executar o corpo MDX;
+- aplicar tipo default somente como política de ingestão explícita, preservando
+  `authored_type`, `effective_type` e a origem do valor;
 - executar uma catraca independente que enumere todo `.md` e `.mdx`
   publicável e prove correspondência 1:1 com os conceitos inventariados;
-- rodar `okf-parser check` sobre o corpus completo;
+- rodar `okf-parser check` sobre o corpus completo com os dois dialetos;
 - adicionar `.okfignore` apenas para artefatos realmente não publicáveis;
 - criar especificações para os tipos existentes;
 - validar links e tipos.
 
-**Gate:** todos os arquivos publicáveis têm `type`, todos aparecem no
-inventário OKF, nenhuma relação crítica fica silenciosamente perdida e não
-resta `.mdx` editorial fora de um ledger explícito de exceções temporárias.
+**Gate:** todos os arquivos `.md` e `.mdx` publicáveis possuem tipo authored
+ou default explícito, aparecem diretamente no inventário OKF e nenhuma relação
+crítica ou construção dinâmica fica silenciosamente perdida.
 
 ### Fase 2 — relações e DuckDB
 
@@ -441,8 +462,8 @@ O redesenho estará validado quando:
 
 1. todo arquivo editorial authored e toda entrada pública derivada estiverem
    contabilizados separadamente;
-2. o corpus completo puder ser inventariado pelo `okf-parser`, com cobertura
-   independente 1:1 dos `.md` e `.mdx` publicáveis durante a transição;
+2. o corpus completo puder ser inventariado diretamente pelo `okf-parser`,
+   com cobertura independente 1:1 dos `.md` e `.mdx` publicáveis;
 3. todo alvo histórico de Evaluation resolver para a revisão exata ou para um
    órfão explicitamente registrado;
 4. o grafo reproduzir relações de tradução, série, caminho e avaliação;
@@ -467,11 +488,12 @@ O redesenho estará validado quando:
 | Q4  | Como Astro consumirá o contrato OKF?                                         | Pelo pacote TypeScript oficial do `okf-parser` ou por artefato gerado por implementação oficial; nunca por reimplementação independente. |
 | Q5  | Rate files antigos ganharão evidências retroativamente?                      | Não; preservar o histórico e exigir evidências somente para novas avaliações.                                                            |
 | Q6  | O ranking global agregará texto e áudio?                                     | Não; haverá superfícies relacionadas, mas métricas separadas.                                                                            |
+| Q7  | Astro dependerá de um servidor GraphQL?                                      | Não; GraphQL poderá ser um adapter opcional e embutido. O build estático deve continuar funcionando diretamente pelo pacote TypeScript.  |
 
 ---
 
 ## 12. Decisão solicitada
 
-Aprovar esta RFC como direção arquitetural e iniciar pela Fase 0. A migração
-física controlada de `.mdx` para `.md` integra a Fase 1; nenhuma outra mudança
-de URL, publicação ou ranking deve ocorrer antes dos gates correspondentes.
+Aprovar esta RFC como direção arquitetural e iniciar pela Fase 0. Markdown e
+MDX permanecerão fontes canônicas; nenhuma mudança de URL, publicação ou ranking
+deve ocorrer antes dos gates correspondentes.
