@@ -67,7 +67,7 @@ Modelos de linguagem são muito bons em encurtar distâncias. Dê dados e uma in
 
 Fonte não é lead. Lead não é rascunho. Rascunho não é matéria checada. Checagem não é autorização de publicação.
 
-Eu quero que essas diferenças existam no disco, não apenas nas instruções do agente.
+Essas diferenças precisam existir no disco, não apenas nas instruções do agente.
 
 ## O CMS é o grafo
 
@@ -83,13 +83,13 @@ Uma matéria pode ter:
 
 O CMS emerge desse grafo.
 
-Se há uma revisão editorial aprovada descendente de uma checagem factual válida, que por sua vez aponta para um rascunho derivado de uma lead, eu consigo dizer onde a história está. Se aparece uma correção depois da publicação, não preciso apagar a matéria anterior para fingir que o erro nunca existiu. A correção é outro nó.
+Se há uma revisão editorial aprovada descendente de uma checagem factual válida, que por sua vez aponta para um rascunho derivado de uma lead, dá para dizer onde a história está. Se aparece uma correção depois da publicação, não é preciso apagar a matéria anterior para fingir que o erro nunca existiu. A correção é outro nó.
 
 Isso também tornou visível uma pequena ironia na retomada do projeto.
 
 O Vigia já dizia usar OKF, mas tinha começado a implementar localmente um pequeno ecossistema para interpretar esse conhecimento: parsing de frontmatter, cobertura de tipos, regras de grafo, unicidade de identificadores. Enquanto isso, meu [okf-parser](https://github.com/franklinbaldo/okf-parser) tinha crescido em outro repositório e já fazia boa parte desse trabalho de forma mais geral: validação, inventário, grafo, DuckDB, schemas, Pydantic, MCP e até operações relacionais sobre frontmatter.
 
-Eu tinha, basicamente, escrito uma versão pior de uma ferramenta minha dentro de outro projeto meu. Um tipo de microserviço doméstico.
+O resultado era, basicamente, uma versão local e mais limitada de uma ferramenta minha dentro de outro projeto meu. Um tipo de microserviço doméstico.
 
 A refatoração atual é menos gloriosa e muito melhor: apagar responsabilidade do Vigia.
 
@@ -117,15 +117,13 @@ Curiosamente, cada vez que a arquitetura fica mais explícita, o modelo fica men
 
 Ele continua sendo útil em lugares difíceis de resolver com código determinístico. Redação é um deles. Checagem semântica é outro: identificar afirmações num texto, decompor frases, localizar exatamente o trecho que está fazendo uma alegação e comparar aquilo com um conjunto fechado de evidências.
 
-Mas não quero que o mesmo agente que escreveu a matéria declare que suas próprias afirmações estão todas sustentadas.
-
-A RFC de fact-checking que está aberta no Vigia propõe uma skill independente. Ela recebe o rascunho e um universo fechado de evidências derivado da linhagem, inventaria as claims por conta própria e devolve uma análise estruturada. Verificações determinísticas validam hashes, referências e spans. O código, não o modelo, calcula `pass`, `revise` ou `block`. No piloto, ainda há revisão humana obrigatória.
+A RFC de fact-checking que está aberta no Vigia evita que o mesmo agente que escreveu a matéria simplesmente declare que suas próprias afirmações estão todas sustentadas. Ela propõe uma skill independente. A skill recebe o rascunho e um universo fechado de evidências derivado da linhagem, inventaria as claims por conta própria e devolve uma análise estruturada. Verificações determinísticas validam hashes, referências e spans. O código, não o modelo, calcula `pass`, `revise` ou `block`. No piloto, ainda há revisão humana obrigatória.
 
 Isso não está todo implementado. É importante dizer isso porque o repositório tem mais arquitetura do que operação neste momento.
 
 Também é onde o desenho se encontra com uma ideia sobre a qual [já escrevi](/blog/delegando-para-agentes/): agente pode elaborar a proposta sem receber automaticamente a autoridade para transformá-la em ato. No Vigia isso aparece menos como uma grande regra de segurança e mais como uma sequência de artefatos. O rascunho é literalmente outra coisa que a publicação.
 
-Não preciso pedir ao agente que se lembre disso se o sistema não oferece um atalho entre os dois.
+Se o sistema não oferece um atalho entre os dois, a separação não depende de o agente se lembrar dela.
 
 ## O perigo de ter ideias demais para um jornal que ainda tem poucas matérias
 
@@ -147,7 +145,7 @@ Primeiro o First Story Run: fonte real, detector, lead, rascunho, checagem, revi
 
 Só então vale perguntar qual detector vem depois.
 
-Há uma razão para eu gostar do teste hiperlocal. Num sistema nacional, uma afirmação genérica pode se esconder no volume. Num jornal de Porto Velho, um erro pode virar o nome de uma empresa real, um bairro real, uma licitação real, uma enchente real. O ganho de automatizar a atenção vem junto com a obrigação de mostrar de onde cada frase saiu.
+O teste hiperlocal tem uma vantagem incômoda. Num sistema nacional, uma afirmação genérica pode se esconder no volume. Num jornal de Porto Velho, um erro pode virar o nome de uma empresa real, um bairro real, uma licitação real, uma enchente real. O ganho de automatizar a atenção vem junto com a obrigação de mostrar de onde cada frase saiu.
 
 Detecção é barata. Relevância é cara.
 
@@ -155,7 +153,7 @@ Redação está ficando barata. Proveniência não.
 
 Publicar uma página estática é trivial. Conseguir percorrer a matéria ao contrário é outra coisa.
 
-Se o Vigia funcionar, quero que uma frase publicada possa ser seguida para trás: publicação → revisão → checagem → rascunho → lead → fonte. Não porque essa cadeia torne a frase verdadeira por mágica, mas porque torna visível onde alguém — código, modelo ou humano — deu um passo maior do que a evidência permitia.
+Se o Vigia funcionar, uma frase publicada deve poder ser seguida para trás: publicação → revisão → checagem → rascunho → lead → fonte. Não porque essa cadeia torne a frase verdadeira por mágica, mas porque torna visível onde alguém — código, modelo ou humano — deu um passo maior do que a evidência permitia.
 
 Por enquanto, continua sendo um protótipo. Há mais RFCs do que matérias. A regra agora é corrigir essa proporção.
 
