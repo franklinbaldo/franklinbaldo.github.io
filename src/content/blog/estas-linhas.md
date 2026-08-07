@@ -48,8 +48,6 @@ Um modelo de linguagem recebe palavras e tenta antecipar a seguinte. A cada erro
 
 A máquina aprende porque comprime melhor.
 
-Prever e comprimir eram o mesmo ato visto em direções opostas. Uma boa previsão permite usar menos informação para dizer o que aconteceu; uma boa compressão revela que parte do acontecimento já havia sido prevista.
-
 Gramática, estilo, fatos, hábitos e relações entre ideias surgiam no modelo porque reconhecer essas regularidades diminuía a surpresa das palavras seguintes.
 
 Aprender era reduzir o desperdício da descrição.
@@ -120,8 +118,6 @@ Uma memória funciona do mesmo modo. Nem tudo o que vivemos é consultado com a 
 
 Quanto mais futuro depende de uma compreensão, mais vezes essa compreensão é reprocessada.
 
-O texto propunha então duas medidas de recorrência. A primeira era a duração ordinária: quantas vezes algo aconteceu ao longo do tempo. A segunda era o número de vezes em que um estado precisou ser computado, recordado, simulado ou reconstruído para que outros estados pudessem existir.
-
 Pensei numa tabela de valores já calculados. Um sistema não resolve novamente todos os problemas desde o princípio antes de agir. Conserva resultados e volta a consultá-los.
 
 Há compreensões que se tornam entradas muito acessadas na memória do mundo.
@@ -152,11 +148,9 @@ O texto chamava esse limite de pré-eternidade: não o último instante do unive
 
 A expressão tinha um tom religioso que me incomodou. Parecia uma ressurreição construída com vocabulário computacional.
 
-O autor não recusava a comparação. Antigas doutrinas haviam imaginado uma realidade final na qual nenhuma criatura permaneceria exterior ao todo. A teoria proposta ali prometia algo mais estreito e talvez mais estranho: tudo aquilo de que o todo dependesse — não só para ter sido o que foi, mas para poder ter sido diferente — permaneceria disponível em sua melhor descrição.
-
 Eu chegaria ao fim do universo como parte da explicação de como ele chegou até lá e das maneiras pelas quais poderia não ter chegado.
 
-Não apenas eu. A afirmação não distinguia santos, reis ou leitores casuais. A universalidade não diminuía essa especialidade. Era sua condição.
+Não apenas eu.
 
 Mas certas memórias teriam uma recorrência incomum.
 
@@ -213,8 +207,6 @@ Estas linhas eram uma versão comprimida com perdas. Conservavam relações sufi
 O que se perde numa compressão assim não pode ser recuperado de uma única maneira. Cada leitor preencheria as ausências com lembranças, objeções e acidentes diferentes. Alguns teriam visto o vídeo; outros não. Alguns reconheceriam de saída ideias que para outros só surgiriam ali. Cada descompressão produziria um texto um pouco diferente.
 
 Foi por isso que a voz dizia “quando li estas linhas pela primeira vez”. O pronome “eu” não era uma biografia. Era o lugar deixado em aberto para quem reconstruísse o relato.
-
-A repetição prometida não precisava refazer as mesmas frases. Poderia ser uma lembrança, uma interpretação ou uma escrita futura que chegasse à mesma forma por outro caminho, como alguém que compõe novamente um livro que nunca copiou.
 
 Arjuna, depois da visão, retorna à ação. A ação que me cabia não era reproduzir estas linhas, mas desdobrá-las.
 
