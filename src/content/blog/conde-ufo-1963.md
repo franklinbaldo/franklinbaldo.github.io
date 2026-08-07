@@ -202,6 +202,10 @@ Um jornalista vai ao interior da Bahia investigar uma esfera metálica com um ca
 
 Volta contando que o telégrafo funcionava surpreendentemente bem.
 
+O detalhe está na segunda página do relatório, que praticamente só existe para terminar essa frase. Depois dela vem a assinatura: **André C. Simonpietri, Scientific Attaché**, pelo embaixador.
+
+A história do disco voador termina, naquele documento, com um adido científico americano registrando a eficiência do telégrafo de Conde.
+
 ## E então apareceu Stanislaw Ponte Preta
 
 Até esse ponto eu tinha uma pequena frustração.
@@ -221,6 +225,18 @@ O título era:
 **A Guerra dos Mundos na Versão Baiana.**
 
 E era sobre Conde.
+
+Vale um aparte aqui, porque Stanislaw não era apenas um colunista engraçado que por acaso esbarrou nessa história.
+
+Sérgio Porto, nascido em 1923 e morto precocemente em 1968, foi jornalista, cronista, radialista, teatrólogo e escritor. A Fundação Casa de Rui Barbosa o descreve como um dos mais importantes jornalistas, cronistas e escritores cariocas do século XX e, junto com seu heterônimo Stanislaw Ponte Preta, como um dos nomes que revolucionaram a imprensa brasileira das décadas de 1950 e 1960. Stanislaw era a persona humorística: a voz com que Porto podia transformar a linguagem de jornal, a solenidade pública, o moralismo e a própria realidade brasileira em matéria de sátira. O nome brincava com **Serafim Ponte Grande**, de Oswald de Andrade.
+
+No *Última Hora*, Stanislaw construiu inclusive uma pequena família fictícia — Tia Zulmira, Primo Altamirando, Rosamundo e outros. E isso aparece dentro da própria crônica de Conde: ao escrever que “quem conta um conto aumenta um ponto”, ele interrompe a frase para avisar que aquela máxima não era de Tia Zulmira, “mas também é boazinha”.
+
+Alguns anos depois, já depois do golpe de 1964, Porto faria o **FEBEAPÁ — Festival de Besteira que Assola o País**. A matéria-prima era deliciosa e terrível: atos, frases e notícias reais que a sátira muitas vezes precisava apenas enquadrar. Os textos saíram no *Última Hora* e depois foram reunidos em três volumes entre 1966 e 1968.
+
+A crônica de Conde é de 1963, portanto anterior ao golpe e anterior ao FEBEAPÁ. Não faz sentido chamá-la de FEBEAPÁ antes do FEBEAPÁ existir. Mas, relendo-a hoje, é difícil não enxergar o mecanismo que depois ficaria famoso: Stanislaw pega uma cadeia de informação pública que já é absurda por conta própria e mostra onde ela vai parar se ninguém interromper a multiplicação.
+
+E foi exatamente isso que ele fez com Conde.
 
 Stanislaw descreve a história quase como alguém acompanhando um experimento de transmissão de informação.
 
@@ -246,11 +262,11 @@ A velha tecnologia:
 
 **quem conta um conto aumenta um ponto.**
 
+O trecho é quase uma teoria da comunicação escrita como piada. Stanislaw imagina a notícia saindo de Salvador para o Rio já como um disco voador de procedência ignorada, “fazendo vítimas”; depois indo do Brasil para o mundo; depois voltando do exterior na forma de perguntas sobre uma imensa frota de discos voadores; até jornais longínquos anunciarem que marcianos haviam invadido a Terra.
+
 Claro que é uma crônica humorística.
 
 Sérgio Porto não estava fazendo perícia de destroços espaciais.
-
-Quando o texto termina falando em um balão de sondagem atmosférica levado pelo vento, isso não pode ser tratado como se fosse a conclusão de uma investigação técnica.
 
 Mas a crônica vale por outra coisa.
 
@@ -275,6 +291,54 @@ Alguma coisa ganhou detalhes no caminho entre Conde, Salvador e Rio.
 Talvez detalhes demais.
 
 A [edição de 14 de novembro de 1963](https://hemeroteca-pdf.bn.gov.br/765147/per765147_1963_00477.pdf) está preservada na Hemeroteca Digital Brasileira.
+
+E aí apareceu uma coisa que eu não tinha percebido na primeira leitura.
+
+## Até o desmentido parece ter se transformado
+
+No fim da crônica, Stanislaw dá sua solução para a história.
+
+Segundo ele, havia “um sujeito ponderado em Conde” que olhou para o objeto e explicou que aquilo era um **balão de sondagem atmosférica do Serviço de Meteorologia, extraviado pelo vento**.
+
+É uma bela saída narrativa.
+
+O problema é que ela não coincide exatamente com a outra fonte contemporânea que temos.
+
+No telegrama do cônsul Harold Midkiff, datado do mesmo dia 14 de novembro, a versão é mais fraca: o **Secretário de Segurança Pública teria especulado** que o objeto poderia ser um balão meteorológico, mas “no such sighting verified” — nenhum avistamento desse tipo havia sido verificado.
+
+Uma fonte nos dá um homem ponderado em Conde olhando para um objeto e identificando um balão.
+
+A outra nos dá uma autoridade em Salvador formulando uma hipótese que continuava sem verificação.
+
+As duas podem até ter origem em informações diferentes. Não temos material suficiente para dizer qual veio primeiro, nem se uma derivou da outra.
+
+Mas elas não são a mesma história.
+
+Isso significa que eu também não posso usar Stanislaw como confirmação de que “era um balão meteorológico”.
+
+E, para este caso, a discrepância é quase boa demais.
+
+Talvez até **a explicação cética** tenha passado pelo mesmo processo de compressão e embelezamento que Stanislaw estava satirizando.
+
+A história extraordinária ganha um cadáver.
+
+A história banal ganha uma testemunha ponderada que olha para o céu e resolve o mistério.
+
+As duas ficam melhores quando contadas.
+
+## Um balão, pelo menos, não seria uma coisa absurda
+
+Dizer que a versão do balão não foi comprovada não significa que ela seja tecnicamente absurda.
+
+Por uma coincidência útil, o próprio Serviço de Meteorologia brasileiro tinha acabado de ser reorganizado naquele mês. O Decreto nº 52.667, de **11 de outubro de 1963**, aprovou seu novo regimento e colocou o **Distrito de Meteorologia do Leste em Salvador**, abrangendo Sergipe e Bahia. O mesmo regimento previa observações de altitude e uma rede regional de observações meteorológicas.
+
+Portanto havia, literalmente, uma estrutura meteorológica oficial sediada em Salvador e responsável pela Bahia quando a história de Conde circulou.
+
+Isso torna perfeitamente plausível, em abstrato, que balões de sondagem fizessem parte do mundo material daquela notícia.
+
+Só não prova que um deles caiu em Conde.
+
+Plausibilidade não é evidência. E uma das coisas que esta investigação está me ensinando é justamente não promover uma boa explicação a fato só porque ela fecha o enredo melhor.
 
 ## Uma história começa a produzir cópias de si mesma
 
@@ -400,7 +464,25 @@ Uma agência de inteligência que arquivasse apenas informações comprovadament
 
 Ela precisa registrar rumores, hipóteses, relatos, negativas, contradições.
 
-O problema aparece décadas depois.
+E o próprio relatório de Conde preserva um exemplo minúsculo e maravilhoso disso.
+
+O documento é datado de **20 de novembro de 1963**. Ele remete a um telegrama de **14 de novembro de 1963**. Toda a cadeia é sobre o episódio de 8 de novembro de 1963.
+
+Mas a linha do assunto diz:
+
+> Reportedly Sighted Near Salvador, Bahia on November 8, **1964**.
+
+Um ano à frente.
+
+É quase certamente um simples erro datilográfico. Ninguém precisa de uma teoria temporal para explicá-lo: o próprio documento, suas referências e sua data tornam 1963 inequívoco.
+
+Mas eu gosto desse erro porque ele é uma miniatura daquilo que o arquivo faz.
+
+O arquivo não preservou “a verdade sobre 8 de novembro”.
+
+Preservou o que alguém escreveu — inclusive o 4 onde deveria haver um 3.
+
+Sessenta e três anos depois, o erro continua lá.
 
 O contexto se solta do documento.
 
@@ -590,7 +672,9 @@ Não sei.
 
 As referências contemporâneas a balão tornam isso possível.
 
-Não tornam verdadeiro.
+A existência de uma estrutura meteorológica oficial em Salvador torna a hipótese banalmente plausível.
+
+Nada disso a torna verdadeira.
 
 E gosto que essa pequena incerteza continue ali.
 
@@ -610,11 +694,25 @@ Mas ainda é uma fonte falando sobre outra fonte.
 
 Quero a página.
 
-O [Instituto Geográfico e Histórico da Bahia](https://www.ighb.org.br/biblioteca) informa possuir coleções que cobrem esses anos.
+O [Instituto Geográfico e Histórico da Bahia](https://www.ighb.org.br/biblioteca) informa possuir coleções que cobrem esses anos: *Diário de Notícias* de 1875 a 1980 e *Jornal da Bahia* de 1959 a 1994.
 
-Então existe uma possibilidade real de que aqueles exemplares continuem guardados.
+E apareceu uma pista adicional sobre o primeiro jornal.
 
-Talvez seja preciso mandar um e-mail.
+A versão pública da Hemeroteca Digital que encontrei para o *Diário de Notícias* de Salvador expõe online apenas exemplares entre 1876 e 1909. Isso, à primeira vista, parecia um beco sem saída.
+
+Mas o **ICAA/Museum of Fine Arts, Houston** cataloga uma matéria chamada “Arte popular”, publicada no *Diário de Notícias* de Salvador em **5 de novembro de 1963**, página 2, e informa expressamente que o item digitalizado está localizado na **Fundação Biblioteca Nacional**.
+
+Quatro dias antes da edição que eu quero.
+
+Isso não me entrega o jornal de 9 de novembro.
+
+Mas melhora bastante a pista: material do *Diário de Notícias* de Salvador de novembro de 1963 já foi digitalizado a partir do acervo da própria Biblioteca Nacional, mesmo que essa faixa de datas não esteja aparecendo na interface pública da coleção que encontrei.
+
+Então a busca continua.
+
+Talvez seja preciso descobrir outro identificador de coleção.
+
+Talvez seja preciso pedir a reprodução diretamente à Biblioteca Nacional ou ao IGHB.
 
 Talvez alguém precise ir fisicamente até uma hemeroteca.
 
@@ -687,5 +785,8 @@ E esta página já faz parte dela.
 - **Foreign Broadcast Information Service / Rádio Tupi (8 nov. 1963)** — o texto transcrito na postagem que despertou esta investigação também aparece preservado na discussão do [r/UFOs](https://www.reddit.com/r/UFOs/comments/1vi9q24/removed_by_moderator/).
 - **Embaixada dos EUA, “Negative Report on UFO” (20 nov. 1963)** — o [despacho diplomático](https://www.war.gov/medialink/ufo/release_05/Aug_07/documents/DOS-UAP-D002_Diplomatic-Cable_Brazil_November-20-1963.pdf) registra a investigação do consulado em Salvador, os dois jornais consultados e a ausência de confirmação local.
 - **Stanislaw Ponte Preta, “A Guerra dos Mundos na Versão Baiana” (14 nov. 1963)** — a [edição do *Última Hora*](https://hemeroteca-pdf.bn.gov.br/765147/per765147_1963_00477.pdf) está disponível na Hemeroteca Digital Brasileira.
+- **Fundação Casa de Rui Barbosa, “Sérgio Porto e Stanislaw Ponte Preta, 50 anos depois”** — uma boa introdução à importância de Sérgio Porto e à persona de Stanislaw na imprensa brasileira.
+- **Biblioteca Nacional, “Sérgio Porto: o ‘Pai espiritual’ de Stanislaw Ponte Preta”** — biografia e contexto da obra, inclusive o FEBEAPÁ e a relação de Porto com o *Última Hora*.
 - **Project Blue Book, Conde, Bahia (nov. 1963)** — o [caso digitalizado](https://archive.org/details/1963-11-9737078-Conde-Bahia-BRAZIL/mode/1up) está preservado no Internet Archive.
+- **Decreto nº 52.667, de 11 out. 1963** — o regimento do Serviço de Meteorologia então vigente estabelecia em Salvador o Distrito de Meteorologia do Leste, responsável por Bahia e Sergipe.
 - **Instituto Geográfico e Histórico da Bahia** — a [hemeroteca do IGHB](https://www.ighb.org.br/biblioteca) informa possuir coleções do *Diário de Notícias* e do *Jornal da Bahia* que abrangem novembro de 1963.
