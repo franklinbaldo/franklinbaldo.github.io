@@ -1,11 +1,13 @@
 import { createHash } from "node:crypto";
 import type { Assignment, Evaluation, EvaluationPlan } from "./types.js";
+import { planDigest } from "./plans.js";
 
 export function evaluationId(input: {
   assignmentId: string;
   evaluatorId: string;
   planId: string;
   planVersion: number;
+  planDigest: string;
 }): string {
   const canonical = JSON.stringify(input);
   return `evaluation-${createHash("sha256").update(canonical).digest("hex").slice(0, 24)}`;
@@ -23,6 +25,20 @@ export function validateEvaluation(input: {
   }
   if (evaluation.planId !== plan.id || evaluation.planVersion !== plan.version) {
     errors.push("evaluation plan does not match the materialized plan");
+  }
+  const digest = planDigest(plan);
+  if (assignment.planDigest !== digest || evaluation.planDigest !== digest) {
+    errors.push("evaluation plan digest does not match the materialized plan");
+  }
+  const expectedId = evaluationId({
+    assignmentId: evaluation.assignmentId,
+    evaluatorId: evaluation.evaluatorId,
+    planId: evaluation.planId,
+    planVersion: evaluation.planVersion,
+    planDigest: evaluation.planDigest,
+  });
+  if (evaluation.id !== expectedId) {
+    errors.push("evaluation id does not match its canonical identity");
   }
   if (evaluation.evaluatorId !== assignment.evaluatorId) {
     errors.push("evaluation must be submitted by the assigned evaluator");
@@ -53,4 +69,3 @@ export function validateEvaluation(input: {
   if (!evaluation.comparison.trim()) errors.push("comparison is required");
   return errors;
 }
-
