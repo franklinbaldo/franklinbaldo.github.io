@@ -67,12 +67,19 @@ export interface Assignment {
   id: string;
   planId: string;
   planVersion: number;
+  planDigest: string;
   seed: string;
   evaluatorId: string;
-  status: "pending" | "completed" | "aborted";
   createdAt: string;
   sideA: EvaluationTarget;
   sideB: EvaluationTarget;
+}
+
+export interface AssignmentState {
+  type: "Assignment State";
+  id: string;
+  assignmentId: string;
+  status: "pending" | "completed" | "aborted";
 }
 
 export type Preference = "a" | "b" | "tie" | "incomparable";
@@ -89,6 +96,7 @@ export interface Evaluation {
   assignmentId: string;
   planId: string;
   planVersion: number;
+  planDigest: string;
   evaluatorId: string;
   modelId: string;
   promptVersion: string;
