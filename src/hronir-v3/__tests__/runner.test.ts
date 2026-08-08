@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, it } from "node:test";
 import { createAssignment } from "../assignment.js";
 import { evaluationId } from "../evaluation.js";
@@ -38,6 +40,7 @@ function turn() {
     evaluatorId: assignment.evaluatorId,
     planId: assignment.planId,
     planVersion: assignment.planVersion,
+    planDigest: assignment.planDigest,
   };
   const evaluation: Evaluation = {
     type: "Evaluation",
@@ -64,6 +67,36 @@ function turn() {
 }
 
 describe("OKF writer", () => {
+  it(
+    "replays a completed turn against the bundle produced by its first run",
+    { timeout: 120_000 },
+    () => {
+      const bundle = mkdtempSync(join(tmpdir(), "hronir-replay-"));
+      try {
+        const input = turn();
+        const first = runTurn(input, { bundlePath: bundle, write: true });
+        const replay = runTurn(input, { bundlePath: bundle, write: true });
+
+        assert.deepEqual(first.assignment.created, [
+          `assignment/${input.assignment.id}.md`,
+        ]);
+        assert.deepEqual(replay.assignment.matched_existing, [
+          `assignment/${input.assignment.id}.md`,
+        ]);
+        assert.deepEqual(replay.evaluation?.matched_existing, [
+          `evaluation/${input.evaluation.id}.md`,
+        ]);
+        assert.deepEqual(replay.assignmentState.skipped_existing, [
+          `assignment-state/assignment-state-${input.assignment.id}.md`,
+        ]);
+        assert.equal(replay.transition?.succeeded, true);
+        assert.deepEqual(replay.transition?.changed_paths, []);
+      } finally {
+        rmSync(bundle, { recursive: true, force: true });
+      }
+    }
+  );
+
   it("uses replay-safe import and apply as the only write surfaces", () => {
     const calls: Array<{ command: string; args: string[]; row?: unknown }> = [];
     const execute: CommandExecutor = (command, args) => {
@@ -86,27 +119,28 @@ describe("OKF writer", () => {
       writer,
     });
 
-    assert.equal(calls.length, 3);
+    assert.equal(calls.length, 5);
     assert.deepEqual(
       calls.map((call) => call.args[3]),
-      ["import", "import", "apply"]
+      ["import", "import", "import", "import", "apply"]
     );
     for (const call of calls) {
       assert.equal(call.command, "uvx");
       assert.equal(call.args[1], OKF_PARSER_SOURCE);
       assert.ok(call.args.includes("--write"));
     }
-    for (const call of calls.slice(0, 2)) {
+    for (const call of [calls[0], calls[1], calls[3]]) {
       assert.ok(call.args.includes("verify-identical"));
     }
-    assert.match(calls[2].args.join("\n"), /EXISTS/);
-    assert.match(calls[2].args.join("\n"), /evaluation\.assignment_id/);
+    assert.ok(calls[2].args.includes("skip"));
+    assert.match(calls[4].args.join("\n"), /EXISTS/);
+    assert.match(calls[4].args.join("\n"), /evaluation\.assignment_id/);
     assert.equal(
-      (calls[0].row as Record<string, unknown>).side_a_revision_id,
+      (calls[1].row as Record<string, unknown>).side_a_revision_id,
       "revision-a"
     );
     assert.equal(
-      (calls[1].row as Record<string, unknown>).assignment_id,
+      (calls[3].row as Record<string, unknown>).assignment_id,
       turn().assignment.id
     );
   });
@@ -123,7 +157,7 @@ describe("OKF writer", () => {
       writer,
     });
     assert.equal(result.written, false);
-    assert.equal(calls.length, 3);
+    assert.equal(calls.length, 5);
     assert.ok(calls.every((args) => !args.includes("--write")));
   });
 
