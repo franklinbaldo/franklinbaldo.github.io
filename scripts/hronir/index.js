@@ -1,6 +1,13 @@
 #!/usr/bin/env -S node --import tsx/esm
 import { createRequire } from "node:module";
 
+const [, , cmd, ...args] = process.argv;
+
+if (cmd === "run") {
+  const { main } = await import("../../src/hronir-v3/cli.js");
+  main(args);
+} else {
+
 function preflight() {
   const require = createRequire(import.meta.url);
   const required = ["gray-matter", "openskill", "remark"];
@@ -41,8 +48,6 @@ const {
   generateMatch,
   submitEval,
 } = await import("../../src/hronir/commands.js");
-
-const [, , cmd, ...args] = process.argv;
 
 function usage() {
   console.error(
@@ -203,4 +208,5 @@ switch (cmd) {
     break;
   default:
     usage();
+}
 }
