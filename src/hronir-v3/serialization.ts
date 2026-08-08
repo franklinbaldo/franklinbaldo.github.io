@@ -1,10 +1,31 @@
 import type {
   Assignment,
+  AssignmentState,
   Evaluation,
+  EvaluationPlan,
   EvaluationTarget,
 } from "./types.js";
+import { materializedPlanId, planDigest } from "./plans.js";
 
 export type ImportRow = Record<string, string | number | null>;
+
+export function planImportRow(plan: EvaluationPlan): ImportRow {
+  return {
+    id: materializedPlanId(plan),
+    plan_id: plan.id,
+    version: plan.version,
+    digest: planDigest(plan),
+    question: plan.question,
+    subject: plan.subject,
+    observed_through: plan.observedThrough,
+    population_json: JSON.stringify(plan.population),
+    language_policy: plan.languagePolicy,
+    lens_json: JSON.stringify(plan.lens),
+    sampling_json: JSON.stringify(plan.sampling),
+    effects_json: JSON.stringify(plan.effects),
+    stopping_rule_json: JSON.stringify(plan.stoppingRule),
+  };
+}
 
 function targetFields(prefix: "side_a" | "side_b", target: EvaluationTarget) {
   if (target.kind === "media") {
@@ -37,12 +58,20 @@ export function assignmentImportRow(assignment: Assignment): ImportRow {
     id: assignment.id,
     plan_id: assignment.planId,
     plan_version: assignment.planVersion,
+    plan_digest: assignment.planDigest,
     seed: assignment.seed,
     evaluator_id: assignment.evaluatorId,
-    status: assignment.status,
     created_at: assignment.createdAt,
     ...targetFields("side_a", assignment.sideA),
     ...targetFields("side_b", assignment.sideB),
+  };
+}
+
+export function assignmentStateImportRow(state: AssignmentState): ImportRow {
+  return {
+    id: state.id,
+    assignment_id: state.assignmentId,
+    status: state.status,
   };
 }
 
@@ -52,6 +81,7 @@ export function evaluationImportRow(evaluation: Evaluation): ImportRow {
     assignment_id: evaluation.assignmentId,
     plan_id: evaluation.planId,
     plan_version: evaluation.planVersion,
+    plan_digest: evaluation.planDigest,
     evaluator_id: evaluation.evaluatorId,
     model_id: evaluation.modelId,
     prompt_version: evaluation.promptVersion,
@@ -66,3 +96,4 @@ export function evaluationImportRow(evaluation: Evaluation): ImportRow {
     comparison: evaluation.comparison,
   };
 }
+
