@@ -20,7 +20,16 @@ export interface OkfResult {
 }
 
 const defaultExecutor: CommandExecutor = (command, args) => {
-  const result = spawnSync(command, args, { encoding: "utf8" });
+  const result = spawnSync(command, args, {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      UV_CACHE_DIR:
+        process.env.UV_CACHE_DIR ?? join(tmpdir(), "hronir-uv-cache"),
+      UV_TOOL_DIR:
+        process.env.UV_TOOL_DIR ?? join(tmpdir(), "hronir-uv-tools"),
+    },
+  });
   return {
     status: result.status,
     stdout: result.stdout ?? "",
@@ -54,9 +63,13 @@ export class OkfWriter {
   }
 
   importConcept(
-    conceptType: "Assignment" | "Evaluation",
+    conceptType:
+      | "Assignment"
+      | "Assignment State"
+      | "Evaluation"
+      | "Evaluation Plan"
     row: ImportRow,
-    options: { write: boolean }
+    options: { write: boolean; onConflict?: "skip" | "verify-identical" }
   ): OkfResult {
     const scratch = mkdtempSync(join(tmpdir(), "hronir-import-"));
     const source = join(scratch, "concept.json");
@@ -74,7 +87,7 @@ export class OkfWriter {
         "--id-column",
         "id",
         "--on-conflict",
-        "verify-identical",
+        options.onConflict ?? "verify-identical",
       ];
       if (options.write) args.push("--write");
       return parseResult(
@@ -86,14 +99,24 @@ export class OkfWriter {
     }
   }
 
+  ensureAssignmentState(
+    row: ImportRow,
+    options: { write: boolean }
+  ): OkfResult {
+    return this.importConcept("Assignment State", row, {
+      ...options,
+      onConflict: "skip",
+    });
+  }
+
   completeEvaluatedAssignments(options: { write: boolean }): OkfResult {
     const sql = [
-      'UPDATE "Assignment" AS assignment',
+      'UPDATE "Assignment State" AS assignment_state',
       "SET status = 'completed'",
       "WHERE status = 'pending'",
       "AND EXISTS (",
       '  SELECT 1 FROM "Evaluation" AS evaluation',
-      "  WHERE evaluation.assignment_id = assignment.id",
+      "  WHERE evaluation.assignment_id = assignment_state.assignment_id",
       ")",
     ].join("\n");
     const args = [
