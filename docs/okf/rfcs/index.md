@@ -28,6 +28,8 @@ cabeçalho de cada RFC para o estado exato e a lista de PRs.
 | [0012](../../rfcs/0012-taxonomia-de-matches-e-proveniencia-linguistica.md)  | Taxonomia de [matches](../concepts/match.md) e proveniência linguística              | Proposed            |
 | [0013](../../rfcs/0013-regimes-de-avaliacao-evidencia-e-amostragem.md)      | Regimes de avaliação, evidência editorial e amostragem                               | Proposed            |
 | [0014](../../rfcs/0014-adocao-open-knowledge-format.md)                     | Adoção do Open Knowledge Format (este bundle)                                        | Draft               |
+| [0019](../../rfcs/0019-rearquitetura-okf-first-do-corpus.md)                | Corpus OKF-first e projeções do blog                                                 | Draft               |
+| [0020](../../rfcs/0020-hronir-sistema-de-evidencia-editorial.md)            | Hrönir como sistema de evidência editorial                                           | Draft               |
 
 ## Ver também
 
