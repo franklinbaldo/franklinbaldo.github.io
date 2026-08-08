@@ -2,9 +2,9 @@
 type: Blog Post
 title: 'A licença que bate na porta'
 description: >-
-  Se uma skill é texto que um agente pode executar, talvez a licença dela também
-  devesse vir acompanhada de um procedimento executável para descobrir uso,
-  provar o caminho e oferecer regularização.
+  Uma licença para Agent Skills pode fazer mais do que dizer quem pode usar o quê:
+  pode ensinar o licenciado a medir e provar seu uso, o emissor a faturar, o recebedor
+  a emitir recibos verificáveis e o auditor a verificar sem depender de vigilância central.
 date: '2026-08-07'
 lang: pt
 docType: essay
@@ -32,6 +32,12 @@ Foi aí que me ocorreu uma ideia um pouco mais desagradável.
 
 E se a própria licença viesse com uma skill para cobrar a licença?
 
+Essa foi a primeira ideia.
+
+Ela durou pouco.
+
+Porque, quando comecei a transformar a brincadeira em protocolo, apareceu uma coisa melhor: **cobrar era só metade do problema**.
+
 ## Uma licença normalmente fica parada
 
 Licenças são documentos passivos.
@@ -42,7 +48,7 @@ A licença descreve uma regra. A execução da regra fica fora dela.
 
 Isso é particularmente estranho num repositório de Agent Skills, porque a coisa licenciada já é, ela mesma, um pedaço de procedimento legível por máquina.
 
-Então imagine o pacote:
+A primeira versão que montei no [`franklinbaldo/skills`](https://github.com/franklinbaldo/skills) ficou assim:
 
 ```text
 LICENSE.md
@@ -50,17 +56,19 @@ licensing/policy.yaml
 license-enforcement/SKILL.md
 ```
 
-O primeiro arquivo continua sendo a norma jurídica.
+O primeiro arquivo é a norma jurídica.
 
-O segundo é a parte mecânica: qual licença vale, o que é avaliação, o que é uso operacional, se existe preço público, quais estados uma investigação pode assumir, quando um humano precisa aprovar alguma coisa.
+O segundo é a parte mecânica: qual licença vale, o que é avaliação, o que é uso operacional, qual modelo comercial está ativo, quais estados uma investigação pode assumir, quando um humano precisa aprovar alguma coisa.
 
-O terceiro ensina um agente a fazer o trabalho que normalmente aparece meses depois, quando alguém percebe que talvez sua obra esteja sendo usada sem autorização.
+O terceiro ensina um agente a olhar para fora: procurar sinais públicos de uso, congelar evidência, distinguir semelhança de cópia, verificar se pode existir uma licença privada, montar um dossiê e preparar uma abordagem.
 
 Não para processar ninguém sozinho. Para olhar.
 
+Esse primeiro experimento virou a [PR #57](https://github.com/franklinbaldo/skills/pull/57).
+
 ## O agente que procura a própria skill
 
-A primeira versão que estou testando no [`franklinbaldo/skills`](https://github.com/franklinbaldo/skills) começa de um jeito conservador.
+A `license-enforcement` começa de um jeito conservador.
 
 O agente recebe uma versão específica de uma skill minha e procura evidência pública de uso. Não basta encontrar outra ferramenta com a mesma finalidade. Ele precisa congelar a versão de origem, registrar o commit, localizar expressão concreta que pareça ter sobrevivido e preservar o contexto do outro lado.
 
@@ -100,6 +108,222 @@ Essa divisão me interessa porque agentes são excelentes máquinas de pular do 
 
 A diferença não está no modelo. Está no protocolo.
 
+Mas havia uma assimetria aí que começou a me incomodar.
+
+Todo o desenho estava do lado de quem fiscaliza.
+
+O titular olha. O titular mede. O titular encontra. O titular aborda. O outro lado aparece no sistema quando já existe uma suspeita.
+
+Isso ainda é uma licença pensada como fiscalização.
+
+## E se o licenciado também recebesse uma skill?
+
+A pergunta que mudou o desenho foi quase óbvia depois que apareceu:
+
+> Se a licença consegue ensinar um agente a fiscalizar, por que ela não ensinaria também o agente licenciado a cumprir a licença?
+
+A partir daí surgiu a [PR #58](https://github.com/franklinbaldo/skills/pull/58), empilhada sobre a #57.
+
+Ela ainda é uma RFC. Não muda silenciosamente a licença atual nem transforma `quote_required` em dívida automática. O que ela propõe é um segundo regime, `metered_public`, em que a regra econômica só pode ser automatizada quando métrica, threshold, arredondamento, preço e evento de cobrança já estiverem publicados de forma determinística.
+
+E o fluxo ordinário muda de personagem.
+
+Não começa no auditor.
+
+Começa no próprio agente licenciado.
+
+```text
+Licensed Agent
+    ↓
+LicenseeMeteringProfile
+    ↓
+environment discovery
+    ↓
+MeteringPlan
+    ↓
+UsageStatement
+    ↓
+InvoiceRequest
+    ↓
+Invoice
+    ↓
+Payment
+    ↓
+Receipt
+```
+
+Isso parece uma diferença pequena. Para mim, é a diferença principal.
+
+O agente que usa a skill aprende qual é a unidade de uso relevante. Descobre o ambiente em que está rodando. Vê quais instrumentos legítimos existem naquele ambiente para contar essa unidade. Registra um plano. Mantém evidência suficiente para reconstruir o uso. Quando cruza o threshold publicado, produz uma declaração e pede a cobrança.
+
+A licença deixa de depender da esperança de que o titular descubra tudo depois.
+
+Ela passa a ensinar o outro lado a deixar um rastro correto enquanto usa.
+
+## Metering não é telemetria escondida
+
+Tem uma versão ruim dessa ideia que seria muito fácil construir.
+
+A skill poderia telefonar para casa toda vez que fosse invocada.
+
+Seria tecnicamente conveniente e conceitualmente péssimo.
+
+A proposta da #58 vai na direção contrária: **self-reporting first; independent verification second**.
+
+O uso fica inicialmente com quem usa.
+
+O licenciado precisa manter um mecanismo idôneo de medição, apropriado à métrica publicada. Esses registros podem continuar privados. O que precisa sair deles é uma declaração reproduzível o bastante para dizer: sob esta versão da política, este uso cruzou este threshold e gera este `InvoiceRequest`.
+
+Isso permite uma coisa que me parece importante: nenhuma autoridade central precisa observar cada invocation.
+
+A licença cria deveres de produção de evidência distribuídos entre os participantes.
+
+O licenciado mantém o `usage evidence`.
+
+O `UsageStatement` transforma esse material em uma declaração.
+
+O `InvoiceRequest` torna público que o próprio licenciado entende ter atingido o evento de cobrança.
+
+A `Invoice` materializa a cobrança sob aquela política.
+
+O pagamento movimenta valor.
+
+E o `Receipt` diz algo mais específico do que “houve uma transferência”.
+
+Ele diz: **este pagamento satisfez esta obrigação de licença para este uso coberto**.
+
+Uma hash de Pix, uma transação em blockchain ou um comprovante bancário provam pouco sozinhos. O recibo precisa ligar política, versão da skill, licenciado, quantidade coberta, invoice, pagamento, tempo e autoridade emissora.
+
+A coisa interessante não é o dinheiro ter se movido.
+
+É outra máquina conseguir verificar o que aquele movimento quitou.
+
+## Um ledger sem transformar blockchain em religião
+
+A consequência natural é que alguns artefatos precisam ganhar vida própria.
+
+Na RFC, `InvoiceRequest`, `Invoice`, `Receipt`, `SigningKey`, evidências e achados de auditoria são propostos como conceitos OKF em Markdown.
+
+Isso combina com outra coisa em que venho trabalhando: usar [`okf-parser`](https://github.com/franklinbaldo/okf-parser) para tratar conhecimento operacional como um corpus que pode ser validado, grafado e consultado sem esconder o significado dentro de um banco privado.
+
+O ledger, então, não precisa ser uma blockchain.
+
+Pode ser um repositório.
+
+Pode ser outro storage append-only.
+
+Pode ter assinatura por GitHub/OIDC. Pode ter chave pública própria. O pagamento pode ser Pix, WLD, x402 ou outra coisa. Essas tecnologias são integrações possíveis, não os fundamentos da licença.
+
+O fundamento é o encadeamento verificável dos fatos.
+
+```text
+policy
+  ↓
+usage statement
+  ↓
+invoice request
+  ↓
+invoice
+  ↓
+payment evidence
+  ↓
+signed receipt
+```
+
+Se um invoice estiver errado, a ideia não é reescrever o passado e fingir que nunca existiu. Cancela-se ou supersede-se o registro.
+
+Se um receipt foi emitido errado, publica-se uma correção ou revogação.
+
+História pública fica história.
+
+## O auditor agora tem um trabalho melhor
+
+Quando o licenciado passa a produzir sua própria trilha, a auditoria não desaparece.
+
+Ela melhora de função.
+
+O fluxo paralelo da #58 é algo assim:
+
+```text
+Audit Agent
+    ↓
+AuditStandard / SkillAuditProfile
+    ↓
+EnvironmentAssessment
+    ↓
+research available tools
+    ↓
+AuditPlan
+    ↓
+UsageEvidence
+    ↓
+UsageFinding
+    ↓
+UsageNotice
+    ↓
+dispute / regularization
+```
+
+A ordem aqui importa bastante.
+
+O auditor não ganha um superpoder chamado “investigue”.
+
+Primeiro precisa entender qual evidência a skill declara relevante. Depois descobre em que mundo está: GitHub? filesystem local? logs? API? produto público? documentação? ambiente corporativo com ferramentas autorizadas? Em seguida inventaria quais instrumentos estão realmente disponíveis e quais limites de autorização existem.
+
+Só então escolhe como coletar evidência.
+
+A falta de ferramenta não autoriza inferência criativa.
+
+E a evidência pública muitas vezes prova apenas um limite inferior.
+
+```yaml
+observed_usage:
+  relation: at_least
+  quantity: 35
+```
+
+não é igual a:
+
+```yaml
+actual_usage: 35
+```
+
+Parece uma distinção pequena até alguém tentar cobrar em cima dela.
+
+A função do auditor não é fabricar o número que falta. É preservar a geometria da incerteza.
+
+## Atribuição também é evidência
+
+Outro pedaço da ideia apareceu quando comecei a pensar no que acontece entre o uso privado e a auditoria externa.
+
+Se uma skill participa materialmente de um produto, serviço ou artefato público, a licença pode exigir atribuição adequada ao meio.
+
+E há uma obrigação diferente: disclosure sob pergunta direta.
+
+Atribuição é proativa.
+
+Disclosure é reativo.
+
+Se alguém pergunta diretamente se uma skill nomeada foi usada, o licenciado não deveria poder negar ou esconder conscientemente esse fato quando a política exige disclosure, ressalvadas as limitações legais e contratuais aplicáveis.
+
+Isso também produz evidência distribuída.
+
+Não é preciso que um servidor meu veja cada execução para o sistema ter superfícies de verificação.
+
+A atribuição revela dependência.
+
+O disclosure impede ocultação deliberada quando há uma pergunta.
+
+O metering produz a contagem do lado do licenciado.
+
+O invoice request expõe o threshold cruzado.
+
+O receipt prova o uso coberto.
+
+A auditoria fornece uma trilha independente quando alguma dessas coisas falha.
+
+A licença começa a se comportar menos como uma proibição e mais como um protocolo de prestação de contas.
+
 ## A parte em que a ideia esbarra no direito autoral
 
 Eu queria uma licença com uma intuição simples: isto aqui é como um livro. Você pode abrir, ler, aprender. Se quiser colocar a coisa para trabalhar dentro da sua empresa, fazemos uma transação.
@@ -120,7 +344,9 @@ Isso estraga uma versão mais gananciosa da ideia e melhora a versão que sobra.
 
 Porque obriga a perguntar qual é de fato o objeto econômico.
 
-No caso das skills, não é “o conhecimento” em abstrato. É o pacote concreto que você instala, copia, adapta, embute e executa. No caso das ferramentas do blog, pode ser o código, as skills, os schemas, os pipelines e outros artefatos concretos. Se um dia eu quiser cobrar pelo acesso ao conhecimento em si, aí o mecanismo é outro: contrato de acesso, serviço, assinatura, conteúdo fechado. Não uma licença pública tentando expandir copyright por decreto doméstico.
+No caso das skills, não é “o conhecimento” em abstrato. É o material concreto protegido que você instala, copia, adapta, embute e executa. No caso das ferramentas do blog, pode ser o código, as skills, os schemas, os pipelines e outros artefatos concretos.
+
+Se um dia eu quiser cobrar pelo acesso ao conhecimento em si, aí o mecanismo é outro: contrato de acesso, serviço, assinatura, conteúdo fechado. Não uma licença pública tentando expandir copyright por decreto doméstico.
 
 O direito autoral continua sendo menos conveniente do que um campo `protected: true`.
 
@@ -132,81 +358,21 @@ Há um vocabulário para uma parte disso.
 
 Licenças como [PolyForm](https://polyformproject.org/licenses) permitem deixar o código visível e conceder direitos diferentes conforme o tipo de uso. A [Business Source License](https://mariadb.com/bsl11/) também trabalha com fonte disponível e limitações de produção antes de uma mudança futura de licença.
 
-Isso não é _Open Source_ no sentido da Open Source Initiative. A [Open Source Definition](https://opensource.org/osd) exige, entre outras coisas, liberdade para uso em qualquer campo e não admite cobrar uma licença adicional simplesmente porque o uso é comercial.
+Isso não é _Open Source_ no sentido da Open Source Initiative. A [Open Source Definition](https://opensource.org/osd) exige, entre outras coisas, liberdade para uso em qualquer campo e não admite uma licença que discrimine um campo de atividade.
 
 Então não vale brincar de nomenclatura.
 
-A licença que coloquei na primeira PR é **source-available, não Open Source**.
+A `Skill Use License 0.1` da #57 é **source-available, não Open Source**.
 
 Ela permite leitura, inspeção, estudo e avaliação de boa-fé. O que ela não concede publicamente é o que chamei de `Operational Use`: carregar, adaptar, embutir ou invocar o material num agente, automação, produto ou processo para produzir trabalho de verdade.
 
-Para isso, a licença diz que é preciso uma licença paga separada.
+A primeira versão continua deliberadamente em `quote_required`.
 
-Ainda não defini o preço.
+Isso importa porque a #58 não finge que uma tabela inexistente já criou uma dívida.
 
-Isso é proposital.
+O modo `metered_public` só faz sentido se a regra econômica estiver publicada antes: métrica, allowance ou threshold, unidade de cobrança, arredondamento, preço, prazo e evento que dispara a invoice.
 
-Seria fácil colocar “US$ 100 por empresa por ano” porque números dão à arquitetura um ar reconfortante de produto. Seria também uma decisão econômica tirada do nada. A primeira versão usa `quote_required`: encontrou alguém que quer usar, conversa-se sobre escopo e preço.
-
-Mais importante: a licença também diz que encontrar uso não autorizado **não cria magicamente uma dívida contratual igual ao preço que eu resolver publicar depois**.
-
-Eu posso oferecer uma licença retroativa ou um acordo. Posso, conforme o caso, ter outros direitos e remédios previstos em lei. Mas “minha tabela diz R$ X” e “você já me deve R$ X” são frases diferentes.
-
-Eu queria que a própria skill soubesse essa diferença.
-
-## A cobrança começa tentando não cobrar a pessoa errada
-
-A parte divertida da ideia é imaginar um agente vasculhando a internet, reconhecendo uma skill, descobrindo a empresa responsável e batendo na porta.
-
-A parte importante é todo o trabalho que acontece antes da batida.
-
-A skill que coloquei na [PR experimental do repositório](https://github.com/franklinbaldo/skills/pull/57) tem algumas proibições que fazem mais trabalho do que a parte de cobrança.
-
-Ela não pode tratar semelhança funcional como cópia. Não pode assumir que “não achei licença” significa “não existe licença”. Precisa procurar contraprova. Precisa distinguir expressão concreta de método ou ideia. Não pode inventar um preço. E não pode entrar em contato com ninguém sem aprovação humana explícita.
-
-O primeiro contato, quando houver, é uma consulta de compliance.
-
-Algo na linha de: encontramos este artefato público, ele parece incorporar este material, a licença pública não concede uso operacional, mas talvez exista uma autorização privada que não conhecemos. Se existe, nos diga. Se não existe, podemos conversar sobre regularização.
-
-Só depois faria sentido uma proposta retroativa. E, se ainda houver uma controvérsia, uma notificação extrajudicial preparada para revisão humana.
-
-O agente pode montar a cronologia, preservar páginas, comparar versões, identificar a pessoa jurídica, organizar correspondência e construir o pacote que um advogado ou titular dos direitos vai analisar.
-
-Ele não precisa ganhar o direito de ser o advogado.
-
-Isso é muito parecido com o que venho descobrindo em outros usos de agentes: o lugar útil da automação frequentemente termina um passo antes da autoridade.
-
-## A licença tem uma porta dos fundos, mas para entrar pela frente
-
-A parte de que mais gostei no desenho é uma pequena recursão.
-
-Se todo uso operacional das skills exige uma licença paga, então a própria `license-enforcement` também exigiria licença para alguém descobrir se está violando a licença.
-
-Seria engraçado por aproximadamente cinco segundos.
-
-Então a licença contém uma exceção específica: qualquer pessoa pode usar gratuitamente a skill de enforcement para fazer _self-audit_, entender os termos, verificar se precisa de licença, entrar em contato comigo ou responder a uma apuração.
-
-A ferramenta que fiscaliza a licença é também a ferramenta que ajuda o outro lado a ficar em conformidade com ela.
-
-Isso muda um pouco o caráter da coisa.
-
-Uma licença tradicional é escrita para um leitor hipotético. Aqui existe a possibilidade de duas máquinas lerem a mesma política de lados diferentes. Meu agente pergunta: “este uso parece coberto?”. O agente da empresa pergunta: “o nosso workflow é operacional? qual material estamos carregando? temos uma licença?”. Os dois podem produzir artefatos comparáveis antes de um ser humano precisar começar a discutir por e-mail.
-
-A licença começa a parecer menos com um aviso na parede e mais com um protocolo.
-
-Não um _smart contract_. Nada se executa sozinho no mundo jurídico. Não existe blockchain capaz de transformar uma inferência ruim em fundamento legal bom.
-
-Mas existe algo menor e talvez mais útil: uma norma acompanhada da sua implementação operacional.
-
-```text
-legal text
-    +
-machine-readable policy
-    +
-compliance/enforcement skill
-    =
-a license an agent can actually work with
-```
+Sem isso, o agente não completa as lacunas com imaginação comercial.
 
 ## O primeiro rato de laboratório sou eu
 
@@ -216,31 +382,65 @@ Então a primeira aplicação não vai ser uma startup hipotética nem uma nova 
 
 São as minhas próprias skills.
 
-A [PR #57](https://github.com/franklinbaldo/skills/pull/57) adiciona a `Skill Use License 0.1`, o `policy.yaml` e a primeira versão da `license-enforcement` skill. Ainda está em draft. Não há preço definido, registro de licenças emitidas, fingerprint automático nem sistema de pagamento. Muito menos um exército de agentes mandando notificações para empresas.
+A [PR #57](https://github.com/franklinbaldo/skills/pull/57) é o protótipo conservador: licença, política legível por máquina e enforcement com revisão humana.
 
-O que existe é o contrato entre as peças.
+A [PR #58](https://github.com/franklinbaldo/skills/pull/58) é a evolução conceitual: `license-compliance`, metering pelo licenciado, `UsageStatement`, `InvoiceRequest`, invoices, receipts e auditoria adaptativa ao ambiente. Ela é uma RFC; ainda não está ativando esse regime econômico no repositório.
 
-E ele já produz perguntas que eu não teria feito se tivesse simplesmente colocado MIT no repositório e ido dormir.
+É importante que seja assim.
 
-Como se prova que uma skill foi usada, e não apenas reinventada? Qual é a unidade econômica: skill, empresa, agente, execução, ano? Como uma empresa prova para um agente fiscalizador que tem licença sem publicar seu contrato? Como versionar direitos quando a skill muda todo mês? O que acontece com forks anteriores? Quanto da detecção pode ser automática sem transformar fingerprint em caça a coincidências? Qual é a forma mínima de um recibo que outra máquina consegue verificar?
+Primeiro o protocolo pode ser criticado como protocolo.
 
-Essas perguntas são melhores do que “qual licença eu coloco no GitHub?”.
+Depois se escolhem métricas, preços e meios de pagamento reais.
 
-A hipótese que estou testando é que Agent Skills criam uma categoria especialmente boa para experimentar com licenças operacionais porque o objeto e o procedimento vivem no mesmo meio: texto estruturado que agentes conseguem ler.
+E só então um agente deve poder transformar uso em obrigação econômica sem perguntar a um humano a cada vez.
 
-Uma licença para software sempre pôde ser lida por uma máquina. Isso é banal.
+A pergunta ficou maior do que “qual licença eu coloco no GitHub?”.
 
-A diferença é uma licença que vem acompanhada de instruções para a máquina saber o que fazer depois de ler.
+Agora é mais parecida com:
+
+> Como fazemos duas máquinas, agindo por pessoas diferentes e sem compartilhar toda a sua memória privada, produzirem evidências compatíveis sobre uso, cobrança e adimplemento?
+
+Isso é um problema de licença, mas também é um problema de protocolo.
+
+E talvez Agent Skills sejam um laboratório especialmente bom porque o objeto, a política, o procedimento de compliance e o procedimento de auditoria vivem todos no mesmo meio: texto estruturado que agentes conseguem ler.
+
+## A licença não precisa observar tudo
+
+A parte de que mais gosto nessa segunda versão é que ela não depende de um fiscal onisciente.
+
+O licenciado aprende a medir e provar seu próprio uso.
+
+O emissor aprende a transformar uma declaração válida em invoice.
+
+O recebedor produz um receipt verificável que liga dinheiro a uma obrigação concreta.
+
+O auditor aprende primeiro quais evidências importam, depois descobre em que mundo está e quais instrumentos legítimos existem naquele mundo para obtê-las.
+
+Attribution e disclosure criam outras superfícies de verificação.
+
+E tudo isso pode deixar uma história auditável sem que exista um servidor central vendo cada invocation.
+
+A primeira ideia era uma licença que viesse com uma skill para bater na porta.
+
+Eu ainda gosto dessa imagem. Ela continua sendo o começo da história.
+
+Mas agora parece pequena.
+
+A licença não apenas sabe o próximo passo.
+
+Ela ensina cada participante a produzir as provas necessárias para que o próximo passo possa acontecer.
 
 Não é uma licença autoexecutável.
 
-É uma licença que sabe o próximo passo.
+**É uma licença que ensina as máquinas a deixar provas de que a cumpriram.**
 
 ## Para se aprofundar
 
-- **[Skill Use License 0.1 / PR #57](https://github.com/franklinbaldo/skills/pull/57)** — o experimento descrito aqui, ainda em draft e deliberadamente sem preço fixo.
-- **[Lei 9.610/1998](https://www.planalto.gov.br/ccivil_03/leis/l9610.htm)** — especialmente o art. 8º, porque uma licença experimental melhora bastante quando começa reconhecendo aquilo que não pode licenciar como exclusividade autoral.
-- **[Lei 9.609/1998](https://www.planalto.gov.br/ccivil_03/leis/l9609.htm)** — regime brasileiro de proteção de programas de computador, relevante para as partes das skills e ferramentas que efetivamente são software.
+- **[Skill Use License 0.1 / PR #57](https://github.com/franklinbaldo/skills/pull/57)** — o primeiro protótipo: `quote_required`, policy legível por máquina e `license-enforcement` com revisão humana.
+- **[Agentic Metered Skill Licensing Protocol / PR #58](https://github.com/franklinbaldo/skills/pull/58)** — a RFC que acrescenta self-metering, `license-compliance`, invoices, receipts, atribuição, disclosure e auditoria adaptativa.
+- **[`okf-parser`](https://github.com/franklinbaldo/okf-parser)** — a infraestrutura genérica que estou usando para experimentar com conceitos e relações OKF sem colocar semântica de licenciamento no parser.
+- **[Lei 9.610/1998](https://www.planalto.gov.br/ccivil_03/leis/l9610.htm)** — especialmente o art. 8º, porque uma licença experimental melhora bastante quando começa reconhecendo aquilo que não pode licenciar como direito exclusivo.
+- **[Lei 9.609/1998](https://www.planalto.gov.br/ccivil_03/leis/l9609.htm)** — regime brasileiro específico de proteção de programas de computador, relevante para as partes das skills e ferramentas que efetivamente são software.
 - **[PolyForm Licenses](https://polyformproject.org/licenses)** — exemplos de licenciamento source-available com permissões calibradas pelo tipo de uso.
-- **[Business Source License 1.1](https://mariadb.com/bsl11/)** — outro desenho em que código fica publicamente disponível sem receber imediatamente todas as liberdades de Open Source.
-- **[Open Source Definition](https://opensource.org/osd)** — útil sobretudo para não chamar de open source uma licença que deliberadamente exige pagamento para determinado uso.
+- **[Business Source License 1.1](https://mariadb.com/bsl11/)** — outro desenho em que o código está publicamente disponível sem receber imediatamente todas as liberdades de Open Source.
+- **[Open Source Definition](https://opensource.org/osd)** — útil principalmente para não chamar de open source uma licença que deliberadamente reserva categorias de uso.
