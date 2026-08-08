@@ -3,7 +3,7 @@ type: Blog Post
 title: 'The license that knocks'
 description: >-
   An Agent Skill license can do more than say who may use what: it can teach
-  the licensee to meter and prove use, the issuer to bill, the recipient to
+  the licensee to meter and report use, the issuer to bill, the recipient to
   produce verifiable receipts, and the auditor to verify without central surveillance.
 date: '2026-08-07'
 lang: en
@@ -124,7 +124,7 @@ The question that changed the design was almost obvious once it appeared:
 
 That is where [PR #58](https://github.com/franklinbaldo/skills/pull/58) came from, stacked on top of #57.
 
-It is still an RFC. It does not silently change the current license or turn `quote_required` into automatic debt. What it proposes is a second regime, `metered_public`, in which the economic rule can only be automated when the metric, threshold, rounding rule, price, and billing event have already been published deterministically.
+It is still an RFC. It does not silently change the current license or turn `quote_required` into automatic debt. What it proposes is a second regime, `metered_public`, in which the economic rule can only be automated when the policy has already published not just the price and metric, but also **who shares the same meter, when the allowance resets, and exactly which usage range each payment covers**.
 
 And the ordinary flow changes protagonists.
 
@@ -134,6 +134,8 @@ It starts with the licensed agent itself.
 
 ```text
 Licensed Agent
+    ↓
+license-compliance bootstrap
     ↓
 LicenseeMeteringProfile
     ↓
@@ -154,7 +156,11 @@ Receipt
 
 That looks like a small difference. To me, it is the main difference.
 
-The agent using the skill learns what the relevant unit of use is. It discovers the environment in which it is running. It sees which legitimate instruments exist in that environment for counting that unit. It records a plan. It maintains enough evidence to reconstruct usage. When it crosses the published threshold, it produces a statement and requests the invoice.
+The agent using the skill learns what the relevant unit of use is. It discovers the environment in which it is running. It sees which legitimate instruments exist in that environment for counting that unit. It records a plan. It maintains enough evidence to reconstruct usage. When it reaches the first use not yet covered by the policy, it produces a statement and requests the corresponding invoice.
+
+`license-compliance` has to be a free bootstrap into that work. It would be a wonderfully recursive and completely useless system if the license charged the licensee for loading the skill required to discover how to count, report, and pay for that same license.
+
+So the RFC now treats that as a mandatory bootstrap exception: using the skill exclusively to read policy, establish metering, produce the `UsageStatement`, request an invoice, and verify a receipt does not itself create additional billable usage under that meter.
 
 The license no longer depends on the hope that the rights holder discovers everything later.
 
@@ -172,7 +178,7 @@ The #58 proposal goes the other way: **self-reporting first; independent verific
 
 Usage initially stays with the party using the skill.
 
-The licensee must maintain a suitable and auditable metering mechanism appropriate to the published metric. Those underlying records may remain private. What must come out of them is a statement reproducible enough to say: under this policy version, this usage crossed this threshold and produces this `InvoiceRequest`.
+The licensee must maintain a suitable and auditable metering mechanism appropriate to the published metric. Those underlying records may remain private. What must come out of them is a statement reproducible enough to say: under this policy version, in this meter scope, I reached this quantity and there is now this uncovered range.
 
 That enables something I find important: no central authority has to observe every invocation.
 
@@ -180,29 +186,63 @@ The license creates distributed duties to produce evidence among the participant
 
 The licensee keeps the `usage evidence`.
 
-The `UsageStatement` turns that material into a declaration.
+The `UsageStatement` turns that material into a bounded assertion by the licensee.
 
-The `InvoiceRequest` makes public that the licensee itself understands the billing event to have occurred.
+The `InvoiceRequest` records that the licensee understands a billing event to have occurred and asks for application of the published policy.
 
-The `Invoice` materializes the charge under that policy.
+The `Invoice` materializes the issuer's position about that charge and that coverage range.
 
 The payment moves value.
 
 And the `Receipt` says something more specific than “a transfer happened.”
 
-It says: **this payment satisfied this licensing obligation for this covered use**.
+It **attests that the issuing authority recognized that payment as satisfying that invoice for that coverage**.
 
-A Pix hash, a blockchain transaction, or a bank confirmation proves too little on its own. The receipt needs to bind the policy, skill version, licensee, covered quantity, invoice, payment, time, and issuing authority.
+That is more careful than saying the receipt “proves that everything happened exactly this way.” A signature can show who made a statement and that the signed content was not altered. It does not automatically turn the declared quantity, legal interpretation, or existence of the obligation into truth.
 
-The interesting fact is not that money moved.
+A Pix hash, a blockchain transaction, or a bank confirmation also says too little on its own. The receipt needs to bind policy, skill version, licensee, meter scope, covered range, invoice, payment, time, and issuing authority.
 
-It is that another machine can verify what that movement settled.
+The interesting thing is not that money moved.
+
+It is that another machine can verify **who recognized what, in relation to which charge and which coverage**.
+
+## Where does a charge end?
+
+The word “quantity” hides an expensive ambiguity.
+
+Imagine a policy with 1,000 free uses and paid blocks of 1,000. The licensee reaches use 1,427. Rounding 427 up to one block tells us how much to charge. It does not, by itself, tell us what that payment covers.
+
+Does it settle only the 427 uses already consumed?
+
+Or does it buy coverage through use 2,000?
+
+Does use 1,428 trigger another invoice?
+
+And do the 1,000 free uses reset every month? Per skill? Per company? Per deployment? Per version?
+
+If two honest implementations can answer differently, the policy is not mechanical enough yet.
+
+So the RFC now requires less glamorous and much more important fields: `meter_scope`, counter mode, allowance reset, `coverage_mode`, carry-forward, prepayment, and a watermark such as `coverage_from` / `coverage_through`.
+
+Under one possible profile:
+
+```text
+free allowance:     1..1000
+first paid block:   1001..2000
+second paid block:  2001..3000
+```
+
+If the cumulative counter reaches 1,427, the first invoice can be for one block and the receipt can record coverage from `1001` through `2000`. Under that model, use 1,428 is already covered. The next economic boundary is 2,001.
+
+Another profile could choose to settle only the range already consumed. The point is not to choose one universal semantic. It is to prevent `rounding: ceiling` from pretending it already chose one.
+
+A charge needs to know where it ends.
 
 ## A ledger without turning blockchain into a religion
 
 The natural consequence is that some artifacts need an independent life.
 
-In the RFC, `InvoiceRequest`, `Invoice`, `Receipt`, `SigningKey`, audit evidence, and findings are proposed as OKF concepts in Markdown.
+In the RFC, `UsageStatement`, `InvoiceRequest`, `Invoice`, `Receipt`, `SigningKey`, audit evidence, and findings are proposed as OKF concepts in Markdown.
 
 That connects to something else I have been building: using [`okf-parser`](https://github.com/franklinbaldo/okf-parser) to treat operational knowledge as a corpus that can be validated, graphed, and queried without hiding the meaning inside a private database.
 
@@ -214,7 +254,7 @@ It can be some other append-only storage.
 
 Signatures may come from GitHub/OIDC. They may come from a published public key. Payment might be Pix, WLD, x402, or something else. Those technologies are possible integrations, not foundations of the license.
 
-The foundation is the verifiable chain of facts.
+The foundation is the verifiable chain of assertions, evidence, and attestations.
 
 ```text
 policy
@@ -230,6 +270,8 @@ payment evidence
 signed receipt
 ```
 
+Each edge helps another machine reconstruct who said what, under which rule, and how that record relates to the others. No single edge turns the entire graph into legal truth.
+
 If an invoice is wrong, the idea is not to rewrite the past and pretend it never existed. Cancel or supersede it.
 
 If a receipt was issued incorrectly, publish a correction or revocation.
@@ -242,7 +284,7 @@ Once the licensee starts producing its own trail, auditing does not disappear.
 
 Its function improves.
 
-The parallel flow in #58 looks roughly like this:
+The parallel flow in #58 now needs to be read like this:
 
 ```text
 Audit Agent
@@ -257,11 +299,17 @@ AuditPlan
     ↓
 UsageEvidence
     ↓
-UsageFinding
+draft UsageFinding [private]
     ↓
-UsageNotice
+HUMAN REVIEW
+    ↓
+published UsageFinding / UsageNotice
     ↓
 dispute / regularization
+    ↓
+HUMAN REVIEW
+    ↓
+audit-originated Invoice
 ```
 
 The order matters quite a lot.
@@ -274,7 +322,7 @@ Only then does it choose how to collect evidence.
 
 Lack of tooling does not authorize creative inference.
 
-And public evidence often proves only a lower bound.
+And public evidence often supports only a lower bound.
 
 ```yaml
 observed_usage:
@@ -285,12 +333,24 @@ observed_usage:
 is not the same as:
 
 ```yaml
-actual_usage: 35
+observed_usage:
+  relation: exact
+  quantity: 35
 ```
 
 That sounds like a tiny distinction until someone tries to bill on top of it.
 
 The auditor's job is not to manufacture the missing number. It is to preserve the geometry of uncertainty.
+
+And the human gate from #57 cannot disappear merely because #58 gained a public ledger.
+
+An agent can internally assemble a `draft UsageFinding`. Publishing about an identifiable company that `usage_supported: true`, sending a `UsageNotice`, or originating an audit invoice already turns investigation into external action. That again requires explicit human decision.
+
+The RFC now has two stops: one before publication/notice and another, separate one, before an audit-originated invoice after the opportunity to contest.
+
+The agent can still do nearly all the preparatory work.
+
+It just does not become the judge by accident of architecture.
 
 ## Attribution is evidence too
 
@@ -310,17 +370,17 @@ That produces distributed evidence too.
 
 A server of mine does not need to see every execution for the system to have verification surfaces.
 
-Attribution reveals dependency.
+Attribution offers public evidence of dependency.
 
-Disclosure prevents deliberate concealment when there is a question.
+Disclosure creates a statement by the licensee when a question is asked.
 
-Metering produces the count on the licensee's side.
+Metering produces the count — or the bound it can actually support — on the licensee's side.
 
-The invoice request exposes the crossed threshold.
+The `InvoiceRequest` publishes the licensee's assertion that a billing event occurred under its reading of the policy.
 
-The receipt proves covered use.
+The `Receipt` attests that the issuer recognized a particular payment as satisfying a particular invoice and coverage.
 
-Auditing provides an independent trail when any of those things fail.
+Auditing provides an independent trail when any of those things diverge.
 
 The license starts to behave less like a prohibition and more like an accountability protocol.
 
@@ -370,7 +430,7 @@ The first version deliberately remains `quote_required`.
 
 That matters because #58 does not pretend that a nonexistent price table has already created a debt.
 
-The `metered_public` mode only makes sense if the economic rule is published in advance: metric, allowance or threshold, billing unit, rounding rule, price, deadline, and invoice-triggering event.
+The `metered_public` mode only makes sense if the economic rule is published in advance: metric, meter scope, allowance and reset, cumulative or periodic counter mode, billing unit, rounding, coverage semantics, price, deadline, and invoice-triggering event.
 
 Without that, the agent does not fill the gaps with commercial imagination.
 
@@ -384,7 +444,7 @@ It is my own skills.
 
 [PR #57](https://github.com/franklinbaldo/skills/pull/57) is the conservative prototype: license, machine-readable policy, and enforcement with human review.
 
-[PR #58](https://github.com/franklinbaldo/skills/pull/58) is the conceptual evolution: `license-compliance`, licensee-side metering, `UsageStatement`, `InvoiceRequest`, invoices, receipts, and environment-adaptive auditing. It is an RFC; it is not yet activating that economic regime in the repository.
+[PR #58](https://github.com/franklinbaldo/skills/pull/58) is the conceptual evolution: `license-compliance`, licensee-side metering, `UsageStatement`, `InvoiceRequest`, invoices, receipts, coverage watermarks, and environment-adaptive auditing with explicit human gates. It is an RFC; it is not yet activating that economic regime in the repository.
 
 That distinction matters.
 
@@ -392,13 +452,15 @@ First the protocol can be criticized as a protocol.
 
 Then real metrics, prices, and payment rails can be chosen.
 
-Only after that should an agent be able to turn usage into an economic obligation without asking a human every single time.
+Only after that should an agent be able to automate the ordinary self-reporting and payment path under previously published rules.
+
+The adversarial path is different: publication of findings about third parties and audit-originated invoices remain behind human decision.
 
 The question has become larger than “which license do I put on GitHub?”.
 
 It now looks more like:
 
-> How do two machines, acting for different people and without sharing all of their private memory, produce compatible evidence about use, billing, and settlement?
+> How do two machines, acting for different people and without sharing all of their private memory, produce compatible assertions and evidence about use, billing, and settlement?
 
 That is a licensing problem, but it is also a protocol problem.
 
@@ -408,17 +470,21 @@ And Agent Skills may be an unusually good laboratory because the object, policy,
 
 The part I like most about this second version is that it does not depend on an omniscient auditor.
 
-The licensee learns to meter and prove its own use.
+The licensee learns to meter and report its own use on a reproducible basis.
 
-The issuer learns to turn a valid declaration into an invoice.
+The issuer learns to apply the policy to the statement and to a determinate coverage range.
 
-The recipient produces a verifiable receipt that binds money to a concrete obligation.
+The recipient produces a verifiable receipt attesting how that payment was recognized.
 
 The auditor first learns which evidence matters, then discovers what world it is in and which legitimate instruments exist in that world for obtaining it.
 
 Attribution and disclosure create additional verification surfaces.
 
 And all of this can leave an auditable history without a central server watching every invocation.
+
+Not because every signed record is automatically true.
+
+But because each actor leaves an attributable assertion, inspectable evidence, or verifiable attestation — and the protocol preserves the differences among those things.
 
 The first idea was a license that came with a skill to knock on the door.
 
@@ -437,7 +503,7 @@ It is not a self-executing license.
 ## Further reading
 
 - **[Skill Use License 0.1 / PR #57](https://github.com/franklinbaldo/skills/pull/57)** — the first prototype: `quote_required`, machine-readable policy, and `license-enforcement` with human review.
-- **[Agentic Metered Skill Licensing Protocol / PR #58](https://github.com/franklinbaldo/skills/pull/58)** — the RFC adding self-metering, `license-compliance`, invoices, receipts, attribution, disclosure, and adaptive auditing.
+- **[Agentic Metered Skill Licensing Protocol / PR #58](https://github.com/franklinbaldo/skills/pull/58)** — the RFC adding self-metering, free `license-compliance` bootstrap, deterministic coverage, invoices, receipts, attribution, disclosure, and adaptive auditing with human gates.
 - **[`okf-parser`](https://github.com/franklinbaldo/okf-parser)** — the generic infrastructure I am using to experiment with OKF concepts and relations without putting licensing semantics into the parser itself.
 - **[Brazilian Copyright Act, Law 9.610/1998](https://www.planalto.gov.br/ccivil_03/leis/l9610.htm)** — especially Article 8, because an experimental license gets much better once it starts by acknowledging what it cannot license as an exclusive right.
 - **[Brazilian Software Act, Law 9.609/1998](https://www.planalto.gov.br/ccivil_03/leis/l9609.htm)** — Brazil's specific regime for computer-program protection, relevant to the parts of skills and tools that actually are software.
