@@ -54,7 +54,11 @@ export class OkfWriter {
   }
 
   importConcept(
-    conceptType: "Assignment" | "Evaluation",
+    conceptType:
+      | "Assignment"
+      | "Evaluation"
+      | "Projection Snapshot"
+      | "Revision Recommendation",
     row: ImportRow,
     options: { write: boolean }
   ): OkfResult {
