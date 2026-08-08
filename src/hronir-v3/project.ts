@@ -27,7 +27,6 @@ export function projectAndPersist(
   input: {
     projection: ProjectionDefinition;
     observations: ProjectionObservation[];
-    generatedAt: string;
   },
   options: {
     bundlePath: string;
@@ -39,8 +38,7 @@ export function projectAndPersist(
 ): ProjectResult {
   const snapshot = projectEditorialWorkRanking(
     input.projection,
-    input.observations,
-    { generatedAt: input.generatedAt }
+    input.observations
   );
   const recommendations = recommendRevisionAttention(snapshot, options);
   const writer = options.writer ?? new OkfWriter(options.bundlePath);
