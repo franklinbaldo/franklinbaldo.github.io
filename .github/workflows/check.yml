@@ -57,7 +57,10 @@ jobs:
           npx depcheck --ignores="@fontsource/fraunces,@fontsource/inter,@picocss/pico,dompurify,highlight.js,katex,marked,mermaid,pagefind,typescript,@astrojs/check,@lhci/cli,depcheck,tsx,astro:content,astro:container"
 
       - name: Prettier check
-        run: npx prettier --check .
+        run: |
+          npx prettier --write src/content/blog/a-licenca-que-bate-na-porta.md src/content/blog/the-license-that-knocks.md
+          git diff -- src/content/blog/a-licenca-que-bate-na-porta.md src/content/blog/the-license-that-knocks.md
+          exit 1
 
       - name: Lint
         run: npm run lint
