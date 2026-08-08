@@ -67,7 +67,9 @@ export class OkfWriter {
       | "Assignment"
       | "Assignment State"
       | "Evaluation"
-      | "Evaluation Plan",
+      | "Evaluation Plan"
+      | "Projection Snapshot"
+      | "Revision Recommendation",
     row: ImportRow,
     options: { write: boolean; onConflict?: "skip" | "verify-identical" }
   ): OkfResult {
