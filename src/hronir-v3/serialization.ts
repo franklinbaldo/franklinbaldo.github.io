@@ -2,6 +2,8 @@ import type {
   Assignment,
   Evaluation,
   EvaluationTarget,
+  ProjectionSnapshot,
+  RevisionRecommendation,
 } from "./types.js";
 
 export type ImportRow = Record<string, string | number | null>;
@@ -64,5 +66,34 @@ export function evaluationImportRow(evaluation: Evaluation): ImportRow {
     critique_a: evaluation.critiqueA,
     critique_b: evaluation.critiqueB,
     comparison: evaluation.comparison,
+  };
+}
+
+export function projectionSnapshotImportRow(
+  snapshot: ProjectionSnapshot
+): ImportRow {
+  return {
+    id: snapshot.id,
+    projection_id: snapshot.projectionId,
+    projection_version: snapshot.projectionVersion,
+    generated_at: snapshot.generatedAt,
+    evaluation_ids_json: JSON.stringify(snapshot.evaluationIds),
+    entries_json: JSON.stringify(snapshot.entries),
+  };
+}
+
+export function revisionRecommendationImportRow(
+  recommendation: RevisionRecommendation
+): ImportRow {
+  return {
+    id: recommendation.id,
+    work_id: recommendation.workId,
+    projection_snapshot_id: recommendation.projectionSnapshotId,
+    status: recommendation.status,
+    priority: recommendation.priority,
+    basis_rank: recommendation.basis.rank,
+    basis_score: recommendation.basis.score,
+    basis_comparisons: recommendation.basis.comparisons,
+    reason: recommendation.reason,
   };
 }
