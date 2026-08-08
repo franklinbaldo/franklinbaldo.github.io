@@ -19,7 +19,7 @@ Hoje, 20 de julho de 2026,<sup><a href="#nota-1" aria-label="Ver nota 1">1</a></
 
 A resposta parecia segura: dava para desenhar analogias — uma malha que se enrola, duas folhas que se sobrepõem, o mapa exponencial —, mas a imagem decisiva teria que esperar. A conjectura continuava aberta havia mais de um século. Sem o polinômio, todo “dobramento sem vinco” seria metáfora.
 
-Algumas horas depois apareceu o polinômio.
+Algumas horas depois apareceu o polinômio. Plot twist: a matemática não esperou nem o próximo parágrafo.
 
 ## O mapa
 
@@ -54,6 +54,8 @@ são enviados para o mesmo ponto:
 $$
 F(A)=F(B)=F(C)=\left(-\frac14,0,0\right).
 $$
+
+Três endereços distintos, um único CEP de saída. O jacobiano, enquanto isso, segue impecável.
 
 Não é uma inferência delicada. É possível verificar as duas afirmações expandindo o determinante e substituindo as três coordenadas. Como o determinante constante pode ser normalizado para $1$ multiplicando uma coordenada de saída por $-1/2$, isso fornece um contraexemplo à Conjectura Jacobiana em dimensão $3$ — e, acrescentando coordenadas identidade, em todas as dimensões superiores.
 
@@ -104,6 +106,8 @@ E a primeira coordenada vale $-1/4$ nos mesmos três valores. Uma linha atravess
 “Dobra sem vinco” ainda é uma metáfora, mas agora é uma metáfora rigorosamente ancorada.
 
 Uma dobra comum explica a sobreposição por um ponto crítico: em algum lugar a superfície perde posto, achata ou muda de orientação. Aqui não há esse lugar. O determinante vale $-2$ em $A$, em $B$, em $C$ e em todos os demais pontos. Cada pequeno cubo continua tridimensional depois da transformação. A falha só aparece quando colocamos regiões distantes lado a lado e percebemos que elas receberam a mesma identidade global.
+
+Em linguagem de software: todos os testes unitários locais passam; a produção global está pegando fogo.
 
 Isso corrige também uma intuição que eu tinha formulado cedo demais. A questão não é que “alguma informação infinitesimal foi esmagada”. Nenhuma foi. A informação perdida é outra: **de qual vizinhança globalmente distinta aquele ponto veio**.
 
