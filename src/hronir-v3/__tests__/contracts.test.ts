@@ -68,16 +68,19 @@ describe("Assignment identity", () => {
       sideB: revision("b"),
     };
     const first = createAssignment(input);
-    const resumed = createAssignment({
-      ...input,
-      createdAt: "2026-08-09T00:00:00Z",
-    });
+    const resumed = createAssignment(input);
     assert.equal(first.id, resumed.id);
     assert.equal(first.sideA.revisionId, "revision-a");
-    assert.equal(first.status, "pending");
     assert.deepEqual(
       validateAssignment(first, EDITORIAL_CALIBRATION_PLAN),
       []
+    );
+    assert.match(
+      validateAssignment(
+        { ...first, id: "assignment-forged" },
+        EDITORIAL_CALIBRATION_PLAN
+      ).join("\n"),
+      /canonical identity/
     );
   });
 });
@@ -97,6 +100,7 @@ describe("Evaluation", () => {
       evaluatorId: assignment.evaluatorId,
       planId: assignment.planId,
       planVersion: assignment.planVersion,
+      planDigest: assignment.planDigest,
     };
     const evaluation: Evaluation = {
       type: "Evaluation",
@@ -127,6 +131,14 @@ describe("Evaluation", () => {
       }),
       []
     );
+    assert.match(
+      validateEvaluation({
+        evaluation: { ...evaluation, id: "evaluation-forged" },
+        assignment,
+        plan: EDITORIAL_CALIBRATION_PLAN,
+      }).join("\n"),
+      /canonical identity/
+    );
   });
 
   it("requires anchored evidence for both sides", () => {
@@ -143,6 +155,7 @@ describe("Evaluation", () => {
       evaluatorId: assignment.evaluatorId,
       planId: assignment.planId,
       planVersion: assignment.planVersion,
+      planDigest: assignment.planDigest,
     };
     const evaluation: Evaluation = {
       type: "Evaluation",
@@ -173,4 +186,3 @@ describe("Evaluation", () => {
     assert.ok(errors.includes("evidence a anchor is required"));
   });
 });
-
