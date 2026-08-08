@@ -1,10 +1,9 @@
 ---
 type: Blog Post
-title: 'O Vigia: um jornal que começa pelo grafo'
+title: 'O Vigia: escalar a atenção, não a autoridade'
 description: >-
-  O Vigia parece um projeto de jornalismo por IA. Na prática, estou tentando
-  construir a cadeia verificável que separa fonte, sinal, lead, rascunho,
-  checagem e publicação.
+  E se uma redação pequena pudesse prestar atenção à cidade como uma redação
+  muito maior, sem entregar à IA a decisão sobre o que merece ser publicado?
 date: '2026-08-07'
 lang: pt
 docType: technical
@@ -20,148 +19,211 @@ emoji: '👁️'
 
 Tenho um jornal em Porto Velho que ainda não é exatamente um jornal.
 
-Ele se chama [O Vigia](https://ovigialocal.github.io/). Existe uma face pública, ainda marcada como protótipo, e existe uma redação privada onde ficam detectores, fontes, regras editoriais e os agentes que eventualmente escrevem alguma coisa.
+Ele se chama [O Vigia](https://ovigialocal.github.io/). Existe uma face pública, ainda marcada como protótipo, e uma redação privada onde estou juntando fontes, detectores, regras editoriais e agentes.
 
-A descrição curta seria: IA acompanha dados públicos e produz jornalismo hiperlocal.
+Quanto mais mexo nele, menos acho que a parte interessante seja a IA escrever notícia.
 
-A descrição curta é quase exatamente a descrição errada.
+Escrever ficou barato.
 
-Ela faz parecer que a parte interessante é pedir a um modelo de linguagem que escreva uma notícia. Essa parte já é relativamente fácil. A parte difícil é impedir que o caminho entre um dado que mudou e uma frase publicada desapareça dentro do modelo.
+Prestar atenção continua caro.
 
-O Vigia está virando um projeto sobre esse caminho.
+Uma redação local pode querer acompanhar o Diário Oficial, licitações, decisões judiciais, mudanças em sites públicos, vagas de emprego, manifestações de autoridades, agenda cultural, voos, esportes, o nível do rio, alertas da Defesa Civil e talvez até mudanças visíveis por satélite. Nenhum desses assuntos é especialmente exótico. O problema é a soma.
+
+Cada fonte tem sua cadência. Algumas mudam várias vezes por dia. Outras uma vez por mês. Algumas exigem comparar duas versões. Outras precisam ser cruzadas com uma segunda fonte antes de significarem qualquer coisa. Muitas produzem centenas de sinais irrelevantes para cada coisa que alguém realmente deveria investigar.
+
+Uma redação grande distribui parte desse trabalho entre editorias, repórteres, produtores, pauteiros e especialistas.
+
+Uma redação pequena simplesmente não olha para tudo.
+
+E talvez seja aí que agentes e software façam uma diferença mais interessante para o jornalismo local do que produzir texto automaticamente.
+
+## O recurso escasso é atenção
+
+O [Atlas da Notícia](https://atlas.jor.br/v7/relatorio-analitico-atlas-2025/) encontrou, na edição de 2025, 2.504 municípios brasileiros sem veículo local registrado. Neles vivem cerca de 20,7 milhões de pessoas. Na Região Norte, 193 dos 450 municípios estavam nessa condição.
+
+Porto Velho não é um desses lugares. O próprio Atlas registra uma concentração relativamente grande de veículos na capital de Rondônia. Isso é importante porque o Vigia não nasceu como uma solução imaginária para uma cidade sem imprensa. Porto Velho é o laboratório.
+
+A pergunta que me interessa é o que poderia acontecer se uma infraestrutura dessas ficasse barata o suficiente para ser reutilizada também onde a redação tem duas, três, cinco pessoas — ou onde manter cobertura especializada de dez assuntos diferentes simplesmente não fecha a conta.
+
+Não estou falando de fazer dez vezes mais matérias com dez vezes menos jornalistas.
+
+Essa é a versão deprimente da automação.
+
+Estou falando de uma redação pequena conseguir **observar uma superfície muito maior da cidade**.
+
+Um detector pode verificar todos os dias se uma página institucional mudou. Outro pode comparar novas contratações públicas. Outro pode olhar uma nova competência do Caged. Outro pode acompanhar uma estação do rio Madeira. Outro pode procurar decisões judiciais potencialmente relevantes. Outro pode perceber que uma notícia nacional produz uma consequência local investigável.
+
+A maior parte dessas execuções deveria terminar em nada.
+
+Isso também é trabalho.
+
+O software olha mil coisas para que o jornalista não precise olhar mil coisas. O ganho só aparece se, quando algo parece importar, o humano puder gastar mais tempo justamente nas partes que não foram barateadas: entender por que aquilo importa, ligar para alguém, ouvir o outro lado, ir ao lugar, encontrar contexto histórico, desconfiar da explicação fácil.
+
+**O Vigia não tenta automatizar o jornalista. Tenta automatizar a vigília.**
 
 ## Um CNPJ apareceu. E daí?
 
-O primeiro vertical é deliberadamente banal.
+O primeiro experimento é quase ridiculamente pequeno.
 
-Tenho outro projeto, o [Ficha](https://github.com/franklinbaldo/ficha), que preserva snapshots dos dados abertos de CNPJ da Receita Federal. Uma das coisas que ele torna possível é comparar competências mensais. Um detector pode olhar dois snapshots e encontrar um estabelecimento que não estava presente no primeiro e passa a aparecer no segundo com situação cadastral ativa.
+Tenho outro projeto, o [Ficha](https://github.com/franklinbaldo/ficha), que preserva snapshots dos dados abertos de CNPJ da Receita Federal. Comparando duas competências mensais, um detector consegue encontrar um estabelecimento que não aparecia na primeira e passa a aparecer na segunda com situação cadastral ativa.
 
-Isso é um fato pequeno e bastante preciso.
+Isso é um fato preciso.
 
 Também é uma fábrica de frases erradas.
 
-O estabelecimento **apareceu pela primeira vez entre os dois snapshots**. Isso não quer dizer que abriu as portas naquele mês. Não quer dizer que começou a atender. Não quer dizer que contratou alguém. Não quer dizer que houve investimento. A própria data de início de atividade é um campo declarado no cadastro, não uma câmera instalada na calçada.
+O estabelecimento **apareceu entre dois snapshots**. Isso não quer dizer que abriu as portas naquele mês. Não quer dizer que começou a atender. Não quer dizer que contratou alguém. Não quer dizer que houve investimento. A data de início de atividade no cadastro também é um dado declarado, não uma câmera instalada na calçada.
 
-Parece uma distinção modesta, mas ela contém quase o projeto inteiro.
+Essa distinção contém uma parte grande do projeto.
 
-Um detector não descobre uma matéria. Ele produz uma observação que talvez mereça virar lead. A lead não autoriza qualquer narrativa compatível com o tema. Ela carrega consigo aquilo que foi observado, de onde veio, quando veio e quais inferências continuam proibidas.
+A máquina é muito boa em perceber a mudança. Ela é muito pior em saber o que a mudança significa para uma cidade.
 
-A linguagem é a última etapa. Antes dela existe uma cadeia.
+Um detector não deveria produzir uma matéria. Deveria produzir um candidato a atenção.
+
+Talvez ele seja descartado. Talvez seja agrupado com outros sinais. Talvez vire uma lead. Talvez obrigue a buscar outra fonte. Talvez alguém ligue para a empresa e descubra que o evento interessante não tem nada a ver com a hipótese inicial.
+
+Isso parece menos eficiente do que mandar o modelo escrever imediatamente.
+
+É justamente a ideia.
+
+## Escalar o que é comum, preservar o que é local
+
+Aqui aparece a parte que mais me interessa como arquitetura.
+
+Quase nada no ato de consultar o PNCP precisa ser reinventado em cada município. O mesmo vale para baixar dados do Caged, consumir uma API hidrológica, preservar uma página pública, acompanhar um calendário de voos ou estruturar uma decisão judicial.
+
+Se um detector de licitações funciona bem em Porto Velho, grande parte dele poderia funcionar em Ariquemes, Vilhena, Ji-Paraná ou numa cidade do interior de outro estado. Mudam as instituições relevantes, a geografia, as fontes complementares, os limiares, o contexto e, principalmente, o que aquela comunidade considera notícia.
+
+Isso sugere uma divisão que eu não tinha formulado claramente quando comecei o projeto:
+
+**a infraestrutura pode ser compartilhada; a autoridade editorial não.**
+
+O código pode aprender a encontrar uma nova contratação em quinhentas cidades sem que quinhentas redações precisem escrever o mesmo coletor. Mas a decisão de investigar aquela contratação não deveria subir para um cérebro editorial nacional só porque o software ficou centralizado.
+
+O detector escala horizontalmente.
+
+A pauta continua local.
+
+Na redação do Vigia, a arquitetura que está aparecendo separa justamente essas decisões:
 
 ```mermaid
 graph LR
-  S1[source anterior] --> L[lead]
-  S2[source atual] --> L
-  L --> D[article-draft]
-  D --> F[article-fact-check]
-  F --> R[article-editorial-review]
-  R --> A[article-ready]
-  A --> P[article-published]
+  S[fontes] --> D[detectores]
+  D --> C[lead-candidates]
+  C --> Q[qualificação]
+  Q --> M[reunião editorial]
+  M --> SC[story-commission]
+  SC --> A[article-draft]
+  A --> F[fact-check]
+  F --> R[editorial-review]
+  R --> P[publicação]
 ```
 
-Isso parece burocracia porque é burocracia.
+Uma mudança detectada não é uma lead. Uma lead não é uma pauta. Uma pauta não é um rascunho. Um rascunho não é uma matéria checada. E uma matéria checada ainda não precisa ser publicada.
 
-Deliberada.
+Isso é burocracia deliberada.
 
-Modelos de linguagem são muito bons em encurtar distâncias. Dê dados e uma intenção e eles tentam produzir a coisa que estaria no fim. Para escrever com fluência, isso é uma qualidade. Para jornalismo verificável, parte do trabalho é justamente **não deixar certas distâncias serem encurtadas**.
+Modelos são muito bons em encurtar distâncias. Você entrega dados e intenção e eles tentam produzir a coisa que estaria no fim. Em várias tarefas isso é exatamente o que eu quero deles.
 
-Fonte não é lead. Lead não é rascunho. Rascunho não é matéria checada. Checagem não é autorização de publicação.
+No jornalismo, algumas distâncias existem por um motivo.
 
-Essas diferenças precisam existir no disco, não apenas nas instruções do agente.
+## O grafo entra para impedir a fábrica de conteúdo
 
-## O CMS é o grafo
+Foi por isso que o Vigia acabou chegando a uma arquitetura de conceitos imutáveis ligados entre si.
 
-A ideia inicial do Vigia tratava cada etapa editorial como um _concept bundle_: um diretório imutável com um documento Markdown e frontmatter estruturado. Em vez de uma mesma matéria mudar de `status: draft` para `status: checked` e depois `status: published`, cada transição cria um novo conceito derivado do anterior.
+Em vez de uma matéria ser um registro que muda de `draft` para `checked` e depois para `published`, cada etapa pode existir como um artefato próprio, derivado dos anteriores. A história ganha uma identidade estável, mas sua trajetória continua visível.
 
-Isso muda uma coisa simples: o estado atual de uma história deixa de ser um campo que alguém atualiza. Ele passa a ser uma conclusão que pode ser reconstruída a partir do histórico.
+Fonte → observação → lead → rascunho → checagem → revisão → publicação.
 
-Uma matéria pode ter:
+Se houver uma correção depois, ela não precisa apagar o passado. É outra parte da história.
 
-- uma `story_id`, estável em toda a história;
-- vários `concept_id`, um para cada etapa editorial;
-- links reais entre os documentos que registram a linhagem.
+É aqui que entra o [okf-parser](https://github.com/franklinbaldo/okf-parser). O Vigia tinha começado a construir localmente coisas como parsing de frontmatter, inventário de tipos, regras de links e validação de grafo. Enquanto isso, meu parser genérico já fazia boa parte desse trabalho em outro repositório.
 
-O CMS emerge desse grafo.
+A refatoração atual é uma retirada: deixar o parser cuidar do que significa ter um corpus de conhecimento estruturalmente válido e deixar o Vigia cuidar das regras que são realmente jornalísticas.
 
-Se há uma revisão editorial aprovada descendente de uma checagem factual válida, que por sua vez aponta para um rascunho derivado de uma lead, dá para dizer onde a história está. Se aparece uma correção depois da publicação, não é preciso apagar a matéria anterior para fingir que o erro nunca existiu. A correção é outro nó.
+O parser pode dizer que uma aresta existe.
 
-Isso também tornou visível uma pequena ironia na retomada do projeto.
+O Vigia precisa dizer se aquela aresta é suficiente para autorizar o próximo passo editorial.
 
-O Vigia já dizia usar OKF, mas tinha começado a implementar localmente um pequeno ecossistema para interpretar esse conhecimento: parsing de frontmatter, cobertura de tipos, regras de grafo, unicidade de identificadores. Enquanto isso, meu [okf-parser](https://github.com/franklinbaldo/okf-parser) tinha crescido em outro repositório e já fazia boa parte desse trabalho de forma mais geral: validação, inventário, grafo, DuckDB, schemas, Pydantic, MCP e até operações relacionais sobre frontmatter.
+Essa distinção é o que permite imaginar escala sem imaginar uma fábrica de _slop_. Se a mesma infraestrutura for reaproveitada em muitas cidades, também precisam ser reaproveitáveis os mecanismos que deixam claro de onde cada afirmação veio, quais transformações sofreu e onde uma inferência entrou.
 
-O resultado era, basicamente, uma versão local e mais limitada de uma ferramenta minha dentro de outro projeto meu. Um tipo de microserviço doméstico.
+O grafo não é o jornal.
 
-A refatoração atual é menos gloriosa e muito melhor: apagar responsabilidade do Vigia.
+É parte do que torna possível aumentar a capacidade do jornal sem tornar invisível o caminho até a publicação.
 
-O parser cuida do que significa ser um corpus OKF válido. O Vigia cuida do que significa ser uma cadeia editorial válida.
+## Se o resultado for mais posts por hora, deu errado
 
-Há uma diferença importante aí. O parser pode saber que um link existe. O Vigia precisa saber que uma `lead` daquele detector exige exatamente dois snapshots de competências distintas. O parser pode materializar conceitos em DuckDB. O Vigia precisa saber que um `article-ready` só pode existir depois dos gates editoriais corretos.
+Existe uma versão muito plausível desse projeto que eu não quero construir.
 
-A infraestrutura genérica desce. A regra jornalística fica.
+Você conecta vinte fontes, roda vinte agentes e passa a publicar duzentas notas porque agora o custo marginal de cada nota ficou próximo de zero.
 
-Na migração apareceu ainda um bug conceitual bonito: eu usava `index.md` como documento principal de cada conceito, mas no formato que o `okf-parser` implementa `index.md` é reservado para _progressive disclosure_. O jornal tinha concepts centrais guardados em arquivos que o parser entendia como outra coisa.
+Tecnicamente impressionante. Jornalisticamente talvez pior do que antes.
 
-Agora cada entidade ganha seu `concept.md`, e os relacionamentos deixam de existir apenas como IDs no YAML: viram também links Markdown resolvíveis. O teste da primeira história passa a poder exigir não apenas “seis arquivos existem”, mas “há seis conceitos, cinco arestas, um componente e o grafo é acíclico”.
+Se a automação só aumentar volume, ela compete com o jornalista justamente no terreno em que a máquina já é barata: transformar informação existente em mais texto.
 
-```bash
-okf-parser check knowledge
-okf-parser inventory knowledge
-okf-parser graph knowledge
-```
+O resultado que me parece interessante é quase o inverso.
 
-É uma mudança pequena de arquivo. É uma mudança grande de quem tem autoridade para dizer que a história está inteira.
+Mais sinais percebidos.
 
-## Onde entra a IA
+Mais candidatos descartados.
 
-Curiosamente, cada vez que a arquitetura fica mais explícita, o modelo fica menos central.
+Mais tempo humano gasto nas poucas coisas que sobreviveram.
 
-Ele continua sendo útil em lugares difíceis de resolver com código determinístico. Redação é um deles. Checagem semântica é outro: identificar afirmações num texto, decompor frases, localizar exatamente o trecho que está fazendo uma alegação e comparar aquilo com um conjunto fechado de evidências.
+Mais telefonemas por matéria, não menos. Mais contexto. Mais contraditório. Mais capacidade de manter uma pauta aberta por alguns dias porque o custo de continuar observando suas fontes caiu.
 
-A RFC de fact-checking que está aberta no Vigia evita que o mesmo agente que escreveu a matéria simplesmente declare que suas próprias afirmações estão todas sustentadas. Ela propõe uma skill independente. A skill recebe o rascunho e um universo fechado de evidências derivado da linhagem, inventaria as claims por conta própria e devolve uma análise estruturada. Verificações determinísticas validam hashes, referências e spans. O código, não o modelo, calcula `pass`, `revise` ou `block`. No piloto, ainda há revisão humana obrigatória.
+Uma redação de cidade pequena não precisa fingir que tem um especialista permanente em hidrologia, licitações, aviação, mercado de trabalho e geoprocessamento. Ela pode ter instrumentos especializados que chamam alguém quando alguma coisa merece atenção.
 
-Isso não está todo implementado. É importante dizer isso porque o repositório tem mais arquitetura do que operação neste momento.
+Um bom detector se parece menos com um repórter automático e mais com um alarme muito exigente.
 
-Também é onde o desenho se encontra com uma ideia sobre a qual [já escrevi](/blog/delegando-para-agentes/): agente pode elaborar a proposta sem receber automaticamente a autoridade para transformá-la em ato. No Vigia isso aparece menos como uma grande regra de segurança e mais como uma sequência de artefatos. O rascunho é literalmente outra coisa que a publicação.
+E um alarme não escreve a matéria sobre o incêndio.
 
-Se o sistema não oferece um atalho entre os dois, a separação não depende de o agente se lembrar dela.
+## A visão ainda está na frente da operação
 
-## O perigo de ter ideias demais para um jornal que ainda tem poucas matérias
+Há um risco de escrever sobre um projeto desses e começar a descrevê-lo no futuro do presente.
 
-O backlog do Vigia cresceu rápido.
+O Vigia ainda é um protótipo. O repositório da redação tem mais arquitetura do que jornalismo publicado.
 
-Há RFCs para monitorar mudanças em sites institucionais, licitações e contratos, decisões judiciais, manifestações públicas, notícias externas com impacto local, esportes, emprego, voos, o rio Madeira, Defesa Civil e agenda cultural.
+O First Story Run que existe hoje testa uma cadeia pequena: duas fontes, uma lead, um rascunho, uma checagem factual e uma revisão editorial. A integração com o `okf-parser` está sendo endurecida agora. O modelo mais completo de reunião editorial, comissionamento e publicação ainda está em RFC. A checagem independente por skill também é uma proposta em construção, não uma capacidade que eu deveria narrar como pronta.
 
-Cada uma isoladamente parece plausível. Juntas, começam a parecer um jornal inteiro.
+E o backlog já é perigosamente tentador: sites institucionais, licitações, Judiciário, falas públicas, notícias externas com impacto local, esportes, empregos, voos, rio Madeira, Defesa Civil, agenda cultural, observação geoespacial.
 
-Só que RFC não é cobertura jornalística.
+É fácil olhar para essa lista e imaginar a plataforma nacional antes de existir a primeira matéria inteira.
 
-Essa é uma confusão fácil em projetos com agentes: arquitetura produz muitos artefatos que se parecem com progresso. Você pode passar uma semana especificando detectores e terminar com uma descrição muito sofisticada de um sistema que ainda não observou nada novo na cidade.
+Por isso a regra de retomada ficou mais conservadora justamente quando a ambição ficou maior: **nenhum novo vertical até uma história real atravessar a cadeia inteira**.
 
-Na retomada, a regra passou a ser a inversa: **nenhum novo vertical até uma história real atravessar a cadeia inteira**.
+Depois, executar de novo sem duplicar tudo.
 
-As RFCs ficam. São mapa, não prova de existência.
+Depois, testar uma correção.
 
-Primeiro o First Story Run: fonte real, detector, lead, rascunho, checagem, revisão, matéria pronta e publicação. Depois outra execução sem duplicar artefatos. Depois uma correção, porque qualquer arquitetura editorial que só funciona quando ninguém erra é uma arquitetura para demos.
+Uma arquitetura editorial que só funciona quando ninguém erra é uma arquitetura para demonstração.
 
-Só então vale perguntar qual detector vem depois.
+## Talvez o produto não seja um jornal
 
-O teste hiperlocal tem uma vantagem incômoda. Num sistema nacional, uma afirmação genérica pode se esconder no volume. Num jornal de Porto Velho, um erro pode virar o nome de uma empresa real, um bairro real, uma licitação real, uma enchente real. O ganho de automatizar a atenção vem junto com a obrigação de mostrar de onde cada frase saiu.
+Ainda chamo O Vigia de jornal porque é a forma mais simples de explicar o que estou tentando fazer em Porto Velho.
 
-Detecção é barata. Relevância é cara.
+Mas existe outra possibilidade.
 
-Redação está ficando barata. Proveniência não.
+Talvez o artefato mais escalável aqui não seja o veículo. Talvez seja uma espécie de infraestrutura de redação: um conjunto de sensores, rotinas, contratos de proveniência e instrumentos editoriais que uma redação pequena possa adaptar à sua cidade.
 
-Publicar uma página estática é trivial. Conseguir percorrer a matéria ao contrário é outra coisa.
+Uma redação ganha um detector novo sem precisar inventá-lo do zero. Outra melhora o tratamento de uma fonte e essa melhoria pode voltar para as demais. A camada comum fica progressivamente melhor em observar. A camada local continua decidindo o que merece investigação e assumindo a responsabilidade pelo que publica.
 
-Se o Vigia funcionar, uma frase publicada deve poder ser seguida para trás: publicação → revisão → checagem → rascunho → lead → fonte. Não porque essa cadeia torne a frase verdadeira por mágica, mas porque torna visível onde alguém — código, modelo ou humano — deu um passo maior do que a evidência permitia.
+Não sei ainda se essa economia fecha. Software pode reduzir um custo; não cria confiança, legitimidade, receita nem jornalistas locais por decreto. Também não transforma uma fonte pública em cobertura de rua.
 
-Por enquanto, continua sendo um protótipo. Há mais RFCs do que matérias. A regra agora é corrigir essa proporção.
+Mas a hipótese me parece boa o bastante para testar.
 
-Primeiro uma história inteira. Depois o resto da cidade.
+O Brasil ainda tem milhares de municípios sem veículo local registrado. Em muitos outros, a imprensa existe com equipes pequenas e uma superfície de cobertura muito maior do que sua capacidade diária de observação.
+
+Se agentes puderem mudar alguma coisa importante nesse cenário, espero que não seja porque aprenderam a substituir a reportagem por texto sintético.
+
+Espero que seja porque fizeram ficar barato olhar para mais lugares — e deixaram o tempo caro para aquilo que continua merecendo gente.
+
+O código pode escalar.
+
+A responsabilidade precisa continuar em algum lugar.
 
 ## Para se aprofundar
 
-- **[O Vigia](https://ovigialocal.github.io/)** — a face pública do protótipo em Porto Velho; é onde a cadeia termina quando algo de fato é publicado.
-- **[Ficha](https://github.com/franklinbaldo/ficha)** — o projeto que preserva snapshots históricos dos dados abertos de CNPJ e fornece o primeiro vertical de observação do Vigia.
-- **[okf-parser](https://github.com/franklinbaldo/okf-parser)** — o substrato genérico para validar, inventariar e consultar o corpus de conhecimento que o Vigia está passando a reutilizar.
-- **[W3C PROV Overview](https://www.w3.org/TR/prov-overview/)** — uma referência muito mais geral para a ideia de proveniência como relação explícita entre entidades, atividades e agentes; útil para pensar por que “de onde veio?” merece estrutura própria.
+- **[Atlas da Notícia — Relatório analítico 2025](https://atlas.jor.br/v7/relatorio-analitico-atlas-2025/)** — o retrato mais recente que usei aqui para dimensionar desertos de notícias e a distribuição do jornalismo local no Brasil.
+- **[O jornalismo da Região Norte segue em expansão](https://atlas.jor.br/atlas-v-7/o-jornalismo-da-regiao-norte-segue-em-expansao-aponta-atlas-da-noticia-2025/)** — o recorte regional do Atlas, incluindo a concentração de veículos nas capitais e os 193 municípios nortistas classificados como desertos de notícias.
+- **[O Vigia](https://ovigialocal.github.io/)** — a face pública do protótipo em Porto Velho.
+- **[Ficha](https://github.com/franklinbaldo/ficha)** — o projeto que preserva snapshots dos dados abertos de CNPJ e fornece o primeiro experimento de observação do Vigia.
+- **[okf-parser](https://github.com/franklinbaldo/okf-parser)** — o substrato genérico que o Vigia está passando a reutilizar para tornar corpus e relações auditáveis.
