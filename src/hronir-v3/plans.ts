@@ -63,6 +63,30 @@ export const EDITORIAL_WORK_PROJECTION: ProjectionDefinition = {
   mediaKind: "text",
 };
 
+function canonicalize(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalize);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, child]) => [key, canonicalize(child)])
+    );
+  }
+  return value;
+}
+
+export function planDigest(plan: EvaluationPlan): string {
+  return `sha256:${createHash("sha256")
+    .update(JSON.stringify(canonicalize(plan)))
+    .digest("hex")}`;
+}
+
+export function materializedPlanId(
+  plan: Pick<EvaluationPlan, "id" | "version">
+): string {
+  return `${plan.id}-v${plan.version}`;
+}
+
 export function validatePlan(plan: EvaluationPlan): string[] {
   const errors: string[] = [];
   if (!plan.id.trim()) errors.push("plan id is required");
@@ -110,4 +134,4 @@ export function planCanFeedProjection(
     plan.effects.includes(effect)
   );
 }
-
+import { createHash } from "node:crypto";
