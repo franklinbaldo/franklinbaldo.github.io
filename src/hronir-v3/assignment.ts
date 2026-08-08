@@ -4,6 +4,7 @@ import type {
   EvaluationPlan,
   EvaluationTarget,
 } from "./types.js";
+import { planDigest } from "./plans.js";
 
 function stableTarget(target: EvaluationTarget) {
   if (target.kind === "media") {
@@ -24,17 +25,20 @@ function stableTarget(target: EvaluationTarget) {
 }
 
 export function assignmentId(input: {
-  plan: Pick<EvaluationPlan, "id" | "version">;
+  plan: EvaluationPlan;
   seed: string;
   evaluatorId: string;
+  createdAt: string;
   sideA: EvaluationTarget;
   sideB: EvaluationTarget;
 }): string {
   const canonical = JSON.stringify({
     planId: input.plan.id,
     planVersion: input.plan.version,
+    planDigest: planDigest(input.plan),
     seed: input.seed,
     evaluatorId: input.evaluatorId,
+    createdAt: input.createdAt,
     sideA: stableTarget(input.sideA),
     sideB: stableTarget(input.sideB),
   });
@@ -55,9 +59,9 @@ export function createAssignment(input: {
     id,
     planId: input.plan.id,
     planVersion: input.plan.version,
+    planDigest: planDigest(input.plan),
     seed: input.seed,
     evaluatorId: input.evaluatorId,
-    status: "pending",
     createdAt: input.createdAt,
     sideA: input.sideA,
     sideB: input.sideB,
@@ -71,6 +75,20 @@ export function validateAssignment(
   const errors: string[] = [];
   if (assignment.planId !== plan.id || assignment.planVersion !== plan.version) {
     errors.push("assignment plan does not match the materialized plan");
+  }
+  if (assignment.planDigest !== planDigest(plan)) {
+    errors.push("assignment plan digest does not match the materialized plan");
+  }
+  const expectedId = assignmentId({
+    plan,
+    seed: assignment.seed,
+    evaluatorId: assignment.evaluatorId,
+    createdAt: assignment.createdAt,
+    sideA: assignment.sideA,
+    sideB: assignment.sideB,
+  });
+  if (assignment.id !== expectedId) {
+    errors.push("assignment id does not match its canonical identity");
   }
   if (assignment.sideA.kind !== assignment.sideB.kind) {
     errors.push("assignment sides must have the same target kind");
@@ -99,4 +117,3 @@ export function validateAssignment(
   }
   return errors;
 }
-
