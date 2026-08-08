@@ -12,7 +12,12 @@ describe("hronir run CLI", () => {
       readText: () => '{"plan":{"id":"plan"}}',
       run: (input, options) => {
         received = { input, options };
-        return { assignment: {}, written: options.write };
+        return {
+          plan: {},
+          assignment: {},
+          assignmentState: {},
+          written: options.write,
+        };
       },
     });
     assert.equal(received?.input.plan.id, "plan");
@@ -30,7 +35,12 @@ describe("hronir run CLI", () => {
       },
       run: (_input, options): RunTurnResult => {
         write = options.write;
-        return { assignment: {}, written: options.write };
+        return {
+          plan: {},
+          assignment: {},
+          assignmentState: {},
+          written: options.write,
+        };
       },
     });
     assert.equal(write, false);
@@ -39,7 +49,12 @@ describe("hronir run CLI", () => {
   it("rejects missing and unknown arguments", () => {
     const dependencies = {
       readText: () => "{}",
-      run: (): RunTurnResult => ({ assignment: {}, written: false }),
+      run: (): RunTurnResult => ({
+        plan: {},
+        assignment: {},
+        assignmentState: {},
+        written: false,
+      }),
     };
     assert.throws(() => executeRunCommand([], dependencies), /usage:/);
     assert.throws(
