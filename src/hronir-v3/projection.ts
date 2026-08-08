@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { validateAssignment } from "./assignment.js";
 import { validateEvaluation } from "./evaluation.js";
-import { planCanFeedProjection } from "./plans.js";
+import { planCanFeedProjection, validatePlan } from "./plans.js";
 import type {
   Assignment,
   Evaluation,
@@ -31,6 +31,7 @@ function outcome(preference: Evaluation["preference"]): [number, number] | null 
 }
 
 function assertObservation(observation: ProjectionObservation): void {
+  const planErrors = validatePlan(observation.plan);
   const assignmentErrors = validateAssignment(
     observation.assignment,
     observation.plan
@@ -40,7 +41,7 @@ function assertObservation(observation: ProjectionObservation): void {
     assignment: observation.assignment,
     plan: observation.plan,
   });
-  const errors = [...assignmentErrors, ...evaluationErrors];
+  const errors = [...planErrors, ...assignmentErrors, ...evaluationErrors];
   if (errors.length > 0) {
     throw new Error(`invalid projection observation:\n- ${errors.join("\n- ")}`);
   }
@@ -48,8 +49,7 @@ function assertObservation(observation: ProjectionObservation): void {
 
 export function projectEditorialWorkRanking(
   projection: ProjectionDefinition,
-  observations: ProjectionObservation[],
-  options: { generatedAt: string }
+  observations: ProjectionObservation[]
 ): ProjectionSnapshot {
   const accepted = observations.filter((observation) => {
     assertObservation(observation);
@@ -98,6 +98,11 @@ export function projectEditorialWorkRanking(
   const evaluationIds = accepted
     .map(({ evaluation }) => evaluation.id)
     .sort();
+  const generatedAt =
+    accepted
+      .map(({ evaluation }) => evaluation.submittedAt)
+      .sort()
+      .at(-1) ?? "1970-01-01T00:00:00.000Z";
   const identity = JSON.stringify({
     projectionId: projection.id,
     projectionVersion: projection.version,
@@ -114,7 +119,7 @@ export function projectEditorialWorkRanking(
     id,
     projectionId: projection.id,
     projectionVersion: projection.version,
-    generatedAt: options.generatedAt,
+    generatedAt,
     evaluationIds,
     entries,
   };
