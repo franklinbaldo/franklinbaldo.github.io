@@ -113,3 +113,35 @@ export interface ProjectionDefinition {
   mediaKind: "text" | "audio";
 }
 
+export interface ProjectedWork {
+  workId: string;
+  rank: number;
+  score: number;
+  comparisons: number;
+  confidenceWeight: number;
+}
+
+export interface ProjectionSnapshot {
+  type: "Projection Snapshot";
+  id: string;
+  projectionId: string;
+  projectionVersion: number;
+  generatedAt: string;
+  evaluationIds: string[];
+  entries: ProjectedWork[];
+}
+
+export interface RevisionRecommendation {
+  type: "Revision Recommendation";
+  id: string;
+  workId: string;
+  projectionSnapshotId: string;
+  status: "proposed" | "accepted" | "dismissed";
+  priority: number;
+  basis: {
+    rank: number;
+    score: number;
+    comparisons: number;
+  };
+  reason: string;
+}
