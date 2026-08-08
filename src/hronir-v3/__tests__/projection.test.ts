@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, it } from "node:test";
 import { createAssignment } from "../assignment.js";
 import { evaluationId } from "../evaluation.js";
@@ -49,6 +52,7 @@ function observation(
     evaluatorId: assignment.evaluatorId,
     planId: assignment.planId,
     planVersion: assignment.planVersion,
+    planDigest: assignment.planDigest,
   };
   const evaluation: Evaluation = {
     type: "Evaluation",
@@ -89,13 +93,11 @@ describe("editorial work projection", () => {
     ];
     const first = projectEditorialWorkRanking(
       EDITORIAL_WORK_PROJECTION,
-      inputs,
-      { generatedAt: "2026-08-08T01:00:00Z" }
+      inputs
     );
     const replay = projectEditorialWorkRanking(
       EDITORIAL_WORK_PROJECTION,
-      inputs.slice().reverse(),
-      { generatedAt: "2026-08-09T01:00:00Z" }
+      inputs.slice().reverse()
     );
     assert.equal(first.id, replay.id);
     assert.deepEqual(
@@ -103,6 +105,42 @@ describe("editorial work projection", () => {
       ["work-a", "work-c", "work-b"]
     );
     assert.equal(first.evaluationIds.length, 2);
+  });
+
+  it("rejects a plan whose effects were changed after assignment", () => {
+    const original = observation(
+      "tampered",
+      "work-a",
+      "work-b",
+      "a",
+      AFFECTIVE_EXPERIMENT_PLAN
+    );
+    const tampered = {
+      ...AFFECTIVE_EXPERIMENT_PLAN,
+      effects: ["editorial-work-ranking" as const],
+    };
+    assert.throws(
+      () =>
+        projectEditorialWorkRanking(EDITORIAL_WORK_PROJECTION, [
+          { ...original, plan: tampered },
+        ]),
+      /invalid projection observation/
+    );
+  });
+
+  it("rejects a valid plan object that does not match the assigned digest", () => {
+    const original = observation("digest", "work-a", "work-b", "a");
+    const changed = {
+      ...EDITORIAL_CALIBRATION_PLAN,
+      question: "Outra pergunta com o mesmo id e versão",
+    };
+    assert.throws(
+      () =>
+        projectEditorialWorkRanking(EDITORIAL_WORK_PROJECTION, [
+          { ...original, plan: changed },
+        ]),
+      /plan digest/
+    );
   });
 
   it("produces recommendations without mutating or selecting revisions", () => {
@@ -113,8 +151,7 @@ describe("editorial work projection", () => {
     ];
     const snapshot = projectEditorialWorkRanking(
       EDITORIAL_WORK_PROJECTION,
-      inputs,
-      { generatedAt: "2026-08-08T01:00:00Z" }
+      inputs
     );
     const recommendations = recommendRevisionAttention(snapshot, {
       bottomFraction: 0.5,
@@ -130,8 +167,7 @@ describe("editorial work projection", () => {
   it("does not recommend low-support entries", () => {
     const snapshot = projectEditorialWorkRanking(
       EDITORIAL_WORK_PROJECTION,
-      [observation("1", "work-a", "work-b", "a")],
-      { generatedAt: "2026-08-08T01:00:00Z" }
+      [observation("1", "work-a", "work-b", "a")]
     );
     assert.deepEqual(recommendRevisionAttention(snapshot), []);
   });
@@ -152,7 +188,6 @@ describe("editorial work projection", () => {
       {
         projection: EDITORIAL_WORK_PROJECTION,
         observations: inputs,
-        generatedAt: "2026-08-08T01:00:00Z",
       },
       {
         bundlePath: "bundle",
@@ -168,4 +203,46 @@ describe("editorial work projection", () => {
       "Revision Recommendation",
     ]);
   });
+
+  it(
+    "replays the same snapshot against the bundle produced by its first run",
+    { timeout: 120_000 },
+    () => {
+      const bundle = mkdtempSync(join(tmpdir(), "hronir-projection-replay-"));
+      try {
+        const inputs = [
+          observation("1", "work-a", "work-b", "a"),
+          observation("2", "work-a", "work-b", "a"),
+          observation("3", "work-a", "work-b", "a"),
+        ];
+        const input = {
+          projection: EDITORIAL_WORK_PROJECTION,
+          observations: inputs,
+        };
+        projectAndPersist(input, {
+          bundlePath: bundle,
+          write: true,
+          bottomFraction: 0.5,
+          minimumComparisons: 3,
+        });
+        const replay = projectAndPersist(input, {
+          bundlePath: bundle,
+          write: true,
+          bottomFraction: 0.5,
+          minimumComparisons: 3,
+        });
+        assert.deepEqual(replay.persistence.snapshot.matched_existing, [
+          `projection-snapshot/${replay.snapshot.id}.md`,
+        ]);
+        assert.deepEqual(
+          replay.persistence.recommendations[0].matched_existing,
+          [
+            `revision-recommendation/${replay.recommendations[0].id}.md`,
+          ]
+        );
+      } finally {
+        rmSync(bundle, { recursive: true, force: true });
+      }
+    }
+  );
 });
