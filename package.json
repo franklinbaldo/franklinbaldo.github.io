@@ -24,6 +24,7 @@
     "format:check": "prettier --check .",
     "lint": "oxlint",
     "hronir": "node --import tsx/esm scripts/hronir/index.js",
+    "hronir:run": "node --import tsx/esm scripts/hronir/index.js run",
     "hronir:generate-match": "node --import tsx/esm scripts/hronir/index.js generate-match",
     "hronir:submit-eval": "node --import tsx/esm scripts/hronir/index.js submit-eval",
     "hronir:init": "node --import tsx/esm scripts/hronir/index.js init",
