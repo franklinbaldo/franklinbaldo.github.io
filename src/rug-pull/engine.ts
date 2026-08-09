@@ -221,7 +221,7 @@ function creatorFor(archetype: Archetype): CreatorState {
         cashPressure: 0.36,
         suspicionEstimate: 0.3,
         intent: "delay_then_extract",
-        targetLiquidity: 215_000,
+        targetLiquidity: 150_000,
         walletMoved: 0,
         hasRealCexContact: false,
         rugAbandoned: false,
@@ -480,7 +480,7 @@ function chooseCreatorAction(state: GameState): CreatorAction {
     const extractionChance = creator.intent === "pump_then_dump" ? 0.22 : 0.3;
     if (roll < extractionChance) {
       return creator.archetype === "sociopath" &&
-        market.liquidity > creator.targetLiquidity * 1.12
+        market.liquidity > creator.targetLiquidity
         ? "remove_liquidity"
         : "staged_dump";
     }
