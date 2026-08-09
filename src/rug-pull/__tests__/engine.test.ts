@@ -27,7 +27,10 @@ function run(seed: string) {
 }
 
 test("same seed and actions reproduce the same public game", () => {
-  assert.deepEqual(getPublicState(run("duck-42")), getPublicState(run("duck-42")));
+  assert.deepEqual(
+    getPublicState(run("duck-42")),
+    getPublicState(run("duck-42"))
+  );
 });
 
 test("different seeds produce more than one creator profile", () => {
@@ -40,7 +43,11 @@ test("different seeds produce more than one creator profile", () => {
     if (state.status !== "playing") {
       archetypes.add(summarizeGame(state).archetype);
     } else {
-      for (let guard = 0; guard < 40 && state.status === "playing"; guard += 1) {
+      for (
+        let guard = 0;
+        guard < 40 && state.status === "playing";
+        guard += 1
+      ) {
         state = applyAction(state, { type: "hold" });
       }
       archetypes.add(summarizeGame(state).archetype);
@@ -50,7 +57,10 @@ test("different seeds produce more than one creator profile", () => {
 });
 
 test("sell all exits immediately and portfolio remains finite", () => {
-  const state = applyAction(createGame("exit-now"), { type: "sell", fraction: 1 });
+  const state = applyAction(createGame("exit-now"), {
+    type: "sell",
+    fraction: 1,
+  });
   const view = getPublicState(state);
 
   assert.equal(state.status, "exited");
@@ -65,7 +75,11 @@ test("investigations consume attention and emit research evidence", () => {
   const state = applyAction(initial, { type: "investigate", kind: "wallet" });
 
   assert.equal(state.player.attention, initial.player.attention - 1);
-  assert.ok(state.feed.some((event) => event.kind === "research" && event.label === "WALLET CHECK"));
+  assert.ok(
+    state.feed.some(
+      (event) => event.kind === "research" && event.label === "WALLET CHECK"
+    )
+  );
 });
 
 test("attention exhaustion does not advance the simulation", () => {
