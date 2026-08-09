@@ -15,7 +15,9 @@ quase o método perfeito para não perceber isso.
 
 A segunda rodada, portanto, releu o conteúdo das edições por páginas e temas,
 procurando reconstruir **o que o jornal estava contando naquele dia**, inclusive
-notícias sem ligação aparente com Conde.
+notícias sem ligação aparente com Conde. A unidade de análise passa a ser a
+**edição inteira**: primeiro um resumo independente do conteúdo, depois a
+comparação com o caso. Busca textual fica apenas como ferramenta auxiliar.
 
 ## Resultado principal
 
