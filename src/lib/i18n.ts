@@ -177,7 +177,7 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "home.viewArchive": "View the full archive →",
       "author.label": "Author",
       "author.tagline":
-        "Lawyer and State Attorney. Writes on AI agency, process metaphysics, and legal design.",
+        "Writes, builds software, and makes music at the border of AI, philosophy, and literature.",
       "author.more": "More essays →",
       "author.aboutMore": "More about me →",
       "author.aboutEyebrow": "About Franklin",
@@ -192,7 +192,7 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "lang.switchAria": "Switch language",
       "og.siteEyebrow": "Franklin Baldo's Digital Garden",
       "og.siteDescription":
-        "Essays on AI agency, process metaphysics, and the architecture of legal systems.",
+        "Essays, code, and music at the border of AI, philosophy, literature, and intelligent systems.",
       "og.qrHint": "Scan to read",
       "archive.jumpToYear": "Jump to year:",
       "webmentions.heading": "Mentions across the web",
@@ -286,7 +286,7 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "home.viewArchive": "Ver o arquivo completo →",
       "author.label": "Autor",
       "author.tagline":
-        "Advogado e Procurador do Estado. Escreve sobre agentes de IA, metafísica do processo e design jurídico.",
+        "Escreve, programa e faz música na fronteira entre IA, filosofia e literatura.",
       "author.more": "Mais ensaios →",
       "author.aboutMore": "Saiba mais sobre mim →",
       "author.aboutEyebrow": "Sobre Franklin",
@@ -301,7 +301,7 @@ export const LANGUAGES: Record<string, LangConfig> = {
       "lang.switchAria": "Alterar idioma",
       "og.siteEyebrow": "Jardim Digital de Franklin Baldo",
       "og.siteDescription":
-        "Ensaios sobre agentes de IA, metafísica do processo e a arquitetura dos sistemas jurídicos.",
+        "Ensaios, código e música na fronteira entre IA, filosofia, literatura e sistemas inteligentes.",
       "og.qrHint": "Aponte para ler",
       "archive.jumpToYear": "Ir para o ano:",
       "webmentions.heading": "Menções na web",
