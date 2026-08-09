@@ -35,7 +35,7 @@ export async function GET(context) {
     version: "https://jsonfeed.org/version/1.1",
     title: "Franklin Baldo",
     description:
-      "Lawyer and State Attorney. Exploring the intersections of process metaphysics, AI agency, and the architecture of legal systems.",
+      "Essays, code, and music at the border of AI, philosophy, and literature.",
     home_page_url: context.site.href,
     feed_url: new URL("feed.json", context.site).href,
     language: "en-us",
