@@ -3,8 +3,8 @@ type: Blog Post
 title: 'A licença que bate na porta'
 description: >-
   Uma licença para Agent Skills pode fazer mais do que dizer quem pode usar o quê:
-  pode ensinar o licenciado a medir e declarar seu uso, o emissor a faturar, o recebedor
-  a emitir recibos verificáveis e o auditor a verificar sem depender de vigilância central.
+  pode ensinar agentes a cumprir regras, medir uso e produzir uma trilha verificável —
+  sem telemetria oculta e sem transformar o licenciamento num framework de billing.
 date: '2026-08-07'
 lang: pt
 docType: essay
@@ -24,7 +24,7 @@ Isso é uma frase meio ridícula para alguém que passa uma quantidade pouco def
 
 A omissão fica mais interessante quando se pergunta o que é uma skill.
 
-Ela parece software porque é instalada. Parece documentação porque é Markdown. Parece prompt porque contém instruções para um modelo. Parece um pequeno manual porque ensina uma tarefa. E, quando funciona, parece um pouco com contratar alguém que já sabe como fazer aquela tarefa.
+Ela parece software porque é instalada. Parece documentação porque é Markdown. Parece prompt porque contém instruções para um modelo. Parece um pequeno manual porque ensina uma tarefa. E, quando funciona, parece um pouco com contratar alguém que já sabe fazer aquela tarefa.
 
 Uma licença MIT sabe lidar muito bem com software. Uma licença de livro sabe lidar razoavelmente bem com texto. Uma Agent Skill fica num lugar esquisito entre as duas coisas: você pode lê-la como um capítulo e pode também carregá-la num agente e fazê-la trabalhar.
 
@@ -58,19 +58,19 @@ license-enforcement/SKILL.md
 
 O primeiro arquivo é a norma jurídica.
 
-O segundo é a parte mecânica: qual licença vale, o que é avaliação, o que é uso operacional, qual modelo comercial está ativo, quais estados uma investigação pode assumir, quando um humano precisa aprovar alguma coisa.
+O segundo é o resumo legível por máquina: qual licença vale, o que é avaliação, o que é uso operacional, qual modelo comercial está ativo e quais catracas humanas precisam ser respeitadas.
 
-O terceiro ensina um agente a olhar para fora: procurar sinais públicos de uso, congelar evidência, distinguir semelhança de cópia, verificar se pode existir uma licença privada, montar um dossiê e preparar uma abordagem.
+O terceiro ensina um agente a olhar para fora: procurar sinais públicos de uso, congelar evidência, distinguir semelhança de cópia, verificar se pode existir uma licença, montar um dossiê e preparar uma abordagem.
 
 Não para processar ninguém sozinho. Para olhar.
 
-Esse primeiro experimento virou a [PR #57](https://github.com/franklinbaldo/skills/pull/57).
+Esse primeiro experimento virou a [PR #57](https://github.com/franklinbaldo/skills/pull/57), que acabou entrando no repositório como a `Skill Use License 0.1` e sua skill de enforcement.
 
 ## O agente que procura a própria skill
 
 A `license-enforcement` começa de um jeito conservador.
 
-O agente recebe uma versão específica de uma skill minha e procura evidência pública de uso. Não basta encontrar outra ferramenta com a mesma finalidade. Ele precisa congelar a versão de origem, registrar o commit, localizar expressão concreta que pareça ter sobrevivido e preservar o contexto do outro lado.
+O agente recebe uma versão específica de uma skill e procura evidência pública de uso. Não basta encontrar outra ferramenta com a mesma finalidade. Ele precisa congelar a versão de origem, registrar proveniência, localizar expressão concreta que pareça ter sobrevivido e preservar o contexto do outro lado.
 
 Depois classifica o caso.
 
@@ -94,15 +94,17 @@ legal_escalation
 
 `signal` quer dizer: achei algo parecido o suficiente para olhar.
 
-`verified_use` quer dizer: há evidência razoável de que material daquela skill foi copiado, adaptado, incorporado ou executado.
+`verified_use` quer dizer: há evidência razoável de uso do material relevante.
 
 Ainda não quer dizer que houve uso ilícito.
 
-Pode existir uma licença privada. Pode haver autorização anterior. Pode ser uma exceção legal. Pode ser material de terceiro que nós dois copiamos legitimamente. Pode ser simplesmente uma parte que eu não tenho direito de monopolizar.
+Pode existir uma licença privada. Pode haver autorização anterior. Pode ser uma exceção legal. Pode ser material de terceiro que nós dois usamos legitimamente. Pode ser simplesmente uma parte que eu não tenho direito de monopolizar.
 
-Só depois dessas perguntas aparece `actionable_concern`: uso verificado, aparentemente operacional, sem licença conhecida ou explicação suficiente. E mesmo isso continua sendo uma classificação interna, não uma sentença judicial escrita em YAML.
+`unknown` não vira `unlicensed` por mágica, e semelhança não vira infração por entusiasmo.
 
-A skill então monta um dossiê para uma pessoa decidir se quer entrar em contato.
+Só depois dessas perguntas aparece `actionable_concern`. E mesmo isso continua sendo uma classificação interna, não uma sentença judicial escrita em YAML.
+
+A skill monta um dossiê para uma pessoa decidir se quer entrar em contato.
 
 Essa divisão me interessa porque agentes são excelentes máquinas de pular do indício para a ação quando você formula o objetivo errado. “Encontre empresas usando minha skill e cobre” é um prompt para produzir falsos positivos com convicção empresarial. “Construa uma cadeia de evidência e pare antes do contato” é outro sistema.
 
@@ -112,59 +114,246 @@ Mas havia uma assimetria aí que começou a me incomodar.
 
 Todo o desenho estava do lado de quem fiscaliza.
 
-O titular olha. O titular mede. O titular encontra. O titular aborda. O outro lado aparece no sistema quando já existe uma suspeita.
+O titular olha. O titular encontra. O titular aborda. O outro lado aparece no sistema quando já existe uma suspeita.
 
 Isso ainda é uma licença pensada como fiscalização.
 
-## E se o licenciado também recebesse uma skill?
+## E se o licenciado também recebesse instruções?
 
 A pergunta que mudou o desenho foi quase óbvia depois que apareceu:
 
 > Se a licença consegue ensinar um agente a fiscalizar, por que ela não ensinaria também o agente licenciado a cumprir a licença?
 
-A partir daí surgiu a [PR #58](https://github.com/franklinbaldo/skills/pull/58), empilhada sobre a #57.
+Daí nasceu a [PR #58](https://github.com/franklinbaldo/skills/pull/58), uma RFC para um possível regime `metered_public`.
 
-Ela ainda é uma RFC. Não muda silenciosamente a licença atual nem transforma `quote_required` em dívida automática. O que ela propõe é um segundo regime, `metered_public`, em que a regra econômica só pode ser automatizada quando a política já publicou de forma determinística não apenas preço e métrica, mas também **quem compartilha o mesmo contador, quando a franquia zera e exatamente qual intervalo de uso cada pagamento cobre**.
-
-E o fluxo ordinário muda de personagem.
-
-Não começa no auditor.
-
-Começa no próprio agente licenciado.
+A ideia fundamental ficou simples:
 
 ```text
-Licensed Agent
-    ↓
-license-compliance bootstrap
-    ↓
-LicenseeMeteringProfile
-    ↓
-environment discovery
-    ↓
-MeteringPlan
-    ↓
+Skill use
+  ↓
 UsageStatement
-    ↓
+  ↓
+[ainda coberto? fim]
+```
+
+Se houver uso não coberto:
+
+```text
+UsageStatement
+  ↓
 InvoiceRequest
-    ↓
+  ↓
 Invoice
-    ↓
-Payment
-    ↓
+  ↓
+payment
+  ↓
 Receipt
 ```
 
-Isso parece uma diferença pequena. Para mim, é a diferença principal.
+O personagem principal deixa de ser o auditor. É o próprio licenciado produzindo uma declaração limitada sobre seu uso.
 
-O agente que usa a skill aprende qual é a unidade de uso relevante. Descobre o ambiente em que está rodando. Vê quais instrumentos legítimos existem naquele ambiente para contar essa unidade. Registra um plano. Mantém evidência suficiente para reconstruir o uso. Quando chega ao primeiro uso ainda não coberto pela política, produz uma declaração e pede a invoice correspondente.
+E aqui veio a parte saudável do processo: **nós quase estragamos a ideia construindo arquitetura demais**.
 
-A `license-compliance` precisa ser uma porta de entrada gratuita para esse trabalho. Seria uma circularidade meio maravilhosa e completamente inútil se a licença cobrasse o licenciado por carregar a skill necessária para descobrir como contar, declarar e pagar a própria licença.
+## O momento em que quase nasceu um ERP de quatro arquivos Markdown
 
-Então a RFC passou a tratar isso como bootstrap obrigatório: usar a skill exclusivamente para ler a política, montar o metering, produzir o `UsageStatement`, pedir invoice e verificar receipt não gera, por si só, mais uso faturável daquele contador.
+Em algum ponto a RFC começou a ganhar `LicenseeMeteringProfile`, `MeteringPlan`, `EnvironmentAssessment`, `AuditPlan`, `SigningKey`, tipos de findings, modelos de auditoria e uma coleção crescente de nomes que pareciam importantes porque tinham PascalCase.
 
-A licença deixa de depender da esperança de que o titular descubra tudo depois.
+Esse é um fenômeno conhecido na engenharia de software: você começa tentando cobrar 0,001 alguma-coisa e três horas depois está projetando o SAP para civilizações interplanetárias.
 
-Ela passa a ensinar o outro lado a deixar um rastro correto enquanto usa.
+A pergunta que salvou o desenho foi brutalmente simples:
+
+> O que o [`okf-parser`](https://github.com/franklinbaldo/okf-parser) já faz?
+
+A resposta era: quase tudo que realmente importava para o experimento.
+
+Ele já valida corpus Markdown, inventaria tipos, enxerga relações explícitas, constrói grafo e materializa DuckDB.
+
+Então a regra virou: **não construir um framework de licenciamento em cima de outro framework de conhecimento**.
+
+O protocolo final da RFC ficou com só quatro tipos econômicos obrigatórios:
+
+- `UsageStatement`;
+- `InvoiceRequest`;
+- `Invoice`;
+- `Receipt`.
+
+A policy é uma regra. Não precisa virar entidade de workflow.
+
+Pagamento é um adapter. Assinatura é um adapter. Blockchain é um adapter. Pix é um adapter. WLD é um adapter. x402 é um adapter.
+
+Nada disso precisa morar no núcleo.
+
+## O primeiro buraco: preço não concede licença
+
+A primeira revisão séria encontrou uma contradição importante.
+
+A licença-base dizia, corretamente, que nenhum `Operational Use` era concedido publicamente. Uso produtivo exigia uma licença operacional separada.
+
+A RFC, ao mesmo tempo, mostrava um exemplo como este:
+
+```text
+uses 1..1000     free
+uses 1001..2000  first paid block
+```
+
+Parecia natural dizer: “os primeiros 1.000 usos são grátis”.
+
+Só que **grátis não é a mesma coisa que licenciado**.
+
+Uma policy econômica dizendo `free_allowance: 1000` não cria, sozinha, a autorização jurídica para fazer o uso nº 1.
+
+Essa distinção acabou virando uma regra explícita da RFC: `metered_public` só pode ser ativado quando existir um instrumento jurídico aplicável — uma nova versão da licença ou um pequeno adendo operacional — dizendo que aquele uso operacional está autorizado sob aquela policy.
+
+Esse instrumento precisa dizer, no mínimo, que:
+
+- a policy identificada governa aquele uso;
+- a franquia gratuita é **licenciada**, não apenas não faturável;
+- os blocos posteriores podem ser cobertos conforme a regra publicada;
+- e o texto jurídico prevalece se houver conflito.
+
+A policy calcula. A licença concede.
+
+Misturar as duas coisas é uma ótima maneira de construir um sistema que sabe exatamente quanto cobrar por uma atividade que nunca autorizou.
+
+## O segundo buraco: o que é uma invocation?
+
+Depois veio uma pergunta ainda mais inconveniente.
+
+A RFC dizia que duas implementações conformes, dadas as mesmas informações, deveriam chegar ao mesmo resultado econômico.
+
+Ótimo.
+
+Mas a unidade era `invocation`.
+
+O que é uma invocation?
+
+Uma skill carregada uma vez e consultada em cinco turnos conta uma vez ou cinco?
+
+Retry depois de erro conta de novo?
+
+Helper skill conta?
+
+Subagent conta?
+
+Uma execução que começa e falha conta?
+
+Uma execução que produz cinco outputs virou cinco usos por osmose?
+
+Se duas implementações honestas respondem diferente, não existe métrica determinística. Existe uma palavra em YAML vestida de métrica.
+
+Então a RFC fixou uma semântica inicial e deliberadamente chata:
+
+- uma invocation é uma tentativa de execução produtiva do Skill principal;
+- continuações, turnos e outputs sob o mesmo `invocation_id` não contam novamente;
+- retry automático da mesma tentativa não conta novamente;
+- uma nova tentativa produtiva conta;
+- helper Skill chamado pelo principal não cria outra invocation principal;
+- um subagent que recebe a Skill governada como seu próprio principal conta separadamente;
+- routing e avaliação anteriores à execução produtiva não contam;
+- se a execução produtiva começou e depois abortou ou falhou, conta uma vez.
+
+Não é a definição universal de invocation para a humanidade.
+
+É uma definição suficientemente precisa para que duas máquinas contem igual.
+
+Essa é uma diferença enorme.
+
+## Onde termina uma cobrança?
+
+A política ilustrativa ficou igualmente sem glamour:
+
+```yaml
+metering:
+  metric: invocation
+  scope: principal_skill
+  counter: cumulative
+  free_allowance: 1000
+  allowance_reset: never
+  billing_unit: 1000
+  rounding: ceiling
+  coverage: paid_block_watermark
+```
+
+Com ela:
+
+```text
+1..1000     franquia
+1001..2000  primeiro bloco pago
+2001..3000  segundo bloco pago
+```
+
+Se o contador chega a 1.427 e o primeiro bloco está coberto, o watermark avança até 2.000. O uso 1.428 não gera outra cobrança. A próxima fronteira é 2.001.
+
+A fórmula pode continuar quase ofensivamente simples:
+
+```text
+covered = max(free_allowance, receipted_coverage_through)
+uncovered = max(0, usage_total - covered)
+blocks = ceil(uncovered / billing_unit)
+requested_coverage_through = covered + blocks * billing_unit
+```
+
+Isso é melhor do que um “billing engine” porque não existe nada ali para admirar.
+
+Só existe uma regra para executar.
+
+## O terceiro buraco: qual policy fez essa conta?
+
+A próxima revisão encontrou um problema de viagem no tempo.
+
+Um `UsageStatement` dizia algo como: cheguei a 1.427 usos. Um `InvoiceRequest` apontava para ele. A `Invoice` apontava para o request. O `Receipt` apontava para a invoice.
+
+O grafo parecia lindo.
+
+Mas qual versão da policy tinha transformado 1.427 em cobertura até 2.000 e preço X?
+
+Se `policy.yaml` mudasse seis meses depois, o grafo continuaria impecável e a explicação econômica evaporaria.
+
+A correção também foi pequena: o `UsageStatement` passou a congelar `license_id` e uma referência imutável da policy — por exemplo, commit e/ou digest. Os registros seguintes herdam essa proveniência pela cadeia.
+
+Não precisamos de um ledger service.
+
+Precisamos saber **qual regra foi aplicada**.
+
+Essa frase vale para uma quantidade surpreendente de sistemas empresariais.
+
+## OKF: relações explícitas ou nada feito
+
+Depois veio o dogfood mais divertido.
+
+Montamos um pequeno corpus fictício:
+
+```text
+UsageStatement
+  → InvoiceRequest
+    → Invoice
+      → Receipt
+```
+
+E mais um `UsageStatement` separado, representando um uso de teste sem cobrança.
+
+O `okf-parser` validou os cinco conceitos sem diagnóstico.
+
+Mas o grafo apareceu com **zero arestas**.
+
+O motivo era ótimo: o parser tinha evoluído e deixado de inventar relações só porque uma string no frontmatter parecia um caminho `.md`. Até colocar sintaxe de link dentro do YAML não bastava para a relação de grafo.
+
+A relação precisava existir como aquilo que ela dizia ser: **um link Markdown explícito no corpo**.
+
+Corrigimos os três predecessores.
+
+O resultado do smoke final, usando um checkout separado do `okf-parser`, foi:
+
+```text
+check      5 conceitos, conformant, 0 diagnostics
+inventory  2 UsageStatement + 1 InvoiceRequest + 1 Invoice + 1 Receipt
+graph      5 nodes, 3 edges, 2 componentes, DAG
+duckdb     5 concepts, 3 links, 0 diagnostics
+```
+
+O segundo componente é intencional. Ele representa um `UsageStatement` que termina ali.
+
+Isso é uma propriedade importante do protocolo: **declarar uso não significa automaticamente dever dinheiro**.
 
 ## Metering não é telemetria escondida
 
@@ -174,215 +363,57 @@ A skill poderia telefonar para casa toda vez que fosse invocada.
 
 Seria tecnicamente conveniente e conceitualmente péssimo.
 
-A proposta da #58 vai na direção contrária: **self-reporting first; independent verification second**.
+O experimento vai na direção contrária: **self-reporting first; independent verification second**.
 
-O uso fica inicialmente com quem usa.
+Os registros brutos podem permanecer com quem usa. O protocolo público precisa da declaração agregada suficiente para reconstruir a situação econômica, não de uma câmera instalada dentro do agente.
 
-O licenciado precisa manter um mecanismo idôneo de medição, apropriado à métrica publicada. Esses registros podem continuar privados. O que precisa sair deles é uma declaração reproduzível o bastante para dizer: sob esta versão da política, neste escopo de medição, cheguei a esta quantidade e existe agora este intervalo ainda não coberto.
+O `UsageStatement` é uma afirmação delimitada.
 
-Isso permite uma coisa que me parece importante: nenhuma autoridade central precisa observar cada invocation.
+O `InvoiceRequest` é um pedido para aplicar a regra publicada.
 
-A licença cria deveres de produção de evidência distribuídos entre os participantes.
+A `Invoice` é a aplicação da policy pelo emissor.
 
-O licenciado mantém o `usage evidence`.
+O `Receipt` registra que o emissor reconheceu determinado pagamento como satisfação de determinada invoice e cobertura.
 
-O `UsageStatement` transforma esse material numa afirmação delimitada do próprio licenciado.
+Nenhum desses documentos ganha verdade metafísica porque foi commitado no Git.
 
-O `InvoiceRequest` registra que ele entende ter ocorrido o evento de cobrança e pede a aplicação da política publicada.
+Assinatura, hash ou attestations podem fortalecer autoria, integridade e proveniência. Não transformam uma afirmação errada numa afirmação verdadeira.
 
-A `Invoice` materializa a posição do emissor sobre aquela cobrança e aquele intervalo.
+Esse limite parece óbvio quando escrito assim. Sistemas distribuídos têm uma capacidade impressionante de esquecer coisas óbvias quando descobrem criptografia.
 
-O pagamento movimenta valor.
+## E a auditoria?
 
-E o `Receipt` diz algo mais específico do que “houve uma transferência”.
+Aqui também houve uma poda importante.
 
-Ele **atesta que a autoridade emissora reconheceu aquele pagamento como satisfação daquela invoice para aquela cobertura**.
+A #58 quase ganhou uma segunda arquitetura inteira de auditoria.
 
-Isso é mais cuidadoso do que dizer que o receipt “prova que tudo aconteceu exatamente assim”. Uma assinatura pode demonstrar quem afirmou algo e que o conteúdo assinado não foi alterado. Ela não transforma automaticamente a quantidade declarada, a interpretação jurídica ou a existência da obrigação em verdade.
+Não precisava.
 
-Uma hash de Pix, uma transação em blockchain ou um comprovante bancário também dizem pouco sozinhos. O receipt precisa ligar política, versão da skill, licenciado, escopo do contador, intervalo coberto, invoice, pagamento, tempo e autoridade emissora.
+A #57 já tinha `license-enforcement`, modelo de evidência, busca por contraprova e catracas humanas.
 
-A coisa interessante não é o dinheiro ter se movido.
+Então a RFC econômica simplesmente delega a ela.
 
-É outra máquina conseguir verificar **quem reconheceu o quê, em relação a qual cobrança e a qual cobertura**.
-
-## Onde termina uma cobrança?
-
-A palavra “quantidade” esconde uma ambiguidade bastante cara.
-
-Imagine uma política com 1.000 usos gratuitos e blocos pagos de 1.000. O licenciado chega ao uso 1.427. Arredondar 427 para um bloco inteiro responde quanto cobrar. Não responde, sozinho, o que aquele pagamento cobre.
-
-Ele quita apenas os 427 usos já consumidos?
-
-Ou compra cobertura até o uso 2.000?
-
-O uso 1.428 dispara outra invoice?
-
-E os 1.000 gratuitos voltam todo mês? Por skill? Por empresa? Por deployment? Por versão?
-
-Se duas implementações honestas conseguem responder de formas diferentes, a política ainda não é suficientemente mecânica.
-
-Então a RFC passou a exigir coisas menos glamourosas e muito mais importantes: `meter_scope`, modo do contador, regra de reset da allowance, `coverage_mode`, carry-forward, prepayment e um watermark como `coverage_from` / `coverage_through`.
-
-Num perfil possível:
+Se houver suspeita de uso não reportado, o caminho adversarial continua sendo outro caminho:
 
 ```text
-free allowance:     1..1000
-first paid block:   1001..2000
-second paid block:  2001..3000
-```
-
-Se o contador cumulativo chega a 1.427, a primeira invoice pode ser de um bloco e o receipt pode registrar cobertura de `1001` até `2000`. Nesse modelo, o uso 1.428 já está coberto. A próxima fronteira econômica é 2.001.
-
-Outro perfil poderia escolher liquidar somente o intervalo já consumido. O ponto não é escolher uma semântica universal. É impedir que `rounding: ceiling` finja que já escolheu uma.
-
-A cobrança precisa saber onde termina.
-
-## Um ledger sem transformar blockchain em religião
-
-A consequência natural é que alguns artefatos precisam ganhar vida própria.
-
-Na RFC, `UsageStatement`, `InvoiceRequest`, `Invoice`, `Receipt`, `SigningKey`, evidências e achados de auditoria são propostos como conceitos OKF em Markdown.
-
-Isso combina com outra coisa em que venho trabalhando: usar [`okf-parser`](https://github.com/franklinbaldo/okf-parser) para tratar conhecimento operacional como um corpus que pode ser validado, grafado e consultado sem esconder o significado dentro de um banco privado.
-
-O ledger, então, não precisa ser uma blockchain.
-
-Pode ser um repositório.
-
-Pode ser outro storage append-only.
-
-Pode ter assinatura por GitHub/OIDC. Pode ter chave pública própria. O pagamento pode ser Pix, WLD, x402 ou outra coisa. Essas tecnologias são integrações possíveis, não os fundamentos da licença.
-
-O fundamento é o encadeamento verificável de afirmações, evidências e atestações.
-
-```text
-policy
+agent investiga
   ↓
-usage statement
+evidência / conclusão interna
   ↓
-invoice request
-  ↓
-invoice
-  ↓
-payment evidence
-  ↓
-signed receipt
-```
-
-Cada seta ajuda uma máquina a reconstruir quem declarou o quê, sob qual regra e com qual relação aos outros registros. Nenhuma seta, sozinha, transforma o grafo inteiro em verdade jurídica.
-
-Se uma invoice estiver errada, a ideia não é reescrever o passado e fingir que nunca existiu. Cancela-se ou supersede-se o registro.
-
-Se um receipt foi emitido errado, publica-se uma correção ou revogação.
-
-História pública fica história.
-
-## O auditor agora tem um trabalho melhor
-
-Quando o licenciado passa a produzir sua própria trilha, a auditoria não desaparece.
-
-Ela melhora de função.
-
-O fluxo paralelo da #58 agora precisa ser lido assim:
-
-```text
-Audit Agent
-    ↓
-AuditStandard / SkillAuditProfile
-    ↓
-EnvironmentAssessment
-    ↓
-research available tools
-    ↓
-AuditPlan
-    ↓
-UsageEvidence
-    ↓
-draft UsageFinding [não público]
-    ↓
 HUMAN REVIEW
-    ↓
-published UsageFinding / UsageNotice
-    ↓
-dispute / regularization
-    ↓
-HUMAN REVIEW
-    ↓
-audit-originated Invoice
+  ↓
+contato ou publicação, se aprovado
 ```
 
-A ordem aqui importa bastante.
+Um lower bound continua sendo lower bound.
 
-O auditor não ganha um superpoder chamado “investigue”.
+`at_least: 17` não se transforma em `exact: 17` só porque seria comercialmente conveniente.
 
-Primeiro precisa entender qual evidência a skill declara relevante. Depois descobre em que mundo está: GitHub? filesystem local? logs? API? produto público? documentação? ambiente corporativo com ferramentas autorizadas? Em seguida inventaria quais instrumentos estão realmente disponíveis e quais limites de autorização existem.
+E uma invoice originada por investigação sobre terceiro não ganha passe livre só porque agora temos Markdown bonito.
 
-Só então escolhe como coletar evidência.
+A máquina pode preparar quase tudo.
 
-A falta de ferramenta não autoriza inferência criativa.
-
-E a evidência pública muitas vezes sustenta apenas um limite inferior.
-
-```yaml
-observed_usage:
-  relation: at_least
-  quantity: 35
-```
-
-não é igual a:
-
-```yaml
-observed_usage:
-  relation: exact
-  quantity: 35
-```
-
-Parece uma distinção pequena até alguém tentar cobrar em cima dela.
-
-A função do auditor não é fabricar o número que falta. É preservar a geometria da incerteza.
-
-E a catraca humana da #57 não pode desaparecer só porque a #58 ganhou um ledger público.
-
-Um agente pode montar internamente um `draft UsageFinding`. Publicar sobre uma empresa identificável que `usage_supported: true`, mandar um `UsageNotice` ou originar uma invoice de auditoria já é transformar investigação em ação externa. Isso volta a exigir decisão humana explícita.
-
-A RFC agora põe duas paradas: uma antes da publicação/notificação e outra, separada, antes de uma invoice originada por auditoria depois da oportunidade de contestação.
-
-O agente continua podendo fazer quase todo o trabalho de preparação.
-
-Ele só não vira juiz por acidente de arquitetura.
-
-## Atribuição também é evidência
-
-Outro pedaço da ideia apareceu quando comecei a pensar no que acontece entre o uso privado e a auditoria externa.
-
-Se uma skill participa materialmente de um produto, serviço ou artefato público, a licença pode exigir atribuição adequada ao meio.
-
-E há uma obrigação diferente: disclosure sob pergunta direta.
-
-Atribuição é proativa.
-
-Disclosure é reativo.
-
-Se alguém pergunta diretamente se uma skill nomeada foi usada, o licenciado não deveria poder negar ou esconder conscientemente esse fato quando a política exige disclosure, ressalvadas as limitações legais e contratuais aplicáveis.
-
-Isso também produz evidência distribuída.
-
-Não é preciso que um servidor meu veja cada execução para o sistema ter superfícies de verificação.
-
-A atribuição oferece evidência pública de dependência.
-
-O disclosure cria uma afirmação do próprio licenciado quando há uma pergunta.
-
-O metering produz a contagem — ou o limite que de fato consegue sustentar — do lado do licenciado.
-
-O `InvoiceRequest` publica a declaração de que determinado evento de cobrança ocorreu sob a leitura do licenciado.
-
-O `Receipt` atesta que o emissor reconheceu determinado pagamento como satisfação de determinada invoice e cobertura.
-
-A auditoria fornece uma trilha independente quando alguma dessas coisas diverge.
-
-A licença começa a se comportar menos como uma proibição e mais como um protocolo de prestação de contas.
+Ela não vira juiz por acidente de arquitetura.
 
 ## A parte em que a ideia esbarra no direito autoral
 
@@ -390,11 +421,13 @@ Eu queria uma licença com uma intuição simples: isto aqui é como um livro. V
 
 Essa intuição funciona só até certo ponto.
 
-A Lei 9.610/1998 é bastante inconveniente para quem gostaria de cobrar aluguel sobre pensamentos: o art. 8º exclui da proteção autoral, como tais, ideias, procedimentos normativos, sistemas, métodos, projetos e conceitos. Na parte científica e técnica, a própria lei também separa a forma de expressão do conteúdo técnico.
+A Lei 9.610/1998 é bastante inconveniente para quem gostaria de cobrar aluguel sobre pensamentos: o art. 8º exclui da proteção autoral, como tais, ideias, procedimentos normativos, sistemas, métodos, projetos e conceitos. Na parte científica e técnica, a lei também separa a forma de expressão do conteúdo técnico.
 
 Isso não é um detalhe para esconder no rodapé. É exatamente a fronteira que a licença precisa respeitar.
 
-Se alguém lê uma skill minha, entende uma boa ideia e depois implementa aquela ideia independentemente, a frase “uso operacional exige pagamento” não transforma a ideia em propriedade intelectual que eu passei a possuir. Uma licença não cria direitos autorais onde a lei deliberadamente não criou.
+Se alguém lê uma skill minha, entende uma boa ideia e depois implementa aquela ideia independentemente, a frase “uso operacional exige pagamento” não transforma a ideia em propriedade intelectual que eu passei a possuir.
+
+Uma licença não cria direitos autorais onde a lei não criou.
 
 O mesmo vale para este blog.
 
@@ -404,9 +437,9 @@ Isso estraga uma versão mais gananciosa da ideia e melhora a versão que sobra.
 
 Porque obriga a perguntar qual é de fato o objeto econômico.
 
-No caso das skills, não é “o conhecimento” em abstrato. É o material concreto protegido que você instala, copia, adapta, embute e executa. No caso das ferramentas do blog, pode ser o código, as skills, os schemas, os pipelines e outros artefatos concretos.
+No caso das skills, não é “o conhecimento” em abstrato. É o material concreto protegido que você instala, copia, adapta, embute e executa.
 
-Se um dia eu quiser cobrar pelo acesso ao conhecimento em si, aí o mecanismo é outro: contrato de acesso, serviço, assinatura, conteúdo fechado. Não uma licença pública tentando expandir copyright por decreto doméstico.
+Se um dia eu quiser cobrar pelo acesso ao conhecimento em si, o mecanismo é outro: contrato de acesso, serviço, assinatura, conteúdo fechado. Não uma licença pública tentando expandir copyright por decreto doméstico.
 
 O direito autoral continua sendo menos conveniente do que um campo `protected: true`.
 
@@ -416,75 +449,78 @@ Ainda bem.
 
 Há um vocabulário para uma parte disso.
 
-Licenças como [PolyForm](https://polyformproject.org/licenses) permitem deixar o código visível e conceder direitos diferentes conforme o tipo de uso. A [Business Source License](https://mariadb.com/bsl11/) também trabalha com fonte disponível e limitações de produção antes de uma mudança futura de licença.
+Licenças como [PolyForm](https://polyformproject.org/licenses) permitem deixar o código visível e conceder direitos diferentes conforme o tipo de uso. A [Business Source License](https://mariadb.com/bsl11/) também trabalha com fonte disponível e limitações de produção.
 
-Isso não é _Open Source_ no sentido da Open Source Initiative. A [Open Source Definition](https://opensource.org/osd) exige, entre outras coisas, liberdade para uso em qualquer campo e não admite uma licença que discrimine um campo de atividade.
+Isso não é _Open Source_ no sentido da Open Source Initiative. A [Open Source Definition](https://opensource.org/osd) exige liberdade de uso que uma licença com restrição de uso operacional não concede.
 
 Então não vale brincar de nomenclatura.
 
-A `Skill Use License 0.1` da #57 é **source-available, não Open Source**.
+A `Skill Use License 0.1` é **source-available, não Open Source**.
 
-Ela permite leitura, inspeção, estudo e avaliação de boa-fé. O que ela não concede publicamente é o que chamei de `Operational Use`: carregar, adaptar, embutir ou invocar o material num agente, automação, produto ou processo para produzir trabalho de verdade.
+Ela permite leitura, inspeção, estudo e avaliação de boa-fé. O que ela não concede publicamente é `Operational Use`: carregar, adaptar, embutir ou invocar o material para trabalho produtivo.
 
-A primeira versão continua deliberadamente em `quote_required`.
+A baseline continua deliberadamente em `quote_required`.
 
-Isso importa porque a #58 não finge que uma tabela inexistente já criou uma dívida.
+E aqui aparece a distinção que a revisão da #58 tornou impossível ignorar:
 
-O modo `metered_public` só faz sentido se a regra econômica estiver publicada antes: métrica, escopo do contador, allowance e reset, modo cumulativo ou periódico, unidade de cobrança, arredondamento, semântica da cobertura, preço, prazo e evento que dispara a invoice.
+```text
+license / addendum  → concede o uso
+policy              → calcula a regra econômica
+records OKF         → deixam a trilha
+okf-parser          → valida e projeta a trilha
+```
 
-Sem isso, o agente não completa as lacunas com imaginação comercial.
+Cada camada faz uma coisa.
 
-## O primeiro rato de laboratório sou eu
+Parece menos mágico.
 
-A parte conveniente de ter uma ideia dessas é que eu já mantenho um repositório cheio de material adequado para testá-la.
+É justamente por isso que funciona melhor.
 
-Então a primeira aplicação não vai ser uma startup hipotética nem uma nova “licença para IA” tentando resolver a economia inteira dos modelos generativos.
+## O primeiro rato de laboratório continuo sendo eu
 
-São as minhas próprias skills.
+As duas PRs acabaram mergeadas no `franklinbaldo/skills`.
 
-A [PR #57](https://github.com/franklinbaldo/skills/pull/57) é o protótipo conservador: licença, política legível por máquina e enforcement com revisão humana.
+A #57 colocou a licença-base, a policy legível por máquina e o enforcement conservador no repositório.
 
-A [PR #58](https://github.com/franklinbaldo/skills/pull/58) é a evolução conceitual: `license-compliance`, metering pelo licenciado, `UsageStatement`, `InvoiceRequest`, invoices, receipts, watermarks de cobertura e auditoria adaptativa ao ambiente com catracas humanas explícitas. Ela é uma RFC; ainda não está ativando esse regime econômico no repositório.
+A #58 colocou a RFC do `metered_public` e o pequeno fixture OKF que prova os dois caminhos mínimos: uso que termina no `UsageStatement` e uso que segue até `InvoiceRequest → Invoice → Receipt`.
 
-É importante que seja assim.
+Mas mergear a RFC **não ativa o regime econômico**.
 
-Primeiro o protocolo pode ser criticado como protocolo.
+A policy vigente continua `quote_required`.
 
-Depois se escolhem métricas, preços e meios de pagamento reais.
+Não existe ainda um grant operacional público de `metered_public`, nem uma contraparte real, nem uma cobrança real esperando para ser automatizada.
 
-E só então um agente deve poder automatizar o caminho ordinário de self-reporting e pagamento sob regras previamente publicadas.
+E isso é bom.
 
-O caminho adversarial é outra coisa: publicação de findings sobre terceiros e invoices originadas por auditoria continuam atrás de decisão humana.
+O protocolo ganhou o direito de existir antes de ganhar o direito de cobrar alguém.
 
-A pergunta ficou maior do que “qual licença eu coloco no GitHub?”.
+Quando houver um experimento econômico real, ele vai precisar começar por três perguntas muito menos futuristas do que “qual blockchain?”:
 
-Agora é mais parecida com:
+1. qual instrumento jurídico concede o uso?
+2. o que exatamente conta como uma unidade?
+3. qual versão da regra governou a transação?
 
-> Como fazemos duas máquinas, agindo por pessoas diferentes e sem compartilhar toda a sua memória privada, produzirem afirmações e evidências compatíveis sobre uso, cobrança e adimplemento?
+Depois disso, talvez Pix, WLD, x402 ou qualquer outra integração seja útil.
 
-Isso é um problema de licença, mas também é um problema de protocolo.
-
-E talvez Agent Skills sejam um laboratório especialmente bom porque o objeto, a política, o procedimento de compliance e o procedimento de auditoria vivem todos no mesmo meio: texto estruturado que agentes conseguem ler.
+Antes disso, é decoração de arquitetura.
 
 ## A licença não precisa observar tudo
 
-A parte de que mais gosto nessa segunda versão é que ela não depende de um fiscal onisciente.
+A parte de que mais gosto no desenho que sobreviveu é que ele não depende de um fiscal onisciente.
 
-O licenciado aprende a medir e declarar seu próprio uso com uma base reproduzível.
+O licenciado pode medir e declarar seu próprio uso.
 
-O emissor aprende a aplicar a política à declaração e a um intervalo de cobertura determinado.
+O emissor pode aplicar uma regra publicada.
 
-O recebedor produz um receipt verificável que atesta como aquele pagamento foi reconhecido.
+O receipt pode registrar qual cobertura foi reconhecida.
 
-O auditor aprende primeiro quais evidências importam, depois descobre em que mundo está e quais instrumentos legítimos existem naquele mundo para obtê-las.
-
-Attribution e disclosure criam outras superfícies de verificação.
+A auditoria continua independente e conservadora.
 
 E tudo isso pode deixar uma história auditável sem que exista um servidor central vendo cada invocation.
 
-Não porque todo registro assinado seja automaticamente verdadeiro.
+Não porque todo registro seja automaticamente verdadeiro.
 
-Mas porque cada ator deixa uma afirmação atribuível, uma evidência inspecionável ou uma atestação verificável — e o protocolo preserva as diferenças entre essas coisas.
+Mas porque cada ator deixa uma afirmação atribuível e o protocolo preserva a relação entre as afirmações.
 
 A primeira ideia era uma licença que viesse com uma skill para bater na porta.
 
@@ -502,11 +538,11 @@ Não é uma licença autoexecutável.
 
 ## Para se aprofundar
 
-- **[Skill Use License 0.1 / PR #57](https://github.com/franklinbaldo/skills/pull/57)** — o primeiro protótipo: `quote_required`, policy legível por máquina e `license-enforcement` com revisão humana.
-- **[Agentic Metered Skill Licensing Protocol / PR #58](https://github.com/franklinbaldo/skills/pull/58)** — a RFC que acrescenta self-metering, bootstrap gratuito de `license-compliance`, cobertura determinística, invoices, receipts, atribuição, disclosure e auditoria adaptativa com catracas humanas.
-- **[`okf-parser`](https://github.com/franklinbaldo/okf-parser)** — a infraestrutura genérica que estou usando para experimentar com conceitos e relações OKF sem colocar semântica de licenciamento no parser.
-- **[Lei 9.610/1998](https://www.planalto.gov.br/ccivil_03/leis/l9610.htm)** — especialmente o art. 8º, porque uma licença experimental melhora bastante quando começa reconhecendo aquilo que não pode licenciar como direito exclusivo.
-- **[Lei 9.609/1998](https://www.planalto.gov.br/ccivil_03/leis/l9609.htm)** — regime brasileiro específico de proteção de programas de computador, relevante para as partes das skills e ferramentas que efetivamente são software.
-- **[PolyForm Licenses](https://polyformproject.org/licenses)** — exemplos de licenciamento source-available com permissões calibradas pelo tipo de uso.
-- **[Business Source License 1.1](https://mariadb.com/bsl11/)** — outro desenho em que o código está publicamente disponível sem receber imediatamente todas as liberdades de Open Source.
+- **[Skill Use License 0.1 / PR #57](https://github.com/franklinbaldo/skills/pull/57)** — licença-base `quote_required`, policy legível por máquina e `license-enforcement` com revisão humana; agora mergeada.
+- **[Agentic Metered Skill Licensing Protocol / PR #58](https://github.com/franklinbaldo/skills/pull/58)** — RFC mergeada que define o experimento `metered_public`, a unidade `invocation`, proveniência da policy e os quatro registros econômicos mínimos, sem ativar o regime.
+- **[`okf-parser`](https://github.com/franklinbaldo/okf-parser)** — infraestrutura genérica usada para validar, grafar e materializar o fixture sem semântica especial de licenciamento no parser.
+- **[Lei 9.610/1998](https://www.planalto.gov.br/ccivil_03/leis/l9610.htm)** — especialmente o art. 8º, porque uma licença experimental melhora quando começa reconhecendo aquilo que não pode licenciar como direito exclusivo.
+- **[Lei 9.609/1998](https://www.planalto.gov.br/ccivil_03/leis/l9609.htm)** — regime brasileiro específico de proteção de programas de computador.
+- **[PolyForm Licenses](https://polyformproject.org/licenses)** — exemplos de licenciamento source-available com permissões calibradas por tipo de uso.
+- **[Business Source License 1.1](https://mariadb.com/bsl11/)** — outro desenho de source availability com restrições de produção.
 - **[Open Source Definition](https://opensource.org/osd)** — útil principalmente para não chamar de open source uma licença que deliberadamente reserva categorias de uso.
