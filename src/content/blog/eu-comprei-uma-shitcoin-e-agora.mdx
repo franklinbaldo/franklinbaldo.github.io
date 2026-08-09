@@ -1,0 +1,79 @@
+---
+type: "Blog Post"
+title: "Eu comprei uma shitcoin. Agora preciso descobrir quando o dev vai me roubar."
+description: "Um experimento jogável sobre memecoins, sinais ruins, sinais falsamente ruins e a arte de sair antes do rug pull."
+date: 2026-08-09
+publishDate: 2026-08-09
+tags:
+  - jogo
+  - experimento
+  - crypto
+  - IA
+lang: pt
+docType: essay
+emoji: "🪙"
+---
+
+Tem uma categoria de conselho financeiro que sempre chega tarde demais.
+
+"Não compre shitcoin."
+
+Excelente. Obrigado. Mas e se eu **já comprei**?
+
+Foi daí que saiu o experimento de hoje.
+
+# Rug Pull Simulator
+
+Você começa a partida com US$ 1.000 já enterrados numa moeda de procedência duvidosa. Quando a tela abre, sua posição já vale US$ 930. O dev está falando no chat. Os holders estão discutindo. A carteira do projeto está se mexendo. Talvez exista uma listagem numa exchange. Talvez não exista listagem nenhuma. Talvez o dev seja um golpista. Talvez seja só um idiota extremamente sincero.
+
+Seu problema não é descobrir se a moeda é boa.
+
+Seu problema é descobrir **quando sair**.
+
+[**Jogar o Rug Pull Simulator →**](/games/rug-pull/)
+
+A ideia me pareceu mais interessante quando percebi que o gráfico não deveria ser o quebra-cabeça. O **dev** deveria ser o quebra-cabeça.
+
+Em vez de tentar prever uma curva, você lê um fluxo de mensagens e tenta inferir uma pessoa:
+
+> Huge announcement tonight. Can't say more yet 🔥
+
+> Wallet movement is operational. Stop feeding the FUD.
+
+> dev wallet moved, anyone checking this?
+
+Às vezes o texto é mentira. Às vezes é verdade. Às vezes é uma meia-verdade dita exatamente no momento em que uma meia-verdade seria mais útil. E às vezes o sujeito acredita genuinamente no projeto e mesmo assim consegue destruí-lo.
+
+O jogador pode segurar, comprar mais, vender 25%, 50% ou tudo. Também pode gastar sua atenção investigando a wallet, a liquidez, o contrato ou o histórico do criador. Só que investigar custa tempo. Enquanto você está fazendo due diligence, a linha pode subir 80%. Ou desaparecer.
+
+A melhor parte é que **vender cedo demais também pode ser uma derrota**. Identificar corretamente um golpista e fazer +12% não é necessariamente tão bom quanto perceber que ele ainda precisa de mais liquidez antes do rug e sair com +400% alguns turnos depois.
+
+Isso transforma a pergunta de:
+
+> "Esse cara é golpista?"
+
+em:
+
+> **"Se ele pretende me roubar, quando exatamente isso se torna racional para ele?"**
+
+Muito mais saudável. Claramente.
+
+## A primeira versão
+
+Essa versão ainda é propositalmente pequena. O mercado e o estado oculto do creator são seedados e reproduzíveis. Existem diferentes perfis de dev, rug pulls terminais, dumps graduais, projetos que simplesmente morrem sem fraude e projetos que sobrevivem.
+
+No fim da partida, o jogo mostra o post-mortem: quem era o creator, quais decisões internas ele tomou e quais sinais você viu sem saber o que significavam.
+
+A arquitetura também separa o que importa: o creator pode decidir uma ação semântica, mas não ganha poder mágico para escolher diretamente o preço, a sua carteira ou quem venceu. O mercado continua sendo uma simulação independente e testável.
+
+Ainda não coloquei um LLM ao vivo escrevendo cada mensagem. Antes de pagar essa complexidade, quero descobrir uma coisa bem mais básica:
+
+**isso é divertido?**
+
+Porque, se não for divertido com um dev determinístico mentindo para você, provavelmente não vai ficar divertido só porque o mentiroso ganhou uma GPU.
+
+Se funcionar, a próxima etapa natural é deixar o creator realmente observar o comportamento dos holders e adaptar a narrativa: acalmar o mercado quando percebe suspeita, inventar explicações para movimentos de wallet, adiar o rug, desistir do rug ou entrar em pânico.
+
+Poker, só que o adversário tem uma memecoin e você tomou decisões ruins antes mesmo de sentar na mesa.
+
+[**Entrar no Telegram e tentar não virar exit liquidity →**](/games/rug-pull/)
