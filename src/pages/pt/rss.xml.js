@@ -32,7 +32,7 @@ export async function GET(context) {
   return rss({
     title: "Franklin Baldo (Português)",
     description:
-      "Advogado e Procurador do Estado. Explorando as interseções entre metafísica do processo, agentes de IA e a arquitetura dos sistemas jurídicos.",
+      "Ensaios, código e música na fronteira entre IA, filosofia e literatura.",
     site: context.site,
     items,
     xmlns: { atom: "http://www.w3.org/2005/Atom" },
