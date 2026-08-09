@@ -15,8 +15,8 @@ precisam ser obtidos.
 > **Nota metodológica:** a primeira rodada usou busca OCR por termos como
 > `Conde` e `satélite` como triagem. Essa técnica se mostrou insuficiente para
 > testar a genealogia da história. Uma segunda rodada releu as edições por
-> páginas e temas, procurando o conteúdo semântico de cada notícia e possíveis
-> fontes para cada detalhe da versão da Tupi. O resultado está documentado em
+> páginas e temas, tratando cada edição como um documento a ser resumido antes
+> da comparação com Conde. O resultado está documentado em
 > `docs/research/conde-ufo-semantic-reading-1963.md` e passa a prevalecer sobre
 > qualquer formulação anterior que tratasse a ausência de palavras-chave como
 > verificação editorial suficiente.
@@ -106,7 +106,7 @@ Na página policial, uma matéria sobre três estátuas de figuras da mitologia
 grega roubadas no Recife relata que elas foram enterradas em um campo de
 futebol num **buraco de quatro metros de profundidade**.
 
-É exatamente a profundidade atribuída, horas depois no registro do FBIS, ao
+É exatamente a profundidade atribuída, no registro do FBIS do mesmo dia, ao
 buraco aberto pela suposta esfera em Conde.
 
 Isso **não prova influência, cópia ou montagem**. A matéria é recifense, a edição
@@ -353,8 +353,8 @@ para 8 e 9.
 Objetivos:
 
 - resumir a edição inteira;
-- localizar qualquer narrativa que possa ser ancestral do caso, independentemente
-  do vocabulário;
+- localizar qualquer narrativa que possa ser ancestral do caso,
+  independentemente do vocabulário;
 - mapear a origem de cada detalhe da versão da Tupi;
 - identificar notas telegráficas e créditos da Agência Meridional;
 - procurar se a expressão ou imagem de um buraco de quatro metros aparece na
