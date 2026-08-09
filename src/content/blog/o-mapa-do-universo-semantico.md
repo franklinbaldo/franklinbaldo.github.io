@@ -367,7 +367,7 @@ Ele vira também um mapa de **capacidade**.
 
 Nesse ponto eu percebi que estava descrevendo um mapa do mundo semântico e pensei imediatamente em Borges.
 
-Em *Do rigor na ciência*, um império aperfeiçoa tanto a cartografia que acaba produzindo um mapa na escala do próprio império.
+Em _Do rigor na ciência_, um império aperfeiçoa tanto a cartografia que acaba produzindo um mapa na escala do próprio império.
 
 O mapa cobre o território.
 
