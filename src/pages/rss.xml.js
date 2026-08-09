@@ -32,7 +32,7 @@ export async function GET(context) {
   return rss({
     title: "Franklin Baldo",
     description:
-      "Lawyer and State Attorney. Exploring the intersections of process metaphysics, AI agency, and the architecture of legal systems.",
+      "Essays, code, and music at the border of AI, philosophy, and literature.",
     site: context.site,
     items,
     xmlns: { atom: "http://www.w3.org/2005/Atom" },

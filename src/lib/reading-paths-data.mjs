@@ -51,8 +51,8 @@ export const READING_PATHS = [
       pt: "Direito e IA",
     },
     blurb: {
-      en: "A state attorney's journey into AI agents: delegation, memory, and what changes when the clerk never forgets — seen from someone who builds at night and argues in court by day.",
-      pt: "A jornada de um procurador do estado pelo mundo dos agentes de IA: delegação, memória, e o que muda quando o escrivão nunca esquece — pelo olhar de quem constrói à noite e argumenta no tribunal de dia.",
+      en: "A journey through law and AI agents: delegation, memory, and what changes when the clerk never forgets — where institutional systems meet automation.",
+      pt: "Uma jornada por direito e agentes de IA: delegação, memória e o que muda quando o escrivão nunca esquece — onde sistemas institucionais encontram automação.",
     },
     source: {
       type: "manual",
