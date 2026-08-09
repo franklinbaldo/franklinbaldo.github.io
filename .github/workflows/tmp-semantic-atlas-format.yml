@@ -1,0 +1,33 @@
+name: Temporary semantic atlas formatter
+
+on:
+  push:
+    branches:
+      - essay/atlas-semantico-quasares-borges
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: essay/atlas-semantico-quasares-borges
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx prettier --write src/content/blog/o-mapa-do-universo-semantico.md
+      - name: Commit formatter output
+        run: |
+          if git diff --quiet -- src/content/blog/o-mapa-do-universo-semantico.md; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/content/blog/o-mapa-do-universo-semantico.md
+          git commit -m "style: format semantic atlas post"
+          git push origin HEAD:essay/atlas-semantico-quasares-borges
