@@ -9,8 +9,17 @@ A pergunta aqui é deliberadamente anterior à investigação americana:
 > Rádio Tupi do Rio em 8 de novembro de 1963?**
 
 Pesquisa realizada em 8 de agosto de 2026. O documento separa fatos
-confirmados, inferências testáveis, resultados negativos de busca e documentos
-que ainda precisam ser obtidos.
+confirmados, inferências testáveis, resultados negativos e documentos que ainda
+precisam ser obtidos.
+
+> **Nota metodológica:** a primeira rodada usou busca OCR por termos como
+> `Conde` e `satélite` como triagem. Essa técnica se mostrou insuficiente para
+> testar a genealogia da história. Uma segunda rodada releu as edições por
+> páginas e temas, procurando o conteúdo semântico de cada notícia e possíveis
+> fontes para cada detalhe da versão da Tupi. O resultado está documentado em
+> `docs/research/conde-ufo-semantic-reading-1963.md` e passa a prevalecer sobre
+> qualquer formulação anterior que tratasse a ausência de palavras-chave como
+> verificação editorial suficiente.
 
 ## Conclusão provisória
 
@@ -55,26 +64,29 @@ Fonte primária contemporânea:
   Versão Baiana", Stanislaw Ponte Preta:
   https://hemeroteca-pdf.bn.gov.br/765147/per765147_1963_00477.pdf
 
-### 7 de novembro — amostra pesquisada, sem ocorrência relevante no OCR
+### 7 de novembro — negativo semântico no Última Hora Nordeste
 
-Foi consultada a edição Nordeste do *Última Hora* correspondente a 7 de
-novembro de 1963 (`00470`) com buscas por termos como `Conde` e `satélite`.
-Não apareceu ocorrência relevante ao caso no OCR consultável.
+A edição 00470 foi relida por páginas e temas. Ela está concentrada em política,
+estiagem no Nordeste, polícia, economia, esportes, vida social e o desastre da
+mina de Peine.
 
-Isso é **resultado negativo limitado**, não prova de ausência: OCR de jornal
-antigo falha, nomes podem estar grafados de outra forma e a notícia pode ter
-circulado em outro veículo ou no rádio antes de aparecer em jornal.
+Não foi identificada uma nota que, mesmo usando vocabulário diferente, pareça
+ser uma versão ancestral do caso de Conde.
+
+Isso é **resultado negativo limitado a este veículo**, não prova de ausência no
+sistema de informação de Salvador: a notícia pode ter circulado por rádio,
+agência, telefone, telegrama ou outro jornal.
 
 - https://hemeroteca-pdf.bn.gov.br/765147/per765147_1963_00470.pdf
 
-### 8 de novembro — Rádio Tupi / FBIS
+### 8 de novembro — Rádio Tupi / FBIS e uma coincidência inesperada
 
 O FBIS registra a Rádio Tupi do Rio transmitindo uma versão já altamente
 elaborada. O texto contém:
 
 - grande esfera metálica;
 - queda no centro da cidade;
-- buraco de quatro metros;
+- **buraco de quatro metros de profundidade**;
 - aberturas semelhantes a janelas cobertas por vidro grosso;
 - um corpo humano;
 - roupas pesadas;
@@ -85,11 +97,37 @@ Documento oficial:
 - `EOP-UAP-D001_NASC-Inquiry-into-Bahia-Brazil-Incident_November-13-1963.pdf`
 - https://www.war.gov/medialink/ufo/release_05/Aug_07/documents/EOP-UAP-D001_NASC-Inquiry-into-Bahia-Brazil-Incident_November-13-1963.pdf
 
-A edição Nordeste do *Última Hora* de 8 de novembro (`00471`) também foi
-pesquisada por OCR sem ocorrência relevante localizada. Novamente, isso não
-exclui circulação por rádio, agência, telegrama ou outro jornal.
+A releitura semântica da edição Nordeste do *Última Hora* de 8 de novembro
+(00471) não encontrou uma notícia explicitamente identificável como Conde.
+Encontrou, porém, uma coincidência textual que a busca por palavras-chave não
+havia revelado.
+
+Na página policial, uma matéria sobre três estátuas de figuras da mitologia
+grega roubadas no Recife relata que elas foram enterradas em um campo de
+futebol num **buraco de quatro metros de profundidade**.
+
+É exatamente a profundidade atribuída, horas depois no registro do FBIS, ao
+buraco aberto pela suposta esfera em Conde.
+
+Isso **não prova influência, cópia ou montagem**. A matéria é recifense, a edição
+é Nordeste e não há ainda uma rota documental que a ligue à pessoa que redigiu
+ou leu a notícia na Tupi. Coincidência permanece a hipótese padrão.
+
+Mas a correspondência é específica o suficiente para ser preservada como pista
+e abre uma pergunta que não existia antes:
+
+> a história de Conde foi apenas ampliada ao circular, ou algum detalhe de sua
+> versão fantástica foi incorporado de outra notícia contemporânea?
+
+A mesma edição também dá destaque ao salvamento dos mineiros de Peine — homens
+soterrados vivos, mortos ainda no fundo da mina e uma cápsula de resgate. Essa
+vizinhança é muito mais frouxa que a coincidência dos quatro metros e **não é
+tratada como evidência de origem**; serve apenas para documentar o ambiente
+narrativo que uma leitura semântica permite enxergar.
 
 - https://hemeroteca-pdf.bn.gov.br/765147/per765147_1963_00471.pdf
+- relatório específico:
+  `docs/research/conde-ufo-semantic-reading-1963.md`
 
 ### 9 de novembro — o desmentido já está no Diário de Notícias
 
@@ -101,17 +139,25 @@ negava categoricamente a existência de objeto estranho em Conde.
 A página original desse fascículo ainda não foi obtida. Portanto, até ela
 aparecer, a formulação correta é sempre "segundo o A-628".
 
-A edição Nordeste do *Última Hora* de 9 de novembro (`00472`) foi pesquisada
-por OCR e não devolveu ocorrência relevante localizada.
+A releitura por páginas da edição Nordeste do *Última Hora* de 9 de novembro
+(00472) não identificou uma matéria sobre Conde. O contraste é informativo: o
+assunto já era concreto o suficiente em Salvador para produzir um desmentido
+institucional no *Diário de Notícias*, mas não aparece neste outro veículo.
+
+Isso é compatível com circulação desigual entre jornais ou com passagem inicial
+por rádio/agência em vez de difusão impressa geral.
 
 - https://hemeroteca-pdf.bn.gov.br/765147/per765147_1963_00472.pdf
 
-### 10 de novembro — amostra pesquisada
+### 10 de novembro — satélite e sondagem já são vocabulário cotidiano
 
-A edição Nordeste do *Última Hora* (`00473`) foi pesquisada. Não foi localizada
-ocorrência do caso. A edição contém noticiário espacial não relacionado ao caso,
-o que é útil apenas para mostrar que `satélite` era vocabulário jornalístico
-corrente, não para explicar a origem do rumor.
+A releitura da edição 00473 não identificou o caso de Conde, mas encontrou uma
+matéria anunciando o futuro lançamento do **Explorer 18** pela NASA. O jornal o
+chama de `satélite` e diz que ele faria `sondagens no espaço interplanetário`.
+
+A notícia é posterior à transmissão da Tupi e portanto não explica sua origem.
+Ela é útil para outro ponto: `satélite`, `sondagem`, foguetes e exploração
+espacial eram vocabulário jornalístico corrente naquela semana.
 
 - https://hemeroteca-pdf.bn.gov.br/765147/per765147_1963_00473.pdf
 
@@ -129,20 +175,24 @@ depois.
 
 Ainda faltam a página original, o título em português e o nome do repórter.
 
-### 11 a 13 de novembro — outras edições do Última Hora
+### 11 a 13 de novembro — negativos semânticos no Última Hora
 
-Foram consultadas as edições Nordeste `00474`, `00475` e `00476`. As buscas de
-OCR não localizaram notícia anterior sobre Conde. Há noticiário espacial
-independente — inclusive sobre lançamentos que ocorrem **depois** da transmissão
-da Tupi —, portanto não apareceu nessa amostra um evento orbital óbvio capaz de
-explicar diretamente a notícia de 8 de novembro.
+As edições Nordeste 00474, 00475 e 00476 foram novamente examinadas por páginas
+e temas, não apenas por ocorrências literais.
+
+Não apareceu nelas uma narrativa que possa ser identificada com segurança como
+uma etapa anterior do caso de Conde.
+
+O negativo é interessante porque, nesse intervalo, sabemos por outras fontes
+que o *Jornal da Bahia* já enviara um repórter a Conde, o governo americano
+começava a pedir verificação e a circulação já era suficiente para Stanislaw
+publicar sua crônica no dia 14. A ausência no *Última Hora Nordeste*, portanto,
+não significa ausência do caso: mostra que a circulação não era uniforme entre
+veículos.
 
 - 11 nov.: https://hemeroteca-pdf.bn.gov.br/765147/per765147_1963_00474.pdf
 - 12 nov.: https://hemeroteca-pdf.bn.gov.br/765147/per765147_1963_00475.pdf
 - 13 nov.: https://hemeroteca-pdf.bn.gov.br/765147/per765147_1963_00476.pdf
-
-Este não é um levantamento orbital exaustivo. A conclusão é apenas negativa e
-estreita: **nas edições consultadas, não apareceu um candidato evidente**.
 
 ### 13 de novembro — o papel americano vira uma pergunta
 
@@ -264,13 +314,17 @@ Tupi.
 
 As perguntas prioritárias passam a ser:
 
-1. **Qual é o primeiro registro conhecido da palavra `satélite` ligada a Conde?**
-2. **Quando entra `tripulado`?**
-3. **A esfera, o buraco, o corpo e as inscrições aparecem todos de uma vez na
-   Tupi ou já existiam em alguma fonte anterior?**
-4. **Quem alimentou a Tupi?** Agência Meridional, correspondente, outra rádio,
+1. **Qual é o primeiro registro de qualquer história identificável como Conde,
+   mesmo que ainda não use a palavra `satélite`?**
+2. **Quando a história passa a ser chamada de `satélite`?**
+3. **Quando entra `tripulado`?**
+4. **Qual é a genealogia independente de cada detalhe da Tupi — esfera, quatro
+   metros, janelas, vidro grosso, corpo, roupa e inscrições?**
+5. **A coincidência dos quatro metros aparece também em outros jornais ou
+   teletipos?**
+6. **Quem alimentou a Tupi?** Agência Meridional, correspondente, outra rádio,
    telefone, telegrama, jornal ou outra cadeia?
-5. **Houve algum objeto físico banal na origem ou a história nasceu inteiramente
+7. **Houve algum objeto físico banal na origem ou a história nasceu inteiramente
    como informação?**
 
 ## O que precisa ser pedido aos arquivos
@@ -288,22 +342,23 @@ Fonte:
 - https://www.ighb.org.br/biblioteca
 
 A próxima consulta não deve pedir apenas as duas páginas já conhecidas por
-citação americana. O pedido ideal é uma **janela**, porque a origem pode estar
-um ou dois dias antes:
+citação americana. Deve pedir **edições completas por janela de datas** e cada
+edição deve ser resumida semanticamente antes de qualquer busca textual.
 
 ### Diário de Notícias — Salvador
 
 Solicitar **7, 8, 9, 10 e 11 de novembro de 1963**, com prioridade absoluta
-para 8 e 9. Procurar:
+para 8 e 9.
 
-- Conde;
-- satélite;
-- satélite tripulado;
-- balão;
-- meteorologia / sondagem;
-- disco voador / objeto estranho;
-- notas telegráficas;
-- créditos da Agência Meridional.
+Objetivos:
+
+- resumir a edição inteira;
+- localizar qualquer narrativa que possa ser ancestral do caso, independentemente
+  do vocabulário;
+- mapear a origem de cada detalhe da versão da Tupi;
+- identificar notas telegráficas e créditos da Agência Meridional;
+- procurar se a expressão ou imagem de um buraco de quatro metros aparece na
+  rede dos Associados.
 
 ### Jornal da Bahia
 
@@ -311,8 +366,9 @@ Solicitar **7 a 12 de novembro de 1963**, com prioridade para 11. Objetivos:
 
 - obter o título original de "The Airship that wasn't there";
 - identificar o repórter enviado a Conde;
-- verificar se a matéria reconstrói versões anteriores do rumor;
-- procurar referências a outros jornais, rádios, telegramas ou agências.
+- reconstruir versões anteriores do rumor;
+- procurar referências a outros jornais, rádios, telegramas ou agências;
+- resumir as edições completas, não apenas buscar `Conde`.
 
 ### Estado da Bahia
 
@@ -342,7 +398,8 @@ posteriores.
 
 Nesta rodada **não foi localizado online**:
 
-- o primeiro despacho ou nota com a versão `satélite`;
+- o primeiro despacho ou nota com a versão simples da história;
+- a primeira versão `satélite`;
 - a primeira versão `satélite tripulado`;
 - o script da Rádio Tupi;
 - boletim correspondente da Agência Meridional;
@@ -350,25 +407,37 @@ Nesta rodada **não foi localizado online**:
 - o recorte original do *Jornal da Bahia* de 11/11;
 - registro meteorológico que ligue um balão específico a Conde.
 
-Essas ausências não diminuem a investigação. Elas definem exatamente onde a
-cadeia documental quebra hoje.
+A releitura semântica acrescenta uma nuance importante ao negativo: no
+*Última Hora Nordeste* não apareceu um ancestral identificável de Conde entre
+7 e 13 de novembro, **mas apareceu uma possível fonte contemporânea para um dos
+detalhes mais específicos da versão fantástica — o buraco de quatro metros**.
+
+Essas ausências e correspondências definem melhor onde a cadeia documental
+quebra e o que deve ser testado em outros acervos.
 
 ## Consequência editorial para o ensaio
 
-A revisão futura do post pode ganhar uma mudança importante de foco:
+A revisão futura do post pode ganhar duas mudanças de foco:
 
 - a Rádio Tupi deixa de parecer o nascimento da história e passa a ser o
   **primeiro fóssil detalhado que temos**;
-- Stanislaw passa a funcionar como uma testemunha contemporânea de que versões
-  menores — `satélite`, depois `satélite tripulado` — circulavam na memória da
-  imprensa de Salvador;
-- a arquitetura dos Diários Associados oferece uma hipótese concreta para o
-  caminho até o Rio, explicitamente marcada como hipótese;
-- o próximo grande achado não é um documento americano novo, mas uma pequena
-  nota baiana anterior a 8 de novembro.
+- além de perguntar como a história cresceu, passa a ser legítimo perguntar
+  **de onde vieram os próprios detalhes que a fizeram crescer**.
 
-Se essa nota aparecer, será possível transformar a sequência abstrata
+A arquitetura dos Diários Associados oferece uma hipótese concreta para o
+caminho até o Rio, explicitamente marcada como hipótese. A coincidência do
+buraco de quatro metros oferece uma primeira pista de que detalhes podem ter
+uma genealogia própria, também ainda sem causalidade demonstrada.
+
+Se conseguirmos obter as edições baianas completas e repetir a leitura
+semântica, será possível testar duas coisas diferentes:
 
 `notícia → circulação → exagero`
 
-em uma genealogia documentada, detalhe por detalhe.
+ou, talvez,
+
+`fluxo de notícias → fragmentos → montagem → circulação`.
+
+Por enquanto, a segunda linha é apenas uma pergunta de pesquisa. O mérito do
+novo método é justamente permitir que ela apareça sem fingir que já foi
+respondida.
