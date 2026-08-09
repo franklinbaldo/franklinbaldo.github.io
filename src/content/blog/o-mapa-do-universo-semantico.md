@@ -212,17 +212,49 @@ Semantic Reference Frame
 quásares fixos
 ```
 
-O telescópio muda.
+E aqui apareceu uma pegadinha ótima, porque toda boa metáfora científica merece uma humilhação matemática.
 
-O céu continua o mesmo.
+**Inventar o céu é fácil. Fazer dois telescópios concordarem sobre onde ele está é outra história.**
+
+Um simplex regular é perfeitamente simétrico. Eu posso rotacionar o céu inteiro e ele continua sendo o mesmo simplex. Portanto, escrever `Q17` em um vértice não faz aquele vértice adquirir magicamente o mesmo significado em duas LLMs.
+
+Depois de whitening, isso fica ainda mais traiçoeiro: se eu igualei as variâncias, uma rotação ortogonal do espaço continua sendo igualmente válida. Corrigir o sinal de um eixo resolve `+/-`; não resolve o céu inteiro girando.
+
+Então a frase “o telescópio muda, o céu continua o mesmo” precisava de uma nota de rodapé que virou parte da arquitetura.
+
+O céu artificial fornece a **geometria**. A orientação semântica precisa de calibração empírica.
+
+Pegamos um conjunto compartilhado de textos, observamos esses mesmos pontos com os dois modelos e obrigamos os telescópios a concordar sobre eles — por exemplo, com uma transformação de Procrustes para um alvo canônico congelado.
+
+```text
+mesmos textos de calibração
+        ↓             ↓
+   telescópio A   telescópio B
+        ↓             ↓
+      whitening     whitening
+        ↓             ↓
+        └── alinhamento pareado ──┐
+                                  ↓
+                         mesmo céu artificial
+```
+
+E o teste importante não é mais “as distâncias continuaram iguais?”. Uma rotação já preserva distâncias por construção.
+
+O teste passa a ser:
+
+> **em textos que não participaram da calibração, os dois telescópios realmente dão as mesmas coordenadas de quásares?**
+
+Se eu embaralho as correspondências de calibração e o resultado continua bom, nosso GPS está fingindo trabalhar.
+
+Essa complicação, aliás, deixou a ideia melhor. Os quásares continuam completamente artificiais. O que ganha ancoragem empírica é a transformação que coloca cada modelo diante daquele céu.
 
 Essa é a parte em que o meme do Drake começa a ficar útil.
 
 > ❌ “Descobrir o conceito universal absolutamente imóvel que existe em todas as LLMs.”
 >
-> ✅ “Inventar uma régua e obrigar cada LLM a declarar onde está em relação a ela.”
+> ✅ “Inventar uma régua, calibrar os instrumentos com pontos compartilhados e testar se eles concordam fora da calibração.”
 
-Muito mais civilizado.
+Menos mágico. Muito mais útil.
 
 ## Não quero só saber onde estou. Quero dirigir.
 
@@ -475,6 +507,84 @@ Depois eu tiro a lupa e jogo fora o detalhe.
 
 Lazy Borges.
 
+## E se o mapa simplesmente lembrar onde já pisou?
+
+A essa altura apareceu uma saída bem menos heroica para o problema de “como eu tiro palavras de uma posição do mapa?”.
+
+Talvez eu não precise inverter a LLM matematicamente logo de saída.
+
+Toda vez que eu faço uma inferência, eu já tenho um pequeno evento completo:
+
+```text
+contexto
+  ↓
+posição no SRF
+  ↓
+próximo token / bloco
+```
+
+Então por que jogar isso fora?
+
+Cada inferência pode deixar um alfinete no atlas.
+
+```text
+(q_t, contexto, token, q_t+1)
+```
+
+Depois de milhões desses alfinetes, quando eu estiver em uma região do mapa, posso procurar os estados já observados mais próximos e perguntar:
+
+> o que a LLM fez quando esteve por aqui antes?
+
+Isso é bastante próximo da ideia dos **kNN language models**, que guardam representações de contextos junto com o próximo token e consultam vizinhos durante a geração. A diferença que quero testar aqui é colocar essa memória no nosso referencial semântico e deixar o **destino da rota** participar da busca.
+
+Dois registros podem estar igualmente perto de onde eu estou, mas um deles saiu para leste e o outro para oeste.
+
+Se meu planner quer leste, isso importa.
+
+```text
+          vizinho A ───→
+        /
+      ● você
+        \
+          vizinho B ←───
+```
+
+A memória deixa de perguntar apenas “qual contexto é parecido?” e passa a perguntar também “qual contexto conhecido realizou um movimento parecido com o que eu quero realizar agora?”.
+
+E dá para guardar mais que o token sorteado.
+
+Se a inferência já calculou a distribuição de logits, jogar tudo fora e salvar apenas uma amostra é uma espécie de amnésia voluntária. Posso guardar pelo menos um `top-k` comprimido e construir uma distribuição lexical local ponderando os vizinhos.
+
+Aí o zoom ganha uma definição bem operacional.
+
+De longe, muitos vizinhos diferentes competem e a entropia lexical é alta.
+
+Quando eu aproximo:
+
+```text
+H(próximo token | vizinhança local) ↓
+```
+
+Se a entropia cai o suficiente, talvez o próprio atlas consiga propor o próximo token ou bloco sem chamar a LLM inteira.
+
+Se não cai, tudo bem: o mapa admite que está borrado e chama o motor.
+
+E ainda existe um fallback meio engraçado para uma região onde temos dois ou três exemplos próximos, mas nenhum exatamente no alvo.
+
+Podemos pedir à própria LLM:
+
+> misture essas realizações e tente chegar semanticamente aqui.
+
+Mas com uma regra importante: **não acreditar nela**.
+
+Geramos a síntese, calculamos novamente onde ela caiu no SRF e só aceitamos se de fato ficou mais perto do alvo.
+
+Misturar dois textos não garante que o embedding da mistura seja o ponto médio. A LLM vira um solver iterativo, não uma régua.
+
+Essa camada virou um novo experimento no programa: um **inverse atlas empírico**, uma memória do território já percorrido que tenta devolver linguagem para uma rota planejada.
+
+Borges provavelmente aprovaria, desde que a lookup table não cresça até cobrir o Império também.
+
 ## Mas ainda tinha um problema caríssimo
 
 Até aí eu ainda estava supondo que construir o mapa exigiria percorrer a LLM.
@@ -678,7 +788,7 @@ Em algum momento já tínhamos:
 
 - trajetórias multiescala;
 - quásares artificiais;
-- um referencial semântico;
+- um referencial semântico calibrado;
 - gravidade e alcançabilidade;
 - rotas multiobjetivo;
 - um atlas com resolução variável;
@@ -687,6 +797,7 @@ Em algum momento já tínhamos:
 - Jacobianos;
 - um servo;
 - compilação dos pesos;
+- uma memória de inferência / inverse atlas;
 - e a possibilidade de minerar tokens dando zoom.
 
 Ou seja: a conversa tinha adquirido massa suficiente para criar seu próprio campo gravitacional.
@@ -709,6 +820,8 @@ MPC semântico
 Semantic Servo / Jacobiano
   ↓
 atlas compilado dos pesos
+  ↓
+inverse atlas / memória de inferência
 ```
 
 O ponto importante é que o paper ainda não diz “isso funciona”.
@@ -717,7 +830,7 @@ Ele diz exatamente o contrário:
 
 > aqui estão as peças que precisam falhar separadamente.
 
-Se o referencial artificial distorce tudo, mata essa parte.
+Se os quásares preservam geometria mas dois modelos não concordam em coordenadas held-out, o céu compartilhado não foi calibrado.
 
 Se o atlas não prediz transições, mata essa parte.
 
@@ -726,6 +839,8 @@ Se o MPC só funciona gastando computação absurda, temos controle mas não efi
 Se o Jacobiano altera a cabeça preditiva mas não a geração real, o volante é decorativo.
 
 Se a SVD da `lm_head` preserva tokens mas não dinâmica, temos compressão lexical, não um universo compilado.
+
+Se a lookup table só funciona quando encontra quase o mesmo contexto exato, o inverse atlas virou memorização borgiana.
 
 É bem menos romântico.
 
@@ -747,6 +862,8 @@ O atlas sabe dizer onde estamos, quais caminhos existem, quais custam caro e qua
 Às vezes o atlas pode ser suficiente para decidir o próximo grande passo.
 
 Às vezes precisamos dar zoom.
+
+Às vezes a memória de inferência já conhece realizações linguísticas muito próximas daquele lugar.
 
 Às vezes precisamos chamar a LLM inteira porque o mapa admite que não sabe.
 
@@ -781,14 +898,14 @@ localização
   ↓
 rota no atlas
   ↓
-zoom onde necessário
+zoom / memória local onde suficiente
   ↓
-execução local
+execução da LLM onde necessário
   ↓
 resposta
 ```
 
-A economia estaria justamente nos saltos em que o mapa consegue trabalhar numa escala maior do que um token.
+A economia estaria justamente nos saltos em que o mapa consegue trabalhar numa escala maior do que um token — ou reutilizar território lexical que já foi observado.
 
 Talvez não consiga.
 
@@ -808,6 +925,8 @@ Nós já temos instrumentos que produzem coordenadas locais: embeddings.
 
 Talvez possamos construir um céu artificial: quásares.
 
+Talvez possamos calibrar telescópios diferentes para esse mesmo céu.
+
 Talvez possamos observar trajetórias.
 
 Talvez essas trajetórias revelem vales, montanhas e corredores.
@@ -817,6 +936,8 @@ Talvez possamos planejar rotas.
 Talvez possamos usar Jacobianos como volante.
 
 Talvez possamos compilar parte do mapa diretamente dos pesos.
+
+Talvez o mapa possa lembrar os lugares onde a LLM já esteve e recuperar linguagem por vizinhança.
 
 E talvez, quando chegarmos perto do destino, possamos dar zoom até a linguagem reaparecer.
 
