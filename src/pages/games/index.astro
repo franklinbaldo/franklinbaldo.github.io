@@ -1,0 +1,68 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+---
+
+<PageLayout
+  title="Games"
+  description="Small interactive experiments and games published inside Franklin Baldo's digital garden."
+  lang="en"
+>
+  <header class="games-head">
+    <p class="games-kicker">Interactive experiments</p>
+    <h1>Games</h1>
+    <p>Small things that are easier to understand by playing them.</p>
+  </header>
+
+  <section class="games-grid" aria-label="Available games">
+    <article class="game-card">
+      <p class="game-card-tag">PLAYABLE PROTOTYPE</p>
+      <h2><a href="/games/rug-pull/">Rug Pull Simulator</a></h2>
+      <p>
+        You already bought the shitcoin. Read the creator, investigate the evidence,
+        and decide whether to stay for the pump or get out before the dev does.
+      </p>
+      <footer>
+        <a href="/games/rug-pull/" role="button">Enter Telegram →</a>
+      </footer>
+    </article>
+  </section>
+</PageLayout>
+
+<style>
+  .games-head {
+    max-width: 720px;
+    margin: 2rem 0 2.5rem;
+  }
+
+  .games-head h1 {
+    margin: 0.25rem 0;
+  }
+
+  .games-kicker,
+  .game-card-tag {
+    margin: 0;
+    color: var(--pico-muted-color);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 1rem;
+  }
+
+  .game-card {
+    margin: 0;
+  }
+
+  .game-card h2 {
+    margin-top: 0.35rem;
+  }
+
+  .game-card footer {
+    margin-top: 1.25rem;
+  }
+</style>
