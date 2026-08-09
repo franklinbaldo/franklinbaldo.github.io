@@ -37,7 +37,7 @@ export async function GET(context) {
     version: "https://jsonfeed.org/version/1.1",
     title: "Franklin Baldo (Português)",
     description:
-      "Advogado e Procurador do Estado. Explorando as interseções entre metafísica do processo, agentes de IA e a arquitetura dos sistemas jurídicos.",
+      "Ensaios, código e música na fronteira entre IA, filosofia e literatura.",
     home_page_url: new URL("pt/", context.site).href,
     feed_url: new URL("pt/feed.json", context.site).href,
     language: "pt-br",
