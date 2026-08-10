@@ -1,0 +1,89 @@
+name: Apply meme-image round 2
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/apply-meme-image-round2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/meme-image-e2e-round2
+
+      - name: Apply paired editorial winners
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          edits = [
+              (
+                  Path('src/content/blog/a-licenca-que-bate-na-porta.md'),
+                  'Esse é um fenômeno conhecido na engenharia de software: você começa tentando cobrar 0,001 alguma-coisa e três horas depois está projetando o SAP para civilizações interplanetárias.\n',
+                  '''Esse é um fenômeno conhecido na engenharia de software: você começa tentando cobrar 0,001 alguma-coisa e três horas depois está projetando o SAP para civilizações interplanetárias.\n\n<figure class="meme">\n  <img\n    src="https://api.memegen.link/images/center/O_que_e_isso~q/Um_ERP_para_quatro_arquivos_Markdown~q.png?width=600"\n    alt="Meme What is this, a Center for Ants?: 'O que é isso?' seguido de 'Um ERP para quatro arquivos Markdown?'."\n    loading="lazy"\n  />\n  <figcaption>Quatro arquivos Markdown. Arquitetura corporativa para civilizações interplanetárias.</figcaption>\n</figure>\n''',
+              ),
+              (
+                  Path('src/content/blog/the-license-that-knocks.md'),
+                  'This is a known software-engineering phenomenon: you start by trying to charge 0.001 of something and three hours later you are designing SAP for interplanetary civilizations.\n',
+                  '''This is a known software-engineering phenomenon: you start by trying to charge 0.001 of something and three hours later you are designing SAP for interplanetary civilizations.\n\n<figure class="meme">\n  <img\n    src="https://api.memegen.link/images/center/What_is_this~q/An_ERP_for_four_Markdown_files~q.png?width=600"\n    alt="What is this, a Center for Ants? meme: 'What is this?' followed by 'An ERP for four Markdown files?'."\n    loading="lazy"\n  />\n  <figcaption>Four Markdown files. Enterprise architecture for interplanetary civilizations.</figcaption>\n</figure>\n''',
+              ),
+              (
+                  Path('src/content/blog/bibliotecario-do-infinito.mdx'),
+                  'Ouvindo a mixagem final, percebo que o peso das guitarras distorcidas no refrão tenta compensar uma ausência de tensão real na harmonia do baião inicial. A intenção era atrito, mas o resultado frequentemente soa como duas músicas tocando em salas separadas. ',
+                  '''Ouvindo a mixagem final, percebo que o peso das guitarras distorcidas no refrão tenta compensar uma ausência de tensão real na harmonia do baião inicial. A intenção era atrito, mas o resultado frequentemente soa como duas músicas tocando em salas separadas.\n\n<figure class="meme">\n  <img\n    src="https://api.memegen.link/images/ski/Se_o_baiao_e_so_adorno/Voce_vai_ter_duas_musicas_em_salas_separadas.png?width=600"\n    alt="Meme Super Cool Ski Instructor: 'Se o baião é só adorno' seguido de 'Você vai ter duas músicas em salas separadas'."\n    loading="lazy"\n  />\n  <figcaption>Fusão de gêneros, versão planta baixa.</figcaption>\n</figure>\n\n''',
+              ),
+              (
+                  Path('src/content/blog/bibliotecario-do-infinito-en.mdx'),
+                  "Listening to the final mix, I realize that the weight of the distorted guitars in the chorus attempts to compensate for a lack of real tension in the initial baião harmony. The intention was friction, but the result often sounds like two different songs playing in separate rooms. ",
+                  '''Listening to the final mix, I realize that the weight of the distorted guitars in the chorus attempts to compensate for a lack of real tension in the initial baião harmony. The intention was friction, but the result often sounds like two different songs playing in separate rooms.\n\n<figure class="meme">\n  <img\n    src="https://api.memegen.link/images/ski/If_baiao_is_only_decoration/Youre_gonna_get_two_songs_in_separate_rooms.png?width=600"\n    alt="Super Cool Ski Instructor meme: 'If baião is only decoration' followed by 'You're gonna get two songs in separate rooms'."\n    loading="lazy"\n  />\n  <figcaption>Genre fusion, floor-plan edition.</figcaption>\n</figure>\n\n''',
+              ),
+          ]
+
+          for path, old, new in edits:
+              text = path.read_text(encoding='utf-8')
+              if new in text:
+                  continue
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{path}: expected exactly one anchor, found {count}')
+              path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+
+      - name: Verify rendered meme assets
+        run: |
+          set -euo pipefail
+          urls=(
+            'https://api.memegen.link/images/center/O_que_e_isso~q/Um_ERP_para_quatro_arquivos_Markdown~q.png?width=600'
+            'https://api.memegen.link/images/center/What_is_this~q/An_ERP_for_four_Markdown_files~q.png?width=600'
+            'https://api.memegen.link/images/ski/Se_o_baiao_e_so_adorno/Voce_vai_ter_duas_musicas_em_salas_separadas.png?width=600'
+            'https://api.memegen.link/images/ski/If_baiao_is_only_decoration/Youre_gonna_get_two_songs_in_separate_rooms.png?width=600'
+          )
+          mkdir -p /tmp/meme-round2
+          i=0
+          for url in "${urls[@]}"; do
+            i=$((i+1))
+            curl --fail --location --silent --show-error "$url" -o "/tmp/meme-round2/$i.png"
+            test -s "/tmp/meme-round2/$i.png"
+            file "/tmp/meme-round2/$i.png"
+          done
+
+      - name: Remove one-shot workflow and commit editorial diff
+        run: |
+          rm .github/workflows/apply-meme-image-round2.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/content/blog/a-licenca-que-bate-na-porta.md \
+                  src/content/blog/the-license-that-knocks.md \
+                  src/content/blog/bibliotecario-do-infinito.mdx \
+                  src/content/blog/bibliotecario-do-infinito-en.mdx \
+                  .github/workflows/apply-meme-image-round2.yml
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'editorial(blog): apply canonical meme-image round 2 winners'
+          git push origin HEAD:experiment/meme-image-e2e-round2
