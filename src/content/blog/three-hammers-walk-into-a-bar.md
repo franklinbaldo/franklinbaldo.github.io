@@ -26,6 +26,15 @@ The unflattering thing about the joke is that I am all three.
 
 I am the lawyer; the _Constituição_ is my profession's manual. I am the Brazilian, and the _vistos_ on the _despacho_ are how I shipped a _parecer_ last Thursday. I am the civil servant in the most literal sense — _Procurador do Estado_, my paychecks are public budget, the second article of the _Lei Orgânica_ governing my office is the rule the civil servant in the bar recites. None of these is a position I argue for. They are, in the most banal sense, my professional formation. _It's giving the same hammer, three handles._
 
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/3hd/Lawyer/Brazilian/Civil_servant.png?width=600"
+    alt="Three-Headed Dragon meme with its three heads labeled Lawyer, Brazilian, and Civil servant."
+    loading="lazy"
+  />
+  <figcaption>Three professional postures, one author, one suspiciously familiar toolbox.</figcaption>
+</figure>
+
 The unflattering thing about the [paper I just wrote](https://github.com/franklinbaldo/papers/blob/main/paper_affordance_restriction.md) is that it has four properties, and three of them are professional postures translated into alignment vocabulary. The fourth is foreign. _Affordance enumeration, doctrine/procedure separation, structured ex-ante commitment, content-addressed canon_ — read aloud they sound like the table of contents of a competent alignment paper. Read against my CV, they are: strict legality, distributed approval, the-act-is-the-paper, and one thing I did not bring.
 
 This is not a criticism of the paper. The first three are good properties. They are the properties of agent design that an unbroken administrative-legal tradition refined over centuries because the actors involved — judges, lawyers, _servidores_ — needed those properties to operate without one of them becoming a king. If administrative-legal practice produces useful constraints on machine agents, this is not an accident. It is what happens when a profession that exists to constrain the powerful is asked, for once, what _constraint_ looks like.
@@ -39,6 +48,15 @@ The lawyer's hammer is _ex ante._ The lawyer does not act and then describe; the
 The Brazilian's hammer is the _chain of vistos._ No single posture in an _Estado de Direito_ produces an act. The technician's draft is reviewed by the _assessor_ before reaching the _coordenador._ The _coordenador_'s recommendation circulates as a _despacho_ before the _secretário_ signs. Some acts climb further. The phrase a foreigner sometimes mistakes for empty bureaucracy — _com vista ao setor de tal coisa,_ literally _with sight to such-and-such sector_ — is a structural device: nothing of consequence happens without distributed sight. Property 2 — _doctrine/procedure separation_ — is this principle generalized. Adding a procedural specialization to the agent's catalog is cheap; adding a doctrinal commitment requires a different signature, in a different queue, under an explicit flag that names what is being done. The asymmetry is not friction. It is the _visto._
 
 The civil servant's hammer is _legalidade estrita._ Article 37 of the 1988 _Constituição_ states it; Bandeira de Mello and Hely Lopes Meirelles spend chapters on it. The citizen may do anything not forbidden; the _servidor_ may do nothing not authorized. The agent of the State is bounded by an enumerated catalog of permissions; if the catalog does not say _você pode fazer isto_, then he may not. Property 1 — _affordance enumeration_ — is this almost verbatim, with _servidor_ replaced by _AI agent._ The agent's allowed actions are the entries in a finite, human-curated catalog. New entries require human approval. The agent does not invent verbs; the _servidor_, by his own oath, does not invent powers.
+
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/ants/Let_the_agent_invent_a_verb~q/Do_you_want_unenumerated_powers~q.png?width=600"
+    alt="Do You Want Ants meme: 'Let the agent invent a verb?' followed by 'Do you want unenumerated powers?'."
+    loading="lazy"
+  />
+  <figcaption>In public law, inventing the verb is how you invent the power.</figcaption>
+</figure>
 
 Three hammers, three properties. _That word is doing too much_ when I say neutrally that _the paper describes a pattern._ The honest sentence is that the pattern, for the first three properties, describes the work I had already done before I knew I was doing it.
 
@@ -56,11 +74,11 @@ Administrative-legal practice has never had a working version of this property. 
 
 <figure class="meme">
   <img
-    src="https://api.memegen.link/images/drake/Citing_SLSA_in_the_paper/Citing_the_paperback_I_actually_got_the_idea_from.png?width=500"
-    alt="Drake meme: Drake refusing the top panel labeled 'Citing SLSA in the paper'; Drake nodding approvingly at the bottom panel labeled 'Citing the paperback I actually got the idea from'."
+    src="https://api.memegen.link/images/both/Merkle_trees_or_Hofstadter~q/Why_not_both~q.png?width=600"
+    alt="Why Not Both meme: 'Merkle trees or Hofstadter?' followed by 'Why not both?'."
     loading="lazy"
   />
-  <figcaption>The honest tally on Property 4. The technical lineage in the paper is real; the personal lineage is older and comes from a different bookshelf entirely.</figcaption>
+  <figcaption>One supplied the technical vocabulary; the other had already supplied the obsession.</figcaption>
 </figure>
 
 None of this makes Property 4 the load-bearing piece of the paper. The paper's central claim runs through the three professional postures and their fit with the three semantic conditions of applicability; content-addressing is a clean technical move that makes the audit trail behave the way the rest of the design needs it to, but the paper would still be a paper without it, just with a softer audit guarantee. What the fourth property reveals, instead, is biographical: an obsession that has been running in parallel to the three professional ones for as long as I have had a reading life, on a shelf I had stopped noticing. The hammer was always there. I had been swinging it without naming it.

@@ -21,6 +21,15 @@ The safe answer seemed to be: you could draw analogies — a mesh that curls in 
 
 A few hours later the polynomial showed up.
 
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/atis/And_then_I_said/locally_invertible_therefore_globally_injective.png?width=600"
+    alt="And Then I Said meme: the first line says 'And then I said'; the second, 'locally invertible, therefore globally injective'."
+    loading="lazy"
+  />
+  <figcaption>An intuition reasonable enough to become a conjecture. Not reasonable enough to survive the polynomial.</figcaption>
+</figure>
+
 ## The map
 
 Consider $F=(P,Q,R):\mathbb C^3\to\mathbb C^3$, with
