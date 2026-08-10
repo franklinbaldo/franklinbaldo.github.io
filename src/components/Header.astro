@@ -283,10 +283,27 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
     }
   }
 
-  const win = window as unknown as { __searchShortcutBound?: boolean };
+  const win = window as unknown as {
+    __searchShortcutBound?: boolean;
+    __dropdownEscBound?: boolean;
+  };
   if (!win.__searchShortcutBound) {
     win.__searchShortcutBound = true;
     document.addEventListener('keydown', focusSearch);
+  }
+
+  function closeOpenDropdowns(event: KeyboardEvent) {
+    if (event.key !== 'Escape') return;
+    const openDropdowns = document.querySelectorAll<HTMLDetailsElement>('details.dropdown[open]');
+    openDropdowns.forEach((details) => {
+      details.removeAttribute('open');
+      details.querySelector('summary')?.focus();
+    });
+  }
+
+  if (!win.__dropdownEscBound) {
+    win.__dropdownEscBound = true;
+    document.addEventListener('keydown', closeOpenDropdowns);
   }
 </script>
 
