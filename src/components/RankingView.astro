@@ -279,10 +279,10 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
         <tr>
           <th scope="col" class="col-rank">{strings.thRank}</th>
           <th scope="col" class="col-post">{strings.thPost}</th>
-          <th scope="col" class="col-winrate sortable" data-sort="winrate" aria-sort="none" tabindex="0">{strings.thWinRate}</th>
-          {snapshot && <th scope="col" class="col-delta sortable" data-sort="delta" aria-sort="none" tabindex="0">{strings.thDelta}</th>}
+          <th scope="col" class="col-winrate sortable" data-sort="winrate" aria-sort="none" tabindex="0" role="button">{strings.thWinRate}</th>
+          {snapshot && <th scope="col" class="col-delta sortable" data-sort="delta" aria-sort="none" tabindex="0" role="button">{strings.thDelta}</th>}
           <th scope="col" class="col-confidence">{strings.thConfidence}</th>
-          <th scope="col" class="col-elo tech-col sortable" data-sort="elo" aria-sort="none" tabindex="0">{strings.thElo}</th>
+          <th scope="col" class="col-elo tech-col sortable" data-sort="elo" aria-sort="none" tabindex="0" role="button">{strings.thElo}</th>
           <th scope="col" class="col-mu tech-col">
             <abbr title={strings.muTip} data-tooltip={strings.muTip} tabindex="0">{strings.thMu}</abbr>
           </th>
@@ -292,7 +292,7 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
           <th scope="col" class="col-ordinal tech-col">
             <abbr title={strings.ordinalTip} data-tooltip={strings.ordinalTip} tabindex="0">{strings.thOrdinal}</abbr>
           </th>
-          <th scope="col" class="col-record tech-col sortable" data-sort="record" aria-sort="none" tabindex="0">{strings.thRecord}</th>
+          <th scope="col" class="col-record tech-col sortable" data-sort="record" aria-sort="none" tabindex="0" role="button">{strings.thRecord}</th>
         </tr>
       </thead>
       <tbody>

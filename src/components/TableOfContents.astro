@@ -132,6 +132,7 @@ const listItems = tree.map(item => ({ ...item }));
       .filter((el): el is HTMLElement => el !== null);
 
     let activeId: string | null = null;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const setActive = (id: string | null) => {
       if (id === activeId) return;
@@ -139,7 +140,8 @@ const listItems = tree.map(item => ({ ...item }));
       links.forEach((a) => {
         const isActive = a.getAttribute('href') === `#${id}`;
         a.classList.toggle('toc-active', isActive);
-        if (isActive) a.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        if (isActive)
+          a.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
       });
     };
 
