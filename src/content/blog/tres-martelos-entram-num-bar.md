@@ -26,6 +26,15 @@ O que há de desconfortável na piada é que eu sou os três.
 
 Sou o advogado; a _Constituição_ é o manual da minha profissão. Sou o brasileiro, e os _vistos_ no _despacho_ são como despachei um _parecer_ quinta-feira passada. Sou o servidor público no sentido mais literal — _Procurador do Estado_, meu contracheque é orçamento público, o segundo artigo da _Lei Orgânica_ que rege meu cargo é a regra que o servidor no bar recita. Nenhuma dessas é uma posição que defendo. São, no sentido mais banal, a minha formação profissional. _É o mesmo martelo com três cabos._
 
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/3hd/Advogado/Brasileiro/Servidor_publico.png?width=600"
+    alt="Meme Three-Headed Dragon com as três cabeças rotuladas Advogado, Brasileiro e Servidor público."
+    loading="lazy"
+  />
+  <figcaption>Três posturas profissionais, um autor, uma caixa de ferramentas suspeitamente familiar.</figcaption>
+</figure>
+
 O que há de desconfortável no [artigo que acabei de escrever](https://github.com/franklinbaldo/papers/blob/main/paper_affordance_restriction.md) é que ele tem quatro propriedades, e três delas são posturas profissionais traduzidas em vocabulário de alinhamento. A quarta é estrangeira. _Enumeração de affordances, separação doutrina/procedimento, compromisso estruturado ex-ante, cânone endereçado por conteúdo_ — lidas em voz alta parecem o índice de um bom artigo de alinhamento. Lidas contra o meu currículo, são: legalidade estrita, aprovação distribuída, o-ato-é-o-papel e uma coisa que eu não trouxe.
 
 Isso não é uma crítica ao artigo. As três primeiras são boas propriedades. São as propriedades de design de agentes que uma tradição administrativa-jurídica ininterrupta refinou por séculos porque os atores envolvidos — juízes, advogados, _servidores_ — precisavam dessas propriedades para operar sem que um deles virasse rei. Se a prática administrativa-jurídica produz restrições úteis sobre agentes de máquina, isso não é acidente. É o que acontece quando uma profissão que existe para restringir o poderoso é perguntada, pela primeira vez, como é que _restrição_ se parece.
@@ -39,6 +48,15 @@ O martelo do advogado é _ex ante._ O advogado não age e depois descreve; o adv
 O martelo do brasileiro é a _cadeia de vistos._ Nenhuma postura singular num _Estado de Direito_ produz um ato. A minuta do técnico é revisada pelo _assessor_ antes de chegar ao _coordenador._ A recomendação do _coordenador_ circula como _despacho_ antes de o _secretário_ assinar. Alguns atos sobem mais. A frase que um estrangeiro às vezes confunde com burocracia vazia — _com vista ao setor de tal coisa_ — é um dispositivo estrutural: nada de relevância acontece sem visibilidade distribuída. Propriedade 2 — _separação doutrina/procedimento_ — é esse princípio generalizado. Adicionar uma especialização procedimental ao catálogo do agente é barato; adicionar um compromisso doutrinário exige uma assinatura diferente, numa fila diferente, sob uma flag explícita que nomeia o que está sendo feito. A assimetria não é atrito. É o _visto._
 
 O martelo do servidor público é a _legalidade estrita._ O artigo 37 da _Constituição_ de 1988 a enuncia; Bandeira de Mello e Hely Lopes Meirelles gastam capítulos inteiros nela. O cidadão pode fazer tudo que não é proibido; o _servidor_ não pode fazer nada que não é autorizado. O agente do Estado é limitado por um catálogo enumerado de permissões; se o catálogo não diz _você pode fazer isto_, então ele não pode. Propriedade 1 — _enumeração de affordances_ — é isso quase ao pé da letra, com _servidor_ substituído por _agente de IA._ As ações permitidas ao agente são as entradas de um catálogo finito, curado por humanos. Novas entradas requerem aprovação humana. O agente não inventa verbos; o _servidor_, pelo seu próprio juramento, não inventa poderes.
+
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/ants/Deixar_o_agente_inventar_um_verbo~q/Voce_quer_poderes_nao_enumerados~q.png?width=600"
+    alt="Meme Do You Want Ants?: 'Deixar o agente inventar um verbo?' seguido de 'Você quer poderes não enumerados?'."
+    loading="lazy"
+  />
+  <figcaption>No direito público, inventar o verbo é como se inventa o poder.</figcaption>
+</figure>
 
 Três martelos, três propriedades. _Essa palavra está fazendo trabalho demais_ quando digo neutralmente que _o artigo descreve um padrão._ A frase honesta é que o padrão, nas três primeiras propriedades, descreve o trabalho que eu já havia feito antes de saber que estava fazendo.
 
@@ -56,11 +74,11 @@ A prática administrativa-jurídica nunca teve uma versão funcional dessa propr
 
 <figure class="meme">
   <img
-    src="https://api.memegen.link/images/drake/Citar_SLSA_no_paper/Citar_o_livro_de_onde_realmente_tirei_a_ideia.png?width=500"
-    alt="Meme do Drake: Drake recusando o painel de cima com 'Citar SLSA no paper'; Drake aprovando o painel de baixo com 'Citar o livro de onde realmente tirei a ideia'."
+    src="https://api.memegen.link/images/both/Arvores_de_Merkle_ou_Hofstadter~q/Por_que_nao_os_dois~q.png?width=600"
+    alt="Meme Why Not Both?: 'Árvores de Merkle ou Hofstadter?' seguido de 'Por que não os dois?'."
     loading="lazy"
   />
-  <figcaption>O balanço honesto sobre a Propriedade 4. A linhagem técnica no artigo é real; a linhagem pessoal é mais antiga e vem de uma estante inteiramente diferente.</figcaption>
+  <figcaption>Um forneceu o vocabulário técnico; o outro já tinha fornecido a obsessão.</figcaption>
 </figure>
 
 Nada disso faz da Propriedade 4 a peça que sustenta o artigo. A tese central percorre as três posturas profissionais e seu encaixe com as três condições semânticas de aplicabilidade; o endereçamento por conteúdo é um movimento técnico limpo que faz a trilha de auditoria se comportar do jeito que o resto do design exige, mas o artigo continuaria sendo artigo sem ele, só com uma garantia de auditoria mais frouxa. O que a quarta propriedade revela, em vez disso, é biográfico: uma obsessão que vem rodando em paralelo às três profissionais desde que tenho vida de leitura, numa estante que eu havia parado de notar. O martelo sempre esteve ali. Eu vinha batendo com ele sem nomeá-lo.

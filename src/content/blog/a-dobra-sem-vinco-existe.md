@@ -21,6 +21,15 @@ A resposta parecia segura: dava para desenhar analogias — uma malha que se enr
 
 Algumas horas depois apareceu o polinômio.
 
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/atis/E_entao_eu_disse/localmente_invertivel_entao_globalmente_injetivo.png?width=600"
+    alt="Meme And Then I Said: a primeira fala diz 'E então eu disse'; a segunda, 'localmente invertível, então globalmente injetivo'."
+    loading="lazy"
+  />
+  <figcaption>Uma intuição razoável o bastante para virar conjectura. Não razoável o bastante para sobreviver ao polinômio.</figcaption>
+</figure>
+
 ## O mapa
 
 Considere $F=(P,Q,R):\mathbb C^3\to\mathbb C^3$, com
