@@ -160,6 +160,15 @@ At one point the RFC started collecting `LicenseeMeteringProfile`, `MeteringPlan
 
 This is a known software-engineering phenomenon: you start by trying to charge 0.001 of something and three hours later you are designing SAP for interplanetary civilizations.
 
+<figure class="meme">
+  <img
+    src="https://api.memegen.link/images/center/What_is_this~q/An_ERP_for_four_Markdown_files~q.png?width=600"
+    alt="What is this, a Center for Ants? meme: 'What is this?' followed by 'An ERP for four Markdown files?'."
+    loading="lazy"
+  />
+  <figcaption>Four Markdown files. Enterprise architecture for interplanetary civilizations.</figcaption>
+</figure>
+
 The question that saved the design was brutally simple:
 
 > What does [`okf-parser`](https://github.com/franklinbaldo/okf-parser) already do?
