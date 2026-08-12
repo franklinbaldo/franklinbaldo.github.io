@@ -110,6 +110,13 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
       );
     })}
   </div>
+  <span
+    id="archive-filter-status"
+    class="sr-only"
+    role="status"
+    aria-live="polite"
+    data-of={t("pt", "post.of")}
+  ></span>
 
   {years.length > 1 && (
     <nav class="year-jump" aria-label="Ir para o ano">
@@ -331,12 +338,24 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
   }
   .nav-btn:hover:not(.nav-disabled) { border-color: var(--pico-primary); }
   .nav-disabled { color: var(--pico-muted-color); cursor: default; border-color: transparent; background: transparent; }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 </style>
 <script is:inline>
   (function () {
     const buttons = document.querySelectorAll('[data-type-filter]');
     const rows = document.querySelectorAll('tr[data-type]');
     const sections = document.querySelectorAll('.archive-year');
+    const status = document.getElementById('archive-filter-status');
     function openHashSection() {
       if (!location.hash) return;
       try {
@@ -352,13 +371,19 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
         buttons.forEach(function (b) { b.setAttribute('aria-pressed', 'false'); b.classList.remove('active'); });
         btn.setAttribute('aria-pressed', 'true');
         btn.classList.add('active');
+        var visibleCount = 0;
         rows.forEach(function (row) {
-          row.style.display = (type === 'all' || row.getAttribute('data-type') === type) ? '' : 'none';
+          var match = type === 'all' || row.getAttribute('data-type') === type;
+          row.style.display = match ? '' : 'none';
+          if (match) visibleCount++;
         });
         sections.forEach(function (sec) {
           var hasVisible = Array.from(sec.querySelectorAll('tr[data-type]')).some(function (r) { return r.style.display !== 'none'; });
           sec.style.display = hasVisible ? '' : 'none';
         });
+        if (status) {
+          status.textContent = visibleCount + ' ' + status.getAttribute('data-of') + ' ' + rows.length + ' posts';
+        }
       });
     });
   })();
