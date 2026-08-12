@@ -180,6 +180,8 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
 </header>
 
 <script>
+  import { pushOverlay, removeOverlay, isTopOverlay } from '../lib/overlay-stack';
+
   function syncMusicBtn(audio: HTMLAudioElement | null) {
     const btns = document.querySelectorAll<HTMLButtonElement>('.nav-music-btn');
     btns.forEach((btn) => {
@@ -294,17 +296,37 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
 
   function closeOpenDropdowns(event: KeyboardEvent) {
     if (event.key !== 'Escape') return;
+    if (!isTopOverlay('header-dropdown')) return;
     const openDropdowns = document.querySelectorAll<HTMLDetailsElement>('details.dropdown[open]');
     openDropdowns.forEach((details) => {
       details.removeAttribute('open');
       details.querySelector('summary')?.focus();
     });
+    removeOverlay('header-dropdown');
   }
 
   if (!win.__dropdownEscBound) {
     win.__dropdownEscBound = true;
     document.addEventListener('keydown', closeOpenDropdowns);
   }
+
+  function bindDropdownOverlayTracking() {
+    document.querySelectorAll<HTMLDetailsElement>('details.dropdown').forEach((details) => {
+      if (details.dataset.overlayBound === '1') return;
+      details.dataset.overlayBound = '1';
+      details.addEventListener('toggle', () => {
+        if (details.open) pushOverlay('header-dropdown');
+        else removeOverlay('header-dropdown');
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindDropdownOverlayTracking);
+  } else {
+    bindDropdownOverlayTracking();
+  }
+  document.addEventListener('astro:page-load', bindDropdownOverlayTracking);
 </script>
 
 <style>
