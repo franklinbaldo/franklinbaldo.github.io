@@ -191,7 +191,7 @@ try {
   >
 </div>
 
-<div id="gmp-drawer" hidden role="dialog" aria-label={L.queueDialog}>
+<div id="gmp-drawer" hidden role="dialog" aria-modal="true" aria-label={L.queueDialog}>
   <div class="gmp-drawer-header">
     <span>{L.queueLabel}</span>
     <button id="gmp-drawer-close" type="button" aria-label={L.closeQueue}>✕</button>
@@ -200,6 +200,8 @@ try {
 </div>
 
 <script>
+  import { pushOverlay, removeOverlay, isTopOverlay } from "../lib/overlay-stack";
+
   const SONG_RE = /suno\.com\/song\/([0-9a-fA-F-]{36})/;
   const REPEAT_OFF = "off";
   const REPEAT_ALL = "all";
@@ -470,6 +472,7 @@ try {
           item.addEventListener("click", () => {
             playSong(qIdx);
             drawerEl.hidden = true;
+            removeOverlay("gmp-drawer");
           });
           drawerList.appendChild(item);
         });
@@ -627,31 +630,58 @@ try {
         renderDrawer();
         drawerEl.hidden = !drawerEl.hidden;
         if (wasHidden && !drawerEl.hidden) {
+          pushOverlay("gmp-drawer");
           const firstItem = drawerList.querySelector<HTMLButtonElement>(".gmp-drawer-item");
           (firstItem ?? drawerCloseBtn).focus();
+        } else if (!wasHidden && drawerEl.hidden) {
+          removeOverlay("gmp-drawer");
         }
       });
 
       drawerCloseBtn.addEventListener("click", () => {
         drawerEl.hidden = true;
+        removeOverlay("gmp-drawer");
       });
 
       document.addEventListener("click", (e) => {
         if (!drawerEl.hidden && !drawerEl.contains(e.target as Node) && e.target !== queueBtn) {
           drawerEl.hidden = true;
+          removeOverlay("gmp-drawer");
         }
       });
 
       document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && !drawerEl.hidden) {
+        if (drawerEl.hidden) return;
+
+        if (e.key === "Escape") {
+          if (!isTopOverlay("gmp-drawer")) return;
           drawerEl.hidden = true;
+          removeOverlay("gmp-drawer");
           queueBtn.focus();
+          return;
+        }
+
+        if (e.key === "Tab") {
+          const focusable = drawerEl.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+          );
+          if (!focusable.length) return;
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
         }
       });
 
       closeBtn.addEventListener("click", () => {
         audio.pause();
         player.hidden = true;
+        if (!drawerEl.hidden) removeOverlay("gmp-drawer");
         drawerEl.hidden = true;
         player.removeAttribute("data-playing-id");
         document.body.classList.remove("gmp-active");
