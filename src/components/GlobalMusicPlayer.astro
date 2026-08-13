@@ -191,9 +191,9 @@ try {
   >
 </div>
 
-<div id="gmp-drawer" hidden role="dialog" aria-modal="true" aria-label={L.queueDialog}>
+<div id="gmp-drawer" hidden role="dialog" aria-modal="true" aria-label={L.queueDialog} transition:persist>
   <div class="gmp-drawer-header">
-    <span>{L.queueLabel}</span>
+    <span id="gmp-drawer-label">{L.queueLabel}</span>
     <button id="gmp-drawer-close" type="button" aria-label={L.closeQueue}>✕</button>
   </div>
   <div id="gmp-drawer-list"></div>
@@ -229,6 +229,9 @@ try {
       repeatOne: "Repeat this song",
       queue: "View queue",
       close: "Close player",
+      queueDialog: "Playback queue",
+      queueLabel: "Queue",
+      closeQueue: "Close queue",
     },
     pt: {
       region: "Player de músicas",
@@ -246,6 +249,9 @@ try {
       repeatOne: "Repetir esta música",
       queue: "Ver fila",
       close: "Fechar player",
+      queueDialog: "Fila de reprodução",
+      queueLabel: "Fila",
+      closeQueue: "Fechar fila",
     },
   } as const;
 
@@ -300,6 +306,7 @@ try {
     const queueBtn = document.getElementById("gmp-queue-btn") as HTMLButtonElement;
     const drawerEl = document.getElementById("gmp-drawer") as HTMLElement;
     const drawerList = document.getElementById("gmp-drawer-list") as HTMLElement;
+    const drawerLabelEl = document.getElementById("gmp-drawer-label") as HTMLElement;
     const drawerCloseBtn = document.getElementById("gmp-drawer-close") as HTMLButtonElement;
     const closeBtn = document.getElementById("gmp-close") as HTMLButtonElement;
 
@@ -307,7 +314,7 @@ try {
       !audio || !coverLinkEl || !coverEl || !titleEl || !seekEl ||
       !timeEl || !durEl || !playBtn || !prevBtn || !nextBtn ||
       !shuffleBtn || !repeatBtn || !volumeEl || !favBtn || !queueBtn ||
-      !drawerEl || !drawerList || !drawerCloseBtn || !closeBtn
+      !drawerEl || !drawerList || !drawerLabelEl || !drawerCloseBtn || !closeBtn
     )
       return;
 
@@ -323,6 +330,9 @@ try {
     nextBtn.setAttribute("aria-label", gmpLabels.next);
     queueBtn.setAttribute("aria-label", gmpLabels.queue);
     closeBtn.setAttribute("aria-label", gmpLabels.close);
+    drawerEl.setAttribute("aria-label", gmpLabels.queueDialog);
+    drawerLabelEl.textContent = gmpLabels.queueLabel;
+    drawerCloseBtn.setAttribute("aria-label", gmpLabels.closeQueue);
     playBtn.setAttribute("aria-label", audio.paused ? gmpLabels.play : gmpLabels.pause);
     favBtn.setAttribute(
       "aria-label",
