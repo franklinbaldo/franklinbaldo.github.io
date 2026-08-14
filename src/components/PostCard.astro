@@ -73,7 +73,7 @@ const overflowCount = allTags.length - visibleTags.length;
         {overflowCount > 0 && <span class="card-tag-overflow">+{overflowCount}</span>}
       </p>
     )}
-    <a href={href}>{t(postLang, 'post.continueReading')}</a>
+    <a href={href} aria-label={`${t(postLang, 'post.continueReading')} — ${title}`}>{t(postLang, 'post.continueReading')}</a>
   </footer>
 </article>
 
