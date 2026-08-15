@@ -74,6 +74,7 @@ export interface RankingStrings {
   allPerspectivesLabel: string;
   tensionUnavailable: string;
   eloTooltip: string;
+  dossierTooltip: string;
 }
 
 interface Props {
@@ -328,7 +329,7 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
               data-sort-record={r.appearances}
             >
               <th scope="row" class="col-rank">
-                <a href={`/ranking/posts/${r.key}/`} class="rank-link" title={`Dossier: ${r.post?.title ?? r.key}`}>{r.rank}</a>
+                <a href={`/ranking/posts/${r.key}/`} class="rank-link" title={strings.dossierTooltip.replace("{title}", r.post?.title ?? r.key)}>{r.rank}</a>
               </th>
               <td class="col-post">
                 {href ? (

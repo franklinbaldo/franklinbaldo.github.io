@@ -46,6 +46,51 @@ const postHref = postInfo
     : `/blog/${postInfo.slug}/`
   : null;
 
+const lang: "en" | "pt" = postInfo?.lang === "pt" ? "pt" : "en";
+
+const strings =
+  lang === "pt"
+    ? {
+        readPost: "Ler post →",
+        globalRank: "posição global",
+        rankChange: "variação de posição",
+        winRate: "taxa de vitória",
+        winsDuels: "vitórias / duelos",
+        ordinal: "ordinal",
+        sparklineCaption: "Taxa de vitória ao longo do tempo (cada ponto = um duelo, cronológico)",
+        perspectiveRankings: "Rankings por perspectiva",
+        duelHistory: "Histórico de duelos",
+        duelHistoryTotal: "no total",
+        noDuels: "Nenhum duelo registrado ainda.",
+        won: "Venceu",
+        lost: "Perdeu",
+        vs: "vs",
+        readFullAnalysis: "Ler análise completa",
+        analysis: "análise →",
+        home: "Início",
+        ranking: "Ranking",
+      }
+    : {
+        readPost: "Read post →",
+        globalRank: "global rank",
+        rankChange: "rank change",
+        winRate: "win rate",
+        winsDuels: "wins / duels",
+        ordinal: "ordinal",
+        sparklineCaption: "Win rate over time (each point = one duel, chronological)",
+        perspectiveRankings: "Perspective rankings",
+        duelHistory: "Duel history",
+        duelHistoryTotal: "total",
+        noDuels: "No duels recorded yet.",
+        won: "Won",
+        lost: "Lost",
+        vs: "vs",
+        readFullAnalysis: "Read full analysis",
+        analysis: "analysis →",
+        home: "Home",
+        ranking: "Ranking",
+      };
+
 const duels = getPostDuelHistory(key);
 
 // Per-perspective rankings
@@ -86,8 +131,8 @@ const sparklinePts = chronological.map((d) => ({ won: d.winnerKey === key }));
 const sparklinePath = buildSparkline(sparklinePts);
 
 const crumbs = [
-  { name: "Home", href: "/" },
-  { name: "Ranking", href: "/ranking/" },
+  { name: strings.home, href: lang === "pt" ? "/pt/" : "/" },
+  { name: strings.ranking, href: lang === "pt" ? "/pt/ranking/" : "/ranking/" },
   { name: title, href: `/ranking/posts/${key}/` },
 ];
 
@@ -100,56 +145,60 @@ function hue(id: string): number {
 function fmtDate(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.valueOf())) return "—";
-  return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  return d.toLocaleDateString(lang === "pt" ? "pt-BR" : "en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 }
 ---
 
 <PageLayout
   title={`${title} — Dossier | Franklin Baldo`}
   description={`Ranking history and duel record for "${title}" in the Hrönir system.`}
-  lang="en"
+  lang={lang}
   noindex
   breadcrumb={toBreadcrumbLd(crumbs, Astro.site)}
 >
-  <Breadcrumbs items={crumbs} lang="en" />
+  <Breadcrumbs items={crumbs} lang={lang} />
 
   <hgroup>
     <h1>{title}</h1>
-    {postHref && <p><a href={postHref}>Read post →</a></p>}
+    {postHref && <p><a href={postHref}>{strings.readPost}</a></p>}
   </hgroup>
 
-  <HronirExplainer lang="en" />
+  <HronirExplainer lang={lang} />
 
   <div class="dossier-stats">
     <div class="doss-stat">
       <span class="doss-val">#{currentRank}</span>
-      <span class="doss-lbl">global rank</span>
+      <span class="doss-lbl">{strings.globalRank}</span>
     </div>
     {delta !== null && delta !== 0 && (
       <div class="doss-stat">
         <span class={`doss-val ${delta > 0 ? "delta-up" : "delta-down"}`}>
           {delta > 0 ? `+${delta}` : `${delta}`}
         </span>
-        <span class="doss-lbl">rank change</span>
+        <span class="doss-lbl">{strings.rankChange}</span>
       </div>
     )}
     <div class="doss-stat">
       <span class="doss-val">{winRate}%</span>
-      <span class="doss-lbl">win rate</span>
+      <span class="doss-lbl">{strings.winRate}</span>
     </div>
     <div class="doss-stat">
       <span class="doss-val">{overallWins}/{duels.length}</span>
-      <span class="doss-lbl">wins / duels</span>
+      <span class="doss-lbl">{strings.winsDuels}</span>
     </div>
     <div class="doss-stat">
       <span class="doss-val">{rankEntry.ordinal.toFixed(3)}</span>
-      <span class="doss-lbl">ordinal</span>
+      <span class="doss-lbl">{strings.ordinal}</span>
     </div>
   </div>
 
   {sparklinePath && (
     <div class="sparkline-wrap">
-      <p class="sparkline-caption">Win rate over time (each point = one duel, chronological)</p>
+      <p class="sparkline-caption">{strings.sparklineCaption}</p>
       <svg viewBox="0 0 200 36" class="sparkline" aria-hidden="true">
         <line x1="0" y1="18" x2="200" y2="18" class="spark-ref" />
         <path d={sparklinePath} class="spark-path" />
@@ -173,7 +222,7 @@ function fmtDate(iso: string): string {
 
   {perspectiveRanks.length > 0 && (
     <section class="persp-ranks">
-      <h2>Perspective rankings</h2>
+      <h2>{strings.perspectiveRankings}</h2>
       <ul class="persp-list">
         {perspectiveRanks.map((pr) => (
           <li>
@@ -189,9 +238,9 @@ function fmtDate(iso: string): string {
   )}
 
   <section class="duel-history">
-    <h2>Duel history <small>({duels.length} total)</small></h2>
+    <h2>{strings.duelHistory} <small>({duels.length} {strings.duelHistoryTotal})</small></h2>
     {duels.length === 0 ? (
-      <p class="empty">No duels recorded yet.</p>
+      <p class="empty">{strings.noDuels}</p>
     ) : (
       <ol class="duel-list">
         {duels.map((d) => {
@@ -209,10 +258,10 @@ function fmtDate(iso: string): string {
           return (
             <li class={won ? "duel-won" : "duel-lost"}>
               <div class="duel-row">
-                <span class="duel-outcome" aria-label={won ? "Won" : "Lost"}>{won ? "W" : "L"}</span>
+                <span class="duel-outcome" aria-label={won ? strings.won : strings.lost}>{won ? "W" : "L"}</span>
                 <div class="duel-content">
                   <div class="duel-opponent">
-                    <span class="vs-label">vs</span>
+                    <span class="vs-label">{strings.vs}</span>
                     {opponentHref ? (
                       <a href={opponentHref}>{opponentTitle}</a>
                     ) : (
@@ -239,9 +288,9 @@ function fmtDate(iso: string): string {
                   <a
                     href={`/ranking/battles/${d.id}/`}
                     class="duel-analysis-link"
-                    title="Read full analysis"
+                    title={strings.readFullAnalysis}
                   >
-                    analysis →
+                    {strings.analysis}
                   </a>
                 )}
               </div>
