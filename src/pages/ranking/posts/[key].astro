@@ -51,6 +51,8 @@ const lang: "en" | "pt" = postInfo?.lang === "pt" ? "pt" : "en";
 const strings =
   lang === "pt"
     ? {
+        dossierSuffix: "Dossiê",
+        metaDescription: `Histórico de ranking e registro de duelos de "${title}" no sistema Hrönir.`,
         readPost: "Ler post →",
         globalRank: "posição global",
         rankChange: "variação de posição",
@@ -71,6 +73,8 @@ const strings =
         ranking: "Ranking",
       }
     : {
+        dossierSuffix: "Dossier",
+        metaDescription: `Ranking history and duel record for "${title}" in the Hrönir system.`,
         readPost: "Read post →",
         globalRank: "global rank",
         rankChange: "rank change",
@@ -154,8 +158,8 @@ function fmtDate(iso: string): string {
 ---
 
 <PageLayout
-  title={`${title} — Dossier | Franklin Baldo`}
-  description={`Ranking history and duel record for "${title}" in the Hrönir system.`}
+  title={`${title} — ${strings.dossierSuffix} | Franklin Baldo`}
+  description={strings.metaDescription}
   lang={lang}
   noindex
   breadcrumb={toBreadcrumbLd(crumbs, Astro.site)}
