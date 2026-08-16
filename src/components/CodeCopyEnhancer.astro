@@ -49,10 +49,8 @@ const ariaCopyLabel = lang === "pt" ? "Copiar código" : "Copy code";
       button.type = "button";
       button.className = "code-copy";
       button.textContent = labels.copy;
-      button.setAttribute(
-        "aria-label",
-        lang ? `${labels.ariaCopy} ${count} (${lang})` : `${labels.ariaCopy} ${count}`,
-      );
+      const langSuffix = lang ? ` (${lang})` : "";
+      button.setAttribute("aria-label", `${labels.ariaCopy} ${count}${langSuffix}`);
 
       let resetTimer: number | undefined;
       let inFlight = false;
