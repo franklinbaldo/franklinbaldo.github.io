@@ -73,7 +73,12 @@ const ICONS: Record<string, string> = {
               <small>
                 {count}{' '}{t(lang, count === 1 ? 'paths.essay' : 'paths.essays')}
                 {' · '}
-                <a href={`${pathsRoot}/${path.slug}/`}>{t(lang, 'paths.startHere')}</a>
+                <a
+                  href={`${pathsRoot}/${path.slug}/`}
+                  aria-label={`${t(lang, 'paths.startHere')} — ${pick(lang, path.title)}`}
+                >
+                  {t(lang, 'paths.startHere')}
+                </a>
               </small>
             </p>
           </div>
