@@ -33,8 +33,10 @@ const ariaCopyLabel = lang === "pt" ? "Copiar código" : "Copy code";
 
   function enhance() {
     const labels = getLabels();
+    let count = 0;
     document.querySelectorAll<HTMLPreElement>("article pre").forEach((pre) => {
       if (pre.parentElement?.classList.contains("code-block")) return;
+      count += 1;
 
       const wrapper = document.createElement("div");
       wrapper.className = "code-block";
@@ -47,7 +49,8 @@ const ariaCopyLabel = lang === "pt" ? "Copiar código" : "Copy code";
       button.type = "button";
       button.className = "code-copy";
       button.textContent = labels.copy;
-      button.setAttribute("aria-label", labels.ariaCopy);
+      const langSuffix = lang ? ` (${lang})` : "";
+      button.setAttribute("aria-label", `${labels.ariaCopy} ${count}${langSuffix}`);
 
       let resetTimer: number | undefined;
       let inFlight = false;
