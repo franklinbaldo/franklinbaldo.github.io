@@ -299,7 +299,7 @@ const showGenreChips =
                     class="fav-btn"
                     type="button"
                     data-suno-id={c.id}
-                    aria-label="Add to favorites"
+                    aria-label={`Add ${c.title || "(untitled)"} to favorites`}
                     aria-pressed="false"
                   >♡</button>
                 </div>
@@ -339,7 +339,11 @@ const showGenreChips =
       const active = favs.includes(id);
       btn.textContent = active ? "♥" : "♡";
       btn.setAttribute("aria-pressed", String(active));
-      btn.setAttribute("aria-label", active ? "Remove from favorites" : "Add to favorites");
+      const title = btn.closest<HTMLElement>(".song-card")?.dataset.title || "";
+      btn.setAttribute(
+        "aria-label",
+        active ? `Remove ${title} from favorites` : `Add ${title} to favorites`,
+      );
       btn.classList.toggle("active", active);
     });
   }
