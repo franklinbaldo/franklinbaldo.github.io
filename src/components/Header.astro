@@ -401,14 +401,14 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
   .nav-burger {
     display: none;
   }
-  /* Unverified: this replaced a previous 1279px cutoff that had a specific
-     measured justification (Pico's own .container breakpoint, plus a
-     measured ~960px width need for the old 8-link flat nav — see git
-     history). This value has not been re-measured against the current
-     content (4 primaryLinks + the "More" summary + music button + language
-     switcher + theme toggle, longest in pt: "Ensaios"/"Projetos"/"Sobre"/
-     "Buscar"/"Mais"). Check in a real browser between ~899px and ~1280px
-     before trusting this, especially in pt. */
+  /* Measured (issue #1536): with the current content (4 primaryLinks + the
+     "More" summary + music button + language switcher + theme toggle,
+     longest in pt: "Arquivo"/"Projetos"/"Sobre"/"Buscar"/"Mais"), .nav-inline
+     never wraps or overflows the header between 899px and 1280px in pt —
+     checked with Playwright at 900/920/950/980/1000/1024/1050/1080/1100/
+     1150/1200/1240/1260/1279/1280px on /pt/, with the right edge of
+     .nav-inline staying ≥90px inside the container's right edge throughout.
+     en labels are shorter, so it holds there too. 899px is kept as-is. */
   @media (max-width: 899px) {
     .nav-inline {
       display: none;
