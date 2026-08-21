@@ -262,7 +262,12 @@ function fmtDate(iso: string): string {
           return (
             <li class={won ? "duel-won" : "duel-lost"}>
               <div class="duel-row">
-                <span class="duel-outcome" aria-label={won ? strings.won : strings.lost}>{won ? "W" : "L"}</span>
+                <span
+                  class="duel-outcome"
+                  aria-label={`${won ? strings.won : strings.lost} ${strings.vs} ${opponentTitle}`}
+                >
+                  {won ? "W" : "L"}
+                </span>
                 <div class="duel-content">
                   <div class="duel-opponent">
                     <span class="vs-label">{strings.vs}</span>

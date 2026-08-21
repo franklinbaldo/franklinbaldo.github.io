@@ -435,7 +435,10 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
                 <div class="bcl-fill loss" style={`width:${100 - tensionPct}%`}></div>
               </div>
             ) : (
-              <div class="bcl-tension bcl-tension-none" aria-label={strings.tensionUnavailable}></div>
+              <div
+                class="bcl-tension bcl-tension-none"
+                aria-label={`${winnerName} vs ${loserName} — ${strings.tensionUnavailable}`}
+              ></div>
             )}
             <span class="bcl-read">{strings.readAnalysisLinkLabel} →</span>
           </a>
