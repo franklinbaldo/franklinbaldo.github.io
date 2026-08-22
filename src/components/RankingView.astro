@@ -319,6 +319,7 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
           const podiumClass = r.rank === 1 ? "row-gold" : r.rank === 2 ? "row-silver" : r.rank === 3 ? "row-bronze" : "";
           const podiumLabel = r.rank === 1 ? strings.podiumGold : r.rank === 2 ? strings.podiumSilver : r.rank === 3 ? strings.podiumBronze : undefined;
           const eloVal = snapshotElo(r.key)?.elo ?? 0;
+          const dossierTooltip = strings.dossierTooltip.replace("{title}", () => r.post?.title ?? r.key);
           return (
             <tr
               class={podiumClass || undefined}
@@ -329,7 +330,7 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
               data-sort-record={r.appearances}
             >
               <th scope="row" class="col-rank">
-                <a href={`/ranking/posts/${r.key}/`} class="rank-link" title={strings.dossierTooltip.replace("{title}", () => r.post?.title ?? r.key)}>{r.rank}</a>
+                <a href={`/ranking/posts/${r.key}/`} class="rank-link" title={dossierTooltip} aria-label={dossierTooltip}>{r.rank}</a>
               </th>
               <td class="col-post">
                 {href ? (
