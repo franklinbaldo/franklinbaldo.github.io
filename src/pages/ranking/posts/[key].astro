@@ -267,7 +267,9 @@ function fmtDate(iso: string): string {
                   <div class="duel-opponent">
                     <span class="vs-label">{strings.vs}</span>
                     {opponentHref ? (
-                      <a href={opponentHref}>{opponentTitle}</a>
+                      <a href={opponentHref} lang={opponent && opponent.lang !== lang ? opponent.lang : undefined}>
+                        {opponentTitle}
+                      </a>
                     ) : (
                       <code>{opponentKey}</code>
                     )}
