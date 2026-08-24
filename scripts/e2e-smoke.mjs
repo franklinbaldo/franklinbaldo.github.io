@@ -46,9 +46,12 @@ function waitForServer(url, timeoutMs = 20_000) {
   });
 }
 
+// Spawned directly (not via `npx astro ...`) so `preview.kill()` below signals
+// the actual server process instead of an intermediary npx wrapper — npx can
+// leave the real astro server as an orphan on the port after the wrapper exits.
 const preview = spawn(
-  "npx",
-  ["astro", "preview", "--port", String(PORT), "--host", "localhost"],
+  "node_modules/.bin/astro",
+  ["preview", "--port", String(PORT), "--host", "localhost"],
   { stdio: "pipe" }
 );
 let previewOutput = "";
@@ -58,46 +61,54 @@ preview.stderr.on("data", (d) => (previewOutput += d));
 const results = [];
 
 try {
-  await waitForServer(BASE);
-
-  const browser = await chromium.launch();
   try {
-    for (const p of PAGES) {
-      const ctx = await browser.newContext();
-      const page = await ctx.newPage();
-      const consoleErrors = [];
-      page.on("console", (msg) => {
-        if (msg.type() === "error") consoleErrors.push(msg.text());
-      });
-      page.on("pageerror", (err) => consoleErrors.push(String(err)));
+    await waitForServer(BASE);
 
-      let httpOk = false;
-      let h1Visible = false;
-      let error = null;
-      try {
-        const response = await page.goto(BASE + p.url, { waitUntil: "load" });
-        httpOk = Boolean(response && response.ok());
-        h1Visible = await page.locator("h1").first().isVisible();
-      } catch (e) {
-        error = e instanceof Error ? e.message : String(e);
+    const browser = await chromium.launch();
+    try {
+      for (const p of PAGES) {
+        const ctx = await browser.newContext();
+        const page = await ctx.newPage();
+        const consoleErrors = [];
+        page.on("console", (msg) => {
+          if (msg.type() === "error") consoleErrors.push(msg.text());
+        });
+        page.on("pageerror", (err) => consoleErrors.push(String(err)));
+
+        let httpOk = false;
+        let h1Visible = false;
+        let error = null;
+        try {
+          const response = await page.goto(BASE + p.url, {
+            waitUntil: "load",
+          });
+          httpOk = Boolean(response && response.ok());
+          h1Visible = await page.locator("h1").first().isVisible();
+        } catch (e) {
+          error = e instanceof Error ? e.message : String(e);
+        }
+
+        results.push({
+          id: p.id,
+          url: p.url,
+          pass: httpOk && h1Visible && consoleErrors.length === 0 && !error,
+          httpOk,
+          h1Visible,
+          consoleErrors,
+          error,
+        });
+        await ctx.close();
       }
-
-      results.push({
-        id: p.id,
-        url: p.url,
-        pass: httpOk && h1Visible && consoleErrors.length === 0 && !error,
-        httpOk,
-        h1Visible,
-        consoleErrors,
-        error,
-      });
-      await ctx.close();
+    } finally {
+      await browser.close();
     }
   } finally {
-    await browser.close();
+    preview.kill();
   }
-} finally {
-  preview.kill();
+} catch (e) {
+  console.error(`e2e smoke: could not complete run — ${e.message}`);
+  console.error(previewOutput);
+  process.exit(1);
 }
 
 let failed = false;
