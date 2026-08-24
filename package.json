@@ -45,7 +45,8 @@
     "suno-rank:round": "node --import tsx/esm scripts/suno-rank/index.js round",
     "suno-rank:ranking": "node --import tsx/esm scripts/suno-rank/index.js ranking",
     "suno-rank:doctor": "node --import tsx/esm scripts/suno-rank/index.js doctor",
-    "test": "node --import tsx/esm --experimental-test-module-mocks --test --test-concurrency=1 \"src/**/*.test.{js,ts}\""
+    "test": "node --import tsx/esm --experimental-test-module-mocks --test --test-concurrency=1 \"src/**/*.test.{js,ts}\"",
+    "test:e2e": "node scripts/e2e-smoke.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.0",
