@@ -318,11 +318,12 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
             : "";
           const podiumClass = r.rank === 1 ? "row-gold" : r.rank === 2 ? "row-silver" : r.rank === 3 ? "row-bronze" : "";
           const podiumLabel = r.rank === 1 ? strings.podiumGold : r.rank === 2 ? strings.podiumSilver : r.rank === 3 ? strings.podiumBronze : undefined;
+          const podiumRowLabel = podiumLabel ? `${podiumLabel} — ${r.post?.title ?? r.key}` : undefined;
           const eloVal = snapshotElo(r.key)?.elo ?? 0;
           return (
             <tr
               class={podiumClass || undefined}
-              aria-label={podiumLabel}
+              aria-label={podiumRowLabel}
               data-sort-winrate={winRatePct}
               data-sort-delta={delta ?? 0}
               data-sort-elo={eloVal}
