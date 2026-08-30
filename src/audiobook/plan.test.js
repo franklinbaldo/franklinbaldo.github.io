@@ -56,7 +56,10 @@ test("voice changes invalidate the segment request digest", () => {
     },
   });
 
-  assert.notEqual(first.segments[0].input_digest, second.segments[0].input_digest);
+  assert.notEqual(
+    first.segments[0].input_digest,
+    second.segments[0].input_digest
+  );
   assert.equal(first.segments[1].input_digest, second.segments[1].input_digest);
 });
 
@@ -64,19 +67,16 @@ test("rejects unknown logical speaker", () => {
   assert.throws(
     () => parseNarrationText(NARRATION, { voices: { narrator: {} } }),
     (error) =>
-      error.details?.some((detail) => detail.includes("unknown speaker: alice")),
+      error.details?.some((detail) => detail.includes("unknown speaker: alice"))
   );
 });
 
 test("rejects duplicate segment ids", () => {
-  const duplicate = NARRATION.replace(
-    "example-001-s0002",
-    "example-001-s0001",
-  );
+  const duplicate = NARRATION.replace("example-001-s0002", "example-001-s0001");
   assert.throws(
     () =>
       parseNarrationText(duplicate, { voices: { narrator: {}, alice: {} } }),
     (error) =>
-      error.details?.some((detail) => detail.includes("duplicate segment id")),
+      error.details?.some((detail) => detail.includes("duplicate segment id"))
   );
 });
