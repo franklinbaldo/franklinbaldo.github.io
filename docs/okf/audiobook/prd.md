@@ -24,7 +24,7 @@ A computação de GPU deve ser **CLI-first**. O projeto não usa notebooks como 
 
 GitHub Actions é o ponto único de operação da pipeline: valida, planeja, despacha compute remoto usando credenciais em GitHub Secrets, recupera outputs, monta o capítulo e publica os artefatos. O contrato detalhado está em [`github-actions-execution.md`](./github-actions-execution.md).
 
-Capítulos publicados também devem ser distribuídos como episódios de um podcast RSS hospedado pelo blog. O usuário assina o feed uma vez e recebe os capítulos seguintes automaticamente no tocador de podcast. O contrato de publicação está em [`podcast-publication.md`](./podcast-publication.md).
+Capítulos publicados também devem ser distribuídos como episódios de um podcast RSS hospedado pelo blog. O usuário assina o feed uma vez no tocador de sua preferência e recebe automaticamente os capítulos seguintes. O contrato de publicação está em [`podcast-publication.md`](./podcast-publication.md).
 
 ## 2. Problema
 
