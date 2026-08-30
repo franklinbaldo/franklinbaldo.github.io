@@ -8,7 +8,7 @@ import { createPlan, createWorkPlan } from "../../src/audiobook/plan.js";
 
 function usage() {
   console.error(
-    "Usage: node scripts/audiobook/plan.mjs (--work <work_id> --chapter <chapter_id> | --narration <file.md> --voices <voices.yaml>) [--output <plan.json>]",
+    "Usage: node scripts/audiobook/plan.mjs (--work <work_id> --chapter <chapter_id> | --narration <file.md> --voices <voices.yaml>) [--output <plan.json>]"
   );
 }
 
@@ -35,27 +35,38 @@ function parseArgs(argv) {
 
   const byWork = args.workId && args.chapterId;
   const byFiles = args.narrationPath && args.voicesPath;
-  if (!byWork && !byFiles) throw new Error("provide --work/--chapter or --narration/--voices");
-  if (byWork && byFiles) throw new Error("choose either work/chapter resolution or explicit file paths");
+  if (!byWork && !byFiles)
+    throw new Error("provide --work/--chapter or --narration/--voices");
+  if (byWork && byFiles)
+    throw new Error(
+      "choose either work/chapter resolution or explicit file paths"
+    );
   return args;
 }
 
 try {
   const args = parseArgs(process.argv.slice(2));
   const plan = args.workId
-    ? createWorkPlan({ rootDir: process.cwd(), workId: args.workId, chapterId: args.chapterId })
+    ? createWorkPlan({
+        rootDir: process.cwd(),
+        workId: args.workId,
+        chapterId: args.chapterId,
+      })
     : createPlan(args);
   const json = `${JSON.stringify(plan, null, 2)}\n`;
   if (args.outputPath) {
     fs.mkdirSync(path.dirname(args.outputPath), { recursive: true });
     fs.writeFileSync(args.outputPath, json);
-    console.error(`wrote ${args.outputPath}: ${plan.segments.length} segment(s)`);
+    console.error(
+      `wrote ${args.outputPath}: ${plan.segments.length} segment(s)`
+    );
   } else {
     process.stdout.write(json);
   }
 } catch (error) {
   console.error(error instanceof Error ? error.message : String(error));
-  if (error?.details) for (const detail of error.details) console.error(`- ${detail}`);
+  if (error?.details)
+    for (const detail of error.details) console.error(`- ${detail}`);
   usage();
   process.exit(2);
 }
