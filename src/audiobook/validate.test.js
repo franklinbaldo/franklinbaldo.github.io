@@ -105,14 +105,12 @@ test("rejects ready_for_audio when it disagrees with gates", () => {
   );
 });
 
-test("validates the repository HPMOR work state", () => {
+test("validates the repository HPMOR work state without freezing editorial progress", () => {
   const result = validateWork(process.cwd(), "hpmor", {
     chapterId: "hpmor-001",
   });
   assert.equal(result.workId, "hpmor");
   assert.equal(result.chapters[0].readyForAudio, false);
-  assert.equal(
-    result.chapters[0].nextAction,
-    "import source snapshot and establish stable segment ids"
-  );
+  assert.equal(typeof result.chapters[0].nextAction, "string");
+  assert.ok(result.chapters[0].nextAction.length > 0);
 });
