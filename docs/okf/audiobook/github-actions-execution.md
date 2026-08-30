@@ -2,7 +2,7 @@
 type: Architecture Contract
 title: Audiobook — GitHub Actions control plane
 description: Contrato para usar GitHub Actions como ponto único de operação da pipeline de audiolivro e despachar compute remoto por CLI.
-tags: [audiobook, github-actions, kaggle, colab, cli, tts]
+tags: [audiobook, github-actions, kaggle, colab, cli, tts, internet-archive]
 timestamp: 2026-08-30T18:20:00Z
 ---
 
@@ -14,174 +14,154 @@ A operação normal da pipeline deve acontecer por **GitHub Actions**.
 
 O operador não precisa abrir Kaggle, Colab nem notebook. O workflow recebe os parâmetros da execução, lê credenciais de GitHub Secrets, valida e planeja o trabalho, despacha compute remoto, acompanha o job, recupera os resultados, valida os artefatos, monta o capítulo e publica os outputs selecionados.
 
-GitHub Actions é o **plano de controle**; GPU e TTS são planos de execução substituíveis.
+GitHub Actions é o **plano de controle**; GPU, TTS e storage são planos de execução substituíveis.
 
 ```text
 workflow_dispatch / future automation
-              |
-              v
-        GitHub Actions
-              |
-     +--------+--------+----------------+
-     |                 |                |
-   Kaggle            Colab            API TTS
-     |                 |                |
-     +--------+--------+----------------+
-              |
-              v
-       segmentos de áudio
-              |
-              v
-      validate + assemble
-              |
-              v
-       publish + artifact
+                  |
+                  v
+           GitHub Actions
+                  |
+        validate + plan
+                  |
+       +----------+----------+
+       |          |          |
+     Colab      Kaggle      API
+       |          |          |
+       +----------+----------+
+                  |
+             collect
+                  |
+             assemble
+                  |
+             publish
+                  |
+       +----------+----------+
+       |                     |
+ Internet Archive       blog / feed RSS
+ (media when enabled)   (canonical identity)
 ```
 
-## 2. Interface do workflow
+## 2. Segurança e autenticação
 
-O workflow de produção deve aceitar, no mínimo:
+Nenhum segredo é versionado.
 
-- `work`;
-- `chapter` ou intervalo;
-- `backend`/modelo TTS;
-- `runner`: `kaggle`, `colab`, `api` ou `local` para testes;
-- `dry_run`;
-- `force` para invalidar cache deliberadamente;
-- opcionalmente `publish` para separar geração de publicação.
+Credenciais externas são mantidas em GitHub Actions Secrets e expostas somente ao step que precisa delas. O workflow deve evitar ecoar segredos em logs e não deve gravá-los em artifacts.
 
-O workflow deve ser acionável manualmente por `workflow_dispatch` na primeira versão. Geração automática por eventos pode ser adicionada somente depois que cache, custo e publicação estiverem estáveis.
+Exemplos de famílias de credenciais:
 
-## 3. Segredos
+- Kaggle API token;
+- credenciais headless aceitas pelo Colab CLI;
+- tokens de Hugging Face quando necessários para modelos gated;
+- chaves de APIs TTS;
+- credenciais de upload do Internet Archive quando o backend de publicação estiver habilitado.
 
-Credenciais nunca entram em Markdown, manifests públicos, arquivos de staging ou argumentos impressos em logs.
+Os nomes finais dos secrets são definidos pela implementação dos respectivos adapters. O contrato é que cada adapter documente explicitamente quais secrets consome e falhe cedo quando estiverem ausentes.
 
-Nomes canônicos iniciais:
-
-```text
-KAGGLE_API_TOKEN
-COLAB_ADC_JSON          # ou outro mecanismo headless comprovado pelo CLI
-HF_TOKEN                # quando um modelo no Hugging Face exigir autenticação
-HIGGS_API_KEY           # se usado
-FISH_API_KEY            # se usado
-```
-
-Outros backends podem adicionar seus próprios secrets sem alterar o contrato do corpus.
+## 3. Runners remotos
 
 ### 3.1. Kaggle
 
-O runner deve usar autenticação não interativa suportada pelo Kaggle CLI, preferencialmente `KAGGLE_API_TOKEN` exposto apenas como variável de ambiente do step.
+O workflow instala o Kaggle CLI, injeta a credencial por ambiente, monta um staging directory, envia um **script kernel** privado com GPU e acompanha o estado até sucesso/falha.
 
-O token não pode ser copiado para o staging enviado ao kernel.
+O job remoto executa o mesmo `worker.py` usado localmente.
 
-Referência: [Kaggle CLI](https://github.com/Kaggle/kaggle-cli).
+O workflow então baixa os outputs do kernel e os valida antes da montagem/publicação.
 
 ### 3.2. Colab
 
-O runner deve usar o mecanismo headless oficialmente suportado pelo Colab CLI. A primeira implementação deve provar em CI que a identidade usada pelo workflow consegue provisionar o acelerador esperado.
+O workflow instala o CLI oficial do Colab e usa somente operações não interativas.
 
-A disponibilidade de GPU gratuita da conta é uma propriedade operacional do runner, não do modelo TTS. Falta de quota/alocação deve produzir status `runner_unavailable`, não reprovar o backend de TTS.
+O caminho preferido deve ser `colab run` ou `colab exec`, mantendo o mesmo worker Python e transmitindo configuração por argumentos/arquivos e environment variables suportadas pelo CLI.
 
-Segredos necessários pelo worker remoto devem ser injetados no runtime pelo mecanismo de environment variables do CLI, sem `.env` versionado ou notebook intermediário.
+A autenticação headless e, principalmente, o acesso efetivo à GPU gratuita a partir da identidade usada no GitHub Actions devem ser provados por um smoke test real antes de o runner Colab ser declarado suportado para produção.
 
-Referência: [Google Colab CLI](https://github.com/googlecolab/google-colab-cli).
+Falha de quota/provisionamento é erro do runner, não do backend TTS.
 
-## 4. Worker comum
+### 3.3. API
 
-O GitHub Actions nunca deve conter a lógica principal do modelo.
+Backends HTTP podem pular a etapa de GPU remota, mas continuam obedecendo ao mesmo plano de segmentos, manifests, cache e validações.
 
-O mesmo `scripts/audiobook/worker.py` é executado localmente ou no runner remoto. O workflow apenas:
+## 4. Publicação e Internet Archive
 
-1. produz `plan.json`;
-2. prepara staging mínimo;
-3. despacha o worker;
-4. aguarda conclusão;
-5. baixa outputs;
-6. valida o manifesto;
-7. chama `assemble`;
-8. publica quando solicitado.
+GitHub Actions também é o ponto único de operação da publicação.
 
-Isso impede divergência entre implementação local, Kaggle e Colab.
+Quando `publish` estiver habilitado para o Internet Archive, o workflow deve:
 
-## 5. Kaggle em CI
+1. instalar o cliente/adapter de upload (`ia`/`internetarchive` ou equivalente suportado);
+2. carregar as credenciais exclusivamente de GitHub Secrets;
+3. fazer upload do áudio final e demais arquivos selecionados para o item estável da obra;
+4. aguardar o arquivo ficar disponível publicamente;
+5. verificar a URL final conforme o contrato de podcast (`HEAD`, range request, MIME e bytes);
+6. só então atualizar o feed RSS e publicar o blog.
 
-Fluxo conceitual:
+A ordem impede que o feed anuncie um episódio cujo enclosure ainda não possa ser reproduzido.
 
-```bash
-kaggle kernels push -p "$STAGING"
-# poll até complete/error
-kaggle kernels status "$KERNEL_REF"
-kaggle kernels output "$KERNEL_REF" -p "$OUTPUT"
-```
+O Internet Archive é um backend de publicação, não uma fonte canônica: Git continua guardando corpus, configuração, hashes e proveniência. Se o Archive estiver temporariamente indisponível, o áudio montado continua recuperável como artifact de build e a publicação pode ser retomada sem regerar o TTS.
 
-O job remoto deve ser `kernel_type: script`, privado e com GPU habilitada.
+## 5. Workflow de produção
 
-O nome do kernel deve incorporar identidade suficiente para evitar colisão entre execuções concorrentes ou o workflow deve serializar explicitamente o runner.
+O workflow inicial deve usar `workflow_dispatch` e aceitar parâmetros como:
 
-## 6. Colab em CI
+- obra;
+- capítulo/intervalo;
+- backend/modelo;
+- runner (`kaggle`, `colab`, `api` e, para debug, `local`);
+- `dry_run`;
+- `force`;
+- `publish`;
+- backend de storage/publicação quando houver mais de um.
 
-O runner pode usar uma execução efêmera para jobs simples ou uma VM persistente durante um batch quando o custo de carregar o modelo repetidamente for relevante.
-
-Fluxo conceitual efêmero:
-
-```bash
-colab run --gpu <preferencia> scripts/audiobook/worker.py -- <args>
-```
-
-Fluxo conceitual persistente:
+Fluxo de referência:
 
 ```text
-colab new -> install/sync -> exec N vezes -> download -> stop
+checkout
+  -> setup
+  -> validate
+  -> plan
+  -> dry-run gate
+  -> dispatch remote compute
+  -> wait/poll
+  -> download results
+  -> validate output manifest
+  -> assemble
+  -> encode final media
+  -> optional publish media (Internet Archive preferred)
+  -> verify public enclosure
+  -> generate feed/site metadata
+  -> deploy site
 ```
 
-O wrapper deve garantir teardown em `finally`/step `always()` quando uma VM persistente tiver sido criada.
+## 6. Idempotência e retomada
 
-## 7. Estado e retomada
+O workflow não pressupõe que uma execução longa termina em uma única tentativa.
 
-Uma execução remota pode terminar por quota, timeout ou falha transitória. Por isso:
+Cada fase deve poder ser retomada a partir de estado verificável:
 
-- cada segmento é independente;
-- cada output possui cache key determinística;
-- o worker escreve progresso incremental;
-- rerun não deve refazer segmentos válidos já persistidos;
-- o manifesto distingue `generated`, `reused`, `failed` e `pending`;
-- o workflow pode retomar um capítulo sem começar do zero.
+- cache keys determinam segmentos já válidos;
+- outputs remotos são validados por digest;
+- capítulo montado é regenerável sem ressintetizar segmentos válidos;
+- upload de publicação usa identifier/nome de arquivo estáveis;
+- feed só muda após confirmação do arquivo público.
 
-## 8. Artefatos do workflow
+Uma falha depois da síntese não deve obrigar a gastar GPU novamente.
 
-Cada execução de síntese deve produzir, no mínimo:
+## 7. Dry-run e proteção de custo
 
-```text
-plan.json
-run-manifest.json
-segments/
-chapter/                 # quando assemble tiver sido executado
-benchmark/               # quando for rodada comparativa
-```
+`dry_run` não envia job pago nem chama API cobrada. Ele mostra exatamente o que seria produzido e quais credenciais/runners seriam necessários.
 
-Os outputs de áudio podem ser temporariamente publicados como GitHub Actions artifacts durante desenvolvimento. Isso não define o storage de distribuição final.
+Qualquer backend capaz de gerar cobrança deve permanecer opt-in na primeira versão.
 
-## 9. Segurança e logs
+Compute gratuito de Kaggle/Colab também deve respeitar planejamento e cache para não desperdiçar quota.
 
-- usar `set -euo pipefail` nos wrappers shell;
-- nunca usar `set -x` em steps que manipulam secrets;
-- não imprimir environment completo;
-- não serializar tokens no `plan.json` ou manifesto;
-- marcar valores derivados sensíveis com masking quando necessário;
-- workflows de PR vindos de forks não recebem secrets e, portanto, não podem sintetizar remotamente;
-- a síntese real deve exigir evento/contexto autorizado.
+## 8. Critérios de aceite
 
-## 10. Critério de aceite do runner automático
+O control plane está implementado quando:
 
-Um runner só pode ser declarado suportado em GitHub Actions depois de um teste end-to-end que prove:
-
-1. autenticação headless;
-2. provisionamento do compute;
-3. envio do worker e input;
-4. execução sem UI;
-5. recuperação dos outputs;
-6. teardown/encerramento;
-7. ausência de secret nos logs e artefatos;
-8. rerun idempotente com cache.
-
-Até esse teste, o runner pode existir como experimental sem bloquear os demais.
+1. um workflow manual consegue validar e planejar um capítulo sem segredo externo;
+2. um runner remoto consegue executar o worker e devolver output validável;
+3. secrets nunca aparecem em corpus, commit ou artifact;
+4. falha de runner é distinguida de falha de modelo;
+5. uma execução interrompida pode ser retomada sem regenerar segmentos válidos;
+6. a mesma interface de workflow pode trocar Kaggle/Colab/API sem alterar o corpus;
+7. quando a publicação no Internet Archive for ativada, upload, verificação e atualização do feed podem ocorrer integralmente dentro do GitHub Actions.
