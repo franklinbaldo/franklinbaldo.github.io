@@ -54,6 +54,8 @@ Cada episódio deve incluir, no mínimo:
 
 O feed deve ser validável por ferramentas de podcast antes de publicação.
 
+Referência de interoperabilidade: [Apple Podcasts — RSS feed requirements](https://podcasters.apple.com/support/823-podcast-requirements).
+
 ## 4. Áudio do episódio
 
 O formato de distribuição inicial preferido é MP3 ou AAC, mantendo WAV/FLAC apenas como intermediário/master quando necessário.
@@ -69,11 +71,15 @@ A URL usada no `<enclosure>` precisa:
 - não depender de cookie ou sessão;
 - permanecer acessível depois que o workflow de Actions terminar.
 
+Referência de áudio: [Apple Podcasts — audio requirements](https://podcasters.apple.com/support/893-audio-requirements).
+
 ## 5. Feed no blog; mídia fora do Pages quando necessário
 
 O feed, páginas HTML, artwork, transcript e manifests pequenos podem ser publicados pelo próprio site.
 
-O áudio integral **não deve depender de caber no deploy do GitHub Pages**. Um audiolivro longo pode ultrapassar os limites de tamanho do Pages mesmo com compressão eficiente.
+O áudio integral **não deve depender de caber no deploy do GitHub Pages**. Um audiolivro longo pode ultrapassar os limites de tamanho do Pages mesmo com compressão eficiente. O GitHub atualmente recomenda até 1 GB para o repositório-fonte, limita o site publicado a 1 GB e aplica limite de banda mensal soft de 100 GB.
+
+Referência: [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
 
 A arquitetura portanto separa:
 
@@ -150,11 +156,18 @@ Cada episódio pode expor:
 
 O transcript é derivado da camada de narração + timestamps efetivamente produzidos pelo áudio, não da tradução isoladamente.
 
+Referências:
+
+- [Podcasting 2.0 — transcript tag](https://podcasting2.org/docs/podcast-namespace/tags/transcript)
+- [Podcasting 2.0 — transcript formats](https://podcasting2.org/docs/podcast-namespace/examples/transcripts/transcripts)
+
 ### 8.2. Chapters
 
 A pipeline pode gerar um arquivo JSON de capítulos/marcadores e referenciá-lo com `<podcast:chapters>`.
 
 Mesmo que cada episódio já corresponda a um capítulo do livro, os chapters internos podem representar cenas, seções ou outros marcos úteis dentro de episódios longos.
+
+Referência: [Podcasting 2.0 — chapters](https://podcasting2.org/docs/podcast-namespace/tags/chapters).
 
 ## 9. Relação com as três camadas OKF
 
