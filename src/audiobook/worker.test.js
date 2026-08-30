@@ -20,6 +20,7 @@ function makePlan(root) {
           {
             segment_id: "example-001-s0001",
             speaker: "narrator",
+            voice: { role: "narrator", locale: "pt-BR" },
             text: "Teste.",
             direction: {},
             input_digest: "sha256:1111111111111111111111111111111111111111111111111111111111111111",
@@ -27,6 +28,7 @@ function makePlan(root) {
           {
             segment_id: "example-001-s0002",
             speaker: "alice",
+            voice: { role: "character", locale: "pt-BR" },
             text: "Outro teste.",
             direction: { emotion: "curious" },
             input_digest: "sha256:2222222222222222222222222222222222222222222222222222222222222222",
