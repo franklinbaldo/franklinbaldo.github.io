@@ -1,7 +1,7 @@
 schema: audiobook-work-state-v1
 work_id: hpmor
 status: preparing
-next_action: import and segment chapter 1 original, then create aligned translation
+next_action: continue chapter 1 from segment hpmor-001-s0002
 project_gates:
   work_metadata_ready: true
   global_editorial_guide_ready: true
@@ -10,10 +10,17 @@ project_gates:
   work_editorial_guide_ready: true
   voices_ready: true
   pronunciation_lexicon_ready: true
+  rights_provenance_metadata_ready: true
+publication:
+  public_distribution_authorized: false
+  blocker: record explicit authorization basis before enabling podcast or public audio upload
 chapters:
   hpmor-001:
-    status: not_started
-    next_action: import source snapshot and establish stable segment ids
+    status: in_progress
+    next_action: import, translate, and prepare narration for hpmor-001-s0002 without renumbering hpmor-001-s0001
+    completed_segments:
+      - hpmor-001-s0001
+    next_segment_id: hpmor-001-s0002
     gates:
       work_ready: true
       source_ready: false
