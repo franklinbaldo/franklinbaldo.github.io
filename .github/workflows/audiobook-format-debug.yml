@@ -1,0 +1,36 @@
+name: Audiobook Format Debug
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Show canonical Prettier patch
+        run: |
+          npx prettier --write \
+            scripts/audiobook/plan.mjs \
+            src/audiobook/plan.js \
+            src/audiobook/plan.test.js \
+            src/audiobook/runners.test.js \
+            src/audiobook/worker.test.js
+          git diff -- \
+            scripts/audiobook/plan.mjs \
+            src/audiobook/plan.js \
+            src/audiobook/plan.test.js \
+            src/audiobook/runners.test.js \
+            src/audiobook/worker.test.js
+          test -z "$(git status --short -- \
+            scripts/audiobook/plan.mjs \
+            src/audiobook/plan.js \
+            src/audiobook/plan.test.js \
+            src/audiobook/runners.test.js \
+            src/audiobook/worker.test.js)"
