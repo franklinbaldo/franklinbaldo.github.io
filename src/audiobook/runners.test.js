@@ -8,7 +8,10 @@ for (const script of [
   "scripts/audiobook/runners/kaggle.sh",
 ]) {
   test(`shell syntax: ${script}`, () => {
-    const result = spawnSync("bash", ["-n", script], { cwd: process.cwd(), encoding: "utf8" });
+    const result = spawnSync("bash", ["-n", script], {
+      cwd: process.cwd(),
+      encoding: "utf8",
+    });
     assert.equal(result.status, 0, result.stderr);
   });
 }
