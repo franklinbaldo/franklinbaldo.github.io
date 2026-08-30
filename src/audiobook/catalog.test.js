@@ -22,7 +22,7 @@ function fixture() {
   write(
     root,
     "data/audiobooks/example/state.yaml",
-    `schema: audiobook-work-state-v1\nwork_id: example\nstatus: publishing\nnext_action: publish second chapter\nchapters:\n  example-001:\n    status: published\n    publication:\n      status: published\n      title: Capítulo 1\n      published_at: 2026-08-30T12:00:00-04:00\n      duration_seconds: 120\n      enclosure:\n        url: https://archive.example/chapter-001.mp3\n        bytes: 1234\n        type: audio/mpeg\n  example-002:\n    status: ready\n    publication:\n      status: ready\n      title: Capítulo 2\n`,
+    `schema: audiobook-work-state-v1\nwork_id: example\nstatus: publishing\nnext_action: publish third chapter\nchapters:\n  example-001:\n    status: published\n    publication:\n      status: published\n      title: Capítulo 1\n      published_at: 2026-08-30T12:00:00-04:00\n      duration_seconds: 120\n      enclosure:\n        url: https://archive.example/chapter-001.mp3\n        bytes: 1234\n        type: audio/mpeg\n  example-002:\n    status: published\n    publication:\n      status: published\n      title: Capítulo 2\n      published_at: 2026-08-30T13:00:00-04:00\n      duration_seconds: 130\n      enclosure:\n        url: https://archive.example/chapter-002.mp3\n        bytes: 2345\n        type: audio/mpeg\n  example-003:\n    status: ready\n    publication:\n      status: ready\n      title: Capítulo 3\n`,
   );
   return root;
 }
@@ -37,14 +37,17 @@ test("loads work metadata and chapter state", () => {
   const root = fixture();
   const work = loadWork(root, "example");
   assert.equal(work.workId, "example");
-  assert.equal(work.chapters.length, 2);
+  assert.equal(work.chapters.length, 3);
 });
 
-test("exposes only published chapters as podcast episodes", () => {
+test("exposes only published chapters, newest first", () => {
   const root = fixture();
   const episodes = publishedEpisodes(loadWork(root, "example"));
-  assert.deepEqual(episodes.map((episode) => episode.chapterId), ["example-001"]);
-  assert.equal(episodes[0].enclosure.bytes, 1234);
+  assert.deepEqual(episodes.map((episode) => episode.chapterId), [
+    "example-002",
+    "example-001",
+  ]);
+  assert.equal(episodes[0].enclosure.bytes, 2345);
 });
 
 test("rejects unsafe work ids", () => {
