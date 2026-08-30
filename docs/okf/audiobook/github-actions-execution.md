@@ -74,6 +74,8 @@ O runner deve usar autenticação não interativa suportada pelo Kaggle CLI, pre
 
 O token não pode ser copiado para o staging enviado ao kernel.
 
+Referência: [Kaggle CLI](https://github.com/Kaggle/kaggle-cli).
+
 ### 3.2. Colab
 
 O runner deve usar o mecanismo headless oficialmente suportado pelo Colab CLI. A primeira implementação deve provar em CI que a identidade usada pelo workflow consegue provisionar o acelerador esperado.
@@ -81,6 +83,8 @@ O runner deve usar o mecanismo headless oficialmente suportado pelo Colab CLI. A
 A disponibilidade de GPU gratuita da conta é uma propriedade operacional do runner, não do modelo TTS. Falta de quota/alocação deve produzir status `runner_unavailable`, não reprovar o backend de TTS.
 
 Segredos necessários pelo worker remoto devem ser injetados no runtime pelo mecanismo de environment variables do CLI, sem `.env` versionado ou notebook intermediário.
+
+Referência: [Google Colab CLI](https://github.com/googlecolab/google-colab-cli).
 
 ## 4. Worker comum
 
