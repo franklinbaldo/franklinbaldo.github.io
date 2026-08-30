@@ -2,7 +2,7 @@
 type: Product Architecture
 title: Audiobook — podcast publication contract
 description: Contrato para publicar capítulos de audiolivro como episódios de um podcast RSS hospedado pelo blog.
-tags: [audiobook, podcast, rss, podcasting-2.0, astro, publishing]
+tags: [audiobook, podcast, rss, podcasting-2.0, astro, publishing, internet-archive]
 timestamp: 2026-08-30T18:25:00Z
 ---
 
@@ -99,7 +99,52 @@ Media storage
   - ...
 ```
 
-O backend de mídia é substituível. Pode começar com uma opção gratuita/experimental, desde que satisfaça o contrato HTTP acima. A identidade do podcast não muda quando o storage muda.
+O backend de mídia é substituível. A identidade do podcast não muda quando o storage muda.
+
+### 5.1. Internet Archive como destino durável preferencial
+
+O **Internet Archive** é o destino durável preferencial para os arquivos finais publicados do audiolivro, sem ser requisito para o primeiro protótipo.
+
+A motivação é separar três funções diferentes:
+
+- GitHub mantém código, corpus, configuração, manifestos e proveniência;
+- GitHub Pages mantém a identidade pública, páginas e feed RSS;
+- Internet Archive mantém os binários finais de mídia destinados à distribuição durável.
+
+O fluxo de produção pode começar usando artifacts temporários de GitHub Actions ou outro storage experimental. A promoção para Internet Archive entra quando a pipeline de publicação estiver estável.
+
+O upload deve ser totalmente headless e acionável pelo mesmo GitHub Actions, preferencialmente através do cliente de linha de comando `ia`/biblioteca `internetarchive` ou API equivalente, com credenciais mantidas exclusivamente em GitHub Secrets. O projeto não depende de interação manual no site do Archive.
+
+O upload para Internet Archive deve ser **idempotente**: a obra recebe um identifier estável, e cada capítulo final usa um nome de arquivo determinístico. Um desenho inicial possível é:
+
+```text
+Internet Archive item: franklinbaldo-hpmor-ptbr-audiobook
+
+files:
+  hpmor-001.mp3
+  hpmor-002.mp3
+  hpmor-003.mp3
+  ...
+  cover.jpg
+  manifest.json
+```
+
+A identidade do item e os nomes exatos ainda podem mudar antes da primeira publicação, mas, depois de expostos no feed, devem ser tratados como contratos externos.
+
+Antes de inserir uma URL do Archive em `<enclosure>`, o estágio `publish` deve verificar empiricamente que a URL final do arquivo satisfaz o contrato de podcast desta especificação (`HEAD`, range requests, MIME e estabilidade). O Internet Archive é o destino preferencial, não uma exceção às validações de interoperabilidade.
+
+A pipeline deve registrar no manifesto de publicação:
+
+- identifier do item no Internet Archive;
+- nome do arquivo remoto;
+- URL pública final usada no `<enclosure>`;
+- digest local e, quando disponível, digest reportado pelo storage;
+- momento do upload;
+- resultado da verificação HTTP pós-upload.
+
+A substituição de um áudio regenerado não altera o `episode_guid`. O feed pode atualizar o `<enclosure>` para a versão final do mesmo capítulo mantendo a identidade lógica do episódio.
+
+Referência operacional: o projeto oficial `internetarchive` fornece biblioteca Python e a ferramenta de linha de comando `ia`, incluindo upload de arquivos para itens do Archive.
 
 ## 6. Publicação pela mesma pipeline
 
@@ -109,7 +154,7 @@ Fluxo:
 
 1. validar áudio final;
 2. calcular digest, bytes, duração e MIME;
-3. enviar o arquivo para media storage;
+3. enviar o arquivo para media storage — preferencialmente Internet Archive quando esse backend estiver habilitado;
 4. verificar `HEAD` e range request na URL pública;
 5. gerar/atualizar metadata do episódio;
 6. gerar transcript/timestamps derivados quando disponíveis;
@@ -216,4 +261,5 @@ A publicação como podcast está funcional quando:
 4. o episódio mantém GUID estável entre regenerações;
 5. o feed pode ser adicionado manualmente a um player de podcast;
 6. após publicar um segundo capítulo, o player o recebe como novo episódio sem nova assinatura;
-7. transcript e chapters opcionais não quebram compatibilidade RSS tradicional.
+7. transcript e chapters opcionais não quebram compatibilidade RSS tradicional;
+8. quando o backend Internet Archive estiver ativado, o upload e a verificação pós-upload são feitos integralmente pelo workflow, sem etapa manual.
