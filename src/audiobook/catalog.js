@@ -72,7 +72,7 @@ export function publishedEpisodes(work) {
       transcript: chapter.publication.transcript ?? null,
       chapters: chapter.publication.chapters ?? null,
     }))
-    .sort((a, b) => new Date(a.publishedAt).valueOf() - new Date(b.publishedAt).valueOf());
+    .sort((a, b) => new Date(b.publishedAt).valueOf() - new Date(a.publishedAt).valueOf());
 }
 
 export { WORK_ID_PATTERN };
