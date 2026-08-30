@@ -14,6 +14,10 @@ chapters:
   hpmor-001:
     status: not_started
     next_action: import source snapshot and establish stable segment ids
+    files:
+      original: original/001.md
+      translation: translation/001.md
+      narration: narration/001.md
     gates:
       work_ready: true
       source_ready: false
