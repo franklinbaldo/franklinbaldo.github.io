@@ -1,0 +1,187 @@
+name: Audiobook TTS Benchmark
+
+on:
+  workflow_dispatch:
+    inputs:
+      benchmark:
+        description: Benchmark corpus id
+        required: true
+        default: pt-br-audiobook-v1
+        type: string
+      runner:
+        description: Compute runner
+        required: true
+        default: kaggle
+        type: choice
+        options:
+          - kaggle
+          - colab
+          - local
+      backend:
+        description: TTS backend
+        required: true
+        default: breeze
+        type: choice
+        options:
+          - breeze
+          - fake
+      model:
+        description: Model repository/path (empty uses backend default)
+        required: false
+        default: ""
+        type: string
+      accelerator:
+        description: T4 for Colab; NvidiaTeslaT4 for Kaggle
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: audiobook-benchmark-${{ inputs.benchmark }}-${{ inputs.backend }}-${{ inputs.runner }}
+  cancel-in-progress: false
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Build deterministic benchmark plan
+        env:
+          BENCHMARK: ${{ inputs.benchmark }}
+        run: |
+          FILE="data/audiobook-benchmarks/$BENCHMARK.yaml"
+          [[ -f "$FILE" ]] || { echo "Unknown benchmark: $BENCHMARK" >&2; exit 2; }
+          node scripts/audiobook/benchmark-plan.mjs \
+            --benchmark "$FILE" \
+            --output "$RUNNER_TEMP/benchmark-plan.json"
+
+      - name: Resolve backend model
+        id: model
+        env:
+          BACKEND: ${{ inputs.backend }}
+          REQUESTED_MODEL: ${{ inputs.model }}
+        run: |
+          if [[ -n "$REQUESTED_MODEL" ]]; then
+            MODEL="$REQUESTED_MODEL"
+          elif [[ "$BACKEND" == "breeze" ]]; then
+            MODEL="BreezeBlue/Breeze-TTS-2"
+          else
+            MODEL="deterministic-tone-v1"
+          fi
+          echo "model=$MODEL" >> "$GITHUB_OUTPUT"
+
+      - name: Configure Kaggle CLI
+        if: ${{ inputs.runner == 'kaggle' }}
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Run benchmark on Kaggle
+        if: ${{ inputs.runner == 'kaggle' }}
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          BACKEND: ${{ inputs.backend }}
+          MODEL: ${{ steps.model.outputs.model }}
+          REQUESTED_ACCELERATOR: ${{ inputs.accelerator }}
+        run: |
+          ACCELERATOR="${REQUESTED_ACCELERATOR:-NvidiaTeslaT4}"
+          bash scripts/audiobook/runners/kaggle.sh \
+            --plan "$RUNNER_TEMP/benchmark-plan.json" \
+            --output "$RUNNER_TEMP/audiobook-result.zip" \
+            --backend "$BACKEND" \
+            --model "$MODEL" \
+            --accelerator "$ACCELERATOR"
+
+      - name: Configure Colab CLI
+        if: ${{ inputs.runner == 'colab' }}
+        env:
+          COLAB_ADC_JSON: ${{ secrets.COLAB_ADC_JSON }}
+        run: |
+          [[ -n "$COLAB_ADC_JSON" ]] || { echo "Missing GitHub secret COLAB_ADC_JSON" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'google-colab-cli==0.6.0'
+          printf '%s' "$COLAB_ADC_JSON" > "$RUNNER_TEMP/colab-adc.json"
+          chmod 600 "$RUNNER_TEMP/colab-adc.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/colab-adc.json" >> "$GITHUB_ENV"
+
+      - name: Run benchmark on Colab
+        if: ${{ inputs.runner == 'colab' }}
+        env:
+          BACKEND: ${{ inputs.backend }}
+          MODEL: ${{ steps.model.outputs.model }}
+          REQUESTED_ACCELERATOR: ${{ inputs.accelerator }}
+        run: |
+          GPU="${REQUESTED_ACCELERATOR:-T4}"
+          bash scripts/audiobook/runners/colab.sh \
+            --plan "$RUNNER_TEMP/benchmark-plan.json" \
+            --output "$RUNNER_TEMP/audiobook-result.zip" \
+            --backend "$BACKEND" \
+            --model "$MODEL" \
+            --gpu "$GPU"
+
+      - name: Run benchmark locally
+        if: ${{ inputs.runner == 'local' }}
+        env:
+          BACKEND: ${{ inputs.backend }}
+          MODEL: ${{ steps.model.outputs.model }}
+        run: |
+          if [[ "$BACKEND" != "fake" ]]; then
+            echo "Local GitHub runner has no supported GPU; choose Kaggle or Colab for $BACKEND" >&2
+            exit 2
+          fi
+          bash scripts/audiobook/runners/local.sh \
+            --plan "$RUNNER_TEMP/benchmark-plan.json" \
+            --output "$RUNNER_TEMP/audiobook-result.zip" \
+            --backend "$BACKEND" \
+            --model "$MODEL"
+
+      - name: Inspect benchmark result
+        run: |
+          mkdir -p "$RUNNER_TEMP/benchmark-result"
+          unzip -q "$RUNNER_TEMP/audiobook-result.zip" -d "$RUNNER_TEMP/benchmark-result"
+          node - "$RUNNER_TEMP/benchmark-result/manifest.json" >> "$GITHUB_STEP_SUMMARY" <<'NODE'
+          const fs = require('node:fs');
+          const manifest = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
+          console.log('## Audiobook TTS benchmark');
+          console.log(`- backend: \`${manifest.backend}\``);
+          console.log(`- model: \`${manifest.model}\``);
+          console.log(`- segments: **${manifest.segments.length}**`);
+          console.log(`- GPU: \`${JSON.stringify(manifest.hardware?.gpu)}\``);
+          console.log(`- backend metadata: \`${JSON.stringify(manifest.backend_metadata ?? {})}\``);
+          NODE
+
+      - name: Upload benchmark audio
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: audiobook-benchmark-${{ inputs.benchmark }}-${{ inputs.backend }}-${{ inputs.runner }}
+          path: ${{ runner.temp }}/benchmark-result/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload benchmark plan
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: audiobook-benchmark-plan-${{ inputs.benchmark }}
+          path: ${{ runner.temp }}/benchmark-plan.json
+          if-no-files-found: error
+          retention-days: 30
