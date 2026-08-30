@@ -11,7 +11,7 @@ function canonicalize(value) {
     return Object.fromEntries(
       Object.keys(value)
         .sort()
-        .map((key) => [key, canonicalize(value[key])]),
+        .map((key) => [key, canonicalize(value[key])])
     );
   }
   return value;
@@ -19,9 +19,7 @@ function canonicalize(value) {
 
 function digest(value) {
   const serialized =
-    typeof value === "string"
-      ? value
-      : JSON.stringify(canonicalize(value));
+    typeof value === "string" ? value : JSON.stringify(canonicalize(value));
   return `sha256:${crypto.createHash("sha256").update(serialized, "utf8").digest("hex")}`;
 }
 
@@ -40,7 +38,7 @@ function readVoices(filePath) {
           : {}),
         ...voice,
       },
-    ]),
+    ])
   );
 }
 
@@ -51,7 +49,8 @@ export function resolveChapterFiles(rootDir, workId, chapterId) {
     throw new Error(`state.work_id does not match ${workId}`);
   }
   const chapter = state.chapters?.[chapterId];
-  if (!chapter) throw new Error(`unknown chapter ${chapterId} for work ${workId}`);
+  if (!chapter)
+    throw new Error(`unknown chapter ${chapterId} for work ${workId}`);
   if (!chapter.files?.narration) {
     throw new Error(`${chapterId}.files.narration is required`);
   }
@@ -66,7 +65,7 @@ export function resolveChapterFiles(rootDir, workId, chapterId) {
 
 export function parseNarrationText(
   markdown,
-  { voices = null, sourcePath = null } = {},
+  { voices = null, sourcePath = null } = {}
 ) {
   const parsed = matter(markdown);
   const frontmatter = parsed.data;
@@ -74,7 +73,7 @@ export function parseNarrationText(
 
   if (frontmatter.type !== "Audiobook Narration Chapter") {
     errors.push(
-      `type must be Audiobook Narration Chapter, got ${JSON.stringify(frontmatter.type)}`,
+      `type must be Audiobook Narration Chapter, got ${JSON.stringify(frontmatter.type)}`
     );
   }
   for (const field of ["work_id", "chapter_id", "lang", "derived_from"]) {
@@ -94,7 +93,7 @@ export function parseNarrationText(
       directive = JSON.parse(match[1]);
     } catch (error) {
       errors.push(
-        `invalid tts directive JSON near offset ${match.index}: ${error.message}`,
+        `invalid tts directive JSON near offset ${match.index}: ${error.message}`
       );
       continue;
     }
@@ -108,19 +107,22 @@ export function parseNarrationText(
       errors.push(`tts directive near offset ${match.index} is missing id`);
     }
     if (!speaker) errors.push(`${segmentId ?? "segment"} is missing speaker`);
-    if (!text) errors.push(`${segmentId ?? "segment"} has empty narration text`);
+    if (!text)
+      errors.push(`${segmentId ?? "segment"} has empty narration text`);
     if (segmentId && seen.has(segmentId)) {
       errors.push(`duplicate segment id: ${segmentId}`);
     }
     if (segmentId) seen.add(segmentId);
     if (voices && speaker && !voice) {
-      errors.push(`${segmentId ?? "segment"} references unknown speaker: ${speaker}`);
+      errors.push(
+        `${segmentId ?? "segment"} references unknown speaker: ${speaker}`
+      );
     }
 
     const direction = Object.fromEntries(
       Object.entries(directive).filter(
-        ([key]) => !["id", "segment_id", "speaker"].includes(key),
-      ),
+        ([key]) => !["id", "segment_id", "speaker"].includes(key)
+      )
     );
 
     if (segmentId && speaker && text && (!voices || voice)) {
@@ -141,7 +143,7 @@ export function parseNarrationText(
 
   if (errors.length) {
     const error = new Error(
-      `Invalid narration${sourcePath ? ` ${sourcePath}` : ""}`,
+      `Invalid narration${sourcePath ? ` ${sourcePath}` : ""}`
     );
     error.details = errors;
     throw error;
@@ -169,12 +171,12 @@ export function createWorkPlan({ rootDir, workId, chapterId }) {
   const plan = createPlan(resolved);
   if (plan.work_id !== workId) {
     throw new Error(
-      `narration work_id ${plan.work_id} does not match requested work ${workId}`,
+      `narration work_id ${plan.work_id} does not match requested work ${workId}`
     );
   }
   if (plan.chapter_id !== chapterId) {
     throw new Error(
-      `narration chapter_id ${plan.chapter_id} does not match requested chapter ${chapterId}`,
+      `narration chapter_id ${plan.chapter_id} does not match requested chapter ${chapterId}`
     );
   }
   return plan;
