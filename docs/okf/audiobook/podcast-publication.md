@@ -1,46 +1,67 @@
 ---
 type: Product Architecture
-title: Audiobook — podcast publication contract
-description: Contrato para publicar capítulos de audiolivro como episódios de um podcast RSS hospedado pelo blog.
-tags: [audiobook, podcast, rss, podcasting-2.0, astro, publishing, internet-archive]
+title: Audiobook — per-work podcast publication contract
+description: Contrato para publicar cada obra da fábrica de audiolivros como um podcast RSS independente hospedado pelo blog.
+tags: [audiobook, podcast, rss, podcasting-2.0, astro, publishing, internet-archive, multi-work]
 timestamp: 2026-08-30T18:25:00Z
 ---
 
-# Publicação do audiolivro como podcast
+# Publicação de cada obra como podcast
 
 ## 1. Objetivo
 
-Todo capítulo de audiolivro marcado como publicável deve poder virar automaticamente um episódio de podcast.
+Toda obra publicável da fábrica de audiolivros recebe seu próprio podcast RSS.
 
-O usuário assina uma única URL RSS no tocador de sua preferência. Depois disso, novos capítulos publicados pela pipeline aparecem no player sem qualquer ação adicional.
+Todo capítulo/unidade da obra marcado como publicável deve poder virar automaticamente um episódio desse podcast.
 
-O blog é a identidade pública e canônica do podcast.
+O usuário assina uma única URL RSS para aquela obra no tocador de sua preferência. Depois disso, novos capítulos publicados pela pipeline aparecem no player sem qualquer ação adicional.
+
+O blog é a identidade pública e canônica dos podcasts; o storage da mídia é infraestrutura substituível.
+
+Exemplos conceituais:
+
+```text
+HPMOR
+  -> https://franklinbaldo.com/audiobooks/hpmor/feed.xml
+
+Bhagavad Gita
+  -> https://franklinbaldo.com/audiobooks/bhagavad-gita/feed.xml
+```
+
+Não existe dependência arquitetural de HPMOR neste contrato.
 
 ## 2. Identidade estável
 
-Cada obra recebe uma URL estável de feed, por exemplo:
+Cada obra recebe uma URL estável de feed derivada do `publication_slug`/`work_id`, por exemplo:
 
 ```text
 https://franklinbaldo.com/audiobooks/hpmor/feed.xml
+https://franklinbaldo.com/audiobooks/bhagavad-gita/feed.xml
 ```
 
 A URL exata será definida pela estrutura pública do site, mas depois de publicada deve ser considerada parte do contrato externo.
 
-Cada capítulo corresponde a um `<item>` RSS com GUID estável derivado da identidade canônica do capítulo, nunca do arquivo de áudio.
+Cada unidade publicada corresponde a um `<item>` RSS com GUID estável derivado da identidade canônica da obra + unidade, nunca do arquivo de áudio.
 
 Exemplo conceitual:
 
 ```text
-podcast_id: audiobook-hpmor
+podcast_id: audiobook:hpmor
 chapter_id: hpmor-001
-episode_guid: audiobook-hpmor:hpmor-001
+episode_guid: audiobook:hpmor:hpmor-001
 ```
 
-Regenerar o áudio, mudar backend TTS ou corrigir metadados **não cria novo episódio**. O GUID permanece o mesmo.
+```text
+podcast_id: audiobook:bhagavad-gita
+chapter_id: bhagavad-gita-001
+episode_guid: audiobook:bhagavad-gita:bhagavad-gita-001
+```
+
+Regenerar o áudio, mudar backend TTS, runner, codec ou storage **não cria novo episódio**. O GUID permanece o mesmo.
 
 ## 3. RSS
 
-O feed deve seguir RSS 2.0 e incluir o namespace `itunes` para compatibilidade ampla. Deve ser público e não exigir autenticação.
+Cada feed deve seguir RSS 2.0 e incluir o namespace `itunes` para compatibilidade ampla. Deve ser público e não exigir autenticação.
 
 Cada episódio deve incluir, no mínimo:
 
@@ -50,7 +71,7 @@ Cada episódio deve incluir, no mínimo:
 - descrição;
 - `<enclosure>` com URL HTTPS, tamanho em bytes e MIME type;
 - duração quando disponível;
-- link para a página do capítulo no blog.
+- link para a página da unidade/capítulo no blog.
 
 O feed deve ser validável por ferramentas de podcast antes de publicação.
 
@@ -73,29 +94,28 @@ A URL usada no `<enclosure>` precisa:
 
 Referência de áudio: [Apple Podcasts — audio requirements](https://podcasters.apple.com/support/893-audio-requirements).
 
-## 5. Feed no blog; mídia fora do Pages quando necessário
+## 5. Feed no blog; mídia fora do Pages
 
 O feed, páginas HTML, artwork, transcript e manifests pequenos podem ser publicados pelo próprio site.
 
-O áudio integral **não deve depender de caber no deploy do GitHub Pages**. Um audiolivro longo pode ultrapassar os limites de tamanho do Pages mesmo com compressão eficiente. O GitHub atualmente recomenda até 1 GB para o repositório-fonte, limita o site publicado a 1 GB e aplica limite de banda mensal soft de 100 GB.
+O áudio integral **não deve depender de caber no deploy do GitHub Pages**. Um acervo com vários audiolivros torna essa separação ainda mais importante.
 
 Referência: [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
 
-A arquitetura portanto separa:
+A arquitetura separa:
 
 ```text
 Blog / GitHub Pages
-  - feed.xml
-  - página da obra
-  - página do capítulo
-  - artwork
-  - transcript / chapters metadata
+  /audiobooks/
+  /audiobooks/<work_id>/
+  /audiobooks/<work_id>/feed.xml
+  transcript / chapters / artwork / páginas
              |
              | enclosure URL
              v
-Media storage
-  - chapter-001.mp3
-  - chapter-002.mp3
+Media storage por obra
+  - 001.mp3
+  - 002.mp3
   - ...
 ```
 
@@ -103,38 +123,49 @@ O backend de mídia é substituível. A identidade do podcast não muda quando o
 
 ### 5.1. Internet Archive como destino durável preferencial
 
-O **Internet Archive** é o destino durável preferencial para os arquivos finais publicados do audiolivro, sem ser requisito para o primeiro protótipo.
+O **Internet Archive** é o destino durável preferencial para os arquivos finais publicados, sem ser requisito para o primeiro protótipo.
 
-A motivação é separar três funções diferentes:
+A unidade padrão de storage deve ser **um item do Internet Archive por obra**, evitando misturar múltiplos audiolivros em um único item global.
 
-- GitHub mantém código, corpus, configuração, manifestos e proveniência;
-- GitHub Pages mantém a identidade pública, páginas e feed RSS;
-- Internet Archive mantém os binários finais de mídia destinados à distribuição durável.
-
-O fluxo de produção pode começar usando artifacts temporários de GitHub Actions ou outro storage experimental. A promoção para Internet Archive entra quando a pipeline de publicação estiver estável.
-
-O upload deve ser totalmente headless e acionável pelo mesmo GitHub Actions, preferencialmente através do cliente de linha de comando `ia`/biblioteca `internetarchive` ou API equivalente, com credenciais mantidas exclusivamente em GitHub Secrets. O projeto não depende de interação manual no site do Archive.
-
-O upload para Internet Archive deve ser **idempotente**: a obra recebe um identifier estável, e cada capítulo final usa um nome de arquivo determinístico. Um desenho inicial possível é:
+Exemplos conceituais:
 
 ```text
-Internet Archive item: franklinbaldo-hpmor-ptbr-audiobook
-
-files:
-  hpmor-001.mp3
-  hpmor-002.mp3
-  hpmor-003.mp3
-  ...
-  cover.jpg
-  manifest.json
+work_id: hpmor
+archive_identifier: franklinbaldo-hpmor-ptbr-audiobook
 ```
 
-A identidade do item e os nomes exatos ainda podem mudar antes da primeira publicação, mas, depois de expostos no feed, devem ser tratados como contratos externos.
+```text
+work_id: bhagavad-gita
+archive_identifier: franklinbaldo-bhagavad-gita-ptbr-audiobook
+```
 
-Antes de inserir uma URL do Archive em `<enclosure>`, o estágio `publish` deve verificar empiricamente que a URL final do arquivo satisfaz o contrato de podcast desta especificação (`HEAD`, range requests, MIME e estabilidade). O Internet Archive é o destino preferencial, não uma exceção às validações de interoperabilidade.
+Cada item pode conter:
 
-A pipeline deve registrar no manifesto de publicação:
+```text
+001.mp3
+002.mp3
+...
+cover.jpg
+manifest.json
+```
 
+A associação `work_id -> archive_identifier` é persistida na configuração da obra. O workflow não inventa um item novo a cada execução.
+
+A motivação é separar três funções:
+
+- Git mantém código, corpus, configuração, manifests e proveniência;
+- GitHub Pages mantém catálogo, identidade pública, páginas e feeds RSS;
+- Internet Archive mantém mídia final destinada à distribuição durável.
+
+O fluxo pode começar usando artifacts temporários de GitHub Actions ou outro storage experimental. A promoção para Internet Archive entra quando a publicação estiver estável.
+
+O upload deve ser totalmente headless e acionável pelo mesmo GitHub Actions, preferencialmente através do cliente `ia`/biblioteca `internetarchive` ou API equivalente, com credenciais mantidas exclusivamente em GitHub Secrets.
+
+Antes de inserir uma URL do Archive em `<enclosure>`, `publish` deve verificar empiricamente que a URL final satisfaz o contrato HTTP desta especificação (`HEAD`, range requests, MIME e estabilidade).
+
+O manifesto de publicação registra:
+
+- `work_id`;
 - identifier do item no Internet Archive;
 - nome do arquivo remoto;
 - URL pública final usada no `<enclosure>`;
@@ -142,34 +173,35 @@ A pipeline deve registrar no manifesto de publicação:
 - momento do upload;
 - resultado da verificação HTTP pós-upload.
 
-A substituição de um áudio regenerado não altera o `episode_guid`. O feed pode atualizar o `<enclosure>` para a versão final do mesmo capítulo mantendo a identidade lógica do episódio.
-
-Referência operacional: o projeto oficial `internetarchive` fornece biblioteca Python e a ferramenta de linha de comando `ia`, incluindo upload de arquivos para itens do Archive.
+A substituição de um áudio regenerado não altera o `episode_guid`.
 
 ## 6. Publicação pela mesma pipeline
 
-O estágio `publish` recebe um capítulo já montado e validado.
+O estágio `publish` recebe uma unidade já montada e validada e conhece seu `work_id`.
 
 Fluxo:
 
 1. validar áudio final;
 2. calcular digest, bytes, duração e MIME;
-3. enviar o arquivo para media storage — preferencialmente Internet Archive quando esse backend estiver habilitado;
-4. verificar `HEAD` e range request na URL pública;
-5. gerar/atualizar metadata do episódio;
-6. gerar transcript/timestamps derivados quando disponíveis;
-7. reconstruir o feed RSS;
-8. executar validação do feed;
-9. publicar o site;
-10. registrar no manifesto a URL do enclosure e a versão publicada.
+3. resolver configuração de publicação da obra;
+4. enviar o arquivo para media storage — preferencialmente o item do Internet Archive daquela obra quando habilitado;
+5. verificar `HEAD` e range request na URL pública;
+6. gerar/atualizar metadata do episódio;
+7. gerar transcript/timestamps derivados quando disponíveis;
+8. reconstruir **somente o feed da obra afetada** e, quando necessário, o catálogo agregado;
+9. executar validação do feed;
+10. publicar o site;
+11. registrar no manifesto a URL do enclosure e a versão publicada.
 
-A ordem é importante: o feed nunca deve apontar para um enclosure que ainda não esteja publicamente acessível.
+A ordem é importante: o feed nunca aponta para um enclosure que ainda não esteja publicamente acessível.
+
+Uma publicação de HPMOR não deve reescrever semanticamente o estado de publicação do Bhagavad Gita, e vice-versa.
 
 ## 7. Estado de publicação
 
 O corpus textual não deve ser publicado como episódio apenas porque existe áudio.
 
-Cada capítulo tem lifecycle explícito, por exemplo:
+Cada unidade tem lifecycle explícito, por exemplo:
 
 ```yaml
 publication:
@@ -179,11 +211,11 @@ publication:
 
 Somente `ready` pode ser promovido por um workflow autorizado para `published`.
 
-O status editorial pertence à obra/capítulo; não ao runner de compute.
+O status editorial pertence à obra/unidade; não ao runner de compute.
 
 ## 8. Podcasting 2.0
 
-O feed deve poder usar o namespace Podcasting 2.0 sem tornar isso requisito para players tradicionais.
+Cada feed deve poder usar o namespace Podcasting 2.0 sem tornar isso requisito para players tradicionais.
 
 ### 8.1. Transcript
 
@@ -210,7 +242,7 @@ Referências:
 
 A pipeline pode gerar um arquivo JSON de capítulos/marcadores e referenciá-lo com `<podcast:chapters>`.
 
-Mesmo que cada episódio já corresponda a um capítulo do livro, os chapters internos podem representar cenas, seções ou outros marcos úteis dentro de episódios longos.
+Mesmo que cada episódio corresponda a uma divisão da obra, os chapters internos podem representar cenas, seções, versos/blocos ou outros marcos úteis dentro de episódios longos.
 
 Referência: [Podcasting 2.0 — chapters](https://podcasting2.org/docs/podcast-namespace/tags/chapters).
 
@@ -219,47 +251,62 @@ Referência: [Podcasting 2.0 — chapters](https://podcasting2.org/docs/podcast-
 O podcast não cria uma quarta fonte textual.
 
 ```text
-original OKF
-    -> translation OKF
-        -> narration OKF
-            -> audio
-                -> podcast episode
+work
+  -> original OKF
+      -> translation OKF
+          -> narration OKF
+              -> audio
+                  -> podcast episode
 ```
 
 A descrição pública e o transcript podem ser gerados a partir das fontes canônicas, mas não substituem nenhuma delas.
 
-## 10. Página do episódio no blog
+## 10. Página da obra e episódio no blog
 
-Cada episódio deve ter página própria, com pelo menos:
+Cada obra deve ter página própria e cada episódio/unidade, página reproduzível por template genérico.
 
-- título/capítulo;
+A página da obra oferece:
+
+- título/atribuição;
+- capa/artwork;
+- descrição;
+- índice de episódios/unidades;
+- player quando aplicável;
+- URL/ação de assinatura do feed daquela obra.
+
+A página de episódio pode oferecer:
+
+- título/unidade;
 - player HTML;
 - duração;
 - data de publicação;
-- link do feed/ação de assinatura;
-- texto em português quando a política de publicação permitir;
+- texto em português quando a política da obra permitir;
 - opcionalmente original e comparação lado a lado;
-- informação de modelo/produção em seção técnica discreta, se desejado.
+- informação técnica de produção, se desejado.
 
 O player web e o player de podcast consomem o mesmo arquivo de mídia final.
 
-## 11. Assinatura
+## 11. Catálogo e assinatura
 
-A página da obra deve oferecer claramente a URL do feed e links de assinatura compatíveis com os destinos que forem configurados.
+`/audiobooks/` é o catálogo agregado do blog, não um substituto dos feeds individuais.
+
+Ele lista as obras disponíveis e oferece claramente a assinatura de cada podcast.
 
 A primeira versão não depende de cadastro em diretórios: qualquer player que aceite URL RSS diretamente deve funcionar.
 
-Submissão futura a Apple Podcasts, Podcast Index ou outros diretórios é uma etapa de distribuição separada e não muda o feed canônico do blog.
+Submissão futura a Apple Podcasts, Podcast Index ou outros diretórios é etapa de distribuição separada por obra e não muda os feeds canônicos do blog.
 
 ## 12. Critério de aceite
 
-A publicação como podcast está funcional quando:
+A publicação multi-work como podcast está funcional quando:
 
-1. um capítulo `ready` é publicado por GitHub Actions;
-2. o áudio fica disponível em URL estável com streaming/seek;
-3. o feed RSS é atualizado automaticamente;
-4. o episódio mantém GUID estável entre regenerações;
-5. o feed pode ser adicionado manualmente a um player de podcast;
-6. após publicar um segundo capítulo, o player o recebe como novo episódio sem nova assinatura;
-7. transcript e chapters opcionais não quebram compatibilidade RSS tradicional;
-8. quando o backend Internet Archive estiver ativado, o upload e a verificação pós-upload são feitos integralmente pelo workflow, sem etapa manual.
+1. uma obra pode ter seu feed gerado sem código exclusivo;
+2. um capítulo/unidade `ready` é publicado por GitHub Actions;
+3. o áudio fica disponível em URL estável com streaming/seek;
+4. o feed correto da obra é atualizado automaticamente;
+5. o episódio mantém GUID estável entre regenerações;
+6. os feeds de HPMOR e de uma segunda fixture/obra podem coexistir sem colisão;
+7. um feed pode ser adicionado manualmente a um player de podcast;
+8. após publicar um segundo capítulo, o player o recebe como novo episódio sem nova assinatura;
+9. transcript e chapters opcionais não quebram compatibilidade RSS tradicional;
+10. quando Internet Archive estiver ativado, upload e verificação pós-upload são feitos integralmente pelo workflow e no item correspondente àquela obra.
