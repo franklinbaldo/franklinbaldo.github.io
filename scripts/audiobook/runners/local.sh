@@ -19,10 +19,18 @@ done
 [[ -n "$PLAN" ]] || { echo "--plan is required" >&2; exit 2; }
 [[ -n "$OUTPUT" ]] || { echo "--output is required" >&2; exit 2; }
 
+# Prefer uv so the script's PEP 723 header decides the interpreter; fall back to
+# the ambient python3 where uv is not installed.
+if command -v uv >/dev/null; then
+  run_script() { uv run --script "$@"; }
+else
+  run_script() { python3 "$@"; }
+fi
+
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 mkdir -p "$(dirname "$OUTPUT")"
-python3 scripts/audiobook/worker.py \
+run_script scripts/audiobook/worker.py \
   --plan "$PLAN" \
   --output-dir "$TMP/output" \
   --backend "$BACKEND" \

@@ -31,16 +31,27 @@ fi
 }
 command -v kaggle >/dev/null || { echo "kaggle CLI not found" >&2; exit 2; }
 
+# Prefer uv so the script's PEP 723 header decides the interpreter; fall back to
+# the ambient python3 where uv is not installed.
+if command -v uv >/dev/null; then
+  run_script() { uv run --script "$@"; }
+else
+  run_script() { python3 "$@"; }
+fi
+
 # Kaggle reports only a coarse status; the real traceback lives in the kernel
 # log. Without this the CI job fails with an opaque "Kaggle job failed".
 dump_kernel_log() {
   local dir log
   dir="$(mktemp -d)"
-  if kaggle kernels output "$KERNEL_ID" -p "$dir" -o -q >/dev/null 2>&1; then
+  # The log is fetched regardless of --file-pattern; the pattern matches no
+  # filename so we do not also pull the kernel's whole working directory, which
+  # holds the multi-gigabyte model cache.
+  if kaggle kernels output "$KERNEL_ID" -p "$dir" -o -q --file-pattern '^$' >/dev/null 2>&1; then
     log="$(find "$dir" -maxdepth 1 -type f -name '*.log' -print -quit)"
     if [[ -n "$log" ]]; then
       echo "----- kaggle kernel log -----" >&2
-      python3 scripts/audiobook/kaggle-log.py "$log" >&2 || true
+      run_script scripts/audiobook/kaggle-log.py "$log" >&2 || true
       echo "----- end kaggle kernel log -----" >&2
     fi
   fi

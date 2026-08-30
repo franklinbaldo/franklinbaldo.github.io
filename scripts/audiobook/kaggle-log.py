@@ -1,4 +1,8 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = []
+# ///
 """Render a Kaggle kernel log (a JSON array of stream records) as plain text.
 
 Kaggle only exposes a coarse kernel status; the actual traceback of a failed
