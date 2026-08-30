@@ -1,8 +1,8 @@
 ---
 type: Product Requirements Document
-title: Audiolivro HPMOR em português — pipeline OKF e TTS
-description: PRD para uma pipeline reproduzível de original, tradução, adaptação de narração e geração incremental de audiolivro.
-tags: [audiobook, hpmor, okf, translation, tts, github-actions]
+title: Audiolivro HPMOR em português — pipeline OKF, TTS e compute CLI-first
+description: PRD para uma pipeline reproduzível de original, tradução, adaptação de narração, benchmark de TTS e geração incremental de audiolivro com runners remotos acionados por linha de comando.
+tags: [audiobook, hpmor, okf, translation, tts, github-actions, kaggle, colab, cli]
 timestamp: 2026-08-30T16:37:00Z
 ---
 
@@ -16,11 +16,11 @@ O princípio central é separar rigorosamente três representações textuais do
 
 1. **original** — o texto-fonte em inglês, preservado como referência;
 2. **tradução** — uma tradução fiel para português brasileiro, adequada para leitura humana e comparação com o original;
-3. **narração** — uma adaptação da tradução destinada especificamente à síntese de voz, podendo ajustar pontuação, pronúncia, pausas, expansão de símbolos, divisão de falas e outras instruções necessárias para que o TTS produza o resultado esperado.
+3. **narração** — uma adaptação da tradução destinada especificamente à síntese de voz, podendo ajustar pontuação, pronúncia, pausas, expansão de símbolos, divisão de falas e instruções de interpretação necessárias para que o TTS produza o resultado esperado.
 
-As três camadas são Markdown em formato OKF e compartilham a mesma identidade de obra e de capítulo. O áudio é derivado da camada de narração; nunca é a fonte canônica do texto.
+As três camadas são Markdown em formato OKF e compartilham a mesma identidade de obra e capítulo. O áudio é derivado da camada de narração; nunca é a fonte canônica do texto.
 
-A computação pesada deve ser executável por GitHub Actions. A pipeline deve ser incremental: uma alteração pequena em texto, voz ou configuração não deve obrigar a regenerar o livro inteiro.
+A computação de GPU deve ser **CLI-first**. O projeto não usa notebooks como interface operacional nem como fonte executável canônica. Toda lógica de produção vive em scripts versionados; Kaggle, Colab e futuros provedores são apenas runners remotos desses scripts.
 
 ## 2. Problema
 
@@ -30,14 +30,15 @@ Um fluxo ingênuo de `texto -> TTS -> arquivo de áudio` perde informação e mi
 - correções de pronúncia ou ritmo acabam contaminando a tradução canônica;
 - não existe uma ligação determinística entre original, tradução e trecho de áudio;
 - regenerar um capítulo inteiro por causa de uma fala é caro e lento;
-- trocar de provedor de TTS exige refazer a arquitetura;
+- trocar de modelo ou provedor de TTS exige refazer a arquitetura;
+- notebooks manuais tornam a execução difícil de automatizar, revisar e reproduzir;
 - artefatos derivados podem se tornar impossíveis de reproduzir depois.
 
 O projeto deve transformar o audiolivro em um sistema de conteúdo versionado, auditável e regenerável.
 
 ## 3. Objetivo do produto
 
-Entregar uma pipeline capaz de, para cada capítulo:
+Entregar uma pipeline capaz de executar, para cada capítulo:
 
 ```text
 original OKF
@@ -49,7 +50,17 @@ tradução OKF
 narração OKF
     |
     v
-segmentos TTS
+planner
+    |
+    v
+worker TTS (.py)
+    |
+    +--> local
+    +--> Colab CLI
+    +--> Kaggle CLI
+    |
+    v
+segmentos de áudio
     |
     v
 áudio do capítulo
@@ -58,7 +69,7 @@ segmentos TTS
     +--> artefatos de distribuição futuros
 ```
 
-O HPMOR é o primeiro corpus e o caso de uso de referência. A arquitetura, porém, não deve depender semanticamente de HPMOR e deve poder ser reutilizada para outras obras no futuro.
+O HPMOR é o primeiro corpus e o caso de uso de referência. A arquitetura não deve depender semanticamente de HPMOR e deve poder ser reutilizada para outras obras.
 
 ## 4. Princípios
 
@@ -74,51 +85,68 @@ A tradução deve permanecer linguisticamente fiel e legível. Ajustes feitos ap
 
 Toda representação equivalente do mesmo capítulo deve carregar o mesmo `work_id` e `chapter_id`.
 
-Exemplo:
-
 ```yaml
 work_id: hpmor
 chapter_id: hpmor-001
 chapter_number: 1
 ```
 
-A tradução e a narração devem apontar explicitamente para a camada da qual derivam.
+A tradução e a narração apontam explicitamente para a camada da qual derivam.
 
 ### 4.4. Unidades menores que o capítulo
 
-A geração de áudio deve operar sobre segmentos estáveis menores que um capítulo. Um segmento pode ser uma fala, um parágrafo narrativo ou outra unidade suficientemente pequena para regeneração isolada.
+A geração de áudio opera sobre segmentos estáveis menores que um capítulo. Um segmento pode ser uma fala, um parágrafo narrativo ou outra unidade suficientemente pequena para regeneração isolada.
 
-Cada segmento deve possuir um `segment_id` estável dentro do capítulo. O mesmo ID deve ser preservado sempre que a unidade correspondente continua semanticamente sendo a mesma.
+Cada segmento possui `segment_id` estável. O mesmo ID é preservado enquanto a unidade correspondente continua semanticamente sendo a mesma.
 
-### 4.5. Provedor de TTS é implementação, não contrato
+### 4.5. TTS é implementação, não contrato
 
-A camada canônica de narração não deve depender de OpenAI, ElevenLabs, Google, modelo local ou qualquer outro fornecedor específico.
+A camada canônica de narração não depende de Breeze, Higgs, Chatterbox, Qwen, Fish, OpenAI, Google ou qualquer outro fornecedor específico.
 
-Um adaptador transforma o formato canônico de narração no request particular de cada backend.
+Um adapter transforma a representação canônica de narração no formato esperado pelo backend selecionado.
 
-### 4.6. Reprodutibilidade por hash
+### 4.6. Idioma declarado pelo modelo não é gate
+
+A ausência de `pt-BR` ou `Portuguese` no model card não elimina um modelo do benchmark.
+
+Modelos generativos podem produzir português adequadamente mesmo quando o idioma não é oficialmente suportado ou avaliado. O critério do projeto é empírico: o modelo permanece candidato enquanto produzir resultado aceitável no corpus de benchmark em português brasileiro.
+
+Nenhum fine-tune deve ser presumido antes de testar zero-shot.
+
+### 4.7. Reprodutibilidade por hash
 
 Um segmento de áudio é identificado por uma chave derivada, no mínimo, de:
 
-- texto de narração do segmento;
+- texto de narração;
 - identidade/configuração da voz;
-- backend e modelo de TTS;
-- parâmetros relevantes do backend;
-- versão do schema/adaptador de narração.
+- backend e modelo TTS;
+- parâmetros relevantes;
+- seed, quando aplicável;
+- versão do adapter;
+- versão do schema de narração.
 
-Se essa chave não mudar e o artefato existir, a pipeline deve reutilizá-lo.
+Se a chave não mudar e o artefato existir, a pipeline reutiliza o áudio.
 
-### 4.7. Git guarda estado; áudio pesado não precisa morar no Git
+### 4.8. Git guarda estado; áudio pesado não precisa morar no Git
 
-O repositório deve guardar corpus, manifestos, configuração, proveniência e hashes. Arquivos de áudio pesados podem ser produzidos por Actions e armazenados como artifacts ou em um destino de publicação definido posteriormente.
+O repositório guarda corpus, manifestos, configuração, proveniência e hashes. Arquivos pesados podem ser mantidos como artifacts ou em um destino de publicação definido posteriormente.
 
-Não é requisito inicial versionar binários de áudio no histórico Git.
+### 4.9. CLI-first; notebooks não são fonte executável
+
+A fonte operacional do projeto é composta por scripts versionados (`.py`, `.sh` e, quando útil, ferramentas Node já existentes no repo).
+
+Regras:
+
+- nenhuma etapa exige abrir uma UI de notebook;
+- `.ipynb` não é formato canônico de código do projeto;
+- um runner pode internamente usar infraestrutura Jupyter, mas isso é detalhe do provedor;
+- o mesmo worker Python deve ser executável localmente, no Colab e no Kaggle com o mínimo possível de diferenças;
+- toda execução remota deve poder ser iniciada, observada e ter seus resultados recuperados por linha de comando;
+- comandos usados manualmente devem ser automatizáveis posteriormente por GitHub Actions.
 
 ## 5. Modelo de conteúdo
 
 ### 5.1. Estrutura-alvo
-
-A estrutura inicial proposta é:
 
 ```text
 data/audiobooks/
@@ -137,13 +165,20 @@ data/audiobooks/
       ...
     voices.yaml
     manifest.json
+
+scripts/audiobook/
+  worker.py
+  plan.py
+  validate.py
+  assemble.py
+  runners/
+    colab.sh
+    kaggle.sh
 ```
 
-O corpus fica fora de `src/content/blog/**`: ele não é um post do Hrönir e não deve entrar acidentalmente em ranking, versionamento ou seleção de posts. O site poderá consumi-lo posteriormente por um loader dedicado, seguindo o princípio já usado em outras fontes derivadas do blog.
+O corpus fica fora de `src/content/blog/**`: ele não é um post do Hrönir e não deve entrar acidentalmente em ranking, versionamento ou seleção de posts.
 
 ### 5.2. Original
-
-Exemplo mínimo:
 
 ```markdown
 ---
@@ -164,14 +199,12 @@ Texto original...
 
 Requisitos:
 
-- preservar a proveniência do texto;
+- preservar a proveniência;
 - registrar digest do conteúdo importado;
-- não incluir adaptações feitas para português ou TTS;
-- manter IDs de segmentos estáveis após a primeira segmentação, salvo quando a própria segmentação precisar mudar.
+- não conter adaptação para português ou TTS;
+- manter IDs de segmentos estáveis após a primeira segmentação.
 
 ### 5.3. Tradução
-
-Exemplo mínimo:
 
 ```markdown
 ---
@@ -191,15 +224,13 @@ Texto traduzido...
 
 Requisitos:
 
-- usar o mesmo `chapter_id` do original;
-- conservar o alinhamento por `segment_id` sempre que possível;
-- ser adequada como tradução para leitura humana;
-- não conter truques específicos de TTS apenas para alterar a pronúncia do sintetizador;
-- permitir comparação automática original <-> tradução por capítulo e segmento.
+- mesmo `chapter_id` do original;
+- alinhamento por `segment_id`;
+- tradução adequada para leitura humana;
+- nenhum truque específico de sintetizador;
+- comparação automática original <-> tradução por capítulo e segmento.
 
 ### 5.4. Narração
-
-Exemplo mínimo:
 
 ```markdown
 ---
@@ -218,29 +249,27 @@ narration_schema: 1
 Texto preparado especificamente para ser narrado...
 ```
 
-A sintaxe exata das diretivas poderá evoluir na primeira implementação, mas o contrato é fixo:
+O contrato da camada:
 
-- Markdown continua legível sem um renderer especial;
+- Markdown continua legível sem renderer especial;
 - cada trecho enviado ao TTS possui identidade estável;
-- `speaker` e demais instruções são provider-neutral;
-- instruções específicas de um fornecedor não entram no corpus canônico;
-- a adaptação pode divergir superficialmente da tradução quando isso melhora a realização oral sem mudar o sentido pretendido.
+- `speaker`, emoção, ritmo, pausa e demais instruções são provider-neutral;
+- tags proprietárias de um modelo não entram no corpus canônico;
+- a adaptação pode divergir superficialmente da tradução para melhorar a realização oral sem mudar o sentido.
 
-Casos típicos da camada de narração:
+Casos típicos:
 
-- escrever por extenso uma sigla ou expressão que o TTS pronuncia incorretamente;
-- introduzir ou retirar pontuação para obter a pausa correta;
-- marcar alternância entre narrador e personagens;
-- estabelecer pronúncia canônica de nomes;
-- dividir uma frase longa em dois requests;
-- controlar pausas e ênfases;
-- eliminar artefatos tipográficos que não devem ser verbalizados.
+- escrever uma sigla por extenso;
+- ajustar pontuação para obter pausas;
+- marcar narrador/personagem;
+- definir pronúncia de nomes;
+- dividir frases longas;
+- controlar ritmo, ênfase e emoção;
+- eliminar artefatos tipográficos não verbalizados.
 
 ## 6. Vozes
 
-`voices.yaml` define identidades lógicas de voz, não IDs rígidos de um único fornecedor.
-
-Exemplo conceitual:
+`voices.yaml` define identidades lógicas, não IDs rígidos de um fornecedor.
 
 ```yaml
 narrator:
@@ -256,70 +285,238 @@ mcgonagall:
   locale: pt-BR
 ```
 
-Cada backend mantém separadamente o mapeamento de identidade lógica para voz/modelo concreto.
+Cada backend mantém separadamente o mapeamento da identidade lógica para referência, prompt, voice clone ou configuração concreta.
 
-Isso permite:
+Isso permite trocar modelo sem reescrever o corpus e comparar backends mantendo a mesma intenção de voz.
 
-- trocar o fornecedor sem reescrever o corpus;
-- comparar vozes de diferentes backends;
-- manter a identidade de um personagem ao longo de todos os capítulos;
-- alterar uma voz e invalidar somente os segmentos afetados.
+## 7. Benchmark de TTS
 
-## 7. Pipeline
+### 7.1. Escolha empírica
 
-### 7.1. Estágios
+Nenhum modelo é escolhido definitivamente por leaderboard ou model card.
 
-A pipeline deve expor estágios independentes:
+O projeto mantém um corpus pequeno de benchmark pt-BR com segmentos que cubram:
+
+- narração neutra;
+- diálogo coloquial;
+- perguntas/exclamações;
+- ironia;
+- medo, raiva e outras emoções;
+- fala baixa/sussurro quando suportado;
+- frases longas;
+- números, siglas e abreviações;
+- fonemas e encontros relevantes do português brasileiro;
+- nomes ingleses dentro de frase portuguesa;
+- alternância pt-BR/inglês;
+- passagens mais longas para testar estabilidade.
+
+### 7.2. Candidatos iniciais
+
+A primeira rodada deve permitir pelo menos:
+
+- Breeze TTS 2;
+- Higgs TTS 3;
+- Chatterbox V3 / pt-BR;
+- Qwen3-TTS;
+- Fish S2.x, enquanto acessível.
+
+A lista é expansível sem alterar o contrato do corpus.
+
+### 7.3. Métricas
+
+Registrar, quando aplicável:
+
+- preferência cega humana;
+- naturalidade em pt-BR;
+- inteligibilidade/pronúncia;
+- expressividade e aderência à direção narrativa;
+- estabilidade da identidade da voz;
+- repetições, omissões e alucinações;
+- duração produzida;
+- real-time factor;
+- VRAM observada;
+- falhas de execução;
+- custo monetário;
+- quantidade de intervenção manual necessária.
+
+A escolha para produção deve privilegiar qualidade de audiobook e estabilidade, não apenas WER.
+
+## 8. Worker TTS único
+
+A unidade executável de geração deve ser um script Python, inicialmente `scripts/audiobook/worker.py`.
+
+Contrato conceitual:
+
+```text
+python scripts/audiobook/worker.py \
+  --work hpmor \
+  --chapter 1 \
+  --backend breeze \
+  --model <modelo> \
+  --input-plan <plan.json> \
+  --output-dir <dir>
+```
+
+O worker:
+
+1. lê um plano de segmentos já validado;
+2. instala/carrega apenas o backend selecionado;
+3. gera cada segmento de forma independente;
+4. escreve áudio + metadata de execução;
+5. não altera original, tradução ou narração;
+6. pode retomar execução parcial;
+7. encerra com código diferente de zero em falhas não recuperáveis.
+
+O script deve ser capaz de detectar a GPU disponível e registrar hardware, versões e parâmetros no manifesto da execução.
+
+Dependências Python devem ser declaradas de forma autocontida sempre que viável, preferencialmente com PEP 723/`uv run`, evitando manter ambientes manuais diferentes por runner.
+
+## 9. Runners de compute
+
+### 9.1. Princípio
+
+Colab e Kaggle não recebem implementações distintas do TTS. Eles recebem o mesmo worker.
+
+O adapter de runner resolve apenas:
+
+- provisionamento/acelerador;
+- envio do script e inputs;
+- autenticação;
+- acompanhamento do job;
+- recuperação dos outputs;
+- teardown quando aplicável.
+
+### 9.2. Colab CLI
+
+O caminho preferido é o CLI oficial do Google Colab, executando diretamente o arquivo Python local.
+
+Forma conceitual:
+
+```bash
+colab run --gpu T4 scripts/audiobook/worker.py -- \
+  --work hpmor \
+  --chapter 1 \
+  --backend breeze \
+  --input-plan plan.json \
+  --output-dir output
+```
+
+Quando for útil reutilizar uma VM durante vários testes, o runner pode usar `colab new`, `colab install`, `colab exec`, `colab download` e `colab stop` em vez do job efêmero.
+
+O projeto não presume que um tipo específico de GPU estará sempre disponível. Falha de quota ou alocação deve ser tratada como indisponibilidade do runner, não como falha do modelo TTS.
+
+### 9.3. Kaggle CLI
+
+Kaggle deve ser usado como **script kernel**, não notebook.
+
+O staging do job contém:
+
+```text
+.kaggle-job/
+  worker.py
+  plan.json
+  kernel-metadata.json
+```
+
+`kernel-metadata.json` usa:
+
+```json
+{
+  "code_file": "worker.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true
+}
+```
+
+Fluxo conceitual:
+
+```bash
+kaggle kernels push -p .kaggle-job --accelerator NvidiaTeslaT4
+kaggle kernels status <user>/<job>
+kaggle kernels output <user>/<job> -p output
+```
+
+O wrapper deve gerar o staging automaticamente; nenhum `.ipynb` precisa existir no repositório.
+
+### 9.4. Local
+
+O mesmo worker deve continuar executável localmente para CPU/GPU disponível, testes e depuração.
+
+O runner local também é a implementação de referência para o contrato de entrada/saída.
+
+## 10. Pipeline
+
+A pipeline expõe estágios independentes:
 
 1. `import` — obtém/normaliza o original e calcula proveniência/digest;
-2. `translate` — cria ou atualiza a camada de tradução;
-3. `prepare-narration` — cria ou atualiza a camada orientada ao TTS;
-4. `validate` — verifica IDs, alinhamento, links de derivação e schema;
-5. `plan` — calcula quais segmentos precisam ser sintetizados e quanto trabalho será executado;
-6. `synthesize` — gera apenas segmentos ausentes ou invalidados;
-7. `assemble` — concatena segmentos em capítulo, preservando ordem e metadados;
-8. `publish` — disponibiliza artefatos no destino configurado.
+2. `translate` — cria ou atualiza a tradução;
+3. `prepare-narration` — cria ou atualiza a camada de narração;
+4. `validate` — verifica IDs, alinhamento, links e schema;
+5. `plan` — calcula segmentos, cache keys e trabalho pendente;
+6. `benchmark` — opcionalmente gera as mesmas amostras em múltiplos backends;
+7. `synthesize` — despacha o worker para runner local/Colab/Kaggle;
+8. `assemble` — concatena segmentos em capítulo;
+9. `publish` — disponibiliza artefatos.
 
-Cada estágio deve poder ser executado sem obrigatoriamente executar os posteriores.
+Cada estágio pode ser executado sem obrigatoriamente executar os posteriores.
 
-### 7.2. Dry-run obrigatório
+### 10.1. Dry-run obrigatório
 
-Qualquer workflow capaz de chamar um serviço pago deve possuir modo `dry-run` que mostre:
+Antes de síntese, `plan` deve mostrar:
 
-- capítulo(s) selecionado(s);
-- número de segmentos a gerar;
-- backend/modelo/voz resolvidos;
-- segmentos reutilizados do cache;
+- capítulos selecionados;
+- segmentos a gerar;
+- backend/modelo/voz;
+- runner escolhido;
+- segmentos reutilizados;
 - segmentos invalidados;
-- estimativa de caracteres ou outra unidade de cobrança disponível.
+- estimativa de caracteres/duração/custo quando disponível.
 
-Nenhum evento de `push` comum deve, na primeira versão, disparar automaticamente uma despesa de TTS.
+Nenhum `push` comum dispara automaticamente despesa de API.
 
-### 7.3. GitHub Actions
+## 11. GitHub Actions
 
-O primeiro workflow de produção deve usar `workflow_dispatch` e aceitar, no mínimo:
+GitHub Actions é **orquestrador**, não requisito de GPU.
+
+O workflow de produção deve poder:
+
+1. validar o corpus;
+2. gerar o plano;
+3. escolher runner;
+4. invocar `colab` ou `kaggle` CLI, ou usar um backend HTTP quando configurado;
+5. acompanhar a execução;
+6. recuperar outputs;
+7. validar manifestos;
+8. montar/publicar artefatos.
+
+O primeiro workflow usa `workflow_dispatch` e aceita, no mínimo:
 
 - obra;
-- capítulo ou intervalo de capítulos;
-- backend;
+- capítulo ou intervalo;
+- backend/modelo;
+- runner (`local`, `colab`, `kaggle`, `api` quando houver);
 - `dry_run`;
-- `force` para ignorar cache, quando necessário.
+- `force` para ignorar cache.
 
-Credenciais de serviços externos entram somente por GitHub Actions secrets e nunca são escritas no corpus, logs ou artefatos.
+Credenciais externas entram somente por secrets/configuração segura e nunca no corpus, logs ou artefatos públicos.
 
-## 8. Manifesto derivado
+A autenticação headless de cada CLI deve ser validada antes de torná-la runner automático de Actions. Um runner pode inicialmente ser acionado manualmente por CLI sem impedir que o resto da pipeline seja automatizado.
 
-A pipeline deve produzir um manifesto por build, contendo informação suficiente para reproduzir e auditar o resultado.
+## 12. Manifesto derivado
 
-Exemplo conceitual:
+A pipeline produz manifesto suficiente para reproduzir e auditar o resultado.
 
 ```json
 {
   "work_id": "hpmor",
   "chapter_id": "hpmor-001",
   "narration_digest": "sha256:...",
-  "backend": "example",
-  "model": "example-model",
+  "runner": "kaggle",
+  "hardware": "NvidiaTeslaT4",
+  "backend": "breeze",
+  "model": "...",
   "segments": [
     {
       "segment_id": "hpmor-001-s0001",
@@ -332,165 +529,176 @@ Exemplo conceitual:
 }
 ```
 
-O manifesto é derivado e pode ser regenerado. Ele não substitui os três bundles textuais.
+O manifesto é derivado e não substitui os três bundles textuais.
 
-## 9. Validação
-
-O projeto deve falhar cedo quando houver inconsistência estrutural.
+## 13. Validação
 
 Validações mínimas:
 
-- todos os arquivos possuem `type` OKF;
-- todo capítulo possui `work_id`, `chapter_id`, `chapter_number` e `lang` válidos;
-- original, tradução e narração de um capítulo concordam em `work_id` e `chapter_id`;
-- `derived_from` resolve para arquivo existente;
-- `segment_id` não se repete dentro de uma obra;
-- a ordem dos segmentos é determinística;
-- um segmento de tradução/narração não referencia silenciosamente um segmento inexistente no ancestral;
+- todos os documentos possuem `type` OKF;
+- todo capítulo possui `work_id`, `chapter_id`, `chapter_number` e `lang`;
+- original, tradução e narração concordam em identidade;
+- `derived_from` resolve;
+- `segment_id` não se repete dentro da obra;
+- ordem dos segmentos é determinística;
+- descendentes não referenciam silenciosamente segmentos inexistentes;
 - manifestos nunca são tratados como fonte canônica;
-- nenhum segredo aparece em arquivos versionados.
+- nenhum segredo aparece versionado;
+- runner não modifica corpus canônico;
+- outputs declarados pelo worker correspondem ao plano recebido.
 
-A implementação deve preferir validação por ferramenta existente do ecossistema OKF quando ela já cobre o requisito, complementando somente o que é específico do domínio de audiolivro.
+## 14. Site
 
-## 10. Site
+A primeira entrega não exige uma experiência pública completa, mas a arquitetura deve permitir que `franklinbaldo.github.io` seja o frontend do audiolivro.
 
-A primeira entrega não exige uma experiência pública completa, mas a arquitetura deve permitir que o próprio `franklinbaldo.github.io` se torne o frontend do audiolivro.
-
-Uma fase posterior pode oferecer:
+Fases posteriores podem oferecer:
 
 - página da obra;
 - índice de capítulos;
-- player por capítulo;
+- player;
 - indicação do trecho corrente;
 - texto traduzido sincronizado;
-- comparação opcional original/tradução;
-- feed RSS/podcast;
-- M4B ou outros formatos de distribuição.
+- comparação original/tradução;
+- RSS/podcast;
+- M4B e outros formatos.
 
-A interface web consome artefatos da pipeline; não redefine o corpus canônico.
+A interface consome artefatos; não redefine o corpus canônico.
 
-## 11. Escopo autoral e de publicação
+## 15. Escopo autoral e publicação
 
 O projeto nasce como experimento pessoal, aberto e não comercial. Questões de autorização, política de distribuição ou eventual mudança de alcance não são gate para o kickstart técnico.
 
-Se o projeto adquirir distribuição material, monetização ou outra relevância que altere seu perfil de risco, essa etapa deve receber revisão própria antes de ampliar a publicação. Essa revisão é uma decisão de distribuição, não um requisito para modelar o corpus e construir a pipeline.
+Se o projeto adquirir distribuição material, monetização ou relevância que altere seu perfil de risco, a publicação deve receber revisão própria antes de ser ampliada.
 
-## 12. Não-objetivos iniciais
+## 16. Não-objetivos iniciais
 
 Não fazem parte do kickstart:
 
-- gerar imediatamente todos os capítulos;
-- escolher definitivamente um fornecedor de TTS;
+- gerar todos os capítulos imediatamente;
+- escolher um vencedor TTS sem benchmark próprio;
+- adaptar/fine-tunar modelo antes de testar zero-shot;
 - criar vozes clonadas de atores ou pessoas reais;
-- produzir uma dramatização com efeitos sonoros e trilha;
-- otimizar o site antes de existir um capítulo end-to-end;
-- armazenar grandes binários de áudio no histórico Git;
-- automatizar gasto de API em todo `push`;
-- transformar a camada de tradução em texto cheio de instruções de sintetizador.
+- dramatização com efeitos/trilha;
+- armazenar grandes binários no Git;
+- automatizar gasto em todo `push`;
+- contaminar tradução com comandos de sintetizador;
+- manter notebooks operacionais ou uma pipeline paralela em `.ipynb`.
 
-## 13. Fases
+## 17. Fases
 
 ### Fase 0 — contrato
 
 Esta PR.
 
-Entregáveis:
-
-- PRD OKF;
-- decisão explícita das três camadas;
-- identidade compartilhada entre as camadas;
-- contrato de pipeline incremental e provider-neutral.
-
-Critério de aceite: o documento é suficiente para implementar a Fase 1 sem precisar decidir novamente a arquitetura fundamental.
+Critério de aceite: o documento fixa arquitetura de corpus, benchmark, worker e compute CLI-first.
 
 ### Fase 1 — corpus mínimo e validação
 
 Entregáveis:
 
-- criar `data/audiobooks/hpmor/{original,translation,narration}`;
-- adicionar o capítulo 1 nas três camadas;
-- definir `voices.yaml` mínimo;
-- implementar validador de IDs, `derived_from` e segmentos;
-- adicionar testes/fixtures;
-- nenhuma chamada de rede paga.
+- `data/audiobooks/hpmor/{original,translation,narration}`;
+- capítulo 1 nas três camadas;
+- `voices.yaml` mínimo;
+- validador de IDs, derivação e segmentos;
+- fixtures/testes;
+- nenhuma chamada paga.
 
-Critério de aceite: um agente consegue percorrer deterministicamente `original -> translation -> narration` do capítulo 1 e mapear cada segmento correspondente.
+Critério de aceite: um agente percorre deterministicamente `original -> translation -> narration` do capítulo 1 e mapeia os segmentos correspondentes.
 
-### Fase 2 — planner e backend abstrato
+### Fase 2 — planner, worker e runners
 
 Entregáveis:
 
-- parser da camada de narração;
+- parser da narração;
 - representação interna de requests TTS;
 - interface de backend;
-- cálculo de cache key;
-- comando `plan`/dry-run;
-- backend fake para testes.
+- cache key;
+- `plan`/dry-run;
+- backend fake;
+- `scripts/audiobook/worker.py`;
+- runner local;
+- wrappers CLI para Colab e Kaggle;
+- Kaggle configurado como `kernel_type: script`;
+- nenhum notebook requerido.
 
-Critério de aceite: o sistema informa exatamente quais segmentos seriam gerados sem chamar um serviço externo.
+Critério de aceite: o mesmo worker executa um job fake localmente e pode ser despachado pelos dois CLIs remotos sem divergência de contrato.
 
-### Fase 3 — primeiro capítulo em áudio
+### Fase 3 — benchmark real
 
 Entregáveis:
 
-- um backend real de TTS;
-- workflow manual em GitHub Actions;
-- geração incremental dos segmentos;
+- adapters dos candidatos selecionados;
+- corpus benchmark pt-BR;
+- execução comparável em pelo menos um runner gratuito disponível;
+- amostras e manifestos comparáveis;
+- relatório de qualidade/estabilidade/desempenho.
+
+Critério de aceite: existe evidência própria suficiente para escolher ou ordenar os modelos para o capítulo 1.
+
+### Fase 4 — primeiro capítulo em áudio
+
+Entregáveis:
+
+- backend/modelo selecionado;
+- geração incremental;
 - montagem do capítulo;
-- manifesto com digests e duração;
-- artifact de Actions com o áudio resultante.
+- manifesto completo;
+- artifact com áudio resultante.
 
-Critério de aceite: o capítulo 1 é reproduzível a partir do commit do corpus e da configuração declarada.
+Critério de aceite: capítulo 1 reproduzível a partir do commit, configuração e runner declarado.
 
-### Fase 4 — experiência no blog
+### Fase 5 — experiência no blog
 
 Entregáveis:
 
-- loader/coleção dedicada;
+- loader dedicado;
 - página da obra;
 - página/player de capítulo;
-- metadados suficientes para navegação.
+- metadados de navegação.
 
-Critério de aceite: o capítulo produzido pela Fase 3 pode ser ouvido no frontend sem duplicar manualmente conteúdo ou metadados.
-
-### Fase 5 — escala
+### Fase 6 — escala
 
 Somente após o capítulo 1 estar satisfatório:
 
-- tradução/adaptação dos capítulos seguintes;
-- revisão de consistência de personagens e pronúncia;
+- capítulos seguintes;
+- consistência de personagens/pronúncia;
 - geração batch incremental;
-- estratégia de armazenamento/publicação durável;
-- formatos de distribuição adicionais.
+- armazenamento/publicação durável;
+- formatos adicionais.
 
-## 14. Métricas de sucesso
+## 18. Métricas de sucesso
 
 O projeto é bem-sucedido quando:
 
-- qualquer trecho traduzido pode ser rastreado ao original correspondente;
-- qualquer trecho narrado pode ser rastreado à tradução correspondente;
-- qualquer segmento de áudio pode ser rastreado ao texto/configuração que o gerou;
-- corrigir uma única fala não força a regeneração do capítulo inteiro;
-- trocar de backend não exige reescrever o corpus de narração;
-- o capítulo 1 pode ser regenerado deterministicamente por GitHub Actions;
-- o corpus continua compreensível como Markdown sem depender da ferramenta de TTS.
+- qualquer tradução é rastreável ao original;
+- qualquer narração é rastreável à tradução;
+- qualquer áudio é rastreável ao texto/configuração/modelo/runner;
+- corrigir uma fala não força regenerar o capítulo inteiro;
+- trocar backend não exige reescrever o corpus;
+- o mesmo worker roda localmente e em compute remoto;
+- nenhum notebook manual é necessário;
+- o capítulo 1 pode ser reproduzido por comandos documentados;
+- o corpus continua compreensível como Markdown sem ferramenta de TTS.
 
-## 15. Decisões já tomadas
+## 19. Decisões já tomadas
 
-Estas decisões são parte do contrato do produto e não devem ser reabertas durante a Fase 1 sem evidência concreta de inviabilidade:
-
-1. haverá três camadas textuais: original, tradução e narração;
+1. haverá três camadas: original, tradução e narração;
 2. todas serão Markdown compatível com OKF;
-3. original e tradução são separados por capítulo;
-4. as camadas correspondentes compartilham o mesmo `chapter_id`;
-5. o alinhamento deve chegar a unidades menores que o capítulo para permitir rastreabilidade e geração incremental;
-6. a narração pode adaptar a forma do texto para TTS, mas não substitui a tradução canônica;
-7. TTS é pluggable e provider-neutral no contrato canônico;
-8. GitHub Actions será um ambiente suportado para a computação de produção;
-9. chamadas pagas começam manuais e com dry-run;
-10. binários de áudio são derivados e não precisam ser commitados no Git;
-11. o HPMOR é o corpus inicial, não uma dependência arquitetural do motor.
+3. as camadas correspondentes compartilham `chapter_id` e IDs menores;
+4. narração adapta a forma para TTS sem substituir a tradução;
+5. TTS é pluggable e provider-neutral;
+6. idioma não listado no model card não elimina candidato;
+7. zero-shot é testado antes de qualquer adaptação;
+8. escolha de modelo passa por benchmark pt-BR próprio;
+9. código de produção é CLI-first e script-first;
+10. `.ipynb` não é fonte operacional do projeto;
+11. Colab e Kaggle são runners do mesmo worker;
+12. Kaggle usa `kernel_type: script`;
+13. GitHub Actions atua como orquestrador e não precisa fornecer GPU;
+14. chamadas pagas começam manuais/dry-run;
+15. binários de áudio são derivados;
+16. HPMOR é o corpus inicial, não uma dependência arquitetural.
 
-## 16. Primeira próxima ação
+## 20. Primeira próxima ação
 
-A próxima PR após este PRD deve implementar exclusivamente a **Fase 1**: estrutura do corpus, capítulo 1 nas três camadas, identidade/alinhamento e validação local, sem integrar ainda um fornecedor real de TTS.
+A próxima PR após este PRD deve implementar a **Fase 1**. Em paralelo, a implementação da Fase 2 já deve preservar o contrato de que o worker será um script Python comum executável por CLI, sem notebook como camada intermediária.
