@@ -1,0 +1,87 @@
+---
+import PageLayout from "../../../layouts/PageLayout.astro";
+import { listWorks, publishedEpisodes } from "../../../audiobook/catalog.js";
+
+export function getStaticPaths() {
+  return listWorks().flatMap((work) =>
+    publishedEpisodes(work).map((episode) => ({
+      params: { workId: work.workId, chapterId: episode.chapterId },
+      props: { work, episode },
+    })),
+  );
+}
+
+const { work, episode } = Astro.props;
+const audioUrl = episode.enclosure?.url;
+---
+
+<PageLayout
+  title={`${episode.title} — ${work.metadata.title}`}
+  description={episode.description || work.metadata.podcast?.description || work.metadata.title}
+  lang="pt"
+  breadcrumb={[
+    { name: "Audiolivros", item: "/audiobooks/" },
+    { name: work.metadata.title, item: `/audiobooks/${work.workId}/` },
+    { name: episode.title, item: `/audiobooks/${work.workId}/${episode.chapterId}/` },
+  ]}
+>
+  <main class="container audiobook-episode">
+    <p><a href={`/audiobooks/${work.workId}/`}>← {work.metadata.title}</a></p>
+    <header>
+      <p class="eyebrow">Audiolivro</p>
+      <h1>{episode.title}</h1>
+      {episode.description && <p>{episode.description}</p>}
+    </header>
+
+    {
+      audioUrl && (
+        <audio controls preload="metadata">
+          <source src={audioUrl} type={episode.enclosure.type} />
+          Seu navegador não suporta reprodução de áudio HTML5.
+        </audio>
+      )
+    }
+
+    <dl>
+      <dt>Publicado</dt>
+      <dd>{new Date(episode.publishedAt).toLocaleDateString("pt-BR")}</dd>
+      {episode.durationSeconds != null && (
+        <>
+          <dt>Duração</dt>
+          <dd>{Math.round(episode.durationSeconds / 60)} min</dd>
+        </>
+      )}
+    </dl>
+
+    {episode.transcript?.url && <p><a href={episode.transcript.url}>Transcript / legendas</a></p>}
+  </main>
+</PageLayout>
+
+<style>
+  .audiobook-episode {
+    max-width: 52rem;
+    padding-block: 3rem 5rem;
+  }
+
+  .eyebrow {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.72;
+  }
+
+  audio {
+    width: 100%;
+    margin-block: 2rem;
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.4rem 1rem;
+  }
+
+  dt {
+    font-weight: 600;
+  }
+</style>
