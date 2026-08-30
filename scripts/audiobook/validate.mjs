@@ -9,7 +9,7 @@ import {
 
 function usage() {
   console.error(
-    "Usage: node scripts/audiobook/validate.mjs --work <work_id> [--chapter <chapter_id>] [--require-ready-for-audio] [--json]",
+    "Usage: node scripts/audiobook/validate.mjs --work <work_id> [--chapter <chapter_id>] [--require-ready-for-audio] [--json]"
   );
 }
 
@@ -52,7 +52,7 @@ try {
     console.log(`next: ${result.nextAction}`);
     for (const chapter of result.chapters) {
       console.log(
-        `${chapter.chapterId}: ${chapter.readyForAudio ? "ready_for_audio" : (chapter.status ?? "not_ready")}`,
+        `${chapter.chapterId}: ${chapter.readyForAudio ? "ready_for_audio" : (chapter.status ?? "not_ready")}`
       );
       if (chapter.pendingGates.length) {
         console.log(`  pending: ${chapter.pendingGates.join(", ")}`);
