@@ -15,7 +15,13 @@ function usage() {
 }
 
 function parseArgs(argv) {
-  const args = { workId: null, chapterId: null, assemblyDir: null, outputPath: null, dryRun: false };
+  const args = {
+    workId: null,
+    chapterId: null,
+    assemblyDir: null,
+    outputPath: null,
+    dryRun: false,
+  };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === "--work") args.workId = argv[++index] ?? null;
@@ -26,7 +32,9 @@ function parseArgs(argv) {
     else if (arg === "--help" || arg === "-h") {
       usage();
       process.exit(0);
-    } else throw new Error(`Unknown argument: ${arg}`);
+    } else {
+      throw new Error(`Unknown argument: ${arg}`);
+    }
   }
   for (const [flag, value] of [
     ["--work", args.workId],
@@ -44,15 +52,25 @@ function readJson(filePath) {
 }
 
 function sha256File(filePath) {
-  const digest = crypto.createHash("sha256");
-  digest.update(fs.readFileSync(filePath));
-  return `sha256:${digest.digest("hex")}`;
+  return new Promise((resolve, reject) => {
+    const digest = crypto.createHash("sha256");
+    const stream = fs.createReadStream(filePath);
+    stream.on("data", (chunk) => digest.update(chunk));
+    stream.on("error", reject);
+    stream.on("end", () => resolve(`sha256:${digest.digest("hex")}`));
+  });
 }
 
 function run(command, args, { env = process.env } = {}) {
-  const result = spawnSync(command, args, { encoding: "utf8", env, stdio: ["ignore", "pipe", "pipe"] });
+  const result = spawnSync(command, args, {
+    encoding: "utf8",
+    env,
+    stdio: ["ignore", "pipe", "pipe"],
+  });
   if (result.status !== 0) {
-    throw new Error(`${command} ${args.join(" ")} failed (${result.status}): ${result.stderr || result.stdout}`);
+    throw new Error(
+      `${command} ${args.join(" ")} failed (${result.status}): ${result.stderr || result.stdout}`,
+    );
   }
   return result.stdout;
 }
@@ -61,7 +79,7 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function verifyEnclosure(url, expectedBytes, attempts = 18) {
+async function verifyRemoteFile(url, expectedBytes, attempts = 18) {
   let lastError;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     try {
@@ -69,14 +87,18 @@ async function verifyEnclosure(url, expectedBytes, attempts = 18) {
       if (!head.ok) throw new Error(`HEAD ${head.status}`);
       const length = Number(head.headers.get("content-length"));
       if (Number.isFinite(length) && length > 0 && length !== expectedBytes) {
-        throw new Error(`Content-Length ${length} != expected ${expectedBytes}`);
+        throw new Error(
+          `Content-Length ${length} != expected ${expectedBytes}`,
+        );
       }
 
       const range = await fetch(url, {
         headers: { Range: "bytes=0-0" },
         redirect: "follow",
       });
-      if (![200, 206].includes(range.status)) throw new Error(`range request ${range.status}`);
+      if (![200, 206].includes(range.status)) {
+        throw new Error(`range request ${range.status}`);
+      }
       const bytes = new Uint8Array(await range.arrayBuffer());
       if (bytes.length < 1) throw new Error("range request returned no bytes");
       return {
@@ -87,51 +109,92 @@ async function verifyEnclosure(url, expectedBytes, attempts = 18) {
       };
     } catch (error) {
       lastError = error;
-      if (attempt < attempts) await sleep(Math.min(5000 * attempt, 20_000));
+      if (attempt < attempts) {
+        await sleep(Math.min(5000 * attempt, 20_000));
+      }
     }
   }
-  throw new Error(`Internet Archive enclosure did not become readable: ${lastError}`);
+  throw new Error(
+    `Internet Archive file did not become readable: ${lastError}`,
+  );
 }
 
-function publicationTitle(work, chapter) {
+function publicationTitle(chapter) {
   const title = chapter.publication?.title;
-  if (!title) throw new Error(`${chapter.chapterId}: publication.title must be set before publishing`);
+  if (!title) {
+    throw new Error(
+      `${chapter.chapterId}: publication.title must be set before publishing`,
+    );
+  }
   return title;
+}
+
+async function validateAssemblyFile(filePath, expected) {
+  if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+    throw new Error(`Missing assembly file: ${filePath}`);
+  }
+  if (fs.statSync(filePath).size !== expected.bytes) {
+    throw new Error(`assembly size mismatch: ${filePath}`);
+  }
+  if ((await sha256File(filePath)) !== expected.sha256) {
+    throw new Error(`assembly digest mismatch: ${filePath}`);
+  }
 }
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const work = loadWork(process.cwd(), args.workId);
-  const chapter = work.chapters.find((entry) => entry.chapterId === args.chapterId);
+  const chapter = work.chapters.find(
+    (entry) => entry.chapterId === args.chapterId,
+  );
   if (!chapter) throw new Error(`Unknown chapter ${args.chapterId}`);
-  if (chapter.ready_for_audio !== true) throw new Error(`${args.chapterId} is not ready_for_audio`);
+  if (chapter.ready_for_audio !== true) {
+    throw new Error(`${args.chapterId} is not ready_for_audio`);
+  }
 
   const archiveItem = work.metadata.media?.archive_item;
-  if (!archiveItem) throw new Error(`${args.workId}: media.archive_item is required`);
+  if (!archiveItem) {
+    throw new Error(`${args.workId}: media.archive_item is required`);
+  }
+
+  if (
+    !args.dryRun &&
+    work.state.publication?.public_distribution_authorized !== true
+  ) {
+    throw new Error(
+      "public distribution is not authorized in state.yaml; refusing Internet Archive upload",
+    );
+  }
 
   const assemblyDir = path.resolve(args.assemblyDir);
   const assembly = readJson(path.join(assemblyDir, "assembly.json"));
-  if (assembly.work_id !== args.workId || assembly.chapter_id !== args.chapterId) {
+  if (
+    assembly.work_id !== args.workId ||
+    assembly.chapter_id !== args.chapterId
+  ) {
     throw new Error("assembly work/chapter identity mismatch");
   }
 
   const audioPath = path.join(assemblyDir, assembly.audio.file);
   const transcriptPath = path.join(assemblyDir, assembly.transcript.file);
-  for (const filePath of [audioPath, transcriptPath]) {
-    if (!fs.statSync(filePath).isFile()) throw new Error(`Missing assembly file: ${filePath}`);
-  }
-  if (fs.statSync(audioPath).size !== assembly.audio.bytes || sha256File(audioPath) !== assembly.audio.sha256) {
-    throw new Error("assembled audio failed local size/digest validation");
-  }
+  await validateAssemblyFile(audioPath, assembly.audio);
+  await validateAssemblyFile(transcriptPath, assembly.transcript);
 
-  const title = publicationTitle(work, chapter);
-  const description = chapter.publication?.description ?? work.metadata.podcast?.description ?? work.metadata.title;
-  const publishedAt = chapter.publication?.published_at ?? new Date().toISOString();
+  const title = publicationTitle(chapter);
+  const description =
+    chapter.publication?.description ??
+    work.metadata.podcast?.description ??
+    work.metadata.title;
+  const publishedAt =
+    chapter.publication?.published_at ?? new Date().toISOString();
   const audioName = path.basename(audioPath);
   const transcriptName = path.basename(transcriptPath);
   const baseUrl = `https://archive.org/download/${encodeURIComponent(archiveItem)}/`;
   const enclosureUrl = new URL(encodeURIComponent(audioName), baseUrl).href;
-  const transcriptUrl = new URL(encodeURIComponent(transcriptName), baseUrl).href;
+  const transcriptUrl = new URL(
+    encodeURIComponent(transcriptName),
+    baseUrl,
+  ).href;
 
   const publication = {
     schema: "audiobook-publication-v1",
@@ -161,7 +224,9 @@ async function main() {
     publication.dry_run = true;
   } else {
     if (!process.env.IA_ACCESS_KEY_ID || !process.env.IA_SECRET_ACCESS_KEY) {
-      throw new Error("IA_ACCESS_KEY_ID and IA_SECRET_ACCESS_KEY are required");
+      throw new Error(
+        "IA_ACCESS_KEY_ID and IA_SECRET_ACCESS_KEY are required",
+      );
     }
 
     run("ia", [
@@ -184,13 +249,21 @@ async function main() {
       `description:${work.metadata.podcast?.description ?? description}`,
     ]);
 
-    publication.verification = await verifyEnclosure(enclosureUrl, assembly.audio.bytes);
-    const transcriptVerification = await verifyEnclosure(transcriptUrl, assembly.transcript.bytes);
-    publication.transcript.verification = transcriptVerification;
+    publication.verification = await verifyRemoteFile(
+      enclosureUrl,
+      assembly.audio.bytes,
+    );
+    publication.transcript.verification = await verifyRemoteFile(
+      transcriptUrl,
+      assembly.transcript.bytes,
+    );
   }
 
   fs.mkdirSync(path.dirname(args.outputPath), { recursive: true });
-  fs.writeFileSync(args.outputPath, `${JSON.stringify(publication, null, 2)}\n`);
+  fs.writeFileSync(
+    args.outputPath,
+    `${JSON.stringify(publication, null, 2)}\n`,
+  );
   console.log(JSON.stringify(publication));
 }
 
