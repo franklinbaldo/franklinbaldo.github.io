@@ -4,7 +4,11 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-import { AudiobookValidationError, validateChapterState, validateWork } from "./validate.js";
+import {
+  AudiobookValidationError,
+  validateChapterState,
+  validateWork,
+} from "./validate.js";
 
 const ALL_TRUE = {
   work_ready: true,
@@ -26,7 +30,12 @@ function fixture({ ready = false } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "audiobook-validator-"));
   const gates = ready
     ? ALL_TRUE
-    : { ...ALL_TRUE, source_ready: false, translation_ready: false, narration_ready: false };
+    : {
+        ...ALL_TRUE,
+        source_ready: false,
+        translation_ready: false,
+        narration_ready: false,
+      };
 
   write(
     root,
@@ -63,8 +72,14 @@ test("validates a not-yet-ready work without requiring audio readiness", () => {
 test("blocks TTS gate until every readiness gate is true", () => {
   const root = fixture();
   assert.throws(
-    () => validateWork(root, "example", { chapterId: "example-001", requireReadyForAudio: true }),
-    (error) => error instanceof AudiobookValidationError && /not ready for audio/.test(error.details.join(" ")),
+    () =>
+      validateWork(root, "example", {
+        chapterId: "example-001",
+        requireReadyForAudio: true,
+      }),
+    (error) =>
+      error instanceof AudiobookValidationError &&
+      /not ready for audio/.test(error.details.join(" ")),
   );
 });
 
@@ -89,8 +104,13 @@ test("rejects ready_for_audio when it disagrees with gates", () => {
 });
 
 test("validates the repository HPMOR work state", () => {
-  const result = validateWork(process.cwd(), "hpmor", { chapterId: "hpmor-001" });
+  const result = validateWork(process.cwd(), "hpmor", {
+    chapterId: "hpmor-001",
+  });
   assert.equal(result.workId, "hpmor");
   assert.equal(result.chapters[0].readyForAudio, false);
-  assert.equal(result.chapters[0].nextAction, "import source snapshot and establish stable segment ids");
+  assert.equal(
+    result.chapters[0].nextAction,
+    "import source snapshot and establish stable segment ids",
+  );
 });
