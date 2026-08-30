@@ -23,7 +23,8 @@ function makePlan(root) {
             voice: { role: "narrator", locale: "pt-BR" },
             text: "Teste.",
             direction: {},
-            input_digest: "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+            input_digest:
+              "sha256:1111111111111111111111111111111111111111111111111111111111111111",
           },
           {
             segment_id: "example-001-s0002",
@@ -31,13 +32,14 @@ function makePlan(root) {
             voice: { role: "character", locale: "pt-BR" },
             text: "Outro teste.",
             direction: { emotion: "curious" },
-            input_digest: "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+            input_digest:
+              "sha256:2222222222222222222222222222222222222222222222222222222222222222",
           },
         ],
       },
       null,
-      2,
-    )}\n`,
+      2
+    )}\n`
   );
   return planPath;
 }
@@ -61,13 +63,17 @@ test("fake worker emits deterministic segment audio, manifest and archive", () =
       "--result-archive",
       archivePath,
     ],
-    { cwd: process.cwd(), encoding: "utf8" },
+    { cwd: process.cwd(), encoding: "utf8" }
   );
 
   assert.equal(result.status, 0, result.stderr);
-  const manifest = JSON.parse(fs.readFileSync(path.join(outputDir, "manifest.json"), "utf8"));
+  const manifest = JSON.parse(
+    fs.readFileSync(path.join(outputDir, "manifest.json"), "utf8")
+  );
   assert.equal(manifest.schema, "audiobook-media-manifest-v1");
   assert.equal(manifest.segments.length, 2);
-  assert.ok(fs.statSync(path.join(outputDir, manifest.segments[0].audio_file)).size > 0);
+  assert.ok(
+    fs.statSync(path.join(outputDir, manifest.segments[0].audio_file)).size > 0
+  );
   assert.ok(fs.statSync(archivePath).size > 0);
 });
