@@ -40,24 +40,26 @@ function fixture({ ready = false } = {}) {
   write(
     root,
     "data/audiobooks/example/work.md",
-    `---\ntype: Audiobook Work\nwork_id: example\ntitle: Example\nsource_language: en\ntarget_language: pt-BR\nsource_url: https://example.test/\n---\n`,
+    `---\ntype: Audiobook Work\nwork_id: example\ntitle: Example\nsource_language: en\ntarget_language: pt-BR\nsource_url: https://example.test/\n---\n`
   );
   write(
     root,
     "data/audiobooks/example/state.yaml",
-    `schema: audiobook-work-state-v1\nwork_id: example\nstatus: preparing\nnext_action: continue\nchapters:\n  example-001:\n    status: ${ready ? "ready" : "in_progress"}\n    next_action: continue chapter\n    gates:\n${Object.entries(gates)
+    `schema: audiobook-work-state-v1\nwork_id: example\nstatus: preparing\nnext_action: continue\nchapters:\n  example-001:\n    status: ${ready ? "ready" : "in_progress"}\n    next_action: continue chapter\n    gates:\n${Object.entries(
+      gates
+    )
       .map(([key, value]) => `      ${key}: ${value}`)
-      .join("\n")}\n    ready_for_audio: ${ready}\n`,
+      .join("\n")}\n    ready_for_audio: ${ready}\n`
   );
   write(
     root,
     "data/audiobooks/example/voices.yaml",
-    "schema: audiobook-voices-v1\nwork_id: example\nvoices:\n  narrator:\n    role: narrator\n",
+    "schema: audiobook-voices-v1\nwork_id: example\nvoices:\n  narrator:\n    role: narrator\n"
   );
   write(
     root,
     "data/audiobooks/example/pronunciation.yaml",
-    "schema: audiobook-pronunciation-v1\nwork_id: example\nentries: []\n",
+    "schema: audiobook-pronunciation-v1\nwork_id: example\nentries: []\n"
   );
   return root;
 }
@@ -79,7 +81,7 @@ test("blocks TTS gate until every readiness gate is true", () => {
       }),
     (error) =>
       error instanceof AudiobookValidationError &&
-      /not ready for audio/.test(error.details.join(" ")),
+      /not ready for audio/.test(error.details.join(" "))
   );
 });
 
@@ -99,7 +101,7 @@ test("rejects ready_for_audio when it disagrees with gates", () => {
         gates: { ...ALL_TRUE, narration_ready: false },
         ready_for_audio: true,
       }),
-    AudiobookValidationError,
+    AudiobookValidationError
   );
 });
 
@@ -111,6 +113,6 @@ test("validates the repository HPMOR work state", () => {
   assert.equal(result.chapters[0].readyForAudio, false);
   assert.equal(
     result.chapters[0].nextAction,
-    "import source snapshot and establish stable segment ids",
+    "import source snapshot and establish stable segment ids"
   );
 });
