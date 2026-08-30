@@ -31,6 +31,22 @@ fi
 }
 command -v kaggle >/dev/null || { echo "kaggle CLI not found" >&2; exit 2; }
 
+# Kaggle reports only a coarse status; the real traceback lives in the kernel
+# log. Without this the CI job fails with an opaque "Kaggle job failed".
+dump_kernel_log() {
+  local dir log
+  dir="$(mktemp -d)"
+  if kaggle kernels output "$KERNEL_ID" -p "$dir" -o -q >/dev/null 2>&1; then
+    log="$(find "$dir" -maxdepth 1 -type f -name '*.log' -print -quit)"
+    if [[ -n "$log" ]]; then
+      echo "----- kaggle kernel log -----" >&2
+      python3 scripts/audiobook/kaggle-log.py "$log" >&2 || true
+      echo "----- end kaggle kernel log -----" >&2
+    fi
+  fi
+  rm -rf "$dir"
+}
+
 STAGE="$(mktemp -d)"
 DOWNLOAD="$(mktemp -d)"
 trap 'rm -rf "$STAGE" "$DOWNLOAD"' EXIT
@@ -89,6 +105,7 @@ for _ in $(seq 1 "${KAGGLE_STATUS_POLLS:-120}"); do
   fi
   if grep -Eqi 'error|failed|cancel' <<<"$STATUS"; then
     echo "Kaggle job failed" >&2
+    dump_kernel_log
     exit 1
   fi
   sleep "${KAGGLE_STATUS_INTERVAL:-30}"
@@ -97,6 +114,7 @@ done
 STATUS="$(kaggle kernels status "$KERNEL_ID" 2>&1)"
 if ! grep -Eqi 'complete|success' <<<"$STATUS"; then
   echo "Kaggle job did not complete within polling window: $STATUS" >&2
+  dump_kernel_log
   exit 1
 fi
 

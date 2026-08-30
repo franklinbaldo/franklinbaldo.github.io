@@ -39,6 +39,12 @@ BREEZE_CODE_REVISION = "ca632ce6c4d05f7985da4eab29b1a5d445b43f7b"
 BREEZE_MODEL_REPOSITORY = "BreezeBlue/Breeze-TTS-2"
 BREEZE_MODEL_REVISION = "a3bd0a6e83cd2d046ce783df2f7cb84292869ef7"
 
+# Breeze pins `torch==2.9.1` but does not pin `torchvision`. Hosted GPU images
+# (Kaggle, Colab) ship a `torchvision` built against their own older torch, and
+# `transformers` imports it eagerly, so upgrading torch alone breaks the import
+# with `operator torchvision::nms does not exist`. Install the matching release.
+BREEZE_TORCHVISION = "torchvision==0.24.1"
+
 
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
@@ -208,6 +214,7 @@ def install_breeze_dependencies(source_dir: Path) -> None:
             "--disable-pip-version-check",
             "-r",
             str(source_dir / "requirements.txt"),
+            BREEZE_TORCHVISION,
         ]
     )
 

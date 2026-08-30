@@ -152,13 +152,24 @@ jobs:
       - name: Configure Colab CLI
         if: ${{ inputs.dry_run == false && inputs.runner == 'colab' }}
         env:
+          COLAB_TOKEN_JSON: ${{ secrets.COLAB_TOKEN_JSON }}
           COLAB_ADC_JSON: ${{ secrets.COLAB_ADC_JSON }}
         run: |
-          [[ -n "$COLAB_ADC_JSON" ]] || { echo "Missing GitHub secret COLAB_ADC_JSON" >&2; exit 2; }
           python -m pip install --disable-pip-version-check 'google-colab-cli==0.6.0'
-          printf '%s' "$COLAB_ADC_JSON" > "$RUNNER_TEMP/colab-adc.json"
-          chmod 600 "$RUNNER_TEMP/colab-adc.json"
-          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/colab-adc.json" >> "$GITHUB_ENV"
+          if [[ -n "$COLAB_TOKEN_JSON" ]]; then
+            install -d -m 700 "$HOME/.config/colab-cli"
+            printf '%s' "$COLAB_TOKEN_JSON" > "$HOME/.config/colab-cli/token.json"
+            chmod 600 "$HOME/.config/colab-cli/token.json"
+            echo "COLAB_AUTH_PROVIDER=oauth2" >> "$GITHUB_ENV"
+          elif [[ -n "$COLAB_ADC_JSON" ]]; then
+            printf '%s' "$COLAB_ADC_JSON" > "$RUNNER_TEMP/colab-adc.json"
+            chmod 600 "$RUNNER_TEMP/colab-adc.json"
+            echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/colab-adc.json" >> "$GITHUB_ENV"
+            echo "COLAB_AUTH_PROVIDER=adc" >> "$GITHUB_ENV"
+          else
+            echo "Missing GitHub secret COLAB_TOKEN_JSON (or COLAB_ADC_JSON)" >&2
+            exit 2
+          fi
 
       - name: Run Colab media worker
         if: ${{ inputs.dry_run == false && inputs.runner == 'colab' }}
