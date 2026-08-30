@@ -2,7 +2,7 @@
 type: Product Requirements Document
 title: Audiolivro HPMOR em português — pipeline OKF, TTS e compute CLI-first
 description: PRD para uma pipeline reproduzível de original, tradução, adaptação de narração, benchmark de TTS e geração incremental de audiolivro com runners remotos acionados por linha de comando.
-tags: [audiobook, hpmor, okf, translation, tts, github-actions, kaggle, colab, cli]
+tags: [audiobook, hpmor, okf, translation, tts, github-actions, kaggle, colab, cli, podcast]
 timestamp: 2026-08-30T16:37:00Z
 ---
 
@@ -22,6 +22,10 @@ As três camadas são Markdown em formato OKF e compartilham a mesma identidade 
 
 A computação de GPU deve ser **CLI-first**. O projeto não usa notebooks como interface operacional nem como fonte executável canônica. Toda lógica de produção vive em scripts versionados; Kaggle, Colab e futuros provedores são apenas runners remotos desses scripts.
 
+GitHub Actions é o ponto único de operação da pipeline: valida, planeja, despacha compute remoto usando credenciais em GitHub Secrets, recupera outputs, monta o capítulo e publica os artefatos. O contrato detalhado está em [`github-actions-execution.md`](./github-actions-execution.md).
+
+Capítulos publicados também devem ser distribuídos como episódios de um podcast RSS hospedado pelo blog. O usuário assina o feed uma vez e recebe os capítulos seguintes automaticamente no tocador de podcast. O contrato de publicação está em [`podcast-publication.md`](./podcast-publication.md).
+
 ## 2. Problema
 
 Um fluxo ingênuo de `texto -> TTS -> arquivo de áudio` perde informação e mistura responsabilidades:
@@ -32,9 +36,10 @@ Um fluxo ingênuo de `texto -> TTS -> arquivo de áudio` perde informação e mi
 - regenerar um capítulo inteiro por causa de uma fala é caro e lento;
 - trocar de modelo ou provedor de TTS exige refazer a arquitetura;
 - notebooks manuais tornam a execução difícil de automatizar, revisar e reproduzir;
-- artefatos derivados podem se tornar impossíveis de reproduzir depois.
+- artefatos derivados podem se tornar impossíveis de reproduzir depois;
+- publicar áudio sem feed estável obriga o ouvinte a acompanhar manualmente o site em vez de usar um tocador de podcast.
 
-O projeto deve transformar o audiolivro em um sistema de conteúdo versionado, auditável e regenerável.
+O projeto deve transformar o audiolivro em um sistema de conteúdo versionado, auditável, regenerável e assinável.
 
 ## 3. Objetivo do produto
 
@@ -58,6 +63,7 @@ worker TTS (.py)
     +--> local
     +--> Colab CLI
     +--> Kaggle CLI
+    +--> API TTS
     |
     v
 segmentos de áudio
@@ -65,7 +71,8 @@ segmentos de áudio
     v
 áudio do capítulo
     |
-    +--> publicação web / player
+    +--> página/player no blog
+    +--> episódio no feed RSS
     +--> artefatos de distribuição futuros
 ```
 
@@ -144,6 +151,18 @@ Regras:
 - toda execução remota deve poder ser iniciada, observada e ter seus resultados recuperados por linha de comando;
 - comandos usados manualmente devem ser automatizáveis posteriormente por GitHub Actions.
 
+### 4.10. GitHub Actions é o plano de controle
+
+A operação suportada do produto parte do GitHub Actions. Kaggle, Colab e APIs TTS são recursos remotos acionados pela pipeline, não interfaces que o operador precise visitar manualmente.
+
+Secrets permanecem no GitHub e são expostos somente ao step/runtime que deles precisar. Um runner remoto é considerado suportado apenas depois de autenticação headless e execução end-to-end comprovadas.
+
+### 4.11. Podcast é saída de primeira classe
+
+O capítulo não termina tecnicamente em um arquivo de áudio. Quando marcado como publicável, ele deve poder virar um episódio de um feed RSS estável mantido pelo blog.
+
+O `chapter_id` determina um GUID de episódio estável. Regenerar o áudio com outro TTS não deve criar episódio duplicado.
+
 ## 5. Modelo de conteúdo
 
 ### 5.1. Estrutura-alvo
@@ -171,6 +190,7 @@ scripts/audiobook/
   plan.py
   validate.py
   assemble.py
+  publish.py
   runners/
     colab.sh
     kaggle.sh
@@ -456,9 +476,9 @@ A pipeline expõe estágios independentes:
 4. `validate` — verifica IDs, alinhamento, links e schema;
 5. `plan` — calcula segmentos, cache keys e trabalho pendente;
 6. `benchmark` — opcionalmente gera as mesmas amostras em múltiplos backends;
-7. `synthesize` — despacha o worker para runner local/Colab/Kaggle;
+7. `synthesize` — despacha o worker para runner local/Colab/Kaggle/API;
 8. `assemble` — concatena segmentos em capítulo;
-9. `publish` — disponibiliza artefatos.
+9. `publish` — envia a mídia, atualiza o episódio/feed e publica os artefatos.
 
 Cada estágio pode ser executado sem obrigatoriamente executar os posteriores.
 
@@ -478,18 +498,19 @@ Nenhum `push` comum dispara automaticamente despesa de API.
 
 ## 11. GitHub Actions
 
-GitHub Actions é **orquestrador**, não requisito de GPU.
+GitHub Actions é **orquestrador e ponto único de operação**, não requisito de GPU.
 
 O workflow de produção deve poder:
 
 1. validar o corpus;
 2. gerar o plano;
 3. escolher runner;
-4. invocar `colab` ou `kaggle` CLI, ou usar um backend HTTP quando configurado;
+4. invocar `colab` ou `kaggle` CLI, ou usar um backend HTTP;
 5. acompanhar a execução;
 6. recuperar outputs;
 7. validar manifestos;
-8. montar/publicar artefatos.
+8. montar o capítulo;
+9. publicar mídia/feed quando autorizado.
 
 O primeiro workflow usa `workflow_dispatch` e aceita, no mínimo:
 
@@ -498,11 +519,12 @@ O primeiro workflow usa `workflow_dispatch` e aceita, no mínimo:
 - backend/modelo;
 - runner (`local`, `colab`, `kaggle`, `api` quando houver);
 - `dry_run`;
-- `force` para ignorar cache.
+- `force` para ignorar cache;
+- `publish`.
 
-Credenciais externas entram somente por secrets/configuração segura e nunca no corpus, logs ou artefatos públicos.
+Credenciais externas entram somente por GitHub Secrets e nunca no corpus, logs ou artefatos públicos.
 
-A autenticação headless de cada CLI deve ser validada antes de torná-la runner automático de Actions. Um runner pode inicialmente ser acionado manualmente por CLI sem impedir que o resto da pipeline seja automatizado.
+Detalhes de autenticação headless, staging, retomada e segurança ficam no contrato [`github-actions-execution.md`](./github-actions-execution.md).
 
 ## 12. Manifesto derivado
 
@@ -531,6 +553,8 @@ A pipeline produz manifesto suficiente para reproduzir e auditar o resultado.
 
 O manifesto é derivado e não substitui os três bundles textuais.
 
+Depois de publicação, pode registrar também `episode_guid`, `enclosure_url`, digest do arquivo distribuído e timestamp de publicação.
+
 ## 13. Validação
 
 Validações mínimas:
@@ -545,24 +569,29 @@ Validações mínimas:
 - manifestos nunca são tratados como fonte canônica;
 - nenhum segredo aparece versionado;
 - runner não modifica corpus canônico;
-- outputs declarados pelo worker correspondem ao plano recebido.
+- outputs declarados pelo worker correspondem ao plano recebido;
+- episódio publicado tem GUID estável;
+- enclosure está publicamente acessível antes de entrar no feed.
 
-## 14. Site
+## 14. Site e podcast
 
-A primeira entrega não exige uma experiência pública completa, mas a arquitetura deve permitir que `franklinbaldo.github.io` seja o frontend do audiolivro.
+O próprio `franklinbaldo.github.io` deve ser o frontend e a identidade RSS do audiolivro.
 
-Fases posteriores podem oferecer:
+A experiência inclui:
 
 - página da obra;
 - índice de capítulos;
-- player;
-- indicação do trecho corrente;
+- página/player por capítulo;
+- indicação do trecho corrente quando disponível;
 - texto traduzido sincronizado;
-- comparação original/tradução;
-- RSS/podcast;
-- M4B e outros formatos.
+- comparação original/tradução quando desejada;
+- feed RSS de podcast;
+- ação clara para copiar/adicionar o feed ao tocador;
+- M4B e outros formatos futuramente.
 
-A interface consome artefatos; não redefine o corpus canônico.
+O feed fica no blog; a mídia pesada pode usar storage separado. Essa separação evita acoplar o podcast aos limites de armazenamento do GitHub Pages.
+
+O contrato completo de RSS, enclosure, GUID, transcript e Podcasting 2.0 está em [`podcast-publication.md`](./podcast-publication.md).
 
 ## 15. Escopo autoral e publicação
 
@@ -582,7 +611,8 @@ Não fazem parte do kickstart:
 - armazenar grandes binários no Git;
 - automatizar gasto em todo `push`;
 - contaminar tradução com comandos de sintetizador;
-- manter notebooks operacionais ou uma pipeline paralela em `.ipynb`.
+- manter notebooks operacionais ou uma pipeline paralela em `.ipynb`;
+- depender de um diretório comercial de podcasts para que a assinatura funcione.
 
 ## 17. Fases
 
@@ -590,7 +620,7 @@ Não fazem parte do kickstart:
 
 Esta PR.
 
-Critério de aceite: o documento fixa arquitetura de corpus, benchmark, worker e compute CLI-first.
+Critério de aceite: o documento fixa arquitetura de corpus, benchmark, worker, compute CLI-first, controle via GitHub Actions e publicação como podcast.
 
 ### Fase 1 — corpus mínimo e validação
 
@@ -619,9 +649,10 @@ Entregáveis:
 - runner local;
 - wrappers CLI para Colab e Kaggle;
 - Kaggle configurado como `kernel_type: script`;
+- workflow GitHub Actions capaz de despachar runner fake/headless;
 - nenhum notebook requerido.
 
-Critério de aceite: o mesmo worker executa um job fake localmente e pode ser despachado pelos dois CLIs remotos sem divergência de contrato.
+Critério de aceite: o mesmo worker executa um job fake localmente e pode ser despachado por Actions pelos CLIs remotos sem divergência de contrato.
 
 ### Fase 3 — benchmark real
 
@@ -635,7 +666,7 @@ Entregáveis:
 
 Critério de aceite: existe evidência própria suficiente para escolher ou ordenar os modelos para o capítulo 1.
 
-### Fase 4 — primeiro capítulo em áudio
+### Fase 4 — primeiro capítulo em áudio e feed
 
 Entregáveis:
 
@@ -643,9 +674,12 @@ Entregáveis:
 - geração incremental;
 - montagem do capítulo;
 - manifesto completo;
+- storage de mídia compatível com podcast;
+- feed RSS inicial;
+- episódio do capítulo 1;
 - artifact com áudio resultante.
 
-Critério de aceite: capítulo 1 reproduzível a partir do commit, configuração e runner declarado.
+Critério de aceite: capítulo 1 reproduzível a partir do commit/configuração e assinável em um player de podcast usando o feed do blog.
 
 ### Fase 5 — experiência no blog
 
@@ -654,7 +688,9 @@ Entregáveis:
 - loader dedicado;
 - página da obra;
 - página/player de capítulo;
-- metadados de navegação.
+- metadados de navegação;
+- ação de assinatura/copiar feed;
+- transcript/timestamps derivados quando disponíveis.
 
 ### Fase 6 — escala
 
@@ -664,7 +700,8 @@ Somente após o capítulo 1 estar satisfatório:
 - consistência de personagens/pronúncia;
 - geração batch incremental;
 - armazenamento/publicação durável;
-- formatos adicionais.
+- formatos adicionais;
+- submissão opcional a diretórios de podcasts.
 
 ## 18. Métricas de sucesso
 
@@ -677,7 +714,10 @@ O projeto é bem-sucedido quando:
 - trocar backend não exige reescrever o corpus;
 - o mesmo worker roda localmente e em compute remoto;
 - nenhum notebook manual é necessário;
+- GitHub Actions consegue executar a pipeline sem interação com UI externa;
 - o capítulo 1 pode ser reproduzido por comandos documentados;
+- o feed pode ser adicionado a um tocador de podcast;
+- novos capítulos publicados aparecem como novos episódios sem reassinar;
 - o corpus continua compreensível como Markdown sem ferramenta de TTS.
 
 ## 19. Decisões já tomadas
@@ -694,11 +734,15 @@ O projeto é bem-sucedido quando:
 10. `.ipynb` não é fonte operacional do projeto;
 11. Colab e Kaggle são runners do mesmo worker;
 12. Kaggle usa `kernel_type: script`;
-13. GitHub Actions atua como orquestrador e não precisa fornecer GPU;
-14. chamadas pagas começam manuais/dry-run;
-15. binários de áudio são derivados;
-16. HPMOR é o corpus inicial, não uma dependência arquitetural.
+13. GitHub Actions é o plano de controle e ponto único de operação;
+14. credenciais remotas ficam em GitHub Secrets;
+15. chamadas pagas começam manuais/dry-run;
+16. binários de áudio são derivados;
+17. capítulos publicáveis viram episódios com GUID estável;
+18. o feed RSS canônico é hospedado pelo blog;
+19. mídia pesada pode usar storage separado do GitHub Pages;
+20. HPMOR é o corpus inicial, não uma dependência arquitetural.
 
 ## 20. Primeira próxima ação
 
-A próxima PR após este PRD deve implementar a **Fase 1**. Em paralelo, a implementação da Fase 2 já deve preservar o contrato de que o worker será um script Python comum executável por CLI, sem notebook como camada intermediária.
+A próxima PR após este PRD deve implementar a **Fase 1**. Em paralelo, a implementação da Fase 2 já deve preservar o contrato de que o worker será um script Python comum executável por GitHub Actions e despachável por CLI, sem notebook como camada intermediária.
