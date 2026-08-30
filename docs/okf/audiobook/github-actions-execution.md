@@ -1,26 +1,30 @@
 ---
 type: Architecture Contract
-title: Audiobook — GitHub Actions control plane
-description: Contrato para usar GitHub Actions como ponto único de operação da pipeline de audiolivro e despachar compute remoto por CLI.
-tags: [audiobook, github-actions, kaggle, colab, cli, tts, internet-archive]
+title: Audiobook Factory — GitHub Actions control plane
+description: Contrato para usar GitHub Actions como ponto único de operação da pipeline multi-work de audiolivros e despachar compute remoto por CLI.
+tags: [audiobook, github-actions, kaggle, colab, cli, tts, internet-archive, multi-work]
 timestamp: 2026-08-30T18:20:00Z
 ---
 
-# GitHub Actions como plano de controle do audiolivro
+# GitHub Actions como plano de controle da fábrica de audiolivros
 
 ## 1. Decisão
 
 A operação normal da pipeline deve acontecer por **GitHub Actions**.
 
-O operador não precisa abrir Kaggle, Colab nem notebook. O workflow recebe os parâmetros da execução, lê credenciais de GitHub Secrets, valida e planeja o trabalho, despacha compute remoto, acompanha o job, recupera os resultados, valida os artefatos, monta o capítulo e publica os outputs selecionados.
+O operador não precisa abrir Kaggle, Colab, Internet Archive nem notebook. O workflow recebe `work_id` e os demais parâmetros da execução, lê credenciais de GitHub Secrets, valida e planeja o trabalho, despacha compute remoto, acompanha o job, recupera os resultados, valida os artefatos, monta a unidade e publica os outputs selecionados.
 
 GitHub Actions é o **plano de controle**; GPU, TTS e storage são planos de execução substituíveis.
+
+Não existe workflow por livro. Existe uma pipeline genérica cuja primeira dimensão é `work_id`.
 
 ```text
 workflow_dispatch / future automation
                   |
                   v
            GitHub Actions
+                  |
+        resolve work_id
                   |
         validate + plan
                   |
@@ -39,10 +43,28 @@ workflow_dispatch / future automation
        +----------+----------+
        |                     |
  Internet Archive       blog / feed RSS
- (media when enabled)   (canonical identity)
+ (per-work media)       (per-work identity)
 ```
 
-## 2. Segurança e autenticação
+## 2. Descoberta de obras
+
+O workflow deve descobrir obras a partir de `data/audiobooks/*/work.md` ou de um índice derivado desses manifests.
+
+A lista de obras não deve ser duplicada em YAML do workflow.
+
+Resolver `work_id` significa carregar, no mínimo:
+
+- diretório canônico da obra;
+- idiomas e metadata básicos;
+- configuração de vozes;
+- configuração de publicação;
+- namespace de cache/artifacts;
+- podcast/feed da obra;
+- identifier remoto de storage quando já configurado.
+
+Uma obra desconhecida falha antes de qualquer compute ou chamada externa.
+
+## 3. Segurança e autenticação
 
 Nenhum segredo é versionado.
 
@@ -58,53 +80,74 @@ Exemplos de famílias de credenciais:
 
 Os nomes finais dos secrets são definidos pela implementação dos respectivos adapters. O contrato é que cada adapter documente explicitamente quais secrets consome e falhe cedo quando estiverem ausentes.
 
-## 3. Runners remotos
+Secrets são infraestrutura compartilhada; configuração editorial e escolha de backend/modelo podem variar por obra sem criar novos secrets necessariamente.
 
-### 3.1. Kaggle
+## 4. Runners remotos
 
-O workflow instala o Kaggle CLI, injeta a credencial por ambiente, monta um staging directory, envia um **script kernel** privado com GPU e acompanha o estado até sucesso/falha.
+### 4.1. Kaggle
 
-O job remoto executa o mesmo `worker.py` usado localmente.
+O workflow instala o Kaggle CLI, injeta a credencial por ambiente, monta um staging directory namespaced por `work_id`, envia um **script kernel** privado com GPU e acompanha o estado até sucesso/falha.
+
+O job remoto executa o mesmo `worker.py` usado localmente e recebe `--work <work_id>`.
 
 O workflow então baixa os outputs do kernel e os valida antes da montagem/publicação.
 
-### 3.2. Colab
+### 4.2. Colab
 
 O workflow instala o CLI oficial do Colab e usa somente operações não interativas.
 
-O caminho preferido deve ser `colab run` ou `colab exec`, mantendo o mesmo worker Python e transmitindo configuração por argumentos/arquivos e environment variables suportadas pelo CLI.
+O caminho preferido deve ser `colab run` ou `colab exec`, mantendo o mesmo worker Python e transmitindo `work_id`, configuração e inputs por argumentos/arquivos/environment variables suportadas pelo CLI.
 
 A autenticação headless e, principalmente, o acesso efetivo à GPU gratuita a partir da identidade usada no GitHub Actions devem ser provados por um smoke test real antes de o runner Colab ser declarado suportado para produção.
 
-Falha de quota/provisionamento é erro do runner, não do backend TTS.
+Falha de quota/provisionamento é erro do runner, não do backend TTS nem da obra.
 
-### 3.3. API
+### 4.3. API
 
-Backends HTTP podem pular a etapa de GPU remota, mas continuam obedecendo ao mesmo plano de segmentos, manifests, cache e validações.
+Backends HTTP podem pular a etapa de GPU remota, mas continuam obedecendo ao mesmo plano de segmentos, manifests, cache e validações, inclusive `work_id`.
 
-## 4. Publicação e Internet Archive
+## 5. Namespacing e isolamento
+
+Todo estado derivado precisa ser isolado por obra.
+
+Exemplos:
+
+```text
+cache/audiobook/hpmor/...
+cache/audiobook/bhagavad-gita/...
+
+artifacts/audiobook/hpmor/001/...
+artifacts/audiobook/bhagavad-gita/001/...
+```
+
+Concurrency também deve considerar `work_id` e unidade para impedir duas publicações concorrentes de alterarem o mesmo feed/item remoto sem necessidade de serializar obras diferentes.
+
+Uma execução de HPMOR não pode invalidar, apagar ou sobrescrever resultados do Bhagavad Gita.
+
+## 6. Publicação e Internet Archive
 
 GitHub Actions também é o ponto único de operação da publicação.
 
-Quando `publish` estiver habilitado para o Internet Archive, o workflow deve:
+Quando `publish` estiver habilitado para o Internet Archive, o workflow resolve o **item estável daquela obra** e deve:
 
 1. instalar o cliente/adapter de upload (`ia`/`internetarchive` ou equivalente suportado);
 2. carregar as credenciais exclusivamente de GitHub Secrets;
-3. fazer upload do áudio final e demais arquivos selecionados para o item estável da obra;
-4. aguardar o arquivo ficar disponível publicamente;
-5. verificar a URL final conforme o contrato de podcast (`HEAD`, range request, MIME e bytes);
-6. só então atualizar o feed RSS e publicar o blog.
+3. obter o `archive_identifier` da configuração de `work_id`;
+4. fazer upload do áudio final e demais arquivos selecionados para esse item;
+5. aguardar o arquivo ficar disponível publicamente;
+6. verificar a URL final conforme o contrato de podcast (`HEAD`, range request, MIME e bytes);
+7. só então atualizar **o feed RSS daquela obra** e publicar o blog.
 
 A ordem impede que o feed anuncie um episódio cujo enclosure ainda não possa ser reproduzido.
 
 O Internet Archive é um backend de publicação, não uma fonte canônica: Git continua guardando corpus, configuração, hashes e proveniência. Se o Archive estiver temporariamente indisponível, o áudio montado continua recuperável como artifact de build e a publicação pode ser retomada sem regerar o TTS.
 
-## 5. Workflow de produção
+## 7. Workflow de produção
 
 O workflow inicial deve usar `workflow_dispatch` e aceitar parâmetros como:
 
-- obra;
-- capítulo/intervalo;
+- `work_id`;
+- capítulo/unidade ou intervalo;
 - backend/modelo;
 - runner (`kaggle`, `colab`, `api` e, para debug, `local`);
 - `dry_run`;
@@ -117,6 +160,7 @@ Fluxo de referência:
 ```text
 checkout
   -> setup
+  -> resolve work
   -> validate
   -> plan
   -> dry-run gate
@@ -126,42 +170,67 @@ checkout
   -> validate output manifest
   -> assemble
   -> encode final media
-  -> optional publish media (Internet Archive preferred)
+  -> optional publish media to work storage
   -> verify public enclosure
-  -> generate feed/site metadata
-  -> deploy site
+  -> generate work feed/site metadata
+  -> deploy site/catalog
 ```
 
-## 6. Idempotência e retomada
+O mesmo workflow deve funcionar conceitualmente assim:
+
+```text
+work=hpmor
+```
+
+ou:
+
+```text
+work=bhagavad-gita
+```
+
+sem alterar o código do workflow.
+
+## 8. Idempotência e retomada
 
 O workflow não pressupõe que uma execução longa termina em uma única tentativa.
 
 Cada fase deve poder ser retomada a partir de estado verificável:
 
-- cache keys determinam segmentos já válidos;
+- cache keys incluem `work_id` e determinam segmentos já válidos;
 - outputs remotos são validados por digest;
-- capítulo montado é regenerável sem ressintetizar segmentos válidos;
-- upload de publicação usa identifier/nome de arquivo estáveis;
+- unidade montada é regenerável sem ressintetizar segmentos válidos;
+- upload de publicação usa identifier/nome de arquivo estáveis por obra;
 - feed só muda após confirmação do arquivo público.
 
 Uma falha depois da síntese não deve obrigar a gastar GPU novamente.
 
-## 7. Dry-run e proteção de custo
+## 9. Dry-run e proteção de custo
 
-`dry_run` não envia job pago nem chama API cobrada. Ele mostra exatamente o que seria produzido e quais credenciais/runners seriam necessários.
+`dry_run` não envia job pago nem chama API cobrada. Ele mostra exatamente:
+
+- obra resolvida;
+- unidade(s) selecionada(s);
+- segmentos pendentes;
+- runner/backend/modelo;
+- cache aproveitado;
+- credenciais necessárias;
+- destino de publicação quando aplicável.
 
 Qualquer backend capaz de gerar cobrança deve permanecer opt-in na primeira versão.
 
 Compute gratuito de Kaggle/Colab também deve respeitar planejamento e cache para não desperdiçar quota.
 
-## 8. Critérios de aceite
+## 10. Critérios de aceite
 
 O control plane está implementado quando:
 
-1. um workflow manual consegue validar e planejar um capítulo sem segredo externo;
-2. um runner remoto consegue executar o worker e devolver output validável;
-3. secrets nunca aparecem em corpus, commit ou artifact;
-4. falha de runner é distinguida de falha de modelo;
-5. uma execução interrompida pode ser retomada sem regenerar segmentos válidos;
-6. a mesma interface de workflow pode trocar Kaggle/Colab/API sem alterar o corpus;
-7. quando a publicação no Internet Archive for ativada, upload, verificação e atualização do feed podem ocorrer integralmente dentro do GitHub Actions.
+1. um workflow manual consegue resolver duas fixtures/obras diferentes por `work_id`;
+2. uma obra inválida falha antes de compute;
+3. um runner remoto consegue executar o worker e devolver output validável;
+4. secrets nunca aparecem em corpus, commit ou artifact;
+5. falha de runner é distinguida de falha de modelo;
+6. uma execução interrompida pode ser retomada sem regenerar segmentos válidos;
+7. a mesma interface de workflow pode trocar Kaggle/Colab/API sem alterar o corpus;
+8. cache, artifacts, manifests, storage e feed são isolados por obra;
+9. nenhuma obra exige workflow próprio;
+10. quando a publicação no Internet Archive for ativada, upload, verificação e atualização do feed da obra podem ocorrer integralmente dentro do GitHub Actions.
