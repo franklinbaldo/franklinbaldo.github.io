@@ -81,13 +81,17 @@ const tensionPct = hasRates
 // postsByKey, so this is "pt" only for duels between two PT-only works.
 const lang: "en" | "pt" = winnerInfo?.lang === "pt" && loserInfo?.lang === "pt" ? "pt" : "en";
 
+// allBattles/backToArchive stay in English in both branches on purpose:
+// /ranking/battles/ (the archive index this links to) has no /pt/ mirror,
+// so a translated label would promise a destination that isn't there —
+// same precedent as the untranslated Season/confidence chips below.
 const strings =
   lang === "pt"
     ? {
         titleSuffix: "Batalhas do Ranking",
         home: "Início",
         ranking: "Ranking",
-        allBattles: "Todas as batalhas",
+        allBattles: "All battles",
         heading: "Relatório do duelo",
         versusAria: "Confronto",
         winner: "Vencedor 🏆",
@@ -101,7 +105,7 @@ const strings =
         navAria: "Navegação de duelos",
         newerBattle: "← Duelo mais recente",
         newest: "← Mais recente",
-        backToArchive: "Voltar ao arquivo",
+        backToArchive: "Back to archive",
         olderBattle: "Duelo mais antigo →",
         oldest: "Mais antigo →",
       }
