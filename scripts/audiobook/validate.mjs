@@ -2,7 +2,10 @@
 
 import process from "node:process";
 
-import { AudiobookValidationError, validateWork } from "../../src/audiobook/validate.js";
+import {
+  AudiobookValidationError,
+  validateWork,
+} from "../../src/audiobook/validate.js";
 
 function usage() {
   console.error(
@@ -22,7 +25,8 @@ function parseArgs(argv) {
     const arg = argv[index];
     if (arg === "--work") args.workId = argv[++index] ?? null;
     else if (arg === "--chapter") args.chapterId = argv[++index] ?? null;
-    else if (arg === "--require-ready-for-audio") args.requireReadyForAudio = true;
+    else if (arg === "--require-ready-for-audio")
+      args.requireReadyForAudio = true;
     else if (arg === "--json") args.json = true;
     else if (arg === "--help" || arg === "-h") {
       usage();
@@ -48,9 +52,11 @@ try {
     console.log(`next: ${result.nextAction}`);
     for (const chapter of result.chapters) {
       console.log(
-        `${chapter.chapterId}: ${chapter.readyForAudio ? "ready_for_audio" : chapter.status ?? "not_ready"}`,
+        `${chapter.chapterId}: ${chapter.readyForAudio ? "ready_for_audio" : (chapter.status ?? "not_ready")}`,
       );
-      if (chapter.pendingGates.length) console.log(`  pending: ${chapter.pendingGates.join(", ")}`);
+      if (chapter.pendingGates.length) {
+        console.log(`  pending: ${chapter.pendingGates.join(", ")}`);
+      }
       if (chapter.nextAction) console.log(`  next: ${chapter.nextAction}`);
     }
   }
