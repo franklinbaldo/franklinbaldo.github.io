@@ -38,7 +38,6 @@ export async function getStaticPaths() {
         prevId: i + 1 < work.length ? work[i + 1].id : null,
         nextId: i > 0 ? work[i - 1].id : null,
         archiveHref: `${archiveBase}#${duel.id}`,
-        archiveLabel: "All battles",
         postAInfo: byKey.get(duel.postAKey ?? ""),
         postBInfo: byKey.get(duel.postBKey ?? ""),
       },
@@ -46,8 +45,7 @@ export async function getStaticPaths() {
   });
 }
 
-const { duel, prevId, nextId, archiveHref, archiveLabel, postAInfo, postBInfo } =
-  Astro.props;
+const { duel, prevId, nextId, archiveHref, postAInfo, postBInfo } = Astro.props;
 
 function postHref(info: { slug: string; lang: string } | undefined) {
   if (!info) return null;
@@ -78,8 +76,64 @@ const tensionPct = hasRates
   ? Math.round((rateWinner! / (rateWinner! + rateLoser!)) * 100)
   : null;
 
+// RFC 0012 §6 rule 4 precedent: collapse to one language only when both
+// sides agree — a work with an EN translation always resolves to "en" in
+// postsByKey, so this is "pt" only for duels between two PT-only works.
+const lang: "en" | "pt" = winnerInfo?.lang === "pt" && loserInfo?.lang === "pt" ? "pt" : "en";
+
+const strings =
+  lang === "pt"
+    ? {
+        titleSuffix: "Batalhas do Ranking",
+        home: "Início",
+        ranking: "Ranking",
+        allBattles: "Todas as batalhas",
+        heading: "Relatório do duelo",
+        versusAria: "Confronto",
+        winner: "Vencedor 🏆",
+        challenger: "Desafiante",
+        tensionAbsent: "Dados de tensão indisponíveis",
+        verdict: "Veredito",
+        analysis: "Análise",
+        evaluatorState: "Estado do avaliador",
+        before: "Antes: ",
+        after: "Depois: ",
+        navAria: "Navegação de duelos",
+        newerBattle: "← Duelo mais recente",
+        newest: "← Mais recente",
+        backToArchive: "Voltar ao arquivo",
+        olderBattle: "Duelo mais antigo →",
+        oldest: "Mais antigo →",
+      }
+    : {
+        titleSuffix: "Ranking Battles",
+        home: "Home",
+        ranking: "Ranking",
+        allBattles: "All battles",
+        heading: "Battle Report",
+        versusAria: "Versus",
+        winner: "Winner 🏆",
+        challenger: "Challenger",
+        tensionAbsent: "Tension data not available",
+        verdict: "Verdict",
+        analysis: "Analysis",
+        evaluatorState: "Evaluator State",
+        before: "Before: ",
+        after: "After: ",
+        navAria: "Battle navigation",
+        newerBattle: "← Newer battle",
+        newest: "← Newest",
+        backToArchive: "Back to archive",
+        olderBattle: "Older battle →",
+        oldest: "Oldest →",
+      };
+
 function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  return new Date(iso).toLocaleDateString(lang === "pt" ? "pt-BR" : "en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 function perspectiveHue(id: string): number {
@@ -100,35 +154,38 @@ const contentLangs = [
 const critiqueLang = duel.reviewLang ? duel.reviewLang.toUpperCase() : null;
 
 const pageTitle = `${winnerTitle} vs ${loserTitle}`;
-const pageDesc = `Hrönir duel: ${winnerTitle} beat ${loserTitle}${duel.perspectiveId ? ` under the ${duel.perspectiveId} perspective` : ""}.`;
+const pageDesc =
+  lang === "pt"
+    ? `Duelo Hrönir: ${winnerTitle} venceu ${loserTitle}${duel.perspectiveId ? ` sob a perspectiva ${duel.perspectiveId}` : ""}.`
+    : `Hrönir duel: ${winnerTitle} beat ${loserTitle}${duel.perspectiveId ? ` under the ${duel.perspectiveId} perspective` : ""}.`;
 
 const rankByKey = getRankByKey();
 const winnerRank = rankByKey.get(winnerKey);
 const loserRank = rankByKey.get(loserKey);
 
 const crumbs = [
-  { name: "Home", href: "/" },
-  { name: "Ranking", href: "/ranking/" },
-  { name: archiveLabel, href: archiveHref },
+  { name: strings.home, href: lang === "pt" ? "/pt/" : "/" },
+  { name: strings.ranking, href: lang === "pt" ? "/pt/ranking/" : "/ranking/" },
+  { name: strings.allBattles, href: archiveHref },
   { name: pageTitle, href: `/ranking/battles/${duel.id}/` },
 ];
 ---
 
 <PageLayout
-  title={`${pageTitle} | Ranking Battles`}
+  title={`${pageTitle} | ${strings.titleSuffix}`}
   description={pageDesc}
-  lang="en"
+  lang={lang}
   noindex
   breadcrumb={toBreadcrumbLd(crumbs, Astro.site)}
 >
-  <Breadcrumbs items={crumbs} lang="en" />
+  <Breadcrumbs items={crumbs} lang={lang} />
 
   <hgroup>
-    <h1>Battle Report</h1>
+    <h1>{strings.heading}</h1>
     <p><small>{fmtDate(duel.runAt)}</small></p>
   </hgroup>
 
-  <HronirExplainer lang="en" />
+  <HronirExplainer lang={lang} />
 
   <div class="battle-tags">
     {duel.season !== undefined && <span class="tag tag-season">Season {duel.season}</span>}
@@ -143,10 +200,10 @@ const crumbs = [
     {critiqueLang && <span class="tag tag-lang">critique: {critiqueLang}</span>}
   </div>
 
-  <section class="versus-section" aria-label="Versus">
+  <section class="versus-section" aria-label={strings.versusAria}>
     <div class="versus-grid">
       <div class="versus-side winner">
-        <div class="versus-label">Winner 🏆</div>
+        <div class="versus-label">{strings.winner}</div>
         <div class="versus-title">
           {winnerHref
             ? <a href={winnerHref}>{winnerTitle}</a>
@@ -165,7 +222,7 @@ const crumbs = [
       </div>
 
       <div class="versus-side loser">
-        <div class="versus-label">Challenger</div>
+        <div class="versus-label">{strings.challenger}</div>
         <div class="versus-title">
           {loserHref
             ? <a href={loserHref}>{loserTitle}</a>
@@ -181,18 +238,29 @@ const crumbs = [
     </div>
 
     {tensionPct !== null ? (
-      <div class="tension-bar" role="meter" aria-label={`Win rate split: ${tensionPct}% / ${100 - tensionPct}%`} aria-valuenow={tensionPct} aria-valuemin={0} aria-valuemax={100}>
+      <div
+        class="tension-bar"
+        role="meter"
+        aria-label={
+          lang === "pt"
+            ? `Divisão da taxa de vitória: ${tensionPct}% / ${100 - tensionPct}%`
+            : `Win rate split: ${tensionPct}% / ${100 - tensionPct}%`
+        }
+        aria-valuenow={tensionPct}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
         <div class="tension-fill winner-fill" style={`width:${tensionPct}%`}></div>
         <div class="tension-fill loser-fill" style={`width:${100 - tensionPct}%`}></div>
       </div>
     ) : (
-      <div class="tension-bar-absent" aria-label="Tension data not available">—</div>
+      <div class="tension-bar-absent" aria-label={strings.tensionAbsent}>—</div>
     )}
   </section>
 
   {duel.parsedContent?.verdict && (
     <section class="content-section verdict-section">
-      <h2>Verdict</h2>
+      <h2>{strings.verdict}</h2>
       <div class="prose" set:html={marked.parse(duel.parsedContent.verdict)} />
     </section>
   )}
@@ -201,13 +269,13 @@ const crumbs = [
     <div class="analyses-grid">
       {duel.parsedContent.postAAnalysis && (
         <section class="content-section">
-          <h3>Analysis — {postAInfo?.title ?? duel.postAKey}</h3>
+          <h3>{strings.analysis} — {postAInfo?.title ?? duel.postAKey}</h3>
           <div class="prose" set:html={marked.parse(duel.parsedContent.postAAnalysis)} />
         </section>
       )}
       {duel.parsedContent.postBAnalysis && (
         <section class="content-section">
-          <h3>Analysis — {postBInfo?.title ?? duel.postBKey}</h3>
+          <h3>{strings.analysis} — {postBInfo?.title ?? duel.postBKey}</h3>
           <div class="prose" set:html={marked.parse(duel.parsedContent.postBAnalysis)} />
         </section>
       )}
@@ -216,28 +284,28 @@ const crumbs = [
 
   {(duel.evaluatorMood || duel.evaluatorMoodAfter) && (
     <section class="content-section mood-section">
-      <h2>Evaluator State</h2>
+      <h2>{strings.evaluatorState}</h2>
       {duel.evaluatorMood && (
         <blockquote lang="pt-BR">
-          <small>Before: </small>"{duel.evaluatorMood}"
+          <small>{strings.before}</small>"{duel.evaluatorMood}"
         </blockquote>
       )}
       {duel.evaluatorMoodAfter && (
         <blockquote lang="pt-BR">
-          <small>After: </small>"{duel.evaluatorMoodAfter}"
+          <small>{strings.after}</small>"{duel.evaluatorMoodAfter}"
         </blockquote>
       )}
     </section>
   )}
 
-  <nav class="battle-nav" aria-label="Battle navigation">
+  <nav class="battle-nav" aria-label={strings.navAria}>
     {nextId ? (
-      <a href={`/ranking/battles/${nextId}/`} class="nav-btn prev-btn">← Newer battle</a>
-    ) : <span class="nav-btn nav-disabled">← Newest</span>}
-    <a href={archiveHref} class="nav-btn archive-btn">Back to archive</a>
+      <a href={`/ranking/battles/${nextId}/`} class="nav-btn prev-btn">{strings.newerBattle}</a>
+    ) : <span class="nav-btn nav-disabled">{strings.newest}</span>}
+    <a href={archiveHref} class="nav-btn archive-btn">{strings.backToArchive}</a>
     {prevId ? (
-      <a href={`/ranking/battles/${prevId}/`} class="nav-btn next-btn">Older battle →</a>
-    ) : <span class="nav-btn nav-disabled">Oldest →</span>}
+      <a href={`/ranking/battles/${prevId}/`} class="nav-btn next-btn">{strings.olderBattle}</a>
+    ) : <span class="nav-btn nav-disabled">{strings.oldest}</span>}
   </nav>
 </PageLayout>
 
