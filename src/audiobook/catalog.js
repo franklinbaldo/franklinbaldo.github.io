@@ -63,19 +63,42 @@ export function listWorks(rootDir = process.cwd()) {
   return listWorkIds(rootDir).map((workId) => loadWork(rootDir, workId));
 }
 
+/**
+ * One chapter that has actually been published as an episode.
+ *
+ * The shape is declared explicitly because the work metadata is read from YAML,
+ * so nothing downstream can infer it and `astro check` rejects the implicit
+ * `any` in the pages that consume this.
+ *
+ * @typedef {object} Episode
+ * @property {string} chapterId
+ * @property {string} title
+ * @property {string} description
+ * @property {string} publishedAt
+ * @property {number | null} durationSeconds
+ * @property {{ url: string, type?: string, length?: number } | null} enclosure
+ * @property {{ url: string, type?: string } | null} transcript
+ * @property {Array<{ title: string, start_seconds: number }> | null} chapters
+ *
+ * @param {{ chapters: Array<Record<string, any>> }} work
+ * @returns {Episode[]}
+ */
 export function publishedEpisodes(work) {
   return work.chapters
     .filter((chapter) => chapter.publication?.status === "published")
-    .map((chapter) => ({
-      chapterId: chapter.chapterId,
-      title: chapter.publication.title ?? chapter.chapterId,
-      description: chapter.publication.description ?? "",
-      publishedAt: chapter.publication.published_at,
-      durationSeconds: chapter.publication.duration_seconds ?? null,
-      enclosure: chapter.publication.enclosure ?? null,
-      transcript: chapter.publication.transcript ?? null,
-      chapters: chapter.publication.chapters ?? null,
-    }))
+    .map(
+      (chapter) =>
+        /** @type {Episode} */ ({
+          chapterId: chapter.chapterId,
+          title: chapter.publication.title ?? chapter.chapterId,
+          description: chapter.publication.description ?? "",
+          publishedAt: chapter.publication.published_at,
+          durationSeconds: chapter.publication.duration_seconds ?? null,
+          enclosure: chapter.publication.enclosure ?? null,
+          transcript: chapter.publication.transcript ?? null,
+          chapters: chapter.publication.chapters ?? null,
+        })
+    )
     .sort(
       (a, b) =>
         new Date(b.publishedAt).valueOf() - new Date(a.publishedAt).valueOf()

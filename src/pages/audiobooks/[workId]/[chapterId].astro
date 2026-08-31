@@ -36,7 +36,7 @@ const audioUrl = episode.enclosure?.url;
     {
       audioUrl && (
         <audio controls preload="metadata">
-          <source src={audioUrl} type={episode.enclosure.type} />
+          <source src={audioUrl} type={episode.enclosure?.type} />
           Seu navegador não suporta reprodução de áudio HTML5.
         </audio>
       )
