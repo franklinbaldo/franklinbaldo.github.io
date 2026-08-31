@@ -1,0 +1,116 @@
+schema: audiobook-tts-benchmark-v1
+benchmark_id: pt-br-audiobook-v1
+language: pt-BR
+description: >-
+  Corpus sintético e não literário para comparar TTS em tarefas relevantes a
+  audiolivros brasileiros sem depender do conteúdo de nenhuma obra.
+voices:
+  narrator:
+    role: narrator
+    locale: pt-BR
+    description: >-
+      Voz narrativa brasileira adulta, clara e natural; calor moderado, boa
+      dicção e capacidade de sustentar raciocínio longo sem soar como locução
+      publicitária.
+  child_scholar:
+    role: character
+    locale: pt-BR
+    description: >-
+      Voz brasileira jovem, curiosa e muito articulada; inteligência precoce
+      sem caricatura infantil e sem exagerar a energia.
+  authority:
+    role: character
+    locale: pt-BR
+    description: >-
+      Voz brasileira adulta com autoridade contida, precisão e firmeza; emoção
+      perceptível sem perder compostura.
+segments:
+  - id: neutral
+    speaker: narrator
+    direction: {}
+    text: >-
+      A chuva começou depois do almoço, devagar, como se a cidade ainda tivesse
+      tempo de decidir se queria mesmo uma tempestade.
+  - id: question
+    speaker: child_scholar
+    direction:
+      emotion: curious
+      pace: lively
+    text: >-
+      Se a conclusão depende dessa hipótese, por que ninguém tentou retirar a
+      hipótese e observar o que ainda continua verdadeiro?
+  - id: authority
+    speaker: authority
+    direction:
+      emotion: restrained concern
+      pace: measured
+    text: >-
+      Não estou dizendo que você está errado. Estou dizendo que, antes de agir,
+      precisamos saber exatamente qual risco estamos assumindo.
+  - id: irony
+    speaker: narrator
+    direction:
+      emotion: dry irony
+    text: >-
+      Naturalmente, o plano era infalível; só dependia de seis coincidências,
+      três portas destrancadas e ninguém fazer uma pergunta óbvia.
+  - id: fear
+    speaker: child_scholar
+    direction:
+      emotion: controlled fear
+      pace: slightly fast
+    text: >-
+      Eu ouvi o barulho outra vez. Desta vez veio do corredor, bem mais perto,
+      e tenho quase certeza de que não foi o vento.
+  - id: whisper
+    speaker: authority
+    direction:
+      delivery: whisper
+      emotion: urgent
+    text: >-
+      Fale baixo. Se eles perceberem que estamos acordados, não teremos uma
+      segunda oportunidade.
+  - id: phonetics
+    speaker: narrator
+    direction:
+      pace: measured
+    text: >-
+      João arranhou o joelho, Guilherme recolheu as folhas molhadas e a manhã
+      terminou com pão, limão, caminhões e um cachorro correndo pela rua.
+  - id: numbers
+    speaker: narrator
+    direction:
+      pace: measured
+    text: >-
+      Às oito e quarenta e cinco, havia vinte e três pessoas na sala; às nove e
+      dez, restavam apenas sete, e a probabilidade estimada caiu para 2,5 por cento.
+  - id: names
+    speaker: narrator
+    direction: {}
+    text: >-
+      Harry perguntou a Hermione se McGonagall ainda estava em Hogwarts, enquanto
+      uma anotação sobre Richard Feynman permanecia aberta sobre a mesa.
+  - id: code-switch
+    speaker: child_scholar
+    direction:
+      emotion: amused
+    text: >-
+      Ele chamou aquilo de fail-safe, depois corrigiu para mecanismo de segurança,
+      e cinco minutos mais tarde já estava explicando Bayesian updating em português.
+  - id: analytical-long
+    speaker: narrator
+    direction:
+      pace: deliberate
+    text: >-
+      O problema não era descobrir qual explicação parecia mais elegante, mas
+      separar aquilo que havia sido observado daquilo que cada pessoa esperava
+      observar; quando as duas coisas se misturavam, qualquer coincidência ganhava
+      aparência de evidência e qualquer dúvida parecia uma objeção pessoal.
+  - id: emotional-transition
+    speaker: narrator
+    direction:
+      emotion: tenderness turning to unease
+      pace: slow
+    text: >-
+      Por um instante, ela sorriu ao reconhecer a letra no envelope. Então viu a
+      data escrita no canto, e o sorriso desapareceu antes que terminasse de respirar.

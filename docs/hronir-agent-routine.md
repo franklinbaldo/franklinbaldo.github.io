@@ -25,8 +25,8 @@ npm ci
 
 Liste os PRs abertos. Para cada PR Hrönir com CI verde, sem conflitos e sem revisões bloqueantes:
 
-- Mescle com **merge commit** — NUNCA squash.
-- Via MCP: `mcp__github__merge_pull_request` com `merge_method: merge`.
+- Mescle com **squash**, o método habilitado e canônico do repositório.
+- Via MCP: `mcp__github__merge_pull_request` com `merge_method: squash`.
 - **Não** mescle PRs que deletem arquivos de `.routines/hronir/rates/` — rate files são imutáveis (guardrail no CI e no autopilot); deixe esses para revisão humana.
 
 ## 1. Atualizar main e criar branch
@@ -132,7 +132,7 @@ mcp__github__create_pull_request:
   base: main
 
 mcp__github__enable_pr_auto_merge:
-  merge_method: merge
+  merge_method: squash
 ```
 
-Se `enable_pr_auto_merge` falhar (ex.: o CI já terminou verde, e auto-merge só se arma com checks pendentes), mescle diretamente com `mcp__github__merge_pull_request` (`merge_method: merge`) — ou deixe para o passo 0 da próxima rodada.
+Se `enable_pr_auto_merge` falhar (ex.: o CI já terminou verde, e auto-merge só se arma com checks pendentes), mescle diretamente com `mcp__github__merge_pull_request` (`merge_method: squash`) — ou deixe para o passo 0 da próxima rodada.

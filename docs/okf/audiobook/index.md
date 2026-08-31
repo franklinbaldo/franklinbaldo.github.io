@@ -38,6 +38,7 @@ O trabalho editorial usa o próprio agente do ChatGPT e o estado versionado no G
 - [`multi-work-architecture.md`](./multi-work-architecture.md) — contrato que garante uma única pipeline para HPMOR, Bhagavad Gita e futuras obras, com `work_id`, configuração e podcast independentes.
 - [`editorial-control-plane.md`](./editorial-control-plane.md) — agente recorrente do ChatGPT, persistência de estado e separação entre trabalho editorial e síntese.
 - [`chapter-readiness.md`](./chapter-readiness.md) — gates obrigatórios antes de uma unidade poder ser enviada ao TTS.
+- [`benchmarks/pt-br-audiobook-v1-breeze.md`](./benchmarks/pt-br-audiobook-v1-breeze.md) — primeiro benchmark TTS **executado** em GPU remota: Breeze TTS 2 em Kaggle e Colab, com medições objetivas de qualidade pt-BR, custo e determinismo.
 - [`guides/editorial-style.md`](./guides/editorial-style.md) — defaults editoriais compartilhados por todas as obras.
 - [`guides/translation.md`](./guides/translation.md) — contrato da tradução canônica em pt-BR.
 - [`guides/narration.md`](./guides/narration.md) — preparação provider-neutral da versão destinada à fala.
