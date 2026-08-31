@@ -179,6 +179,9 @@ jobs:
           console.log(`- segments: **${manifest.segments.length}**`);
           console.log(`- GPU: \`${JSON.stringify(manifest.hardware?.gpu)}\``);
           console.log(`- backend metadata: \`${JSON.stringify(manifest.backend_metadata ?? {})}\``);
+          const t = manifest.timings ?? {};
+          console.log(`- bootstrap: **${((t.bootstrap_ms ?? 0) / 1000).toFixed(1)}s**`);
+          console.log(`- synthesis: **${((t.synthesis_ms ?? 0) / 1000).toFixed(1)}s** for ${((t.audio_ms ?? 0) / 1000).toFixed(1)}s of audio`);
           NODE
 
       - name: Upload benchmark audio
