@@ -6,6 +6,18 @@ entries:
     scope: global
     status: review
     note: Definir forma oral consistente após benchmark pt-BR; não codificar workaround de backend aqui.
+  - term: Petunia
+    scope: global
+    status: review
+    note: Nome introduzido em hpmor-001-s0006; preservar grafia editorial e definir forma oral consistente após benchmark pt-BR.
+  - term: Verres-Evans
+    scope: global
+    status: review
+    note: Sobrenome composto introduzido em hpmor-001-s0006; validar acento e tratamento do hífen no benchmark sem inserir hacks no texto traduzido.
+  - term: Evans-Verres
+    scope: global
+    status: review
+    note: Sobrenome composto introduzido em hpmor-001-s0006; validar acento e tratamento do hífen no benchmark sem inserir hacks no texto traduzido.
   - term: Hermione
     scope: global
     status: review
