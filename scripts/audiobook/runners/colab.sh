@@ -22,6 +22,13 @@ done
 [[ -n "$OUTPUT" ]] || { echo "--output is required" >&2; exit 2; }
 command -v colab >/dev/null || { echo "colab CLI not found" >&2; exit 2; }
 
+# The CLI supports two credential shapes: its own OAuth2 user token at
+# ~/.config/colab-cli/token.json (the one `colab` mints and refreshes), and
+# Application Default Credentials. Default to OAuth2 because ADC user
+# credentials cannot be re-scoped and must be minted with the colaboratory
+# scope explicitly.
+AUTH="${COLAB_AUTH_PROVIDER:-oauth2}"
+
 SESSION="audiobook-${GITHUB_RUN_ID:-$$}-${GITHUB_RUN_ATTEMPT:-1}"
 SESSION="${SESSION,,}"
 TMPDIR_LOCAL="$(mktemp -d)"
@@ -44,21 +51,21 @@ runpy.run_path("/content/worker.py", run_name="__main__")
 PY
 
 cleanup() {
-  colab --auth=adc stop -s "$SESSION" >/dev/null 2>&1 || true
+  colab "--auth=$AUTH" stop -s "$SESSION" >/dev/null 2>&1 || true
   rm -rf "$TMPDIR_LOCAL"
 }
 trap cleanup EXIT
 
 if [[ -n "$GPU" ]]; then
-  colab --auth=adc new -s "$SESSION" --gpu "$GPU"
+  colab "--auth=$AUTH" new -s "$SESSION" --gpu "$GPU"
 else
-  colab --auth=adc new -s "$SESSION"
+  colab "--auth=$AUTH" new -s "$SESSION"
 fi
 
-colab --auth=adc upload -s "$SESSION" scripts/audiobook/worker.py /content/worker.py
-colab --auth=adc upload -s "$SESSION" "$PLAN" /content/plan.json
-colab --auth=adc exec -s "$SESSION" --timeout "${COLAB_EXEC_TIMEOUT:-3600}" -f "$LAUNCHER"
+colab "--auth=$AUTH" upload -s "$SESSION" scripts/audiobook/worker.py /content/worker.py
+colab "--auth=$AUTH" upload -s "$SESSION" "$PLAN" /content/plan.json
+colab "--auth=$AUTH" exec -s "$SESSION" --timeout "${COLAB_EXEC_TIMEOUT:-3600}" -f "$LAUNCHER"
 mkdir -p "$(dirname "$OUTPUT")"
-colab --auth=adc download -s "$SESSION" /content/audiobook-result.zip "$OUTPUT"
+colab "--auth=$AUTH" download -s "$SESSION" /content/audiobook-result.zip "$OUTPUT"
 
 echo "colab result: $OUTPUT"

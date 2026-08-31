@@ -57,24 +57,40 @@ google-colab-cli==0.6.0
 O fluxo usa somente comandos não interativos:
 
 ```text
-colab --auth=adc new
-colab --auth=adc upload
-colab --auth=adc exec
-colab --auth=adc download
-colab --auth=adc stop
+colab --auth=$COLAB_AUTH_PROVIDER new
+colab --auth=$COLAB_AUTH_PROVIDER upload
+colab --auth=$COLAB_AUTH_PROVIDER exec
+colab --auth=$COLAB_AUTH_PROVIDER download
+colab --auth=$COLAB_AUTH_PROVIDER stop
 ```
 
-O CLI oficial recomenda ADC para automação/headless. A identidade precisa ter os scopes necessários ao Colab.
+O CLI aceita duas formas de credencial, e a escolha não é indiferente:
+
+- `oauth2` (**default do projeto**) — o token de usuário que o próprio `colab` emite
+  e renova, gravado em `~/.config/colab-cli/token.json`. Ele já nasce com os scopes
+  que o backend do Colab exige, incluindo `.../auth/colaboratory`, e se renova
+  sozinho pelo `refresh_token`.
+- `adc` — Application Default Credentials. Credenciais **de usuário** obtidas por
+  `gcloud auth application-default login` não podem ser re-escopadas depois
+  (`with_scopes` não é suportado), então precisam ser emitidas já com
+  `--scopes=openid,.../cloud-platform,.../userinfo.email,.../colaboratory`;
+  caso contrário o keep-alive da sessão devolve `403 SCOPE_NOT_PERMITTED`.
 
 ### GitHub Secret
 
-Criar:
+Criar um dos dois:
 
 ```text
+COLAB_TOKEN_JSON
 COLAB_ADC_JSON
 ```
 
-O valor esperado é o conteúdo JSON de Application Default Credentials de uma conta autorizada a usar o Colab. O workflow materializa o JSON num arquivo temporário com permissão restrita e define `GOOGLE_APPLICATION_CREDENTIALS` apenas durante o job.
+`COLAB_TOKEN_JSON` é o conteúdo de `~/.config/colab-cli/token.json` de uma conta
+já autorizada; o workflow o materializa em `~/.config/colab-cli/token.json` com
+permissão restrita e seleciona `COLAB_AUTH_PROVIDER=oauth2`. `COLAB_ADC_JSON` é o
+fallback: materializa um arquivo temporário, aponta
+`GOOGLE_APPLICATION_CREDENTIALS` para ele e seleciona `COLAB_AUTH_PROVIDER=adc`.
+Nenhum dos dois é impresso em log.
 
 **Gate de realidade:** armazenamento correto da credencial não prova que a conta terá direito a uma GPU gratuita em execução headless. Isso deve ser validado por uma execução real com a conta do projeto. Falha de quota/alocação é falha do runner, não do corpus ou do modelo TTS.
 

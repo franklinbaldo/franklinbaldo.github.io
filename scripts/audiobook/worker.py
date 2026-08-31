@@ -1,8 +1,17 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = []
+# ///
 """Audiobook Factory media worker.
 
 The worker deliberately has no editorial intelligence. It receives an already
 validated TTS plan and turns each request into audio through a selected backend.
+
+The script declares no PEP 723 dependencies on purpose: the `fake` backend is
+stdlib-only, and the `breeze` backend must install its pinned stack into the
+interpreter that is actually running, because on a hosted GPU box the CUDA build
+of torch has to match that image's driver.
 
 `fake` produces deterministic WAV tones for CI. `breeze` bootstraps a pinned
 Breeze TTS 2 runtime, loads the model once, then synthesizes all segments through
@@ -38,6 +47,12 @@ BREEZE_CODE_REPOSITORY = "https://github.com/breezeblue-ai/breeze-tts.git"
 BREEZE_CODE_REVISION = "ca632ce6c4d05f7985da4eab29b1a5d445b43f7b"
 BREEZE_MODEL_REPOSITORY = "BreezeBlue/Breeze-TTS-2"
 BREEZE_MODEL_REVISION = "a3bd0a6e83cd2d046ce783df2f7cb84292869ef7"
+
+# Breeze pins `torch==2.9.1` but does not pin `torchvision`. Hosted GPU images
+# (Kaggle, Colab) ship a `torchvision` built against their own older torch, and
+# `transformers` imports it eagerly, so upgrading torch alone breaks the import
+# with `operator torchvision::nms does not exist`. Install the matching release.
+BREEZE_TORCHVISION = "torchvision==0.24.1"
 
 
 def sha256_file(path: Path) -> str:
@@ -208,6 +223,7 @@ def install_breeze_dependencies(source_dir: Path) -> None:
             "--disable-pip-version-check",
             "-r",
             str(source_dir / "requirements.txt"),
+            BREEZE_TORCHVISION,
         ]
     )
 
@@ -239,6 +255,73 @@ def resolve_breeze_model(
         ]
     )
     return Path(model_path.splitlines()[-1]).resolve()
+
+
+def flash_attention_available() -> bool:
+    """Whether this box can actually run FlashAttention 2.
+
+    The package only builds kernels for Ampere and newer (compute capability
+    8.0+), so a T4 (7.5) can never satisfy it regardless of installation.
+    """
+    probe = (
+        "import sys, torch, importlib.util;"
+        "ok = importlib.util.find_spec('flash_attn') is not None"
+        " and torch.cuda.is_available()"
+        " and torch.cuda.get_device_capability(0)[0] >= 8;"
+        "sys.exit(0 if ok else 1)"
+    )
+    completed = subprocess.run(
+        [sys.executable, "-c", probe], check=False, capture_output=True
+    )
+    return completed.returncode == 0
+
+
+def prepare_breeze_checkpoint(snapshot_dir: Path, cache_dir: Path) -> tuple[Path, str]:
+    """Return a checkpoint directory whose attention backend this GPU supports.
+
+    Breeze's checkpoint sets `text_encoder_config.preferred_attn_implementation`
+    to `flash_attention_2`, and the text encoder honours it even when the caller
+    asks for eager attention, so loading the model on a pre-Ampere GPU dies with
+    `FlashAttention2 has been toggled on, but it cannot be used`.
+
+    The Hugging Face snapshot is content-addressed by revision and must stay
+    byte-identical, so instead of editing it we build a sibling directory that
+    symlinks every file and carries a rewritten `config.json`. The pin is
+    preserved; only the attention backend differs, and the manifest records it.
+    """
+    requested = os.environ.get("BREEZE_TEXT_ENCODER_ATTENTION")
+    if not requested:
+        if flash_attention_available():
+            return snapshot_dir, "flash_attention_2"
+        requested = "eager"
+
+    config_path = snapshot_dir / "config.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    if config.get("text_encoder_config", {}).get(
+        "preferred_attn_implementation"
+    ) == requested:
+        return snapshot_dir, requested
+
+    overlay = cache_dir / "checkpoints" / f"{snapshot_dir.name}-{requested}"
+    if not overlay.exists():
+        staging = overlay.with_name(f"{overlay.name}.partial")
+        if staging.exists():
+            raise RuntimeError(f"stale Breeze checkpoint overlay: {staging}")
+        for source in snapshot_dir.rglob("*"):
+            if source.is_dir():
+                continue
+            target = staging / source.relative_to(snapshot_dir)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if source.name != "config.json":
+                target.symlink_to(source.resolve())
+        config.setdefault("text_encoder_config", {})[
+            "preferred_attn_implementation"
+        ] = requested
+        (staging / "config.json").write_text(
+            json.dumps(config, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        staging.rename(overlay)
+    return overlay, requested
 
 
 def free_local_port() -> int:
@@ -292,10 +375,13 @@ class BreezeBackend:
         ).expanduser()
         self.source_dir = ensure_breeze_source(self.cache_dir, self.code_revision)
         install_breeze_dependencies(self.source_dir)
-        self.model_path = resolve_breeze_model(
+        snapshot_dir = resolve_breeze_model(
             model,
             cache_dir=self.cache_dir,
             revision=self.model_revision,
+        )
+        self.model_path, self.text_encoder_attention = prepare_breeze_checkpoint(
+            snapshot_dir, self.cache_dir
         )
         self.port = free_local_port()
         self.base_url = f"http://127.0.0.1:{self.port}"
@@ -325,6 +411,7 @@ class BreezeBackend:
             "model_repository": model,
             "model_revision": self.model_revision,
             "api": "official-streaming-v1",
+            "text_encoder_attn_implementation": self.text_encoder_attention,
             "sample_rate": self.sample_rate,
             "cfg_scale": float(os.environ.get("BREEZE_CFG_SCALE", "4")),
         }
