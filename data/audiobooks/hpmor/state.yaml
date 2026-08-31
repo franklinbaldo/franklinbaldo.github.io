@@ -1,7 +1,7 @@
 schema: audiobook-work-state-v1
 work_id: hpmor
 status: preparing
-next_action: continue chapter 1 from segment hpmor-001-s0008
+next_action: continue chapter 1 from segment hpmor-001-s0009
 project_gates:
   work_metadata_ready: true
   global_editorial_guide_ready: true
@@ -17,7 +17,7 @@ publication:
 chapters:
   hpmor-001:
     status: in_progress
-    next_action: import, translate, and prepare narration for hpmor-001-s0008 without renumbering earlier segments
+    next_action: import, translate, and prepare narration for hpmor-001-s0009 without renumbering earlier segments
     completed_segments:
       - hpmor-001-s0001
       - hpmor-001-s0002
@@ -26,7 +26,8 @@ chapters:
       - hpmor-001-s0005
       - hpmor-001-s0006
       - hpmor-001-s0007
-    next_segment_id: hpmor-001-s0008
+      - hpmor-001-s0008
+    next_segment_id: hpmor-001-s0009
     gates:
       work_ready: true
       source_ready: false
