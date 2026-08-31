@@ -95,7 +95,7 @@ function main() {
 
   chapter.status = "published";
   chapter.publication = {
-    ...(chapter.publication ?? {}),
+    ...chapter.publication,
     status: "published",
     title: publication.title,
     description: publication.description,
