@@ -1,7 +1,7 @@
 schema: audiobook-work-state-v1
 work_id: hpmor
 status: preparing
-next_action: continue chapter 1 from segment hpmor-001-s0026
+next_action: apply staged chapter 1 segment hpmor-001-s0026 to the three canonical chapter files after formatting repair
 project_gates:
   work_metadata_ready: true
   global_editorial_guide_ready: true
@@ -17,7 +17,7 @@ publication:
 chapters:
   hpmor-001:
     status: in_progress
-    next_action: import, translate, and prepare narration for hpmor-001-s0026 without renumbering earlier segments
+    next_action: apply the persisted hpmor-001-s0026 payload to original/001.md, translation/001.md, and narration/001.md; do not advance to s0027 until that mechanical write and validation succeed
     files:
       original: original/001.md
       translation: translation/001.md
@@ -49,6 +49,29 @@ chapters:
       - hpmor-001-s0024
       - hpmor-001-s0025
     next_segment_id: hpmor-001-s0026
+    staged_segment:
+      segment_id: hpmor-001-s0026
+      status: editorial_payload_complete_pending_canonical_write
+      source:
+        text: '"Dad! Mum! "'
+        source_url: https://hpmor.com/chapter/1
+        source_anchor: chapter-1 living-room argument, Harry interrupts both parents immediately after Petunia asks Michael to trust her
+        source_digest: sha256:4fdf84b60af9892474fbc36d39f711410125f4734d6d7d166a940237f6b7371f
+      translation:
+        text: '"Pai! Mãe!"'
+        note: Preserve the two clipped vocatives and exclamation marks; Harry is interrupting both parents, not addressing one parent with a combined phrase.
+      narration:
+        speaker: harry
+        emotion: urgent-interruption
+        pace: fast
+        intensity: medium
+        pause_before_ms: 40
+        pause_after_ms: 180
+        text: '"Pai! Mãe!"'
+        note: Harry-only dialogue; use the existing harry voice directly, with no mixed-dialogue partition and no invented shout beyond the explicit exclamation punctuation.
+      terminology_or_pronunciation_change_required: false
+      voice_rule_change_required: false
+      validated_against_source: true
     validation_notes:
       - hpmor-001-s0009 is the first mixed dialogue+narration source segment; narration marks voice_partition=mixed-dialogue-pending until the provider-neutral audio contract can represent character/narrator partitions without changing the stable editorial segment_id
       - hpmor-001-s0010 through hpmor-001-s0013 use the same pending partition marker where required; no TTS dispatch is allowed while audio_contract_ready is false
@@ -65,6 +88,8 @@ chapters:
       - hpmor-001-s0023 advances source, translation, and narration with the same stable segment_id; Petunia's terse eyewitness insistence is preserved as Ela era uma bruxa / Eu vi, while narration marks the Petunia-narrator-Petunia structure as mixed-dialogue-pending and introduces no new pronunciation or voice rule
       - hpmor-001-s0024 advances source, translation, and narration with the same stable segment_id; Michael's annoyance is represented as gradual and restrained, the translation preserves the modal certainty and condescending final question, narration marks the Michael-narrator-Michael structure as mixed-dialogue-pending, and no new terminology or pronunciation entry is required
       - hpmor-001-s0025 advances source, translation, and narration with the same stable segment_id; Petunia's anxious gesture and near-tears state remain explicit without being intensified into actual crying, the translation preserves the shift from argument-winning to relational trust, narration marks the narrator-Petunia structure as mixed-dialogue-pending, and no new terminology or pronunciation entry is required
+      - hpmor-001-s0026 has a complete source/translation/narration payload persisted above, with the official source verified and Harry's existing voice rule applied; it is intentionally not listed in completed_segments until the payload is written into all three canonical chapter files and validation passes
+      - the previous CI head failed only Prettier on original/001.md, translation/001.md, and narration/001.md; change-card and build checks passed, so formatting repair is part of the required mechanical continuation before s0026 can be committed as complete
     gates:
       work_ready: true
       source_ready: false
