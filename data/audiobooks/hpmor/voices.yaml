@@ -11,6 +11,9 @@ voices:
   michael:
     role: character
     description: Professor adulto, racionalista e formal; dicção precisa, ceticismo seco e autocontrole. Mesmo sob tensão, evitar gritos ou caricatura de autoridade; a incredulidade deve aparecer mais pela precisão e contenção do que por volume.
+  petunia:
+    role: character
+    description: Adulta, afetiva e emocionalmente transparente, mas não frágil por padrão; voz natural e doméstica, capaz de mostrar medo, insistência e vulnerabilidade sem melodrama. Em confronto com Michael, preservar firmeza mesmo quando assustada e evitar transformar tensão em choro ou grito sem indicação textual.
   mcgonagall:
     role: character
     description: Adulta, autoridade contida, precisão e firmeza; emoção deve aparecer sem perder compostura.
