@@ -31,5 +31,5 @@ jobs:
           uvx
           --from git+https://github.com/franklinbaldo/okf-parser@fa357cc377becd6465ed404f10be01b032d6037b
           okf-parser check changelog/changes
-          --require-spec specs/okf-types/{slug}.md
+          --require-spec ../../specs/okf-types/{slug}.md
           --normative-spec
