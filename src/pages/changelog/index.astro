@@ -68,7 +68,7 @@ const repositoryUrl = "https://github.com/franklinbaldo/franklinbaldo.github.io"
             <p class="release-summary">{entry.data.description}</p>
 
             {entry.data.tags && entry.data.tags.length > 0 && (
-              <ul class="changelog-tags" aria-label="Release tags">
+              <ul class="changelog-tags" aria-label={`Tags for v${entry.data.version}`}>
                 {entry.data.tags.map((tag) => (
                   <li>#{tag}</li>
                 ))}
