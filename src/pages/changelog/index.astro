@@ -2,13 +2,51 @@
 import { getCollection, render } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
 
-// Changelog entries are English-only by deliberate exception (CLAUDE.md
-// "Línguas") — a single page serves both EN and PT readers, no /pt/ route.
-const entries = await getCollection("changelog");
-entries.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+type ChangeCardModule = {
+  frontmatter: {
+    type: "changelog";
+    date: string | Date;
+    description: string;
+    tags?: string[];
+  };
+  Content: unknown;
+};
 
-const rendered = await Promise.all(
-  entries.map(async (entry) => ({ entry, Content: (await render(entry)).Content }))
+// Historical release entries stay in the Astro content collection. New change
+// history is card-based (like Pink): stable semantic filenames under
+// changelog/changes/, independent from package/site versions.
+const legacyEntries = await getCollection("changelog");
+const legacyRendered = await Promise.all(
+  legacyEntries.map(async (entry) => ({
+    kind: "release" as const,
+    id: `version-${entry.data.version}`,
+    label: `v${entry.data.version}`,
+    date: entry.data.date,
+    description: entry.data.description,
+    tags: entry.data.tags,
+    Content: (await render(entry)).Content,
+  }))
+);
+
+const modules = import.meta.glob<ChangeCardModule>("../../../changelog/changes/*.md", {
+  eager: true,
+});
+
+const changeCards = Object.entries(modules).map(([path, module]) => {
+  const slug = path.split("/").at(-1)?.replace(/\.md$/, "") ?? path;
+  return {
+    kind: "change" as const,
+    id: `change-${slug}`,
+    label: module.frontmatter.description,
+    date: new Date(module.frontmatter.date),
+    description: module.frontmatter.description,
+    tags: module.frontmatter.tags,
+    Content: module.Content,
+  };
+});
+
+const entries = [...changeCards, ...legacyRendered].sort(
+  (a, b) => b.date.valueOf() - a.date.valueOf()
 );
 
 const fmt = new Intl.DateTimeFormat("en-US", {
@@ -23,7 +61,7 @@ const repositoryUrl = "https://github.com/franklinbaldo/franklinbaldo.github.io"
 
 <PageLayout
   title="Changelog | Franklin Baldo"
-  description="Release notes for the site and Hrönir, listed version by version."
+  description="Changes to the site and its supporting automation, newest first."
   lang="en"
   breadcrumb={[
     { name: "Home", item: new URL("/", Astro.site).href },
@@ -32,55 +70,45 @@ const repositoryUrl = "https://github.com/franklinbaldo/franklinbaldo.github.io"
 >
   <header class="changelog-intro">
     <h1>Changelog</h1>
-    <p>Release notes for the site and Hrönir, newest first.</p>
+    <p>Changes to the site and its supporting automation, newest first.</p>
     <nav class="changelog-resources" aria-label="Changelog resources">
-      <a href={`${repositoryUrl}/tree/main/changelog`}>Source files</a>
+      <a href={`${repositoryUrl}/tree/main/changelog/changes`}>Change cards</a>
       <span aria-hidden="true">·</span>
-      <a href={`${repositoryUrl}/blob/main/docs/okf/README.md`}>Changelog format</a>
+      <a href={`${repositoryUrl}/blob/main/specs/okf-types/changelog.md`}>OKF format</a>
     </nav>
   </header>
 
   <div class="changelog-list">
     {
-      rendered.map(({ entry, Content }) => {
-        const anchor = `version-${entry.data.version}`;
-
-        return (
-          <article id={anchor} class="changelog-entry">
-            <header class="release-header">
-              <div>
-                <p class="release-label">Release</p>
-                <h2>
-                  <a
-                    href={`#${anchor}`}
-                    aria-label={`Permanent link to version ${entry.data.version}`}
-                  >
-                    <span aria-hidden="true">v</span>
-                    {entry.data.version}
-                  </a>
-                </h2>
-              </div>
-              <time datetime={entry.data.date.toISOString()}>
-                {fmt.format(entry.data.date)}
-              </time>
-            </header>
-
-            <p class="release-summary">{entry.data.description}</p>
-
-            {entry.data.tags && entry.data.tags.length > 0 && (
-              <ul class="changelog-tags" aria-label="Release tags">
-                {entry.data.tags.map((tag) => (
-                  <li>#{tag}</li>
-                ))}
-              </ul>
-            )}
-
-            <div class="prose">
-              <Content />
+      entries.map(({ kind, id, label, date, description, tags, Content }) => (
+        <article id={id} class="changelog-entry">
+          <header class="release-header">
+            <div>
+              <p class="release-label">{kind === "change" ? "Change" : "Legacy release"}</p>
+              <h2>
+                <a href={`#${id}`} aria-label={`Permanent link to ${label}`}>
+                  {label}
+                </a>
+              </h2>
             </div>
-          </article>
-        );
-      })
+            <time datetime={date.toISOString()}>{fmt.format(date)}</time>
+          </header>
+
+          {kind === "release" && <p class="release-summary">{description}</p>}
+
+          {tags && tags.length > 0 && (
+            <ul class="changelog-tags" aria-label="Change tags">
+              {tags.map((tag) => (
+                <li>#{tag}</li>
+              ))}
+            </ul>
+          )}
+
+          <div class="prose">
+            <Content />
+          </div>
+        </article>
+      ))
     }
   </div>
 </PageLayout>
@@ -154,7 +182,8 @@ const repositoryUrl = "https://github.com/franklinbaldo/franklinbaldo.github.io"
 
   .release-header h2 {
     margin: 0;
-    font-size: clamp(1.45rem, 4vw, 1.9rem);
+    font-size: clamp(1.25rem, 3vw, 1.65rem);
+    line-height: 1.25;
   }
 
   .release-header h2 a {
@@ -191,12 +220,18 @@ const repositoryUrl = "https://github.com/franklinbaldo/franklinbaldo.github.io"
     list-style: none;
   }
 
+  .prose :global(h1),
+  .prose :global(h2) {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+  }
+
   .prose :global(h3) {
     margin-top: 1.75rem;
+    color: var(--pico-muted-color);
     font-size: 0.78rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--pico-muted-color);
   }
 
   .prose :global(li + li) {
