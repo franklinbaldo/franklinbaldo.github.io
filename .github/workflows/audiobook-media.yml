@@ -160,7 +160,7 @@ jobs:
           # unpinned install creates a ready session that cannot execute:
           # AttributeError: module 'jupyter_kernel_client' has no attribute
           # 'KernelClient'.
-          python -m pip install --disable-pip-version-check \n            'google-colab-cli==0.6.0' 'jupyter-kernel-client==0.9.0'
+          python -m pip install --disable-pip-version-check 'google-colab-cli==0.6.0' 'jupyter-kernel-client==0.9.0'
           if [[ -n "$COLAB_TOKEN_JSON" ]]; then
             install -d -m 700 "$HOME/.config/colab-cli"
             printf '%s' "$COLAB_TOKEN_JSON" > "$HOME/.config/colab-cli/token.json"
