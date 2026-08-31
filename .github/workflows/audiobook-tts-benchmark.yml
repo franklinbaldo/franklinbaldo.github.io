@@ -23,6 +23,7 @@ on:
         default: breeze
         type: choice
         options:
+          - voxcpm2
           - breeze
           - fake
       model:
@@ -81,6 +82,8 @@ jobs:
             MODEL="$REQUESTED_MODEL"
           elif [[ "$BACKEND" == "breeze" ]]; then
             MODEL="BreezeBlue/Breeze-TTS-2"
+          elif [[ "$BACKEND" == "voxcpm2" ]]; then
+            MODEL="openbmb/VoxCPM2"
           else
             MODEL="deterministic-tone-v1"
           fi

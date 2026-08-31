@@ -40,3 +40,7 @@ hronir_session.json
 
 # Hrönir version selection (rebuilt by prebuild/hronir:select before each CI step that needs it)
 src/generated/versions-selected.json
+
+# Python bytecode from running the audiobook worker locally
+__pycache__/
+*.py[cod]
