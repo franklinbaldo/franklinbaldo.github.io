@@ -181,7 +181,7 @@ test("segment audio is normalised into the audiobook loudness window", () => {
   assert.equal(result.status, 0, result.stderr);
   const measured = JSON.parse(result.stdout.trim().split("\n").pop());
 
-  for (const { rms, peak } of measured) {
+  for (const { peak } of measured) {
     // Never hotter than the distributor ceiling, whatever the input level was.
     assert.ok(peak <= -3 + 0.05, `peak ${peak} exceeds the -3 dBFS ceiling`);
   }
