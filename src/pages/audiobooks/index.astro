@@ -1,0 +1,81 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import { listWorks, publishedEpisodes } from "../../audiobook/catalog.js";
+
+const works = listWorks();
+---
+
+<PageLayout
+  title="Audiolivros"
+  description="Audiolivros produzidos de forma reproduzível, capítulo por capítulo."
+  lang="pt"
+>
+  <main class="container audiobook-catalog">
+    <header>
+      <p class="eyebrow">Audiobook Factory</p>
+      <h1>Audiolivros</h1>
+      <p>
+        Obras preparadas em camadas rastreáveis de original, tradução e narração, com síntese de voz e
+        publicação por podcast.
+      </p>
+    </header>
+
+    {
+      works.length === 0 ? (
+        <p>Nenhuma obra cadastrada.</p>
+      ) : (
+        <div class="work-grid">
+          {works.map((work) => {
+            const episodes = publishedEpisodes(work);
+            const enabled = work.metadata.podcast?.enabled === true;
+            return (
+              <article>
+                <p class="status">{enabled ? "podcast" : "em preparação"}</p>
+                <h2><a href={`/audiobooks/${work.workId}/`}>{work.metadata.title}</a></h2>
+                <p>{work.metadata.author}</p>
+                <p>
+                  {episodes.length === 0
+                    ? "Nenhum capítulo publicado ainda."
+                    : `${episodes.length} ${episodes.length === 1 ? "capítulo publicado" : "capítulos publicados"}.`}
+                </p>
+              </article>
+            );
+          })}
+        </div>
+      )
+    }
+  </main>
+</PageLayout>
+
+<style>
+  .audiobook-catalog {
+    max-width: 64rem;
+    padding-block: 3rem 5rem;
+  }
+
+  .eyebrow,
+  .status {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.72;
+  }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  article {
+    padding: 1.25rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+  }
+
+  article h2 {
+    margin-block: 0.35rem 0.75rem;
+    font-size: 1.2rem;
+  }
+</style>

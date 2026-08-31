@@ -1,0 +1,93 @@
+---
+import PageLayout from "../../../layouts/PageLayout.astro";
+import { listWorks, publishedEpisodes } from "../../../audiobook/catalog.js";
+
+export function getStaticPaths() {
+  return listWorks().map((work) => ({ params: { workId: work.workId }, props: { work } }));
+}
+
+const { work } = Astro.props;
+const episodes = publishedEpisodes(work);
+const podcastEnabled = work.metadata.podcast?.enabled === true;
+const podcastDescription = work.metadata.podcast?.description ?? work.metadata.title;
+---
+
+<PageLayout
+  title={`${work.metadata.title} — Audiolivro`}
+  description={podcastDescription}
+  lang="pt"
+  breadcrumb={[
+    { name: "Audiolivros", item: "/audiobooks/" },
+    { name: work.metadata.title, item: `/audiobooks/${work.workId}/` },
+  ]}
+>
+  <main class="container audiobook-work">
+    <p><a href="/audiobooks/">← Audiolivros</a></p>
+    <header>
+      <p class="eyebrow">{podcastEnabled ? "Podcast" : "Em preparação"}</p>
+      <h1>{work.metadata.title}</h1>
+      <p>{work.metadata.author}</p>
+      <p>{podcastDescription}</p>
+    </header>
+
+    {
+      podcastEnabled && (
+        <aside class="subscribe">
+          <strong>Assinar por RSS</strong>
+          <p>Adicione este endereço ao seu tocador de podcasts:</p>
+          <p><a href={`/audiobooks/${work.workId}/feed.xml`}>{`/audiobooks/${work.workId}/feed.xml`}</a></p>
+        </aside>
+      )
+    }
+
+    <section>
+      <h2>Capítulos</h2>
+      {
+        episodes.length === 0 ? (
+          <p>O audiolivro ainda não tem capítulos publicados.</p>
+        ) : (
+          <ol class="episodes">
+            {episodes.map((episode) => (
+              <li>
+                <a href={`/audiobooks/${work.workId}/${episode.chapterId}/`}>{episode.title}</a>
+                {episode.durationSeconds != null && (
+                  <small>{` · ${Math.round(episode.durationSeconds / 60)} min`}</small>
+                )}
+              </li>
+            ))}
+          </ol>
+        )
+      }
+    </section>
+  </main>
+</PageLayout>
+
+<style>
+  .audiobook-work {
+    max-width: 52rem;
+    padding-block: 3rem 5rem;
+  }
+
+  .eyebrow {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.72;
+  }
+
+  .subscribe {
+    margin-block: 2rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+  }
+
+  .subscribe p:last-child {
+    margin-bottom: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .episodes li {
+    margin-block: 0.6rem;
+  }
+</style>
