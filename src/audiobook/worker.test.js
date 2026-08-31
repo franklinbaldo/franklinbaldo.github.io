@@ -151,3 +151,47 @@ test("breeze checkpoint overlay rewrites only the top-level config", () => {
     "weights"
   );
 });
+
+test("segment audio is normalised into the audiobook loudness window", () => {
+  const result = spawnSync(
+    "python3",
+    [
+      "-c",
+      [
+        "import importlib.util, math, struct",
+        "spec = importlib.util.spec_from_file_location('w', 'scripts/audiobook/worker.py')",
+        "w = importlib.util.module_from_spec(spec); spec.loader.exec_module(w)",
+        "import json",
+        "out = []",
+        "for amp, spike in ((0.03, 0.03), (0.25, 0.98)):",
+        "    sig = [amp * math.sin(2 * math.pi * 220 * i / 24000) for i in range(24000)]",
+        "    sig[100] = spike",
+        "    pcm, gain = w.normalize_to_pcm16(sig)",
+        "    n = len(pcm) // 2",
+        "    vals = [struct.unpack_from('<h', pcm, i * 2)[0] / 32768 for i in range(n)]",
+        "    rms = 20 * math.log10(math.sqrt(sum(v * v for v in vals) / n))",
+        "    peak = 20 * math.log10(max(abs(v) for v in vals))",
+        "    out.append({'gain': gain, 'rms': rms, 'peak': peak})",
+        "print(json.dumps(out))",
+      ].join("\n"),
+    ],
+    { cwd: process.cwd(), encoding: "utf8" }
+  );
+
+  assert.equal(result.status, 0, result.stderr);
+  const measured = JSON.parse(result.stdout.trim().split("\n").pop());
+
+  for (const { rms, peak } of measured) {
+    // Never hotter than the distributor ceiling, whatever the input level was.
+    assert.ok(peak <= -3 + 0.05, `peak ${peak} exceeds the -3 dBFS ceiling`);
+  }
+  // A quiet segment is lifted to the target; a hot one is pulled down by the ceiling.
+  assert.ok(
+    Math.abs(measured[0].rms - -20) < 0.2,
+    `quiet segment landed at ${measured[0].rms}`
+  );
+  assert.ok(
+    measured[1].rms < -20,
+    `hot segment should be limited below target, got ${measured[1].rms}`
+  );
+});

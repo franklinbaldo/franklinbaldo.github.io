@@ -55,6 +55,17 @@ BREEZE_MODEL_REVISION = "a3bd0a6e83cd2d046ce783df2f7cb84292869ef7"
 # with `operator torchvision::nms does not exist`. Install the matching release.
 BREEZE_TORCHVISION = "torchvision==0.24.1"
 
+VOXCPM_PACKAGE = "voxcpm==2.0.3"
+VOXCPM_MODEL_REPOSITORY = "openbmb/VoxCPM2"
+
+# Audiobook loudness target. VoxCPM2 varies its own output level by as much
+# as 17 dB across segments — asking for emphasis raises the gain, not just the
+# interpretation — so segments are normalized before they are written. The
+# window is the one audiobook distributors ask for: RMS in [-23, -18] dBFS
+# with true peaks no hotter than -3 dBFS.
+TARGET_RMS_DBFS = -20.0
+TARGET_PEAK_CEILING_DBFS = -3.0
+
 
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
@@ -130,6 +141,39 @@ def write_pcm16_wav(output_path: Path, pcm: bytes, sample_rate: int) -> dict:
         "sample_rate": sample_rate,
         "audio_digest": sha256_file(output_path),
     }
+
+
+def normalize_to_pcm16(audio) -> tuple[bytes, float]:
+    """Bring one segment to the audiobook loudness window and pack it as PCM16.
+
+    Generative TTS sets its own level: across the pt-BR benchmark VoxCPM2 spread
+    17 dB of RMS between segments, and 18 of 41 clips peaked hotter than the
+    -3 dBFS ceiling distributors ask for. Concatenating that as-is produces an
+    audiobook whose volume moves under the listener, so each segment is scaled
+    to `TARGET_RMS_DBFS` and then pulled back if that would breach the ceiling.
+
+    Returns the little-endian signed 16-bit frames and the gain that was applied,
+    which the manifest records so a suspicious segment can be traced.
+    """
+    samples = [float(value) for value in audio]
+    if not samples:
+        raise ValueError("backend returned no audio")
+
+    rms = math.sqrt(sum(value * value for value in samples) / len(samples))
+    peak = max(abs(value) for value in samples)
+    if rms <= 0 or peak <= 0:
+        raise ValueError("backend returned silence")
+
+    gain = 10 ** (TARGET_RMS_DBFS / 20) / rms
+    ceiling = 10 ** (TARGET_PEAK_CEILING_DBFS / 20)
+    if peak * gain > ceiling:
+        gain = ceiling / peak
+
+    scaled = bytearray()
+    for value in samples:
+        clamped = max(-1.0, min(1.0, value * gain))
+        scaled += struct.pack("<h", int(round(clamped * 32767)))
+    return bytes(scaled), round(20 * math.log10(gain), 2)
 
 
 def fake_synthesize(segment: dict, output_path: Path) -> dict:
@@ -511,12 +555,70 @@ class BreezeBackend:
             self.log_stream.close()
 
 
+class VoxCpmBackend:
+    """VoxCPM2: tokenizer-free diffusion TTS with natural-language voice design.
+
+    The voice description and the per-segment direction are compiled into a
+    single parenthetical prefix on the text, which is how this model takes its
+    style instruction. Nothing else about the plan changes, so the same
+    `plan.json` drives this backend and Breeze alike.
+    """
+
+    def __init__(self, model: str, output_dir: Path) -> None:
+        if os.environ.get("AUDIOBOOK_SKIP_BACKEND_INSTALL") != "1":
+            run_checked(
+                [
+                    sys.executable, "-m", "pip", "install",
+                    "--disable-pip-version-check", VOXCPM_PACKAGE,
+                ]
+            )
+        from voxcpm import VoxCPM
+
+        self.cfg_value = float(os.environ.get("VOXCPM_CFG_VALUE", "2"))
+        self.timesteps = int(os.environ.get("VOXCPM_TIMESTEPS", "10"))
+        self.model = VoxCPM.from_pretrained(model, load_denoiser=False)
+        self.sample_rate = int(self.model.tts_model.sample_rate)
+        self.metadata = {
+            "package": VOXCPM_PACKAGE,
+            "model_repository": model,
+            "api": "voxcpm-generate",
+            "sample_rate": self.sample_rate,
+            "cfg_value": self.cfg_value,
+            "inference_timesteps": self.timesteps,
+            "loudness_target_dbfs": TARGET_RMS_DBFS,
+        }
+
+    def synthesize(self, segment: dict, output_path: Path) -> dict:
+        instruction = voice_instruction(segment)
+        prompt = f"({instruction}){segment['text']}"
+        audio = self.model.generate(
+            text=prompt,
+            cfg_value=self.cfg_value,
+            inference_timesteps=self.timesteps,
+        )
+        pcm, gain_db = normalize_to_pcm16(audio)
+        generated = write_pcm16_wav(output_path, pcm, self.sample_rate)
+        return {
+            **generated,
+            "instruction": instruction,
+            "cfg_value": self.cfg_value,
+            "gain_applied_db": gain_db,
+        }
+
+    def close(self) -> None:
+        self.model = None
+
+
 def create_backend(name: str, model: str, output_dir: Path):
     if name == "fake":
         return FakeBackend()
     if name == "breeze":
         return BreezeBackend(model, output_dir)
-    raise ValueError(f"unsupported backend: {name}; available: breeze, fake")
+    if name == "voxcpm2":
+        return VoxCpmBackend(model, output_dir)
+    raise ValueError(
+        f"unsupported backend: {name}; available: breeze, fake, voxcpm2"
+    )
 
 
 def make_archive(output_dir: Path, archive_path: Path) -> None:
@@ -604,7 +706,9 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--plan", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
-    parser.add_argument("--backend", default="fake", choices=["breeze", "fake"])
+    parser.add_argument(
+        "--backend", default="fake", choices=["breeze", "fake", "voxcpm2"]
+    )
     parser.add_argument("--model", default="deterministic-tone-v1")
     parser.add_argument("--result-archive", type=Path)
     return parser.parse_args()
@@ -612,8 +716,11 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    if args.backend == "breeze" and args.model == "deterministic-tone-v1":
-        args.model = BREEZE_MODEL_REPOSITORY
+    if args.model == "deterministic-tone-v1":
+        if args.backend == "breeze":
+            args.model = BREEZE_MODEL_REPOSITORY
+        elif args.backend == "voxcpm2":
+            args.model = VOXCPM_MODEL_REPOSITORY
     try:
         manifest = run(
             args.plan,
