@@ -52,7 +52,14 @@ Versão inicial pinada no workflow:
 
 ```text
 google-colab-cli==0.6.0
+jupyter-kernel-client==0.9.0
 ```
+
+`jupyter-kernel-client` precisa ser pinado junto: a série 1.0.x renomeou a
+classe de cliente e o `google-colab-cli` 0.6.0 ainda importa o nome antigo.
+Sem o pin, a sessão é criada e fica `READY`, os uploads passam, e só o
+`colab exec` morre com `AttributeError: module 'jupyter_kernel_client' has no
+attribute 'KernelClient'`.
 
 O fluxo usa somente comandos não interativos:
 
