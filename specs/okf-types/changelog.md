@@ -14,16 +14,16 @@ Change cards are the durable, reader-facing record of changes to the site and it
 
 ## Required fields
 
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `type` | string | Always `changelog` |
-| `date` | date | Date associated with the change |
-| `description` | string | Short reader-facing summary of the change |
+| Field         | Type   | Meaning                                    |
+| ------------- | ------ | ------------------------------------------ |
+| `type`        | string | Always `changelog`                         |
+| `date`        | date   | Date associated with the change            |
+| `description` | string | Short reader-facing summary of the change  |
 
 ## Optional fields
 
-| Field | Type | Meaning |
-| --- | --- | --- |
+| Field  | Type          | Meaning                       |
+| ------ | ------------- | ----------------------------- |
 | `tags` | array[string] | Small set of discovery labels |
 
 Change cards describe historical change. They are not normative documentation of current behavior.
