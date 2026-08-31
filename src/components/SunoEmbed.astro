@@ -18,8 +18,7 @@ const { id, caption, height = 240 } = Astro.props;
     loading="lazy"
     referrerpolicy="no-referrer-when-downgrade"
     title={`Suno track ${id}`}
-  >
-    <a href={`https://suno.com/song/${id}`}>Listen on Suno</a>
-  </iframe>
+  ></iframe>
+  <a href={`https://suno.com/song/${id}`}>Listen on Suno</a>
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
