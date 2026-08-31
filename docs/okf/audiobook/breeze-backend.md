@@ -8,6 +8,12 @@ timestamp: 2026-08-30T22:30:00Z
 
 # Breeze TTS 2 na Audiobook Factory
 
+> **Resultado do benchmark:** ver
+> [`benchmarks/pt-br-audiobook-v1-breeze.md`](benchmarks/pt-br-audiobook-v1-breeze.md).
+> Executado em Kaggle e Colab; **reprovado para pt-BR** (WER mediana 0,78,
+> idioma detectado "inglês" em 10 de 12 segmentos), aprovado em inglês
+> (WER 0,00) com a mesma integração.
+
 ## Papel
 
 Breeze TTS 2 é o primeiro backend real implementado para testar a arquitetura da fábrica. Ele **não é declarado vencedor por antecipação**. A escolha de produção continua dependente do benchmark pt-BR próprio e da comparação com outros candidatos.
