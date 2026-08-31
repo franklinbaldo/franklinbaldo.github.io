@@ -1,0 +1,35 @@
+name: Change cards
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  changelog:
+    name: OKF change card policy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Require a card for this PR
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: origin/${{ github.base_ref }}
+        run: node scripts/check-change-card.mjs
+
+      - name: Validate change cards as OKF knowledge
+        run: >-
+          uvx
+          --from git+https://github.com/franklinbaldo/okf-parser@fa357cc377becd6465ed404f10be01b032d6037b
+          okf-parser check changelog/changes
+          --require-spec specs/okf-types/{slug}.md
+          --normative-spec
