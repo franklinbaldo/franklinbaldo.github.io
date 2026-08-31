@@ -108,6 +108,12 @@ kaggle==2.2.4
 
 O CLI oficial aceita autenticação não interativa por `KAGGLE_API_TOKEN` e kernels com `kernel_type: script`.
 
+`kaggle kernels push -t N` define o **orçamento de wall-clock do próprio kernel**,
+não um timeout de cliente. Com `-t 600` o Kaggle matou o job no meio da síntese,
+depois de já ter gasto ~2,5 min instalando a pilha pinada de torch e baixando os
+pesos. Default do projeto: `KAGGLE_KERNEL_TIMEOUT=10800` (3 h), com a janela de
+polling (`KAGGLE_STATUS_POLLS`) dimensionada para cobri-lo.
+
 O runner gera um `job.py` autocontido e um `kernel-metadata.json`, depois executa:
 
 ```text
