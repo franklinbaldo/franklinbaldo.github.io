@@ -1,7 +1,7 @@
 schema: audiobook-work-state-v1
 work_id: hpmor
 status: preparing
-next_action: continue chapter 1 from segment hpmor-001-s0020
+next_action: continue chapter 1 from segment hpmor-001-s0021
 project_gates:
   work_metadata_ready: true
   global_editorial_guide_ready: true
@@ -17,7 +17,7 @@ publication:
 chapters:
   hpmor-001:
     status: in_progress
-    next_action: import, translate, and prepare narration for hpmor-001-s0020 without renumbering earlier segments
+    next_action: import, translate, and prepare narration for hpmor-001-s0021 without renumbering earlier segments
     completed_segments:
       - hpmor-001-s0001
       - hpmor-001-s0002
@@ -38,7 +38,8 @@ chapters:
       - hpmor-001-s0017
       - hpmor-001-s0018
       - hpmor-001-s0019
-    next_segment_id: hpmor-001-s0020
+      - hpmor-001-s0020
+    next_segment_id: hpmor-001-s0021
     validation_notes:
       - hpmor-001-s0009 is the first mixed dialogue+narration source segment; narration marks voice_partition=mixed-dialogue-pending until the provider-neutral audio contract can represent character/narrator partitions without changing the stable editorial segment_id
       - hpmor-001-s0010 through hpmor-001-s0013 use the same pending partition marker where required; no TTS dispatch is allowed while audio_contract_ready is false
@@ -49,6 +50,7 @@ chapters:
       - hpmor-001-s0017 is a narrator-only emotional beat; original, translation, narration, and state preserve the same segment_id, and narration uses speaker=narrator without mixed-dialogue partition while preserving that Petunia is only on the verge of tears
       - hpmor-001-s0018 is Petunia-only dialogue; original, translation, narration, and state preserve the same segment_id, narration uses speaker=petunia directly, and the translation preserves the blunt Vernon/Dudley memory without softening character voice
       - hpmor-001-s0019 is Petunia-only dialogue; original, translation, narration, and state preserve the same stable segment_id, the unfinished ultimatum remains deliberately incomplete, and narration uses speaker=petunia with restrained desperation and no invented vocal event
+      - hpmor-001-s0020 is a narrator-only silence beat immediately after Petunia's unfinished ultimatum; original, translation, narration, and state preserve the same stable segment_id, translation stays minimal as Petunia parou., and narration uses speaker=narrator with no invented vocal event
     gates:
       work_ready: true
       source_ready: false
