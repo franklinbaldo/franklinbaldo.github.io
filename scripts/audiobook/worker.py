@@ -539,8 +539,15 @@ def run(
     plan = load_plan(plan_path)
     output_dir.mkdir(parents=True, exist_ok=True)
     segment_dir = output_dir / "segments"
+    # Bootstrap is everything before the first token of audio: cloning the
+    # pinned upstream, installing its stack, downloading the weights and loading
+    # the model. On a cold remote GPU it dominates the job, so the benchmark has
+    # to be able to tell it apart from inference.
+    bootstrap_started = time.monotonic()
     runtime = create_backend(backend, model, output_dir)
+    bootstrap_ms = round((time.monotonic() - bootstrap_started) * 1000)
     manifest_segments = []
+    synthesis_ms = 0
 
     try:
         for index, segment in enumerate(plan["segments"]):
@@ -548,13 +555,17 @@ def run(
                 if not segment.get(field):
                     raise ValueError(f"segment {index} missing {field}")
             audio_path = segment_dir / f"{segment['segment_id']}.wav"
+            segment_started = time.monotonic()
             generated = runtime.synthesize(segment, audio_path)
+            segment_ms = round((time.monotonic() - segment_started) * 1000)
+            synthesis_ms += segment_ms
             manifest_segments.append(
                 {
                     "segment_id": segment["segment_id"],
                     "speaker": segment["speaker"],
                     "input_digest": segment["input_digest"],
                     "audio_file": str(audio_path.relative_to(output_dir)),
+                    "synthesis_ms": segment_ms,
                     **generated,
                 }
             )
@@ -568,6 +579,11 @@ def run(
             "model": model,
             "backend_metadata": runtime.metadata,
             "hardware": hardware_info(),
+            "timings": {
+                "bootstrap_ms": bootstrap_ms,
+                "synthesis_ms": synthesis_ms,
+                "audio_ms": sum(item["duration_ms"] for item in manifest_segments),
+            },
             "segments": manifest_segments,
         }
         manifest_path = output_dir / "manifest.json"

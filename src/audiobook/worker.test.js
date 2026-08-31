@@ -72,6 +72,12 @@ test("fake worker emits deterministic segment audio, manifest and archive", () =
   );
   assert.equal(manifest.schema, "audiobook-media-manifest-v1");
   assert.equal(manifest.segments.length, 2);
+  assert.equal(typeof manifest.timings.bootstrap_ms, "number");
+  assert.equal(
+    manifest.timings.audio_ms,
+    manifest.segments.reduce((total, s) => total + s.duration_ms, 0)
+  );
+  assert.ok(manifest.segments.every((s) => typeof s.synthesis_ms === "number"));
   assert.ok(
     fs.statSync(path.join(outputDir, manifest.segments[0].audio_file)).size > 0
   );
