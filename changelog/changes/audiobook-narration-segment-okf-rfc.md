@@ -9,4 +9,4 @@ tags: [audiobook, okf, rfc]
 
 - Adds RFC 0019 for one OKF concept per narration segment.
 - Defines renderer-conditional tags and explicit speaker spans so mixed dialogue no longer depends on `mixed-dialogue-pending` as the long-term representation.
-- Defines per-renderer input digests and readiness while requiring equivalent plain-text projection across renderers unless an explicit justified variation is recorded.
+- Defines renderer-specific input digests and readiness while requiring equivalent plain-text projection across renderers unless an explicit justified variation is recorded.
