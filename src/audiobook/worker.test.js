@@ -195,3 +195,56 @@ test("segment audio is normalised into the audiobook loudness window", () => {
     `hot segment should be limited below target, got ${measured[1].rms}`
   );
 });
+
+test("kokoro spans carry emotion, speaker, and derive the voice partition", () => {
+  const script = [
+    "import importlib.util, json",
+    "spec = importlib.util.spec_from_file_location('w', 'scripts/audiobook/worker.py')",
+    "w = importlib.util.module_from_spec(spec); spec.loader.exec_module(w)",
+    "class Fake(w.KokoroBackend):",
+    "    def __init__(self): pass",
+    "b = Fake()",
+    "cases = {",
+    "  'plain': 'Uma frase simples.',",
+    "  'emotion': '[ternura] Ela sorriu. [/ternura] [medo] Entao viu a data. [/medo]',",
+    "  'speaker': '<speaker:petunia>Fala dela.</speaker:petunia><speaker:narrator>disse ela.</speaker:narrator>',",
+    "  'nested': '<speaker:harry>[medo] Ouvi de novo. [/medo]</speaker:harry>',",
+    "}",
+    "out = {k: [[e, s, c] for e, s, c in b._spans(v)] for k, v in cases.items()}",
+    "print(json.dumps(out))",
+  ].join("\n");
+
+  const result = spawnSync("python3", ["-c", script], {
+    cwd: process.cwd(),
+    encoding: "utf8",
+  });
+  assert.equal(result.status, 0, result.stderr);
+  const spans = JSON.parse(result.stdout.trim().split("\n").pop());
+
+  // Text with no markup is one span and stays single-voice.
+  assert.deepEqual(spans.plain, [[null, null, "Uma frase simples."]]);
+
+  // An emotion span selects a preset without changing who is speaking.
+  assert.equal(spans.emotion.length, 2);
+  assert.deepEqual(
+    spans.emotion.map((s) => s[0]),
+    ["ternura", "medo"]
+  );
+  assert.ok(spans.emotion.every((s) => s[1] === null));
+
+  // Speaker spans are what replace `voice_partition: mixed-dialogue-pending`.
+  assert.deepEqual(
+    spans.speaker.map((s) => s[1]),
+    ["petunia", "narrator"]
+  );
+
+  // The two kinds nest: a character span can carry an emotion span inside it.
+  assert.deepEqual(spans.nested, [["medo", "harry", "Ouvi de novo."]]);
+
+  // The tag itself must never survive into the text handed to the model.
+  for (const group of Object.values(spans)) {
+    for (const [, , chunk] of group) {
+      assert.ok(!/[[\]]|<speaker:/.test(chunk), `markup leaked into: ${chunk}`);
+    }
+  }
+});
