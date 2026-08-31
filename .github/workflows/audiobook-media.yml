@@ -42,6 +42,11 @@ on:
         required: true
         default: true
         type: boolean
+      publish:
+        description: Publish assembled chapter to Internet Archive and persist enclosure state
+        required: true
+        default: false
+        type: boolean
       force:
         description: Reserved for future cache bypass
         required: true
@@ -49,7 +54,7 @@ on:
         type: boolean
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: audiobook-media-${{ inputs.work_id }}-${{ inputs.chapter_id }}
@@ -61,6 +66,8 @@ jobs:
     timeout-minutes: 360
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
@@ -68,6 +75,19 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      - name: Validate publish invocation
+        if: ${{ inputs.publish == true }}
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+          BACKEND: ${{ inputs.backend }}
+        run: |
+          [[ "$DRY_RUN" == "false" ]] || { echo "publish=true requires dry_run=false" >&2; exit 2; }
+          [[ "$BACKEND" != "fake" ]] || { echo "refusing to publish fake TTS output" >&2; exit 2; }
+          [[ "$GITHUB_REF" == "refs/heads/main" ]] || {
+            echo "publishing is allowed only from the default main branch" >&2
+            exit 2
+          }
 
       - name: Inspect editorial readiness
         id: readiness
@@ -218,6 +238,79 @@ jobs:
             --model "$MODEL" \
             --accelerator "$ACCELERATOR"
 
+      - name: Extract media result
+        if: ${{ inputs.dry_run == false }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/media"
+          unzip -q "$RUNNER_TEMP/audiobook-result.zip" -d "$RUNNER_TEMP/media"
+
+      - name: Assemble chapter and transcript
+        if: ${{ inputs.dry_run == false }}
+        run: |
+          python3 scripts/audiobook/assemble.py \
+            --plan "$RUNNER_TEMP/plan.json" \
+            --media-dir "$RUNNER_TEMP/media" \
+            --output-dir "$RUNNER_TEMP/assembled"
+
+      - name: Configure Internet Archive client
+        if: ${{ inputs.publish == true }}
+        env:
+          IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
+          IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
+        run: |
+          [[ -n "$IA_ACCESS_KEY_ID" ]] || { echo "Missing GitHub secret IA_ACCESS_KEY_ID" >&2; exit 2; }
+          [[ -n "$IA_SECRET_ACCESS_KEY" ]] || { echo "Missing GitHub secret IA_SECRET_ACCESS_KEY" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'internetarchive==5.11.1'
+
+      - name: Upload and verify Internet Archive enclosure
+        if: ${{ inputs.publish == true }}
+        env:
+          WORK_ID: ${{ inputs.work_id }}
+          CHAPTER_ID: ${{ inputs.chapter_id }}
+          IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
+          IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
+        run: |
+          node scripts/audiobook/publish-internet-archive.mjs \
+            --work "$WORK_ID" \
+            --chapter "$CHAPTER_ID" \
+            --assembly-dir "$RUNNER_TEMP/assembled" \
+            --output "$RUNNER_TEMP/publication.json"
+
+      - name: Persist publication state
+        if: ${{ inputs.publish == true }}
+        env:
+          WORK_ID: ${{ inputs.work_id }}
+          CHAPTER_ID: ${{ inputs.chapter_id }}
+        run: |
+          node scripts/audiobook/apply-publication.mjs \
+            --work "$WORK_ID" \
+            --chapter "$CHAPTER_ID" \
+            --publication "$RUNNER_TEMP/publication.json"
+
+          npm run audiobook:validate -- --work "$WORK_ID" --chapter "$CHAPTER_ID" --require-ready-for-audio
+          npm run build
+
+      - name: Commit published episode state
+        if: ${{ inputs.publish == true }}
+        env:
+          WORK_ID: ${{ inputs.work_id }}
+          CHAPTER_ID: ${{ inputs.chapter_id }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "data/audiobooks/$WORK_ID/state.yaml" "data/audiobooks/$WORK_ID/work.md"
+          git commit -m "feat(audiobook): publish $WORK_ID $CHAPTER_ID"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/3), rebasing onto latest main..."
+            git fetch origin main
+            git rebase origin/main
+          done
+          echo "Push failed after 3 attempts; media is uploaded but publication state was not persisted." >&2
+          exit 1
+
       - name: Upload plan
         if: ${{ always() && (inputs.dry_run == false || steps.readiness.outputs.narration_ready == 'true') }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -227,7 +320,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
-      - name: Upload media result
+      - name: Upload raw media result
         if: ${{ inputs.dry_run == false }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -235,3 +328,21 @@ jobs:
           path: ${{ runner.temp }}/audiobook-result.zip
           if-no-files-found: error
           retention-days: 30
+
+      - name: Upload assembled chapter
+        if: ${{ inputs.dry_run == false }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: audiobook-assembled-${{ inputs.work_id }}-${{ inputs.chapter_id }}
+          path: ${{ runner.temp }}/assembled/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload publication receipt
+        if: ${{ inputs.publish == true }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: audiobook-publication-${{ inputs.work_id }}-${{ inputs.chapter_id }}
+          path: ${{ runner.temp }}/publication.json
+          if-no-files-found: error
+          retention-days: 90
