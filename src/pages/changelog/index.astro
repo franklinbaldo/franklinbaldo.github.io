@@ -1,4 +1,5 @@
 ---
+import type { MarkdownInstance } from "astro";
 import { getCollection, render } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
 
@@ -9,7 +10,7 @@ type ChangeCardModule = {
     description: string;
     tags?: string[];
   };
-  Content: unknown;
+  Content: MarkdownInstance<Record<string, unknown>>["Content"];
 };
 
 // Historical release entries stay in the Astro content collection. New change

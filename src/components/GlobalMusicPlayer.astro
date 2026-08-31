@@ -1,7 +1,7 @@
 ---
-import { fetchAllClips, fetchAudioMap } from "../lib/suno";
-import { getRanking } from "../lib/hronir-rank";
 import { getCollection } from "astro:content";
+import { getRanking } from "../lib/hronir-rank";
+import { fetchAllClips } from "../lib/suno";
 
 interface Song {
   id: string;
@@ -13,121 +13,83 @@ interface Song {
 interface Props {
   lang?: string;
 }
-const { lang = "en" } = Astro.props;
 
+const { lang = "en" } = Astro.props;
 const L =
   lang === "pt"
     ? {
         region: "Player de músicas",
-        favAdd: "Adicionar aos favoritos",
-        favRemove: "Remover dos favoritos",
-        seekPosition: "Posição na música",
-        volume: "Volume",
-        shuffle: "Embaralhar",
-        prev: "Anterior",
-        play: "Tocar",
-        pause: "Pausar",
-        next: "Próximo",
-        repeatOff: "Sem repetição",
-        repeatAll: "Repetir tudo",
-        repeatOne: "Repetir esta música",
-        queue: "Ver fila",
+        previous: "Anterior",
+        next: "Próxima",
+        favorite: "Favoritar",
         close: "Fechar player",
-        queueDialog: "Fila de reprodução",
-        queueLabel: "Fila",
-        closeQueue: "Fechar fila",
+        openSuno: "Abrir no Suno",
       }
     : {
         region: "Music player",
-        favAdd: "Add to favorites",
-        favRemove: "Remove from favorites",
-        seekPosition: "Song position",
-        volume: "Volume",
-        shuffle: "Shuffle",
-        prev: "Previous",
-        play: "Play",
-        pause: "Pause",
+        previous: "Previous",
         next: "Next",
-        repeatOff: "No repeat",
-        repeatAll: "Repeat all",
-        repeatOne: "Repeat this song",
-        queue: "View queue",
+        favorite: "Favorite",
         close: "Close player",
-        queueDialog: "Playback queue",
-        queueLabel: "Queue",
-        closeQueue: "Close queue",
+        openSuno: "Open on Suno",
       };
 
 let songs: Song[] = [];
-let audioMap: Record<string, string> = {};
 
 try {
-  const [clips, map] = await Promise.all([fetchAllClips(), fetchAudioMap()]);
-  audioMap = map;
-
-  const clipById = new Map(clips.map((c) => [c.id, c]));
-
+  const clips = await fetchAllClips();
+  const clipById = new Map(clips.map((clip) => [clip.id, clip]));
   const musicPosts = await getCollection(
     "blog",
-    (e) =>
-      e.data.postType === "music" &&
-      (!!e.data.sunoId || (e.data.tracks?.length ?? 0) > 0),
+    (entry) =>
+      entry.data.postType === "music" &&
+      (!!entry.data.sunoId || (entry.data.tracks?.length ?? 0) > 0),
   );
-  // translationKey → every sunoId the post carries (primary + tracks), in
-  // the order they should appear once that post's ranked slot is reached.
+
   const keyToSunoIds = new Map<string, string[]>();
-  // sunoId → post URL (language-aware). A post can carry more than one
-  // Suno rendition via `tracks` — every track's sunoId resolves back to
-  // the same post URL as the primary sunoId.
   const sunoIdToPostUrl = new Map<string, string>();
-  for (const p of musicPosts) {
-    const lang = p.data.lang ?? "en";
-    const url = lang === "pt" ? `/pt/blog/${p.data.slug ?? p.id}/` : `/blog/${p.data.slug ?? p.id}/`;
-    const ids = [p.data.sunoId, ...(p.data.tracks ?? []).map((tr) => tr.sunoId)]
-      .filter((id): id is string => !!id);
-    for (const id of ids) {
-      sunoIdToPostUrl.set(id, url);
-    }
-    if (p.data.translationKey && ids.length > 0) {
-      // A pt/en pair shares one translationKey; merge (don't overwrite) so
-      // that if the two language posts' tracks[] ever diverge, both sides'
-      // ids still land at this post's ranked queue position instead of the
-      // later-processed post silently discarding the other's.
-      const key = p.data.translationKey;
+  for (const post of musicPosts) {
+    const postLang = post.data.lang ?? "en";
+    const url =
+      postLang === "pt"
+        ? `/pt/blog/${post.data.slug ?? post.id}/`
+        : `/blog/${post.data.slug ?? post.id}/`;
+    const ids = [
+      post.data.sunoId,
+      ...(post.data.tracks ?? []).map((track) => track.sunoId),
+    ].filter((id): id is string => !!id);
+    for (const id of ids) sunoIdToPostUrl.set(id, url);
+    if (post.data.translationKey && ids.length > 0) {
+      const key = post.data.translationKey;
       keyToSunoIds.set(key, [...(keyToSunoIds.get(key) ?? []), ...ids]);
     }
   }
 
-  const ranking = getRanking();
   const rankedIds: string[] = [];
   const seen = new Set<string>();
-  for (const row of ranking) {
-    for (const sid of keyToSunoIds.get(row.key) ?? []) {
-      if (clipById.has(sid) && !seen.has(sid)) {
-        rankedIds.push(sid);
-        seen.add(sid);
+  for (const row of getRanking()) {
+    for (const id of keyToSunoIds.get(row.key) ?? []) {
+      if (clipById.has(id) && !seen.has(id)) {
+        rankedIds.push(id);
+        seen.add(id);
       }
     }
   }
-
-  for (const c of clips) {
-    if (!seen.has(c.id)) {
-      rankedIds.push(c.id);
-      seen.add(c.id);
-    }
+  for (const clip of clips) {
+    if (!seen.has(clip.id)) rankedIds.push(clip.id);
   }
 
   songs = rankedIds
     .map((id) => clipById.get(id))
     .filter(Boolean)
-    .map((c) => ({
-      id: c!.id,
-      title: c!.title || "(sem título)",
-      imageUrl: c!.image_url || "",
-      postUrl: sunoIdToPostUrl.get(c!.id) || "",
+    .map((clip) => ({
+      id: clip!.id,
+      title: clip!.title || "(sem título)",
+      imageUrl: clip!.image_url || "",
+      postUrl: sunoIdToPostUrl.get(clip!.id) || "",
     }));
-} catch (e) {
-  console.warn("[GlobalMusicPlayer] failed to load songs:", e);
+} catch (error) {
+  console.warn("[GlobalMusicPlayer] failed to load songs:", error);
 }
 ---
 
@@ -136,943 +98,288 @@ try {
   role="region"
   aria-label={L.region}
   data-songs={JSON.stringify(songs)}
-  data-audio-map={JSON.stringify(audioMap)}
   hidden
   transition:persist
 >
-  <audio id="gmp-audio" preload="none"></audio>
-
-  <a id="gmp-cover-link" href="" tabindex="-1" aria-hidden="true">
-    <img id="gmp-cover" src="" alt="" width="48" height="48" class="gmp-cover" />
-  </a>
-
-  <div class="gmp-info">
-    <div class="gmp-title-row">
-      <a id="gmp-title" class="gmp-title" href=""></a>
-      <button id="gmp-fav" type="button" aria-label={L.favAdd} aria-pressed="false" class="gmp-icon-btn gmp-fav">♡</button>
-    </div>
-    <div class="gmp-seek-row">
-      <span id="gmp-time" class="gmp-time">0:00</span>
-      <input
-        id="gmp-seek"
-        type="range"
-        min="0"
-        max="100"
-        value="0"
-        step="0.1"
-        aria-label={L.seekPosition}
-      />
-      <span id="gmp-dur" class="gmp-time">0:00</span>
-    </div>
+  <div class="gmp-embed-shell">
+    <iframe
+      id="gmp-embed"
+      src="about:blank"
+      width="100%"
+      height="240"
+      frameborder="0"
+      allow="autoplay; encrypted-media; fullscreen"
+      allowfullscreen
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title={L.region}
+    ></iframe>
   </div>
-
-  <input
-    id="gmp-volume"
-    type="range"
-    min="0"
-    max="1"
-    step="0.05"
-    value="1"
-    aria-label={L.volume}
-    class="gmp-volume"
-  />
-
-  <div class="gmp-btns">
-    <button id="gmp-shuffle" type="button" aria-label={L.shuffle} aria-pressed="false" class="gmp-icon-btn">⇌</button>
-    <button id="gmp-prev" type="button" aria-label={L.prev}>⏮</button>
-    <button id="gmp-play" type="button" aria-label={L.play}>▶</button>
+  <div class="gmp-bar">
+    <button id="gmp-prev" type="button" aria-label={L.previous}>⏮</button>
+    <a id="gmp-title" href="" class="gmp-title"></a>
+    <button id="gmp-fav" type="button" aria-label={L.favorite} aria-pressed="false">♡</button>
+    <a id="gmp-suno-link" href="" target="_blank" rel="noopener noreferrer">{L.openSuno} ↗</a>
     <button id="gmp-next" type="button" aria-label={L.next}>⏭</button>
-    <button id="gmp-repeat" type="button" aria-label={L.repeatOff} class="gmp-icon-btn">🔁</button>
-    <button id="gmp-queue-btn" type="button" aria-label={L.queue} class="gmp-icon-btn">≡</button>
+    <button id="gmp-close" type="button" aria-label={L.close}>✕</button>
   </div>
-
-  <button id="gmp-close" type="button" class="gmp-close" aria-label={L.close}
-    >✕</button
-  >
-</div>
-
-<div id="gmp-drawer" hidden role="dialog" aria-modal="true" aria-label={L.queueDialog} transition:persist>
-  <div class="gmp-drawer-header">
-    <span id="gmp-drawer-label">{L.queueLabel}</span>
-    <button id="gmp-drawer-close" type="button" aria-label={L.closeQueue}>✕</button>
-  </div>
-  <div id="gmp-drawer-list"></div>
 </div>
 
 <script>
-  import { pushOverlay, removeOverlay, isTopOverlay } from "../lib/overlay-stack";
-
   const SONG_RE = /suno\.com\/song\/([0-9a-fA-F-]{36})/;
-  const REPEAT_OFF = "off";
-  const REPEAT_ALL = "all";
-  const REPEAT_ONE = "one";
 
-  // #gmp uses transition:persist (it must, to keep the audio playing across
-  // navigations), so Astro's ClientRouter never re-renders it after the
-  // first page load — its data-* attributes can't carry per-page state like
-  // `lang`. <html lang> isn't part of that persisted subtree and does get
-  // updated on every navigation, so read the language from there instead.
-  const GMP_LABELS = {
-    en: {
-      region: "Music player",
-      favAdd: "Add to favorites",
-      favRemove: "Remove from favorites",
-      seekPosition: "Song position",
-      volume: "Volume",
-      shuffle: "Shuffle",
-      prev: "Previous",
-      play: "Play",
-      pause: "Pause",
-      next: "Next",
-      repeatOff: "No repeat",
-      repeatAll: "Repeat all",
-      repeatOne: "Repeat this song",
-      queue: "View queue",
-      close: "Close player",
-      queueDialog: "Playback queue",
-      queueLabel: "Queue",
-      closeQueue: "Close queue",
-    },
-    pt: {
-      region: "Player de músicas",
-      favAdd: "Adicionar aos favoritos",
-      favRemove: "Remover dos favoritos",
-      seekPosition: "Posição na música",
-      volume: "Volume",
-      shuffle: "Embaralhar",
-      prev: "Anterior",
-      play: "Tocar",
-      pause: "Pausar",
-      next: "Próximo",
-      repeatOff: "Sem repetição",
-      repeatAll: "Repetir tudo",
-      repeatOne: "Repetir esta música",
-      queue: "Ver fila",
-      close: "Fechar player",
-      queueDialog: "Fila de reprodução",
-      queueLabel: "Fila",
-      closeQueue: "Fechar fila",
-    },
-  } as const;
-
-  function currentLabels() {
-    return document.documentElement.lang === "pt-BR" ? GMP_LABELS.pt : GMP_LABELS.en;
+  function embedUrl(id: string) {
+    return `https://suno.com/embed/${id}`;
   }
 
-  function fmt(sec: number): string {
-    if (!isFinite(sec) || sec < 0) return "0:00";
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60);
-    return `${m}:${s.toString().padStart(2, "0")}`;
+  function makeEmbed(id: string, title: string) {
+    const iframe = document.createElement("iframe");
+    iframe.src = embedUrl(id);
+    iframe.width = "100%";
+    iframe.height = "240";
+    iframe.frameBorder = "0";
+    iframe.allow = "autoplay; encrypted-media; fullscreen";
+    iframe.setAttribute("allowfullscreen", "");
+    iframe.loading = "lazy";
+    iframe.referrerPolicy = "no-referrer-when-downgrade";
+    iframe.title = title || `Suno track ${id}`;
+    return iframe;
   }
 
-  function shuffle<T>(arr: T[]): T[] {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
+  function upgradeLegacyAudio() {
+    document.querySelectorAll<HTMLElement>("[data-suno-id]").forEach((host) => {
+      const id = host.dataset.sunoId;
+      if (!id) return;
+      host.querySelectorAll<HTMLAudioElement>("audio").forEach((audio) => {
+        audio.replaceWith(makeEmbed(id, host.dataset.title || `Suno track ${id}`));
+      });
+    });
   }
 
   function init() {
+    upgradeLegacyAudio();
+
     const player = document.getElementById("gmp") as HTMLElement | null;
-    if (!player) return;
+    const iframe = document.getElementById("gmp-embed") as HTMLIFrameElement | null;
+    const title = document.getElementById("gmp-title") as HTMLAnchorElement | null;
+    const sunoLink = document.getElementById("gmp-suno-link") as HTMLAnchorElement | null;
+    const prev = document.getElementById("gmp-prev") as HTMLButtonElement | null;
+    const next = document.getElementById("gmp-next") as HTMLButtonElement | null;
+    const fav = document.getElementById("gmp-fav") as HTMLButtonElement | null;
+    const close = document.getElementById("gmp-close") as HTMLButtonElement | null;
+    if (!player || !iframe || !title || !sunoLink || !prev || !next || !fav || !close) return;
 
-    const alreadyInit = player.dataset.gmpInit === "1";
-
-    let songs: { id: string; title: string; imageUrl: string; postUrl: string }[] = [];
-    let audioMap: Record<string, string> = {};
-    let queue: number[] = [];
-    let originalQueue: number[] = [];
-    let currentIdx = 0;
-    let shuffleActive = false;
-    let repeatMode = REPEAT_ALL;
-
-    const audio = document.getElementById("gmp-audio") as HTMLAudioElement;
-    const coverLinkEl = document.getElementById("gmp-cover-link") as HTMLAnchorElement;
-    const coverEl = document.getElementById("gmp-cover") as HTMLImageElement;
-    const titleEl = document.getElementById("gmp-title") as HTMLAnchorElement;
-    const seekEl = document.getElementById("gmp-seek") as HTMLInputElement;
-    const timeEl = document.getElementById("gmp-time") as HTMLElement;
-    const durEl = document.getElementById("gmp-dur") as HTMLElement;
-    const playBtn = document.getElementById("gmp-play") as HTMLButtonElement;
-    const prevBtn = document.getElementById("gmp-prev") as HTMLButtonElement;
-    const nextBtn = document.getElementById("gmp-next") as HTMLButtonElement;
-    const shuffleBtn = document.getElementById("gmp-shuffle") as HTMLButtonElement;
-    const repeatBtn = document.getElementById("gmp-repeat") as HTMLButtonElement;
-    const volumeEl = document.getElementById("gmp-volume") as HTMLInputElement;
-    const favBtn = document.getElementById("gmp-fav") as HTMLButtonElement;
-    const queueBtn = document.getElementById("gmp-queue-btn") as HTMLButtonElement;
-    const drawerEl = document.getElementById("gmp-drawer") as HTMLElement;
-    const drawerList = document.getElementById("gmp-drawer-list") as HTMLElement;
-    const drawerLabelEl = document.getElementById("gmp-drawer-label") as HTMLElement;
-    const drawerCloseBtn = document.getElementById("gmp-drawer-close") as HTMLButtonElement;
-    const closeBtn = document.getElementById("gmp-close") as HTMLButtonElement;
-
-    if (
-      !audio || !coverLinkEl || !coverEl || !titleEl || !seekEl ||
-      !timeEl || !durEl || !playBtn || !prevBtn || !nextBtn ||
-      !shuffleBtn || !repeatBtn || !volumeEl || !favBtn || !queueBtn ||
-      !drawerEl || !drawerList || !drawerLabelEl || !drawerCloseBtn || !closeBtn
-    )
-      return;
-
-    // Runs on every navigation (unlike the block below, which only runs
-    // once) so labels stay in sync with the current page's language even
-    // though #gmp itself is never re-rendered after the first load.
-    const gmpLabels = currentLabels();
-    player.setAttribute("aria-label", gmpLabels.region);
-    seekEl.setAttribute("aria-label", gmpLabels.seekPosition);
-    volumeEl.setAttribute("aria-label", gmpLabels.volume);
-    shuffleBtn.setAttribute("aria-label", gmpLabels.shuffle);
-    prevBtn.setAttribute("aria-label", gmpLabels.prev);
-    nextBtn.setAttribute("aria-label", gmpLabels.next);
-    queueBtn.setAttribute("aria-label", gmpLabels.queue);
-    closeBtn.setAttribute("aria-label", gmpLabels.close);
-    drawerEl.setAttribute("aria-label", gmpLabels.queueDialog);
-    drawerLabelEl.textContent = gmpLabels.queueLabel;
-    drawerCloseBtn.setAttribute("aria-label", gmpLabels.closeQueue);
-    playBtn.setAttribute("aria-label", audio.paused ? gmpLabels.play : gmpLabels.pause);
-    favBtn.setAttribute(
-      "aria-label",
-      favBtn.getAttribute("aria-pressed") === "true" ? gmpLabels.favRemove : gmpLabels.favAdd,
-    );
-    {
-      const mode = repeatBtn.classList.contains("active")
-        ? repeatBtn.textContent === "🔂"
-          ? REPEAT_ONE
-          : REPEAT_ALL
-        : REPEAT_OFF;
-      repeatBtn.setAttribute(
-        "aria-label",
-        mode === REPEAT_OFF ? gmpLabels.repeatOff : mode === REPEAT_ONE ? gmpLabels.repeatOne : gmpLabels.repeatAll,
-      );
-    }
-
-    if (!alreadyInit) {
+    if (player.dataset.gmpInit !== "1") {
       player.dataset.gmpInit = "1";
-
+      let songs: { id: string; title: string; imageUrl: string; postUrl: string }[] = [];
       try {
         songs = JSON.parse(player.dataset.songs || "[]");
-        audioMap = JSON.parse(player.dataset.audioMap || "{}");
       } catch {
         songs = [];
-        audioMap = {};
       }
+      let queue = songs.map((_, index) => index);
+      let current = 0;
 
-      originalQueue = songs.map((_, i) => i);
-      queue = [...originalQueue];
-
-      // Restore repeat mode
-      try {
-        const saved = localStorage.getItem("gmp-repeat");
-        if (saved === REPEAT_OFF || saved === REPEAT_ALL || saved === REPEAT_ONE) {
-          repeatMode = saved;
-          updateRepeatUI();
-        }
-      } catch {}
-
-      // Detect iOS volume control support and hide slider if unsupported
-      try {
-        const testAudio = document.createElement("audio");
-        const orig = testAudio.volume;
-        testAudio.volume = orig === 0 ? 0.5 : 0;
-        if (testAudio.volume === orig) volumeEl.style.display = "none";
-      } catch {}
-
-      // Restore volume
-      try {
-        const savedVol = localStorage.getItem("gmp-volume");
-        if (savedVol !== null) {
-          const v = parseFloat(savedVol);
-          if (isFinite(v)) {
-            audio.volume = v;
-            volumeEl.value = String(v);
-          }
-        }
-      } catch {}
-
-      function audioSrc(id: string): string {
-        return audioMap[id] || `https://cdn1.suno.ai/${id}.mp3`;
-      }
-
-      function updateSongLink(postUrl: string) {
-        if (postUrl) {
-          titleEl.href = postUrl;
-          titleEl.removeAttribute("tabindex");
-          coverLinkEl.href = postUrl;
-          coverLinkEl.removeAttribute("aria-hidden");
-          coverLinkEl.removeAttribute("tabindex");
-        } else {
-          titleEl.removeAttribute("href");
-          titleEl.setAttribute("tabindex", "-1");
-          coverLinkEl.removeAttribute("href");
-          coverLinkEl.setAttribute("aria-hidden", "true");
-          coverLinkEl.setAttribute("tabindex", "-1");
-        }
-      }
-
-      function updateRepeatUI() {
-        const gmpLabels = currentLabels();
-        if (repeatMode === REPEAT_OFF) {
-          repeatBtn.setAttribute("aria-label", gmpLabels.repeatOff);
-          repeatBtn.classList.remove("active");
-          repeatBtn.style.opacity = "0.4";
-        } else if (repeatMode === REPEAT_ALL) {
-          repeatBtn.setAttribute("aria-label", gmpLabels.repeatAll);
-          repeatBtn.classList.add("active");
-          repeatBtn.style.opacity = "1";
-        } else {
-          repeatBtn.setAttribute("aria-label", gmpLabels.repeatOne);
-          repeatBtn.classList.add("active");
-          repeatBtn.style.opacity = "1";
-          repeatBtn.textContent = "🔂";
-        }
-        if (repeatMode !== REPEAT_ONE) repeatBtn.textContent = "🔁";
-      }
-
-      function getFavorites(): string[] {
-        try { return JSON.parse(localStorage.getItem("gmp-favorites") || "[]"); } catch { return []; }
-      }
-
-      function updateFavBtn(songId: string) {
-        const isFav = getFavorites().includes(songId);
-        favBtn.textContent = isFav ? "♥" : "♡";
-        favBtn.setAttribute("aria-pressed", String(isFav));
-        const gmpLabels = currentLabels();
-        favBtn.setAttribute("aria-label", isFav ? gmpLabels.favRemove : gmpLabels.favAdd);
-        favBtn.classList.toggle("active", isFav);
-      }
-
-      function addToHistory(songId: string) {
+      const favorites = () => {
         try {
-          const hist = JSON.parse(localStorage.getItem("gmp-history") || "[]") as string[];
-          const filtered = hist.filter((id) => id !== songId);
-          filtered.unshift(songId);
-          localStorage.setItem("gmp-history", JSON.stringify(filtered.slice(0, 50)));
-        } catch {}
-      }
+          return JSON.parse(localStorage.getItem("gmp-favorites") || "[]") as string[];
+        } catch {
+          return [];
+        }
+      };
 
-      function exposeState() {
-        player!.dataset.queueIds = queue.map((i) => songs[i]?.id ?? "").filter(Boolean).join(",");
-        player!.dataset.favorites = getFavorites().join(",");
-      }
+      const setFavoriteState = (id: string) => {
+        const active = favorites().includes(id);
+        fav.textContent = active ? "♥" : "♡";
+        fav.setAttribute("aria-pressed", String(active));
+      };
 
-      function renderDrawer() {
-        drawerList.innerHTML = "";
-        queue.forEach((songIdx, qIdx) => {
-          const song = songs[songIdx];
-          if (!song) return;
-          const item = document.createElement("button");
-          item.type = "button";
-          item.className = "gmp-drawer-item" + (qIdx === currentIdx ? " active" : "");
-          if (song.imageUrl) {
-            const thumb = document.createElement("img");
-            thumb.src = song.imageUrl;
-            thumb.alt = "";
-            thumb.width = 36;
-            thumb.height = 36;
-            thumb.className = "gmp-drawer-thumb";
-            item.appendChild(thumb);
-          }
-          const label = document.createElement("span");
-          label.textContent = song.title;
-          item.appendChild(label);
-          item.addEventListener("click", () => {
-            playSong(qIdx);
-            drawerEl.hidden = true;
-            removeOverlay("gmp-drawer");
-          });
-          drawerList.appendChild(item);
-        });
-      }
-
-      function playSong(idx: number) {
-        if (idx < 0 || idx >= queue.length) return;
-        currentIdx = idx;
-        const song = songs[queue[idx]];
-        if (!song) return;
-
-        titleEl.textContent = song.title;
-        updateSongLink(song.postUrl);
-        coverEl.src = song.imageUrl || "";
-        coverEl.alt = song.title;
-        coverEl.style.display = song.imageUrl ? "" : "none";
-        audio.src = audioSrc(song.id);
-        player!.hidden = false;
-        document.body.classList.add("gmp-active");
-        player!.dataset.playingId = song.id;
-        updateFavBtn(song.id);
-        addToHistory(song.id);
-        exposeState();
-        audio.play().catch(() => {});
+      const addHistory = (id: string) => {
         try {
-          localStorage.setItem("gmp-suno-id", song.id);
-          localStorage.removeItem("gmp-time");
-        } catch {}
-      }
-
-      function playSunoId(sunoId: string, title?: string) {
-        const idx = songs.findIndex((s) => s.id === sunoId);
-        if (idx !== -1) {
-          const qIdx = queue.indexOf(idx);
-          if (qIdx !== -1) {
-            playSong(qIdx);
-          } else {
-            queue.unshift(idx);
-            originalQueue.unshift(idx);
-            playSong(0);
-          }
-        } else {
-          titleEl.textContent = title || sunoId;
-          updateSongLink("");
-          coverEl.style.display = "none";
-          audio.src = audioSrc(sunoId);
-          player!.hidden = false;
-          document.body.classList.add("gmp-active");
-          audio.play().catch(() => {});
-        }
-      }
-
-      // Restore last session
-      try {
-        const savedId = localStorage.getItem("gmp-suno-id");
-        const savedTime = Number(localStorage.getItem("gmp-time") || "0");
-        if (savedId) {
-          const songIdx = songs.findIndex((s) => s.id === savedId);
-          if (songIdx !== -1) {
-            const qIdx = queue.indexOf(songIdx);
-            currentIdx = qIdx !== -1 ? qIdx : 0;
-            const song = songs[songIdx];
-            titleEl.textContent = song.title;
-            updateSongLink(song.postUrl);
-            coverEl.src = song.imageUrl || "";
-            coverEl.alt = song.title;
-            coverEl.style.display = song.imageUrl ? "" : "none";
-            audio.src = audioSrc(savedId);
-            audio.preload = "metadata";
-            player!.dataset.playingId = savedId;
-            updateFavBtn(savedId);
-            exposeState();
-            if (savedTime > 0) {
-              audio.addEventListener(
-                "loadedmetadata",
-                () => {
-                  audio.currentTime = savedTime;
-                },
-                { once: true },
-              );
-            }
-            player.hidden = false;
-            document.body.classList.add("gmp-active");
-          }
-        }
-      } catch {}
-
-      playBtn.addEventListener("click", () => {
-        if (audio.paused) audio.play().catch(() => {});
-        else audio.pause();
-      });
-
-      prevBtn.addEventListener("click", () => {
-        if (audio.currentTime > 3) {
-          audio.currentTime = 0;
-        } else {
-          playSong((currentIdx - 1 + queue.length) % queue.length);
-        }
-      });
-
-      nextBtn.addEventListener("click", () => {
-        playSong((currentIdx + 1) % queue.length);
-      });
-
-      shuffleBtn.addEventListener("click", () => {
-        shuffleActive = !shuffleActive;
-        shuffleBtn.setAttribute("aria-pressed", String(shuffleActive));
-        shuffleBtn.classList.toggle("active", shuffleActive);
-        if (shuffleActive) {
-          const currentSongIdx = queue[currentIdx];
-          const rest = queue.filter((_, i) => i !== currentIdx);
-          queue = [currentSongIdx, ...shuffle(rest)];
-          currentIdx = 0;
-        } else {
-          const currentSongIdx = queue[currentIdx];
-          queue = [...originalQueue];
-          currentIdx = queue.indexOf(currentSongIdx);
-          if (currentIdx === -1) currentIdx = 0;
-        }
-      });
-
-      repeatBtn.addEventListener("click", () => {
-        if (repeatMode === REPEAT_OFF) repeatMode = REPEAT_ALL;
-        else if (repeatMode === REPEAT_ALL) repeatMode = REPEAT_ONE;
-        else repeatMode = REPEAT_OFF;
-        updateRepeatUI();
-        try {
-          localStorage.setItem("gmp-repeat", repeatMode);
-        } catch {}
-      });
-
-      volumeEl.addEventListener("input", () => {
-        audio.volume = Number(volumeEl.value);
-        try {
-          localStorage.setItem("gmp-volume", volumeEl.value);
-        } catch {}
-      });
-
-      favBtn.addEventListener("click", () => {
-        const currentSong = songs[queue[currentIdx]];
-        if (!currentSong) return;
-        try {
-          const favs = getFavorites();
-          const i = favs.indexOf(currentSong.id);
-          if (i === -1) favs.push(currentSong.id);
-          else favs.splice(i, 1);
-          localStorage.setItem("gmp-favorites", JSON.stringify(favs));
-        } catch {}
-        updateFavBtn(currentSong.id);
-        exposeState();
-      });
-
-      queueBtn.addEventListener("click", () => {
-        const wasHidden = drawerEl.hidden;
-        renderDrawer();
-        drawerEl.hidden = !drawerEl.hidden;
-        if (wasHidden && !drawerEl.hidden) {
-          pushOverlay("gmp-drawer");
-          const firstItem = drawerList.querySelector<HTMLButtonElement>(".gmp-drawer-item");
-          (firstItem ?? drawerCloseBtn).focus();
-        } else if (!wasHidden && drawerEl.hidden) {
-          removeOverlay("gmp-drawer");
-        }
-      });
-
-      drawerCloseBtn.addEventListener("click", () => {
-        drawerEl.hidden = true;
-        removeOverlay("gmp-drawer");
-      });
-
-      document.addEventListener("click", (e) => {
-        if (!drawerEl.hidden && !drawerEl.contains(e.target as Node) && e.target !== queueBtn) {
-          drawerEl.hidden = true;
-          removeOverlay("gmp-drawer");
-        }
-      });
-
-      document.addEventListener("keydown", (e) => {
-        if (drawerEl.hidden) return;
-
-        if (e.key === "Escape") {
-          if (!isTopOverlay("gmp-drawer")) return;
-          drawerEl.hidden = true;
-          removeOverlay("gmp-drawer");
-          queueBtn.focus();
-          return;
-        }
-
-        if (e.key === "Tab") {
-          const focusable = drawerEl.querySelectorAll<HTMLElement>(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+          const history = JSON.parse(localStorage.getItem("gmp-history") || "[]") as string[];
+          localStorage.setItem(
+            "gmp-history",
+            JSON.stringify([id, ...history.filter((item) => item !== id)].slice(0, 50)),
           );
-          if (!focusable.length) return;
-          const first = focusable[0];
-          const last = focusable[focusable.length - 1];
-          if (e.shiftKey && document.activeElement === first) {
-            e.preventDefault();
-            last.focus();
-          } else if (!e.shiftKey && document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-          }
+          localStorage.setItem("gmp-suno-id", id);
+        } catch {
+          // Storage can be unavailable in privacy modes; playback still works.
         }
-      });
+      };
 
-      closeBtn.addEventListener("click", () => {
-        audio.pause();
+      const showId = (id: string, fallbackTitle?: string) => {
+        const index = songs.findIndex((song) => song.id === id);
+        const song = index >= 0 ? songs[index] : null;
+        if (index >= 0) {
+          const queueIndex = queue.indexOf(index);
+          if (queueIndex >= 0) current = queueIndex;
+        }
+        const label = song?.title || fallbackTitle || id;
+        iframe.src = embedUrl(id);
+        iframe.title = label;
+        title.textContent = label;
+        title.href = song?.postUrl || `https://suno.com/song/${id}`;
+        sunoLink.href = `https://suno.com/song/${id}`;
+        player.hidden = false;
+        document.body.classList.add("gmp-active");
+        player.dataset.playingId = id;
+        setFavoriteState(id);
+        addHistory(id);
+      };
+
+      const showQueueIndex = (index: number) => {
+        if (!queue.length) return;
+        current = (index + queue.length) % queue.length;
+        const song = songs[queue[current]];
+        if (song) showId(song.id, song.title);
+      };
+
+      prev.addEventListener("click", () => showQueueIndex(current - 1));
+      next.addEventListener("click", () => showQueueIndex(current + 1));
+      close.addEventListener("click", () => {
+        iframe.src = "about:blank";
         player.hidden = true;
-        if (!drawerEl.hidden) removeOverlay("gmp-drawer");
-        drawerEl.hidden = true;
         player.removeAttribute("data-playing-id");
         document.body.classList.remove("gmp-active");
       });
-
-      audio.addEventListener("play", () => {
-        playBtn.textContent = "⏸";
-        playBtn.setAttribute("aria-label", currentLabels().pause);
-      });
-
-      audio.addEventListener("pause", () => {
-        playBtn.textContent = "▶";
-        playBtn.setAttribute("aria-label", currentLabels().play);
-      });
-
-      audio.addEventListener("ended", () => {
-        if (repeatMode === REPEAT_ONE) {
-          audio.currentTime = 0;
-          audio.play().catch(() => {});
-        } else if (repeatMode === REPEAT_ALL || currentIdx < queue.length - 1) {
-          playSong((currentIdx + 1) % queue.length);
+      fav.addEventListener("click", () => {
+        const id = player.dataset.playingId;
+        if (!id) return;
+        try {
+          const values = favorites();
+          const index = values.indexOf(id);
+          if (index >= 0) values.splice(index, 1);
+          else values.push(id);
+          localStorage.setItem("gmp-favorites", JSON.stringify(values));
+        } catch {
+          // Storage can be unavailable in privacy modes; playback still works.
         }
-        // REPEAT_OFF at end of queue: do nothing (stop)
+        setFavoriteState(id);
       });
 
-      let _saveTimeout: ReturnType<typeof setTimeout> | null = null;
-      audio.addEventListener("timeupdate", () => {
-        if (!audio.duration) return;
-        const pct = (audio.currentTime / audio.duration) * 100;
-        seekEl.value = String(pct);
-        timeEl.textContent = fmt(audio.currentTime);
-        durEl.textContent = fmt(audio.duration);
-        if (!_saveTimeout) {
-          _saveTimeout = setTimeout(() => {
-            _saveTimeout = null;
-            try {
-              if (audio.currentTime > 0)
-                localStorage.setItem(
-                  "gmp-time",
-                  String(Math.floor(audio.currentTime)),
-                );
-            } catch {}
-          }, 5000);
-        }
+      document.addEventListener("gp:play", (event: Event) => {
+        const detail = (event as CustomEvent<{ sunoId: string; title?: string }>).detail;
+        if (detail?.sunoId) showId(detail.sunoId, detail.title);
       });
 
-      audio.addEventListener("loadedmetadata", () => {
-        durEl.textContent = fmt(audio.duration);
-      });
-
-      seekEl.addEventListener("input", () => {
-        if (!audio.duration) return;
-        audio.currentTime = (Number(seekEl.value) / 100) * audio.duration;
-      });
-
-      document.addEventListener("gp:play", (e: Event) => {
-        const { sunoId, title } = (
-          e as CustomEvent<{ sunoId: string; title?: string }>
-        ).detail;
-        if (sunoId) playSunoId(sunoId, title);
-      });
-
-      document.addEventListener("gp:queue", (e: Event) => {
-        const { sunoIds } = (e as CustomEvent<{ sunoIds: string[] }>).detail;
-        if (!sunoIds?.length) return;
-        const newQueue: number[] = [];
-        for (const id of sunoIds) {
-          const idx = songs.findIndex((s) => s.id === id);
-          if (idx !== -1) newQueue.push(idx);
-        }
-        if (!newQueue.length) return;
-        originalQueue = newQueue;
-        queue = shuffleActive ? shuffle(newQueue) : [...newQueue];
-        playSong(0);
-        exposeState();
+      document.addEventListener("gp:queue", (event: Event) => {
+        const ids = (event as CustomEvent<{ sunoIds: string[] }>).detail?.sunoIds ?? [];
+        const mapped = ids
+          .map((id) => songs.findIndex((song) => song.id === id))
+          .filter((index) => index >= 0);
+        if (!mapped.length) return;
+        queue = mapped;
+        current = 0;
+        showQueueIndex(0);
       });
     }
 
-    // Bind Suno links on current page (runs every navigation). Anchors that
-    // declare target="_blank" (e.g. the explicit "Listen on Suno ↗" link on
-    // a post page) are meant to navigate to Suno itself, not play in-page —
-    // skip those so preventDefault() below doesn't defeat their own intent.
     document
-      .querySelectorAll<HTMLAnchorElement>(
-        'a[href*="suno.com/song/"]:not([target="_blank"])',
-      )
-      .forEach((a) => {
-        if (a.dataset.gmpBound === "1") return;
-        const m = a.href.match(SONG_RE);
-        if (!m) return;
-        a.dataset.gmpBound = "1";
-        a.addEventListener("click", (ev: MouseEvent) => {
+      .querySelectorAll<HTMLAnchorElement>('a[href*="suno.com/song/"]:not([target="_blank"])')
+      .forEach((anchor) => {
+        if (anchor.dataset.gmpBound === "1") return;
+        const match = anchor.href.match(SONG_RE);
+        if (!match) return;
+        anchor.dataset.gmpBound = "1";
+        anchor.addEventListener("click", (event: MouseEvent) => {
           if (
-            ev.button !== 0 ||
-            ev.metaKey ||
-            ev.ctrlKey ||
-            ev.shiftKey ||
-            ev.altKey
+            event.button !== 0 ||
+            event.metaKey ||
+            event.ctrlKey ||
+            event.shiftKey ||
+            event.altKey
           )
             return;
-          ev.preventDefault();
+          event.preventDefault();
           document.dispatchEvent(
             new CustomEvent("gp:play", {
-              detail: { sunoId: m[1], title: a.textContent?.trim() },
+              detail: { sunoId: match[1], title: anchor.textContent?.trim() },
             }),
           );
         });
       });
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
-  } else {
-    init();
-  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
   document.addEventListener("astro:page-load", init);
 </script>
 
-<style>
-  /* src/styles/music.css redefines most of #gmp's layout/appearance for
-     real (it wins on CSS specificity via a `body:has(#gmp)` selector) —
-     this block is the pre-redesign fallback styling, kept as-is. If a
-     change here has no visible effect, check music.css first. */
+<style is:global>
   #gmp {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 1rem;
-    background: var(--pico-card-background-color, #fff);
-    border-top: 1px solid var(--pico-muted-border-color, #ddd);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.12);
-    z-index: 200;
-    min-height: 72px;
+    position: fixed !important;
+    inset: auto 0 0 0 !important;
+    z-index: 200 !important;
+    padding: 0.5rem !important;
+    background: var(--pico-card-background-color, #fff) !important;
+    border-top: 1px solid var(--pico-muted-border-color, #ddd) !important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.14) !important;
   }
 
-  #gmp-cover-link {
-    flex-shrink: 0;
+  #gmp[hidden] {
+    display: none !important;
+  }
+
+  .gmp-embed-shell {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  #gmp-embed {
     display: block;
-    border-radius: 4px;
-    overflow: hidden;
-    line-height: 0;
+    width: 100%;
+    border: 0;
   }
 
-  .gmp-cover {
-    width: 48px;
-    height: 48px;
-    object-fit: cover;
-    display: block;
-  }
-
-  .gmp-info {
-    flex: 1;
-    min-width: 0;
+  .gmp-bar {
     display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .gmp-title-row {
-    display: flex;
+    gap: 0.45rem;
     align-items: center;
-    gap: 0.25rem;
-    min-width: 0;
+    max-width: 760px;
+    margin: 0.35rem auto 0;
+  }
+
+  .gmp-bar button,
+  .gmp-bar a {
+    margin: 0;
+    white-space: nowrap;
   }
 
   .gmp-title {
-    font-weight: 600;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: inherit;
-    text-decoration: none;
     flex: 1;
     min-width: 0;
-  }
-
-  .gmp-title:hover {
-    text-decoration: underline;
-  }
-
-  .gmp-fav {
-    font-size: 1rem;
-    flex-shrink: 0;
-  }
-
-  .gmp-seek-row {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-
-  .gmp-time {
-    font-size: 0.7rem;
-    color: var(--pico-muted-color);
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-  }
-
-  #gmp-seek {
-    flex: 1;
-    height: 4px;
-    accent-color: var(--pico-primary);
-    margin: 0;
-    cursor: pointer;
-  }
-
-  .gmp-volume {
-    width: 5rem;
-    flex-shrink: 0;
-    accent-color: var(--pico-primary);
-    height: 4px;
-    cursor: pointer;
-  }
-
-  .gmp-btns {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    flex-shrink: 0;
-  }
-
-  .gmp-btns button {
-    width: 2.2rem;
-    height: 2.2rem;
-    border-radius: 50%;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    font-size: 0.95rem;
-    display: grid;
-    place-items: center;
-    padding: 0;
-    color: var(--pico-color);
-  }
-
-  #gmp-play {
-    background: var(--pico-primary) !important;
-    color: var(--pico-primary-inverse, #fff) !important;
-    font-size: 0.85rem;
-  }
-
-  .gmp-icon-btn {
-    opacity: 0.4;
-    transition: opacity 0.15s;
-  }
-
-  .gmp-icon-btn.active {
-    opacity: 1;
-    color: var(--pico-primary);
-  }
-
-  .gmp-close {
-    flex-shrink: 0;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    color: var(--pico-muted-color);
-    padding: 0.25rem;
-    line-height: 1;
-  }
-
-  @media (max-width: 480px) {
-    #gmp-cover-link {
-      display: none;
-    }
-    .gmp-time,
-    .gmp-volume,
-    #gmp-shuffle,
-    #gmp-repeat {
-      display: none;
-    }
-  }
-</style>
-
-<style is:global>
-  #gmp-drawer {
-    position: fixed;
-    bottom: 72px;
-    left: 0;
-    right: 0;
-    max-height: 300px;
-    overflow-y: auto;
-    background: var(--pico-card-background-color, #fff);
-    border-top: 1px solid var(--pico-muted-border-color, #ddd);
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
-    z-index: 199;
-  }
-
-  .gmp-drawer-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    font-weight: 600;
-    font-size: 0.85rem;
-    border-bottom: 1px solid var(--pico-muted-border-color, #ddd);
-    position: sticky;
-    top: 0;
-    background: var(--pico-card-background-color, #fff);
-  }
-
-  .gmp-drawer-header button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    color: var(--pico-muted-color);
-    padding: 0.25rem;
-    line-height: 1;
-  }
-
-  .gmp-drawer-item {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    width: 100%;
-    text-align: left;
-    padding: 0.45rem 0.75rem;
-    background: none;
-    border: none;
-    border-bottom: 1px solid var(--pico-muted-border-color, #eee);
-    cursor: pointer;
-    font-size: 0.85rem;
-    color: var(--pico-color);
-  }
-  .gmp-drawer-item span {
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
-    flex: 1;
-  }
-  .gmp-drawer-thumb {
-    flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    object-fit: cover;
-    border-radius: 4px;
-  }
-  .gmp-drawer-item:hover {
-    background: var(--pico-secondary-background, #f5f5f5);
-  }
-  .gmp-drawer-item.active {
-    font-weight: 700;
-    color: var(--pico-primary);
+    text-decoration: none;
   }
 
-  .gmp-drawer-item.active::before {
-    content: "▶ ";
+  #gmp-fav,
+  #gmp-prev,
+  #gmp-next,
+  #gmp-close {
+    width: auto !important;
+    min-width: 2.25rem;
+    padding: 0.35rem 0.5rem !important;
   }
 
   body.gmp-active {
-    padding-bottom: 80px;
+    padding-bottom: 310px;
   }
 
-  .song-card.is-playing {
-    outline: 2px solid var(--pico-primary);
-    outline-offset: 2px;
-    border-radius: var(--pico-border-radius);
-  }
-
-  .song-card.is-playing .cover::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to bottom,
-      transparent 60%,
-      rgba(0, 0, 0, 0.4)
-    );
-    border-radius: var(--pico-border-radius);
-    pointer-events: none;
-  }
-
-  .song-card .cover {
-    position: relative;
+  .song-card iframe {
     display: block;
+    width: 100%;
+    min-height: 240px;
+    border: 0;
+  }
+
+  @media (max-width: 600px) {
+    #gmp-suno-link {
+      display: none;
+    }
+
+    body.gmp-active {
+      padding-bottom: 305px;
+    }
   }
 </style>
