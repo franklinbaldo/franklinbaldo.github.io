@@ -8,7 +8,9 @@ const CHANGES_DIR = "changelog/changes/";
 const baseRef = process.env.BASE_REF?.trim();
 
 if (!baseRef) {
-  console.log("✔ check-change-card: no BASE_REF; merge-relative card requirement skipped.");
+  console.log(
+    "✔ check-change-card: no BASE_REF; merge-relative card requirement skipped."
+  );
   process.exit(0);
 }
 
@@ -50,7 +52,9 @@ const addedCards = gitDiff([
 ]).filter((path) => path.endsWith(".md"));
 
 if (addedCards.length === 0) {
-  console.error("\n✗ check-change-card: this PR changes the repository but adds no change card.\n");
+  console.error(
+    "\n✗ check-change-card: this PR changes the repository but adds no change card.\n"
+  );
   console.error("Add at least one Markdown card under changelog/changes/.\n");
   console.error("Required OKF frontmatter:");
   console.error("  ---");
