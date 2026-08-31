@@ -52,6 +52,7 @@ dump_kernel_log() {
     if [[ -n "$log" ]]; then
       echo "----- kaggle kernel log -----" >&2
       run_script scripts/audiobook/kaggle-log.py "$log" >&2 || true
+      [[ -s "$log" ]] || echo "(kernel log is empty; a cancelled kernel often exposes none)" >&2
       echo "----- end kaggle kernel log -----" >&2
     fi
   fi
@@ -106,9 +107,13 @@ cat > "$STAGE/kernel-metadata.json" <<JSON
 }
 JSON
 
-kaggle kernels push -p "$STAGE" --accelerator "$ACCELERATOR" -t "${KAGGLE_PUSH_TIMEOUT:-600}"
+# -t is the kernel's own wall-clock budget, not a client-side push timeout: at
+# 600s Kaggle killed the job mid-synthesis, after it had already spent ~2.5min
+# installing the pinned torch stack and downloading the weights. Give the whole
+# job room; Kaggle still caps GPU kernels at its own global maximum.
+kaggle kernels push -p "$STAGE" --accelerator "$ACCELERATOR" -t "${KAGGLE_KERNEL_TIMEOUT:-${KAGGLE_PUSH_TIMEOUT:-10800}}"
 
-for _ in $(seq 1 "${KAGGLE_STATUS_POLLS:-120}"); do
+for _ in $(seq 1 "${KAGGLE_STATUS_POLLS:-400}"); do
   STATUS="$(kaggle kernels status "$KERNEL_ID" 2>&1)"
   echo "$STATUS"
   if grep -Eqi 'complete|success' <<<"$STATUS"; then
