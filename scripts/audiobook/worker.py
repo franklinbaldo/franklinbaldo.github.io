@@ -29,6 +29,7 @@ import math
 import os
 from pathlib import Path
 import platform
+import shutil
 import socket
 import struct
 import subprocess
@@ -276,6 +277,22 @@ def flash_attention_available() -> bool:
     return completed.returncode == 0
 
 
+def link_or_copy(source: Path, target: Path) -> None:
+    """Materialize `source` at `target` as cheaply as the platform allows.
+
+    Symlinks are the cheapest but need a privilege Windows does not grant by
+    default; hard links fail across filesystems. Copying always works and is the
+    last resort.
+    """
+    for attempt in (target.symlink_to, target.hardlink_to):
+        try:
+            attempt(source.resolve())
+            return
+        except (OSError, NotImplementedError):
+            continue
+    shutil.copyfile(source, target)
+
+
 def prepare_breeze_checkpoint(snapshot_dir: Path, cache_dir: Path) -> tuple[Path, str]:
     """Return a checkpoint directory whose attention backend this GPU supports.
 
@@ -310,10 +327,13 @@ def prepare_breeze_checkpoint(snapshot_dir: Path, cache_dir: Path) -> tuple[Path
         for source in snapshot_dir.rglob("*"):
             if source.is_dir():
                 continue
-            target = staging / source.relative_to(snapshot_dir)
+            relative = source.relative_to(snapshot_dir)
+            target = staging / relative
             target.parent.mkdir(parents=True, exist_ok=True)
-            if source.name != "config.json":
-                target.symlink_to(source.resolve())
+            # Only the top-level config.json is rewritten. Nested ones, notably
+            # audio_tokenizer/config.json, must be linked like any other file.
+            if relative != Path("config.json"):
+                link_or_copy(source, target)
         config.setdefault("text_encoder_config", {})[
             "preferred_attn_implementation"
         ] = requested
