@@ -1,7 +1,7 @@
 schema: audiobook-work-state-v1
 work_id: hpmor
 status: preparing
-next_action: continue chapter 1 from segment hpmor-001-s0025
+next_action: continue chapter 1 from segment hpmor-001-s0026
 project_gates:
   work_metadata_ready: true
   global_editorial_guide_ready: true
@@ -17,7 +17,7 @@ publication:
 chapters:
   hpmor-001:
     status: in_progress
-    next_action: import, translate, and prepare narration for hpmor-001-s0025 without renumbering earlier segments
+    next_action: import, translate, and prepare narration for hpmor-001-s0026 without renumbering earlier segments
     files:
       original: original/001.md
       translation: translation/001.md
@@ -47,7 +47,8 @@ chapters:
       - hpmor-001-s0022
       - hpmor-001-s0023
       - hpmor-001-s0024
-    next_segment_id: hpmor-001-s0025
+      - hpmor-001-s0025
+    next_segment_id: hpmor-001-s0026
     validation_notes:
       - hpmor-001-s0009 is the first mixed dialogue+narration source segment; narration marks voice_partition=mixed-dialogue-pending until the provider-neutral audio contract can represent character/narrator partitions without changing the stable editorial segment_id
       - hpmor-001-s0010 through hpmor-001-s0013 use the same pending partition marker where required; no TTS dispatch is allowed while audio_contract_ready is false
@@ -63,6 +64,7 @@ chapters:
       - hpmor-001-s0022 advances source, translation, and narration with the same stable segment_id; Michael's gentle ordinary explanation remains semantically distinct from Petunia's account, and narration marks the Michael-narrator-Michael structure as mixed-dialogue-pending without inventing vocal events
       - hpmor-001-s0023 advances source, translation, and narration with the same stable segment_id; Petunia's terse eyewitness insistence is preserved as Ela era uma bruxa / Eu vi, while narration marks the Petunia-narrator-Petunia structure as mixed-dialogue-pending and introduces no new pronunciation or voice rule
       - hpmor-001-s0024 advances source, translation, and narration with the same stable segment_id; Michael's annoyance is represented as gradual and restrained, the translation preserves the modal certainty and condescending final question, narration marks the Michael-narrator-Michael structure as mixed-dialogue-pending, and no new terminology or pronunciation entry is required
+      - hpmor-001-s0025 advances source, translation, and narration with the same stable segment_id; Petunia's anxious gesture and near-tears state remain explicit without being intensified into actual crying, the translation preserves the shift from argument-winning to relational trust, narration marks the narrator-Petunia structure as mixed-dialogue-pending, and no new terminology or pronunciation entry is required
     gates:
       work_ready: true
       source_ready: false
