@@ -8,6 +8,16 @@ voices:
   harry:
     role: character
     description: Menino muito articulado e intelectualmente precoce; energia juvenil sem transformar a voz em caricatura infantil.
+    # Kokoro has no child voice, and its Portuguese set has only two male
+    # voices, so a boy is approximated: the Portuguese male base carries the
+    # accent and a lighter British male lifts the timbre, with a modest speed
+    # increase for age. Chosen by ear from twenty candidates; an earlier round
+    # built on a female base was rejected outright.
+    kokoro:
+      voice:
+        - { name: pm_alex, weight: 0.6 }
+        - { name: bm_fable, weight: 0.4 }
+      speed: 1.12
   mcgonagall:
     role: character
     description: Adulta, autoridade contida, precisão e firmeza; emoção deve aparecer sem perder compostura.
