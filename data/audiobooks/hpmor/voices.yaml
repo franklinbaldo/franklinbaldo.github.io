@@ -8,6 +8,9 @@ voices:
   harry:
     role: character
     description: Menino muito articulado e intelectualmente precoce; energia juvenil sem transformar a voz em caricatura infantil.
+  michael:
+    role: character
+    description: Professor adulto, racionalista e formal; dicção precisa, ceticismo seco e autocontrole. Mesmo sob tensão, evitar gritos ou caricatura de autoridade; a incredulidade deve aparecer mais pela precisão e contenção do que por volume.
   mcgonagall:
     role: character
     description: Adulta, autoridade contida, precisão e firmeza; emoção deve aparecer sem perder compostura.
