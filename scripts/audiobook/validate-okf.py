@@ -1,7 +1,7 @@
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
-#   "okf-parser==0.45.4",
+#   "okf-parser @ git+https://github.com/franklinbaldo/okf-parser@5ee72add40d3372682e528fd70641455143269ce",
 #   "PyYAML==6.0.2",
 # ]
 # ///
