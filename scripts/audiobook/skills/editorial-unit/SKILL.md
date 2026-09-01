@@ -30,6 +30,14 @@ Advance exactly one next editorial unit. Do not prepare the following unit in th
 
 Preserve the same `work_id`, `chapter_id` and `segment_id` in original, translation and narration shards. Preserve deterministic lineage with `derived_from`.
 
+## Choose the boundary before translating
+
+Prefer a semantic/prosodic span over a paragraph-sized shard. Modern TTS benefits from enough context to realize cadence and emphasis coherently.
+
+For new work, set `segmentation_contract: semantic-span-v1` and normally target about 120–450 spoken words when adjacent text belongs to the same voice and thought arc. Do not split merely at paragraph boundaries. A segment under 80 words should correspond to a real break in voice, scene, prosody or editorial function; a segment above 600 words deserves a boundary review. Record `segmentation_reason` when deliberately outside those bands.
+
+The size band is an editorial default, not a backend hard limit. Backend limits belong in adapters, not in the canonical text model.
+
 ## Pipeline
 
 1. Create/verify the source shard from the canonical source, with provenance and digest.
@@ -45,6 +53,7 @@ For every new narration shard, set:
 
 ```yaml
 tts_body_contract: tts-input-v1
+segmentation_contract: semantic-span-v1
 ```
 
 The narration Markdown body is not documentation. It is the exact payload to be synthesized. Put non-spoken direction and notes in frontmatter, usually under `editorial_notes`.
