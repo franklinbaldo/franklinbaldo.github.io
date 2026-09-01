@@ -1,7 +1,7 @@
 schema: audiobook-work-state-v1
 work_id: hpmor
 status: preparing
-next_action: materialize exactly hpmor-001-s0030 from staged_segment into original, translation, and narration; preserve stable ids; do not touch s0031 or dispatch TTS
+next_action: continue exactly hpmor-001-s0031 through source, translation, and narration; preserve stable ids; do not dispatch TTS
 project_gates:
   work_metadata_ready: true
   global_editorial_guide_ready: true
@@ -17,11 +17,15 @@ publication:
 chapters:
   hpmor-001:
     status: in_progress
-    next_action: materialize exactly staged hpmor-001-s0030 through all three canonical chapter layers; do not touch s0031 and do not dispatch TTS because chapter-level narration/audio readiness remains false
+    next_action: process exactly hpmor-001-s0031; do not touch s0032 and do not dispatch TTS because chapter-level narration/audio readiness remains false
     files:
       original: original/001.md
       translation: translation/001.md
       narration: narration/001.md
+      canonical_segment_shards:
+        original: original/segments/
+        translation: translation/segments/
+        narration: narration/segments/
     completed_segments:
       - hpmor-001-s0001
       - hpmor-001-s0002
@@ -52,47 +56,15 @@ chapters:
       - hpmor-001-s0027
       - hpmor-001-s0028
       - hpmor-001-s0029
-    next_segment_id: hpmor-001-s0030
-    staged_segment:
-      work_id: hpmor
-      chapter_id: hpmor-001
-      segment_id: hpmor-001-s0030
-      source: '"Then no one in your family knew about magic when Lily got her letter. How did they get convinced?"'
-      source_digest: sha256:5f0066253f4e161a81c88f244c054270e138c84e74fd2c07ee48520d9c7b919a
-      source_anchor: chapter-1 living-room argument, Harry infers that Petunia's nonmagical family originally needed evidence when Lily received her Hogwarts letter
-      translation: '"Então ninguém na sua família sabia sobre magia quando Lily recebeu a carta. Como eles foram convencidos?"'
-      narration:
-        speaker: harry
-        emotion: analytical-follow-up
-        pace: medium
-        intensity: low
-        pause_before_ms: 60
-        pause_after_ms: 180
-      editorial_note: Harry extends the evidential chain rather than challenging Petunia emotionally; the passive Como eles foram convencidos preserves the source question about what evidence changed the family's belief without prematurely naming Hogwarts or a professor, which belongs to the next segment.
-      terminology_pronunciation_change_required: false
-      voice_rule_change_required: false
-      completion_rule: next run must copy this payload unchanged into all three canonical chapter layers, then append hpmor-001-s0030 to completed_segments, delete staged_segment, and advance next_segment_id to hpmor-001-s0031
+      - hpmor-001-s0030
+    next_segment_id: hpmor-001-s0031
     validation_notes:
-      - hpmor-001-s0009 is the first mixed dialogue+narration source segment; narration marks voice_partition=mixed-dialogue-pending until the provider-neutral audio contract can represent character/narrator partitions without changing the stable editorial segment_id
-      - hpmor-001-s0010 through hpmor-001-s0013 use the same pending partition marker where required; no TTS dispatch is allowed while audio_contract_ready is false
-      - hpmor-001-s0013 was advanced across source, translation, and narration with stable work_id/chapter_id/segment_id alignment; rationalist terminology preserves stage-magician vs magical-world semantics and cold reading as leitura fria
-      - hpmor-001-s0014 is a Petunia-only dialogue unit and therefore uses speaker=petunia directly with no mixed-dialogue partition; source, translation, and narration retain the same stable segment_id
-      - hpmor-001-s0015 is a Michael-only dialogue unit and therefore uses speaker=michael directly; its source digest and segment identity align across original, translation, narration, and state
-      - hpmor-001-s0016 is Petunia's first extended confessional unit; source, translation, narration preserve one stable segment_id while narration marks narrator/Petunia voice alternation as mixed-dialogue-pending and retains the source hesitations as character information
-      - hpmor-001-s0017 is a narrator-only emotional beat; original, translation, narration, and state preserve the same segment_id, and narration uses speaker=narrator without mixed-dialogue partition while preserving that Petunia is only on the verge of tears
-      - hpmor-001-s0018 is Petunia-only dialogue; original, translation, narration, and state preserve the same segment_id, narration uses speaker=petunia directly, and the translation preserves the blunt Vernon/Dudley memory without softening character voice
-      - hpmor-001-s0019 is Petunia-only dialogue; original, translation, narration, and state preserve the same stable segment_id, the unfinished ultimatum remains deliberately incomplete, and narration uses speaker=petunia with restrained desperation and no invented vocal event
-      - hpmor-001-s0020 is a narrator-only silence beat immediately after Petunia's unfinished ultimatum; original, translation, narration, and state preserve the same stable segment_id, translation stays minimal as Petunia parou., and narration uses speaker=narrator with no invented vocal event
-      - hpmor-001-s0021 advances source, translation, and narration with the same stable segment_id; because the source alternates Petunia speech with two narrative attributions, narration correctly marks voice_partition=mixed-dialogue-pending instead of pretending the unit is character-only; the emotional arc runs from hesitant resumption through brief relief into grief without invented vocal events
-      - hpmor-001-s0022 advances source, translation, and narration with the same stable segment_id; Michael's gentle ordinary explanation remains semantically distinct from Petunia's account, and narration marks the Michael-narrator-Michael structure as mixed-dialogue-pending without inventing vocal events
-      - hpmor-001-s0023 advances source, translation, and narration with the same stable segment_id; Petunia's terse eyewitness insistence is preserved as Ela era uma bruxa / Eu vi, while narration marks the Petunia-narrator-Petunia structure as mixed-dialogue-pending and introduces no new pronunciation or voice rule
-      - hpmor-001-s0024 advances source, translation, and narration with the same stable segment_id; Michael's annoyance is represented as gradual and restrained, the translation preserves the modal certainty and condescending final question, narration marks the Michael-narrator-Michael structure as mixed-dialogue-pending, and no new terminology or pronunciation entry is required
-      - hpmor-001-s0025 advances source, translation, and narration with the same stable segment_id; Petunia's anxious gesture and near-tears state remain explicit without being intensified into actual crying, the translation preserves the shift from argument-winning to relational trust, narration marks the narrator-Petunia structure as mixed-dialogue-pending, and no new terminology or pronunciation entry is required
-      - hpmor-001-s0026 is now present in original, translation, and narration with the same stable segment_id; Dad! Mum! is translated as Pai! Mãe!, narration uses the existing harry voice directly with urgent-interruption pacing, and no terminology, pronunciation, or voice-rule change is required
-      - hpmor-001-s0027 is now materialized in original, translation, and narration with the same stable segment_id and source digest; the dry observational comparison is preserved without inventing surprise, guilt, dramatic silence, or a vocal event, and narration uses speaker=narrator directly with no mixed-dialogue partition
-      - hpmor-001-s0028 is now materialized in original, translation, and narration with the same stable segment_id and source digest; Harry's deep breath remains narrated rather than becoming an invented TTS vocal event, the negative tag question is preserved in pt-BR, narration marks narrator-to-Harry as mixed-dialogue-pending, and no new terminology, pronunciation, or voice rule is required
-      - hpmor-001-s0029 is now materialized in original, translation, and narration with the same stable segment_id and source digest; Petunia's brief negative answer remains genuinely puzzled without intensification, narration marks Petunia-to-narrator as mixed-dialogue-pending, and no new terminology, pronunciation, or voice rule is required
-      - repository formatting remains separate from chapter readiness and must not be used to bypass source, translation, narration, audio-contract, or rights gates
+      - stable work_id/chapter_id/segment_id alignment is preserved across source, translation, narration, and state for completed units
+      - hpmor-001-s0030 is materialized as canonical per-segment OKF shards in original/segments, translation/segments, and narration/segments; the chapter aggregate snapshots remain partial through s0029 and are not the authoritative representation for s0030
+      - per-segment canonical shards avoid unsafe whole-file rewrites and keep the architecture reusable for other works while preserving the same three-layer editorial contract
+      - mixed dialogue+narration units remain marked voice_partition=mixed-dialogue-pending where the provider-neutral audio contract cannot yet represent internal character/narrator partitions without changing stable editorial segment ids
+      - no terminology, pronunciation, or voice-rule change was required for hpmor-001-s0030
+      - repository formatting is separate from chapter readiness and must not be used to bypass source, translation, narration, audio-contract, or rights gates
     gates:
       work_ready: true
       source_ready: false
