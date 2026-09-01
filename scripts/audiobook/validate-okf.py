@@ -68,11 +68,23 @@ def _markdown_body(path: Path) -> str:
     return ""
 
 
-def _validate_narration_body(root: Path, path: str, data: dict, errors: list[str]) -> None:
+def _validate_narration_body(root: Path, path: str, data: dict, errors: list[str]) -> bool:
+    """Validate shards that opt into the direct-body TTS contract.
+
+    Legacy shards without tts_payload remain readable during migration, but they
+    cannot satisfy the future chapter audio-readiness contract until migrated.
+    """
+    tts_payload = data.get("tts_payload")
+    if tts_payload is None:
+        return False
+    if tts_payload != "body":
+        errors.append(f"{path}: tts_payload must be 'body' when the direct TTS payload contract is declared")
+        return True
+
     body = _markdown_body(root / path)
     if not body:
         errors.append(f"{path}: narration body must be a non-empty direct TTS payload")
-        return
+        return True
 
     editorial_notes = data.get("editorial_notes")
     if editorial_notes is not None:
@@ -86,6 +98,7 @@ def _validate_narration_body(root: Path, path: str, data: dict, errors: list[str
                 f"{path}: narration body line {number} contains Markdown/editorial markup; "
                 "move notes/instructions to frontmatter because body is sent directly to TTS"
             )
+    return True
 
 
 def main() -> int:
@@ -93,6 +106,8 @@ def main() -> int:
     root = Path(__file__).resolve().parents[2]
     work_dir = root / "data" / "audiobooks" / args.work
     errors: list[str] = []
+    tts_payload_segments_checked = 0
+    legacy_narration_segments = 0
 
     for rel in PROJECT_GUIDES:
         if not (root / rel).is_file():
@@ -158,7 +173,10 @@ def main() -> int:
                     errors.append(f"{path}: mixed narration requires voice_partition")
             elif isinstance(speaker, str) and speaker not in voice_ids:
                 errors.append(f"{path}: speaker {speaker!r} has no entry in voices.yaml")
-            _validate_narration_body(root, path, data, errors)
+            if _validate_narration_body(root, path, data, errors):
+                tts_payload_segments_checked += 1
+            else:
+                legacy_narration_segments += 1
         key = (chapter_id, segment_id)
         if layer in segments[key]:
             errors.append(f"{chapter_id}/{segment_id}: duplicate canonical {layer} shard")
@@ -188,13 +206,19 @@ def main() -> int:
         "okf_conformant": report.is_conformant,
         "project_prerequisites_checked": len(PROJECT_GUIDES),
         "canonical_segments_checked": len(segments),
+        "tts_payload_segments_checked": tts_payload_segments_checked,
+        "legacy_narration_segments": legacy_narration_segments,
         "valid": not errors,
         "errors": errors,
     }
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
-        print(f"Audiobook OKF validation: work={args.work} segments={len(segments)} valid={not errors}")
+        print(
+            "Audiobook OKF validation: "
+            f"work={args.work} segments={len(segments)} "
+            f"tts_payload={tts_payload_segments_checked} legacy_narration={legacy_narration_segments} valid={not errors}"
+        )
         for error in errors:
             print(f"- {error}", file=sys.stderr)
     return 0 if not errors else 1
