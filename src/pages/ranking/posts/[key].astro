@@ -295,6 +295,7 @@ function fmtDate(iso: string): string {
                     href={`/ranking/battles/${d.id}/`}
                     class="duel-analysis-link"
                     title={strings.readFullAnalysis}
+                    aria-label={`${strings.readFullAnalysis} — ${strings.vs} ${opponentTitle}`}
                   >
                     {strings.analysis}
                   </a>
