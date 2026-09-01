@@ -2,13 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 
 import matter from "gray-matter";
-import yaml from "js-yaml";
+
+import { deriveWorkState } from "./status.js";
 
 const WORK_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-
-function readYaml(filePath) {
-  return yaml.load(fs.readFileSync(filePath, "utf8")) ?? {};
-}
 
 function readWorkFile(filePath) {
   const parsed = matter(fs.readFileSync(filePath, "utf8"));
@@ -31,31 +28,26 @@ export function listWorkIds(rootDir = process.cwd()) {
 }
 
 export function loadWork(rootDir, workId) {
-  if (!WORK_ID_PATTERN.test(workId))
-    throw new Error(`Invalid work_id: ${workId}`);
+  if (!WORK_ID_PATTERN.test(workId)) throw new Error(`Invalid work_id: ${workId}`);
 
   const workDir = path.join(audiobookRoot(rootDir), workId);
   const work = readWorkFile(path.join(workDir, "work.md"));
-  const state = readYaml(path.join(workDir, "state.yaml"));
-
-  if (work.data.type !== "Audiobook Work")
+  if (work.data.type !== "Audiobook Work") {
     throw new Error(`${workId}: work.md type must be Audiobook Work`);
-  if (work.data.work_id !== workId)
+  }
+  if (work.data.work_id !== workId) {
     throw new Error(`${workId}: work.md work_id mismatch`);
-  if (state.work_id !== workId)
-    throw new Error(`${workId}: state.yaml work_id mismatch`);
+  }
 
-  const chapters = Object.entries(state.chapters ?? {})
-    .map(([chapterId, chapter]) => ({ chapterId, ...chapter }))
-    .sort((a, b) => a.chapterId.localeCompare(b.chapterId));
-
+  const derived = deriveWorkState(rootDir, workId);
   return {
     workId,
     workDir,
     metadata: work.data,
     body: work.body,
-    state,
-    chapters,
+    rights: derived.rights,
+    state: derived,
+    chapters: derived.chapters,
   };
 }
 
@@ -64,12 +56,6 @@ export function listWorks(rootDir = process.cwd()) {
 }
 
 /**
- * One chapter that has actually been published as an episode.
- *
- * The shape is declared explicitly because the work metadata is read from YAML,
- * so nothing downstream can infer it and `astro check` rejects the implicit
- * `any` in the pages that consume this.
- *
  * @typedef {object} Episode
  * @property {string} chapterId
  * @property {string} title
@@ -86,23 +72,17 @@ export function listWorks(rootDir = process.cwd()) {
 export function publishedEpisodes(work) {
   return work.chapters
     .filter((chapter) => chapter.publication?.status === "published")
-    .map(
-      (chapter) =>
-        /** @type {Episode} */ ({
-          chapterId: chapter.chapterId,
-          title: chapter.publication.title ?? chapter.chapterId,
-          description: chapter.publication.description ?? "",
-          publishedAt: chapter.publication.published_at,
-          durationSeconds: chapter.publication.duration_seconds ?? null,
-          enclosure: chapter.publication.enclosure ?? null,
-          transcript: chapter.publication.transcript ?? null,
-          chapters: chapter.publication.chapters ?? null,
-        })
-    )
-    .sort(
-      (a, b) =>
-        new Date(b.publishedAt).valueOf() - new Date(a.publishedAt).valueOf()
-    );
+    .map((chapter) => ({
+      chapterId: chapter.chapterId,
+      title: chapter.publication.title ?? chapter.chapterId,
+      description: chapter.publication.description ?? "",
+      publishedAt: chapter.publication.published_at,
+      durationSeconds: chapter.publication.duration_seconds ?? null,
+      enclosure: chapter.publication.enclosure ?? null,
+      transcript: chapter.publication.transcript ?? null,
+      chapters: chapter.publication.chapters ?? null,
+    }))
+    .sort((a, b) => new Date(b.publishedAt).valueOf() - new Date(a.publishedAt).valueOf());
 }
 
 export { WORK_ID_PATTERN };
