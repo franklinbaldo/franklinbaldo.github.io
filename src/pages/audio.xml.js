@@ -7,15 +7,14 @@ import { isPublished } from "../lib/publish";
 export async function GET(context) {
   const posts = await getCollection("blog");
   const byId = new Map(
-    posts.filter(isPublished).map((post) => [post.id, post]),
+    posts.filter(isPublished).map((post) => [post.id, post])
   );
   const episodes = blogAudioEpisodes()
     .map((episode) => ({ episode, post: byId.get(episode.post_id) }))
     .filter(({ post }) => Boolean(post))
     .sort(
       (a, b) =>
-        Date.parse(b.episode.published_at) -
-        Date.parse(a.episode.published_at),
+        Date.parse(b.episode.published_at) - Date.parse(a.episode.published_at)
     );
 
   return rss({

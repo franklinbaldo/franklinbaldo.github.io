@@ -13,7 +13,7 @@ const manifestPath = arg("--manifest") ?? "data/blog-audio.json";
 const duration = Number(arg("--duration-seconds"));
 if (!publicationPath || !Number.isFinite(duration) || duration <= 0) {
   console.error(
-    "Usage: apply-blog-publication.mjs --publication <json> --duration-seconds <seconds> [--manifest data/blog-audio.json]",
+    "Usage: apply-blog-publication.mjs --publication <json> --duration-seconds <seconds> [--manifest data/blog-audio.json]"
   );
   process.exit(2);
 }
@@ -31,11 +31,11 @@ delete episode.verification;
 manifest.version = 1;
 manifest.episodes = Array.isArray(manifest.episodes) ? manifest.episodes : [];
 const existing = manifest.episodes.findIndex(
-  (item) => item.post_id === episode.post_id,
+  (item) => item.post_id === episode.post_id
 );
 if (existing >= 0) manifest.episodes[existing] = episode;
 else manifest.episodes.push(episode);
 manifest.episodes.sort((a, b) =>
-  String(a.post_id).localeCompare(String(b.post_id)),
+  String(a.post_id).localeCompare(String(b.post_id))
 );
 fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);

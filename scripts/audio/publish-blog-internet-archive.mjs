@@ -21,7 +21,7 @@ const archiveItem =
   (postId ? `franklinbaldo-blog-audio-${postId}` : null);
 if (!postId || !audioPathArg || !title || !output || !archiveItem) {
   console.error(
-    "Usage: publish-blog-internet-archive.mjs --post <post_id> --audio <file> --title <title> --output <json> [--description <text>] [--archive-item <id>]",
+    "Usage: publish-blog-internet-archive.mjs --post <post_id> --audio <file> --title <title> --output <json> [--description <text>] [--archive-item <id>]"
   );
   process.exit(2);
 }
@@ -62,7 +62,7 @@ const run = spawnSync(
     "--metadata",
     `description:${description}`,
   ],
-  { encoding: "utf8" },
+  { encoding: "utf8" }
 );
 if (run.status !== 0) {
   throw new Error(run.stderr || run.stdout || "Internet Archive upload failed");
@@ -76,13 +76,13 @@ for (let attempt = 1; attempt <= 18; attempt += 1) {
     throw new Error(`Internet Archive media not readable: HEAD ${head.status}`);
   }
   await new Promise((resolve) =>
-    setTimeout(resolve, Math.min(attempt * 5000, 20000)),
+    setTimeout(resolve, Math.min(attempt * 5000, 20000))
   );
 }
 const remoteBytes = Number(head.headers.get("content-length"));
 if (Number.isFinite(remoteBytes) && remoteBytes > 0 && remoteBytes !== bytes) {
   throw new Error(
-    `Internet Archive Content-Length ${remoteBytes} != local ${bytes}`,
+    `Internet Archive Content-Length ${remoteBytes} != local ${bytes}`
   );
 }
 const range = await fetch(mediaUrl, {
@@ -94,7 +94,7 @@ if (
   (await range.arrayBuffer()).byteLength < 1
 ) {
   throw new Error(
-    `Internet Archive range verification failed: ${range.status}`,
+    `Internet Archive range verification failed: ${range.status}`
   );
 }
 
