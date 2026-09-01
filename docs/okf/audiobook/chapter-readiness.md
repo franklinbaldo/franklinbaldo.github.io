@@ -70,9 +70,11 @@ Falha nesse gate impede qualquer despacho para API, Colab, Kaggle ou outro runne
 
 ## 6. Skills operacionais
 
-Antes de avançar uma unidade, aplicar `scripts/audiobook/skills/audiobook-editorial-segment/SKILL.md`. Ao criar, revisar ou depurar um narration shard, aplicar também `scripts/audiobook/skills/audiobook-tts-payload/SKILL.md`.
+Toda rodada recorrente MUST começar lendo `scripts/audiobook/skills/audiobook-factory/SKILL.md`. Essa é a skill canônica que persiste o pipeline, a política atual de segmentação/tamanho, o estado evidencial dos backends/runners e o procedimento para incorporar novos benchmarks ao conhecimento do repositório.
 
-As skills explicam o procedimento editorial; o validador é a fronteira mecânica que impede regressão.
+Depois dela, aplicar `scripts/audiobook/skills/audiobook-editorial-segment/SKILL.md` ao avançar uma unidade e `scripts/audiobook/skills/audiobook-tts-payload/SKILL.md` ao criar, revisar ou depurar um narration shard.
+
+As skills explicam o procedimento editorial e o conhecimento operacional atual; o validador é a fronteira mecânica que impede regressão. Evidência nova sobre tamanho de segmento, backend ou runner deve atualizar benchmark/spec e a skill canônica, não ficar apenas em memória de agente.
 
 ## 7. Retomada pelo agente recorrente
 
