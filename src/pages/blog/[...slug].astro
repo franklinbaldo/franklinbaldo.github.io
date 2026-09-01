@@ -1,6 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BlogPostPage from '../../components/BlogPostPage.astro';
+import BlogAudioBridge from '../../components/BlogAudioBridge.astro';
 import { DEFAULT_LANG, postUrl } from '../../lib/i18n';
 import { isPublished } from '../../lib/publish';
 
@@ -23,3 +24,4 @@ if ((post.data.lang ?? DEFAULT_LANG) === 'pt') {
 ---
 
 <BlogPostPage post={post} />
+<BlogAudioBridge postId={post.id} title={post.data.title} lang="en" />
