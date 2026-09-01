@@ -1,7 +1,7 @@
 schema: audiobook-work-state-v1
 work_id: hpmor
 status: preparing
-next_action: import and segment chapter 1 original, then create aligned translation
+next_action: continue exactly hpmor-001-s0033 through source, translation, and narration; preserve stable ids; do not dispatch TTS
 project_gates:
   work_metadata_ready: true
   global_editorial_guide_ready: true
@@ -10,14 +10,63 @@ project_gates:
   work_editorial_guide_ready: true
   voices_ready: true
   pronunciation_lexicon_ready: true
+  rights_provenance_metadata_ready: true
+publication:
+  public_distribution_authorized: false
+  blocker: record explicit authorization basis before enabling podcast or public audio upload
 chapters:
   hpmor-001:
-    status: not_started
-    next_action: import source snapshot and establish stable segment ids
+    status: in_progress
+    next_action: process exactly hpmor-001-s0033; do not touch s0034 and do not dispatch TTS because chapter-level narration/audio readiness remains false
     files:
       original: original/001.md
       translation: translation/001.md
       narration: narration/001.md
+      canonical_segment_shards:
+        original: original/segments/
+        translation: translation/segments/
+        narration: narration/segments/
+    completed_segments:
+      - hpmor-001-s0001
+      - hpmor-001-s0002
+      - hpmor-001-s0003
+      - hpmor-001-s0004
+      - hpmor-001-s0005
+      - hpmor-001-s0006
+      - hpmor-001-s0007
+      - hpmor-001-s0008
+      - hpmor-001-s0009
+      - hpmor-001-s0010
+      - hpmor-001-s0011
+      - hpmor-001-s0012
+      - hpmor-001-s0013
+      - hpmor-001-s0014
+      - hpmor-001-s0015
+      - hpmor-001-s0016
+      - hpmor-001-s0017
+      - hpmor-001-s0018
+      - hpmor-001-s0019
+      - hpmor-001-s0020
+      - hpmor-001-s0021
+      - hpmor-001-s0022
+      - hpmor-001-s0023
+      - hpmor-001-s0024
+      - hpmor-001-s0025
+      - hpmor-001-s0026
+      - hpmor-001-s0027
+      - hpmor-001-s0028
+      - hpmor-001-s0029
+      - hpmor-001-s0030
+      - hpmor-001-s0031
+      - hpmor-001-s0032
+    next_segment_id: hpmor-001-s0033
+    validation_notes:
+      - stable work_id/chapter_id/segment_id alignment is preserved across source, translation, narration, and state for completed units
+      - hpmor-001-s0030 through hpmor-001-s0032 are materialized as canonical per-segment OKF shards in original/segments, translation/segments, and narration/segments; the chapter aggregate snapshots remain partial and are not authoritative for those later shards
+      - per-segment canonical shards avoid unsafe whole-file rewrites and keep the architecture reusable for other works while preserving the same three-layer editorial contract
+      - hpmor-001-s0032 contains Harry dialogue, narrator prose, and Harry dialogue inside one stable editorial segment; it is therefore marked voice_partition=mixed-dialogue-pending rather than splitting or renumbering the segment
+      - hpmor-001-s0032 preserves the scientific term experimental method as método experimental and Harry's firm-but-reasoned delivery; no terminology, pronunciation, or voice-rule change was required
+      - repository formatting is separate from chapter readiness and must not be used to bypass source, translation, narration, audio-contract, or rights gates
     gates:
       work_ready: true
       source_ready: false
