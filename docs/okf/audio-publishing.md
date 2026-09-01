@@ -116,15 +116,7 @@ Quando uma matéria possuir metadata de áudio verificada, sua página deve most
 
 ## Feed de áudio do blog
 
-O site deve expor um feed RSS próprio para matérias em áudio, separado dos feeds de cada audiolivro. Cada item deve ter GUID estável derivado de `audio_id` e enclosure apontando para o arquivo público no Internet Archive.
-
-Uma forma canônica é:
-
-```text
-/audio/feed.xml
-```
-
-O feed só inclui itens cuja mídia esteja `verified`.
+O site expõe `/audio.xml` como feed RSS próprio para matérias em áudio, separado dos feeds de cada audiolivro. Cada item tem GUID estável derivado de `audio_id` e enclosure apontando para o arquivo público no Internet Archive. O feed só inclui itens cuja mídia tenha sido verificada e persistida no manifesto canônico.
 
 ## Multi-work
 
