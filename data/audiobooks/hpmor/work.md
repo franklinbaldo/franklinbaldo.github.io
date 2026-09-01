@@ -8,6 +8,8 @@ target_language: pt-BR
 source_url: https://hpmor.com/
 status: preparing
 publication_mode: non-commercial-experimental
+narration_payload_contract: tts-body-v1
+narration_payload_contract_from: hpmor-001-s0043
 podcast:
   enabled: false
   title: Harry Potter e os Métodos da Racionalidade — Audiolivro
@@ -39,6 +41,7 @@ O texto integral não é duplicado neste arquivo de metadata.
 - tradução e narração são camadas distintas;
 - decisões recorrentes sobem para `editorial.md`/`pronunciation.yaml`;
 - nomes e terminologia devem permanecer consistentes ao longo da obra;
+- a partir de `hpmor-001-s0043`, todo shard de narração obedece `tts-body-v1`: frontmatter contém parâmetros/notas e o body contém somente o payload enviado ao TTS;
 - o primeiro capítulo só pode chegar a `ready_for_audio` depois dos gates de `docs/okf/audiobook/chapter-readiness.md`.
 
 ## Publicação

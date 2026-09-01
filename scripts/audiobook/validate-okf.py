@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import json
 import posixpath
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path, PurePosixPath
@@ -19,11 +20,7 @@ import yaml
 from okf_parser import load_bundle, validate_path
 
 CANONICAL_STATUSES = {"canonical", "canonical-editorial-unit"}
-LAYER_TYPES = {
-    "Audiobook Source Segment": "original",
-    "Audiobook Translation Segment": "translation",
-    "Audiobook Narration Segment": "narration",
-}
+LAYER_TYPES = {"Audiobook Source Segment": "original", "Audiobook Translation Segment": "translation", "Audiobook Narration Segment": "narration"}
 REQUIRED_FIELDS = {
     "original": ("work_id", "chapter_id", "segment_id", "lang", "source_url", "source_digest", "source_anchor", "status"),
     "translation": ("work_id", "chapter_id", "segment_id", "lang", "derived_from", "status"),
@@ -37,6 +34,11 @@ PROJECT_GUIDES = (
     "docs/okf/audiobook/multi-work-architecture.md",
 )
 WORK_PREREQUISITES = ("work.md", "editorial.md", "rights.md", "voices.yaml", "pronunciation.yaml")
+TTS_BODY_CONTRACT = "tts-body-v1"
+TTS_BODY_NORMAL_MIN_CHARS = 240
+TTS_BODY_NORMAL_MAX_CHARS = 1800
+MARKDOWN_CONTROL_RE = re.compile(r"^(?:#{1,6}\s|```|~~~|>\s|[-*+]\s|\d+\.\s|<!--)")
+EDITORIAL_NOTE_RE = re.compile(r"(?:nota\s+(?:editorial|de\s+realiza[cç][aã]o\s+oral)|editorial\s+note)", re.IGNORECASE)
 
 
 def _args() -> argparse.Namespace:
@@ -56,6 +58,48 @@ def _load_yaml(path: Path) -> dict:
     return data if isinstance(data, dict) else {}
 
 
+def _load_markdown(path: Path) -> tuple[dict, str]:
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---"):
+        return {}, text
+    parts = text.split("---", 2)
+    if len(parts) != 3:
+        return {}, text
+    frontmatter = yaml.safe_load(parts[1])
+    return (frontmatter if isinstance(frontmatter, dict) else {}), parts[2].strip()
+
+
+def _segment_at_or_after(segment_id: str, first_segment_id: str) -> bool:
+    return segment_id >= first_segment_id
+
+
+def _validate_tts_body(path: str, data: dict, body: str, errors: list[str]) -> None:
+    body = body.strip()
+    if not body:
+        errors.append(f"{path}: {TTS_BODY_CONTRACT} narration body must not be empty")
+        return
+    for line in body.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if MARKDOWN_CONTROL_RE.match(stripped):
+            errors.append(f"{path}: {TTS_BODY_CONTRACT} body contains Markdown/control syntax: {stripped!r}")
+        if EDITORIAL_NOTE_RE.search(stripped):
+            errors.append(f"{path}: editorial notes belong in frontmatter, not in the TTS body")
+
+    length = len(body)
+    if length < TTS_BODY_NORMAL_MIN_CHARS and not data.get("short_segment_reason"):
+        errors.append(
+            f"{path}: {TTS_BODY_CONTRACT} body has {length} chars (<{TTS_BODY_NORMAL_MIN_CHARS}); "
+            "add short_segment_reason or merge it into the surrounding semantic/prosodic unit"
+        )
+    if length > TTS_BODY_NORMAL_MAX_CHARS and not data.get("long_segment_reason"):
+        errors.append(
+            f"{path}: {TTS_BODY_CONTRACT} body has {length} chars (>{TTS_BODY_NORMAL_MAX_CHARS}); "
+            "add long_segment_reason or split it at a semantic/prosodic boundary"
+        )
+
+
 def main() -> int:
     args = _args()
     root = Path(__file__).resolve().parents[2]
@@ -68,6 +112,14 @@ def main() -> int:
     for name in WORK_PREREQUISITES:
         if not (work_dir / name).is_file():
             errors.append(f"work prerequisite missing: {name}")
+
+    work_metadata, _ = _load_markdown(work_dir / "work.md") if (work_dir / "work.md").is_file() else ({}, "")
+    narration_contract = work_metadata.get("narration_payload_contract")
+    narration_contract_from = work_metadata.get("narration_payload_contract_from")
+    if narration_contract is not None and narration_contract != TTS_BODY_CONTRACT:
+        errors.append(f"work.md: unsupported narration_payload_contract {narration_contract!r}")
+    if narration_contract == TTS_BODY_CONTRACT and not isinstance(narration_contract_from, str):
+        errors.append("work.md: tts-body-v1 requires narration_payload_contract_from")
 
     report = validate_path(work_dir)
     if not report.is_conformant:
@@ -126,6 +178,15 @@ def main() -> int:
                     errors.append(f"{path}: mixed narration requires voice_partition")
             elif isinstance(speaker, str) and speaker not in voice_ids:
                 errors.append(f"{path}: speaker {speaker!r} has no entry in voices.yaml")
+            if narration_contract == TTS_BODY_CONTRACT and isinstance(narration_contract_from, str) and _segment_at_or_after(segment_id, narration_contract_from):
+                if data.get("payload_contract") != TTS_BODY_CONTRACT:
+                    errors.append(f"{path}: narration at/after {narration_contract_from} must declare payload_contract: {TTS_BODY_CONTRACT}")
+                shard_path = root / path
+                if shard_path.is_file():
+                    _, body = _load_markdown(shard_path)
+                    _validate_tts_body(path, data, body, errors)
+                else:
+                    errors.append(f"{path}: narration shard file cannot be read for TTS body validation")
         key = (chapter_id, segment_id)
         if layer in segments[key]:
             errors.append(f"{chapter_id}/{segment_id}: duplicate canonical {layer} shard")
@@ -148,16 +209,7 @@ def main() -> int:
         if narration_target != str(translation["path"]):
             errors.append(f"{narration['path']}: derived_from must resolve to {translation['path']}, got {narration_target}")
 
-    result = {
-        "schema": "audiobook-okf-segment-validation-v1",
-        "work_id": args.work,
-        "chapter_id": args.chapter,
-        "okf_conformant": report.is_conformant,
-        "project_prerequisites_checked": len(PROJECT_GUIDES),
-        "canonical_segments_checked": len(segments),
-        "valid": not errors,
-        "errors": errors,
-    }
+    result = {"schema": "audiobook-okf-segment-validation-v1", "work_id": args.work, "chapter_id": args.chapter, "okf_conformant": report.is_conformant, "project_prerequisites_checked": len(PROJECT_GUIDES), "canonical_segments_checked": len(segments), "narration_payload_contract": narration_contract, "narration_payload_contract_from": narration_contract_from, "valid": not errors, "errors": errors}
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
