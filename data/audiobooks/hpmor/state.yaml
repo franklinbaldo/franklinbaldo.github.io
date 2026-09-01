@@ -1,7 +1,7 @@
 schema: audiobook-work-state-v1
 work_id: hpmor
 status: preparing
-next_action: advance exactly hpmor-001-s0030 through original, translation, and narration; preserve stable ids; do not dispatch TTS while chapter-level readiness remains false
+next_action: materialize exactly hpmor-001-s0030 from staged_segment into original, translation, and narration; preserve stable ids; do not touch s0031 or dispatch TTS
 project_gates:
   work_metadata_ready: true
   global_editorial_guide_ready: true
@@ -17,7 +17,7 @@ publication:
 chapters:
   hpmor-001:
     status: in_progress
-    next_action: advance exactly hpmor-001-s0030 through all three canonical chapter layers; do not touch s0031 and do not dispatch TTS because chapter-level narration/audio readiness remains false
+    next_action: materialize exactly staged hpmor-001-s0030 through all three canonical chapter layers; do not touch s0031 and do not dispatch TTS because chapter-level narration/audio readiness remains false
     files:
       original: original/001.md
       translation: translation/001.md
@@ -53,6 +53,25 @@ chapters:
       - hpmor-001-s0028
       - hpmor-001-s0029
     next_segment_id: hpmor-001-s0030
+    staged_segment:
+      work_id: hpmor
+      chapter_id: hpmor-001
+      segment_id: hpmor-001-s0030
+      source: '"Then no one in your family knew about magic when Lily got her letter. How did they get convinced?"'
+      source_digest: sha256:5f0066253f4e161a81c88f244c054270e138c84e74fd2c07ee48520d9c7b919a
+      source_anchor: chapter-1 living-room argument, Harry infers that Petunia's nonmagical family originally needed evidence when Lily received her Hogwarts letter
+      translation: '"Então ninguém na sua família sabia sobre magia quando Lily recebeu a carta. Como eles foram convencidos?"'
+      narration:
+        speaker: harry
+        emotion: analytical-follow-up
+        pace: medium
+        intensity: low
+        pause_before_ms: 60
+        pause_after_ms: 180
+      editorial_note: Harry extends the evidential chain rather than challenging Petunia emotionally; the passive Como eles foram convencidos preserves the source question about what evidence changed the family's belief without prematurely naming Hogwarts or a professor, which belongs to the next segment.
+      terminology_pronunciation_change_required: false
+      voice_rule_change_required: false
+      completion_rule: next run must copy this payload unchanged into all three canonical chapter layers, then append hpmor-001-s0030 to completed_segments, delete staged_segment, and advance next_segment_id to hpmor-001-s0031
     validation_notes:
       - hpmor-001-s0009 is the first mixed dialogue+narration source segment; narration marks voice_partition=mixed-dialogue-pending until the provider-neutral audio contract can represent character/narrator partitions without changing the stable editorial segment_id
       - hpmor-001-s0010 through hpmor-001-s0013 use the same pending partition marker where required; no TTS dispatch is allowed while audio_contract_ready is false
