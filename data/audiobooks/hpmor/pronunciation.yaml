@@ -30,3 +30,7 @@ entries:
     scope: global
     status: review
     note: Definir pronúncia canônica para pt-BR após amostras reais.
+  - term: Feynman
+    scope: global
+    status: review
+    note: Introduzido em hpmor-001-s0037 em `Lições de Física de Feynman`; preservar a grafia editorial e definir a forma oral pt-BR no benchmark, sem alterar o texto para acomodar um backend específico.
