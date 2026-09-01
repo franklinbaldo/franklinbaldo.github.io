@@ -45,6 +45,8 @@ pace: slow
 intensity: low
 pause_before_ms: 0
 pause_after_ms: 600
+editorial_notes:
+  - "Leitura contida; não acrescentar emoção ausente do texto."
 ```
 
 Adapters podem traduzir isso para prompting, tokens especiais, parâmetros ou SSML específicos do backend.
@@ -71,13 +73,39 @@ Pronúncias recorrentes pertencem a `pronunciation.yaml` da obra, não a correç
 
 Uma exceção local pode existir quando a mesma grafia deve soar de forma diferente naquele contexto.
 
-## 7. Granularidade TTS
+## 7. Contrato do body: payload TTS puro
+
+Para `Audiobook Narration Segment`, o frontmatter é o plano de execução e o body é o payload de síntese.
+
+A fronteira é deliberadamente rígida:
+
+```text
+frontmatter = identidade + lineage + voz + prosódia + parâmetros + notas editoriais
+body        = exatamente o texto a enviar ao TTS
+```
+
+O consumidor deve poder executar conceitualmente `tts(body, frontmatter)` sem remover títulos, notas, comentários ou qualquer outra decoração Markdown.
+
+Consequências normativas:
+
+- o body deve ser não vazio e conter somente material que deve ser pronunciado;
+- notas de realização, justificativas, comentários de tradução, instruções ao agente e observações editoriais pertencem ao frontmatter, preferencialmente em `editorial_notes`;
+- headings Markdown, fenced code blocks, comentários HTML e separadores editoriais são proibidos no body da narração;
+- não criar `## Nota de realização oral` ou seção equivalente depois do texto narrável;
+- quebras de parágrafo no body são parte do payload e podem ser preservadas pelo adapter;
+- o worker/adaptor não deve ter heurística para "limpar" o body antes do TTS: corpus inválido deve falhar na validação.
+
+Esse contrato vale independentemente do backend. Breeze, Kokoro, Gemini, Higgs ou outro adapter podem usar o frontmatter de formas diferentes, mas recebem o mesmo body canônico.
+
+## 8. Granularidade TTS
 
 O segmento editorial e o request TTS podem coincidir, mas não precisam.
 
 Quando um segmento precisa ser dividido em vários requests, a relação deve ser derivada e determinística. Não destruir o `segment_id` editorial apenas por limitação do modelo.
 
-## 8. Revisão oral
+Mesmo quando um adapter divide um segmento, a fonte de texto continua sendo exclusivamente o body do shard de narração.
+
+## 9. Revisão oral
 
 Antes de `narration_ready`, ler mentalmente/em voz alta procurando:
 
@@ -87,9 +115,10 @@ Antes de `narration_ready`, ler mentalmente/em voz alta procurando:
 - transições de speaker incorretas;
 - direção emocional excessiva ou arbitrária;
 - pausas que quebram a sintaxe;
-- requests longos demais para geração estável.
+- requests longos demais para geração estável;
+- qualquer texto no body que não deva ser pronunciado.
 
-## 9. Feedback pós-TTS
+## 10. Feedback pós-TTS
 
 Erro observado no áudio deve ser corrigido na camada mais alta adequada:
 
