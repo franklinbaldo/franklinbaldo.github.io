@@ -1,0 +1,23 @@
+---
+type: Blog Post
+title: O blog agora também é para ouvir
+description: Como transformei a infraestrutura de audiolivros em uma pipeline geral de áudio para matérias, com TTS em GPU gratuita, mídia no Internet Archive e feed próprio.
+date: 2026-09-01
+lang: pt
+tags: [audio, podcast, tts, internet-archive, okf]
+docType: technical
+---
+
+Eu comecei querendo uma fábrica de audiolivros. No caminho, ficou claro que a parte mais útil da infraestrutura não tinha nada de exclusiva a livros: era uma pipeline que transforma texto editorialmente controlado em áudio publicável.
+
+A partir de agora, qualquer matéria do blog pode ganhar uma versão para ouvir. O Markdown publicado continua sendo a fonte canônica. A narração é preparada como uma camada derivada, com decisões explícitas de voz, ritmo e pronúncia. Só depois de essa camada ficar pronta o TTS pode rodar.
+
+A síntese pode usar runners de GPU gratuitos, como Kaggle, e o backend de voz fica separado do trabalho editorial. Isso importa porque tradução, reescrita e preparação da narração continuam sendo trabalho editorial; o modelo externo entra apenas para transformar a versão já aprovada em som.
+
+Os arquivos de áudio finais não ficam no Git. Eles são enviados para o Internet Archive. Antes de o site publicar qualquer player, a pipeline verifica se o arquivo está realmente público, se responde a uma requisição parcial e se o tamanho remoto corresponde ao arquivo produzido.
+
+Depois da verificação, um único manifesto de publicação alimenta três superfícies: o player dentro da própria matéria, uma página com todos os áudios do blog e um feed RSS de áudio. Na prática, o blog também passa a funcionar como um podcast.
+
+A mesma camada continua servindo aos audiolivros. HPMOR é uma obra; uma matéria é outra unidade editorial; amanhã a Bhagavad Gita pode usar a mesma infraestrutura. O que muda é a fonte e o contrato editorial. A mídia, a verificação e a publicação não precisam ser reinventadas.
+
+Este texto é o primeiro piloto dessa nova trilha. Se você estiver lendo depois de a geração de mídia ter sido concluída, deve haver um player no topo da matéria — e o mesmo episódio deve aparecer no feed de áudio do blog.
