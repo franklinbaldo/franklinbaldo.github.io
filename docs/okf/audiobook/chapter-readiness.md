@@ -18,127 +18,62 @@ O workflow TTS só pode aceitar uma unidade quando todos os gates obrigatórios 
 
 ### G0 — work ready
 
-A obra possui:
-
-- `work.md` válido;
-- `work_id` estável;
-- proveniência da fonte;
-- idioma da fonte e idioma alvo;
-- política de publicação/direitos registrada;
-- guia editorial específico, ou declaração explícita de que os defaults globais bastam;
-- `voices.yaml` e `pronunciation.yaml`, ainda que inicialmente mínimos.
+A obra possui `work.md` válido, `work_id` estável, proveniência da fonte, idiomas, política de publicação/direitos, guia editorial específico, `voices.yaml`/`pronunciation.yaml` e contrato de payload quando a obra já usa shards diretamente executáveis por TTS.
 
 ### G1 — source ready
 
-O original da unidade:
-
-- existe;
-- tem `chapter_id`/`unit_id` válido;
-- tem provenance/digest;
-- está segmentado;
-- não contém transformação editorial da tradução.
+O original existe, tem identidade válida, provenance/digest, está segmentado e não mistura transformação editorial da tradução.
 
 ### G2 — translation ready
 
-A tradução:
-
-- cobre todos os segmentos obrigatórios do original;
-- preserva IDs compartilhados;
-- não introduz comandos específicos de TTS;
-- segue guia global + overrides da obra;
-- registra dúvidas não resolvidas como bloqueio, em vez de escondê-las.
+A tradução cobre os segmentos obrigatórios, preserva IDs, não introduz comandos específicos de TTS, segue os guias e registra dúvidas bloqueantes explicitamente.
 
 ### G3 — narration ready
 
-A narração:
+A narração deriva da tradução correspondente, cobre os segmentos destinados à fala, identifica speaker lógico e aplica pronúncia/direção provider-neutral.
 
-- deriva da tradução correspondente;
-- cobre os segmentos destinados à fala;
-- identifica speaker lógico;
-- aplica pronúncia, pontuação oral, expansão de símbolos e divisão de requests quando necessário;
-- mantém intenção sem substituir a tradução canônica;
-- usa somente instruções provider-neutral.
+Para todo segmento alcançado pelo `narration_payload_contract` da obra, o shard declara o mesmo `payload_contract`. Sob `tts-body-v1`, o frontmatter contém identidade, lineage, parâmetros, direção e notas não faladas; o body contém exatamente o texto enviado ao TTS. Se qualquer limpeza heurística ou remoção de Markdown editorial for necessária, `narration_ready` é falso.
 
 ### G4 — consistency ready
 
-A unidade passou por revisão de consistência:
-
-- nomes e termos seguem o glossário;
-- vozes/speakers existem em `voices.yaml`;
-- pronúncias especiais estão declaradas;
-- IDs não colidem;
-- ordem dos segmentos é determinística;
-- tradução e narração não omitiram silenciosamente conteúdo relevante.
+Nomes/termos seguem o glossário, speakers existem, pronúncias especiais estão declaradas, IDs não colidem, ordem é determinística e tradução/narração não omitem conteúdo silenciosamente.
 
 ### G5 — editorial review ready
 
-Uma passada editorial final verifica:
-
-- fluência em pt-BR;
-- fidelidade sem literalismo desnecessário;
-- naturalidade oral;
-- consistência de registro entre personagens/narrador;
-- coerência de pausas/ênfases/direção;
-- ausência de TODOs/bloqueios editoriais.
+A passada final verifica fluência, fidelidade, naturalidade oral, registro consistente, coerência de pausas/ênfases/direção e ausência de TODOs/bloqueios.
 
 ### G6 — audio contract ready
 
-Antes de síntese:
+Backend/modelo podem ser selecionados sem alterar o corpus; vozes lógicas resolvem; o planner emite requests determinísticos; cache keys e montagem são conhecidos. Sob `tts-body-v1`, o planner entrega o body diretamente ao adapter e nunca concatena `editorial_notes` ao texto falado.
 
-- backend/modelo podem ser selecionados sem alterar o corpus;
-- todas as vozes lógicas resolvem para uma configuração do backend escolhido ou para fallback explícito;
-- o planner consegue emitir requests TTS determinísticos;
-- cache keys podem ser calculadas;
-- output esperado e estratégia de montagem são conhecidos.
+## 3. Migração de corpus legado
 
-## 3. Estado mínimo persistido
+Uma obra com shards antigos pode declarar `narration_payload_contract` e `narration_payload_contract_from` em `work.md`. A fronteira permite migração explícita sem tratar legado como exemplo válido. Todo segmento novo a partir da fronteira obedece imediatamente ao contrato. Obras futuras devem iniciar o contrato no primeiro narration segment.
 
-Cada unidade deve poder ser representada por um estado semelhante a:
-
-```yaml
-type: Audiobook Chapter State
-work_id: hpmor
-chapter_id: hpmor-001
-status: narration_in_progress
-next_action: review narration segments hpmor-001-s0041..s0060
-gates:
-  work_ready: true
-  source_ready: true
-  translation_ready: true
-  narration_ready: false
-  consistency_ready: false
-  editorial_review_ready: false
-  audio_contract_ready: false
-ready_for_audio: false
-```
-
-O schema concreto pode usar YAML/JSON derivado, mas os conceitos acima são obrigatórios.
+Um capítulo só pode ser considerado integralmente pronto para áudio quando todo o range a sintetizar estiver no contrato vigente ou tiver sido migrado explicitamente.
 
 ## 4. Invariantes
 
-- `ready_for_audio` só pode ser `true` quando todos os gates obrigatórios forem `true`.
-- alteração no original invalida tradução/narração afetadas.
-- alteração na tradução invalida narração/revisões afetadas.
-- alteração apenas em backend TTS não invalida tradução/narração, mas invalida plano/cache de áudio quando relevante.
-- um capítulo publicado pode voltar a ter áudio regenerado sem mudar seu `chapter_id`/GUID.
+- `ready_for_audio` só pode ser `true` quando todos os gates obrigatórios forem `true`;
+- body de narração sob o contrato vigente não contém material editorial não falado;
+- notas locais pertencem ao frontmatter, preferencialmente em `editorial_notes`;
+- alteração no original invalida tradução/narração afetadas;
+- alteração na tradução invalida narração/revisões afetadas;
+- alteração apenas em backend pode invalidar plano/cache sem invalidar texto editorial;
+- um capítulo publicado pode ter áudio regenerado sem mudar `chapter_id`/GUID.
 
 ## 5. Gate de CI
 
-O workflow de TTS deve começar com um comando equivalente a:
+O gate estrutural canônico é `uv run scripts/audiobook/validate-okf.py --work <work_id> [--chapter <id>]`. Além da conformidade normativa do `okf-parser`, ele aplica `tts-body-v1` a partir da fronteira declarada pela obra e rejeita body vazio, Markdown estrutural e notas editoriais no payload falado.
 
-```text
-audiobook validate --work <work_id> --chapter <id> --require-ready-for-audio
-```
+Falha nesse gate impede qualquer despacho para API, Colab, Kaggle ou outro runner.
 
-Falha nesse comando deve impedir qualquer despacho para API, Colab ou Kaggle.
+## 6. Skills operacionais
 
-## 6. Retomada pelo agente recorrente
+Antes de avançar uma unidade, aplicar `scripts/audiobook/skills/audiobook-editorial-segment/SKILL.md`. Ao criar, revisar ou depurar um narration shard, aplicar também `scripts/audiobook/skills/audiobook-tts-payload/SKILL.md`.
 
-O agente editorial escolhe prioritariamente:
+As skills explicam o procedimento editorial; o validador é a fronteira mecânica que impede regressão.
 
-1. unidades com gate imediatamente desbloqueável;
-2. trabalho já iniciado antes de abrir nova unidade;
-3. dependências globais que bloqueiam múltiplos capítulos;
-4. próximo capítulo ainda não iniciado.
+## 7. Retomada pelo agente recorrente
 
-Assim, a rotina horária converge para capítulos completos em vez de espalhar trabalho parcial pela obra inteira.
+O agente prioriza unidades com gate imediatamente desbloqueável, trabalho já iniciado, dependências globais e só então a próxima unidade. O cursor continua derivado dos shards canônicos, e a fronteira de payload em `work.md` torna a adoção do contrato determinística.

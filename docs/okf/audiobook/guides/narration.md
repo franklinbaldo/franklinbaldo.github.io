@@ -34,7 +34,37 @@ Ela pode mudar a forma superficial do texto quando isso melhora pronúncia, pros
 - inserir explicações editoriais ao ouvinte;
 - usar tags proprietárias de Breeze, Higgs, Qwen, Fish, Chatterbox ou outro backend no corpus canônico.
 
-## 4. Direção provider-neutral
+## 4. Contrato executável do shard de narração
+
+Um `Audiobook Narration Segment` sob o contrato `tts-body-v1` é um envelope executável para TTS:
+
+```text
+frontmatter = identidade + lineage + parâmetros TTS + direção + notas
+body        = exatamente o payload textual enviado ao sintetizador
+```
+
+O consumidor não deve precisar remover títulos, notas, comentários ou Markdown do body. A operação correta deve poder ser conceitualmente `tts(body, frontmatter)`.
+
+Consequências normativas:
+
+- o body não contém `## Nota de realização oral`, notas editoriais, comentários de revisão ou qualquer seção auxiliar;
+- notas pertencem ao frontmatter, preferencialmente em `editorial_notes` quando são locais ao segmento;
+- parâmetros de execução pertencem ao frontmatter (`speaker`, `emotion`, `pace`, `intensity`, pausas, partição de voz e campos provider-neutral equivalentes);
+- o body pode conter vários parágrafos quando todos eles devem ser sintetizados exatamente como estão;
+- Markdown estrutural que não deva ser pronunciado não pode sobreviver no body;
+- o body não pode ser vazio;
+- adapters de backend recebem o body sem heurística editorial de limpeza.
+
+Cada obra declara em `work.md` o contrato e o primeiro segmento a que ele se aplica:
+
+```yaml
+narration_payload_contract: tts-body-v1
+narration_payload_contract_from: <segment_id>
+```
+
+Isso permite migração explícita de corpus legado sem enfraquecer o contrato para unidades novas. Obras futuras devem preferir `tts-body-v1` desde o primeiro segmento.
+
+## 5. Direção provider-neutral
 
 A direção deve usar conceitos estáveis, por exemplo:
 
@@ -45,11 +75,13 @@ pace: slow
 intensity: low
 pause_before_ms: 0
 pause_after_ms: 600
+editorial_notes:
+  - "Manter a frase contida; não inventar suspiro."
 ```
 
-Adapters podem traduzir isso para prompting, tokens especiais, parâmetros ou SSML específicos do backend.
+Adapters podem traduzir isso para prompting, tokens especiais, parâmetros ou SSML específicos do backend. `editorial_notes` não é payload de síntese salvo se um adapter explicitamente converter alguma informação estruturada em instrução suportada; nunca é concatenado ao body.
 
-## 5. Vozes
+## 6. Vozes
 
 A narração referencia nomes lógicos declarados em `voices.yaml`.
 
@@ -65,19 +97,21 @@ Exemplos:
 
 A mesma identidade lógica pode mapear para configurações diferentes conforme o backend do benchmark/produção.
 
-## 6. Pronúncia
+## 7. Pronúncia
 
 Pronúncias recorrentes pertencem a `pronunciation.yaml` da obra, não a correções copiadas em dezenas de capítulos.
 
 Uma exceção local pode existir quando a mesma grafia deve soar de forma diferente naquele contexto.
 
-## 7. Granularidade TTS
+## 8. Granularidade TTS
 
 O segmento editorial e o request TTS podem coincidir, mas não precisam.
 
 Quando um segmento precisa ser dividido em vários requests, a relação deve ser derivada e determinística. Não destruir o `segment_id` editorial apenas por limitação do modelo.
 
-## 8. Revisão oral
+Se um shard já representa um único request, o body inteiro é o request. Se um adapter subdivide um body longo, deve fazê-lo de forma derivada e sem introduzir conteúdo editorial.
+
+## 9. Revisão oral
 
 Antes de `narration_ready`, ler mentalmente/em voz alta procurando:
 
@@ -87,9 +121,10 @@ Antes de `narration_ready`, ler mentalmente/em voz alta procurando:
 - transições de speaker incorretas;
 - direção emocional excessiva ou arbitrária;
 - pausas que quebram a sintaxe;
-- requests longos demais para geração estável.
+- requests longos demais para geração estável;
+- qualquer conteúdo no body que seja metadado ou nota em vez de fala.
 
-## 9. Feedback pós-TTS
+## 10. Feedback pós-TTS
 
 Erro observado no áudio deve ser corrigido na camada mais alta adequada:
 
