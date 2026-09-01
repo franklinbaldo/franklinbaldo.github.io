@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import json
 import posixpath
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path, PurePosixPath
@@ -19,6 +20,7 @@ import yaml
 from okf_parser import load_bundle, validate_path
 
 CANONICAL_STATUSES = {"canonical", "canonical-editorial-unit"}
+TTS_BODY_CONTRACT = "tts-input-v1"
 LAYER_TYPES = {
     "Audiobook Source Segment": "original",
     "Audiobook Translation Segment": "translation",
@@ -33,6 +35,7 @@ PROJECT_GUIDES = (
     "docs/okf/audiobook/editorial-control-plane.md",
     "docs/okf/audiobook/guides/translation.md",
     "docs/okf/audiobook/guides/narration.md",
+    "docs/okf/audiobook/narration-segment-contract.md",
     "docs/okf/audiobook/chapter-readiness.md",
     "docs/okf/audiobook/multi-work-architecture.md",
 )
@@ -54,6 +57,47 @@ def _resolved_link(source_path: str, target: str) -> str:
 def _load_yaml(path: Path) -> dict:
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     return data if isinstance(data, dict) else {}
+
+
+def _markdown_body(path: Path) -> str:
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---\n"):
+        return ""
+    marker = text.find("\n---\n", 4)
+    if marker < 0:
+        return ""
+    return text[marker + 5 :].strip()
+
+
+def _validate_tts_body(path: str, body: str, errors: list[str]) -> None:
+    if not body:
+        errors.append(f"{path}: {TTS_BODY_CONTRACT} narration body must not be empty")
+        return
+
+    forbidden_line_prefixes = ("#", "- ", "* ", "> ", "```", "~~~")
+    for line in body.splitlines():
+        stripped = line.lstrip()
+        if stripped.startswith(forbidden_line_prefixes):
+            errors.append(f"{path}: {TTS_BODY_CONTRACT} body contains Markdown/documentation line {line!r}")
+            break
+
+    forbidden_fragments = (
+        "<!--",
+        "-->",
+        "## Nota",
+        "## Observa",
+        "## Editorial",
+        "![",
+        "](",
+        "**",
+        "__",
+    )
+    for fragment in forbidden_fragments:
+        if fragment in body:
+            errors.append(f"{path}: {TTS_BODY_CONTRACT} body contains non-spoken Markdown/documentation fragment {fragment!r}")
+
+    if re.search(r"<\/?[A-Za-z][^>]*>", body):
+        errors.append(f"{path}: {TTS_BODY_CONTRACT} body contains HTML markup")
 
 
 def main() -> int:
@@ -126,6 +170,13 @@ def main() -> int:
                     errors.append(f"{path}: mixed narration requires voice_partition")
             elif isinstance(speaker, str) and speaker not in voice_ids:
                 errors.append(f"{path}: speaker {speaker!r} has no entry in voices.yaml")
+
+            body_contract = data.get("tts_body_contract")
+            if body_contract is not None and body_contract != TTS_BODY_CONTRACT:
+                errors.append(f"{path}: unknown tts_body_contract {body_contract!r}")
+            if body_contract == TTS_BODY_CONTRACT:
+                _validate_tts_body(path, _markdown_body(root / path), errors)
+
         key = (chapter_id, segment_id)
         if layer in segments[key]:
             errors.append(f"{chapter_id}/{segment_id}: duplicate canonical {layer} shard")
