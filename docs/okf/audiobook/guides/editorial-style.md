@@ -24,15 +24,22 @@ Este documento define defaults da Audiobook Factory. Cada obra pode declarar ove
 
 ## 3. Segmentação
 
-Segmentos devem ser grandes o suficiente para preservar prosódia e pequenos o suficiente para revisão/regeneração localizada.
+A unidade canônica deve seguir a **unidade semântico-prosódica**, não o menor parágrafo que possa ser versionado e nem a limitação do backend TTS mais fraco. Modelos modernos se beneficiam de contexto suficiente para manter prosódia, continuidade e intenção.
 
 Defaults:
 
-- diálogo: uma fala coerente por segmento, salvo quando contexto curto precisa ficar junto;
-- narração: parágrafo ou unidade prosódica coerente;
+- prosa de um único speaker: preferir blocos coerentes de aproximadamente **80–240 palavras** quando o texto permitir;
+- a faixa **60–320 palavras** é normalmente aceitável; fora dela, revisar conscientemente a fronteira;
+- diálogo: preservar uma fala coerente, mas falas curtas adjacentes podem permanecer juntas quando formam uma única batida de cena e o particionamento de voz é explícito;
+- narração: vários parágrafos podem e devem permanecer no mesmo segmento quando pertencem ao mesmo movimento de raciocínio ou cena;
+- mudança real de speaker, quebra de cena, mudança forte de intenção ou unidade que precise ser regenerada isoladamente são bons motivos para cortar;
 - verso: preservar unidade poética definida pela obra;
 - títulos/cabeçalhos: segmentos próprios quando efetivamente narrados;
-- notas/editoriais: não narradas por default, salvo decisão da obra.
+- notas/editoriais: nunca pertencem ao body narrável.
+
+Não criar segmentos de uma frase apenas porque o parágrafo é curto. Se uma frase de transição conduz diretamente ao bloco seguinte com o mesmo speaker e intenção, agregá-la ao bloco.
+
+Essas faixas são **heurísticas editoriais**, não limites de modelo. O adapter de um backend pode subdividir deterministicamente um segmento em requests menores sem alterar `segment_id`.
 
 IDs não carregam significado editorial mutável. Use sequência estável namespaced por obra/unidade.
 
@@ -66,4 +73,6 @@ A revisão final deve procurar principalmente:
 - fala impossível/estranha em voz alta;
 - speaker incorreto;
 - instrução de TTS vazando para a tradução;
-- dependência de contexto visual ausente no áudio.
+- dependência de contexto visual ausente no áudio;
+- segmento curto demais para preservar prosódia sem uma razão editorial real;
+- segmento quebrado apenas por parágrafo quando o raciocínio continua diretamente no seguinte.
