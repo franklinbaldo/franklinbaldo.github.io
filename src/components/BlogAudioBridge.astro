@@ -1,0 +1,40 @@
+---
+import { blogAudioForPost } from '../lib/blog-audio.js';
+
+interface Props { postId: string; title: string; lang?: 'en' | 'pt'; }
+const { postId, title, lang = 'en' } = Astro.props;
+const episode = blogAudioForPost(postId);
+const label = lang === 'pt' ? 'Ouça esta matéria' : 'Listen to this article';
+---
+
+{episode && (
+  <template id={`blog-audio-${postId}`}>
+    <section class="blog-audio-player" aria-label={label}>
+      <p><strong>{label}</strong></p>
+      <audio controls preload="metadata" src={episode.media_url}>
+        <a href={episode.media_url}>{title}</a>
+      </audio>
+    </section>
+  </template>
+)}
+
+{episode && (
+  <script define:vars={{ postId }} is:inline>
+    (() => {
+      const template = document.getElementById(`blog-audio-${postId}`);
+      const article = document.querySelector('article');
+      const header = article?.querySelector(':scope > header');
+      if (!template || !article) return;
+      const node = template.content.cloneNode(true);
+      if (header) header.insertAdjacentElement('afterend', node.firstElementChild);
+      else article.prepend(node);
+      template.remove();
+    })();
+  </script>
+)}
+
+<style>
+  .blog-audio-player { margin: 1rem 0 1.5rem; padding: 1rem; border: 1px solid var(--pico-muted-border-color); border-radius: var(--pico-border-radius); }
+  .blog-audio-player p { margin: 0 0 .5rem; }
+  .blog-audio-player audio { width: 100%; }
+</style>
