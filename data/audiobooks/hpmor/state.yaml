@@ -1,7 +1,7 @@
 schema: audiobook-work-state-v1
 work_id: hpmor
 status: preparing
-next_action: continue exactly hpmor-001-s0031 through source, translation, and narration; preserve stable ids; do not dispatch TTS
+next_action: continue exactly hpmor-001-s0032 through source, translation, and narration; preserve stable ids; do not dispatch TTS
 project_gates:
   work_metadata_ready: true
   global_editorial_guide_ready: true
@@ -17,7 +17,7 @@ publication:
 chapters:
   hpmor-001:
     status: in_progress
-    next_action: process exactly hpmor-001-s0031; do not touch s0032 and do not dispatch TTS because chapter-level narration/audio readiness remains false
+    next_action: process exactly hpmor-001-s0032; do not touch s0033 and do not dispatch TTS because chapter-level narration/audio readiness remains false
     files:
       original: original/001.md
       translation: translation/001.md
@@ -57,13 +57,14 @@ chapters:
       - hpmor-001-s0028
       - hpmor-001-s0029
       - hpmor-001-s0030
-    next_segment_id: hpmor-001-s0031
+      - hpmor-001-s0031
+    next_segment_id: hpmor-001-s0032
     validation_notes:
       - stable work_id/chapter_id/segment_id alignment is preserved across source, translation, narration, and state for completed units
-      - hpmor-001-s0030 is materialized as canonical per-segment OKF shards in original/segments, translation/segments, and narration/segments; the chapter aggregate snapshots remain partial through s0029 and are not the authoritative representation for s0030
+      - hpmor-001-s0030 and hpmor-001-s0031 are materialized as canonical per-segment OKF shards in original/segments, translation/segments, and narration/segments; the chapter aggregate snapshots remain partial and are not authoritative for those later shards
       - per-segment canonical shards avoid unsafe whole-file rewrites and keep the architecture reusable for other works while preserving the same three-layer editorial contract
-      - mixed dialogue+narration units remain marked voice_partition=mixed-dialogue-pending where the provider-neutral audio contract cannot yet represent internal character/narrator partitions without changing stable editorial segment ids
-      - no terminology, pronunciation, or voice-rule change was required for hpmor-001-s0030
+      - hpmor-001-s0031 contains Petunia dialogue, narrator prose, and Petunia dialogue inside one stable editorial segment; it is therefore marked voice_partition=mixed-dialogue-pending rather than splitting or renumbering the segment
+      - no terminology, pronunciation, or voice-rule change was required for hpmor-001-s0031; the existing Petunia and narrator guidance covers the unit
       - repository formatting is separate from chapter readiness and must not be used to bypass source, translation, narration, audio-contract, or rights gates
     gates:
       work_ready: true
