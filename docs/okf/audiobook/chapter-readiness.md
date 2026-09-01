@@ -57,7 +57,12 @@ A narração:
 - identifica speaker lógico;
 - aplica pronúncia, pontuação oral, expansão de símbolos e divisão de requests quando necessário;
 - mantém intenção sem substituir a tradução canônica;
-- usa somente instruções provider-neutral.
+- usa somente instruções provider-neutral;
+- declara `tts_payload: body` em todos os shards destinados à síntese;
+- mantém notas e instruções exclusivamente no frontmatter;
+- possui body não vazio contendo exatamente o texto a ser enviado ao TTS, sem headings, notas, comentários ou blocos auxiliares.
+
+Um capítulo com shard de narração legado que ainda não declare `tts_payload: body` não pode alcançar `narration_ready`, mesmo que continue aceito temporariamente pelo validador de migração.
 
 ### G4 — consistency ready
 
@@ -87,7 +92,7 @@ Antes de síntese:
 
 - backend/modelo podem ser selecionados sem alterar o corpus;
 - todas as vozes lógicas resolvem para uma configuração do backend escolhido ou para fallback explícito;
-- o planner consegue emitir requests TTS determinísticos;
+- o planner consegue emitir requests TTS determinísticos usando o body canônico sem limpeza heurística;
 - cache keys podem ser calculadas;
 - output esperado e estratégia de montagem são conhecidos.
 
@@ -121,6 +126,7 @@ O schema concreto pode usar YAML/JSON derivado, mas os conceitos acima são obri
 - alteração na tradução invalida narração/revisões afetadas.
 - alteração apenas em backend TTS não invalida tradução/narração, mas invalida plano/cache de áudio quando relevante.
 - um capítulo publicado pode voltar a ter áudio regenerado sem mudar seu `chapter_id`/GUID.
+- nenhuma etapa de produção pode depender de remover notas ou seções do body antes da síntese.
 
 ## 5. Gate de CI
 
@@ -131,6 +137,8 @@ audiobook validate --work <work_id> --chapter <id> --require-ready-for-audio
 ```
 
 Falha nesse comando deve impedir qualquer despacho para API, Colab ou Kaggle.
+
+Durante a migração do corpus antigo, `scripts/audiobook/validate-okf.py` reporta quantos shards ainda são legados. O gate de `ready_for_audio` deve exigir zero shards legados no capítulo.
 
 ## 6. Retomada pelo agente recorrente
 
