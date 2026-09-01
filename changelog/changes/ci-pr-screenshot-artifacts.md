@@ -1,12 +1,13 @@
 ---
 type: changelog
 date: 2026-09-01
-description: Capture pull-request screenshots in CI so visual changes have reproducible before/after evidence.
-tags: [ci, visual-regression, cobogo]
+description: Capture reproducible visual evidence in CI and make the published audiobooks catalog discoverable from global navigation.
+tags: [ci, visual-regression, navigation, audiobooks, cobogo]
 ---
 
-# PR screenshot artifacts
+# Audiobooks navigation with reproducible evidence
 
 - Runs the existing screenshot harness against an Astro preview in pull-request CI.
-- Uploads the captured routes as a workflow artifact for visual review.
-- Makes the before/after evidence required by the Cobogó surface-review loop reproducible from the PR head.
+- Uploads the captured routes as workflow artifacts for before/after visual review.
+- Adds Audiobooks/Audiolivros to the existing secondary Header and Footer navigation, linking to `/audiobooks/` without promoting it to a primary CTA.
+- Keeps claims scoped to the published catalog surface; it does not imply that a disabled podcast/feed is active.
