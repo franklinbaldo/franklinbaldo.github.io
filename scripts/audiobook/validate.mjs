@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import process from "node:process";
+import { spawnSync } from "node:child_process";
 
 import {
   AudiobookValidationError,
@@ -40,14 +41,58 @@ function parseArgs(argv) {
   return args;
 }
 
+function validateOkf(args) {
+  const command = [
+    "run",
+    "scripts/audiobook/validate-okf.py",
+    "--work",
+    args.workId,
+    "--json",
+  ];
+  if (args.chapterId) command.push("--chapter", args.chapterId);
+
+  const result = spawnSync("uv", command, {
+    cwd: process.cwd(),
+    encoding: "utf8",
+  });
+
+  if (result.error) {
+    throw new Error(
+      `OKF validation could not start: ${result.error.message}. Install uv; audiobook validation fails closed without okf-parser.`
+    );
+  }
+
+  let report;
+  try {
+    report = JSON.parse(result.stdout || "{}");
+  } catch {
+    throw new Error(
+      `OKF validator returned unreadable output: ${(result.stdout || result.stderr).trim()}`
+    );
+  }
+
+  if (result.status !== 0 || report.valid !== true) {
+    const details = Array.isArray(report.errors) ? report.errors : [];
+    throw new AudiobookValidationError(
+      `Invalid audiobook OKF contract: ${args.workId}`,
+      details.length ? details : [result.stderr.trim() || "okf-parser validation failed"]
+    );
+  }
+
+  return report;
+}
+
 try {
   const args = parseArgs(process.argv.slice(2));
+  const okf = validateOkf(args);
   const result = validateWork(process.cwd(), args.workId, args);
+  const output = { ...result, okf };
 
   if (args.json) {
-    console.log(JSON.stringify(result, null, 2));
+    console.log(JSON.stringify(output, null, 2));
   } else {
     console.log(`work: ${result.workId} — ${result.title}`);
+    console.log(`okf: valid (${okf.canonical_segments_checked} canonical segments checked)`);
     console.log(`status: ${result.status ?? "unknown"}`);
     console.log(`next: ${result.nextAction}`);
     for (const chapter of result.chapters) {
