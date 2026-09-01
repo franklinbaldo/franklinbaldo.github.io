@@ -36,15 +36,18 @@ Ela pode mudar a forma superficial do texto quando isso melhora pronúncia, pros
 
 ## 4. Direção provider-neutral
 
-A direção deve usar conceitos estáveis, por exemplo:
+A direção deve usar conceitos estáveis no frontmatter, por exemplo:
 
 ```yaml
+tts_body_contract: body-is-payload-v1
 speaker: narrator
 emotion: contemplative
 pace: slow
 intensity: low
 pause_before_ms: 0
 pause_after_ms: 600
+editorial_notes:
+  - "Leitura contida; não acrescentar emoção ausente do texto."
 ```
 
 Adapters podem traduzir isso para prompting, tokens especiais, parâmetros ou SSML específicos do backend.
@@ -55,41 +58,43 @@ A narração referencia nomes lógicos declarados em `voices.yaml`.
 
 Nunca gravar diretamente no capítulo um voice ID efêmero de fornecedor.
 
-Exemplos:
-
-- `narrator`
-- `harry`
-- `mcgonagall`
-- `krishna`
-- `arjuna`
-
-A mesma identidade lógica pode mapear para configurações diferentes conforme o backend do benchmark/produção.
-
 ## 6. Pronúncia
 
 Pronúncias recorrentes pertencem a `pronunciation.yaml` da obra, não a correções copiadas em dezenas de capítulos.
 
 Uma exceção local pode existir quando a mesma grafia deve soar de forma diferente naquele contexto.
 
-## 7. Granularidade TTS
+## 7. Contrato executável do body
 
-O segmento editorial e o request TTS podem coincidir, mas não precisam.
+Um `Audiobook Narration Segment` que declara `tts_body_contract: body-is-payload-v1` é um envelope diretamente executável pelo adapter TTS:
 
-Quando um segmento precisa ser dividido em vários requests, a relação deve ser derivada e determinística. Não destruir o `segment_id` editorial apenas por limitação do modelo.
+```text
+frontmatter = identidade + lineage + voz + prosódia + parâmetros + notas editoriais
+body        = exatamente o texto a sintetizar
+```
 
-## 8. Revisão oral
+O consumidor deve poder fazer conceitualmente `tts(body, frontmatter)` sem remover nada do body.
 
-Antes de `narration_ready`, ler mentalmente/em voz alta procurando:
+Portanto:
 
-- frases que exigem visão da pontuação para serem entendidas;
-- números/siglas ambíguos;
-- nomes estrangeiros suscetíveis a erro;
-- transições de speaker incorretas;
-- direção emocional excessiva ou arbitrária;
-- pausas que quebram a sintaxe;
-- requests longos demais para geração estável.
+- o body deve ser não vazio e conter somente material que deve ser pronunciado;
+- notas de realização, justificativas, instruções ao agente e observações editoriais ficam no frontmatter, em especial `editorial_notes`;
+- headings Markdown, fenced code blocks, comentários HTML e separadores editoriais são proibidos no body;
+- `## Nota de realização oral` e equivalentes são inválidos no body;
+- quebras de parágrafo do body fazem parte do payload;
+- o worker não deve possuir heurística para limpar notas do body: corpus inválido deve falhar antes do TTS.
 
-## 9. Feedback pós-TTS
+Shards legados ainda sem `tts_body_contract` podem existir durante a migração, mas um capítulo não pode atingir `ready_for_audio` enquanto houver shard de narração legado.
+
+## 8. Granularidade TTS
+
+O segmento editorial e o request TTS podem coincidir, mas não precisam. Se um adapter precisar dividir um segmento, a divisão deve ser derivada e determinística, sem alterar o `segment_id`; a fonte textual continua sendo exclusivamente o body canônico.
+
+## 9. Revisão oral
+
+Antes de `narration_ready`, verificar também se existe qualquer texto no body que não deva ser pronunciado.
+
+## 10. Feedback pós-TTS
 
 Erro observado no áudio deve ser corrigido na camada mais alta adequada:
 
