@@ -169,7 +169,7 @@ const crumbs = [
                 <div class="tf loser-fill" style={`width:${100 - tensionPct}%`}></div>
               </div>
             ) : (
-              <div class="tension-absent" aria-label="Rates not available">—</div>
+              <div class="tension-absent" aria-label={`${winnerName} vs ${loserName} — rates not available`}>—</div>
             )}
             <div class="read-cta">Read analysis →</div>
           </a>
