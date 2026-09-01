@@ -37,6 +37,7 @@ PROJECT_GUIDES = (
     "docs/okf/audiobook/multi-work-architecture.md",
 )
 WORK_PREREQUISITES = ("work.md", "editorial.md", "rights.md", "voices.yaml", "pronunciation.yaml")
+FORBIDDEN_NARRATION_BODY_PREFIXES = ("#", "```", "<!--", "---")
 
 
 def _args() -> argparse.Namespace:
@@ -54,6 +55,37 @@ def _resolved_link(source_path: str, target: str) -> str:
 def _load_yaml(path: Path) -> dict:
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     return data if isinstance(data, dict) else {}
+
+
+def _markdown_body(path: Path) -> str:
+    text = path.read_text(encoding="utf-8")
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0].strip() != "---":
+        return ""
+    for index, line in enumerate(lines[1:], start=1):
+        if line.strip() == "---":
+            return "".join(lines[index + 1 :]).strip()
+    return ""
+
+
+def _validate_narration_body(root: Path, path: str, data: dict, errors: list[str]) -> None:
+    body = _markdown_body(root / path)
+    if not body:
+        errors.append(f"{path}: narration body must be a non-empty direct TTS payload")
+        return
+
+    editorial_notes = data.get("editorial_notes")
+    if editorial_notes is not None:
+        if not isinstance(editorial_notes, list) or not all(isinstance(note, str) and note.strip() for note in editorial_notes):
+            errors.append(f"{path}: editorial_notes must be a list of non-empty strings when present")
+
+    for number, line in enumerate(body.splitlines(), start=1):
+        stripped = line.lstrip()
+        if stripped.startswith(FORBIDDEN_NARRATION_BODY_PREFIXES):
+            errors.append(
+                f"{path}: narration body line {number} contains Markdown/editorial markup; "
+                "move notes/instructions to frontmatter because body is sent directly to TTS"
+            )
 
 
 def main() -> int:
@@ -126,6 +158,7 @@ def main() -> int:
                     errors.append(f"{path}: mixed narration requires voice_partition")
             elif isinstance(speaker, str) and speaker not in voice_ids:
                 errors.append(f"{path}: speaker {speaker!r} has no entry in voices.yaml")
+            _validate_narration_body(root, path, data, errors)
         key = (chapter_id, segment_id)
         if layer in segments[key]:
             errors.append(f"{chapter_id}/{segment_id}: duplicate canonical {layer} shard")
