@@ -99,3 +99,13 @@ Erro observado no áudio deve ser corrigido na camada mais alta adequada:
 - problema de um backend específico -> adapter/configuração do backend.
 
 Não contaminar o corpus global com workaround específico de modelo quando o adapter consegue resolver.
+
+## 10. Contrato executável do narration shard
+
+Novos `Audiobook Narration Segment` usam `tts_body_contract: tts-input-v1`.
+
+Nesse contrato, o frontmatter contém identidade, lineage, direção de voz, prosódia, pausas e qualquer nota não falada. Notas de realização pertencem a `editorial_notes` ou a outro campo estruturado de frontmatter.
+
+O body contém exclusivamente o texto a ser enviado ao TTS. Não colocar depois do texto seções como `## Nota de realização oral`, observações editoriais, instruções ao modelo ou documentação. O consumidor deve poder executar `tts(body.strip(), frontmatter)` sem limpeza heurística.
+
+A especificação normativa detalhada está em `docs/okf/audiobook/narration-segment-contract.md`.
