@@ -1,7 +1,7 @@
 schema: audiobook-work-state-v1
 work_id: hpmor
 status: preparing
-next_action: materialize exactly hpmor-001-s0029 from staged_segment into original, translation, and narration; preserve stable ids, then move cursor to s0030; do not dispatch TTS while chapter-level readiness remains false
+next_action: advance exactly hpmor-001-s0030 through original, translation, and narration; preserve stable ids; do not dispatch TTS while chapter-level readiness remains false
 project_gates:
   work_metadata_ready: true
   global_editorial_guide_ready: true
@@ -17,7 +17,7 @@ publication:
 chapters:
   hpmor-001:
     status: in_progress
-    next_action: materialize exactly hpmor-001-s0029 from staged_segment into all three canonical chapter layers; do not touch s0030 and do not dispatch TTS because chapter-level narration/audio readiness remains false
+    next_action: advance exactly hpmor-001-s0030 through all three canonical chapter layers; do not touch s0031 and do not dispatch TTS because chapter-level narration/audio readiness remains false
     files:
       original: original/001.md
       translation: translation/001.md
@@ -51,22 +51,8 @@ chapters:
       - hpmor-001-s0026
       - hpmor-001-s0027
       - hpmor-001-s0028
-    next_segment_id: hpmor-001-s0029
-    staged_segment:
-      segment_id: hpmor-001-s0029
-      source: '"No," Petunia said, looking puzzled.'
-      source_digest: sha256:df4ec663ffaac69f624ae960e532b9aa2dd986d6affd1015b92f82b53695c5c3
-      source_anchor: chapter-1 living-room argument, Petunia answers Harry that her parents had no magic and looks puzzled
-      translation: '"Não", disse Petunia, parecendo confusa.'
-      narration:
-        structure: petunia -> narrator
-        voice_partition: mixed-dialogue-pending
-        emotion: puzzled-brief-answer
-        pace: medium
-        intensity: low
-        note: keep the answer brief and genuinely puzzled; do not turn confusion into alarm, suspicion, or comic exaggeration
-      editorial_note: no new terminology, pronunciation, or voice rule is required; preserve the short answer and attribution without intensifying Petunia's puzzlement
-      completion_rule: the next run must write this exact source, translation, and narration payload into the three canonical chapter files with stable work_id/chapter_id/segment_id, then add s0029 to completed_segments, remove staged_segment, and advance next_segment_id to hpmor-001-s0030; it must not advance s0030 in the same run
+      - hpmor-001-s0029
+    next_segment_id: hpmor-001-s0030
     validation_notes:
       - hpmor-001-s0009 is the first mixed dialogue+narration source segment; narration marks voice_partition=mixed-dialogue-pending until the provider-neutral audio contract can represent character/narrator partitions without changing the stable editorial segment_id
       - hpmor-001-s0010 through hpmor-001-s0013 use the same pending partition marker where required; no TTS dispatch is allowed while audio_contract_ready is false
@@ -86,6 +72,7 @@ chapters:
       - hpmor-001-s0026 is now present in original, translation, and narration with the same stable segment_id; Dad! Mum! is translated as Pai! Mãe!, narration uses the existing harry voice directly with urgent-interruption pacing, and no terminology, pronunciation, or voice-rule change is required
       - hpmor-001-s0027 is now materialized in original, translation, and narration with the same stable segment_id and source digest; the dry observational comparison is preserved without inventing surprise, guilt, dramatic silence, or a vocal event, and narration uses speaker=narrator directly with no mixed-dialogue partition
       - hpmor-001-s0028 is now materialized in original, translation, and narration with the same stable segment_id and source digest; Harry's deep breath remains narrated rather than becoming an invented TTS vocal event, the negative tag question is preserved in pt-BR, narration marks narrator-to-Harry as mixed-dialogue-pending, and no new terminology, pronunciation, or voice rule is required
+      - hpmor-001-s0029 is now materialized in original, translation, and narration with the same stable segment_id and source digest; Petunia's brief negative answer remains genuinely puzzled without intensification, narration marks Petunia-to-narrator as mixed-dialogue-pending, and no new terminology, pronunciation, or voice rule is required
       - repository formatting remains separate from chapter readiness and must not be used to bypass source, translation, narration, audio-contract, or rights gates
     gates:
       work_ready: true
