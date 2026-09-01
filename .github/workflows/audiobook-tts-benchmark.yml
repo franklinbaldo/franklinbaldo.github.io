@@ -36,6 +36,11 @@ on:
         required: false
         default: ""
         type: string
+      audition:
+        description: Papel da rubrica para a audição por IA (vazio desliga)
+        required: false
+        default: qualidade
+        type: string
 
 permissions:
   contents: read
@@ -191,6 +196,27 @@ jobs:
           console.log(`- bootstrap: **${((t.bootstrap_ms ?? 0) / 1000).toFixed(1)}s**`);
           console.log(`- synthesis: **${((t.synthesis_ms ?? 0) / 1000).toFixed(1)}s** for ${((t.audio_ms ?? 0) / 1000).toFixed(1)}s of audio`);
           NODE
+
+      - name: Audição por IA contra a rubrica
+        if: ${{ inputs.audition != '' }}
+        continue-on-error: true
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PAPEL: ${{ inputs.audition }}
+        run: |
+          if [[ -z "$GEMINI_API_KEY" ]]; then
+            echo "GEMINI_API_KEY ausente; pulando a audição." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          export PATH="$HOME/.local/bin:$PATH"
+          {
+            echo "## Audição por IA — papel \`$PAPEL\`"
+            echo
+            echo '```'
+            uv run --script scripts/audiobook/audition.py               "$RUNNER_TEMP/benchmark-result/manifest.json"               --papel "$PAPEL"               --out "$RUNNER_TEMP/benchmark-result/audition.json" 2>&1 | tail -40
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload benchmark audio
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
