@@ -1,7 +1,7 @@
 schema: audiobook-work-state-v1
 work_id: hpmor
 status: preparing
-next_action: apply staged hpmor-001-s0027 to original, translation, and narration chapter files before advancing to any later segment; repository tooling in this run could not safely patch the large canonical chapter files atomically
+next_action: continue chapter 1 from hpmor-001-s0028; do not renumber existing segment ids and do not dispatch TTS while chapter-level readiness remains false
 project_gates:
   work_metadata_ready: true
   global_editorial_guide_ready: true
@@ -17,7 +17,7 @@ publication:
 chapters:
   hpmor-001:
     status: in_progress
-    next_action: apply the staged hpmor-001-s0027 payload to all three canonical chapter layers; do not touch s0028 and do not dispatch TTS because chapter-level narration/audio readiness remains false
+    next_action: advance exactly hpmor-001-s0028 across original, translation, and narration; do not touch s0029 and do not dispatch TTS because chapter-level narration/audio readiness remains false
     files:
       original: original/001.md
       translation: translation/001.md
@@ -49,28 +49,8 @@ chapters:
       - hpmor-001-s0024
       - hpmor-001-s0025
       - hpmor-001-s0026
-    next_segment_id: hpmor-001-s0027
-    staged_segment:
-      id: hpmor-001-s0027
-      source:
-        text: "The two of them stopped and looked at Harry as though they'd forgotten there was a third person in the room."
-        source_digest: sha256:e87b35b26ff7c1998d2d8119f063b33c5aef54f13064d59c1ca13c13ffabe4e5
-        source_anchor: chapter-1 living-room argument, both parents stop after Harry's interruption and look at him as if they had forgotten he was present
-      translation:
-        text: "Os dois pararam e olharam para Harry como se tivessem esquecido que havia uma terceira pessoa na sala."
-        note: preserve the dry observational beat; do not add surprise, guilt, silence, or a reaction not present in the source
-      narration:
-        speaker: narrator
-        emotion: observational-surprise
-        pace: medium
-        intensity: low
-        pause_before_ms: 120
-        pause_after_ms: 260
-        voice_partition: null
-        note: narrator-only unit; the mild surprise is carried by the syntax and pause, without inventing a vocal event or assigning speech to either parent
-      terminology_pronunciation_change_required: false
-      voice_guidance_change_required: false
-      editorial_status: staged-awaiting-canonical-write
+      - hpmor-001-s0027
+    next_segment_id: hpmor-001-s0028
     validation_notes:
       - hpmor-001-s0009 is the first mixed dialogue+narration source segment; narration marks voice_partition=mixed-dialogue-pending until the provider-neutral audio contract can represent character/narrator partitions without changing the stable editorial segment_id
       - hpmor-001-s0010 through hpmor-001-s0013 use the same pending partition marker where required; no TTS dispatch is allowed while audio_contract_ready is false
@@ -88,8 +68,8 @@ chapters:
       - hpmor-001-s0024 advances source, translation, and narration with the same stable segment_id; Michael's annoyance is represented as gradual and restrained, the translation preserves the modal certainty and condescending final question, narration marks the Michael-narrator-Michael structure as mixed-dialogue-pending, and no new terminology or pronunciation entry is required
       - hpmor-001-s0025 advances source, translation, and narration with the same stable segment_id; Petunia's anxious gesture and near-tears state remain explicit without being intensified into actual crying, the translation preserves the shift from argument-winning to relational trust, narration marks the narrator-Petunia structure as mixed-dialogue-pending, and no new terminology or pronunciation entry is required
       - hpmor-001-s0026 is now present in original, translation, and narration with the same stable segment_id; Dad! Mum! is translated as Pai! Mãe!, narration uses the existing harry voice directly with urgent-interruption pacing, and no terminology, pronunciation, or voice-rule change is required
-      - hpmor-001-s0027 has been source-verified and editorially resolved in this run but is intentionally staged rather than marked completed because the connector available here replaces whole files and could not safely atomically patch the large canonical chapter files; the next run must apply this exact payload before advancing
-      - the prior CI failure was limited to Prettier on the three canonical chapter files while build and change-card checks passed; repository formatting remains separate from chapter readiness
+      - hpmor-001-s0027 is now materialized in original, translation, and narration with the same stable segment_id and source digest; the dry observational comparison is preserved without inventing surprise, guilt, dramatic silence, or a vocal event, and narration uses speaker=narrator directly with no mixed-dialogue partition
+      - repository formatting remains separate from chapter readiness and must not be used to bypass source, translation, narration, audio-contract, or rights gates
     gates:
       work_ready: true
       source_ready: false
