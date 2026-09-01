@@ -1,0 +1,29 @@
+schema: audiobook-work-state-v1
+work_id: hpmor
+status: preparing
+next_action: import and segment chapter 1 original, then create aligned translation
+project_gates:
+  work_metadata_ready: true
+  global_editorial_guide_ready: true
+  global_translation_guide_ready: true
+  global_narration_guide_ready: true
+  work_editorial_guide_ready: true
+  voices_ready: true
+  pronunciation_lexicon_ready: true
+chapters:
+  hpmor-001:
+    status: not_started
+    next_action: import source snapshot and establish stable segment ids
+    files:
+      original: original/001.md
+      translation: translation/001.md
+      narration: narration/001.md
+    gates:
+      work_ready: true
+      source_ready: false
+      translation_ready: false
+      narration_ready: false
+      consistency_ready: false
+      editorial_review_ready: false
+      audio_contract_ready: false
+    ready_for_audio: false

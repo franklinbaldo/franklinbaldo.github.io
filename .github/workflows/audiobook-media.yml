@@ -1,0 +1,348 @@
+name: Audiobook Media
+
+on:
+  workflow_dispatch:
+    inputs:
+      work_id:
+        description: Audiobook work_id
+        required: true
+        default: hpmor
+        type: string
+      chapter_id:
+        description: Canonical chapter/unit id
+        required: true
+        default: hpmor-001
+        type: string
+      runner:
+        description: Media compute runner
+        required: true
+        default: local
+        type: choice
+        options:
+          - local
+          - colab
+          - kaggle
+      backend:
+        description: TTS backend adapter (fake is the CI/proof backend)
+        required: true
+        default: fake
+        type: string
+      model:
+        description: Backend model identifier
+        required: true
+        default: deterministic-tone-v1
+        type: string
+      accelerator:
+        description: Remote accelerator (T4 for Colab, NvidiaTeslaT4 for Kaggle)
+        required: false
+        default: ""
+        type: string
+      dry_run:
+        description: Validate/plan only; never invoke media compute
+        required: true
+        default: true
+        type: boolean
+      publish:
+        description: Publish assembled chapter to Internet Archive and persist enclosure state
+        required: true
+        default: false
+        type: boolean
+      force:
+        description: Reserved for future cache bypass
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: audiobook-media-${{ inputs.work_id }}-${{ inputs.chapter_id }}
+  cancel-in-progress: false
+
+jobs:
+  media:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Validate publish invocation
+        if: ${{ inputs.publish == true }}
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+          BACKEND: ${{ inputs.backend }}
+        run: |
+          [[ "$DRY_RUN" == "false" ]] || { echo "publish=true requires dry_run=false" >&2; exit 2; }
+          [[ "$BACKEND" != "fake" ]] || { echo "refusing to publish fake TTS output" >&2; exit 2; }
+          [[ "$GITHUB_REF" == "refs/heads/main" ]] || {
+            echo "publishing is allowed only from the default main branch" >&2
+            exit 2
+          }
+
+      - name: Inspect editorial readiness
+        id: readiness
+        env:
+          WORK_ID: ${{ inputs.work_id }}
+          CHAPTER_ID: ${{ inputs.chapter_id }}
+        run: |
+          npm run audiobook:validate -- \
+            --work "$WORK_ID" \
+            --chapter "$CHAPTER_ID" \
+            --json > "$RUNNER_TEMP/readiness.json"
+          cat "$RUNNER_TEMP/readiness.json"
+          node - "$RUNNER_TEMP/readiness.json" >> "$GITHUB_OUTPUT" <<'NODE'
+          const fs = require('node:fs');
+          const result = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
+          const chapter = result.chapters[0];
+          console.log(`ready=${chapter.readyForAudio}`);
+          console.log(`narration_ready=${!chapter.pendingGates.includes('narration_ready')}`);
+          NODE
+
+      - name: Require ready_for_audio before synthesis
+        if: ${{ inputs.dry_run == false }}
+        env:
+          WORK_ID: ${{ inputs.work_id }}
+          CHAPTER_ID: ${{ inputs.chapter_id }}
+        run: |
+          npm run audiobook:validate -- \
+            --work "$WORK_ID" \
+            --chapter "$CHAPTER_ID" \
+            --require-ready-for-audio
+
+      - name: Create deterministic TTS plan
+        if: ${{ inputs.dry_run == false || steps.readiness.outputs.narration_ready == 'true' }}
+        env:
+          WORK_ID: ${{ inputs.work_id }}
+          CHAPTER_ID: ${{ inputs.chapter_id }}
+        run: |
+          node scripts/audiobook/plan.mjs \
+            --work "$WORK_ID" \
+            --chapter "$CHAPTER_ID" \
+            --output "$RUNNER_TEMP/plan.json"
+          node - "$RUNNER_TEMP/plan.json" >> "$GITHUB_STEP_SUMMARY" <<'NODE'
+          const fs = require('node:fs');
+          const plan = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
+          console.log('## TTS plan');
+          console.log(`- work: \`${plan.work_id}\``);
+          console.log(`- chapter: \`${plan.chapter_id}\``);
+          console.log(`- segments: **${plan.segments.length}**`);
+          console.log(`- narration digest: \`${plan.narration_digest}\``);
+          NODE
+
+      - name: Report editorial block in dry-run
+        if: ${{ inputs.dry_run == true && steps.readiness.outputs.narration_ready != 'true' }}
+        env:
+          WORK_ID: ${{ inputs.work_id }}
+          CHAPTER_ID: ${{ inputs.chapter_id }}
+        run: |
+          {
+            echo "## Audiobook dry-run"
+            echo
+            echo "\`$WORK_ID / $CHAPTER_ID\` is not yet narration-ready."
+            echo "No TTS plan or external compute was started."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        if: ${{ inputs.dry_run == false }}
+        with:
+          python-version: "3.12"
+
+      - name: Run local media worker
+        if: ${{ inputs.dry_run == false && inputs.runner == 'local' }}
+        env:
+          BACKEND: ${{ inputs.backend }}
+          MODEL: ${{ inputs.model }}
+        run: |
+          bash scripts/audiobook/runners/local.sh \
+            --plan "$RUNNER_TEMP/plan.json" \
+            --output "$RUNNER_TEMP/audiobook-result.zip" \
+            --backend "$BACKEND" \
+            --model "$MODEL"
+
+      - name: Configure Colab CLI
+        if: ${{ inputs.dry_run == false && inputs.runner == 'colab' }}
+        env:
+          COLAB_TOKEN_JSON: ${{ secrets.COLAB_TOKEN_JSON }}
+          COLAB_ADC_JSON: ${{ secrets.COLAB_ADC_JSON }}
+        run: |
+          # jupyter-kernel-client 1.0.x renamed the client class and
+          # google-colab-cli 0.6.0 still imports the old name, so an
+          # unpinned install creates a ready session that cannot execute:
+          # AttributeError: module 'jupyter_kernel_client' has no attribute
+          # 'KernelClient'.
+          python -m pip install --disable-pip-version-check 'google-colab-cli==0.6.0' 'jupyter-kernel-client==0.9.0'
+          if [[ -n "$COLAB_TOKEN_JSON" ]]; then
+            install -d -m 700 "$HOME/.config/colab-cli"
+            printf '%s' "$COLAB_TOKEN_JSON" > "$HOME/.config/colab-cli/token.json"
+            chmod 600 "$HOME/.config/colab-cli/token.json"
+            echo "COLAB_AUTH_PROVIDER=oauth2" >> "$GITHUB_ENV"
+          elif [[ -n "$COLAB_ADC_JSON" ]]; then
+            printf '%s' "$COLAB_ADC_JSON" > "$RUNNER_TEMP/colab-adc.json"
+            chmod 600 "$RUNNER_TEMP/colab-adc.json"
+            echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/colab-adc.json" >> "$GITHUB_ENV"
+            echo "COLAB_AUTH_PROVIDER=adc" >> "$GITHUB_ENV"
+          else
+            echo "Missing GitHub secret COLAB_TOKEN_JSON (or COLAB_ADC_JSON)" >&2
+            exit 2
+          fi
+
+      - name: Run Colab media worker
+        if: ${{ inputs.dry_run == false && inputs.runner == 'colab' }}
+        env:
+          BACKEND: ${{ inputs.backend }}
+          MODEL: ${{ inputs.model }}
+          REQUESTED_ACCELERATOR: ${{ inputs.accelerator }}
+        run: |
+          GPU="${REQUESTED_ACCELERATOR:-T4}"
+          bash scripts/audiobook/runners/colab.sh \
+            --plan "$RUNNER_TEMP/plan.json" \
+            --output "$RUNNER_TEMP/audiobook-result.zip" \
+            --backend "$BACKEND" \
+            --model "$MODEL" \
+            --gpu "$GPU"
+
+      - name: Configure Kaggle CLI
+        if: ${{ inputs.dry_run == false && inputs.runner == 'kaggle' }}
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Run Kaggle media worker
+        if: ${{ inputs.dry_run == false && inputs.runner == 'kaggle' }}
+        env:
+          BACKEND: ${{ inputs.backend }}
+          MODEL: ${{ inputs.model }}
+          REQUESTED_ACCELERATOR: ${{ inputs.accelerator }}
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          ACCELERATOR="${REQUESTED_ACCELERATOR:-NvidiaTeslaT4}"
+          bash scripts/audiobook/runners/kaggle.sh \
+            --plan "$RUNNER_TEMP/plan.json" \
+            --output "$RUNNER_TEMP/audiobook-result.zip" \
+            --backend "$BACKEND" \
+            --model "$MODEL" \
+            --accelerator "$ACCELERATOR"
+
+      - name: Extract media result
+        if: ${{ inputs.dry_run == false }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/media"
+          unzip -q "$RUNNER_TEMP/audiobook-result.zip" -d "$RUNNER_TEMP/media"
+
+      - name: Assemble chapter and transcript
+        if: ${{ inputs.dry_run == false }}
+        run: |
+          python3 scripts/audiobook/assemble.py \
+            --plan "$RUNNER_TEMP/plan.json" \
+            --media-dir "$RUNNER_TEMP/media" \
+            --output-dir "$RUNNER_TEMP/assembled"
+
+      - name: Configure Internet Archive client
+        if: ${{ inputs.publish == true }}
+        env:
+          IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
+          IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
+        run: |
+          [[ -n "$IA_ACCESS_KEY_ID" ]] || { echo "Missing GitHub secret IA_ACCESS_KEY_ID" >&2; exit 2; }
+          [[ -n "$IA_SECRET_ACCESS_KEY" ]] || { echo "Missing GitHub secret IA_SECRET_ACCESS_KEY" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'internetarchive==5.11.1'
+
+      - name: Upload and verify Internet Archive enclosure
+        if: ${{ inputs.publish == true }}
+        env:
+          WORK_ID: ${{ inputs.work_id }}
+          CHAPTER_ID: ${{ inputs.chapter_id }}
+          IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
+          IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
+        run: |
+          node scripts/audiobook/publish-internet-archive.mjs \
+            --work "$WORK_ID" \
+            --chapter "$CHAPTER_ID" \
+            --assembly-dir "$RUNNER_TEMP/assembled" \
+            --output "$RUNNER_TEMP/publication.json"
+
+      - name: Persist publication state
+        if: ${{ inputs.publish == true }}
+        env:
+          WORK_ID: ${{ inputs.work_id }}
+          CHAPTER_ID: ${{ inputs.chapter_id }}
+        run: |
+          node scripts/audiobook/apply-publication.mjs \
+            --work "$WORK_ID" \
+            --chapter "$CHAPTER_ID" \
+            --publication "$RUNNER_TEMP/publication.json"
+
+          npm run audiobook:validate -- --work "$WORK_ID" --chapter "$CHAPTER_ID" --require-ready-for-audio
+          npm run build
+
+      - name: Commit published episode state
+        if: ${{ inputs.publish == true }}
+        env:
+          WORK_ID: ${{ inputs.work_id }}
+          CHAPTER_ID: ${{ inputs.chapter_id }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "data/audiobooks/$WORK_ID/state.yaml" "data/audiobooks/$WORK_ID/work.md"
+          git commit -m "feat(audiobook): publish $WORK_ID $CHAPTER_ID"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/3), rebasing onto latest main..."
+            git fetch origin main
+            git rebase origin/main
+          done
+          echo "Push failed after 3 attempts; media is uploaded but publication state was not persisted." >&2
+          exit 1
+
+      - name: Upload plan
+        if: ${{ always() && (inputs.dry_run == false || steps.readiness.outputs.narration_ready == 'true') }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: audiobook-plan-${{ inputs.work_id }}-${{ inputs.chapter_id }}
+          path: ${{ runner.temp }}/plan.json
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload raw media result
+        if: ${{ inputs.dry_run == false }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: audiobook-media-${{ inputs.work_id }}-${{ inputs.chapter_id }}
+          path: ${{ runner.temp }}/audiobook-result.zip
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload assembled chapter
+        if: ${{ inputs.dry_run == false }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: audiobook-assembled-${{ inputs.work_id }}-${{ inputs.chapter_id }}
+          path: ${{ runner.temp }}/assembled/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload publication receipt
+        if: ${{ inputs.publish == true }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: audiobook-publication-${{ inputs.work_id }}-${{ inputs.chapter_id }}
+          path: ${{ runner.temp }}/publication.json
+          if-no-files-found: error
+          retention-days: 90

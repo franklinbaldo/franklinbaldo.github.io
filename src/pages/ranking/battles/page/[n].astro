@@ -41,6 +41,9 @@ for (const p of allPosts) {
 function postLabel(key: string) {
   return byKey.get(key)?.title ?? key;
 }
+function postLangAttr(key: string) {
+  return byKey.get(key)?.lang === "pt" ? "pt" : undefined;
+}
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
@@ -161,13 +164,13 @@ const crumbs = [
             </div>
             <div class="battle-versus">
               <div class="side winner">
-                <span class="post-name">{winnerName}</span>
+                <span class="post-name" lang={postLangAttr(d.winnerKey)}>{winnerName}</span>
                 <span class="medal" aria-hidden="true">🏆</span>
                 {hasRates && <span class="rate">{rateWinner!.toFixed(1)}</span>}
               </div>
               <div class="divider"><span class="vs">VS</span></div>
               <div class="side loser">
-                <span class="post-name">{loserName}</span>
+                <span class="post-name" lang={postLangAttr(d.loserKey)}>{loserName}</span>
                 {hasRates && <span class="rate loser-rate">{rateLoser!.toFixed(1)}</span>}
               </div>
             </div>

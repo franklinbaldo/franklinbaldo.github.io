@@ -267,7 +267,9 @@ function fmtDate(iso: string): string {
                   <div class="duel-opponent">
                     <span class="vs-label">{strings.vs}</span>
                     {opponentHref ? (
-                      <a href={opponentHref}>{opponentTitle}</a>
+                      <a href={opponentHref} lang={opponent && opponent.lang !== lang ? opponent.lang : undefined}>
+                        {opponentTitle}
+                      </a>
                     ) : (
                       <code>{opponentKey}</code>
                     )}
@@ -293,6 +295,7 @@ function fmtDate(iso: string): string {
                     href={`/ranking/battles/${d.id}/`}
                     class="duel-analysis-link"
                     title={strings.readFullAnalysis}
+                    aria-label={`${strings.readFullAnalysis} — ${strings.vs} ${opponentTitle}`}
                   >
                     {strings.analysis}
                   </a>

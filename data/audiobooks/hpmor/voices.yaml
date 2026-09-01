@@ -1,0 +1,19 @@
+schema: audiobook-voices-v1
+work_id: hpmor
+default_locale: pt-BR
+voices:
+  narrator:
+    role: narrator
+    description: Voz narrativa principal; clara, controlada e capaz de sustentar passagens analíticas longas sem soar didática demais.
+  harry:
+    role: character
+    description: Menino muito articulado e intelectualmente precoce; energia juvenil sem transformar a voz em caricatura infantil.
+  mcgonagall:
+    role: character
+    description: Adulta, autoridade contida, precisão e firmeza; emoção deve aparecer sem perder compostura.
+  fallback_male:
+    role: fallback
+    description: Fallback provisório para personagem masculino ainda sem direção individual.
+  fallback_female:
+    role: fallback
+    description: Fallback provisório para personagem feminino ainda sem direção individual.
