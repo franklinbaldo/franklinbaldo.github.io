@@ -41,6 +41,32 @@ function parseArgs(argv) {
   return args;
 }
 
+function runUv(command) {
+  let result = spawnSync("uv", command, {
+    cwd: process.cwd(),
+    encoding: "utf8",
+  });
+
+  if (result.error?.code === "ENOENT") {
+    const bootstrap = spawnSync(
+      "python3",
+      ["-m", "pip", "install", "--disable-pip-version-check", "--user", "uv==0.8.13"],
+      { cwd: process.cwd(), encoding: "utf8" }
+    );
+    if (bootstrap.status !== 0) {
+      throw new Error(
+        `OKF validation requires uv; bootstrap failed: ${(bootstrap.stderr || bootstrap.stdout).trim()}`
+      );
+    }
+    result = spawnSync("python3", ["-m", "uv", ...command], {
+      cwd: process.cwd(),
+      encoding: "utf8",
+    });
+  }
+
+  return result;
+}
+
 function validateOkf(args) {
   const command = [
     "run",
@@ -51,14 +77,10 @@ function validateOkf(args) {
   ];
   if (args.chapterId) command.push("--chapter", args.chapterId);
 
-  const result = spawnSync("uv", command, {
-    cwd: process.cwd(),
-    encoding: "utf8",
-  });
-
+  const result = runUv(command);
   if (result.error) {
     throw new Error(
-      `OKF validation could not start: ${result.error.message}. Install uv; audiobook validation fails closed without okf-parser.`
+      `OKF validation could not start: ${result.error.message}. Audiobook validation fails closed without okf-parser.`
     );
   }
 
