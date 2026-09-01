@@ -14,6 +14,8 @@ const archiveHref = `${prefix}/archive/`;
 const tagsHref = `${prefix}/tags/`;
 const musicHref = lang === 'pt' ? `${prefix}/musicas/` : '/music/';
 const booksHref = lang === 'pt' ? `${prefix}/livros/` : '/books/';
+const audiobooksHref = '/audiobooks/';
+const audiobooksLabel = lang === 'pt' ? 'Audiolivros' : 'Audiobooks';
 const searchHref = `${prefix}/search/`;
 const projectsHref = `${prefix}/projects/`;
 const rankingHref = `${prefix}/ranking/`;
@@ -44,6 +46,7 @@ const primaryLinks = [
 const secondaryLinks = [
   { href: musicHref, label: t(lang, 'nav.music') },
   { href: booksHref, label: t(lang, 'nav.books') },
+  { href: audiobooksHref, label: audiobooksLabel },
   { href: rankingHref, label: t(lang, 'nav.ranking') },
   { href: tagsHref, label: t(lang, 'nav.tags') },
   { href: changelogHref, label: 'Changelog' },
