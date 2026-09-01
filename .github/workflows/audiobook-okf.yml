@@ -1,0 +1,28 @@
+name: Audiobook OKF
+
+on:
+  pull_request:
+    paths:
+      - "data/audiobooks/**"
+      - "scripts/audiobook/**"
+      - "src/audiobook/**"
+      - ".github/workflows/audiobook-*.yml"
+  push:
+    branches: [main]
+    paths:
+      - "data/audiobooks/**"
+      - "scripts/audiobook/**"
+      - "src/audiobook/**"
+      - ".github/workflows/audiobook-*.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-hpmor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: astral-sh/setup-uv@v6
+      - name: Validate OKF and per-segment invariants
+        run: uv run scripts/audiobook/validate-okf.py --work hpmor
