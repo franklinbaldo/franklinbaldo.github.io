@@ -4,6 +4,9 @@ work_id: hpmor
 status: editorial-use-allowed-publication-unverified
 source_site: https://hpmor.com/
 checked_at: 2026-08-30
+editorial_work_allowed: true
+public_distribution_authorized: false
+authorization_basis: null
 ---
 
 # Direitos e proveniência — HPMOR
