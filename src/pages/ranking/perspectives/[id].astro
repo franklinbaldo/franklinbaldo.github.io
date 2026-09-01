@@ -105,7 +105,10 @@ const crumbs = [
             <td class="col-rank">{r.rank}</td>
             <td>
               {r.post ? (
-                <a href={r.post.lang === "pt" ? `/pt/blog/${r.post.slug}/` : `/blog/${r.post.slug}/`}>
+                <a
+                  href={r.post.lang === "pt" ? `/pt/blog/${r.post.slug}/` : `/blog/${r.post.slug}/`}
+                  lang={r.post.lang === "pt" ? "pt" : undefined}
+                >
                   {r.post.title}
                 </a>
               ) : (
