@@ -37,6 +37,8 @@ PROJECT_GUIDES = (
     "docs/okf/audiobook/multi-work-architecture.md",
 )
 WORK_PREREQUISITES = ("work.md", "editorial.md", "rights.md", "voices.yaml", "pronunciation.yaml")
+TTS_BODY_CONTRACT = "body-is-payload-v1"
+FORBIDDEN_NARRATION_BODY_PREFIXES = ("#", "```", "<!--", "---")
 
 
 def _args() -> argparse.Namespace:
@@ -56,11 +58,54 @@ def _load_yaml(path: Path) -> dict:
     return data if isinstance(data, dict) else {}
 
 
+def _markdown_body(path: Path) -> str:
+    text = path.read_text(encoding="utf-8")
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0].strip() != "---":
+        return ""
+    for index, line in enumerate(lines[1:], start=1):
+        if line.strip() == "---":
+            return "".join(lines[index + 1 :]).strip()
+    return ""
+
+
+def _validate_tts_body(root: Path, path: str, data: dict, errors: list[str]) -> bool:
+    contract = data.get("tts_body_contract")
+    if contract is None:
+        return False
+    if contract != TTS_BODY_CONTRACT:
+        errors.append(f"{path}: tts_body_contract must be {TTS_BODY_CONTRACT!r}")
+        return True
+
+    body = _markdown_body(root / path)
+    if not body:
+        errors.append(f"{path}: narration body must be a non-empty direct TTS payload")
+        return True
+
+    notes = data.get("editorial_notes")
+    if notes is not None and (
+        not isinstance(notes, list)
+        or not all(isinstance(note, str) and note.strip() for note in notes)
+    ):
+        errors.append(f"{path}: editorial_notes must be a list of non-empty strings when present")
+
+    for number, line in enumerate(body.splitlines(), start=1):
+        stripped = line.lstrip()
+        if stripped.startswith(FORBIDDEN_NARRATION_BODY_PREFIXES):
+            errors.append(
+                f"{path}: narration body line {number} contains Markdown/editorial markup; "
+                "move notes/instructions to frontmatter because body is the direct TTS payload"
+            )
+    return True
+
+
 def main() -> int:
     args = _args()
     root = Path(__file__).resolve().parents[2]
     work_dir = root / "data" / "audiobooks" / args.work
     errors: list[str] = []
+    tts_body_contract_segments = 0
+    legacy_narration_segments = 0
 
     for rel in PROJECT_GUIDES:
         if not (root / rel).is_file():
@@ -126,6 +171,10 @@ def main() -> int:
                     errors.append(f"{path}: mixed narration requires voice_partition")
             elif isinstance(speaker, str) and speaker not in voice_ids:
                 errors.append(f"{path}: speaker {speaker!r} has no entry in voices.yaml")
+            if _validate_tts_body(root, path, data, errors):
+                tts_body_contract_segments += 1
+            else:
+                legacy_narration_segments += 1
         key = (chapter_id, segment_id)
         if layer in segments[key]:
             errors.append(f"{chapter_id}/{segment_id}: duplicate canonical {layer} shard")
@@ -155,13 +204,20 @@ def main() -> int:
         "okf_conformant": report.is_conformant,
         "project_prerequisites_checked": len(PROJECT_GUIDES),
         "canonical_segments_checked": len(segments),
+        "tts_body_contract_segments": tts_body_contract_segments,
+        "legacy_narration_segments": legacy_narration_segments,
         "valid": not errors,
         "errors": errors,
     }
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
-        print(f"Audiobook OKF validation: work={args.work} segments={len(segments)} valid={not errors}")
+        print(
+            "Audiobook OKF validation: "
+            f"work={args.work} segments={len(segments)} "
+            f"tts_body_contract={tts_body_contract_segments} "
+            f"legacy_narration={legacy_narration_segments} valid={not errors}"
+        )
         for error in errors:
             print(f"- {error}", file=sys.stderr)
     return 0 if not errors else 1
