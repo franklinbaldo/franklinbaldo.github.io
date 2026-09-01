@@ -1,0 +1,192 @@
+name: Blog Audio
+
+on:
+  workflow_dispatch:
+    inputs:
+      post_id:
+        description: Canonical blog collection id
+        required: true
+        type: string
+      narration:
+        description: Prepared narration Markdown path
+        required: true
+        type: string
+      voices:
+        description: Voice configuration path
+        required: true
+        default: data/audio/blog/voices.yaml
+        type: string
+      title:
+        description: Public episode title
+        required: true
+        type: string
+      runner:
+        description: Media compute runner
+        required: true
+        default: kaggle
+        type: choice
+        options: [local, kaggle]
+      backend:
+        description: TTS backend
+        required: true
+        default: breeze
+        type: string
+      model:
+        description: Backend model identifier
+        required: true
+        default: breeze-tts-2
+        type: string
+      dry_run:
+        description: Plan only; do not synthesize
+        required: true
+        default: true
+        type: boolean
+      publish:
+        description: Upload verified audio to Internet Archive and publish it in the blog/feed manifest
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: blog-audio-${{ inputs.post_id }}
+  cancel-in-progress: false
+
+jobs:
+  audio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Validate invocation and editorial readiness
+        env:
+          POST_ID: ${{ inputs.post_id }}
+          NARRATION: ${{ inputs.narration }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          PUBLISH: ${{ inputs.publish }}
+          BACKEND: ${{ inputs.backend }}
+        run: |
+          node - "$NARRATION" "$POST_ID" "$DRY_RUN" <<'NODE'
+          const fs = require('node:fs');
+          const matter = require('gray-matter');
+          const [file, postId, dryRun] = process.argv.slice(2);
+          const parsed = matter(fs.readFileSync(file, 'utf8'));
+          const d = parsed.data;
+          if (d.type !== 'Audiobook Narration Chapter') throw new Error('narration must use the canonical TTS narration schema');
+          if (d.work_id !== 'blog') throw new Error('blog narration work_id must be blog');
+          if (d.chapter_id !== postId) throw new Error(`chapter_id ${d.chapter_id} != post_id ${postId}`);
+          if (dryRun === 'false' && d.ready_for_audio !== true) throw new Error('ready_for_audio must be true before TTS');
+          NODE
+          if [[ "$PUBLISH" == "true" ]]; then
+            [[ "$DRY_RUN" == "false" ]] || { echo "publish=true requires dry_run=false" >&2; exit 2; }
+            [[ "$BACKEND" != "fake" ]] || { echo "refusing to publish fake TTS output" >&2; exit 2; }
+            [[ "$GITHUB_REF" == "refs/heads/main" ]] || { echo "publishing is allowed only from main" >&2; exit 2; }
+          fi
+
+      - name: Create deterministic TTS plan
+        env:
+          NARRATION: ${{ inputs.narration }}
+          VOICES: ${{ inputs.voices }}
+        run: node scripts/audiobook/plan.mjs --narration "$NARRATION" --voices "$VOICES" --output "$RUNNER_TEMP/plan.json"
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        if: ${{ inputs.dry_run == false }}
+        with:
+          python-version: '3.12'
+
+      - name: Run local media worker
+        if: ${{ inputs.dry_run == false && inputs.runner == 'local' }}
+        env:
+          BACKEND: ${{ inputs.backend }}
+          MODEL: ${{ inputs.model }}
+        run: bash scripts/audiobook/runners/local.sh --plan "$RUNNER_TEMP/plan.json" --output "$RUNNER_TEMP/audio-result.zip" --backend "$BACKEND" --model "$MODEL"
+
+      - name: Configure Kaggle CLI
+        if: ${{ inputs.dry_run == false && inputs.runner == 'kaggle' }}
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Run Kaggle media worker
+        if: ${{ inputs.dry_run == false && inputs.runner == 'kaggle' }}
+        env:
+          BACKEND: ${{ inputs.backend }}
+          MODEL: ${{ inputs.model }}
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: bash scripts/audiobook/runners/kaggle.sh --plan "$RUNNER_TEMP/plan.json" --output "$RUNNER_TEMP/audio-result.zip" --backend "$BACKEND" --model "$MODEL" --accelerator NvidiaTeslaT4
+
+      - name: Assemble article audio
+        if: ${{ inputs.dry_run == false }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/media"
+          unzip -q "$RUNNER_TEMP/audio-result.zip" -d "$RUNNER_TEMP/media"
+          python3 scripts/audiobook/assemble.py --plan "$RUNNER_TEMP/plan.json" --media-dir "$RUNNER_TEMP/media" --output-dir "$RUNNER_TEMP/assembled"
+
+      - name: Configure Internet Archive client
+        if: ${{ inputs.publish == true }}
+        env:
+          IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
+          IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
+        run: |
+          [[ -n "$IA_ACCESS_KEY_ID" ]] || { echo "Missing GitHub secret IA_ACCESS_KEY_ID" >&2; exit 2; }
+          [[ -n "$IA_SECRET_ACCESS_KEY" ]] || { echo "Missing GitHub secret IA_SECRET_ACCESS_KEY" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'internetarchive==5.11.1'
+
+      - name: Upload, verify and persist publication
+        if: ${{ inputs.publish == true }}
+        env:
+          IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
+          IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
+          POST_ID: ${{ inputs.post_id }}
+          TITLE: ${{ inputs.title }}
+        run: |
+          AUDIO=$(node -e "const a=require('$RUNNER_TEMP/assembled/assembly.json'); process.stdout.write('$RUNNER_TEMP/assembled/'+a.audio.file)")
+          DURATION=$(node -e "const a=require('$RUNNER_TEMP/assembled/assembly.json'); process.stdout.write(String(a.duration_seconds))")
+          node scripts/audio/publish-blog-internet-archive.mjs --post "$POST_ID" --audio "$AUDIO" --title "$TITLE" --output "$RUNNER_TEMP/publication.json"
+          node scripts/audio/apply-blog-publication.mjs --publication "$RUNNER_TEMP/publication.json" --duration-seconds "$DURATION"
+          npm run build
+
+      - name: Commit verified publication manifest
+        if: ${{ inputs.publish == true }}
+        env:
+          POST_ID: ${{ inputs.post_id }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/blog-audio.json
+          git commit -m "feat(audio): publish $POST_ID"
+          for attempt in 1 2 3; do
+            git push origin HEAD:main && exit 0
+            git fetch origin main
+            git rebase origin/main
+          done
+          exit 1
+
+      - name: Upload plan and assembled media
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: blog-audio-${{ inputs.post_id }}
+          path: |
+            ${{ runner.temp }}/plan.json
+            ${{ runner.temp }}/assembled/
+            ${{ runner.temp }}/publication.json
+          if-no-files-found: ignore
+          retention-days: 30
