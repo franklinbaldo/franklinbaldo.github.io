@@ -1,7 +1,7 @@
 schema: audiobook-work-state-v1
 work_id: hpmor
 status: preparing
-next_action: apply staged hpmor-001-s0028 to original, translation, and narration before advancing; do not renumber existing segment ids and do not dispatch TTS while chapter-level readiness remains false
+next_action: advance exactly hpmor-001-s0029 through original, translation, and narration; preserve stable ids and do not dispatch TTS while chapter-level readiness remains false
 project_gates:
   work_metadata_ready: true
   global_editorial_guide_ready: true
@@ -17,7 +17,7 @@ publication:
 chapters:
   hpmor-001:
     status: in_progress
-    next_action: apply the staged hpmor-001-s0028 payload to all three canonical chapter layers; do not touch s0029 and do not dispatch TTS because chapter-level narration/audio readiness remains false
+    next_action: advance exactly hpmor-001-s0029 through all three canonical chapter layers; do not touch s0030 and do not dispatch TTS because chapter-level narration/audio readiness remains false
     files:
       original: original/001.md
       translation: translation/001.md
@@ -50,28 +50,8 @@ chapters:
       - hpmor-001-s0025
       - hpmor-001-s0026
       - hpmor-001-s0027
-    next_segment_id: hpmor-001-s0028
-    staged_segment:
-      id: hpmor-001-s0028
-      source:
-        text: "Harry took a deep breath. \"Mum, your parents didn't have magic, did they?\""
-        source_digest: sha256:cebd8852d7853b6c2784b1538be0e69287b6113b4d9251840070b1d54c9c62ea
-        source_anchor: chapter-1 living-room argument, Harry takes a breath and asks Petunia whether her parents had magic
-      translation:
-        text: "Harry respirou fundo. \"Mãe, seus pais não tinham magia, tinham?\""
-        note: preserve Harry's concise evidential question and the tag-question structure; do not make the line confrontational or more adult than the source
-      narration:
-        voice_partition: mixed-dialogue-pending
-        sequence: narrator -> harry
-        emotion: deliberate-inquiry
-        pace: medium
-        intensity: low
-        pause_before_ms: 180
-        pause_after_ms: 220
-        note: mixed narrator-to-Harry unit; the breath is narrated rather than invented as a TTS vocal event, and Harry's question should sound controlled and analytical rather than accusatory
-      terminology_pronunciation_change_required: false
-      voice_guidance_change_required: false
-      editorial_status: staged-awaiting-canonical-write
+      - hpmor-001-s0028
+    next_segment_id: hpmor-001-s0029
     validation_notes:
       - hpmor-001-s0009 is the first mixed dialogue+narration source segment; narration marks voice_partition=mixed-dialogue-pending until the provider-neutral audio contract can represent character/narrator partitions without changing the stable editorial segment_id
       - hpmor-001-s0010 through hpmor-001-s0013 use the same pending partition marker where required; no TTS dispatch is allowed while audio_contract_ready is false
@@ -90,7 +70,7 @@ chapters:
       - hpmor-001-s0025 advances source, translation, and narration with the same stable segment_id; Petunia's anxious gesture and near-tears state remain explicit without being intensified into actual crying, the translation preserves the shift from argument-winning to relational trust, narration marks the narrator-Petunia structure as mixed-dialogue-pending, and no new terminology or pronunciation entry is required
       - hpmor-001-s0026 is now present in original, translation, and narration with the same stable segment_id; Dad! Mum! is translated as Pai! Mãe!, narration uses the existing harry voice directly with urgent-interruption pacing, and no terminology, pronunciation, or voice-rule change is required
       - hpmor-001-s0027 is now materialized in original, translation, and narration with the same stable segment_id and source digest; the dry observational comparison is preserved without inventing surprise, guilt, dramatic silence, or a vocal event, and narration uses speaker=narrator directly with no mixed-dialogue partition
-      - hpmor-001-s0028 has been source-verified and editorially resolved in this run; its exact payload is staged here because the available repository write action replaces whole canonical chapter files, so the next run must apply this payload before advancing to s0029
+      - hpmor-001-s0028 is now materialized in original, translation, and narration with the same stable segment_id and source digest; Harry's deep breath remains narrated rather than becoming an invented TTS vocal event, the negative tag question is preserved in pt-BR, narration marks narrator-to-Harry as mixed-dialogue-pending, and no new terminology, pronunciation, or voice rule is required
       - repository formatting remains separate from chapter readiness and must not be used to bypass source, translation, narration, audio-contract, or rights gates
     gates:
       work_ready: true
