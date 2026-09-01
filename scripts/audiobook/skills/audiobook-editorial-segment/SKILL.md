@@ -19,6 +19,8 @@ Use this skill whenever advancing one unit of an audiobook in this repository.
 
 Advance exactly one next canonical editorial unit. Do not opportunistically prepare the following segment. Derive the cursor from existing canonical shards rather than a manually maintained state file.
 
+The unit is a semantic/prosodic block, not automatically one sentence or one paragraph. Prefer enough contiguous context for a modern TTS to realize rhythm and intonation coherently. Do not split a single thought merely to keep shards tiny, and do not merge distinct scenes, speakers, or rhetorical movements merely to make a larger request.
+
 For one `segment_id`, create or complete exactly these aligned layers:
 
 ```text
@@ -27,7 +29,7 @@ original/<segment_id>.okf.md
   -> narration/<segment_id>.okf.md
 ```
 
-`work_id`, `chapter_id`, and `segment_id` must be byte-for-byte identical across the three layers. `derived_from` must resolve exactly from translation to original and from narration to translation.
+`work_id`, `chapter_id`, and `segment_id` must be byte-for-byte identical across the three layers. The source span represented by the three bodies must also be the same unit. `derived_from` must resolve exactly from translation to original and from narration to translation.
 
 ## Before editing
 
@@ -37,11 +39,13 @@ If a recurring decision is missing, add it at the work/project level instead of 
 
 ## Original shard
 
-Preserve source text exactly for the selected unit. Record source URL, source anchor and digest. Do not combine the next unit merely because it is convenient for TTS.
+Preserve source text exactly for the selected semantic unit. Record source URL, source anchor and digest. Select the coherent block before translating; do not decide segmentation independently in each layer.
+
+As a repository review heuristic, narration bodies under `tts-body-v1` normally land between roughly 240 and 1800 characters. These are not backend limits. If a natural unit is shorter, record `short_segment_reason`; if it is longer, record `long_segment_reason`. Backend request limits are handled later by adapters without changing the canonical `segment_id`.
 
 ## Translation shard
 
-Translate with ChatGPT's own reasoning. Do not call an external model API. Preserve meaning, rhetoric, ambiguity and register. Keep translation decisions separate from pronunciation and provider-specific TTS workarounds.
+Translate with ChatGPT's own reasoning. Do not call an external model API. Preserve meaning, rhetoric, ambiguity and register. Keep translation decisions separate from pronunciation and provider-specific TTS workarounds. The translation must cover exactly the source span represented by the original shard.
 
 ## Narration shard
 
@@ -53,7 +57,7 @@ Every new narration segment under this contract declares `payload_contract: tts-
 
 ## Validation and readiness
 
-Run the canonical audiobook validation for the work/chapter. A valid segment is not the same thing as an audio-ready chapter. Do not mark a chapter `ready_for_audio` until every project-level readiness prerequisite passes.
+Run the canonical audiobook validation for the work/chapter. The validator checks body purity and requires an explicit frontmatter reason for unusually short or unusually long TTS payloads. A valid segment is not the same thing as an audio-ready chapter. Do not mark a chapter `ready_for_audio` until every project-level readiness prerequisite passes.
 
 External model/API use is forbidden for source selection, translation, rewriting, narration preparation and editorial review. TTS is the only allowed external-model stage, and it may run only after explicit audio readiness.
 
