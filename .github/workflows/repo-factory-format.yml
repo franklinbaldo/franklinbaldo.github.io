@@ -1,4 +1,4 @@
-name: Repo Factory format fix
+name: Repo Factory bootstrap
 
 on:
   push:
@@ -8,7 +8,8 @@ permissions:
   contents: write
 
 jobs:
-  format:
+  bootstrap:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -19,16 +20,20 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Generate public Repo Factory snapshot
+        run: node scripts/generate-repo-factory.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Format Repo Factory files
-        run: npx prettier --write scripts/generate-repo-factory.mjs src/scripts/repo-factory.ts src/styles/repo-factory.css
-      - name: Commit formatting
+        run: npx prettier --write scripts/generate-repo-factory.mjs scripts/pregen.mjs src/scripts/repo-factory.ts src/styles/repo-factory.css src/generated/repo-factory.json
+      - name: Commit bootstrap snapshot
         run: |
-          if git diff --quiet; then
-            echo "Already formatted."
-            exit 0
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add scripts/generate-repo-factory.mjs src/scripts/repo-factory.ts src/styles/repo-factory.css
-          git commit -m "style(games): format Repo Factory"
+          git add scripts/generate-repo-factory.mjs scripts/pregen.mjs src/scripts/repo-factory.ts src/styles/repo-factory.css src/generated/repo-factory.json
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git commit -m "data(games): bootstrap Repo Factory snapshot"
           git push origin HEAD:feat/repo-factory-game
