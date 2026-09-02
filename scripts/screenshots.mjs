@@ -17,9 +17,10 @@ const pages = [
   },
   { id: "04-en-path-agency", url: "/paths/agency-and-constraint/" },
   { id: "05-en-archive", url: "/archive/" },
+  { id: "06-en-repo-factory", url: "/games/repo-factory/" },
 ];
 
-const themeKeyPages = ["01-en-home", "03-en-post-delphi"];
+const themeKeyPages = ["01-en-home", "03-en-post-delphi", "06-en-repo-factory"];
 
 const browser = await chromium.launch();
 
