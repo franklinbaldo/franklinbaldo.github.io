@@ -27,7 +27,7 @@ const recent = (await getCollection("blog"))
     </search>
   </section>
 
-  <nav aria-label="Publicados recentemente">
+  <nav class="recovery-recent" aria-label="Publicados recentemente">
     <h2>Publicados recentemente</h2>
     <ul>
       {recent.map((post) => (
@@ -54,3 +54,22 @@ const recent = (await getCollection("blog"))
   <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
   <script is:inline type="module" src="/pagefind/pagefind-component-ui.js"></script>
 </PageLayout>
+
+<style>
+  @media (max-width: 40rem) {
+    .recovery-recent {
+      display: block;
+    }
+
+    .recovery-recent ul {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.5rem;
+      padding-inline-start: 0;
+    }
+
+    .recovery-recent li {
+      min-width: 0;
+    }
+  }
+</style>
