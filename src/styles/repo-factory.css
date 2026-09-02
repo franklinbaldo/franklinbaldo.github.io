@@ -39,7 +39,12 @@
 .inspector-eyebrow {
   margin: 0;
   color: var(--factory-brass);
-  font: 800 0.68rem/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    800 0.68rem/1.2 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -65,7 +70,12 @@
   padding: 0.85rem 0.95rem;
   border: 1px solid var(--pico-muted-border-color);
   background: color-mix(in srgb, var(--factory-panel) 72%, transparent);
-  font: 0.72rem/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    0.72rem/1.45 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
 }
 
 .factory-source div {
@@ -85,7 +95,8 @@
   border: 1px solid color-mix(in srgb, var(--factory-green) 65%, black);
   border-radius: 50%;
   background: var(--factory-green);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--factory-green) 18%, transparent);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--factory-green) 18%, transparent);
 }
 
 .factory-metrics {
@@ -111,14 +122,23 @@
 .factory-metrics small {
   display: block;
   color: var(--factory-muted);
-  font: 700 0.61rem/1.25 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    700 0.61rem/1.25 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
   letter-spacing: 0.06em;
 }
 
 .factory-metrics strong {
   display: block;
   margin: 0.18rem 0 0.08rem;
-  font: 800 clamp(1.25rem, 3vw, 2rem) / 1 ui-monospace, SFMono-Regular, Menlo, Consolas,
+  font:
+    800 clamp(1.25rem, 3vw, 2rem) / 1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
     monospace;
 }
 
@@ -142,7 +162,12 @@
 
 .factory-toolbar label > span {
   color: var(--factory-muted);
-  font: 700 0.66rem/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    700 0.66rem/1.2 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -284,10 +309,12 @@
   border: 2px solid color-mix(in srgb, var(--factory-ink) 52%, transparent);
   border-radius: 3px;
   background:
-    linear-gradient(90deg, transparent 50%, rgba(255, 255, 255, 0.025) 50%) 0 0 / 6px 6px,
+    linear-gradient(90deg, transparent 50%, rgba(255, 255, 255, 0.025) 50%) 0
+      0 / 6px 6px,
     var(--factory-panel-2);
   color: var(--factory-ink);
-  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--factory-metal) 38%, transparent);
+  box-shadow: inset 0 0 0 3px
+    color-mix(in srgb, var(--factory-metal) 38%, transparent);
   text-align: left;
   transition:
     border-color 120ms ease,
@@ -330,7 +357,12 @@
   gap: 0.38rem;
   align-items: center;
   min-width: 0;
-  font: 700 0.58rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    700 0.58rem/1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
   letter-spacing: 0.05em;
 }
 
@@ -352,14 +384,24 @@
 .factory-node > strong {
   max-width: 100%;
   overflow: hidden;
-  font: 800 1.08rem/1.15 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    800 1.08rem/1.15 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .machine-language {
   color: var(--factory-muted);
-  font: 0.63rem/1.15 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    0.63rem/1.15 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
 }
 
 .machine-pipeline {
@@ -370,7 +412,12 @@
   justify-content: space-between;
   padding-top: 0.45rem;
   border-top: 1px solid color-mix(in srgb, var(--factory-ink) 18%, transparent);
-  font: 700 0.64rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    700 0.64rem/1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
 }
 
 .machine-pipeline i {
@@ -384,7 +431,11 @@
   margin: 0;
   padding: 0.9rem;
   border: 1px solid var(--pico-muted-border-color);
-  background: color-mix(in srgb, var(--factory-panel) 50%, var(--pico-background-color));
+  background: color-mix(
+    in srgb,
+    var(--factory-panel) 50%,
+    var(--pico-background-color)
+  );
 }
 
 .inspector-title-row {
@@ -399,7 +450,12 @@
   min-width: 0;
   margin: 0;
   overflow-wrap: anywhere;
-  font: 800 1.35rem/1.1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    800 1.35rem/1.1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
 }
 
 .status-chip,
@@ -409,7 +465,12 @@
   border: 1px solid currentColor;
   border-radius: 999px;
   padding: 0.12rem 0.34rem;
-  font: 800 0.54rem/1.1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    800 0.54rem/1.1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -464,13 +525,23 @@
 
 .inspector-stats dt {
   color: var(--factory-muted);
-  font: 600 0.5rem/1.1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    600 0.5rem/1.1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
   text-transform: uppercase;
 }
 
 .inspector-stats dd {
   margin: 0.16rem 0 0;
-  font: 800 0.83rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    800 0.83rem/1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
 }
 
 .inspector-block {
@@ -493,7 +564,12 @@
 
 .inspector-block-head span {
   color: var(--factory-muted);
-  font: 0.55rem/1.1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    0.55rem/1.1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
   text-transform: uppercase;
 }
 
@@ -544,7 +620,12 @@
 
 .belt-direction {
   color: var(--factory-brass);
-  font: 800 0.52rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    800 0.52rem/1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
 }
 
 .inspector-empty {
@@ -666,7 +747,12 @@
 .production-repo {
   overflow: hidden;
   color: var(--factory-muted);
-  font: 0.64rem/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    0.64rem/1.2 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -677,7 +763,12 @@
   gap: 0.35rem;
   margin-top: 1rem;
   color: var(--factory-muted);
-  font: 0.64rem/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font:
+    0.64rem/1.3 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
 }
 
 @media (max-width: 1050px) {

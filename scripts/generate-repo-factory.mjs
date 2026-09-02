@@ -100,13 +100,15 @@ function writeSnapshot(snapshot) {
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, `${JSON.stringify(snapshot, null, 2)}\n`);
   console.log(
-    `[repo-factory] wrote ${snapshot.repositories.length} public repositories and ${snapshot.connections.length} belts to ${outputPath}`,
+    `[repo-factory] wrote ${snapshot.repositories.length} public repositories and ${snapshot.connections.length} belts to ${outputPath}`
   );
 }
 
 async function main() {
   if (optional && !token) {
-    console.log("[repo-factory] no GitHub token in optional mode; keeping committed snapshot");
+    console.log(
+      "[repo-factory] no GitHub token in optional mode; keeping committed snapshot"
+    );
     return;
   }
 
@@ -124,22 +126,31 @@ async function main() {
       .trim()
       .split("\n")[0];
     console.warn(
-      `[repo-factory] live GitHub sync unavailable${detail ? `: ${detail}` : ""}; keeping committed snapshot`,
+      `[repo-factory] live GitHub sync unavailable${detail ? `: ${detail}` : ""}; keeping committed snapshot`
     );
     if (!fallback) {
-      throw new Error("repo factory has neither GitHub data nor a committed fallback snapshot");
+      throw new Error(
+        "repo factory has neither GitHub data nor a committed fallback snapshot"
+      );
     }
     return;
   }
 
   const publicRepos = rawRepos
-    .filter((repo) => !repo.private && repo.visibility === "public" && !repo.archived)
+    .filter(
+      (repo) => !repo.private && repo.visibility === "public" && !repo.archived
+    )
     .sort((a, b) => String(b.pushed_at).localeCompare(String(a.pushed_at)));
   const publicNames = new Set(publicRepos.map((repo) => repo.name));
   const connectionEvidence = new Map();
 
   function addConnection(source, target, reason) {
-    if (!publicNames.has(source) || !publicNames.has(target) || source === target) return;
+    if (
+      !publicNames.has(source) ||
+      !publicNames.has(target) ||
+      source === target
+    )
+      return;
     const key = `${source}\u0000${target}`;
     const reasons = connectionEvidence.get(key) ?? new Set();
     reasons.add(reason);
@@ -149,47 +160,66 @@ async function main() {
   const repositories = [];
   for (const [index, repo] of publicRepos.entries()) {
     const prefix = `/repos/${OWNER}/${repo.name}`;
-    console.log(`[repo-factory] ${index + 1}/${publicRepos.length} ${repo.name}`);
+    console.log(
+      `[repo-factory] ${index + 1}/${publicRepos.length} ${repo.name}`
+    );
 
-    const [openPullsRaw, closedPullsRaw, openIssuesRaw, runsRaw, releasesRaw] = [
-      safeGh(`${prefix}/pulls`, { state: "open", per_page: 100 }, []),
-      safeGh(
-        `${prefix}/pulls`,
-        { state: "closed", sort: "updated", direction: "desc", per_page: 50 },
-        [],
-      ),
-      safeGh(
-        `${prefix}/issues`,
-        { state: "open", sort: "updated", direction: "desc", per_page: 50 },
-        [],
-      ),
-      safeGh(`${prefix}/actions/runs`, { per_page: 50 }, { workflow_runs: [] }),
-      safeGh(`${prefix}/releases`, { per_page: 20 }, []),
-    ];
+    const [openPullsRaw, closedPullsRaw, openIssuesRaw, runsRaw, releasesRaw] =
+      [
+        safeGh(`${prefix}/pulls`, { state: "open", per_page: 100 }, []),
+        safeGh(
+          `${prefix}/pulls`,
+          { state: "closed", sort: "updated", direction: "desc", per_page: 50 },
+          []
+        ),
+        safeGh(
+          `${prefix}/issues`,
+          { state: "open", sort: "updated", direction: "desc", per_page: 50 },
+          []
+        ),
+        safeGh(
+          `${prefix}/actions/runs`,
+          { per_page: 50 },
+          { workflow_runs: [] }
+        ),
+        safeGh(`${prefix}/releases`, { per_page: 20 }, []),
+      ];
 
     const openPulls = Array.isArray(openPullsRaw) ? openPullsRaw : [];
     const closedPulls = Array.isArray(closedPullsRaw) ? closedPullsRaw : [];
-    const openIssues = (Array.isArray(openIssuesRaw) ? openIssuesRaw : []).filter(
-      (issue) => !issue.pull_request,
-    );
-    const runs = Array.isArray(runsRaw?.workflow_runs) ? runsRaw.workflow_runs : [];
+    const openIssues = (
+      Array.isArray(openIssuesRaw) ? openIssuesRaw : []
+    ).filter((issue) => !issue.pull_request);
+    const runs = Array.isArray(runsRaw?.workflow_runs)
+      ? runsRaw.workflow_runs
+      : [];
     const releases = Array.isArray(releasesRaw) ? releasesRaw : [];
     const mergedPulls7d = closedPulls.filter(
-      (pull) => pull.merged_at && after(pull.merged_at, since.week),
+      (pull) => pull.merged_at && after(pull.merged_at, since.week)
     );
     const mergedPulls30d = closedPulls.filter(
-      (pull) => pull.merged_at && after(pull.merged_at, since.month),
+      (pull) => pull.merged_at && after(pull.merged_at, since.month)
     );
     const runs24h = runs.filter((run) => after(run.created_at, since.day));
     const runs7d = runs.filter((run) => after(run.created_at, since.week));
     const completedRuns7d = runs7d.filter((run) => run.status === "completed");
-    const successfulRuns7d = completedRuns7d.filter((run) => run.conclusion === "success");
-    const successfulRuns24h = runs24h.filter((run) => run.conclusion === "success");
-    const failedRuns24h = runs24h.filter((run) =>
-      ["failure", "cancelled", "timed_out", "startup_failure"].includes(run.conclusion),
+    const successfulRuns7d = completedRuns7d.filter(
+      (run) => run.conclusion === "success"
     );
-    const releases7d = releases.filter((release) => after(release.published_at, since.week));
-    const releases30d = releases.filter((release) => after(release.published_at, since.month));
+    const successfulRuns24h = runs24h.filter(
+      (run) => run.conclusion === "success"
+    );
+    const failedRuns24h = runs24h.filter((run) =>
+      ["failure", "cancelled", "timed_out", "startup_failure"].includes(
+        run.conclusion
+      )
+    );
+    const releases7d = releases.filter((release) =>
+      after(release.published_at, since.week)
+    );
+    const releases30d = releases.filter((release) =>
+      after(release.published_at, since.month)
+    );
 
     const recentProducts = [
       ...mergedPulls30d.map((pull) =>
@@ -199,8 +229,8 @@ async function main() {
           pull.title,
           pull.html_url,
           pull.merged_at,
-          pull.number,
-        ),
+          pull.number
+        )
       ),
       ...releases30d.map((release) =>
         product(
@@ -208,8 +238,8 @@ async function main() {
           repo.name,
           release.name || release.tag_name,
           release.html_url,
-          release.published_at,
-        ),
+          release.published_at
+        )
       ),
       ...successfulRuns7d.map((run) =>
         product(
@@ -218,8 +248,8 @@ async function main() {
           run.name || run.display_title || "Workflow run",
           run.html_url,
           run.updated_at || run.created_at,
-          run.run_number,
-        ),
+          run.run_number
+        )
       ),
     ]
       .filter((item) => item.at)
@@ -274,12 +304,14 @@ async function main() {
         releases30d.length * 15 +
         freshness,
       0,
-      100,
+      100
     );
     const status =
       failedRuns24h.length > 0 && successfulRuns24h.length === 0
         ? "jammed"
-        : successfulRuns24h.length > 0 || mergedPulls7d.length > 0 || openPulls.length > 0
+        : successfulRuns24h.length > 0 ||
+            mergedPulls7d.length > 0 ||
+            openPulls.length > 0
           ? "flowing"
           : pushed && pushed >= since.month
             ? "warming"
@@ -310,7 +342,8 @@ async function main() {
           ? Math.round((successfulRuns7d.length / completedRuns7d.length) * 100)
           : null,
       releases30d: releases30d.length,
-      productCount7d: mergedPulls7d.length + successfulRuns7d.length + releases7d.length,
+      productCount7d:
+        mergedPulls7d.length + successfulRuns7d.length + releases7d.length,
       activityScore,
       status,
       latestRun,
@@ -336,12 +369,14 @@ async function main() {
     "/search/code",
     { q: `franklinbaldo/ user:${OWNER}`, per_page: 100 },
     { items: [] },
-    ["Accept: application/vnd.github.text-match+json"],
+    ["Accept: application/vnd.github.text-match+json"]
   );
   for (const item of codeSearch?.items ?? []) {
     const source = item.repository?.name;
     if (!publicNames.has(source)) continue;
-    const fragments = (item.text_matches ?? []).map((match) => match.fragment).filter(Boolean);
+    const fragments = (item.text_matches ?? [])
+      .map((match) => match.fragment)
+      .filter(Boolean);
     for (const fragment of fragments) {
       for (const target of referenceTargets(fragment, publicNames)) {
         addConnection(source, target, `code: ${item.path}`);
@@ -363,14 +398,14 @@ async function main() {
       (a, b) =>
         b.weight - a.weight ||
         a.source.localeCompare(b.source) ||
-        a.target.localeCompare(b.target),
+        a.target.localeCompare(b.target)
     );
 
   const sortedRepositories = repositories.sort(
     (a, b) =>
       b.activityScore - a.activityScore ||
       String(b.pushedAt).localeCompare(String(a.pushedAt)) ||
-      a.name.localeCompare(b.name),
+      a.name.localeCompare(b.name)
   );
 
   const totals = sortedRepositories.reduce(
@@ -392,7 +427,7 @@ async function main() {
       runs24h: 0,
       successfulRuns7d: 0,
       releases30d: 0,
-    },
+    }
   );
 
   writeSnapshot({

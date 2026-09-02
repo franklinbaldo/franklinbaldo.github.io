@@ -1,6 +1,10 @@
 type Status = "flowing" | "jammed" | "warming" | "idle";
 type WorkItem = { number: number; title: string; url: string; draft?: boolean };
-type Product = { kind: "merge" | "release" | "run"; title: string; url: string };
+type Product = {
+  kind: "merge" | "release" | "run";
+  title: string;
+  url: string;
+};
 type Repo = {
   name: string;
   url: string;
@@ -10,16 +14,31 @@ type Repo = {
   openPulls: number;
   runs24h: number;
   runSuccessRate: number | null;
-  latestRun: { name: string; status: string; conclusion: string | null; url: string } | null;
+  latestRun: {
+    name: string;
+    status: string;
+    conclusion: string | null;
+    url: string;
+  } | null;
   recentIssues: WorkItem[];
   recentPulls: WorkItem[];
   recentProducts: Product[];
 };
-type Connection = { source: string; target: string; weight: number; reasons: string[] };
-type Snapshot = { owner: string; repositories: Repo[]; connections: Connection[] };
+type Connection = {
+  source: string;
+  target: string;
+  weight: number;
+  reasons: string[];
+};
+type Snapshot = {
+  owner: string;
+  repositories: Repo[];
+  connections: Connection[];
+};
 
 const root = document.querySelector<HTMLElement>(".factory-shell");
-const dataElement = document.querySelector<HTMLScriptElement>("#repo-factory-data");
+const dataElement =
+  document.querySelector<HTMLScriptElement>("#repo-factory-data");
 
 if (root && dataElement && !root.dataset.initialized) {
   root.dataset.initialized = "true";
@@ -50,7 +69,7 @@ if (root && dataElement && !root.dataset.initialized) {
     selector: string,
     emptySelector: string,
     items: WorkItem[],
-    label: (item: WorkItem) => string,
+    label: (item: WorkItem) => string
   ) {
     const list = root?.querySelector<HTMLUListElement>(selector);
     const empty = root?.querySelector<HTMLElement>(emptySelector);
@@ -95,7 +114,7 @@ if (root && dataElement && !root.dataset.initialized) {
     const empty = root?.querySelector<HTMLElement>("#inspector-belts-empty");
     if (!list || !empty) return;
     const related = connections.filter(
-      (connection) => connection.source === name || connection.target === name,
+      (connection) => connection.source === name || connection.target === name
     );
     list.replaceChildren();
     for (const connection of related.slice(0, 6)) {
@@ -125,11 +144,17 @@ if (root && dataElement && !root.dataset.initialized) {
       node.setAttribute("aria-pressed", String(node.dataset.repo === name));
     }
     setText("#inspector-name", repo.name);
-    setText("#inspector-description", repo.description || "No repository description.");
+    setText(
+      "#inspector-description",
+      repo.description || "No repository description."
+    );
     setText("#inspector-issues", repo.openIssues);
     setText("#inspector-prs", repo.openPulls);
     setText("#inspector-runs", repo.runs24h);
-    setText("#inspector-yield", repo.runSuccessRate == null ? "—" : `${repo.runSuccessRate}%`);
+    setText(
+      "#inspector-yield",
+      repo.runSuccessRate == null ? "—" : `${repo.runSuccessRate}%`
+    );
 
     const repoLink = root?.querySelector<HTMLAnchorElement>("#inspector-link");
     if (repoLink) repoLink.href = repo.url;
@@ -139,9 +164,14 @@ if (root && dataElement && !root.dataset.initialized) {
       chip.textContent = statusLabels[repo.status];
     }
 
-    const runLink = root?.querySelector<HTMLAnchorElement>("#inspector-run-link");
+    const runLink = root?.querySelector<HTMLAnchorElement>(
+      "#inspector-run-link"
+    );
     if (repo.latestRun) {
-      setText("#inspector-run-conclusion", repo.latestRun.conclusion || repo.latestRun.status);
+      setText(
+        "#inspector-run-conclusion",
+        repo.latestRun.conclusion || repo.latestRun.status
+      );
       if (runLink) {
         runLink.hidden = false;
         runLink.href = repo.latestRun.url;
@@ -156,20 +186,20 @@ if (root && dataElement && !root.dataset.initialized) {
       "#inspector-inputs",
       "#inspector-inputs-empty",
       repo.recentIssues ?? [],
-      (item) => `#${item.number} ${item.title}`,
+      (item) => `#${item.number} ${item.title}`
     );
     setList(
       "#inspector-assembly",
       "#inspector-assembly-empty",
       repo.recentPulls ?? [],
-      (item) => `#${item.number} ${item.title}${item.draft ? " · draft" : ""}`,
+      (item) => `#${item.number} ${item.title}${item.draft ? " · draft" : ""}`
     );
     setProductList(repo.recentProducts ?? []);
     setBeltList(repo.name);
     for (const belt of belts) {
       belt.classList.toggle(
         "is-selected",
-        belt.dataset.source === repo.name || belt.dataset.target === repo.name,
+        belt.dataset.source === repo.name || belt.dataset.target === repo.name
       );
     }
   }
@@ -181,7 +211,8 @@ if (root && dataElement && !root.dataset.initialized) {
     for (const node of nodes) {
       const name = node.dataset.repo || "";
       const matchesQuery = !query || name.toLowerCase().includes(query);
-      const matchesStatus = selectedStatus === "all" || node.dataset.status === selectedStatus;
+      const matchesStatus =
+        selectedStatus === "all" || node.dataset.status === selectedStatus;
       node.hidden = !(matchesQuery && matchesStatus);
       if (!node.hidden) visible.add(name);
     }
@@ -189,10 +220,13 @@ if (root && dataElement && !root.dataset.initialized) {
     for (const belt of belts) {
       const source = belt.dataset.source || "";
       const target = belt.dataset.target || "";
-      belt.toggleAttribute("hidden", !showBelts || !visible.has(source) || !visible.has(target));
+      belt.toggleAttribute(
+        "hidden",
+        !showBelts || !visible.has(source) || !visible.has(target)
+      );
     }
     const selected = nodes.find(
-      (node) => node.getAttribute("aria-pressed") === "true" && !node.hidden,
+      (node) => node.getAttribute("aria-pressed") === "true" && !node.hidden
     );
     if (!selected) {
       const next = nodes.find((node) => !node.hidden);
@@ -209,7 +243,8 @@ if (root && dataElement && !root.dataset.initialized) {
   status?.addEventListener("change", updateVisibility);
   beltsToggle?.addEventListener("change", updateVisibility);
 
-  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+  const reduceMotion =
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
   let paused = reduceMotion;
   function renderMotion() {
     board?.classList.toggle("motion-paused", paused);
