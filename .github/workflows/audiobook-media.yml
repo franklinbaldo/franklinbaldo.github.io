@@ -55,6 +55,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: audiobook-media-${{ inputs.work_id }}-${{ inputs.chapter_id }}
@@ -295,21 +296,26 @@ jobs:
         env:
           WORK_ID: ${{ inputs.work_id }}
           CHAPTER_ID: ${{ inputs.chapter_id }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "data/audiobooks/$WORK_ID/state.yaml" "data/audiobooks/$WORK_ID/work.md"
           git commit -m "feat(audiobook): publish $WORK_ID $CHAPTER_ID"
-          for attempt in 1 2 3; do
-            if git push origin HEAD:main; then
-              exit 0
-            fi
-            echo "Push rejected (attempt $attempt/3), rebasing onto latest main..."
-            git fetch origin main
-            git rebase origin/main
-          done
-          echo "Push failed after 3 attempts; media is uploaded but publication state was not persisted." >&2
-          exit 1
+          # A main exige head atualizado antes do merge, e a regra tambem vale
+          # para push: o estado publicado vai por PR em auto-merge. O retry com
+          # rebase existia para lidar com a main andando; a branch e recriada a
+          # cada execucao, entao ele sai.
+          BRANCH=automation/audiobook-$WORK_ID
+          git checkout -B "$BRANCH"
+          git push -f origin "$BRANCH"
+          NUM=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [ -z "$NUM" ]; then
+            CORPO="Estado publicado do audiolivro, gerado pelo workflow audiobook-media."
+            URL=$(gh pr create --base main --head "$BRANCH" --title "feat(audiobook): publish episode state" --body "$CORPO")
+            NUM="${URL##*/}"
+          fi
+          gh pr merge "$NUM" --auto --squash
 
       - name: Upload plan
         if: ${{ always() && (inputs.dry_run == false || steps.readiness.outputs.narration_ready == 'true') }}
