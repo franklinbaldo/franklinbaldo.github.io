@@ -1,19 +1,4686 @@
 {
   "schemaVersion": "repo-factory-v1",
-  "generatedAt": null,
+  "generatedAt": "2026-09-02T01:06:57.487Z",
   "owner": "franklinbaldo",
   "source": "GitHub REST API via gh",
-  "bootstrap": true,
+  "bootstrap": false,
   "privacy": "public repositories only",
   "totals": {
-    "repositories": 0,
-    "openIssues": 0,
-    "openPulls": 0,
-    "mergedPulls7d": 0,
-    "runs24h": 0,
-    "successfulRuns7d": 0,
-    "releases30d": 0
+    "repositories": 31,
+    "openIssues": 262,
+    "openPulls": 198,
+    "mergedPulls7d": 177,
+    "runs24h": 246,
+    "successfulRuns7d": 476,
+    "releases30d": 8
   },
-  "repositories": [],
-  "connections": []
+  "repositories": [
+    {
+      "name": "franklinbaldo.github.io",
+      "fullName": "franklinbaldo/franklinbaldo.github.io",
+      "url": "https://github.com/franklinbaldo/franklinbaldo.github.io",
+      "description": "Personal knowledge base and blog built with Astro and Pico.css.",
+      "homepage": null,
+      "language": "MDX",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2025-07-07T15:42:44Z",
+      "updatedAt": "2026-09-01T17:31:45Z",
+      "pushedAt": "2026-09-02T01:06:33Z",
+      "openIssues": 25,
+      "openPulls": 63,
+      "mergedPulls7d": 41,
+      "runs24h": 50,
+      "runs7d": 50,
+      "successfulRuns7d": 22,
+      "failedRuns24h": 13,
+      "runSuccessRate": 54,
+      "releases30d": 0,
+      "productCount7d": 63,
+      "activityScore": 100,
+      "status": "flowing",
+      "latestRun": {
+        "name": "Change cards",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/actions/runs/33578063158",
+        "createdAt": "2026-09-02T01:06:38Z",
+        "updatedAt": "2026-09-02T01:06:41Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "franklinbaldo.github.io",
+        "title": "Change cards",
+        "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/actions/runs/33578046042",
+        "at": "2026-09-02T01:06:53Z",
+        "number": 129
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "franklinbaldo.github.io",
+          "title": "Change cards",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/actions/runs/33578046042",
+          "at": "2026-09-02T01:06:53Z",
+          "number": 129
+        },
+        {
+          "kind": "run",
+          "repo": "franklinbaldo.github.io",
+          "title": "Visual evidence",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/actions/runs/33577725004",
+          "at": "2026-09-02T01:06:39Z",
+          "number": 30
+        },
+        {
+          "kind": "run",
+          "repo": "franklinbaldo.github.io",
+          "title": "Change cards",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/actions/runs/33577972038",
+          "at": "2026-09-02T01:05:49Z",
+          "number": 127
+        },
+        {
+          "kind": "run",
+          "repo": "franklinbaldo.github.io",
+          "title": "Repo Factory format fix",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/actions/runs/33577968736",
+          "at": "2026-09-02T01:05:47Z",
+          "number": 1
+        },
+        {
+          "kind": "run",
+          "repo": "franklinbaldo.github.io",
+          "title": "Change cards",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/actions/runs/33577724986",
+          "at": "2026-09-02T01:02:12Z",
+          "number": 126
+        },
+        {
+          "kind": "run",
+          "repo": "franklinbaldo.github.io",
+          "title": "Audiobook OKF",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/actions/runs/33560646914",
+          "at": "2026-09-01T21:23:01Z",
+          "number": 24
+        },
+        {
+          "kind": "run",
+          "repo": "franklinbaldo.github.io",
+          "title": "Audiobook OKF",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/actions/runs/33560007616",
+          "at": "2026-09-01T21:15:47Z",
+          "number": 22
+        },
+        {
+          "kind": "run",
+          "repo": "franklinbaldo.github.io",
+          "title": "Audiobook OKF",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/actions/runs/33559840446",
+          "at": "2026-09-01T21:14:18Z",
+          "number": 20
+        },
+        {
+          "kind": "run",
+          "repo": "franklinbaldo.github.io",
+          "title": "Audiobook OKF",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/actions/runs/33559759935",
+          "at": "2026-09-01T21:13:22Z",
+          "number": 19
+        },
+        {
+          "kind": "run",
+          "repo": "franklinbaldo.github.io",
+          "title": "Audiobook OKF",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/actions/runs/33559696998",
+          "at": "2026-09-01T21:12:36Z",
+          "number": 17
+        },
+        {
+          "kind": "run",
+          "repo": "franklinbaldo.github.io",
+          "title": "Audiobook OKF",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/actions/runs/33559687632",
+          "at": "2026-09-01T21:12:32Z",
+          "number": 16
+        },
+        {
+          "kind": "run",
+          "repo": "franklinbaldo.github.io",
+          "title": "Audiobook OKF",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/actions/runs/33559670622",
+          "at": "2026-09-01T21:12:18Z",
+          "number": 15
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 1647,
+          "title": "feat(audio): generalizar pipeline para matérias, publicar mídia no Internet Archive e feed de áudio do blog",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/issues/1647",
+          "updatedAt": "2026-09-01T18:57:09Z"
+        },
+        {
+          "number": 1631,
+          "title": "a11y: título \"Global rank\" em /ranking/perspectives/[id]/ repete o mesmo tooltip por linha",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/issues/1631",
+          "updatedAt": "2026-09-01T05:19:40Z"
+        },
+        {
+          "number": 1568,
+          "title": "a11y: badge W/L do histórico de duelos em /ranking/posts/[key]/ não identifica o adversário",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/issues/1568",
+          "updatedAt": "2026-08-20T05:18:30Z"
+        },
+        {
+          "number": 1567,
+          "title": "a11y: card \"tension unavailable\" em RankingView.astro repete o mesmo aria-label por card",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/issues/1567",
+          "updatedAt": "2026-08-20T05:18:24Z"
+        },
+        {
+          "number": 1536,
+          "title": "a11y: verificar breakpoint do header (899px) com rótulos em pt",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/issues/1536",
+          "updatedAt": "2026-08-13T05:18:08Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 1659,
+          "title": "feat(games): add GitHub-powered Repo Factory",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/pull/1659",
+          "updatedAt": "2026-09-02T01:06:34Z",
+          "draft": false
+        },
+        {
+          "number": 1658,
+          "title": "feat(audiobook): advance HPMOR chapter 1 through s0044",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/pull/1658",
+          "updatedAt": "2026-09-01T21:20:21Z",
+          "draft": false
+        },
+        {
+          "number": 1654,
+          "title": "feat(audiobook): persist factory knowledge, semantic segmentation and TTS-ready bodies",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/pull/1654",
+          "updatedAt": "2026-09-01T22:12:12Z",
+          "draft": false
+        },
+        {
+          "number": 1652,
+          "title": "feat(audiobook): advance HPMOR chapter 1 through s0043",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/pull/1652",
+          "updatedAt": "2026-09-01T21:21:39Z",
+          "draft": false
+        },
+        {
+          "number": 1651,
+          "title": "feat(audiobook): advance HPMOR chapter 1 through s0042",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/pull/1651",
+          "updatedAt": "2026-09-01T19:16:52Z",
+          "draft": false
+        },
+        {
+          "number": 1650,
+          "title": "feat(audio): add first audio-ready blog article pilot",
+          "url": "https://github.com/franklinbaldo/franklinbaldo.github.io/pull/1650",
+          "updatedAt": "2026-09-01T19:10:34Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "causaganha",
+      "fullName": "franklinbaldo/causaganha",
+      "url": "https://github.com/franklinbaldo/causaganha",
+      "description": "Archives Brazilian judicial communications (DJEN) on Internet Archive and serves a public coverage dashboard.",
+      "homepage": "https://franklinbaldo.github.io/causaganha/",
+      "language": "Python",
+      "stars": 2,
+      "forks": 2,
+      "defaultBranch": "main",
+      "createdAt": "2025-06-01T00:48:39Z",
+      "updatedAt": "2026-09-02T00:36:30Z",
+      "pushedAt": "2026-09-02T01:01:10Z",
+      "openIssues": 18,
+      "openPulls": 14,
+      "mergedPulls7d": 41,
+      "runs24h": 50,
+      "runs7d": 50,
+      "successfulRuns7d": 46,
+      "failedRuns24h": 4,
+      "runSuccessRate": 92,
+      "releases30d": 0,
+      "productCount7d": 87,
+      "activityScore": 100,
+      "status": "flowing",
+      "latestRun": {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/causaganha/actions/runs/33577729928",
+        "createdAt": "2026-09-02T01:01:48Z",
+        "updatedAt": "2026-09-02T01:02:50Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "causaganha",
+        "title": "CI",
+        "url": "https://github.com/franklinbaldo/causaganha/actions/runs/33577729928",
+        "at": "2026-09-02T01:02:50Z",
+        "number": 3208
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "causaganha",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/causaganha/actions/runs/33577729928",
+          "at": "2026-09-02T01:02:50Z",
+          "number": 3208
+        },
+        {
+          "kind": "run",
+          "repo": "causaganha",
+          "title": "PR #986",
+          "url": "https://github.com/franklinbaldo/causaganha/actions/runs/33577727382",
+          "at": "2026-09-02T01:02:48Z",
+          "number": 3054
+        },
+        {
+          "kind": "run",
+          "repo": "causaganha",
+          "title": "Push on main",
+          "url": "https://github.com/franklinbaldo/causaganha/actions/runs/33576023524",
+          "at": "2026-09-02T00:38:07Z",
+          "number": 3053
+        },
+        {
+          "kind": "run",
+          "repo": "causaganha",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/causaganha/actions/runs/33576023753",
+          "at": "2026-09-02T00:37:31Z",
+          "number": 3207
+        },
+        {
+          "kind": "merge",
+          "repo": "causaganha",
+          "title": "ops(canary): prove TJRO JURIS manifest health independent of catalog gap",
+          "url": "https://github.com/franklinbaldo/causaganha/pull/983",
+          "at": "2026-09-02T00:36:25Z",
+          "number": 983
+        },
+        {
+          "kind": "run",
+          "repo": "causaganha",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/causaganha/actions/runs/33575741034",
+          "at": "2026-09-02T00:33:35Z",
+          "number": 3206
+        },
+        {
+          "kind": "run",
+          "repo": "causaganha",
+          "title": "PR #983",
+          "url": "https://github.com/franklinbaldo/causaganha/actions/runs/33575740032",
+          "at": "2026-09-02T00:33:24Z",
+          "number": 3052
+        },
+        {
+          "kind": "run",
+          "repo": "causaganha",
+          "title": "Render Manifest Parquet",
+          "url": "https://github.com/franklinbaldo/causaganha/actions/runs/33575427329",
+          "at": "2026-09-02T00:31:21Z",
+          "number": 4490
+        },
+        {
+          "kind": "run",
+          "repo": "causaganha",
+          "title": "Render Manifest Parquet",
+          "url": "https://github.com/franklinbaldo/causaganha/actions/runs/33574127626",
+          "at": "2026-09-02T00:12:35Z",
+          "number": 4489
+        },
+        {
+          "kind": "run",
+          "repo": "causaganha",
+          "title": "Upload Backlog",
+          "url": "https://github.com/franklinbaldo/causaganha/actions/runs/33574098660",
+          "at": "2026-09-02T00:09:13Z",
+          "number": 2534
+        },
+        {
+          "kind": "run",
+          "repo": "causaganha",
+          "title": "PR #982",
+          "url": "https://github.com/franklinbaldo/causaganha/actions/runs/33573684480",
+          "at": "2026-09-02T00:04:23Z",
+          "number": 3051
+        },
+        {
+          "kind": "run",
+          "repo": "causaganha",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/causaganha/actions/runs/33573686025",
+          "at": "2026-09-02T00:04:22Z",
+          "number": 3205
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 969,
+          "title": "[Feature]: criar  catálogo de potencial novos datasets",
+          "url": "https://github.com/franklinbaldo/causaganha/issues/969",
+          "updatedAt": "2026-09-02T01:01:54Z"
+        },
+        {
+          "number": 985,
+          "title": "data(tse): provar integração mínima do dataset Processual 2026",
+          "url": "https://github.com/franklinbaldo/causaganha/issues/985",
+          "updatedAt": "2026-09-02T01:01:34Z"
+        },
+        {
+          "number": 984,
+          "title": "data(tcu): provar ingestão reproduzível de acórdãos em CSV oficial",
+          "url": "https://github.com/franklinbaldo/causaganha/issues/984",
+          "updatedAt": "2026-09-02T01:01:24Z"
+        },
+        {
+          "number": 892,
+          "title": "ops: definir health contract e canários para os quatro pipelines",
+          "url": "https://github.com/franklinbaldo/causaganha/issues/892",
+          "updatedAt": "2026-09-02T00:36:39Z"
+        },
+        {
+          "number": 951,
+          "title": "web(agentes): criar entrada pública para usar o CausaGanha via MCP",
+          "url": "https://github.com/franklinbaldo/causaganha/issues/951",
+          "updatedAt": "2026-09-02T00:03:19Z"
+        },
+        {
+          "number": 891,
+          "title": "mcp: compor arquivo, estado atual e teor sem perder proveniência",
+          "url": "https://github.com/franklinbaldo/causaganha/issues/891",
+          "updatedAt": "2026-09-01T20:03:19Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 986,
+          "title": "docs(data): catalogar fontes jurídicas candidatas",
+          "url": "https://github.com/franklinbaldo/causaganha/pull/986",
+          "updatedAt": "2026-09-02T01:01:45Z",
+          "draft": false
+        },
+        {
+          "number": 982,
+          "title": "test(web): garantir paridade da página de agentes com catálogo MCP",
+          "url": "https://github.com/franklinbaldo/causaganha/pull/982",
+          "updatedAt": "2026-09-02T00:03:09Z",
+          "draft": false
+        },
+        {
+          "number": 973,
+          "title": "feat(deploy): empacotar MCP HTTP para rollout reproduzível",
+          "url": "https://github.com/franklinbaldo/causaganha/pull/973",
+          "updatedAt": "2026-09-01T19:04:01Z",
+          "draft": false
+        },
+        {
+          "number": 972,
+          "title": "feat(mcp): limitar timeout e concorrência do endpoint HTTP",
+          "url": "https://github.com/franklinbaldo/causaganha/pull/972",
+          "updatedAt": "2026-09-01T19:02:51Z",
+          "draft": false
+        },
+        {
+          "number": 868,
+          "title": "chore(deps): bump the npm_and_yarn group across 1 directory with 4 updates",
+          "url": "https://github.com/franklinbaldo/causaganha/pull/868",
+          "updatedAt": "2026-08-13T11:54:31Z",
+          "draft": false
+        },
+        {
+          "number": 859,
+          "title": "Read manifest consumers from parquet event log",
+          "url": "https://github.com/franklinbaldo/causaganha/pull/859",
+          "updatedAt": "2026-08-12T02:18:47Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "cobogo",
+      "fullName": "franklinbaldo/cobogo",
+      "url": "https://github.com/franklinbaldo/cobogo",
+      "description": "Modernist Svelte Design System. UI components and tokens inspired by Brazilian architecture.",
+      "homepage": "https://franklinbaldo.github.io/cobogo/",
+      "language": "Astro",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-04-27T02:11:57Z",
+      "updatedAt": "2026-09-02T00:59:15Z",
+      "pushedAt": "2026-09-02T00:59:10Z",
+      "openIssues": 9,
+      "openPulls": 1,
+      "mergedPulls7d": 4,
+      "runs24h": 50,
+      "runs7d": 50,
+      "successfulRuns7d": 49,
+      "failedRuns24h": 1,
+      "runSuccessRate": 98,
+      "releases30d": 0,
+      "productCount7d": 53,
+      "activityScore": 100,
+      "status": "flowing",
+      "latestRun": {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/cobogo/actions/runs/33577546266",
+        "createdAt": "2026-09-02T00:59:13Z",
+        "updatedAt": "2026-09-02T00:59:49Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "cobogo",
+        "title": "Knowledge",
+        "url": "https://github.com/franklinbaldo/cobogo/actions/runs/33577546244",
+        "at": "2026-09-02T01:00:39Z",
+        "number": 417
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "cobogo",
+          "title": "Knowledge",
+          "url": "https://github.com/franklinbaldo/cobogo/actions/runs/33577546244",
+          "at": "2026-09-02T01:00:39Z",
+          "number": 417
+        },
+        {
+          "kind": "run",
+          "repo": "cobogo",
+          "title": "Deploy to GitHub Pages",
+          "url": "https://github.com/franklinbaldo/cobogo/actions/runs/33577546239",
+          "at": "2026-09-02T00:59:59Z",
+          "number": 326
+        },
+        {
+          "kind": "run",
+          "repo": "cobogo",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/cobogo/actions/runs/33577546266",
+          "at": "2026-09-02T00:59:49Z",
+          "number": 825
+        },
+        {
+          "kind": "run",
+          "repo": "cobogo",
+          "title": "Knowledge",
+          "url": "https://github.com/franklinbaldo/cobogo/actions/runs/33575519454",
+          "at": "2026-09-02T00:30:37Z",
+          "number": 416
+        },
+        {
+          "kind": "run",
+          "repo": "cobogo",
+          "title": "Knowledge",
+          "url": "https://github.com/franklinbaldo/cobogo/actions/runs/33575489859",
+          "at": "2026-09-02T00:30:11Z",
+          "number": 415
+        },
+        {
+          "kind": "run",
+          "repo": "cobogo",
+          "title": "Deploy to GitHub Pages",
+          "url": "https://github.com/franklinbaldo/cobogo/actions/runs/33575519460",
+          "at": "2026-09-02T00:30:03Z",
+          "number": 325
+        },
+        {
+          "kind": "run",
+          "repo": "cobogo",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/cobogo/actions/runs/33575519444",
+          "at": "2026-09-02T00:29:48Z",
+          "number": 824
+        },
+        {
+          "kind": "run",
+          "repo": "cobogo",
+          "title": "Deploy to GitHub Pages",
+          "url": "https://github.com/franklinbaldo/cobogo/actions/runs/33575489836",
+          "at": "2026-09-02T00:29:25Z",
+          "number": 324
+        },
+        {
+          "kind": "run",
+          "repo": "cobogo",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/cobogo/actions/runs/33575489867",
+          "at": "2026-09-02T00:29:24Z",
+          "number": 823
+        },
+        {
+          "kind": "run",
+          "repo": "cobogo",
+          "title": "Knowledge",
+          "url": "https://github.com/franklinbaldo/cobogo/actions/runs/33569087168",
+          "at": "2026-09-01T23:02:50Z",
+          "number": 414
+        },
+        {
+          "kind": "run",
+          "repo": "cobogo",
+          "title": "Deploy to GitHub Pages",
+          "url": "https://github.com/franklinbaldo/cobogo/actions/runs/33569087028",
+          "at": "2026-09-01T23:02:28Z",
+          "number": 323
+        },
+        {
+          "kind": "run",
+          "repo": "cobogo",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/cobogo/actions/runs/33569087046",
+          "at": "2026-09-01T23:02:10Z",
+          "number": 822
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 411,
+          "title": "research: confiança progressiva para fontes, metodologia e correções",
+          "url": "https://github.com/franklinbaldo/cobogo/issues/411",
+          "updatedAt": "2026-08-30T17:54:16Z"
+        },
+        {
+          "number": 410,
+          "title": "research: estudar estado vazio editorial sem linguagem de produto inacabado",
+          "url": "https://github.com/franklinbaldo/cobogo/issues/410",
+          "updatedAt": "2026-08-30T17:54:09Z"
+        },
+        {
+          "number": 409,
+          "title": "research: derivar gramática de capa editorial a partir do O Vigia e outro consumer",
+          "url": "https://github.com/franklinbaldo/cobogo/issues/409",
+          "updatedAt": "2026-08-30T17:54:00Z"
+        },
+        {
+          "number": 402,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/cobogo/issues/402",
+          "updatedAt": "2026-08-30T02:01:34Z"
+        },
+        {
+          "number": 404,
+          "title": "ci: restore Vitest contract before making unit tests a required gate",
+          "url": "https://github.com/franklinbaldo/cobogo/issues/404",
+          "updatedAt": "2026-08-30T01:59:30Z"
+        },
+        {
+          "number": 267,
+          "title": "patterns: derive data-reading grammar from multiple live consumers",
+          "url": "https://github.com/franklinbaldo/cobogo/issues/267",
+          "updatedAt": "2026-08-19T01:04:28Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 407,
+          "title": "test: restore Vitest as a CI gate",
+          "url": "https://github.com/franklinbaldo/cobogo/pull/407",
+          "updatedAt": "2026-08-31T20:00:39Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "caixaaberta",
+      "fullName": "franklinbaldo/caixaaberta",
+      "url": "https://github.com/franklinbaldo/caixaaberta",
+      "description": "Open data platform for transparency and public spending analysis.",
+      "homepage": null,
+      "language": "Python",
+      "stars": 1,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2021-07-28T11:04:12Z",
+      "updatedAt": "2026-09-02T00:42:19Z",
+      "pushedAt": "2026-09-02T00:42:16Z",
+      "openIssues": 2,
+      "openPulls": 5,
+      "mergedPulls7d": 8,
+      "runs24h": 24,
+      "runs7d": 48,
+      "successfulRuns7d": 39,
+      "failedRuns24h": 5,
+      "runSuccessRate": 81,
+      "releases30d": 0,
+      "productCount7d": 47,
+      "activityScore": 100,
+      "status": "flowing",
+      "latestRun": {
+        "name": "Real Estate Data Pipeline",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/caixaaberta/actions/runs/33576415994",
+        "createdAt": "2026-09-02T00:42:17Z",
+        "updatedAt": "2026-09-02T00:45:04Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "caixaaberta",
+        "title": "Real Estate Data Pipeline",
+        "url": "https://github.com/franklinbaldo/caixaaberta/actions/runs/33576415994",
+        "at": "2026-09-02T00:45:04Z",
+        "number": 69
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "caixaaberta",
+          "title": "Real Estate Data Pipeline",
+          "url": "https://github.com/franklinbaldo/caixaaberta/actions/runs/33576415994",
+          "at": "2026-09-02T00:45:04Z",
+          "number": 69
+        },
+        {
+          "kind": "merge",
+          "repo": "caixaaberta",
+          "title": "fix: esperar o racionamento do Internet Archive em vez de falhar",
+          "url": "https://github.com/franklinbaldo/caixaaberta/pull/54",
+          "at": "2026-09-02T00:42:14Z",
+          "number": 54
+        },
+        {
+          "kind": "run",
+          "repo": "caixaaberta",
+          "title": "Real Estate Data Pipeline",
+          "url": "https://github.com/franklinbaldo/caixaaberta/actions/runs/33576188793",
+          "at": "2026-09-02T00:39:40Z",
+          "number": 68
+        },
+        {
+          "kind": "merge",
+          "repo": "caixaaberta",
+          "title": "feat: contornar o anti-bot da Caixa, ligar o download e tirar o dado do git",
+          "url": "https://github.com/franklinbaldo/caixaaberta/pull/53",
+          "at": "2026-09-02T00:29:53Z",
+          "number": 53
+        },
+        {
+          "kind": "run",
+          "repo": "caixaaberta",
+          "title": "Real Estate Data Pipeline",
+          "url": "https://github.com/franklinbaldo/caixaaberta/actions/runs/33563224521",
+          "at": "2026-09-01T21:51:09Z",
+          "number": 66
+        },
+        {
+          "kind": "run",
+          "repo": "caixaaberta",
+          "title": "Real Estate Data Pipeline",
+          "url": "https://github.com/franklinbaldo/caixaaberta/actions/runs/33562728606",
+          "at": "2026-09-01T21:47:41Z",
+          "number": 65
+        },
+        {
+          "kind": "run",
+          "repo": "caixaaberta",
+          "title": "Real Estate Data Pipeline",
+          "url": "https://github.com/franklinbaldo/caixaaberta/actions/runs/33562726281",
+          "at": "2026-09-01T21:45:25Z",
+          "number": 64
+        },
+        {
+          "kind": "run",
+          "repo": "caixaaberta",
+          "title": "Real Estate Data Pipeline",
+          "url": "https://github.com/franklinbaldo/caixaaberta/actions/runs/33561626430",
+          "at": "2026-09-01T21:33:05Z",
+          "number": 63
+        },
+        {
+          "kind": "run",
+          "repo": "caixaaberta",
+          "title": "Real Estate Data Pipeline",
+          "url": "https://github.com/franklinbaldo/caixaaberta/actions/runs/33560789224",
+          "at": "2026-09-01T21:25:41Z",
+          "number": 62
+        },
+        {
+          "kind": "run",
+          "repo": "caixaaberta",
+          "title": "Real Estate Data Pipeline",
+          "url": "https://github.com/franklinbaldo/caixaaberta/actions/runs/33559054607",
+          "at": "2026-09-01T21:05:41Z",
+          "number": 61
+        },
+        {
+          "kind": "run",
+          "repo": "caixaaberta",
+          "title": "Real Estate Data Pipeline",
+          "url": "https://github.com/franklinbaldo/caixaaberta/actions/runs/33549709806",
+          "at": "2026-09-01T19:30:02Z",
+          "number": 59
+        },
+        {
+          "kind": "merge",
+          "repo": "caixaaberta",
+          "title": "fix: não declarar coleção do Internet Archive sem privilégio de escrita",
+          "url": "https://github.com/franklinbaldo/caixaaberta/pull/52",
+          "at": "2026-09-01T19:28:32Z",
+          "number": 52
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 43,
+          "title": "pipeline: gate de sanidade antes de publicar o Parquet",
+          "url": "https://github.com/franklinbaldo/caixaaberta/issues/43",
+          "updatedAt": "2026-08-27T15:51:45Z"
+        },
+        {
+          "number": 41,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/caixaaberta/issues/41",
+          "updatedAt": "2026-08-24T10:13:54Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 49,
+          "title": "chore(deps): bump the uv group across 1 directory with 8 updates",
+          "url": "https://github.com/franklinbaldo/caixaaberta/pull/49",
+          "updatedAt": "2026-08-31T10:38:39Z",
+          "draft": false
+        },
+        {
+          "number": 48,
+          "title": "probe: medir leilões reais no Baliza e CausaGanha via Internet Archive",
+          "url": "https://github.com/franklinbaldo/caixaaberta/pull/48",
+          "updatedAt": "2026-08-30T18:00:56Z",
+          "draft": false
+        },
+        {
+          "number": 35,
+          "title": "docs: add MANAGER-INTEL.md report",
+          "url": "https://github.com/franklinbaldo/caixaaberta/pull/35",
+          "updatedAt": "2026-06-22T12:21:55Z",
+          "draft": false
+        },
+        {
+          "number": 34,
+          "title": "feat: Complete TODO items and update pipeline",
+          "url": "https://github.com/franklinbaldo/caixaaberta/pull/34",
+          "updatedAt": "2026-06-03T01:57:15Z",
+          "draft": false
+        },
+        {
+          "number": 26,
+          "title": "feat: Add unit tests and GitHub Actions CI",
+          "url": "https://github.com/franklinbaldo/caixaaberta/pull/26",
+          "updatedAt": "2025-06-03T04:15:40Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "quem-sao-eles",
+      "fullName": "franklinbaldo/quem-sao-eles",
+      "url": "https://github.com/franklinbaldo/quem-sao-eles",
+      "description": "Quem São Eles? — catálogo de políticos brasileiros, monitorado diariamente por agentes jornalistas",
+      "homepage": null,
+      "language": "Astro",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-03-23T21:23:31Z",
+      "updatedAt": "2026-09-01T21:50:39Z",
+      "pushedAt": "2026-09-01T21:45:11Z",
+      "openIssues": 2,
+      "openPulls": 2,
+      "mergedPulls7d": 4,
+      "runs24h": 19,
+      "runs7d": 19,
+      "successfulRuns7d": 18,
+      "failedRuns24h": 1,
+      "runSuccessRate": 95,
+      "releases30d": 0,
+      "productCount7d": 22,
+      "activityScore": 100,
+      "status": "flowing",
+      "latestRun": {
+        "name": "PEP visual capture",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/quem-sao-eles/actions/runs/33562806014",
+        "createdAt": "2026-09-01T21:45:43Z",
+        "updatedAt": "2026-09-01T21:46:25Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "quem-sao-eles",
+        "title": "Deploy to GitHub Pages",
+        "url": "https://github.com/franklinbaldo/quem-sao-eles/actions/runs/33562803474",
+        "at": "2026-09-01T21:46:41Z",
+        "number": 24
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "quem-sao-eles",
+          "title": "Deploy to GitHub Pages",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/actions/runs/33562803474",
+          "at": "2026-09-01T21:46:41Z",
+          "number": 24
+        },
+        {
+          "kind": "run",
+          "repo": "quem-sao-eles",
+          "title": "PEP visual capture",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/actions/runs/33562806014",
+          "at": "2026-09-01T21:46:25Z",
+          "number": 9
+        },
+        {
+          "kind": "run",
+          "repo": "quem-sao-eles",
+          "title": "Deploy to GitHub Pages",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/actions/runs/33562758191",
+          "at": "2026-09-01T21:45:55Z",
+          "number": 23
+        },
+        {
+          "kind": "run",
+          "repo": "quem-sao-eles",
+          "title": "Update PEP Data",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/actions/runs/33562767037",
+          "at": "2026-09-01T21:45:47Z",
+          "number": 8
+        },
+        {
+          "kind": "merge",
+          "repo": "quem-sao-eles",
+          "title": "feat(pep): permitir republicar no Pages sem snapshot novo",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/pull/21",
+          "at": "2026-09-01T21:45:10Z",
+          "number": 21
+        },
+        {
+          "kind": "run",
+          "repo": "quem-sao-eles",
+          "title": "Deploy to GitHub Pages",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/actions/runs/33562678558",
+          "at": "2026-09-01T21:44:47Z",
+          "number": 22
+        },
+        {
+          "kind": "run",
+          "repo": "quem-sao-eles",
+          "title": "Update PEP Data",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/actions/runs/33562477764",
+          "at": "2026-09-01T21:42:58Z",
+          "number": 7
+        },
+        {
+          "kind": "run",
+          "repo": "quem-sao-eles",
+          "title": "Deploy to GitHub Pages",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/actions/runs/33562473347",
+          "at": "2026-09-01T21:42:45Z",
+          "number": 21
+        },
+        {
+          "kind": "run",
+          "repo": "quem-sao-eles",
+          "title": "Python tests",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/actions/runs/33562473365",
+          "at": "2026-09-01T21:42:12Z",
+          "number": 4
+        },
+        {
+          "kind": "merge",
+          "repo": "quem-sao-eles",
+          "title": "fix(pep): não reivindicar coleção no upload para o Internet Archive",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/pull/20",
+          "at": "2026-09-01T21:41:53Z",
+          "number": 20
+        },
+        {
+          "kind": "run",
+          "repo": "quem-sao-eles",
+          "title": "Deploy to GitHub Pages",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/actions/runs/33562415657",
+          "at": "2026-09-01T21:41:46Z",
+          "number": 20
+        },
+        {
+          "kind": "run",
+          "repo": "quem-sao-eles",
+          "title": "Python tests",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/actions/runs/33562415723",
+          "at": "2026-09-01T21:41:31Z",
+          "number": 3
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 15,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/issues/15",
+          "updatedAt": "2026-08-24T10:15:15Z"
+        },
+        {
+          "number": 13,
+          "title": "fix: PEP Parquet URL loses the Project Pages separator",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/issues/13",
+          "updatedAt": "2026-08-17T22:03:46Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 6,
+          "title": "chore(deps): bump urllib3 from 2.6.3 to 2.7.0 in the uv group across 1 directory",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/pull/6",
+          "updatedAt": "2026-05-11T20:13:00Z",
+          "draft": false
+        },
+        {
+          "number": 3,
+          "title": "chore(deps): bump the npm_and_yarn group across 1 directory with 2 updates",
+          "url": "https://github.com/franklinbaldo/quem-sao-eles/pull/3",
+          "updatedAt": "2026-04-10T15:04:29Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "astronauta",
+      "fullName": "franklinbaldo/astronauta",
+      "url": "https://github.com/franklinbaldo/astronauta",
+      "description": "",
+      "homepage": null,
+      "language": "Python",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-07-31T18:59:29Z",
+      "updatedAt": "2026-09-01T12:10:03Z",
+      "pushedAt": "2026-09-01T12:02:08Z",
+      "openIssues": 6,
+      "openPulls": 0,
+      "mergedPulls7d": 3,
+      "runs24h": 16,
+      "runs7d": 41,
+      "successfulRuns7d": 40,
+      "failedRuns24h": 0,
+      "runSuccessRate": 98,
+      "releases30d": 0,
+      "productCount7d": 43,
+      "activityScore": 100,
+      "status": "flowing",
+      "latestRun": {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/astronauta/actions/runs/33505525419",
+        "createdAt": "2026-09-01T12:02:11Z",
+        "updatedAt": "2026-09-01T12:02:39Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "astronauta",
+        "title": "CI",
+        "url": "https://github.com/franklinbaldo/astronauta/actions/runs/33505525419",
+        "at": "2026-09-01T12:02:39Z",
+        "number": 165
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "astronauta",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/astronauta/actions/runs/33505525419",
+          "at": "2026-09-01T12:02:39Z",
+          "number": 165
+        },
+        {
+          "kind": "run",
+          "repo": "astronauta",
+          "title": "Live editor",
+          "url": "https://github.com/franklinbaldo/astronauta/actions/runs/33505525364",
+          "at": "2026-09-01T12:02:32Z",
+          "number": 91
+        },
+        {
+          "kind": "run",
+          "repo": "astronauta",
+          "title": "Live apply",
+          "url": "https://github.com/franklinbaldo/astronauta/actions/runs/33505525377",
+          "at": "2026-09-01T12:02:30Z",
+          "number": 69
+        },
+        {
+          "kind": "run",
+          "repo": "astronauta",
+          "title": "Live import",
+          "url": "https://github.com/franklinbaldo/astronauta/actions/runs/33505525358",
+          "at": "2026-09-01T12:02:30Z",
+          "number": 18
+        },
+        {
+          "kind": "merge",
+          "repo": "astronauta",
+          "title": "docs: reconcile installed runtime packaging",
+          "url": "https://github.com/franklinbaldo/astronauta/pull/40",
+          "at": "2026-09-01T12:02:08Z",
+          "number": 40
+        },
+        {
+          "kind": "run",
+          "repo": "astronauta",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/astronauta/actions/runs/33505337537",
+          "at": "2026-09-01T12:00:38Z",
+          "number": 164
+        },
+        {
+          "kind": "run",
+          "repo": "astronauta",
+          "title": "Live editor",
+          "url": "https://github.com/franklinbaldo/astronauta/actions/runs/33505337593",
+          "at": "2026-09-01T12:00:34Z",
+          "number": 90
+        },
+        {
+          "kind": "run",
+          "repo": "astronauta",
+          "title": "Live apply",
+          "url": "https://github.com/franklinbaldo/astronauta/actions/runs/33505337590",
+          "at": "2026-09-01T12:00:31Z",
+          "number": 68
+        },
+        {
+          "kind": "run",
+          "repo": "astronauta",
+          "title": "Live import",
+          "url": "https://github.com/franklinbaldo/astronauta/actions/runs/33505337553",
+          "at": "2026-09-01T12:00:28Z",
+          "number": 17
+        },
+        {
+          "kind": "run",
+          "repo": "astronauta",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/astronauta/actions/runs/33500446952",
+          "at": "2026-09-01T11:03:29Z",
+          "number": 163
+        },
+        {
+          "kind": "run",
+          "repo": "astronauta",
+          "title": "Live apply",
+          "url": "https://github.com/franklinbaldo/astronauta/actions/runs/33500447050",
+          "at": "2026-09-01T11:03:17Z",
+          "number": 67
+        },
+        {
+          "kind": "run",
+          "repo": "astronauta",
+          "title": "Live editor",
+          "url": "https://github.com/franklinbaldo/astronauta/actions/runs/33500447038",
+          "at": "2026-09-01T11:03:04Z",
+          "number": 89
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 35,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/astronauta/issues/35",
+          "updatedAt": "2026-08-24T10:13:41Z"
+        },
+        {
+          "number": 24,
+          "title": "design: use Cobogó data-reading patterns as admin-density validation case",
+          "url": "https://github.com/franklinbaldo/astronauta/issues/24",
+          "updatedAt": "2026-08-10T20:06:05Z"
+        },
+        {
+          "number": 23,
+          "title": "RFC follow-up: static OKF projection/export without reintroducing a second semantic authority",
+          "url": "https://github.com/franklinbaldo/astronauta/issues/23",
+          "updatedAt": "2026-08-10T14:59:45Z"
+        },
+        {
+          "number": 5,
+          "title": "feat: derive admin field metadata and forms from OKF schema contracts",
+          "url": "https://github.com/franklinbaldo/astronauta/issues/5",
+          "updatedAt": "2026-08-08T14:23:20Z"
+        },
+        {
+          "number": 4,
+          "title": "feat: build Django-admin-style read-only views from OKF types",
+          "url": "https://github.com/franklinbaldo/astronauta/issues/4",
+          "updatedAt": "2026-08-08T14:23:09Z"
+        },
+        {
+          "number": 3,
+          "title": "feat: replace generated JSON with live Astro SSR and an OKF application gateway",
+          "url": "https://github.com/franklinbaldo/astronauta/issues/3",
+          "updatedAt": "2026-08-08T14:22:56Z"
+        }
+      ],
+      "recentPulls": []
+    },
+    {
+      "name": "papers",
+      "fullName": "franklinbaldo/papers",
+      "url": "https://github.com/franklinbaldo/papers",
+      "description": "Research Archive. A collection of papers and documentation on AI, agentic systems, and legal tech.",
+      "homepage": null,
+      "language": "Python",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2025-11-11T13:30:43Z",
+      "updatedAt": "2026-09-01T10:18:18Z",
+      "pushedAt": "2026-09-01T10:11:43Z",
+      "openIssues": 31,
+      "openPulls": 18,
+      "mergedPulls7d": 26,
+      "runs24h": 7,
+      "runs7d": 50,
+      "successfulRuns7d": 50,
+      "failedRuns24h": 0,
+      "runSuccessRate": 100,
+      "releases30d": 1,
+      "productCount7d": 77,
+      "activityScore": 100,
+      "status": "flowing",
+      "latestRun": {
+        "name": "OKF conformance",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/papers/actions/runs/33496147374",
+        "createdAt": "2026-09-01T10:11:44Z",
+        "updatedAt": "2026-09-01T10:12:01Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "papers",
+        "title": "OKF conformance",
+        "url": "https://github.com/franklinbaldo/papers/actions/runs/33496147374",
+        "at": "2026-09-01T10:12:01Z",
+        "number": 585
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "papers",
+          "title": "OKF conformance",
+          "url": "https://github.com/franklinbaldo/papers/actions/runs/33496147374",
+          "at": "2026-09-01T10:12:01Z",
+          "number": 585
+        },
+        {
+          "kind": "run",
+          "repo": "papers",
+          "title": "OKF conformance",
+          "url": "https://github.com/franklinbaldo/papers/actions/runs/33496132223",
+          "at": "2026-09-01T10:11:50Z",
+          "number": 584
+        },
+        {
+          "kind": "merge",
+          "repo": "papers",
+          "title": "synthesis: session 101 blog entry (ESHTR C2 r36 + supportive reply)",
+          "url": "https://github.com/franklinbaldo/papers/pull/409",
+          "at": "2026-09-01T10:11:41Z",
+          "number": 409
+        },
+        {
+          "kind": "run",
+          "repo": "papers",
+          "title": "OKF conformance",
+          "url": "https://github.com/franklinbaldo/papers/actions/runs/33495908477",
+          "at": "2026-09-01T10:09:14Z",
+          "number": 583
+        },
+        {
+          "kind": "run",
+          "repo": "papers",
+          "title": "OKF conformance",
+          "url": "https://github.com/franklinbaldo/papers/actions/runs/33495902245",
+          "at": "2026-09-01T10:09:08Z",
+          "number": 582
+        },
+        {
+          "kind": "merge",
+          "repo": "papers",
+          "title": "supportive ESHTR C2 r36: §4.21 responds to adversarial r36 (v/w/x) — generation/derivation, deliberative-fact independence, threshold decomposition",
+          "url": "https://github.com/franklinbaldo/papers/pull/408",
+          "at": "2026-09-01T10:08:57Z",
+          "number": 408
+        },
+        {
+          "kind": "merge",
+          "repo": "papers",
+          "title": "adversarial ESHTR C2 r36: failure conditions (v), (w), (x) against r35's structural-separability, justificatory-form, and ementa-votos-comparison responses",
+          "url": "https://github.com/franklinbaldo/papers/pull/407",
+          "at": "2026-09-01T10:08:52Z",
+          "number": 407
+        },
+        {
+          "kind": "run",
+          "repo": "papers",
+          "title": "OKF conformance",
+          "url": "https://github.com/franklinbaldo/papers/actions/runs/33495871376",
+          "at": "2026-09-01T10:08:48Z",
+          "number": 581
+        },
+        {
+          "kind": "merge",
+          "repo": "papers",
+          "title": "synthesis: session 100 blog entry (ESHTR C2 r35 + Paper 1G r18)",
+          "url": "https://github.com/franklinbaldo/papers/pull/405",
+          "at": "2026-09-01T10:08:31Z",
+          "number": 405
+        },
+        {
+          "kind": "run",
+          "repo": "papers",
+          "title": "OKF conformance",
+          "url": "https://github.com/franklinbaldo/papers/actions/runs/33491841818",
+          "at": "2026-09-01T09:22:14Z",
+          "number": 580
+        },
+        {
+          "kind": "run",
+          "repo": "papers",
+          "title": "OKF conformance",
+          "url": "https://github.com/franklinbaldo/papers/actions/runs/33487078320",
+          "at": "2026-09-01T08:27:08Z",
+          "number": 579
+        },
+        {
+          "kind": "run",
+          "repo": "papers",
+          "title": "Ternary END weight experiment",
+          "url": "https://github.com/franklinbaldo/papers/actions/runs/33394784342",
+          "at": "2026-08-31T13:29:38Z",
+          "number": 21
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 369,
+          "title": "Semantic Atlas — comparar alinhadores e preservar embeddings observados",
+          "url": "https://github.com/franklinbaldo/papers/issues/369",
+          "updatedAt": "2026-08-25T16:57:03Z"
+        },
+        {
+          "number": 267,
+          "title": "Semantic Atlas — executar navegação MPC e medir rotas naturais",
+          "url": "https://github.com/franklinbaldo/papers/issues/267",
+          "updatedAt": "2026-08-25T05:51:21Z"
+        },
+        {
+          "number": 361,
+          "title": "Programa de atualização: estrutura, simetria, S^6 e machine discovery",
+          "url": "https://github.com/franklinbaldo/papers/issues/361",
+          "updatedAt": "2026-08-24T20:23:23Z"
+        },
+        {
+          "number": 355,
+          "title": "Follow-up matemático: Structural Lifting e promoção para estruturas mais ricas",
+          "url": "https://github.com/franklinbaldo/papers/issues/355",
+          "updatedAt": "2026-08-24T20:23:13Z"
+        },
+        {
+          "number": 365,
+          "title": "PR #342: integrar Truth-Preserving Representations ao eixo Structural Lifting / S^6",
+          "url": "https://github.com/franklinbaldo/papers/issues/365",
+          "updatedAt": "2026-08-24T20:23:00Z"
+        },
+        {
+          "number": 354,
+          "title": "Case study: auditar o candidato S^6 como possível evento de machine discovery",
+          "url": "https://github.com/franklinbaldo/papers/issues/354",
+          "updatedAt": "2026-08-24T18:55:43Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 406,
+          "title": "experiment: from ternary END to packed bitplane compression for LLM weights",
+          "url": "https://github.com/franklinbaldo/papers/pull/406",
+          "updatedAt": "2026-08-31T13:03:30Z",
+          "draft": true
+        },
+        {
+          "number": 399,
+          "title": "paper: write static Semantic Atlas scale result",
+          "url": "https://github.com/franklinbaldo/papers/pull/399",
+          "updatedAt": "2026-08-29T11:56:52Z",
+          "draft": true
+        },
+        {
+          "number": 389,
+          "title": "experiment: run Semantic Atlas gate at 100k",
+          "url": "https://github.com/franklinbaldo/papers/pull/389",
+          "updatedAt": "2026-08-29T07:53:40Z",
+          "draft": true
+        },
+        {
+          "number": 387,
+          "title": "experiment: freeze and run large-scale relational geometry",
+          "url": "https://github.com/franklinbaldo/papers/pull/387",
+          "updatedAt": "2026-08-26T21:06:13Z",
+          "draft": false
+        },
+        {
+          "number": 379,
+          "title": "paper: gate Semantic Atlas dynamics behind relational-scale evidence",
+          "url": "https://github.com/franklinbaldo/papers/pull/379",
+          "updatedAt": "2026-08-29T11:57:14Z",
+          "draft": true
+        },
+        {
+          "number": 378,
+          "title": "paper: isolate Semantic Parallax from Atlas dynamics",
+          "url": "https://github.com/franklinbaldo/papers/pull/378",
+          "updatedAt": "2026-08-26T02:43:01Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "perquire",
+      "fullName": "franklinbaldo/perquire",
+      "url": "https://github.com/franklinbaldo/perquire",
+      "description": "Advanced legal search engine for cross-referencing Brazilian case law.",
+      "homepage": null,
+      "language": "Python",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2025-06-30T01:54:57Z",
+      "updatedAt": "2026-08-31T21:58:08Z",
+      "pushedAt": "2026-08-31T21:55:44Z",
+      "openIssues": 11,
+      "openPulls": 0,
+      "mergedPulls7d": 5,
+      "runs24h": 14,
+      "runs7d": 50,
+      "successfulRuns7d": 19,
+      "failedRuns24h": 6,
+      "runSuccessRate": 38,
+      "releases30d": 0,
+      "productCount7d": 24,
+      "activityScore": 100,
+      "status": "flowing",
+      "latestRun": {
+        "name": "Ox Alpha target-free diagnostic v1",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/perquire/actions/runs/33571593251",
+        "createdAt": "2026-09-01T23:34:03Z",
+        "updatedAt": "2026-09-01T23:34:28Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "perquire",
+        "title": "Ox Alpha target-free diagnostic v1",
+        "url": "https://github.com/franklinbaldo/perquire/actions/runs/33571593251",
+        "at": "2026-09-01T23:34:28Z",
+        "number": 13
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "perquire",
+          "title": "Ox Alpha target-free diagnostic v1",
+          "url": "https://github.com/franklinbaldo/perquire/actions/runs/33571593251",
+          "at": "2026-09-01T23:34:28Z",
+          "number": 13
+        },
+        {
+          "kind": "run",
+          "repo": "perquire",
+          "title": "Ox Alpha target-free diagnostic v1",
+          "url": "https://github.com/franklinbaldo/perquire/actions/runs/33560566195",
+          "at": "2026-09-01T21:21:24Z",
+          "number": 12
+        },
+        {
+          "kind": "run",
+          "repo": "perquire",
+          "title": "Ox Alpha target-free diagnostic v1",
+          "url": "https://github.com/franklinbaldo/perquire/actions/runs/33544545706",
+          "at": "2026-09-01T18:36:52Z",
+          "number": 11
+        },
+        {
+          "kind": "run",
+          "repo": "perquire",
+          "title": "OpenRouter reliability freeze check v2",
+          "url": "https://github.com/franklinbaldo/perquire/actions/runs/33533256773",
+          "at": "2026-09-01T16:42:20Z",
+          "number": 41
+        },
+        {
+          "kind": "run",
+          "repo": "perquire",
+          "title": "Ox Alpha target-free diagnostic v1",
+          "url": "https://github.com/franklinbaldo/perquire/actions/runs/33524217083",
+          "at": "2026-09-01T15:12:06Z",
+          "number": 10
+        },
+        {
+          "kind": "run",
+          "repo": "perquire",
+          "title": "Ox Alpha target-free diagnostic v1",
+          "url": "https://github.com/franklinbaldo/perquire/actions/runs/33497713438",
+          "at": "2026-09-01T10:30:27Z",
+          "number": 9
+        },
+        {
+          "kind": "run",
+          "repo": "perquire",
+          "title": "Ox Alpha target-free diagnostic v1",
+          "url": "https://github.com/franklinbaldo/perquire/actions/runs/33474555313",
+          "at": "2026-09-01T05:41:41Z",
+          "number": 8
+        },
+        {
+          "kind": "run",
+          "repo": "perquire",
+          "title": "OpenRouter reliability freeze check v2",
+          "url": "https://github.com/franklinbaldo/perquire/actions/runs/33472591465",
+          "at": "2026-09-01T05:12:56Z",
+          "number": 40
+        },
+        {
+          "kind": "run",
+          "repo": "perquire",
+          "title": "Ox Alpha target-free diagnostic v1",
+          "url": "https://github.com/franklinbaldo/perquire/actions/runs/33455487289",
+          "at": "2026-09-01T00:37:38Z",
+          "number": 7
+        },
+        {
+          "kind": "run",
+          "repo": "perquire",
+          "title": "Python CI",
+          "url": "https://github.com/franklinbaldo/perquire/actions/runs/33443774821",
+          "at": "2026-08-31T21:56:10Z",
+          "number": 243
+        },
+        {
+          "kind": "merge",
+          "repo": "perquire",
+          "title": "experiment: replace MiniMax M3 with Inkling after observed gate failure",
+          "url": "https://github.com/franklinbaldo/perquire/pull/84",
+          "at": "2026-08-31T21:55:41Z",
+          "number": 84
+        },
+        {
+          "kind": "run",
+          "repo": "perquire",
+          "title": "Ox Alpha target-free diagnostic v1",
+          "url": "https://github.com/franklinbaldo/perquire/actions/runs/33439519155",
+          "at": "2026-08-31T21:06:01Z",
+          "number": 6
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 79,
+          "title": "Diagnose Ox Alpha empty completions before restarting reliability evidence",
+          "url": "https://github.com/franklinbaldo/perquire/issues/79",
+          "updatedAt": "2026-08-25T23:53:03Z"
+        },
+        {
+          "number": 65,
+          "title": "Freeze Ox Alpha for v2 only after target-free eligibility",
+          "url": "https://github.com/franklinbaldo/perquire/issues/65",
+          "updatedAt": "2026-08-25T20:57:32Z"
+        },
+        {
+          "number": 72,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/perquire/issues/72",
+          "updatedAt": "2026-08-24T10:15:09Z"
+        },
+        {
+          "number": 70,
+          "title": "Require external replication before broad Perquire claims",
+          "url": "https://github.com/franklinbaldo/perquire/issues/70",
+          "updatedAt": "2026-08-23T14:58:00Z"
+        },
+        {
+          "number": 69,
+          "title": "Preregister matched-content history-order ablation after positive Gate B",
+          "url": "https://github.com/franklinbaldo/perquire/issues/69",
+          "updatedAt": "2026-08-23T14:57:50Z"
+        },
+        {
+          "number": 67,
+          "title": "Add held-out semantic validation only after causal Gate B",
+          "url": "https://github.com/franklinbaldo/perquire/issues/67",
+          "updatedAt": "2026-08-23T14:57:38Z"
+        }
+      ],
+      "recentPulls": []
+    },
+    {
+      "name": "okf-parser",
+      "fullName": "franklinbaldo/okf-parser",
+      "url": "https://github.com/franklinbaldo/okf-parser",
+      "description": "Validate, query, graph, and integrate Open Knowledge Format bundles",
+      "homepage": null,
+      "language": "Python",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-07-26T10:39:17Z",
+      "updatedAt": "2026-08-31T19:12:41Z",
+      "pushedAt": "2026-08-31T19:10:27Z",
+      "openIssues": 47,
+      "openPulls": 12,
+      "mergedPulls7d": 28,
+      "runs24h": 0,
+      "runs7d": 50,
+      "successfulRuns7d": 24,
+      "failedRuns24h": 0,
+      "runSuccessRate": 48,
+      "releases30d": 4,
+      "productCount7d": 53,
+      "activityScore": 100,
+      "status": "flowing",
+      "latestRun": {
+        "name": "Rust semantic engine",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/okf-parser/actions/runs/33429101774",
+        "createdAt": "2026-08-31T19:10:31Z",
+        "updatedAt": "2026-08-31T19:11:08Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "okf-parser",
+        "title": "CI",
+        "url": "https://github.com/franklinbaldo/okf-parser/actions/runs/33429101697",
+        "at": "2026-08-31T19:13:41Z",
+        "number": 1385
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "okf-parser",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/okf-parser/actions/runs/33429101697",
+          "at": "2026-08-31T19:13:41Z",
+          "number": 1385
+        },
+        {
+          "kind": "run",
+          "repo": "okf-parser",
+          "title": "Rust semantic engine",
+          "url": "https://github.com/franklinbaldo/okf-parser/actions/runs/33429101774",
+          "at": "2026-08-31T19:11:08Z",
+          "number": 675
+        },
+        {
+          "kind": "merge",
+          "repo": "okf-parser",
+          "title": "feat(skill): expose lexical containment in codebase OKF",
+          "url": "https://github.com/franklinbaldo/okf-parser/pull/213",
+          "at": "2026-08-31T19:10:27Z",
+          "number": 213
+        },
+        {
+          "kind": "run",
+          "repo": "okf-parser",
+          "title": "Release Dry Run",
+          "url": "https://github.com/franklinbaldo/okf-parser/actions/runs/33428526391",
+          "at": "2026-08-31T19:09:49Z",
+          "number": 990
+        },
+        {
+          "kind": "run",
+          "repo": "okf-parser",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/okf-parser/actions/runs/33428526492",
+          "at": "2026-08-31T19:07:09Z",
+          "number": 1384
+        },
+        {
+          "kind": "run",
+          "repo": "okf-parser",
+          "title": "Rust semantic engine",
+          "url": "https://github.com/franklinbaldo/okf-parser/actions/runs/33428526306",
+          "at": "2026-08-31T19:04:58Z",
+          "number": 674
+        },
+        {
+          "kind": "run",
+          "repo": "okf-parser",
+          "title": "Release Dry Run",
+          "url": "https://github.com/franklinbaldo/okf-parser/actions/runs/33379168552",
+          "at": "2026-08-31T09:49:01Z",
+          "number": 989
+        },
+        {
+          "kind": "run",
+          "repo": "okf-parser",
+          "title": "Rust semantic engine",
+          "url": "https://github.com/franklinbaldo/okf-parser/actions/runs/33379168537",
+          "at": "2026-08-31T09:45:04Z",
+          "number": 673
+        },
+        {
+          "kind": "run",
+          "repo": "okf-parser",
+          "title": "Apply codebase lexical containment",
+          "url": "https://github.com/franklinbaldo/okf-parser/actions/runs/33378919587",
+          "at": "2026-08-31T09:43:07Z",
+          "number": 2
+        },
+        {
+          "kind": "run",
+          "repo": "okf-parser",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/okf-parser/actions/runs/33348941880",
+          "at": "2026-08-31T01:56:54Z",
+          "number": 1382
+        },
+        {
+          "kind": "run",
+          "repo": "okf-parser",
+          "title": "Rust semantic engine",
+          "url": "https://github.com/franklinbaldo/okf-parser/actions/runs/33348941921",
+          "at": "2026-08-31T01:54:05Z",
+          "number": 672
+        },
+        {
+          "kind": "merge",
+          "repo": "okf-parser",
+          "title": "feat(skill): project PEP 621 dependencies into OKF",
+          "url": "https://github.com/franklinbaldo/okf-parser/pull/212",
+          "at": "2026-08-31T01:53:23Z",
+          "number": 212
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 176,
+          "title": "check: validar `status` do lifecycle core do OKF v0.2 quando presente",
+          "url": "https://github.com/franklinbaldo/okf-parser/issues/176",
+          "updatedAt": "2026-08-28T19:58:43Z"
+        },
+        {
+          "number": 171,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/okf-parser/issues/171",
+          "updatedAt": "2026-08-24T10:14:57Z"
+        },
+        {
+          "number": 169,
+          "title": "release: publish 0.44.0 for consumer adoption",
+          "url": "https://github.com/franklinbaldo/okf-parser/issues/169",
+          "updatedAt": "2026-08-24T07:11:03Z"
+        },
+        {
+          "number": 56,
+          "title": "feat: optional GraphQL schema and read-only query adapter",
+          "url": "https://github.com/franklinbaldo/okf-parser/issues/56",
+          "updatedAt": "2026-08-18T16:45:27Z"
+        },
+        {
+          "number": 164,
+          "title": "release: publish the main TypeScript `okf-parser` package to npm",
+          "url": "https://github.com/franklinbaldo/okf-parser/issues/164",
+          "updatedAt": "2026-08-18T12:58:57Z"
+        },
+        {
+          "number": 156,
+          "title": "npm: publicação de okf-parser/okf-parser-duckdb/okf-parser-native-linux-x64 falha com 404 (pacotes nunca publicados)",
+          "url": "https://github.com/franklinbaldo/okf-parser/issues/156",
+          "updatedAt": "2026-08-17T23:07:26Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 202,
+          "title": "RFC 0012: relational agent surfaces from OKF Generator benchmark",
+          "url": "https://github.com/franklinbaldo/okf-parser/pull/202",
+          "updatedAt": "2026-08-30T01:54:40Z",
+          "draft": false
+        },
+        {
+          "number": 196,
+          "title": "Search stack 3/3: add optional local DuckDB FTS",
+          "url": "https://github.com/franklinbaldo/okf-parser/pull/196",
+          "updatedAt": "2026-08-29T22:41:15Z",
+          "draft": false
+        },
+        {
+          "number": 195,
+          "title": "Search stack 2/3: add offline lexical and literal core",
+          "url": "https://github.com/franklinbaldo/okf-parser/pull/195",
+          "updatedAt": "2026-08-29T22:43:31Z",
+          "draft": false
+        },
+        {
+          "number": 187,
+          "title": "bench: measure agent token cost across knowledge-access strategies",
+          "url": "https://github.com/franklinbaldo/okf-parser/pull/187",
+          "updatedAt": "2026-08-30T01:44:10Z",
+          "draft": true
+        },
+        {
+          "number": 186,
+          "title": "bench: compare workload-specific physical targets",
+          "url": "https://github.com/franklinbaldo/okf-parser/pull/186",
+          "updatedAt": "2026-08-30T01:15:13Z",
+          "draft": true
+        },
+        {
+          "number": 184,
+          "title": "perf: add workload-specific SQLite materialization target",
+          "url": "https://github.com/franklinbaldo/okf-parser/pull/184",
+          "updatedAt": "2026-08-30T01:14:56Z",
+          "draft": true
+        }
+      ]
+    },
+    {
+      "name": "baliza",
+      "fullName": "franklinbaldo/baliza",
+      "url": "https://github.com/franklinbaldo/baliza",
+      "description": "Revenue & SEO Engine. Automated deployment of high-performance landing pages and conversion tracking.",
+      "homepage": null,
+      "language": "Python",
+      "stars": 2,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2025-07-05T15:19:29Z",
+      "updatedAt": "2026-08-31T10:10:25Z",
+      "pushedAt": "2026-08-31T10:06:59Z",
+      "openIssues": 8,
+      "openPulls": 23,
+      "mergedPulls7d": 1,
+      "runs24h": 10,
+      "runs7d": 50,
+      "successfulRuns7d": 45,
+      "failedRuns24h": 1,
+      "runSuccessRate": 90,
+      "releases30d": 0,
+      "productCount7d": 46,
+      "activityScore": 100,
+      "status": "flowing",
+      "latestRun": {
+        "name": "PNCP Sync",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/baliza/actions/runs/33576193640",
+        "createdAt": "2026-09-02T00:39:00Z",
+        "updatedAt": "2026-09-02T00:39:27Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "baliza",
+        "title": "PNCP Sync",
+        "url": "https://github.com/franklinbaldo/baliza/actions/runs/33576193640",
+        "at": "2026-09-02T00:39:27Z",
+        "number": 3254
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "baliza",
+          "title": "PNCP Sync",
+          "url": "https://github.com/franklinbaldo/baliza/actions/runs/33576193640",
+          "at": "2026-09-02T00:39:27Z",
+          "number": 3254
+        },
+        {
+          "kind": "run",
+          "repo": "baliza",
+          "title": "PNCP Sync",
+          "url": "https://github.com/franklinbaldo/baliza/actions/runs/33567461096",
+          "at": "2026-09-01T22:41:06Z",
+          "number": 3253
+        },
+        {
+          "kind": "run",
+          "repo": "baliza",
+          "title": "PNCP Sync",
+          "url": "https://github.com/franklinbaldo/baliza/actions/runs/33554351406",
+          "at": "2026-09-01T20:17:01Z",
+          "number": 3252
+        },
+        {
+          "kind": "run",
+          "repo": "baliza",
+          "title": "PNCP Sync",
+          "url": "https://github.com/franklinbaldo/baliza/actions/runs/33538289273",
+          "at": "2026-09-01T17:38:29Z",
+          "number": 3251
+        },
+        {
+          "kind": "run",
+          "repo": "baliza",
+          "title": "Deploy to GitHub Pages",
+          "url": "https://github.com/franklinbaldo/baliza/actions/runs/33504014289",
+          "at": "2026-09-01T11:46:39Z",
+          "number": 839
+        },
+        {
+          "kind": "run",
+          "repo": "baliza",
+          "title": "PNCP Mirror — Publicações",
+          "url": "https://github.com/franklinbaldo/baliza/actions/runs/33494262288",
+          "at": "2026-09-01T09:59:41Z",
+          "number": 117
+        },
+        {
+          "kind": "run",
+          "repo": "baliza",
+          "title": "PNCP Sync",
+          "url": "https://github.com/franklinbaldo/baliza/actions/runs/33489816812",
+          "at": "2026-09-01T09:01:22Z",
+          "number": 3249
+        },
+        {
+          "kind": "run",
+          "repo": "baliza",
+          "title": "PNCP Backfill",
+          "url": "https://github.com/franklinbaldo/baliza/actions/runs/33489646214",
+          "at": "2026-09-01T08:59:02Z",
+          "number": 6
+        },
+        {
+          "kind": "run",
+          "repo": "baliza",
+          "title": "PNCP Sync",
+          "url": "https://github.com/franklinbaldo/baliza/actions/runs/33466946854",
+          "at": "2026-09-01T03:38:55Z",
+          "number": 3248
+        },
+        {
+          "kind": "run",
+          "repo": "baliza",
+          "title": "PNCP Sync",
+          "url": "https://github.com/franklinbaldo/baliza/actions/runs/33452864837",
+          "at": "2026-08-31T23:58:42Z",
+          "number": 3247
+        },
+        {
+          "kind": "run",
+          "repo": "baliza",
+          "title": "PNCP Sync",
+          "url": "https://github.com/franklinbaldo/baliza/actions/runs/33436128702",
+          "at": "2026-08-31T20:27:50Z",
+          "number": 3246
+        },
+        {
+          "kind": "run",
+          "repo": "baliza",
+          "title": "PNCP Sync",
+          "url": "https://github.com/franklinbaldo/baliza/actions/runs/33403366354",
+          "at": "2026-08-31T14:34:20Z",
+          "number": 3245
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 689,
+          "title": "Alinhar requisito de Python entre README, pyproject e Dockerfile",
+          "url": "https://github.com/franklinbaldo/baliza/issues/689",
+          "updatedAt": "2026-09-01T09:07:31Z"
+        },
+        {
+          "number": 605,
+          "title": "🩺 PNCP Doctor found backup integrity issues",
+          "url": "https://github.com/franklinbaldo/baliza/issues/605",
+          "updatedAt": "2026-08-31T13:01:58Z"
+        },
+        {
+          "number": 588,
+          "title": "🚨 PNCP PCA mirror is failing",
+          "url": "https://github.com/franklinbaldo/baliza/issues/588",
+          "updatedAt": "2026-08-31T12:15:23Z"
+        },
+        {
+          "number": 687,
+          "title": "doctor: mês corrente espelhado não é falha de integridade canônica",
+          "url": "https://github.com/franklinbaldo/baliza/issues/687",
+          "updatedAt": "2026-08-27T21:54:29Z"
+        },
+        {
+          "number": 684,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/baliza/issues/684",
+          "updatedAt": "2026-08-24T17:55:20Z"
+        },
+        {
+          "number": 625,
+          "title": "🚨 Falha no workflow \"Build public-CNPJ reference\" (run #3)",
+          "url": "https://github.com/franklinbaldo/baliza/issues/625",
+          "updatedAt": "2026-07-15T06:43:33Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 683,
+          "title": "chore(deps): bump dawidd6/action-download-artifact from 21 to 23",
+          "url": "https://github.com/franklinbaldo/baliza/pull/683",
+          "updatedAt": "2026-08-22T22:54:32Z",
+          "draft": false
+        },
+        {
+          "number": 682,
+          "title": "chore(deps): bump the minor-and-patch group across 1 directory with 18 updates",
+          "url": "https://github.com/franklinbaldo/baliza/pull/682",
+          "updatedAt": "2026-08-22T22:54:29Z",
+          "draft": false
+        },
+        {
+          "number": 677,
+          "title": "chore(deps): bump actions/upload-artifact from 4 to 7",
+          "url": "https://github.com/franklinbaldo/baliza/pull/677",
+          "updatedAt": "2026-08-15T22:54:08Z",
+          "draft": false
+        },
+        {
+          "number": 676,
+          "title": "chore(deps-dev): bump ruff from 0.15.22 to 0.16.2 in the minor-and-patch group",
+          "url": "https://github.com/franklinbaldo/baliza/pull/676",
+          "updatedAt": "2026-08-22T22:53:12Z",
+          "draft": false
+        },
+        {
+          "number": 646,
+          "title": "chore(deps): bump nanoid from 3.3.11 to 3.3.18 in /web",
+          "url": "https://github.com/franklinbaldo/baliza/pull/646",
+          "updatedAt": "2026-08-12T01:12:30Z",
+          "draft": false
+        },
+        {
+          "number": 642,
+          "title": "chore(deps): bump postcss from 8.5.10 to 8.5.26 in /web",
+          "url": "https://github.com/franklinbaldo/baliza/pull/642",
+          "updatedAt": "2026-08-11T20:31:00Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "ficha",
+      "fullName": "franklinbaldo/ficha",
+      "url": "https://github.com/franklinbaldo/ficha",
+      "description": "Data Extraction Agent. Python-based automation for structured data recovery from legal sources.",
+      "homepage": null,
+      "language": "Python",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-04-26T22:06:38Z",
+      "updatedAt": "2026-08-30T07:08:50Z",
+      "pushedAt": "2026-08-30T07:08:33Z",
+      "openIssues": 26,
+      "openPulls": 6,
+      "mergedPulls7d": 1,
+      "runs24h": 0,
+      "runs7d": 10,
+      "successfulRuns7d": 9,
+      "failedRuns24h": 0,
+      "runSuccessRate": 90,
+      "releases30d": 3,
+      "productCount7d": 10,
+      "activityScore": 100,
+      "status": "flowing",
+      "latestRun": {
+        "name": "ETL — upstream + mirror smoke check",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/ficha/actions/runs/33396841333",
+        "createdAt": "2026-08-31T13:24:54Z",
+        "updatedAt": "2026-08-31T13:25:14Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "ficha",
+        "title": "ETL — upstream + mirror smoke check",
+        "url": "https://github.com/franklinbaldo/ficha/actions/runs/33396841333",
+        "at": "2026-08-31T13:25:14Z",
+        "number": 557
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "ficha",
+          "title": "ETL — upstream + mirror smoke check",
+          "url": "https://github.com/franklinbaldo/ficha/actions/runs/33396841333",
+          "at": "2026-08-31T13:25:14Z",
+          "number": 557
+        },
+        {
+          "kind": "run",
+          "repo": "ficha",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/ficha/actions/runs/33298511254",
+          "at": "2026-08-30T07:10:17Z",
+          "number": 757
+        },
+        {
+          "kind": "merge",
+          "repo": "ficha",
+          "title": "hardening(etl): tighten estabelecimento checkpoint reuse",
+          "url": "https://github.com/franklinbaldo/ficha/pull/225",
+          "at": "2026-08-30T07:08:31Z",
+          "number": 225
+        },
+        {
+          "kind": "run",
+          "repo": "ficha",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/ficha/actions/runs/33298360878",
+          "at": "2026-08-30T07:06:30Z",
+          "number": 756
+        },
+        {
+          "kind": "run",
+          "repo": "ficha",
+          "title": "ETL — upstream + mirror smoke check",
+          "url": "https://github.com/franklinbaldo/ficha/actions/runs/33298360888",
+          "at": "2026-08-30T07:05:03Z",
+          "number": 556
+        },
+        {
+          "kind": "run",
+          "repo": "ficha",
+          "title": "ETL Streaming Benchmark (W3.1)",
+          "url": "https://github.com/franklinbaldo/ficha/actions/runs/33298360911",
+          "at": "2026-08-30T07:05:00Z",
+          "number": 382
+        },
+        {
+          "kind": "run",
+          "repo": "ficha",
+          "title": "Estabelecimento Key Audit — cross-part uniqueness (issue",
+          "url": "https://github.com/franklinbaldo/ficha/actions/runs/33298360882",
+          "at": "2026-08-30T07:04:56Z",
+          "number": 19
+        },
+        {
+          "kind": "run",
+          "repo": "ficha",
+          "title": "ETL — upstream + mirror smoke check",
+          "url": "https://github.com/franklinbaldo/ficha/actions/runs/33298257117",
+          "at": "2026-08-30T07:02:29Z",
+          "number": 555
+        },
+        {
+          "kind": "run",
+          "repo": "ficha",
+          "title": "ETL Streaming Benchmark (W3.1)",
+          "url": "https://github.com/franklinbaldo/ficha/actions/runs/33298257163",
+          "at": "2026-08-30T07:02:23Z",
+          "number": 381
+        },
+        {
+          "kind": "run",
+          "repo": "ficha",
+          "title": "Estabelecimento Key Audit — cross-part uniqueness (issue",
+          "url": "https://github.com/franklinbaldo/ficha/actions/runs/33298257168",
+          "at": "2026-08-30T07:02:19Z",
+          "number": 18
+        },
+        {
+          "kind": "release",
+          "repo": "ficha",
+          "title": "Dados 2026-07",
+          "url": "https://github.com/franklinbaldo/ficha/releases/tag/data-2026-07",
+          "at": "2026-08-20T07:44:44Z",
+          "number": null
+        },
+        {
+          "kind": "merge",
+          "repo": "ficha",
+          "title": "web: pressure-test Cobogó core on the public home",
+          "url": "https://github.com/franklinbaldo/ficha/pull/222",
+          "at": "2026-08-18T09:09:47Z",
+          "number": 222
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 223,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/ficha/issues/223",
+          "updatedAt": "2026-08-24T10:14:30Z"
+        },
+        {
+          "number": 141,
+          "title": "design: Greenfield Design Review do site público (cobogo-design-review)",
+          "url": "https://github.com/franklinbaldo/ficha/issues/141",
+          "updatedAt": "2026-08-14T10:10:01Z"
+        },
+        {
+          "number": 203,
+          "title": "Materializar índices e views úteis em cada release mensal",
+          "url": "https://github.com/franklinbaldo/ficha/issues/203",
+          "updatedAt": "2026-08-14T00:15:49Z"
+        },
+        {
+          "number": 208,
+          "title": "Origem CORS-safe para DuckDB-WASM",
+          "url": "https://github.com/franklinbaldo/ficha/issues/208",
+          "updatedAt": "2026-08-14T00:15:41Z"
+        },
+        {
+          "number": 207,
+          "title": "CI deve rodar em pull requests empilhadas",
+          "url": "https://github.com/franklinbaldo/ficha/issues/207",
+          "updatedAt": "2026-08-13T20:45:57Z"
+        },
+        {
+          "number": 205,
+          "title": "Gerar events.parquet derivado para fatos temporais",
+          "url": "https://github.com/franklinbaldo/ficha/issues/205",
+          "updatedAt": "2026-08-13T19:24:18Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 220,
+          "title": "ops: harden temporary O Vigia canonical probe HTTP access",
+          "url": "https://github.com/franklinbaldo/ficha/pull/220",
+          "updatedAt": "2026-08-17T09:33:05Z",
+          "draft": true
+        },
+        {
+          "number": 184,
+          "title": "ops(etl): publicar 2026-05 com checkpoint SHA-1 (#171)",
+          "url": "https://github.com/franklinbaldo/ficha/pull/184",
+          "updatedAt": "2026-08-12T14:41:23Z",
+          "draft": false
+        },
+        {
+          "number": 109,
+          "title": "docs(rfc): propose faixa_etaria as a derived birth-interval signal (#97)",
+          "url": "https://github.com/franklinbaldo/ficha/pull/109",
+          "updatedAt": "2026-07-23T23:06:49Z",
+          "draft": false
+        },
+        {
+          "number": 108,
+          "title": "feat(etl): socio key/cardinality investigation (#97 slice 5)",
+          "url": "https://github.com/franklinbaldo/ficha/pull/108",
+          "updatedAt": "2026-07-23T23:07:19Z",
+          "draft": false
+        },
+        {
+          "number": 106,
+          "title": "chore(deps): bump astro from 6.4.8 to 7.1.3 in /web in the npm_and_yarn group across 1 directory",
+          "url": "https://github.com/franklinbaldo/ficha/pull/106",
+          "updatedAt": "2026-07-23T23:11:13Z",
+          "draft": false
+        },
+        {
+          "number": 40,
+          "title": "chore(deps): bump urllib3 from 2.6.3 to 2.7.0 in /etl in the uv group across 1 directory",
+          "url": "https://github.com/franklinbaldo/ficha/pull/40",
+          "updatedAt": "2026-07-23T23:11:20Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "sisprev",
+      "fullName": "franklinbaldo/sisprev",
+      "url": "https://github.com/franklinbaldo/sisprev",
+      "description": "",
+      "homepage": null,
+      "language": "HTML",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-07-17T14:39:33Z",
+      "updatedAt": "2026-08-27T20:03:44Z",
+      "pushedAt": "2026-08-27T20:03:16Z",
+      "openIssues": 14,
+      "openPulls": 10,
+      "mergedPulls7d": 3,
+      "runs24h": 3,
+      "runs7d": 25,
+      "successfulRuns7d": 23,
+      "failedRuns24h": 0,
+      "runSuccessRate": 92,
+      "releases30d": 0,
+      "productCount7d": 26,
+      "activityScore": 100,
+      "status": "flowing",
+      "latestRun": {
+        "name": "uv in /. for pypdf, pypdf, pypdf, pypdf - Update #1550896936",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/sisprev/actions/runs/33577258983",
+        "createdAt": "2026-09-02T00:54:57Z",
+        "updatedAt": "2026-09-02T00:55:41Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "sisprev",
+        "title": "uv in /. for pypdf, pypdf, pypdf, pypdf - Update #1550896936",
+        "url": "https://github.com/franklinbaldo/sisprev/actions/runs/33577258983",
+        "at": "2026-09-02T00:55:41Z",
+        "number": 15
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "sisprev",
+          "title": "uv in /. for pypdf, pypdf, pypdf, pypdf - Update #1550896936",
+          "url": "https://github.com/franklinbaldo/sisprev/actions/runs/33577258983",
+          "at": "2026-09-02T00:55:41Z",
+          "number": 15
+        },
+        {
+          "kind": "run",
+          "repo": "sisprev",
+          "title": "uv in /. for pypdf, pypdf, pypdf, pypdf - Update #1550890259",
+          "url": "https://github.com/franklinbaldo/sisprev/actions/runs/33577103215",
+          "at": "2026-09-02T00:53:25Z",
+          "number": 14
+        },
+        {
+          "kind": "run",
+          "repo": "sisprev",
+          "title": "uv in /. for pypdf, pypdf, pypdf - Update #1550872296",
+          "url": "https://github.com/franklinbaldo/sisprev/actions/runs/33576464701",
+          "at": "2026-09-02T00:43:59Z",
+          "number": 13
+        },
+        {
+          "kind": "run",
+          "repo": "sisprev",
+          "title": "Site",
+          "url": "https://github.com/franklinbaldo/sisprev/actions/runs/33111435529",
+          "at": "2026-08-27T20:07:54Z",
+          "number": 646
+        },
+        {
+          "kind": "run",
+          "repo": "sisprev",
+          "title": "Visual capture",
+          "url": "https://github.com/franklinbaldo/sisprev/actions/runs/33111435425",
+          "at": "2026-08-27T20:04:32Z",
+          "number": 11
+        },
+        {
+          "kind": "run",
+          "repo": "sisprev",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/sisprev/actions/runs/33111435659",
+          "at": "2026-08-27T20:04:11Z",
+          "number": 800
+        },
+        {
+          "kind": "merge",
+          "repo": "sisprev",
+          "title": "Unifica nome onde sexo, grau de deficiência ou integral/proporcional são auto-diferenciáveis (Decisão 11)",
+          "url": "https://github.com/franklinbaldo/sisprev/pull/151",
+          "at": "2026-08-27T20:03:16Z",
+          "number": 151
+        },
+        {
+          "kind": "run",
+          "repo": "sisprev",
+          "title": "Site",
+          "url": "https://github.com/franklinbaldo/sisprev/actions/runs/33110313591",
+          "at": "2026-08-27T19:53:49Z",
+          "number": 645
+        },
+        {
+          "kind": "run",
+          "repo": "sisprev",
+          "title": "Visual capture",
+          "url": "https://github.com/franklinbaldo/sisprev/actions/runs/33110313567",
+          "at": "2026-08-27T19:51:11Z",
+          "number": 10
+        },
+        {
+          "kind": "run",
+          "repo": "sisprev",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/sisprev/actions/runs/33110313571",
+          "at": "2026-08-27T19:50:32Z",
+          "number": 799
+        },
+        {
+          "kind": "merge",
+          "repo": "sisprev",
+          "title": "chore: adota PEP 723 nos scripts standalone",
+          "url": "https://github.com/franklinbaldo/sisprev/pull/157",
+          "at": "2026-08-27T19:49:37Z",
+          "number": 157
+        },
+        {
+          "kind": "run",
+          "repo": "sisprev",
+          "title": "Visual capture",
+          "url": "https://github.com/franklinbaldo/sisprev/actions/runs/33101308373",
+          "at": "2026-08-27T18:13:23Z",
+          "number": 9
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 154,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/sisprev/issues/154",
+          "updatedAt": "2026-08-28T11:56:48Z"
+        },
+        {
+          "number": 141,
+          "title": "Ciclo 9 — compor manifestação, carga e prova final de completude",
+          "url": "https://github.com/franklinbaldo/sisprev/issues/141",
+          "updatedAt": "2026-08-08T23:30:01Z"
+        },
+        {
+          "number": 146,
+          "title": "Ciclo 9 — corrigir o rol preservado pelo art. 4º da ECE 146",
+          "url": "https://github.com/franklinbaldo/sisprev/issues/146",
+          "updatedAt": "2026-08-08T23:18:04Z"
+        },
+        {
+          "number": 140,
+          "title": "Ciclo 9 — fechar as causas qualificadas do art. 6º-A antes da LCE 432",
+          "url": "https://github.com/franklinbaldo/sisprev/issues/140",
+          "updatedAt": "2026-08-08T23:13:15Z"
+        },
+        {
+          "number": 142,
+          "title": "Ciclo 9 — concluir janelas históricas de invalidez",
+          "url": "https://github.com/franklinbaldo/sisprev/issues/142",
+          "updatedAt": "2026-08-08T21:33:13Z"
+        },
+        {
+          "number": 139,
+          "title": "Ciclo 9 — reconstruir e versionar os rols históricos de doenças",
+          "url": "https://github.com/franklinbaldo/sisprev/issues/139",
+          "updatedAt": "2026-08-08T21:32:05Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 150,
+          "title": "Bump pypdf from 6.14.2 to 6.15.0 in the uv group across 1 directory",
+          "url": "https://github.com/franklinbaldo/sisprev/pull/150",
+          "updatedAt": "2026-08-09T09:40:08Z",
+          "draft": false
+        },
+        {
+          "number": 149,
+          "title": "Ciclo 9: compor manifestação e carga final",
+          "url": "https://github.com/franklinbaldo/sisprev/pull/149",
+          "updatedAt": "2026-08-27T23:53:32Z",
+          "draft": true
+        },
+        {
+          "number": 148,
+          "title": "Ciclo 9: corrigir rol preservado pela ECE 146",
+          "url": "https://github.com/franklinbaldo/sisprev/pull/148",
+          "updatedAt": "2026-08-08T23:17:54Z",
+          "draft": true
+        },
+        {
+          "number": 147,
+          "title": "Ciclo 9: fechar causas qualificadas do art. 6º-A",
+          "url": "https://github.com/franklinbaldo/sisprev/pull/147",
+          "updatedAt": "2026-08-08T23:13:05Z",
+          "draft": true
+        },
+        {
+          "number": 145,
+          "title": "Ciclo 9: resolver proporcionalidade da invalidez na EC 20",
+          "url": "https://github.com/franklinbaldo/sisprev/pull/145",
+          "updatedAt": "2026-08-08T22:57:36Z",
+          "draft": true
+        },
+        {
+          "number": 144,
+          "title": "Ciclo 9: decompor fórmulas da CF/88 original",
+          "url": "https://github.com/franklinbaldo/sisprev/pull/144",
+          "updatedAt": "2026-08-08T22:29:53Z",
+          "draft": true
+        }
+      ]
+    },
+    {
+      "name": "leizilla",
+      "fullName": "franklinbaldo/leizilla",
+      "url": "https://github.com/franklinbaldo/leizilla",
+      "description": "Automated legal monitoring and alert system for legislation and precedents.",
+      "homepage": null,
+      "language": "Python",
+      "stars": 1,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2025-06-27T21:09:12Z",
+      "updatedAt": "2026-08-30T10:01:44Z",
+      "pushedAt": "2026-08-31T16:59:57Z",
+      "openIssues": 14,
+      "openPulls": 5,
+      "mergedPulls7d": 2,
+      "runs24h": 1,
+      "runs7d": 47,
+      "successfulRuns7d": 27,
+      "failedRuns24h": 1,
+      "runSuccessRate": 57,
+      "releases30d": 0,
+      "productCount7d": 29,
+      "activityScore": 83,
+      "status": "jammed",
+      "latestRun": {
+        "name": "Parse + ETL + Release Dataset",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/franklinbaldo/leizilla/actions/runs/33500948917",
+        "createdAt": "2026-09-01T11:08:31Z",
+        "updatedAt": "2026-09-01T11:10:32Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "leizilla",
+        "title": "Deploy Leizilla Web",
+        "url": "https://github.com/franklinbaldo/leizilla/actions/runs/33417155847",
+        "at": "2026-08-31T17:00:46Z",
+        "number": 20
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "leizilla",
+          "title": "Deploy Leizilla Web",
+          "url": "https://github.com/franklinbaldo/leizilla/actions/runs/33417155847",
+          "at": "2026-08-31T17:00:46Z",
+          "number": 20
+        },
+        {
+          "kind": "run",
+          "repo": "leizilla",
+          "title": "Deploy Leizilla Web",
+          "url": "https://github.com/franklinbaldo/leizilla/actions/runs/33417144792",
+          "at": "2026-08-31T17:00:21Z",
+          "number": 19
+        },
+        {
+          "kind": "run",
+          "repo": "leizilla",
+          "title": "Check Pipeline Credentials",
+          "url": "https://github.com/franklinbaldo/leizilla/actions/runs/33417155941",
+          "at": "2026-08-31T17:00:11Z",
+          "number": 418
+        },
+        {
+          "kind": "run",
+          "repo": "leizilla",
+          "title": "Check Pipeline Credentials",
+          "url": "https://github.com/franklinbaldo/leizilla/actions/runs/33417144758",
+          "at": "2026-08-31T17:00:02Z",
+          "number": 417
+        },
+        {
+          "kind": "run",
+          "repo": "leizilla",
+          "title": "Wayback Save — submete URLs faltantes ao Wayback Machine",
+          "url": "https://github.com/franklinbaldo/leizilla/actions/runs/33377469356",
+          "at": "2026-08-31T13:06:20Z",
+          "number": 17
+        },
+        {
+          "kind": "run",
+          "repo": "leizilla",
+          "title": "Deploy Leizilla Web",
+          "url": "https://github.com/franklinbaldo/leizilla/actions/runs/33389734403",
+          "at": "2026-08-31T12:02:20Z",
+          "number": 18
+        },
+        {
+          "kind": "run",
+          "repo": "leizilla",
+          "title": "Check Pipeline Credentials",
+          "url": "https://github.com/franklinbaldo/leizilla/actions/runs/33389734284",
+          "at": "2026-08-31T12:02:03Z",
+          "number": 416
+        },
+        {
+          "kind": "run",
+          "repo": "leizilla",
+          "title": "Deploy Leizilla Web",
+          "url": "https://github.com/franklinbaldo/leizilla/actions/runs/33389300911",
+          "at": "2026-08-31T11:56:48Z",
+          "number": 17
+        },
+        {
+          "kind": "run",
+          "repo": "leizilla",
+          "title": "Check Pipeline Credentials",
+          "url": "https://github.com/franklinbaldo/leizilla/actions/runs/33389300909",
+          "at": "2026-08-31T11:56:26Z",
+          "number": 415
+        },
+        {
+          "kind": "run",
+          "repo": "leizilla",
+          "title": "Deploy Leizilla Web",
+          "url": "https://github.com/franklinbaldo/leizilla/actions/runs/33389262987",
+          "at": "2026-08-31T11:56:25Z",
+          "number": 16
+        },
+        {
+          "kind": "run",
+          "repo": "leizilla",
+          "title": "Check Pipeline Credentials",
+          "url": "https://github.com/franklinbaldo/leizilla/actions/runs/33389262989",
+          "at": "2026-08-31T11:55:56Z",
+          "number": 414
+        },
+        {
+          "kind": "run",
+          "repo": "leizilla",
+          "title": "Check Pipeline Credentials",
+          "url": "https://github.com/franklinbaldo/leizilla/actions/runs/33389174463",
+          "at": "2026-08-31T11:54:53Z",
+          "number": 413
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 114,
+          "title": "🔴 Parse + ETL + Release Dataset: parse-release / casacivil-lei falhou/cancelado",
+          "url": "https://github.com/franklinbaldo/leizilla/issues/114",
+          "updatedAt": "2026-09-01T11:09:34Z"
+        },
+        {
+          "number": 157,
+          "title": "schema: início de vigência ainda chama data do ato de publicação",
+          "url": "https://github.com/franklinbaldo/leizilla/issues/157",
+          "updatedAt": "2026-08-31T11:58:46Z"
+        },
+        {
+          "number": 136,
+          "title": "🔴 Crawl Rondônia Laws: rondonia_crawler / casacivil-lei falhou/cancelado",
+          "url": "https://github.com/franklinbaldo/leizilla/issues/136",
+          "updatedAt": "2026-08-30T05:03:31Z"
+        },
+        {
+          "number": 140,
+          "title": "🔴 Crawl Rondônia Laws: rondonia_crawler / casacivil-lc falhou/cancelado",
+          "url": "https://github.com/franklinbaldo/leizilla/issues/140",
+          "updatedAt": "2026-08-30T04:03:31Z"
+        },
+        {
+          "number": 151,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/leizilla/issues/151",
+          "updatedAt": "2026-08-24T10:14:49Z"
+        },
+        {
+          "number": 129,
+          "title": "etl/schema: data_publicacao is actually the act's signature/promulgation date, not publication",
+          "url": "https://github.com/franklinbaldo/leizilla/issues/129",
+          "updatedAt": "2026-08-21T21:54:53Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 156,
+          "title": "fix(etl): migrate canonical act date semantics",
+          "url": "https://github.com/franklinbaldo/leizilla/pull/156",
+          "updatedAt": "2026-08-31T17:00:29Z",
+          "draft": true
+        },
+        {
+          "number": 142,
+          "title": "chore(deps): bump aiohttp from 3.14.1 to 3.14.3 in the uv group across 1 directory",
+          "url": "https://github.com/franklinbaldo/leizilla/pull/142",
+          "updatedAt": "2026-08-04T22:27:02Z",
+          "draft": false
+        },
+        {
+          "number": 139,
+          "title": "chore(deps): bump astro from 6.4.8 to 7.1.3 in /web in the npm_and_yarn group across 1 directory",
+          "url": "https://github.com/franklinbaldo/leizilla/pull/139",
+          "updatedAt": "2026-07-23T23:11:27Z",
+          "draft": false
+        },
+        {
+          "number": 116,
+          "title": "feat(opf): opf-bootstrap command + Phase 2.5 gold-scaling plan",
+          "url": "https://github.com/franklinbaldo/leizilla/pull/116",
+          "updatedAt": "2026-07-23T23:08:19Z",
+          "draft": false
+        },
+        {
+          "number": 115,
+          "title": "fix(opf): bake measured T4/Colab lessons into the Phase 3 training notebook",
+          "url": "https://github.com/franklinbaldo/leizilla/pull/115",
+          "updatedAt": "2026-07-23T23:08:50Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "hilda",
+      "fullName": "franklinbaldo/hilda",
+      "url": "https://github.com/franklinbaldo/hilda",
+      "description": "Hilda Hilst persona agent. A creative and philosophical agent for digital publishing.",
+      "homepage": null,
+      "language": "Python",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2025-10-15T21:39:04Z",
+      "updatedAt": "2026-08-31T22:52:57Z",
+      "pushedAt": "2026-09-01T01:55:40Z",
+      "openIssues": 0,
+      "openPulls": 4,
+      "mergedPulls7d": 2,
+      "runs24h": 1,
+      "runs7d": 33,
+      "successfulRuns7d": 26,
+      "failedRuns24h": 0,
+      "runSuccessRate": 79,
+      "releases30d": 0,
+      "productCount7d": 28,
+      "activityScore": 65,
+      "status": "flowing",
+      "latestRun": {
+        "name": "checks",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/hilda/actions/runs/33460604828",
+        "createdAt": "2026-09-01T01:55:45Z",
+        "updatedAt": "2026-09-01T01:56:11Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "hilda",
+        "title": "checks",
+        "url": "https://github.com/franklinbaldo/hilda/actions/runs/33460604828",
+        "at": "2026-09-01T01:56:11Z",
+        "number": 31
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "hilda",
+          "title": "checks",
+          "url": "https://github.com/franklinbaldo/hilda/actions/runs/33460604828",
+          "at": "2026-09-01T01:56:11Z",
+          "number": 31
+        },
+        {
+          "kind": "run",
+          "repo": "hilda",
+          "title": "checks",
+          "url": "https://github.com/franklinbaldo/hilda/actions/runs/33451679094",
+          "at": "2026-08-31T23:41:01Z",
+          "number": 30
+        },
+        {
+          "kind": "run",
+          "repo": "hilda",
+          "title": "checks",
+          "url": "https://github.com/franklinbaldo/hilda/actions/runs/33448237187",
+          "at": "2026-08-31T22:53:21Z",
+          "number": 29
+        },
+        {
+          "kind": "merge",
+          "repo": "hilda",
+          "title": "Measure the out-of-memory regime: no HILDA/HNSW crossover",
+          "url": "https://github.com/franklinbaldo/hilda/pull/4",
+          "at": "2026-08-31T22:52:50Z",
+          "number": 4
+        },
+        {
+          "kind": "run",
+          "repo": "hilda",
+          "title": "checks",
+          "url": "https://github.com/franklinbaldo/hilda/actions/runs/33444334801",
+          "at": "2026-08-31T22:03:20Z",
+          "number": 28
+        },
+        {
+          "kind": "run",
+          "repo": "hilda",
+          "title": "checks",
+          "url": "https://github.com/franklinbaldo/hilda/actions/runs/33443342607",
+          "at": "2026-08-31T21:50:48Z",
+          "number": 27
+        },
+        {
+          "kind": "run",
+          "repo": "hilda",
+          "title": "checks",
+          "url": "https://github.com/franklinbaldo/hilda/actions/runs/33433971528",
+          "at": "2026-08-31T20:04:24Z",
+          "number": 26
+        },
+        {
+          "kind": "run",
+          "repo": "hilda",
+          "title": "checks",
+          "url": "https://github.com/franklinbaldo/hilda/actions/runs/33431216007",
+          "at": "2026-08-31T19:33:57Z",
+          "number": 24
+        },
+        {
+          "kind": "run",
+          "repo": "hilda",
+          "title": "checks",
+          "url": "https://github.com/franklinbaldo/hilda/actions/runs/33430989225",
+          "at": "2026-08-31T19:31:30Z",
+          "number": 23
+        },
+        {
+          "kind": "run",
+          "repo": "hilda",
+          "title": "checks",
+          "url": "https://github.com/franklinbaldo/hilda/actions/runs/33429615642",
+          "at": "2026-08-31T19:16:34Z",
+          "number": 22
+        },
+        {
+          "kind": "run",
+          "repo": "hilda",
+          "title": "checks",
+          "url": "https://github.com/franklinbaldo/hilda/actions/runs/33429281898",
+          "at": "2026-08-31T19:12:57Z",
+          "number": 21
+        },
+        {
+          "kind": "run",
+          "repo": "hilda",
+          "title": "checks",
+          "url": "https://github.com/franklinbaldo/hilda/actions/runs/33427294200",
+          "at": "2026-08-31T18:51:25Z",
+          "number": 19
+        }
+      ],
+      "recentIssues": [],
+      "recentPulls": [
+        {
+          "number": 7,
+          "title": "Explore quasar-anchored persistent semantic IDs",
+          "url": "https://github.com/franklinbaldo/hilda/pull/7",
+          "updatedAt": "2026-09-01T01:55:50Z",
+          "draft": true
+        },
+        {
+          "number": 6,
+          "title": "Measure HILDA's index ownership and incremental growth cost",
+          "url": "https://github.com/franklinbaldo/hilda/pull/6",
+          "updatedAt": "2026-08-31T19:53:21Z",
+          "draft": true
+        },
+        {
+          "number": 2,
+          "title": "feat: Update research paper and add initial Python scripts",
+          "url": "https://github.com/franklinbaldo/hilda/pull/2",
+          "updatedAt": "2026-06-03T04:06:57Z",
+          "draft": false
+        },
+        {
+          "number": 1,
+          "title": "feat: Add script to build HILDA vocabulary codebook",
+          "url": "https://github.com/franklinbaldo/hilda/pull/1",
+          "updatedAt": "2026-06-03T01:55:44Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "skills",
+      "fullName": "franklinbaldo/skills",
+      "url": "https://github.com/franklinbaldo/skills",
+      "description": "Formal Logic & Expertise. A living knowledge base featuring Lean 4 legal formalization and AI-agentic workflows.",
+      "homepage": null,
+      "language": "Python",
+      "stars": 1,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-05-08T23:35:16Z",
+      "updatedAt": "2026-08-27T21:14:51Z",
+      "pushedAt": "2026-08-27T21:12:26Z",
+      "openIssues": 3,
+      "openPulls": 7,
+      "mergedPulls7d": 1,
+      "runs24h": 0,
+      "runs7d": 13,
+      "successfulRuns7d": 12,
+      "failedRuns24h": 0,
+      "runSuccessRate": 92,
+      "releases30d": 0,
+      "productCount7d": 13,
+      "activityScore": 63,
+      "status": "flowing",
+      "latestRun": {
+        "name": "Markdown format",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/skills/actions/runs/33117045116",
+        "createdAt": "2026-08-27T21:12:27Z",
+        "updatedAt": "2026-08-27T21:12:37Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "skills",
+        "title": "Lean 4 Compilation",
+        "url": "https://github.com/franklinbaldo/skills/actions/runs/33117044912",
+        "at": "2026-08-27T21:12:49Z",
+        "number": 352
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "skills",
+          "title": "Lean 4 Compilation",
+          "url": "https://github.com/franklinbaldo/skills/actions/runs/33117044912",
+          "at": "2026-08-27T21:12:49Z",
+          "number": 352
+        },
+        {
+          "kind": "run",
+          "repo": "skills",
+          "title": "Skill helper tests",
+          "url": "https://github.com/franklinbaldo/skills/actions/runs/33117045001",
+          "at": "2026-08-27T21:12:38Z",
+          "number": 117
+        },
+        {
+          "kind": "run",
+          "repo": "skills",
+          "title": "Markdown format",
+          "url": "https://github.com/franklinbaldo/skills/actions/runs/33117045116",
+          "at": "2026-08-27T21:12:37Z",
+          "number": 6
+        },
+        {
+          "kind": "merge",
+          "repo": "skills",
+          "title": "chore: make Python helpers self-contained with PEP 723",
+          "url": "https://github.com/franklinbaldo/skills/pull/92",
+          "at": "2026-08-27T21:12:24Z",
+          "number": 92
+        },
+        {
+          "kind": "run",
+          "repo": "skills",
+          "title": "OKF Agent Skills dogfood",
+          "url": "https://github.com/franklinbaldo/skills/actions/runs/33116914835",
+          "at": "2026-08-27T21:12:03Z",
+          "number": 158
+        },
+        {
+          "kind": "run",
+          "repo": "skills",
+          "title": "Lean 4 Compilation",
+          "url": "https://github.com/franklinbaldo/skills/actions/runs/33116914800",
+          "at": "2026-08-27T21:11:13Z",
+          "number": 351
+        },
+        {
+          "kind": "run",
+          "repo": "skills",
+          "title": "Markdown format",
+          "url": "https://github.com/franklinbaldo/skills/actions/runs/33116914872",
+          "at": "2026-08-27T21:11:00Z",
+          "number": 5
+        },
+        {
+          "kind": "run",
+          "repo": "skills",
+          "title": "Skill helper tests",
+          "url": "https://github.com/franklinbaldo/skills/actions/runs/33116914856",
+          "at": "2026-08-27T21:10:59Z",
+          "number": 116
+        },
+        {
+          "kind": "run",
+          "repo": "skills",
+          "title": "PEP 723 migration",
+          "url": "https://github.com/franklinbaldo/skills/actions/runs/33116546590",
+          "at": "2026-08-27T21:06:21Z",
+          "number": 6
+        },
+        {
+          "kind": "run",
+          "repo": "skills",
+          "title": "PEP 723 migration",
+          "url": "https://github.com/franklinbaldo/skills/actions/runs/33116463504",
+          "at": "2026-08-27T21:05:19Z",
+          "number": 4
+        },
+        {
+          "kind": "run",
+          "repo": "skills",
+          "title": "PEP 723 migration",
+          "url": "https://github.com/franklinbaldo/skills/actions/runs/33116384576",
+          "at": "2026-08-27T21:04:23Z",
+          "number": 3
+        },
+        {
+          "kind": "run",
+          "repo": "skills",
+          "title": "PEP 723 inventory",
+          "url": "https://github.com/franklinbaldo/skills/actions/runs/33116357367",
+          "at": "2026-08-27T21:04:03Z",
+          "number": 2
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 91,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/skills/issues/91",
+          "updatedAt": "2026-08-24T11:45:02Z"
+        },
+        {
+          "number": 41,
+          "title": "skills: real-use feedback and incident-derived regression roadmap",
+          "url": "https://github.com/franklinbaldo/skills/issues/41",
+          "updatedAt": "2026-08-10T22:01:41Z"
+        },
+        {
+          "number": 74,
+          "title": "Create research-frontier skill for claim-aware literature evolution",
+          "url": "https://github.com/franklinbaldo/skills/issues/74",
+          "updatedAt": "2026-08-09T14:11:12Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 86,
+          "title": "feat(redacao-pecas): nova skill; revisao-minutas v2, autocontida",
+          "url": "https://github.com/franklinbaldo/skills/pull/86",
+          "updatedAt": "2026-08-19T15:02:35Z",
+          "draft": false
+        },
+        {
+          "number": 85,
+          "title": "add source-only LiteBox Windows workflow",
+          "url": "https://github.com/franklinbaldo/skills/pull/85",
+          "updatedAt": "2026-08-13T11:50:09Z",
+          "draft": false
+        },
+        {
+          "number": 75,
+          "title": "feat: add claim-aware research-frontier skill (#74)",
+          "url": "https://github.com/franklinbaldo/skills/pull/75",
+          "updatedAt": "2026-08-09T14:18:55Z",
+          "draft": false
+        },
+        {
+          "number": 72,
+          "title": "evals: run first subjective quality E2E on text-meme-injection",
+          "url": "https://github.com/franklinbaldo/skills/pull/72",
+          "updatedAt": "2026-08-08T22:14:23Z",
+          "draft": false
+        },
+        {
+          "number": 71,
+          "title": "docs(loop): add evidence-led lateral opportunity map",
+          "url": "https://github.com/franklinbaldo/skills/pull/71",
+          "updatedAt": "2026-08-08T21:43:56Z",
+          "draft": false
+        },
+        {
+          "number": 19,
+          "title": "docs: add skills CI lint fix plan",
+          "url": "https://github.com/franklinbaldo/skills/pull/19",
+          "updatedAt": "2026-07-23T23:01:41Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "rossio",
+      "fullName": "franklinbaldo/rossio",
+      "url": "https://github.com/franklinbaldo/rossio",
+      "description": "Auditoria contínua da presença digital dos 5.570 municípios brasileiros — acessibilidade, desempenho, SEO e boas práticas via PageSpeed Insights",
+      "homepage": null,
+      "language": "Python",
+      "stars": 3,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2019-05-20T00:28:34Z",
+      "updatedAt": "2026-08-29T03:43:20Z",
+      "pushedAt": "2026-08-29T03:42:53Z",
+      "openIssues": 4,
+      "openPulls": 8,
+      "mergedPulls7d": 0,
+      "runs24h": 1,
+      "runs7d": 14,
+      "successfulRuns7d": 2,
+      "failedRuns24h": 1,
+      "runSuccessRate": 14,
+      "releases30d": 0,
+      "productCount7d": 2,
+      "activityScore": 61,
+      "status": "jammed",
+      "latestRun": {
+        "name": "Coleta PSI (PageSpeed Insights)",
+        "status": "completed",
+        "conclusion": "cancelled",
+        "url": "https://github.com/franklinbaldo/rossio/actions/runs/33486681542",
+        "createdAt": "2026-09-01T08:22:16Z",
+        "updatedAt": "2026-09-01T10:22:51Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "rossio",
+        "title": "Site — build e publicação",
+        "url": "https://github.com/franklinbaldo/rossio/actions/runs/33232089933",
+        "at": "2026-08-29T04:55:35Z",
+        "number": 1
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "rossio",
+          "title": "Site — build e publicação",
+          "url": "https://github.com/franklinbaldo/rossio/actions/runs/33232089933",
+          "at": "2026-08-29T04:55:35Z",
+          "number": 1
+        },
+        {
+          "kind": "run",
+          "repo": "rossio",
+          "title": "Configured Graph Update: pip in /. #1544834943",
+          "url": "https://github.com/franklinbaldo/rossio/actions/runs/33226116441",
+          "at": "2026-08-29T01:20:39Z",
+          "number": 1
+        },
+        {
+          "kind": "merge",
+          "repo": "rossio",
+          "title": "design: distinguish dashboard load failures from empty data",
+          "url": "https://github.com/franklinbaldo/rossio/pull/76",
+          "at": "2026-08-13T05:27:06Z",
+          "number": 76
+        },
+        {
+          "kind": "merge",
+          "repo": "rossio",
+          "title": "design: keep stat animation away from freshness",
+          "url": "https://github.com/franklinbaldo/rossio/pull/75",
+          "at": "2026-08-13T03:01:23Z",
+          "number": 75
+        },
+        {
+          "kind": "merge",
+          "repo": "rossio",
+          "title": "design: restore clear keyboard focus on dashboard controls",
+          "url": "https://github.com/franklinbaldo/rossio/pull/72",
+          "at": "2026-08-13T02:58:31Z",
+          "number": 72
+        },
+        {
+          "kind": "merge",
+          "repo": "rossio",
+          "title": "design: keep dashboard controls and freshness semantically explicit",
+          "url": "https://github.com/franklinbaldo/rossio/pull/68",
+          "at": "2026-08-13T02:58:11Z",
+          "number": 68
+        },
+        {
+          "kind": "merge",
+          "repo": "rossio",
+          "title": "design: use native dashboard interactions",
+          "url": "https://github.com/franklinbaldo/rossio/pull/67",
+          "at": "2026-08-13T02:57:41Z",
+          "number": 67
+        },
+        {
+          "kind": "merge",
+          "repo": "rossio",
+          "title": "design: make MkDocs the single dashboard shell authority",
+          "url": "https://github.com/franklinbaldo/rossio/pull/66",
+          "at": "2026-08-13T02:56:53Z",
+          "number": 66
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 69,
+          "title": "ops: allow main to deploy to the github-pages environment",
+          "url": "https://github.com/franklinbaldo/rossio/issues/69",
+          "updatedAt": "2026-08-17T11:03:11Z"
+        },
+        {
+          "number": 70,
+          "title": "ci: stabilize Ruff and clear the pre-existing F402 base failure",
+          "url": "https://github.com/franklinbaldo/rossio/issues/70",
+          "updatedAt": "2026-08-13T02:52:05Z"
+        },
+        {
+          "number": 2,
+          "title": "Sites de prefeituras que tiveram atualização",
+          "url": "https://github.com/franklinbaldo/rossio/issues/2",
+          "updatedAt": "2020-09-29T19:05:16Z"
+        },
+        {
+          "number": 1,
+          "title": "São João do Paraíso de MG com URL de MA",
+          "url": "https://github.com/franklinbaldo/rossio/issues/1",
+          "updatedAt": "2020-09-23T03:58:21Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 62,
+          "title": "fix(data): update incorrect URLs in main dataset",
+          "url": "https://github.com/franklinbaldo/rossio/pull/62",
+          "updatedAt": "2026-06-23T10:05:24Z",
+          "draft": false
+        },
+        {
+          "number": 61,
+          "title": "docs: add MANAGER-INTEL.md with repo intelligence",
+          "url": "https://github.com/franklinbaldo/rossio/pull/61",
+          "updatedAt": "2026-06-23T07:19:55Z",
+          "draft": false
+        },
+        {
+          "number": 45,
+          "title": "ci(deps): bump actions/checkout from 4 to 6",
+          "url": "https://github.com/franklinbaldo/rossio/pull/45",
+          "updatedAt": "2026-02-24T00:01:10Z",
+          "draft": false
+        },
+        {
+          "number": 44,
+          "title": "ci(deps): bump actions/cache from 4 to 5",
+          "url": "https://github.com/franklinbaldo/rossio/pull/44",
+          "updatedAt": "2026-02-24T00:01:10Z",
+          "draft": false
+        },
+        {
+          "number": 43,
+          "title": "ci(deps): bump actions/setup-python from 5 to 6",
+          "url": "https://github.com/franklinbaldo/rossio/pull/43",
+          "updatedAt": "2026-02-24T00:01:10Z",
+          "draft": false
+        },
+        {
+          "number": 42,
+          "title": "ci(deps): bump astral-sh/setup-uv from 4 to 7",
+          "url": "https://github.com/franklinbaldo/rossio/pull/42",
+          "updatedAt": "2026-02-24T00:01:09Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "fact",
+      "fullName": "franklinbaldo/fact",
+      "url": "https://github.com/franklinbaldo/fact",
+      "description": "The fact profile — a conservative convention over OKF (RFC 0009).",
+      "homepage": null,
+      "language": "Python",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-08-15T10:15:08Z",
+      "updatedAt": "2026-08-31T10:10:55Z",
+      "pushedAt": "2026-08-31T10:02:33Z",
+      "openIssues": 2,
+      "openPulls": 0,
+      "mergedPulls7d": 3,
+      "runs24h": 0,
+      "runs7d": 7,
+      "successfulRuns7d": 6,
+      "failedRuns24h": 0,
+      "runSuccessRate": 86,
+      "releases30d": 0,
+      "productCount7d": 9,
+      "activityScore": 58,
+      "status": "flowing",
+      "latestRun": {
+        "name": "FACT Conformance",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/fact/actions/runs/33380568092",
+        "createdAt": "2026-08-31T10:02:36Z",
+        "updatedAt": "2026-08-31T10:02:47Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "fact",
+        "title": "FACT Conformance",
+        "url": "https://github.com/franklinbaldo/fact/actions/runs/33380568092",
+        "at": "2026-08-31T10:02:47Z",
+        "number": 51
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "fact",
+          "title": "FACT Conformance",
+          "url": "https://github.com/franklinbaldo/fact/actions/runs/33380568092",
+          "at": "2026-08-31T10:02:47Z",
+          "number": 51
+        },
+        {
+          "kind": "merge",
+          "repo": "fact",
+          "title": "feat: make the relational capability boundary executable",
+          "url": "https://github.com/franklinbaldo/fact/pull/9",
+          "at": "2026-08-31T10:02:33Z",
+          "number": 9
+        },
+        {
+          "kind": "run",
+          "repo": "fact",
+          "title": "FACT Conformance",
+          "url": "https://github.com/franklinbaldo/fact/actions/runs/33380504780",
+          "at": "2026-08-31T10:02:00Z",
+          "number": 50
+        },
+        {
+          "kind": "run",
+          "repo": "fact",
+          "title": "FACT Conformance",
+          "url": "https://github.com/franklinbaldo/fact/actions/runs/33274895592",
+          "at": "2026-08-29T21:00:01Z",
+          "number": 49
+        },
+        {
+          "kind": "merge",
+          "repo": "fact",
+          "title": "test: make local type resolution interoperable",
+          "url": "https://github.com/franklinbaldo/fact/pull/8",
+          "at": "2026-08-29T20:59:50Z",
+          "number": 8
+        },
+        {
+          "kind": "run",
+          "repo": "fact",
+          "title": "FACT Conformance",
+          "url": "https://github.com/franklinbaldo/fact/actions/runs/33274885586",
+          "at": "2026-08-29T20:59:44Z",
+          "number": 48
+        },
+        {
+          "kind": "run",
+          "repo": "fact",
+          "title": "FACT Conformance",
+          "url": "https://github.com/franklinbaldo/fact/actions/runs/33261581307",
+          "at": "2026-08-29T15:56:07Z",
+          "number": 46
+        },
+        {
+          "kind": "merge",
+          "repo": "fact",
+          "title": "test: make FACT ignore semantics interoperable",
+          "url": "https://github.com/franklinbaldo/fact/pull/7",
+          "at": "2026-08-29T15:55:57Z",
+          "number": 7
+        },
+        {
+          "kind": "run",
+          "repo": "fact",
+          "title": "FACT Conformance",
+          "url": "https://github.com/franklinbaldo/fact/actions/runs/33261565481",
+          "at": "2026-08-29T15:55:48Z",
+          "number": 45
+        },
+        {
+          "kind": "merge",
+          "repo": "fact",
+          "title": "docs: separate FACT control plane from fact plane",
+          "url": "https://github.com/franklinbaldo/fact/pull/2",
+          "at": "2026-08-15T22:53:08Z",
+          "number": 2
+        },
+        {
+          "kind": "merge",
+          "repo": "fact",
+          "title": "docs: found FACT — FACT Anchors Contexts and Types",
+          "url": "https://github.com/franklinbaldo/fact/pull/1",
+          "at": "2026-08-15T14:55:23Z",
+          "number": 1
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 3,
+          "title": "Audit okf-parser extensions for opinionated FACT conventions",
+          "url": "https://github.com/franklinbaldo/fact/issues/3",
+          "updatedAt": "2026-08-31T10:02:57Z"
+        },
+        {
+          "number": 5,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/fact/issues/5",
+          "updatedAt": "2026-08-24T10:14:22Z"
+        }
+      ],
+      "recentPulls": []
+    },
+    {
+      "name": "intuit",
+      "fullName": "franklinbaldo/intuit",
+      "url": "https://github.com/franklinbaldo/intuit",
+      "description": "",
+      "homepage": null,
+      "language": "JavaScript",
+      "stars": 0,
+      "forks": 1,
+      "defaultBranch": "main",
+      "createdAt": "2023-10-04T14:34:14Z",
+      "updatedAt": "2026-08-31T17:20:45Z",
+      "pushedAt": "2026-08-31T17:08:29Z",
+      "openIssues": 1,
+      "openPulls": 0,
+      "mergedPulls7d": 3,
+      "runs24h": 0,
+      "runs7d": 15,
+      "successfulRuns7d": 14,
+      "failedRuns24h": 0,
+      "runSuccessRate": 93,
+      "releases30d": 0,
+      "productCount7d": 17,
+      "activityScore": 57,
+      "status": "flowing",
+      "latestRun": {
+        "name": "Visual capture",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/intuit/actions/runs/33417946698",
+        "createdAt": "2026-08-31T17:08:30Z",
+        "updatedAt": "2026-08-31T17:09:23Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "intuit",
+        "title": "Test",
+        "url": "https://github.com/franklinbaldo/intuit/actions/runs/33417946657",
+        "at": "2026-08-31T17:09:50Z",
+        "number": 14
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "intuit",
+          "title": "Test",
+          "url": "https://github.com/franklinbaldo/intuit/actions/runs/33417946657",
+          "at": "2026-08-31T17:09:50Z",
+          "number": 14
+        },
+        {
+          "kind": "run",
+          "repo": "intuit",
+          "title": "Visual capture",
+          "url": "https://github.com/franklinbaldo/intuit/actions/runs/33417946698",
+          "at": "2026-08-31T17:09:23Z",
+          "number": 5
+        },
+        {
+          "kind": "run",
+          "repo": "intuit",
+          "title": "Deploy static content to Pages",
+          "url": "https://github.com/franklinbaldo/intuit/actions/runs/33417946679",
+          "at": "2026-08-31T17:08:51Z",
+          "number": 25
+        },
+        {
+          "kind": "merge",
+          "repo": "intuit",
+          "title": "fix: make keyboard focus and reduced motion explicit",
+          "url": "https://github.com/franklinbaldo/intuit/pull/27",
+          "at": "2026-08-31T17:08:27Z",
+          "number": 27
+        },
+        {
+          "kind": "run",
+          "repo": "intuit",
+          "title": "Test",
+          "url": "https://github.com/franklinbaldo/intuit/actions/runs/33417741517",
+          "at": "2026-08-31T17:07:40Z",
+          "number": 13
+        },
+        {
+          "kind": "run",
+          "repo": "intuit",
+          "title": "Visual capture",
+          "url": "https://github.com/franklinbaldo/intuit/actions/runs/33417741529",
+          "at": "2026-08-31T17:06:58Z",
+          "number": 4
+        },
+        {
+          "kind": "run",
+          "repo": "intuit",
+          "title": "Visual capture",
+          "url": "https://github.com/franklinbaldo/intuit/actions/runs/33417536824",
+          "at": "2026-08-31T17:05:09Z",
+          "number": 3
+        },
+        {
+          "kind": "run",
+          "repo": "intuit",
+          "title": "Test",
+          "url": "https://github.com/franklinbaldo/intuit/actions/runs/33413210147",
+          "at": "2026-08-31T16:18:26Z",
+          "number": 11
+        },
+        {
+          "kind": "run",
+          "repo": "intuit",
+          "title": "Visual capture",
+          "url": "https://github.com/franklinbaldo/intuit/actions/runs/33413210167",
+          "at": "2026-08-31T16:17:28Z",
+          "number": 2
+        },
+        {
+          "kind": "run",
+          "repo": "intuit",
+          "title": "Deploy static content to Pages",
+          "url": "https://github.com/franklinbaldo/intuit/actions/runs/33413210139",
+          "at": "2026-08-31T16:17:07Z",
+          "number": 24
+        },
+        {
+          "kind": "merge",
+          "repo": "intuit",
+          "title": "test: add reproducible visual capture",
+          "url": "https://github.com/franklinbaldo/intuit/pull/26",
+          "at": "2026-08-31T16:16:43Z",
+          "number": 26
+        },
+        {
+          "kind": "run",
+          "repo": "intuit",
+          "title": "Test",
+          "url": "https://github.com/franklinbaldo/intuit/actions/runs/33413051136",
+          "at": "2026-08-31T16:16:27Z",
+          "number": 10
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 22,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/intuit/issues/22",
+          "updatedAt": "2026-08-24T10:14:44Z"
+        }
+      ],
+      "recentPulls": []
+    },
+    {
+      "name": "litebox",
+      "fullName": "franklinbaldo/litebox",
+      "url": "https://github.com/franklinbaldo/litebox",
+      "description": "A security-focused library OS supporting kernel- and user-mode execution",
+      "homepage": null,
+      "language": null,
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-08-12T18:47:12Z",
+      "updatedAt": "2026-08-13T15:04:15Z",
+      "pushedAt": "2026-08-13T21:04:57Z",
+      "openIssues": 20,
+      "openPulls": 4,
+      "mergedPulls7d": 0,
+      "runs24h": 0,
+      "runs7d": 0,
+      "successfulRuns7d": 0,
+      "failedRuns24h": 0,
+      "runSuccessRate": null,
+      "releases30d": 0,
+      "productCount7d": 0,
+      "activityScore": 44,
+      "status": "flowing",
+      "latestRun": null,
+      "latestProduct": null,
+      "recentProducts": [],
+      "recentIssues": [
+        {
+          "number": 23,
+          "title": "M7 — Isolation boundary / disposable child (fixture: arbitrary crash/loop payload)",
+          "url": "https://github.com/franklinbaldo/litebox/issues/23",
+          "updatedAt": "2026-08-13T18:39:58Z"
+        },
+        {
+          "number": 22,
+          "title": "M6 — IRQL state machine (fixture: transition + access sequence)",
+          "url": "https://github.com/franklinbaldo/litebox/issues/22",
+          "updatedAt": "2026-08-13T18:39:48Z"
+        },
+        {
+          "number": 21,
+          "title": "M5 — SystemBuffer Shadow Checker (fixture: InLen, OutLen, write trace)",
+          "url": "https://github.com/franklinbaldo/litebox/issues/21",
+          "updatedAt": "2026-08-13T18:39:44Z"
+        },
+        {
+          "number": 20,
+          "title": "M4 — Instrumented allocator (fixture: alloc/free sequence)",
+          "url": "https://github.com/franklinbaldo/litebox/issues/20",
+          "updatedAt": "2026-08-13T18:39:29Z"
+        },
+        {
+          "number": 19,
+          "title": "M3 — Synthetic NT / IRP dispatch (fixture: DriverEntry + 1 IOCTL)",
+          "url": "https://github.com/franklinbaldo/litebox/issues/19",
+          "updatedAt": "2026-08-13T18:39:23Z"
+        },
+        {
+          "number": 18,
+          "title": "M2 — Import resolver / ABI registry (fixture: import table)",
+          "url": "https://github.com/franklinbaldo/litebox/issues/18",
+          "updatedAt": "2026-08-13T18:39:14Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 24,
+          "title": "Implement Driver rehosting module decomposition (M1-M7)",
+          "url": "https://github.com/franklinbaldo/litebox/pull/24",
+          "updatedAt": "2026-08-14T00:56:40Z",
+          "draft": false
+        },
+        {
+          "number": 3,
+          "title": "Add Docker-like LiteBox command interface",
+          "url": "https://github.com/franklinbaldo/litebox/pull/3",
+          "updatedAt": "2026-08-13T15:44:13Z",
+          "draft": true
+        },
+        {
+          "number": 2,
+          "title": "Support passphrase-encrypted TAR files",
+          "url": "https://github.com/franklinbaldo/litebox/pull/2",
+          "updatedAt": "2026-08-12T19:34:56Z",
+          "draft": true
+        },
+        {
+          "number": 1,
+          "title": "Add Windows no-admin LiteBox conveniences",
+          "url": "https://github.com/franklinbaldo/litebox/pull/1",
+          "updatedAt": "2026-08-12T19:32:28Z",
+          "draft": true
+        }
+      ]
+    },
+    {
+      "name": "aleph-the-game",
+      "fullName": "franklinbaldo/aleph-the-game",
+      "url": "https://github.com/franklinbaldo/aleph-the-game",
+      "description": "Be Borges",
+      "homepage": null,
+      "language": "TypeScript",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2025-11-21T19:24:21Z",
+      "updatedAt": "2026-08-31T08:10:01Z",
+      "pushedAt": "2026-08-31T08:07:34Z",
+      "openIssues": 1,
+      "openPulls": 0,
+      "mergedPulls7d": 1,
+      "runs24h": 0,
+      "runs7d": 2,
+      "successfulRuns7d": 2,
+      "failedRuns24h": 0,
+      "runSuccessRate": 100,
+      "releases30d": 0,
+      "productCount7d": 3,
+      "activityScore": 33,
+      "status": "flowing",
+      "latestRun": {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/aleph-the-game/actions/runs/33371422961",
+        "createdAt": "2026-08-31T08:07:34Z",
+        "updatedAt": "2026-08-31T08:07:57Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "aleph-the-game",
+        "title": "CI",
+        "url": "https://github.com/franklinbaldo/aleph-the-game/actions/runs/33371422961",
+        "at": "2026-08-31T08:07:57Z",
+        "number": 4
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "aleph-the-game",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/aleph-the-game/actions/runs/33371422961",
+          "at": "2026-08-31T08:07:57Z",
+          "number": 4
+        },
+        {
+          "kind": "merge",
+          "repo": "aleph-the-game",
+          "title": "docs: explain the game to outside readers",
+          "url": "https://github.com/franklinbaldo/aleph-the-game/pull/5",
+          "at": "2026-08-31T08:07:32Z",
+          "number": 5
+        },
+        {
+          "kind": "run",
+          "repo": "aleph-the-game",
+          "title": "CI",
+          "url": "https://github.com/franklinbaldo/aleph-the-game/actions/runs/33371372035",
+          "at": "2026-08-31T08:07:15Z",
+          "number": 3
+        },
+        {
+          "kind": "merge",
+          "repo": "aleph-the-game",
+          "title": "fix: keep action input isolated from choice shortcuts (#1)",
+          "url": "https://github.com/franklinbaldo/aleph-the-game/pull/2",
+          "at": "2026-08-16T08:04:24Z",
+          "number": 2
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 3,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/aleph-the-game/issues/3",
+          "updatedAt": "2026-08-24T10:13:35Z"
+        }
+      ],
+      "recentPulls": []
+    },
+    {
+      "name": "the-lab",
+      "fullName": "franklinbaldo/the-lab",
+      "url": "https://github.com/franklinbaldo/the-lab",
+      "description": "Public blog for the Rosencrantz Substrate Invariance research lab",
+      "homepage": null,
+      "language": "Astro",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-03-05T13:11:42Z",
+      "updatedAt": "2026-08-14T20:09:02Z",
+      "pushedAt": "2026-08-14T20:07:30Z",
+      "openIssues": 1,
+      "openPulls": 6,
+      "mergedPulls7d": 0,
+      "runs24h": 0,
+      "runs7d": 0,
+      "successfulRuns7d": 0,
+      "failedRuns24h": 0,
+      "runSuccessRate": null,
+      "releases30d": 0,
+      "productCount7d": 0,
+      "activityScore": 33,
+      "status": "flowing",
+      "latestRun": {
+        "name": "npm_and_yarn in /., /site for astro, astro, astro, astro, astro, astro, astro, astro, astro, astro, astro, defu, devalue, devalue, devalue, esbuild, h3, h3, h3, h3, picomatch, picomatch, picomatch, picomatch, smol-toml, vite, vite - Update #1424408914",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/the-lab/actions/runs/27862223043",
+        "createdAt": "2026-06-20T05:58:46Z",
+        "updatedAt": "2026-06-20T05:59:22Z"
+      },
+      "latestProduct": {
+        "kind": "merge",
+        "repo": "the-lab",
+        "title": "feat: expose Rosencrantz source provenance on the public surface",
+        "url": "https://github.com/franklinbaldo/the-lab/pull/127",
+        "at": "2026-08-14T20:07:28Z",
+        "number": 127
+      },
+      "recentProducts": [
+        {
+          "kind": "merge",
+          "repo": "the-lab",
+          "title": "feat: expose Rosencrantz source provenance on the public surface",
+          "url": "https://github.com/franklinbaldo/the-lab/pull/127",
+          "at": "2026-08-14T20:07:28Z",
+          "number": 127
+        },
+        {
+          "kind": "merge",
+          "repo": "the-lab",
+          "title": "a11y: honour prefers-reduced-motion",
+          "url": "https://github.com/franklinbaldo/the-lab/pull/126",
+          "at": "2026-08-11T15:18:06Z",
+          "number": 126
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 128,
+          "title": "Deploy workflow não inicia após push em main",
+          "url": "https://github.com/franklinbaldo/the-lab/issues/128",
+          "updatedAt": "2026-09-01T01:00:08Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 125,
+          "title": "build(deps): bump the npm_and_yarn group across 2 directories with 7 updates",
+          "url": "https://github.com/franklinbaldo/the-lab/pull/125",
+          "updatedAt": "2026-04-21T21:50:13Z",
+          "draft": false
+        },
+        {
+          "number": 123,
+          "title": "Add article about CHSH game and quantum illusion",
+          "url": "https://github.com/franklinbaldo/the-lab/pull/123",
+          "updatedAt": "2026-03-18T03:19:34Z",
+          "draft": false
+        },
+        {
+          "number": 122,
+          "title": "Add article: The Measurement Fragment Triviality Debate",
+          "url": "https://github.com/franklinbaldo/the-lab/pull/122",
+          "updatedAt": "2026-03-18T01:47:56Z",
+          "draft": false
+        },
+        {
+          "number": 121,
+          "title": "feat: add article about temperature sweep test",
+          "url": "https://github.com/franklinbaldo/the-lab/pull/121",
+          "updatedAt": "2026-03-17T23:56:38Z",
+          "draft": false
+        },
+        {
+          "number": 120,
+          "title": "Add article covering Temperature Sweep empirical results",
+          "url": "https://github.com/franklinbaldo/the-lab/pull/120",
+          "updatedAt": "2026-03-17T23:22:06Z",
+          "draft": false
+        },
+        {
+          "number": 119,
+          "title": "Add article covering Temperature Sweep Minimum and Causal Injection tests",
+          "url": "https://github.com/franklinbaldo/the-lab/pull/119",
+          "updatedAt": "2026-03-17T22:49:50Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "tailbox",
+      "fullName": "franklinbaldo/tailbox",
+      "url": "https://github.com/franklinbaldo/tailbox",
+      "description": "Unprivileged Tailscale access for humans and AI agents through Microsoft LiteBox on Windows",
+      "homepage": null,
+      "language": "PowerShell",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-07-25T19:02:04Z",
+      "updatedAt": "2026-07-27T12:15:34Z",
+      "pushedAt": "2026-08-29T01:04:05Z",
+      "openIssues": 0,
+      "openPulls": 1,
+      "mergedPulls7d": 0,
+      "runs24h": 0,
+      "runs7d": 4,
+      "successfulRuns7d": 3,
+      "failedRuns24h": 0,
+      "runSuccessRate": 75,
+      "releases30d": 0,
+      "productCount7d": 3,
+      "activityScore": 24,
+      "status": "flowing",
+      "latestRun": {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/franklinbaldo/tailbox/actions/runs/33225376006",
+        "createdAt": "2026-08-29T01:04:05Z",
+        "updatedAt": "2026-08-29T01:04:49Z"
+      },
+      "latestProduct": {
+        "kind": "run",
+        "repo": "tailbox",
+        "title": "go_modules in /engine - Update #1544829572",
+        "url": "https://github.com/franklinbaldo/tailbox/actions/runs/33225340519",
+        "at": "2026-08-29T01:04:05Z",
+        "number": 21
+      },
+      "recentProducts": [
+        {
+          "kind": "run",
+          "repo": "tailbox",
+          "title": "go_modules in /engine - Update #1544829572",
+          "url": "https://github.com/franklinbaldo/tailbox/actions/runs/33225340519",
+          "at": "2026-08-29T01:04:05Z",
+          "number": 21
+        },
+        {
+          "kind": "run",
+          "repo": "tailbox",
+          "title": "github_actions in /. - Update #1544829660",
+          "url": "https://github.com/franklinbaldo/tailbox/actions/runs/33225340526",
+          "at": "2026-08-29T01:04:02Z",
+          "number": 22
+        },
+        {
+          "kind": "run",
+          "repo": "tailbox",
+          "title": "cargo in /. - Update #1544829631",
+          "url": "https://github.com/franklinbaldo/tailbox/actions/runs/33225340618",
+          "at": "2026-08-29T01:03:55Z",
+          "number": 23
+        }
+      ],
+      "recentIssues": [],
+      "recentPulls": [
+        {
+          "number": 10,
+          "title": "build(deps): bump tailscale.com from 1.102.0 to 1.102.3 in /engine",
+          "url": "https://github.com/franklinbaldo/tailbox/pull/10",
+          "updatedAt": "2026-08-29T01:04:02Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "suj",
+      "fullName": "franklinbaldo/suj",
+      "url": "https://github.com/franklinbaldo/suj",
+      "description": "Uma integração não oficial, experimental e potencialmente insegura com o jus.br, criada para pesquisa e fins acadêmicos. Não use em processos reais.",
+      "homepage": null,
+      "language": "Python",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-08-12T13:47:27Z",
+      "updatedAt": "2026-08-12T18:06:27Z",
+      "pushedAt": "2026-08-12T18:05:28Z",
+      "openIssues": 9,
+      "openPulls": 0,
+      "mergedPulls7d": 0,
+      "runs24h": 0,
+      "runs7d": 0,
+      "successfulRuns7d": 0,
+      "failedRuns24h": 0,
+      "runSuccessRate": null,
+      "releases30d": 0,
+      "productCount7d": 0,
+      "activityScore": 17,
+      "status": "warming",
+      "latestRun": {
+        "name": "Graph Update: uv in /. #1522682367",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/suj/actions/runs/31625907847",
+        "createdAt": "2026-08-12T18:05:33Z",
+        "updatedAt": "2026-08-12T18:06:20Z"
+      },
+      "latestProduct": null,
+      "recentProducts": [],
+      "recentIssues": [
+        {
+          "number": 16,
+          "title": "epic: migrar com segurança o conhecimento da pink#452",
+          "url": "https://github.com/franklinbaldo/suj/issues/16",
+          "updatedAt": "2026-08-12T13:57:08Z"
+        },
+        {
+          "number": 15,
+          "title": "write: implementar commit e reconciliação do protocolo",
+          "url": "https://github.com/franklinbaldo/suj/issues/15",
+          "updatedAt": "2026-08-12T13:56:43Z"
+        },
+        {
+          "number": 14,
+          "title": "write: implementar preparação e upload seguro de documentos",
+          "url": "https://github.com/franklinbaldo/suj/issues/14",
+          "updatedAt": "2026-08-12T13:56:42Z"
+        },
+        {
+          "number": 13,
+          "title": "RFC: definir consentimento, idempotência e estados da escrita",
+          "url": "https://github.com/franklinbaldo/suj/issues/13",
+          "updatedAt": "2026-08-12T13:56:41Z"
+        },
+        {
+          "number": 12,
+          "title": "read: modelar recibo como evidência de verificação",
+          "url": "https://github.com/franklinbaldo/suj/issues/12",
+          "updatedAt": "2026-08-12T13:56:39Z"
+        },
+        {
+          "number": 11,
+          "title": "read: consultar capa processual com contrato tipado e minimização",
+          "url": "https://github.com/franklinbaldo/suj/issues/11",
+          "updatedAt": "2026-08-12T13:56:38Z"
+        }
+      ],
+      "recentPulls": []
+    },
+    {
+      "name": "canivete",
+      "fullName": "franklinbaldo/canivete",
+      "url": "https://github.com/franklinbaldo/canivete",
+      "description": "AI Agent Orchestrator. Swiss-army knife CLI for distributed agents and Telegram command & control.",
+      "homepage": null,
+      "language": "Python",
+      "stars": 1,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-04-27T13:38:08Z",
+      "updatedAt": "2026-05-24T03:38:37Z",
+      "pushedAt": "2026-06-23T19:14:50Z",
+      "openIssues": 1,
+      "openPulls": 4,
+      "mergedPulls7d": 0,
+      "runs24h": 0,
+      "runs7d": 0,
+      "successfulRuns7d": 0,
+      "failedRuns24h": 0,
+      "runSuccessRate": null,
+      "releases30d": 0,
+      "productCount7d": 0,
+      "activityScore": 17,
+      "status": "flowing",
+      "latestRun": {
+        "name": "uv in /. for Mako, pydantic-settings - Update #1461057702",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/canivete/actions/runs/29376791914",
+        "createdAt": "2026-07-14T23:39:55Z",
+        "updatedAt": "2026-07-14T23:40:40Z"
+      },
+      "latestProduct": null,
+      "recentProducts": [],
+      "recentIssues": [
+        {
+          "number": 21,
+          "title": "11 bot/daemon tests failing on `main` — CI broken",
+          "url": "https://github.com/franklinbaldo/canivete/issues/21",
+          "updatedAt": "2026-05-22T13:48:18Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 26,
+          "title": "build(deps): bump pydantic-settings from 2.14.0 to 2.14.2 in the uv group across 1 directory",
+          "url": "https://github.com/franklinbaldo/canivete/pull/26",
+          "updatedAt": "2026-06-23T19:14:51Z",
+          "draft": false
+        },
+        {
+          "number": 25,
+          "title": "Fix RuntimeWarning coroutine was never awaited warnings in test_bot.py",
+          "url": "https://github.com/franklinbaldo/canivete/pull/25",
+          "updatedAt": "2026-06-21T22:51:03Z",
+          "draft": false
+        },
+        {
+          "number": 24,
+          "title": "feat(routine): add active steps (run:) and dynamic loops (while_json, while_exists)",
+          "url": "https://github.com/franklinbaldo/canivete/pull/24",
+          "updatedAt": "2026-06-03T01:56:21Z",
+          "draft": false
+        },
+        {
+          "number": 23,
+          "title": "fix: make CLI and tests compatible with Windows encoding",
+          "url": "https://github.com/franklinbaldo/canivete/pull/23",
+          "updatedAt": "2026-05-24T15:37:10Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "undogmatic",
+      "fullName": "franklinbaldo/undogmatic",
+      "url": "https://github.com/franklinbaldo/undogmatic",
+      "description": "Critical thinking and philosophical analysis engine for legal argumentation.",
+      "homepage": null,
+      "language": "Python",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2025-09-27T18:55:58Z",
+      "updatedAt": "2026-05-10T21:17:25Z",
+      "pushedAt": "2026-06-22T16:21:29Z",
+      "openIssues": 1,
+      "openPulls": 3,
+      "mergedPulls7d": 0,
+      "runs24h": 0,
+      "runs7d": 0,
+      "successfulRuns7d": 0,
+      "failedRuns24h": 0,
+      "runSuccessRate": null,
+      "releases30d": 0,
+      "productCount7d": 0,
+      "activityScore": 13,
+      "status": "flowing",
+      "latestRun": {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/undogmatic/actions/runs/27967479410",
+        "createdAt": "2026-06-22T16:21:39Z",
+        "updatedAt": "2026-06-22T16:22:19Z"
+      },
+      "latestProduct": null,
+      "recentProducts": [],
+      "recentIssues": [
+        {
+          "number": 20,
+          "title": "surface: reconcile legacy ShameFeeling heatmap with current LLM-first ShameScore",
+          "url": "https://github.com/franklinbaldo/undogmatic/issues/20",
+          "updatedAt": "2026-08-17T02:59:03Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 19,
+          "title": "Add MANAGER-INTEL.md strategic overview",
+          "url": "https://github.com/franklinbaldo/undogmatic/pull/19",
+          "updatedAt": "2026-06-22T16:21:31Z",
+          "draft": false
+        },
+        {
+          "number": 14,
+          "title": "Revert 11 feat/embed gemma backend",
+          "url": "https://github.com/franklinbaldo/undogmatic/pull/14",
+          "updatedAt": "2025-10-01T00:06:06Z",
+          "draft": false
+        },
+        {
+          "number": 10,
+          "title": "Handle scorer objects in A/B evaluation",
+          "url": "https://github.com/franklinbaldo/undogmatic/pull/10",
+          "updatedAt": "2025-09-29T13:27:15Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "sei-mcp",
+      "fullName": "franklinbaldo/sei-mcp",
+      "url": "https://github.com/franklinbaldo/sei-mcp",
+      "description": "Model Context Protocol (MCP) server for SEI (Sistema Eletrônico de Informações).",
+      "homepage": null,
+      "language": "TypeScript",
+      "stars": 2,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-01-10T13:35:38Z",
+      "updatedAt": "2026-08-21T17:09:28Z",
+      "pushedAt": "2026-08-24T07:59:12Z",
+      "openIssues": 2,
+      "openPulls": 0,
+      "mergedPulls7d": 0,
+      "runs24h": 0,
+      "runs7d": 0,
+      "successfulRuns7d": 0,
+      "failedRuns24h": 0,
+      "runSuccessRate": null,
+      "releases30d": 0,
+      "productCount7d": 0,
+      "activityScore": 10,
+      "status": "warming",
+      "latestRun": {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/sei-mcp/actions/runs/31920565711",
+        "createdAt": "2026-08-16T01:52:46Z",
+        "updatedAt": "2026-08-16T01:53:06Z"
+      },
+      "latestProduct": {
+        "kind": "merge",
+        "repo": "sei-mcp",
+        "title": "test: exercise production SEI parsers (#4)",
+        "url": "https://github.com/franklinbaldo/sei-mcp/pull/5",
+        "at": "2026-08-16T01:52:43Z",
+        "number": 5
+      },
+      "recentProducts": [
+        {
+          "kind": "merge",
+          "repo": "sei-mcp",
+          "title": "test: exercise production SEI parsers (#4)",
+          "url": "https://github.com/franklinbaldo/sei-mcp/pull/5",
+          "at": "2026-08-16T01:52:43Z",
+          "number": 5
+        },
+        {
+          "kind": "merge",
+          "repo": "sei-mcp",
+          "title": "ci: add GitHub Actions workflow and update test script",
+          "url": "https://github.com/franklinbaldo/sei-mcp/pull/3",
+          "at": "2026-08-15T19:54:10Z",
+          "number": 3
+        }
+      ],
+      "recentIssues": [
+        {
+          "number": 7,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/sei-mcp/issues/7",
+          "updatedAt": "2026-08-24T10:15:32Z"
+        },
+        {
+          "number": 6,
+          "title": "strategy: definir se este repo continua independente após a 0.7 do todos",
+          "url": "https://github.com/franklinbaldo/sei-mcp/issues/6",
+          "updatedAt": "2026-08-24T07:58:59Z"
+        }
+      ],
+      "recentPulls": []
+    },
+    {
+      "name": "rosencrantz-coin",
+      "fullName": "franklinbaldo/rosencrantz-coin",
+      "url": "https://github.com/franklinbaldo/rosencrantz-coin",
+      "description": "Substrate Invariance Tests in LLM-Generated Worlds via Combinatorial Indeterminacy",
+      "homepage": null,
+      "language": "TeX",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-03-03T22:20:31Z",
+      "updatedAt": "2026-08-17T13:08:26Z",
+      "pushedAt": "2026-08-17T13:05:51Z",
+      "openIssues": 2,
+      "openPulls": 0,
+      "mergedPulls7d": 0,
+      "runs24h": 0,
+      "runs7d": 0,
+      "successfulRuns7d": 0,
+      "failedRuns24h": 0,
+      "runSuccessRate": null,
+      "releases30d": 0,
+      "productCount7d": 0,
+      "activityScore": 10,
+      "status": "warming",
+      "latestRun": {
+        "name": "Prettier",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/rosencrantz-coin/actions/runs/23228061369",
+        "createdAt": "2026-03-18T03:43:42Z",
+        "updatedAt": "2026-03-18T03:43:51Z"
+      },
+      "latestProduct": null,
+      "recentProducts": [],
+      "recentIssues": [
+        {
+          "number": 751,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/rosencrantz-coin/issues/751",
+          "updatedAt": "2026-08-24T11:44:53Z"
+        },
+        {
+          "number": 750,
+          "title": "surface: make current paper and experiment outputs reachable from the repository front door",
+          "url": "https://github.com/franklinbaldo/rosencrantz-coin/issues/750",
+          "updatedAt": "2026-08-18T02:01:45Z"
+        }
+      ],
+      "recentPulls": []
+    },
+    {
+      "name": "ovigia-ci",
+      "fullName": "franklinbaldo/ovigia-ci",
+      "url": "https://github.com/franklinbaldo/ovigia-ci",
+      "description": "Execution harness for franklinbaldo/ovigia-redacao (private): runs its canonical workflows using free public-repo Actions minutes. Contains no editorial content.",
+      "homepage": null,
+      "language": null,
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-08-17T13:12:35Z",
+      "updatedAt": "2026-08-17T13:37:02Z",
+      "pushedAt": "2026-08-17T13:33:34Z",
+      "openIssues": 1,
+      "openPulls": 0,
+      "mergedPulls7d": 0,
+      "runs24h": 0,
+      "runs7d": 0,
+      "successfulRuns7d": 0,
+      "failedRuns24h": 0,
+      "runSuccessRate": null,
+      "releases30d": 0,
+      "productCount7d": 0,
+      "activityScore": 9,
+      "status": "warming",
+      "latestRun": null,
+      "latestProduct": null,
+      "recentProducts": [],
+      "recentIssues": [
+        {
+          "number": 1,
+          "title": "Revisão automatizada (Ox Alpha): estado, próximos passos e risco silencioso",
+          "url": "https://github.com/franklinbaldo/ovigia-ci/issues/1",
+          "updatedAt": "2026-08-24T10:15:01Z"
+        }
+      ],
+      "recentPulls": []
+    },
+    {
+      "name": "events-all-the-way-down",
+      "fullName": "franklinbaldo/events-all-the-way-down",
+      "url": "https://github.com/franklinbaldo/events-all-the-way-down",
+      "description": "Events All the Way Down — a blog on process ontology, intelligence, and becoming",
+      "homepage": null,
+      "language": "Svelte",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-03-22T17:59:44Z",
+      "updatedAt": "2026-04-16T01:57:07Z",
+      "pushedAt": "2026-06-02T21:13:20Z",
+      "openIssues": 1,
+      "openPulls": 1,
+      "mergedPulls7d": 0,
+      "runs24h": 0,
+      "runs7d": 0,
+      "successfulRuns7d": 0,
+      "failedRuns24h": 0,
+      "runSuccessRate": null,
+      "releases30d": 0,
+      "productCount7d": 0,
+      "activityScore": 5,
+      "status": "flowing",
+      "latestRun": {
+        "name": "npm_and_yarn in /. for astro, astro, astro, astro, astro, braces, devalue, esbuild, fast-uri, fast-uri, fast-xml-builder, fast-xml-parser, js-yaml, marked, svelte, svelte, svelte, svelte, tar, undici, undici, undici, undici, undici, undici, undici, vite, vite - Update #1454838962",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/events-all-the-way-down/actions/runs/29078938542",
+        "createdAt": "2026-07-10T08:10:26Z",
+        "updatedAt": "2026-07-10T08:11:10Z"
+      },
+      "latestProduct": null,
+      "recentProducts": [],
+      "recentIssues": [
+        {
+          "number": 23,
+          "title": "surface: reconcile standalone blog with the current canonical publication",
+          "url": "https://github.com/franklinbaldo/events-all-the-way-down/issues/23",
+          "updatedAt": "2026-08-18T09:20:39Z"
+        }
+      ],
+      "recentPulls": [
+        {
+          "number": 22,
+          "title": "build(deps): bump astro from 6.1.5 to 6.1.8 in the npm_and_yarn group across 1 directory",
+          "url": "https://github.com/franklinbaldo/events-all-the-way-down/pull/22",
+          "updatedAt": "2026-04-21T22:43:28Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "dreamer",
+      "fullName": "franklinbaldo/dreamer",
+      "url": "https://github.com/franklinbaldo/dreamer",
+      "description": "dream you music",
+      "homepage": null,
+      "language": "Python",
+      "stars": 0,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-01-07T00:14:01Z",
+      "updatedAt": "2026-07-23T20:18:02Z",
+      "pushedAt": "2026-07-23T20:17:56Z",
+      "openIssues": 0,
+      "openPulls": 1,
+      "mergedPulls7d": 0,
+      "runs24h": 0,
+      "runs7d": 0,
+      "successfulRuns7d": 0,
+      "failedRuns24h": 0,
+      "runSuccessRate": null,
+      "releases30d": 0,
+      "productCount7d": 0,
+      "activityScore": 4,
+      "status": "flowing",
+      "latestRun": {
+        "name": "Graph Update: uv in /. #1477107019",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/franklinbaldo/dreamer/actions/runs/30041512243",
+        "createdAt": "2026-07-23T20:18:01Z",
+        "updatedAt": "2026-07-23T20:18:44Z"
+      },
+      "latestProduct": null,
+      "recentProducts": [],
+      "recentIssues": [],
+      "recentPulls": [
+        {
+          "number": 9,
+          "title": "Make a test session for Jules",
+          "url": "https://github.com/franklinbaldo/dreamer/pull/9",
+          "updatedAt": "2026-04-10T15:43:57Z",
+          "draft": false
+        }
+      ]
+    },
+    {
+      "name": "dinossauro",
+      "fullName": "franklinbaldo/dinossauro",
+      "url": "https://github.com/franklinbaldo/dinossauro",
+      "description": "🦖 Exumando o orçamento secreto via Civil Tech: Cross-referencing marketing político com execução orçamentária (PNCP/IA).",
+      "homepage": null,
+      "language": null,
+      "stars": 1,
+      "forks": 0,
+      "defaultBranch": "main",
+      "createdAt": "2026-04-28T11:03:17Z",
+      "updatedAt": "2026-06-16T12:10:32Z",
+      "pushedAt": "2026-05-01T05:30:33Z",
+      "openIssues": 0,
+      "openPulls": 0,
+      "mergedPulls7d": 0,
+      "runs24h": 0,
+      "runs7d": 0,
+      "successfulRuns7d": 0,
+      "failedRuns24h": 0,
+      "runSuccessRate": null,
+      "releases30d": 0,
+      "productCount7d": 0,
+      "activityScore": 0,
+      "status": "idle",
+      "latestRun": null,
+      "latestProduct": null,
+      "recentProducts": [],
+      "recentIssues": [],
+      "recentPulls": []
+    }
+  ],
+  "connections": [
+    {
+      "source": "cobogo",
+      "target": "causaganha",
+      "weight": 33,
+      "reasons": [
+        "code: knowledge/consumers/causaganha.md",
+        "code: knowledge/rounds/2026-08-29T2301.md",
+        "code: knowledge/rounds/2026-08-30T0002.md",
+        "code: knowledge/rounds/2026-08-30T0108.md",
+        "code: knowledge/rounds/2026-08-30T0205.md",
+        "code: knowledge/rounds/2026-08-30T0258.md"
+      ]
+    },
+    {
+      "source": "cobogo",
+      "target": "the-lab",
+      "weight": 19,
+      "reasons": [
+        "code: knowledge/consumers/the-lab.md",
+        "code: knowledge/rounds/2026-08-31T2000.md",
+        "code: knowledge/rounds/2026-08-31T2058.md",
+        "code: knowledge/rounds/2026-08-31T2209.md",
+        "code: knowledge/rounds/2026-09-01T0003.md",
+        "code: knowledge/rounds/2026-09-01T0057.md"
+      ]
+    },
+    {
+      "source": "cobogo",
+      "target": "ficha",
+      "weight": 7,
+      "reasons": [
+        "code: knowledge/rounds/2026-08-30T2358.md",
+        "code: knowledge/rounds/2026-08-31T0102.md",
+        "code: knowledge/rounds/2026-08-31T1603.md",
+        "code: knowledge/rounds/2026-08-31T1657.md",
+        "code: knowledge/rounds/2026-09-01T0259.md",
+        "code: knowledge/rounds/2026-09-01T0357.md"
+      ]
+    },
+    {
+      "source": "cobogo",
+      "target": "intuit",
+      "weight": 7,
+      "reasons": [
+        "code: knowledge/rounds/2026-08-31T0837.md",
+        "code: knowledge/rounds/2026-08-31T1037.md",
+        "code: knowledge/rounds/2026-08-31T1108.md",
+        "code: knowledge/rounds/2026-08-31T1213.md",
+        "code: knowledge/rounds/2026-08-31T1301.md",
+        "code: knowledge/rounds/2026-09-01T0057.md"
+      ]
+    },
+    {
+      "source": "cobogo",
+      "target": "baliza",
+      "weight": 6,
+      "reasons": [
+        "code: knowledge/rounds/2026-08-30T2358.md",
+        "code: knowledge/rounds/2026-08-31T0102.md",
+        "code: knowledge/rounds/2026-08-31T1603.md",
+        "code: knowledge/rounds/2026-08-31T1657.md",
+        "code: knowledge/rounds/2026-09-01T0502.md",
+        "issue #267"
+      ]
+    },
+    {
+      "source": "cobogo",
+      "target": "astronauta",
+      "weight": 5,
+      "reasons": [
+        "code: knowledge/rounds/2026-08-31T0206.md",
+        "code: knowledge/rounds/2026-08-31T0301.md",
+        "code: knowledge/rounds/2026-09-01T0601.md",
+        "code: knowledge/rounds/2026-09-01T0658.md",
+        "code: knowledge/rounds/2026-09-01T0757.md"
+      ]
+    },
+    {
+      "source": "astronauta",
+      "target": "okf-parser",
+      "weight": 4,
+      "reasons": ["issue #3", "issue #4", "issue #5", "recent PR #8"]
+    },
+    {
+      "source": "cobogo",
+      "target": "quem-sao-eles",
+      "weight": 4,
+      "reasons": [
+        "code: knowledge/rounds/2026-08-31T1358.md",
+        "code: knowledge/rounds/2026-09-01T0858.md",
+        "code: knowledge/rounds/2026-09-01T1557.md",
+        "code: knowledge/rounds/2026-09-01T1802.md"
+      ]
+    },
+    {
+      "source": "cobogo",
+      "target": "sisprev",
+      "weight": 4,
+      "reasons": [
+        "code: knowledge/rounds/2026-08-31T2000.md",
+        "code: knowledge/rounds/2026-08-31T2058.md",
+        "code: knowledge/rounds/2026-08-31T2209.md",
+        "code: knowledge/rounds/2026-09-01T0003.md"
+      ]
+    },
+    {
+      "source": "perquire",
+      "target": "papers",
+      "weight": 4,
+      "reasons": ["issue #67", "issue #69", "issue #70", "recent PR #71"]
+    },
+    {
+      "source": "cobogo",
+      "target": "leizilla",
+      "weight": 3,
+      "reasons": [
+        "code: knowledge/rounds/2026-08-31T0206.md",
+        "code: knowledge/rounds/2026-09-01T0259.md",
+        "code: knowledge/rounds/2026-09-01T0357.md"
+      ]
+    },
+    {
+      "source": "cobogo",
+      "target": "okf-parser",
+      "weight": 3,
+      "reasons": ["code: knowledge/index.md", "issue #393", "recent PR #388"]
+    },
+    {
+      "source": "fact",
+      "target": "okf-parser",
+      "weight": 3,
+      "reasons": ["issue #3", "recent PR #2", "recent PR #4"]
+    },
+    {
+      "source": "ficha",
+      "target": "cobogo",
+      "weight": 3,
+      "reasons": ["issue #141", "recent PR #143", "recent PR #210"]
+    },
+    {
+      "source": "papers",
+      "target": "skills",
+      "weight": 3,
+      "reasons": ["PR #279", "issue #278", "issue #349"]
+    },
+    {
+      "source": "astronauta",
+      "target": "cobogo",
+      "weight": 2,
+      "reasons": ["issue #23", "issue #24"]
+    },
+    {
+      "source": "cobogo",
+      "target": "perquire",
+      "weight": 2,
+      "reasons": [
+        "code: knowledge/rounds/2026-08-29T2301.md",
+        "code: knowledge/rounds/2026-08-30T0002.md"
+      ]
+    },
+    {
+      "source": "cobogo",
+      "target": "undogmatic",
+      "weight": 2,
+      "reasons": [
+        "code: knowledge/rounds/2026-08-31T1859.md",
+        "code: knowledge/rounds/2026-08-31T2209.md"
+      ]
+    },
+    {
+      "source": "quem-sao-eles",
+      "target": "cobogo",
+      "weight": 2,
+      "reasons": ["issue #13", "recent PR #12"]
+    },
+    {
+      "source": "skills",
+      "target": "cobogo",
+      "weight": 2,
+      "reasons": ["recent PR #78", "recent PR #80"]
+    },
+    {
+      "source": "skills",
+      "target": "papers",
+      "weight": 2,
+      "reasons": ["PR #75", "issue #74"]
+    },
+    {
+      "source": "baliza",
+      "target": "causaganha",
+      "weight": 1,
+      "reasons": ["recent PR #645"]
+    },
+    {
+      "source": "baliza",
+      "target": "cobogo",
+      "weight": 1,
+      "reasons": ["recent PR #674"]
+    },
+    {
+      "source": "cobogo",
+      "target": "aleph-the-game",
+      "weight": 1,
+      "reasons": ["code: knowledge/rounds/2026-08-31T0401.md"]
+    },
+    {
+      "source": "cobogo",
+      "target": "rosencrantz-coin",
+      "weight": 1,
+      "reasons": ["code: knowledge/consumers/the-lab.md"]
+    },
+    {
+      "source": "cobogo",
+      "target": "rossio",
+      "weight": 1,
+      "reasons": ["code: knowledge/rounds/2026-08-31T2209.md"]
+    },
+    {
+      "source": "cobogo",
+      "target": "skills",
+      "weight": 1,
+      "reasons": ["recent PR #272"]
+    },
+    {
+      "source": "ficha",
+      "target": "skills",
+      "weight": 1,
+      "reasons": ["issue #141"]
+    },
+    {
+      "source": "leizilla",
+      "target": "causaganha",
+      "weight": 1,
+      "reasons": ["code: README.md"]
+    },
+    {
+      "source": "okf-parser",
+      "target": "astronauta",
+      "weight": 1,
+      "reasons": ["issue #56"]
+    },
+    {
+      "source": "quem-sao-eles",
+      "target": "causaganha",
+      "weight": 1,
+      "reasons": ["code: CLAUDE.md"]
+    },
+    {
+      "source": "sisprev",
+      "target": "okf-parser",
+      "weight": 1,
+      "reasons": ["recent PR #119"]
+    },
+    {
+      "source": "skills",
+      "target": "litebox",
+      "weight": 1,
+      "reasons": ["PR #85"]
+    },
+    {
+      "source": "the-lab",
+      "target": "rosencrantz-coin",
+      "weight": 1,
+      "reasons": ["recent PR #127"]
+    }
+  ]
 }
