@@ -1,0 +1,565 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import "../../styles/repo-factory.css";
+import rawSnapshot from "../../generated/repo-factory.json";
+
+type FactoryStatus = "flowing" | "jammed" | "warming" | "idle";
+type ProductKind = "merge" | "release" | "run";
+
+interface FactoryProduct {
+  kind: ProductKind;
+  repo: string;
+  title: string;
+  url: string;
+  at: string;
+  number: number | null;
+}
+
+interface FactoryWorkItem {
+  number: number;
+  title: string;
+  url: string;
+  updatedAt: string;
+  draft?: boolean;
+}
+
+interface FactoryRepo {
+  name: string;
+  fullName: string;
+  url: string;
+  description: string;
+  homepage: string | null;
+  language: string | null;
+  stars: number;
+  forks: number;
+  defaultBranch: string;
+  createdAt: string;
+  updatedAt: string;
+  pushedAt: string;
+  openIssues: number;
+  openPulls: number;
+  mergedPulls7d: number;
+  runs24h: number;
+  runs7d: number;
+  successfulRuns7d: number;
+  failedRuns24h: number;
+  runSuccessRate: number | null;
+  releases30d: number;
+  productCount7d: number;
+  activityScore: number;
+  status: FactoryStatus;
+  latestRun: {
+    name: string;
+    status: string;
+    conclusion: string | null;
+    url: string;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+  latestProduct: FactoryProduct | null;
+  recentProducts: FactoryProduct[];
+  recentIssues: FactoryWorkItem[];
+  recentPulls: FactoryWorkItem[];
+}
+
+interface FactoryConnection {
+  source: string;
+  target: string;
+  weight: number;
+  reasons: string[];
+}
+
+interface FactorySnapshot {
+  schemaVersion: string;
+  generatedAt: string | null;
+  owner: string;
+  source: string;
+  bootstrap: boolean;
+  privacy: string;
+  totals: {
+    repositories: number;
+    openIssues: number;
+    openPulls: number;
+    mergedPulls7d: number;
+    runs24h: number;
+    successfulRuns7d: number;
+    releases30d: number;
+  };
+  repositories: FactoryRepo[];
+  connections: FactoryConnection[];
+}
+
+const snapshot = rawSnapshot as unknown as FactorySnapshot;
+const repositories = snapshot.repositories ?? [];
+const connectionRows = snapshot.connections ?? [];
+const initialRepo = repositories[0] ?? null;
+const initialConnections = initialRepo
+  ? connectionRows.filter(
+      (connection) =>
+        connection.source === initialRepo.name || connection.target === initialRepo.name,
+    )
+  : [];
+
+const BOARD_WIDTH = 1420;
+const CARD_WIDTH = 270;
+const CARD_HEIGHT = 142;
+const COLUMNS = 4;
+const LEFT = 48;
+const TOP = 58;
+const X_GAP = 338;
+const Y_GAP = 188;
+
+const nodes = repositories.map((repo, index) => {
+  const row = Math.floor(index / COLUMNS);
+  const rawColumn = index % COLUMNS;
+  const column = row % 2 === 0 ? rawColumn : COLUMNS - 1 - rawColumn;
+  return {
+    repo,
+    x: LEFT + column * X_GAP,
+    y: TOP + row * Y_GAP,
+  };
+});
+
+const nodeByName = new Map(nodes.map((node) => [node.repo.name, node]));
+const boardHeight = Math.max(
+  520,
+  TOP + Math.ceil(Math.max(1, nodes.length) / COLUMNS) * Y_GAP + 36,
+);
+
+const belts = connectionRows
+  .map((connection) => {
+    const source = nodeByName.get(connection.source);
+    const target = nodeByName.get(connection.target);
+    if (!source || !target) return null;
+    const x1 = source.x + CARD_WIDTH / 2;
+    const y1 = source.y + CARD_HEIGHT / 2;
+    const x2 = target.x + CARD_WIDTH / 2;
+    const y2 = target.y + CARD_HEIGHT / 2;
+    const midX = Math.round((x1 + x2) / 2);
+    return {
+      ...connection,
+      d: `M ${x1} ${y1} H ${midX} V ${y2} H ${x2}`,
+    };
+  })
+  .filter((belt): belt is NonNullable<typeof belt> => Boolean(belt));
+
+const productionLog = repositories
+  .flatMap((repo) => repo.recentProducts ?? [])
+  .sort((a, b) => String(b.at).localeCompare(String(a.at)))
+  .slice(0, 30);
+
+const generatedLabel = snapshot.generatedAt
+  ? new Intl.DateTimeFormat("en", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "UTC",
+      timeZoneName: "short",
+    }).format(new Date(snapshot.generatedAt))
+  : null;
+
+function shortDate(value: string): string {
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC",
+  }).format(new Date(value));
+}
+
+const statusLabel: Record<FactoryStatus, string> = {
+  flowing: "FLOWING",
+  jammed: "JAMMED",
+  warming: "WARMING",
+  idle: "IDLE",
+};
+
+const safeData = JSON.stringify(snapshot).replaceAll("<", "\\u003c");
+---
+
+<PageLayout
+  title="Repo Factory"
+  description="A living factory-floor map of Franklin Baldo's public GitHub repositories: issues become inputs, pull requests become assembly lines, Actions runs become machines, and merges and releases leave as products."
+  lang="en"
+>
+  <section class="factory-shell" aria-labelledby="factory-title">
+    <header class="factory-hero">
+      <div>
+        <p class="factory-kicker">PUBLIC GITHUB · PRODUCTION MAP</p>
+        <h1 id="factory-title">Repo Factory</h1>
+        <p class="factory-deck">
+          A software portfolio rendered as a factory floor. Issues arrive as raw material, pull
+          requests enter assembly, workflow runs process the work, and merges, releases and green
+          runs leave the line as products.
+        </p>
+      </div>
+      <div class="factory-source" aria-label="Data provenance">
+        <span class="source-light" aria-hidden="true"></span>
+        <div>
+          <strong>{snapshot.bootstrap ? "Bootstrap snapshot" : "GitHub API snapshot"}</strong>
+          <span>
+            {generatedLabel ? `generated ${generatedLabel}` : "waiting for first live build"}
+          </span>
+          <span>{snapshot.privacy}</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="factory-metrics" aria-label="Factory totals">
+      <article>
+        <span>FACTORIES</span>
+        <strong>{snapshot.totals.repositories}</strong>
+        <small>public repositories</small>
+      </article>
+      <article>
+        <span>RAW ORE</span>
+        <strong>{snapshot.totals.openIssues}</strong>
+        <small>open issues</small>
+      </article>
+      <article>
+        <span>ASSEMBLY</span>
+        <strong>{snapshot.totals.openPulls}</strong>
+        <small>open pull requests</small>
+      </article>
+      <article>
+        <span>MACHINES / 24H</span>
+        <strong>{snapshot.totals.runs24h}</strong>
+        <small>workflow runs</small>
+      </article>
+      <article>
+        <span>CRATES / 7D</span>
+        <strong>{snapshot.totals.mergedPulls7d}</strong>
+        <small>merged pull requests</small>
+      </article>
+      <article>
+        <span>RELEASES / 30D</span>
+        <strong>{snapshot.totals.releases30d}</strong>
+        <small>tagged output</small>
+      </article>
+    </section>
+
+    <div class="factory-toolbar" aria-label="Factory map controls">
+      <label class="factory-search">
+        <span>Find a factory</span>
+        <input id="factory-search" type="search" placeholder="repo name…" autocomplete="off" />
+      </label>
+      <label>
+        <span>Line state</span>
+        <select id="factory-status">
+          <option value="all">All factories</option>
+          <option value="flowing">Flowing</option>
+          <option value="jammed">Jammed</option>
+          <option value="warming">Warming</option>
+          <option value="idle">Idle</option>
+        </select>
+      </label>
+      <label class="factory-check">
+        <input id="factory-belts" type="checkbox" checked />
+        <span>Show belts</span>
+      </label>
+      <button id="factory-motion" type="button" class="factory-motion" aria-pressed="false">
+        Pause belt motion
+      </button>
+    </div>
+
+    {
+      repositories.length > 0 ? (
+        <div class="factory-layout">
+          <section class="factory-map-frame" aria-label="Interactive repository factory map">
+            <div
+              id="factory-board"
+              class="factory-board"
+              style={`width:${BOARD_WIDTH}px;height:${boardHeight}px`}
+            >
+              <div class="factory-grid" aria-hidden="true"></div>
+              <svg
+                class="factory-belts"
+                viewBox={`0 0 ${BOARD_WIDTH} ${boardHeight}`}
+                width={BOARD_WIDTH}
+                height={boardHeight}
+                aria-hidden="true"
+              >
+                {belts.map((belt) => (
+                  <g data-belt data-source={belt.source} data-target={belt.target}>
+                    <path class="belt-rail" d={belt.d} />
+                    <path class="belt-flow" d={belt.d} />
+                  </g>
+                ))}
+              </svg>
+
+              {nodes.map(({ repo, x, y }, index) => (
+                <button
+                  type="button"
+                  class="factory-node"
+                  style={`--node-x:${x}px;--node-y:${y}px`}
+                  data-repo={repo.name}
+                  data-status={repo.status}
+                  aria-pressed={index === 0 ? "true" : "false"}
+                  title={`Inspect ${repo.fullName}`}
+                >
+                  <span class="machine-topline">
+                    <span class="machine-gear" aria-hidden="true">⚙</span>
+                    <span class="machine-status">{statusLabel[repo.status]}</span>
+                    <span class="machine-score">{repo.activityScore}%</span>
+                  </span>
+                  <strong>{repo.name}</strong>
+                  <span class="machine-language">{repo.language ?? "mixed / unknown"}</span>
+                  <span class="machine-pipeline" aria-label={`${repo.name} production counts`}>
+                    <span title="Open issues">◆ {repo.openIssues}</span>
+                    <i aria-hidden="true">→</i>
+                    <span title="Open pull requests">▰ {repo.openPulls}</span>
+                    <i aria-hidden="true">→</i>
+                    <span title="Workflow runs in the last 24 hours">⚡ {repo.runs24h}</span>
+                    <i aria-hidden="true">→</i>
+                    <span title="Products in the last 7 days">▣ {repo.productCount7d}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <aside class="factory-inspector" aria-labelledby="inspector-name">
+            <p class="inspector-eyebrow">SELECTED FACTORY</p>
+            <div class="inspector-title-row">
+              <h2 id="inspector-name">{initialRepo?.name}</h2>
+              <span
+                id="inspector-status"
+                class={`status-chip status-${initialRepo?.status ?? "idle"}`}
+              >
+                {initialRepo ? statusLabel[initialRepo.status] : "IDLE"}
+              </span>
+            </div>
+            <p id="inspector-description" class="inspector-description">
+              {initialRepo?.description || "No repository description."}
+            </p>
+            <a id="inspector-link" href={initialRepo?.url ?? "#"} target="_blank" rel="noreferrer">
+              Open repository ↗
+            </a>
+
+            <dl class="inspector-stats">
+              <div><dt>Issues</dt><dd id="inspector-issues">{initialRepo?.openIssues ?? 0}</dd></div>
+              <div><dt>PRs</dt><dd id="inspector-prs">{initialRepo?.openPulls ?? 0}</dd></div>
+              <div><dt>Runs 24h</dt><dd id="inspector-runs">{initialRepo?.runs24h ?? 0}</dd></div>
+              <div>
+                <dt>Run yield</dt>
+                <dd id="inspector-yield">
+                  {initialRepo?.runSuccessRate != null ? `${initialRepo.runSuccessRate}%` : "—"}
+                </dd>
+              </div>
+            </dl>
+
+            <section class="inspector-block" aria-labelledby="inspector-run-label">
+              <div class="inspector-block-head">
+                <h3 id="inspector-run-label">Machine status</h3>
+                <span id="inspector-run-conclusion">
+                  {initialRepo?.latestRun?.conclusion ?? initialRepo?.latestRun?.status ?? "no run"}
+                </span>
+              </div>
+              <a
+                id="inspector-run-link"
+                href={initialRepo?.latestRun?.url ?? "#"}
+                target="_blank"
+                rel="noreferrer"
+                hidden={!initialRepo?.latestRun}
+              >
+                {initialRepo?.latestRun?.name ?? "Workflow run"}
+              </a>
+            </section>
+
+            <section class="inspector-block" aria-labelledby="inspector-inputs-label">
+              <div class="inspector-block-head">
+                <h3 id="inspector-inputs-label">Input hopper</h3>
+                <span>issues</span>
+              </div>
+              <ul id="inspector-inputs" class="inspector-list">
+                {initialRepo?.recentIssues.slice(0, 4).map((issue) => (
+                  <li>
+                    <a href={issue.url} target="_blank" rel="noreferrer">
+                      #{issue.number} {issue.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <p
+                id="inspector-inputs-empty"
+                class="inspector-empty"
+                hidden={(initialRepo?.recentIssues.length ?? 0) > 0}
+              >
+                Hopper empty.
+              </p>
+            </section>
+
+            <section class="inspector-block" aria-labelledby="inspector-assembly-label">
+              <div class="inspector-block-head">
+                <h3 id="inspector-assembly-label">Assembly queue</h3>
+                <span>pull requests</span>
+              </div>
+              <ul id="inspector-assembly" class="inspector-list">
+                {initialRepo?.recentPulls.slice(0, 4).map((pull) => (
+                  <li>
+                    <a href={pull.url} target="_blank" rel="noreferrer">
+                      #{pull.number} {pull.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <p
+                id="inspector-assembly-empty"
+                class="inspector-empty"
+                hidden={(initialRepo?.recentPulls.length ?? 0) > 0}
+              >
+                No PRs on the belt.
+              </p>
+            </section>
+
+            <section class="inspector-block" aria-labelledby="inspector-output-label">
+              <div class="inspector-block-head">
+                <h3 id="inspector-output-label">Output chest</h3>
+                <span>recent products</span>
+              </div>
+              <ul id="inspector-products" class="inspector-list product-list">
+                {initialRepo?.recentProducts.slice(0, 5).map((item) => (
+                  <li>
+                    <span class={`product-kind kind-${item.kind}`}>{item.kind}</span>
+                    <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
+                  </li>
+                ))}
+              </ul>
+              <p
+                id="inspector-products-empty"
+                class="inspector-empty"
+                hidden={(initialRepo?.recentProducts.length ?? 0) > 0}
+              >
+                No recent crates in the snapshot window.
+              </p>
+            </section>
+
+            <section class="inspector-block" aria-labelledby="inspector-belts-label">
+              <div class="inspector-block-head">
+                <h3 id="inspector-belts-label">Inter-repo belts</h3>
+                <span>explicit references</span>
+              </div>
+              <ul id="inspector-belts" class="inspector-list belt-list">
+                {initialConnections.slice(0, 6).map((connection) => {
+                  const outbound = connection.source === initialRepo?.name;
+                  const other = outbound ? connection.target : connection.source;
+                  return (
+                    <li>
+                      <span class="belt-direction">{outbound ? "OUT →" : "← IN"}</span>
+                      <a
+                        href={`https://github.com/${snapshot.owner}/${other}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {other}
+                      </a>
+                      <small>{connection.reasons[0] ?? "explicit reference"}</small>
+                    </li>
+                  );
+                })}
+              </ul>
+              <p
+                id="inspector-belts-empty"
+                class="inspector-empty"
+                hidden={initialConnections.length > 0}
+              >
+                No explicit public cross-repo reference found in this snapshot.
+              </p>
+            </section>
+          </aside>
+        </div>
+      ) : (
+        <section class="factory-empty" aria-live="polite">
+          <span class="machine-gear" aria-hidden="true">⚙</span>
+          <div>
+            <h2>The factory is waiting for its first sync.</h2>
+            <p>
+              The committed file is intentionally only a safe fallback. A normal GitHub Pages build
+              runs the collector with <code>gh api</code> and fills this floor with public repositories.
+            </p>
+          </div>
+        </section>
+      )
+    }
+
+    <section class="factory-legend" aria-labelledby="factory-legend-title">
+      <div>
+        <p class="factory-kicker">THE RECIPE</p>
+        <h2 id="factory-legend-title">What the machines mean</h2>
+      </div>
+      <ol>
+        <li>
+          <span class="legend-icon">◆</span><strong>Issue</strong><small>raw material / work demand</small>
+        </li>
+        <li>
+          <span class="legend-icon">▰</span><strong>Pull request</strong><small>assembly line</small>
+        </li>
+        <li>
+          <span class="legend-icon">⚡</span><strong>Actions run</strong><small>machine cycle / quality gate</small>
+        </li>
+        <li>
+          <span class="legend-icon">▣</span><strong>Merge or release</strong><small>finished product</small>
+        </li>
+        <li>
+          <span class="legend-icon belt-icon">━</span><strong>Cross-repo belt</strong><small>explicit GitHub reference</small>
+        </li>
+      </ol>
+      <p class="legend-note">
+        Belts are evidence, not guesswork: the collector derives them from explicit references between
+        public repositories in repository text, recent issues/PRs, and indexed code. Private repositories
+        never enter the public snapshot.
+      </p>
+    </section>
+
+    <section class="production-log" aria-labelledby="production-log-title">
+      <header>
+        <div>
+          <p class="factory-kicker">OUTPUT CHESTS</p>
+          <h2 id="production-log-title">Latest products</h2>
+        </div>
+        <p>Merges, releases and successful Actions runs observed by the snapshot.</p>
+      </header>
+      {
+        productionLog.length > 0 ? (
+          <ol>
+            {productionLog.map((item) => (
+              <li>
+                <time datetime={item.at}>{shortDate(item.at)} UTC</time>
+                <a
+                  class="production-repo"
+                  href={`https://github.com/${snapshot.owner}/${item.repo}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {item.repo}
+                </a>
+                <span class={`product-kind kind-${item.kind}`}>{item.kind}</span>
+                <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p class="inspector-empty">No finished products in the current fallback snapshot.</p>
+        )
+      }
+    </section>
+
+    <footer class="factory-provenance">
+      <strong>Data contract:</strong>
+      <span>{snapshot.schemaVersion}</span>
+      <span>·</span>
+      <span>{snapshot.source}</span>
+      <span>·</span>
+      <span>public data only</span>
+    </footer>
+  </section>
+
+  <script id="repo-factory-data" type="application/json" is:inline set:html={safeData}></script>
+</PageLayout>
+
+<script>
+  import "../../scripts/repo-factory.ts";
+</script>

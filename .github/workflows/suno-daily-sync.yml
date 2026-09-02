@@ -21,6 +21,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: suno-daily-sync
@@ -70,20 +71,26 @@ jobs:
       # direct push to main can easily land behind origin by the time this
       # job finishes its multi-minute catalog fetch. Rebase-and-retry
       # rather than fail the whole run over an ordinary race.
-      - name: Commit and push
+      # A main exige head atualizado antes do merge, e a regra tambem vale para
+      # push: o catalogo sincronizado vai por PR em auto-merge. O retry com
+      # rebase existia para lidar com a main andando; a branch e recriada a cada
+      # execucao, entao ele sai.
+      - name: Commit and open PR
         if: steps.changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/suno-catalog.jsonl src/generated/blog-redirects.json
           git commit -m "feat(music): daily Suno sync — $(date -u +%Y-%m-%d)"
-          for attempt in 1 2 3; do
-            if git push origin HEAD:main; then
-              exit 0
-            fi
-            echo "Push rejected (attempt $attempt/3), rebasing onto latest main..."
-            git fetch origin main
-            git rebase origin/main
-          done
-          echo "Push failed after 3 attempts." >&2
-          exit 1
+          BRANCH=automation/suno-sync
+          git checkout -B "$BRANCH"
+          git push -f origin "$BRANCH"
+          NUM=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [ -z "$NUM" ]; then
+            CORPO="Sincronizacao diaria do catalogo Suno, gerada pelo workflow suno-daily-sync."
+            URL=$(gh pr create --base main --head "$BRANCH" --title "feat(music): daily Suno sync" --body "$CORPO")
+            NUM="${URL##*/}"
+          fi
+          gh pr merge "$NUM" --auto --squash
