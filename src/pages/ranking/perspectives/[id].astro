@@ -119,7 +119,7 @@ const crumbs = [
             <td class="col-num mono">{r.wins}/{r.appearances}</td>
             <td class="col-num">
               {r.globalRank ? (
-                <a href="/ranking/" title="Global rank">#{r.globalRank.rank}</a>
+                <a href="/ranking/" title={`Global rank of ${r.post?.title ?? r.key}`}>#{r.globalRank.rank}</a>
               ) : "—"}
             </td>
           </tr>
