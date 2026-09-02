@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "repo-factory-v1",
+  "generatedAt": null,
+  "owner": "franklinbaldo",
+  "source": "GitHub REST API via gh",
+  "bootstrap": true,
+  "privacy": "public repositories only",
+  "totals": {
+    "repositories": 0,
+    "openIssues": 0,
+    "openPulls": 0,
+    "mergedPulls7d": 0,
+    "runs24h": 0,
+    "successfulRuns7d": 0,
+    "releases30d": 0
+  },
+  "repositories": [],
+  "connections": []
+}
