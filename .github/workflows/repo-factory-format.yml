@@ -1,0 +1,34 @@
+name: Repo Factory format fix
+
+on:
+  push:
+    branches: [feat/repo-factory-game]
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: feat/repo-factory-game
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Format Repo Factory files
+        run: npx prettier --write scripts/generate-repo-factory.mjs src/scripts/repo-factory.ts src/styles/repo-factory.css
+      - name: Commit formatting
+        run: |
+          if git diff --quiet; then
+            echo "Already formatted."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/generate-repo-factory.mjs src/scripts/repo-factory.ts src/styles/repo-factory.css
+          git commit -m "style(games): format Repo Factory"
+          git push origin HEAD:feat/repo-factory-game
