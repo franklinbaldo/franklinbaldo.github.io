@@ -1,6 +1,13 @@
 name: CausaGanha Segmenter GPU
 
 on:
+  # Temporary feature-branch trigger for the real hardware validation below.
+  # Remove it again after the experiment; normal operation is workflow_dispatch.
+  push:
+    branches:
+      - feat/causaganha-segmenter-gpu-runner
+    paths:
+      - .github/workflows/causaganha-segmenter-gpu.yml
   workflow_dispatch:
     inputs:
       runner:
@@ -76,13 +83,13 @@ jobs:
     timeout-minutes: 360
     env:
       PROVIDER: ${{ inputs.runner || 'kaggle' }}
-      CAUSAGANHA_REF: ${{ inputs.causaganha_ref || 'main' }}
+      CAUSAGANHA_REF: ${{ inputs.causaganha_ref || 'feat/segmenter-optimization-recipe' }}
       DATA_DIR: ${{ inputs.data_dir || 'data/segmenter_splits' }}
-      EPOCHS: ${{ inputs.epochs || '3' }}
+      EPOCHS: ${{ inputs.epochs || '20' }}
       BATCH_SIZE: ${{ inputs.batch_size || '1' }}
       SEED: ${{ inputs.seed || '771' }}
-      LEARNING_RATE: ${{ inputs.learning_rate || '1e-5' }}
-      WEIGHT_DECAY: ${{ inputs.weight_decay || '0.01' }}
+      LEARNING_RATE: ${{ inputs.learning_rate || '2e-4' }}
+      WEIGHT_DECAY: ${{ inputs.weight_decay || '0.0' }}
       GRAD_ACCUM_STEPS: ${{ inputs.grad_accum_steps || '1' }}
       MAX_GRAD_NORM: ${{ inputs.max_grad_norm || '1.0' }}
       REQUESTED_ACCELERATOR: ${{ inputs.accelerator || '' }}
