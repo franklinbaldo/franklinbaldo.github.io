@@ -66,9 +66,9 @@ jobs:
     timeout-minutes: 360
     env:
       PROVIDER: ${{ inputs.runner || 'kaggle' }}
-      CAUSAGANHA_REF: ${{ inputs.causaganha_ref || 'main' }}
+      CAUSAGANHA_REF: ${{ inputs.causaganha_ref || 'fix/opf-eval-metrics-envelope' }}
       DATA_DIR: ${{ inputs.data_dir || 'data/segmenter_splits' }}
-      EPOCHS: ${{ inputs.epochs || '1' }}
+      EPOCHS: ${{ inputs.epochs || '3' }}
       BATCH_SIZE: ${{ inputs.batch_size || '1' }}
       SEED: ${{ inputs.seed || '771' }}
       REQUESTED_ACCELERATOR: ${{ inputs.accelerator || '' }}
@@ -190,6 +190,9 @@ jobs:
           if selection:
               print(f"- selected epoch: **{selection.get('selected_epoch')}**")
               print(f"- validation macro-F1: **{selection.get('val_macro_f1')}**")
+              print(f"- validation loss: **{selection.get('val_loss')}**")
+          if summary.get("model_archive_bytes"):
+              print(f"- selected-checkpoint archive: **{summary['model_archive_bytes']} bytes**")
           if summary.get("error"):
               print(f"- error: `{summary['error']}`")
           PY
@@ -218,4 +221,4 @@ jobs:
         if: env.PROVIDER == 'kaggle'
         run: |
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "The full model archive is kept in the private Kaggle kernel output as \`segmenter-model.tar.gz\`; Actions downloads only the compact report to avoid moving multi-GB checkpoints through GitHub artifact storage." >> "$GITHUB_STEP_SUMMARY"
+          echo "The selected model archive is kept in the private Kaggle kernel output as \`segmenter-model.tar.gz\`; Actions downloads only the compact report to avoid moving multi-GB checkpoints through GitHub artifact storage." >> "$GITHUB_STEP_SUMMARY"
