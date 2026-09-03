@@ -2,6 +2,7 @@ name: CausaGanha Segmenter GPU
 
 on:
   # Temporary feature-branch trigger for the real hardware validation below.
+  # Hardware validation trigger: 2026-09-03 strong 20-epoch recipe.
   # Remove it again after the experiment; normal operation is workflow_dispatch.
   push:
     branches:
