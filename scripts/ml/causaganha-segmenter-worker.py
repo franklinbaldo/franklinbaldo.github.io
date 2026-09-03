@@ -90,10 +90,17 @@ def _archive_report(report_dir: Path, output: Path) -> None:
                 archive.write(path, path.relative_to(report_dir))
 
 
-def _archive_model(training_dir: Path, output: Path) -> None:
+def _archive_model(checkpoint_dir: Path, manifest: Path, output: Path) -> None:
+    """Archive only the selected checkpoint, not every exploratory epoch.
+
+    OPF checkpoints are large and mostly incompressible. A low gzip level keeps
+    transfer/storage savings without spending most of the free GPU session on
+    CPU compression after training has already completed.
+    """
     output.parent.mkdir(parents=True, exist_ok=True)
-    with tarfile.open(output, "w:gz") as archive:
-        archive.add(training_dir, arcname="training-run")
+    with tarfile.open(output, "w:gz", compresslevel=1) as archive:
+        archive.add(checkpoint_dir, arcname="checkpoint")
+        archive.add(manifest, arcname="experiment_manifest.json")
 
 
 def main() -> int:
@@ -225,14 +232,33 @@ def main() -> int:
         summary["trainer_command"] = cmd
         _run(cmd, cwd=repo, env=env)
 
-        # Copy compact evidence into the report archive. The checkpoint itself
-        # is preserved separately as a model archive by the provider wrapper.
+        # Copy compact evidence into the report archive.
         for path in sorted(training_dir.glob("val_metrics_epoch_*.json")):
             shutil.copy2(path, report_dir / path.name)
         manifest = training_dir / "experiment_manifest.json"
-        if manifest.is_file():
-            shutil.copy2(manifest, report_dir / manifest.name)
-            summary["experiment_manifest"] = json.loads(manifest.read_text(encoding="utf-8"))
+        if not manifest.is_file():
+            raise FileNotFoundError("trainer completed without experiment_manifest.json")
+
+        manifest_payload = json.loads(manifest.read_text(encoding="utf-8"))
+        shutil.copy2(manifest, report_dir / manifest.name)
+        summary["experiment_manifest"] = manifest_payload
+
+        checkpoint_dir = Path(str(manifest_payload["checkpoint_dir"])).resolve()
+        training_root = training_dir.resolve()
+        if checkpoint_dir.parent != training_root or not checkpoint_dir.is_dir():
+            raise RuntimeError(f"selected checkpoint is outside training output: {checkpoint_dir}")
+
+        model_archive = Path(args.model_archive)
+        _archive_model(checkpoint_dir, manifest, model_archive)
+        summary["selected_checkpoint"] = checkpoint_dir.name
+        summary["model_archive_bytes"] = model_archive.stat().st_size
+
+        # Kaggle publishes everything left under /kaggle/working. Remove the
+        # multi-GB epoch directories after the selected checkpoint is safely
+        # archived, otherwise three epochs cause three full checkpoints to be
+        # synchronized in addition to the archive.
+        for epoch_dir in training_dir.glob("epoch-*"):
+            shutil.rmtree(epoch_dir, ignore_errors=True)
 
         summary["status"] = "success"
         return_code = 0
@@ -248,8 +274,6 @@ def main() -> int:
             encoding="utf-8",
         )
         _archive_report(report_dir, Path(args.report_archive))
-        if training_dir.exists() and any(training_dir.iterdir()):
-            _archive_model(training_dir, Path(args.model_archive))
         shutil.rmtree(work, ignore_errors=True)
 
     return return_code
