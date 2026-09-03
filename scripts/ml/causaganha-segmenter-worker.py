@@ -111,6 +111,10 @@ def main() -> int:
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--seed", type=int, default=771)
+    parser.add_argument("--learning-rate", type=float, default=1e-5)
+    parser.add_argument("--weight-decay", type=float, default=0.01)
+    parser.add_argument("--grad-accum-steps", type=int, default=1)
+    parser.add_argument("--max-grad-norm", type=float, default=1.0)
     parser.add_argument("--output-root", required=True)
     parser.add_argument("--report-archive", required=True)
     parser.add_argument("--model-archive", required=True)
@@ -123,6 +127,12 @@ def main() -> int:
     report_dir.mkdir(parents=True, exist_ok=True)
     training_dir.mkdir(parents=True, exist_ok=True)
 
+    optimization = {
+        "learning_rate": args.learning_rate,
+        "weight_decay": args.weight_decay,
+        "grad_accum_steps": args.grad_accum_steps,
+        "max_grad_norm": args.max_grad_norm,
+    }
     summary: dict[str, object] = {
         "schema": "causaganha-segmenter-gpu-run-v1",
         "started_at": datetime.now(UTC).isoformat(),
@@ -132,6 +142,7 @@ def main() -> int:
         "epochs": args.epochs,
         "batch_size": args.batch_size,
         "seed": args.seed,
+        "optimization": optimization,
         "locked_test_consumed": False,
         "purpose": "exploratory_train_validation_only",
         "hardware": _gpu_snapshot(),
@@ -226,6 +237,14 @@ def main() -> int:
             str(args.batch_size),
             "--seed",
             str(args.seed),
+            "--learning-rate",
+            str(args.learning_rate),
+            "--weight-decay",
+            str(args.weight_decay),
+            "--grad-accum-steps",
+            str(args.grad_accum_steps),
+            "--max-grad-norm",
+            str(args.max_grad_norm),
             "--device",
             "cuda",
         ]
@@ -253,10 +272,9 @@ def main() -> int:
         summary["selected_checkpoint"] = checkpoint_dir.name
         summary["model_archive_bytes"] = model_archive.stat().st_size
 
-        # Kaggle publishes everything left under /kaggle/working. Remove the
-        # multi-GB epoch directories after the selected checkpoint is safely
-        # archived, otherwise three epochs cause three full checkpoints to be
-        # synchronized in addition to the archive.
+        # Defensive cleanup for older CausaGanha refs. New canonical trainers
+        # already bound storage during the epoch loop, but this keeps the
+        # provider workspace compact when dispatching an older revision.
         for epoch_dir in training_dir.glob("epoch-*"):
             shutil.rmtree(epoch_dir, ignore_errors=True)
 
