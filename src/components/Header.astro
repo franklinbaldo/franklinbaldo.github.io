@@ -419,6 +419,16 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
     .nav-burger {
       display: flex;
     }
+    /* Below the burger breakpoint, .brand's white-space:nowrap (added
+       above for the 920-1000px wrap bug, which only exists in the
+       nav-inline layout) has no fallback: it forces "Franklin Baldo." to
+       stay on one line even when the burger-side controls leave no room,
+       overflowing the header horizontally on real phone widths (measured:
+       overflow at <=412px, e.g. most phones in portrait). Only nav-inline
+       widths needed nowrap; restore wrapping as the safety valve here. */
+    .brand {
+      white-space: normal;
+    }
   }
   .burger-menu > summary {
     padding-inline: 0.5rem;
