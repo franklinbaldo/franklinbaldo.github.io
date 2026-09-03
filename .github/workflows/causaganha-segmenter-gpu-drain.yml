@@ -1,0 +1,21 @@
+name: CausaGanha Segmenter GPU Drain
+
+on:
+  push:
+    branches:
+      - feat/causaganha-segmenter-gpu-runner
+    paths:
+      - .github/workflows/causaganha-segmenter-gpu-drain.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: causaganha-segmenter-gpu
+  cancel-in-progress: false
+
+jobs:
+  drain:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Duplicate GPU run drained; no remote GPU is dispatched."
