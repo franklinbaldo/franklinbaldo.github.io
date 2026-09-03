@@ -1,16 +1,6 @@
 name: CausaGanha Segmenter GPU
 
 on:
-  # The feature-branch push trigger exists so the runner can prove itself before
-  # merge. Once merged, normal operation is workflow_dispatch.
-  push:
-    branches:
-      - feat/causaganha-segmenter-gpu-runner
-    paths:
-      - .github/workflows/causaganha-segmenter-gpu.yml
-      - scripts/ml/causaganha-segmenter-worker.py
-      - scripts/ml/runners/kaggle-causaganha-segmenter.sh
-      - scripts/ml/runners/colab-causaganha-segmenter.sh
   workflow_dispatch:
     inputs:
       runner:
@@ -46,6 +36,26 @@ on:
         required: true
         default: "771"
         type: string
+      learning_rate:
+        description: OPF AdamW learning rate
+        required: true
+        default: "1e-5"
+        type: string
+      weight_decay:
+        description: OPF AdamW weight decay
+        required: true
+        default: "0.01"
+        type: string
+      grad_accum_steps:
+        description: Gradient accumulation steps per optimizer update
+        required: true
+        default: "1"
+        type: string
+      max_grad_norm:
+        description: Gradient clipping max norm; <=0 disables clipping
+        required: true
+        default: "1.0"
+        type: string
       accelerator:
         description: NvidiaTeslaT4 on Kaggle; T4 on Colab; blank uses provider default
         required: false
@@ -66,11 +76,15 @@ jobs:
     timeout-minutes: 360
     env:
       PROVIDER: ${{ inputs.runner || 'kaggle' }}
-      CAUSAGANHA_REF: ${{ inputs.causaganha_ref || 'fix/opf-eval-metrics-envelope' }}
+      CAUSAGANHA_REF: ${{ inputs.causaganha_ref || 'main' }}
       DATA_DIR: ${{ inputs.data_dir || 'data/segmenter_splits' }}
       EPOCHS: ${{ inputs.epochs || '3' }}
       BATCH_SIZE: ${{ inputs.batch_size || '1' }}
       SEED: ${{ inputs.seed || '771' }}
+      LEARNING_RATE: ${{ inputs.learning_rate || '1e-5' }}
+      WEIGHT_DECAY: ${{ inputs.weight_decay || '0.01' }}
+      GRAD_ACCUM_STEPS: ${{ inputs.grad_accum_steps || '1' }}
+      MAX_GRAD_NORM: ${{ inputs.max_grad_norm || '1.0' }}
       REQUESTED_ACCELERATOR: ${{ inputs.accelerator || '' }}
 
     steps:
@@ -91,6 +105,10 @@ jobs:
           - epochs: **$EPOCHS**
           - batch size: **$BATCH_SIZE**
           - seed: **$SEED**
+          - learning rate: **$LEARNING_RATE**
+          - weight decay: **$WEIGHT_DECAY**
+          - grad accumulation: **$GRAD_ACCUM_STEPS**
+          - max grad norm: **$MAX_GRAD_NORM**
           - **locked test is not copied to the remote training workspace and is not evaluated**
 
           This run exists to exercise fine-tuning and expose training/validation failures. It does not promote a production model or consume the final evaluation set.
@@ -121,6 +139,10 @@ jobs:
             --epochs "$EPOCHS" \
             --batch-size "$BATCH_SIZE" \
             --seed "$SEED" \
+            --learning-rate "$LEARNING_RATE" \
+            --weight-decay "$WEIGHT_DECAY" \
+            --grad-accum-steps "$GRAD_ACCUM_STEPS" \
+            --max-grad-norm "$MAX_GRAD_NORM" \
             --accelerator "$ACCELERATOR" \
             --report-output "$RUNNER_TEMP/segmenter-report.zip"
 
@@ -158,6 +180,10 @@ jobs:
             --epochs "$EPOCHS" \
             --batch-size "$BATCH_SIZE" \
             --seed "$SEED" \
+            --learning-rate "$LEARNING_RATE" \
+            --weight-decay "$WEIGHT_DECAY" \
+            --grad-accum-steps "$GRAD_ACCUM_STEPS" \
+            --max-grad-norm "$MAX_GRAD_NORM" \
             --gpu "$GPU" \
             --report-output "$RUNNER_TEMP/segmenter-report.zip" \
             --model-output "$RUNNER_TEMP/segmenter-model.tar.gz"
@@ -187,10 +213,13 @@ jobs:
           print(f"- locked test consumed: **{summary.get('locked_test_consumed')}**")
           manifest = summary.get("experiment_manifest") or {}
           selection = manifest.get("checkpoint_selection") or {}
+          optimization = manifest.get("optimization") or {}
           if selection:
               print(f"- selected epoch: **{selection.get('selected_epoch')}**")
               print(f"- validation macro-F1: **{selection.get('val_macro_f1')}**")
               print(f"- validation loss: **{selection.get('val_loss')}**")
+          if optimization:
+              print(f"- optimization: `{optimization}`")
           if summary.get("model_archive_bytes"):
               print(f"- selected-checkpoint archive: **{summary['model_archive_bytes']} bytes**")
           if summary.get("error"):
