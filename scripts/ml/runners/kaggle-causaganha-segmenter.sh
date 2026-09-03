@@ -28,7 +28,10 @@ done
 
 [[ -n "$REPORT_OUTPUT" ]] || { echo "--report-output is required" >&2; exit 2; }
 if [[ -z "$KERNEL_ID" && -n "${KAGGLE_USERNAME:-}" ]]; then
-  KERNEL_ID="${KAGGLE_USERNAME}/causaganha-segmenter-gpu-actions"
+  # Keep id and title slug in lock-step. Kaggle derives this slug from
+  # "CausaGanha OPF Segmenter GPU" and may return non-zero after creating a
+  # different slug when they disagree.
+  KERNEL_ID="${KAGGLE_USERNAME}/causaganha-opf-segmenter-gpu"
 fi
 [[ "$KERNEL_ID" == */* && "$KERNEL_ID" != /* ]] || {
   echo "KAGGLE_KERNEL_ID or KAGGLE_USERNAME is required" >&2
@@ -110,7 +113,15 @@ dump_kernel_log() {
 
 # The kernel-side wall-clock budget must include dependency installation,
 # model download and all requested epochs. Kaggle still enforces its own quota.
-kaggle kernels push -p "$STAGE" --accelerator "$ACCELERATOR" -t "${KAGGLE_KERNEL_TIMEOUT:-10800}"
+set +e
+PUSH_OUTPUT="$(kaggle kernels push -p "$STAGE" --accelerator "$ACCELERATOR" -t "${KAGGLE_KERNEL_TIMEOUT:-10800}" 2>&1)"
+PUSH_RC=$?
+set -e
+printf '%s\n' "$PUSH_OUTPUT"
+if [[ $PUSH_RC -ne 0 ]] && ! grep -Eqi 'successfully pushed' <<<"$PUSH_OUTPUT"; then
+  echo "Kaggle kernel push failed (exit $PUSH_RC)" >&2
+  exit "$PUSH_RC"
+fi
 
 for _ in $(seq 1 "${KAGGLE_STATUS_POLLS:-400}"); do
   STATUS="$(kaggle kernels status "$KERNEL_ID" 2>&1)"
