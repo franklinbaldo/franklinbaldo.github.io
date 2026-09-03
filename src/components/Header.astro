@@ -358,6 +358,7 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
     letter-spacing: -0.01em;
     text-decoration: none;
     overflow-wrap: normal;
+    white-space: nowrap;
   }
   .brand:hover {
     color: var(--pico-primary);
@@ -404,20 +405,29 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
   .nav-burger {
     display: none;
   }
-  /* Unverified: this replaced a previous 1279px cutoff that had a specific
-     measured justification (Pico's own .container breakpoint, plus a
-     measured ~960px width need for the old 8-link flat nav — see git
-     history). This value has not been re-measured against the current
-     content (4 primaryLinks + the "More" summary + music button + language
-     switcher + theme toggle, longest in pt: "Ensaios"/"Projetos"/"Sobre"/
-     "Buscar"/"Mais"). Check in a real browser between ~899px and ~1280px
-     before trusting this, especially in pt. */
+  /* Measured with Playwright at 899-1280px (14 widths) on both /pt/ and en
+     home pages: .nav-inline never wraps or overflows in that range, in
+     either language, so the 899px cutoff stands. The one real defect found
+     at those widths was unrelated to nav-inline — the brand link ("Franklin
+     Baldo.") wrapped onto two lines around 920-1000px, in both languages,
+     because it lacked white-space: nowrap while nav-inline's items already
+     had it; fixed on .brand above. */
   @media (max-width: 899px) {
     .nav-inline {
       display: none;
     }
     .nav-burger {
       display: flex;
+    }
+    /* Below the burger breakpoint, .brand's white-space:nowrap (added
+       above for the 920-1000px wrap bug, which only exists in the
+       nav-inline layout) has no fallback: it forces "Franklin Baldo." to
+       stay on one line even when the burger-side controls leave no room,
+       overflowing the header horizontally on real phone widths (measured:
+       overflow at <=412px, e.g. most phones in portrait). Only nav-inline
+       widths needed nowrap; restore wrapping as the safety valve here. */
+    .brand {
+      white-space: normal;
     }
   }
   .burger-menu > summary {
