@@ -7,6 +7,10 @@ DATA_DIR="data/segmenter_splits"
 EPOCHS="1"
 BATCH_SIZE="1"
 SEED="771"
+LEARNING_RATE="1e-5"
+WEIGHT_DECAY="0.01"
+GRAD_ACCUM_STEPS="1"
+MAX_GRAD_NORM="1.0"
 REPORT_OUTPUT=""
 MODEL_OUTPUT=""
 GPU="${COLAB_GPU:-T4}"
@@ -19,6 +23,10 @@ while [[ $# -gt 0 ]]; do
     --epochs) EPOCHS="$2"; shift 2 ;;
     --batch-size) BATCH_SIZE="$2"; shift 2 ;;
     --seed) SEED="$2"; shift 2 ;;
+    --learning-rate) LEARNING_RATE="$2"; shift 2 ;;
+    --weight-decay) WEIGHT_DECAY="$2"; shift 2 ;;
+    --grad-accum-steps) GRAD_ACCUM_STEPS="$2"; shift 2 ;;
+    --max-grad-norm) MAX_GRAD_NORM="$2"; shift 2 ;;
     --report-output) REPORT_OUTPUT="$2"; shift 2 ;;
     --model-output) MODEL_OUTPUT="$2"; shift 2 ;;
     --gpu) GPU="$2"; shift 2 ;;
@@ -36,9 +44,22 @@ SESSION="${SESSION,,}"
 TMPDIR_LOCAL="$(mktemp -d)"
 LAUNCHER="$TMPDIR_LOCAL/launcher.py"
 
-python3 - "$REPO_URL" "$REF" "$DATA_DIR" "$EPOCHS" "$BATCH_SIZE" "$SEED" > "$LAUNCHER" <<'PY'
+python3 - "$REPO_URL" "$REF" "$DATA_DIR" "$EPOCHS" "$BATCH_SIZE" "$SEED" \
+  "$LEARNING_RATE" "$WEIGHT_DECAY" "$GRAD_ACCUM_STEPS" "$MAX_GRAD_NORM" \
+  > "$LAUNCHER" <<'PY'
 import sys
-repo_url, ref, data_dir, epochs, batch_size, seed = sys.argv[1:]
+(
+    repo_url,
+    ref,
+    data_dir,
+    epochs,
+    batch_size,
+    seed,
+    learning_rate,
+    weight_decay,
+    grad_accum_steps,
+    max_grad_norm,
+) = sys.argv[1:]
 print("import runpy, sys")
 print("sys.argv = " + repr([
     "/content/worker.py",
@@ -48,6 +69,10 @@ print("sys.argv = " + repr([
     "--epochs", epochs,
     "--batch-size", batch_size,
     "--seed", seed,
+    "--learning-rate", learning_rate,
+    "--weight-decay", weight_decay,
+    "--grad-accum-steps", grad_accum_steps,
+    "--max-grad-norm", max_grad_norm,
     "--output-root", "/content/segmenter-output",
     "--report-archive", "/content/segmenter-report.zip",
     "--model-archive", "/content/segmenter-model.tar.gz",
