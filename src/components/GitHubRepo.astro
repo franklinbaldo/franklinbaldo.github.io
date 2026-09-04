@@ -18,7 +18,13 @@ const darkSrc = `${base}&theme=transparent&text_color=eeeeee&title_color=ffffff&
   >
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset={darkSrc} />
-      <img src={lightSrc} alt={`${owner}/${repo}`} loading="lazy" />
+      <img
+        src={lightSrc}
+        alt={`${owner}/${repo}`}
+        loading="lazy"
+        width="400"
+        height="120"
+      />
     </picture>
   </a>
   {caption && <figcaption>{caption}</figcaption>}

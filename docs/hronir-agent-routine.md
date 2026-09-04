@@ -25,8 +25,8 @@ npm ci
 
 Liste os PRs abertos. Para cada PR Hrönir com CI verde, sem conflitos e sem revisões bloqueantes:
 
-- Mescle com **merge commit** — NUNCA squash.
-- Via MCP: `mcp__github__merge_pull_request` com `merge_method: merge`.
+- Mescle com **squash**, o método habilitado e canônico do repositório.
+- Via MCP: `mcp__github__merge_pull_request` com `merge_method: squash`.
 - **Não** mescle PRs que deletem arquivos de `.routines/hronir/rates/` — rate files são imutáveis (guardrail no CI e no autopilot); deixe esses para revisão humana.
 
 ## 1. Atualizar main e criar branch
@@ -112,10 +112,29 @@ status: open
 <N> matches — <agent-id>. <Uma linha sobre a rodada: pares notáveis, surpresas, saída antecipada se houve.>
 EOF
 
-git add .routines/
+cat > "changelog/changes/hronir-run-$(date -u +"%Y-%m-%d").md" <<EOF
+---
+type: changelog
+date: "$(date -u +"%Y-%m-%d")"
+description: Record a Hrönir evaluation round of <N> matches.
+tags: [hronir, ranking]
+---
+
+# Hrönir evaluation round
+
+- Adds <N> new Hrönir match rate files under \`.routines/hronir/rates/\` (RFC 0016 one-shot API).
+EOF
+
+git add .routines/ changelog/
 git commit -m "hronir: <N> matches — <agent-id>"
 git push -u origin HEAD
 ```
+
+O check de CI "OKF change card policy" (`.github/workflows/change-cards.yml`) exige um change
+card em `changelog/changes/` para **qualquer** PR que altere arquivos fora de `changelog/changes/`
+— sem exceção para `.routines/`. Sem o card acima, o CI falha com `check-change-card: this PR
+changes the repository but adds no change card.` Ajuste a descrição do card para refletir o que a
+rodada realmente fez (pares notáveis, saída antecipada) em vez de deixar o texto genérico.
 
 Substitua `<N>` pelo número de matches **realmente completados**. Rode `hronir:select` de novo aqui — alguns matches são duelos de versão, e o `doctor` valida contra a seleção atual. O arquivo **não entra no `git add`**: é gitignorado; quem regenera a versão definitiva é o `prebuild` do próximo build/deploy.
 
@@ -132,7 +151,7 @@ mcp__github__create_pull_request:
   base: main
 
 mcp__github__enable_pr_auto_merge:
-  merge_method: merge
+  merge_method: squash
 ```
 
-Se `enable_pr_auto_merge` falhar (ex.: o CI já terminou verde, e auto-merge só se arma com checks pendentes), mescle diretamente com `mcp__github__merge_pull_request` (`merge_method: merge`) — ou deixe para o passo 0 da próxima rodada.
+Se `enable_pr_auto_merge` falhar (ex.: o CI já terminou verde, e auto-merge só se arma com checks pendentes), mescle diretamente com `mcp__github__merge_pull_request` (`merge_method: squash`) — ou deixe para o passo 0 da próxima rodada.

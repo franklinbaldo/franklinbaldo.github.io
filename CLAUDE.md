@@ -105,10 +105,10 @@ npm run build             # Astro static build
 
 ## Git & PR conventions
 
-- **Merge commits, not squash.** Always merge PRs with a real merge commit
-  (`gh pr merge --merge` / GitHub "Create a merge commit"). Do **not** squash —
-  preserving each PR's history is the project preference. The Hrönir autopilot
-  workflow follows this too.
+- **Squash merge is canonical.** Merge PRs with squash (`gh pr merge --squash` /
+  GitHub "Squash and merge"). The repository enables squash and disables merge
+  commits/rebase; routines and autopilot must use the enabled policy instead of
+  retrying a method the repository rejects.
 
 ## Convenções do repo
 
@@ -167,7 +167,7 @@ Formato frouxo mas nomeado:
 
 `docs/rfcs/NNNN-kebab.md` com tabela de status, história de revisões, e
 implementação faseada na mesma branch (cada fase verde antes da próxima).
-Merge com merge commit, nunca squash.
+Merge por squash, conforme a política canônica do repositório.
 
 ### Padrão para dados persistidos
 

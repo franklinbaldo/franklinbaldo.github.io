@@ -262,12 +262,19 @@ function fmtDate(iso: string): string {
           return (
             <li class={won ? "duel-won" : "duel-lost"}>
               <div class="duel-row">
-                <span class="duel-outcome" aria-label={won ? strings.won : strings.lost}>{won ? "W" : "L"}</span>
+                <span
+                  class="duel-outcome"
+                  aria-label={`${won ? strings.won : strings.lost} ${strings.vs} ${opponentTitle}`}
+                >
+                  {won ? "W" : "L"}
+                </span>
                 <div class="duel-content">
                   <div class="duel-opponent">
                     <span class="vs-label">{strings.vs}</span>
                     {opponentHref ? (
-                      <a href={opponentHref}>{opponentTitle}</a>
+                      <a href={opponentHref} lang={opponent && opponent.lang !== lang ? opponent.lang : undefined}>
+                        {opponentTitle}
+                      </a>
                     ) : (
                       <code>{opponentKey}</code>
                     )}
@@ -293,6 +300,7 @@ function fmtDate(iso: string): string {
                     href={`/ranking/battles/${d.id}/`}
                     class="duel-analysis-link"
                     title={strings.readFullAnalysis}
+                    aria-label={`${strings.readFullAnalysis} — ${strings.vs} ${opponentTitle}`}
                   >
                     {strings.analysis}
                   </a>
