@@ -22,8 +22,9 @@ npm ci
 ## 0. Revisar e mesclar PRs abertos
 
 Liste os PRs abertos. Para qualquer PR desta rotina com CI verde, sem
-conflitos e sem revisões bloqueantes, mescle com **merge commit** — NUNCA
-squash (via MCP: `mcp__github__merge_pull_request` com `merge_method: merge`).
+conflitos e sem revisões bloqueantes, mescle com **squash**, o método habilitado
+e canônico do repositório (via MCP: `mcp__github__merge_pull_request` com
+`merge_method: squash`).
 
 ## 1. Escolher o item de trabalho
 

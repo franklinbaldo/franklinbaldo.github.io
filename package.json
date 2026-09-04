@@ -16,6 +16,8 @@
     "check:changelog": "node scripts/check-changelog.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check:translations": "node scripts/check-translations.mjs",
+    "audiobook:validate": "node scripts/audiobook/validate.mjs",
+    "audiobook:plan": "node scripts/audiobook/plan.mjs",
     "dev": "astro dev",
     "build": "astro build && node scripts/fix-redirect-html.mjs && pagefind --site dist && node --import tsx/esm scripts/generate-ranking-snapshot.mjs",
     "preview": "astro preview",
@@ -45,7 +47,8 @@
     "suno-rank:round": "node --import tsx/esm scripts/suno-rank/index.js round",
     "suno-rank:ranking": "node --import tsx/esm scripts/suno-rank/index.js ranking",
     "suno-rank:doctor": "node --import tsx/esm scripts/suno-rank/index.js doctor",
-    "test": "node --import tsx/esm --experimental-test-module-mocks --test --test-concurrency=1 \"src/**/*.test.{js,ts}\""
+    "test": "node --import tsx/esm --experimental-test-module-mocks --test --test-concurrency=1 \"src/**/*.test.{js,ts}\"",
+    "test:e2e": "node scripts/e2e-smoke.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.0",

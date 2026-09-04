@@ -1,0 +1,20 @@
+schema: audiobook-pronunciation-v1
+work_id: hpmor
+locale: pt-BR
+entries:
+  - term: Harry
+    scope: global
+    status: review
+    note: Definir forma oral consistente após benchmark pt-BR; não codificar workaround de backend aqui.
+  - term: Hermione
+    scope: global
+    status: review
+    note: Definir pronúncia canônica para pt-BR após amostras reais.
+  - term: McGonagall
+    scope: global
+    status: review
+    note: Definir pronúncia canônica para pt-BR após amostras reais.
+  - term: Hogwarts
+    scope: global
+    status: review
+    note: Definir pronúncia canônica para pt-BR após amostras reais.

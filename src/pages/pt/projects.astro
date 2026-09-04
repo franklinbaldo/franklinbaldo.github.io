@@ -1,6 +1,8 @@
 ---
 import PageLayout from "../../layouts/PageLayout.astro";
+import { repoDescriptionLang } from "../../lib/repoDescriptionLang";
 
+const PAGE_LANG = "pt";
 const USER = "franklinbaldo";
 const token = import.meta.env.GITHUB_TOKEN ?? process.env.GITHUB_TOKEN;
 
@@ -80,7 +82,11 @@ const fmt = new Intl.DateTimeFormat("pt-BR", { year: "numeric", month: "short", 
       <header>
         <hgroup>
           <h3><a href={repo.html_url}>{repo.name}</a> {repo.stargazers_count > 0 && <mark>★ {repo.stargazers_count}</mark>}</h3>
-          {repo.description && <p>{repo.description}</p>}
+          {repo.description && (
+            <p lang={repoDescriptionLang(repo.name) !== PAGE_LANG ? repoDescriptionLang(repo.name) : undefined}>
+              {repo.description}
+            </p>
+          )}
         </hgroup>
       </header>
       <footer>
