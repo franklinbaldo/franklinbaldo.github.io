@@ -188,7 +188,7 @@ const booksJsonLd = {
                   {book.user_rating > 0 && (
                     <p
                       class="rating"
-                      aria-label={`${book.user_rating} ${ui.starsAria}`}
+                      aria-label={`${book.title} — ${book.user_rating} ${ui.starsAria}`}
                     >
                       {"★".repeat(book.user_rating)}
                       {"☆".repeat(5 - book.user_rating)}

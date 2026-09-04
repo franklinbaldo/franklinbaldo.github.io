@@ -42,6 +42,7 @@ const enriched = perspectives.map((p) => {
     hue: hue(p.id),
     duelCount: rows.reduce((sum, r) => sum + r.appearances, 0) / 2,
     leaderTitle: leader?.title ?? null,
+    leaderLang: leader?.lang === "pt" ? "pt" : undefined,
     leaderHref,
     postsRanked: rows.length,
   };
@@ -78,7 +79,7 @@ const crumbs = [
         {p.leaderTitle && (
           <div class="persp-leader">
             <span class="persp-leader-label">Leader</span>
-            <span class="persp-leader-title">{p.leaderTitle}</span>
+            <span class="persp-leader-title" lang={p.leaderLang}>{p.leaderTitle}</span>
           </div>
         )}
       </a>

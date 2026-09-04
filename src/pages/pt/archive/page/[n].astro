@@ -163,7 +163,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
                 </td>
                 <td class="col-en">
                   {enId && (
-                    <a class="en-badge" href={`/blog/${enId}/`} aria-label="Versão em inglês disponível" title="Read in English">EN</a>
+                    <a class="en-badge" href={`/blog/${enId}/`} aria-label={`${post.data.title} — Versão em inglês disponível`} title="Read in English">EN</a>
                   )}
                 </td>
               </tr>

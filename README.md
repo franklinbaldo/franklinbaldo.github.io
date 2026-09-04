@@ -1,10 +1,25 @@
 # franklinbaldo.github.io
 
-Personal blog and digital garden of Franklin Baldo. Built with **Astro 6** and **Pico.css v2**.
+Personal blog and digital garden of Franklin Baldo. Built with **Astro 7** and **Pico.css v2**.
+
+**Live site:** https://franklinbaldo.github.io/
+
+## What lives here
+
+The repository powers more than a chronological blog. Its public surface currently includes:
+
+- [essays and the archive](https://franklinbaldo.github.io/archive/), with tags, search and bilingual routes;
+- curated [reading paths](https://franklinbaldo.github.io/) that connect related essays into sequences;
+- a public [projects index](https://franklinbaldo.github.io/projects/);
+- the [Hrönir ranking](https://franklinbaldo.github.io/ranking/), produced from committed pairwise evaluations used to curate and compare the writing corpus;
+- [music](https://franklinbaldo.github.io/music/) and [books](https://franklinbaldo.github.io/books/) as adjacent parts of the digital garden;
+- a public [changelog](https://franklinbaldo.github.io/changelog/) and RSS feeds for following updates.
+
+Hrönir is both repository machinery and a public-facing curation artifact: the evaluation data lives in `.routines/hronir/`, while the resulting ranking is published on the site.
 
 ## Stack
 
-- [Astro 6](https://astro.build/) with `@astrojs/mdx`
+- [Astro 7](https://astro.build/) with `@astrojs/mdx`
 - [Pico.css v2](https://picocss.com/) (semantic, classless-ish CSS)
 - Typography: Fraunces (body) / Inter (UI) via `@fontsource`
 - `astro:assets` for image optimization (heroes generate responsive WebP)
@@ -21,7 +36,7 @@ Personal blog and digital garden of Franklin Baldo. Built with **Astro 6** and *
 | `npm run check:hygiene`  | Repo hygiene (root files, lockfile, etc.) |
 | `npm run hronir:ranking` | Print current Hrönir ranking              |
 
-Requires Node `>=22.12.0` (see `package.json#engines`).
+Requires Node `>=24.0.0` (see `package.json#engines`).
 
 ## Project layout
 
@@ -56,7 +71,7 @@ from the `blog` collection via
 
 ## Notes on the modernization migration
 
-A couple of legacy standalone routes were dropped during the move to Astro 6:
+A couple of legacy standalone routes were dropped during the Astro modernization:
 
 - **`/encrypt.html`** — static page-encryption demo.
 - **`/vault/`** — unmaintained landing page.

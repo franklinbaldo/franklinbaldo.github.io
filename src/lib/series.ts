@@ -4,10 +4,24 @@ import { isPublished } from "./publish";
 
 export interface SeriesContext {
   slug: string;
+  title: string;
   posts: CollectionEntry<"blog">[];
   index: number;
   prev?: CollectionEntry<"blog">;
   next?: CollectionEntry<"blog">;
+}
+
+const SERIES_TITLES: Record<string, { en: string; pt: string }> = {
+  harness: { en: "Harness", pt: "Harness" },
+};
+
+function seriesTitle(slug: string, lang: string): string {
+  const entry = SERIES_TITLES[slug];
+  if (entry) return lang === "pt" ? entry.pt : entry.en;
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
 
 export async function getSeriesContext(
@@ -42,6 +56,7 @@ export async function getSeriesContext(
 
   return {
     slug: series,
+    title: seriesTitle(series, lang),
     posts: all,
     index,
     prev: index > 0 ? all[index - 1] : undefined,

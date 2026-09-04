@@ -318,18 +318,19 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
             : "";
           const podiumClass = r.rank === 1 ? "row-gold" : r.rank === 2 ? "row-silver" : r.rank === 3 ? "row-bronze" : "";
           const podiumLabel = r.rank === 1 ? strings.podiumGold : r.rank === 2 ? strings.podiumSilver : r.rank === 3 ? strings.podiumBronze : undefined;
+          const podiumRowLabel = podiumLabel ? `${podiumLabel} — ${r.post?.title ?? r.key}` : undefined;
           const eloVal = snapshotElo(r.key)?.elo ?? 0;
           return (
             <tr
               class={podiumClass || undefined}
-              aria-label={podiumLabel}
+              aria-label={podiumRowLabel}
               data-sort-winrate={winRatePct}
               data-sort-delta={delta ?? 0}
               data-sort-elo={eloVal}
               data-sort-record={r.appearances}
             >
               <th scope="row" class="col-rank">
-                <a href={`/ranking/posts/${r.key}/`} class="rank-link" title={strings.dossierTooltip.replace("{title}", r.post?.title ?? r.key)}>{r.rank}</a>
+                <a href={`/ranking/posts/${r.key}/`} class="rank-link" title={strings.dossierTooltip.replace("{title}", () => r.post?.title ?? r.key)}>{r.rank}</a>
               </th>
               <td class="col-post">
                 {href ? (
@@ -435,7 +436,10 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
                 <div class="bcl-fill loss" style={`width:${100 - tensionPct}%`}></div>
               </div>
             ) : (
-              <div class="bcl-tension bcl-tension-none" aria-label={strings.tensionUnavailable}></div>
+              <div
+                class="bcl-tension bcl-tension-none"
+                aria-label={`${winnerName} ${strings.recentBeats} ${loserName} — ${strings.tensionUnavailable}`}
+              ></div>
             )}
             <span class="bcl-read">{strings.readAnalysisLinkLabel} →</span>
           </a>

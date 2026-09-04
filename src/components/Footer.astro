@@ -9,7 +9,7 @@ const year = new Date().getFullYear();
 const prefix = urlPrefix(lang);
 
 // Same grouping/order as Header.astro's primaryLinks + secondaryLinks
-// (essays/projects/about/search, then music/books/ranking/tags/changelog)
+// (essays/projects/about/search, then music/books/audiobooks/ranking/tags/changelog)
 // so the header and footer agree on how the site's sections are organized
 // — they used to both be one flat list; keep them in sync now that the
 // header groups the second half under "More".
@@ -20,6 +20,7 @@ const footerNav = [
   { href: `${prefix}/search/`, label: t(lang, 'nav.search') },
   { href: lang === 'pt' ? `${prefix}/musicas/` : '/music/', label: t(lang, 'nav.music') },
   { href: lang === 'pt' ? `${prefix}/livros/` : '/books/', label: t(lang, 'nav.books') },
+  { href: '/audiobooks/', label: lang === 'pt' ? 'Audiolivros' : 'Audiobooks' },
   { href: `${prefix}/ranking/`, label: t(lang, 'nav.ranking') },
   { href: `${prefix}/tags/`, label: t(lang, 'nav.tags') },
   // English-only by deliberate exception (CLAUDE.md "Línguas") — no /pt/ prefix.
