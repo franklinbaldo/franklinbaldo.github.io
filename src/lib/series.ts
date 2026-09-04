@@ -18,7 +18,10 @@ const SERIES_TITLES: Record<string, { en: string; pt: string }> = {
 function seriesTitle(slug: string, lang: string): string {
   const entry = SERIES_TITLES[slug];
   if (entry) return lang === "pt" ? entry.pt : entry.en;
-  return slug.charAt(0).toUpperCase() + slug.slice(1);
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
 
 export async function getSeriesContext(
