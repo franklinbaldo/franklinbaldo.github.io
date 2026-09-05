@@ -130,8 +130,11 @@ function confidenceLevel(sigma: number, appearances: number): {
   return { level: "low", label: strings.confidenceLow };
 }
 
+const perspectiveName = new Map(
+  (perspectivesGrid ?? []).map((p) => [p.id, p.name])
+);
 function formatPerspective(id: string): string {
-  return id.replace(/-/g, " ");
+  return perspectiveName.get(id) ?? id.replace(/-/g, " ");
 }
 
 function perspectiveHue(id: string): number {

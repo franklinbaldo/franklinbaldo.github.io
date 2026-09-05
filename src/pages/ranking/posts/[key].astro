@@ -110,6 +110,11 @@ for (const p of perspectives) {
 }
 perspectiveRanks.sort((a, b) => a.rank - b.rank);
 
+const perspectiveName = new Map(perspectives.map((p) => [p.id, p.name]));
+function perspectiveLabel(id: string) {
+  return perspectiveName.get(id) ?? id.replace(/-/g, " ");
+}
+
 const delta = getSnapshotDelta(key);
 const overallWins = duels.filter((d) => d.winnerKey === key).length;
 const winRate = duels.length > 0 ? Math.round((overallWins / duels.length) * 100) : 0;
@@ -290,7 +295,7 @@ function fmtDate(iso: string): string {
                         class="duel-perspective"
                         style={`--ph:${hue(d.perspectiveId)}`}
                       >
-                        {d.perspectiveId.replace(/-/g, " ")}
+                        {perspectiveLabel(d.perspectiveId)}
                       </a>
                     )}
                   </div>
