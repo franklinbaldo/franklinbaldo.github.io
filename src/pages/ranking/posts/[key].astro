@@ -10,6 +10,7 @@ import {
   getPerPerspectiveRankings,
   getPerspectives,
   getSnapshotDelta,
+  perspectiveLabel,
 } from "../../../lib/hronir-rank";
 import { isPublished } from "../../../lib/publish";
 
@@ -109,11 +110,6 @@ for (const p of perspectives) {
   }
 }
 perspectiveRanks.sort((a, b) => a.rank - b.rank);
-
-const perspectiveName = new Map(perspectives.map((p) => [p.id, p.name]));
-function perspectiveLabel(id: string) {
-  return perspectiveName.get(id) ?? id.replace(/-/g, " ");
-}
 
 const delta = getSnapshotDelta(key);
 const overallWins = duels.filter((d) => d.winnerKey === key).length;

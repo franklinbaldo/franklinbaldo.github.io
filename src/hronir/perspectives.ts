@@ -18,8 +18,15 @@ export function perspectivesDir(): string {
   return PERSPECTIVES_DIR;
 }
 
+// Memoized: called per generated static page (battle/dossier detail routes),
+// so re-reading and re-parsing the same ~dozen files on every call would
+// multiply disk I/O by the page count. The perspective files never change
+// within a single process (build or CLI invocation).
+let _cache: Perspective[] | null = null;
+
 export function listPerspectives(): Perspective[] {
-  if (!fs.existsSync(PERSPECTIVES_DIR)) return [];
+  if (_cache) return _cache;
+  if (!fs.existsSync(PERSPECTIVES_DIR)) return (_cache = []);
   const out: Perspective[] = [];
   for (const f of fs.readdirSync(PERSPECTIVES_DIR)) {
     if (!f.endsWith(".md")) continue;
@@ -43,7 +50,7 @@ export function listPerspectives(): Perspective[] {
     });
   }
   out.sort((a, b) => a.id.localeCompare(b.id));
-  return out;
+  return (_cache = out);
 }
 
 export function pickRandomPerspective(): Perspective {

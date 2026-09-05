@@ -4,7 +4,7 @@ import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import HronirExplainer from "../../../components/HronirExplainer.astro";
 import { toBreadcrumbLd } from "../../../lib/breadcrumbs";
 import { getCollection } from "astro:content";
-import { getDuels, getRankByKey, getPerspectives } from "../../../lib/hronir-rank";
+import { getDuels, getRankByKey, perspectiveLabel } from "../../../lib/hronir-rank";
 import { isPublished } from "../../../lib/publish";
 import { marked } from "marked";
 
@@ -144,11 +144,6 @@ function perspectiveHue(id: string): number {
   let h = 0;
   for (let i = 0; i < id.length; i++) h = ((h << 5) - h + id.charCodeAt(i)) & 0xffff;
   return Math.abs(h) % 360;
-}
-
-const perspectiveName = new Map(getPerspectives().map((p) => [p.id, p.name]));
-function perspectiveLabel(id: string) {
-  return perspectiveName.get(id) ?? id.replace(/-/g, " ");
 }
 
 // RFC 0012 §6 rule 4: discrete language chips. Content can differ per side in

@@ -1,10 +1,11 @@
 ---
-import type {
-  RankRow,
-  DuelEntry,
-  RankingStats,
-  PerspectiveGridItem,
-  RankingSnapshot,
+import {
+  perspectiveLabel,
+  type RankRow,
+  type DuelEntry,
+  type RankingStats,
+  type PerspectiveGridItem,
+  type RankingSnapshot,
 } from "../lib/hronir-rank";
 
 export interface RankPostInfo {
@@ -130,11 +131,8 @@ function confidenceLevel(sigma: number, appearances: number): {
   return { level: "low", label: strings.confidenceLow };
 }
 
-const perspectiveName = new Map(
-  (perspectivesGrid ?? []).map((p) => [p.id, p.name])
-);
 function formatPerspective(id: string): string {
-  return perspectiveName.get(id) ?? id.replace(/-/g, " ");
+  return perspectiveLabel(id);
 }
 
 function perspectiveHue(id: string): number {
