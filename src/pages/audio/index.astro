@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import { blogAudioEpisodes } from '../../lib/blog-audio.js';
+import { postUrl } from '../../lib/i18n';
+import { isPublished } from '../../lib/publish';
+
+const posts = await getCollection('blog');
+const byId = new Map(posts.filter(isPublished).map((post) => [post.id, post]));
+const episodes = blogAudioEpisodes()
+  .map((episode) => ({ episode, post: byId.get(episode.post_id) }))
+  .filter(({ post }) => Boolean(post))
+  .sort((a, b) => Date.parse(b.episode.published_at) - Date.parse(a.episode.published_at));
+---
+<PageLayout title="Áudio" description="Versões em áudio das matérias do blog" lang="pt">
+  <main class="container">
+    <h1>Áudio</h1>
+    <p><a href="/audio.xml">Assinar o feed de áudio</a></p>
+    {episodes.length === 0 ? <p>Nenhuma matéria em áudio publicada ainda.</p> : episodes.map(({ episode, post }) => (
+      <article>
+        <h2><a href={postUrl(post)}>{post.data.title}</a></h2>
+        <audio controls preload="metadata" src={episode.media_url} />
+      </article>
+    ))}
+  </main>
+</PageLayout>
