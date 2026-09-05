@@ -10,6 +10,7 @@ import {
   getPerPerspectiveRankings,
   getPerspectives,
   getSnapshotDelta,
+  perspectiveLabel,
 } from "../../../lib/hronir-rank";
 import { isPublished } from "../../../lib/publish";
 
@@ -290,7 +291,7 @@ function fmtDate(iso: string): string {
                         class="duel-perspective"
                         style={`--ph:${hue(d.perspectiveId)}`}
                       >
-                        {d.perspectiveId.replace(/-/g, " ")}
+                        {perspectiveLabel(d.perspectiveId)}
                       </a>
                     )}
                   </div>

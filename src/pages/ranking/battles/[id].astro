@@ -4,7 +4,7 @@ import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import HronirExplainer from "../../../components/HronirExplainer.astro";
 import { toBreadcrumbLd } from "../../../lib/breadcrumbs";
 import { getCollection } from "astro:content";
-import { getDuels, getRankByKey } from "../../../lib/hronir-rank";
+import { getDuels, getRankByKey, perspectiveLabel } from "../../../lib/hronir-rank";
 import { isPublished } from "../../../lib/publish";
 import { marked } from "marked";
 
@@ -160,8 +160,8 @@ const critiqueLang = duel.reviewLang ? duel.reviewLang.toUpperCase() : null;
 const pageTitle = `${winnerTitle} vs ${loserTitle}`;
 const pageDesc =
   lang === "pt"
-    ? `Duelo Hrönir: ${winnerTitle} venceu ${loserTitle}${duel.perspectiveId ? ` sob a perspectiva ${duel.perspectiveId}` : ""}.`
-    : `Hrönir duel: ${winnerTitle} beat ${loserTitle}${duel.perspectiveId ? ` under the ${duel.perspectiveId} perspective` : ""}.`;
+    ? `Duelo Hrönir: ${winnerTitle} venceu ${loserTitle}${duel.perspectiveId ? ` sob a perspectiva ${perspectiveLabel(duel.perspectiveId)}` : ""}.`
+    : `Hrönir duel: ${winnerTitle} beat ${loserTitle}${duel.perspectiveId ? ` under the ${perspectiveLabel(duel.perspectiveId)} perspective` : ""}.`;
 
 const rankByKey = getRankByKey();
 const winnerRank = rankByKey.get(winnerKey);
@@ -195,7 +195,7 @@ const crumbs = [
     {duel.season !== undefined && <span class="tag tag-season">Season {duel.season}</span>}
     {duel.perspectiveId && (
       <span class="tag tag-perspective" style={`--ph:${perspectiveHue(duel.perspectiveId)}`}>
-        <a href={`/ranking/perspectives/${duel.perspectiveId}/`}>{duel.perspectiveId.replace(/-/g, " ")}</a>
+        <a href={`/ranking/perspectives/${duel.perspectiveId}/`}>{perspectiveLabel(duel.perspectiveId)}</a>
       </span>
     )}
     {duel.agentId && <span class="tag tag-agent">{duel.agentId}</span>}

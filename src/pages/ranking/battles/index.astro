@@ -3,7 +3,7 @@ import PageLayout from "../../../layouts/PageLayout.astro";
 import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import { toBreadcrumbLd } from "../../../lib/breadcrumbs";
 import { getCollection } from "astro:content";
-import { getDuels } from "../../../lib/hronir-rank";
+import { getDuels, perspectiveLabel } from "../../../lib/hronir-rank";
 import { isPublished } from "../../../lib/publish";
 
 const allPosts = await getCollection("blog");
@@ -107,7 +107,7 @@ const crumbs = [
         <button type="button" role="radio" aria-checked="true" data-perspective="all" class="chip active">All perspectives</button>
         {perspectives.map((p) => (
           <button type="button" role="radio" aria-checked="false" data-perspective={p} class="chip" style={`--ph:${perspectiveHue(p)}`}>
-            {p.replace(/-/g, " ")}
+            {perspectiveLabel(p)}
           </button>
         ))}
       </div>
@@ -145,7 +145,7 @@ const crumbs = [
               {d.season !== undefined && <span class="tag tag-season">S{d.season}</span>}
               {d.perspectiveId && (
                 <span class="tag tag-perspective" style={`--ph:${perspectiveHue(d.perspectiveId)}`}>
-                  {d.perspectiveId.replace(/-/g, " ")}
+                  {perspectiveLabel(d.perspectiveId)}
                 </span>
               )}
               {d.agentId && <span class="tag tag-agent">{d.agentId}</span>}

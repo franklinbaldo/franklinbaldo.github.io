@@ -224,6 +224,22 @@ export function getPerspectives(): PerspectiveMeta[] {
   return all.map((p) => ({ id: p.id, name: p.name, summary: p.summary }));
 }
 
+let _perspectiveNameById: Map<string, string> | null = null;
+
+// Reader-facing display name for a perspective id, e.g. "coverage" -> "Coverage
+// Sweep". Falls back to the slugified id for orphaned ids that no longer have
+// an entry in getPerspectives() (a perspective file renamed/removed after the
+// duel was recorded). Shared by every reader-facing surface that renders a
+// perspective id so the mapping and fallback stay in exactly one place.
+export function perspectiveLabel(id: string): string {
+  if (!_perspectiveNameById) {
+    _perspectiveNameById = new Map(
+      getPerspectives().map((p) => [p.id, p.name])
+    );
+  }
+  return _perspectiveNameById.get(id) ?? id.replace(/-/g, " ");
+}
+
 export function getPerPerspectiveRankings(): Map<string, PerspectiveRankRow[]> {
   // computePerPerspectiveRatings() returns Map<string, {key,ordinal,appearances,wins}[]>
   // which matches PerspectiveRankRow[] exactly.

@@ -1,10 +1,11 @@
 ---
-import type {
-  RankRow,
-  DuelEntry,
-  RankingStats,
-  PerspectiveGridItem,
-  RankingSnapshot,
+import {
+  perspectiveLabel,
+  type RankRow,
+  type DuelEntry,
+  type RankingStats,
+  type PerspectiveGridItem,
+  type RankingSnapshot,
 } from "../lib/hronir-rank";
 
 export interface RankPostInfo {
@@ -131,7 +132,7 @@ function confidenceLevel(sigma: number, appearances: number): {
 }
 
 function formatPerspective(id: string): string {
-  return id.replace(/-/g, " ");
+  return perspectiveLabel(id);
 }
 
 function perspectiveHue(id: string): number {
