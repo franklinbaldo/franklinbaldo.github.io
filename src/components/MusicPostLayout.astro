@@ -72,7 +72,8 @@ const copy = {
               type="button"
               data-suno-id={primary.sunoId}
               data-suno-title={primary.label}
-              aria-label={`${copy.playAria} ${primary.label}`}
+              aria-hidden="true"
+              tabindex="-1"
             >
               <span aria-hidden="true">▶</span>
             </button>
@@ -156,7 +157,7 @@ const copy = {
                 type="button"
                 data-suno-id={track.sunoId}
                 data-suno-title={track.label}
-                aria-label={`${copy.playAria} ${track.label}`}
+                aria-label={`${copy.playAria} ${String(index + 1).padStart(2, "0")}. ${track.label}`}
               >
                 <span class="music-version-number" aria-hidden="true">
                   {String(index + 1).padStart(2, "0")}
