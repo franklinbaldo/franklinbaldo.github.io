@@ -157,6 +157,14 @@ const booksJsonLd = {
           </label>
         </div>
 
+        <span
+          id="books-filter-status"
+          class="sr-only"
+          role="status"
+          aria-live="polite"
+          data-count-suffix={ui.countSuffix}
+        ></span>
+
         <p class="results-info">
           <small>
             <span id="visible-count">{likedCount}</span> {ui.countSuffix}
@@ -214,6 +222,8 @@ const booksJsonLd = {
   const sortSelect = document.getElementById("sort-select") as HTMLSelectElement;
   const pills = document.querySelectorAll<HTMLButtonElement>(".pill[data-filter]");
   const countEl = document.getElementById("visible-count");
+  const statusEl = document.getElementById("books-filter-status");
+  const countSuffix = statusEl?.dataset.countSuffix ?? "";
 
   let currentFilter = "liked";
 
@@ -255,6 +265,7 @@ const booksJsonLd = {
     visible.forEach((card) => grid.appendChild(card));
 
     if (countEl) countEl.textContent = String(visible.length);
+    if (statusEl) statusEl.textContent = `${visible.length} ${countSuffix}`;
   }
 
   pills.forEach((pill) => {
@@ -274,6 +285,18 @@ const booksJsonLd = {
 </script>
 
 <style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   .books-controls {
     display: flex;
     flex-wrap: wrap;

@@ -113,7 +113,7 @@ const crumbs = [
       </div>
     )}
     <div class="filter-status">
-      <span id="filter-count-label">Showing {duels.length} of {duels.length} on this page</span>
+      <span id="filter-count-label" role="status" aria-live="polite">Showing {duels.length} of {duels.length} on this page</span>
     </div>
   </div>
 
@@ -375,7 +375,14 @@ const crumbs = [
       updateURL();
     }
 
-    searchInput.addEventListener("input", applyFilters);
+    // Debounce the search box specifically: it drives an aria-live region
+    // (#filter-count-label), and firing that on every keystroke spams
+    // screen reader users with a new announcement per character typed.
+    let searchDebounce: ReturnType<typeof setTimeout> | undefined;
+    searchInput.addEventListener("input", () => {
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(applyFilters, 300);
+    });
     if (seasonSelect) seasonSelect.addEventListener("change", applyFilters);
     if (agentSelect) agentSelect.addEventListener("change", applyFilters);
     confContainer?.querySelectorAll("[role=radio]").forEach((btn) => {
