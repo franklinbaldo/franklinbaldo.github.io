@@ -257,7 +257,7 @@ const showGenreChips =
               <button class="genre-chip" data-genre={g} type="button" aria-pressed="false">{g}</button>
             ))}
           </div>
-          <p class="genre-filter-status" id="genre-filter-status" role="status" aria-live="polite">{clips.length} músicas</p>
+          <p class="genre-filter-status" id="genre-filter-status" role="status" aria-live="polite">{clips.length} {clips.length === 1 ? "música" : "músicas"}</p>
         )}
         <div class="songs-header">
           <h2>
@@ -522,7 +522,7 @@ const showGenreChips =
         const statusEl = document.getElementById("genre-filter-status");
         if (statusEl) {
           const visibleCount = allCards().filter((card) => !card.hidden).length;
-          statusEl.textContent = `${visibleCount} músicas`;
+          statusEl.textContent = `${visibleCount} ${visibleCount === 1 ? "música" : "músicas"}`;
         }
         const url = new URL(location.href);
         if (genre === "all") url.searchParams.delete("genre");

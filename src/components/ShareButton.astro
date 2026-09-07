@@ -43,7 +43,9 @@ const strings =
   function flash(button: HTMLButtonElement, text: string) {
     const label = button.querySelector<HTMLElement>(".share-label");
     if (!label) return;
-    const status = button.parentElement?.querySelector<HTMLElement>(".share-status");
+    const status = button.nextElementSibling?.classList.contains("share-status")
+      ? (button.nextElementSibling as HTMLElement)
+      : null;
     const state = buttonState.get(button) ?? { inFlight: false };
     if (state.timer !== undefined) window.clearTimeout(state.timer);
     label.textContent = text;

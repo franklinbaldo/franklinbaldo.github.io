@@ -224,12 +224,12 @@ try {
         iframe.title = label;
         title.textContent = label;
         title.href = song?.postUrl || `https://suno.com/song/${id}`;
-        if (nowPlayingStatus) {
-          nowPlayingStatus.textContent = `${player.dataset.nowPlaying || ""} ${label}`.trim();
-        }
         sunoLink.href = `https://suno.com/song/${id}`;
         player.hidden = false;
         document.body.classList.add("gmp-active");
+        if (nowPlayingStatus) {
+          nowPlayingStatus.textContent = `${player.dataset.nowPlaying || ""} ${label}`.trim();
+        }
         player.dataset.playingId = id;
         setFavoriteState(id);
         addHistory(id);
