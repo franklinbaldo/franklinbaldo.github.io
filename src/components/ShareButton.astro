@@ -35,6 +35,7 @@ const strings =
 >
   ↗ <span class="share-label">{strings.label}</span>
 </button>
+<span class="sr-only share-status" role="status" aria-live="polite"></span>
 
 <script>
   const buttonState = new WeakMap<HTMLButtonElement, { timer?: number; inFlight: boolean }>();
@@ -42,9 +43,13 @@ const strings =
   function flash(button: HTMLButtonElement, text: string) {
     const label = button.querySelector<HTMLElement>(".share-label");
     if (!label) return;
+    const status = button.nextElementSibling?.classList.contains("share-status")
+      ? (button.nextElementSibling as HTMLElement)
+      : null;
     const state = buttonState.get(button) ?? { inFlight: false };
     if (state.timer !== undefined) window.clearTimeout(state.timer);
     label.textContent = text;
+    if (status) status.textContent = text;
     state.timer = window.setTimeout(() => {
       label.textContent = button.dataset.defaultLabel ?? "Share";
       state.timer = undefined;
@@ -92,3 +97,17 @@ const strings =
     }
   });
 </script>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
