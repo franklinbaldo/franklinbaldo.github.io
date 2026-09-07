@@ -257,6 +257,7 @@ const showGenreChips =
               <button class="genre-chip" data-genre={g} type="button" aria-pressed="false">{g}</button>
             ))}
           </div>
+          <p class="genre-filter-status" id="genre-filter-status" role="status" aria-live="polite">{clips.length} músicas</p>
         )}
         <div class="songs-header">
           <h2>
@@ -518,6 +519,11 @@ const showGenreChips =
           const genres = (card.dataset.genres || "").split(",");
           card.hidden = !genres.includes(genre);
         });
+        const statusEl = document.getElementById("genre-filter-status");
+        if (statusEl) {
+          const visibleCount = allCards().filter((card) => !card.hidden).length;
+          statusEl.textContent = `${visibleCount} músicas`;
+        }
         const url = new URL(location.href);
         if (genre === "all") url.searchParams.delete("genre");
         else url.searchParams.set("genre", genre);
@@ -704,7 +710,12 @@ const showGenreChips =
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.4rem;
+  }
+  .genre-filter-status {
+    font-size: 0.78rem;
+    color: var(--pico-muted-color);
+    margin: 0 0 1rem;
   }
   .genre-chip {
     padding: 0.2rem 0.65rem;
