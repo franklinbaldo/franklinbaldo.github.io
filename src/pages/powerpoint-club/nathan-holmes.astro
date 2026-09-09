@@ -1,5 +1,43 @@
 ---
 const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
+
+const media = {
+  holmesPortrait: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Elizabeth%20Holmes%202014%20(cropped).jpg?width=1200",
+    href: "https://commons.wikimedia.org/wiki/File:Elizabeth_Holmes_2014_(cropped).jpg",
+    credit: "Max Morse / TechCrunch · CC BY 2.0 · Wikimedia Commons",
+  },
+  holmesStage: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Theranos%20Chairman,%20CEO%20and%20Founder%20Elizabeth%20Holmes%20speaks%20onstage%20at%20TechCrunch%20Disrupt%20at%20Pier%2048%20on%20September%208,%202014%20(14996937900).jpg?width=1600",
+    href: "https://commons.wikimedia.org/wiki/File:Theranos_Chairman,_CEO_and_Founder_Elizabeth_Holmes_speaks_onstage_at_TechCrunch_Disrupt_at_Pier_48_on_September_8,_2014_(14996937900).jpg",
+    credit: "TechCrunch / Flickr · CC BY 2.0 · Wikimedia Commons",
+  },
+  theranosLogo: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Theranos%20Logo.svg?width=1200",
+    href: "https://commons.wikimedia.org/wiki/File:Theranos_Logo.svg",
+    credit: "Theranos logo · Wikimedia Commons",
+  },
+  nathanPortrait: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Nathan%20Fielder.jpg?width=1200",
+    href: "https://commons.wikimedia.org/wiki/File:Nathan_Fielder.jpg",
+    credit: "Northwest · CC BY-SA 4.0 · Wikimedia Commons",
+  },
+  dumbStarbucks: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Dumb%20Starbucks.jpg?width=1600",
+    href: "https://commons.wikimedia.org/wiki/File:Dumb_Starbucks.jpg",
+    credit: "Shelby Asistio · CC BY-SA 2.0 · Wikimedia Commons",
+  },
+  rehearsal: {
+    src: "https://i.ytimg.com/vi/2fjPFt8cpic/maxresdefault.jpg",
+    href: "https://www.youtube.com/watch?v=2fjPFt8cpic",
+    credit: "HBO · thumbnail do trailer oficial no YouTube · uso editorial",
+  },
+  ycse: {
+    src: "https://i.ytimg.com/vi/GGJSRFWALTI/maxresdefault.jpg",
+    href: "https://www.youtube.com/watch?v=GGJSRFWALTI",
+    credit: "A24 · thumbnail do teaser oficial no YouTube · uso editorial",
+  },
+};
 ---
 
 <!doctype html>
@@ -9,7 +47,7 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Primeira versão de uma apresentação em Reveal.js para o Clube do PowerPoint: Elizabeth Holmes, Nathan Fielder e o absurdo perfeitamente lógico de You Can See Everything."
+      content="Apresentação em Reveal.js para o Clube do PowerPoint: Elizabeth Holmes, Nathan Fielder e o absurdo perfeitamente lógico de You Can See Everything."
     />
     <title>{title}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css" />
@@ -19,44 +57,66 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
     <div class="reveal club-deck">
       <div class="slides">
         <section data-background-gradient="linear-gradient(135deg, #101014, #24211d)">
-          <p class="eyebrow">Clube do PowerPoint · versão 0.1</p>
-          <h1>Elizabeth Holmes e a Theranos</h1>
-          <p class="subtitle">Ascensão e queda de uma startup de exames de sangue.</p>
-          <p class="small muted">Sim, o começo deve parecer um PowerPoint corporativo chato.</p>
+          <div class="visual-split opening">
+            <div>
+              <p class="eyebrow">Clube do PowerPoint · versão 0.2</p>
+              <h1>Elizabeth Holmes e a Theranos</h1>
+              <p class="subtitle">Ascensão e queda de uma startup de exames de sangue.</p>
+              <p class="small muted">Sim, o começo ainda deve parecer um PowerPoint corporativo chato.</p>
+            </div>
+            <figure class="media portrait">
+              <a href={media.holmesPortrait.href} target="_blank" rel="noreferrer">
+                <img src={media.holmesPortrait.src} alt="Elizabeth Holmes em 2014" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.holmesPortrait.credit}</figcaption>
+            </figure>
+          </div>
           <aside class="notes">
             Comece seco. Não mencione Nathan. A primeira graça é eles acharem que isso é uma apresentação normal sobre fraude empresarial.
           </aside>
         </section>
 
         <section>
-          <p class="eyebrow">A promessa</p>
-          <h2>A ideia era boa demais para ignorar</h2>
-          <p class="big">Uma máquina pequena. Poucas gotas de sangue. Centenas de exames. Resultado rápido, barato e acessível.</p>
-          <p class="fragment punch">Parecia uma revolução médica.</p>
-          <aside class="notes">
-            Não ironize ainda. A ideia precisa soar genuinamente forte, porque o tombo só funciona se a promessa inicial for sedutora.
-          </aside>
+          <div class="visual-split">
+            <div>
+              <p class="eyebrow">A promessa</p>
+              <h2>A ideia era boa demais para ignorar</h2>
+              <p class="big">Uma máquina pequena. Poucas gotas de sangue. Centenas de exames.</p>
+              <p class="fragment punch">Parecia uma revolução médica.</p>
+            </div>
+            <figure class="media logo-card">
+              <a href={media.theranosLogo.href} target="_blank" rel="noreferrer">
+                <img src={media.theranosLogo.src} alt="Logotipo da Theranos" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.theranosLogo.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Não ironize ainda. A ideia precisa soar genuinamente forte.</aside>
         </section>
 
         <section>
-          <p class="eyebrow">Escalada 1</p>
-          <h2>O Vale do Silício comprou a história</h2>
-          <div class="split">
-            <p>Investidores poderosos, capas de revista, linguagem de missão histórica e a comparação inevitável com Steve Jobs.</p>
-            <p class="stat">US$ 9 bi<br /><span>valuation no auge</span></p>
+          <div class="visual-split wide-media">
+            <div>
+              <p class="eyebrow">Escalada 1</p>
+              <h2>O Vale do Silício comprou a história</h2>
+              <p>Investidores poderosos, capas de revista, linguagem de missão histórica e a comparação inevitável com Steve Jobs.</p>
+              <p class="stat">US$ 9 bi<br /><span>valuation no auge</span></p>
+            </div>
+            <figure class="media landscape">
+              <a href={media.holmesStage.href} target="_blank" rel="noreferrer">
+                <img src={media.holmesStage.src} alt="Elizabeth Holmes no palco do TechCrunch Disrupt em 2014" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.holmesStage.credit}</figcaption>
+            </figure>
           </div>
-          <aside class="notes">
-            Apresente a Holmes como fenômeno cultural, não apenas empresária. Visual, narrativa, aura de fundadora genial.
-          </aside>
+          <aside class="notes">Apresente Holmes como fenômeno cultural, não apenas empresária.</aside>
         </section>
 
         <section data-background-gradient="linear-gradient(135deg, #230f12, #070707)">
           <p class="eyebrow">Virada 1</p>
           <h2>Só havia um pequeno problema</h2>
           <p class="reveal-line fragment">A máquina não fazia o que eles diziam que fazia.</p>
-          <aside class="notes">
-            Faça pausa antes da frase. A graça aqui é o “pequeno problema” ser literalmente o produto inteiro.
-          </aside>
+          <aside class="notes">Faça pausa antes da frase. O “pequeno problema” era literalmente o produto inteiro.</aside>
         </section>
 
         <section>
@@ -64,23 +124,29 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
           <h2>Eram exames médicos</h2>
           <p class="big">Quando uma startup mente sobre uma feature, é uma coisa. Quando a promessa envolve sangue, diagnóstico e paciente, o gênero muda.</p>
           <p class="fragment punch">A bizarrice tem vítima.</p>
-          <aside class="notes">
-            Segura o humor. É importante não tratar o dano como punchline. O alvo cômico é a colisão cultural, não os pacientes.
-          </aside>
+          <aside class="notes">Segure o humor. O alvo cômico é a colisão cultural, não os pacientes.</aside>
         </section>
 
         <section>
-          <p class="eyebrow">Escalada 2</p>
-          <h2>A pessoa virou produto</h2>
-          <div class="grid-3">
-            <p>Gola preta.</p>
-            <p>Voz grave.</p>
-            <p>Controle total da narrativa.</p>
+          <div class="visual-split">
+            <div>
+              <p class="eyebrow">Escalada 2</p>
+              <h2>A pessoa virou produto</h2>
+              <div class="grid-3 compact-grid">
+                <p>Gola preta.</p>
+                <p>Voz grave.</p>
+                <p>Controle da narrativa.</p>
+              </div>
+              <p class="fragment big">Elizabeth Holmes começou a parecer uma personagem interpretando Elizabeth Holmes.</p>
+            </div>
+            <figure class="media portrait tall">
+              <a href={media.holmesPortrait.href} target="_blank" rel="noreferrer">
+                <img src={media.holmesPortrait.src} alt="Retrato de Elizabeth Holmes com gola preta" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.holmesPortrait.credit}</figcaption>
+            </figure>
           </div>
-          <p class="fragment big">Em algum ponto, Elizabeth Holmes começou a parecer uma personagem interpretando Elizabeth Holmes.</p>
-          <aside class="notes">
-            Não precisa afirmar que a voz era falsa. A tese é mais segura: a persona pública era extraordinariamente construída.
-          </aside>
+          <aside class="notes">Não afirme que a voz era falsa. A tese é a construção extraordinária da persona pública.</aside>
         </section>
 
         <section>
@@ -88,18 +154,14 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
           <h2>Jornalismo, processo, condenação, prisão</h2>
           <p>Theranos desaba. Holmes é condenada por fraude contra investidores. A história parece completa.</p>
           <p class="fragment end-card">FIM.</p>
-          <aside class="notes">
-            Faça parecer encerramento. Esse falso fim é uma das engrenagens principais do roteiro.
-          </aside>
+          <aside class="notes">Faça parecer encerramento. Esse falso fim é uma engrenagem do roteiro.</aside>
         </section>
 
         <section data-background-gradient="linear-gradient(135deg, #101014, #1d2630)">
           <p class="eyebrow">Mas antes da prisão…</p>
           <h2>Elizabeth Holmes tinha perdido uma coisa</h2>
           <p class="fragment reveal-line">O controle da própria história.</p>
-          <aside class="notes">
-            Reabra a apresentação. Agora a história deixa de ser fraude corporativa e vira representação, câmera, persona.
-          </aside>
+          <aside class="notes">Agora a história vira representação, câmera e persona.</aside>
         </section>
 
         <section>
@@ -107,48 +169,58 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
           <h2>Se você fosse ela…</h2>
           <p class="big">…e quisesse mostrar ao mundo quem você realmente é antes de ir para a prisão, quem você chamaria para filmar?</p>
           <p class="fragment small muted">Jornalista? Netflix? Oprah? Um documentarista sério e discreto?</p>
-          <aside class="notes">
-            Deixe seus irmãos responderem. Não revele Nathan ainda. O silêncio trabalha por você.
-          </aside>
+          <aside class="notes">Deixe seus irmãos responderem. Não revele Nathan ainda.</aside>
         </section>
 
         <section data-background-gradient="linear-gradient(135deg, #070707, #191919)">
-          <p class="eyebrow">Desvio necessário</p>
-          <h2>Infelizmente, agora precisamos falar de Nathan Fielder</h2>
-          <p class="subtitle">Vocês sabem que eu gosto dele. Mas talvez não saibam o tamanho do problema.</p>
-          <aside class="notes">
-            Aqui a apresentação muda de assunto. A plateia deve sentir: “lá vem o Franklin com o Nathan”. Isso é bom.
-          </aside>
+          <div class="visual-split">
+            <div>
+              <p class="eyebrow">Desvio necessário</p>
+              <h2>Infelizmente, agora precisamos falar de Nathan Fielder</h2>
+              <p class="subtitle">Vocês sabem que eu gosto dele. Mas talvez não saibam o tamanho do problema.</p>
+            </div>
+            <figure class="media portrait">
+              <a href={media.nathanPortrait.href} target="_blank" rel="noreferrer">
+                <img src={media.nathanPortrait.src} alt="Nathan Fielder em 2017" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.nathanPortrait.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">A plateia deve sentir “lá vem o Franklin com o Nathan”. Isso é bom.</aside>
         </section>
 
         <section>
           <p class="eyebrow">Regra inicial</p>
           <h2>Nathan não conta uma piada absurda</h2>
           <p class="big fragment">Ele constrói a infraestrutura para que a piada exista no mundo real.</p>
-          <aside class="notes">
-            Esta frase é a chave. Todo exemplo precisa provar essa regra, não apenas ser engraçado.
-          </aside>
+          <aside class="notes">Esta frase é a chave. Todo exemplo precisa provar essa regra.</aside>
         </section>
 
         <section>
-          <p class="eyebrow">Exemplo 1</p>
-          <h2>Dumb Starbucks</h2>
-          <p>Para ajudar uma cafeteria, ele explora a ideia de paródia e abre uma cafeteria quase idêntica à Starbucks — só que tudo é “Dumb”.</p>
-          <p class="fragment punch">Ele não fez um sketch sobre abrir uma Starbucks falsa. Ele abriu a Starbucks falsa.</p>
-          <aside class="notes">
-            Clip sugerido: trecho de Dumb Starbucks / Becoming a Parody Artist. Trinta a noventa segundos bastam.
-          </aside>
+          <div class="visual-split wide-media">
+            <div>
+              <p class="eyebrow">Exemplo 1</p>
+              <h2>Dumb Starbucks</h2>
+              <p>Para ajudar uma cafeteria, ele explora a ideia de paródia e abre uma cafeteria quase idêntica à Starbucks — só que tudo é “Dumb”.</p>
+              <p class="fragment punch">Ele não fez um sketch sobre abrir uma Starbucks falsa. Ele abriu a Starbucks falsa.</p>
+            </div>
+            <figure class="media landscape">
+              <a href={media.dumbStarbucks.href} target="_blank" rel="noreferrer">
+                <img src={media.dumbStarbucks.src} alt="Fachada da Dumb Starbucks em Los Feliz" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.dumbStarbucks.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Se quiser, complemente com um clipe curto do episódio.</aside>
         </section>
 
         <section>
           <p class="eyebrow">Exemplo 2</p>
           <h2>The Movement</h2>
-          <p>Uma empresa de mudanças precisa de mão de obra. A solução de Nathan: transformar carregar móveis de graça em um programa fitness.</p>
+          <p>Uma empresa de mudanças precisa de mão de obra. A solução: transformar carregar móveis de graça em um programa fitness.</p>
           <p class="fragment">Depois ele precisa legitimar a ideia: guru, biografia, televisão, tudo.</p>
           <p class="fragment punch">A mentira fica mais trabalhosa que um negócio real.</p>
-          <aside class="notes">
-            Esse é o slide para mostrar que Nathan escala institucionalmente a premissa. Ele cria mundo, não só cena.
-          </aside>
+          <aside class="notes">Nathan escala institucionalmente a premissa. Ele cria mundo, não só cena.</aside>
         </section>
 
         <section>
@@ -158,19 +230,25 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
           <p class="fragment">Uma pessoa normal inventaria uma história.</p>
           <p class="fragment reveal-line">Nathan fabrica acontecimentos reais para depois poder contar uma história verdadeira.</p>
           <p class="fragment punch">Ele falsifica a realidade para não precisar mentir.</p>
-          <aside class="notes">
-            Esse é provavelmente o melhor resumo moral do método Nathan. Dê tempo para a frase bater.
-          </aside>
+          <aside class="notes">Dê tempo para essa frase bater.</aside>
         </section>
 
         <section data-background-gradient="linear-gradient(135deg, #14120f, #30271a)">
-          <p class="eyebrow">Nova fase</p>
-          <h2>The Rehearsal</h2>
-          <p class="big">E se a gente pudesse ensaiar a própria vida?</p>
-          <p class="fragment">Nathan constrói réplicas, contrata atores, simula conversas e transforma preparação em um labirinto.</p>
-          <aside class="notes">
-            Clip sugerido: a réplica do bar no episódio 1. O público precisa sentir o exagero físico da coisa.
-          </aside>
+          <div class="visual-split wide-media">
+            <div>
+              <p class="eyebrow">Nova fase</p>
+              <h2>The Rehearsal</h2>
+              <p class="big">E se a gente pudesse ensaiar a própria vida?</p>
+              <p class="fragment">Réplicas, atores, simulações e recursos absurdos para tentar reduzir a incerteza da vida real.</p>
+            </div>
+            <figure class="media landscape">
+              <a href={media.rehearsal.href} target="_blank" rel="noreferrer">
+                <img src={media.rehearsal.src} alt="Imagem promocional do trailer oficial de The Rehearsal" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.rehearsal.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">A imagem do trailer ajuda a vender a escala física da coisa antes do clipe.</aside>
         </section>
 
         <section>
@@ -178,28 +256,37 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
           <h2>O assunto dele não é só constrangimento</h2>
           <p class="big">É a fronteira estranha entre pessoa, personagem, ensaio e câmera.</p>
           <p class="fragment punch">Quando alguém sabe que está sendo observado, quem exatamente aparece?</p>
-          <aside class="notes">
-            Esta é a ponte conceitual para Holmes. Não pule. Sem esta ponte, a revelação vira só trivia.
-          </aside>
+          <aside class="notes">Esta é a ponte conceitual para Holmes.</aside>
         </section>
 
         <section data-background-gradient="linear-gradient(135deg, #101014, #24211d)">
           <p class="eyebrow">Voltando à empresária condenada</p>
           <h2>Lembram da mulher cuja persona pública parecia cuidadosamente fabricada?</h2>
           <p class="fragment big">Ela queria mostrar quem ela realmente era.</p>
-          <aside class="notes">
-            Callback explícito. Eles precisam lembrar da persona Holmes e da regra Nathan ao mesmo tempo.
-          </aside>
+          <aside class="notes">Callback explícito.</aside>
         </section>
 
         <section data-background-gradient="linear-gradient(135deg, #2a1118, #070707)">
-          <p class="eyebrow">Revelação 3</p>
-          <h2>Ela deixou Nathan Fielder entrar.</h2>
-          <p class="fragment subtitle">É a pior pessoa possível para alguém tentando controlar a própria representação.</p>
-          <p class="fragment subtitle">Ou talvez exatamente a melhor.</p>
-          <aside class="notes">
-            Este é um pico. Não explique imediatamente. Deixe a sala reagir.
-          </aside>
+          <div class="collision">
+            <figure class="media portrait mini">
+              <a href={media.holmesPortrait.href} target="_blank" rel="noreferrer">
+                <img src={media.holmesPortrait.src} alt="Elizabeth Holmes" referrerpolicy="no-referrer" />
+              </a>
+            </figure>
+            <div class="collision-copy">
+              <p class="eyebrow">Revelação 3</p>
+              <h2>Ela deixou Nathan Fielder entrar.</h2>
+              <p class="fragment subtitle">A pior pessoa possível para alguém tentando controlar a própria representação.</p>
+              <p class="fragment subtitle">Ou talvez exatamente a melhor.</p>
+            </div>
+            <figure class="media portrait mini">
+              <a href={media.nathanPortrait.href} target="_blank" rel="noreferrer">
+                <img src={media.nathanPortrait.src} alt="Nathan Fielder" referrerpolicy="no-referrer" />
+              </a>
+            </figure>
+          </div>
+          <p class="credit-row">Holmes: {media.holmesPortrait.credit} · Fielder: {media.nathanPortrait.credit}</p>
+          <aside class="notes">Este é um pico. Não explique imediatamente. Deixe a sala reagir.</aside>
         </section>
 
         <section>
@@ -207,19 +294,25 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
           <h2>E não foi só uma entrevista</h2>
           <p class="big">O projeto acompanha Holmes nos 34 dias antes de sua ida à prisão e se estende por anos.</p>
           <p class="fragment punch">A premissa “vou recuperar minha narrativa” virou um objeto Nathan Fielder.</p>
-          <aside class="notes">
-            Se for usar a informação de que Fielder conviveu com ela e a família, cite verbalmente a matéria. Este slide evita detalhes excessivos.
-          </aside>
+          <aside class="notes">Aqui a escala volta a crescer.</aside>
         </section>
 
         <section>
-          <p class="eyebrow">O filme</p>
-          <h2>You Can See Everything</h2>
-          <p>Nathan Fielder + Lance Oppenheim. A24. Elizabeth Holmes. Documentário.</p>
-          <p class="fragment reveal-line">Isso realmente existe.</p>
-          <aside class="notes">
-            Só agora diga o título. A frase “isso realmente existe” tem que soar necessária.
-          </aside>
+          <div class="visual-split wide-media">
+            <div>
+              <p class="eyebrow">O filme</p>
+              <h2>You Can See Everything</h2>
+              <p>Nathan Fielder + Lance Oppenheim. A24. Elizabeth Holmes. Documentário.</p>
+              <p class="fragment reveal-line">Isso realmente existe.</p>
+            </div>
+            <figure class="media landscape">
+              <a href={media.ycse.href} target="_blank" rel="noreferrer">
+                <img src={media.ycse.src} alt="Thumbnail do teaser oficial de You Can See Everything" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.ycse.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Só agora diga o título.</aside>
         </section>
 
         <section>
@@ -232,18 +325,25 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowfullscreen></iframe>
           </div>
-          <aside class="notes">
-            Mostrar o teaser depois dos exemplos faz a frase dela ganhar outro peso. Se o iframe falhar, abrir o teaser oficial da A24 no YouTube.
-          </aside>
+          <p class="media-credit"><a href={media.ycse.href} target="_blank" rel="noreferrer">A24 · teaser oficial</a></p>
+          <aside class="notes">Mostrar o teaser depois dos exemplos faz a frase dela ganhar outro peso.</aside>
         </section>
 
         <section data-background-gradient="linear-gradient(135deg, #070707, #221018)">
-          <p class="eyebrow">A frase que parece escrita por um roteirista</p>
-          <h2>“I’m always being real.”</h2>
-          <p class="fragment big">A fundadora acusada de fabricar confiança dizendo isso para o homem obcecado por performance diante da câmera.</p>
-          <aside class="notes">
-            Este é o frame mental do meme. Não precisa mostrar o print ainda; dá para colocar depois quando tivermos imagem própria/licenciada.
-          </aside>
+          <div class="visual-split wide-media">
+            <div>
+              <p class="eyebrow">A frase que parece escrita por um roteirista</p>
+              <h2>“I’m always being real.”</h2>
+              <p class="fragment big">A fundadora acusada de fabricar confiança dizendo isso para o homem obcecado por performance diante da câmera.</p>
+            </div>
+            <figure class="media landscape">
+              <a href={media.ycse.href} target="_blank" rel="noreferrer">
+                <img src={media.ycse.src} alt="Elizabeth Holmes e Nathan Fielder no teaser de You Can See Everything" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.ycse.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Agora o frame do teaser tem contexto.</aside>
         </section>
 
         <section>
@@ -251,37 +351,21 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
           <h2>You Can See Everything</h2>
           <p class="fragment reveal-line">Pode?</p>
           <p class="fragment big">Ver tudo significa conhecer alguém — ou só dá mais material para a pessoa representar melhor?</p>
-          <aside class="notes">
-            Encerrar com pergunta, não com tese fechada. O clube vai gostar mais se sobrar discussão.
-          </aside>
+          <aside class="notes">Encerrar com pergunta, não com tese fechada.</aside>
         </section>
 
         <section>
-          <p class="eyebrow">Teste de sucesso</p>
-          <h2>O que essa apresentação precisa causar</h2>
-          <ul>
-            <li>Quem não conhece Holmes entende por que a história é séria e estranha.</li>
-            <li>Quem não conhece Nathan entende o mecanismo, não só a fama.</li>
-            <li>Todo mundo sai pensando: “como essa combinação foi acontecer?”</li>
-          </ul>
-          <aside class="notes">
-            Este slide é opcional. Pode ser removido na versão performática e mantido como checklist de edição.
-          </aside>
-        </section>
-
-        <section>
-          <p class="eyebrow">Fontes e ajustes da próxima versão</p>
-          <h2>Base factual</h2>
+          <p class="eyebrow">Fontes visuais</p>
+          <h2>As imagens estão linkadas na própria apresentação</h2>
           <ul class="sources">
-            <li>SEC: ação contra Theranos, Holmes e Balwani por declarações falsas a investidores.</li>
-            <li>DOJ: sentença de Holmes a 135 meses por fraude contra investidores.</li>
-            <li>A24: teaser oficial de <em>You Can See Everything</em>.</li>
-            <li>Matérias recentes: Telluride, A24, 34 dias antes da prisão, Fielder + Oppenheim.</li>
+            <li>Elizabeth Holmes: Max Morse / TechCrunch, CC BY 2.0, via Wikimedia Commons.</li>
+            <li>Nathan Fielder: Northwest, CC BY-SA 4.0, via Wikimedia Commons.</li>
+            <li>Dumb Starbucks: Shelby Asistio, CC BY-SA 2.0, via Wikimedia Commons.</li>
+            <li><em>The Rehearsal</em>: thumbnail do trailer oficial da HBO.</li>
+            <li><em>You Can See Everything</em>: thumbnail e teaser oficial da A24.</li>
           </ul>
-          <p class="small muted">Próxima rodada: escolher dois clipes de Nathan, inserir frames autorizados e polir o timing.</p>
-          <aside class="notes">
-            Fontes consultadas na montagem: SEC 2018, DOJ 2022, A24 teaser, Entertainment Weekly, SF Chronicle, People e cobertura recente sobre Telluride.
-          </aside>
+          <p class="small muted">Clique em qualquer imagem durante a edição para abrir a fonte original.</p>
+          <aside class="notes">As imagens promocionais são usadas de modo editorial e com atribuição à fonte; as imagens do Commons já trazem suas licenças explícitas.</aside>
         </section>
       </div>
     </div>
@@ -305,7 +389,7 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
         backgroundTransition: "fade",
         width: 1280,
         height: 720,
-        margin: 0.06,
+        margin: 0.055,
         plugins: [Notes],
       });
 
@@ -315,22 +399,14 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
 </html>
 
 <style is:global>
-  :root {
-    color-scheme: dark;
-  }
-
-  body {
-    margin: 0;
-    background: #070707;
-  }
+  :root { color-scheme: dark; }
+  body { margin: 0; background: #070707; }
 
   .club-deck {
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
-  .club-deck .slides {
-    text-align: left;
-  }
+  .club-deck .slides { text-align: left; }
 
   .club-deck h1,
   .club-deck h2 {
@@ -341,34 +417,29 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
   }
 
   .club-deck h1 {
-    max-width: 950px;
-    font-size: clamp(3.4rem, 7vw, 6.8rem);
+    max-width: 820px;
+    font-size: clamp(3.2rem, 6.3vw, 6.2rem);
     line-height: 0.92;
   }
 
   .club-deck h2 {
     max-width: 1020px;
-    font-size: clamp(3rem, 6vw, 5.8rem);
+    font-size: clamp(2.8rem, 5.4vw, 5.25rem);
     line-height: 0.95;
   }
 
   .club-deck p,
   .club-deck li {
     max-width: 900px;
-    font-size: 2rem;
+    font-size: 1.85rem;
     line-height: 1.18;
   }
 
-  .club-deck ul {
-    margin-left: 1.2em;
-  }
-
-  .club-deck li + li {
-    margin-top: 0.55em;
-  }
+  .club-deck ul { margin-left: 1.2em; }
+  .club-deck li + li { margin-top: 0.5em; }
 
   .club-deck .eyebrow {
-    margin: 0 0 1.2rem;
+    margin: 0 0 1.1rem;
     color: #ffc857;
     font-size: 1rem;
     font-weight: 800;
@@ -376,33 +447,21 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
     text-transform: uppercase;
   }
 
-  .club-deck .subtitle {
-    color: #f4eadc;
-    font-size: 2.1rem;
-  }
-
-  .club-deck .small {
-    font-size: 1.1rem;
-  }
-
-  .club-deck .muted {
-    color: #b7aea2;
-  }
+  .club-deck .subtitle { color: #f4eadc; font-size: 1.9rem; }
+  .club-deck .small { font-size: 1.05rem; }
+  .club-deck .muted { color: #b7aea2; }
 
   .club-deck .big {
-    font-size: clamp(2.2rem, 4vw, 4.2rem);
+    font-size: clamp(2rem, 3.7vw, 3.8rem);
     line-height: 1.05;
   }
 
-  .club-deck .punch {
-    color: #ffc857;
-    font-weight: 800;
-  }
+  .club-deck .punch { color: #ffc857; font-weight: 800; }
 
   .club-deck .reveal-line {
-    color: #ffffff;
+    color: #fff;
     font-family: Fraunces, Georgia, serif;
-    font-size: clamp(3rem, 6vw, 5.6rem);
+    font-size: clamp(2.9rem, 5.7vw, 5.25rem);
     font-weight: 900;
     letter-spacing: -0.05em;
     line-height: 0.98;
@@ -420,28 +479,20 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
     letter-spacing: 0.05em;
   }
 
-  .club-deck .split {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
-    gap: 3rem;
-    align-items: center;
-  }
-
   .club-deck .stat {
-    margin: 0;
+    margin: 1.2rem 0 0;
     color: #ffc857;
     font-family: Fraunces, Georgia, serif;
-    font-size: clamp(4.5rem, 9vw, 8rem);
+    font-size: clamp(4rem, 7vw, 6.6rem);
     font-weight: 900;
     letter-spacing: -0.06em;
     line-height: 0.85;
-    text-align: right;
   }
 
   .club-deck .stat span {
     color: #f4eadc;
     font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 700;
     letter-spacing: 0;
   }
@@ -449,22 +500,99 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
   .club-deck .grid-3 {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
-    margin: 2rem 0 2.6rem;
+    gap: 0.8rem;
+    margin: 1.5rem 0 2rem;
   }
 
   .club-deck .grid-3 p {
-    min-height: 150px;
+    min-height: 115px;
     margin: 0;
-    padding: 1.1rem;
+    padding: 0.8rem;
     border: 1px solid rgba(255, 200, 87, 0.34);
-    border-radius: 1.2rem;
+    border-radius: 1rem;
     background: rgba(255, 255, 255, 0.05);
     font-family: Fraunces, Georgia, serif;
-    font-size: 2.8rem;
+    font-size: 2rem;
     font-weight: 800;
     letter-spacing: -0.04em;
   }
+
+  .club-deck .compact-grid { max-width: 760px; }
+
+  .club-deck .visual-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    gap: 2.4rem;
+    align-items: center;
+  }
+
+  .club-deck .wide-media {
+    grid-template-columns: minmax(0, 0.95fr) minmax(460px, 1.05fr);
+  }
+
+  .club-deck .media {
+    margin: 0;
+    align-self: center;
+  }
+
+  .club-deck .media a {
+    display: block;
+    border: 0;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .club-deck .media img {
+    display: block;
+    width: 100%;
+    max-height: 520px;
+    object-fit: cover;
+    border-radius: 1.15rem;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+  }
+
+  .club-deck .portrait img { aspect-ratio: 4 / 5; }
+  .club-deck .portrait.tall img { max-height: 560px; }
+  .club-deck .landscape img { aspect-ratio: 16 / 10; }
+
+  .club-deck .logo-card {
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 1.2rem;
+    background: rgba(255, 255, 255, 0.94);
+  }
+
+  .club-deck .logo-card img {
+    max-height: 220px;
+    object-fit: contain;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .club-deck figcaption,
+  .club-deck .media-credit,
+  .club-deck .credit-row {
+    margin: 0.55rem 0 0;
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.72rem;
+    line-height: 1.2;
+  }
+
+  .club-deck figcaption a,
+  .club-deck .media-credit a { color: inherit; }
+
+  .club-deck .collision {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr) 220px;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .club-deck .collision-copy { text-align: center; }
+  .club-deck .collision-copy h2 { margin-left: auto; margin-right: auto; }
+  .club-deck .collision-copy p { margin-left: auto; margin-right: auto; }
+  .club-deck .mini img { max-height: 390px; }
+  .club-deck .credit-row { text-align: center; }
 
   .club-deck .video-shell {
     overflow: hidden;
@@ -475,15 +603,8 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
   }
 
-  .club-deck iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-  }
-
-  .club-deck .sources li {
-    font-size: 1.45rem;
-  }
+  .club-deck iframe { width: 100%; height: 100%; border: 0; }
+  .club-deck .sources li { font-size: 1.35rem; }
 
   .deck-help {
     position: fixed;
@@ -508,17 +629,15 @@ const title = "Por que Elizabeth Holmes deixou Nathan Fielder entrar?";
   }
 
   @media (max-width: 760px) {
-    .club-deck .split,
-    .club-deck .grid-3 {
+    .club-deck .visual-split,
+    .club-deck .wide-media,
+    .club-deck .grid-3,
+    .club-deck .collision {
       grid-template-columns: 1fr;
     }
 
-    .club-deck .stat {
-      text-align: left;
-    }
-
-    .deck-help {
-      display: none;
-    }
+    .club-deck .media img { max-height: 300px; }
+    .club-deck .mini { display: none; }
+    .deck-help { display: none; }
   }
 </style>
