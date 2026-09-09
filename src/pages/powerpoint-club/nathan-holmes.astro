@@ -37,6 +37,21 @@ const media = {
     href: "https://www.youtube.com/watch?v=GGJSRFWALTI",
     credit: "A24 · thumbnail do teaser oficial no YouTube · uso editorial",
   },
+  memeAlways: {
+    src: "https://api.memegen.link/images/astronaut/Espera..._isso_era_um_sketch~q/Nunca_foi..jpg?width=900",
+    href: "https://memegen.link/",
+    credit: "Memegen.link · Always Has Been · meme editorial",
+  },
+  memeGru: {
+    src: "https://api.memegen.link/images/gru/Recuperar_a_propria_narrativa/Chamar_um_documentarista/Escolher_Nathan_Fielder/Escolher_Nathan_Fielder.jpg?width=900",
+    href: "https://memegen.link/",
+    credit: "Memegen.link · Gru's Plan · meme editorial",
+  },
+  memeSpiderman: {
+    src: "https://api.memegen.link/images/spiderman/Performance_vendida_como_realidade/Realidade_tratada_como_performance.jpg?width=900",
+    href: "https://memegen.link/",
+    credit: "Memegen.link · Spider-Man Pointing · meme editorial",
+  },
 };
 ---
 
@@ -59,7 +74,7 @@ const media = {
         <section data-background-gradient="linear-gradient(135deg, #101014, #24211d)">
           <div class="visual-split opening">
             <div>
-              <p class="eyebrow">Clube do PowerPoint · versão 0.2</p>
+              <p class="eyebrow">Clube do PowerPoint · versão 0.3</p>
               <h1>Elizabeth Holmes e a Theranos</h1>
               <p class="subtitle">Ascensão e queda de uma startup de exames de sangue.</p>
               <p class="small muted">Sim, o começo ainda deve parecer um PowerPoint corporativo chato.</p>
@@ -196,6 +211,23 @@ const media = {
           <aside class="notes">Esta frase é a chave. Todo exemplo precisa provar essa regra.</aside>
         </section>
 
+        <section data-background-gradient="linear-gradient(135deg, #101014, #201a13)">
+          <div class="meme-slide">
+            <figure class="media meme-card">
+              <a href={media.memeAlways.href} target="_blank" rel="noreferrer">
+                <img src={media.memeAlways.src} alt="Meme Always Has Been: Espera, isso era um sketch? Nunca foi." referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.memeAlways.credit}</figcaption>
+            </figure>
+            <div>
+              <p class="eyebrow">Meme beat 1</p>
+              <h2>Essa é a regra</h2>
+              <p class="big">O absurdo não é comentado. Ele é operacionalizado.</p>
+            </div>
+          </div>
+          <aside class="notes">Respire aqui. O meme não é enfeite: ele fixa a tese antes dos exemplos.</aside>
+        </section>
+
         <section>
           <div class="visual-split wide-media">
             <div>
@@ -266,6 +298,23 @@ const media = {
           <aside class="notes">Callback explícito.</aside>
         </section>
 
+        <section data-background-gradient="linear-gradient(135deg, #151311, #302016)">
+          <div class="meme-slide meme-slide-right">
+            <div>
+              <p class="eyebrow">Meme beat 2</p>
+              <h2>Plano impecável</h2>
+              <p class="big">A cada quadro, uma decisão um pouco mais amaldiçoada.</p>
+            </div>
+            <figure class="media meme-card">
+              <a href={media.memeGru.href} target="_blank" rel="noreferrer">
+                <img src={media.memeGru.src} alt="Meme Gru's Plan: recuperar a própria narrativa, chamar um documentarista, escolher Nathan Fielder." referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.memeGru.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Este meme já pode citar Nathan: ele é a última batida antes da revelação textual.</aside>
+        </section>
+
         <section data-background-gradient="linear-gradient(135deg, #2a1118, #070707)">
           <div class="collision">
             <figure class="media portrait mini">
@@ -287,6 +336,23 @@ const media = {
           </div>
           <p class="credit-row">Holmes: {media.holmesPortrait.credit} · Fielder: {media.nathanPortrait.credit}</p>
           <aside class="notes">Este é um pico. Não explique imediatamente. Deixe a sala reagir.</aside>
+        </section>
+
+        <section data-background-gradient="linear-gradient(135deg, #0a0a0c, #1d1724)">
+          <div class="meme-slide">
+            <figure class="media meme-card">
+              <a href={media.memeSpiderman.href} target="_blank" rel="noreferrer">
+                <img src={media.memeSpiderman.src} alt="Meme Spider-Man: performance vendida como realidade versus realidade tratada como performance." referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.memeSpiderman.credit}</figcaption>
+            </figure>
+            <div>
+              <p class="eyebrow">Meme beat 3</p>
+              <h2>A colisão inteira em uma imagem</h2>
+              <p class="big">Holmes e Nathan parecem opostos — até você perceber que os dois estão presos na mesma pergunta.</p>
+            </div>
+          </div>
+          <aside class="notes">Esse meme segura a virada conceitual antes de falar do filme em si.</aside>
         </section>
 
         <section>
@@ -363,9 +429,10 @@ const media = {
             <li>Dumb Starbucks: Shelby Asistio, CC BY-SA 2.0, via Wikimedia Commons.</li>
             <li><em>The Rehearsal</em>: thumbnail do trailer oficial da HBO.</li>
             <li><em>You Can See Everything</em>: thumbnail e teaser oficial da A24.</li>
+            <li>Memes: renderizados por URL com Memegen.link, em uso editorial e com link de fonte.</li>
           </ul>
           <p class="small muted">Clique em qualquer imagem durante a edição para abrir a fonte original.</p>
-          <aside class="notes">As imagens promocionais são usadas de modo editorial e com atribuição à fonte; as imagens do Commons já trazem suas licenças explícitas.</aside>
+          <aside class="notes">As imagens promocionais e memes são usados de modo editorial e com atribuição; as imagens do Commons já trazem suas licenças explícitas.</aside>
         </section>
       </div>
     </div>
@@ -519,7 +586,8 @@ const media = {
 
   .club-deck .compact-grid { max-width: 760px; }
 
-  .club-deck .visual-split {
+  .club-deck .visual-split,
+  .club-deck .meme-slide {
     display: grid;
     grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
     gap: 2.4rem;
@@ -528,6 +596,14 @@ const media = {
 
   .club-deck .wide-media {
     grid-template-columns: minmax(0, 0.95fr) minmax(460px, 1.05fr);
+  }
+
+  .club-deck .meme-slide {
+    grid-template-columns: minmax(460px, 0.92fr) minmax(0, 1.08fr);
+  }
+
+  .club-deck .meme-slide-right {
+    grid-template-columns: minmax(0, 1.05fr) minmax(440px, 0.95fr);
   }
 
   .club-deck .media {
@@ -554,6 +630,13 @@ const media = {
   .club-deck .portrait img { aspect-ratio: 4 / 5; }
   .club-deck .portrait.tall img { max-height: 560px; }
   .club-deck .landscape img { aspect-ratio: 16 / 10; }
+
+  .club-deck .meme-card img {
+    max-height: 560px;
+    object-fit: contain;
+    border: 2px solid rgba(255, 200, 87, 0.55);
+    background: rgba(255, 255, 255, 0.06);
+  }
 
   .club-deck .logo-card {
     padding: 2rem;
@@ -632,7 +715,9 @@ const media = {
     .club-deck .visual-split,
     .club-deck .wide-media,
     .club-deck .grid-3,
-    .club-deck .collision {
+    .club-deck .collision,
+    .club-deck .meme-slide,
+    .club-deck .meme-slide-right {
       grid-template-columns: 1fr;
     }
 
