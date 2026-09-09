@@ -6,10 +6,14 @@ import { postUrl } from '../../lib/i18n';
 import { isPublished } from '../../lib/publish';
 
 const posts = await getCollection('blog');
-const byId = new Map(posts.filter(isPublished).map((post) => [post.id, post]));
+const byId = new Map(
+  posts.filter((post) => isPublished(post)).map((post) => [post.id, post])
+);
 const episodes = blogAudioEpisodes()
-  .map((episode) => ({ episode, post: byId.get(episode.post_id) }))
-  .filter(({ post }) => Boolean(post))
+  .flatMap((episode) => {
+    const post = byId.get(episode.post_id);
+    return post ? [{ episode, post }] : [];
+  })
   .sort((a, b) => Date.parse(b.episode.published_at) - Date.parse(a.episode.published_at));
 ---
 <PageLayout title="Áudio" description="Versões em áudio das matérias do blog" lang="pt">
