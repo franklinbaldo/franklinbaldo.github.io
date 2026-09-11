@@ -1,0 +1,739 @@
+---
+const title = "Elizabeth Holmes e a Theranos · Clube do PowerPoint";
+
+const media = {
+  holmesPortrait: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Elizabeth%20Holmes%202014%20(cropped).jpg?width=1200",
+    href: "https://commons.wikimedia.org/wiki/File:Elizabeth_Holmes_2014_(cropped).jpg",
+    credit: "Max Morse / TechCrunch · CC BY 2.0 · Wikimedia Commons",
+  },
+  holmesStage: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Theranos%20Chairman,%20CEO%20and%20Founder%20Elizabeth%20Holmes%20speaks%20onstage%20at%20TechCrunch%20Disrupt%20at%20Pier%2048%20on%20September%208,%202014%20(14996937900).jpg?width=1600",
+    href: "https://commons.wikimedia.org/wiki/File:Theranos_Chairman,_CEO_and_Founder_Elizabeth_Holmes_speaks_onstage_at_TechCrunch_Disrupt_at_Pier_48_on_September_8,_2014_(14996937900).jpg",
+    credit: "TechCrunch / Flickr · CC BY 2.0 · Wikimedia Commons",
+  },
+  theranosLogo: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Theranos%20Logo.svg?width=1200",
+    href: "https://commons.wikimedia.org/wiki/File:Theranos_Logo.svg",
+    credit: "Theranos logo · Wikimedia Commons",
+  },
+  nathanPortrait: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Nathan%20Fielder.jpg?width=1200",
+    href: "https://commons.wikimedia.org/wiki/File:Nathan_Fielder.jpg",
+    credit: "Northwest · CC BY-SA 4.0 · Wikimedia Commons",
+  },
+  dumbStarbucks: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Dumb%20Starbucks.jpg?width=1600",
+    href: "https://commons.wikimedia.org/wiki/File:Dumb_Starbucks.jpg",
+    credit: "Shelby Asistio · CC BY-SA 2.0 · Wikimedia Commons",
+  },
+  rehearsal: {
+    src: "https://i.ytimg.com/vi/2fjPFt8cpic/hqdefault.jpg",
+    href: "https://www.youtube.com/watch?v=2fjPFt8cpic",
+    credit: "HBO · thumbnail do trailer oficial no YouTube · uso editorial",
+  },
+  ycse: {
+    src: "https://i.ytimg.com/vi/GGJSRFWALTI/maxresdefault.jpg",
+    href: "https://www.youtube.com/watch?v=GGJSRFWALTI",
+    credit: "A24 · thumbnail do teaser oficial no YouTube · uso editorial",
+  },
+  memeAlways: {
+    src: "https://api.memegen.link/images/astronaut/Espera..._isso_era_um_sketch~q/Nunca_foi..jpg?width=900",
+    href: "https://memegen.link/",
+    credit: "Memegen.link · Always Has Been · meme editorial",
+  },
+  memePadme: {
+    src: "https://api.memegen.link/images/right/_/_/Quero_mostrar_quem_realmente_sou./Com_um_documentarista_discreto.../Um_documentarista_discreto,_né~q.jpg?width=1200",
+    href: "https://memegen.link/",
+    credit: "Memegen.link · Anakin/Padmé · meme editorial",
+  },
+  memeSpiderman: {
+    src: "https://api.memegen.link/images/spiderman/Performance_vendida_como_realidade/Realidade_tratada_como_performance.jpg?width=900",
+    href: "https://memegen.link/",
+    credit: "Memegen.link · Spider-Man Pointing · meme editorial",
+  },
+};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Apresentação em Reveal.js para o Clube do PowerPoint: Elizabeth Holmes, Nathan Fielder e o absurdo perfeitamente lógico de You Can See Everything."
+    />
+    <title>{title}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/black.css" />
+  </head>
+  <body>
+    <div class="reveal club-deck">
+      <div class="slides">
+        <section data-background-gradient="linear-gradient(135deg, #101014, #24211d)">
+          <div class="visual-split opening">
+            <div>
+              <p class="eyebrow">Clube do PowerPoint</p>
+              <h1>Elizabeth Holmes e a Theranos</h1>
+              <p class="subtitle">Ascensão e queda de uma startup de exames de sangue.</p>
+            </div>
+            <figure class="media portrait">
+              <a href={media.holmesPortrait.href} target="_blank" rel="noreferrer">
+                <img src={media.holmesPortrait.src} alt="Elizabeth Holmes em 2014" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.holmesPortrait.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">
+            O começo deve parecer uma apresentação corporativa convencional. Comece seco. Não mencione Nathan. A primeira graça é eles acharem que isso é uma apresentação normal sobre fraude empresarial.
+          </aside>
+        </section>
+
+        <section>
+          <div class="visual-split">
+            <div>
+              <p class="eyebrow">A promessa</p>
+              <h2>A ideia era boa demais para ignorar</h2>
+              <p class="big">Uma máquina pequena. Poucas gotas de sangue. Centenas de exames.</p>
+              <p class="fragment punch">Parecia uma revolução médica.</p>
+            </div>
+            <figure class="media logo-card">
+              <a href={media.theranosLogo.href} target="_blank" rel="noreferrer">
+                <img src={media.theranosLogo.src} alt="Logotipo da Theranos" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.theranosLogo.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Não ironize ainda. A ideia precisa soar genuinamente forte.</aside>
+        </section>
+
+        <section>
+          <div class="visual-split wide-media">
+            <div>
+              <p class="eyebrow">Escalada 1</p>
+              <h2>O Vale do Silício comprou a história</h2>
+              <p>Investidores poderosos, capas de revista, linguagem de missão histórica e a comparação inevitável com Steve Jobs.</p>
+              <p class="stat">US$ 9 bi<br /><span>valuation no auge</span></p>
+            </div>
+            <figure class="media landscape">
+              <a href={media.holmesStage.href} target="_blank" rel="noreferrer">
+                <img src={media.holmesStage.src} alt="Elizabeth Holmes no palco do TechCrunch Disrupt em 2014" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.holmesStage.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Apresente Holmes como fenômeno cultural, não apenas empresária.</aside>
+        </section>
+
+        <section data-background-gradient="linear-gradient(135deg, #230f12, #070707)">
+          <p class="eyebrow">Virada 1</p>
+          <h2>Só havia um pequeno problema</h2>
+          <p class="reveal-line fragment">A máquina não fazia o que eles diziam que fazia.</p>
+          <aside class="notes">Faça pausa antes da frase. O “pequeno problema” era literalmente o produto inteiro.</aside>
+        </section>
+
+        <section>
+          <p class="eyebrow">Não era só vaporware</p>
+          <h2>Eram exames médicos</h2>
+          <p class="big">Quando uma startup mente sobre uma feature, é uma coisa. Quando a promessa envolve sangue, diagnóstico e paciente, o gênero muda.</p>
+          <p class="fragment punch">A bizarrice tem vítima.</p>
+          <aside class="notes">Segure o humor. O alvo cômico é a colisão cultural, não os pacientes.</aside>
+        </section>
+
+        <section>
+          <div class="visual-split">
+            <div>
+              <p class="eyebrow">Escalada 2</p>
+              <h2>A pessoa virou produto</h2>
+              <div class="grid-3 compact-grid">
+                <p>Gola preta.</p>
+                <p>Voz grave.</p>
+                <p>Controle da narrativa.</p>
+              </div>
+              <p class="fragment big">Elizabeth Holmes começou a parecer uma personagem interpretando Elizabeth Holmes.</p>
+            </div>
+            <figure class="media portrait tall">
+              <a href={media.holmesPortrait.href} target="_blank" rel="noreferrer">
+                <img src={media.holmesPortrait.src} alt="Retrato de Elizabeth Holmes com gola preta" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.holmesPortrait.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Não afirme que a voz era falsa. A tese é a construção extraordinária da persona pública.</aside>
+        </section>
+
+        <section>
+          <p class="eyebrow">Queda</p>
+          <h2>Jornalismo, processo, condenação, prisão</h2>
+          <p>Theranos desaba. Holmes é condenada por fraude contra investidores. A história parece completa.</p>
+          <p class="fragment end-card">FIM.</p>
+          <aside class="notes">Faça parecer encerramento. Esse falso fim é uma engrenagem do roteiro.</aside>
+        </section>
+
+        <section data-background-gradient="linear-gradient(135deg, #101014, #1d2630)">
+          <p class="eyebrow">Mas antes da prisão…</p>
+          <h2>Elizabeth Holmes tinha perdido uma coisa</h2>
+          <p class="fragment reveal-line">O controle da própria história.</p>
+          <aside class="notes">Agora a história vira representação, câmera e persona.</aside>
+        </section>
+
+        <section>
+          <p class="eyebrow">Pergunta de mau presságio</p>
+          <h2>Se você fosse ela…</h2>
+          <p class="big">…e quisesse mostrar ao mundo quem você realmente é antes de ir para a prisão, quem você chamaria para filmar?</p>
+          <p class="fragment small muted">Jornalista? Netflix? Oprah? Um documentarista sério e discreto?</p>
+          <aside class="notes">Deixe seus irmãos responderem. Não revele Nathan ainda.</aside>
+        </section>
+
+        <section data-background-gradient="linear-gradient(135deg, #070707, #191919)">
+          <div class="visual-split">
+            <div>
+              <p class="eyebrow">Desvio necessário</p>
+              <h2>Infelizmente, agora precisamos falar de Nathan Fielder</h2>
+              <p class="subtitle">Vocês sabem que eu gosto dele. Mas talvez não saibam o tamanho do problema.</p>
+            </div>
+            <figure class="media portrait">
+              <a href={media.nathanPortrait.href} target="_blank" rel="noreferrer">
+                <img src={media.nathanPortrait.src} alt="Nathan Fielder em 2017" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.nathanPortrait.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">A plateia deve sentir “lá vem o Franklin com o Nathan”. Isso é bom.</aside>
+        </section>
+
+        <section>
+          <p class="eyebrow">Regra inicial</p>
+          <h2>Nathan não conta uma piada absurda</h2>
+          <p class="big fragment">Ele constrói a infraestrutura para que a piada exista no mundo real.</p>
+          <aside class="notes">Esta frase é a chave. Todo exemplo precisa provar essa regra.</aside>
+        </section>
+
+        <section data-background-gradient="linear-gradient(135deg, #101014, #201a13)">
+          <div class="meme-slide">
+            <figure class="media meme-card">
+              <a href={media.memeAlways.href} target="_blank" rel="noreferrer">
+                <img src={media.memeAlways.src} alt="Meme Always Has Been: Espera, isso era um sketch? Nunca foi." referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.memeAlways.credit}</figcaption>
+            </figure>
+            <div>
+              <p class="eyebrow">A regra</p>
+              <h2>“Isso era um sketch?”</h2>
+              <p class="punch">“Nunca foi.”</p>
+              <p class="big">O absurdo não é comentado. Ele é operacionalizado.</p>
+            </div>
+          </div>
+          <aside class="notes">Respire aqui. O meme não é enfeite: ele fixa a tese antes dos exemplos.</aside>
+        </section>
+
+        <section>
+          <div class="visual-split wide-media">
+            <div>
+              <p class="eyebrow">Exemplo 1</p>
+              <h2>Dumb Starbucks</h2>
+              <p>Para ajudar uma cafeteria, ele explora a ideia de paródia e abre uma cafeteria quase idêntica à Starbucks — só que tudo é “Dumb”.</p>
+              <p class="fragment punch">Ele não fez um sketch sobre abrir uma Starbucks falsa. Ele abriu a Starbucks falsa.</p>
+            </div>
+            <figure class="media landscape">
+              <a href={media.dumbStarbucks.href} target="_blank" rel="noreferrer">
+                <img src={media.dumbStarbucks.src} alt="Fachada da Dumb Starbucks em Los Feliz" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.dumbStarbucks.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Se quiser, complemente com um clipe curto do episódio.</aside>
+        </section>
+
+        <section>
+          <p class="eyebrow">Exemplo 2</p>
+          <h2>The Movement</h2>
+          <p>Uma empresa de mudanças precisa de mão de obra. A solução: transformar carregar móveis de graça em um programa fitness.</p>
+          <p class="fragment">Depois ele precisa legitimar a ideia: guru, biografia, televisão, tudo.</p>
+          <p class="fragment punch">A mentira fica mais trabalhosa que um negócio real.</p>
+          <aside class="notes">Nathan escala institucionalmente a premissa. Ele cria mundo, não só cena.</aside>
+        </section>
+
+        <section>
+          <p class="eyebrow">Exemplo 3</p>
+          <h2>The Anecdote</h2>
+          <p>Nathan precisa contar uma história engraçada num talk show.</p>
+          <p class="fragment">Uma pessoa normal inventaria uma história.</p>
+          <p class="fragment reveal-line">Nathan fabrica acontecimentos reais para depois poder contar uma história verdadeira.</p>
+          <p class="fragment punch">Ele falsifica a realidade para não precisar mentir.</p>
+          <aside class="notes">Dê tempo para essa frase bater.</aside>
+        </section>
+
+        <section data-background-gradient="linear-gradient(135deg, #14120f, #30271a)">
+          <div class="visual-split wide-media">
+            <div>
+              <p class="eyebrow">Nova fase</p>
+              <h2>The Rehearsal</h2>
+              <p class="big">E se a gente pudesse ensaiar a própria vida?</p>
+              <p class="fragment">Réplicas, atores, simulações e recursos absurdos para tentar reduzir a incerteza da vida real.</p>
+            </div>
+            <figure class="media landscape">
+              <a href={media.rehearsal.href} target="_blank" rel="noreferrer">
+                <img src={media.rehearsal.src} alt="Imagem promocional do trailer oficial de The Rehearsal" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.rehearsal.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">A imagem do trailer ajuda a vender a escala física da coisa antes do clipe.</aside>
+        </section>
+
+        <section>
+          <p class="eyebrow">O ponto</p>
+          <h2>O assunto dele não é só constrangimento</h2>
+          <p class="big">É a fronteira estranha entre pessoa, personagem, ensaio e câmera.</p>
+          <p class="fragment punch">Quando alguém sabe que está sendo observado, quem exatamente aparece?</p>
+          <aside class="notes">Esta é a ponte conceitual para Holmes.</aside>
+        </section>
+
+        <section data-background-gradient="linear-gradient(135deg, #101014, #24211d)">
+          <p class="eyebrow">Voltando à empresária condenada</p>
+          <h2>Lembram da mulher cuja persona pública parecia cuidadosamente fabricada?</h2>
+          <p class="fragment big">Ela queria mostrar quem ela realmente era.</p>
+          <aside class="notes">Callback explícito.</aside>
+        </section>
+
+        <section data-background-gradient="linear-gradient(135deg, #151311, #302016)">
+          <div class="meme-focus">
+            <div>
+              <p class="eyebrow">A escolha</p>
+              <h2>Um documentarista discreto…</h2>
+            </div>
+            <figure class="media meme-card">
+              <a href={media.memePadme.href} target="_blank" rel="noreferrer">
+                <img src={media.memePadme.src} alt="Meme Anakin e Padmé: Quero mostrar quem realmente sou. Com um documentarista discreto… Um documentarista discreto, né?" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.memePadme.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Não diga quem foi escolhido. Faça uma pausa na pergunta de Padmé; o próximo slide revela Nathan.</aside>
+        </section>
+
+        <section data-background-gradient="linear-gradient(135deg, #2a1118, #070707)">
+          <div class="collision">
+            <figure class="media portrait mini">
+              <a href={media.holmesPortrait.href} target="_blank" rel="noreferrer">
+                <img src={media.holmesPortrait.src} alt="Elizabeth Holmes" referrerpolicy="no-referrer" />
+              </a>
+            </figure>
+            <div class="collision-copy">
+              <p class="eyebrow">Revelação 3</p>
+              <h2>Ela deixou Nathan Fielder entrar.</h2>
+              <p class="fragment subtitle">A pior pessoa possível para alguém tentando controlar a própria representação.</p>
+              <p class="fragment subtitle">Ou talvez exatamente a melhor.</p>
+            </div>
+            <figure class="media portrait mini">
+              <a href={media.nathanPortrait.href} target="_blank" rel="noreferrer">
+                <img src={media.nathanPortrait.src} alt="Nathan Fielder" referrerpolicy="no-referrer" />
+              </a>
+            </figure>
+          </div>
+          <p class="credit-row">Holmes: {media.holmesPortrait.credit} · Fielder: {media.nathanPortrait.credit}</p>
+          <aside class="notes">Este é um pico. Não explique imediatamente. Deixe a sala reagir.</aside>
+        </section>
+
+        <section data-background-gradient="linear-gradient(135deg, #0a0a0c, #1d1724)">
+          <div class="meme-slide">
+            <figure class="media meme-card">
+              <a href={media.memeSpiderman.href} target="_blank" rel="noreferrer">
+                <img src={media.memeSpiderman.src} alt="Meme Spider-Man: performance vendida como realidade versus realidade tratada como performance." referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.memeSpiderman.credit}</figcaption>
+            </figure>
+            <div>
+              <p class="eyebrow">A colisão</p>
+              <h2>A colisão inteira em uma imagem</h2>
+              <p class="big">Holmes e Nathan parecem opostos — até você perceber que os dois estão presos na mesma pergunta.</p>
+            </div>
+          </div>
+          <aside class="notes">Esse meme segura a virada conceitual antes de falar do filme em si.</aside>
+        </section>
+
+        <section>
+          <p class="eyebrow">Escalada 4</p>
+          <h2>E não foi só uma entrevista</h2>
+          <p class="big">O projeto acompanha Holmes nos 34 dias antes de sua ida à prisão e se estende por anos.</p>
+          <p class="fragment punch">A premissa “vou recuperar minha narrativa” virou um objeto Nathan Fielder.</p>
+          <aside class="notes">Aqui a escala volta a crescer.</aside>
+        </section>
+
+        <section>
+          <div class="visual-split wide-media">
+            <div>
+              <p class="eyebrow">O filme</p>
+              <h2>You Can See Everything</h2>
+              <p>Nathan Fielder + Lance Oppenheim. A24. Elizabeth Holmes. Documentário.</p>
+              <p class="fragment reveal-line">Isso realmente existe.</p>
+            </div>
+            <figure class="media landscape uncropped">
+              <a href={media.ycse.href} target="_blank" rel="noreferrer">
+                <img src={media.ycse.src} alt="Thumbnail do teaser oficial de You Can See Everything" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.ycse.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Só agora diga o título.</aside>
+        </section>
+
+        <section class="teaser-slide">
+          <p class="eyebrow">Agora sim: o teaser</p>
+          <h2>Assista sabendo quem são os dois</h2>
+          <div class="video-shell">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/GGJSRFWALTI"
+              title="You Can See Everything - Official Teaser HD - A24"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+          </div>
+          <p class="media-credit"><a href={media.ycse.href} target="_blank" rel="noreferrer">A24 · teaser oficial</a></p>
+          <aside class="notes">Mostrar o teaser depois dos exemplos faz a frase dela ganhar outro peso.</aside>
+        </section>
+
+        <section data-background-gradient="linear-gradient(135deg, #070707, #221018)">
+          <div class="visual-split wide-media">
+            <div>
+              <p class="eyebrow">A frase que parece escrita por um roteirista</p>
+              <h2>“I’m always being real.”</h2>
+              <p class="fragment big">A fundadora acusada de fabricar confiança dizendo isso para o homem obcecado por performance diante da câmera.</p>
+            </div>
+            <figure class="media landscape uncropped">
+              <a href={media.ycse.href} target="_blank" rel="noreferrer">
+                <img src={media.ycse.src} alt="Elizabeth Holmes e Nathan Fielder no teaser de You Can See Everything" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.ycse.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Agora o frame do teaser tem contexto.</aside>
+        </section>
+
+        <section>
+          <p class="eyebrow">O título virou pergunta</p>
+          <h2>You Can See Everything</h2>
+          <p class="fragment reveal-line">Pode?</p>
+          <p class="fragment big">Ver tudo significa conhecer alguém — ou só dá mais material para a pessoa representar melhor?</p>
+          <aside class="notes">Encerrar com pergunta, não com tese fechada.</aside>
+        </section>
+
+        <section>
+          <p class="eyebrow">Fontes visuais</p>
+          <h2>As imagens estão linkadas na própria apresentação</h2>
+          <ul class="sources">
+            <li>Elizabeth Holmes: Max Morse / TechCrunch, CC BY 2.0, via Wikimedia Commons.</li>
+            <li>Nathan Fielder: Northwest, CC BY-SA 4.0, via Wikimedia Commons.</li>
+            <li>Dumb Starbucks: Shelby Asistio, CC BY-SA 2.0, via Wikimedia Commons.</li>
+            <li><em>The Rehearsal</em>: thumbnail do trailer oficial da HBO.</li>
+            <li><em>You Can See Everything</em>: thumbnail e teaser oficial da A24.</li>
+            <li>Memes: renderizados por URL com Memegen.link, em uso editorial e com link de fonte.</li>
+          </ul>
+          <p class="small muted">As imagens têm links para suas fontes originais.</p>
+          <aside class="notes">As imagens promocionais e memes são usados de modo editorial e com atribuição; as imagens do Commons já trazem suas licenças explícitas.</aside>
+        </section>
+      </div>
+    </div>
+
+    <footer class="deck-help" aria-label="Controles da apresentação">
+      <span>← → navega</span>
+      <span>S abre notas</span>
+      <span>Esc visão geral</span>
+    </footer>
+
+    <script is:inline type="module">
+      import Reveal from "https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.esm.js";
+      import Notes from "https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/plugin/notes/notes.esm.js";
+
+      const deck = new Reveal({
+        hash: true,
+        controls: true,
+        progress: true,
+        center: true,
+        transition: "slide",
+        backgroundTransition: "fade",
+        width: 1280,
+        height: 720,
+        margin: 0.055,
+        plugins: [Notes],
+      });
+
+      deck.initialize();
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root { color-scheme: dark; }
+  body { margin: 0; background: #070707; }
+
+  .club-deck {
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  .club-deck .slides { text-align: left; }
+
+  .club-deck h1,
+  .club-deck h2 {
+    font-family: Fraunces, Georgia, serif;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    text-transform: none;
+  }
+
+  .club-deck h1 {
+    max-width: 820px;
+    font-size: clamp(3.2rem, 6.3vw, 6.2rem);
+    line-height: 0.92;
+  }
+
+  .club-deck h2 {
+    max-width: 1020px;
+    font-size: clamp(2.8rem, 5.4vw, 5.25rem);
+    line-height: 0.95;
+  }
+
+  .club-deck p,
+  .club-deck li {
+    max-width: 900px;
+    font-size: 1.85rem;
+    line-height: 1.18;
+  }
+
+  .club-deck ul { margin-left: 1.2em; }
+  .club-deck li + li { margin-top: 0.5em; }
+
+  .club-deck .eyebrow {
+    margin: 0 0 1.1rem;
+    color: #ffc857;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .club-deck .subtitle { color: #f4eadc; font-size: 1.9rem; }
+  .club-deck .small { font-size: 1.05rem; }
+  .club-deck .muted { color: #b7aea2; }
+
+  .club-deck .big {
+    font-size: clamp(2rem, 3.7vw, 3.8rem);
+    line-height: 1.05;
+  }
+
+  .club-deck .punch { color: #ffc857; font-weight: 800; }
+
+  .club-deck .reveal-line {
+    color: #fff;
+    font-family: Fraunces, Georgia, serif;
+    font-size: clamp(2.9rem, 5.7vw, 5.25rem);
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    line-height: 0.98;
+  }
+
+  .club-deck .end-card {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 0.25em 0.45em;
+    border: 0.08em solid #ffc857;
+    color: #ffc857;
+    font-family: Fraunces, Georgia, serif;
+    font-size: 5rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+  }
+
+  .club-deck .stat {
+    margin: 1.2rem 0 0;
+    color: #ffc857;
+    font-family: Fraunces, Georgia, serif;
+    font-size: clamp(4rem, 7vw, 6.6rem);
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    line-height: 0.85;
+  }
+
+  .club-deck .stat span {
+    color: #f4eadc;
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .club-deck .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem;
+    margin: 1.5rem 0 2rem;
+  }
+
+  .club-deck .grid-3 p {
+    min-height: 115px;
+    margin: 0;
+    padding: 0.8rem;
+    border: 1px solid rgba(255, 200, 87, 0.34);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    font-family: Fraunces, Georgia, serif;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+  }
+
+  .club-deck .compact-grid { max-width: 760px; }
+
+  .club-deck .visual-split,
+  .club-deck .meme-slide {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    gap: 2.4rem;
+    align-items: center;
+  }
+
+  .club-deck .wide-media {
+    grid-template-columns: minmax(0, 0.95fr) minmax(460px, 1.05fr);
+  }
+
+  .club-deck .meme-slide {
+    grid-template-columns: minmax(460px, 0.92fr) minmax(0, 1.08fr);
+  }
+
+  .club-deck .meme-slide-right {
+    grid-template-columns: minmax(0, 1.05fr) minmax(440px, 0.95fr);
+  }
+
+  .club-deck .media {
+    margin: 0;
+    align-self: center;
+  }
+
+  .club-deck .media a {
+    display: block;
+    border: 0;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .club-deck .media img {
+    display: block;
+    width: 100%;
+    max-height: 520px;
+    object-fit: cover;
+    border-radius: 1.15rem;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+  }
+
+  .club-deck .portrait img { aspect-ratio: 4 / 5; }
+  .club-deck .portrait.tall img { max-height: 560px; }
+  .club-deck .landscape img { aspect-ratio: 16 / 10; }
+
+  .club-deck .meme-card img {
+    max-height: 560px;
+    object-fit: contain;
+    border: 2px solid rgba(255, 200, 87, 0.55);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .club-deck .logo-card {
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 1.2rem;
+    background: rgba(255, 255, 255, 0.94);
+  }
+
+  .club-deck .logo-card img {
+    max-height: 220px;
+    object-fit: contain;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .club-deck figcaption,
+  .club-deck .media-credit,
+  .club-deck .credit-row {
+    margin: 0.55rem 0 0;
+    color: #c9c4bc;
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .club-deck figcaption a,
+  .club-deck .media-credit a { color: inherit; }
+
+  .club-deck .collision {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr) 220px;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .club-deck .collision-copy { text-align: center; }
+  .club-deck .collision-copy h2 { margin-left: auto; margin-right: auto; }
+  .club-deck .collision-copy p { margin-left: auto; margin-right: auto; }
+  .club-deck .mini img { max-height: 390px; }
+  .club-deck .credit-row { text-align: center; }
+
+  .club-deck .video-shell {
+    overflow: hidden;
+    width: 820px;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 2px solid rgba(255, 200, 87, 0.5);
+    border-radius: 1.4rem;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+  }
+
+  .club-deck iframe { width: 100%; height: 100%; border: 0; }
+  .club-deck .logo-card figcaption { color: #444; }
+  .club-deck .uncropped img { aspect-ratio: 16 / 9; object-fit: contain; }
+  .club-deck .teaser-slide h2 { font-size: 3rem; margin-bottom: 1rem; }
+  .club-deck .teaser-slide .video-shell { margin: 0 auto; }
+  .club-deck .teaser-slide .media-credit { text-align: center; }
+  .club-deck .meme-focus { text-align: center; }
+  .club-deck .meme-focus h2 { font-size: 3rem; max-width: none; margin-bottom: 1rem; }
+  .club-deck .meme-focus .eyebrow { display: none; }
+  .club-deck .meme-focus figure { width: 760px; max-width: 100%; margin: 0 auto; }
+  .club-deck .meme-focus img { max-height: 490px; width: 100%; object-fit: contain; }
+
+  .club-deck .sources li { font-size: 1.35rem; }
+
+  .deck-help {
+    position: fixed;
+    left: 1rem;
+    bottom: 0.75rem;
+    z-index: 20;
+    display: flex;
+    gap: 0.6rem;
+    color: rgba(255, 255, 255, 0.62);
+    font: 700 0.72rem/1 Inter, ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  .deck-help span {
+    padding: 0.45rem 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(8px);
+  }
+
+  @media (max-width: 760px) {
+    .club-deck .visual-split,
+    .club-deck .wide-media,
+    .club-deck .grid-3,
+    .club-deck .collision,
+    .club-deck .meme-slide,
+    .club-deck .meme-slide-right {
+      grid-template-columns: 1fr;
+    }
+
+    .club-deck .media img { max-height: 300px; }
+    .club-deck .mini { display: none; }
+    .deck-help { display: none; }
+  }
+</style>
