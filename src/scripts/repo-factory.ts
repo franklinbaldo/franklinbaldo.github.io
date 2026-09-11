@@ -220,11 +220,6 @@ if (root && dataElement && !root.dataset.initialized) {
       node.hidden = !(matchesQuery && matchesStatus);
       if (!node.hidden) visible.add(name);
     }
-    if (filterStatus) {
-      filterStatus.textContent = `${visible.size} ${
-        visible.size === 1 ? "factory" : "factories"
-      } shown`;
-    }
     const showBelts = beltsToggle?.checked ?? true;
     for (const belt of belts) {
       const source = belt.dataset.source || "";
@@ -241,6 +236,16 @@ if (root && dataElement && !root.dataset.initialized) {
       const next = nodes.find((node) => !node.hidden);
       if (next?.dataset.repo) selectRepo(next.dataset.repo);
     }
+    return visible.size;
+  }
+
+  function announceVisibleCount(count: number) {
+    if (!filterStatus) return;
+    filterStatus.textContent = `${count} ${count === 1 ? "factory" : "factories"} shown`;
+  }
+
+  function updateVisibilityAndAnnounce() {
+    announceVisibleCount(updateVisibility());
   }
 
   for (const node of nodes) {
@@ -248,16 +253,18 @@ if (root && dataElement && !root.dataset.initialized) {
       if (node.dataset.repo) selectRepo(node.dataset.repo);
     });
   }
-  // Debounce the search box specifically: it drives an aria-live region
-  // (#factory-filter-status), and firing that on every keystroke spams
-  // screen reader users with a new announcement per character typed.
-  let searchDebounce: ReturnType<typeof setTimeout> | undefined;
+  // Filtering itself (node/belt visibility) runs on every keystroke so the
+  // board stays responsive. Only the aria-live announcement is debounced,
+  // since firing it on every keystroke spams screen reader users with a
+  // new announcement per character typed.
+  let announceDebounce: ReturnType<typeof setTimeout> | undefined;
   search?.addEventListener("input", () => {
-    clearTimeout(searchDebounce);
-    searchDebounce = setTimeout(updateVisibility, 300);
+    const count = updateVisibility();
+    clearTimeout(announceDebounce);
+    announceDebounce = setTimeout(() => announceVisibleCount(count), 300);
   });
-  status?.addEventListener("change", updateVisibility);
-  beltsToggle?.addEventListener("change", updateVisibility);
+  status?.addEventListener("change", updateVisibilityAndAnnounce);
+  beltsToggle?.addEventListener("change", updateVisibilityAndAnnounce);
 
   const reduceMotion =
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
@@ -274,5 +281,5 @@ if (root && dataElement && !root.dataset.initialized) {
   });
   renderMotion();
   if (repos[0]) selectRepo(repos[0].name);
-  updateVisibility();
+  updateVisibilityAndAnnounce();
 }
