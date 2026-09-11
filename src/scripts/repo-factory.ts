@@ -204,6 +204,10 @@ if (root && dataElement && !root.dataset.initialized) {
     }
   }
 
+  const filterStatus = root.querySelector<HTMLElement>(
+    "#factory-filter-status"
+  );
+
   function updateVisibility() {
     const query = (search?.value || "").trim().toLowerCase();
     const selectedStatus = status?.value || "all";
@@ -232,6 +236,16 @@ if (root && dataElement && !root.dataset.initialized) {
       const next = nodes.find((node) => !node.hidden);
       if (next?.dataset.repo) selectRepo(next.dataset.repo);
     }
+    return visible.size;
+  }
+
+  function announceVisibleCount(count: number) {
+    if (!filterStatus) return;
+    filterStatus.textContent = `${count} ${count === 1 ? "factory" : "factories"} shown`;
+  }
+
+  function updateVisibilityAndAnnounce() {
+    announceVisibleCount(updateVisibility());
   }
 
   for (const node of nodes) {
@@ -239,9 +253,18 @@ if (root && dataElement && !root.dataset.initialized) {
       if (node.dataset.repo) selectRepo(node.dataset.repo);
     });
   }
-  search?.addEventListener("input", updateVisibility);
-  status?.addEventListener("change", updateVisibility);
-  beltsToggle?.addEventListener("change", updateVisibility);
+  // Filtering itself (node/belt visibility) runs on every keystroke so the
+  // board stays responsive. Only the aria-live announcement is debounced,
+  // since firing it on every keystroke spams screen reader users with a
+  // new announcement per character typed.
+  let announceDebounce: ReturnType<typeof setTimeout> | undefined;
+  search?.addEventListener("input", () => {
+    const count = updateVisibility();
+    clearTimeout(announceDebounce);
+    announceDebounce = setTimeout(() => announceVisibleCount(count), 300);
+  });
+  status?.addEventListener("change", updateVisibilityAndAnnounce);
+  beltsToggle?.addEventListener("change", updateVisibilityAndAnnounce);
 
   const reduceMotion =
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
@@ -258,5 +281,5 @@ if (root && dataElement && !root.dataset.initialized) {
   });
   renderMotion();
   if (repos[0]) selectRepo(repos[0].name);
-  updateVisibility();
+  updateVisibilityAndAnnounce();
 }
