@@ -111,6 +111,10 @@ function fmtDate(iso: string | null): string {
   return d.toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" });
 }
 
+function fmtNum(n: number): string {
+  return n.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 const ordinals = rows.map((r) => r.ordinal);
 const ordMax = ordinals.length > 0 ? Math.max(...ordinals) : 0;
 const ordMin = ordinals.length > 0 ? Math.min(...ordinals) : 0;
@@ -232,7 +236,7 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
           <dl class="podium-stats">
             <div>
               <dt>{strings.thOrdinal}</dt>
-              <dd>{r.ordinal.toFixed(2)}</dd>
+              <dd>{fmtNum(r.ordinal)}</dd>
             </div>
             <div>
               <dt>{strings.thRecord}</dt>
@@ -359,9 +363,9 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
               <td class={`col-elo num tech-col ${eloClass}`} title={eloTitle}>
                 {eloData ? eloData.elo : "—"}
               </td>
-              <td class="col-mu num tech-col">{r.mu.toFixed(2)}</td>
-              <td class="col-sigma num tech-col">{r.sigma.toFixed(2)}</td>
-              <td class="col-ordinal num tech-col"><strong>{r.ordinal.toFixed(2)}</strong></td>
+              <td class="col-mu num tech-col">{fmtNum(r.mu)}</td>
+              <td class="col-sigma num tech-col">{fmtNum(r.sigma)}</td>
+              <td class="col-ordinal num tech-col"><strong>{fmtNum(r.ordinal)}</strong></td>
               <td class="col-record num tech-col" title={`${winRatePct}%`}>{r.wins}/{r.appearances}</td>
             </tr>
           );

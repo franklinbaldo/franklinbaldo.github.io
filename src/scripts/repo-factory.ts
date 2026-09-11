@@ -204,6 +204,10 @@ if (root && dataElement && !root.dataset.initialized) {
     }
   }
 
+  const filterStatus = root.querySelector<HTMLElement>(
+    "#factory-filter-status"
+  );
+
   function updateVisibility() {
     const query = (search?.value || "").trim().toLowerCase();
     const selectedStatus = status?.value || "all";
@@ -215,6 +219,11 @@ if (root && dataElement && !root.dataset.initialized) {
         selectedStatus === "all" || node.dataset.status === selectedStatus;
       node.hidden = !(matchesQuery && matchesStatus);
       if (!node.hidden) visible.add(name);
+    }
+    if (filterStatus) {
+      filterStatus.textContent = `${visible.size} ${
+        visible.size === 1 ? "factory" : "factories"
+      } shown`;
     }
     const showBelts = beltsToggle?.checked ?? true;
     for (const belt of belts) {
@@ -239,7 +248,14 @@ if (root && dataElement && !root.dataset.initialized) {
       if (node.dataset.repo) selectRepo(node.dataset.repo);
     });
   }
-  search?.addEventListener("input", updateVisibility);
+  // Debounce the search box specifically: it drives an aria-live region
+  // (#factory-filter-status), and firing that on every keystroke spams
+  // screen reader users with a new announcement per character typed.
+  let searchDebounce: ReturnType<typeof setTimeout> | undefined;
+  search?.addEventListener("input", () => {
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(updateVisibility, 300);
+  });
   status?.addEventListener("change", updateVisibility);
   beltsToggle?.addEventListener("change", updateVisibility);
 
