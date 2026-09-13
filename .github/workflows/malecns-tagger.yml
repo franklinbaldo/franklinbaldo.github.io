@@ -22,7 +22,7 @@ on:
         default: "64"
         type: string
       epochs:
-        description: Training epochs
+        description: Training epochs per paired seed
         required: true
         default: "3"
         type: string
@@ -69,7 +69,7 @@ jobs:
           [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
           python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
 
-      - name: Run MaleCNS tagger on Kaggle
+      - name: Run MaleCNS paired seeds on Kaggle
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
@@ -94,21 +94,21 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/malecns-result"
           unzip -q "$RUNNER_TEMP/malecns-tagger-result.zip" -d "$RUNNER_TEMP/malecns-result"
-          python - "$RUNNER_TEMP/malecns-result/metrics.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          python - "$RUNNER_TEMP/malecns-result/aggregate.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
           import json, sys
           data = json.load(open(sys.argv[1], encoding="utf-8"))
-          fly = data["results"]["malecns_reservoir"]["final"]
-          random = data["results"]["degree_preserving_shuffled_reservoir"]["final"]
-          base = data["results"]["byte_only_baseline"]["final"]
-          print("## MaleCNS byte tagger")
-          print(f"- graph: **{data['graph']['nodes']} neurons / {data['graph']['edges']} edges**")
-          print(f"- MaleCNS reservoir: F1 **{fly['f1']:.4f}**, precision {fly['precision']:.4f}, recall {fly['recall']:.4f}")
-          print(f"- degree-preserving shuffled reservoir: F1 **{random['f1']:.4f}**, precision {random['precision']:.4f}, recall {random['recall']:.4f}")
-          print(f"- byte-only baseline: F1 **{base['f1']:.4f}**, precision {base['precision']:.4f}, recall {base['recall']:.4f}")
-          print(f"- MaleCNS − shuffled: **{fly['f1'] - random['f1']:+.4f} F1**")
-          print(f"- MaleCNS − byte-only: **{fly['f1'] - base['f1']:+.4f} F1**")
-          print(f"- topology randomization: {data['null_model']['successful_swaps']} successful directed double-edge swaps")
-          print(f"- train/val docs: {data['data']['train_docs']} / {data['data']['val_docs']}")
+          fly = data["summary"]["malecns_reservoir"]["f1"]
+          random = data["summary"]["degree_preserving_shuffled_reservoir"]["f1"]
+          base = data["summary"]["byte_only_baseline"]["f1"]
+          topo = data["pairwise_f1"]["malecns_minus_shuffled"]
+          byte = data["pairwise_f1"]["malecns_minus_byte_only"]
+          print("## MaleCNS byte tagger — paired multiseed")
+          print(f"- seeds: {', '.join(map(str, data['seeds']))}")
+          print(f"- MaleCNS F1: **{fly['mean']:.4f} ± {fly['stdev']:.4f}**")
+          print(f"- degree-preserving shuffled F1: **{random['mean']:.4f} ± {random['stdev']:.4f}**")
+          print(f"- byte-only F1: **{base['mean']:.4f} ± {base['stdev']:.4f}**")
+          print(f"- MaleCNS − shuffled: **{topo['mean']:+.4f} ± {topo['stdev']:.4f} F1** ({topo['malecns_wins']}–{topo['shuffled_wins']} wins)")
+          print(f"- MaleCNS − byte-only: **{byte['mean']:+.4f} ± {byte['stdev']:.4f} F1** ({byte['malecns_wins']}–{byte['byte_only_wins']} wins)")
           PY
 
       - name: Upload experiment result
