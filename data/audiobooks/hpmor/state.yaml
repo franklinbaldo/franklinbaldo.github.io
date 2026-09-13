@@ -1,7 +1,7 @@
 schema: audiobook-work-state-v1
 work_id: hpmor
-status: preparing
-next_action: import and segment chapter 1 original, then create aligned translation
+status: in_progress
+next_action: chapter 1 published; later chapters are not authorized by this release
 project_gates:
   work_metadata_ready: true
   global_editorial_guide_ready: true
@@ -12,18 +12,32 @@ project_gates:
   pronunciation_lexicon_ready: true
 chapters:
   hpmor-001:
-    status: not_started
-    next_action: import source snapshot and establish stable segment ids
+    status: published
+    next_action: chapter 1 published and available in podcast feed
     files:
       original: original/001.md
       translation: translation/001.md
       narration: narration/001.md
     gates:
       work_ready: true
-      source_ready: false
-      translation_ready: false
-      narration_ready: false
-      consistency_ready: false
-      editorial_review_ready: false
-      audio_contract_ready: false
-    ready_for_audio: false
+      source_ready: true
+      translation_ready: true
+      narration_ready: true
+      consistency_ready: true
+      editorial_review_ready: true
+      audio_contract_ready: true
+    ready_for_audio: true
+    publication:
+      status: published
+      title: Capítulo 1 — Um Dia de Probabilidade Muito Baixa
+      description: Primeiro capítulo de Harry Potter e os Métodos da Racionalidade,
+        de Eliezer Yudkowsky, em português brasileiro. Tradução e produção de Franklin
+        Baldo; narração sintética com elenco de vozes Kokoro.
+      published_at: '2026-09-13T09:51:18+00:00'
+      duration_seconds: 1023.515
+      language: pt-BR
+      enclosure:
+        url: https://franklinbaldo.github.io/audio/hpmor/hpmor-001-pt-BR.mp3
+        type: audio/mpeg
+        bytes: 16377645
+      audio_sha256: ffa34a5fb3fc43d97b8bacc9a59a1379ce67b6f4a2458c881a27085d4321ec3f

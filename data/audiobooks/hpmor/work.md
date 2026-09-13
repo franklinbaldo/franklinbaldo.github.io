@@ -6,17 +6,17 @@ author: Eliezer Yudkowsky
 source_language: en
 target_language: pt-BR
 source_url: https://hpmor.com/
-status: preparing
+status: in_progress
 publication_mode: non-commercial-experimental
 podcast:
-  enabled: false
+  enabled: true
   title: Harry Potter e os Métodos da Racionalidade — Audiolivro
   description: Edição em português brasileiro produzida pela Audiobook Factory de Franklin Baldo.
   language: pt-BR
   author: Franklin Baldo
 media:
-  durable_backend: internet-archive
-  archive_item: franklinbaldo-hpmor-ptbr-audiobook
+  durable_backend: github-pages
+  base_path: /audio/hpmor/
 ---
 
 # Harry Potter and the Methods of Rationality
@@ -45,6 +45,6 @@ O texto integral não é duplicado neste arquivo de metadata.
 
 O projeto começa como experimento não comercial. Mudanças futuras de alcance/distribuição podem exigir revisão própria, mas não alteram o contrato técnico da fábrica.
 
-A identidade do podcast já está declarada, mas `podcast.enabled` permanece `false` até haver pelo menos um episódio editorialmente aprovado, sintetizado, armazenado e validado.
+O capítulo 1 foi aprovado, sintetizado e validado. O podcast está habilitado para esta publicação; outros capítulos permanecem não publicados.
 
-O destino durável preferencial de mídia é um item estável por obra no Internet Archive. Alterar o storage no futuro não altera `work_id`, GUID dos episódios nem URL canônica do feed.
+O capítulo 1 é servido pelo próprio blog em um endereço estável. Alterar o storage no futuro não altera `work_id`, GUID dos episódios nem URL canônica do feed.
