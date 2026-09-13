@@ -26,7 +26,9 @@ done
 
 [[ -n "$OUTPUT" ]] || { echo "--output is required" >&2; exit 2; }
 if [[ -z "$KERNEL_ID" && -n "${KAGGLE_USERNAME:-}" ]]; then
-  KERNEL_ID="${KAGGLE_USERNAME}/malecns-byte-tagger"
+  # The title below resolves to this slug. Keeping both aligned avoids Kaggle
+  # creating one kernel while the runner polls a different id.
+  KERNEL_ID="${KAGGLE_USERNAME}/malecns-byte-tagger-experiment"
 fi
 [[ "$KERNEL_ID" == */* && "$KERNEL_ID" != /* ]] || {
   echo "KAGGLE_MALECNS_KERNEL_ID or KAGGLE_USERNAME is required" >&2
@@ -37,6 +39,23 @@ command -v kaggle >/dev/null || { echo "kaggle CLI not found" >&2; exit 2; }
 STAGE="$(mktemp -d)"
 DOWNLOAD="$(mktemp -d)"
 trap 'rm -rf "$STAGE" "$DOWNLOAD"' EXIT
+
+# Kaggle status is coarse; fetch the kernel log on failure so CI preserves the
+# actual Python traceback instead of only reporting a generic failed job.
+dump_kernel_log() {
+  local dir log
+  dir="$(mktemp -d)"
+  if kaggle kernels output "$KERNEL_ID" -p "$dir" -o -q --file-pattern '^$' >/dev/null 2>&1; then
+    log="$(find "$dir" -maxdepth 1 -type f -name '*.log' -print -quit)"
+    if [[ -n "$log" ]]; then
+      echo "----- kaggle kernel log -----" >&2
+      cat "$log" >&2 || true
+      [[ -s "$log" ]] || echo "(kernel log is empty)" >&2
+      echo "----- end kaggle kernel log -----" >&2
+    fi
+  fi
+  rm -rf "$dir"
+}
 
 python3 - \
   scripts/malecns-tagger/experiment.py \
@@ -92,27 +111,33 @@ JSON
 kaggle kernels push -p "$STAGE" --accelerator "$ACCELERATOR" -t "${KAGGLE_MALECNS_TIMEOUT:-10800}"
 
 for _ in $(seq 1 "${KAGGLE_STATUS_POLLS:-400}"); do
-  STATUS="$(kaggle kernels status "$KERNEL_ID" 2>&1)"
+  STATUS="$(kaggle kernels status "$KERNEL_ID" 2>&1 || true)"
   echo "$STATUS"
   if grep -Eqi 'complete|success' <<<"$STATUS"; then
     break
   fi
   if grep -Eqi 'error|failed|cancel' <<<"$STATUS"; then
     echo "Kaggle MaleCNS job failed" >&2
+    dump_kernel_log
+    exit 1
+  fi
+  if grep -Eqi 'not found|404|does not exist' <<<"$STATUS"; then
+    echo "Kaggle kernel id did not resolve: $KERNEL_ID" >&2
     exit 1
   fi
   sleep "${KAGGLE_STATUS_INTERVAL:-30}"
 done
 
-STATUS="$(kaggle kernels status "$KERNEL_ID" 2>&1)"
+STATUS="$(kaggle kernels status "$KERNEL_ID" 2>&1 || true)"
 if ! grep -Eqi 'complete|success' <<<"$STATUS"; then
   echo "Kaggle MaleCNS job did not complete: $STATUS" >&2
+  dump_kernel_log
   exit 1
 fi
 
 kaggle kernels output "$KERNEL_ID" -p "$DOWNLOAD" -o --file-pattern '.*malecns-tagger-result\\.zip$'
 RESULT="$(find "$DOWNLOAD" -type f -name 'malecns-tagger-result.zip' -print -quit)"
-[[ -n "$RESULT" ]] || { echo "Kaggle output did not contain malecns-tagger-result.zip" >&2; exit 1; }
+[[ -n "$RESULT" ]] || { echo "Kaggle output did not contain malecns-tagger-result.zip" >&2; dump_kernel_log; exit 1; }
 mkdir -p "$(dirname "$OUTPUT")"
 cp "$RESULT" "$OUTPUT"
 echo "kaggle result: $OUTPUT"
