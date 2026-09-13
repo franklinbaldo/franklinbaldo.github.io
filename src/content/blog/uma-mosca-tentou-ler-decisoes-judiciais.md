@@ -21,7 +21,7 @@ translationKey: malecns-legal-tagger
 
 Eu coloquei um cérebro de mosca para tentar marcar o resultado de decisões judiciais.
 
-A frase parece uma piada de laboratório, mas a implementação é bastante literal. O **MaleCNS** é um mapa recém-publicado das conexões do sistema nervoso central de uma mosca-da-fruta macho. Eu peguei uma parte desse grafo, congelei suas conexões e usei aquilo como a rede recorrente de um pequeno modelo de *sequence tagging*.
+A frase parece uma piada de laboratório, mas a implementação é bastante literal. O **MaleCNS** é um mapa recém-publicado das conexões do sistema nervoso central de uma mosca-da-fruta macho. Eu peguei uma parte desse grafo, congelei suas conexões e usei aquilo como a rede recorrente de um pequeno modelo de _sequence tagging_.
 
 A mosca não recebe palavras, tokens de um LLM nem embeddings semânticos sofisticados. Ela recebe **bytes UTF-8**.
 
@@ -67,12 +67,12 @@ Uma rede recorrente qualquer pode carregar contexto. Se eu comparasse MaleCNS ap
 
 Então construímos um adversário muito mais incômodo.
 
-Pegamos exatamente o mesmo grafo e embaralhamos as conexões usando *directed double-edge swaps*. O controle preserva:
+Pegamos exatamente o mesmo grafo e embaralhamos as conexões usando _directed double-edge swaps_. O controle preserva:
 
 - o mesmo número de neurônios;
 - o mesmo número de conexões;
-- o *in-degree* de cada neurônio;
-- o *out-degree* de cada neurônio;
+- o _in-degree_ de cada neurônio;
+- o _out-degree_ de cada neurônio;
 - o mesmo conjunto de pesos;
 - o mesmo modelo treinável;
 - a mesma seed;
@@ -136,7 +136,7 @@ Agora temos um experimento que sabe dizer "não sei".
 
 O protocolo inicial treinava por exatamente **três épocas** e reportava o último epoch.
 
-Não havia *best checkpoint*. Não havia *early stopping*. E, pelo menos na primeira execução, a loss ainda estava despencando quando mandamos o treinamento parar.
+Não havia _best checkpoint_. Não havia _early stopping_. E, pelo menos na primeira execução, a loss ainda estava despencando quando mandamos o treinamento parar.
 
 Então há uma hipótese muito simples que precisa morrer antes de começarmos a aumentar o cérebro:
 
