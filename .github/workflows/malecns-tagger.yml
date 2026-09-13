@@ -14,7 +14,7 @@ on:
       nodes:
         description: MaleCNS subgraph size
         required: true
-        default: "5000"
+        default: "10000"
         type: string
       input_nodes:
         description: Reservoir neurons receiving the 64d byte adapter
@@ -74,12 +74,12 @@ jobs:
           [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
           python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
 
-      - name: Run MaleCNS 5k paired seeds on Kaggle
+      - name: Run MaleCNS 10k paired seeds on Kaggle
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
           KAGGLE_MALECNS_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_KERNEL_ID }}
-          NODES: ${{ inputs.nodes || '5000' }}
+          NODES: ${{ inputs.nodes || '10000' }}
           INPUT_NODES: ${{ inputs.input_nodes || '64' }}
           EPOCHS: ${{ inputs.epochs || '3' }}
           SEEDS: ${{ inputs.seeds || '20260912,20260913,20260914' }}
@@ -109,7 +109,7 @@ jobs:
           base = data["summary"]["byte_only_baseline"]["f1"]
           topo = data["pairwise_f1"]["malecns_minus_shuffled"]
           byte = data["pairwise_f1"]["malecns_minus_byte_only"]
-          print("## MaleCNS byte tagger — 5k scale")
+          print("## MaleCNS byte tagger — 10k scale")
           print(f"- nodes: **{data['config']['nodes']}**, input nodes: {data['config']['input_nodes']}")
           print(f"- seeds: {', '.join(map(str, data['seeds']))}")
           print(f"- MaleCNS F1: **{fly['mean']:.4f} ± {fly['stdev']:.4f}**")

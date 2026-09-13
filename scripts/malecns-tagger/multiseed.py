@@ -88,7 +88,7 @@ def main() -> int:
         default="20260912,20260913,20260914",
         help="comma-separated paired trial seeds",
     )
-    parser.add_argument("--nodes", type=int, default=5000)
+    parser.add_argument("--nodes", type=int, default=10000)
     parser.add_argument("--input-nodes", type=int, default=64)
     parser.add_argument("--epochs", type=int, default=3)
     parser.add_argument("--max-train-docs", type=int, default=0)
