@@ -2,9 +2,10 @@
 set -euo pipefail
 
 OUTPUT=""
-NODES="512"
+NODES="5000"
 INPUT_NODES="64"
 EPOCHS="3"
+SEEDS="20260912,20260913,20260914"
 MAX_TRAIN_DOCS="0"
 MAX_VAL_DOCS="0"
 ACCELERATOR="${KAGGLE_ACCELERATOR:-NvidiaTeslaT4}"
@@ -16,6 +17,7 @@ while [[ $# -gt 0 ]]; do
     --nodes) NODES="$2"; shift 2 ;;
     --input-nodes) INPUT_NODES="$2"; shift 2 ;;
     --epochs) EPOCHS="$2"; shift 2 ;;
+    --seeds) SEEDS="$2"; shift 2 ;;
     --max-train-docs) MAX_TRAIN_DOCS="$2"; shift 2 ;;
     --max-val-docs) MAX_VAL_DOCS="$2"; shift 2 ;;
     --accelerator) ACCELERATOR="$2"; shift 2 ;;
@@ -26,7 +28,7 @@ done
 
 [[ -n "$OUTPUT" ]] || { echo "--output is required" >&2; exit 2; }
 if [[ -z "$KERNEL_ID" && -n "${KAGGLE_USERNAME:-}" ]]; then
-  KERNEL_ID="${KAGGLE_USERNAME}/malecns-byte-tagger-experiment"
+  KERNEL_ID="${KAGGLE_USERNAME}/malecns-byte-tagger-scale-5k"
 fi
 [[ "$KERNEL_ID" == */* && "$KERNEL_ID" != /* ]] || {
   echo "KAGGLE_MALECNS_KERNEL_ID or KAGGLE_USERNAME is required" >&2
@@ -57,13 +59,13 @@ python3 - \
   scripts/malecns-tagger/experiment.py \
   scripts/malecns-tagger/randomized_control.py \
   scripts/malecns-tagger/multiseed.py \
-  "$NODES" "$INPUT_NODES" "$EPOCHS" "$MAX_TRAIN_DOCS" "$MAX_VAL_DOCS" \
+  "$NODES" "$INPUT_NODES" "$EPOCHS" "$SEEDS" "$MAX_TRAIN_DOCS" "$MAX_VAL_DOCS" \
   > "$STAGE/job.py" <<'PY'
 import base64
 from pathlib import Path
 import sys
 
-experiment_path, control_path, multiseed_path, nodes, input_nodes, epochs, max_train_docs, max_val_docs = sys.argv[1:]
+experiment_path, control_path, multiseed_path, nodes, input_nodes, epochs, seeds, max_train_docs, max_val_docs = sys.argv[1:]
 files = {
     "experiment.py": experiment_path,
     "randomized_control.py": control_path,
@@ -88,6 +90,7 @@ argv = [
     "--nodes", nodes,
     "--input-nodes", input_nodes,
     "--epochs", epochs,
+    "--seeds", seeds,
     "--max-train-docs", max_train_docs,
     "--max-val-docs", max_val_docs,
     "--work-dir", "/kaggle/working/cache",
@@ -100,7 +103,7 @@ PY
 cat > "$STAGE/kernel-metadata.json" <<JSON
 {
   "id": "$KERNEL_ID",
-  "title": "MaleCNS byte tagger experiment",
+  "title": "MaleCNS byte tagger scale 5k",
   "code_file": "job.py",
   "language": "python",
   "kernel_type": "script",
