@@ -110,7 +110,7 @@ test("validates the repository HPMOR work state without freezing editorial progr
     chapterId: "hpmor-001",
   });
   assert.equal(result.workId, "hpmor");
-  assert.equal(result.chapters[0].readyForAudio, false);
+  assert.equal(typeof result.chapters[0].readyForAudio, "boolean");
   assert.equal(typeof result.chapters[0].nextAction, "string");
   assert.ok(result.chapters[0].nextAction.length > 0);
 });
