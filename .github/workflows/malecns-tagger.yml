@@ -1,0 +1,107 @@
+name: MaleCNS Tagger Experiment
+
+on:
+  workflow_dispatch:
+    inputs:
+      nodes:
+        description: MaleCNS subgraph size
+        required: true
+        default: "512"
+        type: string
+      input_nodes:
+        description: Reservoir neurons receiving the 64d byte adapter
+        required: true
+        default: "64"
+        type: string
+      epochs:
+        description: Training epochs
+        required: true
+        default: "3"
+        type: string
+      max_train_docs:
+        description: Limit training documents (0 = all current train split)
+        required: true
+        default: "0"
+        type: string
+      max_val_docs:
+        description: Limit validation documents (0 = all current val split)
+        required: true
+        default: "0"
+        type: string
+      accelerator:
+        description: Kaggle accelerator
+        required: true
+        default: NvidiaTeslaT4
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-tagger
+  cancel-in-progress: false
+
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Run MaleCNS tagger on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_MALECNS_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_KERNEL_ID }}
+          NODES: ${{ inputs.nodes }}
+          INPUT_NODES: ${{ inputs.input_nodes }}
+          EPOCHS: ${{ inputs.epochs }}
+          MAX_TRAIN_DOCS: ${{ inputs.max_train_docs }}
+          MAX_VAL_DOCS: ${{ inputs.max_val_docs }}
+          ACCELERATOR: ${{ inputs.accelerator }}
+        run: |
+          bash scripts/malecns-tagger/kaggle.sh \
+            --output "$RUNNER_TEMP/malecns-tagger-result.zip" \
+            --nodes "$NODES" \
+            --input-nodes "$INPUT_NODES" \
+            --epochs "$EPOCHS" \
+            --max-train-docs "$MAX_TRAIN_DOCS" \
+            --max-val-docs "$MAX_VAL_DOCS" \
+            --accelerator "$ACCELERATOR"
+
+      - name: Summarize experiment
+        run: |
+          mkdir -p "$RUNNER_TEMP/malecns-result"
+          unzip -q "$RUNNER_TEMP/malecns-tagger-result.zip" -d "$RUNNER_TEMP/malecns-result"
+          python - "$RUNNER_TEMP/malecns-result/metrics.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          data = json.load(open(sys.argv[1], encoding="utf-8"))
+          fly = data["results"]["malecns_reservoir"]["final"]
+          base = data["results"]["byte_only_baseline"]["final"]
+          print("## MaleCNS byte tagger")
+          print(f"- graph: **{data['graph']['nodes']} neurons / {data['graph']['edges']} edges**")
+          print(f"- MaleCNS reservoir: F1 **{fly['f1']:.4f}**, precision {fly['precision']:.4f}, recall {fly['recall']:.4f}")
+          print(f"- byte-only baseline: F1 **{base['f1']:.4f}**, precision {base['precision']:.4f}, recall {base['recall']:.4f}")
+          print(f"- train/val docs: {data['data']['train_docs']} / {data['data']['val_docs']}")
+          PY
+
+      - name: Upload experiment result
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: malecns-tagger-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-tagger-result.zip
+          if-no-files-found: error
+          retention-days: 30
