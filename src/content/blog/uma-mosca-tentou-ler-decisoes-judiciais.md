@@ -106,11 +106,9 @@ Uma seed não é resultado. Rodamos então cinco seeds pareadas, sempre mudando 
 
 O resultado agregado foi:
 
-| modelo | F1 médio | desvio-padrão |
-|---|---:|---:|
-| MaleCNS | **0,2753** | 0,0682 |
-| MaleCNS embaralhado | **0,2782** | 0,0610 |
-| byte-only | **0,2727** | 0,0562 |
+- **MaleCNS:** F1 médio **0,2753**, desvio-padrão 0,0682;
+- **MaleCNS embaralhado:** F1 médio **0,2782**, desvio-padrão 0,0610;
+- **byte-only:** F1 médio **0,2727**, desvio-padrão 0,0562.
 
 A diferença pareada MaleCNS menos shuffled ficou em:
 
