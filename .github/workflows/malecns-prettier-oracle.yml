@@ -1,0 +1,31 @@
+name: MaleCNS Prettier Oracle
+
+on:
+  push:
+    branches:
+      - experiment/malecns-tagger-v2
+    paths:
+      - ".github/workflows/malecns-prettier-oracle.yml"
+      - "src/content/blog/uma-mosca-tentou-ler-decisoes-judiciais.md"
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Print canonical formatted file
+        run: |
+          FILE=src/content/blog/uma-mosca-tentou-ler-decisoes-judiciais.md
+          npx prettier --write "$FILE"
+          echo '-----BEGIN-MALECNS-PRETTIER-----'
+          base64 -w0 "$FILE"
+          echo
+          echo '-----END-MALECNS-PRETTIER-----'
