@@ -60,3 +60,7 @@ A rodada demonstra que o pipeline `byte embedding 64d -> recurrent reservoir -> 
 Portanto, esta execução **não fornece evidência de vantagem da topologia biológica**. A diferença é pequena demais para conclusão e deve ser tratada como hipótese para uma rodada pareada com múltiplas seeds.
 
 Limite do claim: trata-se de dinâmica de taxa engenheirada constrangida pelo wiring MaleCNS, não de uma simulação fisiologicamente fiel do cérebro da Drosophila.
+
+## Progressão de escala
+
+A configuração de 512 neurônios é o baseline de capacidade. Depois da rodada multiseed nesse tamanho, a stack #1726 sobe o reservatório para 5.000 neurônios mantendo embedding 64d, 64 neurônios de entrada, tarefa, dados e controles fixos. O passo de 10.000 neurônios só deve ser lançado depois de confirmar que o 5k cabe no orçamento de memória e tempo do Kaggle T4.
