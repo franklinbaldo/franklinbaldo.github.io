@@ -85,10 +85,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--seeds",
-        default="20260912,20260913,20260914,20260915,20260916",
+        default="20260912,20260913,20260914",
         help="comma-separated paired trial seeds",
     )
-    parser.add_argument("--nodes", type=int, default=512)
+    parser.add_argument("--nodes", type=int, default=5000)
     parser.add_argument("--input-nodes", type=int, default=64)
     parser.add_argument("--epochs", type=int, default=3)
     parser.add_argument("--max-train-docs", type=int, default=0)
@@ -182,7 +182,7 @@ def main() -> int:
         "claim_boundary": (
             "This is a paired engineering experiment on an artificial rate reservoir "
             "constrained by MaleCNS wiring. It is not a biologically faithful fly-brain "
-            "simulation, and five seeds are evidence about this pipeline, not a general "
+            "simulation, and these seeds are evidence about this pipeline, not a general "
             "claim about biological connectomes."
         ),
     }
