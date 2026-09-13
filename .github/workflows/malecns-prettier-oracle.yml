@@ -6,26 +6,32 @@ on:
       - experiment/malecns-tagger-v2
     paths:
       - ".github/workflows/malecns-prettier-oracle.yml"
-      - "src/content/blog/uma-mosca-tentou-ler-decisoes-judiciais.md"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: experiment/malecns-tagger-v2
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 24
           cache: npm
       - run: npm ci
-      - name: Print canonical formatted file
+      - name: Apply canonical format
         run: |
           FILE=src/content/blog/uma-mosca-tentou-ler-decisoes-judiciais.md
           npx prettier --write "$FILE"
-          echo '-----BEGIN-MALECNS-PRETTIER-----'
-          base64 -w0 "$FILE"
-          echo
-          echo '-----END-MALECNS-PRETTIER-----'
+          if git diff --quiet -- "$FILE"; then
+            echo "already formatted"
+            exit 0
+          fi
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add "$FILE"
+          git commit -m "style(blog): apply canonical Prettier formatting"
+          git push origin HEAD:experiment/malecns-tagger-v2
