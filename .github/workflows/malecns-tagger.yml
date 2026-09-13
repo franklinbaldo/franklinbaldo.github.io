@@ -14,7 +14,7 @@ on:
       nodes:
         description: MaleCNS subgraph size
         required: true
-        default: "512"
+        default: "5000"
         type: string
       input_nodes:
         description: Reservoir neurons receiving the 64d byte adapter
@@ -25,6 +25,11 @@ on:
         description: Training epochs per paired seed
         required: true
         default: "3"
+        type: string
+      seeds:
+        description: Comma-separated paired seeds
+        required: true
+        default: "20260912,20260913,20260914"
         type: string
       max_train_docs:
         description: Limit training documents (0 = all current train split)
@@ -69,14 +74,15 @@ jobs:
           [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
           python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
 
-      - name: Run MaleCNS paired seeds on Kaggle
+      - name: Run MaleCNS 5k paired seeds on Kaggle
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
           KAGGLE_MALECNS_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_KERNEL_ID }}
-          NODES: ${{ inputs.nodes || '512' }}
+          NODES: ${{ inputs.nodes || '5000' }}
           INPUT_NODES: ${{ inputs.input_nodes || '64' }}
           EPOCHS: ${{ inputs.epochs || '3' }}
+          SEEDS: ${{ inputs.seeds || '20260912,20260913,20260914' }}
           MAX_TRAIN_DOCS: ${{ inputs.max_train_docs || '0' }}
           MAX_VAL_DOCS: ${{ inputs.max_val_docs || '0' }}
           ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
@@ -86,6 +92,7 @@ jobs:
             --nodes "$NODES" \
             --input-nodes "$INPUT_NODES" \
             --epochs "$EPOCHS" \
+            --seeds "$SEEDS" \
             --max-train-docs "$MAX_TRAIN_DOCS" \
             --max-val-docs "$MAX_VAL_DOCS" \
             --accelerator "$ACCELERATOR"
@@ -102,7 +109,8 @@ jobs:
           base = data["summary"]["byte_only_baseline"]["f1"]
           topo = data["pairwise_f1"]["malecns_minus_shuffled"]
           byte = data["pairwise_f1"]["malecns_minus_byte_only"]
-          print("## MaleCNS byte tagger — paired multiseed")
+          print("## MaleCNS byte tagger — 5k scale")
+          print(f"- nodes: **{data['config']['nodes']}**, input nodes: {data['config']['input_nodes']}")
           print(f"- seeds: {', '.join(map(str, data['seeds']))}")
           print(f"- MaleCNS F1: **{fly['mean']:.4f} ± {fly['stdev']:.4f}**")
           print(f"- degree-preserving shuffled F1: **{random['mean']:.4f} ± {random['stdev']:.4f}**")
