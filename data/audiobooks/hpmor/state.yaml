@@ -30,10 +30,11 @@ chapters:
     publication:
       status: published
       title: Capítulo 1 — Um Dia de Probabilidade Muito Baixa
-      description: Primeiro capítulo de Harry Potter e os Métodos da Racionalidade,
+      description:
+        Primeiro capítulo de Harry Potter e os Métodos da Racionalidade,
         de Eliezer Yudkowsky, em português brasileiro. Tradução e produção de Franklin
         Baldo; narração sintética com elenco de vozes Kokoro.
-      published_at: '2026-09-13T09:51:18+00:00'
+      published_at: "2026-09-13T09:51:18+00:00"
       duration_seconds: 1023.515
       language: pt-BR
       enclosure:
