@@ -2,7 +2,7 @@
 set -euo pipefail
 
 OUTPUT=""
-NODES="5000"
+NODES="10000"
 INPUT_NODES="64"
 EPOCHS="3"
 SEEDS="20260912,20260913,20260914"
@@ -28,7 +28,7 @@ done
 
 [[ -n "$OUTPUT" ]] || { echo "--output is required" >&2; exit 2; }
 if [[ -z "$KERNEL_ID" && -n "${KAGGLE_USERNAME:-}" ]]; then
-  KERNEL_ID="${KAGGLE_USERNAME}/malecns-byte-tagger-scale-5k"
+  KERNEL_ID="${KAGGLE_USERNAME}/malecns-byte-tagger-scale-10k"
 fi
 [[ "$KERNEL_ID" == */* && "$KERNEL_ID" != /* ]] || {
   echo "KAGGLE_MALECNS_KERNEL_ID or KAGGLE_USERNAME is required" >&2
@@ -103,7 +103,7 @@ PY
 cat > "$STAGE/kernel-metadata.json" <<JSON
 {
   "id": "$KERNEL_ID",
-  "title": "MaleCNS byte tagger scale 5k",
+  "title": "MaleCNS byte tagger scale 10k",
   "code_file": "job.py",
   "language": "python",
   "kernel_type": "script",
