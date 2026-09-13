@@ -68,7 +68,7 @@ argv = [
     "--work-dir", "/kaggle/working/cache",
     "--output-dir", "/kaggle/working/result",
 ]
-print(f"subprocess.check_call([sys.executable] + {argv[1:]!r})")
+print(f"subprocess.check_call([sys.executable] + {argv!r})")
 print("shutil.make_archive('/kaggle/working/malecns-tagger-result', 'zip', '/kaggle/working/result')")
 PY
 
