@@ -1,6 +1,14 @@
 name: MaleCNS Tagger Experiment
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/malecns-tagger.yml"
+      - "scripts/malecns-tagger/**"
+      - "docs/plans/malecns-tagger-mvp.md"
+      - "changelog/changes/malecns-byte-tagger-mvp.md"
   workflow_dispatch:
     inputs:
       nodes:
@@ -66,12 +74,12 @@ jobs:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
           KAGGLE_MALECNS_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_KERNEL_ID }}
-          NODES: ${{ inputs.nodes }}
-          INPUT_NODES: ${{ inputs.input_nodes }}
-          EPOCHS: ${{ inputs.epochs }}
-          MAX_TRAIN_DOCS: ${{ inputs.max_train_docs }}
-          MAX_VAL_DOCS: ${{ inputs.max_val_docs }}
-          ACCELERATOR: ${{ inputs.accelerator }}
+          NODES: ${{ inputs.nodes || '512' }}
+          INPUT_NODES: ${{ inputs.input_nodes || '64' }}
+          EPOCHS: ${{ inputs.epochs || '3' }}
+          MAX_TRAIN_DOCS: ${{ inputs.max_train_docs || '0' }}
+          MAX_VAL_DOCS: ${{ inputs.max_val_docs || '0' }}
+          ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
         run: |
           bash scripts/malecns-tagger/kaggle.sh \
             --output "$RUNNER_TEMP/malecns-tagger-result.zip" \
