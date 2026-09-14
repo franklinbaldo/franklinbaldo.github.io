@@ -45,6 +45,11 @@ on:
         required: false
         default: "120"
         type: string
+      allow_failed:
+        description: fetch output and logs even from a kernel that reported ERROR
+        required: false
+        default: "false"
+        type: string
 
 permissions:
   contents: read
@@ -80,6 +85,7 @@ jobs:
           KAGGLE_MALECNS_CONFIRMATORY_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_CONFIRMATORY_KERNEL_ID }}
           KERNEL_INPUT: ${{ inputs.kernel }}
           WAIT_MINUTES: ${{ inputs.wait_minutes || '120' }}
+          ALLOW_FAILED: ${{ inputs.allow_failed || 'true' }}
         run: |
           set -euo pipefail
           KERNEL="${KERNEL_INPUT:-}"
@@ -98,6 +104,13 @@ jobs:
               break
             fi
             if grep -Eqi 'KernelWorkerStatus[.](ERROR|CANCEL|FAILED)' <<<"$STATUS"; then
+              # A failed kernel still has a log, and the log is the only way to tell
+              # an input-fingerprint abort apart from a crash. Fetching it costs no GPU.
+              if [[ "$ALLOW_FAILED" == "true" ]]; then
+                echo "kernel reported failure; continuing to fetch its log for diagnosis"
+                echo "KERNEL_FAILED=1" >> "$GITHUB_ENV"
+                break
+              fi
               echo "kernel itself reported failure" >&2
               exit 1
             fi
@@ -123,6 +136,9 @@ jobs:
           set -euo pipefail
           DEST="$RUNNER_TEMP/kaggle-output"
           mkdir -p "$DEST"
+          # A failed kernel has no cache zip, so widen the pattern to whatever it
+          # did leave behind -- the log is the whole point of the trip.
+          if [[ "${KERNEL_FAILED:-}" == "1" ]]; then FILE_PATTERN='.*'; fi
           delay=15
           downloaded=0
           for attempt in $(seq 1 "$ATTEMPTS"); do
@@ -139,11 +155,25 @@ jobs:
           done
           [[ "$downloaded" == 1 ]] || { echo "output unavailable after ${ATTEMPTS} attempts" >&2; exit 1; }
           find "$DEST" -type f -exec ls -l {} +
+          for log in $(find "$DEST" -type f -name '*.log' -o -type f -name '*.txt'); do
+            echo "----- ${log} -----"
+            tail -c 20000 "$log"
+          done
           ZIP="$(find "$DEST" -type f -name '*.zip' -print -quit)"
-          [[ -n "$ZIP" ]] || { echo "no zip in kernel output" >&2; exit 1; }
+          if [[ -z "$ZIP" ]]; then
+            if [[ "${KERNEL_FAILED:-}" == "1" ]]; then
+              # The log is printed above; the job still fails, because a kernel that
+              # errored is not a retrieval that succeeded.
+              echo "kernel failed and produced no cache zip; see log above" >&2
+              exit 1
+            fi
+            echo "no zip in kernel output" >&2
+            exit 1
+          fi
           cp "$ZIP" "$RUNNER_TEMP/malecns-confirmatory-gpu-cache.zip"
 
       - name: Summarize parity
+        if: env.KERNEL_FAILED != '1'
         run: |
           set -euo pipefail
           rm -rf "$RUNNER_TEMP/cache-result"
@@ -173,9 +203,19 @@ jobs:
           PY
 
       - name: Upload retrieved cache
+        if: env.KERNEL_FAILED != '1'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: malecns-confirmatory-gpu-cache-retrieved-${{ github.run_id }}
           path: ${{ runner.temp }}/malecns-confirmatory-gpu-cache.zip
           if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload raw kernel output for diagnosis
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: malecns-confirmatory-kernel-output-${{ github.run_id }}
+          path: ${{ runner.temp }}/kaggle-output
+          if-no-files-found: warn
           retention-days: 7
