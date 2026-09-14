@@ -1,0 +1,94 @@
+name: MaleCNS Visual Attractor Kaggle
+
+on:
+  push:
+    branches:
+      - experiment/malecns-visual-attractor
+    paths:
+      - ".github/workflows/malecns-visual-attractor.yml"
+      - "scripts/malecns-visual-attractor/**"
+  workflow_dispatch:
+    inputs:
+      visual_ref:
+        description: Exact papers commit containing the visual-attractor experiment
+        required: true
+        default: "d5f15903685dff2950864eeda0492836187530b5"
+        type: string
+      runtime_ref:
+        description: Exact papers commit containing the canonical MaleCNS compiler
+        required: true
+        default: "437083ae30f24f6f424ce405182d90b275b62621"
+        type: string
+      accelerator:
+        description: Kaggle accelerator
+        required: true
+        default: NvidiaTeslaT4
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-visual-attractor-kaggle
+  cancel-in-progress: false
+
+jobs:
+  run-positive-control:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Run preregistered visual positive control on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_MALECNS_VISUAL_ATTRACTOR_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_VISUAL_ATTRACTOR_KERNEL_ID }}
+          VISUAL_REF: ${{ inputs.visual_ref || 'd5f15903685dff2950864eeda0492836187530b5' }}
+          RUNTIME_REF: ${{ inputs.runtime_ref || '437083ae30f24f6f424ce405182d90b275b62621' }}
+          ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
+        run: |
+          bash scripts/malecns-visual-attractor/kaggle.sh \
+            --summary "$RUNNER_TEMP/malecns-visual-attractor-summary.json" \
+            --visual-ref "$VISUAL_REF" \
+            --runtime-ref "$RUNTIME_REF" \
+            --accelerator "$ACCELERATOR"
+
+      - name: Summarize Run 1
+        run: |
+          python - "$RUNNER_TEMP/malecns-visual-attractor-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          d=json.load(open(sys.argv[1], encoding='utf-8'))
+          decision=d.get('decision', {})
+          print('## MaleCNS visual attractor — Run 1')
+          print(f"- visual ref: `{d.get('visual_ref')}`")
+          print(f"- runtime ref: `{d.get('runtime_ref')}`")
+          print(f"- graph: `{d.get('graph_sha256')}`")
+          print(f"- interface: `{d.get('interface_sha256')}`")
+          print(f"- scenes: **{d.get('scenes')}** × **{d.get('flies_per_stimulus_per_scene')}** flies/stimulus")
+          print(f"- moving approach: **{decision.get('moving_approach_probability')}**")
+          print(f"- strongest control: **{decision.get('strongest_control')}** ({decision.get('strongest_control_approach_probability')})")
+          print(f"- preregistered gate: **{'PASS' if decision.get('capture_pass') else 'FAIL'}**")
+          print(f"- Kaggle kernel: `{d.get('kernel')}`")
+          print('- heavy trajectories remain in the private Kaggle kernel output; GitHub retrieves only this summary')
+          PY
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: malecns-visual-attractor-summary-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-visual-attractor-summary.json
+          if-no-files-found: error
+          retention-days: 30
