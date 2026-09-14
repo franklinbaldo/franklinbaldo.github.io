@@ -62,7 +62,7 @@ cache = work / "state-cache"
 runtime.mkdir(exist_ok=True)
 cache.mkdir(exist_ok=True)
 
-# Pin both repositories before doing any computation.  The state-cache key itself
+# Pin both repositories before doing any computation. The state-cache key itself
 # still fingerprints the actual graph/features; these refs are provenance, not trust.
 run("git", "clone", "--filter=blob:none", "https://github.com/franklinbaldo/papers.git", papers)
 run("git", "checkout", papers_ref, cwd=papers)
@@ -82,7 +82,7 @@ run(
     "sentencepiece",
 )
 
-# 1) Rebuild the connectome with the exact compiler at PAPERS_REF.  MaleCNS
+# 1) Rebuild the connectome with the exact compiler at PAPERS_REF. MaleCNS
 # source files are public and the compiler records their hashes in the manifest.
 graph_dir = runtime / "graph"
 run(
@@ -135,7 +135,7 @@ run(
 )
 features = feature_report.with_suffix(".features.npz")
 
-# 3) Warm exactly the cache consumed by run_confirmatory.py.  The warmer refuses
+# 3) Warm exactly the cache consumed by run_confirmatory.py. The warmer refuses
 # to write anything until a real CPU-vs-CUDA parity check on the full operator passes.
 args = [
     sys.executable,
@@ -157,10 +157,8 @@ if expected_graph:
     args += ["--expected-graph-hash", expected_graph]
 run(*args, cwd=experiment)
 
-# Keep the state cache small enough to download; graph/features are reproducible
-# and their fingerprints are in the manifest.  Include the feature report/hash
-# metadata so a consumer can prove which reconstruction produced the cache.
-shutil.copy2(feature_report, runtime / feature_report.name)
+# Keep the download limited to reusable state cache + provenance. Graph/features
+# are reproducible and their content fingerprints are already in the GPU manifest.
 archive_root = work / "malecns-confirmatory-gpu-cache"
 archive_root.mkdir(exist_ok=True)
 shutil.copytree(cache, archive_root / "state-cache", dirs_exist_ok=True)
@@ -202,7 +200,6 @@ export PAPERS_REF CAUSAGANHA_REF EXPECTED_FEATURES_HASH EXPECTED_GRAPH_HASH
 # the GitHub runner and are never embedded in the job.
 python3 - "$STAGE/job.py" "$PAPERS_REF" "$CAUSAGANHA_REF" "$EXPECTED_FEATURES_HASH" "$EXPECTED_GRAPH_HASH" <<'PY'
 from pathlib import Path
-import json
 import sys
 path = Path(sys.argv[1])
 text = path.read_text()
