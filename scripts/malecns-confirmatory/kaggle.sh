@@ -180,7 +180,7 @@ PY
 cat > "$STAGE/kernel-metadata.json" <<JSON
 {
   "id": "$KERNEL_ID",
-  "title": "MaleCNS confirmatory GPU cache warmer",
+  "title": "MaleCNS Confirmatory GPU Cache",
   "code_file": "job.py",
   "language": "python",
   "kernel_type": "script",
