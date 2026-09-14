@@ -13,7 +13,16 @@ name: MaleCNS Confirmatory Retrieve Kaggle Output
 # "503 Server Error" and abandoned a healthy running kernel. Only an actual
 # KernelWorkerStatus of ERROR/CANCELLED counts as the job failing.
 
+# The push trigger is not a convenience: workflow_dispatch only exists for
+# workflows already on the default branch, and this one is deliberately still
+# inside a draft PR. Scoped to this file so touching it never cancels or
+# re-triggers the compute workflow, which watches different paths.
 on:
+  push:
+    branches:
+      - experiment/malecns-confirmatory-kaggle-cache
+    paths:
+      - ".github/workflows/malecns-confirmatory-retrieve-output.yml"
   workflow_dispatch:
     inputs:
       kernel:
