@@ -4,7 +4,7 @@ set -euo pipefail
 OUTPUT=""
 ACCELERATOR="${KAGGLE_ACCELERATOR:-NvidiaTeslaT4}"
 KERNEL_ID="${KAGGLE_MALECNS_CONFIRMATORY_KERNEL_ID:-}"
-PAPERS_REF="${PAPERS_REF:-a1fb6ef647f1cc4985dc3caedd8a2e4e3f28ccc8}"
+PAPERS_REF="${PAPERS_REF:-d532920bbe3c3171d0651776a6409df79a049944}"
 CAUSAGANHA_REF="${CAUSAGANHA_REF:-7c3d6557bb692932553622ae6e00493ba04e534f}"
 EXPECTED_FEATURES_HASH="${EXPECTED_FEATURES_HASH:-}"
 EXPECTED_GRAPH_HASH="${EXPECTED_GRAPH_HASH:-}"
@@ -62,8 +62,6 @@ cache = work / "state-cache"
 runtime.mkdir(exist_ok=True)
 cache.mkdir(exist_ok=True)
 
-# Pin both repositories before doing any computation. The state-cache key itself
-# still fingerprints the actual graph/features; these refs are provenance, not trust.
 run("git", "clone", "--filter=blob:none", "https://github.com/franklinbaldo/papers.git", papers)
 run("git", "checkout", papers_ref, cwd=papers)
 run("git", "clone", "--filter=blob:none", "https://github.com/franklinbaldo/causaganha.git", causaganha)
@@ -82,8 +80,6 @@ run(
     "sentencepiece",
 )
 
-# 1) Rebuild the connectome with the exact compiler at PAPERS_REF. MaleCNS
-# source files are public and the compiler records their hashes in the manifest.
 graph_dir = runtime / "graph"
 run(
     sys.executable,
@@ -96,9 +92,6 @@ run(
 )
 graph = graph_dir / "graph.npz"
 
-# 2) Rebuild the 1,924-d MiniLM feature block used by the current confirmatory
-# run: 384 absolute + two 385-d relations and their deltas = 1,924.
-# The held-out semantic corpus is the 17-document CausaGanha segmenter test split.
 feature_report = runtime / "minilm-confirmatory.json"
 tags = [
     "resultado",
@@ -135,8 +128,6 @@ run(
 )
 features = feature_report.with_suffix(".features.npz")
 
-# 3) Warm exactly the cache consumed by run_confirmatory.py. The warmer refuses
-# to write anything until a real CPU-vs-CUDA parity check on the full operator passes.
 args = [
     sys.executable,
     experiment / "scripts/warm_confirmatory_cache_gpu.py",
@@ -157,8 +148,6 @@ if expected_graph:
     args += ["--expected-graph-hash", expected_graph]
 run(*args, cwd=experiment)
 
-# Keep the download limited to reusable state cache + provenance. Graph/features
-# are reproducible and their content fingerprints are already in the GPU manifest.
 archive_root = work / "malecns-confirmatory-gpu-cache"
 archive_root.mkdir(exist_ok=True)
 shutil.copytree(cache, archive_root / "state-cache", dirs_exist_ok=True)
@@ -194,10 +183,6 @@ cat > "$STAGE/kernel-metadata.json" <<JSON
 }
 JSON
 
-export PAPERS_REF CAUSAGANHA_REF EXPECTED_FEATURES_HASH EXPECTED_GRAPH_HASH
-# Environment variables are not automatically visible inside a Kaggle kernel.
-# Bake only non-secret refs/fingerprints into job.py; Kaggle credentials remain on
-# the GitHub runner and are never embedded in the job.
 python3 - "$STAGE/job.py" "$PAPERS_REF" "$CAUSAGANHA_REF" "$EXPECTED_FEATURES_HASH" "$EXPECTED_GRAPH_HASH" <<'PY'
 from pathlib import Path
 import sys
@@ -236,7 +221,22 @@ if ! grep -Eqi 'complete|success' <<<"$STATUS"; then
   exit 1
 fi
 
-kaggle kernels output "$KERNEL_ID" -p "$DOWNLOAD" -o --file-pattern '.*malecns-confirmatory-gpu-cache[.]zip$'
+# Kaggle's output-list endpoint can briefly return 429 immediately after a kernel
+# completes. Retrying download is safe: the completed kernel is immutable.
+sleep 10
+DOWNLOADED=0
+for attempt in $(seq 1 8); do
+  rm -rf "$DOWNLOAD"/*
+  if kaggle kernels output "$KERNEL_ID" -p "$DOWNLOAD" -o \
+      --file-pattern '.*malecns-confirmatory-gpu-cache[.]zip$'; then
+    DOWNLOADED=1
+    break
+  fi
+  echo "Kaggle output download attempt $attempt failed; retrying" >&2
+  sleep $((attempt * 15))
+done
+[[ "$DOWNLOADED" == 1 ]] || { echo "Kaggle output remained unavailable after retries" >&2; exit 1; }
+
 RESULT="$(find "$DOWNLOAD" -type f -name 'malecns-confirmatory-gpu-cache.zip' -print -quit)"
 [[ -n "$RESULT" ]] || { echo "Kaggle output did not contain cache zip" >&2; exit 1; }
 mkdir -p "$(dirname "$OUTPUT")"
