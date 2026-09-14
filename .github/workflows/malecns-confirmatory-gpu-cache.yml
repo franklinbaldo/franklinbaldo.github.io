@@ -49,7 +49,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
-      - uses: actions/setup-python@a309ff8b426b58c5e5b86d7f06ee3304f3231ea3 # v6.2.0
+      - uses: actions/setup-python@a309ff8b426b58c5e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3.12"
 
