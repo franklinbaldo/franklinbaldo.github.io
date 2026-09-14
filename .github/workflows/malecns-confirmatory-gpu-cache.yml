@@ -12,7 +12,7 @@ on:
       papers_ref:
         description: papers commit containing the frozen runner + GPU warmer
         required: true
-        default: "a1fb6ef647f1cc4985dc3caedd8a2e4e3f28ccc8"
+        default: "d532920bbe3c3171d0651776a6409df79a049944"
         type: string
       causaganha_ref:
         description: pinned CausaGanha corpus commit
@@ -67,7 +67,7 @@ jobs:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
           KAGGLE_MALECNS_CONFIRMATORY_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_CONFIRMATORY_KERNEL_ID }}
-          PAPERS_REF: ${{ inputs.papers_ref || 'a1fb6ef647f1cc4985dc3caedd8a2e4e3f28ccc8' }}
+          PAPERS_REF: ${{ inputs.papers_ref || 'd532920bbe3c3171d0651776a6409df79a049944' }}
           CAUSAGANHA_REF: ${{ inputs.causaganha_ref || '7c3d6557bb692932553622ae6e00493ba04e534f' }}
           ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
           EXPECTED_FEATURES_HASH: ${{ inputs.expected_features_hash || '' }}
@@ -98,6 +98,9 @@ jobs:
               print(f"- parity gain: {parity.get('gain')}")
               print(f"- parity max abs: **{parity.get('max_abs'):.3e}**")
               print(f"- parity relative RMSE: **{parity.get('relative_rmse'):.3e}**")
+              if 'cpu_macro_tag_auprc' in parity:
+                  print(f"- macroAP CPU/GPU: **{parity['cpu_macro_tag_auprc']:.6f} / {parity['gpu_macro_tag_auprc']:.6f}** (Δ {parity['macro_tag_auprc_abs_delta']:.3e})")
+                  print(f"- anyAUPRC CPU/GPU: **{parity['cpu_inside_auprc']:.6f} / {parity['gpu_inside_auprc']:.6f}** (Δ {parity['inside_auprc_abs_delta']:.3e})")
           written = sum(row.get('status') == 'written' for row in data.get('cells', []))
           print(f"- operator/seed cells written: **{written}**")
           print(f"- elapsed: **{data.get('elapsed_seconds', 0):.1f}s**")
