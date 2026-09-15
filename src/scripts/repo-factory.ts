@@ -239,12 +239,18 @@ if (root && dataElement && !root.dataset.initialized) {
     return visible.size;
   }
 
+  let announceDebounce: ReturnType<typeof setTimeout> | undefined;
+
   function announceVisibleCount(count: number) {
     if (!filterStatus) return;
     filterStatus.textContent = `${count} ${count === 1 ? "factory" : "factories"} shown`;
   }
 
   function updateVisibilityAndAnnounce() {
+    // Cancel any pending debounced announcement from the search box so a
+    // status/belts change that lands mid-debounce doesn't get clobbered a
+    // moment later by the stale count captured at the last keystroke.
+    clearTimeout(announceDebounce);
     announceVisibleCount(updateVisibility());
   }
 
@@ -257,7 +263,6 @@ if (root && dataElement && !root.dataset.initialized) {
   // board stays responsive. Only the aria-live announcement is debounced,
   // since firing it on every keystroke spams screen reader users with a
   // new announcement per character typed.
-  let announceDebounce: ReturnType<typeof setTimeout> | undefined;
   search?.addEventListener("input", () => {
     const count = updateVisibility();
     clearTimeout(announceDebounce);
