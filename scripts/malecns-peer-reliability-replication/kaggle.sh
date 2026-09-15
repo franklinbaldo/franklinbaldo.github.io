@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Reuse the proven reliability-grid bridge/watchdog, but point it at the
-# preregistered two-new-seed replication batch.
-base="$(dirname "$0")/../malecns-peer-reliability/kaggle.sh"
+# Reuse the proven coupled-flavour bridge/watchdog directly. Avoid wrapping the
+# peer-grid wrapper itself, because that wrapper resolves paths relative to $0
+# and would break after being materialized into /tmp.
+base="$(dirname "$0")/../malecns-coupled-flavour/kaggle.sh"
 tmp="$(mktemp)"
 trap 'rm -f "$tmp"' EXIT
 sed \
-  -e 's#smoke_peer_reliability_grid_gpu[.]py#smoke_peer_reliability_replicate_batch_gpu.py#g' \
-  -e 's#MaleCNS Peer Reliability Grid#MaleCNS Peer Reliability Replication#g' \
+  -e 's#smoke_coupled_flavour_translation_gpu[.]py#smoke_peer_reliability_replicate_batch_gpu.py#g' \
+  -e 's#MaleCNS Coupled Flavour Translation Smoke#MaleCNS Peer Reliability Replication#g' \
   "$base" > "$tmp"
 exec bash "$tmp" "$@"
