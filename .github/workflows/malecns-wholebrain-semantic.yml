@@ -1,0 +1,92 @@
+name: MaleCNS Whole-Brain Semantic Kaggle
+
+on:
+  push:
+    branches:
+      - experiment/malecns-wholebrain-semantic-kaggle
+    paths:
+      - ".github/workflows/malecns-wholebrain-semantic.yml"
+      - "scripts/malecns-wholebrain-semantic/**"
+  workflow_dispatch:
+    inputs:
+      papers_ref:
+        description: Exact papers commit containing the whole-brain GPU smoke
+        required: true
+        default: "1d8412d3af1e28b379b1242f6e71978b1a7ee284"
+        type: string
+      accelerator:
+        description: Kaggle accelerator
+        required: true
+        default: NvidiaTeslaT4
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-wholebrain-semantic-kaggle
+  cancel-in-progress: true
+
+jobs:
+  run-wholebrain-gpu-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Run public whole-brain semantic GPU smoke on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_MALECNS_WHOLEBRAIN_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_WHOLEBRAIN_KERNEL_ID }}
+          PAPERS_REF: ${{ inputs.papers_ref || '1d8412d3af1e28b379b1242f6e71978b1a7ee284' }}
+          ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
+        run: |
+          bash scripts/malecns-wholebrain-semantic/kaggle.sh \
+            --output-dir "$RUNNER_TEMP/malecns-wholebrain-semantic" \
+            --papers-ref "$PAPERS_REF" \
+            --accelerator "$ACCELERATOR"
+
+      - name: Summarize whole-brain GPU smoke
+        run: |
+          python - "$RUNNER_TEMP/malecns-wholebrain-semantic/github-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          d=json.load(open(sys.argv[1], encoding='utf-8'))
+          print('## MaleCNS whole-brain semantic GPU smoke')
+          print(f"- public Kaggle: {d.get('kernel_url')}")
+          print(f"- papers ref: `{d.get('papers_ref')}`")
+          print(f"- features hash: `{d.get('features_hash')}`")
+          print(f"- graph hash: `{d.get('graph_hash')}`")
+          print(f"- GPU: **{d.get('device')}**")
+          print(f"- neurons / edges: **{d.get('neurons')} / {d.get('edges')}**")
+          print(f"- sensory / descending: **{d.get('sensory_neurons')} / {d.get('descending_neurons')}**")
+          print(f"- whole-brain projected width: **{d.get('wholebrain_projection_width')}**")
+          for row in d.get('depths', []):
+              print(
+                  f"- depth {row.get('steps_per_chunk')}: fly loss "
+                  f"{row.get('fly_loss_first'):.6g} → {row.get('fly_loss_second'):.6g}; "
+                  f"up-grad {row.get('up_grad_first'):.6g}; "
+                  f"down-grad after one interface update {row.get('down_grad_second'):.6g}"
+              )
+          print(f"- max CUDA memory: **{d.get('max_cuda_memory_allocated')} bytes**")
+          print('- engineering smoke only; not Stage A/B confirmatory evidence')
+          PY
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: malecns-wholebrain-public-cache-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-wholebrain-semantic
+          if-no-files-found: error
+          retention-days: 30
