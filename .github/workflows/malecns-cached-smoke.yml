@@ -87,7 +87,7 @@ jobs:
           dataset_slug = "malecns-visual-runtime-cache"
           dataset = pathlib.Path("/kaggle/input") / dataset_slug
           cache = dataset
-          visual_repo = pathlib.Path("/kaggle/working/papers")
+          visual_repo = pathlib.Path("/kaggle/temp/malecns-papers")
           subprocess.check_call([
               "git", "clone", "--filter=blob:none",
               "https://github.com/franklinbaldo/papers.git", str(visual_repo),
