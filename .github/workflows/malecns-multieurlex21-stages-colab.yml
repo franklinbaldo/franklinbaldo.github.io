@@ -58,6 +58,19 @@ jobs:
             echo "Missing GitHub secret COLAB_TOKEN_JSON (or COLAB_ADC_JSON)" >&2
             exit 2
           fi
+      - name: Link live telemetry
+        run: |
+          group="gh-${{ github.run_id }}"
+          url="https://wandb.ai/franklinbaldo-org/malecns-multieurlex21/groups/${group}/workspace"
+          {
+            echo "## MaleCNS × MultiEURLEX-21 PT — live telemetry"
+            echo "Stages A/B/C log to Weights & Biases as they run, grouped as \`${group}\`:"
+            echo ""
+            echo "**[${url}](${url})**"
+            echo ""
+            echo "(Populates once the pipeline starts installing the experiment on Colab; refresh if empty.)"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "telemetry: ${url}"
       - name: Run staged pipeline on Colab
         env:
           COLAB_EXEC_TIMEOUT: "9000"
