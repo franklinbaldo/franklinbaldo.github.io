@@ -3,7 +3,7 @@ set -euo pipefail
 
 OUTPUT=""
 ACCELERATOR="${KAGGLE_ACCELERATOR:-NvidiaTeslaT4}"
-KERNEL_ID="${KAGGLE_FEWNERD_KERNEL_ID:-}"
+KERNEL_ID="${KAGGLE_FEWNERD_KERNEL_ID:-${KAGGLE_MALECNS_KERNEL_ID:-}}"
 PAPERS_REF="${PAPERS_REF:-d6fe967c43c8c2acd9276100d5f12791e1749e54}"
 LIMIT="${FEWNERD_SMOKE_LIMIT:-256}"
 
@@ -20,11 +20,14 @@ done
 
 [[ -n "$OUTPUT" ]] || { echo "--output is required" >&2; exit 2; }
 if [[ -z "$KERNEL_ID" && -n "${KAGGLE_USERNAME:-}" ]]; then
-  KERNEL_ID="${KAGGLE_USERNAME}/malecns-fewnerd-byte-ner"
+  # Reuse the already-proven private MaleCNS kernel instead of inventing a
+  # fresh slug that may not exist yet or may be inaccessible via kernels.get.
+  KERNEL_ID="${KAGGLE_USERNAME}/malecns-byte-tagger-experiment"
 fi
-[[ "$KERNEL_ID" == */* && "$KERNEL_ID" != /* ]] || { echo "KAGGLE_FEWNERD_KERNEL_ID or KAGGLE_USERNAME is required" >&2; exit 2; }
+[[ "$KERNEL_ID" == */* && "$KERNEL_ID" != /* ]] || { echo "KAGGLE_FEWNERD_KERNEL_ID/KAGGLE_MALECNS_KERNEL_ID or KAGGLE_USERNAME is required" >&2; exit 2; }
 command -v kaggle >/dev/null || { echo "kaggle CLI not found" >&2; exit 2; }
 
+echo "Using Kaggle kernel: $KERNEL_ID"
 STAGE="$(mktemp -d)"; DOWNLOAD="$(mktemp -d)"
 trap 'rm -rf "$STAGE" "$DOWNLOAD"' EXIT
 
@@ -39,7 +42,7 @@ out=root/'result'; out.mkdir(parents=True,exist_ok=True)
 report=out/'fewnerd-byte-smoke.json'
 subprocess.check_call([sys.executable,str(script),'--output',str(report),'--split','train','--limit','$LIMIT'])
 summary=json.loads(report.read_text())
-summary['executor']='kaggle'; summary['papers_ref']='$PAPERS_REF'; summary['accelerator']='$ACCELERATOR'
+summary['executor']='kaggle'; summary['papers_ref']='$PAPERS_REF'; summary['accelerator']='$ACCELERATOR'; summary['kernel_id']='$KERNEL_ID'
 (out/'github-summary.json').write_text(json.dumps(summary,indent=2)+'\n')
 shutil.make_archive('/kaggle/working/malecns-fewnerd-result','zip',out)
 print(json.dumps({'event':'fewnerd_kaggle_smoke_complete','samples':summary['samples'],'bytes':summary['bytes']}))
