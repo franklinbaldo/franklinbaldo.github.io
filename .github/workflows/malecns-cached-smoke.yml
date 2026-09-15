@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      KERNEL_SLUG: malecns-telemetry-smoke-64x64
+      KERNEL_SLUG: malecns-cached-telemetry-smoke-64x64
       VISUAL_REF: e409aff2958baa6849ba3b577f1195500356bcf4
       CACHE_ARTIFACT_ID: '10406003072'
     steps:
@@ -47,17 +47,34 @@ jobs:
           cp -a "$RUNNER_TEMP/papers/experiments/malecns_visual_attractor" "$STAGE/visual"
           du -sh "$STAGE" "$STAGE/runtime-cache" "$STAGE/visual"
 
+          # Kaggle kernels push does not reliably preserve nested source directories.
+          # Ship one top-level payload and unpack it inside /kaggle/working.
+          tar -C "$STAGE" -czf "$STAGE/payload.tgz" runtime-cache visual
+          rm -rf "$STAGE/runtime-cache" "$STAGE/visual"
+          ls -lh "$STAGE/payload.tgz"
+
           cat > "$STAGE/job.py" <<'PY'
-          import os, pathlib, subprocess, sys, time
+          import os, pathlib, subprocess, sys, tarfile, time
           root = pathlib.Path(__file__).resolve().parent
-          cache = root / "runtime-cache"
-          visual = root / "visual"
+          unpack = pathlib.Path("/kaggle/working/payload")
+          unpack.mkdir(parents=True, exist_ok=True)
+          payload = root / "payload.tgz"
+          print({"event":"payload_unpack_start", "payload":str(payload)}, flush=True)
+          with tarfile.open(payload, "r:gz") as tf:
+              tf.extractall(unpack)
+          cache = unpack / "runtime-cache"
+          visual = unpack / "visual"
+          script = visual / "scripts/run_swarm_capacity_probe.py"
+          required = [cache / "graph.npz", cache / "visual-interface.npz", cache / "screen-geometry.npz", script]
+          missing = [str(p) for p in required if not p.exists()]
+          if missing:
+              raise SystemExit(f"payload missing required files: {missing}")
           out = pathlib.Path("/kaggle/working/cached-smoke")
           out.mkdir(parents=True, exist_ok=True)
           env = os.environ.copy()
           env["PYTHONPATH"] = str(visual / "src") + os.pathsep + str(visual / "scripts")
           cmd = [
-              sys.executable, "-u", str(visual / "scripts/run_swarm_capacity_probe.py"),
+              sys.executable, "-u", str(script),
               "--graph", str(cache / "graph.npz"),
               "--interface", str(cache / "visual-interface.npz"),
               "--screen-geometry", str(cache / "screen-geometry.npz"),
@@ -111,14 +128,27 @@ jobs:
           echo "Pushing cached smoke to $KERNEL_ID"
           kaggle kernels push -p "$STAGE" --accelerator NvidiaTeslaT4
           deadline=$(( $(date +%s) + 720 ))
+          seen_complete=0
           while :; do
             echo "===== $(date -u +%FT%TZ) status ====="
             status="$(kaggle kernels status "$KERNEL_ID" 2>&1 || true)"
             echo "$status"
             echo "===== recent Kaggle logs ====="
-            timeout 8s kaggle kernels logs "$KERNEL_ID" 2>&1 || true
-            if grep -Eqi 'KernelWorkerStatus[.](COMPLETE|SUCCESS)' <<<"$status"; then exit 0; fi
+            logs="$(timeout 8s kaggle kernels logs "$KERNEL_ID" 2>&1 || true)"
+            echo "$logs"
+            if grep -q 'cached_smoke_complete' <<<"$logs"; then
+              seen_complete=1
+              break
+            fi
+            if grep -Eqi 'CalledProcessError|Traceback|No such file or directory|CUDA out of memory' <<<"$logs"; then
+              echo 'Kaggle smoke emitted a terminal error' >&2
+              exit 1
+            fi
+            if grep -Eqi 'KernelWorkerStatus[.](COMPLETE|SUCCESS)' <<<"$status"; then
+              break
+            fi
             if grep -Eqi 'KernelWorkerStatus[.](ERROR|CANCEL|FAILED)' <<<"$status"; then exit 1; fi
             if (( $(date +%s) >= deadline )); then echo 'cached smoke deadline exceeded' >&2; exit 1; fi
             sleep 15
           done
+          echo "cached smoke finished; telemetry_complete=$seen_complete"
