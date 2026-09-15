@@ -27,7 +27,7 @@ on:
       expected_features_hash:
         description: Optional exact block fingerprint from the CPU run; mismatch aborts
         required: false
-        default: ""
+        default: "ab494d7e0b615c9633e7"
         type: string
       expected_graph_hash:
         description: Optional exact graph fingerprint from the CPU run; mismatch aborts
@@ -70,8 +70,8 @@ jobs:
           PAPERS_REF: ${{ inputs.papers_ref || 'd532920bbe3c3171d0651776a6409df79a049944' }}
           CAUSAGANHA_REF: ${{ inputs.causaganha_ref || '7c3d6557bb692932553622ae6e00493ba04e534f' }}
           ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
-          EXPECTED_FEATURES_HASH: ${{ inputs.expected_features_hash || '' }}
-          EXPECTED_GRAPH_HASH: ${{ inputs.expected_graph_hash || '' }}
+          EXPECTED_FEATURES_HASH: ${{ inputs.expected_features_hash || 'ab494d7e0b615c9633e7' }}
+          EXPECTED_GRAPH_HASH: ${{ inputs.expected_graph_hash || '214106d04307618db054cb977a691d48d431b771' }}
         run: |
           bash scripts/malecns-confirmatory/kaggle.sh \
             --output "$RUNNER_TEMP/malecns-confirmatory-gpu-cache.zip" \

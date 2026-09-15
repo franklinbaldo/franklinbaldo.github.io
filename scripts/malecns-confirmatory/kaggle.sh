@@ -80,53 +80,41 @@ run(
     "sentencepiece",
 )
 
+# The inputs are downloaded, not rebuilt. Rebuilding them inside the kernel
+# produced a different experiment, not merely different rounding: the kernel's
+# corpus slice yielded 3 documents / 59 chunks against the CPU reference's
+# 17 documents / 355 chunks, with one tag left at zero positives. The fingerprint
+# gate caught it. Pinned bytes turn that gate into a transport check, which is a
+# question it can actually answer, and the CPU run stays the sole reference.
+inputs_release = os.environ.get("INPUTS_RELEASE", "malecns-confirmatory-inputs-v1")
+base = f"https://github.com/franklinbaldo/papers/releases/download/{inputs_release}"
 graph_dir = runtime / "graph"
-run(
-    sys.executable,
-    experiment / "scripts/compile_connectome.py",
-    "--output",
-    graph_dir,
-    "--cache",
-    work / "malecns-source-cache",
-    cwd=experiment,
-)
+graph_dir.mkdir(parents=True, exist_ok=True)
 graph = graph_dir / "graph.npz"
+features = runtime / "multitag-features.features.npz"
+def fetch(url, dest, attempts=5):
+    import time
+    import urllib.request
+    for attempt in range(1, attempts + 1):
+        try:
+            with urllib.request.urlopen(url, timeout=120) as response:
+                dest.write_bytes(response.read())
+            print(f"  {dest.name}: {dest.stat().st_size} bytes", flush=True)
+            return
+        except Exception as error:
+            print(f"  {dest.name}: attempt {attempt} failed: {error}", flush=True)
+            if attempt == attempts:
+                raise
+            time.sleep(5 * attempt)
 
-feature_report = runtime / "minilm-confirmatory.json"
-tags = [
-    "resultado",
-    "ref_processual",
-    "cabecalho_inicio",
-    "relatorio_inicio",
-    "dispositivo_abertura",
-    "relatorio_fim",
-    "capitulo_merito_inicio",
-    "encerramento_inicio",
-    "fim",
-]
-run(
-    sys.executable,
-    experiment / "scripts/real_encoder_gate.py",
-    "--corpus",
-    causaganha / "data/segmenter_splits/test.jsonl",
-    "--model",
-    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    "--device",
-    "cuda",
-    "--pooling",
-    "mean",
-    "--fine-size",
-    "64",
-    "--scales",
-    "256",
-    "512",
-    "--tags",
-    *tags,
-    "--output",
-    feature_report,
-    cwd=experiment,
-)
-features = feature_report.with_suffix(".features.npz")
+
+for url, dest in (
+    (f"{base}/graph.npz", graph),
+    (f"{base}/manifest.json", graph_dir / "manifest.json"),
+    (f"{base}/multitag-features.features.npz", features),
+):
+    fetch(url, dest)
+feature_report = None
 
 args = [
     sys.executable,
@@ -152,11 +140,14 @@ archive_root = work / "malecns-confirmatory-gpu-cache"
 archive_root.mkdir(exist_ok=True)
 shutil.copytree(cache, archive_root / "state-cache", dirs_exist_ok=True)
 shutil.copy2(runtime / "gpu-cache-manifest.json", archive_root / "gpu-cache-manifest.json")
-shutil.copy2(feature_report, archive_root / "feature-report.json")
+if feature_report is not None and feature_report.exists():
+    shutil.copy2(feature_report, archive_root / "feature-report.json")
 manifest = {
     "papers_ref": papers_ref,
     "causaganha_ref": causaganha_ref,
     "graph_manifest": json.loads((graph_dir / "manifest.json").read_text()),
+    "inputs_release": inputs_release,
+    "inputs_source": "github release assets, not recomputed in-kernel",
 }
 (archive_root / "provenance.json").write_text(json.dumps(manifest, indent=2) + "\n")
 shutil.make_archive(
@@ -173,7 +164,7 @@ cat > "$STAGE/kernel-metadata.json" <<JSON
   "code_file": "job.py",
   "language": "python",
   "kernel_type": "script",
-  "is_private": true,
+  "is_private": false,
   "enable_gpu": true,
   "enable_internet": true,
   "dataset_sources": [],
