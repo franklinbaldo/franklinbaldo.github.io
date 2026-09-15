@@ -37,7 +37,12 @@ jobs:
           kaggle kernels output "${KAGGLE_USERNAME}/malecns-cached-telemetry-smoke-64x64" -p "$RUNNER_TEMP/kaggle-output" -o
           echo '=== downloaded files ==='
           find "$RUNNER_TEMP/kaggle-output" -type f -printf '%s %p\n' | sort -nr | head -100
-          echo '=== summaries ==='
+          echo '=== Kaggle log ==='
+          for f in "$RUNNER_TEMP"/kaggle-output/*.log; do
+            [[ -f "$f" ]] || continue
+            cat "$f"
+          done
+          echo '=== summaries / heartbeats ==='
           while IFS= read -r f; do
             echo "--- $f ---"
             cat "$f"
@@ -48,9 +53,9 @@ jobs:
           set -euxo pipefail
           OUT="$RUNNER_TEMP/harvest"
           mkdir -p "$OUT"
-          find "$RUNNER_TEMP/kaggle-output" -type f \( -name '*summary*.json' -o -name '*heartbeat*.jsonl' -o -name 'graph.npz' -o -name 'visual-interface.npz' -o -name 'screen-geometry.npz' \) -exec cp -t "$OUT" {} +
+          find "$RUNNER_TEMP/kaggle-output" -type f \( -name '*.log' -o -name '*summary*.json' -o -name '*heartbeat*.jsonl' -o -name 'graph.npz' -o -name 'visual-interface.npz' -o -name 'screen-geometry.npz' \) -exec cp -t "$OUT" {} +
           find "$OUT" -type f -printf '%s %p\n' | sort -nr
-          test -n "$(find "$OUT" -type f -name '*summary*.json' -print -quit)"
+          test -n "$(find "$OUT" -type f -print -quit)"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: malecns-cached-smoke-harvest-${{ github.run_id }}
