@@ -12,17 +12,12 @@ RESUME_CKPT=""
 if kaggle kernels output "$KERNEL_ID" -p "$RESUME_DIR" -o --file-pattern '.*full-screen-decoder[.]npz' >/dev/null 2>&1; then
   RESUME_CKPT="$(find "$RESUME_DIR" -type f -name 'full-screen-decoder.npz' -print -quit)"
 fi
-RESUME_FLAG=0
-if [[ -n "$RESUME_CKPT" ]]; then
-  RESUME_FLAG=1
-fi
 
-python3 - "$BASE" "$TMP" "$RESUME_FLAG" <<'PY'
+python3 - "$BASE" "$TMP" <<'PY'
 from pathlib import Path
 import sys
 
 src = Path(sys.argv[1]).read_text(encoding='utf-8')
-resume = sys.argv[3] == '1'
 text = src.replace('run_visual_efficiency_curriculum.py', 'run_physical_full_screen_attractor.py')
 text = text.replace('"--steps", "300",', '"--steps", "350",')
 for line in (
@@ -45,7 +40,7 @@ text = text.replace(
 text = text.replace(
     '    "--reward-feedback-gain", "1000.0",\n',
     '    "--reward-feedback-gain", "1000.0",\n'
-    '    "--projection-gain", "200",\n'
+    '    "--projection-gain", "20000",\n'
     '    "--plastic-reward-gain", "100000000",\n'
     '    "--learning-rate", "0.001",\n'
     '    "--exploration-sigma", "0.05",\n'
@@ -92,34 +87,8 @@ text = text.replace(
 )
 text = text.replace(
     '"experiment": "malecns-visual-efficiency-curriculum-v1",',
-    '"experiment": "malecns-physical-full-screen-attractor-v2-png",',
+    '"experiment": "malecns-physical-full-screen-attractor-v3-png-strong-features",',
 )
-
-# Put the large decoder checkpoint beside job.py in the staged Kaggle source.
-stage_needle = "trap 'rm -rf \"$STAGE\" \"$DOWNLOAD\"' EXIT\n"
-if stage_needle not in text:
-    raise SystemExit('could not locate Kaggle stage trap')
-text = text.replace(
-    stage_needle,
-    stage_needle + '[[ -z "${RESUME_CKPT:-}" ]] || cp "$RESUME_CKPT" "$STAGE/initial-full-screen-decoder.npz"\n',
-    1,
-)
-
-if resume:
-    needle = 'visual_exp = visual_repo / "experiments/malecns_visual_attractor"\n'
-    if needle not in text:
-        raise SystemExit('could not locate visual_exp assignment')
-    injected = needle + (
-        '_fullscreen_checkpoint = pathlib.Path(__file__).with_name("initial-full-screen-decoder.npz")\n'
-        'if not _fullscreen_checkpoint.exists():\n'
-        '    raise RuntimeError("staged full-screen checkpoint missing")\n'
-        'print(f"Using staged full-screen decoder: {_fullscreen_checkpoint}", flush=True)\n'
-    )
-    text = text.replace(needle, injected, 1)
-    arg_needle = '    "--output-dir", run_out,\n'
-    if arg_needle not in text:
-        raise SystemExit('could not install initial-decoder argument')
-    text = text.replace(arg_needle, arg_needle + '    "--initial-decoder", _fullscreen_checkpoint,\n', 1)
 
 for required in (
     'run_physical_full_screen_attractor.py',
@@ -127,22 +96,21 @@ for required in (
     '"--screen-width-px", "64"',
     '"--screen-height-px", "36"',
     '"--feature-dim", "256"',
+    '"--projection-gain", "20000"',
     'full-screen-summary.json',
     'full-screen-decoder.npz',
     'best-retina-initial-pose-physical.png',
-    'initial-full-screen-decoder.npz',
 ):
     if required not in text:
         raise SystemExit(f'full-screen bridge rewrite missing {required}')
-for forbidden in ('"--population"', '"--generations-per-budget"', '"--budgets"', '"--radius"', '"--latent-gain"', '"--mutation-sigma"'):
+for forbidden in ('"--population"', '"--generations-per-budget"', '"--budgets"', '"--radius"', '"--latent-gain"', '"--mutation-sigma"', '"--initial-decoder"'):
     if forbidden in text:
         raise SystemExit(f'full-screen bridge retained unsupported arg {forbidden}')
 Path(sys.argv[2]).write_text(text, encoding='utf-8')
 PY
 
-export RESUME_CKPT
 if [[ -n "$RESUME_CKPT" ]]; then
-  echo "Resuming physical full-screen decoder from staged checkpoint: $RESUME_CKPT"
+  echo "Prior full-screen decoder exists, but this PNG validation run starts fresh because Kaggle source staging does not preserve arbitrary checkpoint files."
 else
   echo "No prior full-screen decoder found; bootstrapping fresh 256x2304 decoder"
 fi
