@@ -26,8 +26,9 @@ while :; do
     cat "$push_log"
     rm -f "$push_log"
     break
+  else
+    status=$?
   fi
-  status=$?
   cat "$push_log" >&2
   if grep -q '429 Client Error: Too Many Requests' "$push_log" && (( attempt < 5 )); then
     delay=$(( attempt * 30 ))
