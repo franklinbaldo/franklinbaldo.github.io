@@ -10,9 +10,9 @@ on:
   workflow_dispatch:
     inputs:
       visual_ref:
-        description: Exact papers commit containing low-energy visual-efficiency curriculum v5
+        description: Exact papers commit containing resumable six-blob visual-efficiency curriculum v6
         required: true
-        default: "52ca03ca97f671ea4bc970c0f5d702ee6bdcc2aa"
+        default: "1f0d34c844a824524f84e95bcba034b055405a48"
         type: string
       runtime_ref:
         description: Exact papers commit containing the canonical MaleCNS compiler
@@ -51,15 +51,15 @@ jobs:
           [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
           python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
 
-      - name: Run public low-energy curriculum on Kaggle
+      - name: Run public resumable six-blob curriculum on Kaggle
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
-          VISUAL_REF: ${{ inputs.visual_ref || '52ca03ca97f671ea4bc970c0f5d702ee6bdcc2aa' }}
+          VISUAL_REF: ${{ inputs.visual_ref || '1f0d34c844a824524f84e95bcba034b055405a48' }}
           RUNTIME_REF: ${{ inputs.runtime_ref || '437083ae30f24f6f424ce405182d90b275b62621' }}
           ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
         run: |
-          bash scripts/malecns-visual-attractor/kaggle-efficiency-v5.sh \
+          bash scripts/malecns-visual-attractor/kaggle-efficiency-v6.sh \
             --summary "$RUNNER_TEMP/malecns-visual-efficiency-summary.json" \
             --visual-ref "$VISUAL_REF" \
             --runtime-ref "$RUNTIME_REF" \
@@ -72,8 +72,10 @@ jobs:
           d=json.load(open(sys.argv[1], encoding='utf-8'))
           best=d.get('lowest_budget_best', {})
           rewards=best.get('condition_reward', {})
-          print('## MaleCNS visual-efficiency curriculum v5')
+          learning=d.get('learning_state', {})
+          print('## MaleCNS visual-efficiency curriculum v6')
           print(f"- visual ref: `{d.get('visual_ref')}`")
+          print(f"- learning state: **{learning.get('mode', 'unknown')}**")
           print(f"- resolved / total receptors: **{d.get('receiver', {}).get('optic_column_resolved')} / {d.get('receiver', {}).get('visual_receptors_total')}**")
           print(f"- budgets: **{d.get('parameters', {}).get('budgets')}**")
           print(f"- lowest-budget advantage vs strongest control: **{best.get('advantage')}**")
@@ -84,7 +86,7 @@ jobs:
           print(f"- blank: **{rewards.get('blank')}**")
           print(f"- learned approach: **{best.get('approach', {}).get('learned')}**")
           print(f"- public Kaggle: {d.get('kaggle_url')}")
-          print('- calibration only; v5 uses an explicit retinal intensity floor and genuinely sub-capacity TV budgets')
+          print('- calibration only; v6 resumes the prior learned transducer when available and uses a six-blob visual vocabulary')
           PY
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
