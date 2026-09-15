@@ -12,6 +12,11 @@ name: MaleCNS Confirmatory Retrieve Kaggle Output
 # compute script greps the status text for "error", which matches the string
 # "503 Server Error" and abandoned a healthy running kernel. Only an actual
 # KernelWorkerStatus of ERROR/CANCELLED counts as the job failing.
+#
+# Case in point: kernel v5 reached COMPLETE at 2026-09-15T00:23:40Z, having passed
+# both input fingerprint gates, and the compute job still exited 1 -- eight 429s in
+# a row on ListKernelSessionOutput. The compute was fine; only the courier failed.
+# This workflow exists so that costs nothing but a retry.
 
 # The push trigger is not a convenience: workflow_dispatch only exists for
 # workflows already on the default branch, and this one is deliberately still
