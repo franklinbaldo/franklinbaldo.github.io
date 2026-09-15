@@ -1,0 +1,54 @@
+name: Kaggle MaleCNS Cleanup
+
+on:
+  push:
+    branches:
+      - experiment/malecns-semantic-cache-kaggle
+    paths:
+      - ".github/workflows/kaggle-malecns-cleanup.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "missing KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "missing KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+      - name: Delete superseded MaleCNS kernels
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KEEP_KERNEL: malecns-semantic-cache-test
+        run: |
+          set -euo pipefail
+          kaggle kernels list --mine --page-size 200 -v > "$RUNNER_TEMP/kernels.csv"
+          cat "$RUNNER_TEMP/kernels.csv"
+          python - "$RUNNER_TEMP/kernels.csv" "$KAGGLE_USERNAME" "$KEEP_KERNEL" <<'PY'
+          import csv, subprocess, sys
+          path, username, keep = sys.argv[1:]
+          prefix = f"{username}/malecns-"
+          candidates = []
+          with open(path, newline='', encoding='utf-8-sig') as f:
+              for row in csv.reader(f):
+                  ref = next((cell.strip() for cell in row if cell.strip().startswith(prefix)), None)
+                  if ref and ref != f"{username}/{keep}":
+                      candidates.append(ref)
+          candidates = sorted(set(candidates))
+          print(f"preserving {username}/{keep}")
+          print(f"deleting {len(candidates)} superseded MaleCNS kernels: {candidates}")
+          for ref in candidates:
+              subprocess.check_call(["kaggle", "kernels", "delete", ref, "-y"])
+          PY
