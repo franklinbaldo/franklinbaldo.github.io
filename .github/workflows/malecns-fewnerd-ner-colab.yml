@@ -12,11 +12,11 @@ on:
       train_limit:
         description: "Few-NERD train sentences for infrastructure smoke"
         required: false
-        default: "2"
+        default: "128"
       dev_limit:
         description: "Few-NERD dev sentences for infrastructure smoke"
         required: false
-        default: "2"
+        default: "64"
 
 permissions:
   contents: read
@@ -58,8 +58,8 @@ jobs:
         env:
           COLAB_EXEC_TIMEOUT: "7200"
         run: |
-          train_limit="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.train_limit || '2' }}"
-          dev_limit="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dev_limit || '2' }}"
+          train_limit="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.train_limit || '128' }}"
+          dev_limit="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dev_limit || '64' }}"
           bash scripts/malecns-fewnerd-ner/colab.sh \
             --output-dir "$RUNNER_TEMP/malecns-fewnerd" \
             --papers-ref "d8605f73308610fc43e74644a6df5b893efe06ab" \
