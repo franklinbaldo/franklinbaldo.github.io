@@ -13,6 +13,10 @@ MODE="${MALECNS_STAGES_MODE:-full}"
 RELEASE_BASE="${MALECNS_CONFIRMATORY_RELEASE_BASE:-https://github.com/franklinbaldo/papers/releases/download/malecns-confirmatory-inputs-v1}"
 HUB_REPO="${MALECNS_HUB_REPO:-franklinbaldo/multieurlex21-pt-semantic-cache}"
 HF_TOKEN="${HF_TOKEN:-}"
+WANDB_API_KEY="${WANDB_API_KEY:-}"
+WANDB_ENTITY="${WANDB_ENTITY:-}"
+WANDB_PROJECT="${WANDB_PROJECT:-malecns-multieurlex21}"
+WANDB_RUN_GROUP="${WANDB_RUN_GROUP:-gh-${GITHUB_RUN_ID:-$$}}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -67,6 +71,9 @@ run("git", "checkout", papers_ref, cwd=papers)
 exp = papers / "experiments/malecns_wifi"
 run(sys.executable, "-m", "pip", "install", "--disable-pip-version-check", "uv")
 run("uv", "pip", "install", "--system", "-e", f"{exp}[train,mteb]", "psutil")
+if os.environ.get("WANDB_API_KEY"):
+    print(json.dumps({"event": "telemetry", "wandb_project": os.environ.get("WANDB_PROJECT"),
+                      "wandb_group": os.environ.get("WANDB_RUN_GROUP")}), flush=True)
 graph = inputs / "graph.npz"
 urllib.request.urlretrieve(f"{release_base}/graph.npz", graph)
 env = os.environ.copy()
@@ -176,20 +183,29 @@ shutil.make_archive("/content/malecns-stages-result", "zip", out)
 print(json.dumps(summary, ensure_ascii=False), flush=True)
 PY
 
-python3 - "$TMP/launcher.py" "$PAPERS_REF" "$RELEASE_BASE" "$MODE" "$HUB_REPO" "$HF_TOKEN" <<'PY'
+python3 - "$TMP/launcher.py" "$PAPERS_REF" "$RELEASE_BASE" "$MODE" "$HUB_REPO" "$HF_TOKEN" \
+  "$WANDB_API_KEY" "$WANDB_ENTITY" "$WANDB_PROJECT" "$WANDB_RUN_GROUP" <<'PY'
 from pathlib import Path
 import sys
-p = Path(sys.argv[1]); papers_ref, release_base, mode, hub_repo, hf_token = sys.argv[2:7]
-p.write_text(
-    "import os, runpy\n"
-    f"os.environ['PAPERS_REF']={papers_ref!r}\n"
-    f"os.environ['RELEASE_BASE']={release_base!r}\n"
-    f"os.environ['MALECNS_STAGES_MODE']={mode!r}\n"
-    f"os.environ['MALECNS_HUB_REPO']={hub_repo!r}\n"
-    f"os.environ['HF_TOKEN']={hf_token!r}\n"
-    "runpy.run_path('/content/worker.py', run_name='__main__')\n",
-    encoding='utf-8',
-)
+p = Path(sys.argv[1])
+papers_ref, release_base, mode, hub_repo, hf_token, wandb_key, wandb_entity, wandb_project, wandb_group = sys.argv[2:11]
+lines = [
+    "import os, runpy",
+    f"os.environ['PAPERS_REF']={papers_ref!r}",
+    f"os.environ['RELEASE_BASE']={release_base!r}",
+    f"os.environ['MALECNS_STAGES_MODE']={mode!r}",
+    f"os.environ['MALECNS_HUB_REPO']={hub_repo!r}",
+    f"os.environ['HF_TOKEN']={hf_token!r}",
+    f"os.environ['WANDB_PROJECT']={wandb_project!r}",
+    f"os.environ['WANDB_RUN_GROUP']={wandb_group!r}",
+    "os.environ['WANDB_SILENT']='true'",
+]
+if wandb_key:
+    lines.append(f"os.environ['WANDB_API_KEY']={wandb_key!r}")
+if wandb_entity:
+    lines.append(f"os.environ['WANDB_ENTITY']={wandb_entity!r}")
+lines.append("runpy.run_path('/content/worker.py', run_name='__main__')")
+p.write_text("\n".join(lines) + "\n", encoding='utf-8')
 PY
 
 run_attempt() {

@@ -62,11 +62,15 @@ jobs:
         env:
           COLAB_EXEC_TIMEOUT: "9000"
           HF_TOKEN: ${{ (github.event_name == 'push' || github.event.inputs.publish == 'true') && secrets.HF_TOKEN || '' }}
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+          WANDB_ENTITY: franklinbaldo-org
+          WANDB_PROJECT: malecns-multieurlex21
+          WANDB_RUN_GROUP: gh-${{ github.run_id }}
           PAPERS_REF: ${{ github.event.inputs.papers_ref || '' }}
         run: |
           # push events carry no inputs: full run (publish the official cache) on the pinned papers ref
           mode="${{ github.event.inputs.mode || 'full' }}"
-          export PAPERS_REF="${PAPERS_REF:-39280ea}"
+          export PAPERS_REF="${PAPERS_REF:-8414670}"
           bash scripts/malecns-multieurlex21/stages.sh \
             --output-dir "$RUNNER_TEMP/malecns-stages" \
             --papers-ref "$PAPERS_REF" \
@@ -77,7 +81,7 @@ jobs:
         run: |
           summary="$RUNNER_TEMP/malecns-stages/github-summary.json"
           [[ -f "$summary" ]] || { echo "missing stages summary" >&2; exit 0; }
-          python - "$summary" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          python - "$summary" "${{ github.run_id }}" >> "$GITHUB_STEP_SUMMARY" <<'PY'
           import json,sys
           d=json.load(open(sys.argv[1],encoding='utf-8'))
           print('## MaleCNS × MultiEURLEX-21 PT — staged pipeline')
@@ -92,6 +96,7 @@ jobs:
           eq=b.get('equivalence') or {}
           print(f"- MaleCNS fast best `{b.get('name')}`: {b.get('docs_per_second') or 0:.1f} docs/s, speedup {b.get('speedup') or 0:.2f}x, max_abs_error {eq.get('max_abs_error')}, min cosine {eq.get('min_cosine')}, gate {eq.get('gate_passed')}")
           print(f"- claim status: {d.get('claim_status')}")
+          print(f"- telemetry: https://wandb.ai/franklinbaldo-org/malecns-multieurlex21/groups/gh-{sys.argv[2] if len(sys.argv) > 2 else ''}")
           print('')
           print('| variant | accuracy (main) | lrap | f1 | hamming |')
           print('|---|---|---|---|---|')
