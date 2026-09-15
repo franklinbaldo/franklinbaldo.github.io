@@ -1,4 +1,4 @@
-name: MaleCNS Online Plastic Screen Learning
+name: MaleCNS Physical Full Screen Learning
 
 on:
   push:
@@ -10,9 +10,9 @@ on:
   workflow_dispatch:
     inputs:
       visual_ref:
-        description: Exact papers commit containing the online reward-plastic screen learner
+        description: Exact papers commit containing physical full-screen online learner
         required: true
-        default: "6e5b4897d8f8ace976dcf351a86d1bc684a462ba"
+        default: "a8d97b3f5956573de476aeddd909875b9268f734"
         type: string
       runtime_ref:
         description: Exact papers commit containing the canonical MaleCNS compiler
@@ -29,11 +29,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: malecns-online-plastic-kaggle
+  group: malecns-physical-full-screen-kaggle
   cancel-in-progress: true
 
 jobs:
-  run-online-plastic:
+  run-full-screen:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
@@ -51,48 +51,46 @@ jobs:
           [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
           python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
 
-      - name: Run online reward-plastic learner on Kaggle
+      - name: Run physical full-screen learner on Kaggle
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
-          VISUAL_REF: ${{ inputs.visual_ref || '6e5b4897d8f8ace976dcf351a86d1bc684a462ba' }}
+          VISUAL_REF: ${{ inputs.visual_ref || 'a8d97b3f5956573de476aeddd909875b9268f734' }}
           RUNTIME_REF: ${{ inputs.runtime_ref || '437083ae30f24f6f424ce405182d90b275b62621' }}
           ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
         run: |
-          bash scripts/malecns-visual-attractor/kaggle-online-plastic.sh \
-            --summary "$RUNNER_TEMP/malecns-online-plastic-summary.json" \
+          bash scripts/malecns-visual-attractor/kaggle-full-screen.sh \
+            --summary "$RUNNER_TEMP/malecns-full-screen-summary.json" \
             --visual-ref "$VISUAL_REF" \
             --runtime-ref "$RUNTIME_REF" \
             --accelerator "$ACCELERATOR"
 
-      - name: Summarize online learning
+      - name: Summarize physical full-screen learning
         run: |
-          python - "$RUNNER_TEMP/malecns-online-plastic-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          python - "$RUNNER_TEMP/malecns-full-screen-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
           import json, sys
           d=json.load(open(sys.argv[1], encoding='utf-8'))
-          episodes=d.get('episodes', [])
-          first=episodes[0] if episodes else {}
-          last=episodes[-1] if episodes else {}
+          best=d.get('best_training_scenario', {})
           learning=d.get('learning_state', {})
-          params=d.get('parameters', {})
-          print('## MaleCNS online reward-plastic screen learning')
+          display=d.get('display', {})
+          generator=d.get('generator', {})
+          print('## MaleCNS physical full-screen online learning')
           print(f"- visual ref: `{d.get('visual_ref')}`")
           print(f"- learning state: **{learning.get('mode', 'unknown')}**")
-          print(f"- rule: **{d.get('learning_rule', {}).get('type')}**")
-          print(f"- budgets: **{params.get('budgets')}**")
-          print(f"- episodes per budget / steps: **{params.get('episodes_per_budget')} / {params.get('steps')}**")
-          print(f"- first episode advantage: **{first.get('advantage')}**")
-          print(f"- last episode advantage: **{last.get('advantage')}**")
-          print(f"- best training advantage: **{d.get('best_training_advantage')}**")
-          print(f"- final adapter weight norm: **{d.get('final_weight_norm')}**")
-          print(f"- max energy mismatch: **{d.get('max_energy_mismatch')}**")
+          print(f"- canvas: **{display.get('width_px')}x{display.get('height_px')}**")
+          print(f"- pooled generator features: **{generator.get('feature_dim')}**")
+          print(f"- every generator neuron contributes: **{generator.get('projection')}**")
+          print(f"- best scenario: **{best.get('scenario', {}).get('name')}**")
+          print(f"- advantage vs uniform TV: **{best.get('advantage_vs_uniform')}**")
+          print(f"- advantage vs strongest nonblank control: **{best.get('advantage_vs_strongest_nonblank_control')}**")
+          print(f"- final decoder weight norm: **{d.get('final_decoder_weight_norm')}**")
           print(f"- public Kaggle: {d.get('kaggle_url')}")
-          print('- training calibration: replay is not the learner; the 6x6 adapter updates online from receiver reward')
+          print('- full-screen content is unrestricted; constraints are emitted luminance, physical screen aperture, distance, pose, and room ambient')
           PY
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: malecns-online-plastic-summary-${{ github.run_id }}
-          path: ${{ runner.temp }}/malecns-online-plastic-summary.json
+          name: malecns-full-screen-summary-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-full-screen-summary.json
           if-no-files-found: error
           retention-days: 30
