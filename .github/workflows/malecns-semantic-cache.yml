@@ -1,0 +1,69 @@
+name: MaleCNS Semantic Cache Kaggle
+
+on:
+  push:
+    branches:
+      - experiment/malecns-semantic-cache-kaggle
+    paths:
+      - ".github/workflows/malecns-semantic-cache.yml"
+      - "scripts/malecns-semantic-cache/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-semantic-cache-kaggle
+  cancel-in-progress: true
+
+jobs:
+  run-semantic-cache-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || exit 2
+          [[ -n "$KAGGLE_USERNAME" ]] || exit 2
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+      - name: Build once and train from semantic cache on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_MALECNS_CACHE_TIMEOUT: "1800"
+          KAGGLE_MALECNS_CACHE_WAIT_SECONDS: "2400"
+        run: |
+          bash scripts/malecns-semantic-cache/kaggle.sh \
+            --output-dir "$RUNNER_TEMP/malecns-semantic-cache" \
+            --kernel-id "$KAGGLE_USERNAME/malecns-semantic-cache-test" \
+            --papers-ref "42aa0e8e678fae35fea4eb5314b505bc03ecfa2b" \
+            --accelerator NvidiaTeslaT4
+      - name: Summarize semantic cache test
+        run: |
+          test -f "$RUNNER_TEMP/malecns-semantic-cache/github-summary.json"
+          python - "$RUNNER_TEMP/malecns-semantic-cache/github-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1],encoding='utf-8'))
+          print('## MaleCNS semantic embedding cache test')
+          print(f"- Kaggle: {d.get('kernel_url')}")
+          print(f"- cache backend/device: `{d.get('cache_backend')}/{d.get('cache_device')}`")
+          print(f"- cache build: **{d.get('cache_build_seconds'):.2f}s** (wall {d.get('cache_build_wall_seconds'):.2f}s)")
+          print(f"- cached two-seed training wall: **{d.get('cached_training_wall_seconds'):.2f}s**")
+          print(f"- per-seed seconds: `{d.get('seed_seconds')}`")
+          print(f"- encoder forward during training: `{d.get('encoder_forward_during_training')}`")
+          print(f"- cache fingerprint: `{d.get('cache_fingerprint')}`")
+          print(f"- preregistered checks: `{d.get('preregistered_checks')}`")
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-semantic-cache-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-semantic-cache
+          if-no-files-found: error
+          retention-days: 30
