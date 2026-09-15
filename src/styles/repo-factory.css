@@ -153,6 +153,18 @@
   background: color-mix(in srgb, var(--factory-panel) 54%, transparent);
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .factory-toolbar label:not(.factory-check) {
   display: grid;
   gap: 0.28rem;
