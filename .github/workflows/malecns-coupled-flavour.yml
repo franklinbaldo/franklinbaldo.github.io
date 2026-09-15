@@ -42,7 +42,7 @@ jobs:
         run: |
           bash scripts/malecns-coupled-flavour/kaggle.sh \
             --output-dir "$RUNNER_TEMP/malecns-coupled-flavour" \
-            --kernel-id "$KAGGLE_USERNAME/malecns-coupled-flavour-smoke" \
+            --kernel-id "$KAGGLE_USERNAME/malecns-coupled-flavour-translation-smoke" \
             --papers-ref "f8dd6fcc8856d17df656d06c372a9f489230b252" \
             --accelerator NvidiaTeslaT4
       - name: Summarize coupled flavour smoke
