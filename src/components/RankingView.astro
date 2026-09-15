@@ -356,8 +356,17 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
               <td class="col-confidence">
                 <span class={`conf-badge conf-${conf.level}`}>{conf.label}</span>
               </td>
-              <td class={`col-elo num tech-col ${eloClass}`} title={eloTitle}>
-                {eloData ? eloData.elo : "—"}
+              <td class={`col-elo num tech-col ${eloClass}`}>
+                {eloData ? (
+                  <abbr tabindex="0" title={eloTitle} data-tooltip={eloTitle}>
+                    {eloData.elo}{" "}
+                    <span class="elo-delta-text">
+                      ({eloDelta >= 0 ? `+${eloDelta}` : eloDelta})
+                    </span>
+                  </abbr>
+                ) : (
+                  "—"
+                )}
               </td>
               <td class="col-mu num tech-col">{r.mu.toFixed(2)}</td>
               <td class="col-sigma num tech-col">{r.sigma.toFixed(2)}</td>
@@ -758,6 +767,7 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
   .elo-down { color: #c0392b; }
   [data-theme="dark"] .elo-up { color: #74c69d; }
   [data-theme="dark"] .elo-down { color: #e57373; }
+  .elo-delta-text { font-size: 0.85em; opacity: 0.85; }
 
   .conf-badge {
     display: inline-block;
