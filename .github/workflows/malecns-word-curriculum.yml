@@ -1,0 +1,69 @@
+name: MaleCNS Word Curriculum Kaggle
+
+on:
+  push:
+    branches:
+      - experiment/malecns-wholebrain-semantic-kaggle
+    paths:
+      - ".github/workflows/malecns-word-curriculum.yml"
+      - "scripts/malecns-word-curriculum/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-word-curriculum-kaggle
+  cancel-in-progress: true
+
+jobs:
+  run-word-curriculum-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || exit 2
+          [[ -n "$KAGGLE_USERNAME" ]] || exit 2
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+      - name: Run public exact-word curriculum smoke on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          bash scripts/malecns-word-curriculum/kaggle.sh \
+            --output-dir "$RUNNER_TEMP/malecns-word-curriculum" \
+            --kernel-id "$KAGGLE_USERNAME/malecns-word-curriculum-smoke" \
+            --papers-ref "4abc3263eb462c5ba0b4e5c40689ebbffc3f3dc1" \
+            --causaganha-ref "7c3d6557bb692932553622ae6e00493ba04e534f" \
+            --accelerator NvidiaTeslaT4
+      - name: Summarize curriculum smoke
+        run: |
+          python - "$RUNNER_TEMP/malecns-word-curriculum/github-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1],encoding='utf-8'))
+          print('## MaleCNS exact-word curriculum smoke')
+          print(f"- Kaggle: {d.get('kernel_url')}")
+          print(f"- target: **{d.get('target')}**")
+          print(f"- embedding models: {', '.join(d.get('models', []))}")
+          print(f"- vector channels: **{d.get('channel_count_total')}**")
+          print(f"- combined input width: **{d.get('combined_input_dim')}**")
+          print(f"- direct probes: `{d.get('direct_probes')}`")
+          print(f"- tag-only heldout: `{d.get('tag_only', {}).get('heldout_final')}`")
+          print(f"- MaleCNS-assisted heldout: `{d.get('malecns_assisted', {}).get('heldout_final')}`")
+          print(f"- GPU: **{d.get('device')}**")
+          print('- exploratory curriculum smoke only')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-word-curriculum-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-word-curriculum
+          if-no-files-found: error
+          retention-days: 30
