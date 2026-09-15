@@ -46,5 +46,7 @@ for required in ('run_swarm_capacity_probe.py', '"--swarm-size", "4096"', '"--mi
 Path(sys.argv[2]).write_text(src, encoding="utf-8")
 PY
 
-export KAGGLE_MALECNS_EFFICIENCY_KERNEL_ID="${KAGGLE_MALECNS_SWARM_CAPACITY_KERNEL_ID:-${KAGGLE_USERNAME}/malecns-swarm-capacity-4096}"
+# Reuse a kernel slug that already exists and is public. Creating a new slug and
+# immediately querying it can return kernels.get denied before the notebook is visible.
+export KAGGLE_MALECNS_EFFICIENCY_KERNEL_ID="${KAGGLE_MALECNS_SWARM_CAPACITY_KERNEL_ID:-${KAGGLE_USERNAME}/malecns-static-swarm-evolution}"
 bash "$TMP" "$@"
