@@ -3,8 +3,8 @@ set -euo pipefail
 
 SUMMARY=""
 ACCELERATOR="${KAGGLE_ACCELERATOR:-NvidiaTeslaT4}"
-KERNEL_ID="${KAGGLE_MALECNS_VISUAL_ATTRACTOR_KERNEL_ID:-}"
-VISUAL_REF="${VISUAL_REF:-5a8b719637e4b857937db87b477e09b502f82bdb}"
+KERNEL_ID="${KAGGLE_MALECNS_SCREEN_KERNEL_ID:-}"
+VISUAL_REF="${VISUAL_REF:-ca157208329c7f09c6aaa3c3fb510bfc62b351c1}"
 RUNTIME_REF="${RUNTIME_REF:-437083ae30f24f6f424ce405182d90b275b62621}"
 
 while [[ $# -gt 0 ]]; do
@@ -21,9 +21,8 @@ done
 [[ -n "$SUMMARY" ]] || { echo "--summary is required" >&2; exit 2; }
 [[ -n "${KAGGLE_USERNAME:-}" ]] || { echo "KAGGLE_USERNAME is required" >&2; exit 2; }
 if [[ -z "$KERNEL_ID" ]]; then
-  KERNEL_ID="${KAGGLE_USERNAME}/malecns-visual-attractor"
+  KERNEL_ID="${KAGGLE_USERNAME}/malecns-stationary-screen-reward"
 fi
-[[ "$KERNEL_ID" == */* && "$KERNEL_ID" != /* ]] || { echo "invalid Kaggle kernel id: $KERNEL_ID" >&2; exit 2; }
 command -v kaggle >/dev/null || { echo "kaggle CLI not found" >&2; exit 2; }
 
 STAGE="$(mktemp -d)"
@@ -34,6 +33,7 @@ cat > "$STAGE/job.py" <<'PY'
 import json
 import os
 import pathlib
+import shutil
 import subprocess
 import sys
 import urllib.request
@@ -48,15 +48,16 @@ visual_ref = os.environ["VISUAL_REF"]
 runtime_ref = os.environ["RUNTIME_REF"]
 kernel_id = os.environ["KERNEL_ID"]
 work = pathlib.Path("/kaggle/working")
-scratch = pathlib.Path("/kaggle/temp/malecns-visual-attractor")
+scratch = pathlib.Path("/kaggle/temp/malecns-stationary-screen-reward")
 scratch.mkdir(parents=True, exist_ok=True)
 visual_repo = scratch / "papers-visual"
 runtime_repo = scratch / "papers-runtime"
 cache = scratch / "malecns-source-cache"
 runtime_out = work / "runtime"
-run_out = work / "run1"
-runtime_out.mkdir(exist_ok=True)
-run_out.mkdir(exist_ok=True)
+run_out = work / "screen-reward"
+public_cache = work / "public-cache"
+for path in (runtime_out, run_out, public_cache):
+    path.mkdir(parents=True, exist_ok=True)
 
 run("git", "clone", "--filter=blob:none", "https://github.com/franklinbaldo/papers.git", visual_repo)
 run("git", "checkout", visual_ref, cwd=visual_repo)
@@ -99,57 +100,74 @@ run(
     cwd=visual_exp,
 )
 
-iface = json.loads(interface_manifest.read_text(encoding="utf-8"))
-counts = iface["counts"]
-required = (
-    "steer_dna02_left", "steer_dna02_right",
-    "forward_dng100_left", "forward_dng100_right",
+screen_geometry = runtime_out / "screen-geometry.npz"
+screen_geometry_manifest = runtime_out / "screen-geometry.json"
+run(
+    sys.executable,
+    visual_exp / "scripts/build_screen_geometry.py",
+    "--interface", interface,
+    "--optic-columns", optic,
+    "--output", screen_geometry,
+    "--manifest", screen_geometry_manifest,
+    cwd=visual_exp,
 )
-missing = [name for name in required if int(counts.get(name, 0)) <= 0]
-if missing:
-    raise SystemExit(f"Run 1 motor interface unresolved: {missing}")
 
 run(
     sys.executable,
-    visual_exp / "scripts/run_positive_control.py",
+    visual_exp / "scripts/run_stationary_screen_reward_loop.py",
     "--graph", graph,
     "--interface", interface,
+    "--screen-geometry", screen_geometry,
     "--output-dir", run_out,
     "--device", "cuda",
-    "--scenes", "32",
-    "--flies", "64",
-    "--seed-base", "20260914",
+    "--flies", "8",
+    "--steps", "400",
+    "--population", "9",
+    "--generations", "3",
+    "--radius", "0.75",
+    "--seed", "20260914",
     "--spectral-scale", "3776.27",
     "--gain", "1.0",
     "--leak", "0.2",
     "--visual-scale", "0.5",
-    "--prime-scale", "0.08",
-    "--dt", "0.02",
-    "--acquisition-seconds", "2.0",
+    "--reward-scale", "0.08",
+    "--reward-feedback-gain", "1000.0",
+    "--mutation-sigma", "0.18",
+    "--telemetry-every", "100",
     cwd=visual_exp,
 )
 
-summary_path = run_out / "positive-control-summary.json"
-summary = json.loads(summary_path.read_text(encoding="utf-8"))
+summary = json.loads((run_out / "screen-reward-summary.json").read_text(encoding="utf-8"))
 summary["visual_ref"] = visual_ref
 summary["runtime_ref"] = runtime_ref
 summary["kernel"] = kernel_id
-summary["graph_sha256"] = summary.get("graph", {}).get("sha256")
-summary["interface_sha256"] = summary.get("interface", {}).get("sha256")
-summary["heavy_storage"] = "private Kaggle kernel output"
-summary["heavy_paths"] = ["runtime/", "run1/trajectories/"]
-(work / "github-summary.json").write_text(
+summary["kaggle_url"] = f"https://www.kaggle.com/code/{kernel_id}"
+summary["public"] = True
+summary["graph_manifest"] = json.loads((graph_dir / "manifest.json").read_text(encoding="utf-8"))
+summary["interface_manifest"] = json.loads(interface_manifest.read_text(encoding="utf-8"))
+summary["screen_geometry_manifest"] = json.loads(screen_geometry_manifest.read_text(encoding="utf-8"))
+(public_cache / "github-summary.json").write_text(
     json.dumps(summary, indent=2, sort_keys=True) + "\n",
     encoding="utf-8",
 )
-(work / "provenance.json").write_text(
+
+for name in (
+    "progress.jsonl",
+    "winner-retina.txt",
+    "winner-top-receptors.json",
+    "screen-reward-summary.json",
+):
+    shutil.copy2(run_out / name, public_cache / name)
+shutil.copy2(interface_manifest, public_cache / "visual-interface.json")
+shutil.copy2(screen_geometry_manifest, public_cache / "screen-geometry.json")
+(public_cache / "provenance.json").write_text(
     json.dumps(
         {
             "visual_ref": visual_ref,
             "runtime_ref": runtime_ref,
             "kernel": kernel_id,
-            "graph_manifest": json.loads((graph_dir / "manifest.json").read_text(encoding="utf-8")),
-            "interface_manifest": iface,
+            "kaggle_url": f"https://www.kaggle.com/code/{kernel_id}",
+            "public": True,
         },
         indent=2,
         sort_keys=True,
@@ -162,24 +180,24 @@ python3 - "$STAGE/job.py" "$VISUAL_REF" "$RUNTIME_REF" "$KERNEL_ID" <<'PY'
 from pathlib import Path
 import sys
 path = Path(sys.argv[1])
-text = path.read_text(encoding='utf-8')
+text = path.read_text(encoding="utf-8")
 prefix = (
     "import os\n"
     f"os.environ['VISUAL_REF'] = {sys.argv[2]!r}\n"
     f"os.environ['RUNTIME_REF'] = {sys.argv[3]!r}\n"
     f"os.environ['KERNEL_ID'] = {sys.argv[4]!r}\n"
 )
-path.write_text(prefix + text, encoding='utf-8')
+path.write_text(prefix + text, encoding="utf-8")
 PY
 
 cat > "$STAGE/kernel-metadata.json" <<JSON
 {
   "id": "$KERNEL_ID",
-  "title": "MaleCNS Visual Attractor",
+  "title": "MaleCNS Stationary Screen Reward Loop",
   "code_file": "job.py",
   "language": "python",
   "kernel_type": "script",
-  "is_private": true,
+  "is_private": false,
   "enable_gpu": true,
   "enable_internet": true,
   "machine_shape": "$ACCELERATOR",
@@ -192,8 +210,12 @@ JSON
 
 kaggle kernels push -p "$STAGE" --accelerator "$ACCELERATOR" -t "${KAGGLE_MALECNS_VISUAL_TIMEOUT:-21600}"
 
+# Stream the public kernel log, including retina grids and reward telemetry, into
+# GitHub Actions while a separate loop watches the terminal worker status.
+(kaggle kernels logs "$KERNEL_ID" --follow --interval 10 || true) &
+LOG_PID=$!
+
 deadline=$(( $(date +%s) + ${KAGGLE_MALECNS_VISUAL_WAIT_SECONDS:-21600} ))
-transport=0
 while :; do
   STATUS="$(kaggle kernels status "$KERNEL_ID" 2>&1 || true)"
   echo "$STATUS"
@@ -201,39 +223,34 @@ while :; do
     break
   fi
   if grep -Eqi 'KernelWorkerStatus[.](ERROR|CANCEL|FAILED)' <<<"$STATUS"; then
+    wait "$LOG_PID" || true
     echo "Kaggle kernel itself reported failure" >&2
     exit 1
   fi
-  if grep -Eq '[0-9]{3} (Client|Server) Error' <<<"$STATUS"; then
-    transport=$((transport + 1))
-    echo "transport error #$transport; kernel state unchanged" >&2
-  fi
   if (( $(date +%s) >= deadline )); then
+    wait "$LOG_PID" || true
     echo "Kaggle kernel did not reach COMPLETE before deadline" >&2
     exit 1
   fi
-  sleep "${KAGGLE_STATUS_INTERVAL:-30}"
+  sleep 30
 done
+wait "$LOG_PID" || true
 
-# Retrieve only the small GitHub-facing manifest. Heavy graph/interface/trajectory
-# files remain in the private Kaggle kernel output and are not a success-path
-# dependency of this workflow.
 delay=15
 downloaded=0
 for attempt in $(seq 1 "${KAGGLE_OUTPUT_ATTEMPTS:-10}"); do
   rm -rf "${DOWNLOAD:?}"/*
-  if kaggle kernels output "$KERNEL_ID" -p "$DOWNLOAD" -o --file-pattern '.*github-summary[.]json$'; then
+  if kaggle kernels output "$KERNEL_ID" -p "$DOWNLOAD" -o --file-pattern '.*public-cache/.*'; then
     downloaded=1
     break
   fi
-  echo "summary download attempt $attempt failed; retrying without rerunning compute" >&2
   sleep "$delay"
   delay=$(( delay < 120 ? delay * 2 : 120 ))
 done
-[[ "$downloaded" == 1 ]] || { echo "Kaggle summary remained unavailable after retries" >&2; exit 1; }
-
+[[ "$downloaded" == 1 ]] || { echo "public cache remained unavailable" >&2; exit 1; }
 RESULT="$(find "$DOWNLOAD" -type f -name 'github-summary.json' -print -quit)"
-[[ -n "$RESULT" ]] || { echo "Kaggle output did not contain github-summary.json" >&2; exit 1; }
+[[ -n "$RESULT" ]] || { echo "Kaggle public cache did not contain github-summary.json" >&2; exit 1; }
 mkdir -p "$(dirname "$SUMMARY")"
 cp "$RESULT" "$SUMMARY"
 echo "Kaggle summary: $SUMMARY"
+echo "Kaggle URL: https://www.kaggle.com/code/$KERNEL_ID"
