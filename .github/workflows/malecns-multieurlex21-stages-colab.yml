@@ -1,6 +1,12 @@
 name: MaleCNS MultiEURLEX-21 stages Colab
 
 on:
+  push:
+    branches:
+      - experiment/malecns-multieurlex21-stages-colab
+    paths:
+      - ".github/workflows/malecns-multieurlex21-stages-colab.yml"
+      - "scripts/malecns-multieurlex21/stages.sh"
   workflow_dispatch:
     inputs:
       mode:
@@ -56,7 +62,7 @@ jobs:
         env:
           COLAB_EXEC_TIMEOUT: "9000"
           HF_TOKEN: ${{ github.event.inputs.publish == 'true' && secrets.HF_TOKEN || '' }}
-          PAPERS_REF: ${{ github.event.inputs.papers_ref }}
+          PAPERS_REF: ${{ github.event.inputs.papers_ref || '' }}
         run: |
           bash scripts/malecns-multieurlex21/stages.sh \
             --output-dir "$RUNNER_TEMP/malecns-stages" \
