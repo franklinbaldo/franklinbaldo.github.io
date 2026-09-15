@@ -83,7 +83,6 @@ features = inputs / "features.npz"
 urllib.request.urlretrieve(f"{release_base}/graph.npz", graph)
 urllib.request.urlretrieve(f"{release_base}/multitag-features.features.npz", features)
 
-# Integrity gate is bit-identical to the audited confirmatory fingerprint recipe.
 stored = np.load(features, allow_pickle=False)
 block = np.hstack([stored["absolute"], stored["sensation"]])
 features_hash = fingerprint(block)
@@ -151,7 +150,8 @@ python3 - "$STAGE/job.py" "$PAPERS_REF" "$KERNEL_ID" "$RELEASE_BASE" "$EXPECTED_
 from pathlib import Path
 import sys
 path = Path(sys.argv[1])
-text = path.read_text(encoding="utf-8")nprefix = (
+text = path.read_text(encoding="utf-8")
+prefix = (
     "import os\n"
     f"os.environ['PAPERS_REF'] = {sys.argv[2]!r}\n"
     f"os.environ['KERNEL_ID'] = {sys.argv[3]!r}\n"
@@ -183,8 +183,6 @@ JSON
 kaggle kernels push -p "$STAGE" --accelerator "$ACCELERATOR" -t "${KAGGLE_MALECNS_WHOLEBRAIN_TIMEOUT:-21600}"
 echo "Public Kaggle kernel: https://www.kaggle.com/code/$KERNEL_ID"
 
-# Same pattern as the stationary-screen experiment: logs are useful evidence but
-# log transport must never decide scientific/engineering success.
 kaggle kernels logs "$KERNEL_ID" --follow --interval "${KAGGLE_WHOLEBRAIN_LOG_INTERVAL:-10}" || true
 
 deadline=$(( $(date +%s) + ${KAGGLE_MALECNS_WHOLEBRAIN_WAIT_SECONDS:-21600} ))
