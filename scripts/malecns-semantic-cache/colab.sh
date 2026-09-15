@@ -68,11 +68,19 @@ shutil.make_archive("/content/malecns-semantic-cache-result","zip",out)
 print(json.dumps({"event":"colab_semantic_cache_complete","cache_build_seconds":cache_seconds,"cached_training_seconds":train_seconds}),flush=True)
 PY
 
-python3 - "$TMP/launcher.py" <<'PY'
+python3 - "$TMP/launcher.py" "$PAPERS_REF" "$RELEASE_BASE" <<'PY'
 from pathlib import Path
 import sys
 p=Path(sys.argv[1])
-p.write_text("import runpy\nrunpy.run_path('/content/worker.py', run_name='__main__')\n",encoding='utf-8')
+papers_ref=sys.argv[2]
+release_base=sys.argv[3]
+p.write_text(
+    "import os, runpy\n"
+    f"os.environ['PAPERS_REF']={papers_ref!r}\n"
+    f"os.environ['RELEASE_BASE']={release_base!r}\n"
+    "runpy.run_path('/content/worker.py', run_name='__main__')\n",
+    encoding='utf-8',
+)
 PY
 
 if [[ -n "$GPU" ]]; then
@@ -81,7 +89,8 @@ else
   colab "--auth=$AUTH" new -s "$SESSION"
 fi
 colab "--auth=$AUTH" upload -s "$SESSION" "$TMP/worker.py" /content/worker.py
-PAPERS_REF="$PAPERS_REF" RELEASE_BASE="$RELEASE_BASE" colab "--auth=$AUTH" exec -s "$SESSION" --timeout "${COLAB_EXEC_TIMEOUT:-3600}" -c "import os; os.environ['PAPERS_REF']='$PAPERS_REF'; os.environ['RELEASE_BASE']='$RELEASE_BASE'; exec(open('/content/worker.py').read())"
+colab "--auth=$AUTH" upload -s "$SESSION" "$TMP/launcher.py" /content/launcher.py
+colab "--auth=$AUTH" exec -s "$SESSION" --timeout "${COLAB_EXEC_TIMEOUT:-3600}" -f "$TMP/launcher.py"
 colab "--auth=$AUTH" download -s "$SESSION" /content/malecns-semantic-cache-result.zip "$TMP/result.zip"
 unzip -q "$TMP/result.zip" -d "$OUTPUT_DIR"
 [[ -f "$OUTPUT_DIR/github-summary.json" ]] || { echo "missing Colab summary" >&2; exit 1; }
