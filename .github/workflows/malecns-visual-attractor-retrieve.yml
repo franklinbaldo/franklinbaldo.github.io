@@ -1,0 +1,101 @@
+name: MaleCNS Visual Attractor Retrieve Kaggle Output
+
+on:
+  push:
+    branches:
+      - experiment/malecns-visual-attractor
+    paths:
+      - ".github/workflows/malecns-visual-attractor-retrieve.yml"
+  workflow_dispatch:
+    inputs:
+      kernel:
+        description: Kaggle kernel slug
+        required: false
+        default: ""
+        type: string
+      allow_failed:
+        description: Retrieve output/logs even when the kernel reported ERROR
+        required: false
+        default: "true"
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-visual-attractor-retrieve
+  cancel-in-progress: false
+
+jobs:
+  retrieve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || exit 2
+          [[ -n "$KAGGLE_USERNAME" ]] || exit 2
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+      - name: Resolve kernel status
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KERNEL_INPUT: ${{ inputs.kernel }}
+          ALLOW_FAILED: ${{ inputs.allow_failed || 'true' }}
+        run: |
+          set -euo pipefail
+          KERNEL="${KERNEL_INPUT:-}"
+          [[ -n "$KERNEL" ]] || KERNEL="${KAGGLE_USERNAME}/malecns-visual-attractor"
+          echo "KERNEL=$KERNEL" >> "$GITHUB_ENV"
+          STATUS="$(kaggle kernels status "$KERNEL" 2>&1 || true)"
+          echo "$STATUS"
+          if grep -Eqi 'KernelWorkerStatus[.](ERROR|CANCEL|FAILED)' <<<"$STATUS"; then
+            [[ "$ALLOW_FAILED" == "true" ]] || exit 1
+            echo "KERNEL_FAILED=1" >> "$GITHUB_ENV"
+          elif ! grep -Eqi 'KernelWorkerStatus[.](COMPLETE|SUCCESS)' <<<"$STATUS"; then
+            echo "kernel is not terminal" >&2
+            exit 1
+          fi
+      - name: Download current kernel output without rerunning compute
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          set -euo pipefail
+          DEST="$RUNNER_TEMP/kaggle-output"
+          mkdir -p "$DEST"
+          delay=15
+          ok=0
+          for attempt in $(seq 1 8); do
+            rm -rf "${DEST:?}"/*
+            if kaggle kernels output "$KERNEL" -p "$DEST" -o --file-pattern '.*'; then
+              ok=1
+              break
+            fi
+            sleep "$delay"
+            delay=$(( delay < 120 ? delay * 2 : 120 ))
+          done
+          [[ "$ok" == 1 ]] || exit 1
+          find "$DEST" -type f -exec ls -lh {} +
+          for log in $(find "$DEST" \( -name '*.log' -o -name '*.txt' \) -type f); do
+            echo "----- $log -----"
+            tail -c 30000 "$log"
+          done
+      - name: Upload diagnostic output
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: malecns-visual-attractor-kaggle-output-${{ github.run_id }}
+          path: ${{ runner.temp }}/kaggle-output
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Preserve failed status
+        if: env.KERNEL_FAILED == '1'
+        run: exit 1
