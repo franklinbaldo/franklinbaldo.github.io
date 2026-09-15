@@ -1,0 +1,67 @@
+name: MaleCNS Coupled Flavour Kaggle
+
+on:
+  push:
+    branches:
+      - experiment/malecns-coupled-flavour-kaggle
+    paths:
+      - ".github/workflows/malecns-coupled-flavour.yml"
+      - "scripts/malecns-coupled-flavour/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-coupled-flavour-kaggle
+  cancel-in-progress: true
+
+jobs:
+  run-coupled-flavour-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || exit 2
+          [[ -n "$KAGGLE_USERNAME" ]] || exit 2
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+      - name: Run coupled flavour translation smoke on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          bash scripts/malecns-coupled-flavour/kaggle.sh \
+            --output-dir "$RUNNER_TEMP/malecns-coupled-flavour" \
+            --kernel-id "$KAGGLE_USERNAME/malecns-coupled-flavour-smoke" \
+            --papers-ref "f8dd6fcc8856d17df656d06c372a9f489230b252" \
+            --accelerator NvidiaTeslaT4
+      - name: Summarize coupled flavour smoke
+        run: |
+          python - "$RUNNER_TEMP/malecns-coupled-flavour/github-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1],encoding='utf-8'))
+          print('## MaleCNS coupled flavour translation smoke')
+          print(f"- Kaggle: {d.get('kernel_url')}")
+          print(f"- spaces: **{len(d.get('spaces', []))}**")
+          print(f"- flavour rule: {d.get('flavour_rule')}")
+          print(f"- coupling: {d.get('coupling_rule')}")
+          print(f"- translation reconstruction: `{d.get('translation_reconstruction')}`")
+          print(f"- independent final: `{d.get('independent', {}).get('curve', [])[-1].get('validation') if d.get('independent', {}).get('curve') else None}`")
+          print(f"- coupled final: `{d.get('coupled', {}).get('curve', [])[-1].get('validation') if d.get('coupled', {}).get('curve') else None}`")
+          print(f"- GPU: **{d.get('device')}**")
+          print('- exploratory curriculum smoke only')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-coupled-flavour-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-coupled-flavour
+          if-no-files-found: error
+          retention-days: 30
