@@ -116,6 +116,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
     role="status"
     aria-live="polite"
     data-of={t("pt", "post.of")}
+    data-posts-word="ensaios"
   ></span>
 
   {years.length > 1 && (
@@ -382,7 +383,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
           sec.style.display = hasVisible ? '' : 'none';
         });
         if (status) {
-          status.textContent = visibleCount + ' ' + status.getAttribute('data-of') + ' ' + rows.length + ' posts';
+          status.textContent = visibleCount + ' ' + status.getAttribute('data-of') + ' ' + rows.length + ' ' + status.getAttribute('data-posts-word');
         }
       });
     });

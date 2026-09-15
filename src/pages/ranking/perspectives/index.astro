@@ -48,6 +48,11 @@ const enriched = perspectives.map((p) => {
   };
 });
 
+// i18n decision (issue #1689, superseding #1083): each card's leader can be
+// a post in either language, so this index page has no single "page
+// language" to switch to. The structural chrome (breadcrumbs, headings)
+// stays English; the leader title already localizes per item via
+// leaderLang below.
 const crumbs = [
   { name: "Home", href: "/" },
   { name: "Ranking", href: "/ranking/" },

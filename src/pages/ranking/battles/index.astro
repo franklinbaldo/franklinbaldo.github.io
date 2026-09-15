@@ -35,8 +35,15 @@ function postHref(key: string) {
   return p.lang === "pt" ? `/pt/blog/${p.slug}/` : `/blog/${p.slug}/`;
 }
 
-function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+// Mirrors the winner/loser-language rule in battles/[id].astro: a duel only
+// reads as "pt" when both sides are pt, since a work with an EN translation
+// always resolves "en" in byKey (RFC 0012 §6 rule 4 precedent).
+function duelLang(d: { winnerKey: string; loserKey: string }): "en" | "pt" {
+  return byKey.get(d.winnerKey)?.lang === "pt" && byKey.get(d.loserKey)?.lang === "pt" ? "pt" : "en";
+}
+
+function fmtDate(iso: string, lang: "en" | "pt") {
+  return new Date(iso).toLocaleDateString(lang === "pt" ? "pt-BR" : "en-US", { year: "numeric", month: "short", day: "numeric" });
 }
 
 function perspectiveHue(id: string): number {
@@ -49,6 +56,13 @@ const seasons = [...new Set(allDuels.map((d) => d.season).filter((s): s is numbe
 const perspectives = [...new Set(allDuels.map((d) => d.perspectiveId).filter(Boolean) as string[])].sort();
 const agents = [...new Set(allDuels.map((d) => d.agentId).filter(Boolean) as string[])].sort();
 
+// i18n decision (issue #1689, superseding #1083): this index page lists
+// duels across every language pair, so it has no single "page language" to
+// switch to — unlike battles/[id].astro, which resolves a duel-specific
+// lang because it has exactly one duel. The structural chrome (breadcrumbs,
+// filters, headings) stays English; per-item pieces that do have their own
+// language already localize per item (postLangAttr for titles, duelLang for
+// dates above).
 const crumbs = [
   { name: "Home", href: "/" },
   { name: "Ranking", href: "/ranking/" },
@@ -141,7 +155,7 @@ const crumbs = [
         >
           <a href={`/ranking/battles/${d.id}/`} class="battle-link" aria-label={`Read analysis: ${winnerName} vs ${loserName}`}>
             <div class="battle-meta">
-              <span class="battle-date">{fmtDate(d.runAt)}</span>
+              <span class="battle-date">{fmtDate(d.runAt, duelLang(d))}</span>
               {d.season !== undefined && <span class="tag tag-season">S{d.season}</span>}
               {d.perspectiveId && (
                 <span class="tag tag-perspective" style={`--ph:${perspectiveHue(d.perspectiveId)}`}>

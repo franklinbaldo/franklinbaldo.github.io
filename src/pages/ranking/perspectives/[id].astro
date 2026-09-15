@@ -59,6 +59,12 @@ function hue(perspId: string): number {
 }
 const ph = hue(id);
 
+// i18n decision (issue #1689, superseding #1083): a single perspective
+// ranks posts across every language, so this page has no single "page
+// language" to switch to (unlike battles/[id].astro, which has exactly two
+// posts to check). The structural chrome (breadcrumbs, headings,
+// HronirExplainer below) stays English; each ranked post title already
+// localizes per row via its own lang attribute.
 const crumbs = [
   { name: "Home", href: "/" },
   { name: "Ranking", href: "/ranking/" },

@@ -65,6 +65,7 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const showUpdated =
   lastModified && lastModified.valueOf() - date.valueOf() > MS_PER_DAY;
 
+const locale = localeFor(postLang);
 const rankInfo = translationKey ? getRankByKey().get(translationKey) : undefined;
 const rankLabel = t(postLang, 'post.rankLabel');
 const rankHref =
@@ -73,11 +74,11 @@ const rankHref =
     : translationKey
       ? `/ranking/posts/${translationKey}/`
       : '/ranking/';
+const numOpts = { minimumFractionDigits: 2, maximumFractionDigits: 2 } as const;
 const rankTitle = rankInfo
-  ? `μ ${rankInfo.row.mu.toFixed(2)}, σ ${rankInfo.row.sigma.toFixed(2)}, ${rankInfo.row.wins}/${rankInfo.row.appearances}`
+  ? `μ ${rankInfo.row.mu.toLocaleString(locale, numOpts)}, σ ${rankInfo.row.sigma.toLocaleString(locale, numOpts)}, ${rankInfo.row.wins}/${rankInfo.row.appearances}`
   : undefined;
 const series = await getSeriesContext(post, { lang: postLang });
-const locale = localeFor(postLang);
 const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
 const tagsPrefix = `${urlPrefix(postLang)}/tags`;
 

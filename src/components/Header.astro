@@ -189,12 +189,16 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
     const btns = document.querySelectorAll<HTMLButtonElement>('.nav-music-btn');
     btns.forEach((btn) => {
       if (!audio || audio.paused) {
+        const label = btn.dataset.playLabel || 'Play music';
         btn.textContent = '♪';
-        btn.setAttribute('aria-label', btn.dataset.playLabel || 'Play music');
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('title', label);
         btn.classList.remove('playing');
       } else {
+        const label = btn.dataset.pauseLabel || 'Pause music';
         btn.textContent = '⏸';
-        btn.setAttribute('aria-label', btn.dataset.pauseLabel || 'Pause music');
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('title', label);
         btn.classList.add('playing');
       }
     });
