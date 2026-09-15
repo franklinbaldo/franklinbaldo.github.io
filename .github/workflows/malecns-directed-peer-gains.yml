@@ -1,12 +1,6 @@
 name: MaleCNS Directed Peer Gains Kaggle
 
 on:
-  push:
-    branches:
-      - experiment/malecns-directed-peer-gains-kaggle
-    paths:
-      - ".github/workflows/malecns-directed-peer-gains.yml"
-      - "scripts/malecns-directed-peer-gains/**"
   workflow_dispatch:
 
 permissions:
@@ -18,55 +12,7 @@ concurrency:
 
 jobs:
   run-directed-peer-gains:
+    if: ${{ false }}
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
-      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
-        with:
-          python-version: "3.12"
-      - name: Configure Kaggle CLI
-        env:
-          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
-          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
-        run: |
-          [[ -n "$KAGGLE_API_TOKEN" ]] || exit 2
-          [[ -n "$KAGGLE_USERNAME" ]] || exit 2
-          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
-      - name: Run directed peer gains on Kaggle
-        env:
-          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
-          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
-          KAGGLE_MALECNS_COUPLED_TIMEOUT: "1200"
-          KAGGLE_MALECNS_COUPLED_WAIT_SECONDS: "1200"
-        run: |
-          bash scripts/malecns-directed-peer-gains/kaggle.sh \
-            --output-dir "$RUNNER_TEMP/malecns-directed-peer-gains" \
-            --kernel-id "$KAGGLE_USERNAME/malecns-directed-peer-gains" \
-            --papers-ref "9b840758a85ccb854271369d2342abadf8306fb4" \
-            --accelerator NvidiaTeslaT4
-      - name: Summarize directed peer gains
-        run: |
-          summary="$RUNNER_TEMP/malecns-directed-peer-gains/github-summary.json"
-          [[ -f "$summary" ]] || { echo "missing directed peer gains summary" >&2; exit 1; }
-          python - "$summary" >> "$GITHUB_STEP_SUMMARY" <<'PY'
-          import json,sys
-          d=json.load(open(sys.argv[1],encoding='utf-8'))
-          print('## MaleCNS directed channel-to-channel teaching gains')
-          print(f"- Kaggle: {d.get('kernel_url')}")
-          print(f"- schema: `{d.get('schema')}`")
-          print(f"- seeds: `{d.get('seeds')}`")
-          for row in d.get('comparisons',[]):
-              print(f"- seed {row['seed']}: scalar unseen={row['scalar_unseen']:.6f}, directed unseen={row['directed_unseen']:.6f}, Δ={row['directed_minus_scalar_unseen']:+.6f}; scalar all={row['scalar_all']:.6f}, directed all={row['directed_all']:.6f}")
-          print(f"- mean directed-scalar unseen: **{d.get('mean_directed_minus_scalar_unseen')}**")
-          print(f"- mean directed-scalar all: **{d.get('mean_directed_minus_scalar_all')}**")
-          print(f"- preregistered checks: `{d.get('preregistered_checks')}`")
-          print('- no inference-time attention/router; directed matrix affects training only')
-          print('- preregistered curriculum evidence only; not Stage A/B')
-          PY
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: malecns-directed-peer-gains-${{ github.run_id }}
-          path: ${{ runner.temp }}/malecns-directed-peer-gains
-          if-no-files-found: error
-          retention-days: 30
+      - run: echo "Disabled while semantic-cache Kaggle benchmark is the only active MaleCNS submission."
