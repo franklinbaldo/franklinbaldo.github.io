@@ -1,0 +1,226 @@
+name: MaleCNS Confirmatory Retrieve Kaggle Output
+
+# Retrieval only. This workflow never pushes a kernel and never asks for a GPU.
+#
+# A completed Kaggle kernel is immutable, but the output endpoints return 429/503
+# for minutes after COMPLETE, and the status endpoint 503s mid-run. Re-running the
+# compute workflow to get past a rate limit would burn a T4 to re-derive bytes
+# that already exist on Kaggle, so download lives on its own and can be retried as
+# often as the API demands.
+#
+# The distinction that matters: a transport error is not a kernel failure. The
+# compute script greps the status text for "error", which matches the string
+# "503 Server Error" and abandoned a healthy running kernel. Only an actual
+# KernelWorkerStatus of ERROR/CANCELLED counts as the job failing.
+#
+# Case in point: kernel v5 reached COMPLETE at 2026-09-15T00:23:40Z, having passed
+# both input fingerprint gates, and the compute job still exited 1 -- eight 429s in
+# a row on ListKernelSessionOutput. The compute was fine; only the courier failed.
+# This workflow exists so that costs nothing but a retry.
+
+# The push trigger is not a convenience: workflow_dispatch only exists for
+# workflows already on the default branch, and this one is deliberately still
+# inside a draft PR. Scoped to this file so touching it never cancels or
+# re-triggers the compute workflow, which watches different paths.
+on:
+  push:
+    branches:
+      - experiment/malecns-confirmatory-kaggle-cache
+    paths:
+      - ".github/workflows/malecns-confirmatory-retrieve-output.yml"
+  workflow_dispatch:
+    inputs:
+      kernel:
+        description: Kaggle kernel slug; defaults to the confirmatory GPU cache kernel
+        required: false
+        default: ""
+        type: string
+      file_pattern:
+        description: regex selecting the output file to download
+        required: false
+        default: ".*malecns-confirmatory-gpu-cache[.]zip$"
+        type: string
+      attempts:
+        description: download attempts, with exponential backoff between them
+        required: false
+        default: "10"
+        type: string
+      wait_minutes:
+        description: how long to wait for the kernel to reach COMPLETE before giving up
+        required: false
+        default: "120"
+        type: string
+      allow_failed:
+        description: fetch output and logs even from a kernel that reported ERROR
+        required: false
+        default: "false"
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-confirmatory-retrieve
+  cancel-in-progress: false
+
+jobs:
+  retrieve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Wait for COMPLETE, tolerating transport errors
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_MALECNS_CONFIRMATORY_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_CONFIRMATORY_KERNEL_ID }}
+          KERNEL_INPUT: ${{ inputs.kernel }}
+          WAIT_MINUTES: ${{ inputs.wait_minutes || '120' }}
+          ALLOW_FAILED: ${{ inputs.allow_failed || 'true' }}
+        run: |
+          set -euo pipefail
+          KERNEL="${KERNEL_INPUT:-}"
+          [[ -n "$KERNEL" ]] || KERNEL="${KAGGLE_MALECNS_CONFIRMATORY_KERNEL_ID:-}"
+          [[ -n "$KERNEL" ]] || KERNEL="${KAGGLE_USERNAME}/malecns-confirmatory-gpu-cache"
+          echo "KERNEL=$KERNEL" >> "$GITHUB_ENV"
+          echo "polling $KERNEL"
+
+          deadline=$(( $(date +%s) + WAIT_MINUTES * 60 ))
+          transport=0
+          while :; do
+            STATUS="$(kaggle kernels status "$KERNEL" 2>&1 || true)"
+            echo "$STATUS"
+            if grep -Eqi 'KernelWorkerStatus[.](COMPLETE|SUCCESS)' <<<"$STATUS"; then
+              echo "kernel is COMPLETE"
+              break
+            fi
+            if grep -Eqi 'KernelWorkerStatus[.](ERROR|CANCEL|FAILED)' <<<"$STATUS"; then
+              # A failed kernel still has a log, and the log is the only way to tell
+              # an input-fingerprint abort apart from a crash. Fetching it costs no GPU.
+              if [[ "$ALLOW_FAILED" == "true" ]]; then
+                echo "kernel reported failure; continuing to fetch its log for diagnosis"
+                echo "KERNEL_FAILED=1" >> "$GITHUB_ENV"
+                break
+              fi
+              echo "kernel itself reported failure" >&2
+              exit 1
+            fi
+            if grep -Eq '[0-9]{3} (Client|Server) Error' <<<"$STATUS"; then
+              transport=$(( transport + 1 ))
+              echo "transport error #${transport}; kernel unaffected, still waiting" >&2
+            fi
+            if (( $(date +%s) >= deadline )); then
+              echo "kernel did not reach COMPLETE within ${WAIT_MINUTES}m" >&2
+              exit 1
+            fi
+            sleep 30
+          done
+          echo "transport errors tolerated while waiting: ${transport}"
+
+      - name: Download kernel output with exponential backoff
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          FILE_PATTERN: ${{ inputs.file_pattern || '.*malecns-confirmatory-gpu-cache[.]zip$' }}
+          ATTEMPTS: ${{ inputs.attempts || '10' }}
+        run: |
+          set -euo pipefail
+          DEST="$RUNNER_TEMP/kaggle-output"
+          mkdir -p "$DEST"
+          # A failed kernel has no cache zip, so widen the pattern to whatever it
+          # did leave behind -- the log is the whole point of the trip.
+          if [[ "${KERNEL_FAILED:-}" == "1" ]]; then FILE_PATTERN='.*'; fi
+          delay=15
+          downloaded=0
+          for attempt in $(seq 1 "$ATTEMPTS"); do
+            rm -rf "${DEST:?}"/*
+            if kaggle kernels output "$KERNEL" -p "$DEST" -o --file-pattern "$FILE_PATTERN"; then
+              echo "downloaded on attempt ${attempt}"
+              downloaded=1
+              break
+            fi
+            echo "attempt ${attempt} failed; sleeping ${delay}s" >&2
+            sleep "$delay"
+            delay=$(( delay * 2 ))
+            if (( delay > 600 )); then delay=600; fi
+          done
+          [[ "$downloaded" == 1 ]] || { echo "output unavailable after ${ATTEMPTS} attempts" >&2; exit 1; }
+          find "$DEST" -type f -exec ls -l {} +
+          for log in $(find "$DEST" -type f -name '*.log' -o -type f -name '*.txt'); do
+            echo "----- ${log} -----"
+            tail -c 20000 "$log"
+          done
+          ZIP="$(find "$DEST" -type f -name '*.zip' -print -quit)"
+          if [[ -z "$ZIP" ]]; then
+            if [[ "${KERNEL_FAILED:-}" == "1" ]]; then
+              # The log is printed above; the job still fails, because a kernel that
+              # errored is not a retrieval that succeeded.
+              echo "kernel failed and produced no cache zip; see log above" >&2
+              exit 1
+            fi
+            echo "no zip in kernel output" >&2
+            exit 1
+          fi
+          cp "$ZIP" "$RUNNER_TEMP/malecns-confirmatory-gpu-cache.zip"
+
+      - name: Summarize parity
+        if: env.KERNEL_FAILED != '1'
+        run: |
+          set -euo pipefail
+          rm -rf "$RUNNER_TEMP/cache-result"
+          mkdir -p "$RUNNER_TEMP/cache-result"
+          unzip -q "$RUNNER_TEMP/malecns-confirmatory-gpu-cache.zip" -d "$RUNNER_TEMP/cache-result"
+          find "$RUNNER_TEMP/cache-result" -maxdepth 2 -type f | head -20
+          python - "$RUNNER_TEMP/cache-result/gpu-cache-manifest.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          data = json.load(open(sys.argv[1], encoding='utf-8'))
+          parity = data.get('parity') or {}
+          print('## MaleCNS confirmatory CUDA cache (retrieved)')
+          print(f"- device: **{data.get('device')}**; torch {data.get('torch')}; CUDA {data.get('cuda')}")
+          print(f"- feature fingerprint: `{data.get('features_hash')}`")
+          print(f"- graph fingerprint: `{data.get('graph_hash')}`")
+          if parity:
+              print(f"- parity gain: {parity.get('gain')}")
+              print(f"- parity max abs: **{parity.get('max_abs'):.3e}**")
+              print(f"- parity relative RMSE: **{parity.get('relative_rmse'):.3e}**")
+              if 'cpu_macro_tag_auprc' in parity:
+                  print(f"- macroAP CPU/GPU: **{parity['cpu_macro_tag_auprc']:.6f} / {parity['gpu_macro_tag_auprc']:.6f}** (delta {parity['macro_tag_auprc_abs_delta']:.3e})")
+                  print(f"- anyAUPRC CPU/GPU: **{parity['cpu_inside_auprc']:.6f} / {parity['gpu_inside_auprc']:.6f}** (delta {parity['inside_auprc_abs_delta']:.3e})")
+          cells = data.get('cells', [])
+          written = sum(row.get('status') == 'written' for row in cells)
+          print(f"- operator/seed cells written: **{written}** of {len(cells)}")
+          gains = sorted({g for row in cells for g in (row.get('gains') or [])})
+          print(f"- gains per cell: {gains}")
+          PY
+
+      - name: Upload retrieved cache
+        if: env.KERNEL_FAILED != '1'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: malecns-confirmatory-gpu-cache-retrieved-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-confirmatory-gpu-cache.zip
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload raw kernel output for diagnosis
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: malecns-confirmatory-kernel-output-${{ github.run_id }}
+          path: ${{ runner.temp }}/kaggle-output
+          if-no-files-found: warn
+          retention-days: 7
