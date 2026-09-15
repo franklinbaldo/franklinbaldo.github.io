@@ -64,11 +64,14 @@ jobs:
           HF_TOKEN: ${{ github.event.inputs.publish == 'true' && secrets.HF_TOKEN || '' }}
           PAPERS_REF: ${{ github.event.inputs.papers_ref || '' }}
         run: |
+          # push events (branch smoke) carry no inputs: smoke run on the pinned papers ref
+          mode="${{ github.event.inputs.mode || 'smoke' }}"
+          export PAPERS_REF="${PAPERS_REF:-8804ad4}"
           bash scripts/malecns-multieurlex21/stages.sh \
             --output-dir "$RUNNER_TEMP/malecns-stages" \
             --papers-ref "$PAPERS_REF" \
             --gpu T4 \
-            --mode "${{ github.event.inputs.mode }}"
+            --mode "$mode"
       - name: Summarize stages
         if: always()
         run: |
