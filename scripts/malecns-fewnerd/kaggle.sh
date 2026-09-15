@@ -20,8 +20,6 @@ done
 
 [[ -n "$OUTPUT" ]] || { echo "--output is required" >&2; exit 2; }
 if [[ -z "$KERNEL_ID" && -n "${KAGGLE_USERNAME:-}" ]]; then
-  # Reuse the already-proven private MaleCNS kernel instead of inventing a
-  # fresh slug that may not exist yet or may be inaccessible via kernels.get.
   KERNEL_ID="${KAGGLE_USERNAME}/malecns-byte-tagger-experiment"
 fi
 [[ "$KERNEL_ID" == */* && "$KERNEL_ID" != /* ]] || { echo "KAGGLE_FEWNERD_KERNEL_ID/KAGGLE_MALECNS_KERNEL_ID or KAGGLE_USERNAME is required" >&2; exit 2; }
@@ -51,7 +49,7 @@ PY
 cat > "$STAGE/kernel-metadata.json" <<JSON
 {
   "id": "$KERNEL_ID",
-  "title": "MaleCNS Few-NERD byte NER smoke",
+  "title": "MaleCNS byte tagger experiment",
   "code_file": "job.py",
   "language": "python",
   "kernel_type": "script",
