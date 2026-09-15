@@ -43,7 +43,7 @@ jobs:
           bash scripts/malecns-peer-reliability/kaggle.sh \
             --output-dir "$RUNNER_TEMP/malecns-peer-reliability" \
             --kernel-id "$KAGGLE_USERNAME/malecns-peer-reliability-grid" \
-            --papers-ref "399020588b1b32941d6a4a03473f21d21bdd921b" \
+            --papers-ref "43aea5a67b25cf7ac3bf6599924e6b715d2bb321" \
             --accelerator NvidiaTeslaT4
       - name: Summarize peer reliability grid
         run: |
