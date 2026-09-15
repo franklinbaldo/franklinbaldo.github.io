@@ -3,8 +3,8 @@ set -euo pipefail
 
 SUMMARY=""
 ACCELERATOR="${KAGGLE_ACCELERATOR:-NvidiaTeslaT4}"
-KERNEL_ID="${KAGGLE_MALECNS_SCREEN_KERNEL_ID:-}"
-VISUAL_REF="${VISUAL_REF:-ca157208329c7f09c6aaa3c3fb510bfc62b351c1}"
+KERNEL_ID="${KAGGLE_MALECNS_EFFICIENCY_KERNEL_ID:-}"
+VISUAL_REF="${VISUAL_REF:-46a09721f069c2cfb955fa78c702eb6425199532}"
 RUNTIME_REF="${RUNTIME_REF:-437083ae30f24f6f424ce405182d90b275b62621}"
 
 while [[ $# -gt 0 ]]; do
@@ -21,7 +21,7 @@ done
 [[ -n "$SUMMARY" ]] || { echo "--summary is required" >&2; exit 2; }
 [[ -n "${KAGGLE_USERNAME:-}" ]] || { echo "KAGGLE_USERNAME is required" >&2; exit 2; }
 if [[ -z "$KERNEL_ID" ]]; then
-  KERNEL_ID="${KAGGLE_USERNAME}/malecns-stationary-screen-reward"
+  KERNEL_ID="${KAGGLE_USERNAME}/malecns-visual-efficiency"
 fi
 command -v kaggle >/dev/null || { echo "kaggle CLI not found" >&2; exit 2; }
 
@@ -48,13 +48,13 @@ visual_ref = os.environ["VISUAL_REF"]
 runtime_ref = os.environ["RUNTIME_REF"]
 kernel_id = os.environ["KERNEL_ID"]
 work = pathlib.Path("/kaggle/working")
-scratch = pathlib.Path("/kaggle/temp/malecns-stationary-screen-reward")
+scratch = pathlib.Path("/kaggle/temp/malecns-visual-efficiency")
 scratch.mkdir(parents=True, exist_ok=True)
 visual_repo = scratch / "papers-visual"
 runtime_repo = scratch / "papers-runtime"
 cache = scratch / "malecns-source-cache"
 runtime_out = work / "runtime"
-run_out = work / "screen-reward"
+run_out = work / "visual-efficiency"
 public_cache = work / "public-cache"
 for path in (runtime_out, run_out, public_cache):
     path.mkdir(parents=True, exist_ok=True)
@@ -114,30 +114,33 @@ run(
 
 run(
     sys.executable,
-    visual_exp / "scripts/run_stationary_screen_reward_loop.py",
+    visual_exp / "scripts/run_visual_efficiency_curriculum.py",
     "--graph", graph,
     "--interface", interface,
     "--screen-geometry", screen_geometry,
     "--output-dir", run_out,
     "--device", "cuda",
     "--flies", "8",
-    "--steps", "400",
-    "--population", "9",
-    "--generations", "3",
+    "--steps", "300",
+    "--population", "7",
+    "--generations-per-budget", "2",
+    "--budgets", "0.12,0.06,0.03",
     "--radius", "0.75",
-    "--seed", "20260914",
+    "--heading-offset-deg", "45",
+    "--seed", "20260915",
     "--spectral-scale", "3776.27",
     "--gain", "1.0",
     "--leak", "0.2",
     "--visual-scale", "0.5",
     "--reward-scale", "0.08",
     "--reward-feedback-gain", "1000.0",
+    "--latent-gain", "20000",
     "--mutation-sigma", "0.18",
     "--telemetry-every", "100",
     cwd=visual_exp,
 )
 
-summary = json.loads((run_out / "screen-reward-summary.json").read_text(encoding="utf-8"))
+summary = json.loads((run_out / "visual-efficiency-summary.json").read_text(encoding="utf-8"))
 summary["visual_ref"] = visual_ref
 summary["runtime_ref"] = runtime_ref
 summary["kernel"] = kernel_id
@@ -155,9 +158,11 @@ for name in (
     "progress.jsonl",
     "winner-retina.txt",
     "winner-top-receptors.json",
-    "screen-reward-summary.json",
+    "visual-efficiency-summary.json",
 ):
     shutil.copy2(run_out / name, public_cache / name)
+for path in run_out.glob("winner-retina-budget-*.txt"):
+    shutil.copy2(path, public_cache / path.name)
 shutil.copy2(interface_manifest, public_cache / "visual-interface.json")
 shutil.copy2(screen_geometry_manifest, public_cache / "screen-geometry.json")
 (public_cache / "provenance.json").write_text(
@@ -168,6 +173,7 @@ shutil.copy2(screen_geometry_manifest, public_cache / "screen-geometry.json")
             "kernel": kernel_id,
             "kaggle_url": f"https://www.kaggle.com/code/{kernel_id}",
             "public": True,
+            "experiment": "malecns-visual-efficiency-curriculum-v1",
         },
         indent=2,
         sort_keys=True,
@@ -193,7 +199,7 @@ PY
 cat > "$STAGE/kernel-metadata.json" <<JSON
 {
   "id": "$KERNEL_ID",
-  "title": "MaleCNS Stationary Screen Reward",
+  "title": "MaleCNS Visual Efficiency",
   "code_file": "job.py",
   "language": "python",
   "kernel_type": "script",
