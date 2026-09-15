@@ -117,23 +117,48 @@ JSON
 
 kaggle kernels push -p "$STAGE" --accelerator "$ACCELERATOR" -t "${KAGGLE_MALECNS_WORD_TIMEOUT:-21600}"
 echo "Public Kaggle kernel: https://www.kaggle.com/code/$KERNEL_ID"
-kaggle kernels logs "$KERNEL_ID" --follow --interval 10 || true
+echo "Kaggle session-status polling is intentionally disabled: the v1 GetKernelSessionStatus endpoint currently returns HTTP 404."
+echo "Completion will be detected from fresh public output instead."
 
 deadline=$(( $(date +%s) + ${KAGGLE_MALECNS_WORD_WAIT_SECONDS:-21600} ))
-while :; do
-  STATUS="$(kaggle kernels status "$KERNEL_ID" 2>&1 || true)"; echo "$STATUS"
-  grep -Eqi 'KernelWorkerStatus[.](COMPLETE|SUCCESS)' <<<"$STATUS" && break
-  if grep -Eqi 'KernelWorkerStatus[.](ERROR|CANCEL|FAILED)' <<<"$STATUS"; then exit 1; fi
-  (( $(date +%s) < deadline )) || exit 1
-  sleep 20
+downloaded=0
+attempt=0
+while (( $(date +%s) < deadline )); do
+  attempt=$((attempt + 1))
+  rm -rf "${DOWNLOAD:?}"/*
+  if kaggle kernels output "$KERNEL_ID" -p "$DOWNLOAD" -o \
+      --file-pattern '.*(github-summary[.]json|word-curriculum[.]json|provenance[.]json)$' >/tmp/kaggle-output.log 2>&1; then
+    summary="$(find "$DOWNLOAD" -type f -name github-summary.json -print -quit)"
+    if [[ -n "$summary" ]] && python3 - "$summary" "$PAPERS_REF" "$CAUSAGANHA_REF" <<'PY'
+import json, sys
+p=json.load(open(sys.argv[1], encoding='utf-8'))
+if p.get('papers_ref') != sys.argv[2] or p.get('causaganha_ref') != sys.argv[3]:
+    raise SystemExit(1)
+print('Fresh Kaggle output matches requested refs.')
+PY
+    then
+      downloaded=1
+      break
+    fi
+    echo "Kaggle output exists but is from an older kernel version; continuing to poll."
+  else
+    if (( attempt == 1 || attempt % 10 == 0 )); then
+      echo "Kaggle output not ready yet (attempt $attempt)."
+      tail -n 3 /tmp/kaggle-output.log || true
+    fi
+  fi
+  sleep "${KAGGLE_MALECNS_WORD_OUTPUT_INTERVAL:-30}"
 done
 
-for attempt in $(seq 1 10); do
-  rm -rf "${DOWNLOAD:?}"/*
-  if kaggle kernels output "$KERNEL_ID" -p "$DOWNLOAD" -o --file-pattern '.*(github-summary[.]json|word-curriculum[.]json|provenance[.]json)$'; then break; fi
-  sleep $((attempt*10))
-done
+if [[ "$downloaded" != 1 ]]; then
+  echo "Fresh Kaggle output did not appear before deadline." >&2
+  echo "Last non-following log snapshot (diagnostic only):" >&2
+  kaggle kernels logs "$KERNEL_ID" 2>&1 | tail -n 120 >&2 || true
+  exit 1
+fi
+
 for name in github-summary.json word-curriculum.json provenance.json; do
-  src="$(find "$DOWNLOAD" -type f -name "$name" -print -quit)"; [[ -n "$src" ]] || exit 1
+  src="$(find "$DOWNLOAD" -type f -name "$name" -print -quit)"
+  [[ -n "$src" ]] || { echo "missing $name in Kaggle output" >&2; exit 1; }
   cp "$src" "$OUTPUT_DIR/$name"
 done
