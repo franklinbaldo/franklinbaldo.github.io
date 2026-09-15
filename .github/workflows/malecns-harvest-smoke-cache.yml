@@ -27,38 +27,40 @@ jobs:
         run: |
           set -euxo pipefail
           python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
-      - name: Download completed cached smoke outputs
+      - name: Download candidate kernel outputs
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
         run: |
           set -euxo pipefail
-          mkdir -p "$RUNNER_TEMP/kaggle-output"
-          kaggle kernels output "${KAGGLE_USERNAME}/malecns-cached-telemetry-smoke-64x64" -p "$RUNNER_TEMP/kaggle-output" -o
-          echo '=== downloaded files ==='
-          find "$RUNNER_TEMP/kaggle-output" -type f -printf '%s %p\n' | sort -nr | head -100
-          echo '=== Kaggle log ==='
-          for f in "$RUNNER_TEMP"/kaggle-output/*.log; do
-            [[ -f "$f" ]] || continue
-            cat "$f"
+          ROOT="$RUNNER_TEMP/kaggle-output"
+          mkdir -p "$ROOT"
+          for slug in malecns-cached-telemetry-smoke-64x64 malecns-static-swarm-evolution; do
+            dest="$ROOT/$slug"
+            mkdir -p "$dest"
+            echo "=== $slug status ==="
+            kaggle kernels status "${KAGGLE_USERNAME}/$slug" || true
+            kaggle kernels output "${KAGGLE_USERNAME}/$slug" -p "$dest" -o || true
+            echo "=== $slug files ==="
+            find "$dest" -type f -printf '%s %p\n' | sort -nr | head -100
+            echo "=== $slug logs/summaries ==="
+            while IFS= read -r f; do
+              echo "--- $f ---"
+              cat "$f"
+              echo
+            done < <(find "$dest" -type f \( -name '*.log' -o -name '*summary*.json' -o -name '*heartbeat*.jsonl' \) | sort)
           done
-          echo '=== summaries / heartbeats ==='
-          while IFS= read -r f; do
-            echo "--- $f ---"
-            cat "$f"
-            echo
-          done < <(find "$RUNNER_TEMP/kaggle-output" -type f \( -name '*summary*.json' -o -name '*heartbeat*.jsonl' \) | sort)
       - name: Pack harvested evidence
         run: |
           set -euxo pipefail
           OUT="$RUNNER_TEMP/harvest"
           mkdir -p "$OUT"
-          find "$RUNNER_TEMP/kaggle-output" -type f \( -name '*.log' -o -name '*summary*.json' -o -name '*heartbeat*.jsonl' -o -name 'graph.npz' -o -name 'visual-interface.npz' -o -name 'screen-geometry.npz' \) -exec cp -t "$OUT" {} +
+          find "$RUNNER_TEMP/kaggle-output" -type f \( -name '*.log' -o -name '*summary*.json' -o -name '*heartbeat*.jsonl' -o -name 'graph.npz' -o -name 'visual-interface.npz' -o -name 'screen-geometry.npz' \) -exec cp --parents -t "$OUT" {} +
           find "$OUT" -type f -printf '%s %p\n' | sort -nr
           test -n "$(find "$OUT" -type f -print -quit)"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: malecns-cached-smoke-harvest-${{ github.run_id }}
+          name: malecns-smoke-harvest-${{ github.run_id }}
           path: ${{ runner.temp }}/harvest/
           if-no-files-found: error
           retention-days: 30
