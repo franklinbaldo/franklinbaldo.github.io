@@ -1,4 +1,4 @@
-name: MaleCNS Visual Efficiency Kaggle
+name: MaleCNS Online Plastic Screen Learning
 
 on:
   push:
@@ -10,9 +10,9 @@ on:
   workflow_dispatch:
     inputs:
       visual_ref:
-        description: Exact papers commit containing resumable six-blob visual-efficiency curriculum v6
+        description: Exact papers commit containing the online reward-plastic screen learner
         required: true
-        default: "1f0d34c844a824524f84e95bcba034b055405a48"
+        default: "6e5b4897d8f8ace976dcf351a86d1bc684a462ba"
         type: string
       runtime_ref:
         description: Exact papers commit containing the canonical MaleCNS compiler
@@ -29,11 +29,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: malecns-visual-efficiency-kaggle
-  cancel-in-progress: false
+  group: malecns-online-plastic-kaggle
+  cancel-in-progress: true
 
 jobs:
-  run-visual-efficiency:
+  run-online-plastic:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
@@ -51,47 +51,48 @@ jobs:
           [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
           python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
 
-      - name: Run public resumable six-blob curriculum on Kaggle
+      - name: Run online reward-plastic learner on Kaggle
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
-          VISUAL_REF: ${{ inputs.visual_ref || '1f0d34c844a824524f84e95bcba034b055405a48' }}
+          VISUAL_REF: ${{ inputs.visual_ref || '6e5b4897d8f8ace976dcf351a86d1bc684a462ba' }}
           RUNTIME_REF: ${{ inputs.runtime_ref || '437083ae30f24f6f424ce405182d90b275b62621' }}
           ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
         run: |
-          bash scripts/malecns-visual-attractor/kaggle-efficiency-v6.sh \
-            --summary "$RUNNER_TEMP/malecns-visual-efficiency-summary.json" \
+          bash scripts/malecns-visual-attractor/kaggle-online-plastic.sh \
+            --summary "$RUNNER_TEMP/malecns-online-plastic-summary.json" \
             --visual-ref "$VISUAL_REF" \
             --runtime-ref "$RUNTIME_REF" \
             --accelerator "$ACCELERATOR"
 
-      - name: Summarize efficiency curriculum
+      - name: Summarize online learning
         run: |
-          python - "$RUNNER_TEMP/malecns-visual-efficiency-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          python - "$RUNNER_TEMP/malecns-online-plastic-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
           import json, sys
           d=json.load(open(sys.argv[1], encoding='utf-8'))
-          best=d.get('lowest_budget_best', {})
-          rewards=best.get('condition_reward', {})
+          episodes=d.get('episodes', [])
+          first=episodes[0] if episodes else {}
+          last=episodes[-1] if episodes else {}
           learning=d.get('learning_state', {})
-          print('## MaleCNS visual-efficiency curriculum v6')
+          params=d.get('parameters', {})
+          print('## MaleCNS online reward-plastic screen learning')
           print(f"- visual ref: `{d.get('visual_ref')}`")
           print(f"- learning state: **{learning.get('mode', 'unknown')}**")
-          print(f"- resolved / total receptors: **{d.get('receiver', {}).get('optic_column_resolved')} / {d.get('receiver', {}).get('visual_receptors_total')}**")
-          print(f"- budgets: **{d.get('parameters', {}).get('budgets')}**")
-          print(f"- lowest-budget advantage vs strongest control: **{best.get('advantage')}**")
-          print(f"- max energy mismatch all stages: **{d.get('max_energy_mismatch_all_stages')}**")
-          print(f"- learned reward: **{rewards.get('learned')}**")
-          print(f"- uniform TV: **{rewards.get('uniform_tv')}**")
-          print(f"- spatial shuffle: **{rewards.get('spatial_shuffle')}**")
-          print(f"- blank: **{rewards.get('blank')}**")
-          print(f"- learned approach: **{best.get('approach', {}).get('learned')}**")
+          print(f"- rule: **{d.get('learning_rule', {}).get('type')}**")
+          print(f"- budgets: **{params.get('budgets')}**")
+          print(f"- episodes per budget / steps: **{params.get('episodes_per_budget')} / {params.get('steps')}**")
+          print(f"- first episode advantage: **{first.get('advantage')}**")
+          print(f"- last episode advantage: **{last.get('advantage')}**")
+          print(f"- best training advantage: **{d.get('best_training_advantage')}**")
+          print(f"- final adapter weight norm: **{d.get('final_weight_norm')}**")
+          print(f"- max energy mismatch: **{d.get('max_energy_mismatch')}**")
           print(f"- public Kaggle: {d.get('kaggle_url')}")
-          print('- calibration only; v6 resumes the prior learned transducer when available and uses a six-blob visual vocabulary')
+          print('- training calibration: replay is not the learner; the 6x6 adapter updates online from receiver reward')
           PY
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: malecns-visual-efficiency-summary-${{ github.run_id }}
-          path: ${{ runner.temp }}/malecns-visual-efficiency-summary.json
+          name: malecns-online-plastic-summary-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-online-plastic-summary.json
           if-no-files-found: error
           retention-days: 30
