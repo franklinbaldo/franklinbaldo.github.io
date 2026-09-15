@@ -40,10 +40,10 @@ jobs:
           KAGGLE_MALECNS_COUPLED_TIMEOUT: "900"
           KAGGLE_MALECNS_COUPLED_WAIT_SECONDS: "900"
         run: |
-          bash scripts/malecns-coupled-flavour/kaggle.sh \
+          bash scripts/malecns-coupled-flavour/kaggle-v2.sh \
             --output-dir "$RUNNER_TEMP/malecns-coupled-flavour" \
             --kernel-id "$KAGGLE_USERNAME/malecns-coupled-flavour-translation-smoke" \
-            --papers-ref "f8dd6fcc8856d17df656d06c372a9f489230b252" \
+            --papers-ref "8b65d0e4d3233f670a6e356c0167882e32c08ec9" \
             --accelerator NvidiaTeslaT4
       - name: Summarize coupled flavour smoke
         run: |
