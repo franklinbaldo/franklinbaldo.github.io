@@ -1,0 +1,68 @@
+name: MaleCNS Coupled Flavour Adapters Kaggle
+
+on:
+  push:
+    branches:
+      - experiment/malecns-coupled-flavour-kaggle
+    paths:
+      - ".github/workflows/malecns-coupled-flavour-adapters.yml"
+      - "scripts/malecns-coupled-flavour/kaggle-v3.sh"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-coupled-flavour-adapters-kaggle
+  cancel-in-progress: true
+
+jobs:
+  run-adapter-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || exit 2
+          [[ -n "$KAGGLE_USERNAME" ]] || exit 2
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+      - name: Run per-channel adapter smoke on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_MALECNS_COUPLED_TIMEOUT: "900"
+          KAGGLE_MALECNS_COUPLED_WAIT_SECONDS: "900"
+        run: |
+          bash scripts/malecns-coupled-flavour/kaggle-v3.sh \
+            --output-dir "$RUNNER_TEMP/malecns-coupled-flavour-adapters" \
+            --kernel-id "$KAGGLE_USERNAME/malecns-coupled-flavour-adapter-smoke" \
+            --papers-ref "07de41ea944150f19c0a3ad532d5f89b4066d3b9" \
+            --accelerator NvidiaTeslaT4
+      - name: Summarize adapter smoke
+        run: |
+          python - "$RUNNER_TEMP/malecns-coupled-flavour-adapters/github-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1],encoding='utf-8'))
+          print('## MaleCNS per-(encoder, scale) adapters')
+          print(f"- Kaggle: {d.get('kernel_url')}")
+          print(f"- channels/spaces: **{len(d.get('spaces', []))}**")
+          print(f"- independent final: `{d.get('independent', {}).get('curve', [])[-1].get('validation') if d.get('independent', {}).get('curve') else None}`")
+          print(f"- coupled final: `{d.get('coupled', {}).get('curve', [])[-1].get('validation') if d.get('coupled', {}).get('curve') else None}`")
+          rows=d.get('coupled',{}).get('final_flavours',[])
+          print('- adapter up norms: `' + str([(r.get('encoder'),r.get('scale'),r.get('adapter_up_norm')) for r in rows]) + '`')
+          print(f"- GPU: **{d.get('device')}**")
+          print('- exploratory curriculum smoke only')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-coupled-flavour-adapters-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-coupled-flavour-adapters
+          if-no-files-found: error
+          retention-days: 30
