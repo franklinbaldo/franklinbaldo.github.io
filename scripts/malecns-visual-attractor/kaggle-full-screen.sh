@@ -54,6 +54,16 @@ text = text.replace(
 )
 text = text.replace(
     'summary = json.loads((run_out / "visual-efficiency-summary.json").read_text(encoding="utf-8"))',
+    'run(\n'
+    '    sys.executable,\n'
+    '    visual_exp / "scripts/render_full_screen_images.py",\n'
+    '    "--summary", run_out / "full-screen-summary.json",\n'
+    '    "--frame", run_out / "best-full-screen-frame.npy",\n'
+    '    "--screen-geometry", screen_geometry,\n'
+    '    "--output-dir", run_out,\n'
+    '    "--device", "cpu",\n'
+    '    cwd=visual_exp,\n'
+    ')\n\n'
     'summary = json.loads((run_out / "full-screen-summary.json").read_text(encoding="utf-8"))',
 )
 text = text.replace('"title": "MaleCNS Visual Efficiency",', '"title": "MaleCNS Physical Full Screen",')
@@ -67,7 +77,14 @@ text = text.replace(
     '    "full-screen-decoder.npz",\n'
     '    "best-full-screen-frame.npy",\n'
     '    "best-full-screen-frame.pgm",\n'
-    '    "best-full-screen-frame.txt",\n):',
+    '    "best-full-screen-frame.txt",\n'
+    '    "best-full-screen-frame.png",\n'
+    '    "best-retina-initial-pose.npy",\n'
+    '    "best-retina-vs-uniform.npy",\n'
+    '    "best-retina-initial-pose-physical.png",\n'
+    '    "best-retina-initial-pose-contrast.png",\n'
+    '    "best-retina-vs-uniform.png",\n'
+    '    "image-artifacts.json",\n):',
 )
 text = text.replace(
     'for path in run_out.glob("winner-retina-budget-*.txt"):\n    shutil.copy2(path, public_cache / path.name)\n',
@@ -75,7 +92,7 @@ text = text.replace(
 )
 text = text.replace(
     '"experiment": "malecns-visual-efficiency-curriculum-v1",',
-    '"experiment": "malecns-physical-full-screen-attractor-v1",',
+    '"experiment": "malecns-physical-full-screen-attractor-v2-png",',
 )
 
 if checkpoint_b64:
@@ -97,11 +114,13 @@ if checkpoint_b64:
 
 for required in (
     'run_physical_full_screen_attractor.py',
+    'render_full_screen_images.py',
     '"--screen-width-px", "64"',
     '"--screen-height-px", "36"',
     '"--feature-dim", "256"',
     'full-screen-summary.json',
     'full-screen-decoder.npz',
+    'best-retina-initial-pose-physical.png',
 ):
     if required not in text:
         raise SystemExit(f'full-screen bridge rewrite missing {required}')
