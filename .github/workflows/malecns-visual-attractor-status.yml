@@ -7,29 +7,82 @@ on:
     paths:
       - ".github/workflows/malecns-visual-attractor-status.yml"
   workflow_dispatch:
+    inputs:
+      interval_seconds:
+        description: Seconds between Kaggle status probes
+        required: false
+        default: "120"
+        type: string
+      max_checks:
+        description: Maximum probes before the monitor stops
+        required: false
+        default: "180"
+        type: string
 
 permissions:
   contents: read
 
+concurrency:
+  group: malecns-visual-attractor-status
+  cancel-in-progress: true
+
 jobs:
   status:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 365
     steps:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
-      - name: Query current private Kaggle kernel
+      - name: Monitor current private Kaggle kernel
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
           KERNEL_ID: ${{ vars.KAGGLE_MALECNS_VISUAL_ATTRACTOR_KERNEL_ID }}
+          INTERVAL_SECONDS: ${{ inputs.interval_seconds || '120' }}
+          MAX_CHECKS: ${{ inputs.max_checks || '180' }}
         run: |
           set -euo pipefail
           [[ -n "$KAGGLE_API_TOKEN" ]] || exit 2
           [[ -n "$KAGGLE_USERNAME" ]] || exit 2
           python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
           KERNEL="${KERNEL_ID:-${KAGGLE_USERNAME}/malecns-visual-attractor}"
+          START="$(date +%s)"
           echo "kernel=$KERNEL"
-          date -u '+checked_at=%Y-%m-%dT%H:%M:%SZ'
-          kaggle kernels status "$KERNEL"
+          echo "interval_seconds=$INTERVAL_SECONDS"
+          echo "max_checks=$MAX_CHECKS"
+
+          for check in $(seq 1 "$MAX_CHECKS"); do
+            NOW="$(date +%s)"
+            ELAPSED=$((NOW - START))
+            CHECKED_AT="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+            STATUS="$(kaggle kernels status "$KERNEL" 2>&1 || true)"
+            printf 'heartbeat=%s checked_at=%s elapsed_s=%s status=%s\n' \
+              "$check" "$CHECKED_AT" "$ELAPSED" "$STATUS"
+            echo "::notice title=Kaggle heartbeat #$check::$CHECKED_AT | elapsed ${ELAPSED}s | $STATUS"
+
+            if grep -Eqi 'KernelWorkerStatus[.](COMPLETE|SUCCESS)' <<<"$STATUS"; then
+              {
+                echo "## MaleCNS visual-attractor Kaggle monitor"
+                echo "- kernel: \`$KERNEL\`"
+                echo "- terminal status: **COMPLETE**"
+                echo "- observed elapsed time: **${ELAPSED}s**"
+                echo "- probes: **$check**"
+              } >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            if grep -Eqi 'KernelWorkerStatus[.](ERROR|CANCEL|FAILED)' <<<"$STATUS"; then
+              {
+                echo "## MaleCNS visual-attractor Kaggle monitor"
+                echo "- kernel: \`$KERNEL\`"
+                echo "- terminal status: **ERROR**"
+                echo "- observed elapsed time: **${ELAPSED}s**"
+                echo "- probes: **$check**"
+              } >> "$GITHUB_STEP_SUMMARY"
+              exit 1
+            fi
+            sleep "$INTERVAL_SECONDS"
+          done
+
+          echo "monitor exhausted MAX_CHECKS without a terminal Kaggle state" >&2
+          exit 2
