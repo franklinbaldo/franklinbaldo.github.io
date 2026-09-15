@@ -584,7 +584,7 @@
 
       function canMoveTo(x, y, r = 0.28) {
         for (const ox of [-r, r]) {
-          for (const oy of [-r, oy]) {
+          for (const oy of [-r, r]) {
             if (isWall(x + ox, y + oy)) return false;
           }
         }
@@ -984,6 +984,8 @@
       // =========================================================================
       // 5. Batched Recurrence Loop (All Flies in 1 Pass through FlatBuffers)
       // =========================================================================
+      const SWARM_ACC = new Float32Array(16);
+
       function stepSwarmConnectome() {
         const t0 = performance.now();
 
@@ -1001,29 +1003,73 @@
         const scales = connectome.scales;
 
         const numFlies = swarm.length;
+        const states = [];
+        const nextStates = [];
+        const drives = [];
+        for (let f = 0; f < numFlies; f++) {
+          states.push(swarm[f].state);
+          nextStates.push(swarm[f].nextState);
+          drives.push(swarm[f].drive);
+        }
 
-        // Outer loop iterates through 165,122 rows once (L3 cache resident!)
-        for (let r = 0; r < N; r++) {
-          const s = offsets[r];
-          const e = offsets[r + 1];
-          let col = 0;
-
-          // Accumulators for each active fly
-          const acc = new Float32Array(numFlies);
-
-          for (let j = s; j < e; j++) {
-            col += deltas[j];
-            const w = lut[(weights[j >> 1] >> (4 * (j & 1))) & 0x0f];
-            for (let f = 0; f < numFlies; f++) {
-              acc[f] += w * swarm[f].state[col];
+        if (numFlies === 1) {
+          const s0 = states[0];
+          const nx0 = nextStates[0];
+          const drv0 = drives[0];
+          for (let r = 0; r < N; r++) {
+            const s = offsets[r],
+              e = offsets[r + 1];
+            let col = 0,
+              acc0 = 0;
+            for (let j = s; j < e; j++) {
+              col += deltas[j];
+              acc0 += lut[(weights[j >> 1] >> (4 * (j & 1))) & 0x0f] * s0[col];
             }
+            nx0[r] =
+              0.65 * s0[r] + 0.35 * Math.tanh(acc0 * scales[r] * 3.5 + drv0[r]);
           }
-
-          const sc = scales[r] * 3.5;
-          for (let f = 0; f < numFlies; f++) {
-            const pre = acc[f] * sc + swarm[f].drive[r];
-            swarm[f].nextState[r] =
-              0.65 * swarm[f].state[r] + 0.35 * Math.tanh(pre);
+        } else if (numFlies === 2) {
+          const s0 = states[0],
+            s1 = states[1];
+          const nx0 = nextStates[0],
+            nx1 = nextStates[1];
+          const drv0 = drives[0],
+            drv1 = drives[1];
+          for (let r = 0; r < N; r++) {
+            const s = offsets[r],
+              e = offsets[r + 1];
+            let col = 0,
+              acc0 = 0,
+              acc1 = 0;
+            for (let j = s; j < e; j++) {
+              col += deltas[j];
+              const w = lut[(weights[j >> 1] >> (4 * (j & 1))) & 0x0f];
+              acc0 += w * s0[col];
+              acc1 += w * s1[col];
+            }
+            const sc = scales[r] * 3.5;
+            nx0[r] = 0.65 * s0[r] + 0.35 * Math.tanh(acc0 * sc + drv0[r]);
+            nx1[r] = 0.65 * s1[r] + 0.35 * Math.tanh(acc1 * sc + drv1[r]);
+          }
+        } else {
+          for (let r = 0; r < N; r++) {
+            const s = offsets[r],
+              e = offsets[r + 1];
+            let col = 0;
+            SWARM_ACC.fill(0);
+            for (let j = s; j < e; j++) {
+              col += deltas[j];
+              const w = lut[(weights[j >> 1] >> (4 * (j & 1))) & 0x0f];
+              for (let f = 0; f < numFlies; f++) {
+                SWARM_ACC[f] += w * states[f][col];
+              }
+            }
+            const sc = scales[r] * 3.5;
+            for (let f = 0; f < numFlies; f++) {
+              nextStates[f][r] =
+                0.65 * states[f][r] +
+                0.35 * Math.tanh(SWARM_ACC[f] * sc + drives[f][r]);
+            }
           }
         }
 
