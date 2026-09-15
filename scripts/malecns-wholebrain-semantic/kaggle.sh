@@ -22,7 +22,7 @@ done
 [[ -n "$OUTPUT_DIR" ]] || { echo "--output-dir is required" >&2; exit 2; }
 [[ -n "${KAGGLE_USERNAME:-}" ]] || { echo "KAGGLE_USERNAME is required" >&2; exit 2; }
 if [[ -z "$KERNEL_ID" ]]; then
-  KERNEL_ID="${KAGGLE_USERNAME}/malecns-wholebrain-semantic-smoke"
+  KERNEL_ID="${KAGGLE_USERNAME}/malecns-whole-brain-semantic-gpu-smoke"
 fi
 [[ "$KERNEL_ID" == */* && "$KERNEL_ID" != /* ]] || { echo "invalid Kaggle kernel id: $KERNEL_ID" >&2; exit 2; }
 command -v kaggle >/dev/null || { echo "kaggle CLI not found" >&2; exit 2; }
@@ -76,7 +76,16 @@ public_cache.mkdir(exist_ok=True)
 run("git", "clone", "--filter=blob:none", "https://github.com/franklinbaldo/papers.git", repo)
 run("git", "checkout", papers_ref, cwd=repo)
 exp = repo / "experiments/malecns_wifi"
+src = exp / "src"
+# Kaggle's script runner can execute with a Python path that does not preserve
+# editable-install import hooks. Make the source tree explicit for this process
+# and every subprocess; dependencies are still installed normally below.
+os.environ["PYTHONPATH"] = str(src) + (
+    os.pathsep + os.environ["PYTHONPATH"] if os.environ.get("PYTHONPATH") else ""
+)
+sys.path.insert(0, str(src))
 run(sys.executable, "-m", "pip", "install", "--disable-pip-version-check", "-e", f"{exp}[train]")
+run(sys.executable, "-c", "import malecns_wifi; print('malecns_wifi import OK')")
 
 graph = inputs / "graph.npz"
 features = inputs / "features.npz"
@@ -137,12 +146,12 @@ provenance.write_text(json.dumps({
     "claim_status": payload["claim_status"],
 }, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
-for src, name in (
+for src_file, name in (
     (summary, "github-summary.json"),
     (report, "gpu-smoke.json"),
     (provenance, "provenance.json"),
 ):
-    shutil.copy2(src, public_cache / name)
+    shutil.copy2(src_file, public_cache / name)
 print(json.dumps({"event": "public_cache_ready", "files": sorted(p.name for p in public_cache.iterdir())}), flush=True)
 PY
 
@@ -219,7 +228,7 @@ done
 [[ "$downloaded" == 1 ]] || { echo "small public cache remained unavailable" >&2; exit 1; }
 
 for name in github-summary.json gpu-smoke.json provenance.json; do
-  src="$(find "$DOWNLOAD" -type f -name "$name" -print -quit)"
-  [[ -n "$src" ]] || { echo "missing $name in Kaggle output" >&2; exit 1; }
-  cp "$src" "$OUTPUT_DIR/$name"
+  src_file="$(find "$DOWNLOAD" -type f -name "$name" -print -quit)"
+  [[ -n "$src_file" ]] || { echo "missing $name in Kaggle output" >&2; exit 1; }
+  cp "$src_file" "$OUTPUT_DIR/$name"
 done
