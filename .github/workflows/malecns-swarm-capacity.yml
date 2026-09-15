@@ -1,4 +1,4 @@
-name: MaleCNS Swarm Capacity 4096x512
+name: MaleCNS Telemetry Smoke 64x64
 
 on:
   push:
@@ -19,7 +19,7 @@ concurrency:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
@@ -35,14 +35,16 @@ jobs:
           [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing KAGGLE_USERNAME" >&2; exit 2; }
           python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
 
-      - name: Run 4096-fly capacity probe on Kaggle
+      - name: Run telemetry smoke on Kaggle
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
           VISUAL_REF: e409aff2958baa6849ba3b577f1195500356bcf4
           RUNTIME_REF: 437083ae30f24f6f424ce405182d90b275b62621
+          KAGGLE_MALECNS_VISUAL_WAIT_SECONDS: 600
         run: |
-          echo "Launching telemetry-enabled probe: 4096 flies, microbatch 512"
+          echo "Telemetry smoke only: 64 flies, microbatch 64, 1 neural step"
+          echo "No 4096-fly run will start from this workflow."
           echo "Scientific ref: $VISUAL_REF"
           bash scripts/malecns-swarm-capacity/kaggle.sh \
             --summary "$RUNNER_TEMP/swarm-capacity-summary.json" \
@@ -55,7 +57,7 @@ jobs:
           python - "$RUNNER_TEMP/swarm-capacity-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
           import json, sys
           d = json.load(open(sys.argv[1], encoding='utf-8'))
-          print('## MaleCNS swarm capacity probe')
+          print('## MaleCNS telemetry smoke')
           print(f"- swarm: **{d['swarm_size']}**")
           print(f"- microbatch: **{d['microbatch_size']}**")
           print(f"- batches: **{d['microbatches']}**")
@@ -67,7 +69,7 @@ jobs:
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: malecns-swarm-capacity-${{ github.run_id }}
+          name: malecns-telemetry-smoke-${{ github.run_id }}
           path: ${{ runner.temp }}/swarm-capacity-summary.json
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 7
