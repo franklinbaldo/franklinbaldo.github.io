@@ -1,0 +1,80 @@
+name: MaleCNS Static Swarm Evolution
+
+on:
+  push:
+    branches:
+      - experiment/malecns-visual-attractor
+    paths:
+      - ".github/workflows/malecns-static-swarm.yml"
+      - "scripts/malecns-visual-attractor/kaggle-static-swarm.sh"
+  workflow_dispatch:
+    inputs:
+      visual_ref:
+        description: Exact green papers SHA for static optics swarm evolution
+        required: true
+        default: "ea69ed1de74d9ce85558b7fae01a84cc44ba103a"
+        type: string
+      runtime_ref:
+        required: true
+        default: "437083ae30f24f6f424ce405182d90b275b62621"
+        type: string
+      accelerator:
+        required: true
+        default: NvidiaTeslaT4
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-static-swarm-kaggle
+  cancel-in-progress: true
+
+jobs:
+  run-static-swarm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+      - name: Run static swarm evolution on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          VISUAL_REF: ${{ inputs.visual_ref || 'ea69ed1de74d9ce85558b7fae01a84cc44ba103a' }}
+          RUNTIME_REF: ${{ inputs.runtime_ref || '437083ae30f24f6f424ce405182d90b275b62621' }}
+          ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
+        run: |
+          bash scripts/malecns-visual-attractor/kaggle-static-swarm.sh \
+            --summary "$RUNNER_TEMP/static-swarm-summary.json" \
+            --visual-ref "$VISUAL_REF" \
+            --runtime-ref "$RUNTIME_REF" \
+            --accelerator "$ACCELERATOR"
+      - name: Summarize
+        run: |
+          python - "$RUNNER_TEMP/static-swarm-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          f=d.get('final_full_swarm_frozen',{})
+          print('## MaleCNS static swarm evolution')
+          print(f"- mean score vs uniform: **{f.get('mean_score')}**")
+          print(f"- positive responders: **{f.get('positive_responders')}/{d.get('swarm',{}).get('flies')}**")
+          print(f"- transport nonzeros: **{d.get('swarm',{}).get('transport_nonzeros')}**")
+          print(f"- Kaggle: {d.get('kaggle_url')}")
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-static-swarm-${{ github.run_id }}
+          path: ${{ runner.temp }}/static-swarm-summary.json
+          if-no-files-found: error
+          retention-days: 30
