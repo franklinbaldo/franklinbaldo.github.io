@@ -123,12 +123,17 @@ cat > "$STAGE/kernel-metadata.json" <<JSON
 }
 JSON
 
-kaggle kernels push -p "$STAGE" --accelerator "$ACCELERATOR" -t "${KAGGLE_MALECNS_COUPLED_TIMEOUT:-21600}"
+# This is a smoke, not a long scientific run: Kaggle itself should also stop quickly.
+kaggle kernels push -p "$STAGE" --accelerator "$ACCELERATOR" -t "${KAGGLE_MALECNS_COUPLED_TIMEOUT:-900}"
 echo "Public Kaggle kernel: https://www.kaggle.com/code/$KERNEL_ID"
 
-# Fresh output is the completion signal; do not call the broken Kaggle status endpoint.
-deadline=$(( $(date +%s) + ${KAGGLE_MALECNS_COUPLED_WAIT_SECONDS:-21600} ))
+# GetKernelSessionStatus is currently unreliable.  Instead, success is a fresh,
+# provenance-checked summary; failure is detected from the terminal kernel log.
+# The local watchdog is deliberately short so GitHub Actions cannot spin for hours
+# after a smoke has already failed on Kaggle.
+deadline=$(( $(date +%s) + ${KAGGLE_MALECNS_COUPLED_WAIT_SECONDS:-900} ))
 delay=10
+last_log_hash=""
 while :; do
   rm -rf "${DOWNLOAD:?}"/*
   if kaggle kernels output "$KERNEL_ID" -p "$DOWNLOAD" -o --file-pattern '.*(github-summary[.]json|coupled-flavour[.]json|provenance[.]json)$' >/tmp/kaggle-coupled-output.log 2>&1; then
@@ -143,13 +148,30 @@ PY
       break
     fi
   fi
+
+  # `logs` does not need the broken status call once the run has terminal logs.
+  # An unhandled Python traceback is terminal for our script kernels.
+  KLOG="$(kaggle kernels logs "$KERNEL_ID" 2>&1 || true)"
+  if [[ -n "$KLOG" ]]; then
+    log_hash="$(printf '%s' "$KLOG" | sha256sum | cut -d' ' -f1)"
+    if [[ "$log_hash" != "$last_log_hash" ]]; then
+      printf '%s\n' "$KLOG" | tail -n 80
+      last_log_hash="$log_hash"
+    fi
+    if grep -Eqi 'Traceback \(most recent call last\)|Version [0-9]+ failed to run|run - failure|KernelWorkerStatus[.](ERROR|CANCEL|FAILED)' <<<"$KLOG"; then
+      echo "Kaggle smoke failed; stopping GitHub Actions immediately." >&2
+      exit 1
+    fi
+  fi
+
   if (( $(date +%s) >= deadline )); then
     cat /tmp/kaggle-coupled-output.log >&2 || true
-    echo "fresh Kaggle output did not become available before deadline" >&2
+    [[ -z "$KLOG" ]] || printf '%s\n' "$KLOG" | tail -n 120 >&2
+    echo "Kaggle smoke produced neither fresh output nor success within 15 minutes." >&2
     exit 1
   fi
   sleep "$delay"
-  delay=$(( delay < 80 ? delay * 2 : 80 ))
+  delay=$(( delay < 30 ? delay * 2 : 30 ))
 done
 
 for name in github-summary.json coupled-flavour.json provenance.json; do
