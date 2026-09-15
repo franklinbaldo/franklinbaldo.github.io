@@ -19,7 +19,7 @@ concurrency:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
@@ -39,9 +39,11 @@ jobs:
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
-          VISUAL_REF: a955e780728b3f1063c5087201b0b4dd4865eeaf
+          VISUAL_REF: e409aff2958baa6849ba3b577f1195500356bcf4
           RUNTIME_REF: 437083ae30f24f6f424ce405182d90b275b62621
         run: |
+          echo "Launching telemetry-enabled probe: 4096 flies, microbatch 512"
+          echo "Scientific ref: $VISUAL_REF"
           bash scripts/malecns-swarm-capacity/kaggle.sh \
             --summary "$RUNNER_TEMP/swarm-capacity-summary.json" \
             --visual-ref "$VISUAL_REF" \
