@@ -1,0 +1,95 @@
+name: MaleCNS Few-NERD NER Colab
+
+on:
+  push:
+    branches:
+      - experiment/malecns-fewnerd-ner-colab
+    paths:
+      - ".github/workflows/malecns-fewnerd-ner-colab.yml"
+      - "scripts/malecns-fewnerd-ner/**"
+  workflow_dispatch:
+    inputs:
+      train_limit:
+        description: "Few-NERD train sentences for infrastructure smoke"
+        required: false
+        default: "2"
+      dev_limit:
+        description: "Few-NERD dev sentences for infrastructure smoke"
+        required: false
+        default: "2"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-fewnerd-ner-colab
+  cancel-in-progress: true
+
+jobs:
+  run-fewnerd-colab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Configure Colab CLI
+        env:
+          COLAB_TOKEN_JSON: ${{ secrets.COLAB_TOKEN_JSON }}
+          COLAB_ADC_JSON: ${{ secrets.COLAB_ADC_JSON }}
+        run: |
+          python -m pip install --disable-pip-version-check 'google-colab-cli==0.6.0' 'jupyter-kernel-client==0.9.0'
+          if [[ -n "$COLAB_TOKEN_JSON" ]]; then
+            install -d -m 700 "$HOME/.config/colab-cli"
+            printf '%s' "$COLAB_TOKEN_JSON" > "$HOME/.config/colab-cli/token.json"
+            chmod 600 "$HOME/.config/colab-cli/token.json"
+            echo "COLAB_AUTH_PROVIDER=oauth2" >> "$GITHUB_ENV"
+          elif [[ -n "$COLAB_ADC_JSON" ]]; then
+            printf '%s' "$COLAB_ADC_JSON" > "$RUNNER_TEMP/colab-adc.json"
+            chmod 600 "$RUNNER_TEMP/colab-adc.json"
+            echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/colab-adc.json" >> "$GITHUB_ENV"
+            echo "COLAB_AUTH_PROVIDER=adc" >> "$GITHUB_ENV"
+          else
+            echo "Missing Colab auth secret" >&2
+            exit 2
+          fi
+      - name: Run trained Few-NERD whole-brain smoke on Colab
+        env:
+          COLAB_EXEC_TIMEOUT: "7200"
+        run: |
+          train_limit="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.train_limit || '2' }}"
+          dev_limit="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dev_limit || '2' }}"
+          bash scripts/malecns-fewnerd-ner/colab.sh \
+            --output-dir "$RUNNER_TEMP/malecns-fewnerd" \
+            --papers-ref "953d7566548167a86b66d31047db75aceac30420" \
+            --gpu T4 \
+            --train-limit "$train_limit" \
+            --dev-limit "$dev_limit"
+      - name: Summarize Few-NERD smoke
+        run: |
+          summary="$RUNNER_TEMP/malecns-fewnerd/github-summary.json"
+          [[ -f "$summary" ]] || { echo "missing Few-NERD summary" >&2; exit 1; }
+          python - "$summary" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1],encoding='utf-8'))
+          curve=d.get('curve',[]); last=curve[-1] if curve else {}
+          print('## MaleCNS × Few-NERD NER trained smoke')
+          print(f"- status: **{d.get('claim_status')}**")
+          print(f"- graph: **{d.get('neurons')} neurons / {d.get('edges')} edges**")
+          print(f"- sensory neurons: **{d.get('sensory_neurons')}**")
+          print(f"- channels: **{len(d.get('semantic_channels',[]))}**")
+          print(f"- train/dev sentences: **{d.get('train_examples')}/{d.get('dev_examples')}**")
+          print(f"- test loaded: **{d.get('test_loaded')}**")
+          print(f"- dev exact entity F1: `{last.get('dev_exact_entity',{}).get('f1')}`")
+          print(f"- epoch seconds: `{last.get('seconds')}`")
+          print(f"- peak CUDA bytes: `{d.get('max_cuda_memory_allocated')}`")
+          print(f"- GPU: **{d.get('device')}**")
+          print('- infrastructure smoke only; not benchmark evidence')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-fewnerd-ner-colab-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-fewnerd
+          if-no-files-found: error
+          retention-days: 30
