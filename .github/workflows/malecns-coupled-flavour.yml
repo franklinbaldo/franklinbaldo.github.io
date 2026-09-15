@@ -19,7 +19,7 @@ concurrency:
 jobs:
   run-coupled-flavour-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
@@ -37,6 +37,8 @@ jobs:
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_MALECNS_COUPLED_TIMEOUT: "900"
+          KAGGLE_MALECNS_COUPLED_WAIT_SECONDS: "900"
         run: |
           bash scripts/malecns-coupled-flavour/kaggle.sh \
             --output-dir "$RUNNER_TEMP/malecns-coupled-flavour" \
