@@ -6,6 +6,7 @@ on:
       - experiment/malecns-visual-attractor
     paths:
       - ".github/workflows/malecns-cached-smoke.yml"
+      - "scripts/kaggle-dataset/publish-private.sh"
   workflow_dispatch:
 
 permissions:
@@ -20,12 +21,13 @@ jobs:
       KERNEL_SLUG: malecns-cached-telemetry-smoke-64x64
       VISUAL_REF: e409aff2958baa6849ba3b577f1195500356bcf4
       CACHE_ARTIFACT_ID: '10406003072'
+      CACHE_DATASET_SLUG: malecns-visual-runtime-cache
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: "3.12"
-      - name: Prepare Kaggle + cached runtime stage
+      - name: Publish cached runtime as Kaggle Dataset
         env:
           GH_TOKEN: ${{ github.token }}
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
@@ -47,30 +49,36 @@ jobs:
           cp -a "$RUNNER_TEMP/papers/experiments/malecns_visual_attractor" "$STAGE/visual"
           du -sh "$STAGE" "$STAGE/runtime-cache" "$STAGE/visual"
 
-          # Kaggle kernels push does not reliably preserve nested source directories.
-          # Ship one top-level payload and unpack it inside /kaggle/working.
-          tar -C "$STAGE" -czf "$STAGE/payload.tgz" runtime-cache visual
-          rm -rf "$STAGE/runtime-cache" "$STAGE/visual"
-          ls -lh "$STAGE/payload.tgz"
+          # Heavy inputs belong in a Kaggle Dataset. Files placed beside job.py
+          # are not reliably preserved by `kaggle kernels push`.
+          DATASET_DIR="$RUNNER_TEMP/dataset"
+          mkdir -p "$DATASET_DIR"
+          cp -a "$STAGE/runtime-cache/." "$DATASET_DIR/"
+          cp -a "$STAGE/visual" "$DATASET_DIR/visual"
+          bash scripts/kaggle-dataset/publish-private.sh \
+            --path "$DATASET_DIR" \
+            --slug "$CACHE_DATASET_SLUG" \
+            --title "MaleCNS visual runtime cache" \
+            --message "cache for ${GITHUB_SHA}" \
+            --license CC-BY-4.0
+          find "$DATASET_DIR" -maxdepth 2 -type f -printf '%s %p\n' | sort -nr
 
           cat > "$STAGE/job.py" <<'PY'
-          import os, pathlib, subprocess, sys, tarfile, time
-          root = pathlib.Path(__file__).resolve().parent
-          unpack = pathlib.Path("/kaggle/working/payload")
-          unpack.mkdir(parents=True, exist_ok=True)
-          payload = root / "payload.tgz"
-          print({"event":"payload_unpack_start", "payload":str(payload)}, flush=True)
-          with tarfile.open(payload, "r:gz") as tf:
-              tf.extractall(unpack)
-          cache = unpack / "runtime-cache"
-          visual = unpack / "visual"
+          import json, os, pathlib, shutil, subprocess, sys, time
+
+          dataset_slug = "malecns-visual-runtime-cache"
+          dataset = pathlib.Path("/kaggle/input") / dataset_slug
+          cache = dataset
+          visual = dataset / "visual"
           script = visual / "scripts/run_swarm_capacity_probe.py"
           required = [cache / "graph.npz", cache / "visual-interface.npz", cache / "screen-geometry.npz", script]
           missing = [str(p) for p in required if not p.exists()]
           if missing:
-              raise SystemExit(f"payload missing required files: {missing}")
+              raise SystemExit(f"Kaggle Dataset missing required files: {missing}")
           out = pathlib.Path("/kaggle/working/cached-smoke")
           out.mkdir(parents=True, exist_ok=True)
+          public = pathlib.Path("/kaggle/working/public-cache")
+          public.mkdir(parents=True, exist_ok=True)
           env = os.environ.copy()
           env["PYTHONPATH"] = str(visual / "src") + os.pathsep + str(visual / "scripts")
           cmd = [
@@ -96,7 +104,26 @@ jobs:
           print({"event":"cached_smoke_launch", "cmd":" ".join(cmd)}, flush=True)
           t0 = time.perf_counter()
           subprocess.check_call(cmd, env=env)
-          print({"event":"cached_smoke_complete", "elapsed_s":time.perf_counter()-t0}, flush=True)
+          elapsed = time.perf_counter()-t0
+          summary = json.loads((out / "swarm-capacity-summary.json").read_text(encoding="utf-8"))
+          summary.update({
+              "cache_source": "kaggle-dataset",
+              "cache_dataset": dataset_slug,
+              "visual_ref": "e409aff2958baa6849ba3b577f1195500356bcf4",
+              "kernel": "franklinbaldo/malecns-cached-telemetry-smoke-64x64",
+              "parameters": {"swarm_size": 64, "microbatch_size": 64, "steps": 1},
+              "probe_elapsed_s": elapsed,
+          })
+          (public / "github-summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          (public / "provenance.json").write_text(json.dumps({
+              "cache_source": "kaggle-dataset",
+              "cache_dataset": dataset_slug,
+              "visual_ref": "e409aff2958baa6849ba3b577f1195500356bcf4",
+              "kernel": "franklinbaldo/malecns-cached-telemetry-smoke-64x64",
+          }, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          for name in ("swarm-capacity-summary.json", "telemetry.jsonl"):
+              shutil.copy2(out / name, public / name)
+          print({"event":"cached_smoke_complete", "elapsed_s":elapsed, "swarm_size":64, "steps":1, "cache_source":"kaggle-dataset"}, flush=True)
           PY
 
           cat > "$STAGE/kernel-metadata.json" <<JSON
@@ -110,7 +137,7 @@ jobs:
             "enable_gpu": true,
             "enable_internet": false,
             "machine_shape": "NvidiaTeslaT4",
-            "dataset_sources": [],
+            "dataset_sources": ["${KAGGLE_USERNAME}/${CACHE_DATASET_SLUG}"],
             "competition_sources": [],
             "kernel_sources": [],
             "model_sources": []
