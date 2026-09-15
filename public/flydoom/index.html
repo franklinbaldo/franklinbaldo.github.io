@@ -66,6 +66,11 @@
         color: var(--green);
         border-color: rgba(46, 160, 67, 0.4);
       }
+      .badge-purple {
+        background: rgba(188, 140, 255, 0.15);
+        color: var(--purple);
+        border-color: rgba(188, 140, 255, 0.4);
+      }
       .toolbar {
         width: 100%;
         max-width: 1080px;
@@ -346,6 +351,9 @@
       <h1>
         <span>🪰 FlyDoom 3D</span>
         <span class="badge badge-green">FlatBuffers Zero-Copy (.mcns)</span>
+        <span class="badge badge-purple" id="badgeThreadMode"
+          >Web Worker Ativo</span
+        >
         <span class="badge">165.122 Neurônios</span>
       </h1>
       <div
@@ -357,10 +365,12 @@
           color: var(--text-muted);
         "
       >
-        <span>FPS: <b id="liveFps" style="color: var(--green)">0</b></span>
+        <span
+          >FPS Visual: <b id="liveFps" style="color: var(--green)">0</b></span
+        >
         <span>•</span>
         <span
-          >Step:
+          >Latência Neural:
           <b id="liveLatency" style="color: var(--accent)">0.0 ms</b></span
         >
       </div>
@@ -432,7 +442,7 @@
               <span style="color: #ffaa00">PRÊMIOS:</span>
               <span id="hudPrimesCount">0</span>
             </div>
-            <div><span style="color: #55ff55">RECORRÊNCIA:</span> L3 CACHE</div>
+            <div><span style="color: #55ff55">RECORRÊNCIA:</span> 165K L3</div>
           </div>
           <div class="crosshair">+</div>
           <div class="scanlines"></div>
@@ -541,6 +551,10 @@
     </div>
 
     <script>
+      window.onerror = function (msg, url, line) {
+        console.error("FlyDoom error:", msg, "at line", line);
+      };
+
       // =========================================================================
       // 1. Doom Arena Map & Wall Geometry
       // =========================================================================
@@ -620,81 +634,170 @@
       ];
 
       // =========================================================================
-      // 2. Zero-Copy FlatBuffers Connectome Runtime
+      // 2. Web Worker Neural Recurrence Engine (Background CPU Thread)
       // =========================================================================
-      let connectome = null;
-      let circuit = null;
+      const WORKER_CODE = `
+        let connectome = null;
+        let circuit = null;
+        let states = [];
+        let nextStates = [];
+        let drives = [];
+        const SWARM_ACC = new Float32Array(16);
 
-      async function loadFlatBuffersConnectome() {
-        const prog = document.getElementById("loadingProgress");
-        const sub = document.getElementById("loadingSubtext");
+        self.onmessage = function(e) {
+          const msg = e.data;
+          if (msg.type === "init") {
+            circuit = msg.circuit;
+            connectome = {
+              n_neurons: msg.n_neurons,
+              offsets: new Uint32Array(msg.offsets),
+              scales: new Float32Array(msg.scales),
+              deltas: new Uint16Array(msg.deltas),
+              weights: new Uint8Array(msg.weights),
+              lut: new Float32Array(msg.lut),
+            };
 
-        // 1. Fetch Circuit Metadata
-        sub.innerText = "Carregando mapa anatômico (circuit.json)...";
-        prog.style.width = "25%";
-        const circuitRes = await fetch("malecns_circuit.json");
-        circuit = await circuitRes.json();
+            for (let f = 0; f < 8; f++) {
+              states.push(new Float32Array(connectome.n_neurons));
+              nextStates.push(new Float32Array(connectome.n_neurons));
+              drives.push(new Float32Array(connectome.n_neurons));
+            }
+            self.postMessage({ type: "ready" });
+          } else if (msg.type === "step") {
+            const numFlies = msg.numFlies;
+            const fliesData = msg.flies;
+            const t0 = performance.now();
 
-        // Pre-split visual projection rays
-        circuit.ray_vpl = [];
-        circuit.ray_vpr = [];
-        const numRays = 32;
-        const vplLen = Math.floor(circuit.vpl.length / (numRays / 2));
-        const vprLen = Math.floor(circuit.vpr.length / (numRays / 2));
-        for (let r = 0; r < numRays / 2; r++) {
-          circuit.ray_vpl.push(circuit.vpl.slice(r * vplLen, (r + 1) * vplLen));
-          circuit.ray_vpr.push(circuit.vpr.slice(r * vprLen, (r + 1) * vprLen));
-        }
+            // 1. Sensory injection
+            for (let f = 0; f < numFlies; f++) {
+              const fd = fliesData[f];
+              const drv = drives[f];
+              drv.fill(0.0);
 
-        // 2. Fetch FlatBuffer Binary
-        sub.innerText = "Baixando malecns_l3_compact.mcns (4.98 MB)...";
-        prog.style.width = "50%";
-        const binRes = await fetch("malecns_l3_compact.mcns");
-        const arrayBuf = await binRes.arrayBuffer();
+              for (let r = 0; r < 16; r++) {
+                const prox = Math.max(0.0, 1.0 - (fd.wallDists[r] / 4.0));
+                const lum = fd.prizeDists[r];
+                const stim = prox * 2.0 + lum * 2.5;
+                const b = circuit.ray_vpl[r];
+                for (let i = 0; i < b.length; i++) drv[b[i]] = stim;
+              }
+              for (let r = 0; r < 16; r++) {
+                const prox = Math.max(0.0, 1.0 - (fd.wallDists[16 + r] / 4.0));
+                const lum = fd.prizeDists[16 + r];
+                const stim = prox * 2.0 + lum * 2.5;
+                const b = circuit.ray_vpr[r];
+                for (let i = 0; i < b.length; i++) drv[b[i]] = stim;
+              }
 
-        prog.style.width = "85%";
-        sub.innerText = "Mapeando ponteiros Zero-Copy em TypedArrays...";
+              const stimL = fd.odorL * 3.5;
+              const stimR = fd.odorR * 3.5;
+              for (let i = 0; i < circuit.olf_l.length; i++) drv[circuit.olf_l[i]] = stimL;
+              for (let i = 0; i < circuit.olf_r.length; i++) drv[circuit.olf_r[i]] = stimR;
+            }
 
-        const view = new DataView(arrayBuf);
-        const rootTableOffset = view.getUint32(0, true);
-        const vtableOffset =
-          rootTableOffset - view.getInt32(rootTableOffset, true);
-        const vtableLen = view.getUint16(vtableOffset, true);
+            // 2. Batched FlatBuffers SpMV Recurrence
+            const N = connectome.n_neurons;
+            const offsets = connectome.offsets;
+            const deltas = connectome.deltas;
+            const weights = connectome.weights;
+            const lut = connectome.lut;
+            const scales = connectome.scales;
 
-        function getVector(fieldIdx, bytesPerElem, ArrayType) {
-          const voffset = 4 + fieldIdx * 2;
-          if (voffset >= vtableLen) return null;
-          const fieldOffset = view.getUint16(vtableOffset + voffset, true);
-          if (fieldOffset === 0) return null;
-          const pos = rootTableOffset + fieldOffset;
-          const vecStart = pos + view.getUint32(pos, true);
-          const len = view.getUint32(vecStart, true);
-          const dataStart = vecStart + 4;
-          return new ArrayType(arrayBuf, dataStart, len);
-        }
+            if (numFlies === 1) {
+              const s0 = states[0], nx0 = nextStates[0], drv0 = drives[0];
+              for (let r = 0; r < N; r++) {
+                const s = offsets[r], e = offsets[r + 1];
+                let col = 0, acc0 = 0;
+                for (let j = s; j < e; j++) {
+                  col += deltas[j];
+                  acc0 += lut[(weights[j >> 1] >> (4 * (j & 1))) & 0x0f] * s0[col];
+                }
+                nx0[r] = 0.65 * s0[r] + 0.35 * Math.tanh(acc0 * scales[r] * 3.5 + drv0[r]);
+              }
+            } else if (numFlies === 2) {
+              const s0 = states[0], s1 = states[1];
+              const nx0 = nextStates[0], nx1 = nextStates[1];
+              const drv0 = drives[0], drv1 = drives[1];
+              for (let r = 0; r < N; r++) {
+                const s = offsets[r], e = offsets[r + 1];
+                let col = 0, acc0 = 0, acc1 = 0;
+                for (let j = s; j < e; j++) {
+                  col += deltas[j];
+                  const w = lut[(weights[j >> 1] >> (4 * (j & 1))) & 0x0f];
+                  acc0 += w * s0[col];
+                  acc1 += w * s1[col];
+                }
+                const sc = scales[r] * 3.5;
+                nx0[r] = 0.65 * s0[r] + 0.35 * Math.tanh(acc0 * sc + drv0[r]);
+                nx1[r] = 0.65 * s1[r] + 0.35 * Math.tanh(acc1 * sc + drv1[r]);
+              }
+            } else {
+              for (let r = 0; r < N; r++) {
+                const s = offsets[r], e = offsets[r + 1];
+                let col = 0;
+                SWARM_ACC.fill(0);
+                for (let j = s; j < e; j++) {
+                  col += deltas[j];
+                  const w = lut[(weights[j >> 1] >> (4 * (j & 1))) & 0x0f];
+                  for (let f = 0; f < numFlies; f++) {
+                    SWARM_ACC[f] += w * states[f][col];
+                  }
+                }
+                const sc = scales[r] * 3.5;
+                for (let f = 0; f < numFlies; f++) {
+                  nextStates[f][r] = 0.65 * states[f][r] + 0.35 * Math.tanh(SWARM_ACC[f] * sc + drives[f][r]);
+                }
+              }
+            }
 
-        const offsets = getVector(5, 4, Uint32Array);
-        const scales = getVector(6, 4, Float32Array);
-        const deltas = getVector(7, 2, Uint16Array);
-        const weights = getVector(8, 1, Uint8Array);
-        const lut = getVector(9, 4, Float32Array);
+            for (let f = 0; f < numFlies; f++) {
+              const tmp = states[f];
+              states[f] = nextStates[f];
+              nextStates[f] = tmp;
+            }
 
-        connectome = {
-          n_neurons: offsets.length - 1,
-          total_edges: deltas.length,
-          offsets,
-          scales,
-          deltas,
-          weights,
-          lut,
+            // 3. Motor decode
+            const results = [];
+            for (let f = 0; f < numFlies; f++) {
+              const st = states[f];
+              let actL = 0, actR = 0, actTot = 0;
+              for (let i = 0; i < circuit.dnl.length; i++) actL += st[circuit.dnl[i]];
+              for (let i = 0; i < circuit.dnr.length; i++) actR += st[circuit.dnr[i]];
+              for (let i = 0; i < circuit.dn_all.length; i++) actTot += st[circuit.dn_all[i]];
+              actL /= circuit.dnl.length;
+              actR /= circuit.dnr.length;
+              actTot /= circuit.dn_all.length;
+
+              const connSteer = (actL - actR) * 8.0;
+              const fd = fliesData[f];
+              const odorSteer = (fd.odorR - fd.odorL) * 1.2;
+
+              let minFront = 999;
+              for (let i = 10; i < 22; i++) minFront = Math.min(minFront, fd.wallDists[i]);
+              let saccade = 0.0;
+              if (minFront < 1.4) {
+                let leftSpace = 0, rightSpace = 0;
+                for (let i = 0; i < 12; i++) leftSpace += fd.wallDists[i];
+                for (let i = 20; i < 32; i++) rightSpace += fd.wallDists[i];
+                saccade = rightSpace > leftSpace ? 0.45 : -0.45;
+              }
+
+              results.push({
+                torque: connSteer + odorSteer + saccade,
+                thrust: 0.18 + Math.max(0.0, actTot * 3.5),
+                meanAct: actTot
+              });
+            }
+
+            const stepLatency = performance.now() - t0;
+            self.postMessage({ type: "stepResult", results, stepLatency });
+          }
         };
+      `;
 
-        prog.style.width = "100%";
-        sub.innerText = "Conectoma pronto: 165.122 neurônios ativos!";
-        setTimeout(() => {
-          document.getElementById("loadingModal").style.display = "none";
-        }, 350);
-      }
+      let neuralWorker = null;
+      let workerBusy = false;
+      let circuit = null;
 
       // =========================================================================
       // 3. Multi-Fly Agent & Prize Classes
@@ -711,18 +814,15 @@
           this.prizesCaught = 0;
           this.meanAct = 0;
 
-          // Neural state vectors (165,122 neurons)
-          this.state = new Float32Array(connectome.n_neurons);
-          this.nextState = new Float32Array(connectome.n_neurons);
-          this.drive = new Float32Array(connectome.n_neurons);
-
           // Raycasting storage
           this.wallDists = new Float32Array(32);
           this.prizeDists = new Float32Array(32);
           this.odorL = 0;
           this.odorR = 0;
-          this.torque = 0;
-          this.thrust = 0;
+          this.targetTorque = 0;
+          this.currentTorque = 0;
+          this.targetThrust = 0.2;
+          this.currentThrust = 0.2;
 
           this.resetPosition();
         }
@@ -732,6 +832,7 @@
           this.x = pt.x;
           this.y = pt.y;
           this.angle = Math.random() * Math.PI * 2;
+          this.currentTorque = 0;
         }
 
         sense(prizes) {
@@ -741,7 +842,6 @@
           const startAng = this.angle - fov / 2;
           const stepAng = fov / numRays;
 
-          // 1. Raycast 3D Vision
           for (let r = 0; r < numRays; r++) {
             const ang = startAng + r * stepAng;
             const sinA = Math.sin(ang);
@@ -758,7 +858,6 @@
             }
             this.wallDists[r] = hit ? dist : maxDepth;
 
-            // Prize detection along ray
             let prizeVis = 0.0;
             for (const p of prizes) {
               const dx = p.x - this.x;
@@ -777,7 +876,6 @@
             this.prizeDists[r] = prizeVis;
           }
 
-          // 2. Bilateral Antennal Odor Sampling
           const antW = 0.5;
           const plX = this.x + 0.5 * antW * Math.sin(this.angle);
           const plY = this.y - 0.5 * antW * Math.cos(this.angle);
@@ -794,75 +892,25 @@
           }
           this.odorL = sumConcL;
           this.odorR = sumConcR;
-
-          // 3. Sensory Injection into Connectome
-          this.drive.fill(0.0);
-          // Visual projection neurons
-          for (let r = 0; r < 16; r++) {
-            const prox = Math.max(0.0, 1.0 - this.wallDists[r] / 4.0);
-            const lum = this.prizeDists[r];
-            const stim = prox * 2.0 + lum * 2.5;
-            const block = circuit.ray_vpl[r];
-            for (let i = 0; i < block.length; i++) this.drive[block[i]] = stim;
-          }
-          for (let r = 0; r < 16; r++) {
-            const prox = Math.max(0.0, 1.0 - this.wallDists[16 + r] / 4.0);
-            const lum = this.prizeDists[16 + r];
-            const stim = prox * 2.0 + lum * 2.5;
-            const block = circuit.ray_vpr[r];
-            for (let i = 0; i < block.length; i++) this.drive[block[i]] = stim;
-          }
-
-          // Olfactory receptor neurons (2,639 ORNs)
-          const stimL = this.odorL * 3.5;
-          const stimR = this.odorR * 3.5;
-          for (let i = 0; i < circuit.olf_l.length; i++)
-            this.drive[circuit.olf_l[i]] = stimL;
-          for (let i = 0; i < circuit.olf_r.length; i++)
-            this.drive[circuit.olf_r[i]] = stimR;
         }
 
-        decodeMotorAndMove(prizes) {
-          // Motor decoding from descending neurons
-          let actL = 0,
-            actR = 0,
-            actTot = 0;
-          for (let i = 0; i < circuit.dnl.length; i++)
-            actL += this.state[circuit.dnl[i]];
-          for (let i = 0; i < circuit.dnr.length; i++)
-            actR += this.state[circuit.dnr[i]];
-          for (let i = 0; i < circuit.dn_all.length; i++)
-            actTot += this.state[circuit.dn_all[i]];
-          actL /= circuit.dnl.length;
-          actR /= circuit.dnr.length;
-          actTot /= circuit.dn_all.length;
-          this.meanAct = actTot;
+        applyMotorCommand(torque, thrust, meanAct) {
+          this.targetTorque = torque;
+          this.targetThrust = thrust;
+          this.meanAct = meanAct;
+        }
 
-          // Steering: Contralateral avoidance + Odor tropotaxis + Looming saccade
-          const connSteer = (actL - actR) * 8.0;
-          const odorSteer = (this.odorR - this.odorL) * 1.2;
+        updatePhysics(prizes) {
+          // Low-pass smoothing for biological motor dynamics (60 FPS interpolation)
+          this.currentTorque =
+            0.7 * this.currentTorque + 0.3 * this.targetTorque;
+          this.currentThrust =
+            0.7 * this.currentThrust + 0.3 * this.targetThrust;
 
-          let minFront = 999;
-          for (let i = 10; i < 22; i++)
-            minFront = Math.min(minFront, this.wallDists[i]);
-          let saccade = 0.0;
-          if (minFront < 1.4) {
-            let leftSpace = 0,
-              rightSpace = 0;
-            for (let i = 0; i < 12; i++) leftSpace += this.wallDists[i];
-            for (let i = 20; i < 32; i++) rightSpace += this.wallDists[i];
-            saccade = rightSpace > leftSpace ? 0.45 : -0.45;
-          }
-
-          this.torque = connSteer + odorSteer + saccade;
-          this.thrust = 0.18 + Math.max(0.0, actTot * 3.5);
-
-          // Update angle
-          this.angle += this.torque;
+          this.angle += this.currentTorque;
           this.angle = ((this.angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
 
-          // Wall sliding physics (test X and Y independently)
-          const spd = Math.max(0.05, Math.min(0.35, this.thrust));
+          const spd = Math.max(0.05, Math.min(0.35, this.currentThrust));
           const dx = Math.cos(this.angle) * spd;
           const dy = Math.sin(this.angle) * spd;
 
@@ -876,13 +924,11 @@
             moved = true;
           }
           if (!moved) {
-            // Corner micro-deflection
             this.angle += (Math.random() - 0.5) * 0.5;
           } else {
             this.totalDist += Math.hypot(dx, dy);
           }
 
-          // Check prize capture
           for (let i = 0; i < prizes.length; i++) {
             const p = prizes[i];
             const dist = Math.hypot(p.x - this.x, p.y - this.y);
@@ -919,12 +965,122 @@
       let frameCount = 0;
       let liveFps = 0;
       let liveLatency = 0;
+      let lastNeuralTickTime = 0;
+
+      async function loadFlatBuffersConnectome() {
+        const prog = document.getElementById("loadingProgress");
+        const sub = document.getElementById("loadingSubtext");
+
+        sub.innerText = "Carregando mapa anatômico (circuit.json)...";
+        prog.style.width = "25%";
+        const circuitRes = await fetch("malecns_circuit.json");
+        circuit = await circuitRes.json();
+
+        circuit.ray_vpl = [];
+        circuit.ray_vpr = [];
+        const numRays = 32;
+        const vplLen = Math.floor(circuit.vpl.length / (numRays / 2));
+        const vprLen = Math.floor(circuit.vpr.length / (numRays / 2));
+        for (let r = 0; r < numRays / 2; r++) {
+          circuit.ray_vpl.push(circuit.vpl.slice(r * vplLen, (r + 1) * vplLen));
+          circuit.ray_vpr.push(circuit.vpr.slice(r * vprLen, (r + 1) * vprLen));
+        }
+
+        sub.innerText = "Baixando malecns_l3_compact.mcns (4.98 MB)...";
+        prog.style.width = "50%";
+        const binRes = await fetch("malecns_l3_compact.mcns");
+        const arrayBuf = await binRes.arrayBuffer();
+
+        prog.style.width = "80%";
+        sub.innerText = "Iniciando Web Worker dedicado...";
+
+        const view = new DataView(arrayBuf);
+        const rootTableOffset = view.getUint32(0, true);
+        const vtableOffset =
+          rootTableOffset - view.getInt32(rootTableOffset, true);
+        const vtableLen = view.getUint16(vtableOffset, true);
+
+        function getVector(fieldIdx, bytesPerElem, ArrayType) {
+          const voffset = 4 + fieldIdx * 2;
+          if (voffset >= vtableLen) return null;
+          const fieldOffset = view.getUint16(vtableOffset + voffset, true);
+          if (fieldOffset === 0) return null;
+          const pos = rootTableOffset + fieldOffset;
+          const vecStart = pos + view.getUint32(pos, true);
+          const len = view.getUint32(vecStart, true);
+          const dataStart = vecStart + 4;
+          return new ArrayType(arrayBuf, dataStart, len);
+        }
+
+        const offsets = getVector(5, 4, Uint32Array);
+        const scales = getVector(6, 4, Float32Array);
+        const deltas = getVector(7, 2, Uint16Array);
+        const weights = getVector(8, 1, Uint8Array);
+        const lut = getVector(9, 4, Float32Array);
+
+        // Create inline Web Worker
+        const blob = new Blob([WORKER_CODE], {
+          type: "application/javascript",
+        });
+        neuralWorker = new Worker(URL.createObjectURL(blob));
+
+        neuralWorker.onmessage = function (e) {
+          const msg = e.data;
+          if (msg.type === "ready") {
+            prog.style.width = "100%";
+            sub.innerText = "Conectoma ativo no Web Worker a 60 FPS!";
+            setTimeout(() => {
+              document.getElementById("loadingModal").style.display = "none";
+            }, 300);
+          } else if (msg.type === "stepResult") {
+            workerBusy = false;
+            liveLatency = msg.stepLatency;
+            const results = msg.results;
+            for (let f = 0; f < results.length; f++) {
+              if (swarm[f]) {
+                swarm[f].applyMotorCommand(
+                  results[f].torque,
+                  results[f].thrust,
+                  results[f].meanAct
+                );
+              }
+            }
+          }
+        };
+
+        // Initialize worker with buffers
+        neuralWorker.postMessage({
+          type: "init",
+          circuit,
+          n_neurons: offsets.length - 1,
+          offsets: offsets.buffer.slice(
+            offsets.byteOffset,
+            offsets.byteOffset + offsets.byteLength
+          ),
+          scales: scales.buffer.slice(
+            scales.byteOffset,
+            scales.byteOffset + scales.byteLength
+          ),
+          deltas: deltas.buffer.slice(
+            deltas.byteOffset,
+            deltas.byteOffset + deltas.byteLength
+          ),
+          weights: weights.buffer.slice(
+            weights.byteOffset,
+            weights.byteOffset + weights.byteLength
+          ),
+          lut: lut.buffer.slice(
+            lut.byteOffset,
+            lut.byteOffset + lut.byteLength
+          ),
+        });
+
+        initSwarm();
+      }
 
       function initSwarm() {
-        // Start with 2 flies and 2 prizes
         prizes.push(new Prize(1));
         prizes.push(new Prize(2));
-
         addFly();
         addFly();
       }
@@ -982,120 +1138,14 @@
       }
 
       // =========================================================================
-      // 5. Batched Recurrence Loop (All Flies in 1 Pass through FlatBuffers)
-      // =========================================================================
-      const SWARM_ACC = new Float32Array(16);
-
-      function stepSwarmConnectome() {
-        const t0 = performance.now();
-
-        // 1. Each fly senses environment
-        for (let i = 0; i < swarm.length; i++) {
-          swarm[i].sense(prizes);
-        }
-
-        // 2. Batched FlatBuffers SpMV Recurrence across all flies
-        const N = connectome.n_neurons;
-        const offsets = connectome.offsets;
-        const deltas = connectome.deltas;
-        const weights = connectome.weights;
-        const lut = connectome.lut;
-        const scales = connectome.scales;
-
-        const numFlies = swarm.length;
-        const states = [];
-        const nextStates = [];
-        const drives = [];
-        for (let f = 0; f < numFlies; f++) {
-          states.push(swarm[f].state);
-          nextStates.push(swarm[f].nextState);
-          drives.push(swarm[f].drive);
-        }
-
-        if (numFlies === 1) {
-          const s0 = states[0];
-          const nx0 = nextStates[0];
-          const drv0 = drives[0];
-          for (let r = 0; r < N; r++) {
-            const s = offsets[r],
-              e = offsets[r + 1];
-            let col = 0,
-              acc0 = 0;
-            for (let j = s; j < e; j++) {
-              col += deltas[j];
-              acc0 += lut[(weights[j >> 1] >> (4 * (j & 1))) & 0x0f] * s0[col];
-            }
-            nx0[r] =
-              0.65 * s0[r] + 0.35 * Math.tanh(acc0 * scales[r] * 3.5 + drv0[r]);
-          }
-        } else if (numFlies === 2) {
-          const s0 = states[0],
-            s1 = states[1];
-          const nx0 = nextStates[0],
-            nx1 = nextStates[1];
-          const drv0 = drives[0],
-            drv1 = drives[1];
-          for (let r = 0; r < N; r++) {
-            const s = offsets[r],
-              e = offsets[r + 1];
-            let col = 0,
-              acc0 = 0,
-              acc1 = 0;
-            for (let j = s; j < e; j++) {
-              col += deltas[j];
-              const w = lut[(weights[j >> 1] >> (4 * (j & 1))) & 0x0f];
-              acc0 += w * s0[col];
-              acc1 += w * s1[col];
-            }
-            const sc = scales[r] * 3.5;
-            nx0[r] = 0.65 * s0[r] + 0.35 * Math.tanh(acc0 * sc + drv0[r]);
-            nx1[r] = 0.65 * s1[r] + 0.35 * Math.tanh(acc1 * sc + drv1[r]);
-          }
-        } else {
-          for (let r = 0; r < N; r++) {
-            const s = offsets[r],
-              e = offsets[r + 1];
-            let col = 0;
-            SWARM_ACC.fill(0);
-            for (let j = s; j < e; j++) {
-              col += deltas[j];
-              const w = lut[(weights[j >> 1] >> (4 * (j & 1))) & 0x0f];
-              for (let f = 0; f < numFlies; f++) {
-                SWARM_ACC[f] += w * states[f][col];
-              }
-            }
-            const sc = scales[r] * 3.5;
-            for (let f = 0; f < numFlies; f++) {
-              nextStates[f][r] =
-                0.65 * states[f][r] +
-                0.35 * Math.tanh(SWARM_ACC[f] * sc + drives[f][r]);
-            }
-          }
-        }
-
-        // Swap states
-        for (let f = 0; f < numFlies; f++) {
-          const tmp = swarm[f].state;
-          swarm[f].state = swarm[f].nextState;
-          swarm[f].nextState = tmp;
-        }
-
-        // 3. Decode Motor actions and move
-        for (let f = 0; f < numFlies; f++) {
-          swarm[f].decodeMotorAndMove(prizes);
-        }
-
-        liveLatency = performance.now() - t0;
-      }
-
-      // =========================================================================
-      // 6. 3D Raycasting Renderer (First-Person Doom Compound Eyes)
+      // 5. 3D Raycasting Renderer (First-Person Doom Compound Eyes)
       // =========================================================================
       const c3d = document.getElementById("canvas3d");
       const ctx3d = c3d.getContext("2d");
 
       function render3D() {
         const activeFly = swarm[selectedFlyIdx] || swarm[0];
+        if (!activeFly) return;
         const w = c3d.width;
         const h = c3d.height;
 
@@ -1108,13 +1158,11 @@
         const numRays = 32;
         const colWidth = Math.ceil(w / numRays);
 
-        // Render 3D Walls
         for (let r = 0; r < numRays; r++) {
           const dist = activeFly.wallDists[r];
           const wallH = Math.min(h, Math.floor((h / dist) * 1.8));
           const top = Math.floor((h - wallH) / 2);
 
-          // Shading based on distance
           const shade = Math.max(0.12, 1.0 - dist / 12.0);
           const colR = Math.floor(140 * shade);
           const colG = Math.floor(70 * shade);
@@ -1123,15 +1171,12 @@
           ctx3d.fillStyle = `rgb(${colR}, ${colG}, ${colB})`;
           ctx3d.fillRect(r * colWidth, top, colWidth + 1, wallH);
 
-          // Brick mortar line
           ctx3d.fillStyle = `rgba(0, 0, 0, ${0.35 * shade})`;
           ctx3d.fillRect(r * colWidth, top, 1, wallH);
         }
 
-        // Render 3D Sprites for Prizes
+        // Render Prizes
         const fov = Math.PI * 0.8;
-        const startAng = activeFly.angle - fov / 2;
-
         for (const p of prizes) {
           const dx = p.x - activeFly.x;
           const dy = p.y - activeFly.y;
@@ -1143,16 +1188,12 @@
           if (Math.abs(diffAng) < fov / 2 && dist > 0.4) {
             const screenX = ((diffAng + fov / 2) / fov) * w;
             const spriteH = Math.min(h * 0.8, Math.floor((h / dist) * 1.2));
-            const spriteTop = Math.floor((h - spriteH) / 2);
-
-            // Check if occluded by wall ray
             const rayIdx = Math.floor(((diffAng + fov / 2) / fov) * numRays);
             if (
               rayIdx >= 0 &&
               rayIdx < numRays &&
               dist < activeFly.wallDists[rayIdx]
             ) {
-              // Draw Golden Prize Orb
               ctx3d.save();
               ctx3d.beginPath();
               ctx3d.arc(screenX, h / 2, spriteH * 0.35, 0, Math.PI * 2);
@@ -1168,7 +1209,7 @@
           }
         }
 
-        // Render 3D Sprites for OTHER Flies in swarm
+        // Render Other Flies in Swarm
         for (const other of swarm) {
           if (other === activeFly) continue;
           const dx = other.x - activeFly.x;
@@ -1195,7 +1236,6 @@
               ctx3d.shadowColor = other.color.hex;
               ctx3d.shadowBlur = 10;
               ctx3d.fill();
-              // Fly wings
               ctx3d.strokeStyle = "rgba(255, 255, 255, 0.7)";
               ctx3d.lineWidth = 2;
               ctx3d.stroke();
@@ -1206,7 +1246,7 @@
       }
 
       // =========================================================================
-      // 7. 2D Radar Renderer (Arena Overview)
+      // 6. 2D Radar Renderer (Arena Overview)
       // =========================================================================
       const cRad = document.getElementById("canvasRadar");
       const ctxRad = cRad.getContext("2d");
@@ -1220,7 +1260,7 @@
         ctxRad.fillStyle = "#0d1117";
         ctxRad.fillRect(0, 0, rw, rh);
 
-        // 1. Draw Walls
+        // Walls
         for (let y = 0; y < MAP_H; y++) {
           for (let x = 0; x < MAP_W; x++) {
             if (WALLS[y][x]) {
@@ -1230,13 +1270,12 @@
           }
         }
 
-        // 2. Draw Prizes & Scent Plumes (Diffusion rings)
+        // Prizes & Scent Waves
         const now = performance.now() * 0.003;
         for (const p of prizes) {
           const px = p.x * scaleX;
           const py = p.y * scaleY;
 
-          // Animated odor plume concentric waves
           for (let ring = 1; ring <= 3; ring++) {
             const rad = ring * 16 + ((now * 15) % 16);
             const alpha = Math.max(0.0, 0.35 - rad / 65);
@@ -1247,7 +1286,6 @@
             ctxRad.stroke();
           }
 
-          // Core Prize
           ctxRad.beginPath();
           ctxRad.arc(px, py, 6, 0, Math.PI * 2);
           ctxRad.fillStyle = "#ffd700";
@@ -1257,14 +1295,13 @@
           ctxRad.shadowBlur = 0;
         }
 
-        // 3. Draw Flies (FOV Cones & Directional arrows)
+        // Flies
         for (let i = 0; i < swarm.length; i++) {
           const f = swarm[i];
           const fx = f.x * scaleX;
           const fy = f.y * scaleY;
           const isCamTarget = i === selectedFlyIdx;
 
-          // View cone
           const fov = Math.PI * 0.8;
           const coneLen = 22;
           ctxRad.beginPath();
@@ -1276,13 +1313,11 @@
             : "rgba(255, 255, 255, 0.06)";
           ctxRad.fill();
 
-          // Fly Body
           ctxRad.beginPath();
           ctxRad.arc(fx, fy, isCamTarget ? 5 : 4, 0, Math.PI * 2);
           ctxRad.fillStyle = f.color.hex;
           ctxRad.fill();
 
-          // Heading tick
           ctxRad.beginPath();
           ctxRad.moveTo(fx, fy);
           ctxRad.lineTo(
@@ -1304,12 +1339,12 @@
       }
 
       // =========================================================================
-      // 8. HUD & Telemetry Update
+      // 7. HUD & Telemetry Update
       // =========================================================================
       function updateHUD() {
         const activeFly = swarm[selectedFlyIdx] || swarm[0];
+        if (!activeFly) return;
 
-        // Olfactometer
         const maxPpm = 2.5;
         const pctL = Math.min(
           100,
@@ -1326,8 +1361,7 @@
         document.getElementById("valOdorR").innerText =
           Math.floor(activeFly.odorR * 400) + " ppm";
 
-        // Steering Torque Meter
-        const torqueDeg = (activeFly.torque * 180) / Math.PI;
+        const torqueDeg = (activeFly.currentTorque * 180) / Math.PI;
         const torquePct = Math.min(50, Math.abs(torqueDeg) * 1.5);
         const torqueBar = document.getElementById("barTorque");
         if (torqueDeg >= 0) {
@@ -1342,7 +1376,6 @@
         document.getElementById("valTorque").innerText =
           (torqueDeg > 0 ? "+" : "") + torqueDeg.toFixed(1) + "°";
 
-        // Closest prize distance
         let minDist = 999;
         for (const p of prizes) {
           minDist = Math.min(
@@ -1355,7 +1388,6 @@
         document.getElementById("hudPrimesCount").innerText =
           activeFly.prizesCaught;
 
-        // Swarm Table
         updateSwarmTable();
       }
 
@@ -1367,11 +1399,11 @@
           if (idx === selectedFlyIdx)
             tr.style.background = "rgba(88, 166, 255, 0.1)";
           tr.innerHTML = `
-          <td><span class="fly-dot" style="background: ${f.color.hex};"></span> Mosca #${f.id}</td>
-          <td><b>${f.prizesCaught}</b></td>
-          <td>${f.totalDist.toFixed(1)}m</td>
-          <td>${(f.meanAct * 100).toFixed(1)}%</td>
-        `;
+            <td><span class="fly-dot" style="background: ${f.color.hex};"></span> Mosca #${f.id}</td>
+            <td><b>${f.prizesCaught}</b></td>
+            <td>${f.totalDist.toFixed(1)}m</td>
+            <td>${(f.meanAct * 100).toFixed(1)}%</td>
+          `;
           tr.style.cursor = "pointer";
           tr.onclick = () => {
             selectedFlyIdx = idx;
@@ -1382,18 +1414,43 @@
       }
 
       // =========================================================================
-      // 9. Main Animation Loop
+      // 8. Main 60 FPS Animation & Decoupled Neural Loop
       // =========================================================================
       function tick(timestamp) {
-        if (!isPaused && connectome) {
-          stepSwarmConnectome();
+        if (!isPaused && neuralWorker) {
+          // 1. Sensory dispatch to background Web Worker at ~25 Hz cadence
+          if (!workerBusy && timestamp - lastNeuralTickTime >= 40) {
+            lastNeuralTickTime = timestamp;
+            workerBusy = true;
+
+            const fliesSensory = [];
+            for (let f = 0; f < swarm.length; f++) {
+              swarm[f].sense(prizes);
+              fliesSensory.push({
+                wallDists: Array.from(swarm[f].wallDists),
+                prizeDists: Array.from(swarm[f].prizeDists),
+                odorL: swarm[f].odorL,
+                odorR: swarm[f].odorR,
+              });
+            }
+
+            neuralWorker.postMessage({
+              type: "step",
+              numFlies: swarm.length,
+              flies: fliesSensory,
+            });
+          }
+
+          // 2. Physics update runs at full 60 FPS smoothly
+          for (let f = 0; f < swarm.length; f++) {
+            swarm[f].updatePhysics(prizes);
+          }
         }
 
         render3D();
         renderRadar();
         updateHUD();
 
-        // FPS tracking
         frameCount++;
         if (timestamp - lastFrameTime >= 500) {
           liveFps = Math.round(
@@ -1410,7 +1467,7 @@
       }
 
       // =========================================================================
-      // 10. Event Listeners
+      // 9. Event Listeners
       // =========================================================================
       document.getElementById("btnAddFly").onclick = addFly;
       document.getElementById("btnRemFly").onclick = removeFly;
@@ -1430,10 +1487,8 @@
         updateFlySelect();
       };
 
-      // Boot
       window.addEventListener("DOMContentLoaded", async () => {
         await loadFlatBuffersConnectome();
-        initSwarm();
         requestAnimationFrame(tick);
       });
     </script>
