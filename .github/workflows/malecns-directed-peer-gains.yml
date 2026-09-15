@@ -47,7 +47,9 @@ jobs:
             --accelerator NvidiaTeslaT4
       - name: Summarize directed peer gains
         run: |
-          python - "$RUNNER_TEMP/malecns-directed-peer-gains/github-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          summary="$RUNNER_TEMP/malecns-directed-peer-gains/github-summary.json"
+          [[ -f "$summary" ]] || { echo "missing directed peer gains summary" >&2; exit 1; }
+          python - "$summary" >> "$GITHUB_STEP_SUMMARY" <<'PY'
           import json,sys
           d=json.load(open(sys.argv[1],encoding='utf-8'))
           print('## MaleCNS directed channel-to-channel teaching gains')
