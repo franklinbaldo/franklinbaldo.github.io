@@ -1,0 +1,77 @@
+name: MaleCNS Few-NERD Kaggle
+
+on:
+  push:
+    branches:
+      - experiment/malecns-fewnerd-kaggle
+    paths:
+      - ".github/workflows/malecns-fewnerd-kaggle.yml"
+      - "scripts/malecns-fewnerd/**"
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: Few-NERD smoke samples
+        required: false
+        default: "256"
+      accelerator:
+        description: Kaggle accelerator
+        required: false
+        default: NvidiaTeslaT4
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-fewnerd-kaggle
+  cancel-in-progress: true
+
+jobs:
+  fewnerd-kaggle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: "3.12"
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+      - name: Run Few-NERD byte-axis smoke on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_FEWNERD_KERNEL_ID: ${{ vars.KAGGLE_FEWNERD_KERNEL_ID }}
+        run: |
+          bash scripts/malecns-fewnerd/kaggle.sh \
+            --output "$RUNNER_TEMP/malecns-fewnerd-result.zip" \
+            --papers-ref "d6fe967c43c8c2acd9276100d5f12791e1749e54" \
+            --limit "${{ github.event.inputs.limit || '256' }}" \
+            --accelerator "${{ github.event.inputs.accelerator || 'NvidiaTeslaT4' }}"
+      - name: Summarize Few-NERD smoke
+        run: |
+          mkdir -p "$RUNNER_TEMP/fewnerd-result"
+          unzip -q "$RUNNER_TEMP/malecns-fewnerd-result.zip" -d "$RUNNER_TEMP/fewnerd-result"
+          python - "$RUNNER_TEMP/fewnerd-result/github-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1],encoding='utf-8'))
+          print('## MaleCNS × Few-NERD byte NER — Kaggle smoke')
+          print(f"- samples: **{d['samples']}**")
+          print(f"- tokens: **{d['tokens']}**")
+          print(f"- UTF-8 bytes: **{d['bytes']}**")
+          print(f"- entity bytes: **{d['entity_bytes']}**")
+          print(f"- unicode tokens: **{d['unicode_tokens']}**")
+          print(f"- round-trip: **{d['roundtrip']}**")
+          print('- status: **pipeline smoke only; not benchmark evidence**')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-fewnerd-kaggle-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-fewnerd-result.zip
+          if-no-files-found: error
+          retention-days: 30
