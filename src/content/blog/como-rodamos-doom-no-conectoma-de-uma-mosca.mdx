@@ -9,16 +9,23 @@ tags: ["malecns", "conectoma", "neurociencia", "doom", "computacao"]
 glyph: "🪰"
 ---
 
-Existe uma lei não escrita na ciência da computação que diz: *se algo processa informação, alguém vai tentar rodar Doom nele*. De calculadoras gráficas a testes de gravidez digitais, de terminais de impressora a bactérias modificadas, "Can it run Doom?" é o rito de passagem definitivo de qualquer arquitetura.
+Existe uma lei não escrita na ciência da computação que diz: _se algo processa informação, alguém vai tentar rodar Doom nele_. De calculadoras gráficas a testes de gravidez digitais, de terminais de impressora a bactérias modificadas, "Can it run Doom?" é o rito de passagem definitivo de qualquer arquitetura.
 
 Mas e se o sistema não for um microprocessador de silício, e sim o **cérebro completo de um organismo biológico**?
 
-Pegamos o conectoma do sistema nervoso central do macho da mosca (*Drosophila melanogaster*, o dataset **MaleCNS v1.0**, contendo todos os **165.122 neurônios** e **10,2 milhões de conexões sinápticas** mapeadas por microscopia eletrônica), transformamos a rede em um operador recorrente compacto residente no cache do processador, e conectamos o cérebro em um loop sensorial-motor para navegar por uma arena 3D estilo Doom em tempo real.
+Pegamos o conectoma do sistema nervoso central do macho da mosca (_Drosophila melanogaster_, o dataset **MaleCNS v1.0**, contendo todos os **165.122 neurônios** e **10,2 milhões de conexões sinápticas** mapeadas por microscopia eletrônica), transformamos a rede em um operador recorrente compacto residente no cache do processador, e conectamos o cérebro em um loop sensorial-motor para navegar por uma arena 3D estilo Doom em tempo real.
 
 O simulador completo está rodando interativamente no iframe abaixo — direto no seu navegador:
 
 <div style="width: 100%; max-width: 1000px; margin: 2rem auto;">
-  <iframe src="/flydoom/index.html" width="100%" height="820" style="border: 2px solid #30363d; border-radius: 8px; background: #0d1117;" title="FlyDoom: Conectoma da Drosophila jogando Doom em 3D" loading="lazy"></iframe>
+  <iframe
+    src="/flydoom/index.html"
+    width="100%"
+    height="820"
+    style="border: 2px solid #30363d; border-radius: 8px; background: #0d1117;"
+    title="FlyDoom: Conectoma da Drosophila jogando Doom em 3D"
+    loading="lazy"
+  ></iframe>
 </div>
 
 ---
@@ -30,8 +37,9 @@ O conectoma de 165 mil neurônios parece modesto para os padrões dos Large Lang
 Em precisão FP32 padrão no PyTorch (`torch.sparse_csr_tensor`), a matriz de adjacência ocupa cerca de **118 MB**. Em formato comprimido SciPy CSR, ocupa **37,2 MB**.
 
 Parece pouco para a RAM de 16 GB do computador, certo? O problema é a física da arquitetura von Neumann:
+
 - A cada passo recorrente da simulação ($x_{t+1} = \tanh(W x_t + I_t)$), o processador precisa ler **a totalidade dos 37 MB de pesos da memória RAM principal (DRAM)**.
-- O canal de memória de um processador comum entrega cerca de 25 a 35 GB/s. 
+- O canal de memória de um processador comum entrega cerca de 25 a 35 GB/s.
 - Fazer uma viagem completa à DRAM para cada frame impõe um teto severo: o PyTorch roda a míseros **16,3 ms por passo (61 passos por segundo)**. A CPU passa mais de 80% dos ciclos ociosa, esperando os dados atravessarem o barramento.
 
 Para rodar em tempo real a taxas de 300+ FPS, havia apenas uma saída: **fazer o cérebro inteiro caber dentro do cache L3 do processador (8 MB)**.
@@ -75,16 +83,20 @@ Para a mosca navegar no mapa de Doom, não bastava rodar matrizes no vácuo — 
 ```
 
 ### A. Visão Bilateral e Evasão Contralateral
-Um motor de *raycasting* DDA (exatamente igual ao de Wolfenstein 3D e Doom clássico) projeta 32 feixes no campo de visão de 145°.
+
+Um motor de _raycasting_ DDA (exatamente igual ao de Wolfenstein 3D e Doom clássico) projeta 32 feixes no campo de visão de 145°.
+
 - Os feixes esquerdos ativam os **4.589 neurônios de projeção visual esquerdos**.
 - Os feixes direitos ativam os **4.612 neurônios de projeção visual direitos**.
-- Conectamos o reflexo biológico contralateral: quando uma parede cresce na esquerda, a excitação motora comanda a mosca a virar para a direita, deslizando suavemente pelas quinas (*wall sliding*).
+- Conectamos o reflexo biológico contralateral: quando uma parede cresce na esquerda, a excitação motora comanda a mosca a virar para a direita, deslizando suavemente pelas quinas (_wall sliding_).
 
 ### B. Quimiotaxia e Tropotaxia Antenal (Olfato)
+
 Moscas reais não encontram comida olhando para ela — encontram pelo **olfato**.
+
 - No conectoma MaleCNS, identificamos **2.639 neurônios receptores olfativos (`cell_class = olfactory`)**.
 - A mosca possui duas antenas separadas no espaço ($w = 0.5\text{ m}$). O prêmio emite uma pluma aromática que decai com o quadrado da distância.
-- Se o cheiro for mais forte na antena direita ($C_R > C_L$), o gradiente induz uma manobra de busca na direção da pluma. Conforme a concentração geral sobe, o circuito comanda um *surge* frontal (aceleração em direção à comida).
+- Se o cheiro for mais forte na antena direita ($C_R > C_L$), o gradiente induz uma manobra de busca na direção da pluma. Conforme a concentração geral sobe, o circuito comanda um _surge_ frontal (aceleração em direção à comida).
 
 ---
 
@@ -92,11 +104,11 @@ Moscas reais não encontram comida olhando para ela — encontram pelo **olfato*
 
 Para ter certeza de que o comportamento de navegação é fruto da **fiação biológica real** e não de um mero truque estatístico, comparamos a mosca contra um **Modelo Nulo de Grau Preservado** (onde as conexões sinápticas foram aleatoriamente permutadas, mantendo o número de entradas e saídas de cada neurônio):
 
-| Modelo | Tamanho / Localização | FPS | Evasão de Paredes | Colisões em 300 Ticks |
-| :--- | :---: | :---: | :---: | :---: |
-| **MaleCNS Compact (.mcns)** | **4,98 MB (Cache L3)** | **335,4 FPS** | **99,4%** | **0 a 1** |
-| SciPy FP32 Original | 37,20 MB (DRAM) | 86,3 FPS | 99,7% | 1 |
-| **Controle Embaralhado (Nulo)** | 37,20 MB (DRAM) | 83,1 FPS | **88,7%** | **34 batidas na parede** |
+| Modelo                          | Tamanho / Localização  |      FPS      | Evasão de Paredes |  Colisões em 300 Ticks   |
+| :------------------------------ | :--------------------: | :-----------: | :---------------: | :----------------------: |
+| **MaleCNS Compact (.mcns)**     | **4,98 MB (Cache L3)** | **335,4 FPS** |     **99,4%**     |        **0 a 1**         |
+| SciPy FP32 Original             |    37,20 MB (DRAM)     |   86,3 FPS    |       99,7%       |            1             |
+| **Controle Embaralhado (Nulo)** |    37,20 MB (DRAM)     |   83,1 FPS    |     **88,7%**     | **34 batidas na parede** |
 
 O cérebro aleatório bateu na parede **34 vezes**, ficando preso em cantos escuros. O conectoma biológico real preservado em 4-bit no L3 navegou pelas salas, fez as curvas em 90°, farejou o prêmio através das portas e capturou alvos randômicos de forma autônoma.
 
@@ -105,6 +117,7 @@ O cérebro aleatório bateu na parede **34 vezes**, ficando preso em cantos escu
 ## 5. Onde o Código e a Demonstração Vivem
 
 Toda a infraestrutura do FlyDoom é código aberto:
+
 - A demonstração interativa completa em tela cheia está disponível em: [`/flydoom/`](/flydoom/)
 - O formato binário Zero-Copy FlatBuffers (`.mcns`), os kernels JIT em Numba/AVX2 e os relatórios de benchmarks estão no repositório de experimentos.
 

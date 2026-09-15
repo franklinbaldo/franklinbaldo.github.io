@@ -9,16 +9,23 @@ tags: ["malecns", "connectome", "neuroscience", "doom", "computing"]
 glyph: "🪰"
 ---
 
-There is an unwritten law in computer science: *if something processes information, someone will try to run Doom on it*. From graphing calculators to digital pregnancy tests, from receipt printers to engineered bacteria, "Can it run Doom?" is the ultimate rite of passage for any computing architecture.
+There is an unwritten law in computer science: _if something processes information, someone will try to run Doom on it_. From graphing calculators to digital pregnancy tests, from receipt printers to engineered bacteria, "Can it run Doom?" is the ultimate rite of passage for any computing architecture.
 
 But what if the system isn't a silicon microprocessor, but the **complete brain of a biological organism**?
 
-We took the entire central nervous system connectome of the male fruit fly (*Drosophila melanogaster*, the **MaleCNS v1.0** dataset, comprising all **165,122 neurons** and **10.2 million synaptic connections** mapped via electron microscopy), transformed the network into a compact, CPU cache-resident recurrent operator, and plugged the brain into an embodied sensory-motor loop navigating a 3D Doom arena in real time.
+We took the entire central nervous system connectome of the male fruit fly (_Drosophila melanogaster_, the **MaleCNS v1.0** dataset, comprising all **165,122 neurons** and **10.2 million synaptic connections** mapped via electron microscopy), transformed the network into a compact, CPU cache-resident recurrent operator, and plugged the brain into an embodied sensory-motor loop navigating a 3D Doom arena in real time.
 
 The complete interactive simulator is running live in the frame below — directly in your browser:
 
 <div style="width: 100%; max-width: 1000px; margin: 2rem auto;">
-  <iframe src="/flydoom/index.html" width="100%" height="820" style="border: 2px solid #30363d; border-radius: 8px; background: #0d1117;" title="FlyDoom: Drosophila Connectome Playing Doom in 3D" loading="lazy"></iframe>
+  <iframe
+    src="/flydoom/index.html"
+    width="100%"
+    height="820"
+    style="border: 2px solid #30363d; border-radius: 8px; background: #0d1117;"
+    title="FlyDoom: Drosophila Connectome Playing Doom in 3D"
+    loading="lazy"
+  ></iframe>
 </div>
 
 ---
@@ -30,6 +37,7 @@ A connectome of 165,000 neurons might seem modest compared to modern multi-billi
 In standard FP32 precision within PyTorch (`torch.sparse_csr_tensor`), the adjacency matrix consumes approximately **118 MB**. In compressed SciPy CSR format, it occupies **37.2 MB**.
 
 This sounds trivial for a computer with 16 GB of RAM, right? The problem lies in the physics of the von Neumann architecture:
+
 - On every recurrent simulation step ($x_{t+1} = \tanh(W x_t + I_t)$), the CPU must fetch the **entire 37 MB of synaptic weights from main memory (DRAM)**.
 - A standard memory bus provides roughly 25 to 35 GB/s of bandwidth.
 - Making a round-trip to DRAM on every single frame imposes a hard ceiling: PyTorch runs at a sluggish **16.3 ms per step (61 steps per second)**. The CPU spends over 80% of its clock cycles idle, waiting for data to travel across the bus.
@@ -75,16 +83,20 @@ To navigate the Doom arena, running matrix multiplications in a vacuum was not e
 ```
 
 ### A. Bilateral Vision and Contralateral Avoidance
-A DDA *raycasting* engine (identical to classic Wolfenstein 3D and Doom) casts 32 beams across a 145° field of view.
+
+A DDA _raycasting_ engine (identical to classic Wolfenstein 3D and Doom) casts 32 beams across a 145° field of view.
+
 - Left rays activate the **4,589 left visual projection neurons**.
 - Right rays activate the **4,612 right visual projection neurons**.
-- We wired the contralateral biological reflex: when a wall approaches on the left, motor drive directs the fly to steer right, sliding smoothly along corners (*wall sliding*).
+- We wired the contralateral biological reflex: when a wall approaches on the left, motor drive directs the fly to steer right, sliding smoothly along corners (_wall sliding_).
 
 ### B. Chemotaxis and Antennal Tropotaxis (Olfaction)
+
 Real flies do not locate food by sight — they track it by **scent**.
+
 - In the MaleCNS connectome, we mapped **2,639 olfactory receptor neurons (`cell_class = olfactory`)**.
 - The fly has two antennae separated in space ($w = 0.5\text{ m}$). The target emits an aromatic plume that diffuses with distance.
-- When odor concentration is stronger on the right antenna ($C_R > C_L$), the bilateral gradient drives turn torque towards the plume. As overall concentration increases, the circuit triggers a forward *surge* (accelerating straight towards food).
+- When odor concentration is stronger on the right antenna ($C_R > C_L$), the bilateral gradient drives turn torque towards the plume. As overall concentration increases, the circuit triggers a forward _surge_ (accelerating straight towards food).
 
 ---
 
@@ -92,11 +104,11 @@ Real flies do not locate food by sight — they track it by **scent**.
 
 To prove that navigation originates from **genuine biological wiring** rather than statistical artifacts, we benchmarked the fly against a **Degree-Preserving Shuffled Null Model** (where synaptic connections were randomly permuted while preserving each neuron's in/out degree):
 
-| Model | Size / Residence | FPS | Wall Avoidance | Collisions in 300 Ticks |
-| :--- | :---: | :---: | :---: | :---: |
-| **MaleCNS Compact (.mcns)** | **4.98 MB (L3 Cache)** | **335.4 FPS** | **99.4%** | **0 to 1** |
-| SciPy FP32 Original | 37.20 MB (DRAM) | 86.3 FPS | 99.7% | 1 |
-| **Shuffled Null Control** | 37.20 MB (DRAM) | 83.1 FPS | **88.7%** | **34 wall impacts** |
+| Model                       |    Size / Residence    |      FPS      | Wall Avoidance | Collisions in 300 Ticks |
+| :-------------------------- | :--------------------: | :-----------: | :------------: | :---------------------: |
+| **MaleCNS Compact (.mcns)** | **4.98 MB (L3 Cache)** | **335.4 FPS** |   **99.4%**    |       **0 to 1**        |
+| SciPy FP32 Original         |    37.20 MB (DRAM)     |   86.3 FPS    |     99.7%      |            1            |
+| **Shuffled Null Control**   |    37.20 MB (DRAM)     |   83.1 FPS    |   **88.7%**    |   **34 wall impacts**   |
 
 The random brain crashed into walls **34 times**, repeatedly wedged in corners. The real biological connectome preserved in 4-bit L3 navigated corridors, negotiated 90° turns, tracked the target's odor plume through doorways, and captured randomly spawned prizes autonomously.
 
@@ -105,6 +117,7 @@ The random brain crashed into walls **34 times**, repeatedly wedged in corners. 
 ## 5. Source Code and Standalone Demo
 
 All FlyDoom infrastructure is open source:
+
 - The full-screen interactive simulator is accessible at: [`/flydoom/`](/flydoom/)
 - The Zero-Copy FlatBuffers schema (`.mcns`), Numba JIT kernels, and benchmark harnesses are located in the experiment repository.
 
