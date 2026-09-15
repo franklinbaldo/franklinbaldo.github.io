@@ -1,0 +1,70 @@
+name: MaleCNS Concept Flavour Kaggle
+
+on:
+  push:
+    branches:
+      - experiment/malecns-concept-flavour-kaggle
+    paths:
+      - ".github/workflows/malecns-concept-flavour.yml"
+      - "scripts/malecns-concept-flavour/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-concept-flavour-kaggle
+  cancel-in-progress: true
+
+jobs:
+  run-concept-flavour-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || exit 2
+          [[ -n "$KAGGLE_USERNAME" ]] || exit 2
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+      - name: Run calibrated concept-flavour smoke on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          bash scripts/malecns-concept-flavour/kaggle.sh \
+            --output-dir "$RUNNER_TEMP/malecns-concept-flavour" \
+            --kernel-id "$KAGGLE_USERNAME/malecns-concept-flavour-smoke" \
+            --papers-ref "33d0f0fb409bf45f21ec04e1d8f796a43de51310" \
+            --accelerator NvidiaTeslaT4
+      - name: Summarize concept-flavour smoke
+        run: |
+          python - "$RUNNER_TEMP/malecns-concept-flavour/github-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1],encoding='utf-8'))
+          print('## MaleCNS calibrated concept-flavour smoke')
+          print(f"- Kaggle: {d.get('kernel_url')}")
+          print(f"- positive bank: {', '.join(d.get('positive_anchors', []))}")
+          print(f"- negative bank: {', '.join(d.get('negative_anchors', []))}")
+          print(f"- held out from calibration/reward: **{', '.join(d.get('heldout_concepts', []))}**")
+          print(f"- conditioned vector channels: **{d.get('channel_count_total')}**")
+          print(f"- combined input width: **{d.get('combined_input_dim')}**")
+          print(f"- offline direct probes: `{d.get('offline_direct_probes')}`")
+          print(f"- offline cosine probes: `{d.get('offline_cosine_probes')}`")
+          print(f"- frozen flavour heldout: `{d.get('frozen_flavour', {}).get('heldout_final')}`")
+          print(f"- online flavour heldout: `{d.get('online_flavour', {}).get('heldout_final')}`")
+          print(f"- GPU: **{d.get('device')}**")
+          print('- exploratory controlled curriculum smoke only')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-concept-flavour-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-concept-flavour
+          if-no-files-found: error
+          retention-days: 30
