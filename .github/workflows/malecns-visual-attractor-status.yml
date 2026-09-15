@@ -1,0 +1,50 @@
+name: MaleCNS Visual Attractor Kaggle Status
+
+on:
+  push:
+    branches:
+      - experiment/malecns-visual-attractor
+    paths:
+      - ".github/workflows/malecns-visual-attractor-status.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-visual-attractor-status
+  cancel-in-progress: true
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Snapshot current Kaggle kernel status and logs
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KERNEL_ID: ${{ vars.KAGGLE_MALECNS_VISUAL_ATTRACTOR_KERNEL_ID }}
+        run: |
+          set -euo pipefail
+          [[ -n "$KAGGLE_API_TOKEN" ]] || exit 2
+          [[ -n "$KAGGLE_USERNAME" ]] || exit 2
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+          KERNEL="${KERNEL_ID:-${KAGGLE_USERNAME}/malecns-visual-attractor}"
+          CHECKED_AT="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          STATUS="$(kaggle kernels status "$KERNEL" 2>&1 || true)"
+          echo "kernel=$KERNEL"
+          echo "checked_at=$CHECKED_AT"
+          echo "status=$STATUS"
+          echo "----- Kaggle execution log snapshot -----"
+          kaggle kernels logs "$KERNEL" 2>&1 || true
+          {
+            echo "## MaleCNS visual-attractor Kaggle snapshot"
+            echo "- kernel: \`$KERNEL\`"
+            echo "- checked at: \`$CHECKED_AT\`"
+            echo "- status: \`$STATUS\`"
+            echo "- execution log was captured in this job log via \`kaggle kernels logs\`"
+          } >> "$GITHUB_STEP_SUMMARY"

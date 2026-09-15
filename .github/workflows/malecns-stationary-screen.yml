@@ -1,0 +1,94 @@
+name: MaleCNS Stationary Screen Reward Kaggle
+
+on:
+  push:
+    branches:
+      - experiment/malecns-visual-attractor
+    paths:
+      - ".github/workflows/malecns-stationary-screen.yml"
+      - "scripts/malecns-stationary-screen/**"
+  workflow_dispatch:
+    inputs:
+      visual_ref:
+        description: Exact papers commit containing the stationary-screen reward calibration
+        required: true
+        default: "ca157208329c7f09c6aaa3c3fb510bfc62b351c1"
+        type: string
+      runtime_ref:
+        description: Exact papers commit containing the canonical MaleCNS compiler
+        required: true
+        default: "437083ae30f24f6f424ce405182d90b275b62621"
+        type: string
+      accelerator:
+        description: Kaggle accelerator
+        required: true
+        default: NvidiaTeslaT4
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-stationary-screen-kaggle
+  cancel-in-progress: true
+
+jobs:
+  run-stationary-screen-calibration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Run public stationary-screen reward calibration on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_MALECNS_STATIONARY_SCREEN_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_STATIONARY_SCREEN_KERNEL_ID }}
+          VISUAL_REF: ${{ inputs.visual_ref || 'ca157208329c7f09c6aaa3c3fb510bfc62b351c1' }}
+          RUNTIME_REF: ${{ inputs.runtime_ref || '437083ae30f24f6f424ce405182d90b275b62621' }}
+          ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
+        run: |
+          bash scripts/malecns-stationary-screen/kaggle.sh \
+            --output-dir "$RUNNER_TEMP/malecns-stationary-screen" \
+            --visual-ref "$VISUAL_REF" \
+            --runtime-ref "$RUNTIME_REF" \
+            --accelerator "$ACCELERATOR"
+
+      - name: Summarize stationary-screen calibration
+        run: |
+          python - "$RUNNER_TEMP/malecns-stationary-screen/github-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          d=json.load(open(sys.argv[1], encoding='utf-8'))
+          best=d.get('best', {})
+          print('## MaleCNS stationary-screen reward-loop calibration')
+          print(f"- public Kaggle: {d.get('kernel_url')}")
+          print(f"- visual ref: `{d.get('visual_ref')}`")
+          print(f"- runtime ref: `{d.get('runtime_ref')}`")
+          print(f"- visual receptors: **{d.get('receiver', {}).get('visual_receptors')}**")
+          print(f"- best generation/candidate: **{best.get('generation')} / {best.get('candidate')}**")
+          print(f"- integrated excitation score: **{best.get('score')}**")
+          print(f"- peak reward: **{best.get('peak_reward')}** at step **{best.get('peak_step')}**")
+          print(f"- approach (secondary): **{best.get('approach')}**")
+          print(f"- final distance (secondary): **{best.get('final_distance')}**")
+          print('- receptor raster and top receptor IDs are in the public cache and streamed in the Kaggle/GitHub logs')
+          print('- calibration only: Run 1 remains FAIL; this does not constitute a capture claim')
+          PY
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: malecns-stationary-screen-public-cache-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-stationary-screen
+          if-no-files-found: error
+          retention-days: 30

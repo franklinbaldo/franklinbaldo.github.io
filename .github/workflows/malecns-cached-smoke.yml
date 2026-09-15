@@ -1,0 +1,205 @@
+name: MaleCNS Cached Telemetry Smoke
+
+on:
+  push:
+    branches:
+      - experiment/malecns-visual-attractor
+    paths:
+      - ".github/workflows/malecns-cached-smoke.yml"
+      - "scripts/kaggle-dataset/publish-private.sh"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  cached-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      KERNEL_SLUG: malecns-cached-telemetry-smoke-64x64
+      VISUAL_REF: e409aff2958baa6849ba3b577f1195500356bcf4
+      CACHE_ARTIFACT_ID: '10406003072'
+      CACHE_DATASET_SLUG: malecns-visual-runtime-cache
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Publish cached runtime as Kaggle Dataset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          set -euxo pipefail
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+          STAGE="$RUNNER_TEMP/stage"
+          mkdir -p "$STAGE/runtime-cache"
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${CACHE_ARTIFACT_ID}/zip" \
+            -o "$RUNNER_TEMP/cache.zip"
+          unzip -q "$RUNNER_TEMP/cache.zip" -d "$STAGE/runtime-cache"
+          test -f "$STAGE/runtime-cache/graph.npz"
+          test -f "$STAGE/runtime-cache/visual-interface.npz"
+          test -f "$STAGE/runtime-cache/screen-geometry.npz"
+          du -sh "$STAGE" "$STAGE/runtime-cache"
+
+          # Heavy inputs belong in a Kaggle Dataset. Files placed beside job.py
+          # are not reliably preserved by `kaggle kernels push`.
+          DATASET_DIR="$RUNNER_TEMP/dataset"
+          mkdir -p "$DATASET_DIR"
+          cp -a "$STAGE/runtime-cache/." "$DATASET_DIR/"
+          cat > "$DATASET_DIR/cache-provenance.json" <<JSON
+          {
+            "cache_artifact_id": "${CACHE_ARTIFACT_ID}",
+            "github_sha": "${GITHUB_SHA}",
+            "visual_ref": "${VISUAL_REF}"
+          }
+          JSON
+          bash scripts/kaggle-dataset/publish-private.sh \
+            --path "$DATASET_DIR" \
+            --slug "$CACHE_DATASET_SLUG" \
+            --title "MaleCNS visual runtime cache" \
+            --message "cache for ${GITHUB_SHA}" \
+            --license CC-BY-4.0
+          DATASET_ID="${KAGGLE_USERNAME}/${CACHE_DATASET_SLUG}"
+          dataset_deadline=$(( $(date +%s) + 180 ))
+          while :; do
+            dataset_files="$(kaggle datasets files "$DATASET_ID" 2>&1 || true)"
+            echo "$dataset_files"
+            if grep -q 'cache-provenance.json' <<<"$dataset_files"; then
+              echo "Kaggle Dataset version is ready: $DATASET_ID"
+              break
+            fi
+            if (( $(date +%s) >= dataset_deadline )); then
+              echo "Kaggle Dataset did not expose the expected cache provenance" >&2
+              exit 1
+            fi
+            sleep 15
+          done
+          find "$DATASET_DIR" -maxdepth 2 -type f -printf '%s %p\n' | sort -nr
+
+          cat > "$STAGE/job.py" <<'PY'
+          import json, os, pathlib, shutil, subprocess, sys, time
+
+          dataset_slug = "malecns-visual-runtime-cache"
+          dataset = pathlib.Path("/kaggle/input") / dataset_slug
+          cache = dataset
+          visual_repo = pathlib.Path("/kaggle/temp/malecns-papers")
+          subprocess.check_call([
+              "git", "clone", "--filter=blob:none",
+              "https://github.com/franklinbaldo/papers.git", str(visual_repo),
+          ])
+          subprocess.check_call(["git", "-C", str(visual_repo), "checkout", "e409aff2958baa6849ba3b577f1195500356bcf4"])
+          visual = visual_repo / "experiments/malecns_visual_attractor"
+          script = visual / "scripts/run_swarm_capacity_probe.py"
+          required = [cache / "graph.npz", cache / "visual-interface.npz", cache / "screen-geometry.npz", script]
+          missing = [str(p) for p in required if not p.exists()]
+          if missing:
+              raise SystemExit(f"Kaggle Dataset missing required files: {missing}")
+          out = pathlib.Path("/kaggle/working/cached-smoke")
+          out.mkdir(parents=True, exist_ok=True)
+          public = pathlib.Path("/kaggle/working/public-cache")
+          public.mkdir(parents=True, exist_ok=True)
+          env = os.environ.copy()
+          env["PYTHONPATH"] = str(visual / "src") + os.pathsep + str(visual / "scripts")
+          cmd = [
+              sys.executable, "-u", str(script),
+              "--graph", str(cache / "graph.npz"),
+              "--interface", str(cache / "visual-interface.npz"),
+              "--screen-geometry", str(cache / "screen-geometry.npz"),
+              "--output-dir", str(out),
+              "--device", "cuda",
+              "--swarm-size", "64",
+              "--microbatch-size", "64",
+              "--steps", "1",
+              "--screen-width-px", "64",
+              "--screen-height-px", "36",
+              "--physical-width", "0.42",
+              "--ambient", "0.08",
+              "--seed", "20260915",
+              "--spectral-scale", "3776.27",
+              "--gain", "1.0",
+              "--leak", "0.2",
+              "--visual-scale", "0.5",
+          ]
+          print({"event":"cached_smoke_launch", "cmd":" ".join(cmd)}, flush=True)
+          t0 = time.perf_counter()
+          subprocess.check_call(cmd, env=env)
+          elapsed = time.perf_counter()-t0
+          summary = json.loads((out / "swarm-capacity-summary.json").read_text(encoding="utf-8"))
+          summary.update({
+              "cache_source": "kaggle-dataset",
+              "cache_dataset": dataset_slug,
+              "visual_ref": "e409aff2958baa6849ba3b577f1195500356bcf4",
+              "kernel": "franklinbaldo/malecns-cached-telemetry-smoke-64x64",
+              "parameters": {"swarm_size": 64, "microbatch_size": 64, "steps": 1},
+              "probe_elapsed_s": elapsed,
+          })
+          (public / "github-summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          (public / "provenance.json").write_text(json.dumps({
+              "cache_source": "kaggle-dataset",
+              "cache_dataset": dataset_slug,
+              "visual_ref": "e409aff2958baa6849ba3b577f1195500356bcf4",
+              "kernel": "franklinbaldo/malecns-cached-telemetry-smoke-64x64",
+          }, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          for name in ("swarm-capacity-summary.json", "telemetry.jsonl"):
+              shutil.copy2(out / name, public / name)
+          print({"event":"cached_smoke_complete", "elapsed_s":elapsed, "swarm_size":64, "steps":1, "cache_source":"kaggle-dataset"}, flush=True)
+          PY
+
+          cat > "$STAGE/kernel-metadata.json" <<JSON
+          {
+            "id": "${KAGGLE_USERNAME}/${KERNEL_SLUG}",
+            "title": "MaleCNS Cached Telemetry Smoke 64x64",
+            "code_file": "job.py",
+            "language": "python",
+            "kernel_type": "script",
+            "is_private": true,
+            "enable_gpu": true,
+            "enable_internet": true,
+            "machine_shape": "NvidiaTeslaT4",
+            "dataset_sources": ["${KAGGLE_USERNAME}/${CACHE_DATASET_SLUG}"],
+            "competition_sources": [],
+            "kernel_sources": [],
+            "model_sources": []
+          }
+          JSON
+
+      - name: Push and stream observable smoke
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          set -uo pipefail
+          STAGE="$RUNNER_TEMP/stage"
+          KERNEL_ID="${KAGGLE_USERNAME}/${KERNEL_SLUG}"
+          echo "Pushing cached smoke to $KERNEL_ID"
+          kaggle kernels push -p "$STAGE" --accelerator NvidiaTeslaT4
+          deadline=$(( $(date +%s) + 720 ))
+          seen_complete=0
+          while :; do
+            echo "===== $(date -u +%FT%TZ) status ====="
+            status="$(kaggle kernels status "$KERNEL_ID" 2>&1 || true)"
+            echo "$status"
+            echo "===== recent Kaggle logs ====="
+            logs="$(timeout 8s kaggle kernels logs "$KERNEL_ID" 2>&1 || true)"
+            echo "$logs"
+            if grep -q 'cached_smoke_complete' <<<"$logs"; then
+              seen_complete=1
+              break
+            fi
+            if grep -Eqi 'CalledProcessError|Traceback|No such file or directory|CUDA out of memory' <<<"$logs"; then
+              echo 'Kaggle smoke emitted a terminal error' >&2
+              exit 1
+            fi
+            if grep -Eqi 'KernelWorkerStatus[.](COMPLETE|SUCCESS)' <<<"$status"; then
+              break
+            fi
+            if grep -Eqi 'KernelWorkerStatus[.](ERROR|CANCEL|FAILED)' <<<"$status"; then exit 1; fi
+            if (( $(date +%s) >= deadline )); then echo 'cached smoke deadline exceeded' >&2; exit 1; fi
+            sleep 15
+          done
+          echo "cached smoke finished; telemetry_complete=$seen_complete"

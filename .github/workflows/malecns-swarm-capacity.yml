@@ -1,0 +1,75 @@
+name: MaleCNS Telemetry Smoke 64x64
+
+on:
+  push:
+    branches:
+      - experiment/malecns-visual-attractor
+    paths:
+      - ".github/workflows/malecns-swarm-capacity.yml"
+      - "scripts/malecns-swarm-capacity/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-swarm-capacity-4096
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Run telemetry smoke on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          VISUAL_REF: e409aff2958baa6849ba3b577f1195500356bcf4
+          RUNTIME_REF: 437083ae30f24f6f424ce405182d90b275b62621
+          KAGGLE_MALECNS_VISUAL_WAIT_SECONDS: 600
+        run: |
+          echo "Telemetry smoke only: 64 flies, microbatch 64, 1 neural step"
+          echo "No 4096-fly run will start from this workflow."
+          echo "Scientific ref: $VISUAL_REF"
+          bash scripts/malecns-swarm-capacity/kaggle.sh \
+            --summary "$RUNNER_TEMP/swarm-capacity-summary.json" \
+            --visual-ref "$VISUAL_REF" \
+            --runtime-ref "$RUNTIME_REF" \
+            --accelerator NvidiaTeslaT4
+
+      - name: Summarize
+        run: |
+          python - "$RUNNER_TEMP/swarm-capacity-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          d = json.load(open(sys.argv[1], encoding='utf-8'))
+          print('## MaleCNS telemetry smoke')
+          print(f"- swarm: **{d['swarm_size']}**")
+          print(f"- microbatch: **{d['microbatch_size']}**")
+          print(f"- batches: **{d['microbatches']}**")
+          print(f"- all visible: **{d['all_visible']}**")
+          print(f"- resampled poses: **{d['total_resampled']}**")
+          print(f"- peak CUDA: **{d['peak_cuda_gib']:.2f} GiB**")
+          print(f"- elapsed: **{d['elapsed_s']:.1f}s**")
+          PY
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-telemetry-smoke-${{ github.run_id }}
+          path: ${{ runner.temp }}/swarm-capacity-summary.json
+          if-no-files-found: error
+          retention-days: 7

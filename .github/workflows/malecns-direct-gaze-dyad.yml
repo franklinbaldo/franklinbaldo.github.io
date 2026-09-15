@@ -1,0 +1,99 @@
+name: MaleCNS Direct-Gaze Dyad Kaggle
+
+on:
+  push:
+    branches:
+      - experiment/malecns-visual-attractor
+    paths:
+      - ".github/workflows/malecns-direct-gaze-dyad.yml"
+      - "scripts/malecns-direct-gaze-dyad/**"
+  workflow_dispatch:
+    inputs:
+      visual_ref:
+        description: Exact papers commit containing the direct-gaze dyad calibration
+        required: true
+        default: "d65fd4d97957fcfe9a7ead040c272ebadaeed321"
+        type: string
+      runtime_ref:
+        description: Exact papers commit containing the canonical MaleCNS compiler
+        required: true
+        default: "437083ae30f24f6f424ce405182d90b275b62621"
+        type: string
+      accelerator:
+        description: Kaggle accelerator
+        required: true
+        default: NvidiaTeslaT4
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-direct-gaze-dyad-kaggle
+  cancel-in-progress: true
+
+jobs:
+  run-dyad-calibration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Run public direct-gaze reciprocal dyad calibration on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_MALECNS_DYAD_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_DYAD_KERNEL_ID }}
+          VISUAL_REF: ${{ inputs.visual_ref || 'd65fd4d97957fcfe9a7ead040c272ebadaeed321' }}
+          RUNTIME_REF: ${{ inputs.runtime_ref || '437083ae30f24f6f424ce405182d90b275b62621' }}
+          ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
+        run: |
+          bash scripts/malecns-direct-gaze-dyad/kaggle.sh \
+            --output-dir "$RUNNER_TEMP/malecns-direct-gaze-dyad" \
+            --visual-ref "$VISUAL_REF" \
+            --runtime-ref "$RUNTIME_REF" \
+            --accelerator "$ACCELERATOR"
+
+      - name: Summarize dyad calibration
+        run: |
+          python - "$RUNNER_TEMP/malecns-direct-gaze-dyad/github-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          d=json.load(open(sys.argv[1], encoding='utf-8'))
+          print('## MaleCNS direct-gaze reciprocal dyad calibration')
+          print(f"- public Kaggle: {d.get('kernel_url')}")
+          print(f"- visual ref: `{d.get('visual_ref')}`")
+          print(f"- runtime ref: `{d.get('runtime_ref')}`")
+          print(f"- mapped visual receptors: **{d.get('interface', {}).get('visual_receptors')}**")
+          print(f"- direct gaze: **{d.get('direct_gaze')}**")
+          print(f"- courtship prime: **{d.get('courtship_prime')}**")
+          selected=d.get('diagnostic_selection', {}).get('smallest_channel_live_visual_scale')
+          print(f"- smallest live visual scale: **{selected}**")
+          for row in d.get('scale_results', []):
+              diag=row.get('diagnostics', {})
+              print(
+                  f"- scale {row.get('visual_scale')}: channel_live={row.get('channel_live')}; "
+                  f"motor Δ={diag.get('reciprocal_vs_blank_motor_l1')}; "
+                  f"receptor Δ={diag.get('reciprocal_vs_blank_receptor_l1')}; "
+                  f"feedback gain={diag.get('feedback_motor_gain_over_one_way')}"
+              )
+          print('- this is calibration only; Run 1 remains FAIL and Run 2 requires a new preregistration')
+          PY
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: malecns-direct-gaze-dyad-public-cache-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-direct-gaze-dyad
+          if-no-files-found: error
+          retention-days: 30

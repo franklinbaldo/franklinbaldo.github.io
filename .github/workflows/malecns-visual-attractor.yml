@@ -1,0 +1,99 @@
+name: MaleCNS Ray Room Compound Eye Learning
+
+on:
+  push:
+    branches:
+      - experiment/malecns-visual-attractor
+    paths:
+      - ".github/workflows/malecns-visual-attractor.yml"
+      - "scripts/malecns-visual-attractor/**"
+  workflow_dispatch:
+    inputs:
+      visual_ref:
+        description: Exact papers commit containing ray-cast room + compound-eye full-screen learner
+        required: true
+        default: "3e91f3338fb752ee1172a4c7989f3774fd4fe6ce"
+        type: string
+      runtime_ref:
+        description: Exact papers commit containing the canonical MaleCNS compiler
+        required: true
+        default: "437083ae30f24f6f424ce405182d90b275b62621"
+        type: string
+      accelerator:
+        description: Kaggle accelerator
+        required: true
+        default: NvidiaTeslaT4
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-physical-full-screen-kaggle
+  cancel-in-progress: true
+
+jobs:
+  run-full-screen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Run ray-room compound-eye learner on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          VISUAL_REF: ${{ inputs.visual_ref || '3e91f3338fb752ee1172a4c7989f3774fd4fe6ce' }}
+          RUNTIME_REF: ${{ inputs.runtime_ref || '437083ae30f24f6f424ce405182d90b275b62621' }}
+          ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
+        run: |
+          bash scripts/malecns-visual-attractor/kaggle-full-screen.sh \
+            --summary "$RUNNER_TEMP/malecns-full-screen-summary.json" \
+            --visual-ref "$VISUAL_REF" \
+            --runtime-ref "$RUNTIME_REF" \
+            --accelerator "$ACCELERATOR"
+
+      - name: Summarize ray-room compound-eye learning
+        run: |
+          python - "$RUNNER_TEMP/malecns-full-screen-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          d=json.load(open(sys.argv[1], encoding='utf-8'))
+          best=d.get('best_training_scenario', {})
+          learning=d.get('learning_state', {})
+          display=d.get('display', {})
+          generator=d.get('generator', {})
+          physics=d.get('physics', {})
+          viz=d.get('visualization', {})
+          print('## MaleCNS ray-room compound-eye online learning')
+          print(f"- visual ref: `{d.get('visual_ref')}`")
+          print(f"- learning state: **{learning.get('mode', 'unknown')}**")
+          print(f"- canvas: **{display.get('width_px')}x{display.get('height_px')}**")
+          print(f"- pooled generator features: **{generator.get('feature_dim')}**")
+          print(f"- column calibration: **{physics.get('column_calibration_mode', 'unknown')}**")
+          print(f"- environment: **{physics.get('model', 'unknown')}**")
+          print(f"- best scenario: **{best.get('scenario', {}).get('name')}**")
+          print(f"- advantage vs uniform TV: **{best.get('advantage_vs_uniform')}**")
+          print(f"- advantage vs strongest nonblank control: **{best.get('advantage_vs_strongest_nonblank_control')}**")
+          print(f"- final decoder weight norm: **{d.get('final_decoder_weight_norm')}**")
+          print(f"- retinal artifact source: **{viz.get('source', 'unknown')}**")
+          print(f"- public Kaggle: {d.get('kaggle_url')}")
+          PY
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: malecns-full-screen-summary-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-full-screen-summary.json
+          if-no-files-found: error
+          retention-days: 30
