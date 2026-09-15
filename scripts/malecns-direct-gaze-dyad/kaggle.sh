@@ -176,7 +176,7 @@ PY
 cat > "$STAGE/kernel-metadata.json" <<JSON
 {
   "id": "$KERNEL_ID",
-  "title": "MaleCNS Direct-Gaze Reciprocal Dyad",
+  "title": "MaleCNS Direct Gaze Dyad",
   "code_file": "job.py",
   "language": "python",
   "kernel_type": "script",
@@ -194,9 +194,6 @@ JSON
 kaggle kernels push -p "$STAGE" --accelerator "$ACCELERATOR" -t "${KAGGLE_MALECNS_DYAD_TIMEOUT:-21600}"
 echo "Public Kaggle kernel: https://www.kaggle.com/code/$KERNEL_ID"
 
-# Stream the actual kernel log into GitHub Actions so scene-level progress and
-# ETA are visible while the T4 is running. A stream transport failure does not
-# change kernel state; the terminal status loop below remains authoritative.
 kaggle kernels logs "$KERNEL_ID" --follow --interval "${KAGGLE_DYAD_LOG_INTERVAL:-10}" || true
 
 deadline=$(( $(date +%s) + ${KAGGLE_MALECNS_DYAD_WAIT_SECONDS:-21600} ))
