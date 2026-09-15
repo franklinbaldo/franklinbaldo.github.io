@@ -57,7 +57,7 @@ jobs:
           mode="${{ github.event.inputs.mode || 'smoke' }}"
           bash scripts/malecns-multieurlex21/colab.sh \
             --output-dir "$RUNNER_TEMP/malecns-multieurlex21" \
-            --papers-ref "a998dabf7ea79c8bc1404d72aee1ff432851bdf8" \
+            --papers-ref "27db9c7095d8523f4a7bf5b1bc6d91263f6a72f8" \
             --gpu T4 \
             --mode "$mode"
       - name: Summarize MultiEURLEX-21
