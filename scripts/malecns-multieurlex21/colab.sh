@@ -2,7 +2,7 @@
 set -euo pipefail
 
 OUTPUT_DIR=""
-PAPERS_REF="${PAPERS_REF:-a998dabf7ea79c8bc1404d72aee1ff432851bdf8}"
+PAPERS_REF="${PAPERS_REF:-27db9c7095d8523f4a7bf5b1bc6d91263f6a72f8}"
 GPU="${COLAB_GPU:-T4}"
 MODE="${MALECNS_MTEB_MODE:-smoke}"
 RELEASE_BASE="${MALECNS_CONFIRMATORY_RELEASE_BASE:-https://github.com/franklinbaldo/papers/releases/download/malecns-confirmatory-inputs-v1}"
@@ -49,10 +49,19 @@ graph=inputs/"graph.npz"
 urllib.request.urlretrieve(f"{release_base}/graph.npz",graph)
 env=os.environ.copy(); env["PYTHONPATH"]=str(exp/"src")+os.pathsep+str(exp/"scripts")+os.pathsep+env.get("PYTHONPATH","")
 report=out/("multieurlex21-pt-smoke.json" if mode=="smoke" else "multieurlex21-pt-mteb.json")
-pred=out/"predictions"
-cmd=[sys.executable,exp/"scripts/run_multieurlex21_pt_mteb.py","--graph",graph,"--output",report,"--predictions",pred,"--batch-size","16","--readout-width","256","--max-chunks","4","--chunk-chars","3000"]
+cmd=[sys.executable,exp/"scripts/run_multieurlex21_pt_mteb.py","--graph",graph,"--output",report,"--batch-size","16","--readout-width","256","--max-chunks","4","--chunk-chars","3000"]
 if mode=="smoke": cmd += ["--smoke","--smoke-train-cap","5000","--smoke-test-cap","96"]
-t0=time.perf_counter(); run(*cmd,cwd=exp,env=env); elapsed=time.perf_counter()-t0
+print("+", " ".join(map(str,cmd)), flush=True)
+t0=time.perf_counter()
+proc=subprocess.run([str(x) for x in cmd],cwd=exp,env=env,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+elapsed=time.perf_counter()-t0
+(out/"runner.log").write_text(proc.stdout or "",encoding="utf-8")
+print(proc.stdout or "", flush=True)
+if proc.returncode != 0:
+    failure={"event":"multieurlex_runner_failed","returncode":proc.returncode,"seconds":elapsed,"papers_ref":papers_ref,"mode":mode}
+    (out/"failure.json").write_text(json.dumps(failure,indent=2)+"\n",encoding="utf-8")
+    shutil.make_archive("/content/malecns-eurlex-result","zip",out)
+    raise SystemExit(proc.returncode)
 summary=json.loads(report.read_text(encoding="utf-8"))
 summary["papers_ref"]=papers_ref
 summary["executor"]="colab"
@@ -79,8 +88,15 @@ PY
 if [[ -n "$GPU" ]]; then colab "--auth=$AUTH" new -s "$SESSION" --gpu "$GPU"; else colab "--auth=$AUTH" new -s "$SESSION"; fi
 colab "--auth=$AUTH" upload -s "$SESSION" "$TMP/worker.py" /content/worker.py
 colab "--auth=$AUTH" upload -s "$SESSION" "$TMP/launcher.py" /content/launcher.py
+set +e
 colab "--auth=$AUTH" exec -s "$SESSION" --timeout "${COLAB_EXEC_TIMEOUT:-7200}" -f "$TMP/launcher.py"
-colab "--auth=$AUTH" download -s "$SESSION" /content/malecns-eurlex-result.zip "$TMP/result.zip"
-unzip -q "$TMP/result.zip" -d "$OUTPUT_DIR"
+status=$?
+set -e
+colab "--auth=$AUTH" download -s "$SESSION" /content/malecns-eurlex-result.zip "$TMP/result.zip" || true
+if [[ -f "$TMP/result.zip" ]]; then unzip -q "$TMP/result.zip" -d "$OUTPUT_DIR"; fi
+if [[ $status -ne 0 ]]; then
+  [[ -f "$OUTPUT_DIR/runner.log" ]] && { echo '--- MultiEURLEX runner.log ---'; cat "$OUTPUT_DIR/runner.log"; }
+  exit "$status"
+fi
 [[ -f "$OUTPUT_DIR/github-summary.json" ]] || { echo "missing Colab summary" >&2; exit 1; }
 echo "Colab MultiEURLEX result: $OUTPUT_DIR"
