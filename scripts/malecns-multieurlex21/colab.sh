@@ -20,9 +20,16 @@ done
 [[ -n "$OUTPUT_DIR" ]] || { echo "--output-dir is required" >&2; exit 2; }
 command -v colab >/dev/null || { echo "colab CLI not found" >&2; exit 2; }
 AUTH="${COLAB_AUTH_PROVIDER:-oauth2}"
-SESSION="malecns-eurlex-${GITHUB_RUN_ID:-$$}-${GITHUB_RUN_ATTEMPT:-1}"; SESSION="${SESSION,,}"
+BASE_SESSION="malecns-eurlex-${GITHUB_RUN_ID:-$$}-${GITHUB_RUN_ATTEMPT:-1}"; BASE_SESSION="${BASE_SESSION,,}"
+CURRENT_SESSION=""
 TMP="$(mktemp -d)"
-trap 'colab "--auth=$AUTH" stop -s "$SESSION" >/dev/null 2>&1 || true; rm -rf "$TMP"' EXIT
+cleanup() {
+  if [[ -n "$CURRENT_SESSION" ]]; then
+    colab "--auth=$AUTH" stop -s "$CURRENT_SESSION" >/dev/null 2>&1 || true
+  fi
+  rm -rf "$TMP"
+}
+trap cleanup EXIT
 mkdir -p "$OUTPUT_DIR"
 
 cat > "$TMP/worker.py" <<'PY'
@@ -85,15 +92,51 @@ p.write_text(
 )
 PY
 
-if [[ -n "$GPU" ]]; then colab "--auth=$AUTH" new -s "$SESSION" --gpu "$GPU"; else colab "--auth=$AUTH" new -s "$SESSION"; fi
-colab "--auth=$AUTH" upload -s "$SESSION" "$TMP/worker.py" /content/worker.py
-colab "--auth=$AUTH" upload -s "$SESSION" "$TMP/launcher.py" /content/launcher.py
-set +e
-colab "--auth=$AUTH" exec -s "$SESSION" --timeout "${COLAB_EXEC_TIMEOUT:-7200}" -f "$TMP/launcher.py"
-status=$?
-set -e
-colab "--auth=$AUTH" download -s "$SESSION" /content/malecns-eurlex-result.zip "$TMP/result.zip" || true
-if [[ -f "$TMP/result.zip" ]]; then unzip -q "$TMP/result.zip" -d "$OUTPUT_DIR"; fi
+run_attempt() {
+  local attempt="$1"
+  CURRENT_SESSION="${BASE_SESSION}-a${attempt}"
+  rm -f "$TMP/result.zip"
+  echo "[colab] MultiEURLEX attempt ${attempt}/2 using session '$CURRENT_SESSION'"
+  if [[ -n "$GPU" ]]; then
+    colab "--auth=$AUTH" new -s "$CURRENT_SESSION" --gpu "$GPU"
+  else
+    colab "--auth=$AUTH" new -s "$CURRENT_SESSION"
+  fi
+  colab "--auth=$AUTH" upload -s "$CURRENT_SESSION" "$TMP/worker.py" /content/worker.py
+  colab "--auth=$AUTH" upload -s "$CURRENT_SESSION" "$TMP/launcher.py" /content/launcher.py
+
+  set +e
+  colab "--auth=$AUTH" exec -s "$CURRENT_SESSION" --timeout "${COLAB_EXEC_TIMEOUT:-7200}" -f "$TMP/launcher.py"
+  local status=$?
+  set -e
+
+  colab "--auth=$AUTH" download -s "$CURRENT_SESSION" /content/malecns-eurlex-result.zip "$TMP/result.zip" || true
+  colab "--auth=$AUTH" stop -s "$CURRENT_SESSION" >/dev/null 2>&1 || true
+  CURRENT_SESSION=""
+
+  if [[ -f "$TMP/result.zip" ]]; then
+    rm -rf "$OUTPUT_DIR"/*
+    unzip -q "$TMP/result.zip" -d "$OUTPUT_DIR"
+  fi
+  return "$status"
+}
+
+status=1
+for attempt in 1 2; do
+  if run_attempt "$attempt"; then
+    status=0
+    break
+  fi
+  status=$?
+  if [[ -f "$OUTPUT_DIR/failure.json" ]]; then
+    echo "[colab] Scientific runner returned an error; not retrying as a connection failure."
+    break
+  fi
+  if [[ "$attempt" -lt 2 ]]; then
+    echo "[colab] Execution channel failed without a runner artifact; restarting in a fresh Colab session."
+  fi
+done
+
 if [[ $status -ne 0 ]]; then
   [[ -f "$OUTPUT_DIR/runner.log" ]] && { echo '--- MultiEURLEX runner.log ---'; cat "$OUTPUT_DIR/runner.log"; }
   exit "$status"
