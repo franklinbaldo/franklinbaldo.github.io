@@ -10,9 +10,9 @@ on:
   workflow_dispatch:
     inputs:
       visual_ref:
-        description: Exact papers commit containing common-target visual-efficiency curriculum v4
+        description: Exact papers commit containing low-energy visual-efficiency curriculum v5
         required: true
-        default: "bb50951941cbc51a038edf1ae05fc21cc88c5ce9"
+        default: "0f5b7d3401691dc6e5f9e56f0f7c22db611cb7d2"
         type: string
       runtime_ref:
         description: Exact papers commit containing the canonical MaleCNS compiler
@@ -51,15 +51,15 @@ jobs:
           [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
           python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
 
-      - name: Run public common-target exact-energy curriculum on Kaggle
+      - name: Run public low-energy curriculum on Kaggle
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
-          VISUAL_REF: ${{ inputs.visual_ref || 'bb50951941cbc51a038edf1ae05fc21cc88c5ce9' }}
+          VISUAL_REF: ${{ inputs.visual_ref || '0f5b7d3401691dc6e5f9e56f0f7c22db611cb7d2' }}
           RUNTIME_REF: ${{ inputs.runtime_ref || '437083ae30f24f6f424ce405182d90b275b62621' }}
           ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
         run: |
-          bash scripts/malecns-visual-attractor/kaggle-efficiency-v4.sh \
+          bash scripts/malecns-visual-attractor/kaggle-efficiency-v5.sh \
             --summary "$RUNNER_TEMP/malecns-visual-efficiency-summary.json" \
             --visual-ref "$VISUAL_REF" \
             --runtime-ref "$RUNTIME_REF" \
@@ -72,7 +72,7 @@ jobs:
           d=json.load(open(sys.argv[1], encoding='utf-8'))
           best=d.get('lowest_budget_best', {})
           rewards=best.get('condition_reward', {})
-          print('## MaleCNS visual-efficiency curriculum v4')
+          print('## MaleCNS visual-efficiency curriculum v5')
           print(f"- visual ref: `{d.get('visual_ref')}`")
           print(f"- resolved / total receptors: **{d.get('receiver', {}).get('optic_column_resolved')} / {d.get('receiver', {}).get('visual_receptors_total')}**")
           print(f"- budgets: **{d.get('parameters', {}).get('budgets')}**")
@@ -84,7 +84,7 @@ jobs:
           print(f"- blank: **{rewards.get('blank')}**")
           print(f"- learned approach: **{best.get('approach', {}).get('learned')}**")
           print(f"- public Kaggle: {d.get('kaggle_url')}")
-          print('- calibration only; v4 scales every nonblank arm to the same attainable per-frame energy and aborts if mismatch exceeds 1e-5')
+          print('- calibration only; v5 uses an explicit retinal intensity floor and genuinely sub-capacity TV budgets')
           PY
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
