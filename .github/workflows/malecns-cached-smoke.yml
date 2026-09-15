@@ -62,6 +62,21 @@ jobs:
             --title "MaleCNS visual runtime cache" \
             --message "cache for ${GITHUB_SHA}" \
             --license CC-BY-4.0
+          DATASET_ID="${KAGGLE_USERNAME}/${CACHE_DATASET_SLUG}"
+          dataset_deadline=$(( $(date +%s) + 180 ))
+          while :; do
+            dataset_files="$(kaggle datasets files "$DATASET_ID" 2>&1 || true)"
+            echo "$dataset_files"
+            if grep -q 'visual/scripts/run_swarm_capacity_probe.py' <<<"$dataset_files"; then
+              echo "Kaggle Dataset version is ready: $DATASET_ID"
+              break
+            fi
+            if (( $(date +%s) >= dataset_deadline )); then
+              echo "Kaggle Dataset did not expose the expected visual runner" >&2
+              exit 1
+            fi
+            sleep 15
+          done
           find "$DATASET_DIR" -maxdepth 2 -type f -printf '%s %p\n' | sort -nr
 
           cat > "$STAGE/job.py" <<'PY'
