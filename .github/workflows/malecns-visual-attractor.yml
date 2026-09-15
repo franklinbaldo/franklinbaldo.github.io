@@ -12,7 +12,7 @@ on:
       visual_ref:
         description: Exact papers commit containing the stationary-screen experiment
         required: true
-        default: "ca157208329c7f09c6aaa3c3fb510bfc62b351c1"
+        default: "a62af61a8267220ab3f01b4244fd38d8eddd99c3"
         type: string
       runtime_ref:
         description: Exact papers commit containing the canonical MaleCNS compiler
@@ -55,7 +55,7 @@ jobs:
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
-          VISUAL_REF: ${{ inputs.visual_ref || 'ca157208329c7f09c6aaa3c3fb510bfc62b351c1' }}
+          VISUAL_REF: ${{ inputs.visual_ref || 'a62af61a8267220ab3f01b4244fd38d8eddd99c3' }}
           RUNTIME_REF: ${{ inputs.runtime_ref || '437083ae30f24f6f424ce405182d90b275b62621' }}
           ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
         run: |
