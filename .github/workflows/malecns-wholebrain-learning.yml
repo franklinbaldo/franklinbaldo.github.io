@@ -1,0 +1,100 @@
+name: MaleCNS Whole-Brain Flavour Learning Kaggle
+
+on:
+  push:
+    branches:
+      - experiment/malecns-wholebrain-semantic-kaggle
+    paths:
+      - ".github/workflows/malecns-wholebrain-learning.yml"
+      - "scripts/malecns-wholebrain-learning/**"
+  workflow_dispatch:
+    inputs:
+      papers_ref:
+        description: Exact papers commit containing the exploratory learning-curve runner
+        required: true
+        default: "dca01cf11cc0e294d62777486af261168b60dd1b"
+        type: string
+      epochs:
+        description: Exploratory epochs per recurrent depth
+        required: true
+        default: "20"
+        type: string
+      accelerator:
+        description: Kaggle accelerator
+        required: true
+        default: NvidiaTeslaT4
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-wholebrain-learning-kaggle
+  cancel-in-progress: true
+
+jobs:
+  run-learning-curve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Run exploratory flavour learning curve on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          PAPERS_REF: ${{ inputs.papers_ref || 'dca01cf11cc0e294d62777486af261168b60dd1b' }}
+          EPOCHS: ${{ inputs.epochs || '20' }}
+          ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
+        run: |
+          bash scripts/malecns-wholebrain-learning/kaggle.sh \
+            --output-dir "$RUNNER_TEMP/malecns-wholebrain-learning" \
+            --kernel-id "$KAGGLE_USERNAME/malecns-whole-brain-flavour-learning" \
+            --papers-ref "$PAPERS_REF" \
+            --epochs "$EPOCHS" \
+            --accelerator "$ACCELERATOR"
+
+      - name: Summarize exploratory learning curve
+        run: |
+          python - "$RUNNER_TEMP/malecns-wholebrain-learning/github-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          d=json.load(open(sys.argv[1], encoding='utf-8'))
+          print('## MaleCNS exploratory whole-brain flavour learning')
+          print(f"- public Kaggle: {d.get('kernel_url')}")
+          print(f"- papers ref: `{d.get('papers_ref')}`")
+          print(f"- train/eval documents: **{d.get('train_document')} / {d.get('eval_document')}**")
+          print(f"- epochs per depth: **{d.get('epochs')}**")
+          base=d.get('tag_only_heldout_final', {})
+          print(f"- tag-only held-out macroAP: **{base.get('macro_tag_auprc')}**")
+          for row in d.get('assisted', []):
+              final=row.get('heldout_final', {})
+              curve=row.get('curve', [])
+              first=curve[0] if curve else {}
+              last=curve[-1] if curve else {}
+              print(
+                  f"- depth {row.get('steps_per_chunk')}: fly loss "
+                  f"{first.get('fly_loss')} → {last.get('fly_loss')}; "
+                  f"held-out macroAP **{final.get('macro_tag_auprc')}**"
+              )
+          print(f"- max CUDA memory: **{d.get('max_cuda_memory_allocated')} bytes**")
+          print('- exploratory mechanism curve only; not Stage A/B confirmatory evidence')
+          PY
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: malecns-wholebrain-learning-public-cache-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-wholebrain-learning
+          if-no-files-found: error
+          retention-days: 30
