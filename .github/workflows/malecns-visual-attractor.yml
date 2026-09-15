@@ -10,9 +10,9 @@ on:
   workflow_dispatch:
     inputs:
       visual_ref:
-        description: Exact papers commit containing the visual-efficiency curriculum
+        description: Exact papers commit containing the visual-efficiency curriculum v2
         required: true
-        default: "46a09721f069c2cfb955fa78c702eb6425199532"
+        default: "c260cabf84aa00dda8d43175a574ce869e8c744c"
         type: string
       runtime_ref:
         description: Exact papers commit containing the canonical MaleCNS compiler
@@ -51,15 +51,15 @@ jobs:
           [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
           python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
 
-      - name: Run public visual-efficiency curriculum on Kaggle
+      - name: Run public exact-energy visual-efficiency curriculum on Kaggle
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
-          VISUAL_REF: ${{ inputs.visual_ref || '46a09721f069c2cfb955fa78c702eb6425199532' }}
+          VISUAL_REF: ${{ inputs.visual_ref || 'c260cabf84aa00dda8d43175a574ce869e8c744c' }}
           RUNTIME_REF: ${{ inputs.runtime_ref || '437083ae30f24f6f424ce405182d90b275b62621' }}
           ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
         run: |
-          bash scripts/malecns-visual-attractor/kaggle.sh \
+          bash scripts/malecns-visual-attractor/kaggle-efficiency-v2.sh \
             --summary "$RUNNER_TEMP/malecns-visual-efficiency-summary.json" \
             --visual-ref "$VISUAL_REF" \
             --runtime-ref "$RUNTIME_REF" \
@@ -72,18 +72,19 @@ jobs:
           d=json.load(open(sys.argv[1], encoding='utf-8'))
           best=d.get('lowest_budget_best', {})
           rewards=best.get('condition_reward', {})
-          print('## MaleCNS visual-efficiency curriculum')
+          print('## MaleCNS visual-efficiency curriculum v2')
           print(f"- visual ref: `{d.get('visual_ref')}`")
           print(f"- resolved / total receptors: **{d.get('receiver', {}).get('optic_column_resolved')} / {d.get('receiver', {}).get('visual_receptors_total')}**")
           print(f"- budgets: **{d.get('parameters', {}).get('budgets')}**")
           print(f"- lowest-budget advantage vs strongest control: **{best.get('advantage')}**")
+          print(f"- max energy mismatch: **{best.get('max_energy_mismatch')}**")
           print(f"- learned reward: **{rewards.get('learned')}**")
           print(f"- uniform TV: **{rewards.get('uniform_tv')}**")
           print(f"- spatial shuffle: **{rewards.get('spatial_shuffle')}**")
           print(f"- blank: **{rewards.get('blank')}**")
           print(f"- learned approach: **{best.get('approach', {}).get('learned')}**")
           print(f"- public Kaggle: {d.get('kaggle_url')}")
-          print('- engineering calibration; structure must beat energy-matched controls before a behavioural claim')
+          print('- engineering calibration; structure must beat exact energy-matched controls before a behavioural claim')
           PY
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
