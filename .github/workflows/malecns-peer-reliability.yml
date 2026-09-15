@@ -1,0 +1,71 @@
+name: MaleCNS Peer Reliability Kaggle
+
+on:
+  push:
+    branches:
+      - experiment/malecns-peer-reliability-kaggle
+    paths:
+      - ".github/workflows/malecns-peer-reliability.yml"
+      - "scripts/malecns-peer-reliability/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-peer-reliability-kaggle
+  cancel-in-progress: true
+
+jobs:
+  run-peer-reliability-grid:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || exit 2
+          [[ -n "$KAGGLE_USERNAME" ]] || exit 2
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+      - name: Run reliability-weighted peer grid on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_MALECNS_COUPLED_TIMEOUT: "900"
+          KAGGLE_MALECNS_COUPLED_WAIT_SECONDS: "900"
+        run: |
+          bash scripts/malecns-peer-reliability/kaggle.sh \
+            --output-dir "$RUNNER_TEMP/malecns-peer-reliability" \
+            --kernel-id "$KAGGLE_USERNAME/malecns-peer-reliability-grid" \
+            --papers-ref "399020588b1b32941d6a4a03473f21d21bdd921b" \
+            --accelerator NvidiaTeslaT4
+      - name: Summarize peer reliability grid
+        run: |
+          python - "$RUNNER_TEMP/malecns-peer-reliability/github-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1],encoding='utf-8'))
+          print('## MaleCNS reliability-weighted peer grid')
+          print(f"- Kaggle: {d.get('kernel_url')}")
+          print(f"- schema: `{d.get('schema')}`")
+          print(f"- peer grid: `{d.get('peer_grid')}`")
+          print(f"- fixed training reliability: `{d.get('coupled',{}).get('fixed_training_reliability')}`")
+          independent=d.get('independent',{}).get('curve',[])
+          print(f"- independent final: `{independent[-1].get('validation') if independent else None}`")
+          for lam, run in d.get('coupled',{}).get('by_lambda',{}).items():
+              curve=run.get('curve',[])
+              print(f"- lambda {lam}: `{curve[-1].get('validation') if curve else None}`")
+          print(f"- GPU: **{d.get('device')}**")
+          print('- exploratory curriculum smoke only')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-peer-reliability-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-peer-reliability
+          if-no-files-found: error
+          retention-days: 30
