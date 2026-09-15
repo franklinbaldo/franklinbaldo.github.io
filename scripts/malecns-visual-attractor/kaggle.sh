@@ -193,7 +193,7 @@ PY
 cat > "$STAGE/kernel-metadata.json" <<JSON
 {
   "id": "$KERNEL_ID",
-  "title": "MaleCNS Stationary Screen Reward Loop",
+  "title": "MaleCNS Stationary Screen Reward",
   "code_file": "job.py",
   "language": "python",
   "kernel_type": "script",
@@ -210,8 +210,6 @@ JSON
 
 kaggle kernels push -p "$STAGE" --accelerator "$ACCELERATOR" -t "${KAGGLE_MALECNS_VISUAL_TIMEOUT:-21600}"
 
-# Stream the public kernel log, including retina grids and reward telemetry, into
-# GitHub Actions while a separate loop watches the terminal worker status.
 (kaggle kernels logs "$KERNEL_ID" --follow --interval 10 || true) &
 LOG_PID=$!
 
