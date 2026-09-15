@@ -9,11 +9,13 @@ trap 'rm -f "$TMP"; rm -rf "$RESUME_DIR"' EXIT
 
 KERNEL_ID="${KAGGLE_MALECNS_EFFICIENCY_KERNEL_ID:-${KAGGLE_USERNAME}/malecns-visual-efficiency}"
 RESUME_CKPT=""
-if kaggle kernels output "$KERNEL_ID" -p "$RESUME_DIR" -o --file-pattern '.*public-cache/best-efficiency-transducer[.]npz' >/dev/null 2>&1; then
+if kaggle kernels output "$KERNEL_ID" -p "$RESUME_DIR" -o --file-pattern '.*best-efficiency-transducer[.]npz' >/dev/null 2>&1; then
   RESUME_CKPT="$(find "$RESUME_DIR" -type f -name 'best-efficiency-transducer.npz' -print -quit)"
 fi
-[[ -n "$RESUME_CKPT" ]] || { echo "online plastic run requires a prior transducer checkpoint" >&2; exit 3; }
-CKPT_B64="$(base64 -w0 "$RESUME_CKPT")"
+CKPT_B64=""
+if [[ -n "$RESUME_CKPT" ]]; then
+  CKPT_B64="$(base64 -w0 "$RESUME_CKPT")"
+fi
 
 python3 - "$BASE" "$TMP" "$CKPT_B64" <<'PY'
 from pathlib import Path
@@ -54,41 +56,47 @@ text = text.replace(
     '"experiment": "malecns-online-reward-plastic-screen-v1",',
 )
 
-needle = 'visual_exp = visual_repo / "experiments/malecns_visual_attractor"\n'
-if needle not in text:
-    raise SystemExit('could not locate visual_exp assignment')
-injected = needle + (
-    'import base64\n'
-    f'_plastic_resume = base64.b64decode({checkpoint_b64!r})\n'
-    '_plastic_checkpoint = visual_exp / "scripts" / "initial-transducer.npz"\n'
-    '_plastic_checkpoint.write_bytes(_plastic_resume)\n'
-    'print("Injected checkpoint for online plastic learner", flush=True)\n'
-)
-text = text.replace(needle, injected, 1)
-arg_needle = '    "--output-dir", run_out,\n'
-if arg_needle not in text:
-    raise SystemExit('could not install initial-transducer argument')
-text = text.replace(
-    arg_needle,
-    arg_needle + '    "--initial-transducer", _plastic_checkpoint,\n',
-    1,
-)
+if checkpoint_b64:
+    needle = 'visual_exp = visual_repo / "experiments/malecns_visual_attractor"\n'
+    if needle not in text:
+        raise SystemExit('could not locate visual_exp assignment')
+    injected = needle + (
+        'import base64\n'
+        f'_plastic_resume = base64.b64decode({checkpoint_b64!r})\n'
+        '_plastic_checkpoint = visual_exp / "scripts" / "initial-transducer.npz"\n'
+        '_plastic_checkpoint.write_bytes(_plastic_resume)\n'
+        'print("Injected checkpoint for online plastic learner", flush=True)\n'
+    )
+    text = text.replace(needle, injected, 1)
+    arg_needle = '    "--output-dir", run_out,\n'
+    if arg_needle not in text:
+        raise SystemExit('could not install initial-transducer argument')
+    text = text.replace(
+        arg_needle,
+        arg_needle + '    "--initial-transducer", _plastic_checkpoint,\n',
+        1,
+    )
 
 for required in (
     'run_online_plastic_screen_learning.py',
     '"--episodes-per-budget", "4"',
     '"--budgets", "0.004,0.002,0.001"',
-    '"--initial-transducer", _plastic_checkpoint',
     'plastic-learning-summary.json',
     'plastic-adapter.npz',
 ):
     if required not in text:
         raise SystemExit(f'online-plastic bridge rewrite missing {required}')
+if checkpoint_b64 and '"--initial-transducer", _plastic_checkpoint' not in text:
+    raise SystemExit('checkpoint existed but was not wired into learner')
 for forbidden in ('"--population"', '"--generations-per-budget"', '"--mutation-sigma"'):
     if forbidden in text:
         raise SystemExit(f'online-plastic bridge retained unsupported arg {forbidden}')
 Path(sys.argv[2]).write_text(text, encoding='utf-8')
 PY
 
-echo "Starting online reward-plastic learner from: $RESUME_CKPT"
+if [[ -n "$RESUME_CKPT" ]]; then
+  echo "Starting online reward-plastic learner from checkpoint: $RESUME_CKPT"
+else
+  echo "No previous transducer found; bootstrapping online plastic learner from fresh 6x6 weights"
+fi
 bash "$TMP" "$@"
