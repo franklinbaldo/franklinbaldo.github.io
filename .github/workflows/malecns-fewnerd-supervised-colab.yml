@@ -16,11 +16,11 @@ on:
       papers_ref:
         description: "franklinbaldo/papers commit or branch with the Few-NERD byte-channel pipeline"
         required: true
-        default: "de7833d"
-      publish:
-        description: "publish the full byte-channel cache to the Hugging Face dataset (needs HF_TOKEN secret)"
+        default: "eb946a9"
+      limit_per_split:
+        description: "sentences per split for a throughput/scale check (ignored when mode=full)"
         required: false
-        default: "true"
+        default: "4000"
 
 permissions:
   contents: read
@@ -71,15 +71,15 @@ jobs:
       - name: Run Few-NERD stages on Colab
         env:
           COLAB_EXEC_TIMEOUT: "9000"
-          HF_TOKEN: ${{ (github.event.inputs.publish == 'true') && secrets.HF_TOKEN || '' }}
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
           WANDB_ENTITY: franklinbaldo-org
           WANDB_PROJECT: malecns-fewnerd
           WANDB_RUN_GROUP: gh-${{ github.run_id }}
           PAPERS_REF: ${{ github.event.inputs.papers_ref || '' }}
+          MALECNS_FEWNERD_LIMIT: ${{ github.event.inputs.limit_per_split || '4000' }}
         run: |
           mode="${{ github.event.inputs.mode || 'smoke' }}"
-          export PAPERS_REF="${PAPERS_REF:-de7833d}"
+          export PAPERS_REF="${PAPERS_REF:-eb946a9}"
           bash scripts/malecns-fewnerd/stages.sh \
             --output-dir "$RUNNER_TEMP/malecns-fewnerd" \
             --papers-ref "$PAPERS_REF" \
@@ -97,9 +97,10 @@ jobs:
           print(f"- mode: **{d.get('mode')}** · papers ref `{d.get('papers_ref')}` · wall {d.get('wall_seconds',0):.0f}s")
           c=d.get('byte_cache',{})
           print(f"- byte cache: {c.get('sentences')} sentences, {c.get('bytes')} bytes, fingerprint `{c.get('fingerprint')}`")
+          dedup=c.get('dedup') or {}
+          print(f"  - dedup: {dedup.get('unique_windows')} unique / {dedup.get('total_occurrences')} occurrences ({dedup.get('dedup_ratio') or 0:.1f}x)")
           for e in c.get('encoders') or []:
-              print(f"  - `{e['name']}` rev `{e.get('revision')}`: {e.get('encode_seconds',0):.0f}s, {e.get('bytes_per_second') or 0:.0f} bytes/s")
-          if d.get('published'): print(f"- published: `{d['published'].get('repo')}` commit `{d['published'].get('commit')}`")
+              print(f"  - `{e['name']}` rev `{e.get('revision')}`: {e.get('encode_seconds',0):.0f}s, {e.get('windows_per_second') or 0:.0f} windows/s")
           r=d.get('reservoir',{})
           print(f"- reservoir: {r.get('docs_per_second') or 0:.1f} sentences/s, {r.get('chunks_per_second') or 0:.1f} bytes/s")
           p=d.get('probe',{})

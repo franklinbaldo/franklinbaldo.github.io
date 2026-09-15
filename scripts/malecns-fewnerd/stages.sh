@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Staged Few-NERD (supervised) pipeline on Colab:
-#   A) frozen byte-synchronised multiscale semantic cache (parquet per encoder,
-#      optional HF publish)
+#   A) frozen byte-synchronised multiscale semantic cache, deduplicated by
+#      window text (local intermediate only, never published)
 #   B) MaleCNS positional reservoir -> per-byte readout embeddings
 #   C) linear probe fit on train/validation, entity-level F1 on test
 set -euo pipefail
@@ -11,8 +11,8 @@ PAPERS_REF="${PAPERS_REF:?PAPERS_REF is required}"
 GPU="${COLAB_GPU:-T4}"
 MODE="${MALECNS_FEWNERD_MODE:-smoke}"
 RELEASE_BASE="${MALECNS_CONFIRMATORY_RELEASE_BASE:-https://github.com/franklinbaldo/papers/releases/download/malecns-confirmatory-inputs-v1}"
-HUB_REPO="${MALECNS_HUB_REPO:-franklinbaldo/fewnerd-semantic-cache}"
-HF_TOKEN="${HF_TOKEN:-}"
+LIMIT_PER_SPLIT="${MALECNS_FEWNERD_LIMIT:-4000}"
+MAX_TOKENS="${MALECNS_FEWNERD_MAX_TOKENS:-64}"
 WANDB_API_KEY="${WANDB_API_KEY:-}"
 WANDB_ENTITY="${WANDB_ENTITY:-}"
 WANDB_PROJECT="${WANDB_PROJECT:-malecns-fewnerd}"
@@ -60,8 +60,8 @@ def run(*args, cwd=None, env=None, log=None):
 papers_ref = os.environ["PAPERS_REF"]
 release_base = os.environ["RELEASE_BASE"]
 mode = os.environ.get("MALECNS_FEWNERD_MODE", "smoke")
-hub_repo = os.environ.get("MALECNS_HUB_REPO", "")
-hf_token = os.environ.get("HF_TOKEN", "")
+limit_per_split = os.environ.get("MALECNS_FEWNERD_LIMIT", "4000")
+max_tokens = os.environ.get("MALECNS_FEWNERD_MAX_TOKENS", "64")
 root = pathlib.Path("/content/malecns-fewnerd"); root.mkdir(parents=True, exist_ok=True)
 papers = root / "papers"; inputs = root / "inputs"; out = root / "out"
 inputs.mkdir(exist_ok=True); out.mkdir(exist_ok=True)
@@ -79,28 +79,14 @@ t_all = time.perf_counter()
 timings = {}
 
 cache = out / "byte-cache"
-stage_a = [py, exp / "scripts/build_fewnerd_semantic_cache.py", "--output-dir", cache, "--device", "cuda", "--batch-size", "256"]
-if mode == "smoke":
-    # full default power-of-two scale ladder (1..2048 chars); only the split
-    # size and word cap are reduced for a quick smoke
-    stage_a += ["--limit-per-split", "64", "--splits", "train", "validation", "test", "--max-tokens", "24"]
+stage_a = [py, exp / "scripts/build_fewnerd_semantic_cache.py", "--output-dir", cache, "--device", "cuda",
+           "--batch-size", "256", "--max-tokens", max_tokens]
+if mode != "full":
+    stage_a += ["--limit-per-split", limit_per_split, "--splits", "train", "validation", "test"]
 t0 = time.perf_counter()
 run(*stage_a, cwd=exp, env=env, log=out / "stage-a.log")
 timings["stage_a_seconds"] = time.perf_counter() - t0
 manifest = json.loads((cache / "manifest.json").read_text(encoding="utf-8"))
-
-published = None
-if mode == "full" and hub_repo and hf_token:
-    t0 = time.perf_counter()
-    push_env = dict(env, HF_TOKEN=hf_token)
-    text = run(py, "-c",
-               "import pathlib; from malecns_wifi.fewnerd_cache import push_to_hub; "
-               f"print(push_to_hub(pathlib.Path({str(cache)!r}), repo_id={hub_repo!r}))",
-               cwd=exp, env=push_env, log=out / "stage-a-publish.log")
-    published = {"repo": hub_repo, "commit": text.strip().splitlines()[-1] if text.strip() else None,
-                 "seconds": time.perf_counter() - t0}
-elif mode == "full":
-    print("HF_TOKEN not provided: byte-channel cache kept as workflow artifact only", flush=True)
 
 t0 = time.perf_counter()
 tokens = out / "byte-embeddings.npz"
@@ -127,34 +113,35 @@ summary = {
     "executor": "colab",
     "wall_seconds": time.perf_counter() - t_all,
     "timings": timings,
-    "byte_cache": {k: manifest.get(k) for k in ("fingerprint", "sentences", "bytes", "total_bytes_on_disk", "seconds", "encoders", "dataset", "chunking")},
-    "published": published,
+    "byte_cache": {k: manifest.get(k) for k in ("fingerprint", "sentences", "bytes", "total_bytes_on_disk", "seconds", "encoders", "dataset", "chunking", "dedup")},
     "reservoir": stage_b_manifest.get("stats"),
     "probe": {"C": probe["probe"]["C"], "val_accuracy": probe["probe"]["val_accuracy"],
               "test_token_accuracy": probe["test_token_accuracy"],
               "test_micro_f1": probe["test_span_metrics"]["micro_f1"],
               "test_macro_f1": probe["test_span_metrics"]["macro_f1"],
               "test_sentences": probe["test_sentences"]},
-    "claim_status": "pipeline smoke only" if mode == "smoke" else "official Few-NERD supervised benchmark evidence",
+    "claim_status": "pipeline smoke only" if mode == "smoke" else
+                    ("throughput/scale check, not benchmark evidence" if mode != "full" else
+                     "official Few-NERD supervised benchmark evidence"),
 }
 (out / "github-summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
 shutil.make_archive("/content/malecns-fewnerd-result", "zip", out)
 print(json.dumps(summary, ensure_ascii=False), flush=True)
 PY
 
-python3 - "$TMP/launcher.py" "$PAPERS_REF" "$RELEASE_BASE" "$MODE" "$HUB_REPO" "$HF_TOKEN" \
+python3 - "$TMP/launcher.py" "$PAPERS_REF" "$RELEASE_BASE" "$MODE" "$LIMIT_PER_SPLIT" "$MAX_TOKENS" \
   "$WANDB_API_KEY" "$WANDB_ENTITY" "$WANDB_PROJECT" "$WANDB_RUN_GROUP" <<'PY'
 from pathlib import Path
 import sys
 p = Path(sys.argv[1])
-papers_ref, release_base, mode, hub_repo, hf_token, wandb_key, wandb_entity, wandb_project, wandb_group = sys.argv[2:11]
+papers_ref, release_base, mode, limit_per_split, max_tokens, wandb_key, wandb_entity, wandb_project, wandb_group = sys.argv[2:11]
 lines = [
     "import os, runpy",
     f"os.environ['PAPERS_REF']={papers_ref!r}",
     f"os.environ['RELEASE_BASE']={release_base!r}",
     f"os.environ['MALECNS_FEWNERD_MODE']={mode!r}",
-    f"os.environ['MALECNS_HUB_REPO']={hub_repo!r}",
-    f"os.environ['HF_TOKEN']={hf_token!r}",
+    f"os.environ['MALECNS_FEWNERD_LIMIT']={limit_per_split!r}",
+    f"os.environ['MALECNS_FEWNERD_MAX_TOKENS']={max_tokens!r}",
     f"os.environ['WANDB_PROJECT']={wandb_project!r}",
     f"os.environ['WANDB_RUN_GROUP']={wandb_group!r}",
     "os.environ['WANDB_SILENT']='true'",
