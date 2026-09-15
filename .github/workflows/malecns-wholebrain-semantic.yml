@@ -50,12 +50,12 @@ jobs:
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
-          KAGGLE_MALECNS_WHOLEBRAIN_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_WHOLEBRAIN_KERNEL_ID }}
           PAPERS_REF: ${{ inputs.papers_ref || '1d8412d3af1e28b379b1242f6e71978b1a7ee284' }}
           ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
         run: |
           bash scripts/malecns-wholebrain-semantic/kaggle.sh \
             --output-dir "$RUNNER_TEMP/malecns-wholebrain-semantic" \
+            --kernel-id "$KAGGLE_USERNAME/malecns-whole-brain-semantic-gpu-smoke" \
             --papers-ref "$PAPERS_REF" \
             --accelerator "$ACCELERATOR"
 
