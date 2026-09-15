@@ -16,7 +16,7 @@ on:
       papers_ref:
         description: "franklinbaldo/papers commit or branch with the Few-NERD byte-channel pipeline"
         required: true
-        default: "experiment/malecns-fewnerd-supervised"
+        default: "de7833d"
       publish:
         description: "publish the full byte-channel cache to the Hugging Face dataset (needs HF_TOKEN secret)"
         required: false
@@ -79,7 +79,7 @@ jobs:
           PAPERS_REF: ${{ github.event.inputs.papers_ref || '' }}
         run: |
           mode="${{ github.event.inputs.mode || 'smoke' }}"
-          export PAPERS_REF="${PAPERS_REF:-cd06570}"
+          export PAPERS_REF="${PAPERS_REF:-de7833d}"
           bash scripts/malecns-fewnerd/stages.sh \
             --output-dir "$RUNNER_TEMP/malecns-fewnerd" \
             --papers-ref "$PAPERS_REF" \
