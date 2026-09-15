@@ -1,0 +1,124 @@
+name: MaleCNS MultiEURLEX-21 stages Colab
+
+on:
+  push:
+    branches:
+      - experiment/malecns-multieurlex21-stages-colab
+    paths:
+      - ".github/workflows/malecns-multieurlex21-stages-colab.yml"
+      - "scripts/malecns-multieurlex21/stages.sh"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "smoke or full"
+        required: false
+        default: "smoke"
+      papers_ref:
+        description: "franklinbaldo/papers commit or branch with the staged pipeline"
+        required: true
+        default: "experiment/malecns-multieurlex21-throughput"
+      publish:
+        description: "publish the full semantic cache to the Hugging Face dataset (needs HF_TOKEN secret)"
+        required: false
+        default: "true"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-multieurlex21-stages-colab
+  cancel-in-progress: false
+
+jobs:
+  run-stages-colab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 170
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Configure Colab CLI
+        env:
+          COLAB_TOKEN_JSON: ${{ secrets.COLAB_TOKEN_JSON }}
+          COLAB_ADC_JSON: ${{ secrets.COLAB_ADC_JSON }}
+        run: |
+          python -m pip install --disable-pip-version-check 'google-colab-cli==0.6.0' 'jupyter-kernel-client==0.9.0'
+          if [[ -n "$COLAB_TOKEN_JSON" ]]; then
+            install -d -m 700 "$HOME/.config/colab-cli"
+            printf '%s' "$COLAB_TOKEN_JSON" > "$HOME/.config/colab-cli/token.json"
+            chmod 600 "$HOME/.config/colab-cli/token.json"
+            echo "COLAB_AUTH_PROVIDER=oauth2" >> "$GITHUB_ENV"
+          elif [[ -n "$COLAB_ADC_JSON" ]]; then
+            printf '%s' "$COLAB_ADC_JSON" > "$RUNNER_TEMP/colab-adc.json"
+            chmod 600 "$RUNNER_TEMP/colab-adc.json"
+            echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/colab-adc.json" >> "$GITHUB_ENV"
+            echo "COLAB_AUTH_PROVIDER=adc" >> "$GITHUB_ENV"
+          else
+            echo "Missing GitHub secret COLAB_TOKEN_JSON (or COLAB_ADC_JSON)" >&2
+            exit 2
+          fi
+      - name: Link live telemetry
+        run: |
+          group="gh-${{ github.run_id }}"
+          url="https://wandb.ai/franklinbaldo-org/malecns-multieurlex21/groups/${group}/workspace"
+          {
+            echo "## MaleCNS × MultiEURLEX-21 PT — live telemetry"
+            echo "Stages A/B/C log to Weights & Biases as they run, grouped as \`${group}\`:"
+            echo ""
+            echo "**[${url}](${url})**"
+            echo ""
+            echo "(Populates once the pipeline starts installing the experiment on Colab; refresh if empty.)"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "telemetry: ${url}"
+      - name: Run staged pipeline on Colab
+        env:
+          COLAB_EXEC_TIMEOUT: "9000"
+          HF_TOKEN: ${{ (github.event_name == 'push' || github.event.inputs.publish == 'true') && secrets.HF_TOKEN || '' }}
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+          WANDB_ENTITY: franklinbaldo-org
+          WANDB_PROJECT: malecns-multieurlex21
+          WANDB_RUN_GROUP: gh-${{ github.run_id }}
+          PAPERS_REF: ${{ github.event.inputs.papers_ref || '' }}
+        run: |
+          # push events carry no inputs: full run (publish the official cache) on the pinned papers ref
+          mode="${{ github.event.inputs.mode || 'full' }}"
+          export PAPERS_REF="${PAPERS_REF:-8414670}"
+          bash scripts/malecns-multieurlex21/stages.sh \
+            --output-dir "$RUNNER_TEMP/malecns-stages" \
+            --papers-ref "$PAPERS_REF" \
+            --gpu T4 \
+            --mode "$mode"
+      - name: Summarize stages
+        if: always()
+        run: |
+          summary="$RUNNER_TEMP/malecns-stages/github-summary.json"
+          [[ -f "$summary" ]] || { echo "missing stages summary" >&2; exit 0; }
+          python - "$summary" "${{ github.run_id }}" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1],encoding='utf-8'))
+          print('## MaleCNS × MultiEURLEX-21 PT — staged pipeline')
+          print(f"- mode: **{d.get('mode')}** · papers ref `{d.get('papers_ref')}` · wall {d.get('wall_seconds',0):.0f}s")
+          sc=d.get('semantic_cache',{})
+          print(f"- semantic cache: {sc.get('documents')} docs, {sc.get('chunks')} chunks, {(sc.get('bytes') or 0)/1e6:.0f} MB, fingerprint `{sc.get('fingerprint')}`")
+          for e in sc.get('encoders') or []:
+              print(f"  - `{e['name']}` rev `{e.get('revision')}`: {e.get('encode_seconds',0):.0f}s, {e.get('chunks_per_second') or 0:.0f} chunks/s")
+          if d.get('published'): print(f"- published: `{d['published'].get('repo')}` commit `{d['published'].get('commit')}`")
+          c=d.get('canonical',{}); b=d.get('best_fast',{})
+          print(f"- MaleCNS canonical: {c.get('docs_per_second') or 0:.1f} docs/s ({c.get('seconds') or 0:.1f}s)")
+          eq=b.get('equivalence') or {}
+          print(f"- MaleCNS fast best `{b.get('name')}`: {b.get('docs_per_second') or 0:.1f} docs/s, speedup {b.get('speedup') or 0:.2f}x, max_abs_error {eq.get('max_abs_error')}, min cosine {eq.get('min_cosine')}, gate {eq.get('gate_passed')}")
+          print(f"- claim status: {d.get('claim_status')}")
+          print(f"- telemetry: https://wandb.ai/franklinbaldo-org/malecns-multieurlex21/groups/gh-{sys.argv[2] if len(sys.argv) > 2 else ''}")
+          print('')
+          print('| variant | accuracy (main) | lrap | f1 | hamming |')
+          print('|---|---|---|---|---|')
+          for name,s in (d.get('scores') or {}).items():
+              print(f"| {name} | {s.get('accuracy')} | {s.get('lrap')} | {s.get('f1')} | {s.get('hamming')} |")
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: malecns-multieurlex21-stages-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-stages
+          if-no-files-found: warn
