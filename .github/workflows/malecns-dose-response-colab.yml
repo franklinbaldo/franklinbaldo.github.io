@@ -1,0 +1,76 @@
+name: MaleCNS Dose Response Colab
+
+on:
+  push:
+    branches:
+      - experiment/malecns-dose-response-colab
+    paths:
+      - ".github/workflows/malecns-dose-response-colab.yml"
+      - "scripts/malecns-dose-response/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-dose-response-colab
+  cancel-in-progress: true
+
+jobs:
+  run-dose-response-colab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Configure Colab CLI
+        env:
+          COLAB_TOKEN_JSON: ${{ secrets.COLAB_TOKEN_JSON }}
+          COLAB_ADC_JSON: ${{ secrets.COLAB_ADC_JSON }}
+        run: |
+          python -m pip install --disable-pip-version-check 'google-colab-cli==0.6.0' 'jupyter-kernel-client==0.9.0'
+          if [[ -n "$COLAB_TOKEN_JSON" ]]; then
+            install -d -m 700 "$HOME/.config/colab-cli"
+            printf '%s' "$COLAB_TOKEN_JSON" > "$HOME/.config/colab-cli/token.json"
+            chmod 600 "$HOME/.config/colab-cli/token.json"
+            echo "COLAB_AUTH_PROVIDER=oauth2" >> "$GITHUB_ENV"
+          elif [[ -n "$COLAB_ADC_JSON" ]]; then
+            printf '%s' "$COLAB_ADC_JSON" > "$RUNNER_TEMP/colab-adc.json"
+            chmod 600 "$RUNNER_TEMP/colab-adc.json"
+            echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/colab-adc.json" >> "$GITHUB_ENV"
+            echo "COLAB_AUTH_PROVIDER=adc" >> "$GITHUB_ENV"
+          else
+            echo "Missing GitHub secret COLAB_TOKEN_JSON (or COLAB_ADC_JSON)" >&2
+            exit 2
+          fi
+      - name: Run dose response on Colab
+        env:
+          COLAB_EXEC_TIMEOUT: "5400"
+        run: |
+          bash scripts/malecns-dose-response/colab.sh \
+            --output-dir "$RUNNER_TEMP/malecns-dose-response" \
+            --papers-ref "ceb353732b23dc948415b7f0ea5b948448c9e606" \
+            --gpu T4
+      - name: Summarize dose response
+        run: |
+          summary="$RUNNER_TEMP/malecns-dose-response/github-summary.json"
+          [[ -f "$summary" ]] || { echo "missing dose-response summary" >&2; exit 1; }
+          python - "$summary" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1],encoding='utf-8'))
+          print('## MaleCNS scalar reliability dose response — Colab T4')
+          print(f"- seeds: `{d.get('seeds')}`")
+          print(f"- cache build: **{d.get('cache_build_seconds',0):.1f}s**")
+          print(f"- cached training: **{d.get('cached_training_seconds',0):.1f}s**")
+          for arm,stats in d.get('arm_summaries',{}).items():
+              print(f"- {arm}: wins={stats['unseen_wins']}/4, mean unseen Δ={stats['mean_unseen_delta']:+.6f}, mean all Δ={stats['mean_all_delta']:+.6f}, eligible={stats['eligible_for_fresh_seed_confirmation']}")
+          print(f"- selected follow-up arm: **{d.get('selected_followup_arm')}**")
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-dose-response-colab-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-dose-response
+          if-no-files-found: error
+          retention-days: 30
