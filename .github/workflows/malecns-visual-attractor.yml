@@ -12,7 +12,7 @@ on:
       visual_ref:
         description: Exact papers commit containing the visual-efficiency curriculum v2
         required: true
-        default: "c260cabf84aa00dda8d43175a574ce869e8c744c"
+        default: "7144a018b1b053d02d5b4edeeb79ee33d46154d4"
         type: string
       runtime_ref:
         description: Exact papers commit containing the canonical MaleCNS compiler
@@ -55,7 +55,7 @@ jobs:
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
-          VISUAL_REF: ${{ inputs.visual_ref || 'c260cabf84aa00dda8d43175a574ce869e8c744c' }}
+          VISUAL_REF: ${{ inputs.visual_ref || '7144a018b1b053d02d5b4edeeb79ee33d46154d4' }}
           RUNTIME_REF: ${{ inputs.runtime_ref || '437083ae30f24f6f424ce405182d90b275b62621' }}
           ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
         run: |
