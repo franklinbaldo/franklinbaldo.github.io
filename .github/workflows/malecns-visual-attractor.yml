@@ -10,9 +10,9 @@ on:
   workflow_dispatch:
     inputs:
       visual_ref:
-        description: Exact papers commit containing physical full-screen online learner
+        description: Exact papers commit containing physical full-screen online learner + PNG renderer
         required: true
-        default: "a8d97b3f5956573de476aeddd909875b9268f734"
+        default: "05801f89d18c8a236001bfd9e13bf59b87403dfd"
         type: string
       runtime_ref:
         description: Exact papers commit containing the canonical MaleCNS compiler
@@ -55,7 +55,7 @@ jobs:
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
-          VISUAL_REF: ${{ inputs.visual_ref || 'a8d97b3f5956573de476aeddd909875b9268f734' }}
+          VISUAL_REF: ${{ inputs.visual_ref || '05801f89d18c8a236001bfd9e13bf59b87403dfd' }}
           RUNTIME_REF: ${{ inputs.runtime_ref || '437083ae30f24f6f424ce405182d90b275b62621' }}
           ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
         run: |
@@ -85,7 +85,7 @@ jobs:
           print(f"- advantage vs strongest nonblank control: **{best.get('advantage_vs_strongest_nonblank_control')}**")
           print(f"- final decoder weight norm: **{d.get('final_decoder_weight_norm')}**")
           print(f"- public Kaggle: {d.get('kaggle_url')}")
-          print('- full-screen content is unrestricted; constraints are emitted luminance, physical screen aperture, distance, pose, and room ambient')
+          print('- PNG outputs: TV frame, physical retinal view, contrast retinal view, and learned-vs-uniform retinal difference')
           PY
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
