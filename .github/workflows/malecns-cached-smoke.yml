@@ -46,7 +46,8 @@ jobs:
           test -f "$STAGE/runtime-cache/screen-geometry.npz"
           git clone --filter=blob:none https://github.com/franklinbaldo/papers.git "$RUNNER_TEMP/papers"
           git -C "$RUNNER_TEMP/papers" checkout "$VISUAL_REF"
-          cp -a "$RUNNER_TEMP/papers/experiments/malecns_visual_attractor" "$STAGE/visual"
+          mkdir -p "$STAGE/visual"
+          cp -a "$RUNNER_TEMP/papers/experiments/malecns_visual_attractor/." "$STAGE/visual/"
           du -sh "$STAGE" "$STAGE/runtime-cache" "$STAGE/visual"
 
           # Heavy inputs belong in a Kaggle Dataset. Files placed beside job.py
