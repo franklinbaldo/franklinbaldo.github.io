@@ -62,7 +62,7 @@ jobs:
           dev_limit="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dev_limit || '2' }}"
           bash scripts/malecns-fewnerd-ner/colab.sh \
             --output-dir "$RUNNER_TEMP/malecns-fewnerd" \
-            --papers-ref "953d7566548167a86b66d31047db75aceac30420" \
+            --papers-ref "d8605f73308610fc43e74644a6df5b893efe06ab" \
             --gpu T4 \
             --train-limit "$train_limit" \
             --dev-limit "$dev_limit"
