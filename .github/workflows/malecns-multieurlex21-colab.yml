@@ -1,0 +1,84 @@
+name: MaleCNS MultiEURLEX-21 Colab
+
+on:
+  push:
+    branches:
+      - experiment/malecns-multieurlex21-colab
+    paths:
+      - ".github/workflows/malecns-multieurlex21-colab.yml"
+      - "scripts/malecns-multieurlex21/**"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "smoke or full"
+        required: false
+        default: "smoke"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-multieurlex21-colab
+  cancel-in-progress: true
+
+jobs:
+  run-multieurlex21-colab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Configure Colab CLI
+        env:
+          COLAB_TOKEN_JSON: ${{ secrets.COLAB_TOKEN_JSON }}
+          COLAB_ADC_JSON: ${{ secrets.COLAB_ADC_JSON }}
+        run: |
+          python -m pip install --disable-pip-version-check 'google-colab-cli==0.6.0' 'jupyter-kernel-client==0.9.0'
+          if [[ -n "$COLAB_TOKEN_JSON" ]]; then
+            install -d -m 700 "$HOME/.config/colab-cli"
+            printf '%s' "$COLAB_TOKEN_JSON" > "$HOME/.config/colab-cli/token.json"
+            chmod 600 "$HOME/.config/colab-cli/token.json"
+            echo "COLAB_AUTH_PROVIDER=oauth2" >> "$GITHUB_ENV"
+          elif [[ -n "$COLAB_ADC_JSON" ]]; then
+            printf '%s' "$COLAB_ADC_JSON" > "$RUNNER_TEMP/colab-adc.json"
+            chmod 600 "$RUNNER_TEMP/colab-adc.json"
+            echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/colab-adc.json" >> "$GITHUB_ENV"
+            echo "COLAB_AUTH_PROVIDER=adc" >> "$GITHUB_ENV"
+          else
+            echo "Missing GitHub secret COLAB_TOKEN_JSON (or COLAB_ADC_JSON)" >&2
+            exit 2
+          fi
+      - name: Run MultiEURLEX-21 on Colab
+        env:
+          COLAB_EXEC_TIMEOUT: "7200"
+        run: |
+          mode="${{ github.event.inputs.mode || 'smoke' }}"
+          bash scripts/malecns-multieurlex21/colab.sh \
+            --output-dir "$RUNNER_TEMP/malecns-multieurlex21" \
+            --papers-ref "a998dabf7ea79c8bc1404d72aee1ff432851bdf8" \
+            --gpu T4 \
+            --mode "$mode"
+      - name: Summarize MultiEURLEX-21
+        run: |
+          summary="$RUNNER_TEMP/malecns-multieurlex21/github-summary.json"
+          [[ -f "$summary" ]] || { echo "missing MultiEURLEX summary" >&2; exit 1; }
+          python - "$summary" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1],encoding='utf-8'))
+          print('## MaleCNS × MultiEURLEX-21 Portuguese')
+          print(f"- status: **{d.get('claim_status')}**")
+          print(f"- dataset revision: `{d.get('dataset',{}).get('revision')}`")
+          print(f"- MTEB main score: `{d.get('mteb',{}).get('main_score')}`")
+          print(f"- runtime: **{d.get('runtime',{}).get('seconds',0):.1f}s**")
+          print(f"- encoder docs: **{d.get('encoder',{}).get('stats',{}).get('documents',0)}**")
+          print(f"- scores: `{d.get('mteb',{}).get('scores')}`")
+          print(f"- directly comparable: **{d.get('comparability',{}).get('direct_public_mteb_comparison')}**")
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-multieurlex21-colab-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-multieurlex21
+          if-no-files-found: error
+          retention-days: 30
