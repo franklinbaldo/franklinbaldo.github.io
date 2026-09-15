@@ -10,5 +10,6 @@ trap 'rm -f "$tmp"' EXIT
 sed \
   -e 's#smoke_coupled_flavour_translation_gpu[.]py#smoke_peer_reliability_replicate_batch_gpu.py#g' \
   -e 's#MaleCNS Coupled Flavour Translation Smoke#MaleCNS Peer Reliability Replication#g' \
+  -e '/"--peer-lambda", "0.5",/d' \
   "$base" > "$tmp"
 exec bash "$tmp" "$@"
