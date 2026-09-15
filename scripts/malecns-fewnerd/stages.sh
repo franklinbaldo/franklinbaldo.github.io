@@ -81,7 +81,9 @@ timings = {}
 cache = out / "byte-cache"
 stage_a = [py, exp / "scripts/build_fewnerd_semantic_cache.py", "--output-dir", cache, "--device", "cuda", "--batch-size", "256"]
 if mode == "smoke":
-    stage_a += ["--limit-per-split", "64", "--splits", "train", "validation", "test", "--max-tokens", "24", "--scales", "8", "32"]
+    # full default power-of-two scale ladder (1..2048 chars); only the split
+    # size and word cap are reduced for a quick smoke
+    stage_a += ["--limit-per-split", "64", "--splits", "train", "validation", "test", "--max-tokens", "24"]
 t0 = time.perf_counter()
 run(*stage_a, cwd=exp, env=env, log=out / "stage-a.log")
 timings["stage_a_seconds"] = time.perf_counter() - t0
