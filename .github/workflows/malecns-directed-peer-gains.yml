@@ -1,6 +1,11 @@
 name: MaleCNS Directed Peer Gains Kaggle
 
 on:
+  push:
+    branches:
+      - experiment/malecns-directed-peer-gains-kaggle
+    paths:
+      - ".github/workflows/malecns-directed-peer-gains.yml"
   workflow_dispatch:
 
 permissions:
@@ -15,4 +20,4 @@ jobs:
     if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Disabled while semantic-cache Kaggle benchmark is the only active MaleCNS submission."
+      - run: echo "Superseded by semantic-cache Kaggle benchmark."
