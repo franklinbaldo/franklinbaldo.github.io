@@ -12,7 +12,7 @@ on:
       visual_ref:
         description: Exact papers commit containing the visual-attractor experiment
         required: true
-        default: "d5f15903685dff2950864eeda0492836187530b5"
+        default: "5a8b719637e4b857937db87b477e09b502f82bdb"
         type: string
       runtime_ref:
         description: Exact papers commit containing the canonical MaleCNS compiler
@@ -57,7 +57,7 @@ jobs:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
           KAGGLE_MALECNS_VISUAL_ATTRACTOR_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_VISUAL_ATTRACTOR_KERNEL_ID }}
-          VISUAL_REF: ${{ inputs.visual_ref || 'd5f15903685dff2950864eeda0492836187530b5' }}
+          VISUAL_REF: ${{ inputs.visual_ref || '5a8b719637e4b857937db87b477e09b502f82bdb' }}
           RUNTIME_REF: ${{ inputs.runtime_ref || '437083ae30f24f6f424ce405182d90b275b62621' }}
           ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
         run: |

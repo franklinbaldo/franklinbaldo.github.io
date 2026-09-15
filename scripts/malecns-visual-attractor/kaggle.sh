@@ -4,7 +4,7 @@ set -euo pipefail
 SUMMARY=""
 ACCELERATOR="${KAGGLE_ACCELERATOR:-NvidiaTeslaT4}"
 KERNEL_ID="${KAGGLE_MALECNS_VISUAL_ATTRACTOR_KERNEL_ID:-}"
-VISUAL_REF="${VISUAL_REF:-d5f15903685dff2950864eeda0492836187530b5}"
+VISUAL_REF="${VISUAL_REF:-5a8b719637e4b857937db87b477e09b502f82bdb}"
 RUNTIME_REF="${RUNTIME_REF:-437083ae30f24f6f424ce405182d90b275b62621}"
 
 while [[ $# -gt 0 ]]; do
@@ -48,8 +48,11 @@ visual_ref = os.environ["VISUAL_REF"]
 runtime_ref = os.environ["RUNTIME_REF"]
 kernel_id = os.environ["KERNEL_ID"]
 work = pathlib.Path("/kaggle/working")
-visual_repo = work / "papers-visual"
-runtime_repo = work / "papers-runtime"
+scratch = pathlib.Path("/kaggle/temp/malecns-visual-attractor")
+scratch.mkdir(parents=True, exist_ok=True)
+visual_repo = scratch / "papers-visual"
+runtime_repo = scratch / "papers-runtime"
+cache = scratch / "malecns-source-cache"
 runtime_out = work / "runtime"
 run_out = work / "run1"
 runtime_out.mkdir(exist_ok=True)
@@ -65,7 +68,6 @@ runtime_exp = runtime_repo / "experiments/malecns_wifi"
 run(sys.executable, "-m", "pip", "install", "--disable-pip-version-check", "-e", str(runtime_exp))
 run(sys.executable, "-m", "pip", "install", "--disable-pip-version-check", "-e", f"{visual_exp}[gpu]")
 
-cache = work / "malecns-source-cache"
 graph_dir = runtime_out / "graph"
 run(
     sys.executable,
