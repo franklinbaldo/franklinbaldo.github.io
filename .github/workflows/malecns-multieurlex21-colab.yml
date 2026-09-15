@@ -12,7 +12,7 @@ on:
       mode:
         description: "smoke or full"
         required: false
-        default: "smoke"
+        default: "full"
 
 permissions:
   contents: read
@@ -54,7 +54,7 @@ jobs:
         env:
           COLAB_EXEC_TIMEOUT: "7200"
         run: |
-          mode="${{ github.event.inputs.mode || 'smoke' }}"
+          mode="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.mode || 'full' }}"
           bash scripts/malecns-multieurlex21/colab.sh \
             --output-dir "$RUNNER_TEMP/malecns-multieurlex21" \
             --papers-ref "27db9c7095d8523f4a7bf5b1bc6d91263f6a72f8" \
