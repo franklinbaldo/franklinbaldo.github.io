@@ -12,17 +12,17 @@ RESUME_CKPT=""
 if kaggle kernels output "$KERNEL_ID" -p "$RESUME_DIR" -o --file-pattern '.*full-screen-decoder[.]npz' >/dev/null 2>&1; then
   RESUME_CKPT="$(find "$RESUME_DIR" -type f -name 'full-screen-decoder.npz' -print -quit)"
 fi
-CKPT_B64=""
+RESUME_FLAG=0
 if [[ -n "$RESUME_CKPT" ]]; then
-  CKPT_B64="$(base64 -w0 "$RESUME_CKPT")"
+  RESUME_FLAG=1
 fi
 
-python3 - "$BASE" "$TMP" "$CKPT_B64" <<'PY'
+python3 - "$BASE" "$TMP" "$RESUME_FLAG" <<'PY'
 from pathlib import Path
 import sys
 
 src = Path(sys.argv[1]).read_text(encoding='utf-8')
-checkpoint_b64 = sys.argv[3]
+resume = sys.argv[3] == '1'
 text = src.replace('run_visual_efficiency_curriculum.py', 'run_physical_full_screen_attractor.py')
 text = text.replace('"--steps", "300",', '"--steps", "350",')
 for line in (
@@ -95,16 +95,25 @@ text = text.replace(
     '"experiment": "malecns-physical-full-screen-attractor-v2-png",',
 )
 
-if checkpoint_b64:
+# Put the large decoder checkpoint beside job.py in the staged Kaggle source.
+stage_needle = "trap 'rm -rf \"$STAGE\" \"$DOWNLOAD\"' EXIT\n"
+if stage_needle not in text:
+    raise SystemExit('could not locate Kaggle stage trap')
+text = text.replace(
+    stage_needle,
+    stage_needle + '[[ -z "${RESUME_CKPT:-}" ]] || cp "$RESUME_CKPT" "$STAGE/initial-full-screen-decoder.npz"\n',
+    1,
+)
+
+if resume:
     needle = 'visual_exp = visual_repo / "experiments/malecns_visual_attractor"\n'
     if needle not in text:
         raise SystemExit('could not locate visual_exp assignment')
     injected = needle + (
-        'import base64\n'
-        f'_fullscreen_resume = base64.b64decode({checkpoint_b64!r})\n'
-        '_fullscreen_checkpoint = visual_exp / "scripts" / "initial-full-screen-decoder.npz"\n'
-        '_fullscreen_checkpoint.write_bytes(_fullscreen_resume)\n'
-        'print("Injected prior full-screen decoder checkpoint", flush=True)\n'
+        '_fullscreen_checkpoint = pathlib.Path(__file__).with_name("initial-full-screen-decoder.npz")\n'
+        'if not _fullscreen_checkpoint.exists():\n'
+        '    raise RuntimeError("staged full-screen checkpoint missing")\n'
+        'print(f"Using staged full-screen decoder: {_fullscreen_checkpoint}", flush=True)\n'
     )
     text = text.replace(needle, injected, 1)
     arg_needle = '    "--output-dir", run_out,\n'
@@ -121,6 +130,7 @@ for required in (
     'full-screen-summary.json',
     'full-screen-decoder.npz',
     'best-retina-initial-pose-physical.png',
+    'initial-full-screen-decoder.npz',
 ):
     if required not in text:
         raise SystemExit(f'full-screen bridge rewrite missing {required}')
@@ -130,8 +140,9 @@ for forbidden in ('"--population"', '"--generations-per-budget"', '"--budgets"',
 Path(sys.argv[2]).write_text(text, encoding='utf-8')
 PY
 
+export RESUME_CKPT
 if [[ -n "$RESUME_CKPT" ]]; then
-  echo "Resuming physical full-screen decoder from checkpoint: $RESUME_CKPT"
+  echo "Resuming physical full-screen decoder from staged checkpoint: $RESUME_CKPT"
 else
   echo "No prior full-screen decoder found; bootstrapping fresh 256x2304 decoder"
 fi
