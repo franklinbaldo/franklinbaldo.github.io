@@ -1,0 +1,71 @@
+name: MaleCNS Peer Reliability Replication Kaggle
+
+on:
+  push:
+    branches:
+      - experiment/malecns-peer-reliability-replication-kaggle
+    paths:
+      - ".github/workflows/malecns-peer-reliability-replication.yml"
+      - "scripts/malecns-peer-reliability-replication/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-peer-reliability-replication-kaggle
+  cancel-in-progress: true
+
+jobs:
+  run-peer-reliability-replication:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || exit 2
+          [[ -n "$KAGGLE_USERNAME" ]] || exit 2
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+      - name: Run peer reliability replication on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_MALECNS_COUPLED_TIMEOUT: "1200"
+          KAGGLE_MALECNS_COUPLED_WAIT_SECONDS: "1200"
+        run: |
+          bash scripts/malecns-peer-reliability-replication/kaggle.sh \
+            --output-dir "$RUNNER_TEMP/malecns-peer-reliability-replication" \
+            --kernel-id "$KAGGLE_USERNAME/malecns-peer-reliability-replication" \
+            --papers-ref "9258f584aa8578877b6ef43a498e788bb33594be" \
+            --accelerator NvidiaTeslaT4
+      - name: Summarize replication
+        run: |
+          python - "$RUNNER_TEMP/malecns-peer-reliability-replication/github-summary.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1],encoding='utf-8'))
+          print('## MaleCNS peer-reliability preregistered replication')
+          print(f"- Kaggle: {d.get('kernel_url')}")
+          print(f"- schema: `{d.get('schema')}`")
+          print(f"- seeds: `{d.get('seeds')}`")
+          for row in d.get('comparisons',[]):
+              print(f"- seed {row['seed']}: independent unseen={row['independent_unseen']:.6f}, unweighted unseen={row['unweighted_unseen']:.6f}, weighted unseen={row['weighted_unseen']:.6f}, weighted-independent={row['weighted_minus_independent_unseen']:+.6f}")
+          print(f"- mean weighted-independent unseen: **{d.get('mean_weighted_minus_independent_unseen')}**")
+          print(f"- mean weighted-independent all: **{d.get('mean_weighted_minus_independent_all')}**")
+          print(f"- mean weighted-unweighted unseen: **{d.get('mean_weighted_minus_unweighted_unseen')}**")
+          print(f"- preregistered checks: `{d.get('preregistered_checks')}`")
+          print(f"- GPU: **{d.get('device')}**")
+          print('- preregistered curriculum replication only; not Stage A/B')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-peer-reliability-replication-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-peer-reliability-replication
+          if-no-files-found: error
+          retention-days: 30
