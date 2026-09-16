@@ -79,7 +79,7 @@ jobs:
           MALECNS_FEWNERD_LIMIT: ${{ github.event.inputs.limit_per_split || '4000' }}
         run: |
           mode="${{ github.event.inputs.mode || 'smoke' }}"
-          export PAPERS_REF="${PAPERS_REF:-5612425}"
+          export PAPERS_REF="${PAPERS_REF:-experiment/malecns-fewnerd-supervised}"
           bash scripts/malecns-fewnerd/stages.sh \
             --output-dir "$RUNNER_TEMP/malecns-fewnerd" \
             --papers-ref "$PAPERS_REF" \

@@ -79,13 +79,41 @@ t_all = time.perf_counter()
 timings = {}
 
 cache = out / "byte-cache"
-stage_a = [py, exp / "scripts/build_fewnerd_semantic_cache.py", "--output-dir", cache, "--device", "cuda",
-           "--batch-size", "256", "--max-tokens", max_tokens]
-if mode != "full":
-    stage_a += ["--limit-per-split", limit_per_split, "--splits", "train", "validation", "test"]
-t0 = time.perf_counter()
-run(*stage_a, cwd=exp, env=env, log=out / "stage-a.log")
-timings["stage_a_seconds"] = time.perf_counter() - t0
+cache_tar_name = f"fewnerd-cache-{limit_per_split}.tar.gz" if mode != "full" else "fewnerd-cache-full.tar.gz"
+cache_tar_path = inputs / cache_tar_name
+cache_url = f"{release_base}/{cache_tar_name}"
+cache_found = False
+
+try:
+    print(f"Checking for pre-computed semantic cache at {cache_url}...", flush=True)
+    req = urllib.request.Request(cache_url, headers={"User-Agent": "MaleCNS-Colab"})
+    with urllib.request.urlopen(req) as resp:
+        if resp.status == 200:
+            with open(cache_tar_path, "wb") as f:
+                shutil.copyfileobj(resp, f)
+            print(f"Downloaded pre-computed cache ({cache_tar_path.stat().st_size} bytes). Unpacking...", flush=True)
+            shutil.unpack_archive(cache_tar_path, cache.parent)
+            cache_found = (cache / "manifest.json").exists()
+except Exception as e:
+    print(f"Pre-computed cache not available on release ({e}); computing Stage A...", flush=True)
+
+if not cache_found:
+    stage_a = [py, exp / "scripts/build_fewnerd_semantic_cache.py", "--output-dir", cache, "--device", "cuda",
+               "--batch-size", "256", "--max-tokens", max_tokens]
+    if mode != "full":
+        stage_a += ["--limit-per-split", limit_per_split, "--splits", "train", "validation", "test"]
+    t0 = time.perf_counter()
+    run(*stage_a, cwd=exp, env=env, log=out / "stage-a.log")
+    timings["stage_a_seconds"] = time.perf_counter() - t0
+    # Pack cache for reuse
+    try:
+        shutil.make_archive(str(out / f"fewnerd-cache-{limit_per_split}"), "gztar", cache)
+    except Exception as e:
+        print(f"Warning: could not archive cache: {e}", flush=True)
+else:
+    timings["stage_a_seconds"] = 0.0
+    print("Stage A skipped! Using pre-computed cached multiscale embeddings.", flush=True)
+
 manifest = json.loads((cache / "manifest.json").read_text(encoding="utf-8"))
 
 t0 = time.perf_counter()
@@ -100,10 +128,14 @@ stage_b_manifest = json.loads(tokens.with_suffix(".manifest.json").read_text(enc
 fine_names_path = out / "fine-names.json"
 fine_names_path.write_text(json.dumps(manifest["labels"]["fine"]), encoding="utf-8")
 
+# Early checkpoint: zip Stage A and Stage B artifacts immediately so they are never lost
+shutil.make_archive("/content/malecns-fewnerd-result", "zip", out)
+
 t0 = time.perf_counter()
 probe_out = out / "probe.json"
 run(py, exp / "scripts/run_fewnerd_probe.py", "--document-embeddings", tokens, "--fine-names", fine_names_path,
-    "--output", probe_out, "--variant", "malecns", cwd=exp, env=env, log=out / "stage-c.log")
+    "--output", probe_out, "--variant", "malecns", "--max-train-rows", "200000",
+    cwd=exp, env=env, log=out / "stage-c.log")
 timings["stage_c_seconds"] = time.perf_counter() - t0
 probe = json.loads(probe_out.read_text(encoding="utf-8"))
 
