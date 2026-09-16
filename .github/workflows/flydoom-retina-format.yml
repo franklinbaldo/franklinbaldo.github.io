@@ -1,0 +1,34 @@
+name: FlyDoom retina format
+
+on:
+  push:
+    branches:
+      - feature/flydoom-sensory-motor-truth
+    paths:
+      - .github/workflows/flydoom-retina-format.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: feature/flydoom-sensory-motor-truth
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Format FlyDoom retina files
+        run: npx prettier --write public/flydoom/index.html public/flydoom/retina_hud.js public/flydoom/RETINA-PROVENANCE.md public/flydoom/retinotopic_columns_1771.meta.json .prettierignore
+      - name: Commit formatting
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/flydoom/index.html public/flydoom/retina_hud.js public/flydoom/RETINA-PROVENANCE.md public/flydoom/retinotopic_columns_1771.meta.json .prettierignore
+          git diff --cached --check
+          git commit -m "style(flydoom): format retina integration" || exit 0
+          git push origin HEAD:feature/flydoom-sensory-motor-truth
