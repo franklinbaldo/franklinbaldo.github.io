@@ -29,7 +29,7 @@ STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 
 cat > "$STAGE/job.py" <<PY
-import json, os, pathlib, shutil, subprocess, sys, threading, time, urllib.request, urllib.parse
+import json, os, pathlib, shutil, subprocess, sys, threading, time, urllib.request
 
 PAPERS_REF = ${PAPERS_REF@Q}
 NTFY_TOPIC = ${NTFY_TOPIC@Q}
@@ -67,6 +67,7 @@ threading.Thread(target=heartbeat, daemon=True).start()
 notify('session_started', kaggle_kernel=${KERNEL_ID@Q}, papers_ref=PAPERS_REF,
        ntfy_url=f'https://ntfy.sh/{NTFY_TOPIC}')
 
+run = None
 try:
     if repo.exists():
         shutil.rmtree(repo)
@@ -79,12 +80,17 @@ try:
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--disable-pip-version-check', '-q',
                            'huggingface_hub>=0.27', 'wandb>=0.19.10'])
 
-    import wandb
-    run = wandb.init(project='malecns-exp1b-recurrent-controls',
-                     name='kaggle-exp1b-public-session',
-                     anonymous='allow',
-                     config={'papers_ref': PAPERS_REF, 'kaggle': True, 'exp': '1B'})
-    notify('wandb_started', wandb_url=getattr(run, 'url', None))
+    try:
+        import wandb
+        run = wandb.init(project='malecns-exp1b-recurrent-controls',
+                         name='kaggle-exp1b-public-session',
+                         anonymous='allow',
+                         config={'papers_ref': PAPERS_REF, 'kaggle': True, 'exp': '1B'})
+        notify('wandb_started', wandb_url=getattr(run, 'url', None), wandb_id=getattr(run, 'id', None))
+    except Exception as exc:
+        notify('wandb_unavailable', error=repr(exc))
+        print('wandb unavailable; continuing with ntfy telemetry:', repr(exc), flush=True)
+        run = None
 
     from huggingface_hub import hf_hub_download, snapshot_download
     import numpy as np
@@ -118,9 +124,15 @@ try:
 
     out = root / 'multieurlex-exp1b-results.json'
     env = os.environ.copy()
-    env['WANDB_PROJECT'] = 'malecns-exp1b-recurrent-controls'
-    env['WANDB_RUN_ID'] = run.id
-    env['WANDB_RESUME'] = 'allow'
+    if run is not None:
+        env['WANDB_PROJECT'] = 'malecns-exp1b-recurrent-controls'
+        env['WANDB_RUN_ID'] = run.id
+        env['WANDB_RESUME'] = 'allow'
+    else:
+        env.pop('WANDB_RUN_ID', None)
+        env.pop('WANDB_RESUME', None)
+        env.setdefault('WANDB_MODE', 'disabled')
+
     cmd = [sys.executable, str(exp / 'scripts' / 'run_multieurlex_exp1b_recurrent_controls.py'),
            '--features', str(target), '--output', str(out), '--seeds', '0', '1', '2']
     notify('experiment_started', command=' '.join(cmd))
@@ -134,12 +146,20 @@ try:
     if code != 0:
         raise subprocess.CalledProcessError(code, cmd)
     result = json.loads(out.read_text())
-    wandb.log({'completed': 1})
-    wandb.summary['result'] = result
-    notify('experiment_finished', result=result, wandb_url=getattr(run, 'url', None))
-    run.finish()
+    if run is not None:
+        run.log({'completed': 1})
+        run.summary['result'] = result
+    notify('experiment_finished', result=result,
+           wandb_url=(getattr(run, 'url', None) if run is not None else None))
+    if run is not None:
+        run.finish()
 except Exception as exc:
     notify('session_failed', error=repr(exc))
+    if run is not None:
+        try:
+            run.finish(exit_code=1)
+        except Exception:
+            pass
     raise
 PY
 
