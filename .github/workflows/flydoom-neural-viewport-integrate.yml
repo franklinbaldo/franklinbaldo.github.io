@@ -1,0 +1,52 @@
+name: FlyDoom neural viewport integrate
+
+on:
+  push:
+    branches: [feature/flydoom-neural-viewport]
+    paths:
+      - scripts/integrate_flydoom_neural_viewport.py
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: feature/flydoom-neural-viewport
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+      - name: Vendor Three.js 0.186.0
+        run: |
+          mkdir -p public/flydoom/vendor
+          npm pack three@0.186.0 --silent
+          tar -xzf three-0.186.0.tgz
+          cp package/build/three.module.min.js public/flydoom/vendor/three.module.min.js
+          SHA=$(sha256sum public/flydoom/vendor/three.module.min.js | cut -d' ' -f1)
+          cat > public/flydoom/THREE-PROVENANCE.md <<EOF
+          # Three.js provenance
+
+          - Package: \`three\`
+          - Version: \`0.186.0\`
+          - Source: npm package tarball
+          - License: MIT
+          - Vendored file: \`vendor/three.module.min.js\`
+          - SHA-256: \`$SHA\`
+
+          Vendored locally so the FlyDoom neural viewport has no runtime CDN dependency.
+          EOF
+      - name: Integrate viewport
+        run: python scripts/integrate_flydoom_neural_viewport.py
+      - name: Format authored files
+        run: npx prettier --write public/flydoom/index.html public/flydoom/neural_viewport.js public/flydoom/THREE-PROVENANCE.md changelog/changes/flydoom-neural-viewport-phase-2a.md .prettierignore
+      - name: Commit generated integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/flydoom/index.html public/flydoom/neural_viewport.js public/flydoom/vendor/three.module.min.js public/flydoom/THREE-PROVENANCE.md changelog/changes/flydoom-neural-viewport-phase-2a.md .prettierignore
+          git diff --cached --check
+          git commit -m "feat(flydoom): add isolated Three.js neural viewport scaffold" || exit 0
+          git push origin HEAD:feature/flydoom-neural-viewport
