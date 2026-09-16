@@ -1,0 +1,63 @@
+name: MaleCNS Exp1B Session Opener
+
+on:
+  push:
+    branches:
+      - experiment/malecns-exp1b-session-opener
+    paths:
+      - ".github/workflows/malecns-exp1b-session-opener.yml"
+      - "scripts/malecns-exp1b/open_public_session.sh"
+  workflow_dispatch:
+    inputs:
+      papers_ref:
+        description: Papers branch/ref containing Exp 1B
+        required: true
+        default: feature/algorithmic-connectome-paper
+        type: string
+      accelerator:
+        description: Kaggle accelerator
+        required: true
+        default: NvidiaTeslaT4
+        type: string
+      ntfy_topic:
+        description: Public ntfy topic
+        required: true
+        default: franklinbaldo-malecns-exp1b-470-20260916-a1
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  open-session:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: experiment/malecns-exp1b-session-opener
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: "3.12"
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+      - name: Open public Kaggle session
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_EXP1B_PUBLIC_KERNEL_ID: ${{ vars.KAGGLE_EXP1B_PUBLIC_KERNEL_ID }}
+          PAPERS_REF: ${{ inputs.papers_ref || 'feature/algorithmic-connectome-paper' }}
+          KAGGLE_ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
+          NTFY_TOPIC: ${{ inputs.ntfy_topic || 'franklinbaldo-malecns-exp1b-470-20260916-a1' }}
+        run: |
+          bash scripts/malecns-exp1b/open_public_session.sh \
+            --papers-ref "$PAPERS_REF" \
+            --accelerator "$KAGGLE_ACCELERATOR" \
+            --ntfy-topic "$NTFY_TOPIC" | tee "$RUNNER_TEMP/session-open.txt"
+          cat "$RUNNER_TEMP/session-open.txt" >> "$GITHUB_STEP_SUMMARY"
