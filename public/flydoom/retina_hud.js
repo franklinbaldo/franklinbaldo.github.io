@@ -9,8 +9,16 @@ export class CompoundEyeHUD {
     if (!(canvas instanceof HTMLCanvasElement)) {
       throw new TypeError("CompoundEyeHUD requires a canvas element");
     }
-    if (!columns || columns.count !== 1771 || !columns.az || !columns.el || !columns.side) {
-      throw new TypeError("Expected MaleCNS retinotopic columns.json (count=1771)");
+    if (
+      !columns ||
+      columns.count !== 1771 ||
+      !columns.az ||
+      !columns.el ||
+      !columns.side
+    ) {
+      throw new TypeError(
+        "Expected MaleCNS retinotopic columns.json (count=1771)"
+      );
     }
 
     this.canvas = canvas;
@@ -55,7 +63,7 @@ export class CompoundEyeHUD {
       const normAz = (az + this.halfFov) / this.fov;
       this.channelMap[i] = Math.min(
         this.channels - 1,
-        Math.max(0, Math.floor(normAz * this.channels)),
+        Math.max(0, Math.floor(normAz * this.channels))
       );
       this.visible[i] = 1;
       this.screenX[i] = normAz * width;
@@ -91,7 +99,13 @@ export class CompoundEyeHUD {
       const b = leftEye ? base : Math.min(255, base + 35);
 
       ctx.beginPath();
-      ctx.arc(this.screenX[i], this.screenY[i], this.pointRadius, 0, Math.PI * 2);
+      ctx.arc(
+        this.screenX[i],
+        this.screenY[i],
+        this.pointRadius,
+        0,
+        Math.PI * 2
+      );
       ctx.fillStyle = `rgba(${r},${g},${b},${0.24 + drive * 0.76})`;
       ctx.fill();
     }
@@ -107,7 +121,8 @@ export class CompoundEyeHUD {
     ctx.lineWidth = 1;
     for (let k = 0; k <= this.channels; k++) {
       const x = k * step;
-      ctx.strokeStyle = k === 16 ? "rgba(255,255,255,0.55)" : "rgba(88,166,255,0.16)";
+      ctx.strokeStyle =
+        k === 16 ? "rgba(255,255,255,0.55)" : "rgba(88,166,255,0.16)";
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, canvas.height);
@@ -136,7 +151,7 @@ export class CompoundEyeHUD {
     const x = ((clientX - rect.left) / rect.width) * this.canvas.width;
     const channel = Math.min(
       this.channels - 1,
-      Math.max(0, Math.floor((x / this.canvas.width) * this.channels)),
+      Math.max(0, Math.floor((x / this.canvas.width) * this.channels))
     );
     const prox = Math.max(0, 1 - wallDists[channel] / 4);
     const prize = prizeDists[channel] ?? 0;
