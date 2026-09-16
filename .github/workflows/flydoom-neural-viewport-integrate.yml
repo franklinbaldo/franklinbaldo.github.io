@@ -44,7 +44,7 @@ jobs:
           python scripts/integrate_flydoom_neural_viewport.py
           sed -i 's#public/flydoom/vendor/three.module.min.js#public/flydoom/vendor/three.module.js#' .prettierignore
       - name: Format authored files
-        run: npx prettier --write public/flydoom/index.html public/flydoom/neural_viewport.js public/flydoom/THREE-PROVENANCE.md changelog/changes/flydoom-neural-viewport-phase-2a.md .prettierignore
+        run: npx prettier --write public/flydoom/index.html public/flydoom/neural_viewport.js public/flydoom/THREE-PROVENANCE.md changelog/changes/flydoom-neural-viewport-phase-2a.md
       - name: Commit generated integration
         run: |
           git config user.name "github-actions[bot]"
