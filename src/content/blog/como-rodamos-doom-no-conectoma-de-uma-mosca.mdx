@@ -1,7 +1,7 @@
 ---
 type: "Blog Post"
-title: "Como rodamos Doom no conectoma cerebral de uma mosca (em tempo real e a 300 FPS)"
-description: "Comprimimos os 165.122 neurônios do MaleCNS de 37MB para 4.98MB via FlatBuffers e 4-bit LUT para caber no cache L3, e colocamos a Drosophila para jogar Doom via quimiotaxia e visão bilateral."
+title: "Como rodamos Doom no conectoma cerebral de uma mosca"
+description: "Usamos uma representação compactada e filtrada do MaleCNS em um loop sensorial-motor no navegador e separamos throughput do kernel, passos neurais e FPS visual."
 date: "2026-09-15"
 lang: pt
 translationKey: flydoom-malecns
@@ -9,23 +9,26 @@ tags: ["malecns", "conectoma", "neurociencia", "doom", "computacao"]
 glyph: "🪰"
 ---
 
-Existe uma lei não escrita na ciência da computação que diz: _se algo processa informação, alguém vai tentar rodar Doom nele_. De calculadoras gráficas a testes de gravidez digitais, de terminais de impressora a bactérias modificadas, "Can it run Doom?" é o rito de passagem definitivo de qualquer arquitetura.
+Existe uma lei não escrita na ciência da computação que diz: _se algo processa informação, alguém vai tentar rodar Doom nele_. De calculadoras gráficas a testes de gravidez digitais, de terminais de impressora a bactérias modificadas, "Can it run Doom?" virou um rito de passagem recorrente.
 
-Mas e se o sistema não for um microprocessador de silício, e sim o **cérebro completo de um organismo biológico**?
+Aqui a brincadeira é outra: usar uma **representação compactada e filtrada do conectoma MaleCNS** como operador recorrente dentro de um agente que navega por uma arena 3D estilo Doom.
 
-Pegamos o conectoma do sistema nervoso central do macho da mosca (_Drosophila melanogaster_, o dataset **MaleCNS v1.0**, contendo todos os **165.122 neurônios** e **10,2 milhões de conexões sinápticas** mapeadas por microscopia eletrônica), transformamos a rede em um operador recorrente compacto residente no cache do processador, e conectamos o cérebro em um loop sensorial-motor para navegar por uma arena 3D estilo Doom em tempo real.
+O ponto importante é separar três grandezas que antes estavam misturadas nesta página:
 
-O simulador completo está rodando interativamente no iframe abaixo — direto no seu navegador:
+- **FPS visual**: quantas vezes a arena é renderizada por segundo;
+- **passos neurais/s**: quantas atualizações do conectoma entram de fato no loop do agente;
+- **throughput do kernel**: quantos passos recorrentes o kernel consegue executar isoladamente em benchmark.
+
+Essas medidas não são equivalentes. O demo interativo abaixo atualmente agenda a atualização neural em torno de **25 Hz** (um passo a cada ~40 ms), enquanto o render pode rodar mais rápido. O número de centenas de passos por segundo, quando exibido, pertence ao benchmark do kernel isolado e não ao loop neural interativo.
 
 <div style="width: 100%; margin: 2rem 0;">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 0.75rem; background: rgba(88, 166, 255, 0.08); border: 1px solid rgba(88, 166, 255, 0.25); border-radius: 8px; padding: 12px 16px;">
     <div>
       <strong style="font-size: 1.02rem; display: flex; align-items: center; gap: 6px;">
-        <span>🎮</span> FlyDoom 3D: Simulador ao Vivo no Conectoma
+        <span>🎮</span> FlyDoom 3D: simulador ao vivo
       </strong>
       <div style="font-size: 0.82rem; color: var(--pico-muted-color); margin-top: 2px;">
-        165.122 neurônios e 10.2M sinapses via FlatBuffers Zero-Copy · Enxame
-        configurável
+        Representação compactada do MaleCNS · loop sensorial-motor · enxame configurável
       </div>
     </div>
     <a
@@ -43,117 +46,128 @@ O simulador completo está rodando interativamente no iframe abaixo — direto n
     width="100%"
     height="920"
     style="width: 100%; height: 920px; border: 2px solid #30363d; border-radius: 8px; background: #0d1117; display: block;"
-    title="FlyDoom: Conectoma da Drosophila jogando Doom em 3D"
+    title="FlyDoom: representação do conectoma MaleCNS em uma arena 3D"
     loading="lazy"
     allow="fullscreen"
   ></iframe>
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.6rem; font-size: 0.82rem; color: var(--pico-muted-color); flex-wrap: wrap; gap: 0.5rem;">
-    <span>
-      💡 Dica: No menu superior do simulador você pode adicionar mais moscas,
-      prêmios ou ativar o modo tela cheia.
-    </span>
-    <a
-      href="/flydoom/"
-      target="_blank"
-      rel="noopener noreferrer"
-      style="font-weight: 600; text-decoration: underline;"
-    >
-      Abrir simulador em tela cheia ↗
-    </a>
-  </div>
 </div>
 
 ---
 
-## 1. O Gargalo de Ferro: A Muralha da DRAM
+## 1. O que exatamente estamos simulando
 
-O conectoma de 165 mil neurônios parece modesto para os padrões dos Large Language Models de bilhões de parâmetros. No entanto, sua conectividade sináptica é esparsa (10,2 milhões de arestas com pesos dirigidos e sinais excitatórios/inibitórios).
+O MaleCNS original é maior do que a representação usada aqui. O experimento não deve apresentar **165.122 neurônios / 10,2 milhões de conexões** como se esses números fossem, sem qualificação, o tamanho bruto do dataset original.
 
-Em precisão FP32 padrão no PyTorch (`torch.sparse_csr_tensor`), a matriz de adjacência ocupa cerca de **118 MB**. Em formato comprimido SciPy CSR, ocupa **37,2 MB**.
+Nossa pipeline deriva uma representação de trabalho e depois aplica filtragem adicional para a versão compacta. Na versão usada pelo kernel comprimido, a poda retém cerca de **1,54 milhão de arestas**. Isso importa porque reduzir o número de arestas também reduz diretamente a quantidade de trabalho por passo.
 
-Parece pouco para a RAM de 16 GB do computador, certo? O problema é a física da arquitetura von Neumann:
+Portanto, qualquer comparação de desempenho precisa separar duas perguntas:
 
-- A cada passo recorrente da simulação ($x_{t+1} = \tanh(W x_t + I_t)$), o processador precisa ler **a totalidade dos 37 MB de pesos da memória RAM principal (DRAM)**.
-- O canal de memória de um processador comum entrega cerca de 25 a 35 GB/s.
-- Fazer uma viagem completa à DRAM para cada frame impõe um teto severo: o PyTorch roda a míseros **16,3 ms por passo (61 passos por segundo)**. A CPU passa mais de 80% dos ciclos ociosa, esperando os dados atravessarem o barramento.
+1. quanto ganhamos por **executar menos arestas**;
+2. quanto ganhamos por **mudar a representação das mesmas arestas**.
 
-Para rodar em tempo real a taxas de 300+ FPS, havia apenas uma saída: **fazer o cérebro inteiro caber dentro do cache L3 do processador (8 MB)**.
-
----
-
-## 2. A Compressão: FlatBuffers Zero-Copy e Quantização 4-Bit
-
-Para reduzir a matriz de adjacência de 37,2 MB para menos de 5 MB sem destruir a dinâmica biológica, aplicamos três técnicas combinadas:
-
-1. **Poda de Ruído Sináptico:** Conexões com $|w| < 18$ sinapses (que representam ruído de reconstrução de micrografia) foram podadas, retendo as 1,54 milhão de autoestradas sinápticas principais.
-2. **Delta Encoding em `uint16`:** Em vez de armazenar índices de coluna de 32 bits, armazenamos o deslocamento relativo ($\Delta$) em 16 bits.
-3. **Quantização Não-Linear por Codebook de 4 bits (LUT):** Os pesos sinápticos foram mapeados para um dicionário logarítmico de 16 níveis em 4 bits (nibbles empaquetados), consumindo apenas **2,5 bytes por aresta**.
-4. **Serialização FlatBuffers (`.mcns`):** Criamos um schema binário estrito que permite carregar o cérebro via `mmap` em **14 microssegundos**, com tempo de carregamento zero e zero alocação de heap.
-
-O resultado final: **4,98 MB**. O cérebro inteiro cabe confortavelmente dentro do cache L3 de 8 MB do nosso Intel Core i5-1145G7, eliminando as viagens à DRAM.
-
-O throughput saltou de 61 passos/s para **335+ FPS na CPU**, um speedup de **5,4x**.
+Sem essa separação, não é correto atribuir todo o ganho de throughput ao fato de o arquivo comprimido caber nominalmente em cache.
 
 ---
 
-## 3. O Loop Sensorial-Motor Multimodal
+## 2. A compactação
 
-Para a mosca navegar no mapa de Doom, não bastava rodar matrizes no vácuo — era preciso acoplar os sensores biológicos reais aos controles da arena:
+A versão compacta combina:
 
-```
-[Arena 3D / Doom Engine]
-      │
-      ├─► Visão: 32 feixes raycasting ────► 4.589 Neurônios Visuais (visual_projection L/R)
-      │
-      └─► Olfato: Pluma de cheiro (ppm) ──► 2.639 Neurônios Olfativos (antennal ORNs)
-                                                    │
-                                                    ▼
-                                   [165.122 Neurônios Recorrentes no L3]
-                                                    │
-                                                    ▼
-                                     1.314 Neurônios Descendentes (DNs)
-                                                    │
-                                                    ▼
-                                [Torque de Curva + Aceleração Frontal + Disparo]
-```
+1. **poda de arestas** segundo o limiar usado pela pipeline;
+2. **delta encoding em `uint16`** para índices;
+3. **codebook de pesos com índice quantizado**, atualmente armazenado em 4 bits por aresta;
+4. **serialização FlatBuffers (`.mcns`)** como formato binário compacto de distribuição.
 
-### A. Visão Bilateral e Evasão Contralateral
+O arquivo resultante tem aproximadamente **4,98 MB**.
 
-Um motor de _raycasting_ DDA (exatamente igual ao de Wolfenstein 3D e Doom clássico) projeta 32 feixes no campo de visão de 145°.
+Isso é útil, mas há duas ressalvas:
 
-- Os feixes esquerdos ativam os **4.589 neurônios de projeção visual esquerdos**.
-- Os feixes direitos ativam os **4.612 neurônios de projeção visual direitos**.
-- Conectamos o reflexo biológico contralateral: quando uma parede cresce na esquerda, a excitação motora comanda a mosca a virar para a direita, deslizando suavemente pelas quinas (_wall sliding_).
+- arquivo menor não implica, por si só, que o working set inteiro da simulação permaneça no L3;
+- o caminho atual do navegador ainda cria cópias de `ArrayBuffer` ao enviar os dados ao Web Worker, portanto **"zero-copy" não descreve o pipeline JavaScript end-to-end**.
 
-### B. Quimiotaxia e Tropotaxia Antenal (Olfato)
-
-Moscas reais não encontram comida olhando para ela — encontram pelo **olfato**.
-
-- No conectoma MaleCNS, identificamos **2.639 neurônios receptores olfativos (`cell_class = olfactory`)**.
-- A mosca possui duas antenas separadas no espaço ($w = 0.5\text{ m}$). O prêmio emite uma pluma aromática que decai com o quadrado da distância.
-- Se o cheiro for mais forte na antena direita ($C_R > C_L$), o gradiente induz uma manobra de busca na direção da pluma. Conforme a concentração geral sobe, o circuito comanda um _surge_ frontal (aceleração em direção à comida).
+Cada mosca mantém, além do grafo, pelo menos três vetores `Float32Array` de estado (`state`, `nextState`, `drive`). Assim, o working set cresce com o número de moscas e deve ser medido, não inferido apenas pelo tamanho do arquivo `.mcns`.
 
 ---
 
-## 4. O Teste de Hipótese: Topologia Real vs Grafo Embaralhado
+## 3. Benchmark correto: uma mudança por vez
 
-Para ter certeza de que o comportamento de navegação é fruto da **fiação biológica real** e não de um mero truque estatístico, comparamos a mosca contra um **Modelo Nulo de Grau Preservado** (onde as conexões sinápticas foram aleatoriamente permutadas, mantendo o número de entradas e saídas de cada neurônio):
+O benchmark passa a ser tratado como uma sequência de ablações, mantendo o mesmo conjunto de arestas sempre que queremos medir representação:
 
-| Modelo                          | Tamanho / Localização  |      FPS      | Evasão de Paredes |  Colisões em 300 Ticks   |
-| :------------------------------ | :--------------------: | :-----------: | :---------------: | :----------------------: |
-| **MaleCNS Compact (.mcns)**     | **4,98 MB (Cache L3)** | **335,4 FPS** |     **99,4%**     |        **0 a 1**         |
-| SciPy FP32 Original             |    37,20 MB (DRAM)     |   86,3 FPS    |       99,7%       |            1             |
-| **Controle Embaralhado (Nulo)** |    37,20 MB (DRAM)     |   83,1 FPS    |     **88,7%**     | **34 batidas na parede** |
+| Etapa | Grafo | Índice | Peso | Pergunta |
+| --- | --- | --- | --- | --- |
+| A | 1,54 M arestas | CSR 32-bit | FP32 | baseline do grafo podado |
+| B | mesmo | delta `uint16` | FP32 | quanto vale comprimir índices? |
+| C | mesmo | delta `uint16` | LUT `uint8` | quanto vale o codebook sem nibble packing? |
+| D | mesmo | delta `uint16` | LUT 4-bit | 4-bit é realmente mais rápido que 8-bit? |
+| E | completo vs. podado | mesma representação | mesma representação | quanto do ganho veio da poda? |
 
-O cérebro aleatório bateu na parede **34 vezes**, ficando preso em cantos escuros. O conectoma biológico real preservado em 4-bit no L3 navegou pelas salas, fez as curvas em 90°, farejou o prêmio através das portas e capturou alvos randômicos de forma autônoma.
+Essa decomposição é mais útil do que um único número agregado, porque permite distinguir **menos trabalho**, **menos tráfego de memória** e **custo de descompactação**.
+
+Um caso particularmente interessante é comparar LUT 8-bit com 4-bit. O formato 4-bit é menor, mas exige `shift` + `mask` + lookup a cada aresta. Um codebook de 8 bits ocupa mais memória, porém pode executar mais rápido. A resposta é experimental.
 
 ---
 
-## 5. Onde o Código e a Demonstração Vivem
+## 4. O loop sensorial-motor
 
-Toda a infraestrutura do FlyDoom é código aberto:
+A arena produz visão raycast e pistas olfativas. Esses sinais alimentam grupos de neurônios da representação do conectoma e o estado recorrente é atualizado pelo kernel.
 
-- A demonstração interativa completa em tela cheia está disponível em: [`/flydoom/`](/flydoom/)
-- O formato binário Zero-Copy FlatBuffers (`.mcns`), os kernels JIT em Numba/AVX2 e os relatórios de benchmarks estão no repositório de experimentos.
+Mas o demo anterior tinha um problema metodológico: além da saída do conectoma, ele somava diretamente ao comando motor três heurísticas feitas à mão:
 
-Se até um conectoma de 165 mil neurônios de uma mosca agora roda Doom a 335 FPS dentro do cache L3 de um notebook comum, a pergunta para os próximos modelos neuromórficos já não é se eles conseguem rodar — mas quem vai conseguir vencê-los no multiplayer.
+- fototaxia direta (`visualSteer`);
+- quimiotaxia direta (`odorSteer`);
+- desvio de parede por `saccade` explícita;
+- além de um `odorSurge` que aumentava diretamente o thrust.
+
+Esses caminhos sensor→motor podem ser úteis como baseline de engenharia, mas não podem ficar misturados silenciosamente ao conectoma quando a pergunta é se **a topologia biológica acrescenta capacidade de controle**.
+
+Por isso o experimento passa a expor modos separados:
+
+| cérebro | heurísticas sensor→motor | objetivo |
+| --- | --- | --- |
+| MaleCNS | não | medir controle produzido pelo conectoma |
+| shuffled | não | medir efeito da topologia preservando estatísticas do grafo |
+| nenhum | sim | medir o baseline heurístico |
+| MaleCNS | sim | medir ganho incremental do conectoma sobre o baseline |
+
+Só comparações com a mesma política externa permitem atribuir diferenças à topologia do conectoma.
+
+---
+
+## 5. O controle embaralhado
+
+O controle nulo deve preservar as propriedades relevantes que queremos manter constantes. Uma simples permutação de conexões pode preservar algumas estatísticas e destruir outras; portanto o experimento registra explicitamente o método de randomização e mede, no mínimo:
+
+- mesma contagem de neurônios e arestas;
+- distribuição de pesos;
+- graus de entrada e saída, quando o método de shuffle os preserva;
+- mesma política sensorial externa;
+- mesma política motora externa;
+- mesmas seeds e spawns.
+
+A conclusão correta não é "o cérebro real joga Doom" a partir de uma única corrida. A pergunta testável é mais estreita: **sob estas condições e esta interface sensorimotora, a topologia MaleCNS produz desempenho diferente de controles nulos definidos previamente?**
+
+---
+
+## 6. Próximas otimizações
+
+As otimizações agora entram como hipóteses mensuráveis:
+
+- **LUT 8-bit vs. 4-bit packed**;
+- **transferable buffers** ou `SharedArrayBuffer` no worker para eliminar cópias evitáveis;
+- **WASM/SIMD** para o hot loop recorrente;
+- **aproximação/LUT de `tanh`**, medindo erro e efeito comportamental;
+- **layout neuron-major para múltiplas moscas**, favorecendo SIMD;
+- **reordenação dos neurônios** para melhorar localidade sem alterar arestas;
+- multithreading apenas depois de medir o custo de sincronização.
+
+O objetivo deixa de ser maximizar um número isolado de FPS e passa a ser obter uma cadeia de evidência reproduzível: **qual transformação acelera o quê, quanto erro introduz e quanto do comportamento vem do conectoma em vez do controlador externo**.
+
+---
+
+## 7. Código e demonstração
+
+- demonstração interativa: [`/flydoom/`](/flydoom/)
+- o formato `.mcns`, kernels e benchmarks devem ser reportados com versão, seed, número de arestas e modo de execução;
+- números de throughput do kernel devem ser rotulados como **kernel steps/s**, separados de **neural steps/s** e **render FPS**.
+
+Esse é o estado mais honesto — e também mais interessante — do experimento: uma representação real do conectoma inserida em um agente, com controles explícitos para descobrir quais partes do comportamento vêm da topologia, quais vêm da interface sensorial-motora e quais ganhos vêm apenas da engenharia de representação.
