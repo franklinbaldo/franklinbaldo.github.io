@@ -1,94 +1,33 @@
 #!/usr/bin/env python3
-"""Build FlyDoom's compact MaleCNS macro-region map.
+"""Build FlyDoom's compact runtime region map from compiler provenance.
 
-Pure offline transform:
+Phase 2A deliberately treats ``circuit.mcns`` as a compiled projection, not as a
+1:1 serialization of the full MaleCNS graph. The compact compiler is responsible
+for emitting one provenance row per runtime node, already resolved to a macro
+region. This script only verifies that provenance is index-aligned with the
+FlatBuffer and serializes the uint8 region vector plus a pinned hash chain.
 
-    graph.npz (canonical SpMV body order)
-      + MaleCNS v1.0 annotations Feather
-      + body_roi_counts.parquet from vendor_malecns_synapses.py
-      -> region_map.bin + region_map.meta.json
+Required provenance columns:
 
-Central brain is never defined by complement. Every non-zero code is justified
-by an explicit descending-neuron annotation or an explicit allowlisted ROI.
+- ``compact_index``: contiguous integer range ``0..Ncompact-1``;
+- ``kind``: e.g. ``body``, ``cluster`` or ``pool``;
+- ``region_code``: 0=other, 1=optic, 2=central, 3=descending.
+
+Recommended lineage columns include ``body_id`` for 1:1 nodes and
+``source_body_ids`` for merged/pooled units. They are preserved in the provenance
+artifact itself; the worker never needs to understand them.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
-from collections import Counter, defaultdict
+import struct
+from collections import Counter
 from pathlib import Path
-from typing import Iterable
 
-import numpy as np
-
-OPTIC_ROIS = frozenset(
-    {
-        "ME_R",
-        "ME_L",
-        "LO_R",
-        "LO_L",
-        "LOP_R",
-        "LOP_L",
-        "LA_R",
-        "LA_L",
-    }
-)
-
-CENTRAL_ROIS = frozenset(
-    {
-        "EB",
-        "FB",
-        "NO",
-        "PB",
-        "AB",
-        "EB_R",
-        "EB_L",
-        "FB_R",
-        "FB_L",
-        "NO_R",
-        "NO_L",
-        "PB_R",
-        "PB_L",
-        "AB_R",
-        "AB_L",
-        "MB_CA_R",
-        "MB_CA_L",
-        "MB_PED_R",
-        "MB_PED_L",
-        "MB_VL_R",
-        "MB_VL_L",
-        "MB_ML_R",
-        "MB_ML_L",
-        "LH_R",
-        "LH_L",
-        "AL_R",
-        "AL_L",
-        "SMP_R",
-        "SMP_L",
-        "SIP_R",
-        "SIP_L",
-        "SLP_R",
-        "SLP_L",
-        "SCL_R",
-        "SCL_L",
-        "ICL_R",
-        "ICL_L",
-    }
-)
-
-REGION_CODE = {"unassigned": 0, "optic": 1, "central": 2, "descending": 3}
+REGION_CODE = {"other": 0, "optic": 1, "central": 2, "descending": 3}
 CODE_REGION = {value: key for key, value in REGION_CODE.items()}
-
-ANNOTATION_URL = (
-    "https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/"
-    "flat-connectome/body-annotations-male-cns-v1.0-minconf-0.5.feather"
-)
-ATTRIBUTION_URL = "https://male-cns.janelia.org/download/"
-
-
-def sha256_bytes(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
 
 
 def sha256_file(path: Path) -> str:
@@ -99,156 +38,72 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def load_table(path: Path):
-    try:
-        import pyarrow as pa
-        import pyarrow.csv as csv
-        import pyarrow.feather as feather
-        import pyarrow.ipc as ipc
-        import pyarrow.parquet as parquet
-    except ImportError as exc:
-        raise SystemExit("pyarrow is required: uv run --with pyarrow ...") from exc
+def sha256_bytes(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
 
+
+def load_rows(path: Path) -> list[dict]:
     suffix = path.suffix.lower()
-    if suffix in {".feather", ".arrow"}:
-        try:
-            return feather.read_table(path)
-        except Exception:
-            with path.open("rb") as source:
-                return ipc.open_file(source).read_all()
-    if suffix == ".parquet":
-        return parquet.read_table(path)
-    if suffix == ".csv":
-        return csv.read_csv(path)
     if suffix in {".json", ".jsonl"}:
         text = path.read_text(encoding="utf-8")
         if suffix == ".jsonl":
-            rows = [json.loads(line) for line in text.splitlines() if line.strip()]
-        else:
-            payload = json.loads(text)
-            rows = payload if isinstance(payload, list) else payload.get("rows", [])
-        return pa.Table.from_pylist(rows)
-    raise SystemExit(f"unsupported table format: {path}")
+            return [json.loads(line) for line in text.splitlines() if line.strip()]
+        payload = json.loads(text)
+        if isinstance(payload, list):
+            return payload
+        if isinstance(payload, dict) and isinstance(payload.get("rows"), list):
+            return payload["rows"]
+        raise SystemExit("JSON provenance must be a list or {'rows': [...]} object")
+
+    if suffix == ".parquet":
+        try:
+            import pyarrow.parquet as pq
+        except ImportError as exc:
+            raise SystemExit(
+                "pyarrow is required for parquet provenance: uv run --with pyarrow ..."
+            ) from exc
+        return pq.read_table(path).to_pylist()
+
+    raise SystemExit("provenance must be .parquet, .json, or .jsonl")
 
 
-def column_name(table, *candidates: str) -> str:
-    for name in candidates:
-        if name in table.column_names:
-            return name
-    raise SystemExit(
-        f"missing one of columns {candidates!r}; got {table.column_names!r}"
-    )
+def _u16(buf: bytes, off: int) -> int:
+    return struct.unpack_from("<H", buf, off)[0]
 
 
-def annotation_lookup(path: Path) -> dict[int, dict[str, str]]:
-    table = load_table(path)
-    body_col = column_name(table, "bodyId", "body")
-    bodies = table[body_col].to_pylist()
-    superclass = (
-        table["superclass"].to_pylist()
-        if "superclass" in table.column_names
-        else [None] * len(bodies)
-    )
-    result: dict[int, dict[str, str]] = {}
-    for body, sup in zip(bodies, superclass, strict=True):
-        if body is None:
-            continue
-        result[int(body)] = {"superclass": "" if sup is None else str(sup)}
-    return result
+def _u32(buf: bytes, off: int) -> int:
+    return struct.unpack_from("<I", buf, off)[0]
 
 
-def roi_scores(path: Path) -> dict[int, list[tuple[str, float]]]:
-    table = load_table(path)
-    body_col = column_name(table, "bodyId", "body")
-    roi_col = column_name(table, "roi", "ROI", "primary_roi", "primaryROI")
-    columns = set(table.column_names)
-
-    if "score" in columns:
-        values = table["score"].to_pylist()
-    elif "synapses" in columns:
-        values = table["synapses"].to_pylist()
-    elif "weight" in columns:
-        values = table["weight"].to_pylist()
-    elif {"pre_count", "post_count"} & columns:
-        pre_name = "pre_count" if "pre_count" in columns else "pre"
-        post_name = "post_count" if "post_count" in columns else "post"
-        pre = table[pre_name].to_pylist() if pre_name in columns else [0] * table.num_rows
-        post = table[post_name].to_pylist() if post_name in columns else [0] * table.num_rows
-        values = [
-            (0 if a is None else float(a)) + (0 if b is None else float(b))
-            for a, b in zip(pre, post, strict=True)
-        ]
-    elif {"pre", "post"} & columns:
-        pre = table["pre"].to_pylist() if "pre" in columns else [0] * table.num_rows
-        post = table["post"].to_pylist() if "post" in columns else [0] * table.num_rows
-        values = [
-            (0 if a is None else float(a)) + (0 if b is None else float(b))
-            for a, b in zip(pre, post, strict=True)
-        ]
-    else:
-        raise SystemExit(
-            "ROI table needs score/synapses/weight, pre/post, or pre_count/post_count"
-        )
-
-    rows: dict[int, list[tuple[str, float]]] = defaultdict(list)
-    for body, roi, score in zip(
-        table[body_col].to_pylist(),
-        table[roi_col].to_pylist(),
-        values,
-        strict=True,
-    ):
-        if body is None or roi is None:
-            continue
-        rows[int(body)].append((str(roi), float(score or 0.0)))
-    return dict(rows)
+def _i32(buf: bytes, off: int) -> int:
+    return struct.unpack_from("<i", buf, off)[0]
 
 
-def roi_region(roi: str) -> int:
-    if roi in OPTIC_ROIS:
-        return REGION_CODE["optic"]
-    if roi in CENTRAL_ROIS:
-        return REGION_CODE["central"]
-    return REGION_CODE["unassigned"]
-
-
-def classify_body(
-    body: int,
-    annotation: dict[str, str] | None,
-    roi_rows: Iterable[tuple[str, float]],
-) -> tuple[int, str | None, float | None]:
-    if annotation and annotation.get("superclass") == "descending_neuron":
-        return REGION_CODE["descending"], "DN_canonical", None
-
-    included = [
-        (roi, score, roi_region(roi))
-        for roi, score in roi_rows
-        if roi_region(roi) != REGION_CODE["unassigned"]
-    ]
-    if not included:
-        return REGION_CODE["unassigned"], None, None
-
-    best_score = max(score for _, score, _ in included)
-    winners = [(roi, region) for roi, score, region in included if score == best_score]
-    regions = {region for _, region in winners}
-    if len(regions) > 1:
-        names = ", ".join(sorted(roi for roi, _ in winners))
-        raise ValueError(
-            f"ambiguous equal-score macro-region tie for body {body}: {names}"
-        )
-    roi, region = sorted(winners)[0]
-    return region, roi, best_score
+def compact_neuron_count(circuit: Path) -> int:
+    """Read Ncompact from the same offsets vector consumed by the browser runtime."""
+    buf = circuit.read_bytes()
+    root = _u32(buf, 0)
+    vtable = root - _i32(buf, root)
+    vtable_len = _u16(buf, vtable)
+    field = 5  # runtime offsets vector
+    slot = 4 + 2 * field
+    if slot + 2 > vtable_len:
+        raise SystemExit("circuit.mcns has no runtime offsets field")
+    rel = _u16(buf, vtable + slot)
+    if rel == 0:
+        raise SystemExit("circuit.mcns runtime offsets field is absent")
+    pos = root + rel
+    vec = pos + _u32(buf, pos)
+    n_offsets = _u32(buf, vec)
+    if n_offsets < 2:
+        raise SystemExit(f"invalid offsets cardinality: {n_offsets}")
+    return n_offsets - 1
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--graph", type=Path, required=True)
-    parser.add_argument("--annotations", type=Path, required=True)
-    parser.add_argument(
-        "--roi-table",
-        type=Path,
-        required=True,
-        help="body_roi_counts.parquet produced from official MaleCNS syn-points",
-    )
+    parser.add_argument("--circuit", type=Path, required=True)
+    parser.add_argument("--provenance", type=Path, required=True)
     parser.add_argument(
         "--output-bin",
         type=Path,
@@ -259,121 +114,69 @@ def main() -> None:
         type=Path,
         default=Path("public/flydoom/data/region_map.meta.json"),
     )
-    parser.add_argument("--expected-neurons", type=int, default=165122)
     args = parser.parse_args()
 
-    graph = np.load(args.graph, allow_pickle=False)
-    if "bodies" not in graph.files:
-        raise SystemExit("graph.npz must contain canonical `bodies`")
-    bodies = np.asarray(graph["bodies"], dtype=np.int64)
-    if len(bodies) != args.expected_neurons:
+    rows = load_rows(args.provenance)
+    ncompact = compact_neuron_count(args.circuit)
+    if len(rows) != ncompact:
         raise SystemExit(
-            f"unexpected graph size: {len(bodies)} != {args.expected_neurons}"
-        )
-    if len(np.unique(bodies)) != len(bodies):
-        raise SystemExit("graph bodies are not unique")
-    if np.any(bodies[1:] <= bodies[:-1]):
-        raise SystemExit(
-            "graph bodies are not strictly increasing; index-order invariant changed"
+            f"provenance cardinality {len(rows)} != compact runtime {ncompact}"
         )
 
-    annotations = annotation_lookup(args.annotations)
-    rois = roi_scores(args.roi_table)
-    region_map = np.zeros(len(bodies), dtype=np.uint8)
-    chosen_roi: Counter[str] = Counter()
-    missing_annotations = 0
-    bodies_with_roi_rows = 0
+    required = {"compact_index", "kind", "region_code"}
+    region_map = bytearray(ncompact)
+    kinds: Counter[str] = Counter()
 
-    for index, body_np in enumerate(bodies):
-        body = int(body_np)
-        annotation = annotations.get(body)
-        if annotation is None:
-            missing_annotations += 1
-        body_rois = rois.get(body, [])
-        if body_rois:
-            bodies_with_roi_rows += 1
-        code, roi, _ = classify_body(body, annotation, body_rois)
+    for expected_index, row in enumerate(rows):
+        missing = required - set(row)
+        if missing:
+            raise SystemExit(
+                f"provenance row {expected_index} missing columns {sorted(missing)}"
+            )
+        index = int(row["compact_index"])
+        if index != expected_index:
+            raise SystemExit(
+                f"provenance index mismatch at row {expected_index}: {index}"
+            )
+        code = int(row["region_code"])
+        if code not in CODE_REGION:
+            raise SystemExit(f"invalid region_code {code} at compact index {index}")
         region_map[index] = code
-        if roi:
-            chosen_roi[roi] += 1
+        kinds[str(row["kind"])] += 1
 
+    raw = bytes(region_map)
     args.output_bin.parent.mkdir(parents=True, exist_ok=True)
-    raw = region_map.tobytes(order="C")
-    if len(raw) != args.expected_neurons:
-        raise SystemExit(
-            f"region map byte length changed: {len(raw)} != {args.expected_neurons}"
-        )
     args.output_bin.write_bytes(raw)
 
-    counts = Counter(int(code) for code in region_map)
-    bodies_sha = sha256_bytes(
-        bodies.astype("<i8", copy=False).tobytes(order="C")
-    )
+    counts = Counter(raw)
     meta = {
-        "format": "flydoom/malecns-region-map-v1",
-        "source": {
-            "dataset": "MaleCNS v1.0",
-            "dataset_url": ATTRIBUTION_URL,
-            "license": "CC BY 4.0",
-            "annotations_url": ANNOTATION_URL,
-            "annotations_sha256": sha256_file(args.annotations),
-            "body_roi_counts_path": str(args.roi_table),
-            "body_roi_counts_sha256": sha256_file(args.roi_table),
-            "graph_path": str(args.graph),
-            "graph_sha256": sha256_file(args.graph),
-            "spmv_body_order_sha256_le_i64": bodies_sha,
-            "spmv_order_rule": (
-                "graph.npz bodies vector; strictly increasing MaleCNS body IDs"
-            ),
-        },
-        "total_neurons": int(len(bodies)),
+        "format": "flydoom/compact-region-map-v2",
+        "compact_neurons": ncompact,
         "byte_length": len(raw),
-        "region_map_bin_sha256": sha256_bytes(raw),
         "region_codes": {str(code): name for code, name in CODE_REGION.items()},
         "counts": {
             CODE_REGION[code]: int(counts.get(code, 0))
             for code in sorted(CODE_REGION)
         },
-        "coverage": {
-            "annotations_found": int(len(bodies) - missing_annotations),
-            "annotations_missing": int(missing_annotations),
-            "bodies_with_roi_rows": int(bodies_with_roi_rows),
+        "provenance_kinds": dict(sorted(kinds.items())),
+        "hash_chain": {
+            "circuit_mcns_sha256": sha256_file(args.circuit),
+            "provenance_sha256": sha256_file(args.provenance),
+            "region_map_bin_sha256": sha256_bytes(raw),
         },
-        "roi_definitions": {
-            "optic": sorted(OPTIC_ROIS),
-            "central": sorted(CENTRAL_ROIS),
-            "descending": ["superclass=descending_neuron"],
+        "contract": {
+            "index_rule": "row i in provenance == slot i in compact runtime",
+            "cardinality_rule": "len(provenance) == len(region_map) == Ncompact",
+            "worker_semantics": "worker consumes only uint8 region codes; lineage stays offline",
+            "code_0": "other/unassigned, never inactive",
         },
-        "classification": {
-            "precedence": [
-                "descending annotation",
-                "highest-scoring explicit included ROI",
-                "unassigned",
-            ],
-            "central_by_complement": False,
-            "cross_macro_equal_score_ties": "error",
-            "note": (
-                "Code 0 means unassigned/other, not inactive. It includes VNC, "
-                "peripheral, unsupported ROI, missing ROI, and neurons that do "
-                "not meet an explicit allowlisted criterion."
-            ),
-        },
-        "chosen_roi_counts": dict(sorted(chosen_roi.items())),
     }
     args.output_meta.parent.mkdir(parents=True, exist_ok=True)
     args.output_meta.write_text(
         json.dumps(meta, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
-    print(
-        json.dumps(
-            {
-                "sha256": meta["region_map_bin_sha256"],
-                "counts": meta["counts"],
-                "coverage": meta["coverage"],
-            },
-            indent=2,
-        )
-    )
+
+    print(json.dumps(meta, indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":
