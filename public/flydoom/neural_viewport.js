@@ -3,7 +3,8 @@ import * as THREE from "./vendor/three.module.js";
 const BASE_OPACITY = 0.1;
 const ACTIVITY_GAIN = 0.85;
 const HISTORY_LIMIT = 180;
-const RASTER_LIMIT = 80;
+const RASTER_LIMIT = 96;
+const TOP_LIMIT = 128;
 const VIEW_STORAGE_KEY = "flydoom.neural-view";
 
 const VIEW_MODES = [
@@ -22,21 +23,105 @@ const REGION_LABELS = {
   3: "descending",
 };
 
+const REGION_RGB = {
+  0: [0.55, 0.58, 0.62],
+  1: [0.0, 0.94, 1.0],
+  2: [1.0, 0.0, 0.67],
+  3: [0.0, 1.0, 0.4],
+};
+
 function clamp01(value) {
   return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
 }
 
-function normalizeTelemetry(payload) {
+function isArrayLike(value) {
+  return Array.isArray(value) || ArrayBuffer.isView(value);
+}
+
+function normalizeTopK(topK) {
+  if (!topK || !isArrayLike(topK.indices) || !isArrayLike(topK.activities)) {
+    return [];
+  }
+  const count = Math.min(topK.indices.length, topK.activities.length, TOP_LIMIT);
+  const coords = isArrayLike(topK.coords) ? topK.coords : null;
+  const bodyIds = isArrayLike(topK.bodyIds) ? topK.bodyIds : null;
+  const regions = isArrayLike(topK.regions) ? topK.regions : null;
+  const labels = Array.isArray(topK.labels) ? topK.labels : null;
+  const neurons = new Array(count);
+  for (let i = 0; i < count; i++) {
+    const base = i * 3;
+    neurons[i] = {
+      index: Number(topK.indices[i]),
+      bodyId: bodyIds ? String(bodyIds[i]) : undefined,
+      activity: Number(topK.activities[i]) || 0,
+      region: regions ? Number(regions[i]) : 0,
+      label: labels?.[i] ?? undefined,
+      x: coords && base + 2 < coords.length ? Number(coords[base]) : undefined,
+      y: coords && base + 2 < coords.length ? Number(coords[base + 1]) : undefined,
+      z: coords && base + 2 < coords.length ? Number(coords[base + 2]) : undefined,
+    };
+  }
+  return neurons;
+}
+
+function normalizeFlow(flow) {
+  if (!flow) return null;
+  if (Array.isArray(flow) && flow.length >= 3) {
+    return [0, 1, 2].map((row) =>
+      [0, 1, 2].map((col) => Number(flow?.[row]?.[col]) || 0)
+    );
+  }
+  const names = ["optic", "central", "descending"];
+  return names.map((from) =>
+    names.map((to) => Number(flow?.[from]?.[to] ?? flow?.[`${from}->${to}`]) || 0)
+  );
+}
+
+export function normalizeNeuralTelemetry(payload) {
   if (!payload) return null;
-  if (payload.macro || payload.neurons || payload.edges) return payload;
+
+  // Canonical NeuralTelemetryDTO.
+  if (
+    payload.macroActivity ||
+    payload.topK ||
+    payload.rasterSlice ||
+    payload.regionalFlow
+  ) {
+    return {
+      tick: payload.tick,
+      simTimeMs: payload.simTimeMs,
+      macro: payload.macroActivity || null,
+      neurons: normalizeTopK(payload.topK),
+      rasterSlice: isArrayLike(payload.rasterSlice) ? payload.rasterSlice : null,
+      regionalFlow: normalizeFlow(payload.regionalFlow),
+    };
+  }
+
+  // Compatibility with the earlier FlyDoom telemetry draft.
+  if (payload.macro || payload.neurons || payload.edges || payload.flow) {
+    return {
+      ...payload,
+      macro: payload.macro || null,
+      neurons: Array.isArray(payload.neurons) ? payload.neurons : [],
+      rasterSlice: isArrayLike(payload.rasterSlice) ? payload.rasterSlice : null,
+      regionalFlow: normalizeFlow(payload.regionalFlow || payload.flow),
+    };
+  }
+
+  // Compatibility with the original three-float scaffold API.
   if (
     Number.isFinite(payload.optic) ||
     Number.isFinite(payload.central) ||
     Number.isFinite(payload.descending)
   ) {
-    return { macro: payload, neurons: [], edges: [] };
+    return {
+      macro: payload,
+      neurons: [],
+      rasterSlice: null,
+      regionalFlow: null,
+    };
   }
-  return payload;
+  return null;
 }
 
 export class NeuralViewport {
@@ -53,6 +138,7 @@ export class NeuralViewport {
     this.telemetry = null;
     this.history = [];
     this.rasterRows = [];
+    this.sparseRasterRows = [];
     this.mode = this.restoreMode();
     this.twoDCanvas = null;
     this.twoD = null;
@@ -110,7 +196,8 @@ export class NeuralViewport {
   }
 
   installViewControls() {
-    const container = this.canvas.closest(".canvas-container") || this.canvas.parentElement;
+    const container =
+      this.canvas.closest(".canvas-container") || this.canvas.parentElement;
     if (!container) return;
 
     const toolbar = document.createElement("div");
@@ -160,10 +247,11 @@ export class NeuralViewport {
     try {
       window.localStorage.setItem(VIEW_STORAGE_KEY, mode);
     } catch {
-      // localStorage is an optional convenience only.
+      // Persistence is a convenience, never a runtime dependency.
     }
     this.applyMode();
-    this.render(this.telemetry);
+    // Render the already-ingested snapshot. Do not ingest it a second time.
+    this.render();
   }
 
   applyMode() {
@@ -175,13 +263,13 @@ export class NeuralViewport {
       macro3d:
         "Schematic macro-regions. Brightness follows measured regional activity when available.",
       soma3d:
-        "Real soma coordinates when supplied by telemetry; otherwise no anatomical points are invented.",
+        "Real soma coordinates only. Missing XYZ remains visibly unavailable; positions are never invented.",
       raster:
-        "Recent active-neuron rows. Requires sparse neuron activity in the telemetry DTO.",
+        "Rolling binary rasterSlice when supplied; otherwise falls back to sparse Top-K activity rows.",
       timeline:
-        "Rolling optic / central / descending activity history.",
-      top: "Ranked sparse active neurons with bodyId, region and activity.",
-      flow: "Regional contribution matrix derived from telemetry flow/edge summaries when available.",
+        "Rolling optic / central / descending activity history from macroActivity.",
+      top: "Ranked Top-K neurons with index/bodyId, region, label and activity when supplied.",
+      flow: "Directional weighted-contribution proxy between regions; this is not a causal estimate.",
     };
     if (this.helpEl) this.helpEl.textContent = help[this.mode] || "";
     this.setStatus(`VIEW · ${this.mode.toUpperCase()}`);
@@ -230,48 +318,60 @@ export class NeuralViewport {
     if (this.statusEl) this.statusEl.textContent = text;
   }
 
-  update(payload) {
-    const telemetry = normalizeTelemetry(payload);
-    if (!telemetry) return;
+  ingest(payload) {
+    const telemetry = normalizeNeuralTelemetry(payload);
+    if (!telemetry) return false;
     this.telemetry = telemetry;
 
-    const macro = telemetry.macro || null;
+    const macro = telemetry.macro;
     if (macro) {
       this.history.push({
         tick: telemetry.tick ?? this.history.length,
-        optic: clamp01(macro.optic),
-        central: clamp01(macro.central),
-        descending: clamp01(macro.descending),
+        optic: clamp01(Number(macro.optic)),
+        central: clamp01(Number(macro.central)),
+        descending: clamp01(Number(macro.descending)),
       });
       if (this.history.length > HISTORY_LIMIT) this.history.shift();
 
       if (this.materials) {
         for (const key of ["optic", "central", "descending"]) {
           this.materials[key].opacity =
-            BASE_OPACITY + clamp01(macro[key]) * ACTIVITY_GAIN;
+            BASE_OPACITY + clamp01(Number(macro[key])) * ACTIVITY_GAIN;
         }
       }
     }
 
-    const neurons = Array.isArray(telemetry.neurons) ? telemetry.neurons : [];
-    if (neurons.length) {
-      this.rasterRows.push({
-        tick: telemetry.tick ?? this.rasterRows.length,
-        neurons: neurons.slice(0, 128),
-      });
+    if (telemetry.rasterSlice) {
+      // Clone only this compact observed-channel slice because transferable worker
+      // buffers may be detached or reused immediately after the message returns.
+      this.rasterRows.push(Uint8Array.from(telemetry.rasterSlice));
       if (this.rasterRows.length > RASTER_LIMIT) this.rasterRows.shift();
     }
+
+    const neurons = Array.isArray(telemetry.neurons) ? telemetry.neurons : [];
+    if (neurons.length) {
+      this.sparseRasterRows.push({
+        tick: telemetry.tick ?? this.sparseRasterRows.length,
+        neurons: neurons.slice(0, TOP_LIMIT),
+      });
+      if (this.sparseRasterRows.length > RASTER_LIMIT) {
+        this.sparseRasterRows.shift();
+      }
+    }
+    return true;
   }
 
   render(payload = null) {
-    if (payload) this.update(payload);
+    if (payload) this.ingest(payload);
 
     if (this.mode === "macro3d") {
       if (!this.available) return;
       this.setMacroVisibility(true);
       this.clearSomaPoints();
       this.renderer.render(this.scene, this.camera);
-      this.setStatus(this.telemetry?.macro ? "LIVE · MACRO 3D" : "SCHEMATIC · MACRO 3D");
+      this.setStatus(
+        this.telemetry?.macro ? "LIVE · MACRO 3D" : "SCHEMATIC · MACRO 3D"
+      );
       return;
     }
 
@@ -316,25 +416,48 @@ export class NeuralViewport {
       return;
     }
 
-    const coords = new Float32Array(positioned.length * 3);
-    let maxAbs = 1;
+    let minX = Infinity,
+      minY = Infinity,
+      minZ = Infinity,
+      maxX = -Infinity,
+      maxY = -Infinity,
+      maxZ = -Infinity;
     for (const neuron of positioned) {
-      maxAbs = Math.max(maxAbs, Math.abs(neuron.x), Math.abs(neuron.y), Math.abs(neuron.z));
+      minX = Math.min(minX, neuron.x);
+      minY = Math.min(minY, neuron.y);
+      minZ = Math.min(minZ, neuron.z);
+      maxX = Math.max(maxX, neuron.x);
+      maxY = Math.max(maxY, neuron.y);
+      maxZ = Math.max(maxZ, neuron.z);
     }
-    const scale = 3.2 / maxAbs;
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    const cz = (minZ + maxZ) / 2;
+    const extent = Math.max(maxX - minX, maxY - minY, maxZ - minZ, 1);
+    const scale = 5.8 / extent;
+
+    const coords = new Float32Array(positioned.length * 3);
+    const colors = new Float32Array(positioned.length * 3);
     positioned.forEach((neuron, index) => {
-      coords[index * 3] = neuron.x * scale;
-      coords[index * 3 + 1] = neuron.y * scale;
-      coords[index * 3 + 2] = neuron.z * scale;
+      const base = index * 3;
+      coords[base] = (neuron.x - cx) * scale;
+      coords[base + 1] = (neuron.y - cy) * scale;
+      coords[base + 2] = (neuron.z - cz) * scale;
+      const rgb = REGION_RGB[neuron.region] || REGION_RGB[0];
+      const gain = 0.35 + 0.65 * clamp01(Math.abs(neuron.activity || 0));
+      colors[base] = rgb[0] * gain;
+      colors[base + 1] = rgb[1] * gain;
+      colors[base + 2] = rgb[2] * gain;
     });
 
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.BufferAttribute(coords, 3));
+    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
     const material = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.09,
+      vertexColors: true,
+      size: 0.1,
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.95,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
@@ -360,11 +483,11 @@ export class NeuralViewport {
   }
 
   renderTimeline() {
-    this.clear2D("POPULATION ACTIVITY", "rolling normalized macro activity");
+    this.clear2D("POPULATION ACTIVITY", "rolling normalized macroActivity");
     const ctx = this.twoD;
     const { width, height } = this.twoDCanvas;
     if (this.history.length < 2) {
-      this.drawWaiting("Waiting for macro telemetry");
+      this.drawWaiting("Waiting for macroActivity telemetry");
       this.setStatus("TIMELINE · WAITING FOR MACRO");
       return;
     }
@@ -413,21 +536,70 @@ export class NeuralViewport {
   }
 
   renderRaster() {
-    this.clear2D("ACTIVE-NEURON RASTER", "sparse top-K activity; one column per recent tick");
+    if (this.rasterRows.length) {
+      this.renderBinaryRaster();
+      return;
+    }
+    this.renderSparseRaster();
+  }
+
+  renderBinaryRaster() {
+    this.clear2D("SPIKE / ACTIVITY RASTER", "rasterSlice channels × recent ticks");
     const ctx = this.twoD;
     const { width, height } = this.twoDCanvas;
-    if (!this.rasterRows.length) {
-      this.drawWaiting("Waiting for sparse neuron telemetry");
-      this.setStatus("RASTER · WAITING FOR NEURONS");
+    const channels = Math.max(...this.rasterRows.map((row) => row.length), 0);
+    if (!channels) {
+      this.drawWaiting("Waiting for rasterSlice telemetry");
+      return;
+    }
+    const left = 52;
+    const top = 48;
+    const chartW = width - left - 10;
+    const chartH = height - top - 12;
+    const cellW = chartW / Math.max(1, this.rasterRows.length);
+    const cellH = chartH / channels;
+    this.rasterRows.forEach((slice, col) => {
+      for (let row = 0; row < slice.length; row++) {
+        if (!slice[row]) continue;
+        ctx.fillStyle = "#58a6ff";
+        ctx.fillRect(
+          left + col * cellW,
+          top + row * cellH,
+          Math.max(1, cellW),
+          Math.max(1, cellH)
+        );
+      }
+    });
+    ctx.fillStyle = "#6e7681";
+    ctx.font = "8px ui-monospace, monospace";
+    const every = Math.max(1, Math.ceil(channels / 12));
+    for (let row = 0; row < channels; row += every) {
+      ctx.fillText(String(row), 8, top + row * cellH + 7);
+    }
+    this.setStatus(`LIVE · RASTER ${channels} CHANNELS`);
+  }
+
+  renderSparseRaster() {
+    this.clear2D(
+      "ACTIVE-NEURON RASTER",
+      "Top-K fallback; rasterSlice has not been supplied"
+    );
+    const ctx = this.twoD;
+    const { width, height } = this.twoDCanvas;
+    if (!this.sparseRasterRows.length) {
+      this.drawWaiting("Waiting for rasterSlice or Top-K telemetry");
+      this.setStatus("RASTER · WAITING FOR TELEMETRY");
       return;
     }
 
     const all = new Map();
-    for (const row of this.rasterRows) {
+    for (const row of this.sparseRasterRows) {
       for (const neuron of row.neurons) {
         const id = String(neuron.bodyId ?? neuron.index ?? "?");
-        const previous = all.get(id) || 0;
-        all.set(id, Math.max(previous, Math.abs(neuron.activity || 0)));
+        all.set(
+          id,
+          Math.max(all.get(id) || 0, Math.abs(neuron.activity || 0))
+        );
       }
     }
     const ids = [...all.entries()]
@@ -439,7 +611,7 @@ export class NeuralViewport {
     const top = 48;
     const chartW = width - left - 10;
     const chartH = height - top - 12;
-    const cellW = chartW / Math.max(1, this.rasterRows.length);
+    const cellW = chartW / Math.max(1, this.sparseRasterRows.length);
     const cellH = chartH / Math.max(1, ids.length);
 
     ctx.fillStyle = "#6e7681";
@@ -450,70 +622,83 @@ export class NeuralViewport {
       }
     });
 
-    this.rasterRows.forEach((sample, col) => {
+    this.sparseRasterRows.forEach((sample, col) => {
       for (const neuron of sample.neurons) {
         const id = String(neuron.bodyId ?? neuron.index ?? "?");
         const row = rowIndex.get(id);
         if (row === undefined) continue;
         const alpha = 0.25 + 0.75 * clamp01(Math.abs(neuron.activity || 0));
         ctx.fillStyle = `rgba(88,166,255,${alpha})`;
-        ctx.fillRect(left + col * cellW, top + row * cellH, Math.max(1, cellW), Math.max(1, cellH));
+        ctx.fillRect(
+          left + col * cellW,
+          top + row * cellH,
+          Math.max(1, cellW),
+          Math.max(1, cellH)
+        );
       }
     });
-    this.setStatus(`LIVE · RASTER ${ids.length} NEURONS`);
+    this.setStatus(`LIVE · TOP-K RASTER ${ids.length}`);
   }
 
   renderTopNeurons() {
-    this.clear2D("TOP ACTIVE NEURONS", "current sparse telemetry snapshot");
+    this.clear2D("TOP ACTIVE NEURONS", "current Top-K telemetry snapshot");
     const ctx = this.twoD;
     const neurons = Array.isArray(this.telemetry?.neurons)
       ? [...this.telemetry.neurons]
       : [];
     if (!neurons.length) {
-      this.drawWaiting("Waiting for sparse neuron telemetry");
+      this.drawWaiting("Waiting for Top-K telemetry");
       this.setStatus("TOP-K · WAITING FOR NEURONS");
       return;
     }
 
-    neurons.sort((a, b) => Math.abs(b.activity || 0) - Math.abs(a.activity || 0));
+    neurons.sort(
+      (a, b) => Math.abs(b.activity || 0) - Math.abs(a.activity || 0)
+    );
     const shown = neurons.slice(0, 14);
     const max = Math.max(...shown.map((n) => Math.abs(n.activity || 0)), 1e-9);
     ctx.font = "9px ui-monospace, monospace";
     shown.forEach((neuron, index) => {
       const y = 50 + index * 17;
       const id = String(neuron.bodyId ?? neuron.index ?? "?");
-      const region = REGION_LABELS[neuron.region] || String(neuron.region ?? "?");
+      const region =
+        REGION_LABELS[neuron.region] || String(neuron.region ?? "?");
       const value = Math.abs(neuron.activity || 0);
+      const label = neuron.label ? ` ${String(neuron.label).slice(0, 12)}` : "";
       ctx.fillStyle = "#8b949e";
-      ctx.fillText(`${id.slice(-12).padStart(12)} ${region.padEnd(10)}`, 8, y + 9);
+      ctx.fillText(
+        `${id.slice(-10).padStart(10)} ${region.slice(0, 6).padEnd(6)}${label}`,
+        8,
+        y + 9
+      );
       ctx.fillStyle = "#238636";
-      ctx.fillRect(190, y + 2, (value / max) * 205, 9);
+      ctx.fillRect(205, y + 2, (value / max) * 175, 9);
       ctx.fillStyle = "#c9d1d9";
-      ctx.fillText(value.toFixed(3), 402, y + 9);
+      ctx.fillText(value.toFixed(3), 388, y + 9);
     });
     this.setStatus(`LIVE · TOP ${shown.length}`);
   }
 
   renderFlow() {
-    this.clear2D("REGIONAL FLOW", "instantaneous weighted-contribution summary");
+    this.clear2D(
+      "REGIONAL FLOW",
+      "instantaneous weighted-contribution proxy — not causal inference"
+    );
     const ctx = this.twoD;
-    const flow = this.telemetry?.flow || this.telemetry?.regionalFlow || null;
+    const flow = this.telemetry?.regionalFlow || null;
     if (!flow) {
-      this.drawWaiting("Waiting for regional flow telemetry");
-      this.setStatus("FLOW · WAITING FOR EDGES");
+      this.drawWaiting("Waiting for regionalFlow telemetry");
+      this.setStatus("FLOW · WAITING FOR CONTRIBUTIONS");
       return;
     }
 
     const names = ["optic", "central", "descending"];
-    const cells = [];
     let max = 0;
-    names.forEach((from) => {
-      names.forEach((to) => {
-        const value = Number(flow?.[from]?.[to] ?? flow?.[`${from}->${to}`] ?? 0) || 0;
-        max = Math.max(max, Math.abs(value));
-        cells.push({ from, to, value });
-      });
-    });
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 3; col++) {
+        max = Math.max(max, Math.abs(Number(flow[row]?.[col]) || 0));
+      }
+    }
     max ||= 1;
 
     const left = 115;
@@ -531,17 +716,30 @@ export class NeuralViewport {
       ctx.restore();
     });
 
-    cells.forEach(({ from, to, value }) => {
-      const col = names.indexOf(to);
-      const row = names.indexOf(from);
-      const alpha = 0.08 + 0.82 * (Math.abs(value) / max);
-      ctx.fillStyle = value >= 0 ? `rgba(46,160,67,${alpha})` : `rgba(248,81,73,${alpha})`;
-      ctx.fillRect(left + col * size, top + row * size, size - 3, size - 3);
-      ctx.fillStyle = "#f0f6fc";
-      ctx.fillText(value.toFixed(2), left + col * size + size / 2, top + row * size + size / 2 + 3);
-    });
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 3; col++) {
+        const value = Number(flow[row]?.[col]) || 0;
+        const alpha = 0.08 + 0.82 * (Math.abs(value) / max);
+        ctx.fillStyle =
+          value >= 0
+            ? `rgba(46,160,67,${alpha})`
+            : `rgba(248,81,73,${alpha})`;
+        ctx.fillRect(
+          left + col * size,
+          top + row * size,
+          size - 3,
+          size - 3
+        );
+        ctx.fillStyle = "#f0f6fc";
+        ctx.fillText(
+          value.toFixed(2),
+          left + col * size + size / 2,
+          top + row * size + size / 2 + 3
+        );
+      }
+    }
     ctx.textAlign = "start";
-    this.setStatus("LIVE · REGIONAL FLOW");
+    this.setStatus("LIVE · REGIONAL FLOW PROXY");
   }
 
   drawWaiting(message) {
@@ -560,7 +758,9 @@ export class NeuralViewport {
       for (const mesh of Object.values(this.meshes || {})) {
         mesh.traverse?.((node) => node.geometry?.dispose?.());
       }
-      for (const material of Object.values(this.materials || {})) material.dispose();
+      for (const material of Object.values(this.materials || {})) {
+        material.dispose();
+      }
       this.renderer.dispose();
     }
     this.available = false;
