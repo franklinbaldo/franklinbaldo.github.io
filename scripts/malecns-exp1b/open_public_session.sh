@@ -29,7 +29,7 @@ STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 
 cat > "$STAGE/job.py" <<PY
-import json, pathlib, shutil, subprocess, sys, threading, time, urllib.request
+import json, pathlib, shutil, subprocess, sys, threading, time, traceback, urllib.request
 
 PAPERS_REF = ${PAPERS_REF@Q}
 NTFY_TOPIC = ${NTFY_TOPIC@Q}
@@ -38,11 +38,32 @@ output_root = pathlib.Path('/kaggle/working')
 scratch = pathlib.Path('/tmp/malecns-exp1b')
 repo = scratch / 'papers'
 started = time.time()
+phase = 'boot'
+status_path = output_root / 'exp1b-session-status.json'
+failure_path = output_root / 'exp1b-session-failure.json'
+
+
+def persist(path, payload):
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + '\n')
+
+
+def status(event, **payload):
+    persist(status_path, {
+        'event': event,
+        'phase': phase,
+        'ts': time.time(),
+        'elapsed_s': round(time.time() - started, 1),
+        'python': sys.version,
+        'papers_ref': PAPERS_REF,
+        **payload,
+    })
 
 
 def notify(event, **payload):
+    status(event, **payload)
     body = json.dumps({
         'event': event,
+        'phase': phase,
         'ts': time.time(),
         'elapsed_s': round(time.time() - started, 1),
         **payload,
@@ -64,25 +85,33 @@ def heartbeat():
         time.sleep(60)
         notify('heartbeat')
 
+output_root.mkdir(parents=True, exist_ok=True)
 threading.Thread(target=heartbeat, daemon=True).start()
-notify('session_started', kaggle_kernel=${KERNEL_ID@Q}, papers_ref=PAPERS_REF,
+notify('session_started', kaggle_kernel=${KERNEL_ID@Q},
        ntfy_url=f'https://ntfy.sh/{NTFY_TOPIC}')
 
 try:
+    phase = 'scratch_setup'
+    status('scratch_setup_started')
     if scratch.exists():
         shutil.rmtree(scratch)
     scratch.mkdir(parents=True, exist_ok=True)
 
+    phase = 'clone'
     notify('clone_started')
     subprocess.check_call(['git', 'clone', '--depth', '1', '--branch', PAPERS_REF,
                            'https://github.com/franklinbaldo/papers.git', str(repo)])
     exp = repo / 'experiments' / 'malecns_wifi'
 
+    phase = 'install_experiment'
     notify('install_started')
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--disable-pip-version-check', '-q', '-e', str(exp)])
+
+    phase = 'install_huggingface_hub'
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--disable-pip-version-check', '-q',
                            'huggingface_hub>=0.27'])
 
+    phase = 'import_dependencies'
     from huggingface_hub import hf_hub_download, snapshot_download
     import numpy as np
 
@@ -92,6 +121,7 @@ try:
     source = None
     built_target = False
 
+    phase = 'features_download'
     notify('features_download_started')
     try:
         source = pathlib.Path(hf_hub_download(
@@ -99,12 +129,14 @@ try:
             repo_type='dataset', filename='multieurlex-1000-features.npz'))
     except Exception as exc:
         print('direct HF feature download failed:', repr(exc), flush=True)
+        phase = 'features_snapshot_download'
         snap = pathlib.Path(snapshot_download(
             repo_id='franklinbaldo/multieurlex21-pt-semantic-cache', repo_type='dataset'))
         required = {'absolute', 'tag_masks', 'groups', 'tag_embeddings'}
         files = sorted(p for p in snap.rglob('*') if p.is_file())
         inventory = [str(p.relative_to(snap)) for p in files]
         print('HF snapshot files:', inventory, flush=True)
+        phase = 'features_snapshot_inventory'
         notify('features_snapshot_inventory', files=inventory)
 
         for candidate in (p for p in files if p.suffix == '.npz'):
@@ -131,6 +163,7 @@ try:
         if source is None:
             raise RuntimeError(f'no compatible MultiEURLEX feature bundle found; snapshot files={inventory}')
 
+    phase = 'features_validate'
     if not built_target:
         shutil.copy2(source, target)
     with np.load(target, allow_pickle=False) as check:
@@ -140,6 +173,7 @@ try:
             raise RuntimeError(f'reconstructed feature bundle missing keys: {missing}')
     notify('features_ready', bytes=target.stat().st_size)
 
+    phase = 'experiment'
     out = output_root / 'multieurlex-exp1b-results.json'
     cmd = [sys.executable, str(exp / 'scripts' / 'run_multieurlex_exp1b_recurrent_controls.py'),
            '--features', str(target), '--output', str(out), '--seeds', '0', '1', '2']
@@ -155,8 +189,26 @@ try:
     if code != 0:
         raise subprocess.CalledProcessError(code, cmd)
 
+    phase = 'finished'
     result = json.loads(out.read_text())
     notify('experiment_finished', result=result)
+except BaseException as exc:
+    tb = traceback.format_exc()
+    failure = {
+        'event': 'session_failed',
+        'phase': phase,
+        'ts': time.time(),
+        'elapsed_s': round(time.time() - started, 1),
+        'error_type': type(exc).__name__,
+        'error': repr(exc),
+        'traceback': tb,
+        'papers_ref': PAPERS_REF,
+        'python': sys.version,
+    }
+    persist(failure_path, failure)
+    notify('session_failed', error_type=type(exc).__name__, error=repr(exc))
+    print(tb, flush=True)
+    raise
 finally:
     shutil.rmtree(scratch, ignore_errors=True)
 PY
