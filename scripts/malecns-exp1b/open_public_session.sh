@@ -17,7 +17,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$KERNEL_ID" && -n "${KAGGLE_USERNAME:-}" ]]; then
-  KERNEL_ID="${KAGGLE_USERNAME}/malecns-exp1b-public-session"
+  KERNEL_ID="${KAGGLE_USERNAME}/malecns-multieurlex-exp-1b-public-session"
 fi
 [[ "$KERNEL_ID" == */* && "$KERNEL_ID" != /* ]] || {
   echo "KAGGLE_EXP1B_PUBLIC_KERNEL_ID or KAGGLE_USERNAME is required" >&2
