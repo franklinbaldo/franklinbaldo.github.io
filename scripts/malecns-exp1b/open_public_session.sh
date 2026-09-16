@@ -90,6 +90,7 @@ try:
     artifacts.mkdir(parents=True, exist_ok=True)
     target = artifacts / 'multieurlex-1000-features.npz'
     source = None
+    built_target = False
 
     notify('features_download_started')
     try:
@@ -101,7 +102,12 @@ try:
         snap = pathlib.Path(snapshot_download(
             repo_id='franklinbaldo/multieurlex21-pt-semantic-cache', repo_type='dataset'))
         required = {'absolute', 'tag_masks', 'groups', 'tag_embeddings'}
-        for candidate in sorted(snap.rglob('*.npz')):
+        files = sorted(p for p in snap.rglob('*') if p.is_file())
+        inventory = [str(p.relative_to(snap)) for p in files]
+        print('HF snapshot files:', inventory, flush=True)
+        notify('features_snapshot_inventory', files=inventory)
+
+        for candidate in (p for p in files if p.suffix == '.npz'):
             try:
                 with np.load(candidate, allow_pickle=False) as data:
                     if required.issubset(data.files):
@@ -109,10 +115,29 @@ try:
                         break
             except Exception:
                 pass
-        if source is None:
-            raise RuntimeError('no compatible MultiEURLEX feature bundle found')
 
-    shutil.copy2(source, target)
+        if source is None:
+            by_stem = {p.stem: p for p in files if p.suffix == '.npy'}
+            if required.issubset(by_stem):
+                arrays = {name: np.load(by_stem[name], allow_pickle=False) for name in sorted(required)}
+                np.savez(target, **arrays)
+                source = target
+                built_target = True
+                notify(
+                    'features_bundle_reconstructed',
+                    source_files={name: str(by_stem[name].relative_to(snap)) for name in sorted(required)},
+                )
+
+        if source is None:
+            raise RuntimeError(f'no compatible MultiEURLEX feature bundle found; snapshot files={inventory}')
+
+    if not built_target:
+        shutil.copy2(source, target)
+    with np.load(target, allow_pickle=False) as check:
+        required = {'absolute', 'tag_masks', 'groups', 'tag_embeddings'}
+        missing = sorted(required.difference(check.files))
+        if missing:
+            raise RuntimeError(f'reconstructed feature bundle missing keys: {missing}')
     notify('features_ready', bytes=target.stat().st_size)
 
     out = output_root / 'multieurlex-exp1b-results.json'
