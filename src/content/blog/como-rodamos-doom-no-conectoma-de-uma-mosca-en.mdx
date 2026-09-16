@@ -17,15 +17,50 @@ We took the entire central nervous system connectome of the male fruit fly (_Dro
 
 The complete interactive simulator is running live in the frame below — directly in your browser:
 
-<div style="width: 100%; max-width: 1000px; margin: 2rem auto;">
+<div style="width: 100%; margin: 2rem 0;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 0.75rem; background: rgba(88, 166, 255, 0.08); border: 1px solid rgba(88, 166, 255, 0.25); border-radius: 8px; padding: 12px 16px;">
+    <div>
+      <strong style="font-size: 1.02rem; display: flex; align-items: center; gap: 6px;">
+        <span>🎮</span> FlyDoom 3D: Live Connectome Simulator
+      </strong>
+      <div style="font-size: 0.82rem; color: var(--pico-muted-color); margin-top: 2px;">
+        165,122 neurons & 10.2M synapses via FlatBuffers Zero-Copy ·
+        Configurable swarm
+      </div>
+    </div>
+    <a
+      href="/flydoom/"
+      target="_blank"
+      rel="noopener noreferrer"
+      role="button"
+      style="display: inline-flex; align-items: center; gap: 8px; font-weight: 600; text-decoration: none; padding: 8px 18px; border-radius: 6px; background: var(--pico-primary); color: #fff;"
+    >
+      🚀 Open in Dedicated Page (Fullscreen) ↗
+    </a>
+  </div>
   <iframe
     src="/flydoom/index.html"
     width="100%"
-    height="820"
-    style="border: 2px solid #30363d; border-radius: 8px; background: #0d1117;"
+    height="920"
+    style="width: 100%; height: 920px; border: 2px solid #30363d; border-radius: 8px; background: #0d1117; display: block;"
     title="FlyDoom: Drosophila Connectome Playing Doom in 3D"
     loading="lazy"
+    allow="fullscreen"
   ></iframe>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.6rem; font-size: 0.82rem; color: var(--pico-muted-color); flex-wrap: wrap; gap: 0.5rem;">
+    <span>
+      💡 Tip: Use the toolbar controls inside the simulator to add flies, spawn
+      prizes, or switch to fullscreen.
+    </span>
+    <a
+      href="/flydoom/"
+      target="_blank"
+      rel="noopener noreferrer"
+      style="font-weight: 600; text-decoration: underline;"
+    >
+      Open standalone simulator ↗
+    </a>
+  </div>
 </div>
 
 ---

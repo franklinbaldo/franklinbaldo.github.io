@@ -17,15 +17,50 @@ Pegamos o conectoma do sistema nervoso central do macho da mosca (_Drosophila me
 
 O simulador completo está rodando interativamente no iframe abaixo — direto no seu navegador:
 
-<div style="width: 100%; max-width: 1000px; margin: 2rem auto;">
+<div style="width: 100%; margin: 2rem 0;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 0.75rem; background: rgba(88, 166, 255, 0.08); border: 1px solid rgba(88, 166, 255, 0.25); border-radius: 8px; padding: 12px 16px;">
+    <div>
+      <strong style="font-size: 1.02rem; display: flex; align-items: center; gap: 6px;">
+        <span>🎮</span> FlyDoom 3D: Simulador ao Vivo no Conectoma
+      </strong>
+      <div style="font-size: 0.82rem; color: var(--pico-muted-color); margin-top: 2px;">
+        165.122 neurônios e 10.2M sinapses via FlatBuffers Zero-Copy · Enxame
+        configurável
+      </div>
+    </div>
+    <a
+      href="/flydoom/"
+      target="_blank"
+      rel="noopener noreferrer"
+      role="button"
+      style="display: inline-flex; align-items: center; gap: 8px; font-weight: 600; text-decoration: none; padding: 8px 18px; border-radius: 6px; background: var(--pico-primary); color: #fff;"
+    >
+      🚀 Abrir em Nova Página (Tela Cheia) ↗
+    </a>
+  </div>
   <iframe
     src="/flydoom/index.html"
     width="100%"
-    height="820"
-    style="border: 2px solid #30363d; border-radius: 8px; background: #0d1117;"
+    height="920"
+    style="width: 100%; height: 920px; border: 2px solid #30363d; border-radius: 8px; background: #0d1117; display: block;"
     title="FlyDoom: Conectoma da Drosophila jogando Doom em 3D"
     loading="lazy"
+    allow="fullscreen"
   ></iframe>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.6rem; font-size: 0.82rem; color: var(--pico-muted-color); flex-wrap: wrap; gap: 0.5rem;">
+    <span>
+      💡 Dica: No menu superior do simulador você pode adicionar mais moscas,
+      prêmios ou ativar o modo tela cheia.
+    </span>
+    <a
+      href="/flydoom/"
+      target="_blank"
+      rel="noopener noreferrer"
+      style="font-weight: 600; text-decoration: underline;"
+    >
+      Abrir simulador em tela cheia ↗
+    </a>
+  </div>
 </div>
 
 ---
