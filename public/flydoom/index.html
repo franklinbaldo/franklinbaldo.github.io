@@ -179,6 +179,23 @@
         width: 100%;
         height: 260px;
       }
+      #compoundEyeCanvas {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16/10;
+        background: #05080c;
+      }
+      .retina-note {
+        padding: 7px 10px 9px;
+        color: var(--text-muted);
+        font-size: 0.66rem;
+        line-height: 1.35;
+        border-top: 1px solid var(--border);
+      }
+      #compoundEyeInspector {
+        color: var(--accent);
+        font-family: monospace;
+      }
 
       .hud-overlay {
         position: absolute;
@@ -507,8 +524,25 @@
         </div>
       </div>
 
-      <!-- Right Side: 2D Radar & Neuro-Telemetry -->
+      <!-- Right Side: Perception, 2D Radar & Neuro-Telemetry -->
       <div style="display: flex; flex-direction: column; gap: 12px">
+        <!-- Compound-eye reconstruction -->
+        <div class="card">
+          <div class="card-header">
+            <span>COMPOUND-EYE RECONSTRUCTION</span>
+            <span id="compoundEyeInspector">1,771 MaleCNS columns</span>
+          </div>
+          <div class="canvas-container">
+            <canvas id="compoundEyeCanvas" width="480" height="300"></canvas>
+          </div>
+          <div class="retina-note">
+            Reconstructed Retinotopic Field (1,771 MaleCNS Columns) · Overlay:
+            32 Active Model Inputs.<br />
+            Biologically grounded reconstruction; highlighted sectors are the
+            actual current encoder channels.
+          </div>
+        </div>
+
         <!-- Radar -->
         <div class="card">
           <div class="card-header">
@@ -874,6 +908,35 @@
       let neuralWorker = null;
       let workerBusy = false;
       let circuit = null;
+      let retinaHUD = null;
+
+      async function initRetinaHUD() {
+        const canvas = document.getElementById("compoundEyeCanvas");
+        if (!canvas) return;
+        const [{ CompoundEyeHUD }, columns] = await Promise.all([
+          import("./retina_hud.js"),
+          fetch("./retinotopic_columns_1771.json").then((r) => {
+            if (!r.ok) throw new Error(`retina geometry HTTP ${r.status}`);
+            return r.json();
+          }),
+        ]);
+        retinaHUD = new CompoundEyeHUD(canvas, columns);
+        const inspector = document.getElementById("compoundEyeInspector");
+        canvas.addEventListener("pointermove", (event) => {
+          const fly = swarm[selectedFlyIdx] || swarm[0];
+          if (!fly || !retinaHUD || !inspector) return;
+          const hit = retinaHUD.inspect(
+            event.clientX,
+            event.clientY,
+            fly.wallDists,
+            fly.prizeDists
+          );
+          inspector.textContent = `ch ${hit.channel} → ${hit.target} · stim ${hit.stim.toFixed(2)}`;
+        });
+        canvas.addEventListener("pointerleave", () => {
+          if (inspector) inspector.textContent = "1,771 MaleCNS columns";
+        });
+      }
 
       // =========================================================================
       // 3. Multi-Fly Agent & Prize Classes
@@ -1620,6 +1683,10 @@
         }
 
         render3D();
+        const retinaFly = swarm[selectedFlyIdx] || swarm[0];
+        if (retinaHUD && retinaFly) {
+          retinaHUD.render(retinaFly.wallDists, retinaFly.prizeDists);
+        }
         renderRadar();
         updateHUD();
 
@@ -1685,7 +1752,7 @@
       }
 
       window.addEventListener("DOMContentLoaded", async () => {
-        await loadFlatBuffersConnectome();
+        await Promise.all([initRetinaHUD(), loadFlatBuffersConnectome()]);
         requestAnimationFrame(tick);
       });
     </script>
