@@ -1,4 +1,4 @@
-import * as THREE from "./vendor/three.module.min.js";
+import * as THREE from "./vendor/three.module.js";
 
 const BASE_OPACITY = 0.1;
 const ACTIVITY_GAIN = 0.85;
@@ -119,7 +119,8 @@ export class NeuralViewport {
     for (const mesh of Object.values(this.meshes || {})) {
       mesh.traverse?.((node) => node.geometry?.dispose?.());
     }
-    for (const material of Object.values(this.materials || {})) material.dispose();
+    for (const material of Object.values(this.materials || {}))
+      material.dispose();
     this.renderer.dispose();
     this.available = false;
   }

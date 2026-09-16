@@ -654,6 +654,24 @@
           </div>
         </div>
 
+        <!-- Neural activity viewport (Phase 2A scaffold) -->
+        <div class="card">
+          <div class="card-header">
+            <span>NEURAL ACTIVITY · PHASE 2A</span>
+            <span id="neuralViewportStatus" style="color: var(--text-muted)"
+              >INIT</span
+            >
+          </div>
+          <div class="canvas-container">
+            <canvas id="neuralCanvas" width="480" height="300"></canvas>
+          </div>
+          <div class="retina-note">
+            Isolated Three.js viewport. Current geometry is explicitly schematic
+            until MaleCNS-derived macro meshes and population manifests are
+            pinned.
+          </div>
+        </div>
+
         <!-- Radar -->
         <div class="card">
           <div class="card-header">
@@ -1031,6 +1049,21 @@
       let workerBusy = false;
       let circuit = null;
       let retinaHUD = null;
+      let neuralViewport = null;
+      let neuralMacroActivity = null;
+
+      async function initNeuralViewport() {
+        const canvas = document.getElementById("neuralCanvas");
+        if (!canvas) return;
+        const status = document.getElementById("neuralViewportStatus");
+        try {
+          const { NeuralViewport } = await import("./neural_viewport.js");
+          neuralViewport = new NeuralViewport(canvas, status);
+        } catch (error) {
+          console.warn("NeuralViewport init failed:", error);
+          if (status) status.textContent = "UNAVAILABLE";
+        }
+      }
 
       async function initRetinaHUD() {
         const canvas = document.getElementById("compoundEyeCanvas");
@@ -1900,6 +1933,7 @@
         if (retinaHUD && retinaFly) {
           retinaHUD.render(retinaFly.wallDists, retinaFly.prizeDists);
         }
+        if (neuralViewport) neuralViewport.render(neuralMacroActivity);
         renderRadar();
         updateHUD();
 
@@ -1965,7 +1999,11 @@
       }
 
       window.addEventListener("DOMContentLoaded", async () => {
-        await Promise.all([initRetinaHUD(), loadFlatBuffersConnectome()]);
+        await Promise.all([
+          initRetinaHUD(),
+          initNeuralViewport(),
+          loadFlatBuffersConnectome(),
+        ]);
         requestAnimationFrame(tick);
       });
     </script>

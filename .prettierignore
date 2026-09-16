@@ -9,3 +9,4 @@ public/flygenesis/index.html
 public/flydoom/retinotopic_columns_1771.json
 
 *.py
+public/flydoom/vendor/three.module.js
