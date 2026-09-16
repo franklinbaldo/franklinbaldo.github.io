@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Deterministic, one-shot integration helper for FlyDoom PR 1A.
 from pathlib import Path
 
 PATH = Path("public/flydoom/index.html")
