@@ -34,8 +34,9 @@ import json, pathlib, shutil, subprocess, sys, threading, time, urllib.request
 PAPERS_REF = ${PAPERS_REF@Q}
 NTFY_TOPIC = ${NTFY_TOPIC@Q}
 NTFY_URL = f"https://ntfy.sh/{NTFY_TOPIC}"
-root = pathlib.Path('/kaggle/working')
-repo = root / 'papers'
+output_root = pathlib.Path('/kaggle/working')
+scratch = pathlib.Path('/tmp/malecns-exp1b')
+repo = scratch / 'papers'
 started = time.time()
 
 
@@ -68,8 +69,10 @@ notify('session_started', kaggle_kernel=${KERNEL_ID@Q}, papers_ref=PAPERS_REF,
        ntfy_url=f'https://ntfy.sh/{NTFY_TOPIC}')
 
 try:
-    if repo.exists():
-        shutil.rmtree(repo)
+    if scratch.exists():
+        shutil.rmtree(scratch)
+    scratch.mkdir(parents=True, exist_ok=True)
+
     notify('clone_started')
     subprocess.check_call(['git', 'clone', '--depth', '1', '--branch', PAPERS_REF,
                            'https://github.com/franklinbaldo/papers.git', str(repo)])
@@ -83,7 +86,7 @@ try:
     from huggingface_hub import hf_hub_download, snapshot_download
     import numpy as np
 
-    artifacts = exp / 'artifacts' / 'runtime-v1'
+    artifacts = scratch / 'artifacts'
     artifacts.mkdir(parents=True, exist_ok=True)
     target = artifacts / 'multieurlex-1000-features.npz'
     source = None
@@ -112,7 +115,7 @@ try:
     shutil.copy2(source, target)
     notify('features_ready', bytes=target.stat().st_size)
 
-    out = root / 'multieurlex-exp1b-results.json'
+    out = output_root / 'multieurlex-exp1b-results.json'
     cmd = [sys.executable, str(exp / 'scripts' / 'run_multieurlex_exp1b_recurrent_controls.py'),
            '--features', str(target), '--output', str(out), '--seeds', '0', '1', '2']
     notify('experiment_started', command=' '.join(cmd))
@@ -129,9 +132,8 @@ try:
 
     result = json.loads(out.read_text())
     notify('experiment_finished', result=result)
-except Exception as exc:
-    notify('session_failed', error=repr(exc))
-    raise
+finally:
+    shutil.rmtree(scratch, ignore_errors=True)
 PY
 
 cat > "$STAGE/kernel-metadata.json" <<JSON
