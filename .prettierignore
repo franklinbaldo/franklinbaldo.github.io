@@ -6,5 +6,6 @@ package-lock.json
 .routines/
 hronir_session.json
 public/flygenesis/index.html
+public/flydoom/retinotopic_columns_1771.json
 
 *.py
