@@ -16,7 +16,7 @@ on:
       papers_ref:
         description: "franklinbaldo/papers commit or branch with the Few-NERD byte-channel pipeline"
         required: true
-        default: "1bb6075"
+        default: "26cf1af"
       limit_per_split:
         description: "sentences per split for a throughput/scale check (ignored when mode=full)"
         required: false
@@ -79,7 +79,7 @@ jobs:
           MALECNS_FEWNERD_LIMIT: ${{ github.event.inputs.limit_per_split || '4000' }}
         run: |
           mode="${{ github.event.inputs.mode || 'smoke' }}"
-          export PAPERS_REF="${PAPERS_REF:-1bb6075}"
+          export PAPERS_REF="${PAPERS_REF:-26cf1af}"
           bash scripts/malecns-fewnerd/stages.sh \
             --output-dir "$RUNNER_TEMP/malecns-fewnerd" \
             --papers-ref "$PAPERS_REF" \
