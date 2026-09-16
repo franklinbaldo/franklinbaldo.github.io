@@ -524,7 +524,12 @@
         <div class="card">
           <div class="card-header">
             <span>NEURO-TELEMETRIA BIOLÓGICA AO VIVO</span>
-            <span class="badge" style="font-size: 0.65rem">DINÂMICA REAL</span>
+            <span
+              class="badge badge-green"
+              id="scentStatusBadge"
+              style="font-size: 0.65rem"
+              >🟢 RASTREAMENTO DE PLUMA</span
+            >
           </div>
           <div class="telemetry">
             <!-- Antennal Olfaction -->
@@ -534,7 +539,7 @@
                 <div
                   id="barOdorL"
                   class="meter-bar-fill"
-                  style="background: #e3b341"
+                  style="background: #3fb950"
                 ></div>
               </div>
               <span class="meter-val" id="valOdorL">0 ppm</span>
@@ -545,7 +550,7 @@
                 <div
                   id="barOdorR"
                   class="meter-bar-fill"
-                  style="background: #e3b341"
+                  style="background: #3fb950"
                 ></div>
               </div>
               <span class="meter-val" id="valOdorR">0 ppm</span>
@@ -828,7 +833,15 @@
 
               const connSteer = (actL - actR) * 8.0;
               const fd = fliesData[f];
-              const odorSteer = (fd.odorR - fd.odorL) * 1.2;
+
+              // Phototaxis: orient toward visible prize luminescence
+              let tLeft = 0, tRight = 0;
+              for (let i = 0; i < 16; i++) tLeft += fd.prizeDists[i];
+              for (let i = 16; i < 32; i++) tRight += fd.prizeDists[i];
+              const visualSteer = (tRight - tLeft) * 0.35;
+
+              // Chemotaxis: bilateral tropotaxis towards higher odor concentration
+              const odorSteer = (fd.odorR - fd.odorL) * 3.5;
 
               let minFront = 999;
               for (let i = 10; i < 22; i++) minFront = Math.min(minFront, fd.wallDists[i]);
@@ -840,9 +853,14 @@
                 saccade = rightSpace > leftSpace ? 0.45 : -0.45;
               }
 
+              const totalTorque = connSteer + visualSteer + odorSteer + saccade;
+              // Forward surge: accelerate when smelling high odor concentration
+              const odorSurge = Math.min(0.14, (fd.odorL + fd.odorR) * 0.1);
+              const fwdThrust = 0.18 + Math.max(0.0, actTot * 3.0) + odorSurge;
+
               results.push({
-                torque: connSteer + odorSteer + saccade,
-                thrust: 0.18 + Math.max(0.0, actTot * 3.5),
+                torque: Math.max(-0.45, Math.min(0.45, totalTorque)),
+                thrust: Math.max(0.08, Math.min(0.38, fwdThrust)),
                 meanAct: actTot
               });
             }
@@ -934,7 +952,7 @@
             this.prizeDists[r] = prizeVis;
           }
 
-          const antW = 0.5;
+          const antW = 0.65;
           const plX = this.x + 0.5 * antW * Math.sin(this.angle);
           const plY = this.y - 0.5 * antW * Math.cos(this.angle);
           const prX = this.x - 0.5 * antW * Math.sin(this.angle);
@@ -945,8 +963,8 @@
           for (const p of prizes) {
             const dl = Math.hypot(p.x - plX, p.y - plY);
             const dr = Math.hypot(p.x - prX, p.y - prY);
-            sumConcL += 1.0 / (1.0 + dl * 0.35);
-            sumConcR += 1.0 / (1.0 + dr * 0.35);
+            sumConcL += 1.0 / (1.0 + Math.pow(dl * 0.32, 1.25));
+            sumConcR += 1.0 / (1.0 + Math.pow(dr * 0.32, 1.25));
           }
           this.odorL = sumConcL;
           this.odorR = sumConcR;
@@ -1233,7 +1251,30 @@
           ctx3d.fillRect(r * colWidth, top, 1, wallH);
         }
 
-        // Render Prizes
+        // Render Floating Scent Mist Particles when smelling prize
+        const avgOdor = (activeFly.odorL + activeFly.odorR) / 2.0;
+        if (avgOdor > 0.08) {
+          const numParticles = Math.min(28, Math.floor(avgOdor * 20));
+          const tNow = performance.now() * 0.001;
+          for (let p = 0; p < numParticles; p++) {
+            const px = (p * 47 + tNow * 50) % w;
+            const py =
+              ((p * 31 + Math.sin(tNow * 2.5 + p) * 22 + tNow * 18) %
+                (h * 0.65)) +
+              h * 0.18;
+            const pSize = (p % 3) + 1.8;
+            const alpha = Math.min(0.7, avgOdor * 0.4);
+            ctx3d.beginPath();
+            ctx3d.arc(px, py, pSize, 0, Math.PI * 2);
+            ctx3d.fillStyle = `rgba(63, 185, 80, ${alpha})`;
+            ctx3d.shadowColor = "#3fb950";
+            ctx3d.shadowBlur = 8;
+            ctx3d.fill();
+            ctx3d.shadowBlur = 0;
+          }
+        }
+
+        // Render Prizes with Glowing Scent Cloud
         const fov = Math.PI * 0.8;
         for (const p of prizes) {
           const dx = p.x - activeFly.x;
@@ -1253,11 +1294,30 @@
               dist < activeFly.wallDists[rayIdx]
             ) {
               ctx3d.save();
+
+              // Glowing green/gold scent plume aura
+              const auraGrad = ctx3d.createRadialGradient(
+                screenX,
+                h / 2,
+                2,
+                screenX,
+                h / 2,
+                spriteH * 0.85
+              );
+              auraGrad.addColorStop(0, "rgba(63, 185, 80, 0.7)");
+              auraGrad.addColorStop(0.4, "rgba(241, 224, 90, 0.35)");
+              auraGrad.addColorStop(1, "rgba(63, 185, 80, 0)");
+              ctx3d.fillStyle = auraGrad;
+              ctx3d.beginPath();
+              ctx3d.arc(screenX, h / 2, spriteH * 0.85, 0, Math.PI * 2);
+              ctx3d.fill();
+
+              // Prize Core
               ctx3d.beginPath();
               ctx3d.arc(screenX, h / 2, spriteH * 0.35, 0, Math.PI * 2);
               ctx3d.fillStyle = "#ffd700";
               ctx3d.shadowColor = "#ffea00";
-              ctx3d.shadowBlur = 15;
+              ctx3d.shadowBlur = 16;
               ctx3d.fill();
               ctx3d.strokeStyle = "#fff";
               ctx3d.lineWidth = 2;
@@ -1328,27 +1388,31 @@
           }
         }
 
-        // Prizes & Scent Waves
-        const now = performance.now() * 0.003;
+        // Prizes & Animated Expanding Scent Waves
         for (const p of prizes) {
           const px = p.x * scaleX;
           const py = p.y * scaleY;
 
-          for (let ring = 1; ring <= 3; ring++) {
-            const rad = ring * 16 + ((now * 15) % 16);
-            const alpha = Math.max(0.0, 0.35 - rad / 65);
-            ctxRad.beginPath();
-            ctxRad.arc(px, py, rad, 0, Math.PI * 2);
-            ctxRad.strokeStyle = `rgba(241, 224, 90, ${alpha})`;
-            ctxRad.lineWidth = 1;
-            ctxRad.stroke();
+          // Vivid expanding scent plume concentric rings (diffusion wave)
+          const wavePhase = (performance.now() * 0.03) % 32;
+          for (let ring = 1; ring <= 4; ring++) {
+            const rad = ring * 12 + wavePhase;
+            const alpha = Math.max(0.0, 0.6 - rad / 75);
+            if (alpha > 0.01) {
+              ctxRad.beginPath();
+              ctxRad.arc(px, py, rad, 0, Math.PI * 2);
+              ctxRad.strokeStyle = `rgba(63, 185, 80, ${alpha})`;
+              ctxRad.lineWidth = 1.8;
+              ctxRad.stroke();
+            }
           }
 
+          // Prize Target Core
           ctxRad.beginPath();
           ctxRad.arc(px, py, 6, 0, Math.PI * 2);
           ctxRad.fillStyle = "#ffd700";
-          ctxRad.shadowColor = "#ffea00";
-          ctxRad.shadowBlur = 8;
+          ctxRad.shadowColor = "#3fb950";
+          ctxRad.shadowBlur = 10;
           ctxRad.fill();
           ctxRad.shadowBlur = 0;
         }
@@ -1371,16 +1435,45 @@
             : "rgba(255, 255, 255, 0.06)";
           ctxRad.fill();
 
+          // Bilateral Antennal Feelers (ORNs)
+          const antLen = 8;
+          const antSep = 3.5;
+          const plX = fx + antSep * Math.sin(f.angle);
+          const plY = fy - antSep * Math.cos(f.angle);
+          const prX = fx - antSep * Math.sin(f.angle);
+          const prY = fy + antSep * Math.cos(f.angle);
+
+          ctxRad.strokeStyle = "#3fb950";
+          ctxRad.lineWidth = isCamTarget ? 2 : 1.4;
+          // Left antenna
+          ctxRad.beginPath();
+          ctxRad.moveTo(plX, plY);
+          ctxRad.lineTo(
+            plX + Math.cos(f.angle - 0.35) * antLen,
+            plY + Math.sin(f.angle - 0.35) * antLen
+          );
+          ctxRad.stroke();
+          // Right antenna
+          ctxRad.beginPath();
+          ctxRad.moveTo(prX, prY);
+          ctxRad.lineTo(
+            prX + Math.cos(f.angle + 0.35) * antLen,
+            prY + Math.sin(f.angle + 0.35) * antLen
+          );
+          ctxRad.stroke();
+
+          // Fly Body
           ctxRad.beginPath();
           ctxRad.arc(fx, fy, isCamTarget ? 5 : 4, 0, Math.PI * 2);
           ctxRad.fillStyle = f.color.hex;
           ctxRad.fill();
 
+          // Heading tick
           ctxRad.beginPath();
           ctxRad.moveTo(fx, fy);
           ctxRad.lineTo(
-            fx + Math.cos(f.angle) * 10,
-            fy + Math.sin(f.angle) * 10
+            fx + Math.cos(f.angle) * 11,
+            fy + Math.sin(f.angle) * 11
           );
           ctxRad.strokeStyle = "#fff";
           ctxRad.lineWidth = 1.5;
@@ -1403,7 +1496,7 @@
         const activeFly = swarm[selectedFlyIdx] || swarm[0];
         if (!activeFly) return;
 
-        const maxPpm = 2.5;
+        const maxPpm = 2.0;
         const pctL = Math.min(
           100,
           Math.floor((activeFly.odorL / maxPpm) * 100)
@@ -1414,10 +1507,27 @@
         );
         document.getElementById("barOdorL").style.width = pctL + "%";
         document.getElementById("barOdorR").style.width = pctR + "%";
-        document.getElementById("valOdorL").innerText =
-          Math.floor(activeFly.odorL * 400) + " ppm";
-        document.getElementById("valOdorR").innerText =
-          Math.floor(activeFly.odorR * 400) + " ppm";
+        const ppmL = Math.floor(activeFly.odorL * 350);
+        const ppmR = Math.floor(activeFly.odorR * 350);
+        document.getElementById("valOdorL").innerText = ppmL + " ppm";
+        document.getElementById("valOdorR").innerText = ppmR + " ppm";
+
+        const scentBadge = document.getElementById("scentStatusBadge");
+        if (scentBadge) {
+          if (ppmL + ppmR > 180) {
+            scentBadge.innerText = "🔥 GRADIENTE FORTE (HOMING)";
+            scentBadge.className = "badge";
+            scentBadge.style.background = "rgba(241, 224, 90, 0.2)";
+            scentBadge.style.color = "#f1e05a";
+            scentBadge.style.borderColor = "rgba(241, 224, 90, 0.5)";
+          } else {
+            scentBadge.innerText = "🟢 RASTREAMENTO DE PLUMA";
+            scentBadge.className = "badge badge-green";
+            scentBadge.style.background = "";
+            scentBadge.style.color = "";
+            scentBadge.style.borderColor = "";
+          }
+        }
 
         const torqueDeg = (activeFly.currentTorque * 180) / Math.PI;
         const torquePct = Math.min(50, Math.abs(torqueDeg) * 1.5);
@@ -1475,15 +1585,24 @@
       // 8. Main 60 FPS Animation & Decoupled Neural Loop
       // =========================================================================
       function tick(timestamp) {
-        if (!isPaused && neuralWorker) {
-          // 1. Sensory dispatch to background Web Worker at ~25 Hz cadence
-          if (!workerBusy && timestamp - lastNeuralTickTime >= 40) {
+        if (!isPaused) {
+          // 1. Continuous 60 FPS physics and antennal sensory updates
+          for (let f = 0; f < swarm.length; f++) {
+            swarm[f].updatePhysics(prizes);
+            swarm[f].sense(prizes);
+          }
+
+          // 2. Sensory dispatch to background Web Worker at biological ~25 Hz cadence
+          if (
+            neuralWorker &&
+            !workerBusy &&
+            timestamp - lastNeuralTickTime >= 40
+          ) {
             lastNeuralTickTime = timestamp;
             workerBusy = true;
 
             const fliesSensory = [];
             for (let f = 0; f < swarm.length; f++) {
-              swarm[f].sense(prizes);
               fliesSensory.push({
                 wallDists: Array.from(swarm[f].wallDists),
                 prizeDists: Array.from(swarm[f].prizeDists),
@@ -1497,11 +1616,6 @@
               numFlies: swarm.length,
               flies: fliesSensory,
             });
-          }
-
-          // 2. Physics update runs at full 60 FPS smoothly
-          for (let f = 0; f < swarm.length; f++) {
-            swarm[f].updatePhysics(prizes);
           }
         }
 
