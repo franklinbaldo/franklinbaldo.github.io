@@ -122,7 +122,7 @@ const vsLabel        = "vs";
               </div>
               <div class="hronir-card-result">
                 <span class="result-badge badge-won">{wonLabel}</span>
-                {myRate != null && <span class="hronir-rate">{myRate.toFixed(1)}★</span>}
+                {myRate != null && <span class="hronir-rate">{myRate.toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}★</span>}
                 {opponent && (
                   <span class="hronir-opponent">
                     {vsLabel}{" "}
@@ -182,7 +182,7 @@ const vsLabel        = "vs";
               </div>
               <div class="hronir-card-result">
                 <span class="result-badge badge-lost">{lostLabel}</span>
-                {myRate != null && <span class="hronir-rate">{myRate.toFixed(1)}★</span>}
+                {myRate != null && <span class="hronir-rate">{myRate.toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}★</span>}
                 {opponent && (
                   <span class="hronir-opponent">
                     {vsLabel}{" "}

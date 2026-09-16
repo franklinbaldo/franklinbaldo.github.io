@@ -80,6 +80,7 @@ const tensionPct = hasRates
 // sides agree — a work with an EN translation always resolves to "en" in
 // postsByKey, so this is "pt" only for duels between two PT-only works.
 const lang: "en" | "pt" = winnerInfo?.lang === "pt" && loserInfo?.lang === "pt" ? "pt" : "en";
+const locale = lang === "pt" ? "pt-BR" : "en-US";
 
 // allBattles/backToArchive stay in English in both branches on purpose:
 // /ranking/battles/ (the archive index this links to) has no /pt/ mirror,
@@ -213,7 +214,11 @@ const crumbs = [
             ? <a href={winnerHref} lang={winnerInfo?.lang === "pt" ? "pt" : undefined}>{winnerTitle}</a>
             : <span lang={winnerInfo?.lang === "pt" ? "pt" : undefined}>{winnerTitle}</span>}
         </div>
-        {hasRates && <div class="versus-rate">{rateWinner!.toFixed(2)}</div>}
+        {hasRates && (
+          <div class="versus-rate">
+            {rateWinner!.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </div>
+        )}
         {winnerRank && (
           <div class="versus-rank">
             <a href={dossierHref(winnerKey) ?? "/ranking/"}>#{winnerRank.rank}/{winnerRank.total}</a>
@@ -232,7 +237,11 @@ const crumbs = [
             ? <a href={loserHref} lang={loserInfo?.lang === "pt" ? "pt" : undefined}>{loserTitle}</a>
             : <span lang={loserInfo?.lang === "pt" ? "pt" : undefined}>{loserTitle}</span>}
         </div>
-        {hasRates && <div class="versus-rate loser-rate">{rateLoser!.toFixed(2)}</div>}
+        {hasRates && (
+          <div class="versus-rate loser-rate">
+            {rateLoser!.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </div>
+        )}
         {loserRank && (
           <div class="versus-rank">
             <a href={dossierHref(loserKey) ?? "/ranking/"}>#{loserRank.rank}/{loserRank.total}</a>

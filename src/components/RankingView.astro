@@ -111,8 +111,8 @@ function fmtDate(iso: string | null): string {
   return d.toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" });
 }
 
-function fmtNum(n: number): string {
-  return n.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+function fmtNum(n: number, digits = 2): string {
+  return n.toLocaleString(locale, { minimumFractionDigits: digits, maximumFractionDigits: digits });
 }
 
 const ordinals = rows.map((r) => r.ordinal);
@@ -156,7 +156,7 @@ const podiumMeta = [
 ];
 
 const avgDuels =
-  stats.totalRated > 0 ? ((stats.totalDuels * 2) / stats.totalRated).toFixed(1) : "0";
+  stats.totalRated > 0 ? fmtNum((stats.totalDuels * 2) / stats.totalRated, 1) : "0";
 
 function postLabel(key: string): string {
   return postByKey.get(key)?.title ?? key;
@@ -438,7 +438,7 @@ function snapshotElo(key: string): { elo: number; peak: number } | null {
               <span class="bcl-winner">{winnerName}</span>
               {hasRates && (
                 <span class="bcl-rates">
-                  {winnerRate!.toFixed(1)} · {loserRate!.toFixed(1)}
+                  {fmtNum(winnerRate!, 1)} · {fmtNum(loserRate!, 1)}
                 </span>
               )}
               <span class="bcl-vs">{strings.recentBeats}</span>

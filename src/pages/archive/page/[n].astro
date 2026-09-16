@@ -150,7 +150,7 @@ const archiveLd = {
                 <td class="col-min">{mins}</td>
                 <td class="col-rank">
                   {rankInfo && (
-                    <a class="rank-badge" href="/ranking/" title={`Hrönir rank: #${rankInfo.rank} of ${rankInfo.total} (ordinal ${rankInfo.row.ordinal.toFixed(2)})`}>
+                    <a class="rank-badge" href={`/ranking/posts/${post.data.translationKey}/`} title={`Hrönir rank: #${rankInfo.rank} of ${rankInfo.total} (ordinal ${rankInfo.row.ordinal.toFixed(2)})`}>
                       #{rankInfo.rank}
                     </a>
                   )}

@@ -23,7 +23,7 @@ const { series, lang, variant = 'aside' } = Astro.props;
         {series.posts.map((p, i) => (
           <li>
             {i === series.index
-              ? <><strong>{p.data.title}</strong> <em>({t(lang, 'post.thisPost')})</em></>
+              ? <span aria-current="page"><strong>{p.data.title}</strong> <em>({t(lang, 'post.thisPost')})</em></span>
               : <a href={p.data.lang === 'pt' ? `/pt/blog/${p.data.slug ?? p.id}/` : `/blog/${p.data.slug ?? p.id}/`}>{p.data.title}</a>}
           </li>
         ))}
