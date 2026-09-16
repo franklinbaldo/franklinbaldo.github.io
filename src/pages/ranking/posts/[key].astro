@@ -289,7 +289,10 @@ function fmtOrdinal(n: number): string {
                   <div class="duel-meta-row">
                     <span class="duel-date">{fmtDate(d.runAt)}</span>
                     {myRate != null && oppRate != null && (
-                      <span class="duel-rates">{myRate.toFixed(1)} / {oppRate.toFixed(1)}</span>
+                      <span class="duel-rates">
+                        {myRate.toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} /{" "}
+                        {oppRate.toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+                      </span>
                     )}
                     {d.perspectiveId && (
                       <a

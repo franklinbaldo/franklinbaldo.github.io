@@ -157,7 +157,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
                 <td class="col-min">{mins}</td>
                 <td class="col-rank">
                   {rankInfo && (
-                    <a class="rank-badge" href="/pt/ranking/" title={`Ranking Hrönir: #${rankInfo.rank} de ${rankInfo.total} (ordinal ${rankInfo.row.ordinal.toFixed(2)})`}>
+                    <a class="rank-badge" href={`/ranking/posts/${post.data.translationKey}/`} title={`Ranking Hrönir: #${rankInfo.rank} de ${rankInfo.total} (ordinal ${rankInfo.row.ordinal.toFixed(2)})`}>
                       #{rankInfo.rank}
                     </a>
                   )}
