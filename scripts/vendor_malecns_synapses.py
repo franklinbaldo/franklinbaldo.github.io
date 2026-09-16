@@ -45,24 +45,21 @@ def pick_column(names: list[str], *candidates: str) -> str:
 
 
 def normalize_roi_table(pa, pc, batch, body_col: str, kind_col: str, roi_col: str):
-    table = pa.Table.from_batches([batch]).select([body_col, kind_col, roi_col])
-    table = table.rename_columns(["bodyId", "kind", "roi"])
+    body = batch.column(batch.schema.get_field_index(body_col))
+    kind = batch.column(batch.schema.get_field_index(kind_col))
+    roi = batch.column(batch.schema.get_field_index(roi_col))
 
-    roi_type = table.schema.field("roi").type
-    if pa.types.is_list(roi_type) or pa.types.is_large_list(roi_type):
-        table = table.flatten()
+    if pa.types.is_list(roi.type) or pa.types.is_large_list(roi.type):
+        parents = pc.list_parent_indices(roi)
         table = pa.table(
             {
-                "bodyId": pc.list_flatten(pa.Table.from_batches([batch])[body_col]),
-                "kind": pc.list_flatten(
-                    pc.make_struct(
-                        pa.Table.from_batches([batch])[kind_col],
-                        field_names=["kind"],
-                    )
-                ),
-                "roi": pc.list_flatten(pa.Table.from_batches([batch])[roi_col]),
+                "bodyId": pc.take(body, parents),
+                "kind": pc.take(kind, parents),
+                "roi": pc.list_flatten(roi),
             }
         )
+    else:
+        table = pa.table({"bodyId": body, "kind": kind, "roi": roi})
 
     if not pa.types.is_string(table.schema.field("roi").type):
         table = table.set_column(
@@ -77,7 +74,10 @@ def normalize_roi_table(pa, pc, batch, body_col: str, kind_col: str, roi_col: st
             pc.cast(table["kind"], pa.string()),
         )
 
-    valid = pc.and_(pc.is_valid(table["bodyId"]), pc.is_valid(table["roi"]))
+    valid = pc.and_(
+        pc.and_(pc.is_valid(table["bodyId"]), pc.is_valid(table["kind"])),
+        pc.is_valid(table["roi"]),
+    )
     return table.filter(valid)
 
 
