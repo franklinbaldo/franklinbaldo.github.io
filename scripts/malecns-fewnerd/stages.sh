@@ -92,6 +92,7 @@ t0 = time.perf_counter()
 tokens = out / "byte-embeddings.npz"
 run(py, exp / "scripts/encode_fewnerd_tokens.py", "--token-cache", cache, "--graph", graph,
     "--output", tokens, "--device", "cuda", "--batch-size", "256",
+    "--readout-mode", "descending_neuron",
     cwd=exp, env=env, log=out / "stage-b.log")
 timings["stage_b_seconds"] = time.perf_counter() - t0
 stage_b_manifest = json.loads(tokens.with_suffix(".manifest.json").read_text(encoding="utf-8"))
@@ -172,7 +173,22 @@ run_attempt() {
   local status=$?
   set -e
 
-  colab "--auth=$AUTH" download -s "$CURRENT_SESSION" /content/malecns-fewnerd-result.zip "$TMP/result.zip" || true
+  # The exec call returning does not guarantee the session is still reachable for
+  # a download in the same instant (observed once: exec succeeded, printed the
+  # full summary, then "download: file not found" -- likely a brief window before
+  # the session's filesystem is reachable again). Retry before giving up, and only
+  # stop the session after we've either got the file or exhausted retries, so the
+  # session is never torn down while we might still fetch the result from it.
+  downloaded=0
+  for try in 1 2 3 4 5; do
+    if colab "--auth=$AUTH" download -s "$CURRENT_SESSION" /content/malecns-fewnerd-result.zip "$TMP/result.zip"; then
+      downloaded=1
+      break
+    fi
+    echo "[colab] download attempt ${try}/5 failed; retrying in 10s"
+    sleep 10
+  done
+  [[ "$downloaded" -eq 1 ]] || echo "[colab] giving up on downloading the result after 5 attempts"
   colab "--auth=$AUTH" stop -s "$CURRENT_SESSION" >/dev/null 2>&1 || true
   CURRENT_SESSION=""
 
