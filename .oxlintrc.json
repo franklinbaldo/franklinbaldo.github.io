@@ -5,6 +5,7 @@
     "correctness": "error",
     "suspicious": "warn"
   },
+  "ignorePatterns": ["public/flydoom/vendor/**"],
   "rules": {},
   "env": {
     "builtin": true
