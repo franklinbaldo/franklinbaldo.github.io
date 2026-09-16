@@ -131,10 +131,10 @@
         width: 100%;
         max-width: 1080px;
         display: grid;
-        grid-template-columns: 1fr 340px;
-        gap: 12px;
+        grid-template-columns: 1fr 310px;
+        gap: 10px;
       }
-      @media (max-width: 860px) {
+      @media (max-width: 680px) {
         .viewport-grid {
           grid-template-columns: 1fr;
         }
@@ -177,7 +177,7 @@
       }
       #canvasRadar {
         width: 100%;
-        height: 320px;
+        height: 260px;
       }
 
       .hud-overlay {
@@ -347,6 +347,47 @@
       </div>
     </div>
 
+    <div
+      id="iframeBanner"
+      style="
+        width: 100%;
+        max-width: 1080px;
+        background: rgba(56, 139, 253, 0.12);
+        border: 1px solid rgba(56, 139, 253, 0.35);
+        border-radius: 6px;
+        padding: 6px 12px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+      "
+    >
+      <span style="color: var(--accent); font-weight: 500">
+        🔬 Modo embutido · Simulação MaleCNS FlatBuffers
+      </span>
+      <a
+        href="/flydoom/"
+        target="_blank"
+        rel="noopener noreferrer"
+        style="
+          color: #fff;
+          background: #238636;
+          border: 1px solid #2ea043;
+          padding: 4px 10px;
+          border-radius: 4px;
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 0.76rem;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+        "
+      >
+        🚀 Abrir em Nova Página (Tela Cheia) ↗
+      </a>
+    </div>
+
     <header>
       <h1>
         <span>🪰 FlyDoom 3D</span>
@@ -419,6 +460,23 @@
         Olhos 3D da Mosca:
         <select class="select" id="selectFlyCam"></select>
       </label>
+      <div
+        style="margin-left: auto; display: flex; gap: 6px; align-items: center"
+      >
+        <button class="btn" id="btnFullscreen" title="Alternar modo tela cheia">
+          ⛶ Tela Cheia
+        </button>
+        <a
+          href="/flydoom/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-primary"
+          id="btnOpenStandalone"
+          title="Abrir simulador em nova aba independente"
+          style="text-decoration: none; color: #fff"
+          >↗ Nova Aba</a
+        >
+      </div>
     </div>
 
     <div class="viewport-grid">
@@ -1486,6 +1544,31 @@
         selectedFlyIdx = parseInt(e.target.value);
         updateFlySelect();
       };
+
+      // Check if running inside an iframe
+      if (window.self === window.top) {
+        const banner = document.getElementById("iframeBanner");
+        if (banner) banner.style.display = "none";
+      }
+
+      // Fullscreen handler
+      const btnFs = document.getElementById("btnFullscreen");
+      if (btnFs) {
+        btnFs.onclick = () => {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+          } else {
+            document.exitFullscreen().catch(() => {});
+          }
+        };
+        document.addEventListener("fullscreenchange", () => {
+          if (document.fullscreenElement) {
+            btnFs.innerText = "⛶ Sair Tela Cheia";
+          } else {
+            btnFs.innerText = "⛶ Tela Cheia";
+          }
+        });
+      }
 
       window.addEventListener("DOMContentLoaded", async () => {
         await loadFlatBuffersConnectome();
