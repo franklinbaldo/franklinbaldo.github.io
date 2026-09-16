@@ -1,0 +1,85 @@
+name: MaleCNS MultiEURLEX Exp 1B
+
+on:
+  push:
+    branches:
+      - experiment/malecns-exp1b-recurrent-controls
+    paths:
+      - ".github/workflows/malecns-exp1b.yml"
+      - "scripts/malecns-exp1b/**"
+  workflow_dispatch:
+    inputs:
+      papers_ref:
+        description: Papers branch/ref containing Exp 1B
+        required: true
+        default: feature/algorithmic-connectome-paper
+        type: string
+      accelerator:
+        description: Kaggle accelerator
+        required: true
+        default: NvidiaTeslaT4
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-exp1b-recurrent-controls
+  cancel-in-progress: false
+
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: experiment/malecns-exp1b-recurrent-controls
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: "3.12"
+
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Run Exp 1B on Kaggle with W&B telemetry
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_EXP1B_KERNEL_ID: ${{ vars.KAGGLE_EXP1B_KERNEL_ID }}
+          PAPERS_REF: ${{ inputs.papers_ref || 'feature/algorithmic-connectome-paper' }}
+          ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
+        run: |
+          bash scripts/malecns-exp1b/kaggle.sh \
+            --output "$RUNNER_TEMP/malecns-exp1b-result.zip" \
+            --papers-ref "$PAPERS_REF" \
+            --accelerator "$ACCELERATOR"
+
+      - name: Summarize result
+        run: |
+          mkdir -p "$RUNNER_TEMP/exp1b"
+          unzip -q "$RUNNER_TEMP/malecns-exp1b-result.zip" -d "$RUNNER_TEMP/exp1b"
+          python - "$RUNNER_TEMP/exp1b/multieurlex-exp1b-results.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          data = json.load(open(sys.argv[1], encoding='utf-8'))
+          print('## MultiEURLEX Exp 1B — recurrent projected controls')
+          for name, row in data['summary'].items():
+              print(f"- {name}: **{row['mean_macro_tag_auprc']:.4f}** macroAP; "
+                    f"Δ vs projected_direct = **{row['mean_delta_vs_projected_direct']:+.4f}**; "
+                    f"wins {row['wins_vs_projected_direct']}/{row['n_seeds']}")
+          PY
+
+      - name: Upload Exp 1B result
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-exp1b-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-exp1b-result.zip
+          if-no-files-found: error
+          retention-days: 30
