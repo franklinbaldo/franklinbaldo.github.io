@@ -59,6 +59,19 @@ def status(event, **payload):
     })
 
 
+def _post_ntfy(body):
+    req = urllib.request.Request(NTFY_URL, data=body, method='POST', headers={
+        'Title': 'MaleCNS Exp1B telemetry',
+        'Tags': 'microscope,computer',
+        'Content-Type': 'application/json',
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=5) as response:
+            response.read()
+    except Exception as exc:
+        print('ntfy failed:', repr(exc), flush=True)
+
+
 def notify(event, **payload):
     status(event, **payload)
     body = json.dumps({
@@ -68,16 +81,7 @@ def notify(event, **payload):
         'elapsed_s': round(time.time() - started, 1),
         **payload,
     }, sort_keys=True).encode()
-    req = urllib.request.Request(NTFY_URL, data=body, method='POST', headers={
-        'Title': f'MaleCNS Exp1B: {event}',
-        'Tags': 'microscope,computer',
-        'Content-Type': 'application/json',
-    })
-    try:
-        with urllib.request.urlopen(req, timeout=20) as response:
-            response.read()
-    except Exception as exc:
-        print('ntfy failed:', repr(exc), flush=True)
+    threading.Thread(target=_post_ntfy, args=(body,), daemon=True).start()
 
 
 def heartbeat():
