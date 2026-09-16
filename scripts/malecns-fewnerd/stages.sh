@@ -91,7 +91,7 @@ manifest = json.loads((cache / "manifest.json").read_text(encoding="utf-8"))
 t0 = time.perf_counter()
 tokens = out / "byte-embeddings.npz"
 run(py, exp / "scripts/encode_fewnerd_tokens.py", "--token-cache", cache, "--graph", graph,
-    "--output", tokens, "--device", "cuda", "--batch-size", "64",
+    "--output", tokens, "--device", "cuda", "--batch-size", "256",
     cwd=exp, env=env, log=out / "stage-b.log")
 timings["stage_b_seconds"] = time.perf_counter() - t0
 stage_b_manifest = json.loads(tokens.with_suffix(".manifest.json").read_text(encoding="utf-8"))
