@@ -159,13 +159,26 @@ run_attempt() {
   local attempt="$1"
   CURRENT_SESSION="${BASE_SESSION}-a${attempt}"
   rm -f "$TMP/result.zip"
-  echo "[colab] Few-NERD attempt ${attempt}/2 using session '$CURRENT_SESSION'"
+  echo "[colab] Few-NERD attempt ${attempt}/3 using session '$CURRENT_SESSION'"
+  local new_cmd=(colab "--auth=$AUTH" new -s "$CURRENT_SESSION")
   if [[ -n "$GPU" ]]; then
-    colab "--auth=$AUTH" new -s "$CURRENT_SESSION" --gpu "$GPU"
-  else
-    colab "--auth=$AUTH" new -s "$CURRENT_SESSION"
+    new_cmd+=(--gpu "$GPU")
   fi
-  colab "--auth=$AUTH" upload -s "$CURRENT_SESSION" "$TMP/worker.py" /content/worker.py
+
+  if ! "${new_cmd[@]}"; then
+    echo "[colab] Failed to create session '$CURRENT_SESSION' (likely Colab GPU rate-limit / cooldown). Waiting 60s before retrying..."
+    colab "--auth=$AUTH" stop -s "$CURRENT_SESSION" >/dev/null 2>&1 || true
+    CURRENT_SESSION=""
+    sleep 60
+    return 1
+  fi
+
+  if ! colab "--auth=$AUTH" upload -s "$CURRENT_SESSION" "$TMP/worker.py" /content/worker.py; then
+    echo "[colab] Failed to upload worker.py to '$CURRENT_SESSION'"
+    colab "--auth=$AUTH" stop -s "$CURRENT_SESSION" >/dev/null 2>&1 || true
+    CURRENT_SESSION=""
+    return 1
+  fi
   colab "--auth=$AUTH" upload -s "$CURRENT_SESSION" "$TMP/launcher.py" /content/launcher.py
 
   set +e
@@ -200,7 +213,7 @@ run_attempt() {
 }
 
 status=1
-for attempt in 1 2; do
+for attempt in 1 2 3; do
   if run_attempt "$attempt"; then
     status=0
     break
