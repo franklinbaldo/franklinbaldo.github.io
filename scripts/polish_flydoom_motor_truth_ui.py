@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# one-shot UI polish helper; touched to trigger workflow
 from pathlib import Path
 
 path = Path('public/flydoom/index.html')
