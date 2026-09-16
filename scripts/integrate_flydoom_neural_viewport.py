@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# one-shot integrator for FlyDoom Phase 2A (rerun)
+# one-shot integrator for FlyDoom Phase 2A (rerun 2)
 from pathlib import Path
 
 p=Path('public/flydoom/index.html')
