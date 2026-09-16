@@ -273,6 +273,70 @@
         font-family: monospace;
         font-size: 0.72rem;
       }
+      .motor-truth {
+        margin-top: 6px;
+        padding-top: 8px;
+        border-top: 1px solid var(--border);
+      }
+      .motor-truth-title {
+        margin-bottom: 6px;
+        color: var(--text-muted);
+        font-family: monospace;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+      .motor-track {
+        flex: 1;
+        height: 9px;
+        background: #21262d;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+      }
+      .motor-track::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: #8b949e;
+        z-index: 2;
+      }
+      .motor-limit {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: rgba(241, 224, 90, 0.65);
+        z-index: 2;
+      }
+      .motor-limit-left {
+        left: 35%;
+      }
+      .motor-limit-right {
+        left: 65%;
+      }
+      .motor-fill {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        background: var(--accent);
+      }
+      .motor-separator {
+        border-top: 1px dashed #30363d;
+        margin: 5px 0;
+      }
+      .odor-drive {
+        color: var(--green);
+        font-family: monospace;
+        font-size: 0.68rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
 
       .flies-table {
         width: 100%;
@@ -589,27 +653,21 @@
               </div>
               <span class="meter-val" id="valOdorR">0 ppm</span>
             </div>
-            <!-- Motor Steering -->
-            <div class="meter-row">
-              <span class="meter-label">Motor Curva:</span>
-              <div class="meter-bar-bg" style="position: relative">
-                <div
-                  style="
-                    position: absolute;
-                    left: 50%;
-                    top: 0;
-                    bottom: 0;
-                    width: 2px;
-                    background: #8b949e;
-                  "
-                ></div>
-                <div
-                  id="barTorque"
-                  class="meter-bar-fill"
-                  style="position: absolute; left: 50%; width: 0%"
-                ></div>
+            <div class="odor-drive">
+              <span>ODOR L ×3.5 <b id="valOdorDriveL">0.000</b></span>
+              <span>ODOR R ×3.5 <b id="valOdorDriveR">0.000</b></span>
+            </div>
+
+            <!-- Motor Truth -->
+            <div class="motor-truth">
+              <div class="motor-truth-title">
+                MOTOR TRUTH · TORQUE DECOMPOSITION
               </div>
-              <span class="meter-val" id="valTorque">0.0°</span>
+              <div id="motorTruthRows"></div>
+              <div class="retina-note" style="padding: 6px 0 0; border-top: 0">
+                Yellow ticks mark the physical clamp at ±0.45. Telemetry is
+                observational only.
+              </div>
             </div>
 
             <!-- Swarm Table -->
@@ -894,8 +952,15 @@
 
               results.push({
                 torque: Math.max(-0.45, Math.min(0.45, totalTorque)),
+                rawTorque: totalTorque,
                 thrust: Math.max(0.08, Math.min(0.38, fwdThrust)),
-                meanAct: actTot
+                meanAct: actTot,
+                motorTerms: {
+                  connectome: connSteer,
+                  phototaxis: visualSteer,
+                  chemotaxis: odorSteer,
+                  saccade
+                }
               });
             }
 
@@ -962,6 +1027,7 @@
           this.currentTorque = 0;
           this.targetThrust = 0.2;
           this.currentThrust = 0.2;
+          this.motorTelemetry = null;
 
           this.resetPosition();
         }
@@ -1182,6 +1248,7 @@
                   results[f].thrust,
                   results[f].meanAct
                 );
+                swarm[f].motorTelemetry = results[f];
               }
             }
           }
@@ -1555,6 +1622,57 @@
       // =========================================================================
       // 7. HUD & Telemetry Update
       // =========================================================================
+      const MOTOR_DISPLAY_RANGE = 1.5;
+      const MOTOR_ROWS = [
+        ["connectome", "CONNECTOME"],
+        ["phototaxis", "PHOTOTAXIS"],
+        ["chemotaxis", "CHEMOTAXIS"],
+        ["saccade", "COLLISION (SACCADE)"],
+      ];
+
+      function ensureMotorTruthRows() {
+        const root = document.getElementById("motorTruthRows");
+        if (!root || root.childElementCount) return;
+        const rows = [
+          ...MOTOR_ROWS,
+          ["rawTorque", "RAW TOTAL"],
+          ["torque", "CLAMPED OUTPUT"],
+        ];
+        for (const [key, label] of rows) {
+          if (key === "rawTorque") {
+            const sep = document.createElement("div");
+            sep.className = "motor-separator";
+            root.appendChild(sep);
+          }
+          const row = document.createElement("div");
+          row.className = "meter-row";
+          row.innerHTML = `
+            <span class="meter-label">${label}</span>
+            <div class="motor-track">
+              <span class="motor-limit motor-limit-left"></span>
+              <span class="motor-limit motor-limit-right"></span>
+              <span class="motor-fill" id="motor-${key}"></span>
+            </div>
+            <span class="meter-val" id="motor-val-${key}">0.000</span>`;
+          root.appendChild(row);
+        }
+      }
+
+      function setMotorBar(key, value) {
+        const fill = document.getElementById(`motor-${key}`);
+        const valueEl = document.getElementById(`motor-val-${key}`);
+        if (!fill || !valueEl) return;
+        const clipped = Math.max(
+          -MOTOR_DISPLAY_RANGE,
+          Math.min(MOTOR_DISPLAY_RANGE, value)
+        );
+        const span = (Math.abs(clipped) / MOTOR_DISPLAY_RANGE) * 50;
+        fill.style.left = clipped < 0 ? `${50 - span}%` : "50%";
+        fill.style.width = `${span}%`;
+        fill.style.background = clipped < 0 ? "#f85149" : "#2ea043";
+        valueEl.textContent = `${value >= 0 ? "+" : ""}${value.toFixed(3)}`;
+      }
+
       function updateHUD() {
         const activeFly = swarm[selectedFlyIdx] || swarm[0];
         if (!activeFly) return;
@@ -1574,6 +1692,21 @@
         const ppmR = Math.floor(activeFly.odorR * 350);
         document.getElementById("valOdorL").innerText = ppmL + " ppm";
         document.getElementById("valOdorR").innerText = ppmR + " ppm";
+        document.getElementById("valOdorDriveL").innerText = (
+          activeFly.odorL * 3.5
+        ).toFixed(3);
+        document.getElementById("valOdorDriveR").innerText = (
+          activeFly.odorR * 3.5
+        ).toFixed(3);
+
+        ensureMotorTruthRows();
+        const telemetry = activeFly.motorTelemetry;
+        if (telemetry?.motorTerms) {
+          for (const [key] of MOTOR_ROWS)
+            setMotorBar(key, telemetry.motorTerms[key] || 0);
+          setMotorBar("rawTorque", telemetry.rawTorque || 0);
+          setMotorBar("torque", telemetry.torque || 0);
+        }
 
         const scentBadge = document.getElementById("scentStatusBadge");
         if (scentBadge) {
@@ -1591,21 +1724,6 @@
             scentBadge.style.borderColor = "";
           }
         }
-
-        const torqueDeg = (activeFly.currentTorque * 180) / Math.PI;
-        const torquePct = Math.min(50, Math.abs(torqueDeg) * 1.5);
-        const torqueBar = document.getElementById("barTorque");
-        if (torqueDeg >= 0) {
-          torqueBar.style.left = "50%";
-          torqueBar.style.width = torquePct + "%";
-          torqueBar.style.background = "#2ea043";
-        } else {
-          torqueBar.style.left = 50 - torquePct + "%";
-          torqueBar.style.width = torquePct + "%";
-          torqueBar.style.background = "#f85149";
-        }
-        document.getElementById("valTorque").innerText =
-          (torqueDeg > 0 ? "+" : "") + torqueDeg.toFixed(1) + "°";
 
         let minDist = 999;
         for (const p of prizes) {
