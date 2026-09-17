@@ -1,7 +1,7 @@
 ---
 type: changelog
 date: 2026-09-17
-description: Atualiza o mapa /papers com a auditoria reproduzível de prior art do experimento MaleCNS, sem alterar seus tiers.
+description: Atualiza /papers com a auditoria de prior art do experimento MaleCNS.
 tags: [papers, research, malecns]
 ---
 
