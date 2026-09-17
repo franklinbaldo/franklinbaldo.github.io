@@ -16,8 +16,9 @@ jobs:
         with:
           ref: fix/flydoom-fourier-manual-reset
       - name: Patch reset semantics
-        shell: python
+        shell: bash
         run: |
+          python - <<'PY'
           from pathlib import Path
 
           path = Path('public/flydoom-fourier/index.html')
@@ -97,6 +98,7 @@ jobs:
           text = text.replace(old, new, 1)
 
           path.write_text(text)
+          PY
       - name: Format
         run: npx prettier --write public/flydoom-fourier/index.html
       - name: Commit patch
