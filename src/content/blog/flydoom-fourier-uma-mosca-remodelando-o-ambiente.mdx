@@ -1,7 +1,7 @@
 ---
 type: "Blog Post"
-title: "FlyDoom Fourier: uma mosca remodelando o próprio ambiente 3D"
-description: "Um novo demo do FlyDoom usa a camada descendente do MaleCNS para controlar coeficientes de Fourier que deformam uma arena 3D. O reward aumenta quando o ambiente converge para um shape-alvo predeterminado."
+title: "FlyDoom Morph: a mosca é o próprio corpo"
+description: "Um demo do MaleCNS em que a camada descendente controla um corpo 3D segmentado com dezenas a centenas de graus morfológicos acoplados. O reward é gradual e combina shape com uma sequência de posições-alvo."
 date: "2026-09-16"
 lang: pt
 translationKey: flydoom-fourier-shape-control
@@ -10,22 +10,24 @@ tags:
     "malecns",
     "conectoma",
     "doom",
-    "fourier",
+    "morphogenesis",
     "reinforcement-learning",
     "embodied-ai",
   ]
 glyph: "🪰"
 ---
 
-No FlyDoom original, a camada descendente do **MaleCNS** termina em comandos motores que movem a mosca.
+No FlyDoom original, a camada descendente do **MaleCNS** terminava em comandos motores para mover uma mosca dentro de um ambiente.
 
-Neste experimento, trocamos a pergunta:
+Neste experimento, a separação entre “mosca” e “corpo” desaparece:
 
-> **e se a saída motora da mosca não movesse apenas o corpo, mas deformasse o próprio espaço em que ela está?**
+> **a mosca é o próprio objeto 3D que está sendo transformado.**
 
-O demonstrador abaixo transforma a atividade dos neurônios descendentes em velocidades de coeficientes de uma base de Fourier. Esses coeficientes alteram continuamente o shape de uma arena 3D. Um segundo shape, mostrado como wireframe, é o alvo predeterminado. A recompensa cresce conforme a arena atual se aproxima desse alvo e recebe um bônus quando a similaridade passa de 97%.
+O corpo é uma cadeia de segmentos. Cada segmento tem vários graus de liberdade contínuos e um gene que pode trocar sua família geométrica. A camada descendente não escolhe diretamente “aumentar comprimento” ou “girar o terceiro segmento”. Ela passa por um adapter pequeno e treinável; depois, uma matriz de acoplamento distribui cada ação por várias características simultaneamente.
 
-<div style="width: 100%; max-width: 1180px; margin: 2rem auto;">
+O resultado é um problema de controle morfológico de alta dimensão, com interferência deliberada entre variáveis.
+
+<div style="width: 100%; max-width: 1240px; margin: 2rem auto;">
   <div style="display:flex;justify-content:flex-end;margin-bottom:.6rem;">
     <a
       href="/flydoom-fourier/"
@@ -39,9 +41,9 @@ O demonstrador abaixo transforma a atividade dos neurônios descendentes em velo
   <iframe
     src="/flydoom-fourier/index.html"
     width="100%"
-    height="980"
+    height="1080"
     style="border: 2px solid #30363d; border-radius: 10px; background: #06090d;"
-    title="FlyDoom Fourier: MaleCNS controlando deformações de uma arena 3D"
+    title="FlyDoom Morph: MaleCNS controlando um corpo 3D segmentado"
     loading="lazy"
   ></iframe>
 </div>
@@ -49,7 +51,7 @@ O demonstrador abaixo transforma a atividade dos neurônios descendentes em velo
 ## O loop
 
 ```text
-arena 3D deformável
+corpo 3D atual + corpo-alvo + posição atual
         ↓
  câmera / retina de 32 colunas
         ↓
@@ -61,87 +63,132 @@ arena 3D deformável
         ↓
  8 canais de leitura dos DNs
         ↓
- adapter treinável DN → Fourier
+ adapter treinável: DN(8) → ações latentes(16)
         ↓
- 6 coeficientes de deformação
+ matriz de acoplamento morfológico
         ↓
- novo shape da arena
+ até 140 genes do corpo
         ↓
- similaridade com o shape-alvo
+ novo corpo / nova posição da ponta
         ↓
- reward
+ shape reward + goal reward + progress reward
 ```
 
-O conectoma continua congelado. **Não estamos treinando os pesos do MaleCNS.** O único componente que aprende é a pequena projeção entre a camada descendente e os atuadores de Fourier.
+O conectoma continua congelado. **Não treinamos os pesos do MaleCNS.** O aprendizado fica fora do cérebro, na projeção pequena entre a camada descendente e as ações latentes.
 
-## Por que Fourier?
+## Um corpo com muitos graus de possibilidade
 
-Uma transformação de Fourier dá um vocabulário pequeno para mudanças globais de forma.
+O demo permite entre **3 e 14 segmentos**. Cada segmento tem dez genes:
 
-Em vez de permitir que a mosca mova milhares de vértices individualmente, damos a ela seis “músculos geométricos”:
+- comprimento;
+- raio;
+- taper;
+- yaw;
+- pitch;
+- roll;
+- curvatura;
+- flare;
+- lóbulo;
+- tipo do segmento.
 
-- `sin(x)`
-- `cos(x)`
-- `sin(z)`
-- `cos(z)`
-- `sin(x + z)`
-- `cos(2x - z)`
+Com 14 segmentos, são **140 graus morfológicos ativos**.
 
-A soma desses modos produz uma superfície 3D contínua. Cada ação modifica a velocidade de um coeficiente.
+O tipo não é apenas decorativo. Um gene contínuo escolhe, dentro do vocabulário permitido pela sessão, entre famílias como:
 
-Isso cria uma espécie de corpo estendido: a camada descendente não termina numa perna ou asa, mas em **graus de liberdade do ambiente**.
+- `capsule`;
+- `orb`;
+- `fin`;
+- `spike`;
+- `ring`.
 
-## O alvo e a recompensa
+O seletor de “vocabulário da sessão” permite restringir quais tipos existem numa rodada. Assim, uma sessão pode começar apenas com formas simples e outra liberar asas, espinhos ou anéis sem mudar o conectoma.
 
-O demo tem quatro shapes-alvo predeterminados: cratera, sela, crista diagonal e ilhas.
+## As variáveis se interferem
 
-A tela mostra ao mesmo tempo:
+A parte importante é não fazer uma correspondência trivial de um neurônio para um knob.
 
-- a superfície atual em azul;
-- o shape-alvo como wireframe violeta;
-- a atividade de oito canais descendentes;
-- os seis coeficientes atuais e seus valores-alvo;
-- similaridade, melhor similaridade, reward e número de acertos.
+Os oito canais descendentes produzem dezesseis ações latentes. Depois, uma matriz de acoplamento fixa espalha essas ações pelos genes do corpo. O mesmo canal pode aumentar o comprimento de um segmento, alterar a curvatura de outro e empurrar um terceiro para a fronteira em que muda de tipo.
 
-O reward é deliberadamente simples: uma função contínua da distância entre os vetores de coeficientes, com bônus ao ultrapassar 97% de similaridade. Isso deixa o processo observável no navegador e evita esconder a função objetivo.
+O knob **acoplamento entre genes** controla quanto dessa interferência entra no sistema.
+
+Isso torna o problema mais próximo de um sistema corporal: mudar uma característica pode alterar várias outras consequências geométricas ao mesmo tempo.
+
+## Reward gradual e metas sucessivas
+
+O objetivo não é apenas acertar ou errar um shape.
+
+O reward é denso. Em cada frame ele combina:
+
+1. **shape match** — semelhança entre o corpo atual e o corpo-alvo;
+2. **goal match** — proximidade entre a ponta do corpo e a posição atual;
+3. **progress** — recompensa adicional por reduzir a distância desde o frame anterior.
+
+Quando a ponta entra no raio da posição-alvo, há um bônus e imediatamente aparece **a próxima posição**. Depois de completar a sequência inteira, uma nova sequência é gerada para o mesmo corpo-alvo.
+
+Assim, a tarefa é temporal:
+
+```text
+aproximar o shape
+→ atingir posição A
+→ atingir posição B
+→ atingir posição C
+→ atingir posição D
+→ continuar
+```
+
+Não existe reset automático por acertar uma posição ou por encerrar um episódio de aprendizado.
+
+## Reset memory e New target shape são coisas diferentes
+
+Essa distinção é explícita na interface.
+
+**Reset memory** apaga somente:
+
+- policy do adapter;
+- melhor policy registrada;
+- score da policy;
+- contador e acumuladores dos episódios de aprendizado;
+- estado recorrente usado pela simulação do MaleCNS.
+
+Ele **não** move o corpo atual, não troca o corpo-alvo e não reinicia a sequência de posições.
+
+**New target shape**, por outro lado:
+
+- gera um novo corpo-alvo 3D;
+- gera uma nova sequência de posições;
+- preserva a policy aprendida;
+- preserva o corpo atual como ponto de partida para a nova tarefa.
+
+Isso permite testar transferência: a memória aprendida num shape pode ajudar — ou atrapalhar — no próximo.
+
+## Knobs estruturais
+
+Além dos dois botões, o demo expõe knobs para:
+
+- número de segmentos;
+- famílias de segmento permitidas na sessão;
+- complexidade do próximo alvo;
+- intensidade do acoplamento entre genes;
+- exploração do adapter;
+- ganho morfológico.
+
+A intenção é deixar o motor capaz de operar num espaço muito maior do que uma única tarefa exige. As limitações passam a ser escolhidas por sessão, não embutidas na arquitetura.
 
 ## O que vem do MaleCNS de verdade
 
-O demo reutiliza diretamente os mesmos assets do FlyDoom:
+O demo continua reutilizando os mesmos assets do FlyDoom:
 
 - `/flydoom/malecns_l3_compact.mcns`
 - `/flydoom/malecns_circuit.json`
 
-A recorrência é executada no navegador em um Web Worker. O frame renderizado da arena é comprimido em 32 colunas visuais e projetado nos grupos visuais já mapeados. Depois de cada step do conectoma, os neurônios descendentes são agregados em oito buckets determinísticos e entregues ao adapter.
+A recorrência roda em um Web Worker. O frame renderizado é comprimido em 32 colunas visuais e projetado nos grupos visuais já mapeados. Depois do step, os 1.314 neurônios descendentes são agregados em oito buckets determinísticos.
 
-Essa divisão em oito buckets **não é uma nova anatomia biológica**. É apenas uma forma de preservar mais dimensionalidade da camada descendente do que a leitura esquerda/direita usada em demos anteriores.
+Esses oito buckets **não são uma nova anatomia biológica**. São uma interface artificial para preservar mais dimensionalidade da camada descendente.
 
-## A parte treinável
+## O que o experimento está perguntando
 
-A projeção `DN → Fourier` começa com pesos pequenos.
+O demo não demonstra que uma mosca biológica “sabe construir corpos”. Ele cria uma bancada para outra pergunta:
 
-Cada episódio testa uma versão perturbada desses pesos. Se a política melhora a similaridade média com o alvo, ela passa a ser a nova base para a próxima perturbação. É um hill-climber mínimo, colocado fora do cérebro.
+> **uma dinâmica recorrente extraída de um conectoma real pode fornecer um estado útil para aprender controle morfológico de alta dimensão, com variáveis acopladas e objetivos sequenciais?**
 
-Essa separação é importante:
-
-```text
-MaleCNS recorrente = fixo
-DN → Fourier       = treinável
-arena + reward     = ambiente artificial
-```
-
-Portanto, este demo não diz que uma mosca biológica conhece séries de Fourier ou sabe remodelar superfícies. Ele testa uma ideia arquitetural mais estreita: **se usarmos a camada descendente de um conectoma real como estado de controle, ela pode alimentar um adapter que aprende a manipular um espaço físico de baixa dimensão?**
-
-## Próximo experimento
-
-A versão realmente interessante é comparar três controladores sob as mesmas condições:
-
-1. MaleCNS congelado;
-2. reservoir aleatório com o mesmo número de canais efetivos;
-3. uma rede pequena treinável com orçamento de parâmetros equivalente.
-
-Mesmos seeds, mesmos shapes, mesmo número de steps, mesmo adapter e mesma função de reward.
-
-A pergunta útil deixa de ser “a mosca conseguiu?” e passa a ser:
-
-> **há alguma vantagem mensurável em usar a dinâmica recorrente do conectoma como estado intermediário para controlar transformações geométricas?**
+A comparação científica continua sendo MaleCNS congelado contra reservoirs aleatórios e redes pequenas sob o mesmo orçamento, seeds, corpo, targets e reward.
