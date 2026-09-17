@@ -124,6 +124,7 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
           type="button"
           aria-label={playMusicLabel}
           title={playMusicLabel}
+          aria-pressed="false"
           data-play-label={playMusicLabel}
           data-pause-label={pauseMusicLabel}
         >♪</button>
@@ -139,6 +140,7 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
           type="button"
           aria-label={playMusicLabel}
           title={playMusicLabel}
+          aria-pressed="false"
           data-play-label={playMusicLabel}
           data-pause-label={pauseMusicLabel}
         >♪</button>
@@ -193,12 +195,14 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
         btn.textContent = '♪';
         btn.setAttribute('aria-label', label);
         btn.setAttribute('title', label);
+        btn.setAttribute('aria-pressed', 'false');
         btn.classList.remove('playing');
       } else {
         const label = btn.dataset.pauseLabel || 'Pause music';
         btn.textContent = '⏸';
         btn.setAttribute('aria-label', label);
         btn.setAttribute('title', label);
+        btn.setAttribute('aria-pressed', 'true');
         btn.classList.add('playing');
       }
     });
