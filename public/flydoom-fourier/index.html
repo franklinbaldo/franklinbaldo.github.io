@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FlyDoom Fourier — MaleCNS remodela uma arena 3D</title>
+  <style>
+    :root{
+      color-scheme:dark;
+      --bg:#06090d;--panel:#0d131a;--panel2:#111a23;--line:#263340;
+      --text:#d8e3ea;--muted:#8fa2af;--accent:#7ee787;--cyan:#79c0ff;
+      --gold:#f2cc60;--red:#ff7b72;--purple:#d2a8ff
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:radial-gradient(circle at 20% 0,#0f1b25 0,#06090d 44%);color:var(--text);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    body{min-height:100vh;padding:14px}
+    .shell{width:min(1180px,100%);margin:auto}
+    header{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start;margin:4px 0 12px}
+    .eyebrow{margin:0 0 6px;color:var(--cyan);font:700 .72rem ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase}
+    h1{margin:0;font-size:clamp(1.35rem,3vw,2.15rem);line-height:1.05;color:#fff}
+    .lede{max-width:850px;margin:8px 0 0;color:var(--muted);line-height:1.5;font-size:.9rem}
+    .status{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:999px;
+      background:#091017;color:var(--muted);font:700 .72rem ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}
+    .status-dot{width:8px;height:8px;border-radius:999px;background:var(--gold);box-shadow:0 0 12px currentColor}
+    .status.live .status-dot{background:var(--accent)}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:10px}
+    .panel{background:linear-gradient(180deg,rgba(17,26,35,.95),rgba(10,15,21,.95));border:1px solid var(--line);border-radius:12px;overflow:hidden}
+    .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 12px;border-bottom:1px solid var(--line);
+      color:var(--muted);font-size:.72rem}
+    .panel-head h2{margin:0;color:var(--text);font-size:.82rem;text-transform:uppercase;letter-spacing:.05em}
+    #stage{position:relative;height:610px;background:#020408}
+    #stage canvas{display:block;width:100%;height:100%}
+    .legend{position:absolute;left:10px;bottom:10px;display:flex;flex-wrap:wrap;gap:7px;pointer-events:none}
+    .chip{padding:5px 7px;border-radius:7px;border:1px solid rgba(255,255,255,.12);background:rgba(4,7,10,.78);
+      backdrop-filter:blur(6px);font:700 .66rem ui-monospace,SFMono-Regular,Menlo,monospace}
+    .chip.current{color:var(--cyan)} .chip.target{color:var(--purple)} .chip.hit{color:var(--accent)}
+    .retina{position:absolute;right:10px;bottom:10px;width:210px;height:72px;padding:7px;border:1px solid rgba(255,255,255,.12);
+      border-radius:8px;background:rgba(4,7,10,.78);display:flex;gap:2px;align-items:end}
+    .retina span{flex:1;min-width:2px;height:3px;background:var(--cyan);opacity:.35;border-radius:2px 2px 0 0}
+    .metrics{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line)}
+    .metric{padding:10px 11px;min-width:0}.metric+.metric{border-left:1px solid var(--line)}
+    .metric-label{font-size:.64rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .metric-value{margin-top:4px;color:#fff;font:800 1.02rem ui-monospace,SFMono-Regular,Menlo,monospace;overflow:hidden;text-overflow:ellipsis}
+    .metric-value.accent{color:var(--accent)}
+    aside{display:grid;gap:10px;align-content:start}
+    .controls{padding:11px;display:grid;gap:10px}
+    .row{display:flex;gap:7px;flex-wrap:wrap}
+    button,select,input{font:inherit}
+    button,select{border:1px solid var(--line);border-radius:8px;background:#16202a;color:var(--text);padding:7px 9px;font-size:.76rem}
+    button{cursor:pointer;font-weight:750}button:hover{border-color:#536575;background:#1b2834}
+    button.primary{background:#163b26;border-color:#2d7b47;color:#d9ffe4}
+    button.warn{background:#332616;border-color:#6d5426;color:#ffe7a8}
+    .control{display:grid;gap:6px}.control-line{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:.7rem}
+    input[type="range"]{width:100%;accent-color:var(--accent)}
+    .dn-grid{padding:10px 11px;display:grid;gap:7px}
+    .dn-row{display:grid;grid-template-columns:42px 1fr 48px;gap:7px;align-items:center;font:700 .67rem ui-monospace,SFMono-Regular,Menlo,monospace}
+    .bar{height:8px;border-radius:99px;background:#071018;overflow:hidden;border:1px solid #1e2b36}
+    .fill{height:100%;width:50%;transform-origin:left;background:linear-gradient(90deg,var(--cyan),var(--purple))}
+    .coef-grid{padding:10px 11px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .coef{padding:8px;border:1px solid #20303d;border-radius:8px;background:#091017}
+    .coef b{display:block;color:var(--muted);font:700 .63rem ui-monospace,SFMono-Regular,Menlo,monospace}
+    .coef span{display:block;margin-top:4px;color:#fff;font:800 .8rem ui-monospace,SFMono-Regular,Menlo,monospace}
+    .notes{margin-top:10px;padding:12px 14px;color:var(--muted);font-size:.76rem;line-height:1.5}
+    .notes strong{color:var(--text)}
+    code{color:#c9d1d9}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}#stage{height:520px}}
+    @media(max-width:620px){body{padding:8px}header{grid-template-columns:1fr}.status{justify-self:start}#stage{height:440px}.retina{width:160px}.metrics{grid-template-columns:repeat(2,1fr)}.metric+.metric{border-left:0}.metric:nth-child(even){border-left:1px solid var(--line)}.metric:nth-child(n+3){border-top:1px solid var(--line)}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div>
+      <p class="eyebrow">FlyDoom · MaleCNS · descending layer → Fourier actuator</p>
+      <h1>FlyDoom Fourier</h1>
+      <p class="lede">A mosca vê uma arena 3D deformável. O conectoma MaleCNS processa o quadro; 1.314 neurônios descendentes são lidos em oito canais e um adapter treinável transforma esses canais em velocidades de seis coeficientes de Fourier do terreno. O alvo é um shape 3D predeterminado.</p>
+    </div>
+    <div class="status" id="status"><span class="status-dot"></span><span id="statusText">Carregando MaleCNS…</span></div>
+  </header>
+
+  <div class="layout">
+    <main class="panel">
+      <div class="panel-head">
+        <h2>Arena morfológica</h2>
+        <span>azul = ambiente atual · violeta = shape-alvo</span>
+      </div>
+      <div id="stage">
+        <div class="legend">
+          <span class="chip current">CURRENT SURFACE</span>
+          <span class="chip target">TARGET GHOST</span>
+          <span class="chip hit" id="hitChip">TARGET HIT ≥ 97%</span>
+        </div>
+        <div class="retina" id="retina" title="32 colunas visuais enviadas ao MaleCNS"></div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">reward</div><div class="metric-value accent" id="rewardValue">0.000</div></div>
+        <div class="metric"><div class="metric-label">shape match</div><div class="metric-value" id="matchValue">0.000</div></div>
+        <div class="metric"><div class="metric-label">best</div><div class="metric-value" id="bestValue">0.000</div></div>
+        <div class="metric"><div class="metric-label">hits</div><div class="metric-value" id="hitsValue">0</div></div>
+        <div class="metric"><div class="metric-label">MaleCNS step</div><div class="metric-value" id="latencyValue">—</div></div>
+      </div>
+    </main>
+
+    <aside>
+      <section class="panel">
+        <div class="panel-head"><h2>Experimento</h2><span id="episodeLabel">episode 0</span></div>
+        <div class="controls">
+          <div class="row">
+            <button class="primary" id="pauseButton">Pause</button>
+            <button id="resetButton">Reset</button>
+            <button class="warn" id="randomizeButton">New start</button>
+          </div>
+          <label class="control"><span class="control-line"><span>shape-alvo</span><span id="targetName">Cratera</span></span>
+            <select id="targetSelect">
+              <option value="crater">Cratera</option>
+              <option value="saddle">Sela</option>
+              <option value="ridge">Crista diagonal</option>
+              <option value="islands">Ilhas</option>
+            </select>
+          </label>
+          <label class="control"><span class="control-line"><span>exploração do adapter</span><span id="exploreLabel">18%</span></span>
+            <input id="exploreRange" type="range" min="0" max="0.45" step="0.01" value="0.18" />
+          </label>
+          <label class="control"><span class="control-line"><span>ganho Fourier</span><span id="gainLabel">0.42</span></span>
+            <input id="gainRange" type="range" min="0.08" max="0.9" step="0.01" value="0.42" />
+          </label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Camada descendente</h2><span>8 buckets fixos de DN</span></div>
+        <div class="dn-grid" id="dnGrid"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Fourier state</h2><span>current → target</span></div>
+        <div class="coef-grid" id="coefGrid"></div>
+      </section>
+    </aside>
+  </div>
+
+  <section class="panel notes">
+    <strong>Contrato científico do demo.</strong> A recorrência é o MaleCNS compactado já usado pelo FlyDoom. A divisão dos DNs em oito canais, o adapter <code>DN → Fourier</code>, a câmera, a função de reward e a arena são artificiais. O adapter é o único componente treinável: a cada episódio ele sofre uma perturbação e é mantido quando melhora o match médio. A recompensa é contínua para tornar o processo visível e recebe um bônus quando o shape ultrapassa 97% de similaridade; isso não implica que a mosca biológica conheça Fourier nem o conceito do alvo.
+  </section>
+</div>
+
+<canvas id="visionCanvas" width="160" height="96" hidden></canvas>
+
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+
+const clamp=(v,lo=0,hi=1)=>Math.min(hi,Math.max(lo,v));
+const TAU=Math.PI*2;
+function gaussian(){
+  let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);
+}
+function seededRandom(seed){
+  let s=seed>>>0;
+  return ()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};
+}
+const TARGETS={
+  crater:{label:"Cratera", coeff:[-0.52,0.08,0.06,-0.48,0.18,0.06]},
+  saddle:{label:"Sela", coeff:[0.48,-0.44,0.34,-0.28,0.02,0.14]},
+  ridge:{label:"Crista diagonal", coeff:[0.08,0.10,-0.12,0.06,0.62,-0.34]},
+  islands:{label:"Ilhas", coeff:[0.30,0.26,0.28,0.24,-0.18,0.52]}
+};
+const BASIS_LABELS=["sin x","cos x","sin z","cos z","sin(x+z)","cos(2x−z)"];
+let targetKey="crater", target=TARGETS[targetKey].coeff.slice();
+let coeff=Array.from({length:6},()=>gaussian()*0.22);
+let velocity=new Float32Array(6);
+let fourierGain=.42, exploration=.18, paused=false, hits=0, episode=0, reward=0, match=0, bestMatch=0;
+let episodeStart=performance.now(), episodeScore=0, episodeSamples=0;
+const EPISODE_MS=6500, HIT_THRESHOLD=.97;
+
+const stage=document.getElementById("stage");
+const scene=new THREE.Scene();
+scene.fog=new THREE.FogExp2(0x05080c,0.055);
+const camera=new THREE.PerspectiveCamera(52,1,.1,80);
+camera.position.set(8.5,7.2,9.2);
+camera.lookAt(0,0,0);
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+renderer.setClearColor(0x020408,1);
+stage.prepend(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(0xb9ddff,0x101010,1.8));
+const keyLight=new THREE.DirectionalLight(0xffffff,2.2); keyLight.position.set(5,9,4);scene.add(keyLight);
+const rim=new THREE.DirectionalLight(0x9b7bff,1.4); rim.position.set(-6,4,-5);scene.add(rim);
+
+const floorGrid=new THREE.GridHelper(12,24,0x223647,0x14212d);
+floorGrid.position.y=-2.75;scene.add(floorGrid);
+
+const geometry=new THREE.PlaneGeometry(11,11,64,64);
+geometry.rotateX(-Math.PI/2);
+const original=geometry.attributes.position.array.slice();
+const currentMaterial=new THREE.MeshStandardMaterial({color:0x1c6ca1,metalness:.05,roughness:.6,side:THREE.DoubleSide,transparent:true,opacity:.76});
+const targetMaterial=new THREE.MeshBasicMaterial({color:0xb788ff,wireframe:true,transparent:true,opacity:.27,side:THREE.DoubleSide});
+const surface=new THREE.Mesh(geometry,currentMaterial); scene.add(surface);
+const targetGeometry=geometry.clone();
+const targetOriginal=targetGeometry.attributes.position.array.slice();
+const targetSurface=new THREE.Mesh(targetGeometry,targetMaterial); targetSurface.position.y=.035;scene.add(targetSurface);
+
+const fly=new THREE.Group();
+const bodyMat=new THREE.MeshStandardMaterial({color:0x384f2f,roughness:.75});
+const eyeMat=new THREE.MeshStandardMaterial({color:0xa03f3a,roughness:.5});
+const thorax=new THREE.Mesh(new THREE.SphereGeometry(.20,16,10),bodyMat);thorax.scale.set(1,0.78,1.25);fly.add(thorax);
+const head=new THREE.Mesh(new THREE.SphereGeometry(.12,14,10),bodyMat);head.position.z=-.28;fly.add(head);
+for(const sx of [-1,1]){const eye=new THREE.Mesh(new THREE.SphereGeometry(.07,10,8),eyeMat);eye.position.set(sx*.10,.03,-.34);fly.add(eye);}
+fly.position.set(0,.35,0);scene.add(fly);
+
+const basis=(x,z)=>[
+  Math.sin(x*.78),Math.cos(x*.72),Math.sin(z*.82),Math.cos(z*.70),
+  Math.sin((x+z)*.62),Math.cos(2*x*.55-z*.68)
+];
+function heightAt(x,z,c){
+  const b=basis(x,z); let y=0;
+  for(let k=0;k<6;k++) y+=c[k]*b[k];
+  const r=Math.hypot(x,z);
+  y*=Math.exp(-Math.max(0,r-4.2)*.45);
+  return y*1.36;
+}
+function deform(geom, base, c){
+  const pos=geom.attributes.position.array;
+  for(let i=0;i<pos.length;i+=3){
+    const x=base[i],z=base[i+2];
+    pos[i+1]=heightAt(x,z,c)-1.15;
+  }
+  geom.attributes.position.needsUpdate=true;
+  geom.computeVertexNormals();
+}
+function resize(){
+  const w=stage.clientWidth,h=stage.clientHeight;
+  renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(stage);resize();
+
+const visionCanvas=document.getElementById("visionCanvas");
+const visionCtx=visionCanvas.getContext("2d",{willReadFrequently:true});
+const retina=new Float32Array(32);
+const retinaEls=[];
+const retinaEl=document.getElementById("retina");
+for(let i=0;i<32;i++){const el=document.createElement("span");retinaEl.appendChild(el);retinaEls.push(el);}
+function sampleRetina(){
+  visionCtx.clearRect(0,0,visionCanvas.width,visionCanvas.height);
+  visionCtx.drawImage(renderer.domElement,0,0,visionCanvas.width,visionCanvas.height);
+  const data=visionCtx.getImageData(0,0,visionCanvas.width,visionCanvas.height).data;
+  retina.fill(0);const counts=new Uint32Array(32);
+  for(let y=0;y<visionCanvas.height;y+=3){
+    for(let x=0;x<visionCanvas.width;x+=2){
+      const o=(y*visionCanvas.width+x)*4;
+      const lum=(data[o]*.2126+data[o+1]*.7152+data[o+2]*.0722)/255;
+      const bucket=Math.min(31,Math.floor(x/visionCanvas.width*32));
+      retina[bucket]+=lum;counts[bucket]++;
+    }
+  }
+  for(let i=0;i<32;i++){
+    retina[i]=counts[i]?retina[i]/counts[i]:0;
+    retinaEls[i].style.height=`${3+retina[i]*54}px`;
+    retinaEls[i].style.opacity=String(.25+retina[i]*.75);
+  }
+}
+
+const WORKER_CODE=`
+let connectome=null,circuit=null,state=null,nextState=null,drive=null;
+self.onmessage=function(event){
+ const msg=event.data;
+ if(msg.type==="init"){
+   circuit=msg.circuit;
+   connectome={n_neurons:msg.n_neurons,offsets:new Uint32Array(msg.offsets),scales:new Float32Array(msg.scales),deltas:new Uint16Array(msg.deltas),weights:new Uint8Array(msg.weights),lut:new Float32Array(msg.lut)};
+   state=new Float32Array(connectome.n_neurons);nextState=new Float32Array(connectome.n_neurons);drive=new Float32Array(connectome.n_neurons);
+   self.postMessage({type:"ready",n:connectome.n_neurons,dn:circuit.dn_all.length});return;
+ }
+ if(msg.type!=="step"||!connectome)return;
+ const t0=performance.now(), retinal=msg.retina;drive.fill(0);
+ for(let r=0;r<16;r++){
+   const ls=retinal[r]*3.2,rs=retinal[16+r]*3.2,lb=circuit.ray_vpl[r],rb=circuit.ray_vpr[r];
+   for(let i=0;i<lb.length;i++)drive[lb[i]]=ls;
+   for(let i=0;i<rb.length;i++)drive[rb[i]]=rs;
+ }
+ const N=connectome.n_neurons,o=connectome.offsets,s=connectome.scales,d=connectome.deltas,w=connectome.weights,l=connectome.lut;
+ for(let row=0;row<N;row++){
+   const start=o[row],end=o[row+1];let col=0,acc=0;
+   for(let edge=start;edge<end;edge++){col+=d[edge];const packed=w[edge>>1],weight=l[(packed>>(4*(edge&1)))&15];acc+=weight*state[col];}
+   nextState[row]=.65*state[row]+.35*Math.tanh(acc*s[row]*3.5+drive[row]);
+ }
+ const swap=state;state=nextState;nextState=swap;
+ const channels=new Float32Array(8),counts=new Uint32Array(8);
+ for(let i=0;i<circuit.dn_all.length;i++){const bucket=i&7;channels[bucket]+=state[circuit.dn_all[i]];counts[bucket]++;}
+ for(let b=0;b<8;b++)channels[b]=counts[b]?channels[b]/counts[b]:0;
+ self.postMessage({type:"result",channels:Array.from(channels),latency:performance.now()-t0});
+};`;
+
+let neuralWorker=null,workerBusy=false,neuralReady=false,neuralLatency=0;
+const dn=new Float32Array(8);
+async function loadMaleCns(){
+  const status=document.getElementById("status"),statusText=document.getElementById("statusText");
+  try{
+    statusText.textContent="Loading circuit map…";
+    const circuitResponse=await fetch("../flydoom/malecns_circuit.json");
+    if(!circuitResponse.ok)throw new Error(`circuit ${circuitResponse.status}`);
+    const circuit=await circuitResponse.json();
+    circuit.ray_vpl=[];circuit.ray_vpr=[];
+    const buckets=16,vplLen=Math.floor(circuit.vpl.length/buckets),vprLen=Math.floor(circuit.vpr.length/buckets);
+    for(let r=0;r<buckets;r++){
+      circuit.ray_vpl.push(circuit.vpl.slice(r*vplLen,(r+1)*vplLen));
+      circuit.ray_vpr.push(circuit.vpr.slice(r*vprLen,(r+1)*vprLen));
+    }
+    statusText.textContent="Loading 4.98 MB MaleCNS…";
+    const binaryResponse=await fetch("../flydoom/malecns_l3_compact.mcns");
+    if(!binaryResponse.ok)throw new Error(`MaleCNS ${binaryResponse.status}`);
+    const arrayBuffer=await binaryResponse.arrayBuffer(),view=new DataView(arrayBuffer);
+    const root=view.getUint32(0,true),vtable=root-view.getInt32(root,true),vtableLen=view.getUint16(vtable,true);
+    function getVector(fieldIndex,ArrayType){
+      const vo=4+fieldIndex*2;if(vo>=vtableLen)return null;
+      const fo=view.getUint16(vtable+vo,true);if(!fo)return null;
+      const p=root+fo,vs=p+view.getUint32(p,true),len=view.getUint32(vs,true),start=vs+4;
+      return new ArrayType(arrayBuffer,start,len);
+    }
+    const offsets=getVector(5,Uint32Array),scales=getVector(6,Float32Array),deltas=getVector(7,Uint16Array),weights=getVector(8,Uint8Array),lut=getVector(9,Float32Array);
+    if(!offsets||!scales||!deltas||!weights||!lut)throw new Error("invalid MCNS vectors");
+    neuralWorker=new Worker(URL.createObjectURL(new Blob([WORKER_CODE],{type:"application/javascript"})));
+    neuralWorker.onmessage=(event)=>{
+      const msg=event.data;
+      if(msg.type==="ready"){
+        neuralReady=true;status.classList.add("live");
+        statusText.textContent=`${msg.n.toLocaleString()} neurons · ${msg.dn.toLocaleString()} DNs · live`;
+      }else if(msg.type==="result"){
+        workerBusy=false;neuralLatency=msg.latency;
+        for(let i=0;i<8;i++)dn[i]=Math.tanh(msg.channels[i]*4.5);
+      }
+    };
+    neuralWorker.onerror=(event)=>{workerBusy=false;statusText.textContent=`Worker error: ${event.message}`;};
+    neuralWorker.postMessage({
+      type:"init",circuit,n_neurons:offsets.length-1,
+      offsets:offsets.buffer.slice(offsets.byteOffset,offsets.byteOffset+offsets.byteLength),
+      scales:scales.buffer.slice(scales.byteOffset,scales.byteOffset+scales.byteLength),
+      deltas:deltas.buffer.slice(deltas.byteOffset,deltas.byteOffset+deltas.byteLength),
+      weights:weights.buffer.slice(weights.byteOffset,weights.byteOffset+weights.byteLength),
+      lut:lut.buffer.slice(lut.byteOffset,lut.byteOffset+lut.byteLength)
+    });
+  }catch(error){
+    console.error(error);statusText.textContent="MaleCNS unavailable · synthetic DN fallback";
+    const dot=status.querySelector(".status-dot");dot.style.background="var(--red)";
+  }
+}
+function requestNeuralStep(){
+  if(neuralReady&&neuralWorker&&!workerBusy){
+    workerBusy=true;neuralWorker.postMessage({type:"step",retina:Array.from(retina)});
+  }else if(!neuralReady){
+    const t=performance.now()/900;
+    for(let i=0;i<8;i++)dn[i]=Math.sin(t*(.7+i*.09)+i*.8)*.24;
+  }
+}
+
+const rng=seededRandom(20260916);
+let W=Array.from({length:6},()=>Array.from({length:8},()=> (rng()*2-1)*.28));
+let bestW=W.map(row=>row.slice()),trialW=W.map(row=>row.slice()),bestEpisodeScore=-Infinity;
+function perturbFromBest(){
+  trialW=bestW.map(row=>row.map(v=>clamp(v+gaussian()*exploration,-1.8,1.8)));
+}
+function finishEpisode(now){
+  const score=episodeSamples?episodeScore/episodeSamples:match;
+  if(score>=bestEpisodeScore){bestEpisodeScore=score;bestW=trialW.map(r=>r.slice());}
+  episode++;episodeStart=now;episodeScore=0;episodeSamples=0;perturbFromBest();randomizeStart();
+}
+function randomizeStart(){
+  coeff=target.map((v,i)=>clamp(v+gaussian()*.52,-.9,.9));
+  if(Math.random()<.35)coeff=Array.from({length:6},()=>gaussian()*.26);
+  velocity.fill(0);
+}
+perturbFromBest();
+
+function shapeMatch(){
+  let mse=0;
+  for(let i=0;i<6;i++){const d=coeff[i]-target[i];mse+=d*d;}
+  mse/=6;
+  return Math.exp(-3.6*mse);
+}
+let hitLatched=false;
+function updateController(dt,now){
+  const actions=new Float32Array(6);
+  for(let k=0;k<6;k++){
+    let v=0;for(let j=0;j<8;j++)v+=trialW[k][j]*dn[j];
+    v+=gaussian()*exploration*.12;
+    actions[k]=Math.tanh(v);
+    velocity[k]=velocity[k]*.86+actions[k]*fourierGain*.14;
+    coeff[k]=clamp(coeff[k]+velocity[k]*dt,-.95,.95);
+  }
+  match=shapeMatch();
+  const hit=match>=HIT_THRESHOLD;
+  reward=Math.pow(match,6)+(hit?1:0);
+  if(hit&&!hitLatched){hits++;hitLatched=true;}
+  if(!hit&&match<HIT_THRESHOLD-.025)hitLatched=false;
+  bestMatch=Math.max(bestMatch,match);
+  episodeScore+=match;episodeSamples++;
+  if(now-episodeStart>=EPISODE_MS||hit)finishEpisode(now);
+}
+
+const dnGrid=document.getElementById("dnGrid"),dnBars=[],dnTexts=[];
+for(let i=0;i<8;i++){
+  const row=document.createElement("div");row.className="dn-row";
+  const label=document.createElement("span");label.textContent=`DN${i+1}`;
+  const bar=document.createElement("div");bar.className="bar";const fill=document.createElement("div");fill.className="fill";bar.appendChild(fill);
+  const text=document.createElement("span");text.textContent="0.00";
+  row.append(label,bar,text);dnGrid.appendChild(row);dnBars.push(fill);dnTexts.push(text);
+}
+const coefGrid=document.getElementById("coefGrid"),coefEls=[];
+for(let i=0;i<6;i++){
+  const box=document.createElement("div");box.className="coef";
+  const b=document.createElement("b");b.textContent=BASIS_LABELS[i];
+  const s=document.createElement("span");box.append(b,s);coefGrid.appendChild(box);coefEls.push(s);
+}
+function updateUi(){
+  document.getElementById("rewardValue").textContent=reward.toFixed(3);
+  document.getElementById("matchValue").textContent=match.toFixed(3);
+  document.getElementById("bestValue").textContent=bestMatch.toFixed(3);
+  document.getElementById("hitsValue").textContent=String(hits);
+  document.getElementById("latencyValue").textContent=neuralLatency?`${neuralLatency.toFixed(1)} ms`:"—";
+  document.getElementById("episodeLabel").textContent=`episode ${episode} · policy ${bestEpisodeScore>-Infinity?bestEpisodeScore.toFixed(3):"—"}`;
+  document.getElementById("hitChip").style.opacity=match>=HIT_THRESHOLD?"1":".45";
+  for(let i=0;i<8;i++){
+    dnBars[i].style.width=`${clamp((dn[i]+1)*.5)*100}%`;dnTexts[i].textContent=dn[i].toFixed(2);
+  }
+  for(let i=0;i<6;i++)coefEls[i].textContent=`${coeff[i].toFixed(2)} → ${target[i].toFixed(2)}`;
+}
+document.getElementById("pauseButton").addEventListener("click",e=>{paused=!paused;e.currentTarget.textContent=paused?"Resume":"Pause";});
+document.getElementById("resetButton").addEventListener("click",()=>{
+  const r=seededRandom(20260916);W=Array.from({length:6},()=>Array.from({length:8},()=> (r()*2-1)*.28));
+  bestW=W.map(r=>r.slice());trialW=W.map(r=>r.slice());bestEpisodeScore=-Infinity;episode=0;hits=0;bestMatch=0;episodeStart=performance.now();randomizeStart();
+});
+document.getElementById("randomizeButton").addEventListener("click",()=>{episodeStart=performance.now();randomizeStart();});
+document.getElementById("targetSelect").addEventListener("change",e=>{
+  targetKey=e.target.value;target=TARGETS[targetKey].coeff.slice();document.getElementById("targetName").textContent=TARGETS[targetKey].label;
+  bestEpisodeScore=-Infinity;bestMatch=0;episode=0;hits=0;episodeStart=performance.now();perturbFromBest();randomizeStart();deform(targetGeometry,targetOriginal,target);
+});
+document.getElementById("exploreRange").addEventListener("input",e=>{exploration=Number(e.target.value);document.getElementById("exploreLabel").textContent=`${Math.round(exploration*100)}%`;});
+document.getElementById("gainRange").addEventListener("input",e=>{fourierGain=Number(e.target.value);document.getElementById("gainLabel").textContent=fourierGain.toFixed(2);});
+
+let last=performance.now(),lastSense=0;
+function frame(now){
+  const dt=Math.min(.033,Math.max(.001,(now-last)/1000));last=now;
+  if(!paused){
+    if(now-lastSense>70){lastSense=now;sampleRetina();requestNeuralStep();}
+    updateController(dt,now);
+  }
+  deform(geometry,original,coeff);deform(targetGeometry,targetOriginal,target);
+  const y=heightAt(0,0,coeff)-.80;fly.position.y=y;fly.rotation.y+=dt*.45;
+  surface.rotation.y=Math.sin(now/7000)*.08;targetSurface.rotation.y=surface.rotation.y;
+  renderer.render(scene,camera);updateUi();requestAnimationFrame(frame);
+}
+deform(targetGeometry,targetOriginal,target);randomizeStart();loadMaleCns();requestAnimationFrame(frame);
+window.addEventListener("error",event=>console.error("FlyDoom Fourier error",event.error||event.message));
+</script>
+</body>
+</html>
