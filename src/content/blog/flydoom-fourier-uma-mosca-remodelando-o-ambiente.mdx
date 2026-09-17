@@ -1,0 +1,139 @@
+---
+type: "Blog Post"
+title: "FlyDoom Fourier: uma mosca remodelando o próprio ambiente 3D"
+description: "Um novo demo do FlyDoom usa a camada descendente do MaleCNS para controlar coeficientes de Fourier que deformam uma arena 3D. O reward aumenta quando o ambiente converge para um shape-alvo predeterminado."
+date: "2026-09-16"
+lang: pt
+translationKey: flydoom-fourier-shape-control
+tags: ["malecns", "conectoma", "doom", "fourier", "reinforcement-learning", "embodied-ai"]
+glyph: "🪰"
+---
+
+No FlyDoom original, a camada descendente do **MaleCNS** termina em comandos motores que movem a mosca.
+
+Neste experimento, trocamos a pergunta:
+
+> **e se a saída motora da mosca não movesse apenas o corpo, mas deformasse o próprio espaço em que ela está?**
+
+O demonstrador abaixo transforma a atividade dos neurônios descendentes em velocidades de coeficientes de uma base de Fourier. Esses coeficientes alteram continuamente o shape de uma arena 3D. Um segundo shape, mostrado como wireframe, é o alvo predeterminado. A recompensa cresce conforme a arena atual se aproxima desse alvo e recebe um bônus quando a similaridade passa de 97%.
+
+<div style="width: 100%; max-width: 1180px; margin: 2rem auto;">
+  <div style="display:flex;justify-content:flex-end;margin-bottom:.6rem;">
+    <a
+      href="/flydoom-fourier/"
+      target="_blank"
+      rel="noopener"
+      style="display:inline-block;padding:.55rem .8rem;border:1px solid #30363d;border-radius:8px;text-decoration:none;"
+    >
+      🚀 Abrir o demo em página própria ↗
+    </a>
+  </div>
+  <iframe
+    src="/flydoom-fourier/index.html"
+    width="100%"
+    height="980"
+    style="border: 2px solid #30363d; border-radius: 10px; background: #06090d;"
+    title="FlyDoom Fourier: MaleCNS controlando deformações de uma arena 3D"
+    loading="lazy"
+  ></iframe>
+</div>
+
+## O loop
+
+```text
+arena 3D deformável
+        ↓
+ câmera / retina de 32 colunas
+        ↓
+ grupos visuais do MaleCNS
+        ↓
+ recorrência do conectoma (165.122 neurônios)
+        ↓
+ 1.314 neurônios descendentes
+        ↓
+ 8 canais de leitura dos DNs
+        ↓
+ adapter treinável DN → Fourier
+        ↓
+ 6 coeficientes de deformação
+        ↓
+ novo shape da arena
+        ↓
+ similaridade com o shape-alvo
+        ↓
+ reward
+```
+
+O conectoma continua congelado. **Não estamos treinando os pesos do MaleCNS.** O único componente que aprende é a pequena projeção entre a camada descendente e os atuadores de Fourier.
+
+## Por que Fourier?
+
+Uma transformação de Fourier dá um vocabulário pequeno para mudanças globais de forma.
+
+Em vez de permitir que a mosca mova milhares de vértices individualmente, damos a ela seis “músculos geométricos”:
+
+- `sin(x)`
+- `cos(x)`
+- `sin(z)`
+- `cos(z)`
+- `sin(x + z)`
+- `cos(2x - z)`
+
+A soma desses modos produz uma superfície 3D contínua. Cada ação modifica a velocidade de um coeficiente.
+
+Isso cria uma espécie de corpo estendido: a camada descendente não termina numa perna ou asa, mas em **graus de liberdade do ambiente**.
+
+## O alvo e a recompensa
+
+O demo tem quatro shapes-alvo predeterminados: cratera, sela, crista diagonal e ilhas.
+
+A tela mostra ao mesmo tempo:
+
+- a superfície atual em azul;
+- o shape-alvo como wireframe violeta;
+- a atividade de oito canais descendentes;
+- os seis coeficientes atuais e seus valores-alvo;
+- similaridade, melhor similaridade, reward e número de acertos.
+
+O reward é deliberadamente simples: uma função contínua da distância entre os vetores de coeficientes, com bônus ao ultrapassar 97% de similaridade. Isso deixa o processo observável no navegador e evita esconder a função objetivo.
+
+## O que vem do MaleCNS de verdade
+
+O demo reutiliza diretamente os mesmos assets do FlyDoom:
+
+- `/flydoom/malecns_l3_compact.mcns`
+- `/flydoom/malecns_circuit.json`
+
+A recorrência é executada no navegador em um Web Worker. O frame renderizado da arena é comprimido em 32 colunas visuais e projetado nos grupos visuais já mapeados. Depois de cada step do conectoma, os neurônios descendentes são agregados em oito buckets determinísticos e entregues ao adapter.
+
+Essa divisão em oito buckets **não é uma nova anatomia biológica**. É apenas uma forma de preservar mais dimensionalidade da camada descendente do que a leitura esquerda/direita usada em demos anteriores.
+
+## A parte treinável
+
+A projeção `DN → Fourier` começa com pesos pequenos.
+
+Cada episódio testa uma versão perturbada desses pesos. Se a política melhora a similaridade média com o alvo, ela passa a ser a nova base para a próxima perturbação. É um hill-climber mínimo, colocado fora do cérebro.
+
+Essa separação é importante:
+
+```text
+MaleCNS recorrente = fixo
+DN → Fourier       = treinável
+arena + reward     = ambiente artificial
+```
+
+Portanto, este demo não diz que uma mosca biológica conhece séries de Fourier ou sabe remodelar superfícies. Ele testa uma ideia arquitetural mais estreita: **se usarmos a camada descendente de um conectoma real como estado de controle, ela pode alimentar um adapter que aprende a manipular um espaço físico de baixa dimensão?**
+
+## Próximo experimento
+
+A versão realmente interessante é comparar três controladores sob as mesmas condições:
+
+1. MaleCNS congelado;
+2. reservoir aleatório com o mesmo número de canais efetivos;
+3. uma rede pequena treinável com orçamento de parâmetros equivalente.
+
+Mesmos seeds, mesmos shapes, mesmo número de steps, mesmo adapter e mesma função de reward.
+
+A pergunta útil deixa de ser “a mosca conseguiu?” e passa a ser:
+
+> **há alguma vantagem mensurável em usar a dinâmica recorrente do conectoma como estado intermediário para controlar transformações geométricas?**
