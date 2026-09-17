@@ -1,0 +1,50 @@
+name: Format FlyDoom Morph
+
+on:
+  push:
+    branches:
+      - feat/flydoom-morph-body
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: feat/flydoom-morph-body
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Fix spike axis
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('public/flydoom-fourier/index.html')
+          s = p.read_text()
+          old = 'return new THREE.Vector3(r*(.7+.4*tail),l,r*(.7+.4*tail));'
+          new = 'return new THREE.Vector3(r*(.7+.4*tail),r*(.7+.4*tail),l);'
+          if old in s:
+              p.write_text(s.replace(old, new, 1))
+          PY
+      - name: Format changed files
+        run: >-
+          npx prettier --write
+          public/flydoom-fourier/index.html
+          src/content/blog/flydoom-fourier-uma-mosca-remodelando-o-ambiente.mdx
+          changelog/changes/flydoom-fourier-shape-control.md
+      - name: Commit formatting
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/flydoom-fourier/index.html src/content/blog/flydoom-fourier-uma-mosca-remodelando-o-ambiente.mdx changelog/changes/flydoom-fourier-shape-control.md
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "style: format FlyDoom Morph files"
+          git push origin HEAD:feat/flydoom-morph-body
