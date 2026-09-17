@@ -475,7 +475,6 @@
               <div class="row">
                 <button class="primary" id="pauseButton">Pause</button>
                 <button id="resetButton">Reset</button>
-                <button class="warn" id="randomizeButton">New start</button>
               </div>
               <label class="control"
                 ><span class="control-line"
@@ -965,7 +964,6 @@ self.onmessage=function(event){
         episodeScore = 0;
         episodeSamples = 0;
         perturbFromBest();
-        randomizeStart();
       }
       function randomizeStart() {
         coeff = target.map((v, i) => clamp(v + gaussian() * 0.52, -0.9, 0.9));
@@ -1006,7 +1004,7 @@ self.onmessage=function(event){
         bestMatch = Math.max(bestMatch, match);
         episodeScore += match;
         episodeSamples++;
-        if (now - episodeStart >= EPISODE_MS || hit) finishEpisode(now);
+        if (now - episodeStart >= EPISODE_MS) finishEpisode(now);
       }
 
       const dnGrid = document.getElementById("dnGrid"),
@@ -1077,14 +1075,13 @@ self.onmessage=function(event){
         hits = 0;
         bestMatch = 0;
         episodeStart = performance.now();
+        episodeScore = 0;
+        episodeSamples = 0;
+        hitLatched = false;
+        reward = 0;
+        match = 0;
         randomizeStart();
       });
-      document
-        .getElementById("randomizeButton")
-        .addEventListener("click", () => {
-          episodeStart = performance.now();
-          randomizeStart();
-        });
       document
         .getElementById("targetSelect")
         .addEventListener("change", (e) => {
@@ -1092,13 +1089,6 @@ self.onmessage=function(event){
           target = TARGETS[targetKey].coeff.slice();
           document.getElementById("targetName").textContent =
             TARGETS[targetKey].label;
-          bestEpisodeScore = -Infinity;
-          bestMatch = 0;
-          episode = 0;
-          hits = 0;
-          episodeStart = performance.now();
-          perturbFromBest();
-          randomizeStart();
           deform(targetGeometry, targetOriginal, target);
         });
       document.getElementById("exploreRange").addEventListener("input", (e) => {
