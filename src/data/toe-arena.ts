@@ -32,16 +32,16 @@ export const toeTheories: ToeTheory[] = [
     strengths: [
       "Includes a quantum graviton naturally and has a broad framework for gauge interactions.",
       "Large body of technically mature work, dualities, black-hole microstate calculations, and links to quantum field theory.",
-      "Offers one of the broadest existing unification programmes rather than only a quantization of gravity."
+      "Offers one of the broadest existing unification programmes rather than only a quantization of gravity.",
     ],
     openProblems: [
       "No direct experimental confirmation of string-specific physics.",
       "Vacuum selection / landscape makes a unique route to the observed Standard Model difficult.",
-      "Many characteristic effects are expected near scales that are hard to probe directly."
+      "Many characteristic effects are expected near scales that are hard to probe directly.",
     ],
     sourceLabel: "Living Reviews / string-theory literature",
     sourceUrl: "https://arxiv.org/abs/hep-th/9810188",
-    note: "Opening-season placement: mature benchmark contender, but A rather than S because empirical discrimination remains the central gap."
+    note: "Opening-season placement: mature benchmark contender, but A rather than S because empirical discrimination remains the central gap.",
   },
   {
     slug: "loop-quantum-gravity",
@@ -55,17 +55,17 @@ export const toeTheories: ToeTheory[] = [
     strengths: [
       "Mathematically developed background-independent quantization of geometry.",
       "Concrete results for geometric spectra and extensive work on black holes and cosmology.",
-      "Long-running independent research programme with many formulations and applications."
+      "Long-running independent research programme with many formulations and applications.",
     ],
     openProblems: [
       "Dynamics and the recovery of smooth low-energy spacetime remain central issues.",
       "Standard Model matter and full force unification are not automatically delivered by the core framework.",
-      "Distinctive experimentally accessible signatures remain difficult to isolate."
+      "Distinctive experimentally accessible signatures remain difficult to isolate.",
     ],
     sourceLabel: "Carlo Rovelli, Loop Quantum Gravity",
     sourceUrl: "https://arxiv.org/abs/gr-qc/9710008",
     sourceDate: "1997-10-01",
-    note: "A as a quantum-gravity programme; the Arena displays the scope limitation explicitly rather than pretending every contender solves the same problem."
+    note: "A as a quantum-gravity programme; the Arena displays the scope limitation explicitly rather than pretending every contender solves the same problem.",
   },
   {
     slug: "asymptotic-safety",
@@ -79,16 +79,16 @@ export const toeTheories: ToeTheory[] = [
     strengths: [
       "Uses the established language of quantum field theory and renormalization-group flow.",
       "Substantial non-perturbative calculation programme and active phenomenology.",
-      "Potentially conservative UV completion without requiring a wholly new microscopic ontology."
+      "Potentially conservative UV completion without requiring a wholly new microscopic ontology.",
     ],
     openProblems: [
       "The existence and properties of the required fixed point must survive truncation/systematic-control questions.",
       "A complete, compelling derivation of observed matter content and parameters remains open.",
-      "Phenomenological signals are not yet decisive evidence for the framework."
+      "Phenomenological signals are not yet decisive evidence for the framework.",
     ],
     sourceLabel: "Andrea Spina, Black Holes in Asymptotic Safety (review)",
     sourceUrl: "https://arxiv.org/abs/2510.14552",
-    sourceDate: "2025-10-16"
+    sourceDate: "2025-10-16",
   },
   {
     slug: "causal-dynamical-triangulations",
@@ -102,16 +102,17 @@ export const toeTheories: ToeTheory[] = [
     strengths: [
       "Direct computational access to a non-perturbative Planckian regime.",
       "Emergent de Sitter-like large-scale geometry and scale-dependent spectral dimension are concrete outputs.",
-      "Clear numerical programme with increasingly refined observables."
+      "Clear numerical programme with increasingly refined observables.",
     ],
     openProblems: [
       "Continuum limit and connection to complete low-energy physics remain active research questions.",
       "Matter and Standard Model unification are not part of the core success story.",
-      "Current quantitative results do not yet amount to experimentally unique predictions."
+      "Current quantitative results do not yet amount to experimentally unique predictions.",
     ],
-    sourceLabel: "Ambjørn & Loll, Causal Dynamical Triangulations: Gateway to Nonperturbative Quantum Gravity",
+    sourceLabel:
+      "Ambjørn & Loll, Causal Dynamical Triangulations: Gateway to Nonperturbative Quantum Gravity",
     sourceUrl: "https://arxiv.org/abs/2401.09399",
-    sourceDate: "2024-01-17"
+    sourceDate: "2024-01-17",
   },
   {
     slug: "lim-lqg-toe-2026",
@@ -125,17 +126,18 @@ export const toeTheories: ToeTheory[] = [
     strengths: [
       "Explicit recent attempt at the exact ToE problem rather than only quantum gravity.",
       "Mathematical construction is concrete enough to expose claims and possible failure modes.",
-      "Connects established gauge-theory and loop-quantization machinery."
+      "Connects established gauge-theory and loop-quantization machinery.",
     ],
     openProblems: [
       "Very recent and not yet a mature independently developed research programme.",
       "No established empirical evidence discriminating it from other approaches.",
-      "The route from the construction to the observed detailed Standard Model spectrum and low-energy phenomenology requires much more development."
+      "The route from the construction to the observed detailed Standard Model spectrum and low-energy phenomenology requires much more development.",
     ],
-    sourceLabel: "Adrian P. C. Lim, From Loop Quantum Gravity to a Theory of Everything",
+    sourceLabel:
+      "Adrian P. C. Lim, From Loop Quantum Gravity to a Theory of Everything",
     sourceUrl: "https://arxiv.org/abs/2601.03292",
     sourceDate: "2026-01-05",
-    note: "This is the opening season's 'new challenger': high-interest, conservative scientific placement pending independent scrutiny."
+    note: "This is the opening season's 'new challenger': high-interest, conservative scientific placement pending independent scrutiny.",
   },
   {
     slug: "informational-time",
@@ -149,34 +151,35 @@ export const toeTheories: ToeTheory[] = [
     strengths: [
       "Explicit operational quantities and proposed falsifiable experiments.",
       "Carefully separates causal, representational, physical, algorithmic, and semantic claims.",
-      "Useful bridge between information, agency, compression, and causal depth."
+      "Useful bridge between information, agency, compression, and causal depth.",
     ],
     openProblems: [
       "The quantities still require empirical measurement in natural or artificial systems.",
       "It does not claim to unify gravity with the Standard Model or replace physical time.",
-      "As a position paper, its central experimental programme is still prospective."
+      "As a position paper, its central experimental programme is still prospective.",
     ],
     sourceLabel: "Franklin Baldo, Time as Concatenation",
-    sourceUrl: "https://github.com/franklinbaldo/papers/blob/main/informational_time.md",
+    sourceUrl:
+      "https://github.com/franklinbaldo/papers/blob/main/informational_time.md",
     sourceDate: "2026-07-30",
-    note: "NR is intentional: the paper itself says its scope is narrower than a general metaphysics or replacement for physical time."
-  }
+    note: "NR is intentional: the paper itself says its scope is narrower than a general metaphysics or replacement for physical time.",
+  },
 ];
 
 export const openingClashes = [
   {
     title: "String theory × Loop quantum gravity",
     battleground: "scope vs. background independence",
-    body: "String theory brings a much broader unification programme; loop quantum gravity builds background independence directly into its quantization of geometry. The clash does not produce a winner: it exposes that they optimize for different bottlenecks."
+    body: "String theory brings a much broader unification programme; loop quantum gravity builds background independence directly into its quantization of geometry. The clash does not produce a winner: it exposes that they optimize for different bottlenecks.",
   },
   {
     title: "Asymptotic safety × Causal dynamical triangulations",
     battleground: "continuum RG vs. lattice emergence",
-    body: "Asymptotic safety attacks ultraviolet completion through renormalization-group structure; CDT constructs a causal lattice path integral and asks whether continuum spacetime emerges. A decisive bridge would be evidence that both descriptions converge on the same universality class."
+    body: "Asymptotic safety attacks ultraviolet completion through renormalization-group structure; CDT constructs a causal lattice path integral and asks whether continuum spacetime emerges. A decisive bridge would be evidence that both descriptions converge on the same universality class.",
   },
   {
     title: "Lim 2026 × established programmes",
     battleground: "new explicit unification claim vs. maturity",
-    body: "The 2026 proposal gets credit for tackling force-plus-gravity unification explicitly, but it enters below mature programmes until independent calculations, low-energy recovery, and discriminating predictions accumulate. Novelty raises interest tier, not scientific tier."
-  }
+    body: "The 2026 proposal gets credit for tackling force-plus-gravity unification explicitly, but it enters below mature programmes until independent calculations, low-energy recovery, and discriminating predictions accumulate. Novelty raises interest tier, not scientific tier.",
+  },
 ];
