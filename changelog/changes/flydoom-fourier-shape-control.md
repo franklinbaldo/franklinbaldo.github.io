@@ -1,12 +1,14 @@
 ---
 type: changelog
 date: 2026-09-16
-description: Add FlyDoom Fourier, a MaleCNS descending-layer demo that learns to deform a 3D arena toward predefined Fourier shape targets.
-tags: [flydoom, malecns, fourier, simulation, reinforcement-learning, 3d]
+description: FlyDoom Morph turns the fly into a segmented 3D body controlled through the MaleCNS descending layer, with dense reward and sequential spatial goals.
+tags: [flydoom, malecns, morphogenesis, simulation, reinforcement-learning, 3d]
 ---
 
-# FlyDoom Fourier
+# FlyDoom Morph
 
-Adds `/flydoom-fourier/` and a Portuguese blog post embedding the demo.
+Reworks `/flydoom-fourier/` from a deformable terrain into a segmented 3D body.
 
-The browser experiment reuses the existing compact MaleCNS assets, compresses the rendered arena into 32 visual columns, reads 1,314 descending neurons through eight deterministic buckets, and trains only a small DN-to-Fourier adapter. Six Fourier coefficients deform a 3D terrain toward one of four target shapes. The UI exposes descending activity, current/target coefficients, similarity, reward, hit count, and MaleCNS step latency.
+The browser experiment still reuses the compact MaleCNS assets and reads 1,314 descending neurons through eight deterministic buckets, but now trains a small `DN(8) → latent(16)` adapter. A fixed dense coupling matrix projects those latent actions into up to 140 active morphology genes across 14 segments. Segment families can switch among capsule, orb, fin, spike, and ring according to a session-specific vocabulary.
+
+Reward is gradual: shape similarity, distance to the current spatial goal, and frame-to-frame progress are combined continuously. Reaching one goal advances to the next position without resetting the body. `Reset memory` clears only learned policy state; `New target shape` changes the target body and its waypoint sequence while preserving the learned policy.
