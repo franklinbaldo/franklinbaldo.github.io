@@ -15,90 +15,13 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           ref: fix/flydoom-fourier-manual-reset
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
       - name: Patch reset semantics
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          path = Path('public/flydoom-fourier/index.html')
-          text = path.read_text()
-
-          old = '''      function finishEpisode(now) {
-        const score = episodeSamples ? episodeScore / episodeSamples : match;
-        if (score >= bestEpisodeScore) {
-          bestEpisodeScore = score;
-          bestW = trialW.map((r) => r.slice());
-        }
-        episode++;
-        episodeStart = now;
-        episodeScore = 0;
-        episodeSamples = 0;
-        perturbFromBest();
-        randomizeStart();
-      }'''
-          new = '''      function finishEpisode(now) {
-        const score = episodeSamples ? episodeScore / episodeSamples : match;
-        if (score >= bestEpisodeScore) {
-          bestEpisodeScore = score;
-          bestW = trialW.map((r) => r.slice());
-        }
-        episode++;
-        episodeStart = now;
-        episodeScore = 0;
-        episodeSamples = 0;
-        perturbFromBest();
-      }'''
-          assert old in text
-          text = text.replace(old, new, 1)
-
-          old = '        if (now - episodeStart >= EPISODE_MS || hit) finishEpisode(now);'
-          new = '        if (now - episodeStart >= EPISODE_MS) finishEpisode(now);'
-          assert old in text
-          text = text.replace(old, new, 1)
-
-          old = '                <button class="warn" id="randomizeButton">New start</button>\n'
-          assert old in text
-          text = text.replace(old, '', 1)
-
-          old = '''      document
-        .getElementById("randomizeButton")
-        .addEventListener("click", () => {
-          episodeStart = performance.now();
-          randomizeStart();
-        });
-'''
-          assert old in text
-          text = text.replace(old, '', 1)
-
-          old = '''          bestEpisodeScore = -Infinity;
-          bestMatch = 0;
-          episode = 0;
-          hits = 0;
-          episodeStart = performance.now();
-          perturbFromBest();
-          randomizeStart();
-          deform(targetGeometry, targetOriginal, target);'''
-          new = '''          deform(targetGeometry, targetOriginal, target);'''
-          assert old in text
-          text = text.replace(old, new, 1)
-
-          old = '''        episodeStart = performance.now();
-        randomizeStart();
-      });'''
-          new = '''        episodeStart = performance.now();
-        episodeScore = 0;
-        episodeSamples = 0;
-        hitLatched = false;
-        reward = 0;
-        match = 0;
-        randomizeStart();
-      });'''
-          assert old in text
-          text = text.replace(old, new, 1)
-
-          path.write_text(text)
-          PY
+        run: python scripts/patch_flydoom_manual_reset.py
       - name: Format
         run: npx prettier --write public/flydoom-fourier/index.html
       - name: Commit patch
