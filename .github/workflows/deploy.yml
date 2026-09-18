@@ -48,6 +48,16 @@ jobs:
       - run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Publish Hrönir Parquet dataset
+        run: >-
+          uv run --with duckdb
+          python scripts/json-to-parquet.py
+          dist/data/hronir.json
+          dist/data/hronir.parquet
+
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: dist
