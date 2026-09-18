@@ -8,7 +8,7 @@ import {
   createCurriculumTarget,
   curriculumStage,
   maskActions,
-  maskFeatures,
+  maskSignals,
   stateAwareReward,
   stateDiscomfortPenalty,
   applyActions,
@@ -130,26 +130,31 @@ test("actions integrate through bounded dynamics instead of teleporting", () => 
   assert.ok(state.tx > firstTx);
 });
 
-test("curriculum starts with exactly one actuator and one sensory family", () => {
+test("curriculum starts with exactly one actuator and one scalar sensory signal", () => {
   const stage = curriculumStage(32, 0);
 
   assert.equal(stage.activeActions.length, 1);
+  assert.equal(stage.activeSignalIndices.length, 1);
   assert.equal(stage.activeFeatures.length, 1);
   assert.equal(stage.unlockedActionLabel, "fourier-1");
   assert.equal(stage.unlockedFeatureLabel, "height");
 });
 
-test("curriculum adds one actuator per stage and only one new sensory family until all six exist", () => {
+test("curriculum adds exactly one actuator and one scalar signal per stage", () => {
   const first = curriculumStage(32, 0);
   const second = curriculumStage(32, 1);
   const sixth = curriculumStage(32, 5);
   const seventh = curriculumStage(32, 6);
 
   assert.equal(second.activeActions.length, first.activeActions.length + 1);
-  assert.equal(second.activeFeatures.length, first.activeFeatures.length + 1);
-  assert.equal(sixth.activeFeatures.length, 6);
-  assert.equal(seventh.activeFeatures.length, 6);
+  assert.equal(
+    second.activeSignalIndices.length,
+    first.activeSignalIndices.length + 1,
+  );
+  assert.equal(sixth.activeSignalIndices.length, 6);
+  assert.equal(seventh.activeSignalIndices.length, 7);
   assert.equal(seventh.activeActions.length, 7);
+  assert.equal(new Set(seventh.activeSignalIndices).size, 7);
 });
 
 test("curriculum target preserves solved dimensions while adding a new one", () => {
@@ -162,7 +167,7 @@ test("curriculum target preserves solved dimensions while adding a new one", () 
   assert.notEqual(stage1.coeff[1], 0);
 });
 
-test("inactive actuators and sensory families are hard-masked", () => {
+test("inactive actuators and scalar sensory signals are hard-masked", () => {
   const actions = new Float32Array(37).fill(0.5);
   const maskedActions = maskActions(actions, [36]);
   assert.equal(maskedActions[36], 0.5);
@@ -170,12 +175,14 @@ test("inactive actuators and sensory families are hard-masked", () => {
   assert.equal(maskedActions[35], 0);
 
   const features = new Float32Array(SENSOR_CELLS * FEATURE_COUNT).fill(0.5);
-  const maskedFeatures = maskFeatures(features, [3], FEATURE_COUNT);
-  for (let cell = 0; cell < SENSOR_CELLS; cell++) {
-    for (let feature = 0; feature < FEATURE_COUNT; feature++) {
-      const value = maskedFeatures[cell * FEATURE_COUNT + feature];
-      assert.equal(value, feature === 3 ? 0.5 : 0);
-    }
+  const activeSignals = [3, FEATURE_COUNT + 1];
+  const maskedFeatures = maskSignals(features, activeSignals);
+
+  for (let index = 0; index < maskedFeatures.length; index++) {
+    assert.equal(
+      maskedFeatures[index],
+      activeSignals.includes(index) ? 0.5 : 0,
+    );
   }
 });
 
