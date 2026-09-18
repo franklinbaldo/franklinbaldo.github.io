@@ -47,7 +47,7 @@ let targetSeed = 20260918;
 let current = createState(MODES.length);
 let target = createTarget(MODES, targetSeed, difficulty);
 let dynamics = createDynamics(MODES.length);
-let readout = createReadout(ACTION_COUNT, 16, 20260918);
+let readout = createReadout(ACTION_COUNT, 32, 20260918);
 let featureGain = new Float32Array([1.6, 1.2, 1.2, 1.0, 1.3, 0.9]);
 let heldActions = new Float32Array(ACTION_COUNT);
 let previousHidden = null;
@@ -97,7 +97,7 @@ function resetCurrent({ resetLearning = false } = {}) {
   reward = 0;
 
   if (resetLearning) {
-    readout = createReadout(ACTION_COUNT, 16, targetSeed);
+    readout = createReadout(ACTION_COUNT, 32, targetSeed);
     featureGain = new Float32Array([1.6, 1.2, 1.2, 1.0, 1.3, 0.9]);
     hits = 0;
     scoreHistory.length = 0;
@@ -380,7 +380,7 @@ async function loadMaleCns() {
         workerBusy = false;
         neuralLatency = msg.latency;
         const dnValues = new Float32Array(msg.dnValues);
-        const hidden = projectDn(dnValues, 16);
+        const hidden = projectDn(dnValues, 32);
         const actionNoise = makeNoise(ACTION_COUNT, OUTPUT_SIGMA);
         heldActions = readoutActions(readout, hidden, actionNoise);
         previousHidden = hidden;
