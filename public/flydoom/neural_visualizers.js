@@ -226,7 +226,7 @@
   }
 
   register("cloud", "Activity cloud", drawCloud, "topological live cloud · not anatomical geometry");
-  register("raster", "Spike raster", makeRaster(), "sampled units × time");
+  register("raster", "Activity raster", makeRaster(), "sampled activity × time");
   register("bars", "Populations", drawBars, "Frank-style signal → activity view");
   register("sensory", "Sensory field", drawSensory, "green=input · violet=secondary/error");
 
