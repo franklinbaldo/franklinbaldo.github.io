@@ -29,6 +29,30 @@ export function boundVelocity(value, mode, complexity = 0.55) {
   return clamp(value, -limit, limit);
 }
 
+export function exponentialPrecisionPotential(
+  value,
+  target = 1,
+  beta = 10,
+) {
+  const safeTarget = Math.max(1e-9, target);
+  const x = clamp(value / safeTarget, 0, 1);
+  const denominator = Math.expm1(beta);
+  if (!Number.isFinite(denominator) || denominator <= 0) return x;
+  return Math.expm1(beta * x) / denominator;
+}
+
+export function exponentialPrecisionDelta(
+  currentValue,
+  previousValue,
+  target = 1,
+  beta = 10,
+) {
+  return (
+    exponentialPrecisionPotential(currentValue, target, beta) -
+    exponentialPrecisionPotential(previousValue, target, beta)
+  );
+}
+
 export function normalizedSpectralRms(
   coeff,
   modes,
