@@ -1,26 +1,22 @@
 ---
 type: okf-type-spec
-filename: paper.md
 title: "OKF Type: paper"
-description: "Normative spec for the public Papers portfolio cards"
+description: "Normative spec for public Papers portfolio cards"
 resource: okf-type:paper
 tags: [okf, paper, portfolio, research, spec]
-timestamp: "2026-09-18T00:00:00Z"
 ---
 
 # OKF Type: `paper`
 
 A `paper` card is the canonical knowledge record used by the public `/papers` portfolio.
 
-The Markdown card is the source of truth. Astro pages, TypeScript projections, counts, tier boards and summaries MUST be derived from these cards rather than maintained as a second semantic authority.
+The card MUST contain knowledge, not template ceremony. Do not add fields or body text merely because other cards have them.
 
 ## Required fields
 
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `type` | string | Always `paper` |
-| `order` | integer | Stable editorial display order within the portfolio |
-| `file` | string | Paper path in `franklinbaldo/papers` |
 | `title` | string | Public display title |
 | `family` | string | Research family / programme |
 | `kind` | string | Conceptual, empirical, formal, legal, computational, etc. |
@@ -30,19 +26,33 @@ The Markdown card is the source of truth. Astro pages, TypeScript projections, c
 | `idea` | string | Plain-language central idea |
 | `status` | string | Current evidence/maturity state |
 | `limit` | string | Main limitation, falsifier, or open question |
-| `updated` | date | Last material portfolio review |
 
 ## Optional fields
 
+Optional means semantically optional, not boilerplate to be filled with empty/default values.
+
 | Field | Type | Meaning |
 | --- | --- | --- |
-| `source_url` | string | Override URL when the canonical paper is not on `main` |
-| `related_file` | string | Related audit/companion file in `franklinbaldo/papers` |
-| `related_label` | string | Human-readable label for `related_file` |
+| `source_url` | string | Only when the canonical source cannot be derived from the card slug |
+| `related_file` | string | Only when a specific audit/companion file materially helps the reader |
 
-## Identity and storage
+## Identity and derived values
 
-Each paper MUST occupy exactly one card under `knowledge/papers/`. The card filename is a stable slug. Do not put multiple papers into one card.
+Each paper occupies exactly one card under `knowledge/papers/`. The filename without `.md` is the stable slug.
+
+By default, the canonical paper filename is derived as `<slug>.md` in `franklinbaldo/papers`. Do not repeat it as a `file` field.
+
+Display order is a UI concern and MUST NOT be stored as `order` in a knowledge card. The projection may use a deterministic sort or page-level grouping.
+
+Do not require `updated` merely to record that an automation touched the card. Add temporal data only when the date itself is material knowledge.
+
+## Body
+
+The Markdown body MAY be empty. Do not repeat the title, type, repository location, or generic text such as “canonical card”.
+
+Use the body only when the paper needs substantive knowledge that is genuinely clearer as prose than as structured front matter.
+
+## No duplicate authority
 
 Do not add or update an individual paper by editing a hardcoded array in `src/pages/papers.astro`, a JSON catalog, or another parallel store. Any TypeScript module is a build-time projection only.
 
