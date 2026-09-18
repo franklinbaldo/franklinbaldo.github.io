@@ -20,6 +20,7 @@ import {
   progressReward,
   projectDn,
   readoutActions,
+  spectralLimit,
   stateDiscomfortPenalty,
   surfaceHeight,
   updateReadout,
@@ -372,8 +373,9 @@ function drawSpectrum(context, width, height) {
       count === 1
         ? width * 0.5
         : pad + (orderIndex / (count - 1)) * usable;
-    drawStem(x, target.coeff[actionIndex], "#d67cff", -2);
-    drawStem(x, current.coeff[actionIndex], "#73d8ff", 2);
+    const limit = Math.max(1e-6, spectralLimit(MODES[actionIndex]));
+    drawStem(x, target.coeff[actionIndex] / limit, "#d67cff", -2);
+    drawStem(x, current.coeff[actionIndex] / limit, "#73d8ff", 2);
 
     context.fillStyle = "#8fa0ae";
     context.font = `${Math.max(10, width / 55)}px ui-monospace, monospace`;
