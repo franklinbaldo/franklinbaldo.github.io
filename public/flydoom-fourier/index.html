@@ -412,9 +412,11 @@
           <p class="lede">
             A mosca vê uma arena 3D deformável. O conectoma MaleCNS processa o
             quadro; 1.314 neurônios descendentes formam um espaço latente de
-            controle que é interpolado para até 4.096 atuadores de Fourier.
+            controle: 1.311 canais alimentam até 4.096 atuadores de Fourier,
+            e 3 meta-atuadores controlam translação X/Z e resolução da grid.
             O usuário controla separadamente o número de atuadores e a resolução
-            física da grid, além da complexidade do target. Eles não competem:
+            física da grid, além da complexidade do target. Current e target têm
+            a mesma transformação X/Z. Eles não competem:
             ambos podem crescer; o custo científico aparece na carga de controle
             imposta aos 1.314 DNs. Um meta-atuador descendente adicional escolhe
             dinamicamente a resolução efetiva da grid dentro do teto definido
@@ -477,6 +479,10 @@
             <div class="metric">
               <div class="metric-label">grid actuator</div>
               <div class="metric-value" id="gridActuatorValue">0.00</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">translation</div>
+              <div class="metric-value" id="translationValue">0,0 → 0,0</div>
             </div>
             <div class="metric">
               <div class="metric-label">MaleCNS step</div>
@@ -615,15 +621,20 @@
         <strong>Contrato científico do demo.</strong> A recorrência é o MaleCNS
         compactado já usado pelo FlyDoom. A visão egocêntrica, a aferência
         artificial de erro morfológico espacial e o decoder
-        <code>1.314 DN → 1.314 latentes → N Fourier</code> são artificiais.
+        <code>1.314 DN → 1.311 latentes de shape + 3 meta-atuadores → N Fourier</code> são artificiais.
         <code>N</code> é controlável entre 16 e 4.096 nesta demo e pode exceder
         o número de DNs por interpolação. A resolução física da grid é um
         parâmetro independente (16×16 a 128×128): grid e atuadores podem crescer
-        simultaneamente. O usuário define o teto da grid e um meta-atuador
-        descendente escolhe a resolução efetiva durante a tarefa. A razão
-        <code>N / 1.314</code> é exibida como
+        simultaneamente. O usuário define o teto da grid; três meta-atuadores
+        descendentes controlam translação X/Z da superfície atual e a resolução
+        efetiva durante a tarefa. O target usa exatamente o mesmo espaço de
+        translação. A razão <code>N / 1.311</code> é exibida como
         <em>control load</em>; quando ela cresce, o mesmo espaço descendente precisa
-        coordenar mais graus de liberdade. O conectoma fica congelado;
+        coordenar mais graus de liberdade. O <em>shape match</em> é calculado no
+        estado Fourier completo e na translação, com termo de pior modo; não por
+        uma grade esparsa de pontos, impedindo aliasing/reward hacking por picos
+        entre amostras. Cada modo também tem orçamento de amplitude e velocidade
+        que decai com a frequência. O conectoma fica congelado;
         o erro espacial entra como aferência sensorial local. Além do reward
         global, cada uma das 32 regiões recebe reward próprio: melhora local é
         positiva; erro residual e worsening são negativos. Esse vetor regional
@@ -642,6 +653,12 @@
     <script src="../flydoom/neural_visualizers.js"></script>
     <script type="module">
       import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+      import {
+        boundCoefficient,
+        boundVelocity,
+        robustShapeMatch,
+        spectralEnvelopeForMode,
+      } from "./control_core.js";
 
       const clamp = (v, lo = 0, hi = 1) => Math.min(hi, Math.max(lo, v));
       const TAU = Math.PI * 2;
@@ -660,6 +677,8 @@
         };
       }
       const DN_LATENT_DOF = 1314;
+      const META_ACTUATOR_COUNT = 3;
+      const SHAPE_LATENT_DOF = DN_LATENT_DOF - META_ACTUATOR_COUNT;
       const MAX_DOF = 4096;
       const DEFAULT_DOF = 256;
       const DEFAULT_GRID = 64;
@@ -706,7 +725,11 @@
         targetKey = "crater",
         targetSeed = 20260918,
         targetOffsetX = 0,
-        targetOffsetZ = 0;
+        targetOffsetZ = 0,
+        currentOffsetX = 0,
+        currentOffsetZ = 0,
+        currentOffsetVelocityX = 0,
+        currentOffsetVelocityZ = 0;
 
       function seededGaussian(rng) {
         let u = 0, v = 0;
@@ -716,10 +739,7 @@
       }
 
       function spectralEnvelope(mode, complexity = targetComplexity) {
-        const cutoff = 1.8 + complexity * 23;
-        const slope = 1.35 - complexity * 0.65;
-        return Math.exp(-Math.pow(mode.freq / cutoff, 1.35)) /
-          Math.pow(Math.max(1, mode.freq), slope);
+        return spectralEnvelopeForMode(mode, complexity);
       }
 
       function targetCoefficients(kind = targetKey, seed = targetSeed) {
@@ -895,6 +915,10 @@
         return y * (1.36 / Math.sqrt(Math.max(1, n / 6)));
       }
 
+      function currentHeightAt(x, z) {
+        return heightAt(x - currentOffsetX, z - currentOffsetZ, coeff);
+      }
+
       function targetHeightAt(x, z) {
         return heightAt(x - targetOffsetX, z - targetOffsetZ, target);
       }
@@ -1006,7 +1030,7 @@
           const z = clamp(originZ + fz * forward + rz * lateral, -5.4, 5.4);
           localSampleX[i] = x;
           localSampleZ[i] = z;
-          const currentH = heightAt(x, z, coeff);
+          const currentH = currentHeightAt(x, z);
           const targetH = targetHeightAt(x, z);
           const signed = clamp((targetH - currentH) / 2.5, -1, 1);
           const absErr = Math.abs(signed);
@@ -1299,9 +1323,7 @@ self.onmessage=function(event){
         return latent[lo] * (1 - smooth) + latent[hi] * smooth;
       }
 
-      function updateGridActuator(now, latent, latentCount) {
-        if (!latentCount) return;
-        const source = latent[Math.min(latentCount - 1, DN_LATENT_DOF - 1)] || 0;
+      function updateGridActuator(now, source) {
         gridActuator = gridActuator * 0.9 + source * 0.1;
         const normalized = clamp((gridActuator + 1) * 0.5);
         const desired = Math.round(
@@ -1315,41 +1337,85 @@ self.onmessage=function(event){
           gridResolution = nextResolution;
           lastGridRebuild = now;
           rebuildGrid();
-          deform(geometry, original, coeff);
           deform(
-          targetGeometry,
-          targetOriginal,
-          target,
-          targetOffsetX,
-          targetOffsetZ
-        );
+            geometry,
+            original,
+            coeff,
+            currentOffsetX,
+            currentOffsetZ
+          );
+          deform(
+            targetGeometry,
+            targetOriginal,
+            target,
+            targetOffsetX,
+            targetOffsetZ
+          );
         }
+      }
+
+      function updateMetaActuators(now, dt, latent, latentCount) {
+        if (latentCount < META_ACTUATOR_COUNT) return latentCount;
+        const shapeLatentCount = latentCount - META_ACTUATOR_COUNT;
+        const xAction = latent[shapeLatentCount] || 0;
+        const zAction = latent[shapeLatentCount + 1] || 0;
+        const gridAction = latent[shapeLatentCount + 2] || 0;
+
+        currentOffsetVelocityX =
+          currentOffsetVelocityX * 0.9 + xAction * 0.22;
+        currentOffsetVelocityZ =
+          currentOffsetVelocityZ * 0.9 + zAction * 0.22;
+        currentOffsetX = clamp(
+          currentOffsetX + currentOffsetVelocityX * dt,
+          -4.8,
+          4.8
+        );
+        currentOffsetZ = clamp(
+          currentOffsetZ + currentOffsetVelocityZ * dt,
+          -4.8,
+          4.8
+        );
+        updateGridActuator(now, gridAction);
+        return shapeLatentCount;
       }
 
       function randomizeStart() {
         coeff.fill(0);
-        for (let i = 0; i < activeDof; i++)
-          coeff[i] = clamp(target[i] + gaussian() * 0.26 * spectralEnvelope(MODES[i]), -0.9, 0.9);
-        if (Math.random() < 0.35)
-          for (let i = 0; i < activeDof; i++)
-            coeff[i] = gaussian() * 0.16 * spectralEnvelope(MODES[i]);
-        velocity.fill(0);
-      }
-      function shapeMatch() {
-        let mse = 0;
-        let samples = 0;
-        const steps = 9;
-        for (let iz = 0; iz < steps; iz++) {
-          const z = -4.8 + (iz / (steps - 1)) * 9.6;
-          for (let ix = 0; ix < steps; ix++) {
-            const x = -4.8 + (ix / (steps - 1)) * 9.6;
-            const d = heightAt(x, z, coeff) - targetHeightAt(x, z);
-            mse += d * d;
-            samples++;
+        for (let i = 0; i < activeDof; i++) {
+          coeff[i] = boundCoefficient(
+            target[i] + gaussian() * 0.26 * spectralEnvelope(MODES[i]),
+            MODES[i],
+            targetComplexity
+          );
+        }
+        if (Math.random() < 0.35) {
+          for (let i = 0; i < activeDof; i++) {
+            coeff[i] = boundCoefficient(
+              gaussian() * 0.16 * spectralEnvelope(MODES[i]),
+              MODES[i],
+              targetComplexity
+            );
           }
         }
-        mse /= Math.max(1, samples);
-        return Math.exp(-1.35 * mse);
+        velocity.fill(0);
+        currentOffsetX = targetOffsetX;
+        currentOffsetZ = targetOffsetZ;
+        currentOffsetVelocityX = 0;
+        currentOffsetVelocityZ = 0;
+      }
+
+      function shapeMatch() {
+        return robustShapeMatch({
+          coeff,
+          target,
+          modes: MODES,
+          count: activeDof,
+          complexity: targetComplexity,
+          currentOffsetX,
+          currentOffsetZ,
+          targetOffsetX,
+          targetOffsetZ,
+        });
       }
 
       function updateTargetLabel() {
@@ -1397,14 +1463,31 @@ self.onmessage=function(event){
           );
         }
 
-        updateGridActuator(now, latentAction, latentCount);
+        const shapeLatentCount = updateMetaActuators(
+          now,
+          dt,
+          latentAction,
+          latentCount
+        );
 
         for (let k = 0; k < activeDof; k++) {
-          const action = latentCount
-            ? decodeLatent(latentAction.subarray(0, latentCount), k, activeDof)
+          const action = shapeLatentCount
+            ? decodeLatent(
+                latentAction.subarray(0, shapeLatentCount),
+                k,
+                activeDof
+              )
             : Math.tanh(dn[k % 8] + gaussian() * sigma);
-          velocity[k] = velocity[k] * 0.86 + action * fourierGain * 0.14;
-          coeff[k] = clamp(coeff[k] + velocity[k] * dt, -0.95, 0.95);
+          velocity[k] = boundVelocity(
+            velocity[k] * 0.86 + action * fourierGain * 0.14,
+            MODES[k],
+            targetComplexity
+          );
+          coeff[k] = boundCoefficient(
+            coeff[k] + velocity[k] * dt,
+            MODES[k],
+            targetComplexity
+          );
         }
 
         match = shapeMatch();
@@ -1422,7 +1505,10 @@ self.onmessage=function(event){
         if (latentCount) {
           const sigma2 = Math.max(0.001, sigma * sigma);
           for (let q = 0; q < latentCount; q++) {
-            const localAdvantage = regionalCreditForLatent(q, latentCount);
+            const localAdvantage =
+              q < shapeLatentCount
+                ? regionalCreditForLatent(q, shapeLatentCount)
+                : globalAdvantage;
             // Global reward keeps task-level credit; regional reward dominates
             // spatial correction so a bad region penalizes the latents/modes
             // that actually influence that part of the surface.
@@ -1506,9 +1592,11 @@ self.onmessage=function(event){
         document.getElementById("bestValue").textContent = bestMatch.toFixed(3);
         document.getElementById("hitsValue").textContent = String(hits);
         document.getElementById("loadValue").textContent =
-          `${(activeDof / DN_LATENT_DOF).toFixed(2)}×`;
+          `${(activeDof / SHAPE_LATENT_DOF).toFixed(2)}×`;
         document.getElementById("gridActuatorValue").textContent =
           `${gridActuator.toFixed(2)} → ${gridResolution}²`;
+        document.getElementById("translationValue").textContent =
+          `(${currentOffsetX.toFixed(1)}, ${currentOffsetZ.toFixed(1)}) → (${targetOffsetX.toFixed(1)}, ${targetOffsetZ.toFixed(1)})`;
         document.getElementById("latencyValue").textContent = neuralLatency
           ? `${neuralLatency.toFixed(1)} ms`
           : "—";
@@ -1597,7 +1685,13 @@ self.onmessage=function(event){
         document.getElementById("gridLabel").textContent =
           `${gridCeiling} × ${gridCeiling}`;
         rebuildGrid();
-        deform(geometry, original, coeff);
+        deform(
+          geometry,
+          original,
+          coeff,
+          currentOffsetX,
+          currentOffsetZ
+        );
         deform(
           targetGeometry,
           targetOriginal,
@@ -1644,7 +1738,13 @@ self.onmessage=function(event){
           }
           updateController(dt, now);
         }
-        deform(geometry, original, coeff);
+        deform(
+          geometry,
+          original,
+          coeff,
+          currentOffsetX,
+          currentOffsetZ
+        );
         deform(
           targetGeometry,
           targetOriginal,
@@ -1652,7 +1752,7 @@ self.onmessage=function(event){
           targetOffsetX,
           targetOffsetZ
         );
-        const y = heightAt(0, 0, coeff) - 0.8;
+        const y = currentHeightAt(0, 0) - 0.8;
         fly.position.y = y;
         fly.rotation.y += dt * 0.45;
         surface.rotation.y = Math.sin(now / 7000) * 0.08;
