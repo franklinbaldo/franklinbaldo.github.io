@@ -664,8 +664,8 @@
         boundCoefficient,
         boundVelocity,
         enforceSpectralEnergyBudget,
-        exponentialPrecisionDelta,
         normalizedSpectralRms,
+        precisionProgressReward,
         robustShapeMatch,
         spectralEnvelopeForMode,
       } from "./control_core.js";
@@ -1082,16 +1082,15 @@
           // exponentially more as error approaches zero. Reversing the move
           // gives the same-magnitude negative reward, so precision loss near
           // the target is punished just as strongly.
-          const linearProgress = currentSimilarity - previousSimilarity;
-          const exponentialProgress = exponentialPrecisionDelta(
-            currentSimilarity,
-            previousSimilarity,
-            1,
-            PRECISION_BETA
-          );
           const r = clamp(
-            linearProgress * REGIONAL_BASE_PROGRESS_GAIN +
-              exponentialProgress * REGIONAL_PRECISION_GAIN,
+            precisionProgressReward(
+              currentSimilarity,
+              previousSimilarity,
+              1,
+              PRECISION_BETA,
+              REGIONAL_BASE_PROGRESS_GAIN,
+              REGIONAL_PRECISION_GAIN
+            ),
             -1,
             1
           );
@@ -1548,19 +1547,17 @@ self.onmessage=function(event){
           mismatchSq += localError[i] * localError[i];
         mismatchMagnitude = Math.sqrt(mismatchSq / localError.length);
         const hit = match >= HIT_THRESHOLD;
-        const linearProgress =
-          (match - previousMatch) / HIT_THRESHOLD;
-        const precisionProgress = exponentialPrecisionDelta(
+        const progressReward = precisionProgressReward(
           match,
           previousMatch,
           HIT_THRESHOLD,
-          PRECISION_BETA
+          PRECISION_BETA,
+          GLOBAL_BASE_PROGRESS_GAIN,
+          GLOBAL_PRECISION_GAIN
         );
         previousMatch = match;
         reward = clamp(
-          linearProgress * GLOBAL_BASE_PROGRESS_GAIN +
-            precisionProgress * GLOBAL_PRECISION_GAIN +
-            (hit && !hitLatched ? 1 : 0),
+          progressReward + (hit && !hitLatched ? 1 : 0),
           -1,
           1
         );
