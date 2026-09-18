@@ -658,6 +658,11 @@
       const MAX_DOF = 4096;
       const DEFAULT_DOF = 256;
       const DEFAULT_GRID = 64;
+      const META_NAMES = [
+        "curvature-x", "curvature-z", "saddle", "tilt-x", "tilt-z",
+        "rotation", "scale-x", "scale-z", "shear", "amplitude", "bandwidth",
+      ];
+      const META_COUNT = META_NAMES.length;
       const TARGET_META = {
         crater: { label: "Cratera", family: "simple" },
         saddle: { label: "Sela", family: "simple" },
@@ -701,7 +706,11 @@
         targetKey = "crater",
         targetSeed = 20260918,
         targetOffsetX = 0,
-        targetOffsetZ = 0;
+        targetOffsetZ = 0,
+        adapterMode = "both";
+      const metaCurrent = new Float32Array(META_COUNT);
+      const metaVelocity = new Float32Array(META_COUNT);
+      const metaTarget = new Float32Array(META_COUNT);
 
       function seededGaussian(rng) {
         let u = 0, v = 0;
@@ -715,6 +724,29 @@
         const slope = 1.35 - complexity * 0.65;
         return Math.exp(-Math.pow(mode.freq / cutoff, 1.35)) /
           Math.pow(Math.max(1, mode.freq), slope);
+      }
+
+      function targetMetaParameters(kind = targetKey, seed = targetSeed) {
+        const rng = seededRandom(seed ^ 0x9e3779b9);
+        const out = new Float32Array(META_COUNT);
+        const strength = 0.18 + targetComplexity * 0.72;
+        for (let i = 0; i < META_COUNT; i++)
+          out[i] = clamp(seededGaussian(rng) * strength * 0.42, -0.9, 0.9);
+        if (kind === "crater") {
+          out[0] = 0.55 * strength;
+          out[1] = 0.55 * strength;
+          out[2] *= 0.2;
+        } else if (kind === "saddle") {
+          out[0] = 0.45 * strength;
+          out[1] = -0.45 * strength;
+          out[2] = 0.55 * strength;
+        } else if (kind === "ridge") {
+          out[5] = 0.35 * strength;
+          out[8] = 0.38 * strength;
+        }
+        out[9] = clamp(0.15 + Math.abs(out[9]), -0.9, 0.9);
+        out[10] = clamp(targetComplexity * 1.6 - 0.8, -0.9, 0.9);
+        return out;
       }
 
       function targetCoefficients(kind = targetKey, seed = targetSeed) {
@@ -754,6 +786,7 @@
       }
 
       let target = targetCoefficients();
+      metaTarget.set(targetMetaParameters());
       let coeff = new Float32Array(MAX_DOF);
       let velocity = new Float32Array(MAX_DOF);
       let fourierGain = 0.42,
@@ -881,25 +914,52 @@
         return mode.phase === "sin" ? Math.sin(angle) : Math.cos(angle);
       }
 
-      function heightAt(x, z, c, count = activeDof) {
+      function metaCoordinates(x, z, meta) {
+        const scaleX = 1 + meta[6] * 0.38;
+        const scaleZ = 1 + meta[7] * 0.38;
+        let u = x / Math.max(0.35, scaleX);
+        let v = z / Math.max(0.35, scaleZ);
+        u -= meta[8] * 0.32 * v;
+        const angle = meta[5] * 0.75;
+        const ca = Math.cos(angle), sa = Math.sin(angle);
+        return [u * ca - v * sa, u * sa + v * ca];
+      }
+
+      function heightAt(x, z, c, count = activeDof, meta = metaCurrent) {
+        const [u, v] = metaCoordinates(x, z, meta);
         let y = 0;
         const n = Math.min(count, c.length, MAX_DOF);
-        for (let k = 0; k < n; k++) y += c[k] * modeValue(MODES[k], x, z);
-        const r = Math.hypot(x, z);
+        const cutoff = 2 + ((meta[10] + 1) * 0.5) * 28;
+        for (let k = 0; k < n; k++) {
+          const attenuation = Math.exp(-Math.pow(MODES[k].freq / cutoff, 2.2));
+          y += c[k] * modeValue(MODES[k], u, v) * attenuation;
+        }
+        const r = Math.hypot(u, v);
         y *= Math.exp(-Math.max(0, r - 4.2) * 0.45);
-        return y * (1.36 / Math.sqrt(Math.max(1, n / 6)));
+        y *= (1 + meta[9] * 0.7) * (1.36 / Math.sqrt(Math.max(1, n / 6)));
+        y += meta[0] * 0.055 * u * u;
+        y += meta[1] * 0.055 * v * v;
+        y += meta[2] * 0.07 * u * v;
+        y += meta[3] * 0.28 * u + meta[4] * 0.28 * v;
+        return y;
       }
 
       function targetHeightAt(x, z) {
-        return heightAt(x - targetOffsetX, z - targetOffsetZ, target);
+        return heightAt(
+          x - targetOffsetX,
+          z - targetOffsetZ,
+          target,
+          activeDof,
+          metaTarget
+        );
       }
 
-      function deform(geom, base, c, offsetX = 0, offsetZ = 0) {
+      function deform(geom, base, c, offsetX = 0, offsetZ = 0, meta = metaCurrent) {
         const pos = geom.attributes.position.array;
         for (let i = 0; i < pos.length; i += 3) {
           const x = base[i],
             z = base[i + 2];
-          pos[i + 1] = heightAt(x - offsetX, z - offsetZ, c) - 1.15;
+          pos[i + 1] = heightAt(x - offsetX, z - offsetZ, c, activeDof, meta) - 1.15;
         }
         geom.attributes.position.needsUpdate = true;
         geom.computeVertexNormals();
@@ -1001,7 +1061,7 @@
           const z = clamp(originZ + fz * forward + rz * lateral, -5.4, 5.4);
           localSampleX[i] = x;
           localSampleZ[i] = z;
-          const currentH = heightAt(x, z, coeff);
+          const currentH = heightAt(x, z, coeff, activeDof, metaCurrent);
           const targetH = targetHeightAt(x, z);
           const signed = clamp((targetH - currentH) / 2.5, -1, 1);
           const absErr = Math.abs(signed);
@@ -1290,7 +1350,8 @@ self.onmessage=function(event){
           targetOriginal,
           target,
           targetOffsetX,
-          targetOffsetZ
+          targetOffsetZ,
+          metaTarget
         );
         }
       }
@@ -1312,7 +1373,9 @@ self.onmessage=function(event){
           const z = -4.8 + (iz / (steps - 1)) * 9.6;
           for (let ix = 0; ix < steps; ix++) {
             const x = -4.8 + (ix / (steps - 1)) * 9.6;
-            const d = heightAt(x, z, coeff) - targetHeightAt(x, z);
+            const d =
+              heightAt(x, z, coeff, activeDof, metaCurrent) -
+              targetHeightAt(x, z);
             mse += d * d;
             samples++;
           }
@@ -1351,7 +1414,8 @@ self.onmessage=function(event){
           targetOriginal,
           target,
           targetOffsetX,
-          targetOffsetZ
+          targetOffsetZ,
+          metaTarget
         );
         resetRegionalRewardMemory();
       }
@@ -1539,7 +1603,8 @@ self.onmessage=function(event){
           targetOriginal,
           target,
           targetOffsetX,
-          targetOffsetZ
+          targetOffsetZ,
+          metaTarget
         );
         });
       document.getElementById("exploreRange").addEventListener("input", (e) => {
@@ -1572,7 +1637,8 @@ self.onmessage=function(event){
           targetOriginal,
           target,
           targetOffsetX,
-          targetOffsetZ
+          targetOffsetZ,
+          metaTarget
         );
       });
       document
@@ -1619,7 +1685,8 @@ self.onmessage=function(event){
           targetOriginal,
           target,
           targetOffsetX,
-          targetOffsetZ
+          targetOffsetZ,
+          metaTarget
         );
         const y = heightAt(0, 0, coeff) - 0.8;
         fly.position.y = y;
