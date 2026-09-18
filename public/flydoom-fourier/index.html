@@ -979,7 +979,6 @@
       });
       const retina = new Float32Array(32);
       const LOCAL_FEATURE_COUNT = 6;
-      const localError = new Float32Array(32);
       const localMismatch = new Float32Array(32);
       const localFeatures = new Float32Array(32 * LOCAL_FEATURE_COUNT);
       const localFeatureRms = new Float32Array(LOCAL_FEATURE_COUNT);
@@ -1085,7 +1084,6 @@
 
           const mismatch = localizedMismatchMagnitude(features);
           localMismatch[i] = mismatch;
-          localError[i] = features[0];
           localWorsening[i] = clamp(
             (mismatch - previousLocalAbsError[i]) * 8,
             0,
