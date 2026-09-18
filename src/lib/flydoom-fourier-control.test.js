@@ -7,9 +7,12 @@ import {
   enforceSpectralEnergyBudget,
   exponentialPrecisionDelta,
   exponentialPrecisionPotential,
+  localizedMismatchMagnitude,
+  localizedSurfaceMismatch,
   normalizedSpectralRms,
   precisionProgressReward,
   robustShapeMatch,
+  surfaceDifferentialStats,
 } from "../../public/flydoom-fourier/control_core.js";
 
 function mode(freq) {
@@ -195,4 +198,43 @@ test("hybrid shaping keeps a broad signal but strongly amplifies late precision"
   assert.ok(coarse > 0);
   assert.ok(precise > coarse * 25);
   assert.equal(precisePenalty, -precise);
+});
+
+test("localized mismatch distinguishes height, tilt, curvature, and normals", () => {
+  const flat = (x, z) => 0;
+  const raised = (x, z) => 0.5;
+  const tilted = (x, z) => 0.6 * x;
+  const bowl = (x, z) => 0.2 * (x * x + z * z);
+
+  const base = surfaceDifferentialStats(flat, 0, 0);
+  const raisedStats = surfaceDifferentialStats(raised, 0, 0);
+  const tiltedStats = surfaceDifferentialStats(tilted, 0, 0);
+  const bowlStats = surfaceDifferentialStats(bowl, 0, 0);
+
+  const heightMismatch = localizedSurfaceMismatch(
+    base, raisedStats, 1, 0, 0, 1,
+  );
+  assert.ok(Math.abs(heightMismatch[0]) > 0);
+  assert.equal(heightMismatch[1], 0);
+  assert.equal(heightMismatch[2], 0);
+
+  const tiltMismatch = localizedSurfaceMismatch(
+    base, tiltedStats, 1, 0, 0, 1,
+  );
+  assert.ok(Math.abs(tiltMismatch[1]) > 0);
+  assert.ok(tiltMismatch[4] > 0);
+
+  const curvatureMismatch = localizedSurfaceMismatch(
+    base, bowlStats, 1, 0, 0, 1,
+  );
+  assert.ok(Math.abs(curvatureMismatch[3]) > 0);
+});
+
+test("localized mismatch is zero for identical surfaces", () => {
+  const surface = (x, z) => Math.sin(x) * 0.2 + Math.cos(z) * 0.1;
+  const a = surfaceDifferentialStats(surface, 0.7, -0.4);
+  const features = localizedSurfaceMismatch(a, a, 1, 0, 0, 1);
+
+  assert.deepEqual(features, [0, 0, 0, 0, 0, 0]);
+  assert.equal(localizedMismatchMagnitude(features), 0);
 });
