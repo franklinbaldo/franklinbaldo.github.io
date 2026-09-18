@@ -437,7 +437,7 @@
             <div class="legend">
               <span class="chip current">CURRENT SURFACE</span>
               <span class="chip target">TARGET GHOST</span>
-              <span class="chip hit" id="hitChip">TARGET HIT ≥ 97%</span>
+              <span class="chip hit" id="hitChip">HIT ≥ 97% → TARGET RELOCATES</span>
             </div>
             <div
               class="retina"
@@ -620,7 +620,9 @@
         permanece um escalar global para aprendizado. Só o readout descendente
         aprende, por uma atualização reward-modulated sobre os DNs individuais. A recompensa é contínua para tornar o processo
         visível e recebe
-        um bônus quando o shape ultrapassa 97% de similaridade; isso não implica
+        um bônus quando o shape ultrapassa 97% de similaridade. Ao atingir o
+        limiar, o mesmo target é realocado automaticamente para outra posição
+        aleatória da arena sem resetar a política; isso não implica
         que a mosca biológica conheça Fourier nem o conceito do alvo.
       </section>
     </div>
@@ -691,7 +693,9 @@
         lastGridRebuild = 0,
         targetComplexity = 0.55,
         targetKey = "crater",
-        targetSeed = 20260918;
+        targetSeed = 20260918,
+        targetOffsetX = 0,
+        targetOffsetZ = 0;
 
       function seededGaussian(rng) {
         let u = 0, v = 0;
@@ -880,12 +884,16 @@
         return y * (1.36 / Math.sqrt(Math.max(1, n / 6)));
       }
 
-      function deform(geom, base, c) {
+      function targetHeightAt(x, z) {
+        return heightAt(x - targetOffsetX, z - targetOffsetZ, target);
+      }
+
+      function deform(geom, base, c, offsetX = 0, offsetZ = 0) {
         const pos = geom.attributes.position.array;
         for (let i = 0; i < pos.length; i += 3) {
           const x = base[i],
             z = base[i + 2];
-          pos[i + 1] = heightAt(x, z, c) - 1.15;
+          pos[i + 1] = heightAt(x - offsetX, z - offsetZ, c) - 1.15;
         }
         geom.attributes.position.needsUpdate = true;
         geom.computeVertexNormals();
@@ -980,7 +988,7 @@
           const x = clamp(originX + fx * forward + rx * lateral, -5.4, 5.4);
           const z = clamp(originZ + fz * forward + rz * lateral, -5.4, 5.4);
           const currentH = heightAt(x, z, coeff);
-          const targetH = heightAt(x, z, target);
+          const targetH = targetHeightAt(x, z);
           const signed = clamp((targetH - currentH) / 2.5, -1, 1);
           const absErr = Math.abs(signed);
           localError[i] = signed;
@@ -1211,7 +1219,13 @@ self.onmessage=function(event){
           lastGridRebuild = now;
           rebuildGrid();
           deform(geometry, original, coeff);
-          deform(targetGeometry, targetOriginal, target);
+          deform(
+          targetGeometry,
+          targetOriginal,
+          target,
+          targetOffsetX,
+          targetOffsetZ
+        );
         }
       }
 
@@ -1226,12 +1240,51 @@ self.onmessage=function(event){
       }
       function shapeMatch() {
         let mse = 0;
-        for (let i = 0; i < activeDof; i++) {
-          const d = coeff[i] - target[i];
-          mse += d * d;
+        let samples = 0;
+        const steps = 9;
+        for (let iz = 0; iz < steps; iz++) {
+          const z = -4.8 + (iz / (steps - 1)) * 9.6;
+          for (let ix = 0; ix < steps; ix++) {
+            const x = -4.8 + (ix / (steps - 1)) * 9.6;
+            const d = heightAt(x, z, coeff) - targetHeightAt(x, z);
+            mse += d * d;
+            samples++;
+          }
         }
-        mse /= Math.max(1, activeDof);
-        return Math.exp(-3.6 * mse);
+        mse /= Math.max(1, samples);
+        return Math.exp(-1.35 * mse);
+      }
+
+      function updateTargetLabel() {
+        document.getElementById("targetName").textContent =
+          `${TARGET_META[targetKey].label} · (${targetOffsetX.toFixed(1)}, ${targetOffsetZ.toFixed(1)})`;
+      }
+
+      function randomizeTargetPosition() {
+        const previousX = targetOffsetX;
+        const previousZ = targetOffsetZ;
+        let x = previousX;
+        let z = previousZ;
+        for (let tries = 0; tries < 20; tries++) {
+          const angle = Math.random() * TAU;
+          const radius = 1.4 + Math.random() * 2.2;
+          x = Math.cos(angle) * radius;
+          z = Math.sin(angle) * radius;
+          if (Math.hypot(x - previousX, z - previousZ) >= 1.2) break;
+        }
+        targetOffsetX = x;
+        targetOffsetZ = z;
+        previousLocalAbsError.fill(0);
+        localWorsening.fill(0);
+        velocity.fill(0);
+        updateTargetLabel();
+        deform(
+          targetGeometry,
+          targetOriginal,
+          target,
+          targetOffsetX,
+          targetOffsetZ
+        );
       }
       let hitLatched = false;
       function updateController(dt, now) {
@@ -1284,6 +1337,7 @@ self.onmessage=function(event){
         if (hit && !hitLatched) {
           hits++;
           hitLatched = true;
+          randomizeTargetPosition();
         }
         if (!hit && match < HIT_THRESHOLD - 0.025) hitLatched = false;
         bestMatch = Math.max(bestMatch, match);
@@ -1387,12 +1441,19 @@ self.onmessage=function(event){
           targetKey = e.target.value;
           targetSeed++;
           target = targetCoefficients(targetKey, targetSeed);
-          document.getElementById("targetName").textContent =
-            TARGET_META[targetKey].label;
+          targetOffsetX = 0;
+          targetOffsetZ = 0;
+          updateTargetLabel();
           previousLocalAbsError.fill(0);
           localWorsening.fill(0);
           randomizeStart();
-          deform(targetGeometry, targetOriginal, target);
+          deform(
+          targetGeometry,
+          targetOriginal,
+          target,
+          targetOffsetX,
+          targetOffsetZ
+        );
         });
       document.getElementById("exploreRange").addEventListener("input", (e) => {
         exploration = Number(e.target.value);
@@ -1419,7 +1480,13 @@ self.onmessage=function(event){
           `${gridCeiling} × ${gridCeiling}`;
         rebuildGrid();
         deform(geometry, original, coeff);
-        deform(targetGeometry, targetOriginal, target);
+        deform(
+          targetGeometry,
+          targetOriginal,
+          target,
+          targetOffsetX,
+          targetOffsetZ
+        );
       });
       document
         .getElementById("complexityRange")
@@ -1437,8 +1504,9 @@ self.onmessage=function(event){
         .addEventListener("click", () => {
           targetKey = "random";
           document.getElementById("targetSelect").value = targetKey;
-          document.getElementById("targetName").textContent =
-            TARGET_META[targetKey].label;
+          targetOffsetX = 0;
+          targetOffsetZ = 0;
+          updateTargetLabel();
           target = targetCoefficients(targetKey, ++targetSeed);
           previousLocalAbsError.fill(0);
           localWorsening.fill(0);
@@ -1459,7 +1527,13 @@ self.onmessage=function(event){
           updateController(dt, now);
         }
         deform(geometry, original, coeff);
-        deform(targetGeometry, targetOriginal, target);
+        deform(
+          targetGeometry,
+          targetOriginal,
+          target,
+          targetOffsetX,
+          targetOffsetZ
+        );
         const y = heightAt(0, 0, coeff) - 0.8;
         fly.position.y = y;
         fly.rotation.y += dt * 0.45;
@@ -1469,7 +1543,14 @@ self.onmessage=function(event){
         updateUi();
         requestAnimationFrame(frame);
       }
-      deform(targetGeometry, targetOriginal, target);
+      updateTargetLabel();
+      deform(
+        targetGeometry,
+        targetOriginal,
+        target,
+        targetOffsetX,
+        targetOffsetZ
+      );
       randomizeStart();
       loadMaleCns();
       requestAnimationFrame(frame);
