@@ -72,7 +72,7 @@ const latestDate = latest?.data.date.toLocaleDateString('pt-BR', {
   .home-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 2rem;
+    gap: clamp(2rem, 5vw, 4rem);
   }
 
   @media (min-width: 1100px) {
@@ -97,20 +97,35 @@ const latestDate = latest?.data.date.toLocaleDateString('pt-BR', {
   }
 
   .home-hero {
-    margin-block: calc(var(--pico-spacing) * 1.5) calc(var(--pico-spacing) * 1.25);
+    position: relative;
+    margin-block: clamp(2rem, 7vw, 5rem) clamp(2rem, 5vw, 3.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem) 0;
+  }
+  .home-hero::after {
+    content: "";
+    display: block;
+    width: min(7rem, 28vw);
+    height: 0.28rem;
+    margin-top: 1.4rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--pico-primary), transparent);
   }
   .home-title {
-    font-size: clamp(2rem, 5vw, 3rem);
-    margin: 0 0 .25rem;
-    letter-spacing: -0.015em;
+    max-width: 11ch;
+    font-size: clamp(3.2rem, 9vw, 6.4rem);
+    line-height: .9;
+    margin: 0 0 .8rem;
+    letter-spacing: -0.065em;
   }
   .home-title-dot {
     color: var(--pico-primary);
   }
   .home-tagline {
+    max-width: 42rem;
     color: var(--pico-muted-color);
     margin: 0;
-    font-size: 1.05rem;
+    font-size: clamp(1.05rem, 2.3vw, 1.35rem);
+    line-height: 1.5;
   }
 
   .section-eyebrow {
@@ -126,17 +141,35 @@ const latestDate = latest?.data.date.toLocaleDateString('pt-BR', {
     margin-block: 0 calc(var(--pico-spacing) * 1.75);
   }
   .featured-card {
+    position: relative;
+    overflow: hidden;
     margin: 0;
-    padding: 1.25rem 1.5rem;
-    background: var(--pico-card-background-color);
+    padding: clamp(1.4rem, 3.5vw, 2.25rem);
+    background:
+      linear-gradient(135deg, var(--surface-raised), var(--pico-card-background-color));
     border: 1px solid var(--pico-muted-border-color);
-    border-radius: var(--pico-border-radius);
-    box-shadow: var(--paper-shadow);
+    border-radius: var(--radius-large);
+    box-shadow: var(--elevation-card);
+  }
+  .featured-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: .32rem;
+    background: var(--pico-primary);
+  }
+  @media (hover: hover) {
+    .featured-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--elevation-soft);
+    }
   }
   .featured-title {
     margin: 0 0 0.5rem;
-    font-size: clamp(1.3rem, 3vw, 1.7rem);
-    line-height: 1.2;
+    max-width: 22ch;
+    font-size: clamp(1.55rem, 3.8vw, 2.25rem);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
   }
   .featured-title a {
     color: inherit;
@@ -162,12 +195,16 @@ const latestDate = latest?.data.date.toLocaleDateString('pt-BR', {
   }
   .featured-cta {
     margin-left: auto;
-    font-weight: 600;
+    padding: .35rem .65rem;
+    border-radius: 999px;
+    background: var(--accent-wash);
+    font-weight: 700;
     text-decoration: none;
   }
 
   .home-recent {
-    margin-block: 0 calc(var(--pico-spacing) * 2);
+    margin-block: 0 calc(var(--pico-spacing) * 2.5);
+    padding-top: .4rem;
   }
   .home-archive-link {
     margin-top: var(--pico-spacing);
