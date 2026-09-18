@@ -21,6 +21,7 @@ import {
   projectDn,
   readoutActions,
   spectralLimit,
+  stateAwareReward,
   stateDiscomfortPenalty,
   surfaceHeight,
   updateReadout,
@@ -81,6 +82,7 @@ let previousMatch = latestScore.match;
 let progressComponent = 0;
 let statePenalty = stateDiscomfortPenalty(previousMatch, HIT_THRESHOLD);
 let reward = clamp(progressComponent + statePenalty, -1, 1);
+let learningCredit = 0;
 
 let stageStreak = 0;
 let stagesMastered = 0;
@@ -536,7 +538,7 @@ function updateUi() {
   matchEl.textContent = latestScore.match.toFixed(3);
   rewardEl.textContent = reward.toFixed(3);
   rewardBreakdownEl.textContent =
-    `Δ ${progressComponent >= 0 ? "+" : ""}${progressComponent.toFixed(3)} · state ${statePenalty.toFixed(3)}`;
+    `Δ ${progressComponent >= 0 ? "+" : ""}${progressComponent.toFixed(3)} · state ${statePenalty.toFixed(3)} · credit ${learningCredit >= 0 ? "+" : ""}${learningCredit.toFixed(3)}`;
   hitEl.textContent =
     `${stageStreak}/${STAGE_HOLD_TICKS} · ${stagesMastered} mastered`;
   latencyEl.textContent = neuralLatency ? `${neuralLatency.toFixed(1)} ms` : "—";
@@ -694,16 +696,25 @@ function sensoryTick() {
   latestScore = geometricMatch(current, target, MODES);
   const completedMatch = latestScore.match;
 
-  progressComponent = progressReward(completedMatch, previousMatch);
-  statePenalty = stateDiscomfortPenalty(completedMatch, HIT_THRESHOLD);
-  reward = clamp(progressComponent + statePenalty, -1, 1);
+  const rewardParts = stateAwareReward(
+    completedMatch,
+    previousMatch,
+    HIT_THRESHOLD,
+  );
+  progressComponent = rewardParts.progress;
+  statePenalty = rewardParts.statePenalty;
+  reward = rewardParts.total;
+  learningCredit = rewardParts.credit;
   previousMatch = completedMatch;
 
   if (completedMatch >= STAGE_MATCH_THRESHOLD) stageStreak++;
   else stageStreak = 0;
 
   const completedStage = stageStreak >= STAGE_HOLD_TICKS;
-  if (completedStage) reward = clamp(reward + 1, -1, 1);
+  if (completedStage) {
+    reward = clamp(reward + 1, -1, 1);
+    learningCredit = clamp(learningCredit + 1, -1, 1);
+  }
 
   // Credit only the currently unlocked degrees of freedom.
   if (previousHidden && previousActionNoise) {
@@ -711,14 +722,14 @@ function sensoryTick() {
       readout,
       previousHidden,
       previousActionNoise,
-      reward,
+      learningCredit,
       0.0011,
       OUTPUT_SIGMA,
     );
     previousHidden = null;
     previousActionNoise = null;
   }
-  updateInputAdapter(reward);
+  updateInputAdapter(learningCredit);
   previousInputNoise = null;
 
   scoreHistory.push(completedMatch);
