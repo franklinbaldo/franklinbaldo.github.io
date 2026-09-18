@@ -151,13 +151,36 @@ const exhibitions = toeTheories.filter((theory) => theory.kind !== "contender");
 </PageLayout>
 
 <style>
-  .arena-shell { --ink: #181512; --muted: #655f58; --paper: #f3efe5; --line: #c8c0af; max-width: 1180px; margin: 0 auto; padding-bottom: 5rem; }
-  .hero { margin: 1.5rem 0 4rem; padding: clamp(2rem, 7vw, 5.5rem); border: 1px solid var(--line); background: linear-gradient(135deg, #f5d547 0 18%, var(--paper) 18% 100%); box-shadow: 12px 12px 0 var(--ink); }
+  .arena-shell {
+    --ink: var(--pico-color);
+    --muted: var(--pico-muted-color);
+    --paper: color-mix(in srgb, var(--pico-background-color) 88%, var(--pico-primary) 12%);
+    --line: var(--pico-muted-border-color);
+    --panel: var(--pico-card-background-color, var(--pico-background-color));
+    --panel-soft: color-mix(in srgb, var(--pico-background-color) 94%, var(--pico-primary) 6%);
+    --accent-gold: #f5d547;
+    --accent-interest: #e8e0ff;
+    --accent-science: #f5e4a3;
+    --inverse: var(--pico-background-color);
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-bottom: 5rem;
+  }
+  [data-theme="dark"] .arena-shell {
+    --paper: color-mix(in srgb, var(--pico-background-color) 88%, #7d6a20 12%);
+    --panel: var(--pico-card-background-color, #211c17);
+    --panel-soft: color-mix(in srgb, var(--pico-background-color) 90%, #8a7440 10%);
+    --accent-gold: #d8b93f;
+    --accent-interest: #342d4a;
+    --accent-science: #493f24;
+    --inverse: #fff9e8;
+  }
+  .hero { margin: 1.5rem 0 4rem; padding: clamp(2rem, 7vw, 5.5rem); border: 1px solid var(--line); background: linear-gradient(135deg, var(--accent-gold) 0 18%, var(--paper) 18% 100%); box-shadow: 12px 12px 0 var(--ink); }
   .eyebrow, .kicker, .round { font: 800 .75rem/1.1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; text-transform: uppercase; }
   .hero h1 { margin: .35rem 0 .75rem; font-size: clamp(3.8rem, 12vw, 8.4rem); line-height: .82; letter-spacing: -.075em; }
   .lede { max-width: 780px; font-size: clamp(1.05rem, 2vw, 1.4rem); line-height: 1.45; }
   .hero-notes { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.5rem; }
-  .hero-notes span { padding: .45rem .7rem; border: 1px solid var(--ink); background: #fffdf5; font-size: .82rem; font-weight: 700; }
+  .hero-notes span { padding: .45rem .7rem; border: 1px solid var(--ink); background: var(--panel); font-size: .82rem; font-weight: 700; }
   .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 2rem; margin: 4rem 0 1rem; }
   .section-heading h2, .rules h2 { margin: .15rem 0 0; font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -.045em; }
   .section-heading > p { max-width: 360px; color: var(--muted); text-align: right; }
@@ -166,14 +189,14 @@ const exhibitions = toeTheories.filter((theory) => theory.kind !== "contender");
   .tier-row:last-child { border-bottom: 0; }
   .tier-letter { display: grid; place-items: center; border-right: 2px solid var(--ink); font-size: 3rem; font-weight: 950; }
   .tier-s .tier-letter { background: #f2bd2f; } .tier-a .tier-letter { background: #f3d86e; } .tier-b .tier-letter { background: #c7df9d; } .tier-c .tier-letter { background: #abd7cf; } .tier-d .tier-letter { background: #c9c1df; } .tier-f .tier-letter { background: #dfb1a3; }
-  .tier-content { padding: 1rem; background: #fffdf7; }
+  .tier-content { padding: 1rem; background: var(--panel-soft); }
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 1rem; }
-  .theory-card { border: 1px solid var(--line); padding: 1rem; background: white; }
+  .theory-card { border: 1px solid var(--line); padding: 1rem; background: var(--panel); }
   .theory-card h3, .clash-card h3, .exhibition-card h3 { margin: .6rem 0; font-size: 1.35rem; line-height: 1.05; }
-  .theory-card > p, .clash-card > p, .exhibition-card p { color: #433e38; line-height: 1.5; }
+  .theory-card > p, .clash-card > p, .exhibition-card p { color: var(--pico-color); line-height: 1.5; }
   .card-topline { display: flex; gap: .4rem; flex-wrap: wrap; }
   .science-badge, .interest-badge, .nr { display: inline-block; padding: .25rem .45rem; border: 1px solid var(--ink); font: 700 .7rem/1 ui-monospace, monospace; text-transform: uppercase; }
-  .interest-badge { background: #e8e0ff; } .science-badge { background: #f5e4a3; }
+  .interest-badge { background: var(--accent-interest); } .science-badge { background: var(--accent-science); }
   details { margin-top: 1rem; border-top: 1px dashed var(--line); padding-top: .7rem; }
   summary { cursor: pointer; font-weight: 800; }
   .evidence-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: .8rem; }
@@ -184,16 +207,16 @@ const exhibitions = toeTheories.filter((theory) => theory.kind !== "contender");
   .source-line { font-size: .8rem; color: var(--muted); }
   .empty-tier { margin: 1rem; color: var(--muted); font-style: italic; }
   .clash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-  .clash-card { min-height: 250px; padding: 1.2rem; border: 2px solid var(--ink); background: #f7f1df; box-shadow: 6px 6px 0 var(--ink); }
-  .battleground { display: inline-block; padding: .25rem .45rem; background: var(--ink); color: white !important; font: 700 .72rem/1.3 ui-monospace, monospace; text-transform: uppercase; }
+  .clash-card { min-height: 250px; padding: 1.2rem; border: 2px solid var(--ink); background: var(--panel-soft); box-shadow: 6px 6px 0 var(--ink); }
+  .battleground { display: inline-block; padding: .25rem .45rem; background: var(--ink); color: var(--inverse) !important; font: 700 .72rem/1.3 ui-monospace, monospace; text-transform: uppercase; }
   .exhibition-list { display: grid; gap: .8rem; }
-  .exhibition-card { display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: end; padding: 1.2rem; border: 1px solid var(--line); background: #f7f5ee; }
+  .exhibition-card { display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: end; padding: 1.2rem; border: 1px solid var(--line); background: var(--panel); }
   .exhibition-meta { display: flex; flex-direction: column; gap: .5rem; align-items: end; white-space: nowrap; }
-  .rules { margin-top: 4rem; padding: 2rem; background: var(--ink); color: #fff9e8; }
-  .rule-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 1.5rem 0; background: #7d766d; }
+  .rules { margin-top: 4rem; padding: 2rem; background: var(--ink); color: var(--inverse); }
+  .rule-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 1.5rem 0; background: var(--pico-muted-border-color); }
   .rule-grid article { display: flex; flex-direction: column; gap: .7rem; min-height: 150px; padding: 1rem; background: var(--ink); }
-  .rule-grid strong { font-size: 2rem; color: #f5d547; }
-  .fineprint { max-width: 850px; color: #d7d0c5; }
+  .rule-grid strong { font-size: 2rem; color: var(--accent-gold); }
+  .fineprint { max-width: 850px; color: var(--pico-muted-color); }
   @media (max-width: 760px) {
     .hero { box-shadow: 6px 6px 0 var(--ink); }
     .section-heading { display: block; }
