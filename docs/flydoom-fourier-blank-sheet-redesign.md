@@ -242,12 +242,12 @@ The first public successor run exposed two remaining first-principles problems:
 
 The reconciled design therefore adds an automatic curriculum:
 
-- stage 1 starts with one Fourier actuator and the height mismatch family;
-- each mastered stage adds exactly one actuator while preserving all prior target dimensions;
-- the first six stages also unlock one new sensory family at a time;
+- stage 1 starts with one Fourier actuator and one localized scalar height signal;
+- each mastered stage adds exactly one actuator **and one scalar sensory signal**, while preserving all prior target dimensions;
+- sensory signals are revealed center-out over the 8×4 sheet and cycle through height, slope X, slope Z, curvature, normal disagreement, and slope magnitude;
 - mastery means holding match ≥ 0.970 for 12 consecutive sensory ticks;
-- after all six sensory families are active, later stages keep adding actuators one by one;
-- reward combines progress shaping with an absolute bad-state discomfort term, so low match remains aversive even when Δmatch is close to zero.
+- the displayed reward combines progress shaping with an absolute bad-state discomfort term, so low match remains aversive even when Δmatch is close to zero;
+- the perturbation learner uses directional improvement in that discomfort rather than the absolute state cost, so improving a bad state still receives positive credit.
 
 The human visualization follows the same curriculum rather than revealing the whole problem immediately:
 
