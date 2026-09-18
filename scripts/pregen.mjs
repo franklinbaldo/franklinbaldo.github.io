@@ -30,6 +30,7 @@ const steps = [
     ? [["scripts/generate-repo-factory.mjs", "--optional"]]
     : []),
   ["--import", "tsx/esm", "scripts/hronir/index.js", "select"],
+  ["--import", "tsx/esm", "scripts/materialize-hronir.mjs"],
   ["scripts/generate-translation-pairs.mjs"],
   ["scripts/generate-redirects.mjs"],
 ];
