@@ -11,7 +11,7 @@ Adds a parallel `/flydoom-fourier-next/` prototype rather than rewriting the exi
 
 The successor uses 32 Fourier residual modes plus five shared global transforms (translation X/Z, tilt X/Z, bowl curvature). Current and target therefore live in exactly the same reachable state space.
 
-The task input is an explicit 8×4 artificial proprioceptive mismatch sheet, not the rendered 3D view. MaleCNS recurrence remains frozen. A tiny learnable feature-gain adapter sits before the connectome and a low-rank 1,314-DN → 16-context → 37-action readout learns after it.
+The task input is an explicit 8×4 artificial proprioceptive mismatch sheet, not the rendered 3D view. MaleCNS recurrence remains frozen. A tiny learnable feature-gain adapter sits before the connectome and a low-rank 1,314-DN → 32-context → 37-action readout learns after it.
 
 Success is scored on realized geometry with dense height/normal/curvature checks and a worst-patch term. Reward is progress-based with an exponential late-precision tail, and a hit requires several consecutive sensory ticks above threshold before the same target shape relocates.
 
