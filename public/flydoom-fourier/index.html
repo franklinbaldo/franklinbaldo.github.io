@@ -485,7 +485,7 @@
           <section class="panel">
             <div class="panel-head">
               <h2>Experimento</h2>
-              <span id="episodeLabel">episode 0</span>
+              <span id="episodeLabel">continuous · 0s</span>
             </div>
             <div class="controls">
               <div class="row">
@@ -755,11 +755,8 @@
         bestMatch = 0,
         mismatchMagnitude = 0,
         rewardBaseline = 0;
-      let episodeStart = performance.now(),
-        episodeScore = 0,
-        episodeSamples = 0;
-      const EPISODE_MS = 6500,
-        HIT_THRESHOLD = 0.97,
+      const runStartedAt = performance.now();
+      const HIT_THRESHOLD = 0.97,
         READOUT_LR = 0.00018;
 
       const stage = document.getElementById("stage");
@@ -1180,15 +1177,6 @@ self.onmessage=function(event){
         }
       }
 
-      function finishEpisode(now) {
-        const score = episodeSamples ? episodeScore / episodeSamples : match;
-        bestEpisodeScore = Math.max(bestEpisodeScore, score);
-        episode++;
-        episodeStart = now;
-        episodeScore = 0;
-        episodeSamples = 0;
-        randomizeStart();
-      }
       function randomizeStart() {
         coeff.fill(0);
         for (let i = 0; i < activeDof; i++)
@@ -1260,9 +1248,7 @@ self.onmessage=function(event){
         }
         if (!hit && match < HIT_THRESHOLD - 0.025) hitLatched = false;
         bestMatch = Math.max(bestMatch, match);
-        episodeScore += match;
-        episodeSamples++;
-        if (now - episodeStart >= EPISODE_MS) finishEpisode(now);
+        bestEpisodeScore = Math.max(bestEpisodeScore, match);
       }
 
       const dnGrid = document.getElementById("dnGrid"),
@@ -1318,8 +1304,9 @@ self.onmessage=function(event){
         document.getElementById("latencyValue").textContent = neuralLatency
           ? `${neuralLatency.toFixed(1)} ms`
           : "—";
+        const elapsed = (performance.now() - runStartedAt) / 1000;
         document.getElementById("episodeLabel").textContent =
-          `episode ${episode} · policy ${bestEpisodeScore > -Infinity ? bestEpisodeScore.toFixed(3) : "—"}`;
+          `continuous · ${elapsed.toFixed(0)}s · best ${bestEpisodeScore > -Infinity ? bestEpisodeScore.toFixed(3) : "—"}`;
         document.getElementById("hitChip").style.opacity =
           match >= HIT_THRESHOLD ? "1" : ".45";
         for (let i = 0; i < 8; i++) {
@@ -1347,9 +1334,6 @@ self.onmessage=function(event){
         episode = 0;
         hits = 0;
         bestMatch = 0;
-        episodeStart = performance.now();
-        episodeScore = 0;
-        episodeSamples = 0;
         hitLatched = false;
         reward = 0;
         match = 0;
