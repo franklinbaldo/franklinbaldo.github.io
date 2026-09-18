@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   boundCoefficient,
   coefficientLimitForMode,
+  enforceSpectralEnergyBudget,
   robustShapeMatch,
 } from "../../public/flydoom-fourier/control_core.js";
 
@@ -70,4 +71,29 @@ test("spectral budget shrinks with frequency and clamps coefficients", () => {
   assert.ok(highLimit < lowLimit);
   assert.equal(boundCoefficient(10, high, 0.55), highLimit);
   assert.equal(boundCoefficient(-10, high, 0.55), -highLimit);
+});
+
+test("global spectral budget prevents many bounded modes from stacking into spikes", () => {
+  const modes = Array.from({ length: 256 }, (_, i) => mode(1 + i / 3));
+  const coeff = new Float32Array(256);
+  for (let i = 0; i < coeff.length; i++) {
+    coeff[i] = coefficientLimitForMode(modes[i], 0.55);
+  }
+
+  const scale = enforceSpectralEnergyBudget(
+    coeff,
+    modes,
+    coeff.length,
+    0.55,
+    0.6,
+  );
+
+  assert.ok(scale < 1);
+  const normalizedRms = Math.sqrt(
+    Array.from(coeff).reduce((sum, value, i) => {
+      const limit = coefficientLimitForMode(modes[i], 0.55);
+      return sum + (value / limit) ** 2;
+    }, 0) / coeff.length,
+  );
+  assert.ok(normalizedRms <= 0.600001);
 });
