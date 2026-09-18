@@ -3,7 +3,6 @@ export type Confidence = "low" | "medium" | "high";
 
 export interface Paper {
   slug: string;
-  order: number;
   file: string;
   sourceUrl?: string;
   title: string;
@@ -16,15 +15,11 @@ export interface Paper {
   status: string;
   limit: string;
   relatedFile?: string;
-  relatedLabel?: string;
-  updated: string;
 }
 
 type PaperCardModule = {
   frontmatter: {
     type: "paper";
-    order: number;
-    file: string;
     source_url?: string;
     title: string;
     family: string;
@@ -36,8 +31,6 @@ type PaperCardModule = {
     status: string;
     limit: string;
     related_file?: string;
-    related_label?: string;
-    updated: string | Date;
   };
 };
 
@@ -49,15 +42,10 @@ export const papers: Paper[] = Object.entries(modules)
   .map(([path, module]) => {
     const slug = path.split("/").at(-1)?.replace(/\.md$/, "") ?? path;
     const card = module.frontmatter;
-    const updated =
-      card.updated instanceof Date
-        ? card.updated.toISOString().slice(0, 10)
-        : String(card.updated);
 
     return {
       slug,
-      order: card.order,
-      file: card.file,
+      file: `${slug}.md`,
       sourceUrl: card.source_url,
       title: card.title,
       family: card.family,
@@ -69,11 +57,6 @@ export const papers: Paper[] = Object.entries(modules)
       status: card.status,
       limit: card.limit,
       relatedFile: card.related_file,
-      relatedLabel: card.related_label,
-      updated,
     };
   })
-  .sort((a, b) => a.order - b.order);
-
-export const PAPERS_UPDATED =
-  papers.map((paper) => paper.updated).sort().at(-1) ?? "unknown";
+  .sort((a, b) => a.family.localeCompare(b.family) || a.title.localeCompare(b.title));
