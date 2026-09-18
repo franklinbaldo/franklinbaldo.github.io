@@ -634,7 +634,9 @@
         estado Fourier completo e na translação, com termo de pior modo; não por
         uma grade esparsa de pontos, impedindo aliasing/reward hacking por picos
         entre amostras. Cada modo também tem orçamento de amplitude e velocidade
-        que decai com a frequência. O conectoma fica congelado;
+        que decai com a frequência, além de um orçamento global de energia
+        espectral para impedir empilhamento de centenas de modos. O conectoma fica
+        congelado;
         o erro espacial entra como aferência sensorial local. Além do reward
         global, cada uma das 32 regiões recebe reward próprio: melhora local é
         positiva; erro residual e worsening são negativos. Esse vetor regional
@@ -656,6 +658,7 @@
       import {
         boundCoefficient,
         boundVelocity,
+        enforceSpectralEnergyBudget,
         robustShapeMatch,
         spectralEnvelopeForMode,
       } from "./control_core.js";
@@ -1491,6 +1494,12 @@ self.onmessage=function(event){
             targetComplexity
           );
         }
+        enforceSpectralEnergyBudget(
+          coeff,
+          MODES,
+          activeDof,
+          targetComplexity
+        );
 
         match = shapeMatch();
         sampleLocalErrorField();
