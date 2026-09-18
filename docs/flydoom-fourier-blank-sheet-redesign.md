@@ -95,7 +95,7 @@ Instead:
 ```text
 1,314 DNs
    ↓ fixed deterministic random projection
-16 contextual hidden values
+32 contextual hidden values
    ↓ trainable linear readout
 37 action channels
 ```
