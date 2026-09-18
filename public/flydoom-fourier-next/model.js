@@ -66,35 +66,59 @@ export function curriculumActionOrder(modeCount = 32) {
   return order;
 }
 
-export function curriculumFeatureOrder() {
-  return [0, 1, 2, 3, 4, 5];
+export function curriculumSignalOrder(limit = 37) {
+  const cells = Array.from({ length: SENSOR_CELLS }, (_, cell) => cell);
+  cells.sort((a, b) => {
+    const ax = (a % SENSOR_COLS) - (SENSOR_COLS - 1) / 2;
+    const az = Math.floor(a / SENSOR_COLS) - (SENSOR_ROWS - 1) / 2;
+    const bx = (b % SENSOR_COLS) - (SENSOR_COLS - 1) / 2;
+    const bz = Math.floor(b / SENSOR_COLS) - (SENSOR_ROWS - 1) / 2;
+    const da = ax * ax + az * az;
+    const db = bx * bx + bz * bz;
+    return da - db || a - b;
+  });
+
+  const order = [];
+  for (const cell of cells) {
+    for (let feature = 0; feature < FEATURE_COUNT; feature++) {
+      order.push(cell * FEATURE_COUNT + feature);
+      if (order.length >= limit) return order;
+    }
+  }
+  return order;
 }
 
 export function curriculumStage(modeCount = 32, stageIndex = 0) {
   const actionOrder = curriculumActionOrder(modeCount);
-  const featureOrder = curriculumFeatureOrder();
+  const signalOrder = curriculumSignalOrder(actionOrder.length);
   const index = clamp(Math.round(stageIndex), 0, actionOrder.length - 1);
   const activeActions = actionOrder.slice(0, index + 1);
-  const activeFeatures = featureOrder.slice(
-    0,
-    Math.min(index + 1, featureOrder.length),
+  const activeSignalIndices = signalOrder.slice(0, index + 1);
+  const activeFeatures = Array.from(
+    new Set(activeSignalIndices.map((signal) => signal % FEATURE_COUNT)),
   );
   const actionIndex = actionOrder[index];
+  const signalIndex = signalOrder[index];
+  const signalCell = Math.floor(signalIndex / FEATURE_COUNT);
+  const signalFeature = signalIndex % FEATURE_COUNT;
   const globalNames = ["translate-x", "translate-z", "tilt-x", "tilt-z", "bowl"];
+
   return {
     index,
     total: actionOrder.length,
     activeActions,
+    activeSignalIndices,
     activeFeatures,
     unlockedAction: actionIndex,
     unlockedActionLabel:
       actionIndex < modeCount
         ? `fourier-${actionIndex + 1}`
         : globalNames[actionIndex - modeCount],
-    unlockedFeature:
-      index < featureOrder.length ? featureOrder[index] : null,
-    unlockedFeatureLabel:
-      index < featureOrder.length ? FEATURE_NAMES[featureOrder[index]] : null,
+    unlockedSignal: signalIndex,
+    unlockedSignalCell: signalCell,
+    unlockedFeature: signalFeature,
+    unlockedFeatureLabel: FEATURE_NAMES[signalFeature],
+    unlockedSignalLabel: `${FEATURE_NAMES[signalFeature]} @ cell ${signalCell + 1}`,
   };
 }
 
@@ -141,17 +165,10 @@ export function maskActions(actions, activeActions) {
   return out;
 }
 
-export function maskFeatures(features, activeFeatures, featureCount = FEATURE_COUNT) {
+export function maskSignals(features, activeSignalIndices) {
   const out = new Float32Array(features.length);
-  const enabled = new Set(activeFeatures);
-  const cells = Math.floor(features.length / featureCount);
-  for (let cell = 0; cell < cells; cell++) {
-    for (let feature = 0; feature < featureCount; feature++) {
-      if (enabled.has(feature)) {
-        out[cell * featureCount + feature] =
-          features[cell * featureCount + feature];
-      }
-    }
+  for (const index of activeSignalIndices) {
+    if (index >= 0 && index < features.length) out[index] = features[index];
   }
   return out;
 }
