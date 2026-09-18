@@ -449,7 +449,7 @@
           </div>
           <div class="metrics">
             <div class="metric">
-              <div class="metric-label">reward Δ exp-precision</div>
+              <div class="metric-label">reward Δ precision (exp)</div>
               <div class="metric-value accent" id="rewardValue">0.000</div>
             </div>
             <div class="metric">
@@ -639,12 +639,14 @@
         de modos sem tornar o alvo inalcançável. O conectoma fica
         congelado;
         o erro espacial entra como aferência sensorial local. O reward global
-        é a diferença temporal de uma potencial exponencial de precisão, calibrada
-        para saturar no limiar de HIT: a mesma melhora de match vale cada vez mais
-        à medida que se aproxima de 97%, e uma regressão recebe penalidade
-        exponencial simétrica. Ficar parado não rende reward. Cada uma das 32
-        regiões usa o mesmo princípio sobre o erro local, projetado de volta aos
-        modos/latentes que influenciam a região. Só o readout descendente aprende,
+        combina um pequeno backbone linear de progresso com a diferença temporal
+        de uma potencial exponencial de precisão, calibrada para saturar no limiar
+        de HIT. O backbone mantém sinal de aprendizagem quando o shape ainda está
+        longe; a componente exponencial domina perto de 97%, fazendo a mesma melhora
+        de match valer cada vez mais. Uma regressão recebe penalidade simétrica e
+        exponencialmente maior perto do alvo; ficar parado não rende reward. Cada
+        uma das 32 regiões usa o mesmo princípio sobre o erro local, projetado de
+        volta aos modos/latentes que influenciam a região. Só o readout descendente aprende,
         por uma atualização reward-modulated sobre os DNs individuais. O cruzamento
         de 97% ainda recebe um bônus único. Ao atingir o
         limiar, o mesmo target é realocado automaticamente para outra posição
@@ -803,7 +805,9 @@
       const runStartedAt = performance.now();
       const HIT_THRESHOLD = 0.97,
         PRECISION_BETA = 10,
+        GLOBAL_BASE_PROGRESS_GAIN = 2,
         GLOBAL_PRECISION_GAIN = 8,
+        REGIONAL_BASE_PROGRESS_GAIN = 3,
         REGIONAL_PRECISION_GAIN = 8,
         READOUT_LR = 0.00018;
 
@@ -1078,13 +1082,16 @@
           // exponentially more as error approaches zero. Reversing the move
           // gives the same-magnitude negative reward, so precision loss near
           // the target is punished just as strongly.
+          const linearProgress = currentSimilarity - previousSimilarity;
+          const exponentialProgress = exponentialPrecisionDelta(
+            currentSimilarity,
+            previousSimilarity,
+            1,
+            PRECISION_BETA
+          );
           const r = clamp(
-            exponentialPrecisionDelta(
-              currentSimilarity,
-              previousSimilarity,
-              1,
-              PRECISION_BETA
-            ) * REGIONAL_PRECISION_GAIN,
+            linearProgress * REGIONAL_BASE_PROGRESS_GAIN +
+              exponentialProgress * REGIONAL_PRECISION_GAIN,
             -1,
             1
           );
@@ -1432,7 +1439,9 @@ self.onmessage=function(event){
         currentOffsetVelocityX = 0;
         currentOffsetVelocityZ = 0;
         previousMatch = shapeMatch();
+        match = previousMatch;
         reward = 0;
+        resetRegionalRewardMemory();
       }
 
       function shapeMatch() {
@@ -1539,6 +1548,8 @@ self.onmessage=function(event){
           mismatchSq += localError[i] * localError[i];
         mismatchMagnitude = Math.sqrt(mismatchSq / localError.length);
         const hit = match >= HIT_THRESHOLD;
+        const linearProgress =
+          (match - previousMatch) / HIT_THRESHOLD;
         const precisionProgress = exponentialPrecisionDelta(
           match,
           previousMatch,
@@ -1547,7 +1558,8 @@ self.onmessage=function(event){
         );
         previousMatch = match;
         reward = clamp(
-          precisionProgress * GLOBAL_PRECISION_GAIN +
+          linearProgress * GLOBAL_BASE_PROGRESS_GAIN +
+            precisionProgress * GLOBAL_PRECISION_GAIN +
             (hit && !hitLatched ? 1 : 0),
           -1,
           1
@@ -1691,7 +1703,6 @@ self.onmessage=function(event){
         localWorsening.fill(0);
         regionalReward.fill(0);
         randomizeStart();
-        resetRegionalRewardMemory();
       });
       document
         .getElementById("targetSelect")
@@ -1832,7 +1843,6 @@ self.onmessage=function(event){
         targetOffsetZ
       );
       randomizeStart();
-      resetRegionalRewardMemory();
       loadMaleCns();
       requestAnimationFrame(frame);
       window.addEventListener("error", (event) =>
