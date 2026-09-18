@@ -31,7 +31,14 @@
   --paper-shadow:
     0 1px 0 var(--pico-muted-border-color),
     0 24px 48px -32px rgba(42, 36, 29, 0.18);
-  --cobogo-opacity: 0.05;
+  --cobogo-opacity: 0.045;
+  --surface-raised: #fff8e9;
+  --surface-soft: #efe4cf;
+  --accent-wash: rgba(196, 82, 24, 0.09);
+  --elevation-soft: 0 14px 40px -28px rgba(42, 36, 29, 0.34);
+  --elevation-card:
+    0 1px 0 rgba(42, 36, 29, 0.08),
+    0 18px 48px -34px rgba(42, 36, 29, 0.32);
 }
 
 [data-theme="dark"] {
@@ -47,12 +54,23 @@
   --pico-mark-color: #ede4d3;
   --paper-shadow:
     0 1px 0 rgba(0, 0, 0, 0.4), 0 24px 48px -32px rgba(0, 0, 0, 0.5);
-  --cobogo-opacity: 0.04;
+  --cobogo-opacity: 0.035;
+  --surface-raised: #282017;
+  --surface-soft: #201a14;
+  --accent-wash: rgba(241, 158, 92, 0.1);
+  --elevation-soft: 0 16px 44px -28px rgba(0, 0, 0, 0.72);
+  --elevation-card:
+    0 1px 0 rgba(255, 255, 255, 0.03),
+    0 18px 48px -32px rgba(0, 0, 0, 0.72);
 }
 
 :root {
   /* Slightly softer corners than Pico's default 0.25rem. */
-  --pico-border-radius: 0.375rem;
+  --pico-border-radius: 0.55rem;
+  --radius-small: 0.4rem;
+  --radius-medium: 0.7rem;
+  --radius-large: 1rem;
+  --content-reading-width: 72ch;
 
   /*
    * Shared stacking offsets for the fixed bottom-right widgets that can
