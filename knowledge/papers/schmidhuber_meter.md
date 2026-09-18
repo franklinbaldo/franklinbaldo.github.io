@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 11
 file: "schmidhuber_meter.md"
 title: "Schmidhuber Meter"
 family: "Método formal"

@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 4
 file: "paper1C_categorias_processuais_formalizacao.md"
 title: "Categorias processuais e formalização"
 family: "Raciocínio jurídico auditável"

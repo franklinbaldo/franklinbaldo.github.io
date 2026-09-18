@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 25
 file: "forbidden_relay.md"
 title: "Forbidden Relay"
 family: "Comunicação emergente e agência"

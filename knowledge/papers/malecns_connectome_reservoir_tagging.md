@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 34
 file: "malecns_connectome_reservoir_tagging.md"
 title: "MaleCNS como reservoir para tagging jurídico"
 family: "Neurocomputação experimental"

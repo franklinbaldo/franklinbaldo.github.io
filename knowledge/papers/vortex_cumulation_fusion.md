@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 35
 file: "vortex_cumulation_fusion.md"
 title: "Vortex cumulation e fusão"
 family: "Física matemática"

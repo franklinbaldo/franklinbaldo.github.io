@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 24
 file: "rl_relay_transducers.md"
 title: "Relay transducers por RL"
 family: "Comunicação emergente e agência"

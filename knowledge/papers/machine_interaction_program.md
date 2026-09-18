@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 37
 file: "machine_interaction_program.md"
 title: "Machine Interaction Program"
 family: "Comunicação emergente e agência"

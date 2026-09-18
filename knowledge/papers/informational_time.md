@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 21
 file: "informational_time.md"
 title: "Tempo como concatenação"
 family: "Aprendizagem e tempo informacional"

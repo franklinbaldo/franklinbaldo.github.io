@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 12
 file: "embedding_seeded_tournament.md"
 title: "ESHTR: torneios semânticos para decisões judiciais"
 family: "Método formal"

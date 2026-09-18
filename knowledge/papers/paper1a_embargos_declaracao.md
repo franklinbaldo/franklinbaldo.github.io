@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 2
 file: "paper1A_embargos_declaracao.md"
 title: "Embargos de Declaração: vícios e efeitos"
 family: "Raciocínio jurídico auditável"

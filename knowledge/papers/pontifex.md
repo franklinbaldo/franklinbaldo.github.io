@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 30
 file: "pontifex.md"
 title: "Pontifex"
 family: "Interpretabilidade"

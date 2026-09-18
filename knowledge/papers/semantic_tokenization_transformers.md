@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 13
 file: "semantic_tokenization_transformers.md"
 title: "Semantic Tokenization Transformers"
 family: "Método formal"

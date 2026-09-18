@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 23
 file: "pedagogical_signal_extraction.md"
 title: "Pedagogical Signal Extraction"
 family: "Aprendizagem e tempo informacional"

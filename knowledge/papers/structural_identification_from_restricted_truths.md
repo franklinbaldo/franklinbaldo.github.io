@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 14
 file: "structural_identification_from_restricted_truths.md"
 title: "Identificação estrutural por verdades restritas"
 family: "Método formal"

@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 7
 file: "paper1F_reputacao_sistema_juridico.md"
 title: "Reputação no sistema jurídico"
 family: "Raciocínio jurídico auditável"

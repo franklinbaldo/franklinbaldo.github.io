@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 1
 file: "paper1_dogmatico_ED_precedentes.md"
 title: "Embargos de Declaração e precedentes"
 family: "Raciocínio jurídico auditável"

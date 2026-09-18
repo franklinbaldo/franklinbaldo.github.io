@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 9
 file: "pipeline_lean_argdown.md"
 title: "Lean + Argdown para auditoria jurídica"
 family: "Método formal"

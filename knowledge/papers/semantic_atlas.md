@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 15
 file: "semantic_atlas.md"
 title: "Semantic Atlas"
 family: "Geometria semântica"

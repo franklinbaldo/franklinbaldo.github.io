@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 5
 file: "paper1D_vinculacao_racional_dialogo_institucional.md"
 title: "Vinculação racional e diálogo institucional"
 family: "Raciocínio jurídico auditável"

@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 36
 file: "sintese_programa.md"
 title: "Síntese do programa jurídico"
 family: "Raciocínio jurídico auditável"

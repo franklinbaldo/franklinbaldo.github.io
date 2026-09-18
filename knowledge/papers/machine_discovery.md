@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 26
 file: "machine_discovery.md"
 title: "Machine Discovery"
 family: "Comunicação emergente e agência"

@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 8
 file: "paper1G_livre_convencimento_patrimonialismo.md"
 title: "Livre convencimento e patrimonialismo"
 family: "Raciocínio jurídico auditável"

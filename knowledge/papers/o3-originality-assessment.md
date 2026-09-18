@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 32
 file: "o3-originality-assessment.md"
 title: "Pontifex: avaliação exploratória de prior art"
 family: "Interpretabilidade"

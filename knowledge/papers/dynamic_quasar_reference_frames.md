@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 18
 file: "dynamic_quasar_reference_frames.md"
 title: "Dynamic Quasar Reference Frames"
 family: "Geometria semântica"

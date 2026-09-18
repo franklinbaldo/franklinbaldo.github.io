@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 17
 file: "semantic_atlas_manifolds.md"
 title: "Semantic Atlas em manifolds"
 family: "Geometria semântica"

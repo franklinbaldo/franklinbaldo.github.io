@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 33
 file: "empirical_evaluation.md"
 title: "Avaliação empírica no TJRO"
 family: "Raciocínio jurídico auditável"

@@ -3,6 +3,7 @@ export type Confidence = "low" | "medium" | "high";
 
 export interface Paper {
   slug: string;
+  order: number;
   file: string;
   sourceUrl?: string;
   title: string;
@@ -22,6 +23,7 @@ export interface Paper {
 type PaperCardModule = {
   frontmatter: {
     type: "paper";
+    order: number;
     file: string;
     source_url?: string;
     title: string;
@@ -54,6 +56,7 @@ export const papers: Paper[] = Object.entries(modules)
 
     return {
       slug,
+      order: card.order,
       file: card.file,
       sourceUrl: card.source_url,
       title: card.title,
@@ -70,7 +73,7 @@ export const papers: Paper[] = Object.entries(modules)
       updated,
     };
   })
-  .sort((a, b) => a.title.localeCompare(b.title));
+  .sort((a, b) => a.order - b.order);
 
 export const PAPERS_UPDATED =
   papers.map((paper) => paper.updated).sort().at(-1) ?? "unknown";

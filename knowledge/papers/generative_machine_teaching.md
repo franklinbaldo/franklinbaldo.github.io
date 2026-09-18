@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 20
 file: "generative_machine_teaching.md"
 title: "Generative Machine Teaching"
 family: "Aprendizagem e tempo informacional"

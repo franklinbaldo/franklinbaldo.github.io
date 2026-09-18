@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 22
 file: "informational_time_negentropy_clarifications.md"
 title: "Negentropia, lei externa e agência"
 family: "Aprendizagem e tempo informacional"

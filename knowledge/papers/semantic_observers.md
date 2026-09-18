@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 19
 file: "semantic_observers.md"
 title: "Semantic Observers"
 family: "Geometria semântica"

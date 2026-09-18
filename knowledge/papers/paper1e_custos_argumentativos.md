@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 6
 file: "paper1E_custos_argumentativos.md"
 title: "Custos argumentativos"
 family: "Raciocínio jurídico auditável"

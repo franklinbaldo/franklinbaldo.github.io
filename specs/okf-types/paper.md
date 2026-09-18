@@ -19,6 +19,7 @@ The Markdown card is the source of truth. Astro pages, TypeScript projections, c
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `type` | string | Always `paper` |
+| `order` | integer | Stable editorial display order within the portfolio |
 | `file` | string | Paper path in `franklinbaldo/papers` |
 | `title` | string | Public display title |
 | `family` | string | Research family / programme |

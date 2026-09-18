@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 3
 file: "paper1B_cinco_saidas_precedentes.md"
 title: "Cinco saídas diante de precedentes"
 family: "Raciocínio jurídico auditável"

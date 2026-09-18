@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 27
 file: "affordance_restriction.md"
 title: "Alignment by Affordance Restriction"
 family: "Comunicação emergente e agência"

@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 29
 file: "contract_aware_driver_rehosting.md"
 title: "Contract-aware driver rehosting"
 family: "Sistemas"

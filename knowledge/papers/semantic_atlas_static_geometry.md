@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 16
 file: "semantic_atlas_static_geometry.md"
 title: "Semantic Atlas: geometria local em escala"
 family: "Geometria semântica"

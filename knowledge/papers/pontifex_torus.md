@@ -1,5 +1,6 @@
 ---
 type: paper
+order: 31
 file: "pontifex_torus.md"
 source_url: "https://github.com/franklinbaldo/papers/blob/experiment/pontifex-red-1/pontifex_torus.md"
 title: "Pontifex Torus"
