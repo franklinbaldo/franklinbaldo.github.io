@@ -159,8 +159,8 @@ export function maskFeatures(features, activeFeatures, featureCount = FEATURE_CO
 export function stateDiscomfortPenalty(
   match,
   target = 0.985,
-  gain = 0.45,
-  power = 2,
+  gain = 0.65,
+  power = 1.7,
 ) {
   const deficit = clamp((target - match) / Math.max(1e-9, target), 0, 1);
   return -gain * Math.pow(deficit, power);
