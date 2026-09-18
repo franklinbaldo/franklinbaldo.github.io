@@ -49,20 +49,25 @@ export function buildModes(count = 32) {
 
 export function curriculumActionOrder(modeCount = 32) {
   const base = modeCount;
-  const order = [
-    base + 4, // bowl ↔ curvature
-    base + 2, // tilt X ↔ slope X
-    base + 3, // tilt Z ↔ slope Z
-    0,        // first residual mode ↔ height
-    base,     // translation X ↔ normal disagreement
-    base + 1, // translation Z ↔ slope magnitude
-  ];
-  for (let mode = 1; mode < modeCount; mode++) order.push(mode);
+  const order = [];
+
+  // Start in the spectral domain: one Fourier actuator at a time. This makes
+  // stage 1 literally one controllable line in the spectrum.
+  const sensoryBootstrapModes = Math.min(6, modeCount);
+  for (let mode = 0; mode < sensoryBootstrapModes; mode++) order.push(mode);
+
+  // Once all six sensory families are available, introduce global transforms.
+  order.push(base, base + 1, base + 2, base + 3, base + 4);
+
+  // Then keep growing spectral complexity one actuator at a time.
+  for (let mode = sensoryBootstrapModes; mode < modeCount; mode++) {
+    order.push(mode);
+  }
   return order;
 }
 
 export function curriculumFeatureOrder() {
-  return [3, 1, 2, 0, 4, 5];
+  return [0, 1, 2, 3, 4, 5];
 }
 
 export function curriculumStage(modeCount = 32, stageIndex = 0) {
