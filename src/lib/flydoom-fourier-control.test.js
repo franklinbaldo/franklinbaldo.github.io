@@ -5,7 +5,10 @@ import {
   boundCoefficient,
   coefficientLimitForMode,
   enforceSpectralEnergyBudget,
+  exponentialPrecisionDelta,
+  exponentialPrecisionPotential,
   normalizedSpectralRms,
+  precisionProgressReward,
   robustShapeMatch,
 } from "../../public/flydoom-fourier/control_core.js";
 
@@ -123,4 +126,73 @@ test("target-aware energy ceiling can preserve a legal target above the floor", 
   );
 
   assert.equal(scale, 1);
+});
+
+test("precision potential concentrates reward near the success threshold", () => {
+  const threshold = 0.97;
+  const beta = 10;
+  const coarse = exponentialPrecisionDelta(0.501, 0.5, threshold, beta);
+  const precise = exponentialPrecisionDelta(0.961, 0.96, threshold, beta);
+
+  assert.ok(precise > coarse * 100);
+  assert.ok(precise > 0);
+});
+
+test("precision delta is symmetric: worsening near target is an equal penalty", () => {
+  const threshold = 0.97;
+  const beta = 10;
+  const up = exponentialPrecisionDelta(0.961, 0.96, threshold, beta);
+  const down = exponentialPrecisionDelta(0.96, 0.961, threshold, beta);
+
+  assert.ok(up > 0);
+  assert.equal(down, -up);
+});
+
+test("staying still produces no precision reward", () => {
+  assert.equal(exponentialPrecisionDelta(0.95, 0.95, 0.97, 10), 0);
+});
+
+test("most extractable potential remains near the success threshold", () => {
+  const threshold = 0.97;
+  const beta = 10;
+  const atNinetyPercentOfThreshold = exponentialPrecisionPotential(
+    threshold * 0.9,
+    threshold,
+    beta,
+  );
+
+  assert.ok(atNinetyPercentOfThreshold < 0.4);
+  assert.ok(1 - atNinetyPercentOfThreshold > 0.6);
+});
+
+test("hybrid shaping keeps a broad signal but strongly amplifies late precision", () => {
+  const threshold = 0.97;
+  const coarse = precisionProgressReward(
+    0.501,
+    0.5,
+    threshold,
+    10,
+    2,
+    8,
+  );
+  const precise = precisionProgressReward(
+    0.961,
+    0.96,
+    threshold,
+    10,
+    2,
+    8,
+  );
+  const precisePenalty = precisionProgressReward(
+    0.96,
+    0.961,
+    threshold,
+    10,
+    2,
+    8,
+  );
+
+  assert.ok(coarse > 0);
+  assert.ok(precise > coarse * 25);
+  assert.equal(precisePenalty, -precise);
 });
