@@ -23,7 +23,7 @@ Neste experimento, trocamos a pergunta:
 
 > **e se a saída motora da mosca não movesse apenas o corpo, mas deformasse o próprio espaço em que ela está?**
 
-O demonstrador abaixo transforma a atividade dos neurônios descendentes em velocidades de coeficientes de uma base de Fourier. Esses coeficientes alteram continuamente o shape de uma arena 3D. Um segundo shape, mostrado como wireframe, é o alvo predeterminado. A recompensa cresce conforme a arena atual se aproxima desse alvo e recebe um bônus quando a similaridade passa de 97%.
+O demonstrador abaixo fecha o loop em duas direções. A mosca recebe uma visão egocêntrica da arena e também uma **aferência artificial de erro morfológico**: seis sinais assinados dizem, em cada modo de Fourier, em que direção o shape atual está desajustado em relação ao alvo. Esses sinais entram no MaleCNS antes da recorrência. Na saída, os **1.314 neurônios descendentes** alimentam diretamente seis atuadores de Fourier por um readout treinável. A recompensa cresce conforme a arena atual se aproxima do alvo e recebe um bônus quando a similaridade passa de 97%.
 
 <div style="width: 100%; max-width: 1180px; margin: 2rem auto;">
   <div style="display:flex;justify-content:flex-end;margin-bottom:.6rem;">
@@ -51,17 +51,17 @@ O demonstrador abaixo transforma a atividade dos neurônios descendentes em velo
 ```text
 arena 3D deformável
         ↓
- câmera / retina de 32 colunas
+ câmera egocêntrica / retina de 32 colunas
+        +
+ erro morfológico assinado (6 modos)
         ↓
- grupos visuais do MaleCNS
+ ingresso sensorial artificial no MaleCNS
         ↓
  recorrência do conectoma (165.122 neurônios)
         ↓
  1.314 neurônios descendentes
         ↓
- 8 canais de leitura dos DNs
-        ↓
- adapter treinável DN → Fourier
+ readout treinável 1.314 DN → 6 Fourier
         ↓
  6 coeficientes de deformação
         ↓
@@ -72,7 +72,7 @@ arena 3D deformável
  reward
 ```
 
-O conectoma continua congelado. **Não estamos treinando os pesos do MaleCNS.** O único componente que aprende é a pequena projeção entre a camada descendente e os atuadores de Fourier.
+O conectoma continua congelado. **Não estamos treinando os pesos do MaleCNS.** O componente que aprende é somente o readout entre a camada descendente e os seis atuadores de Fourier. A diferença importante é que ele agora recebe os DNs individualmente; os oito buckets continuam existindo apenas como resumo visual da interface, não como gargalo de controle.
 
 ## Por que Fourier?
 
@@ -99,8 +99,10 @@ A tela mostra ao mesmo tempo:
 
 - a superfície atual em azul;
 - o shape-alvo como wireframe violeta;
-- a atividade de oito canais descendentes;
+- a retina egocêntrica enviada ao MaleCNS;
+- oito resumos visuais da camada descendente;
 - os seis coeficientes atuais e seus valores-alvo;
+- a magnitude do mismatch que está sendo aferida;
 - similaridade, melhor similaridade, reward e número de acertos.
 
 O reward é deliberadamente simples: uma função contínua da distância entre os vetores de coeficientes, com bônus ao ultrapassar 97% de similaridade. Isso deixa o processo observável no navegador e evita esconder a função objetivo.
@@ -112,22 +114,25 @@ O demo reutiliza diretamente os mesmos assets do FlyDoom:
 - `/flydoom/malecns_l3_compact.mcns`
 - `/flydoom/malecns_circuit.json`
 
-A recorrência é executada no navegador em um Web Worker. O frame renderizado da arena é comprimido em 32 colunas visuais e projetado nos grupos visuais já mapeados. Depois de cada step do conectoma, os neurônios descendentes são agregados em oito buckets determinísticos e entregues ao adapter.
+A recorrência é executada no navegador em um Web Worker. A retina agora é renderizada de uma câmera colocada na cabeça da mosca, não da câmera do espectador. Além disso, o vetor `target - current` dos seis coeficientes é transformado em um padrão oponente de aferência e injetado no ingresso sensorial antes da recorrência. Isso dá ao sistema uma maneira explícita de **sentir que está desajustado**.
 
-Essa divisão em oito buckets **não é uma nova anatomia biológica**. É apenas uma forma de preservar mais dimensionalidade da camada descendente do que a leitura esquerda/direita usada em demos anteriores.
+Esse canal de erro é deliberadamente artificial: não afirmamos que a drosófila biológica tenha um sensor de Fourier. Ele representa o sinal de tarefa que, em um corpo real, viria de propriocepção, equilíbrio, visão ou outra aferência relevante.
+
+Depois de cada step, o Worker devolve os 1.314 DNs individualmente ao readout. Os oito buckets permanecem somente para a visualização da atividade descendente.
 
 ## A parte treinável
 
-A projeção `DN → Fourier` começa com pesos pequenos.
+A projeção `1.314 DN → 6 Fourier` começa com pesos pequenos. Cada atuador recebe uma combinação treinável da atividade dos DNs individuais.
 
-Cada episódio testa uma versão perturbada desses pesos. Se a política melhora a similaridade média com o alvo, ela passa a ser a nova base para a próxima perturbação. É um hill-climber mínimo, colocado fora do cérebro.
+A exploração acontece na própria ação. O reward mantém uma baseline móvel e modula a atualização do readout: ruído que precede melhora recebe crédito; ruído que precede piora recebe crédito negativo. É uma versão mínima de policy gradient por perturbação, ainda inteiramente fora do conectoma.
 
 Essa separação é importante:
 
 ```text
-MaleCNS recorrente = fixo
-DN → Fourier       = treinável
-arena + reward     = ambiente artificial
+MaleCNS recorrente          = fixo
+erro → ingresso sensorial   = interface artificial
+1.314 DN → 6 Fourier        = treinável
+arena + reward              = ambiente artificial
 ```
 
 Portanto, este demo não diz que uma mosca biológica conhece séries de Fourier ou sabe remodelar superfícies. Ele testa uma ideia arquitetural mais estreita: **se usarmos a camada descendente de um conectoma real como estado de controle, ela pode alimentar um adapter que aprende a manipular um espaço físico de baixa dimensão?**
