@@ -134,8 +134,8 @@ test("curriculum starts with exactly one actuator and one sensory family", () =>
 
   assert.equal(stage.activeActions.length, 1);
   assert.equal(stage.activeFeatures.length, 1);
-  assert.equal(stage.unlockedActionLabel, "bowl");
-  assert.equal(stage.unlockedFeatureLabel, "curvature");
+  assert.equal(stage.unlockedActionLabel, "fourier-1");
+  assert.equal(stage.unlockedFeatureLabel, "height");
 });
 
 test("curriculum adds one actuator per stage and only one new sensory family until all six exist", () => {
@@ -156,9 +156,9 @@ test("curriculum target preserves solved dimensions while adding a new one", () 
   const stage0 = createCurriculumTarget(modes, 99, 0);
   const stage1 = createCurriculumTarget(modes, 99, 1);
 
-  assert.equal(stage0.bowl, stage1.bowl);
-  assert.equal(stage0.tiltX, 0);
-  assert.notEqual(stage1.tiltX, 0);
+  assert.equal(stage0.coeff[0], stage1.coeff[0]);
+  assert.equal(stage0.coeff[1], 0);
+  assert.notEqual(stage1.coeff[1], 0);
 });
 
 test("inactive actuators and sensory families are hard-masked", () => {
