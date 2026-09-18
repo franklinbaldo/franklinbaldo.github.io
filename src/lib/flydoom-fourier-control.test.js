@@ -8,6 +8,7 @@ import {
   exponentialPrecisionDelta,
   exponentialPrecisionPotential,
   normalizedSpectralRms,
+  precisionProgressReward,
   robustShapeMatch,
 } from "../../public/flydoom-fourier/control_core.js";
 
@@ -162,4 +163,36 @@ test("most extractable potential remains near the success threshold", () => {
 
   assert.ok(atNinetyPercentOfThreshold < 0.4);
   assert.ok(1 - atNinetyPercentOfThreshold > 0.6);
+});
+
+test("hybrid shaping keeps a broad signal but strongly amplifies late precision", () => {
+  const threshold = 0.97;
+  const coarse = precisionProgressReward(
+    0.501,
+    0.5,
+    threshold,
+    10,
+    2,
+    8,
+  );
+  const precise = precisionProgressReward(
+    0.961,
+    0.96,
+    threshold,
+    10,
+    2,
+    8,
+  );
+  const precisePenalty = precisionProgressReward(
+    0.96,
+    0.961,
+    threshold,
+    10,
+    2,
+    8,
+  );
+
+  assert.ok(coarse > 0);
+  assert.ok(precise > coarse * 25);
+  assert.equal(precisePenalty, -precise);
 });
