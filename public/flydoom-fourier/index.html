@@ -647,7 +647,9 @@
         inclinação na direção do olhar, inclinação lateral, curvatura, ângulo entre
         normais e magnitude da inclinação; populações aferentes distintas codificam
         feature e sinal no mesmo local. O worsening amplifica esse desconforto.
-        O reward global
+        Essas estatísticas diferenciais são atualizadas no passo sensorial (~14 Hz),
+        enquanto a dinâmica mecânica continua no frame rate visual, evitando custo
+        excessivo de derivadas em dispositivos móveis. O reward global
         combina um pequeno backbone linear de progresso com a diferença temporal
         de uma potencial exponencial de precisão, calibrada para saturar no limiar
         de HIT. O backbone mantém sinal de aprendizagem quando o shape ainda está
@@ -1582,7 +1584,6 @@ self.onmessage=function(event){
         );
 
         match = shapeMatch();
-        sampleLocalErrorField();
         let mismatchSq = 0;
         for (let i = 0; i < localMismatch.length; i++)
           mismatchSq += localMismatch[i] * localMismatch[i];
@@ -1837,6 +1838,7 @@ self.onmessage=function(event){
           if (now - lastSense > 70) {
             lastSense = now;
             sampleRetina();
+            sampleLocalErrorField();
             requestNeuralStep();
           }
           updateController(dt, now);
