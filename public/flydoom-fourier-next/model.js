@@ -397,6 +397,27 @@ export function progressReward(
   return clamp(linear * linearGain + precision * precisionGain, -1, 1);
 }
 
+export function stateAwareReward(
+  current,
+  previous,
+  target = 0.985,
+) {
+  const progress = progressReward(current, previous, target);
+  const statePenalty = stateDiscomfortPenalty(current, target);
+  const previousStatePenalty = stateDiscomfortPenalty(previous, target);
+  const stateImprovement = statePenalty - previousStatePenalty;
+
+  return {
+    progress,
+    statePenalty,
+    total: clamp(progress + statePenalty, -1, 1),
+    // Absolute discomfort is useful as valence, but node-perturbation learning
+    // must credit changes in discomfort rather than punish every action merely
+    // because the current state is still bad.
+    credit: clamp(progress + stateImprovement * 0.5, -1, 1),
+  };
+}
+
 function pseudoWeight(inputIndex, hiddenIndex) {
   const value = Math.sin(
     (inputIndex + 1) * 12.9898 + (hiddenIndex + 1) * 78.233,
