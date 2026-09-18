@@ -7,7 +7,6 @@ import {
   SENSOR_CELLS,
   applyActions,
   buildModes,
-  cloneState,
   createDynamics,
   createReadout,
   createState,
@@ -55,7 +54,6 @@ let previousHidden = null;
 let previousActionNoise = null;
 let previousInputNoise = null;
 let pendingInputNoise = null;
-let pendingField = null;
 let latestField = localMismatchField(current, target, MODES);
 let latestScore = geometricMatch(current, target, MODES);
 let previousMatch = latestScore.match;
@@ -367,7 +365,7 @@ async function loadMaleCns() {
       throw new Error("invalid MaleCNS vectors");
     }
 
-    worker = new Worker("./worker.js");
+    worker = new Worker(new URL("./worker.js", import.meta.url));
     worker.onmessage = (event) => {
       const msg = event.data;
       if (msg.type === "ready") {
@@ -389,7 +387,6 @@ async function loadMaleCns() {
         previousActionNoise = actionNoise;
         previousInputNoise = pendingInputNoise;
         pendingInputNoise = null;
-        pendingField = null;
       }
     };
     worker.onerror = (event) => {
@@ -432,9 +429,17 @@ async function loadMaleCns() {
 
 function sensoryTick() {
   latestScore = geometricMatch(current, target, MODES);
-  reward = progressReward(latestScore.match, previousMatch);
-  previousMatch = latestScore.match;
+  const completedMatch = latestScore.match;
+  reward = progressReward(completedMatch, previousMatch);
+  previousMatch = completedMatch;
 
+  if (completedMatch >= HIT_THRESHOLD) hitStreak++;
+  else hitStreak = 0;
+
+  const completedTarget = hitStreak >= HIT_HOLD_TICKS;
+  if (completedTarget) reward = clamp(reward + 1, -1, 1);
+
+  // Credit the perturbations that produced the interval that just ended.
   if (previousHidden && previousActionNoise) {
     updateNorm = updateReadout(
       readout,
@@ -444,21 +449,21 @@ function sensoryTick() {
       0.0011,
       OUTPUT_SIGMA,
     );
+    previousHidden = null;
+    previousActionNoise = null;
   }
   updateInputAdapter(reward);
+  previousInputNoise = null;
 
-  if (latestScore.match >= HIT_THRESHOLD) hitStreak++;
-  else hitStreak = 0;
-
-  if (hitStreak >= HIT_HOLD_TICKS) {
-    hits++;
-    reward = 1;
-    newTarget({ keepShape: true });
-  }
-
-  latestField = localMismatchField(current, target, MODES);
-  scoreHistory.push(latestScore.match);
+  scoreHistory.push(completedMatch);
   if (scoreHistory.length > 180) scoreHistory.shift();
+
+  if (completedTarget) {
+    hits++;
+    newTarget({ keepShape: true });
+  } else {
+    latestField = localMismatchField(current, target, MODES);
+  }
 
   if (workerReady && !workerBusy && worker) {
     const inputNoise = makeNoise(FEATURE_COUNT, INPUT_SIGMA);
@@ -469,7 +474,6 @@ function sensoryTick() {
 
     workerBusy = true;
     pendingInputNoise = inputNoise;
-    pendingField = latestField;
     worker.postMessage({
       type: "step",
       features: Array.from(latestField.features),
