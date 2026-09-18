@@ -457,8 +457,12 @@
               <div class="metric-value" id="matchValue">0.000</div>
             </div>
             <div class="metric">
-              <div class="metric-label">erro local RMS</div>
+              <div class="metric-label">grid mismatch RMS</div>
               <div class="metric-value" id="mismatchValue">0.000</div>
+              <div
+                id="mismatchStatsValue"
+                style="margin-top:3px;font:.58rem ui-monospace,monospace;color:var(--muted);white-space:normal;line-height:1.25"
+              >h ∇f ∇l κ n s</div>
             </div>
             <div class="metric">
               <div class="metric-label">reward regional</div>
@@ -638,7 +642,14 @@
         espectral ajustado ao próprio target para impedir empilhamento de centenas
         de modos sem tornar o alvo inalcançável. O conectoma fica
         congelado;
-        o erro espacial entra como aferência sensorial local. O reward global
+        o desalinhamento entra como aferência sensorial local multicanal. Em cada
+        uma das 32 regiões a mosca recebe separadamente diferença de altura,
+        inclinação na direção do olhar, inclinação lateral, curvatura, ângulo entre
+        normais e magnitude da inclinação; populações aferentes distintas codificam
+        feature e sinal no mesmo local. O worsening amplifica esse desconforto.
+        Essas estatísticas diferenciais são atualizadas no passo sensorial (~14 Hz),
+        enquanto a dinâmica mecânica continua no frame rate visual, evitando custo
+        excessivo de derivadas em dispositivos móveis. O reward global
         combina um pequeno backbone linear de progresso com a diferença temporal
         de uma potencial exponencial de precisão, calibrada para saturar no limiar
         de HIT. O backbone mantém sinal de aprendizagem quando o shape ainda está
@@ -664,8 +675,11 @@
         boundCoefficient,
         boundVelocity,
         enforceSpectralEnergyBudget,
+        localizedMismatchMagnitude,
+        localizedSurfaceMismatch,
         normalizedSpectralRms,
         precisionProgressReward,
+        surfaceDifferentialStats,
         robustShapeMatch,
         spectralEnvelopeForMode,
       } from "./control_core.js";
@@ -964,7 +978,10 @@
         willReadFrequently: true,
       });
       const retina = new Float32Array(32);
-      const localError = new Float32Array(32);
+      const LOCAL_FEATURE_COUNT = 6;
+      const localMismatch = new Float32Array(32);
+      const localFeatures = new Float32Array(32 * LOCAL_FEATURE_COUNT);
+      const localFeatureRms = new Float32Array(LOCAL_FEATURE_COUNT);
       const localSampleX = new Float32Array(32);
       const localSampleZ = new Float32Array(32);
       const previousLocalAbsError = new Float32Array(32);
@@ -1026,10 +1043,9 @@
       }
 
       function sampleLocalErrorField() {
-        // 32 egocentric regions: 16 rays to the fly's left visual field and
-        // 16 to the right. Each ray samples a point on the controllable surface.
-        // The signal is signed target-current plus a separate "getting worse"
-        // term derived from the change in absolute local error.
+        // 32 egocentric regions. Each region carries a multi-feature mismatch
+        // vector: height, forward/lateral slope, curvature, normal angle,
+        // and slope magnitude.
         const yaw = fly.rotation.y;
         const fx = -Math.sin(yaw);
         const fz = -Math.cos(yaw);
@@ -1037,6 +1053,8 @@
         const rz = -Math.sin(yaw);
         const originX = fly.position.x;
         const originZ = fly.position.z;
+        localFeatureRms.fill(0);
+
         for (let i = 0; i < 32; i++) {
           const sideIndex = i < 16 ? i : i - 16;
           const side = i < 16 ? -1 : 1;
@@ -1046,24 +1064,43 @@
           const z = clamp(originZ + fz * forward + rz * lateral, -5.4, 5.4);
           localSampleX[i] = x;
           localSampleZ[i] = z;
-          const currentH = currentHeightAt(x, z);
-          const targetH = targetHeightAt(x, z);
-          const signed = clamp((targetH - currentH) / 2.5, -1, 1);
-          const absErr = Math.abs(signed);
-          localError[i] = signed;
+
+          const currentStats = surfaceDifferentialStats(currentHeightAt, x, z, 0.22);
+          const targetStats = surfaceDifferentialStats(targetHeightAt, x, z, 0.22);
+          const features = localizedSurfaceMismatch(
+            currentStats,
+            targetStats,
+            fx,
+            fz,
+            rx,
+            rz
+          );
+
+          for (let f = 0; f < LOCAL_FEATURE_COUNT; f++) {
+            const value = features[f];
+            localFeatures[i * LOCAL_FEATURE_COUNT + f] = value;
+            localFeatureRms[f] += value * value;
+          }
+
+          const mismatch = localizedMismatchMagnitude(features);
+          localMismatch[i] = mismatch;
           localWorsening[i] = clamp(
-            (absErr - previousLocalAbsError[i]) * 8,
+            (mismatch - previousLocalAbsError[i]) * 8,
             0,
             1
           );
-          previousLocalAbsError[i] = absErr;
+          previousLocalAbsError[i] = mismatch;
+        }
+
+        for (let f = 0; f < LOCAL_FEATURE_COUNT; f++) {
+          localFeatureRms[f] = Math.sqrt(localFeatureRms[f] / 32);
         }
       }
 
       function resetRegionalRewardMemory() {
         sampleLocalErrorField();
         for (let i = 0; i < 32; i++) {
-          previousLearningAbsError[i] = Math.abs(localError[i]);
+          previousLearningAbsError[i] = localMismatch[i];
           regionalReward[i] = 0;
         }
         regionalRewardMean = 0;
@@ -1074,7 +1111,7 @@
         let sum = 0;
         let worst = Infinity;
         for (let i = 0; i < 32; i++) {
-          const absErr = Math.abs(localError[i]);
+          const absErr = localMismatch[i];
           const previousAbsErr = previousLearningAbsError[i];
           const currentSimilarity = 1 - absErr;
           const previousSimilarity = 1 - previousAbsErr;
@@ -1134,27 +1171,30 @@ self.onmessage=function(event){
    self.postMessage({type:"ready",n:connectome.n_neurons,dn:circuit.dn_all.length});return;
  }
  if(msg.type!=="step"||!connectome)return;
- const t0=performance.now(), retinal=msg.retina, localError=msg.localError||[], worsening=msg.worsening||[];drive.fill(0);
+ const t0=performance.now(), retinal=msg.retina, localFeatures=msg.localFeatures||[], featureCount=msg.featureCount||1, worsening=msg.worsening||[];drive.fill(0);
  for(let r=0;r<16;r++){
    const ls=retinal[r]*3.2,rs=retinal[16+r]*3.2,lb=circuit.ray_vpl[r],rb=circuit.ray_vpr[r];
    for(let i=0;i<lb.length;i++)drive[lb[i]]=ls;
    for(let i=0;i<rb.length;i++)drive[rb[i]]=rs;
  }
- // Spatial morphology-error afference. Error stays local: each egocentric
- // region is injected into the same left/right visual ingress bin that
- // represents that region. Positive/negative errors are opponent-signed;
- // regions whose absolute error is growing get an urgency gain.
+ // Localized multi-statistic morphology discomfort. The neurons assigned
+ // to each spatial ingress bin are partitioned into feature/opponent groups,
+ // so distinct mismatch statistics remain distinct while preserving location.
+ const featureGains=[2.4,1.8,1.8,1.5,2.0,1.3];
  for(let k=0;k<32;k++){
-   const e=Math.max(-1,Math.min(1,localError[k]||0));
    const worse=Math.max(0,Math.min(1,worsening[k]||0));
-   const mag=Math.abs(e)*(2.0+2.2*worse);
    const side=k<16?circuit.ray_vpl:circuit.ray_vpr;
    const bin=k&15;
-   const opposite=(15-bin);
-   const primary=side[bin],counter=side[opposite];
-   const sign=e>=0?1:-1;
-   for(let i=0;i<primary.length;i++)drive[primary[i]]+=sign*mag;
-   for(let i=0;i<counter.length;i++)drive[counter[i]]-=sign*mag*.35;
+   const population=side[bin];
+   const partitions=Math.max(2,featureCount*2);
+   for(let f=0;f<featureCount;f++){
+     const raw=Math.max(-1,Math.min(1,localFeatures[k*featureCount+f]||0));
+     const mag=Math.abs(raw)*(featureGains[f]||1)*(1+2.5*worse);
+     if(mag<=1e-6)continue;
+     const opponent=raw>=0?0:1;
+     const residue=(f*2+opponent)%partitions;
+     for(let i=residue;i<population.length;i+=partitions)drive[population[i]]+=mag;
+   }
  }
  const N=connectome.n_neurons,o=connectome.offsets,s=connectome.scales,d=connectome.deltas,w=connectome.weights,l=connectome.lut;
  for(let row=0;row<N;row++){
@@ -1255,7 +1295,7 @@ self.onmessage=function(event){
                 neuralViz.update({
                   activity: dnFull,
                   sensory: retina,
-                  secondary: localError,
+                  secondary: localMismatch,
                   channels: Array.from({ length: 8 }, (_, i) => ({
                     label: `DN${i + 1}`,
                     value: dn[i]
@@ -1310,7 +1350,8 @@ self.onmessage=function(event){
           neuralWorker.postMessage({
             type: "step",
             retina: Array.from(retina),
-            localError: Array.from(localError),
+            localFeatures: Array.from(localFeatures),
+            featureCount: LOCAL_FEATURE_COUNT,
             worsening: Array.from(localWorsening),
           });
         } else if (!neuralReady) {
@@ -1321,7 +1362,7 @@ self.onmessage=function(event){
             neuralViz.update({
               activity: dn,
               sensory: retina,
-              secondary: localError,
+              secondary: localMismatch,
               channels: Array.from({ length: 8 }, (_, i) => ({
                 label: `DN${i + 1}`,
                 value: dn[i]
@@ -1541,11 +1582,10 @@ self.onmessage=function(event){
         );
 
         match = shapeMatch();
-        sampleLocalErrorField();
         let mismatchSq = 0;
-        for (let i = 0; i < localError.length; i++)
-          mismatchSq += localError[i] * localError[i];
-        mismatchMagnitude = Math.sqrt(mismatchSq / localError.length);
+        for (let i = 0; i < localMismatch.length; i++)
+          mismatchSq += localMismatch[i] * localMismatch[i];
+        mismatchMagnitude = Math.sqrt(mismatchSq / localMismatch.length);
         const hit = match >= HIT_THRESHOLD;
         const progressReward = precisionProgressReward(
           match,
@@ -1647,6 +1687,8 @@ self.onmessage=function(event){
         document.getElementById("matchValue").textContent = match.toFixed(3);
         document.getElementById("mismatchValue").textContent =
           mismatchMagnitude.toFixed(3);
+        document.getElementById("mismatchStatsValue").textContent =
+          `h ${localFeatureRms[0].toFixed(2)} · ∇f ${localFeatureRms[1].toFixed(2)} · ∇l ${localFeatureRms[2].toFixed(2)} · κ ${localFeatureRms[3].toFixed(2)} · n ${localFeatureRms[4].toFixed(2)} · s ${localFeatureRms[5].toFixed(2)}`;
         const regionalEl = document.getElementById("regionalRewardValue");
         regionalEl.textContent =
           `${regionalRewardMean.toFixed(3)} / ${regionalRewardWorst.toFixed(3)}`;
@@ -1794,6 +1836,7 @@ self.onmessage=function(event){
           if (now - lastSense > 70) {
             lastSense = now;
             sampleRetina();
+            sampleLocalErrorField();
             requestNeuralStep();
           }
           updateController(dt, now);
