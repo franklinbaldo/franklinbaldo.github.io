@@ -75,6 +75,67 @@ export function precisionProgressReward(
   );
 }
 
+export function surfaceDifferentialStats(heightAt, x, z, epsilon = 0.22) {
+  const e = Math.max(1e-4, epsilon);
+  const h = heightAt(x, z);
+  const xp = heightAt(x + e, z);
+  const xm = heightAt(x - e, z);
+  const zp = heightAt(x, z + e);
+  const zm = heightAt(x, z - e);
+
+  const gradX = (xp - xm) / (2 * e);
+  const gradZ = (zp - zm) / (2 * e);
+  const curvature = (xp + xm + zp + zm - 4 * h) / (e * e);
+  const slope = Math.hypot(gradX, gradZ);
+  const invNormal = 1 / Math.hypot(gradX, 1, gradZ);
+
+  return {
+    height: h,
+    gradX,
+    gradZ,
+    slope,
+    curvature,
+    normalX: -gradX * invNormal,
+    normalY: invNormal,
+    normalZ: -gradZ * invNormal,
+  };
+}
+
+export function localizedSurfaceMismatch(
+  currentStats,
+  targetStats,
+  forwardX,
+  forwardZ,
+  rightX,
+  rightZ,
+) {
+  const gradDx = targetStats.gradX - currentStats.gradX;
+  const gradDz = targetStats.gradZ - currentStats.gradZ;
+  const normalDot = clamp(
+    currentStats.normalX * targetStats.normalX +
+      currentStats.normalY * targetStats.normalY +
+      currentStats.normalZ * targetStats.normalZ,
+    -1,
+    1,
+  );
+
+  return [
+    clamp((targetStats.height - currentStats.height) / 2.5, -1, 1),
+    clamp((gradDx * forwardX + gradDz * forwardZ) / 1.5, -1, 1),
+    clamp((gradDx * rightX + gradDz * rightZ) / 1.5, -1, 1),
+    clamp((targetStats.curvature - currentStats.curvature) / 4, -1, 1),
+    clamp((1 - normalDot) / 0.35, 0, 1),
+    clamp((targetStats.slope - currentStats.slope) / 1.5, -1, 1),
+  ];
+}
+
+export function localizedMismatchMagnitude(features) {
+  if (!features.length) return 0;
+  let squared = 0;
+  for (const value of features) squared += value * value;
+  return clamp(Math.sqrt(squared / features.length), 0, 1);
+}
+
 export function normalizedSpectralRms(
   coeff,
   modes,
