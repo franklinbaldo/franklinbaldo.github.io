@@ -449,7 +449,7 @@
           </div>
           <div class="metrics">
             <div class="metric">
-              <div class="metric-label">reward</div>
+              <div class="metric-label">reward Δ exp-precision</div>
               <div class="metric-value accent" id="rewardValue">0.000</div>
             </div>
             <div class="metric">
@@ -638,13 +638,15 @@
         espectral ajustado ao próprio target para impedir empilhamento de centenas
         de modos sem tornar o alvo inalcançável. O conectoma fica
         congelado;
-        o erro espacial entra como aferência sensorial local. Além do reward
-        global, cada uma das 32 regiões recebe reward próprio: melhora local é
-        positiva; erro residual e worsening são negativos. Esse vetor regional
-        é projetado de volta aos modos/latentes que influenciam cada região. Só o readout descendente
-        aprende, por uma atualização reward-modulated sobre os DNs individuais. A recompensa é contínua para tornar o processo
-        visível e recebe
-        um bônus quando o shape ultrapassa 97% de similaridade. Ao atingir o
+        o erro espacial entra como aferência sensorial local. O reward global
+        é a diferença temporal de uma potencial exponencial de precisão, calibrada
+        para saturar no limiar de HIT: a mesma melhora de match vale cada vez mais
+        à medida que se aproxima de 97%, e uma regressão recebe penalidade
+        exponencial simétrica. Ficar parado não rende reward. Cada uma das 32
+        regiões usa o mesmo princípio sobre o erro local, projetado de volta aos
+        modos/latentes que influenciam a região. Só o readout descendente aprende,
+        por uma atualização reward-modulated sobre os DNs individuais. O cruzamento
+        de 97% ainda recebe um bônus único. Ao atingir o
         limiar, o mesmo target é realocado automaticamente para outra posição
         aleatória da arena sem resetar a política; isso não implica
         que a mosca biológica conheça Fourier nem o conceito do alvo.
@@ -660,6 +662,7 @@
         boundCoefficient,
         boundVelocity,
         enforceSpectralEnergyBudget,
+        exponentialPrecisionDelta,
         normalizedSpectralRms,
         robustShapeMatch,
         spectralEnvelopeForMode,
@@ -794,11 +797,14 @@
         episode = 0,
         reward = 0,
         match = 0,
+        previousMatch = 0,
         bestMatch = 0,
-        mismatchMagnitude = 0,
-        rewardBaseline = 0;
+        mismatchMagnitude = 0;
       const runStartedAt = performance.now();
       const HIT_THRESHOLD = 0.97,
+        PRECISION_BETA = 10,
+        GLOBAL_PRECISION_GAIN = 8,
+        REGIONAL_PRECISION_GAIN = 8,
         READOUT_LR = 0.00018;
 
       const stage = document.getElementById("stage");
@@ -1065,12 +1071,20 @@
         let worst = Infinity;
         for (let i = 0; i < 32; i++) {
           const absErr = Math.abs(localError[i]);
-          const improvement = previousLearningAbsError[i] - absErr;
-          // Local reward: improvement is positive credit; residual error keeps
-          // a small negative pressure; actively worsening regions are punished
-          // more strongly. This is deliberately separate from the global reward.
+          const previousAbsErr = previousLearningAbsError[i];
+          const currentSimilarity = 1 - absErr;
+          const previousSimilarity = 1 - previousAbsErr;
+          // Potential-based shaping: the same local improvement is worth
+          // exponentially more as error approaches zero. Reversing the move
+          // gives the same-magnitude negative reward, so precision loss near
+          // the target is punished just as strongly.
           const r = clamp(
-            improvement * 3.0 - absErr * 0.12 - localWorsening[i] * 0.35,
+            exponentialPrecisionDelta(
+              currentSimilarity,
+              previousSimilarity,
+              1,
+              PRECISION_BETA
+            ) * REGIONAL_PRECISION_GAIN,
             -1,
             1
           );
@@ -1417,6 +1431,8 @@ self.onmessage=function(event){
         currentOffsetZ = targetOffsetZ;
         currentOffsetVelocityX = 0;
         currentOffsetVelocityZ = 0;
+        previousMatch = shapeMatch();
+        reward = 0;
       }
 
       function shapeMatch() {
@@ -1467,6 +1483,8 @@ self.onmessage=function(event){
           targetOffsetX,
           targetOffsetZ
         );
+        previousMatch = shapeMatch();
+        reward = 0;
         resetRegionalRewardMemory();
       }
       let hitLatched = false;
@@ -1521,9 +1539,20 @@ self.onmessage=function(event){
           mismatchSq += localError[i] * localError[i];
         mismatchMagnitude = Math.sqrt(mismatchSq / localError.length);
         const hit = match >= HIT_THRESHOLD;
-        reward = Math.pow(match, 6) + (hit ? 1 : 0);
-        rewardBaseline = rewardBaseline * 0.985 + reward * 0.015;
-        const globalAdvantage = clamp(reward - rewardBaseline, -1, 1);
+        const precisionProgress = exponentialPrecisionDelta(
+          match,
+          previousMatch,
+          HIT_THRESHOLD,
+          PRECISION_BETA
+        );
+        previousMatch = match;
+        reward = clamp(
+          precisionProgress * GLOBAL_PRECISION_GAIN +
+            (hit && !hitLatched ? 1 : 0),
+          -1,
+          1
+        );
+        const globalAdvantage = reward;
         updateRegionalRewards();
 
         if (latentCount) {
@@ -1650,7 +1679,6 @@ self.onmessage=function(event){
         latentGain.fill(1);
         latentBias.fill(0);
         bestEpisodeScore = -Infinity;
-        rewardBaseline = 0;
         episode = 0;
         hits = 0;
         bestMatch = 0;
