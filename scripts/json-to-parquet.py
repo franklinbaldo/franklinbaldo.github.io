@@ -18,22 +18,20 @@ def main() -> int:
     target.parent.mkdir(parents=True, exist_ok=True)
 
     con = duckdb.connect()
-    con.execute(
-        """
-        COPY (
-          SELECT *
-          FROM read_json_auto(?, format='array', maximum_object_size=104857600)
-        )
-        TO ? (FORMAT PARQUET, COMPRESSION ZSTD)
-        """,
-        [str(source), str(target)],
+    relation = con.sql(
+        "SELECT * FROM read_json_auto(?, format='array', maximum_object_size=104857600)",
+        params=[str(source)],
     )
+    relation.write_parquet(str(target), compression="zstd")
 
     manifest = source.with_name("hronir-manifest.json")
     if manifest.exists():
         data = json.loads(manifest.read_text(encoding="utf-8"))
         data["parquet_bytes"] = target.stat().st_size
-        manifest.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        manifest.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
 
     print(f"[hronir-data] parquet -> {target} ({target.stat().st_size} bytes)")
     return 0
