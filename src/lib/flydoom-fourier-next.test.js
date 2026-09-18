@@ -79,7 +79,7 @@ test("late precision pays far more than equal progress when far away", () => {
   assert.ok(far > 0);
   assert.ok(near > far * 20);
   assert.equal(progressReward(0.98, 0.98), 0);
-  assert.equal(progressReward(0.98, 0.981), -near);
+  assert.ok(Math.abs(progressReward(0.98, 0.981) + near) < 1e-12);
   assert.ok(1 - precisionPotential(0.985 * 0.9) > 0.6);
 });
 
