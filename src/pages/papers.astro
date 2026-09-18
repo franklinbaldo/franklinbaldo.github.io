@@ -1,8 +1,7 @@
 ---
 import PageLayout from "../layouts/PageLayout.astro";
-import { papers, PAPERS_UPDATED, type Tier } from "../data/papers";
+import { papers, type Tier } from "../data/papers";
 
-const updated = PAPERS_UPDATED;
 const repo = "https://github.com/franklinbaldo/papers/blob/main/";
 
 const familyOrder = ["Raciocínio jurídico auditável","Método formal","Geometria semântica","Aprendizagem e tempo informacional","Comunicação emergente e agência","Interpretabilidade","Neurocomputação experimental","Sistemas","Física matemática"];
@@ -25,7 +24,7 @@ const interestCounts = Object.fromEntries(tiers.map((tier)=>[tier,papers.filter(
 <PageLayout title="Papers | Franklin Baldo" description="Mapa vivo dos papers de Franklin Baldo: ideias em linguagem acessível, maturidade científica, interesse e conexões entre linhas de pesquisa." lang="pt">
   <main class="papers-shell">
     <header class="hero">
-      <p class="eyebrow">MAPA VIVO · ATUALIZADO {updated}</p>
+      <p class="eyebrow">MAPA VIVO</p>
       <h1>Papers</h1>
       <p class="lede">Esta página é o mapa das ideias que estão no repositório <a href="https://github.com/franklinbaldo/papers">franklinbaldo/papers</a>. Ela tenta responder três perguntas sem obrigar você a ler trinta papers primeiro: <strong>qual é a ideia?</strong>, <strong>quão madura ela está?</strong> e <strong>como ela conversa com as outras?</strong></p>
       <p class="caveat">Os tiers são uma fotografia comparativa, não um selo de verdade. <strong>Tier científico</strong> mede maturidade, formalização e contato com evidência dentro do domínio. <strong>Tier de interesse</strong> mede o quanto a ideia é fértil para gerar experimentos, conexões ou novas perguntas. Quase tudo aqui é trabalho próprio, em grande parte não revisado por pares.</p>
@@ -58,7 +57,7 @@ const interestCounts = Object.fromEntries(tiers.map((tier)=>[tier,papers.filter(
           <h3>{paper.title}</h3><p class="idea">{paper.idea}</p>
           <dl><div><dt>Agora</dt><dd>{paper.status}</dd></div><div><dt>O que segura</dt><dd>{paper.limit}</dd></div></dl>
           <a class="paper-link" href={paper.sourceUrl ?? `${repo}${paper.file}`}>abrir paper ↗</a>
-          {paper.relatedFile && <a class="related-link" href={`${repo}${paper.relatedFile}`}>{paper.relatedLabel ?? "material relacionado"} ↗</a>}
+          {paper.relatedFile && <a class="related-link" href={`${repo}${paper.relatedFile}`}>material relacionado ↗</a>}
         </article>)}</div>
       </section>
     )})}
