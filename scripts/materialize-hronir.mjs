@@ -20,8 +20,10 @@ const rows = loadMatches()
     const { norm, data, runAtRaw } = loaded;
     return {
       id: text(data.id) ?? `hronir:${norm.id}`,
-      type: text(data.type) ?? "Rate File",
-      schema: text(data.schema) ?? "legacy-rate-file",
+      type: "Hronir Evaluation",
+      schema: "hronir-public-row-v1",
+      source_type: text(data.type) ?? "Rate File",
+      source_schema: text(data.schema) ?? "legacy-rate-file",
       prompt_version: text(data.prompt_version),
       run_id: text(data.run_id),
       run_at: runAtRaw || null,
