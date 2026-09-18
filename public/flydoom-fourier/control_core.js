@@ -29,6 +29,31 @@ export function boundVelocity(value, mode, complexity = 0.55) {
   return clamp(value, -limit, limit);
 }
 
+export function enforceSpectralEnergyBudget(
+  coeff,
+  modes,
+  count,
+  complexity = 0.55,
+  maxNormalizedRms = 0.6,
+) {
+  const n = Math.max(1, Math.min(count, coeff.length, modes.length));
+  let squared = 0;
+  for (let k = 0; k < n; k++) {
+    const limit = Math.max(
+      0.03,
+      coefficientLimitForMode(modes[k], complexity),
+    );
+    const normalized = coeff[k] / limit;
+    squared += normalized * normalized;
+  }
+  const rms = Math.sqrt(squared / n);
+  if (rms <= maxNormalizedRms || rms === 0) return 1;
+
+  const scale = maxNormalizedRms / rms;
+  for (let k = 0; k < n; k++) coeff[k] *= scale;
+  return scale;
+}
+
 /**
  * Reward-safe shape score.
  *
