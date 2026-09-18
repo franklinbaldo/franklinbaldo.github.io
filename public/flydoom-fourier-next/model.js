@@ -47,6 +47,120 @@ export function buildModes(count = 32) {
   return modes;
 }
 
+export function curriculumActionOrder(modeCount = 32) {
+  const base = modeCount;
+  const order = [
+    base + 4, // bowl ↔ curvature
+    base + 2, // tilt X ↔ slope X
+    base + 3, // tilt Z ↔ slope Z
+    0,        // first residual mode ↔ height
+    base,     // translation X ↔ normal disagreement
+    base + 1, // translation Z ↔ slope magnitude
+  ];
+  for (let mode = 1; mode < modeCount; mode++) order.push(mode);
+  return order;
+}
+
+export function curriculumFeatureOrder() {
+  return [3, 1, 2, 0, 4, 5];
+}
+
+export function curriculumStage(modeCount = 32, stageIndex = 0) {
+  const actionOrder = curriculumActionOrder(modeCount);
+  const featureOrder = curriculumFeatureOrder();
+  const index = clamp(Math.round(stageIndex), 0, actionOrder.length - 1);
+  const activeActions = actionOrder.slice(0, index + 1);
+  const activeFeatures = featureOrder.slice(
+    0,
+    Math.min(index + 1, featureOrder.length),
+  );
+  const actionIndex = actionOrder[index];
+  const globalNames = ["translate-x", "translate-z", "tilt-x", "tilt-z", "bowl"];
+  return {
+    index,
+    total: actionOrder.length,
+    activeActions,
+    activeFeatures,
+    unlockedAction: actionIndex,
+    unlockedActionLabel:
+      actionIndex < modeCount
+        ? `fourier-${actionIndex + 1}`
+        : globalNames[actionIndex - modeCount],
+    unlockedFeature:
+      index < featureOrder.length ? featureOrder[index] : null,
+    unlockedFeatureLabel:
+      index < featureOrder.length ? FEATURE_NAMES[featureOrder[index]] : null,
+  };
+}
+
+function nonZeroSigned(rng, minMagnitude, maxMagnitude) {
+  const sign = rng() < 0.5 ? -1 : 1;
+  return sign * (minMagnitude + rng() * (maxMagnitude - minMagnitude));
+}
+
+function setTargetAction(state, modes, actionIndex, rng) {
+  if (actionIndex < modes.length) {
+    const limit = spectralLimit(modes[actionIndex]);
+    state.coeff[actionIndex] = nonZeroSigned(rng, limit * 0.28, limit * 0.62);
+    return;
+  }
+
+  const globalIndex = actionIndex - modes.length;
+  if (globalIndex === 0) state.tx = nonZeroSigned(rng, 0.65, 1.8);
+  else if (globalIndex === 1) state.tz = nonZeroSigned(rng, 0.65, 1.8);
+  else if (globalIndex === 2) state.tiltX = nonZeroSigned(rng, 0.07, 0.2);
+  else if (globalIndex === 3) state.tiltZ = nonZeroSigned(rng, 0.07, 0.2);
+  else if (globalIndex === 4) state.bowl = nonZeroSigned(rng, 0.09, 0.22);
+}
+
+export function createCurriculumTarget(
+  modes,
+  seed = 1,
+  stageIndex = 0,
+) {
+  const target = createState(modes.length);
+  const rng = seededRandom(seed);
+  const order = curriculumActionOrder(modes.length);
+  const last = clamp(Math.round(stageIndex), 0, order.length - 1);
+  for (let index = 0; index <= last; index++) {
+    setTargetAction(target, modes, order[index], rng);
+  }
+  return target;
+}
+
+export function maskActions(actions, activeActions) {
+  const out = new Float32Array(actions.length);
+  for (const index of activeActions) {
+    if (index >= 0 && index < actions.length) out[index] = actions[index];
+  }
+  return out;
+}
+
+export function maskFeatures(features, activeFeatures, featureCount = FEATURE_COUNT) {
+  const out = new Float32Array(features.length);
+  const enabled = new Set(activeFeatures);
+  const cells = Math.floor(features.length / featureCount);
+  for (let cell = 0; cell < cells; cell++) {
+    for (let feature = 0; feature < featureCount; feature++) {
+      if (enabled.has(feature)) {
+        out[cell * featureCount + feature] =
+          features[cell * featureCount + feature];
+      }
+    }
+  }
+  return out;
+}
+
+export function stateDiscomfortPenalty(
+  match,
+  target = 0.985,
+  gain = 0.45,
+  power = 2,
+) {
+  const deficit = clamp((target - match) / Math.max(1e-9, target), 0, 1);
+  return -gain * Math.pow(deficit, power);
+}
+
 export function activeModeCount(difficulty, total = 32) {
   if (difficulty === "coarse") return Math.min(total, 8);
   if (difficulty === "mixed") return Math.min(total, 20);
