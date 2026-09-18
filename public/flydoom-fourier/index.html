@@ -411,10 +411,10 @@
           <h1>FlyDoom Fourier</h1>
           <p class="lede">
             A mosca vê uma arena 3D deformável. O conectoma MaleCNS processa o
-            quadro; 1.314 neurônios descendentes alimentam um readout treinável
-            com até 1.314 atuadores de Fourier. O usuário controla quantos graus
-            de liberdade a mosca recebe e pode escolher targets simples,
-            complexos ou procedurais.
+            quadro; 1.314 neurônios descendentes formam um espaço latente de
+            controle que é interpolado para até 4.096 atuadores de Fourier.
+            O usuário controla separadamente o número de atuadores e a resolução
+            física da grid, além da complexidade do target.
           </p>
         </div>
         <div class="status" id="status">
@@ -500,15 +500,29 @@
               <label class="control"
                 ><span class="control-line"
                   ><span>atuadores Fourier</span
-                  ><span id="dofLabel">256</span></span
+                  ><span id="dofLabel">256 / 4.096</span></span
                 >
                 <input
                   id="dofRange"
                   type="range"
                   min="16"
-                  max="1314"
+                  max="4096"
                   step="1"
                   value="256"
+                />
+              </label>
+              <label class="control"
+                ><span class="control-line"
+                  ><span>resolução da grid</span
+                  ><span id="gridLabel">64 × 64</span></span
+                >
+                <input
+                  id="gridRange"
+                  type="range"
+                  min="16"
+                  max="128"
+                  step="8"
+                  value="64"
                 />
               </label>
               <label class="control"
@@ -580,9 +594,11 @@
       <section class="panel notes">
         <strong>Contrato científico do demo.</strong> A recorrência é o MaleCNS
         compactado já usado pelo FlyDoom. A visão egocêntrica, a aferência
-        artificial de erro morfológico, o adapter <code>1.314 DN → N Fourier</code>,
-        a função de reward e a arena são artificiais. <code>N</code> é controlável
-        entre 16 e 1.314 atuadores; O conectoma fica congelado;
+        artificial de erro morfológico e o decoder
+        <code>1.314 DN → 1.314 latentes → N Fourier</code> são artificiais.
+        <code>N</code> é controlável entre 16 e 4.096 nesta demo e pode exceder
+        o número de DNs por interpolação. A resolução física da grid é um
+        parâmetro independente (16×16 a 128×128). O conectoma fica congelado;
         só o readout descendente aprende, por uma atualização reward-modulated
         sobre os DNs individuais. A recompensa é contínua para tornar o processo
         visível e recebe
@@ -612,8 +628,10 @@
           return s / 4294967296;
         };
       }
-      const MAX_DOF = 1314;
+      const DN_LATENT_DOF = 1314;
+      const MAX_DOF = 4096;
       const DEFAULT_DOF = 256;
+      const DEFAULT_GRID = 64;
       const TARGET_META = {
         crater: { label: "Cratera", family: "simple" },
         saddle: { label: "Sela", family: "simple" },
@@ -649,6 +667,7 @@
       );
 
       let activeDof = DEFAULT_DOF,
+        gridResolution = DEFAULT_GRID,
         targetComplexity = 0.55,
         targetKey = "crater",
         targetSeed = 20260918;
@@ -753,9 +772,6 @@
       floorGrid.position.y = -2.75;
       scene.add(floorGrid);
 
-      const geometry = new THREE.PlaneGeometry(11, 11, 64, 64);
-      geometry.rotateX(-Math.PI / 2);
-      const original = geometry.attributes.position.array.slice();
       const currentMaterial = new THREE.MeshStandardMaterial({
         color: 0x1c6ca1,
         metalness: 0.05,
@@ -771,13 +787,34 @@
         opacity: 0.27,
         side: THREE.DoubleSide,
       });
-      const surface = new THREE.Mesh(geometry, currentMaterial);
-      scene.add(surface);
-      const targetGeometry = geometry.clone();
-      const targetOriginal = targetGeometry.attributes.position.array.slice();
-      const targetSurface = new THREE.Mesh(targetGeometry, targetMaterial);
-      targetSurface.position.y = 0.035;
-      scene.add(targetSurface);
+      let geometry = null,
+        targetGeometry = null,
+        original = null,
+        targetOriginal = null,
+        surface = null,
+        targetSurface = null;
+      function rebuildGrid() {
+        if (surface) {
+          scene.remove(surface);
+          geometry.dispose();
+        }
+        if (targetSurface) {
+          scene.remove(targetSurface);
+          targetGeometry.dispose();
+        }
+        geometry = new THREE.PlaneGeometry(11, 11, gridResolution, gridResolution);
+        geometry.rotateX(-Math.PI / 2);
+        original = geometry.attributes.position.array.slice();
+        surface = new THREE.Mesh(geometry, currentMaterial);
+        scene.add(surface);
+
+        targetGeometry = geometry.clone();
+        targetOriginal = targetGeometry.attributes.position.array.slice();
+        targetSurface = new THREE.Mesh(targetGeometry, targetMaterial);
+        targetSurface.position.y = 0.035;
+        scene.add(targetSurface);
+      }
+      rebuildGrid();
 
       const fly = new THREE.Group();
       const bodyMat = new THREE.MeshStandardMaterial({
@@ -919,7 +956,7 @@ self.onmessage=function(event){
    for(let i=0;i<lb.length;i++)drive[lb[i]]=ls;
    for(let i=0;i<rb.length;i++)drive[rb[i]]=rs;
  }
- // Synthetic morphology-error afference: six signed errors are encoded as
+ // Synthetic morphology-error afference: signed spectral errors are encoded as
  // opponent patterns on otherwise existing sensory ingress. This is an
  // explicit experimental interface, not claimed fly anatomy.
  for(let k=0;k<mismatch.length;k++){
@@ -1085,14 +1122,23 @@ self.onmessage=function(event){
       }
 
       const rng = seededRandom(20260916);
-      let W = [];
       let bestEpisodeScore = -Infinity;
-      function ensureReadoutWidth() {
-        if (!dnFull.length || (W[0] && W[0].length === dnFull.length)) return;
-        W = Array.from({ length: activeDof }, () =>
-          Array.from({ length: dnFull.length }, () => (rng() * 2 - 1) * 0.018)
-        );
+      let latentGain = new Float32Array(DN_LATENT_DOF).fill(1);
+      let latentBias = new Float32Array(DN_LATENT_DOF);
+      let latentAction = new Float32Array(DN_LATENT_DOF);
+      let latentNoise = new Float32Array(DN_LATENT_DOF);
+
+      function decodeLatent(latent, actuatorIndex, actuatorCount) {
+        const n = Math.min(latent.length, DN_LATENT_DOF);
+        if (n <= 1) return n ? latent[0] : 0;
+        const p = (actuatorIndex / Math.max(1, actuatorCount - 1)) * (n - 1);
+        const lo = Math.floor(p);
+        const hi = Math.min(n - 1, lo + 1);
+        const t = p - lo;
+        const smooth = t * t * (3 - 2 * t);
+        return latent[lo] * (1 - smooth) + latent[hi] * smooth;
       }
+
       function finishEpisode(now) {
         const score = episodeSamples ? episodeScore / episodeSamples : match;
         bestEpisodeScore = Math.max(bestEpisodeScore, score);
@@ -1122,39 +1168,49 @@ self.onmessage=function(event){
       }
       let hitLatched = false;
       function updateController(dt, now) {
-        ensureReadoutWidth();
-        const actions = new Float32Array(activeDof);
-        const noises = new Float32Array(activeDof);
         const sigma = Math.max(0.025, exploration * 0.32);
+        const latentCount = Math.min(DN_LATENT_DOF, dnFull.length);
+        for (let q = 0; q < latentCount; q++) {
+          latentNoise[q] = gaussian() * sigma;
+          latentAction[q] = Math.tanh(
+            dnFull[q] * latentGain[q] + latentBias[q] + latentNoise[q]
+          );
+        }
+
         for (let k = 0; k < activeDof; k++) {
-          let v = 0;
-          if (dnFull.length && W[k]) {
-            for (let j = 0; j < dnFull.length; j++) v += W[k][j] * dnFull[j];
-            v /= Math.sqrt(dnFull.length);
-          } else {
-            for (let j = 0; j < 8; j++) v += dn[j] * (j === k ? 0.08 : 0);
-          }
-          noises[k] = gaussian() * sigma;
-          actions[k] = Math.tanh(v + noises[k]);
-          velocity[k] = velocity[k] * 0.86 + actions[k] * fourierGain * 0.14;
+          const action = latentCount
+            ? decodeLatent(latentAction.subarray(0, latentCount), k, activeDof)
+            : Math.tanh(dn[k % 8] + gaussian() * sigma);
+          velocity[k] = velocity[k] * 0.86 + action * fourierGain * 0.14;
           coeff[k] = clamp(coeff[k] + velocity[k] * dt, -0.95, 0.95);
         }
+
         match = shapeMatch();
         let mismatchSq = 0;
-        for (let i = 0; i < activeDof; i++) mismatchSq += (target[i] - coeff[i]) ** 2;
+        for (let i = 0; i < activeDof; i++)
+          mismatchSq += (target[i] - coeff[i]) ** 2;
         mismatchMagnitude = Math.sqrt(mismatchSq / Math.max(1, activeDof));
         const hit = match >= HIT_THRESHOLD;
         reward = Math.pow(match, 6) + (hit ? 1 : 0);
         rewardBaseline = rewardBaseline * 0.985 + reward * 0.015;
         const advantage = clamp(reward - rewardBaseline, -1, 1);
-        if (dnFull.length) {
-          const norm = READOUT_LR * advantage / Math.max(0.001, sigma * sigma) / Math.sqrt(dnFull.length);
-          for (let k = 0; k < activeDof; k++) {
-            const credit = norm * noises[k];
-            for (let j = 0; j < dnFull.length; j++)
-              W[k][j] = clamp(W[k][j] + credit * dnFull[j], -0.22, 0.22);
+
+        if (latentCount) {
+          const lr = READOUT_LR * advantage / Math.max(0.001, sigma * sigma);
+          for (let q = 0; q < latentCount; q++) {
+            latentBias[q] = clamp(
+              latentBias[q] + lr * latentNoise[q] * 0.2,
+              -0.65,
+              0.65
+            );
+            latentGain[q] = clamp(
+              latentGain[q] + lr * latentNoise[q] * dnFull[q] * 0.08,
+              0.15,
+              2.5
+            );
           }
         }
+
         if (hit && !hitLatched) {
           hits++;
           hitLatched = true;
@@ -1224,7 +1280,7 @@ self.onmessage=function(event){
           dnTexts[i].textContent = dn[i].toFixed(2);
         }
         document.getElementById("fourierStateLabel").textContent =
-          `${activeDof.toLocaleString()} ativos · current → target`;
+          `${activeDof.toLocaleString()} atuadores · grid ${gridResolution}×${gridResolution}`;
         for (let i = 0; i < DISPLAY_MODES; i++) {
           const k = representativeModeIndex(i);
           coefEls[i].b.textContent = `#${k + 1} ${MODE_LABELS[k]}`;
@@ -1237,7 +1293,8 @@ self.onmessage=function(event){
         e.currentTarget.textContent = paused ? "Resume" : "Pause";
       });
       document.getElementById("resetButton").addEventListener("click", () => {
-        W = [];
+        latentGain.fill(1);
+        latentBias.fill(0);
         bestEpisodeScore = -Infinity;
         rewardBaseline = 0;
         episode = 0;
@@ -1261,8 +1318,7 @@ self.onmessage=function(event){
           document.getElementById("targetName").textContent =
             TARGET_META[targetKey].label;
           randomizeStart();
-          W = [];
-          deform(targetGeometry, targetOriginal, target);
+            deform(targetGeometry, targetOriginal, target);
         });
       document.getElementById("exploreRange").addEventListener("input", (e) => {
         exploration = Number(e.target.value);
@@ -1277,11 +1333,18 @@ self.onmessage=function(event){
       document.getElementById("dofRange").addEventListener("input", (e) => {
         activeDof = Math.max(16, Math.min(MAX_DOF, Number(e.target.value)));
         document.getElementById("dofLabel").textContent =
-          activeDof.toLocaleString();
-        W = [];
+          `${activeDof.toLocaleString()} / ${MAX_DOF.toLocaleString()}`;
         coeff.fill(0);
         velocity.fill(0);
         randomizeStart();
+      });
+      document.getElementById("gridRange").addEventListener("input", (e) => {
+        gridResolution = Math.max(16, Math.min(128, Number(e.target.value)));
+        document.getElementById("gridLabel").textContent =
+          `${gridResolution} × ${gridResolution}`;
+        rebuildGrid();
+        deform(geometry, original, coeff);
+        deform(targetGeometry, targetOriginal, target);
       });
       document
         .getElementById("complexityRange")
@@ -1290,8 +1353,7 @@ self.onmessage=function(event){
           document.getElementById("complexityLabel").textContent =
             `${Math.round(targetComplexity * 100)}%`;
           target = targetCoefficients(targetKey, ++targetSeed);
-          W = [];
-          randomizeStart();
+            randomizeStart();
         });
       document
         .getElementById("randomTargetButton")
@@ -1301,8 +1363,7 @@ self.onmessage=function(event){
           document.getElementById("targetName").textContent =
             TARGET_META[targetKey].label;
           target = targetCoefficients(targetKey, ++targetSeed);
-          W = [];
-          randomizeStart();
+            randomizeStart();
         });
 
       let last = performance.now(),
