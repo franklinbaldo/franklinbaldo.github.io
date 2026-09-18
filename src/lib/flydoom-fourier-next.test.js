@@ -9,6 +9,7 @@ import {
   curriculumStage,
   maskActions,
   maskFeatures,
+  stateAwareReward,
   stateDiscomfortPenalty,
   applyActions,
   buildModes,
@@ -186,4 +187,19 @@ test("bad stable states remain aversive even with zero progress", () => {
   assert.ok(bad < -0.3);
   assert.ok(medium < -0.08);
   assert.ok(Math.abs(near) < 0.001);
+});
+
+test("bad state stays negative while a small improvement still earns positive learning credit", () => {
+  const parts = stateAwareReward(0.121, 0.12);
+
+  assert.ok(parts.total < -0.4);
+  assert.ok(parts.statePenalty < -0.5);
+  assert.ok(parts.credit > 0);
+});
+
+test("worsening from the same bad state gives negative learning credit", () => {
+  const parts = stateAwareReward(0.119, 0.12);
+
+  assert.ok(parts.total < -0.4);
+  assert.ok(parts.credit < 0);
 });
