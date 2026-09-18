@@ -53,6 +53,28 @@ export function exponentialPrecisionDelta(
   );
 }
 
+export function precisionProgressReward(
+  currentValue,
+  previousValue,
+  target = 1,
+  beta = 10,
+  baseProgressGain = 0,
+  precisionGain = 1,
+) {
+  const safeTarget = Math.max(1e-9, target);
+  const linearProgress = (currentValue - previousValue) / safeTarget;
+  const precisionProgress = exponentialPrecisionDelta(
+    currentValue,
+    previousValue,
+    safeTarget,
+    beta,
+  );
+  return (
+    linearProgress * baseProgressGain +
+    precisionProgress * precisionGain
+  );
+}
+
 export function normalizedSpectralRms(
   coeff,
   modes,
