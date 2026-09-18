@@ -197,7 +197,7 @@
       }
       .metrics {
         display: grid;
-        grid-template-columns: repeat(7, 1fr);
+        grid-template-columns: repeat(8, 1fr);
         border-top: 1px solid var(--line);
       }
       .metric {
@@ -416,7 +416,9 @@
             O usuário controla separadamente o número de atuadores e a resolução
             física da grid, além da complexidade do target. Eles não competem:
             ambos podem crescer; o custo científico aparece na carga de controle
-            imposta aos 1.314 DNs.
+            imposta aos 1.314 DNs. Um meta-atuador descendente adicional escolhe
+            dinamicamente a resolução efetiva da grid dentro do teto definido
+            pelo usuário.
           </p>
         </div>
         <div class="status" id="status">
@@ -469,6 +471,10 @@
               <div class="metric-value" id="loadValue">0.19×</div>
             </div>
             <div class="metric">
+              <div class="metric-label">grid actuator</div>
+              <div class="metric-value" id="gridActuatorValue">0.00</div>
+            </div>
+            <div class="metric">
               <div class="metric-label">MaleCNS step</div>
               <div class="metric-value" id="latencyValue">—</div>
             </div>
@@ -519,7 +525,7 @@
               </label>
               <label class="control"
                 ><span class="control-line"
-                  ><span>resolução da grid</span
+                  ><span>teto da grid</span
                   ><span id="gridLabel">64 × 64</span></span
                 >
                 <input
@@ -605,7 +611,9 @@
         <code>N</code> é controlável entre 16 e 4.096 nesta demo e pode exceder
         o número de DNs por interpolação. A resolução física da grid é um
         parâmetro independente (16×16 a 128×128): grid e atuadores podem crescer
-        simultaneamente. A razão <code>N / 1.314</code> é exibida como
+        simultaneamente. O usuário define o teto da grid e um meta-atuador
+        descendente escolhe a resolução efetiva durante a tarefa. A razão
+        <code>N / 1.314</code> é exibida como
         <em>control load</em>; quando ela cresce, o mesmo espaço descendente precisa
         coordenar mais graus de liberdade. O conectoma fica congelado;
         só o readout descendente aprende, por uma atualização reward-modulated
@@ -677,6 +685,9 @@
 
       let activeDof = DEFAULT_DOF,
         gridResolution = DEFAULT_GRID,
+        gridCeiling = DEFAULT_GRID,
+        gridActuator = 0,
+        lastGridRebuild = 0,
         targetComplexity = 0.55,
         targetKey = "crater",
         targetSeed = 20260918;
@@ -1148,6 +1159,27 @@ self.onmessage=function(event){
         return latent[lo] * (1 - smooth) + latent[hi] * smooth;
       }
 
+      function updateGridActuator(now, latent, latentCount) {
+        if (!latentCount) return;
+        const source = latent[Math.min(latentCount - 1, DN_LATENT_DOF - 1)] || 0;
+        gridActuator = gridActuator * 0.9 + source * 0.1;
+        const normalized = clamp((gridActuator + 1) * 0.5);
+        const desired = Math.round(
+          (16 + normalized * (gridCeiling - 16)) / 8
+        ) * 8;
+        const nextResolution = Math.max(16, Math.min(gridCeiling, desired));
+        if (
+          nextResolution !== gridResolution &&
+          now - lastGridRebuild > 500
+        ) {
+          gridResolution = nextResolution;
+          lastGridRebuild = now;
+          rebuildGrid();
+          deform(geometry, original, coeff);
+          deform(targetGeometry, targetOriginal, target);
+        }
+      }
+
       function finishEpisode(now) {
         const score = episodeSamples ? episodeScore / episodeSamples : match;
         bestEpisodeScore = Math.max(bestEpisodeScore, score);
@@ -1185,6 +1217,8 @@ self.onmessage=function(event){
             dnFull[q] * latentGain[q] + latentBias[q] + latentNoise[q]
           );
         }
+
+        updateGridActuator(now, latentAction, latentCount);
 
         for (let k = 0; k < activeDof; k++) {
           const action = latentCount
@@ -1279,6 +1313,8 @@ self.onmessage=function(event){
         document.getElementById("hitsValue").textContent = String(hits);
         document.getElementById("loadValue").textContent =
           `${(activeDof / DN_LATENT_DOF).toFixed(2)}×`;
+        document.getElementById("gridActuatorValue").textContent =
+          `${gridActuator.toFixed(2)} → ${gridResolution}²`;
         document.getElementById("latencyValue").textContent = neuralLatency
           ? `${neuralLatency.toFixed(1)} ms`
           : "—";
@@ -1350,9 +1386,10 @@ self.onmessage=function(event){
         randomizeStart();
       });
       document.getElementById("gridRange").addEventListener("input", (e) => {
-        gridResolution = Math.max(16, Math.min(128, Number(e.target.value)));
+        gridCeiling = Math.max(16, Math.min(128, Number(e.target.value)));
+        gridResolution = Math.min(gridResolution, gridCeiling);
         document.getElementById("gridLabel").textContent =
-          `${gridResolution} × ${gridResolution}`;
+          `${gridCeiling} × ${gridCeiling}`;
         rebuildGrid();
         deform(geometry, original, coeff);
         deform(targetGeometry, targetOriginal, target);
