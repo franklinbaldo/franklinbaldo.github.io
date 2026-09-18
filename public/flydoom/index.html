@@ -654,6 +654,9 @@
           </div>
         </div>
 
+        <!-- Pluggable neural activity visualizer -->
+        <div id="neuralVizHost"></div>
+
         <!-- Radar -->
         <div class="card">
           <div class="card-header">
@@ -762,6 +765,7 @@
       </div>
     </div>
 
+    <script src="./neural_visualizers.js"></script>
     <script>
       window.onerror = function (msg, url, line) {
         console.error("FlyDoom error:", msg, "at line", line);
@@ -1007,11 +1011,22 @@
               const odorSurge = Math.min(0.14, (fd.odorL + fd.odorR) * 0.1);
               const fwdThrust = 0.18 + Math.max(0.0, actTot * 3.0) + odorSurge;
 
+              const sampleCount = Math.min(256, circuit.dn_all.length);
+              const dnSample = new Float32Array(sampleCount);
+              for (let s = 0; s < sampleCount; s++) {
+                const src = Math.min(
+                  circuit.dn_all.length - 1,
+                  Math.floor((s / Math.max(1, sampleCount)) * circuit.dn_all.length)
+                );
+                dnSample[s] = st[circuit.dn_all[src]];
+              }
+
               results.push({
                 torque: Math.max(-0.45, Math.min(0.45, totalTorque)),
                 rawTorque: totalTorque,
                 thrust: Math.max(0.08, Math.min(0.38, fwdThrust)),
                 meanAct: actTot,
+                dnSample: Array.from(dnSample),
                 motorTerms: {
                   connectome: connSteer,
                   phototaxis: visualSteer,
@@ -1031,6 +1046,7 @@
       let workerBusy = false;
       let circuit = null;
       let retinaHUD = null;
+      let neuralViz = null;
 
       async function initRetinaHUD() {
         const canvas = document.getElementById("compoundEyeCanvas");
@@ -1307,6 +1323,31 @@
                 );
                 swarm[f].motorTelemetry = results[f];
               }
+            }
+            const vr = results[selectedFlyIdx] || results[0];
+            const vf = swarm[selectedFlyIdx] || swarm[0];
+            if (neuralViz && vr && vf) {
+              const wallSignal = Array.from(
+                vf.wallDists,
+                (distance) => Math.max(0, 1 - distance / 14)
+              );
+              neuralViz.update({
+                activity: vr.dnSample || [],
+                sensory: vf.prizeDists,
+                secondary: wallSignal,
+                channels: [
+                  { label: "connectome", value: vr.motorTerms.connectome },
+                  { label: "phototaxis", value: vr.motorTerms.phototaxis },
+                  { label: "chemotaxis", value: vr.motorTerms.chemotaxis },
+                  { label: "saccade", value: vr.motorTerms.saccade },
+                  { label: "torque", value: vr.torque },
+                  { label: "thrust", value: vr.thrust },
+                  { label: "mean DN", value: vr.meanAct }
+                ],
+                meta: {
+                  hz: msg.stepLatency > 0 ? 1000 / msg.stepLatency : 0
+                }
+              });
             }
           }
         };
@@ -1965,6 +2006,16 @@
       }
 
       window.addEventListener("DOMContentLoaded", async () => {
+        neuralViz =
+          window.FlyNeuralViz &&
+          window.FlyNeuralViz.mount(
+            document.getElementById("neuralVizHost"),
+            {
+              title: "MALECNS · LIVE VIEW",
+              storageKey: "malecns-neural-viz",
+              defaultMode: "cloud"
+            }
+          );
         await Promise.all([initRetinaHUD(), loadFlatBuffersConnectome()]);
         requestAnimationFrame(tick);
       });

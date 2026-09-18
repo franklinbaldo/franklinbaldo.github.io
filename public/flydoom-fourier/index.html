@@ -590,6 +590,10 @@
           </section>
 
           <section class="panel">
+            <div id="neuralVizHost"></div>
+          </section>
+
+          <section class="panel">
             <div class="panel-head">
               <h2>Camada descendente</h2>
               <span>1.314 DNs · 8 resumos visuais</span>
@@ -635,6 +639,7 @@
 
     <canvas id="visionCanvas" width="160" height="96" hidden></canvas>
 
+    <script src="../flydoom/neural_visualizers.js"></script>
     <script type="module">
       import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
 
@@ -1123,6 +1128,7 @@ self.onmessage=function(event){
         neuralLatency = 0;
       const dn = new Float32Array(8);
       let dnFull = new Float32Array(0);
+      let neuralViz = null;
       async function loadMaleCns() {
         const status = document.getElementById("status"),
           statusText = document.getElementById("statusText");
@@ -1195,6 +1201,20 @@ self.onmessage=function(event){
               dnFull = new Float32Array(msg.dnValues);
               for (let i = 0; i < dnFull.length; i++)
                 dnFull[i] = Math.tanh(dnFull[i] * 4.5);
+              if (neuralViz) {
+                neuralViz.update({
+                  activity: dnFull,
+                  sensory: retina,
+                  secondary: localError,
+                  channels: Array.from({ length: 8 }, (_, i) => ({
+                    label: `DN${i + 1}`,
+                    value: dn[i]
+                  })),
+                  meta: {
+                    hz: msg.latency > 0 ? 1000 / msg.latency : 0
+                  }
+                });
+              }
             }
           };
           neuralWorker.onerror = (event) => {
@@ -1247,6 +1267,17 @@ self.onmessage=function(event){
           const t = performance.now() / 900;
           for (let i = 0; i < 8; i++)
             dn[i] = Math.sin(t * (0.7 + i * 0.09) + i * 0.8) * 0.24;
+          if (neuralViz) {
+            neuralViz.update({
+              activity: dn,
+              sensory: retina,
+              secondary: localError,
+              channels: Array.from({ length: 8 }, (_, i) => ({
+                label: `DN${i + 1}`,
+                value: dn[i]
+              }))
+            });
+          }
         }
       }
 
@@ -1630,6 +1661,16 @@ self.onmessage=function(event){
         updateUi();
         requestAnimationFrame(frame);
       }
+      neuralViz =
+        window.FlyNeuralViz &&
+        window.FlyNeuralViz.mount(
+          document.getElementById("neuralVizHost"),
+          {
+            title: "MALECNS · VISUALIZER",
+            storageKey: "malecns-neural-viz",
+            defaultMode: "cloud"
+          }
+        );
       updateTargetLabel();
       deform(
         targetGeometry,
