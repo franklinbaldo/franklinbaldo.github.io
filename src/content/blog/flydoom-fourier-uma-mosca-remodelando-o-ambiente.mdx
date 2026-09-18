@@ -23,7 +23,7 @@ Neste experimento, trocamos a pergunta:
 
 > **e se a saída motora da mosca não movesse apenas o corpo, mas deformasse o próprio espaço em que ela está?**
 
-O demonstrador abaixo transforma a atividade dos neurônios descendentes em velocidades de coeficientes de uma base de Fourier. Esses coeficientes alteram continuamente o shape de uma arena 3D. Um segundo shape, mostrado como wireframe, é o alvo predeterminado. A recompensa cresce conforme a arena atual se aproxima desse alvo e recebe um bônus quando a similaridade passa de 97%.
+O demonstrador abaixo fecha o loop em duas direções. A mosca recebe uma visão egocêntrica da arena e uma **aferência artificial de erro morfológico** que informa em quais componentes espectrais o shape atual está desajustado. Na saída, os **1.314 neurônios descendentes** formam um espaço latente de controle. Esse espaço pode ser interpolado para até **4.096 atuadores Fourier**. Separadamente, o usuário define um teto para a resolução da grid e um meta-atuador descendente escolhe a resolução efetiva durante a tarefa. Assim, quantidade de atuadores, resolução física e complexidade do target viram variáveis experimentais independentes.
 
 <div style="width: 100%; max-width: 1180px; margin: 2rem auto;">
   <div style="display:flex;justify-content:flex-end;margin-bottom:.6rem;">
@@ -51,19 +51,25 @@ O demonstrador abaixo transforma a atividade dos neurônios descendentes em velo
 ```text
 arena 3D deformável
         ↓
- câmera / retina de 32 colunas
+ câmera egocêntrica / retina de 32 colunas
+        +
+ erro morfológico espectral
         ↓
- grupos visuais do MaleCNS
+ ingresso sensorial artificial no MaleCNS
         ↓
  recorrência do conectoma (165.122 neurônios)
         ↓
  1.314 neurônios descendentes
         ↓
- 8 canais de leitura dos DNs
+ 1.314 controles latentes
         ↓
- adapter treinável DN → Fourier
+ decoder / interpolação espectral
         ↓
- 6 coeficientes de deformação
+ N atuadores Fourier (16–4.096)
+        +
+ meta-atuador de resolução
+        ↓
+ grid efetiva (16×16 até o teto definido pelo usuário)
         ↓
  novo shape da arena
         ↓
@@ -72,35 +78,55 @@ arena 3D deformável
  reward
 ```
 
-O conectoma continua congelado. **Não estamos treinando os pesos do MaleCNS.** O único componente que aprende é a pequena projeção entre a camada descendente e os atuadores de Fourier.
+O conectoma continua congelado. **Não estamos treinando os pesos do MaleCNS.** Os DNs funcionam como controles latentes. Um decoder contínuo projeta esse espaço para os atuadores Fourier, inclusive quando há mais atuadores do que DNs. Um controle descendente adicional regula a resolução efetiva da grid dentro do teto escolhido pelo usuário. Os oito buckets continuam existindo apenas como resumo visual.
 
-## Por que Fourier?
+## Atuadores, grid e carga de controle
 
-Uma transformação de Fourier dá um vocabulário pequeno para mudanças globais de forma.
+Os atuadores Fourier e a resolução da grid são **parâmetros diferentes**.
 
-Em vez de permitir que a mosca mova milhares de vértices individualmente, damos a ela seis “músculos geométricos”:
+- `atuadores Fourier`: quantos graus de liberdade espectrais podem ser comandados;
+- `teto da grid`: a maior resolução física permitida para a superfície;
+- `grid efetiva`: a resolução que o meta-atuador descendente escolhe naquele momento;
+- `complexidade`: quanta energia o target coloca em frequências espaciais altas.
 
-- `sin(x)`
-- `cos(x)`
-- `sin(z)`
-- `cos(z)`
-- `sin(x + z)`
-- `cos(2x - z)`
+Não existe um tradeoff obrigatório entre uma grid fina e muitos atuadores. Os dois podem aumentar juntos. O que tende a ficar mais difícil é a coordenação: os mesmos 1.314 DNs precisam controlar um espaço de atuação cada vez maior.
 
-A soma desses modos produz uma superfície 3D contínua. Cada ação modifica a velocidade de um coeficiente.
+A interface mostra essa pressão como **control load**:
 
-Isso cria uma espécie de corpo estendido: a camada descendente não termina numa perna ou asa, mas em **graus de liberdade do ambiente**.
+```text
+control load = número de atuadores Fourier / 1.314 DNs
+```
+
+Quando esse valor ultrapassa `1×`, o decoder está expandindo um espaço latente menor para mais graus de liberdade físicos. Isso permite testar diretamente se a capacidade de controle se degrada e em que ritmo.
+
+Há ainda uma segunda pergunta: para uma dada tarefa e um dado nível de controle, **qual resolução física vale a pena manter?** A grid efetiva também é uma ação. Assim, a mosca pode aprender que certas tarefas pedem uma superfície mais fina e outras não.
+
+O experimento passa a procurar uma superfície de capacidade:
+
+```text
+atuadores × teto da grid × complexidade do target
+                  ↓
+      desempenho + grid efetiva escolhida
+```
+
+Isso permite estimar uma **resolução ótima por nível de controle e por tarefa**, em vez de fixar arbitrariamente a malha.
 
 ## O alvo e a recompensa
 
-O demo tem quatro shapes-alvo predeterminados: cratera, sela, crista diagonal e ilhas.
+O demo inclui targets simples e complexos: cratera, sela, crista, ilhas, labirinto, símbolo, montanhas, espectro aleatório e um alvo adversarial multiescala. O botão “Novo target aleatório” produz outro espectro e o controle de complexidade altera a presença de frequências espaciais mais altas.
 
 A tela mostra ao mesmo tempo:
 
 - a superfície atual em azul;
 - o shape-alvo como wireframe violeta;
-- a atividade de oito canais descendentes;
-- os seis coeficientes atuais e seus valores-alvo;
+- a retina egocêntrica enviada ao MaleCNS;
+- oito resumos visuais da camada descendente;
+- uma amostra dos coeficientes atuais e seus valores-alvo;
+- a magnitude do mismatch aferido;
+- número de atuadores Fourier;
+- teto e resolução efetiva da grid;
+- **control load** (`atuadores / 1.314`);
+- valor do meta-atuador de resolução;
 - similaridade, melhor similaridade, reward e número de acertos.
 
 O reward é deliberadamente simples: uma função contínua da distância entre os vetores de coeficientes, com bônus ao ultrapassar 97% de similaridade. Isso deixa o processo observável no navegador e evita esconder a função objetivo.
@@ -112,25 +138,32 @@ O demo reutiliza diretamente os mesmos assets do FlyDoom:
 - `/flydoom/malecns_l3_compact.mcns`
 - `/flydoom/malecns_circuit.json`
 
-A recorrência é executada no navegador em um Web Worker. O frame renderizado da arena é comprimido em 32 colunas visuais e projetado nos grupos visuais já mapeados. Depois de cada step do conectoma, os neurônios descendentes são agregados em oito buckets determinísticos e entregues ao adapter.
+A recorrência é executada no navegador em um Web Worker. A retina é renderizada de uma câmera colocada na cabeça da mosca, não da câmera do espectador. Além disso, uma amostra compacta do erro espectral `target - current` é transformada em um padrão oponente de aferência e injetada no ingresso sensorial antes da recorrência. Isso dá ao sistema uma maneira explícita de **sentir que está desajustado**.
 
-Essa divisão em oito buckets **não é uma nova anatomia biológica**. É apenas uma forma de preservar mais dimensionalidade da camada descendente do que a leitura esquerda/direita usada em demos anteriores.
+Esse canal de erro é deliberadamente artificial: não afirmamos que a drosófila biológica tenha um sensor de Fourier. Ele representa o sinal de tarefa que, em um corpo real, viria de propriocepção, equilíbrio, visão ou outra aferência relevante.
+
+Depois de cada step, o Worker devolve os 1.314 DNs individualmente ao readout. Os oito buckets permanecem somente para a visualização da atividade descendente.
 
 ## A parte treinável
 
-A projeção `DN → Fourier` começa com pesos pequenos.
+Os 1.314 DNs alimentam controles latentes com ganho e bias ajustáveis. Quando existem mais atuadores do que DNs, a ação é expandida por interpolação suave para a base Fourier ativa. Um dos controles latentes também funciona como **meta-atuador de resolução**, escolhendo a grid efetiva dentro do teto permitido pelo usuário.
 
-Cada episódio testa uma versão perturbada desses pesos. Se a política melhora a similaridade média com o alvo, ela passa a ser a nova base para a próxima perturbação. É um hill-climber mínimo, colocado fora do cérebro.
+A exploração acontece no espaço latente. O reward mantém uma baseline móvel e modula ganho/bias dos controles descendentes: perturbações que precedem melhora recebem crédito; perturbações que precedem piora recebem crédito negativo.
 
 Essa separação é importante:
 
 ```text
-MaleCNS recorrente = fixo
-DN → Fourier       = treinável
-arena + reward     = ambiente artificial
+MaleCNS recorrente                = fixo
+erro → ingresso sensorial         = interface artificial
+1.314 DN → 1.314 latentes         = adaptável
+latentes → N Fourier              = decoder/interpolação
+latente → resolução efetiva       = meta-atuador
+N                                 = 16–4.096 nesta demo
+teto da grid                      = 16×16–128×128
+arena + reward                    = ambiente artificial
 ```
 
-Portanto, este demo não diz que uma mosca biológica conhece séries de Fourier ou sabe remodelar superfícies. Ele testa uma ideia arquitetural mais estreita: **se usarmos a camada descendente de um conectoma real como estado de controle, ela pode alimentar um adapter que aprende a manipular um espaço físico de baixa dimensão?**
+Portanto, este demo não diz que uma mosca biológica conhece séries de Fourier ou sabe remodelar superfícies. Ele testa uma pergunta arquitetural mais forte: **qual fronteira de complexidade espacial um estado descendente de 1.314 dimensões consegue controlar quando variamos separadamente os atuadores, a resolução física e a dificuldade da tarefa — e qual resolução a própria política escolhe usar?**
 
 ## Próximo experimento
 
