@@ -175,23 +175,63 @@ const exhibitions = toeTheories.filter((theory) => theory.kind !== "contender");
     --accent-science: #493f24;
     --inverse: #fff9e8;
   }
-  .hero { margin: 1.5rem 0 4rem; padding: clamp(2rem, 7vw, 5.5rem); border: 1px solid var(--line); background: linear-gradient(135deg, var(--accent-gold) 0 18%, var(--paper) 18% 100%); box-shadow: 12px 12px 0 var(--ink); }
+  .hero {
+    margin: clamp(1.5rem, 4vw, 3rem) 0 clamp(3rem, 7vw, 5rem);
+    padding: clamp(2rem, 7vw, 5.5rem);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-large);
+    background:
+      linear-gradient(135deg, var(--accent-gold) 0 16%, transparent 16%),
+      linear-gradient(145deg, var(--paper), var(--panel));
+    box-shadow: var(--elevation-card);
+    overflow: hidden;
+  }
   .eyebrow, .kicker, .round { font: 800 .75rem/1.1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; text-transform: uppercase; }
-  .hero h1 { margin: .35rem 0 .75rem; font-size: clamp(3.8rem, 12vw, 8.4rem); line-height: .82; letter-spacing: -.075em; }
+  .hero h1 {
+    margin: .35rem 0 .9rem;
+    font-size: clamp(3.8rem, 12vw, 8.4rem);
+    line-height: .82;
+    letter-spacing: -.075em;
+    text-wrap: balance;
+  }
   .lede { max-width: 780px; font-size: clamp(1.05rem, 2vw, 1.4rem); line-height: 1.45; }
   .hero-notes { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.5rem; }
-  .hero-notes span { padding: .45rem .7rem; border: 1px solid var(--ink); background: var(--panel); font-size: .82rem; font-weight: 700; }
+  .hero-notes span {
+    padding: .48rem .75rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--panel) 88%, transparent);
+    font-size: .82rem;
+    font-weight: 700;
+  }
   .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 2rem; margin: 4rem 0 1rem; }
   .section-heading h2, .rules h2 { margin: .15rem 0 0; font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -.045em; }
   .section-heading > p { max-width: 360px; color: var(--muted); text-align: right; }
-  .tier-board { border: 2px solid var(--ink); }
-  .tier-row { display: grid; grid-template-columns: 82px 1fr; min-height: 100px; border-bottom: 2px solid var(--ink); }
+  .tier-board {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-large);
+    box-shadow: var(--elevation-soft);
+  }
+  .tier-row { display: grid; grid-template-columns: 82px 1fr; min-height: 100px; border-bottom: 1px solid var(--line); }
   .tier-row:last-child { border-bottom: 0; }
-  .tier-letter { display: grid; place-items: center; border-right: 2px solid var(--ink); font-size: 3rem; font-weight: 950; }
+  .tier-letter { display: grid; place-items: center; border-right: 1px solid var(--line); font-size: 3rem; font-weight: 950; }
   .tier-s .tier-letter { background: #f2bd2f; } .tier-a .tier-letter { background: #f3d86e; } .tier-b .tier-letter { background: #c7df9d; } .tier-c .tier-letter { background: #abd7cf; } .tier-d .tier-letter { background: #c9c1df; } .tier-f .tier-letter { background: #dfb1a3; }
   .tier-content { padding: 1rem; background: var(--panel-soft); }
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 1rem; }
-  .theory-card { border: 1px solid var(--line); padding: 1rem; background: var(--panel); }
+  .theory-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-medium);
+    padding: 1.05rem;
+    background: var(--panel);
+    box-shadow: 0 10px 28px -26px rgba(0,0,0,.55);
+  }
+  @media (hover: hover) {
+    .theory-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--elevation-soft);
+    }
+  }
   .theory-card h3, .clash-card h3, .exhibition-card h3 { margin: .6rem 0; font-size: 1.35rem; line-height: 1.05; }
   .theory-card > p, .clash-card > p, .exhibition-card p { color: var(--pico-color); line-height: 1.5; }
   .card-topline { display: flex; gap: .4rem; flex-wrap: wrap; }
@@ -207,18 +247,41 @@ const exhibitions = toeTheories.filter((theory) => theory.kind !== "contender");
   .source-line { font-size: .8rem; color: var(--muted); }
   .empty-tier { margin: 1rem; color: var(--muted); font-style: italic; }
   .clash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-  .clash-card { min-height: 250px; padding: 1.2rem; border: 2px solid var(--ink); background: var(--panel-soft); box-shadow: 6px 6px 0 var(--ink); }
+  .clash-card {
+    min-height: 250px;
+    padding: 1.35rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-medium);
+    background: var(--panel-soft);
+    box-shadow: var(--elevation-card);
+  }
   .battleground { display: inline-block; padding: .25rem .45rem; background: var(--ink); color: var(--inverse) !important; font: 700 .72rem/1.3 ui-monospace, monospace; text-transform: uppercase; }
   .exhibition-list { display: grid; gap: .8rem; }
-  .exhibition-card { display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: end; padding: 1.2rem; border: 1px solid var(--line); background: var(--panel); }
+  .exhibition-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: end;
+    padding: 1.3rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-medium);
+    background: var(--panel);
+  }
   .exhibition-meta { display: flex; flex-direction: column; gap: .5rem; align-items: end; white-space: nowrap; }
-  .rules { margin-top: 4rem; padding: 2rem; background: var(--ink); color: var(--inverse); }
+  .rules {
+    margin-top: clamp(4rem, 8vw, 6rem);
+    padding: clamp(1.5rem, 5vw, 3rem);
+    border-radius: var(--radius-large);
+    background: linear-gradient(145deg, var(--ink), color-mix(in srgb, var(--ink) 88%, var(--pico-primary) 12%));
+    color: var(--inverse);
+    box-shadow: var(--elevation-card);
+  }
   .rule-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 1.5rem 0; background: var(--pico-muted-border-color); }
   .rule-grid article { display: flex; flex-direction: column; gap: .7rem; min-height: 150px; padding: 1rem; background: var(--ink); }
   .rule-grid strong { font-size: 2rem; color: var(--accent-gold); }
   .fineprint { max-width: 850px; color: var(--pico-muted-color); }
   @media (max-width: 760px) {
-    .hero { box-shadow: 6px 6px 0 var(--ink); }
+    .hero { box-shadow: var(--elevation-soft); }
     .section-heading { display: block; }
     .section-heading > p { text-align: left; }
     .tier-row { grid-template-columns: 55px 1fr; }
