@@ -437,7 +437,7 @@
             <div class="legend">
               <span class="chip current">CURRENT SURFACE</span>
               <span class="chip target">TARGET GHOST</span>
-              <span class="chip hit" id="hitChip">TARGET HIT ≥ 97%</span>
+              <span class="chip hit" id="hitChip">HIT ≥ 97% → TARGET RELOCATES</span>
             </div>
             <div
               class="retina"
@@ -455,7 +455,7 @@
               <div class="metric-value" id="matchValue">0.000</div>
             </div>
             <div class="metric">
-              <div class="metric-label">mismatch sentido</div>
+              <div class="metric-label">erro local RMS</div>
               <div class="metric-value" id="mismatchValue">0.000</div>
             </div>
             <div class="metric">
@@ -606,7 +606,7 @@
       <section class="panel notes">
         <strong>Contrato científico do demo.</strong> A recorrência é o MaleCNS
         compactado já usado pelo FlyDoom. A visão egocêntrica, a aferência
-        artificial de erro morfológico e o decoder
+        artificial de erro morfológico espacial e o decoder
         <code>1.314 DN → 1.314 latentes → N Fourier</code> são artificiais.
         <code>N</code> é controlável entre 16 e 4.096 nesta demo e pode exceder
         o número de DNs por interpolação. A resolução física da grid é um
@@ -616,10 +616,13 @@
         <code>N / 1.314</code> é exibida como
         <em>control load</em>; quando ela cresce, o mesmo espaço descendente precisa
         coordenar mais graus de liberdade. O conectoma fica congelado;
-        só o readout descendente aprende, por uma atualização reward-modulated
-        sobre os DNs individuais. A recompensa é contínua para tornar o processo
+        o erro espacial entra como aferência sensorial local, enquanto o reward
+        permanece um escalar global para aprendizado. Só o readout descendente
+        aprende, por uma atualização reward-modulated sobre os DNs individuais. A recompensa é contínua para tornar o processo
         visível e recebe
-        um bônus quando o shape ultrapassa 97% de similaridade; isso não implica
+        um bônus quando o shape ultrapassa 97% de similaridade. Ao atingir o
+        limiar, o mesmo target é realocado automaticamente para outra posição
+        aleatória da arena sem resetar a política; isso não implica
         que a mosca biológica conheça Fourier nem o conceito do alvo.
       </section>
     </div>
@@ -690,7 +693,9 @@
         lastGridRebuild = 0,
         targetComplexity = 0.55,
         targetKey = "crater",
-        targetSeed = 20260918;
+        targetSeed = 20260918,
+        targetOffsetX = 0,
+        targetOffsetZ = 0;
 
       function seededGaussian(rng) {
         let u = 0, v = 0;
@@ -879,12 +884,16 @@
         return y * (1.36 / Math.sqrt(Math.max(1, n / 6)));
       }
 
-      function deform(geom, base, c) {
+      function targetHeightAt(x, z) {
+        return heightAt(x - targetOffsetX, z - targetOffsetZ, target);
+      }
+
+      function deform(geom, base, c, offsetX = 0, offsetZ = 0) {
         const pos = geom.attributes.position.array;
         for (let i = 0; i < pos.length; i += 3) {
           const x = base[i],
             z = base[i + 2];
-          pos[i + 1] = heightAt(x, z, c) - 1.15;
+          pos[i + 1] = heightAt(x - offsetX, z - offsetZ, c) - 1.15;
         }
         geom.attributes.position.needsUpdate = true;
         geom.computeVertexNormals();
@@ -904,6 +913,9 @@
         willReadFrequently: true,
       });
       const retina = new Float32Array(32);
+      const localError = new Float32Array(32);
+      const previousLocalAbsError = new Float32Array(32);
+      const localWorsening = new Float32Array(32);
       const retinaEls = [];
       const retinaEl = document.getElementById("retina");
       for (let i = 0; i < 32; i++) {
@@ -956,6 +968,39 @@
         }
       }
 
+      function sampleLocalErrorField() {
+        // 32 egocentric regions: 16 rays to the fly's left visual field and
+        // 16 to the right. Each ray samples a point on the controllable surface.
+        // The signal is signed target-current plus a separate "getting worse"
+        // term derived from the change in absolute local error.
+        const yaw = fly.rotation.y;
+        const fx = -Math.sin(yaw);
+        const fz = -Math.cos(yaw);
+        const rx = Math.cos(yaw);
+        const rz = -Math.sin(yaw);
+        const originX = fly.position.x;
+        const originZ = fly.position.z;
+        for (let i = 0; i < 32; i++) {
+          const sideIndex = i < 16 ? i : i - 16;
+          const side = i < 16 ? -1 : 1;
+          const lateral = side * (0.35 + (sideIndex / 15) * 4.2);
+          const forward = 0.7 + (sideIndex / 15) * 4.8;
+          const x = clamp(originX + fx * forward + rx * lateral, -5.4, 5.4);
+          const z = clamp(originZ + fz * forward + rz * lateral, -5.4, 5.4);
+          const currentH = heightAt(x, z, coeff);
+          const targetH = targetHeightAt(x, z);
+          const signed = clamp((targetH - currentH) / 2.5, -1, 1);
+          const absErr = Math.abs(signed);
+          localError[i] = signed;
+          localWorsening[i] = clamp(
+            (absErr - previousLocalAbsError[i]) * 8,
+            0,
+            1
+          );
+          previousLocalAbsError[i] = absErr;
+        }
+      }
+
       const WORKER_CODE = `
 let connectome=null,circuit=null,state=null,nextState=null,drive=null;
 self.onmessage=function(event){
@@ -967,24 +1012,27 @@ self.onmessage=function(event){
    self.postMessage({type:"ready",n:connectome.n_neurons,dn:circuit.dn_all.length});return;
  }
  if(msg.type!=="step"||!connectome)return;
- const t0=performance.now(), retinal=msg.retina, mismatch=msg.mismatch||[];drive.fill(0);
+ const t0=performance.now(), retinal=msg.retina, localError=msg.localError||[], worsening=msg.worsening||[];drive.fill(0);
  for(let r=0;r<16;r++){
    const ls=retinal[r]*3.2,rs=retinal[16+r]*3.2,lb=circuit.ray_vpl[r],rb=circuit.ray_vpr[r];
    for(let i=0;i<lb.length;i++)drive[lb[i]]=ls;
    for(let i=0;i<rb.length;i++)drive[rb[i]]=rs;
  }
- // Synthetic morphology-error afference: signed spectral errors are encoded as
- // opponent patterns on otherwise existing sensory ingress. This is an
- // explicit experimental interface, not claimed fly anatomy.
- for(let k=0;k<mismatch.length;k++){
-   const e=Math.max(-1,Math.min(1,mismatch[k]||0)),mag=Math.abs(e)*2.4;
-   const posBin=(2+k*3)%16,negBin=(13+k*5)%16;
-   const bins=e>=0?[posBin,negBin]:[negBin,posBin];
-   for(const side of [circuit.ray_vpl,circuit.ray_vpr]){
-     const excite=side[bins[0]],inhibit=side[bins[1]];
-     for(let i=0;i<excite.length;i++)drive[excite[i]]+=mag;
-     for(let i=0;i<inhibit.length;i++)drive[inhibit[i]]-=mag*.55;
-   }
+ // Spatial morphology-error afference. Error stays local: each egocentric
+ // region is injected into the same left/right visual ingress bin that
+ // represents that region. Positive/negative errors are opponent-signed;
+ // regions whose absolute error is growing get an urgency gain.
+ for(let k=0;k<32;k++){
+   const e=Math.max(-1,Math.min(1,localError[k]||0));
+   const worse=Math.max(0,Math.min(1,worsening[k]||0));
+   const mag=Math.abs(e)*(2.0+2.2*worse);
+   const side=k<16?circuit.ray_vpl:circuit.ray_vpr;
+   const bin=k&15;
+   const opposite=(15-bin);
+   const primary=side[bin],counter=side[opposite];
+   const sign=e>=0?1:-1;
+   for(let i=0;i<primary.length;i++)drive[primary[i]]+=sign*mag;
+   for(let i=0;i<counter.length;i++)drive[counter[i]]-=sign*mag*.35;
  }
  const N=connectome.n_neurons,o=connectome.offsets,s=connectome.scales,d=connectome.deltas,w=connectome.weights,l=connectome.lut;
  for(let row=0;row<N;row++){
@@ -1122,14 +1170,12 @@ self.onmessage=function(event){
       function requestNeuralStep() {
         if (neuralReady && neuralWorker && !workerBusy) {
           workerBusy = true;
-          const mismatch = Array.from(
-            { length: Math.min(activeDof, 48) },
-            (_, i) => clamp(target[i] - coeff[i], -1, 1)
-          );
+          sampleLocalErrorField();
           neuralWorker.postMessage({
             type: "step",
             retina: Array.from(retina),
-            mismatch,
+            localError: Array.from(localError),
+            worsening: Array.from(localWorsening),
           });
         } else if (!neuralReady) {
           const t = performance.now() / 900;
@@ -1173,7 +1219,13 @@ self.onmessage=function(event){
           lastGridRebuild = now;
           rebuildGrid();
           deform(geometry, original, coeff);
-          deform(targetGeometry, targetOriginal, target);
+          deform(
+          targetGeometry,
+          targetOriginal,
+          target,
+          targetOffsetX,
+          targetOffsetZ
+        );
         }
       }
 
@@ -1188,12 +1240,51 @@ self.onmessage=function(event){
       }
       function shapeMatch() {
         let mse = 0;
-        for (let i = 0; i < activeDof; i++) {
-          const d = coeff[i] - target[i];
-          mse += d * d;
+        let samples = 0;
+        const steps = 9;
+        for (let iz = 0; iz < steps; iz++) {
+          const z = -4.8 + (iz / (steps - 1)) * 9.6;
+          for (let ix = 0; ix < steps; ix++) {
+            const x = -4.8 + (ix / (steps - 1)) * 9.6;
+            const d = heightAt(x, z, coeff) - targetHeightAt(x, z);
+            mse += d * d;
+            samples++;
+          }
         }
-        mse /= Math.max(1, activeDof);
-        return Math.exp(-3.6 * mse);
+        mse /= Math.max(1, samples);
+        return Math.exp(-1.35 * mse);
+      }
+
+      function updateTargetLabel() {
+        document.getElementById("targetName").textContent =
+          `${TARGET_META[targetKey].label} · (${targetOffsetX.toFixed(1)}, ${targetOffsetZ.toFixed(1)})`;
+      }
+
+      function randomizeTargetPosition() {
+        const previousX = targetOffsetX;
+        const previousZ = targetOffsetZ;
+        let x = previousX;
+        let z = previousZ;
+        for (let tries = 0; tries < 20; tries++) {
+          const angle = Math.random() * TAU;
+          const radius = 1.4 + Math.random() * 2.2;
+          x = Math.cos(angle) * radius;
+          z = Math.sin(angle) * radius;
+          if (Math.hypot(x - previousX, z - previousZ) >= 1.2) break;
+        }
+        targetOffsetX = x;
+        targetOffsetZ = z;
+        previousLocalAbsError.fill(0);
+        localWorsening.fill(0);
+        velocity.fill(0);
+        updateTargetLabel();
+        deform(
+          targetGeometry,
+          targetOriginal,
+          target,
+          targetOffsetX,
+          targetOffsetZ
+        );
       }
       let hitLatched = false;
       function updateController(dt, now) {
@@ -1217,10 +1308,11 @@ self.onmessage=function(event){
         }
 
         match = shapeMatch();
+        sampleLocalErrorField();
         let mismatchSq = 0;
-        for (let i = 0; i < activeDof; i++)
-          mismatchSq += (target[i] - coeff[i]) ** 2;
-        mismatchMagnitude = Math.sqrt(mismatchSq / Math.max(1, activeDof));
+        for (let i = 0; i < localError.length; i++)
+          mismatchSq += localError[i] * localError[i];
+        mismatchMagnitude = Math.sqrt(mismatchSq / localError.length);
         const hit = match >= HIT_THRESHOLD;
         reward = Math.pow(match, 6) + (hit ? 1 : 0);
         rewardBaseline = rewardBaseline * 0.985 + reward * 0.015;
@@ -1245,6 +1337,7 @@ self.onmessage=function(event){
         if (hit && !hitLatched) {
           hits++;
           hitLatched = true;
+          randomizeTargetPosition();
         }
         if (!hit && match < HIT_THRESHOLD - 0.025) hitLatched = false;
         bestMatch = Math.max(bestMatch, match);
@@ -1338,6 +1431,8 @@ self.onmessage=function(event){
         reward = 0;
         match = 0;
         mismatchMagnitude = 0;
+        previousLocalAbsError.fill(0);
+        localWorsening.fill(0);
         randomizeStart();
       });
       document
@@ -1346,10 +1441,19 @@ self.onmessage=function(event){
           targetKey = e.target.value;
           targetSeed++;
           target = targetCoefficients(targetKey, targetSeed);
-          document.getElementById("targetName").textContent =
-            TARGET_META[targetKey].label;
+          targetOffsetX = 0;
+          targetOffsetZ = 0;
+          updateTargetLabel();
+          previousLocalAbsError.fill(0);
+          localWorsening.fill(0);
           randomizeStart();
-            deform(targetGeometry, targetOriginal, target);
+          deform(
+          targetGeometry,
+          targetOriginal,
+          target,
+          targetOffsetX,
+          targetOffsetZ
+        );
         });
       document.getElementById("exploreRange").addEventListener("input", (e) => {
         exploration = Number(e.target.value);
@@ -1376,7 +1480,13 @@ self.onmessage=function(event){
           `${gridCeiling} × ${gridCeiling}`;
         rebuildGrid();
         deform(geometry, original, coeff);
-        deform(targetGeometry, targetOriginal, target);
+        deform(
+          targetGeometry,
+          targetOriginal,
+          target,
+          targetOffsetX,
+          targetOffsetZ
+        );
       });
       document
         .getElementById("complexityRange")
@@ -1385,17 +1495,22 @@ self.onmessage=function(event){
           document.getElementById("complexityLabel").textContent =
             `${Math.round(targetComplexity * 100)}%`;
           target = targetCoefficients(targetKey, ++targetSeed);
-            randomizeStart();
+          previousLocalAbsError.fill(0);
+          localWorsening.fill(0);
+          randomizeStart();
         });
       document
         .getElementById("randomTargetButton")
         .addEventListener("click", () => {
           targetKey = "random";
           document.getElementById("targetSelect").value = targetKey;
-          document.getElementById("targetName").textContent =
-            TARGET_META[targetKey].label;
+          targetOffsetX = 0;
+          targetOffsetZ = 0;
+          updateTargetLabel();
           target = targetCoefficients(targetKey, ++targetSeed);
-            randomizeStart();
+          previousLocalAbsError.fill(0);
+          localWorsening.fill(0);
+          randomizeStart();
         });
 
       let last = performance.now(),
@@ -1412,7 +1527,13 @@ self.onmessage=function(event){
           updateController(dt, now);
         }
         deform(geometry, original, coeff);
-        deform(targetGeometry, targetOriginal, target);
+        deform(
+          targetGeometry,
+          targetOriginal,
+          target,
+          targetOffsetX,
+          targetOffsetZ
+        );
         const y = heightAt(0, 0, coeff) - 0.8;
         fly.position.y = y;
         fly.rotation.y += dt * 0.45;
@@ -1422,7 +1543,14 @@ self.onmessage=function(event){
         updateUi();
         requestAnimationFrame(frame);
       }
-      deform(targetGeometry, targetOriginal, target);
+      updateTargetLabel();
+      deform(
+        targetGeometry,
+        targetOriginal,
+        target,
+        targetOffsetX,
+        targetOffsetZ
+      );
       randomizeStart();
       loadMaleCns();
       requestAnimationFrame(frame);
