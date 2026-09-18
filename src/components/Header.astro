@@ -348,18 +348,21 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
     z-index: 50;
     padding-block: 0;
     --pico-nav-element-spacing-vertical: 0.5rem;
-    background: var(--pico-background-color);
-    border-bottom: 1px solid var(--pico-muted-border-color);
+    background: color-mix(in srgb, var(--pico-background-color) 88%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--pico-muted-border-color) 84%, transparent);
+    box-shadow: 0 8px 24px -24px rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(14px) saturate(115%);
+    -webkit-backdrop-filter: blur(14px) saturate(115%);
   }
   .site-header > nav {
-    padding-block: 0.25rem;
+    padding-block: 0.35rem;
   }
 
   .brand {
     font-family: var(--pico-font-family-serif);
-    font-size: 1.2rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
     text-decoration: none;
     overflow-wrap: normal;
     white-space: nowrap;
@@ -382,14 +385,20 @@ const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
   .nav-inline a[aria-current='page'],
   .nav-inline summary[aria-current='page'] {
     color: var(--pico-primary);
-    text-decoration: underline;
-    text-underline-offset: 0.45em;
-    text-decoration-thickness: 2px;
+    text-decoration: none;
+    background: var(--accent-wash);
+    border-radius: 999px;
+    padding-inline: 0.55rem;
   }
 
   .more-menu > summary {
-    padding-inline: 0.5rem;
+    padding-inline: 0.6rem;
     cursor: pointer;
+    border-radius: 999px;
+    transition: background 160ms ease, color 160ms ease;
+  }
+  .more-menu > summary:hover {
+    background: var(--accent-wash);
   }
   .more-menu > ul {
     right: 0;
