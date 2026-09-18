@@ -1119,7 +1119,11 @@
                   sensoryWWorsening[i] * localWorsening[i] +
                   sensoryBias[i]
               )
-            : retina[i];
+            : Math.tanh(
+                retina[i] +
+                  0.85 * localError[i] +
+                  0.45 * localWorsening[i]
+              );
         }
       }
 
