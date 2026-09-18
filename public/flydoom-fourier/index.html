@@ -1501,7 +1501,8 @@ self.onmessage=function(event){
             targetOriginal,
             target,
             targetOffsetX,
-            targetOffsetZ
+            targetOffsetZ,
+            metaTarget
           );
         }
       }
@@ -1632,7 +1633,8 @@ self.onmessage=function(event){
           targetOriginal,
           target,
           targetOffsetX,
-          targetOffsetZ
+          targetOffsetZ,
+          metaTarget
         );
         previousMatch = shapeMatch();
         reward = 0;
@@ -1644,9 +1646,18 @@ self.onmessage=function(event){
         const latentCount = Math.min(DN_LATENT_DOF, dnFull.length);
         for (let q = 0; q < latentCount; q++) {
           latentNoise[q] = gaussian() * sigma;
-          latentAction[q] = Math.tanh(
-            dnFull[q] * latentGain[q] + latentBias[q] + latentNoise[q]
-          );
+          if (outputAdapterEnabled()) {
+            const left = dnFull[q > 0 ? q - 1 : q] || 0;
+            const right = dnFull[q + 1 < latentCount ? q + 1 : q] || 0;
+            latentAction[q] = Math.tanh(
+              dnFull[q] * latentGain[q] +
+                (left + right) * 0.5 * latentNeighbor[q] +
+                latentBias[q] +
+                latentNoise[q]
+            );
+          } else {
+            latentAction[q] = Math.tanh(dnFull[q] + latentNoise[q]);
+          }
         }
 
         const shapeLatentCount = updateMetaActuators(
@@ -1706,6 +1717,7 @@ self.onmessage=function(event){
         );
         const globalAdvantage = reward;
         updateRegionalRewards();
+        updateSensoryAdapter();
 
         if (latentCount) {
           const sigma2 = Math.max(0.001, sigma * sigma);
@@ -1723,16 +1735,26 @@ self.onmessage=function(event){
               1
             );
             const lr = READOUT_LR * advantage / sigma2;
-            latentBias[q] = clamp(
-              latentBias[q] + lr * latentNoise[q] * 0.2,
-              -0.65,
-              0.65
-            );
-            latentGain[q] = clamp(
-              latentGain[q] + lr * latentNoise[q] * dnFull[q] * 0.08,
-              0.15,
-              2.5
-            );
+            if (outputAdapterEnabled()) {
+              const left = dnFull[q > 0 ? q - 1 : q] || 0;
+              const right = dnFull[q + 1 < latentCount ? q + 1 : q] || 0;
+              latentBias[q] = clamp(
+                latentBias[q] + lr * latentNoise[q] * 0.2,
+                -0.65,
+                0.65
+              );
+              latentGain[q] = clamp(
+                latentGain[q] + lr * latentNoise[q] * dnFull[q] * 0.08,
+                0.15,
+                2.5
+              );
+              latentNeighbor[q] = clamp(
+                latentNeighbor[q] +
+                  lr * latentNoise[q] * (left + right) * 0.03,
+                -0.5,
+                0.5
+              );
+            }
           }
         }
 
@@ -1765,6 +1787,18 @@ self.onmessage=function(event){
         dnGrid.appendChild(row);
         dnBars.push(fill);
         dnTexts.push(text);
+      }
+      const metaGrid = document.getElementById("metaGrid"),
+        metaEls = [];
+      for (let i = 0; i < GEOM_META_COUNT; i++) {
+        const box = document.createElement("div");
+        box.className = "coef";
+        const b = document.createElement("b");
+        const v = document.createElement("span");
+        b.textContent = META_NAMES[i];
+        box.append(b, v);
+        metaGrid.appendChild(box);
+        metaEls.push(v);
       }
       const coefGrid = document.getElementById("coefGrid"),
         coefEls = [];
@@ -1816,6 +1850,12 @@ self.onmessage=function(event){
         }
         document.getElementById("fourierStateLabel").textContent =
           `${activeDof.toLocaleString()} atuadores · grid ${gridResolution}×${gridResolution}`;
+        document.getElementById("metaStateLabel").textContent =
+          "11 geométricos + X/Z + grid · adapters " + adapterMode;
+        for (let i = 0; i < GEOM_META_COUNT; i++) {
+          metaEls[i].textContent =
+            metaCurrent[i].toFixed(2) + " → " + metaTarget[i].toFixed(2);
+        }
         for (let i = 0; i < DISPLAY_MODES; i++) {
           const k = representativeModeIndex(i);
           coefEls[i].b.textContent = `#${k + 1} ${MODE_LABELS[k]}`;
@@ -1830,6 +1870,13 @@ self.onmessage=function(event){
       document.getElementById("resetButton").addEventListener("click", () => {
         latentGain.fill(1);
         latentBias.fill(0);
+        latentNeighbor.fill(0.06);
+        sensoryWRetina.fill(1);
+        sensoryWError.fill(0.85);
+        sensoryWWorsening.fill(0.45);
+        sensoryBias.fill(0);
+        metaCurrent.fill(0);
+        metaVelocity.fill(0);
         bestEpisodeScore = -Infinity;
         episode = 0;
         hits = 0;
@@ -1850,6 +1897,7 @@ self.onmessage=function(event){
           targetKey = e.target.value;
           targetSeed++;
           target = targetCoefficients(targetKey, targetSeed);
+          metaTarget.set(targetMetaParameters(targetKey, targetSeed));
           targetOffsetX = 0;
           targetOffsetZ = 0;
           updateTargetLabel();
@@ -1861,9 +1909,21 @@ self.onmessage=function(event){
           targetOriginal,
           target,
           targetOffsetX,
-          targetOffsetZ
+          targetOffsetZ,
+          metaTarget
         );
         });
+      document.getElementById("adapterMode").addEventListener("change", (e) => {
+        adapterMode = e.target.value;
+        const labels = {
+          both: "entrada + saída",
+          input: "só entrada",
+          output: "só saída",
+          none: "nenhum",
+        };
+        document.getElementById("adapterModeLabel").textContent =
+          labels[adapterMode] || adapterMode;
+      });
       document.getElementById("exploreRange").addEventListener("input", (e) => {
         exploration = Number(e.target.value);
         document.getElementById("exploreLabel").textContent =
@@ -1900,7 +1960,8 @@ self.onmessage=function(event){
           targetOriginal,
           target,
           targetOffsetX,
-          targetOffsetZ
+          targetOffsetZ,
+          metaTarget
         );
       });
       document
@@ -1910,6 +1971,7 @@ self.onmessage=function(event){
           document.getElementById("complexityLabel").textContent =
             `${Math.round(targetComplexity * 100)}%`;
           target = targetCoefficients(targetKey, ++targetSeed);
+          metaTarget.set(targetMetaParameters(targetKey, targetSeed));
           previousLocalAbsError.fill(0);
           localWorsening.fill(0);
           randomizeStart();
@@ -1923,6 +1985,7 @@ self.onmessage=function(event){
           targetOffsetZ = 0;
           updateTargetLabel();
           target = targetCoefficients(targetKey, ++targetSeed);
+          metaTarget.set(targetMetaParameters(targetKey, targetSeed));
           previousLocalAbsError.fill(0);
           localWorsening.fill(0);
           randomizeStart();
@@ -1953,7 +2016,8 @@ self.onmessage=function(event){
           targetOriginal,
           target,
           targetOffsetX,
-          targetOffsetZ
+          targetOffsetZ,
+          metaTarget
         );
         const y = currentHeightAt(0, 0) - 0.8;
         fly.position.y = y;
