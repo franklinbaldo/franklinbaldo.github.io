@@ -411,10 +411,10 @@
           <h1>FlyDoom Fourier</h1>
           <p class="lede">
             A mosca vê uma arena 3D deformável. O conectoma MaleCNS processa o
-            quadro; 1.314 neurônios descendentes são lidos em oito canais e um
-            adapter treinável transforma esses canais em velocidades de seis
-            coeficientes de Fourier do terreno. O alvo é um shape 3D
-            predeterminado.
+            quadro; 1.314 neurônios descendentes alimentam um readout treinável
+            com até 1.314 atuadores de Fourier. O usuário controla quantos graus
+            de liberdade a mosca recebe e pode escolher targets simples,
+            complexos ou procedurais.
           </p>
         </div>
         <div class="status" id="status">
@@ -490,8 +490,44 @@
                   <option value="saddle">Sela</option>
                   <option value="ridge">Crista diagonal</option>
                   <option value="islands">Ilhas</option>
+                  <option value="maze">Labirinto</option>
+                  <option value="glyph">Símbolo</option>
+                  <option value="mountains">Montanhas</option>
+                  <option value="random">Espectro aleatório</option>
+                  <option value="adversarial">Adversarial multiescala</option>
                 </select>
               </label>
+              <label class="control"
+                ><span class="control-line"
+                  ><span>atuadores Fourier</span
+                  ><span id="dofLabel">256</span></span
+                >
+                <input
+                  id="dofRange"
+                  type="range"
+                  min="16"
+                  max="1314"
+                  step="1"
+                  value="256"
+                />
+              </label>
+              <label class="control"
+                ><span class="control-line"
+                  ><span>complexidade do alvo</span
+                  ><span id="complexityLabel">55%</span></span
+                >
+                <input
+                  id="complexityRange"
+                  type="range"
+                  min="0.1"
+                  max="1"
+                  step="0.01"
+                  value="0.55"
+                />
+              </label>
+              <div class="row">
+                <button id="randomTargetButton">Novo target aleatório</button>
+              </div>
               <label class="control"
                 ><span class="control-line"
                   ><span>exploração do adapter</span
@@ -534,7 +570,7 @@
           <section class="panel">
             <div class="panel-head">
               <h2>Fourier state</h2>
-              <span>current → target</span>
+              <span id="fourierStateLabel">256 ativos · current → target</span>
             </div>
             <div class="coef-grid" id="coefGrid"></div>
           </section>
@@ -544,8 +580,9 @@
       <section class="panel notes">
         <strong>Contrato científico do demo.</strong> A recorrência é o MaleCNS
         compactado já usado pelo FlyDoom. A visão egocêntrica, a aferência
-        artificial de erro morfológico, o adapter <code>1.314 DN → 6 Fourier</code>,
-        a função de reward e a arena são artificiais. O conectoma fica congelado;
+        artificial de erro morfológico, o adapter <code>1.314 DN → N Fourier</code>,
+        a função de reward e a arena são artificiais. <code>N</code> é controlável
+        entre 16 e 1.314 atuadores; O conectoma fica congelado;
         só o readout descendente aprende, por uma atualização reward-modulated
         sobre os DNs individuais. A recompensa é contínua para tornar o processo
         visível e recebe
@@ -575,36 +612,100 @@
           return s / 4294967296;
         };
       }
-      const TARGETS = {
-        crater: {
-          label: "Cratera",
-          coeff: [-0.52, 0.08, 0.06, -0.48, 0.18, 0.06],
-        },
-        saddle: {
-          label: "Sela",
-          coeff: [0.48, -0.44, 0.34, -0.28, 0.02, 0.14],
-        },
-        ridge: {
-          label: "Crista diagonal",
-          coeff: [0.08, 0.1, -0.12, 0.06, 0.62, -0.34],
-        },
-        islands: {
-          label: "Ilhas",
-          coeff: [0.3, 0.26, 0.28, 0.24, -0.18, 0.52],
-        },
+      const MAX_DOF = 1314;
+      const DEFAULT_DOF = 256;
+      const TARGET_META = {
+        crater: { label: "Cratera", family: "simple" },
+        saddle: { label: "Sela", family: "simple" },
+        ridge: { label: "Crista diagonal", family: "simple" },
+        islands: { label: "Ilhas", family: "simple" },
+        maze: { label: "Labirinto", family: "geometric" },
+        glyph: { label: "Símbolo", family: "geometric" },
+        mountains: { label: "Montanhas", family: "organic" },
+        random: { label: "Espectro aleatório", family: "procedural" },
+        adversarial: { label: "Adversarial multiescala", family: "procedural" },
       };
-      const BASIS_LABELS = [
-        "sin x",
-        "cos x",
-        "sin z",
-        "cos z",
-        "sin(x+z)",
-        "cos(2x−z)",
-      ];
-      let targetKey = "crater",
-        target = TARGETS[targetKey].coeff.slice();
-      let coeff = Array.from({ length: 6 }, () => gaussian() * 0.22);
-      let velocity = new Float32Array(6);
+
+      function buildModes(limit = MAX_DOF) {
+        const modes = [];
+        let shell = 1;
+        while (modes.length < limit) {
+          for (let kx = 0; kx <= shell && modes.length < limit; kx++) {
+            const kz = shell - kx;
+            if (kx === 0 && kz === 0) continue;
+            for (const phase of ["sin", "cos"]) {
+              if (modes.length >= limit) break;
+              const freq = Math.hypot(kx, kz);
+              modes.push({ kx, kz, phase, freq });
+            }
+          }
+          shell++;
+        }
+        return modes;
+      }
+      const MODES = buildModes();
+      const MODE_LABELS = MODES.map(
+        (m) => `${m.phase}(${m.kx || ""}x${m.kx && m.kz ? "+" : ""}${m.kz || ""}z)`
+      );
+
+      let activeDof = DEFAULT_DOF,
+        targetComplexity = 0.55,
+        targetKey = "crater",
+        targetSeed = 20260918;
+
+      function seededGaussian(rng) {
+        let u = 0, v = 0;
+        while (!u) u = rng();
+        while (!v) v = rng();
+        return Math.sqrt(-2 * Math.log(u)) * Math.cos(TAU * v);
+      }
+
+      function spectralEnvelope(mode, complexity = targetComplexity) {
+        const cutoff = 1.8 + complexity * 23;
+        const slope = 1.35 - complexity * 0.65;
+        return Math.exp(-Math.pow(mode.freq / cutoff, 1.35)) /
+          Math.pow(Math.max(1, mode.freq), slope);
+      }
+
+      function targetCoefficients(kind = targetKey, seed = targetSeed) {
+        const out = new Float32Array(MAX_DOF);
+        const rng = seededRandom(seed);
+        for (let i = 0; i < MAX_DOF; i++) {
+          const m = MODES[i];
+          const env = spectralEnvelope(m);
+          let v = 0;
+          if (kind === "crater") {
+            v = m.phase === "cos" ? -0.6 * env * Math.cos(m.freq * 0.72) : 0;
+          } else if (kind === "saddle") {
+            v = env * ((m.kx === 1 && m.kz === 0 ? 0.55 : 0) - (m.kz === 1 && m.kx === 0 ? 0.52 : 0));
+          } else if (kind === "ridge") {
+            v = env * (m.kx === m.kz ? (m.phase === "sin" ? 0.52 : -0.22) : 0);
+          } else if (kind === "islands") {
+            v = env * (Math.sin(m.kx * 1.7 + m.kz * 0.9) * 0.34 + Math.cos(m.kz * 2.2) * 0.18);
+          } else if (kind === "maze") {
+            const stripe = ((m.kx % 4 === 1) || (m.kz % 5 === 2)) ? 1 : 0;
+            v = stripe * env * (m.phase === "sin" ? 0.5 : -0.36);
+          } else if (kind === "glyph") {
+            v = env * (
+              Math.sin(m.kx * 0.83) * Math.cos(m.kz * 1.31) +
+              0.55 * Math.cos((m.kx + m.kz) * 0.57)
+            ) * 0.34;
+          } else if (kind === "mountains") {
+            v = seededGaussian(rng) * env * 0.52;
+          } else if (kind === "adversarial") {
+            const band = 0.35 + 0.65 * Math.sin(m.freq * 2.8 + m.kx * 0.7);
+            v = seededGaussian(rng) * env * band * 0.62;
+          } else {
+            v = seededGaussian(rng) * env * 0.55;
+          }
+          out[i] = clamp(v, -0.9, 0.9);
+        }
+        return out;
+      }
+
+      let target = targetCoefficients();
+      let coeff = new Float32Array(MAX_DOF);
+      let velocity = new Float32Array(MAX_DOF);
       let fourierGain = 0.42,
         exploration = 0.18,
         paused = false,
@@ -710,22 +811,20 @@
       fly.position.set(0, 0.35, 0);
       scene.add(fly);
 
-      const basis = (x, z) => [
-        Math.sin(x * 0.78),
-        Math.cos(x * 0.72),
-        Math.sin(z * 0.82),
-        Math.cos(z * 0.7),
-        Math.sin((x + z) * 0.62),
-        Math.cos(2 * x * 0.55 - z * 0.68),
-      ];
-      function heightAt(x, z, c) {
-        const b = basis(x, z);
+      function modeValue(mode, x, z) {
+        const angle = mode.kx * x * 0.48 + mode.kz * z * 0.48;
+        return mode.phase === "sin" ? Math.sin(angle) : Math.cos(angle);
+      }
+
+      function heightAt(x, z, c, count = activeDof) {
         let y = 0;
-        for (let k = 0; k < 6; k++) y += c[k] * b[k];
+        const n = Math.min(count, c.length, MAX_DOF);
+        for (let k = 0; k < n; k++) y += c[k] * modeValue(MODES[k], x, z);
         const r = Math.hypot(x, z);
         y *= Math.exp(-Math.max(0, r - 4.2) * 0.45);
-        return y * 1.36;
+        return y * (1.36 / Math.sqrt(Math.max(1, n / 6)));
       }
+
       function deform(geom, base, c) {
         const pos = geom.attributes.position.array;
         for (let i = 0; i < pos.length; i += 3) {
@@ -823,9 +922,9 @@ self.onmessage=function(event){
  // Synthetic morphology-error afference: six signed errors are encoded as
  // opponent patterns on otherwise existing sensory ingress. This is an
  // explicit experimental interface, not claimed fly anatomy.
- for(let k=0;k<6;k++){
+ for(let k=0;k<mismatch.length;k++){
    const e=Math.max(-1,Math.min(1,mismatch[k]||0)),mag=Math.abs(e)*2.4;
-   const posBin=2+k*2,negBin=13-k*2;
+   const posBin=(2+k*3)%16,negBin=(13+k*5)%16;
    const bins=e>=0?[posBin,negBin]:[negBin,posBin];
    for(const side of [circuit.ray_vpl,circuit.ray_vpr]){
      const excite=side[bins[0]],inhibit=side[bins[1]];
@@ -969,7 +1068,10 @@ self.onmessage=function(event){
       function requestNeuralStep() {
         if (neuralReady && neuralWorker && !workerBusy) {
           workerBusy = true;
-          const mismatch = target.map((t, i) => clamp(t - coeff[i], -1, 1));
+          const mismatch = Array.from(
+            { length: Math.min(activeDof, 48) },
+            (_, i) => clamp(target[i] - coeff[i], -1, 1)
+          );
           neuralWorker.postMessage({
             type: "step",
             retina: Array.from(retina),
@@ -987,7 +1089,7 @@ self.onmessage=function(event){
       let bestEpisodeScore = -Infinity;
       function ensureReadoutWidth() {
         if (!dnFull.length || (W[0] && W[0].length === dnFull.length)) return;
-        W = Array.from({ length: 6 }, () =>
+        W = Array.from({ length: activeDof }, () =>
           Array.from({ length: dnFull.length }, () => (rng() * 2 - 1) * 0.018)
         );
       }
@@ -1001,27 +1103,30 @@ self.onmessage=function(event){
         randomizeStart();
       }
       function randomizeStart() {
-        coeff = target.map((v, i) => clamp(v + gaussian() * 0.52, -0.9, 0.9));
+        coeff.fill(0);
+        for (let i = 0; i < activeDof; i++)
+          coeff[i] = clamp(target[i] + gaussian() * 0.26 * spectralEnvelope(MODES[i]), -0.9, 0.9);
         if (Math.random() < 0.35)
-          coeff = Array.from({ length: 6 }, () => gaussian() * 0.26);
+          for (let i = 0; i < activeDof; i++)
+            coeff[i] = gaussian() * 0.16 * spectralEnvelope(MODES[i]);
         velocity.fill(0);
       }
       function shapeMatch() {
         let mse = 0;
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < activeDof; i++) {
           const d = coeff[i] - target[i];
           mse += d * d;
         }
-        mse /= 6;
+        mse /= Math.max(1, activeDof);
         return Math.exp(-3.6 * mse);
       }
       let hitLatched = false;
       function updateController(dt, now) {
         ensureReadoutWidth();
-        const actions = new Float32Array(6);
-        const noises = new Float32Array(6);
+        const actions = new Float32Array(activeDof);
+        const noises = new Float32Array(activeDof);
         const sigma = Math.max(0.025, exploration * 0.32);
-        for (let k = 0; k < 6; k++) {
+        for (let k = 0; k < activeDof; k++) {
           let v = 0;
           if (dnFull.length && W[k]) {
             for (let j = 0; j < dnFull.length; j++) v += W[k][j] * dnFull[j];
@@ -1036,15 +1141,15 @@ self.onmessage=function(event){
         }
         match = shapeMatch();
         let mismatchSq = 0;
-        for (let i = 0; i < 6; i++) mismatchSq += (target[i] - coeff[i]) ** 2;
-        mismatchMagnitude = Math.sqrt(mismatchSq / 6);
+        for (let i = 0; i < activeDof; i++) mismatchSq += (target[i] - coeff[i]) ** 2;
+        mismatchMagnitude = Math.sqrt(mismatchSq / Math.max(1, activeDof));
         const hit = match >= HIT_THRESHOLD;
         reward = Math.pow(match, 6) + (hit ? 1 : 0);
         rewardBaseline = rewardBaseline * 0.985 + reward * 0.015;
         const advantage = clamp(reward - rewardBaseline, -1, 1);
         if (dnFull.length) {
           const norm = READOUT_LR * advantage / Math.max(0.001, sigma * sigma) / Math.sqrt(dnFull.length);
-          for (let k = 0; k < 6; k++) {
+          for (let k = 0; k < activeDof; k++) {
             const credit = norm * noises[k];
             for (let j = 0; j < dnFull.length; j++)
               W[k][j] = clamp(W[k][j] + credit * dnFull[j], -0.22, 0.22);
@@ -1083,15 +1188,22 @@ self.onmessage=function(event){
       }
       const coefGrid = document.getElementById("coefGrid"),
         coefEls = [];
-      for (let i = 0; i < 6; i++) {
+      const DISPLAY_MODES = 12;
+      for (let i = 0; i < DISPLAY_MODES; i++) {
         const box = document.createElement("div");
         box.className = "coef";
         const b = document.createElement("b");
-        b.textContent = BASIS_LABELS[i];
         const s = document.createElement("span");
         box.append(b, s);
         coefGrid.appendChild(box);
-        coefEls.push(s);
+        coefEls.push({ b, s });
+      }
+      function representativeModeIndex(slot) {
+        if (DISPLAY_MODES <= 1) return 0;
+        return Math.min(
+          activeDof - 1,
+          Math.floor((slot / (DISPLAY_MODES - 1)) * Math.max(0, activeDof - 1))
+        );
       }
       function updateUi() {
         document.getElementById("rewardValue").textContent = reward.toFixed(3);
@@ -1111,9 +1223,14 @@ self.onmessage=function(event){
           dnBars[i].style.width = `${clamp((dn[i] + 1) * 0.5) * 100}%`;
           dnTexts[i].textContent = dn[i].toFixed(2);
         }
-        for (let i = 0; i < 6; i++)
-          coefEls[i].textContent =
-            `${coeff[i].toFixed(2)} → ${target[i].toFixed(2)}`;
+        document.getElementById("fourierStateLabel").textContent =
+          `${activeDof.toLocaleString()} ativos · current → target`;
+        for (let i = 0; i < DISPLAY_MODES; i++) {
+          const k = representativeModeIndex(i);
+          coefEls[i].b.textContent = `#${k + 1} ${MODE_LABELS[k]}`;
+          coefEls[i].s.textContent =
+            `${coeff[k].toFixed(2)} → ${target[k].toFixed(2)}`;
+        }
       }
       document.getElementById("pauseButton").addEventListener("click", (e) => {
         paused = !paused;
@@ -1139,9 +1256,12 @@ self.onmessage=function(event){
         .getElementById("targetSelect")
         .addEventListener("change", (e) => {
           targetKey = e.target.value;
-          target = TARGETS[targetKey].coeff.slice();
+          targetSeed++;
+          target = targetCoefficients(targetKey, targetSeed);
           document.getElementById("targetName").textContent =
-            TARGETS[targetKey].label;
+            TARGET_META[targetKey].label;
+          randomizeStart();
+          W = [];
           deform(targetGeometry, targetOriginal, target);
         });
       document.getElementById("exploreRange").addEventListener("input", (e) => {
@@ -1154,6 +1274,36 @@ self.onmessage=function(event){
         document.getElementById("gainLabel").textContent =
           fourierGain.toFixed(2);
       });
+      document.getElementById("dofRange").addEventListener("input", (e) => {
+        activeDof = Math.max(16, Math.min(MAX_DOF, Number(e.target.value)));
+        document.getElementById("dofLabel").textContent =
+          activeDof.toLocaleString();
+        W = [];
+        coeff.fill(0);
+        velocity.fill(0);
+        randomizeStart();
+      });
+      document
+        .getElementById("complexityRange")
+        .addEventListener("input", (e) => {
+          targetComplexity = Number(e.target.value);
+          document.getElementById("complexityLabel").textContent =
+            `${Math.round(targetComplexity * 100)}%`;
+          target = targetCoefficients(targetKey, ++targetSeed);
+          W = [];
+          randomizeStart();
+        });
+      document
+        .getElementById("randomTargetButton")
+        .addEventListener("click", () => {
+          targetKey = "random";
+          document.getElementById("targetSelect").value = targetKey;
+          document.getElementById("targetName").textContent =
+            TARGET_META[targetKey].label;
+          target = targetCoefficients(targetKey, ++targetSeed);
+          W = [];
+          randomizeStart();
+        });
 
       let last = performance.now(),
         lastSense = 0;
