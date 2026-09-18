@@ -5,6 +5,7 @@ import {
   boundCoefficient,
   coefficientLimitForMode,
   enforceSpectralEnergyBudget,
+  normalizedSpectralRms,
   robustShapeMatch,
 } from "../../public/flydoom-fourier/control_core.js";
 
@@ -96,4 +97,30 @@ test("global spectral budget prevents many bounded modes from stacking into spik
     }, 0) / coeff.length,
   );
   assert.ok(normalizedRms <= 0.600001);
+});
+
+test("target-aware energy ceiling can preserve a legal target above the floor", () => {
+  const modes = Array.from({ length: 16 }, (_, i) => mode(i + 1));
+  const target = new Float32Array(16);
+  for (let i = 0; i < target.length; i++) {
+    target[i] = coefficientLimitForMode(modes[i], 0.55) * 0.62;
+  }
+
+  const targetRms = normalizedSpectralRms(
+    target,
+    modes,
+    target.length,
+    0.55,
+  );
+  const ceiling = Math.max(0.6, targetRms + 0.05);
+  const copy = new Float32Array(target);
+  const scale = enforceSpectralEnergyBudget(
+    copy,
+    modes,
+    copy.length,
+    0.55,
+    ceiling,
+  );
+
+  assert.equal(scale, 1);
 });
