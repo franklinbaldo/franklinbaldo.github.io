@@ -110,22 +110,27 @@ const exhibitions = toeTheories.filter((theory) => theory.kind !== "contender");
     <section aria-labelledby="exhibition-heading">
       <div class="section-heading">
         <div>
-          <p class="kicker">EXHIBITION</p>
-          <h2 id="exhibition-heading">Ideias adjacentes da casa</h2>
+          <p class="kicker">EXHIBITION / TRIAGEM</p>
+          <h2 id="exhibition-heading">Ideias adjacentes e candidatas fora do ranking</h2>
         </div>
-        <p>Podem entrar na conversa sem fingir que são uma ToE.</p>
+        <p>Podem entrar na conversa sem fingir que cumprem o contrato de uma ToE auditável.</p>
       </div>
       <div class="exhibition-list">
         {exhibitions.map((theory) => (
           <article class="exhibition-card">
             <div>
-              <span class="nr">NR · não ranqueada cientificamente</span>
+              <span class="nr">
+                {theory.kind === "adjacent"
+                  ? "NR · fora do ranking principal"
+                  : "NR · não ranqueada cientificamente"}
+              </span>
               <h3>{theory.name}</h3>
               <p>{theory.summary}</p>
+              {theory.note && <p class="note">{theory.note}</p>}
             </div>
             <div class="exhibition-meta">
               <span>interesse {theory.interestTier}</span>
-              <a href={theory.sourceUrl}>abrir paper ↗</a>
+              <a href={theory.sourceUrl}>abrir fonte ↗</a>
             </div>
           </article>
         ))}
