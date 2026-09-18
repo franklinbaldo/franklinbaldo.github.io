@@ -201,9 +201,9 @@ test("hybrid shaping keeps a broad signal but strongly amplifies late precision"
 });
 
 test("localized mismatch distinguishes height, tilt, curvature, and normals", () => {
-  const flat = (x, z) => 0;
-  const raised = (x, z) => 0.5;
-  const tilted = (x, z) => 0.6 * x;
+  const flat = (_x, _z) => 0;
+  const raised = (_x, _z) => 0.5;
+  const tilted = (x, _z) => 0.6 * x;
   const bowl = (x, z) => 0.2 * (x * x + z * z);
 
   const base = surfaceDifferentialStats(flat, 0, 0);
