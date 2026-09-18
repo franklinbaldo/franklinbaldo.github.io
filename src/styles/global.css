@@ -133,6 +133,49 @@
 html {
   scroll-padding-top: 5.5rem;
 }
+
+::selection {
+  background: color-mix(in srgb, var(--pico-primary) 24%, transparent);
+  color: var(--pico-color);
+}
+
+body {
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  text-underline-offset: 0.16em;
+  text-decoration-thickness: 0.08em;
+}
+
+main.container,
+body > main {
+  animation: page-enter 180ms ease-out both;
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main.container,
+  body > main { animation: none; }
+}
+
+article,
+.card-like {
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+@media (hover: hover) {
+  article:hover {
+    border-color: color-mix(in srgb, var(--pico-primary) 28%, var(--pico-muted-border-color));
+  }
+}
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
