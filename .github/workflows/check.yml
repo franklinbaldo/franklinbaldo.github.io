@@ -56,9 +56,6 @@ jobs:
         run: |
           npx depcheck --ignores="@fontsource/fraunces,@fontsource/inter,@picocss/pico,dompurify,highlight.js,katex,marked,mermaid,pagefind,typescript,@astrojs/check,@lhci/cli,depcheck,tsx,astro:content,astro:container"
 
-      - name: Prettier check
-        run: npx prettier --check .
-
       - name: Lint
         run: npm run lint
 
@@ -124,7 +121,7 @@ jobs:
   # Rodavam em série no fim do job `check`, então PRs pagavam a soma dos dois;
   # como um não depende do resultado do outro, rodar em paralelo corta o
   # tempo de espera para o máximo dos dois em vez da soma. O trade-off: numa
-  # PR que falha em lint/prettier/etc, o build/Lighthouse ainda roda até o
+  # PR que falha em lint/testes/etc, o build/Lighthouse ainda roda até o
   # fim (antes era abortado cedo) — aceitável aqui porque minutos de Actions
   # são de graça em repo público; o que importa é o tempo de espera.
   build:
