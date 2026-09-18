@@ -1,7 +1,5 @@
 ---
 type: paper
-order: 23
-file: "pedagogical_signal_extraction.md"
 title: "Pedagogical Signal Extraction"
 family: "Aprendizagem e tempo informacional"
 kind: "aprendizagem de invariantes"
@@ -12,10 +10,4 @@ idea: "Pergunta como um aprendiz pode distinguir ruído de estrutura ainda não 
 status: "Position paper não revisado por pares, sem resultados empíricos. A auditoria reproduzível mostra que machine teaching learner-relative, curricula sequenciais, ensino sob incerteza, retrospective revaluation e representações preditivas compactas já cobrem grande parte dos componentes. A fronteira candidata fica no teste conjunto de progressive decodability, structured irregularity e retrospective gain medido por ablação pós-unlock em held-out."
 limit: "O fenômeno amplo de 'evidência posterior muda o valor da evidência anterior' não é novo, nem são currículo adaptativo e predictive bottlenecks. O teste decisivo é remover a observação antes opaca depois que a regra de decodificação já foi aprendida e verificar se o desempenho held-out piora; se um baseline sequencial/preditivo pareado reproduzir o mesmo efeito, o framework adicional não foi necessário. Busca negativa não prova prioridade."
 related_file: "audits/prior-art/pedagogical-signal-extraction-2026-09-18.md"
-related_label: "ler auditoria de prior art"
-updated: "2026-09-18"
 ---
-
-# Pedagogical Signal Extraction
-
-Canonical OKF card for the public Papers portfolio. The paper itself remains in `franklinbaldo/papers`.
