@@ -197,7 +197,7 @@
       }
       .metrics {
         display: grid;
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: repeat(7, 1fr);
         border-top: 1px solid var(--line);
       }
       .metric {
@@ -414,7 +414,9 @@
             quadro; 1.314 neurônios descendentes formam um espaço latente de
             controle que é interpolado para até 4.096 atuadores de Fourier.
             O usuário controla separadamente o número de atuadores e a resolução
-            física da grid, além da complexidade do target.
+            física da grid, além da complexidade do target. Eles não competem:
+            ambos podem crescer; o custo científico aparece na carga de controle
+            imposta aos 1.314 DNs.
           </p>
         </div>
         <div class="status" id="status">
@@ -461,6 +463,10 @@
             <div class="metric">
               <div class="metric-label">hits</div>
               <div class="metric-value" id="hitsValue">0</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">control load</div>
+              <div class="metric-value" id="loadValue">0.19×</div>
             </div>
             <div class="metric">
               <div class="metric-label">MaleCNS step</div>
@@ -598,7 +604,10 @@
         <code>1.314 DN → 1.314 latentes → N Fourier</code> são artificiais.
         <code>N</code> é controlável entre 16 e 4.096 nesta demo e pode exceder
         o número de DNs por interpolação. A resolução física da grid é um
-        parâmetro independente (16×16 a 128×128). O conectoma fica congelado;
+        parâmetro independente (16×16 a 128×128): grid e atuadores podem crescer
+        simultaneamente. A razão <code>N / 1.314</code> é exibida como
+        <em>control load</em>; quando ela cresce, o mesmo espaço descendente precisa
+        coordenar mais graus de liberdade. O conectoma fica congelado;
         só o readout descendente aprende, por uma atualização reward-modulated
         sobre os DNs individuais. A recompensa é contínua para tornar o processo
         visível e recebe
@@ -1268,6 +1277,8 @@ self.onmessage=function(event){
           mismatchMagnitude.toFixed(3);
         document.getElementById("bestValue").textContent = bestMatch.toFixed(3);
         document.getElementById("hitsValue").textContent = String(hits);
+        document.getElementById("loadValue").textContent =
+          `${(activeDof / DN_LATENT_DOF).toFixed(2)}×`;
         document.getElementById("latencyValue").textContent = neuralLatency
           ? `${neuralLatency.toFixed(1)} ms`
           : "—";
