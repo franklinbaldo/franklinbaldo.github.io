@@ -9,7 +9,9 @@
 //
 // Failure semantics match the old `&&` chain for required steps. Repo Factory
 // uses the committed public snapshot on pull requests and local development;
-// scheduled/push builds of main refresh it before Astro renders the site.
+// scheduled/repository-dispatch builds of main refresh it before Astro renders
+// the site. Ordinary pushes reuse the committed snapshot so a blog/content
+// deploy does not spend ~2 minutes polling dozens of unrelated repositories.
 import { spawnSync } from "node:child_process";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -17,10 +19,16 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, "..");
 const isMainBuild = process.env.GITHUB_REF_NAME === "main";
+const refreshRepoFactory =
+  process.env.REFRESH_REPO_FACTORY === "1" ||
+  process.env.GITHUB_EVENT_NAME === "schedule" ||
+  process.env.GITHUB_EVENT_NAME === "repository_dispatch";
 
 const steps = [
   ["scripts/copy-katex.mjs"],
-  ...(isMainBuild ? [["scripts/generate-repo-factory.mjs", "--optional"]] : []),
+  ...(isMainBuild && refreshRepoFactory
+    ? [["scripts/generate-repo-factory.mjs", "--optional"]]
+    : []),
   ["--import", "tsx/esm", "scripts/hronir/index.js", "select"],
   ["scripts/generate-translation-pairs.mjs"],
   ["scripts/generate-redirects.mjs"],
