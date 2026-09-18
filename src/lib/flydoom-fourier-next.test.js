@@ -93,8 +93,8 @@ test("thin output adapter produces bounded actions and learns from credited nois
   const dn = new Float32Array(1314);
   dn[3] = 0.4;
   dn[801] = -0.3;
-  const hidden = projectDn(dn, 16);
-  const readout = createReadout(37, 16, 42);
+  const hidden = projectDn(dn, 32);
+  const readout = createReadout(37, 32, 42);
   const noise = new Float32Array(37).fill(0.04);
   const before = new Float32Array(readout.weights);
   const actions = readoutActions(readout, hidden, noise);
