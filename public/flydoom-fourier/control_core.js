@@ -118,13 +118,16 @@ export function localizedSurfaceMismatch(
     -1,
     1,
   );
+  const normalGap = Math.max(0, 1 - normalDot);
+  const normalMismatch =
+    normalGap < 1e-12 ? 0 : clamp(normalGap / 0.35, 0, 1);
 
   return [
     clamp((targetStats.height - currentStats.height) / 2.5, -1, 1),
     clamp((gradDx * forwardX + gradDz * forwardZ) / 1.5, -1, 1),
     clamp((gradDx * rightX + gradDz * rightZ) / 1.5, -1, 1),
     clamp((targetStats.curvature - currentStats.curvature) / 4, -1, 1),
-    clamp((1 - normalDot) / 0.35, 0, 1),
+    normalMismatch,
     clamp((targetStats.slope - currentStats.slope) / 1.5, -1, 1),
   ];
 }
