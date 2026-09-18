@@ -1604,6 +1604,18 @@ self.onmessage=function(event){
         dnBars.push(fill);
         dnTexts.push(text);
       }
+      const metaGrid = document.getElementById("metaGrid"),
+        metaEls = [];
+      for (let i = 0; i < META_COUNT; i++) {
+        const box = document.createElement("div");
+        box.className = "coef";
+        const b = document.createElement("b");
+        const v = document.createElement("span");
+        b.textContent = META_NAMES[i];
+        box.append(b, v);
+        metaGrid.appendChild(box);
+        metaEls.push(v);
+      }
       const coefGrid = document.getElementById("coefGrid"),
         coefEls = [];
       const DISPLAY_MODES = 12;
@@ -1651,7 +1663,14 @@ self.onmessage=function(event){
           dnTexts[i].textContent = dn[i].toFixed(2);
         }
         document.getElementById("fourierStateLabel").textContent =
-          `${activeDof.toLocaleString()} atuadores · grid ${gridResolution}×${gridResolution}`;
+          activeDof.toLocaleString() + " atuadores · grid " +
+          gridResolution + "×" + gridResolution;
+        document.getElementById("metaStateLabel").textContent =
+          "11 geométricos + grid · adapters " + adapterMode;
+        for (let i = 0; i < META_COUNT; i++) {
+          metaEls[i].textContent =
+            metaCurrent[i].toFixed(2) + " → " + metaTarget[i].toFixed(2);
+        }
         for (let i = 0; i < DISPLAY_MODES; i++) {
           const k = representativeModeIndex(i);
           coefEls[i].b.textContent = `#${k + 1} ${MODE_LABELS[k]}`;
@@ -1666,6 +1685,13 @@ self.onmessage=function(event){
       document.getElementById("resetButton").addEventListener("click", () => {
         latentGain.fill(1);
         latentBias.fill(0);
+        latentNeighbor.fill(0.06);
+        sensoryWRetina.fill(1);
+        sensoryWError.fill(0.85);
+        sensoryWWorsening.fill(0.45);
+        sensoryBias.fill(0);
+        metaCurrent.fill(0);
+        metaVelocity.fill(0);
         bestEpisodeScore = -Infinity;
         rewardBaseline = 0;
         episode = 0;
@@ -1688,6 +1714,7 @@ self.onmessage=function(event){
           targetKey = e.target.value;
           targetSeed++;
           target = targetCoefficients(targetKey, targetSeed);
+          metaTarget.set(targetMetaParameters(targetKey, targetSeed));
           targetOffsetX = 0;
           targetOffsetZ = 0;
           updateTargetLabel();
@@ -1703,6 +1730,17 @@ self.onmessage=function(event){
           metaTarget
         );
         });
+      document.getElementById("adapterMode").addEventListener("change", (e) => {
+        adapterMode = e.target.value;
+        const labels = {
+          both: "entrada + saída",
+          input: "só entrada",
+          output: "só saída",
+          none: "nenhum",
+        };
+        document.getElementById("adapterModeLabel").textContent =
+          labels[adapterMode] || adapterMode;
+      });
       document.getElementById("exploreRange").addEventListener("input", (e) => {
         exploration = Number(e.target.value);
         document.getElementById("exploreLabel").textContent =
@@ -1744,6 +1782,7 @@ self.onmessage=function(event){
           document.getElementById("complexityLabel").textContent =
             `${Math.round(targetComplexity * 100)}%`;
           target = targetCoefficients(targetKey, ++targetSeed);
+          metaTarget.set(targetMetaParameters(targetKey, targetSeed));
           previousLocalAbsError.fill(0);
           localWorsening.fill(0);
           randomizeStart();
@@ -1757,6 +1796,7 @@ self.onmessage=function(event){
           targetOffsetZ = 0;
           updateTargetLabel();
           target = targetCoefficients(targetKey, ++targetSeed);
+          metaTarget.set(targetMetaParameters(targetKey, targetSeed));
           previousLocalAbsError.fill(0);
           localWorsening.fill(0);
           randomizeStart();
