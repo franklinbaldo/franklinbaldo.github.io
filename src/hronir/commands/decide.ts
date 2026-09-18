@@ -336,7 +336,9 @@ export function decide(args: string[]) {
   });
 
   const data = {
-    type: "Rate File",
+    type: "Hronir Evaluation",
+    schema: "hronir-evaluation-v1",
+    id: `hronir:${runId}:${aKey}:${bKey}`,
     run_id: runId,
     run_at: runAt,
     post_a: withContentLang(currentMatch.post_a),
