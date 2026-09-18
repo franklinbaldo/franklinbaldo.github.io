@@ -29,12 +29,11 @@ export function boundVelocity(value, mode, complexity = 0.55) {
   return clamp(value, -limit, limit);
 }
 
-export function enforceSpectralEnergyBudget(
+export function normalizedSpectralRms(
   coeff,
   modes,
   count,
   complexity = 0.55,
-  maxNormalizedRms = 0.6,
 ) {
   const n = Math.max(1, Math.min(count, coeff.length, modes.length));
   let squared = 0;
@@ -46,10 +45,21 @@ export function enforceSpectralEnergyBudget(
     const normalized = coeff[k] / limit;
     squared += normalized * normalized;
   }
-  const rms = Math.sqrt(squared / n);
+  return Math.sqrt(squared / n);
+}
+
+export function enforceSpectralEnergyBudget(
+  coeff,
+  modes,
+  count,
+  complexity = 0.55,
+  maxNormalizedRms = 0.6,
+) {
+  const rms = normalizedSpectralRms(coeff, modes, count, complexity);
   if (rms <= maxNormalizedRms || rms === 0) return 1;
 
   const scale = maxNormalizedRms / rms;
+  const n = Math.max(1, Math.min(count, coeff.length, modes.length));
   for (let k = 0; k < n; k++) coeff[k] *= scale;
   return scale;
 }
