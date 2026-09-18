@@ -1057,6 +1057,12 @@
       const regionalReward = new Float32Array(32);
       let regionalRewardMean = 0;
       let regionalRewardWorst = 0;
+      const sensoryWRetina = new Float32Array(32).fill(1);
+      const sensoryWError = new Float32Array(32).fill(0.85);
+      const sensoryWWorsening = new Float32Array(32).fill(0.45);
+      const sensoryBias = new Float32Array(32);
+      const adaptedSensory = new Float32Array(32);
+      const sensoryAdapterLR = 0.0008;
       const retinaEls = [];
       const retinaEl = document.getElementById("retina");
       for (let i = 0; i < 32; i++) {
@@ -1144,6 +1150,57 @@
         }
       }
 
+      function inputAdapterEnabled() {
+        return adapterMode === "both" || adapterMode === "input";
+      }
+
+      function outputAdapterEnabled() {
+        return adapterMode === "both" || adapterMode === "output";
+      }
+
+      function runSensoryAdapter() {
+        for (let i = 0; i < 32; i++) {
+          adaptedSensory[i] = inputAdapterEnabled()
+            ? Math.tanh(
+                sensoryWRetina[i] * retina[i] +
+                  sensoryWError[i] * localError[i] +
+                  sensoryWWorsening[i] * localWorsening[i] +
+                  sensoryBias[i]
+              )
+            : Math.tanh(
+                retina[i] + 0.85 * localError[i] + 0.45 * localWorsening[i]
+              );
+        }
+      }
+
+      function updateSensoryAdapter() {
+        if (!inputAdapterEnabled()) return;
+        for (let i = 0; i < 32; i++) {
+          const credit = regionalReward[i];
+          sensoryWRetina[i] = clamp(
+            sensoryWRetina[i] + sensoryAdapterLR * credit * retina[i],
+            0.15,
+            2.5
+          );
+          sensoryWError[i] = clamp(
+            sensoryWError[i] + sensoryAdapterLR * credit * localError[i],
+            -2.5,
+            2.5
+          );
+          sensoryWWorsening[i] = clamp(
+            sensoryWWorsening[i] +
+              sensoryAdapterLR * credit * localWorsening[i],
+            -2,
+            2
+          );
+          sensoryBias[i] = clamp(
+            sensoryBias[i] + sensoryAdapterLR * credit * 0.15,
+            -0.8,
+            0.8
+          );
+        }
+      }
+
       function resetRegionalRewardMemory() {
         sampleLocalErrorField();
         for (let i = 0; i < 32; i++) {
@@ -1218,27 +1275,12 @@ self.onmessage=function(event){
    self.postMessage({type:"ready",n:connectome.n_neurons,dn:circuit.dn_all.length});return;
  }
  if(msg.type!=="step"||!connectome)return;
- const t0=performance.now(), retinal=msg.retina, localError=msg.localError||[], worsening=msg.worsening||[];drive.fill(0);
+ const t0=performance.now(), sensory=msg.sensory||[];drive.fill(0);
  for(let r=0;r<16;r++){
-   const ls=retinal[r]*3.2,rs=retinal[16+r]*3.2,lb=circuit.ray_vpl[r],rb=circuit.ray_vpr[r];
+   const ls=(sensory[r]||0)*3.2,rs=(sensory[16+r]||0)*3.2;
+   const lb=circuit.ray_vpl[r],rb=circuit.ray_vpr[r];
    for(let i=0;i<lb.length;i++)drive[lb[i]]=ls;
    for(let i=0;i<rb.length;i++)drive[rb[i]]=rs;
- }
- // Spatial morphology-error afference. Error stays local: each egocentric
- // region is injected into the same left/right visual ingress bin that
- // represents that region. Positive/negative errors are opponent-signed;
- // regions whose absolute error is growing get an urgency gain.
- for(let k=0;k<32;k++){
-   const e=Math.max(-1,Math.min(1,localError[k]||0));
-   const worse=Math.max(0,Math.min(1,worsening[k]||0));
-   const mag=Math.abs(e)*(2.0+2.2*worse);
-   const side=k<16?circuit.ray_vpl:circuit.ray_vpr;
-   const bin=k&15;
-   const opposite=(15-bin);
-   const primary=side[bin],counter=side[opposite];
-   const sign=e>=0?1:-1;
-   for(let i=0;i<primary.length;i++)drive[primary[i]]+=sign*mag;
-   for(let i=0;i<counter.length;i++)drive[counter[i]]-=sign*mag*.35;
  }
  const N=connectome.n_neurons,o=connectome.offsets,s=connectome.scales,d=connectome.deltas,w=connectome.weights,l=connectome.lut;
  for(let row=0;row<N;row++){
@@ -1391,11 +1433,10 @@ self.onmessage=function(event){
       function requestNeuralStep() {
         if (neuralReady && neuralWorker && !workerBusy) {
           workerBusy = true;
+          runSensoryAdapter();
           neuralWorker.postMessage({
             type: "step",
-            retina: Array.from(retina),
-            localError: Array.from(localError),
-            worsening: Array.from(localWorsening),
+            sensory: Array.from(adaptedSensory),
           });
         } else if (!neuralReady) {
           const t = performance.now() / 900;
@@ -1419,6 +1460,7 @@ self.onmessage=function(event){
       let bestEpisodeScore = -Infinity;
       let latentGain = new Float32Array(DN_LATENT_DOF).fill(1);
       let latentBias = new Float32Array(DN_LATENT_DOF);
+      let latentNeighbor = new Float32Array(DN_LATENT_DOF).fill(0.06);
       let latentAction = new Float32Array(DN_LATENT_DOF);
       let latentNoise = new Float32Array(DN_LATENT_DOF);
 
@@ -1467,9 +1509,18 @@ self.onmessage=function(event){
       function updateMetaActuators(now, dt, latent, latentCount) {
         if (latentCount < META_ACTUATOR_COUNT) return latentCount;
         const shapeLatentCount = latentCount - META_ACTUATOR_COUNT;
-        const xAction = latent[shapeLatentCount] || 0;
-        const zAction = latent[shapeLatentCount + 1] || 0;
-        const gridAction = latent[shapeLatentCount + 2] || 0;
+        for (let m = 0; m < GEOM_META_COUNT; m++) {
+          const action = latent[shapeLatentCount + m] || 0;
+          metaVelocity[m] = metaVelocity[m] * 0.9 + action * 0.1;
+          metaCurrent[m] = clamp(
+            metaCurrent[m] + metaVelocity[m] * dt * 0.24,
+            -1,
+            1
+          );
+        }
+        const xAction = latent[shapeLatentCount + GEOM_META_COUNT] || 0;
+        const zAction = latent[shapeLatentCount + GEOM_META_COUNT + 1] || 0;
+        const gridAction = latent[shapeLatentCount + GEOM_META_COUNT + 2] || 0;
 
         currentOffsetVelocityX =
           currentOffsetVelocityX * 0.9 + xAction * 0.22;
@@ -1528,7 +1579,7 @@ self.onmessage=function(event){
       }
 
       function shapeMatch() {
-        return robustShapeMatch({
+        const fourierMatch = robustShapeMatch({
           coeff,
           target,
           modes: MODES,
@@ -1539,6 +1590,14 @@ self.onmessage=function(event){
           targetOffsetX,
           targetOffsetZ,
         });
+        let metaMse = 0;
+        for (let i = 0; i < GEOM_META_COUNT; i++) {
+          const d = metaCurrent[i] - metaTarget[i];
+          metaMse += d * d;
+        }
+        metaMse /= GEOM_META_COUNT;
+        const metaMatch = Math.exp(-2.2 * metaMse);
+        return Math.sqrt(fourierMatch * metaMatch);
       }
 
       function updateTargetLabel() {
