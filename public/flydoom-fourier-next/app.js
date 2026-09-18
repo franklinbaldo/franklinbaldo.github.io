@@ -16,7 +16,7 @@ import {
   geometricMatch,
   localMismatchField,
   maskActions,
-  maskFeatures,
+  maskSignals,
   projectDn,
   readoutActions,
   spectralLimit,
@@ -192,9 +192,8 @@ function advanceCurriculum() {
 function updateTargetLabel() {
   targetLabelEl.textContent =
     `stage ${stage.index + 1}/${stage.total} · +${stage.unlockedActionLabel}`;
-  stageLabelEl.textContent = stage.unlockedFeatureLabel
-    ? `unlock: ${stage.unlockedActionLabel} + ${stage.unlockedFeatureLabel}`
-    : `unlock: ${stage.unlockedActionLabel} · 6 sensory families active`;
+  stageLabelEl.textContent =
+    `unlock: ${stage.unlockedActionLabel} + ${stage.unlockedSignalLabel}`;
 }
 
 function buildHeatmap() {
@@ -281,31 +280,45 @@ function meanRange(values, start, end) {
 
 function updateHeatmap() {
   const cells = heatmapEl.children;
-  const featureEnabled = stage.activeFeatures.includes(selectedFeature);
+  const activeSignals = new Set(stage.activeSignalIndices);
 
   for (let cell = 0; cell < SENSOR_CELLS; cell++) {
-    const value = featureEnabled
-      ? latestField.features[cell * FEATURE_COUNT + selectedFeature] || 0
-      : 0;
+    const signalIndex = cell * FEATURE_COUNT + selectedFeature;
+    const enabled = activeSignals.has(signalIndex);
+    const value = enabled ? latestField.features[signalIndex] || 0 : 0;
     const magnitude = Math.min(1, Math.abs(value));
     const hue = value >= 0 ? 190 : 335;
     cells[cell].style.background =
       `hsla(${hue}, 82%, ${42 + magnitude * 18}%, ${0.08 + magnitude * 0.88})`;
-    cells[cell].style.opacity = featureEnabled ? "1" : ".18";
-    cells[cell].title =
-      `${FEATURE_NAMES[selectedFeature]} · ${value.toFixed(3)}`;
+    cells[cell].style.opacity = enabled ? "1" : ".12";
+    cells[cell].title = enabled
+      ? `${FEATURE_NAMES[selectedFeature]} · ${value.toFixed(3)}`
+      : "locked";
   }
 }
 
 function updateFeatureBars() {
-  for (let i = 0; i < FEATURE_COUNT; i++) {
-    const enabled = stage.activeFeatures.includes(i);
-    const value = enabled ? latestField.featureRms[i] || 0 : 0;
-    const bar = document.getElementById(`featureBar${i}`);
-    bar.style.width = `${Math.min(100, value * 100)}%`;
+  const activeSignals = new Set(stage.activeSignalIndices);
+
+  for (let feature = 0; feature < FEATURE_COUNT; feature++) {
+    let squared = 0;
+    let count = 0;
+
+    for (let cell = 0; cell < SENSOR_CELLS; cell++) {
+      const signalIndex = cell * FEATURE_COUNT + feature;
+      if (!activeSignals.has(signalIndex)) continue;
+      const value = latestField.features[signalIndex] || 0;
+      squared += value * value;
+      count++;
+    }
+
+    const enabled = count > 0;
+    const rms = enabled ? Math.sqrt(squared / count) : 0;
+    const bar = document.getElementById(`featureBar${feature}`);
+    bar.style.width = `${Math.min(100, rms * 100)}%`;
     bar.style.opacity = enabled ? "1" : ".12";
-    document.getElementById(`featureVal${i}`).textContent = enabled
-      ? value.toFixed(2)
+    document.getElementById(`featureVal${feature}`).textContent = enabled
+      ? rms.toFixed(2)
       : "locked";
   }
 }
@@ -749,10 +762,9 @@ function sensoryTick() {
         : 0;
     }
 
-    const sensedFeatures = maskFeatures(
+    const sensedFeatures = maskSignals(
       latestField.features,
-      stage.activeFeatures,
-      FEATURE_COUNT,
+      stage.activeSignalIndices,
     );
 
     workerBusy = true;
