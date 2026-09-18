@@ -773,7 +773,7 @@
           } else {
             v = seededGaussian(rng) * env * 0.55;
           }
-          out[i] = clamp(v, -0.9, 0.9);
+          out[i] = boundCoefficient(v, m, targetComplexity);
         }
         return out;
       }
@@ -1442,6 +1442,8 @@ self.onmessage=function(event){
         localWorsening.fill(0);
         regionalReward.fill(0);
         velocity.fill(0);
+        currentOffsetVelocityX = 0;
+        currentOffsetVelocityZ = 0;
         updateTargetLabel();
         deform(
           targetGeometry,
