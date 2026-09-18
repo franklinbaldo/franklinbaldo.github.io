@@ -17,7 +17,6 @@ import {
   localMismatchField,
   maskActions,
   maskFeatures,
-  progressReward,
   projectDn,
   readoutActions,
   spectralLimit,
