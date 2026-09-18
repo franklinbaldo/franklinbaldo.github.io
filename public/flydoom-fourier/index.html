@@ -635,7 +635,8 @@
         uma grade esparsa de pontos, impedindo aliasing/reward hacking por picos
         entre amostras. Cada modo também tem orçamento de amplitude e velocidade
         que decai com a frequência, além de um orçamento global de energia
-        espectral para impedir empilhamento de centenas de modos. O conectoma fica
+        espectral ajustado ao próprio target para impedir empilhamento de centenas
+        de modos sem tornar o alvo inalcançável. O conectoma fica
         congelado;
         o erro espacial entra como aferência sensorial local. Além do reward
         global, cada uma das 32 regiões recebe reward próprio: melhora local é
@@ -659,6 +660,7 @@
         boundCoefficient,
         boundVelocity,
         enforceSpectralEnergyBudget,
+        normalizedSpectralRms,
         robustShapeMatch,
         spectralEnvelopeForMode,
       } from "./control_core.js";
@@ -732,7 +734,8 @@
         currentOffsetX = 0,
         currentOffsetZ = 0,
         currentOffsetVelocityX = 0,
-        currentOffsetVelocityZ = 0;
+        currentOffsetVelocityZ = 0,
+        spectralEnergyCeiling = 0.6;
 
       function seededGaussian(rng) {
         let u = 0, v = 0;
@@ -1383,6 +1386,15 @@ self.onmessage=function(event){
       }
 
       function randomizeStart() {
+        spectralEnergyCeiling = Math.max(
+          0.6,
+          normalizedSpectralRms(
+            target,
+            MODES,
+            activeDof,
+            targetComplexity
+          ) + 0.05
+        );
         coeff.fill(0);
         for (let i = 0; i < activeDof; i++) {
           coeff[i] = boundCoefficient(
@@ -1498,7 +1510,8 @@ self.onmessage=function(event){
           coeff,
           MODES,
           activeDof,
-          targetComplexity
+          targetComplexity,
+          spectralEnergyCeiling
         );
 
         match = shapeMatch();
