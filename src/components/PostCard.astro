@@ -17,7 +17,7 @@ const formattedDate = date.toLocaleDateString(locale(postLang), {
 
 const blurb = description;
 const wordCount = (post.body ?? '').trim().split(/\s+/).filter(Boolean).length;
-const minutesRead = Math.max(1, Math.round(wordCount / 220));
+const minutesRead = Math.max(1, Math.round(wordCount / 200));
 
 const href = postLang === 'pt' ? `/pt/blog/${post.data.slug ?? post.id}/` : `/blog/${post.data.slug ?? post.id}/`;
 const typeLabel = type
