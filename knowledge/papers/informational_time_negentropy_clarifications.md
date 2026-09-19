@@ -9,9 +9,9 @@ confidence: "medium"
 idea: >-
   Pergunta quando ordem observada já justifica falar em agente: uma flutuação, uma lei estruturada externa e um agente podem produzir sinais organizados, então o modelo de agência precisa vencer alternativas não-agentes fortes e continuar prevendo ou respondendo melhor a intervenções.
 status: >-
-  Clarificação não revisada por pares que fortalece o teste de reconhecimento com quatro famílias de explicação e custo explícito de modelo, registry e busca. A auditoria encontra antecedentes para intentional stance, inverse planning, detecção bayesiana de agência e MDL/prequential prediction, mas não localiza a combinação completa do critério.
+  Companion conceitual não revisado por pares cuja v0.1 integrou a fronteira de prior art e está tecnicamente pronta para empacotamento no Zenodo. O critério compara explicitamente M_max, M_self, M_law e M_agent, cobra custos de modelo, registry, busca e parâmetros e exige que qualquer vantagem retrospectiva sobreviva em previsão ou intervenção held-out com controles de capacidade entre as famílias.
 limit: >-
-  Os ingredientes são amplamente conhecidos e a combinação ainda não foi validada. O teste decisivo é comparar o critério completo com WCD, Bayesian inverse planning, SPRT, prequential-MDL e uma lei estruturada complexity-matched; não localizar antecedente exato não prova novidade.
+  Ainda não há benchmark empírico validando o critério. O teste decisivo é comparar a construção completa com WCD, Bayesian inverse planning, SPRT, prequential-MDL e leis estruturadas de capacidade comparável; se a vantagem de M_agent desaparecer quando M_law recebe expressividade equivalente, o resultado mede assimetria do benchmark, não agência.
 related_file: "audits/prior-art/informational-time-critical-recognition-2026-09-18.md"
 relations:
   - type: provides_control_for
