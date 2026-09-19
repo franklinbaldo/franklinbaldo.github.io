@@ -25,6 +25,34 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: "3.12"
+      - name: Preflight papers experiment
+        run: |
+          git clone --quiet --filter=blob:none https://github.com/franklinbaldo/papers.git "$RUNNER_TEMP/papers-state-directed"
+          git -C "$RUNNER_TEMP/papers-state-directed" checkout --quiet 9ade5b651b8475028cc302b17c80c2c7464f658f
+          python -m py_compile \
+            "$RUNNER_TEMP/papers-state-directed/experiments/malecns_wifi/scripts/smoke_fully_state_conditioned_directed_plasticity_one_gpu.py" \
+            "$RUNNER_TEMP/papers-state-directed/experiments/malecns_wifi/scripts/smoke_fully_state_conditioned_directed_plasticity_batch_gpu.py"
+
+      - name: Restore exact semantic cache from preserved #460 run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/malecns-cache"
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            /repos/franklinbaldo/franklinbaldo.github.io/actions/artifacts/10405623856/zip \
+            > "$RUNNER_TEMP/malecns-cache.zip"
+          unzip -j "$RUNNER_TEMP/malecns-cache.zip" \
+            semantic-cache.npz semantic-cache.manifest.json \
+            -d "$RUNNER_TEMP/malecns-cache"
+          python - "$RUNNER_TEMP/malecns-cache/semantic-cache.manifest.json" <<'PY'
+          import json,sys
+          m=json.load(open(sys.argv[1],encoding="utf-8"))
+          expected="37bf1fbaf59385ff4d37b667ed9a814db7bc12f6e47c41edcaab8d9a20c4612f"
+          assert m.get("fingerprint")==expected, (m.get("fingerprint"), expected)
+          print("semantic cache fingerprint:", expected)
+          PY
+
       - name: Configure Colab CLI
         env:
           COLAB_TOKEN_JSON: ${{ secrets.COLAB_TOKEN_JSON }}
@@ -52,7 +80,8 @@ jobs:
         run: |
           bash scripts/malecns-fully-state-conditioned/colab.sh \
             --output-dir "$RUNNER_TEMP/malecns-state-directed" \
-            --papers-ref "7ec9895d1d7c33e22757a1959888dc2ef5dea117" \
+            --papers-ref "9ade5b651b8475028cc302b17c80c2c7464f658f" \
+            --embedding-cache "$RUNNER_TEMP/malecns-cache/semantic-cache.npz" \
             --gpu T4
 
       - name: Summarize experiment
