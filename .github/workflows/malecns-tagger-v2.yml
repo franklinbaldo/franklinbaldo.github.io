@@ -1,0 +1,115 @@
+name: MaleCNS Tagger v2 Training Gate
+
+on:
+  push:
+    branches:
+      - experiment/malecns-tagger-v2
+    paths:
+      - ".github/workflows/malecns-tagger-v2.yml"
+      - "scripts/malecns-tagger/v2.py"
+      - "scripts/malecns-tagger/kaggle-v2.sh"
+      - "docs/plans/malecns-tagger-v2.md"
+  workflow_dispatch:
+    inputs:
+      max_epochs:
+        description: Maximum epochs; best validation-F1 checkpoint is restored
+        required: true
+        default: "30"
+        type: string
+      min_epochs:
+        description: Minimum epochs before early stopping
+        required: true
+        default: "5"
+        type: string
+      patience:
+        description: Validation-F1 patience
+        required: true
+        default: "5"
+        type: string
+      accelerator:
+        description: Kaggle accelerator
+        required: true
+        default: NvidiaTeslaT4
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-tagger-v2
+  cancel-in-progress: true
+
+jobs:
+  training-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Static checks
+        run: |
+          python -m py_compile scripts/malecns-tagger/v2.py
+          bash -n scripts/malecns-tagger/kaggle-v2.sh
+
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Run five paired 512-node v2 trials on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_MALECNS_V2_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_V2_KERNEL_ID }}
+          MAX_EPOCHS: ${{ inputs.max_epochs || '30' }}
+          MIN_EPOCHS: ${{ inputs.min_epochs || '5' }}
+          PATIENCE: ${{ inputs.patience || '5' }}
+          ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
+        run: |
+          bash scripts/malecns-tagger/kaggle-v2.sh \
+            --output "$RUNNER_TEMP/malecns-tagger-v2-result.zip" \
+            --nodes 512 \
+            --input-nodes 64 \
+            --seeds '20260912,20260913,20260914,20260915,20260916' \
+            --max-epochs "$MAX_EPOCHS" \
+            --min-epochs "$MIN_EPOCHS" \
+            --patience "$PATIENCE" \
+            --accelerator "$ACCELERATOR"
+
+      - name: Summarize training gate
+        run: |
+          mkdir -p "$RUNNER_TEMP/malecns-v2"
+          unzip -q "$RUNNER_TEMP/malecns-tagger-v2-result.zip" -d "$RUNNER_TEMP/malecns-v2"
+          python - "$RUNNER_TEMP/malecns-v2/aggregate.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          data=json.load(open(sys.argv[1], encoding='utf-8'))
+          fly=data['summary']['malecns_reservoir']['f1']
+          random=data['summary']['degree_preserving_shuffled_reservoir']['f1']
+          base=data['summary']['byte_only_baseline']['f1']
+          topo=data['pairwise_f1']['malecns_minus_shuffled']
+          byte=data['pairwise_f1']['malecns_minus_byte_only']
+          print('## MaleCNS tagger v2 — training gate')
+          print(f"- MaleCNS F1: **{fly['mean']:.4f} ± {fly['stdev']:.4f}**")
+          print(f"- shuffled F1: **{random['mean']:.4f} ± {random['stdev']:.4f}**")
+          print(f"- byte-only F1: **{base['mean']:.4f} ± {base['stdev']:.4f}**")
+          print(f"- MaleCNS − shuffled: **{topo['mean']:+.4f} ± {topo['stdev']:.4f}**")
+          print(f"- MaleCNS − byte-only: **{byte['mean']:+.4f} ± {byte['stdev']:.4f}**")
+          print(f"- best MaleCNS epochs: **{data['best_epochs']['malecns_reservoir']}**")
+          print(f"- best shuffled epochs: **{data['best_epochs']['degree_preserving_shuffled_reservoir']}**")
+          print(f"- best byte-only epochs: **{data['best_epochs']['byte_only_baseline']}**")
+          PY
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: malecns-tagger-v2-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-tagger-v2-result.zip
+          if-no-files-found: error
+          retention-days: 30
