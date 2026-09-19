@@ -9,9 +9,10 @@ confidence: "medium"
 idea: >-
   Trata espaços de representação inteiros como vértices e cada intervenção controlada que pode ser aplicada aos dois extremos como uma aresta distinta. A aposta é separar a possibilidade de fazer a mesma pergunta experimental da semelhança das respostas, para que alinhamento, desacordo e topologia apareçam depois como medições — não como premissas.
 status: >-
-  Position paper com definição matemática explícita e companion Lean 4 que verifica o núcleo mínimo: contraste binário como menor alfabeto discreto não trivial, intervenções como arestas, multiarestas, conectividade simétrica, composição e comprimento de walks e a possibilidade de endpoints discordarem. Ainda não relata medições empíricas; propõe testes sintéticos e entre representações heterogêneas.
+  Position paper com definição matemática explícita, companion Lean 4 e auditoria claim-specific de prior art já incorporada. A v0.1 está tecnicamente pronta para empacotamento no Zenodo: o texto agora reconhece antecedentes para correspondência de intervenções, causal abstraction, transportability e identifiability e restringe a contribuição ao pacote mais estreito em que espaços inteiros são vértices e intervenções compartilhadas são arestas primitivas independentes da resposta. Ainda não há validação empírica.
 limit: >-
-  A dificuldade central é operacional: definir que uma intervenção é realmente a mesma em dois espaços sem pressupor o alinhamento que o método pretende descobrir. A redução a contrastes binários pode perder estrutura essencial, o multigrafo pode ser pobre demais para relações de ordem superior, e ainda falta uma auditoria sistemática de prior art antes de qualquer claim forte de novidade.
+  O risco principal é operacional e potencialmente circular: demonstrar que uma intervenção é realmente a mesma nos dois espaços sem usar justamente o alinhamento que o método pretende descobrir. Contrastes binários não garantem identificabilidade, e transports ou testes de closure flexíveis demais podem produzir alinhamentos espúrios; os próximos testes precisam de intervenções held-out e nulls/capacity-matched antes que ciclos, Torus ou manifolds contem como evidência.
+related_file: "audits/prior-art/interventional-latent-graph-2026-09-19.md"
 relations:
   - type: extends
     target: pontifex
