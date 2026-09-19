@@ -33,7 +33,7 @@ const recent = await fetchGoodreadsBooks().then((b) => recentBooks(b, 3)).catch(
       <ul class="rail-books">
         {recent.map((book) => (
           <li>
-            <a href={book.link} target="_blank" rel="noopener noreferrer" title={`${book.title} — ${book.author_name}`}>
+            <a href={book.link} target="_blank" rel="noopener noreferrer" title={`${book.title} — ${book.author_name}`} aria-label={`${book.title} — ${book.author_name}`}>
               {book.book_image_url
                 ? <img src={book.book_image_url} alt={book.title} width="40" height="60" loading="lazy" decoding="async" />
                 : <span class="rail-book-fallback" aria-hidden="true">📖</span>
