@@ -26,6 +26,9 @@ const footerNav = [
   // English-only by deliberate exception (CLAUDE.md "Línguas") — no /pt/ prefix.
   { href: '/changelog/', label: 'Changelog' },
 ];
+
+const here = Astro.url.pathname.replace(/\/$/, '') + '/';
+const isCurrent = (href: string) => here === href.replace(/\/$/, '') + '/';
 ---
 
 <footer class="container site-footer">
@@ -38,7 +41,17 @@ const footerNav = [
     </ul>
     <ul class="footer-links">
       {footerNav.map((l) => (
-        <li><small><a href={l.href} class="secondary">{l.label}</a></small></li>
+        <li>
+          <small>
+            <a
+              href={l.href}
+              class="secondary"
+              aria-current={isCurrent(l.href) ? 'page' : undefined}
+            >
+              {l.label}
+            </a>
+          </small>
+        </li>
       ))}
     </ul>
     <ul>
@@ -79,6 +92,12 @@ const footerNav = [
   }
   .site-footer a {
     text-decoration: none;
+  }
+  .site-footer a[aria-current='page'] {
+    color: var(--pico-primary);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
   }
   .site-footer a:hover {
     color: var(--pico-primary);
