@@ -3,15 +3,15 @@ type: paper
 title: "Lean + Argdown para auditoria jurídica"
 family: "Método formal"
 kind: "metodológico/formal"
-scientific_tier: "C"
+scientific_tier: "B"
 interest_tier: "A"
 confidence: "medium"
 idea: >-
   Separa três superfícies de auditoria: Argdown torna ataques e apoios legíveis; Lean verifica o que realmente decorre de premissas explícitas e expõe suas dependências com `#print axioms`; uma etapa jurídica independente pergunta se essas premissas representam adequadamente as fontes e os fatos.
 status: >-
-  Methodology paper não revisado por pares, com pipeline implementável e auditoria reproduzível de prior art. A auditoria encontrou antecedentes fortes para theorem proving jurídico e pipelines formais em estágios e, mais importante, uma correção de conteúdo: o paper atual atribui a TAIR e aos argumentation frameworks uma exigência de aciclicidade que a fonte primária não sustenta, enquanto ciclos são parte conhecida da literatura de Dung-style AFs.
+  Paper metodológico/formal não revisado por pares, agora corrigido e preparado para arquivo: retirou a atribuição errada de aciclicidade à TAIR/argumentation frameworks, integrou prior art de argumentação e formalização jurídica, preservou a separação entre validade formal e adequação jurídica das premissas e pinou a implementação usada pelo caso demonstrativo. A contribuição defendida ficou restrita ao contrato integrado de rastreabilidade entre representação argumentativa, prova, ledger de axiomas, revisão jurídica, síntese e tradução forense.
 limit: >-
-  Enquanto o paper não corrigir essa comparação, a tese `compilação > aciclicidade` não é defensável como escrita; suporte de Lean a definições recursivas também não licencia dependências circulares em provas jurídicas. A contribuição residual fica no contrato de rastreabilidade Argdown attack → Lean theorem → `#print axioms` ledger → revisão jurídica independente → defeat synthesis → tradução forense, especialmente no CPC brasileiro; busca negativa não prova prioridade.
+  Os componentes isolados têm antecedentes fortes e a busca de prior art não prova prioridade da conjunção. Ainda faltam revisão por pares ou replicação independente e validação em mais de um caso/domínio; em particular, o gate de adequação jurídica continua sendo uma etapa humana e revisável, não algo certificado pelo Lean.
 related_file: "audits/prior-art/pipeline-lean-argdown-2026-09-18.md"
 relations:
   - type: formalizes
