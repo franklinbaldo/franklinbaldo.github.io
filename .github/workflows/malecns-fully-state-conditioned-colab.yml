@@ -1,0 +1,94 @@
+name: MaleCNS Fully State-Conditioned Directed Plasticity
+
+on:
+  push:
+    branches:
+      - experiment/malecns-fully-state-conditioned-colab
+    paths:
+      - ".github/workflows/malecns-fully-state-conditioned-colab.yml"
+      - "scripts/malecns-fully-state-conditioned/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-fully-state-conditioned-colab
+  cancel-in-progress: true
+
+jobs:
+  run-fully-state-conditioned-colab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 210
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Configure Colab CLI
+        env:
+          COLAB_TOKEN_JSON: ${{ secrets.COLAB_TOKEN_JSON }}
+          COLAB_ADC_JSON: ${{ secrets.COLAB_ADC_JSON }}
+        run: |
+          python -m pip install --disable-pip-version-check 'google-colab-cli==0.6.0' 'jupyter-kernel-client==0.9.0'
+          if [[ -n "$COLAB_TOKEN_JSON" ]]; then
+            install -d -m 700 "$HOME/.config/colab-cli"
+            printf '%s' "$COLAB_TOKEN_JSON" > "$HOME/.config/colab-cli/token.json"
+            chmod 600 "$HOME/.config/colab-cli/token.json"
+            echo "COLAB_AUTH_PROVIDER=oauth2" >> "$GITHUB_ENV"
+          elif [[ -n "$COLAB_ADC_JSON" ]]; then
+            printf '%s' "$COLAB_ADC_JSON" > "$RUNNER_TEMP/colab-adc.json"
+            chmod 600 "$RUNNER_TEMP/colab-adc.json"
+            echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/colab-adc.json" >> "$GITHUB_ENV"
+            echo "COLAB_AUTH_PROVIDER=adc" >> "$GITHUB_ENV"
+          else
+            echo "Missing GitHub secret COLAB_TOKEN_JSON (or COLAB_ADC_JSON)" >&2
+            exit 2
+          fi
+
+      - name: Run fully state-conditioned directed plasticity on Colab
+        env:
+          COLAB_EXEC_TIMEOUT: "10800"
+        run: |
+          bash scripts/malecns-fully-state-conditioned/colab.sh \
+            --output-dir "$RUNNER_TEMP/malecns-state-directed" \
+            --papers-ref "7ec9895d1d7c33e22757a1959888dc2ef5dea117" \
+            --gpu T4
+
+      - name: Summarize experiment
+        run: |
+          summary="$RUNNER_TEMP/malecns-state-directed/github-summary.json"
+          [[ -f "$summary" ]] || { echo "missing summary" >&2; exit 1; }
+          python - "$summary" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1],encoding="utf-8"))
+          print("## MaleCNS fully state-conditioned directed plasticity")
+          print(f"- seeds: `{d.get('seeds')}`")
+          print(f"- cache build: **{d.get('cache_build_seconds',0):.1f}s**")
+          print(f"- training: **{d.get('cached_training_seconds',0):.1f}s**")
+          q=d.get("questions",{})
+          for key in (
+              "q1_coupling_vs_independent",
+              "q3_directed_vs_scalar_reliability",
+              "q4_dynamic_direction_vs_scalar_state",
+              "q4_malecns_vs_raw",
+              "q4_malecns_vs_random_esn",
+              "q4_malecns_vs_degree_rewired",
+              "q4_malecns_vs_state_shuffled",
+          ):
+              x=q.get(key,{})
+              print(
+                  f"- {key}: wins={x.get('wins_unseen')}/4, "
+                  f"mean Δ unseen={x.get('mean_delta_unseen',0):+.6f}, "
+                  f"mean Δ all={x.get('mean_delta_all',0):+.6f}"
+              )
+          print(f"- gate collapse: `{d.get('gate_collapse')}`")
+          print(f"- promotion checks: `{d.get('promotion_checks')}`")
+          PY
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: malecns-fully-state-conditioned-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-state-directed
+          if-no-files-found: error
+          retention-days: 30
