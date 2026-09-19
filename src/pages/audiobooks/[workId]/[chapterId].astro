@@ -20,9 +20,9 @@ const audioUrl = episode.enclosure?.url;
   description={episode.description || work.metadata.podcast?.description || work.metadata.title}
   lang="pt"
   breadcrumb={[
-    { name: "Audiolivros", item: "/audiobooks/" },
-    { name: work.metadata.title, item: `/audiobooks/${work.workId}/` },
-    { name: episode.title, item: `/audiobooks/${work.workId}/${episode.chapterId}/` },
+    { name: "Audiolivros", item: new URL("/audiobooks/", Astro.site).href },
+    { name: work.metadata.title, item: new URL(`/audiobooks/${work.workId}/`, Astro.site).href },
+    { name: episode.title, item: new URL(`/audiobooks/${work.workId}/${episode.chapterId}/`, Astro.site).href },
   ]}
 >
   <main class="container audiobook-episode">
