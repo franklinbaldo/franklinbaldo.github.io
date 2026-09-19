@@ -2,7 +2,7 @@
 set -euo pipefail
 
 OUTPUT_DIR=""
-PAPERS_REF="${PAPERS_REF:-9ade5b651b8475028cc302b17c80c2c7464f658f}"
+PAPERS_REF="${PAPERS_REF:-ba42b713f286a4cf098394727ec8d79f22be1070}"
 GPU="${COLAB_GPU:-T4}"
 EMBEDDING_CACHE=""
 RELEASE_BASE="${MALECNS_CONFIRMATORY_RELEASE_BASE:-https://github.com/franklinbaldo/papers/releases/download/malecns-confirmatory-inputs-v1}"
