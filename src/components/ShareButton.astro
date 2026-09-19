@@ -52,6 +52,7 @@ const strings =
     if (status) status.textContent = text;
     state.timer = window.setTimeout(() => {
       label.textContent = button.dataset.defaultLabel ?? "Share";
+      if (status) status.textContent = "";
       state.timer = undefined;
     }, 1800);
     buttonState.set(button, state);
