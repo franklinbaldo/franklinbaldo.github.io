@@ -10,8 +10,8 @@ confidence: "medium"
 idea: >-
   Mapeia pedidos, provimentos, pretensões recursais e proveniência de afirmações do processo civil para categorias que possam virar tipos, predicados e axiomas sem transformar ambiguidades jurídicas em regras computacionais falsas.
 status: >-
-  Paper dogmático/formal ainda bloqueado para arquivo. A revisão de domínio encontrou erros materiais na leitura dos arts. 322/324, 485, 487, 356, 503/504 e 1.013 do CPC, além de uma mistura entre mapeamento descritivo e proposta própria no quadro de rationes candidatas para maiorias fragmentadas.
+  Paper dogmático/formal ainda bloqueado para arquivo. Depois da revisão dos erros materiais nos arts. 322/324, 485, 487, 356, 503/504 e 1.013 do CPC, a issue de readiness foi escalada para revisão humana: é preciso decidir se o quadro de rationes candidatas do §5.3 permanece como heurística interpretativa própria — com prior art e limitações específicos — ou sai para manter o paper descritivo, e se o §5.5 preserva alguma tese afirmativa de propagação/preclusão além de uma leitura conservadora do CPC.
 limit: >-
-  Antes de congelar uma versão, precisa corrigir e source-pin as regras do CPC, separar descrição dogmática de heurísticas propostas e auditar o prior art da propagação/proveniência e das rationes candidatas. Sem isso, a formalização corre o risco concreto de produzir axiomas que compilam mas descrevem o direito errado.
-related_file: "audits/zenodo-readiness/2026-09-19-0702Z.md"
+  As correções mecânicas de fonte não resolvem a identidade do paper. Antes de congelar uma versão, é preciso separar descrição dogmática de proposta própria e decidir explicitamente o escopo dos §§5.3 e 5.5; só então faz sentido corrigir os dispositivos, completar metadados e empacotar. Sem essa escolha, a formalização pode produzir axiomas coerentes que codificam uma tese jurídica que o próprio paper não assumiu conscientemente.
+related_file: "audits/zenodo-readiness/2026-09-19-1131Z-fix-round.md"
 ---
