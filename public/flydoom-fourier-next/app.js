@@ -7,17 +7,21 @@ import {
   SENSOR_CELLS,
   applyActions,
   buildModes,
+  clamp,
+  createCurriculumTarget,
   createDynamics,
   createReadout,
   createState,
-  createTarget,
+  curriculumStage,
   geometricMatch,
   localMismatchField,
-  progressReward,
+  maskActions,
+  maskSignals,
   projectDn,
   readoutActions,
-  relocateTarget,
-  seededRandom,
+  spectralLimit,
+  stateAwareReward,
+  stateDiscomfortPenalty,
   surfaceHeight,
   updateReadout,
 } from "./model.js";
@@ -25,14 +29,12 @@ import {
 const MODES = buildModes(32);
 const ACTION_COUNT = MODES.length + GLOBAL_ACTIONS;
 const HIT_THRESHOLD = 0.985;
-const HIT_HOLD_TICKS = 8;
+const STAGE_MATCH_THRESHOLD = 0.97;
+const STAGE_HOLD_TICKS = 12;
 const SENSE_INTERVAL_MS = 80;
 const OUTPUT_SIGMA = 0.12;
 const INPUT_SIGMA = 0.08;
 const INPUT_LR = 0.00035;
-
-const clamp = (value, lo = 0, hi = 1) =>
-  Math.min(hi, Math.max(lo, value));
 
 function gaussian() {
   let u = 0;
@@ -42,24 +44,47 @@ function gaussian() {
   return Math.sqrt(-2 * Math.log(u)) * Math.cos(Math.PI * 2 * v);
 }
 
-let difficulty = "coarse";
-let targetSeed = 20260918;
+function noiseForIndices(length, indices, sigma) {
+  const out = new Float32Array(length);
+  for (const index of indices) {
+    if (index >= 0 && index < length) out[index] = gaussian() * sigma;
+  }
+  return out;
+}
+
+function featureNoiseForStage(stage, sigma) {
+  const out = new Float32Array(FEATURE_COUNT);
+  for (const feature of stage.activeFeatures) {
+    out[feature] = gaussian() * sigma;
+  }
+  return out;
+}
+
+let curriculumSeed = 20260918;
+let stageIndex = 0;
+let stage = curriculumStage(MODES.length, stageIndex);
 let current = createState(MODES.length);
-let target = createTarget(MODES, targetSeed, difficulty);
+let target = createCurriculumTarget(MODES, curriculumSeed, stageIndex);
 let dynamics = createDynamics(MODES.length);
-let readout = createReadout(ACTION_COUNT, 32, 20260918);
+let readout = createReadout(ACTION_COUNT, 32, curriculumSeed);
 let featureGain = new Float32Array([1.6, 1.2, 1.2, 1.0, 1.3, 0.9]);
 let heldActions = new Float32Array(ACTION_COUNT);
+
 let previousHidden = null;
 let previousActionNoise = null;
 let previousInputNoise = null;
 let pendingInputNoise = null;
+
 let latestField = localMismatchField(current, target, MODES);
 let latestScore = geometricMatch(current, target, MODES);
 let previousMatch = latestScore.match;
-let reward = 0;
-let hitStreak = 0;
-let hits = 0;
+let progressComponent = 0;
+let statePenalty = stateDiscomfortPenalty(previousMatch, HIT_THRESHOLD);
+let reward = clamp(progressComponent + statePenalty, -1, 1);
+let learningCredit = 0;
+
+let stageStreak = 0;
+let stagesMastered = 0;
 let updateNorm = 0;
 let paused = false;
 let targetDirty = true;
@@ -67,71 +92,108 @@ let neuralLatency = 0;
 let workerReady = false;
 let workerBusy = false;
 let worker = null;
-let selectedFeature = 0;
+let selectedFeature = stage.activeFeatures[0];
 const scoreHistory = [];
 
 const statusEl = document.getElementById("status");
 const statusTextEl = document.getElementById("statusText");
 const matchEl = document.getElementById("matchValue");
 const rewardEl = document.getElementById("rewardValue");
+const rewardBreakdownEl = document.getElementById("rewardBreakdown");
 const hitEl = document.getElementById("hitValue");
 const latencyEl = document.getElementById("latencyValue");
 const updateEl = document.getElementById("updateValue");
 const gainEl = document.getElementById("gainValue");
 const targetLabelEl = document.getElementById("targetLabel");
+const stageLabelEl = document.getElementById("stageLabel");
+const vizLabelEl = document.getElementById("vizLabel");
 const heatmapEl = document.getElementById("heatmap");
 const featureBarsEl = document.getElementById("featureBars");
 const actionBarsEl = document.getElementById("actionBars");
 const historyCanvas = document.getElementById("history");
 const historyCtx = historyCanvas.getContext("2d");
+const curriculumCanvas = document.getElementById("curriculumCanvas");
+const curriculumCtx = curriculumCanvas.getContext("2d");
+const surfaceStage = document.getElementById("surfaceStage");
+
+function clearCreditMemory() {
+  previousHidden = null;
+  previousActionNoise = null;
+  previousInputNoise = null;
+  pendingInputNoise = null;
+}
+
+function syncStage() {
+  stage = curriculumStage(MODES.length, stageIndex);
+  if (!stage.activeFeatures.includes(selectedFeature)) {
+    selectedFeature = stage.activeFeatures.at(-1);
+  }
+  buildFeatureButtons();
+  updateTargetLabel();
+}
 
 function resetCurrent({ resetLearning = false } = {}) {
   current = createState(MODES.length);
   dynamics = createDynamics(MODES.length);
   heldActions.fill(0);
-  previousHidden = null;
-  previousActionNoise = null;
-  previousInputNoise = null;
-  pendingInputNoise = null;
-  hitStreak = 0;
-  reward = 0;
+  clearCreditMemory();
+  stageStreak = 0;
+  progressComponent = 0;
 
   if (resetLearning) {
-    readout = createReadout(ACTION_COUNT, 32, targetSeed);
+    readout = createReadout(ACTION_COUNT, 32, curriculumSeed);
     featureGain = new Float32Array([1.6, 1.2, 1.2, 1.0, 1.3, 0.9]);
-    hits = 0;
+    stagesMastered = 0;
     scoreHistory.length = 0;
   }
 
   latestField = localMismatchField(current, target, MODES);
   latestScore = geometricMatch(current, target, MODES);
   previousMatch = latestScore.match;
+  statePenalty = stateDiscomfortPenalty(previousMatch, HIT_THRESHOLD);
+  reward = clamp(statePenalty, -1, 1);
   targetDirty = true;
 }
 
-function newTarget({ keepShape = false } = {}) {
-  if (keepShape) {
-    const rng = seededRandom(++targetSeed);
-    relocateTarget(target, rng);
-  } else {
-    target = createTarget(MODES, ++targetSeed, difficulty);
-  }
+function restartCurriculum({ newSeed = false, resetLearning = false } = {}) {
+  if (newSeed) curriculumSeed++;
+  stageIndex = 0;
+  stage = curriculumStage(MODES.length, stageIndex);
+  target = createCurriculumTarget(MODES, curriculumSeed, stageIndex);
+  selectedFeature = stage.activeFeatures[0];
+  resetCurrent({ resetLearning });
   targetDirty = true;
+  syncStage();
+}
+
+function advanceCurriculum() {
+  if (stageIndex < stage.total - 1) {
+    stageIndex++;
+  } else {
+    curriculumSeed++;
+  }
+
+  stage = curriculumStage(MODES.length, stageIndex);
+  target = createCurriculumTarget(MODES, curriculumSeed, stageIndex);
+  stageStreak = 0;
+  stagesMastered++;
+  progressComponent = 0;
+  clearCreditMemory();
+
   latestField = localMismatchField(current, target, MODES);
   latestScore = geometricMatch(current, target, MODES);
   previousMatch = latestScore.match;
-  hitStreak = 0;
-  reward = 0;
-  previousHidden = null;
-  previousActionNoise = null;
-  previousInputNoise = null;
-  pendingInputNoise = null;
-  updateTargetLabel();
+  statePenalty = stateDiscomfortPenalty(previousMatch, HIT_THRESHOLD);
+  reward = clamp(statePenalty, -1, 1);
+  targetDirty = true;
+  syncStage();
 }
 
 function updateTargetLabel() {
   targetLabelEl.textContent =
-    `${difficulty} · target #${targetSeed} · (${target.tx.toFixed(1)}, ${target.tz.toFixed(1)})`;
+    `stage ${stage.index + 1}/${stage.total} · +${stage.unlockedActionLabel}`;
+  stageLabelEl.textContent =
+    `unlock: ${stage.unlockedActionLabel} + ${stage.unlockedSignalLabel}`;
 }
 
 function buildHeatmap() {
@@ -146,12 +208,19 @@ function buildHeatmap() {
 function buildFeatureButtons() {
   const host = document.getElementById("featureButtons");
   host.innerHTML = "";
+
   FEATURE_NAMES.forEach((name, index) => {
+    const enabled = stage.activeFeatures.includes(index);
     const button = document.createElement("button");
     button.type = "button";
-    button.className = index === selectedFeature ? "feature-button active" : "feature-button";
+    button.disabled = !enabled;
+    button.className =
+      index === selectedFeature && enabled
+        ? "feature-button active"
+        : "feature-button";
     button.textContent = name;
     button.addEventListener("click", () => {
+      if (!enabled) return;
       selectedFeature = index;
       buildFeatureButtons();
       updateHeatmap();
@@ -175,9 +244,9 @@ function buildFeatureBars() {
 }
 
 const actionRows = [
-  ["low Fourier", 0, 8],
-  ["mid Fourier", 8, 20],
-  ["fine Fourier", 20, 32],
+  ["Fourier 1–6", 0, 6],
+  ["Fourier 7–16", 6, 16],
+  ["Fourier 17–32", 16, 32],
   ["translate X", 32, 33],
   ["translate Z", 33, 34],
   ["tilt X", 34, 35],
@@ -211,25 +280,46 @@ function meanRange(values, start, end) {
 
 function updateHeatmap() {
   const cells = heatmapEl.children;
+  const activeSignals = new Set(stage.activeSignalIndices);
+
   for (let cell = 0; cell < SENSOR_CELLS; cell++) {
-    const value =
-      latestField.features[cell * FEATURE_COUNT + selectedFeature] || 0;
+    const signalIndex = cell * FEATURE_COUNT + selectedFeature;
+    const enabled = activeSignals.has(signalIndex);
+    const value = enabled ? latestField.features[signalIndex] || 0 : 0;
     const magnitude = Math.min(1, Math.abs(value));
     const hue = value >= 0 ? 190 : 335;
     cells[cell].style.background =
-      `hsla(${hue}, 82%, ${42 + magnitude * 18}%, ${0.12 + magnitude * 0.86})`;
-    cells[cell].title =
-      `${FEATURE_NAMES[selectedFeature]} · ${value.toFixed(3)}`;
+      `hsla(${hue}, 82%, ${42 + magnitude * 18}%, ${0.08 + magnitude * 0.88})`;
+    cells[cell].style.opacity = enabled ? "1" : ".12";
+    cells[cell].title = enabled
+      ? `${FEATURE_NAMES[selectedFeature]} · ${value.toFixed(3)}`
+      : "locked";
   }
 }
 
 function updateFeatureBars() {
-  for (let i = 0; i < FEATURE_COUNT; i++) {
-    const value = latestField.featureRms[i] || 0;
-    document.getElementById(`featureBar${i}`).style.width =
-      `${Math.min(100, value * 100)}%`;
-    document.getElementById(`featureVal${i}`).textContent =
-      value.toFixed(2);
+  const activeSignals = new Set(stage.activeSignalIndices);
+
+  for (let feature = 0; feature < FEATURE_COUNT; feature++) {
+    let squared = 0;
+    let count = 0;
+
+    for (let cell = 0; cell < SENSOR_CELLS; cell++) {
+      const signalIndex = cell * FEATURE_COUNT + feature;
+      if (!activeSignals.has(signalIndex)) continue;
+      const value = latestField.features[signalIndex] || 0;
+      squared += value * value;
+      count++;
+    }
+
+    const enabled = count > 0;
+    const rms = enabled ? Math.sqrt(squared / count) : 0;
+    const bar = document.getElementById(`featureBar${feature}`);
+    bar.style.width = `${Math.min(100, rms * 100)}%`;
+    bar.style.opacity = enabled ? "1" : ".12";
+    document.getElementById(`featureVal${feature}`).textContent = enabled
+      ? rms.toFixed(2)
+      : "locked";
   }
 }
 
@@ -245,22 +335,202 @@ function updateActionBars() {
   });
 }
 
-function drawHistory() {
-  const rect = historyCanvas.getBoundingClientRect();
+function resizeCanvas(canvas, context) {
+  const rect = canvas.getBoundingClientRect();
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const width = Math.max(240, Math.floor(rect.width * dpr));
-  const height = Math.max(100, Math.floor(rect.height * dpr));
-  if (historyCanvas.width !== width || historyCanvas.height !== height) {
-    historyCanvas.width = width;
-    historyCanvas.height = height;
+  const height = Math.max(120, Math.floor(rect.height * dpr));
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
+  }
+  context.setTransform(1, 0, 0, 1, 0, 0);
+  return { width, height, dpr };
+}
+
+function visualMode() {
+  if (stage.index < 6) return "spectrum";
+  if (stage.index < 11) return "profile";
+  if (stage.index < 24) return "map";
+  return "surface";
+}
+
+function drawSpectrum(context, width, height) {
+  context.fillStyle = "#050b10";
+  context.fillRect(0, 0, width, height);
+
+  const activeFourier = stage.activeActions.filter(
+    (index) => index < MODES.length,
+  );
+  const count = Math.max(1, activeFourier.length);
+  const pad = width * 0.08;
+  const usable = width - pad * 2;
+  const baseline = height * 0.5;
+
+  context.strokeStyle = "rgba(255,255,255,.14)";
+  context.beginPath();
+  context.moveTo(pad, baseline);
+  context.lineTo(width - pad, baseline);
+  context.stroke();
+
+  const drawStem = (x, value, strokeStyle, offset) => {
+    context.strokeStyle = strokeStyle;
+    context.lineWidth = Math.max(2, width / 340);
+    context.beginPath();
+    context.moveTo(x + offset, baseline);
+    context.lineTo(x + offset, baseline - value * height * 0.34);
+    context.stroke();
+  };
+
+  activeFourier.forEach((actionIndex, orderIndex) => {
+    const x =
+      count === 1
+        ? width * 0.5
+        : pad + (orderIndex / (count - 1)) * usable;
+    const limit = Math.max(1e-6, spectralLimit(MODES[actionIndex]));
+    drawStem(x, target.coeff[actionIndex] / limit, "#d67cff", -2);
+    drawStem(x, current.coeff[actionIndex] / limit, "#73d8ff", 2);
+
+    context.fillStyle = "#8fa0ae";
+    context.font = `${Math.max(10, width / 55)}px ui-monospace, monospace`;
+    context.textAlign = "center";
+    context.fillText(String(actionIndex + 1), x, height - 12);
+  });
+
+  context.textAlign = "left";
+  context.fillStyle = "#8fa0ae";
+  context.font = `${Math.max(10, width / 60)}px ui-monospace, monospace`;
+  context.fillText("violet target · cyan current", pad, 20);
+}
+
+function drawProfile(context, width, height) {
+  context.fillStyle = "#050b10";
+  context.fillRect(0, 0, width, height);
+  const pad = 24;
+  const samples = 128;
+
+  const values = [];
+  let min = Infinity;
+  let max = -Infinity;
+  for (let i = 0; i < samples; i++) {
+    const x = -4.5 + (i / (samples - 1)) * 9;
+    const currentY = surfaceHeight(current, MODES, x, 0);
+    const targetY = surfaceHeight(target, MODES, x, 0);
+    values.push([currentY, targetY]);
+    min = Math.min(min, currentY, targetY);
+    max = Math.max(max, currentY, targetY);
+  }
+  const span = Math.max(0.3, max - min);
+  const yFor = (value) =>
+    height - pad - ((value - min) / span) * (height - pad * 2);
+
+  const trace = (column, strokeStyle) => {
+    context.strokeStyle = strokeStyle;
+    context.lineWidth = 2;
+    context.beginPath();
+    values.forEach((pair, index) => {
+      const x = pad + (index / (samples - 1)) * (width - pad * 2);
+      const y = yFor(pair[column]);
+      if (index === 0) context.moveTo(x, y);
+      else context.lineTo(x, y);
+    });
+    context.stroke();
+  };
+
+  trace(1, "#d67cff");
+  trace(0, "#73d8ff");
+  context.fillStyle = "#8fa0ae";
+  context.font = "11px ui-monospace, monospace";
+  context.fillText("cross-section z = 0", pad, 18);
+}
+
+function heightColor(value, min, max, alpha = 1) {
+  const t = clamp((value - min) / Math.max(1e-6, max - min), 0, 1);
+  const hue = 215 - t * 170;
+  return `hsla(${hue}, 78%, 48%, ${alpha})`;
+}
+
+function drawMap(context, width, height) {
+  context.fillStyle = "#050b10";
+  context.fillRect(0, 0, width, height);
+  const cols = 28;
+  const rows = 22;
+  const half = width / 2;
+  const gap = 6;
+  const tileW = (half - gap - 16) / cols;
+  const tileH = (height - 34) / rows;
+
+  const currentValues = [];
+  const targetValues = [];
+  let min = Infinity;
+  let max = -Infinity;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = -4.5 + (col / (cols - 1)) * 9;
+      const z = -3.7 + (row / (rows - 1)) * 7.4;
+      const a = surfaceHeight(current, MODES, x, z);
+      const b = surfaceHeight(target, MODES, x, z);
+      currentValues.push(a);
+      targetValues.push(b);
+      min = Math.min(min, a, b);
+      max = Math.max(max, a, b);
+    }
   }
 
+  const drawHalf = (values, startX, label) => {
+    let index = 0;
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        context.fillStyle = heightColor(values[index++], min, max);
+        context.fillRect(
+          startX + col * tileW,
+          24 + row * tileH,
+          tileW + 0.5,
+          tileH + 0.5,
+        );
+      }
+    }
+    context.fillStyle = "#8fa0ae";
+    context.font = "10px ui-monospace, monospace";
+    context.fillText(label, startX, 16);
+  };
+
+  drawHalf(currentValues, 8, "current");
+  drawHalf(targetValues, half + gap, "target");
+}
+
+function drawCurriculumView() {
+  const mode = visualMode();
+  vizLabelEl.textContent =
+    mode === "spectrum"
+      ? `spectrum · ${stage.activeActions.filter((i) => i < MODES.length).length} spectral lines`
+      : mode === "profile"
+        ? "1D cross-section"
+        : mode === "map"
+          ? "2D height maps"
+          : "3D surface";
+
+  const showSurface = mode === "surface";
+  curriculumCanvas.hidden = showSurface;
+  surfaceStage.hidden = !showSurface;
+
+  if (showSurface) return;
+
+  const { width, height } = resizeCanvas(curriculumCanvas, curriculumCtx);
+  if (mode === "spectrum") drawSpectrum(curriculumCtx, width, height);
+  else if (mode === "profile") drawProfile(curriculumCtx, width, height);
+  else drawMap(curriculumCtx, width, height);
+}
+
+function drawHistory() {
+  const { width, height, dpr } = resizeCanvas(historyCanvas, historyCtx);
   historyCtx.fillStyle = "#071018";
   historyCtx.fillRect(0, 0, width, height);
   historyCtx.strokeStyle = "rgba(255,255,255,.12)";
   historyCtx.beginPath();
-  historyCtx.moveTo(0, height * (1 - HIT_THRESHOLD));
-  historyCtx.lineTo(width, height * (1 - HIT_THRESHOLD));
+  historyCtx.moveTo(0, height * (1 - STAGE_MATCH_THRESHOLD));
+  historyCtx.lineTo(width, height * (1 - STAGE_MATCH_THRESHOLD));
   historyCtx.stroke();
 
   if (scoreHistory.length < 2) return;
@@ -279,35 +549,35 @@ function drawHistory() {
 function updateUi() {
   matchEl.textContent = latestScore.match.toFixed(3);
   rewardEl.textContent = reward.toFixed(3);
-  hitEl.textContent = `${hitStreak}/${HIT_HOLD_TICKS} · ${hits} hits`;
+  rewardBreakdownEl.textContent =
+    `Δ ${progressComponent >= 0 ? "+" : ""}${progressComponent.toFixed(3)} · state ${statePenalty.toFixed(3)} · credit ${learningCredit >= 0 ? "+" : ""}${learningCredit.toFixed(3)}`;
+  hitEl.textContent =
+    `${stageStreak}/${STAGE_HOLD_TICKS} · ${stagesMastered} mastered`;
   latencyEl.textContent = neuralLatency ? `${neuralLatency.toFixed(1)} ms` : "—";
   updateEl.textContent = updateNorm.toExponential(2);
   gainEl.textContent = Array.from(featureGain)
-    .map((value) => value.toFixed(2))
+    .map((value, index) =>
+      stage.activeFeatures.includes(index) ? value.toFixed(2) : "·",
+    )
     .join(" · ");
   updateHeatmap();
   updateFeatureBars();
   updateActionBars();
+  drawCurriculumView();
   drawHistory();
 }
 
 function updateInputAdapter(rewardValue) {
   if (!previousInputNoise || !rewardValue) return;
   const denom = INPUT_SIGMA * INPUT_SIGMA;
-  for (let i = 0; i < FEATURE_COUNT; i++) {
-    featureGain[i] = clamp(
-      featureGain[i] +
-        (INPUT_LR * rewardValue * previousInputNoise[i]) / denom,
+  for (const feature of stage.activeFeatures) {
+    featureGain[feature] = clamp(
+      featureGain[feature] +
+        (INPUT_LR * rewardValue * previousInputNoise[feature]) / denom,
       0.25,
       3.5,
     );
   }
-}
-
-function makeNoise(length, sigma) {
-  const out = new Float32Array(length);
-  for (let i = 0; i < length; i++) out[i] = gaussian() * sigma;
-  return out;
 }
 
 async function loadMaleCns() {
@@ -379,10 +649,17 @@ async function loadMaleCns() {
       if (msg.type === "result") {
         workerBusy = false;
         neuralLatency = msg.latency;
+
         const dnValues = new Float32Array(msg.dnValues);
         const hidden = projectDn(dnValues, 32);
-        const actionNoise = makeNoise(ACTION_COUNT, OUTPUT_SIGMA);
-        heldActions = readoutActions(readout, hidden, actionNoise);
+        const actionNoise = noiseForIndices(
+          ACTION_COUNT,
+          stage.activeActions,
+          OUTPUT_SIGMA,
+        );
+        const rawActions = readoutActions(readout, hidden, actionNoise);
+        heldActions = maskActions(rawActions, stage.activeActions);
+
         previousHidden = hidden;
         previousActionNoise = actionNoise;
         previousInputNoise = pendingInputNoise;
@@ -430,53 +707,71 @@ async function loadMaleCns() {
 function sensoryTick() {
   latestScore = geometricMatch(current, target, MODES);
   const completedMatch = latestScore.match;
-  reward = progressReward(completedMatch, previousMatch);
+
+  const rewardParts = stateAwareReward(
+    completedMatch,
+    previousMatch,
+    HIT_THRESHOLD,
+  );
+  progressComponent = rewardParts.progress;
+  statePenalty = rewardParts.statePenalty;
+  reward = rewardParts.total;
+  learningCredit = rewardParts.credit;
   previousMatch = completedMatch;
 
-  if (completedMatch >= HIT_THRESHOLD) hitStreak++;
-  else hitStreak = 0;
+  if (completedMatch >= STAGE_MATCH_THRESHOLD) stageStreak++;
+  else stageStreak = 0;
 
-  const completedTarget = hitStreak >= HIT_HOLD_TICKS;
-  if (completedTarget) reward = clamp(reward + 1, -1, 1);
+  const completedStage = stageStreak >= STAGE_HOLD_TICKS;
+  if (completedStage) {
+    reward = clamp(reward + 1, -1, 1);
+    learningCredit = clamp(learningCredit + 1, -1, 1);
+  }
 
-  // Credit the perturbations that produced the interval that just ended.
+  // Credit only the currently unlocked degrees of freedom.
   if (previousHidden && previousActionNoise) {
     updateNorm = updateReadout(
       readout,
       previousHidden,
       previousActionNoise,
-      reward,
+      learningCredit,
       0.0011,
       OUTPUT_SIGMA,
     );
     previousHidden = null;
     previousActionNoise = null;
   }
-  updateInputAdapter(reward);
+  updateInputAdapter(learningCredit);
   previousInputNoise = null;
 
   scoreHistory.push(completedMatch);
   if (scoreHistory.length > 180) scoreHistory.shift();
 
-  if (completedTarget) {
-    hits++;
-    newTarget({ keepShape: true });
+  if (completedStage) {
+    advanceCurriculum();
   } else {
     latestField = localMismatchField(current, target, MODES);
   }
 
   if (workerReady && !workerBusy && worker) {
-    const inputNoise = makeNoise(FEATURE_COUNT, INPUT_SIGMA);
+    const inputNoise = featureNoiseForStage(stage, INPUT_SIGMA);
     const gains = new Float32Array(FEATURE_COUNT);
     for (let i = 0; i < FEATURE_COUNT; i++) {
-      gains[i] = clamp(featureGain[i] + inputNoise[i], 0.25, 3.5);
+      gains[i] = stage.activeFeatures.includes(i)
+        ? clamp(featureGain[i] + inputNoise[i], 0.25, 3.5)
+        : 0;
     }
+
+    const sensedFeatures = maskSignals(
+      latestField.features,
+      stage.activeSignalIndices,
+    );
 
     workerBusy = true;
     pendingInputNoise = inputNoise;
     worker.postMessage({
       type: "step",
-      features: Array.from(latestField.features),
+      features: Array.from(sensedFeatures),
       featureCount: FEATURE_COUNT,
       cellCount: SENSOR_CELLS,
       gains: Array.from(gains),
@@ -487,10 +782,11 @@ function sensoryTick() {
 }
 
 // ---------------------------------------------------------------------------
-// Rendering — presentation only. It does not feed the controller.
+// Progressive visualization.
+// The human view gets more dimensional only as the curriculum gets harder.
+// It is never controller input.
 // ---------------------------------------------------------------------------
 
-const stage = document.getElementById("stage");
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x04090e);
 scene.fog = new THREE.FogExp2(0x04090e, 0.045);
@@ -505,7 +801,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
 renderer.setClearColor(0x04090e, 1);
-stage.appendChild(renderer.domElement);
+surfaceStage.appendChild(renderer.domElement);
 
 scene.add(new THREE.HemisphereLight(0xbbe4ff, 0x0b0d12, 1.75));
 const key = new THREE.DirectionalLight(0xffffff, 2.25);
@@ -548,28 +844,6 @@ const targetMesh = new THREE.Mesh(targetGeometry, targetMaterial);
 targetMesh.position.y = 0.035;
 world.add(targetMesh);
 
-const agent = new THREE.Group();
-const body = new THREE.Mesh(
-  new THREE.SphereGeometry(0.18, 12, 8),
-  new THREE.MeshStandardMaterial({ color: 0xe7d35f, roughness: 0.72 }),
-);
-body.scale.set(1, 0.52, 1.45);
-agent.add(body);
-for (const side of [-1, 1]) {
-  const wing = new THREE.Mesh(
-    new THREE.SphereGeometry(0.16, 10, 6),
-    new THREE.MeshBasicMaterial({
-      color: 0xbde7ff,
-      transparent: true,
-      opacity: 0.36,
-    }),
-  );
-  wing.scale.set(1.5, 0.18, 0.7);
-  wing.position.set(side * 0.18, 0.08, 0);
-  agent.add(wing);
-}
-world.add(agent);
-
 function updateGeometry(geometry, base, state) {
   const positions = geometry.attributes.position.array;
   for (let i = 0; i < positions.length; i += 3) {
@@ -581,18 +855,22 @@ function updateGeometry(geometry, base, state) {
   geometry.computeVertexNormals();
 }
 
-function resize() {
-  const width = Math.max(1, stage.clientWidth);
-  const height = Math.max(1, stage.clientHeight);
+function resizeSurfaceRenderer() {
+  const width = Math.max(1, surfaceStage.clientWidth);
+  const height = Math.max(1, surfaceStage.clientHeight);
   renderer.setSize(width, height, false);
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 }
 
-new ResizeObserver(resize).observe(stage);
-resize();
+new ResizeObserver(resizeSurfaceRenderer).observe(surfaceStage);
+resizeSurfaceRenderer();
 updateGeometry(targetGeometry, targetBase, target);
-updateTargetLabel();
+syncStage();
+buildHeatmap();
+buildFeatureBars();
+buildActionBars();
+updateUi();
 
 let lastFrame = performance.now();
 let lastSense = 0;
@@ -603,22 +881,25 @@ function frame(now) {
 
   if (!paused && workerReady) {
     applyActions(current, dynamics, heldActions, MODES, dt);
+
     if (now - lastSense >= SENSE_INTERVAL_MS) {
       lastSense = now;
       sensoryTick();
     }
   }
 
-  updateGeometry(currentGeometry, currentBase, current);
-  if (targetDirty) {
-    updateGeometry(targetGeometry, targetBase, target);
-    targetDirty = false;
+  const mode = visualMode();
+  if (mode === "surface") {
+    updateGeometry(currentGeometry, currentBase, current);
+    if (targetDirty) {
+      updateGeometry(targetGeometry, targetBase, target);
+      targetDirty = false;
+    }
+    world.rotation.y = Math.sin(now / 8500) * 0.08;
+    renderer.render(scene, camera);
   }
 
-  agent.position.y = surfaceHeight(current, MODES, 0, 0) - 0.75;
-  agent.rotation.y = now / 1400;
-  world.rotation.y = Math.sin(now / 8500) * 0.08;
-  renderer.render(scene, camera);
+  drawCurriculumView();
   requestAnimationFrame(frame);
 }
 
@@ -632,28 +913,15 @@ document.getElementById("pauseButton").addEventListener("click", (event) => {
 });
 
 document.getElementById("resetButton").addEventListener("click", () => {
-  resetCurrent({ resetLearning: true });
+  restartCurriculum({ newSeed: false, resetLearning: true });
   updateUi();
 });
 
 document.getElementById("newTargetButton").addEventListener("click", () => {
-  newTarget({ keepShape: false });
-  resetCurrent({ resetLearning: false });
+  restartCurriculum({ newSeed: true, resetLearning: false });
   updateUi();
 });
 
-document.getElementById("difficulty").addEventListener("change", (event) => {
-  difficulty = event.target.value;
-  newTarget({ keepShape: false });
-  resetCurrent({ resetLearning: false });
-  updateUi();
-});
-
-buildHeatmap();
-buildFeatureButtons();
-buildFeatureBars();
-buildActionBars();
-updateUi();
 loadMaleCns();
 requestAnimationFrame(frame);
 
