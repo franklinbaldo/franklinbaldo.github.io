@@ -25,13 +25,13 @@ What nobody told us is that it was a **philosophical manifesto**.
 Before diving in — if you have never seen the OSI model explained, two videos are worth your time. NetworkChuck is energetic and concrete (he traces an HTTP request through every layer with actual protocols, and somehow makes it fun):
 
 <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:1.5rem 0;">
-  <iframe src="https://www.youtube.com/watch?v=AW1lMmeRKak" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
+  <iframe src="https://www.youtube.com/embed/AW1lMmeRKak" title="NetworkChuck OSI model explainer" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
 </div>
 
 Computerphile is more conceptual, asking _why_ we design networks in layers at all:
 
 <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:1.5rem 0;">
-  <iframe src="https://www.youtube.com/watch?v=eelvWAURfdI" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
+  <iframe src="https://www.youtube.com/embed/eelvWAURfdI" title="Computerphile network layering explainer" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
 </div>
 
 Watch either one. Then come back and read the rest of this as philosophy, not as CCNA prep.
