@@ -1,11 +1,15 @@
 export type Tier = "S" | "A" | "B" | "C" | "D" | "F";
 export type Confidence = "low" | "medium" | "high";
 
+export interface PaperRelation {
+  type: string;
+  target: string;
+  note?: string;
+}
+
 export interface Paper {
   slug: string;
-  order: number;
-  file: string;
-  sourceUrl?: string;
+  sourceUrl: string;
   title: string;
   family: string;
   kind: string;
@@ -16,15 +20,12 @@ export interface Paper {
   status: string;
   limit: string;
   relatedFile?: string;
-  relatedLabel?: string;
-  updated: string;
+  relations: PaperRelation[];
 }
 
 type PaperCardModule = {
   frontmatter: {
     type: "paper";
-    order: number;
-    file: string;
     source_url?: string;
     title: string;
     family: string;
@@ -36,11 +37,11 @@ type PaperCardModule = {
     status: string;
     limit: string;
     related_file?: string;
-    related_label?: string;
-    updated: string | Date;
+    relations?: PaperRelation[];
   };
 };
 
+const repo = "https://github.com/franklinbaldo/papers/blob/main/";
 const modules = import.meta.glob<PaperCardModule>("../../knowledge/papers/*.md", {
   eager: true,
 });
@@ -49,16 +50,10 @@ export const papers: Paper[] = Object.entries(modules)
   .map(([path, module]) => {
     const slug = path.split("/").at(-1)?.replace(/\.md$/, "") ?? path;
     const card = module.frontmatter;
-    const updated =
-      card.updated instanceof Date
-        ? card.updated.toISOString().slice(0, 10)
-        : String(card.updated);
 
     return {
       slug,
-      order: card.order,
-      file: card.file,
-      sourceUrl: card.source_url,
+      sourceUrl: card.source_url ?? `${repo}${slug}.md`,
       title: card.title,
       family: card.family,
       kind: card.kind,
@@ -69,11 +64,18 @@ export const papers: Paper[] = Object.entries(modules)
       status: card.status,
       limit: card.limit,
       relatedFile: card.related_file,
-      relatedLabel: card.related_label,
-      updated,
+      relations: card.relations ?? [],
     };
   })
-  .sort((a, b) => a.order - b.order);
+  .sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
 
-export const PAPERS_UPDATED =
-  papers.map((paper) => paper.updated).sort().at(-1) ?? "unknown";
+const slugs = new Set(papers.map((paper) => paper.slug));
+for (const paper of papers) {
+  for (const relation of paper.relations) {
+    if (!slugs.has(relation.target)) {
+      throw new Error(
+        `Paper ${paper.slug} relates to unknown paper slug ${relation.target}`,
+      );
+    }
+  }
+}
