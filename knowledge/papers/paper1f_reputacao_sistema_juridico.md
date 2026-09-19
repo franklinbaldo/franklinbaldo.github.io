@@ -1,21 +1,21 @@
 ---
 type: paper
 source_url: "https://github.com/franklinbaldo/papers/blob/main/paper1F_reputacao_sistema_juridico.md"
-title: "Reputação no sistema jurídico"
+title: "Reputação jurídica sob verificação direta"
 family: "Raciocínio jurídico auditável"
 kind: "conceitual/jurídico"
 scientific_tier: "C"
 interest_tier: "A"
 confidence: "medium"
 idea: >-
-  Modela reputação como substituto para verificação direta de qualidade jurídica: quando avaliar argumentos é caro, prestígio, afiliação e histórico funcionam como proxies. A hipótese residual é mais estreita: se verificação argumentativa direta ficar barata, esses proxies deveriam perder peso e permitir reputação local baseada em filings verificáveis.
+  Estreita a hipótese reputacional para um canal local: quando certas propriedades de uma peça podem ser verificadas de forma barata e reproduzível, observações repetidas do mesmo praticante por uma unidade institucional podem atualizar uma crença local de confiabilidade. Isso não implica automaticamente reputação de rede, democratização sistêmica nem um score de advogado.
 status: >-
-  Paper jurídico conceitual, não revisado por pares. A auditoria reproduzível mostra que reputação sob assimetria de informação, efeitos de certificação/prestígio e rankings de qualidade data-driven já têm antecedentes fortes. A contribuição candidata fica no choque específico de verificabilidade argumentativa + depreciação relativa de capital reputacional + canal local tribunal–praticante.
+  Preprint conceitual v0.1 repository-ready para o fluxo de publicação no Zenodo. A revisão passou a tratar reputação sob assimetria de informação, certificação/prestígio, vantagens de incumbência e sinais data-driven como antecedentes, abandonou a tese ampla de democratização reputacional e separou explicitamente aprendizagem local por observação repetida de propagação ampla em rede. O commit mergeado passou OKF conformance e validação dos bundles Zenodo-ready.
 limit: >-
-  Ainda não há teste empírico de que verificação no nível do argumento acrescente algo além de sinais objetivos de resultado. O falsificador central é direto: se rankings baseados em outcomes já absorverem o desconto de prestígio, ou se a auditoria argumentativa não reduzir o peso de afiliação/credenciais depois de controlar performance, o mecanismo distintivo não se sustenta; busca negativa não prova prioridade.
-related_file: "audits/prior-art/paper1f-reputation-coordination-2026-09-18.md"
+  O canal local ainda é uma hipótese sem validação empírica. Ele depende de atribuição confiável da peça ao agente, repetição, custo de verificação realmente baixo, continuidade ou memória do observador e incentivo institucional para usar a informação. A passagem de confiança local para reputação profissional ampla permanece não demonstrada; se esses requisitos falharem ou se sinais objetivos já capturarem o mesmo efeito, a contribuição residual perde força.
+related_file: "audits/zenodo-readiness/2026-09-19-1948Z-fix-round.md"
 relations:
   - type: shares_mechanism_with
     target: paper1e_custos_argumentativos
-    note: "Compartilha o mecanismo de redução de custo informacional: um paper trata produção de argumento; o outro, verificação e reputação."
+    note: "Compartilha a redução do custo informacional: o Paper 1E trata produção e engajamento; este trata verificação repetida e confiança local."
 ---
