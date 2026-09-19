@@ -74,6 +74,37 @@ jobs:
             exit 2
           fi
 
+      - name: Release sole stale T4 assignment from cancelled executor
+        run: |
+          python - <<'PY'
+          from colab_cli.common import state
+          assignments = state.client.list_assignments()
+          summary = [
+              {
+                  "endpoint": a.endpoint,
+                  "accelerator": a.accelerator.value,
+                  "variant": a.variant.name,
+              }
+              for a in assignments
+          ]
+          print("active Colab assignments before run:", summary)
+          if not assignments:
+              raise SystemExit(0)
+          if len(assignments) == 1 and assignments[0].accelerator.value == "T4":
+              endpoint = assignments[0].endpoint
+              print("releasing sole stale T4 assignment:", endpoint)
+              state.client.unassign(endpoint)
+              remaining = state.client.list_assignments()
+              if remaining:
+                  raise SystemExit(
+                      f"assignment cleanup did not converge: {[a.endpoint for a in remaining]}"
+                  )
+              raise SystemExit(0)
+          raise SystemExit(
+              "Refusing automatic cleanup because active assignments are not exactly one T4"
+          )
+          PY
+
       - name: Run fully state-conditioned directed plasticity on Colab
         env:
           COLAB_EXEC_TIMEOUT: "10800"
