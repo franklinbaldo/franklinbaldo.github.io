@@ -3,15 +3,15 @@ type: paper
 title: "Forbidden Relay"
 family: "Comunicação emergente e agência"
 kind: "pré-registro experimental"
-scientific_tier: "D"
+scientific_tier: "C"
 interest_tier: "S"
 confidence: "high"
 idea: >-
   Pré-registra um teste de comunicação composta: pequenos relays treinados por RL só podem editar ou recuperar texto entre chamadas de LLMs black-box, e o receptor final deve reconstruir exatamente um alvo benigno mesmo quando o literal não aparece nos outputs intermediários.
 status: >-
-  Pré-registro não revisado por pares e sem resultados. A auditoria reproduzível encontra antecedentes fortes para protocolos aprendidos por RL, steganografia robusta a paraphrase/word blocking, sequências LLM-to-LLM e decodabilidade relativa ao receptor; o alvo de novidade defensável é a conjunção experimental completa, não esses fenômenos isolados.
+  A v0.1 agora é um pré-registro congelado, sem resultados, marcado no repositório como pronto para empacotamento Zenodo. Estão fixados target families, budgets, regimes de canal, profundidades de treino e teste, memória, baseline ladder, endpoint de exact recovery sem leakage literal, controles de private code e side-channel, análise estatística e regra prospectiva de amendment.
 limit: >-
-  A combinação ainda não localizada junta relay discreto entre chamadas black-box, recuperação exata de palavras e nonces, zero literal intermediário, transferência para profundidades e modelos não vistos, regimes frozen/heterogeneous/coadapted, diagnósticos de private code, memória e controles de side-channel. O falsificador central agora é direto: se um codec semântico/paraphrase-robust ou uma cifra in-context, com bandwidth comparável, igualar o relay em unseen depth/model, o maquinário RL específico não demonstrou valor adicional. Busca negativa não prova prioridade.
+  RL communication, sequential LLM relays, steganografia robusta a paraphrase/word blocking e decodabilidade relativa ao receptor são antecedentes materiais. O teste decisivo ainda não foi executado: se um codec fixo semantic/paraphrase-robust ou uma cifra in-context, com bandwidth e calls pareados, igualar o relay em profundidades e modelos não vistos, o maquinário RL específico não demonstrou valor adicional; busca negativa não prova prioridade.
 related_file: "audits/prior-art/forbidden-relay-2026-09-18.md"
 relations:
   - type: tests
