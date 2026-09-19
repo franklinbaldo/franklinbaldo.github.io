@@ -8,10 +8,10 @@ scientific_tier: "C"
 interest_tier: "A"
 confidence: "medium"
 idea: >-
-  Tenta explicar historicamente por que a liberdade decisória brasileira assumiu uma forma resistente à disciplina de precedentes. Depois das críticas internas, a hipótese mais específica pergunta se o campo receptor selecionou uma validação retrospectiva da prática existente, em vez de tratar a doutrina importada como norma prospectiva a cumprir.
+  Pergunta se características do campo jurídico brasileiro ajudaram a selecionar uma forma específica de recepção do livre convencimento: validação retrospectiva de práticas já existentes, em vez de tratar o princípio como padrão prospectivo de transformação.
 status: >-
-  Paper histórico-institucional vivo, não revisado por pares, com ciclos adversariais. A nova auditoria mostra que a tese ampla patrimonialismo/personalismo → imprevisibilidade e fraqueza de precedentes já tinha antecedentes fortes e impõe uma correção cronológica importante: o CPC de 1939, art. 118, já codificava livre convencimento + motivação antes da chegada de Liebman ao Brasil em 1940. O núcleo ainda em aberto fica na hipótese mais estreita de absorptive form-selection.
+  A v0.1 está repository-ready para o fluxo Zenodo após uma correção histórica decisiva: o art. 118 do CPC de 1939 já combinava livre formação do convencimento e dever de motivação antes da chegada de Liebman ao Brasil em 1940. A versão atual abandona a genealogia forte de origem, credita o prior art sobre patrimonialismo, precedentes, livre convencimento e recepção jurídica e mantém apenas a hipótese mais estreita de absorptive form-selection, em competição explícita com explicações publicistas/italianas e gerais de transplante jurídico. O SHA mergeado passou os checks de OKF e preparação dos bundles Zenodo.
 limit: >-
-  A cadeia causal residual ainda não foi demonstrada. Legal transplants e estudos do campo jurídico já explicam transformação local de doutrina, e a escola processualista posterior pode ter interpretado ou legitimado um princípio já codificado, mas não criado sua primeira forma técnica. O teste decisivo é reconstruir a gênese de 1939 e comparar campos receptores: se a validação retrospectiva aparecer sem as condições patrimoniais propostas, ou já vier determinada pela fonte publicista, a explicação perde força; busca negativa não prova prioridade.
-related_file: "audits/prior-art/paper1g-livre-convencimento-patrimonialismo-2026-09-18.md"
+  A hipótese causal residual continua sem demonstração histórica independente. É preciso reconstruir melhor a gênese de 1939 e comparar campos receptores: se a validação retrospectiva aparecer sem as condições institucionais propostas, ou se a forma de recepção for explicada suficientemente pela fonte publicista, italiana ou por mecanismos gerais de transplante, a hipótese perde força. Readiness editorial não substitui esse teste.
+related_file: "audits/zenodo-readiness/2026-09-19-2046Z-fix-round.md"
 ---
