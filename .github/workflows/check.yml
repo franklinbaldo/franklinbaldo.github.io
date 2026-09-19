@@ -223,7 +223,7 @@ jobs:
         run: |
           bash scripts/malecns-fully-state-conditioned/colab.sh \
             --output-dir "$RUNNER_TEMP/malecns-state-directed" \
-            --papers-ref "7ec9895d1d7c33e22757a1959888dc2ef5dea117" \
+            --papers-ref "9ade5b651b8475028cc302b17c80c2c7464f658f" \
             --gpu T4
 
       - name: Summarize experiment
