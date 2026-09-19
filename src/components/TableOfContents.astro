@@ -140,8 +140,12 @@ const listItems = tree.map(item => ({ ...item }));
       links.forEach((a) => {
         const isActive = a.getAttribute('href') === `#${id}`;
         a.classList.toggle('toc-active', isActive);
-        if (isActive)
+        if (isActive) {
+          a.setAttribute('aria-current', 'location');
           a.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+        } else {
+          a.removeAttribute('aria-current');
+        }
       });
     };
 
