@@ -1,21 +1,21 @@
 ---
 type: paper
 source_url: "https://github.com/franklinbaldo/papers/blob/main/paper1A_embargos_declaracao.md"
-title: "Embargos de Declaração: vícios e efeitos"
+title: "Embargos de Declaração: vícios de mérito, modificação como consequência e limite de determinação única"
 family: "Raciocínio jurídico auditável"
 kind: "dogmático"
-scientific_tier: "C"
+scientific_tier: "B"
 interest_tier: "B"
 confidence: "medium"
 idea: >-
-  Separa integração de um vício da simples rediscussão do mérito e propõe um teste cognitivo mais estreito: quando as premissas já adotadas determinam unicamente a consequência omitida, a complementação seria recognitiva/integrativa; quando ainda permitem resultados diferentes, há cognição potencialmente generativa.
+  Parte de uma distinção simples: Embargos de Declaração corrigem obscuridade, contradição, omissão ou erro material mesmo quando o defeito toca o mérito. Se a correção necessariamente muda o resultado, a modificação vem da própria integração, não de um pedido autônomo de “efeitos infringentes”. A proposta residual mais estreita é reservar a ideia de integração recognitiva aos casos em que os compromissos já assumidos pela decisão determinam univocamente a resposta omitida.
 status: >-
-  Paper dogmático não revisado por pares. A auditoria reproduzível mostra que efeitos modificativos como consequência necessária da correção já eram doutrina consolidada sob o CPC/1973 e identifica duas correções materiais no texto atual: a leitura atribuída a Nery sobre pedido expresso parece invertida pela fonte verificável, e o CPC/2015 não pode ser tratado como origem da arquitetura consequência-not-autonomous-request.
+  Preprint dogmático v0.1 agora marcado como Zenodo-ready no repositório. A revisão corrigiu o dispositivo legal central — a modificação está no art. 1.024 §4º, enquanto o §3º trata da conversão em agravo interno —, corrigiu a atribuição a Nery, incorporou o prior art CPC/1973→2015 e retirou reivindicações amplas de novidade. O texto mantém como contribuição própria uma prescrição de redação do pedido e o teste cognitivo de determinação única, com fontes doutrinárias, legais e jurisprudenciais explicitadas.
 limit: >-
-  A contribuição residual defensável fica no boundary test de determinação única, não na ideia ampla de efeitos infringentes nem na consequência necessária. Antes de publicação externa, o paper precisa corrigir Nery, reconstruir a continuidade CPC/1973→2015 e testar a taxonomia em omissões reais do art. 489 §1º IV: se casos 'unicamente determinados' e 'apenas direcionados' não se separarem de modo reproduzível, o teste perde valor. Busca negativa não prova prioridade.
-related_file: "audits/prior-art/paper1a-embargos-declaracao-2026-09-18.md"
+  A prontidão editorial não valida por si só a contribuição residual. O teste de determinação única ainda precisa ser aplicado de forma reproduzível a um conjunto de omissões reais — especialmente casos do art. 489 §1º IV — e sobreviver à distinção entre resposta realmente unívoca e mero direcionamento argumentativo. O paper segue sem revisão por pares nem validação multi-caso independente; se avaliadores não conseguirem separar consistentemente essas classes, a contribuição cognitiva perde força.
+related_file: "audits/zenodo-readiness/2026-09-19-1827Z-fix-round.md"
 relations:
   - type: extends
     target: paper1_dogmatico_ed_precedentes
-    note: "Refina a série guarda-chuva com um teste específico para distinguir integração de nova cognição."
+    note: "Refina a série guarda-chuva com uma regra prática de redação e um teste específico para distinguir integração de nova cognição."
 ---
