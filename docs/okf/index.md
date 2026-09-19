@@ -21,6 +21,7 @@ duelos de versão.
 - [Sessão](./concepts/session.md) — a rodada de N matches que um agente conduz.
 - [Post](./concepts/post.md) — um post do blog; carrega literalmente o campo `type` do OKF (RFC 0014).
 - [Match](./concepts/match.md) — uma partida par-a-par entre dois posts.
+- [Hrönir Evaluation](../../specs/okf-types/hronir-evaluation.md) — contrato normativo da crítica/avaliação persistida.
 - [Rate file](./concepts/rate-file.md) — o registro de uma decisão, no schema `stars-v1`.
 - [Ranking](./concepts/ranking.md) — como o placar OpenSkill é calculado a partir dos rate files.
 - [Seleção de versões](./concepts/selection.md) — como o ranking decide qual versão de cada post é a publicada.

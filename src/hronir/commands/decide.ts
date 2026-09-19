@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { RATES_DIR } from "../posts.js";
-import { writeMatch } from "../matches.js";
+import { matchId, writeMatch } from "../matches.js";
 import { pickRandomPerspective, loadPerspective } from "../perspectives.js";
 import {
   SESSION_PATH,
@@ -336,7 +336,9 @@ export function decide(args: string[]) {
   });
 
   const data = {
-    type: "Rate File",
+    type: "Hronir Evaluation",
+    schema: "hronir-evaluation-v1",
+    id: `hronir:${matchId(aKey, bKey, runAt)}`,
     run_id: runId,
     run_at: runAt,
     post_a: withContentLang(currentMatch.post_a),

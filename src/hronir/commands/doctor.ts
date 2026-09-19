@@ -193,7 +193,34 @@ export function doctor() {
     //   - new-schema (pre-stars): `agent_id` set, prose in frontmatter.
     //   - legacy: neither marker — accepted as-is for historical compatibility.
     const isStarsSchema = STARS_SCHEMAS.has(String(data.prompt_version));
+    const isHronirEvaluationV1 =
+      String(data.schema) === "hronir-evaluation-v1";
     const isNewSchema = !!data.agent_id || isStarsSchema;
+
+    // RFC 0018: the persisted OKF data contract is independent from the
+    // evaluator prompt contract. Historical rate files stay valid, but every
+    // hronir-evaluation-v1 record must identify itself explicitly.
+    if (isHronirEvaluationV1) {
+      if (data.type !== "Hronir Evaluation") {
+        issues.push(
+          `${base}: hronir-evaluation-v1 exige type='Hronir Evaluation'`
+        );
+      }
+      if (
+        typeof data.id !== "string" ||
+        !data.id.startsWith("hronir:") ||
+        data.id.length <= "hronir:".length
+      ) {
+        issues.push(
+          `${base}: hronir-evaluation-v1 exige id estável com prefixo 'hronir:'`
+        );
+      }
+      if (String(data.prompt_version) !== "stars-v3") {
+        issues.push(
+          `${base}: hronir-evaluation-v1 exige prompt_version='stars-v3'`
+        );
+      }
+    }
 
     // Stars-schema invariants are independent of agent_id presence: a match
     // produced by the new flow must pass them regardless of whether the file

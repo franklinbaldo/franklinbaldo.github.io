@@ -14,10 +14,16 @@ export interface PostSide {
 }
 
 export interface RateFile {
+  /** OKF concept type. Historical files use "Rate File"; new files use
+   *  "Hronir Evaluation" (RFC 0018). */
+  type?: "Rate File" | "Hronir Evaluation";
+  /** Data contract, distinct from prompt_version. */
+  schema?: "stars-v1" | "hronir-evaluation-v1";
+  /** Stable authored identity for new OKF-native evaluations. */
+  id?: string;
   // RFC 0012 §4.2: stars-v1/v2 stay valid and are classified `legacy`; new
-  // sessions write stars-v3. `schema` is historically only ever "stars-v1";
-  // the active marker is `prompt_version`.
-  schema?: "stars-v1";
+  // sessions write stars-v3. `prompt_version` versions the evaluator prompt;
+  // RFC 0018 gives the persisted data its own independent `schema` field.
   prompt_version?: string;
   /** RFC 0012 §4.1: redundant with `aKey === bKey`, validated against it,
    *  never trusted in isolation. Written for human inspection in stars-v3. */

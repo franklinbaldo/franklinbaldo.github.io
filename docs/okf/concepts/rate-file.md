@@ -1,7 +1,7 @@
 ---
 type: Data Schema
 title: Rate file
-description: Registro de uma decisão de match — schema stars-v1, um arquivo Markdown por partida, committed em .routines/hronir/rates/.
+description: Registro histórico de decisões Hrönir; novos arquivos usam o contrato OKF hronir-evaluation-v1 e o acervo legado permanece legível.
 resource: ../../../.routines/hronir/rates/
 tags: [hronir, rate-file, schema]
 timestamp: 2026-07-03T00:00:00Z
@@ -9,7 +9,7 @@ timestamp: 2026-07-03T00:00:00Z
 
 # Rate file
 
-Cada [match](./match.md) decidido produz um arquivo Markdown em
+Cada [match](./match.md) decidido produz um conceito Hrönir em
 `.routines/hronir/rates/<run_id>_<keyA>_x_<keyB>.md`, front-matter apenas
 (corpo vazio). O schema é identificado pelo campo `prompt_version` (hoje
 `stars-v3`; a família é conhecida como **`stars-v1`** por convenção de
@@ -44,3 +44,18 @@ decisão nova e retroagido aos 1764 arquivos já existentes.
 
 - [Match](./match.md)
 - [Ranking](./ranking.md) — consome todos os rate files preenchidos.
+
+
+## Contrato OKF atual (RFC 0018)
+
+Arquivos novos usam `type: Hronir Evaluation`, `schema: hronir-evaluation-v1`
+e um `id: hronir:...` estável. `prompt_version` continua existindo, mas
+versiona o prompt do avaliador — não o contrato persistido.
+
+O corpus histórico com `type: Rate File` e schemas/prompt versions anteriores
+não é reescrito. `src/hronir/matches.ts` o normaliza para a mesma representação
+computacional, e `scripts/materialize-hronir.mjs` publica a projeção comum em
+JSON/Parquet.
+
+A fonte de verdade continua sendo o Markdown OKF em
+`.routines/hronir/rates/`; os formatos colunares são derivados.
