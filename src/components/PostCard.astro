@@ -68,7 +68,7 @@ const overflowCount = allTags.length - visibleTags.length;
     {visibleTags.length > 0 && (
       <p class="card-tags">
         {visibleTags.map((tag) => (
-          <a href={`${tagsPrefix}/${tag}/`} class="card-tag">#{tag}</a>
+          <a href={`${tagsPrefix}/${tag}/`} class="card-tag" rel="tag">#{tag}</a>
         ))}
         {overflowCount > 0 && <span class="card-tag-overflow">+{overflowCount}</span>}
       </p>
