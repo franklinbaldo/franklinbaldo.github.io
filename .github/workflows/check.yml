@@ -196,6 +196,14 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Preflight papers experiment
+        run: |
+          git clone --quiet --filter=blob:none https://github.com/franklinbaldo/papers.git "$RUNNER_TEMP/papers-state-directed"
+          git -C "$RUNNER_TEMP/papers-state-directed" checkout --quiet 9ade5b651b8475028cc302b17c80c2c7464f658f
+          python -m py_compile \
+            "$RUNNER_TEMP/papers-state-directed/experiments/malecns_wifi/scripts/smoke_fully_state_conditioned_directed_plasticity_one_gpu.py" \
+            "$RUNNER_TEMP/papers-state-directed/experiments/malecns_wifi/scripts/smoke_fully_state_conditioned_directed_plasticity_batch_gpu.py"
+
       - name: Configure Colab CLI
         env:
           COLAB_TOKEN_JSON: ${{ secrets.COLAB_TOKEN_JSON }}
