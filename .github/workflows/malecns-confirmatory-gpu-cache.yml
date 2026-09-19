@@ -1,0 +1,115 @@
+name: MaleCNS Confirmatory GPU Cache
+
+on:
+  push:
+    branches:
+      - experiment/malecns-confirmatory-kaggle-cache
+    paths:
+      - ".github/workflows/malecns-confirmatory-gpu-cache.yml"
+      - "scripts/malecns-confirmatory/**"
+  workflow_dispatch:
+    inputs:
+      papers_ref:
+        description: papers commit containing the frozen runner + GPU warmer
+        required: true
+        default: "d532920bbe3c3171d0651776a6409df79a049944"
+        type: string
+      causaganha_ref:
+        description: pinned CausaGanha corpus commit
+        required: true
+        default: "7c3d6557bb692932553622ae6e00493ba04e534f"
+        type: string
+      accelerator:
+        description: Kaggle accelerator
+        required: true
+        default: NvidiaTeslaT4
+        type: string
+      expected_features_hash:
+        description: Optional exact block fingerprint from the CPU run; mismatch aborts
+        required: false
+        default: "ab494d7e0b615c9633e7"
+        type: string
+      expected_graph_hash:
+        description: Optional exact graph fingerprint from the CPU run; mismatch aborts
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: malecns-confirmatory-gpu-cache
+  cancel-in-progress: true
+
+jobs:
+  warm-cache:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Configure Kaggle CLI
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+        run: |
+          [[ -n "$KAGGLE_API_TOKEN" ]] || { echo "Missing GitHub secret KAGGLE_API_TOKEN" >&2; exit 2; }
+          [[ -n "$KAGGLE_USERNAME" ]] || { echo "Missing GitHub variable KAGGLE_USERNAME" >&2; exit 2; }
+          python -m pip install --disable-pip-version-check 'kaggle==2.2.4'
+
+      - name: Warm confirmatory state cache on Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KAGGLE_USERNAME: ${{ vars.KAGGLE_USERNAME }}
+          KAGGLE_MALECNS_CONFIRMATORY_KERNEL_ID: ${{ vars.KAGGLE_MALECNS_CONFIRMATORY_KERNEL_ID }}
+          PAPERS_REF: ${{ inputs.papers_ref || 'd532920bbe3c3171d0651776a6409df79a049944' }}
+          CAUSAGANHA_REF: ${{ inputs.causaganha_ref || '7c3d6557bb692932553622ae6e00493ba04e534f' }}
+          ACCELERATOR: ${{ inputs.accelerator || 'NvidiaTeslaT4' }}
+          EXPECTED_FEATURES_HASH: ${{ inputs.expected_features_hash || 'ab494d7e0b615c9633e7' }}
+          EXPECTED_GRAPH_HASH: ${{ inputs.expected_graph_hash || '214106d04307618db054cb977a691d48d431b771' }}
+        run: |
+          bash scripts/malecns-confirmatory/kaggle.sh \
+            --output "$RUNNER_TEMP/malecns-confirmatory-gpu-cache.zip" \
+            --papers-ref "$PAPERS_REF" \
+            --causaganha-ref "$CAUSAGANHA_REF" \
+            --accelerator "$ACCELERATOR" \
+            --expected-features-hash "$EXPECTED_FEATURES_HASH" \
+            --expected-graph-hash "$EXPECTED_GRAPH_HASH"
+
+      - name: Summarize parity and cache output
+        run: |
+          rm -rf "$RUNNER_TEMP/cache-result"
+          mkdir -p "$RUNNER_TEMP/cache-result"
+          unzip -q "$RUNNER_TEMP/malecns-confirmatory-gpu-cache.zip" -d "$RUNNER_TEMP/cache-result"
+          python - "$RUNNER_TEMP/cache-result/gpu-cache-manifest.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          data = json.load(open(sys.argv[1], encoding='utf-8'))
+          parity = data.get('parity') or {}
+          print('## MaleCNS confirmatory CUDA cache')
+          print(f"- device: **{data.get('device')}**; torch {data.get('torch')}; CUDA {data.get('cuda')}")
+          print(f"- feature fingerprint: `{data.get('features_hash')}`")
+          print(f"- graph fingerprint: `{data.get('graph_hash')}`")
+          if parity:
+              print(f"- parity gain: {parity.get('gain')}")
+              print(f"- parity max abs: **{parity.get('max_abs'):.3e}**")
+              print(f"- parity relative RMSE: **{parity.get('relative_rmse'):.3e}**")
+              if 'cpu_macro_tag_auprc' in parity:
+                  print(f"- macroAP CPU/GPU: **{parity['cpu_macro_tag_auprc']:.6f} / {parity['gpu_macro_tag_auprc']:.6f}** (Δ {parity['macro_tag_auprc_abs_delta']:.3e})")
+                  print(f"- anyAUPRC CPU/GPU: **{parity['cpu_inside_auprc']:.6f} / {parity['gpu_inside_auprc']:.6f}** (Δ {parity['inside_auprc_abs_delta']:.3e})")
+          written = sum(row.get('status') == 'written' for row in data.get('cells', []))
+          print(f"- operator/seed cells written: **{written}**")
+          print(f"- elapsed: **{data.get('elapsed_seconds', 0):.1f}s**")
+          PY
+
+      - name: Upload state cache
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: malecns-confirmatory-gpu-cache-${{ github.run_id }}
+          path: ${{ runner.temp }}/malecns-confirmatory-gpu-cache.zip
+          if-no-files-found: error
+          retention-days: 7
