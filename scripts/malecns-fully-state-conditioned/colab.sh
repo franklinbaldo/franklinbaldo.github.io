@@ -4,6 +4,7 @@ set -euo pipefail
 OUTPUT_DIR=""
 PAPERS_REF="${PAPERS_REF:-9ade5b651b8475028cc302b17c80c2c7464f658f}"
 GPU="${COLAB_GPU:-T4}"
+EMBEDDING_CACHE=""
 RELEASE_BASE="${MALECNS_CONFIRMATORY_RELEASE_BASE:-https://github.com/franklinbaldo/papers/releases/download/malecns-confirmatory-inputs-v1}"
 
 while [[ $# -gt 0 ]]; do
@@ -11,6 +12,7 @@ while [[ $# -gt 0 ]]; do
     --output-dir) OUTPUT_DIR="$2"; shift 2 ;;
     --papers-ref) PAPERS_REF="$2"; shift 2 ;;
     --gpu) GPU="$2"; shift 2 ;;
+    --embedding-cache) EMBEDDING_CACHE="$2"; shift 2 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
 done
@@ -51,18 +53,26 @@ env=os.environ.copy()
 env["PYTHONPATH"]=str(exp/"src")+os.pathsep+str(exp/"scripts")+os.pathsep+env.get("PYTHONPATH","")
 
 cache=out/"semantic-cache.npz"
-t0=time.perf_counter()
-run(
-    sys.executable,
-    exp/"scripts/build_semantic_embedding_cache.py",
-    "--output",cache,
-    "--backend","torch",
-    "--device","cuda",
-    "--batch-size","64",
-    cwd=exp,
-    env=env,
-)
-cache_seconds=time.perf_counter()-t0
+external_cache=pathlib.Path("/content/semantic-cache.npz")
+external_manifest=pathlib.Path("/content/semantic-cache.manifest.json")
+if external_cache.exists() and external_manifest.exists():
+    shutil.copy2(external_cache, cache)
+    shutil.copy2(external_manifest, cache.with_suffix(".manifest.json"))
+    cache_seconds=0.0
+    print(json.dumps({"event":"semantic_cache_reused","path":str(external_cache)}),flush=True)
+else:
+    t0=time.perf_counter()
+    run(
+        sys.executable,
+        exp/"scripts/build_semantic_embedding_cache.py",
+        "--output",cache,
+        "--backend","torch",
+        "--device","cuda",
+        "--batch-size","64",
+        cwd=exp,
+        env=env,
+    )
+    cache_seconds=time.perf_counter()-t0
 
 report=out/"fully-state-conditioned-directed-plasticity.json"
 t1=time.perf_counter()
@@ -127,6 +137,13 @@ else
 fi
 colab "--auth=$AUTH" upload -s "$SESSION" "$TMP/worker.py" /content/worker.py
 colab "--auth=$AUTH" upload -s "$SESSION" "$TMP/launcher.py" /content/launcher.py
+if [[ -n "$EMBEDDING_CACHE" ]]; then
+  [[ -f "$EMBEDDING_CACHE" ]] || { echo "embedding cache not found: $EMBEDDING_CACHE" >&2; exit 2; }
+  manifest="${EMBEDDING_CACHE%.npz}.manifest.json"
+  [[ -f "$manifest" ]] || { echo "embedding cache manifest not found: $manifest" >&2; exit 2; }
+  colab "--auth=$AUTH" upload -s "$SESSION" "$EMBEDDING_CACHE" /content/semantic-cache.npz
+  colab "--auth=$AUTH" upload -s "$SESSION" "$manifest" /content/semantic-cache.manifest.json
+fi
 colab "--auth=$AUTH" exec -s "$SESSION" --timeout "${COLAB_EXEC_TIMEOUT:-10800}" -f "$TMP/launcher.py"
 colab "--auth=$AUTH" download -s "$SESSION" /content/malecns-state-directed-result.zip "$TMP/result.zip"
 unzip -q "$TMP/result.zip" -d "$OUTPUT_DIR"
