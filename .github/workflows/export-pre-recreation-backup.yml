@@ -1,4 +1,4 @@
-name: Export pre-recreation backup
+name: Export pre-recreation backup\n# rerun-generation: 2
 
 on:
   workflow_dispatch:
