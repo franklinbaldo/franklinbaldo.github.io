@@ -126,7 +126,10 @@ const nextMusicNav = nextMusicPost
 
 const translationSiblings = translationKey
   ? allPosts.filter(
-      (entry) => entry.data.translationKey === translationKey && entry.id !== post.id,
+      (entry) =>
+        isPublished(entry) &&
+        entry.data.translationKey === translationKey &&
+        entry.id !== post.id,
     )
   : [];
 const translations: Record<string, string> = Object.fromEntries(
