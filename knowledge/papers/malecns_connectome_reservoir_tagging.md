@@ -13,8 +13,4 @@ status: >-
 limit: >-
   O experimento usa só um subgrafo de alta conectividade, dinâmica leaky-tanh engenheirada, projeção de entrada arbitrária e readout supervisionado open-loop; portanto o near-null não pode ser generalizado para MaleCNS inteiro nem para aprendizagem biologicamente endereçada em closed loop. O corpus também é pequeno e o experimento não resolve se recorrência, dinâmica ou topologia poderiam ajudar em outra formulação. O prior art já inclui connectome reservoirs, NLP com reservoirs e MaleCNS com linguagem, de modo que a contribuição defendível é a combinação estreita de tagging jurídico byte-level com controles pareados.
 related_file: "audits/prior-art/malecns-tagging-falsification-2026-09-19.md"
-relations:
-  - type: contrasts_with
-    target: malecns_whole_cns_speed_hold
-    note: "Este é o diagnóstico reduzido, open-loop e textual; o sucessor executa o MaleCNS inteiro em closed loop com sensores, reforço e atuador declarados."
 ---
