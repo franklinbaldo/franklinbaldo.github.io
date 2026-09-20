@@ -7,17 +7,20 @@ scientific_tier: "C"
 interest_tier: "A"
 confidence: "medium"
 idea: >-
-  Trata espaços de representação inteiros como vértices e cada intervenção controlada que pode ser aplicada aos dois extremos como uma aresta distinta. A aposta é separar a possibilidade de fazer a mesma pergunta experimental da semelhança das respostas, para que alinhamento, desacordo e topologia apareçam depois como medições — não como premissas.
+  Trata sistemas de representação inteiros como vértices e cada identidade experimental compartilhada como uma aresta, mesmo quando cada substrato realiza fisicamente o contraste de maneira diferente. A aresta diz apenas que a mesma pergunta experimental pode ser operacionalizada nos dois lados; similaridade, alinhamento, causalidade e geometria aparecem depois como medições, não como premissas.
 status: >-
-  Position paper com definição matemática explícita, companion Lean 4 e auditoria claim-specific de prior art já incorporada. A v0.1 está tecnicamente pronta para empacotamento no Zenodo: o texto agora reconhece antecedentes para correspondência de intervenções, causal abstraction, transportability e identifiability e restringe a contribuição ao pacote mais estreito em que espaços inteiros são vértices e intervenções compartilhadas são arestas primitivas independentes da resposta. Ainda não há validação empírica.
+  Position paper com definição matemática explícita, companion Lean 4 e auditoria claim-specific de prior art já incorporada. A v0.1 está tecnicamente pronta para empacotamento no Zenodo e restringe a contribuição ao pacote em que espaços inteiros são vértices e identidades de intervenção são arestas primitivas independentes da resposta. A revisão transversal do programa corrigiu uma ambiguidade importante: "mesma intervenção" agora significa a mesma identidade/contrato experimental, não necessariamente a mesma perturbação física. Realizações substrate-native, como os proxies entre linguagem e MaleCNS, são portanto uma especialização legítima do ILG. Ainda não há validação empírica do formalismo como ferramenta de identificação.
 limit: >-
-  O risco principal é operacional e potencialmente circular: demonstrar que uma intervenção é realmente a mesma nos dois espaços sem usar justamente o alinhamento que o método pretende descobrir. Contrastes binários não garantem identificabilidade, e transports ou testes de closure flexíveis demais podem produzir alinhamentos espúrios; os próximos testes precisam de intervenções held-out e nulls/capacity-matched antes que ciclos, Torus ou manifolds contem como evidência.
+  O risco principal continua sendo identificabilidade e circularidade: o contrato que declara duas realizações como a mesma intervenção não pode importar justamente o alinhamento que deveria ser descoberto. Contrastes binários não garantem identificabilidade, e transports ou testes de closure flexíveis demais podem produzir alinhamentos espúrios; os próximos testes precisam de intervenções held-out, nulls/capacity-matched e realizadores alternativos antes que ciclos, Torus ou manifolds contem como evidência.
 related_file: "audits/prior-art/interventional-latent-graph-2026-09-19.md"
 relations:
   - type: extends
     target: pontifex
-    note: "Coloca antes da comparação Pontifex uma camada de incidência: a intervenção compartilhada cria a aresta; semelhança ou desacordo das respostas é medido depois."
+    note: "Coloca antes da comparação Pontifex uma camada de incidência: a identidade experimental compartilhada cria a aresta; semelhança ou desacordo das respostas é medido depois."
   - type: constrains
     target: pontifex_torus
     note: "Torna ciclos e topologia toroidal hipóteses downstream que precisam competir com nulls e outras geometrias, em vez de fazê-los parte da definição do grafo."
+  - type: formalizes
+    target: pontifex_malecns_narrative_proxy_interventions
+    note: "Fornece a noção de identidade experimental compartilhada que permite realizações substrate-native sem exigir a mesma intervenção física nos dois sistemas."
 ---
