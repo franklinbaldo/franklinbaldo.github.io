@@ -62,9 +62,9 @@
     "dompurify": "^3.4.15",
     "fast-xml-parser": "^5.11.1",
     "highlight.js": "^11.12.0",
-    "image-size": "^2.0.3",
+    "image-size": "^2.0.4",
     "katex": "^0.18.7",
-    "marked": "^18.0.12",
+    "marked": "^18.0.13",
     "mdast-util-to-string": "^4.0.0",
     "mermaid": "^11.16.1",
     "pagefind": "^1.5.2",
@@ -85,9 +85,9 @@
     "gray-matter": "^4.0.3",
     "js-yaml": "^4.3.2",
     "openskill": "^4.1.1",
-    "oxlint": "^1.82.0",
+    "oxlint": "^1.83.0",
     "playwright": "^1.63.0",
-    "prettier": "^3.9.6",
+    "prettier": "^3.9.8",
     "remark": "15.0.1",
     "tsx": "^4.23.13"
   }
