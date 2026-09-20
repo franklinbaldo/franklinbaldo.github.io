@@ -21,7 +21,7 @@ const podcastDescription = work.metadata.podcast?.description ?? work.metadata.t
     { name: work.metadata.title, item: new URL(`/audiobooks/${work.workId}/`, Astro.site).href },
   ]}
 >
-  <main class="container audiobook-work">
+  <div class="container audiobook-work">
     <p><a href="/audiobooks/">← Audiolivros</a></p>
     <header>
       <p class="eyebrow">{podcastEnabled ? "Podcast" : "Em preparação"}</p>
@@ -59,7 +59,7 @@ const podcastDescription = work.metadata.podcast?.description ?? work.metadata.t
         )
       }
     </section>
-  </main>
+  </div>
 </PageLayout>
 
 <style>
