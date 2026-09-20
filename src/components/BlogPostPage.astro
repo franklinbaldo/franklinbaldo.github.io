@@ -57,7 +57,7 @@ const {
 const postLang = (lang ?? DEFAULT_LANG) as 'en' | 'pt';
 const isMusic = postType === 'music';
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
-const wordCount: number | undefined = minutesRead ? minutesRead * 200 : undefined;
+const wordCount: number | undefined = remarkPluginFrontmatter.wordsRead;
 const hasMath: boolean = !!remarkPluginFrontmatter.hasMath;
 const lastModifiedISO: string | undefined = remarkPluginFrontmatter.lastModified;
 const lastModified = lastModifiedISO ? new Date(lastModifiedISO) : undefined;
@@ -364,7 +364,7 @@ const musicIndexLabel = t(postLang, 'music.indexLabel');
                   {tags.map((tag, index) => (
                     <>
                       {index > 0 && ' '}
-                      <a class="tag-pill" href={`${tagsPrefix}/${tag}/`}>
+                      <a class="tag-pill" href={`${tagsPrefix}/${tag}/`} rel="tag">
                         #{tag}
                       </a>
                     </>
