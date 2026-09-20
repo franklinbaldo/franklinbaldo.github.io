@@ -501,8 +501,9 @@ const musicIndexLabel = t(postLang, 'music.indexLabel');
           });
         });
       }
+      // Inline scripts rerun when ClientRouter swaps in a new post, so direct
+      // initialization is enough; a permanent page-load listener would accumulate.
       bindPlayBtns();
-      document.addEventListener('astro:page-load', bindPlayBtns);
     })();
   </script>
 
@@ -519,8 +520,8 @@ const musicIndexLabel = t(postLang, 'music.indexLabel');
           firstP.setAttribute('data-dropcap', '');
         }
       }
+      // This inline initializer runs for the newly swapped post itself.
       applyDropCap();
-      document.addEventListener('astro:page-load', applyDropCap);
     })();
   </script>
 
@@ -528,6 +529,7 @@ const musicIndexLabel = t(postLang, 'music.indexLabel');
     (() => {
       const bar = document.getElementById('read-progress');
       if (!bar) return;
+      const controller = new AbortController();
       const update = () => {
         const html = document.documentElement;
         const max = html.scrollHeight - html.clientHeight;
@@ -535,8 +537,16 @@ const musicIndexLabel = t(postLang, 'music.indexLabel');
         bar.value = pct;
       };
       update();
-      window.addEventListener('scroll', update, { passive: true });
-      window.addEventListener('resize', update);
+      window.addEventListener('scroll', update, {
+        passive: true,
+        signal: controller.signal,
+      });
+      window.addEventListener('resize', update, { signal: controller.signal });
+      document.addEventListener(
+        'astro:before-swap',
+        () => controller.abort(),
+        { once: true },
+      );
     })();
   </script>
 </PageLayout>
