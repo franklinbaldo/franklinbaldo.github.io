@@ -31,10 +31,16 @@ API = "https://api.github.com"
 
 
 def run(cmd: list[str], *, cwd: Path | None = None, check: bool = True, stdout=None) -> subprocess.CompletedProcess:
-    p = subprocess.run(cmd, cwd=cwd, stdout=stdout, stderr=subprocess.PIPE, text=stdout is None)
+    kwargs = {"cwd": cwd, "stderr": subprocess.PIPE}
+    if stdout is None:
+        kwargs["stdout"] = subprocess.PIPE
+        kwargs["text"] = True
+    else:
+        kwargs["stdout"] = stdout
+    p = subprocess.run(cmd, **kwargs)
     if check and p.returncode != 0:
         err = p.stderr if isinstance(p.stderr, str) else ""
-        raise RuntimeError(f"command failed ({p.returncode}): {' '.join(cmd)}\n{err[-4000:]}")
+        raise RuntimeError(f"command failed ({p.returncode}): {' '.join(cmd)}\\n{err[-4000:]}")
     return p
 
 
