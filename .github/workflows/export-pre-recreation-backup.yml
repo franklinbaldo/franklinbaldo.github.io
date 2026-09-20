@@ -31,7 +31,7 @@ jobs:
         run: |
           python scripts/export-pre-recreation-backup.py \
             --source franklinbaldo/franklinbaldo.github.io \
-            --seed-sha b3ddee690fdc020854ec4cb5b4912a8c97192d8c \
+            --seed-sha 9b7deb7d3a9d85b4b61bf295e4ecc5840d8922b1 \
             --consumed-pr 1956 \
             --output "${RUNNER_TEMP}/blog-backup"
 
