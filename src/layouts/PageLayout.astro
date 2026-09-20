@@ -244,7 +244,7 @@ const personLd = {
         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', theme);
     </script>
-    <script is:inline>
+    <script>
       // Preserve the current theme across Astro view transitions: the
       // server-rendered <html> in the incoming document has no data-theme,
       // so without this the page would flash to the OS default before the
@@ -260,7 +260,7 @@ const personLd = {
       window.__pageLang = pageLang;
       window.__translations = translations || {};
     </script>
-    <script is:inline>
+    <script>
       // Move focus to <h1> (or <main> as fallback) after ClientRouter (SPA) navigations
       // so screen readers announce the new page title instead of a silent focus.
       document.addEventListener('astro:after-swap', () => {
