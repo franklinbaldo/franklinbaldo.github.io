@@ -12,3 +12,5 @@ tags: [backup, migration, fix]
 - A malformed literal newline in the workflow header is corrected so Actions can allocate a runner.
 
 - The verified Git bundle is split into transport-sized artifacts so the private backup can be copied outside Actions storage.
+
+- Bundle transport is reduced to 80 MiB chunks so each verified part can be copied into private durable storage through the connector.
