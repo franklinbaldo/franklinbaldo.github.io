@@ -1,0 +1,142 @@
+name: Export pre-recreation backup
+# rerun-generation: 3
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/export-pre-recreation-backup.yml'
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  actions: read
+  pages: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          lfs: false
+
+      - name: Export and verify full pre-recreation backup
+        run: |
+          python scripts/export-pre-recreation-backup.py \
+            --source franklinbaldo/franklinbaldo.github.io \
+            --seed-sha b3ddee690fdc020854ec4cb5b4912a8c97192d8c \
+            --consumed-pr 1956 \
+            --output "${RUNNER_TEMP}/blog-backup"
+
+      - name: Split verified bundle for durable transfer
+        shell: bash
+        run: |
+          set -euo pipefail
+          BACKUP="${RUNNER_TEMP}/blog-backup"
+          PARTS="${RUNNER_TEMP}/bundle-parts"
+          mkdir -p "$PARTS"
+          split -b 80M -d -a 3 "$BACKUP/repository.bundle" "$PARTS/repository.bundle.part"
+          COUNT=$(find "$PARTS" -maxdepth 1 -type f -name 'repository.bundle.part*' | wc -l)
+          test "$COUNT" -eq 7
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          backup=Path(os.environ["RUNNER_TEMP"])/"blog-backup"
+          parts=Path(os.environ["RUNNER_TEMP"])/"bundle-parts"
+          def sha(p):
+              h=hashlib.sha256()
+              with open(p,"rb") as f:
+                  for b in iter(lambda:f.read(1024*1024),b""): h.update(b)
+              return h.hexdigest()
+          original=backup/"repository.bundle"
+          rows=[]
+          for p in sorted(parts.glob("repository.bundle.part*")):
+              rows.append({"name":p.name,"bytes":p.stat().st_size,"sha256":sha(p)})
+          json.dump({
+              "original_name":"repository.bundle",
+              "original_bytes":original.stat().st_size,
+              "original_sha256":sha(original),
+              "parts":rows,
+              "reassemble":"concatenate parts in lexical order"
+          },open(backup/"bundle-reassembly.json","w"),indent=2)
+          PY
+          rm "$BACKUP/repository.bundle"
+
+      - name: Upload backup support package
+        uses: actions/upload-artifact@v4
+        with:
+          name: franklinbaldo-github-io-pre-recreation-support
+          path: ${{ runner.temp }}/blog-backup
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Upload Git bundle part 000
+        uses: actions/upload-artifact@v4
+        with:
+          name: franklinbaldo-github-io-bundle-part-000
+          path: ${{ runner.temp }}/bundle-parts/repository.bundle.part000
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Upload Git bundle part 001
+        uses: actions/upload-artifact@v4
+        with:
+          name: franklinbaldo-github-io-bundle-part-001
+          path: ${{ runner.temp }}/bundle-parts/repository.bundle.part001
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Upload Git bundle part 002
+        uses: actions/upload-artifact@v4
+        with:
+          name: franklinbaldo-github-io-bundle-part-002
+          path: ${{ runner.temp }}/bundle-parts/repository.bundle.part002
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Upload Git bundle part 003
+        uses: actions/upload-artifact@v4
+        with:
+          name: franklinbaldo-github-io-bundle-part-003
+          path: ${{ runner.temp }}/bundle-parts/repository.bundle.part003
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Upload Git bundle part 004
+        uses: actions/upload-artifact@v4
+        with:
+          name: franklinbaldo-github-io-bundle-part-004
+          path: ${{ runner.temp }}/bundle-parts/repository.bundle.part004
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Upload Git bundle part 005
+        uses: actions/upload-artifact@v4
+        with:
+          name: franklinbaldo-github-io-bundle-part-005
+          path: ${{ runner.temp }}/bundle-parts/repository.bundle.part005
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Upload Git bundle part 006
+        uses: actions/upload-artifact@v4
+        with:
+          name: franklinbaldo-github-io-bundle-part-006
+          path: ${{ runner.temp }}/bundle-parts/repository.bundle.part006
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
