@@ -1,0 +1,44 @@
+name: Export pre-recreation backup
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/export-pre-recreation-backup.yml'
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  actions: read
+  pages: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          lfs: false
+
+      - name: Export and verify full pre-recreation backup
+        run: |
+          python scripts/export-pre-recreation-backup.py \
+            --source franklinbaldo/franklinbaldo.github.io \
+            --seed-sha b3ddee690fdc020854ec4cb5b4912a8c97192d8c \
+            --consumed-pr 1956 \
+            --output "${RUNNER_TEMP}/blog-backup"
+
+      - name: Upload verified backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: franklinbaldo-github-io-pre-recreation-backup
+          path: ${{ runner.temp }}/blog-backup
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
