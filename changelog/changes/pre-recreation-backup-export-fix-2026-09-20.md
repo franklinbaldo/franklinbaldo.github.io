@@ -9,3 +9,4 @@ tags: [backup, migration, fix]
 
 - Git helper commands now return captured stdout to the exporter.
 - The export workflow is retriggered so bundle/LFS/issue/PR preservation can complete.
+- A malformed literal newline in the workflow header is corrected so Actions can allocate a runner.
