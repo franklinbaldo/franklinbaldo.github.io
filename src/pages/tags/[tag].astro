@@ -106,7 +106,7 @@ const collectionLd = {
         <small>
           Related:{" "}
           {relatedTags.map((t, i) => (
-            <>{i > 0 && " "}<a href={`/tags/${t}/`} class="tag-pill">#{t}</a></>
+            <>{i > 0 && " "}<a href={`/tags/${t}/`} class="tag-pill" rel="tag">#{t}</a></>
           ))}
         </small>
       </p>
