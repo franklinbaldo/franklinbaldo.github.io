@@ -26,6 +26,7 @@ Algumas horas depois apareceu o polinômio.
     src="https://api.memegen.link/images/atis/E_entao_eu_disse/localmente_invertivel_entao_globalmente_injetivo.png?width=600"
     alt="Meme And Then I Said: a primeira fala diz 'E então eu disse'; a segunda, 'localmente invertível, então globalmente injetivo'."
     loading="lazy"
+    decoding="async"
   />
   <figcaption>Uma intuição razoável o bastante para virar conjectura. Não razoável o bastante para sobreviver ao polinômio.</figcaption>
 </figure>
@@ -132,7 +133,7 @@ Caiu a Conjectura Jacobiana como afirmação para todas as dimensões. Caiu tamb
 
 Não caiu o teorema da função inversa: ele continua garantindo precisamente o que sempre garantiu, uma inversa local. Não caiu automaticamente o caso $\mathbb C^2\to\mathbb C^2$. E não surgiu uma contradição na matemática: surgiu um objeto que a conjectura dizia não poder existir.
 
-<p id="nota-1"><small><sup>1</sup> O mapa foi <a href="https://x.com/__alpoge__/status/2079028340955197566">divulgado por Levent Alpöge</a>, que atribuiu a pergunta a Akhil e a produção do exemplo a Fable. A fórmula recebeu <a href="https://zzhang-iu.github.io/papers/direct-consequences-jacobian/">verificação pública independente</a>, mas a história da descoberta, a atribuição completa e uma apresentação acadêmica formal ainda estão sendo consolidadas. Este texto se apoia somente nas identidades algébricas diretamente verificáveis: $\det JF=-2$ e $F(A)=F(B)=F(C)$.</small></p>
+<p id="nota-1"><small><sup>1</sup> O mapa foi <a href="https://x.com/__alpoge__/status/2079028340955197566">divulgado por Levent Alpöge</a>, que atribuiu a pergunta a Akhil e a produção do exemplo a Fable. A fórmula recebeu <a href="https://zzhang-iu.github.io/papers/direct-consequences-jacobian/">verificação pública independente</a>. Em 15 de setembro de 2026, Arno van den Essen publicou também <a href="https://arxiv.org/abs/2609.17795">uma derivação elementar no arXiv</a> que obtém, a menos de mudanças lineares de coordenadas, o mesmo exemplo de Alpöge. A história completa da descoberta e da atribuição ainda está sendo consolidada. Este texto se apoia somente nas identidades algébricas diretamente verificáveis: $\det JF=-2$ e $F(A)=F(B)=F(C)$.</small></p>
 
 Há uma ironia boa nisso tudo. A pergunta filosófica era se o todo poderia esconder uma ambiguidade ausente de cada parte local. A resposta chegou não como ensaio, mas como três pontos e um determinante:
 
