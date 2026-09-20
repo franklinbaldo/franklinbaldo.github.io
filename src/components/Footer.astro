@@ -72,9 +72,10 @@ const isCurrent = (href: string) => here === href.replace(/\/$/, '') + '/';
     const li = document.getElementById("footer-lang-li");
     const link = document.getElementById("footer-lang-link");
     if (!li || !link || !target) return;
+    const targetLocale = target === "pt" ? "pt-BR" : target;
     link.href = translations[target];
-    link.hreflang = target;
-    link.lang = target;
+    link.hreflang = targetLocale;
+    link.lang = targetLocale;
     link.textContent = target === "pt" ? "Português" : "English";
     link.setAttribute(
       "aria-label",
