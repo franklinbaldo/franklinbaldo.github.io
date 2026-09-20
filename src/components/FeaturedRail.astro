@@ -15,7 +15,7 @@ const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
 
 {posts.length > 0 && (
   <section class="featured-rail" aria-label={t(lang, 'featured.label')}>
-    {posts.map((post) => {
+    {posts.map((post, index) => {
       const { title, date, description, featuredReason, heroImage, heroImageAlt } = post.data;
       const href = (post.data.lang ?? 'en') === 'pt' ? `/pt/blog/${post.data.slug ?? post.id}/` : `/blog/${post.data.slug ?? post.id}/`;
       return (
@@ -39,7 +39,8 @@ const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
                 widths={[480, 800]}
                 sizes="(max-width: 800px) 100vw, 800px"
                 format="webp"
-                loading="eager"
+                loading={index === 0 ? 'eager' : 'lazy'}
+                fetchpriority={index === 0 ? 'high' : 'auto'}
               />
             </a>
           )}

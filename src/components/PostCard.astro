@@ -17,7 +17,7 @@ const formattedDate = date.toLocaleDateString(locale(postLang), {
 
 const blurb = description;
 const wordCount = (post.body ?? '').trim().split(/\s+/).filter(Boolean).length;
-const minutesRead = Math.max(1, Math.round(wordCount / 200));
+const minutesRead = Math.max(1, Math.ceil(wordCount / 200));
 
 const href = postLang === 'pt' ? `/pt/blog/${post.data.slug ?? post.id}/` : `/blog/${post.data.slug ?? post.id}/`;
 const typeLabel = type
@@ -47,6 +47,7 @@ const overflowCount = allTags.length - visibleTags.length;
         width="1200"
         height="630"
         loading="lazy"
+        decoding="async"
       />
     )}
   </a>
@@ -68,7 +69,7 @@ const overflowCount = allTags.length - visibleTags.length;
     {visibleTags.length > 0 && (
       <p class="card-tags">
         {visibleTags.map((tag) => (
-          <a href={`${tagsPrefix}/${tag}/`} class="card-tag">#{tag}</a>
+          <a href={`${tagsPrefix}/${tag}/`} class="card-tag" rel="tag">#{tag}</a>
         ))}
         {overflowCount > 0 && <span class="card-tag-overflow">+{overflowCount}</span>}
       </p>

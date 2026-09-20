@@ -6,7 +6,7 @@ interface Props {
 }
 
 const { lang } = Astro.props;
-const homeHref = `${urlPrefix(lang)}/`;
+const archiveHref = `${urlPrefix(lang)}/archive/`;
 const rssHref = `${urlPrefix(lang)}/rss.xml`;
 ---
 
@@ -28,7 +28,7 @@ const rssHref = `${urlPrefix(lang)}/rss.xml`;
       <li><a href={rssHref}>RSS</a></li>
     </ul>
     <footer>
-      <a href={homeHref}>{t(lang, 'author.more')}</a>
+      <a href={archiveHref}>{t(lang, 'author.more')}</a>
     </footer>
   </article>
 </aside>

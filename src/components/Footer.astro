@@ -59,7 +59,7 @@ const isCurrent = (href: string) => here === href.replace(/\/$/, '') + '/';
       <li><small><a href="/pt/rss.xml" aria-label="Feed RSS (Português)">RSS PT</a></small></li>
       <li><small><a href="https://github.com/franklinbaldo" rel="me">GitHub</a></small></li>
       <li id="footer-lang-li" style="display:none">
-        <small><a id="footer-lang-link" href="#" class="secondary"></a></small>
+        <small><a id="footer-lang-link" class="secondary"></a></small>
       </li>
     </ul>
   </nav>
@@ -72,7 +72,10 @@ const isCurrent = (href: string) => here === href.replace(/\/$/, '') + '/';
     const li = document.getElementById("footer-lang-li");
     const link = document.getElementById("footer-lang-link");
     if (!li || !link || !target) return;
+    const targetLocale = target === "pt" ? "pt-BR" : target;
     link.href = translations[target];
+    link.hreflang = targetLocale;
+    link.lang = targetLocale;
     link.textContent = target === "pt" ? "Português" : "English";
     link.setAttribute(
       "aria-label",

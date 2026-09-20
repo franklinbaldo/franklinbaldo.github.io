@@ -1,17 +1,17 @@
 ---
 type: paper
-title: "Pedagogical Signal Extraction"
+title: "Structured Irregularity"
 family: "Aprendizagem e tempo informacional"
 kind: "aprendizagem de invariantes"
 scientific_tier: "C"
 interest_tier: "A"
 confidence: "medium"
 idea: >-
-  Pergunta como um aprendiz pode distinguir ruído de estrutura ainda não decodificável e testar se evidência antiga se torna realmente útil depois que aprende uma representação capaz de interpretá-la.
+  Pergunta como um aprendiz pode distinguir ruído, opacidade temporária, padrão acidental e ocultação, e testar se uma observação antiga se torna realmente útil depois que aprende uma estrutura capaz de reinterpretá-la.
 status: >-
-  Position paper não revisado por pares, sem resultados empíricos. A auditoria reproduzível mostra que machine teaching learner-relative, curricula sequenciais, ensino sob incerteza, retrospective revaluation e representações preditivas compactas já cobrem grande parte dos componentes. A fronteira candidata fica no teste conjunto de progressive decodability, structured irregularity e retrospective gain medido por ablação pós-unlock em held-out.
+  Position paper v0.1 agora congelado e repository-ready para empacotamento Zenodo, sem depósito externo e sem resultados empíricos. A versão auditada trata machine teaching learner-relative, curricula sequenciais, ensino sob incerteza, retrospective revaluation e representações preditivas compactas como antecedentes. A contribuição candidata foi estreitada para a conjunção de opacidade temporária relativa ao aprendiz, uma taxonomia operacional de quatro tipos de irregularidade e uma ablação pós-unlock em held-out que mede se uma observação anterior passa a carregar valor depois que a estrutura de decodificação foi adquirida.
 limit: >-
-  O fenômeno amplo de 'evidência posterior muda o valor da evidência anterior' não é novo, nem são currículo adaptativo e predictive bottlenecks. O teste decisivo é remover a observação antes opaca depois que a regra de decodificação já foi aprendida e verificar se o desempenho held-out piora; se um baseline sequencial/preditivo pareado reproduzir o mesmo efeito, o framework adicional não foi necessário. Busca negativa não prova prioridade.
+  O paper ainda não demonstra empiricamente que o diagnóstico separa estrutura útil de reconstrução retrospectiva. O teste decisivo continua sendo remover a observação antes opaca depois do unlock e verificar perda held-out contra baselines sequenciais/preditivos pareados; se eles reproduzirem o mesmo efeito, o framework adicional perde necessidade explicativa. Readiness editorial e busca negativa não estabelecem prioridade nem eficácia.
 related_file: "audits/prior-art/pedagogical-signal-extraction-2026-09-18.md"
 relations:
   - type: tests

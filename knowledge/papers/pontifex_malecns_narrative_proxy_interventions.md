@@ -9,21 +9,18 @@ confidence: "medium"
 idea: >-
   Propõe alinhar trajetórias de embeddings de linguagem e do MaleCNS sem fingir que os dois espaços compartilham coordenadas: ambos realizam, em sua própria modalidade, a mesma história causal ordenada, e o Pontifex compara a geometria das respostas preservando a ordem narrativa.
 status: >-
-  Position paper prospectivo com objeto formal, protocolo, controles e previsões falsificáveis, ainda sem novas medições empíricas. A auditoria claim-specific e a passada adversarial já foram concluídas: Gromov Dynamic Time Warping, CTW/GTW, alinhamento Gromov-Wasserstein sem rótulos, causal abstraction e estudos de event boundaries cobrem vários ingredientes genéricos antes do cutoff. A contribuição defensável ficou mais estreita: a busca não localizou, antes do cutoff, a conjunção completa de proxies nativos texto↔MaleCNS, intervenção-em-história e teste held-out. O manuscrito, porém, ainda não absorveu integralmente essa auditoria, continua em publication.status: draft e não está congelado para Zenodo.
+  A v0.1 foi congelada como position paper/protocolo Zenodo-ready no commit dd3db1fec6531d99db9516e96b2c34639f7e2c99. O manuscrito incorpora prior art de CTW/GTW, GDTW, Gromov-Wasserstein, causal abstraction e event boundaries, estreita a contribuição para a conjunção de proxies nativos texto↔MaleCNS, intervenção-em-história e previsão held-out, e inclui os controles adversariais exigidos pela auditoria. A revisão de consistência do programa também removeu uma dependência conceitual indevida: o protocolo instancia MaleCNS como observador/substrato heterogêneo e não depende de Torus; Torus pode ser testado depois apenas como modelo opcional sobre as respostas. O bundle do SHA exato passou OKF conformance e validação local de empacotamento; ainda não houve depósito externo no Zenodo nem novas medições empíricas.
 limit: >-
-  Um alinhamento positivo demonstraria correspondência estrutural preditiva sob as intervenções declaradas, não mecanismo, ontologia ou computação compartilhados. Antes do freeze, o manuscrito precisa incorporar GDTW/GWOT e CTW/GTW na escada de baselines, separar conteúdo de boundary de efeito de anchor, controlar overlap lexical/participantes e prefixos embaralhados, preregistrar capacidade do warp/mapa, usar renderers/proxies independentes e nulls random/untrained/shuffled, além de consolidar as limitações e empacotar um SHA exato. Depois disso, a hipótese científica ainda exige histórias/intervenções held-out e MaleCNS rewired/random pareados.
-related_file: "audits/prior-art/narrative-proxy-interventions-2026-09-19.md"
+  A prontidão arquivística não muda a maturidade científica: a hipótese ainda precisa mostrar, em histórias e intervenções held-out, que a geometria de respostas texto↔MaleCNS acrescenta poder preditivo além de tempo, CTW/GTW, GDTW/Gromov-Wasserstein, tradutores diretos e nulls de capacidade pareada. Também permanece o risco de a correspondência ser construída pelo registry/renderers de proxies; desempenho do MaleCNS como reservoir ou controlador não transfere para esta hipótese sem um bridge experiment específico. Um resultado positivo sustentaria no máximo correspondência estrutural preditiva sob as intervenções declaradas, não mecanismo, ontologia ou computação compartilhados.
+related_file: "audits/zenodo-readiness/2026-09-19-1541Z-fix-round.md"
 relations:
   - type: extends
     target: pontifex
-    note: "Troca a exigência de um input físico comum por histórias causais ordenadas realizadas nativamente em cada substrato."
+    note: "Troca a exigência de uma realização física comum por uma identidade experimental compartilhada, realizada nativamente em cada substrato."
   - type: applies
     target: interventional_latent_graph
-    note: "Usa intervenções compartilhadas como ponte entre espaços, mas acrescenta história, condições de contorno e ordem causal."
-  - type: extends
-    target: pontifex_torus
-    note: "Pede ao Torus que alinhe geometrias de resposta ao longo de tempo narrativo monotônico, sem alinhamento direto de coordenadas latentes."
+    note: "Realiza uma mesma identidade experimental por proxies substrate-native e acrescenta história, condições de contorno e ordem causal."
   - type: contrasts_with
     target: malecns_connectome_reservoir_tagging
-    note: "Leva o programa MaleCNS para uma interface biologicamente endereçada e causal, em contraste com o reservoir reduzido open-loop do baseline de tagging."
+    note: "Instancia MaleCNS como observador heterogêneo; desempenho de reservoir/controller é uma linha separada e não conta como evidência de correspondência proxy sem bridge experiment."
 ---
