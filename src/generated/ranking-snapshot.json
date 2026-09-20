@@ -1,9 +1,9 @@
 {
   "_meta": {
     "schema": "snapshot-v2",
-    "generatedAt": "2026-09-15T22:29:35.783Z",
+    "generatedAt": "2026-09-20T05:05:49.623Z",
     "basis": "build",
-    "totalDuels": 2867
+    "totalDuels": 2872
   },
   "keys": {
     "third-half-fourth-wall": {
@@ -504,146 +504,158 @@
       "elo": 991,
       "eloPeak": 1030
     },
-    "inaugural-post": {
+    "flydoom-malecns": {
       "rank": 84,
+      "ordinal": 5.2656,
+      "elo": 1067,
+      "eloPeak": 1067
+    },
+    "inaugural-post": {
+      "rank": 85,
       "ordinal": 4.8048,
       "elo": 921,
       "eloPeak": 1001
     },
     "music-particles": {
-      "rank": 85,
+      "rank": 86,
       "ordinal": 4.7353,
       "elo": 894,
       "eloPeak": 1060
     },
     "music-caminho": {
-      "rank": 86,
+      "rank": 87,
       "ordinal": 4.5589,
       "elo": 929,
       "eloPeak": 1035
     },
     "music-o-magico-e-o-fogo": {
-      "rank": 87,
+      "rank": 88,
       "ordinal": 3.5509,
       "elo": 875,
       "eloPeak": 1047
     },
     "music-151474c5-1420-4cc1-9ab5-80721f4459ed": {
-      "rank": 88,
+      "rank": 89,
       "ordinal": 3.041,
       "elo": 901,
       "eloPeak": 1031
     },
     "music-belief-engine-labyrinth-song-moving-window-viii": {
-      "rank": 89,
+      "rank": 90,
       "ordinal": 2.9995,
       "elo": 817,
       "eloPeak": 1000
     },
     "music-dd332f75-6052-4f9e-bccd-fb0303731d6e": {
-      "rank": 90,
+      "rank": 91,
       "ordinal": 2.8916,
       "elo": 879,
       "eloPeak": 1016
     },
     "conceptual-document": {
-      "rank": 91,
+      "rank": 92,
       "ordinal": 2.8891,
       "elo": 910,
       "eloPeak": 1036
     },
     "verne-identity-repo": {
-      "rank": 92,
+      "rank": 93,
       "ordinal": 2.859,
       "elo": 867,
       "eloPeak": 1017
     },
     "music-vos": {
-      "rank": 93,
+      "rank": 94,
       "ordinal": 2.1565,
       "elo": 923,
       "eloPeak": 1064
     },
     "music-46336b97-4306-41bc-8a7b-48f0ebebbd29": {
-      "rank": 94,
+      "rank": 95,
       "ordinal": 2.0507,
       "elo": 852,
       "eloPeak": 1015
     },
     "music-crystallizing-from-the-nothing": {
-      "rank": 95,
+      "rank": 96,
       "ordinal": 1.8941,
       "elo": 833,
       "eloPeak": 1059
     },
     "data-portrait-2026": {
-      "rank": 96,
+      "rank": 97,
       "ordinal": 1.8463,
       "elo": 1019,
       "eloPeak": 1026
     },
     "music-borges-and-me": {
-      "rank": 97,
+      "rank": 98,
       "ordinal": 1.8338,
       "elo": 851,
       "eloPeak": 1047
     },
     "manifold-betting-ideas": {
-      "rank": 98,
+      "rank": 99,
       "ordinal": 1.6218,
       "elo": 1015,
       "eloPeak": 1015
     },
     "music-universal-threshold": {
-      "rank": 99,
+      "rank": 100,
       "ordinal": 1.4442,
       "elo": 892,
       "eloPeak": 1000
     },
     "music-sussurros-binarios": {
-      "rank": 100,
+      "rank": 101,
       "ordinal": 1.1885,
       "elo": 820,
       "eloPeak": 1000
     },
     "music-borges-and-the-hyperobject-at-the-end-of-time": {
-      "rank": 101,
+      "rank": 102,
       "ordinal": 0.616,
       "elo": 827,
       "eloPeak": 1049
     },
     "music-bibliotecario-do-infinito": {
-      "rank": 102,
+      "rank": 103,
       "ordinal": -0.3877,
       "elo": 793,
       "eloPeak": 1000
     },
     "autumn-balance-2026": {
-      "rank": 103,
+      "rank": 104,
       "ordinal": -0.4099,
       "elo": 984,
       "eloPeak": 1000
     },
     "music-f73c60f0-49af-45fd-a483-1d35a676dccc": {
-      "rank": 104,
+      "rank": 105,
       "ordinal": -1.1895,
       "elo": 800,
       "eloPeak": 1000
     },
     "music-veu-do-infinito": {
-      "rank": 105,
+      "rank": 106,
       "ordinal": -1.8046,
       "elo": 797,
       "eloPeak": 1001
     },
+    "flygenesis-malecns": {
+      "rank": 107,
+      "ordinal": -2.6051,
+      "elo": 933,
+      "eloPeak": 1000
+    },
     "may-in-seven-drafts-2026": {
-      "rank": 106,
+      "rank": 108,
       "ordinal": -3.0818,
       "elo": 917,
       "eloPeak": 1016
     },
     "events-welcome": {
-      "rank": 107,
+      "rank": 109,
       "ordinal": -4.4097,
       "elo": 740,
       "eloPeak": 1000
