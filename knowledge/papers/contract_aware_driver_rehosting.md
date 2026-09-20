@@ -1,21 +1,21 @@
 ---
 type: paper
-order: 29
-file: "contract_aware_driver_rehosting.md"
 title: "Contract-aware driver rehosting"
 family: "Sistemas"
 kind: "segurança de sistemas"
 scientific_tier: "C"
 interest_tier: "A"
 confidence: "medium"
-idea: "Instrumenta um driver rehosted com dois limites: a região fisicamente alocada e a fronteira lógica declarada pelo contrato de I/O, tratando o cruzamento dessa fronteira como evento bruto até haver evidência de intenção de saída."
-status: "Methodology paper com shadow checking e auditoria reproduzível de prior art. A auditoria mostra que rehosting/emulação de drivers e sub-bounds dentro de uma alocação maior já têm antecedentes fortes."
-limit: "ASan container-overflow, EffectiveSan, x64dbg/driver_unpacking, Speakeasy e a documentação de METHOD_BUFFERED antecipam componentes importantes. A contribuição candidata fica na combinação Windows I/O contract + dual bound + promoção sensível à ambiguidade + controle negativo + reprodução independente; ainda falta validação ampla em drivers reais, e busca negativa não prova novidade."
+idea: >-
+  Instrumenta um driver rehosted com dois limites: a região fisicamente alocada e a fronteira lógica declarada pelo contrato de I/O, tratando o cruzamento dessa fronteira como evento bruto até haver evidência de intenção de saída.
+status: >-
+  Position/methodology paper congelado como v0.1 e marcado como pronto para publicação no Zenodo. A novidade foi estreitada para a combinação Windows METHOD_BUFFERED + dual bound + promoção sensível à ambiguidade + protocolo calibrado de evidência; o substrato de brokering do LiteBox foi demonstrado, mas o rehosting .sys, a ABI NT sintética, shadow checking calibrado, contenção e avaliação de terceiros continuam propostos ou não validados.
+limit: >-
+  ASan container-overflow, EffectiveSan, x64dbg/driver_unpacking, Speakeasy e a documentação de METHOD_BUFFERED antecipam componentes importantes. A contribuição candidata fica na conjunção operacional e no critério de promoção; o scaffold M1–M7 do LiteBox PR #24 permanece aberto, não mergeado e não validado, não há vulnerabilidade de driver reportada e ainda falta validação ampla em drivers reais.
 related_file: "audits/prior-art/contract-aware-driver-rehosting-2026-09-17.md"
-related_label: "ler auditoria de prior art"
-updated: "2026-09-18"
+relations:
+  - type: applies
+    target: affordance_restriction
+    note: >-
+      Usa a distinção entre teto de privilégio e custo de affordances de pesquisa para enquadrar o rehosting sem confundir aumento de capacidade prática com aumento de autorização.
 ---
-
-# Contract-aware driver rehosting
-
-Canonical OKF card for the public Papers portfolio. The paper itself remains in `franklinbaldo/papers`.

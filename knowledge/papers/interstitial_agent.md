@@ -1,21 +1,20 @@
 ---
 type: paper
-order: 28
-file: "interstitial_agent.md"
 title: "Interstitial Agent"
 family: "Comunicação emergente e agência"
 kind: "agência/sistemas"
 scientific_tier: "C"
 interest_tier: "S"
 confidence: "medium"
-idea: "Pergunta onde exatamente está a agência quando vários modelos e transdutores aprendidos formam uma cadeia: em cada modelo, nos intermediários ou no sistema composto inteiro."
-status: "Position paper não revisado por pares. A auditoria reproduzível mergeada em main mostra que comunicação oculta, decodabilidade relativa ao receptor e falhas de segurança por composição já tinham antecedentes fortes; a combinação ainda não localizada é o relay discreto aprendido entre LLMs black-box, treinado por recompensa tardia e tratado como locus de agência."
-limit: "Semantic Intent Fragmentation, ChainCaps e um estudo de mediação multiagente de julho de 2026 antecipam diretamente o 'compositional safety gap'; steganography/emergent communication antecipam persistência funcional sem persistência de superfície. Falta demonstrar que o relay externo é causalmente distinto desses mecanismos e traz valor preditivo ou de segurança; busca negativa não prova prioridade."
+idea: >-
+  Pergunta onde exatamente está a agência quando vários modelos e transdutores aprendidos formam uma cadeia: em cada modelo, nos intermediários ou no sistema composto inteiro.
+status: >-
+  Position paper v0.1 agora congelado e repository-ready para empacotamento Zenodo, sem depósito externo e sem resultado experimental. A versão auditada incorpora explicitamente comunicação emergente, decodabilidade relativa ao receptor, canais covert/steganographic e falhas de segurança por composição como antecedentes. A contribuição candidata foi estreitada para tratar um relay discreto externo, separadamente aprendido entre chamadas black-box de LLMs, otimizado por recompensa tardia e analisado junto com memória associativa, topologia, capacidade do receptor e proveniência como um locus de política e segurança por direito próprio.
+limit: >-
+  Semantic Intent Fragmentation, ChainCaps, estudos de mediação multiagente e a literatura de steganography/emergent communication já antecipam boa parte dos fenômenos genéricos. Ainda falta demonstrar empiricamente que o relay externo é causalmente distinto, acrescenta poder preditivo ou muda a avaliação de segurança frente a controles compostos fortes. Readiness editorial e busca negativa não provam prioridade.
 related_file: "audits/prior-art/interstitial-agent-2026-09-17.md"
-related_label: "ler auditoria de prior art"
-updated: "2026-09-18"
+relations:
+  - type: applies
+    target: rl_relay_transducers
+    note: "Aplica a arquitetura relay à pergunta de onde agência e falhas por composição realmente residem."
 ---
-
-# Interstitial Agent
-
-Canonical OKF card for the public Papers portfolio. The paper itself remains in `franklinbaldo/papers`.

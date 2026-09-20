@@ -105,4 +105,19 @@ export const openingClashes = [
     battleground: "breadth of claims vs. independent recovery",
     body: "ZEBTS is broader in advertised scope than almost every Arena entry, but breadth earns interest rather than scientific rank. To climb, the operator-spectral construction must independently recover established low-energy physics and survive external calculation; until then its enormous scope is a liability as much as an attraction.",
   },
+  {
+    title: "Geometric Action Principle × Holomorphic UFT",
+    battleground: "single-action economy vs. explicit Standard Model recovery",
+    body: "The Clifford action programme gets credit for deriving gravity, gauge and fermionic structures from one invariant and intersecting known healthy linearized gravity sectors. Holomorphic UFT currently goes further toward explicit Standard Model masses and mixings. The former needs realistic SM representations and full stability; the latter needs stronger independent reproduction. Neither clash warrants an A-tier promotion yet.",
+  },
+  {
+    title: "Lucron Network × Loop quantum gravity / CDT",
+    battleground: "discrete pregeometry and continuum recovery",
+    body: "Lucron supplies explicit relational units, network dynamics and concrete falsifiers, but its exact Lorentz, Yang–Mills and particle-spectrum recovery remains unfinished. LQG and CDT have much deeper mathematical or numerical development but do not package the same broad Standard-Model ambition. A derivation of Lorentz symmetry and gauge structure from Lucron dynamics would materially change this comparison.",
+  },
+  {
+    title: "Unified Emergence × Lucron Network",
+    battleground: "continuum-first vs. discrete-first ontology",
+    body: "Unified Emergence avoids fundamental discreteness and therefore the immediate burden of recovering continuum Lorentz symmetry, but its foundational coarse-graining operator is not yet specified well enough to carry the physics. Lucron is more calculationally explicit and falsifiable, but must show that its discrete substrate really reproduces continuum symmetries. For now this is a D-vs-C maturity gap, not a verdict on ontology.",
+  },
 ];

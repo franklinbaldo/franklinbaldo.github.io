@@ -173,12 +173,20 @@ const crumbs = [
               <div class="side winner">
                 <span class="post-name" lang={postLangAttr(d.winnerKey)}>{winnerName}</span>
                 <span class="medal" aria-hidden="true">🏆</span>
-                {hasRates && <span class="rate">{rateWinner!.toFixed(1)}</span>}
+                {hasRates && (
+                  <span class="rate">
+                    {rateWinner!.toLocaleString(duelLang(d) === "pt" ? "pt-BR" : "en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+                  </span>
+                )}
               </div>
               <div class="divider"><span class="vs">VS</span></div>
               <div class="side loser">
                 <span class="post-name" lang={postLangAttr(d.loserKey)}>{loserName}</span>
-                {hasRates && <span class="rate loser-rate">{rateLoser!.toFixed(1)}</span>}
+                {hasRates && (
+                  <span class="rate loser-rate">
+                    {rateLoser!.toLocaleString(duelLang(d) === "pt" ? "pt-BR" : "en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+                  </span>
+                )}
               </div>
             </div>
             {tensionPct !== null ? (

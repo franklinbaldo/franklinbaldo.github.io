@@ -26,6 +26,7 @@ A few hours later the polynomial showed up.
     src="https://api.memegen.link/images/atis/And_then_I_said/locally_invertible_therefore_globally_injective.png?width=600"
     alt="And Then I Said meme: the first line says 'And then I said'; the second, 'locally invertible, therefore globally injective'."
     loading="lazy"
+    decoding="async"
   />
   <figcaption>An intuition reasonable enough to become a conjecture. Not reasonable enough to survive the polynomial.</figcaption>
 </figure>
@@ -132,7 +133,7 @@ What fell is the Jacobian Conjecture as a claim for every dimension. What also f
 
 What didn't fall is the inverse function theorem: it still guarantees exactly what it always guaranteed, a local inverse. What didn't automatically fall is the $\mathbb C^2\to\mathbb C^2$ case. And no contradiction appeared in mathematics: an object appeared that the conjecture said couldn't exist.
 
-<p id="note-1"><small><sup>1</sup> The map was <a href="https://x.com/__alpoge__/status/2079028340955197566">announced by Levent Alpöge</a>, who credited the question to Akhil and the construction of the example to Fable. The formula received <a href="https://zzhang-iu.github.io/papers/direct-consequences-jacobian/">independent public verification</a>, but the discovery story, full attribution, and a formal academic writeup are still being consolidated. This text relies only on the directly verifiable algebraic identities: $\det JF=-2$ and $F(A)=F(B)=F(C)$.</small></p>
+<p id="note-1"><small><sup>1</sup> The map was <a href="https://x.com/__alpoge__/status/2079028340955197566">announced by Levent Alpöge</a>, who credited the question to Akhil and the construction of the example to Fable. The formula received <a href="https://zzhang-iu.github.io/papers/direct-consequences-jacobian/">independent public verification</a>. On September 15, 2026, Arno van den Essen also posted <a href="https://arxiv.org/abs/2609.17795">an elementary derivation on arXiv</a> that recovers, up to linear coordinate changes, Alpöge's example. The full discovery and attribution history is still being consolidated. This text relies only on the directly verifiable algebraic identities: $\det JF=-2$ and $F(A)=F(B)=F(C)$.</small></p>
 
 There is a fitting irony in all of this. The philosophical question was whether the whole could hide an ambiguity absent from every local part. The answer arrived not as an essay, but as three points and a determinant:
 

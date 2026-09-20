@@ -1,21 +1,17 @@
 ---
 type: paper
-order: 8
-file: "paper1G_livre_convencimento_patrimonialismo.md"
+source_url: "https://github.com/franklinbaldo/papers/blob/main/paper1G_livre_convencimento_patrimonialismo.md"
 title: "Livre convencimento e patrimonialismo"
 family: "Raciocínio jurídico auditável"
 kind: "histórico/dogmático"
 scientific_tier: "C"
 interest_tier: "A"
 confidence: "medium"
-idea: "Tenta explicar historicamente por que a liberdade decisória brasileira assumiu uma forma resistente à disciplina de precedentes. Depois das críticas internas, a hipótese mais específica pergunta se o campo receptor selecionou uma validação retrospectiva da prática existente, em vez de tratar a doutrina importada como norma prospectiva a cumprir."
-status: "Paper histórico-institucional vivo, não revisado por pares, com ciclos adversariais. A nova auditoria mostra que a tese ampla patrimonialismo/personalismo → imprevisibilidade e fraqueza de precedentes já tinha antecedentes fortes e impõe uma correção cronológica importante: o CPC de 1939, art. 118, já codificava livre convencimento + motivação antes da chegada de Liebman ao Brasil em 1940. O núcleo ainda em aberto fica na hipótese mais estreita de absorptive form-selection."
-limit: "A cadeia causal residual ainda não foi demonstrada. Legal transplants e estudos do campo jurídico já explicam transformação local de doutrina, e a escola processualista posterior pode ter interpretado ou legitimado um princípio já codificado, mas não criado sua primeira forma técnica. O teste decisivo é reconstruir a gênese de 1939 e comparar campos receptores: se a validação retrospectiva aparecer sem as condições patrimoniais propostas, ou já vier determinada pela fonte publicista, a explicação perde força; busca negativa não prova prioridade."
-related_file: "audits/prior-art/paper1g-livre-convencimento-patrimonialismo-2026-09-18.md"
-related_label: "ler auditoria de prior art"
-updated: "2026-09-18"
+idea: >-
+  Pergunta se características do campo jurídico receptor ajudam a explicar não a origem nem a forma doutrinária do livre convencimento, mas a persistência de um padrão de enforcement em que a fundamentação precisa existir sem que sua suficiência seja controlada com a mesma intensidade.
+status: >-
+  A v0.1 segue repository-ready, mas o edit cycle 16 estreitou a hipótese de modo material. O rastreamento de Amaral Santos, Lopes da Costa, Pontes de Miranda e Barbosa Moreira não confirmou supressão doutrinária da accountability: a motivação foi promovida e progressivamente autonomizada como garantia, e a explicação por legitimação/recepção de campo periférico ficou melhor sustentada que a patrimonialista para a forma da exposição doutrinária. O que sobrevive como hipótese própria fica no enforcement: STF e STJ mantiveram um limiar de presença, não suficiência, para a fundamentação mesmo após sua constitucionalização. Esse dado oferece ao mecanismo de habitus uma continuidade observável, sem demonstrar ainda sua causa.
+limit: >-
+  A continuidade de enforcement não identifica sozinha um mecanismo patrimonialista. Portugal exibe limiar semelhante, enquanto a Argentina dispõe desde 1909 de um canal de controle qualitativo da fundamentação; nem a hipótese patrimonialista nem a alternativa de campo periférico explicam ainda esse contraste Brasil/Portugal versus Argentina. O teste decisivo é comparativo e histórico: reconstruir por que esses regimes divergiram sem atribuir ao habitus o que mecanismos gerais de transplante, desenho institucional ou tradição processual já explicam.
+related_file: "synthesis/blog/2026-09-20-session-112-edit-cycle-16-paper1g-form-selection-absorbed.md"
 ---
-
-# Livre convencimento e patrimonialismo
-
-Canonical OKF card for the public Papers portfolio. The paper itself remains in `franklinbaldo/papers`.

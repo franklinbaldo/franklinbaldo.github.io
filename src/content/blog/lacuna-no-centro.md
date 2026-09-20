@@ -27,7 +27,7 @@ Decades later, mathematicians Lenstra and de Smit showed the gap can be filled �
 Grant Sanderson (3Blue1Brown) made a video showing this transformation in motion. I recommend watching it before reading further.
 
 <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:1.5rem 0;">
-  <iframe src="https://www.youtube.com/embed/ldxFjLJ3rVY" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
+  <iframe src="https://www.youtube.com/embed/ldxFjLJ3rVY" title="3Blue1Brown video about the mathematics of Escher's Print Gallery" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
 </div>
 
 The reason this video felt like more than a mathematical curiosity — the reason it landed the way it did, on March 22, 2026 — is that we are, right now, in the middle of building Escher's picture.

@@ -1,21 +1,16 @@
 ---
 type: paper
-order: 34
-file: "malecns_connectome_reservoir_tagging.md"
 title: "MaleCNS como reservoir para tagging jurídico"
 family: "Neurocomputação experimental"
 kind: "empírico"
 scientific_tier: "C"
 interest_tier: "S"
 confidence: "high"
-idea: "Usa a conectividade real do sistema nervoso da mosca como uma rede recorrente congelada e pergunta se essa topologia ajuda a marcar trechos de texto jurídico melhor que controles embaralhados e um baseline sem recorrência."
-status: "Primeiro experimento multi-seed concluído, com resultado negativo/indeterminado para vantagem da topologia biológica; auditoria reproduzível de prior art agora estreita a contribuição defensável ao teste controlado dessa topologia em tagging jurídico byte-level."
-limit: "Connectomas como reservoirs, Drosophila recorrente, reservoir computing para NLP e até MaleCNS + linguagem + readout congelado já têm antecedentes próximos. A combinação exata com controles pareados de topologia e não recorrência não foi localizada antes do cutoff, mas busca negativa não prova novidade; dataset minúsculo e possível subtreinamento continuam impedindo alegar superioridade do conectoma."
-related_file: "audits/prior-art/malecns-connectome-reservoir-tagging-2026-09-17.md"
-related_label: "ler auditoria de prior art"
-updated: "2026-09-18"
+idea: >-
+  Testa se um subgrafo real do sistema nervoso da mosca, usado como reservoir recorrente congelado, acrescenta sinal útil para tagging byte a byte de texto jurídico quando comparado com um grafo degree-preserving embaralhado e com um baseline sem recorrência.
+status: >-
+  A v0.1 permanece como diagnóstico histórico da formulação reduzida e open-loop: 512 neurônios, cinco seeds pareadas e um pequeno corpus jurídico. O MaleCNS obteve F1 médio 0,2753, contra 0,2782 no reservoir degree-preserving embaralhado e 0,2727 no baseline byte-only; as diferenças são pequenas e variáveis entre seeds. O resultado demonstra um pipeline reprodutível de tagging connectome-constrained, mas não sustenta vantagem específica da topologia biológica. A linha whole-CNS fechada deixou de ser uma promessa dentro deste mesmo paper: ela agora tem um sucessor results-bearing próprio, `malecns_whole_cns_speed_hold.md`, e deve ser avaliada separadamente.
+limit: >-
+  O experimento usa só um subgrafo de alta conectividade, dinâmica leaky-tanh engenheirada, projeção de entrada arbitrária e readout supervisionado open-loop; portanto o near-null não pode ser generalizado para MaleCNS inteiro nem para aprendizagem biologicamente endereçada em closed loop. O corpus também é pequeno e o experimento não resolve se recorrência, dinâmica ou topologia poderiam ajudar em outra formulação. O prior art já inclui connectome reservoirs, NLP com reservoirs e MaleCNS com linguagem, de modo que a contribuição defendível é a combinação estreita de tagging jurídico byte-level com controles pareados.
+related_file: "audits/prior-art/malecns-tagging-falsification-2026-09-19.md"
 ---
-
-# MaleCNS como reservoir para tagging jurídico
-
-Canonical OKF card for the public Papers portfolio. The paper itself remains in `franklinbaldo/papers`.

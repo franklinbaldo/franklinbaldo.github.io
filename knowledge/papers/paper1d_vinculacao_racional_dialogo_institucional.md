@@ -1,21 +1,21 @@
 ---
 type: paper
-order: 5
-file: "paper1D_vinculacao_racional_dialogo_institucional.md"
-title: "Vinculação racional e diálogo institucional"
+source_url: "https://github.com/franklinbaldo/papers/blob/main/paper1D_vinculacao_racional_dialogo_institucional.md"
+title: "Súmula vinculante, reclamação e diálogo institucional"
 family: "Raciocínio jurídico auditável"
 kind: "dogmático"
-scientific_tier: "C"
+scientific_tier: "B"
 interest_tier: "B"
 confidence: "medium"
-idea: "Propõe uma arquitetura mais estreita do que a versão original: a decisão inferior pode produzir um sinal argumentativo de distinção ou revisitação, a reclamação pode transmitir esse conflito ao STF e o tribunal deve enfrentar razões materialmente relevantes sem confundir crítica ao precedente com competência para revisá-lo formalmente."
-status: "Paper dogmático não revisado por pares. A auditoria reproduzível encontra prior art direto para reclamação como diálogo, deveres bidirecionais de fundamentação e os ônus de aplicar ou afastar precedentes; também identifica duas formulações atuais fortes demais, de modo que o texto precisa de reescrita competence-sensitive antes de publicação externa."
-limit: "Enquanto o paper não separar aplicação, distinguishing, sinalização/anticipatory challenge e revisão formal, a tese permanece doutrinariamente superestendida. A contribuição residual é o encadeamento lower-court signal → complaint → reasoned STF engagement → preservação/distinção/possível evolução formal; o teste de maior valor é um corpus de reclamações que meça se o STF realmente engaja esse sinal. Busca negativa não prova prioridade."
-related_file: "audits/prior-art/paper1d-vinculacao-racional-dialogo-institucional-2026-09-18.md"
-related_label: "ler auditoria de prior art"
-updated: "2026-09-18"
+idea: >-
+  Separa três coisas que versões anteriores misturavam: força vinculante, dever de fundamentação e competência para revisar o precedente. No domínio específico STF + súmula vinculante, a decisão inferior pode produzir um sinal argumentativo; uma reclamação cabível pode levar o conflito ao STF; e o tribunal deve engajar razões materiais sem transformar crítica bem fundamentada em autorização automática para revisão formal.
+status: >-
+  Preprint dogmático v0.1 repository-ready para o fluxo de publicação no Zenodo. A revisão retirou a tese forte de que razões bastariam para legitimar qualquer afastamento, creditou o prior art direto sobre fundamentação bilateral, reclamação como diálogo e anticipatory overruling, e confinou a arquitetura residual ao domínio STF + súmula vinculante + reclamação processualmente disponível. O commit mergeado passou OKF conformance e validação dos bundles Zenodo-ready.
+limit: >-
+  A arquitetura está doutrinariamente mais defensável, mas seu ganho explicativo ainda precisa ser demonstrado além da reconstrução normativa. O teste de maior valor é um corpus de reclamações que permita medir quando sinais argumentativos inferiores realmente chegam ao STF, quais são processualmente filtrados e se argumentos materiais alteram o grau de engajamento, distinção ou evolução formal. O paper segue sem revisão por pares nem validação empírica desse canal.
+related_file: "audits/zenodo-readiness/2026-09-19-1948Z-fix-round.md"
+relations:
+  - type: extends
+    target: paper1_dogmatico_ed_precedentes
+    note: "Refina a linha guarda-chuva com uma arquitetura competência-sensível de diálogo entre decisão inferior, reclamação e STF."
 ---
-
-# Vinculação racional e diálogo institucional
-
-Canonical OKF card for the public Papers portfolio. The paper itself remains in `franklinbaldo/papers`.

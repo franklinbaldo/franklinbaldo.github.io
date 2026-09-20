@@ -1,21 +1,21 @@
 ---
 type: paper
-order: 6
-file: "paper1E_custos_argumentativos.md"
-title: "Custos argumentativos"
+source_url: "https://github.com/franklinbaldo/papers/blob/main/paper1E_custos_argumentativos.md"
+title: "Custos argumentativos, IA e precedentes no Brasil"
 family: "Raciocínio jurídico auditável"
 kind: "conceitual/jurídico"
 scientific_tier: "C"
 interest_tier: "A"
 confidence: "medium"
-idea: "Modela o sistema de precedentes como um jogo de incentivos: produzir argumentação capaz de mover o STF custa ao agente individual, enquanto parte do benefício de melhorar o precedente se espalha pelo sistema. A tese é que tecnologia pode alterar esse equilíbrio ao baratear argumento realmente auditável."
-status: "Paper jurídico conceitual, não revisado por pares. A auditoria reproduzível mostra antecedentes fortes para divergência entre incentivos privados e sociais, precedentes como investimento, jogos estratégicos entre cortes e ganhos de produtividade jurídica com IA. A contribuição residual fica no loop brasileiro STF/reclamação combinado aos deveres argumentativos do CPC."
-limit: "Shavell, Landes & Posner, Rubin/Priest, a literatura de hierarquia judicial e estudos de produtividade jurídica com IA antecipam partes centrais. Falta demonstrar empiricamente que reduzir o custo de argumento auditável aumenta o engajamento do STF e desloca o equilíbrio, sem confundir mais texto ou mais litigância com melhor argumento; busca negativa não prova prioridade."
-related_file: "audits/prior-art/argumentative-costs-precedent-equilibrium-2026-09-18.md"
-related_label: "ler auditoria de prior art"
-updated: "2026-09-18"
+idea: >-
+  Propõe uma hipótese condicional para o sistema brasileiro: reduzir o custo de produzir argumento só importa institucionalmente quando aumenta qualidade/auditabilidade, o argumento consegue alcançar o órgão competente por canal processual adequado e há engajamento observável. O mecanismo compete com um canal oposto em que IA barata aumenta volume, ruído e custo de triagem sem melhorar a resposta judicial.
+status: >-
+  Preprint conceitual v0.1 repository-ready para o fluxo de publicação no Zenodo. A revisão passou a tratar como antecedentes a divergência entre incentivos privados e sociais, precedentes como investimento, jogos estratégicos entre cortes e os efeitos de produtividade jurídica da IA. A contribuição residual ficou no mecanismo brasileiro qualidade auditável → canal institucional disponível → engajamento sob deveres de fundamentação, com preservação explícita da competência para revisão formal e inclusão do canal de congestionamento.
+limit: >-
+  O paper ainda formula uma hipótese, não um resultado empírico. Para subir de maturidade precisa mostrar, com dados, que a queda no custo de produzir argumentos auditáveis altera engajamento institucional depois de separar qualidade de mero volume, controlar admissibilidade/seleção e medir também o canal de congestionamento. Se mais produção apenas elevar ruído e triagem sem efeito de engajamento, o mecanismo central enfraquece.
+related_file: "audits/zenodo-readiness/2026-09-19-1948Z-fix-round.md"
+relations:
+  - type: applies
+    target: paper1d_vinculacao_racional_dialogo_institucional
+    note: "Aplica uma lente de incentivos ao canal institucional do Paper 1D e pergunta quando argumentos auditáveis realmente chegam e recebem resposta."
 ---
-
-# Custos argumentativos
-
-Canonical OKF card for the public Papers portfolio. The paper itself remains in `franklinbaldo/papers`.
