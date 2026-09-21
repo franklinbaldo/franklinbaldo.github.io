@@ -42,7 +42,7 @@ type: Hronir Evaluation
 Then run:
 
 ```bash
-uv run --with 'okf-parser @ git+https://github.com/franklinbaldo/okf-parser@3d4f31f41bca4aecb11a627f23900051f3f68685' \
+uv run --with 'okf-parser @ git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' \
   okf-parser check .routines/hronir/evaluations \
   --require-spec ../../../specs/okf-types/{slug}.md \
   --normative-spec
