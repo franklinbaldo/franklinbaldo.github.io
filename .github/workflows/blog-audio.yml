@@ -183,7 +183,7 @@ jobs:
           tags: [audio, blog, podcast, internet-archive]
           ---
 
-          # Publish blog audio for `$POST_ID`
+          # Publish blog audio for $POST_ID
 
           Records the verified external audio publication produced by the Blog Audio workflow.
           EOF
