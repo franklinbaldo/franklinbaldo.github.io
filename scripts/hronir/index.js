@@ -30,6 +30,7 @@ const {
   decide,
   ranking,
   diagnose,
+  tierEvidence,
   editWorst,
   migrate,
   doctor,
@@ -46,7 +47,7 @@ const [, , cmd, ...args] = process.argv;
 
 function usage() {
   console.error(
-    "Uso: hronir {generate-match [init-opts]|submit-eval --agent-id <id> <decide-flags>|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--review-lang <lang>] [--objective coverage|refine-top|hunt-worst] [--min-appearances N]|continue|decide --after-mood <text> --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text> [--clash-append <text>] [--review-a-append <text>] [--review-b-append <text>]|ranking|diagnose|draft-worst|draft-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force]|select [--dry-run]|prune [--dry-run]|flatten [--slug <slug>] [--dry-run]}"
+    "Uso: hronir {generate-match [init-opts]|submit-eval --agent-id <id> <decide-flags>|init --agent-id <id> [--matches N] [--skip-edit] [--skip-rating] [--eval-lang <lang>] [--review-lang <lang>] [--objective coverage|refine-top|hunt-worst] [--min-appearances N]|continue|decide --after-mood <text> --rate-a <1.00-5.00> --rate-b <1.00-5.00> --review-a <text> --review-b <text> --clash <text> [--clash-append <text>] [--review-a-append <text>] [--review-b-append <text>]|ranking|diagnose|tier-evidence [--key <translationKey>] [--limit N]|draft-worst|draft-commit --msg <text>|migrate [--dry-run]|doctor|end [--skip-edit] [--force]|select [--dry-run]|prune [--dry-run]|flatten [--slug <slug>] [--dry-run]}"
   );
   process.exit(1);
 }
@@ -84,16 +85,20 @@ function parseMatches(raw) {
   return Number(String(raw).trim());
 }
 
-function parseMinAppearances(raw) {
-  if (raw == null) return null;
-  const s = String(raw).trim();
-  if (!/^\d+$/.test(s) || Number(s) < 1) {
+function parsePositiveInteger(raw, flag, fallback) {
+  if (raw == null) return fallback;
+  const value = String(raw).trim();
+  if (!/^\d+$/.test(value) || Number(value) < 1) {
     console.error(
-      `Erro: --min-appearances deve ser um inteiro positivo (recebido: ${JSON.stringify(raw)}).`
+      `Erro: ${flag} deve ser um inteiro positivo (recebido: ${JSON.stringify(raw)}).`
     );
     process.exit(1);
   }
-  return Number(s);
+  return Number(value);
+}
+
+function parseMinAppearances(raw) {
+  return parsePositiveInteger(raw, "--min-appearances", null);
 }
 
 function parseInitOptions(args) {
@@ -159,6 +164,15 @@ switch (cmd) {
   case "diagnose":
     diagnose();
     break;
+  case "tier-evidence": {
+    const key = readFlagValue(args, [args.indexOf("--key")]);
+    const limitRaw = readFlagValue(args, [args.indexOf("--limit")]);
+    tierEvidence({
+      key,
+      limit: parsePositiveInteger(limitRaw, "--limit", 20),
+    });
+    break;
+  }
   case "draft-worst":
     editWorst();
     break;
