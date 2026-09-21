@@ -62,6 +62,9 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      - name: Tier evidence smoke
+        run: npm run hronir:tier-evidence -- --limit 12
+
       - name: Generate version selection
         run: npm run hronir:select
 
