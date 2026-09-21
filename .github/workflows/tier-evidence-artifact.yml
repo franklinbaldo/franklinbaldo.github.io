@@ -27,7 +27,7 @@ jobs:
       - run: npm ci
 
       - name: Project tier evidence
-        run: npm run hronir:tier-evidence -- --limit 25 | tee tier-evidence.txt
+        run: npm run hronir:tier-evidence -- --limit 200 | tee tier-evidence.txt
 
       - name: Upload tier evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
