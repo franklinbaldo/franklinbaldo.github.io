@@ -63,7 +63,7 @@ jobs:
         run: npm test
 
       - name: Tier evidence smoke
-        run: npm run hronir:tier-evidence -- --limit 12
+        run: npm run hronir:tier-evidence -- --limit 20
 
       - name: Generate version selection
         run: npm run hronir:select
