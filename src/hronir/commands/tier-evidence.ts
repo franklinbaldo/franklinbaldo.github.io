@@ -86,7 +86,7 @@ export function tierEvidence({
       ].join("\t")
     );
 
-    if (key || row.key === "delegating-to-agents") {
+    if (key) {
       for (const perspective of perspectiveRows.toSorted(
         (a, b) => a.rank - b.rank || a.id.localeCompare(b.id)
       )) {
@@ -95,10 +95,6 @@ export function tierEvidence({
         );
       }
     }
-  }
-
-  if (!key) {
-    throw new Error("temporary tier-evidence probe");
   }
 
   nextStep(
