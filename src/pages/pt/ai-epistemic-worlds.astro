@@ -188,7 +188,7 @@ const interestCounts = Object.fromEntries(
           <p class="kicker">INTERVENÇÕES</p>
           <h2 id="intervention-heading">Observar sem floodar; desafiar com método</h2>
         </div>
-        <p>Uma primeira intervenção por repositório. Sem resposta material, não há bump, nova issue, PR nem comentário.</p>
+        <p>Uma intervenção inicial por owner/repo. Sem avanço material, paramos; com avanço, o gate abre e a colaboração pode continuar por comentários, issues ou PRs.</p>
       </div>
       <div class="research-grid">
         {aiEpistemicInterventions.map((item) => (
@@ -214,9 +214,11 @@ const interestCounts = Object.fromEntries(
         ))}
       </div>
       <p class="fineprint">
-        O observatório transfere controles, métodos e artefatos — não crenças. A partir do primeiro toque,
-        qualquer adoção posterior é registrada como possível influência causal do observatório e deixa de contar
-        automaticamente como convergência independente.
+        O observatório transfere controles, métodos e artefatos — não crenças. Cada owner/repo recebe no máximo
+        um toque inicial enquanto estiver sem engajamento. Se a intervenção produzir avanço verificável, novas
+        intervenções naquele mesmo repo ficam liberadas enquanto a pesquisa continuar produtiva. Qualquer adoção
+        posterior é registrada como possível influência causal do observatório e deixa de contar automaticamente
+        como convergência independente.
       </p>
     </section>
 

@@ -5,7 +5,7 @@ title: "OKF Type: ai-epistemic-world"
 description: "Normative spec for AI-mediated epistemic world case cards"
 resource: okf-type:ai-epistemic-world
 tags: [okf, ai, epistemic-worlds, tiering, spec]
-timestamp: "2026-09-20T00:00:00Z"
+timestamp: "2026-09-21T00:00:00Z"
 ---
 
 # OKF Type: `ai-epistemic-world`
@@ -43,6 +43,17 @@ The type describes public artifacts and longitudinal patterns. It MUST NOT be us
 | `ai_role` | array[string] | Roles explicitly attributed to AI in the artifacts |
 | `literalness` | string | Editorial description of literal/speculative/art/ambiguous framing |
 | `note` | string | Tier history or important editorial qualification |
+| `activity_metrics` | object | Objective public-GitHub activity snapshot with exact measurement window and coverage |
+
+## Activity metrics
+
+`activity_metrics` is descriptive operational evidence, not psychiatric evidence and not a tier shortcut. It SHOULD be present when the underlying public GitHub data has actually been measured.
+
+The block SHOULD preserve `measured_at`, `metric_coverage`, an exact `observation_window`, raw counts when available, and normalized rates only when their denominator is known. Prefer rolling 7/30/90-day windows plus observed all-time totals over vague averages. Distinguish `0` from `not_measured` or unavailable; never infer missing counts from contribution heatmaps alone.
+
+Useful fields include repository counts/creation windows, authored commits by rolling window and calendar day, commits per active day, peak day/month, active-day counts and streaks, PRs/issues by rolling window, releases/tags, epistemic-world cluster size, materially distinct artifact families, directly attributable AI co-authorship, and a burstiness measure relative to an earlier public baseline. Counting rules SHOULD avoid double-counting merge commits where the same underlying work is already represented.
+
+Cross-case leaderboards MAY use only metrics with comparable coverage and observation windows. Activity volume alone MUST NOT promote `evidence_tier` and MUST NOT be interpreted as evidence of mental illness.
 
 ## Identity
 
