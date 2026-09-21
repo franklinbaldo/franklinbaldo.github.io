@@ -9,7 +9,7 @@ tags: [dependencies, typescript, openskill, github-actions, maintenance]
 
 This change finishes the dependency backlog after the coordinated minor/patch refresh.
 
-It upgrades TypeScript 5.9 to 7.0 and OpenSkill 4 to 5 without replacing the already-reconciled Astro/MDX lockfile. The OpenSkill transitive runtime closure is transplanted onto the current lock graph rather than accepting the stale Dependabot lock wholesale.
+It upgrades TypeScript 5.9 to 6.0.3 and OpenSkill 4 to 5 without replacing the already-reconciled Astro/MDX lockfile. TypeScript 7.0.2 was tested first but is intentionally deferred because the current @astrojs/check 0.9.10 peer range supports TypeScript 5 and 6, not 7. The OpenSkill transitive runtime closure is transplanted onto the current lock graph rather than accepting the stale Dependabot lock wholesale.
 
 Pinned GitHub Actions are upgraded together so CI exercises the new action generations as part of this pull request: checkout 7.0.1, setup-node 7.0.0, cache 6.1.0, upload-pages-artifact 5.0.0 and deploy-pages 5.0.1.
 
