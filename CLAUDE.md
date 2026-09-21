@@ -5,7 +5,7 @@
 Static blog built with **Astro** (TypeScript). Content lives in `src/content/blog/`.
 
 Hrönir is an **OKF-first editorial evidence system**. Its persistent state is
-Markdown under `.routines/hronir/rates/`; agents create and complete evaluations
+Markdown under `.routines/hronir/evaluations/`; agents create and complete evaluations
 directly in Markdown, and `okf-parser` is the sole operational validator.
 
 TypeScript under `src/hronir/` may consume those records during the static build
@@ -43,7 +43,7 @@ Then run:
 
 ```bash
 uv run --with 'okf-parser @ git+https://github.com/franklinbaldo/okf-parser@3d4f31f41bca4aecb11a627f23900051f3f68685' \
-  okf-parser check .routines/hronir/rates \
+  okf-parser check .routines/hronir/evaluations \
   --require-spec ../../../specs/okf-types/{slug}.md \
   --normative-spec
 ```
@@ -128,7 +128,7 @@ Formato frouxo mas nomeado:
 - Docs/RFCs: `docs(rfc): RFC NNNN — título`
 - Remoção justificada de rate files: `hronir: remove <motivo>` — único caso em que
   o guardrail de imutabilidade (`.github/workflows/check.yml`, "Rate file deletion
-  guard") permite deletar arquivos de `.routines/hronir/rates/`. Use só quando os
+  guard") permite deletar arquivos de `.routines/hronir/evaluations/`. Use só quando os
   rates avaliaram uma versão publicada por engano (ex. um stub/placeholder), não
   para "corrigir" avaliações legítimas de que você discorda.
 
@@ -151,7 +151,7 @@ Merge por squash, conforme a política canônica do repositório.
 
 Todo post em `src/content/blog/**` tem `type: Blog Post | Music Post`
 (obrigatório) — a classificação OKF, não confundir com `docType` (opcional;
-a antiga taxonomia editorial: essay/letter/fiction/technical/dialogue). Rate files históricos em `.routines/hronir/rates/**` usam `type: Rate File`; avaliações novas usam `type: Hronir Evaluation`. Ambos os
+a antiga taxonomia editorial: essay/letter/fiction/technical/dialogue). Rate files históricos em `.routines/hronir/evaluations/**` usam `type: Rate File`; avaliações novas usam `type: Hronir Evaluation`. Ambos os
 campos são **excluídos** do hash de identidade de versão
 (`UUID_EXCLUDED_FIELDS` em `src/hronir/posts.ts`) — editá-los não muda a
 identidade de uma versão. Ver `docs/okf/` e RFC 0014 §7.
