@@ -1,5 +1,6 @@
 ---
 type: paper
+source_url: "https://github.com/franklinbaldo/papers/blob/main/relay-systems/rl-relay-transducers.md"
 title: "Relay transducers por RL"
 family: "Comunicação emergente e agência"
 kind: "controle/representação"

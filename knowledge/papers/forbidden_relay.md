@@ -1,5 +1,6 @@
 ---
 type: paper
+source_url: "https://github.com/franklinbaldo/papers/blob/main/relay-systems/forbidden-relay.md"
 title: "Forbidden Relay"
 family: "Comunicação emergente e agência"
 kind: "pré-registro experimental"
