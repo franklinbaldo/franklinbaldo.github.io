@@ -20,6 +20,7 @@ const searchHref = `${prefix}/search/`;
 const projectsHref = `${prefix}/projects/`;
 const rankingHref = `${prefix}/ranking/`;
 const epistemicWorldsHref = '/pt/ai-epistemic-worlds/';
+const awesomeAiSlopHref = '/pt/awesome-ai-slop/';
 const aboutHref = `${prefix}/about/`;
 // Changelog content is English-only by deliberate exception (CLAUDE.md
 // "Línguas") — one page serves both languages, no /pt/ prefix.
@@ -49,7 +50,7 @@ const secondaryLinks = [
   { href: booksHref, label: t(lang, 'nav.books') },
   { href: audiobooksHref, label: audiobooksLabel },
   { href: rankingHref, label: t(lang, 'nav.ranking') },
-  ...(lang === 'pt' ? [{ href: epistemicWorldsHref, label: 'Mundos IA' }] : []),
+  ...(lang === 'pt' ? [{ href: epistemicWorldsHref, label: 'Mundos IA' }, { href: awesomeAiSlopHref, label: 'AI Slop' }] : []),
   { href: tagsHref, label: t(lang, 'nav.tags') },
   { href: changelogHref, label: 'Changelog' },
 ];
