@@ -5,6 +5,6 @@ description: "Repairs public paper and prior-art links after upstream research l
 tags: [papers, okf, links, research]
 ---
 
-- Points the existing public Informational Time, Machine Discovery, and Generative Machine Teaching cards at their new canonical upstream paths.
-- Updates their material prior-art links to the colocated audit paths.
+- Points the existing public Informational Time, Machine Discovery, Generative Machine Teaching, Relay Systems, and Structural Identification cards at their new canonical upstream paths.
+- Updates material prior-art links where those audits moved with their research lines.
 - No paper is newly published and no tier changes.
