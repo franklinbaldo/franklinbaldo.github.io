@@ -29,7 +29,7 @@ A execução canônica usa `uv run`:
 
 ```bash
 uv run --with 'okf-parser @ git+https://github.com/franklinbaldo/okf-parser@3d4f31f41bca4aecb11a627f23900051f3f68685' \
-  okf-parser check .routines/hronir/rates \
+  okf-parser check .routines/hronir/evaluations \
   --require-spec ../../../specs/okf-types/{slug}.md \
   --normative-spec
 ```
