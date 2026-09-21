@@ -1,4 +1,4 @@
-export type SlopTier = "S" | "A" | "B" | "C" | "D" | "F";
+export type QualityTier = "S" | "A" | "B" | "C" | "D" | "F";
 export type InterestTier = "S" | "A" | "B" | "C" | "D" | "F";
 
 export interface AiSlopEntry {
@@ -6,12 +6,12 @@ export interface AiSlopEntry {
   name: string;
   artifactType: string;
   creatorHandle?: string;
-  slopTier: SlopTier;
+  qualityTier: QualityTier;
   interestTier: InterestTier;
   confidence: "low" | "medium" | "high";
   summary: string;
-  slopSignals: string[];
-  redeemingFeatures: string[];
+  qualitySignals: string[];
+  limitations: string[];
   aiMediationEvidence: string[];
   sourceLabel: string;
   sourceUrl: string;
@@ -27,12 +27,12 @@ type AiSlopCardModule = {
     name: string;
     artifact_type: string;
     creator_handle?: string;
-    slop_tier: SlopTier;
+    quality_tier: QualityTier;
     interest_tier: InterestTier;
     confidence: AiSlopEntry["confidence"];
     summary: string;
-    slop_signals: string[];
-    redeeming_features: string[];
+    quality_signals: string[];
+    limitations: string[];
     ai_mediation_evidence: string[];
     source_label: string;
     source_url: string;
@@ -60,12 +60,12 @@ export const awesomeAiSlop: AiSlopEntry[] = Object.entries(modules)
       name: card.name,
       artifactType: card.artifact_type,
       creatorHandle: card.creator_handle,
-      slopTier: card.slop_tier,
+      qualityTier: card.quality_tier,
       interestTier: card.interest_tier,
       confidence: card.confidence,
       summary: card.summary,
-      slopSignals: card.slop_signals,
-      redeemingFeatures: card.redeeming_features,
+      qualitySignals: card.quality_signals,
+      limitations: card.limitations,
       aiMediationEvidence: card.ai_mediation_evidence,
       sourceLabel: card.source_label,
       sourceUrl: card.source_url,

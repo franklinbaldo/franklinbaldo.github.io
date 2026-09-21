@@ -7,7 +7,7 @@ const tiers = ["S", "A", "B", "C", "D", "F"] as const;
 
 <PageLayout
   title="Awesome AI Slop | Franklin Baldo"
-  description="Uma tier list viva de AI slop: artefatos em que escala e fluência geradas por IA correm mais rápido que curadoria, verificação e julgamento editorial."
+  description="Uma tier list viva dos melhores artefatos culturais feitos notadamente com IA."
   lang="pt"
 >
   <main class="slop-shell">
@@ -15,29 +15,30 @@ const tiers = ["S", "A", "B", "C", "D", "F"] as const;
       <p class="eyebrow">AWESOME LIST · ATUALIZADA {AWESOME_AI_SLOP_UPDATED}</p>
       <h1>Awesome AI Slop</h1>
       <p class="lede">
-        Uma coleção de artefatos em que a IA produziu <em>demais</em>, rápido demais, com curadoria de menos —
-        e às vezes o resultado é justamente por isso fascinante. <strong>S significa mais slop, não melhor.</strong>
+        O melhor da cultura feita notadamente com IA. Aqui <strong>slop não quer dizer ruim</strong>:
+        é só o apelido para o meio de produção. O ranking pergunta se a obra é boa, memorável,
+        inventiva e culturalmente interessante.
       </p>
       <div class="hero-notes">
-        <span>🫠 slop é atributo do artefato</span>
+        <span>🏆 S = melhor slop</span>
+        <span>🤖 IA é critério de entrada</span>
         <span>✨ interesse é um tier separado</span>
-        <span>🧾 AI precisa de evidência direta</span>
-        <span>↕ tiers só mudam com razão material</span>
+        <span>🧾 IA precisa de evidência direta</span>
       </div>
     </header>
 
     <section aria-labelledby="board-heading">
       <div class="section-heading">
         <div>
-          <p class="kicker">SLOP TIER</p>
-          <h2 id="board-heading">A pilha</h2>
+          <p class="kicker">QUALITY TIER</p>
+          <h2 id="board-heading">A liga</h2>
         </div>
-        <p>Quanto mais alto, mais exemplar do fenômeno. Interesse pode apontar para outra direção.</p>
+        <p>Quanto mais alto, melhor o artefato. A quantidade de IA não dá bônus por si só.</p>
       </div>
 
       <div class="tier-board">
         {tiers.map((tier) => {
-          const entries = awesomeAiSlop.filter((entry) => entry.slopTier === tier);
+          const entries = awesomeAiSlop.filter((entry) => entry.qualityTier === tier);
           return (
             <section class={`tier-row tier-${tier.toLowerCase()}`} aria-label={`Tier ${tier}`}>
               <div class="tier-letter" aria-hidden="true">{tier}</div>
@@ -49,7 +50,7 @@ const tiers = ["S", "A", "B", "C", "D", "F"] as const;
                     {entries.map((entry) => (
                       <article class="slop-card" id={entry.slug}>
                         <div class="card-topline">
-                          <span class="slop-badge">slop {entry.slopTier}</span>
+                          <span class="quality-badge">qualidade {entry.qualityTier}</span>
                           <span class="interest-badge">interesse {entry.interestTier}</span>
                           <span class="confidence-badge">conf. {entry.confidence}</span>
                         </div>
@@ -60,15 +61,15 @@ const tiers = ["S", "A", "B", "C", "D", "F"] as const;
                         </p>
                         <p>{entry.summary}</p>
                         <details>
-                          <summary>Por que está aqui?</summary>
+                          <summary>Por que está nesse tier?</summary>
                           <div class="evidence-grid">
                             <div>
-                              <h4>Sinais de slop</h4>
-                              <ul>{entry.slopSignals.map((item) => <li>{item}</li>)}</ul>
+                              <h4>O que funciona</h4>
+                              <ul>{entry.qualitySignals.map((item) => <li>{item}</li>)}</ul>
                             </div>
                             <div>
-                              <h4>O que salva / interessa</h4>
-                              <ul>{entry.redeemingFeatures.map((item) => <li>{item}</li>)}</ul>
+                              <h4>O que segura</h4>
+                              <ul>{entry.limitations.map((item) => <li>{item}</li>)}</ul>
                             </div>
                           </div>
                           <div>
@@ -94,17 +95,17 @@ const tiers = ["S", "A", "B", "C", "D", "F"] as const;
 
     <section class="rules" aria-labelledby="rules-heading">
       <p class="kicker">REGRAS</p>
-      <h2 id="rules-heading">O que conta como AI slop?</h2>
+      <h2 id="rules-heading">O que entra?</h2>
       <div class="rule-grid">
-        <article><strong>01</strong><span>escala ou velocidade muito acima da curadoria visível</span></article>
-        <article><strong>02</strong><span>repetição, enchimento, templates ou proliferação de artefatos</span></article>
-        <article><strong>03</strong><span>fluência que supera verificação, coerência ou julgamento editorial</span></article>
-        <article><strong>04</strong><span>evidência direta de que IA participou materialmente</span></article>
+        <article><strong>01</strong><span>artefato cultural público e avaliável por si mesmo</span></article>
+        <article><strong>02</strong><span>evidência direta de participação material de IA</span></article>
+        <article><strong>03</strong><span>qualidade julgada pelo resultado, não pela quantidade de automação</span></article>
+        <article><strong>04</strong><span>curadoria humana, edição e pós-produção contam a favor quando melhoram a obra</span></article>
       </div>
       <p class="fineprint">
-        Não basta “parecer escrito por IA”. O board exige evidência pública de mediação por IA.
-        E slop não é sinônimo de inútil: alguns casos podem ser culturalmente excelentes, engraçados,
-        tecnicamente curiosos ou produtivos — por isso existe um tier de interesse separado.
+        “Slop” aqui é afetuoso e descritivo: cultura feita com IA. Pode ser música, imagem, filme,
+        meme, jogo, site, livro, vídeo ou outra coisa. O tier principal mede qualidade cultural;
+        o tier de interesse mede estranheza, novidade, importância e poder de gerar conversa.
       </p>
     </section>
   </main>
@@ -157,8 +158,8 @@ const tiers = ["S", "A", "B", "C", "D", "F"] as const;
   .slop-card h3 { margin:.6rem 0 .25rem; font-size:1.35rem; line-height:1.08; }
   .meta { margin:0 0 .75rem; color:var(--muted); font:700 .8rem/1.2 ui-monospace, monospace; }
   .card-topline { display:flex; gap:.35rem; flex-wrap:wrap; }
-  .slop-badge, .interest-badge, .confidence-badge { display:inline-block; padding:.25rem .45rem; border:1px solid var(--ink); font:700 .68rem/1 ui-monospace, monospace; text-transform:uppercase; }
-  .slop-badge { background:var(--slime); color:#17151c; }
+  .quality-badge, .interest-badge, .confidence-badge { display:inline-block; padding:.25rem .45rem; border:1px solid var(--ink); font:700 .68rem/1 ui-monospace, monospace; text-transform:uppercase; }
+  .quality-badge { background:var(--slime); color:#17151c; }
   .interest-badge { background:var(--interest); }
   details { margin-top:1rem; border-top:1px dashed var(--line); padding-top:.7rem; }
   summary { cursor:pointer; font-weight:800; }
