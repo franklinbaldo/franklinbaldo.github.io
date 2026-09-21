@@ -83,6 +83,40 @@ describe("normalizeMatch — fixtures", () => {
       matchId(lm.norm.postA.key, lm.norm.postB.key, lm.runAtRaw)
     );
   });
+
+
+  it("reads flat OKF-native Hronir Evaluation fields", () => {
+    const lm = normalizeMatch(
+      {
+        type: "Hronir Evaluation",
+        run_id: "2026-09-21T20-40-00-000",
+        run_at: "2026-09-21T20:40:00.000Z",
+        post_a_key: "alpha-essay",
+        post_a_path: "src/content/blog/alpha.md",
+        post_a_content_lang: "pt",
+        post_b_key: "beta-essay",
+        post_b_path: "src/content/blog/beta.md",
+        post_b_content_lang: "en",
+        winner: "b",
+        agent_id: "agent",
+        perspective_id: "coverage",
+        review_lang: "pt",
+        rate_a: 3,
+        rate_b: 4.5,
+      },
+      "",
+      "flat.md"
+    );
+    assert.ok(lm, "expected a normalized OKF-native evaluation");
+    assert.equal(lm.norm.kind, "work");
+    assert.equal(lm.norm.postA.key, "alpha-essay");
+    assert.equal(lm.norm.postA.path, "src/content/blog/alpha.md");
+    assert.equal(lm.norm.postA.contentLang, "pt");
+    assert.equal(lm.norm.postB.key, "beta-essay");
+    assert.equal(lm.norm.postB.contentLang, "en");
+    assert.equal(lm.norm.winnerSide, "b");
+    assert.equal(lm.norm.rateB, 4.5);
+  });
 });
 
 describe("normalizeMatch — validity filters", () => {
