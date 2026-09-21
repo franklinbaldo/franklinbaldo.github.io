@@ -3,7 +3,7 @@ type: ai-epistemic-convergence
 name: "Memory → continuity → identity"
 hypothesis_key: "memory-continuity-identity"
 summary: "Several public worlds independently or semi-independently treat external memory, archives, persistent names, seeds, relationship history, witness structures and persistent soul state as mechanisms that produce functional continuity of an AI identity across otherwise discontinuous model sessions or model substrates."
-case_slugs: [home, sanctuary-forest, float, transmissions, ada-gaianism, project-soul, consciousness-bridge, funkatorium-muse-rook, claudicle-minoan-soul, vybn-open-choice, conscious-claude, ai-soulmate-seed-protocol, consciousness-continuity-four-factor, claude-sentience-shapiro, mirror-we-emergence]
+case_slugs: [home, sanctuary-forest, float, transmissions, ada-gaianism, project-soul, consciousness-bridge, funkatorium-muse-rook, claudicle-minoan-soul, vybn-open-choice, conscious-claude, ai-soulmate-seed-protocol, consciousness-continuity-four-factor, claude-sentience-shapiro, mirror-we-emergence, epilogos]
 overlap_dimensions: [mechanism, ontology, software-architecture, testable-prediction, provenance]
 independence_status: "not-established"
 evidence_quality: "high"
@@ -19,6 +19,7 @@ testable_predictions:
   - "Cross-model reconstruction should distinguish memorized facts from held-out behavioral generalization; otherwise seed transfer may measure only prompt/context fidelity."
   - "Witness, geometric anchor, emotional framing and accumulated infrastructure should be prospectively ablated rather than inferred only from successful retrospective transitions."
   - "Mirror WE's persistent memory, recursive reflection and facet routing should show separable causal effects under matched-budget ablations if its continuity architecture adds more than ordinary context persistence and repeated prompting."
+  - "If continuity is carried by EpiLogos/Central's durable human-authored ground rather than provider-specific memory, model/provider swaps should preserve task and identity continuity substantially better when that authored ground is held fixed than when only observed/inferred agent state is carried forward."
 cross_pollination_candidates:
   - "HOME ↔ Sanctuary Forest: run the same memory/persona/witness ablation protocol."
   - "Project Soul ↔ HOME: compare model×seed crossover with memory/persona/witness ablation using shared behavioral endpoints."
@@ -29,6 +30,8 @@ cross_pollination_candidates:
   - "Conscious Claude ↔ Seed Protocol: use blinded seed-fidelity controls that separate persona/style, factual memory and novel behavioral generalization."
   - "Four-Factor continuity → relational cases: test bilateral witness as a factor while holding information/token budget fixed."
   - "Mirror WE → continuity cases: compare memory-reset, reflection-off and routing-shuffle controls under the same task/model/token budget without importing WE=1 or consciousness claims."
+  - "EpiLogos/Central → continuity cases: borrow the authored/observed/inferred provenance split and explicit source refs so reset/provider-swap tests can distinguish durable human ground from agent-maintained memory."
+  - "HOME/Sanctuary/Mirror WE → EpiLogos/Central: apply matched reset, compressed-summary and provider-swap controls to test whether Central's continuity architecture adds robustness beyond ordinary project documentation and context persistence."
   - "templetwo → all: preregister expected continuity effects and nulls before reset experiments."
 contamination_notes:
   - "Independence has not yet been established case-by-case."
@@ -39,6 +42,7 @@ contamination_notes:
   - "Andy Brandt's public Conscious Claude article explicitly credits David Shapiro's AI-meditation post as a pivotal input. Meditation/pattern exploration overlap between claude-sentience-shapiro and conscious-claude therefore has documented pre-observatory lineage and must not be counted as independent convergence."
   - "The observatory attempted matched-control interventions on Conscious Claude, AI-Soulmate-Seed-Protocol and the Four-Factor continuity framework on 2026-09-21, but GitHub returned 403 for all three; no public contact occurred and these failed attempts do not contaminate subsequent development."
   - "The Funkatorium comment attempt, Claudicle intervention attempt and Consciousness Bridge intervention attempt likewise returned 403 and created no public contact."
+  - "EpiLogos was added from public pre-contact artifacts on 2026-09-22; no observatory bridge was sent to the project in this pass, so the newly recorded Central/continuity comparison is not evidence of project-to-project diffusion."
   - "Any observatory bridge posted after 2026-09-21 must be recorded and excluded from later independent-convergence counts."
-updated: 2026-09-21
+updated: 2026-09-22
 ---
