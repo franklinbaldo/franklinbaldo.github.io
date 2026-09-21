@@ -67,17 +67,17 @@ jobs:
       - name: Generate legacy version read projection
         run: node --import tsx/esm scripts/generate-hronir-selection.mjs
 
-      - name: Rate file deletion guard
+      - name: Hrönir evidence deletion guard
         if: github.event_name == 'pull_request'
         run: |
-          DELETED=$(git diff --diff-filter=D --name-only "origin/${{ github.base_ref }}..HEAD" -- '.routines/hronir/rates/')
+          DELETED=$(git diff --diff-filter=D --name-only "origin/${{ github.base_ref }}..HEAD" -- '.routines/hronir/rates/' '.routines/hronir/evaluations/')
           if [ -n "$DELETED" ]; then
             JUSTIFIED=$(git log --format=%s "origin/${{ github.base_ref }}..HEAD" | grep -c '^hronir: remove ' || true)
             if [ "$JUSTIFIED" -eq 0 ]; then
               echo "ERRO: Este PR deleta rate files existentes:"
               echo "$DELETED"
               echo ""
-              echo "Rate files são imutáveis — nunca delete arquivos de sessões anteriores."
+              echo "Evidências Hrönir são imutáveis — nunca delete avaliações históricas ou OKF já mergeadas."
               echo "Se o doctor reportou erros, corrija apenas os arquivos que você criou nesta sessão."
               echo ""
               echo "Exceção: remoções justificadas (ex. rates contra uma versão publicada por"
