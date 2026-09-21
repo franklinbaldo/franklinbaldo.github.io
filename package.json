@@ -33,6 +33,7 @@
     "hronir:decide": "node --import tsx/esm scripts/hronir/index.js decide",
     "hronir:ranking": "node --import tsx/esm scripts/hronir/index.js ranking",
     "hronir:diagnose": "node --import tsx/esm scripts/hronir/index.js diagnose",
+    "hronir:tier-evidence": "node --import tsx/esm scripts/hronir/index.js tier-evidence",
     "hronir:draft-worst": "node --import tsx/esm scripts/hronir/index.js draft-worst",
     "hronir:draft-commit": "node --import tsx/esm scripts/hronir/index.js draft-commit",
     "hronir:select": "node --import tsx/esm scripts/hronir/index.js select",
