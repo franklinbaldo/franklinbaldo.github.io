@@ -23,7 +23,7 @@ O antigo `scripts/hronir/index.js` foi removido. Não use `npx hronir` nem
 
 ## Persistência
 
-Novas avaliações são arquivos em `.routines/hronir/rates/` com:
+Novas avaliações são arquivos em `.routines/hronir/evaluations/` com:
 
 ```yaml
 ---
