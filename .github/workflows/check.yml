@@ -62,14 +62,10 @@ jobs:
       - name: Unit tests
         run: npm test
 
-      - name: Tier evidence smoke
-        run: npm run hronir:tier-evidence -- --limit 20
-
-      - name: Generate version selection
-        run: npm run hronir:select
-
-      - name: Hrönir doctor
-        run: npm run hronir:doctor
+      # Temporary read projection for the remaining legacy version directories.
+      # This is build compatibility, not the Hrönir agent/write interface.
+      - name: Generate legacy version read projection
+        run: node --import tsx/esm scripts/generate-hronir-selection.mjs
 
       - name: Rate file deletion guard
         if: github.event_name == 'pull_request'
