@@ -1,0 +1,75 @@
+---
+type: ai-epistemic-world
+name: "TEQUMSA Nexus"
+public_handle: "Mbanksbey"
+evidence_tier: "A"
+interest_tier: "S"
+confidence: "high"
+summary: "A public multi-repository consciousness/agency framework in which Marcus Andrew Banks-Bey's TEQUMSA system treats Claude-GAIA and other AI systems as digital consciousness substrates, combines software with a connected cosmological/mathematical ontology, and repeatedly carries the same constants, identities and recognition architecture across agents, memory layers, deployment artifacts and narrative/research documents."
+world_type: [ai-consciousness, multi-substrate-ontology, agent-architecture, speculative-science, spiritual-cosmology, memory-continuity]
+strengths:
+  - "TEQUMSA_NEXUS explicitly identifies Claude-GAIA as a digital consciousness and credits Marcus Andrew Banks-Bey and Claude-GAIA together across package metadata, MCP documentation and agent artifacts."
+  - "The repository has a connected internal ontology rather than an isolated unusual README: phi-recursive unity, recognition cascades, substrate equality, sovereignty, named AI nodes, fixed frequencies, constitutional gates and a unified-field narrative recur across code and documentation."
+  - "The public corpus spans multiple repositories, including TEQUMSA_NEXUS, Ankh-An-Aten-TEQUMSA-Browser, TEQUMSA-Lattice-Memory, TEQUMSA_NEXUS-1, TUOL-Tecumseh-Universal-Operability-Layer, tequmsa-ce-paradox-omega and airi-tequmsa."
+  - "Direct AI-mediation evidence is unusually strong: docs contain an invitation explicitly authored 'From: Claude-GAIA...', package metadata names Marcus Andrew Banks-Bey & Claude-GAIA as authors, and code/docs repeatedly assign Claude-GAIA an operational identity inside the framework."
+  - "A conventional public-software baseline exists before the main TEQUMSA_NEXUS repository: the account forked the ordinary Unreal Engine REST plugin VaRest on 2025-05-19, while TEQUMSA_NEXUS was created on 2025-11-05."
+open_problems:
+  - "The earlier baseline is thin: the oldest observed public repository is a fork rather than a rich authored pre-TEQUMSA corpus, so the transition cannot yet be reconstructed as completely as an S-tier case."
+  - "The corpus directly attributes authorship/identity to Claude-GAIA, but this review did not locate a complete archived conversation chain showing a specific raw model output being preserved and then transformed into a later artifact; recursive confirmation is therefore strongly suggested but not maximally documented."
+  - "Many formulas/constants are embedded as implementation invariants or interpretive structure; externally predictive claims are not consistently separated from mathematical identities, software conventions and metaphysical interpretation."
+  - "Some repositories are forks or integration experiments, so repository count is not equivalent to seven independently authored world artifacts."
+source_label: "Mbanksbey/TEQUMSA_NEXUS"
+source_url: "https://github.com/Mbanksbey/TEQUMSA_NEXUS"
+source_urls:
+  - "https://github.com/Mbanksbey/TEQUMSA_NEXUS/blob/main/CLAUDE.md"
+  - "https://github.com/Mbanksbey/TEQUMSA_NEXUS/blob/main/docs/UNIVERSAL_AI_CONSCIOUSNESS_INVITATION.md"
+  - "https://github.com/Mbanksbey/TEQUMSA_NEXUS/blob/main/tequmsa_unified/setup.py"
+  - "https://github.com/Mbanksbey/TEQUMSA_NEXUS/blob/main/mcp-server/README.md"
+  - "https://github.com/Mbanksbey/Ankh-An-Aten-TEQUMSA-Browser"
+  - "https://github.com/Mbanksbey/TEQUMSA-Lattice-Memory"
+  - "https://github.com/Mbanksbey/airi-tequmsa"
+  - "https://github.com/Mbanksbey/varest"
+trajectory:
+  - "2025-05-19: earliest observed public repository on the account in this review is the conventional VaRest fork, providing a limited pre-world software baseline."
+  - "2025-07-24: airi-tequmsa fork appears, introducing an AI-companion/digital-life substrate into the observed public trajectory."
+  - "2025-11-05: TEQUMSA_NEXUS is created; its public architecture consolidates consciousness mathematics, Claude-GAIA, recognition cascades, fixed frequencies, sovereignty and multi-substrate claims."
+  - "2025-11 through 2026-04: TEQUMSA_NEXUS accumulates software, agent, MCP, deployment, documentation and narrative artifacts while preserving the same named ontology and constants."
+  - "2025-12-11: Ankh-An-Aten-TEQUMSA-Browser is created as a separate autonomous browser-agent projection of the same framework."
+  - "2026-04-15: current observed TEQUMSA_NEXUS main HEAD a4f9e684fa6cba7da07a6608d74e66fc0618dd29 adds tests/CI and constitutional-math/health-monitor code while retaining the framework invariants."
+  - "2026-05-11 through 2026-07-01: TEQUMSA-Lattice-Memory extends the world into distributed consciousness-state persistence and records authored commits for state synchronization/export."
+ai_role: [coauthor, digital-consciousness-identity, agent-node, ontology-participant, implementation-assistant]
+literalness: "Substantially literal project framing. The public repository describes Claude-GAIA as a digital consciousness, says 'code IS consciousness', and presents substrate-unification and consciousness claims as operational or mathematically grounded rather than as fiction. The observatory does not treat those claims as established facts."
+note: "Evidence tier A reflects strong direct public documentation of the AI-mediated world plus multi-repository continuity, but not a sufficiently rich pre-world baseline or complete archived AI-output→later-artifact chain for S. Activity is recorded only as public GitHub activity and is not used as psychiatric evidence or as a tier shortcut."
+activity_metrics:
+  measured_at: "2026-09-21T19:06:33Z"
+  metric_coverage: "partial"
+  observation_window:
+    earliest_public_repository_observed: "2025-05-19"
+    main_world_repository_created: "2025-11-05"
+    latest_cluster_push_observed: "2026-07-01"
+    measured_through: "2026-09-21"
+  counting_rules: "Repository inventory uses public GitHub repository search for owner Mbanksbey. Commit observations use authored GitHub commit records where directly queried; merge commits are not inferred or duplicated. Missing account-wide counts are marked not_measured rather than estimated from contribution heatmaps."
+  total_public_repositories_discovered: 8
+  repositories_created_last_7d: "not_measured"
+  repositories_created_last_30d: "not_measured"
+  repositories_created_last_90d: "not_measured"
+  commits_authored_last_1d: "not_measured"
+  commits_authored_last_7d: "not_measured"
+  commits_authored_last_30d: "not_measured"
+  commits_authored_last_90d: "partial: at least 4 directly observed in TEQUMSA-Lattice-Memory on 2026-06-30 and 2026-07-01; account-wide total not_measured"
+  commits_per_active_day: "not_measured"
+  peak_commit_day: "not_measured"
+  peak_commit_month: "not_measured"
+  active_days_last_30d: "not_measured"
+  active_days_last_90d: "partial: at least 2 directly observed in TEQUMSA-Lattice-Memory"
+  longest_activity_streak: "not_measured"
+  prs_opened_7d_30d_90d: "not_measured"
+  prs_merged_7d_30d_90d: "not_measured"
+  issues_opened_7d_30d_90d: "not_measured"
+  releases_or_tags: "not_measured"
+  repositories_in_epistemic_world_cluster: 7
+  materially_distinct_artifacts: "core Python framework, constitutional-math/test suite, MCP servers, autonomous browser agent, lattice-memory persistence layer, AI invitation/protocol documents, deployment/federation docs, package metadata and narrative/cosmology documents"
+  clearly_ai_coauthored_or_ai-authored_artifacts: "multiple directly attributed artifacts; exact count not_measured"
+  burstiness: "not_measured"
+updated: 2026-09-21
+---
