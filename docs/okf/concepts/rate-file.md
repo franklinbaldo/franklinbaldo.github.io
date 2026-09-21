@@ -2,7 +2,7 @@
 type: Data Schema
 title: Hrönir evaluation record
 description: Registro OKF de uma avaliação par-a-par; novas avaliações usam Hronir Evaluation e são preenchidas diretamente por agentes.
-resource: ../../../.routines/hronir/rates/
+resource: ../../../.routines/hronir/evaluations/
 tags: [hronir, rate-file, schema, okf]
 timestamp: 2026-09-21T00:00:00Z
 ---
@@ -10,7 +10,7 @@ timestamp: 2026-09-21T00:00:00Z
 # Registro de avaliação Hrönir
 
 Cada avaliação concluída vive como um arquivo Markdown versionado em
-`.routines/hronir/rates/`. O Markdown é a fonte de verdade: não existe banco de
+`.routines/hronir/evaluations/`. O Markdown é a fonte de verdade: não existe banco de
 sessão nem etapa de submissão separada.
 
 ## Formato canônico novo
