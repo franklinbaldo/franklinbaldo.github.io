@@ -1,0 +1,55 @@
+---
+// Renders mermaid code blocks client-side.
+// Looks for <pre><code class="language-mermaid">…</code></pre> emitted by
+// the default Shiki/markdown pipeline, swaps the wrapper to a mermaid
+// container, then runs mermaid.run on it. No build-time dependency on
+// Playwright; broken diagrams degrade gracefully to a code block.
+---
+
+<script>
+  let initializedTheme: string | undefined;
+
+  async function render() {
+    // Astro's default Shiki pipeline emits mermaid blocks as
+    // <pre data-language="mermaid"><code>…</code></pre> — the language tag
+    // lives on the <pre>, not on the <code>. Earlier selector targeted
+    // .language-mermaid on <code> and matched nothing.
+    const preBlocks = document.querySelectorAll<HTMLElement>(
+      "article pre[data-language='mermaid']",
+    );
+    if (preBlocks.length === 0) return;
+
+    const targets: HTMLElement[] = [];
+    preBlocks.forEach((pre) => {
+      if (pre.dataset.mermaidProcessed === "true") return;
+      const source = pre.textContent ?? "";
+      const container = document.createElement("div");
+      container.className = "mermaid";
+      container.textContent = source.trim();
+      pre.replaceWith(container);
+      targets.push(container);
+    });
+
+    if (targets.length === 0) return;
+
+    const { default: mermaid } = await import("mermaid");
+    const dark = document.documentElement.dataset.theme === "dark";
+    const theme = dark ? "dark" : "neutral";
+    if (initializedTheme !== theme) {
+      mermaid.initialize({
+        startOnLoad: false,
+        theme,
+        securityLevel: "strict",
+      });
+      initializedTheme = theme;
+    }
+    try {
+      await mermaid.run({ nodes: targets });
+    } catch (err) {
+      console.warn("[mermaid] render error:", err);
+    }
+  }
+
+  render();
+  document.addEventListener("astro:page-load", render);
+</script>

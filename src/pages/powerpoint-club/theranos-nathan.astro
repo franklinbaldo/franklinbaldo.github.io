@@ -1,0 +1,623 @@
+---
+const title = "Theranos, depois Nathan · Clube do PowerPoint";
+
+const media = {
+  holmesPortrait: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Elizabeth%20Holmes%202014%20(cropped).jpg?width=1200",
+    href: "https://commons.wikimedia.org/wiki/File:Elizabeth_Holmes_2014_(cropped).jpg",
+    credit: "Max Morse / TechCrunch · CC BY 2.0 · Wikimedia Commons",
+  },
+  holmesStage: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Theranos%20Chairman,%20CEO%20and%20Founder%20Elizabeth%20Holmes%20speaks%20onstage%20at%20TechCrunch%20Disrupt%20at%20Pier%2048%20on%20September%208,%202014%20(14996937900).jpg?width=1600",
+    href: "https://commons.wikimedia.org/wiki/File:Theranos_Chairman,_CEO_and_Founder_Elizabeth_Holmes_speaks_onstage_at_TechCrunch_Disrupt_at_Pier_48_on_September_8,_2014_(14996937900).jpg",
+    credit: "TechCrunch / Flickr · CC BY 2.0 · Wikimedia Commons",
+  },
+  theranosLogo: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Theranos%20Logo.svg?width=1200",
+    href: "https://commons.wikimedia.org/wiki/File:Theranos_Logo.svg",
+    credit: "Theranos logo · Wikimedia Commons",
+  },
+  nathanPortrait: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Nathan%20Fielder.jpg?width=1200",
+    href: "https://commons.wikimedia.org/wiki/File:Nathan_Fielder.jpg",
+    credit: "Northwest · CC BY-SA 4.0 · Wikimedia Commons",
+  },
+  dumbStarbucks: {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Dumb%20Starbucks.jpg?width=1600",
+    href: "https://commons.wikimedia.org/wiki/File:Dumb_Starbucks.jpg",
+    credit: "Shelby Asistio · CC BY-SA 2.0 · Wikimedia Commons",
+  },
+  rehearsal: {
+    src: "https://i.ytimg.com/vi/2fjPFt8cpic/hqdefault.jpg",
+    href: "https://www.youtube.com/watch?v=2fjPFt8cpic",
+    credit: "HBO · thumbnail do trailer oficial no YouTube · uso editorial",
+  },
+  ycse: {
+    src: "https://i.ytimg.com/vi/GGJSRFWALTI/maxresdefault.jpg",
+    href: "https://www.youtube.com/watch?v=GGJSRFWALTI",
+    credit: "A24 · thumbnail do teaser oficial no YouTube · uso editorial",
+  },
+};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Apresentação alternativa do Clube do PowerPoint: começa como história da Theranos e termina como uma apresentação sobre Nathan Fielder."
+    />
+    <title>{title}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/white.css" />
+  </head>
+  <body>
+    <div class="reveal bait-deck">
+      <div class="slides">
+        <section class="cover success">
+          <p class="eyebrow">Clube do PowerPoint · primeiro dia</p>
+          <h1>Theranos</h1>
+          <p class="subtitle">A startup que prometeu reinventar os exames de sangue.</p>
+          <aside class="notes">Abrir como se fosse uma palestra séria de negócios. Nada de Nathan. Nada de ironia ainda.</aside>
+        </section>
+
+        <section class="success">
+          <div class="split">
+            <div>
+              <p class="eyebrow">O pitch</p>
+              <h2>Uma caixa pequena para uma promessa enorme</h2>
+              <p class="big">Poucas gotas de sangue. Centenas de exames. Resultado rápido. Mais barato. Mais acessível.</p>
+            </div>
+            <figure class="media logo-card">
+              <a href={media.theranosLogo.href} target="_blank" rel="noreferrer">
+                <img src={media.theranosLogo.src} alt="Logotipo da Theranos" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.theranosLogo.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Vender a promessa como se fosse genuinamente irresistível. A plateia precisa pensar: ok, isso seria incrível.</aside>
+        </section>
+
+        <section class="success">
+          <p class="eyebrow">O case</p>
+          <h2>Não era só uma empresa. Era uma tese bonita.</h2>
+          <div class="cards">
+            <p>Descentralizar exames.</p>
+            <p>Reduzir atrito médico.</p>
+            <p>Transformar prevenção em rotina.</p>
+          </div>
+          <p class="fragment kicker">É difícil torcer contra uma promessa dessas.</p>
+          <aside class="notes">A graça futura depende de levar essa parte a sério. Não antecipar o tom de fraude.</aside>
+        </section>
+
+        <section class="success">
+          <p class="eyebrow">A surpresa 1</p>
+          <h2>E a empresa foi fundada por uma mulher.</h2>
+          <p class="fragment big">Num ecossistema que adora fundador-prodígio, isso já virava narrativa.</p>
+          <aside class="notes">Começar a deslocar o foco da empresa para a personagem, mas sem entrar em caricatura.</aside>
+        </section>
+
+        <section class="success">
+          <div class="split portrait-right">
+            <div>
+              <p class="eyebrow">A surpresa 2</p>
+              <h2>Ela era jovem. Muito jovem.</h2>
+              <p class="big">Largou Stanford para construir a empresa.</p>
+              <p class="fragment kicker">Ou seja: o roteiro do Vale do Silício estava completo antes do produto estar.</p>
+            </div>
+            <figure class="media portrait">
+              <a href={media.holmesPortrait.href} target="_blank" rel="noreferrer">
+                <img src={media.holmesPortrait.src} alt="Elizabeth Holmes em 2014" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.holmesPortrait.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Aqui já pode entrar uma microironia, mas ainda parecendo admiração.</aside>
+        </section>
+
+        <section class="success">
+          <div class="split">
+            <div>
+              <p class="eyebrow">A escalada</p>
+              <h2>Investidor, conselho, farmácia, revista, palco.</h2>
+              <p class="big">A história ficou grande demais para parecer só uma aposta.</p>
+              <p class="stat">US$ 9 bi <span>de valuation no auge</span></p>
+            </div>
+            <figure class="media landscape">
+              <a href={media.holmesStage.href} target="_blank" rel="noreferrer">
+                <img src={media.holmesStage.src} alt="Elizabeth Holmes no palco do TechCrunch Disrupt" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.holmesStage.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Fazer parecer final de capítulo 1 de série: a empresa venceu o mundo.</aside>
+        </section>
+
+        <section class="success applause">
+          <p class="eyebrow">Parece final feliz</p>
+          <h2>Então temos aqui um case clássico de inovação.</h2>
+          <p class="fragment big">Ciência, empreendedorismo, representatividade, coragem, escala.</p>
+          <p class="fragment kicker">Bonito, né?</p>
+          <aside class="notes">Pausa. Deixar a sala comprar a moldura. Próximo slide quebra.</aside>
+        </section>
+
+        <section class="crash">
+          <p class="eyebrow">Só tem um problema</p>
+          <h2>O produto nunca funcionou.</h2>
+          <p class="fragment big">Não do jeito que era vendido.</p>
+          <aside class="notes">Virada seca. Não explicar tudo ainda. Só deixar cair.</aside>
+        </section>
+
+        <section class="crash">
+          <p class="eyebrow">E não era só isso</p>
+          <h2>A empresa precisava parecer uma revolução todos os dias.</h2>
+          <p class="big">A tecnologia falhava, mas a narrativa não podia falhar.</p>
+          <p class="fragment kicker">Então a narrativa começou a trabalhar no lugar da tecnologia.</p>
+          <aside class="notes">Essa frase prepara Nathan sem falar Nathan: performance como infraestrutura.</aside>
+        </section>
+
+        <section class="crash">
+          <p class="eyebrow">E também esse problema</p>
+          <h2>Não era app. Não era rede social. Eram exames médicos.</h2>
+          <p class="big">O erro não ficava preso numa tela. Ele atravessava sangue, diagnóstico, tratamento e paciente.</p>
+          <aside class="notes">Segurar o respeito aqui. O humor vem da estrutura absurda, não das vítimas.</aside>
+        </section>
+
+        <section class="crash">
+          <p class="eyebrow">E também esse outro</p>
+          <h2>Quem fazia pergunta virava problema.</h2>
+          <p class="big">Segredo, pressão, medo, advogado, controle de imagem.</p>
+          <p class="fragment kicker">Uma empresa de transparência biológica operava como caixa-preta social.</p>
+          <aside class="notes">Boa frase para bater. A contradição é forte e fácil de lembrar.</aside>
+        </section>
+
+        <section class="crash">
+          <p class="eyebrow">A queda</p>
+          <h2>A história desabou.</h2>
+          <p class="big">Jornalismo investigativo. Processos. Condenação por fraude contra investidores. Prisão.</p>
+          <p class="fragment end-card">FIM?</p>
+          <aside class="notes">Dar sensação de fim de apresentação convencional. Talvez agradecer visualmente com gesto falso.</aside>
+        </section>
+
+        <section class="fake-ending">
+          <p class="eyebrow">Então é isso</p>
+          <h2>Hoje a gente ia falar sobre uma startup que mentiu para o mundo.</h2>
+          <p class="fragment big">Vocês gostaram?</p>
+          <p class="fragment big no">Não importa.</p>
+          <aside class="notes">Esse é o momento teatral. Esperar risada/confusão. Próximo slide vira a mesa.</aside>
+        </section>
+
+        <section class="nathan-turn">
+          <p class="eyebrow">Porque não era sobre isso</p>
+          <h2>Essa é uma apresentação sobre Nathan Fielder.</h2>
+          <p class="fragment big">A Theranos era só a isca.</p>
+          <aside class="notes">A revelação deve parecer quase uma traição. Um golpe baixo carinhoso no Clube do PowerPoint.</aside>
+        </section>
+
+        <section class="nathan-turn">
+          <div class="split portrait-right">
+            <div>
+              <p class="eyebrow">O problema Nathan</p>
+              <h2>Nathan não faz piada sobre o absurdo.</h2>
+              <p class="big">Ele constrói uma situação real onde o absurdo precisa se comportar como realidade.</p>
+            </div>
+            <figure class="media portrait">
+              <a href={media.nathanPortrait.href} target="_blank" rel="noreferrer">
+                <img src={media.nathanPortrait.src} alt="Nathan Fielder" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.nathanPortrait.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Frase-motor da segunda metade. Tudo daqui para frente prova isso.</aside>
+        </section>
+
+        <section class="nathan-turn">
+          <div class="split">
+            <div>
+              <p class="eyebrow">Exemplo rápido</p>
+              <h2>Dumb Starbucks</h2>
+              <p class="big">Ele não fez um sketch sobre abrir uma Starbucks falsa.</p>
+              <p class="fragment kicker">Ele abriu a Starbucks falsa.</p>
+            </div>
+            <figure class="media landscape">
+              <a href={media.dumbStarbucks.href} target="_blank" rel="noreferrer">
+                <img src={media.dumbStarbucks.src} alt="Fachada da Dumb Starbucks" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.dumbStarbucks.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Esse exemplo é a porta de entrada: simples, visual e absurdo sem explicação longa.</aside>
+        </section>
+
+        <section class="nathan-turn">
+          <div class="split">
+            <div>
+              <p class="eyebrow">Depois piora</p>
+              <h2>The Rehearsal</h2>
+              <p class="big">E se a vida pudesse ser ensaiada antes de ser vivida?</p>
+              <p class="fragment kicker">Ele transforma ansiedade social em arquitetura.</p>
+            </div>
+            <figure class="media landscape">
+              <a href={media.rehearsal.href} target="_blank" rel="noreferrer">
+                <img src={media.rehearsal.src} alt="Thumbnail do trailer oficial de The Rehearsal" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.rehearsal.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Aqui o tema fica mais profundo: ensaio, câmera, personagem e controle.</aside>
+        </section>
+
+        <section class="collision-slide">
+          <div class="collision">
+            <figure class="media portrait mini">
+              <a href={media.holmesPortrait.href} target="_blank" rel="noreferrer">
+                <img src={media.holmesPortrait.src} alt="Elizabeth Holmes" referrerpolicy="no-referrer" />
+              </a>
+            </figure>
+            <div>
+              <p class="eyebrow">A colisão</p>
+              <h2>Theranos era sobre controlar uma narrativa.</h2>
+              <p class="big">Nathan é sobre destruir a ilusão de que alguém controla totalmente a própria performance.</p>
+            </div>
+            <figure class="media portrait mini">
+              <a href={media.nathanPortrait.href} target="_blank" rel="noreferrer">
+                <img src={media.nathanPortrait.src} alt="Nathan Fielder" referrerpolicy="no-referrer" />
+              </a>
+            </figure>
+          </div>
+          <p class="credit-row">Holmes: {media.holmesPortrait.credit} · Fielder: {media.nathanPortrait.credit}</p>
+          <aside class="notes">Aqui finalmente junta as duas apresentações. O segredo é que a primeira metade era preparação conceitual.</aside>
+        </section>
+
+        <section class="nathan-turn">
+          <div class="split">
+            <div>
+              <p class="eyebrow">E aí vem o filme</p>
+              <h2>You Can See Everything</h2>
+              <p class="big">Elizabeth Holmes tentando mostrar quem realmente é.</p>
+              <p class="fragment kicker">Para Nathan Fielder.</p>
+            </div>
+            <figure class="media landscape uncropped">
+              <a href={media.ycse.href} target="_blank" rel="noreferrer">
+                <img src={media.ycse.src} alt="Thumbnail do teaser oficial de You Can See Everything" referrerpolicy="no-referrer" />
+              </a>
+              <figcaption>{media.ycse.credit}</figcaption>
+            </figure>
+          </div>
+          <aside class="notes">Não precisa explicar tudo. A preparação já fez o público entender por que isso é perfeito.</aside>
+        </section>
+
+        <section class="teaser-slide nathan-turn">
+          <p class="eyebrow">Agora sim</p>
+          <h2>O teaser muda de gênero depois dessa história</h2>
+          <div class="video-shell">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/GGJSRFWALTI"
+              title="You Can See Everything - Official Teaser HD - A24"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+          </div>
+          <p class="media-credit"><a href={media.ycse.href} target="_blank" rel="noreferrer">A24 · teaser oficial</a></p>
+          <aside class="notes">Mostrar o teaser só depois do bait-and-switch. Antes seria só curiosidade; agora é punchline.</aside>
+        </section>
+
+        <section class="finale">
+          <p class="eyebrow">A pergunta final</p>
+          <h2>Quando alguém tenta parecer real diante da câmera…</h2>
+          <p class="fragment big">a câmera revela a pessoa?</p>
+          <p class="fragment big">ou só dá a ela mais uma coisa para interpretar?</p>
+          <aside class="notes">Terminar como pergunta. O Clube sai com uma tese, mas também com vontade de discutir.</aside>
+        </section>
+
+        <section class="sources-slide">
+          <p class="eyebrow">Fontes visuais</p>
+          <h2>Imagens linkadas na apresentação</h2>
+          <ul>
+            <li>Elizabeth Holmes: Max Morse / TechCrunch, CC BY 2.0, via Wikimedia Commons.</li>
+            <li>Nathan Fielder: Northwest, CC BY-SA 4.0, via Wikimedia Commons.</li>
+            <li>Dumb Starbucks: Shelby Asistio, CC BY-SA 2.0, via Wikimedia Commons.</li>
+            <li><em>The Rehearsal</em>: thumbnail do trailer oficial da HBO.</li>
+            <li><em>You Can See Everything</em>: thumbnail e teaser oficial da A24.</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+
+    <footer class="deck-help" aria-label="Controles da apresentação">
+      <span>← → navega</span>
+      <span>S notas</span>
+      <span>Esc visão geral</span>
+    </footer>
+
+    <script is:inline type="module">
+      import Reveal from "https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.esm.js";
+      import Notes from "https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/plugin/notes/notes.esm.js";
+
+      const deck = new Reveal({
+        hash: true,
+        controls: true,
+        progress: true,
+        center: true,
+        transition: "slide",
+        backgroundTransition: "fade",
+        width: 1280,
+        height: 720,
+        margin: 0.055,
+        plugins: [Notes],
+      });
+
+      deck.initialize();
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    color-scheme: light;
+    --paper: #f7efe2;
+    --ink: #14110f;
+    --muted: #6b5f55;
+    --gold: #b27818;
+    --blood: #7c1420;
+    --black: #070707;
+    --blue: #1e3557;
+  }
+
+  body { margin: 0; background: var(--paper); }
+
+  .bait-deck {
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--ink);
+  }
+
+  .bait-deck .slides { text-align: left; }
+
+  .bait-deck section {
+    padding: 3rem 4rem;
+    box-sizing: border-box;
+  }
+
+  .bait-deck h1,
+  .bait-deck h2 {
+    margin: 0;
+    font-family: Fraunces, Georgia, serif;
+    font-weight: 900;
+    letter-spacing: -0.065em;
+    line-height: 0.92;
+    text-transform: none;
+  }
+
+  .bait-deck h1 { font-size: clamp(5rem, 11vw, 10.5rem); }
+  .bait-deck h2 { max-width: 1050px; font-size: clamp(3.2rem, 6.5vw, 6rem); }
+
+  .bait-deck p,
+  .bait-deck li {
+    max-width: 940px;
+    font-size: 1.75rem;
+    line-height: 1.16;
+  }
+
+  .bait-deck .eyebrow {
+    margin: 0 0 1.1rem;
+    color: var(--gold);
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .bait-deck .subtitle { max-width: 760px; color: var(--muted); font-size: 2.2rem; }
+  .bait-deck .big { font-size: clamp(2rem, 3.6vw, 3.7rem); line-height: 1.04; }
+  .bait-deck .kicker { color: var(--gold); font-weight: 900; }
+  .bait-deck .no { color: #fff; font-weight: 900; }
+
+  .bait-deck .cover {
+    display: grid;
+    align-content: center;
+    min-height: 100%;
+  }
+
+  .bait-deck .success {
+    background:
+      radial-gradient(circle at top right, rgba(178, 120, 24, 0.18), transparent 42%),
+      linear-gradient(135deg, #fff9ef, #f2e4ce);
+  }
+
+  .bait-deck .crash {
+    background:
+      radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.1), transparent 32%),
+      linear-gradient(135deg, #1a080b, #050505);
+    color: #f8ecdc;
+  }
+
+  .bait-deck .crash .eyebrow { color: #ffbc42; }
+  .bait-deck .crash .kicker { color: #ffbc42; }
+
+  .bait-deck .fake-ending {
+    background: linear-gradient(135deg, #111, #3b0f16);
+    color: #fff;
+  }
+
+  .bait-deck .nathan-turn {
+    background:
+      radial-gradient(circle at 15% 18%, rgba(255, 200, 87, 0.2), transparent 30%),
+      linear-gradient(135deg, #08090d, #152137);
+    color: #f7efe2;
+  }
+
+  .bait-deck .nathan-turn .eyebrow { color: #ffc857; }
+  .bait-deck .nathan-turn .kicker { color: #ffc857; }
+
+  .bait-deck .collision-slide {
+    background: linear-gradient(135deg, #f7efe2 0%, #ead5b9 48%, #111827 48%, #070707 100%);
+  }
+
+  .bait-deck .finale {
+    background: linear-gradient(135deg, #070707, #191016);
+    color: #f7efe2;
+  }
+
+  .bait-deck .sources-slide { background: #f7efe2; }
+  .bait-deck .sources-slide li { font-size: 1.35rem; }
+
+  .bait-deck .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(430px, 0.95fr);
+    gap: 2.4rem;
+    align-items: center;
+  }
+
+  .bait-deck .portrait-right {
+    grid-template-columns: minmax(0, 1.2fr) minmax(310px, 0.8fr);
+  }
+
+  .bait-deck .cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .bait-deck .cards p {
+    min-height: 130px;
+    margin: 0;
+    padding: 1rem;
+    border: 1px solid rgba(178, 120, 24, 0.35);
+    border-radius: 1.1rem;
+    background: rgba(255, 255, 255, 0.55);
+    font-family: Fraunces, Georgia, serif;
+    font-size: 2.15rem;
+    font-weight: 900;
+    letter-spacing: -0.045em;
+  }
+
+  .bait-deck .media { margin: 0; }
+  .bait-deck .media a { display: block; color: inherit; text-decoration: none; }
+  .bait-deck .media img {
+    display: block;
+    width: 100%;
+    max-height: 520px;
+    object-fit: cover;
+    border-radius: 1.3rem;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+  }
+
+  .bait-deck .portrait img { aspect-ratio: 4 / 5; }
+  .bait-deck .landscape img { aspect-ratio: 16 / 10; }
+  .bait-deck .uncropped img { aspect-ratio: 16 / 9; object-fit: contain; background: #060606; }
+
+  .bait-deck .logo-card {
+    padding: 2rem;
+    border-radius: 1.4rem;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 24px 70px rgba(47, 33, 16, 0.14);
+  }
+
+  .bait-deck .logo-card img { max-height: 230px; object-fit: contain; box-shadow: none; border-radius: 0; }
+
+  .bait-deck figcaption,
+  .bait-deck .media-credit,
+  .bait-deck .credit-row {
+    margin: 0.55rem 0 0;
+    color: rgba(20, 17, 15, 0.62);
+    font-size: 0.92rem;
+    line-height: 1.18;
+  }
+
+  .bait-deck .nathan-turn figcaption,
+  .bait-deck .teaser-slide .media-credit,
+  .bait-deck .finale figcaption { color: rgba(247, 239, 226, 0.7); }
+
+  .bait-deck .stat {
+    margin: 1.2rem 0 0;
+    color: var(--gold);
+    font-family: Fraunces, Georgia, serif;
+    font-size: clamp(4.6rem, 8vw, 7.4rem);
+    font-weight: 900;
+    letter-spacing: -0.07em;
+    line-height: 0.82;
+  }
+
+  .bait-deck .stat span {
+    display: block;
+    color: var(--muted);
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  .bait-deck .end-card {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.18em 0.42em;
+    border: 0.08em solid #ffbc42;
+    color: #ffbc42;
+    font-family: Fraunces, Georgia, serif;
+    font-size: 5.5rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+  }
+
+  .bait-deck .collision {
+    display: grid;
+    grid-template-columns: 215px minmax(0, 1fr) 215px;
+    gap: 1.4rem;
+    align-items: center;
+  }
+
+  .bait-deck .collision h2 { max-width: 760px; font-size: clamp(2.8rem, 5.3vw, 5rem); }
+  .bait-deck .mini img { max-height: 365px; }
+  .bait-deck .credit-row { text-align: center; }
+
+  .bait-deck .video-shell {
+    overflow: hidden;
+    width: 830px;
+    max-width: 100%;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9;
+    border: 2px solid rgba(255, 200, 87, 0.65);
+    border-radius: 1.4rem;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+  }
+
+  .bait-deck .teaser-slide h2 { max-width: none; text-align: center; font-size: 3.3rem; margin-bottom: 1rem; }
+  .bait-deck .teaser-slide .eyebrow,
+  .bait-deck .teaser-slide .media-credit { text-align: center; }
+  .bait-deck iframe { width: 100%; height: 100%; border: 0; }
+
+  .deck-help {
+    position: fixed;
+    left: 1rem;
+    bottom: 0.75rem;
+    z-index: 20;
+    display: flex;
+    gap: 0.6rem;
+    color: rgba(255, 255, 255, 0.68);
+    font: 800 0.72rem/1 Inter, ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  .deck-help span {
+    padding: 0.45rem 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(8px);
+  }
+
+  @media (max-width: 760px) {
+    .bait-deck section { padding: 2rem; }
+    .bait-deck .split,
+    .bait-deck .portrait-right,
+    .bait-deck .cards,
+    .bait-deck .collision { grid-template-columns: 1fr; }
+    .bait-deck .media img { max-height: 300px; }
+    .bait-deck .mini { display: none; }
+    .deck-help { display: none; }
+  }
+</style>

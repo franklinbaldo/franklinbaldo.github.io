@@ -1,0 +1,49 @@
+---
+// RFC 0012/0014: shared "what is this?" primer for Hrönir detail pages
+// (battles, perspectives, versions, dossiers) that a visitor can land on
+// directly from search or a shared link, with no prior context on the
+// ranking system. Mirrors the copy in RankingView.astro's plain-lang-explain
+// block, condensed, plus a persistent link back to the full ranking.
+export interface Props {
+  lang?: "en" | "pt";
+}
+
+const { lang = "en" } = Astro.props;
+
+const copy =
+  lang === "pt"
+    ? {
+        heading: "O que é isso?",
+        body: "Esta página é um artefato do Hrönir: um sistema de duelos par-a-par entre textos deste blog, avaliados por leitores humanos e IA sob diferentes perspectivas e ranqueados com OpenSkill. Um duelo, uma perspectiva ou uma versão isolados não contam a história toda.",
+        cta: "Ver como funciona e o ranking completo",
+        href: "/pt/ranking/",
+      }
+    : {
+        heading: "What is this?",
+        body: "This page is an artifact of Hrönir: a pairwise-duel system for this blog's posts, judged by human and AI readers under different perspectives and ranked with OpenSkill. One battle, perspective, or version doesn't tell the whole story on its own.",
+        cta: "See how it works and the full ranking",
+        href: "/ranking/",
+      };
+---
+
+<details class="hronir-explainer">
+  <summary>{copy.heading}</summary>
+  <p>{copy.body}</p>
+  <p><a href={copy.href}>{copy.cta} →</a></p>
+</details>
+
+<style>
+  .hronir-explainer {
+    margin: 0 0 1.5rem;
+    font-size: 0.85rem;
+    color: var(--pico-muted-color);
+  }
+  .hronir-explainer summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--pico-color);
+  }
+  .hronir-explainer p {
+    margin: 0.5rem 0 0;
+  }
+</style>

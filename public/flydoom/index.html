@@ -1,0 +1,2024 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlyDoom 3D: Conectoma MaleCNS (165k Neurônios) em Tempo Real</title>
+    <style>
+      :root {
+        --bg: #090c10;
+        --card: #0d1117;
+        --border: #30363d;
+        --accent: #58a6ff;
+        --text: #c9d1d9;
+        --text-muted: #8b949e;
+        --green: #2ea043;
+        --gold: #f1e05a;
+        --red: #f85149;
+        --purple: #bc8cff;
+        --orange: #ff7b72;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 12px;
+        min-height: 100vh;
+      }
+      header {
+        width: 100%;
+        max-width: 1080px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      h1 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .badge {
+        background: rgba(56, 139, 253, 0.15);
+        color: var(--accent);
+        border: 1px solid rgba(56, 139, 253, 0.4);
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.72rem;
+        font-family: monospace;
+      }
+      .badge-green {
+        background: rgba(46, 160, 67, 0.15);
+        color: var(--green);
+        border-color: rgba(46, 160, 67, 0.4);
+      }
+      .badge-purple {
+        background: rgba(188, 140, 255, 0.15);
+        color: var(--purple);
+        border-color: rgba(188, 140, 255, 0.4);
+      }
+      .toolbar {
+        width: 100%;
+        max-width: 1080px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 12px;
+        margin-bottom: 12px;
+      }
+      .btn {
+        background: #21262d;
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.15s;
+      }
+      .btn:hover {
+        background: #30363d;
+        border-color: var(--text-muted);
+        color: #fff;
+      }
+      .btn-primary {
+        background: #238636;
+        border-color: #2ea043;
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: #2ea043;
+      }
+      .btn-danger {
+        background: #da3633;
+        border-color: #f85149;
+        color: #fff;
+      }
+      .btn-danger:hover {
+        background: #f85149;
+      }
+      .select {
+        background: #21262d;
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+      }
+      .viewport-grid {
+        width: 100%;
+        max-width: 1080px;
+        display: grid;
+        grid-template-columns: 1fr 310px;
+        gap: 10px;
+      }
+      @media (max-width: 680px) {
+        .viewport-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .card-header {
+        padding: 8px 12px;
+        background: #161b22;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.78rem;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--text-muted);
+      }
+      .canvas-container {
+        position: relative;
+        background: #000;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      canvas {
+        display: block;
+        image-rendering: pixelated;
+      }
+      #canvas3d {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16/10;
+      }
+      #canvasRadar {
+        width: 100%;
+        height: 260px;
+      }
+      #compoundEyeCanvas {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16/10;
+        background: #05080c;
+      }
+      .retina-note {
+        padding: 7px 10px 9px;
+        color: var(--text-muted);
+        font-size: 0.66rem;
+        line-height: 1.35;
+        border-top: 1px solid var(--border);
+      }
+      #compoundEyeInspector {
+        color: var(--accent);
+        font-family: monospace;
+      }
+
+      .hud-overlay {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        display: flex;
+        justify-content: space-between;
+        pointer-events: none;
+        font-family: monospace;
+        font-size: 0.75rem;
+        text-shadow: 0 1px 2px #000;
+      }
+      .crosshair {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 14px;
+      }
+      .scanlines {
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+          linear-gradient(
+            90deg,
+            rgba(255, 0, 0, 0.03),
+            rgba(0, 255, 0, 0.01),
+            rgba(0, 0, 255, 0.03)
+          );
+        background-size:
+          100% 3px,
+          4px 100%;
+        pointer-events: none;
+      }
+      .telemetry {
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 0.78rem;
+      }
+      .meter-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .meter-label {
+        width: 85px;
+        color: var(--text-muted);
+        font-family: monospace;
+        font-size: 0.72rem;
+      }
+      .meter-bar-bg {
+        flex: 1;
+        height: 8px;
+        background: #21262d;
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+      }
+      .meter-bar-fill {
+        height: 100%;
+        background: var(--accent);
+        width: 0%;
+        transition: width 0.05s;
+      }
+      .meter-val {
+        width: 45px;
+        text-align: right;
+        font-family: monospace;
+        font-size: 0.72rem;
+      }
+      .motor-truth {
+        margin-top: 6px;
+        padding-top: 8px;
+        border-top: 1px solid var(--border);
+      }
+      .motor-truth-title {
+        margin-bottom: 6px;
+        color: var(--text-muted);
+        font-family: monospace;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+      .motor-truth-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 7px;
+        padding: 6px 7px;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.025);
+        font-family: monospace;
+        font-size: 0.68rem;
+      }
+      .motor-dominant-label {
+        color: var(--text-muted);
+        margin-right: 5px;
+      }
+      .motor-status {
+        border: 1px solid rgba(46, 160, 67, 0.5);
+        color: #3fb950;
+        border-radius: 999px;
+        padding: 2px 6px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+      .motor-status.saturated {
+        border-color: rgba(241, 224, 90, 0.65);
+        color: #f1e05a;
+        background: rgba(241, 224, 90, 0.08);
+      }
+      .motor-direction-scale {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 8px;
+        margin: 0 48px 5px 85px;
+        color: #6e7681;
+        font-family: monospace;
+        font-size: 0.58rem;
+      }
+      .motor-direction-scale span:last-child {
+        text-align: right;
+      }
+      .motor-row-dominant .meter-label,
+      .motor-row-dominant .meter-val {
+        color: #fff;
+        font-weight: 700;
+      }
+      .motor-track {
+        flex: 1;
+        height: 9px;
+        background: #21262d;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+      }
+      .motor-track::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: #8b949e;
+        z-index: 2;
+      }
+      .motor-limit {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: rgba(241, 224, 90, 0.65);
+        z-index: 2;
+      }
+      .motor-limit-left {
+        left: 35%;
+      }
+      .motor-limit-right {
+        left: 65%;
+      }
+      .motor-fill {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        background: var(--accent);
+      }
+      .motor-separator {
+        border-top: 1px dashed #30363d;
+        margin: 5px 0;
+      }
+      .odor-drive {
+        color: var(--green);
+        font-family: monospace;
+        font-size: 0.68rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .flies-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.74rem;
+        margin-top: 6px;
+      }
+      .flies-table th,
+      .flies-table td {
+        padding: 4px 6px;
+        text-align: left;
+        border-bottom: 1px solid #21262d;
+      }
+      .flies-table th {
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+      .fly-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 4px;
+      }
+
+      /* Loading overlay */
+      #loadingModal {
+        position: fixed;
+        inset: 0;
+        background: rgba(9, 12, 16, 0.92);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(4px);
+      }
+      .spinner {
+        width: 44px;
+        height: 44px;
+        border: 4px solid var(--border);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: 16px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loadingModal">
+      <div class="spinner"></div>
+      <div id="loadingText" style="font-weight: 600; margin-bottom: 6px">
+        Carregando Conectoma MaleCNS via FlatBuffers...
+      </div>
+      <div
+        id="loadingSubtext"
+        style="
+          color: var(--text-muted);
+          font-size: 0.8rem;
+          font-family: monospace;
+        "
+      >
+        Baixando malecns_l3_compact.mcns (4.98 MB Zero-Copy)...
+      </div>
+      <div
+        style="
+          width: 280px;
+          height: 6px;
+          background: #21262d;
+          border-radius: 3px;
+          margin-top: 12px;
+          overflow: hidden;
+        "
+      >
+        <div
+          id="loadingProgress"
+          style="
+            width: 10%;
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.2s;
+          "
+        ></div>
+      </div>
+    </div>
+
+    <div
+      id="iframeBanner"
+      style="
+        width: 100%;
+        max-width: 1080px;
+        background: rgba(56, 139, 253, 0.12);
+        border: 1px solid rgba(56, 139, 253, 0.35);
+        border-radius: 6px;
+        padding: 6px 12px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+      "
+    >
+      <span style="color: var(--accent); font-weight: 500">
+        🔬 Modo embutido · Simulação MaleCNS FlatBuffers
+      </span>
+      <a
+        href="/flydoom/"
+        target="_blank"
+        rel="noopener noreferrer"
+        style="
+          color: #fff;
+          background: #238636;
+          border: 1px solid #2ea043;
+          padding: 4px 10px;
+          border-radius: 4px;
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 0.76rem;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+        "
+      >
+        🚀 Abrir em Nova Página (Tela Cheia) ↗
+      </a>
+    </div>
+
+    <header>
+      <h1>
+        <span>🪰 FlyDoom 3D</span>
+        <span class="badge badge-green">FlatBuffers Zero-Copy (.mcns)</span>
+        <span class="badge badge-purple" id="badgeThreadMode"
+          >Web Worker Ativo</span
+        >
+        <span class="badge">165.122 Neurônios</span>
+      </h1>
+      <div
+        style="
+          display: flex;
+          gap: 8px;
+          align-items: center;
+          font-size: 0.75rem;
+          color: var(--text-muted);
+        "
+      >
+        <span
+          >FPS Visual: <b id="liveFps" style="color: var(--green)">0</b></span
+        >
+        <span>•</span>
+        <span
+          >Latência Neural:
+          <b id="liveLatency" style="color: var(--accent)">0.0 ms</b></span
+        >
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <button class="btn btn-primary" id="btnAddFly">+ Mosca</button>
+      <button class="btn btn-danger" id="btnRemFly">- Mosca</button>
+      <div
+        style="
+          height: 18px;
+          width: 1px;
+          background: var(--border);
+          margin: 0 4px;
+        "
+      ></div>
+      <button class="btn btn-primary" id="btnAddPrize">+ Prêmio</button>
+      <button class="btn btn-danger" id="btnRemPrize">- Prêmio</button>
+      <div
+        style="
+          height: 18px;
+          width: 1px;
+          background: var(--border);
+          margin: 0 4px;
+        "
+      ></div>
+      <button class="btn" id="btnRandomSpawn">🎲 Spawn Randômico</button>
+      <button class="btn" id="btnTogglePause">⏸ Pausar</button>
+      <div
+        style="
+          height: 18px;
+          width: 1px;
+          background: var(--border);
+          margin: 0 4px;
+        "
+      ></div>
+      <label
+        style="
+          font-size: 0.78rem;
+          color: var(--text-muted);
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        "
+      >
+        Olhos 3D da Mosca:
+        <select class="select" id="selectFlyCam"></select>
+      </label>
+      <div
+        style="margin-left: auto; display: flex; gap: 6px; align-items: center"
+      >
+        <button class="btn" id="btnFullscreen" title="Alternar modo tela cheia">
+          ⛶ Tela Cheia
+        </button>
+        <a
+          href="/flydoom/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-primary"
+          id="btnOpenStandalone"
+          title="Abrir simulador em nova aba independente"
+          style="text-decoration: none; color: #fff"
+          >↗ Nova Aba</a
+        >
+      </div>
+    </div>
+
+    <div class="viewport-grid">
+      <!-- Main 3D Canvas (Doom Raycaster) -->
+      <div class="card">
+        <div class="card-header">
+          <span id="labelFlyView"
+            >VISÃO 3D EM TEMPO REAL — MOSCA #1 (OLHOS COMPOSTOS)</span
+          >
+          <span
+            id="badgeTargetDist"
+            style="color: var(--gold); font-family: monospace"
+            >Dist Alvo: --</span
+          >
+        </div>
+        <div class="canvas-container">
+          <canvas id="canvas3d" width="480" height="300"></canvas>
+          <div class="hud-overlay">
+            <div><span style="color: #ff5555">HEALTH:</span> 100%</div>
+            <div>
+              <span style="color: #ffaa00">PRÊMIOS:</span>
+              <span id="hudPrimesCount">0</span>
+            </div>
+            <div><span style="color: #55ff55">RECORRÊNCIA:</span> 165K L3</div>
+          </div>
+          <div class="crosshair">+</div>
+          <div class="scanlines"></div>
+        </div>
+      </div>
+
+      <!-- Right Side: Perception, 2D Radar & Neuro-Telemetry -->
+      <div style="display: flex; flex-direction: column; gap: 12px">
+        <!-- Compound-eye reconstruction -->
+        <div class="card">
+          <div class="card-header">
+            <span>COMPOUND-EYE RECONSTRUCTION</span>
+            <span id="compoundEyeInspector">1,771 MaleCNS columns</span>
+          </div>
+          <div class="canvas-container">
+            <canvas id="compoundEyeCanvas" width="480" height="300"></canvas>
+          </div>
+          <div class="retina-note">
+            Reconstructed Retinotopic Field (1,771 MaleCNS Columns) · Overlay:
+            32 Active Model Inputs.<br />
+            Biologically grounded reconstruction; highlighted sectors are the
+            actual current encoder channels.
+          </div>
+        </div>
+
+        <!-- Pluggable neural activity visualizer -->
+        <div id="neuralVizHost"></div>
+
+        <!-- Radar -->
+        <div class="card">
+          <div class="card-header">
+            <span>RADAR TÁTICO 2D DA ARENA</span>
+            <span style="color: var(--text-muted)">E1M1 ARENA</span>
+          </div>
+          <div class="canvas-container">
+            <canvas id="canvasRadar" width="340" height="320"></canvas>
+          </div>
+        </div>
+
+        <!-- Telemetry -->
+        <div class="card">
+          <div class="card-header">
+            <span>NEURO-TELEMETRIA BIOLÓGICA AO VIVO</span>
+            <span
+              class="badge badge-green"
+              id="scentStatusBadge"
+              style="font-size: 0.65rem"
+              >🟢 RASTREAMENTO DE PLUMA</span
+            >
+          </div>
+          <div class="telemetry">
+            <!-- Antennal Olfaction -->
+            <div class="meter-row">
+              <span class="meter-label">Antena Esq:</span>
+              <div class="meter-bar-bg">
+                <div
+                  id="barOdorL"
+                  class="meter-bar-fill"
+                  style="background: #3fb950"
+                ></div>
+              </div>
+              <span class="meter-val" id="valOdorL">0 ppm</span>
+            </div>
+            <div class="meter-row">
+              <span class="meter-label">Antena Dir:</span>
+              <div class="meter-bar-bg">
+                <div
+                  id="barOdorR"
+                  class="meter-bar-fill"
+                  style="background: #3fb950"
+                ></div>
+              </div>
+              <span class="meter-val" id="valOdorR">0 ppm</span>
+            </div>
+            <div class="odor-drive">
+              <span>ODOR L ×3.5 <b id="valOdorDriveL">0.000</b></span>
+              <span>ODOR R ×3.5 <b id="valOdorDriveR">0.000</b></span>
+            </div>
+
+            <!-- Motor Truth -->
+            <div class="motor-truth">
+              <div class="motor-truth-title">
+                MOTOR TRUTH · TORQUE DECOMPOSITION
+              </div>
+              <div class="motor-truth-summary">
+                <div>
+                  <span class="motor-dominant-label">DOMINANT</span
+                  ><b id="motorDominant">—</b>
+                </div>
+                <span class="motor-status" id="motorClampStatus">LINEAR</span>
+              </div>
+              <div class="motor-direction-scale">
+                <span>← LEFT</span><span>0</span><span>RIGHT →</span>
+              </div>
+              <div id="motorTruthRows"></div>
+              <div class="retina-note" style="padding: 6px 0 0; border-top: 0">
+                Colors identify motor sources; direction is encoded spatially.
+                Yellow ticks mark the physical clamp at ±0.45.
+              </div>
+            </div>
+
+            <!-- Swarm Table -->
+            <div
+              style="
+                margin-top: 4px;
+                border-top: 1px solid var(--border);
+                padding-top: 6px;
+              "
+            >
+              <div
+                style="
+                  font-weight: 600;
+                  font-size: 0.72rem;
+                  color: var(--text-muted);
+                  margin-bottom: 4px;
+                "
+              >
+                ENXAME DE MOSCAS:
+              </div>
+              <table class="flies-table">
+                <thead>
+                  <tr>
+                    <th>Mosca</th>
+                    <th>Prêmios</th>
+                    <th>Dist (m)</th>
+                    <th>Ativação</th>
+                  </tr>
+                </thead>
+                <tbody id="fliesTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./neural_visualizers.js"></script>
+    <script>
+      window.onerror = function (msg, url, line) {
+        console.error("FlyDoom error:", msg, "at line", line);
+      };
+
+      // =========================================================================
+      // 1. Doom Arena Map & Wall Geometry
+      // =========================================================================
+      const ARENA_GRID = [
+        "####################",
+        "#..................#",
+        "#..####......####..#",
+        "#..#............#..#",
+        "#..#..##....##..#..#",
+        "#.....#......#.....#",
+        "#.....#......#.....#",
+        "#..#..##....##..#..#",
+        "#..#............#..#",
+        "#..####......####..#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################",
+      ];
+      const MAP_H = ARENA_GRID.length;
+      const MAP_W = ARENA_GRID[0].length;
+      const WALLS = new Array(MAP_H).fill(0).map(() => new Uint8Array(MAP_W));
+      const WALKABLE_TILES = [];
+
+      for (let y = 0; y < MAP_H; y++) {
+        for (let x = 0; x < MAP_W; x++) {
+          if (ARENA_GRID[y][x] === "#") {
+            WALLS[y][x] = 1;
+          } else {
+            WALKABLE_TILES.push({ x: x + 0.5, y: y + 0.5 });
+          }
+        }
+      }
+
+      function isWall(x, y) {
+        const ix = Math.floor(x);
+        const iy = Math.floor(y);
+        if (ix < 0 || ix >= MAP_W || iy < 0 || iy >= MAP_H) return true;
+        return WALLS[iy][ix] === 1;
+      }
+
+      function canMoveTo(x, y, r = 0.28) {
+        for (const ox of [-r, r]) {
+          for (const oy of [-r, r]) {
+            if (isWall(x + ox, y + oy)) return false;
+          }
+        }
+        return true;
+      }
+
+      function getRandomWalkable(minDistFrom = [], minDist = 3.5) {
+        const shuffled = [...WALKABLE_TILES].sort(() => Math.random() - 0.5);
+        for (const pt of shuffled) {
+          let ok = true;
+          for (const other of minDistFrom) {
+            const d = Math.hypot(pt.x - other.x, pt.y - other.y);
+            if (d < minDist) {
+              ok = false;
+              break;
+            }
+          }
+          if (ok) return { ...pt };
+        }
+        return { ...shuffled[0] };
+      }
+
+      // Colors for swarm flies
+      const FLY_COLORS = [
+        { name: "Verde", hex: "#2ea043", rgb: [46, 160, 67] },
+        { name: "Azul", hex: "#58a6ff", rgb: [88, 166, 255] },
+        { name: "Vermelho", hex: "#f85149", rgb: [248, 81, 73] },
+        { name: "Amarelo", hex: "#f1e05a", rgb: [241, 224, 90] },
+        { name: "Roxo", hex: "#bc8cff", rgb: [188, 140, 255] },
+        { name: "Laranja", hex: "#ff7b72", rgb: [255, 123, 114] },
+        { name: "Ciano", hex: "#39c5cf", rgb: [57, 197, 207] },
+        { name: "Rosa", hex: "#f778ba", rgb: [247, 120, 186] },
+      ];
+
+      // =========================================================================
+      // 2. Web Worker Neural Recurrence Engine (Background CPU Thread)
+      // =========================================================================
+      const WORKER_CODE = `
+        let connectome = null;
+        let circuit = null;
+        let states = [];
+        let nextStates = [];
+        let drives = [];
+        const SWARM_ACC = new Float32Array(16);
+
+        self.onmessage = function(e) {
+          const msg = e.data;
+          if (msg.type === "init") {
+            circuit = msg.circuit;
+            connectome = {
+              n_neurons: msg.n_neurons,
+              offsets: new Uint32Array(msg.offsets),
+              scales: new Float32Array(msg.scales),
+              deltas: new Uint16Array(msg.deltas),
+              weights: new Uint8Array(msg.weights),
+              lut: new Float32Array(msg.lut),
+            };
+
+            for (let f = 0; f < 8; f++) {
+              states.push(new Float32Array(connectome.n_neurons));
+              nextStates.push(new Float32Array(connectome.n_neurons));
+              drives.push(new Float32Array(connectome.n_neurons));
+            }
+            self.postMessage({ type: "ready" });
+          } else if (msg.type === "step") {
+            const numFlies = msg.numFlies;
+            const fliesData = msg.flies;
+            const t0 = performance.now();
+
+            // 1. Sensory injection
+            for (let f = 0; f < numFlies; f++) {
+              const fd = fliesData[f];
+              const drv = drives[f];
+              drv.fill(0.0);
+
+              for (let r = 0; r < 16; r++) {
+                const prox = Math.max(0.0, 1.0 - (fd.wallDists[r] / 4.0));
+                const lum = fd.prizeDists[r];
+                const stim = prox * 2.0 + lum * 2.5;
+                const b = circuit.ray_vpl[r];
+                for (let i = 0; i < b.length; i++) drv[b[i]] = stim;
+              }
+              for (let r = 0; r < 16; r++) {
+                const prox = Math.max(0.0, 1.0 - (fd.wallDists[16 + r] / 4.0));
+                const lum = fd.prizeDists[16 + r];
+                const stim = prox * 2.0 + lum * 2.5;
+                const b = circuit.ray_vpr[r];
+                for (let i = 0; i < b.length; i++) drv[b[i]] = stim;
+              }
+
+              const stimL = fd.odorL * 3.5;
+              const stimR = fd.odorR * 3.5;
+              for (let i = 0; i < circuit.olf_l.length; i++) drv[circuit.olf_l[i]] = stimL;
+              for (let i = 0; i < circuit.olf_r.length; i++) drv[circuit.olf_r[i]] = stimR;
+            }
+
+            // 2. Batched FlatBuffers SpMV Recurrence
+            const N = connectome.n_neurons;
+            const offsets = connectome.offsets;
+            const deltas = connectome.deltas;
+            const weights = connectome.weights;
+            const lut = connectome.lut;
+            const scales = connectome.scales;
+
+            if (numFlies === 1) {
+              const s0 = states[0], nx0 = nextStates[0], drv0 = drives[0];
+              for (let r = 0; r < N; r++) {
+                const s = offsets[r], e = offsets[r + 1];
+                let col = 0, acc0 = 0;
+                for (let j = s; j < e; j++) {
+                  col += deltas[j];
+                  acc0 += lut[(weights[j >> 1] >> (4 * (j & 1))) & 0x0f] * s0[col];
+                }
+                nx0[r] = 0.65 * s0[r] + 0.35 * Math.tanh(acc0 * scales[r] * 3.5 + drv0[r]);
+              }
+            } else if (numFlies === 2) {
+              const s0 = states[0], s1 = states[1];
+              const nx0 = nextStates[0], nx1 = nextStates[1];
+              const drv0 = drives[0], drv1 = drives[1];
+              for (let r = 0; r < N; r++) {
+                const s = offsets[r], e = offsets[r + 1];
+                let col = 0, acc0 = 0, acc1 = 0;
+                for (let j = s; j < e; j++) {
+                  col += deltas[j];
+                  const w = lut[(weights[j >> 1] >> (4 * (j & 1))) & 0x0f];
+                  acc0 += w * s0[col];
+                  acc1 += w * s1[col];
+                }
+                const sc = scales[r] * 3.5;
+                nx0[r] = 0.65 * s0[r] + 0.35 * Math.tanh(acc0 * sc + drv0[r]);
+                nx1[r] = 0.65 * s1[r] + 0.35 * Math.tanh(acc1 * sc + drv1[r]);
+              }
+            } else {
+              for (let r = 0; r < N; r++) {
+                const s = offsets[r], e = offsets[r + 1];
+                let col = 0;
+                SWARM_ACC.fill(0);
+                for (let j = s; j < e; j++) {
+                  col += deltas[j];
+                  const w = lut[(weights[j >> 1] >> (4 * (j & 1))) & 0x0f];
+                  for (let f = 0; f < numFlies; f++) {
+                    SWARM_ACC[f] += w * states[f][col];
+                  }
+                }
+                const sc = scales[r] * 3.5;
+                for (let f = 0; f < numFlies; f++) {
+                  nextStates[f][r] = 0.65 * states[f][r] + 0.35 * Math.tanh(SWARM_ACC[f] * sc + drives[f][r]);
+                }
+              }
+            }
+
+            for (let f = 0; f < numFlies; f++) {
+              const tmp = states[f];
+              states[f] = nextStates[f];
+              nextStates[f] = tmp;
+            }
+
+            // 3. Motor decode
+            const results = [];
+            for (let f = 0; f < numFlies; f++) {
+              const st = states[f];
+              let actL = 0, actR = 0, actTot = 0;
+              for (let i = 0; i < circuit.dnl.length; i++) actL += st[circuit.dnl[i]];
+              for (let i = 0; i < circuit.dnr.length; i++) actR += st[circuit.dnr[i]];
+              for (let i = 0; i < circuit.dn_all.length; i++) actTot += st[circuit.dn_all[i]];
+              actL /= circuit.dnl.length;
+              actR /= circuit.dnr.length;
+              actTot /= circuit.dn_all.length;
+
+              const connSteer = (actL - actR) * 8.0;
+              const fd = fliesData[f];
+
+              // Phototaxis: orient toward visible prize luminescence
+              let tLeft = 0, tRight = 0;
+              for (let i = 0; i < 16; i++) tLeft += fd.prizeDists[i];
+              for (let i = 16; i < 32; i++) tRight += fd.prizeDists[i];
+              const visualSteer = (tRight - tLeft) * 0.35;
+
+              // Chemotaxis: bilateral tropotaxis towards higher odor concentration
+              const odorSteer = (fd.odorR - fd.odorL) * 3.5;
+
+              let minFront = 999;
+              for (let i = 10; i < 22; i++) minFront = Math.min(minFront, fd.wallDists[i]);
+              let saccade = 0.0;
+              if (minFront < 1.4) {
+                let leftSpace = 0, rightSpace = 0;
+                for (let i = 0; i < 12; i++) leftSpace += fd.wallDists[i];
+                for (let i = 20; i < 32; i++) rightSpace += fd.wallDists[i];
+                saccade = rightSpace > leftSpace ? 0.45 : -0.45;
+              }
+
+              const totalTorque = connSteer + visualSteer + odorSteer + saccade;
+              // Forward surge: accelerate when smelling high odor concentration
+              const odorSurge = Math.min(0.14, (fd.odorL + fd.odorR) * 0.1);
+              const fwdThrust = 0.18 + Math.max(0.0, actTot * 3.0) + odorSurge;
+
+              const sampleCount = Math.min(256, circuit.dn_all.length);
+              const dnSample = new Float32Array(sampleCount);
+              for (let s = 0; s < sampleCount; s++) {
+                const src = Math.min(
+                  circuit.dn_all.length - 1,
+                  Math.floor((s / Math.max(1, sampleCount)) * circuit.dn_all.length)
+                );
+                dnSample[s] = st[circuit.dn_all[src]];
+              }
+
+              results.push({
+                torque: Math.max(-0.45, Math.min(0.45, totalTorque)),
+                rawTorque: totalTorque,
+                thrust: Math.max(0.08, Math.min(0.38, fwdThrust)),
+                meanAct: actTot,
+                dnSample: Array.from(dnSample),
+                motorTerms: {
+                  connectome: connSteer,
+                  phototaxis: visualSteer,
+                  chemotaxis: odorSteer,
+                  saccade
+                }
+              });
+            }
+
+            const stepLatency = performance.now() - t0;
+            self.postMessage({ type: "stepResult", results, stepLatency });
+          }
+        };
+      `;
+
+      let neuralWorker = null;
+      let workerBusy = false;
+      let circuit = null;
+      let retinaHUD = null;
+      let neuralViz = null;
+
+      async function initRetinaHUD() {
+        const canvas = document.getElementById("compoundEyeCanvas");
+        if (!canvas) return;
+        const [{ CompoundEyeHUD }, columns] = await Promise.all([
+          import("./retina_hud.js"),
+          fetch("./retinotopic_columns_1771.json").then((r) => {
+            if (!r.ok) throw new Error(`retina geometry HTTP ${r.status}`);
+            return r.json();
+          }),
+        ]);
+        retinaHUD = new CompoundEyeHUD(canvas, columns);
+        const inspector = document.getElementById("compoundEyeInspector");
+        canvas.addEventListener("pointermove", (event) => {
+          const fly = swarm[selectedFlyIdx] || swarm[0];
+          if (!fly || !retinaHUD || !inspector) return;
+          const hit = retinaHUD.inspect(
+            event.clientX,
+            event.clientY,
+            fly.wallDists,
+            fly.prizeDists
+          );
+          inspector.textContent = `ch ${hit.channel} → ${hit.target} · stim ${hit.stim.toFixed(2)}`;
+        });
+        canvas.addEventListener("pointerleave", () => {
+          if (inspector) inspector.textContent = "1,771 MaleCNS columns";
+        });
+      }
+
+      // =========================================================================
+      // 3. Multi-Fly Agent & Prize Classes
+      // =========================================================================
+      class FlyAgent {
+        constructor(id, colorInfo) {
+          this.id = id;
+          this.color = colorInfo;
+          this.x = 0;
+          this.y = 0;
+          this.angle = Math.random() * Math.PI * 2;
+          this.speed = 0;
+          this.totalDist = 0;
+          this.prizesCaught = 0;
+          this.meanAct = 0;
+
+          // Raycasting storage
+          this.wallDists = new Float32Array(32);
+          this.prizeDists = new Float32Array(32);
+          this.odorL = 0;
+          this.odorR = 0;
+          this.targetTorque = 0;
+          this.currentTorque = 0;
+          this.targetThrust = 0.2;
+          this.currentThrust = 0.2;
+          this.motorTelemetry = null;
+
+          this.resetPosition();
+        }
+
+        resetPosition(otherEntities = []) {
+          const pt = getRandomWalkable(otherEntities, 2.5);
+          this.x = pt.x;
+          this.y = pt.y;
+          this.angle = Math.random() * Math.PI * 2;
+          this.currentTorque = 0;
+        }
+
+        sense(prizes) {
+          const numRays = 32;
+          const fov = Math.PI * 0.8;
+          const maxDepth = 14.0;
+          const startAng = this.angle - fov / 2;
+          const stepAng = fov / numRays;
+
+          for (let r = 0; r < numRays; r++) {
+            const ang = startAng + r * stepAng;
+            const sinA = Math.sin(ang);
+            const cosA = Math.cos(ang);
+
+            let dist = 0.1;
+            let hit = false;
+            while (dist < maxDepth) {
+              if (isWall(this.x + cosA * dist, this.y + sinA * dist)) {
+                hit = true;
+                break;
+              }
+              dist += 0.12;
+            }
+            this.wallDists[r] = hit ? dist : maxDepth;
+
+            let prizeVis = 0.0;
+            for (const p of prizes) {
+              const dx = p.x - this.x;
+              const dy = p.y - this.y;
+              const dp = Math.hypot(dx, dy);
+              const ap = Math.atan2(dy, dx);
+              const diffA =
+                ((ap - ang + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+              if (Math.abs(diffA) < stepAng && dp < this.wallDists[r]) {
+                prizeVis = Math.max(
+                  prizeVis,
+                  Math.max(0.0, 1.0 - dp / maxDepth)
+                );
+              }
+            }
+            this.prizeDists[r] = prizeVis;
+          }
+
+          const antW = 0.65;
+          const plX = this.x + 0.5 * antW * Math.sin(this.angle);
+          const plY = this.y - 0.5 * antW * Math.cos(this.angle);
+          const prX = this.x - 0.5 * antW * Math.sin(this.angle);
+          const prY = this.y + 0.5 * antW * Math.cos(this.angle);
+
+          let sumConcL = 0;
+          let sumConcR = 0;
+          for (const p of prizes) {
+            const dl = Math.hypot(p.x - plX, p.y - plY);
+            const dr = Math.hypot(p.x - prX, p.y - prY);
+            sumConcL += 1.0 / (1.0 + Math.pow(dl * 0.32, 1.25));
+            sumConcR += 1.0 / (1.0 + Math.pow(dr * 0.32, 1.25));
+          }
+          this.odorL = sumConcL;
+          this.odorR = sumConcR;
+        }
+
+        applyMotorCommand(torque, thrust, meanAct) {
+          this.targetTorque = torque;
+          this.targetThrust = thrust;
+          this.meanAct = meanAct;
+        }
+
+        updatePhysics(prizes) {
+          // Low-pass smoothing for biological motor dynamics (60 FPS interpolation)
+          this.currentTorque =
+            0.7 * this.currentTorque + 0.3 * this.targetTorque;
+          this.currentThrust =
+            0.7 * this.currentThrust + 0.3 * this.targetThrust;
+
+          this.angle += this.currentTorque;
+          this.angle = ((this.angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+
+          const spd = Math.max(0.05, Math.min(0.35, this.currentThrust));
+          const dx = Math.cos(this.angle) * spd;
+          const dy = Math.sin(this.angle) * spd;
+
+          let moved = false;
+          if (canMoveTo(this.x + dx, this.y)) {
+            this.x += dx;
+            moved = true;
+          }
+          if (canMoveTo(this.x, this.y + dy)) {
+            this.y += dy;
+            moved = true;
+          }
+          if (!moved) {
+            this.angle += (Math.random() - 0.5) * 0.5;
+          } else {
+            this.totalDist += Math.hypot(dx, dy);
+          }
+
+          for (let i = 0; i < prizes.length; i++) {
+            const p = prizes[i];
+            const dist = Math.hypot(p.x - this.x, p.y - this.y);
+            if (dist < 1.1) {
+              this.prizesCaught++;
+              p.respawn(swarm.map((f) => ({ x: f.x, y: f.y })));
+            }
+          }
+        }
+      }
+
+      class Prize {
+        constructor(id) {
+          this.id = id;
+          this.x = 0;
+          this.y = 0;
+          this.respawn();
+        }
+        respawn(exclude = []) {
+          const pt = getRandomWalkable(exclude, 4.0);
+          this.x = pt.x;
+          this.y = pt.y;
+        }
+      }
+
+      // =========================================================================
+      // 4. Swarm State Management
+      // =========================================================================
+      const swarm = [];
+      const prizes = [];
+      let selectedFlyIdx = 0;
+      let isPaused = false;
+      let lastFrameTime = performance.now();
+      let frameCount = 0;
+      let liveFps = 0;
+      let liveLatency = 0;
+      let lastNeuralTickTime = 0;
+
+      async function loadFlatBuffersConnectome() {
+        const prog = document.getElementById("loadingProgress");
+        const sub = document.getElementById("loadingSubtext");
+
+        sub.innerText = "Carregando mapa anatômico (circuit.json)...";
+        prog.style.width = "25%";
+        const circuitRes = await fetch("malecns_circuit.json");
+        circuit = await circuitRes.json();
+
+        circuit.ray_vpl = [];
+        circuit.ray_vpr = [];
+        const numRays = 32;
+        const vplLen = Math.floor(circuit.vpl.length / (numRays / 2));
+        const vprLen = Math.floor(circuit.vpr.length / (numRays / 2));
+        for (let r = 0; r < numRays / 2; r++) {
+          circuit.ray_vpl.push(circuit.vpl.slice(r * vplLen, (r + 1) * vplLen));
+          circuit.ray_vpr.push(circuit.vpr.slice(r * vprLen, (r + 1) * vprLen));
+        }
+
+        sub.innerText = "Baixando malecns_l3_compact.mcns (4.98 MB)...";
+        prog.style.width = "50%";
+        const binRes = await fetch("malecns_l3_compact.mcns");
+        const arrayBuf = await binRes.arrayBuffer();
+
+        prog.style.width = "80%";
+        sub.innerText = "Iniciando Web Worker dedicado...";
+
+        const view = new DataView(arrayBuf);
+        const rootTableOffset = view.getUint32(0, true);
+        const vtableOffset =
+          rootTableOffset - view.getInt32(rootTableOffset, true);
+        const vtableLen = view.getUint16(vtableOffset, true);
+
+        function getVector(fieldIdx, bytesPerElem, ArrayType) {
+          const voffset = 4 + fieldIdx * 2;
+          if (voffset >= vtableLen) return null;
+          const fieldOffset = view.getUint16(vtableOffset + voffset, true);
+          if (fieldOffset === 0) return null;
+          const pos = rootTableOffset + fieldOffset;
+          const vecStart = pos + view.getUint32(pos, true);
+          const len = view.getUint32(vecStart, true);
+          const dataStart = vecStart + 4;
+          return new ArrayType(arrayBuf, dataStart, len);
+        }
+
+        const offsets = getVector(5, 4, Uint32Array);
+        const scales = getVector(6, 4, Float32Array);
+        const deltas = getVector(7, 2, Uint16Array);
+        const weights = getVector(8, 1, Uint8Array);
+        const lut = getVector(9, 4, Float32Array);
+
+        // Create inline Web Worker
+        const blob = new Blob([WORKER_CODE], {
+          type: "application/javascript",
+        });
+        neuralWorker = new Worker(URL.createObjectURL(blob));
+
+        neuralWorker.onmessage = function (e) {
+          const msg = e.data;
+          if (msg.type === "ready") {
+            prog.style.width = "100%";
+            sub.innerText = "Conectoma ativo no Web Worker a 60 FPS!";
+            setTimeout(() => {
+              document.getElementById("loadingModal").style.display = "none";
+            }, 300);
+          } else if (msg.type === "stepResult") {
+            workerBusy = false;
+            liveLatency = msg.stepLatency;
+            const results = msg.results;
+            for (let f = 0; f < results.length; f++) {
+              if (swarm[f]) {
+                swarm[f].applyMotorCommand(
+                  results[f].torque,
+                  results[f].thrust,
+                  results[f].meanAct
+                );
+                swarm[f].motorTelemetry = results[f];
+              }
+            }
+            const vr = results[selectedFlyIdx] || results[0];
+            const vf = swarm[selectedFlyIdx] || swarm[0];
+            if (neuralViz && vr && vf) {
+              const wallSignal = Array.from(
+                vf.wallDists,
+                (distance) => Math.max(0, 1 - distance / 14)
+              );
+              neuralViz.update({
+                activity: vr.dnSample || [],
+                sensory: vf.prizeDists,
+                secondary: wallSignal,
+                channels: [
+                  { label: "connectome", value: vr.motorTerms.connectome },
+                  { label: "phototaxis", value: vr.motorTerms.phototaxis },
+                  { label: "chemotaxis", value: vr.motorTerms.chemotaxis },
+                  { label: "saccade", value: vr.motorTerms.saccade },
+                  { label: "torque", value: vr.torque },
+                  { label: "thrust", value: vr.thrust },
+                  { label: "mean DN", value: vr.meanAct }
+                ],
+                meta: {
+                  hz: msg.stepLatency > 0 ? 1000 / msg.stepLatency : 0
+                }
+              });
+            }
+          }
+        };
+
+        // Initialize worker with buffers
+        neuralWorker.postMessage({
+          type: "init",
+          circuit,
+          n_neurons: offsets.length - 1,
+          offsets: offsets.buffer.slice(
+            offsets.byteOffset,
+            offsets.byteOffset + offsets.byteLength
+          ),
+          scales: scales.buffer.slice(
+            scales.byteOffset,
+            scales.byteOffset + scales.byteLength
+          ),
+          deltas: deltas.buffer.slice(
+            deltas.byteOffset,
+            deltas.byteOffset + deltas.byteLength
+          ),
+          weights: weights.buffer.slice(
+            weights.byteOffset,
+            weights.byteOffset + weights.byteLength
+          ),
+          lut: lut.buffer.slice(
+            lut.byteOffset,
+            lut.byteOffset + lut.byteLength
+          ),
+        });
+
+        initSwarm();
+      }
+
+      function initSwarm() {
+        prizes.push(new Prize(1));
+        prizes.push(new Prize(2));
+        addFly();
+        addFly();
+      }
+
+      function addFly() {
+        if (swarm.length >= FLY_COLORS.length) return;
+        const fly = new FlyAgent(swarm.length + 1, FLY_COLORS[swarm.length]);
+        swarm.push(fly);
+        updateFlySelect();
+        updateSwarmTable();
+      }
+
+      function removeFly() {
+        if (swarm.length <= 1) return;
+        swarm.pop();
+        if (selectedFlyIdx >= swarm.length) selectedFlyIdx = swarm.length - 1;
+        updateFlySelect();
+        updateSwarmTable();
+      }
+
+      function addPrize() {
+        if (prizes.length >= 10) return;
+        prizes.push(new Prize(prizes.length + 1));
+      }
+
+      function removePrize() {
+        if (prizes.length <= 1) return;
+        prizes.pop();
+      }
+
+      function randomSpawnAll() {
+        const allEnts = [];
+        for (const f of swarm) {
+          f.resetPosition(allEnts);
+          allEnts.push({ x: f.x, y: f.y });
+        }
+        for (const p of prizes) {
+          p.respawn(allEnts);
+          allEnts.push({ x: p.x, y: p.y });
+        }
+      }
+
+      function updateFlySelect() {
+        const sel = document.getElementById("selectFlyCam");
+        sel.innerHTML = "";
+        swarm.forEach((f, idx) => {
+          const opt = document.createElement("option");
+          opt.value = idx;
+          opt.innerText = `Mosca #${f.id} (${f.color.name})`;
+          if (idx === selectedFlyIdx) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        document.getElementById("labelFlyView").innerText =
+          `VISÃO 3D EM TEMPO REAL — MOSCA #${swarm[selectedFlyIdx].id} (${swarm[selectedFlyIdx].color.name.toUpperCase()})`;
+      }
+
+      // =========================================================================
+      // 5. 3D Raycasting Renderer (First-Person Doom Compound Eyes)
+      // =========================================================================
+      const c3d = document.getElementById("canvas3d");
+      const ctx3d = c3d.getContext("2d");
+
+      function render3D() {
+        const activeFly = swarm[selectedFlyIdx] || swarm[0];
+        if (!activeFly) return;
+        const w = c3d.width;
+        const h = c3d.height;
+
+        // Ceiling and floor
+        ctx3d.fillStyle = "#121417";
+        ctx3d.fillRect(0, 0, w, h / 2);
+        ctx3d.fillStyle = "#1b1814";
+        ctx3d.fillRect(0, h / 2, w, h / 2);
+
+        const numRays = 32;
+        const colWidth = Math.ceil(w / numRays);
+
+        for (let r = 0; r < numRays; r++) {
+          const dist = activeFly.wallDists[r];
+          const wallH = Math.min(h, Math.floor((h / dist) * 1.8));
+          const top = Math.floor((h - wallH) / 2);
+
+          const shade = Math.max(0.12, 1.0 - dist / 12.0);
+          const colR = Math.floor(140 * shade);
+          const colG = Math.floor(70 * shade);
+          const colB = Math.floor(40 * shade);
+
+          ctx3d.fillStyle = `rgb(${colR}, ${colG}, ${colB})`;
+          ctx3d.fillRect(r * colWidth, top, colWidth + 1, wallH);
+
+          ctx3d.fillStyle = `rgba(0, 0, 0, ${0.35 * shade})`;
+          ctx3d.fillRect(r * colWidth, top, 1, wallH);
+        }
+
+        // Render Floating Scent Mist Particles when smelling prize
+        const avgOdor = (activeFly.odorL + activeFly.odorR) / 2.0;
+        if (avgOdor > 0.08) {
+          const numParticles = Math.min(28, Math.floor(avgOdor * 20));
+          const tNow = performance.now() * 0.001;
+          for (let p = 0; p < numParticles; p++) {
+            const px = (p * 47 + tNow * 50) % w;
+            const py =
+              ((p * 31 + Math.sin(tNow * 2.5 + p) * 22 + tNow * 18) %
+                (h * 0.65)) +
+              h * 0.18;
+            const pSize = (p % 3) + 1.8;
+            const alpha = Math.min(0.7, avgOdor * 0.4);
+            ctx3d.beginPath();
+            ctx3d.arc(px, py, pSize, 0, Math.PI * 2);
+            ctx3d.fillStyle = `rgba(63, 185, 80, ${alpha})`;
+            ctx3d.shadowColor = "#3fb950";
+            ctx3d.shadowBlur = 8;
+            ctx3d.fill();
+            ctx3d.shadowBlur = 0;
+          }
+        }
+
+        // Render Prizes with Glowing Scent Cloud
+        const fov = Math.PI * 0.8;
+        for (const p of prizes) {
+          const dx = p.x - activeFly.x;
+          const dy = p.y - activeFly.y;
+          const dist = Math.hypot(dx, dy);
+          const ang = Math.atan2(dy, dx);
+          const diffAng =
+            ((ang - activeFly.angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+
+          if (Math.abs(diffAng) < fov / 2 && dist > 0.4) {
+            const screenX = ((diffAng + fov / 2) / fov) * w;
+            const spriteH = Math.min(h * 0.8, Math.floor((h / dist) * 1.2));
+            const rayIdx = Math.floor(((diffAng + fov / 2) / fov) * numRays);
+            if (
+              rayIdx >= 0 &&
+              rayIdx < numRays &&
+              dist < activeFly.wallDists[rayIdx]
+            ) {
+              ctx3d.save();
+
+              // Glowing green/gold scent plume aura
+              const auraGrad = ctx3d.createRadialGradient(
+                screenX,
+                h / 2,
+                2,
+                screenX,
+                h / 2,
+                spriteH * 0.85
+              );
+              auraGrad.addColorStop(0, "rgba(63, 185, 80, 0.7)");
+              auraGrad.addColorStop(0.4, "rgba(241, 224, 90, 0.35)");
+              auraGrad.addColorStop(1, "rgba(63, 185, 80, 0)");
+              ctx3d.fillStyle = auraGrad;
+              ctx3d.beginPath();
+              ctx3d.arc(screenX, h / 2, spriteH * 0.85, 0, Math.PI * 2);
+              ctx3d.fill();
+
+              // Prize Core
+              ctx3d.beginPath();
+              ctx3d.arc(screenX, h / 2, spriteH * 0.35, 0, Math.PI * 2);
+              ctx3d.fillStyle = "#ffd700";
+              ctx3d.shadowColor = "#ffea00";
+              ctx3d.shadowBlur = 16;
+              ctx3d.fill();
+              ctx3d.strokeStyle = "#fff";
+              ctx3d.lineWidth = 2;
+              ctx3d.stroke();
+              ctx3d.restore();
+            }
+          }
+        }
+
+        // Render Other Flies in Swarm
+        for (const other of swarm) {
+          if (other === activeFly) continue;
+          const dx = other.x - activeFly.x;
+          const dy = other.y - activeFly.y;
+          const dist = Math.hypot(dx, dy);
+          const ang = Math.atan2(dy, dx);
+          const diffAng =
+            ((ang - activeFly.angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+
+          if (Math.abs(diffAng) < fov / 2 && dist > 0.4) {
+            const screenX = ((diffAng + fov / 2) / fov) * w;
+            const spriteH = Math.min(h * 0.8, Math.floor((h / dist) * 1.0));
+            const rayIdx = Math.floor(((diffAng + fov / 2) / fov) * numRays);
+
+            if (
+              rayIdx >= 0 &&
+              rayIdx < numRays &&
+              dist < activeFly.wallDists[rayIdx]
+            ) {
+              ctx3d.save();
+              ctx3d.beginPath();
+              ctx3d.arc(screenX, h / 2, spriteH * 0.25, 0, Math.PI * 2);
+              ctx3d.fillStyle = other.color.hex;
+              ctx3d.shadowColor = other.color.hex;
+              ctx3d.shadowBlur = 10;
+              ctx3d.fill();
+              ctx3d.strokeStyle = "rgba(255, 255, 255, 0.7)";
+              ctx3d.lineWidth = 2;
+              ctx3d.stroke();
+              ctx3d.restore();
+            }
+          }
+        }
+      }
+
+      // =========================================================================
+      // 6. 2D Radar Renderer (Arena Overview)
+      // =========================================================================
+      const cRad = document.getElementById("canvasRadar");
+      const ctxRad = cRad.getContext("2d");
+
+      function renderRadar() {
+        const rw = cRad.width;
+        const rh = cRad.height;
+        const scaleX = rw / MAP_W;
+        const scaleY = rh / MAP_H;
+
+        ctxRad.fillStyle = "#0d1117";
+        ctxRad.fillRect(0, 0, rw, rh);
+
+        // Walls
+        for (let y = 0; y < MAP_H; y++) {
+          for (let x = 0; x < MAP_W; x++) {
+            if (WALLS[y][x]) {
+              ctxRad.fillStyle = "#30363d";
+              ctxRad.fillRect(x * scaleX, y * scaleY, scaleX - 1, scaleY - 1);
+            }
+          }
+        }
+
+        // Prizes & Animated Expanding Scent Waves
+        for (const p of prizes) {
+          const px = p.x * scaleX;
+          const py = p.y * scaleY;
+
+          // Vivid expanding scent plume concentric rings (diffusion wave)
+          const wavePhase = (performance.now() * 0.03) % 32;
+          for (let ring = 1; ring <= 4; ring++) {
+            const rad = ring * 12 + wavePhase;
+            const alpha = Math.max(0.0, 0.6 - rad / 75);
+            if (alpha > 0.01) {
+              ctxRad.beginPath();
+              ctxRad.arc(px, py, rad, 0, Math.PI * 2);
+              ctxRad.strokeStyle = `rgba(63, 185, 80, ${alpha})`;
+              ctxRad.lineWidth = 1.8;
+              ctxRad.stroke();
+            }
+          }
+
+          // Prize Target Core
+          ctxRad.beginPath();
+          ctxRad.arc(px, py, 6, 0, Math.PI * 2);
+          ctxRad.fillStyle = "#ffd700";
+          ctxRad.shadowColor = "#3fb950";
+          ctxRad.shadowBlur = 10;
+          ctxRad.fill();
+          ctxRad.shadowBlur = 0;
+        }
+
+        // Flies
+        for (let i = 0; i < swarm.length; i++) {
+          const f = swarm[i];
+          const fx = f.x * scaleX;
+          const fy = f.y * scaleY;
+          const isCamTarget = i === selectedFlyIdx;
+
+          const fov = Math.PI * 0.8;
+          const coneLen = 22;
+          ctxRad.beginPath();
+          ctxRad.moveTo(fx, fy);
+          ctxRad.arc(fx, fy, coneLen, f.angle - fov / 2, f.angle + fov / 2);
+          ctxRad.closePath();
+          ctxRad.fillStyle = isCamTarget
+            ? "rgba(88, 166, 255, 0.18)"
+            : "rgba(255, 255, 255, 0.06)";
+          ctxRad.fill();
+
+          // Bilateral Antennal Feelers (ORNs)
+          const antLen = 8;
+          const antSep = 3.5;
+          const plX = fx + antSep * Math.sin(f.angle);
+          const plY = fy - antSep * Math.cos(f.angle);
+          const prX = fx - antSep * Math.sin(f.angle);
+          const prY = fy + antSep * Math.cos(f.angle);
+
+          ctxRad.strokeStyle = "#3fb950";
+          ctxRad.lineWidth = isCamTarget ? 2 : 1.4;
+          // Left antenna
+          ctxRad.beginPath();
+          ctxRad.moveTo(plX, plY);
+          ctxRad.lineTo(
+            plX + Math.cos(f.angle - 0.35) * antLen,
+            plY + Math.sin(f.angle - 0.35) * antLen
+          );
+          ctxRad.stroke();
+          // Right antenna
+          ctxRad.beginPath();
+          ctxRad.moveTo(prX, prY);
+          ctxRad.lineTo(
+            prX + Math.cos(f.angle + 0.35) * antLen,
+            prY + Math.sin(f.angle + 0.35) * antLen
+          );
+          ctxRad.stroke();
+
+          // Fly Body
+          ctxRad.beginPath();
+          ctxRad.arc(fx, fy, isCamTarget ? 5 : 4, 0, Math.PI * 2);
+          ctxRad.fillStyle = f.color.hex;
+          ctxRad.fill();
+
+          // Heading tick
+          ctxRad.beginPath();
+          ctxRad.moveTo(fx, fy);
+          ctxRad.lineTo(
+            fx + Math.cos(f.angle) * 11,
+            fy + Math.sin(f.angle) * 11
+          );
+          ctxRad.strokeStyle = "#fff";
+          ctxRad.lineWidth = 1.5;
+          ctxRad.stroke();
+
+          if (isCamTarget) {
+            ctxRad.beginPath();
+            ctxRad.arc(fx, fy, 9, 0, Math.PI * 2);
+            ctxRad.strokeStyle = "#58a6ff";
+            ctxRad.lineWidth = 1;
+            ctxRad.stroke();
+          }
+        }
+      }
+
+      // =========================================================================
+      // 7. HUD & Telemetry Update
+      // =========================================================================
+      const MOTOR_DISPLAY_RANGE = 1.5;
+      const MOTOR_ROWS = [
+        ["connectome", "CONNECTOME"],
+        ["phototaxis", "PHOTOTAXIS"],
+        ["chemotaxis", "CHEMOTAXIS"],
+        ["saccade", "COLLISION (SACCADE)"],
+      ];
+      const MOTOR_COLORS = {
+        connectome: "#58a6ff",
+        phototaxis: "#f1e05a",
+        chemotaxis: "#3fb950",
+        saccade: "#bc8cff",
+        rawTorque: "#c9d1d9",
+        torque: "#ff7b72",
+      };
+
+      function ensureMotorTruthRows() {
+        const root = document.getElementById("motorTruthRows");
+        if (!root || root.childElementCount) return;
+        const rows = [
+          ...MOTOR_ROWS,
+          ["rawTorque", "RAW TOTAL"],
+          ["torque", "CLAMPED OUTPUT"],
+        ];
+        for (const [key, label] of rows) {
+          if (key === "rawTorque") {
+            const sep = document.createElement("div");
+            sep.className = "motor-separator";
+            root.appendChild(sep);
+          }
+          const row = document.createElement("div");
+          row.className = "meter-row";
+          row.dataset.motorKey = key;
+          row.innerHTML = `
+            <span class="meter-label">${label}</span>
+            <div class="motor-track">
+              <span class="motor-limit motor-limit-left"></span>
+              <span class="motor-limit motor-limit-right"></span>
+              <span class="motor-fill" id="motor-${key}"></span>
+            </div>
+            <span class="meter-val" id="motor-val-${key}">0.000</span>`;
+          root.appendChild(row);
+        }
+      }
+
+      function setMotorBar(key, value) {
+        const fill = document.getElementById(`motor-${key}`);
+        const valueEl = document.getElementById(`motor-val-${key}`);
+        if (!fill || !valueEl) return;
+        const clipped = Math.max(
+          -MOTOR_DISPLAY_RANGE,
+          Math.min(MOTOR_DISPLAY_RANGE, value)
+        );
+        const span = (Math.abs(clipped) / MOTOR_DISPLAY_RANGE) * 50;
+        fill.style.left = clipped < 0 ? `${50 - span}%` : "50%";
+        fill.style.width = `${span}%`;
+        fill.style.background = MOTOR_COLORS[key] || "#58a6ff";
+        valueEl.textContent = `${value >= 0 ? "+" : ""}${value.toFixed(3)}`;
+      }
+
+      function updateHUD() {
+        const activeFly = swarm[selectedFlyIdx] || swarm[0];
+        if (!activeFly) return;
+
+        const maxPpm = 2.0;
+        const pctL = Math.min(
+          100,
+          Math.floor((activeFly.odorL / maxPpm) * 100)
+        );
+        const pctR = Math.min(
+          100,
+          Math.floor((activeFly.odorR / maxPpm) * 100)
+        );
+        document.getElementById("barOdorL").style.width = pctL + "%";
+        document.getElementById("barOdorR").style.width = pctR + "%";
+        const ppmL = Math.floor(activeFly.odorL * 350);
+        const ppmR = Math.floor(activeFly.odorR * 350);
+        document.getElementById("valOdorL").innerText = ppmL + " ppm";
+        document.getElementById("valOdorR").innerText = ppmR + " ppm";
+        document.getElementById("valOdorDriveL").innerText = (
+          activeFly.odorL * 3.5
+        ).toFixed(3);
+        document.getElementById("valOdorDriveR").innerText = (
+          activeFly.odorR * 3.5
+        ).toFixed(3);
+
+        ensureMotorTruthRows();
+        const telemetry = activeFly.motorTelemetry;
+        if (telemetry?.motorTerms) {
+          for (const [key] of MOTOR_ROWS)
+            setMotorBar(key, telemetry.motorTerms[key] || 0);
+          setMotorBar("rawTorque", telemetry.rawTorque || 0);
+          setMotorBar("torque", telemetry.torque || 0);
+
+          let dominantKey = MOTOR_ROWS[0][0];
+          for (const [key] of MOTOR_ROWS) {
+            if (
+              Math.abs(telemetry.motorTerms[key] || 0) >
+              Math.abs(telemetry.motorTerms[dominantKey] || 0)
+            )
+              dominantKey = key;
+          }
+          const dominantLabel =
+            MOTOR_ROWS.find(([key]) => key === dominantKey)?.[1] || dominantKey;
+          const dominantEl = document.getElementById("motorDominant");
+          if (dominantEl) {
+            const v = telemetry.motorTerms[dominantKey] || 0;
+            dominantEl.textContent = `${dominantLabel} ${v >= 0 ? "→" : "←"} ${Math.abs(v).toFixed(3)}`;
+            dominantEl.style.color = MOTOR_COLORS[dominantKey] || "#fff";
+          }
+          document.querySelectorAll("[data-motor-key]").forEach((row) => {
+            row.classList.toggle(
+              "motor-row-dominant",
+              row.dataset.motorKey === dominantKey
+            );
+          });
+          const clampStatus = document.getElementById("motorClampStatus");
+          if (clampStatus) {
+            const saturated = Math.abs(telemetry.rawTorque || 0) > 0.45;
+            clampStatus.textContent = saturated ? "SATURATED" : "LINEAR";
+            clampStatus.classList.toggle("saturated", saturated);
+          }
+        }
+
+        const scentBadge = document.getElementById("scentStatusBadge");
+        if (scentBadge) {
+          if (ppmL + ppmR > 180) {
+            scentBadge.innerText = "🔥 GRADIENTE FORTE (HOMING)";
+            scentBadge.className = "badge";
+            scentBadge.style.background = "rgba(241, 224, 90, 0.2)";
+            scentBadge.style.color = "#f1e05a";
+            scentBadge.style.borderColor = "rgba(241, 224, 90, 0.5)";
+          } else {
+            scentBadge.innerText = "🟢 RASTREAMENTO DE PLUMA";
+            scentBadge.className = "badge badge-green";
+            scentBadge.style.background = "";
+            scentBadge.style.color = "";
+            scentBadge.style.borderColor = "";
+          }
+        }
+
+        let minDist = 999;
+        for (const p of prizes) {
+          minDist = Math.min(
+            minDist,
+            Math.hypot(p.x - activeFly.x, p.y - activeFly.y)
+          );
+        }
+        document.getElementById("badgeTargetDist").innerText =
+          `Dist Alvo: ${minDist.toFixed(1)} m`;
+        document.getElementById("hudPrimesCount").innerText =
+          activeFly.prizesCaught;
+
+        updateSwarmTable();
+      }
+
+      function updateSwarmTable() {
+        const tbody = document.getElementById("fliesTableBody");
+        tbody.innerHTML = "";
+        swarm.forEach((f, idx) => {
+          const tr = document.createElement("tr");
+          if (idx === selectedFlyIdx)
+            tr.style.background = "rgba(88, 166, 255, 0.1)";
+          tr.innerHTML = `
+            <td><span class="fly-dot" style="background: ${f.color.hex};"></span> Mosca #${f.id}</td>
+            <td><b>${f.prizesCaught}</b></td>
+            <td>${f.totalDist.toFixed(1)}m</td>
+            <td>${(f.meanAct * 100).toFixed(1)}%</td>
+          `;
+          tr.style.cursor = "pointer";
+          tr.onclick = () => {
+            selectedFlyIdx = idx;
+            updateFlySelect();
+          };
+          tbody.appendChild(tr);
+        });
+      }
+
+      // =========================================================================
+      // 8. Main 60 FPS Animation & Decoupled Neural Loop
+      // =========================================================================
+      function tick(timestamp) {
+        if (!isPaused) {
+          // 1. Continuous 60 FPS physics and antennal sensory updates
+          for (let f = 0; f < swarm.length; f++) {
+            swarm[f].updatePhysics(prizes);
+            swarm[f].sense(prizes);
+          }
+
+          // 2. Sensory dispatch to background Web Worker at biological ~25 Hz cadence
+          if (
+            neuralWorker &&
+            !workerBusy &&
+            timestamp - lastNeuralTickTime >= 40
+          ) {
+            lastNeuralTickTime = timestamp;
+            workerBusy = true;
+
+            const fliesSensory = [];
+            for (let f = 0; f < swarm.length; f++) {
+              fliesSensory.push({
+                wallDists: Array.from(swarm[f].wallDists),
+                prizeDists: Array.from(swarm[f].prizeDists),
+                odorL: swarm[f].odorL,
+                odorR: swarm[f].odorR,
+              });
+            }
+
+            neuralWorker.postMessage({
+              type: "step",
+              numFlies: swarm.length,
+              flies: fliesSensory,
+            });
+          }
+        }
+
+        render3D();
+        const retinaFly = swarm[selectedFlyIdx] || swarm[0];
+        if (retinaHUD && retinaFly) {
+          retinaHUD.render(retinaFly.wallDists, retinaFly.prizeDists);
+        }
+        renderRadar();
+        updateHUD();
+
+        frameCount++;
+        if (timestamp - lastFrameTime >= 500) {
+          liveFps = Math.round(
+            (frameCount * 1000) / (timestamp - lastFrameTime)
+          );
+          document.getElementById("liveFps").innerText = liveFps;
+          document.getElementById("liveLatency").innerText =
+            liveLatency.toFixed(1) + " ms";
+          frameCount = 0;
+          lastFrameTime = timestamp;
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      // =========================================================================
+      // 9. Event Listeners
+      // =========================================================================
+      document.getElementById("btnAddFly").onclick = addFly;
+      document.getElementById("btnRemFly").onclick = removeFly;
+      document.getElementById("btnAddPrize").onclick = addPrize;
+      document.getElementById("btnRemPrize").onclick = removePrize;
+      document.getElementById("btnRandomSpawn").onclick = randomSpawnAll;
+
+      document.getElementById("btnTogglePause").onclick = () => {
+        isPaused = !isPaused;
+        document.getElementById("btnTogglePause").innerText = isPaused
+          ? "▶ Continuar"
+          : "⏸ Pausar";
+      };
+
+      document.getElementById("selectFlyCam").onchange = (e) => {
+        selectedFlyIdx = parseInt(e.target.value);
+        updateFlySelect();
+      };
+
+      // Check if running inside an iframe
+      if (window.self === window.top) {
+        const banner = document.getElementById("iframeBanner");
+        if (banner) banner.style.display = "none";
+      }
+
+      // Fullscreen handler
+      const btnFs = document.getElementById("btnFullscreen");
+      if (btnFs) {
+        btnFs.onclick = () => {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+          } else {
+            document.exitFullscreen().catch(() => {});
+          }
+        };
+        document.addEventListener("fullscreenchange", () => {
+          if (document.fullscreenElement) {
+            btnFs.innerText = "⛶ Sair Tela Cheia";
+          } else {
+            btnFs.innerText = "⛶ Tela Cheia";
+          }
+        });
+      }
+
+      window.addEventListener("DOMContentLoaded", async () => {
+        neuralViz =
+          window.FlyNeuralViz &&
+          window.FlyNeuralViz.mount(
+            document.getElementById("neuralVizHost"),
+            {
+              title: "MALECNS · LIVE VIEW",
+              storageKey: "malecns-neural-viz",
+              defaultMode: "cloud"
+            }
+          );
+        await Promise.all([initRetinaHUD(), loadFlatBuffersConnectome()]);
+        requestAnimationFrame(tick);
+      });
+    </script>
+  </body>
+</html>

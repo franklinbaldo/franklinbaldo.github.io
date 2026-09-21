@@ -1,0 +1,15 @@
+version: 1
+locale: pt-BR
+entries:
+  - term: OKF
+    say_as: "ó-ká-éfe"
+  - term: GitHub
+    say_as: "guít-râb"
+  - term: Internet Archive
+    say_as: "ínternet árkaiv"
+  - term: TTS
+    say_as: "tê-tê-ésse"
+  - term: Breeze
+    say_as: "bríz"
+  - term: Kaggle
+    say_as: "káguel"

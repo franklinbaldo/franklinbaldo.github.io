@@ -1,0 +1,46 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# copied at build time from node_modules/katex by scripts/copy-katex.mjs
+public/katex/
+
+# copied at build time from node_modules/highlight.js by scripts/copy-katex.mjs
+public/hljs/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.production
+
+# macOS-specific files
+.DS_Store
+
+# jetbrains setting folder
+.idea/
+.claude/
+.agents/
+
+# Materialized agent-skill content — regenerate from skills-lock.json with
+# `npx skills experimental_install`. Only the lock file is tracked, same
+# relationship as package-lock.json to node_modules/.
+
+# Hrönir transient session state (never committed)
+hronir_session.json
+
+# Hrönir version selection (rebuilt by prebuild/hronir:select before each CI step that needs it)
+src/generated/versions-selected.json
+
+# Python bytecode from running the audiobook worker locally
+__pycache__/
+*.py[cod]

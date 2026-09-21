@@ -1,0 +1,87 @@
+---
+interface Props {
+  lang?: string;
+}
+const { lang = 'en' } = Astro.props;
+const label = lang === 'pt' ? 'Voltar ao topo' : 'Back to top';
+const text = lang === 'pt' ? '↑ Topo' : '↑ Top';
+---
+
+<a href="#main" class="back-to-top" aria-label={label}>{text}</a>
+
+<style>
+  .back-to-top {
+    position: fixed;
+    bottom: var(--fixed-stack-bottom-back-to-top);
+    right: var(--fixed-stack-right-wide);
+    padding: 0.5rem 0.75rem;
+    background: var(--pico-background-color);
+    color: var(--pico-muted-color);
+    border: 1px solid var(--pico-border-color);
+    border-radius: var(--pico-border-radius);
+    font-size: 0.85rem;
+    text-decoration: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  /* Show only after the user has scrolled past the first viewport. */
+  @media (prefers-reduced-motion: no-preference) {
+    .back-to-top {
+      animation: fade-in linear both;
+      animation-timeline: scroll(root);
+      animation-range: 100vh 110vh;
+    }
+  }
+
+  @keyframes fade-in {
+    to {
+      opacity: 0.85;
+      pointer-events: auto;
+    }
+  }
+
+  .back-to-top:focus-visible {
+    opacity: 0.85 !important;
+    pointer-events: auto !important;
+  }
+</style>
+
+<script>
+  // JS fallback for browsers that don't support scroll-driven animations
+  // (mainly Safari < 17 and any narrow-viewport context where the CSS
+  // animation-timeline rule may not fire) — also used when the user prefers
+  // reduced motion, since the scroll-driven animation is skipped above.
+  const backToTopWindow = window as typeof window & {
+    __backToTopAbort?: AbortController;
+  };
+
+  function initBackToTop() {
+    // Astro view transitions replace the page element but keep window-level
+    // listeners alive. Abort the previous fallback before binding the new page
+    // so repeated client-side navigations cannot accumulate scroll handlers.
+    backToTopWindow.__backToTopAbort?.abort();
+    backToTopWindow.__backToTopAbort = undefined;
+
+    const el = document.querySelector<HTMLAnchorElement>('.back-to-top');
+    if (!el) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduceMotion && CSS.supports('animation-timeline', 'scroll(root)')) return;
+
+    const controller = new AbortController();
+    backToTopWindow.__backToTopAbort = controller;
+    const update = () => {
+      const show = window.scrollY > window.innerHeight;
+      el.style.opacity = show ? '0.85' : '0';
+      el.style.pointerEvents = show ? 'auto' : 'none';
+    };
+    update();
+    window.addEventListener('scroll', update, {
+      passive: true,
+      signal: controller.signal,
+    });
+  }
+  document.addEventListener('astro:page-load', initBackToTop);
+  initBackToTop();
+</script>

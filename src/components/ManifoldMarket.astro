@@ -1,0 +1,20 @@
+---
+interface Props {
+  user?: string;
+  slug: string;
+  caption?: string;
+  height?: number;
+}
+const { user = "FranklinBaldo", slug, caption, height = 405 } = Astro.props;
+---
+
+<figure class="manifold-embed">
+  <iframe
+    src={`https://manifold.markets/embed/${user}/${slug}`}
+    width="100%"
+    height={height}
+    frameborder="0"
+    loading="lazy"
+    title={`Manifold market: ${slug}`}></iframe>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

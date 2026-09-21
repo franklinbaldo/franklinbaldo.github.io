@@ -1,0 +1,754 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+---
+
+<PageLayout
+  title="Rug Pull Simulator"
+  description="You already bought the shitcoin. Read the creator, read the market, and get out before the creator gets out through you."
+  lang="en"
+>
+  <section class="rug-shell" aria-labelledby="rug-title">
+    <header class="rug-hero">
+      <p class="rug-kicker">A tiny adversarial trading game</p>
+      <h1 id="rug-title">Rug Pull Simulator</h1>
+      <p class="rug-deck">The chart is not the puzzle. The developer is.</p>
+    </header>
+
+    <section id="rug-intro" class="rug-intro" aria-label="Game introduction">
+      <p class="rug-terminal">You bought <strong>$1,000</strong> of a shitcoin.</p>
+      <p>You don't know who made it.</p>
+      <p>You don't know if they're going to rug.</p>
+      <p>You are already down <strong>7%</strong>.</p>
+      <button id="rug-start" type="button" class="rug-primary">ENTER TELEGRAM →</button>
+      <p class="rug-fineprint">Fictional money, fictional token, real bad vibes.</p>
+    </section>
+
+    <section id="rug-game" class="rug-game" hidden aria-label="Rug Pull Simulator game">
+      <div class="rug-marketbar">
+        <div>
+          <p class="rug-label">TOKEN</p>
+          <h2 id="rug-symbol">$DUCK</h2>
+          <p id="rug-name" class="rug-muted">Duck Protocol</p>
+        </div>
+        <div class="rug-price-block">
+          <p class="rug-label">PRICE</p>
+          <strong id="rug-price">$0.93</strong>
+          <span id="rug-change" class="rug-change">−7.0%</span>
+        </div>
+      </div>
+
+      <div class="rug-grid rug-stats" aria-label="Market and portfolio statistics">
+        <article>
+          <span>Portfolio</span>
+          <strong id="rug-portfolio">$1,180</strong>
+        </article>
+        <article>
+          <span>Cash</span>
+          <strong id="rug-cash">$250</strong>
+        </article>
+        <article>
+          <span>Liquidity</span>
+          <strong id="rug-liquidity">$120k</strong>
+        </article>
+        <article>
+          <span>Holders</span>
+          <strong id="rug-holders">2.5k</strong>
+        </article>
+      </div>
+
+      <section class="rug-chart-card" aria-labelledby="rug-chart-title">
+        <div class="rug-card-head">
+          <div>
+            <p id="rug-chart-title" class="rug-label">PRICE TRACE</p>
+            <span class="rug-muted">supporting evidence, not the puzzle</span>
+          </div>
+          <span id="rug-beat" class="rug-beat">T+00</span>
+        </div>
+        <svg id="rug-chart" viewBox="0 0 320 72" role="img" aria-label="Token price history">
+          <line x1="0" y1="36" x2="320" y2="36" class="rug-chart-mid"></line>
+          <polyline id="rug-chart-line" points="0,36 320,36" fill="none" vector-effect="non-scaling-stroke"></polyline>
+        </svg>
+      </section>
+
+      <section class="rug-feed-card" aria-labelledby="rug-feed-title">
+        <div class="rug-card-head">
+          <div>
+            <p id="rug-feed-title" class="rug-label">LIVE FEED</p>
+            <span class="rug-live"><i></i> live simulation</span>
+          </div>
+          <span id="rug-attention" class="rug-attention">Research ●●</span>
+        </div>
+        <ol id="rug-feed" class="rug-feed" aria-live="polite" aria-relevant="additions"></ol>
+      </section>
+
+      <section class="rug-controls" aria-label="Trading controls">
+        <p class="rug-label">TRADE</p>
+        <div class="rug-action-grid">
+          <button type="button" data-rug-action="buy">BUY 50% CASH</button>
+          <button type="button" data-rug-action="hold">HOLD</button>
+          <button type="button" data-rug-action="sell25">SELL 25%</button>
+          <button type="button" data-rug-action="sell50">SELL 50%</button>
+          <button type="button" data-rug-action="sell100" class="rug-danger">SELL ALL</button>
+        </div>
+      </section>
+
+      <section class="rug-controls" aria-label="Investigation controls">
+        <div class="rug-control-head">
+          <p class="rug-label">INVESTIGATE</p>
+          <span class="rug-muted">costs one research charge and advances time</span>
+        </div>
+        <div class="rug-action-grid rug-investigate-grid">
+          <button type="button" data-rug-investigate="wallet">WALLET</button>
+          <button type="button" data-rug-investigate="liquidity">LP</button>
+          <button type="button" data-rug-investigate="contract">CONTRACT</button>
+          <button type="button" data-rug-investigate="creator">CREATOR</button>
+        </div>
+      </section>
+
+      <section id="rug-result" class="rug-result" hidden aria-labelledby="rug-result-title">
+        <p class="rug-kicker">POST-MORTEM</p>
+        <h2 id="rug-result-title">Session complete</h2>
+        <p id="rug-verdict" class="rug-verdict"></p>
+        <div class="rug-grid rug-result-stats">
+          <article>
+            <span>Final value</span>
+            <strong id="rug-final-value"></strong>
+          </article>
+          <article>
+            <span>P/L</span>
+            <strong id="rug-final-pnl"></strong>
+          </article>
+          <article>
+            <span>Creator</span>
+            <strong id="rug-archetype"></strong>
+          </article>
+          <article>
+            <span>Peak captured</span>
+            <strong id="rug-capture"></strong>
+          </article>
+        </div>
+        <h3>What the dev was thinking</h3>
+        <ol id="rug-timeline" class="rug-timeline"></ol>
+        <div class="rug-result-actions">
+          <button id="rug-replay" type="button">REPLAY THIS SEED</button>
+          <button id="rug-new" type="button" class="rug-primary">NEW SHITCOIN →</button>
+        </div>
+      </section>
+
+      <footer class="rug-session-meta">
+        <span>seed: <code id="rug-seed"></code></span>
+        <button id="rug-reset" type="button" class="rug-link-button">new seed</button>
+      </footer>
+    </section>
+
+    <aside class="rug-note">
+      <strong>Prototype rule:</strong> the creator can choose actions and messages, but the deterministic game engine owns price, liquidity and your balance. No real crypto is involved.
+    </aside>
+  </section>
+</PageLayout>
+
+<script>
+  import {
+    applyAction,
+    createGame,
+    getPublicState,
+    summarizeGame,
+    type GameState,
+    type InvestigationKind,
+    type PlayerAction,
+    type PublicGameState,
+  } from "../../rug-pull/engine";
+
+  let state: GameState | null = null;
+  let initialPrice = 0.93;
+
+  const $ = <T extends HTMLElement>(selector: string) => document.querySelector<T>(selector);
+
+  function randomSeed(): string {
+    const values = new Uint32Array(2);
+    crypto.getRandomValues(values);
+    return `${values[0]!.toString(36)}-${values[1]!.toString(36)}`;
+  }
+
+  function money(value: number, digits = 0): string {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: digits,
+      minimumFractionDigits: digits,
+    }).format(value);
+  }
+
+  function compact(value: number): string {
+    return new Intl.NumberFormat("en-US", {
+      notation: "compact",
+      maximumFractionDigits: 1,
+    }).format(value);
+  }
+
+  function signedPercent(value: number): string {
+    const sign = value > 0 ? "+" : "";
+    return `${sign}${value.toFixed(1)}%`;
+  }
+
+  function eventClass(kind: string): string {
+    return `rug-feed-${kind.replace(/[^a-z]/g, "")}`;
+  }
+
+  function renderFeed(view: PublicGameState): void {
+    const feed = $("#rug-feed");
+    if (!feed) return;
+    feed.replaceChildren();
+
+    for (const event of view.feed.slice(-18)) {
+      const row = document.createElement("li");
+      row.className = eventClass(event.kind);
+
+      const meta = document.createElement("span");
+      meta.className = "rug-feed-meta";
+      meta.textContent = `T+${String(event.beat).padStart(2, "0")} · ${event.label}`;
+
+      const text = document.createElement("p");
+      text.textContent = event.text;
+
+      row.append(meta, text);
+      feed.append(row);
+    }
+
+    feed.scrollTop = feed.scrollHeight;
+  }
+
+  function renderChart(view: PublicGameState): void {
+    const line = $("#rug-chart-line") as SVGPolylineElement | null;
+    if (!line) return;
+    const points = view.priceHistory;
+    const values = points.map((point) => point.price);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const span = Math.max(0.000001, max - min);
+    const width = 320;
+    const height = 62;
+    const top = 5;
+    const coords = points.map((point, index) => {
+      const x = points.length <= 1 ? 0 : (index / (points.length - 1)) * width;
+      const y = top + (1 - (point.price - min) / span) * height;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    line.setAttribute("points", coords.join(" "));
+  }
+
+  function renderResult(current: GameState): void {
+    const result = $("#rug-result");
+    if (!result) return;
+    if (current.status === "playing") {
+      result.hidden = true;
+      return;
+    }
+
+    const summary = summarizeGame(current);
+    result.hidden = false;
+    $("#rug-verdict")!.textContent = summary.verdict;
+    $("#rug-final-value")!.textContent = money(summary.finalValue, 0);
+    $("#rug-final-pnl")!.textContent = signedPercent(summary.pnlPercent);
+    $("#rug-archetype")!.textContent = summary.archetype.replaceAll("_", " ");
+    $("#rug-capture")!.textContent = `${summary.capturePercent.toFixed(0)}%`;
+
+    const timeline = $("#rug-timeline");
+    if (timeline) {
+      timeline.replaceChildren();
+      for (const item of summary.creatorTimeline) {
+        const row = document.createElement("li");
+        const time = document.createElement("strong");
+        time.textContent = `T+${String(item.beat).padStart(2, "0")}`;
+        const text = document.createElement("span");
+        text.textContent = item.note;
+        row.append(time, text);
+        timeline.append(row);
+      }
+    }
+
+    for (const button of document.querySelectorAll<HTMLButtonElement>(
+      "[data-rug-action], [data-rug-investigate]"
+    )) {
+      button.disabled = true;
+    }
+    result.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function render(): void {
+    if (!state) return;
+    const view = getPublicState(state);
+    const priceChange = ((view.market.price - initialPrice) / initialPrice) * 100;
+
+    $("#rug-symbol")!.textContent = view.token.symbol;
+    $("#rug-name")!.textContent = view.token.name;
+    $("#rug-price")!.textContent = money(view.market.price, view.market.price < 1 ? 4 : 2);
+    const change = $("#rug-change")!;
+    change.textContent = signedPercent(priceChange);
+    change.dataset.direction = priceChange >= 0 ? "up" : "down";
+    $("#rug-portfolio")!.textContent = money(view.portfolioValue, 0);
+    $("#rug-cash")!.textContent = money(view.player.cash, 0);
+    $("#rug-liquidity")!.textContent = money(view.market.liquidity, 0);
+    $("#rug-holders")!.textContent = compact(view.market.holders);
+    $("#rug-beat")!.textContent = `T+${String(view.beat).padStart(2, "0")}`;
+    $("#rug-seed")!.textContent = view.seed;
+    $("#rug-attention")!.textContent = `Research ${"●".repeat(view.attention)}${"○".repeat(
+      view.maxAttention - view.attention
+    )}`;
+
+    renderChart(view);
+    renderFeed(view);
+    renderResult(state);
+
+    for (const button of document.querySelectorAll<HTMLButtonElement>("[data-rug-investigate]")) {
+      button.disabled = view.status !== "playing" || view.attention <= 0;
+    }
+    for (const button of document.querySelectorAll<HTMLButtonElement>("[data-rug-action]")) {
+      button.disabled = view.status !== "playing";
+    }
+  }
+
+  function start(seed = randomSeed()): void {
+    state = createGame(seed);
+    initialPrice = state.priceHistory[0]?.price ?? state.market.price;
+    $("#rug-intro")!.hidden = true;
+    $("#rug-game")!.hidden = false;
+    $("#rug-result")!.hidden = true;
+    for (const button of document.querySelectorAll<HTMLButtonElement>(
+      "[data-rug-action], [data-rug-investigate]"
+    )) {
+      button.disabled = false;
+    }
+    render();
+  }
+
+  function dispatch(action: PlayerAction): void {
+    if (!state || state.status !== "playing") return;
+    state = applyAction(state, action);
+    render();
+  }
+
+  function bind(): void {
+    $("#rug-start")?.addEventListener("click", () => start());
+    $("#rug-new")?.addEventListener("click", () => start());
+    $("#rug-reset")?.addEventListener("click", () => start());
+    $("#rug-replay")?.addEventListener("click", () => state && start(state.seed));
+
+    for (const button of document.querySelectorAll<HTMLButtonElement>("[data-rug-action]")) {
+      button.addEventListener("click", () => {
+        const action = button.dataset.rugAction;
+        if (action === "buy") dispatch({ type: "buy" });
+        if (action === "hold") dispatch({ type: "hold" });
+        if (action === "sell25") dispatch({ type: "sell", fraction: 0.25 });
+        if (action === "sell50") dispatch({ type: "sell", fraction: 0.5 });
+        if (action === "sell100") dispatch({ type: "sell", fraction: 1 });
+      });
+    }
+
+    for (const button of document.querySelectorAll<HTMLButtonElement>("[data-rug-investigate]")) {
+      button.addEventListener("click", () => {
+        const kind = button.dataset.rugInvestigate as InvestigationKind | undefined;
+        if (kind) dispatch({ type: "investigate", kind });
+      });
+    }
+  }
+
+  document.addEventListener("astro:page-load", bind);
+</script>
+
+<style>
+  .rug-shell {
+    --rug-surface: color-mix(in srgb, var(--pico-card-background-color) 86%, transparent);
+    --rug-border: color-mix(in srgb, var(--pico-muted-border-color) 82%, transparent);
+    --rug-hot: #ff6b5f;
+    --rug-good: #35c78a;
+    --rug-warn: #e7b64c;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 1.5rem 0 4rem;
+  }
+
+  .rug-hero {
+    margin: 1rem 0 2rem;
+    text-align: center;
+  }
+
+  .rug-kicker,
+  .rug-label {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--pico-muted-color);
+  }
+
+  .rug-hero h1 {
+    margin: 0.25rem 0;
+    font-size: clamp(2.25rem, 8vw, 4.8rem);
+    letter-spacing: -0.045em;
+  }
+
+  .rug-deck {
+    margin: 0;
+    font-size: clamp(1rem, 3vw, 1.35rem);
+    color: var(--pico-muted-color);
+  }
+
+  .rug-intro {
+    max-width: 580px;
+    margin: 2.5rem auto;
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+    border: 1px solid var(--rug-border);
+    border-radius: 1.2rem;
+    background: var(--rug-surface);
+    box-shadow: 0 22px 70px rgb(0 0 0 / 0.12);
+  }
+
+  .rug-intro p {
+    margin: 0.4rem 0;
+  }
+
+  .rug-terminal {
+    margin-bottom: 1.2rem !important;
+    font-size: 1.25rem;
+  }
+
+  .rug-primary {
+    margin-top: 1.25rem;
+    font-weight: 800;
+  }
+
+  .rug-fineprint,
+  .rug-muted {
+    color: var(--pico-muted-color);
+    font-size: 0.82rem;
+  }
+
+  .rug-game {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .rug-game[hidden],
+  .rug-result[hidden],
+  .rug-intro[hidden] {
+    display: none;
+  }
+
+  .rug-marketbar,
+  .rug-card-head,
+  .rug-control-head,
+  .rug-session-meta,
+  .rug-result-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .rug-marketbar {
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--rug-border);
+    border-radius: 1rem;
+    background: var(--rug-surface);
+  }
+
+  .rug-marketbar h2,
+  .rug-price-block strong {
+    margin: 0;
+    font-size: 1.65rem;
+  }
+
+  .rug-price-block {
+    text-align: right;
+  }
+
+  .rug-change {
+    display: block;
+    font-weight: 700;
+  }
+
+  .rug-change[data-direction="up"] {
+    color: var(--rug-good);
+  }
+
+  .rug-change[data-direction="down"] {
+    color: var(--rug-hot);
+  }
+
+  .rug-grid {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .rug-stats,
+  .rug-result-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .rug-stats article,
+  .rug-result-stats article {
+    margin: 0;
+    padding: 0.75rem 0.85rem;
+    border: 1px solid var(--rug-border);
+    border-radius: 0.8rem;
+    background: var(--rug-surface);
+  }
+
+  .rug-stats article span,
+  .rug-result-stats article span {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.72rem;
+    color: var(--pico-muted-color);
+  }
+
+  .rug-stats article strong,
+  .rug-result-stats article strong {
+    font-size: 1rem;
+    overflow-wrap: anywhere;
+  }
+
+  .rug-chart-card,
+  .rug-feed-card,
+  .rug-controls,
+  .rug-result,
+  .rug-note {
+    border: 1px solid var(--rug-border);
+    border-radius: 1rem;
+    background: var(--rug-surface);
+  }
+
+  .rug-chart-card,
+  .rug-feed-card,
+  .rug-controls,
+  .rug-result {
+    padding: 1rem;
+  }
+
+  #rug-chart {
+    display: block;
+    width: 100%;
+    height: 112px;
+    margin-top: 0.75rem;
+    overflow: visible;
+  }
+
+  #rug-chart-line {
+    stroke: currentColor;
+    stroke-width: 2.5;
+  }
+
+  .rug-chart-mid {
+    stroke: var(--rug-border);
+    stroke-width: 1;
+    stroke-dasharray: 4 5;
+  }
+
+  .rug-beat,
+  .rug-attention {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.78rem;
+    color: var(--pico-muted-color);
+  }
+
+  .rug-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.2rem;
+    font-size: 0.78rem;
+    color: var(--pico-muted-color);
+  }
+
+  .rug-live i {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--rug-hot);
+    box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--rug-hot) 18%, transparent);
+  }
+
+  .rug-feed {
+    max-height: 420px;
+    margin: 0.8rem 0 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+    scroll-behavior: smooth;
+  }
+
+  .rug-feed li {
+    padding: 0.8rem 0.15rem;
+    border-bottom: 1px solid var(--rug-border);
+  }
+
+  .rug-feed li:last-child {
+    border-bottom: 0;
+  }
+
+  .rug-feed p {
+    margin: 0.18rem 0 0;
+    line-height: 1.45;
+  }
+
+  .rug-feed-meta {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--pico-muted-color);
+  }
+
+  .rug-feed-dev .rug-feed-meta {
+    color: var(--rug-warn);
+  }
+
+  .rug-feed-wallet .rug-feed-meta,
+  .rug-feed-chain .rug-feed-meta {
+    color: var(--rug-hot);
+  }
+
+  .rug-feed-research .rug-feed-meta {
+    color: var(--rug-good);
+  }
+
+  .rug-action-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.55rem;
+    margin-top: 0.65rem;
+  }
+
+  .rug-action-grid button {
+    margin: 0;
+    padding: 0.7rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.025em;
+  }
+
+  .rug-investigate-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .rug-danger {
+    border-color: color-mix(in srgb, var(--rug-hot) 72%, var(--rug-border));
+  }
+
+  .rug-result {
+    margin-top: 0.5rem;
+    border-color: color-mix(in srgb, var(--rug-warn) 60%, var(--rug-border));
+  }
+
+  .rug-result h2 {
+    margin: 0.2rem 0 0.35rem;
+  }
+
+  .rug-verdict {
+    margin-top: 0;
+    font-size: 1.1rem;
+  }
+
+  .rug-result h3 {
+    margin-top: 1.5rem;
+  }
+
+  .rug-timeline {
+    display: grid;
+    gap: 0.55rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .rug-timeline li {
+    display: grid;
+    grid-template-columns: 4rem 1fr;
+    gap: 0.65rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--rug-border);
+  }
+
+  .rug-timeline strong {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.76rem;
+  }
+
+  .rug-result-actions {
+    margin-top: 1rem;
+  }
+
+  .rug-result-actions button {
+    margin: 0;
+  }
+
+  .rug-session-meta {
+    padding: 0.2rem 0.35rem;
+    color: var(--pico-muted-color);
+    font-size: 0.75rem;
+  }
+
+  .rug-link-button {
+    width: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    text-decoration: underline;
+    box-shadow: none;
+  }
+
+  .rug-note {
+    margin-top: 1.5rem;
+    padding: 0.9rem 1rem;
+    color: var(--pico-muted-color);
+    font-size: 0.82rem;
+  }
+
+  @media (max-width: 720px) {
+    .rug-shell {
+      padding-top: 0.4rem;
+    }
+
+    .rug-hero {
+      margin-bottom: 1.25rem;
+    }
+
+    .rug-stats,
+    .rug-result-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .rug-action-grid,
+    .rug-investigate-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .rug-action-grid .rug-danger {
+      grid-column: 1 / -1;
+    }
+
+    .rug-control-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .rug-feed {
+      max-height: 360px;
+    }
+
+    .rug-result-actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rug-feed,
+    * {
+      scroll-behavior: auto !important;
+    }
+  }
+</style>

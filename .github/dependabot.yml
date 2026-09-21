@@ -1,0 +1,30 @@
+# Dependabot config. Two ecosystems: npm (this is a Node/Astro project) and
+# github-actions (the workflows under .github/workflows/). Both run weekly.
+#
+# Minor and patch bumps are grouped into a single PR per ecosystem per run —
+# low-risk updates shouldn't need one review per package. Major bumps are
+# deliberately left out of the group (and therefore ungrouped/separate PRs,
+# Dependabot's default) since they can carry breaking changes and deserve
+# individual review — see the `sharp` phantom-dependency incident this config
+# was added alongside for why unreviewed dependency drift is worth avoiding.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"

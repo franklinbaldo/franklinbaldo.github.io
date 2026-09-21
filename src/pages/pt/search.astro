@@ -1,0 +1,49 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+---
+
+<PageLayout
+  title="Busca | Franklin Baldo"
+  description="Busca de texto completo pelos ensaios."
+  lang="pt"
+  image="/og/search-pt.png"
+  translations={{ en: "/search/" }}
+>
+  <hgroup>
+    <h1>Busca</h1>
+    <p><small>Busca de texto completo por todos os ensaios. Índice construído com <a href="https://pagefind.app/">Pagefind</a>.</small></p>
+  </hgroup>
+
+  <fieldset role="search" class="search-fieldset">
+    <pagefind-searchbox data-filter="lang:pt"></pagefind-searchbox>
+  </fieldset>
+
+  <p class="search-hint" id="search-hint">Digite uma palavra ou frase para buscar entre todos os ensaios.</p>
+
+  <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
+  <script is:inline type="module" src="/pagefind/pagefind-component-ui.js"></script>
+  <script is:inline>
+    (() => {
+      const q = new URLSearchParams(location.search).get('q');
+      customElements.whenDefined('pagefind-searchbox').then(() => {
+        const box = document.querySelector('pagefind-searchbox');
+        const hint = document.getElementById('search-hint');
+        if (box) {
+          box.addEventListener('input', () => hint?.remove(), { once: true });
+          if (q && typeof box.triggerSearch === 'function') {
+            hint?.remove();
+            box.triggerSearch(q);
+          }
+        }
+      });
+    })();
+  </script>
+
+  <style>
+    .search-hint {
+      color: var(--pico-muted-color);
+      font-size: 0.9rem;
+      margin-top: 0.75rem;
+    }
+  </style>
+</PageLayout>

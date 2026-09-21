@@ -1,0 +1,24 @@
+---
+interface Props {
+  id: string;
+  caption?: string;
+  height?: number;
+}
+const { id, caption, height = 240 } = Astro.props;
+---
+
+<figure class="suno-embed">
+  <iframe
+    src={`https://suno.com/embed/${id}`}
+    width="100%"
+    height={height}
+    frameborder="0"
+    allow="autoplay; encrypted-media; fullscreen"
+    allowfullscreen
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+    title={`Suno track ${id}`}
+  ></iframe>
+  <a href={`https://suno.com/song/${id}`}>Listen on Suno</a>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

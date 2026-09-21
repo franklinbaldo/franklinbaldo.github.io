@@ -1,0 +1,311 @@
+// @ts-check
+import { defineConfig } from "astro/config";
+import { existsSync, readFileSync } from "node:fs";
+import { DEFAULT_LANG, LANG_META } from "./src/lib/languages.mjs";
+import { READING_PATHS } from "./src/lib/reading-paths-data.mjs";
+import { loadPosts } from "./scripts/lib/blog-links.mjs";
+
+/** @type {Record<string, Record<string, string>>} */
+let blogPairs = {};
+try {
+  blogPairs = JSON.parse(
+    readFileSync("./src/generated/blog-translation-pairs.json", "utf-8")
+  );
+} catch {
+  // File not yet generated — sitemap will emit blog posts without hreflang.
+}
+
+/** @type {Record<string, string>} */
+let blogRedirects = {};
+try {
+  blogRedirects = JSON.parse(
+    readFileSync("./src/generated/blog-redirects.json", "utf-8")
+  );
+} catch {
+  // File not yet generated — legacy date-prefixed URLs won't redirect.
+}
+
+// RFC 0010 §4.4: pruned versions keep their public permalinks as redirects
+// to the live post — `hronir:prune` registers every removed slug@uuid here.
+// Absent registry = nothing pruned yet. A present-but-malformed registry
+// must fail the build: completing without these redirects would 404 every
+// pruned permalink, and the source files are already gone.
+if (existsSync("./src/generated/versions-pruned.json")) {
+  const pruned = JSON.parse(
+    readFileSync("./src/generated/versions-pruned.json", "utf-8")
+  );
+  if (pruned?._meta?.schema !== "pruned-v1" || !Array.isArray(pruned.pruned)) {
+    throw new Error(
+      "versions-pruned.json fora do schema pruned-v1 (_meta.schema + array 'pruned') — repare o registro antes de buildar."
+    );
+  }
+  for (const e of pruned.pruned) {
+    // registerPruned (the only writer) always emits these fields; anything
+    // else is a damaged entry that would generate /blog/undefined/... or
+    // silently drop a permalink.
+    if (
+      typeof e?.slug !== "string" ||
+      typeof e?.uuid !== "string" ||
+      typeof e?.lang !== "string"
+    ) {
+      throw new Error(
+        `versions-pruned.json: entrada inválida ${JSON.stringify(e)} (esperado {slug, uuid, lang}) — repare o registro antes de buildar.`
+      );
+    }
+    const base = e.lang === "pt" ? `/pt/blog/${e.slug}` : `/blog/${e.slug}`;
+    for (const uuid of new Set(
+      [e.uuid, e.legacyUuid, e.preOkfUuid].filter(Boolean)
+    )) {
+      blogRedirects[`${base}/v/${uuid}/`] = `${base}/`;
+    }
+  }
+}
+
+// Every redirect this config declares — the merged map is needed both to
+// configure `redirects` below and to keep its stub pages (whose whole
+// purpose is to bounce elsewhere) out of the sitemap. A redirect stub isn't
+// a landing page: indexing it is pointless, and Lighthouse CI's sitemap-based
+// "one representative /blog/<post> page" autodiscovery landing on one adds a
+// real extra hop before content paints, which isn't a meaningful perf sample.
+/** @type {Record<string, string>} */
+const allRedirects = {
+  "/musicas/": "/music/",
+  // be-me-borges + borges-and-me merged into borges-e-eu as extra `tracks`
+  // (four Suno renditions of the same "Borges y yo" essay, one post).
+  // The EN side later moved from the untranslated "borges-e-eu-en" slug to
+  // a real English slug, "borges-and-i" — every prior EN redirect target
+  // updated to match, plus one more hop for the retired slug itself.
+  "/pt/blog/be-me-borges/": "/pt/blog/borges-e-eu/",
+  "/blog/be-me-borges-en/": "/blog/borges-and-i/",
+  "/pt/blog/borges-and-me/": "/pt/blog/borges-e-eu/",
+  "/blog/borges-and-me-en/": "/blog/borges-and-i/",
+  "/blog/borges-e-eu-en/": "/blog/borges-and-i/",
+  ...blogRedirects,
+};
+
+// Both `/blog/<id-or-slug>/` and `/pt/blog/<id-or-slug>/` resolve for every
+// published post (src/pages/blog/[...slug].astro and its pt/ mirror both
+// iterate every post regardless of language, redirecting the wrong-language
+// route to the real one — see scripts/lib/blog-links.mjs's validTargets).
+// That wrong-language route is a stub exactly like the ones above; exclude
+// it from the sitemap for the same reason.
+const crossLangShadowUrls = new Set();
+for (const p of loadPosts()) {
+  if (!p.published) continue;
+  const s = p.slug ?? p.id;
+  crossLangShadowUrls.add(p.lang === "pt" ? `/blog/${s}/` : `/pt/blog/${s}/`);
+}
+
+import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import rehypeSlug from "rehype-slug";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import { remarkReadingTime } from "./src/lib/remark-reading-time.mjs";
+import { remarkGitModified } from "./src/lib/remark-git-modified.mjs";
+import { remarkHasMath } from "./src/lib/remark-has-math.mjs";
+import { rehypeWrapTables } from "./src/lib/rehype-wrap-tables.mjs";
+
+// Local markdown images are already optimized (and get width/height) by
+// Astro's built-in asset pipeline; this only covers remote `img` src that
+// pipeline can't reach. Generated by scripts/generate-image-dimensions.mjs —
+// absent cache (fresh checkout before first `npm run prebuild`-adjacent step)
+// just means remote images render without explicit dimensions, same as before.
+/** @type {Record<string, {width: number, height: number}>} */
+let remoteImageDimensions = {};
+try {
+  remoteImageDimensions = JSON.parse(
+    readFileSync("./src/generated/image-dimensions.json", "utf-8")
+  );
+} catch {
+  // Not generated yet.
+}
+
+/**
+ * Adds loading="lazy" to all img elements rendered from markdown, plus
+ * width/height for remote images with a known size (RFC: issue #553 — CLS).
+ */
+function rehypeLazyImages() {
+  /** @param {any} tree */
+  return function (tree) {
+    /** @param {any} node */
+    function visit(node) {
+      if (node.type === "element" && node.tagName === "img") {
+        node.properties ??= {};
+        if (!node.properties.loading) {
+          node.properties.loading = "lazy";
+        }
+        const src = node.properties.src;
+        const dims =
+          typeof src === "string" ? remoteImageDimensions[src] : undefined;
+        if (dims && !node.properties.width && !node.properties.height) {
+          node.properties.width = dims.width;
+          node.properties.height = dims.height;
+        }
+      }
+      if (Array.isArray(node.children)) {
+        node.children.forEach(visit);
+      }
+    }
+    visit(tree);
+  };
+}
+
+// https://astro.build/config
+export default defineConfig({
+  site: "https://franklinbaldo.github.io",
+  integrations: [
+    mdx(),
+    sitemap({
+      // RFC 0003: version pages (/blog/<slug>/v/<uuid>) are noindex archives —
+      // keep them out of the sitemap.
+      // Issue #1042: Hrönir detail pages (one per battle/perspective/version/
+      // post-dossier — thousands of them) are jargon-dense process artifacts,
+      // not landing pages; they're noindex too, so exclude them the same way.
+      // Redirect stubs (allRedirects' keys + the cross-language shadow
+      // routes) are excluded too — see the comments where those are built.
+      filter: (page) => {
+        const path = page.replace("https://franklinbaldo.github.io", "");
+        return (
+          path !== "/404/" &&
+          path !== "/pt/404/" &&
+          !/\/v\/[0-9a-f-]{8,}\/?$/i.test(page) &&
+          !/\/ranking\/(battles|perspectives|versions|posts)\/[^/]+\/?$/i.test(
+            page
+          ) &&
+          !allRedirects[path] &&
+          !crossLangShadowUrls.has(path)
+        );
+      },
+      serialize(item) {
+        const base = "https://franklinbaldo.github.io";
+
+        // Build hreflang links from a { [langCode]: absoluteUrl } map.
+        /** @param {Record<string, string>} langUrls */
+        const makeLinks = (langUrls) => [
+          ...Object.entries(langUrls).map(([code, url]) => ({
+            lang: LANG_META[code]?.locale ?? code,
+            url,
+          })),
+          {
+            lang: "x-default",
+            url: langUrls[DEFAULT_LANG] ?? Object.values(langUrls)[0],
+          },
+        ];
+
+        const staticPairs = {
+          [base + "/"]: base + "/pt/",
+          [base + "/about/"]: base + "/pt/about/",
+          [base + "/archive/"]: base + "/pt/archive/",
+          [base + "/tags/"]: base + "/pt/tags/",
+          [base + "/search/"]: base + "/pt/search/",
+          [base + "/projects/"]: base + "/pt/projects/",
+          [base + "/ranking/"]: base + "/pt/ranking/",
+          [base + "/music/"]: base + "/pt/musicas/",
+          [base + "/books/"]: base + "/pt/livros/",
+        };
+        const ptToEn = Object.fromEntries(
+          Object.entries(staticPairs).map(([en, pt]) => [pt, en])
+        );
+
+        // Reading paths (/paths/[slug]/ ↔ /pt/paths/[slug]/) aren't blog
+        // posts and aren't in staticPairs — derive their pairs from the same
+        // READING_PATHS list the pages themselves are built from.
+        const pathPairs = Object.fromEntries(
+          READING_PATHS.map((p) => [
+            base + "/paths/" + p.slug + "/",
+            base + "/pt/paths/" + p.slug + "/",
+          ])
+        );
+        const pathToEn = Object.fromEntries(
+          Object.entries(pathPairs).map(([en, pt]) => [pt, en])
+        );
+
+        if (staticPairs[item.url]) {
+          item.links = makeLinks({ en: item.url, pt: staticPairs[item.url] });
+        } else if (ptToEn[item.url]) {
+          item.links = makeLinks({ en: ptToEn[item.url], pt: item.url });
+        } else if (pathPairs[item.url]) {
+          item.links = makeLinks({ en: item.url, pt: pathPairs[item.url] });
+        } else if (pathToEn[item.url]) {
+          item.links = makeLinks({ en: pathToEn[item.url], pt: item.url });
+        } else {
+          // Blog post pairs — look up pre-generated bidirectional map.
+          const path = item.url.replace(base, "");
+          const pair = blogPairs[path];
+          if (pair) {
+            item.links = makeLinks(
+              Object.fromEntries(
+                Object.entries(pair).map(([code, p]) => [code, base + p])
+              )
+            );
+          }
+        }
+        return item;
+      },
+    }),
+  ],
+  redirects: allRedirects,
+  prefetch: {
+    defaultStrategy: "viewport",
+  },
+  markdown: {
+    shikiConfig: {
+      // Register `greentext` as a no-op grammar so ```greentext fences
+      // keep their data-language marker (Shiki otherwise normalizes unknown
+      // languages to plaintext). The actual styling is plain CSS.
+      langs: [
+        {
+          name: "greentext",
+          scopeName: "source.greentext",
+          patterns: [],
+          repository: {},
+        },
+      ],
+      transformers: [
+        {
+          name: "greentext-line-marker",
+          line(node, _line) {
+            if (this.options.lang !== "greentext") return;
+            const text = node.children
+              .map((c) => {
+                if (c.type !== "element") return "";
+                const child = c.children?.[0];
+                return child?.type === "text" ? child.value : "";
+              })
+              .join("");
+            if (/^\s*>/.test(text)) {
+              node.properties.class =
+                `${node.properties.class ?? ""} gt-quote`.trim();
+            }
+          },
+        },
+      ],
+    },
+    remarkPlugins: [
+      remarkMath,
+      remarkHasMath,
+      remarkReadingTime,
+      remarkGitModified,
+    ],
+    rehypePlugins: [
+      rehypeKatex,
+      rehypeSlug,
+      [
+        rehypeAutolinkHeadings,
+        {
+          behavior: "append",
+          properties: {
+            className: ["heading-anchor"],
+            "aria-hidden": "true",
+            tabIndex: -1,
+          },
+          content: { type: "text", value: "#" },
+        },
+      ],
+      rehypeWrapTables,
+      rehypeLazyImages,
+    ],
+  },
+});

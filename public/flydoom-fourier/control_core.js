@@ -1,0 +1,221 @@
+const clamp = (value, lo, hi) => Math.min(hi, Math.max(lo, value));
+
+export function spectralEnvelopeForMode(mode, complexity = 0.55) {
+  const cutoff = 1.8 + complexity * 23;
+  const slope = 1.35 - complexity * 0.65;
+  return (
+    Math.exp(-Math.pow(mode.freq / cutoff, 1.35)) /
+    Math.pow(Math.max(1, mode.freq), slope)
+  );
+}
+
+export function coefficientLimitForMode(mode, complexity = 0.55) {
+  const envelope = spectralEnvelopeForMode(mode, complexity);
+  return clamp(0.03 + envelope * 0.92, 0.03, 0.95);
+}
+
+export function velocityLimitForMode(mode, complexity = 0.55) {
+  const envelope = spectralEnvelopeForMode(mode, complexity);
+  return clamp(0.025 + envelope * 0.45, 0.025, 0.475);
+}
+
+export function boundCoefficient(value, mode, complexity = 0.55) {
+  const limit = coefficientLimitForMode(mode, complexity);
+  return clamp(value, -limit, limit);
+}
+
+export function boundVelocity(value, mode, complexity = 0.55) {
+  const limit = velocityLimitForMode(mode, complexity);
+  return clamp(value, -limit, limit);
+}
+
+export function exponentialPrecisionPotential(
+  value,
+  target = 1,
+  beta = 10,
+) {
+  const safeTarget = Math.max(1e-9, target);
+  const x = clamp(value / safeTarget, 0, 1);
+  const denominator = Math.expm1(beta);
+  if (!Number.isFinite(denominator) || denominator <= 0) return x;
+  return Math.expm1(beta * x) / denominator;
+}
+
+export function exponentialPrecisionDelta(
+  currentValue,
+  previousValue,
+  target = 1,
+  beta = 10,
+) {
+  return (
+    exponentialPrecisionPotential(currentValue, target, beta) -
+    exponentialPrecisionPotential(previousValue, target, beta)
+  );
+}
+
+export function precisionProgressReward(
+  currentValue,
+  previousValue,
+  target = 1,
+  beta = 10,
+  baseProgressGain = 0,
+  precisionGain = 1,
+) {
+  const safeTarget = Math.max(1e-9, target);
+  const linearProgress = (currentValue - previousValue) / safeTarget;
+  const precisionProgress = exponentialPrecisionDelta(
+    currentValue,
+    previousValue,
+    safeTarget,
+    beta,
+  );
+  return (
+    linearProgress * baseProgressGain +
+    precisionProgress * precisionGain
+  );
+}
+
+export function surfaceDifferentialStats(heightAt, x, z, epsilon = 0.22) {
+  const e = Math.max(1e-4, epsilon);
+  const h = heightAt(x, z);
+  const xp = heightAt(x + e, z);
+  const xm = heightAt(x - e, z);
+  const zp = heightAt(x, z + e);
+  const zm = heightAt(x, z - e);
+
+  const gradX = (xp - xm) / (2 * e);
+  const gradZ = (zp - zm) / (2 * e);
+  const curvature = (xp + xm + zp + zm - 4 * h) / (e * e);
+  const slope = Math.hypot(gradX, gradZ);
+  const invNormal = 1 / Math.hypot(gradX, 1, gradZ);
+
+  return {
+    height: h,
+    gradX,
+    gradZ,
+    slope,
+    curvature,
+    normalX: -gradX * invNormal,
+    normalY: invNormal,
+    normalZ: -gradZ * invNormal,
+  };
+}
+
+export function localizedSurfaceMismatch(
+  currentStats,
+  targetStats,
+  forwardX,
+  forwardZ,
+  rightX,
+  rightZ,
+) {
+  const gradDx = targetStats.gradX - currentStats.gradX;
+  const gradDz = targetStats.gradZ - currentStats.gradZ;
+  const normalDot = clamp(
+    currentStats.normalX * targetStats.normalX +
+      currentStats.normalY * targetStats.normalY +
+      currentStats.normalZ * targetStats.normalZ,
+    -1,
+    1,
+  );
+  const normalGap = Math.max(0, 1 - normalDot);
+  const normalMismatch =
+    normalGap < 1e-12 ? 0 : clamp(normalGap / 0.35, 0, 1);
+
+  return [
+    clamp((targetStats.height - currentStats.height) / 2.5, -1, 1),
+    clamp((gradDx * forwardX + gradDz * forwardZ) / 1.5, -1, 1),
+    clamp((gradDx * rightX + gradDz * rightZ) / 1.5, -1, 1),
+    clamp((targetStats.curvature - currentStats.curvature) / 4, -1, 1),
+    normalMismatch,
+    clamp((targetStats.slope - currentStats.slope) / 1.5, -1, 1),
+  ];
+}
+
+export function localizedMismatchMagnitude(features) {
+  if (!features.length) return 0;
+  let squared = 0;
+  for (const value of features) squared += value * value;
+  return clamp(Math.sqrt(squared / features.length), 0, 1);
+}
+
+export function normalizedSpectralRms(
+  coeff,
+  modes,
+  count,
+  complexity = 0.55,
+) {
+  const n = Math.max(1, Math.min(count, coeff.length, modes.length));
+  let squared = 0;
+  for (let k = 0; k < n; k++) {
+    const limit = Math.max(
+      0.03,
+      coefficientLimitForMode(modes[k], complexity),
+    );
+    const normalized = coeff[k] / limit;
+    squared += normalized * normalized;
+  }
+  return Math.sqrt(squared / n);
+}
+
+export function enforceSpectralEnergyBudget(
+  coeff,
+  modes,
+  count,
+  complexity = 0.55,
+  maxNormalizedRms = 0.6,
+) {
+  const rms = normalizedSpectralRms(coeff, modes, count, complexity);
+  if (rms <= maxNormalizedRms || rms === 0) return 1;
+
+  const scale = maxNormalizedRms / rms;
+  const n = Math.max(1, Math.min(count, coeff.length, modes.length));
+  for (let k = 0; k < n; k++) coeff[k] *= scale;
+  return scale;
+}
+
+/**
+ * Reward-safe shape score.
+ *
+ * The surface is parameterized by a unique Fourier coefficient vector plus
+ * an explicit translation. Comparing those latent physical parameters avoids
+ * the sparse-probe aliasing that allowed narrow high-frequency spikes to score
+ * as a hit between sampled points.
+ */
+export function robustShapeMatch({
+  coeff,
+  target,
+  modes,
+  count,
+  complexity = 0.55,
+  currentOffsetX = 0,
+  currentOffsetZ = 0,
+  targetOffsetX = 0,
+  targetOffsetZ = 0,
+}) {
+  const n = Math.max(
+    1,
+    Math.min(count ?? coeff.length, coeff.length, target.length, modes.length),
+  );
+  let squared = 0;
+  let worst = 0;
+
+  for (let k = 0; k < n; k++) {
+    const scale = Math.max(0.03, coefficientLimitForMode(modes[k], complexity));
+    const normalizedError = (coeff[k] - target[k]) / scale;
+    squared += normalizedError * normalizedError;
+    worst = Math.max(worst, Math.abs(normalizedError));
+  }
+
+  const rms = Math.sqrt(squared / n);
+  const translationError =
+    Math.hypot(
+      currentOffsetX - targetOffsetX,
+      currentOffsetZ - targetOffsetZ,
+    ) / 4.8;
+
+  // The max-error term prevents a single unsampled high-frequency mode from
+  // hiding inside the mean over hundreds or thousands of Fourier coefficients.
+  const loss = 0.7 * rms + 0.22 * worst + 0.7 * translationError;
+  return clamp(Math.exp(-loss), 0, 1);
+}
