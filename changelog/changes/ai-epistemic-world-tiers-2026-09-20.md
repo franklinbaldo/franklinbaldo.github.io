@@ -13,3 +13,4 @@ tags: [ai, epistemic-worlds, okf, tiering, github]
 - Seeds the board with the ten direct-GitHub cases already reviewed.
 - Keeps evidence S empty until a near-complete longitudinal transition is documented.
 - Adds a Portuguese public observatory page with evidence cards, trajectories, sources and explicit non-clinical boundaries.
+- Extends CI so `okf-parser` validates every `knowledge/ai-epistemic-worlds/` card against the normative type spec.
