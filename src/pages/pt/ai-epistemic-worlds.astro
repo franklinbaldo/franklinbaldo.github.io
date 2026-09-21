@@ -1,0 +1,272 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import {
+  aiEpistemicWorlds,
+  AI_EPISTEMIC_WORLDS_UPDATED,
+} from "../../data/ai-epistemic-worlds";
+
+const tiers = ["S", "A", "B", "C", "D", "F"] as const;
+const ranked = aiEpistemicWorlds.filter((world) => world.evidenceTier !== "NR");
+const nr = aiEpistemicWorlds.filter((world) => world.evidenceTier === "NR");
+const interestCounts = Object.fromEntries(
+  tiers.map((tier) => [tier, aiEpistemicWorlds.filter((world) => world.interestTier === tier).length]),
+);
+---
+
+<PageLayout
+  title="Mundos epistêmicos mediados por IA | Franklin Baldo"
+  description="Um observatório vivo de mundos epistêmicos mediados por IA encontrados no GitHub, com tiers separados de evidência e interesse."
+  lang="pt"
+>
+  <main class="worlds-shell">
+    <header class="hero">
+      <p class="eyebrow">OBSERVATÓRIO · ATUALIZADO {AI_EPISTEMIC_WORLDS_UPDATED}</p>
+      <h1>Mundos epistêmicos mediados por IA</h1>
+      <p class="lede">
+        Pessoas estão usando IAs não apenas para escrever código, mas para construir sistemas próprios
+        de significado, identidade, ciência, espiritualidade e agência. Este observatório acompanha esses
+        mundos diretamente no GitHub. <strong>O tier de evidência mede a documentação do mundo — não a
+        verdade das crenças e nunca um diagnóstico clínico.</strong>
+      </p>
+      <div class="hero-notes">
+        <span>🌐 {aiEpistemicWorlds.length} casos catalogados</span>
+        <span>🧾 GitHub direto como fonte</span>
+        <span>↕ tiers mudam com evidência material</span>
+        <span>✨ interesse é independente de evidência</span>
+      </div>
+    </header>
+
+    <section aria-labelledby="ranking-heading">
+      <div class="section-heading">
+        <div>
+          <p class="kicker">TIER DE EVIDÊNCIA</p>
+          <h2 id="ranking-heading">A liga</h2>
+        </div>
+        <p>S fica vazio até aparecer um caso com transição quase completa preservada no Git.</p>
+      </div>
+
+      <div class="tier-board">
+        {tiers.map((tier) => {
+          const entries = ranked.filter((world) => world.evidenceTier === tier);
+          return (
+            <section class={`tier-row tier-${tier.toLowerCase()}`} aria-label={`Tier ${tier}`}>
+              <div class="tier-letter" aria-hidden="true">{tier}</div>
+              <div class="tier-content">
+                {entries.length === 0 ? (
+                  <p class="empty-tier">vazio — nenhum caso ganhou esse lugar ainda</p>
+                ) : (
+                  <div class="cards">
+                    {entries.map((world) => (
+                      <article class="world-card" id={world.slug}>
+                        <div class="card-topline">
+                          <span class="evidence-badge">evidência {world.evidenceTier}</span>
+                          <span class="interest-badge">interesse {world.interestTier}</span>
+                          <span class="confidence-badge">conf. {world.confidence}</span>
+                        </div>
+                        <h3>{world.name}</h3>
+                        <p class="handle">@{world.publicHandle}</p>
+                        <p>{world.summary}</p>
+                        <div class="tags" aria-label="Tipos de mundo">
+                          {world.worldType.map((tag) => <span>{tag}</span>)}
+                        </div>
+                        <details>
+                          <summary>Ver ficha de evidência</summary>
+                          {world.trajectory?.length && (
+                            <div class="trajectory">
+                              <h4>Trajetória</h4>
+                              <ol>{world.trajectory.map((item) => <li>{item}</li>)}</ol>
+                            </div>
+                          )}
+                          <div class="evidence-grid">
+                            <div>
+                              <h4>O que sustenta o tier</h4>
+                              <ul>{world.strengths.map((item) => <li>{item}</li>)}</ul>
+                            </div>
+                            <div>
+                              <h4>O que impede subir</h4>
+                              <ul>{world.openProblems.map((item) => <li>{item}</li>)}</ul>
+                            </div>
+                          </div>
+                          {world.aiRole?.length && (
+                            <p class="meta-line"><strong>Papel da IA:</strong> {world.aiRole.join(" · ")}</p>
+                          )}
+                          {world.literalness && (
+                            <p class="meta-line"><strong>Enquadramento:</strong> {world.literalness}</p>
+                          )}
+                          {world.note && <p class="note">{world.note}</p>}
+                          <p class="source-line">
+                            Fonte principal: <a href={world.sourceUrl}>{world.sourceLabel}</a>
+                            <> · confiança: {world.confidence}</>
+                          </p>
+                          {world.sourceUrls?.length && (
+                            <p class="source-line">
+                              Fontes relacionadas: {world.sourceUrls.map((url, index) => (
+                                <>
+                                  {index > 0 && " · "}
+                                  <a href={url}>GitHub {index + 2}</a>
+                                </>
+                              ))}
+                            </p>
+                          )}
+                        </details>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          );
+        })}
+      </div>
+    </section>
+
+    <section aria-labelledby="interest-heading">
+      <div class="section-heading">
+        <div>
+          <p class="kicker">TIER DE INTERESSE</p>
+          <h2 id="interest-heading">Outra dimensão</h2>
+        </div>
+        <p>Interesse mede fertilidade, singularidade e riqueza de artefatos — não evidência.</p>
+      </div>
+      <div class="interest-strip">
+        {tiers.map((tier) => (
+          <div class="interest-cell">
+            <strong>{tier}</strong>
+            <span>{interestCounts[tier] ?? 0} caso{(interestCounts[tier] ?? 0) === 1 ? "" : "s"}</span>
+          </div>
+        ))}
+      </div>
+      <p class="fineprint">
+        Um caso pode ser <strong>evidência B / interesse S</strong>: ainda mal documentado, mas
+        conceitualmente extraordinário. Também pode ocorrer o inverso. As duas letras respondem a perguntas diferentes.
+      </p>
+    </section>
+
+    {nr.length > 0 && (
+      <section aria-labelledby="nr-heading">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">NR / TRIAGEM</p>
+            <h2 id="nr-heading">Fora do ranking</h2>
+          </div>
+        </div>
+        <div class="nr-list">
+          {nr.map((world) => (
+            <article>
+              <strong>{world.name}</strong>
+              <span>@{world.publicHandle}</span>
+              <p>{world.summary}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="rules" aria-labelledby="rules-heading">
+      <p class="kicker">CONTRATO DOS TIERS</p>
+      <h2 id="rules-heading">O que move um caso?</h2>
+      <div class="rule-grid">
+        <article><strong>S</strong><span>filme quase completo: baseline/transição + artefatos + mediação + recursão</span></article>
+        <article><strong>A</strong><span>mundo claro e longitudinal, com múltiplas evidências diretas; falta uma peça grande</span></article>
+        <article><strong>B</strong><span>caso claro, mas parcial, curto ou ainda muito ambíguo</span></article>
+        <article><strong>C–F</strong><span>de candidato plausível até falso positivo investigado</span></article>
+      </div>
+      <p class="fineprint">
+        Volume de commits, linguagem incomum, espiritualidade, claims grandiosos ou uso intenso de IA
+        são apenas sinais de descoberta. O observatório cataloga artefatos públicos e mudanças verificáveis,
+        registra explicações alternativas e não infere condição de saúde mental.
+      </p>
+    </section>
+  </main>
+</PageLayout>
+
+<style>
+  .worlds-shell {
+    --ink: var(--pico-color);
+    --muted: var(--pico-muted-color);
+    --line: var(--pico-muted-border-color);
+    --panel: var(--pico-card-background-color, var(--pico-background-color));
+    --panel-soft: color-mix(in srgb, var(--pico-background-color) 93%, #7b61ff 7%);
+    --wash: color-mix(in srgb, var(--pico-background-color) 88%, #61d7c9 12%);
+    --interest: color-mix(in srgb, var(--pico-background-color) 78%, #bba8ff 22%);
+    --evidence: color-mix(in srgb, var(--pico-background-color) 78%, #8ce2d8 22%);
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-bottom: 5rem;
+  }
+  .hero {
+    margin: clamp(1.5rem, 4vw, 3rem) 0 clamp(3rem, 7vw, 5rem);
+    padding: clamp(2rem, 7vw, 5rem);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-large);
+    background:
+      radial-gradient(circle at 90% 10%, color-mix(in srgb, #7b61ff 35%, transparent), transparent 35%),
+      linear-gradient(145deg, var(--wash), var(--panel));
+    box-shadow: var(--elevation-card);
+  }
+  .eyebrow, .kicker { font: 800 .75rem/1.1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; text-transform: uppercase; }
+  .hero h1 { margin: .45rem 0 1rem; max-width: 11ch; font-size: clamp(3rem, 9vw, 7rem); line-height: .88; letter-spacing: -.065em; }
+  .lede { max-width: 850px; font-size: clamp(1.05rem, 2vw, 1.35rem); line-height: 1.5; }
+  .hero-notes { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.5rem; }
+  .hero-notes span { padding: .48rem .75rem; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--panel) 88%, transparent); font-size: .82rem; font-weight: 700; }
+  .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 2rem; margin: 4rem 0 1rem; }
+  .section-heading h2, .rules h2 { margin: .15rem 0 0; font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -.045em; }
+  .section-heading > p { max-width: 390px; color: var(--muted); text-align: right; }
+  .tier-board { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-large); box-shadow: var(--elevation-soft); }
+  .tier-row { display: grid; grid-template-columns: 82px 1fr; min-height: 100px; border-bottom: 1px solid var(--line); }
+  .tier-row:last-child { border-bottom: 0; }
+  .tier-letter { display: grid; place-items: center; border-right: 1px solid var(--line); font-size: 3rem; font-weight: 950; color: #17151c; }
+  .tier-s .tier-letter { background: #f2bd2f; }
+  .tier-a .tier-letter { background: #88ddd2; }
+  .tier-b .tier-letter { background: #b9d99a; }
+  .tier-c .tier-letter { background: #a9cfdf; }
+  .tier-d .tier-letter { background: #c9c1df; }
+  .tier-f .tier-letter { background: #dfb1a3; }
+  .tier-content { padding: 1rem; background: var(--panel-soft); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(285px, 1fr)); gap: 1rem; }
+  .world-card { border: 1px solid var(--line); border-radius: var(--radius-medium); padding: 1.05rem; background: var(--panel); box-shadow: 0 10px 28px -26px rgba(0,0,0,.55); }
+  .world-card h3 { margin: .6rem 0 .2rem; font-size: 1.35rem; line-height: 1.08; }
+  .handle { margin: 0 0 .7rem; color: var(--muted); font: 700 .8rem/1.2 ui-monospace, monospace; }
+  .card-topline { display: flex; gap: .35rem; flex-wrap: wrap; }
+  .evidence-badge, .interest-badge, .confidence-badge { display: inline-block; padding: .25rem .45rem; border: 1px solid var(--ink); font: 700 .68rem/1 ui-monospace, monospace; text-transform: uppercase; }
+  .evidence-badge { background: var(--evidence); }
+  .interest-badge { background: var(--interest); }
+  .confidence-badge { background: var(--panel-soft); }
+  .tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .8rem; }
+  .tags span { padding: .2rem .4rem; border-radius: 999px; background: var(--panel-soft); color: var(--muted); font-size: .72rem; }
+  details { margin-top: 1rem; border-top: 1px dashed var(--line); padding-top: .7rem; }
+  summary { cursor: pointer; font-weight: 800; }
+  .trajectory { margin-top: 1rem; }
+  .trajectory ol { display: flex; flex-wrap: wrap; gap: .4rem; padding: 0; list-style: none; counter-reset: step; }
+  .trajectory li { counter-increment: step; padding: .4rem .55rem; border: 1px solid var(--line); border-radius: 999px; font-size: .78rem; }
+  .trajectory li::before { content: counter(step) " · "; font-weight: 800; }
+  .evidence-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: .8rem; }
+  .evidence-grid h4 { margin-bottom: .35rem; }
+  .evidence-grid ul { margin-top: 0; padding-left: 1.2rem; }
+  .evidence-grid li { margin-bottom: .4rem; line-height: 1.35; }
+  .meta-line, .source-line { font-size: .84rem; line-height: 1.45; }
+  .source-line { color: var(--muted); }
+  .note { padding: .7rem; background: var(--wash); }
+  .empty-tier { margin: 1rem; color: var(--muted); font-style: italic; }
+  .interest-strip { display: grid; grid-template-columns: repeat(6, 1fr); border: 1px solid var(--line); border-radius: var(--radius-large); overflow: hidden; }
+  .interest-cell { display: flex; flex-direction: column; align-items: center; gap: .25rem; padding: 1rem .5rem; border-right: 1px solid var(--line); background: var(--panel); }
+  .interest-cell:last-child { border-right: 0; }
+  .interest-cell strong { font-size: 2rem; }
+  .interest-cell span { color: var(--muted); font-size: .78rem; }
+  .rules { margin-top: clamp(4rem, 8vw, 6rem); padding: clamp(1.5rem, 5vw, 3rem); border-radius: var(--radius-large); background: var(--ink); color: var(--pico-background-color); box-shadow: var(--elevation-card); }
+  .rule-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 1.5rem 0; background: var(--line); }
+  .rule-grid article { display: flex; flex-direction: column; gap: .7rem; min-height: 150px; padding: 1rem; background: var(--ink); }
+  .rule-grid strong { font-size: 2rem; color: #88ddd2; }
+  .fineprint { max-width: 900px; color: var(--muted); }
+  .rules .fineprint { color: color-mix(in srgb, var(--pico-background-color) 72%, transparent); }
+  @media (max-width: 760px) {
+    .section-heading { display: block; }
+    .section-heading > p { text-align: left; }
+    .tier-row { grid-template-columns: 55px 1fr; }
+    .tier-letter { font-size: 2rem; }
+    .evidence-grid, .rule-grid { grid-template-columns: 1fr; }
+    .interest-strip { grid-template-columns: repeat(3, 1fr); }
+    .interest-cell:nth-child(3) { border-right: 0; }
+    .interest-cell:nth-child(-n+3) { border-bottom: 1px solid var(--line); }
+  }
+</style>
