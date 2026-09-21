@@ -151,7 +151,7 @@ Merge por squash, conforme a política canônica do repositório.
 
 Todo post em `src/content/blog/**` tem `type: Blog Post | Music Post`
 (obrigatório) — a classificação OKF, não confundir com `docType` (opcional;
-a antiga taxonomia editorial: essay/letter/fiction/technical/dialogue). Rate files históricos em `.routines/hronir/evaluations/**` usam `type: Rate File`; avaliações novas usam `type: Hronir Evaluation`. Ambos os
+a antiga taxonomia editorial: essay/letter/fiction/technical/dialogue). Rate files históricos em `.routines/hronir/rates/**` usam `type: Rate File` quando já são OKF; alguns registros pré-OKF nem sequer têm `type`. Avaliações novas vivem em `.routines/hronir/evaluations/**` e usam `type: Hronir Evaluation`. Ambos os
 campos são **excluídos** do hash de identidade de versão
 (`UUID_EXCLUDED_FIELDS` em `src/hronir/posts.ts`) — editá-los não muda a
 identidade de uma versão. Ver `docs/okf/` e RFC 0014 §7.
@@ -183,7 +183,7 @@ scripts/lib/              Shared helpers consumidos por múltiplos scripts
   content.mjs             Fonte única de descoberta de posts (listPostFiles, readPostMeta)
   blog-links.mjs          Validação e redirects de links internos
 src/generated/            Artefatos gerados; redirects e sitemap data são commitados, versions-selected.json é gitignorado (regenerado pelo prebuild)
-.routines/hronir/         Rate files produced by sessions (committed to git)
+.routines/hronir/rates/   Evidência histórica Hrönir (legado, imutável)\n.routines/hronir/evaluations/ Avaliações novas OKF-native (imutáveis)
 docs/rfcs/                RFCs do projeto (0001…)
 docs/plans/               Planos e documentos de planejamento
 docs/okf/                 Bundle Open Knowledge Format (RFC 0014) — conceitos do Hrönir navegáveis por agente
