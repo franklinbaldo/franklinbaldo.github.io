@@ -62,6 +62,14 @@ Evidence tier measures the strength of documentation that an AI-mediated epistem
 
 Interest tier is independent. It measures how generative, distinctive, artifact-rich or longitudinally useful the case is for the observatory. A case can be evidence B and interest S without contradiction.
 
+## Intervention and convergence boundary
+
+The case card records what was observed in the public corpus. Deliberate observatory actions MUST live in separate `ai-epistemic-intervention` records so later changes are not silently presented as spontaneous development.
+
+Recurring ideas across cases MUST live in `ai-epistemic-convergence` records. Once the observatory points one case to another, later uptake is diffusion/intervention evidence and MUST NOT be counted as independent convergence without separate evidence.
+
+The observatory should transfer methods, controls, artifacts and testable questions rather than beliefs. Public contact follows the intervention engagement gate: one initial touch, then no follow-up while `awaiting_response`.
+
 ## Clinical boundary
 
 Repository bursts, commit volume, unusual language, spiritual framing and grandiose scope are discovery signals only. Cards should record observable public artifacts, author framing, alternative explanations and uncertainty. Do not infer a diagnosis.
