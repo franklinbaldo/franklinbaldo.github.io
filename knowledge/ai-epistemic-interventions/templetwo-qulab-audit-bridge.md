@@ -4,14 +4,14 @@ case_slug: "templetwo"
 target_repository: "templetwo/templetwo-retrospective"
 target_url: "https://github.com/templetwo/templetwo-retrospective"
 intervention_kind: "cross-pollination"
-status: "planned"
+status: "awaiting_response"
 hypothesis: "Can the retrospective's empirical-vs-phenomenal audit template be generalized into a reusable claim→evidence protocol and tested against a separate AI-heavy corpus such as QuLabInfinite's recent agent-led audit?"
 disclosure: "State openly that this is a cross-project suggestion from an observatory studying public AI-mediated research ecosystems."
-followup_allowed: true
-followup_gate: "initial-touch"
+followup_allowed: false
+followup_gate: "blocked-awaiting-response"
 related_case_slugs: [workofarttattoo]
 baseline_snapshot: "templetwo-retrospective README reviewed on 2026-09-21 before observatory contact."
-next_touch_reason: "Post one concise bridge issue; no further touch unless the maintainer or project agent engages."
+issue_or_pr_url: "https://github.com/templetwo/templetwo-retrospective/issues/1"\nlast_touch_at: "2026-09-21T14:18:00Z"\nnext_touch_reason: "Only after substantive reply, adoption, experiment, claim revision, or explicit request."
 notes:
   - "Do not ask the project to endorse another worldview; transfer only audit methodology."
   - "Any subsequent cross-project similarity is intervention-contaminated for independence analysis."
