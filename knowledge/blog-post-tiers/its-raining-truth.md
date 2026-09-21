@@ -5,7 +5,7 @@ quality_tier: "A"
 interest_tier: "A"
 confidence: "high"
 reviewed_at: "2026-09-21"
-reviewed_revision: "508500cda5237248d60fe7079fd50be32934940a"
+reviewed_revision: "4680e07cc3dbe5215e1d5df0646c78c0e604acca"
 summary: >-
   Excellent autobiographical-philosophical essay whose strongest move is to make
   inherited religion, parenthood, and textual criticism parts of the same argument.
