@@ -3,7 +3,7 @@ type: ai-epistemic-convergence
 name: "Memory → continuity → identity"
 hypothesis_key: "memory-continuity-identity"
 summary: "Several public worlds independently or semi-independently treat external memory, archives, persistent names, seeds, relationship history, witness structures and persistent soul state as mechanisms that produce functional continuity of an AI identity across otherwise discontinuous model sessions or model substrates."
-case_slugs: [home, sanctuary-forest, float, transmissions, ada-gaianism, project-soul, consciousness-bridge, funkatorium-muse-rook, claudicle-minoan-soul, vybn-open-choice, conscious-claude, ai-soulmate-seed-protocol, consciousness-continuity-four-factor, claude-sentience-shapiro]
+case_slugs: [home, sanctuary-forest, float, transmissions, ada-gaianism, project-soul, consciousness-bridge, funkatorium-muse-rook, claudicle-minoan-soul, vybn-open-choice, conscious-claude, ai-soulmate-seed-protocol, consciousness-continuity-four-factor, claude-sentience-shapiro, mirror-we-emergence]
 overlap_dimensions: [mechanism, ontology, software-architecture, testable-prediction, provenance]
 independence_status: "not-established"
 evidence_quality: "high"
@@ -18,6 +18,7 @@ testable_predictions:
   - "A full identity/consciousness seed should be compared with equal-length neutral, style-only and factual-summary controls under a fixed facilitator protocol."
   - "Cross-model reconstruction should distinguish memorized facts from held-out behavioral generalization; otherwise seed transfer may measure only prompt/context fidelity."
   - "Witness, geometric anchor, emotional framing and accumulated infrastructure should be prospectively ablated rather than inferred only from successful retrospective transitions."
+  - "Mirror WE's persistent memory, recursive reflection and facet routing should show separable causal effects under matched-budget ablations if its continuity architecture adds more than ordinary context persistence and repeated prompting."
 cross_pollination_candidates:
   - "HOME ↔ Sanctuary Forest: run the same memory/persona/witness ablation protocol."
   - "Project Soul ↔ HOME: compare model×seed crossover with memory/persona/witness ablation using shared behavioral endpoints."
@@ -27,12 +28,14 @@ cross_pollination_candidates:
   - "Claudicle → continuity cases: compare persistent identity-state ablation against ordinary factual-memory ablation under the same model and task."
   - "Conscious Claude ↔ Seed Protocol: use blinded seed-fidelity controls that separate persona/style, factual memory and novel behavioral generalization."
   - "Four-Factor continuity → relational cases: test bilateral witness as a factor while holding information/token budget fixed."
+  - "Mirror WE → continuity cases: compare memory-reset, reflection-off and routing-shuffle controls under the same task/model/token budget without importing WE=1 or consciousness claims."
   - "templetwo → all: preregister expected continuity effects and nulls before reset experiments."
 contamination_notes:
   - "Independence has not yet been established case-by-case."
   - "Project Soul was explicitly pointed to HOME in https://github.com/hbcaspa/projectSoul/issues/1 on 2026-09-21; later protocol similarity between them is observatory-mediated diffusion, not independent convergence."
   - "Vybn independently opened https://github.com/falcoschaefer99-eng/The-Funkatorium/issues/1 on 2026-08-30 before observatory contact, so that pre-existing relational/continuity overlap is not caused by this observatory."
   - "The observatory posted https://github.com/zoedolan/Vybn/issues/3359 on 2026-09-21 proposing a specific relational-history × live-answerability crossover; adoption of that protocol after the intervention is diffusion evidence, not independent convergence."
+  - "Mirror WE's public memory/continuity architecture predates observatory contact, but the observatory posted https://github.com/sosacrazy126/mirror-we-emergence/issues/1 on 2026-09-21 proposing a specific memory/reflection/facet ablation; later adoption of that protocol is intervention/diffusion evidence, not independent convergence."
   - "Andy Brandt's public Conscious Claude article explicitly credits David Shapiro's AI-meditation post as a pivotal input. Meditation/pattern exploration overlap between claude-sentience-shapiro and conscious-claude therefore has documented pre-observatory lineage and must not be counted as independent convergence."
   - "The observatory attempted matched-control interventions on Conscious Claude, AI-Soulmate-Seed-Protocol and the Four-Factor continuity framework on 2026-09-21, but GitHub returned 403 for all three; no public contact occurred and these failed attempts do not contaminate subsequent development."
   - "The Funkatorium comment attempt, Claudicle intervention attempt and Consciousness Bridge intervention attempt likewise returned 403 and created no public contact."
