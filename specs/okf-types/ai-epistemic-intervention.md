@@ -46,16 +46,20 @@ The purpose is to improve epistemic quality and test whether useful ideas can tr
 
 ## Engagement gate / timeline hygiene
 
-One intervention is one public touch unless the target engages.
+The initial-contact unit is one public GitHub repository, identified by its `owner/repo`.
 
-After the initial issue, PR or comment is posted, the record MUST move to `awaiting_response`, set `followup_allowed: false`, and use `followup_gate: blocked-awaiting-response`.
+For each target repository, the observatory SHOULD make at most **one initial intervention** while the repository is unengaged. That initial intervention may be an issue, PR or comment, whichever best fits the repository and question.
 
-Silence is not engagement. While awaiting response:
+After that initial intervention is posted, the repository's intervention record MUST move to `awaiting_response`, set `followup_allowed: false`, and use `followup_gate: blocked-awaiting-response`.
 
-- do not bump;
-- do not repeat the same suggestion in a new issue;
+Silence is not engagement. While the repository is awaiting response:
+
+- do not bump the existing thread;
+- do not open a second issue with a different formulation just to obtain attention;
 - do not open a PR merely to force attention;
-- do not cross-post the same intervention to multiple threads in that repository.
+- do not cross-post the intervention into other threads in the same repository.
+
+If the same public user owns multiple materially distinct repositories, each `owner/repo` is evaluated separately; do not use activity in one repository as automatic permission to intervene in another.
 
 A follow-up becomes allowed only after a material signal such as:
 
@@ -66,7 +70,11 @@ A follow-up becomes allowed only after a material signal such as:
 - the maintainer explicitly requests implementation or further analysis;
 - genuinely new public evidence changes the question enough to justify a distinct intervention.
 
-When engagement occurs, set `status: engaged`, `followup_allowed: true`, and `followup_gate: allowed-on-engagement`. Further comments, issues or PRs should continue only while the interaction remains productive.
+When **material progress attributable to the intervention** occurs, set `status: engaged`, `followup_allowed: true`, and `followup_gate: allowed-on-engagement`. From that point onward, the observatory MAY continue intervening in that same repository through comments, follow-up issues or PRs, as long as each new action advances the live research thread and the interaction remains productive.
+
+Material progress includes a substantive maintainer/agent reply, experiment run, code or documentation change, claim revision, explicit reference to the intervention, or an explicit request for further implementation/analysis. Mere views, reactions, automated bot noise, unrelated commits or passage of time do not open the gate.
+
+If progress stops, set `followup_allowed: false` again and return to waiting rather than continuing to post.
 
 ## Baseline and contamination
 
