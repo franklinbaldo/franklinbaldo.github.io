@@ -1,5 +1,6 @@
 ---
 type: paper
+source_url: "https://github.com/franklinbaldo/papers/blob/main/auditable-legal-reasoning/empirical-evaluation.md"
 title: "Avaliação empírica no TJRO"
 family: "Raciocínio jurídico auditável"
 kind: "paper empírico exploratório / pré-registro parcial"

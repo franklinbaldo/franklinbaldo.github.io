@@ -1,6 +1,6 @@
 ---
 type: paper
-source_url: "https://github.com/franklinbaldo/papers/blob/main/paper1D_vinculacao_racional_dialogo_institucional.md"
+source_url: "https://github.com/franklinbaldo/papers/blob/main/auditable-legal-reasoning/vinculacao-racional-dialogo-institucional.md"
 title: "Súmula vinculante, reclamação e diálogo institucional"
 family: "Raciocínio jurídico auditável"
 kind: "dogmático"

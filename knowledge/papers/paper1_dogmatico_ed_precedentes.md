@@ -1,6 +1,6 @@
 ---
 type: paper
-source_url: "https://github.com/franklinbaldo/papers/blob/main/paper1_dogmatico_ED_precedentes.md"
+source_url: "https://github.com/franklinbaldo/papers/blob/main/auditable-legal-reasoning/embargos-de-declaracao-e-precedentes-vinculantes.md"
 title: "Embargos de Declaração e respostas a precedentes vinculantes"
 family: "Raciocínio jurídico auditável"
 kind: "dogmático"

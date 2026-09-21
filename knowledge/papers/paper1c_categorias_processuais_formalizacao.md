@@ -1,6 +1,6 @@
 ---
 type: paper
-source_url: "https://github.com/franklinbaldo/papers/blob/main/paper1C_categorias_processuais_formalizacao.md"
+source_url: "https://github.com/franklinbaldo/papers/blob/main/auditable-legal-reasoning/categorias-processuais-formalizacao-computacional.md"
 title: "Categorias processuais e formalização"
 family: "Raciocínio jurídico auditável"
 kind: "formal/dogmático"

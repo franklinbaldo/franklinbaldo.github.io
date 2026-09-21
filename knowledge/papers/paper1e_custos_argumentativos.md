@@ -1,6 +1,6 @@
 ---
 type: paper
-source_url: "https://github.com/franklinbaldo/papers/blob/main/paper1E_custos_argumentativos.md"
+source_url: "https://github.com/franklinbaldo/papers/blob/main/auditable-legal-reasoning/custos-argumentativos-equilibrio-institucional.md"
 title: "Custos argumentativos, IA e precedentes no Brasil"
 family: "Raciocínio jurídico auditável"
 kind: "conceitual/jurídico"
