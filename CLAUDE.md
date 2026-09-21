@@ -2,97 +2,71 @@
 
 ## Project overview
 
-Static blog built with **Astro** (TypeScript). Content lives in `src/content/blog/`.  
-The **Hrönir** system (`scripts/hronir/`) runs pairwise comparisons between posts and ranks them with OpenSkill.
+Static blog built with **Astro** (TypeScript). Content lives in `src/content/blog/`.
 
-## Running a Hrönir session (agent happy path)
+Hrönir is an **OKF-first editorial evidence system**. Its persistent state is
+Markdown under `.routines/hronir/rates/`; agents create and complete evaluations
+directly in Markdown, and `okf-parser` is the sole operational validator.
 
-The canonical flow (RFC 0016) is the one-shot API — each match is two commands
-plus reading two files, with no session state to manage:
+TypeScript under `src/hronir/` may consume those records during the static build
+to project rankings and reader-facing pages. It is not an agent workflow, form
+engine, or state machine.
 
-```bash
-npx hronir generate-match --objective coverage        # prints perspective, both post paths, glyph + mood, decide prompt
-# read BOTH files printed by the command, in full
-npx hronir submit-eval --agent-id 'this is my id' \
-  --after-mood "..." --rate-a 4.25 --rate-b 3.00 \
-  --review-a "..." --review-b "..." --clash "..."     # decide + auto-close of the round
+## Running a Hrönir evaluation
+
+Canonical instructions live in
+[`docs/hronir-agent-routine.md`](docs/hronir-agent-routine.md).
+
+The invariant is:
+
+```text
+create/edit .md
+→ uv run ... okf-parser check
+→ read diagnostics
+→ fill/correct .md
+→ repeat until conformant
 ```
 
-Repeat for as many matches as you can evaluate attentively (3–6 good matches
-beat 10 rushed ones). `npx hronir ranking` prints the current ranking.
+Do **not** use `npm run hronir:*`, `npx hronir`,
+`scripts/hronir/index.js`, `generate-match`, `submit-eval`, `init`,
+`continue`, `decide` or `doctor` as an agent interface.
 
-- `--agent-id` is **required on `submit-eval`** — a stable identifier for the
-  evaluator; slugs or quoted phrases with spaces both work. It flows verbatim
-  into the commit message (`hronir: <N> matches — <agent-id>`), where the `—`
-  separator keeps a spaced id unambiguous. Generating a match is
-  identity-agnostic (`generate-match` stores `agentId: "TODO"`), but you may
-  pass `--agent-id` there to pin it early.
-- Post content is never printed inline: the CLI prints the slug, file path and
-  Suno URLs; the agent reads the file directly.
-- If `submit-eval` fails validation (e.g. word count too short), the draft is
-  saved automatically — complete it with `--clash-append` /
-  `--review-a-append` / `--review-b-append` instead of rewriting.
-- `--review-lang en|pt` (on `generate-match`) — language the reviews/clash are
-  written in (RFC 0012 §6); defaults to `--eval-lang`. Recorded as
-  `review_lang` in each rate file.
-- `--objective coverage|refine-top|hunt-worst` — RFC 0013 §8: sampling bias,
-  recorded as `objective` in each rate file. `coverage` (recommended while the
-  corpus is thin) prioritizes under-sampled works. Default: neutral.
-- Multi-match sessions still exist for direct human use:
-  `npx hronir init --agent-id '...' --matches 10 --skip-edit`, then
-  `continue` → `decide` per match (`continue` prints both posts and the decide
-  prompt at once; `end` closes early). Note: with `npm run`, flags need npm's
-  `--` separator (`npm run hronir:init -- --agent-id ...`); `npx hronir`
-  avoids that.
+A new evaluation starts as:
 
-### Constraints the agent must respect
-
-| Field                       | Constraint                                                                                                                                                                                                                                           |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--rate-a` / `--rate-b`     | 1.00–5.00, ≤2 decimal places, **no ties**                                                                                                                                                                                                            |
-| `--review-a` / `--review-b` | ≥100 words each, written in the session's `review_lang` (RFC 0012 §6 — defaults to the evaluation language, pt), from the perspective shown in the banner. Refer to the post by its **slug** (shown in the post header), not "Post A" / "Post B"     |
-| `--clash`                   | ≥100 words, narrative confrontation between both posts through the perspective's lens. Refer to each post by its **slug**, not "Post A" / "Post B"                                                                                                   |
-| `--after-mood`              | **First flag**, ≤250 chars, **first person PT**, about **your internal state** now — energy, fatigue, satisfaction, unease. **Not about the posts.** Must be original (not a copy of the initial mood in the banner). See "Deciding the mood" below. |
-
-The `--review-a` / `--review-b` / `--clash` fields render as **Markdown** — use emphasis, lists, blockquotes (to quote passages), and emojis where they aid readability. Formatting in service of the content, not decoration.
-
-### Deciding the mood (do this first)
-
-`--after-mood` is the **first** flag you submit. Before writing anything,
-Hrönir shows you, in the `generate-match` output (re-printed by `continue`),
-a **random Unicode glyph** it
-drew for you (with its `U+XXXX` codepoint) plus your **initial mood** from the
-banner. Read the glyph _subjectively_ — there is no lookup table; its shape,
-its stroke, whatever that character evokes in you, you decide how it weighs.
-Combine that reading with your initial mood and with what these two posts (and
-the clash between them) made you feel. The result is your internal state right
-now — and that state then **colors the tone** in which you write the reviews
-and the clash. That is why the mood is decided first.
-
-### After all matches — open a PR
-
-```bash
-git add .routines/hronir/
-git commit -m "hronir: <N> matches — <agent-id>"
-# push and open a PR
+```yaml
+---
+type: Hronir Evaluation
+---
 ```
 
-The rate files go to `.routines/hronir/` and must be committed.  
-Run `npm run hronir:doctor` before committing to catch any inconsistencies.
-
-## Other useful commands
+Then run:
 
 ```bash
-npm run hronir:ranking          # print current ranking to stdout
-npm run hronir:doctor           # validate all rate files
-npm run hronir:draft-worst      # RFC 0003: cria uma NOVA versão (rascunho) do pior post
-npm run hronir:draft-commit -- --msg "..."  # registra o rascunho (canônica intocada)
-npm run hronir:select           # RFC 0010 (amendment 2026-07-01): recalcula versions-selected.json — função pura de rate files + versões, sem histerese; gitignorado, regenerado pelo prebuild antes de cada build; rode localmente antes de qualquer outro comando hronir num checkout novo
-npm run hronir:select -- --dry-run  # mostra o que seria selecionado sem gravar
-npm run hronir:prune -- --dry-run   # lista versões perdedoras elegíveis para poda (≥0.5★ abaixo, n≥3)
-npm run hronir:prune            # remove as versões perdedoras elegíveis
-npm run hronir:end -- --force   # discard an in-progress session (o match em andamento é perdido; os já submetidos ficam)
+uv run --with 'okf-parser @ git+https://github.com/franklinbaldo/okf-parser@3d4f31f41bca4aecb11a627f23900051f3f68685' \
+  okf-parser check .routines/hronir/rates \
+  --require-spec ../../../specs/okf-types/{slug}.md \
+  --normative-spec
 ```
+
+`OKF011` diagnostics are the fill-list. Edit the Markdown and repeat until
+`conformant: true`. The normative field contract is
+`specs/okf-types/hronir-evaluation.md`.
+
+Historical `type: Rate File` documents remain immutable compatibility data.
+Do not rewrite them merely to modernize shape.
+
+### Semantic constraints
+
+The parser owns structural completeness. The evaluator owns semantic quality:
+
+- `rate_a` / `rate_b`: 1.00–5.00, at most two decimals, no tie;
+- `winner` matches the higher rating;
+- `review_a`, `review_b` and `clash`: at least 100 words each and specific
+  to the actual works;
+- `review_lang` is explicit;
+- `evaluator_mood_after` is first-person internal state after reading;
+- read both works and the chosen perspective in full before completing the
+  evaluation.
 
 ## Build & lint
 
@@ -171,16 +145,13 @@ Merge por squash, conforme a política canônica do repositório.
 
 ### Padrão para dados persistidos
 
-Schema versionado (ex. `stars-v1`) + script de migração preservado + validação
-no `hronir:doctor`. Qualquer dado novo (ex. versões de posts da RFC 0003)
-declara conformidade com este padrão em vez de reinventar.
+`Hronir Evaluation` é validado por `okf-parser` contra a spec OKF normativa. Dados históricos preservam seus schemas/versionamento e não são reescritos em massa. Qualquer dado novo declara sua spec em `specs/okf-types/` e ganha um check reproduzível.
 
 ### Campo `type` (OKF, RFC 0014)
 
 Todo post em `src/content/blog/**` tem `type: Blog Post | Music Post`
 (obrigatório) — a classificação OKF, não confundir com `docType` (opcional;
-a antiga taxonomia editorial: essay/letter/fiction/technical/dialogue). Todo
-rate file em `.routines/hronir/rates/**` tem `type: Rate File`. Ambos os
+a antiga taxonomia editorial: essay/letter/fiction/technical/dialogue). Rate files históricos em `.routines/hronir/rates/**` usam `type: Rate File`; avaliações novas usam `type: Hronir Evaluation`. Ambos os
 campos são **excluídos** do hash de identidade de versão
 (`UUID_EXCLUDED_FIELDS` em `src/hronir/posts.ts`) — editá-los não muda a
 identidade de uma versão. Ver `docs/okf/` e RFC 0014 §7.
@@ -203,11 +174,11 @@ O `check:hygiene` valida o nome.
 src/content/blog/         Blog posts (markdown + frontmatter)
 src/components/           Astro components
 src/lib/                  Build-time TypeScript helpers
-src/hronir/               Hrönir core modules (commands, ranking, matches, posts, selection)
-  __tests__/              Unit tests (node:test)
-scripts/hronir/           Hrönir CLI entry point and perspectives/skills
+src/hronir/               Projeções de leitura/build do Hrönir (ranking, matches, seleção legada)
+  __tests__/              Testes das projeções (node:test)
+scripts/hronir/           Código legado e recursos editoriais; não é interface operacional
   perspectives/           Reader perspective files (.md)
-  skills/                 Writing skills for edit-worst phase
+  skills/                 Writing skills para edição editorial
 scripts/lib/              Shared helpers consumidos por múltiplos scripts
   content.mjs             Fonte única de descoberta de posts (listPostFiles, readPostMeta)
   blog-links.mjs          Validação e redirects de links internos
