@@ -1,46 +1,54 @@
 ---
 type: Data Schema
-title: Rate file
-description: Registro de uma decisão de match — schema stars-v1, um arquivo Markdown por partida, committed em .routines/hronir/rates/.
+title: Hrönir evaluation record
+description: Registro OKF de uma avaliação par-a-par; novas avaliações usam Hronir Evaluation e são preenchidas diretamente por agentes.
 resource: ../../../.routines/hronir/rates/
-tags: [hronir, rate-file, schema]
-timestamp: 2026-07-03T00:00:00Z
+tags: [hronir, rate-file, schema, okf]
+timestamp: 2026-09-21T00:00:00Z
 ---
 
-# Rate file
+# Registro de avaliação Hrönir
 
-Cada [match](./match.md) decidido produz um arquivo Markdown em
-`.routines/hronir/rates/<run_id>_<keyA>_x_<keyB>.md`, front-matter apenas
-(corpo vazio). O schema é identificado pelo campo `prompt_version` (hoje
-`stars-v3`; a família é conhecida como **`stars-v1`** por convenção de
-nomeação de schema do repo — ver `CLAUDE.md` §"Padrão para dados
-persistidos"). Rate files são **imutáveis** por convenção: o guardrail de CI
-("Rate file deletion guard") bloqueia deleção, exceto para remover uma
-avaliação de uma versão publicada por engano.
+Cada avaliação concluída vive como um arquivo Markdown versionado em
+`.routines/hronir/rates/`. O Markdown é a fonte de verdade: não existe banco de
+sessão nem etapa de submissão separada.
 
-Desde a RFC 0014 (r1), todo rate file carrega literalmente `type: Rate File`
-no front-matter — o campo obrigatório do OKF, escrito pelo CLI em toda
-decisão nova e retroagido aos 1764 arquivos já existentes.
+## Formato canônico novo
 
-## Campos principais
+Novas avaliações usam:
 
-| Campo                                     | Descrição                                                                                             |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `type`                                    | `"Rate File"` — classificação OKF (RFC 0014).                                                         |
-| `run_id`, `run_at`                        | Identidade e timestamp da rodada.                                                                     |
-| `post_a` / `post_b`                       | `key`, `path`, `display_lang`, `content_lang`, `version` (UUIDv5), `ref`.                             |
-| `winner`                                  | `"a"` ou `"b"` — derivado das estrelas, não escolhido diretamente.                                    |
-| `agent_id`                                | Identidade do avaliador (RFC-obrigatório, flui de `--agent-id`).                                      |
-| `perspective_id`                          | A [perspectiva](./perspective.md) sorteada para o match.                                              |
-| `eval_lang` / `review_lang`               | Língua da sessão / língua das reviews e do clash (RFC 0012 §6).                                       |
-| `objective`                               | Viés de amostragem do match (RFC 0013 §8).                                                            |
-| `evaluator_mood` / `evaluator_mood_after` | Estado do avaliador antes e depois da decisão; `mood_glyph` é o glifo sorteado que informa o "after". |
-| `impression_a` / `impression_b`           | Legado (RFC 0016): sempre `null` em arquivos novos; preenchidos só em rate files antigos.             |
-| `rate_a` / `rate_b`                       | Estrelas 1.00–5.00, sem empate.                                                                       |
-| `review_a` / `review_b`                   | Resenha de cada post, ≥100 palavras, na `review_lang`.                                                |
-| `clash`                                   | Confronto narrativo entre os dois posts, ≥100 palavras.                                               |
+```yaml
+type: Hronir Evaluation
+```
 
-## Ver também
+O contrato normativo vive em
+[`specs/okf-types/hronir-evaluation.md`](../../../specs/okf-types/hronir-evaluation.md).
+O agente começa com um documento mínimo e executa `okf-parser check` com
+`--require-spec` e `--normative-spec`. Diagnósticos `OKF011` apontam os
+campos obrigatórios ausentes; o agente edita o próprio Markdown e repete o check
+até `conformant: true`.
 
-- [Match](./match.md)
-- [Ranking](./ranking.md) — consome todos os rate files preenchidos.
+Os lados do duelo são deliberadamente planos
+(`post_a_key`, `post_a_path`, `post_b_key`, `post_b_path` etc.) para que
+cada campo possa produzir um diagnóstico independente.
+
+## Legado
+
+Arquivos históricos com:
+
+```yaml
+type: Rate File
+```
+
+continuam válidos e legíveis. Eles usam os objetos aninhados `post_a` e
+`post_b` e não devem ser migrados em massa: são evidência histórica imutável.
+A spec mínima de compatibilidade está em
+[`specs/okf-types/rate-file.md`](../../../specs/okf-types/rate-file.md).
+
+## Consumidores
+
+O build Astro/TypeScript pode ler tanto o formato legado quanto
+`Hronir Evaluation` para produzir ranking, histórico e páginas públicas. Esse
+código é uma projeção de leitura; ele não cria, completa nem valida avaliações.
+
+A autoridade de escrita/validação é o `okf-parser`.
