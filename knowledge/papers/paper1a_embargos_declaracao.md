@@ -1,6 +1,6 @@
 ---
 type: paper
-source_url: "https://github.com/franklinbaldo/papers/blob/main/paper1A_embargos_declaracao.md"
+source_url: "https://github.com/franklinbaldo/papers/blob/main/auditable-legal-reasoning/embargos-de-declaracao-cpc-2015.md"
 title: "Embargos de Declaração: vícios de mérito, modificação como consequência e limite de determinação única"
 family: "Raciocínio jurídico auditável"
 kind: "dogmático"

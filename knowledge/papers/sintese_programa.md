@@ -1,5 +1,6 @@
 ---
 type: paper
+source_url: "https://github.com/franklinbaldo/papers/blob/main/auditable-legal-reasoning/research-program.md"
 title: "Síntese do programa jurídico"
 family: "Raciocínio jurídico auditável"
 kind: "síntese"
@@ -9,9 +10,9 @@ confidence: "medium"
 idea: >-
   Costura dogmática, representação formal, avaliação comparativa e hipóteses institucionais num programa único de raciocínio jurídico auditável, mantendo explícita a fronteira entre o que o direito exige, o que um modelo formal representa e o que ainda precisa ser testado empiricamente.
 status: >-
-  A v0.1 foi reconstruída a partir do estado corrigido dos papers-filhos e está repository-ready para o fluxo Zenodo. A versão atual incorpora as fronteiras de prior art dos Papers 1A–1G, trata Argdown e Lean como superfícies complementares de auditoria, mantém proveniência como rastreabilidade em vez de efeito processual automático, corrige as claims de ESHTR e declara expressamente que o paper empírico ainda não contém resultado TJRO executado. Custos, reputação e mudança institucional aparecem como hipóteses condicionais, não como efeitos já observados; o SHA mergeado passou os checks de OKF e preparação dos bundles Zenodo.
+  A v0.1 reúne o estado corrigido dos papers-filhos e está repository-ready para o fluxo Zenodo. A versão atual incorpora as fronteiras de prior art dos Papers 1A–1G, trata Argdown e Lean como superfícies complementares de auditoria, mantém proveniência como rastreabilidade em vez de efeito processual automático e corrige as claims de ESHTR. Desde o primeiro piloto TJRO executado, o mapa empírico também ficou mais preciso: o Q1p comparou structured prompting P_proxy com um baseline simples e não encontrou vantagem (66,4 versus 72,2 de validade processual média; diferença pareada -5,8). Esse resultado negativo informa o programa, mas não testa a pipeline Lean completa. Custos, reputação e mudança institucional continuam como hipóteses condicionais, não efeitos já observados.
 limit: >-
-  A síntese ficou epistemicamente mais limpa, mas continua dependente da maturidade desigual dos componentes. O protocolo empírico ainda precisa produzir um resultado reproduzível no corpus TJRO/CausaGanha, e as hipóteses de custos, reputação e mudança institucional carecem de validação própria. A promoção reflete a correção material de escopo, coerência e provenance do mapa do programa, não evidência empírica nova nem revisão independente.
+  A síntese continua dependente da maturidade desigual dos componentes. O Q1p é exploratório — 10 casos, um único modelo Gemini usado na geração e no julgamento cego, e P_proxy sem compilação Lean —, enquanto Q1/Q2/Q3 e a pipeline completa permanecem não executados. As hipóteses de custos, reputação e mudança institucional também carecem de validação própria. O tier B reflete coerência e delimitação do mapa do programa, não eficácia empírica demonstrada nem revisão independente.
 related_file: "audits/zenodo-readiness/2026-09-19-2046Z-fix-round.md"
 relations:
   - type: synthesizes
@@ -34,11 +35,11 @@ relations:
     note: "Mantém reputação como mecanismo local e observável antes de qualquer extrapolação sistêmica."
   - type: synthesizes
     target: paper1g_livre_convencimento_patrimonialismo
-    note: "Propaga a correção 1939/1940 e a hipótese histórica estreita de forma de absorção."
+    note: "Propaga a correção 1939/1940, a hipótese histórica estreita de forma de absorção e mantém aberta a continuidade pré/pós-1988."
   - type: synthesizes
     target: pipeline_lean_argdown
     note: "Combina topologia argumentativa, consequência formal e revisão jurídica como superfícies distintas de auditoria."
   - type: frames
     target: empirical_evaluation
-    note: "Mantém a avaliação TJRO como etapa empírica prospectiva e impede que protocolo seja descrito como resultado executado."
+    note: "Incorpora o primeiro piloto Q1p negativo sem confundi-lo com teste da pipeline Lean completa; Q1/Q2/Q3 permanecem prospectivos."
 ---

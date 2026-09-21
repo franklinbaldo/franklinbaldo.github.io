@@ -1,6 +1,6 @@
 ---
 type: paper
-source_url: "https://github.com/franklinbaldo/papers/blob/main/paper1B_cinco_saidas_precedentes.md"
+source_url: "https://github.com/franklinbaldo/papers/blob/main/auditable-legal-reasoning/cinco-saidas-precedentes-vinculantes.md"
 title: "Cinco saídas diante de precedentes"
 family: "Raciocínio jurídico auditável"
 kind: "dogmático"

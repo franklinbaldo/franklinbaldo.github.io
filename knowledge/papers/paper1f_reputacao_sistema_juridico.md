@@ -1,6 +1,6 @@
 ---
 type: paper
-source_url: "https://github.com/franklinbaldo/papers/blob/main/paper1F_reputacao_sistema_juridico.md"
+source_url: "https://github.com/franklinbaldo/papers/blob/main/auditable-legal-reasoning/reputacao-coordenacao-sistema-juridico.md"
 title: "Reputação jurídica sob verificação direta"
 family: "Raciocínio jurídico auditável"
 kind: "conceitual/jurídico"
