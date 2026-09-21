@@ -1,9 +1,11 @@
 ---
-title: "AI Epistemic Worlds observatory: TEQUMSA Nexus"
+type: changelog
 date: 2026-09-21
+description: Add TEQUMSA Nexus to the AI Epistemic Worlds observatory, record its null-model benchmark intervention, and recheck existing waiting repositories.
+tags: [ai, epistemic-worlds, intervention, github, okf]
 ---
 
-# AI Epistemic Worlds observatory
+# AI Epistemic Worlds observatory — TEQUMSA Nexus
 
 - Added `tequmsa-nexus` as `evidence_tier: A`, `interest_tier: S`, `confidence: high` after manual longitudinal review.
 - Public trajectory observed: thin ordinary-software baseline (`Mbanksbey/varest`, 2025-05-19) → AI-companion fork (`airi-tequmsa`, 2025-07-24) → `TEQUMSA_NEXUS` (2025-11-05) → separate TEQUMSA browser and lattice-memory artifacts through 2026-07-01.
