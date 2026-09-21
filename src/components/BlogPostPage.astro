@@ -20,6 +20,7 @@ import MusicPostLayout from './MusicPostLayout.astro';
 import { getRankByKey } from '../lib/hronir-rank';
 import { getSeriesContext } from '../lib/series';
 import { isPublished } from '../lib/publish';
+import { tagUrl } from '../lib/tag-url';
 import {
   DEFAULT_LANG,
   locale as localeFor,
@@ -80,7 +81,6 @@ const rankTitle = rankInfo
   : undefined;
 const series = await getSeriesContext(post, { lang: postLang });
 const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
-const tagsPrefix = `${urlPrefix(postLang)}/tags`;
 
 const allPosts = await getCollection('blog');
 const sameLangPosts = allPosts
@@ -367,7 +367,7 @@ const musicIndexLabel = t(postLang, 'music.indexLabel');
                   {tags.map((tag, index) => (
                     <>
                       {index > 0 && ' '}
-                      <a class="tag-pill" href={`${tagsPrefix}/${tag}/`} rel="tag">
+                      <a class="tag-pill" href={tagUrl(tag, postLang)} rel="tag">
                         #{tag}
                       </a>
                     </>

@@ -6,6 +6,7 @@ import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import { isPublished } from "../../lib/publish";
 import { toBreadcrumbLd } from "../../lib/breadcrumbs";
 import { tagDescriptions } from "../../lib/tagDescriptions";
+import { tagUrl } from "../../lib/tag-url";
 
 export async function getStaticPaths() {
   const all = (await getCollection("blog")).filter((p) => isPublished(p));
@@ -39,6 +40,7 @@ interface Props {
 
 const { tag, posts, hasPtCounterpart } = Astro.props;
 const count = posts.length;
+const currentTagUrl = tagUrl(tag, "en");
 
 const coTags = new Map<string, number>();
 for (const post of posts) {
@@ -58,7 +60,7 @@ const description =
 const crumbs = [
   { name: "Home", href: "/" },
   { name: "Tags", href: "/tags/" },
-  { name: `#${tag}`, href: `/tags/${tag}/` },
+  { name: `#${tag}`, href: currentTagUrl },
 ];
 
 const collectionLd = {
@@ -67,7 +69,7 @@ const collectionLd = {
   name: `#${tag}`,
   description,
   inLanguage: "en-US",
-  url: Astro.site ? new URL(`/tags/${tag}/`, Astro.site).href : `/tags/${tag}/`,
+  url: Astro.site ? new URL(currentTagUrl, Astro.site).href : currentTagUrl,
   hasPart: posts.map((p) => ({
     "@type": "BlogPosting",
     headline: p.data.title,
@@ -81,7 +83,7 @@ const collectionLd = {
   title={`#${tag} | Franklin Baldo`}
   description={description}
   lang="en"
-  translations={hasPtCounterpart ? { pt: `/pt/tags/${tag}/` } : {}}
+  translations={hasPtCounterpart ? { pt: tagUrl(tag, "pt") } : {}}
   breadcrumb={toBreadcrumbLd(crumbs, Astro.site)}
 >
   <script type="application/ld+json" set:html={JSON.stringify(collectionLd)} is:inline slot="head" />
@@ -94,7 +96,7 @@ const collectionLd = {
           <small>
             {count} {count === 1 ? "essay" : "essays"} · <a href="/tags/">all tags</a>
             {hasPtCounterpart && (
-              <> · <a class="lang-badge" href={`/pt/tags/${tag}/`} title="Ler em Português">PT</a></>
+              <> · <a class="lang-badge" href={tagUrl(tag, "pt")} title="Ler em Português">PT</a></>
             )}
           </small>
         </p>
@@ -106,7 +108,7 @@ const collectionLd = {
         <small>
           Related:{" "}
           {relatedTags.map((t, i) => (
-            <>{i > 0 && " "}<a href={`/tags/${t}/`} class="tag-pill" rel="tag">#{t}</a></>
+            <>{i > 0 && " "}<a href={tagUrl(t, "en")} class="tag-pill" rel="tag">#{t}</a></>
           ))}
         </small>
       </p>
