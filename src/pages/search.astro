@@ -1,0 +1,45 @@
+---
+import PageLayout from "../layouts/PageLayout.astro";
+---
+
+<PageLayout title="Search | Franklin Baldo" description="Full-text search across the garden." lang="en" image="/og/search.png" translations={{ pt: "/pt/search/" }}>
+  <hgroup>
+    <h1>Search</h1>
+    <p><small>Full-text search across all essays. Index built with <a href="https://pagefind.app/">Pagefind</a>.</small></p>
+  </hgroup>
+
+  <fieldset role="search" class="search-fieldset">
+    <pagefind-searchbox data-filter="lang:en"></pagefind-searchbox>
+  </fieldset>
+
+  <p class="search-hint" id="search-hint">Type a word or phrase to search through all essays.</p>
+
+  <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
+  <script is:inline type="module" src="/pagefind/pagefind-component-ui.js"></script>
+  <script is:inline>
+    // Pre-populate search from ?q= URL param (enables Google Sitelinks Searchbox action).
+    // Uses the documented pagefind-searchbox instance API: triggerSearch().
+    (() => {
+      const q = new URLSearchParams(location.search).get('q');
+      customElements.whenDefined('pagefind-searchbox').then(() => {
+        const box = document.querySelector('pagefind-searchbox');
+        const hint = document.getElementById('search-hint');
+        if (box) {
+          box.addEventListener('input', () => hint?.remove(), { once: true });
+          if (q && typeof box.triggerSearch === 'function') {
+            hint?.remove();
+            box.triggerSearch(q);
+          }
+        }
+      });
+    })();
+  </script>
+
+  <style>
+    .search-hint {
+      color: var(--pico-muted-color);
+      font-size: 0.9rem;
+      margin-top: 0.75rem;
+    }
+  </style>
+</PageLayout>

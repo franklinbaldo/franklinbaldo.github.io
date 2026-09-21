@@ -1,0 +1,482 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { t, urlPrefix } from '../lib/i18n';
+
+interface Props {
+  lang?: string;
+}
+const { lang = 'en' } = Astro.props;
+
+const prefix = urlPrefix(lang);
+const homeHref = `${prefix}/`;
+const archiveHref = `${prefix}/archive/`;
+const tagsHref = `${prefix}/tags/`;
+const musicHref = lang === 'pt' ? `${prefix}/musicas/` : '/music/';
+const booksHref = lang === 'pt' ? `${prefix}/livros/` : '/books/';
+const audiobooksHref = '/audiobooks/';
+const audiobooksLabel = lang === 'pt' ? 'Audiolivros' : 'Audiobooks';
+const searchHref = `${prefix}/search/`;
+const projectsHref = `${prefix}/projects/`;
+const rankingHref = `${prefix}/ranking/`;
+const epistemicWorldsHref = '/pt/ai-epistemic-worlds/';
+const awesomeAiSlopHref = '/pt/awesome-ai-slop/';
+const aboutHref = `${prefix}/about/`;
+// Changelog content is English-only by deliberate exception (CLAUDE.md
+// "Línguas") — one page serves both languages, no /pt/ prefix.
+const changelogHref = '/changelog/';
+
+const menuLabel = t(lang, 'nav.menu');
+const moreLabel = t(lang, 'nav.more');
+const collectionLabel = t(lang, 'nav.collections');
+const playMusicLabel = t(lang, 'nav.playMusic');
+const pauseMusicLabel = t(lang, 'nav.pauseMusic');
+
+// Label kept as t(lang, 'nav.archive') ("Archive"/"Arquivo"), not a rebrand
+// like "Essays" — the /archive/ page's own <h1> and the breadcrumb on every
+// post (src/pages/[pt/]blog/[...slug].astro) both still say "Archive", and
+// a nav label that disagrees with the page it links to reads as a broken
+// link. Rename all three together in one PR if the "Essays" language is
+// wanted.
+const primaryLinks = [
+  { href: archiveHref, label: t(lang, 'nav.archive') },
+  { href: projectsHref, label: t(lang, 'nav.projects') },
+  { href: aboutHref, label: t(lang, 'nav.about') },
+  { href: searchHref, label: t(lang, 'nav.search') },
+];
+
+const secondaryLinks = [
+  { href: musicHref, label: t(lang, 'nav.music') },
+  { href: booksHref, label: t(lang, 'nav.books') },
+  { href: audiobooksHref, label: audiobooksLabel },
+  { href: rankingHref, label: t(lang, 'nav.ranking') },
+  ...(lang === 'pt' ? [{ href: epistemicWorldsHref, label: 'Mundos IA' }, { href: awesomeAiSlopHref, label: 'AI Slop' }] : []),
+  { href: tagsHref, label: t(lang, 'nav.tags') },
+  { href: changelogHref, label: 'Changelog' },
+];
+
+const here = Astro.url.pathname.replace(/\/$/, '') + '/';
+const isCurrent = (href: string) => {
+  const h = href.replace(/\/$/, '') + '/';
+  if (h === '/' || h === `${prefix}/`) return here === h;
+  return here === h;
+};
+const secondaryCurrent = secondaryLinks.some((link) => isCurrent(link.href));
+---
+
+<header class="site-header">
+  <nav
+    class="container"
+    aria-label={lang === 'pt' ? 'Navegação principal' : 'Main navigation'}
+  >
+    <ul>
+      <li>
+        <a
+          href={homeHref}
+          class="brand contrast"
+          aria-current={here === homeHref ? 'page' : undefined}
+        >
+          Franklin Baldo<span class="brand-dot" aria-hidden="true">.</span>
+        </a>
+      </li>
+    </ul>
+    <ul class="nav-inline">
+      {
+        primaryLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="secondary"
+              aria-current={isCurrent(link.href) ? 'page' : undefined}
+              data-search-link={link.href === searchHref ? true : undefined}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <details class="dropdown more-menu">
+          <summary
+            class="secondary"
+            aria-current={secondaryCurrent ? 'page' : undefined}
+          >
+            {moreLabel}
+          </summary>
+          <ul>
+            <li class="menu-section">{collectionLabel}</li>
+            {
+              secondaryLinks.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    aria-current={isCurrent(link.href) ? 'page' : undefined}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </details>
+      </li>
+      <li>
+        <button
+          id="nav-music-btn"
+          class="nav-music-btn secondary outline"
+          type="button"
+          aria-label={playMusicLabel}
+          aria-pressed="false"
+          title={playMusicLabel}
+          data-play-label={playMusicLabel}
+          data-pause-label={pauseMusicLabel}
+        >♪</button>
+      </li>
+      <li><LanguageSwitcher /></li>
+      <li><ThemeToggle lang={lang} /></li>
+    </ul>
+    <ul class="nav-burger">
+      <li>
+        <button
+          id="nav-music-btn-mobile"
+          class="nav-music-btn secondary outline"
+          type="button"
+          aria-label={playMusicLabel}
+          aria-pressed="false"
+          title={playMusicLabel}
+          data-play-label={playMusicLabel}
+          data-pause-label={pauseMusicLabel}
+        >♪</button>
+      </li>
+      <li><LanguageSwitcher /></li>
+      <li><ThemeToggle lang={lang} /></li>
+      <li>
+        <details class="dropdown burger-menu">
+          <summary aria-label={menuLabel}>☰</summary>
+          <ul>
+            {
+              primaryLinks.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    aria-current={isCurrent(link.href) ? 'page' : undefined}
+                    data-search-link={link.href === searchHref ? true : undefined}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))
+            }
+            <li class="menu-section">{collectionLabel}</li>
+            {
+              secondaryLinks.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    aria-current={isCurrent(link.href) ? 'page' : undefined}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </details>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  import { pushOverlay, removeOverlay, isTopOverlay } from '../lib/overlay-stack';
+
+  function syncMusicBtn(audio: HTMLAudioElement | null) {
+    const btns = document.querySelectorAll<HTMLButtonElement>('.nav-music-btn');
+    btns.forEach((btn) => {
+      if (!audio || audio.paused) {
+        const label = btn.dataset.playLabel || 'Play music';
+        btn.textContent = '♪';
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('aria-pressed', 'false');
+        btn.setAttribute('title', label);
+        btn.classList.remove('playing');
+      } else {
+        const label = btn.dataset.pauseLabel || 'Pause music';
+        btn.textContent = '⏸';
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('aria-pressed', 'true');
+        btn.setAttribute('title', label);
+        btn.classList.add('playing');
+      }
+    });
+  }
+
+  function initMusicBtn() {
+    const btns = document.querySelectorAll<HTMLButtonElement>('.nav-music-btn');
+    if (!btns.length) return;
+
+    const audio = document.getElementById('gmp-audio') as HTMLAudioElement | null;
+
+    // Sync initial state
+    syncMusicBtn(audio);
+
+    if (audio && audio.dataset.navBound !== '1') {
+      audio.dataset.navBound = '1';
+      audio.addEventListener('play', () => syncMusicBtn(audio));
+      audio.addEventListener('pause', () => syncMusicBtn(audio));
+      audio.addEventListener('ended', () => syncMusicBtn(audio));
+    }
+
+    btns.forEach((btn) => {
+      if (btn.dataset.musicBound === '1') return;
+      btn.dataset.musicBound = '1';
+      btn.addEventListener('click', () => {
+        const a = document.getElementById('gmp-audio') as HTMLAudioElement | null;
+        const player = document.getElementById('gmp') as HTMLElement | null;
+
+        if (a && !a.paused) {
+          // Playing → pause
+          a.pause();
+        } else if (a && a.src && player && !player.hidden) {
+          // Paused but has a track → resume
+          a.play().catch(() => {});
+        } else {
+          // Nothing playing → start first song from player's queue
+          const gmp = document.getElementById('gmp') as HTMLElement | null;
+          let songs: { id: string; title: string }[] = [];
+          try {
+            songs = JSON.parse(gmp?.dataset.songs || '[]');
+          } catch {}
+          if (songs[0]) {
+            document.dispatchEvent(
+              new CustomEvent('gp:play', {
+                detail: { sunoId: songs[0].id, title: songs[0].title },
+              }),
+            );
+          }
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMusicBtn);
+  } else {
+    initMusicBtn();
+  }
+  document.addEventListener('astro:page-load', initMusicBtn);
+
+  function isTypingTarget(el: Element | null): boolean {
+    if (!el) return false;
+    const tag = el.tagName;
+    return (
+      tag === 'INPUT' ||
+      tag === 'TEXTAREA' ||
+      tag === 'SELECT' ||
+      (el as HTMLElement).isContentEditable
+    );
+  }
+
+  function focusSearch(event: KeyboardEvent) {
+    if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
+    if (isTypingTarget(document.activeElement)) return;
+
+    const searchbox = document.querySelector('pagefind-searchbox');
+    const searchInput = searchbox?.querySelector<HTMLInputElement>('input');
+    if (searchInput) {
+      event.preventDefault();
+      searchInput.focus();
+      return;
+    }
+
+    const links = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>('[data-search-link]'),
+    );
+    const link = links.find((el) => el.offsetParent !== null) ?? links[0];
+    if (link) {
+      event.preventDefault();
+      link.focus();
+    }
+  }
+
+  const win = window as unknown as {
+    __searchShortcutBound?: boolean;
+    __dropdownEscBound?: boolean;
+  };
+  if (!win.__searchShortcutBound) {
+    win.__searchShortcutBound = true;
+    document.addEventListener('keydown', focusSearch);
+  }
+
+  function closeOpenDropdowns(event: KeyboardEvent) {
+    if (event.key !== 'Escape') return;
+    if (!isTopOverlay('header-dropdown')) return;
+    const openDropdowns = document.querySelectorAll<HTMLDetailsElement>('details.dropdown[open]');
+    openDropdowns.forEach((details) => {
+      details.removeAttribute('open');
+      details.querySelector('summary')?.focus();
+    });
+    removeOverlay('header-dropdown');
+  }
+
+  if (!win.__dropdownEscBound) {
+    win.__dropdownEscBound = true;
+    document.addEventListener('keydown', closeOpenDropdowns);
+  }
+
+  function bindDropdownOverlayTracking() {
+    document.querySelectorAll<HTMLDetailsElement>('details.dropdown').forEach((details) => {
+      if (details.dataset.overlayBound === '1') return;
+      details.dataset.overlayBound = '1';
+      details.addEventListener('toggle', () => {
+        if (details.open) pushOverlay('header-dropdown');
+        else removeOverlay('header-dropdown');
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindDropdownOverlayTracking);
+  } else {
+    bindDropdownOverlayTracking();
+  }
+  document.addEventListener('astro:page-load', bindDropdownOverlayTracking);
+</script>
+
+<style>
+  /*
+   * Sticky paper masthead. With the secondary collection links grouped under
+   * More, the primary navigation can remain visible on laptop widths instead
+   * of collapsing almost everywhere.
+   */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding-block: 0;
+    --pico-nav-element-spacing-vertical: 0.5rem;
+    background: color-mix(in srgb, var(--pico-background-color) 88%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--pico-muted-border-color) 84%, transparent);
+    box-shadow: 0 8px 24px -24px rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(14px) saturate(115%);
+    -webkit-backdrop-filter: blur(14px) saturate(115%);
+  }
+  .site-header > nav {
+    padding-block: 0.35rem;
+  }
+
+  .brand {
+    font-family: var(--pico-font-family-serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    text-decoration: none;
+    overflow-wrap: normal;
+    white-space: nowrap;
+  }
+  .brand:hover {
+    color: var(--pico-primary);
+  }
+  .brand-dot {
+    color: var(--pico-primary);
+  }
+
+  .nav-inline a,
+  .nav-inline summary {
+    font-size: 0.92rem;
+    text-decoration: none;
+    overflow-wrap: normal;
+    word-break: normal;
+    white-space: nowrap;
+  }
+  .nav-inline a[aria-current='page'],
+  .nav-inline summary[aria-current='page'] {
+    color: var(--pico-primary);
+    text-decoration: none;
+    background: var(--accent-wash);
+    border-radius: 999px;
+    padding-inline: 0.55rem;
+  }
+
+  .more-menu > summary {
+    padding-inline: 0.6rem;
+    cursor: pointer;
+    border-radius: 999px;
+    transition: background 160ms ease, color 160ms ease;
+  }
+  .more-menu > summary:hover {
+    background: var(--accent-wash);
+  }
+  .more-menu > ul {
+    right: 0;
+    left: auto;
+    min-width: 13rem;
+  }
+  .menu-section {
+    padding: 0.45rem 0.75rem 0.25rem;
+    color: var(--pico-muted-color);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  .nav-burger {
+    display: none;
+  }
+  /* Measured with Playwright at 899-1280px (14 widths) on both /pt/ and en
+     home pages: .nav-inline never wraps or overflows in that range, in
+     either language, so the 899px cutoff stands. The one real defect found
+     at those widths was unrelated to nav-inline — the brand link ("Franklin
+     Baldo.") wrapped onto two lines around 920-1000px, in both languages,
+     because it lacked white-space: nowrap while nav-inline's items already
+     had it; fixed on .brand above. */
+  @media (max-width: 899px) {
+    .nav-inline {
+      display: none;
+    }
+    .nav-burger {
+      display: flex;
+    }
+    /* Below the burger breakpoint, .brand's white-space:nowrap (added
+       above for the 920-1000px wrap bug, which only exists in the
+       nav-inline layout) has no fallback: it forces "Franklin Baldo." to
+       stay on one line even when the burger-side controls leave no room,
+       overflowing the header horizontally on real phone widths (measured:
+       overflow at <=412px, e.g. most phones in portrait). Only nav-inline
+       widths needed nowrap; restore wrapping as the safety valve here. */
+    .brand {
+      white-space: normal;
+    }
+  }
+  .burger-menu > summary {
+    padding-inline: 0.5rem;
+  }
+  .burger-menu > ul {
+    right: 0;
+    left: auto;
+    min-width: 13rem;
+  }
+  .burger-menu .menu-section {
+    border-top: 1px solid var(--pico-muted-border-color);
+    margin-top: 0.25rem;
+  }
+
+  .nav-music-btn {
+    padding: 0.25rem 0.6rem;
+    font-size: 1rem;
+    line-height: 1;
+    border-radius: 6px;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      color 0.15s;
+    white-space: nowrap;
+  }
+  .nav-music-btn.playing {
+    background: var(--pico-primary) !important;
+    color: var(--pico-primary-inverse, #fff) !important;
+    border-color: var(--pico-primary) !important;
+  }
+</style>

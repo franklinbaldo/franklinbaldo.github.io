@@ -1,0 +1,82 @@
+---
+type: "Blog Post"
+title: "FlyGenesis: a fly building bodies to solve physical worlds"
+description: "We reuse the same compact MaleCNS connectome from FlyDoom and place it inside a morphology-evolution loop: bodies built from functional protein-inspired modules change as the physical curriculum gets harder."
+date: "2026-09-15"
+lang: en
+translationKey: flygenesis-malecns
+tags: ["malecns", "connectome", "evolution", "robotics", "embodied-ai"]
+glyph: "🪰"
+---
+
+After putting **MaleCNS** inside a 3D navigation loop, the next question became more interesting: what if the fly did not receive a fixed body?
+
+What if it participated in a process that **creates bodies, tests them in physics, preserves the useful ones, and progressively makes the world harder**?
+
+The first demonstrator is embedded below. It reuses the same FlyDoom assets: the compact 165,122-neuron MaleCNS connectome and the anatomical map of sensory and descending neuron groups. The site does not ship a second copy of the brain.
+
+<div style="width: 100%; max-width: 1120px; margin: 2rem auto;">
+  <iframe
+    src="/flygenesis/index.html"
+    width="100%"
+    height="900"
+    style="border: 2px solid #30363d; border-radius: 8px; background: #0d1117;"
+    title="FlyGenesis: MaleCNS modulating evolving bodies in 2D physics"
+    loading="lazy"
+  ></iframe>
+</div>
+
+## The loop
+
+```text
+physical world
+   ↓
+synthetic sensors
+   ↓
+MaleCNS visual + olfactory neurons
+   ↓
+165,122-neuron recurrent connectome
+   ↓
+descending neurons
+   ↓
+motor adapter
+   ↓
+mutable body
+   ↓
+distance, energy and success
+   ↓
+selection + mutation
+```
+
+The body starts simple. Mutations can change limb length, angle, phase, stiffness, adhesion and actuator gain; some mutations add or remove limbs. A body that solves the current world better can enter the lineage.
+
+When the lineage reaches the goal, the physical curriculum advances: flat ground, a step, a valley, and mixed terrain.
+
+## The “proteins” are still a functional alphabet
+
+The current demo deliberately separates morphology search from molecular simulation.
+
+**Actomyosin, collagen, elastin and adhesion are functional abstractions** for actuation, structure, compliance and grip. We are not yet simulating amino-acid sequences, folding, molecular dynamics or real protein fabrication.
+
+That is intentional. First we want to see whether there is an interesting search problem at the level of **morphology + control + physics**. If useful body plans emerge, a later layer can ask which real proteins or materials could implement each function.
+
+## What actually comes from MaleCNS
+
+The demo directly loads:
+
+- `/flydoom/malecns_l3_compact.mcns`
+- `/flydoom/malecns_circuit.json`
+
+The browser kernel uses the same compact recurrent representation as FlyDoom. Body and terrain signals are projected into mapped sensory populations, while descending-neuron activity is read by the motor adapter.
+
+So the **recurrent topology is MaleCNS**. The sensors, body model, adapter, fitness function and evolutionary algorithm are synthetic. This is an architecture demonstrator, not evidence that a biological fly can design robots.
+
+## The experiment behind the toy
+
+The long-term goal is not to reward larger bodies. Complexity should survive only when it buys physical capability.
+
+The scientific comparison comes next: run MaleCNS, degree-preserving randomized reservoirs and small learned networks through the **same morphological search**, with matched budgets, seeds and curricula.
+
+The question then becomes:
+
+> **Does biological connectome dynamics provide any measurable advantage when brain, body and physical curriculum co-evolve?**

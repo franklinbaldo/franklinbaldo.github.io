@@ -1,0 +1,8 @@
+/* Keyboard focus for image-backed playback controls in Favorites/Recent.
+ * These images become role="button" + tabindex=0 at runtime, so they need
+ * the same explicit focus treatment as the catalogue's native cover links. */
+main:has(#songs-grid) .mini-card img:focus-visible,
+main:has(#songs-grid) .history-item img:focus-visible {
+  outline: 2px solid var(--pico-primary);
+  outline-offset: 2px;
+}

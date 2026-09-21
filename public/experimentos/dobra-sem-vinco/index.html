@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>A dobra sem vinco — contraexemplo jacobiano em dimensão 3</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <div>
+          <h1>A dobra sem vinco existe</h1>
+          <p>
+            Uma visualização exata — em uma fatia real tridimensional — do mapa
+            polinomial que tem jacobiano constante e ainda assim manda três
+            pontos diferentes para o mesmo ponto.
+          </p>
+        </div>
+        <div class="proof">det JF ≡ −2 · colisão verificada</div>
+      </header>
+
+      <div class="layout">
+        <nav aria-label="Modos da visualização">
+          <button class="tab active" data-view="collision">
+            <strong>1. Colisão exata</strong
+            ><small>Três lugares viram um.</small>
+          </button>
+          <button class="tab" data-view="curve">
+            <strong>2. Curva-testemunha</strong
+            ><small>−1, 0 e 1 têm a mesma imagem.</small>
+          </button>
+          <button class="tab" data-view="local">
+            <strong>3. Sem vinco local</strong
+            ><small>Os três jacobianos são invertíveis.</small>
+          </button>
+          <button class="tab" data-view="meaning">
+            <strong>4. O que caiu</strong
+            ><small>E o que continua aberto.</small>
+          </button>
+          <div class="note">
+            <strong>O desenho não é mera analogia.</strong> Os pontos à esquerda
+            são projeções de A, B e C; o ponto à direita é a projeção de suas
+            imagens reais. As setas representam a relação F, não trajetórias no
+            espaço.
+          </div>
+        </nav>
+
+        <main>
+          <section class="view active" id="collision">
+            <h2>
+              Uma transformação localmente reversível, globalmente ambígua
+            </h2>
+            <p class="lede">
+              À esquerda estão as projeções dos três pontos reais A, B e C. À
+              direita está a projeção de F(A), F(B) e F(C): o mesmo ponto T =
+              (−¼, 0, 0). As setas indicam correspondência pelo mapa, não uma
+              animação ou trajetória física.
+            </p>
+            <div class="viz">
+              <svg
+                id="collisionSvg"
+                viewBox="0 0 760 430"
+                role="img"
+                aria-label="Projeções dos três pontos reais do domínio e de sua imagem comum"
+              ></svg>
+            </div>
+          </section>
+
+          <section class="view" id="curve">
+            <h2>Uma única curva já testemunha a colisão tripla</h2>
+            <p class="lede">
+              A curva γ(t) passa por C, A e B quando t = −1, 0 e 1. Cada painel
+              abaixo usa sua própria escala vertical e mostra, sem truncamento,
+              uma coordenada de F(γ(t)). Nas três marcas, os valores são
+              simultaneamente (−¼, 0, 0).
+            </p>
+            <div class="equation">
+              γ(t) = (t, −3t/2, −1/4 + 27t²/4)<br /><b
+                >F(γ(−1)) = F(γ(0)) = F(γ(1)) = (−1/4, 0, 0)</b
+              >
+            </div>
+            <div class="viz">
+              <svg
+                id="curveSvg"
+                viewBox="0 0 760 470"
+                role="img"
+                aria-label="Três painéis com as coordenadas exatas do mapa ao longo da curva testemunha"
+              ></svg>
+            </div>
+          </section>
+
+          <section class="view" id="local">
+            <h2>Não há “local do crime”</h2>
+            <p class="lede">
+              Em cada pré-imagem da colisão, a derivada é uma matriz invertível.
+              Um cubinho infinitesimal vira um paralelepípedo de volume
+              orientado −2 — nunca uma lâmina, linha ou ponto.
+            </p>
+            <div class="viz">
+              <div class="cards" id="jacobianCards"></div>
+            </div>
+          </section>
+
+          <section class="view" id="meaning">
+            <h2>A conjectura geral caiu; o plano ainda resiste</h2>
+            <p class="lede">
+              O mapa é F=(P,Q,R): ℂ³→ℂ³. Como seus coeficientes e os três pontos
+              são reais, a colisão já aparece na restrição ℝ³→ℝ³ que esta página
+              desenha.
+            </p>
+            <div class="viz" style="align-items: flex-start; padding-top: 20px">
+              <div style="width: 100%">
+                <div class="equation">
+                  P = (1+xy)³z + y²(1+xy)(4+3xy)<br />
+                  Q = y + 3x(1+xy)²z + 3xy²(4+3xy)<br />
+                  R = 2x − 3x²y − x³z
+                </div>
+                <div class="facts" style="margin-top: 18px">
+                  <div class="fact">
+                    <h3>O que foi refutado</h3>
+                    <p>
+                      A afirmação de que todo mapa polinomial complexo com
+                      determinante jacobiano constante e não nulo possui inversa
+                      polinomial, em todas as dimensões. Um contraexemplo em
+                      dimensão 3 basta.
+                    </p>
+                  </div>
+                  <div class="fact">
+                    <h3>O que permanece aberto</h3>
+                    <p>
+                      O caso em duas variáveis, ℂ²→ℂ². A falha em dimensão 3 não
+                      produz automaticamente uma falha no plano.
+                    </p>
+                  </div>
+                  <div class="fact">
+                    <h3>Por que “sem vinco”</h3>
+                    <p>
+                      O determinante nunca zera. Portanto, perto de cada ponto,
+                      F continua sendo reversível. A perda de identidade só
+                      aparece quando comparamos regiões globalmente distintas.
+                    </p>
+                  </div>
+                  <div class="fact">
+                    <h3>O detalhe mais estranho</h3>
+                    <p>
+                      Não precisamos imaginar a colisão em seis dimensões reais:
+                      os três pontos conflitantes já pertencem ao subespaço real
+                      ℝ³ e têm a mesma imagem real.
+                    </p>
+                  </div>
+                </div>
+                <div class="warning">
+                  Resultado divulgado em 20 de julho de 2026. A identidade
+                  algébrica e a colisão desta página são verificáveis por
+                  substituição direta; atribuição e contexto histórico ainda
+                  podem ser refinados conforme surgir uma publicação formal.
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

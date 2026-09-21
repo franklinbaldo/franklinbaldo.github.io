@@ -1,0 +1,64 @@
+---
+type: "Blog Post"
+title: "FlyTTS: treinando o conectoma de uma mosca para gerar waveform direto no navegador"
+description: "Um loop contínuo no browser conecta texto e a própria saída de áudio ao MaleCNS congelado e treina um readout online para reproduzir uma gravação WAV sample por sample."
+date: "2026-09-15"
+lang: pt
+translationKey: flytts-malecns-browser
+tags: ["malecns", "conectoma", "tts", "audio", "machine-learning"]
+glyph: "🪰"
+---
+
+Depois do tagger e do FlyDoom, o próximo teste é deliberadamente simples de formular: **o conectoma MaleCNS consegue participar de uma transformação texto → waveform sem vocoder, mel-spectrogram ou codec acústico?**
+
+Para o primeiro experimento não tentamos generalização. Tentamos primeiro uma coisa mais básica e verificável: deixar o sistema rodar continuamente no navegador até conseguir reproduzir uma gravação curta já associada ao seu texto.
+
+<div style="width: 100%; max-width: 1120px; margin: 2rem auto;">
+  <iframe
+    src="/flytts/index.html"
+    width="100%"
+    height="1120"
+    style="border: 2px solid #30363d; border-radius: 8px; background: #090c10;"
+    title="FlyTTS: aprendizado contínuo de waveform no MaleCNS"
+    loading="lazy"
+  ></iframe>
+</div>
+
+## O loop
+
+O cérebro usado aqui é o mesmo artefato compacto do FlyDoom: `malecns_l3_compact.mcns`, com o conectoma congelado e executado num Web Worker.
+
+A cada passo:
+
+```text
+texto correspondente ao instante ─┐
+                                  ├─> MaleCNS congelada
+waveform produzida no passo anterior ┘        │
+                                              ▼
+                                  512 estados amostrados
+                                              │
+                                              ▼
+                              readout treinável → 128 PCM samples
+                                              │
+                         gravação-alvo ── erro ┘
+                                              │
+                                         update NLMS
+                                              │
+                                      próximo passo
+```
+
+Quando o sistema chega ao fim do WAV, ele volta ao começo sem apagar os pesos do readout. Isso transforma a página num experimento contínuo: perda, correlação e waveform são atualizadas volta após volta enquanto a mosca continua aprendendo.
+
+## A voz-alvo
+
+O alvo inicial é `LJ001-0002` do LJSpeech, cuja transcrição é **“in being comparatively modern.”**. O dataset fornece WAV mono PCM de 22,05 kHz junto com a transcrição. A página tenta carregar esse clipe diretamente; se o host remoto bloquear CORS, também aceita qualquer WAV local como substituto.
+
+O ponto importante é que o alvo do treinamento é a **waveform diretamente**. Não existe um vocoder fazendo a parte final por fora.
+
+## O que está sendo treinado
+
+Neste MVP o MaleCNS não muda. Também não estamos alegando que a dinâmica artificial de taxa usada aqui seja uma simulação biofísica literal da Drosophila. O que treinamos online é um readout pequeno sobre 512 estados amostrados do conectoma; o texto e a própria waveform recém-produzida são injetados como estímulos artificiais.
+
+Isso é proposital. Primeiro queremos responder à pergunta mais barata: **há um estado recorrente utilizável ali para fazer a onda convergir?** Se a resposta for sim, o passo seguinte é tornar também o adapter de entrada treinável e depois sair do overfit de uma única frase para vários pares texto/voz.
+
+O detalhe mais divertido é que o feedback auditivo já está no primeiro protótipo: a saída não serve apenas para ser ouvida por nós; ela volta como parte da entrada do próximo passo. A mosca, nesse sentido operacional e artificial, está continuamente “ouvindo” o que acabou de dizer.
