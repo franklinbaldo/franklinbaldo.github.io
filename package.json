@@ -6,7 +6,6 @@
     "node": ">=24.0.0"
   },
   "bin": {
-    "hronir": "scripts/hronir/index.js",
     "suno-rank": "scripts/suno-rank/index.js"
   },
   "scripts": {
@@ -25,24 +24,6 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "oxlint",
-    "hronir": "node --import tsx/esm scripts/hronir/index.js",
-    "hronir:generate-match": "node --import tsx/esm scripts/hronir/index.js generate-match",
-    "hronir:submit-eval": "node --import tsx/esm scripts/hronir/index.js submit-eval",
-    "hronir:init": "node --import tsx/esm scripts/hronir/index.js init",
-    "hronir:continue": "node --import tsx/esm scripts/hronir/index.js continue",
-    "hronir:decide": "node --import tsx/esm scripts/hronir/index.js decide",
-    "hronir:ranking": "node --import tsx/esm scripts/hronir/index.js ranking",
-    "hronir:diagnose": "node --import tsx/esm scripts/hronir/index.js diagnose",
-    "hronir:tier-evidence": "node --import tsx/esm scripts/hronir/index.js tier-evidence",
-    "hronir:draft-worst": "node --import tsx/esm scripts/hronir/index.js draft-worst",
-    "hronir:draft-commit": "node --import tsx/esm scripts/hronir/index.js draft-commit",
-    "hronir:select": "node --import tsx/esm scripts/hronir/index.js select",
-    "hronir:prune": "node --import tsx/esm scripts/hronir/index.js prune",
-    "hronir:flatten": "node --import tsx/esm scripts/hronir/index.js flatten",
-    "hronir:end": "node --import tsx/esm scripts/hronir/index.js end",
-    "hronir:migrate": "node --import tsx/esm scripts/hronir/index.js migrate",
-    "hronir:doctor": "node --import tsx/esm scripts/hronir/index.js doctor",
-    "hronir:diagnose-corpus": "node --import tsx/esm scripts/hronir/diagnose-corpus.mjs",
     "music:sync": "node scripts/sync-suno-catalog.mjs",
     "suno-rank": "node --import tsx/esm scripts/suno-rank/index.js",
     "suno-rank:round": "node --import tsx/esm scripts/suno-rank/index.js round",

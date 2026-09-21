@@ -8,6 +8,7 @@ import { remark } from "remark";
 export const POSTS_DIR = "src/content/blog";
 export const OUT_DIR = ".routines/hronir";
 export const RATES_DIR = path.join(OUT_DIR, "rates");
+export const EVALUATIONS_DIR = path.join(OUT_DIR, "evaluations");
 // RFC 0015 (single-file model): where active, not-yet-decided challengers
 // live once a slug has flattened to `<slug>.mdx` — outside the content
 // collection, so an open competition never adds a file under POSTS_DIR.

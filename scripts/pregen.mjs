@@ -3,7 +3,7 @@
 // Both hooks used to repeat the exact same `&&`-chained shell command in
 // package.json. This runs the same steps, in the same order, from a single
 // place: copy KaTeX assets, refresh the public GitHub factory snapshot on
-// main-branch builds, recompute the Hrönir version selection, then regenerate
+// main-branch builds, refresh the legacy Hrönir read projection, then regenerate
 // the translation-pairs and legacy-redirect JSON files that astro.config.mjs
 // and the content layer read at build time.
 //
@@ -29,7 +29,7 @@ const steps = [
   ...(isMainBuild && refreshRepoFactory
     ? [["scripts/generate-repo-factory.mjs", "--optional"]]
     : []),
-  ["--import", "tsx/esm", "scripts/hronir/index.js", "select"],
+  ["--import", "tsx/esm", "scripts/generate-hronir-selection.mjs"],
   ["scripts/generate-translation-pairs.mjs"],
   ["scripts/generate-redirects.mjs"],
 ];
