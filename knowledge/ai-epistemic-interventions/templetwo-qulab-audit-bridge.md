@@ -11,7 +11,9 @@ followup_allowed: false
 followup_gate: "blocked-awaiting-response"
 related_case_slugs: [workofarttattoo]
 baseline_snapshot: "templetwo-retrospective README reviewed on 2026-09-21 before observatory contact."
-issue_or_pr_url: "https://github.com/templetwo/templetwo-retrospective/issues/1"\nlast_touch_at: "2026-09-21T14:18:00Z"\nnext_touch_reason: "Only after substantive reply, adoption, experiment, claim revision, or explicit request."
+issue_or_pr_url: "https://github.com/templetwo/templetwo-retrospective/issues/1"
+last_touch_at: "2026-09-21T14:18:00Z"
+next_touch_reason: "Only after substantive reply, adoption, experiment, claim revision, or explicit request."
 notes:
   - "Do not ask the project to endorse another worldview; transfer only audit methodology."
   - "Any subsequent cross-project similarity is intervention-contaminated for independence analysis."
