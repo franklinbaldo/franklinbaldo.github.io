@@ -90,12 +90,6 @@
       "elo": 1099,
       "eloPeak": 1099
     },
-    "pontifex-research": {
-      "rank": 15,
-      "ordinal": 14.7592,
-      "elo": 1100,
-      "eloPeak": 1161
-    },
     "two-questions-out-loud": {
       "rank": 16,
       "ordinal": 14.6779,
@@ -395,12 +389,6 @@
       "ordinal": 7.6266,
       "elo": 963,
       "eloPeak": 1073
-    },
-    "pontifex-guide": {
-      "rank": 66,
-      "ordinal": 7.5459,
-      "elo": 1026,
-      "eloPeak": 1060
     },
     "music-uma-so-cancao": {
       "rank": 67,

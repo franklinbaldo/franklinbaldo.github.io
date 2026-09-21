@@ -12,6 +12,16 @@ timestamp: "2026-09-19T00:00:00Z"
 
 A `paper` card is the canonical knowledge record used by the public `/papers` portfolio.
 
+## Publication boundary
+
+The public portfolio is curated and intentionally non-exhaustive. Existence of a paper, branch, experiment, audit, findings record, tracker, tier, or publication-readiness state in `franklinbaldo/papers` does **not** authorize publication here.
+
+- Creating a new public paper card requires explicit publication approval in the canonical upstream OKF state. Accepted signals include an explicit boolean such as `publication_approved: true`, `public: true`, `approved_for_public_blog: true`, or an equivalent field explicitly defined by the current upstream contract. Absence, ambiguity, tier assignment, or Zenodo/publication readiness is not approval.
+- A sync routine may update an already-public card from upstream facts, but MUST NOT infer that a new upstream paper should become public.
+- When publication approval is withdrawn, remove the public card and public references while leaving the research record in its source repository untouched.
+- Do not preserve names, summaries, relations, changelog prose, generated indexes, or routine artifacts for intentionally withheld research merely for provenance. Public provenance starts again only if publication is later re-authorized.
+- The absence of a paper from this repository is not evidence that the research does not exist, was abandoned, or received a negative evaluation.
+
 The Markdown card is the source of truth. Astro pages, TypeScript projections, counts, tier boards, relationships and summaries MUST be derived from these cards rather than maintained as a second semantic authority.
 
 ## Required fields

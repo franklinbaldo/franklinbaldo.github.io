@@ -14,9 +14,6 @@ limit: >-
   Reproduzir o comportamento não implica recuperar o mecanismo biológico: circuitos artificiais podem ser substitutos funcionais, o gerador pode impor falsas invariantes, a métrica de comportamento pode vazar a resposta e o fenótipo pode identificar apenas uma classe ampla de mecanismos. Topologia também não pode ser confundida com effectome, pesos, neuromodulação, estado ou plasticidade. O protocolo só ganha força científica se usar várias famílias de geradores, muitos nulls/rewires, métricas congeladas, generator-held-out e perturbation-held-out, baselines de geometria estática e alternativas effectome/state-aware, e principalmente uma abertura cega da evidência biológica depois de congelar as previsões. Até isso acontecer, permanece uma proposta estruturada e falsificável, não evidência de um bridge mecanístico já descoberto.
 related_file: "audits/prior-art/genotype-connectome-behavior-stories-2026-09-20.md"
 relations:
-  - type: extends
-    target: pontifex_malecns_narrative_proxy_interventions
-    note: "Mantém a ideia de história ordenada realizada em substratos diferentes, mas muda a direção: usa a história comportamental observada para buscar uma população de circuitos contrafactuais e testar invariantes contra biologia withheld."
   - type: applies
     target: interventional_latent_graph
     note: "Usa identidades de intervenção para relacionar genoma, desenvolvimento, circuito, atividade e comportamento sem exigir coordenadas comuns; o novo passo é inferir ensembles phenotype-compatible ao longo dessa cadeia."

@@ -175,7 +175,9 @@
       "lang": "pt",
       "kept": "src/content/blog/borges-and-me.mdx",
       "reason": "selected",
-      "removed": ["src/content/blog/borges-and-me/v-2026-06-09T20-24-29.mdx"],
+      "removed": [
+        "src/content/blog/borges-and-me/v-2026-06-09T20-24-29.mdx"
+      ],
       "selectedFrom": "src/content/blog/borges-and-me/v-2026-06-10T12-11-31.mdx",
       "selectedUuid": "429a5c28-4256-5f6d-b683-c64cc36a5ccd",
       "selectedSha256": "21ab1b18fe9bff4177a066aec5e699c6e46e724efa32f410c0ac93bf7727368d"
@@ -640,19 +642,6 @@
       "selectedSha256": "3a4f5a4cb6c1bf57add41f7555003126cc7f1b159d0349849c75c119d1a5664b"
     },
     {
-      "slug": "guia-de-implementao-da-arquitetura-pontifex",
-      "lang": "pt",
-      "kept": "src/content/blog/guia-de-implementao-da-arquitetura-pontifex.md",
-      "reason": "selected",
-      "removed": [
-        "src/content/blog/guia-de-implementao-da-arquitetura-pontifex/v-2026-06-10T05-09-44.md",
-        "src/content/blog/guia-de-implementao-da-arquitetura-pontifex/v-2026-06-11T17-38-21-327.md"
-      ],
-      "selectedFrom": "src/content/blog/guia-de-implementao-da-arquitetura-pontifex/v-2026-06-11T17-54-14-649.md",
-      "selectedUuid": "4b8f35f3-cef2-512b-b1fb-c4a5142b7b32",
-      "selectedSha256": "aea7390b50fd9dcf4ca46425cb8a9e75ecbd2fc9f8297416f0f0421e80b5fa6f"
-    },
-    {
       "slug": "inaugural-post-a-glimpse-inside-my-mind",
       "lang": "en",
       "kept": "src/content/blog/inaugural-post-a-glimpse-inside-my-mind.md",
@@ -812,7 +801,9 @@
       "lang": "pt",
       "kept": "src/content/blog/o-medo-do-louco.mdx",
       "reason": "selected",
-      "removed": ["src/content/blog/o-medo-do-louco/v-2026-06-09T20-24-29.mdx"],
+      "removed": [
+        "src/content/blog/o-medo-do-louco/v-2026-06-09T20-24-29.mdx"
+      ],
       "selectedFrom": "src/content/blog/o-medo-do-louco/v-2026-06-11T06-58-37-717.mdx",
       "selectedUuid": "76972a67-5d4a-5b40-83ec-84abba59e867",
       "selectedSha256": "db81acd85cc0dc89d10a594bec03ca91d83e97413a04a918a8b65d7f1ede6999"
@@ -883,7 +874,9 @@
       "lang": "pt",
       "kept": "src/content/blog/o-prologo.mdx",
       "reason": "selected",
-      "removed": ["src/content/blog/o-prologo/v-2026-06-16T19-17-39-928.mdx"],
+      "removed": [
+        "src/content/blog/o-prologo/v-2026-06-16T19-17-39-928.mdx"
+      ],
       "selectedFrom": "src/content/blog/o-prologo/v-2026-06-09T20-24-29.mdx",
       "selectedUuid": "d44a9272-5a65-5da0-8ac7-4e0eae7123b7",
       "selectedSha256": "b3b798c9fb968f439dc4fb96ff3130360f22b911b1988c97aa4cd0163cc33427"
@@ -1099,7 +1092,9 @@
       "lang": "pt",
       "kept": "src/content/blog/particles.mdx",
       "reason": "selected",
-      "removed": ["src/content/blog/particles/v-2026-06-10T18-32-48.mdx"],
+      "removed": [
+        "src/content/blog/particles/v-2026-06-10T18-32-48.mdx"
+      ],
       "selectedFrom": "src/content/blog/particles/v-2026-06-12T20-12-46-402.mdx",
       "selectedUuid": "6850b99a-3365-59f7-8e6c-4be4d8113d0b",
       "selectedSha256": "b7d9ed13a81ac0c9a0f9b2b8125e36be16ca63fb9f5cdd31ea72964da8e51f0d"
@@ -1109,7 +1104,9 @@
       "lang": "en",
       "kept": "src/content/blog/particles-en.mdx",
       "reason": "selected",
-      "removed": ["src/content/blog/particles-en/v-2026-06-10T18-32-48.mdx"],
+      "removed": [
+        "src/content/blog/particles-en/v-2026-06-10T18-32-48.mdx"
+      ],
       "selectedFrom": "src/content/blog/particles-en/v-2026-06-12T20-12-46-402.mdx",
       "selectedUuid": "cb7cffa3-a1c0-5725-bf0d-c4a1aaadb0ab",
       "selectedSha256": "bb99989431fc7fff011e283a5ec5d44729c5020a3725c45dc33a8295aa0b3875"
@@ -1189,19 +1186,6 @@
       "selectedFrom": "src/content/blog/pierre-menard-pesquisador-computacional/v-2026-06-10T05-09-44.md",
       "selectedUuid": "a7fdd878-55bb-5737-8324-71ee5e52ceb1",
       "selectedSha256": "6854cafb64ba604b29455c7d719f043a5aaa969db4532d682f2516069cc85c9b"
-    },
-    {
-      "slug": "pontifex-architecture-implementation-guide",
-      "lang": "en",
-      "kept": "src/content/blog/pontifex-architecture-implementation-guide.md",
-      "reason": "selected",
-      "removed": [
-        "src/content/blog/pontifex-architecture-implementation-guide/v-2026-06-10T05-09-44.md",
-        "src/content/blog/pontifex-architecture-implementation-guide/v-2026-06-11T17-38-21-327.md"
-      ],
-      "selectedFrom": "src/content/blog/pontifex-architecture-implementation-guide/v-2026-06-11T17-54-14-649.md",
-      "selectedUuid": "9fcea834-39e7-5eb1-811b-0e5dee73fe49",
-      "selectedSha256": "ed4389791d048bdba525aa90062569eb461e3ab00e518b31d6e4a21ab4a149fa"
     },
     {
       "slug": "postagem-inaugural-um-vislumbre-da-minha-mente",
@@ -1691,7 +1675,9 @@
       "lang": "pt",
       "kept": "src/content/blog/travessia-update.md",
       "reason": "selected",
-      "removed": ["src/content/blog/travessia-update/v-2026-06-10T05-09-44.md"],
+      "removed": [
+        "src/content/blog/travessia-update/v-2026-06-10T05-09-44.md"
+      ],
       "selectedFrom": "src/content/blog/travessia-update/v-2026-06-21T19-13-27-644.md",
       "selectedUuid": "f5062a96-136f-5fd4-9e23-ed7324dd110d",
       "selectedSha256": "f23d12248478d40f7d4997c4d684299bbb8bfaf22de19b28e38b3e10eae6ed63"
@@ -1929,7 +1915,9 @@
       "lang": "pt",
       "kept": "src/content/blog/xadrez.mdx",
       "reason": "selected",
-      "removed": ["src/content/blog/xadrez/v-2026-06-09T20-24-29.mdx"],
+      "removed": [
+        "src/content/blog/xadrez/v-2026-06-09T20-24-29.mdx"
+      ],
       "selectedFrom": "src/content/blog/xadrez/v-2026-06-13T04-57-16-825.mdx",
       "selectedUuid": "455a5c3f-d9af-5b5e-8005-0c53c9dcbec9",
       "selectedSha256": "e86f3b1b08945081b7f4f4918780c65d28b18a5d73731574d2a450907af7d233"
@@ -1939,7 +1927,9 @@
       "lang": "en",
       "kept": "src/content/blog/xadrez-en.mdx",
       "reason": "selected",
-      "removed": ["src/content/blog/xadrez-en/v-2026-06-09T20-24-29.mdx"],
+      "removed": [
+        "src/content/blog/xadrez-en/v-2026-06-09T20-24-29.mdx"
+      ],
       "selectedFrom": "src/content/blog/xadrez-en/v-2026-06-13T04-57-16-825.mdx",
       "selectedUuid": "abf158d7-16ae-5414-a51e-a875c8522833",
       "selectedSha256": "3e42d1a1293e3e36cf64bc40341d651d2fae51dcd1b3fee6fba7d911e30a286b"
