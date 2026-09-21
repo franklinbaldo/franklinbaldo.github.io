@@ -38,7 +38,7 @@ conteúdo. A perspectiva deve realmente influenciar a avaliação.
 Crie um arquivo em:
 
 ```text
-.routines/hronir/rates/<run_id>_<post-a-key>_x_<post-b-key>.md
+.routines/hronir/evaluations/<run_id>_<post-a-key>_x_<post-b-key>.md
 ```
 
 Comece deliberadamente mínimo:
@@ -59,7 +59,7 @@ Use sempre o `okf-parser` pinado pelo repositório/CI:
 
 ```bash
 uv run --with 'okf-parser @ git+https://github.com/franklinbaldo/okf-parser@3d4f31f41bca4aecb11a627f23900051f3f68685' \
-  okf-parser check .routines/hronir/rates \
+  okf-parser check .routines/hronir/evaluations \
   --require-spec ../../../specs/okf-types/{slug}.md \
   --normative-spec
 ```
