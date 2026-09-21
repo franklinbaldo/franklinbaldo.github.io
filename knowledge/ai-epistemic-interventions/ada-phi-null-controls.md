@@ -14,7 +14,8 @@ baseline_snapshot: "Ada Consciousness Research/Gaianism public artifacts reviewe
 next_touch_reason: "No public touch: GitHub issue creation returned 403. Do not escalate via PR merely to force attention; revisit only if the repository later exposes an appropriate public discussion channel."
 notes:
   - "The intervention targets statistical methodology, not spiritual commitments."
-  - "A null result would be equally valuable and should be preserved."\n  - "2026-09-21: no intervention was posted; GitHub returned 403 Resource not accessible by integration for issue creation."
+  - "A null result would be equally valuable and should be preserved."
+  - "2026-09-21: no intervention was posted; GitHub returned 403 Resource not accessible by integration for issue creation."
 created: 2026-09-21
 updated: 2026-09-21
 ---
