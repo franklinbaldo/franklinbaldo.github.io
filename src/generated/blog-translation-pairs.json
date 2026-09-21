@@ -327,14 +327,6 @@
     "en": "/blog/funes-soul/",
     "pt": "/pt/blog/soulmd-funes/"
   },
-  "/pt/blog/guia-de-implementao-da-arquitetura-pontifex/": {
-    "pt": "/pt/blog/guia-de-implementao-da-arquitetura-pontifex/",
-    "en": "/blog/pontifex-architecture-implementation-guide/"
-  },
-  "/blog/pontifex-architecture-implementation-guide/": {
-    "pt": "/pt/blog/guia-de-implementao-da-arquitetura-pontifex/",
-    "en": "/blog/pontifex-architecture-implementation-guide/"
-  },
   "/blog/inaugural-post-a-glimpse-inside-my-mind/": {
     "en": "/blog/inaugural-post-a-glimpse-inside-my-mind/",
     "pt": "/pt/blog/postagem-inaugural-um-vislumbre-da-minha-mente/"
@@ -590,14 +582,6 @@
   "/pt/blog/pierre-menard-pesquisador-computacional/": {
     "en": "/blog/pierre-menard-computational-researcher/",
     "pt": "/pt/blog/pierre-menard-pesquisador-computacional/"
-  },
-  "/blog/pontifex-novel-architecture-semantic-probing/": {
-    "en": "/blog/pontifex-novel-architecture-semantic-probing/",
-    "pt": "/pt/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/"
-  },
-  "/pt/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/": {
-    "en": "/blog/pontifex-novel-architecture-semantic-probing/",
-    "pt": "/pt/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/"
   },
   "/blog/prayer-to-the-unfinished-moving-window-v/": {
     "en": "/blog/prayer-to-the-unfinished-moving-window-v/",

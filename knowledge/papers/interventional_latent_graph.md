@@ -13,14 +13,4 @@ status: >-
 limit: >-
   O risco principal continua sendo identificabilidade e circularidade: o contrato que declara duas realizações como a mesma intervenção não pode importar justamente o alinhamento que deveria ser descoberto. Contrastes binários não garantem identificabilidade, e transports ou testes de closure flexíveis demais podem produzir alinhamentos espúrios; os próximos testes precisam de intervenções held-out, nulls/capacity-matched e realizadores alternativos antes que ciclos, Torus ou manifolds contem como evidência.
 related_file: "audits/prior-art/interventional-latent-graph-2026-09-19.md"
-relations:
-  - type: extends
-    target: pontifex
-    note: "Coloca antes da comparação Pontifex uma camada de incidência: a identidade experimental compartilhada cria a aresta; semelhança ou desacordo das respostas é medido depois."
-  - type: constrains
-    target: pontifex_torus
-    note: "Torna ciclos e topologia toroidal hipóteses downstream que precisam competir com nulls e outras geometrias, em vez de fazê-los parte da definição do grafo."
-  - type: formalizes
-    target: pontifex_malecns_narrative_proxy_interventions
-    note: "Fornece a noção de identidade experimental compartilhada que permite realizações substrate-native sem exigir a mesma intervenção física nos dois sistemas."
 ---
