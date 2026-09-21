@@ -1,5 +1,6 @@
 ---
 type: paper
+source_url: "https://github.com/franklinbaldo/papers/blob/main/malecns/whole-cns-speed-hold.md"
 title: "Whole-MaleCNS em controle fechado de velocidade"
 family: "Neurocomputação experimental"
 kind: "empírico / resultado negativo"
