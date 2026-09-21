@@ -3,7 +3,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { execFileSync } from "node:child_process";
 import matter from "gray-matter";
-import { OUT_DIR, RATES_DIR } from "./posts.js";
+import { EVALUATIONS_DIR, OUT_DIR, RATES_DIR } from "./posts.js";
 import type {
   MatchKind,
   NormalizedMatch,
@@ -13,7 +13,7 @@ import type {
 export function listMatchFiles(): string[] {
   const out: string[] = [];
   const seen = new Set<string>();
-  for (const dir of [OUT_DIR, RATES_DIR]) {
+  for (const dir of [OUT_DIR, RATES_DIR, EVALUATIONS_DIR]) {
     if (!fs.existsSync(dir)) continue;
     for (const f of fs.readdirSync(dir)) {
       if (!/_x_.*\.md$/.test(f)) continue;
