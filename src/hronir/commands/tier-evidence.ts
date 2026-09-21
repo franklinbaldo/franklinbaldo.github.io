@@ -44,8 +44,7 @@ export function tierEvidence({
     const rank = ratings.findIndex((candidate) => candidate.key === row.key) + 1;
     const abs = absolute.get(row.key);
     const deconf = deconfounded.get(row.key);
-    const gap =
-      abs && deconf ? deconf.quality - abs.stars : null;
+    const gap = abs && deconf ? deconf.quality - abs.stars : null;
 
     const perspectiveRows: Array<{
       id: string;
@@ -88,7 +87,7 @@ export function tierEvidence({
     );
 
     if (key) {
-      for (const perspective of perspectiveRows.sort(
+      for (const perspective of perspectiveRows.toSorted(
         (a, b) => a.rank - b.rank || a.id.localeCompare(b.id)
       )) {
         console.log(
