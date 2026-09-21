@@ -67,6 +67,9 @@ jobs:
       - name: Generate legacy version read projection
         run: node --import tsx/esm scripts/generate-hronir-selection.mjs
 
+      - name: Tag taxonomy collision guard
+        run: npm run check:tags
+
       - name: Hrönir evidence deletion guard
         if: github.event_name == 'pull_request'
         run: |
