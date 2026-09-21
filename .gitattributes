@@ -1,8 +1,0 @@
-# Git LFS — imagens e áudio apenas (vídeos servidos direto, sem LFS)
-*.mp3 filter=lfs diff=lfs merge=lfs -text
-*.png filter=lfs diff=lfs merge=lfs -text
-*.jpg filter=lfs diff=lfs merge=lfs -text
-*.webp filter=lfs diff=lfs merge=lfs -text
-
-# Published chapter served directly by GitHub Pages (no LFS checkout needed).
-public/audio/hpmor/hpmor-001-pt-BR.mp3 -filter -diff -merge -text
