@@ -50,6 +50,14 @@ jobs:
           --require-spec ../../specs/okf-types/{slug}.md
           --normative-spec
 
+      - name: Validate Awesome AI Slop cards as OKF knowledge
+        run: >-
+          uvx
+          --from git+https://github.com/franklinbaldo/okf-parser@77b9fbfe16b25e13f45d35ea5dd7e00d50f12764
+          okf-parser check knowledge/awesome-ai-slop
+          --require-spec ../../specs/okf-types/{slug}.md
+          --normative-spec
+
       - name: Validate Blog Post Tier cards as OKF knowledge
         run: >-
           uvx
