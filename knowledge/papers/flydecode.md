@@ -1,5 +1,6 @@
 ---
 type: paper
+source_url: "https://github.com/franklinbaldo/papers/blob/main/malecns/flydecode.md"
 title: "FlyDecode: Active Logit Sensing and Episodic Trajectory Memory for Stateful Connectome-Guided Decoding"
 family: "Neurocomputação experimental"
 kind: "conceitual / protocolo experimental"

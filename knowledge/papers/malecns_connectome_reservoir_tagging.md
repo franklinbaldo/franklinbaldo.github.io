@@ -1,5 +1,6 @@
 ---
 type: paper
+source_url: "https://github.com/franklinbaldo/papers/blob/main/malecns/connectome-reservoir-tagging.md"
 title: "MaleCNS como reservoir para tagging jurídico"
 family: "Neurocomputação experimental"
 kind: "empírico"
