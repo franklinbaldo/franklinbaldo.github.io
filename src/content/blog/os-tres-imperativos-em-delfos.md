@@ -10,7 +10,7 @@ series: harness
 seriesOrder: 3
 featured: true
 featuredReason: "Um ensaio fundacional para o caminho de leitura Agência e Restrição."
-tags: ["filosofia", "ia", "agentes", "harness", "história", "autoconhecimento"]
+tags: ["filosofia", "IA", "agentes", "harness", "história", "autoconhecimento"]
 draftCreatedAt: "2026-06-12T12:06:06.428Z"
 ---
 
@@ -105,7 +105,7 @@ A segunda dizia **μηδὲν ἄγαν**: _mēdén ágan_, _nada em excesso_. E
 ficou mais discreta. A ética aristotélica do meio-termo — a virtude como
 o ponto médio entre dois vícios — é essencialmente essa inscrição
 desdobrada ao longo de treze livros. A palavra grega _sōphrosynē_,
-normalmente traduzida como _temperança_, mas melhor renderizada como
+normalmente traduzida por _temperança_, mas melhor renderizada como
 _sanidade de espírito_, nomeia o estado de obedecê-la. O princípio
 sobreviveu na _moderatio_ romana e na prudência cristã e no moderno
 _bom senso_. Comparada à primeira inscrição, viajou menos
