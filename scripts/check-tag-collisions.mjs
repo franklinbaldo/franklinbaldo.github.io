@@ -4,7 +4,6 @@ import matter from "gray-matter";
 import { BLOG_DIR, listPostFiles } from "./lib/content.mjs";
 
 const KNOWN_COLLISIONS = new Map([
-  ["engenharia-de-software", ["engenharia de software", "engenharia-de-software"]],
   ["software-engineering", ["software engineering", "software-engineering"]],
 ]);
 
