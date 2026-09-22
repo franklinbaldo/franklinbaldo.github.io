@@ -11,7 +11,7 @@ lang: pt
 tags:
   - ia
   - agentes
-  - memoria
+  - memória
   - familia
   - engenharia
 previousVersion:
