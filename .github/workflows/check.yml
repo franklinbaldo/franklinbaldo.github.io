@@ -62,6 +62,12 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      # Read-only editorial projection. Hrönir authoring remains OKF-first:
+      # this does not restore the retired Node agent CLI or any npm write path.
+      - name: Hrönir tier evidence (read-only)
+        run: |
+          node --import tsx/esm -e 'import("./src/hronir/commands/tier-evidence.ts").then(({ tierEvidence }) => tierEvidence({ limit: 32 }))'
+
       # Temporary read projection for the remaining legacy version directories.
       # This is build compatibility, not the Hrönir agent/write interface.
       - name: Generate legacy version read projection
