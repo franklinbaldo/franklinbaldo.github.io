@@ -5,7 +5,6 @@ import { BLOG_DIR, listPostFiles } from "./lib/content.mjs";
 
 const KNOWN_COLLISIONS = new Map([
   ["ai", ["AI", "ai"]],
-  ["amazonia", ["amazonia", "amazônia"]],
   ["engenharia-de-software", ["engenharia de software", "engenharia-de-software"]],
   ["ia", ["IA", "ia"]],
   ["software-engineering", ["software engineering", "software-engineering"]],
@@ -44,6 +43,25 @@ function publicTagUrls(tag, languages) {
   return urls;
 }
 
+function languagesWithMultipleVariants(key, variants, evidence) {
+  const variantEvidence = evidence.get(key);
+  const byLanguage = new Map();
+
+  for (const variant of variants) {
+    const occurrence = variantEvidence?.get(variant);
+    if (!occurrence) continue;
+    for (const language of occurrence.languages) {
+      if (!byLanguage.has(language)) byLanguage.set(language, new Set());
+      byLanguage.get(language).add(variant);
+    }
+  }
+
+  return [...byLanguage.entries()]
+    .filter(([, languageVariants]) => languageVariants.size > 1)
+    .map(([language]) => language)
+    .sort();
+}
+
 const groups = new Map();
 const evidence = new Map();
 let postsScanned = 0;
@@ -78,10 +96,17 @@ for (const file of listPostFiles()) {
   }
 }
 
-const collisions = [...groups.entries()]
+const equivalentGroups = [...groups.entries()]
   .map(([key, values]) => [key, [...values].sort()])
   .filter(([, values]) => values.length > 1)
   .sort(([a], [b]) => a.localeCompare(b));
+
+const collisions = equivalentGroups.filter(
+  ([key, variants]) => languagesWithMultipleVariants(key, variants, evidence).length > 0,
+);
+const crossLanguageEquivalents = equivalentGroups.filter(
+  ([key, variants]) => languagesWithMultipleVariants(key, variants, evidence).length === 0,
+);
 
 const violations = [];
 for (const [key, variants] of collisions) {
@@ -106,16 +131,17 @@ console.log(
   `Tag taxonomy: scanned ${postsScanned} published posts and ${tagsScanned} tag assignments.`,
 );
 for (const [key, variants] of collisions) {
-  console.log(`  ${key}: ${variants.join(" / ")}`);
+  const languages = languagesWithMultipleVariants(key, variants, evidence);
+  console.log(`  ${key} [${languages.join(", ")}]: ${variants.join(" / ")}`);
   if (!showMigrationInventory) continue;
 
   const variantEvidence = evidence.get(key);
   for (const variant of variants) {
     const occurrence = variantEvidence.get(variant);
-    const languages = [...occurrence.languages].sort();
+    const variantLanguages = [...occurrence.languages].sort();
     const urls = publicTagUrls(variant, occurrence.languages);
     console.log(
-      `    ${JSON.stringify(variant)}: ${occurrence.assignments} assignment(s), ${occurrence.posts.size} post(s), language(s) ${languages.join(", ")}; public URL(s): ${urls.join(", ")}`,
+      `    ${JSON.stringify(variant)}: ${occurrence.assignments} assignment(s), ${occurrence.posts.size} post(s), language(s) ${variantLanguages.join(", ")}; public URL(s): ${urls.join(", ")}`,
     );
     for (const post of [...occurrence.posts].sort()) {
       console.log(`      - ${post}`);
@@ -124,6 +150,21 @@ for (const [key, variants] of collisions) {
 }
 if (resolved.length > 0) {
   console.log(`Known collision groups no longer present: ${resolved.join(", ")}`);
+}
+if (showMigrationInventory && crossLanguageEquivalents.length > 0) {
+  console.log("Cross-language equivalents (separate route namespaces, not collisions):");
+  for (const [key, variants] of crossLanguageEquivalents) {
+    console.log(`  ${key}: ${variants.join(" / ")}`);
+    const variantEvidence = evidence.get(key);
+    for (const variant of variants) {
+      const occurrence = variantEvidence.get(variant);
+      const variantLanguages = [...occurrence.languages].sort();
+      const urls = publicTagUrls(variant, occurrence.languages);
+      console.log(
+        `    ${JSON.stringify(variant)}: language(s) ${variantLanguages.join(", ")}; public URL(s): ${urls.join(", ")}`,
+      );
+    }
+  }
 }
 
 if (violations.length > 0) {
@@ -136,7 +177,7 @@ if (violations.length > 0) {
 }
 
 console.log(
-  `Tag taxonomy collision guard passed: ${collisions.length} known collision groups, no new variants.`,
+  `Tag taxonomy collision guard passed: ${collisions.length} known within-language collision groups, ${crossLanguageEquivalents.length} cross-language-only equivalent groups.`,
 );
 if (!showMigrationInventory) {
   console.log(
