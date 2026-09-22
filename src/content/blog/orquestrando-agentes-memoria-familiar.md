@@ -9,7 +9,7 @@ docType: essay
 date: 2026-03-30T00:00:00.000Z
 lang: pt
 tags:
-  - ia
+  - IA
   - agentes
   - memória
   - familia

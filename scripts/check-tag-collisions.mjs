@@ -6,7 +6,6 @@ import { BLOG_DIR, listPostFiles } from "./lib/content.mjs";
 const KNOWN_COLLISIONS = new Map([
   ["ai", ["AI", "ai"]],
   ["engenharia-de-software", ["engenharia de software", "engenharia-de-software"]],
-  ["ia", ["IA", "ia"]],
   ["software-engineering", ["software engineering", "software-engineering"]],
 ]);
 

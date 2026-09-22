@@ -10,7 +10,7 @@ lang: pt
 author: franklin
 translationKey: census-not-sample
 tags:
-  - ia
+  - IA
   - economia
   - tributos
   - desigualdade
