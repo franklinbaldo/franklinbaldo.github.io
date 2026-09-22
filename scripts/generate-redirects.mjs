@@ -27,6 +27,8 @@ const { redirects } = analyzeLinks(posts);
 // Keep the legacy public URL as a redirect and point at the encoded canonical
 // tag URL used by the page/link helpers.
 const TAG_REDIRECTS = {
+  "/tags/AI/": "/tags/ai/",
+  "/pt/tags/AI/": "/pt/tags/ai/",
   "/pt/tags/ia/": "/pt/tags/IA/",
   "/pt/tags/memoria/": "/pt/tags/mem%C3%B3ria/",
 };
