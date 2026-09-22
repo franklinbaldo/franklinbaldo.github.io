@@ -31,27 +31,23 @@ jobs:
           TARGET_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           REPORT="$RUNNER_TEMP/hronir-tier-evidence.txt"
-          node --import tsx/esm -e 'import("./src/hronir/commands/tier-evidence.ts").then(({ tierEvidence }) => tierEvidence({ limit: 50 }))' | tee "$REPORT"
+          node --import tsx/esm -e 'import("./src/hronir/commands/tier-evidence.ts").then(({ tierEvidence }) => tierEvidence({ limit: 50, sort: "review-priority" }))' | tee "$REPORT"
           {
-            echo "### Hrönir tier evidence — derived, read-only"
+            echo "### Hrönir editorial review priority — derived, read-only"
             echo
             echo '```text'
             cat "$REPORT"
             echo '```'
             echo
-            echo "Canonical judgments remain the OKF-native blog-post-tier cards; this report persists no ranking state."
+            echo "Priority ranks editorial uncertainty, not literary quality. Canonical judgments remain the OKF-native blog-post-tier cards; this report persists no ranking state."
           } >> "$GITHUB_STEP_SUMMARY"
 
-          # Advance the machine-readable candidate band with editorial coverage.
-          # Commit statuses are ephemeral derived metadata, not ranking state.
-          tiered_count="$(grep -l '^type: blog-post-tier$' knowledge/blog-post-tiers/*.md | wc -l | tr -d ' ')"
-          start_rank=$((tiered_count + 1))
-          end_rank=$((start_rank + 9))
-          awk -v start="$start_rank" -v end="$end_rank" 'NR > 1 && $1 >= start && $1 <= end' "$REPORT" | while IFS= read -r row; do
-            rank="${row%%$'\t'*}"
+          # Publish only the ten highest-priority review candidates. These
+          # statuses are ephemeral derived metadata, never canonical state.
+          awk 'NR >= 2 && NR <= 11' "$REPORT" | nl -w1 -s $'\t' | while IFS=$'\t' read -r slot row; do
             compact="$(printf '%s' "$row" | tr '\t' ' ')"
             gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${TARGET_SHA}" \
               -f state=success \
-              -f context="hronir/tier-rank-${rank}" \
+              -f context="hronir/review-priority-${slot}" \
               -f description="${compact:0:140}" >/dev/null
           done
