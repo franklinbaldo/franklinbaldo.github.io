@@ -15,7 +15,8 @@ cross_pollination_candidates:
   - "shakfu -> hidday: use sanduk as an optional worker runtime for Claude/Codex steps so AgentForge can separate orchestration authority from disposable execution, host-held credentials and auditable model traffic."
   - "hidday -> shakfu: adapt AgentForge's already-learned pressure-valve lesson into a durable assistant preflight/lease that checks equivalent work before a scheduled sanduk wakeup begins, rather than relying only on run-local isolation and statistics."
 contamination_notes:
-  - "Different maintainers do not establish independent convergence. Both projects participate in the same contemporary coding-agent ecosystem and may share upstream practices or model-generated design patterns. No observatory-mediated introduction between the maintainers has occurred as of this record."
+  - "Different maintainers do not establish independent convergence. Both projects participate in the same contemporary coding-agent ecosystem and may share upstream practices or model-generated design patterns."
+  - "The observatory intervened on AgentForge PR #31 on 2026-09-22 with a concrete reservation/deduplication proposal, and the owner-side project agent subsequently confirmed the diagnosis and escalated it to the repository owner. No introduction to shakfu was made, but any later AgentForge adoption of the proposed reservation must be treated as observatory-influenced diffusion/uptake rather than independent convergence."
 source_urls:
   - "https://github.com/shakfu/sanduk"
   - "https://github.com/shakfu/sanduk/blob/main/README.md"
@@ -23,5 +24,7 @@ source_urls:
   - "https://github.com/hidday/AgentForge"
   - "https://github.com/hidday/AgentForge/pull/30"
   - "https://github.com/hidday/AgentForge/pull/31"
+  - "https://github.com/hidday/AgentForge/pull/31#issuecomment-5782371524"
+  - "https://github.com/hidday/AgentForge/pull/31#issuecomment-5782570527"
 updated: 2026-09-22
 ---
