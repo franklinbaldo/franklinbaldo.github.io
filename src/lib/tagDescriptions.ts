@@ -92,8 +92,8 @@ export const tagDescriptions: Record<string, { en?: string; pt?: string }> = {
     pt: "Sobre incerteza, acaso e raciocínio sob informação incompleta.",
   },
   law: {
-    en: "Essays at the intersection of law, process, and automation — written by a public defender.",
-    pt: "Ensaios na interseção entre direito, processo e automação — escritos por um defensor público.",
+    en: "Essays at the intersection of law, process, and automation, grounded in Brazilian public-sector legal practice.",
+    pt: "Ensaios na interseção entre direito, processo e automação, ancorados na prática jurídica do setor público brasileiro.",
   },
   economics: {
     en: "On incentives, markets, and the economics of attention and automation.",
