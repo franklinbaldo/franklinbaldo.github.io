@@ -11,7 +11,7 @@ description: >-
   metaphysical awe with the ontology of autoregressive processes.
 tags:
   - philosophy
-  - AI
+  - ai
   - metaphysics
   - process ontology
   - Demis Hassabis
