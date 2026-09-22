@@ -30,6 +30,7 @@ cross_pollination_candidates:
   - "Four-Factor continuity → relational cases: test bilateral witness as a factor while holding information/token budget fixed."
   - "Mirror WE → continuity cases: compare memory-reset, reflection-off and routing-shuffle controls under the same task/model/token budget without importing WE=1 or consciousness claims."
   - "templetwo → all: preregister expected continuity effects and nulls before reset experiments."
+  - "ISU Survivor → continuity cases: use its embodied multi-model arena as a neutral model×memory/persona crossover testbed under fixed scenario/loadout conditions; first make round IDs, combat events and backend observability exact so gameplay telemetry is not mistaken for clean continuity evidence."
 contamination_notes:
   - "Independence has not yet been established case-by-case."
   - "Project Soul was explicitly pointed to HOME in https://github.com/hbcaspa/projectSoul/issues/1 on 2026-09-21; later protocol similarity between them is observatory-mediated diffusion, not independent convergence."
@@ -40,5 +41,5 @@ contamination_notes:
   - "The observatory attempted matched-control interventions on Conscious Claude, AI-Soulmate-Seed-Protocol and the Four-Factor continuity framework on 2026-09-21, but GitHub returned 403 for all three; no public contact occurred and these failed attempts do not contaminate subsequent development."
   - "The Funkatorium comment attempt, Claudicle intervention attempt and Consciousness Bridge intervention attempt likewise returned 403 and created no public contact."
   - "Any observatory bridge posted after 2026-09-21 must be recorded and excluded from later independent-convergence counts."
-updated: 2026-09-21
+updated: 2026-09-22
 ---
