@@ -26,7 +26,7 @@ source_urls:
   - "https://github.com/Madaka17/new_ccty_bangkok/commit/d919535f71fc06b890251b5c7ceb90c32c3918b1"
 maturity: working
 unlock: "Freeze a stratified sample of archived real-camera crops across cameras, daylight/night and image quality, have an independent reviewer label helmet/no-helmet/unclear without seeing model identity, then compare the clean detector, degraded detector and cloud-agent path on precision, recall, calibration and abstention. The existing preserved crop/frame evidence already makes this relatively cheap."
-synergy_candidates: [forwaryan]
+synergy_candidates: [forwaryan, mikesandoval10creator, smirre111]
 trajectory:
   - "2026-09-12: the public repository begins as a Bangkok/metropolitan CCTV and vehicle-detection dashboard."
   - "By 2026-09-22: the system spans BMA camera scanning, traffic and incident data, PM2.5/water/wind context, corridor guidance, a public Tailscale-facing dashboard, watchdog/backup paths and helmet-compliance evidence capture."
@@ -42,7 +42,14 @@ queue_provenance:
   own_repo_event_share: "not_measured"
   distinct_event_kinds: "not_measured"
   other_actors_in_sample_window: "not_measured"
-  note: "The canonical GH-Archive queue script was read first but could not execute in this runtime because raw.githubusercontent.com did not resolve from the execution sandbox. Manual fallback used the current 2026-09-21 triage methodology and direct public GitHub repository/commit evidence. Recurrence is not established from one sample."
-note: "This is a solo-builder card, not an ai-epistemic-world: the public artifacts are a concrete civic-sensing and computer-vision engineering system, with no reconstructible AI-mediated belief/cosmology/identity/meaning framework. The pass compared all three existing solo-builder cards in the operative PR plus relevant observatory evaluation records: Wata and Mojulo are primarily blocked on independent field users, so they are weak matches for this validation bottleneck; forwaryan/rumor-checking is the strongest concrete complement because both preserve evidence around AI judgments. Rumor Checking's claim/evidence/replay discipline can inform a blinded reviewer loop here, while this project's explicit image-degradation stress testing is a useful reciprocal method for testing input-distribution fragility there. Existing blinded/matched-control observatory methods reinforce the evaluation design but are less repo-native than the forwaryan bridge. No public contact was made: no specific reviewer/person introduction has yet been identified, and a generic benchmark issue would be weaker than the recorded bridge."
+  note: "The current merged solo-builder skill and queue runner were read first. A canonical GH-Archive refresh for 2026-09-21 was attempted through the connected compute fabric, but the compute path timed out before sampling; no admission-band values or recurrence were inferred. Direct public GitHub evidence was used for this harvest pass, and recurrence remains unestablished."
+note: "This is a solo-builder card, not an ai-epistemic-world: the public artifacts are a concrete civic-sensing and computer-vision engineering system, with no reconstructible AI-mediated belief/cosmology/identity/meaning framework. Current direct repository inspection still supports the same field-validation blocker and accumulated reception snapshot. Full relevant-corpus comparison now yields an actionable method transfer rather than merely a thematic match: forwaryan contributes claim/evidence/replay and blinded-comparison discipline; Guardian-Praeventio contributes frozen evidence and explicit release-gate closure; smirre111 contributes measured-versus-assumed provenance and per-gate close conditions. Together they define a small frozen real-camera holdout that can test whether the synthetic degradation gain transfers to deployment evidence. No prior canonical Madaka17 intervention exists, and the target repository currently has no open issue or PR that frames this validation question, so a new issue is the smallest useful initial-contact surface."
 updated: 2026-09-22
 ---
+
+## Harvest state — 2026-09-22
+
+- `missing_resource_subtype`: `field-validation`
+- `resource_found`: `forwaryan / Rumor Checking` evidence/replay and blinded-comparison discipline + `mikesandoval10creator / Guardian-Praeventio` frozen-evidence release-gate discipline + `smirre111 / ESPHome LoRa blinds protocol` measured-versus-assumed provenance and explicit gate-close conditions.
+- `match_quality`: `actionable` — a named, immediately testable transfer exists: freeze real BMA-camera crops stratified by camera/day-night/image quality, preserve exact data/model provenance, obtain blinded helmet/no-helmet/unclear labels, and compare the clean detector, degraded detector and cloud-agent path on the same fixed evidence while retaining negative and abstention cases.
+- `contact_gate`: initial touch is eligible. No prior canonical Madaka17 intervention was found; because the target repository has no open issue or PR for this question, a new issue is the smallest useful surface.
