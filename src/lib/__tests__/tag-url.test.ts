@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { tagUrl } from "../tag-url.ts";
 
-const LEGACY_COLLISION_URLS = [
+const LEGACY_COLLISION_ROUTE_CONTRACT = [
   ["AI", "/tags/AI/", "/pt/tags/AI/"],
   ["ai", "/tags/ai/", "/pt/tags/ai/"],
   ["amazonia", "/tags/amazonia/", "/pt/tags/amazonia/"],
@@ -49,13 +49,13 @@ describe("tagUrl", () => {
     assert.equal(tagUrl("C++", "en"), "/tags/C%2B%2B/");
   });
 
-  it("freezes legacy URLs for all variants in the six pre-migration collision groups", () => {
-    for (const [tag, englishUrl, portugueseUrl] of LEGACY_COLLISION_URLS) {
-      assert.equal(tagUrl(tag, "en"), englishUrl, `English URL changed for ${tag}`);
+  it("freezes route construction for all variants in the six pre-migration collision groups", () => {
+    for (const [tag, englishUrl, portugueseUrl] of LEGACY_COLLISION_ROUTE_CONTRACT) {
+      assert.equal(tagUrl(tag, "en"), englishUrl, `English route changed for ${tag}`);
       assert.equal(
         tagUrl(tag, "pt"),
         portugueseUrl,
-        `Portuguese URL changed for ${tag}`,
+        `Portuguese route changed for ${tag}`,
       );
     }
   });
