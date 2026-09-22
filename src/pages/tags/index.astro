@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
 import { isPublished } from "../../lib/publish";
+import { tagUrl } from "../../lib/tag-url";
 
 const posts = (await getCollection("blog"))
   .filter((p) => isPublished(p))
@@ -29,7 +30,7 @@ const itemListLd = {
     "@type": "ListItem",
     position: i + 1,
     name: `#${tag} (${count})`,
-    url: Astro.site ? new URL(`/tags/${tag}/`, Astro.site).href : `/tags/${tag}/`,
+    url: Astro.site ? new URL(tagUrl(tag, "en"), Astro.site).href : tagUrl(tag, "en"),
   })),
 };
 ---
@@ -42,7 +43,7 @@ const itemListLd = {
     {tags.map(([tag, count]) => (
       <li>
         <a
-          href={`/tags/${tag}/`}
+          href={tagUrl(tag, "en")}
           rel="tag"
           style={`font-size: ${(0.85 + ((count - minCount) / Math.max(1, maxCount - minCount)) * 0.65).toFixed(2)}rem`}
           aria-label={`#${tag} — ${count} post${count !== 1 ? 's' : ''}`}

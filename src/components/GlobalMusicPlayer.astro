@@ -1,14 +1,5 @@
 ---
-import { getCollection } from "astro:content";
-import { getRanking } from "../lib/hronir-rank";
-import { fetchAllClips } from "../lib/suno";
-
-interface Song {
-  id: string;
-  title: string;
-  imageUrl: string;
-  postUrl: string;
-}
+import { getPlayerSongs } from "../lib/music-player";
 
 interface Props {
   lang?: string;
@@ -36,70 +27,16 @@ const L =
         nowPlaying: "Now playing:",
       };
 
-let songs: Song[] = [];
-
-try {
-  const clips = await fetchAllClips();
-  const clipById = new Map(clips.map((clip) => [clip.id, clip]));
-  const musicPosts = await getCollection(
-    "blog",
-    (entry) =>
-      entry.data.postType === "music" &&
-      (!!entry.data.sunoId || (entry.data.tracks?.length ?? 0) > 0),
-  );
-
-  const keyToSunoIds = new Map<string, string[]>();
-  const sunoIdToPostUrl = new Map<string, string>();
-  for (const post of musicPosts) {
-    const postLang = post.data.lang ?? "en";
-    const url =
-      postLang === "pt"
-        ? `/pt/blog/${post.data.slug ?? post.id}/`
-        : `/blog/${post.data.slug ?? post.id}/`;
-    const ids = [
-      post.data.sunoId,
-      ...(post.data.tracks ?? []).map((track) => track.sunoId),
-    ].filter((id): id is string => !!id);
-    for (const id of ids) sunoIdToPostUrl.set(id, url);
-    if (post.data.translationKey && ids.length > 0) {
-      const key = post.data.translationKey;
-      keyToSunoIds.set(key, [...(keyToSunoIds.get(key) ?? []), ...ids]);
-    }
-  }
-
-  const rankedIds: string[] = [];
-  const seen = new Set<string>();
-  for (const row of getRanking()) {
-    for (const id of keyToSunoIds.get(row.key) ?? []) {
-      if (clipById.has(id) && !seen.has(id)) {
-        rankedIds.push(id);
-        seen.add(id);
-      }
-    }
-  }
-  for (const clip of clips) {
-    if (!seen.has(clip.id)) rankedIds.push(clip.id);
-  }
-
-  songs = rankedIds
-    .map((id) => clipById.get(id))
-    .filter(Boolean)
-    .map((clip) => ({
-      id: clip!.id,
-      title: clip!.title || "(sem título)",
-      imageUrl: clip!.image_url || "",
-      postUrl: sunoIdToPostUrl.get(clip!.id) || "",
-    }));
-} catch (error) {
-  console.warn("[GlobalMusicPlayer] failed to load songs:", error);
-}
+const songs = await getPlayerSongs();
+const bootstrapSongs = songs.slice(0, 1);
 ---
 
 <div
   id="gmp"
   role="region"
   aria-label={L.region}
-  data-songs={JSON.stringify(songs)}
+  data-songs={JSON.stringify(bootstrapSongs)}
+  data-songs-url="/music-player.json"
   data-now-playing={L.nowPlaying}
   hidden
   transition:persist
@@ -131,6 +68,8 @@ try {
 
 <script>
   const SONG_RE = /suno\.com\/song\/([0-9a-fA-F-]{36})/;
+
+  type Song = { id: string; title: string; imageUrl: string; postUrl: string };
 
   function embedUrl(id: string) {
     return `https://suno.com/embed/${id}`;
@@ -176,7 +115,7 @@ try {
 
     if (player.dataset.gmpInit !== "1") {
       player.dataset.gmpInit = "1";
-      let songs: { id: string; title: string; imageUrl: string; postUrl: string }[] = [];
+      let songs: Song[] = [];
       try {
         songs = JSON.parse(player.dataset.songs || "[]");
       } catch {
@@ -184,6 +123,31 @@ try {
       }
       let queue = songs.map((_, index) => index);
       let current = 0;
+      let catalogLoaded = false;
+      let catalogPromise: Promise<Song[]> | null = null;
+
+      const loadCatalog = async () => {
+        if (catalogLoaded) return songs;
+        if (!catalogPromise) {
+          catalogPromise = fetch(player.dataset.songsUrl || "/music-player.json", {
+            headers: { Accept: "application/json" },
+          })
+            .then(async (response) => {
+              if (!response.ok) throw new Error(`HTTP ${response.status}`);
+              const value = await response.json();
+              return Array.isArray(value) ? (value as Song[]) : [];
+            })
+            .catch((error) => {
+              console.warn("[GlobalMusicPlayer] failed to load catalog:", error);
+              return songs;
+            });
+        }
+        const loaded = await catalogPromise;
+        if (loaded.length > 0) songs = loaded;
+        queue = songs.map((_, index) => index);
+        catalogLoaded = true;
+        return songs;
+      };
 
       const favorites = () => {
         try {
@@ -212,7 +176,8 @@ try {
         }
       };
 
-      const showId = (id: string, fallbackTitle?: string) => {
+      const showId = async (id: string, fallbackTitle?: string) => {
+        await loadCatalog();
         const index = songs.findIndex((song) => song.id === id);
         const song = index >= 0 ? songs[index] : null;
         if (index >= 0) {
@@ -235,15 +200,16 @@ try {
         addHistory(id);
       };
 
-      const showQueueIndex = (index: number) => {
+      const showQueueIndex = async (index: number) => {
+        await loadCatalog();
         if (!queue.length) return;
         current = (index + queue.length) % queue.length;
         const song = songs[queue[current]];
-        if (song) showId(song.id, song.title);
+        if (song) await showId(song.id, song.title);
       };
 
-      prev.addEventListener("click", () => showQueueIndex(current - 1));
-      next.addEventListener("click", () => showQueueIndex(current + 1));
+      prev.addEventListener("click", () => void showQueueIndex(current - 1));
+      next.addEventListener("click", () => void showQueueIndex(current + 1));
       close.addEventListener("click", () => {
         iframe.src = "about:blank";
         player.hidden = true;
@@ -267,18 +233,20 @@ try {
 
       document.addEventListener("gp:play", (event: Event) => {
         const detail = (event as CustomEvent<{ sunoId: string; title?: string }>).detail;
-        if (detail?.sunoId) showId(detail.sunoId, detail.title);
+        if (detail?.sunoId) void showId(detail.sunoId, detail.title);
       });
 
       document.addEventListener("gp:queue", (event: Event) => {
         const ids = (event as CustomEvent<{ sunoIds: string[] }>).detail?.sunoIds ?? [];
-        const mapped = ids
-          .map((id) => songs.findIndex((song) => song.id === id))
-          .filter((index) => index >= 0);
-        if (!mapped.length) return;
-        queue = mapped;
-        current = 0;
-        showQueueIndex(0);
+        void loadCatalog().then(() => {
+          const mapped = ids
+            .map((id) => songs.findIndex((song) => song.id === id))
+            .filter((index) => index >= 0);
+          if (!mapped.length) return;
+          queue = mapped;
+          current = 0;
+          void showQueueIndex(0);
+        });
       });
     }
 
