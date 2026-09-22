@@ -1,0 +1,244 @@
+name: Papers Experiment Runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      experiment_id:
+        description: Stable short id used in the artifact name
+        required: true
+        type: string
+      source_sha:
+        description: Exact 40-character commit SHA from franklinbaldo/papers
+        required: true
+        type: string
+      workdir:
+        description: Relative working directory inside franklinbaldo/papers
+        required: true
+        default: "."
+        type: string
+      command:
+        description: Trusted command to execute from workdir
+        required: true
+        type: string
+      artifact_path:
+        description: Relative result path or glob inside workdir
+        required: true
+        default: "results/**"
+        type: string
+      python_version:
+        description: Python runtime
+        required: true
+        default: "3.12"
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: papers-experiment-${{ inputs.experiment_id }}-${{ inputs.source_sha }}
+  cancel-in-progress: false
+
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      BUNDLE_DIR: ${{ runner.temp }}/papers-experiment-bundle
+      SOURCE_DIR: ${{ github.workspace }}/papers
+      EXPERIMENT_ID: ${{ inputs.experiment_id }}
+      REQUESTED_SOURCE_SHA: ${{ inputs.source_sha }}
+      WORKDIR: ${{ inputs.workdir }}
+      EXPERIMENT_COMMAND: ${{ inputs.command }}
+      ARTIFACT_PATH: ${{ inputs.artifact_path }}
+
+    steps:
+      - name: Validate immutable experiment inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$REQUESTED_SOURCE_SHA" =~ ^[0-9a-fA-F]{40}$ ]] || {
+            echo "source_sha must be an exact 40-character Git commit SHA" >&2
+            exit 2
+          }
+          for value in "$WORKDIR" "$ARTIFACT_PATH"; do
+            [[ "$value" != /* ]] || {
+              echo "workdir/artifact_path must be relative" >&2
+              exit 2
+            }
+            [[ "/$value/" != *"/../"* ]] || {
+              echo "workdir/artifact_path may not traverse with .." >&2
+              exit 2
+            }
+          done
+          [[ -n "$EXPERIMENT_ID" && -n "$EXPERIMENT_COMMAND" ]] || {
+            echo "experiment_id and command must be non-empty" >&2
+            exit 2
+          }
+
+      - name: Checkout exact papers source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: franklinbaldo/papers
+          ref: ${{ inputs.source_sha }}
+          path: papers
+          fetch-depth: 1
+          persist-credentials: false
+          token: ${{ secrets.PAPERS_READ_TOKEN || github.token }}
+
+      - name: Verify source provenance
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          resolved="$(git -C "$SOURCE_DIR" rev-parse HEAD)"
+          requested="$(printf '%s' "$REQUESTED_SOURCE_SHA" | tr 'A-F' 'a-f')"
+          [[ "$resolved" == "$requested" ]] || {
+            echo "Resolved SHA $resolved does not match requested SHA $requested" >&2
+            exit 3
+          }
+          [[ -d "$SOURCE_DIR/$WORKDIR" ]] || {
+            echo "workdir does not exist at source SHA: $WORKDIR" >&2
+            exit 4
+          }
+          echo "resolved_sha=$resolved" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ inputs.python_version }}
+
+      - uses: astral-sh/setup-uv@v7
+
+      - name: Run experiment
+        id: run
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$BUNDLE_DIR"
+          set +e
+          (
+            cd "$SOURCE_DIR/$WORKDIR"
+            bash -euo pipefail -lc "$EXPERIMENT_COMMAND"
+          ) >"$BUNDLE_DIR/stdout.log" 2>"$BUNDLE_DIR/stderr.log"
+          exit_code=$?
+          set -e
+          printf '%s\n' "$exit_code" > "$BUNDLE_DIR/exit-code.txt"
+          echo "exit_code=$exit_code" >> "$GITHUB_OUTPUT"
+
+      - name: Collect result payload and provenance
+        if: ${{ always() }}
+        shell: bash
+        env:
+          RESOLVED_SOURCE_SHA: ${{ steps.source.outputs.resolved_sha }}
+          EXPERIMENT_EXIT_CODE: ${{ steps.run.outputs.exit_code }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$BUNDLE_DIR"
+
+          if [[ -d "$SOURCE_DIR/.git" ]]; then
+            git -C "$SOURCE_DIR" status --porcelain=v1 > "$BUNDLE_DIR/workspace-status.txt" || true
+            git -C "$SOURCE_DIR" diff --binary --no-ext-diff > "$BUNDLE_DIR/workspace.patch" || true
+          fi
+
+          python - <<'PY'
+          import glob
+          import hashlib
+          import json
+          import os
+          import pathlib
+          import platform
+          import subprocess
+          import tarfile
+          from datetime import datetime, timezone
+
+          bundle = pathlib.Path(os.environ["BUNDLE_DIR"])
+          source = pathlib.Path(os.environ["SOURCE_DIR"])
+          workdir = source / os.environ["WORKDIR"]
+          pattern = os.environ["ARTIFACT_PATH"]
+
+          matches = sorted(pathlib.Path(p) for p in glob.glob(str(workdir / pattern), recursive=True))
+          files = []
+          for path in matches:
+              if path.is_file():
+                  files.append(path)
+              elif path.is_dir():
+                  files.extend(sorted(p for p in path.rglob("*") if p.is_file()))
+          files = list(dict.fromkeys(files))
+
+          payload = bundle / "payload.tar.gz"
+          if files:
+              with tarfile.open(payload, "w:gz") as tf:
+                  for path in files:
+                      tf.add(path, arcname=str(path.relative_to(workdir)))
+
+          payload_sha256 = None
+          if payload.exists():
+              payload_sha256 = hashlib.sha256(payload.read_bytes()).hexdigest()
+
+          def version(cmd):
+              try:
+                  return subprocess.check_output(cmd, text=True, stderr=subprocess.STDOUT).strip()
+              except Exception:
+                  return None
+
+          provenance = {
+              "schema": "papers-experiment-harvest-v1",
+              "source_repository": "franklinbaldo/papers",
+              "requested_source_sha": os.environ["REQUESTED_SOURCE_SHA"].lower(),
+              "resolved_source_sha": os.environ.get("RESOLVED_SOURCE_SHA") or None,
+              "experiment_id": os.environ["EXPERIMENT_ID"],
+              "workdir": os.environ["WORKDIR"],
+              "command": os.environ["EXPERIMENT_COMMAND"],
+              "artifact_path": pattern,
+              "matched_result_files": [str(p.relative_to(workdir)) for p in files],
+              "payload_sha256": payload_sha256,
+              "exit_code": int(os.environ.get("EXPERIMENT_EXIT_CODE") or -1),
+              "runner": {
+                  "os": os.environ.get("RUNNER_OS"),
+                  "arch": os.environ.get("RUNNER_ARCH"),
+                  "python": platform.python_version(),
+                  "uv": version(["uv", "--version"]),
+              },
+              "workflow": {
+                  "repository": os.environ.get("GITHUB_REPOSITORY"),
+                  "workflow": os.environ.get("GITHUB_WORKFLOW"),
+                  "workflow_sha": os.environ.get("GITHUB_SHA"),
+                  "run_id": os.environ.get("GITHUB_RUN_ID"),
+                  "run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT"),
+                  "run_number": os.environ.get("GITHUB_RUN_NUMBER"),
+              },
+              "finished_at_utc": datetime.now(timezone.utc).isoformat(),
+          }
+          (bundle / "provenance.json").write_text(
+              json.dumps(provenance, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+          {
+            echo "## Papers experiment"
+            echo "- experiment: `$EXPERIMENT_ID`"
+            echo "- source: `franklinbaldo/papers@${RESOLVED_SOURCE_SHA:-unresolved}`"
+            echo "- workdir: `$WORKDIR`"
+            echo "- exit code: `${EXPERIMENT_EXIT_CODE:-not-run}`"
+            if [[ -f "$BUNDLE_DIR/payload.tar.gz" ]]; then
+              echo "- payload: collected"
+            else
+              echo "- payload: no files matched `$ARTIFACT_PATH`"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload harvest bundle
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: papers-experiment-${{ inputs.experiment_id }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/papers-experiment-bundle/
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Propagate experiment failure
+        if: ${{ always() && steps.run.outputs.exit_code != '0' }}
+        shell: bash
+        run: |
+          echo "Experiment failed with exit code ${{ steps.run.outputs.exit_code || 'not-run' }}" >&2
+          exit 1
