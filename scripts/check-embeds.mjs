@@ -72,7 +72,7 @@ for await (const file of contentFiles(CONTENT_ROOT)) {
       failures.push(`${location}: YouTube iframe needs a non-empty title or aria-label`);
     }
     if (loading !== "lazy") {
-      failures.push(`${location}: YouTube iframe must declare loading=\"lazy\"`);
+      failures.push(`${location}: YouTube iframe must declare loading="lazy"`);
     }
   }
 }
