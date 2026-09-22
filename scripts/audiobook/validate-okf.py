@@ -1,7 +1,7 @@
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
-#   "okf-parser @ git+https://github.com/franklinbaldo/okf-parser@5ee72add40d3372682e528fd70641455143269ce",
+#   "okf-parser @ git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a",
 #   "PyYAML==6.0.2",
 # ]
 # ///
@@ -181,7 +181,7 @@ def main() -> int:
             if narration_contract == TTS_BODY_CONTRACT and isinstance(narration_contract_from, str) and _segment_at_or_after(segment_id, narration_contract_from):
                 if data.get("payload_contract") != TTS_BODY_CONTRACT:
                     errors.append(f"{path}: narration at/after {narration_contract_from} must declare payload_contract: {TTS_BODY_CONTRACT}")
-                shard_path = root / path
+                shard_path = work_dir / path
                 if shard_path.is_file():
                     _, body = _load_markdown(shard_path)
                     _validate_tts_body(path, data, body, errors)
