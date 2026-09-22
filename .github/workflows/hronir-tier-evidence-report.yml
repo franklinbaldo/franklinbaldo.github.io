@@ -44,7 +44,7 @@ jobs:
 
           # Publish only the ten highest-priority review candidates. These
           # statuses are ephemeral derived metadata, never canonical state.
-          tail -n +2 "$REPORT" | head -n 10 | nl -w1 -s $'\t' | while IFS=$'\t' read -r slot row; do
+          awk 'NR >= 2 && NR <= 11' "$REPORT" | nl -w1 -s $'\t' | while IFS=$'\t' read -r slot row; do
             compact="$(printf '%s' "$row" | tr '\t' ' ')"
             gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${TARGET_SHA}" \
               -f state=success \
