@@ -3,6 +3,11 @@ name: Tier Evidence Read Projection
 on:
   pull_request:
     branches: [main]
+    paths:
+      - "knowledge/blog-post-tiers/**"
+      - ".routines/hronir/**"
+      - "src/hronir/**"
+      - "specs/okf-types/blog-post-tier.md"
 
 permissions:
   contents: read
