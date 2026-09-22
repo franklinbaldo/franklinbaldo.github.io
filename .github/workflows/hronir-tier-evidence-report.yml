@@ -1,0 +1,57 @@
+name: Hrönir Tier Evidence Report
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "knowledge/blog-post-tiers/**"
+      - "src/hronir/**"
+      - ".github/workflows/hronir-tier-evidence-report.yml"
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Publish read-only tier evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          REPORT="$RUNNER_TEMP/hronir-tier-evidence.txt"
+          node --import tsx/esm -e 'import("./src/hronir/commands/tier-evidence.ts").then(({ tierEvidence }) => tierEvidence({ limit: 50 }))' | tee "$REPORT"
+          {
+            echo "### Hrönir tier evidence — derived, read-only"
+            echo
+            echo '```text'
+            cat "$REPORT"
+            echo '```'
+            echo
+            echo "Canonical judgments remain the OKF-native blog-post-tier cards; this report persists no ranking state."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # Advance the machine-readable candidate band with editorial coverage.
+          # Commit statuses are ephemeral derived metadata, not ranking state.
+          tiered_count="$(grep -l '^type: blog-post-tier$' knowledge/blog-post-tiers/*.md | wc -l | tr -d ' ')"
+          start_rank=$((tiered_count + 1))
+          end_rank=$((start_rank + 9))
+          awk -v start="$start_rank" -v end="$end_rank" 'NR > 1 && $1 >= start && $1 <= end' "$REPORT" | while IFS= read -r row; do
+            rank="${row%%$'\t'*}"
+            compact="$(printf '%s' "$row" | tr '\t' ' ')"
+            gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${TARGET_SHA}" \
+              -f state=success \
+              -f context="hronir/tier-rank-${rank}" \
+              -f description="${compact:0:140}" >/dev/null
+          done
