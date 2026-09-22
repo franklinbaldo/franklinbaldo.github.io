@@ -11,8 +11,9 @@
   "scripts": {
     "prebuild": "node scripts/pregen.mjs",
     "predev": "node scripts/pregen.mjs",
-    "check:hygiene": "node scripts/check-hygiene.mjs",
+    "check:hygiene": "node scripts/check-hygiene.mjs && node scripts/check-embeds.mjs",
     "check:changelog": "node scripts/check-changelog.mjs",
+    "check:embeds": "node scripts/check-embeds.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check:tags": "node scripts/check-tag-collisions.mjs",
     "check:translations": "node scripts/check-translations.mjs",
