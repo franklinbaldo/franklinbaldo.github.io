@@ -1,0 +1,28 @@
+name: Tier Evidence Read Projection
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  tier-evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # Diagnostic projection only. Hrönir writes remain exclusively
+      # OKF-native Markdown + okf-parser under .routines/hronir/evaluations/.
+      - name: Project tier evidence from canonical Hrönir records
+        run: >-
+          node --import tsx/esm --input-type=module -e
+          'import { tierEvidence } from "./src/hronir/commands/tier-evidence.ts"; tierEvidence({ limit: 30 });'
