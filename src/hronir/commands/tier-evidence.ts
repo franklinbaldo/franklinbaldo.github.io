@@ -2,6 +2,12 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import {
+  isPublishedData,
+  keyForPath,
+  listPosts,
+  readPost,
+} from "../posts.js";
+import {
   computeAbsoluteQuality,
   computeDeconfoundedQuality,
   computePerPerspectiveRatings,
@@ -50,6 +56,22 @@ function readTierCards(): Map<string, TierCardProjection> {
 }
 
 /**
+ * Current conceptual works that are still publishable from the content tree.
+ * Historical Hrönir rate files intentionally survive post deletion, so the
+ * ranking can contain keys that are no longer part of the published blog.
+ * Editorial tiering must not resurrect those historical competitors.
+ */
+function readPublishedWorkKeys(): Set<string> {
+  const keys = new Set<string>();
+  for (const postPath of listPosts()) {
+    const data = readPost(postPath);
+    if (!isPublishedData(data)) continue;
+    keys.add(keyForPath(postPath));
+  }
+  return keys;
+}
+
+/**
  * Read-only projection for editorial tiering. Every metric is recomputed from
  * canonical Hrönir evidence, while tier state is read from canonical OKF cards.
  * The review-priority score is triage metadata only and is never persisted.
@@ -64,59 +86,62 @@ export function tierEvidence({
   const deconfounded = computeDeconfoundedQuality().quality;
   const perPerspective = computePerPerspectiveRatings();
   const tierCards = readTierCards();
+  const publishedKeys = readPublishedWorkKeys();
   const perspectiveUniverse = perPerspective.size;
 
-  const projected = ratings.map((row, index) => {
-    const abs = absolute.get(row.key);
-    const deconf = deconfounded.get(row.key);
-    const gap = abs && deconf ? deconf.quality - abs.stars : null;
+  const projected = ratings
+    .map((row, index) => {
+      const abs = absolute.get(row.key);
+      const deconf = deconfounded.get(row.key);
+      const gap = abs && deconf ? deconf.quality - abs.stars : null;
 
-    const perspectiveRows: Array<{
-      id: string;
-      rank: number;
-      ordinal: number;
-      wins: number;
-      appearances: number;
-    }> = [];
+      const perspectiveRows: Array<{
+        id: string;
+        rank: number;
+        ordinal: number;
+        wins: number;
+        appearances: number;
+      }> = [];
 
-    for (const [id, rows] of perPerspective) {
-      const perspectiveIndex = rows.findIndex(
-        (candidate) => candidate.key === row.key,
-      );
-      if (perspectiveIndex < 0) continue;
-      const perspectiveRow = rows[perspectiveIndex];
-      perspectiveRows.push({
-        id,
-        rank: perspectiveIndex + 1,
-        ordinal: perspectiveRow.ordinal,
-        wins: perspectiveRow.wins,
-        appearances: perspectiveRow.appearances,
+      for (const [id, rows] of perPerspective) {
+        const perspectiveIndex = rows.findIndex(
+          (candidate) => candidate.key === row.key,
+        );
+        if (perspectiveIndex < 0) continue;
+        const perspectiveRow = rows[perspectiveIndex];
+        perspectiveRows.push({
+          id,
+          rank: perspectiveIndex + 1,
+          ordinal: perspectiveRow.ordinal,
+          wins: perspectiveRow.wins,
+          appearances: perspectiveRow.appearances,
+        });
+      }
+
+      const card = tierCards.get(row.key);
+      const priority = deriveReviewPriority({
+        tiered: Boolean(card),
+        confidence: card?.confidence ?? null,
+        appearances: row.appearances,
+        absoluteN: abs?.n ?? 0,
+        gap,
+        perspectiveCount: perspectiveRows.length,
+        perspectiveUniverse,
       });
-    }
 
-    const card = tierCards.get(row.key);
-    const priority = deriveReviewPriority({
-      tiered: Boolean(card),
-      confidence: card?.confidence ?? null,
-      appearances: row.appearances,
-      absoluteN: abs?.n ?? 0,
-      gap,
-      perspectiveCount: perspectiveRows.length,
-      perspectiveUniverse,
-    });
-
-    return {
-      row,
-      rank: index + 1,
-      abs,
-      deconf,
-      gap,
-      perspectiveRows,
-      top10: perspectiveRows.filter((entry) => entry.rank <= 10).length,
-      card,
-      priority,
-    };
-  });
+      return {
+        row,
+        rank: index + 1,
+        abs,
+        deconf,
+        gap,
+        perspectiveRows,
+        top10: perspectiveRows.filter((entry) => entry.rank <= 10).length,
+        card,
+        priority,
+      };
+    })
+    .filter((entry) => publishedKeys.has(entry.row.key));
 
   const selected = key
     ? projected.filter((entry) => entry.row.key === key)
@@ -131,7 +156,7 @@ export function tierEvidence({
       ).slice(0, limit);
 
   if (key && selected.length === 0) {
-    throw new Error(`Hrönir key not found: ${key}`);
+    throw new Error(`Published Hrönir key not found: ${key}`);
   }
 
   console.log(
