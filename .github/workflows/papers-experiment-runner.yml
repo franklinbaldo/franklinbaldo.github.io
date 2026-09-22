@@ -75,6 +75,17 @@ jobs:
             exit 2
           }
 
+      - name: Require read-only papers credential
+        env:
+          PAPERS_READ_TOKEN: ${{ secrets.PAPERS_READ_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ -n "$PAPERS_READ_TOKEN" ]] || {
+            echo "Missing PAPERS_READ_TOKEN: configure a read-only token scoped to franklinbaldo/papers." >&2
+            exit 2
+          }
+
       - name: Checkout exact papers source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -83,7 +94,7 @@ jobs:
           path: papers
           fetch-depth: 1
           persist-credentials: false
-          token: ${{ secrets.PAPERS_READ_TOKEN || github.token }}
+          token: ${{ secrets.PAPERS_READ_TOKEN }}
 
       - name: Verify source provenance
         id: source
