@@ -8,7 +8,6 @@ const KNOWN_COLLISIONS = new Map([
   ["amazonia", ["amazonia", "amazônia"]],
   ["engenharia-de-software", ["engenharia de software", "engenharia-de-software"]],
   ["ia", ["IA", "ia"]],
-  ["memoria", ["memoria", "memória"]],
   ["software-engineering", ["software engineering", "software-engineering"]],
 ]);
 
