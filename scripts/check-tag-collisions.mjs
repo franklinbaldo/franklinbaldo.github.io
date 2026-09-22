@@ -124,7 +124,7 @@ for (const [key, variants] of collisions) {
 const resolved = [...KNOWN_COLLISIONS.keys()].filter(
   (key) => !collisions.some(([collisionKey]) => collisionKey === key),
 );
-const showMigrationInventory = process.argv.includes("--report");
+const showMigrationInventory = process.argv.includes("--report") || violations.length > 0;
 
 console.log(
   `Tag taxonomy: scanned ${postsScanned} published posts and ${tagsScanned} tag assignments.`,
