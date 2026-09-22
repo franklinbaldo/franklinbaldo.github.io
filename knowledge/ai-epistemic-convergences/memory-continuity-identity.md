@@ -33,6 +33,7 @@ cross_pollination_candidates:
   - "EpiLogos/Central → continuity cases: borrow the authored/observed/inferred provenance split and explicit source refs so reset/provider-swap tests can distinguish durable human ground from agent-maintained memory."
   - "HOME/Sanctuary/Mirror WE → EpiLogos/Central: apply matched reset, compressed-summary and provider-swap controls to test whether Central's continuity architecture adds robustness beyond ordinary project documentation and context persistence."
   - "templetwo → all: preregister expected continuity effects and nulls before reset experiments."
+  - "ISU Survivor → continuity cases: use its embodied multi-model arena as a neutral model×memory/persona crossover testbed under fixed scenario/loadout conditions; first make round IDs, combat events and backend observability exact so gameplay telemetry is not mistaken for clean continuity evidence."
 contamination_notes:
   - "Independence has not yet been established case-by-case."
   - "Project Soul was explicitly pointed to HOME in https://github.com/hbcaspa/projectSoul/issues/1 on 2026-09-21; later protocol similarity between them is observatory-mediated diffusion, not independent convergence."

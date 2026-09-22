@@ -56,6 +56,12 @@ jobs:
           --require-spec ../../specs/okf-types/{slug}.md
           --normative-spec
 
+      - name: Validate Solo Builder cards as OKF knowledge
+        run: >-
+          uv run --with 'git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check knowledge/solo-builders
+          --require-spec ../../specs/okf-types/{slug}.md
+          --normative-spec
+
       - name: Validate Awesome AI Slop cards as OKF knowledge
         run: >-
           uv run --with 'git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check knowledge/awesome-ai-slop
@@ -73,7 +79,6 @@ jobs:
           uv run --with 'git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check knowledge/papers
           --require-spec ../../specs/okf-types/{slug}.md
           --normative-spec
-
 
       - name: Validate Hronir evaluations as OKF knowledge
         run: >-
