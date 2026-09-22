@@ -15,25 +15,27 @@ reception:
   external_pull_requests: "not_measured"
   distinct_external_contributors: "not_measured"
   discussions: 0
-  window: "Repository created 2026-03-20; accumulated repository API snapshot through 2026-09-22. Repository metadata reports one star, zero forks, one watchers_count, zero subscribers and discussions disabled. A public issue search excluding the owner found no external issues. Exhaustive external pull-request and contributor identity measurement was not completed because GitHub secondary rate limiting interrupted that query, so those fields remain not_measured. Account-wide isolation is not claimed."
-blocking_constraint: "The repository has already built extensive unit/integration verification, mutation testing, audit ledgers and real safety-critical flows, and it has repeatedly corrected optimistic completeness claims after deeper review. Its own current evidence still marks physical validation as a release gate, including real Android/iOS proximity behavior and a pending ten-scenario pre-pilot field test covering conditions such as prolonged pocket carry, no-signal operation, fall detection, low battery and shift changes. The next discriminating constraint is therefore independent execution and review of those real-world safety scenarios, not another obvious missing software feature."
-missing_resource: reviewer
+  window: "Repository created 2026-03-20; accumulated repository API snapshot through 2026-09-22. Repository metadata reports one star, zero forks, one watchers_count, zero subscribers and discussions disabled. A public issue search excluding the owner found no external issues. Exhaustive external pull-request and contributor identity measurement was not completed, so those fields remain not_measured. Account-wide isolation is not claimed."
+blocking_constraint: "The 2026-09-22 README rewrite materially clarifies the immediate release boundary. Android 1.0 is explicitly blocked on already-identified internal release debt: placeholder TLS certificate pins, missing full-screen-intent behavior for critical Android pushes, a systemic cross-tenant authorization audit gap, branch-protection and workflow-pinning gaps, missing mobile-release credentials/evidence, and repeated deploy failures tied to HEALTH_PROFESSIONAL_LOOKUP_KEYS. The repository's canonical TODO still preserves physical Android/iOS validation as a release gate after the native proximity bridge was implemented, but that external field-validation gate is downstream of these concrete implementation/configuration/deployment blockers. The current next constraint therefore does not justify inferring an absent external reviewer, user, peer, knowledge source or tool."
+missing_resource: none-apparent
 confidence: high
 source_label: "mikesandoval10creator/Guardian-Praeventio"
 source_url: "https://github.com/mikesandoval10creator/Guardian-Praeventio"
 source_urls:
   - "https://github.com/mikesandoval10creator/Guardian-Praeventio/blob/main/README.md"
   - "https://github.com/mikesandoval10creator/Guardian-Praeventio/blob/main/TODO.md"
+  - "https://github.com/mikesandoval10creator/Guardian-Praeventio/commit/59f2ce1810b851d0d22c670cca7d4a3b0300d76a"
   - "https://github.com/mikesandoval10creator/Guardian-Praeventio/pull/1744"
   - "https://github.com/mikesandoval10creator/Guardian-Praeventio/commit/7175ae29bef00a2a3b02ab742ea2ac35e2b2f2bb"
 maturity: working
-unlock: "Turn the already-described pre-pilot field scenarios into a frozen evidence bundle and have an independent safety/field reviewer execute them on real target devices with preregistered pass/fail criteria, logs, expected-versus-observed outcomes, and retained negative results. That would convert the repository's unusually strong internal 'honest state' discipline into external release evidence."
-synergy_candidates: [madaka17, forwaryan]
+unlock: "Close the explicit current P0 release debt first and produce a clean deploy/mobile release candidate with the security and credential gates actually satisfied. Only then promote the already-described real-device scenarios back to the immediate boundary and seek independent field review with frozen expected-versus-observed evidence. Reassess missing_resource at that transition rather than treating a later reviewer need as today's blocker."
+synergy_candidates: [madaka17, forwaryan, darkphilosopher, shakfu]
 trajectory:
   - "2026-03-20: Guardian-Praeventio repository created from the Google AI Studio application template and expanded into a broad occupational-safety platform."
   - "2026-05-19: the repository records an independent verification pass that re-runs tests, inspects safety-critical implementation, corrects earlier claims and preserves newly discovered blockers instead of treating the previous state as complete."
   - "2026-06-19 to 2026-07-13: deeper audits sharply revise real E2E coverage downward, while native proximity bridges are implemented; physical Android/iOS validation remains an explicit release gate."
-  - "2026-09-21: safety-related fixes and integration work continue on main and in PRs; the latest examined commit is co-authored by the local Hermes agent, showing the AI-assisted production loop remains active."
+  - "2026-09-21: safety-related fixes and integration work continue on main and in PRs; the examined commit is co-authored by the local Hermes agent, showing the AI-assisted production loop remains active."
+  - "2026-09-22: a code-verified README rewrite explicitly blocks Android 1.0 on unresolved TLS pinning, critical-push, cross-tenant authorization, branch/workflow, credential and deploy gates, making those internal blockers prior to the still-valid downstream physical-validation gate."
 ai_role: [implementation-collaborator, code-coauthor, audit-collaborator]
 queue_provenance:
   criteria_version: "2026-09-21"
@@ -45,7 +47,16 @@ queue_provenance:
   own_repo_event_share: "not_measured"
   distinct_event_kinds: "not_measured"
   other_actors_in_sample_window: "not_measured"
-  note: "The canonical GH-Archive queue runner was attempted first but the available compute fabric returned upstream 504 timeouts before the sample completed. Manual fallback therefore used the current skill methodology plus direct public GitHub repository, commit, PR and issue evidence. Recurrence is not established from one sampled pass, and unmeasured admission values are preserved as not_measured rather than inferred."
-note: "This is a solo-builder card, not an ai-epistemic-world: the public artifacts are a concrete safety software/product and validation program, not a reconstructible AI-mediated belief, cosmology, identity, agency or meaning system. Comparison against all five operative solo-builder cards and the relevant observatory convergence corpus found Madaka17/new_ccty_bangkok as the strongest complement: both have working AI-assisted systems whose next credible step is independent real-world review, while Rumor Checking contributes a useful evidence/replay discipline. Mojulo, Wata and SharksVsDolphins are weaker matches because their visible bottleneck is primarily independent user adoption rather than safety validation. No public contact was made in this pass; the cross-project method bridge was recorded first so any future introduction can be specific rather than a generic request for testing."
+  note: "The canonical GH-Archive queue runner was attempted first but the available compute fabric returned a transient upstream 504 before sampling completed. This same-day material-update pass therefore does not increment times_sampled or claim recurrence. Direct current GitHub repository, README, TODO and main-branch evidence was used for the reclassification."
+note: "This remains a solo-builder card, not an ai-epistemic-world: the public artifacts are a concrete safety software/product and validation program, not a reconstructible AI-mediated belief, cosmology, identity, agency or meaning system. Comparison against all twelve other operative solo-builder cards changes the action conclusion rather than finding a new person to contact. Shakfu/sanduk is the nearest security-boundary analogue, while Madaka17, smirre111 and DarkPhilosopher remain useful method comparisons for the later physical-validation stage; none supplies a missing resource that resolves Praeventio's immediate enumerated implementation/configuration debt. The earlier reviewer classification therefore overstated an environmental reviewer shortage by pulling a downstream gate forward in time. No public contact was made: there is no actionable external resource transfer for the current blocker, and the existing Praeventio field-evidence discipline remains useful to Spark without implying Praeventio itself currently needs a reviewer first."
 updated: 2026-09-22
 ---
+
+## Longitudinal update — 2026-09-22
+
+- `previous_missing_resource`: `reviewer` (`field-validation` interpretation).
+- `current_missing_resource`: `none-apparent`.
+- `reason`: the current README makes several known internal shippability/security/deployment gates earlier than the preserved physical-device validation gate.
+- `later_gate`: independent real-device field review remains valid after those internal blockers close; this update changes sequencing, not the value of that validation method.
+- `match_quality_for_current_blocker`: `weak` across the corpus because no external introduction resolves the immediate enumerated work.
+- `contact_gate`: no contact justified for this update.
