@@ -35,6 +35,8 @@ PROJECT_GUIDES = (
 )
 WORK_PREREQUISITES = ("work.md", "editorial.md", "rights.md", "voices.yaml", "pronunciation.yaml")
 TTS_BODY_CONTRACT = "tts-body-v1"
+TTS_BODY_NORMAL_MIN_CHARS = 240
+TTS_BODY_NORMAL_MAX_CHARS = 1800
 MARKDOWN_CONTROL_RE = re.compile(r"^(?:#{1,6}\s|```|~~~|>\s|[-*+]\s|\d+\.\s|<!--)")
 EDITORIAL_NOTE_RE = re.compile(r"(?:nota\s+(?:editorial|de\s+realiza[cç][aã]o\s+oral)|editorial\s+note)", re.IGNORECASE)
 
@@ -71,8 +73,9 @@ def _segment_at_or_after(segment_id: str, first_segment_id: str) -> bool:
     return segment_id >= first_segment_id
 
 
-def _validate_tts_body(path: str, body: str, errors: list[str]) -> None:
-    if not body.strip():
+def _validate_tts_body(path: str, data: dict, body: str, errors: list[str]) -> None:
+    body = body.strip()
+    if not body:
         errors.append(f"{path}: {TTS_BODY_CONTRACT} narration body must not be empty")
         return
     for line in body.splitlines():
@@ -83,6 +86,18 @@ def _validate_tts_body(path: str, body: str, errors: list[str]) -> None:
             errors.append(f"{path}: {TTS_BODY_CONTRACT} body contains Markdown/control syntax: {stripped!r}")
         if EDITORIAL_NOTE_RE.search(stripped):
             errors.append(f"{path}: editorial notes belong in frontmatter, not in the TTS body")
+
+    length = len(body)
+    if length < TTS_BODY_NORMAL_MIN_CHARS and not data.get("short_segment_reason"):
+        errors.append(
+            f"{path}: {TTS_BODY_CONTRACT} body has {length} chars (<{TTS_BODY_NORMAL_MIN_CHARS}); "
+            "add short_segment_reason or merge it into the surrounding semantic/prosodic unit"
+        )
+    if length > TTS_BODY_NORMAL_MAX_CHARS and not data.get("long_segment_reason"):
+        errors.append(
+            f"{path}: {TTS_BODY_CONTRACT} body has {length} chars (>{TTS_BODY_NORMAL_MAX_CHARS}); "
+            "add long_segment_reason or split it at a semantic/prosodic boundary"
+        )
 
 
 def main() -> int:
@@ -169,7 +184,7 @@ def main() -> int:
                 shard_path = root / path
                 if shard_path.is_file():
                     _, body = _load_markdown(shard_path)
-                    _validate_tts_body(path, body, errors)
+                    _validate_tts_body(path, data, body, errors)
                 else:
                     errors.append(f"{path}: narration shard file cannot be read for TTS body validation")
         key = (chapter_id, segment_id)
