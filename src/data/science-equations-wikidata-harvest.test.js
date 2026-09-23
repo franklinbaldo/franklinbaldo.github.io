@@ -45,6 +45,8 @@ test("extractP2534Records preserves attested notation and statement provenance",
 
   assert.equal(records.length, 1);
   assert.equal(records[0].source_id, "wikidata-p2534");
+  assert.equal(records[0].source_license, "CC0-1.0");
+  assert.match(records[0].source_policy_url, /Wikidata:Licensing$/);
   assert.equal(records[0].source_entity_id, "Q41591");
   assert.equal(records[0].source_statement_id, "Q41591$statement-1");
   assert.equal(records[0].original_expression, "R=\\frac{U}{I}");
