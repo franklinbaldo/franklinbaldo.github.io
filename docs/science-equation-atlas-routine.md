@@ -2,234 +2,116 @@
 
 Esta rotina mantém o Atlas das Equações como um programa recorrente de ingestão, organização e auditoria de estruturas quantitativas usadas no conhecimento humano.
 
-A fonte de verdade conceitual é `knowledge/science-equations/`: Markdown OKF normal, legível por humanos. Não crie um banco paralelo que concorra com esses conceitos. Entretanto, o Atlas é planejado para milhões de ocorrências: dados brutos e normalizados em massa NÃO precisam virar um arquivo Markdown por ocorrência. Use artefatos estruturados e regeneráveis para escala; mantenha no OKF a taxonomia, os conceitos importantes, as famílias, a proveniência, as regras de normalização, decisões metodológicas, auditorias e runs.
-
-Leia também `docs/science-equation-atlas-sources.md`. O backlog principal do projeto é um backlog de fontes/corpora, não uma lista manual de equações.
+A fonte de verdade conceitual é `knowledge/science-equations/`, em Markdown OKF legível por humanos. O Atlas, porém, é planejado para milhões de ocorrências: dados massivos não viram um arquivo Markdown por ocorrência. Leia também `docs/science-equation-atlas-sources.md` e `docs/science-equation-atlas-storage.md`.
 
 ## Objetivo de escala
 
-O objetivo não é adicionar uma fórmula por execução. O objetivo é descobrir e integrar fontes capazes de produzir grandes lotes verificáveis.
+A unidade primária de trabalho é uma **fonte/corpus**, não uma fórmula individual. Prefira dumps, APIs, XML/JATS/MathML, datasets publicados, repositórios Git e outros canais bulk oficiais. Só faça busca página a página quando não existir caminho estruturado melhor.
 
-Uma execução bem-sucedida pode ingerir milhares ou milhões de candidatos, mesmo que apenas uma pequena parte seja promovida imediatamente a conceitos OKF curados.
-
-Meça o avanço por:
-
-- fontes/corpora integrados;
-- candidatos extraídos;
-- ocorrências com proveniência;
-- domínios/subdomínios cobertos;
-- duplicatas textuais e estruturais eliminadas;
-- famílias candidatas e verificadas;
-- taxa de rejeição;
-- dívida de auditoria.
-
-Número de PRs ou número de arquivos Markdown não é métrica de rendimento.
+Meça avanço por fontes integradas, ocorrências com proveniência, cobertura de domínios/subdomínios, rejeições, duplicatas eliminadas, famílias candidatas/verificadas e dívida de auditoria. Número de PRs ou arquivos Markdown não é métrica de rendimento.
 
 ## Início de cada execução
 
-1. Leia esta rotina e o plano de fontes.
-2. Reconstrua o estado atual a partir de `main`, do bundle OKF e dos manifests/artefatos de ingestão existentes.
-3. Use a versão compatível mais recente de `okf-parser` para inventário, diagnósticos, relações e grafo.
-4. Leia runs recentes apenas para reconstruir decisões persistidas; não carregue estado transitório no prompt.
-5. Escolha preferencialmente a próxima **fonte ou corpus** que maximize ganho verificável de cobertura por custo.
-6. Só escolha uma fórmula individual quando isso for necessário para validar um pipeline, resolver uma ambiguidade ou auditar uma família.
+1. Leia esta rotina, o plano de fontes e o contrato de storage.
+2. Reconstrua o estado exclusivamente de `main`, `knowledge/science-equations/` e manifests persistidos; não carregue estado transitório no prompt.
+3. Use `okf-parser` para inventário, diagnósticos, relações e grafo do bundle.
+4. Inspecione runs recentes apenas para reconstruir decisões persistidas.
+5. Escolha a fonte/corpus com maior ganho verificável de cobertura por custo, estrutura, proveniência e risco de licença.
+6. Só escolha uma fórmula isolada para validar pipeline, resolver ambiguidade ou auditar família.
 
-## Escopo do Atlas
+## Escopo
 
-Cubra domínios, disciplinas, subdisciplinas e tópicos de:
+Cubra ciências naturais, matemática e estatística, engenharia, medicina e saúde, ciência da computação, economia e finanças, ciências sociais, direito e regulação, administração, logística, pesquisa operacional e outras áreas em que relações quantitativas ou formalizações tenham identidade conceitual. Não suponha que uma área "não usa equações".
 
-- ciências naturais;
-- matemática e estatística;
-- engenharia;
-- medicina e saúde;
-- ciência da computação;
-- economia e finanças;
-- ciências sociais;
-- direito e regulação;
-- administração, logística e pesquisa operacional;
-- outras áreas de conhecimento ou prática em que relações quantitativas ou formalizações tenham identidade conceitual.
+Inclua fórmulas, funções, recorrências, transformações, kernels, objetivos/losses, constraints, desigualdades, distribuições, leis de escala, regras de atualização, transições de estado, relações constitutivas, funções de custo, mapas computacionais, regras quantitativas legais/regulatórias e modelos algorítmicos com formalização matemática útil.
 
-Não suponha de antemão que uma área "não usa equações".
+## Attested vs reconstructed
 
-## O que conta como estrutura
-
-Não restrinja a coleta a expressões que uma fonte chama de "equação".
-
-Podem entrar:
-
-- fórmulas;
-- funções;
-- recorrências;
-- transformações;
-- kernels;
-- objetivos e funções de perda;
-- constraints;
-- desigualdades;
-- distribuições;
-- leis de escala;
-- regras de atualização;
-- transições de estado;
-- relações constitutivas;
-- funções de custo;
-- mapas computacionais;
-- regras quantitativas legais ou regulatórias;
-- modelos algorítmicos que possuam uma formalização matemática útil.
-
-### Attested vs reconstructed
-
-Toda ocorrência deve poder ser distinguida quanto à origem:
+Toda ocorrência deve ser classificada como:
 
 - **attested** — a expressão, ou forma matematicamente equivalente, aparece explicitamente na fonte;
-- **reconstructed** — a fonte atesta uma função, algoritmo, regra, pseudocódigo, procedimento ou descrição e o Atlas produz uma formalização matemática fiel.
+- **reconstructed** — a fonte atesta função, algoritmo, regra, pseudocódigo, procedimento ou descrição, e o Atlas produz uma formalização matemática fiel.
 
-Nunca apresente uma reconstrução como se fosse a notação original da fonte.
+Nunca apresente reconstrução como notação original. Para `reconstructed`, preserve artefato de origem, regra de tradução, hipóteses introduzidas, tipos/domínios e teste ou argumento de fidelidade.
 
-Para `reconstructed`, preserve:
+## Um adapter por source
 
-- trecho/artefato de origem;
-- regra de tradução;
-- hipóteses introduzidas;
-- tipos/domínio das entradas e saídas;
-- teste ou argumento que mostre fidelidade à operação original.
+Cada fonte tem um adapter próprio de aquisição e extração. O adapter deve:
 
-Não transforme qualquer programa arbitrário em matemática só porque é teoricamente possível. Priorize estruturas com identidade conceitual ou uso recorrente na subárea.
+1. descobrir e pinçar um snapshot oficial;
+2. adquirir pelo canal bulk preferido;
+3. extrair ocorrências fiéis com proveniência;
+4. preservar licença/restrições;
+5. emitir um stream transitório aceito pelo materializer comum.
 
-## Estratégia source-first
+O adapter não decide o armazenamento final. Todos desembocam no mesmo lake Parquet e no mesmo publisher do Internet Archive.
 
-Priorize nesta ordem aproximada:
+## Pipeline
 
-1. repositórios estruturados de fórmulas e objetos matemáticos;
-2. dumps e APIs oficiais com marcação matemática;
-3. corpora científicos de texto completo com LaTeX/MathML/JATS;
-4. documentação técnica e repositórios de software científico;
-5. legislação, regulação, manuais e padrões públicos;
-6. open textbooks e handbooks;
-7. web crawl apenas como fonte de descoberta ou preenchimento de cauda longa.
-
-Antes de criar um scraper específico, procure:
-
-- dump;
-- API;
-- export estruturado;
-- repositório Git;
-- XML/JATS/MathML;
-- dataset de pesquisa já publicado;
-- mirror autorizado.
-
-Evite scraping página a página quando um caminho de bulk access existir.
-
-## Taxonomia
-
-Use OpenAlex e outras taxonomias especializadas como roteadores e superfícies de reconciliação, não como limite do universo do Atlas.
-
-A taxonomia deve conseguir representar áreas ausentes ou mal servidas por classificações científicas tradicionais, inclusive direito, regulação e prática profissional.
-
-Classifique uma ocorrência pelo contexto da fonte e preserve classificações externas como proveniência. Não force uma única árvore quando múltiplas classificações forem informativas.
-
-## Pipeline de ingestão
-
-Cada fonte deve passar, quando aplicável, por:
+Quando aplicável, cada fonte passa por:
 
 1. **snapshot/manifest** — versão, data, licença, URL/identificador e checksum;
-2. **extract** — capturar expressão original e contexto;
-3. **classify** — associar domínio/tópico usando metadados da fonte e/ou classificadores;
-4. **normalize** — gerar representação comparável sem destruir a original;
-5. **deduplicate** — eliminar repetições em camadas;
-6. **cluster** — produzir candidatos a famílias estruturais;
-7. **verify** — testar relações fortes;
-8. **promote** — materializar em OKF apenas conceitos, famílias, decisões e exemplos que mereçam identidade própria;
-9. **publish** — atualizar índices, métricas e projeções do blog.
+2. **extract** — expressão original e contexto;
+3. **classify** — domínio/tópico;
+4. **normalize** — representação comparável sem destruir o original;
+5. **deduplicate** — camadas progressivas;
+6. **cluster** — candidatos a famílias;
+7. **verify** — relações fortes;
+8. **promote** — materializar em OKF apenas conceitos/famílias/decisões com identidade própria;
+9. **publish** — Parquet + Internet Archive + manifest leve no Git.
 
-## Representação em massa
+## Lake e publicação
 
-Não crie milhões de arquivos Markdown.
+Apache Parquet é o formato canônico de armazenamento em massa. JSONL/CSV podem existir somente como entrada transitória ou interoperabilidade. Separe, quando aplicável, estágios `extracted`, `normalized` e `deduplicated`, preservando expressão original e proveniência em todos eles.
 
-Grandes volumes devem ser armazenados em shards estruturados, preferencialmente formatos colunares ou streamáveis, como Parquet ou JSONL comprimido. DuckDB pode ser usado como índice/projeção local regenerável.
+Particione por fonte, snapshot e estágio sem criar milhões de arquivos pequenos. Cada lote deve ter schema versionado, row counts, estatísticas, SHA-256 por shard e manifest determinístico.
 
-O repositório Git deve guardar principalmente:
+Parquets e manifests do snapshot são publicados no **Internet Archive** a partir de Jatobá, sandbox ou outro executor explicitamente disponível. Não use GitHub Actions para aquisição, processamento, geração de Parquet ou upload. O fluxo obrigatório é `UPLOAD -> VERIFY -> COMMIT MANIFEST`.
 
-- schemas;
-- código de ingestão;
-- manifests;
-- pequenos fixtures;
-- documentação;
-- conceitos OKF;
-- famílias;
-- auditorias;
-- métricas agregadas.
+O Git guarda somente código, schemas, manifests leves, checksums, Internet Archive identifiers/URLs, proveniência, documentação, OKF, auditorias e runs. Nunca guarde shards massivos no histórico Git.
 
-Dados massivos gerados devem ficar fora do histórico Git normal quando excederem uma escala saudável para o repositório, com referências reproduzíveis a partir dos manifests.
+Snapshots publicados são imutáveis por identidade: nova versão da fonte gera novo item/identificador. Se a licença não permitir redistribuição do bruto, publique apenas derivados permitidos e registre origem, snapshot, licença e checksums suficientes para auditoria.
 
-## Proveniência mínima por ocorrência
+## Proveniência mínima
 
 Preserve sempre que disponível:
 
 - `source_id`;
-- versão/snapshot da fonte;
+- versão/snapshot;
 - identificador do documento/objeto;
-- posição ou seletor dentro da fonte;
+- posição/seletor na fonte;
 - expressão original;
-- encoding original (TeX, MathML, código, texto etc.);
-- classe de proveniência `attested` ou `reconstructed`;
+- encoding original;
+- `attested`/`reconstructed`;
 - licença/restrição de reuso;
 - classificação de domínio;
 - checksum do registro de origem.
 
-## Normalização
+## Normalização e deduplicação
 
-Preserve a expressão original.
+Preserve a expressão original. Compare progressivamente por:
 
-Produza progressivamente representações derivadas que permitam comparar:
-
-- igualdade textual;
+- igualdade source-exact/textual;
 - LaTeX/MathML canonicalizado;
 - árvore sintática;
 - equivalência algébrica;
-- renomeação de variáveis com tipos;
-- reescala;
-- adimensionalização;
+- renomeação tipada;
+- reescala/adimensionalização;
 - equivalência funcional;
 - equivalência dinâmica;
 - operador compartilhado;
 - família estrutural.
 
-Não colapse essas relações em um único "same formula".
+Não colapse tudo em `same formula`. Clustering/embeddings geram candidatos; relações fortes e `equation-family` exigem transformação reproduzível ou argumento formal suficiente.
 
-## Famílias
+## Taxonomia e auditoria
 
-Crie ou edite um `equation-family` quando houver valor explicativo.
+Use OpenAlex e taxonomias especializadas como roteadores, não como limite do universo. Preserve múltiplas classificações quando forem informativas, especialmente em direito, regulação e prática profissional.
 
-Uma relação forte precisa de transformação reproduzível ou argumento formal suficiente. Similaridade visual, embedding ou clustering servem para gerar candidatos, não para confirmar equivalência.
-
-## Auditoria
-
-A auditoria deve ser amostral e orientada por risco.
-
-Priorize:
-
-- fontes novas;
-- clusters muito grandes;
-- equivalências surpreendentes;
-- reconstruções automáticas;
-- domínios com semântica sensível;
-- fórmulas que cruzam áreas muito distantes;
-- registros com licença ou proveniência incompleta.
+A auditoria é amostral e orientada por risco. Priorize fontes novas, clusters muito grandes, equivalências surpreendentes, reconstruções automáticas, domínios sensíveis, cruzamentos distantes e registros com licença/proveniência incompletas.
 
 ## Fechamento
 
-Registre um `science-atlas-run` em `knowledge/science-equations/runs/` com:
+Registre um `science-atlas-run` em `knowledge/science-equations/runs/` com fonte/corpus, snapshot, executor, Internet Archive identifier, Parquet manifests/shards, quantidades extraídas/normalizadas/deduplicadas, rejeições, famílias candidatas/verificadas, cobertura nova, dívida de auditoria e próximos corpora sugeridos pelo estado.
 
-- fonte/corpus trabalhado;
-- snapshot;
-- candidatos extraídos;
-- candidatos aceitos/rejeitados;
-- deduplicações;
-- famílias propostas/verificadas;
-- cobertura nova;
-- dívida de auditoria;
-- artefatos gerados;
-- próximos corpora sugeridos pelo estado.
-
-Valide o bundle com `okf-parser` e rode os checks normais do blog.
-
-Uma execução boa deixa o sistema capaz de ingerir mais conhecimento com menos trabalho manual.
+Valide o bundle com `okf-parser` e rode os checks locais/reprodutíveis do blog. Uma execução boa deixa o sistema capaz de ingerir mais conhecimento com menos trabalho manual.
