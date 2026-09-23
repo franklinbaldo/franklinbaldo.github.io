@@ -5,7 +5,7 @@ latex: "\\frac{dT}{dt}=-k(T-T_\\infty)"
 summary: "Temperature approaches a constant ambient temperature at a rate proportional to the temperature difference."
 status: normalized
 source_label: "Khan Academy, Newton's Law of Cooling"
-source_url: "https://www.khanacademy.org/science/physics/thermodynamics/temp-kinetic-theory-ideal-gas-law/a/newtons-law-of-cooling"
+source_url: "https://www.khanacademy.org/science/physics/thermodynamics/laws-of-thermodynamics/a/newtons-law-of-cooling"
 updated: "2026-09-22"
 ---
 
@@ -39,4 +39,4 @@ The relaxing temperature difference is therefore an occurrence of [first-order l
 
 ## Evidence
 
-A standard differential-equation presentation gives \(dT/dt=-k(T-T_a)\) and its exponential solution: [Khan Academy, Newton's Law of Cooling](https://www.khanacademy.org/science/physics/thermodynamics/temp-kinetic-theory-ideal-gas-law/a/newtons-law-of-cooling).
+A standard differential-equation presentation gives \(dT/dt=-k(T-T_a)\) and its exponential solution: [Khan Academy, Newton's Law of Cooling](https://www.khanacademy.org/science/physics/thermodynamics/laws-of-thermodynamics/a/newtons-law-of-cooling).
