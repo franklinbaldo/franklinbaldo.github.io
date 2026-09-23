@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://franklinbaldo.github.io/data/science-equations/schemas/occurrence-v1.json",
+  "title": "Scientific Equation Atlas occurrence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "occurrence_id",
+    "source_id",
+    "source_snapshot",
+    "provenance_class",
+    "original_expression",
+    "original_encoding",
+    "source_record_sha256",
+    "original_text_sha256",
+    "source_payload_json"
+  ],
+  "properties": {
+    "occurrence_id": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "source_id": { "type": "string", "minLength": 1 },
+    "source_snapshot": { "type": "string", "minLength": 1 },
+    "source_document_id": { "type": ["string", "null"] },
+    "source_locator": { "type": ["string", "null"] },
+    "source_url": { "type": ["string", "null"] },
+    "source_license": { "type": ["string", "null"] },
+    "source_license_url": { "type": ["string", "null"] },
+    "source_policy_url": { "type": ["string", "null"] },
+    "provenance_class": { "enum": ["attested", "reconstructed"] },
+    "original_expression": { "type": "string", "minLength": 1 },
+    "original_encoding": { "type": "string", "minLength": 1 },
+    "source_record_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "original_text_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "normalized_text_sha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
+    "source_payload_json": { "type": "string", "minLength": 2 }
+  }
+}
