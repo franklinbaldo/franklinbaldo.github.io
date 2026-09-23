@@ -10,9 +10,10 @@ updated: "2026-09-23"
 
 # Physics and Astronomy
 
-This card now follows OpenAlex's exact field label **Physics and Astronomy**. The current atlas has sampled physics subfields but has not yet sampled an astronomy-specific equation occurrence; the broader field label records the external taxonomy without pretending that the corpus already covers both halves evenly.
+This card follows OpenAlex's exact field label **Physics and Astronomy**. Physics and astronomy now both have explicit subfield paths in the atlas; the broader field label remains a taxonomy node rather than a claim that either side is exhaustively covered.
 
 ## Initial subbranches
 
 - [Nuclear physics](nuclear-physics.md)
 - [Thermodynamics and heat transfer](thermodynamics.md)
+- [Astronomy and Astrophysics](astronomy-astrophysics.md)
