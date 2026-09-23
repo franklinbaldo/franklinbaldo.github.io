@@ -80,28 +80,29 @@ source adapter
   -> transient JSONL stream
   -> materialize-parquet.py
   -> source+snapshot+stage Parquet shards
-  -> deterministic manifest + SHA-256/MD5 + row counts
+  -> deterministic stage manifest + SHA-256/MD5 + row counts
   -> publish-internet-archive.mjs
   -> remote metadata/size/hash verification
   -> lightweight verified publication state committed to Git
 ```
 
-`Apache Parquet` is now the canonical mass format. JSONL is transient only. The materializer defaults to 250,000 rows per Zstd-compressed shard and refuses an empty dataset. `publish-internet-archive.mjs` requires `IA_ACCESS_KEY_ID` and `IA_SECRET_ACCESS_KEY` in the external executor environment, aborts if an existing same-name remote file conflicts by bytes/MD5, reuses identical files idempotently, and verifies the Internet Archive item after upload before publication state may be committed.
+`Apache Parquet` is now the canonical mass format. JSONL is transient only. The materializer defaults to 250,000 rows per Zstd-compressed shard, refuses an empty dataset, and uses separate `manifest-extracted.json`, `manifest-normalized.json` and `manifest-deduplicated.json` names so stages can coexist in one immutable source-snapshot item. `publish-internet-archive.mjs` requires `IA_ACCESS_KEY_ID` and `IA_SECRET_ACCESS_KEY` in the external executor environment, aborts if an existing same-name remote file conflicts by bytes/MD5, reuses identical files idempotently, and verifies the Internet Archive item after upload before publication state may be committed.
 
 GitHub Actions is not an acquisition, materialization or publication backend for this pipeline.
 
 ## Validation performed in this execution
 
-The PMC adapter was compiled with Python 3 and exercised against a synthetic two-article JATS corpus:
+The PMC adapter was compiled with Python 3 and its extraction/license behavior was exercised against a synthetic three-article JATS corpus:
 
-- 2 XML files seen;
+- 3 XML files seen;
 - 1 CC BY article accepted;
-- 1 CC BY-NC article rejected by the license gate;
-- 2 attested formulas emitted (one MathML inline formula, one TeX display formula);
+- 1 CC BY-NC article rejected;
+- 1 CC BY-ND article rejected by the conservative derived-data gate;
+- 2 attested formulas emitted from the accepted article (one MathML inline formula, one TeX display formula);
 - 1 empty formula skipped;
 - 0 parse errors.
 
-The fixture test passed under Node's test runner and verifies license filtering, formula kinds, encodings, provenance class and SHA-256 fields.
+The repository fixture encodes the same cases and verifies license filtering, formula kinds, TeX/MathML encodings without relying on a particular XML namespace prefix, provenance class and SHA-256 fields.
 
 The generic materializer and Internet Archive publisher were added as control-plane code. Actual PyArrow Parquet writing and Internet Archive publication were **not** executed in this sandbox because PyArrow is not installed here, outbound dependency acquisition is unavailable, and Internet Archive credentials are not exposed to this environment. The repository-pinned `okf-parser` likewise cannot be fetched here through `uv` because the sandbox lacks outbound Git/DNS access. None of those unavailable checks are reported as green.
 
@@ -115,7 +116,7 @@ Internet Archive items published: **0**.
 
 Internet Archive identifier: **not assigned yet**; the descriptor requires `scientific-equation-atlas-pmc-jats-commercial-cc-<snapshot-id>` after a real inventory/selection digest exists.
 
-The synthetic fixture's two rows are test evidence only and are not counted as corpus ingestion.
+The synthetic fixture's two emitted rows are test evidence only and are not counted as corpus ingestion.
 
 ## Coverage gained
 
@@ -132,7 +133,7 @@ The highest-value next step is a real external-executor materialization:
 3. retrieve only the corresponding JATS XML objects;
 4. stream them through `harvest-pmc-jats.py` into `materialize-parquet.py`;
 5. record measured accepted/rejected article counts and formula counts;
-6. publish the Parquet shards plus lake manifest to the deterministic Internet Archive item;
+6. publish the Parquet shards plus stage manifest to the deterministic Internet Archive item;
 7. verify remote files;
 8. only then commit the lightweight publication manifest with verified URLs/checksums.
 
