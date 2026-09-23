@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "source_id": "ietf-rfcxml-formal-blocks",
+  "source_name": "RFC Editor RFCXML formal sourcecode blocks",
+  "source_homepage": "https://www.rfc-editor.org/",
+  "bulk_access": {
+    "kind": "rsync",
+    "documentation_url": "https://www.rfc-editor.org/series/rfc-download/",
+    "module": "rfcs",
+    "command": "rsync -avz --delete rsync.rfc-editor.org::rfcs <mirror-dir>"
+  },
+  "readiness": "harvest-ready",
+  "license": "IETF-Trust-Legal-Provisions",
+  "license_url": "https://www.rfc-editor.org/series/rfc-use/",
+  "policy_url": "https://trustee.ietf.org/license-info",
+  "scope": {
+    "file_pattern": "rfc*.xml",
+    "rfcxml_elements": ["sourcecode"],
+    "default_sourcecode_types": ["abnf", "pseudocode"],
+    "provenance_class": "attested",
+    "record_granularity": "one occurrence per selected RFCXML sourcecode block",
+    "note": "The first lane intentionally harvests formal grammar and pseudocode blocks only. Other sourcecode/artwork types require separate precision audits before promotion."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-ietf-rfcxml.py",
+    "input": "local RFC Editor rsync mirror",
+    "transient_output": "JSONL to stdout",
+    "command": "python3 scripts/science-equations/harvest-ietf-rfcxml.py --mirror <mirror>/in-notes --snapshot <snapshot-id>"
+  },
+  "canonical_storage": {
+    "format": "parquet",
+    "compression": "zstd",
+    "occurrence_schema": "data/science-equations/schemas/occurrence-v1.json",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "publisher": "scripts/science-equations/publish-internet-archive.mjs",
+    "internet_archive_identifier_template": "scientific-equation-atlas-ietf-rfcxml-formal-blocks-<snapshot-id>"
+  },
+  "snapshot_policy": {
+    "rule": "The external executor must record the UTC acquisition timestamp and a SHA-256 inventory digest of the mirrored rfc*.xml file names+bytes+hashes before materialization.",
+    "immutability": "Each distinct inventory digest is a distinct Atlas snapshot and Internet Archive item."
+  }
+}
