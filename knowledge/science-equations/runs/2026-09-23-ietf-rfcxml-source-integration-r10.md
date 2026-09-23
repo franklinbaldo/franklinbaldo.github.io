@@ -2,7 +2,7 @@
 type: science-atlas-run
 date: "2026-09-23"
 mode: "source-first corpus adapter integration"
-summary: "Add the RFC Editor rsync/RFCXML lane as the third bulk source adapter, extracting attested ABNF and pseudocode blocks into the common occurrence contract and Parquet/Internet Archive pipeline without fabricating a bulk materialization that this executor could not perform."
+summary: "Add the RFC Editor rsync/RFCXML lane as the third bulk source adapter, normalize all three current bulk sources behind persistent source descriptors, and route them into the common Parquet/Internet Archive contract without fabricating an unexecuted bulk materialization."
 updated: "2026-09-23"
 ---
 
@@ -13,6 +13,16 @@ updated: "2026-09-23"
 This execution reread the Atlas routine and source plan from `main`, inspected `knowledge/science-equations/`, the current manifests and the open Parquet/Internet Archive storage PR before changing the source inventory.
 
 The persistent Atlas already had bulk adapters for Wikidata P2534 and OEIS `%F` formula lines. The missing reusable layer was being materialized in the open storage PR: all adapters converge on a common occurrence schema, canonical Apache Parquet shards, verified Internet Archive publication and lightweight Git manifests. This run therefore advanced a genuinely different domain rather than adding an isolated formula.
+
+## Stable source descriptors
+
+The three current bulk lanes now have persistent source descriptors under `data/science-equations/sources/`:
+
+- `wikidata-p2534.json` — official Wikidata entity dumps, CC0, one attested occurrence per value-bearing P2534 statement;
+- `oeis-formula-lines.json` — pinned `oeis/oeisdata` commit, CC BY-SA 4.0, one attested occurrence per `%F` line;
+- `ietf-rfcxml.json` — RFC Editor rsync mirror, IETF Trust terms, attested RFCXML formal sourcecode blocks.
+
+The descriptor is stable source knowledge, not run state. It records bulk acquisition method, rights/readiness, adapter, canonical Parquet/storage contract and the rule for creating immutable snapshots. Snapshot IDs, measured row counts, shard hashes and Archive publication state remain in run/snapshot manifests instead of being hardcoded into the scheduler prompt.
 
 ## Source selected
 
@@ -72,13 +82,14 @@ No GitHub Action is used for acquisition, Parquet generation or Archive publicat
 
 A repository test was added at `src/data/science-equations-ietf-rfcxml-harvest.test.js`. Its fixture contains ABNF, pseudocode and unrelated JSON sourcecode; the expected lane emits only the two selected formal blocks and checks provenance, source URL/section, encoding and SHA-256 shapes.
 
-The adapter itself uses only Python's standard library, so source extraction adds no new runtime dependency. Parquet materialization remains in the shared PyArrow-based layer.
+The adapter itself uses only Python's standard library, so source extraction adds no new runtime dependency. A local isolated fixture execution reproduced the expected two-row result and `python -m py_compile` accepted the adapter logic. Parquet materialization remains in the shared PyArrow-based layer.
 
 This automation environment still cannot resolve outbound package/source hosts from its execution sandbox and does not expose Internet Archive credentials. Consequently, a full rsync mirror, Parquet write and authenticated Archive publication were not performed here. Those are not reported as green.
 
 ## Actual yield
 
 - source/corpus adapters added: **1** (`ietf-rfcxml-formal-blocks`);
+- stable bulk-source descriptors added: **3** (Wikidata, OEIS, RFCXML);
 - new domain coverage: **computer networking / protocols / security / systems formal syntax and pseudocode**;
 - persistent Parquet rows materialized: **0**;
 - Internet Archive items published: **0**;
