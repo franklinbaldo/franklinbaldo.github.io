@@ -9,6 +9,7 @@ import test from "node:test";
 const script = fileURLToPath(
   new URL("../../scripts/science-equations/harvest-pmc-jats.py", import.meta.url),
 );
+const python = process.env.PYTHON ?? (process.platform === "win32" ? "python" : "python3");
 
 test("PMC JATS adapter extracts licensed TeX/MathML and rejects noncommercial articles", () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "atlas-pmc-"));
@@ -32,11 +33,11 @@ test("PMC JATS adapter extracts licensed TeX/MathML and rejects noncommercial ar
     );
 
     const run = spawnSync(
-      "python3",
+      python,
       [script, "--root", dir, "--snapshot", "fixture-inventory-digest"],
       { encoding: "utf8" },
     );
-    assert.equal(run.status, 0, run.stderr);
+    assert.equal(run.status, 0, run.stderr || run.error?.message);
     const rows = run.stdout.trim().split("\n").filter(Boolean).map(JSON.parse);
     assert.equal(rows.length, 2);
     assert.deepEqual(
