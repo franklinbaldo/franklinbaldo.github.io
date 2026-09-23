@@ -11,8 +11,8 @@ import sys
 from typing import TextIO
 
 SOURCE_ID = "lmfdb-nf-defining-polynomials"
-SOURCE_LICENSE = "CC BY-SA 4.0"
-SOURCE_LICENSE_URL = "https://creativecommons.org/licenses/by-sa/4.0/"
+SOURCE_LICENSE = "CC-BY-SA"
+SOURCE_LICENSE_URL = "https://www.lmfdb.org/api/options"
 SOURCE_ACCESS_URL = "https://www.lmfdb.org/api/options"
 
 
