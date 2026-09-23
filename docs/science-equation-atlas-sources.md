@@ -340,22 +340,40 @@ Uma ocorrência pode ser duplicata textual sem ser semanticamente redundante: a 
 
 Embeddings e modelos podem gerar candidatos, mas nunca devem ser a evidência final de equivalência.
 
-## Escala de armazenamento
+## Escala de armazenamento e publicação
 
-Milhões de registros não devem ser milhões de blobs Git.
+Milhões de registros não devem ser milhões de blobs Git. O **equation lake persistente usa Apache Parquet e Internet Archive**: Parquet é o formato canônico das aquisições em massa e Archive.org é o backend público/durável dos shards. JSONL/CSV podem existir somente como streams intermediários efêmeros entre extrator e materializador.
 
-Prefira shards imutáveis:
+Layout lógico preferido:
 
 ```text
 dataset/
   source=<id>/
     snapshot=<version>/
-      part-00000.parquet
-      part-00001.parquet
-      ...
+      extracted/part-00000.parquet
+      normalized/part-00000.parquet
+      deduplicated/part-00000.parquet
+      manifest.json
 ```
 
-O Git guarda schemas, importadores, manifests, checksums, pequenos fixtures, documentação, conceitos OKF e resultados agregados. O snapshot massivo pode morar em storage apropriado e ser reproduzível a partir do manifest.
+Nem toda fonte precisa produzir todas as três camadas no primeiro run. `extracted` preserva ocorrências e notação da fonte; `normalized` adiciona representações derivadas não destrutivas; `deduplicated` materializa decisões de deduplicação sem apagar a relação com as linhas de origem.
+
+Cada snapshot/camada publicado deve ter um item determinístico/versionado no Internet Archive ou um namespace equivalente dentro do item do snapshot. O manifest em Git registra, no mínimo:
+
+- identificador e URLs do item Archive.org;
+- snapshot e licença da fonte;
+- schema/versionamento da camada;
+- nomes dos Parquets;
+- linhas, bytes e SHA-256 por shard;
+- algoritmo de compressão;
+- status de upload e verificação;
+- parâmetros necessários para reprodução.
+
+Uploads devem ser idempotentes e usar verificação de checksum. Após o envio, confira os metadados públicos do Archive.org e compare nome, tamanho e checksum disponível com os arquivos locais antes de marcar a aquisição como persistida. O utilitário comum é `scripts/science-equations/materialize-parquet-ia.py`; sua opção `--local-only` serve apenas para testes/fixtures.
+
+Credenciais IA-S3 nunca entram em Git. A biblioteca/CLI oficial `internetarchive` exige IA-S3 para upload; ausência de credenciais é blocker operacional explícito. Referências técnicas: [Internet Archive CLI — upload](https://archive.org/services/docs/api/internetarchive/cli.html), [Internet Archive Python API](https://archive.org/services/docs/api/internetarchive/api.html) e [Apache Parquet](https://parquet.apache.org/).
+
+O Git guarda schemas, importadores, manifests, checksums, pequenos fixtures, documentação, conceitos OKF e resultados agregados. Parquets não entram no histórico normal do repositório.
 
 O site usa índices/projeções para busca e navegação; não precisa carregar o dataset inteiro no build.
 
