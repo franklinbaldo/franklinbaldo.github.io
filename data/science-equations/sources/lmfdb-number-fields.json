@@ -30,10 +30,10 @@
   },
   "license_policy": {
     "scope": "corpus-wide",
-    "license": "CC BY-SA 4.0",
-    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "license": "CC-BY-SA",
+    "license_url": "https://www.lmfdb.org/api/options",
     "policy_url": "https://www.lmfdb.org/api/options",
-    "rule": "Preserve LMFDB attribution and share-alike metadata with every published Parquet snapshot and Internet Archive item."
+    "rule": "Preserve LMFDB attribution and share-alike metadata with every published Parquet snapshot and Internet Archive item; do not assert a CC-BY-SA version that the official access page does not specify."
   },
   "adapter": {
     "path": "scripts/science-equations/harvest-lmfdb-number-fields.py",
