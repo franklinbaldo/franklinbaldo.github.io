@@ -92,8 +92,11 @@ def emit_page(
         context_start = max(0, start - context_chars)
         context_end = min(len(text), end + context_chars)
         context = text[context_start:context_end]
+        # Logical source identity deliberately excludes the dump partition filename so
+        # a combined dump and its official partitioned representation hash the same
+        # page/revision occurrence.
         record_identity = "\n".join(
-            [snapshot, source_path, page_id, revision_id, str(index), match.group(0)]
+            [snapshot, page_id, revision_id, str(index), match.group(0)]
         )
         document_id = f"enwiki:{page_id}:{revision_id}"
         oldid_url = (
