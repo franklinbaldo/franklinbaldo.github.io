@@ -1,10 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { loadNormalizedMatches } from "../matches.js";
 import {
+  getPostUuid,
   isPublishedData,
   keyForPath,
   listPosts,
+  POSTS_DIR,
   readPost,
 } from "../posts.js";
 import {
@@ -27,6 +30,13 @@ interface TierEvidenceOptions {
 
 interface TierCardProjection {
   confidence: TierConfidence;
+}
+
+interface VersionAttentionProjection {
+  wins: number;
+  losses: number;
+  lossPerspectives: number;
+  attention: boolean;
 }
 
 const TIER_DIR = path.join(process.cwd(), "knowledge/blog-post-tiers");
@@ -72,6 +82,85 @@ function readPublishedWorkKeys(): Set<string> {
 }
 
 /**
+ * Flat canonical files have an unambiguous live content UUID without consulting
+ * the generated selection manifest. Legacy multi-file directories are skipped
+ * conservatively: a stale/missing generated selection must never manufacture
+ * version attention. As the corpus flattens, more works become eligible for
+ * this derived check automatically.
+ */
+function readUnambiguousCurrentVersionIds(): Map<string, Set<string>> {
+  const current = new Map<string, Set<string>>();
+
+  for (const postPath of listPosts()) {
+    const data = readPost(postPath);
+    if (!isPublishedData(data)) continue;
+
+    const relative = path.relative(POSTS_DIR, postPath);
+    if (relative.includes(path.sep)) continue;
+
+    const uuid = getPostUuid(postPath);
+    if (!uuid) continue;
+    const key = keyForPath(postPath);
+    if (!current.has(key)) current.set(key, new Set());
+    current.get(key)!.add(uuid);
+  }
+
+  return current;
+}
+
+/**
+ * A selected/current version needs attention only when an archived challenger
+ * beats it repeatedly under at least two distinct perspectives. One loss is a
+ * useful observation, not a regression signal. This projection never changes
+ * selection; it only raises editorial review priority.
+ */
+function deriveVersionAttention(): Map<string, VersionAttentionProjection> {
+  const currentByKey = readUnambiguousCurrentVersionIds();
+  const mutable = new Map<
+    string,
+    { wins: number; losses: number; lossPerspectives: Set<string> }
+  >();
+
+  for (const key of currentByKey.keys()) {
+    mutable.set(key, { wins: 0, losses: 0, lossPerspectives: new Set() });
+  }
+
+  for (const match of loadNormalizedMatches()) {
+    if (match.kind !== "version") continue;
+    const key = match.postA.key;
+    const currentVersions = currentByKey.get(key);
+    if (!currentVersions) continue;
+
+    const aCurrent =
+      match.postA.version != null && currentVersions.has(match.postA.version);
+    const bCurrent =
+      match.postB.version != null && currentVersions.has(match.postB.version);
+    if (aCurrent === bCurrent) continue;
+
+    const selectedSide = aCurrent ? "a" : "b";
+    const stats = mutable.get(key)!;
+    if (match.winnerSide === selectedSide) {
+      stats.wins++;
+    } else {
+      stats.losses++;
+      if (match.perspectiveId) stats.lossPerspectives.add(match.perspectiveId);
+    }
+  }
+
+  const projected = new Map<string, VersionAttentionProjection>();
+  for (const [key, stats] of mutable) {
+    const lossPerspectives = stats.lossPerspectives.size;
+    projected.set(key, {
+      wins: stats.wins,
+      losses: stats.losses,
+      lossPerspectives,
+      attention: stats.losses >= 2 && lossPerspectives >= 2,
+    });
+  }
+  return projected;
+}
+
+/**
  * Read-only projection for editorial tiering. Every metric is recomputed from
  * canonical Hrönir evidence, while tier state is read from canonical OKF cards.
  * The review-priority score is triage metadata only and is never persisted.
@@ -87,6 +176,7 @@ export function tierEvidence({
   const perPerspective = computePerPerspectiveRatings();
   const tierCards = readTierCards();
   const publishedKeys = readPublishedWorkKeys();
+  const versionAttention = deriveVersionAttention();
   const perspectiveUniverse = perPerspective.size;
 
   const projected = ratings
@@ -119,6 +209,7 @@ export function tierEvidence({
       }
 
       const card = tierCards.get(row.key);
+      const version = versionAttention.get(row.key);
       const priority = deriveReviewPriority({
         tiered: Boolean(card),
         confidence: card?.confidence ?? null,
@@ -127,6 +218,7 @@ export function tierEvidence({
         gap,
         perspectiveCount: perspectiveRows.length,
         perspectiveUniverse,
+        versionAttention: version?.attention ?? false,
       });
 
       return {
@@ -138,6 +230,7 @@ export function tierEvidence({
         perspectiveRows,
         top10: perspectiveRows.filter((entry) => entry.rank <= 10).length,
         card,
+        version,
         priority,
       };
     })
@@ -160,11 +253,11 @@ export function tierEvidence({
   }
 
   console.log(
-    "rank\tkey\ttiered\tconfidence\tordinal\tmu\tsigma\tW/N\tabs-ewma\tabs-n\tdeconf\tdeconf-n\tgap\tperspectives\ttop10-perspectives\tsignal-agreement\treview-priority\tpriority-reasons",
+    "rank\tkey\ttiered\tconfidence\tordinal\tmu\tsigma\tW/N\tabs-ewma\tabs-n\tdeconf\tdeconf-n\tgap\tperspectives\ttop10-perspectives\tversion-attention\tselected-version-W/L\tsignal-agreement\treview-priority\tpriority-reasons",
   );
 
   for (const entry of selected) {
-    const { row, card, priority, perspectiveRows } = entry;
+    const { row, card, version, priority, perspectiveRows } = entry;
     console.log(
       [
         entry.rank,
@@ -182,6 +275,8 @@ export function tierEvidence({
         fixed(entry.gap),
         perspectiveRows.length,
         entry.top10,
+        version ? (version.attention ? "yes" : "no") : "-",
+        version ? `${version.wins}/${version.losses}` : "-",
         priority.signalAgreement,
         priority.score,
         priority.reasons.join(","),
@@ -194,6 +289,11 @@ export function tierEvidence({
       )) {
         console.log(
           `  ${perspective.id}\trank=${perspective.rank}\tordinal=${fixed(perspective.ordinal)}\tW/N=${perspective.wins}/${perspective.appearances}`,
+        );
+      }
+      if (version) {
+        console.log(
+          `  version-attention\t${version.attention ? "yes" : "no"}\tselected-version-W/L=${version.wins}/${version.losses}\tlosing-perspectives=${version.lossPerspectives}`,
         );
       }
     }
