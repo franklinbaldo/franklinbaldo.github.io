@@ -56,4 +56,26 @@ describe("deriveReviewPriority", () => {
       "light-absolute-coverage",
     ]);
   });
+
+  it("surfaces repeated selected-version regression as decision-relevant", () => {
+    const result = deriveReviewPriority({
+      tiered: false,
+      confidence: null,
+      appearances: 47,
+      absoluteN: 15,
+      gap: 0.31,
+      perspectiveCount: 13,
+      perspectiveUniverse: 14,
+      versionAttention: true,
+    });
+
+    assert.equal(result.score, 158);
+    assert.equal(result.signalAgreement, "medium");
+    assert.deepEqual(result.reasons, [
+      "unrated",
+      "missing-perspectives:1",
+      "moderate-absolute-deconfounded-gap",
+      "version-attention",
+    ]);
+  });
 });
