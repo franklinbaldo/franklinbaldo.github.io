@@ -83,7 +83,7 @@ export const tagDescriptions: Record<string, { en?: string; pt?: string }> = {
     en: "On chaos, unpredictability, and the limits of control in complex systems.",
     pt: "Sobre caos, imprevisibilidade e os limites do controle em sistemas complexos.",
   },
-  "software engineering": {
+  "software-engineering": {
     en: "Notes on building software — architecture, tooling, and the craft itself.",
     pt: "Notas sobre construir software — arquitetura, ferramentas e o ofício em si.",
   },

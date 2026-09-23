@@ -3,9 +3,7 @@ import { relative } from "node:path";
 import matter from "gray-matter";
 import { BLOG_DIR, listPostFiles } from "./lib/content.mjs";
 
-const KNOWN_COLLISIONS = new Map([
-  ["software-engineering", ["software engineering", "software-engineering"]],
-]);
+const KNOWN_COLLISIONS = new Map();
 
 export function normalizeTagKey(tag) {
   return tag

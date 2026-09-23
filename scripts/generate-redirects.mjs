@@ -29,6 +29,8 @@ const { redirects } = analyzeLinks(posts);
 const TAG_REDIRECTS = {
   "/tags/AI/": "/tags/ai/",
   "/pt/tags/AI/": "/pt/tags/ai/",
+  "/tags/software%20engineering/": "/tags/software-engineering/",
+  "/pt/tags/software%20engineering/": "/pt/tags/software-engineering/",
   "/pt/tags/engenharia%20de%20software/": "/pt/tags/engenharia-de-software/",
   "/pt/tags/ia/": "/pt/tags/IA/",
   "/pt/tags/memoria/": "/pt/tags/mem%C3%B3ria/",
