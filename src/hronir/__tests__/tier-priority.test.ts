@@ -35,6 +35,30 @@ describe("deriveReviewPriority", () => {
     assert.deepEqual(result.reasons, ["large-absolute-deconfounded-gap"]);
   });
 
+  it("detects disagreement between ordinal, win-loss, and absolute signals", () => {
+    const result = deriveReviewPriority({
+      tiered: false,
+      confidence: null,
+      appearances: 39,
+      absoluteN: 27,
+      gap: -0.1,
+      perspectiveCount: 13,
+      perspectiveUniverse: 14,
+      ordinalPercentile: 0.07,
+      winRate: 13 / 39,
+      absoluteQuality: 3.81,
+      deconfoundedQuality: 3.71,
+    });
+
+    assert.equal(result.score, 118);
+    assert.equal(result.signalAgreement, "medium");
+    assert.deepEqual(result.reasons, [
+      "unrated",
+      "missing-perspectives:1",
+      "moderate-cross-signal-disagreement",
+    ]);
+  });
+
   it("raises review priority for low confidence and missing perspectives", () => {
     const result = deriveReviewPriority({
       tiered: true,
