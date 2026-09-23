@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "source_id": "lmfdb-nf-defining-polynomials",
+  "source_name": "LMFDB number fields — canonical defining polynomials",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "documentation": "https://www.lmfdb.org/api/options",
+    "statistics": "https://www.lmfdb.org/api/stats",
+    "table": "nf_fields",
+    "access_mode": "official read-only PostgreSQL SQL mirror",
+    "sql_mirror": {
+      "host": "devmirror.lmfdb.xyz",
+      "port": 5432,
+      "dbname": "lmfdb",
+      "user": "lmfdb"
+    },
+    "deterministic_query": "SELECT label, coeffs, degree, disc_abs, disc_sign, galois_label FROM nf_fields ORDER BY label"
+  },
+  "scope": {
+    "object": "number field",
+    "attested_fields": ["label", "coeffs", "degree", "disc_abs", "disc_sign", "galois_label"],
+    "derived_structure": "P(x)=0 from the stored constant-first defining-polynomial coefficients",
+    "provenance_class": "reconstructed",
+    "reason": "The database attests the coefficient vector for the defining polynomial; the Atlas serializes those coefficients into an equation P(x)=0 and therefore does not claim the emitted notation is the source's original notation."
+  },
+  "snapshot_policy": {
+    "kind": "rowstream-digest",
+    "rule": "Export the selected columns in deterministic label order, compute SHA-256 over the exact CSV byte stream before extraction, and identify the acquisition as rowstream-sha256:<digest>. A wall-clock date or LMFDB release label alone is not sufficient because the public mirror can change independently.",
+    "required_fields": ["query", "row_count", "rowstream_sha256", "observed_at"]
+  },
+  "license_policy": {
+    "scope": "corpus-wide",
+    "license": "CC-BY-SA",
+    "license_url": "https://www.lmfdb.org/api/options",
+    "policy_url": "https://www.lmfdb.org/api/options",
+    "rule": "Preserve LMFDB attribution and share-alike metadata with every published Parquet snapshot and Internet Archive item; do not assert a CC-BY-SA version that the official access page does not specify."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-lmfdb-number-fields.py",
+    "input": "deterministic CSV export from nf_fields",
+    "transport_output": "JSONL to stdout (transient only)",
+    "provenance_class": "reconstructed",
+    "validation": ["degree equals len(coeffs)-1", "leading coefficient is nonzero", "label is present"]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-lmfdb-nf-defining-polynomials-<rowstream-digest>-<stage>"
+  }
+}
