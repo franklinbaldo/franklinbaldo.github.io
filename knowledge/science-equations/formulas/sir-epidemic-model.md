@@ -1,7 +1,7 @@
 ---
 type: science-formula
 name: "SIR epidemic model"
-latex: "\\begin{aligned}\\frac{dS}{dt}&=-\\beta IS\\\\\\frac{dI}{dt}&=\\beta IS-\\gamma I\\\\\\frac{dR}{dt}&=\\gamma I\\end{aligned}"
+latex: "\\frac{dS}{dt}=-\\beta IS;\\quad \\frac{dI}{dt}=\\beta IS-\\gamma I;\\quad \\frac{dR}{dt}=\\gamma I"
 summary: "A three-compartment model in which susceptible population flows into an infectious compartment and then into a recovered compartment."
 status: verified
 source_label: "Scientific Reports (2020), The approximately universal shapes of epidemic curves in the SEIR model"
