@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "source_id": "wikipedia-en-math",
+  "source_name": "English Wikipedia current-revision math tags",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "dump_root": "https://dumps.wikimedia.org/enwiki/",
+    "documentation": "https://meta.wikimedia.org/wiki/Data_dumps/What's_available_for_download",
+    "access_mode": "Official Wikimedia pages-articles multistream XML dumps; prefer the partitioned .xml.bz2 files for parallel external acquisition."
+  },
+  "snapshot_policy": {
+    "kind": "dump-id-plus-official-checksums-plus-local-sha256",
+    "rule": "Pin the enwiki dump date and exact pages-articles-multistream file inventory. Verify each downloaded object against Wikimedia's published checksum and compute a local SHA-256. Derive source_snapshot from a deterministic SHA-256 over the sorted filename, byte length, official checksum and local SHA-256 inventory. A date alone is not the final lake snapshot identity.",
+    "required_fields": [
+      "dump_date",
+      "dump_status_url",
+      "official_checksum_manifest_url",
+      "selected_file_inventory_sha256"
+    ]
+  },
+  "license_policy": {
+    "scope": "page/revision attribution preserved",
+    "default_text_license": "CC-BY-SA-4.0-or-compatible-and/or-GFDL",
+    "terms_url": "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use",
+    "rule": "Preserve a stable oldid URL for every occurrence. Wikimedia text is reusable under the applicable free-license terms, but imported text can carry compatible-license or additional attribution requirements; do not erase page/revision lineage or visible source-specific notices during curated reuse."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-wikimedia-math.py",
+    "input": "One or more official pages-articles-multistream XML, XML.bz2 or XML.gz files",
+    "transport_output": "JSONL to stdout (transient only)",
+    "selection": "Main namespace pages by default; every non-empty <math>...</math> body in current revision wikitext",
+    "expression_encoding": "mediawiki-math-tex",
+    "provenance_class": "attested"
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-wikipedia-en-math-<inventory-digest>-<stage>"
+  }
+}
