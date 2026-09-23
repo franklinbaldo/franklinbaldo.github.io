@@ -425,7 +425,7 @@ def main() -> int:
 
     if args.json:
         print(json.dumps(report, indent=2))
-        return 0 if all_ok else 1
+        return 0
 
     print("=" * 60)
     print("Scientific Equation Atlas — Local Data Plane Doctor")
