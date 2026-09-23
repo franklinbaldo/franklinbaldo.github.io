@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "source_id": "oeis-formula-lines",
+  "source_name": "OEIS formula lines (%F)",
+  "source_homepage": "https://oeis.org/",
+  "bulk_access": {
+    "kind": "git",
+    "documentation_url": "https://oeis.org/wiki/Download",
+    "repository": "https://github.com/oeis/oeisdata",
+    "preferred_artifact": "pinned oeis/oeisdata commit"
+  },
+  "readiness": "harvest-ready",
+  "license": "CC-BY-SA-4.0",
+  "license_url": "https://oeis.org/LICENSE",
+  "policy_url": "https://oeis.org/wiki/Legal_Documents",
+  "scope": {
+    "path": "seq/**/*.seq",
+    "oeis_internal_fields": ["F"],
+    "provenance_class": "attested",
+    "record_granularity": "one occurrence per %F formula line",
+    "original_encoding": "oeis-internal-format-ascii-math"
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-oeis-formulas.mjs",
+    "input": "local checkout containing the pinned oeis/oeisdata commit",
+    "transient_output": "JSONL to stdout",
+    "command": "node scripts/science-equations/harvest-oeis-formulas.mjs --repo <oeisdata-clone> --snapshot <commit>"
+  },
+  "canonical_storage": {
+    "format": "parquet",
+    "compression": "zstd",
+    "occurrence_schema": "data/science-equations/schemas/occurrence-v1.json",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "publisher": "scripts/science-equations/publish-internet-archive.mjs",
+    "internet_archive_identifier_template": "scientific-equation-atlas-oeis-formula-lines-<commit>"
+  },
+  "snapshot_policy": {
+    "rule": "Use the resolved immutable oeis/oeisdata commit SHA and retain the export timestamp from time.txt when available.",
+    "immutability": "Each distinct source commit is a distinct Atlas snapshot and Internet Archive item."
+  }
+}
