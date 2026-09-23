@@ -3,10 +3,10 @@ type: science-formula
 name: "Logistic population growth"
 latex: "\\frac{dP}{dt}=rP\\left(1-\\frac{P}{K}\\right)"
 summary: "Population growth slows as population size approaches a fixed carrying capacity."
-status: verified
+status: audited
 source_label: "OpenStax Calculus Volume 2, §4.4"
 source_url: "https://openstax.org/books/calculus-volume-2/pages/4-4-the-logistic-equation"
-updated: "2026-09-22"
+updated: "2026-09-23"
 ---
 
 # Logistic population growth
@@ -35,7 +35,7 @@ Expanding the source equation gives
 \frac{dP}{dt}=rP-\frac{r}{K}P^2.
 \]
 
-For finite \(K\), the quadratic term makes the ODE nonlinear. A constant renaming or rescaling of \(P\) therefore does **not** turn the full logistic equation into the atlas's existing first-order linear-decay form \(dx/dt=-kx\). No equation-family link is asserted in this run.
+For finite \(K\), the quadratic term makes the ODE nonlinear. A constant renaming or rescaling of \(P\) therefore does **not** turn the full logistic equation into the atlas's existing first-order linear-decay form \(dx/dt=-kx\). No equation-family link is asserted.
 
 There is a controlled low-density approximation. When \(P/K\ll1\),
 
@@ -46,6 +46,18 @@ There is a controlled low-density approximation. When \(P/K\ll1\),
 \]
 
 For the usual ecological growth case \(r>0\), this is first-order exponential **growth**, not the verified decay family whose canonical parameterization requires \(k>0\) in \(dx/dt=-kx\). Treating those as one family would require deliberately broadening the family definition rather than silently changing a sign.
+
+## Saturation-family audit
+
+The Atlas now also contains the algebraic [normalized saturating hyperbola](../families/normalized-saturating-hyperbola.md),
+
+\[
+y=\frac{x}{1+x}.
+\]
+
+The logistic model is **not** an occurrence of that family merely because its solutions can approach the carrying capacity \(K\). The source formula here is a nonlinear differential equation for a trajectory \(P(t)\); the new family is a static input-response relation. Converting a particular logistic solution to a sigmoid or rational-looking expression after solving the ODE does not make the governing equation equivalent to the algebraic family.
+
+This distinction is recorded explicitly because "saturation" is otherwise an easy source of false graph edges.
 
 ## Evidence
 

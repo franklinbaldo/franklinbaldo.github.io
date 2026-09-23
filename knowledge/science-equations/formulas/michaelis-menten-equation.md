@@ -3,7 +3,7 @@ type: science-formula
 name: "Michaelis–Menten equation"
 latex: "v_0=\\frac{V[S]_0}{K_{\\mathrm{M}}+[S]_0}"
 summary: "Initial enzyme-catalysed reaction rate rises hyperbolically with substrate concentration toward a limiting rate."
-status: verified
+status: normalized
 source_label: "IUPAC Gold Book, Michaelis–Menten equation"
 source_url: "https://goldbook.iupac.org/terms/view/11546"
 updated: "2026-09-23"
@@ -54,6 +54,8 @@ For positive \(K_{\mathrm{M}}\) and nonzero \(V\), substitution gives
 
 This is a verified rescaling of the same relation, not a replacement for the source notation. It makes the saturation structure explicit: \(\nu\to1\) as \(s\to\infty\), while \(\nu=1/2\) at \(s=1\).
 
+With \(x=s\) and \(y=\nu\), this is exactly the canonical form of the verified [normalized saturating hyperbola](../families/normalized-saturating-hyperbola.md) family. The independent Langmuir adsorption occurrence reaches the same canonical form through different scientific variables and scale parameters.
+
 ### Low-substrate limit
 
 If \([S]_0\ll K_{\mathrm{M}}\), then
@@ -68,7 +70,7 @@ This is a controlled first-order **rate approximation** in substrate concentrati
 
 ### Existing-family rejection
 
-The current Atlas contains two equation families. The relevant decay family is
+The first differential family is
 
 \[
 \frac{dx}{dt}=-kx,\qquad k>0.
@@ -82,15 +84,13 @@ Michaelis–Menten as recorded here is an algebraic initial-rate relation, not a
 
 plus assumptions allowing the instantaneous rate to retain Michaelis–Menten form as \([S]\) changes. Only in the additional low-substrate limit would that augmented model reduce approximately to a first-order decay law. Those extra assumptions are not invertible variable renamings of the source occurrence, so **no `first-order-linear-decay` edge is created**.
 
-The other existing family, the undamped linear harmonic oscillator,
+The undamped linear harmonic oscillator,
 
 \[
 \frac{d^2x}{dt^2}+\omega^2x=0,
 \]
 
 is likewise not equivalent: it is a second-order evolution law with periodic generic solutions, whereas the Michaelis–Menten occurrence is a static rate-versus-concentration relation. No oscillator-family edge is created.
-
-A generic saturating-hyperbola family is also deferred until another independent scientific occurrence is present and an explicit transformation is worth encoding.
 
 ## Evidence and prior art
 
