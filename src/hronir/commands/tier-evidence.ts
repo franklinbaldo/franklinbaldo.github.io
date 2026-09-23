@@ -1,14 +1,17 @@
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { loadNormalizedMatches } from "../matches.js";
 import {
   getPostUuid,
+  getPostUuidFromBlob,
   isPublishedData,
   keyForPath,
   listPosts,
   POSTS_DIR,
   readPost,
+  readPostFromBlob,
 } from "../posts.js";
 import {
   computeAbsoluteQuality,
@@ -30,6 +33,12 @@ interface TierEvidenceOptions {
 
 interface TierCardProjection {
   confidence: TierConfidence;
+  reviewedRevision: string | null;
+}
+
+interface CurrentVersionProjection {
+  path: string;
+  uuid: string;
 }
 
 interface VersionAttentionProjection {
@@ -59,7 +68,11 @@ function readTierCards(): Map<string, TierCardProjection> {
       data.confidence === "high"
         ? data.confidence
         : null;
-    cards.set(String(data.translation_key), { confidence });
+    const reviewedRevision =
+      typeof data.reviewed_revision === "string" && data.reviewed_revision.trim()
+        ? data.reviewed_revision.trim()
+        : null;
+    cards.set(String(data.translation_key), { confidence, reviewedRevision });
   }
 
   return cards;
@@ -85,11 +98,14 @@ function readPublishedWorkKeys(): Set<string> {
  * Flat canonical files have an unambiguous live content UUID without consulting
  * the generated selection manifest. Legacy multi-file directories are skipped
  * conservatively: a stale/missing generated selection must never manufacture
- * version attention. As the corpus flattens, more works become eligible for
- * this derived check automatically.
+ * version attention or a stale-review signal. As the corpus flattens, more
+ * works become eligible for these derived checks automatically.
  */
-function readUnambiguousCurrentVersionIds(): Map<string, Set<string>> {
-  const current = new Map<string, Set<string>>();
+function readUnambiguousCurrentVersions(): Map<
+  string,
+  CurrentVersionProjection[]
+> {
+  const current = new Map<string, CurrentVersionProjection[]>();
 
   for (const postPath of listPosts()) {
     const data = readPost(postPath);
@@ -101,11 +117,82 @@ function readUnambiguousCurrentVersionIds(): Map<string, Set<string>> {
     const uuid = getPostUuid(postPath);
     if (!uuid) continue;
     const key = keyForPath(postPath);
-    if (!current.has(key)) current.set(key, new Set());
-    current.get(key)!.add(uuid);
+    if (!current.has(key)) current.set(key, []);
+    current.get(key)!.push({ path: postPath, uuid });
   }
 
   return current;
+}
+
+function toGitPath(filePath: string): string {
+  return filePath.split(path.sep).join("/");
+}
+
+function historicalFlatKey(
+  filePath: string,
+  data: Record<string, unknown>,
+): string {
+  if (data.translationKey) return String(data.translationKey);
+  return path.basename(filePath).replace(/\.mdx?$/, "");
+}
+
+/**
+ * Derive whether a canonical tier review predates a material change to the
+ * selected flat content. The comparison uses the same semantic UUID machinery
+ * as Hrönir, so lifecycle fields and slug-only moves do not create churn.
+ *
+ * This deliberately fails open to "unknown" (no map entry) when a current path
+ * cannot be resolved at the reviewed revision. That makes renames/moves safe:
+ * a path change alone is never enough to call a review stale. A future rename-
+ * aware resolver can broaden coverage without changing this conservative
+ * contract.
+ */
+function deriveStaleVersions(
+  cards: Map<string, TierCardProjection>,
+  currentByKey: Map<string, CurrentVersionProjection[]>,
+): Map<string, boolean> {
+  const stale = new Map<string, boolean>();
+
+  for (const [key, card] of cards) {
+    if (!card.reviewedRevision) continue;
+    const current = currentByKey.get(key);
+    if (!current?.length) continue;
+
+    let comparable = true;
+    let changed = false;
+
+    for (const version of current) {
+      let blobSha: string;
+      try {
+        blobSha = execFileSync(
+          "git",
+          ["rev-parse", "--verify", `${card.reviewedRevision}:${toGitPath(version.path)}`],
+          { stdio: ["ignore", "pipe", "ignore"] },
+        )
+          .toString()
+          .trim();
+      } catch {
+        comparable = false;
+        break;
+      }
+
+      try {
+        const historicalData = readPostFromBlob(blobSha);
+        if (historicalFlatKey(version.path, historicalData) !== key) {
+          comparable = false;
+          break;
+        }
+        if (getPostUuidFromBlob(blobSha) !== version.uuid) changed = true;
+      } catch {
+        comparable = false;
+        break;
+      }
+    }
+
+    if (comparable) stale.set(key, changed);
+  }
+
+  return stale;
 }
 
 /**
@@ -114,8 +201,14 @@ function readUnambiguousCurrentVersionIds(): Map<string, Set<string>> {
  * useful observation, not a regression signal. This projection never changes
  * selection; it only raises editorial review priority.
  */
-function deriveVersionAttention(): Map<string, VersionAttentionProjection> {
-  const currentByKey = readUnambiguousCurrentVersionIds();
+function deriveVersionAttention(
+  currentEntries: Map<string, CurrentVersionProjection[]>,
+): Map<string, VersionAttentionProjection> {
+  const currentByKey = new Map<string, Set<string>>();
+  for (const [key, entries] of currentEntries) {
+    currentByKey.set(key, new Set(entries.map((entry) => entry.uuid)));
+  }
+
   const mutable = new Map<
     string,
     { wins: number; losses: number; lossPerspectives: Set<string> }
@@ -176,7 +269,9 @@ export function tierEvidence({
   const perPerspective = computePerPerspectiveRatings();
   const tierCards = readTierCards();
   const publishedKeys = readPublishedWorkKeys();
-  const versionAttention = deriveVersionAttention();
+  const currentVersions = readUnambiguousCurrentVersions();
+  const staleVersions = deriveStaleVersions(tierCards, currentVersions);
+  const versionAttention = deriveVersionAttention(currentVersions);
   const perspectiveUniverse = perPerspective.size;
 
   const projected = ratings
@@ -209,6 +304,7 @@ export function tierEvidence({
       }
 
       const card = tierCards.get(row.key);
+      const staleVersion = staleVersions.get(row.key);
       const version = versionAttention.get(row.key);
       const ordinalPercentile =
         ratings.length <= 1 ? 0.5 : 1 - index / (ratings.length - 1);
@@ -220,6 +316,7 @@ export function tierEvidence({
         gap,
         perspectiveCount: perspectiveRows.length,
         perspectiveUniverse,
+        staleVersion: staleVersion ?? false,
         versionAttention: version?.attention ?? false,
         ordinalPercentile,
         winRate: row.appearances > 0 ? row.wins / row.appearances : null,
@@ -236,6 +333,7 @@ export function tierEvidence({
         perspectiveRows,
         top10: perspectiveRows.filter((entry) => entry.rank <= 10).length,
         card,
+        staleVersion,
         version,
         priority,
       };
@@ -259,11 +357,11 @@ export function tierEvidence({
   }
 
   console.log(
-    "rank\tkey\ttiered\tconfidence\tordinal\tmu\tsigma\tW/N\tabs-ewma\tabs-n\tdeconf\tdeconf-n\tgap\tperspectives\ttop10-perspectives\tversion-attention\tselected-version-W/L\tsignal-agreement\treview-priority\tpriority-reasons",
+    "rank\tkey\ttiered\tconfidence\tordinal\tmu\tsigma\tW/N\tabs-ewma\tabs-n\tdeconf\tdeconf-n\tgap\tperspectives\ttop10-perspectives\tstale-version\tversion-attention\tselected-version-W/L\tsignal-agreement\treview-priority\tpriority-reasons",
   );
 
   for (const entry of selected) {
-    const { row, card, version, priority, perspectiveRows } = entry;
+    const { row, card, staleVersion, version, priority, perspectiveRows } = entry;
     console.log(
       [
         entry.rank,
@@ -281,6 +379,7 @@ export function tierEvidence({
         fixed(entry.gap),
         perspectiveRows.length,
         entry.top10,
+        staleVersion == null ? "-" : staleVersion ? "yes" : "no",
         version ? (version.attention ? "yes" : "no") : "-",
         version ? `${version.wins}/${version.losses}` : "-",
         priority.signalAgreement,
@@ -295,6 +394,11 @@ export function tierEvidence({
       )) {
         console.log(
           `  ${perspective.id}\trank=${perspective.rank}\tordinal=${fixed(perspective.ordinal)}\tW/N=${perspective.wins}/${perspective.appearances}`,
+        );
+      }
+      if (staleVersion != null) {
+        console.log(
+          `  stale-version\t${staleVersion ? "yes" : "no"}\treviewed-revision=${card?.reviewedRevision ?? "-"}`,
         );
       }
       if (version) {
