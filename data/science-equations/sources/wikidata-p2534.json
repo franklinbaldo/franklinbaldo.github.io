@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "source_id": "wikidata-p2534",
+  "source_name": "Wikidata defining formula (P2534)",
+  "source_homepage": "https://www.wikidata.org/wiki/Property:P2534",
+  "bulk_access": {
+    "kind": "dump",
+    "documentation_url": "https://www.wikidata.org/wiki/Wikidata:Database_download",
+    "root_url": "https://dumps.wikimedia.org/wikidatawiki/entities/",
+    "preferred_artifact": "official Wikidata JSON entity dump"
+  },
+  "readiness": "harvest-ready",
+  "license": "CC0-1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "policy_url": "https://www.wikidata.org/wiki/Wikidata:Licensing",
+  "scope": {
+    "property": "P2534",
+    "symbol_property": "P7235",
+    "provenance_class": "attested",
+    "record_granularity": "one occurrence per value-bearing P2534 statement",
+    "original_encoding": "wikidata-mathematical-expression"
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-wikidata-p2534.mjs",
+    "input": "decompressed official Wikidata JSON entity dump",
+    "transient_output": "JSONL to stdout",
+    "command": "bzip2 -dc <wikidata-dump>.json.bz2 | node scripts/science-equations/harvest-wikidata-p2534.mjs --snapshot <snapshot-id>"
+  },
+  "canonical_storage": {
+    "format": "parquet",
+    "compression": "zstd",
+    "occurrence_schema": "data/science-equations/schemas/occurrence-v1.json",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "publisher": "scripts/science-equations/publish-internet-archive.mjs",
+    "internet_archive_identifier_template": "scientific-equation-atlas-wikidata-p2534-<snapshot-id>"
+  },
+  "snapshot_policy": {
+    "rule": "Pin the official dump artifact name/date and record its published checksum before extraction.",
+    "immutability": "A distinct upstream dump checksum is a distinct Atlas snapshot and Internet Archive item."
+  }
+}
