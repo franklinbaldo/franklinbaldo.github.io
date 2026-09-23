@@ -1,0 +1,229 @@
+---
+import katex from "katex";
+import "katex/dist/katex.min.css";
+import PageLayout from "../../layouts/PageLayout.astro";
+import {
+  equationFamilies,
+  scienceBranches,
+  scienceFormulas,
+  SCIENCE_EQUATIONS_UPDATED,
+} from "../../data/science-equations";
+
+const branchBySlug = new Map(scienceBranches.map((branch) => [branch.slug, branch]));
+const formulaBySlug = new Map(scienceFormulas.map((formula) => [formula.slug, formula]));
+const root = branchBySlug.get("science");
+const topBranches = (root?.children ?? [])
+  .map((slug) => branchBySlug.get(slug))
+  .filter((branch): branch is NonNullable<typeof branch> => Boolean(branch));
+
+const renderEquation = (latex: string) =>
+  katex.renderToString(latex, { displayMode: true, throwOnError: false });
+---
+
+<PageLayout
+  title="Atlas das Equações | Franklin Baldo"
+  description="Uma taxonomia viva das fórmulas usadas pela ciência e das estruturas matemáticas que reaparecem entre disciplinas."
+  lang="pt"
+>
+  <main class="atlas-shell">
+    <header class="atlas-hero">
+      <p class="eyebrow">EXPERIMENTO ABERTO · ATUALIZADO {SCIENCE_EQUATIONS_UPDATED}</p>
+      <h1>Atlas das Equações</h1>
+      <p class="lede">
+        Uma árvore da ciência, suas fórmulas realmente usadas e um segundo grafo por baixo:
+        as estruturas matemáticas que voltam a aparecer com outros nomes, variáveis e interpretações.
+      </p>
+      <div class="stats" aria-label="Cobertura atual">
+        <span><strong>{scienceBranches.length}</strong> ramos</span>
+        <span><strong>{scienceFormulas.length}</strong> fórmulas</span>
+        <span><strong>{equationFamilies.length}</strong> famílias</span>
+      </div>
+    </header>
+
+    <section aria-labelledby="tree-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">01 · TAXONOMIA</p>
+          <h2 id="tree-title">A árvore começa larga</h2>
+        </div>
+        <p>O corpus cresce por cobertura, não por obsessão em terminar uma disciplina antes das outras.</p>
+      </div>
+      <div class="branch-grid">
+        {topBranches.map((branch) => (
+          <article>
+            <small>{branch.level}</small>
+            <h3>{branch.name}</h3>
+            <p>{branch.description}</p>
+            {branch.children.length > 0 && (
+              <ul>
+                {branch.children.map((slug) => {
+                  const child = branchBySlug.get(slug);
+                  return child ? <li>{child.name}</li> : null;
+                })}
+              </ul>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section aria-labelledby="formula-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">02 · OCORRÊNCIAS</p>
+          <h2 id="formula-title">A fórmula fica no idioma da área</h2>
+        </div>
+        <p>Cada ocorrência preserva sua notação e seu significado científico antes de qualquer normalização.</p>
+      </div>
+      <div class="formula-grid">
+        {scienceFormulas.map((formula) => (
+          <article class="formula-card" id={formula.slug}>
+            <div class="card-meta">
+              <span>{formula.status}</span>
+              <span>{formula.branches.map((slug) => branchBySlug.get(slug)?.name).filter(Boolean).join(" · ")}</span>
+            </div>
+            <h3>{formula.name}</h3>
+            <div class="equation" set:html={renderEquation(formula.latex)} />
+            <p>{formula.summary}</p>
+            {formula.sourceUrl && (
+              <p class="source">
+                <a href={formula.sourceUrl}>Fonte: {formula.sourceLabel ?? formula.sourceUrl}</a>
+              </p>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section aria-labelledby="family-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">03 · GRAFO MATEMÁTICO</p>
+          <h2 id="family-title">O mesmo esqueleto reaparece</h2>
+        </div>
+        <p>Uma família só entra como verificada quando a transformação entre as ocorrências pode ser mostrada.</p>
+      </div>
+
+      {equationFamilies.map((family) => (
+        <article class="family-card" id={family.slug}>
+          <div>
+            <p class="eyebrow">{family.status}</p>
+            <h3>{family.name}</h3>
+            <p>{family.summary}</p>
+          </div>
+          <div class="family-equation" set:html={renderEquation(family.canonicalLatex)} />
+          <div>
+            <h4>Ocorrências ligadas</h4>
+            <ul>
+              {family.members.map((slug) => {
+                const formula = formulaBySlug.get(slug);
+                return formula ? <li><a href={"#" + formula.slug}>{formula.name}</a></li> : null;
+              })}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <section class="method" aria-labelledby="method-title">
+      <p class="eyebrow">MÉTODO</p>
+      <h2 id="method-title">Markdown primeiro, grafo depois</h2>
+      <p>
+        A fonte de verdade são os documentos OKF em <code>knowledge/science-equations/</code>.
+        Os links Markdown são as relações canônicas. Esta página é apenas uma projeção regenerável:
+        a rotina recorrente pesquisa novos ramos, verifica fontes, normaliza fórmulas, testa equivalências
+        e audita conexões antigas.
+      </p>
+    </section>
+  </main>
+</PageLayout>
+
+<style>
+  .atlas-shell { max-width: 1180px; margin: 0 auto; padding-bottom: 5rem; }
+  .atlas-hero {
+    margin: clamp(1.5rem, 4vw, 3rem) 0 clamp(3rem, 7vw, 5rem);
+    padding: clamp(2rem, 7vw, 5rem);
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--radius-large);
+    background:
+      radial-gradient(circle at 88% 14%, color-mix(in srgb, var(--pico-primary) 24%, transparent), transparent 34%),
+      var(--pico-card-background-color);
+    box-shadow: var(--elevation-card);
+  }
+  .eyebrow {
+    margin: 0;
+    font: 800 .72rem/1.1 ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--pico-primary);
+  }
+  .atlas-hero h1 {
+    margin: .45rem 0 1rem;
+    max-width: 9ch;
+    font-size: clamp(3.5rem, 10vw, 7.6rem);
+    line-height: .86;
+    letter-spacing: -.07em;
+  }
+  .lede { max-width: 820px; font-size: clamp(1.08rem, 2vw, 1.42rem); line-height: 1.5; }
+  .stats { display: flex; flex-wrap: wrap; gap: .65rem; margin-top: 1.5rem; }
+  .stats span {
+    padding: .5rem .8rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: 999px;
+    background: var(--pico-background-color);
+  }
+  .stats strong { font-size: 1.15rem; }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 2rem;
+    margin: 4.5rem 0 1.25rem;
+  }
+  .section-head h2, .method h2 {
+    margin: .2rem 0 0;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    letter-spacing: -.045em;
+  }
+  .section-head > p { max-width: 420px; margin: 0; color: var(--pico-muted-color); text-align: right; }
+  .branch-grid, .formula-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .branch-grid article, .formula-card, .family-card {
+    margin: 0;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--radius-medium);
+    background: var(--pico-card-background-color);
+    box-shadow: var(--elevation-soft);
+  }
+  .branch-grid article, .formula-card { padding: 1.25rem; }
+  .branch-grid h3, .formula-card h3, .family-card h3 { margin: .35rem 0 .65rem; }
+  .branch-grid small { text-transform: uppercase; letter-spacing: .08em; color: var(--pico-muted-color); }
+  .card-meta { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.5rem; color:var(--pico-muted-color); font:700 .7rem/1.2 ui-monospace, monospace; text-transform:uppercase; }
+  .equation { overflow-x: auto; padding: .65rem 0; font-size: 1.06rem; }
+  .source { margin-bottom: 0; font-size: .82rem; }
+  .family-card {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr .9fr;
+    gap: 1.5rem;
+    align-items: center;
+    padding: clamp(1.3rem, 4vw, 2.4rem);
+  }
+  .family-equation { overflow-x: auto; font-size: 1.25rem; }
+  .method {
+    margin-top: 5rem;
+    padding: clamp(1.5rem, 5vw, 3rem);
+    border-radius: var(--radius-large);
+    background: var(--pico-color);
+    color: var(--pico-background-color);
+  }
+  .method .eyebrow { color: color-mix(in srgb, var(--pico-primary) 70%, white); }
+  .method p:last-child { max-width: 900px; }
+  @media (max-width: 760px) {
+    .section-head { display: block; }
+    .section-head > p { margin-top: .75rem; text-align: left; }
+    .family-card { grid-template-columns: 1fr; }
+  }
+</style>
