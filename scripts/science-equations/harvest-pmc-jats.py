@@ -71,7 +71,7 @@ def normalize_license(root: ET.Element) -> tuple[str | None, str | None, str | N
         if "creativecommons.org/publicdomain/zero/" in target:
             version = target.rstrip("/").rsplit("/", 1)[-1]
             return f"CC0-{version}", href, text, True
-        match = re.search(r"creativecommons\.org/licenses/(by(?:-sa|-nd)?)/(\d+(?:\.\d+)?)/", target)
+        match = re.search(r"creativecommons\.org/licenses/(by(?:-sa)?)/(\d+(?:\.\d+)?)/", target)
         if match:
             family, version = match.groups()
             return f"CC-{family.upper()}-{version}", href, text, True
