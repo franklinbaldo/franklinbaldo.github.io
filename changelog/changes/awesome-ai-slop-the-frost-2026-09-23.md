@@ -1,7 +1,7 @@
 ---
 type: changelog
 date: 2026-09-23
-description: Add the reviewed Awesome AI Slop card for The Frost: Part One.
+description: 'Add the reviewed Awesome AI Slop card for The Frost: Part One.'
 tags: [ai, slop, culture, dalle, film, short-film]
 ---
 
