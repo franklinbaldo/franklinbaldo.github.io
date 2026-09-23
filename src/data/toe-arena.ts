@@ -130,4 +130,9 @@ export const openingClashes = [
     battleground: "information-theoretic reconstruction of physical law",
     body: "AME(4,6) builds from a real perfect-tensor/quantum-code object and reaches aggressively into particle parameters and gravity, but the physical identification is unproved and several headline claims were later softened or partially retracted. Observer Patch Holography has stronger formal reconstruction and machine-checkable components, while still carrying an explicit physical-realization gap. Independent recovery of Einstein and chiral Standard-Model structure from either information substrate would be the relevant discriminator; no tier movement follows yet.",
   },
+  {
+    title: "Computational Finitism × Lucron Network",
+    battleground: "finite discrete substrate vs. recovered continuum physics",
+    body: "Both programmes try to recover matter, gravity and continuum behavior from a discrete microscopic substrate. Computational Finitism has a broad runnable simulation corpus and aggressive numerical claims, but its current bridge to precision Lorentz, chiral Standard-Model structure and running couplings is not independently established, and its decision-bearing paper introduces a new transfer mechanism after an explicit mobility failure. Lucron also has major unfinished Lorentz/Yang–Mills work but currently states those gaps more narrowly. Independent frozen-rule reproductions are the relevant discriminator; no Lucron tier move follows.",
+  },
 ];
