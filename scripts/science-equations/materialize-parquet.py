@@ -223,7 +223,7 @@ def materialize(args: argparse.Namespace) -> dict[str, Any]:
             "published": False,
         },
     }
-    manifest_path = output_dir / "manifest.json"
+    manifest_path = output_dir / f"manifest-{args.stage}.json"
     manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return manifest
 
