@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "source_id": "wikipedia-en-math",
+  "source_name": "English Wikipedia current-revision math tags",
+  "readiness": "harvest-ready",
+  "license": "CC-BY-SA-4.0-or-compatible-and/or-GFDL",
+  "license_url": "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use",
+  "snapshot": {
+    "dump_date": "20260901",
+    "dump_status": "complete",
+    "dump_status_url": "https://dumps.wikimedia.org/enwiki/20260901/",
+    "machine_status_url": "https://dumps.wikimedia.org/enwiki/20260901/dumpstatus.json",
+    "official_sha1_manifest_url": "https://dumps.wikimedia.org/enwiki/20260901/enwiki-20260901-sha1sums.txt",
+    "canonical_combined_file": "enwiki-20260901-pages-articles-multistream.xml.bz2",
+    "canonical_combined_file_official_sha1": "e0a53c30c3a3b444018df95704d3d101cd618440",
+    "acquisition_strategy": "Acquire the official partitioned pages-articles-multistream XML.bz2 files in an external executor for parallelism; verify every file against the Wikimedia checksum manifest; compute local SHA-256; then derive the final source_snapshot inventory digest before extraction."
+  },
+  "scope": {
+    "namespace": 0,
+    "revision_scope": "current revision from pages-articles dump",
+    "selection": "non-empty <math>...</math> bodies",
+    "provenance_class": "attested",
+    "original_encoding": "mediawiki-math-tex"
+  },
+  "harvester": {
+    "path": "scripts/science-equations/harvest-wikimedia-math.py",
+    "input": "verified pages-articles-multistream XML partition files",
+    "output": "JSONL to stdout (transient only)",
+    "command": "python scripts/science-equations/harvest-wikimedia-math.py --snapshot inventory-sha256:<digest> --input <verified-partition-1.xml.bz2> [<verified-partition-2.xml.bz2> ...] > wikipedia-math.jsonl"
+  },
+  "materialization": {
+    "full_snapshot_executed_in_this_run": false,
+    "persistent_occurrences_materialized": 0,
+    "internet_archive_items_published": 0,
+    "reason": "The current sandbox can verify the official dump metadata over web access and fixture-test the streaming adapter, but its shell cannot resolve external hosts for bulk download, PyArrow is not installed, and no Internet Archive credentials are exposed. No fixture occurrence is counted as corpus ingestion.",
+    "canonical_storage": "Apache Parquet shards on Internet Archive after external-executor acquisition, checksum verification, materialization and remote verification"
+  }
+}
