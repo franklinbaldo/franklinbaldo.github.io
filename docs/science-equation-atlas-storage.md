@@ -24,10 +24,12 @@ Mass data is stored as Apache Parquet. A materialized dataset is partitioned by 
 <source>--<snapshot>--extracted--00000.parquet
 <source>--<snapshot>--extracted--00001.parquet
 ...
-manifest.json
+manifest-extracted.json
+manifest-normalized.json
+manifest-deduplicated.json
 ```
 
-Later stages use the same convention with `normalized` and `deduplicated`.
+Each stage has its own manifest so extracted, normalized and deduplicated datasets can coexist in the same immutable source+snapshot Internet Archive item without manifest-name collisions.
 
 Every Parquet row keeps the common provenance fields plus `source_payload_json`, a canonical JSON serialization of the complete adapter record. This allows source-specific metadata to survive without forcing one giant cross-source schema.
 
@@ -57,7 +59,7 @@ The materializer:
 - writes Zstandard-compressed Parquet;
 - uses deterministic shard names;
 - records row counts, byte sizes, SHA-256 and MD5 per shard;
-- writes a deterministic `manifest.json`;
+- writes deterministic stage-specific manifests (`manifest-extracted.json`, `manifest-normalized.json`, `manifest-deduplicated.json`);
 - refuses to call an empty dataset a successful materialization.
 
 The default target is 250,000 rows per shard. Adjust this only when measured file sizes or source shape justify it; avoid tiny-file proliferation.
@@ -72,14 +74,14 @@ The item identifier is deterministic by source and snapshot, normally:
 scientific-equation-atlas-<source>-<snapshot>
 ```
 
-A published item contains the Parquet shards and the lake manifest. New source snapshots get new identifiers. Do not silently mutate an already published snapshot into a different source version.
+A published item may contain stage-specific Parquet shards and manifests for the same pinned source snapshot. New source snapshots get new identifiers. Do not silently mutate an already published snapshot into a different source version.
 
-Use:
+Use, for example:
 
 ```sh
 node scripts/science-equations/publish-internet-archive.mjs \
-  --manifest /data/equation-atlas/oeis/<commit>/manifest.json \
-  --publication-output /data/equation-atlas/oeis/<commit>/publication.json
+  --manifest /data/equation-atlas/oeis/<commit>/manifest-extracted.json \
+  --publication-output /data/equation-atlas/oeis/<commit>/publication-extracted.json
 ```
 
 The executor must provide `IA_ACCESS_KEY_ID` and `IA_SECRET_ACCESS_KEY` in its environment and an `ia` CLI compatible with the Internet Archive Python client. Secrets never enter the repository, manifest or command-line arguments.
