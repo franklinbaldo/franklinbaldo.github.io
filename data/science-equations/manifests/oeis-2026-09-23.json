@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "source_id": "oeis-formula-lines",
   "source_name": "The On-Line Encyclopedia of Integer Sequences",
   "source_repository": "https://github.com/oeis/oeisdata",
@@ -26,11 +26,20 @@
     "source": "https://oeis.org/",
     "note": "Live OEIS sequence count observed during source audit; this is not an ingestion count for the pinned snapshot."
   },
-  "harvester": {
+  "adapter": {
     "path": "scripts/science-equations/harvest-oeis-formulas.mjs",
     "input": "pinned oeis/oeisdata Git repository",
-    "output": "JSONL to stdout",
-    "command": "node scripts/science-equations/harvest-oeis-formulas.mjs --repo <oeisdata-clone> --snapshot 86962e9ef366e08ffbeeff8c72c1cf2b4268d82b > oeis-formulas.jsonl"
+    "transient_output": "JSONL to stdout",
+    "command": "node scripts/science-equations/harvest-oeis-formulas.mjs --repo <oeisdata-clone> --snapshot 86962e9ef366e08ffbeeff8c72c1cf2b4268d82b"
+  },
+  "canonical_storage": {
+    "format": "parquet",
+    "compression": "zstd",
+    "occurrence_schema": "data/science-equations/schemas/occurrence-v1.json",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "publisher": "scripts/science-equations/publish-internet-archive.mjs",
+    "internet_archive_identifier": "scientific-equation-atlas-oeis-formula-lines-86962e9ef366e08ffbeeff8c72c1cf2b4268d82b",
+    "note": "JSONL is transient adapter interchange only; bulk persistent storage is Parquet outside Git."
   },
   "fingerprints": {
     "source_record_sha256": "snapshot + path + line number + complete %F source line",
@@ -40,7 +49,7 @@
   "materialization": {
     "full_snapshot_executed_in_this_run": false,
     "persistent_occurrences_materialized": 0,
-    "reason": "The repository-mutation environment could inspect the pinned public source but had no direct bulk materialization path for cloning and executing against the full OEIS export. The adapter is fixture-tested and designed to run directly over the pinned Git export without page scraping.",
-    "recommended_storage": "sharded compressed JSONL or Parquet outside normal Git history, referenced by a post-harvest manifest with counts and checksums"
+    "internet_archive_published": false,
+    "reason": "The current execution environment can update the control plane but cannot acquire the pinned OEIS export, materialize PyArrow Parquet, or authenticate to Internet Archive. No bulk occurrence is claimed until an external executor completes and verifies the snapshot."
   }
 }
