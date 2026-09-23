@@ -6,7 +6,7 @@ summary: "Add a license-filtered PMC JATS adapter for attested display/inline fo
 updated: "2026-09-23"
 ---
 
-# PMC JATS source integration — commercial Creative Commons lane
+# PMC JATS source integration — adaptation-safe Creative Commons lane
 
 ## State reconstructed before acting
 
@@ -16,7 +16,7 @@ Persisted state showed two bulk adapters already in `main` — Wikidata P2534 an
 
 ## Source selected
 
-The new lane is **PubMed Central Article Datasets / JATS XML**, restricted initially to article versions with an explicit commercial Creative Commons license recognized by the JATS adapter: CC0, CC BY, CC BY-SA or CC BY-ND.
+The new lane is **PubMed Central Article Datasets / JATS XML**, restricted initially to article versions whose JATS license URI is recognized as CC0, CC BY or CC BY-SA.
 
 Official acquisition/policy surfaces checked on 2026-09-23:
 
@@ -41,16 +41,16 @@ Accepted by this lane:
 
 - CC0;
 - CC BY;
-- CC BY-SA;
-- CC BY-ND.
+- CC BY-SA.
 
 Excluded by default:
 
+- CC BY-ND;
 - CC BY-NC families;
 - custom/unknown licenses;
 - records whose JATS license URI cannot be recognized by the adapter.
 
-Author manuscripts may have additional PMC reuse rights, but they are not silently folded into this first lane. They require a separate source policy/adapter lane so the origin of permission remains explicit.
+PMC documentation includes CC BY-ND among licenses usable for commercial reuse, but the Atlas is more conservative for a derived-data lake: no-derivatives records stay out until stage-specific treatment of extraction, normalization and redistribution is audited. Author manuscripts may also have additional PMC reuse rights, but they are not silently folded into this first lane; they require a separate source policy/adapter lane so the origin of permission remains explicit.
 
 ## Adapter behavior
 
@@ -96,7 +96,7 @@ The PMC adapter was compiled with Python 3 and exercised against a synthetic two
 
 - 2 XML files seen;
 - 1 CC BY article accepted;
-- 1 CC BY-NC article rejected by the commercial-license gate;
+- 1 CC BY-NC article rejected by the license gate;
 - 2 attested formulas emitted (one MathML inline formula, one TeX display formula);
 - 1 empty formula skipped;
 - 0 parse errors.
@@ -128,7 +128,7 @@ No `equation-family` was created in this run. Shared text hashes or later cluste
 The highest-value next step is a real external-executor materialization:
 
 1. acquire a pinned PMC daily inventory from `pmc-oa-opendata`;
-2. select a commercial-CC subset and record the inventory/selection digest;
+2. select the adaptation-safe Creative Commons subset and record the inventory/selection digest;
 3. retrieve only the corresponding JATS XML objects;
 4. stream them through `harvest-pmc-jats.py` into `materialize-parquet.py`;
 5. record measured accepted/rejected article counts and formula counts;
