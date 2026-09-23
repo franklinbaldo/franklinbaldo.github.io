@@ -210,6 +210,8 @@ export function tierEvidence({
 
       const card = tierCards.get(row.key);
       const version = versionAttention.get(row.key);
+      const ordinalPercentile =
+        ratings.length <= 1 ? 0.5 : 1 - index / (ratings.length - 1);
       const priority = deriveReviewPriority({
         tiered: Boolean(card),
         confidence: card?.confidence ?? null,
@@ -219,6 +221,10 @@ export function tierEvidence({
         perspectiveCount: perspectiveRows.length,
         perspectiveUniverse,
         versionAttention: version?.attention ?? false,
+        ordinalPercentile,
+        winRate: row.appearances > 0 ? row.wins / row.appearances : null,
+        absoluteQuality: abs?.stars ?? null,
+        deconfoundedQuality: deconf?.quality ?? null,
       });
 
       return {
