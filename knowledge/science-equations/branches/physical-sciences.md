@@ -19,4 +19,4 @@ OpenAlex uses **Physical Sciences** as a top-level domain. The atlas uses this i
 - [Engineering](engineering.md)
 - [Mathematics](mathematics.md)
 
-The `Physics and Astronomy` label now matches the current OpenAlex field label. The filename `physics.md` is retained to avoid meaningless link churn; the corpus still has no astronomy-specific equation occurrence, so coverage remains visibly incomplete rather than implied by the taxonomy label alone.
+The `Physics and Astronomy` label matches the current OpenAlex field label. Astronomy is now sampled explicitly through the [Astronomy and Astrophysics](astronomy-astrophysics.md) subfield and a sourced Kepler-third-law occurrence, while the corpus still records that as sparse coverage rather than implying the whole field is represented.
