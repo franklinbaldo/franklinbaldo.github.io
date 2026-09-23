@@ -17,6 +17,7 @@ notes:
   - "Canonical intervention search found no earlier public observatory touch to DarkPhilosopher before this planned contact."
   - "A prior issue-creation attempt on 2026-09-22 returned GitHub 403 before publication. It consumed no initial-touch gate and created no contamination."
   - "At this review there are no open issues or pull requests in DarkPhilosopher/spark, so a new issue is the smallest contextual public surface available if posting succeeds."
+  - "After the baseline/disclosure record was merged in franklinbaldo/franklinbaldo.github.io#2103, a fresh new-issue attempt on 2026-09-23 again returned `403 Resource not accessible by integration` before publication. No public artifact exists, the initial-touch gate remains unused, and the run did not switch to another channel to compensate for the unavailable issue write."
 ---
 
 ## Planned transfer
