@@ -6,6 +6,9 @@ import { pathToFileURL } from "node:url";
 import readline from "node:readline";
 
 const SOURCE_ID = "wikidata-p2534";
+const SOURCE_LICENSE = "CC0-1.0";
+const SOURCE_LICENSE_URL = "https://creativecommons.org/publicdomain/zero/1.0/";
+const SOURCE_POLICY_URL = "https://www.wikidata.org/wiki/Wikidata:Licensing";
 
 function sha256(value) {
   return createHash("sha256").update(value).digest("hex");
@@ -40,6 +43,9 @@ export function extractP2534Records(
       source_id: SOURCE_ID,
       source_snapshot: snapshot ?? null,
       source_url: sourceUrl,
+      source_license: SOURCE_LICENSE,
+      source_license_url: SOURCE_LICENSE_URL,
+      source_policy_url: SOURCE_POLICY_URL,
       source_entity_id: entity.id,
       source_entity_lastrevid: entity.lastrevid ?? null,
       source_statement_id: statement.id ?? null,
