@@ -1,8 +1,8 @@
 ---
 type: science-atlas-run
 date: "2026-09-23"
-mode: "source-first scale pivot + corpus rights audit"
-summary: "Replace one-formula-at-a-time acquisition with a corpus-first pipeline, audit eight high-yield source families for bulk access and reuse constraints, and establish a rights-aware queue spanning science, mathematics, computing, engineering and law."
+mode: "source-first scale pivot + corpus rights audit + first bulk adapter"
+summary: "Replace one-formula-at-a-time acquisition with a corpus-first pipeline, audit eight high-yield source families, and implement the first streaming Wikidata P2534 bulk adapter with provenance-preserving tests."
 updated: "2026-09-23"
 ---
 
@@ -57,6 +57,39 @@ This distinction is essential for computer science and law. A sorting/update rul
 
 Mass occurrences are not required to become millions of Markdown files. The stable conceptual layer remains Markdown OKF, while bulk occurrences may be stored in immutable Parquet/JSONL shards or equivalent external artifacts referenced by manifests. Git remains the home for schemas, importers, manifests, checksums, fixtures, aggregate metrics, curated concepts, families, audits and runs.
 
+## First bulk adapter: Wikidata P2534
+
+This run also implements `scripts/science-equations/harvest-wikidata-p2534.mjs` rather than stopping at a planning document.
+
+The adapter is deliberately **streaming**: it reads the decompressed official Wikidata JSON entity dump line by line and emits one JSONL occurrence for every value-bearing P2534 statement. It does not require the full dump to fit in memory and it does not commit the resulting mass dataset to Git.
+
+Each emitted record preserves:
+
+- Wikidata QID;
+- entity revision when present;
+- statement id and rank;
+- the source mathematical expression unchanged;
+- qualifiers and references;
+- related P7235 symbol claims;
+- provenance class `attested`;
+- snapshot id supplied by the caller;
+- SHA-256 of the source statement JSON.
+
+The source expression is not normalized in this stage. Normalization belongs downstream so the original notation always remains recoverable.
+
+A fixture-level unit test exercises dump-line parsing, provenance preservation, symbol-claim retention, statement hashing and streaming record limits. The full source-sized harvest is intentionally not committed to normal Git history.
+
+Reproducible bulk invocation after obtaining an official Wikidata JSON dump is:
+
+```sh
+bzip2 -dc latest-all.json.bz2 | \
+  node scripts/science-equations/harvest-wikidata-p2534.mjs \
+  --snapshot <wikidata-snapshot-id> \
+  > wikidata-p2534.jsonl
+```
+
+The generated JSONL should be sharded/converted to the configured external bulk store rather than added as millions of repository blobs.
+
 ## Deduplication / equivalence boundary
 
 No new `equation-family` edge was created in this run because no new mathematical equivalence was tested. This was deliberate.
@@ -78,16 +111,18 @@ Only the later layers can propose semantic family relations, and those relations
 - source families rights/access-audited against official documentation: **8**;
 - immediately high-value bulk lanes identified: **Wikidata, OEIS, LMFDB, GovInfo/CFR/eCFR, PMC/JATS, IETF RFCXML**, plus license-filtered arXiv;
 - current addressable structured formula statements identified in the first lane: **113,316 P2534 uses** at audit time;
+- streaming bulk adapters implemented: **1**;
+- adapter provenance/unit-test cases added: **3**;
 - existing curated formula occurrences: **14**;
 - new equation-family confirmations: **0**;
-- raw equation candidates ingested in this architecture run: **0**;
+- full Wikidata snapshot occurrences harvested into persistent bulk storage in this run: **0**;
 - false bulk assumptions corrected: **1 major case** (DLMF moved from ingestion priority to reference-only), plus the PMC 2026 access path and arXiv redistribution boundary made explicit.
 
-The zero raw-ingestion count is recorded rather than hidden: this run changes the pipeline so subsequent executions can harvest source-sized batches without creating license or Git-history debt.
+The zero persistent full-dump count is recorded rather than hidden. This iteration delivers the streaming path and its tests; a source-sized run requires the official dump plus bulk storage and should not be simulated by copying a tiny web sample and calling it ingestion.
 
 ## Frontier left by the corpus
 
-The next high-return implementation target is a reproducible **Wikidata P2534 adapter** with a versioned manifest and small fixture. It should preserve QID, statement identity when available, original mathematical expression, ranks/qualifiers/references and symbol metadata, then emit sharded occurrence records outside the conceptual Markdown layer.
+The next high-return unit is to execute the P2534 adapter against a versioned official Wikidata dump, shard the output, write a manifest with snapshot/checksums/counts and measure exact textual deduplication. That run can move from the addressable **113,316 statements** to an exact accepted/rejected occurrence count without manual formula research.
 
 After that, the strongest independent lanes are OEIS for discrete mathematics, GovInfo/eCFR for law/regulation, PMC/JATS for biomedical science, and IETF RFCXML for computing/protocols. This is a portfolio rather than a single disciplinary queue: the scheduler should avoid spending many consecutive runs on one domain while other high-yield corpora remain untouched.
 
