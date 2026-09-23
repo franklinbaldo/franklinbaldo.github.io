@@ -10,7 +10,7 @@ description: >-
   bee turned into something that could be interrupted, redirected, talked to.
 tags:
   - artificial intelligence
-  - software engineering
+  - software-engineering
   - agents
   - jules
   - canivete
