@@ -132,19 +132,44 @@ Cada fonte deve passar, quando aplicável, por:
 
 1. **snapshot/manifest** — versão, data, licença, URL/identificador e checksum;
 2. **extract** — capturar expressão original e contexto;
-3. **classify** — associar domínio/tópico usando metadados da fonte e/ou classificadores;
-4. **normalize** — gerar representação comparável sem destruir a original;
-5. **deduplicate** — eliminar repetições em camadas;
-6. **cluster** — produzir candidatos a famílias estruturais;
-7. **verify** — testar relações fortes;
-8. **promote** — materializar em OKF apenas conceitos, famílias, decisões e exemplos que mereçam identidade própria;
-9. **publish** — atualizar índices, métricas e projeções do blog.
+3. **materialize** — converter o fluxo de ocorrências em shards Parquet imutáveis;
+4. **publish** — enviar os Parquets e seu manifest ao Internet Archive e verificar tamanho/checksum pós-upload;
+5. **classify** — associar domínio/tópico usando metadados da fonte e/ou classificadores;
+6. **normalize** — gerar representação comparável sem destruir a original;
+7. **deduplicate** — eliminar repetições em camadas;
+8. **cluster** — produzir candidatos a famílias estruturais;
+9. **verify** — testar relações fortes;
+10. **promote** — materializar em OKF apenas conceitos, famílias, decisões e exemplos que mereçam identidade própria;
+11. **project** — atualizar índices, métricas, UI e grafo do blog.
+
+JSONL, CSV, XML ou outros formatos podem existir como **streams transitórios** entre extrator e materializador, mas não são o formato persistente canônico do equation lake.
+
+## Contrato de armazenamento e publicação
+
+A persistência bulk do Atlas usa **Apache Parquet**. Shards devem ser imutáveis, comprimidos com ZSTD quando a implementação suportar, conter schema explícito e checksums e preservar a expressão original sem normalização destrutiva.
+
+Os Parquets persistentes devem ser publicados no **Internet Archive**. O Git guarda apenas código, schemas, manifests, checksums, metadados, pequenos fixtures e referências reproduzíveis ao item do Archive.org.
+
+Uma aquisição massiva só conta como **persistida** quando:
+
+1. todos os shards Parquet foram materializados;
+2. cada shard possui contagem de linhas, tamanho e SHA-256 registrados;
+3. os shards foram enviados a um item determinístico/versionado do Internet Archive;
+4. o upload foi verificado contra os metadados de arquivo do Archive.org;
+5. o manifest final, contendo identificador/URLs do item e checksums, também foi publicado no item;
+6. uma cópia pequena do manifest foi registrada em Git.
+
+Não marque `persistent_occurrences_materialized` ou equivalente como maior que zero se os Parquets ainda existirem apenas em storage efêmero/local.
+
+Use `scripts/science-equations/materialize-parquet-ia.py` como adaptador comum quando o harvester produzir JSONL. A opção `--local-only` existe para fixtures/debugging; aquisições reais devem usar `--publish`.
+
+Credenciais IA-S3 são segredo operacional e jamais entram no repositório, em run Markdown ou em manifests. A documentação oficial do Internet Archive exige IA-S3 para upload; trate ausência de credenciais como blocker reproduzível, não como motivo para mudar o backend silenciosamente.
 
 ## Representação em massa
 
 Não crie milhões de arquivos Markdown.
 
-Grandes volumes devem ser armazenados em shards estruturados, preferencialmente formatos colunares ou streamáveis, como Parquet ou JSONL comprimido. DuckDB pode ser usado como índice/projeção local regenerável.
+Grandes volumes persistentes devem ser armazenados em Parquet no Internet Archive. DuckDB e ferramentas Arrow podem ser usados como índices/projeções locais regeneráveis. JSONL comprimido pode ser usado apenas quando for uma etapa intermediária explicitamente efêmera ou quando uma fonte externa já o forneça como snapshot de origem; a camada canônica adquirida pelo Atlas continua sendo Parquet.
 
 O repositório Git deve guardar principalmente:
 
@@ -157,8 +182,6 @@ O repositório Git deve guardar principalmente:
 - famílias;
 - auditorias;
 - métricas agregadas.
-
-Dados massivos gerados devem ficar fora do histórico Git normal quando excederem uma escala saudável para o repositório, com referências reproduzíveis a partir dos manifests.
 
 ## Proveniência mínima por ocorrência
 
@@ -227,7 +250,8 @@ Registre um `science-atlas-run` em `knowledge/science-equations/runs/` com:
 - famílias propostas/verificadas;
 - cobertura nova;
 - dívida de auditoria;
-- artefatos gerados;
+- artefatos Parquet gerados;
+- item/URLs do Internet Archive ou blocker de publicação;
 - próximos corpora sugeridos pelo estado.
 
 Valide o bundle com `okf-parser` e rode os checks normais do blog.
