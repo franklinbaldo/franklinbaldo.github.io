@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "source_id": "pmc-jats-commercial-cc",
-  "source_name": "PubMed Central JATS formulas — commercial Creative Commons lane",
+  "source_name": "PubMed Central JATS formulas — adaptation-safe Creative Commons lane",
   "source_homepage": "https://pmc.ncbi.nlm.nih.gov/tools/pmcaws/",
   "bulk_access": {
     "kind": "aws-s3-open-data",
@@ -14,10 +14,10 @@
   },
   "readiness": "license-filtered",
   "license_policy": {
-    "lane": "commercial Creative Commons only",
-    "accepted": ["CC0", "CC BY", "CC BY-SA", "CC BY-ND"],
-    "excluded_by_default": ["CC BY-NC", "CC BY-NC-SA", "CC BY-NC-ND", "custom/unknown"],
-    "enforcement": "Acquisition should prefilter from PMC metadata/inventory and the adapter independently fails closed unless the JATS license URI is recognized as an accepted Creative Commons family.",
+    "lane": "adaptation-safe Creative Commons subset for derived Parquet publication",
+    "accepted": ["CC0", "CC BY", "CC BY-SA"],
+    "excluded_by_default": ["CC BY-ND", "CC BY-NC", "CC BY-NC-SA", "CC BY-NC-ND", "custom/unknown"],
+    "enforcement": "Acquisition should prefilter from PMC metadata/inventory and the adapter independently fails closed unless the JATS license URI is recognized as CC0, CC BY or CC BY-SA. PMC documents CC BY-ND among commercial-reuse filters, but the Atlas excludes no-derivatives licenses from this derived-data lane until stage-specific treatment of adaptations is audited.",
     "policy_url": "https://pmc.ncbi.nlm.nih.gov/tools/textmining/"
   },
   "scope": {
