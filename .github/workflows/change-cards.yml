@@ -80,6 +80,12 @@ jobs:
           --require-spec ../../specs/okf-types/{slug}.md
           --normative-spec
 
+      - name: Validate Scientific Equation Atlas as OKF knowledge
+        run: >-
+          uv run --with 'git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check knowledge/science-equations
+          --require-spec ../../specs/okf-types/{slug}.md
+          --normative-spec
+
       - name: Validate Hronir evaluations as OKF knowledge
         run: >-
           uv run --with 'git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check .routines/hronir/evaluations
