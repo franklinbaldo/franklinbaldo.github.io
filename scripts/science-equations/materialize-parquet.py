@@ -84,7 +84,10 @@ def sanitize(value: str) -> str:
 
 
 def iter_rows(input_path: Path):
-    with input_path.open("r", encoding="utf-8") as handle:
+    with input_path.open("rb") as raw_handle:
+        header = raw_handle.read(2)
+        encoding = "utf-16" if header == b"\xff\xfe" else "utf-8-sig"
+    with input_path.open("r", encoding=encoding) as handle:
         for line_no, line in enumerate(handle, 1):
             if not line.strip():
                 continue
