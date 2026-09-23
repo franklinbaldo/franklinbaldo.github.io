@@ -5,7 +5,7 @@ level: domain
 description: "Scientific study of living systems, organisms, populations and biological processes."
 taxonomy_sources:
   - "OpenAlex domain: Life Sciences"
-updated: "2026-09-22"
+updated: "2026-09-23"
 ---
 
 # Life Sciences
@@ -15,3 +15,4 @@ OpenAlex uses **Life Sciences** as one of its four top-level domains. The atlas 
 ## Initial branches
 
 - [Agricultural and Biological Sciences](agricultural-biological-sciences.md)
+- [Biochemistry, Genetics and Molecular Biology](biochemistry-genetics-molecular-biology.md)
