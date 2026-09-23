@@ -4,7 +4,7 @@ Esta rotina mantém o Atlas das Equações como um programa recorrente de ingest
 
 A fonte de verdade conceitual é `knowledge/science-equations/`: Markdown OKF normal, legível por humanos. Não crie um banco paralelo que concorra com esses conceitos. Entretanto, o Atlas é planejado para milhões de ocorrências: dados brutos e normalizados em massa NÃO precisam virar um arquivo Markdown por ocorrência. Use artefatos estruturados e regeneráveis para escala; mantenha no OKF a taxonomia, os conceitos importantes, as famílias, a proveniência, as regras de normalização, decisões metodológicas, auditorias e runs.
 
-Leia também `docs/science-equation-atlas-sources.md`. O backlog principal do projeto é um backlog de fontes/corpora, não uma lista manual de equações.
+Leia também `docs/science-equation-atlas-sources.md` e `docs/science-equation-atlas-storage.md`. O backlog principal do projeto é um backlog de fontes/corpora, não uma lista manual de equações.
 
 ## Objetivo de escala
 
@@ -138,27 +138,52 @@ Cada fonte deve passar, quando aplicável, por:
 6. **cluster** — produzir candidatos a famílias estruturais;
 7. **verify** — testar relações fortes;
 8. **promote** — materializar em OKF apenas conceitos, famílias, decisões e exemplos que mereçam identidade própria;
-9. **publish** — atualizar índices, métricas e projeções do blog.
+9. **publish** — materializar os estágios massivos em Parquet, publicar os snapshots redistribuíveis no Internet Archive, verificar remotamente e então atualizar os manifests/índices leves do Git e as projeções do blog.
 
 ## Representação em massa
 
 Não crie milhões de arquivos Markdown.
 
-Grandes volumes devem ser armazenados em shards estruturados, preferencialmente formatos colunares ou streamáveis, como Parquet ou JSONL comprimido. DuckDB pode ser usado como índice/projeção local regenerável.
+**Apache Parquet é o formato canônico do equation lake.** Toda ingestão massiva aceita deve produzir Parquet antes de ser considerada materializada. JSONL e CSV podem existir apenas como transporte transitório entre adapter e materialização, ou como formato de interoperabilidade; não são armazenamento canônico.
+
+Quando aplicável, mantenha estágios separados e reproduzíveis:
+
+- `extracted` — ocorrência original + proveniência;
+- `normalized` — representações derivadas não destrutivas;
+- `deduplicated` — seleção/agrupamento após regras de deduplicação explicitamente registradas.
+
+Use shards colunares suficientemente grandes para evitar milhões de arquivos pequenos. O manifest de cada lote deve registrar schema versionado, contagem de linhas, byte size e SHA-256 de cada shard. DuckDB/Arrow podem ser usados como índices ou projeções locais regeneráveis, mas não substituem os Parquets canônicos.
+
+Para dados cuja redistribuição seja permitida, o **Internet Archive é o armazenamento durável dos Parquets e manifests de snapshot**. Um snapshot publicado deve ter identificador determinístico ou explicitamente versionado e não pode ser sobrescrito silenciosamente. Upload só conta como concluído depois de verificação remota de presença, tamanho e checksum disponível.
 
 O repositório Git deve guardar principalmente:
 
-- schemas;
+- schemas e descriptors de fonte;
 - código de ingestão;
-- manifests;
+- manifests leves e checksums;
+- identificadores/URLs do Internet Archive;
 - pequenos fixtures;
 - documentação;
 - conceitos OKF;
 - famílias;
 - auditorias;
-- métricas agregadas.
+- métricas agregadas e runs.
 
-Dados massivos gerados devem ficar fora do histórico Git normal quando excederem uma escala saudável para o repositório, com referências reproduzíveis a partir dos manifests.
+Shards Parquet massivos não entram no histórico Git normal.
+
+### Data plane externo
+
+GitHub Actions **não é data plane do Atlas**. Não use Actions para adquirir corpora, processar ocorrências, gerar Parquet, normalizar/deduplicar datasets ou fazer upload ao Internet Archive.
+
+A execução pesada e a publicação devem ocorrer em Jatobá, sandbox ou outro executor externo explicitamente disponível. Credenciais do Internet Archive ficam no ambiente secreto do executor (`IA_ACCESS_KEY_ID` e `IA_SECRET_ACCESS_KEY` ou mecanismo equivalente), nunca no Git e nunca em argumentos persistidos.
+
+A ordem de publicação é fail-closed:
+
+```text
+acquire -> verify source -> extract -> Parquet -> manifest/checksums -> Internet Archive upload -> remote verify -> lightweight Git manifest/run
+```
+
+Não faça o Git anunciar um snapshot externo antes de o objeto remoto ter sido verificado.
 
 ## Proveniência mínima por ocorrência
 
@@ -221,15 +246,18 @@ Registre um `science-atlas-run` em `knowledge/science-equations/runs/` com:
 
 - fonte/corpus trabalhado;
 - snapshot;
+- executor usado;
 - candidatos extraídos;
 - candidatos aceitos/rejeitados;
 - deduplicações;
 - famílias propostas/verificadas;
 - cobertura nova;
+- Internet Archive identifier/URLs quando houver publicação verificada;
+- shards/manifests Parquet e checksums;
 - dívida de auditoria;
 - artefatos gerados;
 - próximos corpora sugeridos pelo estado.
 
-Valide o bundle com `okf-parser` e rode os checks normais do blog.
+Valide o bundle com `okf-parser` e rode os checks locais/reprodutíveis normais do blog.
 
 Uma execução boa deixa o sistema capaz de ingerir mais conhecimento com menos trabalho manual.
