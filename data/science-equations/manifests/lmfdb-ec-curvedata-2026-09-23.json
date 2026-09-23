@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "source_id": "lmfdb-ec-curvedata-weierstrass",
+  "source_name": "LMFDB elliptic curves over Q — ec_curvedata",
+  "source_homepage": "https://www.lmfdb.org/EllipticCurve/Q/",
+  "source_access": "https://www.lmfdb.org/api/options",
+  "readiness": "harvest-ready",
+  "license": "CC-BY-SA-4.0",
+  "license_url": "https://www.lmfdb.org/knowledge/show/doc.license",
+  "snapshot": {
+    "kind": "live-sql-materialization",
+    "observed_release": "1.2.1",
+    "observed_at": "2026-09-23",
+    "note": "The public SQL mirror is a live read-only service. The immutable Atlas snapshot identity is completed only after acquisition and content-addressed Parquet materialization."
+  },
+  "scope": {
+    "table": "ec_curvedata",
+    "columns": ["lmfdb_label", "ainvs", "conductor"],
+    "provenance_class": "reconstructed",
+    "record_granularity": "one occurrence per ec_curvedata row",
+    "source_representation": "LMFDB a-invariants [a1,a2,a3,a4,a6]",
+    "reconstruction": "y^2 + a1*x*y + a3*y = x^3 + a2*x^2 + a4*x + a6"
+  },
+  "addressable_corpus_observation": {
+    "row_count": 3824372,
+    "observed_at": "2026-09-23",
+    "source": "https://www.lmfdb.org/api/stats",
+    "note": "Current ec_curvedata row count observed from the official LMFDB API statistics page; this is not an ingestion count."
+  },
+  "acquisition": {
+    "preferred": "official read-only PostgreSQL mirror",
+    "host": "devmirror.lmfdb.xyz",
+    "port": 5432,
+    "database": "lmfdb",
+    "user": "lmfdb",
+    "adapter": "scripts/science-equations/harvest-lmfdb-ec-curvedata.py",
+    "command": "uv run --with 'psycopg[binary]' scripts/science-equations/harvest-lmfdb-ec-curvedata.py --snapshot <snapshot-id> > lmfdb-ec-curvedata.jsonl"
+  },
+  "materialization": {
+    "canonical_format": "Apache Parquet",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "publisher": "scripts/science-equations/publish-internet-archive.mjs",
+    "storage_contract": "docs/science-equation-atlas-storage.md",
+    "internet_archive": true,
+    "github_actions_for_data_plane": false,
+    "persistent_occurrences_materialized": 0,
+    "archive_identifier": null,
+    "reason": "This execution environment can define and fixture-test the source lane but cannot perform the full 3.82M-row SQL acquisition, install the missing Parquet dependency, or authenticate to Internet Archive."
+  }
+}
