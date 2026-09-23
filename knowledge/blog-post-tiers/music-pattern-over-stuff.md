@@ -4,8 +4,9 @@ translation_key: "music-pattern-over-stuff"
 quality_tier: "B"
 interest_tier: "B"
 confidence: "high"
-reviewed_at: "2026-09-22"
-reviewed_revision: "21e4a2a00ca4e0d0ccea87e44955c9621cf40cba"
+signal_agreement: "low"
+reviewed_at: "2026-09-23"
+reviewed_revision: "eb2de1f9b1abf7faf6d9b737ffb4ebbe36a30231"
 summary: >-
   A strong, unusually well-sourced piece of philosophical songwriting whose
   principal achievement is epistemic rather than lyrical novelty. Hrönir places
@@ -26,7 +27,7 @@ strengths:
   - "Long-Form Rationalist scores the current selected PT work 4.75 and praises its unusually explicit provenance: the exact Jim Rutt episode is named, Goertzel, Peirce and Whitman are traced, speculation is separated from science, and uncertainty about Suno's compositional intent is admitted rather than rationalized."
   - "Skeptical Specialist scores the selected PT work 4.25: the central ontology is contestable, but the song names that fragility directly with `not proven / not a theorem` and makes clear that it is presenting a sensibility rather than smuggling a theorem through poetic language."
   - "The current structure has a real arc despite following the interview: waking disorientation moves through body, cognition and epistemology into cosmology, then returns as dissolution in the final refrain. Lateral Essayist explicitly finds that this ordering survives a reshuffle test."
-  - "Both selected language versions have direct version wins over later archived variants. The selected PT version wins 3.85 to 3.70 and the selected EN version 3.75 to 3.50 under Lateral Essayist, with the archived alternatives adding no substantive body improvement."
+  - "Both selected language versions have direct version wins over archived variants. The current EN selection beats a later archived alternative 3.75 to 3.50 under Lateral Essayist, while the current PT selection also wins direct comparisons under Lateral Essayist and Long-Form Rationalist."
 open_problems:
   - "The absolute/de-confounded split is the largest material uncertainty signal in the current queue: 2.72 versus 3.83 (+1.11). The work performs much better after perspective effects are removed than in raw current-selected scoring."
   - "Weird-Clarity scores the selected EN work 2.75 and Lyric-as-Poem scores it 3.00 for the same reason: the piece is deliberately a transparent versification of ideas, so much of its language can be paraphrased without losing the underlying claim."
@@ -34,14 +35,21 @@ open_problems:
   - "Comedy-Carries-Argument scores the current PT work 2.00 because the piece is solemn from end to end; this is perspective-specific rather than a general quality failure, but it illustrates how little tonal range the work offers outside philosophical seriousness."
   - "The core philosophical claims remain suggestive rather than demonstrated. Skeptical Specialist notes that Peircean categories do not by themselves establish an ontology of physics and that the bridge from consciousness crystallizing to pattern being fundamental is intentionally left open."
   - "One of fourteen Hrönir perspectives is still missing, so high confidence reflects broad coverage rather than exhaustive unanimity."
+  - "The current derived projection now marks version_attention true with selected-version W/L 4/3. Two distinct PT version duels prefer the later `1314c277...` challenger under Comedy-Carries-Argument (4.25 vs 4.00) and Internet-Native (4.85 vs 4.65), while other PT and EN duels prefer the clean current selections. The challenger body is substantively identical and carries auto-edit/YAML residue that a Lateral-Essayist duel explicitly penalizes, so the signal warrants attention but not rollback."
 note: >-
   Derived signal agreement is low, but confidence is high: 44 appearances,
   13/14 perspectives and 28 absolute observations on current selections are
   enough to know that the disagreement is real rather than a sampling accident.
-  No version-attention trigger is warranted because both selected language
-  versions beat their archived challengers directly. No new duel is added merely
-  to increase N; the next useful comparison would target the single missing
-  perspective or directly discriminate the B/C quality boundary.
+  The 2026-09-23 periodic reaudit corrects stale version semantics in the prior
+  record: current Hrönir derivation reports version_attention true and
+  selected-version W/L 4/3. This does not justify an automatic version switch.
+  Current selections win meaningful direct duels, while the two PT challenger
+  wins reward a later variant whose body is substantively the same and whose
+  technical editing residue is penalized by another perspective. No new duel is
+  added merely to increase N; the remaining uncertainty is already localized in
+  the large absolute/de-confounded gap, perspective dependence, one missing
+  perspective and mixed version evidence.
 history:
   - "2026-09-22: initial placement -> quality B / interest B / confidence high. Previous tier: none. Evidence: Hrönir #70/107; ordinal 7.04 (mu 23.94, sigma 5.63); 24/44 wins/appearances; absolute quality 2.72 over 28 current-selected observations; de-confounded quality 3.83 over 44; +1.11 gap; 13/14 perspectives; low signal agreement. Representative current-selected readings: Long-Form Rationalist 4.75, Skeptical Specialist 4.25, Weird-Clarity 2.75, Lyric-as-Poem 3.00, Returning Reader 2.75, Comedy-Carries-Argument 2.00. Current PT and EN selections each beat archived alternatives in direct version duels. Unresolved weaknesses: high perspective dependence, limited lyrical irreducibility, source dependence, repeated corpus gestures, solemn tonal range, and one missing perspective."
+  - "2026-09-23 reaudit: tiers unchanged at quality B / interest B / confidence high. Material evidence semantics changed: the current derived projection marks version_attention true with selected-version W/L 4/3, correcting the earlier no-attention statement. Two distinct perspectives prefer a later PT challenger, while other PT/EN version duels prefer the clean selected files and identify no substantive body improvement in the challenger. Unresolved weaknesses remain the +1.11 absolute/de-confounded gap, perspective dependence, one missing perspective, and now-explicit version attention. No promotion or demotion."
 ---
