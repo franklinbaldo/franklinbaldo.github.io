@@ -29,7 +29,7 @@
   "harvester": {
     "path": "scripts/science-equations/harvest-oeis-formulas.mjs",
     "input": "pinned oeis/oeisdata Git repository",
-    "output": "JSONL to stdout",
+    "output": "transient JSONL to stdout",
     "command": "node scripts/science-equations/harvest-oeis-formulas.mjs --repo <oeisdata-clone> --snapshot 86962e9ef366e08ffbeeff8c72c1cf2b4268d82b > oeis-formulas.jsonl"
   },
   "fingerprints": {
@@ -40,7 +40,14 @@
   "materialization": {
     "full_snapshot_executed_in_this_run": false,
     "persistent_occurrences_materialized": 0,
-    "reason": "The repository-mutation environment could inspect the pinned public source but had no direct bulk materialization path for cloning and executing against the full OEIS export. The adapter is fixture-tested and designed to run directly over the pinned Git export without page scraping.",
-    "recommended_storage": "sharded compressed JSONL or Parquet outside normal Git history, referenced by a post-harvest manifest with counts and checksums"
+    "canonical_format": "Apache Parquet",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "publisher": "scripts/science-equations/publish-internet-archive.mjs",
+    "storage_contract": "docs/science-equation-atlas-storage.md",
+    "internet_archive": true,
+    "github_actions_for_data_plane": false,
+    "archive_identifier": null,
+    "reason": "The pinned full source still needs to be executed on an external bulk-capable runner. JSONL is only a transient adapter stream; persistent bulk output must be Parquet and verified on Internet Archive before the Git publication record is updated."
   }
 }
