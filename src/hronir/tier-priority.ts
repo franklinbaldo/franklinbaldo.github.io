@@ -9,6 +9,7 @@ export interface ReviewPriorityInput {
   gap: number | null;
   perspectiveCount: number;
   perspectiveUniverse: number;
+  staleVersion?: boolean;
   versionAttention?: boolean;
   /** 0 = bottom of the ordinal table, 1 = top. */
   ordinalPercentile?: number | null;
@@ -93,6 +94,15 @@ export function deriveReviewPriority(input: ReviewPriorityInput): ReviewPriority
   } else if (input.confidence === "medium") {
     score += 30;
     reasons.push("medium-confidence");
+  }
+
+  // A material selected-content change invalidates blind carry-forward even
+  // when the old record had strong coverage. Keep this below low-confidence
+  // uncertainty but above version-attention, which can be resolved without a
+  // content change.
+  if (input.staleVersion === true) {
+    score += 50;
+    reasons.push("stale-version");
   }
 
   const missingPerspectives = Math.max(
