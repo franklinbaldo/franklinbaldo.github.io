@@ -11,7 +11,7 @@ const script = fileURLToPath(
 );
 const python = process.env.PYTHON ?? (process.platform === "win32" ? "python" : "python3");
 
-test("PMC JATS adapter extracts licensed TeX/MathML and rejects noncommercial articles", () => {
+test("PMC JATS adapter extracts adaptation-safe TeX/MathML and rejects restricted licenses", () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "atlas-pmc-"));
   try {
     fs.writeFileSync(
@@ -30,6 +30,10 @@ test("PMC JATS adapter extracts licensed TeX/MathML and rejects noncommercial ar
     fs.writeFileSync(
       path.join(dir, "PMC999.xml"),
       `<article xmlns:xlink="http://www.w3.org/1999/xlink"><front><article-meta><article-id pub-id-type="pmc">PMC999</article-id><permissions><license xlink:href="https://creativecommons.org/licenses/by-nc/4.0/"><license-p>CC BY-NC 4.0</license-p></license></permissions></article-meta></front><body><disp-formula><tex-math>x=1</tex-math></disp-formula></body></article>`,
+    );
+    fs.writeFileSync(
+      path.join(dir, "PMC888.xml"),
+      `<article xmlns:xlink="http://www.w3.org/1999/xlink"><front><article-meta><article-id pub-id-type="pmc">PMC888</article-id><permissions><license xlink:href="https://creativecommons.org/licenses/by-nd/4.0/"><license-p>CC BY-ND 4.0</license-p></license></permissions></article-meta></front><body><disp-formula><tex-math>z=2</tex-math></disp-formula></body></article>`,
     );
 
     const run = spawnSync(
@@ -54,15 +58,18 @@ test("PMC JATS adapter extracts licensed TeX/MathML and rejects noncommercial ar
     );
     assert(
       rows.some(
-        (row) => row.original_encoding === "mathml-xml" && row.original_expression.includes("<ns0:math"),
+        (row) =>
+          row.original_encoding === "mathml-xml" &&
+          row.original_expression.includes("http://www.w3.org/1998/Math/MathML") &&
+          row.original_expression.includes(">x<"),
       ),
     );
     assert(rows.every((row) => /^[a-f0-9]{64}$/.test(row.source_record_sha256)));
 
     const metrics = JSON.parse(run.stderr.trim());
-    assert.equal(metrics.files_seen, 2);
+    assert.equal(metrics.files_seen, 3);
     assert.equal(metrics.articles_accepted, 1);
-    assert.equal(metrics.articles_rejected_license, 1);
+    assert.equal(metrics.articles_rejected_license, 2);
     assert.equal(metrics.formulas_emitted, 2);
     assert.equal(metrics.formulas_skipped_empty, 1);
     assert.equal(metrics.parse_errors, 0);
