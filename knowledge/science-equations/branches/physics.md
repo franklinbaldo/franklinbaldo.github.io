@@ -17,3 +17,7 @@ This card follows OpenAlex's exact field label **Physics and Astronomy**. The at
 - [Nuclear physics](nuclear-physics.md)
 - [Thermodynamics and heat transfer](thermodynamics.md)
 - [Astronomy and Astrophysics](astronomy-astrophysics.md)
+
+## Verified formula occurrences
+
+- [Simple harmonic motion](../formulas/simple-harmonic-motion.md), a foundational undamped oscillatory law retained at field level until a narrower taxonomy node is justified from prior art rather than invented ad hoc.
