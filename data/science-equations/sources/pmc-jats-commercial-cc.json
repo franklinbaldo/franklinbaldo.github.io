@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "source_id": "pmc-jats-commercial-cc",
+  "source_name": "PubMed Central JATS formulas — commercial Creative Commons lane",
+  "source_homepage": "https://pmc.ncbi.nlm.nih.gov/tools/pmcaws/",
+  "bulk_access": {
+    "kind": "aws-s3-open-data",
+    "bucket_arn": "arn:aws:s3:::pmc-oa-opendata",
+    "region": "us-east-1",
+    "authentication": "anonymous --no-sign-request",
+    "inventory": "daily S3 inventory",
+    "documentation_url": "https://pmc.ncbi.nlm.nih.gov/tools/pmcaws/",
+    "note": "The 2026 PMC Article Dataset distribution uses the AWS Cloud Service. Legacy article-dataset FTP/OA Web Service paths are not acquisition backends for this adapter."
+  },
+  "readiness": "license-filtered",
+  "license_policy": {
+    "lane": "commercial Creative Commons only",
+    "accepted": ["CC0", "CC BY", "CC BY-SA", "CC BY-ND"],
+    "excluded_by_default": ["CC BY-NC", "CC BY-NC-SA", "CC BY-NC-ND", "custom/unknown"],
+    "enforcement": "Acquisition should prefilter from PMC metadata/inventory and the adapter independently fails closed unless the JATS license URI is recognized as an accepted Creative Commons family.",
+    "policy_url": "https://pmc.ncbi.nlm.nih.gov/tools/textmining/"
+  },
+  "scope": {
+    "article_format": "NISO JATS XML",
+    "elements": ["disp-formula", "inline-formula"],
+    "preferred_encodings": ["tex-math", "MathML"],
+    "provenance_class": "attested",
+    "record_granularity": "one occurrence per non-empty JATS formula element",
+    "domains": ["medicine", "health", "life-sciences", "biomedicine"]
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-pmc-jats.py",
+    "input": "local tree of JATS XML acquired from the license-filtered PMC AWS Article Dataset",
+    "transient_output": "JSONL to stdout",
+    "command": "python3 scripts/science-equations/harvest-pmc-jats.py --root <jats-root> --snapshot <snapshot-id>"
+  },
+  "canonical_storage": {
+    "format": "parquet",
+    "compression": "zstd",
+    "occurrence_schema": "data/science-equations/schemas/occurrence-v1.json",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "publisher": "scripts/science-equations/publish-internet-archive.mjs",
+    "internet_archive_identifier_template": "scientific-equation-atlas-pmc-jats-commercial-cc-<snapshot-id>"
+  },
+  "snapshot_policy": {
+    "rule": "Pin the PMC daily inventory object used for selection and record its retrieval date, ETag when available, and SHA-256. Hash the selected article-version inventory rows/metadata deterministically; that digest is part of the Atlas snapshot identity.",
+    "reason": "PMC is continuously updated and does not create a new article-version prefix for every metadata/content change, so a calendar date alone is not a sufficient immutable snapshot.",
+    "immutability": "A distinct inventory/selection digest is a distinct Atlas snapshot and Internet Archive item."
+  }
+}
