@@ -18,5 +18,6 @@ This is the root of the atlas. The taxonomy is deliberately treated as a researc
 - [Physical Sciences](physical-sciences.md)
 - [Life Sciences](life-sciences.md)
 - [Health Sciences](health-sciences.md)
+- [Social Sciences](social-sciences.md)
 
 The recurring routine expands breadth before drilling indefinitely into one branch.
