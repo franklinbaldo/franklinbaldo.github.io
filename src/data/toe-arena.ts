@@ -120,4 +120,14 @@ export const openingClashes = [
     battleground: "continuum-first vs. discrete-first ontology",
     body: "Unified Emergence avoids fundamental discreteness and therefore the immediate burden of recovering continuum Lorentz symmetry, but its foundational coarse-graining operator is not yet specified well enough to carry the physics. Lucron is more calculationally explicit and falsifiable, but must show that its discrete substrate really reproduces continuum symmetries. For now this is a D-vs-C maturity gap, not a verdict on ontology.",
   },
+  {
+    title: "CronNet-Holo 600-cell × Holomorphic UFT",
+    battleground: "sharp geometric predictions vs. independently validated recovery",
+    body: "Both programmes claim explicit geometry-first routes to Standard-Model-plus-gravity structure. CronNet-Holo is unusually sharp about laboratory and parameter-level predictions, including the 12.8 THz target, but its current physical bridge is conditional on five hypotheses and lacks independent reproduction. Holomorphic UFT has the stronger peer-reviewed technical lineage but also needs broader external replication. A prospective CronNet-Holo prediction surviving independent testing would materially change this comparison; today it does not move either tier.",
+  },
+  {
+    title: "AME(4,6) × Observer Patch Holography",
+    battleground: "information-theoretic reconstruction of physical law",
+    body: "AME(4,6) builds from a real perfect-tensor/quantum-code object and reaches aggressively into particle parameters and gravity, but the physical identification is unproved and several headline claims were later softened or partially retracted. Observer Patch Holography has stronger formal reconstruction and machine-checkable components, while still carrying an explicit physical-realization gap. Independent recovery of Einstein and chiral Standard-Model structure from either information substrate would be the relevant discriminator; no tier movement follows yet.",
+  },
 ];
