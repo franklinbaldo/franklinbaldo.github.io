@@ -6,7 +6,7 @@ interest_tier: "A"
 confidence: "high"
 signal_agreement: "medium"
 reviewed_at: "2026-09-23"
-reviewed_revision: "f3a858bbd0d9cfb5922efe73a89b3225bac31c03"
+reviewed_revision: "47fbe8a1d9fa6b962f63dfa2adc9b616004f699b"
 issue_urls:
   - "https://github.com/franklinbaldo/franklinbaldo.github.io/issues/2163"
 summary: >-
