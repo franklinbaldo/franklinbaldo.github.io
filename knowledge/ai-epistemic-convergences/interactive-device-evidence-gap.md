@@ -15,24 +15,25 @@ testable_predictions:
   - "For Wata, a cold-install protocol on the intended PTT handhelds should distinguish Matrix/protocol correctness from hardware-button, audio-delivery, notification and setup failures."
   - "For Guardian-Praeventio, keeping physical mobile checks as explicit release gates should expose hardware/runtime failures that cannot be certified by its unusually extensive unit, integration and audit stack alone."
 cross_pollination_candidates:
-  - "ACTIONABLE — mikesandoval10creator -> darkphilosopher: transfer Guardian-Praeventio's frozen field-scenario discipline into Spark as five preregistered real-device scenarios on two Android devices, recording device/Android/Termux versions, expected versus observed behavior, screenshots/video, negative results and whether each failure belongs to app logic or the integration boundary. The immediate anchor is Spark commit 1910af44e71f096528eabde5f07af1daaf80d2a8, which explicitly leaves the Termux:API hop unverified end to end."
+  - "ACTIONABLE — mikesandoval10creator -> darkphilosopher: transfer Guardian-Praeventio's frozen field-scenario discipline into Spark as five preregistered real-device scenarios on two Android devices, recording device/Android/Termux versions, expected versus observed behavior, screenshots/video, negative results and whether each failure belongs to app logic or the integration boundary. The immediate anchor is Spark commit 1910af44e71f096528eabde5f07af1daaf80d2a8, which explicitly leaves the Termux:API hop unverified end to end. The transfer is now posted at DarkPhilosopher/spark#1 and is awaiting response."
   - "PLAUSIBLE — adriaanm -> darkphilosopher: Wata's cold-setup discipline on intended Android hardware remains a useful secondary method transfer for Spark's Termux/browser/device boundary, but it is less concrete than the Guardian-Praeventio field-evidence protocol."
 contamination_notes:
-  - "Different maintainers do not establish independent convergence. The observatory identified these bridges on 2026-09-22; no successful public cross-project contact among these maintainers has been made through this record, so later uptake after any future introduction must be treated as diffusion."
+  - "Different maintainers do not establish independent convergence. The observatory identified these bridges on 2026-09-22. On 2026-09-23 the Guardian-Praeventio -> Spark transfer was publicly posted at https://github.com/DarkPhilosopher/spark/issues/1; any later Spark adoption, experiment or claim change attributable to that issue is diffusion and MUST NOT be counted as independent convergence."
   - "Later on 2026-09-22, https://github.com/gigglesquid19/SharksVsDolphins returned 404 and the repository was absent from gigglesquid19's current public repository listing. The tester-weekend pattern remains preserved as historical evidence from the earlier public snapshot, but the direct gigglesquid19↔DarkPhilosopher bridge has been retired as a live cross-pollination candidate unless the project becomes publicly inspectable again. Public evidence does not establish why visibility changed."
-  - "A public issue carrying the Guardian-Praeventio -> Spark method transfer was attempted only after the canonical intervention corpus showed no prior DarkPhilosopher touch, but GitHub returned 403 Resource not accessible by integration. No issue was posted, so this attempt does not consume the initial-touch gate and creates no observatory contamination in Spark."
+  - "Earlier public-issue attempts carrying the Guardian-Praeventio -> Spark method transfer returned 403 before publication and created no contamination. The successful issue on 2026-09-23 supersedes that channel blocker and consumes the initial-touch gate."
 source_urls:
   - "https://github.com/DarkPhilosopher/spark/blob/main/CLAUDE.md"
   - "https://github.com/DarkPhilosopher/spark/commit/1910af44e71f096528eabde5f07af1daaf80d2a8"
+  - "https://github.com/DarkPhilosopher/spark/issues/1"
   - "https://github.com/gigglesquid19/SharksVsDolphins"
   - "https://github.com/adriaanm/wata"
   - "https://github.com/mikesandoval10creator/Guardian-Praeventio"
   - "https://github.com/mikesandoval10creator/Guardian-Praeventio/blob/main/TODO.md"
-updated: 2026-09-22
+updated: 2026-09-23
 ---
 
 This convergence concerns validation method and resource bottlenecks, not the quality or correctness of the products themselves. It deliberately keeps internal software correctness, real-device behavior and user reception as separate evidence channels.
 
-## Harvest state — 2026-09-22
+## Harvest state — 2026-09-23
 
-The strongest live bridge is now `mikesandoval10creator -> darkphilosopher`, with `match_quality: actionable`. The concrete resource has been found even though the human reviewer has not: Guardian-Praeventio contributes a field-validation protocol that can be transferred without assuming anything about either product's correctness. The public contact channel is currently unavailable to the observatory integration, so the useful state is preserved here rather than compensated for with another channel.
+The strongest live bridge remains `mikesandoval10creator -> darkphilosopher`, with `match_quality: actionable`. The concrete resource is Guardian-Praeventio's field-validation discipline, transferred to Spark as a frozen expected-versus-observed device protocol. The transfer is now public at `DarkPhilosopher/spark#1` and the intervention gate is closed pending material engagement. No uptake is recorded yet; silence does not authorize a second touch.
