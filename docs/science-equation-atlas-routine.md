@@ -144,21 +144,11 @@ Cada fonte deve passar, quando aplicável, por:
 
 Não crie milhões de arquivos Markdown.
 
-Grandes volumes devem ser armazenados em shards estruturados, preferencialmente formatos colunares ou streamáveis, como Parquet ou JSONL comprimido. DuckDB pode ser usado como índice/projeção local regenerável.
+Apache Parquet é o formato canônico do equation lake para dados massivos. JSONL e CSV podem existir apenas como transporte transitório de adapters, aquisição ou interoperabilidade; eles não são armazenamento canônico. Use shards Parquet com compressão e manifests determinísticos, evitando milhões de arquivos pequenos. DuckDB pode ser usado como índice/projeção local regenerável.
 
-O repositório Git deve guardar principalmente:
+Parquets redistribuíveis e seus manifests devem ser publicados no Internet Archive a partir de executor externo/sandbox/Jatobá, nunca via GitHub Actions. O Git guarda apenas código, schemas/descriptors, manifests leves, checksums, identificadores/URLs externos, documentação, conceitos OKF, famílias, auditorias e métricas agregadas.
 
-- schemas;
-- código de ingestão;
-- manifests;
-- pequenos fixtures;
-- documentação;
-- conceitos OKF;
-- famílias;
-- auditorias;
-- métricas agregadas.
-
-Dados massivos gerados devem ficar fora do histórico Git normal quando excederem uma escala saudável para o repositório, com referências reproduzíveis a partir dos manifests.
+Dados massivos gerados devem ficar fora do histórico Git normal, com referências reproduzíveis a partir dos manifests.
 
 ## Proveniência mínima por ocorrência
 
