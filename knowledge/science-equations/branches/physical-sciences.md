@@ -10,13 +10,13 @@ updated: "2026-09-23"
 
 # Physical Sciences
 
-OpenAlex uses **Physical Sciences** as a top-level domain. The atlas adds this missing intermediate node so its broad physical-science branches are no longer attached directly to the root while the Life Sciences branch follows a domain → field path.
+OpenAlex uses **Physical Sciences** as a top-level domain. The atlas uses this intermediate node so broad physical-science fields are not attached directly to the root while the Life Sciences and Health Sciences paths use the same domain → field structure.
 
 ## Initial branches
 
-- [Physics](physics.md)
+- [Physics and Astronomy](physics.md)
 - [Chemistry](chemistry.md)
 - [Engineering](engineering.md)
 - [Mathematics](mathematics.md)
 
-The existing authored labels are preserved here. In particular, the atlas's `Physics` card is narrower in name than OpenAlex's field label **Physics and Astronomy**; that naming question is left for a dedicated taxonomy audit rather than silently rewritten in this run.
+The `Physics and Astronomy` label now matches the current OpenAlex field label. The filename `physics.md` is retained to avoid meaningless link churn; the corpus still has no astronomy-specific equation occurrence, so coverage remains visibly incomplete rather than implied by the taxonomy label alone.
