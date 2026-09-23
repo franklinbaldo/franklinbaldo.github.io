@@ -1,4 +1,5 @@
 ---
+type: changelog
 date: 2026-09-23
 description: Add Neutrino–Antineutrino Plasma Unification to ToE Arena after an empirical-cutoff audit.
 tags: [toe-arena, physics, okf, research]
