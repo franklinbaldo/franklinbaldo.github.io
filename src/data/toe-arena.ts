@@ -135,4 +135,9 @@ export const openingClashes = [
     battleground: "finite discrete substrate vs. recovered continuum physics",
     body: "Both programmes try to recover matter, gravity and continuum behavior from a discrete microscopic substrate. Computational Finitism has a broad runnable simulation corpus and aggressive numerical claims, but its current bridge to precision Lorentz, chiral Standard-Model structure and running couplings is not independently established, and its decision-bearing paper introduces a new transfer mechanism after an explicit mobility failure. Lucron also has major unfinished Lorentz/Yang–Mills work but currently states those gaps more narrowly. Independent frozen-rule reproductions are the relevant discriminator; no Lucron tier move follows.",
   },
+  {
+    title: "Pole Theory × Quantized Spacetime",
+    battleground: "discrete substrate → Lorentz, chiral Standard Model and Einstein recovery",
+    body: "Both programmes start from fundamental discreteness and claim a route to quantum fields plus gravity. Quantized Spacetime currently exposes a cleaner direct gauge-and-metric construction, although it assumes quantum mechanics and general relativity up front. Pole Theory aims for deeper ontological compression, but its present recovery chain re-imports Ricci curvature, a quantum amplitude, fermion masses, Yukawa factors and CKM/PMNS matrices. A frozen derivation from microscopic rules to anomaly-consistent chiral matter, precision Lorentz behavior and Einstein gravity would materially change the comparison; today Quantized Spacetime remains C/A and Pole Theory enters D/A.",
+  },
 ];
