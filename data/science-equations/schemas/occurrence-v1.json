@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://franklinbaldo.github.io/data/science-equations/schemas/occurrence-v1.json",
+  "title": "Scientific Equation Atlas occurrence v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "occurrence_id",
+    "source_id",
+    "source_snapshot",
+    "provenance_class",
+    "source_record_sha256",
+    "metadata_json"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "occurrence_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_id": {"type": "string", "minLength": 1},
+    "source_snapshot": {"type": "string", "minLength": 1},
+    "source_document_id": {"type": ["string", "null"]},
+    "source_document_url": {"type": ["string", "null"]},
+    "source_record_url": {"type": ["string", "null"]},
+    "source_license": {"type": ["string", "null"]},
+    "source_license_url": {"type": ["string", "null"]},
+    "provenance_class": {"enum": ["attested", "reconstructed"]},
+    "original_expression": {"type": ["string", "null"]},
+    "original_encoding": {"type": ["string", "null"]},
+    "source_representation": {"type": ["string", "null"]},
+    "source_representation_encoding": {"type": ["string", "null"]},
+    "reconstructed_expression": {"type": ["string", "null"]},
+    "reconstructed_encoding": {"type": ["string", "null"]},
+    "transformation_rule": {"type": ["string", "null"]},
+    "context": {"type": ["string", "null"]},
+    "domain_hint": {"type": ["string", "null"]},
+    "subdomain_hint": {"type": ["string", "null"]},
+    "source_record_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "original_text_sha256": {"type": ["string", "null"]},
+    "normalized_text_sha256": {"type": ["string", "null"]},
+    "reconstructed_text_sha256": {"type": ["string", "null"]},
+    "metadata_json": {"type": "string"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"provenance_class": {"const": "attested"}}},
+      "then": {"required": ["original_expression"]}
+    },
+    {
+      "if": {"properties": {"provenance_class": {"const": "reconstructed"}}},
+      "then": {"required": ["source_representation", "reconstructed_expression", "transformation_rule"]}
+    }
+  ],
+  "additionalProperties": false
+}
