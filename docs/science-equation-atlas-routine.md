@@ -144,7 +144,7 @@ Cada fonte deve passar, quando aplicável, por:
 
 Não crie milhões de arquivos Markdown.
 
-Grandes volumes devem ser armazenados em shards estruturados, preferencialmente formatos colunares ou streamáveis, como Parquet ou JSONL comprimido. DuckDB pode ser usado como índice/projeção local regenerável.
+Grandes volumes devem ser armazenados no formato colunar canônico **Apache Parquet**, com compressão Zstandard e shards determinísticos. Formatos como JSONL ou CSV existem apenas como transporte/interoperabilidade transitória dos adapters e não como equation lake persistente. DuckDB pode ser usado como índice/projeção local regenerável.
 
 O repositório Git deve guardar principalmente:
 

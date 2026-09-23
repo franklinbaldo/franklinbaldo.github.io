@@ -1,0 +1,5 @@
+# Dependencies for Scientific Equation Atlas local data plane
+pydantic>=2.0.0
+pyarrow>=14.0.0
+internetarchive>=5.0.0
+truststore>=0.9.0; sys_platform == 'win32'
