@@ -81,6 +81,23 @@ describe("deriveReviewPriority", () => {
     ]);
   });
 
+  it("surfaces a materially changed selected version as stale", () => {
+    const result = deriveReviewPriority({
+      tiered: true,
+      confidence: "high",
+      appearances: 40,
+      absoluteN: 12,
+      gap: 0.1,
+      perspectiveCount: 14,
+      perspectiveUniverse: 14,
+      staleVersion: true,
+    });
+
+    assert.equal(result.score, 50);
+    assert.equal(result.signalAgreement, "high");
+    assert.deepEqual(result.reasons, ["stale-version"]);
+  });
+
   it("surfaces repeated selected-version regression as decision-relevant", () => {
     const result = deriveReviewPriority({
       tiered: false,
