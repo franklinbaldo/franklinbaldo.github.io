@@ -9,6 +9,7 @@ export interface ReviewPriorityInput {
   gap: number | null;
   perspectiveCount: number;
   perspectiveUniverse: number;
+  versionAttention?: boolean;
 }
 
 export interface ReviewPriority {
@@ -57,6 +58,11 @@ export function deriveReviewPriority(input: ReviewPriorityInput): ReviewPriority
     signalAgreement = "medium";
     score += 12;
     reasons.push("moderate-absolute-deconfounded-gap");
+  }
+
+  if (input.versionAttention === true) {
+    score += 40;
+    reasons.push("version-attention");
   }
 
   if (input.appearances < 12) {
