@@ -47,26 +47,40 @@ async function fetchMetadata(identifier) {
   return response.json();
 }
 
+function remotePlan(metadata, expected) {
+  const remote = new Map((metadata?.files ?? []).map((file) => [file.name, file]));
+  const missing = [];
+  for (const local of expected) {
+    const found = remote.get(local.name);
+    if (!found) {
+      missing.push(local);
+      continue;
+    }
+    if (Number(found.size) !== local.bytes) {
+      throw new Error(
+        `immutable snapshot conflict for ${local.name}: remote bytes ${found.size} != local ${local.bytes}`,
+      );
+    }
+    if (found.md5 && found.md5 !== local.md5) {
+      throw new Error(
+        `immutable snapshot conflict for ${local.name}: remote MD5 ${found.md5} != local ${local.md5}`,
+      );
+    }
+  }
+  return missing;
+}
+
 async function waitForRemoteFiles(identifier, expected, attempts = 18) {
   let last = null;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     try {
       const metadata = await fetchMetadata(identifier);
-      const remote = new Map((metadata.files ?? []).map((file) => [file.name, file]));
-      const missing = [];
-      for (const local of expected) {
-        const found = remote.get(local.name);
-        if (!found) {
-          missing.push(`${local.name}:missing`);
-          continue;
-        }
-        if (Number(found.size) !== local.bytes) missing.push(`${local.name}:bytes`);
-        if (found.md5 && found.md5 !== local.md5) missing.push(`${local.name}:md5`);
-      }
+      const missing = remotePlan(metadata, expected);
       if (missing.length === 0) return metadata;
-      last = missing.join(", ");
+      last = missing.map((entry) => `${entry.name}:missing`).join(", ");
     } catch (error) {
       last = error instanceof Error ? error.message : String(error);
+      if (last.startsWith("immutable snapshot conflict")) throw error;
     }
     if (attempt < attempts) {
       await new Promise((resolve) => setTimeout(resolve, Math.min(attempt * 5000, 30000)));
@@ -96,20 +110,6 @@ async function main() {
   if (!identifier) throw new Error("manifest.internet_archive.identifier is required");
 
   const localFiles = verifyLocalManifest(manifestPath, manifest);
-  const uploadFiles = [...localFiles.map((entry) => entry.file), manifestPath];
-  const metadata = [
-    "mediatype:data",
-    `title:${title ?? `Scientific Equation Atlas — ${manifest.source_id} — ${manifest.source_snapshot}`}`,
-    `creator:${creator}`,
-    `description:${description}`,
-    `subject:Scientific Equation Atlas;equations;Parquet;open data;${manifest.source_id}`,
-  ];
-
-  const command = ["upload", identifier, ...uploadFiles, "--retries", "10"];
-  for (const value of metadata) command.push("--metadata", value);
-  const run = spawnSync(iaCli, command, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
-  if (run.status !== 0) throw new Error(run.stderr || run.stdout || "Internet Archive upload failed");
-
   const expected = [
     ...localFiles,
     {
@@ -120,6 +120,36 @@ async function main() {
       md5: md5File(manifestPath),
     },
   ];
+
+  // Internet Archive items are appendable by default. The Atlas treats one
+  // source+snapshot identifier as immutable: existing same-name files must match
+  // byte length and MD5 exactly, otherwise publication aborts rather than
+  // overwriting a previously published snapshot.
+  let missing = expected;
+  try {
+    const existing = await fetchMetadata(identifier);
+    missing = remotePlan(existing, expected);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (message.startsWith("immutable snapshot conflict")) throw error;
+    // A not-yet-created item or transient metadata miss is handled by the upload
+    // and the stronger post-upload verification below.
+  }
+
+  if (missing.length > 0) {
+    const metadata = [
+      "mediatype:data",
+      `title:${title ?? `Scientific Equation Atlas — ${manifest.source_id} — ${manifest.source_snapshot}`}`,
+      `creator:${creator}`,
+      `description:${description}`,
+      `subject:Scientific Equation Atlas;equations;Parquet;open data;${manifest.source_id}`,
+    ];
+    const command = ["upload", identifier, ...missing.map((entry) => entry.file), "--retries", "10"];
+    for (const value of metadata) command.push("--metadata", value);
+    const run = spawnSync(iaCli, command, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+    if (run.status !== 0) throw new Error(run.stderr || run.stdout || "Internet Archive upload failed");
+  }
+
   await waitForRemoteFiles(identifier, expected);
 
   const publication = {
@@ -127,6 +157,8 @@ async function main() {
     metadata_url: `https://archive.org/metadata/${identifier}`,
     details_url: `https://archive.org/details/${identifier}`,
     files: expected.map(({ name, bytes, sha256, md5 }) => ({ name, bytes, sha256, md5 })),
+    uploaded_files: missing.map((entry) => entry.name),
+    idempotent_reuse: missing.length === 0,
     verified: true,
   };
   process.stdout.write(`${JSON.stringify(publication, null, 2)}\n`);
