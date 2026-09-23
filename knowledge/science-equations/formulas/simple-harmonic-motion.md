@@ -3,7 +3,7 @@ type: science-formula
 name: "Simple harmonic motion"
 latex: "x(t)=A\\cos(\\omega t+\\varphi)"
 summary: "Sinusoidal displacement for ideal simple harmonic motion with constant amplitude, angular frequency and phase."
-status: verified
+status: audited
 source_label: "OpenStax University Physics Volume 1, §15.1 Simple Harmonic Motion"
 source_url: "https://openstax.org/books/university-physics-volume-1/pages/15-1-simple-harmonic-motion"
 updated: "2026-09-23"
@@ -84,29 +84,38 @@ A=\sqrt{C^2+D^2},
 
 with \(C=A\cos\varphi\) and \(D=-A\sin\varphi\). The zero solution is recovered by \(A=0\). This makes the sinusoidal representation and the undamped second-order oscillator ODE equivalent descriptions of the same solution space under those conditions.
 
-### Existing equation-family test
+### Verified equation-family edge
 
-The Atlas currently has the first-order linear-decay family
+The previous Atlas run deliberately deferred a generic oscillator family until a second independent scientific occurrence could be checked. The new [ideal LC circuit oscillation](lc-circuit-oscillation.md) provides that independent occurrence. OpenStax maps the mechanical oscillator to the electrical one with
+
+\[
+m\mapsto L,\qquad k\mapsto \frac{1}{C},\qquad x\mapsto q,
+\]
+
+and both reduce to
+
+\[
+\frac{d^2x}{dt^2}+\omega^2x=0.
+\]
+
+Accordingly this occurrence is now linked to [undamped linear harmonic oscillator](../families/undamped-linear-harmonic-oscillator.md). The family edge is based on an explicit reversible variable correspondence and the same second-order operator, not on the superficial fact that both solutions contain trigonometric functions.
+
+### First-order-decay rejection
+
+The Atlas's older family is first-order scalar decay,
 
 \[
 \frac{dx}{dt}=-kx,\qquad k>0.
 \]
 
-Simple harmonic motion instead obeys a second-order equation,
-
-\[
-\frac{d^2x}{dt^2}+\omega^2x=0,
-\]
-
-with periodic non-decaying solutions. A constant variable renaming or rescaling cannot change derivative order or turn the two-dimensional oscillator state space \((x,\dot x)\) into the scalar first-order decay law. Therefore **no link to the existing decay family is created**.
-
-The Atlas also does not create a generic `harmonic-oscillator` equation-family card from this single verified occurrence. A future family becomes better justified when another independent scientific occurrence—such as a small-angle pendulum, LC circuit, acoustic mode or another linear oscillator—is added and an explicit transformation can be checked.
+Simple harmonic motion instead has a second-order evolution law and a two-dimensional state \((x,\dot x)\). Its generic nonzero solutions are periodic and do not monotonically relax to zero. Constant variable renaming, sign changes or rescaling cannot remove that derivative-order/state-dimension difference, so no decay-family edge is created.
 
 ## Evidence and prior art
 
 - [OpenStax University Physics Volume 1, §15.1](https://openstax.org/books/university-physics-volume-1/pages/15-1-simple-harmonic-motion) gives the generalized source equation \(x(t)=A\cos(\omega t+\varphi)\), defines amplitude, angular frequency and phase, and derives velocity and acceleration by differentiation.
 - [OpenStax University Physics Volume 1, Chapter 15 Summary](https://openstax.org/books/university-physics-volume-1/pages/15-summary) states the defining restoring-force condition for simple harmonic motion and gives \(\omega=\sqrt{k/m}\), \(T=2\pi\sqrt{m/k}\), and the same displacement law.
 - [OpenStax University Physics Volume 1, §15.5](https://openstax.org/books/university-physics-volume-1/pages/15-5-damped-oscillations) gives the neighboring damped equation \(m\,d^2x/dt^2+b\,dx/dt+kx=0\), showing why damped motion should not be silently folded into the undamped occurrence.
+- [OpenStax University Physics Volume 2, §14.5](https://openstax.org/books/university-physics-volume-2/pages/14-5-oscillations-in-an-lc-circuit) supplies the independent electrical occurrence and explicitly states the mechanical-to-electromagnetic variable correspondence used for the new family edge.
 - [Wolfram Formula Repository, "Damped Harmonic Oscillator"](https://resources.wolframcloud.com/FormulaRepository/resources/Damped-Harmonic-Oscillator) was checked as neighboring prior art; it treats damping ratio and damped frequency as additional structure rather than as the same undamped formula.
 
 ## Scope
