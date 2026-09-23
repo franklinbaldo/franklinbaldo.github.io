@@ -1,0 +1,30 @@
+---
+type: blog-post-tier
+translation_key: "music-o-magico-e-o-fogo"
+quality_tier: "B"
+interest_tier: "B"
+confidence: "high"
+signal_agreement: "medium"
+reviewed_at: "2026-09-23"
+reviewed_revision: "25144977e0e5dcfa2ec3257eec80e096b8df078e"
+issue_urls:
+  - "https://github.com/franklinbaldo/franklinbaldo.github.io/issues/2182"
+summary: >-
+  O Mágico e o Fogo is a competent and carefully staged spoken-word retelling of Borges's The Circular Ruins. Its strongest achieved move is musical rather than argumentative: the gentle campfire texture and bedtime-story register remain unchanged through the ontological reveal, so the form refuses the obvious ominous cue and lets the meaning change while the sonic world does not. Quality is B because that craft decision is real and the adaptation is accessible, but the selected text is often closer to faithful plot transmission than transformative writing, the language carries narrative more than poetic pressure, and the composer notes overstate an unproved structural identity with Events All the Way Down. Interest is B because the bedtime-Borges inversion and unchanged-fire texture are memorable and discussion-producing, but Returning-Reader and the version record both suggest refinement of a known literary structure more than a new generative move within the corpus.
+strengths:
+  - "Coverage is complete and substantial enough for a high-confidence judgment: the current derived projection reports 46 pairwise appearances, 20 wins, 33 selected absolute-quality observations, 14/14 perspective coverage, 3.43 absolute quality and 3.70 de-confounded quality."
+  - "Craft-Listener scores the current EN work 3.90 and identifies the clearest success: the requested soft guitar, fire crackling and calm narration do not change register at the final revelation. The unchanged soundscape makes the ontological collapse arrive without a conventional dramatic cue, matching the stated compositional intent."
+  - "Curious-Outsider finds the Borges story legible without prior knowledge and rewards the explicit grounding of The Circular Ruins; the childlike spoken-word register makes the nested-dream plot unusually accessible."
+  - "The selected work has a coherent circular architecture: dreamer creates dreamed child, fire marks the child's unreality, and the same fire finally exposes the dreamer's own status. Even less favorable perspectives generally recognize that structural clarity."
+open_problems:
+  - "The cross-signal record is solid but materially non-elite. At review time the read-only projection reports rank 86/107, OpenSkill ordinal 4.01 (mu 20.07, sigma 5.36), 20/46 head-to-head wins, selected absolute quality 3.43 and de-confounded quality 3.70. Signal agreement is therefore medium rather than allowing either the stronger adjusted quality or the weaker ordinal/head-to-head position to dictate the tier."
+  - "Lyric-as-Poem scores the selected EN work 2.75 and localizes a text-level limitation: the poetry is mainly in the circular story structure, while the sentences themselves explain plot and depend on voice/music/context rather than carrying much compression on the page."
+  - "Skeptical-Specialist identifies the principal epistemic weakness in the composer notes: the claim that Borges's regress is 'structurally identical' to Events All the Way Down is asserted rather than demonstrated. The local craft observation about the unchanged musical register is stronger than the philosophical equivalence attached to it."
+  - "Derived version_attention is true with selected-version W/L 3/11. Some losses are nearly cosmetic and should not trigger rollback, but at least one Lateral-Essayist duel prefers an archived PT challenger 4.00 to the selected PT version 3.25 because the challenger preserves stranger, more concrete and more playful material. Returning-Reader likewise finds the selected family mostly polish of the same structure rather than a substantive new move. Issue #2182 tracks discriminating adjudication rather than score-based restoration."
+  - "Felt-Not-Explained identifies a second execution tradeoff: the composer notes can pre-interpret the magician/fire metaphor instead of allowing the experiential contrast to land first. Any revision should preserve enough Borges grounding for outsiders while reducing explanation that merely restates the intended effect."
+  - "At corpus level, Borges is already a recurring source. This work's distinctiveness therefore rests primarily on the bedtime/campfire delivery constraint and its unchanged texture at the reveal, not on source choice alone; that keeps interest at B rather than A."
+note: >-
+  Confidence is high because the judgment rests on 46 pairwise appearances, 33 selected absolute observations, complete 14/14 perspective coverage, substantive reviews across craft, accessibility, lyric density, skepticism and returning-reader views, plus fourteen direct version duels. At review time the derived projection reports rank 86/107; ordinal 4.01; 20/46 wins/appearances; absolute quality 3.43; de-confounded quality 3.70; a +0.27 gap; medium signal agreement; selected-version W/L 3/11; and version_attention true. PT and EN share one translationKey and therefore one conceptual tier. No new duel was added because coverage is already complete and the remaining uncertainty is localized in version selection and claim calibration rather than missing evidence.
+history:
+  - "2026-09-23: initial placement -> quality B / interest B / confidence high. Previous tier: none. Material evidence: 46 Hrönir appearances, 33 selected absolute observations, complete 14/14 perspective coverage, a 20/46 overall win record, strong craft evidence for the unchanged campfire register, contrary lyric/returning-reader evidence about transformiveness, a skeptical objection to the Events equivalence, and selected-version W/L 3/11. Unresolved weaknesses: direct-retelling ceiling, explanatory pre-interpretation, unsupported structural-identity claim, and version adjudication tracked in issue #2182."
+---
