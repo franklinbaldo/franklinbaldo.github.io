@@ -183,7 +183,7 @@ jobs:
           inv_path = pathlib.Path(os.environ["INVENTORY"])
           inventory = json.loads(inv_path.read_text()) if inv_path.exists() else None
           pub_path = pathlib.Path(os.environ["PUBLICATION"])
-          publication = json.loads(pub_path.read_text()) if pub_path.exists() else None
+          publication = json.loads(pub_path.read_text()) if (pub_path.exists() and pub_path.stat().st_size > 0) else None
 
           record = {
               "schema_version": 1,
