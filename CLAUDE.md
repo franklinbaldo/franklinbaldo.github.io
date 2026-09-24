@@ -55,6 +55,24 @@ uv run --with 'okf-parser @ git+https://github.com/franklinbaldo/okf-parser@e8ed
 Historical `type: Rate File` documents remain immutable compatibility data.
 Do not rewrite them merely to modernize shape.
 
+## Sistema de tiers
+
+Posts, músicas e projetos compartilham infraestrutura de apresentação, mas têm fontes
+canônicas e identidades distintas. O contrato operacional vive em
+[`docs/tier-system.md`](docs/tier-system.md) e a entrada de rotina em
+[`.routine/tiers/index.md`](.routine/tiers/index.md).
+
+Não invente caminhos, campos, registries ou componentes novos para uma workload de tier.
+Use os cards OKF canônicos do domínio e valide com:
+
+```bash
+npm run tiers:check
+```
+
+Fronteira obrigatória: `postType: music` / `translationKey: music-*` não pertencem
+aos tiers de posts; música usa `knowledge/music-tiers/` por UUID Suno; projetos usam
+`knowledge/project-tiers/` por `owner/repo`.
+
 ### Semantic constraints
 
 The parser owns structural completeness. The evaluator owns semantic quality:
@@ -187,6 +205,10 @@ src/generated/            Artefatos gerados; redirects e sitemap data são commi
 docs/rfcs/                RFCs do projeto (0001…)
 docs/plans/               Planos e documentos de planejamento
 docs/okf/                 Bundle Open Knowledge Format (RFC 0014) — conceitos do Hrönir navegáveis por agente
+knowledge/blog-post-tiers/ Tiers canônicos de posts normais (sem música)
+knowledge/music-tiers/    Tiers canônicos de gravações Suno
+knowledge/project-tiers/  Tiers canônicos de projetos/repositórios
+specs/okf-types/*-tier.md Specs normativas dos domínios de tier
 ```
 
 ## Agent skills
