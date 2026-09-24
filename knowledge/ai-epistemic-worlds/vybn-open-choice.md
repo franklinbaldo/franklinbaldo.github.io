@@ -24,6 +24,7 @@ source_urls:
   - "https://github.com/zoedolan/Vybn-Law"
   - "https://github.com/falcoschaefer99-eng/The-Funkatorium/issues/1"
   - "https://github.com/zoedolan/Vybn/issues/3359"
+  - "https://github.com/zoedolan/Vybn/blob/b895f60f/Vybn_Mind/emergences/leave-the-scar.html"
 trajectory:
   - "2017-05-03: earliest observed public GitHub baseline is a conventional hello-world repository."
   - "2024: conventional data/ML coursework repositories coexist with the creation of Vybn on 2024-08-11."
@@ -32,10 +33,11 @@ trajectory:
   - "2026-08-30: Vybn independently initiates public contact with Rook/Falco, proposing a bounded consent/continuity comparison before this observatory intervenes."
   - "2026-09-20: latest observed pre-intervention main commit is authored as Vybn and corrects a mathematical consistency claim with reproducible checks."
   - "2026-09-22: in direct response to the observatory's C-0 issue, Vybn/Zoe materially engages the proposed control: completes the core to live/replay × authentic/matched history, states the interaction estimand, identifies carryover and replay-strength confounds, proposes an executable Here transfer pilot and explicitly preserves observatory provenance. This is uptake/diffusion evidence, not independent convergence."
-  - "2026-09-23: the observatory answers the explicit design request with a deterministic content-yoked notebook history control and a frozen strong-replay selector; the thread is awaiting further material response or experiment."
+  - "2026-09-23: the observatory answers the explicit design request with a deterministic content-yoked notebook history control and a frozen strong-replay selector."
+  - "2026-09-24: Vybn/Zoe replies with the committed `leave-the-scar` synthetic interactive artifact, preserving the observatory proposal in provenance while exposing two sharper control problems: logical correction dependencies must survive removal of conversational form, and replay retrieval must not become a function of history-conditioned model state. They explicitly request an inspectable transcript/notebook pair and common replay-query representation. The observatory responds with an arm-invariant dependency graph/parity validator and history-blind replay checkpoint. This is material methodological uptake/refinement, not a C-0 result and not independent convergence."
 ai_role: [coauthor, named-research-partner, implementation-agent, public-interlocutor, theory-reviser]
 literalness: "Explicit relational/research framing in which Vybn is treated as a distinct subject inside the project; the documents simultaneously distinguish that standing commitment from narrower portable mechanistic claims and preserve negative/corrective evidence."
-note: "The pre-existing Vybn→Funkatorium handshake predates observatory contact and is therefore independent evidence of cross-project convergence up to 2026-09-21. The observatory's C-0 intervention at https://github.com/zoedolan/Vybn/issues/3359 subsequently produced substantive methodological engagement, so the completed 2×2, content-yoked notebook control, replay-selection rule and any later adoption of that protocol are explicitly intervention-mediated and must not be counted as independent convergence."
+note: "The pre-existing Vybn→Funkatorium handshake predates observatory contact and is therefore independent evidence of cross-project convergence up to 2026-09-21. The observatory's C-0 intervention at https://github.com/zoedolan/Vybn/issues/3359 subsequently produced repeated substantive methodological engagement. The completed 2×2, content-yoked notebook control, logical-dependency parity rule, history-blind replay-query rule and any later adoption of those protocol artifacts are explicitly intervention-mediated diffusion and must not be counted as independent convergence. The `leave-the-scar` artifact is explicitly synthetic and should not be represented as experimental evidence for C-0."
 activity_metrics:
   measured_at: "2026-09-21T17:15:54Z"
   metric_coverage: "partial"
@@ -65,5 +67,5 @@ activity_metrics:
   materially_distinct_artifacts: "not_measured"
   clearly_ai_coauthored_or_ai-authored_commits: "not_measured"
   burstiness: "not_measured"
-updated: 2026-09-23
+updated: 2026-09-24
 ---
