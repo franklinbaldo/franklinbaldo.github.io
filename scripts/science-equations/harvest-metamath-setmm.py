@@ -4,13 +4,15 @@
 from __future__ import annotations
 
 import argparse
-import bisect
 import hashlib
 import json
 import re
+import shutil
 import sys
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable, Iterator
 
 SOURCE_ID = "metamath-setmm-relations"
 SOURCE_NAME = "Metamath Proof Explorer set.mm — formal relation assertions"
@@ -28,7 +30,56 @@ class Token:
     text: str
     start: int
     end: int
+    line_start: int
+    line_end: int
     comment: bool = False
+
+
+class TokenStream:
+    """Single-pass Metamath lexer with one-token lookahead and fail-closed gaps."""
+
+    def __init__(self, text: str):
+        self.text = text
+        self._matches: Iterator[re.Match[str]] = iter(TOKEN_RE.finditer(text))
+        self._buffer: Token | None = None
+        self._cursor = 0
+        self._line = 1
+        self._finished = False
+
+    def _read(self) -> Token | None:
+        if self._finished:
+            return None
+        try:
+            match = next(self._matches)
+        except StopIteration:
+            tail = self.text[self._cursor :]
+            if "$" in tail:
+                offset = self._cursor + tail.index("$")
+                raise ValueError(f"unrecognized Metamath dollar directive near byte {offset}")
+            self._finished = True
+            return None
+
+        gap = self.text[self._cursor : match.start()]
+        if "$" in gap:
+            offset = self._cursor + gap.index("$")
+            raise ValueError(f"unrecognized Metamath dollar directive near byte {offset}")
+        self._line += gap.count("\n")
+        raw = match.group(0)
+        line_start = self._line
+        line_end = line_start + raw.count("\n")
+        self._line = line_end
+        self._cursor = match.end()
+        return Token(raw, match.start(), match.end(), line_start, line_end, raw.startswith("$("))
+
+    def peek(self) -> Token | None:
+        if self._buffer is None:
+            self._buffer = self._read()
+        return self._buffer
+
+    def pop(self) -> Token | None:
+        token = self.peek()
+        self._buffer = None
+        return token
 
 
 def sha256_text(value: str) -> str:
@@ -38,32 +89,6 @@ def sha256_text(value: str) -> str:
 def canonical_sha256(value: object) -> str:
     payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return sha256_text(payload)
-
-
-def scan(text: str) -> list[Token]:
-    tokens: list[Token] = []
-    for match in TOKEN_RE.finditer(text):
-        raw = match.group(0)
-        tokens.append(Token(raw, match.start(), match.end(), raw.startswith("$(")))
-    # Fail closed if a dollar sign is not covered by a Metamath token/directive.
-    covered = [False] * len(text)
-    for tok in tokens:
-        for idx in range(tok.start, tok.end):
-            covered[idx] = True
-    for idx, ch in enumerate(text):
-        if ch == "$" and not covered[idx]:
-            raise ValueError(f"unrecognized Metamath dollar directive near byte {idx}")
-    return tokens
-
-
-def line_starts(text: str) -> list[int]:
-    starts = [0]
-    starts.extend(match.end() for match in re.finditer("\n", text))
-    return starts
-
-
-def line_number(starts: list[int], offset: int) -> int:
-    return bisect.bisect_right(starts, offset)
 
 
 def clean_comment(raw: str | None) -> str | None:
@@ -79,24 +104,28 @@ def exact_between(text: str, semantic: list[Token]) -> str:
     return text[semantic[0].start : semantic[-1].end]
 
 
-def parse_expression(tokens: list[Token], idx: int, terminators: set[str]) -> tuple[list[Token], int, str]:
+def parse_expression(stream: TokenStream, terminators: set[str]) -> tuple[list[Token], Token]:
     semantic: list[Token] = []
-    while idx < len(tokens):
-        tok = tokens[idx]
+    while True:
+        tok = stream.pop()
+        if tok is None:
+            raise ValueError(f"unterminated expression; expected one of {sorted(terminators)}")
         if tok.comment:
-            idx += 1
             continue
         if tok.text in terminators:
-            return semantic, idx, tok.text
+            return semantic, tok
         semantic.append(tok)
-        idx += 1
-    raise ValueError(f"unterminated expression; expected one of {sorted(terminators)}")
 
 
-def iter_records(text: str, snapshot: str, commit: str, relation_tokens: tuple[str, ...]) -> tuple[list[dict], dict]:
-    tokens = scan(text)
-    starts = line_starts(text)
-    document_sha = sha256_text(text)
+def harvest(
+    text: str,
+    document_sha: str,
+    snapshot: str,
+    commit: str,
+    relation_tokens: tuple[str, ...],
+    emit: Callable[[dict], None],
+) -> dict:
+    stream = TokenStream(text)
     metrics = {
         "files_seen": 1,
         "assertions_seen": 0,
@@ -114,26 +143,26 @@ def iter_records(text: str, snapshot: str, commit: str, relation_tokens: tuple[s
     active_e: list[dict] = []
     active_d: list[list[str]] = []
     scopes: list[tuple[int, int, int]] = []
-    records: list[dict] = []
-    idx = 0
     pending_comment: str | None = None
 
-    def skip_comments(pos: int) -> int:
+    def pop_noncomment() -> Token | None:
         nonlocal pending_comment
-        while pos < len(tokens) and tokens[pos].comment:
-            pending_comment = tokens[pos].text
-            pos += 1
-        return pos
+        while True:
+            token = stream.pop()
+            if token is None:
+                return None
+            if token.comment:
+                pending_comment = token.text
+                continue
+            return token
 
-    while idx < len(tokens):
-        idx = skip_comments(idx)
-        if idx >= len(tokens):
+    while True:
+        tok = pop_noncomment()
+        if tok is None:
             break
-        tok = tokens[idx]
 
         if tok.text == "${":
             scopes.append((len(active_f), len(active_e), len(active_d)))
-            idx += 1
             continue
         if tok.text == "$}":
             if not scopes:
@@ -142,7 +171,6 @@ def iter_records(text: str, snapshot: str, commit: str, relation_tokens: tuple[s
             del active_f[nf:]
             del active_e[ne:]
             del active_d[nd:]
-            idx += 1
             pending_comment = None
             continue
         if tok.text == "$[":
@@ -150,37 +178,38 @@ def iter_records(text: str, snapshot: str, commit: str, relation_tokens: tuple[s
             raise ValueError("$[ include directive encountered; set.mm lane requires one self-contained pinned set.mm file")
         if tok.text in {"$c", "$v", "$d"}:
             kind = tok.text
-            expr, end_idx, terminator = parse_expression(tokens, idx + 1, {"$."})
-            if terminator != "$.":
-                raise AssertionError(terminator)
+            expr, terminator = parse_expression(stream, {"$."})
+            if terminator.text != "$.":
+                raise AssertionError(terminator.text)
             if kind == "$d":
                 variables = [item.text for item in expr]
                 if len(variables) >= 2:
                     active_d.append(variables)
-            idx = end_idx + 1
             pending_comment = None
             continue
         if tok.text in SPECIALS:
-            raise ValueError(f"unexpected directive {tok.text} at line {line_number(starts, tok.start)}")
+            raise ValueError(f"unexpected directive {tok.text} at line {tok.line_start}")
 
-        # Labeled statements: <label> $f/$e/$a/$p ...
         label_tok = tok
         label = tok.text
         statement_comment = pending_comment
-        idx = skip_comments(idx + 1)
-        if idx >= len(tokens) or tokens[idx].text not in {"$f", "$e", "$a", "$p"}:
-            got = tokens[idx].text if idx < len(tokens) else "EOF"
+        directive_tok = pop_noncomment()
+        if directive_tok is None or directive_tok.text not in {"$f", "$e", "$a", "$p"}:
+            got = directive_tok.text if directive_tok else "EOF"
             raise ValueError(f"label {label!r} not followed by $f/$e/$a/$p (got {got!r})")
-        directive_tok = tokens[idx]
         directive = directive_tok.text
         if directive in {"$f", "$e", "$a"}:
-            expr, end_idx, terminator = parse_expression(tokens, idx + 1, {"$."})
+            expr, terminator = parse_expression(stream, {"$."})
+            if terminator.text != "$.":
+                raise AssertionError(terminator.text)
             proof_semantic: list[Token] = []
         else:
-            expr, proof_start_idx, terminator = parse_expression(tokens, idx + 1, {"$="})
-            proof_semantic, end_idx, proof_terminator = parse_expression(tokens, proof_start_idx + 1, {"$."})
-            if terminator != "$=" or proof_terminator != "$.":
-                raise AssertionError((terminator, proof_terminator))
+            expr, proof_marker = parse_expression(stream, {"$="})
+            if proof_marker.text != "$=":
+                raise AssertionError(proof_marker.text)
+            proof_semantic, proof_terminator = parse_expression(stream, {"$."})
+            if proof_terminator.text != "$.":
+                raise AssertionError(proof_terminator.text)
 
         expr_tokens = [item.text for item in expr]
         expr_original = exact_between(text, expr)
@@ -232,9 +261,6 @@ def iter_records(text: str, snapshot: str, commit: str, relation_tokens: tuple[s
                         if len(relevant) >= 2:
                             distinct.append(relevant)
                     proof_original = exact_between(text, proof_semantic) if directive == "$p" else None
-                    line_start = line_number(starts, label_tok.start)
-                    end_tok = expr[-1] if expr else directive_tok
-                    line_end = line_number(starts, end_tok.end - 1)
                     record_identity = {
                         "source_id": SOURCE_ID,
                         "source_snapshot": snapshot,
@@ -245,7 +271,7 @@ def iter_records(text: str, snapshot: str, commit: str, relation_tokens: tuple[s
                         "expression_original": expr_original,
                         "expression_tokens": expr_tokens,
                     }
-                    records.append(
+                    emit(
                         {
                             "schema_version": 1,
                             "source_id": SOURCE_ID,
@@ -258,8 +284,8 @@ def iter_records(text: str, snapshot: str, commit: str, relation_tokens: tuple[s
                             "source_document_id": "set.mm",
                             "source_document_sha256": document_sha,
                             "source_selector": f"label:{label}",
-                            "source_position": {"line_start": line_start, "line_end": line_end},
-                            "source_url": f"https://github.com/metamath/set.mm/blob/{commit}/set.mm#L{line_start}",
+                            "source_position": {"line_start": label_tok.line_start, "line_end": expr[-1].line_end if expr else directive_tok.line_end},
+                            "source_url": f"https://github.com/metamath/set.mm/blob/{commit}/set.mm#L{label_tok.line_start}",
                             "source_record_sha256": canonical_sha256(record_identity),
                             "expression_original": expr_original,
                             "expression_encoding": "Metamath token expression",
@@ -283,12 +309,11 @@ def iter_records(text: str, snapshot: str, commit: str, relation_tokens: tuple[s
                     )
                     metrics["records_written"] += 1
 
-        idx = end_idx + 1
         pending_comment = None
 
     if scopes:
         raise ValueError("unclosed Metamath scope at end of file")
-    return records, metrics
+    return metrics
 
 
 def main() -> int:
@@ -309,15 +334,23 @@ def main() -> int:
         parser.error(f"--snapshot must begin with {expected_prefix!r}")
 
     try:
-        text = source_path.read_text(encoding="utf-8")
+        source_bytes = source_path.read_bytes()
+        document_sha = hashlib.sha256(source_bytes).hexdigest()
+        text = source_bytes.decode("utf-8")
+        del source_bytes
         relation_tokens = tuple(dict.fromkeys((*DEFAULT_RELATION_TOKENS, *args.relation_token)))
-        records, metrics = iter_records(text, args.snapshot, args.commit, relation_tokens)
+        with tempfile.SpooledTemporaryFile(mode="w+", encoding="utf-8", max_size=8 * 1024 * 1024) as output:
+            def emit(record: dict) -> None:
+                output.write(json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
+                output.write("\n")
+
+            metrics = harvest(text, document_sha, args.snapshot, args.commit, relation_tokens, emit)
+            output.seek(0)
+            shutil.copyfileobj(output, sys.stdout)
     except Exception as exc:
         print(json.dumps({"documents_rejected": 1, "error": str(exc)}, ensure_ascii=False, sort_keys=True), file=sys.stderr)
         return 2
 
-    for record in records:
-        print(json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
     print(json.dumps(metrics, ensure_ascii=False, sort_keys=True, separators=(",", ":")), file=sys.stderr)
     return 0
 
