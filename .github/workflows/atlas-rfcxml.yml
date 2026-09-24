@@ -37,18 +37,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      WORK_ROOT: ${{ runner.temp }}/atlas-rfcxml
-      MIRROR_ROOT: ${{ runner.temp }}/atlas-rfcxml/mirror
-      OCCURRENCES: ${{ runner.temp }}/atlas-rfcxml/occurrences.jsonl
-      PARQUET_DIR: ${{ runner.temp }}/atlas-rfcxml/extracted
-      INVENTORY: ${{ runner.temp }}/atlas-rfcxml/source-inventory.json
-      PUBLICATION: ${{ runner.temp }}/atlas-rfcxml/publication.json
       IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
       IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup environment paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "WORK_ROOT=${RUNNER_TEMP}/atlas-rfcxml" >> "$GITHUB_ENV"
+          echo "MIRROR_ROOT=${RUNNER_TEMP}/atlas-rfcxml/mirror" >> "$GITHUB_ENV"
+          echo "OCCURRENCES=${RUNNER_TEMP}/atlas-rfcxml/occurrences.jsonl" >> "$GITHUB_ENV"
+          echo "PARQUET_DIR=${RUNNER_TEMP}/atlas-rfcxml/extracted" >> "$GITHUB_ENV"
+          echo "INVENTORY=${RUNNER_TEMP}/atlas-rfcxml/source-inventory.json" >> "$GITHUB_ENV"
+          echo "PUBLICATION=${RUNNER_TEMP}/atlas-rfcxml/publication.json" >> "$GITHUB_ENV"
 
       - name: Setup Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -224,12 +229,12 @@ jobs:
         with:
           name: atlas-rfcxml-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            ${{ runner.temp }}/atlas-rfcxml/source-inventory.json
-            ${{ runner.temp }}/atlas-rfcxml/occurrences.jsonl
-            ${{ runner.temp }}/atlas-rfcxml/extracted/manifest.json
-            ${{ runner.temp }}/atlas-rfcxml/extracted/*.parquet
-            ${{ runner.temp }}/atlas-rfcxml/publication.json
-            ${{ runner.temp }}/atlas-rfcxml/control/publication.json
+            ${{ env.INVENTORY }}
+            ${{ env.OCCURRENCES }}
+            ${{ env.PARQUET_DIR }}/manifest.json
+            ${{ env.PARQUET_DIR }}/*.parquet
+            ${{ env.PUBLICATION }}
+            ${{ env.WORK_ROOT }}/control/publication.json
           if-no-files-found: warn
           retention-days: 90
 
