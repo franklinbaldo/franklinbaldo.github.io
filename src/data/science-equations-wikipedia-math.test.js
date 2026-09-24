@@ -50,6 +50,9 @@ test("Wikipedia adapter extracts explicit attested math and skips literal region
   assert.deepEqual(rows.map((row) => row.expression_original), ["E=mc^2", "\\int_0^1 x\\,dx = 1/2"]);
   assert.ok(rows.every((row) => row.provenance_class === "attested"));
   assert.ok(rows.every((row) => row.source_id === "wikipedia-en-math-tags"));
+  assert.ok(rows.every((row) => row.source_wiki_id === "enwiki"));
+  assert.ok(rows.every((row) => row.source_wiki_language === "en"));
+  assert.equal(rows[0].source_document_id, "wiki:enwiki:page:10:revision:20");
   assert.equal(rows[0].source_document_url, "https://en.wikipedia.org/w/index.php?oldid=20");
   assert.equal(rows[0].source_revision_sha1, "abc123");
   assert.deepEqual(rows[1].source_attested_payload.attributes, { display: "block" });
@@ -82,4 +85,35 @@ test("Wikipedia source record hashes are independent of dump-part packaging", ()
   assert.equal(second.status, 0, second.stderr);
   const hashes = (stdout) => stdout.trim().split("\n").filter(Boolean).map((line) => JSON.parse(line).source_record_sha256);
   assert.deepEqual(hashes(first.stdout), hashes(second.stdout));
+});
+
+test("Wikipedia adapter can isolate a non-English wiki inside the multilingual source family", () => {
+  const root = mkdtempSync(join(tmpdir(), "atlas-wikipedia-multilingual-"));
+  const xmlPath = join(root, "ptwiki-fixture.xml");
+  writeFileSync(xmlPath, fixtureXml, "utf8");
+
+  const result = runPython([
+    "scripts/science-equations/harvest-wikipedia-math.py",
+    "--dump",
+    xmlPath,
+    "--snapshot",
+    "wikimedia-content-current:ptwiki:inventory-sha256:fixture",
+    "--source-id",
+    "wikipedia-multilingual-math-tags",
+    "--wiki-id",
+    "ptwiki",
+    "--wiki-language",
+    "pt",
+    "--wiki-base",
+    "https://pt.wikipedia.org",
+  ]);
+  assert.equal(result.status, 0, result.stderr);
+  const rows = result.stdout.trim().split("\n").filter(Boolean).map(JSON.parse);
+  assert.equal(rows.length, 2);
+  assert.ok(rows.every((row) => row.source_id === "wikipedia-multilingual-math-tags"));
+  assert.ok(rows.every((row) => row.source_wiki_id === "ptwiki"));
+  assert.ok(rows.every((row) => row.source_wiki_language === "pt"));
+  assert.equal(rows[0].source_document_id, "wiki:ptwiki:page:10:revision:20");
+  assert.equal(rows[0].source_document_url, "https://pt.wikipedia.org/w/index.php?oldid=20");
+  assert.match(rows[0].source_locator, /^wiki:ptwiki;/);
 });
