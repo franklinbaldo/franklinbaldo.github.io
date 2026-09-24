@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "source_id": "modelica-msl-equations",
+  "source_name": "Modelica Standard Library — explicit equation-section statements",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "repository": "https://github.com/modelica/ModelicaStandardLibrary",
+    "releases": "https://github.com/modelica/ModelicaStandardLibrary/releases",
+    "language_specification": "https://specification.modelica.org/maint/3.7/equations.html",
+    "access_mode": "Acquire an official tagged Modelica Standard Library release or exact Git commit outside GitHub Actions. Prefer the release archive/tag, pin the resolved commit, verify the acquired bytes, and build a deterministic SHA-256 inventory rather than scraping rendered documentation."
+  },
+  "scope": {
+    "corpus": "The Modelica/ package tree from an exact Modelica Standard Library release/commit, spanning multi-domain physical and engineering models",
+    "structures": [
+      "normal equality equations",
+      "initial equations",
+      "connect equations",
+      "if-equation branch leaves with preserved control context",
+      "when-equation branch leaves with preserved control context",
+      "for-equation leaves with preserved loop context",
+      "reinit/assert/terminate and other explicit equation-section calls"
+    ],
+    "domains": [
+      "mechanical systems",
+      "electrical and electronic systems",
+      "magnetic systems",
+      "thermal systems",
+      "fluid systems",
+      "control systems",
+      "state machines and clocked systems",
+      "multi-domain cyber-physical models"
+    ],
+    "provenance_class": "attested",
+    "original_representation": "exact lexical Modelica equation statement from a source .mo file, with enclosing equation-section and branch/loop context retained separately",
+    "batching": "one exact MSL release/commit plus deterministic Modelica/**/*.mo inventory per extraction/materialization batch",
+    "exclusions": [
+      "Do not treat algorithm-section := assignments as equations in this lane",
+      "Do not harvest equation-looking text from comments, strings, HTML documentation or annotations",
+      "Do not flatten models, solve equations, expand connect semantics or symbolically rewrite source equations in the extracted stage",
+      "Do not treat declaration/binding/modification equations as covered by this first lane; add them only with a separate tested extraction contract"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "git-commit-plus-content-inventory",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "Resolve the chosen official MSL release/tag to an exact commit, acquire the release outside GitHub Actions, verify the checkout/archive, inventory LICENSE plus the production Modelica/**/*.mo tree with SHA-256, and use modelica-msl:git:<commit>:inventory-sha256:<digest> as source_snapshot. Any changed commit, file set or byte inventory creates a new immutable snapshot/item.",
+    "required_fields": [
+      "release_or_ref",
+      "commit",
+      "file_count",
+      "total_bytes",
+      "inventory_sha256",
+      "files"
+    ]
+  },
+  "license_policy": {
+    "policy": "redistributable-with-attribution",
+    "license": "BSD-3-Clause",
+    "license_url": "https://github.com/modelica/ModelicaStandardLibrary/blob/master/LICENSE",
+    "evidence": [
+      "https://github.com/modelica/ModelicaStandardLibrary",
+      "https://github.com/modelica/ModelicaStandardLibrary/blob/master/LICENSE"
+    ],
+    "rule": "The Modelica Standard Library repository is distributed under the 3-Clause BSD License. Preserve the exact pinned LICENSE in the source inventory and include source/release/commit provenance in published derivatives. Fail closed if the selected release contains an object with a conflicting object-level rights notice rather than assuming repository-level rights override it."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-modelica-msl.py",
+    "input": "the Modelica/ directory from an exact Modelica Standard Library checkout",
+    "transport_output": "JSONL to stdout (transient only)",
+    "required_arguments": [
+      "--input <checkout>/Modelica",
+      "--commit <40-hex>",
+      "--snapshot modelica-msl:git:<40-hex>:inventory-sha256:<64-hex>"
+    ],
+    "provenance_class": "attested",
+    "validation": [
+      "comments and strings are masked without changing source offsets, preventing documentation/examples from being emitted",
+      "algorithm sections are excluded",
+      "expression_original is the exact lexical equation leaf from source through its terminating semicolon",
+      "initial-vs-normal equation section, Modelica class context, file path, line range and enclosing if/when/for branch context are retained",
+      "source_record_sha256 is independent of executor checkout directory and depends on snapshot, repository path, source bytes, source offsets and exact expression bytes",
+      "snapshot commit must match the separately supplied pinned commit",
+      "No OCR, flattening, symbolic rewrite or reconstructed equation is performed at extracted stage"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": [
+      "extracted",
+      "normalized",
+      "deduplicated"
+    ],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-modelica-msl-<inventory-digest>-<stage>"
+  }
+}
