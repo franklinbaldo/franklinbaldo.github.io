@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "source_id": "uspto-redbook-mathml",
+  "source_name": "USPTO Red Book patent grants/applications — explicit machine-readable MathML",
+  "readiness": "license-filtered",
+  "official_access": {
+    "open_data_portal": "https://data.uspto.gov/bulkdata/datasets",
+    "grant_full_text_xml": "https://data.uspto.gov/bulkdata/datasets/ptgrxml",
+    "application_full_text_xml": "https://data.uspto.gov/bulkdata/datasets/appxml",
+    "odp_search_api": "https://api.uspto.gov/api/v1/datasets/products/search",
+    "xml_resources": "https://www.uspto.gov/learning-and-resources/xml-resources",
+    "access_mode": "Use official USPTO Open Data Portal bulk full-text XML release objects. ODP currently requires authenticated USPTO.gov/API access for acquisition; download on an external executor and never scrape individual patent pages when the bulk XML product is available."
+  },
+  "scope": {
+    "corpus": "USPTO Red Book full-text XML patent grants and published patent applications containing machine-readable <maths><math> content",
+    "structures": [
+      "explicit mathematical expressions encoded as MathML",
+      "algorithms and quantitative update rules",
+      "signal, control and dynamical-system relations",
+      "physical and engineering equations",
+      "objectives, losses, constraints and inequalities",
+      "statistical and probabilistic formulas",
+      "quantitative financial or economic relations when explicitly encoded"
+    ],
+    "provenance_class": "attested",
+    "original_representation": "exact lexical MathML <math> substring inside the patent XML <maths> container",
+    "batching": "one deterministic content inventory of official ODP release objects per extraction/materialization batch",
+    "exclusions": [
+      "Image-only <maths><img> containers are not treated as attested machine-readable formulas and are skipped without OCR",
+      "Do not infer equations from prose, drawings, claims or generic numerals",
+      "Do not reconstruct formulas from raster equation images in this lane",
+      "Do not assert algebraic, functional, dynamic or family equivalence at extracted stage",
+      "Do not process pre-XML APS/SGML products as though they were Red Book XML"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "odp-release-object-content-inventory",
+    "rule": "At run time enumerate the selected official ODP full-text XML release objects, acquire them outside GitHub Actions, SHA-256 each exact downloaded object, record product, release date, official object name and byte size, sort those entries deterministically, and use uspto-redbook:inventory-sha256:<digest> as source_snapshot. Authenticated/signed download URLs are transient transport and never snapshot identity. Any object-set or byte change creates a new immutable snapshot and Internet Archive item.",
+    "required_fields": [
+      "object_count",
+      "total_bytes",
+      "inventory_sha256",
+      "objects"
+    ]
+  },
+  "license_policy": {
+    "policy": "license-filtered",
+    "default": "fail-closed",
+    "dataset_license": "Public Domain Mark 1.0",
+    "dataset_license_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "dataset_metadata_evidence": [
+      "https://catalog.data.gov/dataset/patent-grant-full-text-1976-present",
+      "https://catalog.data.gov/dataset/patent-application-full-text-2001-present"
+    ],
+    "terms_evidence": "https://www.uspto.gov/terms-use-uspto-websites",
+    "rule": "Data.gov metadata marks the USPTO full-text patent grant/application datasets with Public Domain Mark 1.0, and USPTO states patent text and drawings are typically not subject to copyright restrictions, but limited copyright and mask-work exceptions can exist. The acquisition manifest therefore records a rights decision and evidence per acquired object, and the adapter additionally fails closed for redistribution on a patent document when an explicit copyright/all-rights-reserved or mask-work notice is detected. Image-only math is never republished as an extracted equation payload."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-uspto-redbook-mathml.py",
+    "input": "root containing externally acquired official ODP Red Book XML or ZIP release objects plus a lightweight audited acquisition manifest",
+    "acquisition_manifest_schema": {
+      "schema_version": 1,
+      "source_id": "uspto-redbook-mathml",
+      "required_per_object": [
+        "relative_path",
+        "object_name",
+        "product",
+        "release_date",
+        "sha256",
+        "rights_status"
+      ],
+      "rights_status_values": [
+        "redistributable",
+        "unverified",
+        "restricted"
+      ],
+      "redistributable_requires": [
+        "license",
+        "license_url"
+      ]
+    },
+    "transport_output": "JSONL to stdout (transient only)",
+    "required_arguments": [
+      "--input <acquired-odp-object-root>",
+      "--acquisition-manifest <audited-objects.json>",
+      "--snapshot uspto-redbook:inventory-sha256:<digest>"
+    ],
+    "provenance_class": "attested",
+    "validation": [
+      "The adapter streams concatenated Red Book us-patent-grant and us-patent-application documents from direct XML or XML members inside ZIP release objects",
+      "Only a machine-readable MathML <math> element inside a <maths> container is emitted; image-only containers are counted and skipped without OCR",
+      "expression_original is the exact lexical MathML substring from the source XML, preserving prefix spelling, entities and spacing",
+      "source_record_sha256 is independent of executor/local acquisition path and depends on immutable snapshot, patent publication identity, exact patent-document bytes, maths ordinal and expression bytes",
+      "Patent publication identity, title, publication date/kind, Red Book DTD version/language, source-object checksum and nearby context are retained when available",
+      "Explicit copyright/all-rights-reserved or mask-work notices fail closed for redistribution even if the enclosing release object was audited as redistributable",
+      "No OCR, equation reconstruction, symbolic normalization, equivalence assertion or equation-family assertion occurs at extracted stage"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": [
+      "extracted",
+      "normalized",
+      "deduplicated"
+    ],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "publication_filter": "redistribution_allowed == true",
+    "identifier_template": "scientific-equation-atlas-uspto-redbook-<inventory-digest>-<stage>"
+  }
+}
