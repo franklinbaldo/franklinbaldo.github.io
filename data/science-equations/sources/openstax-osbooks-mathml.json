@@ -10,7 +10,7 @@
     "template_repository": "https://github.com/openstax/template-osbooks",
     "cnxml_library": "https://github.com/openstax/cnxml",
     "access_mode": "official OpenStax Git repositories containing collections/, modules/, media/, META-INF/ and per-repository LICENSE files",
-    "listing_rule": "Enumerate public non-archived repositories in the official openstax organization, select names beginning with osbooks-, pin each repository by exact commit SHA, and inspect its LICENSE before extraction/publication. Do not hardcode a transient repository list in the Atlas source descriptor."
+    "listing_rule": "Enumerate public non-archived repositories in the official openstax organization and consider names beginning with osbooks-. Admit a repository to the harvest family only when the pinned commit contains a real book-content structure (modules/ plus META-INF/books.xml or an equivalent collection spine) and an auditable content LICENSE. This structural predicate excludes playground/template/test repositories without hardcoding a transient repository-name list. Pin each accepted repository by exact commit SHA before extraction."
   },
   "scope": {
     "corpus": "OpenStax textbook content repositories across mathematics, natural sciences, engineering-adjacent subjects, economics, business, medicine/life sciences and social sciences",
