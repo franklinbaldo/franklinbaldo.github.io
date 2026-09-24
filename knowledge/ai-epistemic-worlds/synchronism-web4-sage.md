@@ -49,6 +49,16 @@ activity_metrics:
   commits_authored_last_30d: "not_measured"
   commits_authored_last_90d: "not_measured"
   repositories_in_epistemic_world_cluster: ">=5"
+  accumulated_reception:
+    stars: 8
+    forks: 2
+    watchers_legacy: 8
+    subscribers: 2
+    external_issues: "not_measured"
+    external_pull_requests: "not_measured"
+    discussions: 0
+    scope: "primary Synchronism repository API snapshot through 2026-09-24; watchers_count is GitHub's legacy star-mirroring field, so it is not treated as a distinct human-reception count"
+    isolation_claim: "not_made"
   burstiness: "not_measured"
 updated: 2026-09-24
 ---
