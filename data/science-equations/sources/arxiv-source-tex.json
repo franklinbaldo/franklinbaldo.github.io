@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "source_id": "arxiv-source-tex-math",
+  "source_name": "arXiv bulk source TeX mathematical expressions",
+  "readiness": "license-filtered",
+  "official_access": {
+    "documentation": "https://info.arxiv.org/help/bulk_data_s3.html",
+    "bucket": "s3://arxiv",
+    "source_manifest": "s3://arxiv/src/arXiv_src_manifest.xml",
+    "source_prefix": "s3://arxiv/src/",
+    "access_mode": "AWS S3 requester-pays source tar chunks; no page-by-page crawling",
+    "metadata_oai": "https://oaipmh.arxiv.org/oai",
+    "metadata_documentation": "https://info.arxiv.org/help/oa/index.html",
+    "metadata_format": "arXiv metadata format with categories and license"
+  },
+  "scope": {
+    "structures": [
+      "inline TeX math",
+      "display TeX math",
+      "equation/align/gather/multline/eqnarray environments"
+    ],
+    "provenance_class": "attested",
+    "original_representation": "exact TeX source slice including delimiter or environment",
+    "exclusions": [
+      "TeX comments",
+      "verbatim/listing/minted blocks",
+      "PDF-only submissions",
+      "macro expansion or semantic reconstruction in the extracted stage"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "composite-content-digest",
+    "planner": "scripts/science-equations/plan-arxiv-source.py",
+    "rule": "Pin the official S3 source-manifest selection and the exact OAI-PMH metadata harvest used for license/category joins. Build a deterministic inventory SHA-256 for the OAI XML pages with build-source-inventory.py, then define source_snapshot from a canonical digest of src_selection_sha256 plus oai_inventory_sha256. Persist every downloaded source chunk's local SHA-256 after verifying the official size and MD5 fields. A wall-clock date alone is insufficient.",
+    "required_fields": [
+      "src_manifest_sha256",
+      "src_selection_sha256",
+      "oai_inventory_sha256",
+      "downloaded_chunk_sha256"
+    ]
+  },
+  "license_policy": {
+    "scope": "article/version-level",
+    "metadata_license": "CC0 1.0",
+    "automatic_redistribution_allowlist": [
+      "CC0 1.0",
+      "CC BY 4.0",
+      "CC BY-SA 4.0"
+    ],
+    "filtered_or_manual_review": [
+      "arXiv perpetual non-exclusive 1.0",
+      "CC BY-NC-SA 4.0",
+      "CC BY-NC-ND 4.0",
+      "custom",
+      "missing",
+      "unknown"
+    ],
+    "rule": "Most arXiv articles use the default arXiv license, which does not give arXiv the right to grant third-party redistribution. The Atlas may analyze lawfully acquired source locally, but the Internet Archive lake publishes formula occurrence rows only when the exact article/version license is explicitly cleared by the allowlist. If source-version to license-version matching is ambiguous, fail closed. Source packages themselves are never republished by this lane."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-arxiv-source.py",
+    "input": "official requester-pays S3 source tar chunks plus local OAI-PMH arXiv metadata harvest",
+    "transport_output": "JSONL to stdout (transient only)",
+    "license_default": "fail-closed; non-allowlisted, missing, unknown, or version-ambiguous licenses emit no publishable occurrence",
+    "provenance_class": "attested"
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-arxiv-source-tex-math-<composite-digest>-<stage>"
+  }
+}
