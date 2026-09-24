@@ -1,6 +1,9 @@
 ---
 import PageLayout from "../layouts/PageLayout.astro";
 import { repoDescriptionLang } from "../lib/repoDescriptionLang";
+import TierBoard, { type TierBoardStrings } from "../components/TierBoard.astro";
+import { projectTiers } from "../data/project-tiers";
+import type { TierBoardItem } from "../data/tier-types";
 
 const PAGE_LANG = "en";
 const USER = "franklinbaldo";
@@ -51,22 +54,71 @@ try {
 }
 
 const fmt = new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", day: "2-digit" });
+
+const projectTierItems: TierBoardItem[] = projectTiers.map((record) => {
+  const live = repos.find((repo) => repo.full_name === record.repository);
+  return {
+    id: `project-tier-${record.slug}`,
+    title: record.name,
+    href: live?.html_url ?? `https://github.com/${record.repository}`,
+    qualityTier: record.qualityTier,
+    interestTier: record.interestTier,
+    confidence: record.confidence,
+    summary: record.summary,
+    reviewedAt: record.reviewedAt,
+    note: record.note,
+    strengths: record.strengths,
+    openProblems: record.openProblems,
+    history: record.history,
+    evidence: live
+      ? [
+          { label: "stars", value: live.stargazers_count },
+          { label: "forks", value: live.forks_count },
+          { label: "language", value: live.language ?? "—" },
+          { label: "updated", value: fmt.format(new Date(live.pushed_at)) },
+        ]
+      : [],
+  };
+});
+
+const projectTierStrings: TierBoardStrings = {
+  heading: "Project tiers",
+  description:
+    "Quality measures project execution; interest measures originality, leverage and fertility. Stars and activity are evidence, not the letter definition.",
+  qualityLabel: "quality",
+  interestLabel: "interest",
+  confidenceLabel: "conf.",
+  summaryQualityLabel: "quality",
+  summaryInterestLabel: "interest / fertility",
+  emptyTier: "empty — no project classified here yet",
+  emptyBoard:
+    "The infrastructure is ready; the hourly routine has not produced its first canonical project card yet.",
+  detailsLabel: "View project card",
+  strengthsHeading: "What supports it",
+  openProblemsHeading: "What holds it back",
+  historyHeading: "Tier history",
+  reviewedLabel: "reviewed",
+};
 ---
 
 <PageLayout
-  title="Projects | Franklin Baldo"
-  description="Public repositories, pulled live from GitHub at build time."
+  title="Project tiers | Franklin Baldo"
+  description="Canonical tiers for public projects, with the GitHub catalog retained as evidence and discovery."
   lang="en"
   image="/og/projects.png"
   translations={{ pt: "/pt/projects/" }}
 >
   <hgroup>
-    <h1>Projects</h1>
+    <h1>Project tiers</h1>
     <p><small>
-      Public repos from <a href={`https://github.com/${USER}`}>@{USER}</a>,
+      Editorial tiers for public projects from <a href={`https://github.com/${USER}`}>@{USER}</a>,
       sorted by stars · last fetched at build
     </small></p>
   </hgroup>
+
+  <TierBoard items={projectTierItems} strings={projectTierStrings} id="project-tiers" />
+
+  <h2>Project catalog</h2>
 
   {error && (
     <p><small>
