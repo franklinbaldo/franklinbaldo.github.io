@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "source_id": "lmfdb-ec-q-weierstrass",
+  "source_name": "LMFDB elliptic curves over Q — minimal Weierstrass models from a-invariants",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "documentation": "https://www.lmfdb.org/api/options",
+    "statistics": "https://www.lmfdb.org/api/stats",
+    "table": "ec_curvedata",
+    "access_mode": "official read-only PostgreSQL SQL mirror",
+    "sql_mirror": {
+      "host": "devmirror.lmfdb.xyz",
+      "port": 5432,
+      "dbname": "lmfdb",
+      "user": "lmfdb"
+    },
+    "deterministic_query": "SELECT lmfdb_label, ainvs, conductor, jinv, analytic_rank, cm, lmfdb_iso, lmfdb_number FROM ec_curvedata ORDER BY lmfdb_label"
+  },
+  "scope": {
+    "object": "elliptic curve over Q",
+    "attested_fields": [
+      "lmfdb_label",
+      "ainvs",
+      "conductor",
+      "jinv",
+      "analytic_rank",
+      "cm",
+      "lmfdb_iso",
+      "lmfdb_number"
+    ],
+    "derived_structure": "generalized minimal Weierstrass equation reconstructed from stored a-invariants [a1,a2,a3,a4,a6]",
+    "provenance_class": "reconstructed",
+    "reason": "The database directly attests the five a-invariants. The Atlas serializes them into y^2+a1*x*y+a3*y=x^3+a2*x^2+a4*x+a6, so the emitted equation is reconstructed rather than claimed to be the source's original notation."
+  },
+  "snapshot_policy": {
+    "kind": "rowstream-digest",
+    "rule": "Export the selected columns in deterministic lmfdb_label order, compute SHA-256 over the exact CSV byte stream before extraction, and identify the acquisition as rowstream-sha256:<digest>. Record observed LMFDB release/table statistics separately; do not use a wall-clock timestamp alone as corpus identity.",
+    "required_fields": ["query", "row_count", "rowstream_sha256", "observed_at"]
+  },
+  "license_policy": {
+    "scope": "corpus-wide",
+    "license": "CC-BY-SA",
+    "license_url": "https://www.lmfdb.org/api/options",
+    "policy_url": "https://www.lmfdb.org/api/options",
+    "rule": "Preserve LMFDB attribution and share-alike metadata with every published Parquet snapshot and Internet Archive item; do not assert a CC-BY-SA version that the official access page does not specify."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-lmfdb-elliptic-curves-q.py",
+    "input": "deterministic CSV export from ec_curvedata",
+    "transport_output": "JSONL to stdout (transient only)",
+    "provenance_class": "reconstructed",
+    "validation": [
+      "lmfdb_label is present",
+      "conductor is positive",
+      "ainvs contains exactly five integers"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-lmfdb-ec-q-weierstrass-<rowstream-digest>-<stage>"
+  }
+}
