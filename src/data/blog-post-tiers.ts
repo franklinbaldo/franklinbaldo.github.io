@@ -5,8 +5,10 @@ import {
   computeRatings,
 } from "../hronir/ranking.js";
 
-export type BlogPostTier = "S" | "A" | "B" | "C" | "D" | "F";
-export type BlogPostTierConfidence = "low" | "medium" | "high";
+import type { Tier, TierConfidence } from "./tier-types";
+
+export type BlogPostTier = Tier;
+export type BlogPostTierConfidence = TierConfidence;
 
 export interface BlogPostTierEvidence {
   rank: number | null;
@@ -122,6 +124,9 @@ export const blogPostTiers: BlogPostTierRecord[] = Object.entries(modules)
       evidence: evidenceFor(card.translation_key),
     };
   })
+  // Music now has its own audio-first tier domain. Keep legacy music-* cards
+  // in the repository for provenance, but do not project them as normal posts.
+  .filter((record) => !record.translationKey.startsWith("music-"))
   .sort((a, b) => {
     const aRank = a.evidence.rank ?? Number.MAX_SAFE_INTEGER;
     const bRank = b.evidence.rank ?? Number.MAX_SAFE_INTEGER;
