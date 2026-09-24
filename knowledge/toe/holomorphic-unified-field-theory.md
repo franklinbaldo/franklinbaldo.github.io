@@ -11,8 +11,8 @@ open_problems: ["There is still no direct empirical evidence that selects the ho
 source_label: "Moffat & Thompson, Holomorphic Unified Field Theory of Gravity and the Standard Model"
 source_url: "https://arxiv.org/abs/2506.19161"
 source_date: "2025-06-23"
-note: "2026-09-18: entered at B/A. Multiple peer-reviewed papers and explicit Standard-Model calculations put it above a one-off proposal, but limited independent reproduction and unresolved structural criticism keep it below the A programmes."
-updated: "2026-09-18"
+note: "2026-09-18: entered at B/A. Multiple peer-reviewed papers and explicit Standard-Model calculations put it above a one-off proposal, but limited independent reproduction and unresolved structural criticism keep it below the A programmes. 2026-09-24: remains B/A after a 2026-09-23 EPJ C paper applied the programme's nonlocal-regulator machinery to the observed top-antitop threshold enhancement. This improves empirical contact but does not justify promotion because the effective kernel scale is constrained from the observed excess and the paper describes the agreement as a postdiction; it is also programme-authored rather than an independent reproduction."
+updated: "2026-09-24"
 ---
 
 # Holomorphic Unified Field Theory
