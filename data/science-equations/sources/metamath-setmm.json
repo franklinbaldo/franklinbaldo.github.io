@@ -5,9 +5,10 @@
   "readiness": "harvest-ready",
   "official_access": {
     "repository": "https://github.com/metamath/set.mm",
+    "source_ref": "refs/heads/develop",
     "proof_explorer": "https://us.metamath.org/mpeuni/mmset.html",
     "copyright": "https://us.metamath.org/copyright.html",
-    "access_mode": "Resolve the official active set.mm branch to an exact Git commit on the external executor, acquire exactly set.mm from that commit, and process the source database directly. Do not scrape generated theorem pages."
+    "access_mode": "Resolve the official develop branch to an exact Git commit on the external executor, acquire exactly set.mm from that commit, and process the source database directly. Do not scrape generated theorem pages."
   },
   "scope": {
     "corpus": "The set.mm database underlying the Metamath Proof Explorer at one exact official Git commit",
@@ -34,10 +35,10 @@
     ]
   },
   "snapshot_policy": {
-    "kind": "official-git-commit-plus-content-inventory",
+    "kind": "official-develop-git-commit-plus-content-inventory",
     "builder": "scripts/science-equations/build-source-inventory.py",
-    "rule": "At run time resolve the official set.mm source branch selected for acquisition to its exact Git commit, SHA-256 the acquired set.mm bytes, build a deterministic one-file inventory, and use metamath-setmm:git:<commit>:inventory-sha256:<digest> as source_snapshot. The descriptor never encodes a mutable latest commit. Any changed commit or bytes creates a new immutable snapshot and Internet Archive item.",
-    "required_fields": ["git_commit", "file_count", "total_bytes", "inventory_sha256", "files"]
+    "rule": "At run time resolve refs/heads/develop in the official metamath/set.mm repository to its exact Git commit, SHA-256 the acquired set.mm bytes, build a deterministic one-file inventory, and use metamath-setmm:git:<commit>:inventory-sha256:<digest> as source_snapshot. The descriptor pins the stable source ref but never a mutable commit. Any changed commit or bytes creates a new immutable snapshot and Internet Archive item.",
+    "required_fields": ["source_ref", "git_commit", "file_count", "total_bytes", "inventory_sha256", "files"]
   },
   "license_policy": {
     "scope": "set.mm only",
