@@ -60,7 +60,7 @@ uv run --with pydantic --with pyarrow \
 
 ## Internet Archive publication
 
-Publication is performed outside GitHub Actions. Use an external executor/sandbox/Jatobá with `IA_ACCESS_KEY_ID` and `IA_SECRET_ACCESS_KEY` supplied through its secret environment.
+Publication may run in a trusted reproducible executor, including GitHub Actions or an external executor/sandbox/Jatobá. Credentials must be supplied only through the executor secret environment; for GitHub Actions use repository/environment secrets such as `IA_ACCESS_KEY_ID` and `IA_SECRET_ACCESS_KEY`.
 
 `scripts/science-equations/publish-internet-archive.py` publishes the Parquet shards plus the deterministic manifest through the official `ia` CLI. It uses a deterministic item identifier derived from source + snapshot + stage unless explicitly overridden.
 
@@ -80,6 +80,20 @@ The existence of a bulk endpoint is not permission to redistribute every record.
 
 A source may therefore have a valid acquisition/analysis lane while still producing zero publishable rows for a particular license class. That is preferable to silently broadening reuse rights.
 
-## No GitHub Actions data plane
+## Reproducible execution plane
 
-GitHub Actions is not a data plane for the Atlas. Do not use it to download corpora, generate Parquet, perform normalization/deduplication, or upload to Internet Archive. Repository checks may validate lightweight code/docs, but bulk execution and publication belong to an external executor.
+The Atlas data plane may run in GitHub Actions or an external executor when the lane can preserve the same provenance, licensing and content-addressing guarantees. The executor is an implementation detail; the contracts are not.
+
+For GitHub Actions data-plane jobs:
+
+- acquisition must use the source's documented bulk interface, never HTML scraping as a shortcut;
+- mutable sources must be content-addressed before extraction;
+- source-specific provenance guards must remain fail-closed;
+- transient JSONL and source mirrors stay out of Git history;
+- canonical bulk output is Parquet, and only redistributable artifacts may be published;
+- Internet Archive credentials are read from GitHub Secrets and must never be printed or persisted;
+- publication uses the same no-silent-overwrite and remote-verification contract as external execution;
+- Git receives only lightweight manifests/publication records and run metadata, preferably through a reviewable control-plane PR;
+- large or long-running sources must be partitioned rather than weakening the snapshot or provenance contract to fit runner limits.
+
+Historical run cards that state an execution occurred outside GitHub Actions remain historical facts and are not rewritten retroactively.
