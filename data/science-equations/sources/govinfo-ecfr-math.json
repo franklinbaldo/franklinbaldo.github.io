@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "source_id": "govinfo-ecfr-math-blocks",
+  "source_name": "GovInfo Electronic Code of Federal Regulations explicit MATH blocks",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "documentation": "https://www.govinfo.gov/developers",
+    "bulk_root": "https://www.govinfo.gov/bulkdata/ECFR",
+    "bulk_listing_json": "https://www.govinfo.gov/bulkdata/json/ECFR",
+    "xml_user_guide": "https://github.com/usgpo/bulk-data/blob/main/ECFR-XML-User-Guide.md",
+    "access_mode": "official GovInfo bulk XML, current eCFR XML file for each title",
+    "listing_rule": "Traverse the official JSON/XML bulk listing; do not scrape individual eCFR HTML pages."
+  },
+  "scope": {
+    "collection": "Electronic Code of Federal Regulations",
+    "structures": ["explicit MATH elements / MathType equation blocks"],
+    "provenance_class": "attested",
+    "original_representation": "serialized <MATH> XML plus referenced graphic URLs and nearby regulatory context",
+    "exclusions": [
+      "No OCR in extracted stage",
+      "No reconstruction of formula text from the image",
+      "No automatic conversion of prose thresholds or tables to equations in this lane"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "inventory-digest",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "Because eCFR is a mutable current editorial compilation, enumerate the complete official per-title XML inventory, record relative path, byte size and SHA-256 for every downloaded XML object, sort deterministically by path, and hash the canonical inventory. Use inventory-sha256:<digest> as source_snapshot; a wall-clock date alone is insufficient.",
+    "required_fields": ["inventory_sha256", "files", "file_count", "total_bytes"]
+  },
+  "license_policy": {
+    "scope": "government corpus with third-party-content caveat",
+    "license": "US-Government-Work-with-third-party-caveat",
+    "policy_url": "https://www.govinfo.gov/about/policies",
+    "rule": "GovInfo states U.S. Government works are generally public domain under 17 USC 105 but publications can contain third-party copyrighted material. Publish Atlas-derived occurrence metadata, source XML wrappers and URLs with provenance; do not mirror or redistribute linked equation graphic bytes unless their rights are separately audited."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-govinfo-ecfr-math.py",
+    "input": "local mirror of official GovInfo eCFR XML files",
+    "transport_output": "JSONL to stdout (transient only)",
+    "provenance_class": "attested",
+    "validation": [
+      "MATH element has an attested payload (attributes, text, or graphic reference)",
+      "No OCR or reconstruction is claimed by the extracted stage",
+      "Title, section, relative path and linked graphic references are preserved when available"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-govinfo-ecfr-math-blocks-<inventory-digest>-<stage>"
+  }
+}
