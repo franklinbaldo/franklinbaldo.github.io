@@ -229,18 +229,18 @@ def emit_article(package_name: str, payload, container: str, metadata: dict | No
     source_url = f"https://arxiv.org/abs/{arxiv_id}{version if str(version).startswith('v') else ''}"
     members = payload if isinstance(payload, list) else list(tex_members_from_blob(package_name, payload))
 
-    ordinal = 0
     for member_name, data in members:
         metrics["source_files_seen"] += 1
         text = decode_text(data)
+        file_ordinal = 0
         for start, end, body_start, body_end, kind, environment in iter_math_matches(text):
             metrics["math_candidates_seen"] += 1
-            ordinal += 1
+            file_ordinal += 1
             body = text[body_start:body_end]
             raw_math = text[start:end]
             expression_sha256 = sha256_text(body)
             record_key = "\u001f".join(
-                [SOURCE_ID, arxiv_id, str(version), member_name, str(ordinal), expression_sha256]
+                [SOURCE_ID, arxiv_id, str(version), member_name, str(file_ordinal), expression_sha256]
             )
             normalized_text = " ".join(body.split())
             row = {
@@ -256,7 +256,7 @@ def emit_article(package_name: str, payload, container: str, metadata: dict | No
                 "normalized_text_sha256": sha256_text(normalized_text),
                 "source_document_id": f"arxiv:{arxiv_id}:{version}",
                 "source_document_url": source_url,
-                "source_locator": f"arxiv:{arxiv_id}:{version};file:{member_name};math:{ordinal}",
+                "source_locator": f"arxiv:{arxiv_id}:{version};file:{member_name};math:{file_ordinal}",
                 "source_license": license_label,
                 "source_license_url": metadata.get("license_url"),
                 "context_text": context_text(text, start, end, args.context_chars),
