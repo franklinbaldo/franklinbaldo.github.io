@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "source_id": "openstax-osbooks-mathml",
+  "source_name": "OpenStax osbooks CNXML explicit MathML",
+  "readiness": "license-filtered",
+  "official_access": {
+    "organization": "openstax",
+    "repository_family": "public GitHub repositories whose names begin with osbooks-",
+    "repository_listing": "https://api.github.com/orgs/openstax/repos",
+    "template_repository": "https://github.com/openstax/template-osbooks",
+    "cnxml_library": "https://github.com/openstax/cnxml",
+    "access_mode": "official OpenStax Git repositories containing collections/, modules/, media/, META-INF/ and per-repository LICENSE files",
+    "listing_rule": "Enumerate public non-archived repositories in the official openstax organization, select names beginning with osbooks-, pin each repository by exact commit SHA, and inspect its LICENSE before extraction/publication. Do not hardcode a transient repository list in the Atlas source descriptor."
+  },
+  "scope": {
+    "corpus": "OpenStax textbook content repositories across mathematics, natural sciences, engineering-adjacent subjects, economics, business, medicine/life sciences and social sciences",
+    "structures": [
+      "explicit MathML <math> elements embedded in CNXML modules",
+      "inline mathematical expressions",
+      "display equations",
+      "inequalities, functions, distributions, transformations and other source-attested mathematical structures represented in MathML"
+    ],
+    "provenance_class": "attested",
+    "original_representation": "exact lexical MathML subtree from the CNXML module",
+    "batching": "one OpenStax repository at one exact commit per source_snapshot/materialization batch",
+    "exclusions": [
+      "Do not infer formulas from prose in this lane",
+      "Do not OCR media or equation images in this lane",
+      "Do not treat generic numeric text as a mathematical occurrence",
+      "Repositories without an auditable content license remain index-only until rights are resolved"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "git-commit-plus-content-inventory",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "For one official OpenStax osbooks repository, pin an exact Git commit, record the repository LICENSE blob/hash, build a deterministic SHA-256 inventory over the acquired content files, and use openstax:<owner-repo>:git:<commit>:inventory-sha256:<digest> as source_snapshot. A changed commit or changed byte inventory creates a new immutable snapshot/item.",
+    "required_fields": [
+      "repository",
+      "commit",
+      "license_path",
+      "license_sha256",
+      "inventory_sha256",
+      "file_count",
+      "total_bytes",
+      "files"
+    ]
+  },
+  "license_policy": {
+    "scope": "per OpenStax content repository",
+    "policy": "license-filtered",
+    "rule": "Read and hash the repository LICENSE for every snapshot. Carry the observed license on every occurrence. Known Creative Commons licenses may be published only with their attribution, ShareAlike and/or NonCommercial obligations preserved as applicable. If the license is absent, ambiguous, contains content-specific exceptions that are not resolved, or the acquired material is outside the repository license grant, do not publish that payload to the Atlas Internet Archive item; retain only permitted metadata/checksums/provenance.",
+    "attribution": "Preserve OpenStax repository, exact commit, module content-id/title and stable source URL on every occurrence."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-openstax-cnxml.py",
+    "input": "one locally acquired and verified OpenStax osbooks repository or CNXML file",
+    "transport_output": "JSONL to stdout (transient only)",
+    "required_arguments": [
+      "--repository openstax/<osbooks-repo>",
+      "--commit <exact-git-sha>",
+      "--snapshot openstax:<owner-repo>:git:<commit>:inventory-sha256:<digest>",
+      "--license <observed-license-id>",
+      "--license-url <stable-license-url>"
+    ],
+    "provenance_class": "attested",
+    "validation": [
+      "The XML parser and lexical scanner must agree on the number of MathML math elements in each accepted CNXML document",
+      "expression_original is the exact lexical MathML subtree from source CNXML rather than regenerated XML",
+      "source_record_sha256 is based on repository, commit, logical module id, formula index and exact expression hash rather than local checkout path",
+      "Module content-id/title, source file, repository, commit, document SHA-256 and nearby text context are preserved",
+      "No OCR, prose-to-math reconstruction or algebraic equivalence assertion occurs at extracted stage"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-openstax-osbooks-mathml-<repository>-<inventory-digest>-<stage>"
+  }
+}
