@@ -8,7 +8,7 @@ confidence: high
 summary: 'Longa suíço de 72 minutos dirigido por Peter Luisi a partir de um roteiro creditado ao ChatGPT 4.0. A equipe tratou a escrita por IA como experimento controlado: o modelo gerou trama, personagens, cenas, ações, reviravoltas e diálogos; a produção humana selecionou sugestões, encurtou material e realizou o filme com elenco e equipe profissionais.'
 quality_signals:
   - 'A realização audiovisual foi deliberadamente profissional — elenco, fotografia, desenho de produção, montagem, som, trilha e pós-produção humanos — o que permite julgar o texto gerado sem confundi-lo com acabamento amador.'
-  - 'A premissa metalinguística é coerente com o próprio método de produção: um roteirista ameaçado por uma IA foi escrito por uma IA, criando uma tensão formal que existe no objeto e não apenas no marketing ao redor dele.'
+  - 'A premissa metalinguística é coerente com o próprio método de produção: uma história sobre um roteirista ameaçado por IA foi escrita por IA, criando uma tensão formal que existe no objeto e não apenas no marketing ao redor dele.'
   - 'O projeto é incomumente transparente para uma obra comercialmente produzida: o site oficial publica a metodologia, o roteiro e documentação do processo de prompting, tornando o filme verificável como experimento cultural e não apenas como alegação promocional.'
 limitations:
   - 'O roteiro tende a explicitar temas e motivações em vez de dramatizá-los com sutileza; personagens e conflitos funcionam mais como veículos para a tese sobre substituição criativa do que como pessoas plenamente individualizadas.'
@@ -26,5 +26,5 @@ source_urls:
   - 'https://lastscreenwriter.com/documentation-downloads/'
 observed_at: 2026-09-24
 updated: 2026-09-24
-note: 'Quality C / interest S: a produção profissional dá ao roteiro gerado condições justas para funcionar, mas o resultado permanece tematicamente óbvio, arquétipo e pouco sutil, então a qualidade cultural fica em C. O interesse é S pela escala do experimento, pela transparência excepcional do processo e por colocar um roteiro de ChatGPT 4.0 no centro de um longa profissional justamente quando a autoria por IA se tornava uma disputa explícita na indústria cinematográfica.'
+note: 'Quality C / interest S: a produção profissional dá ao roteiro gerado condições justas para funcionar, mas o resultado permanece tematicamente óbvio, arquetípico e pouco sutil, então a qualidade cultural fica em C. O interesse é S pela escala do experimento, pela transparência excepcional do processo e por colocar um roteiro de ChatGPT 4.0 no centro de um longa profissional justamente quando a autoria por IA se tornava uma disputa explícita na indústria cinematográfica.'
 ---
