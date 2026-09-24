@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "source_id": "metamath-setmm-relations",
+  "source_name": "Metamath Proof Explorer set.mm — formal relation assertions",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "repository": "https://github.com/metamath/set.mm",
+    "proof_explorer": "https://us.metamath.org/mpeuni/mmset.html",
+    "copyright": "https://us.metamath.org/copyright.html",
+    "access_mode": "Resolve the official active set.mm branch to an exact Git commit on the external executor, acquire exactly set.mm from that commit, and process the source database directly. Do not scrape generated theorem pages."
+  },
+  "scope": {
+    "corpus": "The set.mm database underlying the Metamath Proof Explorer at one exact official Git commit",
+    "structures": [
+      "logical axiom assertions encoded by $a",
+      "proved theorem assertions encoded by $p",
+      "equalities and inequalities identified by exact Metamath relation tokens",
+      "membership and non-membership relations",
+      "subset and non-subset relations",
+      "formal hypotheses and distinct-variable constraints attached to emitted assertions"
+    ],
+    "relation_tokens": ["=", "=/=", "<", "<_", ">", ">_", "e.", "e/", "C_", "C/_"],
+    "provenance_class": "attested",
+    "original_representation": "exact lexical assertion substring from set.mm plus the token sequence used by Metamath",
+    "batching": "one exact set.mm Git commit + deterministic content inventory per extraction/materialization batch",
+    "included_paths": ["set.mm"],
+    "exclusions": [
+      "syntax statements whose assertion typecode is not |- are not emitted by this relation lane",
+      "logical assertions without one of the explicitly configured relation tokens are not emitted",
+      "proof bodies are hashed for provenance but are not copied into every occurrence row",
+      "no theorem is rewritten into conventional textbook notation at extracted stage",
+      "no algebraic, logical or definitional equivalence is inferred at extracted stage",
+      "other Metamath databases in the repository are outside this lane; in particular peano.mm is excluded because its file-level rights differ"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "official-git-commit-plus-content-inventory",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "At run time resolve the official set.mm source branch selected for acquisition to its exact Git commit, SHA-256 the acquired set.mm bytes, build a deterministic one-file inventory, and use metamath-setmm:git:<commit>:inventory-sha256:<digest> as source_snapshot. The descriptor never encodes a mutable latest commit. Any changed commit or bytes creates a new immutable snapshot and Internet Archive item.",
+    "required_fields": ["git_commit", "file_count", "total_bytes", "inventory_sha256", "files"]
+  },
+  "license_policy": {
+    "scope": "set.mm only",
+    "policy": "CC0-1.0",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "evidence": [
+      "https://us.metamath.org/copyright.html",
+      "https://github.com/metamath/set.mm/blob/develop/LICENSE"
+    ],
+    "rule": "The official Metamath copyright page places the Metamath databases in CC0 except for the explicitly identified peano.mm exception. This lane therefore scopes acquisition to set.mm only. Do not infer the set.mm rights decision for peano.mm or any later separately licensed object without a new audit. Preserve commit, source path and hashes as provenance even though attribution is not required by CC0."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-metamath-setmm.py",
+    "input": "one pinned set.mm file or a checkout root containing exactly the pinned set.mm source object",
+    "transport_output": "JSONL to stdout (transient only)",
+    "required_arguments": [
+      "--input <set.mm-or-checkout-root>",
+      "--snapshot metamath-setmm:git:<commit>:inventory-sha256:<digest>",
+      "--commit <exact-git-commit>"
+    ],
+    "provenance_class": "attested",
+    "validation": [
+      "only $a and $p statements with typecode |- and an exact configured relation token are emitted",
+      "expression_original is the exact lexical assertion substring and metamath_expression_tokens preserves the formal token sequence",
+      "active essential hypotheses, relevant floating hypotheses and relevant distinct-variable constraints are preserved as formal context",
+      "the immediately preceding Metamath source comment is preserved as source context when available",
+      "proof text is not duplicated into the lake row; a proof SHA-256 is retained for $p assertions",
+      "source_record_sha256 is independent of the executor checkout directory and depends only on source identity, immutable snapshot, set.mm bytes, label, statement type and assertion",
+      "$[ include directives fail closed because this lane requires a single pinned self-contained set.mm source object",
+      "OCR, notation reconstruction and equivalence inference are forbidden at extracted stage"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-metamath-setmm-<inventory-digest>-<stage>"
+  }
+}
