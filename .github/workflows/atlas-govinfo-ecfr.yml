@@ -1,0 +1,284 @@
+name: Atlas — GovInfo eCFR lane
+
+on:
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: "Acquire one eCFR title for a bounded smoke, or all current titles"
+        required: true
+        default: "title"
+        type: choice
+        options:
+          - title
+          - all
+      title:
+        description: "eCFR title number when scope=title (1-50 except reserved Title 35)"
+        required: true
+        default: "1"
+        type: string
+      rows_per_shard:
+        description: "Parquet rows per shard"
+        required: true
+        default: "250000"
+        type: string
+      publish:
+        description: "Publish verified Parquet + manifest to Internet Archive"
+        required: true
+        default: true
+        type: boolean
+      open_control_pr:
+        description: "Open a lightweight PR containing the verified publication record"
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: atlas-govinfo-ecfr-${{ inputs.scope }}-${{ inputs.title }}
+  cancel-in-progress: false
+
+jobs:
+  harvest-materialize-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    env:
+      WORK_ROOT: ${{ runner.temp }}/atlas-govinfo-ecfr
+      MIRROR_ROOT: ${{ runner.temp }}/atlas-govinfo-ecfr/mirror
+      OCCURRENCES: ${{ runner.temp }}/atlas-govinfo-ecfr/occurrences.jsonl
+      PARQUET_DIR: ${{ runner.temp }}/atlas-govinfo-ecfr/extracted
+      INVENTORY: ${{ runner.temp }}/atlas-govinfo-ecfr/source-inventory.json
+      PUBLICATION: ${{ runner.temp }}/atlas-govinfo-ecfr/publication.json
+      IA_ACCESS_KEY_ID: ${{ secrets.IA_ACCESS_KEY_ID }}
+      IA_SECRET_ACCESS_KEY: ${{ secrets.IA_SECRET_ACCESS_KEY }}
+
+    steps:
+      - name: Checkout exact workflow source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Install Atlas data-plane dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check -r scripts/science-equations/requirements.txt
+
+      - name: Validate immutable run inputs and secrets
+        shell: bash
+        env:
+          SCOPE: ${{ inputs.scope }}
+          TITLE: ${{ inputs.title }}
+          ROWS_PER_SHARD: ${{ inputs.rows_per_shard }}
+          PUBLISH: ${{ inputs.publish }}
+        run: |
+          set -euo pipefail
+          [[ "$SCOPE" == "title" || "$SCOPE" == "all" ]] || { echo "invalid scope" >&2; exit 2; }
+          [[ "$ROWS_PER_SHARD" =~ ^[1-9][0-9]*$ ]] || { echo "rows_per_shard must be positive" >&2; exit 2; }
+          if [[ "$SCOPE" == "title" ]]; then
+            [[ "$TITLE" =~ ^[0-9]+$ ]] || { echo "title must be numeric" >&2; exit 2; }
+            (( TITLE >= 1 && TITLE <= 50 && TITLE != 35 )) || {
+              echo "title must be 1-50 except reserved Title 35" >&2
+              exit 2
+            }
+          fi
+          if [[ "$PUBLISH" == "true" ]]; then
+            [[ -n "${IA_ACCESS_KEY_ID:-}" && -n "${IA_SECRET_ACCESS_KEY:-}" ]] || {
+              echo "Internet Archive secrets are required when publish=true" >&2
+              exit 2
+            }
+          fi
+
+      - name: Acquire official GovInfo eCFR XML
+        id: acquire
+        shell: bash
+        env:
+          SCOPE: ${{ inputs.scope }}
+          TITLE: ${{ inputs.title }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$MIRROR_ROOT" "$WORK_ROOT/listings"
+
+          if [[ "$SCOPE" == "all" ]]; then
+            titles="$(seq 1 50 | grep -vx 35 | tr '\n' ' ')"
+          else
+            titles="$TITLE"
+          fi
+
+          for n in $titles; do
+            filename="ECFR-title${n}.xml"
+            listing="https://www.govinfo.gov/bulkdata/json/ECFR/title-${n}"
+            source="https://www.govinfo.gov/bulkdata/ECFR/title-${n}/${filename}"
+
+            echo "Validating title ${n} against official GovInfo JSON listing"
+            curl --fail --silent --show-error --location               --retry 5 --retry-all-errors               -H 'Accept: application/json'               "$listing"               -o "$WORK_ROOT/listings/title-${n}.json"
+
+            python - "$WORK_ROOT/listings/title-${n}.json" "$filename" <<'PY'
+          import pathlib
+          import sys
+
+          listing = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8", errors="replace")
+          expected = sys.argv[2]
+          if expected not in listing:
+              raise SystemExit(f"official GovInfo listing does not attest expected file: {expected}")
+          PY
+
+            mkdir -p "$MIRROR_ROOT/title-${n}"
+            curl --fail --silent --show-error --location               --retry 5 --retry-all-errors               -A 'ScientificEquationAtlas/1.0 (+https://franklinbaldo.github.io/)'               "$source"               -o "$MIRROR_ROOT/title-${n}/${filename}"
+
+            python - "$MIRROR_ROOT/title-${n}/${filename}" <<'PY'
+          import pathlib
+          import sys
+          import xml.etree.ElementTree as ET
+
+          path = pathlib.Path(sys.argv[1])
+          if path.stat().st_size == 0:
+              raise SystemExit(f"empty XML acquisition: {path}")
+          ET.parse(path)
+          print(f"validated XML: {path} ({path.stat().st_size} bytes)")
+          PY
+          done
+
+          python scripts/science-equations/build-source-inventory.py             --root "$MIRROR_ROOT"             --glob '*.xml'             --source-id govinfo-ecfr-math-blocks             --output "$INVENTORY"
+
+          snapshot="$(python - "$INVENTORY" <<'PY'
+          import json
+          import pathlib
+          import sys
+          data = json.loads(pathlib.Path(sys.argv[1]).read_text())
+          print("inventory-sha256:" + data["inventory_sha256"])
+          PY
+          )"
+          echo "snapshot=$snapshot" >> "$GITHUB_OUTPUT"
+          echo "titles=$titles" >> "$GITHUB_OUTPUT"
+
+      - name: Harvest attested MATH blocks
+        id: harvest
+        shell: bash
+        env:
+          SNAPSHOT: ${{ steps.acquire.outputs.snapshot }}
+        run: |
+          set -euo pipefail
+          python scripts/science-equations/harvest-govinfo-ecfr-math.py             --mirror "$MIRROR_ROOT"             --snapshot "$SNAPSHOT"             --strict-xml             > "$OCCURRENCES"             2> "$WORK_ROOT/harvest-metrics.json"
+
+          python scripts/science-equations/materialize-parquet.py             --input "$OCCURRENCES"             --output-dir "$PARQUET_DIR"             --stage extracted             --rows-per-shard "${{ inputs.rows_per_shard }}"             --validate-only
+
+      - name: Materialize canonical Parquet
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/science-equations/materialize-parquet.py             --input "$OCCURRENCES"             --output-dir "$PARQUET_DIR"             --stage extracted             --rows-per-shard "${{ inputs.rows_per_shard }}"
+
+      - name: Publish and verify Internet Archive item
+        if: ${{ inputs.publish }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/science-equations/publish-internet-archive.py             --manifest "$PARQUET_DIR/manifest.json"             > "$PUBLICATION"
+
+      - name: Build lightweight control-plane record
+        if: ${{ always() && (steps.harvest.outcome == 'success') }}
+        shell: bash
+        env:
+          SNAPSHOT: ${{ steps.acquire.outputs.snapshot }}
+          TITLES: ${{ steps.acquire.outputs.titles }}
+          PUBLISH: ${{ inputs.publish }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$WORK_ROOT/control"
+          python - <<'PY'
+          import json
+          import os
+          import pathlib
+          from datetime import datetime, timezone
+
+          root = pathlib.Path(os.environ["WORK_ROOT"])
+          manifest = json.loads((pathlib.Path(os.environ["PARQUET_DIR"]) / "manifest.json").read_text())
+          inventory = json.loads(pathlib.Path(os.environ["INVENTORY"]).read_text())
+          publication_path = pathlib.Path(os.environ["PUBLICATION"])
+          publication = json.loads(publication_path.read_text()) if publication_path.exists() else None
+
+          record = {
+              "schema_version": 1,
+              "record_type": "science-atlas-publication",
+              "source_id": manifest["source_id"],
+              "source_snapshot": manifest["source_snapshot"],
+              "stage": manifest["stage"],
+              "rows": manifest["rows"],
+              "shards": manifest["shards"],
+              "source_inventory": {
+                  "inventory_sha256": inventory["inventory_sha256"],
+                  "file_count": inventory["file_count"],
+                  "total_bytes": inventory["total_bytes"],
+                  "files": inventory["files"],
+              },
+              "scope": {
+                  "titles": os.environ["TITLES"].split(),
+              },
+              "provenance_guards": {
+                  "provenance_class": "attested",
+                  "ocr_performed": False,
+                  "reconstruction_performed": False,
+                  "linked_graphic_bytes_redistributed": False,
+              },
+              "internet_archive": publication,
+              "workflow": {
+                  "repository": os.environ.get("GITHUB_REPOSITORY"),
+                  "sha": os.environ.get("GITHUB_SHA"),
+                  "run_id": os.environ.get("GITHUB_RUN_ID"),
+                  "run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT"),
+              },
+              "recorded_at_utc": datetime.now(timezone.utc).isoformat(),
+          }
+          (root / "control" / "publication.json").write_text(
+              json.dumps(record, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Upload run evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: atlas-govinfo-ecfr-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/atlas-govinfo-ecfr/source-inventory.json
+            ${{ runner.temp }}/atlas-govinfo-ecfr/harvest-metrics.json
+            ${{ runner.temp }}/atlas-govinfo-ecfr/extracted/manifest.json
+            ${{ runner.temp }}/atlas-govinfo-ecfr/publication.json
+            ${{ runner.temp }}/atlas-govinfo-ecfr/control/publication.json
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Open lightweight control-plane PR
+        if: ${{ inputs.open_control_pr && inputs.publish }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SNAPSHOT: ${{ steps.acquire.outputs.snapshot }}
+        run: |
+          set -euo pipefail
+          [[ -s "$PUBLICATION" ]] || { echo "publication record missing" >&2; exit 4; }
+
+          digest="${SNAPSHOT#inventory-sha256:}"
+          short="${digest:0:16}"
+          control_branch="automation/atlas-govinfo-run-${GITHUB_RUN_ID}"
+          target="data/science-equations/publications/govinfo-ecfr-math/${digest}.json"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$control_branch"
+          mkdir -p "$(dirname "$target")"
+          cp "$WORK_ROOT/control/publication.json" "$target"
+          git add "$target"
+          git commit -m "data(atlas): record GovInfo eCFR publication ${short}"
+          git push origin "$control_branch"
+
+          gh pr create             --base main             --head "$control_branch"             --title "data(atlas): record GovInfo eCFR publication ${short}"             --body "Automated lightweight control-plane record for verified GovInfo/eCFR Atlas publication. No Parquet shards or source XML are committed to Git. Provenance remains attested-only; OCR, reconstruction and linked graphic redistribution remain false."
