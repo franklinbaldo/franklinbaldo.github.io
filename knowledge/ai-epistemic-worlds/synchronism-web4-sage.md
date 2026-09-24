@@ -37,7 +37,7 @@ ai_role: [thinking-partner, coauthor, autonomous-experimenter, cross-project-int
 literalness: "Research/speculative philosophy and computational cosmology. The corpus repeatedly distinguishes ontology/framing from empirical findings and openly preserves failed or refuted hypotheses."
 note: "An observatory intervention was posted to Synchronism on 2026-09-21. The issue still has no reply. The 2026-09-22/23 repository work is therefore recorded as longitudinal public evidence, not as observatory uptake: it does not reference the intervention and its H-oracle proposal is methodologically adjacent but distinct from the observatory's frozen-ontology out-of-sample holdout. Any later adoption of that specific holdout remains intervention-contaminated rather than independent convergence."
 activity_metrics:
-  measured_at: "2026-09-24T09:00:00Z"
+  measured_at: "2026-09-24"
   metric_coverage: "partial"
   observation_window:
     world_cluster_verified_from: "2025-02-11"
