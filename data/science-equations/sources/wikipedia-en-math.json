@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "source_id": "wikipedia-en-math-tags",
+  "source_name": "English Wikipedia explicit MediaWiki math tags",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "dump_root": "https://dumps.wikimedia.org/enwiki/",
+    "dump_documentation": "https://meta.wikimedia.org/wiki/Data_dumps/What%27s_available_for_download",
+    "math_markup_documentation": "https://www.mediawiki.org/wiki/Extension:Math",
+    "access_mode": "official Wikimedia XML pages-articles dump, preferably multistream parts for parallel acquisition",
+    "listing_rule": "Choose a completed enwiki dump snapshot from the official dump service, record its status metadata, download the complete selected pages-articles-multistream surface, and verify the published MD5/SHA-1 checksums before local processing. Do not scrape Wikipedia article pages individually."
+  },
+  "scope": {
+    "project": "English Wikipedia",
+    "default_namespace": 0,
+    "structures": ["explicit <math>...</math> extension tags containing TeX-like math source"],
+    "provenance_class": "attested",
+    "original_representation": "exact body of the explicit math tag plus the raw matched tag and attributes from revision wikitext",
+    "exclusions": [
+      "Redirect pages are excluded from the default article lane",
+      "Non-main namespaces are excluded by default and can be enabled explicitly",
+      "Math-like text inside HTML comments, nowiki, pre, source, syntaxhighlight, and code regions is excluded",
+      "Empty math tags are rejected",
+      "{{#tag:math|...}} parser-function forms are not claimed by this adapter and require a separate parser-aware lane"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "verified-dump-inventory",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "Pin one completed Wikimedia dump generation, verify every selected dump part against the official published checksum surface, then compute a deterministic local SHA-256 inventory over the exact downloaded files. Use dump-inventory-sha256:<digest> as source_snapshot; the dump date alone is metadata, not the complete content identity.",
+    "required_fields": ["dump_generation", "official_checksum_verification", "inventory_sha256", "files", "file_count", "total_bytes"]
+  },
+  "license_policy": {
+    "scope": "Wikipedia text content with imported-text attribution caveat",
+    "license": "CC-BY-SA-4.0-and-GFDL-with-imported-text-caveat",
+    "policy_url": "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use",
+    "rule": "Text contributed by rights-holders is licensed under CC BY-SA 4.0 and GFDL, while imported text can carry compatible-license and additional-attribution requirements. Preserve page title, page/revision identifiers, stable oldid URL, and source snapshot on every occurrence. Do not mirror the raw Wikipedia dump into the Atlas Internet Archive item; publish only the permitted derived occurrence Parquets and their attribution/provenance metadata under the applicable share-alike requirements."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-wikipedia-math.py",
+    "input": "local verified pages-articles XML, XML.bz2, XML.gz file or directory of dump parts",
+    "transport_output": "JSONL to stdout (transient only)",
+    "provenance_class": "attested",
+    "validation": [
+      "Expression body is non-empty and appears explicitly inside a rendered math extension tag",
+      "Revision/page identifiers and stable oldid URL are preserved when available",
+      "source_record_sha256 is independent of physical dump-part packaging",
+      "No reconstruction, OCR, or parser-function expansion is claimed at extracted stage"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-wikipedia-en-math-tags-<inventory-digest>-<stage>"
+  }
+}
