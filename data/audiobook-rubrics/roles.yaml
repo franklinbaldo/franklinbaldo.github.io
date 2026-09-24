@@ -1,0 +1,129 @@
+schema: audiobook-audition-rubrics-v1
+description: >-
+  O que cada papel precisa de uma voz, em termos que um ouvinte consegue
+  verificar. A rubrica é derivada do personagem, nunca do áudio: ela existe
+  antes das amostras e não muda porque uma amostra ficou bonita.
+
+# Escalas oferecidas ao juiz de áudio. Estimativas, não preferências: o modelo
+# descreve o que ouve, e o encaixe com o alvo é aritmética nossa.
+escalas:
+  idade_aparente: número em anos, sua melhor estimativa
+  genero_percebido: '"masculino", "feminino" ou "ambíguo"'
+  sotaque: '"brasileiro", "europeu", "estrangeiro" ou "indefinido"'
+  articulacao: 0 a 5 — clareza de dicção
+  vivacidade: 0 a 5 — energia e prontidão na fala
+  naturalidade: 0 a 5 — soa gente, não máquina
+  artefatos: 0 a 5 — chiado, corte, sílaba engolida, timbre instável (0 = limpo)
+  infantilizacao: 0 a 5 — quanto soa caricatura de criancinha (0 = nada)
+
+papeis:
+  harry:
+    briefing: >-
+      Harry, onze anos, protagonista de ficção racionalista. Fala como adulto —
+      vocabulário preciso, raciocínio encadeado — com voz de criança. A tensão
+      entre as duas coisas é o personagem. Vai narrar dezenas de horas.
+    alvo:
+      idade_aparente: 12
+      genero_percebido: masculino
+      sotaque: brasileiro
+      articulacao: 5
+      vivacidade: 4
+      naturalidade: 5
+      artefatos: 0
+      infantilizacao: 1
+    peso:
+      idade_aparente: 3.0
+      genero_percebido: 3.0
+      sotaque: 2.5
+      articulacao: 1.5
+      vivacidade: 1.0
+      naturalidade: 2.0
+      artefatos: 1.5
+      infantilizacao: 2.0
+
+  narrador:
+    briefing: >-
+      Narrador de audiolivro que sustenta a maior parte de setenta horas,
+      incluindo passagens analíticas longas. Precisa não cansar.
+    alvo:
+      idade_aparente: 40
+      genero_percebido: masculino
+      sotaque: brasileiro
+      articulacao: 5
+      vivacidade: 3
+      naturalidade: 5
+      artefatos: 0
+      infantilizacao: 0
+    peso:
+      idade_aparente: 1.5
+      genero_percebido: 2.0
+      sotaque: 2.5
+      articulacao: 2.5
+      vivacidade: 1.0
+      naturalidade: 3.0
+      artefatos: 2.5
+      infantilizacao: 0.5
+
+  autoridade_feminina:
+    briefing: >-
+      Mulher adulta com autoridade contida: precisão e firmeza, emoção
+      perceptível sem perder a compostura.
+    alvo:
+      idade_aparente: 50
+      genero_percebido: feminino
+      sotaque: brasileiro
+      articulacao: 5
+      vivacidade: 2
+      naturalidade: 5
+      artefatos: 0
+      infantilizacao: 0
+    peso:
+      idade_aparente: 2.0
+      genero_percebido: 3.0
+      sotaque: 2.5
+      articulacao: 2.0
+      vivacidade: 1.0
+      naturalidade: 2.5
+      artefatos: 2.0
+      infantilizacao: 1.0
+
+  autoridade_masculina:
+    briefing: >-
+      Homem adulto em posição de autoridade ou paternidade. Firmeza sem
+      aspereza. Precisa se distinguir claramente do narrador, que também é
+      masculino adulto — se os dois se confundirem, o ouvinte perde quem fala.
+    alvo:
+      idade_aparente: 45
+      genero_percebido: masculino
+      sotaque: brasileiro
+      articulacao: 4
+      vivacidade: 2
+      naturalidade: 5
+      artefatos: 0
+      infantilizacao: 0
+    peso:
+      idade_aparente: 2.0
+      genero_percebido: 3.0
+      sotaque: 2.5
+      articulacao: 2.0
+      vivacidade: 1.0
+      naturalidade: 2.5
+      artefatos: 2.0
+      infantilizacao: 0.5
+
+  # Não é um personagem: é o controle de qualidade que roda sobre a saída de
+  # produção, onde não há alvo de idade nem de gênero a acertar.
+  qualidade:
+    briefing: >-
+      Verificação de qualidade de um segmento já sintetizado para o audiolivro.
+      O que importa é o áudio ser limpo, natural e inequivocamente brasileiro.
+    alvo:
+      sotaque: brasileiro
+      articulacao: 5
+      naturalidade: 5
+      artefatos: 0
+    peso:
+      sotaque: 3.0
+      articulacao: 2.0
+      naturalidade: 3.0
+      artefatos: 3.0
