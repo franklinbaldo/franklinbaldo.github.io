@@ -118,12 +118,12 @@ export const openingClashes = [
   {
     title: "Unified Emergence × Lucron Network",
     battleground: "continuum-first vs. discrete-first ontology",
-    body: "Unified Emergence avoids fundamental discreteness and therefore the immediate burden of recovering continuum Lorentz symmetry, but its foundational coarse-graining operator is not yet specified well enough to carry the physics. Lucron is more calculationally explicit and falsifiable, but must show that its discrete substrate really reproduces continuum symmetries. For now this is a D-vs-C maturity gap, not a verdict on ontology.",
+    body: "Unified Emergence avoids fundamental discreteness, but its current Photonic-Higgs refractive equation is not merely incomplete: with the stated Higgs-mass parameter it is Yukawa-screened on a microscopic scale and therefore does not recover long-range gravity. Lucron is more calculationally explicit and remains C/A with major Lorentz, Yang–Mills and particle-spectrum recovery debt, but no comparably direct long-range-propagator contradiction is currently recorded. This is now an F-vs-C scientific-maturity gap, not a verdict on continuum-first versus discrete-first ontology.",
   },
   {
     title: "CronNet-Holo 600-cell × Holomorphic UFT",
     battleground: "sharp geometric predictions vs. independently validated recovery",
-    body: "Both programmes claim explicit geometry-first routes to Standard-Model-plus-gravity structure. CronNet-Holo is unusually sharp about laboratory and parameter-level predictions, including the 12.8 THz target, but its current physical bridge is conditional on five hypotheses and lacks independent reproduction. Holomorphic UFT has the stronger peer-reviewed technical lineage but also needs broader external replication. A prospective CronNet-Holo prediction surviving independent testing would materially change this comparison; today it does not move either tier.",
+    body: "Both programmes claim explicit geometry-first routes to Standard-Model-plus-gravity structure. CronNet-Holo is unusually sharp about laboratory and parameter-level predictions, including the 12.8 THz target, but its current physical bridge is conditional on five hypotheses and lacks independent reproduction. Holomorphic UFT has the stronger peer-reviewed technical lineage but also needs broader external replication. A prospective CronNet-Holo prediction surviving independent testing would materially change the comparison; today it does not move either tier.",
   },
   {
     title: "AME(4,6) × Observer Patch Holography",
