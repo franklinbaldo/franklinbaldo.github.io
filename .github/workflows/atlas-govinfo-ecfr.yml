@@ -176,6 +176,13 @@ jobs:
           set -euo pipefail
           python scripts/science-equations/materialize-parquet.py             --input "$OCCURRENCES"             --output-dir "$PARQUET_DIR"             --stage extracted             --rows-per-shard "${{ inputs.rows_per_shard }}"
 
+      - name: Verify Internet Archive credentials
+        if: ${{ inputs.publish }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ia configure --check
+
       - name: Publish and verify Internet Archive item
         if: ${{ inputs.publish }}
         shell: bash
