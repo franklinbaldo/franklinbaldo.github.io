@@ -1,3 +1,10 @@
+---
+type: changelog
+date: 2026-09-24
+description: Add the Hrönir-backed canonical editorial tier for the Verne identity-repo essay.
+tags: [blog, hronir, tiering, editorial]
+---
+
 # Tier Verne identity-repo
 
 - Adds the canonical `blog-post-tier` card for `verne-identity-repo` as quality B / interest A / confidence high, treating PT and EN as one conceptual work by `translationKey`.
