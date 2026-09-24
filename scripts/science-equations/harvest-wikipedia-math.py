@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract explicit MediaWiki <math> tags from Wikimedia XML article dumps."""
+"""Extract explicit MediaWiki <math> tags from Wikimedia XML content exports."""
 
 from __future__ import annotations
 
@@ -16,9 +16,11 @@ from pathlib import Path
 from typing import Iterator
 from urllib.parse import quote
 
-SOURCE_ID = "wikipedia-en-math-tags"
-SOURCE_LICENSE = "CC-BY-SA-4.0-and-GFDL-with-imported-text-caveat"
-SOURCE_LICENSE_URL = "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use"
+DEFAULT_SOURCE_ID = "wikipedia-en-math-tags"
+DEFAULT_SOURCE_LICENSE = "CC-BY-SA-4.0-and-GFDL-with-imported-text-caveat"
+DEFAULT_SOURCE_LICENSE_URL = "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use"
+DEFAULT_WIKI_ID = "enwiki"
+DEFAULT_WIKI_LANGUAGE = "en"
 DEFAULT_WIKI_BASE = "https://en.wikipedia.org"
 
 MATH_RE = re.compile(r"<math(?P<attrs>\s[^>]*)?>(?P<body>.*?)</math\s*>", re.IGNORECASE | re.DOTALL)
@@ -111,8 +113,13 @@ def page_revision(page: ET.Element) -> ET.Element | None:
 def emit_page(
     page: ET.Element,
     *,
+    source_id: str,
+    source_license: str,
+    source_license_url: str,
     source_snapshot: str,
     relative_path: str,
+    wiki_id: str,
+    wiki_language: str | None,
     wiki_base: str,
     namespace: str | None,
     context_chars: int,
@@ -160,14 +167,14 @@ def emit_page(
         ordinal += 1
         raw_tag = match.group(0)
         normalized_text = " ".join(body.split())
-        locator = f"page:{page_id};revision:{revision_id};math:{ordinal}"
-        record_key = "\u001f".join([SOURCE_ID, page_id, revision_id, str(ordinal), body])
+        locator = f"wiki:{wiki_id};page:{page_id};revision:{revision_id};math:{ordinal}"
+        record_key = "\u001f".join([source_id, wiki_id, page_id, revision_id, str(ordinal), body])
         oldid_url = f"{wiki_base.rstrip('/')}/w/index.php?oldid={quote(revision_id)}" if revision_id else None
         page_url = f"{wiki_base.rstrip('/')}/wiki/{quote(title.replace(' ', '_'), safe='/:()')}" if title else None
 
         row = {
             "schema_version": 1,
-            "source_id": SOURCE_ID,
+            "source_id": source_id,
             "source_snapshot": source_snapshot,
             "provenance_class": "attested",
             "expression_original": body,
@@ -176,12 +183,14 @@ def emit_page(
             "expression_sha256": sha256_text(body),
             "normalized_text": normalized_text,
             "normalized_text_sha256": sha256_text(normalized_text),
-            "source_document_id": f"page:{page_id}:revision:{revision_id}",
+            "source_document_id": f"wiki:{wiki_id}:page:{page_id}:revision:{revision_id}",
             "source_document_url": oldid_url or page_url,
             "source_locator": locator,
-            "source_license": SOURCE_LICENSE,
-            "source_license_url": SOURCE_LICENSE_URL,
+            "source_license": source_license,
+            "source_license_url": source_license_url,
             "context_text": collapse_context(text, match.start(), match.end(), context_chars),
+            "source_wiki_id": wiki_id,
+            "source_wiki_language": wiki_language,
             "source_page_title": title,
             "source_page_id": page_id,
             "source_namespace": ns,
@@ -205,7 +214,12 @@ def process_file(
     path: Path,
     *,
     root: Path,
+    source_id: str,
+    source_license: str,
+    source_license_url: str,
     source_snapshot: str,
+    wiki_id: str,
+    wiki_language: str | None,
     wiki_base: str,
     namespace: str | None,
     context_chars: int,
@@ -222,8 +236,13 @@ def process_file(
                     continue
                 yield from emit_page(
                     elem,
+                    source_id=source_id,
+                    source_license=source_license,
+                    source_license_url=source_license_url,
                     source_snapshot=source_snapshot,
                     relative_path=relative_path,
+                    wiki_id=wiki_id,
+                    wiki_language=wiki_language,
                     wiki_base=wiki_base,
                     namespace=namespace,
                     context_chars=context_chars,
@@ -239,8 +258,13 @@ def process_file(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dump", required=True, type=Path, help="Wikimedia XML dump file or directory of dump parts")
-    parser.add_argument("--snapshot", required=True, help="Content-addressed dump snapshot identifier")
+    parser.add_argument("--dump", required=True, type=Path, help="MediaWiki XML content export file or directory of parts")
+    parser.add_argument("--snapshot", required=True, help="Content-addressed export snapshot identifier")
+    parser.add_argument("--source-id", default=DEFAULT_SOURCE_ID)
+    parser.add_argument("--source-license", default=DEFAULT_SOURCE_LICENSE)
+    parser.add_argument("--source-license-url", default=DEFAULT_SOURCE_LICENSE_URL)
+    parser.add_argument("--wiki-id", default=DEFAULT_WIKI_ID)
+    parser.add_argument("--wiki-language", default=DEFAULT_WIKI_LANGUAGE)
     parser.add_argument("--wiki-base", default=DEFAULT_WIKI_BASE)
     parser.add_argument("--namespace", default="0", help="MediaWiki namespace to harvest; default 0 (articles)")
     parser.add_argument("--all-namespaces", action="store_true")
@@ -251,6 +275,10 @@ def main() -> int:
         parser.error(f"dump path does not exist: {args.dump}")
     if args.context_chars < 0:
         parser.error("--context-chars must be non-negative")
+    if not args.source_id.strip():
+        parser.error("--source-id must not be empty")
+    if not args.wiki_id.strip():
+        parser.error("--wiki-id must not be empty")
 
     metrics = {
         "files_seen": 0,
@@ -268,11 +296,17 @@ def main() -> int:
         "records_written": 0,
     }
     namespace = None if args.all_namespaces else args.namespace
+    wiki_language = args.wiki_language or None
     for path in iter_dump_files(args.dump):
         for row in process_file(
             path,
             root=args.dump,
+            source_id=args.source_id,
+            source_license=args.source_license,
+            source_license_url=args.source_license_url,
             source_snapshot=args.snapshot,
+            wiki_id=args.wiki_id,
+            wiki_language=wiki_language,
             wiki_base=args.wiki_base,
             namespace=namespace,
             context_chars=args.context_chars,
@@ -280,7 +314,7 @@ def main() -> int:
         ):
             print(json.dumps(row, ensure_ascii=False, sort_keys=True))
 
-    print(json.dumps({"event": "harvest-complete", **metrics}, sort_keys=True), file=sys.stderr)
+    print(json.dumps({"event": "harvest-complete", "source_id": args.source_id, "wiki_id": args.wiki_id, **metrics}, sort_keys=True), file=sys.stderr)
     if metrics["files_seen"] == 0:
         return 2
     if metrics["files_parsed"] == 0:
