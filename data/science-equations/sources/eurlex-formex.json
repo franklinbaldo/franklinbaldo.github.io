@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "source_id": "eurlex-formex-formulas",
+  "source_name": "EUR-Lex legislation in force — Formex 4 explicit formulas",
+  "readiness": "license-filtered",
+  "official_access": {
+    "data_dump": "https://datadump.publications.europa.eu/",
+    "machine_readable_guide": "https://eur-lex.europa.eu/content/tools/Retrieval_machine-readable_formats.pdf",
+    "cellar": "https://op.europa.eu/en/web/cellar",
+    "formex_manual": "https://op.europa.eu/documents/3938058/5910419/formex_manual_on_screen_version.html",
+    "access_mode": "official EUR-Lex Data Dump bulk export in FMX/Formex XML, one legal collection/language request at a time",
+    "authentication": "EU Login is required for the Data Dump application",
+    "acquisition_rule": "Use the official Data Dump/Cellar structured surfaces; do not scrape EUR-Lex document HTML page by page."
+  },
+  "scope": {
+    "collection": "EUR-Lex legal acts in force (CELEX sector 3) and compatible Formex 4 exports",
+    "structures": [
+      "FORMULA elements",
+      "EXPR mathematical expressions",
+      "OP.CMP comparison operators",
+      "OP.MATH mathematical operators",
+      "FRACTION, ROOT, INTEGRAL, SUM, FUNCTION and other Formex formula components"
+    ],
+    "provenance_class": "attested",
+    "original_representation": "serialized Formex 4 FORMULA XML subtree plus CELEX/language/context",
+    "exclusions": [
+      "No OCR in extracted stage",
+      "No reconstruction of prose thresholds, tables or image-only chemical structures in this lane",
+      "No algebraic equivalence claim during extraction"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "inventory-digest",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "Treat each completed Data Dump download request (collection + language + provider snapshot metadata) as one acquisition batch. Record the official request/download metadata, mirror every FMX XML object outside Git, compute byte size and SHA-256 per object, sort deterministically by relative path, and hash the canonical inventory. Use inventory-sha256:<digest> as source_snapshot; a request date alone is insufficient.",
+    "required_fields": [
+      "data_dump_request_id_or_provider_identifier",
+      "collection",
+      "language",
+      "inventory_sha256",
+      "files",
+      "file_count",
+      "total_bytes"
+    ]
+  },
+  "license_policy": {
+    "scope": "EU document reuse with document/third-party rights caveats",
+    "license": "EU-reuse-policy-with-third-party-caveat",
+    "policy_url": "https://op.europa.eu/en/web/about-us/legal-notices/publications-office-of-the-european-union-copyright",
+    "legal_basis_url": "https://eur-lex.europa.eu/eli/dec/2011/833/oj/eng",
+    "rule": "EUR-Lex states its data can be reused free of charge subject to its copyright notice. Commission Decision 2011/833 covers Commission/Publications Office documents but excludes material where reuse cannot be authorised because of third-party rights. Preserve CELEX, language and source attribution on every row; before public Internet Archive publication, apply a rights allowlist/audit to the selected dump. If reuse is uncertain, keep that material index-only or retain hashes/provenance without redistributing the formula payload. Never republish unrelated embedded third-party assets by default."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-eurlex-formex-formulas.py",
+    "input": "local mirror of official EUR-Lex Data Dump FMX/Formex XML",
+    "transport_output": "JSONL to stdout (transient only)",
+    "provenance_class": "attested",
+    "validation": [
+      "Only explicit FORMULA elements are emitted",
+      "Serialized FORMULA XML, TYPE, CELEX, language and nearby context are preserved when available",
+      "No OCR or reconstruction is claimed by the extracted stage",
+      "Empty FORMULA elements are rejected"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "publication_gate": "rights audit/allowlist for the selected Data Dump batch",
+    "identifier_template": "scientific-equation-atlas-eurlex-formex-formulas-<inventory-digest>-<stage>"
+  }
+}
