@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "source_id": "wikimedia-open-learning-math-tags",
+  "source_name": "Wikimedia Wikibooks and Wikiversity explicit MediaWiki math tags",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "dataset": "mediawiki_content_current",
+    "export_root": "https://dumps.wikimedia.org/other/mediawiki_content_current/",
+    "documentation": "https://wikitech.wikimedia.org/wiki/MediaWiki_Content_File_Exports",
+    "wiki_id_mapping": "https://wikitech.wikimedia.org/wiki/MediaWiki_Content_File_Exports/WikiId_Mappings",
+    "terms_of_use": "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use",
+    "math_markup_documentation": "https://www.mediawiki.org/wiki/Extension:Math",
+    "access_mode": "Official per-wiki monthly compressed XML content exports with SHA256SUMS completion markers; no page-by-page scraping.",
+    "listing_rule": "Select public production wikis from the official WikiId mapping whose hostname ends in .wikibooks.org or .wikiversity.org. Exclude betawikiversity because it is a cross-project incubation/coordination surface rather than a production language-edition learning corpus. For each selected wiki_id, choose a generation only after SHA256SUMS exists, acquire every listed XML.bz2 object outside Git, and verify sha256sum --check before extraction."
+  },
+  "scope": {
+    "projects": "Production Wikibooks and Wikiversity language editions across Wikimedia",
+    "default_namespace": 0,
+    "structures": [
+      "explicit <math>...</math> tags carrying TeX-like source",
+      "inline mathematical expressions",
+      "display equations",
+      "functions, recurrences, inequalities, transformations, objectives, constraints and quantitative rules encoded through the Math extension"
+    ],
+    "provenance_class": "attested",
+    "original_representation": "exact body of the explicit math tag plus raw matched tag and attributes from revision wikitext",
+    "batching": "one wiki_id plus one completed content-current export generation per source_snapshot/materialization batch",
+    "exclusions": [
+      "betawikiversity is excluded from the production corpus",
+      "Redirect pages are excluded from the default learning-material lane",
+      "Non-main namespaces are excluded by default and can be enabled explicitly after a namespace-specific audit",
+      "Math-like text inside HTML comments, nowiki, pre, source, syntaxhighlight and code regions is excluded",
+      "Empty math tags are rejected",
+      "{{#tag:math|...}} parser-function forms require a separate parser-aware lane",
+      "No prose-to-math reconstruction, OCR or translation is performed in the extracted stage"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "verified-per-wiki-content-export-inventory",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "For one selected Wikibooks or Wikiversity wiki_id, pin a completed mediawiki_content_current export generation by the presence of its official SHA256SUMS, verify every acquired object against that checksum surface, then compute a deterministic local SHA-256 inventory over the exact downloaded files. Use wikimedia-content-current:<wiki_id>:inventory-sha256:<digest> as source_snapshot. Do not mix wiki_ids or export generations in one materialization batch.",
+    "required_fields": [
+      "dataset",
+      "project_family",
+      "wiki_id",
+      "language",
+      "hostname",
+      "export_generation",
+      "official_sha256sums_url",
+      "official_checksum_verification",
+      "inventory_sha256",
+      "files",
+      "file_count",
+      "total_bytes"
+    ]
+  },
+  "license_policy": {
+    "scope": "Wikibooks and Wikiversity text, with project-edition and imported-text caveats",
+    "license": "CC-BY-SA-4.0-and-GFDL-with-project-edition-and-imported-text-caveat",
+    "policy_url": "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use",
+    "rule": "Wikimedia's Terms of Use license contributor-owned text under CC BY-SA 4.0 and GFDL unless a Project edition or feature requires another free license; imported text can carry compatible-license and additional-attribution obligations. Preserve wiki_id, language, hostname, page title, page/revision identifiers, stable oldid URL and source snapshot on every occurrence. Before publication, fail closed for a page/project with an explicit incompatible or unresolved rights exception. Do not republish Wikimedia XML export bytes in the Atlas Internet Archive item; publish only permitted derived occurrence Parquets and deterministic manifests with applicable attribution/share-alike metadata."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-wikipedia-math.py",
+    "input": "one locally verified Wikibooks or Wikiversity mediawiki_content_current XML/XML.bz2 file or directory",
+    "transport_output": "JSONL to stdout (transient only)",
+    "required_arguments": [
+      "--source-id wikimedia-open-learning-math-tags",
+      "--wiki-id <wiki_id>",
+      "--wiki-language <language>",
+      "--wiki-base https://<hostname>",
+      "--snapshot wikimedia-content-current:<wiki_id>:inventory-sha256:<digest>"
+    ],
+    "provenance_class": "attested",
+    "validation": [
+      "Every expression body is non-empty and appears explicitly inside a MediaWiki Math extension tag",
+      "wiki_id participates in source_document_id, source_locator and source_record_sha256 so page/revision IDs cannot collide across projects or languages",
+      "Revision/page identifiers and stable oldid URL are preserved when available",
+      "source_record_sha256 is independent of physical export-part packaging",
+      "No reconstruction, OCR, translation or parser-function expansion is claimed at extracted stage"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-wikimedia-open-learning-math-tags-<wiki-id>-<inventory-digest>-<stage>"
+  }
+}
