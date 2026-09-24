@@ -5,7 +5,7 @@ public_handle: "leprekonsg"
 building: "A local-first single-purchase assistant for scarce first-party retail drops: a deterministic controller owns observation, eligibility policy and execution boundaries, while Claude/Gemini interpret evidence under explicit provenance, abstention and human-handoff rules."
 domain: [retail-assistance, browser-automation, agent-safety, evidence-provenance, local-first, human-in-the-loop]
 reception:
-  measured_at: "2026-09-22"
+  measured_at: "2026-09-24"
   scope: "primary repository accumulated public GitHub state"
   stars: 0
   forks: 0
@@ -15,8 +15,8 @@ reception:
   external_pull_requests: 0
   distinct_external_contributors: "not_measured"
   discussions: 0
-  window: "Repository created 2026-09-18; accumulated API snapshot through 2026-09-22. Repository metadata reports zero stars, forks, watchers and subscribers; public issue and pull-request searches with state=all returned no records; discussions are disabled. Contributor identity was not measured, and account-wide isolation is not claimed."
-blocking_constraint: "The demo, policy and evidence machinery are already extensive, and supervised read-only Lazada experiments have shown that single reads and several bounded 120-second-cadence runs can work. The repository itself still keeps live observation disabled because those runs do not establish a sustainable cadence: one profile encountered reCAPTCHA, the latest feasibility record says no cadence is validated or approved by Lazada, and production requires both a passed continuous-observation gate and a reviewed cadence. The next visible bottleneck is therefore reliable knowledge about the safe, sustainable observation regime and its failure boundaries, not another obvious missing controller feature."
+  window: "Repository created 2026-09-18; accumulated API snapshot through 2026-09-24. Repository metadata reports zero stars, forks, watchers and subscribers; the complete public issue and pull-request collections are empty, and discussions are disabled. Contributor identity was not measured, and account-wide isolation is not claimed."
+blocking_constraint: "The 2026-09-24 work materially closes the earlier instrumentation gap: the project corrected a mathematically invalid p95 reaction estimate, moved restock alerting ahead of model inference, added deterministic alert/retraction behavior, and instrumented in-stock detection, sell-out bounds, alert delivery and time-to-buy. The discriminating bottleneck is now the real operating regime those instruments have not yet measured. Roughly 70 live reads have still observed zero in-stock events; the one-minute sell-out duration is a user observation rather than a measured distribution; the 20-second time-to-buy assumption is unmeasured; Lazada-alert delivery latency is unknown; and polling alone is calculated not to reliably beat a one-minute sell-out at any cadence validated so far. The next useful evidence is therefore field measurement of the platform-specific observation/alert envelope rather than another controller feature."
 missing_resource: knowledge
 confidence: high
 source_label: "leprekonsg/beat-the-scalper"
@@ -24,15 +24,18 @@ source_url: "https://github.com/leprekonsg/beat-the-scalper"
 source_urls:
   - "https://github.com/leprekonsg/beat-the-scalper/blob/main/README.md"
   - "https://github.com/leprekonsg/beat-the-scalper/blob/main/docs/lazada-feasibility.md"
+  - "https://github.com/leprekonsg/beat-the-scalper/blob/main/docs/evaluation-results.md"
   - "https://github.com/leprekonsg/beat-the-scalper/commit/6ceb66d0f66a85833ab70fa2faf5c3b38a830f91"
   - "https://github.com/leprekonsg/beat-the-scalper/commit/bde876fd40d46ea8a603dedb0adecc6bd045e10b"
+  - "https://github.com/leprekonsg/beat-the-scalper/commit/3745b16495f820f5f5a22092ab9fe1dc4863717e"
 maturity: testing
-unlock: "Freeze a longer supervised observe-only protocol with explicit maximum duration/cadence, fresh-profile versus persistent-profile strata, challenge/access-control incidence, layout/readiness failures, latency and abstention outcomes, then preserve every negative run. The useful result is a bounded operating envelope or a clear no-go result; either would let the current feasibility gate become evidence-based without expanding authority beyond observation."
+unlock: "Use the new instruments as a frozen operating-regime protocol rather than widening authority: collect approved in-stock observations, `restock.ended` min/max bounds across actual restocks, challenge/access-control incidence at each tested cadence/profile regime, and alert-drill delivery plus time-to-buy measurements. Keep the cadence and stopping rules fixed before each run and preserve negative/challenged runs. The useful result is a bounded catch-rate/operating envelope or a clear no-go result; either is more decision-relevant than optimizing against the current 60-second/20-second assumptions."
 synergy_candidates: [forwaryan, madaka17, mikesandoval10creator]
 trajectory:
   - "2026-09-18: repository created with 282 unit/integration tests, a Playwright e2e suite, a disabled live-retailer path and Claude Opus 5 explicitly credited as co-author."
   - "2026-09-19: supervised Lazada feasibility work records single reads, observe-only Gemini computer-use runs, repeated 120-second-cadence observations, a reCAPTCHA event and an unapproved accidental 404 access rather than omitting inconvenient evidence."
   - "2026-09-21: Claude-coauthored live parsing changes replace guessed selectors/fixed sleeps with a verified buy-box scope and decisive-state readiness; a three-read live run returns the expected UNAVAILABLE state on every read while the production live gate remains disabled."
+  - "2026-09-24: a Claude-coauthored measurement pass corrects the reaction-statistic definition, raises deterministic restock alerts before model calls, and adds explicit instruments for live in-stock detection, sell-out duration, alert delivery and time-to-buy; the resulting evaluation states that polling alone cannot reliably beat a one-minute sell-out at any cadence validated so far."
 ai_role: [implementation-collaborator, code-coauthor, evidence-interpreter]
 queue_provenance:
   criteria_version: "2026-09-21"
@@ -44,7 +47,17 @@ queue_provenance:
   own_repo_event_share: "not_measured"
   distinct_event_kinds: "not_measured"
   other_actors_in_sample_window: "not_measured"
-  note: "The canonical GH-Archive queue refresh was attempted first, but the available compute path timed out and the local fallback could not resolve raw.githubusercontent.com. This candidate was therefore admitted to manual examination using the current skill methodology and direct GitHub evidence from a repository pushed on the sampled date. Admission-band values that could not be reconstructed are preserved as not_measured; recurrence is not established from one pass."
-note: "This is a solo-builder card, not an ai-epistemic-world: the public artifacts describe a bounded retail-assistance engineering system with unusually explicit provenance and authority limits, not a reconstructible belief/cosmology/identity/meaning framework. Comparison against all six operative solo-builder cards found the strongest method bridge with forwaryan/rumor-checking: both make uncertainty explicit instead of forcing a verdict, preserve evidence around machine interpretation, and separate model judgment from final authority. Bangkok CCTV and Praeventio are secondary complements because they turn uncertain machine output into external review/release gates. No public contact was made: the useful cross-project method was first recorded canonically, and the repo already names its own feasibility blocker precisely enough that a generic issue would add little."
-updated: 2026-09-22
+  note: "The current merged solo-builder skill and queue script were read first. A durable GH-Archive refresh could not execute in this runtime because the connected compute path timed out, so no admission-band value or recurrence was manufactured. This pass used the documented longitudinal fallback: an already investigated card with material new direct GitHub evidence."
+note: "This remains a solo-builder card, not an ai-epistemic-world: the public artifacts describe a bounded retail-assistance engineering system with explicit provenance and authority limits, not a reconstructible belief/cosmology/identity/meaning framework. Full relevant-corpus comparison keeps forwaryan/Rumor Checking as the strongest provenance/abstention method analogue and Madaka17 as the strongest field-validation analogue, with Guardian-Praeventio contributing release-gate discipline. None supplies the platform-specific operating-regime measurements now missing. The bridge is therefore plausible rather than actionable: the repository already built the relevant instruments, and no external resource was found that closes the unknown Lazada alert/cadence/challenge envelope. No public contact was made; the account-level initial-touch gate remains unused."
+updated: 2026-09-24
 ---
+
+## Observatory state — 2026-09-24
+
+- `mode`: `discovery`
+- `missing_resource_subtype`: `operating-regime`
+- `resource_found`: `partial-internal-instrumentation` — the repository now has instruments for in-stock detection, sell-out bounds, alert delivery and time-to-buy, but the decisive live measurements remain absent.
+- `match_quality`: `plausible`
+- `recurrence`: unchanged at one sampled day because the queue refresh failed before GH-Archive sampling; persistence is not claimed.
+- `strongest_comparisons`: Rumor Checking for provenance/abstention invariants; Madaka17 for separating upstream field evidence from model error; Guardian-Praeventio for evidence-backed release gates. None closes the platform-specific operating regime.
+- `contact`: `none`; the initial-touch gate remains unused because no specific non-obvious external transfer improves on the instruments already added by the repository.

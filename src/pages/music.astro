@@ -2,6 +2,9 @@
 import PageLayout from "../layouts/PageLayout.astro";
 import { sleep, formatDuration } from "../lib/suno";
 import { getCollection } from "astro:content";
+import TierBoard, { type TierBoardStrings } from "../components/TierBoard.astro";
+import { musicTiers } from "../data/music-tiers";
+import type { TierBoardItem } from "../data/tier-types";
 
 const HANDLE = "franklinbaldo";
 const SUNO_API = "https://studio-api-prod.suno.com/api";
@@ -161,23 +164,78 @@ const showGenreChips =
   allGenres.length >= 2 &&
   allGenres.length <= 25 &&
   allGenres.every((g) => g.length <= 40);
+
+const clipById = new Map(clips.map((clip) => [clip.id, clip]));
+const tierNumber = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+const tierFmt = (value: number | null) => (value === null ? "—" : tierNumber.format(value));
+
+const musicTierItems: TierBoardItem[] = musicTiers.map((record) => {
+  const clip = clipById.get(record.sunoId);
+  const ev = record.evidence;
+  return {
+    id: `music-tier-${record.slug}`,
+    title: clip?.title || record.title,
+    href: `https://suno.com/song/${record.sunoId}`,
+    qualityTier: record.qualityTier,
+    interestTier: record.interestTier,
+    confidence: record.confidence,
+    summary: record.summary,
+    reviewedAt: record.reviewedAt,
+    note: record.note,
+    strengths: record.strengths,
+    openProblems: record.openProblems,
+    history: record.history,
+    evidence: [
+      { label: "audio rank", value: ev.rank ? `#${ev.rank}` : "—" },
+      { label: "ordinal", value: tierFmt(ev.ordinal) },
+      { label: "W/N", value: `${ev.wins}/${ev.appearances}` },
+      { label: "plays", value: clip?.play_count ?? "—" },
+      { label: "likes", value: clip?.upvote_count ?? "—" },
+    ],
+    links: [{ href: `#${record.sunoId}`, label: "listen in catalog ↓" }],
+  };
+});
+
+const musicTierStrings: TierBoardStrings = {
+  heading: "Music tiers",
+  description:
+    "Letters are canonical OKF cards per Suno recording. The music Hrönir compares audio directly; sparse coverage stays low-confidence instead of becoming fake precision.",
+  qualityLabel: "quality",
+  interestLabel: "interest",
+  confidenceLabel: "conf.",
+  summaryQualityLabel: "musical quality",
+  summaryInterestLabel: "interest / replay",
+  emptyTier: "empty — no recording classified here yet",
+  emptyBoard:
+    "The board is ready. The hourly routine starts provisionally and only promotes tiers when audio evidence supports the move.",
+  detailsLabel: "View music card",
+  strengthsHeading: "What supports it",
+  openProblemsHeading: "What holds it back",
+  historyHeading: "Tier history",
+  reviewedLabel: "reviewed",
+};
 ---
 
 <PageLayout
-  title="Music | Franklin Baldo"
-  description="Songs and playlists published on Suno, fetched live at build time."
+  title="Music tiers | Franklin Baldo"
+  description="Canonical tiers for public Suno recordings, with audio ranking and the full catalog."
   lang="en"
   image="/og/music.png"
   translations={{ pt: "/pt/musicas/" }}
 >
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(musicJsonLd)} is:inline />
   <hgroup>
-    <h1>Music</h1>
+    <h1>Music tiers</h1>
     <p><small>
-      Public songs from <a href={`https://suno.com/@${HANDLE}`}>@{HANDLE}</a> on Suno,
+      Tier board and public-song catalog from <a href={`https://suno.com/@${HANDLE}`}>@{HANDLE}</a> on Suno,
       sorted by most recent · updated at build time.
     </small></p>
   </hgroup>
+
+  <TierBoard items={musicTierItems} strings={musicTierStrings} id="music-tiers" />
 
   {error && (
     <p><small>

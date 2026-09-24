@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "source_id": "biomodels-sbml-math",
+  "source_name": "BioModels — explicit SBML MathML",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "live_repository": "https://biomodels.org/",
+    "live_api_docs": "https://www.biomodels.org/docs/",
+    "archival_collection": "https://www.ebi.ac.uk/biostudies/BioModels",
+    "archival_help": "https://www.ebi.ac.uk/biostudies/BioModels/help",
+    "archival_api": "https://www.ebi.ac.uk/biostudies/api/v1/biomodels/search",
+    "archival_download_prefix": "https://ftp.ebi.ac.uk/biostudies/",
+    "access_mode": "Discover accessions through the official BioModels/BioStudies APIs, resolve each accession's file inventory, and transfer model files through the official HTTP/FTP/Aspera surfaces rather than scraping model pages.",
+    "transition_note": "BioModels moved from EMBL-EBI to the University of Florida in 2025. biomodels.org is the live service; EMBL-EBI retains the BioStudies archival collection as a reproducible bulk-access surface."
+  },
+  "scope": {
+    "corpus": "Published and archived mathematical/computational models of biological and biomedical systems represented in SBML and related standard formats",
+    "structures": [
+      "reaction kinetic laws",
+      "assignment rules",
+      "rate rules",
+      "algebraic rules",
+      "initial assignments",
+      "function definitions",
+      "event triggers, delays, priorities and assignments",
+      "constraints and stoichiometric mathematics",
+      "other explicit MathML expressions carried by SBML models"
+    ],
+    "provenance_class": "attested",
+    "original_representation": "exact lexical MathML <math> element as stored in the SBML source file",
+    "batching": "one verified BioModels inventory snapshot per extraction/materialization batch",
+    "exclusions": [
+      "Do not derive ODEs from reaction networks in the extracted stage",
+      "Do not turn a kinetic law plus stoichiometry into a reconstructed differential equation in this lane",
+      "Do not OCR PDFs or figures when SBML MathML is available",
+      "Do not silently substitute a converted/exported representation for the archived source file without recording that representation as a distinct source object"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "api-resolved-accession-and-file-content-inventory",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "Enumerate the official BioModels corpus through the live API or the EMBL-EBI BioStudies archival collection, resolve the exact files for each accession, retain the API/export metadata used for discovery, SHA-256 every acquired source object, build a deterministic sorted inventory, and use biomodels:inventory-sha256:<digest> as source_snapshot. A changed accession set, file set, or byte inventory is a new immutable snapshot/item.",
+    "required_fields": [
+      "discovery_endpoint",
+      "accession_count",
+      "file_count",
+      "total_bytes",
+      "inventory_sha256",
+      "files"
+    ]
+  },
+  "license_policy": {
+    "scope": "hosted BioModels model encodings",
+    "policy": "CC0",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "evidence": [
+      "https://www.ebi.ac.uk/training/online/courses/biomodels-quick-tour/what-is-biomodels/",
+      "https://www.ebi.ac.uk/about/news/updates-from-data-resources/biomodels-moves-university-of-florida/"
+    ],
+    "rule": "BioModels states that hosted models are freely available for use, modification and redistribution under CC0. Preserve accession and model/file provenance even though attribution is not a CC0 condition. If an acquired object carries a conflicting explicit rights notice or is not a BioModels-hosted model encoding, fail closed for that object and record the audit debt instead of inheriting CC0 by association."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-biomodels-sbml.py",
+    "input": "one SBML file or a directory tree of BioModels SBML/XML files whose paths contain BIOMD########## or MODEL########## accessions",
+    "transport_output": "JSONL to stdout (transient only)",
+    "required_arguments": [
+      "--input <file-or-directory>",
+      "--snapshot biomodels:inventory-sha256:<digest>"
+    ],
+    "provenance_class": "attested",
+    "validation": [
+      "XML parser and lexical scanner must agree on the number and order of MathML <math> elements in each accepted file",
+      "expression_original is the exact lexical MathML substring from the source XML, preserving entities, namespaces and spacing",
+      "source_record_sha256 is independent of the executor's local directory and depends on accession, snapshot, document bytes, MathML ordinal, semantic parent and expression bytes",
+      "SBML level/version, model id/name, semantic parent, target symbol, explicit target units when present, reaction/event/function identifiers and document checksum are retained",
+      "No OCR, ODE reconstruction, symbolic equivalence or equation-family assertion occurs at extracted stage"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-biomodels-<inventory-digest>-<stage>"
+  }
+}
