@@ -52,7 +52,20 @@ def main() -> int:
     source_id = manifest["source_id"]
     snapshot = manifest["source_snapshot"]
     stage = manifest["stage"]
-    identifier = args.identifier or f"scientific-equation-atlas-{sanitize(source_id)}-{sanitize(snapshot)}-{sanitize(stage)}"
+    if not args.identifier:
+        clean_source = sanitize(source_id)
+        hex_match = re.search(r"[0-9a-fA-F]{16,64}", snapshot)
+        clean_snap = hex_match.group(0)[:16] if hex_match else sanitize(snapshot)[:16]
+        clean_stage = sanitize(stage)
+        raw_id = f"atlas-{clean_source}-{clean_snap}-{clean_stage}"
+        if len(raw_id) > 80:
+            raw_id = f"atlas-{clean_source[:30]}-{clean_snap[:16]}-{clean_stage[:10]}"
+        identifier = raw_id
+    else:
+        identifier = args.identifier
+
+    if len(identifier) > 80:
+        raise SystemExit(f"Internet Archive identifier must be <= 80 chars, got {len(identifier)}: {identifier}")
     base = args.manifest.parent
     paths = [base / shard["file"] for shard in manifest["shards"]] + [args.manifest]
     expected = {
