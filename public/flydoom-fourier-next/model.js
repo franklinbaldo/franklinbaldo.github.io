@@ -47,6 +47,142 @@ export function buildModes(count = 32) {
   return modes;
 }
 
+export function curriculumActionOrder(modeCount = 32) {
+  const base = modeCount;
+  const order = [];
+
+  // Start in the spectral domain: one Fourier actuator at a time. This makes
+  // stage 1 literally one controllable line in the spectrum.
+  const sensoryBootstrapModes = Math.min(6, modeCount);
+  for (let mode = 0; mode < sensoryBootstrapModes; mode++) order.push(mode);
+
+  // Once all six sensory families are available, introduce global transforms.
+  order.push(base, base + 1, base + 2, base + 3, base + 4);
+
+  // Then keep growing spectral complexity one actuator at a time.
+  for (let mode = sensoryBootstrapModes; mode < modeCount; mode++) {
+    order.push(mode);
+  }
+  return order;
+}
+
+export function curriculumSignalOrder(limit = 37) {
+  const cells = Array.from({ length: SENSOR_CELLS }, (_, cell) => cell);
+  cells.sort((a, b) => {
+    const ax = (a % SENSOR_COLS) - (SENSOR_COLS - 1) / 2;
+    const az = Math.floor(a / SENSOR_COLS) - (SENSOR_ROWS - 1) / 2;
+    const bx = (b % SENSOR_COLS) - (SENSOR_COLS - 1) / 2;
+    const bz = Math.floor(b / SENSOR_COLS) - (SENSOR_ROWS - 1) / 2;
+    const da = ax * ax + az * az;
+    const db = bx * bx + bz * bz;
+    return da - db || a - b;
+  });
+
+  const order = [];
+  for (const cell of cells) {
+    for (let feature = 0; feature < FEATURE_COUNT; feature++) {
+      order.push(cell * FEATURE_COUNT + feature);
+      if (order.length >= limit) return order;
+    }
+  }
+  return order;
+}
+
+export function curriculumStage(modeCount = 32, stageIndex = 0) {
+  const actionOrder = curriculumActionOrder(modeCount);
+  const signalOrder = curriculumSignalOrder(actionOrder.length);
+  const index = clamp(Math.round(stageIndex), 0, actionOrder.length - 1);
+  const activeActions = actionOrder.slice(0, index + 1);
+  const activeSignalIndices = signalOrder.slice(0, index + 1);
+  const activeFeatures = Array.from(
+    new Set(activeSignalIndices.map((signal) => signal % FEATURE_COUNT)),
+  );
+  const actionIndex = actionOrder[index];
+  const signalIndex = signalOrder[index];
+  const signalCell = Math.floor(signalIndex / FEATURE_COUNT);
+  const signalFeature = signalIndex % FEATURE_COUNT;
+  const globalNames = ["translate-x", "translate-z", "tilt-x", "tilt-z", "bowl"];
+
+  return {
+    index,
+    total: actionOrder.length,
+    activeActions,
+    activeSignalIndices,
+    activeFeatures,
+    unlockedAction: actionIndex,
+    unlockedActionLabel:
+      actionIndex < modeCount
+        ? `fourier-${actionIndex + 1}`
+        : globalNames[actionIndex - modeCount],
+    unlockedSignal: signalIndex,
+    unlockedSignalCell: signalCell,
+    unlockedFeature: signalFeature,
+    unlockedFeatureLabel: FEATURE_NAMES[signalFeature],
+    unlockedSignalLabel: `${FEATURE_NAMES[signalFeature]} @ cell ${signalCell + 1}`,
+  };
+}
+
+function nonZeroSigned(rng, minMagnitude, maxMagnitude) {
+  const sign = rng() < 0.5 ? -1 : 1;
+  return sign * (minMagnitude + rng() * (maxMagnitude - minMagnitude));
+}
+
+function setTargetAction(state, modes, actionIndex, rng) {
+  if (actionIndex < modes.length) {
+    const limit = spectralLimit(modes[actionIndex]);
+    state.coeff[actionIndex] = nonZeroSigned(rng, limit * 0.28, limit * 0.62);
+    return;
+  }
+
+  const globalIndex = actionIndex - modes.length;
+  if (globalIndex === 0) state.tx = nonZeroSigned(rng, 0.65, 1.8);
+  else if (globalIndex === 1) state.tz = nonZeroSigned(rng, 0.65, 1.8);
+  else if (globalIndex === 2) state.tiltX = nonZeroSigned(rng, 0.07, 0.2);
+  else if (globalIndex === 3) state.tiltZ = nonZeroSigned(rng, 0.07, 0.2);
+  else if (globalIndex === 4) state.bowl = nonZeroSigned(rng, 0.09, 0.22);
+}
+
+export function createCurriculumTarget(
+  modes,
+  seed = 1,
+  stageIndex = 0,
+) {
+  const target = createState(modes.length);
+  const rng = seededRandom(seed);
+  const order = curriculumActionOrder(modes.length);
+  const last = clamp(Math.round(stageIndex), 0, order.length - 1);
+  for (let index = 0; index <= last; index++) {
+    setTargetAction(target, modes, order[index], rng);
+  }
+  return target;
+}
+
+export function maskActions(actions, activeActions) {
+  const out = new Float32Array(actions.length);
+  for (const index of activeActions) {
+    if (index >= 0 && index < actions.length) out[index] = actions[index];
+  }
+  return out;
+}
+
+export function maskSignals(features, activeSignalIndices) {
+  const out = new Float32Array(features.length);
+  for (const index of activeSignalIndices) {
+    if (index >= 0 && index < features.length) out[index] = features[index];
+  }
+  return out;
+}
+
+export function stateDiscomfortPenalty(
+  match,
+  target = 0.985,
+  gain = 0.65,
+  power = 1.7,
+) {
+  const deficit = clamp((target - match) / Math.max(1e-9, target), 0, 1);
+  return -gain * Math.pow(deficit, power);
+}
+
 export function activeModeCount(difficulty, total = 32) {
   if (difficulty === "coarse") return Math.min(total, 8);
   if (difficulty === "mixed") return Math.min(total, 20);
@@ -276,6 +412,27 @@ export function progressReward(
     precisionPotential(current, target, beta) -
     precisionPotential(previous, target, beta);
   return clamp(linear * linearGain + precision * precisionGain, -1, 1);
+}
+
+export function stateAwareReward(
+  current,
+  previous,
+  target = 0.985,
+) {
+  const progress = progressReward(current, previous, target);
+  const statePenalty = stateDiscomfortPenalty(current, target);
+  const previousStatePenalty = stateDiscomfortPenalty(previous, target);
+  const stateImprovement = statePenalty - previousStatePenalty;
+
+  return {
+    progress,
+    statePenalty,
+    total: clamp(progress + statePenalty, -1, 1),
+    // Absolute discomfort is useful as valence, but node-perturbation learning
+    // must credit changes in discomfort rather than punish every action merely
+    // because the current state is still bad.
+    credit: clamp(progress + stateImprovement * 0.5, -1, 1),
+  };
 }
 
 function pseudoWeight(inputIndex, hiddenIndex) {
