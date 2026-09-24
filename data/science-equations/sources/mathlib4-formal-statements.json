@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "source_id": "mathlib4-formal-statements",
+  "source_name": "Lean mathlib4 — explicit theorem and lemma proposition statements",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "repository": "https://github.com/leanprover-community/mathlib4",
+    "documentation": "https://leanprover-community.github.io/",
+    "lean_theorem_semantics": "https://lean-lang.org/theorem_proving_in_lean4/Propositions-and-Proofs/",
+    "access_mode": "Resolve an exact mathlib4 Git commit, acquire the repository checkout on an external executor, and process Mathlib/**/*.lean in bulk. GitHub Actions must not perform acquisition, extraction, Parquet generation, or Internet Archive publication."
+  },
+  "scope": {
+    "corpus": "The maintained Mathlib/**/*.lean mathematical library tree at one exact mathlib4 commit",
+    "structures": [
+      "explicit theorem proposition statements",
+      "explicit lemma proposition statements",
+      "equalities and inequalities",
+      "quantified mathematical statements",
+      "logical equivalences and implications",
+      "membership, order, algebraic and analytic relations",
+      "constraints and formal statements across algebra, analysis, topology, number theory, probability, combinatorics, geometry, computability and related mathematical domains"
+    ],
+    "provenance_class": "attested",
+    "original_representation": "exact lexical Lean 4 proposition substring between a theorem/lemma declaration's result colon and its proof delimiter",
+    "batching": "one exact mathlib4 Git commit + deterministic Mathlib/**/*.lean source inventory per extraction/materialization batch",
+    "included_paths": [
+      "Mathlib/**/*.lean"
+    ],
+    "exclusions": [
+      "proof bodies are not equation occurrences in this lane",
+      "definitions, examples, axioms, syntax declarations and generated/rendered documentation are excluded from this first formal-statement lane",
+      "the extractor rejects theorem/lemma declarations without an explicit lexical proposition boundary",
+      "comments, normal/raw strings, character literals and Lean syntax quotations are masked only for declaration-boundary detection and never emitted as source attestations",
+      "no Lean-to-LaTeX translation, elaboration, theorem proving, algebraic normalization or equation-family assertion occurs at extracted stage",
+      "Archive/, MathlibTest/, Batteries/ and vendored/dependency trees are outside this lane unless a later source contract audits them separately"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "exact-git-commit-plus-source-content-inventory",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "At run time resolve the selected official mathlib4 ref to its exact Git commit; acquire that commit outside GitHub Actions; SHA-256 every included Mathlib/**/*.lean source object; sort path/size/hash records deterministically; record the root LICENSE SHA-256; and use mathlib4:git:<commit>:inventory-sha256:<digest> as source_snapshot. The descriptor does not hardcode a mutable current commit. A changed commit, file set or source byte inventory creates a new immutable snapshot and Internet Archive item.",
+    "required_fields": [
+      "git_commit",
+      "file_count",
+      "total_bytes",
+      "inventory_sha256",
+      "license_sha256",
+      "files"
+    ]
+  },
+  "license_policy": {
+    "scope": "mathlib4 repository work under Mathlib/**/*.lean at the selected commit",
+    "policy": "Apache-2.0",
+    "license": "Apache-2.0",
+    "license_url": "https://github.com/leanprover-community/mathlib4/blob/master/LICENSE",
+    "evidence": [
+      "https://github.com/leanprover-community/mathlib4/blob/<commit>/LICENSE"
+    ],
+    "rule": "Verify the root LICENSE at the selected commit before harvest and retain Apache-2.0 notices/conditions with redistributed source-derived data. If the selected snapshot contains a NOTICE file or file-specific third-party rights notices relevant to included source, preserve them as required and fail closed for affected payloads until audited. Scope excludes dependency/vendor trees by default."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-mathlib4-statements.py",
+    "input": "verified mathlib4 repository checkout containing Mathlib/ and the root Apache-2.0 LICENSE",
+    "transport_output": "JSONL to stdout (transient only)",
+    "required_arguments": [
+      "--input <verified-mathlib4-checkout>",
+      "--snapshot mathlib4:git:<commit>:inventory-sha256:<digest>",
+      "--commit <exact-40-hex-git-commit>"
+    ],
+    "provenance_class": "attested",
+    "validation": [
+      "expression_original is the exact lexical Lean 4 proposition substring and is not a pretty-printed or LaTeX reconstruction",
+      "source snapshot must bind exactly to the supplied full Git commit and a 64-hex inventory digest",
+      "root LICENSE must contain Apache License Version 2.0 evidence and its SHA-256 is retained",
+      "nested block comments, line comments, normal/raw strings, character literals, backtick names and syntax quotations are excluded from declaration discovery",
+      "source_record_sha256 is independent of checkout directory and depends on source id, immutable snapshot, repository-relative path, document bytes, declaration ordinal/kind/name and proposition bytes",
+      "declarations without an explicit proposition + proof delimiter are rejected rather than guessed",
+      "proof bodies, OCR, prose reconstruction, Lean elaboration and semantic equivalence claims are excluded from extracted output"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-mathlib4-<inventory-digest>-<stage>"
+  }
+}
