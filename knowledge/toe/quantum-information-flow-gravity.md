@@ -1,0 +1,20 @@
+---
+type: toe
+name: "Quantum Information Flow Gravity"
+kind: "adjacent"
+scientific_tier: "F"
+interest_tier: "S"
+confidence: "high"
+summary: "Xiaodong Yang, Yuchen Yang and Helin Mei propose an entropy-current field that modifies the Dirac equation, couples to fermionic spin and is then used in an induced-gravity construction. The programme is unusually explicit and experimentally attackable, but the current v2 contains a load-bearing derivation failure: it states that expanding the induced Einstein-Hilbert action around flat spacetime yields a massive Fierz-Pauli spin-2 action, even though the displayed Einstein-Hilbert action contains no graviton mass term. The claimed mass is then imported from the Proca entropy sector through a mapping that is asserted rather than derived in the displayed calculation."
+strengths: ["The proposal gives an explicit modified Dirac equation, entropy-current EFT, induced-gravity mechanism and concrete spin-polarization and gravitational-wave observables rather than only an information-theoretic analogy.","The authors clearly label the theory as a low-energy EFT and expose numerical ranges for the entropy-fermion coupling and an ultralight graviton mass, creating a large falsification surface.","The paper identifies missing microscopic input, including the origin of the coupling lambda, and discusses future gravitational-wave and cosmological tests."]
+open_problems: ["Equation (53) is the induced Einstein-Hilbert action, while the subsequent quadratic expansion is claimed to produce a Fierz-Pauli mass term. A pure Einstein-Hilbert expansion about flat spacetime gives the massless spin-2 kinetic theory; the displayed mass term therefore does not follow from the stated substitution. The later claim that the Proca mass maps exactly to the metric mass needs a separate derivation.","The microscopic action already contains an explicit non-minimal curvature coupling xi R s_mu s^mu and uses a background metric as an intermediate field, so the strength of the claim that geometry itself has been derived depends on a companion microscopic construction.","The STAR-based coupling estimate is explicitly order-of-magnitude and model-dependent, and the nonlinear consistency issues of massive gravity are not solved.","The programme does not derive the realistic chiral Standard Model and remains an unreviewed preprint programme."]
+source_label: "Xiaodong Yang, Yuchen Yang & Helin Mei, Emergent Gravity from Quantum Information Flow: A Modified Dirac-Equation Perspective, Preprints.org v2"
+source_url: "https://www.preprints.org/manuscript/202607.1698"
+source_date: "2026-08-25"
+note: "2026-09-26: first Arena audit. F scientific applies to the current v2 as written, not to emergent/information-theoretic gravity in general: the paper's central massive-graviton step does not follow from its displayed induced Einstein-Hilbert action. S interest is separate and reflects the unusually explicit entropy-current -> fermion -> gravity chain and its many concrete tests. Clash: Information Flux Theory (C/S), battleground information-first recovery of matter plus gravity. QIFG has cleaner near-term spin/GW observables but a load-bearing graviton-mass derivation failure and no realistic SM recovery; IFT claims a much broader one-field SM-plus-gravity reconstruction but lacks independent reproduction. The clash does not move IFT."
+updated: "2026-09-26"
+---
+
+# Quantum Information Flow Gravity
+
+The current v2 is a technically explicit information-to-gravity proposal with a real experimental surface, but its headline massive-graviton derivation fails at the displayed step: expanding the induced Einstein-Hilbert action does not by itself generate the Fierz-Pauli mass term written in the next equation. A future version could reopen the scientific placement by deriving the entropy/Proca-to-metric mass mapping independently, establishing nonlinear consistency, and reproducing a load-bearing prediction without using the target observable as calibration.
