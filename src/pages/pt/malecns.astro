@@ -1,0 +1,74 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import TierBoard, { type TierBoardStrings } from "../../components/TierBoard.astro";
+import { maleCnsProjects } from "../../data/malecns-projects";
+import type { TierBoardItem } from "../../data/tier-types";
+
+const items: TierBoardItem[] = maleCnsProjects.map((record) => ({
+  id: `malecns-project-${record.slug}`,
+  title: record.name,
+  href: record.primaryUrl,
+  qualityTier: record.scientificTier,
+  interestTier: record.interestTier,
+  confidence: record.confidence,
+  summary: record.summary,
+  reviewedAt: record.reviewedAt,
+  note: record.note,
+  strengths: record.strongestEvidence,
+  openProblems: [
+    ...record.limitations,
+    ...record.controls.map((control) => `Controle: ${control}`),
+  ],
+  history: record.history,
+  evidence: [
+    { label: "tipo", value: record.kind },
+    { label: "estágio", value: record.stage },
+    { label: "origem", value: record.ownership === "own" ? "próprio" : "independente" },
+  ],
+  links: record.links,
+}));
+
+const strings: TierBoardStrings = {
+  heading: "MaleCNS — tier list de projetos",
+  description:
+    "Tier científico mede força da evidência MaleCNS, não se o resultado foi positivo. Interesse mede originalidade e fertilidade. Um null reproduzível pode ficar acima de uma demo chamativa sem controles.",
+  qualityLabel: "científico",
+  interestLabel: "interesse",
+  confidenceLabel: "conf.",
+  summaryQualityLabel: "evidência científica",
+  summaryInterestLabel: "interesse / fertilidade",
+  emptyTier: "vazio — nenhum projeto classificado neste tier",
+  emptyBoard: "Nenhum projeto MaleCNS foi classificado ainda.",
+  detailsLabel: "Ver evidência e limites",
+  strengthsHeading: "Evidência mais forte",
+  openProblemsHeading: "Limites e controles",
+  historyHeading: "Histórico do tier",
+  reviewedLabel: "revisão",
+};
+---
+
+<PageLayout
+  title="MaleCNS — tier list de projetos | Franklin Baldo"
+  description="Curadoria viva de projetos que executam, derivam de ou experimentam com o conectoma MaleCNS."
+  lang="pt"
+  translations={{ en: "/malecns/" }}
+>
+  <hgroup>
+    <h1>MaleCNS — projetos, demos e experimentos</h1>
+    <p>Uma curadoria viva do ecossistema MaleCNS, com a mesma régua para projetos próprios e independentes.</p>
+  </hgroup>
+
+  <p>
+    O eixo <strong>científico</strong> avalia a força da evidência pública para o
+    que o projeto realmente demonstra. Resultado negativo não é punição: um bom
+    controle que derruba a hipótese melhora o registro. O eixo de
+    <strong>interesse</strong> mede originalidade, ambição e fertilidade.
+  </p>
+
+  <TierBoard items={items} strings={strings} id="malecns-project-tiers" />
+
+  <p><small>
+    Fonte canônica: cartões OKF em <code>knowledge/malecns-projects/</code>.
+    Mudança de tier exige evidência material.
+  </small></p>
+</PageLayout>
