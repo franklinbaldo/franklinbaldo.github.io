@@ -1,0 +1,20 @@
+---
+type: toe
+name: "Dilatant Dark Fluid"
+kind: "adjacent"
+scientific_tier: "C"
+interest_tier: "A"
+confidence: "medium"
+summary: "Marco Fedi's Dilatant Dark Fluid (DDF) proposes a two-component quantum-hydrodynamic dark medium: an ultralight superfluid sector and a heavier shear-jamming bosonic phase. The model interprets photons as transverse modes, recovers Lorentz-form kinematics from a speed-dependent jamming response, models particles as vortical defects, generates gravity through Bernoulli/superfluid dynamics and Painleve-Gullstrand river variables, and extends the same substrate to galactic and cosmological phenomenology. The programme is concrete and falsifiable enough for structured-speculation status, but it remains adjacent rather than a full ToE because realistic Standard-Model embedding and precision cosmology are not yet closed."
+strengths: ["The current v8 formulation exposes an explicit two-sector substrate and connects one constitutive mechanism to Lorentz kinematics, photonic propagation, vortex matter, gravity and cosmology.", "The framework is not purely interpretive: it advertises a direct gravitational discriminator, astrophysical tests of the superfluid-cosmic-web picture and laboratory rheology tests.", "Painleve-Gullstrand variables provide a clear bridge to known relativistic exterior solutions, giving the proposal concrete recovery targets rather than only analogy."]
+open_problems: ["The latest public lineage still lacks an end-to-end derivation of the realistic chiral Standard Model; the July v5 status explicitly left a full Standard-Model embedding for future work.", "Full CMB/BAO transfer calculations and cosmological likelihood analysis were also explicitly left open in the v5 lineage; v8 broadens the gravity/cosmology story but the public abstract does not establish those closures.", "Recovering Lorentz-form observables because the medium also controls the measuring rods and clocks is weaker evidence than deriving all preferred-frame observables and precision constraints from the microscopic dynamics.", "I found no independent end-to-end reconstruction of the DDF substrate-to-relativity/gravity chain in the sources reviewed for this entry."]
+source_label: "Marco Fedi, Dilatant Dark Fluid: Toward a Unified Quantum-Hydrodynamic Origin of Lorentz Invariance, Gravity, and Cosmological Phenomenology, v8"
+source_url: "https://doi.org/10.5281/zenodo.22288393"
+source_date: "2026-09-04"
+note: "History: first public version located in the current Zenodo lineage by 2026-06-16; v8 published 2026-09-04. 2026-09-25: first Arena placement at adjacent C scientific / A interest, medium confidence. C credits a concrete mathematical/physical substrate, multiple recovery calculations and explicit discriminators, while withholding B-tier status because the realistic Standard Model, full precision cosmology and independent replication remain open. Interest A reflects the unusually attackable hydrodynamic unification programme, not a probability that the ontology is correct. Clash: The Stiff Medium Model (C/A), battleground single substrate -> Lorentz-safe realistic matter + gravity. DDF's advantage is a distinctive jamming/superfluid mechanism with direct hydrodynamic and gravitational discriminators; its liability is incomplete Standard-Model and precision-cosmology closure. Stiff Medium's advantage is a more explicit scalar/fermion/gauge Lagrangian and broader executable particle-physics audit surface; its liability is its own unresolved alpha, flavour, UV, Lorentz and nonlinear-GR gates. The clash moves neither tier."
+updated: "2026-09-25"
+---
+
+# Dilatant Dark Fluid
+
+The Arena records DDF as **adjacent C scientific / A interest**. Its strongest feature is a concrete dark-medium mechanism spanning relativistic kinematics, vortical matter and gravity; its decisive current limitation is that the route from that substrate to the observed chiral Standard Model and precision cosmology remains unfinished.
