@@ -7,12 +7,12 @@ kind: "whole-connectome embodied control experiment"
 stage: "single-seed steering skill with connected CARLA demonstration"
 primary_url: "https://github.com/MarkUnthank/flyhard"
 repository: "MarkUnthank/flyhard"
-evidence_url: "https://github.com/MarkUnthank/flyhard/blob/main/docs/pilot-2026-09-09.md"
+evidence_url: "https://github.com/MarkUnthank/flyhard/blob/main/docs/carla-video-2026-09-09.md"
 scientific_tier: "B"
 interest_tier: "S"
 confidence: "high"
-reviewed_at: "2026-09-26"
-reviewed_revision: "26198488ba288a1ff55cd2299fcc841d5a148c60"
+reviewed_at: "2026-09-27"
+reviewed_revision: "328906f4a0e62c8f9fc18805cf6edae6989b82a5"
 summary: >-
   Full-scale MaleCNS-derived controller coupled to a simulated fly body and a
   passive steering wheel, with a held-out stationary steering skill and a
@@ -33,5 +33,6 @@ controls:
   - "A topology-destroying matched graph control and conventional policy comparator remain missing for the learned steering claim."
 history:
   - "2026-09-26: initial placement -> scientific B / interest S, high confidence; strong embodied causal evidence, topology-specific claim withheld."
+  - "2026-09-27: evidence-source refresh -> connected-CARLA report and current repository head rechecked; scientific B / interest S unchanged because newer commits do not add a matched topology or conventional-policy comparator."
 note: "The tier credits the demonstrated embodied control chain, not a claim that MaleCNS topology is superior."
 ---

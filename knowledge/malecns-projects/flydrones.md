@@ -29,10 +29,13 @@ limitations:
   - "The real-drone adapters are documented as not yet flight-tested by the project."
   - "The drone's own flight controller and an external safety governor remain outside the neural substrate."
   - "Camera-to-neuron encoding and the descending-neuron readout are engineered."
+  - "The MaleCNS builder prefers consensus_nt and treats histamine as inhibitory, but maps dopamine, serotonin and octopamine to positive instantaneous synaptic drive; the public MaleCNS NT audit identifies those amines as a distinct modulatory class, so full-brain results should be checked under that alternative mapping."
 controls:
   - "A same-size random-graph benchmark is reported for throughput, but it is not a behavioral topology control."
   - "Dry-run and simulator-first hardware paths provide engineering safety controls."
+  - "The independent MaleCNS NT audit (https://doi.org/10.5281/zenodo.22975837) provides a concrete transmitter-mapping sensitivity test for the full-connectome path."
   - "Missing: full-MaleCNS versus rewired/random recurrent/simple-controller comparison under the same simulated or physical flight task."
 history:
   - "2026-09-26: initial placement -> scientific C / interest S, high confidence; full-MaleCNS infrastructure credited, physical/full-brain behavioral claim withheld."
+  - "2026-09-26: transmitter-mapping clash review -> tier unchanged; consensus_nt and histamine handling align with the audit, while monoamine-as-fast-excitatory remains an unresolved dynamical choice."
 ---
