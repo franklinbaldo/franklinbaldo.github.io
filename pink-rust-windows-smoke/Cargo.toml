@@ -1,0 +1,11 @@
+[package]
+name = "pink-native-packaging"
+version = "0.9.0"
+edition = "2024"
+publish = false
+
+[[bin]]
+name = "pink"
+path = "src/main.rs"
+
+[dependencies]
