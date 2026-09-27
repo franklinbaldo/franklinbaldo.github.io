@@ -2,11 +2,11 @@
 import katex from "katex";
 import "katex/dist/katex.min.css";
 import PageLayout from "../../layouts/PageLayout.astro";
+import EquationUniverse from "../../components/EquationUniverse.astro";
 import {
   equationFamilies,
   scienceBranches,
   scienceFormulas,
-  SCIENCE_EQUATIONS_UPDATED,
 } from "../../data/science-equations";
 
 const branchBySlug = new Map(scienceBranches.map((branch) => [branch.slug, branch]));
@@ -26,19 +26,7 @@ const renderEquation = (latex: string) =>
   lang="pt"
 >
   <main class="atlas-shell">
-    <header class="atlas-hero">
-      <p class="eyebrow">EXPERIMENTO ABERTO · ATUALIZADO {SCIENCE_EQUATIONS_UPDATED}</p>
-      <h1>Atlas das Equações</h1>
-      <p class="lede">
-        Uma árvore da ciência, suas fórmulas realmente usadas e um segundo grafo por baixo:
-        as estruturas matemáticas que voltam a aparecer com outros nomes, variáveis e interpretações.
-      </p>
-      <div class="stats" aria-label="Cobertura atual">
-        <span><strong>{scienceBranches.length}</strong> ramos</span>
-        <span><strong>{scienceFormulas.length}</strong> fórmulas</span>
-        <span><strong>{equationFamilies.length}</strong> famílias</span>
-      </div>
-    </header>
+    <EquationUniverse />\n\n
 
     <section aria-labelledby="tree-title">
       <div class="section-head">
