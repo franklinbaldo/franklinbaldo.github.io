@@ -201,7 +201,7 @@ def render(data: dict[str, Any]) -> str:
     return json.dumps(data, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
 
 
-def emit_base64(text: str, chunk_size: int = 3000) -> None:
+def emit_base64(text: str, chunk_size: int = 1000) -> None:
     encoded = base64.b64encode(text.encode("utf-8")).decode("ascii")
     chunks = [encoded[index : index + chunk_size] for index in range(0, len(encoded), chunk_size)]
     total = len(chunks)
