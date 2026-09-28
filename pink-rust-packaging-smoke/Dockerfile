@@ -1,7 +1,7 @@
-FROM rust:1.90-slim-bookworm
+FROM python:3.13-slim-bookworm
 
 RUN apt-get update -qq \
-    && apt-get install -y -qq curl ca-certificates python3 >/dev/null \
+    && apt-get install -y -qq curl ca-certificates >/dev/null \
     && rm -rf /var/lib/apt/lists/* \
     && curl -LsSf https://astral.sh/uv/install.sh | sh
 
@@ -10,7 +10,8 @@ WORKDIR /work
 COPY . .
 
 RUN set -eux; \
-    python3 scripts/check_rust_packaging.py; \
-    echo PINK_RUST_PACKAGING_SMOKE_PASS
+    uv venv --python 3.13 /tmp/venv; \
+    uv pip install --python /tmp/venv/bin/python /work/dist/pink-0.9.0-py3-none-any.whl; \
+    /tmp/venv/bin/python scripts/generate_rust_golden.py --stdout-base64
 
-CMD ["sh", "-c", "echo PINK_RUST_PACKAGING_RUNTIME && sleep 60"]
+CMD ["sh", "-c", "echo PINK_RUST_GOLDEN_PHASE0_RUNTIME && sleep 60"]
