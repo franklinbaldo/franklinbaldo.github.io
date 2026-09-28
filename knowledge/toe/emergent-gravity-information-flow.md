@@ -5,6 +5,9 @@ kind: "adjacent"
 scientific_tier: "C"
 interest_tier: "A"
 confidence: "medium"
+summary: "A low-energy information-flow framework connecting a vector current, fermionic matter and effective gravitational dynamics."
+strengths: ["Explicit effective-field-theory construction.", "Identifies observable signatures.", "States a limited low-energy scope."]
+open_problems: ["A realistic particle-physics sector is not derived.", "The emergence step still depends on background geometric ingredients.", "Independent validation remains limited."]
 source_label: "Xiaodong Yang, Yuchen Yang & Helin Mei, Emergent Gravity from Quantum Information Flow, v3"
 source_url: "https://www.preprints.org/manuscript/202607.1698"
 source_date: "2026-09-28"
