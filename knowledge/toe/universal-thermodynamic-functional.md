@@ -5,6 +5,9 @@ kind: "adjacent"
 scientific_tier: "C"
 interest_tier: "A"
 confidence: "medium"
+summary: "A free-energy functional combining Fisher information, potential energy and Shannon entropy to recover quantum dynamics and, with extra thermodynamic assumptions, semiclassical gravity."
+strengths: ["Explicit variational construction for continuity and quantum Hamilton-Jacobi/Schrodinger structure.", "Makes its macroscopic gravitational assumptions unusually visible.", "Provides crossover and Landauer-style empirical targets."]
+open_problems: ["The area-entropy law is assumed rather than derived from the microscopic functional.", "Einstein recovery additionally assumes local Lorentz invariance, Clausius and Unruh thermodynamics.", "No realistic Standard-Model matter sector is derived and the scale-dependent cosmological term remains phenomenological."]
 source_label: "Lamine Bougueroua, A Universal Thermodynamic Functional for Quantum and Gravitational Laws"
 source_url: "https://www.preprints.org/manuscript/202602.1065"
 source_date: "2026-02-13"
