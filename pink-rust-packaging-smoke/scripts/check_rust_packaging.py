@@ -115,6 +115,7 @@ def main() -> None:
         tool_dir = tmp / "tools"
         bin_dir = tmp / "bin"
         cache_dir = tmp / "cache"
+        python_dir = tmp / "python"
         native_dist.mkdir()
 
         env = os.environ.copy()
@@ -123,9 +124,11 @@ def main() -> None:
                 "UV_TOOL_DIR": str(tool_dir),
                 "UV_TOOL_BIN_DIR": str(bin_dir),
                 "UV_CACHE_DIR": str(cache_dir),
+                "UV_PYTHON_INSTALL_DIR": str(python_dir),
             }
         )
 
+        _run(["uv", "python", "install", "3.13"], env=env)
         _run(["uv", "build", "--wheel", "--out-dir", str(native_dist)], cwd=NATIVE, env=env)
         native_wheel = _single_wheel(native_dist, "native")
 
@@ -140,6 +143,8 @@ def main() -> None:
                 "tool",
                 "install",
                 "--force",
+                "--python",
+                "3.13",
                 "pink",
                 "--index",
                 legacy_index,
