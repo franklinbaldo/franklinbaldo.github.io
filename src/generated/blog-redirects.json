@@ -380,5 +380,12 @@
   "/pt/blog/musicas/xadrez-9be1b69a/": "/pt/blog/xadrez-9be1b69a/",
   "/pt/blog/musicas/xadrez-b6422434/": "/pt/blog/xadrez-b6422434/",
   "/pt/blog/musicas/xadrez-en/": "/pt/blog/chess/",
-  "/pt/blog/musicas/xadrez/": "/pt/blog/xadrez/"
+  "/pt/blog/musicas/xadrez/": "/pt/blog/xadrez/",
+  "/pt/tags/AI/": "/pt/tags/ai/",
+  "/pt/tags/engenharia%20de%20software/": "/pt/tags/engenharia-de-software/",
+  "/pt/tags/ia/": "/pt/tags/IA/",
+  "/pt/tags/memoria/": "/pt/tags/mem%C3%B3ria/",
+  "/pt/tags/software%20engineering/": "/pt/tags/software-engineering/",
+  "/tags/AI/": "/tags/ai/",
+  "/tags/software%20engineering/": "/tags/software-engineering/"
 }
