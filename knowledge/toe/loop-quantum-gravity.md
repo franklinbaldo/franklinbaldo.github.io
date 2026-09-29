@@ -5,16 +5,14 @@ kind: "contender"
 scientific_tier: "A"
 interest_tier: "A"
 confidence: "medium"
-summary: "A non-perturbative, background-independent quantization programme for general relativity with discrete spectra for geometric observables such as area and volume. It is a mature quantum-gravity research programme, though its scope is narrower than a complete unification of all fundamental interactions."
-strengths: ["Mathematically developed background-independent quantization of geometry.","Concrete results for geometric spectra and extensive work on black holes and cosmology.","Long-running independent research programme with many formulations and applications."]
-open_problems: ["Dynamics and the recovery of smooth low-energy spacetime remain central issues.","Standard Model matter and full force unification are not automatically delivered by the core framework.","Distinctive experimentally accessible signatures remain difficult to isolate."]
-source_label: "Carlo Rovelli, Loop Quantum Gravity"
-source_url: "https://arxiv.org/abs/gr-qc/9710008"
-source_date: "1997-10-01"
-note: "A as a quantum-gravity programme; the Arena displays the scope limitation explicitly rather than pretending every contender solves the same problem."
-updated: "2026-09-18"
+summary: "Background-independent quantum-gravity programme. A 2026 paper gives an exact local covariant cuscuton representation of the standard flat-FLRW Loop Quantum Cosmology bounce, without deriving it from full LQG."
+strengths: ["Mature non-perturbative quantization of geometry.", "Long independent literature on black holes and cosmology.", "The 2026 cuscuton construction exactly reproduces the standard flat-FLRW LQC bounce without extra local propagating degrees of freedom."]
+open_problems: ["Low-energy and dynamical recovery remain incomplete.", "The new equivalence is background-level only; it does not establish inhomogeneous or perturbative equivalence and is not a derivation from full LQG.", "Standard-Model unification and distinctive experimental signatures remain incomplete."]
+source_label: "Afshordi & Giesel, A Cuscuton Representation of the Loop Quantum Cosmology Bounce"
+source_url: "https://arxiv.org/abs/2609.35222"
+source_date: "2026-09-28"
+note: "r112: A/A unchanged. Material covariance/recovery update; core blockers remain. Clash: Asymptotic Safety A/A; no movement."
+updated: "2026-09-29"
 ---
-
 # Loop quantum gravity
-
-A non-perturbative, background-independent quantization programme for general relativity with discrete spectra for geometric observables such as area and volume. It is a mature quantum-gravity research programme, though its scope is narrower than a complete unification of all fundamental interactions.
+A/A, medium confidence.
