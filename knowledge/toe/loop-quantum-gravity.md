@@ -5,14 +5,15 @@ kind: "contender"
 scientific_tier: "A"
 interest_tier: "A"
 confidence: "medium"
-summary: "Background-independent quantum-gravity programme. A 2026 paper gives an exact local covariant cuscuton representation of the standard flat-FLRW Loop Quantum Cosmology bounce, without deriving it from full LQG."
-strengths: ["Mature non-perturbative quantization of geometry.", "Long independent literature on black holes and cosmology.", "The 2026 cuscuton construction exactly reproduces the standard flat-FLRW LQC bounce without extra local propagating degrees of freedom."]
-open_problems: ["Low-energy and dynamical recovery remain incomplete.", "The new equivalence is background-level only; it does not establish inhomogeneous or perturbative equivalence and is not a derivation from full LQG.", "Standard-Model unification and distinctive experimental signatures remain incomplete."]
-source_label: "Afshordi & Giesel, A Cuscuton Representation of the Loop Quantum Cosmology Bounce"
-source_url: "https://arxiv.org/abs/2609.35222"
-source_date: "2026-09-28"
-note: "r112: A/A unchanged. Material covariance/recovery update; core blockers remain. Clash: Asymptotic Safety A/A; no movement."
-updated: "2026-09-29"
+summary: "Background-independent quantum gravity; a 2026 EPRL-FK result recovers curved Regge dynamics after imposing geometric closure."
+strengths: ["Mature non-perturbative geometry programme.", "Long independent literature.", "Geometric closure yields length-Regge geometries and Regge equations in the studied semiclassical branch."]
+open_problems: ["Continuum recovery remains incomplete.", "The result is semiclassical at fixed discretization.", "Matter unification and distinctive empirical tests remain incomplete."]
+source_label: "Bruno, Dona & Sreeram, Closing the Loop"
+source_url: "https://arxiv.org/abs/2609.37179"
+source_date: "2026-09-29"
+note: "r126 carry-forward from r123: A/A unchanged."
+updated: "2026-09-30"
 ---
 # Loop quantum gravity
+
 A/A, medium confidence.
