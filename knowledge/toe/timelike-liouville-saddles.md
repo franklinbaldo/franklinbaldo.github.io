@@ -5,16 +5,15 @@ kind: "adjacent"
 scientific_tier: "B"
 interest_tier: "A"
 confidence: "medium"
-summary: "Emilie Despontin uses Picard-Lefschetz theory to explain the non-perturbative saddle structure of the timelike Liouville two-sphere partition function. For a Hankel-type zero-mode contour, the thimble decomposition reproduces the extra saddle structure encoded in the analytically continued DOZZ expression for 0 < beta < 1 and reorganizes across beta = 1."
-strengths: ["Resolves a specific mismatch between the perturbative round-sphere path integral and the analytically continued DOZZ result.", "Connects semiclassical saddle analysis, conformal bootstrap data and recent probabilistic constructions of timelike Liouville theory.", "Treats a concrete two-dimensional quantum-gravity laboratory with explicit non-perturbative contour machinery."]
-open_problems: ["The Picard-Lefschetz decomposition is conditional on the chosen integration contour; the paper stresses that the contour is an additional prescription and is not uniquely fixed by convergence.", "The analysis is restricted to the zero mode for the saddle-sector question, with non-zero-mode fluctuations treated separately.", "This is a controlled two-dimensional quantum-gravity/string-theory result, not a realistic four-dimensional gravity-plus-Standard-Model unification."]
-source_label: "Emilie Despontin, Saddling Timelike Liouville Theory"
-source_url: "https://arxiv.org/abs/2609.31438"
-source_date: "2026-09-25"
-note: "2026-09-28: enters as adjacent B/A, medium confidence. Clash: String/M theory A/S on non-perturbative worldsheet and gravitational path-integral control. The result sharpens one important laboratory but does not select a four-dimensional vacuum or supply empirical string-specific evidence; String/M does not move."
-updated: "2026-09-28"
+summary: "Complex-saddle and Picard-Lefschetz control in Liouville quantum gravity. r117 adds an RP2 semiclassical calculation in which infinitely many complex saddles reproduce a known exact bootstrap one-point function."
+strengths: ["The original timelike analysis resolves a mismatch between perturbative saddles and analytically continued DOZZ data.", "The new RP2 calculation tests complex saddles against an independently known exact bootstrap answer and succeeds for a convergent contour.", "The programme connects path-integral contours, conformal bootstrap data and two-dimensional de Sitter/Liouville gravity."]
+open_problems: ["Contour choice remains an additional prescription rather than uniquely fixed dynamics.", "The new RP2 result is an analogous complex-saddle laboratory, not a proof of every timelike-Liouville contour prescription.", "This remains controlled two-dimensional quantum gravity rather than realistic 4d gravity plus Standard Model unification."]
+source_label: "Yu Nakayama, Semiclassical Liouville Theory on the Real Projective Plane, arXiv:2609.34811"
+source_url: "https://arxiv.org/abs/2609.34811"
+source_date: "2026-09-28"
+note: "History: B/A since r84. r117 adds a rare exact-bootstrap validation of complex saddles on RP2; evidence strengthens, but scope and contour ambiguities keep B/A. Clash: de Sitter Vacua & pUniverses B/A on 2d dS/QG control; no movement."
+updated: "2026-09-29"
 ---
-
 # Timelike Liouville Saddle Structure
 
 Adjacent B/A, medium confidence.
