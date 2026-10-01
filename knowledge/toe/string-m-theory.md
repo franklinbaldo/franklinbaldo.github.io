@@ -5,13 +5,13 @@ kind: "contender"
 scientific_tier: "A"
 interest_tier: "S"
 confidence: "medium"
-summary: "A broad quantum-gravity and unification programme; r149 adds a systematic BHK Calabi-Yau compactification scan."
-strengths: ["Includes quantum gravity and gauge interactions.", "Large mature literature on dualities, black holes and holography.", "The r149 BHK study enumerates 216 loop-type Calabi-Yau polynomials and identifies two configurations with the observed family count."]
-open_problems: ["No direct string-specific experimental confirmation.", "Vacuum selection remains open.", "A correct family count alone does not establish a realistic particle-physics vacuum."]
-source_label: "Maxim Malyutin, BHK Calabi-Yau loop-type orbifolds"
-source_url: "https://arxiv.org/abs/2609.38273"
+summary: "A broad quantum-gravity and unification programme; r154 adds CMB energy-injection bounds on long-lived light moduli common in string, supergravity and extra-dimensional models."
+strengths: ["Includes quantum gravity and gauge interactions.", "Large mature literature on dualities, black holes, holography and compactification.", "Recent CMB bounds provide a concrete cosmological constraint on broad classes of light moduli across multiple production channels."]
+open_problems: ["No direct string-specific experimental confirmation.", "Vacuum selection and moduli stabilization remain open.", "The CMB constraint applies to generic moduli and narrows parameter space without uniquely testing String/M theory."]
+source_label: "Agarwal et al., CMB Injection Bounds on Moduli Fields"
+source_url: "https://arxiv.org/abs/2609.38151"
 source_date: "2026-09-29"
-note: "r149: A/S unchanged. Clash: BFSS Matrix Theory A/S."
+note: "r154: A/S unchanged. New CMB constraints strengthen empirical contact but are not string-specific evidence. Clash remains BFSS Matrix Theory A/S."
 updated: "2026-10-01"
 ---
 # String theory / M-theory
