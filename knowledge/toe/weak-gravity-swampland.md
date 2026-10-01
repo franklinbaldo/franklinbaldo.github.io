@@ -5,13 +5,13 @@ kind: "adjacent"
 scientific_tier: "A"
 interest_tier: "S"
 confidence: "medium"
-summary: "A mature quantum-gravity consistency programme; r159 adds a concrete inflationary loophole analysis for the Festina-Lente bound tied to Affleck-Dine baryogenesis."
-strengths: ["Large independent literature and sharp EFT/string constraints.", "A strict sublattice WGC is proven for perturbative bosonic strings in D>=6.", "Recent work extends asymptotic-Hodge constraints beyond explicit compactifications and sharpens de Sitter consistency conditions.", "The r159 result explicitly classifies MSSM flat directions that can Higgs all continuous gauge symmetries during inflation while supporting Affleck-Dine baryogenesis and satisfying the Festina-Lente bound."]
-open_problems: ["The WGC and broad swampland programme remain conjectural in general quantum gravity.", "The Festina-Lente result exposes model-building freedom: its inflationary force depends on assumptions about unbroken gauge symmetries.", "The programme constrains consistent EFTs but does not itself provide complete microscopic dynamics or direct experimental confirmation."]
-source_label: "Nakamura & Yamada, Reconciling Inflation with the Festina Lente Bound through Affleck-Dine Baryogenesis"
-source_url: "https://arxiv.org/abs/2609.37674"
-source_date: "2026-09-29"
-note: "History: remains adjacent A/S. r159 clarifies rather than promotes or relegates: complete gauge breaking can evade the inflationary Festina-Lente tension and simultaneously support Affleck-Dine baryogenesis. Clash: String/M A/S; swampland offers sharper EFT consistency filters while String/M supplies explicit microscopic constructions."
+summary: "A mature quantum-gravity consistency programme; r163 adds a CFT large-charge convexity bound that is provable in a controlled class of theories and motivated by the WGC."
+strengths: ["Large independent literature and sharp EFT/string constraints.", "A strict sublattice WGC is proven for perturbative bosonic strings in D>=6.", "Recent asymptotic-Hodge work sharpens quantum-gravity consistency constraints beyond explicit compactifications.", "Popov & Sharon prove the WGC-motivated projected large-charge bound alpha_0 <= 0 for 3d CFTs with moduli spaces, giving a rare theorem-level CFT consequence in the holographic-swampland direction."]
+open_problems: ["The WGC and broad swampland programme remain conjectural in general quantum gravity.", "The new convexity theorem is for a projected minimum dimension in a restricted class of 3d CFTs and is not a proof of the full WGC.", "The programme constrains consistent EFTs but does not itself provide complete microscopic dynamics or direct experimental confirmation."]
+source_label: "Popov & Sharon, Towers of Operators in CFTs and Convexity Bounds at Large Charge"
+source_url: "https://arxiv.org/abs/2607.28726"
+source_date: "2026-07-30"
+note: "History: remains adjacent A/S. r163 follows renewed discussion in the Swampland Seminar on 2026-09-29: a WGC-motivated charge-convexity statement becomes an explicit CFT theorem in the projected large-charge setting. This strengthens theoretical control without changing the evidence category. Clash: String/M A/S; swampland supplies sharp consistency filters while String/M supplies explicit microscopic constructions."
 updated: "2026-10-01"
 ---
 # Weak Gravity Conjecture / Swampland
