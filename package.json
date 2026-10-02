@@ -43,19 +43,19 @@
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.1",
-    "@astrojs/mdx": "^8.0.1",
+    "@astrojs/mdx": "^8.0.2",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@fontsource/fraunces": "^5.3.0",
     "@fontsource/inter": "^5.3.0",
     "@picocss/pico": "^2.1.1",
-    "astro": "^7.3.3",
-    "dompurify": "^3.4.15",
+    "astro": "^7.3.5",
+    "dompurify": "^3.4.16",
     "fast-xml-parser": "^5.11.1",
     "highlight.js": "^11.12.0",
     "image-size": "^2.0.4",
-    "katex": "^0.18.7",
-    "marked": "^18.0.13",
+    "katex": "^0.18.9",
+    "marked": "^18.0.14",
     "mdast-util-to-string": "^4.0.0",
     "mermaid": "^11.16.1",
     "pagefind": "^1.5.2",
@@ -64,7 +64,7 @@
     "rehype-katex": "^7.0.1",
     "rehype-slug": "^6.0.0",
     "remark-math": "^6.0.0",
-    "satori": "^0.33.4",
+    "satori": "^0.33.5",
     "sharp": "^0.35.4",
     "typescript": "^6.0.3",
     "unist-util-visit": "^5.1.0"
@@ -76,10 +76,10 @@
     "gray-matter": "^4.0.3",
     "js-yaml": "^4.3.2",
     "openskill": "^5.0.1",
-    "oxlint": "^1.83.0",
+    "oxlint": "^1.85.0",
     "playwright": "^1.63.0",
-    "prettier": "^3.9.8",
+    "prettier": "^3.9.9",
     "remark": "15.0.1",
-    "tsx": "^4.23.13"
+    "tsx": "^4.23.15"
   }
 }
