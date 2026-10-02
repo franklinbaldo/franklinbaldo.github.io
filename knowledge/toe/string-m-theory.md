@@ -5,13 +5,13 @@ kind: "contender"
 scientific_tier: "A"
 interest_tier: "S"
 confidence: "medium"
-summary: "A broad quantum-gravity and unification programme; r167-r168 add two independent amplitude-bootstrap results that sharply constrain string scattering under explicit assumptions."
-strengths: ["Includes quantum gravity and gauge interactions.", "Large mature literature on dualities, black holes, holography and compactification.", "Huang, Wan, Wang and Zhou derive all-orders low-energy master equations whose gauge-theory solution selects Veneziano under stated analytic and positive-dispersion assumptions.", "Cao's analytic dual resonance independently fixes the scalar string amplitude for every n>=5 given an integer planar spectrum, a joint crossing-spin bound, and suitable complex-Regge decay."]
-open_problems: ["No direct string-specific experimental confirmation.", "Vacuum selection and moduli stabilization remain open.", "The recent uniqueness results depend on explicit spectral, analyticity, positivity, spin-support or Regge assumptions; the gravity result of r167 still needs an extra finite-spin assumption to isolate Virasoro-Shapiro."]
-source_label: "Qu Cao, Analytic Dual Resonance and the String Bootstrap"
-source_url: "https://arxiv.org/abs/2610.01101"
-source_date: "2026-10-01"
-note: "History: A/S unchanged. r167 added all-orders infrared-consistency constraints. r168 adds an independent analytic-dual-resonance uniqueness route for higher-point scalar string amplitudes; this strengthens structural rigidity but not empirical confirmation or vacuum selection. Clash: BFSS Matrix Theory A/S; no tier movement."
+summary: "A broad quantum-gravity and unification programme; recent amplitude-bootstrap rigidity results are now joined by a general perturbative-superstring exclusion of continuous-spin particle representations."
+strengths: ["Includes quantum gravity and gauge interactions.", "Large mature literature on dualities, black holes, holography and compactification.", "Recent amplitude-bootstrap work sharply constrains string scattering under explicit assumptions.", "Alabbasi and Quevedo extend an older bosonic result to perturbative superstrings: continuous-spin particles are absent, providing a rare model-independent low-energy exclusion within perturbative string constructions."]
+open_problems: ["No direct string-specific experimental confirmation.", "Vacuum selection and moduli stabilization remain open.", "Amplitude uniqueness results depend on explicit analytic and spectral assumptions.", "The continuous-spin exclusion applies to perturbative superstring constructions and does not by itself establish the full nonperturbative M-theory spectrum."]
+source_label: "Alabbasi & Quevedo, Absence of Continuous Spin Particles in Superstring Theory"
+source_url: "https://arxiv.org/abs/2610.00745"
+source_date: "2026-09-30"
+note: "History: A/S unchanged. r167-r168 strengthened amplitude rigidity. r173 adds a model-independent perturbative-superstring exclusion of continuous-spin particles, generalizing the earlier bosonic result. This improves falsifiability but is not experimental confirmation and does not resolve vacuum selection. Clash: BFSS Matrix Theory A/S; no tier movement."
 updated: "2026-10-02"
 ---
 # String theory / M-theory
