@@ -2,18 +2,18 @@
 type: toe
 name: "Dark Dimension"
 kind: "adjacent"
-scientific_tier: "B"
+scientific_tier: "C"
 interest_tier: "S"
 confidence: "medium"
-summary: "A Swampland-motivated mesoscopic extra-dimension programme tying the dark-energy scale to a micron-scale KK tower and neutrino physics; r121 records a major negative result for the rapid KK-graviton cascade used by existing dark-graviton-DM realizations."
-strengths: ["The original programme makes quantitative links among dark energy, a mesoscopic extra dimension, a lowered species scale and neutrino masses.", "Follow-up work develops explicit B-L/neutrino phenomenology and terrestrial constraints, and string compactification work addresses moduli stabilisation.", "A 2026-09-28 universal KK-graviton calculation is a sharp falsifier: the q^5 decay rate strongly suppresses the rapid cascade assumed by existing Dark-Dimension dark-matter models."]
-open_problems: ["The framework is motivated by Swampland conjectures rather than derived from a unique microscopic theory.", "The new cascade calculation places severe pressure on the dark-graviton-DM branch and may rule out existing realizations that rely on rapid cascading.", "Moduli stabilisation, cosmological tuning and a complete realistic compactification remain open."]
-source_label: "Lee, Randall & Riojas, A Universal Kaluza-Klein Graviton Cascade Rate, arXiv:2609.36234"
-source_url: "https://arxiv.org/abs/2609.36234"
-source_date: "2026-09-28"
-note: "r121 materializes the r120 carry-forward evaluation: adjacent B/S. The programme is unusually testable, but a central dark-graviton-DM escape route is now under direct theoretical pressure. Clash: Weak Gravity Conjecture / Swampland A/S; no tier movement."
-updated: "2026-09-30"
+summary: "A Swampland-motivated mesoscopic extra-dimension programme tying the dark-energy scale to a KK tower and neutrino physics; two independent 2026 decay calculations now put the minimal flat dark-graviton-DM realization and its preferred radius under severe pressure."
+strengths: ["Makes quantitative links among dark energy, an extra dimension, the species scale and neutrino physics.", "Has active independent phenomenology and string-motivated model building, including evolving-radius and axiverse variants.", "Its central cascade assumptions are sharply calculable and falsifiable rather than protected from negative results."]
+open_problems: ["Lee, Randall & Riojas and independently Langhoff find near-threshold KK-graviton decays scale as p^5, suppressing the rapid cascade used by existing dark-graviton-DM models.", "Langhoff further finds irreducible freeze-in gamma-ray constraints that, with standard BBN/CMB reheating bounds, push the radius almost three orders of magnitude below the naive distance-conjecture scale in the flat model.", "Surviving variants require additional structure such as evolving radii, extra towers or altered cosmological assumptions; moduli stabilization and a unique realistic compactification remain open."]
+source_label: "Kevin Langhoff, Near Threshold Kaluza-Klein Graviton Decays and the Dark Dimension, arXiv:2610.01825"
+source_url: "https://arxiv.org/abs/2610.01825"
+source_date: "2026-10-01"
+note: "History: r121 kept B/S after Lee-Randall-Riojas arXiv:2609.36234 first established the universal p^5 cascade suppression. r170 moves B/S -> C/S after an independent calculation reproduces the d-wave suppression and adds a broader reheating/freeze-in tension with the naive micron-scale radius. This is not F: non-minimal variants remain under study, including an accepted 2026 evolving-dark-sector realization. Clash: Weak Gravity Conjecture / Swampland A/S; no movement for WGC."
+updated: "2026-10-02"
 ---
 # Dark Dimension
 
-Adjacent B/S, medium confidence. The new cascade-rate result is evidence against an important implementation, not a reason to treat the entire extra-dimensional programme as ruled out.
+Adjacent C/S, medium confidence. The minimal flat realization is now under replicated theoretical pressure, while more elaborate variants remain scientifically live.
