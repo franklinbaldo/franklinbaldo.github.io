@@ -11,7 +11,7 @@ open_problems: ["No accepted complete dS4 dual.", "The new Stokes result is semi
 source_label: "Masazumi Honda & Kotaro Shinmyo, Stokes Phenomena between AdS/CFT and dS/CFT"
 source_url: "https://arxiv.org/abs/2609.10677"
 source_date: "2026-09-09"
-note: "History: B/S unchanged. r137 added the 2026 fermion dictionary. r172 adds a nontrivial bulk/boundary Stokes match and contour prescription, but the low-dimensional minisuperspace/zero-mode scope blocks promotion. Clash: String de Sitter Excited-State Cosmology B/S; dS/CFT has a boundary dictionary, while the excited-state programme offers an explicit string/M-theory bulk construction. No tier movement."
+note: "History: B/S unchanged. r137 added the 2026 fermion dictionary. r172 adds a nontrivial bulk/boundary Stokes match and contour prescription, but the low-dimensional minisuperspace/zero-mode scope blocks promotion. Clash: String/M Theory A/S; dS/CFT has a direct boundary dictionary for de Sitter, while String/M has much broader microscopic and nonperturbative structure but no accepted complete dS4 realization. No tier movement."
 updated: "2026-10-02"
 ---
 
