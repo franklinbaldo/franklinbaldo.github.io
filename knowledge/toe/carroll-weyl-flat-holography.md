@@ -5,14 +5,14 @@ kind: "adjacent"
 scientific_tier: "B"
 interest_tier: "A"
 confidence: "medium"
-summary: "A flat-holography programme connecting null-boundary Carroll-Weyl structure to a smooth AdS-to-Minkowski recovery of free massless fields of arbitrary integer spin in even spacetime dimensions."
-strengths: ["Null-boundary analyses give finite integrable Carroll-Weyl charges with centrally extended symmetry structure.", "Bekaert, Campoleoni, Pekar and Raj recover the full free Minkowski solution space as a smooth limit of the AdS solution space for arbitrary integer spin in even dimensions.", "The AdS source and vev expand into the analogues of shear, mass and angular-momentum aspects plus the subleading tower at null infinity, supported by Lorentz/conformal representation branching."]
-open_problems: ["The new AdS-to-flat recovery is for free massless equations rather than a fully interacting quantum-gravity theory.", "The general result is restricted to even spacetime dimensions and does not provide realistic matter or Standard-Model recovery.", "No distinctive empirical test of the holographic interpretation is yet established."]
-source_label: "Xavier Bekaert, Andrea Campoleoni, Simon Pekar & S. I. Aadharsh Raj, Flat from AdS: in any even dimension and for any spin, JHEP 09 (2026) 269"
-source_url: "https://doi.org/10.1007/JHEP09(2026)269"
-source_date: "2026-09-25"
-note: "History: r126 entered adjacent B/A from charged Carroll-Weyl symmetries at null boundaries. r144 adds peer-reviewed arbitrary-spin solution-space recovery from AdS to Minkowski; this strengthens the flat-limit dictionary but remains free-field rather than interacting QG, so B/A is unchanged. Clash: Observer-Patch Holography B/S; flat holography has more explicit asymptotic solution-space recovery, while observer-patch holography pursues a broader reconstruction programme. No tier movement."
-updated: "2026-09-30"
+summary: "A Carrollian/flat-holography programme with explicit null-boundary charges, a smooth AdS-to-flat free-field dictionary, and now a geometric-trinity construction that trades magnetic Carrollian curvature for torsion or non-metricity."
+strengths: ["Null-boundary analyses give finite integrable Carroll-Weyl charges with centrally extended symmetry structure.", "Bekaert, Campoleoni, Pekar and Raj recover the full free Minkowski solution space as a smooth AdS limit for arbitrary integer spin in even dimensions.", "Ahmadi-Jahmani and Parvizi construct dynamically equivalent magnetic Carrollian formulations in curvature, torsion and non-metricity language, with explicit maps to electric Carroll gravity, Maxwell-like sectors, fracton-like tensor gauge structure and Carroll-Weyl dilaton theory."]
+open_problems: ["The new trinity result is a fresh preprint and concerns a degenerate Carrollian sector rather than a complete interacting quantum-gravity theory.", "The established AdS-to-flat recovery is still free-field and restricted to even spacetime dimensions.", "No realistic matter sector or distinctive empirical test selects the Carrollian holographic interpretation."]
+source_label: "Ahmadi-Jahmani & Parvizi, Trinity of Carrollian Gravity: Dynamically Equivalent Formulations of Magnetic Carrollian Gravity"
+source_url: "https://arxiv.org/abs/2610.01976"
+source_date: "2026-10-01"
+note: "History: r126 entered B/A from Carroll-Weyl null-boundary structure; r144 added peer-reviewed arbitrary-spin AdS-to-flat recovery; r167 adds a geometric-trinity dictionary for magnetic Carrollian gravity. This broadens structural control without changing the evidence category. Clash: Hořava Gravity A/A; Carrollian gravity has exact equivalence maps in an ultrarelativistic sector, while Hořava has a more explicit UV-scaling proposal and broader phenomenology. No tier movement."
+updated: "2026-10-01"
 ---
 # Carroll-Weyl Flat Holography
 
