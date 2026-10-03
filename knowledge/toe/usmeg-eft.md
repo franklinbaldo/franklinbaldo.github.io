@@ -5,16 +5,16 @@ kind: "contender"
 scientific_tier: "C"
 interest_tier: "A"
 confidence: "medium"
-summary: "The Unified Standard Model with Emergent Gravity–Effective Field Theory keeps the Standard Model and a quantum spin-2 graviton in four dimensions, while a Lagrange-multiplier constraint is claimed to terminate the gravitational loop expansion at one loop. A September 2026 Physics Letters B paper interprets the classical metric as a condensate that is controlled only below a gravitational breakdown scale near 10^18 GeV."
-strengths: ["Uses explicit path-integral, renormalization-group and BRST machinery rather than only a qualitative emergent-gravity picture.","The September 2026 condensate result is peer-reviewed and states clearly where the effective description is and is not controlled.","It exposes concrete observables, including the two tensor graviton modes and momentum-dependent quantum corrections, even though the polarization count itself is shared with general relativity."]
-open_problems: ["The framework explicitly loses a controlled geometric description near 10^18 GeV, so it is not yet an ultraviolet-complete Theory of Everything.","Exactly two tensor polarizations are a consistency requirement shared by general relativity and many viable frameworks, not unique evidence for USMEG-EFT.","The disordered/pre-geometric phase and strict condensate dissolution are acknowledged as hypotheses requiring a fuller construction beyond the current second-order formalism."]
-source_label: "Farrukh A. Chishtie, Classical spacetime as a gravitational condensate (Physics Letters B)"
-source_url: "https://doi.org/10.1016/j.physletb.2026.140803"
-source_date: "2026-09"
-note: "2026-09-18: entered at C/A. The new peer-reviewed condensate calculation earns structured-speculation status, but the explicit ultraviolet breakdown blocks a higher scientific tier until the high-energy completion or uniquely discriminating evidence exists."
-updated: "2026-09-18"
+summary: "The Unified Standard Model with Emergent Gravity–Effective Field Theory treats four-dimensional gravity as an effective quantum field theory coupled to the Standard Model, with a Lagrange-multiplier construction restricting gravitational radiative corrections. A September 2026 condensate paper and a revised Canadian Journal of Physics comparison expand the programme's account of emergence and observational constraints."
+strengths: ["Explicit path-integral, renormalization and BRST machinery.", "Peer-reviewed 2026 condensate treatment states the regime where the geometric description is controlled.", "The revised Einstein-Cartan comparison adds gravitational-wave, torsion and equivalence-principle constraints and states the framework's limitations."]
+open_problems: ["No controlled ultraviolet completion above the gravitational cutoff.", "Two tensor polarizations are consistency evidence shared with general relativity, not a unique signal.", "Framework-specific corrections remain beyond current experimental sensitivity and the pre-geometric phase is not yet microscopically derived."]
+source_label: "Farrukh A. Chishtie, USMEG-EFT 2026 condensate and Einstein-Cartan assessment"
+source_url: "https://arxiv.org/abs/2509.08848"
+source_date: "2026-09-24"
+note: "History: entered C/A on 2026-09-18. r91 records the September-24 revision and Canadian Journal of Physics publication as a material evidence update with no tier movement. Clash: Asymptotic Safety A/A on low-energy calculability versus ultraviolet completion."
+updated: "2026-09-28"
 ---
 
 # USMEG-EFT
 
-The Unified Standard Model with Emergent Gravity–Effective Field Theory keeps the Standard Model and a quantum spin-2 graviton in four dimensions, while a Lagrange-multiplier constraint is claimed to terminate the gravitational loop expansion at one loop. A September 2026 Physics Letters B paper interprets the classical metric as a condensate that is controlled only below a gravitational breakdown scale near 10^18 GeV.
+C/A, medium confidence. The new publication strengthens the constraint ledger but does not close the ultraviolet or distinctive-evidence gaps.

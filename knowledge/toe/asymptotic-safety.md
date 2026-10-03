@@ -5,16 +5,16 @@ kind: "contender"
 scientific_tier: "A"
 interest_tier: "A"
 confidence: "medium"
-summary: "A quantum-gravity programme in which gravity can remain predictive at arbitrarily high energies if the renormalization-group flow approaches a suitable ultraviolet fixed point. A 2026 scaling-solution result now pushes the programme further into Standard-Model phenomenology by asking whether quantum gravity can predict the Fermi-to-Planck scale hierarchy."
-strengths: ["Uses the established language of quantum field theory and renormalization-group flow.","Substantial non-perturbative calculation programme and active phenomenology.","Potentially conservative UV completion without requiring a wholly new microscopic ontology.","A paper accepted in Physical Review D on 2026-09-14 derives a scaling solution in which an ultraviolet fixed point can make the cosmon-Higgs coupling predictive and yield a very small Fermi-to-Planck scale ratio."]
-open_problems: ["The existence and properties of the required fixed point must survive truncation/systematic-control questions.","A complete, compelling derivation of observed matter content and parameters remains open.","The Fermi-scale result depends on assumptions about the ultraviolet fixed point and is not yet decisive empirical evidence for the framework."]
-source_label: "Christof Wetterich, Fermi scale from quantum gravity scaling solution (Phys. Rev. D, accepted)"
-source_url: "https://journals.aps.org/prd/accepted/10.1103/3d3b-txny"
-source_date: "2026-09-14"
-note: "2026-09-18 review: held at A/A. The new accepted result materially strengthens contact with the gauge-hierarchy problem, but does not by itself resolve fixed-point control or deliver a discriminating observation."
-updated: "2026-09-18"
+summary: "A mature quantum-gravity programme based on an interacting ultraviolet fixed point; r149 adds a perturbative Ricci-flow renormalization scheme that recovers a non-Gaussian fixed point."
+strengths: ["Large independent functional-RG literature.", "Recent essential-scheme work improves gauge control.", "The 2026 perturbative Ricci-flow calculation defines a renormalization scheme for Newton's constant and recovers a non-Gaussian fixed point."]
+open_problems: ["Fixed-point evidence must remain stable under truncation, regulator and scheme changes.", "The new perturbative result is a fresh complementary calculation, not a complete proof of the full theory.", "Realistic matter content and unique empirical confirmation remain open."]
+source_label: "Harlander, Kluth, Kohnen & Werthenbach, The perturbative Ricci flow in gravity"
+source_url: "https://arxiv.org/abs/2604.18678"
+source_date: "2026-04-20"
+note: "History: remains A/A in r149. The Ricci-flow result provides an independent perturbative route toward the fixed-point picture without closing systematic or empirical gaps. Clash: Low-Energy GR EFT A/A on ultraviolet completion versus infrared robustness. No tier movement."
+updated: "2026-10-01"
 ---
 
 # Asymptotic safety
 
-A quantum-gravity programme in which gravity can remain predictive at arbitrarily high energies if the renormalization-group flow approaches a suitable ultraviolet fixed point. A 2026 scaling-solution result now pushes the programme further into Standard-Model phenomenology by asking whether quantum gravity can predict the Fermi-to-Planck scale hierarchy.
+A/A, medium confidence.

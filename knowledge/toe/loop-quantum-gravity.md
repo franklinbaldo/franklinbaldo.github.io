@@ -5,16 +5,15 @@ kind: "contender"
 scientific_tier: "A"
 interest_tier: "A"
 confidence: "medium"
-summary: "A non-perturbative, background-independent quantization programme for general relativity with discrete spectra for geometric observables such as area and volume. It is a mature quantum-gravity research programme, though its scope is narrower than a complete unification of all fundamental interactions."
-strengths: ["Mathematically developed background-independent quantization of geometry.","Concrete results for geometric spectra and extensive work on black holes and cosmology.","Long-running independent research programme with many formulations and applications."]
-open_problems: ["Dynamics and the recovery of smooth low-energy spacetime remain central issues.","Standard Model matter and full force unification are not automatically delivered by the core framework.","Distinctive experimentally accessible signatures remain difficult to isolate."]
-source_label: "Carlo Rovelli, Loop Quantum Gravity"
-source_url: "https://arxiv.org/abs/gr-qc/9710008"
-source_date: "1997-10-01"
-note: "A as a quantum-gravity programme; the Arena displays the scope limitation explicitly rather than pretending every contender solves the same problem."
-updated: "2026-09-18"
+summary: "Background-independent quantum gravity; a 2026 EPRL-FK result recovers curved Regge dynamics after imposing geometric closure."
+strengths: ["Mature non-perturbative geometry programme.", "Long independent literature.", "Geometric closure yields length-Regge geometries and Regge equations in the studied semiclassical branch."]
+open_problems: ["Continuum recovery remains incomplete.", "The result is semiclassical at fixed discretization.", "Matter unification and distinctive empirical tests remain incomplete."]
+source_label: "Bruno, Dona & Sreeram, Closing the Loop"
+source_url: "https://arxiv.org/abs/2609.37179"
+source_date: "2026-09-29"
+note: "r126 carry-forward from r123: A/A unchanged."
+updated: "2026-09-30"
 ---
-
 # Loop quantum gravity
 
-A non-perturbative, background-independent quantization programme for general relativity with discrete spectra for geometric observables such as area and volume. It is a mature quantum-gravity research programme, though its scope is narrower than a complete unification of all fundamental interactions.
+A/A, medium confidence.
