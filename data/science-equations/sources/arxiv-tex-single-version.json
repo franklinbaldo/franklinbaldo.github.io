@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "source_id": "arxiv-source-tex-single-version",
+  "source_name": "arXiv bulk TeX source — single-version redistributable subset",
+  "readiness": "license-filtered",
+  "official_access": {
+    "source_dataset": "Amazon S3 requester-pays arXiv source files",
+    "source_bucket": "s3://arxiv/src/",
+    "source_manifest": "s3://arxiv/src/arXiv_src_manifest.xml",
+    "source_documentation": "https://info.arxiv.org/help/bulk_data_s3.html",
+    "metadata_dataset": "arXiv OAI-PMH arXivRaw",
+    "metadata_endpoint": "https://oaipmh.arxiv.org/oai",
+    "metadata_documentation": "https://info.arxiv.org/help/oa/index.html",
+    "license_documentation": "https://info.arxiv.org/help/license/index.html",
+    "access_mode": "official bulk source TAR chunks plus bulk OAI-PMH metadata; no page-by-page article scraping"
+  },
+  "scope": {
+    "structures": [
+      "inline TeX math",
+      "display TeX math",
+      "equation environments",
+      "align/gather/multline/eqnarray environments"
+    ],
+    "provenance_class": "attested",
+    "original_representation": "exact TeX body and exact matched delimiter/environment from the source file",
+    "admission_rule": "An article is payload-eligible only when arXivRaw reports exactly one version and the paper-level license is an unambiguous redistributable CC BY, CC BY-SA, or CC0 URL. Multi-version records are excluded from payload publication because arXiv states that different versions can carry different licenses while bulk OAI metadata exposes one paper-level/current license.",
+    "exclusions": [
+      "arXiv perpetual non-exclusive license",
+      "CC BY-NC and CC BY-NC-ND/NC-SA licenses",
+      "missing or unrecognized licenses",
+      "records with zero or more than one recorded version",
+      "math inside TeX comments, verbatim/lstlisting/minted environments, and verb commands",
+      "macro expansion, OCR, and prose-to-math reconstruction at extracted stage"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "content-addressed-source-plus-metadata-inventory",
+    "source_inventory_builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "Pin an exact arXiv source manifest, verify every acquired S3 source TAR against the manifest md5sum, build a deterministic SHA-256 inventory over the exact acquired source chunks, independently inventory the exact OAI-PMH arXivRaw XML used for rights/version decisions, and derive one source_snapshot from both inventory digests. Do not identify a snapshot only by wall-clock date.",
+    "template": "arxiv-single-version:src-inventory-sha256:<src-digest>:oai-inventory-sha256:<oai-digest>",
+    "required_fields": [
+      "source_manifest_url",
+      "source_manifest_sha256",
+      "source_chunks",
+      "source_inventory_sha256",
+      "oai_metadata_inventory_sha256",
+      "oai_harvest_bounds_or_resumption_evidence",
+      "file_count",
+      "total_bytes"
+    ]
+  },
+  "license_policy": {
+    "readiness": "license-filtered",
+    "metadata_license": "CC0-1.0",
+    "payload_allowlist": [
+      "Creative Commons Attribution (CC BY)",
+      "Creative Commons Attribution-ShareAlike (CC BY-SA)",
+      "Creative Commons Zero (CC0)"
+    ],
+    "version_safety_rule": "Bulk payload publication is fail-closed to records with exactly one arXivRaw version. This makes the one OAI license field unambiguous for the only source version. Multi-version papers remain available for indexing/linking but are not redistributed until a reproducible per-version license source is integrated.",
+    "publication_partitioning": "Before Internet Archive publication, partition permitted rows by observed license class so ShareAlike and attribution obligations are explicit and no mixed-license item obscures per-row rights.",
+    "raw_source_policy": "Do not mirror arXiv source packages in Atlas Internet Archive items. Publish only permitted derived occurrence Parquets and lightweight manifests, preserving article/version URL and observed license on every row."
+  },
+  "adapters": {
+    "metadata": {
+      "path": "scripts/science-equations/extract-arxiv-oai-metadata.py",
+      "input": "bulk OAI-PMH arXivRaw XML",
+      "transport_output": "JSONL metadata to stdout (transient only)"
+    },
+    "occurrences": {
+      "path": "scripts/science-equations/harvest-arxiv-tex.py",
+      "input": "locally verified arXiv S3 source TAR chunk(s) plus transient metadata JSONL",
+      "transport_output": "OccurrenceV1-compatible JSONL to stdout (transient only)",
+      "validation": [
+        "Every emitted expression is explicitly present in TeX source",
+        "Every emitted article has exactly one arXivRaw version",
+        "Every emitted article has a recognized CC BY, CC BY-SA, or CC0 license",
+        "source_record_sha256 is independent of local checkout/root location",
+        "No OCR, macro expansion, algebraic equivalence, or reconstruction is claimed"
+      ]
+    }
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-arxiv-source-tex-single-version-<inventory-digest>-<license-class>-<stage>"
+  }
+}
