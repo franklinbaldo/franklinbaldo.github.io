@@ -1,0 +1,64 @@
+{
+  "internet_archive": {
+    "details_url": "https://archive.org/details/atlas-ietf-rfcxml-formal-blocks-41e201186fb4f203-extracted",
+    "files": {
+      "extracted-00000.parquet": {
+        "md5": "60fb14a02099316321a782ba6e1c5499",
+        "sha256": "20c97508159d9b8ee3bab4fedf2e90cae95dfbd48f96c180e53f7e7426777c8e",
+        "size": 16878
+      },
+      "manifest.json": {
+        "md5": "1bb76ccdc9b864d6320e593375b3531d",
+        "sha256": "45eeb5c7fc9041f0355468832050d4ea93a869a6b5b5a3bf9c70cac171d3f5fe",
+        "size": 486
+      }
+    },
+    "identifier": "atlas-ietf-rfcxml-formal-blocks-41e201186fb4f203-extracted",
+    "metadata_url": "https://archive.org/metadata/atlas-ietf-rfcxml-formal-blocks-41e201186fb4f203-extracted",
+    "verified": true
+  },
+  "provenance_guards": {
+    "linked_graphic_bytes_redistributed": false,
+    "ocr_performed": false,
+    "provenance_class": "attested",
+    "reconstruction_performed": false
+  },
+  "record_type": "science-atlas-publication",
+  "recorded_at_utc": "2026-09-24T14:48:26.179445+00:00",
+  "rows": 3,
+  "schema_version": 1,
+  "scope": {
+    "rfcs": [
+      "9000"
+    ]
+  },
+  "shards": [
+    {
+      "bytes": 16878,
+      "file": "extracted-00000.parquet",
+      "rows": 3,
+      "sha256": "20c97508159d9b8ee3bab4fedf2e90cae95dfbd48f96c180e53f7e7426777c8e"
+    }
+  ],
+  "source_id": "ietf-rfcxml-formal-blocks",
+  "source_inventory": {
+    "file_count": 1,
+    "files": [
+      {
+        "bytes": 725904,
+        "path": "rfc9000.xml",
+        "sha256": "78bf03d20155947b5613e942b513b37b6b25229940002e00124bcfc1856a32a9"
+      }
+    ],
+    "inventory_sha256": "41e201186fb4f20327ae784c49efc8e622184680f430cae05398dfcfb3afb67b",
+    "total_bytes": 725904
+  },
+  "source_snapshot": "inventory-sha256:41e201186fb4f20327ae784c49efc8e622184680f430cae05398dfcfb3afb67b",
+  "stage": "extracted",
+  "workflow": {
+    "repository": "franklinbaldo/franklinbaldo.github.io",
+    "run_attempt": "1",
+    "run_id": "36014758176",
+    "sha": "065cbada4248cadbcefedd7bef696458a9e2f81f"
+  }
+}
