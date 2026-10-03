@@ -1,0 +1,20 @@
+---
+type: toe
+name: "Einstein–Maxwell from One Ordered Response (SL(3,C))"
+kind: "adjacent"
+scientific_tier: "NR"
+interest_tier: "A"
+confidence: "medium"
+summary: "Erik Trangärd's September 2026 preprint builds a local pure-connection construction in which the only dynamical parent field is an SL(3,C) connection and a single homogeneous adjoint-invariant phase supplies both gravitational and electromagnetic constitutive response. On a specified regular Lorentzian neutral branch, the paper claims exact Einstein–Maxwell–Λ electrovacuum equations at finite electromagnetic amplitude. The construction is technically interesting but intentionally narrower than a Theory of Everything: it does not yet derive the weak or strong interactions, realistic chiral matter, the Standard Model, quantization or a distinctive empirical prediction."
+strengths: ["The preprint states a sharply defined mathematical claim rather than a loose analogy: one SL(3,C) connection and one invariant phase generate geometry, Maxwell propagation and electromagnetic backreaction on the stated branch.", "The advertised recovery is exact within the local neutral branch and at finite electromagnetic amplitude, rather than only a quadratic or infinitesimal matching.", "The paper supplies a local invariant completion, spectral-projector construction, connection two-jet and explicit curvature/coupling conventions, giving independent readers a concrete derivation to attack or reproduce."]
+open_problems: ["Scope is the decisive Arena limit: Einstein–Maxwell electrovacuum is only gravity plus the abelian electromagnetic sector. No weak/strong gauge sectors, realistic fermions, generations, Higgs/Yukawa structure or full Standard Model are derived in the current public record.", "The construction is local around a regular ordered branch. Global existence, branch selection, singular sectors and uniqueness of the physical realization are not established by the abstract-level result.", "The current version is a single-author, non-peer-reviewed preprint with no independent reconstruction or empirical discriminator yet located.", "A route from the same parent principle to quantum dynamics and realistic matter would be required before this should enter the ranked ToE contender set."]
+source_label: "Erik Trangärd, Einstein–Maxwell from One Ordered Response: An Exact Local SL(3,C) Construction, Preprints.org v1"
+source_url: "https://www.preprints.org/manuscript/202609.2071"
+source_date: "2026-09-23"
+note: "2026-09-24: added as adjacent at NR scientific / A interest, medium confidence. NR is a scope decision, not a negative verdict on the mathematical construction: the current paper unifies only classical gravity and electromagnetism, so it does not yet claim the gravity-plus-realistic-Standard-Model scope required for Arena scientific ranking. Interest A reflects the unusually clean single-response exact-recovery target. Clash: Weyl–Dirac–Born–Infeld (B/A). Battleground: economy and exact recovery versus breadth and maturity in gauge–gravity unification. Trangärd's advantage is a compact pure-connection parent with exact Einstein–Maxwell–Λ recovery on its stated local branch; its liability is narrow classical scope and no external scrutiny. WDBI already embeds the full Standard Model in a peer-reviewed Weyl/DBI action and has a developed low-energy Einstein route, but imports rather than derives the Standard-Model gauge/matter structure. The comparison does not move WDBI. A future same-parent derivation of non-abelian chiral matter plus independent reproduction could move this entry from adjacent NR into the ranked contender set."
+updated: "2026-09-24"
+---
+
+# Einstein–Maxwell from One Ordered Response
+
+This is recorded as an adjacent unification result rather than a full ToE contender. Its value to the Arena is methodological: it gives a compact benchmark for how much classical gauge–gravity structure can genuinely descend from one parent response before additional matter and Standard-Model assumptions are introduced.
