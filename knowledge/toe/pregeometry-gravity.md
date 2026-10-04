@@ -5,14 +5,14 @@ kind: "adjacent"
 scientific_tier: "B"
 interest_tier: "A"
 confidence: "medium"
-summary: "A peer-reviewed gauge programme for emergent metric gravity; the September 2026 result extends recovery to the geometric trinity and metric-affine gravity."
-strengths: ["Explicit symmetry-breaking construction.", "Peer-reviewed gravity recovery.", "New recovery of curvature, torsion and non-metricity formulations."]
+summary: "Peer-reviewed pregeometric gauge gravity with spontaneous symmetry breaking; recent work recovers the geometric trinity and the dynamical/topological gravity sectors."
+strengths: ["Peer-reviewed gauge construction for emergent gravity.", "Recovers curvature, torsion and non-metricity formulations.", "A 2026 PRD paper derives Einstein-Hilbert, cosmological-constant and four-dimensional topological terms from five pregeometric invariants."]
 open_problems: ["No complete realistic matter derivation.", "No decisive empirical discriminator.", "No full quantum completion."]
 source_label: "Capozziello & Meluccio, The pre-geometric origin of geometric trinity of gravity"
 source_url: "https://doi.org/10.1140/epjc/s10052-026-16359-8"
 source_date: "2026-09-18"
-note: "r126: B/A remains; broader classical recovery, no tier movement."
-updated: "2026-09-30"
+note: "History: B/A unchanged. r231 adds the peer-reviewed PRD 114, 044056 result on common pregeometric origins for dynamical and topological gravity sectors."
+updated: "2026-10-04"
 ---
 # Pregeometry Gravity
 
