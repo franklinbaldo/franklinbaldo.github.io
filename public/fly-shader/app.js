@@ -196,7 +196,7 @@ let worker = null;
 let workerReady = false;
 let workerBusy = false;
 let tickLatency = 0;
-let tickRate = 0;
+let tickInterval = 0;
 
 function setStatus(text, kind) {
   $("statusText").textContent = text;
@@ -271,16 +271,27 @@ async function loadMaleCns() {
       if (msg.type === "result") {
         workerBusy = false;
         tickLatency = msg.latency;
-        const now = performance.now() / 1000;
-        const tickDt = lastTickTime === null ? 0.1 : now - lastTickTime;
-        lastTickTime = now;
-        tickRate = tickRate * 0.9 + (1 / Math.max(1e-3, tickDt)) * 0.1;
+        // Readout adaptation runs on world time, so pausing or a background
+        // tab does not count as elapsed simulation time.
+        const tickDt =
+          lastTickTime === null
+            ? 1 / NEURAL_HZ
+            : Math.max(1e-3, sentWorldTime - lastTickTime);
+        lastTickTime = sentWorldTime;
+        tickInterval = tickInterval
+          ? tickInterval * 0.9 + tickDt * 0.1
+          : tickDt;
         readMotor(new Float32Array(msg.dnValues), tickDt);
       }
     };
     worker.onerror = (event) => {
       workerBusy = false;
       workerReady = false;
+      // Stop driving the knobs with a frozen command and drop any sample
+      // that would otherwise be scored as closed-loop.
+      haveMotor = false;
+      motor.fill(0);
+      pending = null;
       setStatus(`MaleCNS worker error: ${event.message}`, "error");
     };
     worker.postMessage({
@@ -300,6 +311,7 @@ async function loadMaleCns() {
 }
 
 let nextNeuralTime = 0;
+let sentWorldTime = 0;
 
 function neuralTick() {
   if (!workerReady || workerBusy || paused) return;
@@ -307,6 +319,7 @@ function neuralTick() {
   // A slow device falls behind instead of bursting to catch up.
   nextNeuralTime = Math.max(nextNeuralTime + 1 / NEURAL_HZ, worldTime);
   workerBusy = true;
+  sentWorldTime = worldTime;
   const features = Array.from(sampleEye(worldTime));
   worker.postMessage({
     type: "step",
@@ -744,7 +757,7 @@ function drawStats() {
   const closed = $("closed").checked;
   $("stats").innerHTML = [
     `loop: <b>${closed ? "closed" : "open (leak only)"}</b>`,
-    `neural ticks: <b>${tickRate.toFixed(1)}/s</b> · <b>${tickLatency.toFixed(0)} ms</b>`,
+    `neural ticks: <b>${(tickInterval ? 1 / tickInterval : 0).toFixed(1)}</b> per world-s · <b>${tickLatency.toFixed(0)} ms</b>`,
     `mean |DN|: <b>${dnMeanAbs.toFixed(3)}</b>`,
     `world energy Σ|c|²: <b>${energy.toFixed(3)}</b>`,
     `t = <b>${worldTime.toFixed(1)} s</b>${pending ? " · measuring kick…" : ""}`,
