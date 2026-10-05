@@ -134,6 +134,10 @@ function resetAttractorWorld() {
   worldHaveRetina = false;
   worldRetinaDelta = 0;
   worldParityError = null;
+  if (liveReady && live) {
+    live.postMessage({ type: "reset" });
+    lastTickTime = null;
+  }
   if (columnEye) {
     columnEye.lum.fill(0);
     columnEye.dlum.fill(0);
