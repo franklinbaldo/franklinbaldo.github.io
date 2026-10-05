@@ -242,7 +242,7 @@ export function vectorRms(a) {
 
 // GLSL implementation of the same generator. app.js runs a readPixels parity
 // check against worldValue() so the screen and the eye cannot silently drift.
-export const WORLD_GLSL = String.raw\`
+export const WORLD_GLSL = String.raw`
 uniform vec4 uWorldTheta[32];
 
 void addWorldMode(float fi, vec2 amp, vec2 q, inout float total) {
@@ -277,4 +277,4 @@ float generativeWorld(vec2 p) {
   }
   return 0.125000000000 * total;
 }
-\`;
+`;
