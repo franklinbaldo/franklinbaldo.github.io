@@ -1319,12 +1319,11 @@ function applyReadoutMode() {
       .querySelectorAll(`.${cls}`)
       .forEach((el) => (el.hidden = name !== mode));
   }
-  document
-    .querySelectorAll(".no-flight")
-    .forEach((el) => (el.hidden = mode === "flight"));
-  document
-    .querySelectorAll(".no-world")
-    .forEach((el) => (el.hidden = mode === "world"));
+  document.querySelectorAll(".no-flight, .no-world").forEach((el) => {
+    el.hidden =
+      (el.classList.contains("no-flight") && mode === "flight") ||
+      (el.classList.contains("no-world") && mode === "world");
+  });
   $("drift").checked = mode === "knobs";
   if (mode !== "flight") {
     worldView.zoom = 0;
