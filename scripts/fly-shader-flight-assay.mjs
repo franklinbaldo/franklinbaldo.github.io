@@ -22,12 +22,7 @@ import { availableParallelism } from "node:os";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
-import {
-  Worker,
-  isMainThread,
-  parentPort,
-  workerData,
-} from "node:worker_threads";
+import { Worker, isMainThread, parentPort } from "node:worker_threads";
 import {
   RESULTS,
   loadConnectome,
