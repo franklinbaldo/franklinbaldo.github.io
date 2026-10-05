@@ -165,6 +165,8 @@ export function createWorldCoupler(
     z: new Float32Array(dnCount),
     velocity: new Float32Array(WORLD_LATENT_DIM),
     velocityNorm: 0,
+    rawVelocityNorm: 0,
+    saturationFraction: 0,
   };
 }
 
@@ -190,6 +192,8 @@ export function worldCouplerStep(
   }
 
   let speedSq = 0;
+  let rawSpeedSq = 0;
+  let saturated = 0;
   for (let j = 0; j < WORLD_LATENT_DIM; j++) {
     let projected = 0;
     if (drive) {
@@ -200,12 +204,23 @@ export function worldCouplerStep(
       }
       projected *= inv;
     }
-    const v = gain * projected - leak * theta[j];
-    velocity[j] = v;
-    theta[j] = clamp(theta[j] + dt * v, -WORLD_THETA_MAX, WORLD_THETA_MAX);
-    speedSq += v * v;
+    const before = theta[j];
+    const rawVelocity = gain * projected - leak * before;
+    const after = clamp(
+      before + dt * rawVelocity,
+      -WORLD_THETA_MAX,
+      WORLD_THETA_MAX
+    );
+    const actualVelocity = (after - before) / dt;
+    velocity[j] = actualVelocity;
+    theta[j] = after;
+    speedSq += actualVelocity * actualVelocity;
+    rawSpeedSq += rawVelocity * rawVelocity;
+    if (Math.abs(after) >= WORLD_THETA_MAX - 1e-6) saturated++;
   }
   coupler.velocityNorm = Math.sqrt(speedSq / WORLD_LATENT_DIM);
+  coupler.rawVelocityNorm = Math.sqrt(rawSpeedSq / WORLD_LATENT_DIM);
+  coupler.saturationFraction = saturated / WORLD_LATENT_DIM;
   return coupler.theta;
 }
 
