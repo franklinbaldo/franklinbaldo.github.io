@@ -202,3 +202,28 @@ And some knobs.
 Then we give the knobs to the fly.
 
 And see what kind of world it makes.
+
+## Try it
+
+So I built the first experiment. Twelve drifting Fourier modes are the whole world. A frozen MaleCNS connectome (165,122 neurons) looks at it through an 8×4 eye, and its 1,314 descending neurons, through a fixed random projection, push the twelve complex coefficients. Nothing is trained. Turn on auto-probe and the empirical operator fills in: which mode the circuit amplifies, which it suppresses, which it converts into another.
+
+<div style="margin: 1.5rem 0;">
+  <div style="margin-bottom: .6rem;">
+    <a
+      href="/fly-shader/"
+      target="_blank"
+      rel="noopener"
+      style="display:inline-block;padding:.55rem .8rem;border:1px solid #30363d;border-radius:8px;text-decoration:none;"
+    >
+      🪰 Open the demo on its own page ↗
+    </a>
+  </div>
+  <iframe
+    src="/fly-shader/index.html"
+    width="100%"
+    height="1320"
+    style="border: 2px solid #30363d; border-radius: 10px; background: #05090d;"
+    title="The Shader Is the Fly’s World: MaleCNS holding the knobs of a Fourier shader"
+    loading="lazy"
+  ></iframe>
+</div>

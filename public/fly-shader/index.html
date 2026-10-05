@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>The Shader Is the Fly’s World</title>
+    <style>
+      :root {
+        --bg: #05090d;
+        --panel: #0a1219;
+        --line: #233341;
+        --text: #e7eef5;
+        --muted: #8fa0ae;
+        --cyan: #73d8ff;
+        --violet: #d67cff;
+        --green: #67e08a;
+        --red: #ff6b7a;
+        --amber: #ffc36b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+
+      body {
+        padding: 14px;
+      }
+
+      .shell {
+        width: min(1180px, 100%);
+        margin: 0 auto;
+        display: grid;
+        gap: 12px;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 1.15rem;
+      }
+
+      header p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.45;
+      }
+
+      .loop {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.74rem;
+        color: var(--cyan);
+      }
+
+      .main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 260px;
+        gap: 12px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px;
+        min-width: 0;
+      }
+
+      .panel h2 {
+        margin: 0 0 6px;
+        font-size: 0.72rem;
+        font-weight: 750;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .stage {
+        position: relative;
+        aspect-ratio: 2 / 1;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #000;
+      }
+
+      .stage canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--amber);
+        flex: none;
+      }
+
+      .status.live .dot {
+        background: var(--green);
+      }
+
+      .status.error .dot {
+        background: var(--red);
+      }
+
+      .controls {
+        display: grid;
+        gap: 10px;
+        align-content: start;
+      }
+
+      .row {
+        display: grid;
+        gap: 4px;
+        font-size: 0.78rem;
+      }
+
+      .row label {
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+      }
+
+      .row input[type="range"] {
+        width: 100%;
+      }
+
+      .toggle {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font-size: 0.8rem;
+      }
+
+      button {
+        background: #102230;
+        color: var(--text);
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 7px 9px;
+        font: inherit;
+        font-size: 0.8rem;
+        cursor: pointer;
+      }
+
+      button:hover {
+        border-color: var(--cyan);
+      }
+
+      .buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+
+      .stats {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.72rem;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .stats b {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .knobs {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .knob {
+        display: grid;
+        gap: 2px;
+        justify-items: center;
+        cursor: pointer;
+        padding: 0;
+        border: 0;
+        background: none;
+      }
+
+      .knob canvas {
+        width: 100%;
+        max-width: 64px;
+        aspect-ratio: 1;
+      }
+
+      .knob span {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.62rem;
+        color: var(--muted);
+      }
+
+      .lower {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .lower canvas {
+        width: 100%;
+        display: block;
+        border-radius: 6px;
+        background: #03070a;
+      }
+
+      .note {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 0.74rem;
+        line-height: 1.45;
+      }
+
+      .legend {
+        display: flex;
+        justify-content: space-between;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.66rem;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      @media (max-width: 820px) {
+        .main,
+        .lower {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .knobs {
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <h1>The Shader Is the Fly’s World</h1>
+        <p>
+          Twelve drifting Fourier modes are the whole visual world. A frozen
+          MaleCNS connectome looks at it through an 8×4 eye, and its 1,314
+          descending neurons hold the knobs.
+        </p>
+        <p class="loop">
+          shader → eye (8×4 × 6 features) → MaleCNS → descending neurons →
+          Fourier coefficients → shader
+        </p>
+      </header>
+
+      <div class="main">
+        <div class="panel">
+          <div class="stage">
+            <canvas id="world" width="960" height="480"></canvas>
+            <canvas id="eye" width="960" height="480"></canvas>
+          </div>
+        </div>
+
+        <div class="panel controls">
+          <div id="status" class="status">
+            <span class="dot"></span><span id="statusText">loading…</span>
+          </div>
+
+          <label class="toggle">
+            <input id="closed" type="checkbox" checked /> loop closed (DNs hold
+            the knobs)
+          </label>
+          <label class="toggle">
+            <input id="adaptive" type="checkbox" checked /> adaptive readout
+            (z-scored DNs)
+          </label>
+          <label class="toggle">
+            <input id="probe" type="checkbox" /> auto-probe (kick every 4 s)
+          </label>
+          <label class="toggle">
+            <input id="showEye" type="checkbox" checked /> show eye samples
+          </label>
+
+          <div class="row">
+            <label>motor gain <b id="gainOut">1.0</b></label>
+            <input
+              id="gain"
+              type="range"
+              min="0"
+              max="3"
+              step="0.05"
+              value="1"
+            />
+          </div>
+          <div class="row">
+            <label>leak <b id="leakOut">0.35</b></label>
+            <input
+              id="leak"
+              type="range"
+              min="0.05"
+              max="1.5"
+              step="0.05"
+              value="0.35"
+            />
+          </div>
+
+          <div class="buttons">
+            <button id="kick">Perturb a mode</button>
+            <button id="reset">Reset world</button>
+            <button id="clearOp">Clear operator</button>
+            <button id="pause">Pause</button>
+          </div>
+
+          <div id="stats" class="stats"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>The knobs — complex coefficient per mode (click to perturb)</h2>
+        <div id="knobs" class="knobs"></div>
+      </div>
+
+      <div class="lower">
+        <div class="panel">
+          <h2>Mode energy over time</h2>
+          <canvas id="waterfall" width="640" height="240"></canvas>
+          <div class="legend"><span>−20 s</span><span>now</span></div>
+          <p class="note">
+            One row per mode, brightness = |c|². Stable bands are fixed points;
+            stripes that repeat are cycles; amber ticks mark a perturbation.
+          </p>
+        </div>
+        <div class="panel">
+          <h2>Empirical operator</h2>
+          <canvas id="operator" width="360" height="360"></canvas>
+          <p class="note">
+            Row = mode kicked, column = mode that changed. Cell = energy change
+            1–3 s after the kick versus just before it, minus the kick’s own
+            passive decay, centred across kicked modes so only the kick-specific
+            response remains. Cyan = gained energy, violet = lost. Meaningful
+            only with the loop closed and after many kicks;
+            <span id="opCount">0 kicks</span>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
