@@ -353,16 +353,19 @@
           </p>
         </div>
         <div class="panel">
-          <h2>Empirical operator</h2>
+          <h2>Empirical operator (paired probes)</h2>
           <canvas id="operator" width="360" height="360"></canvas>
           <p class="note">
-            Row = mode kicked, column = mode that changed. Cell = energy change
-            1–3 s after the kick versus just before it, minus the kick’s own
-            passive decay, centred across kicked modes so only the kick-specific
-            response remains. Cyan = gained energy, violet = lost. Kicks before
-            the DNs are live, or within 3 s of another kick, are not recorded.
-            Meaningful only after many kicks;
-            <span id="opCount">0 kicks</span>.
+            Row = mode kicked, column = mode that changed. At each kick the
+            whole state (world, eye, readout, connectome) is snapshotted and a
+            second worker replays four deterministic branches for 3 s: closed
+            loop with and without the kick, and leak-only with and without it.
+            Cell = mean energy over 1–3 s of (closed+kick − closed) − (leak+kick
+            − leak), per unit of kick energy: what the loop did to the kick,
+            with its own drift and the kick’s passive decay removed. Cyan = the
+            loop added energy to that mode, violet = it removed it. This is the
+            operator of connectome <em>plus</em> this arbitrary readout, not of
+            the connectome alone. <span id="opCount">0 kicks</span>.
           </p>
         </div>
       </div>

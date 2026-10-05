@@ -205,7 +205,7 @@ And see what kind of world it makes.
 
 ## Try it
 
-So I built the first experiment. Twelve drifting Fourier modes are the whole world. A frozen MaleCNS connectome (165,122 neurons) looks at it through an 8×4 eye, and its 1,314 descending neurons, through a fixed random projection, push the twelve complex coefficients. Nothing is trained. Turn on auto-probe and the empirical operator fills in: which mode the circuit amplifies, which it suppresses, which it converts into another.
+So I built the first experiment. Twelve drifting Fourier modes are the whole world. A frozen MaleCNS connectome (165,122 neurons) looks at it through an 8×4 eye, and its 1,314 descending neurons, through a fixed random projection, push the twelve complex coefficients. Nothing is trained. Every perturbation is measured against a paired control: the whole state is snapshotted at the kick and replayed with and without it, in closed loop and with the knobs merely leaking, so the operator only credits the loop with what it did to that kick. Turn on auto-probe and it fills in: which modes the loop amplifies, which it suppresses, which it converts into others. It is the operator of the connectome plus an arbitrary readout, not of the connectome alone. That separation is the next experiment.
 
 <div style="margin: 1.5rem 0;">
   <div style="margin-bottom: .6rem;">

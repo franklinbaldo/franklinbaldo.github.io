@@ -1,202 +1,77 @@
 // The Shader Is the Fly's World — closed-loop demo.
 // World: 12 drifting Fourier modes with complex coefficients (the knobs).
 // Eye: 8×4 analytic samples of the field, 6 features per cell.
-// Brain: frozen MaleCNS connectome (shared worker from FlyDoom Fourier Next).
+// Brain: frozen MaleCNS connectome, stepped in brain-worker.js.
 // Motor: 1,314 descending neurons → fixed ±1 projection → 24 knob velocities.
+// Lab: a second worker replays paired counterfactual branches from a snapshot
+// taken at each kick, so the operator isolates the loop's response to it.
 
-const MODE_COUNT = 12;
-const KNOB_COUNT = MODE_COUNT * 2;
-const EYE_COLS = 8;
-const EYE_ROWS = 4;
-const EYE_CELLS = EYE_COLS * EYE_ROWS;
-const FEATURE_COUNT = 6;
-const MOTOR_DRIVE = 0.9;
-const MAX_AMPLITUDE = 1.2;
-const KICK_SIZE = 0.8;
-const OP_WINDOW = [1, 3];
+import {
+  EYE_CELLS,
+  EYE_COLS,
+  EYE_ROWS,
+  FEATURE_COUNT,
+  KNOB_COUNT,
+  MAX_AMPLITUDE,
+  MODE_COUNT,
+  NEURAL_HZ,
+  applyKick,
+  clamp,
+  cloneEye,
+  cloneReadout,
+  createEye,
+  createReadout,
+  eyeCellCenter,
+  modeEnergy,
+  modes,
+  prepareCircuit,
+  readMotor,
+  sampleEye,
+  sampleField,
+  seededRandom,
+  worldStep,
+} from "./sim.js";
+
 const PROBE_INTERVAL = 4;
-const READOUT_TAU = 4;
-// The worker advances its recurrent state one fixed step per message, so the
-// brain is stepped on world time, not per animation frame (refresh-independent).
-const NEURAL_HZ = 15;
 const WATERFALL_SECONDS = 20;
 
 const $ = (id) => document.getElementById(id);
 
-function clamp(value, lo, hi) {
-  return Math.min(hi, Math.max(lo, value));
-}
-
-function seededRandom(seed) {
-  let state = seed >>> 0;
-  return () => {
-    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
-    return state / 4294967296;
-  };
-}
-
-// ---------------------------------------------------------------- world
-
-const modes = [];
-for (let i = 0; i < MODE_COUNT; i++) {
-  const orientation = ((i % 6) * Math.PI) / 6;
-  const cycles = i < 6 ? 1.5 : 3.5;
-  const k = 2 * Math.PI * cycles;
-  const speed = (i < 6 ? 0.6 : 1.1) + 0.12 * (i % 6);
-  modes.push({
-    kx: k * Math.cos(orientation),
-    ky: k * Math.sin(orientation),
-    omega: i % 2 ? -speed : speed,
-    label: `${cycles}c ${Math.round((orientation * 180) / Math.PI)}°`,
-  });
-}
+// ---------------------------------------------------------------- live state
 
 const coeff = new Float32Array(KNOB_COUNT); // [re0, im0, re1, im1, …]
-const motor = new Float32Array(KNOB_COUNT); // latest DN command, in [-1, 1]
-let haveMotor = false;
+const eye = createEye();
+const readout = createReadout();
 let worldTime = 0;
+let paused = false;
 
 function randomizeWorld(rng = Math.random) {
   for (let i = 0; i < KNOB_COUNT; i++) coeff[i] = (rng() * 2 - 1) * 0.25;
 }
 
-function modeEnergy(source, i) {
-  const re = source[2 * i];
-  const im = source[2 * i + 1];
-  return re * re + im * im;
+function readoutParams() {
+  return {
+    adaptive: $("adaptive").checked,
+    gain: Number($("gain").value),
+  };
 }
 
-function limitAmplitude(source) {
-  for (let i = 0; i < MODE_COUNT; i++) {
-    const amplitude = Math.sqrt(modeEnergy(source, i));
-    if (amplitude > MAX_AMPLITUDE) {
-      const scale = MAX_AMPLITUDE / amplitude;
-      source[2 * i] *= scale;
-      source[2 * i + 1] *= scale;
-    }
-  }
-}
+// ---------------------------------------------------------------- workers
 
-// Field value and analytic derivatives at (x, y), x ∈ [0, 2], y ∈ [0, 1].
-function sampleField(x, y, t) {
-  let value = 0;
-  let dx = 0;
-  let dy = 0;
-  let laplacian = 0;
-  for (let i = 0; i < MODE_COUNT; i++) {
-    const m = modes[i];
-    const re = coeff[2 * i];
-    const im = coeff[2 * i + 1];
-    const theta = m.kx * x + m.ky * y - m.omega * t;
-    const c = Math.cos(theta);
-    const s = Math.sin(theta);
-    const term = re * c - im * s;
-    const slope = -re * s - im * c;
-    value += term;
-    dx += slope * m.kx;
-    dy += slope * m.ky;
-    laplacian -= term * (m.kx * m.kx + m.ky * m.ky);
-  }
-  return { value, dx, dy, laplacian };
-}
-
-// ---------------------------------------------------------------- eye
-
-const previousLuminance = new Float32Array(EYE_CELLS);
-let previousEyeTime = null;
-const eyeSamples = new Float32Array(EYE_CELLS * FEATURE_COUNT);
-
-function eyeCellCenter(cell) {
-  const col = cell % EYE_COLS;
-  const row = Math.floor(cell / EYE_COLS);
-  return { x: ((col + 0.5) / EYE_COLS) * 2, y: (row + 0.5) / EYE_ROWS };
-}
-
-function sampleEye(t) {
-  const dt =
-    previousEyeTime === null ? null : Math.max(1e-3, t - previousEyeTime);
-  for (let cell = 0; cell < EYE_CELLS; cell++) {
-    const { x, y } = eyeCellCenter(cell);
-    const f = sampleField(x, y, t);
-    const luminance = Math.tanh(f.value * 0.9);
-    const temporal =
-      dt === null
-        ? 0
-        : Math.tanh(((luminance - previousLuminance[cell]) / dt) * 0.5);
-    const o = cell * FEATURE_COUNT;
-    eyeSamples[o] = luminance;
-    eyeSamples[o + 1] = Math.tanh(f.dx / 15);
-    eyeSamples[o + 2] = Math.tanh(f.dy / 15);
-    eyeSamples[o + 3] = temporal;
-    eyeSamples[o + 4] = Math.tanh(Math.hypot(f.dx, f.dy) / 15);
-    eyeSamples[o + 5] = Math.tanh(f.laplacian / 300);
-    previousLuminance[cell] = luminance;
-  }
-  previousEyeTime = t;
-  return eyeSamples;
-}
-
-// ---------------------------------------------------------------- motor readout
-
-let projection = null;
-let projectionScale = 1;
-const readoutMean = new Float64Array(KNOB_COUNT);
-const readoutVar = new Float64Array(KNOB_COUNT).fill(1e-2);
-let readoutPrimed = false;
-let lastTickTime = null;
-let dnMeanAbs = 0;
-
-function buildProjection(dnCount) {
-  const rng = seededRandom(20261005);
-  projection = new Int8Array(KNOB_COUNT * dnCount);
-  for (let i = 0; i < projection.length; i++) {
-    projection[i] = rng() < 0.5 ? -1 : 1;
-  }
-  projectionScale = 1 / Math.sqrt(dnCount);
-}
-
-function readMotor(dnValues, tickDt) {
-  const dnCount = dnValues.length;
-  if (!projection || projection.length !== KNOB_COUNT * dnCount) {
-    buildProjection(dnCount);
-  }
-
-  let absSum = 0;
-  for (let d = 0; d < dnCount; d++) absSum += Math.abs(dnValues[d]);
-  dnMeanAbs = absSum / dnCount;
-
-  const adaptive = $("adaptive").checked;
-  const gain = Number($("gain").value);
-  const alpha = 1 - Math.exp(-tickDt / READOUT_TAU);
-
-  for (let j = 0; j < KNOB_COUNT; j++) {
-    let sum = 0;
-    const offset = j * dnCount;
-    for (let d = 0; d < dnCount; d++)
-      sum += projection[offset + d] * dnValues[d];
-    const p = sum * projectionScale;
-
-    if (!readoutPrimed) readoutMean[j] = p;
-    const deviation = p - readoutMean[j];
-    readoutMean[j] += alpha * deviation;
-    readoutVar[j] += alpha * (deviation * deviation - readoutVar[j]);
-
-    const drive = adaptive
-      ? (deviation / Math.sqrt(readoutVar[j] + 1e-8)) * 0.6
-      : p * 4;
-    motor[j] = Math.tanh(gain * drive);
-  }
-  readoutPrimed = true;
-  haveMotor = true;
-}
-
-// ---------------------------------------------------------------- connectome
-
-let worker = null;
-let workerReady = false;
-let workerBusy = false;
+let live = null;
+let liveReady = false;
+let liveBusy = false;
+let lab = null;
+let labReady = false;
+let labBusy = false;
+let labElapsed = 0;
 let tickLatency = 0;
 let tickInterval = 0;
+let lastTickTime = null;
+let nextNeuralTime = 0;
+let sentWorldTime = 0;
+let snapshotId = 0;
+const waitingSnapshots = new Map();
 
 function setStatus(text, kind) {
   $("statusText").textContent = text;
@@ -210,19 +85,7 @@ async function loadMaleCns() {
     const circuitResponse = await fetch("../flydoom/malecns_circuit.json");
     if (!circuitResponse.ok)
       throw new Error(`circuit HTTP ${circuitResponse.status}`);
-    const circuit = await circuitResponse.json();
-
-    // Same 16 visual ingress buckets per side as FlyDoom Fourier Next, so the
-    // 8×4 eye keeps its left/right retinotopy (cols 0–3 left, 4–7 right).
-    const buckets = 16;
-    circuit.ray_vpl = [];
-    circuit.ray_vpr = [];
-    const vplLen = Math.floor(circuit.vpl.length / buckets);
-    const vprLen = Math.floor(circuit.vpr.length / buckets);
-    for (let i = 0; i < buckets; i++) {
-      circuit.ray_vpl.push(circuit.vpl.slice(i * vplLen, (i + 1) * vplLen));
-      circuit.ray_vpr.push(circuit.vpr.slice(i * vprLen, (i + 1) * vprLen));
-    }
+    const circuit = prepareCircuit(await circuitResponse.json());
 
     const binaryResponse = await fetch("../flydoom/malecns_l3_compact.mcns");
     if (!binaryResponse.ok)
@@ -243,91 +106,126 @@ async function loadMaleCns() {
       const length = view.getUint32(start, true);
       return new ArrayType(buffer, start + 4, length);
     };
-    const copy = (v) =>
-      v.buffer.slice(v.byteOffset, v.byteOffset + v.byteLength);
-
-    const offsets = getVector(5, Uint32Array);
-    const scales = getVector(6, Float32Array);
-    const deltas = getVector(7, Uint16Array);
-    const weights = getVector(8, Uint8Array);
-    const lut = getVector(9, Float32Array);
-    if (!offsets || !scales || !deltas || !weights || !lut) {
+    const vectors = {
+      offsets: getVector(5, Uint32Array),
+      scales: getVector(6, Float32Array),
+      deltas: getVector(7, Uint16Array),
+      weights: getVector(8, Uint8Array),
+      lut: getVector(9, Float32Array),
+    };
+    if (Object.values(vectors).some((v) => !v)) {
       throw new Error("invalid MaleCNS vectors");
     }
-
-    worker = new Worker(
-      new URL("../flydoom-fourier-next/worker.js", import.meta.url)
-    );
-    worker.onmessage = (event) => {
-      const msg = event.data;
-      if (msg.type === "ready") {
-        workerReady = true;
-        setStatus(
-          `${msg.neurons.toLocaleString("en")} neurons · ${msg.descending.toLocaleString("en")} DNs · frozen weights`,
-          "live"
-        );
-        return;
+    // Each worker gets its own copy of the frozen weights.
+    const initMessage = () => {
+      const msg = { type: "init", circuit };
+      for (const [key, v] of Object.entries(vectors)) {
+        msg[key] = v.buffer.slice(v.byteOffset, v.byteOffset + v.byteLength);
       }
-      if (msg.type === "result") {
-        workerBusy = false;
-        tickLatency = msg.latency;
-        // Readout adaptation runs on world time, so pausing or a background
-        // tab does not count as elapsed simulation time.
-        const tickDt =
-          lastTickTime === null
-            ? 1 / NEURAL_HZ
-            : Math.max(1e-3, sentWorldTime - lastTickTime);
-        lastTickTime = sentWorldTime;
-        tickInterval = tickInterval
-          ? tickInterval * 0.9 + tickDt * 0.1
-          : tickDt;
-        readMotor(new Float32Array(msg.dnValues), tickDt);
-      }
+      return msg;
     };
-    worker.onerror = (event) => {
-      workerBusy = false;
-      workerReady = false;
-      // Stop driving the knobs with a frozen command and drop any sample
-      // that would otherwise be scored as closed-loop.
-      haveMotor = false;
-      motor.fill(0);
-      pending = null;
+    const spawn = () =>
+      new Worker(new URL("./brain-worker.js", import.meta.url), {
+        type: "module",
+      });
+
+    live = spawn();
+    live.onmessage = onLiveMessage;
+    live.onerror = (event) => {
+      liveBusy = false;
+      liveReady = false;
+      // Stop driving the knobs with a frozen command; no new probes can start.
+      readout.haveMotor = false;
+      readout.motor.fill(0);
+      waitingSnapshots.clear();
+      labBusy = false;
       setStatus(`MaleCNS worker error: ${event.message}`, "error");
     };
-    worker.postMessage({
-      type: "init",
-      circuit,
-      nNeurons: offsets.length - 1,
-      offsets: copy(offsets),
-      scales: copy(scales),
-      deltas: copy(deltas),
-      weights: copy(weights),
-      lut: copy(lut),
-    });
+    live.postMessage(initMessage());
+
+    lab = spawn();
+    lab.onmessage = onLabMessage;
+    lab.onerror = (event) => {
+      labReady = false;
+      labBusy = false;
+      console.error("lab worker error", event.message);
+    };
+    lab.postMessage(initMessage());
   } catch (error) {
     console.error(error);
     setStatus("MaleCNS unavailable — the world only leaks", "error");
   }
 }
 
-let nextNeuralTime = 0;
-let sentWorldTime = 0;
+function onLiveMessage(event) {
+  const msg = event.data;
+  if (msg.type === "ready") {
+    liveReady = true;
+    setStatus(
+      `${msg.neurons.toLocaleString("en")} neurons · ${msg.descending.toLocaleString("en")} DNs · frozen weights`,
+      "live"
+    );
+    return;
+  }
+  if (msg.type === "result") {
+    liveBusy = false;
+    tickLatency = msg.latency;
+    // Readout adaptation runs on world time, so pausing or a background tab
+    // does not count as elapsed simulation time.
+    const tickDt =
+      lastTickTime === null
+        ? 1 / NEURAL_HZ
+        : Math.max(1e-3, sentWorldTime - lastTickTime);
+    lastTickTime = sentWorldTime;
+    tickInterval = tickInterval ? tickInterval * 0.9 + tickDt * 0.1 : tickDt;
+    readMotor(readout, new Float32Array(msg.dnValues), tickDt, readoutParams());
+    return;
+  }
+  if (msg.type === "snapshot") {
+    const pending = waitingSnapshots.get(msg.id);
+    waitingSnapshots.delete(msg.id);
+    if (!pending || !labReady) {
+      labBusy = false;
+      return;
+    }
+    pending.snapshot.brainState = msg.state;
+    lab.postMessage(
+      { type: "probe", snapshot: pending.snapshot, kick: pending.kick },
+      [msg.state.buffer]
+    );
+  }
+}
+
+function onLabMessage(event) {
+  const msg = event.data;
+  if (msg.type === "ready") {
+    labReady = true;
+    return;
+  }
+  if (msg.type === "probe") {
+    labBusy = false;
+    labElapsed = msg.elapsed;
+    if (msg.kickEnergy > 1e-4) {
+      const row = msg.mode * MODE_COUNT;
+      for (let i = 0; i < MODE_COUNT; i++)
+        operatorSum[row + i] += msg.response[i];
+      operatorCount[msg.mode]++;
+    }
+  }
+}
 
 function neuralTick() {
-  if (!workerReady || workerBusy || paused) return;
+  if (!liveReady || liveBusy || paused) return;
   if (worldTime < nextNeuralTime) return;
   // Keep phase while on time; when late (first tick after loading, a stalled
   // worker, a slow device) drop the backlog and wait a full interval.
   nextNeuralTime += 1 / NEURAL_HZ;
   if (nextNeuralTime <= worldTime) nextNeuralTime = worldTime + 1 / NEURAL_HZ;
-  workerBusy = true;
+  liveBusy = true;
   sentWorldTime = worldTime;
-  const features = Array.from(sampleEye(worldTime));
-  worker.postMessage({
+  live.postMessage({
     type: "step",
-    features,
-    featureCount: FEATURE_COUNT,
-    cellCount: EYE_CELLS,
+    features: Array.from(sampleEye(eye, coeff, worldTime)),
   });
 }
 
@@ -335,94 +233,61 @@ function neuralTick() {
 
 const operatorSum = new Float64Array(MODE_COUNT * MODE_COUNT);
 const operatorCount = new Uint32Array(MODE_COUNT);
-let pending = null;
 let lastProbe = 0;
-let lastKickTime = -Infinity;
+let skippedKicks = 0;
 const kickMarks = [];
 
+// Every kick perturbs the live world. When the loop is live and the lab is
+// free, the pre-kick state (world, eye, readout, brain) is also snapshotted
+// and the lab replays four branches from it: closed loop with and without the
+// kick, and leak-only with and without it. The operator row is the
+// difference-in-differences, so neither the loop's own drift nor the kick's
+// passive decay is credited to the circuit.
 function kick(mode = Math.floor(Math.random() * MODE_COUNT)) {
-  const pre = new Float64Array(MODE_COUNT);
-  for (let i = 0; i < MODE_COUNT; i++) pre[i] = modeEnergy(coeff, i);
-
-  const re0 = coeff[2 * mode];
-  const im0 = coeff[2 * mode + 1];
   const phase = Math.random() * Math.PI * 2;
-  coeff[2 * mode] += KICK_SIZE * Math.cos(phase);
-  coeff[2 * mode + 1] += KICK_SIZE * Math.sin(phase);
-  limitAmplitude(coeff);
+  const recordable =
+    $("closed").checked &&
+    liveReady &&
+    readout.haveMotor &&
+    labReady &&
+    !labBusy;
+
+  if (recordable) {
+    labBusy = true;
+    const id = ++snapshotId;
+    waitingSnapshots.set(id, {
+      kick: { mode, phase },
+      snapshot: {
+        coeff: new Float32Array(coeff),
+        t: worldTime,
+        eye: cloneEye(eye),
+        readout: cloneReadout(readout),
+        params: { leak: Number($("leak").value), ...readoutParams() },
+      },
+    });
+    // The brain state may be one in-flight step ahead of this world snapshot;
+    // that is shared by all four branches, so the pairing stays exact.
+    live.postMessage({ type: "snapshot", id });
+  } else if ($("closed").checked) {
+    skippedKicks++;
+  }
+
+  applyKick(coeff, mode, phase);
   kickMarks.push({ mode, t: worldTime });
-
-  // Near MAX_AMPLITUDE the clamp shortens and rotates the kick, so measure
-  // the perturbation actually applied rather than the nominal KICK_SIZE.
-  const dRe = coeff[2 * mode] - re0;
-  const dIm = coeff[2 * mode + 1] - im0;
-  const kickEnergy = dRe * dRe + dIm * dIm;
-  const injected = modeEnergy(coeff, mode) - pre[mode];
-
-  // A sample counts only if the DNs are actually holding the knobs and the
-  // previous kick has washed out; a kick that lands inside another kick's
-  // window contaminates both, so the earlier measurement is dropped too.
-  const washedOut = worldTime - lastKickTime >= OP_WINDOW[1];
-  lastKickTime = worldTime;
-  const loopLive = $("closed").checked && workerReady && haveMotor;
-
-  pending =
-    loopLive && washedOut && !pending && kickEnergy > 1e-4
-      ? {
-          mode,
-          t0: worldTime,
-          pre,
-          actual: new Float64Array(MODE_COUNT),
-          kickEnergy,
-          injected,
-          passive: 0,
-          samples: 0,
-        }
-      : null;
-}
-
-// Response of mode i = mean energy in the window minus energy just before the
-// kick. On the kicked mode, the energy the kick itself would still carry under
-// passive leak is subtracted: the energy the kick injected into that mode
-// (post-clamp, cross term included), decaying at the leak rate.
-function trackPending(leak) {
-  if (!pending) return;
-  const age = worldTime - pending.t0;
-  if (age >= OP_WINDOW[0] && age <= OP_WINDOW[1]) {
-    for (let i = 0; i < MODE_COUNT; i++)
-      pending.actual[i] += modeEnergy(coeff, i);
-    pending.passive += pending.injected * Math.exp(-2 * leak * age);
-    pending.samples++;
-  }
-  if (age > OP_WINDOW[1]) {
-    if (pending.samples > 0) {
-      const row = pending.mode * MODE_COUNT;
-      const n = pending.samples;
-      for (let i = 0; i < MODE_COUNT; i++) {
-        let response = pending.actual[i] / n - pending.pre[i];
-        if (i === pending.mode) response -= pending.passive / n;
-        operatorSum[row + i] += response / pending.kickEnergy;
-      }
-      operatorCount[pending.mode]++;
-    }
-    pending = null;
-  }
 }
 
 // ---------------------------------------------------------------- dynamics
 
-let paused = false;
-
 function step(dt) {
-  const leak = Number($("leak").value);
   const closed = $("closed").checked;
-  for (let i = 0; i < KNOB_COUNT; i++) {
-    const drive = closed && haveMotor ? MOTOR_DRIVE * motor[i] : 0;
-    coeff[i] += dt * (drive - leak * coeff[i]);
-  }
-  limitAmplitude(coeff);
+  worldStep(
+    coeff,
+    readout.motor,
+    closed && readout.haveMotor,
+    Number($("leak").value),
+    dt
+  );
   worldTime += dt;
-  trackPending(leak);
 
   if ($("probe").checked && closed && worldTime - lastProbe >= PROBE_INTERVAL) {
     lastProbe = worldTime;
@@ -529,6 +394,7 @@ function setupCpuFallback() {
       for (let px = 0; px < canvas.width; px++) {
         const v = Math.tanh(
           sampleField(
+            coeff,
             ((px + 0.5) / canvas.width) * 2,
             (py + 0.5) / canvas.height,
             worldTime
@@ -577,15 +443,15 @@ function drawEye() {
     const cx = (x / 2) * w;
     const cy = y * h;
     const o = cell * FEATURE_COUNT;
-    const luminance = eyeSamples[o];
+    const luminance = eye.samples[o];
     const gray = Math.round(128 + luminance * 120);
     eyeCtx.fillStyle = `rgb(${gray},${gray},${gray})`;
     eyeCtx.fillRect(cx - size / 2, cy - size / 2, size, size);
     eyeCtx.strokeStyle = "rgba(5,9,13,0.9)";
     eyeCtx.strokeRect(cx - size / 2, cy - size / 2, size, size);
 
-    const gx = eyeSamples[o + 1];
-    const gy = eyeSamples[o + 2];
+    const gx = eye.samples[o + 1];
+    const gy = eye.samples[o + 2];
     eyeCtx.strokeStyle = "#ffc36b";
     eyeCtx.lineWidth = 2;
     eyeCtx.beginPath();
@@ -632,11 +498,14 @@ function drawKnobs() {
     ctx.arc(c, c, r, 0, Math.PI * 2);
     ctx.stroke();
 
-    if (haveMotor) {
+    if (readout.haveMotor) {
       ctx.strokeStyle = "rgba(214,124,255,0.75)";
       ctx.beginPath();
       ctx.moveTo(c, c);
-      ctx.lineTo(c + motor[2 * i] * r * 0.5, c - motor[2 * i + 1] * r * 0.5);
+      ctx.lineTo(
+        c + readout.motor[2 * i] * r * 0.5,
+        c - readout.motor[2 * i + 1] * r * 0.5
+      );
       ctx.stroke();
     }
 
@@ -697,21 +566,11 @@ function drawOperator() {
   operatorCtx.fillStyle = "#03070a";
   operatorCtx.fillRect(0, 0, s, s);
 
-  // Rows are centred column-wise over the kicked modes measured so far, so a
-  // cell shows what is specific to kicking that mode, not the loop's drift.
+  // Paired probes already remove the loop's drift and the kick's passive
+  // decay, so each row is shown as measured (mean over its kicks).
   const measured = [];
   for (let r = 0; r < MODE_COUNT; r++) if (operatorCount[r]) measured.push(r);
-  const columnMean = new Float64Array(MODE_COUNT);
-  if (measured.length >= 2) {
-    for (const r of measured) {
-      for (let c = 0; c < MODE_COUNT; c++) {
-        columnMean[c] +=
-          operatorSum[r * MODE_COUNT + c] / operatorCount[r] / measured.length;
-      }
-    }
-  }
-  const valueAt = (r, c) =>
-    operatorSum[r * MODE_COUNT + c] / operatorCount[r] - columnMean[c];
+  const valueAt = (r, c) => operatorSum[r * MODE_COUNT + c] / operatorCount[r];
 
   let maxAbs = 1e-6;
   for (const r of measured) {
@@ -748,7 +607,11 @@ function drawOperator() {
   operatorCtx.textAlign = "start";
 
   const kicks = operatorCount.reduce((a, b) => a + b, 0);
-  $("opCount").textContent = `${kicks} kick${kicks === 1 ? "" : "s"} recorded`;
+  $("opCount").textContent =
+    `${kicks} paired probe${kicks === 1 ? "" : "s"} recorded` +
+    (skippedKicks
+      ? ` (${skippedKicks} kicks skipped while the lab was busy)`
+      : "");
 }
 
 // ---------------------------------------------------------------- stats & controls
@@ -757,12 +620,18 @@ function drawStats() {
   let energy = 0;
   for (let i = 0; i < MODE_COUNT; i++) energy += modeEnergy(coeff, i);
   const closed = $("closed").checked;
+  const labText = !labReady
+    ? "loading"
+    : labBusy
+      ? "replaying paired branches…"
+      : `idle (last probe ${(labElapsed / 1000).toFixed(1)} s)`;
   $("stats").innerHTML = [
     `loop: <b>${closed ? "closed" : "open (leak only)"}</b>`,
     `neural ticks: <b>${(tickInterval ? 1 / tickInterval : 0).toFixed(1)}</b> per world-s · <b>${tickLatency.toFixed(0)} ms</b>`,
-    `mean |DN|: <b>${dnMeanAbs.toFixed(3)}</b>`,
+    `mean |DN|: <b>${readout.dnMeanAbs.toFixed(3)}</b>`,
     `world energy Σ|c|²: <b>${energy.toFixed(3)}</b>`,
-    `t = <b>${worldTime.toFixed(1)} s</b>${pending ? " · measuring kick…" : ""}`,
+    `lab: <b>${labText}</b>`,
+    `t = <b>${worldTime.toFixed(1)} s</b>`,
   ].join("<br />");
 }
 
@@ -775,19 +644,16 @@ $("leak").addEventListener("input", () => {
 $("kick").addEventListener("click", () => kick());
 $("reset").addEventListener("click", () => {
   randomizeWorld();
-  pending = null;
   nextNeuralTime = worldTime;
 });
 $("clearOp").addEventListener("click", () => {
   operatorSum.fill(0);
   operatorCount.fill(0);
+  skippedKicks = 0;
 });
 $("pause").addEventListener("click", () => {
   paused = !paused;
   $("pause").textContent = paused ? "Resume" : "Pause";
-});
-$("closed").addEventListener("change", () => {
-  pending = null;
 });
 
 // ---------------------------------------------------------------- main loop
@@ -817,6 +683,6 @@ function frame(now) {
 }
 
 randomizeWorld(seededRandom(7));
-sampleEye(0);
+sampleEye(eye, coeff, 0);
 requestAnimationFrame(frame);
 loadMaleCns();
