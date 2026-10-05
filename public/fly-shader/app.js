@@ -1225,9 +1225,14 @@ function drawWorldStats() {
     "DN baseline: <b>" + baselineText + "</b>",
     "latent RMS: <b>" +
       vectorRms(worldCoupler.theta).toFixed(3) +
-      "</b> · |dθ/dt| RMS: <b>" +
+      "</b> · actual |dθ/dt| RMS: <b>" +
       worldCoupler.velocityNorm.toFixed(4) +
+      "</b> · raw drive: <b>" +
+      worldCoupler.rawVelocityNorm.toFixed(4) +
       "</b>",
+    "latent dimensions at ±2 bound: <b>" +
+      (100 * worldCoupler.saturationFraction).toFixed(1) +
+      "%</b>",
     "retinal Δ RMS (1,771 luminances): <b>" +
       worldRetinaDelta.toExponential(2) +
       "</b>",
