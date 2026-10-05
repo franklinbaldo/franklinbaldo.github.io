@@ -13,6 +13,10 @@ export async function loadSim() {
   return import(new URL("fly-shader/sim.js", PUBLIC).href);
 }
 
+export async function loadWorld() {
+  return import(new URL("fly-shader/world.js", PUBLIC).href);
+}
+
 // Same FlatBuffer layout app.js reads in the browser.
 export function loadConnectome() {
   const raw = readFileSync(new URL("flydoom/malecns_l3_compact.mcns", PUBLIC));
