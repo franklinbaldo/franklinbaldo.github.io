@@ -83,6 +83,13 @@ function mean(values) {
   return values.reduce((a, b) => a + b, 0) / values.length;
 }
 
+function fraction(values, predicate) {
+  if (!values.length) return 0;
+  let n = 0;
+  for (const value of values) if (predicate(value)) n++;
+  return n / values.length;
+}
+
 function runJob(ctx, job) {
   const { sim, world, circuit } = ctx;
   const tickDt = 1 / sim.NEURAL_HZ;
@@ -162,6 +169,8 @@ function runJob(ctx, job) {
     world.worldCouplerStep(coupler, dn, baseline, tickDt, {
       drive: job.condition !== "open",
       dnPermutation,
+      gain: job.gain,
+      leak: job.leak,
     });
     t += tickDt;
 
@@ -171,6 +180,8 @@ function runJob(ctx, job) {
         retinal_delta_rms: retinalStep / Math.max(1, retinalSamples),
         theta_rms: world.vectorRms(coupler.theta),
         theta_velocity_rms: coupler.velocityNorm,
+        theta_raw_velocity_rms: coupler.rawVelocityNorm,
+        theta_bound_fraction: coupler.saturationFraction,
       });
       retinalStep = 0;
       retinalSamples = 0;
@@ -196,6 +207,14 @@ function runJob(ctx, job) {
       theta: roundedVector(coupler.theta),
       retinal_delta_rms: mean(window.map((r) => r.retinal_delta_rms)),
       theta_velocity_rms: mean(window.map((r) => r.theta_velocity_rms)),
+      theta_raw_velocity_rms: mean(
+        window.map((r) => r.theta_raw_velocity_rms)
+      ),
+      theta_bound_fraction: mean(window.map((r) => r.theta_bound_fraction)),
+      retinal_saturated_fraction: fraction(
+        finalSample.lum,
+        (value) => Math.abs(value) >= 0.95
+      ),
       theta_rms: world.vectorRms(coupler.theta),
     },
     records,
@@ -237,6 +256,15 @@ function summarise(results, world) {
         theta_velocity_rms_mean: mean(
           group.map((r) => r.final.theta_velocity_rms)
         ),
+        theta_raw_velocity_rms_mean: mean(
+          group.map((r) => r.final.theta_raw_velocity_rms)
+        ),
+        theta_bound_fraction_mean: mean(
+          group.map((r) => r.final.theta_bound_fraction)
+        ),
+        retinal_saturated_fraction_mean: mean(
+          group.map((r) => r.final.retinal_saturated_fraction)
+        ),
       };
     }
     byCondition[condition] = {
@@ -246,6 +274,15 @@ function summarise(results, world) {
       ),
       theta_velocity_rms_mean: mean(
         rows.map((r) => r.final.theta_velocity_rms)
+      ),
+      theta_raw_velocity_rms_mean: mean(
+        rows.map((r) => r.final.theta_raw_velocity_rms)
+      ),
+      theta_bound_fraction_mean: mean(
+        rows.map((r) => r.final.theta_bound_fraction)
+      ),
+      retinal_saturated_fraction_mean: mean(
+        rows.map((r) => r.final.retinal_saturated_fraction)
       ),
       retinal_pairwise_rms_mean: mean(
         Object.values(perProjection).map(
@@ -279,6 +316,8 @@ if (isMainThread) {
         default: CONDITIONS.join(","),
       },
       seconds: { type: "string", default: "120" },
+      gain: { type: "string" },
+      leak: { type: "string" },
       lanes: { type: "string" },
       out: {
         type: "string",
@@ -290,6 +329,11 @@ if (isMainThread) {
   const projectionSeeds = args.projections.split(",").map(Number);
   const conditions = args.conditions.split(",");
   const seconds = Number(args.seconds);
+  const calibration = await setup();
+  const gain =
+    args.gain === undefined ? calibration.world.WORLD_GAIN : Number(args.gain);
+  const leak =
+    args.leak === undefined ? calibration.world.WORLD_LEAK : Number(args.leak);
   for (const c of conditions)
     if (!CONDITIONS.includes(c)) throw new Error("unknown condition " + c);
 
@@ -297,7 +341,14 @@ if (isMainThread) {
   for (const worldSeed of worldSeeds)
     for (const projectionSeed of projectionSeeds)
       for (const condition of conditions)
-        jobs.push({ worldSeed, projectionSeed, condition, seconds });
+        jobs.push({
+          worldSeed,
+          projectionSeed,
+          condition,
+          seconds,
+          gain,
+          leak,
+        });
 
   const results = [];
   let hashes = null;
@@ -337,7 +388,7 @@ if (isMainThread) {
       requestedLanes || Math.max(1, availableParallelism() - 1)
     )
   );
-  const ctxForSummary = await setup();
+  const ctxForSummary = calibration;
   await Promise.all(Array.from({ length: lanes }, runWorker));
 
   results.sort(
@@ -370,8 +421,8 @@ if (isMainThread) {
           conditions,
           seconds,
           baselineSeconds: ctxForSummary.world.WORLD_BASELINE_SECONDS,
-          gain: ctxForSummary.world.WORLD_GAIN,
-          leak: ctxForSummary.world.WORLD_LEAK,
+          gain,
+          leak,
           latentDimensions: ctxForSummary.world.WORLD_LATENT_DIM,
           primaryState:
             "1,771 compound-eye luminances; theta distance is secondary",
