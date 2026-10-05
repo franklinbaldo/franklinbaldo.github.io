@@ -8,9 +8,11 @@
 // Lab: a second worker replays paired counterfactual branches from a snapshot
 // taken at each kick, so the operator isolates the loop's response to it; in
 // the phase readout it runs the optomotor sweep the same way.
-// Flight: the whole compound eye (1,771 columns → lamina L1/L2/L3) sees the
+// Flight: the whole compound eye (1,771 columns → lamina L1/L2) sees the
 // world, and a policy trained by reward alone acts on it in 29 ways; the
-// reward is the giant fiber (DNp01), the descending neuron of takeoff.
+// reward is the giant fiber (DNp01), used here as a takeoff/escape proxy.
+// World: the same compound eye closes a no-reward loop through a frozen seeded
+// projection from DNs into a 128-D luminance generator.
 
 import {
   ACTION_COUNT,
@@ -55,6 +57,22 @@ import {
   steerSignal,
   worldStep,
 } from "./sim.js";
+import {
+  WORLD_BASELINE_SECONDS,
+  WORLD_GAIN,
+  WORLD_GLSL,
+  WORLD_LATENT_DIM,
+  WORLD_LEAK,
+  createDnBaseline,
+  createWorldCoupler,
+  freezeDnBaseline,
+  observeDnBaseline,
+  rmsDistance,
+  sampleWorldColumns,
+  vectorRms,
+  worldCouplerStep,
+  worldValue,
+} from "./world.js";
 
 const PROBE_INTERVAL = 4;
 const WATERFALL_SECONDS = 20;
@@ -76,9 +94,18 @@ let flyYaw = 0;
 let paused = false;
 let columnEye = null;
 let policy = null;
+let worldCoupler = null;
+let worldBaselineAcc = null;
+let worldBaseline = null;
+let worldBaselineStarted = 0;
+let worldPrevRetina = null;
+let worldHaveRetina = false;
+let worldRetinaDelta = 0;
+let worldParityError = null;
 
 const phaseMode = () => $("readoutMode").value === "phase";
 const flightMode = () => $("readoutMode").value === "flight";
+const worldMode = () => $("readoutMode").value === "world";
 
 function randomizeWorld(rng = Math.random) {
   for (let i = 0; i < KNOB_COUNT; i++) coeff[i] = (rng() * 2 - 1) * 0.25;
@@ -89,6 +116,35 @@ function readoutParams() {
     adaptive: $("adaptive").checked,
     gain: Number($("gain").value),
   };
+}
+
+function resetAttractorWorld() {
+  if (!circuit) return;
+  const worldSeed = Math.max(1, Number($("worldSeed").value) || 1);
+  const projectionSeed = Math.max(1, Number($("projectionSeed").value) || 1);
+  worldCoupler = createWorldCoupler(
+    circuit.dn_all.length,
+    worldSeed,
+    projectionSeed
+  );
+  worldBaselineAcc = createDnBaseline(circuit.dn_all.length);
+  worldBaseline = null;
+  worldBaselineStarted = worldTime;
+  worldPrevRetina = new Float32Array(circuit.eye.count);
+  worldHaveRetina = false;
+  worldRetinaDelta = 0;
+  worldParityError = null;
+  if (liveReady && live) {
+    live.postMessage({ type: "reset" });
+    lastTickTime = null;
+  }
+  if (columnEye) {
+    columnEye.lum.fill(0);
+    columnEye.dlum.fill(0);
+    columnEye.previousTime = null;
+  }
+  nextNeuralTime = worldTime;
+  requestAnimationFrame(() => checkWorldParity());
 }
 
 // ---------------------------------------------------------------- workers
@@ -133,6 +189,7 @@ async function loadMaleCns() {
     );
     columnEye = createColumnEye(circuit.eye.count);
     resetPolicy();
+    resetAttractorWorld();
 
     const binaryResponse = await fetch("../flydoom/malecns_l3_compact.mcns");
     if (!binaryResponse.ok)
@@ -228,6 +285,22 @@ function onLiveMessage(event) {
     // Both readouts track the DNs all the time, so switching between them
     // does not start from a cold baseline.
     const dnValues = new Float32Array(msg.dnValues);
+    if (msg.world && worldCoupler) {
+      let absSum = 0;
+      for (const v of dnValues) absSum += Math.abs(v);
+      readout.dnMeanAbs = absSum / dnValues.length;
+      if (!worldBaseline) {
+        observeDnBaseline(worldBaselineAcc, dnValues);
+        if (sentWorldTime - worldBaselineStarted >= WORLD_BASELINE_SECONDS) {
+          worldBaseline = freezeDnBaseline(worldBaselineAcc);
+        }
+      } else {
+        worldCouplerStep(worldCoupler, dnValues, worldBaseline, tickDt, {
+          drive: $("closed").checked,
+        });
+      }
+      return;
+    }
     if (msg.flight && policy) {
       let absSum = 0;
       for (const v of dnValues) absSum += Math.abs(v);
@@ -316,11 +389,25 @@ function neuralTick() {
   if (nextNeuralTime <= worldTime) nextNeuralTime = worldTime + 1 / NEURAL_HZ;
   liveBusy = true;
   sentWorldTime = worldTime;
-  if (flightMode() && columnEye) {
-    sampleColumns(columnEye, circuit.eye, coeff, worldView, worldTime);
+  if ((flightMode() || worldMode()) && columnEye) {
+    if (worldMode() && worldCoupler) {
+      sampleWorldColumns(
+        columnEye,
+        circuit.eye,
+        worldCoupler.theta,
+        worldTime
+      );
+      if (worldHaveRetina)
+        worldRetinaDelta = rmsDistance(columnEye.lum, worldPrevRetina);
+      worldPrevRetina.set(columnEye.lum);
+      worldHaveRetina = true;
+    } else {
+      sampleColumns(columnEye, circuit.eye, coeff, worldView, worldTime);
+    }
     live.postMessage({
       type: "step",
-      flight: true,
+      flight: flightMode(),
+      world: worldMode(),
       features: {
         lum: new Float32Array(columnEye.lum),
         dlum: new Float32Array(columnEye.dlum),
@@ -419,7 +506,11 @@ function runSweep() {
 
 function step(dt) {
   const closed = $("closed").checked;
-  if (flightMode()) {
+  if (worldMode()) {
+    // theta only moves on neural ticks, after the frozen baseline exists.
+    // There is no autonomous shader clock in this mode.
+    flyYaw = 0;
+  } else if (flightMode()) {
     // The policy's 29 actions move the world; with the loop open it only
     // drifts and relaxes (zero actions), and the policy still learns nothing
     // from it because no action reached the world.
@@ -446,12 +537,13 @@ function step(dt) {
   }
   worldTime += dt;
   // In flight the drift clock is one of the fly's actions (applyActions).
-  if (!flightMode() && $("drift").checked) worldView.tau += dt;
+  if (!flightMode() && !worldMode() && $("drift").checked) worldView.tau += dt;
   recordYaw(dt);
 
   if (
     !phaseMode() &&
     !flightMode() &&
+    !worldMode() &&
     $("probe").checked &&
     closed &&
     worldTime - lastProbe >= PROBE_INTERVAL
@@ -473,8 +565,11 @@ uniform vec2 uRes;
 uniform float uT;
 uniform float uZoom;
 uniform float uGain;
+uniform float uGenerative;
+uniform float uParity;
 uniform vec3 uK[${MODE_COUNT}];
 uniform vec2 uC[${MODE_COUNT}];
+${WORLD_GLSL}
 float tanhf(float x) { float e = exp(2.0 * clamp(x, -9.0, 9.0)); return (e - 1.0) / (e + 1.0); }
 void main() {
   vec2 p = gl_FragCoord.xy / uRes;
@@ -483,15 +578,20 @@ void main() {
   float x = 1.0 + (p.x * 2.0 - 1.0) * s;
   float y = 0.5 + ((1.0 - p.y) - 0.5) * s;
   float f = 0.0;
-  for (int i = 0; i < ${MODE_COUNT}; i++) {
-    float th = uK[i].x * x + uK[i].y * y - uK[i].z * uT;
-    f += uC[i].x * cos(th) - uC[i].y * sin(th);
+  if (uGenerative > 0.5) {
+    f = generativeWorld(vec2(x, y));
+  } else {
+    for (int i = 0; i < ${MODE_COUNT}; i++) {
+      float th = uK[i].x * x + uK[i].y * y - uK[i].z * uT;
+      f += uC[i].x * cos(th) - uC[i].y * sin(th);
+    }
   }
-  float v = tanhf(f * uGain * 0.9);
+  float v = tanhf(f * (uGenerative > 0.5 ? 0.9 : uGain * 0.9));
   vec3 base = vec3(0.035, 0.07, 0.10);
   vec3 pos = vec3(0.45, 0.85, 1.0);
   vec3 neg = vec3(0.84, 0.49, 1.0);
   vec3 col = v >= 0.0 ? mix(base, pos, v) : mix(base, neg, -v);
+  if (uParity > 0.5) col = vec3(0.5 + 0.5 * v);
   gl_FragColor = vec4(col, 1.0);
 }`;
 
@@ -535,18 +635,24 @@ function setupWebGl() {
   const uT = gl.getUniformLocation(program, "uT");
   const uZoom = gl.getUniformLocation(program, "uZoom");
   const uGain = gl.getUniformLocation(program, "uGain");
+  const uGenerative = gl.getUniformLocation(program, "uGenerative");
+  const uParity = gl.getUniformLocation(program, "uParity");
+  const uWorldTheta = gl.getUniformLocation(program, "uWorldTheta[0]");
   const uK = gl.getUniformLocation(program, "uK");
   const uC = gl.getUniformLocation(program, "uC");
   const k = new Float32Array(MODE_COUNT * 3);
   modes.forEach((m, i) => k.set([m.kx, m.ky, m.omega], i * 3));
   gl.uniform3fv(uK, k);
 
-  return () => {
+  return (parity = false) => {
     gl.viewport(0, 0, worldCanvas.width, worldCanvas.height);
     gl.uniform2f(uRes, worldCanvas.width, worldCanvas.height);
     gl.uniform1f(uT, worldView.tau);
-    gl.uniform1f(uZoom, worldView.zoom);
+    gl.uniform1f(uZoom, worldMode() ? 0 : worldView.zoom);
     gl.uniform1f(uGain, worldView.gain);
+    gl.uniform1f(uGenerative, worldMode() && worldCoupler ? 1 : 0);
+    gl.uniform1f(uParity, parity ? 1 : 0);
+    if (worldCoupler) gl.uniform4fv(uWorldTheta, worldCoupler.theta);
     gl.uniform2fv(uC, coeff);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   };
@@ -566,15 +672,13 @@ function setupCpuFallback() {
     let o = 0;
     for (let py = 0; py < canvas.height; py++) {
       for (let px = 0; px < canvas.width; px++) {
-        const v = Math.tanh(
-          0.9 *
-            viewValue(
-              coeff,
-              worldView,
-              ((px + 0.5) / canvas.width) * 2,
-              (py + 0.5) / canvas.height
-            )
-        );
+        const x = ((px + 0.5) / canvas.width) * 2;
+        const y = (py + 0.5) / canvas.height;
+        const raw =
+          worldMode() && worldCoupler
+            ? worldValue(worldCoupler.theta, x, y)
+            : viewValue(coeff, worldView, x, y);
+        const v = Math.tanh(0.9 * raw);
         const target = v >= 0 ? [115, 216, 255] : [214, 124, 255];
         const w = Math.abs(v);
         image.data[o++] = 9 + (target[0] - 9) * w;
@@ -592,6 +696,31 @@ try {
 } catch (error) {
   console.error(error);
   renderWorld = setupCpuFallback();
+}
+
+function checkWorldParity() {
+  if (!gl || !worldMode() || !worldCoupler || !renderWorld) return;
+  renderWorld(true);
+  const pixel = new Uint8Array(4);
+  const points = [
+    [97, 83],
+    [251, 177],
+    [479, 239],
+    [703, 101],
+    [817, 361],
+    [911, 431],
+  ];
+  let maxError = 0;
+  for (const [px, py] of points) {
+    gl.readPixels(px, py, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+    const gpu = (pixel[0] / 255) * 2 - 1;
+    const x = ((px + 0.5) / worldCanvas.width) * 2;
+    const y = 1 - (py + 0.5) / worldCanvas.height;
+    const js = Math.tanh(0.9 * worldValue(worldCoupler.theta, x, y));
+    maxError = Math.max(maxError, Math.abs(gpu - js));
+  }
+  worldParityError = maxError;
+  renderWorld(false);
 }
 
 // ---------------------------------------------------------------- rendering: eye overlay
@@ -1082,6 +1211,49 @@ function drawActions() {
   actionCtx.textAlign = "start";
 }
 
+function drawWorldStats() {
+  if (!worldCoupler) return;
+  const elapsed = Math.max(0, worldTime - worldBaselineStarted);
+  const baselineText = worldBaseline
+    ? "frozen (" + worldBaseline.samples + " neural samples)"
+    : "calibrating " +
+      Math.min(WORLD_BASELINE_SECONDS, elapsed).toFixed(1) +
+      " / " +
+      WORLD_BASELINE_SECONDS +
+      " s";
+  $("worldStats").innerHTML = [
+    "DN baseline: <b>" + baselineText + "</b>",
+    "latent RMS: <b>" +
+      vectorRms(worldCoupler.theta).toFixed(3) +
+      "</b> · actual |dθ/dt| RMS: <b>" +
+      worldCoupler.velocityNorm.toFixed(4) +
+      "</b> · raw drive: <b>" +
+      worldCoupler.rawVelocityNorm.toFixed(4) +
+      "</b>",
+    "latent dimensions at ±2 bound: <b>" +
+      (100 * worldCoupler.saturationFraction).toFixed(1) +
+      "%</b>",
+    "retinal Δ RMS (1,771 luminances): <b>" +
+      worldRetinaDelta.toExponential(2) +
+      "</b>",
+    "world seed: <b>" +
+      worldCoupler.worldSeed +
+      "</b> · projection seed: <b>" +
+      worldCoupler.projectionSeed +
+      "</b>",
+    "fixed coupling: g=<b>" +
+      WORLD_GAIN +
+      "</b> · λ=<b>" +
+      WORLD_LEAK +
+      "</b> · latent dimensions: <b>" +
+      WORLD_LATENT_DIM +
+      "</b>",
+    "JS↔GLSL parity max error: <b>" +
+      (worldParityError === null ? "pending" : worldParityError.toFixed(4)) +
+      "</b>",
+  ].join("<br />");
+}
+
 function drawFlightStats() {
   if (!policy) return;
   const minute = takeoffTimes.filter((t) => worldTime - t <= 60).length;
@@ -1102,6 +1274,7 @@ function drawStats() {
   for (let i = 0; i < MODE_COUNT; i++) energy += modeEnergy(coeff, i);
   const closed = $("closed").checked;
   const phase = phaseMode();
+  const selfWorld = worldMode();
   const labText = !labReady
     ? "loading"
     : sweepRunning
@@ -1109,20 +1282,28 @@ function drawStats() {
       : labBusy
         ? "replaying paired branches…"
         : `idle (last run ${(labElapsed / 1000).toFixed(1)} s)`;
-  const loopText = closed
-    ? "closed"
-    : flightMode()
-      ? "open (the fly cannot act)"
-      : phase
-        ? "open (the fly cannot turn)"
-        : "open (leak only)";
+  const loopText = selfWorld
+    ? worldBaseline
+      ? closed
+        ? "closed (DNs tune the world)"
+        : "open (generator leak only)"
+      : "baseline calibration (coupling frozen)"
+    : closed
+      ? "closed"
+      : flightMode()
+        ? "open (the fly cannot act)"
+        : phase
+          ? "open (the fly cannot turn)"
+          : "open (leak only)";
   $("stats").innerHTML = [
     `loop: <b>${loopText}</b>`,
     `neural ticks: <b>${(tickInterval ? 1 / tickInterval : 0).toFixed(1)}</b> per world-s · <b>${tickLatency.toFixed(0)} ms</b>`,
     `mean |DN|: <b>${readout.dnMeanAbs.toFixed(3)}</b>`,
-    phase
-      ? `R−L: <b>${steer.raw.toExponential(2)}</b> · yaw <b>${flyYaw.toFixed(3)}</b>`
-      : `world energy Σ|c|²: <b>${energy.toFixed(3)}</b>`,
+    selfWorld
+      ? "perceptual state: <b>1,771-D retinal luminance</b>"
+      : phase
+        ? `R−L: <b>${steer.raw.toExponential(2)}</b> · yaw <b>${flyYaw.toFixed(3)}</b>`
+        : `world energy Σ|c|²: <b>${energy.toFixed(3)}</b>`,
     `lab: <b>${labText}</b>`,
     `t = <b>${worldTime.toFixed(1)} s</b>`,
   ].join("<br />");
@@ -1140,25 +1321,47 @@ function applyReadoutMode() {
     knobs: "knobs-only",
     phase: "phase-only",
     flight: "flight-only",
+    world: "world-only",
   };
   for (const [name, cls] of Object.entries(show)) {
     document
       .querySelectorAll(`.${cls}`)
       .forEach((el) => (el.hidden = name !== mode));
   }
-  document
-    .querySelectorAll(".no-flight")
-    .forEach((el) => (el.hidden = mode === "flight"));
+  document.querySelectorAll(".no-flight, .no-world").forEach((el) => {
+    el.hidden =
+      (el.classList.contains("no-flight") && mode === "flight") ||
+      (el.classList.contains("no-world") && mode === "world");
+  });
   $("drift").checked = mode === "knobs";
   if (mode !== "flight") {
     worldView.zoom = 0;
     worldView.gain = 1;
   }
+  const diagrams = {
+    knobs:
+      "shader → eye (8×4 × 6) → MaleCNS → DNs → Fourier coefficients → shader",
+    phase: "shader → eye (8×4 × 6) → MaleCNS → DNs → yaw → shader",
+    flight:
+      "shader → compound eye (1,771 columns) → L1/L2 → MaleCNS → DNs → learned 29-action policy → shader",
+    world:
+      "128-D world generator → compound eye (1,771 columns) → L1/L2 → MaleCNS → DNs → frozen projection → world latent",
+  };
+  $("loopDiagram").textContent = diagrams[mode];
   if (mode === "phase") drawSweep();
+  if (mode === "world" && circuit) {
+    resetAttractorWorld();
+    checkWorldParity();
+  }
 }
 
 $("readoutMode").addEventListener("change", applyReadoutMode);
 $("resetPolicy").addEventListener("click", resetPolicy);
+$("resetWorldAttractor").addEventListener("click", resetAttractorWorld);
+$("worldSeed").addEventListener("change", () => worldMode() && resetAttractorWorld());
+$("projectionSeed").addEventListener("change", () =>
+  worldMode() && resetAttractorWorld()
+);
 $("eta").addEventListener("input", () => {
   $("etaOut").textContent = (10 ** Number($("eta").value)).toExponential(0);
 });
@@ -1220,15 +1423,16 @@ function frame(now) {
     drawOperator();
     drawStats();
     if (flightMode()) drawFlightStats();
+    if (worldMode()) drawWorldStats();
   }
   requestAnimationFrame(frame);
 }
 
 randomizeWorld(seededRandom(7));
 sampleEye(eye, coeff, 0);
-// ?readout=phase|flight opens straight in that readout, so a link can point at it.
+// ?readout=phase|flight|world opens straight in that readout.
 const requested = new URLSearchParams(location.search).get("readout");
-if (requested === "phase" || requested === "flight") {
+if (requested === "phase" || requested === "flight" || requested === "world") {
   $("readoutMode").value = requested;
 }
 applyReadoutMode();

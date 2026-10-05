@@ -374,6 +374,9 @@
               <option value="flight">
                 flight: whole eye, learns what makes it take off
               </option>
+              <option value="world">
+                world: DNs tune a 128-D generative world (no reward)
+              </option>
             </select>
           </div>
 
@@ -399,6 +402,8 @@
           <label class="toggle">
             <input id="showEye" type="checkbox" checked /> show eye samples
           </label>
+          <div class="row world-only" hidden><label>world seed</label><input id="worldSeed" type="number" min="1" step="1" value="1" /></div>
+          <div class="row world-only" hidden><label>projection seed</label><input id="projectionSeed" type="number" min="1" step="1" value="1" /></div>
 
           <div class="row phase-only" hidden>
             <label
@@ -467,12 +472,18 @@
             <button id="resetPolicy" class="flight-only" hidden>
               Forget policy
             </button>
+            <button id="resetWorldAttractor" class="world-only" hidden>Reset self-tuning world</button>
           </div>
 
           <div id="stats" class="stats"></div>
         </div>
       </div>
 
+      <div class="panel world-only" hidden>
+        <h2>Self-tuning generative world — no reward</h2>
+        <div id="worldStats" class="verdict"></div>
+        <p class="note">A fixed 128-D multiscale Fourier generator defines the luminance world. For the first 8 s DN normalisation is measured with coupling off, then frozen. MaleCNS drives dθ/dt = 0.18 P z(DN) − 0.20 θ through a seeded fixed projection, with θ bounded to ±2. There is no reward or autonomous drift. The primary perceptual state is the 1,771-D retinal luminance vector; θ distance is secondary.</p>
+      </div>
       <div class="panel flight-only" hidden>
         <h2>Flight drive — what makes the fly want to take off</h2>
         <div class="assay">
