@@ -28,6 +28,14 @@ self.onmessage = (event) => {
 
   if (!brain) return;
 
+  if (msg.type === "reset") {
+    brain.state.fill(0);
+    brain.next.fill(0);
+    brain.drive.fill(0);
+    self.postMessage({ type: "reset" });
+    return;
+  }
+
   if (msg.type === "step") {
     const started = performance.now();
     const dnValues = brainStep(brain, msg.features);
