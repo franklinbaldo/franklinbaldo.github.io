@@ -316,8 +316,10 @@ let sentWorldTime = 0;
 function neuralTick() {
   if (!workerReady || workerBusy || paused) return;
   if (worldTime < nextNeuralTime) return;
-  // A slow device falls behind instead of bursting to catch up.
-  nextNeuralTime = Math.max(nextNeuralTime + 1 / NEURAL_HZ, worldTime);
+  // Keep phase while on time; when late (first tick after loading, a stalled
+  // worker, a slow device) drop the backlog and wait a full interval.
+  nextNeuralTime += 1 / NEURAL_HZ;
+  if (nextNeuralTime <= worldTime) nextNeuralTime = worldTime + 1 / NEURAL_HZ;
   workerBusy = true;
   sentWorldTime = worldTime;
   const features = Array.from(sampleEye(worldTime));
