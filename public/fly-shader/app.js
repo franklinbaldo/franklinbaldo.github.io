@@ -16,6 +16,9 @@ const KICK_SIZE = 0.8;
 const OP_WINDOW = [1, 3];
 const PROBE_INTERVAL = 4;
 const READOUT_TAU = 4;
+// The worker advances its recurrent state one fixed step per message, so the
+// brain is stepped on world time, not per animation frame (refresh-independent).
+const NEURAL_HZ = 15;
 const WATERFALL_SECONDS = 20;
 
 const $ = (id) => document.getElementById(id);
@@ -296,8 +299,13 @@ async function loadMaleCns() {
   }
 }
 
+let nextNeuralTime = 0;
+
 function neuralTick() {
   if (!workerReady || workerBusy || paused) return;
+  if (worldTime < nextNeuralTime) return;
+  // A slow device falls behind instead of bursting to catch up.
+  nextNeuralTime = Math.max(nextNeuralTime + 1 / NEURAL_HZ, worldTime);
   workerBusy = true;
   const features = Array.from(sampleEye(worldTime));
   worker.postMessage({
@@ -320,34 +328,47 @@ function kick(mode = Math.floor(Math.random() * MODE_COUNT)) {
   const pre = new Float64Array(MODE_COUNT);
   for (let i = 0; i < MODE_COUNT; i++) pre[i] = modeEnergy(coeff, i);
 
+  const re0 = coeff[2 * mode];
+  const im0 = coeff[2 * mode + 1];
   const phase = Math.random() * Math.PI * 2;
   coeff[2 * mode] += KICK_SIZE * Math.cos(phase);
   coeff[2 * mode + 1] += KICK_SIZE * Math.sin(phase);
   limitAmplitude(coeff);
   kickMarks.push({ mode, t: worldTime });
 
-  pending = $("closed").checked
-    ? {
-        mode,
-        t0: worldTime,
-        pre,
-        actual: new Float64Array(MODE_COUNT),
-        passive: 0,
-        samples: 0,
-      }
-    : null;
+  // Near MAX_AMPLITUDE the clamp shortens and rotates the kick, so measure
+  // the perturbation actually applied rather than the nominal KICK_SIZE.
+  const dRe = coeff[2 * mode] - re0;
+  const dIm = coeff[2 * mode + 1] - im0;
+  const kickEnergy = dRe * dRe + dIm * dIm;
+  const injected = modeEnergy(coeff, mode) - pre[mode];
+
+  pending =
+    $("closed").checked && kickEnergy > 1e-4
+      ? {
+          mode,
+          t0: worldTime,
+          pre,
+          actual: new Float64Array(MODE_COUNT),
+          kickEnergy,
+          injected,
+          passive: 0,
+          samples: 0,
+        }
+      : null;
 }
 
 // Response of mode i = mean energy in the window minus energy just before the
 // kick. On the kicked mode, the energy the kick itself would still carry under
-// passive leak is subtracted (random kick phase averages the cross term out).
+// passive leak is subtracted: the energy the kick injected into that mode
+// (post-clamp, cross term included), decaying at the leak rate.
 function trackPending(leak) {
   if (!pending) return;
   const age = worldTime - pending.t0;
   if (age >= OP_WINDOW[0] && age <= OP_WINDOW[1]) {
     for (let i = 0; i < MODE_COUNT; i++)
       pending.actual[i] += modeEnergy(coeff, i);
-    pending.passive += KICK_SIZE * KICK_SIZE * Math.exp(-2 * leak * age);
+    pending.passive += pending.injected * Math.exp(-2 * leak * age);
     pending.samples++;
   }
   if (age > OP_WINDOW[1]) {
@@ -357,7 +378,7 @@ function trackPending(leak) {
       for (let i = 0; i < MODE_COUNT; i++) {
         let response = pending.actual[i] / n - pending.pre[i];
         if (i === pending.mode) response -= pending.passive / n;
-        operatorSum[row + i] += response / (KICK_SIZE * KICK_SIZE);
+        operatorSum[row + i] += response / pending.kickEnergy;
       }
       operatorCount[pending.mode]++;
     }
@@ -732,6 +753,7 @@ $("kick").addEventListener("click", () => kick());
 $("reset").addEventListener("click", () => {
   randomizeWorld();
   pending = null;
+  nextNeuralTime = worldTime;
 });
 $("clearOp").addEventListener("click", () => {
   operatorSum.fill(0);
