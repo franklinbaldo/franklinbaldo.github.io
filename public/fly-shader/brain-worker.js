@@ -36,6 +36,7 @@ self.onmessage = (event) => {
         type: "result",
         dnValues,
         flight: Boolean(msg.flight),
+        world: Boolean(msg.world),
         latency: performance.now() - started,
       },
       [dnValues.buffer]
