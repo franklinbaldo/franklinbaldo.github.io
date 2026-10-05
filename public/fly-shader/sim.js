@@ -129,13 +129,16 @@ export function cloneEye(eye) {
   };
 }
 
-export function sampleEye(eye, coeff, t) {
+// `t` is world time (it sets the temporal-derivative feature); `tau` is the
+// phase clock of the modes' own drift, which the phase readout can freeze so
+// that the only motion on the retina is the stimulus and the fly's own turning.
+export function sampleEye(eye, coeff, t, tau = t) {
   const dt =
     eye.previousTime === null ? null : Math.max(1e-3, t - eye.previousTime);
   const out = eye.samples;
   for (let cell = 0; cell < EYE_CELLS; cell++) {
     const { x, y } = eyeCellCenter(cell);
-    const f = sampleField(coeff, x, y, t);
+    const f = sampleField(coeff, x, y, tau);
     const luminance = Math.tanh(f.value * 0.9);
     const temporal =
       dt === null
@@ -235,10 +238,19 @@ export function prepareCircuit(circuit) {
       list.slice(i * size, (i + 1) * size)
     );
   };
+  // Side of each DN in dn_all order: +1 right (dnr), −1 left (dnl), 0 for the
+  // few in neither list. This is the only DN annotation the artifact carries.
+  const right = new Set(circuit.dnr);
+  const left = new Set(circuit.dnl);
+  const dnSide = new Int8Array(circuit.dn_all.length);
+  circuit.dn_all.forEach((id, i) => {
+    dnSide[i] = right.has(id) ? 1 : left.has(id) ? -1 : 0;
+  });
   return {
     ...circuit,
     ray_vpl: split(circuit.vpl),
     ray_vpr: split(circuit.vpr),
+    dn_side: dnSide,
   };
 }
 
@@ -371,4 +383,179 @@ export function pairedProbe(snapshot, brain, kick) {
       kickEnergy;
   }
   return { response, kickEnergy };
+}
+
+// ---------------------------------------------------------------- phase readout
+
+// In the phase readout the DNs no longer paint the coefficients: they move the
+// fly through a world whose texture is fixed. Yaw is a translation in x, and a
+// translation of a Fourier world is an exact phase ramp, so self-motion costs
+// one complex rotation per mode and adds no free parameters.
+export const YAW_MAX = 0.6; // world-widths per second at full steering command
+export const STEER_TAU = 20;
+export const OPTO_DURATION = 6;
+export const OPTO_WINDOW = [2, 6];
+export const OPTO_VELOCITIES = [
+  -0.6, -0.3, -0.15, -0.05, 0, 0.05, 0.15, 0.3, 0.6,
+];
+
+// f'(x, y) = f(x − dx, y): every mode turns by −kx·dx; amplitudes are untouched.
+export function shiftWorld(coeff, dx) {
+  for (let i = 0; i < MODE_COUNT; i++) {
+    const phi = -modes[i].kx * dx;
+    const c = Math.cos(phi);
+    const s = Math.sin(phi);
+    const re = coeff[2 * i];
+    const im = coeff[2 * i + 1];
+    coeff[2 * i] = re * c - im * s;
+    coeff[2 * i + 1] = re * s + im * c;
+  }
+}
+
+// Mean right-side DN minus mean left-side DN. Without a functional annotation
+// of DN types in the artifact, bilateral asymmetry is the steering proxy; the
+// sign convention (right > left ⇒ turn right) is an assumption, and the
+// open-loop sweep is what tells whether the circuit agrees with it.
+export function steerSignal(dnValues, dnSide) {
+  let right = 0;
+  let left = 0;
+  let nRight = 0;
+  let nLeft = 0;
+  for (let i = 0; i < dnValues.length; i++) {
+    if (dnSide[i] > 0) {
+      right += dnValues[i];
+      nRight++;
+    } else if (dnSide[i] < 0) {
+      left += dnValues[i];
+      nLeft++;
+    }
+  }
+  return right / Math.max(1, nRight) - left / Math.max(1, nLeft);
+}
+
+export function createSteer() {
+  return {
+    baseline: 0,
+    variance: 0,
+    ticks: 0,
+    raw: 0,
+    command: 0,
+    haveCommand: false,
+  };
+}
+
+export function cloneSteer(steer) {
+  return { ...steer };
+}
+
+// z-scores the raw asymmetry against a slow world-time baseline. The first
+// ticks use a running mean (weight 1/n) so the variance is not seeded by a
+// single sample and the command does not saturate at start-up.
+export function readSteer(steer, raw, tickDt, gain) {
+  const alpha = Math.max(
+    1 - Math.exp(-tickDt / STEER_TAU),
+    1 / (steer.ticks + 1)
+  );
+  if (steer.ticks === 0) steer.baseline = raw;
+  const deviation = raw - steer.baseline;
+  steer.baseline += alpha * deviation;
+  steer.variance += alpha * (deviation * deviation - steer.variance);
+  steer.ticks++;
+  steer.raw = raw;
+  const z = steer.ticks < 3 ? 0 : deviation / Math.sqrt(steer.variance + 1e-12);
+  steer.command = Math.tanh(gain * 0.6 * z);
+  steer.haveCommand = true;
+}
+
+// One deterministic branch of the optomotor assay: the world turns at
+// `velocity` (world-widths/s, + = rightward), the modes' own drift is frozen,
+// and with `closed` the fly's yaw is subtracted from the retinal slip. Returns
+// the window means of the raw steering asymmetry, the yaw and the slip.
+export function runOptomotorBranch(snapshot, brain, velocity, { closed }) {
+  const coeff = new Float32Array(snapshot.coeff);
+  const eye = cloneEye(snapshot.eye);
+  const steer = cloneSteer(snapshot.steer);
+  const { steerGain } = snapshot.params;
+  const dnSide = brain.circuit.dn_side;
+  let t = snapshot.t;
+  brain.state.set(snapshot.brainState);
+
+  const steps = Math.round(OPTO_DURATION / WORLD_DT);
+  const stepsPerTick = Math.round(1 / (NEURAL_HZ * WORLD_DT));
+  const tickDt = stepsPerTick * WORLD_DT;
+  let steerSum = 0;
+  let ticks = 0;
+  let yawSum = 0;
+  let samples = 0;
+
+  for (let k = 0; k < steps; k++) {
+    const age = k * WORLD_DT;
+    const inWindow = age >= OPTO_WINDOW[0] - 1e-9;
+    if (k % stepsPerTick === 0) {
+      const dnValues = brainStep(brain, sampleEye(eye, coeff, t, snapshot.tau));
+      const raw = steerSignal(dnValues, dnSide);
+      readSteer(steer, raw, tickDt, steerGain);
+      if (inWindow) {
+        steerSum += raw;
+        ticks++;
+      }
+    }
+    const yaw = closed && steer.haveCommand ? YAW_MAX * steer.command : 0;
+    shiftWorld(coeff, (velocity - yaw) * WORLD_DT);
+    t += WORLD_DT;
+    if (inWindow) {
+      yawSum += yaw;
+      samples++;
+    }
+  }
+  const yaw = yawSum / samples;
+  return { steer: steerSum / ticks, yaw, slip: velocity - yaw };
+}
+
+// Open- and closed-loop branches for every velocity from one snapshot. Every
+// branch shares the snapshot, so the v = 0 branch is the paired baseline: the
+// open-loop response is steer(v) − steer(0), with the circuit's own drift
+// removed exactly, as in the kick probes.
+export function optomotorSweep(snapshot, brain, velocities, onProgress) {
+  const open = [];
+  const closed = [];
+  velocities.forEach((v, i) => {
+    open.push(runOptomotorBranch(snapshot, brain, v, { closed: false }));
+    closed.push(runOptomotorBranch(snapshot, brain, v, { closed: true }));
+    if (onProgress) onProgress((i + 1) / velocities.length);
+  });
+  const zero = velocities.indexOf(0);
+  const base = zero >= 0 ? open[zero].steer : 0;
+  return {
+    velocities: [...velocities],
+    response: open.map((r) => r.steer - base),
+    yaw: closed.map((r) => r.yaw),
+    slip: closed.map((r) => r.slip),
+  };
+}
+
+// Splits a response sampled at ±v into its odd part (direction-selective: it
+// flips with the stimulus) and even part (motion per se, or an asymmetric
+// input map). The optomotor index is the least-squares slope of the odd part
+// through the origin; its share of the energy says how directional it is.
+export function optomotorSummary(velocities, values) {
+  let num = 0;
+  let den = 0;
+  let oddEnergy = 0;
+  let evenEnergy = 0;
+  velocities.forEach((v, i) => {
+    if (v <= 0) return;
+    const j = velocities.indexOf(-v);
+    if (j < 0) return;
+    const odd = (values[i] - values[j]) / 2;
+    const even = (values[i] + values[j]) / 2;
+    num += v * odd;
+    den += v * v;
+    oddEnergy += odd * odd;
+    evenEnergy += even * even;
+  });
+  return {
+    slope: den ? num / den : 0,
+    directional: oddEnergy / Math.max(1e-30, oddEnergy + evenEnergy),
+  };
 }

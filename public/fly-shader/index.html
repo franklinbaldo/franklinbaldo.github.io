@@ -248,8 +248,63 @@
         margin-top: 4px;
       }
 
+      select {
+        width: 100%;
+        background: #102230;
+        color: var(--text);
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 6px 8px;
+        font: inherit;
+        font-size: 0.8rem;
+      }
+
+      .phase-only[hidden],
+      .knobs-only[hidden] {
+        display: none;
+      }
+
+      .assay {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .assay canvas {
+        width: 100%;
+        display: block;
+        border-radius: 6px;
+        background: #03070a;
+      }
+
+      .assay-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .assay-head h2 {
+        margin: 0;
+      }
+
+      .verdict {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.72rem;
+        color: var(--muted);
+        line-height: 1.55;
+        margin-top: 6px;
+      }
+
+      .verdict b {
+        color: var(--text);
+        font-weight: 600;
+      }
+
       @media (max-width: 820px) {
         .main,
+        .assay,
         .lower {
           grid-template-columns: minmax(0, 1fr);
         }
@@ -288,21 +343,44 @@
             <span class="dot"></span><span id="statusText">loading…</span>
           </div>
 
+          <div class="row">
+            <label for="readoutMode">readout</label>
+            <select id="readoutMode">
+              <option value="knobs">arbitrary: DNs paint the knobs</option>
+              <option value="phase">phase: DNs turn the fly (yaw)</option>
+            </select>
+          </div>
+
           <label class="toggle">
-            <input id="closed" type="checkbox" checked /> loop closed (DNs hold
-            the knobs)
+            <input id="closed" type="checkbox" checked /> loop closed (DNs act
+            on the world)
           </label>
           <label class="toggle">
+            <input id="drift" type="checkbox" checked /> modes drift on their
+            own
+          </label>
+          <label class="toggle knobs-only">
             <input id="adaptive" type="checkbox" checked /> adaptive readout
             (z-scored DNs)
           </label>
-          <label class="toggle">
+          <label class="toggle knobs-only">
             <input id="probe" type="checkbox" /> auto-probe (kick every 4 s)
           </label>
           <label class="toggle">
             <input id="showEye" type="checkbox" checked /> show eye samples
           </label>
 
+          <div class="row phase-only" hidden>
+            <label>stimulus rotation <b id="stimOut">0.30</b></label>
+            <input
+              id="stim"
+              type="range"
+              min="-0.6"
+              max="0.6"
+              step="0.05"
+              value="0.3"
+            />
+          </div>
           <div class="row">
             <label>motor gain <b id="gainOut">1.0</b></label>
             <input
@@ -314,7 +392,7 @@
               value="1"
             />
           </div>
-          <div class="row">
+          <div class="row knobs-only">
             <label>leak <b id="leakOut">0.35</b></label>
             <input
               id="leak"
@@ -337,12 +415,56 @@
         </div>
       </div>
 
+      <div class="panel phase-only" hidden>
+        <div class="assay-head">
+          <h2>Optomotor assay — does the fly turn with the world?</h2>
+          <button id="sweep">Run sweep</button>
+        </div>
+        <div class="assay">
+          <div>
+            <canvas id="yawTrace" width="560" height="200"></canvas>
+            <div class="legend">
+              <span>−20 s</span
+              ><span
+                >amber = stimulus · cyan = fly yaw · violet = retinal slip</span
+              ><span>now</span>
+            </div>
+          </div>
+          <div>
+            <canvas id="sweepPlot" width="560" height="200"></canvas>
+            <div id="verdict" class="verdict">
+              No sweep yet. A sweep snapshots the live state and replays, for
+              each stimulus speed, a 6 s open-loop branch (the world turns, the
+              fly cannot) and a closed-loop branch (its yaw subtracts from the
+              slip), with the modes' own drift frozen.
+            </div>
+          </div>
+        </div>
+        <p class="note">
+          Here the DNs no longer paint the coefficients: the world's texture is
+          fixed and the DNs move the fly through it. A yaw turn is a translation
+          in x, which for Fourier modes is an exact phase ramp c →
+          c·e<sup>−i·kx·Δx</sup>, so self-motion adds no free parameters. The
+          artifact labels DNs only by side, so steering = mean(right DNs) −
+          mean(left DNs), z-scored against a 20 s baseline, with the convention
+          right &gt; left ⇒ turn right. Left panel of the sweep: open-loop
+          response, Δ(R−L) relative to the paired v = 0 branch. Right:
+          closed-loop yaw; the dashed diagonal is perfect following. The odd
+          part of the response (it flips with the stimulus) is the directional,
+          optomotor-like component; the even part reacts to motion regardless of
+          direction. The sign convention is an assumption: a consistently
+          negative slope would mean the convention, not the fly, is backwards;
+          an even-dominated response means there is no optomotor reflex to find.
+          No null model yet.
+        </p>
+      </div>
+
       <div class="panel">
         <h2>The knobs — complex coefficient per mode (click to perturb)</h2>
         <div id="knobs" class="knobs"></div>
       </div>
 
-      <div class="lower">
+      <div class="lower knobs-only">
         <div class="panel">
           <h2>Mode amplitude over time</h2>
           <canvas id="waterfall" width="640" height="240"></canvas>
