@@ -357,7 +357,7 @@
           <div class="stage">
             <canvas id="world" width="960" height="480"></canvas>
             <canvas id="eye" width="960" height="480"></canvas>
-            <div id="takeoffFlash" class="takeoff">takeoff</div>
+            <div id="takeoffFlash" class="takeoff">GF ≥ 3σ</div>
           </div>
         </div>
 
@@ -401,7 +401,10 @@
           </label>
 
           <div class="row phase-only" hidden>
-            <label>stimulus rotation <b id="stimOut">0.30</b></label>
+            <label
+              >stimulus rotation, x/s (2 x = 360°)
+              <b id="stimOut">0.30</b></label
+            >
             <input
               id="stim"
               type="range"
@@ -478,8 +481,8 @@
             <div class="legend">
               <span>−60 s</span
               ><span
-                >cyan = giant-fiber drive (σ above its own mean) · dashed =
-                takeoff · amber = takeoff</span
+                >cyan = giant-fiber drive (σ above its own mean) · dashed = 3σ
+                threshold · amber = crossing (takeoff proxy)</span
               ><span>now</span>
             </div>
             <div id="flightStats" class="verdict"></div>
@@ -493,24 +496,29 @@
           </div>
         </div>
         <p class="note">
-          The whole compound eye looks at the world: 1,771 retinotopic columns
-          on both sides, each driving its own lamina L1, L2 and L3 cells
-          (matched by the MaleCNS hex annotation). Light enters with a negative
-          sign because every photoreceptor → lamina synapse in this connectome
-          is inhibitory. The fly acts on its world in 29 ways: yaw and pitch
-          (exact phase ramps), loom (the pattern expands from straight ahead),
-          contrast, the speed of the modes' own drift, and a velocity on each of
-          the 24 mode coefficients. A linear policy from the descending neurons
-          to those actions is trained by reward alone — REINFORCE with
-          exploration noise and a one-second eligibility trace — while the
-          connectome stays frozen. The reward is the giant fiber, DNp01 (“GF” in
-          the MaleCNS annotation), the descending neuron of escape takeoff,
-          measured as how far it rises above its own recent mean; it is removed
-          from the policy's input, so the only way to raise it is through what
-          the eye sees. A takeoff is the giant fiber crossing 3σ. No null model
-          yet: compare with learning off before reading anything into a rising
-          takeoff count. Column geometry, lamina hex coordinates and DN types:
-          MaleCNS v1.0, CC BY 4.0 (Berg et al. 2026,
+          The compound eye looks at the world: 1,771 retinotopic columns (879
+          left, 892 right), each driving its own lamina L1 and L2 cells, matched
+          by the MaleCNS hex annotation; 1,768 columns have at least one. L3 is
+          left out because MaleCNS v1.0 annotates it in the right eye only, and
+          a one-sided input is an asymmetry a reward-seeking policy would
+          exploit. Light enters with a negative sign because every photoreceptor
+          → L1/L2 synapse in this connectome is inhibitory. The fly acts on its
+          world in 29 ways: yaw and pitch (exact phase ramps), loom (the pattern
+          expands from straight ahead), contrast, the speed of the modes' own
+          drift, and a velocity on each of the 24 mode coefficients. A linear
+          policy from the descending neurons to those actions is trained by
+          reward alone — reward-modulated node perturbation with a one-second
+          eligibility trace — while the connectome stays frozen; with the loop
+          open it neither acts nor learns. The reward is the giant fiber, DNp01
+          (“GF” in the MaleCNS annotation), central to the visual escape
+          circuit, measured as how far it rises above its own recent mean; it is
+          removed from the policy's input, so the only way to raise it is
+          through what the eye sees. A crossing of 3σ is counted as a takeoff
+          proxy — an event in this rate model, not an observed takeoff. In
+          headless runs a sham learner rewarded by two random DNs crosses as
+          often as the real one, so there is no evidence yet of giant-fiber
+          specific learning. Column geometry, lamina hex coordinates and DN
+          types: MaleCNS v1.0, CC BY 4.0 (Berg et al. 2026,
           <a href="https://doi.org/10.1016/j.cell.2026.08.015"
             >doi:10.1016/j.cell.2026.08.015</a
           >).
@@ -528,7 +536,8 @@
             <div class="legend">
               <span>−20 s</span
               ><span
-                >amber = stimulus · cyan = fly yaw · violet = retinal slip</span
+                >amber = stimulus · cyan = fly yaw · violet = controlled
+                rotation (stimulus − yaw)</span
               ><span>now</span>
             </div>
           </div>

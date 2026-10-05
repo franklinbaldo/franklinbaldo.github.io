@@ -234,6 +234,7 @@ function onLiveMessage(event) {
       readout.dnMeanAbs = absSum / dnValues.length;
       const tookOff = policyStep(policy, dnValues, tickDt, {
         learn: $("learn").checked,
+        acting: $("closed").checked,
         eta: 10 ** Number($("eta").value),
         sigma: Number($("sigma").value),
       });
@@ -350,7 +351,7 @@ const kickMarks = [];
 function kick(mode = Math.floor(Math.random() * MODE_COUNT)) {
   const phase = Math.random() * Math.PI * 2;
   const recordable =
-    !phaseMode() &&
+    $("readoutMode").value === "knobs" &&
     $("closed").checked &&
     liveReady &&
     readout.haveMotor &&
@@ -365,15 +366,20 @@ function kick(mode = Math.floor(Math.random() * MODE_COUNT)) {
       snapshot: {
         coeff: new Float32Array(coeff),
         t: worldTime,
+        tau: worldView.tau,
         eye: cloneEye(eye),
         readout: cloneReadout(readout),
-        params: { leak: Number($("leak").value), ...readoutParams() },
+        params: {
+          leak: Number($("leak").value),
+          drift: $("drift").checked,
+          ...readoutParams(),
+        },
       },
     });
     // The brain state may be one in-flight step ahead of this world snapshot;
     // that is shared by all four branches, so the pairing stays exact.
     live.postMessage({ type: "snapshot", id });
-  } else if ($("closed").checked && !phaseMode()) {
+  } else if ($("closed").checked && $("readoutMode").value === "knobs") {
     skippedKicks++;
   }
 
@@ -689,7 +695,7 @@ function drawKnobs() {
     ctx.arc(c, c, r, 0, Math.PI * 2);
     ctx.stroke();
 
-    if (readout.haveMotor && !phaseMode()) {
+    if (readout.haveMotor && $("readoutMode").value === "knobs") {
       ctx.strokeStyle = "rgba(214,124,255,0.75)";
       ctx.beginPath();
       ctx.moveTo(c, c);
@@ -956,7 +962,7 @@ function drawVerdict() {
         ? "directional, follows the stimulus (optomotor under the convention)"
         : "directional, against the stimulus (convention or circuit backwards)";
   $("verdict").innerHTML = [
-    `open-loop slope: <b>${open.slope.toExponential(2)}</b> per world-width/s`,
+    `open-loop slope: <b>${open.slope.toExponential(2)}</b> per x-unit/s (panorama = 2 x)`,
     `directional share: <b>${(100 * open.directional).toFixed(0)}%</b> (odd / total energy)`,
     `reading: <b>${reading}</b>`,
     `closed-loop yaw/stimulus: <b>${closed.slope.toFixed(3)}</b> (1 = perfect following)`,
@@ -1083,7 +1089,7 @@ function drawFlightStats() {
   for (const v of policy.W) norm += v * v;
   $("flightStats").innerHTML = [
     `giant fiber (DNp01): <b>${policy.gfLevel.toFixed(4)}</b> · drive <b>${policy.reward.toFixed(2)}σ</b>`,
-    `takeoffs: <b>${policy.takeoffs}</b> total · <b>${minute}</b> in the last minute`,
+    `GF crossings ≥ ${TAKEOFF_Z}σ (takeoff proxy): <b>${policy.takeoffs}</b> total · <b>${minute}</b> in the last minute`,
     `world: zoom <b>${worldView.zoom.toFixed(2)}</b> · contrast <b>${worldView.gain.toFixed(2)}</b>`,
     `policy |W|: <b>${Math.sqrt(norm).toFixed(2)}</b> · learning <b>${$("learn").checked ? "on" : "off"}</b>`,
   ].join("<br />");

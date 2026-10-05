@@ -9,5 +9,6 @@ public/flygenesis/index.html
 public/flydoom/retinotopic_columns_1771.json
 public/fly-shader/eye_columns.json
 public/fly-shader/dn_types.json
+scripts/fly-shader-results/
 
 *.py

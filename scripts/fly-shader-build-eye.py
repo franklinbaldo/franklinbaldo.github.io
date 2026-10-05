@@ -15,6 +15,9 @@ Outputs, next to the demo:
   eye_columns.json  one entry per retinotopic column (azimuth, elevation, side)
                     with the artifact indices of its lamina L1, L2 and L3 cells,
                     matched by eye side and the annotated hex coordinates.
+                    L3 is kept for the record but the demo drives L1 and L2
+                    only: MaleCNS v1.0 annotates L3 in the right eye alone
+                    (892 of 892 right columns, 0 of 879 left).
   dn_types.json     the annotated type of every DN, in dn_all order.
 
 Data: MaleCNS v1.0, CC BY 4.0 (Berg et al. 2026). Column geometry:
@@ -132,7 +135,10 @@ def main() -> None:
             separators=(",", ":"),
         )
     )
-    print(f"columns {len(columns)} covered {covered}")
+    for side, name in ((0, "left"), (1, "right")):
+        on_side = [c for c in columns if c["side"] == side]
+        per_type = {t: sum(1 for c in on_side if c[t]) for t in LAMINA_TYPES}
+        print(f"{name}: {len(on_side)} columns, covered {per_type}")
 
 
 if __name__ == "__main__":

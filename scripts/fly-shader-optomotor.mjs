@@ -4,60 +4,39 @@
 // static worlds: warm the brain, snapshot, then replay every stimulus speed
 // open- and closed-loop from the snapshot (exactly what the page's "Run sweep"
 // does once). Prints per-world odd/even summaries and writes the raw sweeps,
-// with the connectome's sha256, to fly-shader-optomotor.json.
+// with the connectome's sha256, to scripts/fly-shader-results/optomotor.json.
+// Velocities are in x-units/s: the panorama is 2 x-units wide (360° in the
+// compound-eye mapping), so 0.3 x/s is 54°/s.
 //
 //   node scripts/fly-shader-optomotor.mjs [--seeds 1,2,3] [--out file.json]
-import { createHash } from "node:crypto";
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import {
+  RESULTS,
+  loadConnectome,
+  loadSim,
+  readJson,
+} from "./fly-shader-load.mjs";
 
-const PUBLIC = new URL("../public/", import.meta.url);
-const sim = await import(new URL("fly-shader/sim.js", PUBLIC).href);
+const sim = await loadSim();
 
 const { values: args } = parseArgs({
   options: {
     seeds: { type: "string", default: "1,2,3,4,5,6,7,8" },
-    out: { type: "string", default: "fly-shader-optomotor.json" },
+    out: {
+      type: "string",
+      default: fileURLToPath(new URL("optomotor.json", RESULTS)),
+    },
     warmup: { type: "string", default: "4" },
     gain: { type: "string", default: "1" },
   },
 });
 
-// Same FlatBuffer layout app.js reads in the browser.
-function loadConnectome() {
-  const raw = readFileSync(new URL("flydoom/malecns_l3_compact.mcns", PUBLIC));
-  const buffer = raw.buffer.slice(
-    raw.byteOffset,
-    raw.byteOffset + raw.byteLength
-  );
-  const view = new DataView(buffer);
-  const root = view.getUint32(0, true);
-  const vtable = root - view.getInt32(root, true);
-  const vtableLen = view.getUint16(vtable, true);
-  const getVector = (fieldIndex, ArrayType) => {
-    const offset = 4 + fieldIndex * 2;
-    if (offset >= vtableLen) throw new Error(`missing field ${fieldIndex}`);
-    const position = root + view.getUint16(vtable + offset, true);
-    const start = position + view.getUint32(position, true);
-    return new ArrayType(buffer, start + 4, view.getUint32(start, true));
-  };
-  return {
-    sha256: createHash("sha256").update(raw).digest("hex"),
-    connectome: {
-      offsets: getVector(5, Uint32Array),
-      scales: getVector(6, Float32Array),
-      deltas: getVector(7, Uint16Array),
-      weights: getVector(8, Uint8Array),
-      lut: getVector(9, Float32Array),
-    },
-  };
-}
-
 const { connectome, sha256 } = loadConnectome();
 const circuit = sim.prepareCircuit(
-  JSON.parse(
-    readFileSync(new URL("flydoom/malecns_circuit.json", PUBLIC), "utf8")
-  )
+  readJson("flydoom/malecns_circuit.json").data
 );
 const brain = sim.createBrain(circuit, connectome);
 const seeds = args.seeds.split(",").map(Number);
@@ -112,15 +91,22 @@ for (const seed of seeds) {
 
 const positive = results.filter((r) => r.open.slope > 0).length;
 const shares = results.map((r) => r.open.directional).sort((a, b) => a - b);
+const mid = shares.length >> 1;
+const median =
+  shares.length % 2 ? shares[mid] : (shares[mid - 1] + shares[mid]) / 2;
 console.log(
   `open-loop slope > 0 in ${positive}/${results.length} worlds; ` +
-    `median directional share ${(100 * shares[shares.length >> 1]).toFixed(0)}%`
+    `median directional share ${(100 * median).toFixed(0)}%`
 );
+mkdirSync(dirname(args.out), { recursive: true });
 writeFileSync(
   args.out,
   JSON.stringify(
     {
+      assay: "optomotor",
+      units: "velocity in x-units/s; panorama = 2 x-units = 360°",
       connectome_sha256: sha256,
+      seeds,
       warmup,
       steerGain,
       velocities: sim.OPTO_VELOCITIES,

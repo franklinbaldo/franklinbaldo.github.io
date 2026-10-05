@@ -330,7 +330,10 @@ export function attachEye(circuit, eyeColumns, dnTypes) {
     x[i] = (c.az + Math.PI) / Math.PI;
     y[i] = (Math.PI / 2 - c.el) / Math.PI;
     side[i] = c.side;
-    cells.push(...c.L1, ...c.L2, ...c.L3);
+    // L1 and L2 only: in MaleCNS v1.0 L3 is annotated in the right eye alone
+    // (892 of 892 right columns, 0 of 879 left), and a one-sided input is an
+    // asymmetry a reward-seeking policy would happily exploit.
+    cells.push(...c.L1, ...c.L2);
     offsets[i + 1] = cells.length;
   });
   const giantFiber = [];
@@ -392,10 +395,11 @@ function injectGrid(brain, features) {
   }
 }
 
-// Compound-eye ingress: every retinotopic column drives its own lamina L1, L2
-// and L3 cells. Light enters with a negative sign because in this artifact
-// every R1–R6 → L1/L2/L3 synapse is inhibitory (histaminergic), so the drive
-// stands in for the photoreceptors the trace left out, without their columns.
+// Compound-eye ingress: each retinotopic column drives its own lamina L1 and L2
+// cells (1,768 of the 1,771 columns have at least one). Light enters with a
+// negative sign because in this artifact every R1–R6 → L1/L2 synapse is
+// inhibitory (histaminergic), so the drive stands in for the photoreceptors,
+// which are traced only in part and carry no column annotation.
 export const LAMINA_SUSTAINED = 0.6;
 export const LAMINA_TRANSIENT = 0.8;
 
@@ -446,12 +450,17 @@ export const PROBE_WINDOW = [1, 3];
 // the loop is closed (eye → brain → readout → knobs, zero neural latency, at
 // NEURAL_HZ); without it the knobs only leak. Everything is deterministic, so
 // two branches from the same snapshot differ only by what they were given.
+// The drift clock `tau` is part of the snapshot and advances only when drift
+// was on, exactly as on the page: once drift has been off (or the phase
+// readout was used) tau ≠ t, and sampling with t would probe a different world
+// from the one the loop sees.
 export function runBranch(snapshot, { brain, kick }) {
   const coeff = new Float32Array(snapshot.coeff);
   const eye = cloneEye(snapshot.eye);
   const readout = cloneReadout(snapshot.readout);
-  const { leak, adaptive, gain } = snapshot.params;
+  const { leak, adaptive, gain, drift } = snapshot.params;
   let t = snapshot.t;
+  let tau = snapshot.tau;
 
   if (brain) brain.state.set(snapshot.brainState);
   let kickEnergy = 0;
@@ -465,7 +474,7 @@ export function runBranch(snapshot, { brain, kick }) {
 
   for (let k = 0; k < steps; k++) {
     if (brain && k % stepsPerTick === 0) {
-      const dnValues = brainStep(brain, sampleEye(eye, coeff, t));
+      const dnValues = brainStep(brain, sampleEye(eye, coeff, t, tau));
       readMotor(readout, dnValues, tickDt, { adaptive, gain });
     }
     worldStep(
@@ -476,6 +485,7 @@ export function runBranch(snapshot, { brain, kick }) {
       WORLD_DT
     );
     t += WORLD_DT;
+    if (drift) tau += WORLD_DT;
     const age = (k + 1) * WORLD_DT;
     if (age >= PROBE_WINDOW[0] - 1e-9) {
       for (let i = 0; i < MODE_COUNT; i++) energy[i] += modeEnergy(coeff, i);
@@ -512,7 +522,7 @@ export function pairedProbe(snapshot, brain, kick) {
 // fly through a world whose texture is fixed. Yaw is a translation in x, and a
 // translation of a Fourier world is an exact phase ramp, so self-motion costs
 // one complex rotation per mode and adds no free parameters.
-export const YAW_MAX = 0.6; // world-widths per second at full steering command
+export const YAW_MAX = 0.6; // x-units/s at full command (panorama = 2 x-units = 360°)
 export const STEER_TAU = 20;
 export const OPTO_DURATION = 6;
 export const OPTO_WINDOW = [2, 6];
@@ -589,8 +599,10 @@ export function readSteer(steer, raw, tickDt, gain) {
 }
 
 // One deterministic branch of the optomotor assay: the world turns at
-// `velocity` (world-widths/s, + = rightward), the modes' own drift is frozen,
-// and with `closed` the fly's yaw is subtracted from the retinal slip. Returns
+// `velocity` (x-units/s, + = rightward; the panorama is 2 x-units, 360° in the
+// compound-eye mapping, so 0.3 x/s = 54°/s), the modes' own drift is frozen,
+// and with `closed` the fly's yaw is subtracted from the controlled rotation
+// (stimulus − yaw, which leaves out any intrinsic drift). Returns
 // the window means of the raw steering asymmetry, the yaw and the slip.
 export function runOptomotorBranch(snapshot, brain, velocity, { closed }) {
   const coeff = new Float32Array(snapshot.coeff);
@@ -738,7 +750,8 @@ export function applyActions(coeff, view, actions, dt) {
 // the connectome stays frozen. Reward is the giant fiber (DNp01, both sides):
 // its activity above a slow running mean, in units of its running deviation.
 // The giant fiber is removed from the policy's input, so the policy can only
-// raise it through the world. Learning is REINFORCE with node perturbation:
+// raise it through the world. Learning is reward-modulated node perturbation
+// with an eligibility trace (close to, but not, a score-function REINFORCE):
 // the action is a = clamp(tanh(W·z) + ξ, −1, 1) with ξ an Ornstein–Uhlenbeck
 // exploration noise kept outside the tanh (a saturated mean must not silence
 // exploration), an eligibility trace e accumulates ξ·(1 − tanh²)·z over about a
@@ -782,8 +795,17 @@ function gaussian(rng) {
 }
 
 // One neural tick: score the giant fiber, learn from it, then act. Returns
-// true on a takeoff (the giant fiber crossing TAKEOFF_Z deviations).
-export function policyStep(policy, dnValues, tickDt, { learn, eta, sigma }) {
+// true on a giant-fiber threshold crossing (TAKEOFF_Z deviations), the
+// takeoff proxy — a rate-model event, not an observed behavioural takeoff.
+// With `acting` false the actions do not reach the world (loop open), so the
+// tick neither learns nor explores, and the eligibility trace is cleared:
+// noise that never acted must not be credited when the loop closes again.
+export function policyStep(
+  policy,
+  dnValues,
+  tickDt,
+  { learn, eta, sigma, acting = true }
+) {
   const { W, e, z, dnMean, dnVar, noise, actions, inputs } = policy;
 
   // Reward: giant fiber level, z-scored against its own slow history.
@@ -809,7 +831,7 @@ export function policyStep(policy, dnValues, tickDt, { learn, eta, sigma }) {
   }
   policy.flying = delta > TAKEOFF_Z * 0.5 && (policy.flying || takeoff);
 
-  if (learn && policy.ticks >= 15) {
+  if (learn && acting && policy.ticks >= 15) {
     const step = eta * clamp(delta, -3, 3);
     const keep = 1 - WEIGHT_DECAY * tickDt;
     for (let k = 0; k < W.length; k++) W[k] = keep * W[k] + step * e[k];
@@ -830,6 +852,21 @@ export function policyStep(policy, dnValues, tickDt, { learn, eta, sigma }) {
         : clamp(dev / Math.sqrt(dnVar[d] + 1e-10), -4, 4) * norm;
   }
   z[inputs - 1] = 1;
+
+  if (!acting) {
+    // Loop open: show the policy's mean command, explore nothing, and forget
+    // any trace so reclosing starts from a clean credit assignment.
+    noise.fill(0);
+    e.fill(0);
+    for (let j = 0; j < ACTION_COUNT; j++) {
+      const row = j * inputs;
+      let u = 0;
+      for (let d = 0; d < inputs; d++) u += W[row + d] * z[d];
+      actions[j] = Math.tanh(u);
+    }
+    policy.ticks++;
+    return takeoff;
+  }
 
   // Act with exploration, and remember what the exploration was.
   const decayNoise = Math.exp(-tickDt / NOISE_TAU);
