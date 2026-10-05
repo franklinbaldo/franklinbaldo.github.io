@@ -8,8 +8,13 @@
 // Lab: a second worker replays paired counterfactual branches from a snapshot
 // taken at each kick, so the operator isolates the loop's response to it; in
 // the phase readout it runs the optomotor sweep the same way.
+// Flight: the whole compound eye (1,771 columns → lamina L1/L2/L3) sees the
+// world, and a policy trained by reward alone acts on it in 29 ways; the
+// reward is the giant fiber (DNp01), the descending neuron of takeoff.
 
 import {
+  ACTION_COUNT,
+  ACTION_LABELS,
   EYE_CELLS,
   EYE_COLS,
   EYE_ROWS,
@@ -19,24 +24,32 @@ import {
   MODE_COUNT,
   NEURAL_HZ,
   OPTO_VELOCITIES,
+  TAKEOFF_Z,
   YAW_MAX,
+  applyActions,
   applyKick,
+  attachEye,
   clamp,
   cloneEye,
   cloneReadout,
   cloneSteer,
+  createColumnEye,
   createEye,
+  createPolicy,
   createReadout,
   createSteer,
+  createView,
   eyeCellCenter,
   modeEnergy,
   modes,
   optomotorSummary,
+  policyStep,
   prepareCircuit,
   readMotor,
   readSteer,
+  sampleColumns,
   sampleEye,
-  sampleField,
+  viewValue,
   seededRandom,
   shiftWorld,
   steerSignal,
@@ -45,6 +58,7 @@ import {
 
 const PROBE_INTERVAL = 4;
 const WATERFALL_SECONDS = 20;
+const NO_ACTIONS = new Float32Array(ACTION_COUNT);
 
 const $ = (id) => document.getElementById(id);
 
@@ -56,11 +70,15 @@ const readout = createReadout();
 const steer = createSteer();
 let circuit = null;
 let worldTime = 0;
-let tau = 0; // phase clock of the modes' own drift
+// zoom and contrast only move in flight; tau is the modes' own drift clock.
+const worldView = createView();
 let flyYaw = 0;
 let paused = false;
+let columnEye = null;
+let policy = null;
 
 const phaseMode = () => $("readoutMode").value === "phase";
+const flightMode = () => $("readoutMode").value === "flight";
 
 function randomizeWorld(rng = Math.random) {
   for (let i = 0; i < KNOB_COUNT; i++) coeff[i] = (rng() * 2 - 1) * 0.25;
@@ -102,7 +120,19 @@ async function loadMaleCns() {
     const circuitResponse = await fetch("../flydoom/malecns_circuit.json");
     if (!circuitResponse.ok)
       throw new Error(`circuit HTTP ${circuitResponse.status}`);
-    circuit = prepareCircuit(await circuitResponse.json());
+    const [eyeResponse, typesResponse] = await Promise.all([
+      fetch("./eye_columns.json"),
+      fetch("./dn_types.json"),
+    ]);
+    if (!eyeResponse.ok || !typesResponse.ok)
+      throw new Error("compound-eye tables unavailable");
+    circuit = attachEye(
+      prepareCircuit(await circuitResponse.json()),
+      await eyeResponse.json(),
+      await typesResponse.json()
+    );
+    columnEye = createColumnEye(circuit.eye.count);
+    resetPolicy();
 
     const binaryResponse = await fetch("../flydoom/malecns_l3_compact.mcns");
     if (!binaryResponse.ok)
@@ -198,6 +228,18 @@ function onLiveMessage(event) {
     // Both readouts track the DNs all the time, so switching between them
     // does not start from a cold baseline.
     const dnValues = new Float32Array(msg.dnValues);
+    if (msg.flight && policy) {
+      let absSum = 0;
+      for (const v of dnValues) absSum += Math.abs(v);
+      readout.dnMeanAbs = absSum / dnValues.length;
+      const tookOff = policyStep(policy, dnValues, tickDt, {
+        learn: $("learn").checked,
+        eta: 10 ** Number($("eta").value),
+        sigma: Number($("sigma").value),
+      });
+      recordFlight(tookOff);
+      return;
+    }
     readMotor(readout, dnValues, tickDt, readoutParams());
     readSteer(
       steer,
@@ -273,9 +315,21 @@ function neuralTick() {
   if (nextNeuralTime <= worldTime) nextNeuralTime = worldTime + 1 / NEURAL_HZ;
   liveBusy = true;
   sentWorldTime = worldTime;
+  if (flightMode() && columnEye) {
+    sampleColumns(columnEye, circuit.eye, coeff, worldView, worldTime);
+    live.postMessage({
+      type: "step",
+      flight: true,
+      features: {
+        lum: new Float32Array(columnEye.lum),
+        dlum: new Float32Array(columnEye.dlum),
+      },
+    });
+    return;
+  }
   live.postMessage({
     type: "step",
-    features: Array.from(sampleEye(eye, coeff, worldTime, tau)),
+    features: Array.from(sampleEye(eye, coeff, worldTime, worldView.tau)),
   });
 }
 
@@ -346,7 +400,7 @@ function runSweep() {
     snapshot: {
       coeff: new Float32Array(coeff),
       t: worldTime,
-      tau,
+      tau: worldView.tau,
       eye: cloneEye(eye),
       steer: cloneSteer(steer),
       params: { steerGain: Number($("gain").value) },
@@ -359,7 +413,18 @@ function runSweep() {
 
 function step(dt) {
   const closed = $("closed").checked;
-  if (phaseMode()) {
+  if (flightMode()) {
+    // The policy's 29 actions move the world; with the loop open it only
+    // drifts and relaxes (zero actions), and the policy still learns nothing
+    // from it because no action reached the world.
+    flyYaw = 0;
+    applyActions(
+      coeff,
+      worldView,
+      closed && policy ? policy.actions : NO_ACTIONS,
+      dt
+    );
+  } else if (phaseMode()) {
     // Fixed texture; the stimulus turns the world, the fly's yaw turns it back.
     flyYaw = closed && steer.haveCommand ? YAW_MAX * steer.command : 0;
     shiftWorld(coeff, (Number($("stim").value) - flyYaw) * dt);
@@ -374,11 +439,13 @@ function step(dt) {
     );
   }
   worldTime += dt;
-  if ($("drift").checked) tau += dt;
+  // In flight the drift clock is one of the fly's actions (applyActions).
+  if (!flightMode() && $("drift").checked) worldView.tau += dt;
   recordYaw(dt);
 
   if (
     !phaseMode() &&
+    !flightMode() &&
     $("probe").checked &&
     closed &&
     worldTime - lastProbe >= PROBE_INTERVAL
@@ -398,19 +465,23 @@ const FRAGMENT = `
 precision highp float;
 uniform vec2 uRes;
 uniform float uT;
+uniform float uZoom;
+uniform float uGain;
 uniform vec3 uK[${MODE_COUNT}];
 uniform vec2 uC[${MODE_COUNT}];
 float tanhf(float x) { float e = exp(2.0 * clamp(x, -9.0, 9.0)); return (e - 1.0) / (e + 1.0); }
 void main() {
   vec2 p = gl_FragCoord.xy / uRes;
-  float x = p.x * 2.0;
-  float y = 1.0 - p.y;
+  // Same view transform as viewValue in sim.js: scale about the point ahead.
+  float s = exp(-uZoom);
+  float x = 1.0 + (p.x * 2.0 - 1.0) * s;
+  float y = 0.5 + ((1.0 - p.y) - 0.5) * s;
   float f = 0.0;
   for (int i = 0; i < ${MODE_COUNT}; i++) {
     float th = uK[i].x * x + uK[i].y * y - uK[i].z * uT;
     f += uC[i].x * cos(th) - uC[i].y * sin(th);
   }
-  float v = tanhf(f * 0.9);
+  float v = tanhf(f * uGain * 0.9);
   vec3 base = vec3(0.035, 0.07, 0.10);
   vec3 pos = vec3(0.45, 0.85, 1.0);
   vec3 neg = vec3(0.84, 0.49, 1.0);
@@ -456,6 +527,8 @@ function setupWebGl() {
 
   const uRes = gl.getUniformLocation(program, "uRes");
   const uT = gl.getUniformLocation(program, "uT");
+  const uZoom = gl.getUniformLocation(program, "uZoom");
+  const uGain = gl.getUniformLocation(program, "uGain");
   const uK = gl.getUniformLocation(program, "uK");
   const uC = gl.getUniformLocation(program, "uC");
   const k = new Float32Array(MODE_COUNT * 3);
@@ -465,7 +538,9 @@ function setupWebGl() {
   return () => {
     gl.viewport(0, 0, worldCanvas.width, worldCanvas.height);
     gl.uniform2f(uRes, worldCanvas.width, worldCanvas.height);
-    gl.uniform1f(uT, tau);
+    gl.uniform1f(uT, worldView.tau);
+    gl.uniform1f(uZoom, worldView.zoom);
+    gl.uniform1f(uGain, worldView.gain);
     gl.uniform2fv(uC, coeff);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   };
@@ -486,12 +561,13 @@ function setupCpuFallback() {
     for (let py = 0; py < canvas.height; py++) {
       for (let px = 0; px < canvas.width; px++) {
         const v = Math.tanh(
-          sampleField(
-            coeff,
-            ((px + 0.5) / canvas.width) * 2,
-            (py + 0.5) / canvas.height,
-            tau
-          ).value * 0.9
+          0.9 *
+            viewValue(
+              coeff,
+              worldView,
+              ((px + 0.5) / canvas.width) * 2,
+              (py + 0.5) / canvas.height
+            )
         );
         const target = v >= 0 ? [115, 216, 255] : [214, 124, 255];
         const w = Math.abs(v);
@@ -517,9 +593,31 @@ try {
 const eyeCanvas = $("eye");
 const eyeCtx = eyeCanvas.getContext("2d");
 
+// The compound eye: one dot per retinotopic column at its viewing direction
+// on the panorama, shaded by the luminance it last reported to its lamina.
+function drawColumns() {
+  const w = eyeCanvas.width;
+  const h = eyeCanvas.height;
+  const { count, x, y } = circuit.eye;
+  for (let c = 0; c < count; c++) {
+    const gray = Math.round(128 + columnEye.lum[c] * 120);
+    eyeCtx.fillStyle = `rgb(${gray},${gray},${gray})`;
+    eyeCtx.fillRect((x[c] / 2) * w - 2, y[c] * h - 2, 4, 4);
+  }
+  eyeCtx.fillStyle = "rgba(231,238,245,0.75)";
+  eyeCtx.font = "600 15px ui-monospace, monospace";
+  eyeCtx.fillText(`${count.toLocaleString("en")} columns → lamina`, 10, h - 10);
+  const ahead = "ahead";
+  eyeCtx.fillText(ahead, w / 2 - eyeCtx.measureText(ahead).width / 2, 18);
+}
+
 function drawEye() {
   eyeCtx.clearRect(0, 0, eyeCanvas.width, eyeCanvas.height);
   if (!$("showEye").checked) return;
+  if (flightMode() && columnEye) {
+    drawColumns();
+    return;
+  }
   const w = eyeCanvas.width;
   const h = eyeCanvas.height;
   const size = Math.min(w / EYE_COLS, h / EYE_ROWS) * 0.34;
@@ -867,6 +965,130 @@ function drawVerdict() {
   ].join("<br />");
 }
 
+// ---------------------------------------------------------------- rendering: flight
+
+const FLIGHT_SECONDS = 60;
+const flightLength = FLIGHT_SECONDS * NEURAL_HZ;
+const flightTrace = new Float32Array(flightLength);
+const flightTakeoff = new Uint8Array(flightLength);
+let flightHead = 0;
+const takeoffTimes = [];
+let flash = 0;
+
+function resetPolicy() {
+  if (!circuit) return;
+  policy = createPolicy(circuit.dn_all.length, circuit.gf, Date.now() >>> 0);
+  takeoffTimes.length = 0;
+  flightTrace.fill(0);
+  flightTakeoff.fill(0);
+}
+
+function recordFlight(tookOff) {
+  flightTrace[flightHead] = policy.reward;
+  flightTakeoff[flightHead] = tookOff ? 1 : 0;
+  flightHead = (flightHead + 1) % flightLength;
+  if (tookOff) {
+    takeoffTimes.push(worldTime);
+    flash = 1;
+  }
+}
+
+const gfCanvas = $("gfTrace");
+const gfCtx = gfCanvas.getContext("2d");
+
+// Giant-fiber drive over the last minute, in units of its own running
+// deviation: the reward. The dashed line is the takeoff threshold.
+function drawGfTrace() {
+  const w = gfCanvas.width;
+  const h = gfCanvas.height;
+  const range = TAKEOFF_Z * 1.6;
+  const yOf = (v) => h / 2 - (clamp(v, -range, range) / range) * (h / 2 - 4);
+  gfCtx.fillStyle = "#03070a";
+  gfCtx.fillRect(0, 0, w, h);
+  gfCtx.strokeStyle = "#233341";
+  gfCtx.beginPath();
+  gfCtx.moveTo(0, yOf(0));
+  gfCtx.lineTo(w, yOf(0));
+  gfCtx.stroke();
+  gfCtx.setLineDash([4, 4]);
+  gfCtx.strokeStyle = "#ffc36b";
+  gfCtx.beginPath();
+  gfCtx.moveTo(0, yOf(TAKEOFF_Z));
+  gfCtx.lineTo(w, yOf(TAKEOFF_Z));
+  gfCtx.stroke();
+  gfCtx.setLineDash([]);
+
+  gfCtx.strokeStyle = "#73d8ff";
+  gfCtx.lineWidth = 1.5;
+  gfCtx.beginPath();
+  for (let k = 0; k < flightLength; k++) {
+    const i = (flightHead + k) % flightLength;
+    const x = (k / (flightLength - 1)) * w;
+    if (k === 0) gfCtx.moveTo(x, yOf(flightTrace[i]));
+    else gfCtx.lineTo(x, yOf(flightTrace[i]));
+    if (flightTakeoff[i]) {
+      gfCtx.fillStyle = "#ffc36b";
+      gfCtx.fillRect(x - 1.5, 0, 3, h);
+    }
+  }
+  gfCtx.stroke();
+  gfCtx.lineWidth = 1;
+}
+
+const actionCanvas = $("actions");
+const actionCtx = actionCanvas.getContext("2d");
+
+// What the policy is doing right now, one bar per action, centred at zero.
+function drawActions() {
+  const w = actionCanvas.width;
+  const h = actionCanvas.height;
+  actionCtx.fillStyle = "#03070a";
+  actionCtx.fillRect(0, 0, w, h);
+  const barW = w / ACTION_COUNT;
+  const mid = h / 2 - 8;
+  actionCtx.strokeStyle = "#233341";
+  actionCtx.beginPath();
+  actionCtx.moveTo(0, mid);
+  actionCtx.lineTo(w, mid);
+  actionCtx.stroke();
+  actionCtx.font = "9px ui-monospace, monospace";
+  actionCtx.textAlign = "center";
+  for (let j = 0; j < ACTION_COUNT; j++) {
+    const a = policy ? policy.actions[j] : 0;
+    const global = j < 5;
+    actionCtx.fillStyle = global ? "#ffc36b" : "#73d8ff";
+    const barH = a * (mid - 4);
+    actionCtx.fillRect(
+      j * barW + 2,
+      mid - Math.max(barH, 0),
+      barW - 4,
+      Math.abs(barH)
+    );
+    actionCtx.fillStyle = "#8fa0ae";
+    if (global || j % 2 === 1) {
+      actionCtx.fillText(
+        global ? ACTION_LABELS[j][0].toUpperCase() : `m${(j - 5) >> 1}`,
+        j * barW + barW / 2 - (global ? 0 : barW / 2),
+        h - 4
+      );
+    }
+  }
+  actionCtx.textAlign = "start";
+}
+
+function drawFlightStats() {
+  if (!policy) return;
+  const minute = takeoffTimes.filter((t) => worldTime - t <= 60).length;
+  let norm = 0;
+  for (const v of policy.W) norm += v * v;
+  $("flightStats").innerHTML = [
+    `giant fiber (DNp01): <b>${policy.gfLevel.toFixed(4)}</b> · drive <b>${policy.reward.toFixed(2)}σ</b>`,
+    `takeoffs: <b>${policy.takeoffs}</b> total · <b>${minute}</b> in the last minute`,
+    `world: zoom <b>${worldView.zoom.toFixed(2)}</b> · contrast <b>${worldView.gain.toFixed(2)}</b>`,
+    `policy |W|: <b>${Math.sqrt(norm).toFixed(2)}</b> · learning <b>${$("learn").checked ? "on" : "off"}</b>`,
+  ].join("<br />");
+}
+
 // ---------------------------------------------------------------- stats & controls
 
 function drawStats() {
@@ -883,9 +1105,11 @@ function drawStats() {
         : `idle (last run ${(labElapsed / 1000).toFixed(1)} s)`;
   const loopText = closed
     ? "closed"
-    : phase
-      ? "open (the fly cannot turn)"
-      : "open (leak only)";
+    : flightMode()
+      ? "open (the fly cannot act)"
+      : phase
+        ? "open (the fly cannot turn)"
+        : "open (leak only)";
   $("stats").innerHTML = [
     `loop: <b>${loopText}</b>`,
     `neural ticks: <b>${(tickInterval ? 1 / tickInterval : 0).toFixed(1)}</b> per world-s · <b>${tickLatency.toFixed(0)} ms</b>`,
@@ -899,20 +1123,42 @@ function drawStats() {
   $("sweep").disabled = !liveReady || !labReady || labBusy;
 }
 
-// The two readouts differ in what is meaningful: the phase readout fixes the
+// The readouts differ in what is meaningful: the phase readout fixes the
 // texture, so it starts with the modes' own drift off (the stimulus is then
-// the only motion on the retina), and hides the knob-only controls.
+// the only motion on the retina); flight hands drift, zoom and contrast to the
+// policy. Each mode shows only its own controls, and leaving flight returns
+// the view to neutral.
 function applyReadoutMode() {
-  const phase = phaseMode();
+  const mode = $("readoutMode").value;
+  const show = {
+    knobs: "knobs-only",
+    phase: "phase-only",
+    flight: "flight-only",
+  };
+  for (const [name, cls] of Object.entries(show)) {
+    document
+      .querySelectorAll(`.${cls}`)
+      .forEach((el) => (el.hidden = name !== mode));
+  }
   document
-    .querySelectorAll(".phase-only")
-    .forEach((el) => (el.hidden = !phase));
-  document.querySelectorAll(".knobs-only").forEach((el) => (el.hidden = phase));
-  $("drift").checked = !phase;
-  if (phase) drawSweep();
+    .querySelectorAll(".no-flight")
+    .forEach((el) => (el.hidden = mode === "flight"));
+  $("drift").checked = mode === "knobs";
+  if (mode !== "flight") {
+    worldView.zoom = 0;
+    worldView.gain = 1;
+  }
+  if (mode === "phase") drawSweep();
 }
 
 $("readoutMode").addEventListener("change", applyReadoutMode);
+$("resetPolicy").addEventListener("click", resetPolicy);
+$("eta").addEventListener("input", () => {
+  $("etaOut").textContent = (10 ** Number($("eta").value)).toExponential(0);
+});
+$("sigma").addEventListener("input", () => {
+  $("sigmaOut").textContent = Number($("sigma").value).toFixed(2);
+});
 $("sweep").addEventListener("click", runSweep);
 $("stim").addEventListener("input", () => {
   $("stimOut").textContent = Number($("stim").value).toFixed(2);
@@ -957,19 +1203,27 @@ function frame(now) {
   drawEye();
   drawKnobs();
   if (phaseMode()) drawYawTrace();
+  if (flightMode()) {
+    drawGfTrace();
+    drawActions();
+    $("takeoffFlash").style.opacity = flash.toFixed(2);
+    flash = Math.max(0, flash - dt * 1.5);
+  }
   if (now - lastStats > 250) {
     lastStats = now;
     drawOperator();
     drawStats();
+    if (flightMode()) drawFlightStats();
   }
   requestAnimationFrame(frame);
 }
 
 randomizeWorld(seededRandom(7));
 sampleEye(eye, coeff, 0);
-// ?readout=phase opens straight in the phase readout, so a link can point at it.
-if (new URLSearchParams(location.search).get("readout") === "phase") {
-  $("readoutMode").value = "phase";
+// ?readout=phase|flight opens straight in that readout, so a link can point at it.
+const requested = new URLSearchParams(location.search).get("readout");
+if (requested === "phase" || requested === "flight") {
+  $("readoutMode").value = requested;
 }
 applyReadoutMode();
 requestAnimationFrame(frame);

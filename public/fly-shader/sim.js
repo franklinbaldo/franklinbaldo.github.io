@@ -157,6 +157,65 @@ export function sampleEye(eye, coeff, t, tau = t) {
   return out;
 }
 
+// ---------------------------------------------------------------- compound eye
+
+// What the fly can do to the world beyond the coefficients: `zoom` is the log
+// scale of the pattern about the point straight ahead (rising zoom expands the
+// pattern from the front: looming), `gain` is global contrast and `tau` the
+// phase clock of the modes' own drift.
+export const FRONT_X = 1;
+export const FRONT_Y = 0.5;
+
+export function createView() {
+  return { zoom: 0, gain: 1, tau: 0 };
+}
+
+export function viewValue(coeff, view, x, y) {
+  const s = Math.exp(-view.zoom);
+  const qx = FRONT_X + (x - FRONT_X) * s;
+  const qy = FRONT_Y + (y - FRONT_Y) * s;
+  let value = 0;
+  for (let i = 0; i < MODE_COUNT; i++) {
+    const m = modes[i];
+    const theta = m.kx * qx + m.ky * qy - m.omega * view.tau;
+    value +=
+      coeff[2 * i] * Math.cos(theta) - coeff[2 * i + 1] * Math.sin(theta);
+  }
+  return view.gain * value;
+}
+
+export function createColumnEye(count) {
+  return {
+    lum: new Float32Array(count),
+    dlum: new Float32Array(count),
+    previousTime: null,
+  };
+}
+
+export function cloneColumnEye(eye) {
+  return {
+    lum: new Float32Array(eye.lum),
+    dlum: new Float32Array(eye.dlum),
+    previousTime: eye.previousTime,
+  };
+}
+
+// Luminance and its temporal change at every column, with the same squashing
+// as the grid eye's luminance and temporal features.
+export function sampleColumns(eye, geometry, coeff, view, t) {
+  const dt =
+    eye.previousTime === null ? null : Math.max(1e-3, t - eye.previousTime);
+  for (let c = 0; c < geometry.count; c++) {
+    const lum = Math.tanh(
+      0.9 * viewValue(coeff, view, geometry.x[c], geometry.y[c])
+    );
+    eye.dlum[c] = dt === null ? 0 : Math.tanh(((lum - eye.lum[c]) / dt) * 0.5);
+    eye.lum[c] = lum;
+  }
+  eye.previousTime = t;
+  return eye;
+}
+
 // ---------------------------------------------------------------- motor readout
 
 const projections = new Map();
@@ -254,6 +313,38 @@ export function prepareCircuit(circuit) {
   };
 }
 
+// Attaches the compound eye (eye_columns.json) and the DN types (dn_types.json)
+// to a prepared circuit. Each column becomes a viewing direction in world
+// coordinates — the equirectangular panorama, x = (az + π)/π ∈ [0, 2],
+// y = (π/2 − el)/π ∈ [0, 1], so the canvas shows the whole sphere around the
+// fly — plus the flat list of its lamina cells.
+export function attachEye(circuit, eyeColumns, dnTypes) {
+  const columns = eyeColumns.columns;
+  const n = columns.length;
+  const x = new Float32Array(n);
+  const y = new Float32Array(n);
+  const side = new Int8Array(n);
+  const offsets = new Uint32Array(n + 1);
+  const cells = [];
+  columns.forEach((c, i) => {
+    x[i] = (c.az + Math.PI) / Math.PI;
+    y[i] = (Math.PI / 2 - c.el) / Math.PI;
+    side[i] = c.side;
+    cells.push(...c.L1, ...c.L2, ...c.L3);
+    offsets[i + 1] = cells.length;
+  });
+  const giantFiber = [];
+  dnTypes.type.forEach((t, i) => {
+    if (t === "DNp01") giantFiber.push(i);
+  });
+  return {
+    ...circuit,
+    eye: { count: n, x, y, side, offsets, cells: Uint32Array.from(cells) },
+    dn_type: dnTypes.type,
+    gf: giantFiber, // positions in dn_all of DNp01, the giant fiber
+  };
+}
+
 export function createBrain(circuit, connectome) {
   const n = connectome.offsets.length - 1;
   return {
@@ -266,12 +357,21 @@ export function createBrain(circuit, connectome) {
   };
 }
 
-// One recurrent update, identical to the FlyDoom Fourier Next worker: each eye
-// cell drives its own ingress bucket, split by feature × sign; the frozen
-// MaleCNS weights then relax the state by 0.65/0.35. Returns the DN readout.
-export function brainStep(brain, features) {
-  const { circuit, connectome, drive } = brain;
-  drive.fill(0);
+// One recurrent update with the frozen MaleCNS weights (state relaxes by
+// 0.65/0.35, as in the FlyDoom Fourier Next worker). `input` is either the 8×4
+// grid features (FlyDoom ingress into visual projection neurons) or a compound
+// eye sample { lum, dlum } (lamina drive, see injectColumns). Returns the DNs.
+export function brainStep(brain, input) {
+  brain.drive.fill(0);
+  if (input && input.lum) injectColumns(brain, input);
+  else injectGrid(brain, input);
+  return relax(brain);
+}
+
+// FlyDoom ingress: each eye cell drives its own bucket of visual projection
+// neurons, split by feature × sign.
+function injectGrid(brain, features) {
+  const { circuit, drive } = brain;
   const partitions = FEATURE_COUNT * 2;
   for (let cell = 0; cell < EYE_CELLS; cell++) {
     const col = cell % 8;
@@ -290,7 +390,28 @@ export function brainStep(brain, features) {
       }
     }
   }
+}
 
+// Compound-eye ingress: every retinotopic column drives its own lamina L1, L2
+// and L3 cells. Light enters with a negative sign because in this artifact
+// every R1–R6 → L1/L2/L3 synapse is inhibitory (histaminergic), so the drive
+// stands in for the photoreceptors the trace left out, without their columns.
+export const LAMINA_SUSTAINED = 0.6;
+export const LAMINA_TRANSIENT = 0.8;
+
+function injectColumns(brain, sample) {
+  const { drive } = brain;
+  const { offsets, cells } = brain.circuit.eye;
+  const { lum, dlum } = sample;
+  for (let c = 0; c < lum.length; c++) {
+    const d = -(LAMINA_SUSTAINED * lum[c] + LAMINA_TRANSIENT * dlum[c]);
+    for (let k = offsets[c]; k < offsets[c + 1]; k++) drive[cells[k]] += d;
+  }
+}
+
+function relax(brain) {
+  const { circuit, connectome } = brain;
+  const drive = brain.drive;
   const { offsets, scales, deltas, weights, lut } = connectome;
   const state = brain.state;
   const next = brain.next;
@@ -558,4 +679,174 @@ export function optomotorSummary(velocities, values) {
     slope: den ? num / den : 0,
     directional: oddEnergy / Math.max(1e-30, oddEnergy + evenEnergy),
   };
+}
+
+// ---------------------------------------------------------------- flight: actions
+
+// Everything the fly can do to its world. Global actions are exact transforms
+// (yaw/pitch are phase ramps, loom rescales the spectrum about the point ahead,
+// contrast scales the field, drift sets the modes' own clock); the rest are the
+// original knobs, one velocity per real and imaginary part of each mode.
+export const GLOBAL_ACTIONS = ["yaw", "pitch", "loom", "contrast", "drift"];
+export const ACTION_LABELS = [
+  ...GLOBAL_ACTIONS,
+  ...modes.flatMap((m, i) => [`re${i}`, `im${i}`]),
+];
+export const ACTION_COUNT = ACTION_LABELS.length;
+export const FLIGHT_LEAK = 0.1;
+
+// f'(x, y) = f(x, y − dy): every mode turns by −ky·dy.
+export function shiftWorldY(coeff, dy) {
+  for (let i = 0; i < MODE_COUNT; i++) {
+    const phi = -modes[i].ky * dy;
+    const c = Math.cos(phi);
+    const s = Math.sin(phi);
+    const re = coeff[2 * i];
+    const im = coeff[2 * i + 1];
+    coeff[2 * i] = re * c - im * s;
+    coeff[2 * i + 1] = re * s + im * c;
+  }
+}
+
+// Advances the world one step under actions in [−1, 1]. Loom and contrast
+// relax back to neutral, so looming stays a change the fly has to keep making
+// rather than a state it can park in.
+export function applyActions(coeff, view, actions, dt) {
+  shiftWorld(coeff, 0.4 * actions[0] * dt);
+  shiftWorldY(coeff, 0.2 * actions[1] * dt);
+  view.zoom = clamp(
+    view.zoom + dt * (0.8 * actions[2] - 0.3 * view.zoom),
+    -1.5,
+    1.5
+  );
+  view.gain = clamp(
+    view.gain + dt * (0.6 * actions[3] - 0.3 * (view.gain - 1)),
+    0.1,
+    3
+  );
+  view.tau += dt * (1 + actions[4]);
+  const g = GLOBAL_ACTIONS.length;
+  for (let i = 0; i < KNOB_COUNT; i++) {
+    coeff[i] += dt * (MOTOR_DRIVE * actions[g + i] - FLIGHT_LEAK * coeff[i]);
+  }
+  limitAmplitude(coeff);
+}
+
+// ---------------------------------------------------------------- flight: policy
+
+// A linear policy from the DNs to the actions, trained by reward alone while
+// the connectome stays frozen. Reward is the giant fiber (DNp01, both sides):
+// its activity above a slow running mean, in units of its running deviation.
+// The giant fiber is removed from the policy's input, so the policy can only
+// raise it through the world. Learning is REINFORCE with node perturbation:
+// the action is a = clamp(tanh(W·z) + ξ, −1, 1) with ξ an Ornstein–Uhlenbeck
+// exploration noise kept outside the tanh (a saturated mean must not silence
+// exploration), an eligibility trace e accumulates ξ·(1 − tanh²)·z over about a
+// second (the eye → giant fiber delay), and W += η·δ·e − decay·W with δ the
+// normalised reward. Inputs are z-scored per DN and scaled by 1/√n, so the DN
+// part of z has unit norm and the bias (constant 1) — the policy's plain
+// preference for each action — learns first.
+export const REWARD_TAU = 10;
+export const ELIGIBILITY_TAU = 1;
+export const NOISE_TAU = 0.5;
+export const TAKEOFF_Z = 3;
+export const INPUT_TAU = 10;
+export const WEIGHT_DECAY = 0.01; // per world-second, only while learning
+
+export function createPolicy(dnCount, gf, seed = 1) {
+  const inputs = dnCount + 1; // DNs + bias
+  return {
+    inputs,
+    gf: new Set(gf),
+    W: new Float32Array(ACTION_COUNT * inputs),
+    e: new Float32Array(ACTION_COUNT * inputs),
+    z: new Float32Array(inputs),
+    dnMean: new Float32Array(dnCount),
+    dnVar: new Float32Array(dnCount),
+    noise: new Float32Array(ACTION_COUNT),
+    actions: new Float32Array(ACTION_COUNT),
+    rMean: 0,
+    rVar: 0,
+    ticks: 0,
+    gfLevel: 0,
+    reward: 0,
+    takeoffs: 0,
+    flying: false,
+    rng: seededRandom(seed),
+  };
+}
+
+function gaussian(rng) {
+  const u = Math.max(1e-12, rng());
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * rng());
+}
+
+// One neural tick: score the giant fiber, learn from it, then act. Returns
+// true on a takeoff (the giant fiber crossing TAKEOFF_Z deviations).
+export function policyStep(policy, dnValues, tickDt, { learn, eta, sigma }) {
+  const { W, e, z, dnMean, dnVar, noise, actions, inputs } = policy;
+
+  // Reward: giant fiber level, z-scored against its own slow history.
+  let gf = 0;
+  for (const i of policy.gf) gf += dnValues[i];
+  gf /= policy.gf.size;
+  policy.gfLevel = gf;
+  const a = Math.max(
+    1 - Math.exp(-tickDt / REWARD_TAU),
+    1 / (policy.ticks + 1)
+  );
+  const deviation = gf - policy.rMean;
+  policy.rMean += a * deviation;
+  policy.rVar += a * (deviation * deviation - policy.rVar);
+  const delta =
+    policy.ticks < 15 ? 0 : deviation / Math.sqrt(policy.rVar + 1e-12);
+  policy.reward = delta;
+
+  let takeoff = false;
+  if (delta > TAKEOFF_Z && !policy.flying) {
+    policy.takeoffs++;
+    takeoff = true;
+  }
+  policy.flying = delta > TAKEOFF_Z * 0.5 && (policy.flying || takeoff);
+
+  if (learn && policy.ticks >= 15) {
+    const step = eta * clamp(delta, -3, 3);
+    const keep = 1 - WEIGHT_DECAY * tickDt;
+    for (let k = 0; k < W.length; k++) W[k] = keep * W[k] + step * e[k];
+  }
+
+  // Inputs: each DN z-scored against its own running mean and variance, the
+  // giant fiber zeroed, scaled by 1/√n; plus a constant bias.
+  const b = Math.max(1 - Math.exp(-tickDt / INPUT_TAU), 1 / (policy.ticks + 1));
+  const norm = 1 / Math.sqrt(inputs - 1);
+  for (let d = 0; d < inputs - 1; d++) {
+    if (policy.ticks === 0) dnMean[d] = dnValues[d];
+    const dev = dnValues[d] - dnMean[d];
+    dnMean[d] += b * dev;
+    dnVar[d] += b * (dev * dev - dnVar[d]);
+    z[d] =
+      policy.gf.has(d) || policy.ticks < 15
+        ? 0
+        : clamp(dev / Math.sqrt(dnVar[d] + 1e-10), -4, 4) * norm;
+  }
+  z[inputs - 1] = 1;
+
+  // Act with exploration, and remember what the exploration was.
+  const decayNoise = Math.exp(-tickDt / NOISE_TAU);
+  const kick = sigma * Math.sqrt(1 - decayNoise * decayNoise);
+  const decayTrace = Math.exp(-tickDt / ELIGIBILITY_TAU);
+  for (let j = 0; j < ACTION_COUNT; j++) {
+    noise[j] = decayNoise * noise[j] + kick * gaussian(policy.rng);
+    const row = j * inputs;
+    let u = 0;
+    for (let d = 0; d < inputs; d++) u += W[row + d] * z[d];
+    const mean = Math.tanh(u);
+    actions[j] = clamp(mean + noise[j], -1, 1);
+    const slope = noise[j] * (1 - mean * mean);
+    for (let d = 0; d < inputs; d++) {
+      e[row + d] = decayTrace * e[row + d] + slope * z[d];
+    }
+  }
+  policy.ticks++;
+  return takeoff;
 }

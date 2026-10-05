@@ -32,7 +32,12 @@ self.onmessage = (event) => {
     const started = performance.now();
     const dnValues = brainStep(brain, msg.features);
     self.postMessage(
-      { type: "result", dnValues, latency: performance.now() - started },
+      {
+        type: "result",
+        dnValues,
+        flight: Boolean(msg.flight),
+        latency: performance.now() - started,
+      },
       [dnValues.buffer]
     );
     return;
