@@ -322,6 +322,7 @@ const operatorSum = new Float64Array(MODE_COUNT * MODE_COUNT);
 const operatorCount = new Uint32Array(MODE_COUNT);
 let pending = null;
 let lastProbe = 0;
+let lastKickTime = -Infinity;
 const kickMarks = [];
 
 function kick(mode = Math.floor(Math.random() * MODE_COUNT)) {
@@ -343,8 +344,15 @@ function kick(mode = Math.floor(Math.random() * MODE_COUNT)) {
   const kickEnergy = dRe * dRe + dIm * dIm;
   const injected = modeEnergy(coeff, mode) - pre[mode];
 
+  // A sample counts only if the DNs are actually holding the knobs and the
+  // previous kick has washed out; a kick that lands inside another kick's
+  // window contaminates both, so the earlier measurement is dropped too.
+  const washedOut = worldTime - lastKickTime >= OP_WINDOW[1];
+  lastKickTime = worldTime;
+  const loopLive = $("closed").checked && workerReady && haveMotor;
+
   pending =
-    $("closed").checked && kickEnergy > 1e-4
+    loopLive && washedOut && !pending && kickEnergy > 1e-4
       ? {
           mode,
           t0: worldTime,

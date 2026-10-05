@@ -344,11 +344,11 @@
 
       <div class="lower">
         <div class="panel">
-          <h2>Mode energy over time</h2>
+          <h2>Mode amplitude over time</h2>
           <canvas id="waterfall" width="640" height="240"></canvas>
           <div class="legend"><span>−20 s</span><span>now</span></div>
           <p class="note">
-            One row per mode, brightness = |c|². Stable bands are fixed points;
+            One row per mode, brightness = |c|. Stable bands are fixed points;
             stripes that repeat are cycles; amber ticks mark a perturbation.
           </p>
         </div>
@@ -359,8 +359,9 @@
             Row = mode kicked, column = mode that changed. Cell = energy change
             1–3 s after the kick versus just before it, minus the kick’s own
             passive decay, centred across kicked modes so only the kick-specific
-            response remains. Cyan = gained energy, violet = lost. Meaningful
-            only with the loop closed and after many kicks;
+            response remains. Cyan = gained energy, violet = lost. Kicks before
+            the DNs are live, or within 3 s of another kick, are not recorded.
+            Meaningful only after many kicks;
             <span id="opCount">0 kicks</span>.
           </p>
         </div>
