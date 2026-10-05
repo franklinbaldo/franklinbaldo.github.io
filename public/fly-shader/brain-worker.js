@@ -2,7 +2,7 @@
 // a second instance (the lab) runs paired counterfactual probes from snapshots
 // of the live state without stalling the live loop.
 
-import { brainStep, createBrain, pairedProbe } from "./sim.js";
+import { brainStep, createBrain, optomotorSweep, pairedProbe } from "./sim.js";
 
 let brain = null;
 
@@ -32,7 +32,12 @@ self.onmessage = (event) => {
     const started = performance.now();
     const dnValues = brainStep(brain, msg.features);
     self.postMessage(
-      { type: "result", dnValues, latency: performance.now() - started },
+      {
+        type: "result",
+        dnValues,
+        flight: Boolean(msg.flight),
+        latency: performance.now() - started,
+      },
       [dnValues.buffer]
     );
     return;
@@ -52,6 +57,22 @@ self.onmessage = (event) => {
       mode: msg.kick.mode,
       response,
       kickEnergy,
+      elapsed: performance.now() - started,
+    });
+    return;
+  }
+
+  if (msg.type === "sweep") {
+    const started = performance.now();
+    const sweep = optomotorSweep(
+      msg.snapshot,
+      brain,
+      msg.velocities,
+      (fraction) => self.postMessage({ type: "sweepProgress", fraction })
+    );
+    self.postMessage({
+      type: "sweep",
+      sweep,
       elapsed: performance.now() - started,
     });
   }

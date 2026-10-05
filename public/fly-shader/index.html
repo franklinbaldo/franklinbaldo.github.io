@@ -248,8 +248,85 @@
         margin-top: 4px;
       }
 
+      select {
+        width: 100%;
+        background: #102230;
+        color: var(--text);
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 6px 8px;
+        font: inherit;
+        font-size: 0.8rem;
+      }
+
+      .phase-only[hidden],
+      .knobs-only[hidden],
+      .flight-only[hidden],
+      .no-flight[hidden] {
+        display: none;
+      }
+
+      .note a {
+        color: var(--cyan);
+      }
+
+      .takeoff {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 2.4rem;
+        font-weight: 750;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--amber);
+        background: radial-gradient(rgba(255, 195, 107, 0.28), transparent 70%);
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .assay {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .assay canvas {
+        width: 100%;
+        display: block;
+        border-radius: 6px;
+        background: #03070a;
+      }
+
+      .assay-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .assay-head h2 {
+        margin: 0;
+      }
+
+      .verdict {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.72rem;
+        color: var(--muted);
+        line-height: 1.55;
+        margin-top: 6px;
+      }
+
+      .verdict b {
+        color: var(--text);
+        font-weight: 600;
+      }
+
       @media (max-width: 820px) {
         .main,
+        .assay,
         .lower {
           grid-template-columns: minmax(0, 1fr);
         }
@@ -280,6 +357,7 @@
           <div class="stage">
             <canvas id="world" width="960" height="480"></canvas>
             <canvas id="eye" width="960" height="480"></canvas>
+            <div id="takeoffFlash" class="takeoff">GF ≥ 3σ</div>
           </div>
         </div>
 
@@ -288,22 +366,77 @@
             <span class="dot"></span><span id="statusText">loading…</span>
           </div>
 
+          <div class="row">
+            <label for="readoutMode">readout</label>
+            <select id="readoutMode">
+              <option value="knobs">arbitrary: DNs paint the knobs</option>
+              <option value="phase">phase: DNs turn the fly (yaw)</option>
+              <option value="flight">
+                flight: whole eye, learns what makes it take off
+              </option>
+            </select>
+          </div>
+
           <label class="toggle">
-            <input id="closed" type="checkbox" checked /> loop closed (DNs hold
-            the knobs)
+            <input id="closed" type="checkbox" checked /> loop closed (DNs act
+            on the world)
           </label>
-          <label class="toggle">
+          <label class="toggle no-flight">
+            <input id="drift" type="checkbox" checked /> modes drift on their
+            own
+          </label>
+          <label class="toggle flight-only" hidden>
+            <input id="learn" type="checkbox" checked /> learning (reward =
+            giant fiber)
+          </label>
+          <label class="toggle knobs-only">
             <input id="adaptive" type="checkbox" checked /> adaptive readout
             (z-scored DNs)
           </label>
-          <label class="toggle">
+          <label class="toggle knobs-only">
             <input id="probe" type="checkbox" /> auto-probe (kick every 4 s)
           </label>
           <label class="toggle">
             <input id="showEye" type="checkbox" checked /> show eye samples
           </label>
 
-          <div class="row">
+          <div class="row phase-only" hidden>
+            <label
+              >stimulus rotation, x/s (2 x = 360°)
+              <b id="stimOut">0.30</b></label
+            >
+            <input
+              id="stim"
+              type="range"
+              min="-0.6"
+              max="0.6"
+              step="0.05"
+              value="0.3"
+            />
+          </div>
+          <div class="row flight-only" hidden>
+            <label>learning rate <b id="etaOut">1e-3</b></label>
+            <input
+              id="eta"
+              type="range"
+              min="-5"
+              max="-2"
+              step="0.25"
+              value="-3"
+            />
+          </div>
+          <div class="row flight-only" hidden>
+            <label>exploration σ <b id="sigmaOut">0.50</b></label>
+            <input
+              id="sigma"
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value="0.5"
+            />
+          </div>
+          <div class="row no-flight">
             <label>motor gain <b id="gainOut">1.0</b></label>
             <input
               id="gain"
@@ -314,7 +447,7 @@
               value="1"
             />
           </div>
-          <div class="row">
+          <div class="row knobs-only">
             <label>leak <b id="leakOut">0.35</b></label>
             <input
               id="leak"
@@ -331,10 +464,110 @@
             <button id="reset">Reset world</button>
             <button id="clearOp">Clear operator</button>
             <button id="pause">Pause</button>
+            <button id="resetPolicy" class="flight-only" hidden>
+              Forget policy
+            </button>
           </div>
 
           <div id="stats" class="stats"></div>
         </div>
+      </div>
+
+      <div class="panel flight-only" hidden>
+        <h2>Flight drive — what makes the fly want to take off</h2>
+        <div class="assay">
+          <div>
+            <canvas id="gfTrace" width="560" height="180"></canvas>
+            <div class="legend">
+              <span>−60 s</span
+              ><span
+                >cyan = giant-fiber drive (σ above its own mean) · dashed = 3σ
+                threshold · amber = crossing (takeoff proxy)</span
+              ><span>now</span>
+            </div>
+            <div id="flightStats" class="verdict"></div>
+          </div>
+          <div>
+            <canvas id="actions" width="560" height="180"></canvas>
+            <div class="legend">
+              <span>amber = Yaw · Pitch · Loom · Contrast · Drift</span
+              ><span>cyan = mode coefficients (re, im)</span>
+            </div>
+          </div>
+        </div>
+        <p class="note">
+          The compound eye looks at the world: 1,771 retinotopic columns (879
+          left, 892 right), each driving its own lamina L1 and L2 cells, matched
+          by the MaleCNS hex annotation; 1,768 columns have at least one. L3 is
+          left out because MaleCNS v1.0 annotates it in the right eye only, and
+          a one-sided input is an asymmetry a reward-seeking policy would
+          exploit. Light enters with a negative sign because every photoreceptor
+          → L1/L2 synapse in this connectome is inhibitory. The fly acts on its
+          world in 29 ways: yaw and pitch (exact phase ramps), loom (the pattern
+          expands from straight ahead), contrast, the speed of the modes' own
+          drift, and a velocity on each of the 24 mode coefficients. A linear
+          policy from the descending neurons to those actions is trained by
+          reward alone — reward-modulated node perturbation with a one-second
+          eligibility trace — while the connectome stays frozen; with the loop
+          open it neither acts nor learns. The reward is the giant fiber, DNp01
+          (“GF” in the MaleCNS annotation), central to the visual escape
+          circuit, measured as how far it rises above its own recent mean; it is
+          removed from the policy's input, so the only way to raise it is
+          through what the eye sees. A crossing of 3σ is counted as a takeoff
+          proxy — an event in this rate model, not an observed takeoff. In
+          headless runs a sham learner rewarded by two random DNs crosses as
+          often as the real one, so there is no evidence yet of giant-fiber
+          specific learning. Column geometry, lamina hex coordinates and DN
+          types: MaleCNS v1.0, CC BY 4.0 (Berg et al. 2026,
+          <a href="https://doi.org/10.1016/j.cell.2026.08.015"
+            >doi:10.1016/j.cell.2026.08.015</a
+          >).
+        </p>
+      </div>
+
+      <div class="panel phase-only" hidden>
+        <div class="assay-head">
+          <h2>Optomotor assay — does the fly turn with the world?</h2>
+          <button id="sweep">Run sweep</button>
+        </div>
+        <div class="assay">
+          <div>
+            <canvas id="yawTrace" width="560" height="200"></canvas>
+            <div class="legend">
+              <span>−20 s</span
+              ><span
+                >amber = stimulus · cyan = fly yaw · violet = controlled
+                rotation (stimulus − yaw)</span
+              ><span>now</span>
+            </div>
+          </div>
+          <div>
+            <canvas id="sweepPlot" width="560" height="200"></canvas>
+            <div id="verdict" class="verdict">
+              No sweep yet. A sweep snapshots the live state and replays, for
+              each stimulus speed, a 6 s open-loop branch (the world turns, the
+              fly cannot) and a closed-loop branch (its yaw subtracts from the
+              slip), with the modes' own drift frozen.
+            </div>
+          </div>
+        </div>
+        <p class="note">
+          Here the DNs no longer paint the coefficients: the world's texture is
+          fixed and the DNs move the fly through it. A yaw turn is a translation
+          in x, which for Fourier modes is an exact phase ramp c →
+          c·e<sup>−i·kx·Δx</sup>, so self-motion adds no free parameters. The
+          artifact labels DNs only by side, so steering = mean(right DNs) −
+          mean(left DNs), z-scored against a 20 s baseline, with the convention
+          right &gt; left ⇒ turn right. Left panel of the sweep: open-loop
+          response, Δ(R−L) relative to the paired v = 0 branch. Right:
+          closed-loop yaw; the dashed diagonal is perfect following. The odd
+          part of the response (it flips with the stimulus) is the directional,
+          optomotor-like component; the even part reacts to motion regardless of
+          direction. The sign convention is an assumption: a consistently
+          negative slope would mean the convention, not the fly, is backwards;
+          an even-dominated response means there is no optomotor reflex to find.
+          No null model yet.
+        </p>
       </div>
 
       <div class="panel">
@@ -342,7 +575,7 @@
         <div id="knobs" class="knobs"></div>
       </div>
 
-      <div class="lower">
+      <div class="lower knobs-only">
         <div class="panel">
           <h2>Mode amplitude over time</h2>
           <canvas id="waterfall" width="640" height="240"></canvas>
