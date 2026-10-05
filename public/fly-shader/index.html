@@ -342,13 +342,13 @@
       <header>
         <h1>The Shader Is the Fly’s World</h1>
         <p>
-          Twelve drifting Fourier modes are the whole visual world. A frozen
-          MaleCNS connectome looks at it through an 8×4 eye, and its 1,314
-          descending neurons hold the knobs.
+          A frozen MaleCNS connectome is coupled to a visual world in several
+          ways: arbitrary Fourier knobs, yaw, a learned flight policy, or a
+          no-reward 128-dimensional generative world that the DNs tune directly.
         </p>
-        <p class="loop">
-          shader → eye (8×4 × 6 features) → MaleCNS → descending neurons →
-          Fourier coefficients → shader
+        <p id="loopDiagram" class="loop">
+          shader → eye (8×4 × 6) → MaleCNS → DNs → Fourier coefficients →
+          shader
         </p>
       </header>
 
@@ -374,6 +374,9 @@
               <option value="flight">
                 flight: whole eye, learns what makes it take off
               </option>
+              <option value="world">
+                world: whole eye tunes a 128-D generative world
+              </option>
             </select>
           </div>
 
@@ -381,7 +384,7 @@
             <input id="closed" type="checkbox" checked /> loop closed (DNs act
             on the world)
           </label>
-          <label class="toggle no-flight">
+          <label class="toggle no-flight no-world">
             <input id="drift" type="checkbox" checked /> modes drift on their
             own
           </label>
@@ -436,7 +439,7 @@
               value="0.5"
             />
           </div>
-          <div class="row no-flight">
+          <div class="row no-flight no-world">
             <label>motor gain <b id="gainOut">1.0</b></label>
             <input
               id="gain"
@@ -459,13 +462,31 @@
             />
           </div>
 
+          <div class="row world-only" hidden>
+            <label>world initial seed</label>
+            <input id="worldSeed" type="number" min="1" step="1" value="1" />
+          </div>
+          <div class="row world-only" hidden>
+            <label>DN → latent projection seed</label>
+            <input
+              id="projectionSeed"
+              type="number"
+              min="1"
+              step="1"
+              value="1"
+            />
+          </div>
+
           <div class="buttons">
-            <button id="kick">Perturb a mode</button>
-            <button id="reset">Reset world</button>
-            <button id="clearOp">Clear operator</button>
+            <button id="kick" class="no-world">Perturb a mode</button>
+            <button id="reset" class="no-world">Reset world</button>
+            <button id="clearOp" class="no-world">Clear operator</button>
             <button id="pause">Pause</button>
             <button id="resetPolicy" class="flight-only" hidden>
               Forget policy
+            </button>
+            <button id="resetWorldAttractor" class="world-only" hidden>
+              Reset + recalibrate
             </button>
           </div>
 
@@ -473,8 +494,39 @@
         </div>
       </div>
 
+      <div class="panel world-only" hidden>
+        <h2>Self-tuning world — no reward, no learned policy</h2>
+        <div id="worldStats" class="verdict"></div>
+        <p class="note">
+          The state of this experiment is what the fly can actually see. A
+          128-dimensional latent controls 64 complex multiscale Fourier modes;
+          the first eight dimensions also warp coordinates. Every latent
+          dimension changes panorama luminance — there are no colour-only or
+          blind-field-only parameters in this first version. The 1,771
+          compound-eye luminances are therefore the primary perceptual
+          fingerprint; distance in θ is secondary.
+        </p>
+        <p class="note">
+          Before feedback starts, DN means and variances are measured for
+          8 world-seconds with θ held fixed, then frozen. After that the loop is
+          dθ/dt = −λθ + gPz(DN), with a seeded fixed ±1 projection P, g = 0.18
+          and λ = 0.20. There is no reward, exploration or online
+          renormalisation. The generator has no autonomous clock in this mode,
+          so a fixed θ is a stationary visual world. Opening the loop leaves
+          only the leak. The screen and the JS eye sampler share the same
+          generator equations and are checked at runtime with WebGL readPixels.
+        </p>
+        <p class="note">
+          Convergence here is not a claim about what the fly “likes”. The
+          headless assay compares real MaleCNS with an open-loop generator,
+          DN-identity permutation and visual-column permutation across world and
+          projection seeds. Only structure that survives those controls is a
+          candidate connectome-induced perceptual attractor.
+        </p>
+      </div>
+
       <div class="panel flight-only" hidden>
-        <h2>Flight drive — what makes the fly want to take off</h2>
+        <h2>Flight drive — giant-fiber takeoff/escape proxy</h2>
         <div class="assay">
           <div>
             <canvas id="gfTrace" width="560" height="180"></canvas>
