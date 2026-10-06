@@ -5,14 +5,15 @@ kind: "contender"
 scientific_tier: "C"
 interest_tier: "S"
 confidence: "medium"
-summary: "Passes 11570-11579 add an executable su(3)+su(2)+u(1) intersection, discrete curvature and overlap/Ginsparg-Wilson structure, while preserving explicit firewalls on chirality and gravity."
-strengths: ["Exact finite-algebra certificates.", "Executable Standard-Model-shaped Lie algebra.", "Nontrivial discrete curvature.", "Explicit negative firewalls."]
-open_problems: ["The su(2) factor also rotates the selected event 3-plane.", "The matter carrier is vectorlike rather than the observed chiral Standard Model.", "Einstein-Hilbert remains conditional on a smooth Dirac limit.", "Observed masses, couplings and empirical validation remain missing."]
-source_label: "W33 Passes 11570-11579"
-source_url: "https://github.com/wilcompute/W33-Theory/commit/81d039a08f6d18e22c34059ea748a483f8011878"
+summary: "Passes 11580-11589 move the gauge interpretation to internal Spin(10), deriving a Pati-Salam chain, one-family hypercharges, the Z6 quotient and anomaly checks while keeping family replication, flavor and continuum gravity open."
+strengths: ["Executable finite-algebra certificates.", "Derived one-family charge spectrum.", "Explicit anomaly and global-group checks.", "The previous spatial-SU(2) interpretation is corrected rather than hidden."]
+open_problems: ["Family replication and flavor remain open.", "Measured couplings and vacuum selection remain open.", "Einstein dynamics still require a controlled continuum limit.", "Independent empirical validation is absent."]
+source_label: "W33 Passes 11580-11589"
+source_url: "https://github.com/wilcompute/W33-Theory/commit/b156c5512ee588b926e769e9825a5dea96a133eb"
 source_date: "2026-10-06"
-note: "r274: remains C/S. Material mathematical advance, but the physical bridge remains open. No tier movement."
+note: "r276: remains C/S. Material internal advance: the prior weak-isospin/spacetime conflation is repaired, but gravity, flavor and empirical bridges remain unresolved. No tier movement."
 updated: "2026-10-06"
 ---
 # W(3,3) Finite-Geometry Unification Programme
-C/S, medium confidence.
+
+C/S, medium confidence. The new Spin(10) packet strengthens the internal Standard-Model-shaped structure without yet closing the physical bridge.
