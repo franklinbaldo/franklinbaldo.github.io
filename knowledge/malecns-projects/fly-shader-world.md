@@ -1,23 +1,24 @@
 ---
 type: malecns-project
-project_id: 'franklinbaldo-fly-shader-world'
-name: 'The Shader Is the Flys World'
+project_id: franklinbaldo-fly-shader-world
+name: Fly Shader World
 ownership: own
-kind: experimental demo
-stage: results published
+kind: visual feedback experiment
+stage: public demo; negative assays; next grid pending
 primary_url: https://franklinbaldo.github.io/fly-shader/
 scientific_tier: C
 interest_tier: S
 confidence: medium
 reviewed_at: '2026-10-09'
 reviewed_revision: 1dbb600ee84e861b99e5113b593066c5b078a554
-summary: 'The public demo implements connectome-driven visual feedback. Optomotor and reward tests were negative; the new generative-world assay is pending.'
+summary: 'Frozen MaleCNS responds to Fourier imagery and modifies its own simulated world. No biologically validated behavior or attractor has been shown.'
 strongest_evidence:
-  - 'PR 2356 reports negative optomotor and sham-reward assays.'
+  - 'Eight-world optomotor and three-world giant-fiber reward assays were negative (PR 2356).'
 limitations:
-  - 'No completed real-versus-null attractor comparison.'
+  - 'Visual/motor mappings are synthetic; 100-run world-attractor grid not reported.'
 controls:
-  - 'Matched DN and visual permutations implemented but not yet run.'
+  - 'Measured sham reward; planned DN and retinal-column permutation nulls.'
 history:
   - '2026-10-09: initial C/S/medium.'
+note: 'Unlike FlyDoom, output is the perceived world rather than a game action.'
 ---
