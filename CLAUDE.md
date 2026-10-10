@@ -55,6 +55,15 @@ uv run --with 'okf-parser @ git+https://github.com/franklinbaldo/okf-parser@e8ed
 Historical `type: Rate File` documents remain immutable compatibility data.
 Do not rewrite them merely to modernize shape.
 
+## Experiência do leitor — UX/UI
+
+A rotina autônoma está em [`.routine/ux-ui/index.md`](.routine/ux-ui/index.md).
+O estado persistente em DAG é [`knowledge/ux-ui/index.md`](knowledge/ux-ui/index.md),
+validado pelo tipo [`ux-ui-improvement`](specs/okf-types/ux-ui-improvement.md).
+Use `npm run ux:check` e `npm run ux:graph`; documente a evidência e
+abra PRs de alterações concretas. Não faça merge automaticamente nem declare
+testes não executados como aprovados. Preserve i18n e acessibilidade.
+
 ## Sistema de tiers
 
 Posts, músicas e projetos compartilham infraestrutura de apresentação, mas têm fontes
