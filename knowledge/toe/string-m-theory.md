@@ -17,3 +17,11 @@ updated: "2026-10-03"
 # String theory / M-theory
 
 A/S, medium confidence.
+
+## r368 — Differential T₂ duality and higher global data (10 October 2026)
+
+Gagliardo, Saemann and Tellez-Dominguez, arXiv:2610.12383v1 (8 October 2026), develop **differential T₂ duality** as spans of principal 3-bundles with connections. They characterize dual pairs, give rules for transforming characteristic classes and connect the d=2 case to the dimensional-reduction/T-duality chain from eleven-dimensional supergravity to type IIB. It sharpens the mathematics of global higher gauge fields and duality beyond a purely local or rational-homotopy picture.
+
+**Evidence and limits:** The principal-3-bundle characterization and examples are substantive mathematical results, but the authors explicitly state this is *not* full U-duality. M5-branes, full Riemannian information and the mixed G₄ gravitational flux quantization condition remain unincorporated. No unique realistic compactification or experimental prediction follows.
+
+**Clash:** String/M-theory A/S vs BFSS Matrix Theory A/S. This result improves a geometric duality dictionary; BFSS pursues a microscopic matrix definition, and neither currently derives a unique observed 4D vacuum. Scientific **A**, interest **S**, confidence **medium**, unchanged. Source: https://arxiv.org/abs/2610.12383 ; https://arxiv.org/html/2610.12383v1 .
