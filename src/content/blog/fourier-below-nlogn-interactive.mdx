@@ -1,0 +1,38 @@
+---
+type: Blog Post
+title: "Fourier below n log n: an interactive laboratory"
+description: "Explore the DFT, the classic FFT, and what OpenAI's tiny theoretical exponent saving actually means in a browser-based visual laboratory."
+date: 2026-10-10
+lang: en
+docType: technical
+tags: [mathematics, algorithms, fourier, interactive, complexity]
+emoji: "〰️"
+---
+
+In October 2026, [OpenAI Mathematics result #130](https://github.com/openai/math/blob/main/overview.tex) made a striking claim: a deterministic exact discrete Fourier transform for every length `n` with `O(n (log n)^(1−10⁻¹³))` operations. This crosses a familiar asymptotic boundary—but **not** in the model of your everyday JavaScript FFT.
+
+## Try the Fourier laboratory
+
+Change the waveform and sample size, inspect the spectrum, and compare the operation counts. Everything runs **locally in your browser**, without a backend or third-party scripts.
+
+<iframe src="/demos/fourier-below-nlogn.html" title="Interactive Fourier transform and complexity laboratory" loading="lazy" style={{ width: '100%', height: '1130px', border: '0', borderRadius: '12px', background: '#0b1220' }}></iframe>
+
+[Open the laboratory in its own tab](/demos/fourier-below-nlogn.html).
+
+## What is actually implemented?
+
+The demo executes two **real** transforms on the same input: a direct discrete Fourier transform using quadratic work, and a conventional in-place radix-2 Cooley–Tukey FFT using `O(n log n)` work. Their numerical disagreement is shown explicitly. The transform is approximate because JavaScript uses floating-point numbers.
+
+The paper's `O(n (log n)^(1−δ))` result is **not implemented here**. Its exact-arithmetic construction relies on finite tensor savings, specially prepared scalars and substantial uniformization machinery. Showing the asymptotic expression on a graph is not equivalent to implementing it.
+
+## Why such a tiny delta matters
+
+For `δ = 10⁻¹³`, the ratio between the idealized expressions is `(log n)^(-δ)`. At ordinary input sizes, this differs from one by a microscopic fraction. The significance is theoretical: it establishes, under the stated model and assuming the proof, a strict asymptotic saving beyond the familiar `n log n` form. Big-O notation hides constants and provides no practical crossover size.
+
+## The exactness caveat
+
+The claimed algorithm works in an **exact complex arithmetic** model with unrestricted coefficients and a supplied root of unity, counting scalar preparation and logarithmic-word indexing. That is not a bit-complexity claim, a finite-precision stability theorem or an assertion that it beats optimized numerical FFT libraries in practice. The associated [Lean scope description](https://github.com/openai/math/blob/main/lean/docs/130.md) distinguishes the subsequential circuit result from the all-length uniform theorem.
+
+The natural next research task is to isolate and implement one finite tensor-saving primitive from the manuscripts at a tractable size, instrument its actual gate count, and compare it against an equally charged FFT baseline—without silently substituting a conventional FFT for the new construction.
+
+**Primary sources:** [OpenAI Mathematics overview](https://github.com/openai/math/blob/main/overview.tex) · [Uniform exact Fourier scope](https://github.com/openai/math/blob/main/lean/docs/130.md) · [Explicit power-saving manuscript](https://github.com/openai/math/blob/main/preprints/An-explicit-power-saving-for-the-exact-discrete-Fourier-transform-September-25-2026/main.pdf)
