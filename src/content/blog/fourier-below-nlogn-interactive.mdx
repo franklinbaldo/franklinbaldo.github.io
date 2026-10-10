@@ -25,6 +25,14 @@ The demo executes two **real** transforms on the same input: a direct discrete F
 
 The paper's `O(n (log n)^(1−δ))` result is **not implemented here**. Its exact-arithmetic construction relies on finite tensor savings, specially prepared scalars and substantial uniformization machinery. Showing the asymptotic expression on a graph is not equivalent to implementing it.
 
+## One component of the research construction, made executable
+
+The manuscript's all-length reduction uses the **chirp identity**. For the unnormalized DFT with a negative-exponent root, let η = exp(−πi/n), so η² is the n-th DFT root. Then
+
+`exp(−2πijk/n) = η^(j²) · η^(−(k−j)²) · η^(k²)`.
+
+The laboratory now has a **Verify chirp identity** button. It recomputes all output frequencies through this factorization and compares them against the direct DFT. It is an executable finite test of a *genuine component* of the all-length construction, but it performs the check in quadratic work and **does not** instantiate the large finite tensor network responsible for beating n log n. A complete faithful implementation of that network is still a separate research/engineering task.
+
 ## Why such a tiny delta matters
 
 For `δ = 10⁻¹³`, the ratio between the idealized expressions is `(log n)^(-δ)`. At ordinary input sizes, this differs from one by a microscopic fraction. The significance is theoretical: it establishes, under the stated model and assuming the proof, a strict asymptotic saving beyond the familiar `n log n` form. Big-O notation hides constants and provides no practical crossover size.
