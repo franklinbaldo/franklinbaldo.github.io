@@ -5,16 +5,15 @@ kind: "contender"
 scientific_tier: "A"
 interest_tier: "A"
 confidence: "medium"
-summary: "A non-perturbative, background-independent quantization programme for general relativity with discrete spectra for geometric observables such as area and volume. It is a mature quantum-gravity research programme, though its scope is narrower than a complete unification of all fundamental interactions."
-strengths: ["Mathematically developed background-independent quantization of geometry.","Concrete results for geometric spectra and extensive work on black holes and cosmology.","Long-running independent research programme with many formulations and applications."]
-open_problems: ["Dynamics and the recovery of smooth low-energy spacetime remain central issues.","Standard Model matter and full force unification are not automatically delivered by the core framework.","Distinctive experimentally accessible signatures remain difficult to isolate."]
-source_label: "Carlo Rovelli, Loop Quantum Gravity"
-source_url: "https://arxiv.org/abs/gr-qc/9710008"
-source_date: "1997-10-01"
-note: "A as a quantum-gravity programme; the Arena displays the scope limitation explicitly rather than pretending every contender solves the same problem."
-updated: "2026-09-18"
+summary: "Background-independent quantum gravity; recent 2026 results connect EPRL-FK semiclassics to curved Regge dynamics and test LQC inverse-volume corrections against ACT/Planck/DESI/BICEP cosmology."
+strengths: ["Mature non-perturbative geometry programme with a long independent literature.", "Geometric closure yields length-Regge geometries and Regge equations in the studied EPRL-FK semiclassical branch.", "A peer-reviewed 2026 LQC analysis derives inverse-volume shifts in n_s and r and finds parameter regions that move otherwise disfavored fractional-power inflation models into current 68%/95% observational contours."]
+open_problems: ["Continuum recovery of the full theory remains incomplete.", "The cosmology result uses a symmetry-reduced semiclassical effective framework and is valid only perturbatively in the inverse-volume correction.", "Predictions depend on quantization/lattice-refinement parameters, while anomaly-free closure restricts the trustworthy regime.", "Matter unification and a distinctive confirmed empirical signal remain incomplete."]
+source_label: "Parvizi & Karami, Fractional power law inflationary potentials in loop quantum cosmology with inverse volume corrections in light of ACT observations"
+source_url: "https://doi.org/10.1140/epjc/s10052-026-16380-x"
+source_date: "2026-10-01"
+note: "History: A/A unchanged. r126 added the EPRL-FK geometric-closure result; r213 adds the peer-reviewed ACT-era LQC inverse-volume test. The new cosmology strengthens quantitative phenomenology but is not a detection of loop quantum geometry and does not close continuum or matter-unification gaps."
+updated: "2026-10-03"
 ---
-
 # Loop quantum gravity
 
-A non-perturbative, background-independent quantization programme for general relativity with discrete spectra for geometric observables such as area and volume. It is a mature quantum-gravity research programme, though its scope is narrower than a complete unification of all fundamental interactions.
+A/A, medium confidence.
