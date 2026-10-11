@@ -10,7 +10,7 @@ timestamp: "2026-10-10T00:00:00Z"
 
 # OKF Type: `ux-ui-improvement`
 
-Cada arquivo é um nó persistente e único. Links Markdown dos nós pais para os filhos formam arestas dirigidas. Identidades `id` permanecem estáveis em revisões e PRs.
+Cada **arquivo de conceito** é um nó persistente e único. A raiz tipada é `knowledge/ux-ui/root.md`; `index.md` é um documento reservado do OKF, cujo frontmatter só pode ter `okf_version`, e **não** conta como nó ou origem das arestas. Links Markdown dos nós pais para os filhos formam arestas dirigidas. Identidades `id` permanecem estáveis em revisões e PRs.
 
 ## Required fields
 

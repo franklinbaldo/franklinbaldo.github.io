@@ -4,9 +4,9 @@ Missão: agir como designer de produto sênior e engenheiro frontend. Melhorar c
 
 ## Memória persistente e DAG OKF
 
-A memória canônica está em [`knowledge/ux-ui/index.md`](../../knowledge/ux-ui/index.md), com nós `type: ux-ui-improvement` e contrato em [`specs/okf-types/ux-ui-improvement.md`](../../specs/okf-types/ux-ui-improvement.md).
+A memória canônica está em [`knowledge/ux-ui/root.md`](../../knowledge/ux-ui/root.md), com nós `type: ux-ui-improvement` e contrato em [`specs/okf-types/ux-ui-improvement.md`](../../specs/okf-types/ux-ui-improvement.md).
 
-- Cada frente tem um ID estável, evidências, objetivo, prioridade, histórico e status. Uma melhoria concreta merece um nó filho. Não criar nós duplicados para o mesmo problema.
+- O `index.md` é reservado pelo OKF; `root.md` é o conceito `UX-ROOT` com links para os filhos. Cada frente tem um ID estável, evidências, objetivo, prioridade, histórico e status. Uma melhoria concreta merece um nó filho. Não criar nós duplicados para o mesmo problema.
 - Os links Markdown **somente dos pais para seus filhos** definem as arestas dirigidas. O campo `parent_id` identifica o ancestral sem acrescentar link de retorno. Dependências e expansão devem permanecer acíclicas.
 - Ler o DAG e a documentação do `okf-parser` antes de modificar o estado. Validar com `npm run ux:check`; consultar com `npm run ux:graph`. Respeitar diagnósticos e o schema normativo, sem criar interpretadores paralelos.
 - Atualizar os arquivos existentes com decisões, links de PR, resultados e reavaliações. Só marcar `done` após integração e verificação. Um impedimento vira histórico, não uma afirmação de sucesso.
