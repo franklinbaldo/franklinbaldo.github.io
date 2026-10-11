@@ -15,6 +15,7 @@ evidence:
 reviewed_at: "2026-10-10"
 history:
   - "2026-10-10: selecionado como primeiro filho acionável. Fallback PT/EN, rebinding, foco e reduced-motion implementados no branch de PR."
+  - "2026-10-11: acrescentada busca local bilíngue por título/autor no branch existente, commit d6c84f1, com normalização de acentos, estado sem resultados e layout mobile. Sete asserts estáticos PASS; okf-parser, Astro, Prettier, build e testes visuais NOT_RUN. Registro adicional como nó filho foi bloqueado pelo controle de segurança do conector GitHub."
 ---
 
 # UX-BOOKS-001
@@ -23,4 +24,6 @@ history:
 
 **Verificação:** `npm run build`, `npx astro check`, `npx prettier --check .`; depois conferir teclado, Favoritos/Todos, mudança de ordenação, ida e volta entre rotas e ausência de feed em EN/PT. Não declarar testes de navegador executados antes de realmente executá-los.
 
-**Próximo aprofundamento:** teste de fluxo com Playwright e comparação visual de estados claros/escuros em celular.
+**Descoberta:** o novo campo de pesquisa localiza títulos e autores em EN/PT, combinando o termo com Favoritos/Todos e a ordenação atual. A busca normaliza diacríticos, anuncia a contagem atualizada e explica pesquisas sem correspondências. Verificar digitação, limpeza, ausência de resultados e ida/volta entre rotas.
+
+**Próximo aprofundamento:** teste de fluxo com Playwright e comparação visual de estados claros/escuros em celular. Após autorização para criar arquivos, separar a descoberta em nó filho próprio, sem duplicar o histórico.
