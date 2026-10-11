@@ -22,6 +22,9 @@ const ui = pick(lang, {
     emptyTitle: "The shelf is quiet for now",
     emptyDescription: "There are no books to show here yet. Meanwhile, browse my",
     noFavorites: "No favorites to show yet. Choose All to browse the full shelf.",
+    noSearchResults: "No books match your search. Try another title or author, or switch to All.",
+    searchPlaceholder: "Search titles or authors",
+    ariaSearch: "Search books by title or author",
     filterFavorites: "★ Favorites",
     filterAll: "All",
     sort: "Sort",
@@ -48,6 +51,9 @@ const ui = pick(lang, {
     emptyTitle: "A estante está vazia por enquanto",
     emptyDescription: "Ainda não há livros para mostrar aqui. Enquanto isso, consulte minha",
     noFavorites: "Ainda não há favoritos para mostrar. Selecione Todos para explorar a estante.",
+    noSearchResults: "Nenhum livro corresponde à busca. Tente outro título ou autor, ou selecione Todos.",
+    searchPlaceholder: "Buscar títulos ou autores",
+    ariaSearch: "Buscar livros por título ou autor",
     filterFavorites: "★ Favoritos",
     filterAll: "Todos",
     sort: "Ordenar",
@@ -156,6 +162,16 @@ const booksJsonLd = {
               {ui.filterAll} <span class="pill-count">{books.length}</span>
             </button>
           </div>
+          <label class="books-search">
+            <span class="sr-only">{ui.ariaSearch}</span>
+            <input
+              id="books-search"
+              type="search"
+              placeholder={ui.searchPlaceholder}
+              aria-controls="books-grid"
+              autocomplete="off"
+            />
+          </label>
           <label class="sort-label">
             <span>{ui.sort}</span>
             <select id="sort-select" aria-label={ui.ariaSort}>
@@ -184,6 +200,9 @@ const booksJsonLd = {
         <p id="books-filter-empty" class="filter-empty" hidden={likedCount > 0}>
           {ui.noFavorites}
         </p>
+        <p id="books-search-empty" class="filter-empty" hidden>
+          {ui.noSearchResults}
+        </p>
         <div class="books-grid" id="books-grid">
           {books.map((book) => {
             const pubYear = book.book_published ? String(book.book_published) : "";
@@ -195,6 +214,7 @@ const booksJsonLd = {
                 data-date={book.user_read_at}
                 data-year={pubYear}
                 data-title={book.title}
+                data-search={`${book.title} ${book.author_name}`}
                 aria-hidden={!liked ? "true" : undefined}
                 style={!liked ? "display:none" : undefined}
               >
@@ -232,9 +252,9 @@ const booksJsonLd = {
 
 <script>
   function initBooksShelf() {
-
     const grid = document.querySelector<HTMLElement>("#books-grid");
     const sortSelect = document.querySelector<HTMLSelectElement>("#sort-select");
+    const searchInput = document.querySelector<HTMLInputElement>("#books-search");
     // Goodreads can return no cards; ClientRouter can also replace this page.
     if (!grid || !sortSelect || grid.dataset.booksBound === "1") return;
     grid.dataset.booksBound = "1";
@@ -242,9 +262,14 @@ const booksJsonLd = {
     const countEl = document.getElementById("visible-count");
     const statusEl = document.getElementById("books-filter-status");
     const emptyFavorites = document.getElementById("books-filter-empty");
+    const emptySearch = document.getElementById("books-search-empty");
     const countSuffix = statusEl?.dataset.countSuffix ?? "";
 
     let currentFilter = "liked";
+
+    // Normalize accents so searches like "cafe" match "Café" in both languages.
+    const normalizeText = (value: string) =>
+      value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase().trim();
 
     function cards() {
       return Array.from(grid.querySelectorAll<HTMLElement>(".book-card"));
@@ -253,10 +278,13 @@ const booksJsonLd = {
     function applyFilterAndSort() {
       const all = cards();
       const sortVal = sortSelect.value;
+      const query = normalizeText(searchInput?.value ?? "");
 
       all.forEach((card) => {
         const rating = Number(card.dataset.rating);
-        const show = currentFilter === "all" || rating >= 4;
+        const show =
+          (currentFilter === "all" || rating >= 4) &&
+          (!query || normalizeText(card.dataset.search ?? "").includes(query));
         card.style.display = show ? "" : "none";
         card.setAttribute("aria-hidden", show ? "false" : "true");
       });
@@ -286,8 +314,9 @@ const booksJsonLd = {
       if (countEl) countEl.textContent = String(visible.length);
       if (statusEl) statusEl.textContent = `${visible.length} ${countSuffix}`;
       if (emptyFavorites) {
-        emptyFavorites.hidden = visible.length > 0 || currentFilter !== "liked";
+        emptyFavorites.hidden = visible.length > 0 || currentFilter !== "liked" || !!query;
       }
+      if (emptySearch) emptySearch.hidden = visible.length > 0 || !query;
     }
 
     pills.forEach((pill) => {
@@ -304,6 +333,7 @@ const booksJsonLd = {
     });
 
     sortSelect.addEventListener("change", applyFilterAndSort);
+    searchInput?.addEventListener("input", applyFilterAndSort);
   }
 
   if (document.readyState === "loading") {
@@ -410,6 +440,21 @@ const booksJsonLd = {
   .pill-count {
     font-size: 0.75rem;
     opacity: 0.75;
+  }
+
+  .books-search {
+    flex: 1 1 13rem;
+    max-width: 23rem;
+    margin: 0;
+  }
+
+  .books-search input {
+    width: 100%;
+    height: 2.4rem;
+    margin: 0;
+    padding: 0.35rem 0.65rem;
+    border-radius: var(--pico-border-radius);
+    font-size: 0.875rem;
   }
 
   .sort-label {
@@ -537,6 +582,18 @@ const booksJsonLd = {
   .book-info .year {
     margin: 0.35rem 0 0;
     color: var(--pico-muted-color);
+  }
+
+  @media (max-width: 38rem) {
+    .books-search {
+      order: 1;
+      flex-basis: 100%;
+      max-width: none;
+    }
+
+    .sort-label {
+      order: 2;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
