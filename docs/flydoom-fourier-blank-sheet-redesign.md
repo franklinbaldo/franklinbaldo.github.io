@@ -233,6 +233,31 @@ If this version is visibly and experimentally better, it can replace the old rou
 8. **Can the old demo be recovered while this is evaluated?**
    - Yes: the old route is untouched.
 
+## Curriculum refinement after first live run
+
+The first public successor run exposed two remaining first-principles problems:
+
+1. A purely progress-based reward can become nearly neutral in a bad but stable state.
+2. Showing the full 3D arena from the first frame overstates the dimensionality of the task the policy is currently solving.
+
+The reconciled design therefore adds an automatic curriculum:
+
+- stage 1 starts with one Fourier actuator and one localized scalar height signal;
+- each mastered stage adds exactly one actuator **and one scalar sensory signal**, while preserving all prior target dimensions;
+- sensory signals are revealed center-out over the 8×4 sheet and cycle through height, slope X, slope Z, curvature, normal disagreement, and slope magnitude;
+- mastery means holding match ≥ 0.970 for 12 consecutive sensory ticks;
+- the displayed reward combines progress shaping with an absolute bad-state discomfort term, so low match remains aversive even when Δmatch is close to zero;
+- the perturbation learner uses directional improvement in that discomfort rather than the absolute state cost, so improving a bad state still receives positive credit.
+
+The human visualization follows the same curriculum rather than revealing the whole problem immediately:
+
+- early stages: a growing spectrum, one controllable line per level;
+- then: a 1D cross-section;
+- then: 2D height maps;
+- only late in the curriculum: the full 3D surface.
+
+The rendered fly is removed. The experiment is about surface control through MaleCNS dynamics, not locomotion, and a visible fly was adding narrative clutter without causal information.
+
 ## What this redesign intentionally does not answer yet
 
 - whether 1,314 DNs can control 4,096 Fourier degrees of freedom;
