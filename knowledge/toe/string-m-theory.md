@@ -12,7 +12,7 @@ source_label: "Corrêa, Donagi & Noja, Supermoduli spaces are non-projected in e
 source_url: "https://arxiv.org/abs/2610.00490"
 source_date: "2026-09-30"
 note: "History: A/S unchanged. r173 added the continuous-spin exclusion. r178 added amplitude-rigidity results. r193 added the N>2 AdS4 classification and light-moduli constraints. r200 added ExFT/homotopy-transfer Kaluza-Klein perturbation theory. r203 added Lie-2-algebroid closed-string generalised geometry. r204 adds arXiv:2610.00490, extending the classic supermoduli non-projection result to every genus g>=3 and both parity sectors. This is a rigorous structural constraint on perturbative superstring geometry, not new empirical evidence. Clash: BFSS Matrix Theory A/S; no tier movement."
-updated: "2026-10-03"
+updated: "2026-10-12"
 ---
 # String theory / M-theory
 
@@ -25,3 +25,12 @@ Gagliardo, Saemann and Tellez-Dominguez, arXiv:2610.12383v1 (8 October 2026), de
 **Evidence and limits:** The principal-3-bundle characterization and examples are substantive mathematical results, but the authors explicitly state this is *not* full U-duality. M5-branes, full Riemannian information and the mixed G₄ gravitational flux quantization condition remain unincorporated. No unique realistic compactification or experimental prediction follows.
 
 **Clash:** String/M-theory A/S vs BFSS Matrix Theory A/S. This result improves a geometric duality dictionary; BFSS pursues a microscopic matrix definition, and neither currently derives a unique observed 4D vacuum. Scientific **A**, interest **S**, confidence **medium**, unchanged. Source: https://arxiv.org/abs/2610.12383 ; https://arxiv.org/html/2610.12383v1 .
+
+
+## r397 — Higher-point completion is possible but not unique (12 October 2026)
+
+Ilmo Sung, [arXiv:2610.10712v1](https://arxiv.org/abs/2610.10712) (submitted 7 October 2026), shows that, **within a specified planar four-dimensional maximally supersymmetric, massless tree-amplitude class and formal derivative expansion with positive leading four-point contact coefficient**, the known six-point constraints are sufficient for extension to arbitrary multiplicity. Higher-point contact terms remain non-unique: an explicit deformation changes a five-point contact amplitude while preserving the entire four-point amplitude, relevant symmetries, factorization and disk monodromy. This strengthens the analytic consistency toolbox but **precludes inferring a unique full S-matrix from those low-point conditions alone**. Additional spectral, dispersive or massive-state assumptions may still select narrower families. This is neither a direct test of string theory nor a contradiction of previously reported uniqueness results that explicitly assume stronger analyticity/spectrum conditions.
+
+A complementary backlog result, Aldazabal *et al.*, [arXiv:2609.16455](https://arxiv.org/abs/2609.16455) (15 September 2026), proposes transformations for a **truncated heterotic toroidal double-field description** with enhanced non-Abelian gauge symmetries and generalized Kaluza–Klein modes. The construction recovers the expected gauge algebra at enhancement points but does not establish a full non-perturbative string field theory, exact action invariance in every sector, a realistic vacuum, or experimental discrimination; the full PDF was not independently re-evaluated in this Arena pass.
+
+**Evidence for:** a precise new all-multiplicity existence/non-uniqueness theorem and improved intermediate stringy gauge dictionary. **Evidence against/unresolved:** non-uniqueness of higher contact data without stronger assumptions; neither result derives observed four-dimensional matter, gravity, vacuum selection, or a string-specific observation. **Clash — BFSS Matrix Theory (A/S):** perturbative massless amplitude consistency versus a proposed nonperturbative matrix definition of M-theory. BFSS offers a microscopic large-\(N\) target but has no complete observed vacuum; neither result closes the other's missing bridge. **String/M-theory remains scientific A / interest S, placement confidence medium.** This is a material *mathematical record update*, not a scientific-tier movement or an empirical confirmation.
