@@ -12,7 +12,7 @@ source_label: "Corrêa, Donagi & Noja, Supermoduli spaces are non-projected in e
 source_url: "https://arxiv.org/abs/2610.00490"
 source_date: "2026-09-30"
 note: "History: A/S unchanged. r173 added the continuous-spin exclusion. r178 added amplitude-rigidity results. r193 added the N>2 AdS4 classification and light-moduli constraints. r200 added ExFT/homotopy-transfer Kaluza-Klein perturbation theory. r203 added Lie-2-algebroid closed-string generalised geometry. r204 adds arXiv:2610.00490, extending the classic supermoduli non-projection result to every genus g>=3 and both parity sectors. This is a rigorous structural constraint on perturbative superstring geometry, not new empirical evidence. Clash: BFSS Matrix Theory A/S; no tier movement."
-updated: "2026-10-12"
+updated: "2026-10-14"
 ---
 # String theory / M-theory
 
@@ -47,3 +47,16 @@ A complementary backlog result, Aldazabal *et al.*, [arXiv:2609.16455](https://a
 **Clash — BFSS Matrix Theory (A scientific / S interest).** Battleground: a microscopic/nonperturbative definition and recovery of physical scattering. The OSFT proposal gives a relatively explicit flat-space bosonic closed-string scattering reconstruction, but its beyond-tree physical normalization/unitarity and phenomenology are open; BFSS starts from a matrix description of M-theory but also lacks complete reconstruction of observed 4D vacua and arbitrary-scattering observables. Independent checks of multi-loop amplitudes with correct off-shell LSZ and a supersymmetric extension would change this comparison. Neither supplies a decisive experiment or warrants tier movement.
 
 **Decision.** Material **methodological/theoretical** update, not experimental confirmation. This contribution itself is **NR scientific / S interest** as an adjacent technical development; String/M-theory retains **A scientific / S interest**, **medium** placement confidence. No new standalone ToE contender. Historical note: r397 retained A/S; r411 and r414 proposed mathematical additions locally, but those unpublished adenda are not represented here as already incorporated.
+
+
+## r447 — Resolved G2 compactifications with scale separation (14 October 2026 review)
+
+**Scientific A / interest S / medium placement confidence, unchanged.** New primary source: Aggarwal, Apers & Farakos, [arXiv:2610.13586](https://arxiv.org/abs/2610.13586), submitted **9 October 2026**.
+
+**Positive (qualified):** Within massive type-IIA supergravity compactifications on resolved G2 orientifolds, the authors exhibit flux choices stabilizing geometric blow-up moduli while preserving parametric AdS3/Kaluza–Klein scale separation and a controlled large-volume regime. They reexamine apparent O-plane intersections after resolution, account for curvature-induced source charges and analyze a finite-interval brane-dual geometry with low-energy mode decoupling. This repairs some delicate geometric/consistency assumptions in a particular family of string vacua; it is not new experimental evidence.
+
+**Unresolved:** These are **three-dimensional AdS** constructions, not a realistic 3+1D vacuum. The authors leave a complete superpotential for additional axionic moduli, D-brane position stabilization and parts of the full analytic brane network for further study; perturbative supergravity and large-flux assumptions remain important. No unique vacuum selection, observed chiral Standard Model, independent empirical discriminator or complete quantum-gravity definition follows.
+
+**Clash — String/M-theory (A/S) vs BFSS Matrix Theory (A/S), on microscopic compactification control.** The resolved G2 approach improves effective-supergravity geometry and stabilization, but has not derived its vacuum physics from an independent microscopic formulation. BFSS offers an alternative matrix description but likewise lacks a derivation of this realistic compactification/spectrum. A matched protected spectrum, a controlled quantum vacuum and observationally constrained particle content could alter this comparison. **No tier movement.**
+
+The paper was selected in the r447 randomized sample (N=7, k=4); provenance and three adjacent results are in [r447 audit](../../docs/toe-arena/2026-10-14-r447.md).
