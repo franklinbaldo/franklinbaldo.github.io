@@ -47,6 +47,14 @@ limitations:
     The movement readout abstains on unqualified yaw/turn intentions; behavior
     partly reflects authored locomotion. No matched rewiring or compute-matched
     artificial network establishes a special benefit of original MaleCNS wiring.
+  - >-
+    Recalculation of the public v9 test confusion counts finds 793 true
+    positives, 15 false positives and 107 false negatives (micro-F1 0.92857).
+    Two near-ubiquitous brightness labels account for 516/793 true positives.
+    Removing only those two labels from the metric yields micro-F1 0.81953
+    (277 TP, 15 FP, 107 FN), a descriptive sensitivity audit rather than
+    a new neural ablation. The qualified warm-left label has only 20/27 =
+    0.741 precision on the held-out test set, below its validation gate.
 controls:
   - >-
     Present: grouped training/validation/test splits, blind exclusion of
