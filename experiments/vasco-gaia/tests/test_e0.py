@@ -1,0 +1,44 @@
+import importlib.util
+import tempfile
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+r = load('runner', ROOT / 'experiments/vasco-gaia/run.py')
+h = load('harvester', ROOT / 'tools/experiment_harvest.py')
+HEADER = b'source_id,plate_id,scan_id,gaiaedr3_id,sextractor_flags\n'
+RAW = HEADER + b'1,7538,9720,123,0\n2,7538,9720,,0\n3,7538,9720,123,4\n'
+class E0(unittest.TestCase):
+    def test_classes(self):
+        self.assertEqual(r.classify_bytes(RAW), [('1','gaia_clean'),('2','no_gaia_clean'),('3','review')])
+    def test_duplicates(self):
+        with self.assertRaises(ValueError): r.classify_bytes(RAW+b'1,7538,9720,,0\n')
+    def test_wrong_scan(self):
+        with self.assertRaises(ValueError): r.classify_bytes(RAW.replace(b'9720',b'9721'))
+    def test_empty(self):
+        with self.assertRaises(ValueError): r.classify_bytes(HEADER)
+    def test_ragged(self):
+        with self.assertRaises(ValueError): r.classify_bytes(HEADER+b'1,7538\n')
+    def test_null_and_invalid(self):
+        rows=r.classify_bytes(HEADER+b'1,7538,9720,NULL,0\n2,7538,9720,0,0\n3,7538,9720,1,NULL\n')
+        self.assertEqual([x[1] for x in rows],['no_gaia_clean','review','review'])
+    def test_hash_and_harvest(self):
+        with tempfile.TemporaryDirectory() as td:
+            src=Path(td)/'raw.csv';src.write_bytes(RAW);out=Path(td)/'out'
+            with self.assertRaises(ValueError):r.run(src,out,'0'*64,'UNCOMMITTED')
+            self.assertFalse(out.exists())
+            counts=r.run(src,out,r.sha256(RAW),'UNCOMMITTED')
+            self.assertEqual(h.harvest(out),counts)
+            with self.assertRaises(ValueError):r.run(src,out,r.sha256(RAW),'UNCOMMITTED')
+            (out/'classifications.csv').write_text('tampered')
+            with self.assertRaises(ValueError):h.harvest(out)
+    def test_traversal(self):
+        with tempfile.TemporaryDirectory() as td:
+            p=Path(td);(p/'SHA256SUMS').write_text('0'*64+'  ../x\n')
+            with self.assertRaises(ValueError):h.harvest(p)
+if __name__ == '__main__':unittest.main()
