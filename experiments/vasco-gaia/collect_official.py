@@ -4,6 +4,7 @@ import argparse
 import csv
 import hashlib
 import io
+import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -70,6 +71,8 @@ def collect(destination, expected):
             'Proper motion, independent Gaia matching and astrophysical controls: NOT_RUN.', '']))
         return digest
     except Exception as error:
+        if isinstance(error, urllib.error.HTTPError):
+            (dest / "response-error.xml").write_bytes(error.read(CAP + 1))
         (dest / 'FAILURE.md').write_text('Collection failed; expansion stopped.\n' + type(error).__name__ + ': ' + str(error) + '\n')
         raise
 
