@@ -12,3 +12,6 @@ public/fly-shader/dn_types.json
 scripts/fly-shader-results/
 
 *.py
+
+# Tera components and control blocks are not HTML syntax.
+zola/templates/**
