@@ -48,6 +48,7 @@
   --code: #2c241b;
 }
 .theme-toggle {
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -62,6 +63,8 @@
   position: relative;
 }
 .more-menu summary {
+  min-height: 44px;
+  padding-block: 0.55rem;
   cursor: pointer;
   font-size: 0.85rem;
   color: var(--muted);
@@ -120,7 +123,8 @@ a:hover {
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
-summary:focus-visible {
+summary:focus-visible,
+select:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 5px;
   border-radius: 2px;
@@ -206,7 +210,8 @@ h3 {
 }
 .nav-links a {
   display: inline-block;
-  padding-block: 0.35rem;
+  padding-block: 0.55rem;
+  min-height: 44px;
   color: var(--muted);
   font-size: 0.85rem;
   text-decoration: none;
@@ -599,27 +604,74 @@ main:focus {
 .start-here {
   margin-bottom: 3rem;
 }
+.section-heading,
 .start-here > h2 {
-  margin-bottom: 0.5rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.035em;
+}
+.section-heading {
+  margin-bottom: 0;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--ink);
+}
+.start-here > .tagline {
+  margin-top: 0;
+  font-size: 1rem;
+}
+.start-here > h2 {
+  margin: 0 0 0.5rem;
 }
 .reading-paths {
   list-style: none;
   padding: 0;
   margin: 1.5rem 0;
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem;
 }
 .reading-paths li {
-  padding: 1rem 1.25rem;
+  min-width: 0;
+}
+.reading-path-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.1rem;
   border: 1px solid var(--line);
   border-radius: 0.5rem;
   background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+}
+.reading-path-card:hover,
+.reading-path-card:focus-visible {
+  border-color: var(--accent);
+}
+.reading-path-card:hover h3,
+.reading-path-card:focus-visible h3 {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.path-number {
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 1rem;
+}
+.path-cta {
+  padding-top: 1.25rem;
+  margin-top: auto;
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 650;
 }
 .reading-paths h3 {
   margin: 0 0 0.5rem;
   font-size: 1.1rem;
 }
 .reading-paths p {
+  line-height: 1.5;
   margin: 0;
   font-size: 0.9rem;
   color: var(--muted);
@@ -627,6 +679,36 @@ main:focus {
 .discovery-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem 1.5rem;
-  font-size: 0.9rem;
+  gap: 0.6rem 1rem;
+  font-size: 0.85rem;
+}
+.discovery-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.35rem;
+}
+.discovery-links a:hover {
+  border-color: var(--accent);
+}
+@media (max-width: 1100px) {
+  .reading-paths {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .home-hero h1 {
+    font-size: clamp(2.9rem, 13vw, 3.9rem);
+  }
+  .home-hero {
+    padding-bottom: 1.5rem;
+  }
+  .home-hero::after {
+    margin-top: 1.5rem;
+  }
+  .nav-links {
+    gap: 0.25rem 0.8rem;
+  }
 }

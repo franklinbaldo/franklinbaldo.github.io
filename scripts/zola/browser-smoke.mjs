@@ -82,6 +82,24 @@ try {
         );
         await page.waitForSelector(".pagefind-ui__result");
       }
+      if (name === "home" || name === "home-pt") {
+        const cards = page.locator(".reading-path-card");
+        assert.equal(await cards.count(), 3, `${path} curated reading paths`);
+        for (const card of await cards.all()) {
+          assert.ok(await card.isVisible());
+          const box = await card.boundingBox();
+          assert.ok(box.width >= 44 && box.height >= 44, "card touch target");
+          await card.focus();
+          assert.equal(
+            await card.evaluate((el) => el === document.activeElement),
+            true
+          );
+        }
+        for (const link of await page.locator(".discovery-links a").all()) {
+          const box = await link.boundingBox();
+          assert.ok(box.height >= 44, "archive shortcut touch target");
+        }
+      }
       if (name === "home") {
         const toggle = page.locator("[data-theme-toggle]");
         await toggle.check();
