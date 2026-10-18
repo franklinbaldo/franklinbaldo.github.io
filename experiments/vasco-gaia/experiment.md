@@ -30,7 +30,7 @@ sextractor_flags. O SHA256 deve ser obtido da fonte/proveniência revisada, não
 automaticamente de um download não verificado. Usar o SHA exato do commit executado:
 
     python experiments/vasco-gaia/run.py --input input.csv --input-sha256 SHA256 --code-sha COMMIT --output results/IDENTIDADE
-    python tools/experiment_harvest.py --results results/IDENTIDADE
+    python tools/experiment_harvest.py --results results/IDENTIDADE --input-sha256 SHA256 --code-sha COMMIT
 
 O runner recusa saída existente, CSV vazio ou irregular, IDs duplicados, outras
 placas/digitalizações, mais de 2.500 linhas e hash divergente. Preserva bytes brutos,
@@ -82,3 +82,7 @@ Execução real, fila global, coleta oficial congelada e persistência cross-rep
 ainda não comprovadas por este código. Não usar secrets de
 papers para executar código de PR. Publicação dos resultados por PR em papers pode
 ser feita por MCP; credencial persistente para automação exige aprovação específica.
+
+O harvester reconstrói os artefatos com código confiável e âncoras externas de
+entrada/commit, comparando também o manifesto integral. Requer o mesmo ambiente
+Python do produtor; divergência de versão é falha explícita, não normalizada.
