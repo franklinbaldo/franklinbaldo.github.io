@@ -72,7 +72,13 @@ NOT_RUN. Nenhuma inferência de origem artificial está autorizada por este E0.
 
 # Pendências operacionais explícitas
 
-Workflow automático, fila global, coleta oficial congelada, execução Actions e
-persistência cross-repo ainda não comprovados por este código. Não usar secrets de
+O workflow limitado a push em main nos caminhos do experimento ou disparo manual
+executa testes e replay das 36 observações arquivadas, em ubuntu-24.04, timeout de
+5 minutos e contents:read. Não usa secrets ou armazenamento de artifacts; emite
+manifesto, hashes e classificações no log. Minutos de runner padrão em repositório
+público são gratuitos segundo https://docs.github.com/en/billing/concepts/product-billing/github-actions.
+A quota de armazenamento não foi verificada, por isso upload-artifact não é usado.
+Execução real, fila global, coleta oficial congelada e persistência cross-repo
+ainda não comprovadas por este código. Não usar secrets de
 papers para executar código de PR. Publicação dos resultados por PR em papers pode
 ser feita por MCP; credencial persistente para automação exige aprovação específica.
