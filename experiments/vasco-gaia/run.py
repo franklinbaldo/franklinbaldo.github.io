@@ -92,10 +92,14 @@ def run(source, out, expected, code_sha):
              f'runner_sha256: {runner_hash}', f'input_sha256: {expected}',
              f'result_sha256: {result_hash}', f'processed_sources: {len(rows)}',
              f'python_version: "{platform.python_version()}"', '---', '',
-             '# Archived catalog accounting replay', '',
+             '# Catalog accounting replay', '',
              'Source DOI: https://doi.org/10.17876/plate/dr.4/13 (APPLAUSE DR4).',
              'Canonical protocol: https://github.com/franklinbaldo/papers/blob/3820bb71a4c11440d926eb1d42f90276ad7f1a8a/experiments/vasco_transients/PROTOCOL.md',
-             'Default fixture: archived stratified selection, 12 per category; original collection not reproduced.',
+             ('Input context: official refetch of three preselected archived IDs; one per category, not an independent sample.'
+              if expected == '329b0f22f1fbdf13557970b5091a551407cdc0ad95dc416a041e35c5d5f86774'
+              else 'Input context: archived stratified fixture, 12 per category; original collection not reproduced.'
+              if expected == '214798342dfd2be13cc10335f713fc8d80cb3150e914230ad12fb94c2797283d'
+              else 'Input context: custom data; provenance must be provided separately.'),
              'This is a computational replay, not completion of scientific E0.',
              f'Reproduce: python experiments/vasco-gaia/run.py --input input.csv --input-sha256 {expected} --code-sha {code_sha} --output fresh-results', '', 'Input: APPLAUSE DR4 source_calib; plate 7538, scan 9720.', '',
              *[f'- {label}: {counts[label]}' for label in LABELS], '',
