@@ -35,7 +35,7 @@ def request_query(query, endpoint=ENDPOINT, timeout=20):
     if query not in QUERIES:
         raise ValueError("Query must be one of the frozen named probes")
     qs = urllib.parse.urlencode({'REQUEST': 'doQuery', 'LANG': 'ADQL', 'QUERY': QUERIES[query], 'FORMAT': 'votable', 'MAXREC': '2'})
-    req = urllib.request.Request(endpoint + '?' + qs, headers={'Accept': 'application/x-votable+xml'})
+    req = urllib.request.Request(endpoint + '?' + qs)
     try:
         with urllib.request.urlopen(req, timeout=timeout) as response:
             payload = response.read(MAX_RESPONSE + 1)
