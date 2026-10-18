@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+"""Read-only, bounded APPLAUSE DR4 TAP diagnostic. An error is never a nondetection."""
+import argparse
+import hashlib
+import urllib.error
+import urllib.parse
+import urllib.request
+import xml.etree.ElementTree as ET
+from datetime import datetime, timezone
+from pathlib import Path
+
+ENDPOINT = "https://www.plate-archive.org/tap/sync"
+MAX_RESPONSE = 2_000_000
+QUERIES = {
+    "schema_smoke": "SELECT TOP 1 table_name FROM TAP_SCHEMA.tables WHERE table_name='applause_dr4.source_calib'",
+    "source_exact_gaia": "SELECT TOP 1 source_id,plate_id,scan_id,gaiaedr3_id FROM applause_dr4.source_calib WHERE plate_id=7538 AND gaiaedr3_id=2032807544502144384",
+}
+
+def classify(status, payload):
+    try:
+        root = ET.fromstring(payload)
+    except ET.ParseError:
+        return "invalid_votable"
+    infos = [x for x in root.iter() if x.tag.rsplit('}', 1)[-1] == 'INFO' and x.attrib.get('name') == 'QUERY_STATUS']
+    if not infos:
+        return "unknown_status"
+    if any(x.attrib.get('value', '').upper() == 'ERROR' for x in infos):
+        message = ' '.join(''.join(x.itertext()) for x in infos).lower()
+        return 'tap_statement_timeout' if 'statement timeout' in message else 'tap_error'
+    if status != 200:
+        return "http_error"
+    return "valid_votable" if all(x.attrib.get('value', '').upper() in ('OK', 'OVERFLOW') for x in infos) else "unknown_status"
+
+def request_query(query, endpoint=ENDPOINT, timeout=20):
+    if query not in QUERIES:
+        raise ValueError("Query must be one of the frozen named probes")
+    qs = urllib.parse.urlencode({'REQUEST': 'doQuery', 'LANG': 'ADQL', 'QUERY': QUERIES[query], 'FORMAT': 'votable', 'MAXREC': '2'})
+    req = urllib.request.Request(endpoint + '?' + qs, headers={'Accept': 'application/x-votable+xml'})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as response:
+            payload = response.read(MAX_RESPONSE + 1)
+            status = response.status
+    except urllib.error.HTTPError as exc:
+        status = exc.code
+        payload = exc.read(MAX_RESPONSE + 1)
+    except (urllib.error.URLError, TimeoutError) as exc:
+        return {'probe': query, 'result': 'network_unavailable', 'error_type': type(exc).__name__}
+    if len(payload) > MAX_RESPONSE:
+        return {'probe': query, 'result': 'response_too_large', 'http_status': status}
+    return {'probe': query, 'result': classify(status, payload), 'http_status': status,
+            'response_sha256': hashlib.sha256(payload).hexdigest(), 'response_bytes': len(payload)}
+
+def format_finding(records, timestamp):
+    lines = ['---', 'type: Finding',
+             'title: "VASCO APPLAUSE DR4 TAP bounded availability probes"',
+             'status: exploratory', 'research_front: vasco-historical-transients-falsification',
+             '---', '', '# TAP diagnostic', '',
+             f'Executed UTC: {timestamp}', '',
+             'This is server-health evidence; an ERROR/timeout is **not** a source nondetection.',
+             'The probes are fixed and read-only; no bulk source retrieval is attempted.', '']
+    for r in records:
+        lines.append(f"- {r['probe']}: **{r['result']}**, HTTP {r.get('http_status', 'N/A')}, bytes {r.get('response_bytes', 'N/A')}, response SHA-256 `{r.get('response_sha256', 'N/A')}`")
+    return '\n'.join(lines + ['', 'Scientific source completeness: NOT_RUN.',
+                               'Physical transient detection: NOT_RUN.', ''])
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument('--output', required=True)
+    p.add_argument('--timeout', type=int, default=20)
+    a = p.parse_args()
+    if not 1 <= a.timeout <= 30:
+        p.error('timeout must be 1–30 seconds')
+    out = Path(a.output)
+    if out.exists():
+        p.error('output already exists: immutable diagnostic')
+    records = [request_query(k, timeout=a.timeout) for k in QUERIES]
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(format_finding(records, datetime.now(timezone.utc).isoformat()), encoding='utf-8')
+    for r in records:
+        print(r)
+    return 0 if all(r['result'] == 'valid_votable' for r in records) else 2
+
+if __name__ == '__main__':
+    raise SystemExit(main())
