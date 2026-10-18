@@ -43,3 +43,26 @@ jobs:
             cat results/vasco-e0/SHA256SUMS
             cat results/vasco-e0/classifications.csv
           fi
+      - name: Refetch three frozen IDs from official APPLAUSE
+        id: official
+        env:
+          CODE_SHA: ${{ github.sha }}
+        run: |
+          python3 experiments/vasco-gaia/collect_official.py --output results/official-source --expected-normalized-sha256 329b0f22f1fbdf13557970b5091a551407cdc0ad95dc416a041e35c5d5f86774
+          python3 experiments/vasco-gaia/run.py --input results/official-source/input.csv --input-sha256 329b0f22f1fbdf13557970b5091a551407cdc0ad95dc416a041e35c5d5f86774 --code-sha "$CODE_SHA" --output results/official-replay
+          python3 tools/experiment_harvest.py --results results/official-replay --input-sha256 329b0f22f1fbdf13557970b5091a551407cdc0ad95dc416a041e35c5d5f86774 --code-sha "$CODE_SHA"
+      - name: Preserve official collection or failure in log
+        if: always()
+        env:
+          COLLECTION_OUTCOME: ${{ steps.official.outcome }}
+        run: |
+          echo "Official refetch and verification status: $COLLECTION_OUTCOME" | tee -a "$GITHUB_STEP_SUMMARY"
+          python3 - <<'PYLOG'
+          import base64, hashlib
+          from pathlib import Path
+          for directory in ['results/official-source', 'results/official-replay']:
+              for p in sorted(Path(directory).glob('*')):
+                  if p.is_file():
+                      raw = p.read_bytes()
+                      print('EVIDENCE', p.as_posix(), hashlib.sha256(raw).hexdigest(), base64.b64encode(raw).decode())
+          PYLOG
