@@ -28,8 +28,30 @@
       <h1>Franklin Baldo<span aria-hidden="true">.</span></h1>
       <p class="tagline">{% if lang == "pt" %}Ensaios, código e música na fronteira da IA, filosofia e literatura.{% else %}Essays, code, and music at the border of AI, philosophy, and literature.{% endif %}</p>
     </header>
+    <section class="start-here" aria-labelledby="start-here-heading">
+      <h2 id="start-here-heading">{% if lang == "pt" %}Comece por aqui{% else %}Start here{% endif %}</h2>
+      <p class="tagline">{% if lang == "pt" %}Escolha um assunto e siga uma trilha de leitura pelo acervo.{% else %}Choose a subject and follow a reading path through the archive.{% endif %}</p>
+      {% set reading_paths = load_data(path="reading-paths.json") %}
+      <ul class="reading-paths">
+        {% for path in reading_paths %}
+        <li>
+          <a class="reading-path-card" href="{{ prefix }}/paths/{{ path.slug }}/" aria-labelledby="path-{{ path.slug }}">
+            <span class="path-number" aria-hidden="true">0{{ loop.index }}</span>
+            <h3 id="path-{{ path.slug }}">{{ path.title[lang] }}</h3>
+            <p>{{ path.blurb[lang] }}</p>
+            <span class="path-cta" aria-hidden="true">{% if lang == "pt" %}Seguir trilha{% else %}Follow this path{% endif %} →</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+      <nav class="discovery-links" aria-label="{% if lang == 'pt' %}Explorar o acervo{% else %}Explore the archive{% endif %}">
+        <a href="{{ prefix }}/archive/">{% if lang == "pt" %}Todos os textos{% else %}All posts{% endif %}</a>
+        <a href="{{ prefix }}/tags/">{% if lang == "pt" %}Explorar por assunto{% else %}Browse by topic{% endif %}</a>
+        <a href="{{ prefix }}/search/">{% if lang == "pt" %}Buscar no acervo{% else %}Search the archive{% endif %}</a>
+      </nav>
+    </section>
     <section aria-labelledby="recent-heading">
-      <h2 class="eyebrow" id="recent-heading">{% if lang == "pt" %}Publicações recentes{% else %}Recent writing{% endif %}</h2>
+      <h2 class="section-heading" id="recent-heading">{% if lang == "pt" %}Publicações recentes{% else %}Recent writing{% endif %}</h2>
       {{ <post_list pages={blog.pages} lang={lang} limit={12} /> }}
       <p class="archive-link"><a href="{{ prefix }}/archive/">{% if lang == "pt" %}Ver o arquivo completo{% else %}Browse the full archive{% endif %} <span aria-hidden="true">→</span></a></p>
     </section>
