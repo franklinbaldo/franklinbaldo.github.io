@@ -82,6 +82,34 @@ try {
             "migração"
         );
         await page.waitForSelector(".pagefind-ui__result");
+        const searchInput = page.locator(".pagefind-ui__search-input");
+        await searchInput.fill("Fourier");
+        await page.waitForURL("**/pt/search/?q=Fourier");
+        assert.equal(
+          await page.locator(".language-link").getAttribute("href"),
+          base + "/search/?q=Fourier"
+        );
+        await page.reload({ waitUntil: "networkidle" });
+        await page.waitForFunction(
+          () =>
+            document.querySelector(".pagefind-ui__search-input")?.value ===
+            "Fourier"
+        );
+        await page.waitForSelector(".pagefind-ui__result-link");
+        await page.locator(".pagefind-ui__result-link").first().click();
+        await page.waitForURL((url) => !url.pathname.endsWith("/search/"));
+        await page.goBack();
+        await page.waitForFunction(
+          () =>
+            document.querySelector(".pagefind-ui__search-input")?.value ===
+            "Fourier"
+        );
+        await page.locator(".pagefind-ui__search-clear").click();
+        await page.waitForURL("**/pt/search/");
+        assert.equal(
+          await page.locator(".language-link").getAttribute("href"),
+          base + "/search/"
+        );
       }
       if (name === "home" || name === "home-pt") {
         const menu = page.locator(".more-menu");
@@ -131,6 +159,10 @@ try {
         await page.locator("[data-archive] nav a").first().click();
         await page.waitForURL("**/archive/page/2/");
         const prefix = name === "archive-pt" ? "/pt" : "";
+        assert.equal(
+          await page.locator(".language-link").getAttribute("href"),
+          prefix ? "/archive/" : "/pt/archive/"
+        );
         await page.locator("#archive-query").fill("Fourier");
         await page.locator(".archive-search button").click();
         await page.waitForURL(`**${prefix}/search/?q=Fourier`);
