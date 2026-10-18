@@ -80,3 +80,22 @@ assert.equal(
 console.log(
   `Zola artifact checks: ${manifest.posts.length} posts, complete bilingual feeds, local resources, OG assets and public-only player passed`
 );
+// Literal app markup must never be reinterpreted as indented Markdown code.
+const rug = readFileSync(join(out, "games/rug-pull/index.html"), "utf8");
+assert.ok(
+  rug.includes('<button id="rug-start"'),
+  "Rug Pull start control is real HTML"
+);
+assert.ok(
+  !rug.includes("&lt;button id=&quot;rug-start"),
+  "Rug Pull markup is not escaped code"
+);
+for (const path of [
+  "about/index.html",
+  "pt/about/index.html",
+  "games/index.html",
+])
+  assert.ok(
+    !readFileSync(join(out, path), "utf8").includes("&lt;p&gt;"),
+    `${path} literal prose remains HTML`
+  );

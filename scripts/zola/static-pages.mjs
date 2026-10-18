@@ -20,7 +20,12 @@ function write(path, content) {
 function page(path, title, body, lang = "en") {
   write(
     `content/pages/${stableName(path)}.md`,
-    frontmatter({ title, path, template: "page.html" }, { lang }) + body
+    path === "/changelog/"
+      ? frontmatter({ title, path, template: "page.html" }, { lang }) + body
+      : frontmatter(
+          { title, path, template: "literal.html" },
+          { lang, literal_html: body, show_title: path.endsWith("/about/") }
+        )
   );
 }
 function emitModule(file, source = readFileSync(file, "utf8")) {
