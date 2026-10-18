@@ -69,7 +69,7 @@
   font-size: 0.85rem;
   color: var(--muted);
 }
-.more-menu > ul {
+.more-menu > .more-panel {
   position: absolute;
   z-index: 20;
   top: calc(100% + 0.5rem);
@@ -85,7 +85,7 @@
   border-radius: 0.5rem;
   box-shadow: 0 0.5rem 1.5rem #0002;
 }
-.more-menu > ul a {
+.more-menu > .more-panel a {
   display: block;
 }
 .heading-alias {
@@ -100,7 +100,7 @@
   .more-item {
     position: static;
   }
-  .more-menu > ul {
+  .more-menu > .more-panel {
     left: 0;
     right: 0;
     width: 100%;
@@ -711,4 +711,56 @@ main:focus {
   .nav-links {
     gap: 0.25rem 0.8rem;
   }
+}
+
+.more-panel section + section {
+  border-top: 1px solid var(--line);
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+}
+.more-panel h2 {
+  font-family: inherit;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 0.3rem 0;
+}
+.more-panel ul {
+  display: block;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.more-panel a:focus-visible,
+.more-menu summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.archive-search {
+  max-width: 36rem;
+  margin-block: 1.5rem;
+}
+.archive-search label {
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.archive-search > div {
+  display: flex;
+  gap: 0.5rem;
+}
+.archive-search input {
+  min-width: 0;
+  flex: 1;
+}
+.archive-search input,
+.archive-search button {
+  min-height: 44px;
+  font: inherit;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+  color: var(--ink);
+  background: var(--surface);
+}
+.archive-search button {
+  cursor: pointer;
 }

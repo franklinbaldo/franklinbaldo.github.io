@@ -172,3 +172,24 @@ for (const lang of ["en", "pt"]) {
 console.log(
   "Home discovery: bilingual canonical paths and archive shortcuts passed"
 );
+
+for (const prefix of ["", "pt/"]) {
+  const archive = readFileSync(join(out, prefix, "archive/index.html"), "utf8");
+  assert.ok(archive.includes(`action="/${prefix}search/"`));
+  assert.ok(archive.includes('aria-describedby="archive-filter-help"'));
+  assert.ok(archive.includes('class="archive-summary"'));
+  assert.equal(
+    (archive.match(/<section aria-labelledby="more-group-/g) || []).length,
+    3
+  );
+}
+const demo = readFileSync(join(out, "demos/fourier-below-nlogn.html"), "utf8");
+assert.ok(
+  demo.includes('href="/blog/fourier-below-nlogn-interactive/" target="_top"')
+);
+assert.ok(
+  existsSync(join(out, "blog/fourier-below-nlogn-interactive/index.html"))
+);
+console.log(
+  "Archive search, grouped navigation and Fourier article return passed"
+);
