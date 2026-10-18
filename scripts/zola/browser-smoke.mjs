@@ -10,6 +10,7 @@ const out = ".cache/zola-screenshots";
 mkdirSync(out, { recursive: true });
 const browser = await chromium.launch();
 const results = [];
+const failures = [];
 try {
   for (const viewport of [
     { width: 1440, height: 1000 },
@@ -126,21 +127,35 @@ try {
         status: response.status(),
       });
     }
-    results.push(...(await checkMusic(page, base, out, viewport.width)));
-    results.push(...(await checkBooks(page, base, out, viewport.width)));
-    results.push(...(await checkSciencePages(page, base, out, viewport.width)));
-    results.push(...(await checkNativeApps(page, base, out, viewport.width)));
-    assert.deepEqual(errors, [], "browser console errors");
+    for (const [name, check] of [
+      ["music", checkMusic],
+      ["books", checkBooks],
+      ["science", checkSciencePages],
+      ["apps", checkNativeApps],
+    ]) {
+      try {
+        results.push(...(await check(page, base, out, viewport.width)));
+      } catch (error) {
+        failures.push(`${name}/${viewport.width}: ${error.stack}`);
+        console.error(failures.at(-1));
+        await page.screenshot({
+          path: `${out}/failure-${name}-${viewport.width}.png`,
+        });
+      }
+    }
+    if (errors.length)
+      failures.push(`browser/${viewport.width}: ${errors.join("; ")}`);
     await context.close();
   }
   writeFileSync(
     `${out}/report.json`,
     JSON.stringify(
-      { head: process.env.GITHUB_HEAD_SHA ?? null, results },
+      { head: process.env.GITHUB_HEAD_SHA ?? null, results, failures },
       null,
       2
     ) + "\n"
   );
+  assert.deepEqual(failures, [], "All browser checks must pass");
 } finally {
   await browser.close();
 }

@@ -386,7 +386,14 @@ write(
   `// Reused literal GlobalMusicPlayer client code; no Astro runtime.\n(() => {\n${compiled.outputText}\n})();\n`
 );
 const tokens = `:root{--pico-background-color:var(--paper);--pico-card-background-color:var(--surface);--pico-color:var(--ink);--pico-muted-color:var(--muted);--pico-muted-border-color:var(--line);--pico-primary:var(--accent);--pico-primary-inverse:var(--surface);--pico-code-background-color:var(--code);--pico-border-radius:.5rem;--radius-medium:.6rem;--radius-large:.9rem;--pico-font-family-sans-serif:system-ui,sans-serif;--pico-font-family-serif:Georgia,serif}\n`;
-write("static/css/music-player.css", tokens + literal(playerSource, "style"));
+// The catalogue stylesheet still contains positioning for an older compact
+// player. Its translate must not shift this fixed full-width iframe player.
+write(
+  "static/css/music-player.css",
+  tokens +
+    literal(playerSource, "style") +
+    "\n#gmp{translate:none!important;width:auto!important}body.gmp-active{padding-bottom:310px!important}\n"
+);
 const galleryCss = literal(
   readFileSync("src/pages/music.astro", "utf8"),
   "style"
