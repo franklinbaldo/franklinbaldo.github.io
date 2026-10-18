@@ -44,3 +44,8 @@ src/generated/versions-selected.json
 # Python bytecode from running the audiobook worker locally
 __pycache__/
 *.py[cod]
+
+# Disposable Zola migration preview
+dist-zola/
+.cache/zola-site/
+.cache/zola-parity.json

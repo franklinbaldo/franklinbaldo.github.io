@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<article class="reading-page"{% if page_kind == "post" %} data-pagefind-body{% endif %}{% if page.extra.original_id %} data-original-id="{{ page.extra.original_id }}"{% endif %}>
+  <header class="article-header">
+    {% if page.date %}<p class="eyebrow"><time datetime="{{ page.date }}">{{ page.date | date(format="%Y-%m-%d") }}</time>{% if page.reading_time %} · {{ page.reading_time }} {% if site_lang == "pt" %}min de leitura{% else %}min read{% endif %}{% endif %}</p>{% endif %}
+    <h1 data-pagefind-meta="title">{{ page.title }}</h1>
+    {% if page.description %}<p class="tagline" data-pagefind-meta="description">{{ page.description }}</p>{% endif %}
+    {% if page.extra.tags %}
+    <ul class="tag-list" aria-label="Tags" data-pagefind-ignore>
+      {% for tag in page.extra.tags %}<li>{{ tag }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+  </header>
+  {% if page.extra.hero_image %}
+  <figure class="hero-image"><img src="{{ page.extra.hero_image }}" alt="{{ page.extra.hero_image_alt | default(value='') }}" decoding="async" fetchpriority="high"></figure>
+  {% endif %}
+  <div class="prose"><div data-zola-content>{{ page.content | safe }}</div><!-- /zola-content --></div>
+  {% if page_kind == "search" %}
+    <div id="search" data-language="{{ site_lang }}" data-bundle-path="{{ get_url(path='pagefind/') }}" role="search" aria-label="{% if site_lang == 'pt' %}Buscar publicações{% else %}Search posts{% endif %}"></div>
+    <p id="search-status" role="status" class="search-status"></p>
+    <noscript><p>{% if site_lang == "pt" %}A busca precisa de JavaScript. Você também pode navegar pelo{% else %}Search needs JavaScript. You can also browse the{% endif %} <a href="{{ prefix }}/archive/">{% if site_lang == "pt" %}arquivo{% else %}archive{% endif %}</a>.</p></noscript>
+  {% endif %}
+  {% if page_kind == "post" %}
+  <footer class="article-footer" data-pagefind-ignore>
+    <a href="{{ prefix }}/archive/">← {% if site_lang == "pt" %}Voltar ao arquivo{% else %}Back to the archive{% endif %}</a>
+    {% if page.extra.translations %}
+      {% for code, href in page.extra.translations %}
+        {% if code != site_lang %}<a href="{{ href }}" hreflang="{% if code == 'pt' %}pt-BR{% else %}{{ code }}{% endif %}" lang="{% if code == 'pt' %}pt-BR{% else %}{{ code }}{% endif %}">{% if code == "pt" %}Ler em português{% else %}Read in English{% endif %} →</a>{% endif %}
+      {% endfor %}
+    {% endif %}
+  </footer>
+  {% endif %}
+</article>
+{% endblock content %}

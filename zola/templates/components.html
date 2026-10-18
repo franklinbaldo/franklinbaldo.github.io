@@ -1,0 +1,47 @@
+{% component post_list(pages, lang, limit=0) %}
+<ol class="post-list">
+  {% for post in pages %}
+    {% if limit == 0 or loop.index <= limit %}
+    <li>
+      <article>
+        {% if post.date %}<time class="post-date" datetime="{{ post.date }}">{{ post.date | date(format="%Y-%m-%d") }}</time>{% endif %}
+        <h2><a href="{{ post.permalink }}">{{ post.title }}</a></h2>
+        {% if post.description %}<p>{{ post.description }}</p>{% endif %}
+      </article>
+    </li>
+    {% endif %}
+  {% endfor %}
+</ol>
+{% endcomponent post_list %}
+
+{% component home(lang) %}
+{% set prefix = "" %}
+{% set blog = get_section(path="blog/_index.md", lang="en") %}
+{% if lang == "pt" %}
+  {% set prefix = "/pt" %}
+  {% set blog = get_section(path="pt/blog/_index.md", lang="en") %}
+{% endif %}
+<div class="home-layout">
+  <div>
+    <header class="home-hero">
+      <p class="eyebrow">{% if lang == "pt" %}Jardim digital{% else %}A digital garden{% endif %}</p>
+      <h1>Franklin Baldo<span aria-hidden="true">.</span></h1>
+      <p class="tagline">{% if lang == "pt" %}Ensaios, código e música na fronteira da IA, filosofia e literatura.{% else %}Essays, code, and music at the border of AI, philosophy, and literature.{% endif %}</p>
+    </header>
+    <section aria-labelledby="recent-heading">
+      <h2 class="eyebrow" id="recent-heading">{% if lang == "pt" %}Publicações recentes{% else %}Recent writing{% endif %}</h2>
+      {{ <post_list pages={blog.pages} lang={lang} limit={12} /> }}
+      <p class="archive-link"><a href="{{ prefix }}/archive/">{% if lang == "pt" %}Ver o arquivo completo{% else %}Browse the full archive{% endif %} <span aria-hidden="true">→</span></a></p>
+    </section>
+  </div>
+  <aside class="author-rail" aria-label="{% if lang == 'pt' %}Acompanhe{% else %}Stay in the loop{% endif %}">
+    <img class="avatar" src="{{ get_url(path='avatar.png') }}" width="96" height="96" alt="Franklin Baldo" decoding="async">
+    <p class="eyebrow">{% if lang == "pt" %}Ideias em construção{% else %}Ideas in progress{% endif %}</p>
+    <p>{% if lang == "pt" %}Um espaço para explorar ideias, fazer perguntas e compartilhar descobertas.{% else %}A space to explore ideas, ask questions, and share discoveries.{% endif %}</p>
+    <ul class="rail-links">
+      <li><a href="{{ prefix }}/rss.xml">{% if lang == "pt" %}Acompanhar por RSS{% else %}Follow via RSS{% endif %}</a></li>
+      <li><a href="{{ prefix }}/search/">{% if lang == "pt" %}Buscar no arquivo{% else %}Search the archive{% endif %}</a></li>
+    </ul>
+  </aside>
+</div>
+{% endcomponent home %}
