@@ -262,6 +262,7 @@ export async function checkMusic(page, base, out, width) {
           "Fechar player"
     );
     await assertPreserved();
+    await page.screenshot({ path: `${out}/music-active-${width}.png` });
     await page.locator("#gmp-close").click();
     assert.equal(await page.locator("#gmp").isVisible(), false);
     assert.equal(

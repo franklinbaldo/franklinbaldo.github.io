@@ -120,8 +120,30 @@ export async function checkNativeApps(page, base, screenshotDirectory, width) {
       "standalone"
     );
     await page.waitForSelector(".reveal.ready");
-    assert.ok((await page.locator(".slides > section").count()) > 20);
+    assert.ok((await page.locator(".slides section").count()) > 20);
     assert.ok((await page.locator("aside.notes").count()) > 20);
+    // Reveal 5.2 automatically wraps mobile slides in scroll pages.
+    // Preserve and test that mode instead of imposing desktop DOM/keys.
+    if (await page.locator(".reveal-scroll").count()) {
+      assert.ok((await page.locator(".scroll-page").count()) > 20);
+      await page.locator(".reveal-scroll").evaluate((viewport) => {
+        viewport.scrollTo({
+          top: viewport.clientHeight * 2,
+          behavior: "instant",
+        });
+      });
+      await page.waitForFunction(
+        () => document.querySelector(".reveal-scroll")?.scrollTop > 0
+      );
+      await page
+        .locator(".reveal-scroll")
+        .evaluate((viewport) =>
+          viewport.scrollTo({ top: 0, behavior: "instant" })
+        );
+      await finish();
+      continue;
+    }
+
     const first = await page.locator(".slides > section.present").innerText();
     await page.keyboard.press("ArrowRight");
     await page.waitForFunction(
