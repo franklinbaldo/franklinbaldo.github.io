@@ -18,6 +18,11 @@ class E0(unittest.TestCase):
         self.assertEqual(r.classify_bytes(RAW), [('1','gaia_clean'),('2','no_gaia_clean'),('3','review')])
     def test_duplicates(self):
         with self.assertRaises(ValueError): r.classify_bytes(RAW+b'1,7538,9720,,0\n')
+    def test_limits_and_headers(self):
+        with self.assertRaises(ValueError): r.classify_bytes(b'x'*(r.MAX_BYTES+1))
+        with self.assertRaises(ValueError): r.classify_bytes(HEADER.replace(b'source_id',b'source_id,source_id')+b'1,1,7538,9720,,0\n')
+        rows=HEADER+b''.join(f'{i},7538,9720,,0\n'.encode() for i in range(1,2502))
+        with self.assertRaises(ValueError): r.classify_bytes(rows)
     def test_wrong_scan(self):
         with self.assertRaises(ValueError): r.classify_bytes(RAW.replace(b'9720',b'9721'))
     def test_empty(self):
