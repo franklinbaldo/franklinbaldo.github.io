@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { parse } from "parse5";
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 const out = "dist-zola";
@@ -99,3 +100,30 @@ for (const path of [
     !readFileSync(join(out, path), "utf8").includes("&lt;p&gt;"),
     `${path} literal prose remains HTML`
   );
+
+for (const path of ["index.html", "about/index.html", "archive/index.html"]) {
+  assert.match(
+    readFileSync(join(out, path), "utf8"),
+    /<meta name="description" content="[^"]+/,
+    path + " SEO description"
+  );
+}
+for (const path of ["music/index.html", "pt/musicas/index.html"]) {
+  const ids = [];
+  function visit(node) {
+    if (
+      node.attrs?.some(
+        (attr) => attr.name === "class" && attr.value === "song-card"
+      )
+    ) {
+      ids.push(node.attrs.find((attr) => attr.name === "data-suno-id")?.value);
+    }
+    for (const child of node.childNodes ?? []) visit(child);
+  }
+  visit(parse(readFileSync(join(out, path), "utf8")));
+  assert.deepEqual(
+    ids.toSorted(),
+    catalog.map((song) => song.id).toSorted(),
+    path + " rendered gallery/catalog parity"
+  );
+}

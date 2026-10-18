@@ -301,10 +301,9 @@ for (const lang of ["en", "pt"]) {
         lang,
         translations: { en: "/music/", pt: "/pt/musicas/" },
         music_jsonld: json(structured),
+        literal_html: body,
       }
-    ) +
-      body +
-      "\n"
+    ) + "\n"
   );
 }
 

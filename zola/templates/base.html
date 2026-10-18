@@ -16,6 +16,7 @@
   {% set description = section.description | default(value=config.description) %}
   {% set document = section %}
 {% endif %}
+{% if not description %}{% set description = config.description %}{% endif %}
 {% set prefix = "" %}
 {% set html_lang = "en" %}
 {% if site_lang == "pt" %}

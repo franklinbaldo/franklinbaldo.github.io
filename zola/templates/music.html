@@ -4,5 +4,5 @@
   {{ page.extra.music_jsonld | safe }}
 </script>
 <script src="/js/music-gallery.js" defer></script>
-{% endblock head %} {% block content %}{{ page.content | safe }}{% endblock
+{% endblock head %} {% block content %}{{ page.extra.literal_html | safe }}{% endblock
 content %}
