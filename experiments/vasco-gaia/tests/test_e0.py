@@ -33,12 +33,26 @@ class E0(unittest.TestCase):
             with self.assertRaises(ValueError):r.run(src,out,'0'*64,'UNCOMMITTED')
             self.assertFalse(out.exists())
             counts=r.run(src,out,r.sha256(RAW),'UNCOMMITTED')
-            self.assertEqual(h.harvest(out),counts)
+            self.assertEqual(h.harvest(out,r.sha256(RAW),'UNCOMMITTED'),counts)
             with self.assertRaises(ValueError):r.run(src,out,r.sha256(RAW),'UNCOMMITTED')
             (out/'classifications.csv').write_text('tampered')
-            with self.assertRaises(ValueError):h.harvest(out)
+            with self.assertRaises(ValueError):h.harvest(out,r.sha256(RAW),'UNCOMMITTED')
+    def test_forged_manifest(self):
+        with tempfile.TemporaryDirectory() as td:
+            src=Path(td)/'raw.csv';src.write_bytes(RAW);out=Path(td)/'out'
+            r.run(src,out,r.sha256(RAW),'UNCOMMITTED')
+            manifest=out/'RESULT.md'
+            manifest.write_text(manifest.read_text().replace('processed_sources: 3','processed_sources: 999'))
+            (out/'SHA256SUMS').write_text(''.join(f'{r.sha256((out/n).read_bytes())}  {n}\n' for n in ['input.csv','classifications.csv','RESULT.md']))
+            with self.assertRaises(ValueError):h.harvest(out,r.sha256(RAW),'UNCOMMITTED')
+    def test_external_anchor(self):
+        with tempfile.TemporaryDirectory() as td:
+            src=Path(td)/'raw.csv';src.write_bytes(RAW);out=Path(td)/'out'
+            r.run(src,out,r.sha256(RAW),'UNCOMMITTED')
+            with self.assertRaises(ValueError):h.harvest(out,'0'*64,'UNCOMMITTED')
+            with self.assertRaises(ValueError):h.harvest(out,r.sha256(RAW),'a'*40)
     def test_traversal(self):
         with tempfile.TemporaryDirectory() as td:
             p=Path(td);(p/'SHA256SUMS').write_text('0'*64+'  ../x\n')
-            with self.assertRaises(ValueError):h.harvest(p)
+            with self.assertRaises(ValueError):h.harvest(p,'0'*64,'UNCOMMITTED')
 if __name__ == '__main__':unittest.main()
