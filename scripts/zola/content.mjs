@@ -52,6 +52,23 @@ export function frontmatter(data, extra = {}) {
 }
 // Only literal JSX styles are accepted. Never execute expressions from content.
 export function convertBody(body) {
+  // JSX comments are editorial metadata, not visible prose. Preserve examples
+  // inside fenced/inline code rather than deleting with an unrestricted regex.
+  const protectedRanges = [];
+  const collectCode = (node) => {
+    if (node.type === "code" || node.type === "inlineCode")
+      protectedRanges.push([
+        node.position.start.offset,
+        node.position.end.offset,
+      ]);
+    for (const child of node.children ?? []) collectCode(child);
+  };
+  collectCode(remark().parse(body));
+  body = body.replace(/\{\/\*[\s\S]*?\*\/\}/g, (match, offset) =>
+    protectedRanges.some(([start, end]) => offset >= start && offset < end)
+      ? match
+      : ""
+  );
   if (/^(?:import|export)\s/m.test(body))
     throw new Error("MDX import/export requires a native port");
   let converted = body

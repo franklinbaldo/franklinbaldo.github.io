@@ -8,7 +8,7 @@
     if (typeof window.PagefindUI !== "function") {
       throw new Error("The local search bundle was not generated");
     }
-    new window.PagefindUI({
+    const search = new window.PagefindUI({
       element: "#search",
       bundlePath: container.dataset.bundlePath,
       showSubResults: true,
@@ -26,6 +26,8 @@
           }
         : {},
     });
+    const query = new URLSearchParams(location.search).get("q");
+    if (query) search.triggerSearch(query);
   } catch (error) {
     status.textContent = portuguese
       ? "A busca está indisponível. Use o arquivo para encontrar as publicações."

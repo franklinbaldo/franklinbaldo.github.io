@@ -49,3 +49,5 @@ __pycache__/
 dist-zola/
 .cache/zola-site/
 .cache/zola-parity.json
+
+.cache/zola-screenshots/

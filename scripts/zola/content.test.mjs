@@ -46,3 +46,11 @@ test("TOML values escape quotes and translations keys", () => {
     )
   );
 });
+
+test("editorial JSX comments stay hidden while code examples stay intact", () => {
+  assert.equal(
+    convertBody("Before {/* secret note */} after"),
+    "Before  after"
+  );
+  assert.equal(convertBody("`{/* example */}`"), "`{/* example */}`");
+});

@@ -1,16 +1,16 @@
 // RFC-free smoke test (issue #1086): loads a handful of key pages against a
-// built `dist/` via `astro preview` and asserts each one responds OK, paints
+// built `dist-zola/` via the native static server and asserts each one responds OK, paints
 // an <h1>, and logs no browser console errors. Not a full regression suite —
 // just a cheap guard against a page-breaking change slipping through.
 //
-// Requires `npm run build` to have already produced `dist/` (same
+// Requires `npm run build` to have already produced `dist-zola/` (same
 // precondition as Lighthouse CI's `staticDistDir`, see .lighthouserc.cjs).
 import { chromium } from "playwright";
 import { existsSync } from "node:fs";
 import { spawn } from "node:child_process";
 
 const PORT = 4321;
-const BASE = `http://localhost:${PORT}`;
+const BASE = `http://127.0.0.1:${PORT}`;
 
 const PAGES = [
   { id: "en-home", url: "/" },
@@ -21,9 +21,9 @@ const PAGES = [
   { id: "pt-ranking", url: "/pt/ranking/" },
 ];
 
-if (!existsSync("dist")) {
+if (!existsSync("dist-zola/index.html")) {
   console.error(
-    "dist/ not found — run `npm run build` before `npm run test:e2e`."
+    "dist-zola/ not found — run `npm run build` before `npm run test:e2e`."
   );
   process.exit(1);
 }
@@ -46,12 +46,10 @@ function waitForServer(url, timeoutMs = 20_000) {
   });
 }
 
-// Spawned directly (not via `npx astro ...`) so `preview.kill()` below signals
-// the actual server process instead of an intermediary npx wrapper — npx can
-// leave the real astro server as an orphan on the port after the wrapper exits.
+// Spawn the actual server process so cleanup cannot leave a preview orphan.
 const preview = spawn(
-  "node_modules/.bin/astro",
-  ["preview", "--port", String(PORT), "--host", "localhost"],
+  process.execPath,
+  ["scripts/zola/serve.mjs", "--port", String(PORT), "--host", "127.0.0.1"],
   { stdio: "pipe" }
 );
 let previewOutput = "";

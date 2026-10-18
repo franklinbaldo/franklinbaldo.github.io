@@ -2,10 +2,9 @@
 
 ## Estado
 
-A produção continua no workflow `deploy.yml`, com Astro. Este trabalho adiciona
-uma pipeline Zola nativa e verificável, sem substituir produção por uma versão
-com rotas ou funcionalidades faltantes. A presença de um build Zola verde não
-significa que a migração esteja concluída.
+Esta branch configura `deploy.yml` para gerar e publicar `dist-zola/`. O cutover
+só ocorre após merge e deploy verificados. Um build local verde, isoladamente,
+não significa que a migração esteja concluída.
 
 ## Executar
 
@@ -17,7 +16,9 @@ executar o binário.
 ```sh
 npm run test:zola
 npm run build:zola
-python3 -m http.server 8000 --directory dist-zola
+npm run preview
+# desenvolvimento com rebuild automático:
+npm run dev
 ```
 
 `ZOLA_BIN=/caminho/zola npm run build:zola` permite um binário fora do PATH.
@@ -50,7 +51,7 @@ um cutover que ainda não aconteceu.
 ## Gate de publicação
 
 ```sh
-ASTRO_TELEMETRY_DISABLED=1 npm run build
+npm run build:astro
 npm run build:zola
 npm run check:zola:parity
 ```
@@ -68,8 +69,8 @@ justificar explicitamente cada diferença, é obrigatório testar:
 6. Demos, jogos, apresentações e seus scripts/artefatos
 7. Preview visual desktop/mobile e ausência de erros de console
 
-Somente após esses gates deve-se trocar `deploy.yml` para `build:zola` e
-`dist-zola`. O workflow de preview não tem permissão de Pages e nunca publica.
+Somente após esses gates deve-se integrar a alteração de `deploy.yml` para
+Zola e `dist-zola`. O workflow de preview não tem permissão de Pages e nunca publica.
 Não há migração automática de configuração de segurança ou permissões.
 
 ## Referências
@@ -77,3 +78,19 @@ Não há migração automática de configuração de segurança ou permissões.
 - https://www.getzola.org/documentation/getting-started/installation/
 - https://www.getzola.org/documentation/getting-started/cli-usage/
 - https://www.getzola.org/documentation/deployment/github-pages/
+
+## Checkpoint de paridade de rotas
+
+O build integrado de 18/10/2026 cobre os 4.704 artefatos comparados do baseline,
+com zero rota pública ausente e todos os arquivos de `public/` idênticos.
+A única remoção deliberada é a imagem OG de
+`the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life`,
+cuja fonte está marcada `draft: true`. O teste verifica essa condição antes
+de aceitar a exceção; uma futura publicação exige removê-la.
+
+Os dois URLs históricos de sitemap continuam disponíveis. Páginas `noindex`
+não entram nos sitemaps. Rankings, ciência, apps, música e livros têm
+exportadores nativos; o player fica fora do conteúdo substituído durante
+a navegação progressiva. Mermaid e cópia de código usam bundles independentes
+de Astro. A cobertura de caminhos não substitui o smoke funcional/visual
+no Chromium, ainda obrigatório antes do cutover.

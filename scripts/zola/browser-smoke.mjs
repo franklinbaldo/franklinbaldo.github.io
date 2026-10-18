@@ -1,3 +1,7 @@
+import { checkNativeApps } from "./apps/browser-checks.mjs";
+import { checkSciencePages } from "./science-browser-checks.mjs";
+import { checkMusic } from "./music-browser-checks.mjs";
+import { checkBooks } from "./books-browser-checks.mjs";
 import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { chromium } from "playwright";
@@ -14,12 +18,18 @@ try {
     const context = await browser.newContext({ viewport });
     const page = await context.newPage();
     const errors = [];
+    page.on("response", (response) => {
+      if (response.url().startsWith(base) && response.status() >= 400)
+        errors.push(`${response.status()} ${response.url()}`);
+    });
     page.on("pageerror", (error) => errors.push(error.message));
     for (const [name, path] of [
       ["home", "/"],
       ["home-pt", "/pt/"],
       ["migration", "/pt/blog/migracao-do-blog-para-zola/"],
-      ["search", "/pt/search/"],
+      ["reviewed-post", "/pt/blog/vos/"],
+      ["search", "/pt/search/?q=migra%C3%A7%C3%A3o"],
+      ["archive", "/archive/"],
       ["ranking", "/ranking/"],
       ["battles", "/ranking/battles/"],
       ["rug-pull", "/games/rug-pull/"],
@@ -34,14 +44,65 @@ try {
         path
       );
       assert.ok(await page.locator("h1").first().isVisible(), path);
+      assert.ok(
+        await page.evaluate(() =>
+          [...document.styleSheets].some(
+            (sheet) =>
+              sheet.href?.endsWith("/css/site.css") && sheet.cssRules.length > 0
+          )
+        ),
+        `${path} native stylesheet`
+      );
       if (name === "migration") {
+        assert.ok(await page.locator("[data-article-toc]").count());
+        assert.ok(await page.locator("[data-article-share]").count());
         assert.ok(await page.locator("[data-zola-content]").innerText());
         const html = await page.content();
         assert.ok(!html.includes("data-astro-cid"));
       }
+      if (name === "reviewed-post") {
+        const review = page.locator("details[data-hronir-duel]").first();
+        assert.ok(await review.count());
+        await review.locator("summary").first().click();
+        assert.equal(await review.getAttribute("open"), "");
+        await review.locator("summary").first().click();
+        assert.equal(await review.getAttribute("open"), null);
+        assert.ok(await page.locator(".article-related").count());
+        const schemas = await page
+          .locator('script[type="application/ld+json"]')
+          .allTextContents();
+        assert.ok(schemas.some((text) => text.includes("BlogPosting")));
+      }
       if (name === "search") {
-        await page.locator('input[type="search"]').fill("migração");
+        await page.waitForFunction(
+          () =>
+            document.querySelector(".pagefind-ui__search-input")?.value ===
+            "migração"
+        );
         await page.waitForSelector(".pagefind-ui__result");
+      }
+      if (name === "home") {
+        const toggle = page.locator("[data-theme-toggle]");
+        await toggle.check();
+        assert.equal(
+          await page.locator("html").getAttribute("data-theme"),
+          "dark"
+        );
+        await toggle.uncheck();
+        assert.equal(
+          await page.locator("html").getAttribute("data-theme"),
+          "light"
+        );
+      }
+      if (name === "archive") {
+        assert.equal(await page.locator("[data-archive-type]").count(), 50);
+        await page.locator("[data-archive-filter]").selectOption({ index: 1 });
+        assert.ok(
+          (await page.locator("[data-archive-type]:not([hidden])").count()) > 0
+        );
+        await page.locator("[data-archive] nav a").first().click();
+        await page.waitForURL("**/archive/page/2/");
+        assert.ok((await page.locator("[data-archive-type]").count()) > 0);
       }
       if (name === "rug-pull") {
         await page.locator("#rug-start").click();
@@ -65,6 +126,10 @@ try {
         status: response.status(),
       });
     }
+    results.push(...(await checkMusic(page, base, out, viewport.width)));
+    results.push(...(await checkBooks(page, base, out, viewport.width)));
+    results.push(...(await checkSciencePages(page, base, out, viewport.width)));
+    results.push(...(await checkNativeApps(page, base, out, viewport.width)));
     assert.deepEqual(errors, [], "browser console errors");
     await context.close();
   }

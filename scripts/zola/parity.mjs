@@ -22,7 +22,20 @@ const routes = files(baseline)
       !f.startsWith("pagefind/") &&
       /\.(html|xml|json|png)$/.test(f)
   );
-const missing = routes.filter((f) => !existsSync(join(candidate, f)));
+// Astro emitted this social image even though its source is explicitly draft.
+// Do not reproduce that publication leak. No published content is excepted.
+const intentionalRemovals = [
+  "og/the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life.png",
+];
+const draftSource = readFileSync(
+  "src/content/blog/the-art-of-delegating-orchestrating-jules-and-claude-in-everyday-life.md",
+  "utf8"
+);
+if (!/^draft: true$/m.test(draftSource))
+  throw new Error("Revisit draft OG exception: source is now public");
+const missing = routes.filter(
+  (f) => !existsSync(join(candidate, f)) && !intentionalRemovals.includes(f)
+);
 const changedPublic = files("public")
   .map((f) => relative("public", f))
   .filter(
@@ -35,6 +48,7 @@ const report = {
   candidate,
   total_baseline_routes: routes.length,
   missing_routes: missing,
+  intentional_removals: intentionalRemovals,
   changed_public_assets: changedPublic,
   ready_for_cutover: missing.length === 0 && changedPublic.length === 0,
   note: "Route/asset coverage only; interactive behavior and rendering require separate checks.",

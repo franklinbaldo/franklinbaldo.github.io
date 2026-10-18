@@ -1,6 +1,8 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { escapeHtml } from "./content.mjs";
+import { preserveHeadingAnchors } from "./anchors.mjs";
+import { articleSchema, renderArticleToc } from "./article-extras.mjs";
 const base = "https://franklinbaldo.github.io";
 const out = "dist-zola";
 const manifest = JSON.parse(
@@ -11,14 +13,33 @@ function write(path, content) {
   mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, content);
 }
+let restoredAnchors = 0;
 for (const p of manifest.posts) {
-  const html = readFileSync(join(out, p.path, "index.html"), "utf8");
+  let html = readFileSync(join(out, p.path, "index.html"), "utf8");
   const match = html.match(
-    /<div[^>]*\bdata-zola-content[^>]*>([\s\S]*?)<\/div><!-- \/zola-content -->/
+    /<div[^>]*\bdata-zola-content[^>]*>([\s\S]*?)<\/div>\s*<!-- \/zola-content -->/
   );
   if (!match) throw new Error(`Missing full-content feed boundary: ${p.path}`);
-  p.html = match[1];
+  const preserved = preserveHeadingAnchors(match[1]);
+  p.html = preserved.html;
+  restoredAnchors += preserved.restored;
+  if (p.html !== match[1]) {
+    const start = match.index + match[0].indexOf(match[1]);
+    html = html.slice(0, start) + p.html + html.slice(start + match[1].length);
+  }
+  html = html.replace(
+    "<!-- zola-article-toc -->",
+    p.data.postType === "music"
+      ? ""
+      : renderArticleToc(p.html, p.data.lang ?? "en")
+  );
+  html = html.replace(
+    "<!-- zola-article-schema -->",
+    `<script type="application/ld+json" data-article-schema>${articleSchema(p, p.html)}</script>`
+  );
+  write(join(p.path, "index.html"), html);
 }
+console.log(`Zola headings: ${restoredAnchors} historical permalinks restored`);
 for (const lang of ["en", "pt"]) {
   const prefix = lang === "pt" ? "pt/" : "";
   const posts = manifest.posts.filter((p) => (p.data.lang ?? "en") === lang);
@@ -59,4 +80,28 @@ for (const lang of ["en", "pt"]) {
 }
 console.log(
   "Zola feeds: EN/PT RSS and JSON Feed with exact rendered article content"
+);
+// Preserve the historical sitemap URLs advertised in robots.txt, while excluding
+// explicit noindex compatibility pages from discovery.
+const sitemap = readFileSync(join(out, "sitemap.xml"), "utf8").replace(
+  /\s*<url>[\s\S]*?<\/url>/g,
+  (entry) => {
+    const loc = entry.match(/<loc>(.*?)<\/loc>/)?.[1];
+    if (!loc) return entry;
+    const path = decodeURI(new URL(loc).pathname);
+    try {
+      const html = readFileSync(join(out, path, "index.html"), "utf8");
+      return /<meta\s+name="robots"\s+content="[^"]*noindex/.test(html)
+        ? ""
+        : entry;
+    } catch {
+      return entry;
+    }
+  }
+);
+write("sitemap.xml", sitemap);
+write("sitemap-0.xml", sitemap);
+write(
+  "sitemap-index.xml",
+  `<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><sitemap><loc>${base}/sitemap-0.xml</loc></sitemap></sitemapindex>\n`
 );

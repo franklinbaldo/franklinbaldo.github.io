@@ -11,7 +11,8 @@ import { dirname, extname, join, relative, resolve } from "node:path";
 import matter from "gray-matter";
 import { listPostFiles, postIdFromPath } from "../lib/content.mjs";
 import { READING_PATHS } from "../../src/lib/reading-paths-data.mjs";
-import { slugFor } from "../../src/lib/suno-music.ts";
+import { parseTags, slugFor } from "../../src/lib/suno-music.ts";
+import { createArticleExtras } from "./article-extras.mjs";
 import {
   convertBody,
   escapeHtml,
@@ -81,8 +82,74 @@ const catalog = readFileSync("data/suno-catalog.jsonl", "utf8")
   .split("\n")
   .filter(Boolean)
   .map((line) => JSON.parse(line));
+const publicClips = new Map(
+  catalog
+    .filter((clip) => clip.isPublic === true)
+    .map((clip) => [clip.id, clip])
+);
+// Match BlogPostPage's canonical primary-track + additional-renditions model.
+// Publication of a post is not permission to expose a private Suno recording.
+function normalizeMusicTracks(data) {
+  if (data.postType !== "music") return [];
+  const tracks = [
+    ...(data.sunoId
+      ? [
+          {
+            label: data.title,
+            sunoId: data.sunoId,
+            sunoImageUrl: data.sunoImageUrl,
+            genre: data.genre,
+            duration: data.duration,
+          },
+        ]
+      : []),
+    ...(data.tracks ?? []),
+  ];
+  const seen = new Set();
+  return tracks
+    .filter((track) => {
+      if (
+        !publicClips.has(track.sunoId) ||
+        seen.has(track.sunoId) ||
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+          track.sunoId
+        )
+      )
+        return false;
+      seen.add(track.sunoId);
+      return true;
+    })
+    .map((track) => {
+      const clip = publicClips.get(track.sunoId);
+      const image = track.sunoImageUrl || clip.imageUrl || "";
+      return {
+        sunoId: track.sunoId,
+        label: track.label || clip.title || data.title,
+        image: /^https?:\/\//i.test(image) ? image : "",
+        genre: track.genre ?? parseTags(clip.styleTags),
+        duration: Number(track.duration ?? clip.durationSeconds) || 0,
+      };
+    });
+}
+function musicControls(data, lang) {
+  const tracks = normalizeMusicTracks(data);
+  return tracks
+    .map((track, index) => {
+      const url = `https://suno.com/song/${track.sunoId}`;
+      const seconds = Math.round(track.duration);
+      const duration =
+        seconds > 0
+          ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
+          : "";
+      const details = [...track.genre, duration].filter(Boolean);
+      const play = lang === "pt" ? "Ouvir" : "Play";
+      const external = lang === "pt" ? "Abrir no Suno" : "Open on Suno";
+      return `<article class="music-post-track" data-suno-id="${escapeHtml(track.sunoId)}" data-title="${escapeHtml(track.label)}">${index === 0 && track.image ? `<img src="${escapeHtml(track.image)}" alt="${escapeHtml(track.label)}" width="160" height="160" loading="lazy">` : ""}<h3>${escapeHtml(track.label)}</h3>${details.length ? `<p><small>${details.map(escapeHtml).join(" · ")}</small></p>` : ""}<p><a class="music-play-btn" href="${url}" aria-label="${escapeHtml(`${play} ${track.label}`)}">▶ ${play}</a> · <a href="${url}" target="_blank" rel="noopener noreferrer">${external} ↗</a></p></article>`;
+    })
+    .join("\n");
+}
 for (const clip of catalog) {
-  if (!clip.isPublic || !clip.createdAt) continue;
+  if (clip.isPublic !== true || !clip.createdAt) continue;
   const data = {
     title: clip.title || "(sem título)",
     description: `Música de Franklin Baldo — ${clip.title || "sem título"}`,
@@ -91,18 +158,18 @@ for (const clip of catalog) {
     tags: ["música"],
     postType: "music",
     sunoId: clip.id,
+    sunoImageUrl: clip.imageUrl,
+    genre: parseTags(clip.styleTags),
+    duration: clip.durationSeconds,
   };
   const id = slugFor(clip);
-  const audio = clip.audioUrl
-    ? `<audio controls preload="none" src="${escapeHtml(clip.audioUrl)}"></audio>\n\n`
-    : "";
   posts = posts.filter((post) => post.id !== id); // musicLoader.store.set replaces the same collection identity
   posts.push({
     id,
     data,
     path: postPath(id, data),
     source: "data/suno-catalog.jsonl",
-    body: `${audio}## Letra\n\n<pre>${escapeHtml((clip.lyricsPrompt || "").trim())}</pre>\n`,
+    body: `## Letra\n\n<pre>${escapeHtml((clip.lyricsPrompt || "").trim())}</pre>\n`,
   });
 }
 posts.sort(
@@ -154,17 +221,38 @@ for (const lang of ["en", "pt"]) {
           `- [${p.data.title.replace(/[[\]]/g, "")}](${p.path}) · ${p.data.date.slice(0, 10)}`
       )
       .join("\n");
+  const totalPages = Math.max(1, Math.ceil(selected.length / 50));
+  function archiveBody(n) {
+    const subset = selected.slice((n - 1) * 50, n * 50);
+    const types = [...new Set(subset.map((p) => p.data.docType || "other"))];
+    const label = lang === "pt" ? "Filtrar por tipo" : "Filter by type";
+    const controls = `<label>${label} <select data-archive-filter><option value="">${lang === "pt" ? "Todos" : "All"}</option>${types.map((type) => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join("")}</select></label><p role="status" data-archive-status></p>`;
+    const items = subset
+      .map(
+        (p) =>
+          `<li data-archive-type="${escapeHtml(p.data.docType || "other")}"><a href="${p.path}">${escapeHtml(p.data.title)}</a> · <time datetime="${p.data.date}">${p.data.date.slice(0, 10)}</time></li>`
+      )
+      .join("\n");
+    const links = Array.from({ length: totalPages }, (_, i) => i + 1)
+      .map((number) =>
+        number === n
+          ? `<strong aria-current="page">${number}</strong>`
+          : `<a href="${prefix}/archive/${number === 1 ? "" : `page/${number}/`}">${number}</a>`
+      )
+      .join(" · ");
+    return `<div data-archive>${controls}<ul>${items}</ul><nav aria-label="${lang === "pt" ? "Páginas do arquivo" : "Archive pages"}">${links}</nav></div><script src="/js/archive.js" defer></script>`;
+  }
   page(
     `${prefix}/archive/`,
     lang === "pt" ? "Arquivo" : "Archive",
-    list(selected),
+    archiveBody(1),
     { lang }
   );
-  for (let n = 1; n <= Math.ceil(selected.length / 50); n++)
+  for (let n = 1; n <= totalPages; n++)
     page(
       `${prefix}/archive/page/${n}/`,
       lang === "pt" ? `Arquivo — ${n}` : `Archive — ${n}`,
-      list(selected.slice((n - 1) * 50, n * 50)),
+      archiveBody(n),
       { lang }
     );
   page(`${prefix}/search/`, lang === "pt" ? "Busca" : "Search", "", {
@@ -188,6 +276,7 @@ for (const lang of ["en", "pt"]) {
       { lang }
     );
 }
+const articleExtras = await createArticleExtras(posts, { now });
 for (const p of posts) {
   const lang = p.data.lang ?? "en";
   const metadata = {
@@ -206,8 +295,16 @@ for (const p of posts) {
       hero_image: p.hero,
       hero_image_alt: p.data.heroImageAlt ?? "",
       tags: p.data.tags ?? [],
+      tag_links: Object.fromEntries(
+        (p.data.tags ?? []).map((tag) => [
+          tag,
+          `${lang === "pt" ? "/pt" : ""}/tags/${encodeURIComponent(tag)}/`,
+        ])
+      ),
       translations: pairs[p.data.translationKey],
       post_type: p.data.postType ?? "essay",
+      music_controls: musicControls(p.data, lang),
+      ...articleExtras(p),
     }) + p.body
   );
 }

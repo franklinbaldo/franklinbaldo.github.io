@@ -5,7 +5,7 @@
     <li>
       <article>
         {% if post.date %}<time class="post-date" datetime="{{ post.date }}">{{ post.date | date(format="%Y-%m-%d") }}</time>{% endif %}
-        <h2><a href="{{ post.permalink }}">{{ post.title }}</a></h2>
+        <h2><a href="{{ post.path }}">{{ post.title }}</a></h2>
         {% if post.description %}<p>{{ post.description }}</p>{% endif %}
       </article>
     </li>
@@ -35,7 +35,7 @@
     </section>
   </div>
   <aside class="author-rail" aria-label="{% if lang == 'pt' %}Acompanhe{% else %}Stay in the loop{% endif %}">
-    <img class="avatar" src="{{ get_url(path='avatar.png') }}" width="96" height="96" alt="Franklin Baldo" decoding="async">
+    <img class="avatar" src="/avatar.png" width="96" height="96" alt="Franklin Baldo" decoding="async">
     <p class="eyebrow">{% if lang == "pt" %}Ideias em construção{% else %}Ideas in progress{% endif %}</p>
     <p>{% if lang == "pt" %}Um espaço para explorar ideias, fazer perguntas e compartilhar descobertas.{% else %}A space to explore ideas, ask questions, and share discoveries.{% endif %}</p>
     <ul class="rail-links">

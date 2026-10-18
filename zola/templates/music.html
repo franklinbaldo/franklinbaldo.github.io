@@ -1,0 +1,8 @@
+{% extends "base.html" %} {% block head %}
+<link rel="stylesheet" href="/css/music.css" />
+<script type="application/ld+json">
+  {{ page.extra.music_jsonld | safe }}
+</script>
+<script src="/js/music-gallery.js" defer></script>
+{% endblock head %} {% block content %}{{ page.content | safe }}{% endblock
+content %}

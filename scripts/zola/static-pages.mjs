@@ -57,7 +57,14 @@ function emitModule(file, source = readFileSync(file, "utf8")) {
       return JSON.stringify(emitModule(dependency));
     }
   );
-  js = js.replaceAll('"astro:page-load"', '"DOMContentLoaded"');
+  js = js.replace(
+    "function bind() {",
+    'function bind() { const root = document.querySelector("#rug-start"); if (!root || root.dataset.bound) return; root.dataset.bound = "true";'
+  );
+  js = js.replace(
+    'document.addEventListener("astro:page-load", bind);',
+    'if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bind, {once:true}); else bind();'
+  );
   write(`static/${path}`, js);
   return path;
 }
