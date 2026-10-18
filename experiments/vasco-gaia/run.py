@@ -6,7 +6,6 @@ import hashlib
 import io
 import platform
 import re
-import shutil
 from collections import Counter
 from pathlib import Path
 
@@ -68,7 +67,10 @@ def run(source, out, expected, code_sha):
         raise ValueError('Exact input SHA256 required')
     if code_sha != 'UNCOMMITTED' and not re.fullmatch(r'[0-9a-f]{40}', code_sha):
         raise ValueError('Exact code commit required')
-    raw = source.read_bytes()
+    with source.open("rb") as stream:
+        raw = stream.read(MAX_BYTES + 1)
+    if len(raw) > MAX_BYTES:
+        raise ValueError("Input exceeds byte cap")
     if sha256(raw) != expected:
         raise ValueError('Input hash mismatch')
     rows = classify_bytes(raw)
@@ -76,7 +78,7 @@ def run(source, out, expected, code_sha):
     runner_hash = sha256(Path(__file__).read_bytes())
     identity = sha256(f'{code_sha}\n{runner_hash}\n{expected}\n7538\n9720\ne0-v2'.encode())
     out.mkdir(parents=True)
-    shutil.copyfile(source, out / 'input.csv')
+    (out / 'input.csv').write_bytes(raw)
     with (out / 'classifications.csv').open('w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['source_id', 'classification'])
