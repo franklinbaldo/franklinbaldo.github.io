@@ -3,11 +3,13 @@
 import argparse
 import csv
 import hashlib
+import importlib.util
+import tempfile
 from collections import Counter
 from pathlib import Path
 
 
-def harvest(root):
+def harvest(root, expected_input_sha256, code_sha):
     root = Path(root).resolve(strict=True)
     sums = root / 'SHA256SUMS'
     expected = {'input.csv', 'classifications.csv', 'RESULT.md'}
@@ -45,11 +47,25 @@ def harvest(root):
         if result['classification'] != label:
             raise ValueError('Classification mismatch')
         counts[label] += 1
+    # Re-render the exact manifest using trusted versioned code and externally
+    # pinned inputs. No ad-hoc OKF parser and no trust in self-declared hashes.
+    runner_path = Path(__file__).resolve().parents[1] / 'experiments/vasco-gaia/run.py'
+    spec = importlib.util.spec_from_file_location('trusted_runner', runner_path)
+    runner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(runner)
+    with tempfile.TemporaryDirectory() as td:
+        regenerated = Path(td) / 'verified'
+        runner.run(root / 'input.csv', regenerated, expected_input_sha256, code_sha)
+        for name in expected:
+            if (regenerated / name).read_bytes() != (root / name).read_bytes():
+                raise ValueError('Artifact disagrees with trusted replay: ' + name)
     return counts
 
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
     p.add_argument('--results', required=True)
+    p.add_argument('--input-sha256', required=True)
+    p.add_argument('--code-sha', required=True)
     a = p.parse_args()
-    print(dict(harvest(a.results)))
+    print(dict(harvest(a.results, a.input_sha256, a.code_sha)))
