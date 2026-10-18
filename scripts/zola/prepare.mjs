@@ -346,6 +346,8 @@ console.log(
   `Zola input: ${posts.length} public posts (${posts.filter((p) => p.source === "data/suno-catalog.jsonl").length} synthesized music), ${excluded.length} excluded; public assets copied verbatim`
 );
 
+write("reading-paths.json", JSON.stringify(READING_PATHS));
+
 for (const path of READING_PATHS)
   for (const lang of ["en", "pt"]) {
     let selected;

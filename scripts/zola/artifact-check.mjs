@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { parse } from "parse5";
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
+import { READING_PATHS } from "../../src/lib/reading-paths-data.mjs";
 const out = "dist-zola";
 const manifest = JSON.parse(
   readFileSync(".cache/zola-site/manifest.json", "utf8")
@@ -127,3 +128,47 @@ for (const path of ["music/index.html", "pt/musicas/index.html"]) {
     path + " rendered gallery/catalog parity"
   );
 }
+
+// Home discovery reuses the canonical reading paths in each language.
+for (const lang of ["en", "pt"]) {
+  const prefix = lang === "pt" ? "/pt" : "";
+  const home = readFileSync(join(out, prefix, "index.html"), "utf8");
+  const discovery = home.match(
+    /<section class="start-here"[\s\S]*?<\/section>/
+  )?.[0];
+  assert.ok(discovery, `${lang} home discovery section`);
+  assert.ok(
+    home.indexOf('id="start-here-heading"') <
+      home.indexOf('id="recent-heading"'),
+    `${lang} reading paths precede recent posts`
+  );
+  for (const path of READING_PATHS) {
+    const url = `${prefix}/paths/${path.slug}/`;
+    assert.ok(discovery.includes(`href="${url}"`), `${lang} path ${path.slug}`);
+    assert.ok(
+      discovery.includes(path.title[lang]),
+      `${lang} canonical path title`
+    );
+    assert.ok(
+      discovery.includes(path.blurb[lang]),
+      `${lang} canonical path blurb`
+    );
+    const destination = readFileSync(join(out, url, "index.html"), "utf8");
+    assert.match(destination, /<ol>/, `${url} contains a reading sequence`);
+    for (const link of destination.matchAll(
+      /href="(\/(?:pt\/)?blog\/[^"#?]+)"/g
+    ))
+      assert.ok(
+        existsSync(join(out, link[1], "index.html")),
+        `${url} reading destination ${link[1]} exists`
+      );
+  }
+  for (const route of ["archive", "tags", "search"]) {
+    const url = `${prefix}/${route}/`;
+    assert.ok(discovery.includes(`href="${url}"`), `${lang} ${route} shortcut`);
+    assert.ok(existsSync(join(out, url, "index.html")), `${url} exists`);
+  }
+}
+console.log(
+  "Home discovery: bilingual canonical paths and archive shortcuts passed"
+);

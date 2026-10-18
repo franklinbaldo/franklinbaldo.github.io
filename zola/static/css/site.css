@@ -595,3 +595,38 @@ main:focus {
     overflow: visible;
   }
 }
+
+.start-here {
+  margin-bottom: 3rem;
+}
+.start-here > h2 {
+  margin-bottom: 0.5rem;
+}
+.reading-paths {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.reading-paths li {
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--surface);
+}
+.reading-paths h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+.reading-paths p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.discovery-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.5rem;
+  font-size: 0.9rem;
+}
