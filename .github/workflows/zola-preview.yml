@@ -39,6 +39,25 @@ jobs:
           echo "$RUNNER_TEMP/zola-bin" >> "$GITHUB_PATH"
       - run: npm run test:zola
       - run: npm run build:zola
+      - name: Install Chromium for native Zola QA
+        run: npx playwright install --with-deps chromium
+      - name: Test native Zola in Chromium
+        env:
+          GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 --directory dist-zola > /tmp/zola-preview.log 2>&1 &
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8000/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/zola/browser-smoke.mjs
+      - name: Upload native Zola screenshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: zola-visual-evidence
+          path: .cache/zola-screenshots
+          retention-days: 7
       - name: Upload preview (never publish to Pages)
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:

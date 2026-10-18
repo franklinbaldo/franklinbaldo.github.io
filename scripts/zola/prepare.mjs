@@ -151,7 +151,7 @@ for (const lang of ["en", "pt"]) {
     ps
       .map(
         (p) =>
-          `- [${p.data.title.replace(/[\[\]]/g, "")}](${p.path}) · ${p.data.date.slice(0, 10)}`
+          `- [${p.data.title.replace(/[[\]]/g, "")}](${p.path}) · ${p.data.date.slice(0, 10)}`
       )
       .join("\n");
   page(
@@ -237,7 +237,7 @@ write(
   JSON.stringify(
     {
       generated_at: now.toISOString(),
-      posts: posts.map(({ body, ...p }) => p),
+      posts: posts.map(({ body: _body, ...p }) => p),
       excluded,
       redirects,
     },

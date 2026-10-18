@@ -12,6 +12,8 @@ function run(bin, args) {
 run(process.execPath, ["scripts/pregen.mjs"]);
 run(process.execPath, ["--import", "tsx/esm", "scripts/zola/prepare.mjs"]);
 run(process.execPath, ["--import", "tsx/esm", "scripts/zola/audio.mjs"]);
+run(process.execPath, ["--import", "tsx/esm", "scripts/zola/static-pages.mjs"]);
+run(process.execPath, ["--import", "tsx/esm", "scripts/zola/rankings.mjs"]);
 run(zola, [
   "--root",
   ".cache/zola-site",
