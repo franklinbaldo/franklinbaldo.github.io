@@ -17,4 +17,5 @@ url_prefix = "sub_path"
 [[listings]]
 name = "archive"
 title = "Archive"
+language = "en"
 per_page = 50
