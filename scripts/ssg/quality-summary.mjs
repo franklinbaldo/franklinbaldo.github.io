@@ -19,7 +19,7 @@ export function summarize(report, maxExamples = 5) {
       issue_count: result.issues.length,
       examples: result.issues.slice(0, maxExamples),
     };
-  }).sort((a, b) => b.issue_count - a.issue_count ||
+  }).toSorted((a, b) => b.issue_count - a.issue_count ||
     a.name.localeCompare(b.name));
 
   const actual = pillarStats.reduce((sum, pillar) => sum + pillar.issue_count, 0);
