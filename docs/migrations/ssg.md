@@ -110,3 +110,19 @@ The candidate now projects `src/generated/repo-factory.json` to native SSG Markd
 The index displays the snapshot date, which must not be presented as live GitHub data. The route parity gate asserts that both outputs exist. The project index is a functional starting point, **not** equivalence to the existing Zola projects UI: rich filters, tiers, related project data and visual/browser behavior still need to be ported and verified.
 
 Implementation: `scripts/ssg/projects.mjs` and dedicated invariant tests; both language versions use built-in SSG templates and translation keys.
+
+## Conteúdo semântico — além da existência da URL
+
+O CI também executa `node scripts/ssg/article-parity.mjs` após construir
+ambas as saídas. Para cada post canônico projetado, extrai o corpo de
+`[data-zola-content]` do Zola e `.reading-page .prose` do SSG. Registra
+o tamanho textual e a sobreposição multiconjunto de tokens, verificando
+se título e idioma efetivamente renderizados coincidem. A ausência de
+qualquer página, corpo ou idioma/título esperado provoca falha, mas as
+diferenças no corpus textual ainda são diagnósticas (sem corte arbitrário),
+pois HTML, KaTeX, quebras, acessibilidade e apresentação variam entre
+motores. O relatório completo fica em
+`.cache/ssg-native/article-parity.json` como artifact da PR.
+
+**Importante:** texto parecido não comprova equivalência de links, código,
+interatividade ou comportamento; não autoriza cutover.
