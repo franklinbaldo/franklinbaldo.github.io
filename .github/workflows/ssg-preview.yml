@@ -28,6 +28,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Enforce generator architecture boundaries
+        run: node scripts/ssg/check-architecture.mjs
       - name: Test native projection invariants
         run: node --test scripts/ssg/*.test.mjs
       - name: Build canonical Hrönir and translation read projections
