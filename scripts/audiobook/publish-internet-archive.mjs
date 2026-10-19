@@ -7,6 +7,7 @@ import process from "node:process";
 import { spawnSync } from "node:child_process";
 
 import { loadWork } from "../../src/audiobook/catalog.js";
+import { assertPublicationAuthorized } from "../../src/audiobook/rights.js";
 
 function usage() {
   console.error(
@@ -157,14 +158,7 @@ async function main() {
     throw new Error(`${args.workId}: media.archive_item is required`);
   }
 
-  if (
-    !args.dryRun &&
-    work.state.publication?.public_distribution_authorized !== true
-  ) {
-    throw new Error(
-      "public distribution is not authorized in state.md; refusing Internet Archive upload"
-    );
-  }
+  if (!args.dryRun) assertPublicationAuthorized(work.workDir, args.chapterId);
 
   const assemblyDir = path.resolve(args.assemblyDir);
   const assembly = readJson(path.join(assemblyDir, "assembly.json"));
