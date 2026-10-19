@@ -56,3 +56,28 @@ The initial candidate is expected to report gaps: it is NOT proof that the
 full 4,704-artifact baseline has been migrated. A passing candidate workflow
 does not authorize publication. The native SSG plugin audit is exploratory
 until violations have been assessed and critical ones are blocking.
+
+## Verified checkpoint — 19 October 2026
+
+GitHub Actions built SSG 0.0.68 on the full current editorial projection:
+252 published posts rendered; 1 draft/future post excluded; 0 unsupported;
+0 projected post routes missing. Native content validation loaded 2 schemas
+and verified all content files. Static assets were copied without overwriting
+SSG output (120 copied, 2 collisions preserved).
+
+**Not production-ready.** The preview still lacks six special route roots:
+`/archive/`, `/projects/`, `/music/`, `/books/`, `/ranking/` and
+`/papers/`. The native SSG auditor reported 8/10 quality pillars passed
+with 1,065 findings across 557 pages; its separate accessibility scan found
+5 heading-hierarchy issues in 5 articles. The SARIF report is uploaded even
+when findings make the audit subcommand return non-zero.
+
+Upstream investigation: SSG's built-in `PaginationPlugin::after_compile`
+currently looks only for `ctx.build_dir/.meta` and returns early if absent.
+`TemplatePlugin` already resolves sidecars from either build or site
+directories after staticdatagen's output promotion. This is a likely cause
+of the missing built-in `/archive/` listing; confirm with a focused
+reproduction before patching or reporting upstream. Avoid substituting a
+custom archive generator without first resolving the native behavior.
+
+No GitHub Pages cutover is authorized by this checkpoint.
