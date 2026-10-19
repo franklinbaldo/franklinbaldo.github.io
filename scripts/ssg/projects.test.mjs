@@ -28,7 +28,7 @@ test("canonical public snapshot renders bilingual SSG markdown, not HTML", () =>
   assert.equal(result.pages[1].metadata.translation_key, "projects-index");
   assert.ok(result.pages[0].body.indexOf("alpha") < result.pages[0].body.indexOf("zeta"));
   assert.match(result.pages[0].body, /Snapshot from \*\*2026-10-01\*\*/);
-  assert.match(result.pages[0].body, /A \\[test\\]\\* repo/);
+  assert.ok(result.pages[0].body.includes("A \\[test\\]\\* repo"));
   assert.match(result.pages[1].body, /Repositórios públicos/);
   assert.doesNotMatch(result.pages[0].body, /<html/);
 });
