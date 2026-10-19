@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "source_id": "physiome-cellml-math",
+  "source_name": "Physiome Model Repository — explicit CellML MathML",
+  "readiness": "license-filtered",
+  "official_access": {
+    "repository": "https://models.physiomeproject.org/",
+    "cellml_listing": "https://models.physiomeproject.org/cellml",
+    "cellml_specification": "https://www.cellml.org/specifications/cellml_2.0/",
+    "access_mode": "Enumerate published CellML model workspaces from the official Physiome Model Repository, resolve each workspace's official clone URI and exact Git commit, and acquire workspace repositories on an external executor. Do not scrape rendered equation pages when versioned workspace source is available."
+  },
+  "scope": {
+    "corpus": "Published Physiome Model Repository workspaces containing CellML model source",
+    "structures": [
+      "ordinary differential equations",
+      "algebraic equations",
+      "inequalities and logical relations",
+      "piecewise relations",
+      "kinetic and electrophysiology relations",
+      "constitutive laws",
+      "PKPD and metabolism model equations",
+      "other explicit Content MathML statements embedded in CellML components"
+    ],
+    "provenance_class": "attested",
+    "original_representation": "exact lexical MathML <math> element as stored in the version-pinned CellML source file",
+    "batching": "one deterministic multi-workspace inventory snapshot per extraction/materialization batch",
+    "exclusions": [
+      "Do not derive new ODE systems by flattening CellML imports or component connections in the extracted lane",
+      "Do not convert rendered documentation or figures with OCR when CellML source exists",
+      "Do not treat SED-ML, generated code, plots or annotations as CellML equation attestations",
+      "Do not assert algebraic, functional or dynamic equivalence between models at extracted stage"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "workspace-git-commit-plus-cellml-content-inventory",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "At run time enumerate the official PMR CellML corpus, resolve every selected workspace to its official clone URI and exact Git commit, record an audited rights status for each workspace/exposure, SHA-256 every included .cellml object, sort workspace/commit/path/size/hash entries deterministically, and use physiome-cellml:inventory-sha256:<digest> as source_snapshot. Any change to the selected workspace set, commits, file set or bytes creates a new immutable snapshot and Internet Archive item.",
+    "required_fields": [
+      "workspace_count",
+      "cellml_file_count",
+      "total_bytes",
+      "inventory_sha256",
+      "workspaces",
+      "files"
+    ]
+  },
+  "license_policy": {
+    "policy": "license-filtered",
+    "default": "fail-closed",
+    "repository_citation_evidence": "https://models.physiomeproject.org/e/6af/Components/time.cellml/license_citation",
+    "conflict_evidence_example": "https://models.physiomeproject.org/e/49f/experiments/cell-model.xml/license_citation",
+    "rule": "PMR license/citation pages can state a repository-wide CC BY 3.0 policy while individual exposures can simultaneously report that their terms are unspecified. Therefore redistribution is decided per workspace/exposure in the acquisition manifest. Only rows whose audited rights_status is redistributable may enter Internet Archive publication; unverified or restricted rows remain local/index-only until resolved. Preserve license evidence URL, workspace, exposure, commit and source hashes."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-physiome-cellml.py",
+    "input": "root directory containing version-pinned PMR workspace checkouts plus a lightweight audited workspace manifest",
+    "workspace_manifest_schema": {
+      "schema_version": 1,
+      "required_per_workspace": [
+        "workspace_id",
+        "relative_path",
+        "commit",
+        "git_url",
+        "rights_status"
+      ],
+      "rights_status_values": ["redistributable", "unverified", "restricted"],
+      "redistributable_requires": ["license", "license_url"]
+    },
+    "transport_output": "JSONL to stdout (transient only)",
+    "required_arguments": [
+      "--input <acquired-workspace-root>",
+      "--workspace-manifest <audited-workspaces.json>",
+      "--snapshot physiome-cellml:inventory-sha256:<digest>"
+    ],
+    "provenance_class": "attested",
+    "validation": [
+      "XML parser and lexical scanner must agree on the number and order of MathML <math> elements in each accepted CellML file",
+      "expression_original is the exact lexical MathML substring from the source file, preserving namespace spelling, entities and spacing",
+      "source_record_sha256 is independent of the executor checkout directory and depends on immutable snapshot, workspace id, exact commit, repository-relative file path, document bytes, MathML ordinal, expression bytes and component",
+      "model/component context plus directly referenced CellML variables and their explicitly declared units/initial values are retained when available",
+      "workspace rights status is carried into every occurrence and redistribution_allowed is true only for explicitly audited redistributable workspaces",
+      "No OCR, import flattening, ODE reconstruction, symbolic equivalence or equation-family assertion occurs at extracted stage"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "publication_filter": "redistribution_allowed == true",
+    "identifier_template": "scientific-equation-atlas-physiome-cellml-<inventory-digest>-<stage>"
+  }
+}

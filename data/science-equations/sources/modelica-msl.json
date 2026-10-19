@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "source_id": "modelica-msl-equations",
+  "source_name": "Modelica Standard Library — explicit equation-section equalities",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "repository": "https://github.com/modelica/ModelicaStandardLibrary",
+    "releases": "https://github.com/modelica/ModelicaStandardLibrary/releases",
+    "language_specification": "https://specification.modelica.org/maint/3.6/equations.html",
+    "access_mode": "Resolve a stable official MSL release tag and its exact commit, acquire that release on an external executor, and process the published Modelica/**/*.mo source tree. Do not scrape rendered documentation pages."
+  },
+  "scope": {
+    "corpus": "Published Modelica package source in a stable Modelica Standard Library release",
+    "structures": [
+      "simple equality equations in equation sections",
+      "simple equality equations in initial equation sections",
+      "constitutive relations",
+      "dynamical relations",
+      "control-system equations",
+      "electrical, magnetic, mechanical, thermal and fluid equations",
+      "conditional equalities with source control context",
+      "array and vector equalities expressed in Modelica syntax"
+    ],
+    "provenance_class": "attested",
+    "original_representation": "exact lexical Modelica equality statement, including the terminating semicolon, as stored in the .mo source file",
+    "batching": "one stable MSL release tag + exact Git commit + deterministic Modelica source inventory per extraction/materialization batch",
+    "included_paths": [
+      "Modelica/**/*.mo"
+    ],
+    "exclusions": [
+      "algorithm sections and := assignments are not equations in this lane",
+      "connect clauses are topology and are not emitted as equation occurrences",
+      "assert, reinit and terminate calls are not emitted as equality occurrences",
+      "documentation prose and formulas appearing only inside HTML annotations are not harvested by this source-code lane",
+      "the adapter does not flatten inheritance, resolve replaceable classes, infer units through the type system, or symbolically transform expressions at extracted stage"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "official-release-git-commit-plus-source-content-inventory",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "At run time resolve the stable official MSL release selected for acquisition to its exact Git commit; SHA-256 every included .mo file; sort the path/size/hash inventory deterministically; and use modelica-msl:release:<tag>:git:<commit>:inventory-sha256:<digest> as source_snapshot. The descriptor does not encode a mutable 'latest' version. A different release, commit, file set or byte inventory creates a new immutable snapshot and Internet Archive item.",
+    "required_fields": [
+      "release_tag",
+      "git_commit",
+      "file_count",
+      "total_bytes",
+      "inventory_sha256",
+      "files"
+    ]
+  },
+  "license_policy": {
+    "scope": "Modelica Standard Library source release",
+    "policy": "BSD-3-Clause",
+    "license": "BSD-3-Clause",
+    "license_url": "https://modelica.org/licenses/modelica-3-clause-bsd",
+    "evidence": [
+      "https://github.com/modelica/ModelicaStandardLibrary/blob/master/LICENSE",
+      "https://github.com/modelica/ModelicaStandardLibrary"
+    ],
+    "rule": "Retain the Modelica Association/contributor copyright notice, BSD 3-Clause conditions and disclaimer with redistributed source-derived data. Preserve release, commit, source path and record hashes for attribution/provenance. Any vendored third-party asset outside the scoped Modelica .mo source tree requires an independent rights decision and is excluded by default."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-modelica-msl.py",
+    "input": "repository root of one verified MSL release checkout; when a Modelica/ directory is present the adapter scopes traversal to Modelica/**/*.mo",
+    "transport_output": "JSONL to stdout (transient only)",
+    "required_arguments": [
+      "--input <verified-msl-release-checkout>",
+      "--snapshot modelica-msl:release:<tag>:git:<commit>:inventory-sha256:<digest>",
+      "--release-tag <official-tag>",
+      "--commit <exact-git-commit>"
+    ],
+    "provenance_class": "attested",
+    "validation": [
+      "expression_original is the exact lexical simple equality statement from an equation or initial equation section, including the terminating semicolon",
+      "comments and strings are masked only for lexical boundary detection and do not alter emitted source bytes",
+      "semicolon separators inside parentheses, brackets or braces do not terminate an occurrence",
+      "if/elseif/else, when/elsewhen and for equation control context is retained when expressed in the line-oriented MSL source style",
+      "source_record_sha256 is independent of the executor checkout directory and depends on source id, immutable snapshot, repository-relative source path, document bytes, equation ordinal, expression bytes, class path and section",
+      "algorithm assignments, connect clauses, assert/reinit/terminate calls, documentation text, OCR and reconstructed equations are excluded from extracted output",
+      "no semantic flattening, algebraic equivalence or equation-family assertion occurs at extracted stage"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-modelica-msl-<inventory-digest>-<stage>"
+  }
+}
