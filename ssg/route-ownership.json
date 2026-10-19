@@ -15,7 +15,12 @@
     {
       "path": "/archive/",
       "owner": "ssg-core",
-      "strategy": "native-listings"
+      "strategy": "native-markdown-fallback"
+    },
+    {
+      "path": "/pt/archive/",
+      "owner": "ssg-core",
+      "strategy": "native-markdown-fallback"
     },
     {
       "path": "/projects/",

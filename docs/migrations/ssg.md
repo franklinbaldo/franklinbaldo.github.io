@@ -126,3 +126,28 @@ motores. O relatório completo fica em
 
 **Importante:** texto parecido não comprova equivalência de links, código,
 interatividade ou comportamento; não autoriza cutover.
+
+## Arquivo bilíngue paginado — reparo provisório de integridade (19/10/2026)
+
+O SSG 0.0.68 inclui `PaginationPlugin` e `[[listings]]`, mas o
+`after_compile` procura apenas `build_dir/.meta`, depois que
+`staticdatagen` promove os sidecars para `site_dir/.meta`.
+Consequência: nenhuma página de arquivo ou paginação é emitida pelo plugin
+na compilação normal. A configuração nativa permanece declarada com filtros
+de idioma, sem fazer fork do SSG nem construir HTML manual.
+
+Enquanto o reparo upstream não estiver disponível, `scripts/ssg/archive.mjs`
+projeta **somente Markdown e frontmatter** a partir da mesma lista de posts
+publicados que alimenta o site, em páginas de 50 itens para EN e PT.
+É uma exceção temporária e isolada: o SSG continua responsável por
+renderização, templates, HTML, i18n e SEO. O novo gate
+`scripts/ssg/verify-archive.mjs` confere as duas línguas, totais,
+ordem, IDs e URLs reais em **cada** página do artefato compilado,
+rejeitando páginas vazias, vazamentos e duplicações. A projeção recusa
+rotas suspeitas, registros sem título/data e coleções sem língua.
+
+Remover o adaptador assim que uma versão fixada do plugin de listagem
+passar nos mesmos testes e nos smokes de Chromium. O conteúdo do arquivo
+Zola ainda tem filtros, facetas e estilos não portados; a existência
+do Markdown convertido **não** autoriza o cutover. O deploy Zola permanece
+intacto, sem alterações em `deploy.yml`.

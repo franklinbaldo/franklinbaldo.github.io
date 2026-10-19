@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 import yaml from "js-yaml";
 import { renderProjects } from "./projects.mjs";
+import { renderArchive } from "./archive.mjs";
 import { BLOG_DIR, listPostFiles, postIdFromPath } from "../lib/content.mjs";
 import { convertBody, postPath, published, rewriteImages, stableName } from "../lib/publication.mjs";
 
@@ -100,7 +101,8 @@ export function prepareNativeSite({ now = new Date(), output = OUTPUT } = {}) {
       const finalBody = convertBody(rewritten);
       write(content, target, markdownDocument(metadata, finalBody));
       seenRoutes.add(route);
-      entries.push({ id, route, source: relative(ROOT, file), lang: metadata.language });
+      entries.push({ id, route, source: relative(ROOT, file), lang: metadata.language,
+        title: metadata.title, date: metadata.date });
     } catch (error) {
       unsupported.push({ id, route: route ?? null, source: relative(ROOT, file), reason: error.message });
     }
@@ -118,16 +120,20 @@ export function prepareNativeSite({ now = new Date(), output = OUTPUT } = {}) {
   write(content, "index.md", markdownDocument(home,
     "# Writing and research\n\n[Browse the archive](/archive/) · [Português](/pt/)"));
   write(content, "pt/index.md", markdownDocument(homePt,
-    "# Ensaios e pesquisa\n\n[Acervo](/archive/) · [English](/)"));
+    "# Ensaios e pesquisa\n\n[Acervo](/pt/archive/) · [English](/)"));
   const publicRepoSnapshot = JSON.parse(
     readFileSync(join(ROOT, "src/generated/repo-factory.json"), "utf8")
   );
   const projects = renderProjects(publicRepoSnapshot);
   for (const page of projects.pages)
     write(content, page.target, markdownDocument(page.metadata, page.body));
+  const archive = renderArchive(entries);
+  for (const page of archive.pages)
+    write(content, page.target, markdownDocument(page.metadata, page.body));
   const manifest = {
     generator: "ssg", pinned_version: "0.0.68", source: "src/content/blog",
     entries, excluded, unsupported,
+    archive: { pages: archive.pages.map((page) => page.route), counts: archive.counts, per_page: archive.perPage },
     projects: { count: projects.count, generatedAt: projects.generatedAt, source: projects.source, routes: projects.pages.map((page) => page.route) },
     note: "Native candidate. Unsupported pages and routes must be ported before cutover.",
   };
