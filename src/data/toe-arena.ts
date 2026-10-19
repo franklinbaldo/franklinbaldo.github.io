@@ -118,7 +118,7 @@ export const openingClashes = [
   {
     title: "Unified Emergence × Lucron Network",
     battleground: "continuum-first vs. discrete-first ontology",
-    body: "Unified Emergence avoids fundamental discreteness and therefore the immediate burden of recovering continuum Lorentz symmetry, but its foundational coarse-graining operator is not yet specified well enough to carry the physics. Lucron is more calculationally explicit and falsifiable, but must show that its discrete substrate really reproduces continuum symmetries. For now this is a D-vs-C maturity gap, not a verdict on ontology.",
+    body: "Unified Emergence avoids fundamental discreteness, but its current Photonic-Higgs refractive equation is not merely incomplete: with the stated Higgs-mass parameter it is Yukawa-screened on a microscopic scale and therefore does not recover long-range gravity. Lucron is more calculationally explicit and remains C/A with major Lorentz, Yang–Mills and particle-spectrum recovery debt, but no comparably direct long-range-propagator contradiction is currently recorded. This is now an F-vs-C scientific-maturity gap, not a verdict on continuum-first versus discrete-first ontology.",
   },
   {
     title: "CronNet-Holo 600-cell × Holomorphic UFT",

@@ -2,7 +2,7 @@
 
 ## Project overview
 
-Static blog built with **Astro** (TypeScript). Content lives in `src/content/blog/`.
+Static site currently deployed with **Zola 0.23.6**; **SSG 0.0.68 is an experimental migration candidate** in PR #2394. Astro remains as an explicit legacy parity fallback, not the production generator. Canonical article content lives in `src/content/blog/`.
 
 Hrönir is an **OKF-first editorial evidence system**. Its persistent state is
 Markdown under `.routines/hronir/evaluations/`; agents create and complete evaluations
@@ -92,7 +92,9 @@ The parser owns structural completeness. The evaluator owns semantic quality:
 npm ci                    # install deps
 npx prettier --check .    # CI check (must pass before PR)
 npx prettier --write .    # fix formatting
-npm run build             # Astro static build
+npm run build             # Zola production static build
+npm run build:astro       # parity fallback only
+node --test scripts/ssg/*.test.mjs  # SSG migration tests
 ```
 
 ## Git & PR conventions
@@ -186,6 +188,24 @@ Journals de agente vivem em `.routines/YYYY-MM-DDTHH-MM-SS-slug.md` com
 frontmatter mínimo: `date` (ISO), `branch`, `status` (`open`/`merged`/`closed`).
 O `check:hygiene` valida o nome.
 
+## Migração SSG e responsabilidades arquiteturais
+
+- **Produção**: `npm run build` ainda publica via Zola. Não trocar
+  `deploy.yml` apenas por uma compilação SSG sem erros.
+- **Destino**: `ssg/` contém templates, schemas e propriedade das rotas;
+  `scripts/ssg/` contém adaptadores e gates de pré-visualização.
+  `.cache/ssg-native/` e `dist-ssg/` são descartáveis.
+- **Fronteira**: `scripts/ssg/**` não importa `scripts/zola/**`,
+  componentes Astro ou código de páginas; a lógica editorial compartilhada
+  pertence a `scripts/lib/publication.mjs` ou aos domínios canônicos.
+- **Decisão arquitetural e plano de limpeza**:
+  [`docs/architecture/ssg-native.md`](docs/architecture/ssg-native.md).
+  Proibir duplicar taxonomia, feeds, SEO, i18n, pesquisa e auditoria quando
+  o SSG nativo atende o contrato verificado.
+- **Gate**: `node scripts/ssg/check-architecture.mjs`, testes, validação de
+  schemas, paridade de URLs/recursos e smoke real em browser. O SSG não tem
+  autorização de publicação até cumprir o baseline Zola.
+
 ## Key directories
 
 ```
@@ -198,6 +218,7 @@ scripts/hronir/           Código legado e recursos editoriais; não é interfac
   perspectives/           Reader perspective files (.md)
   skills/                 Writing skills para edição editorial
 scripts/lib/              Shared helpers consumidos por múltiplos scripts
+  publication.mjs       Regras de publicação reutilizáveis por Zola e SSG; sem dependência do gerador
   content.mjs             Fonte única de descoberta de posts (listPostFiles, readPostMeta)
   blog-links.mjs          Validação e redirects de links internos
 src/generated/            Artefatos gerados; redirects e sitemap data são commitados, versions-selected.json é gitignorado (regenerado pelo prebuild)
