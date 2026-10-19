@@ -29,9 +29,9 @@ function validateEntries(entries) {
 }
 
 function escapedTitle(title) {
-  return title.replace(/[\r\n\t]+/g, " ")
-    .replace(/([\\\[\]*_<>])/g, "\\$1")
-    .replaceAll(String.fromCharCode(96), "\\" + String.fromCharCode(96));
+  const escaped = new Set(["\\", "[", "]", "*", "_", "<", ">", "`"]);
+  return title.replace(/[\r\n\t]+/g, " ").replace(/./gu, (char) =>
+    escaped.has(char) ? "\\" + char : char);
 }
 
 export function archiveGroups(entries, language, perPage = ARCHIVE_PER_PAGE) {
