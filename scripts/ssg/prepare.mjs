@@ -29,6 +29,7 @@ export function metadataForPost(data, id) {
   if (!data.title || !data.description) throw new Error("Missing metadata: " + id);
   const lang = data.lang === "pt" ? "pt" : "en";
   return {
+    schema: "post",
     title: String(data.title),
     name: String(data.title),
     description: String(data.description),
@@ -62,6 +63,7 @@ export function prepareNativeSite({ now = new Date(), output = OUTPUT } = {}) {
   rmSync(output, { recursive: true, force: true });
   mkdirSync(content, { recursive: true });
   mkdirSync(assetRoot, { recursive: true });
+  cpSync(join(ROOT, "ssg/content.schema.toml"), join(content, "content.schema.toml"));
   const entries = [];
   const excluded = [];
   const unsupported = [];
@@ -103,7 +105,7 @@ export function prepareNativeSite({ now = new Date(), output = OUTPUT } = {}) {
   // SSG's own i18n plugin handles alternate links, root-hosted English,
   // and /pt/ based on these content files and translation_key.
   const home = {
-    title: "Franklin Baldo", name: "Franklin Baldo", description: "Essays, code and research.",
+    schema: "page", title: "Franklin Baldo", name: "Franklin Baldo", description: "Essays, code and research.",
     language: "en", layout: "page", draft: false,
   };
   const homePt = {
