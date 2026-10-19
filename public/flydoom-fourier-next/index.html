@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>FlyDoom Fourier Next — blank-sheet redesign</title>
+    <title>FlyDoom Fourier Next — curriculum</title>
     <style>
       :root {
         --bg: #05090d;
@@ -65,7 +65,7 @@
       }
 
       .lede {
-        max-width: 760px;
+        max-width: 800px;
         margin: 6px 0 0;
         color: var(--muted);
         line-height: 1.45;
@@ -82,7 +82,6 @@
         color: var(--muted);
         background: var(--panel);
         font: 0.72rem ui-monospace, monospace;
-        white-space: nowrap;
       }
 
       .status-dot {
@@ -136,46 +135,41 @@
         font-size: 0.68rem;
       }
 
-      #stage {
+      .viz-shell {
         position: relative;
         height: min(68vh, 650px);
-        min-height: 460px;
+        min-height: 430px;
         background:
           radial-gradient(circle at 50% 20%, rgba(69, 124, 159, 0.12), transparent 45%),
           #030609;
       }
 
-      #stage canvas {
-        display: block;
+      #curriculumCanvas,
+      #surfaceStage {
+        position: absolute;
+        inset: 0;
         width: 100%;
         height: 100%;
       }
 
-      .stage-legend {
+      #surfaceStage canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .viz-caption {
         position: absolute;
         left: 10px;
         bottom: 10px;
         z-index: 3;
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-        pointer-events: none;
-      }
-
-      .chip {
         padding: 5px 7px;
         border: 1px solid rgba(255, 255, 255, 0.14);
         border-radius: 7px;
-        background: rgba(4, 9, 13, 0.78);
+        background: rgba(4, 9, 13, 0.8);
+        color: var(--muted);
         font: 0.66rem ui-monospace, monospace;
-      }
-
-      .chip.current {
-        color: var(--cyan);
-      }
-
-      .chip.target {
-        color: var(--violet);
+        pointer-events: none;
       }
 
       .metrics {
@@ -209,6 +203,13 @@
         text-overflow: ellipsis;
       }
 
+      .metric em {
+        display: block;
+        margin-top: 2px;
+        color: var(--muted);
+        font: normal 0.56rem ui-monospace, monospace;
+      }
+
       aside {
         display: grid;
         gap: 10px;
@@ -230,17 +231,13 @@
         gap: 7px;
       }
 
-      button,
-      select {
+      button {
         border: 1px solid var(--line);
         border-radius: 8px;
         background: #14212c;
         color: var(--text);
         padding: 7px 9px;
         font: 700 0.72rem inherit;
-      }
-
-      button {
         cursor: pointer;
       }
 
@@ -249,9 +246,23 @@
         border-color: #2e7548;
       }
 
-      .target-line {
+      .stage-card {
+        display: grid;
+        gap: 4px;
+        padding: 9px 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #071018;
+      }
+
+      .stage-card b {
+        font: 700 0.68rem ui-monospace, monospace;
+      }
+
+      .stage-card span {
         color: var(--muted);
-        font: 0.68rem ui-monospace, monospace;
+        font-size: 0.66rem;
+        line-height: 1.35;
       }
 
       .feature-buttons {
@@ -270,6 +281,11 @@
         border-color: var(--cyan);
         color: var(--cyan);
         background: #0d2734;
+      }
+
+      .feature-button:disabled {
+        opacity: 0.28;
+        cursor: not-allowed;
       }
 
       #heatmap {
@@ -387,7 +403,7 @@
           grid-template-columns: 1fr;
         }
 
-        #stage {
+        .viz-shell {
           height: 540px;
         }
       }
@@ -403,12 +419,11 @@
 
         .status {
           justify-self: start;
-          white-space: normal;
         }
 
-        #stage {
-          height: 430px;
-          min-height: 390px;
+        .viz-shell {
+          height: 420px;
+          min-height: 360px;
         }
 
         .metrics {
@@ -430,13 +445,13 @@
     <div class="shell">
       <header>
         <div>
-          <p class="eyebrow">blank-sheet prototype · frozen MaleCNS</p>
+          <p class="eyebrow">curriculum prototype · frozen MaleCNS</p>
           <h1>FlyDoom Fourier Next</h1>
           <p class="lede">
-            Uma superfície, um alvo e um loop causal pequeno: 32 modos Fourier +
-            5 transformações globais. A mosca sente um campo 8×4 de
-            desalinhamento geométrico, a MaleCNS fica congelada e somente duas
-            camadas finas nas bordas aprendem.
+            Começa com um único atuador e um único sinal sensorial. Quando a
+            política estabiliza esse estágio, um novo grau de liberdade é
+            acrescentado sem apagar o que já foi aprendido. A própria
+            visualização cresce junto: espectro → perfil 1D → mapa 2D → superfície 3D.
           </p>
         </div>
         <div class="status" id="status">
@@ -449,14 +464,13 @@
         <main class="panel">
           <div class="panel-head">
             <h2>World</h2>
-            <span id="targetLabel">target</span>
+            <span id="targetLabel">stage 1</span>
           </div>
 
-          <div id="stage">
-            <div class="stage-legend">
-              <span class="chip current">CURRENT</span>
-              <span class="chip target">TARGET</span>
-            </div>
+          <div class="viz-shell">
+            <canvas id="curriculumCanvas"></canvas>
+            <div id="surfaceStage" hidden></div>
+            <div class="viz-caption" id="vizLabel">spectrum · 1 spectral line</div>
           </div>
 
           <div class="metrics">
@@ -465,12 +479,13 @@
               <b id="matchValue">0.000</b>
             </div>
             <div class="metric">
-              <small>reward Δ</small>
+              <small>reward total</small>
               <b id="rewardValue">0.000</b>
+              <em id="rewardBreakdown">Δ 0.000 · state 0.000</em>
             </div>
             <div class="metric">
-              <small>sustained hit</small>
-              <b id="hitValue">0/8</b>
+              <small>stage stability</small>
+              <b id="hitValue">0/12</b>
             </div>
             <div class="metric">
               <small>MaleCNS step</small>
@@ -482,24 +497,21 @@
         <aside>
           <section class="panel">
             <div class="panel-head">
-              <h2>Experiment</h2>
-              <span>same reachable space</span>
+              <h2>Curriculum</h2>
+              <span>one dimension at a time</span>
             </div>
             <div class="controls">
               <div class="control-row">
                 <button class="primary" id="pauseButton">Pause</button>
                 <button id="resetButton">Reset learning</button>
-                <button id="newTargetButton">New target</button>
+                <button id="newTargetButton">New curriculum</button>
               </div>
-              <div class="control-row">
-                <select id="difficulty" aria-label="Target difficulty">
-                  <option value="coarse">coarse</option>
-                  <option value="mixed">mixed</option>
-                  <option value="fine">fine</option>
-                </select>
-              </div>
-              <div class="target-line">
-                target relocates only after 8 consecutive sensory ticks ≥ 0.985
+              <div class="stage-card">
+                <b id="stageLabel">unlock</b>
+                <span>
+                  Avança após 12 sensory ticks consecutivos com match ≥ 0.970.
+                  O target do estágio seguinte preserva todas as dimensões já resolvidas.
+                </span>
               </div>
             </div>
           </section>
@@ -507,7 +519,7 @@
           <section class="panel">
             <div class="panel-head">
               <h2>What the fly feels</h2>
-              <span>artificial task proprioception</span>
+              <span>only unlocked signals are injected</span>
             </div>
             <div class="section-body">
               <div class="feature-buttons" id="featureButtons"></div>
@@ -519,7 +531,7 @@
           <section class="panel">
             <div class="panel-head">
               <h2>What the fly does</h2>
-              <span>held actions between sensory ticks</span>
+              <span>locked actuators are hard zero</span>
             </div>
             <div class="section-body">
               <div class="bar-list" id="actionBars"></div>
@@ -545,10 +557,12 @@
       <details>
         <summary>Scientific contract</summary>
         <p>
-          A recorrência MaleCNS e seus pesos ficam congelados. O campo 8×4 de
-          mismatch, os adaptadores de entrada/saída, a superfície deformável,
-          o target e o reward são artificiais. A renderização 3D existe para o
-          leitor e não é usada como entrada do controlador nesta versão.
+          A recorrência MaleCNS e seus pesos ficam congelados. O currículo,
+          o campo sensorial artificial, os adapters, o target, a superfície e
+          o reward são artificiais. A visualização cresce em dimensionalidade
+          apenas para o leitor e nunca entra no controlador. Não há uma “mosca”
+          renderizada no mundo: o objeto deste experimento é a transformação da
+          superfície, não locomoção.
         </p>
       </details>
     </div>
