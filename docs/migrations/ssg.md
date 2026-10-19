@@ -1,0 +1,56 @@
+# SSG native built-ins — migration candidate
+
+**State: experimental. Public Pages still uses Zola.**
+**Target:** SSG 0.0.68, SHA-256-pinned from the official GitHub release.
+**Canonical content:** src/content/blog/ (never edit generated .cache/ssg-native).
+
+## Goal
+
+Delegate SEO, accessibility, security, RSS/Atom, sitemaps, i18n, search,
+taxonomies, templating and generated indexes to SSG's native pipeline.
+Retain custom logic only for canonical editorial identity, safe media
+handling and specialized interactive experiences.
+
+## Implemented in this first migration increment
+
+- Canonical post selection via the existing content helper, including
+  legacy version precedence and flattened sources.
+- Publication filtering (drafts and future publishDate).
+- Bilingual URLs based on slug ?? id, and shared translation_key.
+- SSG source frontmatter projection with deterministic published dates.
+- Safe handling of supported JSX literals, KaTeX and local blog images.
+- Native SSG templates and config (i18n, archive listing, plugins).
+- Output and manifest reports; no silent exclusion of unsupported MDX.
+- Separate candidate workflow, no Pages write permission, no deploy switch.
+
+## Test from the repository root
+
+Requires Node 24, npm ci and the official ssg v0.0.68 binary.
+
+    node --test scripts/ssg/*.test.mjs
+    node scripts/ssg/prepare.mjs
+    ssg -f ssg/ssg.toml -c .cache/ssg-native/content -o dist-ssg -t ssg/templates
+    node scripts/ssg/finish.mjs
+    node scripts/ssg/parity.mjs
+    ssg audit dist-ssg --out sarif
+
+Never direct SSG output to the repository's public/ directory: it contains
+SOURCE assets. Dist output is dist-ssg/ only. The preview workflow uploads
+the native output and JSON evidence; it cannot deploy to GitHub Pages.
+
+## Cutover gate
+
+1. Zero unsupported or missing public posts, no private clips or draft leak.
+2. The full historical route and asset baseline remains equivalent,
+   including EN/PT, translations, metadata, RSS and redirects.
+3. Native search, archives, accessibility and CSP work in Chromium and
+   on a phone, not merely as generated files.
+4. Music players, Hrönir, books, papers, science, MaleCNS, ToE and all
+   interactive demos remain functional and visually reviewed.
+5. Build time, bandwidth and delivered JS are benchmarked on the same corpus.
+6. Only then switch deploy.yml and the production npm build, with Zola rollback.
+
+The initial candidate is expected to report gaps: it is NOT proof that the
+full 4,704-artifact baseline has been migrated. A passing candidate workflow
+does not authorize publication. The native SSG plugin audit is exploratory
+until violations have been assessed and critical ones are blocking.
