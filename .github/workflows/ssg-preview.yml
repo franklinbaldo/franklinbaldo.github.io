@@ -73,6 +73,8 @@ jobs:
         run: npm run build:zola
       - name: Compare full published Zola artifact against SSG
         run: node scripts/ssg/compare-baseline.mjs
+      - name: Verify canonical article title, language and rendered body
+        run: node scripts/ssg/article-parity.mjs
       - name: Collect SSG native audits (non-blocking while parity is incomplete)
         if: success()
         continue-on-error: true
@@ -99,5 +101,6 @@ jobs:
             .cache/ssg-native/ssg-audit.sarif
             .cache/ssg-native/full-parity.json
             .cache/ssg-native/quality-summary.json
+            .cache/ssg-native/article-parity.json
           if-no-files-found: warn
           retention-days: 14
