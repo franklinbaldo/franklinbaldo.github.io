@@ -90,8 +90,8 @@ The parser owns structural completeness. The evaluator owns semantic quality:
 
 ```bash
 npm ci                    # install deps
-npx prettier --check .    # CI check (must pass before PR)
-npx prettier --write .    # fix formatting
+npm run format:check      # auditoria Oxfmt (não é gate obrigatório do CI)
+npm run format            # formatar com Oxfmt; revisar o diff antes de commitar
 npm run build             # Zola production static build
 npm run build:astro       # parity fallback only
 node --test scripts/ssg/*.test.mjs  # SSG migration tests
