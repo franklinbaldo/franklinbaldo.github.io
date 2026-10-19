@@ -1,3 +1,4 @@
+import { checkProprioception } from "./proprioception-browser-checks.mjs";
 import { checkNativeApps } from "./apps/browser-checks.mjs";
 import { checkSciencePages } from "./science-browser-checks.mjs";
 import { checkMusic } from "./music-browser-checks.mjs";
@@ -167,6 +168,7 @@ try {
       });
     }
     for (const [name, check] of [
+      ["proprioception", checkProprioception],
       ["music", checkMusic],
       ["books", checkBooks],
       ["science", checkSciencePages],

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Uma articulação passiva e sinais proprioceptivos programados, com limites de conexão neural explícitos."
+    />
+    <title>Corpo em movimento · Laboratório proprioceptivo</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <nav aria-label="Navegação">
+        <a href="/">← Blog</a><a href="/fly-shader/">Demo visual anterior</a>
+      </nav>
+      <header>
+        <p class="eyebrow">LABORATÓRIO · ETAPA 1</p>
+        <h1>O corpo antes do movimento voluntário</h1>
+        <p class="intro">
+          Uma articulação fêmur–tíbia da perna posterior direita é movida
+          segundo uma trajetória externa programada. Observe separadamente o
+          estado físico, sua codificação sensorial e o que ainda falta conectar.
+        </p>
+      </header>
+      <p class="notice">
+        <strong>Protótipo de engenharia.</strong> O encoder é programado e
+        qualitativo. Não é atividade registrada, descoberta científica ou
+        evidência de consciência.
+      </p>
+      <section class="controls" aria-labelledby="controls-title">
+        <h2 id="controls-title">Estímulo passivo</h2>
+        <div class="fields">
+          <label for="center"
+            >Posição central <output id="center-value">90°</output
+            ><input
+              id="center"
+              type="range"
+              min="20"
+              max="160"
+              value="90"
+              step="1" /></label
+          ><label for="amplitude"
+            >Amplitude solicitada <output id="amplitude-value">45°</output
+            ><input
+              id="amplitude"
+              type="range"
+              min="0"
+              max="70"
+              value="45"
+              step="1" /></label
+          ><label for="frequency"
+            >Frequência <output id="frequency-value">0.20 Hz</output
+            ><input
+              id="frequency"
+              type="range"
+              min="0"
+              max="1"
+              value="0.2"
+              step="0.05"
+          /></label>
+        </div>
+        <p>
+          A amplitude efetiva é reduzida perto dos limites de 20°–160°. Esses
+          limites são escolhas da demonstração. Mudar um controle reinicia o
+          estímulo em pausa.
+        </p>
+        <label class="control-baseline" for="silenced"
+          ><input id="silenced" type="checkbox" /> Controle sem entrada no grafo
+          (encoder continua visível)</label
+        >
+        <button id="play" type="button" aria-pressed="false">
+          Iniciar movimento
+        </button>
+        <button id="reset" type="button">Reiniciar</button
+        ><span id="motion-status" role="status">Em pausa</span>
+      </section>
+      <div class="panels">
+        <section aria-labelledby="physical-title">
+          <p class="eyebrow">01 · FÍSICA</p>
+          <h2 id="physical-title">Articulação virtual</h2>
+          <svg
+            viewBox="0 0 320 260"
+            role="img"
+            aria-labelledby="joint-title joint-desc"
+          >
+            <title id="joint-title">Fêmur e tíbia</title>
+            <desc id="joint-desc">
+              O ângulo interno aumenta na extensão. Valores numéricos abaixo.
+            </desc>
+            <line x1="40" y1="100" x2="160" y2="100" class="femur" />
+            <line
+              id="tibia"
+              x1="160"
+              y1="100"
+              x2="160"
+              y2="220"
+              class="tibia"
+            />
+            <circle cx="160" cy="100" r="10" />
+            <text x="45" y="77">fêmur</text>
+            <text x="215" y="220">tíbia</text>
+          </svg>
+          <dl>
+            <dt>Ângulo</dt>
+            <dd id="angle">90.0°</dd>
+            <dt>Velocidade</dt>
+            <dd id="velocity">0.0°/s</dd>
+            <dt>Tempo simulado</dt>
+            <dd id="time">0.00 s</dd>
+          </dl>
+          <p>
+            A pausa congela o tempo. A velocidade exibida é a derivada do
+            estímulo naquele instante.
+          </p>
+        </section>
+        <section aria-labelledby="sensory-title">
+          <p class="eyebrow">02 · ENCODER PROGRAMADO</p>
+          <h2 id="sensory-title">Sinais inspirados no FeCO</h2>
+          <p>
+            Índices sem unidade, de 0 a 1; não representam neurônios individuais
+            ou taxas de disparo.
+          </p>
+          <div id="channels"></div>
+          <p>
+            Claw: posição. Hook: direção do movimento. Club: movimento
+            bidirecional. Vibração de alta frequência não é simulada nesta
+            etapa.
+          </p>
+        </section>
+        <section aria-labelledby="neural-title">
+          <p class="eyebrow">03 · CIRCUITO</p>
+          <h2 id="neural-title">Resposta neural</h2>
+          <p id="neural-status" class="badge" role="status">NOT_CONNECTED</p>
+          <button id="connect" type="button">
+            Carregar modelo exploratório (5 MB)
+          </button>
+          <p id="neural-detail">
+            Nenhuma atividade neural calculada. Carregue o grafo para testar
+            propagação de estímulos artificiais nos 33 aferentes FeCO
+            identificados.
+          </p>
+          <dl>
+            <dt>VNC · média |estado|</dt>
+            <dd id="vnc-activity">—</dd>
+            <dt>Ascendentes · média |estado|</dt>
+            <dd id="ascending-activity">—</dd>
+            <dt>Passos do modelo</dt>
+            <dd id="neural-steps">0</dd>
+          </dl>
+          <p>
+            Entrada artificial uniforme por subtipo: claw recebe posição
+            normalizada; hook recebe velocidade absoluta; club recebe zero
+            (vibração não simulada). Isso não atribui preferência fisiológica a
+            cada célula.
+          </p>
+          <p>
+            Estados são números do modelo recorrente, não spikes ou medições.
+            Grupos downstream excluem aferentes; não são um readout de DNs.
+          </p>
+          <p><a href="./audit.json">Identidades e proveniência</a></p>
+        </section>
+      </div>
+      <footer>
+        <h2>Como interpretar</h2>
+        <p>
+          A associação qualitativa entre posição, direção e movimento vem de
+          estudos do órgão cordotonal femoral. As curvas lineares e os ganhos
+          desta página são escolhas de implementação. Não há treinamento,
+          recompensa nem resposta downstream inventada.
+        </p>
+        <p>
+          <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6481666/"
+            >Mamiya et al. (2018): codificação FeCO</a
+          >
+          ·
+          <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7752136/"
+            >Agrawal et al. (2020): processamento na VNC</a
+          >
+        </p>
+        <p>
+          Próxima etapa: validar codificação e dinâmica contra evidência
+          fisiológica. Movimento autogerado e sua modulação ficam para depois.
+        </p>
+      </footer>
+      <noscript
+        >Ative JavaScript para operar os controles. O circuito neural permanece
+        não conectado.</noscript
+      >
+    </main>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
