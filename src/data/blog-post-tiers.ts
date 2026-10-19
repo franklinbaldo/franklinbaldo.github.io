@@ -4,6 +4,7 @@ import {
   computePerPerspectiveRatings,
   computeRatings,
 } from "../hronir/ranking.js";
+import { isNormalEditorialTierKey } from "../hronir/tier-scope.js";
 
 import type { Tier, TierConfidence } from "./tier-types";
 
@@ -126,7 +127,7 @@ export const blogPostTiers: BlogPostTierRecord[] = Object.entries(modules)
   })
   // Music now has its own audio-first tier domain. Keep legacy music-* cards
   // in the repository for provenance, but do not project them as normal posts.
-  .filter((record) => !record.translationKey.startsWith("music-"))
+  .filter((record) => isNormalEditorialTierKey(record.translationKey))
   .sort((a, b) => {
     const aRank = a.evidence.rank ?? Number.MAX_SAFE_INTEGER;
     const bRank = b.evidence.rank ?? Number.MAX_SAFE_INTEGER;

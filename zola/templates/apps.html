@@ -1,0 +1,15 @@
+{% extends "base.html" %} {% block head %}
+<link rel="stylesheet" href="/css/apps.css" data-native-app-style />
+<link rel="stylesheet" href="/{{ page.extra.app_css }}" data-native-app-style />
+<script type="module" src="/{{ page.extra.app_script }}"></script>
+{% endblock head %} {% block content %} {% set app =
+load_data(path=page.extra.app_data) %}
+<div
+  class="native-app"
+  data-native-app="interactive"
+  data-app="{{ page.extra.app_id }}"
+  data-pagefind-body
+>
+  {{ app.body | safe }}
+</div>
+{% endblock content %}
