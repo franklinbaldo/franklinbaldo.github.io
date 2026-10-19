@@ -55,6 +55,8 @@ jobs:
         run: ssg -f ssg/ssg.toml -c .cache/ssg-native/content -o dist-ssg -t ssg/templates
       - name: Preserve static public assets without replacing native output
         run: node scripts/ssg/finish.mjs
+      - name: Normalize SSG canonical headers on redirects only
+        run: node scripts/ssg/fix-redirect-headers.mjs
       - name: Verify rendered redirect canonicals, noindex and actual destinations
         run: node scripts/ssg/verify-redirects.mjs
       - name: Verify native bilingual project HTML against canonical public data
