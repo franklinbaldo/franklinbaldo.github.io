@@ -262,7 +262,15 @@ for (const lang of ["en", "pt"]) {
       `${prefix}/archive/page/${n}/`,
       lang === "pt" ? `Arquivo — ${n}` : `Archive — ${n}`,
       archiveBody(n),
-      { lang }
+      // The language archives have different lengths and ordering. Link to the
+      // other archive's start instead of assuming page n exists in both.
+      {
+        lang,
+        translations: {
+          [lang === "pt" ? "en" : "pt"]:
+            lang === "pt" ? "/archive/" : "/pt/archive/",
+        },
+      }
     );
   page(`${prefix}/search/`, lang === "pt" ? "Busca" : "Search", "", {
     lang,
