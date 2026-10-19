@@ -1,0 +1,31 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "proseWrap": "preserve",
+  "trailingComma": "es5",
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    ".astro/",
+    "public/pagefind/",
+    "package-lock.json",
+    ".routines/",
+    "hronir_session.json",
+    "public/flygenesis/index.html",
+    "public/flydoom/retinotopic_columns_1771.json",
+    "public/fly-shader/eye_columns.json",
+    "public/fly-shader/dn_types.json",
+    "scripts/fly-shader-results/",
+    "*.py",
+    "zola/templates/**"
+  ],
+  "overrides": [
+    {
+      "files": ["*.md"],
+      "options": {
+        "embeddedLanguageFormatting": "off"
+      }
+    }
+  ]
+}
