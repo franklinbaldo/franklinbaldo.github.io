@@ -5,6 +5,7 @@ import { dirname, extname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 import yaml from "js-yaml";
+import { renderProjects } from "./projects.mjs";
 import { BLOG_DIR, listPostFiles, postIdFromPath } from "../lib/content.mjs";
 import { convertBody, postPath, published, rewriteImages, stableName } from "../lib/publication.mjs";
 
@@ -111,16 +112,23 @@ export function prepareNativeSite({ now = new Date(), output = OUTPUT } = {}) {
     language: "en", layout: "page", draft: false,
   };
   const homePt = {
-    title: "Franklin Baldo", name: "Franklin Baldo", description: "Ensaios, código e pesquisa.",
+    schema: "page", title: "Franklin Baldo", name: "Franklin Baldo", description: "Ensaios, código e pesquisa.",
     language: "pt", layout: "page", draft: false,
   };
   write(content, "index.md", markdownDocument(home,
     "# Writing and research\n\n[Browse the archive](/archive/) · [Português](/pt/)"));
   write(content, "pt/index.md", markdownDocument(homePt,
     "# Ensaios e pesquisa\n\n[Acervo](/archive/) · [English](/)"));
+  const publicRepoSnapshot = JSON.parse(
+    readFileSync(join(ROOT, "src/generated/repo-factory.json"), "utf8")
+  );
+  const projects = renderProjects(publicRepoSnapshot);
+  for (const page of projects.pages)
+    write(content, page.target, markdownDocument(page.metadata, page.body));
   const manifest = {
     generator: "ssg", pinned_version: "0.0.68", source: "src/content/blog",
     entries, excluded, unsupported,
+    projects: { count: projects.count, generatedAt: projects.generatedAt, source: projects.source, routes: projects.pages.map((page) => page.route) },
     note: "Native candidate. Unsupported pages and routes must be ported before cutover.",
   };
   writeFileSync(join(output, "manifest.json"), JSON.stringify(manifest, null, 2) + "\n");

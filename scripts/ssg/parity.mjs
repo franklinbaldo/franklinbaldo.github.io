@@ -9,6 +9,9 @@ if (!existsSync(input)) throw new Error("Missing native projection manifest");
 const manifest = JSON.parse(readFileSync(input, "utf8"));
 const missing = manifest.entries.filter((e) =>
   !existsSync(join(site, e.route.slice(1), "index.html")));
+const expectedProjectRoutes = manifest.projects?.routes ?? [];
+const missingProjectRoutes = expectedProjectRoutes.filter((route) =>
+  !existsSync(join(site, route.slice(1), "index.html")));
 // Keep one canonical registry of special route ownership: avoid a hardcoded
 // second list hidden in a parity script as the SSG migration progresses.
 const routeRegistry = JSON.parse(
@@ -21,7 +24,7 @@ const specialRoutes = routeRegistry.routes.map((r) => r.path);
 if (new Set(specialRoutes).size !== specialRoutes.length ||
     routeRegistry.routes.some((r) =>
       typeof r.path !== "string" ||
-      !/^\/(?:[a-z0-9-]+\/|[a-z0-9-]+\.xml)?$/.test(r.path) ||
+      !/^\/(?:(?:[a-z0-9-]+\/)+|[a-z0-9-]+\.xml)?$/.test(r.path) ||
       typeof r.owner !== "string" || !r.owner ||
       typeof r.strategy !== "string" || !r.strategy)) {
   throw new Error("Duplicate or invalid SSG route ownership records");
@@ -36,14 +39,16 @@ const report = {
   excluded_unpublished: manifest.excluded.length,
   unsupported_posts: manifest.unsupported.length,
   missing_projected_posts: missing,
+  expected_project_routes: expectedProjectRoutes,
+  missing_project_routes: missingProjectRoutes,
   special_routes_not_yet_replaced: absentSpecial,
   missing_route_owners: routeRegistry.routes.filter((r) => absentSpecial.includes(r.path)),
-  complete_site_parity: missing.length === 0 && manifest.unsupported.length === 0 && absentSpecial.length === 0,
+  complete_site_parity: missing.length === 0 && missingProjectRoutes.length === 0 && manifest.unsupported.length === 0 && absentSpecial.length === 0,
   public_cutover_allowed: false,
   explanation: "Completeness of posts is tested; full behavioral, media, SEO and historical URL parity remains outstanding."
 };
 writeFileSync(join(root,".cache/ssg-native/parity.json"),JSON.stringify(report,null,2)+"\n");
 console.log(JSON.stringify({ posts_projected:report.posts_projected,
-  missing_projected_posts:missing.length, unsupported_posts:report.unsupported_posts,
+  missing_projected_posts:missing.length, missing_project_routes:missingProjectRoutes, unsupported_posts:report.unsupported_posts,
   absent_special:absentSpecial, public_cutover_allowed:false },null,2));
-if (missing.length || manifest.unsupported.length) process.exitCode = 1;
+if (missing.length || missingProjectRoutes.length || manifest.unsupported.length) process.exitCode = 1;
