@@ -5,7 +5,8 @@ import path from "node:path";
 import process from "node:process";
 
 import matter from "gray-matter";
-import yaml from "js-yaml";
+
+import { formatOkfDocument, readOkfDocument } from "../../src/audiobook/okf.js";
 
 function parseArgs(argv) {
   const args = { workId: null, chapterId: null, publicationPath: null };
@@ -25,15 +26,6 @@ function parseArgs(argv) {
   return args;
 }
 
-function yamlText(value) {
-  return yaml.dump(value, {
-    noRefs: true,
-    lineWidth: -1,
-    sortKeys: false,
-    quotingType: '"',
-  });
-}
-
 function updateWorkPodcast(workPath) {
   const parsed = matter(fs.readFileSync(workPath, "utf8"));
   if (!parsed.data.podcast) {
@@ -42,26 +34,25 @@ function updateWorkPodcast(workPath) {
   if (parsed.data.podcast.enabled === true) return false;
 
   parsed.data.podcast.enabled = true;
-  const frontmatter = yamlText(parsed.data).trimEnd();
-  const body = parsed.content.startsWith("\n")
-    ? parsed.content
-    : `\n${parsed.content}`;
-  fs.writeFileSync(workPath, `---\n${frontmatter}\n---${body}`);
+  fs.writeFileSync(workPath, formatOkfDocument(parsed.data, parsed.content));
   return true;
 }
 
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const workDir = path.join(process.cwd(), "data", "audiobooks", args.workId);
-  const statePath = path.join(workDir, "state.yaml");
+  const statePath = path.join(workDir, "state.md");
   const workPath = path.join(workDir, "work.md");
-  const state = yaml.load(fs.readFileSync(statePath, "utf8")) ?? {};
+  const { data: state, body: stateBody } = readOkfDocument(
+    statePath,
+    "Audiobook Work State"
+  );
   const publication = JSON.parse(fs.readFileSync(args.publicationPath, "utf8"));
 
   if (state.work_id !== args.workId) throw new Error("state work_id mismatch");
   if (state.publication?.public_distribution_authorized !== true) {
     throw new Error(
-      "public distribution is not authorized in state.yaml; refusing to persist a public episode"
+      "public distribution is not authorized in state.md; refusing to persist a public episode"
     );
   }
   if (
@@ -117,7 +108,7 @@ function main() {
     ? `continue editorial work on ${pending[0]}`
     : "all registered chapters published";
 
-  fs.writeFileSync(statePath, yamlText(state));
+  fs.writeFileSync(statePath, formatOkfDocument(state, stateBody));
   const podcastChanged = updateWorkPodcast(workPath);
 
   console.log(

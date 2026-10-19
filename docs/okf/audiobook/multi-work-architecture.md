@@ -78,7 +78,7 @@ data/audiobooks/
     narration/
       001.md
       ...
-    voices.yaml
+    voices.md
 
   bhagavad-gita/
     work.md
@@ -91,7 +91,7 @@ data/audiobooks/
     narration/
       001.md
       ...
-    voices.yaml
+    voices.md
 
 scripts/audiobook/
   # código compartilhado por TODAS as obras
@@ -218,7 +218,7 @@ Se futuramente houver uma obra que já esteja no idioma-alvo e não exija tradu�
 
 É a adaptação oral da edição canônica. Continua provider-neutral e pode introduzir direção de voz, pronúncia, expansão oral, pausas e outras informações necessárias para TTS.
 
-Em HPMOR, `voices.yaml` provavelmente terá vários personagens. Em Bhagavad Gita, a estratégia pode ser narrador único, narrador + vozes distintas, ou outra direção editorial. Isso é configuração da obra, não decisão global do motor.
+Em HPMOR, `voices.md` provavelmente terá vários personagens. Em Bhagavad Gita, a estratégia pode ser narrador único, narrador + vozes distintas, ou outra direção editorial. Isso é configuração da obra, não decisão global do motor.
 
 ## 7. Uma CLI, muitas obras
 

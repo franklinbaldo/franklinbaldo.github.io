@@ -1,3 +1,5 @@
+---
+type: Audiobook Pronunciation Lexicon
 schema: audiobook-pronunciation-v1
 work_id: hpmor
 locale: pt-BR
@@ -18,3 +20,6 @@ entries:
     scope: global
     status: review
     note: Definir pronúncia canônica para pt-BR após amostras reais.
+---
+
+Léxico de pronúncia da obra HPMOR. Pronúncias recorrentes ficam aqui, não na narração de cada capítulo.

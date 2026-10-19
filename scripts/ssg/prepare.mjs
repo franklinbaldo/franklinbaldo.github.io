@@ -4,7 +4,7 @@ import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } fr
 import { dirname, extname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
-import yaml from "js-yaml";
+import { stringify } from "yaml";
 import { renderProjects } from "./projects.mjs";
 import { renderArchive } from "./archive.mjs";
 import { BLOG_DIR, listPostFiles, postIdFromPath } from "../lib/content.mjs";
@@ -49,7 +49,15 @@ export function metadataForPost(data, id) {
 }
 
 export function markdownDocument(metadata, body) {
-  return "---\n" + yaml.dump(metadata, { lineWidth: -1, noRefs: true }) +
+  // YAML 1.1 with single quotes reproduces the previous js-yaml output, so
+  // date-like strings stay quoted and the projection is unchanged.
+  const frontmatter = stringify(metadata, {
+    version: "1.1",
+    singleQuote: true,
+    lineWidth: 0,
+    aliasDuplicateObjects: false,
+  });
+  return "---\n" + frontmatter +
     "---\n\n" + body.trimStart() + "\n";
 }
 

@@ -4,9 +4,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import yaml from "js-yaml";
+import { parse as parseYaml } from "yaml";
 
-const workflow = yaml.load(
+const workflow = parseYaml(
   readFileSync(
     new URL(
       "../../.github/workflows/papers-experiment-runner.yml",

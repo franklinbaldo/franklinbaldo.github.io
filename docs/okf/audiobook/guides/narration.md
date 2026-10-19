@@ -51,7 +51,7 @@ Adapters podem traduzir isso para prompting, tokens especiais, parâmetros ou SS
 
 ## 5. Vozes
 
-A narração referencia nomes lógicos declarados em `voices.yaml`.
+A narração referencia nomes lógicos declarados em `voices.md`.
 
 Nunca gravar diretamente no capítulo um voice ID efêmero de fornecedor.
 
@@ -67,7 +67,7 @@ A mesma identidade lógica pode mapear para configurações diferentes conforme 
 
 ## 6. Pronúncia
 
-Pronúncias recorrentes pertencem a `pronunciation.yaml` da obra, não a correções copiadas em dezenas de capítulos.
+Pronúncias recorrentes pertencem a `pronunciation.md` da obra, não a correções copiadas em dezenas de capítulos.
 
 Uma exceção local pode existir quando a mesma grafia deve soar de forma diferente naquele contexto.
 
@@ -95,7 +95,7 @@ Erro observado no áudio deve ser corrigido na camada mais alta adequada:
 
 - erro lexical/semântico -> tradução;
 - problema de forma oral -> narração;
-- pronúncia recorrente -> `pronunciation.yaml`;
+- pronúncia recorrente -> `pronunciation.md`;
 - problema de um backend específico -> adapter/configuração do backend.
 
 Não contaminar o corpus global com workaround específico de modelo quando o adapter consegue resolver.

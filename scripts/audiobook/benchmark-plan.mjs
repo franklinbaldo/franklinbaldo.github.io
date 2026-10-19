@@ -4,13 +4,12 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
-import yaml from "js-yaml";
-
+import { readOkfDocument } from "../../src/audiobook/okf.js";
 import { canonicalize, digest } from "../../src/audiobook/plan.js";
 
 function usage() {
   console.error(
-    "Usage: node scripts/audiobook/benchmark-plan.mjs --benchmark <file.yaml> [--output <plan.json>]"
+    "Usage: node scripts/audiobook/benchmark-plan.mjs --benchmark <file.md> [--output <plan.json>]"
   );
 }
 
@@ -29,6 +28,11 @@ function parseArgs(argv) {
   }
   if (!args.benchmarkPath) throw new Error("--benchmark is required");
   return args;
+}
+
+function corpusOf(document) {
+  const { type: _type, ...corpus } = document;
+  return corpus;
 }
 
 function createBenchmarkPlan(document, sourcePath) {
@@ -75,15 +79,19 @@ function createBenchmarkPlan(document, sourcePath) {
     lang: document.language,
     benchmark_id: document.benchmark_id,
     benchmark_source: sourcePath,
-    narration_digest: digest(document),
+    // `type` is OKF envelope, not corpus content; excluding it keeps the digest
+    // comparable with runs made before the corpus became an OKF document.
+    narration_digest: digest(corpusOf(document)),
     segments,
   };
 }
 
 try {
   const args = parseArgs(process.argv.slice(2));
-  const source = fs.readFileSync(args.benchmarkPath, "utf8");
-  const document = yaml.load(source);
+  const { data: document } = readOkfDocument(
+    args.benchmarkPath,
+    "Audiobook TTS Benchmark"
+  );
   const plan = createBenchmarkPlan(document, args.benchmarkPath);
   const output = `${JSON.stringify(plan, null, 2)}\n`;
   if (args.outputPath) {

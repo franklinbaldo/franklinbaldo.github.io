@@ -100,8 +100,9 @@ docs/okf/audiobook/guides/       regras globais
 data/audiobooks/<work_id>/
   work.md                         identidade/proveniência
   editorial.md                    overrides editoriais da obra
-  voices.yaml                     identidade lógica das vozes
-  pronunciation.yaml              léxico/pronúncia específica
+  voices.md                       identidade lógica das vozes
+  pronunciation.md                léxico/pronúncia específica
+  state.md                        estado editorial e de publicação (mantido por máquina)
 ```
 
 Regras específicas da obra prevalecem sobre defaults globais apenas quando a exceção é explícita.
