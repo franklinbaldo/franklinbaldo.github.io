@@ -45,6 +45,8 @@ jobs:
           tar -xzf "$RUNNER_TEMP/ssg.tar.gz" -C "$RUNNER_TEMP/ssg-bin"
           echo "$RUNNER_TEMP/ssg-bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/ssg-bin/ssg" --version
+      - name: Native content schema validation
+        run: ssg --validate -c .cache/ssg-native/content
       - name: Native SSG compilation (SEO, a11y, search, feeds, i18n)
         run: ssg -f ssg/ssg.toml -c .cache/ssg-native/content -o dist-ssg -t ssg/templates
       - name: Preserve static public assets without replacing native output
