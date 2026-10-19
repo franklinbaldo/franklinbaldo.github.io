@@ -1,0 +1,66 @@
+name: Zola migration preview
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "zola/**"
+      - "scripts/zola/**"
+      - "src/content/blog/**"
+      - "data/suno-catalog.jsonl"
+      - "package*.json"
+      - ".github/workflows/zola-preview.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Install pinned official Zola release
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 \
+            https://github.com/getzola/zola/releases/download/v0.23.6/zola-v0.23.6-x86_64-unknown-linux-musl.tar.gz \
+            --output "$RUNNER_TEMP/zola.tar.gz"
+          echo "7d77a4220a4f699cba2fc0e0c7859f780e887e269159ad4fab90e11ea16c906f  $RUNNER_TEMP/zola.tar.gz" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/zola-bin"
+          tar -xzf "$RUNNER_TEMP/zola.tar.gz" -C "$RUNNER_TEMP/zola-bin"
+          echo "$RUNNER_TEMP/zola-bin" >> "$GITHUB_PATH"
+      - run: npm run test:zola
+      - run: npm run build:zola
+      - name: Install Chromium for native Zola QA
+        run: npx playwright install --with-deps chromium
+      - name: Test native Zola in Chromium
+        env:
+          GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 --directory dist-zola > /tmp/zola-preview.log 2>&1 &
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8000/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/zola/browser-smoke.mjs
+      - name: Upload native Zola screenshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: zola-visual-evidence
+          path: .cache/zola-screenshots
+          retention-days: 7
+      - name: Upload preview (never publish to Pages)
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: zola-preview
+          path: dist-zola
+          retention-days: 7

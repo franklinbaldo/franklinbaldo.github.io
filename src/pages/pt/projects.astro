@@ -1,6 +1,9 @@
 ---
 import PageLayout from "../../layouts/PageLayout.astro";
 import { repoDescriptionLang } from "../../lib/repoDescriptionLang";
+import TierBoard, { type TierBoardStrings } from "../../components/TierBoard.astro";
+import { projectTiers } from "../../data/project-tiers";
+import type { TierBoardItem } from "../../data/tier-types";
 
 const PAGE_LANG = "pt";
 const USER = "franklinbaldo";
@@ -51,22 +54,71 @@ try {
 }
 
 const fmt = new Intl.DateTimeFormat("pt-BR", { year: "numeric", month: "short", day: "2-digit" });
+
+const projectTierItems: TierBoardItem[] = projectTiers.map((record) => {
+  const live = repos.find((repo) => repo.full_name === record.repository);
+  return {
+    id: `project-tier-${record.slug}`,
+    title: record.name,
+    href: live?.html_url ?? `https://github.com/${record.repository}`,
+    qualityTier: record.qualityTier,
+    interestTier: record.interestTier,
+    confidence: record.confidence,
+    summary: record.summary,
+    reviewedAt: record.reviewedAt,
+    note: record.note,
+    strengths: record.strengths,
+    openProblems: record.openProblems,
+    history: record.history,
+    evidence: live
+      ? [
+          { label: "estrelas", value: live.stargazers_count },
+          { label: "forks", value: live.forks_count },
+          { label: "linguagem", value: live.language ?? "—" },
+          { label: "atualizado", value: fmt.format(new Date(live.pushed_at)) },
+        ]
+      : [],
+  };
+});
+
+const projectTierStrings: TierBoardStrings = {
+  heading: "Tiers de projetos",
+  description:
+    "Qualidade mede execução do projeto; interesse mede originalidade, alavancagem e fertilidade. Estrelas e atividade são evidência, não a definição da letra.",
+  qualityLabel: "qualidade",
+  interestLabel: "interesse",
+  confidenceLabel: "conf.",
+  summaryQualityLabel: "qualidade",
+  summaryInterestLabel: "interesse / fertilidade",
+  emptyTier: "vazio — nenhum projeto classificado aqui ainda",
+  emptyBoard:
+    "A infraestrutura está pronta; a rotina horária ainda não produziu a primeira ficha canônica de projeto.",
+  detailsLabel: "Ver ficha do projeto",
+  strengthsHeading: "O que sustenta",
+  openProblemsHeading: "O que segura",
+  historyHeading: "Histórico do tier",
+  reviewedLabel: "revisão",
+};
 ---
 
 <PageLayout
-  title="Projetos | Franklin Baldo"
-  description="Repositórios públicos, carregados ao vivo do GitHub no momento da compilação."
+  title="Tiers de projetos | Franklin Baldo"
+  description="Tiers canônicos dos projetos públicos, com o catálogo do GitHub como evidência e superfície de descoberta."
   lang="pt"
   image="/og/projects-pt.png"
   translations={{ en: "/projects/" }}
 >
   <hgroup>
-    <h1>Projetos</h1>
+    <h1>Tiers de projetos</h1>
     <p><small>
-      Repositórios públicos de <a href={`https://github.com/${USER}`}>@{USER}</a>,
+      Classificação editorial dos projetos públicos de <a href={`https://github.com/${USER}`}>@{USER}</a>,
       ordenados por estrelas · última atualização na compilação
     </small></p>
   </hgroup>
+
+  <TierBoard items={projectTierItems} strings={projectTierStrings} id="project-tiers" />
+
+  <h2>Catálogo de projetos</h2>
 
   {error && (
     <p><small>

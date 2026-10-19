@@ -23,6 +23,10 @@ import {
   deriveReviewPriority,
   type TierConfidence,
 } from "../tier-priority.js";
+import {
+  isNormalEditorialPost,
+  isNormalEditorialTierKey,
+} from "../tier-scope.js";
 import { nextStep } from "./_shared.js";
 
 interface TierEvidenceOptions {
@@ -62,6 +66,8 @@ function readTierCards(): Map<string, TierCardProjection> {
     if (!name.endsWith(".md")) continue;
     const { data } = matter(fs.readFileSync(path.join(TIER_DIR, name), "utf8"));
     if (data.type !== "blog-post-tier" || !data.translation_key) continue;
+    const translationKey = String(data.translation_key);
+    if (!isNormalEditorialTierKey(translationKey)) continue;
     const confidence =
       data.confidence === "low" ||
       data.confidence === "medium" ||
@@ -72,7 +78,7 @@ function readTierCards(): Map<string, TierCardProjection> {
       typeof data.reviewed_revision === "string" && data.reviewed_revision.trim()
         ? data.reviewed_revision.trim()
         : null;
-    cards.set(String(data.translation_key), { confidence, reviewedRevision });
+    cards.set(translationKey, { confidence, reviewedRevision });
   }
 
   return cards;
@@ -82,14 +88,17 @@ function readTierCards(): Map<string, TierCardProjection> {
  * Current conceptual works that are still publishable from the content tree.
  * Historical Hrönir rate files intentionally survive post deletion, so the
  * ranking can contain keys that are no longer part of the published blog.
- * Editorial tiering must not resurrect those historical competitors.
+ * Editorial tiering must not resurrect those historical competitors or cross
+ * the hard boundary into the separate music-tier domain.
  */
 function readPublishedWorkKeys(): Set<string> {
   const keys = new Set<string>();
   for (const postPath of listPosts()) {
     const data = readPost(postPath);
     if (!isPublishedData(data)) continue;
-    keys.add(keyForPath(postPath));
+    const key = keyForPath(postPath);
+    if (!isNormalEditorialPost(data, key)) continue;
+    keys.add(key);
   }
   return keys;
 }
@@ -110,13 +119,14 @@ function readUnambiguousCurrentVersions(): Map<
   for (const postPath of listPosts()) {
     const data = readPost(postPath);
     if (!isPublishedData(data)) continue;
+    const key = keyForPath(postPath);
+    if (!isNormalEditorialPost(data, key)) continue;
 
     const relative = path.relative(POSTS_DIR, postPath);
     if (relative.includes(path.sep)) continue;
 
     const uuid = getPostUuid(postPath);
     if (!uuid) continue;
-    const key = keyForPath(postPath);
     if (!current.has(key)) current.set(key, []);
     current.get(key)!.push({ path: postPath, uuid });
   }
