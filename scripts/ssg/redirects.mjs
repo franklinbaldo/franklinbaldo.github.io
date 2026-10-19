@@ -15,7 +15,8 @@ export const STATIC_ALIASES = Object.freeze({
 export function validRoute(path) {
   if (typeof path !== "string" || !path.startsWith("/") ||
       (path !== "/" && !path.endsWith("/")) ||
-      path.includes("//") || /[\\?#<>"'\u0000-\u001f]/u.test(path) ||
+      path.includes("//") || /[\\?#<>"']/u.test(path) ||
+      [...path].some((char) => char.codePointAt(0) < 32) ||
       /%(?:2f|5c|2e|00)/i.test(path) || /%(?![0-9a-f]{2})/i.test(path)) return false;
   if (path === "/") return true;
   return path.slice(1, -1).split("/").every((part) =>
@@ -83,9 +84,9 @@ export function planRedirects({ entries, legacy, knownTargets = [] } = {}) {
       },
     });
   }
-  pages.sort((a, b) => a.from.localeCompare(b.from, "en"));
+  const sortedPages = pages.toSorted((a, b) => a.from.localeCompare(b.from, "en"));
   return {
-    pages, excluded,
+    pages: sortedPages, excluded,
     legacy_routes: Object.keys(legacy).length,
     published_post_routes: entries.length,
     total_candidates: combined.size,
