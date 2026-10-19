@@ -7,7 +7,8 @@ Leia primeiro:
 1. `docs/tier-system.md`;
 2. a spec do domínio em `specs/okf-types/`;
 3. os cards canônicos do domínio;
-4. a evidência atual específica do domínio.
+4. a evidência atual específica do domínio;
+5. para rodadas de curadoria MaleCNS, `docs/malecns-curation-workflow.md` (uma PR por rodada, merge só após os gates).
 
 Não invente paths, campos, registries, componentes ou uma segunda taxonomia. O golden path, fronteiras, validação e merge estão em `docs/tier-system.md`.
 

@@ -19,6 +19,10 @@ const pages = [
   { id: "05-en-archive", url: "/archive/" },
   { id: "06-en-repo-factory", url: "/games/repo-factory/" },
   { id: "07-flymirror", url: "/flymirror/" },
+  { id: "08-pt-archive", url: "/pt/archive/" },
+  { id: "09-en-more-menu", url: "/", openMenu: true },
+  { id: "10-pt-more-menu", url: "/pt/", openMenu: true },
+  { id: "11-fourier-demo", url: "/demos/fourier-below-nlogn.html" },
 ];
 
 const themeKeyPages = ["01-en-home", "03-en-post-delphi", "06-en-repo-factory"];
@@ -47,6 +51,8 @@ async function shoot(p, viewport, theme) {
   // Settle web fonts + lazy images.
   await page.evaluate(() => (document.fonts ? document.fonts.ready : null));
   await page.waitForTimeout(300);
+
+  if (p.openMenu) await page.locator(".more-menu summary").click();
 
   const vpLabel = viewport.width >= 1000 ? "desktop" : "mobile";
   const themeLabel = theme === "dark" ? "-dark" : "";

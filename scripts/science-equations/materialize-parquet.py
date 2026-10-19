@@ -20,10 +20,11 @@ class OccurrenceV1(BaseModel):
     source_id: str
     source_snapshot: str
     provenance_class: Literal["attested", "reconstructed"]
-    expression_original: str
+    expression_original: str | None = None
+    expression_reconstructed: str | None = None
     expression_encoding: str
     source_record_sha256: str
-    expression_sha256: str
+    expression_sha256: str | None = None
     normalized_text: str | None = None
     normalized_text_sha256: str | None = None
     source_document_id: str | None = None
@@ -48,9 +49,19 @@ class OccurrenceV1(BaseModel):
         for old, new in aliases.items():
             if new not in data and old in data:
                 data[new] = data[old]
-        if "expression_sha256" not in data and data.get("expression_original"):
-            data["expression_sha256"] = hashlib.sha256(data["expression_original"].encode()).hexdigest()
+        if "expression_sha256" not in data:
+            expression = data.get("expression_original") or data.get("expression_reconstructed")
+            if expression:
+                data["expression_sha256"] = hashlib.sha256(expression.encode()).hexdigest()
         return data
+
+    @model_validator(mode="after")
+    def validate_expression_provenance(self):
+        if self.provenance_class == "attested" and not self.expression_original:
+            raise ValueError("attested occurrences require expression_original")
+        if self.provenance_class == "reconstructed" and not (self.expression_reconstructed or self.expression_original):
+            raise ValueError("reconstructed occurrences require expression_reconstructed or legacy expression_original")
+        return self
 
 
 class ShardEntry(BaseModel):
