@@ -133,3 +133,7 @@ removido com evidência, não pela extensão do arquivo.
 Em particular, **não** criar monorepo, mover 250 posts de uma só vez nem
 reescrever os componentes de apps simultaneamente. O objetivo é diminuir o
 número de conceitos e caminhos ativos, não aumentar o número de pastas.
+
+### Integridade mensurável da migração
+
+A partir da etapa de instrumentação, a PR de SSG deve confrontar todos os caminhos HTML e os demais arquivos do artefato Zola real, além de calcular hashes dos assets de origem. A existência de seis páginas raiz não significa equivalência de milhares de rotas de detalhe. O relatório `.cache/ssg-native/full-parity.json` é a base verificável dessa cobertura e o `quality-summary.json` explicita os pilares de auditoria por prioridade. A função de comparação não autoriza o cutover sozinha: comportamento, conteúdo, SEO, navegação e multimídia continuam exigindo testes próprios.
