@@ -7,6 +7,7 @@ import process from "node:process";
 import matter from "gray-matter";
 
 import { formatOkfDocument, readOkfDocument } from "../../src/audiobook/okf.js";
+import { assertPublicationAuthorized } from "../../src/audiobook/rights.js";
 
 function parseArgs(argv) {
   const args = { workId: null, chapterId: null, publicationPath: null };
@@ -50,11 +51,7 @@ function main() {
   const publication = JSON.parse(fs.readFileSync(args.publicationPath, "utf8"));
 
   if (state.work_id !== args.workId) throw new Error("state work_id mismatch");
-  if (state.publication?.public_distribution_authorized !== true) {
-    throw new Error(
-      "public distribution is not authorized in state.md; refusing to persist a public episode"
-    );
-  }
+  assertPublicationAuthorized(workDir, args.chapterId);
   if (
     publication.work_id !== args.workId ||
     publication.chapter_id !== args.chapterId

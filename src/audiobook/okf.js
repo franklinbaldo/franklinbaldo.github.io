@@ -12,7 +12,6 @@ export const TYPED_FIELDS = Object.freeze({
   "Audiobook Work State": {
     boolean: [
       "project_gates.*",
-      "publication.public_distribution_authorized",
       "chapters.*.gates.*",
       "chapters.*.ready_for_audio",
     ],

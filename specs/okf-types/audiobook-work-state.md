@@ -25,11 +25,11 @@ An `Audiobook Work State` document is the machine-maintained ledger of one audio
 
 ## Optional fields
 
-| Field                                        | Type         | Meaning                                                   |
-| -------------------------------------------- | ------------ | --------------------------------------------------------- |
-| `project_gates`                              | map[boolean] | Work-level readiness gates                                |
-| `publication`                                | map          | Work-level publication policy                             |
-| `publication.public_distribution_authorized` | boolean      | Whether episodes of this work may be distributed publicly |
+| Field           | Type         | Meaning                    |
+| --------------- | ------------ | -------------------------- |
+| `project_gates` | map[boolean] | Work-level readiness gates |
+
+Publication authorization is not part of the state. It lives only in the work's `Audiobook Rights Record` (`rights.md`): `public_distribution_authorized: true` and the chapter listed in `authorized_chapters`. `src/audiobook/rights.js` enforces both before any upload or published episode.
 
 ## Chapter state
 
@@ -44,6 +44,7 @@ Each value of `chapters` is a map with these fields:
 | `ready_for_audio`                                 | boolean      | Whether the chapter may be sent to TTS                                       |
 | `publication`                                     | map          | Episode publication record                                                   |
 | `publication.duration_seconds`                    | number       | Episode duration                                                             |
+| `publication.audio_digest`                        | string       | `sha256:<hex>` of the published audio file                                   |
 | `publication.enclosure.bytes`                     | number       | Size of the published audio file                                             |
 | `publication.transcript.verification.headStatus`  | number       | HTTP status of the transcript HEAD check                                     |
 | `publication.transcript.verification.rangeStatus` | number       | HTTP status of the transcript range check                                    |
