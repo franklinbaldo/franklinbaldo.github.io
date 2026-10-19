@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+{% if page_kind == "home" or section.path == "/pt/" %}
+  {{ <home lang={site_lang} /> }}
+{% else %}
+  <header class="collection-header">
+    <h1>{{ section.title }}</h1>
+    {% if section.description %}<p class="tagline">{{ section.description }}</p>{% endif %}
+  </header>
+  {% if section.content %}<div class="prose">{{ section.content | safe }}</div>{% endif %}
+  {% if paginator is defined %}
+    {{ <post_list pages={paginator.pages} lang={site_lang} /> }}
+    <nav class="pagination" aria-label="{% if site_lang == 'pt' %}Paginação{% else %}Pagination{% endif %}">
+      {% if paginator.previous %}<a href="{{ paginator.previous }}">← {% if site_lang == "pt" %}Mais recentes{% else %}Newer{% endif %}</a>{% endif %}
+      <span>{{ paginator.current_index }} / {{ paginator.number_pagers }}</span>
+      {% if paginator.next %}<a href="{{ paginator.next }}">{% if site_lang == "pt" %}Mais antigas{% else %}Older{% endif %} →</a>{% endif %}
+    </nav>
+  {% elif section.pages %}
+    {{ <post_list pages={section.pages} lang={site_lang} /> }}
+  {% endif %}
+{% endif %}
+{% endblock content %}

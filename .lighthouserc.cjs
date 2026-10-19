@@ -60,7 +60,7 @@
 module.exports = {
   ci: {
     collect: {
-      staticDistDir: "./dist",
+      staticDistDir: "./dist-zola",
       numberOfRuns: 3,
       url: ["/", "/404.html", "/about/", "/archive/", "/blog/the-amanuensis/"],
     },
