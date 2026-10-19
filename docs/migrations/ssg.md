@@ -1,6 +1,7 @@
 # SSG native built-ins — migration candidate
 
 **State: experimental. Public Pages still uses Zola.**
+**Architecture:** [SSG boundaries and cleanup](../architecture/ssg-native.md).  
 **Target:** SSG 0.0.68, SHA-256-pinned from the official GitHub release.
 **Canonical content:** src/content/blog/ (never edit generated .cache/ssg-native).
 
@@ -27,6 +28,7 @@ handling and specialized interactive experiences.
 
 Requires Node 24, npm ci and the official ssg v0.0.68 binary.
 
+    node scripts/ssg/check-architecture.mjs
     node --test scripts/ssg/*.test.mjs
     node scripts/pregen.mjs
     node scripts/ssg/prepare.mjs
