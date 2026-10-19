@@ -56,6 +56,22 @@ try {
         ),
         `${path} native stylesheet`
       );
+      if (name === "home" || name === "home-pt") {
+        assert.equal(
+          await page.locator('.site-header nav > .nav-links > li > a[href="/papers/"]').count(),
+          1,
+          "Papers should be immediately discoverable"
+        );
+        assert.equal(
+          await page.locator('.site-header nav > .nav-links > li > a[href$="/tags/"]').count(),
+          0,
+          "Tags should not consume a primary navigation slot"
+        );
+        const tagRoute = name === "home-pt" ? "/pt/tags/" : "/tags/";
+        const menu = page.locator(".site-header .more-menu");
+        assert.equal(await menu.locator('a[href="/papers/"]').count(), 0);
+        assert.equal(await menu.locator(`a[href="${tagRoute}"]`).count(), 1);
+      }
       if (name === "migration") {
         assert.ok(await page.locator("[data-article-toc]").count());
         assert.ok(await page.locator("[data-article-share]").count());

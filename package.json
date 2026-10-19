@@ -22,8 +22,8 @@
     "build": "node scripts/zola/build.mjs",
     "preview": "node scripts/zola/serve.mjs",
     "astro": "astro",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "lint": "oxlint",
     "music:sync": "node scripts/sync-suno-catalog.mjs",
     "suno-rank": "node --import tsx/esm scripts/suno-rank/index.js",
@@ -85,7 +85,7 @@
     "openskill": "^5.0.1",
     "oxlint": "^1.88.0",
     "playwright": "^1.64.1",
-    "prettier": "^3.9.10",
+    "oxfmt": "0.73.0",
     "remark": "15.0.1",
     "tsx": "^4.23.15"
   }
