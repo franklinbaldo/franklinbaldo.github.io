@@ -341,7 +341,9 @@
     <div class="shell">
       <header>
         <p>
-          <a href="/fly-proprioception/">Laboratório de propriocepção passiva</a>
+          <a href="/fly-proprioception/"
+            >Laboratório de propriocepção passiva</a
+          >
         </p>
         <h1>The Shader Is the Fly’s World</h1>
         <p>
@@ -349,7 +351,7 @@
           MaleCNS connectome looks at it through an 8×4 eye, and its 1,314
           descending neurons hold the knobs.
         </p>
-        <p class="loop">
+        <p id="loopDiagram" class="loop">
           shader → eye (8×4 × 6 features) → MaleCNS → descending neurons →
           Fourier coefficients → shader
         </p>
@@ -405,8 +407,20 @@
           <label class="toggle">
             <input id="showEye" type="checkbox" checked /> show eye samples
           </label>
-          <div class="row world-only" hidden><label>world seed</label><input id="worldSeed" type="number" min="1" step="1" value="1" /></div>
-          <div class="row world-only" hidden><label>projection seed</label><input id="projectionSeed" type="number" min="1" step="1" value="1" /></div>
+          <div class="row world-only" hidden>
+            <label>world seed</label
+            ><input id="worldSeed" type="number" min="1" step="1" value="1" />
+          </div>
+          <div class="row world-only" hidden>
+            <label>projection seed</label
+            ><input
+              id="projectionSeed"
+              type="number"
+              min="1"
+              step="1"
+              value="1"
+            />
+          </div>
 
           <div class="row phase-only" hidden>
             <label
@@ -475,7 +489,9 @@
             <button id="resetPolicy" class="flight-only" hidden>
               Forget policy
             </button>
-            <button id="resetWorldAttractor" class="world-only" hidden>Reset self-tuning world</button>
+            <button id="resetWorldAttractor" class="world-only" hidden>
+              Reset self-tuning world
+            </button>
           </div>
 
           <div id="stats" class="stats"></div>
@@ -485,7 +501,14 @@
       <div class="panel world-only" hidden>
         <h2>Self-tuning generative world — no reward</h2>
         <div id="worldStats" class="verdict"></div>
-        <p class="note">A fixed 128-D multiscale Fourier generator defines the luminance world. For the first 8 s DN normalisation is measured with coupling off, then frozen. MaleCNS drives dθ/dt = 0.18 P z(DN) − 0.20 θ through a seeded fixed projection, with θ bounded to ±2. There is no reward or autonomous drift. The primary perceptual state is the 1,771-D retinal luminance vector; θ distance is secondary.</p>
+        <p class="note">
+          A fixed 128-D multiscale Fourier generator defines the luminance
+          world. For the first 8 s DN normalisation is measured with coupling
+          off, then frozen. MaleCNS drives dθ/dt = 0.18 P z(DN) − 0.20 θ through
+          a seeded fixed projection, with θ bounded to ±2. There is no reward or
+          autonomous drift. The primary perceptual state is the 1,771-D retinal
+          luminance vector; θ distance is secondary.
+        </p>
       </div>
       <div class="panel flight-only" hidden>
         <h2>Flight drive — what makes the fly want to take off</h2>
