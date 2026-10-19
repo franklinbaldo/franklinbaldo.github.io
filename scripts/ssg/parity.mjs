@@ -24,7 +24,7 @@ const specialRoutes = routeRegistry.routes.map((r) => r.path);
 if (new Set(specialRoutes).size !== specialRoutes.length ||
     routeRegistry.routes.some((r) =>
       typeof r.path !== "string" ||
-      !/^\/(?:[a-z0-9-]+\/|[a-z0-9-]+\.xml)?$/.test(r.path) ||
+      !/^\/(?:(?:[a-z0-9-]+\/)+|[a-z0-9-]+\.xml)?$/.test(r.path) ||
       typeof r.owner !== "string" || !r.owner ||
       typeof r.strategy !== "string" || !r.strategy)) {
   throw new Error("Duplicate or invalid SSG route ownership records");
