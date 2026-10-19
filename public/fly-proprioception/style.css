@@ -1,0 +1,186 @@
+* {
+  box-sizing: border-box;
+}
+:root {
+  color-scheme: dark;
+  font-family: system-ui, sans-serif;
+  background: #10191e;
+  color: #e7efed;
+}
+body {
+  margin: 0;
+}
+main {
+  max-width: 1260px;
+  margin: auto;
+  padding: 28px;
+}
+a {
+  color: #9ce8d1;
+}
+nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+header {
+  max-width: 850px;
+  margin: 52px 0 28px;
+}
+h1 {
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  line-height: 1.08;
+  font-weight: 650;
+  letter-spacing: -0.035em;
+}
+h2 {
+  font-size: 1.3rem;
+}
+p {
+  line-height: 1.6;
+  color: #bdcece;
+}
+.intro {
+  font-size: 1.15rem;
+}
+.eyebrow {
+  color: #91d4bc;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+}
+.notice,
+.controls,
+.panels section {
+  border: 1px solid #38504e;
+  border-radius: 14px;
+  padding: 24px;
+}
+.notice {
+  border-left: 4px solid #e8bd75;
+}
+.controls {
+  margin: 24px 0;
+  background: #18272b;
+}
+.fields,
+.panels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+label {
+  display: block;
+}
+output,
+.channel span {
+  float: right;
+  color: #9ce8d1;
+}
+input {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  accent-color: #9ce8d1;
+}
+button {
+  font: inherit;
+  border: 1px solid #9ce8d1;
+  border-radius: 8px;
+  min-height: 44px;
+  padding: 8px 18px;
+  background: #233d3b;
+  color: #fff;
+  cursor: pointer;
+  margin: 4px 8px 4px 0;
+}
+:focus-visible {
+  outline: 3px solid #e8bd75;
+  outline-offset: 4px;
+}
+#motion-status {
+  display: inline-block;
+  margin: 8px;
+}
+.panels section {
+  background: #152126;
+}
+svg {
+  width: 100%;
+  height: auto;
+}
+svg line {
+  stroke-width: 14;
+  stroke-linecap: round;
+}
+.femur {
+  stroke: #88afc5;
+}
+.tibia {
+  stroke: #9ce8d1;
+}
+svg circle {
+  fill: #e8bd75;
+}
+svg text {
+  fill: #bdcece;
+  font-size: 14px;
+}
+dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.channel {
+  margin: 22px 0;
+}
+meter {
+  display: block;
+  width: 100%;
+  height: 18px;
+}
+.badge {
+  display: inline-block;
+  padding: 8px 12px;
+  border: 1px solid #e8bd75;
+  border-radius: 6px;
+  color: #f3d5a3;
+  font-family: monospace;
+}
+footer {
+  margin: 44px 0;
+  max-width: 900px;
+}
+@media (max-width: 850px) {
+  .panels,
+  .fields {
+    grid-template-columns: 1fr;
+  }
+  main {
+    padding: 18px;
+  }
+  header {
+    margin-top: 36px;
+  }
+  .panels section,
+  .controls {
+    padding: 20px;
+  }
+  svg {
+    max-height: 250px;
+  }
+}
+
+.control-baseline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.control-baseline input {
+  width: 20px;
+  flex: 0 0 20px;
+}
