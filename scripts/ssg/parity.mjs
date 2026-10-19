@@ -46,4 +46,4 @@ writeFileSync(join(root,".cache/ssg-native/parity.json"),JSON.stringify(report,n
 console.log(JSON.stringify({ posts_projected:report.posts_projected,
   missing_projected_posts:missing.length, unsupported_posts:report.unsupported_posts,
   absent_special:absentSpecial, public_cutover_allowed:false },null,2));
-if (missing.length) process.exitCode = 1;
+if (missing.length || manifest.unsupported.length) process.exitCode = 1;
