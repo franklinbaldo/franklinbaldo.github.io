@@ -30,7 +30,7 @@ function family(file) {
 function groupByFamily(paths) {
   const result = {};
   for (const path of paths) result[family(path)] = (result[family(path)] ?? 0) + 1;
-  return Object.fromEntries(Object.entries(result).sort((a, b) =>
+  return Object.fromEntries(Object.entries(result).toSorted((a, b) =>
     b[1] - a[1] || a[0].localeCompare(b[0])));
 }
 
@@ -50,9 +50,9 @@ export async function compareSites({
     if (!existsSync(dir)) throw new Error("Missing directory: " + dir);
   }
 
-  const baselineFiles = walk(baseline).sort();
-  const candidateFiles = walk(candidate).sort();
-  const staticFiles = walk(staticSource).sort();
+  const baselineFiles = walk(baseline).toSorted();
+  const candidateFiles = walk(candidate).toSorted();
+  const staticFiles = walk(staticSource).toSorted();
   const bset = new Set(baselineFiles);
   const cset = new Set(candidateFiles);
 
@@ -129,7 +129,6 @@ export function compactSummary(report) {
 }
 
 async function main(args) {
-  const root = process.cwd();
   const baseline = resolve(args[0] ?? "dist-zola");
   const candidate = resolve(args[1] ?? "dist-ssg");
   const staticSource = resolve(args[2] ?? "public");
