@@ -25,7 +25,7 @@ export function verifyArchiveHtml(html, page, total) {
   const main = descendants(document, (node) => node.tagName === "main")[0];
   if (!main) throw new Error("Native archive missing main landmark: " + page.route);
   const h1 = descendants(main, (node) => node.tagName === "h1");
-  if (h1.length !== 1 || textContent(h1[0]).trim() !== (page.language === "pt" ? "Arquivo" : "Archive"))
+  if (h1.length !== 1 || textContent(h1[0]).trim() !== page.metadata.title)
     throw new Error("Native archive heading mismatch: " + page.route);
   const allLinks = descendants(main, (node) => node.tagName === "a");
   const publishedLinks = allLinks.map((node) => attribute(node, "href"))
