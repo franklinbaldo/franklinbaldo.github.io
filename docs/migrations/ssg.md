@@ -30,6 +30,7 @@ Requires Node 24, npm ci and the official ssg v0.0.68 binary.
     node --test scripts/ssg/*.test.mjs
     node scripts/pregen.mjs
     node scripts/ssg/prepare.mjs
+    ssg --validate -c .cache/ssg-native/content
     ssg -f ssg/ssg.toml -c .cache/ssg-native/content -o dist-ssg -t ssg/templates
     node scripts/ssg/finish.mjs
     node scripts/ssg/parity.mjs
