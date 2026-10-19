@@ -25,7 +25,7 @@ Aplicar os defaults globais da Audiobook Factory preservando a combinação part
 - narrador deve permanecer distinto das vozes de personagens;
 - diálogo deve preservar contraste de personalidade e idade sem caricatura;
 - ironia, hesitação e ênfase só são marcadas quando sustentadas pelo texto/contexto;
-- nomes ingleses e termos científicos suscetíveis a erro entram em `pronunciation.yaml`;
+- nomes ingleses e termos científicos suscetíveis a erro entram em `pronunciation.md`;
 - frases analíticas longas podem ser divididas para TTS sem perder relações lógicas.
 
 ## Continuidade

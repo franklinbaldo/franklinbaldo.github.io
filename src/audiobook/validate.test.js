@@ -44,22 +44,22 @@ function fixture({ ready = false } = {}) {
   );
   write(
     root,
-    "data/audiobooks/example/state.yaml",
-    `schema: audiobook-work-state-v1\nwork_id: example\nstatus: preparing\nnext_action: continue\nchapters:\n  example-001:\n    status: ${ready ? "ready" : "in_progress"}\n    next_action: continue chapter\n    gates:\n${Object.entries(
+    "data/audiobooks/example/state.md",
+    `---\ntype: Audiobook Work State\nschema: audiobook-work-state-v1\nwork_id: example\nstatus: preparing\nnext_action: continue\nchapters:\n  example-001:\n    status: ${ready ? "ready" : "in_progress"}\n    next_action: continue chapter\n    gates:\n${Object.entries(
       gates
     )
       .map(([key, value]) => `      ${key}: ${value}`)
-      .join("\n")}\n    ready_for_audio: ${ready}\n`
+      .join("\n")}\n    ready_for_audio: ${ready}\n---\n`
   );
   write(
     root,
-    "data/audiobooks/example/voices.yaml",
-    "schema: audiobook-voices-v1\nwork_id: example\nvoices:\n  narrator:\n    role: narrator\n"
+    "data/audiobooks/example/voices.md",
+    "---\ntype: Audiobook Voice Cast\nschema: audiobook-voices-v1\nwork_id: example\nvoices:\n  narrator:\n    role: narrator\n---\n"
   );
   write(
     root,
-    "data/audiobooks/example/pronunciation.yaml",
-    "schema: audiobook-pronunciation-v1\nwork_id: example\nentries: []\n"
+    "data/audiobooks/example/pronunciation.md",
+    "---\ntype: Audiobook Pronunciation Lexicon\nschema: audiobook-pronunciation-v1\nwork_id: example\nentries: []\n---\n"
   );
   return root;
 }

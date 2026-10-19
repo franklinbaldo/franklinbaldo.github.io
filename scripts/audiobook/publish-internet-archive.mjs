@@ -162,7 +162,7 @@ async function main() {
     work.state.publication?.public_distribution_authorized !== true
   ) {
     throw new Error(
-      "public distribution is not authorized in state.yaml; refusing Internet Archive upload"
+      "public distribution is not authorized in state.md; refusing Internet Archive upload"
     );
   }
 

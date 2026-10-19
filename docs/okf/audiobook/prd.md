@@ -212,7 +212,7 @@ data/audiobooks/
       001.md
       002.md
       ...
-    voices.yaml
+    voices.md
 
   bhagavad-gita/
     work.md
@@ -222,7 +222,7 @@ data/audiobooks/
       ...
     narration/
       ...
-    voices.yaml
+    voices.md
 
 scripts/audiobook/
   # compartilhados entre todas as obras
@@ -337,7 +337,7 @@ Casos típicos:
 
 ## 6. Vozes
 
-`voices.yaml` pertence à obra e define identidades lógicas, não IDs rígidos de um fornecedor.
+`voices.md` pertence à obra e define identidades lógicas, não IDs rígidos de um fornecedor.
 
 Para HPMOR pode haver narrador e vários personagens:
 
@@ -716,7 +716,7 @@ Entregáveis:
 - `data/audiobooks/hpmor/work.md`;
 - `data/audiobooks/hpmor/{original,translation,narration}`;
 - capítulo 1 do HPMOR nas três camadas;
-- `voices.yaml` mínimo;
+- `voices.md` mínimo;
 - validador genérico de obra, IDs, derivação e segmentos;
 - uma segunda fixture mínima fictícia ou estrutural para provar que o validador não depende de HPMOR;
 - fixtures/testes;

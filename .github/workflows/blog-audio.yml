@@ -14,7 +14,7 @@ on:
       voices:
         description: Voice configuration path
         required: true
-        default: data/audio/blog/voices.yaml
+        default: data/audio/blog/voices.md
         type: string
       title:
         description: Public episode title

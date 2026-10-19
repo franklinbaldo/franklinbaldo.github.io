@@ -15,7 +15,7 @@ test("synthetic pt-BR benchmark compiles into a provider-neutral TTS plan", () =
     [
       "scripts/audiobook/benchmark-plan.mjs",
       "--benchmark",
-      "data/audiobook-benchmarks/pt-br-audiobook-v1.yaml",
+      "data/audiobook-benchmarks/pt-br-audiobook-v1.md",
       "--output",
       outputPath,
     ],

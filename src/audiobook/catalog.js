@@ -2,13 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 
 import matter from "gray-matter";
-import yaml from "js-yaml";
+import { readOkfDocument } from "./okf.js";
 
 const WORK_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-
-function readYaml(filePath) {
-  return yaml.load(fs.readFileSync(filePath, "utf8")) ?? {};
-}
 
 function readWorkFile(filePath) {
   const parsed = matter(fs.readFileSync(filePath, "utf8"));
@@ -36,14 +32,17 @@ export function loadWork(rootDir, workId) {
 
   const workDir = path.join(audiobookRoot(rootDir), workId);
   const work = readWorkFile(path.join(workDir, "work.md"));
-  const state = readYaml(path.join(workDir, "state.yaml"));
+  const state = readOkfDocument(
+    path.join(workDir, "state.md"),
+    "Audiobook Work State"
+  ).data;
 
   if (work.data.type !== "Audiobook Work")
     throw new Error(`${workId}: work.md type must be Audiobook Work`);
   if (work.data.work_id !== workId)
     throw new Error(`${workId}: work.md work_id mismatch`);
   if (state.work_id !== workId)
-    throw new Error(`${workId}: state.yaml work_id mismatch`);
+    throw new Error(`${workId}: state.md work_id mismatch`);
 
   const chapters = Object.entries(state.chapters ?? {})
     .map(([chapterId, chapter]) => ({ chapterId, ...chapter }))
@@ -66,7 +65,7 @@ export function listWorks(rootDir = process.cwd()) {
 /**
  * One chapter that has actually been published as an episode.
  *
- * The shape is declared explicitly because the work metadata is read from YAML,
+ * The shape is declared explicitly because the work metadata is read from frontmatter,
  * so nothing downstream can infer it and `astro check` rejects the implicit
  * `any` in the pages that consume this.
  *

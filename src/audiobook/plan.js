@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import matter from "gray-matter";
-import yaml from "js-yaml";
+import { readOkfDocument } from "./okf.js";
 
 function canonicalize(value) {
   if (Array.isArray(value)) return value.map(canonicalize);
@@ -23,12 +23,8 @@ function digest(value) {
   return `sha256:${crypto.createHash("sha256").update(serialized, "utf8").digest("hex")}`;
 }
 
-function readYaml(filePath) {
-  return yaml.load(fs.readFileSync(filePath, "utf8")) ?? {};
-}
-
 function readVoices(filePath) {
-  const document = readYaml(filePath);
+  const { data: document } = readOkfDocument(filePath, "Audiobook Voice Cast");
   return Object.fromEntries(
     Object.entries(document.voices ?? {}).map(([voiceId, voice]) => [
       voiceId,
@@ -44,7 +40,10 @@ function readVoices(filePath) {
 
 export function resolveChapterFiles(rootDir, workId, chapterId) {
   const workDir = path.join(rootDir, "data", "audiobooks", workId);
-  const state = readYaml(path.join(workDir, "state.yaml"));
+  const { data: state } = readOkfDocument(
+    path.join(workDir, "state.md"),
+    "Audiobook Work State"
+  );
   if (state.work_id !== workId) {
     throw new Error(`state.work_id does not match ${workId}`);
   }
@@ -58,7 +57,7 @@ export function resolveChapterFiles(rootDir, workId, chapterId) {
   return {
     workDir,
     narrationPath: path.join(workDir, chapter.files.narration),
-    voicesPath: path.join(workDir, "voices.yaml"),
+    voicesPath: path.join(workDir, "voices.md"),
     chapterState: chapter,
   };
 }

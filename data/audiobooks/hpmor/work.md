@@ -37,7 +37,7 @@ O texto integral não é duplicado neste arquivo de metadata.
 
 - idioma alvo: português brasileiro;
 - tradução e narração são camadas distintas;
-- decisões recorrentes sobem para `editorial.md`/`pronunciation.yaml`;
+- decisões recorrentes sobem para `editorial.md`/`pronunciation.md`;
 - nomes e terminologia devem permanecer consistentes ao longo da obra;
 - o primeiro capítulo só pode chegar a `ready_for_audio` depois dos gates de `docs/okf/audiobook/chapter-readiness.md`.
 

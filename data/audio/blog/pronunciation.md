@@ -1,3 +1,5 @@
+---
+type: Audiobook Pronunciation Lexicon
 version: 1
 locale: pt-BR
 entries:
@@ -13,3 +15,6 @@ entries:
     say_as: "bríz"
   - term: Kaggle
     say_as: "káguel"
+---
+
+Léxico de pronúncia da narração dos posts do blog.
