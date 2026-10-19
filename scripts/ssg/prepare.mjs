@@ -17,7 +17,7 @@ function inside(root, file) {
 
 export function targetForRoute(route) {
   if (!/^\/(?:pt\/)?blog\/[a-zA-Z0-9][\w./%-]*\/$/.test(route) ||
-      route.includes("..") || route.includes("//") || route.includes("%2f")) {
+      route.includes("..") || route.includes("//") || /%(?:2f|5c|2e)/i.test(route)) {
     throw new Error("Unsafe or unsupported native SSG route: " + route);
   }
   return join(route.slice(1), "index.md");
@@ -27,6 +27,8 @@ export function metadataForPost(data, id) {
   const date = new Date(data.date);
   if (!Number.isFinite(date.valueOf())) throw new Error("Invalid post date: " + id);
   if (!data.title || !data.description) throw new Error("Missing metadata: " + id);
+  if (data.lang && !["pt", "en"].includes(data.lang))
+    throw new Error("Unsupported editorial language: " + data.lang + " (" + id + ")");
   const lang = data.lang === "pt" ? "pt" : "en";
   return {
     schema: "post",
@@ -125,7 +127,10 @@ export function prepareNativeSite({ now = new Date(), output = OUTPUT } = {}) {
   console.log("SSG projection: " + entries.length + " posts, " +
     excluded.length + " excluded, " + unsupported.length + " unsupported.");
   if (entries.length < 100) throw new Error("Suspicious SSG projection: fewer than 100 posts; run scripts/pregen.mjs before prepare.mjs and inspect the manifest");
-  if (unsupported.length) console.warn("Unsupported posts are recorded in .cache/ssg-native/manifest.json");
+  if (unsupported.length) {
+    console.error("Unsupported post details: .cache/ssg-native/manifest.json");
+    throw new Error("SSG projected " + entries.length + " posts but rejected " + unsupported.length + " published source(s); do not silently omit published content");
+  }
   return manifest;
 }
 

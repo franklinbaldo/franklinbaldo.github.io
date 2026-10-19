@@ -7,7 +7,7 @@ test("canonical bilingual routes map to matching SSG directory indexes", () => {
   assert.equal(targetForRoute("/pt/blog/abc/"), "pt/blog/abc/index.md");
 });
 test("route conversion rejects traversal and malformed paths", () => {
-  for (const route of ["/blog/../secret/", "/blog/../../", "/blog//", "/bad/", "/pt/blog/a%2fb/"]) {
+  for (const route of ["/blog/../secret/", "/blog/../../", "/blog//", "/bad/", "/pt/blog/a%2fb/", "/pt/blog/a%2Fb/", "/blog/a%5cfoo/"]) {
     assert.throws(() => targetForRoute(route));
   }
 });
@@ -31,4 +31,5 @@ test("publication metadata reuses canonical translation identity", () => {
 test("missing required metadata cannot become a public page", () => {
   assert.throws(() => metadataForPost({ title:"Only title",date:"2026-10-18" },"x"));
   assert.throws(() => metadataForPost({ title:"x",description:"y",date:"broken" },"x"));
+  assert.throws(() => metadataForPost({ title:"x",description:"y",date:"2026-10-18",lang:"es" },"x"));
 });
