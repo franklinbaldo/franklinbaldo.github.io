@@ -16,14 +16,131 @@
         <a href="/">← Blog</a><a href="/fly-shader/">Demo visual anterior</a>
       </nav>
       <header>
-        <p class="eyebrow">LABORATÓRIO · ETAPA 1</p>
-        <h1>O corpo antes do movimento voluntário</h1>
+        <p class="eyebrow">LABORATÓRIO · CORPO / SINAL / IMAGEM</p>
+        <h1>Um corpo. Dois modos de ver.</h1>
         <p class="intro">
           Uma articulação fêmur–tíbia da perna posterior direita é movida
           segundo uma trajetória externa programada. Observe separadamente o
-          estado físico, sua codificação sensorial e o que ainda falta conectar.
+          estado físico, sua codificação sensorial e a resposta exploratória do
+          circuito.
         </p>
       </header>
+      <section class="scene-section" aria-labelledby="scene-title">
+        <div class="scene-heading">
+          <div>
+            <p class="eyebrow">CENA PROCEDURAL · WEBGL 2</p>
+            <h2 id="scene-title">Articulação posterior direita</h2>
+          </div>
+          <label class="mode-picker" for="scene-mode"
+            >Modo visual<select id="scene-mode">
+              <option value="inspection">Inspeção</option>
+              <option value="artistic">Expressivo</option>
+            </select></label
+          >
+        </div>
+        <div class="scene-layout">
+          <div class="scene-stage">
+            <canvas
+              id="body-scene"
+              role="img"
+              aria-label="Cena tridimensional da articulação fêmur–tíbia posterior direita; o ângulo e a atividade são descritos numericamente abaixo"
+              hidden
+            ></canvas>
+            <div id="scene-fallback" class="scene-fallback">
+              <svg
+                viewBox="0 0 640 400"
+                role="img"
+                aria-labelledby="fallback-title"
+              >
+                <title id="fallback-title">
+                  Esquema alternativo da articulação
+                </title>
+                <path d="M40 340H600M80 370H560" class="floor-guide" />
+                <line x1="150" y1="140" x2="320" y2="140" class="femur" />
+                <line
+                  id="fallback-tibia"
+                  x1="320"
+                  y1="140"
+                  x2="320"
+                  y2="310"
+                  class="tibia"
+                />
+                <circle cx="320" cy="140" r="14" />
+                <text x="140" y="110">fêmur</text>
+                <text x="380" y="310">tíbia</text>
+              </svg>
+              <p>Esquema 2D · os dados e controles continuam disponíveis</p>
+            </div>
+            <div class="scene-overlay" aria-hidden="true">
+              <span>FÊMUR / TÍBIA · DIREITA</span
+              ><span id="scene-angle">90.0°</span>
+            </div>
+          </div>
+          <div class="appearance-controls">
+            <p class="eyebrow">APARÊNCIA · NÃO ALTERA O MODELO</p>
+            <label for="scene-curvature"
+              >Curvatura da superfície
+              <output id="scene-curvature-value">0.35</output
+              ><input
+                id="scene-curvature"
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value="0.35" /></label
+            ><label for="scene-roughness"
+              >Rugosidade <output id="scene-roughness-value">0.35</output
+              ><input
+                id="scene-roughness"
+                type="range"
+                min="0.1"
+                max="1"
+                step="0.05"
+                value="0.35" /></label
+            ><label for="scene-light"
+              >Direção da luz <output id="scene-light-value">35°</output
+              ><input
+                id="scene-light"
+                type="range"
+                min="-180"
+                max="180"
+                step="5"
+                value="35" /></label
+            ><label for="scene-detail"
+              >Detalhe da superfície
+              <output id="scene-detail-value">0.30</output
+              ><input
+                id="scene-detail"
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value="0.3" /></label
+            ><label for="scene-palette"
+              >Paleta<select id="scene-palette">
+                <option value="teal">Jade / cobre</option>
+                <option value="amber">Âmbar / carvão</option>
+                <option value="violet">Violeta / gelo</option>
+              </select></label
+            ><button id="scene-reset" type="button">Restaurar aparência</button>
+          </div>
+        </div>
+        <p id="scene-status" role="status">
+          Preparando a cena. O esquema 2D está disponível.
+        </p>
+        <p class="scene-legend">
+          <span class="legend-dot"></span>Ângulo → pose real da articulação
+          virtual. Material, curvatura e luz → escolhas visuais. Cor neural →
+          média |estado| da VNC, com ganho de exibição 1000 e limite 1; sem
+          dados, o ponto fica neutro. Sua localização é uma escolha gráfica, não
+          a posição dos neurônios.
+        </p>
+        <p class="scene-caption">
+          Inspeção e Expressivo usam a mesma pose, câmera e dados. O chão é uma
+          referência visual: não há simulação de contato, carga ou força. A
+          superfície é estilizada, sem pretensão de reconstrução anatômica.
+        </p>
+      </section>
       <p class="notice">
         <strong>Protótipo de engenharia.</strong> O encoder é programado e
         qualitativo. Não é atividade registrada, descoberta científica ou

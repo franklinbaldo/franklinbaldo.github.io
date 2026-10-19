@@ -1,5 +1,6 @@
 // Worker postMessage has no targetOrigin parameter.
 /* eslint-disable unicorn/require-post-message-target-origin */
+import { createScene } from "./scene.js";
 import { CHANNELS, passiveState, encodeFeCO } from "./model.js";
 const $ = (id) => document.getElementById(id);
 const labels = [
@@ -38,6 +39,30 @@ const readParameters = () =>
   Object.fromEntries(
     ["center", "amplitude", "frequency"].map((id) => [id, Number($(id).value)])
   );
+let neuralActivity = null;
+const appearanceDefaults = {
+  "scene-mode": "inspection",
+  "scene-curvature": "0.35",
+  "scene-roughness": "0.35",
+  "scene-light": "35",
+  "scene-detail": "0.3",
+  "scene-palette": "teal",
+};
+const readAppearance = () => ({
+  mode: $("scene-mode").value,
+  curvature: Number($("scene-curvature").value),
+  roughness: Number($("scene-roughness").value),
+  lightAzimuth: Number($("scene-light").value),
+  surfaceDetail: Number($("scene-detail").value),
+  palette: $("scene-palette").value,
+});
+const scene = createScene($("body-scene"), {
+  onStatus: ({ state, message }) => {
+    $("body-scene").hidden = state !== "ready";
+    $("scene-fallback").hidden = state === "ready";
+    $("scene-status").textContent = message;
+  },
+});
 function render() {
   const parameters = Object.fromEntries(
     ["center", "amplitude", "frequency"].map((id) => [id, Number($(id).value)])
@@ -50,6 +75,24 @@ function render() {
   $("angle").textContent = `${state.angleDeg.toFixed(1)}°`;
   $("velocity").textContent = `${state.velocityDegPerSec.toFixed(1)}°/s`;
   $("time").textContent = `${time.toFixed(2)} s`;
+  $("scene-angle").textContent = `${state.angleDeg.toFixed(1)}°`;
+  $("fallback-tibia").setAttribute(
+    "x2",
+    320 - 170 * Math.cos((state.angleDeg * Math.PI) / 180)
+  );
+  $("fallback-tibia").setAttribute(
+    "y2",
+    140 + 170 * Math.sin((state.angleDeg * Math.PI) / 180)
+  );
+  for (const [id, suffix] of [
+    ["scene-curvature", ""],
+    ["scene-roughness", ""],
+    ["scene-light", "°"],
+    ["scene-detail", ""],
+  ])
+    $(`${id}-value`).value =
+      `${Number($(id).value).toFixed(suffix ? 0 : 2)}${suffix}`;
+  scene?.render({ ...state, neuralActivity }, readAppearance());
   const angle = (state.angleDeg * Math.PI) / 180;
   $("tibia").setAttribute("x2", 160 - 120 * Math.cos(angle));
   $("tibia").setAttribute("y2", 100 + 120 * Math.sin(angle));
@@ -89,6 +132,7 @@ function reset() {
   pending = false;
   bufferedFrame = null;
   time = 0;
+  neuralActivity = connected ? 0 : null;
   worker?.postMessage({ type: "reset" });
   $("vnc-activity").textContent = connected ? "0.000000" : "—";
   $("ascending-activity").textContent = connected ? "0.000000" : "—";
@@ -96,6 +140,7 @@ function reset() {
   render();
 }
 function applyFrame(data) {
+  neuralActivity = data.activity.vnc_intrinsic;
   time = data.time;
   $("vnc-activity").textContent = data.activity.vnc_intrinsic.toFixed(6);
   $("ascending-activity").textContent =
@@ -129,6 +174,8 @@ $("connect").addEventListener("click", () => {
     bufferedFrame = null;
     worker.terminate();
     worker = null;
+    neuralActivity = null;
+    render();
     $("vnc-activity").textContent = "—";
     $("ascending-activity").textContent = "—";
     $("neural-steps").textContent = "0";
@@ -173,6 +220,13 @@ $("play").addEventListener("click", () => {
 $("reset").addEventListener("click", reset);
 for (const id of ["center", "amplitude", "frequency", "silenced"])
   $(id).addEventListener("input", reset);
+for (const id of Object.keys(appearanceDefaults))
+  $(id).addEventListener("input", render);
+$("scene-reset").addEventListener("click", () => {
+  for (const [id, value] of Object.entries(appearanceDefaults))
+    $(id).value = value;
+  render();
+});
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) pause();
 });
