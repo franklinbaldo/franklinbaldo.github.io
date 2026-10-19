@@ -12,14 +12,15 @@ async function walk(dir) {
   return files;
 }
 
-const catalogText = await readFile("dist/music-player.json", "utf8");
+const output = process.argv[2] || "dist-zola";
+const catalogText = await readFile(join(output, "music-player.json"), "utf8");
 const catalog = JSON.parse(catalogText);
 if (!Array.isArray(catalog)) {
-  throw new Error("dist/music-player.json must contain an array");
+  throw new Error(`${output}/music-player.json must contain an array`);
 }
 
 const catalogBytes = Buffer.byteLength(catalogText);
-const htmlFiles = await walk("dist");
+const htmlFiles = await walk(output);
 let playerPages = 0;
 let maxBootstrapBytes = 0;
 const violations = [];
@@ -41,11 +42,14 @@ for (const file of htmlFiles) {
   const bootstrapBytes = Buffer.byteLength(match[1]);
   maxBootstrapBytes = Math.max(maxBootstrapBytes, bootstrapBytes);
   if (bootstrapBytes > 2048) {
-    violations.push(`${file}: bootstrap payload is ${bootstrapBytes} bytes (> 2048)`);
+    violations.push(
+      `${file}: bootstrap payload is ${bootstrapBytes} bytes (> 2048)`
+    );
   }
 }
 
-if (playerPages === 0) violations.push("no built pages contain the global music player");
+if (playerPages === 0)
+  violations.push("no built pages contain the global music player");
 
 if (violations.length > 0) {
   console.error("Global music player payload regression:");
@@ -58,5 +62,5 @@ const duplicatedBytesAvoided = perPageSaved * playerPages;
 console.log(
   `music-player payload: ${catalog.length} songs; static asset ${catalogBytes} B; ` +
     `${playerPages} player pages; max bootstrap ${maxBootstrapBytes} B; ` +
-    `>=${perPageSaved} B removed per player page (~${duplicatedBytesAvoided} B across this build).`,
+    `>=${perPageSaved} B removed per player page (~${duplicatedBytesAvoided} B across this build).`
 );
