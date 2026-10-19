@@ -1,0 +1,68 @@
+{% set player_songs = load_data(path="music-player-bootstrap.json") %}
+<div
+  id="gmp"
+  role="region"
+  aria-label="{% if site_lang == 'pt' %}Player de músicas{% else %}Music player{% endif %}"
+  data-songs="{{ player_songs | json_encode() }}"
+  data-songs-url="/music-player.json"
+  data-now-playing="{% if site_lang == 'pt' %}Tocando agora:{% else %}Now playing:{% endif %}"
+  hidden
+  data-persist
+>
+  <span
+    id="gmp-now-playing"
+    role="status"
+    aria-live="polite"
+    class="sr-only"
+  ></span>
+  <div class="gmp-embed-shell">
+    <iframe
+      id="gmp-embed"
+      src="about:blank"
+      width="100%"
+      height="240"
+      frameborder="0"
+      allow="autoplay; encrypted-media; fullscreen"
+      allowfullscreen
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title="{% if site_lang == 'pt' %}Player de músicas{% else %}Music player{% endif %}"
+    ></iframe>
+  </div>
+  <div class="gmp-bar">
+    <button
+      id="gmp-prev"
+      type="button"
+      aria-label="{% if site_lang == 'pt' %}Anterior{% else %}Previous{% endif %}"
+    >
+      ⏮
+    </button>
+    <a id="gmp-title" class="gmp-title"></a>
+    <button
+      id="gmp-fav"
+      type="button"
+      aria-label="{% if site_lang == 'pt' %}Favoritar{% else %}Favorite{% endif %}"
+      aria-pressed="false"
+    >
+      ♡
+    </button>
+    <a id="gmp-suno-link" target="_blank" rel="noopener noreferrer"
+      >{% if site_lang == 'pt' %}Abrir no Suno{% else %}Open on Suno{% endif %}
+      ↗</a
+    >
+    <button
+      id="gmp-next"
+      type="button"
+      aria-label="{% if site_lang == 'pt' %}Próxima{% else %}Next{% endif %}"
+    >
+      ⏭
+    </button>
+    <button
+      id="gmp-close"
+      type="button"
+      aria-label="{% if site_lang == 'pt' %}Fechar player{% else %}Close player{% endif %}"
+    >
+      ✕
+    </button>
+  </div>
+</div>
