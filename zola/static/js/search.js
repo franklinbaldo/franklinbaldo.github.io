@@ -26,8 +26,32 @@
           }
         : {},
     });
+    // Keep searches reproducible when reloading, sharing, changing language or
+    // returning from a result. Replace rather than adding a history entry per key.
+    function syncQuery(query) {
+      const url = new URL(location.href);
+      if (query) url.searchParams.set("q", query);
+      else url.searchParams.delete("q");
+      history.replaceState(history.state, "", url);
+      for (const link of document.querySelectorAll(".language-link")) {
+        const translated = new URL(link.href);
+        if (query) translated.searchParams.set("q", query);
+        else translated.searchParams.delete("q");
+        link.href = translated.href;
+      }
+    }
+    container.addEventListener("input", (event) => {
+      if (event.target.matches(".pagefind-ui__search-input"))
+        syncQuery(event.target.value);
+    });
+    container.addEventListener("click", (event) => {
+      if (event.target.closest(".pagefind-ui__search-clear")) syncQuery("");
+    });
     const query = new URLSearchParams(location.search).get("q");
-    if (query) search.triggerSearch(query);
+    if (query) {
+      search.triggerSearch(query);
+      syncQuery(query);
+    }
   } catch (error) {
     status.textContent = portuguese
       ? "A busca está indisponível. Use o arquivo para encontrar as publicações."
