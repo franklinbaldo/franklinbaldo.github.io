@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "source_id": "wikipedia-multilingual-math-tags",
+  "source_name": "Multilingual Wikipedia explicit MediaWiki math tags",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "dataset": "mediawiki_content_current",
+    "export_root": "https://dumps.wikimedia.org/other/mediawiki_content_current/",
+    "documentation": "https://wikitech.wikimedia.org/wiki/MediaWiki_Content_File_Exports",
+    "wiki_id_mapping": "https://wikitech.wikimedia.org/wiki/MediaWiki_Content_File_Exports/WikiId_Mappings",
+    "math_markup_documentation": "https://www.mediawiki.org/wiki/Extension:Math",
+    "access_mode": "official Wikimedia per-wiki monthly compressed XML content exports with SHA256SUMS completion markers",
+    "listing_rule": "Select Wikipedia projects from the official WikiId mapping by hostname ending in .wikipedia.org. Exclude enwiki because it has its own source descriptor. For each selected wiki_id, choose an export date only when that wiki's SHA256SUMS exists, acquire every listed XML.bz2 object, and verify sha256sum --check before extraction. Do not scrape article HTML page by page."
+  },
+  "scope": {
+    "projects": "public Wikipedia language editions other than English Wikipedia",
+    "default_namespace": 0,
+    "structures": ["explicit <math>...</math> extension tags containing TeX-like math source"],
+    "provenance_class": "attested",
+    "original_representation": "exact body of the explicit math tag plus raw matched tag and attributes from revision wikitext",
+    "batching": "one wiki_id plus one completed export generation per source_snapshot/materialization batch",
+    "exclusions": [
+      "enwiki is excluded to avoid overlap with wikipedia-en-math-tags",
+      "Redirect pages are excluded from the default article lane",
+      "Non-main namespaces are excluded by default and can be enabled explicitly",
+      "Math-like text inside HTML comments, nowiki, pre, source, syntaxhighlight, and code regions is excluded",
+      "Empty math tags are rejected",
+      "{{#tag:math|...}} parser-function forms require a separate parser-aware lane"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "verified-per-wiki-content-export-inventory",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "For one wiki_id, pin a completed mediawiki_content_current export generation by the presence of its official SHA256SUMS, verify every selected file against that checksum surface, then compute a deterministic local SHA-256 inventory over the exact downloaded files. Use wikimedia-content-current:<wiki_id>:inventory-sha256:<digest> as source_snapshot. Do not mix wiki_ids or export generations in one materialization batch.",
+    "required_fields": ["dataset", "wiki_id", "language", "hostname", "export_generation", "official_sha256sums_url", "official_checksum_verification", "inventory_sha256", "files", "file_count", "total_bytes"]
+  },
+  "license_policy": {
+    "scope": "Wikipedia text content with imported-text attribution caveat",
+    "license": "CC-BY-SA-4.0-and-GFDL-with-imported-text-caveat",
+    "policy_url": "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use",
+    "rule": "Preserve wiki_id, language, hostname, page title, page/revision identifiers, stable oldid URL, and source snapshot on every occurrence. Imported text can carry compatible-license and additional-attribution requirements. Do not republish Wikimedia source-export bytes in the Atlas Internet Archive item; publish only permitted derived occurrence Parquets and deterministic manifests under applicable attribution/share-alike obligations."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-wikipedia-math.py",
+    "input": "one locally verified wiki_id mediawiki_content_current XML/XML.bz2 directory",
+    "transport_output": "JSONL to stdout (transient only)",
+    "required_arguments": ["--source-id wikipedia-multilingual-math-tags", "--wiki-id <wiki_id>", "--wiki-language <language>", "--wiki-base https://<hostname>", "--snapshot wikimedia-content-current:<wiki_id>:inventory-sha256:<digest>"],
+    "provenance_class": "attested",
+    "validation": [
+      "Every expression body is non-empty and appears explicitly inside a rendered math extension tag",
+      "wiki_id participates in source_document_id, source_locator, and source_record_sha256 so page/revision IDs cannot collide across wikis",
+      "Revision/page identifiers and stable oldid URL are preserved when available",
+      "source_record_sha256 is independent of physical export-part packaging",
+      "No reconstruction, OCR, translation, or parser-function expansion is claimed at extracted stage"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-wikipedia-multilingual-math-tags-<wiki-id>-<inventory-digest>-<stage>"
+  }
+}

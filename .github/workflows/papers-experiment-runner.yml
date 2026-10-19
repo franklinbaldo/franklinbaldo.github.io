@@ -43,7 +43,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 240
     env:
-      BUNDLE_DIR: ${{ runner.temp }}/papers-experiment-bundle
       SOURCE_DIR: ${{ github.workspace }}/papers
       EXPERIMENT_ID: ${{ inputs.experiment_id }}
       REQUESTED_SOURCE_SHA: ${{ inputs.source_sha }}
@@ -52,6 +51,11 @@ jobs:
       ARTIFACT_PATH: ${{ inputs.artifact_path }}
 
     steps:
+      - name: Initialize bundle directory
+        shell: bash
+        run: |
+          printf 'BUNDLE_DIR=%s/papers-experiment-bundle\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+
       - name: Validate immutable experiment inputs
         shell: bash
         run: |
@@ -227,14 +231,14 @@ jobs:
 
           {
             echo "## Papers experiment"
-            echo "- experiment: `$EXPERIMENT_ID`"
-            echo "- source: `franklinbaldo/papers@${RESOLVED_SOURCE_SHA:-unresolved}`"
-            echo "- workdir: `$WORKDIR`"
-            echo "- exit code: `${EXPERIMENT_EXIT_CODE:-not-run}`"
+            printf -- '- experiment: `%s`\n' "$EXPERIMENT_ID"
+            printf -- '- source: `franklinbaldo/papers@%s`\n' "${RESOLVED_SOURCE_SHA:-unresolved}"
+            printf -- '- workdir: `%s`\n' "$WORKDIR"
+            printf -- '- exit code: `%s`\n' "${EXPERIMENT_EXIT_CODE:-not-run}"
             if [[ -f "$BUNDLE_DIR/payload.tar.gz" ]]; then
               echo "- payload: collected"
             else
-              echo "- payload: no files matched `$ARTIFACT_PATH`"
+              printf -- '- payload: no files matched `%s`\n' "$ARTIFACT_PATH"
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 

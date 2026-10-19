@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "source_id": "qplib-quadratic-programs",
+  "source_name": "QPLIB — quadratic programming objective and constraint models",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "home": "https://qplib.zib.de/",
+    "archive": "https://qplib.zib.de/qplib.zip",
+    "instances": "https://qplib.zib.de/instances.html",
+    "statistics": "https://qplib.zib.de/statistics.html",
+    "documentation": "https://qplib.zib.de/doc.html",
+    "access_mode": "Acquire the official qplib.zip archive in one bulk transfer, verify its bytes, enumerate native .qplib members, and parse the native sparse model format. Do not scrape individual instance pages when the bulk archive is available."
+  },
+  "scope": {
+    "corpus": "The curated QPLIB collection of continuous and discrete quadratic optimization benchmark models; exact source cardinality belongs in each run/snapshot manifest rather than this stable descriptor.",
+    "structures": [
+      "quadratic and linear objective functions",
+      "linear and quadratic general constraints",
+      "constraint lower and upper bounds",
+      "variable bounds and integrality/domain metadata retained as source context",
+      "optimization sense and problem-type semantics"
+    ],
+    "provenance_class": "reconstructed",
+    "original_representation": "native QPLIB sparse coefficient encoding; the instance does not contain the reconstructed infix formula verbatim",
+    "batching": "one complete verified QPLIB archive inventory per extraction/materialization batch",
+    "exclusions": [
+      "Do not label reconstructed objective/constraint strings as attested notation",
+      "Do not infer algebraic equivalence, convexity, optimality, or equation-family membership in the extracted stage",
+      "Do not turn variable bounds or integrality metadata into separate raw occurrences in this lane; preserve them as typed source context until a dedicated rule is specified",
+      "Do not use per-instance HTML scraping as the primary acquisition path when qplib.zip is available"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "content-addressed-bulk-archive-and-member-inventory",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "Download the official qplib.zip outside Git, SHA-256 the archive and every extracted .qplib member, sort the inventory deterministically, record archive/member counts and total bytes, and use qplib:inventory-sha256:<digest> as source_snapshot. Any changed archive or member bytes create a new immutable snapshot/item rather than overwriting a published one.",
+    "required_fields": [
+      "archive_url",
+      "archive_sha256",
+      "member_count",
+      "total_member_bytes",
+      "inventory_sha256",
+      "files"
+    ]
+  },
+  "license_policy": {
+    "policy": "CC-BY-4.0",
+    "license": "CC-BY-4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "evidence": [
+      "https://qplib.zib.de/",
+      "https://qplib.zib.de/doc.html"
+    ],
+    "rule": "QPLIB states that the library is licensed under CC-BY 4.0. Preserve QPLIB identity, source URL, snapshot checksum, and citation metadata with redistributed Parquet derivatives. Fail closed if a future snapshot carries a conflicting rights notice."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-qplib.py",
+    "input": "one native .qplib file or a directory tree extracted from the verified official qplib.zip archive",
+    "transport_output": "JSONL to stdout (transient only)",
+    "required_arguments": [
+      "--input <qplib-file-or-directory>",
+      "--snapshot qplib:inventory-sha256:<digest>"
+    ],
+    "provenance_class": "reconstructed",
+    "validation": [
+      "Parse the documented conditional QPLIB sections according to the three-letter problem type and reject unexpected trailing data",
+      "Validate one-based variable/constraint indices and lower-triangle quadratic entries",
+      "Keep expression_original null because the native instance stores sparse coefficients rather than the reconstructed infix formula",
+      "Write the mechanically reconstructed mathematical form to expression_reconstructed and identify the transformation as qplib-native-sparse-model-v1",
+      "Preserve problem name/type, objective sense, source-file SHA-256, term counts, constraint bounds, and custom constraint name when present",
+      "Use a disk-backed SQLite spool for sparse coefficient sections so corpus-scale instances do not require loading all terms or constraints into RAM",
+      "No OCR, solver execution, simplification, symbolic equivalence, or family assertion occurs at extracted stage"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-qplib-<inventory-digest>-<stage>"
+  }
+}
