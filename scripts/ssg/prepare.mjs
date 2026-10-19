@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 import yaml from "js-yaml";
 import { BLOG_DIR, listPostFiles, postIdFromPath } from "../lib/content.mjs";
-import { convertBody, postPath, published, rewriteImages, stableName } from "../zola/content.mjs";
+import { convertBody, postPath, published, rewriteImages, stableName } from "../lib/publication.mjs";
 
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 export const OUTPUT = join(ROOT, ".cache/ssg-native");
