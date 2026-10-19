@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="{{ page.language | default(site.language) }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ page.title }} · {{ site.title }}{% endblock %}</title>
+  <meta name="description" content="{{ page.description | default(site.description) }}">
+  <link rel="stylesheet" href="/ssg-preview.css">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss.xml">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content / Pular para conteúdo</a>
+  <header class="site-header">
+    <nav aria-label="Primary / Principal">
+      <a href="/">Franklin Baldo</a>
+      <a href="/archive/">Archive</a>
+      <a href="/pt/">Português</a>
+      <a href="/topics/">Topics</a>
+    </nav>
+    <!-- ssg:lang-switcher -->
+  </header>
+  <main id="main">{% block content %}{% endblock %}</main>
+  <footer class="site-footer">© Franklin Baldo · <a href="/rss.xml">RSS</a></footer>
+</body>
+</html>
