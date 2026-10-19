@@ -36,6 +36,8 @@ jobs:
         run: node scripts/pregen.mjs
       - name: Prepare canonical published posts for SSG
         run: node scripts/ssg/prepare.mjs
+      - name: Prepare historical published aliases as native SSG pages
+        run: node scripts/ssg/prepare-redirects.mjs
       - name: Install official SHA-256 pinned SSG v0.0.68
         shell: bash
         run: |
@@ -53,6 +55,10 @@ jobs:
         run: ssg -f ssg/ssg.toml -c .cache/ssg-native/content -o dist-ssg -t ssg/templates
       - name: Preserve static public assets without replacing native output
         run: node scripts/ssg/finish.mjs
+      - name: Normalize SSG canonical headers on redirects only
+        run: node scripts/ssg/fix-redirect-headers.mjs
+      - name: Verify rendered redirect canonicals, noindex and actual destinations
+        run: node scripts/ssg/verify-redirects.mjs
       - name: Verify native bilingual project HTML against canonical public data
         run: node scripts/ssg/verify-projects.mjs
       - name: Assert projected route coverage and record cutover gaps
@@ -102,5 +108,7 @@ jobs:
             .cache/ssg-native/full-parity.json
             .cache/ssg-native/quality-summary.json
             .cache/ssg-native/article-parity.json
+            .cache/ssg-native/redirects.json
+            .cache/ssg-native/redirect-validation.json
           if-no-files-found: warn
           retention-days: 14
