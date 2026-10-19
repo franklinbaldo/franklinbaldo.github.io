@@ -106,7 +106,7 @@
         <nav aria-label="{% if site_lang == 'pt' %}Navegação principal{% else %}Main navigation{% endif %}">
           <ul class="nav-links">
             <li><a href="{{ prefix }}/archive/">{% if site_lang == "pt" %}Arquivo{% else %}Archive{% endif %}</a></li>
-            <li><a href="{{ prefix }}/tags/">Tags</a></li>
+            <li><a href="/papers/">Papers</a></li>
             <li><a href="{{ prefix }}/search/">{% if site_lang == "pt" %}Buscar{% else %}Search{% endif %}</a></li>
             <li><a href="{{ prefix }}/ranking/">Ranking</a></li>
             <li><a href="{% if site_lang == 'pt' %}/pt/musicas/{% else %}/music/{% endif %}">{% if site_lang == "pt" %}Músicas{% else %}Music{% endif %}</a></li>
@@ -117,6 +117,7 @@
                   <section aria-labelledby="more-group-0">
                     <h2 id="more-group-0">{% if site_lang == "pt" %}Ler e ouvir{% else %}Read and listen{% endif %}</h2>
                     <ul>
+                      <li><a href="{{ prefix }}/tags/">Tags</a></li>
                       <li><a href="{% if site_lang == 'pt' %}/pt/livros/{% else %}/books/{% endif %}">{% if site_lang == "pt" %}Livros{% else %}Books{% endif %}</a></li>
                       <li><a href="/audiobooks/">{% if site_lang == "pt" %}Audiolivros{% else %}Audiobooks{% endif %}</a></li>
                       <li><a href="/audio/">{% if site_lang == "pt" %}Áudio{% else %}Audio{% endif %}</a></li>
@@ -129,7 +130,6 @@
                       <li><a href="/games/">{% if site_lang == "pt" %}Jogos{% else %}Games{% endif %}</a></li>
                       <li><a href="/games/repo-factory/">Repo Factory</a></li>
                       <li><a href="{{ prefix }}/malecns/">MaleCNS</a></li>
-                      <li><a href="/papers/">Papers</a></li>
                       <li><a href="/pt/ai-epistemic-worlds/">{% if site_lang == "pt" %}Mundos IA{% else %}AI worlds{% endif %}</a></li>
                       <li><a href="/pt/awesome-ai-slop/">AI Slop</a></li>
                       <li><a href="/pt/atlas-das-equacoes/">{% if site_lang == "pt" %}Atlas das Equações{% else %}Equation atlas{% endif %}</a></li>
