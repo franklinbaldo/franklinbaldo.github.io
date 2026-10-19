@@ -1,0 +1,18 @@
+:root{color-scheme:light dark;font-family:system-ui,-apple-system,sans-serif;line-height:1.65}
+*{box-sizing:border-box}
+body{margin:0;background:Canvas;color:CanvasText}
+a{color:LinkText;text-underline-offset:3px}
+:focus-visible{outline:3px solid #4388db;outline-offset:3px}
+.skip-link{position:absolute;top:-5rem;left:1rem;padding:.6rem;background:Canvas;color:CanvasText}
+.skip-link:focus{top:1rem}
+.site-header,.site-footer{border-block:1px solid color-mix(in srgb,CanvasText 18%,Canvas);padding:1rem}
+.site-header nav{display:flex;flex-wrap:wrap;gap:1.1rem;max-width:64rem;margin:auto;align-items:center}
+.site-header nav a:first-child{font-weight:700;margin-right:auto}
+main{max-width:48rem;margin:2rem auto 5rem;padding:0 1.3rem}
+h1{font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.2}
+.prose img,.prose video{max-width:100%;height:auto}
+.prose pre{overflow-x:auto;padding:1rem;border:1px solid #888;border-radius:.5rem}
+.prose code{overflow-wrap:anywhere}
+.tagline{opacity:.8}
+.reading-page time{font-size:.9rem;opacity:.75}
+.site-footer{text-align:center}

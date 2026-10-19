@@ -150,6 +150,19 @@ jobs:
           [[ -n "$IA_SECRET_ACCESS_KEY" ]] || { echo "Missing GitHub secret IA_SECRET_ACCESS_KEY" >&2; exit 2; }
           python -m pip install --disable-pip-version-check 'internetarchive==5.11.1'
 
+      - name: Install pinned official Zola release
+        if: ${{ inputs.publish == true }}
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 \
+            https://github.com/getzola/zola/releases/download/v0.23.6/zola-v0.23.6-x86_64-unknown-linux-musl.tar.gz \
+            --output "$RUNNER_TEMP/zola.tar.gz"
+          echo "7d77a4220a4f699cba2fc0e0c7859f780e887e269159ad4fab90e11ea16c906f  $RUNNER_TEMP/zola.tar.gz" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/zola-bin"
+          tar -xzf "$RUNNER_TEMP/zola.tar.gz" -C "$RUNNER_TEMP/zola-bin"
+          echo "$RUNNER_TEMP/zola-bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/zola-bin/zola" --version
+
       - name: Upload, verify and persist publication
         if: ${{ inputs.publish == true }}
         env:
