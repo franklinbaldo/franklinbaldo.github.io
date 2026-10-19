@@ -1,0 +1,152 @@
+---
+import { TIER_ORDER, type TierBoardItem } from "../data/tier-types";
+
+export interface TierBoardStrings {
+  heading: string;
+  description?: string;
+  qualityLabel: string;
+  interestLabel: string;
+  confidenceLabel: string;
+  summaryQualityLabel: string;
+  summaryInterestLabel: string;
+  emptyTier: string;
+  emptyBoard: string;
+  detailsLabel: string;
+  strengthsHeading: string;
+  openProblemsHeading: string;
+  historyHeading: string;
+  reviewedLabel: string;
+}
+
+interface Props {
+  items: TierBoardItem[];
+  strings: TierBoardStrings;
+  id?: string;
+}
+
+const { items, strings, id = "tiers" } = Astro.props as Props;
+const qualityCounts = Object.fromEntries(
+  TIER_ORDER.map((tier) => [tier, items.filter((item) => item.qualityTier === tier).length]),
+);
+const interestCounts = Object.fromEntries(
+  TIER_ORDER.map((tier) => [tier, items.filter((item) => item.interestTier === tier).length]),
+);
+---
+
+<section class="tier-shell" id={id} aria-labelledby={`${id}-heading`}>
+  <header class="tier-header">
+    <div>
+      <p class="tier-kicker">TIER BOARD</p>
+      <h2 id={`${id}-heading`}>{strings.heading}</h2>
+    </div>
+    {strings.description && <p>{strings.description}</p>}
+  </header>
+
+  {items.length === 0 ? (
+    <p class="tier-empty-board">{strings.emptyBoard}</p>
+  ) : (
+    <>
+      <div class="tier-scoreboard" aria-label={strings.heading}>
+        <div>
+          <span>{strings.summaryQualityLabel}</span>
+          <div class="tier-counts">
+            {TIER_ORDER.map((tier) => <b>{tier} {qualityCounts[tier] ?? 0}</b>)}
+          </div>
+        </div>
+        <div>
+          <span>{strings.summaryInterestLabel}</span>
+          <div class="tier-counts">
+            {TIER_ORDER.map((tier) => <b>{tier} {interestCounts[tier] ?? 0}</b>)}
+          </div>
+        </div>
+      </div>
+
+      <div class="tier-board">
+        {TIER_ORDER.map((tier) => {
+          const tierItems = items.filter((item) => item.qualityTier === tier);
+          return (
+            <section class={`tier-row tier-${tier.toLowerCase()}`} aria-label={`Tier ${tier}`}>
+              <div class="tier-letter" aria-hidden="true">{tier}</div>
+              <div class="tier-content">
+                {tierItems.length === 0 ? (
+                  <p class="tier-empty">{strings.emptyTier}</p>
+                ) : (
+                  <div class="tier-cards">
+                    {tierItems.map((item) => {
+                      const hasDetails =
+                        (item.strengths?.length ?? 0) > 0 ||
+                        (item.openProblems?.length ?? 0) > 0 ||
+                        (item.history?.length ?? 0) > 0 ||
+                        Boolean(item.note);
+                      return (
+                        <article class="tier-card" id={item.id}>
+                          <div class="tier-badges">
+                            <span>{strings.qualityLabel} {item.qualityTier}</span>
+                            <span>{strings.interestLabel} {item.interestTier}</span>
+                            <span>{strings.confidenceLabel} {item.confidence}</span>
+                          </div>
+                          <h3>
+                            {item.href ? <a href={item.href}>{item.title}</a> : item.title}
+                          </h3>
+                          <p>{item.summary}</p>
+
+                          {(item.evidence?.length ?? 0) > 0 && (
+                            <div class="tier-evidence">
+                              {item.evidence!.map((cell) => (
+                                <div><strong>{cell.value}</strong><span>{cell.label}</span></div>
+                              ))}
+                            </div>
+                          )}
+
+                          {hasDetails && (
+                            <details>
+                              <summary>{strings.detailsLabel}</summary>
+                              <div class="tier-details">
+                                {(item.strengths?.length ?? 0) > 0 && (
+                                  <div>
+                                    <h4>{strings.strengthsHeading}</h4>
+                                    <ul>{item.strengths!.map((value) => <li>{value}</li>)}</ul>
+                                  </div>
+                                )}
+                                {(item.openProblems?.length ?? 0) > 0 && (
+                                  <div>
+                                    <h4>{strings.openProblemsHeading}</h4>
+                                    <ul>{item.openProblems!.map((value) => <li>{value}</li>)}</ul>
+                                  </div>
+                                )}
+                              </div>
+                              {(item.history?.length ?? 0) > 0 && (
+                                <>
+                                  <h4>{strings.historyHeading}</h4>
+                                  <ul>{item.history!.map((value) => <li>{value}</li>)}</ul>
+                                </>
+                              )}
+                              {item.note && <p class="tier-note">{item.note}</p>}
+                            </details>
+                          )}
+
+                          <footer>
+                            {item.reviewedAt && <small>{strings.reviewedLabel} {item.reviewedAt}</small>}
+                            {(item.links?.length ?? 0) > 0 && (
+                              <nav aria-label={item.title}>
+                                {item.links!.map((link) => <a href={link.href}>{link.label}</a>)}
+                              </nav>
+                            )}
+                          </footer>
+                        </article>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </section>
+          );
+        })}
+      </div>
+    </>
+  )}
+</section>
+
+<style>
+  .tier-shell{margin:3rem 0}.tier-header{display:flex;justify-content:space-between;align-items:end;gap:2rem;margin-bottom:1rem}.tier-header h2{margin:.15rem 0 0;font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.04em}.tier-header>p{max-width:42rem;color:var(--pico-muted-color);text-align:right}.tier-kicker{margin:0;font:800 .72rem/1.1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase}.tier-scoreboard{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1rem 0}.tier-scoreboard>div{padding:.8rem;border:1px solid var(--pico-muted-border-color);border-radius:var(--radius-medium);background:var(--pico-card-background-color,var(--pico-background-color))}.tier-scoreboard>div>span{font-size:.72rem;font-weight:800;text-transform:uppercase}.tier-counts{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.45rem}.tier-counts b{padding:.25rem .4rem;border:1px solid var(--pico-muted-border-color);font:800 .74rem/1 ui-monospace,monospace}.tier-board{overflow:hidden;border:1px solid var(--pico-muted-border-color);border-radius:var(--radius-large)}.tier-row{display:grid;grid-template-columns:64px 1fr;border-bottom:1px solid var(--pico-muted-border-color)}.tier-row:last-child{border-bottom:0}.tier-letter{display:grid;place-items:center;border-right:1px solid var(--pico-muted-border-color);font-size:2.35rem;font-weight:950;color:#17151c}.tier-s .tier-letter{background:#f2bd2f}.tier-a .tier-letter{background:#88ddd2}.tier-b .tier-letter{background:#b9d99a}.tier-c .tier-letter{background:#a9cfdf}.tier-d .tier-letter{background:#c9c1df}.tier-f .tier-letter{background:#dfb1a3}.tier-content{padding:.8rem;background:color-mix(in srgb,var(--pico-background-color) 95%,var(--pico-primary) 5%)}.tier-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.75rem}.tier-card{display:flex;flex-direction:column;padding:.9rem;border:1px solid var(--pico-muted-border-color);border-radius:var(--radius-medium);background:var(--pico-card-background-color,var(--pico-background-color))}.tier-card h3{margin:.55rem 0 .35rem;font-size:1.2rem}.tier-card h3 a{text-decoration:none}.tier-badges{display:flex;flex-wrap:wrap;gap:.3rem}.tier-badges span{padding:.22rem .35rem;border:1px solid var(--pico-muted-border-color);font:700 .66rem/1 ui-monospace,monospace;text-transform:uppercase}.tier-evidence{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:1px;margin:.8rem 0;background:var(--pico-muted-border-color);border:1px solid var(--pico-muted-border-color)}.tier-evidence div{display:flex;flex-direction:column;padding:.55rem;background:var(--pico-card-background-color,var(--pico-background-color))}.tier-evidence strong{font:800 .9rem/1.1 ui-monospace,monospace}.tier-evidence span{margin-top:.18rem;color:var(--pico-muted-color);font-size:.64rem;text-transform:uppercase}.tier-card details{margin-top:.5rem;padding-top:.55rem;border-top:1px dashed var(--pico-muted-border-color)}.tier-card summary{cursor:pointer;font-weight:800}.tier-details{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}.tier-details ul,.tier-card details>ul{padding-left:1.1rem}.tier-note{padding:.55rem;background:color-mix(in srgb,var(--pico-background-color) 90%,var(--pico-primary) 10%)}.tier-card footer{display:flex;justify-content:space-between;align-items:end;gap:.75rem;flex-wrap:wrap;margin-top:auto;padding-top:.75rem}.tier-card footer nav{display:flex;flex-wrap:wrap;gap:.7rem}.tier-card footer a{font-weight:800;text-decoration:none}.tier-empty,.tier-empty-board{color:var(--pico-muted-color);font-style:italic}.tier-empty{margin:.7rem}.tier-empty-board{padding:1rem;border:1px dashed var(--pico-muted-border-color);border-radius:var(--radius-medium)}@media(max-width:760px){.tier-header{align-items:start;flex-direction:column;gap:.5rem}.tier-header>p{text-align:left}.tier-scoreboard,.tier-details{grid-template-columns:1fr}.tier-row{grid-template-columns:48px 1fr}.tier-letter{font-size:1.8rem}.tier-cards{grid-template-columns:1fr}}
+</style>

@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "source_id": "cran-rd-math",
+  "source_name": "CRAN source packages — explicit Rd documentation mathematics",
+  "readiness": "license-filtered",
+  "official_access": {
+    "master": "https://cran.r-project.org/",
+    "source_packages": "https://cran.r-project.org/src/contrib/",
+    "packages_index": "https://cran.r-project.org/src/contrib/PACKAGES",
+    "mirror_documentation": "https://cran.r-project.org/mirror-howto.html",
+    "rd_math_specification": "https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Mathematics",
+    "access_mode": "Acquire src/contrib/PACKAGES plus current source package tarballs from CRAN or an official rsync mirror on an external executor. Prefer a synchronized mirror or bounded package batch over page-by-page package scraping. Source tarballs remain transient acquisition objects; the Atlas lake persists Parquet derivatives only."
+  },
+  "scope": {
+    "corpus": "CRAN source packages and their man/*.Rd documentation files",
+    "structures": [
+      "statistical distributions and estimators",
+      "likelihoods and objectives",
+      "regression and econometric formulas",
+      "optimization criteria and constraints",
+      "probability and stochastic-process relations",
+      "numerical-analysis formulas",
+      "bioinformatics and biostatistics formulas",
+      "finance and risk formulas",
+      "machine-learning losses and update rules",
+      "other explicit Rd \\eqn and \\deqn mathematical expressions"
+    ],
+    "provenance_class": "attested",
+    "original_representation": "exact first verbatim Rd argument of \\eqn{} or \\deqn{}, with the complete source macro and optional ASCII alternative preserved separately",
+    "batching": "one deterministic inventory snapshot over the acquired PACKAGES index and selected current CRAN source tarballs",
+    "exclusions": [
+      "Do not infer formulas from prose, R code, examples or function signatures in the extracted lane",
+      "Do not treat R formula-language expressions using ~ as mathematical equations unless a later reconstructed lane defines and tests that translation",
+      "Do not execute Rd macros, Sweave, R Markdown or package code during extraction",
+      "Do not OCR PDFs or rendered manuals when source Rd exists",
+      "Do not assert algebraic or functional equivalence at extracted stage"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "cran-index-plus-source-tarball-content-inventory",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "Acquire the official src/contrib/PACKAGES snapshot and the selected current source tarballs outside GitHub Actions; SHA-256 the index and every tarball; build a deterministic sorted inventory by package/version/object path/size/hash; use cran-rd-math:inventory-sha256:<digest> as source_snapshot. A changed package set, version, index or byte sequence creates a new immutable snapshot and Internet Archive item. Never identify a snapshot only by wall-clock date.",
+    "required_fields": [
+      "packages_index_sha256",
+      "package_count",
+      "tarball_count",
+      "total_bytes",
+      "inventory_sha256",
+      "files"
+    ]
+  },
+  "license_policy": {
+    "policy": "license-filtered",
+    "default": "fail-closed",
+    "description_license_evidence": "https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Licensing",
+    "rule": "CRAN requires a package-level License field and repositories may add License_is_FOSS and License_restricts_use metadata. Preserve the exact package/version/license metadata per occurrence. The adapter marks redistribution_allowed only when the acquired repository metadata explicitly says License_is_FOSS=yes and License_restricts_use=no; custom, missing, ambiguous or restrictive cases remain local/index-only until audited. Publication must preserve package-level license obligations and must not republish CRAN source tarballs as Atlas artifacts."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-cran-rd.py",
+    "input": "directory containing externally acquired CRAN source *.tar.gz objects plus the matching official src/contrib/PACKAGES snapshot",
+    "transport_output": "JSONL to stdout (transient only)",
+    "required_arguments": [
+      "--input <cran-source-tarball-root>",
+      "--packages-index <PACKAGES>",
+      "--snapshot cran-rd-math:inventory-sha256:<digest>"
+    ],
+    "provenance_class": "attested",
+    "validation": [
+      "only literal \\eqn{} and \\deqn{} macros in man/*.Rd are harvested; Rd comments are ignored",
+      "expression_original is the exact first verbatim Rd math argument; source_markup_original preserves the complete lexical macro and expression_ascii_original preserves the optional second argument",
+      "nested TeX braces are parsed without normalizing the expression",
+      "package, version, title, license, source tarball SHA-256, Rd path, Rd document SHA-256, topic, aliases, section and line range are retained",
+      "source_record_sha256 is independent of executor path and depends on immutable source identity and exact source bytes",
+      "no package code is executed and no OCR, prose reconstruction, symbolic equivalence or equation-family assertion occurs at extracted stage"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": [
+      "extracted",
+      "normalized",
+      "deduplicated"
+    ],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "publication_filter": "redistribution_allowed == true",
+    "identifier_template": "scientific-equation-atlas-cran-rd-<inventory-digest>-<stage>"
+  }
+}

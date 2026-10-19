@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "source_id": "stackexchange-data-dump-tex",
+  "source_name": "Stack Exchange network data dumps — explicit TeX/MathJax",
+  "readiness": "license-filtered",
+  "official_access": {
+    "network": "Stack Exchange",
+    "current_access": "Per-site quarterly data dump from the authenticated Settings page on each Stack Exchange site",
+    "help": "https://stackoverflow.com/help/account",
+    "process_announcement": "https://meta.stackexchange.com/questions/401324/announcing-a-change-to-the-data-dump-process",
+    "schema": "https://meta.stackexchange.com/questions/2677/database-schema-documentation-for-the-public-data-dump-and-sede",
+    "community_release_index": "https://meta.stackexchange.com/questions/224873/all-stack-exchange-data-dump-releases",
+    "access_mode": "one site archive at a time; XML files compressed as 7z; PostHistory.xml contains raw Markdown body revisions and Posts.xml supplies post metadata",
+    "mirror_rule": "Prefer the authenticated official per-site dump. A community Internet Archive/Academic Torrents mirror may be used only as a byte transport mirror when the release identity, site archive, checksum provenance and mirror status are recorded explicitly; never describe a community reupload as an official Stack Exchange archive."
+  },
+  "scope": {
+    "corpus": "Public question/answer revisions across Stack Exchange network sites, with particularly dense quantitative coverage in mathematics, statistics, physics, computer science, engineering, economics/finance and related technical communities",
+    "structures": [
+      "explicit inline TeX delimited by $...$ or \\(...\\)",
+      "explicit display TeX delimited by $$...$$ or \\[...\\]",
+      "equations, functions, distributions, recurrences, inequalities, transforms, objectives, constraints and algorithmic mathematical notation explicitly authored in post Markdown"
+    ],
+    "provenance_class": "attested",
+    "original_representation": "exact TeX/MathJax-delimited substring from the selected raw Markdown body revision in PostHistory.xml",
+    "batching": "one Stack Exchange site archive at one verified release/snapshot per extraction/materialization batch",
+    "exclusions": [
+      "Do not infer mathematics from prose in this lane",
+      "Do not harvest TeX-looking text inside fenced code, inline code, HTML code/pre, script, style or comments",
+      "Do not OCR images",
+      "Do not treat current Posts.xml HTML as the licensing timestamp when PostHistory provides the exact body revision"
+    ]
+  },
+  "snapshot_policy": {
+    "kind": "release-plus-site-archive-content-inventory",
+    "builder": "scripts/science-equations/build-source-inventory.py",
+    "rule": "For each site, pin a named Stack Exchange dump release, retain the acquired archive filename/source URL and published checksum evidence when available, hash the acquired .7z and the extracted PostHistory.xml/Posts.xml objects, then use stackexchange:<site>:<release>:inventory-sha256:<digest> as source_snapshot. A changed release or changed byte inventory creates a new immutable snapshot/item.",
+    "required_fields": [
+      "site",
+      "release",
+      "acquisition_url",
+      "acquisition_kind",
+      "archive_sha256",
+      "inventory_sha256",
+      "file_count",
+      "total_bytes",
+      "files"
+    ]
+  },
+  "license_policy": {
+    "scope": "per selected question/answer body revision",
+    "policy": "license-filtered",
+    "license_help": "https://stackoverflow.com/help/licensing",
+    "revision_rules": [
+      "revision created before 2011-04-08 UTC -> CC BY-SA 2.5",
+      "revision created from 2011-04-08 UTC up to but not including 2018-05-02 UTC -> CC BY-SA 3.0",
+      "revision created on or after 2018-05-02 UTC -> CC BY-SA 4.0"
+    ],
+    "rule": "Use PostHistory body revision CreationDate, not post creation date or a later unrelated title/tag edit, to attach the applicable Creative Commons version. Preserve site, post id, revision GUID/history id, user identifiers when available and a stable revisions URL for attribution. The authenticated dump download process also imposes access/use terms; therefore never republish raw .7z/XML dump files, and keep Internet Archive publication of derived equation payloads fail-closed until the run records a rights review for the exact acquisition path and intended redistribution. Metadata, code, checksums and non-payload audit records may still be persisted in Git.",
+    "attribution": "Preserve the Stack Exchange site, post/revision locator and available owner/revision user identifiers on every occurrence."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-stackexchange-tex.py",
+    "input": "one extracted Stack Exchange site dump containing PostHistory.xml and optionally Posts.xml",
+    "transport_output": "JSONL to stdout (transient only)",
+    "required_arguments": [
+      "--site <site-hostname>",
+      "--snapshot stackexchange:<site>:<release>:inventory-sha256:<digest>",
+      "--input <extracted-site-dump-directory>"
+    ],
+    "provenance_class": "attested",
+    "validation": [
+      "Latest raw body revision is selected from PostHistory type 2/5/8 using CreationDate and history id, rather than inferring a license from Posts.LastEditDate",
+      "expression_original is an exact substring of raw Markdown from the selected PostHistory body revision",
+      "Code/comment regions are length-preservingly masked only for detection, so emitted substrings still come from the original Markdown",
+      "Post metadata enrichment is optional and streaming; the body-revision SQLite scratch index keeps memory bounded for large sites",
+      "No OCR, prose-to-math reconstruction, symbolic equivalence or equation-family assertion occurs at extracted stage"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive after rights gate",
+    "identifier_template": "scientific-equation-atlas-stackexchange-<site>-<inventory-digest>-<stage>"
+  }
+}

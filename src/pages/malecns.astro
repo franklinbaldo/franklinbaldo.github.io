@@ -1,0 +1,74 @@
+---
+import PageLayout from "../layouts/PageLayout.astro";
+import TierBoard, { type TierBoardStrings } from "../components/TierBoard.astro";
+import { maleCnsProjects } from "../data/malecns-projects";
+import type { TierBoardItem } from "../data/tier-types";
+
+const items: TierBoardItem[] = maleCnsProjects.map((record) => ({
+  id: `malecns-project-${record.slug}`,
+  title: record.name,
+  href: record.primaryUrl,
+  qualityTier: record.scientificTier,
+  interestTier: record.interestTier,
+  confidence: record.confidence,
+  summary: record.summary,
+  reviewedAt: record.reviewedAt,
+  note: record.note,
+  strengths: record.strongestEvidence,
+  openProblems: [
+    ...record.limitations,
+    ...record.controls.map((control) => `Control: ${control}`),
+  ],
+  history: record.history,
+  evidence: [
+    { label: "kind", value: record.kind },
+    { label: "stage", value: record.stage },
+    { label: "origin", value: record.ownership },
+  ],
+  links: record.links,
+}));
+
+const strings: TierBoardStrings = {
+  heading: "MaleCNS project tier list",
+  description:
+    "Scientific tier measures MaleCNS evidence strength, not whether a result is positive. Interest measures originality and research fertility. A reproducible null can rank above an exciting uncontrolled demo.",
+  qualityLabel: "scientific",
+  interestLabel: "interest",
+  confidenceLabel: "conf.",
+  summaryQualityLabel: "scientific evidence",
+  summaryInterestLabel: "interest / fertility",
+  emptyTier: "empty — no project classified in this tier",
+  emptyBoard: "No MaleCNS project has been classified yet.",
+  detailsLabel: "View evidence and limits",
+  strengthsHeading: "Strongest evidence",
+  openProblemsHeading: "Limits and controls",
+  historyHeading: "Tier history",
+  reviewedLabel: "reviewed",
+};
+---
+
+<PageLayout
+  title="MaleCNS project tier list | Franklin Baldo"
+  description="A living curation of projects that execute, derive from, or experiment with the MaleCNS connectome."
+  lang="en"
+  translations={{ pt: "/pt/malecns/" }}
+>
+  <hgroup>
+    <h1>MaleCNS — projects, demos and experiments</h1>
+    <p>A living curation of the MaleCNS ecosystem, applying the same evidence standard to my work and independent projects.</p>
+  </hgroup>
+
+  <p>
+    The <strong>scientific</strong> axis evaluates the strength of public evidence
+    for what the project actually demonstrates. Negative results are not
+    penalized. <strong>Interest</strong> measures originality, ambition and
+    research fertility.
+  </p>
+
+  <TierBoard items={items} strings={strings} id="malecns-project-tiers" />
+
+  <p><small>
+    Canonical source: OKF cards under <code>knowledge/malecns-projects/</code>.
+    Tier movement requires material evidence.
+  </small></p>
+</PageLayout>

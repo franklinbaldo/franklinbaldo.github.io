@@ -4,14 +4,20 @@
   "source_name": "English Wikipedia explicit MediaWiki math tags",
   "readiness": "harvest-ready",
   "official_access": {
-    "dump_root": "https://dumps.wikimedia.org/enwiki/",
-    "dump_documentation": "https://meta.wikimedia.org/wiki/Data_dumps/What%27s_available_for_download",
+    "dataset": "mediawiki_content_current",
+    "export_root": "https://dumps.wikimedia.org/other/mediawiki_content_current/enwiki/",
+    "export_documentation": "https://wikitech.wikimedia.org/wiki/MediaWiki_Content_File_Exports",
+    "wiki_id_mapping": "https://wikitech.wikimedia.org/wiki/MediaWiki_Content_File_Exports/WikiId_Mappings",
     "math_markup_documentation": "https://www.mediawiki.org/wiki/Extension:Math",
-    "access_mode": "official Wikimedia XML pages-articles dump, preferably multistream parts for parallel acquisition",
-    "listing_rule": "Choose a completed enwiki dump snapshot from the official dump service, record its status metadata, download the complete selected pages-articles-multistream surface, and verify the published MD5/SHA-1 checksums before local processing. Do not scrape Wikipedia article pages individually."
+    "legacy_dump_root": "https://dumps.wikimedia.org/enwiki/",
+    "access_mode": "official Wikimedia per-wiki monthly compressed XML current-content export, preferred over the deprecated legacy XML dump path",
+    "listing_rule": "For enwiki, choose a mediawiki_content_current export generation only after its SHA256SUMS exists, download every listed XML.bz2 object, and verify sha256sum --check before local processing. Do not scrape Wikipedia article pages individually."
   },
   "scope": {
     "project": "English Wikipedia",
+    "wiki_id": "enwiki",
+    "language": "en",
+    "hostname": "en.wikipedia.org",
     "default_namespace": 0,
     "structures": ["explicit <math>...</math> extension tags containing TeX-like math source"],
     "provenance_class": "attested",
@@ -25,26 +31,26 @@
     ]
   },
   "snapshot_policy": {
-    "kind": "verified-dump-inventory",
+    "kind": "verified-content-export-inventory",
     "builder": "scripts/science-equations/build-source-inventory.py",
-    "rule": "Pin one completed Wikimedia dump generation, verify every selected dump part against the official published checksum surface, then compute a deterministic local SHA-256 inventory over the exact downloaded files. Use dump-inventory-sha256:<digest> as source_snapshot; the dump date alone is metadata, not the complete content identity.",
-    "required_fields": ["dump_generation", "official_checksum_verification", "inventory_sha256", "files", "file_count", "total_bytes"]
+    "rule": "Pin one completed enwiki mediawiki_content_current export generation by the presence of its official SHA256SUMS, verify every export part against that checksum surface, then compute a deterministic local SHA-256 inventory over the exact downloaded files. Use wikimedia-content-current:enwiki:inventory-sha256:<digest> as source_snapshot; the export date alone is metadata, not the complete content identity.",
+    "required_fields": ["dataset", "wiki_id", "export_generation", "official_sha256sums_url", "official_checksum_verification", "inventory_sha256", "files", "file_count", "total_bytes"]
   },
   "license_policy": {
     "scope": "Wikipedia text content with imported-text attribution caveat",
     "license": "CC-BY-SA-4.0-and-GFDL-with-imported-text-caveat",
     "policy_url": "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use",
-    "rule": "Text contributed by rights-holders is licensed under CC BY-SA 4.0 and GFDL, while imported text can carry compatible-license and additional-attribution requirements. Preserve page title, page/revision identifiers, stable oldid URL, and source snapshot on every occurrence. Do not mirror the raw Wikipedia dump into the Atlas Internet Archive item; publish only the permitted derived occurrence Parquets and their attribution/provenance metadata under the applicable share-alike requirements."
+    "rule": "Text contributed by rights-holders is licensed under CC BY-SA 4.0 and GFDL, while imported text can carry compatible-license and additional-attribution requirements. Preserve wiki_id, page title, page/revision identifiers, stable oldid URL, and source snapshot on every occurrence. Do not mirror the raw Wikimedia content export into the Atlas Internet Archive item; publish only permitted derived occurrence Parquets and their attribution/provenance metadata under applicable share-alike requirements."
   },
   "adapter": {
     "path": "scripts/science-equations/harvest-wikipedia-math.py",
-    "input": "local verified pages-articles XML, XML.bz2, XML.gz file or directory of dump parts",
+    "input": "local verified enwiki mediawiki_content_current XML/XML.bz2 file or directory of export parts",
     "transport_output": "JSONL to stdout (transient only)",
     "provenance_class": "attested",
     "validation": [
       "Expression body is non-empty and appears explicitly inside a rendered math extension tag",
-      "Revision/page identifiers and stable oldid URL are preserved when available",
-      "source_record_sha256 is independent of physical dump-part packaging",
+      "wiki_id, revision/page identifiers and stable oldid URL are preserved when available",
+      "source_record_sha256 is independent of physical export-part packaging",
       "No reconstruction, OCR, or parser-function expansion is claimed at extracted stage"
     ]
   },
