@@ -33,7 +33,7 @@ Requires Node 24, npm ci and the official ssg v0.0.68 binary.
     ssg -f ssg/ssg.toml -c .cache/ssg-native/content -o dist-ssg -t ssg/templates
     node scripts/ssg/finish.mjs
     node scripts/ssg/parity.mjs
-    ssg audit dist-ssg --out sarif
+    ssg audit --output dist-ssg --sarif
 
 Never direct SSG output to the repository's public/ directory: it contains
 SOURCE assets. Dist output is dist-ssg/ only. The preview workflow uploads
