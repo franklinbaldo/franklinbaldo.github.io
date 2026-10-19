@@ -31,5 +31,5 @@ const report = {
 writeFileSync(join(root,".cache/ssg-native/parity.json"),JSON.stringify(report,null,2)+"\n");
 console.log(JSON.stringify({ posts_projected:report.posts_projected,
   missing_projected_posts:missing.length, unsupported_posts:report.unsupported_posts,
-  absent_special:absentSpecial.length, public_cutover_allowed:false },null,2));
+  absent_special:absentSpecial, public_cutover_allowed:false },null,2));
 if (missing.length) process.exitCode = 1;
