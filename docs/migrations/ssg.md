@@ -84,3 +84,21 @@ reproduction before patching or reporting upstream. Avoid substituting a
 custom archive generator without first resolving the native behavior.
 
 No GitHub Pages cutover is authorized by this checkpoint.
+
+## Full-artifact comparison and native quality triage
+
+The candidate workflow now builds *both* the real Zola reference and the SSG preview from the same Git commit, and runs:
+
+```sh
+node scripts/ssg/quality-summary.mjs
+node scripts/ssg/compare-baseline.mjs dist-zola dist-ssg public
+```
+
+Two machine-readable outputs are retained as CI artifacts:
+
+- `.cache/ssg-native/full-parity.json` inventories ALL baseline HTML URLs, missing non-HTML output, and static asset hash differences. Top-level publication routes alone are not sufficient.
+- `.cache/ssg-native/quality-summary.json` ranks SSG's native quality findings by pillar, with representative diagnostics and counts. These checks are not a substitute for WCAG browser audits.
+
+SSG remains an incomplete candidate until full parity and functional tests pass. The comparator records missing routes without blocking every experimental build; set `SSG_REQUIRE_FULL_PARITY=1` to enforce complete artifact path coverage at cutover.
+
+The SSG projection rejects any unsupported published source rather than silently omitting a post. In that case the rejected-source manifest is still written for debugging, but the build fails.
