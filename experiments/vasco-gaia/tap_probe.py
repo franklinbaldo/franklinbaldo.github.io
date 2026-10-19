@@ -2,6 +2,10 @@
 """Read-only, bounded APPLAUSE DR4 TAP diagnostic. An error is never a nondetection."""
 import argparse
 import hashlib
+import http.client
+import signal
+import threading
+from contextlib import contextmanager
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -20,10 +24,10 @@ def classify(status, payload):
     try:
         root = ET.fromstring(payload)
     except ET.ParseError:
-        return "invalid_votable"
+        return "http_error" if status != 200 else "invalid_votable"
     infos = [x for x in root.iter() if x.tag.rsplit('}', 1)[-1] == 'INFO' and x.attrib.get('name') == 'QUERY_STATUS']
     if not infos:
-        return "unknown_status"
+        return "http_error" if status != 200 else "unknown_status"
     if any(x.attrib.get('value', '').upper() == 'ERROR' for x in infos):
         message = ' '.join(''.join(x.itertext()) for x in infos).lower()
         return 'tap_statement_timeout' if 'statement timeout' in message else 'tap_error'
@@ -31,20 +35,61 @@ def classify(status, payload):
         return "http_error"
     return "valid_votable" if all(x.attrib.get('value', '').upper() in ('OK', 'OVERFLOW') for x in infos) else "unknown_status"
 
+class DeadlineUnavailable(RuntimeError):
+    """A hard request deadline cannot be installed safely in this context."""
+
+
+@contextmanager
+def request_deadline(timeout):
+    # urlopen's timeout is an inactivity timeout, not a total request budget.
+    # A real-time signal also interrupts DNS, response headers and slow reads.
+    if (threading.current_thread() is not threading.main_thread()
+            or not hasattr(signal, 'setitimer')
+            or not hasattr(signal, 'SIGALRM')):
+        raise DeadlineUnavailable('hard deadlines require a POSIX main thread')
+    if signal.getitimer(signal.ITIMER_REAL) != (0.0, 0.0):
+        # Do not steal an embedding application's active alarm.
+        raise DeadlineUnavailable('an existing real-time timer is active')
+    previous_handler = signal.getsignal(signal.SIGALRM)
+
+    def expired(signum, frame):
+        raise TimeoutError('absolute request deadline exceeded')
+
+    signal.signal(signal.SIGALRM, expired)
+    try:
+        signal.setitimer(signal.ITIMER_REAL, timeout)
+        yield
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous_handler)
+
+
 def request_query(query, endpoint=ENDPOINT, timeout=20):
     if query not in QUERIES:
         raise ValueError("Query must be one of the frozen named probes")
+    if not 0 < timeout <= 30:
+        raise ValueError('timeout must be positive and at most 30 seconds')
     qs = urllib.parse.urlencode({'REQUEST': 'doQuery', 'LANG': 'ADQL', 'QUERY': QUERIES[query], 'FORMAT': 'votable', 'MAXREC': '2'})
     req = urllib.request.Request(endpoint + '?' + qs)
+    status = None
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as response:
-            payload = response.read(MAX_RESPONSE + 1)
-            status = response.status
-    except urllib.error.HTTPError as exc:
-        status = exc.code
-        payload = exc.read(MAX_RESPONSE + 1)
-    except (urllib.error.URLError, TimeoutError) as exc:
-        return {'probe': query, 'result': 'network_unavailable', 'error_type': type(exc).__name__}
+        with request_deadline(timeout):
+            try:
+                response = urllib.request.urlopen(req, timeout=timeout)
+            except urllib.error.HTTPError as exc:
+                response = exc
+            # HTTPError is also a response: read and close it inside the same
+            # deadline and exception boundary as a successful HTTP response.
+            with response:
+                status = response.code
+                payload = response.read(MAX_RESPONSE + 1)
+    except DeadlineUnavailable as exc:
+        return {'probe': query, 'result': 'deadline_unavailable', 'error': str(exc)}
+    except (urllib.error.URLError, OSError, http.client.HTTPException) as exc:
+        record = {'probe': query, 'result': 'network_unavailable', 'error_type': type(exc).__name__}
+        if status is not None:
+            record['http_status'] = status
+        return record
     if len(payload) > MAX_RESPONSE:
         return {'probe': query, 'result': 'response_too_large', 'http_status': status}
     return {'probe': query, 'result': classify(status, payload), 'http_status': status,
@@ -82,3 +127,4 @@ def main():
 
 if __name__ == '__main__':
     raise SystemExit(main())
+
