@@ -18,6 +18,11 @@
       "strategy": "native-listings"
     },
     {
+      "path": "/pt/archive/",
+      "owner": "ssg-core",
+      "strategy": "native-listings"
+    },
+    {
       "path": "/projects/",
       "owner": "projects",
       "strategy": "domain-data-to-ssg"
