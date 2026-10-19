@@ -5,11 +5,24 @@
 import { execFileSync } from "node:child_process";
 
 const CHANGES_DIR = "changelog/changes/";
+// Dependency bumps opened by Dependabot are the one exemption: their PR body
+// already records the change, and a hand-written card per bump is noise. The
+// check keys on the PR author, not the push actor, so commits pushed onto a
+// Dependabot branch keep the exemption and nobody else inherits it.
+const EXEMPT_AUTHORS = new Set(["dependabot[bot]"]);
 const baseRef = process.env.BASE_REF?.trim();
+const prAuthor = process.env.PR_AUTHOR?.trim();
 
 if (!baseRef) {
   console.log(
     "✔ check-change-card: no BASE_REF; merge-relative card requirement skipped."
+  );
+  process.exit(0);
+}
+
+if (prAuthor && EXEMPT_AUTHORS.has(prAuthor)) {
+  console.log(
+    `✔ check-change-card: PR opened by ${prAuthor}; change card not required.`
   );
   process.exit(0);
 }
@@ -36,7 +49,8 @@ if (changed.length === 0) {
 
 // A PR that only edits existing change cards is bookkeeping, not a new product
 // change. Everything else — source, content, CI, docs, data, workflows — must
-// leave a card. This intentionally has no broad `skip-changelog` escape hatch.
+// leave a card. Beyond the Dependabot exemption above, this intentionally has
+// no broad `skip-changelog` escape hatch.
 const substantive = changed.filter((path) => !path.startsWith(CHANGES_DIR));
 if (substantive.length === 0) {
   console.log("✔ check-change-card: PR only changes changelog cards.");

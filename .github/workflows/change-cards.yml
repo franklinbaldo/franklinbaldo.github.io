@@ -24,6 +24,7 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           BASE_REF: origin/${{ github.base_ref }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
         run: node scripts/check-change-card.mjs
 
       - name: Validate change cards as OKF knowledge
