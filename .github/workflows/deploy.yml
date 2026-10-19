@@ -22,12 +22,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # RFC 0015: prebuild runs hronir:select, and a flattened slug's
-      # history (blobs for folded-back/pruned versions) is resolved via
-      # git plumbing — a shallow clone would silently fail to find them.
-      # This workflow already builds the site (and therefore already runs
-      # hronir:select through the `prebuild` npm hook), so it needs full
-      # history regardless of whether any slug is flat yet.
+      # The native build runs shared pregeneration once. Historical Hrönir
+      # projections need complete git history even when the site uses Zola.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
@@ -38,19 +34,24 @@ jobs:
 
       - run: npm ci
 
-      - name: Cache Astro build state
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .astro
-          key: ${{ runner.os }}-astro-v24-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-astro-v24-
+      - name: Install pinned official Zola release
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 \
+            https://github.com/getzola/zola/releases/download/v0.23.6/zola-v0.23.6-x86_64-unknown-linux-musl.tar.gz \
+            --output "$RUNNER_TEMP/zola.tar.gz"
+          echo "7d77a4220a4f699cba2fc0e0c7859f780e887e269159ad4fab90e11ea16c906f  $RUNNER_TEMP/zola.tar.gz" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/zola-bin"
+          tar -xzf "$RUNNER_TEMP/zola.tar.gz" -C "$RUNNER_TEMP/zola-bin"
+          echo "$RUNNER_TEMP/zola-bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/zola-bin/zola" --version
+
       - run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: dist
+          path: dist-zola
 
   deploy:
     needs: build

@@ -1,0 +1,73 @@
+/* Original app styles use Pico token names; keep their values inside the apps. */
+.native-app,
+.rug-shell {
+  --pico-background-color: var(--paper);
+  --pico-card-background-color: var(--surface);
+  --pico-muted-border-color: var(--line);
+  --pico-color: var(--ink);
+  --pico-muted-color: var(--muted);
+  --pico-primary: var(--accent);
+  --radius-medium: 1rem;
+  --radius-large: 1.5rem;
+  --elevation-soft: 0 4px 12px rgb(0 0 0 / 5%);
+  --elevation-card: 0 12px 32px rgb(0 0 0 / 8%);
+}
+.native-app :where(button, input, select) {
+  font: inherit;
+}
+.native-app :where(button, select) {
+  cursor: pointer;
+}
+.native-app :where(input[type="search"], select) {
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: 0.25rem;
+  padding: 0.4rem 0.7rem;
+  color: var(--pico-color);
+  background: var(--pico-background-color);
+}
+.native-app button {
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 0.25rem;
+}
+.native-app [hidden] {
+  display: none !important;
+}
+.native-app .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+body:has(.factory-shell) > #main {
+  width: min(1440px, calc(100% - 3rem));
+}
+body:has(.atlas-shell) > #main {
+  width: min(1180px, calc(100% - 3rem));
+}
+@media (max-width: 600px) {
+  body:has(.native-app) > #main {
+    width: calc(100% - 1.5rem);
+  }
+}
+
+/* Zola also supports the OS color preference without a theme attribute. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .factory-shell {
+    --factory-ink: #eee3d0;
+    --factory-muted: #b7aa96;
+    --factory-metal: #4f493f;
+    --factory-panel: #29251f;
+    --factory-panel-2: #342e26;
+    --factory-brass: #d1974f;
+    --factory-green: #82a36f;
+    --factory-red: #d77961;
+    --factory-blue: #7f9daa;
+    --factory-grid: rgba(225, 210, 185, 0.09);
+  }
+}
