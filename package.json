@@ -73,7 +73,7 @@
     "typescript": "^6.0.3",
     "unist-util-visit": "^5.1.0",
     "github-slugger": "^2.0.0",
-    "parse5": "^7.3.0"
+    "parse5": "^8.0.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
