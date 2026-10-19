@@ -19,23 +19,26 @@ Hrönir is both repository machinery and a public-facing curation artifact: eval
 
 ## Stack
 
-- [Astro 7](https://astro.build/) with `@astrojs/mdx`
+- [Zola 0.23.6](https://www.getzola.org/) with native Tera templates
+- Node 24 for canonical editorial projections, KaTeX, social images and Pagefind
 - [Pico.css v2](https://picocss.com/) (semantic, classless-ish CSS)
 - Typography: Fraunces (body) / Inter (UI) via `@fontsource`
-- `astro:assets` for image optimization (heroes generate responsive WebP)
+- Source assets preserved; local article images copied by the native exporter
 - **Hrönir** — pairwise editorial evidence in Markdown OKF; agents are guided and validated by `okf-parser`. See [`CLAUDE.md`](./CLAUDE.md) for the operating contract.
 
 ## Commands
 
-| Command                  | Action                                    |
-| :----------------------- | :---------------------------------------- |
-| `npm install`            | Install dependencies                      |
-| `npm run dev`            | Start dev server at `localhost:4321`      |
-| `npm run build`          | Build production site to `./dist/`        |
-| `npm run preview`        | Preview the built site locally            |
-| `npm run check:hygiene`  | Repo hygiene (root files, lockfile, etc.) |
+| Command                 | Action                                    |
+| :---------------------- | :---------------------------------------- |
+| `npm install`           | Install dependencies                      |
+| `npm run dev`           | Start dev server at `localhost:4321`      |
+| `npm run build`         | Build production site to `./dist-zola/`   |
+| `npm run preview`       | Preview the built site locally            |
+| `npm run check:hygiene` | Repo hygiene (root files, lockfile, etc.) |
 
-Requires Node `>=24.0.0` (see `package.json#engines`).
+Requires Node `>=24.0.0` and the official Zola **0.23.6** binary in PATH (or `ZOLA_BIN=/path/to/zola`). See [migration and verification instructions](docs/migrations/zola.md). `npm run build:astro` is an explicit legacy parity fallback; it is not the production generator.
+
+Native templates and browser assets live in `zola/`; exporters and the static preview server live in `scripts/zola/`. The disposable input is `.cache/zola-site/`. Never use the source `public/` directory as Zola output.
 
 ## Project layout
 
@@ -65,8 +68,7 @@ docs/
 ## Feeds
 
 RSS feed at [`/rss.xml`](https://franklinbaldo.github.io/rss.xml), generated
-from the `blog` collection via
-[`@astrojs/rss`](https://docs.astro.build/en/recipes/rss/).
+from the exact rendered article HTML via `scripts/zola/finish.mjs`. Portuguese RSS is at `/pt/rss.xml`; JSON Feeds are at `/feed.json` and `/pt/feed.json`.
 
 ## Notes on the modernization migration
 

@@ -74,6 +74,18 @@ jobs:
           --require-spec ../../specs/okf-types/{slug}.md
           --normative-spec
 
+      - name: Validate Music Tier cards as OKF knowledge
+        run: >-
+          uv run --with 'git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check knowledge/music-tiers
+          --require-spec ../../specs/okf-types/{slug}.md
+          --normative-spec
+
+      - name: Validate Project Tier cards as OKF knowledge
+        run: >-
+          uv run --with 'git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check knowledge/project-tiers
+          --require-spec ../../specs/okf-types/{slug}.md
+          --normative-spec
+
       - name: Validate Paper cards as OKF knowledge
         run: >-
           uv run --with 'git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check knowledge/papers
