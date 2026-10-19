@@ -1,0 +1,68 @@
+name: Bounded VASCO E0 archived replay
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'experiments/vasco-gaia/**'
+      - 'tools/experiment_harvest.py'
+      - '.github/workflows/blog-experiment-runner.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: vasco-e0-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  archived-replay:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Verify Python and synthetic controls
+        run: |
+          python3 --version
+          python3 -m unittest discover -s experiments/vasco-gaia/tests -v
+      - name: Replay frozen archived observations
+        id: replay
+        env:
+          CODE_SHA: ${{ github.sha }}
+        run: |
+          python3 experiments/vasco-gaia/run.py --input experiments/vasco-gaia/fixtures/hamburg_7538_real_36.csv --input-sha256 214798342dfd2be13cc10335f713fc8d80cb3150e914230ad12fb94c2797283d --code-sha "$CODE_SHA" --output results/vasco-e0
+          python3 tools/experiment_harvest.py --results results/vasco-e0 --input-sha256 214798342dfd2be13cc10335f713fc8d80cb3150e914230ad12fb94c2797283d --code-sha "$CODE_SHA"
+      - name: Preserve small results in job log and summary
+        if: always()
+        env:
+          REPLAY_OUTCOME: ${{ steps.replay.outcome }}
+        run: |
+          echo "Replay and verification status: $REPLAY_OUTCOME" | tee -a "$GITHUB_STEP_SUMMARY"
+          if test -f results/vasco-e0/RESULT.md; then
+            cat results/vasco-e0/RESULT.md >> "$GITHUB_STEP_SUMMARY"
+            cat results/vasco-e0/RESULT.md
+            cat results/vasco-e0/SHA256SUMS
+            cat results/vasco-e0/classifications.csv
+          fi
+      - name: Refetch three frozen IDs from official APPLAUSE
+        id: official
+        env:
+          CODE_SHA: ${{ github.sha }}
+        run: |
+          python3 experiments/vasco-gaia/collect_official.py --output results/official-source --expected-normalized-sha256 329b0f22f1fbdf13557970b5091a551407cdc0ad95dc416a041e35c5d5f86774
+          python3 experiments/vasco-gaia/run.py --input results/official-source/input.csv --input-sha256 329b0f22f1fbdf13557970b5091a551407cdc0ad95dc416a041e35c5d5f86774 --code-sha "$CODE_SHA" --output results/official-replay
+          python3 tools/experiment_harvest.py --results results/official-replay --input-sha256 329b0f22f1fbdf13557970b5091a551407cdc0ad95dc416a041e35c5d5f86774 --code-sha "$CODE_SHA"
+      - name: Preserve official collection or failure in log
+        if: always()
+        env:
+          COLLECTION_OUTCOME: ${{ steps.official.outcome }}
+        run: |
+          echo "Official refetch and verification status: $COLLECTION_OUTCOME" | tee -a "$GITHUB_STEP_SUMMARY"
+          python3 - <<'PYLOG'
+          import base64, hashlib
+          from pathlib import Path
+          for directory in ['results/official-source', 'results/official-replay']:
+              for p in sorted(Path(directory).glob('*')):
+                  if p.is_file():
+                      raw = p.read_bytes()
+                      print('EVIDENCE', p.as_posix(), hashlib.sha256(raw).hexdigest(), base64.b64encode(raw).decode())
+          PYLOG

@@ -225,8 +225,17 @@ for (const lang of ["en", "pt"]) {
   function archiveBody(n) {
     const subset = selected.slice((n - 1) * 50, n * 50);
     const types = [...new Set(subset.map((p) => p.data.docType || "other"))];
-    const label = lang === "pt" ? "Filtrar por tipo" : "Filter by type";
-    const controls = `<label>${label} <select data-archive-filter><option value="">${lang === "pt" ? "Todos" : "All"}</option>${types.map((type) => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join("")}</select></label><p role="status" data-archive-status></p>`;
+    const label =
+      lang === "pt"
+        ? "Filtrar esta página por tipo"
+        : "Filter this page by type";
+    const searchLabel =
+      lang === "pt" ? "Buscar em todo o acervo" : "Search the entire archive";
+    const summary =
+      lang === "pt"
+        ? `Página ${n} de ${totalPages} · ${selected.length} publicações no acervo`
+        : `Page ${n} of ${totalPages} · ${selected.length} posts in the archive`;
+    const controls = `<p class="archive-summary">${summary}</p><form class="archive-search" action="${prefix}/search/" method="get" role="search"><label for="archive-query">${searchLabel}</label><div><input id="archive-query" type="search" name="q" required><button type="submit">${lang === "pt" ? "Buscar" : "Search"}</button></div></form><p id="archive-filter-help">${lang === "pt" ? "O filtro abaixo se aplica apenas às publicações desta página. Use a busca para pesquisar em todo o acervo." : "The filter below applies only to posts on this page. Use search to explore the entire archive."}</p><label>${label} <select data-archive-filter aria-describedby="archive-filter-help"><option value="">${lang === "pt" ? "Todos" : "All"}</option>${types.map((type) => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join("")}</select></label><p role="status" data-archive-status></p>`;
     const items = subset
       .map(
         (p) =>
@@ -253,7 +262,15 @@ for (const lang of ["en", "pt"]) {
       `${prefix}/archive/page/${n}/`,
       lang === "pt" ? `Arquivo — ${n}` : `Archive — ${n}`,
       archiveBody(n),
-      { lang }
+      // The language archives have different lengths and ordering. Link to the
+      // other archive's start instead of assuming page n exists in both.
+      {
+        lang,
+        translations: {
+          [lang === "pt" ? "en" : "pt"]:
+            lang === "pt" ? "/archive/" : "/pt/archive/",
+        },
+      }
     );
   page(`${prefix}/search/`, lang === "pt" ? "Busca" : "Search", "", {
     lang,
@@ -345,6 +362,8 @@ write(
 console.log(
   `Zola input: ${posts.length} public posts (${posts.filter((p) => p.source === "data/suno-catalog.jsonl").length} synthesized music), ${excluded.length} excluded; public assets copied verbatim`
 );
+
+write("reading-paths.json", JSON.stringify(READING_PATHS));
 
 for (const path of READING_PATHS)
   for (const lang of ["en", "pt"]) {
