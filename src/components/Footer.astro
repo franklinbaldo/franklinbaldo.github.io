@@ -26,16 +26,32 @@ const footerNav = [
   // English-only by deliberate exception (CLAUDE.md "Línguas") — no /pt/ prefix.
   { href: '/changelog/', label: 'Changelog' },
 ];
+
+const here = Astro.url.pathname.replace(/\/$/, '') + '/';
+const isCurrent = (href: string) => here === href.replace(/\/$/, '') + '/';
 ---
 
 <footer class="container site-footer">
-  <nav class="footer-nav">
+  <nav
+    class="footer-nav"
+    aria-label={lang === 'pt' ? 'Navegação do rodapé' : 'Footer navigation'}
+  >
     <ul>
       <li><small>© {year} Franklin Baldo</small></li>
     </ul>
     <ul class="footer-links">
       {footerNav.map((l) => (
-        <li><small><a href={l.href} class="secondary">{l.label}</a></small></li>
+        <li>
+          <small>
+            <a
+              href={l.href}
+              class="secondary"
+              aria-current={isCurrent(l.href) ? 'page' : undefined}
+            >
+              {l.label}
+            </a>
+          </small>
+        </li>
       ))}
     </ul>
     <ul>
@@ -43,7 +59,7 @@ const footerNav = [
       <li><small><a href="/pt/rss.xml" aria-label="Feed RSS (Português)">RSS PT</a></small></li>
       <li><small><a href="https://github.com/franklinbaldo" rel="me">GitHub</a></small></li>
       <li id="footer-lang-li" style="display:none">
-        <small><a id="footer-lang-link" href="#" class="secondary"></a></small>
+        <small><a id="footer-lang-link" class="secondary"></a></small>
       </li>
     </ul>
   </nav>
@@ -56,7 +72,10 @@ const footerNav = [
     const li = document.getElementById("footer-lang-li");
     const link = document.getElementById("footer-lang-link");
     if (!li || !link || !target) return;
+    const targetLocale = target === "pt" ? "pt-BR" : target;
     link.href = translations[target];
+    link.hreflang = targetLocale;
+    link.lang = targetLocale;
     link.textContent = target === "pt" ? "Português" : "English";
     link.setAttribute(
       "aria-label",
@@ -76,6 +95,12 @@ const footerNav = [
   }
   .site-footer a {
     text-decoration: none;
+  }
+  .site-footer a[aria-current='page'] {
+    color: var(--pico-primary);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
   }
   .site-footer a:hover {
     color: var(--pico-primary);

@@ -9,7 +9,7 @@ date: '2026-05-14'
 lang: pt
 translationKey: agent-no-verbs
 tags:
-  - ia
+  - IA
   - agentes
   - alinhamento
   - gherkin

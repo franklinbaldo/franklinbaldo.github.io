@@ -20,6 +20,7 @@ import MusicPostLayout from './MusicPostLayout.astro';
 import { getRankByKey } from '../lib/hronir-rank';
 import { getSeriesContext } from '../lib/series';
 import { isPublished } from '../lib/publish';
+import { tagUrl } from '../lib/tag-url';
 import {
   DEFAULT_LANG,
   locale as localeFor,
@@ -57,7 +58,7 @@ const {
 const postLang = (lang ?? DEFAULT_LANG) as 'en' | 'pt';
 const isMusic = postType === 'music';
 const minutesRead: number | undefined = remarkPluginFrontmatter.minutesRead;
-const wordCount: number | undefined = minutesRead ? minutesRead * 200 : undefined;
+const wordCount: number | undefined = remarkPluginFrontmatter.wordsRead;
 const hasMath: boolean = !!remarkPluginFrontmatter.hasMath;
 const lastModifiedISO: string | undefined = remarkPluginFrontmatter.lastModified;
 const lastModified = lastModifiedISO ? new Date(lastModifiedISO) : undefined;
@@ -80,7 +81,6 @@ const rankTitle = rankInfo
   : undefined;
 const series = await getSeriesContext(post, { lang: postLang });
 const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' } as const;
-const tagsPrefix = `${urlPrefix(postLang)}/tags`;
 
 const allPosts = await getCollection('blog');
 const sameLangPosts = allPosts
@@ -126,7 +126,10 @@ const nextMusicNav = nextMusicPost
 
 const translationSiblings = translationKey
   ? allPosts.filter(
-      (entry) => entry.data.translationKey === translationKey && entry.id !== post.id,
+      (entry) =>
+        isPublished(entry) &&
+        entry.data.translationKey === translationKey &&
+        entry.id !== post.id,
     )
   : [];
 const translations: Record<string, string> = Object.fromEntries(
@@ -364,7 +367,7 @@ const musicIndexLabel = t(postLang, 'music.indexLabel');
                   {tags.map((tag, index) => (
                     <>
                       {index > 0 && ' '}
-                      <a class="tag-pill" href={`${tagsPrefix}/${tag}/`}>
+                      <a class="tag-pill" href={tagUrl(tag, postLang)} rel="tag">
                         #{tag}
                       </a>
                     </>
@@ -498,8 +501,9 @@ const musicIndexLabel = t(postLang, 'music.indexLabel');
           });
         });
       }
+      // Inline scripts rerun when ClientRouter swaps in a new post, so direct
+      // initialization is enough; a permanent page-load listener would accumulate.
       bindPlayBtns();
-      document.addEventListener('astro:page-load', bindPlayBtns);
     })();
   </script>
 
@@ -516,8 +520,8 @@ const musicIndexLabel = t(postLang, 'music.indexLabel');
           firstP.setAttribute('data-dropcap', '');
         }
       }
+      // This inline initializer runs for the newly swapped post itself.
       applyDropCap();
-      document.addEventListener('astro:page-load', applyDropCap);
     })();
   </script>
 
@@ -525,6 +529,7 @@ const musicIndexLabel = t(postLang, 'music.indexLabel');
     (() => {
       const bar = document.getElementById('read-progress');
       if (!bar) return;
+      const controller = new AbortController();
       const update = () => {
         const html = document.documentElement;
         const max = html.scrollHeight - html.clientHeight;
@@ -532,8 +537,16 @@ const musicIndexLabel = t(postLang, 'music.indexLabel');
         bar.value = pct;
       };
       update();
-      window.addEventListener('scroll', update, { passive: true });
-      window.addEventListener('resize', update);
+      window.addEventListener('scroll', update, {
+        passive: true,
+        signal: controller.signal,
+      });
+      window.addEventListener('resize', update, { signal: controller.signal });
+      document.addEventListener(
+        'astro:before-swap',
+        () => controller.abort(),
+        { once: true },
+      );
     })();
   </script>
 </PageLayout>

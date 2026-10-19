@@ -64,6 +64,18 @@ const canonical = new URL(canonicalOverride ?? Astro.url.pathname, Astro.site);
 const DEFAULT_OG_IMAGE = lang === "pt" ? "/og/home-pt.png" : "/og/home.png";
 const ogImageRaw = image ?? DEFAULT_OG_IMAGE;
 const ogImage = Astro.site ? new URL(ogImageRaw, Astro.site).href : ogImageRaw;
+const ogImagePath = ogImageRaw.split(/[?#]/, 1)[0].toLowerCase();
+const ogImageType =
+  ogImagePath.endsWith(".png") ? "image/png" :
+  ogImagePath.endsWith(".jpg") || ogImagePath.endsWith(".jpeg") ? "image/jpeg" :
+  ogImagePath.endsWith(".webp") ? "image/webp" :
+  ogImagePath.endsWith(".gif") ? "image/gif" :
+  ogImagePath.endsWith(".avif") ? "image/avif" :
+  undefined;
+// The generated /og/ cards are guaranteed to be 1200×630. A custom hero image
+// may have different intrinsic dimensions, so omitting dimensions is more
+// accurate than publishing false metadata.
+const ogImageHasStandardDimensions = ogImageRaw.startsWith("/og/");
 const rssUrl = new URL(lang === 'pt' ? "pt/rss.xml" : "rss.xml", Astro.site);
 
 const SOCIAL_PROFILES = [
@@ -77,11 +89,13 @@ const alternateOgLocales = alternateEntries
   .map(([code]) => LANGUAGES[code]?.locale.replace("-", "_"))
   .filter((v): v is string => !!v);
 
-// x-default hreflang: EN version if available; EN homepage fallback for PT-only pages.
-const enHomepageHref = Astro.site ? new URL("/", Astro.site).href : null;
-const xDefaultHref = lang === DEFAULT_LANG
-  ? canonical.href
-  : (translations[DEFAULT_LANG] ? new URL(translations[DEFAULT_LANG], Astro.site).href : enHomepageHref);
+// x-default must remain an alternate for this piece of content. Prefer the
+// English counterpart when it exists; otherwise the current localized page
+// is a more accurate fallback than an unrelated English homepage.
+const xDefaultHref =
+  lang === DEFAULT_LANG || !translations[DEFAULT_LANG]
+    ? canonical.href
+    : new URL(translations[DEFAULT_LANG], Astro.site).href;
 
 const breadcrumbLd = type === "article"
   ? {
@@ -168,10 +182,6 @@ const personLd = {
     <meta name="color-scheme" content="dark light" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="preload" href="/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
-    <link rel="preconnect" href="https://cdn2.suno.ai" crossorigin="anonymous" />
-    <link rel="preconnect" href="https://suno.com" />
-    <link rel="dns-prefetch" href="//cdn1.suno.ai" />
-    <link rel="dns-prefetch" href="//i.gr-assets.com" />
     <title>{documentTitle}</title>
     <meta name="description" content={description} />
     <meta name="robots" content={noindex ? "noindex, follow" : "max-image-preview:large, max-snippet:-1, max-video-preview:-1"} />
@@ -214,10 +224,10 @@ const personLd = {
     <meta property="og:locale" content={ogLocale} />
     {alternateOgLocales.map((l) => <meta property="og:locale:alternate" content={l} />)}
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:type" content="image/png" />
+    {ogImageType && <meta property="og:image:type" content={ogImageType} />}
     <meta property="og:image:alt" content={title} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    {ogImageHasStandardDimensions && <meta property="og:image:width" content="1200" />}
+    {ogImageHasStandardDimensions && <meta property="og:image:height" content="630" />}
     {publishedTime && (
       <meta property="article:published_time" content={publishedTime.toISOString()} />
     )}
@@ -246,7 +256,7 @@ const personLd = {
         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', theme);
     </script>
-    <script is:inline>
+    <script>
       // Preserve the current theme across Astro view transitions: the
       // server-rendered <html> in the incoming document has no data-theme,
       // so without this the page would flash to the OS default before the
@@ -262,7 +272,7 @@ const personLd = {
       window.__pageLang = pageLang;
       window.__translations = translations || {};
     </script>
-    <script is:inline>
+    <script>
       // Move focus to <h1> (or <main> as fallback) after ClientRouter (SPA) navigations
       // so screen readers announce the new page title instead of a silent focus.
       document.addEventListener('astro:after-swap', () => {

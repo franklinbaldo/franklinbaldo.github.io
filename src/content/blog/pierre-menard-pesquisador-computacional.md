@@ -6,7 +6,7 @@ docType: essay
 date: "2026-05-14"
 lang: pt
 translationKey: pierre-menard
-tags: ["pesquisa", "escrita", "metodologia", "borges", "tdd", "ia"]
+tags: ["pesquisa", "escrita", "metodologia", "borges", "tdd", "IA"]
 draftCreatedAt: "2026-06-12T12:06:06.428Z"
 ---
 

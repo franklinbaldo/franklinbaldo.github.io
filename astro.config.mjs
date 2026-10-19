@@ -168,6 +168,8 @@ export default defineConfig({
       filter: (page) => {
         const path = page.replace("https://franklinbaldo.github.io", "");
         return (
+          path !== "/404/" &&
+          path !== "/pt/404/" &&
           !/\/v\/[0-9a-f-]{8,}\/?$/i.test(page) &&
           !/\/ranking\/(battles|perspectives|versions|posts)\/[^/]+\/?$/i.test(
             page

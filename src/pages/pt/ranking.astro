@@ -14,6 +14,9 @@ import RankingView, {
   type UnratedItem,
   type RankingStrings,
 } from "../../components/RankingView.astro";
+import TierBoard, { type TierBoardStrings } from "../../components/TierBoard.astro";
+import { blogPostTiers } from "../../data/blog-post-tiers";
+import type { TierBoardItem } from "../../data/tier-types";
 
 const all = await getCollection("blog");
 const byKey = new Map<string, RankPostInfo>();
@@ -139,6 +142,59 @@ const strings: RankingStrings = {
   eloTooltip: "Elo: {elo} ({delta} desde 1000 · pico: {peak})",
   dossierTooltip: "Dossiê: {title}",
 };
+
+const tierNumber = new Intl.NumberFormat("pt-BR", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+const tierFmt = (value: number | null) => (value === null ? "—" : tierNumber.format(value));
+
+const postTierItems: TierBoardItem[] = blogPostTiers.map((record) => {
+  const post = byKey.get(record.translationKey);
+  const ev = record.evidence;
+  return {
+    id: `post-tier-${record.translationKey}`,
+    title: post?.title ?? record.translationKey,
+    href: post
+      ? `/${post.lang === "pt" ? "pt/" : ""}blog/${post.slug}/`
+      : undefined,
+    qualityTier: record.qualityTier,
+    interestTier: record.interestTier,
+    confidence: record.confidence,
+    summary: record.summary,
+    reviewedAt: record.reviewedAt,
+    note: record.note,
+    strengths: record.strengths,
+    openProblems: record.openProblems,
+    history: record.history,
+    evidence: [
+      { label: "ranking", value: ev.rank ? `#${ev.rank}` : "—" },
+      { label: "ordinal", value: tierFmt(ev.ordinal) },
+      { label: "estrelas", value: tierFmt(ev.absoluteStars) },
+      { label: "de-conf.", value: tierFmt(ev.deconfoundedQuality) },
+      { label: "V/N", value: `${ev.wins}/${ev.appearances}` },
+    ],
+    links: [{ href: `/ranking/posts/${record.translationKey}/`, label: "dossiê Hrönir ↗" }],
+  };
+});
+
+const postTierStrings: TierBoardStrings = {
+  heading: "Tiers de posts",
+  description:
+    "A letra é uma decisão editorial canônica em OKF; o ranking Hrönir, estrelas e perspectivas são evidência. Músicas agora têm um tier board separado, baseado no sistema de áudio.",
+  qualityLabel: "qualidade",
+  interestLabel: "interesse",
+  confidenceLabel: "conf.",
+  summaryQualityLabel: "qualidade",
+  summaryInterestLabel: "interesse / fertilidade",
+  emptyTier: "vazio — ninguém ganhou este lugar ainda",
+  emptyBoard: "Ainda não há tiers canônicos de posts.",
+  detailsLabel: "Ver ficha editorial",
+  strengthsHeading: "O que sustenta",
+  openProblemsHeading: "O que segura",
+  historyHeading: "Histórico do tier",
+  reviewedLabel: "revisão",
+};
 ---
 
 <PageLayout
@@ -160,4 +216,5 @@ const strings: RankingStrings = {
     perspectivesGrid={perspectivesGrid}
     snapshot={snapshot}
   />
+  <TierBoard items={postTierItems} strings={postTierStrings} id="post-tiers" />
 </PageLayout>

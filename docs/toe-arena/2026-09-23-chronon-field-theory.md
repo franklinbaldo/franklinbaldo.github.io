@@ -1,0 +1,25 @@
+# ToE Arena scan — 2026-09-23 — Chronon Field Theory
+
+This incremental audit applies `franklinbaldo/skills/toe-arena-tiering`: scientific tier tracks maturity/evidence and interest tier tracks fecundity/testability. Neither axis is a probability that a theory is true.
+
+## Entered: Chronon Field Theory (CFT) — F scientific / S interest, high confidence
+
+**Source / date.** Bin Li, *Chronon Field Theory: Unification of Gravity and Gauge Interactions via Temporal Flow Dynamics*, Preprints.org. v1 was posted **2025-05-19**; the current v3 was posted **2025-05-28**. The broader programme also has a narrower peer-reviewed paper, *Emergent Gravity and Gauge Interactions from a Dynamical Temporal Field*, received 2025-06-25, accepted 2025-08-15 and published in *Reports in Advances of Physical Sciences* on **2025-09-25**, plus a later CFT-related paper in *Quantum Reports* for 2026.
+
+**Proposal.** CFT promotes a unit-norm, future-directed timelike vector field `Φ`—the “Real Now”—to the fundamental substrate. Gravity is attributed to large-scale alignment/curvature of `Φ`; electromagnetism to phase rotations; weak interactions to shear; strong confinement to Chronon flux tubes; and fermions to topological solitons. The broad unification manuscript also claims an emergent metric, lattice solitons, spin/statistics, particle generations, high-precision scattering corrections and cosmological signatures.
+
+**Strengths.** The programme is structurally compact and mathematically exposed. It provides an action and field equations, attempts numerical simulations, and identifies open gates instead of presenting only philosophical claims. The peer-reviewed RAPS paper gives CFT genuine sector-level publication maturity by developing Einstein-like emergent gravity and a U(1)/Maxwell sector, although it explicitly leaves matter couplings and broader interactions for future work. This makes CFT unusually useful for an Arena audit: several central claims can be checked with ordinary differential topology and effective-field-theory reasoning rather than waiting for inaccessible Planck-scale experiments.
+
+**Load-bearing mathematical failure.** Section 26 of the broad v3 unification manuscript defines the Chronon field as a section whose fiber is the future unit hyperboloid
+
+`H^3 = { v | g(v,v) = -1, v^0 > 0 }`,
+
+then states that `H^3` is homotopy equivalent to `S^2` and concludes `π2(H^3) ≅ Z` and `π3(H^3) ≅ Z`. That is false for the stated target: real hyperbolic 3-space is diffeomorphic to `R^3`, hence contractible, and therefore has trivial higher homotopy groups. The same manuscript later treats the target of unit future-directed vectors as `S^3` in order to invoke `π3(S^3)=Z`, but it does not derive an additional compact internal variable that changes the target from the hyperboloid to a 3-sphere.
+
+This is not a peripheral typo. The manuscript repeatedly uses the nontrivial winding to supply soliton protection, fermion number, spin/statistics language and the three-generation construction. If the target is the stated `H^3`, those topological sectors do not exist as claimed.
+
+**Tier decision.** **F scientific** applies to the current broad v3 unification formulation because the Arena rubric permits F for an internally inconsistent formulation, and this inconsistency hits a load-bearing derivation. The narrower peer-reviewed gravity/U(1) sector is meaningful maturity evidence, but it does not contain or repair the failed topology supporting the broader matter/generation claims. The v3 manuscript also admits that parts of the weak/strong construction and the full mass/RG programme are incomplete. **S interest** is deliberately separate: “one dynamical temporal field → geometry + gauge + matter” is an exceptionally generative compression, and the topology failure gives a very crisp repair gate rather than making the programme scientifically uninteresting.
+
+**Clash — Complex Hopf Fibration Gauge–Gravity Unification (C/S).** Battleground: topology as the generator of realistic matter, gauge structure and gravity. Complex Hopf still has a difficult physical-identification problem—why the universal Hopf/classifying-space construction should be the actual physical substrate—but its relevant topology is mathematically genuine. CFT currently fails one step earlier: the target manifold it explicitly defines does not carry the homotopy classes its particle construction needs. The clash therefore does **not** move Complex Hopf.
+
+**Movement history.** First canonical placement on **2026-09-23** at **F/S**, high confidence. This is an omission correction, not a demotion from a prior Arena tier. Upward movement requires defining a genuinely different target/internal manifold with the necessary nontrivial homotopy, modifying the action consistently if needed, and then re-deriving the solitons, fermion content and generation claims. A repaired theory should be re-tiered on its new formulation rather than inheriting F automatically.

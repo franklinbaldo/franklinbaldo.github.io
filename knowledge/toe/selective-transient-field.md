@@ -1,0 +1,20 @@
+---
+type: toe
+name: "Selective Transient Field (STF)"
+kind: "contender"
+scientific_tier: "C"
+interest_tier: "S"
+confidence: "medium"
+summary: "Z. Paz's Selective Transient Field framework proposes a single scalar response field coupled to changing spacetime curvature, with a two-clock architecture and causal finite-memory response. Its current programme extends from gravity and cosmology into a conditional 10D compactification route to Standard-Model masses, couplings and flavour structure, while explicitly retaining one measurable scalar-mass scale and several open normalization and stability assumptions."
+strengths: ["The current V9.7.2 formulation is mathematically concrete enough to audit: it specifies the two-clock variables, curvature-state construction, causal high-pass memory kernel and regulated scalar response rather than relying only on qualitative analogy.","The project exposes a broad prospective test surface across gravitational transients, cosmology and particle/flavour phenomenology, and the current documentation distinguishes theoretical inputs from quantities claimed as outputs.","The public correction history is unusually visible for a speculative programme: the author has withdrawn or narrowed failed claims, including the earlier flyby kinetic-energy-transfer interpretation, the all-dark-matter reading for the ultralight scalar, and a prior DHOST classification."]
+open_problems: ["No independent end-to-end reproduction or peer-reviewed validation of the central STF-to-gravity-plus-particle-physics chain was located in this audit; most validation and adversarial checking documented by the project remains internal to the programme.","The framework imports important established structure rather than deriving everything from a smaller principle: GR/Peters dynamics, substantial Standard-Model fermionic structure, one free scalar-mass scale, and a conditional 10D compactification/matching step. The SI normalization and stability domain are still explicit open assumptions.","Several former signature claims have been withdrawn or narrowed. In particular, an all-dark-matter interpretation near the quoted ultralight mass is incompatible with Lyman-alpha constraints, so the surviving dark-sector interpretation must be subdominant or otherwise modified. Some older project pages still contain superseded language, making version provenance important when evaluating claims."]
+source_label: "Z. Paz, The Selective Transient Field from First Principles — The Two-Clock Theory, V9.7.2"
+source_url: "https://existshappens.com/papers/first-principles/"
+source_date: "2026-09-05"
+note: "2026-09-23: first Arena entry at C scientific / S interest, medium confidence. The project history dates the STF programme to 2025; this pass uses the decision-bearing Theory Edition V9.7.2 dated 2026-09-05 because it incorporates later corrections and explicitly states the remaining free scale and open assumptions. C credits a large, explicit and falsifiable technical corpus but reflects weak independent scrutiny, conditional load-bearing bridges and a record of materially revised claims. S interest is separate and reflects the unusually broad test registry, visible self-correction and generative attempt to connect transient curvature response, cosmology and particle parameters. Clash: USMEG-EFT remains C/A. STF has the broader prospective prediction register and more visible falsification ledger, while USMEG-EFT has peer-reviewed EFT machinery and a clearer statement of its ultraviolet breakdown. The comparison does not warrant moving USMEG-EFT."
+updated: "2026-09-23"
+---
+
+# Selective Transient Field (STF)
+
+Z. Paz's Selective Transient Field framework proposes a single scalar response field coupled to changing spacetime curvature, with a two-clock architecture and causal finite-memory response. Its current programme extends from gravity and cosmology into a conditional 10D compactification route to Standard-Model masses, couplings and flavour structure, while explicitly retaining one measurable scalar-mass scale and several open normalization and stability assumptions.

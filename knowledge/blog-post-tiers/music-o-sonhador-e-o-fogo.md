@@ -1,0 +1,29 @@
+---
+type: blog-post-tier
+translation_key: "music-o-sonhador-e-o-fogo"
+quality_tier: "B"
+interest_tier: "A"
+confidence: "high"
+signal_agreement: "medium"
+reviewed_at: "2026-09-23"
+reviewed_revision: "ee4be5928b9ec33c21f29e24feeb1b845a5f2727"
+issue_urls:
+  - "https://github.com/franklinbaldo/franklinbaldo.github.io/issues/2187"
+summary: >-
+  O Sonhador e o Fogo is a strong narrative adaptation of Borges whose best achievement is formal rather than merely referential: the fast Brazilian folk-rock/cantoria pacing turns the creation of the dreamed son, the reports of fire-immunity and the father's final entrance into the flames into a continuously tightening story, so the recursive reveal lands as drama before the composer notes explain it. Quality is B because that execution is consistently strong but the notes overreach when they promote Borges's recursive dream into a general claim that there is no base level, invoke Whitehead without enough argumentative support, and describe an unprompted Suno repetition as something "the model found" without separating generated output from authorial interpretation. Interest is A because the Borges-to-cantoria transformation, recursive dream ontology and visible human/model authorship tension are distinctive, memorable and unusually conversation-producing even within a corpus that returns often to Borges.
+strengths:
+  - "Coverage is complete enough for a high-confidence judgment: the current Hrönir projection reports 60 pairwise appearances, 25 wins, 21 current-selected absolute-quality observations, 14/14 perspective coverage, 3.82 selected absolute quality and 3.91 de-confounded quality."
+  - "Internet-Native scores the current selected PT work 4.50 and treats the song as unusually self-sufficient: the narrative can be shared without intellectual setup, the cantoria pacing pushes each verse into the next, and the final discovery works before the notes are read."
+  - "Comedy-Carries-Argument also scores the selected PT work 4.50, finding that the recursive reveal has genuine lightness and dramatic timing: the philosophy is carried by a story that moves rather than by explanatory density alone."
+  - "The best skeptical evidence does not reject the work's core form. Skeptical-Specialist identifies the dramatic correspondence between Borges's narrative and the escalation of the arrangement as the part that survives hostile review; the vulnerabilities are concentrated in the explanatory claims around Whitehead, model agency and non-nihilism."
+open_problems:
+  - "Cross-signal evidence is good but not elite. At review time the read-only projection reports rank 77/107, OpenSkill ordinal 5.68 (mu 21.80, sigma 5.37) and 25/60 head-to-head wins, while selected absolute quality is 3.82 and de-confounded quality is 3.91. The projection therefore marks signal agreement medium rather than allowing either the stronger absolute/de-confounded result or weaker ordinal/head-to-head result to dictate the tier alone."
+  - "The composer notes make a larger ontological move than the evidence earns. Borges's recursive dream can productively motivate a no-base-level/process-ontology reading, but the selected notes present that reading as implication and invoke Whitehead without establishing the bridge. Skeptical-Specialist explicitly identifies both the Whitehead reference and the bare 'this is not nihilism' move as weak points."
+  - "The EN selected notes say the unprompted repeated ending was something 'the model found'. That is an interesting authorship observation, but the wording risks turning a valuable generated pattern plus human interpretation into an unsupported claim about discovery or understanding."
+  - "Derived version_attention is true and the selected versions are only 3/9 in direct version duels. A Skeptical-Specialist challenger wins 4.00 to 3.50 by removing the weak Whitehead move and making the non-nihilism argument more explicit; a Curious-Outsider challenger wins 3.50 to 3.25 because an extra sentence gives the final sense of comfort a clearer emotional bridge. This is evidence for discriminating version review, not automatic rollback."
+  - "Issue #2187 tracks the B/A boundary: calibrate the ontology and model-agency claims and adjudicate which challenger gains should return to the selected notes without changing versions merely by duel count."
+note: >-
+  Confidence is high because the judgment rests on 60 pairwise appearances, 21 current-selected absolute observations, complete 14/14 perspective coverage, substantive reviews from both enthusiastic and hostile lenses, and twelve direct selected-version duels. At review time the derived projection reports rank 77/107; ordinal 5.68; 25/60 wins/appearances; absolute quality 3.82; de-confounded quality 3.91; absolute/de-confounded gap 0.08; medium signal agreement; selected-version W/L 3/9; and version_attention true. PT and EN share one translationKey and therefore one conceptual tier. No new duel was added because coverage is already complete and the remaining uncertainty is localized in claim calibration and version choice rather than missing evidence.
+history:
+  - "2026-09-23: initial placement -> quality B / interest A / confidence high. Previous tier: none. Material evidence: 60 Hrönir appearances, 21 selected absolute observations, complete 14/14 perspective coverage, a 25/60 overall win record, strong narrative/pacing praise, explicit skeptical objections to the explanatory ontology and model-agency language, and selected-version W/L 3/9. Unresolved weaknesses: overextended no-base-level/process-ontology framing, unsupported Whitehead/model-discovery wording, and version_attention around challengers that improve defensibility or emotional grounding. Issue #2187 tracks the substantive fix and re-evaluation trigger."
+---

@@ -68,7 +68,13 @@ const replies = mentions.filter(
           {[...likes, ...reposts].slice(0, 5).map((m, i) => (
             <>
               {i > 0 && ', '}
-              <a href={m.author?.url ?? m.url ?? '#'}>{m.author?.name ?? t(lang, 'webmentions.anonymous')}</a>
+              {m.author?.url || m.url ? (
+                <a href={m.author?.url ?? m.url} rel="ugc nofollow">
+                  {m.author?.name ?? t(lang, 'webmentions.anonymous')}
+                </a>
+              ) : (
+                <span>{m.author?.name ?? t(lang, 'webmentions.anonymous')}</span>
+              )}
             </>
           ))}
           {likes.length + reposts.length > 5 && <> +{likes.length + reposts.length - 5} {t(lang, 'webmentions.more')}</>}
@@ -80,9 +86,13 @@ const replies = mentions.filter(
       <ol>
         {replies.map((m) => (
           <li>
-            <a href={m.url ?? m.author?.url ?? "#"}>
+            {m.url || m.author?.url ? (
+              <a href={m.url ?? m.author?.url} rel="ugc nofollow">
+                <strong>{m.author?.name ?? t(lang, 'webmentions.someone')}</strong>
+              </a>
+            ) : (
               <strong>{m.author?.name ?? t(lang, 'webmentions.someone')}</strong>
-            </a>
+            )}
             {m.published && (
               <small> · <time datetime={m.published}>{new Date(m.published).toLocaleDateString(lang === 'pt' ? 'pt-BR' : 'en-US', { year: "numeric", month: "short", day: "2-digit" })}</time></small>
             )}

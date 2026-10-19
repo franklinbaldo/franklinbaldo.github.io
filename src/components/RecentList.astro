@@ -12,7 +12,7 @@ const loc = locale(lang);
 const dateOpts = { month: 'short', day: '2-digit', year: 'numeric' } as const;
 const minRead = (body: string | undefined) => {
   const wc = (body ?? '').trim().split(/\s+/).filter(Boolean).length;
-  return Math.max(1, Math.round(wc / 220));
+  return Math.max(1, Math.ceil(wc / 200));
 };
 ---
 

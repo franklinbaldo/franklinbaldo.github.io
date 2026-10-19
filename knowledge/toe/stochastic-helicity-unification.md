@@ -1,0 +1,20 @@
+---
+type: toe
+name: "Stochastic Helicity Unification (Ghose)"
+kind: "contender"
+scientific_tier: "C"
+interest_tier: "A"
+confidence: "medium"
+summary: "Partha Ghose's stochastic-process unification programme treats quantum behavior as emergent from finite-speed Wiener/Kac/Poisson processes and extends helicity-resolved stochastic dynamics from Dirac/Maxwell-like equations toward non-Abelian Riemann-Silberstein fields and spin networks, with the stated goal of unifying Standard-Model gauge interactions, matter and gravity without taking canonical quantization as fundamental."
+strengths: ["The programme has a concrete mathematical corpus rather than a branding-only Theory of Everything: stochastic master equations, analytic-continuation routes to Dirac/Maxwell-like dynamics, a non-Abelian Riemann-Silberstein ansatz and helicity-resolved spin-network evolution appear across multiple 2025-2026 preprints.","Follow-up work with Partha Nandi and Francesco Petruccione develops the spin-network/Wheeler-DeWitt side, giving the idea technical continuity beyond a single speculative manuscript and exposing specific derivation gates that can be checked.","The spin-network branch is background-independent in construction and combines a fundamental-length cutoff with an explicit microscopic stochastic dynamics, creating a useful comparison against loop-quantum-gravity/spinfoam approaches rather than merely restating their ontology."]
+open_problems: ["The gravity bridge is not yet an end-to-end derivation: the 2025 synthesis labels the spin-network sector a blueprint/conceptual framework, the earlier field calculation reaches linearized gravity, and recovery of full Einstein dynamics is expected from semiclassical spin-network limits rather than demonstrated for the new stochastic rules.","The observed Standard-Model gauge group is introduced as SU(3), SU(2) and U(1) internal labels rather than derived from the stochastic substrate. Chiral representations, three generations, anomaly cancellation, masses, mixings and running couplings remain load-bearing recovery tests.","The non-Abelian Riemann-Silberstein construction is only suggestive in the weak-coupling expansion, while independent end-to-end reproduction and a distinctive empirical discriminator are missing. The 2026 electrodynamics continuation explicitly aims to preserve successful QED predictions rather than supply a new deviation to test."]
+source_label: "Partha Ghose, A New Approach to Unification"
+source_url: "https://arxiv.org/abs/2508.19280"
+source_date: "2025-08-24"
+note: "2026-09-23: moved from Arena watchlist to first canonical entry at C scientific / A interest, medium confidence after a full-text audit of the 2025 synthesis and its 2025-2026 stochastic-helicity follow-ups. C credits a concrete mathematical programme spanning stochastic quantum dynamics, gauge fields and spin networks; it remains below B because full Einstein recovery, realistic chiral Standard-Model derivation, independent reproduction and discriminating empirical predictions are not yet established. A interest is separate and reflects the generative bridge between stochastic mechanics, Riemann-Silberstein fields and quantum geometry. Clash: Loop Quantum Gravity/spinfoams on dynamical mechanism plus matter incorporation versus mature gravitational recovery; no existing tier moves."
+updated: "2026-09-23"
+---
+
+# Stochastic Helicity Unification (Ghose)
+
+Partha Ghose's stochastic-process unification programme asks whether finite-speed stochastic dynamics can sit underneath quantum field behavior and quantum geometry. Its current chain runs from Kac/Poisson helicity-reversal processes and Dirac/Maxwell-like evolution, through an attempted non-Abelian Riemann-Silberstein generalization, to stochastic dynamics on spin networks. The scientific tier records the present maturity of that chain, not a probability that the ontology is true; the independent interest tier records how productive the proposed bridge is for comparison and testing.

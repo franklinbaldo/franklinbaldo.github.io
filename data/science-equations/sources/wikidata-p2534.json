@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "source_id": "wikidata-p2534",
+  "source_name": "Wikidata — defining formula (P2534)",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "documentation": "https://www.wikidata.org/wiki/Wikidata:Database_download",
+    "property_documentation": "https://www.wikidata.org/wiki/Property:P2534",
+    "dump_directory": "https://dumps.wikimedia.org/wikidatawiki/entities/",
+    "access_mode": "Official JSON entity dump stream (latest-all.json.bz2) or incremental updates"
+  },
+  "snapshot_policy": {
+    "kind": "dump-date-or-etag",
+    "rule": "Pin the official dump release date or HTTP ETag for reproducible extraction."
+  },
+  "license_policy": {
+    "scope": "corpus-wide",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "policy_url": "https://www.wikidata.org/wiki/Wikidata:Licensing",
+    "rule": "Wikidata structured data in main/property namespaces is dedicated to the public domain under CC0 1.0."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-wikidata-p2534.mjs",
+    "input": "streamed official Wikidata JSON entity dump line-by-line",
+    "transport_output": "JSONL to stdout (transient only)",
+    "property": "P2534",
+    "provenance_class": "attested"
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-wikidata-p2534-<snapshot>-<stage>"
+  }
+}

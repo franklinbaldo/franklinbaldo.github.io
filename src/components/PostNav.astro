@@ -23,19 +23,23 @@ const fmt = (d: Date) => d.toLocaleDateString(localeFor(lang), dateOpts);
   (prev || next) && (
     <nav class="post-nav" aria-label={navLabel}>
       {prev ? (
-        <a class="post-nav-link post-nav-prev" href={prev.href}>
+        <a class="post-nav-link post-nav-prev" href={prev.href} rel="prev">
           <span class="post-nav-dir">{prevLabel}</span>
           <span class="post-nav-title">{prev.title}</span>
-          {prev.date && <span class="post-nav-date">{fmt(prev.date)}</span>}
+          {prev.date && (
+            <time class="post-nav-date" datetime={prev.date.toISOString()}>{fmt(prev.date)}</time>
+          )}
         </a>
       ) : (
         <span />
       )}
       {next && (
-        <a class="post-nav-link post-nav-next" href={next.href}>
+        <a class="post-nav-link post-nav-next" href={next.href} rel="next">
           <span class="post-nav-dir">{nextLabel}</span>
           <span class="post-nav-title">{next.title}</span>
-          {next.date && <span class="post-nav-date">{fmt(next.date)}</span>}
+          {next.date && (
+            <time class="post-nav-date" datetime={next.date.toISOString()}>{fmt(next.date)}</time>
+          )}
         </a>
       )}
     </nav>

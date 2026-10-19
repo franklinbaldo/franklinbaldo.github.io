@@ -1,106 +1,104 @@
-# Rotina de agente Hrönir — avaliação de matches
+# Rotina de agente Hrönir — OKF-first
 
-Execute uma rodada de avaliação Hrönir: só matches (comparações par a par), sem editar posts. A fase de edição do pior post é responsabilidade de uma rotina **separada** — `docs/hronir-edit-worst-routine.md` — que roda uma vez por dia, não a cada hora.
+O Hrönir não tem mais um fluxo operacional em Node. A avaliação é um artefato
+Markdown OKF, e o `okf-parser` é a autoridade para dizer o que falta preencher.
 
-O fluxo é a API one-shot (RFC 0016): cada match é `generate-match` → ler os dois posts → `submit-eval`. Não há estado de sessão para gerenciar — `submit-eval` fecha o match sozinho.
+A regra operacional é simples:
 
-## Antes de começar
+> criar o `.md` → rodar `okf-parser check` → preencher/corrigir o que o
+> diagnóstico pedir → repetir até o check ficar verde.
 
-Confirme que está dentro do checkout do repositório (`git rev-parse --show-toplevel` deve apontar para `franklinbaldo.github.io`). Se não estiver — diretório vazio, outro repo, ou erro —, clone antes de prosseguir:
+Não use `npm run hronir:*`, `npx hronir`, `scripts/hronir/index.js`,
+`generate-match` ou `submit-eval`. Esses caminhos não são mais a interface de
+agente.
 
-```bash
-git clone https://github.com/franklinbaldo/franklinbaldo.github.io.git
-cd franklinbaldo.github.io
-```
-
-Depois, instale as dependências — todo comando `hronir` roda via `tsx` e falha sem `node_modules/`:
-
-```bash
-npm ci
-```
-
-(Num checkout já existente, rode `npm ci` só se `node_modules/` não existir.)
-
-## 0. Revisar e mesclar PRs abertos
-
-Liste os PRs abertos. Para cada PR Hrönir com CI verde, sem conflitos e sem revisões bloqueantes:
-
-- Mescle com **squash**, o método habilitado e canônico do repositório.
-- Via MCP: `mcp__github__merge_pull_request` com `merge_method: squash`.
-- **Não** mescle PRs que deletem arquivos de `.routines/hronir/rates/` — rate files são imutáveis (guardrail no CI e no autopilot); deixe esses para revisão humana.
-
-## 1. Atualizar main e criar branch
+## 0. Começar do main atual
 
 ```bash
-git checkout main && git pull origin main
+git switch main
+git pull --ff-only
 BRANCH="hronir/run-$(date -u +"%Y-%m-%dT%H-%M-%S")"
-git checkout -b "$BRANCH"
+git switch -c "$BRANCH"
 ```
 
-## 2. Recomputar a seleção de versões (local, não commitada)
+## 1. Escolher o duelo
 
-```bash
-npm run hronir:select
+Escolha dois trabalhos distintos do corpus atual em `src/content/blog/`. Prefira
+obras com pouca evidência recente ou combinações que ainda não tenham sido
+comparadas sob a mesma perspectiva. Leia os dois arquivos integralmente.
+
+A seleção é uma decisão do agente sobre o corpus; não existe mais estado de
+sessão oculto nem um comando que "entrega" o próximo formulário.
+
+Escolha também uma perspectiva em `scripts/hronir/perspectives/` e leia seu
+conteúdo. A perspectiva deve realmente influenciar a avaliação.
+
+## 2. Criar o registro OKF mínimo
+
+Crie um arquivo em:
+
+```text
+.routines/hronir/evaluations/<run_id>_<post-a-key>_x_<post-b-key>.md
 ```
 
-`src/generated/versions-selected.json` é **gitignorado** e regenerado pelo `prebuild` a cada build, mas `generate-match` depende dele para montar o pool de pares — num checkout novo o arquivo não existe e o comando falha com "mínimo 4 posts para formar pares". Rode `select` aqui, localmente, antes de tudo.
+Comece deliberadamente mínimo:
 
-## 3. Loop de avaliação — um match por vez
-
-Escolha quantos matches cabem na sua capacidade real de leitura atenta: uma rodada de 3–6 matches bem avaliados vale mais que uma de 10 apressados; 5 é um bom default.
-
-Para cada match:
-
-```bash
-npx hronir generate-match --objective coverage
+```yaml
+---
+type: Hronir Evaluation
+---
 ```
 
-O comando imprime a perspectiva do match, o slug e o **caminho** de cada post, o glifo + mood inicial, e as instruções de decisão. **Leia os dois arquivos inteiros** antes de qualquer outra coisa. Quando indicar "DUELO DE VERSÃO", Post A é a versão canônica e Post B a desafiante — avalie qual serve melhor o leitor, não qual é mais recente.
+Não copie um formulário fixo para "passar de primeira". O contrato está na spec
+`specs/okf-types/hronir-evaluation.md`; quem informa os campos obrigatórios é o
+parser.
 
-(`--objective coverage`, RFC 0013 §8, prioriza obras sub-amostradas — o viés recomendado enquanto o corpus é raso. Fica registrado como proveniência no rate file.)
+## 3. Deixar o parser dirigir o preenchimento
 
-Depois, submeta a avaliação (`--after-mood` primeiro — ver abaixo):
+Use sempre o `okf-parser` pinado pelo repositório/CI:
 
 ```bash
-npx hronir submit-eval --agent-id '<seu id estável>' \
-  --after-mood "Estou inquieto, com ideias demais na cabeça para assentar." \
-  --rate-a 4.25 \
-  --rate-b 3.00 \
-  --review-a "Resenha do <slug-a> em pelo menos 100 palavras, da ótica da perspectiva." \
-  --review-b "Resenha do <slug-b> em pelo menos 100 palavras, da ótica da perspectiva." \
-  --clash   "Confronto em pelo menos 100 palavras: por que <slug-a> ganhou/perdeu perante <slug-b> segundo a perspectiva."
+uv run --with 'okf-parser @ git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' \
+  okf-parser check .routines/hronir/evaluations \
+  --require-spec ../../../specs/okf-types/{slug}.md \
+  --normative-spec
 ```
 
-Se `submit-eval` falhar por validação (texto curto), o rascunho é salvo automaticamente — complemente sem reescrever:
+Para o arquivo novo, cada `OKF011` indica um campo obrigatório ausente ou vazio.
+Preencha o campo pedido no frontmatter, preserve o que já está correto e rode o
+mesmo check novamente. Continue até `conformant: true`.
+
+O arquivo Markdown é simultaneamente o estado de trabalho e o resultado final.
+Não existe `submit`, draft escondido, sessão temporária ou segunda base de
+estado.
+
+## 4. Regras semânticas da avaliação
+
+O check garante o contrato estrutural declarado pela spec; o agente continua
+responsável pela qualidade semântica do conteúdo.
+
+- `rate_a` e `rate_b`: 1.00–5.00, até duas casas decimais e sem empate.
+- `winner`: deve corresponder ao lado com a maior nota.
+- `review_a` e `review_b`: pelo menos 100 palavras cada, específicas ao texto
+  avaliado e escritas em `review_lang`.
+- `clash`: pelo menos 100 palavras, confrontando concretamente os dois trabalhos
+  pela lente da perspectiva escolhida.
+- `evaluator_mood_after`: em primeira pessoa e sobre o estado interno do
+  avaliador depois da leitura, não um resumo dos posts.
+- Não use prosa genérica intercambiável. Cite ou parafraseie escolhas, imagens,
+  argumentos ou estruturas concretas dos dois trabalhos.
+
+O formato novo usa campos escalares `post_a_key`, `post_a_path`,
+`post_b_key`, `post_b_path` etc. Isso é deliberado: permite ao parser apontar
+exatamente qual célula do "formulário" ainda falta. Os antigos `type: Rate File`
+com `post_a`/`post_b` aninhados permanecem legíveis como legado e não devem ser
+reescritos em massa.
+
+## 5. Gate final
+
+Antes de commitar, o mesmo comando acima precisa terminar conforme. Depois:
 
 ```bash
-npx hronir submit-eval --agent-id '<seu id estável>' \
-  --clash-append "<continuação>" \
-  --review-a-append "<continuação>" \
-  --review-b-append "<continuação>"
-```
-
-Se precisar abortar um match no meio (contexto/tempo esgotando), `npx hronir end --force` descarta **só** o match em andamento — os rate files já submetidos ficam intactos.
-
-### Restrições
-
-| Campo                       | Restrição                                                                                                                                                                               |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--rate-a` / `--rate-b`     | 1.00–5.00, ≤2 casas decimais, **sem empate**                                                                                                                                            |
-| `--review-a` / `--review-b` | ≥100 palavras cada, na `review_lang` da sessão (RFC 0012 §6 — default: a língua de avaliação, pt), pela perspectiva do banner. Refira-se ao post pelo **slug**, não "Post A" / "Post B" |
-| `--clash`                   | ≥100 palavras, na mesma `review_lang`, confronto narrativo entre os dois posts pela lente da perspectiva. Use os **slugs**                                                              |
-| `--after-mood`              | **Primeiro flag**, ≤250 chars, PT, 1ª pessoa, sobre seu estado interno agora. Não sobre os posts. Original (não copie o mood inicial do banner)                                         |
-
-**Decida o mood antes de escrever.** O `generate-match` mostra um glifo Unicode aleatório (com codepoint) e seu mood inicial. Leia o glifo subjetivamente — não há tabela de significados — e combine com o que os dois posts provocaram: o resultado é o `--after-mood`, e esse estado colore o tom das resenhas e do clash. Detalhes em CLAUDE.md, "Deciding the mood".
-
-**Atingir a contagem mínima de palavras não é o objetivo — o objetivo é uma leitura real.** O contador de palavras não distingue uma resenha específica de texto genérico repetido até bater 100 palavras. Cada resenha e o clash devem citar ou parafrasear algo concreto e específico de cada post (uma ideia, uma imagem, uma escolha estrutural) — não frases-clichê intercambiáveis entre quaisquer dois posts. Se uma frase da sua resenha serviria, sem alteração, para qualquer outro par de posts, reescreva-a.
-
-## 4. Validar, criar journal e commitar
-
-```bash
-npm run hronir:select
-npm run hronir:doctor
-
 TIMESTAMP="$(date -u +"%Y-%m-%dT%H-%M-%S")"
 cat > ".routines/${TIMESTAMP}-hronir-run.md" <<EOF
 ---
@@ -109,49 +107,29 @@ branch: ${BRANCH}
 status: open
 ---
 
-<N> matches — <agent-id>. <Uma linha sobre a rodada: pares notáveis, surpresas, saída antecipada se houve.>
+<N> avaliações Hrönir OKF — <agent-id>.
 EOF
+```
 
-cat > "changelog/changes/hronir-run-$(date -u +"%Y-%m-%d").md" <<EOF
----
-type: changelog
-date: "$(date -u +"%Y-%m-%d")"
-description: Record a Hrönir evaluation round of <N> matches.
-tags: [hronir, ranking]
----
+Crie também o change card exigido pelo repositório em
+`changelog/changes/`, descrevendo a rodada de forma específica.
 
-# Hrönir evaluation round
+Então:
 
-- Adds <N> new Hrönir match rate files under \`.routines/hronir/rates/\` (RFC 0016 one-shot API).
-EOF
-
-git add .routines/ changelog/
+```bash
+git add .routines/ changelog/changes/
 git commit -m "hronir: <N> matches — <agent-id>"
 git push -u origin HEAD
 ```
 
-O check de CI "OKF change card policy" (`.github/workflows/change-cards.yml`) exige um change
-card em `changelog/changes/` para **qualquer** PR que altere arquivos fora de `changelog/changes/`
-— sem exceção para `.routines/`. Sem o card acima, o CI falha com `check-change-card: this PR
-changes the repository but adds no change card.` Ajuste a descrição do card para refletir o que a
-rodada realmente fez (pares notáveis, saída antecipada) em vez de deixar o texto genérico.
+Abra PR para `main`. Rate files já mergeados são evidência imutável: não edite
+uma avaliação histórica para mudar um julgamento; produza nova evidência.
 
-Substitua `<N>` pelo número de matches **realmente completados**. Rode `hronir:select` de novo aqui — alguns matches são duelos de versão, e o `doctor` valida contra a seleção atual. O arquivo **não entra no `git add`**: é gitignorado; quem regenera a versão definitiva é o `prebuild` do próximo build/deploy.
+## Fronteira arquitetural
 
-## 5. Abrir PR e habilitar auto-merge
+O Astro/TypeScript ainda pode **ler** os registros durante o build para projetar
+ranking e páginas públicas. Isso é uma projeção de leitura do site, não a
+máquina de estado do Hrönir.
 
-Via MCP:
-
-```
-mcp__github__create_pull_request:
-  owner: franklinbaldo
-  repo: franklinbaldo.github.io
-  title: "hronir: <N> matches — <agent-id>"
-  head: <BRANCH>
-  base: main
-
-mcp__github__enable_pr_auto_merge:
-  merge_method: squash
-```
-
-Se `enable_pr_auto_merge` falhar (ex.: o CI já terminou verde, e auto-merge só se arma com checks pendentes), mescle diretamente com `mcp__github__merge_pull_request` (`merge_method: squash`) — ou deixe para o passo 0 da próxima rodada.
+Criação, preenchimento, validação e avanço de avaliações são exclusivamente
+Markdown OKF + `okf-parser`.

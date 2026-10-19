@@ -33,7 +33,7 @@ I wanted a system that would catch the context as it was happening.
 
 James Boswell is the reason I called it a "Boswell Digital." He was Johnson's biographer — not the biographer who turned Johnson into a monument, but the one who caught him stumbling. The hesitations, the contradictions, the morning Johnson said something he had to unsay by afternoon. Without those, you'd have a glossary, not a biography. I wanted something that would catch the stumbles.
 
-The specific shape I imagined: agents that monitor my public data sources, identify significant events ("leads"), and write articles. The articles go through a pipeline — writer, editor, fact-checker, an "OmbudsmanBot" that checks for privacy problems — and eventually get published automatically. The whole thing runs on GitHub Actions.
+The specific shape I imagined: agents that monitor my public data sources, identify significant events ("leads"), and write articles. The articles go through a pipeline — writer, editor, fact-checker, an "OmbudsmanBot" that checks for privacy problems — and eventually get published automatically. The whole pipeline runs on GitHub Actions.
 
 ```mermaid
 graph TD

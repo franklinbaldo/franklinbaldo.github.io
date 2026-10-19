@@ -14,6 +14,7 @@ const { currentId, tags, lang, postType } = Astro.props;
 const currentLang = lang ?? DEFAULT_LANG;
 
 const locale = currentLang === 'pt' ? 'pt-BR' : 'en';
+const tagsPrefix = currentLang === 'pt' ? '/pt/tags' : '/tags';
 const dateOpts: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
 
 const sameLangPosts = (await getCollection('blog'))
@@ -53,7 +54,15 @@ const headingId = 'related-posts-heading';
         <h4><a href={(p.data.lang ?? DEFAULT_LANG) === 'pt' ? `/pt/blog/${p.data.slug ?? p.id}/` : `/blog/${p.data.slug ?? p.id}/`}>{p.data.title}</a></h4>
         <p><small><time datetime={p.data.date.toISOString()}>{p.data.date.toLocaleDateString(locale, dateOpts)}</time></small></p>
         {p.data.description && <p><small>{p.data.description.length > 120 ? p.data.description.slice(0, 120) + '…' : p.data.description}</small></p>}
-        {!usedFallback && sharedTags.length > 0 && <p><small>{sharedTags.map(tag => `#${tag}`).join(' ')}</small></p>}
+        {!usedFallback && sharedTags.length > 0 && (
+          <p>
+            <small>
+              {sharedTags.map((tag, index) => (
+                <>{index > 0 && ' '}<a href={`${tagsPrefix}/${tag}/`} rel="tag">#{tag}</a></>
+              ))}
+            </small>
+          </p>
+        )}
       </article>
     ))}
   </section>

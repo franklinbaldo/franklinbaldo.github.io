@@ -26,9 +26,7 @@ name: Hrönir Autopilot
 # convention (see docs/hronir-agent-routine.md, docs/hronir-edit-worst-routine.md).
 
 on:
-  workflow_run:
-    workflows: ["Check"]
-    types: [completed]
+  # Automatic workflow_run trigger disabled. Run this workflow manually only.
   workflow_dispatch:
     inputs:
       pr:
@@ -66,7 +64,7 @@ jobs:
       github.event.workflow_run.event == 'pull_request' &&
       startsWith(github.event.workflow_run.head_branch, 'hronir/'))
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Resolve target PR
         id: resolve
@@ -120,7 +118,7 @@ jobs:
           HAS_DRAFT=0
           while IFS= read -r f; do
             [ -n "$f" ] || continue
-            case "$f" in .routines/hronir/rates/*) HAS_RATE=1 ;; esac
+            case "$f" in .routines/hronir/rates/* | .routines/hronir/evaluations/*) HAS_RATE=1 ;; esac
             # Drafts: legacy sibling v-* files, or RFC 0015 drafts for
             # flattened slugs (edit-worst writes them under drafts/).
             case "$f" in src/content/blog/*/v-*.md | src/content/blog/*/v-*.mdx | .routines/hronir/drafts/*) HAS_DRAFT=1 ;; esac
@@ -148,7 +146,7 @@ jobs:
           # Reuses FILES_JSON from the path gate above — same PR, same field, no
           # need for a second API round-trip.
           DELETED_RATES=$(echo "$FILES_JSON" | jq \
-            '[.files[] | select(.status == "removed") | select(.path | startswith(".routines/hronir/rates/"))] | length')
+            '[.files[] | select(.status == "removed") | select(.path | startswith(".routines/hronir/rates/") or startswith(".routines/hronir/evaluations/"))] | length')
           if [ "${DELETED_RATES:-0}" -gt 0 ]; then
             echo "PR #$PR deleta ${DELETED_RATES} rate file(s) — bloqueado pelo autopilot."
             echo "Rate files são imutáveis. Nunca delete arquivos de sessões anteriores."

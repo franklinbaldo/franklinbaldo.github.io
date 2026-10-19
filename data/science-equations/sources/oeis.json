@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "source_id": "oeis-formula-lines",
+  "source_name": "The On-Line Encyclopedia of Integer Sequences",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "documentation": "https://oeis.org/wiki/Download",
+    "homepage": "https://oeis.org/",
+    "repository": "https://github.com/oeis/oeisdata",
+    "access_mode": "Git repository clone or strip-down fetch; no page scraping"
+  },
+  "snapshot_policy": {
+    "kind": "git-commit-hash",
+    "rule": "Pin the oeisdata git commit hash used for the extraction run."
+  },
+  "license_policy": {
+    "scope": "corpus-wide",
+    "license": "CC-BY-SA-4.0",
+    "license_url": "https://oeis.org/LICENSE",
+    "policy_url": "https://oeis.org/wiki/Legal_Documents",
+    "rule": "OEIS data is licensed under CC BY-SA 4.0; attribution and share-alike constraints apply to redistributions."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-oeis-formulas.mjs",
+    "input": "pinned oeis/oeisdata Git repository",
+    "transport_output": "JSONL to stdout (transient only)",
+    "scope_field": "%F",
+    "provenance_class": "attested"
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-oeis-formula-lines-<snapshot>-<stage>"
+  }
+}

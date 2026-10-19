@@ -9,6 +9,7 @@ export { decide } from "./decide.js";
 export { submitEval } from "./submit-eval.js";
 export { ranking } from "./ranking.js";
 export { diagnose } from "./diagnose.js";
+export { tierEvidence } from "./tier-evidence.js";
 export { editWorst } from "./edit-worst.js";
 export { migrate } from "./migrate.js";
 export { doctor } from "./doctor.js";

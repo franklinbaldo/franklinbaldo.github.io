@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "source_id": "pmc-jats-formulas",
+  "source_name": "PubMed Central Article Datasets / JATS",
+  "readiness": "license-filtered",
+  "official_access": {
+    "documentation": "https://pmc.ncbi.nlm.nih.gov/tools/pmcaws/",
+    "dataset_documentation": "https://pmc.ncbi.nlm.nih.gov/tools/textmining/",
+    "bucket_arn": "arn:aws:s3:::pmc-oa-opendata",
+    "access_mode": "AWS Open Data Cloud Service; anonymous S3/HTTPS retrieval",
+    "legacy_services": "Do not use the retired FTP Article Datasets, OA Web Service, or legacy AWS prefixes after the August 2026 transition."
+  },
+  "snapshot_policy": {
+    "kind": "inventory-digest",
+    "rule": "Pin the PMC Cloud Service inventory used for acquisition and identify the run by a deterministic SHA-256 over the selected inventory rows/object identifiers, timestamps and ETags. A wall-clock date alone is not a sufficient snapshot.",
+    "required_fields": ["inventory_observed_at", "inventory_sha256", "selection_query_or_filter"]
+  },
+  "license_policy": {
+    "scope": "article-level",
+    "automatic_redistribution_allowlist": ["CC0", "CC-BY", "CC-BY-SA"],
+    "manual_review": ["CC-BY-ND", "CC-BY-NC", "CC-BY-NC-SA", "CC-BY-NC-ND", "custom", "missing"],
+    "rule": "The source adapter may inspect all lawfully retrieved text-mining records, but publication to the Atlas Internet Archive lake must default to rows whose article-level license is conservatively cleared for derived redistribution. Other rows require an explicit legal/policy decision recorded in a run."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-pmc-jats.mjs",
+    "input": "JATS XML files retrieved through the official PMC Cloud Service",
+    "transport_output": "JSONL to stdout (transient only)",
+    "formula_elements": ["disp-formula", "inline-formula"],
+    "provenance_class": "attested"
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-pmc-jats-formulas-<inventory-digest>-<stage>"
+  }
+}

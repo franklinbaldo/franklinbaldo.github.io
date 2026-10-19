@@ -11,7 +11,7 @@ description: >-
   Demis Hassabis com a ontologia dos processos autorregressivos.
 tags:
   - philosophy
-  - AI
+  - ai
   - metaphysics
   - process ontology
   - Demis Hassabis

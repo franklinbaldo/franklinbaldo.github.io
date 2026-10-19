@@ -1,121 +1,74 @@
-# Rotina de agente Hrönir — edição do pior post
+# Rotina de agente Hrönir — revisão editorial diária
 
-Rotina diária, separada da rotina horária de avaliação de matches (`docs/hronir-agent-routine.md`). Enquanto a rotina de matches prioriza volume (várias sessões por dia, modelo rápido), esta é trabalho editorial de verdade: escolher o post pior-ranqueado e reescrevê-lo com base nas críticas acumuladas — cabe rodar uma vez por dia, com um modelo mais cuidadoso.
+Esta rotina substitui o antigo fluxo `draft-worst`/Node. Não existe mais um
+comando Hrönir que escolha, crie ou registre um rascunho em nome do agente.
 
-Não chame `npm run hronir:init` aqui — essa rotina não roda matches, só a fase de edição, que funciona standalone.
+O agente trabalha diretamente sobre os artefatos versionados e usa a evidência
+Hrönir já registrada para escolher uma revisão editorial útil.
 
-## Antes de começar
-
-Confirme que está dentro do checkout do repositório (`git rev-parse --show-toplevel` deve apontar para `franklinbaldo.github.io`). Se não estiver — diretório vazio, outro repo, ou erro —, clone antes de prosseguir:
-
-```bash
-git clone https://github.com/franklinbaldo/franklinbaldo.github.io.git
-cd franklinbaldo.github.io
-```
-
-Depois, instale as dependências — todo comando `hronir` roda via `tsx` e falha sem `node_modules/`:
+## 0. Começar do main atual
 
 ```bash
-npm ci
-```
-
-(Num checkout já existente, rode `npm ci` só se `node_modules/` não existir.)
-
-## 0. Revisar e mesclar PRs abertos
-
-Liste os PRs abertos. Para cada PR Hrönir com CI verde, sem conflitos e sem revisões bloqueantes:
-
-- Mescle com **squash**, o método habilitado e canônico do repositório.
-- Via MCP: `mcp__github__merge_pull_request` com `merge_method: squash`.
-
-## 1. Atualizar main e criar branch
-
-```bash
-git checkout main && git pull origin main
+git switch main
+git pull --ff-only
 BRANCH="hronir/edit-worst-$(date -u +"%Y-%m-%dT%H-%M-%S")"
-git checkout -b "$BRANCH"
+git switch -c "$BRANCH"
 ```
 
-## 2. Recomputar a seleção de versões (local, não commitada)
+## 1. Escolher o candidato
 
-```bash
-npm run hronir:select
-```
+Leia a evidência atual em `.routines/hronir/rates/` e, quando útil, as projeções
+de ranking já versionadas/publicadas pelo site. Priorize um trabalho com evidência
+suficiente de fraqueza e críticas concretas recorrentes.
 
-`src/generated/versions-selected.json` é **gitignorado** — nunca é commitado
-por uma sessão. É uma função pura de rate files + arquivos de versão
-(amendment RFC 0010, 2026-07-01: sem histerese — vence sempre a versão mais
-bem avaliada com evidência suficiente), regenerado deterministicamente pelo
-`prebuild` antes de cada build. Mas `draft-worst` depende dele para saber qual
-versão é a canônica a copiar como base do rascunho: num checkout novo o
-arquivo não existe, e pular este passo faz `draft-worst` tratar todo post
-como sem seleção. Rode `select` aqui, localmente, antes de tudo.
+Não execute `npm run hronir:draft-worst`, `hronir:select`,
+`hronir:draft-commit`, `hronir:end` ou `hronir:doctor`.
 
-## 3. Escolher e rascunhar o pior post
+A seleção deve ser justificável pela evidência existente, não apenas pela posição
+ordinal de um snapshot.
 
-```bash
-npm run hronir:draft-worst
-```
+## 2. Ler as críticas antes de editar
 
-Esse comando já escolhe o post pior-ranqueado elegível — pulando os recém-editados, os com rascunho pendente, e os sem arquivo correspondente em `src/content/blog/` (post avaliado no passado e depois deletado) — e cria os rascunhos (`src/content/blog/<slug>/v-<timestamp>.<ext>`, um por idioma) prontos para editar.
+Localize todas as avaliações relevantes para a chave do post, incluindo
+`Hronir Evaluation` e `Rate File` legados. Leia `review_a`, `review_b` e
+`clash`, distinguindo críticas recorrentes de preferências isoladas de uma única
+perspectiva.
 
-Se não houver candidato elegível, o comando avisa e termina sem erro ("Volume insuficiente para edit-worst", ou lista os pulados por falta de arquivo). **Não force nada nesse caso** — não há trabalho de edição para fazer hoje; finalize sem abrir PR.
+Leia também:
 
-## 4. Editar
+- `scripts/hronir/skills/franklin-blog/SKILL.md`;
+- `scripts/hronir/skills/franklin-essay/SKILL.md` quando o texto for
+  argumentativo-formal.
 
-Leia AS DUAS skills antes de editar:
+## 3. Criar a nova versão diretamente
 
-- `scripts/hronir/skills/franklin-blog/SKILL.md`
-- `scripts/hronir/skills/franklin-essay/SKILL.md`
+Preserve a versão publicada e crie um novo arquivo de versão no mesmo diretório,
+seguindo a convenção já existente do post. Copie o conteúdo atual e edite o novo
+arquivo; não altere retroativamente uma versão que já recebeu avaliações.
 
-Default: `franklin-blog`. Use `franklin-essay` **apenas** se o post for argumentativo-formal (paper-shaped, defesa de tese, citação acadêmica densa). Em caso de dúvida, blog.
+A revisão deve responder às críticas concretas que motivaram a escolha. Não faça
+polimento cosmético só para produzir atividade.
 
-Edite os **rascunhos** impressos pelo comando anterior — nunca as versões selecionadas, que ficam intactas e continuam publicadas até o rascunho vencer seus duelos. O objetivo é diminuir o gap observado entre este post e os melhores colocados, mantendo o espírito do post.
+## 4. Validar conhecimento OKF
 
-Isso é o ponto principal desta rotina: leia de verdade as críticas e defesas acumuladas nos matches anteriores (o comando imprime o contexto) antes de editar. Um polimento superficial que não responde às críticas registradas não cumpre o propósito da rotina.
+A rotina editorial não reintroduz um CLI Hrönir. Para qualquer artefato OKF
+criado ou alterado, o gate é `okf-parser`, no mesmo padrão da rotina de
+avaliação. Se a revisão produzir uma nova avaliação, use
+`type: Hronir Evaluation` e complete-a pelo ciclo de diagnósticos
+`OKF011` até ficar conforme.
 
-## 5. Registrar e finalizar
+Os checks normais do blog continuam sendo usados para garantir que o site
+renderiza; eles não são a máquina de estado do Hrönir.
 
-```bash
-npm run hronir:draft-commit -- --msg "<justificativa da edição, referenciando as críticas que motivaram>"
-npm run hronir:select
-npm run hronir:end
-npm run hronir:doctor
-```
+## 5. Registrar a decisão
 
-`hronir:select` roda de novo aqui — o novo rascunho entra no cômputo, e o
-`doctor` valida contra a seleção fresca. O arquivo segue gitignorado — não
-commitado por sessão, regenerado pelo `prebuild` no próximo build/deploy.
+Crie um journal em `.routines/` explicando:
 
-## 6. Journal e commit
+- qual trabalho foi escolhido;
+- qual evidência Hrönir sustentou a escolha;
+- quais críticas a revisão tentou resolver;
+- qual nova versão foi criada.
 
-```bash
-TIMESTAMP="$(date -u +"%Y-%m-%dT%H-%M-%S")"
-cat > ".routines/${TIMESTAMP}-hronir-edit-worst.md" <<EOF
----
-date: "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-branch: ${BRANCH}
-status: open
----
-EOF
-
-git add .routines/ src/content/blog/
-git commit -m "hronir: edição do pior post — <agent-id>"
-git push -u origin HEAD
-```
-
-## 7. Abrir PR e habilitar auto-merge
-
-Via MCP:
-
-```
-mcp__github__create_pull_request:
-  owner: franklinbaldo
-  repo: franklinbaldo.github.io
-  title: "hronir: edição do pior post — <agent-id>"
-  head: <BRANCH>
-  base: main
-
-mcp__github__enable_pr_auto_merge:
-  merge_method: squash
-```
+Crie também o change card obrigatório em `changelog/changes/`, faça commit,
+push e abra PR. A versão anterior permanece disponível para comparação e
+proveniência.

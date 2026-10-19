@@ -19,14 +19,12 @@ const headingId = 'comments-heading';
 const giscusLang = lang ?? DEFAULT_LANG;
 ---
 
-<section aria-labelledby={headingId}>
-  <h3 id={headingId}>{t(lang, 'comments.heading')}</h3>
-  {isConfigured ? (
+{isConfigured && (
+  <section aria-labelledby={headingId}>
+    <h3 id={headingId}>{t(lang, 'comments.heading')}</h3>
     <div id="giscus-container" data-giscus></div>
-  ) : (
-    <p><small>{t(lang, 'comments.notConfigured')}</small></p>
-  )}
-</section>
+  </section>
+)}
 
 {isConfigured && (
   <script

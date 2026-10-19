@@ -105,4 +105,39 @@ export const openingClashes = [
     battleground: "breadth of claims vs. independent recovery",
     body: "ZEBTS is broader in advertised scope than almost every Arena entry, but breadth earns interest rather than scientific rank. To climb, the operator-spectral construction must independently recover established low-energy physics and survive external calculation; until then its enormous scope is a liability as much as an attraction.",
   },
+  {
+    title: "Geometric Action Principle × Holomorphic UFT",
+    battleground: "single-action economy vs. explicit Standard Model recovery",
+    body: "The Clifford action programme gets credit for deriving gravity, gauge and fermionic structures from one invariant and intersecting known healthy linearized gravity sectors. Holomorphic UFT currently goes further toward explicit Standard Model masses and mixings. The former needs realistic SM representations and full stability; the latter needs stronger independent reproduction. Neither clash warrants an A-tier promotion yet.",
+  },
+  {
+    title: "Lucron Network × Loop quantum gravity / CDT",
+    battleground: "discrete pregeometry and continuum recovery",
+    body: "Lucron supplies explicit relational units, network dynamics and concrete falsifiers, but its exact Lorentz, Yang–Mills and particle-spectrum recovery remains unfinished. LQG and CDT have much deeper mathematical or numerical development but do not package the same broad Standard-Model ambition. A derivation of Lorentz symmetry and gauge structure from Lucron dynamics would materially change this comparison.",
+  },
+  {
+    title: "Unified Emergence × Lucron Network",
+    battleground: "continuum-first vs. discrete-first ontology",
+    body: "Unified Emergence avoids fundamental discreteness, but its current Photonic-Higgs refractive equation is not merely incomplete: with the stated Higgs-mass parameter it is Yukawa-screened on a microscopic scale and therefore does not recover long-range gravity. Lucron is more calculationally explicit and remains C/A with major Lorentz, Yang–Mills and particle-spectrum recovery debt, but no comparably direct long-range-propagator contradiction is currently recorded. This is now an F-vs-C scientific-maturity gap, not a verdict on continuum-first versus discrete-first ontology.",
+  },
+  {
+    title: "CronNet-Holo 600-cell × Holomorphic UFT",
+    battleground: "sharp geometric predictions vs. independently validated recovery",
+    body: "Both programmes claim explicit geometry-first routes to Standard-Model-plus-gravity structure. CronNet-Holo is unusually sharp about laboratory and parameter-level predictions, including the 12.8 THz target, but its current physical bridge is conditional on five hypotheses and lacks independent reproduction. Holomorphic UFT has the stronger peer-reviewed technical lineage but also needs broader external replication. A prospective CronNet-Holo prediction surviving independent testing would materially change this comparison; today it does not move either tier.",
+  },
+  {
+    title: "AME(4,6) × Observer Patch Holography",
+    battleground: "information-theoretic reconstruction of physical law",
+    body: "AME(4,6) builds from a real perfect-tensor/quantum-code object and reaches aggressively into particle parameters and gravity, but the physical identification is unproved and several headline claims were later softened or partially retracted. Observer Patch Holography has stronger formal reconstruction and machine-checkable components, while still carrying an explicit physical-realization gap. Independent recovery of Einstein and chiral Standard-Model structure from either information substrate would be the relevant discriminator; no tier movement follows yet.",
+  },
+  {
+    title: "Computational Finitism × Lucron Network",
+    battleground: "finite discrete substrate vs. recovered continuum physics",
+    body: "Both programmes try to recover matter, gravity and continuum behavior from a discrete microscopic substrate. Computational Finitism has a broad runnable simulation corpus and aggressive numerical claims, but its current bridge to precision Lorentz, chiral Standard-Model structure and running couplings is not independently established, and its decision-bearing paper introduces a new transfer mechanism after an explicit mobility failure. Lucron also has major unfinished Lorentz/Yang–Mills work but currently states those gaps more narrowly. Independent frozen-rule reproductions are the relevant discriminator; no Lucron tier move follows.",
+  },
+  {
+    title: "Pole Theory × Quantized Spacetime",
+    battleground: "discrete substrate → Lorentz, chiral Standard Model and Einstein recovery",
+    body: "Both programmes start from fundamental discreteness and claim a route to quantum fields plus gravity. Quantized Spacetime currently exposes a cleaner direct gauge-and-metric construction, although it assumes quantum mechanics and general relativity up front. Pole Theory aims for deeper ontological compression, but its present recovery chain re-imports Ricci curvature, a quantum amplitude, fermion masses, Yukawa factors and CKM/PMNS matrices. A frozen derivation from microscopic rules to anomaly-consistent chiral matter, precision Lorentz behavior and Einstein gravity would materially change the comparison; today Quantized Spacetime remains C/A and Pole Theory enters D/A.",
+  },
 ];

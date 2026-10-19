@@ -66,11 +66,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
           cache: npm
@@ -153,7 +153,7 @@ jobs:
             echo "No TTS plan or external compute was started."
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         if: ${{ inputs.dry_run == false }}
         with:
           python-version: "3.12"
@@ -277,6 +277,19 @@ jobs:
             --assembly-dir "$RUNNER_TEMP/assembled" \
             --output "$RUNNER_TEMP/publication.json"
 
+      - name: Install pinned official Zola release
+        if: ${{ inputs.publish == true }}
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 \
+            https://github.com/getzola/zola/releases/download/v0.23.6/zola-v0.23.6-x86_64-unknown-linux-musl.tar.gz \
+            --output "$RUNNER_TEMP/zola.tar.gz"
+          echo "7d77a4220a4f699cba2fc0e0c7859f780e887e269159ad4fab90e11ea16c906f  $RUNNER_TEMP/zola.tar.gz" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/zola-bin"
+          tar -xzf "$RUNNER_TEMP/zola.tar.gz" -C "$RUNNER_TEMP/zola-bin"
+          echo "$RUNNER_TEMP/zola-bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/zola-bin/zola" --version
+
       - name: Persist publication state
         if: ${{ inputs.publish == true }}
         env:
@@ -319,7 +332,7 @@ jobs:
 
       - name: Upload plan
         if: ${{ always() && (inputs.dry_run == false || steps.readiness.outputs.narration_ready == 'true') }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: audiobook-plan-${{ inputs.work_id }}-${{ inputs.chapter_id }}
           path: ${{ runner.temp }}/plan.json
@@ -328,7 +341,7 @@ jobs:
 
       - name: Upload raw media result
         if: ${{ inputs.dry_run == false }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: audiobook-media-${{ inputs.work_id }}-${{ inputs.chapter_id }}
           path: ${{ runner.temp }}/audiobook-result.zip
@@ -337,7 +350,7 @@ jobs:
 
       - name: Upload assembled chapter
         if: ${{ inputs.dry_run == false }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: audiobook-assembled-${{ inputs.work_id }}-${{ inputs.chapter_id }}
           path: ${{ runner.temp }}/assembled/
@@ -346,7 +359,7 @@ jobs:
 
       - name: Upload publication receipt
         if: ${{ inputs.publish == true }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: audiobook-publication-${{ inputs.work_id }}-${{ inputs.chapter_id }}
           path: ${{ runner.temp }}/publication.json

@@ -13,6 +13,7 @@ const { items, lang = 'en' } = Astro.props;
   <ol>
     {items.map((item, i) => (
       <li>
+        {i > 0 && <span class="separator" aria-hidden="true">/</span>}
         {i === items.length - 1 ? (
           <span aria-current="page">{item.name}</span>
         ) : (
@@ -34,8 +35,7 @@ const { items, lang = 'en' } = Astro.props;
     font-size: 0.8rem;
     color: var(--pico-muted-color);
   }
-  .breadcrumbs li + li::before {
-    content: ' / ';
+  .breadcrumbs .separator {
     padding: 0 0.35em;
   }
   .breadcrumbs a {

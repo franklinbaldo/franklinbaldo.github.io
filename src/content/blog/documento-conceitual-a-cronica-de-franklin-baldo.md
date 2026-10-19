@@ -80,7 +80,7 @@ graph TD
 
 ### **3. O Elenco de Agentes: Uma Equipe de Especialistas Digitais**
 
-Cada etapa do pipeline é executada por um agente especializado, que é essencialmente um script Python envolvendo um prompt bem definido para a API do Gemini. (Para detalhes técnicos da implementação, veja o [Guia de Arquitetura Pontifex](/blog/guia-de-implementao-da-arquitetura-pontifex/).)
+Cada etapa do pipeline é executada por um agente especializado, que é essencialmente um script Python envolvendo um prompt bem definido para a API do Gemini.
 | Agente | Persona | Responsabilidade Principal |
 | :--- | :--- | :--- |
 | **LeadCollector** | O Arquivista | Monitora as fontes de dados, identifica novos eventos e os normaliza em um formato de "lead" (JSON). Não usa LLM. |
@@ -113,7 +113,7 @@ Este projeto não termina quando o primeiro post for publicado. Sua verdadeira f
 - **Resultado Esperado:** O banco de dados de artigos se torna grande o suficiente para que o sistema mude de um simples "cronista" para um "analista". Novos agentes podem ser introduzidos para tarefas de síntese.
   - **Geração de Posts "On This Day":** O sistema pode gerar automaticamente posts do tipo "Há 3 anos, Franklin estava explorando este conceito..." correlacionando artigos antigos com atividades atuais.
   - **Detecção de Evolução de Pensamento:** Um agente analítico poderia, trimestralmente, analisar todos os posts sobre um determinado tópico (ex: "Inteligência Artificial") e redigir um meta-artigo intitulado "Uma Análise da Minha Posição em IA: Evolução de Q1 2025 a Q1 2026", destacando mudanças de opinião e contradições.
-  - **Identificação de Conexões Inexploradas:** O sistema poderia identificar que um commit em um projeto de física quântica e uma aposta no Manifold sobre leis de conservação ocorreram na mesma semana e sugerir um post mais profundo conectando os dois eventos, algo que você mesmo poderia não ter notado. O prompt se tornaria: "Analise os leads da última semana e proponha uma tese original que os conecte." (Um exemplo inicial de sondagem semântica pode ser visto em [Pontifex Novel Architecture](/blog/pontifex-uma-nova-arquitetura-para-investigao-semntica/).)
+  - **Identificação de Conexões Inexploradas:** O sistema poderia identificar que um commit em um projeto de física quântica e uma aposta no Manifold sobre leis de conservação ocorreram na mesma semana e sugerir um post mais profundo conectando os dois eventos, algo que você mesmo poderia não ter notado. O prompt se tornaria: "Analise os leads da última semana e proponha uma tese original que os conecte."
 
 #### **Horizonte 3 (Ano 5+): O Oráculo Pessoal e a Máquina de Legado**
 

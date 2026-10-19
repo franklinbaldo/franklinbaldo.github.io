@@ -1,0 +1,180 @@
+---
+type: "Blog Post"
+title: "FlyDoom Fourier: a fly reshaping its own 3D environment"
+description: "A new FlyDoom demo uses the MaleCNS descending layer to control Fourier coefficients that deform a 3D arena. Reward increases as the environment converges toward a predetermined target shape."
+date: "2026-09-16"
+lang: en
+translationKey: flydoom-fourier-shape-control
+tags:
+  [
+    "malecns",
+    "connectome",
+    "doom",
+    "fourier",
+    "reinforcement-learning",
+    "embodied-ai",
+  ]
+glyph: "🪰"
+---
+
+In the original FlyDoom, the **MaleCNS** descending layer ends in motor commands that move the fly.
+
+In this experiment, we change the question:
+
+> **what if the fly's motor output did not only move the body, but also deformed the space in which it lives?**
+
+The demo below closes the loop in two directions. The fly receives an egocentric view of the arena and an **artificial morphological-error afference** indicating which spectral components of the current shape are mismatched. On the output side, the **1,314 descending neurons** form a latent control space. This space can be interpolated into as many as **4,096 Fourier actuators**. Separately, the user defines a ceiling for grid resolution and a descending meta-actuator selects the effective resolution during the task. The number of actuators, physical resolution, and target complexity therefore become independent experimental variables.
+
+<div style="width: 100%; max-width: 1180px; margin: 2rem auto;">
+  <div style="display:flex;justify-content:flex-end;margin-bottom:.6rem;">
+    <a
+      href="/flydoom-fourier/"
+      target="_blank"
+      rel="noopener"
+      style="display:inline-block;padding:.55rem .8rem;border:1px solid #30363d;border-radius:8px;text-decoration:none;"
+    >
+      🚀 Open the demo on its own page ↗
+    </a>
+  </div>
+  <iframe
+    src="/flydoom-fourier/index.html"
+    width="100%"
+    height="980"
+    style="border: 2px solid #30363d; border-radius: 10px; background: #06090d;"
+    title="FlyDoom Fourier: MaleCNS controlling deformations of a 3D arena"
+    loading="lazy"
+  ></iframe>
+</div>
+
+## The loop
+
+```text
+deformable 3D arena
+        ↓
+ egocentric camera / 32-column retina
+        +
+ spectral morphological error
+        ↓
+ artificial sensory input into MaleCNS
+        ↓
+ connectome recurrence (165,122 neurons)
+        ↓
+ 1,314 descending neurons
+        ↓
+ 1,314 latent controls
+        ↓
+ decoder / spectral interpolation
+        ↓
+ N Fourier actuators (16–4,096)
+        +
+ resolution meta-actuator
+        ↓
+ effective grid (16×16 up to the user-defined ceiling)
+        ↓
+ new arena shape
+        ↓
+ similarity to the target shape
+        ↓
+ reward
+```
+
+The connectome remains frozen. **We are not training MaleCNS weights.** The DNs act as latent controls. A continuous decoder projects this space onto the Fourier actuators, including when there are more actuators than DNs. An additional descending control regulates the effective grid resolution within the ceiling chosen by the user. The eight buckets still exist only as a visual summary.
+
+## Actuators, grid, and control load
+
+The Fourier actuators and grid resolution are **different parameters**.
+
+- `Fourier actuators`: how many spectral degrees of freedom can be commanded;
+- `grid ceiling`: the largest physical resolution allowed for the surface;
+- `effective grid`: the resolution selected by the meta-actuator at that moment;
+- `complexity`: how much energy the target places in high spatial frequencies.
+
+There is no mandatory tradeoff between a fine grid and many actuators. Both can increase together. What tends to become harder is coordination: the same 1,314 DNs must control an increasingly large action space.
+
+The interface exposes this pressure as **control load**:
+
+```text
+control load = number of Fourier actuators / 1,314 DNs
+```
+
+When this value exceeds `1×`, the decoder is expanding a smaller latent space into more physical degrees of freedom. This lets us directly test whether control capacity degrades, and at what rate.
+
+There is a second question as well: for a given task and control level, **which physical resolution is worth maintaining?** Effective grid resolution is also an action. The fly can therefore learn that some tasks require a finer surface while others do not.
+
+The experiment starts to search a capacity surface:
+
+```text
+actuators × grid ceiling × target complexity
+                    ↓
+        performance + chosen effective grid
+```
+
+This makes it possible to estimate an **optimal resolution by control level and task**, instead of fixing the mesh arbitrarily.
+
+## The target and the reward
+
+The demo includes simple and complex targets: crater, saddle, ridge, islands, maze, symbol, mountains, random spectrum, and a multiscale adversarial target. The “New random target” button generates another spectrum, while the complexity control changes the presence of higher spatial frequencies.
+
+The screen simultaneously displays:
+
+- the current surface in blue;
+- the target shape as a violet wireframe;
+- the egocentric retina sent to MaleCNS;
+- eight visual summaries of the descending layer;
+- a sample of current coefficients and their target values;
+- the magnitude of the measured mismatch;
+- number of Fourier actuators;
+- grid ceiling and effective grid resolution;
+- **control load** (`actuators / 1,314`);
+- the resolution meta-actuator value;
+- similarity, best similarity, reward, and hit count.
+
+The reward is deliberately simple: a continuous function of the distance between coefficient vectors, with a bonus after exceeding 97% similarity. This keeps the process observable in the browser and avoids hiding the objective function.
+
+## What actually comes from MaleCNS
+
+The demo directly reuses the same assets as FlyDoom:
+
+- `/flydoom/malecns_l3_compact.mcns`
+- `/flydoom/malecns_circuit.json`
+
+Recurrence runs in the browser inside a Web Worker. The retina is rendered from a camera placed on the fly's head, not from the spectator camera. In addition, a compact sample of the spectral error `target - current` is transformed into an opponent afferent pattern and injected into sensory input before recurrence. This gives the system an explicit way to **feel that it is mismatched**.
+
+This error channel is deliberately artificial: we are not claiming that a biological fruit fly has a Fourier sensor. It represents a task signal that, in a real body, would come from proprioception, balance, vision, or another relevant afferent channel.
+
+After each step, the Worker returns all 1,314 DNs individually to the readout. The eight buckets remain only for visualizing descending activity.
+
+## The trainable part
+
+The 1,314 DNs feed latent controls with adjustable gain and bias. When there are more actuators than DNs, the action is smoothly expanded by interpolation across the active Fourier basis. One of the latent controls also acts as a **resolution meta-actuator**, choosing the effective grid within the user-defined ceiling.
+
+Exploration occurs in latent space. Reward maintains a moving baseline and modulates gain/bias of the descending controls: perturbations that precede improvement receive positive credit; perturbations that precede deterioration receive negative credit.
+
+This separation matters:
+
+```text
+MaleCNS recurrence                  = fixed
+error → sensory input               = artificial interface
+1,314 DN → 1,314 latents            = adaptive
+latents → N Fourier                 = decoder/interpolation
+latent → effective resolution       = meta-actuator
+N                                    = 16–4,096 in this demo
+grid ceiling                         = 16×16–128×128
+arena + reward                       = artificial environment
+```
+
+So this demo does not say that a biological fly understands Fourier series or knows how to reshape surfaces. It tests a stronger architectural question: **what boundary of spatial complexity can a 1,314-dimensional descending state control when we vary actuators, physical resolution, and task difficulty independently — and which resolution does the policy itself choose to use?**
+
+## Next experiment
+
+The truly interesting version is to compare three controllers under the same conditions:
+
+1. frozen MaleCNS;
+2. a random reservoir with the same number of effective channels;
+3. a small trainable network with an equivalent parameter budget.
+
+Same seeds, same shapes, same number of steps, same adapter, and the same reward function.
+
+The useful question stops being “did the fly manage it?” and becomes:
+
+> **is there any measurable advantage in using the recurrent dynamics of the connectome as an intermediate state for controlling geometric transformations?**

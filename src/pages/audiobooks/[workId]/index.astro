@@ -17,11 +17,11 @@ const podcastDescription = work.metadata.podcast?.description ?? work.metadata.t
   description={podcastDescription}
   lang="pt"
   breadcrumb={[
-    { name: "Audiolivros", item: "/audiobooks/" },
-    { name: work.metadata.title, item: `/audiobooks/${work.workId}/` },
+    { name: "Audiolivros", item: new URL("/audiobooks/", Astro.site).href },
+    { name: work.metadata.title, item: new URL(`/audiobooks/${work.workId}/`, Astro.site).href },
   ]}
 >
-  <main class="container audiobook-work">
+  <div class="container audiobook-work">
     <p><a href="/audiobooks/">← Audiolivros</a></p>
     <header>
       <p class="eyebrow">{podcastEnabled ? "Podcast" : "Em preparação"}</p>
@@ -59,7 +59,7 @@ const podcastDescription = work.metadata.podcast?.description ?? work.metadata.t
         )
       }
     </section>
-  </main>
+  </div>
 </PageLayout>
 
 <style>

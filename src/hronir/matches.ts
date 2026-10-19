@@ -3,7 +3,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { execFileSync } from "node:child_process";
 import matter from "gray-matter";
-import { OUT_DIR, RATES_DIR } from "./posts.js";
+import { EVALUATIONS_DIR, OUT_DIR, RATES_DIR } from "./posts.js";
 import type {
   MatchKind,
   NormalizedMatch,
@@ -13,7 +13,7 @@ import type {
 export function listMatchFiles(): string[] {
   const out: string[] = [];
   const seen = new Set<string>();
-  for (const dir of [OUT_DIR, RATES_DIR]) {
+  for (const dir of [OUT_DIR, RATES_DIR, EVALUATIONS_DIR]) {
     if (!fs.existsSync(dir)) continue;
     for (const f of fs.readdirSync(dir)) {
       if (!/_x_.*\.md$/.test(f)) continue;
@@ -151,11 +151,36 @@ function normalizeSide(
 /** Pure: turns one parsed rate file into a LoadedMatch, or null when the file
  *  carries no usable verdict (no winner, missing keys, TODO). Same filters the
  *  three legacy readers applied, in one place. */
+function flatHronirSide(
+  data: Record<string, unknown>,
+  side: "a" | "b"
+): Record<string, unknown> | null {
+  const prefix = `post_${side}_`;
+  const key = data[`${prefix}key`];
+  if (typeof key !== "string" || !key) return null;
+  const out: Record<string, unknown> = { key };
+  for (const field of ["path", "display_lang", "content_lang", "version", "ref"]) {
+    const value = data[`${prefix}${field}`];
+    if (value != null) out[field] = value;
+  }
+  return out;
+}
+
 export function normalizeMatch(
   data: Record<string, unknown>,
   content: string,
   filePath: string
 ): LoadedMatch | null {
+  // OKF-native Hrönir evaluations flatten each side so every required field can
+  // be diagnosed independently by okf-parser. Legacy Rate File documents keep
+  // their nested post_a/post_b objects and remain readable.
+  if (data.type === "Hronir Evaluation") {
+    data = {
+      ...data,
+      post_a: flatHronirSide(data, "a"),
+      post_b: flatHronirSide(data, "b"),
+    };
+  }
   let winner = data.winner as string;
   if (data.override && data.override !== "null")
     winner = data.override as string;

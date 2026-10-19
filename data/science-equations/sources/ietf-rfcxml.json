@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "source_id": "ietf-rfcxml-formal-blocks",
+  "source_name": "RFC Editor RFCXML formal blocks",
+  "readiness": "harvest-ready",
+  "official_access": {
+    "documentation": "https://www.rfc-editor.org/series/rfc-download/",
+    "mirror": "rsync.rfc-editor.org::rfcs",
+    "access_mode": "official RFC Editor rsync mirror",
+    "acquisition_command": "rsync -avz --delete rsync.rfc-editor.org::rfcs <mirror>"
+  },
+  "scope": {
+    "object": "formal sourcecode blocks embedded in RFCXML",
+    "initial_types": ["abnf", "pseudocode"],
+    "provenance_class": "attested",
+    "reason": "The Atlas emits the exact RFCXML sourcecode body as the expression and therefore treats the notation as source-attested rather than reconstructed."
+  },
+  "snapshot_policy": {
+    "kind": "inventory-digest",
+    "rule": "After mirroring, enumerate selected rfc*.xml files in deterministic path order and hash an inventory containing each relative path, byte size and SHA-256 digest. Use that inventory SHA-256 as source_snapshot; a wall-clock date alone is not sufficient because the rsync mirror is mutable.",
+    "required_fields": ["inventory_sha256", "file_count", "total_bytes", "observed_at"]
+  },
+  "license_policy": {
+    "scope": "document-level source material",
+    "license": "IETF-Trust-Legal-Provisions",
+    "license_url": "https://www.rfc-editor.org/series/rfc-use/",
+    "policy_url": "https://trustee.ietf.org/license-info",
+    "rule": "Preserve RFC identity, source locator, exact sourcecode text and IETF Trust policy metadata with every extracted occurrence and published snapshot."
+  },
+  "adapter": {
+    "path": "scripts/science-equations/harvest-ietf-rfcxml.py",
+    "input": "local RFC Editor rsync mirror containing rfc*.xml",
+    "transport_output": "JSONL to stdout (transient only)",
+    "provenance_class": "attested",
+    "validation": [
+      "filename matches rfc<digits>.xml",
+      "XML parses successfully or is explicitly rejected",
+      "sourcecode type is in the selected allowlist",
+      "sourcecode body is non-empty"
+    ]
+  },
+  "lake": {
+    "canonical_format": "Apache Parquet",
+    "materializer": "scripts/science-equations/materialize-parquet.py",
+    "stages": ["extracted", "normalized", "deduplicated"],
+    "compression": "zstd",
+    "default_rows_per_shard": 250000,
+    "publisher": "scripts/science-equations/publish-internet-archive.py",
+    "storage": "Internet Archive",
+    "identifier_template": "scientific-equation-atlas-ietf-rfcxml-formal-blocks-<inventory-digest>-<stage>"
+  }
+}

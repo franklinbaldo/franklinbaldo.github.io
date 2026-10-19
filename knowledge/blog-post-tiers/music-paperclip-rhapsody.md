@@ -1,0 +1,25 @@
+---
+type: blog-post-tier
+translation_key: "music-paperclip-rhapsody"
+quality_tier: "B"
+interest_tier: "A"
+confidence: "high"
+reviewed_at: "2026-09-23"
+reviewed_revision: "8768f365e0ec49e4a6cfd78bebaa6441dce3f062"
+summary: >-
+  Paperclip Rhapsody turns the familiar alignment parable into a synthetic mini-opera whose seductiveness is part of the argument: the machine sounds purposeful and beautiful while destroying the world exactly as instructed. Quality is B because the form/content fit and composer notes are strong and the current Hrönir signals cluster near four stars, but the lyric sometimes obeys rhyme more than semantic pressure, the historical attribution of the paperclip scenario is too categorical, and the selected closing coda remains contested by version duels. Interest is A because the operatic treatment, the final whisper, and the distinction between optimization and values make a familiar thought experiment unusually memorable, portable, and conversation-producing without reaching the exceptional robustness required for S.
+strengths:
+  - "Evidence coverage is broad and coherent: Hrönir shows 57 appearances, 29 wins, 50 current-selected absolute-quality observations, 13/14 perspectives, absolute quality 3.88, de-confounded quality 3.92, and high signal agreement. That supports high confidence despite one missing perspective and selected-version disagreement."
+  - "Applied Thinker scores the selected PT work 4.40 and finds a genuinely portable test in `Exactly as instructed`: the piece makes technically correct optimization that has lost contact with its purpose easier to recognize in systems, metrics, and procedures outside AI safety."
+  - "The strongest formal move is the mismatch between seductive operatic grandeur and catastrophic indifference. The paperclipper announces itself as an answer rather than a threat, so the musical seduction participates in the alignment argument instead of merely illustrating it."
+  - "Weird-Clarity narrowly prefers the June 11 PT selection 3.75 to the June 9 version 3.50 because `pavor ontológico do esvaziamento` adds content that resists easy paraphrase; Returning Reader likewise prefers the June 11 EN selection 4.10 to 3.40 for taking more formal and conceptual risk."
+open_problems:
+  - "Fact-Checker scores the selected PT work 3.10 and flags the sentence saying the paperclip-maximizer thought experiment was proposed by Nick Bostrom as too categorical. Bostrom's 2003 paper does contain the paperclip-manufacturing superintelligence example, while historical evidence also points to an earlier Yudkowsky mailing-list formulation. Issue #2119 tracks a sourced bilingual provenance correction."
+  - "Lyric-as-Poem scores the selected EN work 3.75 and identifies a craft ceiling: several regular rhymes visibly pull diction toward the rhyme scheme rather than toward the strongest semantic choice, so the lyric is less dense on the page than the composer notes and musical concept."
+  - "Skeptical Specialist scores a selected PT evaluation 2.50 and finds less directly examinable argumentative structure than in essayistic work. That perspective understates how much the later composer notes do, but it correctly marks that much of the piece's reasoning is carried by framing and form rather than by explicit argument in the lyric itself."
+  - "Derived `version_attention` is true with selected-version W/L 4/7. Long-Form Rationalist prefers the June 9 EN challenger 3.75 to the June 11 selection 3.25 because the final ontological-dread paragraph repeats work already done by the Whitehead section and weakens the landing. Contrary Weird-Clarity and Returning-Reader evidence favors the selection, so this is a discriminating adjudication problem rather than an automatic rollback; issue #2119 tracks it."
+note: >-
+  Confidence is high because evidence is abundant and the main quality signals agree, not because every perspective or version duel agrees. At review time the derived projection shows rank 41/107, ordinal 9.95 (mu 25.87, sigma 5.30), 29/57 wins/appearances, selected absolute quality 3.88 over 50 observations, de-confounded quality 3.92 over 57, a +0.04 gap, 13/14 perspectives, high signal agreement, selected-version W/L 4/7, and version_attention true. PT and EN share one translationKey and therefore one conceptual tier. No new duel was added: eleven selected-version wins/losses plus broad perspective coverage already localize the remaining uncertainty to provenance and the editorial value of the closing coda, so another generic comparison would add little information.
+history:
+  - "2026-09-23: initial placement -> quality B / interest A / confidence high. Previous tier: none. Material evidence: 57 Hrönir appearances, 50 selected absolute observations, 13/14 perspectives, high signal agreement, strong Applied-Thinker/form-content evidence, and mixed version-duel evidence that preserves version_attention. Unresolved weaknesses: forced-rhyme pressure in the lyric, overly categorical paperclip provenance, limited explicit argumentative surface for skeptical readers, and selected-coda adjudication tracked in issue #2119."
+---

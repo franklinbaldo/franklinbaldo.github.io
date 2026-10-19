@@ -1,0 +1,29 @@
+---
+type: blog-post-tier
+translation_key: "music-o-regral"
+quality_tier: "B"
+interest_tier: "A"
+confidence: "high"
+signal_agreement: "high"
+reviewed_at: "2026-09-23"
+reviewed_revision: "2980a72adff69e884f58bf4f5b5c2baf6b7f5d18"
+issue_urls:
+  - "https://github.com/franklinbaldo/franklinbaldo.github.io/issues/2225"
+summary: >-
+  "O Regral" is a strong and unusually distinctive translation of computational-cosmology ideas into Pantanal/sertão language: its invented vocabulary makes the concept experiential rather than merely decorative, and the best lines retain pressure even when separated from the composer notes. Quality is B because the explanatory layer sometimes turns a productive metaphor into a stronger technical claim than it has earned, especially around "computational autopoiesis" and the move from observers inside the Ruliad to the Ruliad observing itself through us; the lyric can also become lexically overpacked and explanatory. Interest is A because the collision of viola caipira, rural naming practices and the Ruliad is genuinely generative, memorable and difficult to reduce to a conventional science-song paraphrase.
+strengths:
+  - "Coverage supports a high-confidence judgment: the current Hrönir projection reports rank 65/107, ordinal 7.48, 26 wins in 55 appearances, 15 selected-version absolute-quality observations, complete 14/14 perspective coverage, absolute quality 3.68 and de-confounded quality 3.84."
+  - "Weird-Clarity gives the current EN selection 4.50 and identifies the work's strongest achievement: 'Tulha', 'Trançado', 'Grão-de-Lógica', 'Espinhel de mundos' and 'Vidraça' create a vocabulary whose strangeness cannot be cleanly translated back into ordinary exposition, while the bridge and outro leave a productive residue rather than closing the thought."
+  - "A recent Fact-Checker comparison gives the current EN selection 4.15 and finds its explicit Wolfram/Ruliad description substantially accurate and clearly framed as the composer's interpretive attempt rather than as an official definition. This keeps the scientific reference point from being merely ornamental even though later inferential moves need tighter calibration."
+  - "The current selected text also preserves gains identified in version duels: some earlier/current comparisons reward the notes for making the artistic problem legible, while another rewards the more confident lexical presentation over an older version's process-heavy hedging. Those are real editorial gains and argue against score-only rollback."
+open_problems:
+  - "Skeptical Specialist gives a current EN comparison 3.50 and identifies the central quality ceiling: the bridge asks a compelling question, but the notes do not supply the intermediate argument from a Ruliad containing observers to 'computational autopoiesis' or to the Ruliad literally observing itself through human windows. The metaphor is interesting; presenting it as a technical consequence is under-argued. Issue #2225 tracks calibration."
+  - "Lyric-as-Poem finds a recurring local weakness in the lyric surface: repeated neologisms can shift from compression into accumulation, and explanatory lines such as the machine turning while people walk are closer to prose placed in meter than to irreducible image. This limits achieved poetic quality without erasing the stronger ground-level images."
+  - "The composer notes invoke `_Events All the Way Down_` as a parallel source of the idea. A historical skeptical version review specifically preferred a challenger that removed this unpublished/self-referential support and used externally checkable references instead. If the cross-link remains, it should be framed as related authorial exploration rather than evidentiary authority."
+  - "PT and EN are one conceptual work but the published surfaces drift: the EN notes contain a fuller Wolfram/Ruliad definition than PT, while the EN page's `Lyrics` section still carries the Portuguese lyric. Issue #2225 tracks semantic alignment without treating translation polish as a separate tier authority."
+  - "Derived `version_attention` is true, with the selected version at 3/4 in direct version duels. Existing reviews show heterogeneous reasons for both wins and losses, including transparency, hedging and reference support, so the signal warrants content-aware adjudication rather than automatic rollback."
+note: >-
+  Confidence is high because the judgment rests on 55 pairwise appearances, 15 selected absolute observations and complete 14/14 perspective coverage. Signal agreement is high because ordinal position, win rate, absolute quality and de-confounded quality all occupy broadly compatible middle-to-strong bands; this does not mean perspectives are unanimous. At review time the selected version has direct-version W/L 3/4 and derived `version_attention` is true. No new duel was added because the remaining uncertainty is already localized by complete perspective coverage and substantive version reviews.
+history:
+  - "2026-09-23: initial placement -> quality B / interest A / confidence high. Previous tier: none. Material evidence: 55 Hrönir appearances with 26 wins, 15 selected absolute observations, complete 14/14 perspective coverage, absolute quality 3.68, de-confounded quality 3.84, strong Weird-Clarity evidence for the irreducible sertão/Ruliad vocabulary, current Fact-Checker evidence that the explicit Ruliad description is substantially defensible, Skeptical-Specialist evidence that the autopoiesis/self-observation bridge outruns its argument, Lyric-as-Poem evidence of lexical overaccumulation, and selected-version W/L 3/4. Unresolved weaknesses: technical-claim calibration, self-referential support, PT/EN semantic drift and content-aware version adjudication. Issue #2225 is the substantive-fix and re-evaluation trigger."
+---

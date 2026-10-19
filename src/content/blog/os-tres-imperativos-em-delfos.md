@@ -10,7 +10,7 @@ series: harness
 seriesOrder: 3
 featured: true
 featuredReason: "Um ensaio fundacional para o caminho de leitura Agência e Restrição."
-tags: ["filosofia", "ia", "agentes", "harness", "história", "autoconhecimento"]
+tags: ["filosofia", "IA", "agentes", "harness", "história", "autoconhecimento"]
 draftCreatedAt: "2026-06-12T12:06:06.428Z"
 ---
 

@@ -17,7 +17,7 @@ const episodes = blogAudioEpisodes()
   .sort((a, b) => Date.parse(b.episode.published_at) - Date.parse(a.episode.published_at));
 ---
 <PageLayout title="Áudio" description="Versões em áudio das matérias do blog" lang="pt">
-  <main class="container">
+  <div class="container">
     <h1>Áudio</h1>
     <p><a href="/audio.xml">Assinar o feed de áudio</a></p>
     {episodes.length === 0 ? <p>Nenhuma matéria em áudio publicada ainda.</p> : episodes.map(({ episode, post }) => (
@@ -26,5 +26,5 @@ const episodes = blogAudioEpisodes()
         <audio controls preload="metadata" src={episode.media_url} />
       </article>
     ))}
-  </main>
+  </div>
 </PageLayout>

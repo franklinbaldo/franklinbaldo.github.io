@@ -13,7 +13,7 @@ description: >-
 tags:
   - artificial intelligence
   - borges
-  - software engineering
+  - software-engineering
   - agents
   - funes
 draftCreatedAt: '2026-06-13T13:35:52.989Z'

@@ -1,0 +1,105 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "../../layouts/PageLayout.astro";
+import TierBoard, { type TierBoardStrings } from "../../components/TierBoard.astro";
+import {
+  BLOG_POST_TIERS_UPDATED,
+  blogPostTiers,
+} from "../../data/blog-post-tiers";
+import type { TierBoardItem } from "../../data/tier-types";
+import { isPublished } from "../../lib/publish";
+
+const allPosts = await getCollection("blog");
+const postByKey = new Map<
+  string,
+  { title: string; slug: string; lang: string }
+>();
+
+for (const post of allPosts) {
+  if (!isPublished(post)) continue;
+  const key = post.data.translationKey;
+  if (!key) continue;
+  const lang = post.data.lang ?? "en";
+  const existing = postByKey.get(key);
+  if (!existing || lang === "pt") {
+    postByKey.set(key, {
+      title: post.data.title,
+      slug: post.data.slug ?? post.id,
+      lang,
+    });
+  }
+}
+
+const number = new Intl.NumberFormat("pt-BR", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+const fmt = (value: number | null) => (value === null ? "—" : number.format(value));
+
+const items: TierBoardItem[] = blogPostTiers.map((record) => {
+  const post = postByKey.get(record.translationKey);
+  const ev = record.evidence;
+  return {
+    id: `post-tier-${record.translationKey}`,
+    title: post?.title ?? record.translationKey,
+    href: post
+      ? `/${post.lang === "pt" ? "pt/" : ""}blog/${post.slug}/`
+      : undefined,
+    qualityTier: record.qualityTier,
+    interestTier: record.interestTier,
+    confidence: record.confidence,
+    summary: record.summary,
+    reviewedAt: record.reviewedAt,
+    note: record.note,
+    strengths: record.strengths,
+    openProblems: record.openProblems,
+    history: record.history,
+    evidence: [
+      { label: "ranking", value: ev.rank ? `#${ev.rank}` : "—" },
+      { label: "ordinal", value: fmt(ev.ordinal) },
+      { label: "estrelas", value: fmt(ev.absoluteStars) },
+      { label: "de-conf.", value: fmt(ev.deconfoundedQuality) },
+      { label: "V/N", value: `${ev.wins}/${ev.appearances}` },
+    ],
+    links: [
+      { href: `/ranking/posts/${record.translationKey}/`, label: "dossiê Hrönir ↗" },
+    ],
+  };
+});
+
+const strings: TierBoardStrings = {
+  heading: "Tiers de posts",
+  description:
+    "A letra é uma decisão editorial canônica em OKF; OpenSkill, estrelas, qualidade de-confundida e perspectivas são evidência, não conversores automáticos de percentil.",
+  qualityLabel: "qualidade",
+  interestLabel: "interesse",
+  confidenceLabel: "conf.",
+  summaryQualityLabel: "qualidade",
+  summaryInterestLabel: "interesse / fertilidade",
+  emptyTier: "vazio — ninguém ganhou este lugar ainda",
+  emptyBoard: "Ainda não há tiers canônicos de posts.",
+  detailsLabel: "Ver ficha editorial",
+  strengthsHeading: "O que sustenta",
+  openProblemsHeading: "O que segura",
+  historyHeading: "Histórico do tier",
+  reviewedLabel: "revisão",
+};
+---
+
+<PageLayout
+  title="Tiers dos posts | Franklin Baldo"
+  description="Avaliação editorial dos posts do blog, ancorada no Hrönir e mantida em registros OKF por obra conceitual."
+  lang="pt"
+>
+  <hgroup>
+    <h1>Tiers dos posts</h1>
+    <p>
+      <small>
+        Atualizado {BLOG_POST_TIERS_UPDATED} · o mesmo board canônico aparece em
+        <a href="/pt/ranking/#post-tiers">Ranking → Tiers de posts</a>.
+      </small>
+    </p>
+  </hgroup>
+
+  <TierBoard items={items} strings={strings} id="post-tiers" />
+</PageLayout>

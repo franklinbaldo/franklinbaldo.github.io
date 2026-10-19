@@ -23,13 +23,13 @@ Two videos arrived on the same day and made this abstract observation concrete.
 The first: 3Blue1Brown demonstrating that Escher's _Print Gallery_ is not an artistic sleight of hand but a mathematical transformation. Apply the complex logarithm — a function that converts rotation-and-scaling into simple translation, then re-rolls via the exponential — to the engraving, and it "unrolls" into a flat, periodic plane. The blank center Escher left unresolved disappears: it is filled by the mathematical structure itself, the only content it could possibly have. Escher worked in the projected space. The mathematicians worked in the actual space. Only one of them could fill the center.
 
 <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:1.5rem 0;">
-  <iframe src="https://www.youtube.com/embed/ldxFjLJ3rVY" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
+  <iframe src="https://www.youtube.com/embed/ldxFjLJ3rVY" title="3Blue1Brown video about the mathematics of Escher's Print Gallery" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
 </div>
 
 The second: AlphaPhoenix, three years of work, a puzzle that required thinking in 3,721 dimensions.
 
 <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:1.5rem 0;">
-  <iframe src="https://www.youtube.com/embed/g8pjrVbdafY" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
+  <iframe src="https://www.youtube.com/embed/g8pjrVbdafY" title="AlphaPhoenix video about solving a 61×61 Lights Out puzzle" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
 </div>
 
 ---
