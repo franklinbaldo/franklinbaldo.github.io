@@ -1,0 +1,885 @@
+---
+import {
+  equationFamilies,
+  scienceBranches,
+  scienceFormulas,
+  SCIENCE_EQUATIONS_UPDATED,
+} from "../data/science-equations";
+
+const branchBySlug = new Map(scienceBranches.map((branch) => [branch.slug, branch]));
+const parentBySlug = new Map<string, string>();
+for (const branch of scienceBranches) {
+  for (const child of branch.children) parentBySlug.set(child, branch.slug);
+}
+
+const root = branchBySlug.get("science");
+const topDomainSlugs = root?.children ?? [];
+
+const topDomainFor = (slug: string) => {
+  let current = slug;
+  const seen = new Set<string>();
+  while (current && !seen.has(current)) {
+    seen.add(current);
+    const parent = parentBySlug.get(current);
+    if (!parent || parent === "science") return current;
+    current = parent;
+  }
+  return slug;
+};
+
+const domains = topDomainSlugs
+  .map((slug) => branchBySlug.get(slug))
+  .filter((branch): branch is NonNullable<typeof branch> => Boolean(branch))
+  .map((branch) => ({
+    id: branch.slug,
+    label: branch.name,
+    description: branch.description,
+  }));
+
+const formulas = scienceFormulas.map((formula) => ({
+  id: formula.slug,
+  label: formula.name,
+  latex: formula.latex,
+  summary: formula.summary,
+  status: formula.status,
+  sourceLabel: formula.sourceLabel ?? "",
+  sourceUrl: formula.sourceUrl ?? "",
+  domains: Array.from(new Set(formula.branches.map(topDomainFor))),
+  families: formula.families,
+}));
+
+const families = equationFamilies.map((family) => ({
+  id: family.slug,
+  label: family.name,
+  latex: family.canonicalLatex,
+  summary: family.summary,
+  status: family.status,
+  members: family.members,
+}));
+
+const graphData = {
+  updated: SCIENCE_EQUATIONS_UPDATED,
+  formulas,
+  families,
+  domains,
+};
+---
+
+<section class="uekg-universe" id="uekg-universe" data-graph={JSON.stringify(graphData)} aria-labelledby="uekg-universe-title">
+  <div class="universe-backdrop" aria-hidden="true"></div>
+  <div class="universe-grid" aria-hidden="true"></div>
+
+  <div class="universe-copy">
+    <p class="universe-kicker">UEKG · UNIVERSAL EQUATION KNOWLEDGE GRAPH</p>
+    <h2 id="uekg-universe-title">A mesma matemática.<br /><span>Outros mundos.</span></h2>
+    <p class="universe-deck">
+      Veja as mesmas equações se reorganizarem por disciplina — e depois pelo esqueleto matemático que compartilham.
+    </p>
+  </div>
+
+  <div class="universe-controls" aria-label="Modo de visualização">
+    <button type="button" class="mode-button is-active" data-mode="discipline" aria-pressed="true">
+      Por disciplina
+    </button>
+    <button type="button" class="mode-button" data-mode="structure" aria-pressed="false">
+      Por estrutura
+    </button>
+  </div>
+
+  <div class="universe-stage" data-stage>
+    <svg class="universe-edges" data-edges aria-hidden="true"></svg>
+    <div class="universe-nodes" data-nodes></div>
+
+    <aside class="universe-panel" data-panel aria-live="polite">
+      <p class="panel-kind" data-panel-kind>Explore o grafo</p>
+      <h3 data-panel-title>Uma fórmula pode pertencer a dois mundos.</h3>
+      <div class="panel-equation" data-panel-equation></div>
+      <p data-panel-summary>
+        Clique em qualquer nó. Em “por disciplina”, o mapa mostra onde a equação é usada. Em “por estrutura”, ele revela famílias matemáticas compartilhadas entre áreas.
+      </p>
+      <a class="panel-source" data-panel-source hidden>Ver fonte ↗</a>
+    </aside>
+
+    <div class="universe-legend" aria-hidden="true">
+      <span><i class="dot formula"></i> equação</span>
+      <span><i class="dot anchor"></i> agrupador</span>
+      <span><i class="line"></i> relação</span>
+    </div>
+  </div>
+
+  <div class="universe-footer">
+    <div class="universe-stats">
+      <span><strong>{scienceFormulas.length}</strong> equações</span>
+      <span><strong>{equationFamilies.length}</strong> famílias verificadas</span>
+      <span><strong>{domains.length}</strong> grandes domínios</span>
+    </div>
+    <div class="spotlights" aria-label="Famílias para destacar">
+      <span>Experimente:</span>
+      {equationFamilies.slice(0, 4).map((family) => (
+        <button type="button" data-focus-family={family.slug}>{family.name}</button>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const universe = document.querySelector<HTMLElement>("#uekg-universe");
+
+  if (universe) {
+    const data = JSON.parse(universe.dataset.graph || "{}");
+    const stage = universe.querySelector<HTMLElement>("[data-stage]");
+    const nodeLayer = universe.querySelector<HTMLElement>("[data-nodes]");
+    const edgeSvg = universe.querySelector<SVGSVGElement>("[data-edges]");
+    const modeButtons = Array.from(universe.querySelectorAll<HTMLButtonElement>("[data-mode]"));
+    const spotlightButtons = Array.from(universe.querySelectorAll<HTMLButtonElement>("[data-focus-family]"));
+    const panel = universe.querySelector<HTMLElement>("[data-panel]");
+    const panelKind = universe.querySelector<HTMLElement>("[data-panel-kind]");
+    const panelTitle = universe.querySelector<HTMLElement>("[data-panel-title]");
+    const panelEquation = universe.querySelector<HTMLElement>("[data-panel-equation]");
+    const panelSummary = universe.querySelector<HTMLElement>("[data-panel-summary]");
+    const panelSource = universe.querySelector<HTMLAnchorElement>("[data-panel-source]");
+
+    if (stage && nodeLayer && edgeSvg && panel && panelKind && panelTitle && panelEquation && panelSummary && panelSource) {
+      type GraphNode = {
+        key: string;
+        id: string;
+        kind: "formula" | "domain" | "family" | "frontier";
+        label: string;
+        latex?: string;
+        summary?: string;
+        description?: string;
+        status?: string;
+        sourceLabel?: string;
+        sourceUrl?: string;
+        domains?: string[];
+        families?: string[];
+        members?: string[];
+        x?: number;
+        y?: number;
+      };
+
+      type Edge = { from: string; to: string; kind: "discipline" | "structure" };
+
+      const formulas: GraphNode[] = (data.formulas || []).map((item: any) => ({
+        ...item,
+        key: `formula:${item.id}`,
+        kind: "formula" as const,
+      }));
+      const domains: GraphNode[] = (data.domains || []).map((item: any) => ({
+        ...item,
+        key: `domain:${item.id}`,
+        kind: "domain" as const,
+      }));
+      const families: GraphNode[] = (data.families || []).map((item: any) => ({
+        ...item,
+        key: `family:${item.id}`,
+        kind: "family" as const,
+      }));
+      const frontier: GraphNode = {
+        key: "frontier:open",
+        id: "open-frontier",
+        kind: "frontier",
+        label: "Fronteira aberta",
+        description: "Equações ainda sem uma família matemática verificada no Atlas.",
+      };
+
+      const nodes = [...formulas, ...domains, ...families, frontier];
+      const nodeByKey = new Map(nodes.map((node) => [node.key, node]));
+      const buttons = new Map<string, HTMLButtonElement>();
+      const lines = new Map<string, SVGLineElement>();
+      let mode: "discipline" | "structure" = "discipline";
+      let focused: string | null = null;
+      let autoMorphTimer: number | undefined;
+
+      const domainForFormula = (formula: GraphNode) =>
+        formula.domains?.find((id) => domains.some((domain) => domain.id === id)) ?? domains[0]?.id ?? "";
+
+      const structureForFormula = (formula: GraphNode) =>
+        formula.families?.find((id) => families.some((family) => family.id === id)) ?? frontier.id;
+
+      const activeAnchors = () => mode === "discipline" ? domains : [...families, frontier];
+
+      const activeEdges = (): Edge[] => {
+        if (mode === "discipline") {
+          return formulas
+            .map((formula) => ({
+              from: `domain:${domainForFormula(formula)}`,
+              to: formula.key,
+              kind: "discipline" as const,
+            }))
+            .filter((edge) => nodeByKey.has(edge.from));
+        }
+
+        const familyEdges: Edge[] = [];
+        for (const formula of formulas) {
+          const memberships = formula.families?.filter((id) => families.some((family) => family.id === id)) ?? [];
+          if (memberships.length === 0) {
+            familyEdges.push({ from: frontier.key, to: formula.key, kind: "structure" });
+          } else {
+            for (const familyId of memberships) {
+              familyEdges.push({ from: `family:${familyId}`, to: formula.key, kind: "structure" });
+            }
+          }
+        }
+        return familyEdges;
+      };
+
+      const createNodes = () => {
+        for (const node of nodes) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `graph-node ${node.kind}`;
+          button.dataset.key = node.key;
+          button.setAttribute("aria-label", node.label);
+          button.innerHTML = `
+            <span class="node-core" aria-hidden="true"></span>
+            <span class="node-label"></span>
+          `;
+          const label = button.querySelector<HTMLElement>(".node-label");
+          if (label) label.textContent = node.label;
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            focusNode(node.key, true);
+          });
+          nodeLayer.appendChild(button);
+          buttons.set(node.key, button);
+        }
+      };
+
+      const seededOffset = (text: string) => {
+        let hash = 2166136261;
+        for (const char of text) {
+          hash ^= char.charCodeAt(0);
+          hash = Math.imul(hash, 16777619);
+        }
+        return ((hash >>> 0) % 1000) / 1000;
+      };
+
+      const placeLayout = () => {
+        const rect = stage.getBoundingClientRect();
+        const width = Math.max(rect.width, 640);
+        const height = Math.max(rect.height, 620);
+        const compact = rect.width < 760;
+        const cx = compact ? width * 0.5 : width * 0.47;
+        const cy = compact ? height * 0.46 : height * 0.52;
+        const anchors = activeAnchors();
+        const rx = compact ? width * 0.31 : Math.min(width * 0.31, 470);
+        const ry = compact ? height * 0.25 : Math.min(height * 0.31, 300);
+
+        anchors.forEach((anchor, index) => {
+          const angle = -Math.PI / 2 + (Math.PI * 2 * index) / Math.max(anchors.length, 1);
+          anchor.x = cx + Math.cos(angle) * rx;
+          anchor.y = cy + Math.sin(angle) * ry;
+        });
+
+        const visibleAnchorById = new Map(anchors.map((anchor) => [anchor.id, anchor]));
+        const grouped = new Map<string, GraphNode[]>();
+        for (const formula of formulas) {
+          const groupId = mode === "discipline" ? domainForFormula(formula) : structureForFormula(formula);
+          const group = grouped.get(groupId) ?? [];
+          group.push(formula);
+          grouped.set(groupId, group);
+        }
+
+        for (const [groupId, group] of grouped) {
+          const anchor = visibleAnchorById.get(groupId);
+          if (!anchor) continue;
+          group.forEach((formula, index) => {
+            const offset = seededOffset(formula.id) * Math.PI * 2;
+            const angle = offset + index * 2.399963229728653;
+            const ring = compact
+              ? 54 + 19 * Math.sqrt(index + 1)
+              : 68 + 24 * Math.sqrt(index + 1);
+            formula.x = (anchor.x ?? cx) + Math.cos(angle) * ring;
+            formula.y = (anchor.y ?? cy) + Math.sin(angle) * ring * 0.74;
+          });
+        }
+
+        for (const node of nodes) {
+          const button = buttons.get(node.key);
+          if (!button) continue;
+          const isAnchorVisible =
+            node.kind === "formula" ||
+            (mode === "discipline" && node.kind === "domain") ||
+            (mode === "structure" && (node.kind === "family" || node.kind === "frontier"));
+
+          button.classList.toggle("is-hidden", !isAnchorVisible);
+          if (node.x != null && node.y != null) {
+            button.style.setProperty("--node-x", `${node.x}px`);
+            button.style.setProperty("--node-y", `${node.y}px`);
+          }
+        }
+
+        drawEdges(width, height);
+      };
+
+      const drawEdges = (width: number, height: number) => {
+        edgeSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+        const edges = activeEdges();
+        const activeKeys = new Set<string>();
+
+        edges.forEach((edge, index) => {
+          const from = nodeByKey.get(edge.from);
+          const to = nodeByKey.get(edge.to);
+          if (!from || !to || from.x == null || from.y == null || to.x == null || to.y == null) return;
+
+          const key = `${mode}:${edge.from}:${edge.to}:${index}`;
+          activeKeys.add(key);
+          let line = lines.get(key);
+          if (!line) {
+            line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.classList.add("graph-edge", edge.kind);
+            edgeSvg.appendChild(line);
+            lines.set(key, line);
+          }
+          line.setAttribute("x1", String(from.x));
+          line.setAttribute("y1", String(from.y));
+          line.setAttribute("x2", String(to.x));
+          line.setAttribute("y2", String(to.y));
+        });
+
+        for (const [key, line] of lines) {
+          const shouldShow = activeKeys.has(key);
+          line.classList.toggle("is-hidden", !shouldShow);
+        }
+
+        applyFocus();
+      };
+
+      const detailKind = (node: GraphNode) => {
+        if (node.kind === "formula") return `EQUAÇÃO · ${(node.status || "candidate").toUpperCase()}`;
+        if (node.kind === "family") return `FAMÍLIA · ${(node.status || "hypothesis").toUpperCase()}`;
+        if (node.kind === "domain") return "DOMÍNIO CIENTÍFICO";
+        return "FRONTEIRA DE PESQUISA";
+      };
+
+      const updatePanel = (node: GraphNode) => {
+        panelKind.textContent = detailKind(node);
+        panelTitle.textContent = node.label;
+        panelEquation.textContent = node.latex || "";
+        panelEquation.hidden = !node.latex;
+        panelSummary.textContent = node.summary || node.description || "";
+        if (node.sourceUrl) {
+          panelSource.hidden = false;
+          panelSource.href = node.sourceUrl;
+          panelSource.textContent = node.sourceLabel ? `Fonte: ${node.sourceLabel} ↗` : "Ver fonte ↗";
+        } else {
+          panelSource.hidden = true;
+          panelSource.removeAttribute("href");
+        }
+        panel.classList.add("is-open");
+      };
+
+      const neighborSet = () => {
+        if (!focused) return new Set<string>();
+        const set = new Set<string>([focused]);
+        for (const edge of activeEdges()) {
+          if (edge.from === focused) set.add(edge.to);
+          if (edge.to === focused) set.add(edge.from);
+        }
+        return set;
+      };
+
+      const applyFocus = () => {
+        const neighbors = neighborSet();
+        for (const [key, button] of buttons) {
+          button.classList.toggle("is-focused", focused === key);
+          button.classList.toggle("is-dimmed", Boolean(focused) && !neighbors.has(key));
+        }
+        for (const [key, line] of lines) {
+          if (line.classList.contains("is-hidden")) continue;
+          const parts = key.split(":");
+          const edgeFrom = parts.slice(2, -2).join(":");
+          const edgeTo = parts.slice(-2, -1).join(":");
+          const related = !focused || key.includes(focused.replace(":", ":"));
+          line.classList.toggle("is-dimmed", Boolean(focused) && !related && !neighbors.has(edgeFrom) && !neighbors.has(edgeTo));
+        }
+      };
+
+      const focusNode = (key: string | null, userInitiated = false) => {
+        focused = key;
+        if (userInitiated && autoMorphTimer) {
+          window.clearTimeout(autoMorphTimer);
+          autoMorphTimer = undefined;
+        }
+        if (!key) {
+          panel.classList.remove("is-open");
+          applyFocus();
+          return;
+        }
+        const node = nodeByKey.get(key);
+        if (!node) return;
+        updatePanel(node);
+        applyFocus();
+      };
+
+      const switchMode = (nextMode: "discipline" | "structure", userInitiated = false) => {
+        mode = nextMode;
+        focused = null;
+        panel.classList.remove("is-open");
+        universe.dataset.mode = mode;
+        modeButtons.forEach((button) => {
+          const active = button.dataset.mode === mode;
+          button.classList.toggle("is-active", active);
+          button.setAttribute("aria-pressed", String(active));
+        });
+        placeLayout();
+        if (userInitiated && autoMorphTimer) {
+          window.clearTimeout(autoMorphTimer);
+          autoMorphTimer = undefined;
+        }
+      };
+
+      createNodes();
+      universe.dataset.mode = mode;
+      placeLayout();
+
+      modeButtons.forEach((button) => {
+        button.addEventListener("click", () => switchMode(button.dataset.mode as "discipline" | "structure", true));
+      });
+
+      spotlightButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          switchMode("structure", true);
+          const familyId = button.dataset.focusFamily;
+          if (familyId) {
+            window.setTimeout(() => focusNode(`family:${familyId}`, true), 450);
+          }
+        });
+      });
+
+      stage.addEventListener("click", () => focusNode(null, true));
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") focusNode(null, true);
+      });
+
+      const observer = new ResizeObserver(() => placeLayout());
+      observer.observe(stage);
+
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!prefersReducedMotion) {
+        autoMorphTimer = window.setTimeout(() => {
+          if (!focused && mode === "discipline") switchMode("structure", false);
+        }, 3200);
+      }
+    }
+  }
+</script>
+
+<style>
+  .uekg-universe {
+    --universe-cyan: #62f1ff;
+    --universe-violet: #ae7bff;
+    --universe-amber: #ffd166;
+    --universe-ink: #060811;
+    position: relative;
+    left: 50%;
+    width: min(1600px, calc(100vw - 1rem));
+    transform: translateX(-50%);
+    overflow: hidden;
+    margin: clamp(1.25rem, 3vw, 2.5rem) 0 5rem;
+    border: 1px solid rgba(155, 180, 255, .18);
+    border-radius: clamp(1.25rem, 3vw, 2.5rem);
+    color: #f6f7ff;
+    background:
+      radial-gradient(circle at 18% 0%, rgba(53, 218, 255, .13), transparent 31%),
+      radial-gradient(circle at 86% 20%, rgba(174, 123, 255, .16), transparent 34%),
+      linear-gradient(145deg, #080b15 0%, #03050a 74%);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, .42);
+    isolation: isolate;
+  }
+
+  .universe-backdrop,
+  .universe-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .universe-backdrop {
+    opacity: .65;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255,255,255,.75) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 80% 22%, rgba(255,255,255,.5) 0 1px, transparent 1.3px),
+      radial-gradient(circle at 64% 66%, rgba(255,255,255,.5) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 28% 76%, rgba(255,255,255,.45) 0 1px, transparent 1.3px);
+    background-size: 190px 170px, 270px 220px, 330px 290px, 410px 360px;
+  }
+
+  .universe-grid {
+    opacity: .15;
+    background-image:
+      linear-gradient(rgba(128, 155, 210, .25) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(128, 155, 210, .25) 1px, transparent 1px);
+    background-size: 52px 52px;
+    mask-image: linear-gradient(to bottom, black, transparent 86%);
+  }
+
+  .universe-copy {
+    position: relative;
+    z-index: 3;
+    max-width: 850px;
+    padding: clamp(2rem, 5vw, 4.6rem) clamp(1.25rem, 5vw, 4.8rem) 0;
+  }
+
+  .universe-kicker {
+    margin: 0 0 .9rem;
+    color: var(--universe-cyan);
+    font: 800 .68rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: .17em;
+  }
+
+  .universe-copy h2 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(3rem, 7vw, 7.2rem);
+    line-height: .84;
+    letter-spacing: -.065em;
+  }
+
+  .universe-copy h2 span {
+    background: linear-gradient(90deg, var(--universe-cyan), #d7b9ff 72%);
+    background-clip: text;
+    color: transparent;
+  }
+
+  .universe-deck {
+    max-width: 690px;
+    margin: 1.3rem 0 0;
+    color: rgba(238, 242, 255, .7);
+    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    line-height: 1.55;
+  }
+
+  .universe-controls {
+    position: absolute;
+    z-index: 8;
+    top: clamp(1.25rem, 3vw, 2.2rem);
+    right: clamp(1.25rem, 3vw, 2.2rem);
+    display: flex;
+    gap: .35rem;
+    padding: .35rem;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 999px;
+    background: rgba(5, 7, 14, .72);
+    backdrop-filter: blur(18px);
+  }
+
+  .mode-button,
+  .spotlights button {
+    width: auto;
+    margin: 0;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .mode-button {
+    padding: .6rem .9rem;
+    border-radius: 999px;
+    color: rgba(244, 247, 255, .65);
+    background: transparent;
+    font: 750 .76rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  .mode-button.is-active {
+    color: #061018;
+    background: var(--universe-cyan);
+    box-shadow: 0 0 28px rgba(98, 241, 255, .22);
+  }
+
+  [data-mode="structure"] .mode-button.is-active {
+    background: #c5a0ff;
+  }
+
+  .universe-stage {
+    position: relative;
+    z-index: 2;
+    min-height: clamp(650px, 68vw, 860px);
+    margin-top: -2.5rem;
+  }
+
+  .universe-edges,
+  .universe-nodes {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .universe-edges {
+    overflow: visible;
+  }
+
+  :global(.graph-edge) {
+    stroke-width: 1.15;
+    opacity: .42;
+    transition: opacity .35s ease, stroke .45s ease;
+  }
+
+  :global(.graph-edge.discipline) { stroke: rgba(98, 241, 255, .62); }
+  :global(.graph-edge.structure) { stroke: rgba(190, 145, 255, .72); }
+  :global(.graph-edge.is-hidden) { opacity: 0; }
+  :global(.graph-edge.is-dimmed) { opacity: .05; }
+
+  :global(.graph-node) {
+    --size: 58px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--size);
+    min-width: 0;
+    height: var(--size);
+    margin: 0;
+    padding: 0;
+    transform: translate(calc(var(--node-x) - 50%), calc(var(--node-y) - 50%));
+    border: 0;
+    border-radius: 50%;
+    color: #fff;
+    background: transparent;
+    cursor: pointer;
+    transition:
+      transform .9s cubic-bezier(.2,.75,.2,1),
+      opacity .35s ease,
+      filter .35s ease;
+    z-index: 4;
+  }
+
+  :global(.graph-node .node-core) {
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(255,255,255,.44);
+    border-radius: inherit;
+    background:
+      radial-gradient(circle at 35% 30%, rgba(255,255,255,.94), rgba(98,241,255,.42) 15%, rgba(31,61,91,.78) 54%, rgba(7,12,23,.95) 74%);
+    box-shadow:
+      inset 0 0 18px rgba(255,255,255,.16),
+      0 0 22px rgba(98,241,255,.16);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+
+  :global(.graph-node .node-label) {
+    position: absolute;
+    top: calc(100% - 1px);
+    left: 50%;
+    width: max-content;
+    max-width: 120px;
+    transform: translateX(-50%);
+    color: rgba(242, 245, 255, .74);
+    font: 720 .63rem/1.15 ui-sans-serif, system-ui, sans-serif;
+    text-align: center;
+    text-wrap: balance;
+    pointer-events: none;
+    text-shadow: 0 2px 8px #000;
+  }
+
+  :global(.graph-node.domain),
+  :global(.graph-node.family),
+  :global(.graph-node.frontier) {
+    --size: 108px;
+  }
+
+  :global(.graph-node.domain .node-core),
+  :global(.graph-node.family .node-core),
+  :global(.graph-node.frontier .node-core) {
+    inset: 12px;
+    border-width: 1.5px;
+  }
+
+  :global(.graph-node.domain .node-core) {
+    background: radial-gradient(circle at 35% 28%, #e9feff, #3cdcf0 14%, #0e7180 52%, #06252d 74%);
+    box-shadow: 0 0 34px rgba(98,241,255,.32), inset 0 0 25px rgba(255,255,255,.25);
+  }
+
+  :global(.graph-node.family .node-core) {
+    background: radial-gradient(circle at 35% 28%, #fff, #caa9ff 14%, #6d42ab 52%, #251544 74%);
+    box-shadow: 0 0 38px rgba(174,123,255,.36), inset 0 0 25px rgba(255,255,255,.23);
+  }
+
+  :global(.graph-node.frontier .node-core) {
+    border-style: dashed;
+    background: radial-gradient(circle, rgba(255,209,102,.18), rgba(82,54,18,.25) 58%, rgba(20,13,4,.7) 72%);
+    box-shadow: 0 0 34px rgba(255,209,102,.12);
+  }
+
+  :global(.graph-node:hover .node-core),
+  :global(.graph-node.is-focused .node-core) {
+    transform: scale(1.2);
+    border-color: #fff;
+    box-shadow: 0 0 42px rgba(98,241,255,.5), inset 0 0 26px rgba(255,255,255,.28);
+  }
+
+  :global(.graph-node.family:hover .node-core),
+  :global(.graph-node.family.is-focused .node-core) {
+    box-shadow: 0 0 46px rgba(174,123,255,.58), inset 0 0 26px rgba(255,255,255,.28);
+  }
+
+  :global(.graph-node.is-hidden) {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  :global(.graph-node.is-dimmed) {
+    opacity: .12;
+    filter: grayscale(.65);
+  }
+
+  .universe-panel {
+    position: absolute;
+    z-index: 7;
+    right: clamp(1rem, 3vw, 2.2rem);
+    bottom: clamp(1rem, 3vw, 2.2rem);
+    width: min(390px, calc(100% - 2rem));
+    padding: 1.25rem 1.35rem 1.35rem;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 1.25rem;
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    background: rgba(6, 9, 18, .84);
+    box-shadow: 0 24px 70px rgba(0,0,0,.45);
+    backdrop-filter: blur(22px);
+    transition: opacity .28s ease, transform .28s ease;
+  }
+
+  .universe-panel.is-open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .panel-kind {
+    margin: 0 0 .35rem;
+    color: var(--universe-cyan);
+    font: 800 .65rem/1.1 ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: .12em;
+  }
+
+  .universe-panel h3 {
+    margin: 0 0 .7rem;
+    color: #fff;
+    font-size: 1.35rem;
+    line-height: 1.05;
+  }
+
+  .panel-equation {
+    overflow-x: auto;
+    margin: .8rem 0;
+    padding: .65rem .8rem;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: .75rem;
+    color: #d9e7ff;
+    background: rgba(255,255,255,.04);
+    font: 650 .82rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  .universe-panel > p:not(.panel-kind) {
+    margin-bottom: .9rem;
+    color: rgba(240,243,255,.7);
+    font-size: .9rem;
+    line-height: 1.48;
+  }
+
+  .panel-source {
+    color: var(--universe-cyan);
+    font-size: .78rem;
+  }
+
+  .universe-legend {
+    position: absolute;
+    left: clamp(1rem, 3vw, 2.2rem);
+    bottom: clamp(1rem, 3vw, 2.2rem);
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .8rem;
+    color: rgba(240,243,255,.44);
+    font: 680 .63rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  .universe-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+  }
+
+  .dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+
+  .dot.formula { background: var(--universe-cyan); }
+  .dot.anchor { background: var(--universe-violet); }
+  .line {
+    width: 18px;
+    height: 1px;
+    background: rgba(190,145,255,.65);
+  }
+
+  .universe-footer {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.15rem clamp(1.25rem, 4vw, 3rem) 1.45rem;
+    border-top: 1px solid rgba(255,255,255,.08);
+    background: rgba(4,6,12,.62);
+  }
+
+  .universe-stats,
+  .spotlights {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem .8rem;
+  }
+
+  .universe-stats {
+    color: rgba(243,246,255,.56);
+    font-size: .72rem;
+  }
+
+  .universe-stats strong {
+    color: #fff;
+    font-size: .9rem;
+  }
+
+  .spotlights > span {
+    color: rgba(243,246,255,.45);
+    font-size: .68rem;
+  }
+
+  .spotlights button {
+    padding: .38rem .62rem;
+    border: 1px solid rgba(174,123,255,.23);
+    border-radius: 999px;
+    color: #d9c6ff;
+    background: rgba(174,123,255,.08);
+    font-size: .67rem;
+  }
+
+  .spotlights button:hover {
+    border-color: rgba(174,123,255,.55);
+    background: rgba(174,123,255,.16);
+  }
+
+  @media (max-width: 820px) {
+    .uekg-universe { width: calc(100vw - .5rem); }
+    .universe-copy { padding-top: 5.8rem; }
+    .universe-controls { left: 1rem; right: auto; }
+    .universe-stage { min-height: 760px; margin-top: -1rem; }
+    .universe-footer { display: block; }
+    .spotlights { margin-top: .9rem; }
+    .universe-legend { display: none; }
+    :global(.graph-node .node-label) { max-width: 90px; font-size: .58rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.graph-node),
+    .universe-panel {
+      transition-duration: .01ms;
+    }
+  }
+</style>

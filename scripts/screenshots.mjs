@@ -1,7 +1,7 @@
 import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
 
-const BASE = "http://localhost:4321";
+const BASE = "http://127.0.0.1:4321";
 const OUT = "/tmp/screenshots";
 mkdirSync(OUT, { recursive: true });
 
@@ -13,12 +13,16 @@ const pages = [
   { id: "02-pt-home", url: "/pt/" },
   {
     id: "03-en-post-delphi",
-    url: "/blog/2026-05-04-the-three-imperatives-at-delphi/",
+    url: "/blog/the-three-imperatives-at-delphi/",
   },
   { id: "04-en-path-agency", url: "/paths/agency-and-constraint/" },
   { id: "05-en-archive", url: "/archive/" },
   { id: "06-en-repo-factory", url: "/games/repo-factory/" },
   { id: "07-flymirror", url: "/flymirror/" },
+  { id: "08-pt-archive", url: "/pt/archive/" },
+  { id: "09-en-more-menu", url: "/", openMenu: true },
+  { id: "10-pt-more-menu", url: "/pt/", openMenu: true },
+  { id: "11-fourier-demo", url: "/demos/fourier-below-nlogn.html" },
 ];
 
 const themeKeyPages = ["01-en-home", "03-en-post-delphi", "06-en-repo-factory"];
@@ -41,10 +45,14 @@ async function shoot(p, viewport, theme) {
   }, theme);
 
   const page = await ctx.newPage();
-  await page.goto(BASE + p.url, { waitUntil: "networkidle" });
+  const response = await page.goto(BASE + p.url, { waitUntil: "networkidle" });
+  if (!response.ok())
+    throw new Error(`Screenshot route ${p.url}: HTTP ${response.status()}`);
   // Settle web fonts + lazy images.
   await page.evaluate(() => (document.fonts ? document.fonts.ready : null));
   await page.waitForTimeout(300);
+
+  if (p.openMenu) await page.locator(".more-menu summary").click();
 
   const vpLabel = viewport.width >= 1000 ? "desktop" : "mobile";
   const themeLabel = theme === "dark" ? "-dark" : "";

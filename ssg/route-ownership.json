@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "purpose": "Native SSG route ownership; candidate only until full cutover.",
+  "routes": [
+    {
+      "path": "/",
+      "owner": "ssg-core",
+      "strategy": "native-index"
+    },
+    {
+      "path": "/pt/",
+      "owner": "ssg-core",
+      "strategy": "native-i18n"
+    },
+    {
+      "path": "/archive/",
+      "owner": "ssg-core",
+      "strategy": "native-listings"
+    },
+    {
+      "path": "/pt/archive/",
+      "owner": "ssg-core",
+      "strategy": "native-listings"
+    },
+    {
+      "path": "/projects/",
+      "owner": "projects",
+      "strategy": "domain-data-to-ssg"
+    },
+    {
+      "path": "/pt/projects/",
+      "owner": "projects",
+      "strategy": "domain-data-to-ssg"
+    },
+    {
+      "path": "/music/",
+      "owner": "music",
+      "strategy": "domain-data-to-ssg"
+    },
+    {
+      "path": "/books/",
+      "owner": "books",
+      "strategy": "domain-data-to-ssg"
+    },
+    {
+      "path": "/ranking/",
+      "owner": "hronir",
+      "strategy": "okf-projection-to-ssg"
+    },
+    {
+      "path": "/papers/",
+      "owner": "papers",
+      "strategy": "okf-projection-to-ssg"
+    },
+    {
+      "path": "/rss.xml",
+      "owner": "ssg-core",
+      "strategy": "native-feed"
+    },
+    {
+      "path": "/atom.xml",
+      "owner": "ssg-core",
+      "strategy": "native-feed"
+    },
+    {
+      "path": "/sitemap.xml",
+      "owner": "ssg-core",
+      "strategy": "native-sitemap"
+    }
+  ]
+}
