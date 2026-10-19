@@ -30,8 +30,10 @@ export function metadataForPost(data, id) {
   const lang = data.lang === "pt" ? "pt" : "en";
   return {
     title: String(data.title),
+    name: String(data.title),
     description: String(data.description),
     date: date.toISOString().slice(0, 10),
+    news_publication_date: date.toISOString().slice(0, 10),
     layout: "post",
     language: lang,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
@@ -101,11 +103,11 @@ export function prepareNativeSite({ now = new Date(), output = OUTPUT } = {}) {
   // SSG's own i18n plugin handles alternate links, root-hosted English,
   // and /pt/ based on these content files and translation_key.
   const home = {
-    title: "Franklin Baldo", description: "Essays, code and research.",
+    title: "Franklin Baldo", name: "Franklin Baldo", description: "Essays, code and research.",
     language: "en", layout: "page", draft: false,
   };
   const homePt = {
-    title: "Franklin Baldo", description: "Ensaios, código e pesquisa.",
+    title: "Franklin Baldo", name: "Franklin Baldo", description: "Ensaios, código e pesquisa.",
     language: "pt", layout: "page", draft: false,
   };
   write(content, "index.md", markdownDocument(home,
