@@ -71,6 +71,34 @@ try {
         const menu = page.locator(".site-header .more-menu");
         assert.equal(await menu.locator('a[href="/papers/"]').count(), 0);
         assert.equal(await menu.locator(`a[href="${tagRoute}"]`).count(), 1);
+        const research = page.locator(".research-doorways");
+        assert.equal(await research.count(), 1, "one open-lab entry section");
+        assert.equal(await research.locator("h2").count(), 1);
+        const entrances = research.locator("a");
+        const expectedPaths = [
+          "/papers/",
+          "/games/repo-factory/",
+          name === "home-pt" ? "/pt/malecns/" : "/malecns/",
+        ];
+        assert.deepEqual(
+          await entrances.evaluateAll((links) =>
+            links.map((link) => new URL(link.href).pathname)
+          ),
+          expectedPaths,
+          "three existing research destinations, localized where available"
+        );
+        for (const link of await entrances.all()) {
+          assert.ok(await link.isVisible(), "research entry visible without interaction");
+          assert.ok((await link.innerText()).trim().length > 10, "research entry describes destination");
+        }
+        if (viewport.width === 390) {
+          assert.ok(
+            await research.evaluate(
+              (node) => node.getBoundingClientRect().right <= window.innerWidth + 1
+            ),
+            "research entries fit the 390px viewport"
+          );
+        }
       }
       if (name === "migration") {
         assert.ok(await page.locator("[data-article-toc]").count());

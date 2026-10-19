@@ -28,6 +28,16 @@
       <h1>Franklin Baldo<span aria-hidden="true">.</span></h1>
       <p class="tagline">{% if lang == "pt" %}Ensaios, código e música na fronteira da IA, filosofia e literatura.{% else %}Essays, code, and music at the border of AI, philosophy, and literature.{% endif %}</p>
     </header>
+    <section class="research-doorways" aria-labelledby="research-doorways-heading">
+      <p class="eyebrow">{% if lang == "pt" %}Laboratório aberto{% else %}Open research lab{% endif %}</p>
+      <h2 id="research-doorways-heading">{% if lang == "pt" %}Investigue, experimente, confira as fontes{% else %}Investigate, experiment, check the sources{% endif %}</h2>
+      <p>{% if lang == "pt" %}Acompanhe pesquisas em andamento, explore ferramentas interativas e consulte projetos públicos. Experimentos exploratórios não substituem medições validadas.{% else %}Follow research in progress, explore interactive tools, and inspect public projects. Exploratory demos are not validated measurements.{% endif %}</p>
+      <ul class="research-doorways-list">
+        <li><a href="/papers/"><strong>{% if lang == "pt" %}Pesquisar · Papers{% else %}Research · Papers{% endif %}</strong><span>{% if lang == "pt" %}Publicações e trilhas de investigação{% else %}Publications and research trails{% endif %}</span><span class="research-doorways-arrow" aria-hidden="true">→</span></a></li>
+        <li><a href="/games/repo-factory/"><strong>{% if lang == "pt" %}Experimentar · Repo Factory{% else %}Try · Repo Factory{% endif %}</strong><span>{% if lang == "pt" %}Explore um mapa interativo de repositórios{% else %}Explore an interactive repository map{% endif %}</span><span class="research-doorways-arrow" aria-hidden="true">→</span></a></li>
+        <li><a href="{{ prefix }}/malecns/"><strong>{% if lang == "pt" %}Explorar · MaleCNS{% else %}Explore · MaleCNS{% endif %}</strong><span>{% if lang == "pt" %}Projetos e registros de evidências{% else %}Projects and evidence records{% endif %}</span><span class="research-doorways-arrow" aria-hidden="true">→</span></a></li>
+      </ul>
+    </section>
     <section class="start-here" aria-labelledby="start-here-heading">
       <h2 id="start-here-heading">{% if lang == "pt" %}Comece por aqui{% else %}Start here{% endif %}</h2>
       <p class="tagline">{% if lang == "pt" %}Escolha um assunto e siga uma trilha de leitura pelo acervo.{% else %}Choose a subject and follow a reading path through the archive.{% endif %}</p>
