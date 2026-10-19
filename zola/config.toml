@@ -1,0 +1,37 @@
+# Compatibility target: Zola 0.23.6. The build script verifies the binary version.
+# Source documents remain in src/content/blog; the exporter prepares content/.
+base_url = "https://franklinbaldo.github.io"
+title = "Franklin Baldo"
+description = "Essays, code, and music at the border of AI, philosophy, and literature."
+default_language = "en"
+author = "Franklin Baldo"
+compile_sass = false
+minify_html = false
+build_search_index = false
+# Imported Markdown can contain literal template examples.
+skip_content_templating = ["*.md", "**/*.md"]
+# The exporter produces separate feeds using each post's original language.
+generate_feeds = false
+feed_filenames = ["rss.xml"]
+generate_sitemap = true
+# Preserve the existing public/robots.txt copied by the exporter.
+generate_robots_txt = false
+
+[markdown]
+smart_punctuation = false
+bottom_footnotes = true
+insert_anchor_links = "heading"
+
+[markdown.highlighting]
+light_theme = "github-light"
+dark_theme = "github-dark"
+style = "inline"
+# Existing posts include custom/diagram fences, which must remain readable.
+error_on_missing_language = false
+
+[slugify]
+paths = "safe"
+anchors = "on"
+
+[extra]
+author = "Franklin Baldo"

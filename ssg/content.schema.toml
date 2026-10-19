@@ -1,0 +1,51 @@
+# Native SSG content type validation. Generated input is derived from canonical Markdown.
+[[schemas]]
+name = "post"
+
+[[schemas.fields]]
+name = "title"
+type = "string"
+required = true
+
+[[schemas.fields]]
+name = "description"
+type = "string"
+required = true
+
+[[schemas.fields]]
+name = "date"
+type = "date"
+required = true
+
+[[schemas.fields]]
+name = "tags"
+type = "list"
+required = false
+
+[[schemas.fields]]
+name = "language"
+type = "enum(en,pt)"
+required = true
+
+[[schemas.fields]]
+name = "draft"
+type = "bool"
+required = true
+
+[[schemas]]
+name = "page"
+
+[[schemas.fields]]
+name = "title"
+type = "string"
+required = true
+
+[[schemas.fields]]
+name = "description"
+type = "string"
+required = true
+
+[[schemas.fields]]
+name = "language"
+type = "enum(en,pt)"
+required = true
