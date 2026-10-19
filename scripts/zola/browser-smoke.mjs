@@ -1,3 +1,4 @@
+import { checkProprioception } from "./proprioception-browser-checks.mjs";
 import { checkNativeApps } from "./apps/browser-checks.mjs";
 import { checkSciencePages } from "./science-browser-checks.mjs";
 import { checkMusic } from "./music-browser-checks.mjs";
@@ -31,6 +32,7 @@ try {
       ["reviewed-post", "/pt/blog/vos/"],
       ["search", "/pt/search/?q=migra%C3%A7%C3%A3o"],
       ["archive", "/archive/"],
+      ["archive-pt", "/pt/archive/"],
       ["ranking", "/ranking/"],
       ["battles", "/ranking/battles/"],
       ["rug-pull", "/games/rug-pull/"],
@@ -81,6 +83,60 @@ try {
             "migração"
         );
         await page.waitForSelector(".pagefind-ui__result");
+        const searchInput = page.locator(".pagefind-ui__search-input");
+        await searchInput.fill("Fourier");
+        await page.waitForURL("**/pt/search/?q=Fourier");
+        assert.equal(
+          await page.locator(".language-link").getAttribute("href"),
+          base + "/search/?q=Fourier"
+        );
+        await page.reload({ waitUntil: "networkidle" });
+        await page.waitForFunction(
+          () =>
+            document.querySelector(".pagefind-ui__search-input")?.value ===
+            "Fourier"
+        );
+        await page.waitForSelector(".pagefind-ui__result-link");
+        await page.locator(".pagefind-ui__result-link").first().click();
+        await page.waitForURL((url) => !url.pathname.endsWith("/search/"));
+        await page.goBack();
+        await page.waitForFunction(
+          () =>
+            document.querySelector(".pagefind-ui__search-input")?.value ===
+            "Fourier"
+        );
+        await page.locator(".pagefind-ui__search-clear").click();
+        await page.waitForURL("**/pt/search/");
+        assert.equal(
+          await page.locator(".language-link").getAttribute("href"),
+          base + "/search/"
+        );
+      }
+      if (name === "home" || name === "home-pt") {
+        const menu = page.locator(".more-menu");
+        await menu.locator("summary").focus();
+        await page.keyboard.press("Enter");
+        assert.equal(await menu.locator("section").count(), 3);
+        assert.equal(await menu.locator("section a").count(), 14);
+        assert.ok(await menu.locator("section h2").first().isVisible());
+        await page.keyboard.press("Enter");
+        assert.equal(await menu.getAttribute("open"), null);
+        const cards = page.locator(".reading-path-card");
+        assert.equal(await cards.count(), 3, `${path} curated reading paths`);
+        for (const card of await cards.all()) {
+          assert.ok(await card.isVisible());
+          const box = await card.boundingBox();
+          assert.ok(box.width >= 44 && box.height >= 44, "card touch target");
+          await card.focus();
+          assert.equal(
+            await card.evaluate((el) => el === document.activeElement),
+            true
+          );
+        }
+        for (const link of await page.locator(".discovery-links a").all()) {
+          const box = await link.boundingBox();
+          assert.ok(box.height >= 44, "archive shortcut touch target");
+        }
       }
       if (name === "home") {
         const toggle = page.locator("[data-theme-toggle]");
@@ -95,7 +151,7 @@ try {
           "light"
         );
       }
-      if (name === "archive") {
+      if (name === "archive" || name === "archive-pt") {
         assert.equal(await page.locator("[data-archive-type]").count(), 50);
         await page.locator("[data-archive-filter]").selectOption({ index: 1 });
         assert.ok(
@@ -103,6 +159,22 @@ try {
         );
         await page.locator("[data-archive] nav a").first().click();
         await page.waitForURL("**/archive/page/2/");
+        const prefix = name === "archive-pt" ? "/pt" : "";
+        assert.equal(
+          await page.locator(".language-link").getAttribute("href"),
+          prefix ? "/archive/" : "/pt/archive/"
+        );
+        await page.locator("#archive-query").fill("Fourier");
+        await page.locator(".archive-search button").click();
+        await page.waitForURL(`**${prefix}/search/?q=Fourier`);
+        await page.waitForFunction(
+          () =>
+            document.querySelector(".pagefind-ui__search-input")?.value ===
+            "Fourier"
+        );
+        await page.goto(base + prefix + "/archive/page/2/", {
+          waitUntil: "networkidle",
+        });
         assert.ok((await page.locator("[data-archive-type]").count()) > 0);
       }
       if (name === "rug-pull") {
@@ -128,6 +200,7 @@ try {
       });
     }
     for (const [name, check] of [
+      ["proprioception", checkProprioception],
       ["music", checkMusic],
       ["books", checkBooks],
       ["science", checkSciencePages],

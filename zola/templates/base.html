@@ -113,22 +113,37 @@
             <li class="more-item">
               <details class="more-menu">
                 <summary>{% if site_lang == "pt" %}Mais{% else %}More{% endif %}</summary>
-                <ul>
-                  <li><a href="{{ prefix }}/projects/">{% if site_lang == "pt" %}Projetos{% else %}Projects{% endif %}</a></li>
-                  <li><a href="{{ prefix }}/about/">{% if site_lang == "pt" %}Sobre{% else %}About{% endif %}</a></li>
-                  <li><a href="{% if site_lang == 'pt' %}/pt/livros/{% else %}/books/{% endif %}">{% if site_lang == "pt" %}Livros{% else %}Books{% endif %}</a></li>
-                  <li><a href="/audiobooks/">{% if site_lang == "pt" %}Audiolivros{% else %}Audiobooks{% endif %}</a></li>
-                  <li><a href="/audio/">{% if site_lang == "pt" %}Áudio{% else %}Audio{% endif %}</a></li>
-                  <li><a href="/games/">{% if site_lang == "pt" %}Jogos{% else %}Games{% endif %}</a></li>
-                  <li><a href="/games/repo-factory/">Repo Factory</a></li>
-                  <li><a href="{{ prefix }}/malecns/">MaleCNS</a></li>
-                  <li><a href="/papers/">Papers</a></li>
-                  <li><a href="/pt/ai-epistemic-worlds/">{% if site_lang == "pt" %}Mundos IA{% else %}AI worlds{% endif %}</a></li>
-                  <li><a href="/pt/awesome-ai-slop/">AI Slop</a></li>
-                  <li><a href="/pt/atlas-das-equacoes/">{% if site_lang == "pt" %}Atlas das Equações{% else %}Equation atlas{% endif %}</a></li>
-                  <li><a href="/pt/toe-arena/">TOE Arena</a></li>
-                  <li><a href="/changelog/">Changelog</a></li>
-                </ul>
+                <div class="more-panel">
+                  <section aria-labelledby="more-group-0">
+                    <h2 id="more-group-0">{% if site_lang == "pt" %}Ler e ouvir{% else %}Read and listen{% endif %}</h2>
+                    <ul>
+                      <li><a href="{% if site_lang == 'pt' %}/pt/livros/{% else %}/books/{% endif %}">{% if site_lang == "pt" %}Livros{% else %}Books{% endif %}</a></li>
+                      <li><a href="/audiobooks/">{% if site_lang == "pt" %}Audiolivros{% else %}Audiobooks{% endif %}</a></li>
+                      <li><a href="/audio/">{% if site_lang == "pt" %}Áudio{% else %}Audio{% endif %}</a></li>
+                    </ul>
+                  </section>
+                  <section aria-labelledby="more-group-1">
+                    <h2 id="more-group-1">{% if site_lang == "pt" %}Explorar e experimentar{% else %}Explore and experiment{% endif %}</h2>
+                    <ul>
+                      <li><a href="{{ prefix }}/projects/">{% if site_lang == "pt" %}Projetos{% else %}Projects{% endif %}</a></li>
+                      <li><a href="/games/">{% if site_lang == "pt" %}Jogos{% else %}Games{% endif %}</a></li>
+                      <li><a href="/games/repo-factory/">Repo Factory</a></li>
+                      <li><a href="{{ prefix }}/malecns/">MaleCNS</a></li>
+                      <li><a href="/papers/">Papers</a></li>
+                      <li><a href="/pt/ai-epistemic-worlds/">{% if site_lang == "pt" %}Mundos IA{% else %}AI worlds{% endif %}</a></li>
+                      <li><a href="/pt/awesome-ai-slop/">AI Slop</a></li>
+                      <li><a href="/pt/atlas-das-equacoes/">{% if site_lang == "pt" %}Atlas das Equações{% else %}Equation atlas{% endif %}</a></li>
+                      <li><a href="/pt/toe-arena/">TOE Arena</a></li>
+                    </ul>
+                  </section>
+                  <section aria-labelledby="more-group-2">
+                    <h2 id="more-group-2">{% if site_lang == "pt" %}Sobre o site{% else %}About the site{% endif %}</h2>
+                    <ul>
+                      <li><a href="{{ prefix }}/about/">{% if site_lang == "pt" %}Sobre{% else %}About{% endif %}</a></li>
+                      <li><a href="/changelog/">Changelog</a></li>
+                    </ul>
+                  </section>
+                </div>
               </details>
             </li>
             {% if document is defined and document.extra.translations is defined %}
