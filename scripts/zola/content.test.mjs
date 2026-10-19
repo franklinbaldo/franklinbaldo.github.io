@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { convertBody, frontmatter, postPath, published } from "./content.mjs";
+import * as sharedPublication from "../lib/publication.mjs";
+
 test("publication boundary excludes drafts and scheduled posts", () => {
   const now = new Date("2026-10-18T12:00:00Z");
   assert.equal(published({ draft: true }, now), false);
@@ -53,4 +55,11 @@ test("editorial JSX comments stay hidden while code examples stay intact", () =>
     "Before  after"
   );
   assert.equal(convertBody("`{/* example */}`"), "`{/* example */}`");
+});
+
+test("Zola compatibility surface reexports the exact common publication rules", async () => {
+  const legacy = await import("./content.mjs");
+  for (const name of ["published", "postPath", "convertBody", "stableName", "rewriteImages", "escapeHtml", "quote"]) {
+    assert.strictEqual(legacy[name], sharedPublication[name], name + " diverged from the common policy");
+  }
 });

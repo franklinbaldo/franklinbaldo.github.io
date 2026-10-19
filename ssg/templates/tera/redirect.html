@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="{{ page.language | default('en') }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title }} · Franklin Baldo</title>
+  <meta name="robots" content="noindex,follow">
+  <meta http-equiv="refresh" content="0;url={{ page.redirect_target }}">
+  <link rel="canonical" href="https://franklinbaldo.github.io{{ page.redirect_target }}">
+</head>
+<body>
+  <main id="main">
+    <h1>{{ page.title }}</h1>
+    <p>
+      {% if page.language == "pt" %}O endereço mudou. Continue para a página atual:{% else %}This address has moved. Continue to the current page:{% endif %}
+      <a href="{{ page.redirect_target }}">{{ page.redirect_target }}</a>
+    </p>
+  </main>
+</body>
+</html>
