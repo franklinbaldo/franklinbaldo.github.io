@@ -19,7 +19,7 @@ The temptation is to present a table of human-versus-AI agreement and declare vi
 
 ## Try the experiment
 
-This miniature two-armed bandit runs entirely in your browser. Choose between A and B, observe rewards, and compare your choices with a simulated learning policy. Try the **reversal** scenario: the better arm switches halfway through. Does the policy adapt when its expectations stop working?
+This miniature two-armed bandit runs entirely in your browser. Choose between A and B, observe rewards, and compare your choices with a simulated learning policy. Try the **reversal** scenario: at some point, the better arm switches. Does the policy adapt when its expectations stop working?
 
 <iframe title="Interactive human versus simulated decision policy choice laboratory" src="/demos/core-choice-lab/" loading="lazy" style="width:100%;height:1150px;border:0;border-radius:12px" allow="clipboard-write"></iframe>
 
