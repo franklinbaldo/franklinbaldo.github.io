@@ -14,6 +14,7 @@ handling and specialized interactive experiences.
 
 ## Implemented in this first migration increment
 
+- Generator-independent publication rules shared through `scripts/lib/publication.mjs` rather than importing Zola into SSG.
 - Canonical post selection via the existing content helper, including
   legacy version precedence and flattened sources.
 - Publication filtering (drafts and future publishDate).
