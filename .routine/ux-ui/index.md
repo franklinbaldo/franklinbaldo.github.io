@@ -88,9 +88,9 @@ Ao editar componentes/páginas Astro:
 ## 4. Validar
 
 ```bash
-npx astro check      # 0 erros novos (warnings pré-existentes não bloqueiam)
-npx prettier --check .
-npm run build         # confirma build completo, incl. prebuild/pregen e pagefind
+npx astro check      # compatibilidade legada; 0 erros novos
+npm run format:check  # auditoria Oxfmt; não é gate obrigatório do CI
+npm run build         # Zola: build completo, geração e Pagefind
 ```
 
 Depois do build, confira o HTML gerado para a string/atributo que você
