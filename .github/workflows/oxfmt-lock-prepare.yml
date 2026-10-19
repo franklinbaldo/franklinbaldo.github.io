@@ -1,0 +1,56 @@
+# TEMPORARY: prepare the reproducible npm lockfile for the Oxfmt migration.
+# Remove this workflow before merging the migration PR.
+name: Oxfmt lockfile preparation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "package.json"
+      - ".oxfmtrc.json"
+      - ".github/workflows/oxfmt-lock-prepare.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'chore/oxfmt-migration-20261019'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - name: Update the dependency lockfile only
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Verify clean locked installation
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Verify Oxfmt executable
+        run: |
+          ./node_modules/.bin/oxfmt --version
+          npm ls oxfmt --depth=0
+      - name: Commit lockfile on the same migration branch
+        shell: bash
+        run: |
+          git add -- package-lock.json
+          if git diff --cached --quiet; then
+            echo "Lockfile already matches package.json"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "build(oxfmt): atualizar lockfile npm reproduzivel"
+          git push origin "HEAD:refs/heads/chore/oxfmt-migration-20261019"
+      - name: Preserve generated lockfile for audit
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: oxfmt-migration-lockfile
+          path: package-lock.json
+          retention-days: 1
