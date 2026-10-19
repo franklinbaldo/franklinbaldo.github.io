@@ -26,9 +26,7 @@ name: Hrönir Autopilot
 # convention (see docs/hronir-agent-routine.md, docs/hronir-edit-worst-routine.md).
 
 on:
-  workflow_run:
-    workflows: ["Check"]
-    types: [completed]
+  # Automatic workflow_run trigger disabled. Run this workflow manually only.
   workflow_dispatch:
     inputs:
       pr:

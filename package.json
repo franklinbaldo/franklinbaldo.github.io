@@ -9,8 +9,6 @@
     "suno-rank": "scripts/suno-rank/index.js"
   },
   "scripts": {
-    "prebuild": "node scripts/pregen.mjs",
-    "predev": "node scripts/pregen.mjs",
     "check:hygiene": "node scripts/check-hygiene.mjs && node scripts/check-embeds.mjs",
     "check:changelog": "node scripts/check-changelog.mjs",
     "check:embeds": "node scripts/check-embeds.mjs",
@@ -20,9 +18,9 @@
     "check:translations": "node scripts/check-translations.mjs",
     "audiobook:validate": "node scripts/audiobook/validate.mjs",
     "audiobook:plan": "node scripts/audiobook/plan.mjs",
-    "dev": "astro dev",
-    "build": "astro build && npm run check:player-payload && node scripts/fix-redirect-html.mjs && pagefind --site dist && node --import tsx/esm scripts/generate-ranking-snapshot.mjs",
-    "preview": "astro preview",
+    "dev": "node scripts/zola/serve.mjs --build --watch",
+    "build": "node scripts/zola/build.mjs",
+    "preview": "node scripts/zola/serve.mjs",
     "astro": "astro",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -38,7 +36,14 @@
     "tiers:check:posts": "uv run --with 'okf-parser @ git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check knowledge/blog-post-tiers --require-spec ../../specs/okf-types/{slug}.md --normative-spec",
     "tiers:check:music": "uv run --with 'okf-parser @ git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check knowledge/music-tiers --require-spec ../../specs/okf-types/{slug}.md --normative-spec",
     "tiers:check:projects": "uv run --with 'okf-parser @ git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check knowledge/project-tiers --require-spec ../../specs/okf-types/{slug}.md --normative-spec",
-    "tiers:check": "npm run tiers:check:posts && npm run tiers:check:music && npm run tiers:check:projects"
+    "tiers:check:malecns": "uv run --with 'okf-parser @ git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check knowledge/malecns-projects --require-spec ../../specs/okf-types/{slug}.md --normative-spec",
+    "tiers:check": "npm run tiers:check:posts && npm run tiers:check:music && npm run tiers:check:projects && npm run tiers:check:malecns",
+    "build:zola": "node scripts/zola/build.mjs",
+    "check:zola:parity": "node scripts/zola/parity.mjs",
+    "test:zola": "node --test scripts/zola/*.test.mjs scripts/zola/apps/*.test.mjs",
+    "build:astro": "node scripts/pregen.mjs && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/check-player-payload.mjs dist && node scripts/fix-redirect-html.mjs && pagefind --site dist && node --import tsx/esm scripts/generate-ranking-snapshot.mjs",
+    "dev:astro": "node scripts/pregen.mjs && ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "preview:astro": "ASTRO_TELEMETRY_DISABLED=1 astro preview"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.1",
@@ -66,12 +71,15 @@
     "satori": "^0.33.4",
     "sharp": "^0.35.4",
     "typescript": "^6.0.3",
-    "unist-util-visit": "^5.1.0"
+    "unist-util-visit": "^5.1.0",
+    "github-slugger": "^2.0.0",
+    "parse5": "^7.3.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@lhci/cli": "^0.15.1",
     "depcheck": "^1.4.7",
+    "esbuild": "^0.28.1",
     "gray-matter": "^4.0.3",
     "js-yaml": "^4.3.2",
     "openskill": "^5.0.1",
