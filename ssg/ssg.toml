@@ -18,3 +18,13 @@ url_prefix = "sub_path"
 name = "archive"
 title = "Archive"
 per_page = 50
+language = "en"
+
+# SSG 0.0.68 has a sidecar promotion bug in PaginationPlugin::after_compile.
+# Until the native plugin is repaired upstream, scripts/ssg/archive.mjs
+# projects these routes to Markdown and SSG renders them normally.
+[[listings]]
+name = "pt/archive"
+title = "Arquivo"
+per_page = 50
+language = "pt"
