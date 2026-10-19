@@ -27,6 +27,20 @@ test("bilingual archive uses one canonical source with stable 50-entry pages", (
   assert.ok(!("date" in result.pages[2].metadata), "listing must not be indexed as an article");
 });
 
+test("matching archive pages share translation identity, but unmatched pages fall back safely", () => {
+  const entries = [
+    ...Array.from({ length: 101 }, (_, i) => item("e" + i, "en")),
+    ...Array.from({ length: 52 }, (_, i) => item("p" + i, "pt")),
+  ];
+  const pages = new Map(renderArchive(entries).pages.map((page) => [page.route, page]));
+  assert.equal(pages.get("/archive/page/2/").metadata.translation_key, "ssg-archive-page-2");
+  assert.equal(pages.get("/pt/archive/page/2/").metadata.translation_key, "ssg-archive-page-2");
+  assert.ok(pages.get("/archive/page/2/").body.includes("[Arquivo em português](/pt/archive/page/2/)"));
+  assert.ok(pages.get("/pt/archive/page/2/").body.includes("[English archive](/archive/page/2/)"));
+  assert.ok(!("translation_key" in pages.get("/archive/page/3/").metadata));
+  assert.ok(pages.get("/archive/page/3/").body.includes("[Arquivo em português](/pt/archive/)"));
+});
+
 test("date descending and route ascending break ties independent of input order", () => {
   const pages = archiveGroups([
     item("z", "en", "2026-01-01"),
