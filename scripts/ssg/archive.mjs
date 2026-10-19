@@ -54,9 +54,12 @@ export function renderArchive(entries, perPage = ARCHIVE_PER_PAGE) {
     en: entries.filter((e) => e.lang === "en").length,
     pt: entries.filter((e) => e.lang === "pt").length,
   };
+  const groupsByLanguage = Object.fromEntries(
+    ["en", "pt"].map((language) => [language, archiveGroups(entries, language, perPage)])
+  );
   for (const language of ["en", "pt"]) {
     const pt = language === "pt";
-    const groups = archiveGroups(entries, language, perPage);
+    const groups = groupsByLanguage[language];
     if (!groups.length)
       throw new Error("Native archive has no entries for " + language);
     for (const [index, group] of groups.entries()) {
@@ -65,7 +68,12 @@ export function renderArchive(entries, perPage = ARCHIVE_PER_PAGE) {
       const intro = pt
         ? "Publicações em português: " + counts.pt + ". Página " + number + " de " + groups.length + "."
         : "English publications: " + counts.en + ". Page " + number + " of " + groups.length + ".";
-      const switchLink = pt ? "[English archive](/archive/)" : "[Arquivo em português](/pt/archive/)";
+      const alternateLanguage = pt ? "en" : "pt";
+      const paired = number <= groupsByLanguage[alternateLanguage].length;
+      const alternateRoute = pageRoute(alternateLanguage, paired ? number : 1);
+      const switchLink = pt
+        ? "[English archive](" + alternateRoute + ")"
+        : "[Arquivo em português](" + alternateRoute + ")";
       const rows = group.map((entry) =>
         "- [" + escapedTitle(entry.title) + "](" + entry.route + ") — " + entry.date);
       const navigation = groups.length === 1 ? [] : [
@@ -82,7 +90,9 @@ export function renderArchive(entries, perPage = ARCHIVE_PER_PAGE) {
           title: number === 1 ? title : title + " — " + number,
           name: title, description: intro, language,
           layout: "page", draft: false,
-          ...(number === 1 ? { translation_key: "ssg-archive" } : {}),
+          ...(paired
+            ? { translation_key: number === 1 ? "ssg-archive" : "ssg-archive-page-" + number }
+            : {}),
         },
         // The SSG page template already emits the sole H1 and intro tagline.
         // Do not repeat them in Markdown (WCAG heading/SEO duplication).
