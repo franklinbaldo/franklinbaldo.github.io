@@ -120,6 +120,7 @@ export function prepareNativeSite({ now = new Date(), output = OUTPUT } = {}) {
   writeFileSync(join(output, "manifest.json"), JSON.stringify(manifest, null, 2) + "\n");
   console.log("SSG projection: " + entries.length + " posts, " +
     excluded.length + " excluded, " + unsupported.length + " unsupported.");
+  if (entries.length < 100) throw new Error("Suspicious SSG projection: fewer than 100 posts; run scripts/pregen.mjs before prepare.mjs and inspect the manifest");
   if (unsupported.length) console.warn("Unsupported posts are recorded in .cache/ssg-native/manifest.json");
   return manifest;
 }
