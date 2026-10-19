@@ -14,6 +14,9 @@ import RankingView, {
   type UnratedItem,
   type RankingStrings,
 } from "../components/RankingView.astro";
+import TierBoard, { type TierBoardStrings } from "../components/TierBoard.astro";
+import { blogPostTiers } from "../data/blog-post-tiers";
+import type { TierBoardItem } from "../data/tier-types";
 
 const all = await getCollection("blog");
 const byKey = new Map<string, RankPostInfo>();
@@ -136,6 +139,59 @@ const strings: RankingStrings = {
   eloTooltip: "Elo: {elo} ({delta} since 1000 · peak: {peak})",
   dossierTooltip: "Dossier: {title}",
 };
+
+const tierNumber = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+const tierFmt = (value: number | null) => (value === null ? "—" : tierNumber.format(value));
+
+const postTierItems: TierBoardItem[] = blogPostTiers.map((record) => {
+  const post = byKey.get(record.translationKey);
+  const ev = record.evidence;
+  return {
+    id: `post-tier-${record.translationKey}`,
+    title: post?.title ?? record.translationKey,
+    href: post
+      ? `/${post.lang === "pt" ? "pt/" : ""}blog/${post.slug}/`
+      : undefined,
+    qualityTier: record.qualityTier,
+    interestTier: record.interestTier,
+    confidence: record.confidence,
+    summary: record.summary,
+    reviewedAt: record.reviewedAt,
+    note: record.note,
+    strengths: record.strengths,
+    openProblems: record.openProblems,
+    history: record.history,
+    evidence: [
+      { label: "ranking", value: ev.rank ? `#${ev.rank}` : "—" },
+      { label: "ordinal", value: tierFmt(ev.ordinal) },
+      { label: "stars", value: tierFmt(ev.absoluteStars) },
+      { label: "deconf.", value: tierFmt(ev.deconfoundedQuality) },
+      { label: "W/N", value: `${ev.wins}/${ev.appearances}` },
+    ],
+    links: [{ href: `/ranking/posts/${record.translationKey}/`, label: "Hrönir dossier ↗" }],
+  };
+});
+
+const postTierStrings: TierBoardStrings = {
+  heading: "Post tiers",
+  description:
+    "Letters are canonical OKF editorial decisions; Hrönir rank, stars and perspectives are evidence. Music now has a separate audio-first tier board.",
+  qualityLabel: "quality",
+  interestLabel: "interest",
+  confidenceLabel: "conf.",
+  summaryQualityLabel: "quality",
+  summaryInterestLabel: "interest / fertility",
+  emptyTier: "empty — nobody has earned this place yet",
+  emptyBoard: "There are no canonical post tiers yet.",
+  detailsLabel: "View editorial card",
+  strengthsHeading: "What supports it",
+  openProblemsHeading: "What holds it back",
+  historyHeading: "Tier history",
+  reviewedLabel: "reviewed",
+};
 ---
 
 <PageLayout
@@ -157,4 +213,5 @@ const strings: RankingStrings = {
     perspectivesGrid={perspectivesGrid}
     snapshot={snapshot}
   />
+  <TierBoard items={postTierItems} strings={postTierStrings} id="post-tiers" />
 </PageLayout>

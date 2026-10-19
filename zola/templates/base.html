@@ -1,0 +1,177 @@
+{% set site_lang = "en" %}
+{% set page_kind = "home" %}
+{% set title = config.title %}
+{% set description = config.description %}
+{% if page is defined %}
+  {% set site_lang = page.extra.lang | default(value="en") %}
+  {% set page_kind = page.extra.kind | default(value="page") %}
+  {% if page.extra.original_id %}{% set page_kind = "post" %}{% endif %}
+  {% set title = page.title | default(value=config.title) %}
+  {% set description = page.description | default(value=config.description) %}
+  {% set document = page %}
+{% elif section is defined %}
+  {% set site_lang = section.extra.lang | default(value="en") %}
+  {% set page_kind = section.extra.kind | default(value="section") %}
+  {% set title = section.title | default(value=config.title) %}
+  {% set description = section.description | default(value=config.description) %}
+  {% set document = section %}
+{% endif %}
+{% if not description %}{% set description = config.description %}{% endif %}
+{% set prefix = "" %}
+{% set html_lang = "en" %}
+{% if site_lang == "pt" %}
+  {% set prefix = "/pt" %}
+  {% set html_lang = "pt-BR" %}
+  {% if description == config.description %}{% set description = "Ensaios, código e música na fronteira da IA, filosofia e literatura." %}{% endif %}
+{% endif %}
+{% set route = current_path | default(value="/") %}
+{% if document is defined %}{% set route = document.path %}{% endif %}
+{% set static_translation = "" %}
+{% set paired_paths = ["/about/", "/archive/", "/tags/", "/search/", "/projects/", "/ranking/", "/malecns/"] %}
+{% for pair in paired_paths %}
+  {% if route == pair %}{% set_global static_translation = "/pt" ~ pair %}{% endif %}
+  {% if route == "/pt" ~ pair %}{% set_global static_translation = pair %}{% endif %}
+{% endfor %}
+{% if route == "/books/" %}{% set static_translation = "/pt/livros/" %}{% endif %}
+{% if route == "/pt/livros/" %}{% set static_translation = "/books/" %}{% endif %}
+{% if route == "/music/" %}{% set static_translation = "/pt/musicas/" %}{% endif %}
+{% if route == "/pt/musicas/" %}{% set static_translation = "/music/" %}{% endif %}
+<!doctype html>
+<html lang="{{ html_lang }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="generator" content="Zola">
+    {% if route == "/pt/404/" %}<meta name="robots" content="noindex,follow">{% endif %}
+    <title>{% block title %}{{ title }}{% if title != config.title %} | {{ config.title }}{% endif %}{% endblock title %}</title>
+    <meta name="description" content="{{ description }}">
+    {% if current_url is defined %}
+    <link rel="canonical" href="{{ current_url }}">
+    <meta property="og:url" content="{{ current_url }}">
+    <link rel="alternate" hreflang="{{ html_lang }}" href="{{ current_url }}">
+    {% endif %}
+    {% if document is defined and document.extra.translations is defined %}
+      {% for code, href in document.extra.translations %}
+        {% if code != site_lang %}<link rel="alternate" hreflang="{% if code == 'pt' %}pt-BR{% else %}{{ code }}{% endif %}" href="{{ get_url(path=href) }}">{% endif %}
+      {% endfor %}
+    {% elif static_translation != "" %}
+    <link rel="alternate" hreflang="{% if site_lang == 'pt' %}en{% else %}pt-BR{% endif %}" href="{{ get_url(path=static_translation) }}">
+    {% endif %}
+    {% if page_kind == "home" %}
+    <link rel="alternate" hreflang="{% if site_lang == 'pt' %}en{% else %}pt-BR{% endif %}" href="{{ config.base_url }}{% if site_lang != 'pt' %}/pt{% endif %}/">
+    {% endif %}
+    <meta property="og:site_name" content="{{ config.title }}">
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:locale" content="{% if site_lang == 'pt' %}pt_BR{% else %}en_US{% endif %}">
+    <meta property="og:type" content="{% if page_kind == 'post' %}article{% else %}website{% endif %}">
+    {% if page is defined and page.date %}<meta property="article:published_time" content="{{ page.date }}">{% endif %}
+    {% if page is defined and page.extra.original_id %}
+    <meta property="og:image" content="{{ config.base_url }}/og/{{ page.extra.original_id }}.png">
+    <meta name="twitter:card" content="summary_large_image">
+    {% elif page is defined and page.extra.hero_image %}
+    <meta property="og:image" content="{{ get_url(path=page.extra.hero_image) }}">
+    {% if page.extra.hero_image_alt %}<meta property="og:image:alt" content="{{ page.extra.hero_image_alt }}">{% endif %}
+    {% endif %}
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <script src="/js/theme.js" data-persist></script>
+    <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/css/apps.css">
+    <link rel="stylesheet" href="/css/enhancements.css">
+    <link rel="stylesheet" href="/css/music-player.css">
+    <script type="module" src="/js/enhancements/article.js" data-persist></script>
+    <script src="/js/music-player.js" defer data-persist></script>
+    <script src="/js/navigation.js" defer data-persist></script>
+    {% if page_kind == "post" %}
+    <link rel="stylesheet" href="/css/article.css">
+    <script src="/js/article.js" defer data-persist></script>
+    <!-- zola-article-schema -->
+    {% endif %}
+    <link rel="stylesheet" href="/katex/katex.min.css">
+    <link rel="alternate" type="application/rss+xml" title="Franklin Baldo · English" href="{{ get_url(path='rss.xml') }}">
+    <link rel="alternate" type="application/rss+xml" title="Franklin Baldo · Português" href="{{ get_url(path='pt/rss.xml') }}">
+    {% if page_kind == "search" %}
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/js/search.js" defer></script>
+    {% endif %}
+    {% block head %}{% endblock head %}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{% if site_lang == "pt" %}Pular para o conteúdo{% else %}Skip to content{% endif %}</a>
+    <header class="site-header" data-pagefind-ignore>
+      <div class="container header-inner">
+        <a class="site-name" href="{{ prefix }}/">Franklin Baldo<span aria-hidden="true">.</span></a>
+        <nav aria-label="{% if site_lang == 'pt' %}Navegação principal{% else %}Main navigation{% endif %}">
+          <ul class="nav-links">
+            <li><a href="{{ prefix }}/archive/">{% if site_lang == "pt" %}Arquivo{% else %}Archive{% endif %}</a></li>
+            <li><a href="{{ prefix }}/tags/">Tags</a></li>
+            <li><a href="{{ prefix }}/search/">{% if site_lang == "pt" %}Buscar{% else %}Search{% endif %}</a></li>
+            <li><a href="{{ prefix }}/ranking/">Ranking</a></li>
+            <li><a href="{% if site_lang == 'pt' %}/pt/musicas/{% else %}/music/{% endif %}">{% if site_lang == "pt" %}Músicas{% else %}Music{% endif %}</a></li>
+            <li class="more-item">
+              <details class="more-menu">
+                <summary>{% if site_lang == "pt" %}Mais{% else %}More{% endif %}</summary>
+                <div class="more-panel">
+                  <section aria-labelledby="more-group-0">
+                    <h2 id="more-group-0">{% if site_lang == "pt" %}Ler e ouvir{% else %}Read and listen{% endif %}</h2>
+                    <ul>
+                      <li><a href="{% if site_lang == 'pt' %}/pt/livros/{% else %}/books/{% endif %}">{% if site_lang == "pt" %}Livros{% else %}Books{% endif %}</a></li>
+                      <li><a href="/audiobooks/">{% if site_lang == "pt" %}Audiolivros{% else %}Audiobooks{% endif %}</a></li>
+                      <li><a href="/audio/">{% if site_lang == "pt" %}Áudio{% else %}Audio{% endif %}</a></li>
+                    </ul>
+                  </section>
+                  <section aria-labelledby="more-group-1">
+                    <h2 id="more-group-1">{% if site_lang == "pt" %}Explorar e experimentar{% else %}Explore and experiment{% endif %}</h2>
+                    <ul>
+                      <li><a href="{{ prefix }}/projects/">{% if site_lang == "pt" %}Projetos{% else %}Projects{% endif %}</a></li>
+                      <li><a href="/games/">{% if site_lang == "pt" %}Jogos{% else %}Games{% endif %}</a></li>
+                      <li><a href="/games/repo-factory/">Repo Factory</a></li>
+                      <li><a href="{{ prefix }}/malecns/">MaleCNS</a></li>
+                      <li><a href="/papers/">Papers</a></li>
+                      <li><a href="/pt/ai-epistemic-worlds/">{% if site_lang == "pt" %}Mundos IA{% else %}AI worlds{% endif %}</a></li>
+                      <li><a href="/pt/awesome-ai-slop/">AI Slop</a></li>
+                      <li><a href="/pt/atlas-das-equacoes/">{% if site_lang == "pt" %}Atlas das Equações{% else %}Equation atlas{% endif %}</a></li>
+                      <li><a href="/pt/toe-arena/">TOE Arena</a></li>
+                    </ul>
+                  </section>
+                  <section aria-labelledby="more-group-2">
+                    <h2 id="more-group-2">{% if site_lang == "pt" %}Sobre o site{% else %}About the site{% endif %}</h2>
+                    <ul>
+                      <li><a href="{{ prefix }}/about/">{% if site_lang == "pt" %}Sobre{% else %}About{% endif %}</a></li>
+                      <li><a href="/changelog/">Changelog</a></li>
+                    </ul>
+                  </section>
+                </div>
+              </details>
+            </li>
+            {% if document is defined and document.extra.translations is defined %}
+              {% for code, href in document.extra.translations %}
+                {% if code != site_lang %}<li><a class="language-link" href="{{ href }}" lang="{% if code == 'pt' %}pt-BR{% else %}{{ code }}{% endif %}" hreflang="{% if code == 'pt' %}pt-BR{% else %}{{ code }}{% endif %}">{% if code == "pt" %}Português{% else %}English{% endif %}</a></li>{% endif %}
+              {% endfor %}
+            {% elif static_translation != "" %}
+            <li><a class="language-link" href="{{ static_translation }}" lang="{% if site_lang == 'pt' %}en{% else %}pt-BR{% endif %}" hreflang="{% if site_lang == 'pt' %}en{% else %}pt-BR{% endif %}">{% if site_lang == "pt" %}English{% else %}Português{% endif %}</a></li>
+            {% elif page_kind == "home" %}
+            <li><a class="language-link" href="{% if site_lang == 'pt' %}/{% else %}/pt/{% endif %}" lang="{% if site_lang == 'pt' %}en{% else %}pt-BR{% endif %}">{% if site_lang == "pt" %}English{% else %}Português{% endif %}</a></li>
+            {% endif %}
+            <li><label class="theme-toggle"><input type="checkbox" role="switch" data-theme-toggle><span>{% if site_lang == "pt" %}Modo escuro{% else %}Dark mode{% endif %}</span></label></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main id="main" class="container" tabindex="-1">{% block content %}{% endblock content %}</main>
+    <footer class="site-footer container" data-pagefind-ignore>
+      <p>© {{ now() | date(format="%Y") }} Franklin Baldo</p>
+      <nav aria-label="{% if site_lang == 'pt' %}Navegação do rodapé{% else %}Footer navigation{% endif %}">
+        <ul class="nav-links">
+          <li><a href="{{ prefix }}/">{% if site_lang == "pt" %}Início{% else %}Home{% endif %}</a></li>
+          <li><a href="/rss.xml" lang="en">RSS EN</a></li>
+          <li><a href="/pt/rss.xml" lang="pt-BR">RSS PT</a></li>
+          <li><a href="https://github.com/franklinbaldo" rel="me">GitHub</a></li>
+        </ul>
+      </nav>
+    </footer>
+  {% include "player.html" %}
+  </body>
+</html>

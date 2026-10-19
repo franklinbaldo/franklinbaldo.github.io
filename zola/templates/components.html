@@ -1,0 +1,69 @@
+{% component post_list(pages, lang, limit=0) %}
+<ol class="post-list">
+  {% for post in pages %}
+    {% if limit == 0 or loop.index <= limit %}
+    <li>
+      <article>
+        {% if post.date %}<time class="post-date" datetime="{{ post.date }}">{{ post.date | date(format="%Y-%m-%d") }}</time>{% endif %}
+        <h2><a href="{{ post.path }}">{{ post.title }}</a></h2>
+        {% if post.description %}<p>{{ post.description }}</p>{% endif %}
+      </article>
+    </li>
+    {% endif %}
+  {% endfor %}
+</ol>
+{% endcomponent post_list %}
+
+{% component home(lang) %}
+{% set prefix = "" %}
+{% set blog = get_section(path="blog/_index.md", lang="en") %}
+{% if lang == "pt" %}
+  {% set prefix = "/pt" %}
+  {% set blog = get_section(path="pt/blog/_index.md", lang="en") %}
+{% endif %}
+<div class="home-layout">
+  <div>
+    <header class="home-hero">
+      <p class="eyebrow">{% if lang == "pt" %}Jardim digital{% else %}A digital garden{% endif %}</p>
+      <h1>Franklin Baldo<span aria-hidden="true">.</span></h1>
+      <p class="tagline">{% if lang == "pt" %}Ensaios, código e música na fronteira da IA, filosofia e literatura.{% else %}Essays, code, and music at the border of AI, philosophy, and literature.{% endif %}</p>
+    </header>
+    <section class="start-here" aria-labelledby="start-here-heading">
+      <h2 id="start-here-heading">{% if lang == "pt" %}Comece por aqui{% else %}Start here{% endif %}</h2>
+      <p class="tagline">{% if lang == "pt" %}Escolha um assunto e siga uma trilha de leitura pelo acervo.{% else %}Choose a subject and follow a reading path through the archive.{% endif %}</p>
+      {% set reading_paths = load_data(path="reading-paths.json") %}
+      <ul class="reading-paths">
+        {% for path in reading_paths %}
+        <li>
+          <a class="reading-path-card" href="{{ prefix }}/paths/{{ path.slug }}/" aria-labelledby="path-{{ path.slug }}">
+            <span class="path-number" aria-hidden="true">0{{ loop.index }}</span>
+            <h3 id="path-{{ path.slug }}">{{ path.title[lang] }}</h3>
+            <p>{{ path.blurb[lang] }}</p>
+            <span class="path-cta" aria-hidden="true">{% if lang == "pt" %}Seguir trilha{% else %}Follow this path{% endif %} →</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+      <nav class="discovery-links" aria-label="{% if lang == 'pt' %}Explorar o acervo{% else %}Explore the archive{% endif %}">
+        <a href="{{ prefix }}/archive/">{% if lang == "pt" %}Todos os textos{% else %}All posts{% endif %}</a>
+        <a href="{{ prefix }}/tags/">{% if lang == "pt" %}Explorar por assunto{% else %}Browse by topic{% endif %}</a>
+        <a href="{{ prefix }}/search/">{% if lang == "pt" %}Buscar no acervo{% else %}Search the archive{% endif %}</a>
+      </nav>
+    </section>
+    <section aria-labelledby="recent-heading">
+      <h2 class="section-heading" id="recent-heading">{% if lang == "pt" %}Publicações recentes{% else %}Recent writing{% endif %}</h2>
+      {{ <post_list pages={blog.pages} lang={lang} limit={12} /> }}
+      <p class="archive-link"><a href="{{ prefix }}/archive/">{% if lang == "pt" %}Ver o arquivo completo{% else %}Browse the full archive{% endif %} <span aria-hidden="true">→</span></a></p>
+    </section>
+  </div>
+  <aside class="author-rail" aria-label="{% if lang == 'pt' %}Acompanhe{% else %}Stay in the loop{% endif %}">
+    <img class="avatar" src="/avatar.png" width="96" height="96" alt="Franklin Baldo" decoding="async">
+    <p class="eyebrow">{% if lang == "pt" %}Ideias em construção{% else %}Ideas in progress{% endif %}</p>
+    <p>{% if lang == "pt" %}Um espaço para explorar ideias, fazer perguntas e compartilhar descobertas.{% else %}A space to explore ideas, ask questions, and share discoveries.{% endif %}</p>
+    <ul class="rail-links">
+      <li><a href="{{ prefix }}/rss.xml">{% if lang == "pt" %}Acompanhar por RSS{% else %}Follow via RSS{% endif %}</a></li>
+      <li><a href="{{ prefix }}/search/">{% if lang == "pt" %}Buscar no arquivo{% else %}Search the archive{% endif %}</a></li>
+    </ul>
+  </aside>
+</div>
+{% endcomponent home %}
