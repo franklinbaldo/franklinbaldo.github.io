@@ -19,6 +19,7 @@ test("publication metadata reuses canonical translation identity", () => {
   assert.equal(metadata.translation_key,"shared-id");
   assert.equal(metadata.language,"pt");
   assert.equal(metadata.layout,"post");
+  assert.equal(metadata.schema,"post");
   assert.equal(metadata.date,"2026-10-18");
   assert.equal(metadata.name,"Ensaio");
   assert.equal(metadata.news_publication_date,"2026-10-18");
