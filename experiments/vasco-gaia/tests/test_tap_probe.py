@@ -2,11 +2,12 @@ import importlib.util
 import http.client
 import io
 import signal
+import socket
 import time
 import unittest
 import urllib.error
 from pathlib import Path
-from unittest.mock import call, patch
+from unittest.mock import Mock, call, patch
 
 PATH = Path(__file__).resolve().parents[1] / 'tap_probe.py'
 spec = importlib.util.spec_from_file_location('tap_probe', PATH)
@@ -123,7 +124,7 @@ class RequestDeadlineTests(unittest.TestCase):
                     call(signal.ITIMER_REAL, 0.08), call(signal.ITIMER_REAL, 0)])
                 elapsed = time.monotonic() - start
                 self.assertEqual(record['result'], 'network_unavailable')
-                self.assertEqual(record['error_type'], 'TimeoutError')
+                self.assertEqual(record['error_type'], '_RequestDeadlineExceeded')
                 self.assertEqual(record['http_status'], status)
                 self.assertLess(elapsed, 0.5)  # Generous scheduling tolerance; timer is armed only once.
                 self.assertTrue(response.closed)
@@ -133,7 +134,34 @@ class RequestDeadlineTests(unittest.TestCase):
     def test_open_is_also_deadline_bounded(self):
         with patch.object(probe.urllib.request, 'urlopen', side_effect=lambda *a, **k: time.sleep(1)):
             record = probe.request_query('schema_smoke', timeout=0.03)
-        self.assertEqual(record['error_type'], 'TimeoutError')
+        self.assertEqual(record['error_type'], '_RequestDeadlineExceeded')
+
+    def test_deadline_escapes_multiple_address_connection_retry(self):
+        # Use the real retry loop: TimeoutError/OSError would be swallowed and
+        # the second address attempted after the one-shot alarm has expired.
+        addresses = [
+            (socket.AF_INET, socket.SOCK_STREAM, 6, '', ('192.0.2.1', 80)),
+            (socket.AF_INET, socket.SOCK_STREAM, 6, '', ('192.0.2.2', 80)),
+        ]
+        first_socket = Mock()
+        first_socket.connect.side_effect = lambda address: time.sleep(1)
+        second_socket = Mock()
+
+        def open_connection(*args, **kwargs):
+            connection = socket.create_connection(('example.invalid', 80),
+                                                  timeout=kwargs['timeout'])
+            connection.close()
+            return Response(votable())
+
+        with patch.object(socket, 'getaddrinfo', return_value=addresses):
+            with patch.object(socket, 'socket', side_effect=[first_socket, second_socket]) as sockets:
+                with patch.object(probe.urllib.request, 'urlopen', side_effect=open_connection):
+                    record = probe.request_query('schema_smoke', timeout=0.03)
+        self.assertEqual(record['result'], 'network_unavailable')
+        self.assertEqual(record['error_type'], '_RequestDeadlineExceeded')
+        self.assertEqual(sockets.call_count, 1)
+        second_socket.connect.assert_not_called()
+        self.assertEqual(signal.getitimer(signal.ITIMER_REAL), (0.0, 0.0))
 
     def test_existing_alarm_is_not_modified(self):
         with patch.object(signal, 'getitimer', return_value=(10.0, 2.0)):

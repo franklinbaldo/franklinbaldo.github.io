@@ -39,6 +39,10 @@ class DeadlineUnavailable(RuntimeError):
     """A hard request deadline cannot be installed safely in this context."""
 
 
+class _RequestDeadlineExceeded(Exception):
+    """Escape transport retries, which may catch OSError/TimeoutError."""
+
+
 @contextmanager
 def request_deadline(timeout):
     # urlopen's timeout is an inactivity timeout, not a total request budget.
@@ -53,7 +57,7 @@ def request_deadline(timeout):
     previous_handler = signal.getsignal(signal.SIGALRM)
 
     def expired(signum, frame):
-        raise TimeoutError('absolute request deadline exceeded')
+        raise _RequestDeadlineExceeded('absolute request deadline exceeded')
 
     signal.signal(signal.SIGALRM, expired)
     try:
@@ -85,7 +89,7 @@ def request_query(query, endpoint=ENDPOINT, timeout=20):
                 payload = response.read(MAX_RESPONSE + 1)
     except DeadlineUnavailable as exc:
         return {'probe': query, 'result': 'deadline_unavailable', 'error': str(exc)}
-    except (urllib.error.URLError, OSError, http.client.HTTPException) as exc:
+    except (_RequestDeadlineExceeded, urllib.error.URLError, OSError, http.client.HTTPException) as exc:
         record = {'probe': query, 'result': 'network_unavailable', 'error_type': type(exc).__name__}
         if status is not None:
             record['http_status'] = status
