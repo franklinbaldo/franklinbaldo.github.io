@@ -102,3 +102,27 @@ Two machine-readable outputs are retained as CI artifacts:
 SSG remains an incomplete candidate until full parity and functional tests pass. The comparator records missing routes without blocking every experimental build; set `SSG_REQUIRE_FULL_PARITY=1` to enforce complete artifact path coverage at cutover.
 
 The SSG projection rejects any unsupported published source rather than silently omitting a post. In that case the rejected-source manifest is still written for debugging, but the build fails.
+
+## Native projects index — first domain cutover candidate (19 October 2026)
+
+The candidate now projects `src/generated/repo-factory.json` to native SSG Markdown for `/projects/` and `/pt/projects/`. It does not reuse generated Zola HTML. The snapshot declares `schemaVersion=repo-factory-v1`, owner `franklinbaldo` and `privacy=public repositories only`. The adapter rejects private or malformed repositories, misleading GitHub URLs, duplicate identity and inconsistent catalog totals.
+
+The index displays the snapshot date, which must not be presented as live GitHub data. The route parity gate asserts that both outputs exist. The project index is a functional starting point, **not** equivalence to the existing Zola projects UI: rich filters, tiers, related project data and visual/browser behavior still need to be ported and verified.
+
+Implementation: `scripts/ssg/projects.mjs` and dedicated invariant tests; both language versions use built-in SSG templates and translation keys.
+
+## Conteúdo semântico — além da existência da URL
+
+O CI também executa `node scripts/ssg/article-parity.mjs` após construir
+ambas as saídas. Para cada post canônico projetado, extrai o corpo de
+`[data-zola-content]` do Zola e `.reading-page .prose` do SSG. Registra
+o tamanho textual e a sobreposição multiconjunto de tokens, verificando
+se título e idioma efetivamente renderizados coincidem. A ausência de
+qualquer página, corpo ou idioma/título esperado provoca falha, mas as
+diferenças no corpus textual ainda são diagnósticas (sem corte arbitrário),
+pois HTML, KaTeX, quebras, acessibilidade e apresentação variam entre
+motores. O relatório completo fica em
+`.cache/ssg-native/article-parity.json` como artifact da PR.
+
+**Importante:** texto parecido não comprova equivalência de links, código,
+interatividade ou comportamento; não autoriza cutover.
