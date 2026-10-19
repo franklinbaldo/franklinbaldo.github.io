@@ -55,6 +55,22 @@ jobs:
         run: node scripts/ssg/finish.mjs
       - name: Assert projected route coverage and record cutover gaps
         run: node scripts/ssg/parity.mjs
+      - name: Summarize native quality and prioritize findings
+        run: node scripts/ssg/quality-summary.mjs
+      - name: Install pinned Zola reference generator
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 \
+            https://github.com/getzola/zola/releases/download/v0.23.6/zola-v0.23.6-x86_64-unknown-linux-musl.tar.gz \
+            --output "$RUNNER_TEMP/zola.tar.gz"
+          echo "7d77a4220a4f699cba2fc0e0c7859f780e887e269159ad4fab90e11ea16c906f  $RUNNER_TEMP/zola.tar.gz" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/zola-bin"
+          tar -xzf "$RUNNER_TEMP/zola.tar.gz" -C "$RUNNER_TEMP/zola-bin"
+          echo "$RUNNER_TEMP/zola-bin" >> "$GITHUB_PATH"
+      - name: Build full Zola reference (all domains and applications)
+        run: npm run build:zola
+      - name: Compare full published Zola artifact against SSG
+        run: node scripts/ssg/compare-baseline.mjs
       - name: Collect SSG native audits (non-blocking while parity is incomplete)
         if: success()
         continue-on-error: true
@@ -79,5 +95,7 @@ jobs:
             .cache/ssg-native/parity.json
             .cache/ssg-native/asset-report.json
             .cache/ssg-native/ssg-audit.sarif
+            .cache/ssg-native/full-parity.json
+            .cache/ssg-native/quality-summary.json
           if-no-files-found: warn
           retention-days: 14
