@@ -4,7 +4,7 @@ import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } fr
 import { dirname, extname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
-import yaml from "js-yaml";
+import * as yaml from "js-yaml";
 import { renderProjects } from "./projects.mjs";
 import { renderArchive } from "./archive.mjs";
 import { BLOG_DIR, listPostFiles, postIdFromPath } from "../lib/content.mjs";

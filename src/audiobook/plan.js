@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import matter from "gray-matter";
-import yaml from "js-yaml";
+import * as yaml from "js-yaml";
 
 function canonicalize(value) {
   if (Array.isArray(value)) return value.map(canonicalize);

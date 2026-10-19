@@ -13,7 +13,7 @@
 
 import { execSync } from "child_process";
 import { existsSync, unlinkSync } from "fs";
-import jsYaml from "js-yaml";
+import * as jsYaml from "js-yaml";
 const { load: parseYaml } = jsYaml;
 
 const TOKEN_RE = /\b[A-Za-z]+_\d{3,}_[A-Za-z0-9]{4,}_\d+\b/g;

@@ -5,7 +5,7 @@ import path from "node:path";
 import process from "node:process";
 
 import matter from "gray-matter";
-import yaml from "js-yaml";
+import * as yaml from "js-yaml";
 
 function parseArgs(argv) {
   const args = { workId: null, chapterId: null, publicationPath: null };

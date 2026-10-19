@@ -17,7 +17,7 @@
 
 import { execSync, execFileSync } from "child_process";
 import { gzipSync } from "zlib";
-import jsYaml from "js-yaml";
+import * as jsYaml from "js-yaml";
 
 const { load: parseYaml } = jsYaml;
 
