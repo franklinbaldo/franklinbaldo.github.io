@@ -1,6 +1,13 @@
 name: SSG native built-ins candidate
 
 on:
+  push:
+    branches: ["fix/ssg-*", "feat/ssg-*"]
+    paths:
+      - "ssg/**"
+      - "scripts/ssg/**"
+      - "docs/migrations/ssg.md"
+      - ".github/workflows/ssg-preview.yml"
   pull_request:
     branches: [main]
     paths:
