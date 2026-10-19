@@ -371,6 +371,28 @@ export function brainStep(brain, input) {
   return relax(brain);
 }
 
+// Explicit sparse stimulation boundary for exploratory non-visual inputs.
+// Callers own identity/provenance checks and must label drive assumptions.
+export function brainStepWithDrive(brain, entries, readoutIndices = []) {
+  for (const [index, value] of entries) {
+    if (
+      !Number.isInteger(index) ||
+      index < 0 ||
+      index >= brain.neurons ||
+      !Number.isFinite(value) ||
+      Math.abs(value) > 1
+    )
+      throw new RangeError("invalid sparse stimulation");
+  }
+  for (const index of readoutIndices) {
+    if (!Number.isInteger(index) || index < 0 || index >= brain.neurons)
+      throw new RangeError("invalid readout index");
+  }
+  brain.drive.fill(0);
+  for (const [index, value] of entries) brain.drive[index] = value;
+  return relax(brain, readoutIndices);
+}
+
 // FlyDoom ingress: each eye cell drives its own bucket of visual projection
 // neurons, split by feature × sign.
 function injectGrid(brain, features) {
@@ -413,8 +435,8 @@ function injectColumns(brain, sample) {
   }
 }
 
-function relax(brain) {
-  const { circuit, connectome } = brain;
+function relax(brain, readoutIndices = brain.circuit.dn_all) {
+  const { connectome } = brain;
   const drive = brain.drive;
   const { offsets, scales, deltas, weights, lut } = connectome;
   const state = brain.state;
@@ -435,7 +457,7 @@ function relax(brain) {
   brain.state = next;
   brain.next = state;
 
-  const dn = circuit.dn_all;
+  const dn = readoutIndices;
   const dnValues = new Float32Array(dn.length);
   for (let i = 0; i < dn.length; i++) dnValues[i] = brain.state[dn[i]];
   return dnValues;
