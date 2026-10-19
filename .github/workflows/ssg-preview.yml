@@ -30,6 +30,8 @@ jobs:
       - run: npm ci
       - name: Test native projection invariants
         run: node --test scripts/ssg/*.test.mjs
+      - name: Build canonical Hrönir and translation read projections
+        run: node scripts/pregen.mjs
       - name: Prepare canonical published posts for SSG
         run: node scripts/ssg/prepare.mjs
       - name: Install official SHA-256 pinned SSG v0.0.68
