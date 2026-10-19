@@ -1,0 +1,25 @@
+{% set app = load_data(path=page.extra.app_data) %}
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content="Zola" />
+    <title>{{ page.title }}</title>
+    <meta name="description" content="{{ page.description }}" />
+    <link rel="canonical" href="{{ current_url }}" />
+    <meta property="og:url" content="{{ current_url }}" />
+    <meta property="og:title" content="{{ page.title }}" />
+    <meta property="og:description" content="{{ page.description }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content="{{ config.title }}" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    {{ app.stylesheets | safe }}
+    <link rel="stylesheet" href="/{{ page.extra.app_css }}" />
+    <script type="module" src="/{{ page.extra.app_script }}"></script>
+  </head>
+  <body data-native-app="standalone" data-app="{{ page.extra.app_id }}">
+    {{ app.body | safe }}
+  </body>
+</html>

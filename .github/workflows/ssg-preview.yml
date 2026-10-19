@@ -1,0 +1,117 @@
+name: SSG native built-ins candidate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "ssg/**"
+      - "scripts/ssg/**"
+      - "src/content/blog/**"
+      - "src/generated/versions-selected.json"
+      - "docs/migrations/ssg.md"
+      - ".github/workflows/ssg-preview.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Enforce generator architecture boundaries
+        run: node scripts/ssg/check-architecture.mjs
+      - name: Test native projection invariants
+        run: node --test scripts/ssg/*.test.mjs
+      - name: Build canonical Hrönir and translation read projections
+        run: node scripts/pregen.mjs
+      - name: Prepare canonical published posts for SSG
+        run: node scripts/ssg/prepare.mjs
+      - name: Prepare historical published aliases as native SSG pages
+        run: node scripts/ssg/prepare-redirects.mjs
+      - name: Install official SHA-256 pinned SSG v0.0.68
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 \
+            https://github.com/sebastienrousseau/static-site-generator/releases/download/v0.0.68/ssg-v0.0.68-x86_64-unknown-linux-musl.tar.gz \
+            --output "$RUNNER_TEMP/ssg.tar.gz"
+          echo "2959c5fd6b9149a1017f9959c654a09444c9419ba2c237454656d6214805991a  $RUNNER_TEMP/ssg.tar.gz" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/ssg-bin"
+          tar -xzf "$RUNNER_TEMP/ssg.tar.gz" -C "$RUNNER_TEMP/ssg-bin"
+          echo "$RUNNER_TEMP/ssg-bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/ssg-bin/ssg" --version
+      - name: Native content schema validation
+        run: ssg --validate -c .cache/ssg-native/content
+      - name: Native SSG compilation (SEO, a11y, search, feeds, i18n)
+        run: ssg -f ssg/ssg.toml -c .cache/ssg-native/content -o dist-ssg -t ssg/templates
+      - name: Preserve static public assets without replacing native output
+        run: node scripts/ssg/finish.mjs
+      - name: Normalize SSG canonical headers on redirects only
+        run: node scripts/ssg/fix-redirect-headers.mjs
+      - name: Verify rendered redirect canonicals, noindex and actual destinations
+        run: node scripts/ssg/verify-redirects.mjs
+      - name: Verify native bilingual project HTML against canonical public data
+        run: node scripts/ssg/verify-projects.mjs
+      - name: Verify native bilingual archive pages and article pagination
+        run: node scripts/ssg/verify-archive.mjs
+      - name: Assert projected route coverage and record cutover gaps
+        run: node scripts/ssg/parity.mjs
+      - name: Summarize native quality and prioritize findings
+        run: node scripts/ssg/quality-summary.mjs
+      - name: Install pinned Zola reference generator
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 \
+            https://github.com/getzola/zola/releases/download/v0.23.6/zola-v0.23.6-x86_64-unknown-linux-musl.tar.gz \
+            --output "$RUNNER_TEMP/zola.tar.gz"
+          echo "7d77a4220a4f699cba2fc0e0c7859f780e887e269159ad4fab90e11ea16c906f  $RUNNER_TEMP/zola.tar.gz" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/zola-bin"
+          tar -xzf "$RUNNER_TEMP/zola.tar.gz" -C "$RUNNER_TEMP/zola-bin"
+          echo "$RUNNER_TEMP/zola-bin" >> "$GITHUB_PATH"
+      - name: Build full Zola reference (all domains and applications)
+        run: npm run build:zola
+      - name: Compare full published Zola artifact against SSG
+        run: node scripts/ssg/compare-baseline.mjs
+      - name: Verify canonical article title, language and rendered body
+        run: node scripts/ssg/article-parity.mjs
+      - name: Collect SSG native audits (non-blocking while parity is incomplete)
+        if: success()
+        continue-on-error: true
+        shell: bash
+        run: |
+          ssg audit --output dist-ssg --sarif > .cache/ssg-native/ssg-audit.sarif
+      - name: Upload native SSG preview
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ssg-preview
+          path: dist-ssg/
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Upload projection and parity reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ssg-candidate-evidence
+          path: |
+            .cache/ssg-native/manifest.json
+            .cache/ssg-native/parity.json
+            .cache/ssg-native/asset-report.json
+            .cache/ssg-native/ssg-audit.sarif
+            .cache/ssg-native/full-parity.json
+            .cache/ssg-native/quality-summary.json
+            .cache/ssg-native/article-parity.json
+            .cache/ssg-native/redirects.json
+            .cache/ssg-native/redirect-validation.json
+            .cache/ssg-native/archive-report.json
+          if-no-files-found: warn
+          retention-days: 14
