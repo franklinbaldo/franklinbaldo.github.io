@@ -49,6 +49,29 @@ class HTTPClassificationTests(unittest.TestCase):
                 self.assertEqual(probe.classify(503, body), 'http_error')
 
 
+    def test_non_votable_roots_are_rejected(self):
+        for root in ('html', 'error', '{urn:example}error'):
+            # Include plausible TAP status content so root validation, rather
+            # than the missing-INFO fallback, determines the classification.
+            tag = 'error' if root.startswith('{') else root
+            namespace = ' xmlns="urn:example"' if root.startswith('{') else ''
+            for value in ('OK', 'ERROR'):
+                body = (f'<{tag}{namespace}><INFO name="QUERY_STATUS" '
+                        f'value="{value}">statement timeout</INFO></{tag}>').encode()
+                for status, expected in ((200, 'invalid_votable'), (503, 'http_error')):
+                    with self.subTest(root=root, value=value, status=status):
+                        self.assertEqual(probe.classify(status, body), expected)
+
+    def test_unsupported_xml_encodings_return_records(self):
+        # Unknown codecs raise LookupError; unsupported multibyte codecs can
+        # raise ValueError rather than ElementTree.ParseError.
+        for encoding in ('x-nonexistent', 'utf-32'):
+            body = (f'<?xml version="1.0" encoding="{encoding}"?>').encode() + votable()
+            for status, expected in ((200, 'invalid_votable'), (503, 'http_error')):
+                with self.subTest(encoding=encoding, status=status):
+                    self.assertEqual(probe.classify(status, body), expected)
+
+
 class Response(io.BytesIO):
     code = 200
 

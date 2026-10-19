@@ -23,7 +23,9 @@ QUERIES = {
 def classify(status, payload):
     try:
         root = ET.fromstring(payload)
-    except ET.ParseError:
+    except (ET.ParseError, LookupError, ValueError):
+        return "http_error" if status != 200 else "invalid_votable"
+    if root.tag.rsplit('}', 1)[-1] != 'VOTABLE':
         return "http_error" if status != 200 else "invalid_votable"
     infos = [x for x in root.iter() if x.tag.rsplit('}', 1)[-1] == 'INFO' and x.attrib.get('name') == 'QUERY_STATUS']
     if not infos:
