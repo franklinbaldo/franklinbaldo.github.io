@@ -84,7 +84,9 @@ export function renderArchive(entries, perPage = ARCHIVE_PER_PAGE) {
           layout: "page", draft: false,
           ...(number === 1 ? { translation_key: "ssg-archive" } : {}),
         },
-        body: ["# " + title, "", intro, "", switchLink, "",
+        // The SSG page template already emits the sole H1 and intro tagline.
+        // Do not repeat them in Markdown (WCAG heading/SEO duplication).
+        body: [switchLink, "",
           pt ? "## Publicações" : "## Publications", "", ...rows, ...navigation].join("\n"),
         postRoutes: group.map((entry) => entry.route),
       });
