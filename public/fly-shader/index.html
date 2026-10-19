@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>The Shader Is the Fly’s World</title>
+    <style>
+      :root {
+        --bg: #05090d;
+        --panel: #0a1219;
+        --line: #233341;
+        --text: #e7eef5;
+        --muted: #8fa0ae;
+        --cyan: #73d8ff;
+        --violet: #d67cff;
+        --green: #67e08a;
+        --red: #ff6b7a;
+        --amber: #ffc36b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+
+      body {
+        padding: 14px;
+      }
+
+      .shell {
+        width: min(1180px, 100%);
+        margin: 0 auto;
+        display: grid;
+        gap: 12px;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 1.15rem;
+      }
+
+      header p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.45;
+      }
+
+      .loop {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.74rem;
+        color: var(--cyan);
+      }
+
+      .main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 260px;
+        gap: 12px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px;
+        min-width: 0;
+      }
+
+      .panel h2 {
+        margin: 0 0 6px;
+        font-size: 0.72rem;
+        font-weight: 750;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .stage {
+        position: relative;
+        aspect-ratio: 2 / 1;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #000;
+      }
+
+      .stage canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--amber);
+        flex: none;
+      }
+
+      .status.live .dot {
+        background: var(--green);
+      }
+
+      .status.error .dot {
+        background: var(--red);
+      }
+
+      .controls {
+        display: grid;
+        gap: 10px;
+        align-content: start;
+      }
+
+      .row {
+        display: grid;
+        gap: 4px;
+        font-size: 0.78rem;
+      }
+
+      .row label {
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+      }
+
+      .row input[type="range"] {
+        width: 100%;
+      }
+
+      .toggle {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font-size: 0.8rem;
+      }
+
+      button {
+        background: #102230;
+        color: var(--text);
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 7px 9px;
+        font: inherit;
+        font-size: 0.8rem;
+        cursor: pointer;
+      }
+
+      button:hover {
+        border-color: var(--cyan);
+      }
+
+      .buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+
+      .stats {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.72rem;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .stats b {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .knobs {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .knob {
+        display: grid;
+        gap: 2px;
+        justify-items: center;
+        cursor: pointer;
+        padding: 0;
+        border: 0;
+        background: none;
+      }
+
+      .knob canvas {
+        width: 100%;
+        max-width: 64px;
+        aspect-ratio: 1;
+      }
+
+      .knob span {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.62rem;
+        color: var(--muted);
+      }
+
+      .lower {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .lower canvas {
+        width: 100%;
+        display: block;
+        border-radius: 6px;
+        background: #03070a;
+      }
+
+      .note {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 0.74rem;
+        line-height: 1.45;
+      }
+
+      .legend {
+        display: flex;
+        justify-content: space-between;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.66rem;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      select {
+        width: 100%;
+        background: #102230;
+        color: var(--text);
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 6px 8px;
+        font: inherit;
+        font-size: 0.8rem;
+      }
+
+      .phase-only[hidden],
+      .knobs-only[hidden],
+      .flight-only[hidden],
+      .no-flight[hidden] {
+        display: none;
+      }
+
+      .note a {
+        color: var(--cyan);
+      }
+
+      .takeoff {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 2.4rem;
+        font-weight: 750;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--amber);
+        background: radial-gradient(rgba(255, 195, 107, 0.28), transparent 70%);
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .assay {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .assay canvas {
+        width: 100%;
+        display: block;
+        border-radius: 6px;
+        background: #03070a;
+      }
+
+      .assay-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .assay-head h2 {
+        margin: 0;
+      }
+
+      .verdict {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.72rem;
+        color: var(--muted);
+        line-height: 1.55;
+        margin-top: 6px;
+      }
+
+      .verdict b {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      @media (max-width: 820px) {
+        .main,
+        .assay,
+        .lower {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .knobs {
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <p>
+          <a href="/fly-proprioception/"
+            >Laboratório de propriocepção passiva</a
+          >
+        </p>
+        <h1>The Shader Is the Fly’s World</h1>
+        <p>
+          Twelve drifting Fourier modes are the whole visual world. A frozen
+          MaleCNS connectome looks at it through an 8×4 eye, and its 1,314
+          descending neurons hold the knobs.
+        </p>
+        <p id="loopDiagram" class="loop">
+          shader → eye (8×4 × 6 features) → MaleCNS → descending neurons →
+          Fourier coefficients → shader
+        </p>
+      </header>
+
+      <div class="main">
+        <div class="panel">
+          <div class="stage">
+            <canvas id="world" width="960" height="480"></canvas>
+            <canvas id="eye" width="960" height="480"></canvas>
+            <div id="takeoffFlash" class="takeoff">GF ≥ 3σ</div>
+          </div>
+        </div>
+
+        <div class="panel controls">
+          <div id="status" class="status">
+            <span class="dot"></span><span id="statusText">loading…</span>
+          </div>
+
+          <div class="row">
+            <label for="readoutMode">readout</label>
+            <select id="readoutMode">
+              <option value="knobs">arbitrary: DNs paint the knobs</option>
+              <option value="phase">phase: DNs turn the fly (yaw)</option>
+              <option value="flight">
+                flight: whole eye, learns what makes it take off
+              </option>
+              <option value="world">
+                world: DNs tune a 128-D generative world (no reward)
+              </option>
+            </select>
+          </div>
+
+          <label class="toggle">
+            <input id="closed" type="checkbox" checked /> loop closed (DNs act
+            on the world)
+          </label>
+          <label class="toggle no-flight">
+            <input id="drift" type="checkbox" checked /> modes drift on their
+            own
+          </label>
+          <label class="toggle flight-only" hidden>
+            <input id="learn" type="checkbox" checked /> learning (reward =
+            giant fiber)
+          </label>
+          <label class="toggle knobs-only">
+            <input id="adaptive" type="checkbox" checked /> adaptive readout
+            (z-scored DNs)
+          </label>
+          <label class="toggle knobs-only">
+            <input id="probe" type="checkbox" /> auto-probe (kick every 4 s)
+          </label>
+          <label class="toggle">
+            <input id="showEye" type="checkbox" checked /> show eye samples
+          </label>
+          <div class="row world-only" hidden>
+            <label>world seed</label
+            ><input id="worldSeed" type="number" min="1" step="1" value="1" />
+          </div>
+          <div class="row world-only" hidden>
+            <label>projection seed</label
+            ><input
+              id="projectionSeed"
+              type="number"
+              min="1"
+              step="1"
+              value="1"
+            />
+          </div>
+
+          <div class="row phase-only" hidden>
+            <label
+              >stimulus rotation, x/s (2 x = 360°)
+              <b id="stimOut">0.30</b></label
+            >
+            <input
+              id="stim"
+              type="range"
+              min="-0.6"
+              max="0.6"
+              step="0.05"
+              value="0.3"
+            />
+          </div>
+          <div class="row flight-only" hidden>
+            <label>learning rate <b id="etaOut">1e-3</b></label>
+            <input
+              id="eta"
+              type="range"
+              min="-5"
+              max="-2"
+              step="0.25"
+              value="-3"
+            />
+          </div>
+          <div class="row flight-only" hidden>
+            <label>exploration σ <b id="sigmaOut">0.50</b></label>
+            <input
+              id="sigma"
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value="0.5"
+            />
+          </div>
+          <div class="row no-flight">
+            <label>motor gain <b id="gainOut">1.0</b></label>
+            <input
+              id="gain"
+              type="range"
+              min="0"
+              max="3"
+              step="0.05"
+              value="1"
+            />
+          </div>
+          <div class="row knobs-only">
+            <label>leak <b id="leakOut">0.35</b></label>
+            <input
+              id="leak"
+              type="range"
+              min="0.05"
+              max="1.5"
+              step="0.05"
+              value="0.35"
+            />
+          </div>
+
+          <div class="buttons">
+            <button id="kick">Perturb a mode</button>
+            <button id="reset">Reset world</button>
+            <button id="clearOp">Clear operator</button>
+            <button id="pause">Pause</button>
+            <button id="resetPolicy" class="flight-only" hidden>
+              Forget policy
+            </button>
+            <button id="resetWorldAttractor" class="world-only" hidden>
+              Reset self-tuning world
+            </button>
+          </div>
+
+          <div id="stats" class="stats"></div>
+        </div>
+      </div>
+
+      <div class="panel world-only" hidden>
+        <h2>Self-tuning generative world — no reward</h2>
+        <div id="worldStats" class="verdict"></div>
+        <p class="note">
+          A fixed 128-D multiscale Fourier generator defines the luminance
+          world. For the first 8 s DN normalisation is measured with coupling
+          off, then frozen. MaleCNS drives dθ/dt = 0.18 P z(DN) − 0.20 θ through
+          a seeded fixed projection, with θ bounded to ±2. There is no reward or
+          autonomous drift. The primary perceptual state is the 1,771-D retinal
+          luminance vector; θ distance is secondary.
+        </p>
+      </div>
+      <div class="panel flight-only" hidden>
+        <h2>Flight drive — what makes the fly want to take off</h2>
+        <div class="assay">
+          <div>
+            <canvas id="gfTrace" width="560" height="180"></canvas>
+            <div class="legend">
+              <span>−60 s</span
+              ><span
+                >cyan = giant-fiber drive (σ above its own mean) · dashed = 3σ
+                threshold · amber = crossing (takeoff proxy)</span
+              ><span>now</span>
+            </div>
+            <div id="flightStats" class="verdict"></div>
+          </div>
+          <div>
+            <canvas id="actions" width="560" height="180"></canvas>
+            <div class="legend">
+              <span>amber = Yaw · Pitch · Loom · Contrast · Drift</span
+              ><span>cyan = mode coefficients (re, im)</span>
+            </div>
+          </div>
+        </div>
+        <p class="note">
+          The compound eye looks at the world: 1,771 retinotopic columns (879
+          left, 892 right), each driving its own lamina L1 and L2 cells, matched
+          by the MaleCNS hex annotation; 1,768 columns have at least one. L3 is
+          left out because MaleCNS v1.0 annotates it in the right eye only, and
+          a one-sided input is an asymmetry a reward-seeking policy would
+          exploit. Light enters with a negative sign because every photoreceptor
+          → L1/L2 synapse in this connectome is inhibitory. The fly acts on its
+          world in 29 ways: yaw and pitch (exact phase ramps), loom (the pattern
+          expands from straight ahead), contrast, the speed of the modes' own
+          drift, and a velocity on each of the 24 mode coefficients. A linear
+          policy from the descending neurons to those actions is trained by
+          reward alone — reward-modulated node perturbation with a one-second
+          eligibility trace — while the connectome stays frozen; with the loop
+          open it neither acts nor learns. The reward is the giant fiber, DNp01
+          (“GF” in the MaleCNS annotation), central to the visual escape
+          circuit, measured as how far it rises above its own recent mean; it is
+          removed from the policy's input, so the only way to raise it is
+          through what the eye sees. A crossing of 3σ is counted as a takeoff
+          proxy — an event in this rate model, not an observed takeoff. In
+          headless runs a sham learner rewarded by two random DNs crosses as
+          often as the real one, so there is no evidence yet of giant-fiber
+          specific learning. Column geometry, lamina hex coordinates and DN
+          types: MaleCNS v1.0, CC BY 4.0 (Berg et al. 2026,
+          <a href="https://doi.org/10.1016/j.cell.2026.08.015"
+            >doi:10.1016/j.cell.2026.08.015</a
+          >).
+        </p>
+      </div>
+
+      <div class="panel phase-only" hidden>
+        <div class="assay-head">
+          <h2>Optomotor assay — does the fly turn with the world?</h2>
+          <button id="sweep">Run sweep</button>
+        </div>
+        <div class="assay">
+          <div>
+            <canvas id="yawTrace" width="560" height="200"></canvas>
+            <div class="legend">
+              <span>−20 s</span
+              ><span
+                >amber = stimulus · cyan = fly yaw · violet = controlled
+                rotation (stimulus − yaw)</span
+              ><span>now</span>
+            </div>
+          </div>
+          <div>
+            <canvas id="sweepPlot" width="560" height="200"></canvas>
+            <div id="verdict" class="verdict">
+              No sweep yet. A sweep snapshots the live state and replays, for
+              each stimulus speed, a 6 s open-loop branch (the world turns, the
+              fly cannot) and a closed-loop branch (its yaw subtracts from the
+              slip), with the modes' own drift frozen.
+            </div>
+          </div>
+        </div>
+        <p class="note">
+          Here the DNs no longer paint the coefficients: the world's texture is
+          fixed and the DNs move the fly through it. A yaw turn is a translation
+          in x, which for Fourier modes is an exact phase ramp c →
+          c·e<sup>−i·kx·Δx</sup>, so self-motion adds no free parameters. The
+          artifact labels DNs only by side, so steering = mean(right DNs) −
+          mean(left DNs), z-scored against a 20 s baseline, with the convention
+          right &gt; left ⇒ turn right. Left panel of the sweep: open-loop
+          response, Δ(R−L) relative to the paired v = 0 branch. Right:
+          closed-loop yaw; the dashed diagonal is perfect following. The odd
+          part of the response (it flips with the stimulus) is the directional,
+          optomotor-like component; the even part reacts to motion regardless of
+          direction. The sign convention is an assumption: a consistently
+          negative slope would mean the convention, not the fly, is backwards;
+          an even-dominated response means there is no optomotor reflex to find.
+          No null model yet.
+        </p>
+      </div>
+
+      <div class="panel">
+        <h2>The knobs — complex coefficient per mode (click to perturb)</h2>
+        <div id="knobs" class="knobs"></div>
+      </div>
+
+      <div class="lower knobs-only">
+        <div class="panel">
+          <h2>Mode amplitude over time</h2>
+          <canvas id="waterfall" width="640" height="240"></canvas>
+          <div class="legend"><span>−20 s</span><span>now</span></div>
+          <p class="note">
+            One row per mode, brightness = |c|. Stable bands are fixed points;
+            stripes that repeat are cycles; amber ticks mark a perturbation.
+          </p>
+        </div>
+        <div class="panel">
+          <h2>Empirical operator (paired probes)</h2>
+          <canvas id="operator" width="360" height="360"></canvas>
+          <p class="note">
+            Row = mode kicked, column = mode that changed. At each kick the
+            whole state (world, eye, readout, connectome) is snapshotted and a
+            second worker replays four deterministic branches for 3 s: closed
+            loop with and without the kick, and leak-only with and without it.
+            Cell = mean energy over 1–3 s of (closed+kick − closed) − (leak+kick
+            − leak), per unit of kick energy: what the loop did to the kick,
+            with its own drift and the kick’s passive decay removed. Cyan = the
+            loop added energy to that mode, violet = it removed it. This is the
+            operator of connectome <em>plus</em> this arbitrary readout, not of
+            the connectome alone. <span id="opCount">0 kicks</span>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

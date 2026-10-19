@@ -1,0 +1,10 @@
+{% extends "base.html" %} {% block head %}
+<link rel="stylesheet" href="/css/science.css" />
+<script src="/js/science.js" defer></script>
+{% if page.extra.og_image is defined %}<meta
+  property="og:image"
+  content="{{ get_url(path=page.extra.og_image) }}"
+/>{% endif %} {% endblock head %} {% block content %}
+<div data-zola-content>{{ page.content | safe }}</div>
+<!-- /zola-content -->
+{% endblock content %}

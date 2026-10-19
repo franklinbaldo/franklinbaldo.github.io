@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -18,6 +20,18 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      - name: Install pinned official Zola release
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 \
+            https://github.com/getzola/zola/releases/download/v0.23.6/zola-v0.23.6-x86_64-unknown-linux-musl.tar.gz \
+            --output "$RUNNER_TEMP/zola.tar.gz"
+          echo "7d77a4220a4f699cba2fc0e0c7859f780e887e269159ad4fab90e11ea16c906f  $RUNNER_TEMP/zola.tar.gz" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/zola-bin"
+          tar -xzf "$RUNNER_TEMP/zola.tar.gz" -C "$RUNNER_TEMP/zola-bin"
+          echo "$RUNNER_TEMP/zola-bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/zola-bin/zola" --version
 
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
@@ -29,14 +43,14 @@ jobs:
 
       - name: Start preview
         run: |
-          npx astro preview --host 127.0.0.1 > /tmp/astro-preview.log 2>&1 &
+          node scripts/zola/serve.mjs --host 127.0.0.1 --port 4321 > /tmp/zola-preview.log 2>&1 &
           for i in {1..30}; do
-            if curl --fail --silent http://localhost:4321/ >/dev/null; then
+            if curl --fail --silent http://127.0.0.1:4321/ >/dev/null; then
               exit 0
             fi
             sleep 1
           done
-          cat /tmp/astro-preview.log
+          cat /tmp/zola-preview.log
           exit 1
 
       - name: Capture
