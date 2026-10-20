@@ -1,4 +1,5 @@
 import { escapeHtml as h } from "../content.mjs";
+import { AGENT_LANE_HEIGHT, agentProviders } from "../../../src/lib/repo-factory-agents.mjs";
 const link = (url, text, className = "") =>
   `<a href="${h(url)}"${className ? ` class="${className}"` : ""} target="_blank" rel="noreferrer">${text}</a>`;
 const hidden = (value) => (value ? " hidden" : "");
@@ -21,12 +22,12 @@ export function renderFactory(snapshot) {
   const boardWidth = 1420;
   const boardHeight = Math.max(
     520,
-    58 + Math.ceil(Math.max(1, repositories.length) / 4) * 188 + 36
+    58 + AGENT_LANE_HEIGHT + Math.ceil(Math.max(1, repositories.length) / 4) * 188 + 36
   );
   const nodes = repositories.map((repo, index) => {
     const row = Math.floor(index / 4);
     const column = row % 2 === 0 ? index % 4 : 3 - (index % 4);
-    return { repo, x: 48 + column * 338, y: 58 + row * 188 };
+    return { repo, x: 48 + column * 338, y: 58 + AGENT_LANE_HEIGHT + row * 188 };
   });
   const nodeByName = new Map(nodes.map((node) => [node.repo.name, node]));
   const belts = connections.flatMap((connection) => {
@@ -106,6 +107,15 @@ export function renderFactory(snapshot) {
       <section class="factory-map-frame" aria-label="Interactive repository factory map">
         <div id="factory-board" class="factory-board" style="width:${boardWidth}px;height:${boardHeight}px">
           <div class="factory-grid" aria-hidden="true"></div>
+          <section class="factory-agent-lane" aria-label="AI agent provider nodes">
+            <p class="agent-lane-title">AGENT NETWORK · INTEGRATION PORTALS</p>
+            ${agentProviders.map((agent, index) => `<a class="factory-agent-node" data-agent-provider="${h(agent.id)}" style="--agent-x:${48 + index * 338}px" href="${h(agent.documentation)}" target="_blank" rel="noreferrer" aria-label="${h(agent.label)}, integration not yet instrumented. Open integration documentation">
+              <span class="agent-node-platform">${h(agent.platform)} · INTEGRATION PATH</span>
+              <strong>${h(agent.label)}</strong><small>${h(agent.adapter)}</small>
+              <span class="agent-node-state">NO SESSION TELEMETRY</span>
+            </a>`).join("")}
+            <p class="agent-lane-disclaimer">Provider portals only. No agent sessions, assignments, or activity are inferred.</p>
+          </section>
           <svg class="factory-belts" viewBox="0 0 ${boardWidth} ${boardHeight}" width="${boardWidth}" height="${boardHeight}" aria-hidden="true">
             ${belts.map((belt) => `<g data-belt data-source="${h(belt.source)}" data-target="${h(belt.target)}"><path class="belt-rail" d="${belt.d}"></path><path class="belt-flow" d="${belt.d}"></path></g>`).join("")}
           </svg>
