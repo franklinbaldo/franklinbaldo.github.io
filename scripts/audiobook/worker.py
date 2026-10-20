@@ -29,6 +29,7 @@ import math
 import os
 from pathlib import Path
 import platform
+import re
 import shutil
 import socket
 import struct
@@ -57,6 +58,13 @@ BREEZE_TORCHVISION = "torchvision==0.24.1"
 
 VOXCPM_PACKAGE = "voxcpm==2.0.3"
 VOXCPM_MODEL_REPOSITORY = "openbmb/VoxCPM2"
+
+KOKORO_PACKAGE = "kokoro>=0.9"
+KOKORO_MODEL_REPOSITORY = "hexgrad/Kokoro-82M"
+KOKORO_LANG_CODE = "p"  # misaki's Brazilian Portuguese phonemisation
+# Reading a paragraph in a single call was judged worse than splitting it per
+# clause, with the same voice and the same text, in the pt-BR listening test.
+KOKORO_SPLIT_PATTERN = r"(?<=[.;])\s+"
 
 # Audiobook loudness target. VoxCPM2 varies its own output level by as much
 # as 17 dB across segments — asking for emphasis raises the gain, not just the
@@ -609,6 +617,136 @@ class VoxCpmBackend:
         self.model = None
 
 
+# Kokoro takes no style prompt: `voice`, `speed` and `split_pattern` are its
+# entire control surface. But a voice is a 256-dimension style tensor, and in
+# StyleTTS2 that tensor carries affect as well as timbre, so an emotion can be
+# approximated by moving through voice space instead of by instruction.
+#
+# These presets were rated by ear against the pt-BR corpus. Only the ones judged
+# good are enabled by default; two more are kept as provisional, and the two that
+# were judged bad are deliberately absent until they are redesigned.
+KOKORO_EMOTIONS = {
+    "neutro": {"voices": [("pm_alex", 1.0)], "speed": 1.00, "gain_db": 0.0},
+    "medo": {"voices": [("pm_alex", 0.70), ("pf_dora", 0.30)], "speed": 1.15, "gain_db": -2.0},
+    "raiva": {"voices": [("pm_alex", 0.70), ("am_onyx", 0.30)], "speed": 1.10, "gain_db": 2.0},
+    "ternura": {"voices": [("pm_alex", 0.60), ("pf_dora", 0.40)], "speed": 0.90, "gain_db": -3.0},
+    "sussurro": {"voices": [("pm_alex", 1.0)], "speed": 0.92, "gain_db": -12.0,
+                 "provisional": True},
+    "solene": {"voices": [("pm_alex", 0.70), ("pm_santa", 0.30)], "speed": 0.82, "gain_db": 0.0,
+               "provisional": True},
+}
+
+# `[emocao] ... [/emocao]` and `<speaker:name> ... </speaker:name>` select the
+# configuration for the span that follows. The tag never reaches the model:
+# Kokoro pronounces whatever is left in the text, down to the word "asterisco".
+KOKORO_SPAN = re.compile(
+    r"\[(/?)([A-Za-z\u00c0-\u017f]+)\]|<(/?)speaker:([A-Za-z0-9_-]+)>"
+)
+
+
+class KokoroBackend:
+    """Kokoro-82M: fast, permissively licensed, steered entirely through voice space."""
+
+    def __init__(self, model: str, output_dir: Path) -> None:
+        if os.environ.get("AUDIOBOOK_SKIP_BACKEND_INSTALL") != "1":
+            run_checked([sys.executable, "-m", "pip", "install",
+                         "--disable-pip-version-check", KOKORO_PACKAGE])
+        from kokoro import KPipeline
+
+        self.pipeline = KPipeline(lang_code=KOKORO_LANG_CODE)
+        self.sample_rate = 24000
+        self.split_pattern = os.environ.get("KOKORO_SPLIT_PATTERN", KOKORO_SPLIT_PATTERN)
+        self._blends = {}
+        self.metadata = {
+            "package": KOKORO_PACKAGE,
+            "model_repository": model,
+            "lang_code": KOKORO_LANG_CODE,
+            "split_pattern": self.split_pattern,
+            "sample_rate": self.sample_rate,
+            "emotions": sorted(KOKORO_EMOTIONS),
+        }
+
+    def _blend(self, voices):
+        """Weighted sum of style tensors; a lone voice is used unchanged."""
+        key = tuple(voices)
+        if key not in self._blends:
+            import torch
+
+            packs = [self.pipeline.load_single_voice(name) * weight
+                     for name, weight in voices]
+            self._blends[key] = torch.stack(packs).sum(dim=0)
+        return self._blends[key]
+
+    def _speak(self, text, preset):
+        import numpy as np
+
+        parts = [np.asarray(audio) for _, _, audio in self.pipeline(
+            text, voice=self._blend(preset["voices"]), speed=preset["speed"],
+            split_pattern=self.split_pattern)]
+        if not parts:
+            raise ValueError(f"kokoro produced no audio for: {text[:60]!r}")
+        return np.concatenate(parts) * (10 ** (preset["gain_db"] / 20))
+
+    def _preset_for(self, segment, emotion, speaker):
+        preset = dict(KOKORO_EMOTIONS.get(emotion or "", KOKORO_EMOTIONS["neutro"]))
+        if speaker:
+            # A speaker span replaces the voice outright; emotion still applies.
+            preset["voices"] = [(speaker, 1.0)]
+            return preset
+        config = (segment.get("voice") or {}).get("kokoro") or {}
+        named = config.get("voice")
+        if named:
+            preset["voices"] = (
+                [(item["name"], float(item["weight"])) for item in named]
+                if isinstance(named, list) else [(named, 1.0)]
+            )
+        if config.get("speed") is not None:
+            preset["speed"] = float(config["speed"])
+        return preset
+
+    def _spans(self, text):
+        spans, cursor, emotion, speaker = [], 0, None, None
+        for match in KOKORO_SPAN.finditer(text):
+            chunk = text[cursor:match.start()].strip()
+            if chunk:
+                spans.append((emotion, speaker, chunk))
+            if match.group(2) is not None:
+                emotion = None if match.group(1) else match.group(2).lower()
+            else:
+                speaker = None if match.group(3) else match.group(4).lower()
+            cursor = match.end()
+        tail = text[cursor:].strip()
+        if tail:
+            spans.append((emotion, speaker, tail))
+        return spans
+
+    def synthesize(self, segment, output_path):
+        import numpy as np
+
+        spans = self._spans(segment["text"])
+        if not spans:
+            raise ValueError("segment has no narratable text")
+
+        gap = np.zeros(int(0.12 * self.sample_rate), dtype="float32")
+        rendered = []
+        for index, (emotion, speaker, chunk) in enumerate(spans):
+            if index:
+                rendered.append(gap)
+            rendered.append(self._speak(chunk, self._preset_for(segment, emotion, speaker)))
+
+        pcm, gain_db = normalize_to_pcm16(np.concatenate(rendered))
+        generated = write_pcm16_wav(output_path, pcm, self.sample_rate)
+        return {
+            **generated,
+            "spans": [{"emotion": e, "speaker": s} for e, s, _ in spans],
+            "voice_partition": "mixed" if any(s for _, s, _ in spans) else "single",
+            "gain_applied_db": gain_db,
+        }
+
+    def close(self):
+        self.pipeline = None
+
+
 def create_backend(name: str, model: str, output_dir: Path):
     if name == "fake":
         return FakeBackend()
@@ -616,8 +754,10 @@ def create_backend(name: str, model: str, output_dir: Path):
         return BreezeBackend(model, output_dir)
     if name == "voxcpm2":
         return VoxCpmBackend(model, output_dir)
+    if name == "kokoro":
+        return KokoroBackend(model, output_dir)
     raise ValueError(
-        f"unsupported backend: {name}; available: breeze, fake, voxcpm2"
+        f"unsupported backend: {name}; available: breeze, fake, kokoro, voxcpm2"
     )
 
 
@@ -707,7 +847,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--plan", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument(
-        "--backend", default="fake", choices=["breeze", "fake", "voxcpm2"]
+        "--backend", default="fake",
+        choices=["breeze", "fake", "kokoro", "voxcpm2"],
     )
     parser.add_argument("--model", default="deterministic-tone-v1")
     parser.add_argument("--result-archive", type=Path)
@@ -721,6 +862,8 @@ def main() -> int:
             args.model = BREEZE_MODEL_REPOSITORY
         elif args.backend == "voxcpm2":
             args.model = VOXCPM_MODEL_REPOSITORY
+        elif args.backend == "kokoro":
+            args.model = KOKORO_MODEL_REPOSITORY
     try:
         manifest = run(
             args.plan,
