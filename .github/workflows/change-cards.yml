@@ -104,3 +104,27 @@ jobs:
           uv run --with 'git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check .routines/hronir/evaluations
           --require-spec ../../../specs/okf-types/{slug}.md
           --normative-spec
+
+      # Legacy audiobook types (work, rights, editorial guides, chapter texts)
+      # have no spec yet and are excluded explicitly; any new type added under
+      # these directories must ship a spec in specs/okf-types/.
+      - name: Validate audiobook work data as OKF knowledge
+        run: >-
+          uv run --with 'git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check data/audiobooks
+          --exclude '*/work.md' --exclude '*/editorial.md' --exclude '*/rights.md'
+          --exclude '*/original/*' --exclude '*/translation/*' --exclude '*/narration/*'
+          --require-spec ../../specs/okf-types/{slug}.md
+          --normative-spec
+
+      - name: Validate blog audio data as OKF knowledge
+        run: >-
+          uv run --with 'git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check data/audio/blog
+          --exclude 'editorial.md' --exclude '*/narration.md'
+          --require-spec ../../../specs/okf-types/{slug}.md
+          --normative-spec
+
+      - name: Validate audiobook TTS benchmarks as OKF knowledge
+        run: >-
+          uv run --with 'git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check data/audiobook-benchmarks
+          --require-spec ../../specs/okf-types/{slug}.md
+          --normative-spec

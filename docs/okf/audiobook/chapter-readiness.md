@@ -26,7 +26,7 @@ A obra possui:
 - idioma da fonte e idioma alvo;
 - política de publicação/direitos registrada;
 - guia editorial específico, ou declaração explícita de que os defaults globais bastam;
-- `voices.yaml` e `pronunciation.yaml`, ainda que inicialmente mínimos.
+- `voices.md` e `pronunciation.md`, ainda que inicialmente mínimos.
 
 ### G1 — source ready
 
@@ -64,7 +64,7 @@ A narração:
 A unidade passou por revisão de consistência:
 
 - nomes e termos seguem o glossário;
-- vozes/speakers existem em `voices.yaml`;
+- vozes/speakers existem em `voices.md`;
 - pronúncias especiais estão declaradas;
 - IDs não colidem;
 - ordem dos segmentos é determinística;

@@ -6,8 +6,8 @@ post_id: o-blog-agora-tem-audio
 lang: pt-BR
 derived_from: ../../../../src/content/blog/o-blog-agora-tem-audio.mdx
 editorial_guide: ../editorial.md
-voices: ../voices.yaml
-pronunciation_guide: ../pronunciation.yaml
+voices: ../voices.md
+pronunciation_guide: ../pronunciation.md
 ready_for_audio: true
 status: canonical-editorial-unit
 ---

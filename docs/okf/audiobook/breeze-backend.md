@@ -52,7 +52,7 @@ O cache raiz pode ser definido por `AUDIOBOOK_MODEL_CACHE`. `AUDIOBOOK_SKIP_BACK
 
 ## Voz lógica para Voice Design
 
-A configuração provider-neutral em `voices.yaml` entra no plano de cada segmento e faz parte de `input_digest`.
+A configuração provider-neutral em `voices.md` entra no plano de cada segmento e faz parte de `input_digest`.
 
 Exemplo conceitual:
 
@@ -106,7 +106,7 @@ O encoding final para MP3/AAC continua responsabilidade do assembler, não do ba
 
 ## Benchmark independente de obra
 
-O corpus `data/audiobook-benchmarks/pt-br-audiobook-v1.yaml` não pertence a HPMOR nem a qualquer obra. Ele existe para testar o motor antes de um capítulo editorial ficar pronto.
+O corpus `data/audiobook-benchmarks/pt-br-audiobook-v1.md` não pertence a HPMOR nem a qualquer obra. Ele existe para testar o motor antes de um capítulo editorial ficar pronto.
 
 Cobre pelo menos:
 
@@ -148,4 +148,4 @@ Qualidade relativa, identidade de personagem e expressividade são avaliadas dep
 - bootstrap inicial baixa vários gigabytes e pode consumir parte relevante de uma sessão gratuita;
 - o backend usa a implementação eager padrão para caber em GPUs de aproximadamente 12–16 GB, em vez de presumir o caminho `--fast-all` mais pesado.
 
-Se Voice Design for linguisticamente bom mas instável entre segmentos, o próximo experimento é gerar uma âncora de voz por personagem e usar Voice Direction com reference audio — sem mudar o contrato canônico de `voices.yaml`.
+Se Voice Design for linguisticamente bom mas instável entre segmentos, o próximo experimento é gerar uma âncora de voz por personagem e usar Voice Direction com reference audio — sem mudar o contrato canônico de `voices.md`.

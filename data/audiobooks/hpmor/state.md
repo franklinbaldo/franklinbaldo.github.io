@@ -1,3 +1,5 @@
+---
+type: Audiobook Work State
 schema: audiobook-work-state-v1
 work_id: hpmor
 status: in_progress
@@ -41,4 +43,7 @@ chapters:
         url: https://franklinbaldo.github.io/audio/hpmor/hpmor-001-pt-BR.mp3
         type: audio/mpeg
         bytes: 16377645
-      audio_sha256: ffa34a5fb3fc43d97b8bacc9a59a1379ce67b6f4a2458c881a27085d4321ec3f
+      audio_digest: sha256:ffa34a5fb3fc43d97b8bacc9a59a1379ce67b6f4a2458c881a27085d4321ec3f
+---
+
+Estado editorial e de publicação da obra HPMOR. Arquivo mantido por máquina: `scripts/audiobook/apply-publication.mjs` reescreve o frontmatter ao publicar um capítulo.

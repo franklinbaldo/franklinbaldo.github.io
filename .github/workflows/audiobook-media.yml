@@ -313,7 +313,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "data/audiobooks/$WORK_ID/state.yaml" "data/audiobooks/$WORK_ID/work.md"
+          git add "data/audiobooks/$WORK_ID/state.md" "data/audiobooks/$WORK_ID/work.md"
           git commit -m "feat(audiobook): publish $WORK_ID $CHAPTER_ID"
           # A main exige head atualizado antes do merge, e a regra tambem vale
           # para push: o estado publicado vai por PR em auto-merge. O retry com

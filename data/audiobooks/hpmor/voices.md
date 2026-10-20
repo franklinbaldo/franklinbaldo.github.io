@@ -1,3 +1,5 @@
+---
+type: Audiobook Voice Cast
 schema: audiobook-voices-v1
 work_id: hpmor
 default_locale: pt-BR
@@ -58,3 +60,6 @@ voices:
     kokoro:
       voice: pm_alex
       speed: 1.0
+---
+
+Elenco de vozes lógicas da obra HPMOR. Cada voz entra no plano de cada segmento e faz parte do `input_digest`; mudar uma voz invalida o áudio já gerado com ela.

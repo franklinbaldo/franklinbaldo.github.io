@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import matter from "gray-matter";
-import yaml from "js-yaml";
+import { readOkfDocument } from "./okf.js";
 
 const REQUIRED_GATES = [
   "work_ready",
@@ -33,12 +33,12 @@ function readUtf8(filePath) {
   }
 }
 
-function readYaml(filePath) {
+function readOkf(filePath, expectedType) {
+  readUtf8(filePath);
   try {
-    return yaml.load(readUtf8(filePath)) ?? {};
+    return readOkfDocument(filePath, expectedType).data;
   } catch (error) {
-    if (error instanceof AudiobookValidationError) throw error;
-    throw new AudiobookValidationError(`Invalid YAML: ${filePath}`, [
+    throw new AudiobookValidationError(`Invalid OKF document: ${filePath}`, [
       String(error),
     ]);
   }
@@ -128,9 +128,15 @@ export function validateWork(rootDir, workId, options = {}) {
   const errors = [];
 
   const work = readMarkdownFrontmatter(path.join(workDir, "work.md"));
-  const state = readYaml(path.join(workDir, "state.yaml"));
-  const voices = readYaml(path.join(workDir, "voices.yaml"));
-  const pronunciation = readYaml(path.join(workDir, "pronunciation.yaml"));
+  const state = readOkf(path.join(workDir, "state.md"), "Audiobook Work State");
+  const voices = readOkf(
+    path.join(workDir, "voices.md"),
+    "Audiobook Voice Cast"
+  );
+  const pronunciation = readOkf(
+    path.join(workDir, "pronunciation.md"),
+    "Audiobook Pronunciation Lexicon"
+  );
 
   requireEqual(errors, work.type, "Audiobook Work", "work.type");
   requireEqual(errors, work.work_id, workId, "work.work_id");

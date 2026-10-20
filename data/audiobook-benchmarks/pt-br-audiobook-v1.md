@@ -1,3 +1,5 @@
+---
+type: Audiobook TTS Benchmark
 schema: audiobook-tts-benchmark-v1
 benchmark_id: pt-br-audiobook-v1
 language: pt-BR
@@ -114,3 +116,6 @@ segments:
     text: >-
       Por um instante, ela sorriu ao reconhecer a letra no envelope. Então viu a
       data escrita no canto, e o sorriso desapareceu antes que terminasse de respirar.
+---
+
+Corpus de benchmark de TTS em português brasileiro, independente de qualquer obra. O `narration_digest` do plano ignora o campo `type`, então continua comparável com as rodadas anteriores à migração para OKF.

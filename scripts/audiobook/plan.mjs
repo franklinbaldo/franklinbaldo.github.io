@@ -8,7 +8,7 @@ import { createPlan, createWorkPlan } from "../../src/audiobook/plan.js";
 
 function usage() {
   console.error(
-    "Usage: node scripts/audiobook/plan.mjs (--work <work_id> --chapter <chapter_id> | --narration <file.md> --voices <voices.yaml>) [--output <plan.json>]"
+    "Usage: node scripts/audiobook/plan.mjs (--work <work_id> --chapter <chapter_id> | --narration <file.md> --voices <voices.md>) [--output <plan.json>]"
   );
 }
 
