@@ -11,6 +11,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { renderFactory } from "./factory.mjs";
+import { agentProviders } from "../../../src/lib/repo-factory-agents.mjs";
 import { renderAtlas } from "./atlas.mjs";
 import { readDeck } from "./decks.mjs";
 import { readScienceCards, scienceGraph } from "./science.mjs";
@@ -89,6 +90,18 @@ test("science links use the same deduplication, anchor and relative-path semanti
   }
 });
 
+test("Repo Factory renders provider nodes without inventing observed sessions", () => {
+  const snapshot = JSON.parse(read("src/generated/repo-factory.json"));
+  const html = renderFactory(snapshot);
+  assert.equal(count(html, /class="factory-agent-node"/g), agentProviders.length);
+  for (const provider of agentProviders) {
+    assert.ok(html.includes(`data-agent-provider="${provider.id}"`));
+    assert.ok(html.includes(provider.documentation));
+  }
+  assert.ok(html.includes("NO SESSION TELEMETRY"));
+  assert.ok(html.includes("No agent sessions, assignments, or activity are inferred."));
+  assert.doesNotMatch(html, /data-agent-session=/);
+});
 test("Repo Factory preserves all controls, initial inspector IDs and complete snapshot", () => {
   const snapshot = JSON.parse(read("src/generated/repo-factory.json"));
   const html = renderFactory(snapshot);

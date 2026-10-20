@@ -2,6 +2,7 @@
 import PageLayout from "../../layouts/PageLayout.astro";
 import "../../styles/repo-factory.css";
 import rawSnapshot from "../../generated/repo-factory.json";
+import { AGENT_LANE_HEIGHT, agentProviders } from "../../lib/repo-factory-agents.mjs";
 
 type FactoryStatus = "flowing" | "jammed" | "warming" | "idle";
 type ProductKind = "merge" | "release" | "run";
@@ -105,7 +106,7 @@ const CARD_WIDTH = 270;
 const CARD_HEIGHT = 142;
 const COLUMNS = 4;
 const LEFT = 48;
-const TOP = 58;
+const TOP = 58 + AGENT_LANE_HEIGHT;
 const X_GAP = 338;
 const Y_GAP = 188;
 
@@ -276,6 +277,28 @@ const safeData = JSON.stringify(snapshot).replaceAll("<", "\\u003c");
               style={`width:${BOARD_WIDTH}px;height:${boardHeight}px`}
             >
               <div class="factory-grid" aria-hidden="true"></div>
+              <section class="factory-agent-lane" aria-label="AI agent provider nodes">
+                <p class="agent-lane-title">AGENT NETWORK · INTEGRATION PORTALS</p>
+                {agentProviders.map((agent, index) => (
+                  <a
+                    class="factory-agent-node"
+                    data-agent-provider={agent.id}
+                    style={`--agent-x:${LEFT + index * X_GAP}px`}
+                    href={agent.documentation}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`${agent.label}, integration not yet instrumented. Open integration documentation`}
+                  >
+                    <span class="agent-node-platform">{agent.platform} · INTEGRATION PATH</span>
+                    <strong>{agent.label}</strong>
+                    <small>{agent.adapter}</small>
+                    <span class="agent-node-state">NO SESSION TELEMETRY</span>
+                  </a>
+                ))}
+                <p class="agent-lane-disclaimer">
+                  Provider portals only. No agent sessions, assignments, or activity are inferred.
+                </p>
+              </section>
               <svg
                 class="factory-belts"
                 viewBox={`0 0 ${BOARD_WIDTH} ${boardHeight}`}

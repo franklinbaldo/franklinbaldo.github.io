@@ -305,6 +305,85 @@
   }
 }
 
+
+/* Provider portals are not claims of running agent sessions. */
+.factory-agent-lane {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  width: 100%;
+  height: 200px;
+  pointer-events: none;
+  border-bottom: 2px dashed color-mix(in srgb, var(--factory-blue) 55%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--factory-blue) 12%, transparent), transparent);
+}
+
+.agent-lane-title,
+.agent-lane-disclaimer {
+  position: absolute;
+  left: 48px;
+  margin: 0;
+  color: var(--factory-muted);
+  font: 700 0.65rem/1.3 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.055em;
+}
+
+.agent-lane-title {
+  top: 16px;
+  color: var(--factory-blue);
+}
+
+.agent-lane-disclaimer {
+  bottom: 12px;
+}
+
+.factory-agent-node {
+  position: absolute;
+  left: var(--agent-x);
+  top: 44px;
+  display: grid;
+  gap: 0.14rem;
+  width: 270px;
+  min-height: 112px;
+  padding: 0.65rem 0.72rem;
+  pointer-events: auto;
+  border: 2px solid var(--factory-blue);
+  border-left-width: 7px;
+  border-radius: 4px;
+  background: var(--factory-panel-2);
+  color: var(--factory-ink);
+  text-decoration: none;
+  box-shadow: 2px 3px 0 color-mix(in srgb, var(--factory-blue) 30%, transparent);
+}
+
+.factory-agent-node:hover,
+.factory-agent-node:focus-visible {
+  color: var(--factory-ink);
+  outline: 2px solid var(--factory-brass);
+  outline-offset: 2px;
+}
+
+.factory-agent-node > strong {
+  font: 800 1.08rem/1.15 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.agent-node-platform,
+.agent-node-state,
+.factory-agent-node small {
+  color: var(--factory-muted);
+  font: 700 0.61rem/1.25 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.agent-node-platform {
+  color: var(--factory-blue);
+  letter-spacing: 0.05em;
+}
+
+.agent-node-state {
+  color: var(--factory-red);
+}
+
 .factory-node {
   position: absolute;
   left: var(--node-x);
