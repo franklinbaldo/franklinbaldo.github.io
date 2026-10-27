@@ -1,0 +1,394 @@
+---
+const title = "Achei. Será? · Clube dos Silveira Baldo · rascunho";
+const media = {};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Rascunho em 10 slides: descoberta com IA, VASCO, verificação e provas integradas em Lean."
+    />
+    <title>{title}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/white.css" />
+  </head>
+  <body>
+    <div class="reveal bait-deck">
+      <div class="slides">
+
+        <section class="cover success">
+          <p class="eyebrow">Clube dos Silveira Baldo · rascunho para revisão</p>
+          <h1>Achei. Será?</h1>
+          <p class="subtitle">IA, um ponto no céu e o trabalho de conferir.</p>
+          <p>Franklin · 27/10/2026 · 21h · America/Porto_Velho</p>
+          <aside class="notes">Abrir com a pergunta: se um ponto aparece numa imagem antiga e não aparece em outra, o que vocês acham que aconteceu? Deixar as hipóteses aparecerem. Esta versão não exibe recortes de candidatos em investigação.</aside>
+        </section>
+        <section class="success">
+          <p class="eyebrow">1 ponto, várias explicações</p>
+          <h2>Como conferir esse ponto?</h2>
+          <div class="cards"><p>Objeto no céu?</p><p>Marca na placa?</p><p>Diferença entre imagens?</p></div>
+          <p class="fragment kicker">Que teste separa uma hipótese da outra?</p>
+          <aside class="notes">Conferir coordenadas, época, filtro e sensibilidade. Procurar outra digitalização da mesma placa, outras exposições e contrapartidas em catálogos. Uma diferença entre imagens pode vir do instrumento ou do processamento; cada comparação precisa de contexto.</aside>
+        </section>
+        <section class="success">
+          <p class="eyebrow">VASCO</p>
+          <h2>Uma pergunta que eu não teria procurado</h2>
+          <p class="big">A IA ajudou a investigar dados que já estavam catalogados.</p>
+          <p class="fragment kicker">Ainda não temos uma explicação confirmada.</p>
+          <aside class="notes">VASCO compara levantamentos antigos e modernos em busca de fontes que aparecem ou desaparecem. Para mim, a descoberta aqui foi encontrar uma pergunta investigável com ajuda de IA. Isso não equivale a descobrir um novo objeto, confirmar um candidato ou estabelecer um recorde. A IA pode ajudar a explorar, escrever código e propor verificações; os dados e as verificações continuam necessários. Fonte pública: https://arxiv.org/abs/2206.00907 . Transição: e quando o objeto a conferir é uma prova?</aside>
+        </section>
+        <section class="success">
+          <p class="eyebrow">Exemplo conceitual</p>
+          <h2>Cada passo tem suas hipóteses</h2>
+          <p class="big">Todo múltiplo de 4 é par.</p>
+          <p class="fragment big">Este número é múltiplo de 4.</p>
+          <p class="fragment kicker">O que podemos concluir?</p>
+          <aside class="notes">Pedir a conclusão antes de avançar. O número é par. Temos uma regra e a hipótese que permite aplicá-la. Não é uma demonstração em Lean executada ao vivo: é um exemplo conceitual de dependência entre hipóteses e conclusão.</aside>
+        </section>
+        <section class="success">
+          <p class="eyebrow">Exemplo conceitual · tiramos uma hipótese</p>
+          <h2>E agora?</h2>
+          <p class="big">Todo múltiplo de 4 é par.</p>
+          <p class="fragment">Podemos concluir que este número é par?</p>
+          <p class="fragment kicker">Falta saber algo sobre este número.</p>
+          <aside class="notes">Sem a segunda hipótese, não podemos concluir a paridade deste número. Lean é uma linguagem de programação e um assistente de provas: confere a prova do enunciado formal, com as definições, hipóteses e axiomas utilizados. Ainda precisamos revisar se formalizamos a pergunta que pretendíamos fazer. Fonte: https://lean-lang.org/theorem_proving_in_lean4/ .</aside>
+        </section>
+        <section class="success">
+          <p class="eyebrow">Lean · provas integradas</p>
+          <h2>Uma prova pode ajudar a próxima</h2>
+          <div class="cards"><p>Definições comuns</p><p>Uma parte demonstrada</p><p>Uma nova pergunta</p></div>
+          <p class="fragment kicker">Sem refazer tudo. Sem esquecer as hipóteses.</p>
+          <aside class="notes">Provas integradas no sentido concreto de peças que se conectam na mesma linguagem: a conclusão de um lema pode alimentar outra prova quando as hipóteses se encaixam. Não basta colar textos convincentes. Se a IA sugerir uma prova, o verificador continua tendo trabalho a fazer.</aside>
+        </section>
+        <section class="success">
+          <p class="eyebrow">Mathlib</p>
+          <h2>Conhecimento construído por muitas pessoas</h2>
+          <p class="big">Uma biblioteca comunitária de matemática formalizada em Lean.</p>
+          <p class="fragment kicker">Definições e provas que outras pessoas podem examinar e reutilizar.</p>
+          <aside class="notes">A parte que me interessa é a continuidade: uma pessoa deixa uma peça utilizável para outra. A biblioteca não elimina o trabalho de escolher definições e formular bons problemas. Fonte: https://leanprover-community.github.io/ .</aside>
+        </section>
+        <section class="success">
+          <p class="eyebrow">Da biblioteca à pesquisa matemática</p>
+          <h2>O que uma garantia garante?</h2>
+          <p class="big">Uma propriedade de um modelo, sob hipóteses explícitas.</p>
+          <p class="fragment">Por exemplo: estudar relações entre DFT e convolução.</p>
+          <p class="fragment kicker">Uma prova em aritmética exata não mede velocidade de CPU.</p>
+          <aside class="notes">DFT é a transformada discreta de Fourier; convolução combina sequências. Aqui são apenas exemplos de objetos matemáticos que podemos formalizar e conectar. Distinguir uma identidade matemática, uma implementação com arredondamento e um teste de desempenho. Este slide não anuncia um resultado novo nem demonstra a viabilidade de um projeto. A ligação com pesquisa é transformar uma pergunta em um enunciado preciso e verificar o que realmente foi provado.</aside>
+        </section>
+        <section class="success">
+          <p class="eyebrow">Duas formas de conferir</p>
+          <h2>O que foi conferido?</h2>
+          <div class="cards"><p>VASCO<br />O que aconteceu na placa?</p><p>Lean<br />O que segue destas hipóteses?</p><p>Nós<br />O modelo responde à pergunta?</p></div>
+          <p class="fragment kicker">Ainda revisamos o enunciado, o modelo e a ligação com o mundo.</p>
+          <aside class="notes">Observação empírica e prova formal têm critérios diferentes. Uma prova não confirma sozinha a natureza de um ponto numa imagem. Uma imagem não demonstra um teorema. Em ambos os casos quero conseguir mostrar o caminho entre a pergunta e a conclusão.</aside>
+        </section>
+        <section class="success">
+          <p class="eyebrow">Como alguém continua daqui?</p>
+          <h2>Qual pergunta vocês gostariam de investigar com essa ajuda?</h2>
+          <p>Compartilhar uma prova é deixar um ponto de partida para outra pessoa.</p>
+          <p class="media-credit">Para explorar: <a href="https://arxiv.org/abs/2206.00907">VASCO</a> · <a href="https://lean-lang.org/theorem_proving_in_lean4/">Lean</a> · <a href="https://leanprover-community.github.io/">Mathlib</a></p>
+          <aside class="notes">Deixar a conversa aberta. Se surgir uma ideia, começar pelo que contaria como evidência a favor ou contra, antes de pedir uma conclusão à IA.</aside>
+        </section>
+      </div>
+    </div>
+
+    <footer class="deck-help" aria-label="Controles da apresentação">
+      <span>← → navega</span>
+      <span>S notas</span>
+      <span>Esc visão geral</span>
+    </footer>
+
+    <script is:inline type="module">
+      import Reveal from "https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.esm.js";
+      import Notes from "https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/plugin/notes/notes.esm.js";
+
+      const deck = new Reveal({
+        hash: true,
+        controls: true,
+        progress: true,
+        center: true,
+        transition: "slide",
+        backgroundTransition: "fade",
+        width: 1280,
+        height: 720,
+        margin: 0.055,
+        plugins: [Notes],
+      });
+
+      deck.initialize();
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    color-scheme: light;
+    --paper: #f7efe2;
+    --ink: #14110f;
+    --muted: #6b5f55;
+    --gold: #b27818;
+    --blood: #7c1420;
+    --black: #070707;
+    --blue: #1e3557;
+  }
+
+  body { margin: 0; background: var(--paper); }
+
+  .bait-deck {
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--ink);
+  }
+
+  .bait-deck .slides { text-align: left; }
+
+  .bait-deck section {
+    padding: 3rem 4rem;
+    box-sizing: border-box;
+  }
+
+  .bait-deck h1,
+  .bait-deck h2 {
+    margin: 0;
+    font-family: Fraunces, Georgia, serif;
+    font-weight: 900;
+    letter-spacing: -0.065em;
+    line-height: 0.92;
+    text-transform: none;
+  }
+
+  .bait-deck h1 { font-size: clamp(5rem, 11vw, 10.5rem); }
+  .bait-deck h2 { max-width: 1050px; font-size: clamp(3.2rem, 6.5vw, 6rem); }
+
+  .bait-deck p,
+  .bait-deck li {
+    max-width: 940px;
+    font-size: 1.75rem;
+    line-height: 1.16;
+  }
+
+  .bait-deck .eyebrow {
+    margin: 0 0 1.1rem;
+    color: var(--gold);
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .bait-deck .subtitle { max-width: 760px; color: var(--muted); font-size: 2.2rem; }
+  .bait-deck .big { font-size: clamp(2rem, 3.6vw, 3.7rem); line-height: 1.04; }
+  .bait-deck .kicker { color: var(--gold); font-weight: 900; }
+  .bait-deck .no { color: #fff; font-weight: 900; }
+
+  .bait-deck .cover {
+    display: grid;
+    align-content: center;
+    min-height: 100%;
+  }
+
+  .bait-deck .success {
+    background:
+      radial-gradient(circle at top right, rgba(178, 120, 24, 0.18), transparent 42%),
+      linear-gradient(135deg, #fff9ef, #f2e4ce);
+  }
+
+  .bait-deck .crash {
+    background:
+      radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.1), transparent 32%),
+      linear-gradient(135deg, #1a080b, #050505);
+    color: #f8ecdc;
+  }
+
+  .bait-deck .crash .eyebrow { color: #ffbc42; }
+  .bait-deck .crash .kicker { color: #ffbc42; }
+
+  .bait-deck .fake-ending {
+    background: linear-gradient(135deg, #111, #3b0f16);
+    color: #fff;
+  }
+
+  .bait-deck .nathan-turn {
+    background:
+      radial-gradient(circle at 15% 18%, rgba(255, 200, 87, 0.2), transparent 30%),
+      linear-gradient(135deg, #08090d, #152137);
+    color: #f7efe2;
+  }
+
+  .bait-deck .nathan-turn .eyebrow { color: #ffc857; }
+  .bait-deck .nathan-turn .kicker { color: #ffc857; }
+
+  .bait-deck .collision-slide {
+    background: linear-gradient(135deg, #f7efe2 0%, #ead5b9 48%, #111827 48%, #070707 100%);
+  }
+
+  .bait-deck .finale {
+    background: linear-gradient(135deg, #070707, #191016);
+    color: #f7efe2;
+  }
+
+  .bait-deck .sources-slide { background: #f7efe2; }
+  .bait-deck .sources-slide li { font-size: 1.35rem; }
+
+  .bait-deck .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(430px, 0.95fr);
+    gap: 2.4rem;
+    align-items: center;
+  }
+
+  .bait-deck .portrait-right {
+    grid-template-columns: minmax(0, 1.2fr) minmax(310px, 0.8fr);
+  }
+
+  .bait-deck .cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .bait-deck .cards p {
+    min-height: 130px;
+    margin: 0;
+    padding: 1rem;
+    border: 1px solid rgba(178, 120, 24, 0.35);
+    border-radius: 1.1rem;
+    background: rgba(255, 255, 255, 0.55);
+    font-family: Fraunces, Georgia, serif;
+    font-size: 2.15rem;
+    font-weight: 900;
+    letter-spacing: -0.045em;
+  }
+
+  .bait-deck .media { margin: 0; }
+  .bait-deck .media a { display: block; color: inherit; text-decoration: none; }
+  .bait-deck .media img {
+    display: block;
+    width: 100%;
+    max-height: 520px;
+    object-fit: cover;
+    border-radius: 1.3rem;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+  }
+
+  .bait-deck .portrait img { aspect-ratio: 4 / 5; }
+  .bait-deck .landscape img { aspect-ratio: 16 / 10; }
+  .bait-deck .uncropped img { aspect-ratio: 16 / 9; object-fit: contain; background: #060606; }
+
+  .bait-deck .logo-card {
+    padding: 2rem;
+    border-radius: 1.4rem;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 24px 70px rgba(47, 33, 16, 0.14);
+  }
+
+  .bait-deck .logo-card img { max-height: 230px; object-fit: contain; box-shadow: none; border-radius: 0; }
+
+  .bait-deck figcaption,
+  .bait-deck .media-credit,
+  .bait-deck .credit-row {
+    margin: 0.55rem 0 0;
+    color: rgba(20, 17, 15, 0.62);
+    font-size: 0.92rem;
+    line-height: 1.18;
+  }
+
+  .bait-deck .nathan-turn figcaption,
+  .bait-deck .teaser-slide .media-credit,
+  .bait-deck .finale figcaption { color: rgba(247, 239, 226, 0.7); }
+
+  .bait-deck .stat {
+    margin: 1.2rem 0 0;
+    color: var(--gold);
+    font-family: Fraunces, Georgia, serif;
+    font-size: clamp(4.6rem, 8vw, 7.4rem);
+    font-weight: 900;
+    letter-spacing: -0.07em;
+    line-height: 0.82;
+  }
+
+  .bait-deck .stat span {
+    display: block;
+    color: var(--muted);
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  .bait-deck .end-card {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.18em 0.42em;
+    border: 0.08em solid #ffbc42;
+    color: #ffbc42;
+    font-family: Fraunces, Georgia, serif;
+    font-size: 5.5rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+  }
+
+  .bait-deck .collision {
+    display: grid;
+    grid-template-columns: 215px minmax(0, 1fr) 215px;
+    gap: 1.4rem;
+    align-items: center;
+  }
+
+  .bait-deck .collision h2 { max-width: 760px; font-size: clamp(2.8rem, 5.3vw, 5rem); }
+  .bait-deck .mini img { max-height: 365px; }
+  .bait-deck .credit-row { text-align: center; }
+
+  .bait-deck .video-shell {
+    overflow: hidden;
+    width: 830px;
+    max-width: 100%;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9;
+    border: 2px solid rgba(255, 200, 87, 0.65);
+    border-radius: 1.4rem;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+  }
+
+  .bait-deck .teaser-slide h2 { max-width: none; text-align: center; font-size: 3.3rem; margin-bottom: 1rem; }
+  .bait-deck .teaser-slide .eyebrow,
+  .bait-deck .teaser-slide .media-credit { text-align: center; }
+  .bait-deck iframe { width: 100%; height: 100%; border: 0; }
+
+  .deck-help {
+    position: fixed;
+    left: 1rem;
+    bottom: 0.75rem;
+    z-index: 20;
+    display: flex;
+    gap: 0.6rem;
+    color: rgba(255, 255, 255, 0.68);
+    font: 800 0.72rem/1 Inter, ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  .deck-help span {
+    padding: 0.45rem 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(8px);
+  }
+
+  @media (max-width: 760px) {
+    .bait-deck section { padding: 2rem; }
+    .bait-deck .split,
+    .bait-deck .portrait-right,
+    .bait-deck .cards,
+    .bait-deck .collision { grid-template-columns: 1fr; }
+    .bait-deck .media img { max-height: 300px; }
+    .bait-deck .mini { display: none; }
+    .deck-help { display: none; }
+  }
+</style>

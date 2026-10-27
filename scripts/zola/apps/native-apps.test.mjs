@@ -93,13 +93,18 @@ test("science links use the same deduplication, anchor and relative-path semanti
 test("Repo Factory renders provider nodes without inventing observed sessions", () => {
   const snapshot = JSON.parse(read("src/generated/repo-factory.json"));
   const html = renderFactory(snapshot);
-  assert.equal(count(html, /class="factory-agent-node"/g), agentProviders.length);
+  assert.equal(
+    count(html, /class="factory-agent-node"/g),
+    agentProviders.length
+  );
   for (const provider of agentProviders) {
     assert.ok(html.includes(`data-agent-provider="${provider.id}"`));
     assert.ok(html.includes(provider.documentation));
   }
   assert.ok(html.includes("NO SESSION TELEMETRY"));
-  assert.ok(html.includes("No agent sessions, assignments, or activity are inferred."));
+  assert.ok(
+    html.includes("No agent sessions, assignments, or activity are inferred.")
+  );
   assert.doesNotMatch(html, /data-agent-session=/);
 });
 test("Repo Factory preserves all controls, initial inspector IDs and complete snapshot", () => {
@@ -204,3 +209,15 @@ for (const id of ["nathan-holmes", "theranos-nathan"]) {
     );
   });
 }
+
+test("achei-sera projects all ten slides and notes into native Zola", () => {
+  const file = "src/pages/powerpoint-club/achei-sera.astro";
+  const deck = readDeck(read(file), file);
+  assert.equal(count(deck.body, /<section\b/g), 10);
+  assert.equal(count(deck.body, /class="notes"/g), 10);
+  assert.ok(deck.body.includes("America/Porto_Velho"));
+  assert.ok(deck.body.includes("Ainda não temos uma explicação confirmada."));
+  assert.ok(deck.script.includes("plugins: [Notes]"));
+  assert.ok(deck.script.includes("hash: true"));
+  assert.ok(!/[{}]/.test(deck.body));
+});

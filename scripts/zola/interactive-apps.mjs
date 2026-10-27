@@ -182,7 +182,7 @@ page(
   "pt"
 );
 
-for (const id of ["nathan-holmes", "theranos-nathan"]) {
+for (const id of ["nathan-holmes", "theranos-nathan", "achei-sera"]) {
   const file = `src/pages/powerpoint-club/${id}.astro`;
   const deck = readDeck(read(file), file);
   css(deck.css, id);
@@ -199,5 +199,5 @@ for (const id of ["nathan-holmes", "theranos-nathan"]) {
   );
 }
 console.log(
-  `Native apps projected: ${snapshot.repositories?.length ?? 0} repositories, ${cards.formulas.length} formulas, ${cards.families.length} families, 2 complete Reveal decks`
+  `Native apps projected: ${snapshot.repositories?.length ?? 0} repositories, ${cards.formulas.length} formulas, ${cards.families.length} families, 3 complete Reveal decks`
 );
