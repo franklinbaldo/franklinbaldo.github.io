@@ -5,7 +5,6 @@ description: "Um desenho animado de nove minutos sobre IA, Lean e o fiscal que s
 docType: essay
 date: "2026-10-27"
 lang: pt
-translationKey: todo-mundo-e-matematico-agora
 tags: ["matemática", "lean", "IA", "formalização", "vídeo"]
 ---
 
