@@ -6,7 +6,7 @@ docType: essay
 date: "2026-10-27"
 lang: pt
 translationKey: todo-mundo-e-matematico-agora
-tags: ["matemática", "lean", "ia", "formalização", "vídeo"]
+tags: ["matemática", "lean", "IA", "formalização", "vídeo"]
 ---
 
 Fiz um desenho animado. Nove minutos, em português, para o Clube dos Silveira Baldo. É uma comédia sobre IA e matemática, e o protagonista é um assistente de provas com sotaque francês.
