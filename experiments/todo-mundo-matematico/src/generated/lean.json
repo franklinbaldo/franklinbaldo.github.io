@@ -1,0 +1,23 @@
+{
+ "version": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)",
+ "ParMaisDois.lean": {
+  "code": "/-\n  TODO MUNDO É MATEMÁTICO AGORA!  ·  Cena 5\n  \"Se você pegar qualquer número par e somar dois,\n   o resultado continua sendo par.\"\n-/\n\n/-- `n` é par quando é formado por pares completos: `n = k + k`. -/\ndef Par (n : Nat) : Prop := ∃ k, n = k + k\n\n/-- Par mais dois continua par — para TODO número natural. -/\ntheorem par_mais_dois (n : Nat) (h : Par n) : Par (n + 2) := by\n  obtain ⟨k, hk⟩ := h               -- n = k + k\n  refine ⟨k + 1, ?_⟩                -- mais um par: k vira k + 1\n  rw [hk, Nat.add_add_add_comm]     -- (k + k) + 2 = (k + 1) + (k + 1)\n\n-- Exemplos só testam; o teorema acima vale para todos.\nexample : Par 4 := ⟨2, rfl⟩\nexample : Par 6 := ⟨3, rfl⟩\nexample : Par 8 := ⟨4, rfl⟩\n\n#print axioms par_mais_dois\n",
+  "output": "'par_mais_dois' does not depend on any axioms",
+  "exit": 0
+ },
+ "Festa.lean": {
+  "code": "/-\n  Cena 8: a prova perfeita do problema errado.\n  A IA entendeu 12 convidados. Eram 10.\n-/\n\ndef convidados : Nat := 12   -- ← a hipótese errada mora aqui\ndef coxinhasPorPessoa : Nat := 3\n\ntheorem coxinhas_suficientes :\n    convidados * coxinhasPorPessoa = 36 := by\n  decide\n\n#print axioms coxinhas_suficientes\n",
+  "output": "'coxinhas_suficientes' does not depend on any axioms",
+  "exit": 0
+ },
+ "Comutativa.lean": {
+  "code": "-- Cena 4: a mesma afirmação, agora com uma justificativa de verdade.\ntheorem obvio (a b : Nat) : a + b = b + a := by\n  exact Nat.add_comm a b   -- lema da biblioteca padrão, já verificado\n\n#print axioms obvio\n",
+  "output": "'obvio' does not depend on any axioms",
+  "exit": 0
+ },
+ "rejeitado/Obvio.lean": {
+  "code": "-- Cena 4: a IA tenta passar um \"é óbvio\" pelo fiscal. (Este arquivo DEVE falhar.)\ntheorem obvio (a b : Nat) : a + b = b + a := by\n  rfl   -- \"é óbvio!\"\n",
+  "output": "rejeitado/Obvio.lean:3:2: error: Tactic `rfl` failed: The left-hand side\n  a + b\nis not definitionally equal to the right-hand side\n  b + a\n\na b : Nat\n⊢ a + b = b + a",
+  "exit": 1
+ }
+}

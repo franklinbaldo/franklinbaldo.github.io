@@ -1,0 +1,19 @@
+Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)
+$ lean ParMaisDois.lean
+'par_mais_dois' does not depend on any axioms
+✔ ParMaisDois.lean compilou
+$ lean Festa.lean
+'coxinhas_suficientes' does not depend on any axioms
+✔ Festa.lean compilou
+$ lean Comutativa.lean
+'obvio' does not depend on any axioms
+✔ Comutativa.lean compilou
+$ lean rejeitado/Obvio.lean   (tem que falhar)
+rejeitado/Obvio.lean:3:2: error: Tactic `rfl` failed: The left-hand side
+  a + b
+is not definitionally equal to the right-hand side
+  b + a
+
+a b : Nat
+⊢ a + b = b + a
+✔ rejeitado/Obvio.lean foi rejeitado, como esperado

@@ -1,7 +1,8 @@
 // CI guard: enforce repo hygiene conventions.
 //   1. Root-level tracked files must be in an explicit allowlist.
 //   2. Exactly one lockfile: package-lock.json.
-//   3. No nested package.json outside the root.
+//   3. No nested package.json outside the root (except self-contained
+//      projects under experiments/, which never enter the site build).
 //   4. No banned scratch-file patterns.
 //   5. Journal files in .routines/ (top-level only) must follow the
 //      YYYY-MM-DDTHH-MM-SS-slug.md naming convention.
@@ -58,7 +59,7 @@ for (const f of tracked) {
 
 // ── 3. No nested package.json ──────────────────────────────────────────────
 for (const f of tracked) {
-  if (f !== "package.json" && f.endsWith("/package.json")) {
+  if (f !== "package.json" && f.endsWith("/package.json") && !f.startsWith("experiments/")) {
     errors.push(
       `Nested package.json: "${f}" — merge its deps into the root package.json`
     );

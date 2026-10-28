@@ -1,0 +1,832 @@
+{
+ "voices": {
+  "N": {
+   "name": "Narrador",
+   "voice": "pt-BR-AntonioNeural",
+   "rate": "+8%",
+   "pitch": "+0Hz"
+  },
+  "MAT": {
+   "name": "Matemático Tradicional",
+   "voice": "de-DE-FlorianMultilingualNeural",
+   "rate": "-4%",
+   "pitch": "-6Hz"
+  },
+  "PES": {
+   "name": "Pessoa Comum",
+   "voice": "pt-BR-FranciscaNeural",
+   "rate": "+4%",
+   "pitch": "+8Hz"
+  },
+  "IA": {
+   "name": "IA",
+   "voice": "pt-BR-ThalitaMultilingualNeural",
+   "rate": "+14%",
+   "pitch": "+30Hz",
+   "fx": "robot"
+  },
+  "LEAN": {
+   "name": "Lean",
+   "voice": "fr-FR-RemyMultilingualNeural",
+   "rate": "-2%",
+   "pitch": "-14Hz"
+  },
+  "AVO": {
+   "name": "Vovó",
+   "voice": "pt-BR-FranciscaNeural",
+   "rate": "-8%",
+   "pitch": "-10Hz"
+  },
+  "KID": {
+   "name": "Criança",
+   "voice": "pt-BR-ThalitaMultilingualNeural",
+   "rate": "+10%",
+   "pitch": "+75Hz"
+  },
+  "TIO": {
+   "name": "Tio do Churrasco",
+   "voice": "it-IT-GiuseppeMultilingualNeural",
+   "rate": "+6%",
+   "pitch": "+0Hz"
+  },
+  "ADV": {
+   "name": "Advogado",
+   "voice": "pt-BR-AntonioNeural",
+   "rate": "+12%",
+   "pitch": "+14Hz"
+  }
+ },
+ "scenes": [
+  {
+   "id": "s1",
+   "title": "O fim do clube secreto",
+   "lead": 1.2,
+   "tail": 0.4,
+   "lines": [
+    [
+     "s1_a",
+     "N",
+     "Senhoras e senhores, temos uma notícia extraordinária!",
+     0.4
+    ],
+    [
+     "s1_b",
+     "N",
+     "O clube mais exclusivo da história da humanidade acaba de perder o controle da portaria!",
+     0.7
+    ],
+    [
+     "s1_c",
+     "N",
+     "Durante séculos, a matemática parecia reservada a gente muito especial: quem dominava símbolos misteriosos e passava décadas estudando antes de encarar um problema difícil.",
+     0.5
+    ],
+    [
+     "s1_d",
+     "PES",
+     "Com licença... por que um mais um dá dois?",
+     0.3
+    ],
+    [
+     "s1_e",
+     "MAT",
+     "Mas você sequer tem doutorado? Volte depois de estudar mais vinte anos!",
+     0.6
+    ],
+    [
+     "s1_f",
+     "N",
+     "Mas uma coisa muito interessante está acontecendo.",
+     0.4
+    ],
+    [
+     "s1_g",
+     "IA",
+     "Abram caminho! Inteligência artificial passando!",
+     2.4
+    ],
+    [
+     "s1_h",
+     "N",
+     "Agora, qualquer pessoa pode ter uma ideia, conversar com uma inteligência artificial e transformá-la numa questão matemática. E ainda pedir a um computador que confira a demonstração!",
+     0.5
+    ],
+    [
+     "s1_i",
+     "N",
+     "Senhoras e senhores... todo mundo é matemático agora!",
+     0.6,
+     {
+      "pitch": "+6Hz"
+     }
+    ],
+    [
+     "s1_j",
+     "MAT",
+     "Ai... meu coração...",
+     1.4
+    ]
+   ]
+  },
+  {
+   "id": "s2",
+   "title": "A matemática está em toda parte",
+   "lead": 0.5,
+   "tail": 0.4,
+   "lines": [
+    [
+     "s2_a",
+     "N",
+     "Mas espere. Matemática não é só fazer contas?",
+     0.3
+    ],
+    [
+     "s2_b",
+     "N",
+     "Não! Matemática também é estudar regras, relações, estruturas e consequências.",
+     0.4
+    ],
+    [
+     "s2_c",
+     "N",
+     "Dá para investigar se as regras de um jogo são contraditórias, provar que um algoritmo sempre termina, ou descobrir se uma combinação de condições torna algo impossível.",
+     0.3
+    ],
+    [
+     "s2_d",
+     "N",
+     "Pode até perguntar se existem regras que garantam que ninguém fique sem bolo numa festa!",
+     0.5
+    ],
+    [
+     "s2_e",
+     "N",
+     "E ninguém precisa começar sabendo a linguagem matemática sofisticada. Dá para começar com perguntas normais, de pessoas normais.",
+     0.4
+    ],
+    [
+     "s2_f",
+     "N",
+     "Ou por pessoas absolutamente anormais, como aquele seu tio que jura ter uma fórmula científica para o churrasco perfeito.",
+     0.3
+    ],
+    [
+     "s2_g",
+     "TIO",
+     "Campeão intergaláctico, meu filho! Tá escrito no troféu!",
+     0.6
+    ],
+    [
+     "s2_h",
+     "LEAN",
+     "Hum. E cadê a prova?",
+     1.0
+    ]
+   ]
+  },
+  {
+   "id": "s3",
+   "title": "A IA vira seu matemático particular",
+   "lead": 0.5,
+   "tail": 0.4,
+   "lines": [
+    [
+     "s3_a",
+     "N",
+     "Imagine que você teve uma ideia. Sobre números, sobre um jogo, sobre regras.",
+     0.4
+    ],
+    [
+     "s3_b",
+     "N",
+     "Antes, você nem saberia por onde começar.",
+     0.4
+    ],
+    [
+     "s3_c",
+     "PES",
+     "Eu tenho uma ideia, mas não sei escrever isso matematicamente.",
+     0.2
+    ],
+    [
+     "s3_d",
+     "IA",
+     "Excelente! Conte tudo! Eu adoro ideias!",
+     0.4
+    ],
+    [
+     "s3_e",
+     "N",
+     "Hoje, você explica a ideia para uma IA com suas próprias palavras, e ela ajuda a transformar tudo em definições, hipóteses, uma conjectura... e um caminho para a prova.",
+     0.4
+    ],
+    [
+     "s3_f",
+     "N",
+     "É como ter um parceiro de matemática que nunca se cansa das suas perguntas.",
+     0.6
+    ],
+    [
+     "s3_g",
+     "N",
+     "Só tem um pequeno probleminha.",
+     0.4
+    ],
+    [
+     "s3_h",
+     "N",
+     "A inteligência artificial pode errar. E, pior ainda, pode errar com uma confiança absolutamente espetacular!",
+     0.3
+    ],
+    [
+     "s3_i",
+     "IA",
+     "Acabei de resolver toda a matemática! Pode chamar a imprensa!",
+     2.6,
+     {
+      "rate": "+20%",
+      "pitch": "+40Hz"
+     }
+    ],
+    [
+     "s3_j",
+     "LEAN",
+     "Cadê a prova?",
+     1.0
+    ]
+   ]
+  },
+  {
+   "id": "s4",
+   "title": "Lean, o fiscal implacável",
+   "lead": 0.5,
+   "tail": 0.4,
+   "lines": [
+    [
+     "s4_a",
+     "N",
+     "Conheçam: Lean!",
+     0.4
+    ],
+    [
+     "s4_b",
+     "N",
+     "Lean é um sistema onde escrevemos afirmações e demonstrações de um jeito que o computador consegue conferir, passo a passo, se tudo respeita as regras da lógica.",
+     0.4
+    ],
+    [
+     "s4_c",
+     "N",
+     "A IA pode sugerir a prova. Mas Lean não se impressiona com discurso bonito.",
+     0.3
+    ],
+    [
+     "s4_d",
+     "IA",
+     "Esse passo aqui... é óbvio!",
+     0.3
+    ],
+    [
+     "s4_e",
+     "LEAN",
+     "Óbvio não é prova.",
+     1.4
+    ],
+    [
+     "s4_f",
+     "N",
+     "Não aceita: é evidente.",
+     0.2
+    ],
+    [
+     "s4_g",
+     "IA",
+     "Então confia em mim!",
+     0.3
+    ],
+    [
+     "s4_h",
+     "LEAN",
+     "Confiança também não é prova.",
+     1.2
+    ],
+    [
+     "s4_i",
+     "N",
+     "Não aceita: todo mundo sabe. E definitivamente não aceita: vi num vídeo da internet.",
+     0.2
+    ],
+    [
+     "s4_j",
+     "IA",
+     "Mas era um vídeo muito bom!",
+     0.2
+    ],
+    [
+     "s4_k",
+     "LEAN",
+     "Cadê... a... prova?",
+     0.6
+    ],
+    [
+     "s4_l",
+     "N",
+     "Ele exige uma cadeia lógica completa, passo por passo. Quando a prova está certa, Lean confirma.",
+     0.3
+    ],
+    [
+     "s4_m",
+     "LEAN",
+     "Aprovado.",
+     1.0
+    ],
+    [
+     "s4_n",
+     "N",
+     "E tem mais: a Mathlib, uma biblioteca colaborativa gigantesca, com centenas de milhares de definições e teoremas já formalizados.",
+     0.3
+    ],
+    [
+     "s4_o",
+     "N",
+     "É como uma caixa gigante de LEGO matemático: você não fabrica cada peça, usa as que outras pessoas já construíram e verificaram.",
+     0.4
+    ],
+    [
+     "s4_p",
+     "N",
+     "A matemática deixa de ser só uma coisa que você lê. Passa a ser uma coisa que você constrói!",
+     0.6
+    ]
+   ]
+  },
+  {
+   "id": "s5",
+   "title": "Vamos provar alguma coisa!",
+   "lead": 0.5,
+   "tail": 0.4,
+   "lines": [
+    [
+     "s5_a",
+     "N",
+     "Vamos experimentar!",
+     0.3
+    ],
+    [
+     "s5_b",
+     "N",
+     "Eu afirmo: qualquer número par, somado com dois, continua par.",
+     0.5
+    ],
+    [
+     "s5_c",
+     "N",
+     "Dois mais dois dá quatro.",
+     0.3
+    ],
+    [
+     "s5_d",
+     "N",
+     "Quatro mais dois dá seis.",
+     0.3
+    ],
+    [
+     "s5_e",
+     "N",
+     "Seis mais dois dá oito.",
+     0.4
+    ],
+    [
+     "s5_f",
+     "IA",
+     "Três exemplos! Está provado! Chamem a imprensa!",
+     0.3
+    ],
+    [
+     "s5_g",
+     "LEAN",
+     "Três exemplos não são todos os números. Cadê a prova?",
+     0.4
+    ],
+    [
+     "s5_h",
+     "N",
+     "Exato. Testar exemplos não prova que vale para todos. Precisamos de uma explicação geral.",
+     0.4
+    ],
+    [
+     "s5_i",
+     "N",
+     "Um número par é formado só por pares completos. Acrescente mais um par, e continuam sendo só pares. Nenhuma bolinha sobra sozinha.",
+     0.4
+    ],
+    [
+     "s5_j",
+     "N",
+     "Não importa se começamos com quatro bolinhas... ou com quatro bilhões de bolinhas.",
+     0.6
+    ],
+    [
+     "s5_k",
+     "N",
+     "Essa ideia vira uma demonstração formal. Em Lean, fica assim.",
+     0.4
+    ],
+    [
+     "s5_l",
+     "N",
+     "Primeiro, definimos: n é par se existe um k tal que n é igual a k mais k. Depois, mostramos que n mais dois também é assim: basta usar k mais um.",
+     0.4
+    ],
+    [
+     "s5_m",
+     "N",
+     "E agora, o momento da verdade.",
+     2.4
+    ],
+    [
+     "s5_n",
+     "LEAN",
+     "Verificado. Sem lacunas, sem sorry, e sem nenhum axioma.",
+     0.5
+    ],
+    [
+     "s5_o",
+     "N",
+     "Percebe a diferença? A IA não está só dizendo que parece certo. Uma ferramenta especializada conferiu a estrutura da prova.",
+     0.6
+    ]
+   ]
+  },
+  {
+   "id": "s6",
+   "title": "A invasão dos matemáticos amadores",
+   "lead": 0.5,
+   "tail": 0.4,
+   "lines": [
+    [
+     "s6_a",
+     "N",
+     "Agora começa a verdadeira confusão.",
+     0.2
+    ],
+    [
+     "s6_b",
+     "N",
+     "Se dá para formalizar regras, as possibilidades são enormes.",
+     0.3
+    ],
+    [
+     "s6_c",
+     "N",
+     "A vovó pode tentar criar uma teoria matemática do bolo perfeito.",
+     0.3
+    ],
+    [
+     "s6_d",
+     "LEAN",
+     "Linha três: uma pitadinha de sal. O que significa uma pitadinha?",
+     0.2
+    ],
+    [
+     "s6_e",
+     "AVO",
+     "É uma pitadinha, meu filho!",
+     0.6
+    ],
+    [
+     "s6_f",
+     "N",
+     "A criança, claro, tenta algo mais ambicioso.",
+     0.2
+    ],
+    [
+     "s6_g",
+     "KID",
+     "Hipótese: se ninguém entrar no meu quarto, ninguém vê a bagunça. Logo, eu não preciso arrumar!",
+     0.2
+    ],
+    [
+     "s6_h",
+     "IA",
+     "Brilhante! Prêmio Nobel da Arrumação para você!",
+     0.3
+    ],
+    [
+     "s6_i",
+     "LEAN",
+     "Isso prova que ninguém vê a bagunça. Não prova que a bagunça é permitida.",
+     0.5
+    ],
+    [
+     "s6_j",
+     "N",
+     "Um programador pode provar que o algoritmo dele funciona. Um advogado pode formalizar as condições e exceções de uma norma.",
+     0.2
+    ],
+    [
+     "s6_k",
+     "ADV",
+     "Artigo primeiro: é proibido entrar com veículos no parque.",
+     0.2
+    ],
+    [
+     "s6_l",
+     "LEAN",
+     "Defina veículo. Bicicleta é veículo? Patinete? Carrinho de bebê?",
+     0.5
+    ],
+    [
+     "s6_m",
+     "N",
+     "E o tio do churrasco pode tentar provar que é o maior churrasqueiro do sistema solar.",
+     0.2
+    ],
+    [
+     "s6_n",
+     "TIO",
+     "Teorema: o meu churrasco é o melhor do universo!",
+     0.2
+    ],
+    [
+     "s6_o",
+     "LEAN",
+     "Qual é a definição de melhor?",
+     0.3
+    ],
+    [
+     "s6_p",
+     "TIO",
+     "O meu!",
+     0.8
+    ],
+    [
+     "s6_q",
+     "N",
+     "Porque a matemática tem uma mania inconveniente: ela obriga a gente a explicar o que as palavras significam.",
+     0.3
+    ],
+    [
+     "s6_r",
+     "N",
+     "Afinal... o que exatamente é um churrasco perfeito?",
+     0.3
+    ],
+    [
+     "s6_s",
+     "LEAN",
+     "Abrindo processo.",
+     1.8
+    ]
+   ]
+  },
+  {
+   "id": "s7",
+   "title": "E se formalizássemos o mundo?",
+   "lead": 0.6,
+   "tail": 0.4,
+   "lines": [
+    [
+     "s7_a",
+     "N",
+     "E se começássemos a fazer isso com problemas muito maiores?",
+     0.4
+    ],
+    [
+     "s7_b",
+     "N",
+     "Podemos representar aspectos de leis, regras administrativas, programas, sistemas de votação, jogos e teorias científicas.",
+     0.4
+    ],
+    [
+     "s7_c",
+     "N",
+     "Provar que um programa nunca chega a um estado proibido. Descobrir se duas regras, juntas, se contradizem.",
+     0.4
+    ],
+    [
+     "s7_e",
+     "N",
+     "Não, isso não significa que um programa vá resolver sozinho todas as dúvidas do mundo.",
+     0.2
+    ],
+    [
+     "s7_f",
+     "IA",
+     "Ainda!",
+     0.9
+    ],
+    [
+     "s7_g",
+     "N",
+     "Significa algo mais interessante: investigar formalmente perguntas que antes nem sabíamos transformar em matemática.",
+     0.6
+    ],
+    [
+     "s7_h",
+     "MAT",
+     "Milhares... de matemáticos... sem doutorado...",
+     1.6
+    ]
+   ]
+  },
+  {
+   "id": "s8",
+   "title": "A pegadinha da prova perfeita",
+   "lead": 0.5,
+   "tail": 0.4,
+   "lines": [
+    [
+     "s8_a",
+     "N",
+     "Mas existe uma pegadinha.",
+     0.4
+    ],
+    [
+     "s8_b",
+     "N",
+     "Imagine que você está organizando uma festa para dez pessoas.",
+     0.2
+    ],
+    [
+     "s8_c",
+     "IA",
+     "Doze convidados! Entendido!",
+     0.3
+    ],
+    [
+     "s8_d",
+     "N",
+     "Só que a IA entendeu que são doze.",
+     0.3
+    ],
+    [
+     "s8_e",
+     "N",
+     "Ela faz uma conta perfeita: doze pessoas, três coxinhas cada, trinta e seis coxinhas. E Lean confere.",
+     0.3
+    ],
+    [
+     "s8_f",
+     "LEAN",
+     "Doze vezes três, trinta e seis. Matematicamente correto.",
+     0.8
+    ],
+    [
+     "s8_g",
+     "N",
+     "Parabéns! Você acaba de demonstrar, com rigor absoluto, a solução para o problema errado!",
+     0.5
+    ],
+    [
+     "s8_h",
+     "N",
+     "Lição importante: uma prova pode ser perfeita e ainda assim responder à pergunta errada. Formalizar exige escolher hipóteses, e a matemática verifica o que decorre delas.",
+     0.3
+    ],
+    [
+     "s8_i",
+     "N",
+     "Fatos do mundo real pedem observação e evidência. A matemática não transforma hipótese em realidade.",
+     0.4
+    ],
+    [
+     "s8_j",
+     "IA",
+     "Coxinha? Alguém? Cadeira número onze? Cadeira número doze?",
+     0.4
+    ],
+    [
+     "s8_k",
+     "LEAN",
+     "Convidados não localizados.",
+     1.4
+    ]
+   ]
+  },
+  {
+   "id": "s9",
+   "title": "A próxima grande descoberta",
+   "lead": 0.6,
+   "tail": 0.2,
+   "lines": [
+    [
+     "s9_a",
+     "N",
+     "Então, o que tudo isso significa?",
+     0.3
+    ],
+    [
+     "s9_b",
+     "N",
+     "Significa que fazer matemática deixa de ser coisa reservada a poucos especialistas.",
+     0.3
+    ],
+    [
+     "s9_c",
+     "N",
+     "Você pode começar com uma pergunta. Uma ideia sobre números, a regra de um jogo, uma hipótese sobre a sua vida.",
+     0.3
+    ],
+    [
+     "s9_d",
+     "N",
+     "Conversar com uma IA, transformar a ideia em matemática, e descobrir o que realmente dá para demonstrar.",
+     0.4
+    ],
+    [
+     "s9_e",
+     "N",
+     "Às vezes você vai errar. Às vezes a pergunta nem estava bem formulada. E, às vezes, quem sabe, vai encontrar algo que ninguém tinha percebido.",
+     0.5
+    ],
+    [
+     "s9_f",
+     "N",
+     "O extraordinário não é a IA substituir os matemáticos. É ela ajudar muito mais gente a participar da matemática.",
+     0.4
+    ],
+    [
+     "s9_g",
+     "MAT",
+     "Tá bom... tá bom. Puxem uma cadeira. Tem giz para todo mundo.",
+     0.6
+    ],
+    [
+     "s9_h",
+     "N",
+     "Então, da próxima vez que tiver uma ideia maluca, não descarte. Pergunte: dá para formalizar isso?",
+     0.5
+    ],
+    [
+     "s9_i",
+     "N",
+     "Porque o próximo matemático...",
+     1.8
+    ],
+    [
+     "s9_j",
+     "N",
+     "pode ser você!",
+     4.5,
+     {
+      "rate": "+8%",
+      "pitch": "+14Hz"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "post",
+   "title": "Pós-créditos",
+   "lead": 0.8,
+   "tail": 0.0,
+   "lines": [
+    [
+     "p_a",
+     "AVO",
+     "Teorema: ninguém sai da minha casa com fome.",
+     0.3
+    ],
+    [
+     "p_b",
+     "LEAN",
+     "Isso vale universalmente?",
+     0.3
+    ],
+    [
+     "p_c",
+     "AVO",
+     "Na minha casa, vale.",
+     0.3
+    ],
+    [
+     "p_d",
+     "LEAN",
+     "Mas...",
+     0.0,
+     {
+      "cut": 0.45
+     }
+    ],
+    [
+     "p_e",
+     "AVO",
+     "Come mais um pedaço de bolo!",
+     0.5,
+     {
+      "rate": "+16%",
+      "pitch": "+6Hz"
+     }
+    ]
+   ]
+  },
+  {
+   "id": "credits",
+   "title": "Créditos",
+   "lead": 10.0,
+   "tail": 0.0,
+   "lines": []
+  }
+ ]
+}
