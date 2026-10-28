@@ -30,7 +30,7 @@
     "audio": "uv run --with edge-tts --with numpy python tools/build_audio.py && uv run --with numpy python tools/build_music.py && uv run --with numpy python tools/build_sfx.py",
     "lean": "sh lean/verificar.sh && python3 tools/capture_lean.py",
     "dev": "remotion studio",
-    "render": "remotion render TodoMundoMatematico out/todo-mundo-e-matematico-agora.mp4 --concurrency=4 --crf=20",
+    "render": "remotion render TodoMundoMatematico out/bruto.mp4 --concurrency=4 --crf=20 && ffmpeg -y -v error -i out/bruto.mp4 -c:v copy -af \"loudnorm=I=-16:TP=-1.5:LRA=11\" -c:a aac -b:a 192k out/todo-mundo-e-matematico-agora.mp4",
     "lint": "tsc"
   },
   "allowScripts": {

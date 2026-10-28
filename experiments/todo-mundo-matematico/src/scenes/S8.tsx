@@ -134,7 +134,7 @@ export const S8: React.FC = () => {
               return <Coxinha key={i} x={1180 + (i % 9) * 72} y={170 + Math.floor(i / 9) * 80} s={1.2 * pop(frame, c.word("s8_e", "coxinhas", 0) + i * 0.9)} rot={(i * 23) % 30 - 15} />;
             })}
             <text x={1470} y={540} textAnchor="middle" fontFamily={display} fontWeight={800} fontSize={72} fill={C.yellow}>
-              12 × 3 = {coxCount}
+              12 × 3 = {coxCount || "?"}
             </text>
           </svg>
           <CodePanel code={lean["Festa.lean"].code.split("\n").slice(5).join("\n")} x={60} y={120} w={1040} size={27} title="Festa.lean" highlight={[0]} border={frame > c("s8_f").start ? C.green : C.cyan} />
