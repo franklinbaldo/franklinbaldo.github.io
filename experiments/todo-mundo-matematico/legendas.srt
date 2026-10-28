@@ -1,0 +1,1003 @@
+1
+00:00:01,296 --> 00:00:04,421
+Senhoras e senhores, temos uma notícia extraordinária!
+
+2
+00:00:05,003 --> 00:00:06,971
+O clube mais exclusivo da história da
+
+3
+00:00:06,971 --> 00:00:09,482
+humanidade acaba de perder o controle da portaria!
+
+4
+00:00:10,375 --> 00:00:13,257
+Durante séculos, a matemática parecia reservada a
+
+5
+00:00:13,257 --> 00:00:14,692
+gente muito especial:
+
+6
+00:00:14,692 --> 00:00:17,342
+quem dominava símbolos misteriosos e passava décadas
+
+7
+00:00:17,342 --> 00:00:19,588
+estudando antes de encarar um problema difícil.
+
+8
+00:00:20,262 --> 00:00:21,200
+PESSOA COMUM: Com licença...
+
+9
+00:00:21,200 --> 00:00:22,486
+PESSOA COMUM: por que um mais um dá dois?
+
+10
+00:00:22,949 --> 00:00:25,175
+MATEMÁTICO TRADICIONAL: Mas você sequer tem doutorado?
+
+11
+00:00:25,175 --> 00:00:27,727
+MATEMÁTICO TRADICIONAL: Volte depois de estudar mais vinte anos!
+
+12
+00:00:28,499 --> 00:00:31,092
+Mas uma coisa muito interessante está acontecendo.
+
+13
+00:00:31,627 --> 00:00:32,857
+IA: Abram caminho!
+
+14
+00:00:32,857 --> 00:00:34,622
+IA: Inteligência artificial passando!
+
+15
+00:00:37,238 --> 00:00:39,738
+Agora, qualquer pessoa pode ter uma ideia,
+
+16
+00:00:39,738 --> 00:00:42,354
+conversar com uma inteligência artificial e transformá-la
+
+17
+00:00:42,354 --> 00:00:44,306
+numa questão matemática.
+
+18
+00:00:44,306 --> 00:00:45,891
+E ainda pedir a um computador que
+
+19
+00:00:45,891 --> 00:00:47,153
+confira a demonstração!
+
+20
+00:00:47,826 --> 00:00:49,250
+Senhoras e senhores...
+
+21
+00:00:49,250 --> 00:00:50,963
+todo mundo é matemático agora!
+
+22
+00:00:51,720 --> 00:00:53,491
+MATEMÁTICO TRADICIONAL: Ai... meu coração...
+
+23
+00:00:55,963 --> 00:00:57,510
+Mas espere.
+
+24
+00:00:57,510 --> 00:00:59,478
+Matemática não é só fazer contas?
+
+25
+00:00:59,965 --> 00:01:03,353
+Não! Matemática também é estudar regras,
+
+26
+00:01:03,353 --> 00:01:05,702
+relações, estruturas e consequências.
+
+27
+00:01:06,298 --> 00:01:07,907
+Dá para investigar se as regras de
+
+28
+00:01:07,907 --> 00:01:09,481
+um jogo são contraditórias,
+
+29
+00:01:09,481 --> 00:01:11,750
+provar que um algoritmo sempre termina,
+
+30
+00:01:11,750 --> 00:01:13,926
+ou descobrir se uma combinação de condições
+
+31
+00:01:13,926 --> 00:01:15,060
+torna algo impossível.
+
+32
+00:01:15,534 --> 00:01:17,536
+Pode até perguntar se existem regras que
+
+33
+00:01:17,536 --> 00:01:19,943
+garantam que ninguém fique sem bolo numa festa!
+
+34
+00:01:20,641 --> 00:01:22,851
+E ninguém precisa começar sabendo a linguagem
+
+35
+00:01:22,851 --> 00:01:25,035
+matemática sofisticada.
+
+36
+00:01:25,035 --> 00:01:27,234
+Dá para começar com perguntas normais,
+
+37
+00:01:27,234 --> 00:01:28,426
+de pessoas normais.
+
+38
+00:01:29,014 --> 00:01:31,282
+Ou por pessoas absolutamente anormais,
+
+39
+00:01:31,282 --> 00:01:32,741
+como aquele seu tio que jura ter
+
+40
+00:01:32,741 --> 00:01:35,229
+uma fórmula científica para o churrasco perfeito.
+
+41
+00:01:35,666 --> 00:01:38,402
+TIO DO CHURRASCO: Campeão intergaláctico, meu filho!
+
+42
+00:01:38,402 --> 00:01:39,864
+TIO DO CHURRASCO: Tá escrito no troféu!
+
+43
+00:01:40,581 --> 00:01:42,635
+LEAN: Hum. E cadê a prova?
+
+44
+00:01:44,743 --> 00:01:47,321
+Imagine que você teve uma ideia.
+
+45
+00:01:47,321 --> 00:01:49,242
+Sobre números, sobre um jogo,
+
+46
+00:01:49,242 --> 00:01:50,006
+sobre regras.
+
+47
+00:01:50,593 --> 00:01:53,209
+Antes, você nem saberia por onde começar.
+
+48
+00:01:53,864 --> 00:01:54,993
+PESSOA COMUM: Eu tenho uma ideia,
+
+49
+00:01:54,993 --> 00:01:57,217
+PESSOA COMUM: mas não sei escrever isso matematicamente.
+
+50
+00:01:57,590 --> 00:01:59,729
+IA: Excelente! Conte tudo!
+
+51
+00:01:59,729 --> 00:02:00,814
+IA: Eu adoro ideias!
+
+52
+00:02:01,456 --> 00:02:03,400
+Hoje, você explica a ideia para uma
+
+53
+00:02:03,400 --> 00:02:06,062
+IA com suas próprias palavras,
+
+54
+00:02:06,062 --> 00:02:07,451
+e ela ajuda a transformar tudo em
+
+55
+00:02:07,451 --> 00:02:10,518
+definições, hipóteses, uma conjectura...
+
+56
+00:02:10,518 --> 00:02:11,676
+e um caminho para a prova.
+
+57
+00:02:12,257 --> 00:02:13,970
+É como ter um parceiro de matemática
+
+58
+00:02:13,970 --> 00:02:15,972
+que nunca se cansa das suas perguntas.
+
+59
+00:02:16,757 --> 00:02:18,331
+Só tem um pequeno probleminha.
+
+60
+00:02:18,910 --> 00:02:21,568
+A inteligência artificial pode errar.
+
+61
+00:02:21,568 --> 00:02:23,756
+E, pior ainda, pode errar com uma
+
+62
+00:02:23,756 --> 00:02:25,677
+confiança absolutamente espetacular!
+
+63
+00:02:26,196 --> 00:02:28,383
+IA: Acabei de resolver toda a matemática!
+
+64
+00:02:28,383 --> 00:02:29,435
+IA: Pode chamar a imprensa!
+
+65
+00:02:32,216 --> 00:02:33,261
+LEAN: Cadê a prova?
+
+66
+00:02:35,361 --> 00:02:36,553
+Conheçam: Lean!
+
+67
+00:02:37,144 --> 00:02:39,343
+Lean é um sistema onde escrevemos afirmações
+
+68
+00:02:39,343 --> 00:02:40,743
+e demonstrações de um jeito que o
+
+69
+00:02:40,743 --> 00:02:43,382
+computador consegue conferir, passo a passo,
+
+70
+00:02:43,382 --> 00:02:45,385
+se tudo respeita as regras da lógica.
+
+71
+00:02:45,962 --> 00:02:49,245
+A IA pode sugerir a prova.
+
+72
+00:02:49,245 --> 00:02:51,595
+Mas Lean não se impressiona com discurso bonito.
+
+73
+00:02:52,019 --> 00:02:53,061
+IA: Esse passo aqui...
+
+74
+00:02:53,061 --> 00:02:53,609
+IA: é óbvio!
+
+75
+00:02:54,060 --> 00:02:55,374
+LEAN: Óbvio não é prova.
+
+76
+00:02:56,972 --> 00:02:57,887
+Não aceita:
+
+77
+00:02:57,887 --> 00:02:58,639
+é evidente.
+
+78
+00:02:58,962 --> 00:03:00,146
+IA: Então confia em mim!
+
+79
+00:03:00,579 --> 00:03:02,531
+LEAN: Confiança também não é prova.
+
+80
+00:03:03,934 --> 00:03:04,941
+Não aceita:
+
+81
+00:03:04,941 --> 00:03:06,755
+todo mundo sabe.
+
+82
+00:03:06,755 --> 00:03:08,526
+E definitivamente não aceita:
+
+83
+00:03:08,526 --> 00:03:09,833
+vi num vídeo da internet.
+
+84
+00:03:10,153 --> 00:03:11,502
+IA: Mas era um vídeo muito bom!
+
+85
+00:03:11,846 --> 00:03:14,129
+LEAN: Cadê... a... prova?
+
+86
+00:03:14,923 --> 00:03:17,134
+Ele exige uma cadeia lógica completa,
+
+87
+00:03:17,134 --> 00:03:18,820
+passo por passo.
+
+88
+00:03:18,820 --> 00:03:20,324
+Quando a prova está certa,
+
+89
+00:03:20,324 --> 00:03:21,100
+Lean confirma.
+
+90
+00:03:21,535 --> 00:03:22,441
+LEAN: Aprovado.
+
+91
+00:03:23,627 --> 00:03:24,519
+E tem mais:
+
+92
+00:03:24,519 --> 00:03:27,632
+a Mathlib, uma biblioteca colaborativa gigantesca,
+
+93
+00:03:27,632 --> 00:03:29,565
+com centenas de milhares de definições e
+
+94
+00:03:29,565 --> 00:03:30,977
+teoremas já formalizados.
+
+95
+00:03:31,455 --> 00:03:33,075
+É como uma caixa gigante de LEGO
+
+96
+00:03:33,075 --> 00:03:35,668
+matemático: você não fabrica cada peça,
+
+97
+00:03:35,668 --> 00:03:37,612
+usa as que outras pessoas já construíram
+
+98
+00:03:37,612 --> 00:03:38,307
+e verificaram.
+
+99
+00:03:38,896 --> 00:03:40,551
+A matemática deixa de ser só uma
+
+100
+00:03:40,551 --> 00:03:42,237
+coisa que você lê.
+
+101
+00:03:42,237 --> 00:03:44,251
+Passa a ser uma coisa que você constrói!
+
+102
+00:03:45,909 --> 00:03:47,066
+Vamos experimentar!
+
+103
+00:03:47,613 --> 00:03:48,574
+Eu afirmo:
+
+104
+00:03:48,574 --> 00:03:50,993
+qualquer número par, somado com dois,
+
+105
+00:03:50,993 --> 00:03:51,769
+continua par.
+
+106
+00:03:52,519 --> 00:03:53,839
+Dois mais dois dá quatro.
+
+107
+00:03:54,338 --> 00:03:55,773
+Quatro mais dois dá seis.
+
+108
+00:03:56,245 --> 00:03:57,553
+Seis mais dois dá oito.
+
+109
+00:03:58,115 --> 00:03:59,387
+IA: Três exemplos!
+
+110
+00:03:59,387 --> 00:04:00,585
+IA: Está provado!
+
+111
+00:04:00,585 --> 00:04:01,616
+IA: Chamem a imprensa!
+
+112
+00:04:02,082 --> 00:04:04,913
+LEAN: Três exemplos não são todos os números.
+
+113
+00:04:04,913 --> 00:04:05,959
+LEAN: Cadê a prova?
+
+114
+00:04:06,559 --> 00:04:09,715
+Exato. Testar exemplos não prova que vale
+
+115
+00:04:09,715 --> 00:04:11,197
+para todos.
+
+116
+00:04:11,197 --> 00:04:13,060
+Precisamos de uma explicação geral.
+
+117
+00:04:13,610 --> 00:04:15,219
+Um número par é formado só por
+
+118
+00:04:15,219 --> 00:04:16,975
+pares completos.
+
+119
+00:04:16,975 --> 00:04:18,479
+Acrescente mais um par,
+
+120
+00:04:18,479 --> 00:04:20,794
+e continuam sendo só pares.
+
+121
+00:04:20,794 --> 00:04:22,507
+Nenhuma bolinha sobra sozinha.
+
+122
+00:04:23,094 --> 00:04:25,675
+Não importa se começamos com quatro bolinhas...
+
+123
+00:04:25,675 --> 00:04:27,435
+ou com quatro bilhões de bolinhas.
+
+124
+00:04:28,217 --> 00:04:31,095
+Essa ideia vira uma demonstração formal.
+
+125
+00:04:31,095 --> 00:04:32,345
+Em Lean, fica assim.
+
+126
+00:04:32,910 --> 00:04:34,508
+Primeiro, definimos:
+
+127
+00:04:34,508 --> 00:04:35,781
+n é par se existe um k
+
+128
+00:04:35,781 --> 00:04:36,950
+tal que n é igual a k
+
+129
+00:04:36,950 --> 00:04:38,254
+mais k.
+
+130
+00:04:38,254 --> 00:04:40,847
+Depois, mostramos que n mais dois também
+
+131
+00:04:40,847 --> 00:04:41,425
+é assim:
+
+132
+00:04:41,425 --> 00:04:42,583
+basta usar k mais um.
+
+133
+00:04:43,175 --> 00:04:45,189
+E agora, o momento da verdade.
+
+134
+00:04:47,736 --> 00:04:51,550
+LEAN: Verificado. Sem lacunas, sem sorry,
+
+135
+00:04:51,550 --> 00:04:52,787
+LEAN: e sem nenhum axioma.
+
+136
+00:04:53,494 --> 00:04:55,481
+Percebe a diferença?
+
+137
+00:04:55,481 --> 00:04:57,877
+A IA não está só dizendo que
+
+138
+00:04:57,877 --> 00:04:59,498
+parece certo.
+
+139
+00:04:59,498 --> 00:05:02,530
+Uma ferramenta especializada conferiu a estrutura da prova.
+
+140
+00:05:04,201 --> 00:05:06,146
+Agora começa a verdadeira confusão.
+
+141
+00:05:06,520 --> 00:05:08,372
+Se dá para formalizar regras,
+
+142
+00:05:08,372 --> 00:05:10,051
+as possibilidades são enormes.
+
+143
+00:05:10,531 --> 00:05:12,418
+A vovó pode tentar criar uma teoria
+
+144
+00:05:12,418 --> 00:05:14,003
+matemática do bolo perfeito.
+
+145
+00:05:14,429 --> 00:05:15,603
+LEAN: Linha três:
+
+146
+00:05:15,603 --> 00:05:17,159
+LEAN: uma pitadinha de sal.
+
+147
+00:05:17,159 --> 00:05:18,944
+LEAN: O que significa uma pitadinha?
+
+148
+00:05:19,343 --> 00:05:21,001
+VOVÓ: É uma pitadinha, meu filho!
+
+149
+00:05:21,820 --> 00:05:24,713
+A criança, claro, tenta algo mais ambicioso.
+
+150
+00:05:25,030 --> 00:05:27,360
+CRIANÇA: Hipótese: se ninguém entrar no meu quarto,
+
+151
+00:05:27,360 --> 00:05:28,859
+CRIANÇA: ninguém vê a bagunça.
+
+152
+00:05:28,859 --> 00:05:30,461
+CRIANÇA: Logo, eu não preciso arrumar!
+
+153
+00:05:30,921 --> 00:05:33,816
+IA: Brilhante! Prêmio Nobel da Arrumação para você!
+
+154
+00:05:34,267 --> 00:05:36,729
+LEAN: Isso prova que ninguém vê a bagunça.
+
+155
+00:05:36,729 --> 00:05:38,910
+LEAN: Não prova que a bagunça é permitida.
+
+156
+00:05:39,629 --> 00:05:41,701
+Um programador pode provar que o algoritmo
+
+157
+00:05:41,701 --> 00:05:43,271
+dele funciona.
+
+158
+00:05:43,271 --> 00:05:45,702
+Um advogado pode formalizar as condições e
+
+159
+00:05:45,702 --> 00:05:46,882
+exceções de uma norma.
+
+160
+00:05:47,280 --> 00:05:48,329
+ADVOGADO: Artigo primeiro:
+
+161
+00:05:48,329 --> 00:05:50,294
+ADVOGADO: é proibido entrar com veículos no parque.
+
+162
+00:05:50,640 --> 00:05:52,234
+LEAN: Defina veículo.
+
+163
+00:05:52,234 --> 00:05:54,071
+LEAN: Bicicleta é veículo?
+
+164
+00:05:54,071 --> 00:05:56,418
+LEAN: Patinete? Carrinho de bebê?
+
+165
+00:05:57,043 --> 00:05:58,780
+E o tio do churrasco pode tentar
+
+166
+00:05:58,780 --> 00:06:00,481
+provar que é o maior churrasqueiro do
+
+167
+00:06:00,481 --> 00:06:01,314
+sistema solar.
+
+168
+00:06:01,710 --> 00:06:03,927
+TIO DO CHURRASCO: Teorema: o meu churrasco é o melhor
+
+169
+00:06:03,927 --> 00:06:04,658
+TIO DO CHURRASCO: do universo!
+
+170
+00:06:04,995 --> 00:06:06,717
+LEAN: Qual é a definição de melhor?
+
+171
+00:06:07,217 --> 00:06:07,783
+TIO DO CHURRASCO: O meu!
+
+172
+00:06:08,741 --> 00:06:11,241
+Porque a matemática tem uma mania inconveniente:
+
+173
+00:06:11,241 --> 00:06:12,561
+ela obriga a gente a explicar o
+
+174
+00:06:12,561 --> 00:06:13,892
+que as palavras significam.
+
+175
+00:06:14,372 --> 00:06:17,231
+Afinal... o que exatamente é um churrasco perfeito?
+
+176
+00:06:17,669 --> 00:06:18,944
+LEAN: Abrindo processo.
+
+177
+00:06:21,944 --> 00:06:23,680
+E se começássemos a fazer isso com
+
+178
+00:06:23,680 --> 00:06:25,081
+problemas muito maiores?
+
+179
+00:06:25,665 --> 00:06:27,771
+Podemos representar aspectos de leis,
+
+180
+00:06:27,771 --> 00:06:31,718
+regras administrativas, programas, sistemas de votação,
+
+181
+00:06:31,718 --> 00:06:33,350
+jogos e teorias científicas.
+
+182
+00:06:33,937 --> 00:06:35,615
+Provar que um programa nunca chega a
+
+183
+00:06:35,615 --> 00:06:37,429
+um estado proibido.
+
+184
+00:06:37,429 --> 00:06:39,038
+Descobrir se duas regras,
+
+185
+00:06:39,038 --> 00:06:40,623
+juntas, se contradizem.
+
+186
+00:06:41,182 --> 00:06:43,404
+Não, isso não significa que um programa
+
+187
+00:06:43,404 --> 00:06:45,661
+vá resolver sozinho todas as dúvidas do mundo.
+
+188
+00:06:45,983 --> 00:06:46,476
+IA: Ainda!
+
+189
+00:06:47,573 --> 00:06:49,656
+Significa algo mais interessante:
+
+190
+00:06:49,656 --> 00:06:52,550
+investigar formalmente perguntas que antes nem sabíamos
+
+191
+00:06:52,550 --> 00:06:53,823
+transformar em matemática.
+
+192
+00:06:54,570 --> 00:06:57,044
+MATEMÁTICO TRADICIONAL: Milhares... de matemáticos...
+
+193
+00:06:57,044 --> 00:06:58,047
+MATEMÁTICO TRADICIONAL: sem doutorado...
+
+194
+00:07:00,720 --> 00:07:02,109
+Mas existe uma pegadinha.
+
+195
+00:07:02,712 --> 00:07:04,899
+Imagine que você está organizando uma festa
+
+196
+00:07:04,899 --> 00:07:05,975
+para dez pessoas.
+
+197
+00:07:06,336 --> 00:07:08,496
+IA: Doze convidados! Entendido!
+
+198
+00:07:08,998 --> 00:07:11,788
+Só que a IA entendeu que são doze.
+
+199
+00:07:12,263 --> 00:07:13,952
+Ela faz uma conta perfeita:
+
+200
+00:07:13,952 --> 00:07:16,383
+doze pessoas, três coxinhas cada,
+
+201
+00:07:16,383 --> 00:07:18,382
+trinta e seis coxinhas.
+
+202
+00:07:18,382 --> 00:07:19,354
+E Lean confere.
+
+203
+00:07:19,784 --> 00:07:22,845
+LEAN: Doze vezes três, trinta e seis.
+
+204
+00:07:22,845 --> 00:07:24,605
+LEAN: Matematicamente correto.
+
+205
+00:07:25,559 --> 00:07:28,773
+Parabéns! Você acaba de demonstrar,
+
+206
+00:07:28,773 --> 00:07:30,891
+com rigor absoluto, a solução para o
+
+207
+00:07:30,891 --> 00:07:31,713
+problema errado!
+
+208
+00:07:32,419 --> 00:07:33,739
+Lição importante:
+
+209
+00:07:33,739 --> 00:07:35,556
+uma prova pode ser perfeita e ainda
+
+210
+00:07:35,556 --> 00:07:38,006
+assim responder à pergunta errada.
+
+211
+00:07:38,006 --> 00:07:40,355
+Formalizar exige escolher hipóteses,
+
+212
+00:07:40,355 --> 00:07:42,636
+e a matemática verifica o que decorre delas.
+
+213
+00:07:43,118 --> 00:07:45,432
+Fatos do mundo real pedem observação e
+
+214
+00:07:45,432 --> 00:07:49,433
+evidência. A matemática não transforma hipótese em realidade.
+
+215
+00:07:49,977 --> 00:07:51,731
+IA: Coxinha? Alguém?
+
+216
+00:07:51,731 --> 00:07:53,310
+IA: Cadeira número onze?
+
+217
+00:07:53,310 --> 00:07:54,560
+IA: Cadeira número doze?
+
+218
+00:07:55,114 --> 00:07:57,142
+LEAN: Convidados não localizados.
+
+219
+00:07:59,719 --> 00:08:01,884
+Então, o que tudo isso significa?
+
+220
+00:08:02,386 --> 00:08:04,689
+Significa que fazer matemática deixa de ser
+
+221
+00:08:04,689 --> 00:08:06,923
+coisa reservada a poucos especialistas.
+
+222
+00:08:07,408 --> 00:08:10,032
+Você pode começar com uma pergunta.
+
+223
+00:08:10,032 --> 00:08:11,374
+Uma ideia sobre números,
+
+224
+00:08:11,374 --> 00:08:12,601
+a regra de um jogo,
+
+225
+00:08:12,601 --> 00:08:14,106
+uma hipótese sobre a sua vida.
+
+226
+00:08:14,607 --> 00:08:16,864
+Conversar com uma IA,
+
+227
+00:08:16,864 --> 00:08:18,773
+transformar a ideia em matemática,
+
+228
+00:08:18,773 --> 00:08:20,996
+e descobrir o que realmente dá para demonstrar.
+
+229
+00:08:21,645 --> 00:08:23,794
+Às vezes você vai errar.
+
+230
+00:08:23,794 --> 00:08:25,623
+Às vezes a pergunta nem estava bem
+
+231
+00:08:25,623 --> 00:08:28,402
+formulada. E, às vezes,
+
+232
+00:08:28,402 --> 00:08:30,578
+quem sabe, vai encontrar algo que ninguém
+
+233
+00:08:30,578 --> 00:08:31,457
+tinha percebido.
+
+234
+00:08:32,161 --> 00:08:35,240
+O extraordinário não é a IA substituir
+
+235
+00:08:35,240 --> 00:08:36,926
+os matemáticos.
+
+236
+00:08:36,926 --> 00:08:38,454
+É ela ajudar muito mais gente a
+
+237
+00:08:38,454 --> 00:08:39,750
+participar da matemática.
+
+238
+00:08:40,296 --> 00:08:41,246
+MATEMÁTICO TRADICIONAL: Tá bom...
+
+239
+00:08:41,246 --> 00:08:42,118
+MATEMÁTICO TRADICIONAL: tá bom.
+
+240
+00:08:42,118 --> 00:08:43,746
+MATEMÁTICO TRADICIONAL: Puxem uma cadeira.
+
+241
+00:08:43,746 --> 00:08:45,321
+MATEMÁTICO TRADICIONAL: Tem giz para todo mundo.
+
+242
+00:08:46,109 --> 00:08:48,018
+Então, da próxima vez que tiver uma
+
+243
+00:08:48,018 --> 00:08:50,561
+ideia maluca, não descarte.
+
+244
+00:08:50,561 --> 00:08:52,610
+Pergunte: dá para formalizar isso?
+
+245
+00:08:53,293 --> 00:08:54,763
+Porque o próximo matemático...
+
+246
+00:08:56,759 --> 00:08:57,755
+pode ser você!
+
+247
+00:09:03,455 --> 00:09:06,390
+VOVÓ: Teorema: ninguém sai da minha casa com fome.
+
+248
+00:09:06,848 --> 00:09:08,621
+LEAN: Isso vale universalmente?
+
+249
+00:09:09,131 --> 00:09:10,503
+VOVÓ: Na minha casa, vale.
+
+250
+00:09:10,950 --> 00:09:11,435
+LEAN: Mas...
+
+251
+00:09:11,443 --> 00:09:12,822
+VOVÓ: Come mais um pedaço de bolo!
