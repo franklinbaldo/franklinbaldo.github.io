@@ -1,0 +1,32 @@
+steps:
+- name: "node:24-bookworm"
+  entrypoint: "bash"
+  args:
+  - "-euc"
+  - |
+    apt-get update -qq
+    DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends python3 python3-pip python3-venv espeak-ng ffmpeg fluidsynth fluid-soundfont-gm chromium curl fonts-dejavu-core >/tmp/apt.log 2>&1
+    python3 -m venv /opt/voice
+    /opt/voice/bin/pip install -q --no-cache-dir numpy soundfile kokoro-onnx misaki mido
+    mkdir -p models assets
+    curl -fsSL --retry 3 --retry-delay 2 https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx -o models/kokoro-v1.0.onnx
+    curl -fsSL --retry 3 --retry-delay 2 https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin -o models/voices-v1.0.bin
+    npm install --no-fund --no-audit --no-save hyperframes gsap
+    cp node_modules/gsap/dist/gsap.min.js assets/
+    /opt/voice/bin/python audio.py
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium npx hyperframes check --json > check.json || true
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium npx hyperframes snapshot --at 0,15,38,62,94,122 --review > /tmp/snapshot.log 2>&1 || cat /tmp/snapshot.log
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium npx hyperframes render --output draft.mp4 --fps 24 --quality draft --workers 2
+    ffmpeg -y -loglevel error -i draft.mp4 -c:v libx264 -preset medium -crf 23 -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart ruinas-v2.mp4
+    ffprobe -v error -show_entries format=duration,size -of json ruinas-v2.mp4
+- name: "gcr.io/google.com/cloudsdktool/google-cloud-cli:slim"
+  entrypoint: "bash"
+  args:
+  - "-euc"
+  - |
+    gcloud storage cp ruinas-v2.mp4 gs://virtual-computer-fsb_cloudbuild/hyperframes-ruinas-v2/ruinas-v2.mp4
+    gcloud storage cp voice-report.json gs://virtual-computer-fsb_cloudbuild/hyperframes-ruinas-v2/voice-report.json
+    gcloud storage cp check.json gs://virtual-computer-fsb_cloudbuild/hyperframes-ruinas-v2/check.json
+options:
+  machineType: E2_HIGHCPU_8
+timeout: 3600s
