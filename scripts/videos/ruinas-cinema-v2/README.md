@@ -1,9 +1,13 @@
 # O Mágico e o Fogo — HyperFrames v2
 
-Fonte da narrativa: https://franklinbaldo.github.io/pt/blog/o-magico-e-o-fogo/
-Música relacionada: https://franklinbaldo.github.io/pt/blog/o-sonhador-e-o-fogo/
-Skill estudada: https://github.com/remotion-dev/skills
+Fontes narrativas: [O Mágico e o Fogo](https://franklinbaldo.github.io/pt/blog/o-magico-e-o-fogo/) e [O Sonhador e o Fogo](https://franklinbaldo.github.io/pt/blog/o-sonhador-e-o-fogo/).
 
-art.py produz o cenário original; film.py escreve subcomposições HyperFrames, timeline e VTT; audio.py sintetiza voz neural brasileira Kokoro e trilha instrumental com FluidSynth.
-cloudbuild.yaml constrói e renderiza o filme. Arquivos gerados: index.html, compositions/, assets/, ruinas-v2.mp4.
-A versão não usa o áudio do Suno sem exportação oficial autorizada, pois o acesso direto à CDN retornou HTTP 403.
+- `art.py` desenha cenas vetoriais originais em camadas.
+- `film.py` compõe 14 cenas editáveis e legendas WebVTT.
+- `audio.py` sintetiza narração Kokoro pt-BR e música com FluidSynth.
+- `SPEC.md` e `STORYLINES.md` documentam as decisões criativas.
+- `.github/workflows/ruinas-cinema.yml` executa o render no **GitHub Actions público**, sem depender de Cloud Build/GCP.
+
+O workflow é ativado apenas por atualizações do projeto na branch de revisão. Valida o MP4, anexa o resultado ao run e adiciona o vídeo validado à PR **draft**; não faz merge nem publica o artigo. A página só será publicada após revisão humana.
+
+A gravação original do Suno permanece vinculada no artigo, sem contornar a restrição HTTP 403 da CDN. A nova locução é sintética e independente.
