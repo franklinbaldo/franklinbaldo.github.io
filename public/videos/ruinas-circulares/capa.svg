@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+<title id="title">O menino que nasceu de um sonho</title>
+<desc id="desc">Um sonhador diante de pedras circulares, sob a lua e um céu de estrelas.</desc>
+<defs>
+  <radialGradient id="night"><stop offset="0" stop-color="#43537e"/><stop offset="1" stop-color="#14192c"/></radialGradient>
+  <linearGradient id="land" x2="0" y2="1"><stop stop-color="#49666e"/><stop offset="1" stop-color="#222f42"/></linearGradient>
+</defs>
+<rect width="960" height="540" fill="url(#night)"/>
+<circle cx="758" cy="108" r="57" fill="#e9ddae"/><circle cx="775" cy="85" r="55" fill="#29334f"/>
+<g fill="#f8e7bd" opacity=".8"><circle cx="91" cy="62" r="2"/><circle cx="187" cy="119" r="2.5"/><circle cx="297" cy="74" r="2"/><circle cx="388" cy="136" r="1.5"/><circle cx="561" cy="83" r="2"/><circle cx="673" cy="45" r="1.5"/><circle cx="857" cy="155" r="2"/><circle cx="915" cy="68" r="3"/></g>
+<path d="M0 358 Q220 278 460 352 T960 347 L960 540 H0Z" fill="url(#land)"/>
+<ellipse cx="480" cy="347" rx="305" ry="82" fill="none" stroke="#a7b2ac" stroke-width="30" stroke-dasharray="53 24" opacity=".83"/>
+<g transform="translate(470 148)">
+<path d="M-67 206 Q-49 48 0 11 Q57 48 69 206Z" fill="#777196" stroke="#e0c5cb" stroke-width="4"/>
+<circle cy="65" r="29" fill="#e5bea3"/>
+<path d="M-32 54 Q-2 12 31 54" stroke="#4f4766" fill="none" stroke-width="14"/>
+</g>
+<path d="M565 130 L580 178 L628 194 L580 210 L565 260 L550 210 L502 194 L550 178Z" fill="#f5dd9f"/>
+<rect x="46" y="407" width="868" height="110" rx="20" fill="#131a31" opacity=".91"/>
+<text x="480" y="458" text-anchor="middle" font-family="Georgia,serif" font-weight="bold" font-size="43" fill="#ffedc5">O menino que nasceu de um sonho</text>
+<text x="480" y="493" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#d8d8df">Um conto infantil inspirado em Jorge Luis Borges</text>
+</svg>
