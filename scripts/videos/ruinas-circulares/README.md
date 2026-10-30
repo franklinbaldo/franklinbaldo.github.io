@@ -2,11 +2,11 @@
 
 Fonte do curta animado original inspirado livremente em *As ruínas circulares*, de Jorge Luis Borges.
 
-A composição usa [Hyperframes](https://github.com/heygen-com/hyperframes), HTML/SVG e GSAP. O roteiro original, as legendas e as ilustrações vetoriais são gerados por build.py; os áudios são sintetizados via edge-tts (pt-BR), com fallback local para espeak-ng. A trilha é sintetizada com FFmpeg.
+A composição usa [Hyperframes](https://github.com/heygen-com/hyperframes), HTML/SVG e GSAP. O roteiro original, as legendas e as ilustrações vetoriais são gerados por build.py; os áudios são sintetizados preferencialmente com Piper (pt_BR-faber-medium), depois edge-tts, com fallback para espeak-ng. A trilha é sintetizada com FFmpeg.
 
 ## Reproduzir
 
-Requisitos: Node.js 22 ou posterior, Python 3, FFmpeg, FFprobe, espeak-ng, edge-tts e Hyperframes.
+Requisitos: Node.js 22 ou posterior, Python 3, FFmpeg, FFprobe, espeak-ng, Hyperframes e GSAP. Para usar a voz Piper, instale piper-tts e defina PIPER_MODEL_PATH para o modelo ONNX de voz pt_BR-faber-medium. Se não estiver disponível, instale edge-tts para tentar voz neural via rede, ou use espeak-ng localmente.
 
 1. Execute python3 build.py a partir deste diretório (o script cria index.html, meta.json e assets/).
 2. Copie node_modules/gsap/dist/gsap.min.js para assets/.

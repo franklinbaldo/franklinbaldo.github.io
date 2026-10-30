@@ -26,6 +26,20 @@ def run(cmd, **kwargs):
     return subprocess.run(cmd, check=True, **kwargs)
 
 def create_voice(text, path):
+    # Voz neural local, quando um modelo Piper está disponível no executor.
+    model = os.environ.get("PIPER_MODEL_PATH")
+    if model and Path(model).exists():
+        wav = path.with_suffix(".wav")
+        try:
+            run(["piper", "--model", model, "--output_file", str(wav)],
+                input=text.encode("utf-8"), timeout=100, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(wav),
+                 "-codec:a", "libmp3lame", "-q:a", "3", str(path)])
+            wav.unlink(missing_ok=True)
+            if path.stat().st_size > 1000:
+                return "piper-pt_BR-faber-medium"
+        except (OSError, subprocess.SubprocessError, TimeoutError):
+            wav.unlink(missing_ok=True)
     edge = ["edge-tts", "--voice", "pt-BR-FranciscaNeural", "--rate", "-8%", "--text", text, "--write-media", str(path)]
     try:
         run(edge, timeout=55, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
@@ -123,7 +137,7 @@ def main():
             + f'<div class="top">UM CONTO PARA SONHAR</div><div class="credit">Inspirado livremente em Jorge Luis Borges</div>'
             + svg_art(motif)
             + f'<div class="copy"><{"h1" if i == 0 else "h2"}>{escape(title)}</{"h1" if i == 0 else "h2"}><p>{escape(narration)}</p></div></section>')
-        pieces.append(f'<audio id="voice-{i}" src="./assets/narration-{i}.mp3" data-start="{starts[i]}" data-duration="{round(lengths[i]-1.6,2)}" data-track-index="2" data-volume="1"></audio>')
+        pieces.append(f'<audio id="voice-{i}" src="./assets/narration-{i}.mp3" data-start="{starts[i]}" data-duration="{round(lengths[i]-1.7,2)}" data-track-index="2" data-volume="1"></audio>')
     pieces.append(f'<audio id="music" src="./assets/ambient.mp3" data-start="0" data-duration="{total}" data-track-index="3" data-volume=".8"></audio>')
     pieces.append('''</div><script src="./assets/gsap.min.js"></script><script>
 const tl = gsap.timeline({paused:true});
