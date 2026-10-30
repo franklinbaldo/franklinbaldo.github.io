@@ -5,7 +5,6 @@ description: "Uma suposta prova diz que um dos problemas mais difíceis da compu
 date: "2026-10-28"
 docType: essay
 lang: pt
-translationKey: eth-eli13
 tags: [complexidade, matemática, IA, explicação]
 ---
 
