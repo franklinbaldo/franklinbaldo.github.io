@@ -8,10 +8,7 @@ lang: pt
 author: franklin
 tags:
   - literatura
-  - Borges
-  - infância
-  - animação
-  - filosofia
+  - contos-animados
 emoji: "🌙"
 ---
 
