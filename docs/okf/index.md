@@ -2,7 +2,7 @@
 type: Index
 title: Hrönir
 description: Sistema de avaliação par-a-par de posts do blog, com ranking OpenSkill e seleção de versões.
-resource: ../../CLAUDE.md
+resource: ../../AGENTS.md
 tags: [hronir]
 timestamp: 2026-07-03T00:00:00Z
 ---
@@ -34,5 +34,5 @@ duelos de versão.
 ## Fora do escopo deste bundle
 
 Instruções operacionais passo a passo (como rodar uma sessão, flags exatas,
-constraints de validação) vivem em [`CLAUDE.md`](../../CLAUDE.md) — este
+constraints de validação) vivem em [`AGENTS.md`](../../AGENTS.md) — este
 bundle documenta os conceitos, não o procedimento.

@@ -24,7 +24,7 @@ Hrönir is both repository machinery and a public-facing curation artifact: eval
 - [Pico.css v2](https://picocss.com/) (semantic, classless-ish CSS)
 - Typography: Fraunces (body) / Inter (UI) via `@fontsource`
 - Source assets preserved; local article images copied by the native exporter
-- **Hrönir** — pairwise editorial evidence in Markdown OKF; agents are guided and validated by `okf-parser`. See [`CLAUDE.md`](./CLAUDE.md) for the operating contract.
+- **Hrönir** — pairwise editorial evidence in Markdown OKF; agents are guided and validated by `okf-parser`. See [`AGENTS.md`](./AGENTS.md) for the operating contract.
 
 ## Commands
 
