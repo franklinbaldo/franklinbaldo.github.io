@@ -88,7 +88,7 @@ def build(durations):
     hosts=[]
     for i,((slug,stage,title,spoken),d) in enumerate(zip(SCENES,durations)):
         hosts.append(f'<div id="{slug}" class="clip" data-composition-id="{slug}" data-composition-src="compositions/{slug}.html" data-start="{starts[i]}" data-duration="{d:.3f}" data-width="1920" data-height="1080" data-track-index="1" data-track-kind="graphics"></div>')
-        hosts.append(f'<audio id="nar-{i}" src="assets/narration-{i:02}.wav" data-start="{starts[i]}" data-duration="{max(.1,d-1.0):.3f}" data-track-index="3" data-volume="1.35"></audio>')
+        hosts.append(f'<audio id="nar-{i}" src="assets/narration-{i:02}.wav" data-start="{starts[i]}" data-duration="{max(.1,d-1.2):.3f}" data-track-index="3" data-volume="1.35"></audio>')
     hosts.append(f'<audio id="trilha" src="assets/trilha.mp3" data-start="0" data-duration="{total:.3f}" data-track-index="4" data-volume=".75" data-fade-in="2.4" data-fade-out="3.2"></audio>')
     hosts.append(f'<div id="fx-host" class="clip" data-start="0" data-duration="{total}" data-track-index="5"><div id="iris"></div><div id="flash"></div></div>')
     transition=[]

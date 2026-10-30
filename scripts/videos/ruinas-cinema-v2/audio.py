@@ -39,7 +39,7 @@ def soundtrack(seconds):
         bar=i//8;note=chords[bar%4][i%8]
         vel=46+r.randint(-9,8)
         acoustic.append(mido.Message("note_on",note=note,velocity=vel,channel=0,time=0 if i==0 else 0))
-        acoustic.append(mido.Message("note_off",note=note,velocity=0,channel=0,time=190))
+        acoustic.append(mido.Message("note_off",note=note,velocity=0,channel=0,time=365))
     # A sustained low cello supports the fire and recognition without jump-scare.
     # A separate track uses delta time ticks and overlaps piano chords.
     pad=mido.MidiTrack();midi.tracks.append(pad)
@@ -47,7 +47,7 @@ def soundtrack(seconds):
     for i in range(max(1,int(seconds/12))):
         note=[40,36,38,35][i%4]
         pad.append(mido.Message("note_on",note=note,velocity=28,channel=1,time=0))
-        pad.append(mido.Message("note_off",note=note,velocity=0,channel=1,time=2400))
+        pad.append(mido.Message("note_off",note=note,velocity=0,channel=1,time=11520))
     midi.save(ASSETS/"trilha.mid")
     sf2="/usr/share/sounds/sf2/FluidR3_GM.sf2"
     run(["fluidsynth","-ni",sf2,str(ASSETS/"trilha.mid"),"-F",str(ASSETS/"raw-music.wav"),"-r","22050"])
