@@ -18,8 +18,8 @@ description: |
 # franklin-blog
 
 Default skill for Franklin Baldo's blog at franklinbaldo.github.io.
-The blog is Astro 5 with gwern-typography, mixing English and
-Portuguese posts. The voice criterion drives every other decision in
+O blog usa Zola 0.23.6 em produção; SSG está em avaliação e Astro é fallback legado.
+O conteúdo canônico vive em `src/content/blog/`. The voice criterion drives every other decision in
 this skill.
 
 Two companion skills carry visual mechanics:
@@ -350,6 +350,17 @@ converge on a shared gesture, they can become a new category.
 For now, they live here.
 
 Authors: W.G. Sebald, Annie Dillard, Janet Malcolm.
+
+
+## Vídeo complementar ao post
+
+Pesquisar primeiro as obras do autor no próprio blog: músicas, narrações, versões anteriores, imagens e letras. Preservar a intenção e o impacto narrativo; não substituir uma adaptação já boa por sinopse genérica. Propor vídeo quando o movimento trouxer valor real (demonstração, narrativa, ensino, música); não impor vídeo a todo post.
+
+Após o rascunho descartável, definir argumento, storyboard e plano de som. Usar `hyperframes`, `hyperframes-registry`, `hyperframes-cli`, `media-use` para vídeo HTML; `remotion-best-practices`, `remotion-markup`, `remotion-render`, `remotion-captions` para Remotion; `remotion-to-hyperframes` quando migrar composições. Consultar os arquivos SKILL.md das versões pinadas em `skills-lock.json`. Respeitar acesso, licença e proveniência dos áudios originais.
+
+Post multimídia: arquivo Markdown canônico, vídeo HTML5 responsivo com controles, poster, WebVTT, transcrição, créditos e alternativa textual. Só publicar quando o MP4 real existir, tiver áudio/legendas sincronizados, tamanho adequado, revisão visual e reprodução móvel verificada. Não entregar slideshow de textos como se fosse curta cinematográfico.
+
+Para blog e repositórios públicos, renderizar por **GitHub Actions**, com artefatos para revisão, não por Cloud Build. A automação não deve fazer merge de vídeo não aprovado.
 
 ## Workflow: draft-first
 

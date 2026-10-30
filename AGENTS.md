@@ -1,4 +1,4 @@
-# CLAUDE.md — Franklin Baldo's Blog
+# AGENTS.md — Blog de Franklin Baldo
 
 ## Project overview
 
@@ -232,6 +232,15 @@ knowledge/project-tiers/  Tiers canônicos de projetos/repositórios
 specs/okf-types/*-tier.md Specs normativas dos domínios de tier
 ```
 
+
+## Vídeos e skills editoriais
+
+Antes de produzir posts ou adaptações, consulte `scripts/hronir/skills/franklin-blog/SKILL.md` e o acervo original do autor. Vídeos são opcionais e devem acrescentar narrativa, explicação ou demonstração, nunca ser slideshow decorativo.
+
+Skills instaladas via `skills-lock.json`: `hyperframes`, `hyperframes-cli`, `hyperframes-registry`, `media-use`, `remotion-to-hyperframes`, `remotion-best-practices`, `remotion-markup`, `remotion-render`, `remotion-captions`. Consulte os SKILL.md oficiais, mantenha as dependências pinadas e não duplique cópias materializadas. Origens: https://github.com/heygen-com/hyperframes/tree/main/skills e https://github.com/remotion-dev/skills.
+
+Vídeo: fonte e autorização → argumento/storyboard → composição editável → render → snapshots, áudio, legendas, direitos e teste no celular → publicação. Posts multimídia precisam de vídeo HTML5, poster, WebVTT, transcrição e créditos. **GitHub Actions é a opção padrão de renderização para o blog e demais repositórios públicos**, não Cloud Build. Não publicar artefato sem revisão nem usar mídia cujo acesso ou licença não estejam autorizados.
+
 ## Agent skills
 
 Skills from `franklinbaldo/skills` are managed via the `skills` CLI, not
@@ -244,6 +253,8 @@ or after `skills-lock.json` changes:
 npx skills experimental_install   # materialize from skills-lock.json
 npx skills add franklinbaldo/skills -s suno-curator -s suno-profile -y   # add/update specific skills
 ```
+
+Além das skills Suno, usar as skills de vídeo listadas acima quando houver componente audiovisual.
 
 Currently in use: `suno-curator` (blog-side Suno sync — mirroring public
 songs into music posts) and `suno-profile` (Suno profile/catalog curation
