@@ -15,7 +15,7 @@ steps:
     cp node_modules/gsap/dist/gsap.min.js assets/
     /opt/voice/bin/python audio.py
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium npx hyperframes check --json > check.json || true
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium npx hyperframes snapshot --at 0,15,38,62,94,122 --review > /tmp/snapshot.log 2>&1 || cat /tmp/snapshot.log
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium npx hyperframes snapshot --review > /tmp/snapshot.log 2>&1 || cat /tmp/snapshot.log
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium npx hyperframes render --output draft.mp4 --fps 24 --quality draft --workers 2
     ffmpeg -y -loglevel error -i draft.mp4 -c:v libx264 -preset medium -crf 23 -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart ruinas-v2.mp4
     ffprobe -v error -show_entries format=duration,size -of json ruinas-v2.mp4
