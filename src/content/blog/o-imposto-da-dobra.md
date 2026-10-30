@@ -6,7 +6,7 @@ date: "2026-10-28"
 docType: essay
 lang: pt
 translationKey: eth-eli13
-tags: [complexidade, matemática, ia, explicação]
+tags: [complexidade, matemática, IA, explicação]
 ---
 
 Esta semana apareceu [um repositório no GitHub da Anthropic](https://github.com/anthropics/formal-math/tree/16a5ce41304fcdaea4e0be7c132e1c361dc26da5/eth) com uma formalização em [Lean](https://lean-lang.org/) e [um artigo](https://hexagonmath.org/2610.00577v1) com um título modesto: *A 2^o(n) Time Algorithm for 3-SAT*. Se o que ele diz estiver certo, uma das apostas mais usadas da ciência da computação teórica acabou de perder.
