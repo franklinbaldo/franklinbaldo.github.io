@@ -5,7 +5,7 @@ Este diretório é um bundle no [Open Knowledge Format
 um arquivo Markdown por conceito, com front-matter YAML leve (`type` é o
 único campo obrigatório) e links relativos entre conceitos relacionados.
 O objetivo é dar a agentes — e a humanos — um mapa navegável dos conceitos
-centrais do sistema Hrönir, complementar (não substituto) ao `CLAUDE.md` e
+centrais do sistema Hrönir, complementar (não substituto) ao `AGENTS.md` e
 aos READMEs de operação.
 
 Comece por [`index.md`](./index.md).

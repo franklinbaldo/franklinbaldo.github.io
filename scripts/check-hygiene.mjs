@@ -30,7 +30,7 @@ const ROOT_ALLOWLIST = new Set([
   ".nvmrc",
   ".oxlintrc.json",
   ".oxfmtrc.json",
-  "CLAUDE.md",
+  "AGENTS.md",
   "README.md",
   "astro.config.mjs",
   "package-lock.json",
