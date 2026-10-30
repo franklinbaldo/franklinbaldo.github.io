@@ -113,7 +113,7 @@ check derivam — veja RFC 0004.
 ### Línguas
 
 - **Código e identificadores**: inglês (variáveis, funções, comentários inline).
-- **Docs, RFCs, prosa de processo** (`docs/`, `CLAUDE.md`, mensagens de commit): português.
+- **Docs, RFCs, prosa de processo** (`docs/`, `AGENTS.md`, mensagens de commit): português.
 - **Exceção — `changelog/`**: entradas de changelog (`changelog/<versão>.md`)
   são em **inglês**, formatadas como markdown OKF (`type` obrigatório, aqui
   `Changelog Entry` — ver `docs/okf/README.md`). Decisão deliberada do

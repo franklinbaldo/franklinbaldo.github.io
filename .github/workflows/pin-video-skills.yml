@@ -1,0 +1,56 @@
+name: Pin video skills in project lock
+on:
+  push:
+    branches: [docs/agents-skills-video-editorial]
+    paths:
+      - '.github/workflows/pin-video-skills.yml'
+permissions:
+  contents: write
+concurrency:
+  group: pin-video-skills
+  cancel-in-progress: false
+jobs:
+  pin:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - name: Replace placeholder locks with verified upstream installations
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const path='skills-lock.json';
+          const data=JSON.parse(fs.readFileSync(path,'utf8'));
+          for (const [key,value] of Object.entries(data.skills)) {
+            if (value.computedHash === 'pending-cli-install') delete data.skills[key];
+          }
+          fs.writeFileSync(path,JSON.stringify(data,null,2)+'\n');
+          NODE
+          npx --yes skills@latest add heygen-com/hyperframes -s hyperframes -s hyperframes-cli -s hyperframes-registry -s media-use -s remotion-to-hyperframes -a claude-code -y
+          npx --yes skills@latest add remotion-dev/skills -s remotion-best-practices -s remotion-markup -s remotion-render -s remotion-captions -a claude-code -y
+      - name: Verify lock entries and finite hashes
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const lock=JSON.parse(fs.readFileSync('skills-lock.json','utf8'));
+          const names=['suno-curator','suno-profile','hyperframes','hyperframes-cli','hyperframes-registry','media-use','remotion-to-hyperframes','remotion-best-practices','remotion-markup','remotion-render','remotion-captions'];
+          for (const name of names) {
+            const item=lock.skills[name];
+            if (!item || !/^[0-9a-f]{64}$/.test(item.computedHash)) throw new Error('Unpinned or missing '+name);
+          }
+          console.log('Verified',names.length,'skill hashes from actual installations');
+          NODE
+      - name: Commit verified skills-lock.json to this PR
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add skills-lock.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(skills): replace provisional entries with installed hashes"
+            git push origin HEAD:refs/heads/docs/agents-skills-video-editorial
+          fi
