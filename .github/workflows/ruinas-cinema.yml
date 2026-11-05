@@ -1,0 +1,129 @@
+name: Ruínas — HyperFrames review film
+
+on:
+  push:
+    branches:
+      - feat/ruinas-circulares-cinema-v2
+    paths:
+      - "scripts/videos/ruinas-cinema-v2/**"
+      - ".github/workflows/ruinas-cinema.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ruinas-cinema-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render:
+    if: github.repository == 'franklinbaldo/franklinbaldo.github.io'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+        working-directory: scripts/videos/ruinas-cinema-v2
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Install offline media/render dependencies on GitHub runner
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+            espeak-ng ffmpeg fluidsynth fluid-soundfont-gm fonts-dejavu-core
+          python -m pip install --disable-pip-version-check \
+            numpy soundfile kokoro-onnx misaki mido
+          # Keep dependencies out of the blog's root package.json/lockfile.
+          npm install --prefix "$RUNNER_TEMP/hyperframes-tools" --no-save --no-package-lock --no-audit --no-fund hyperframes gsap
+          mkdir -p assets models
+          cp "$RUNNER_TEMP/hyperframes-tools/node_modules/gsap/dist/gsap.min.js" assets/
+          curl -fL --retry 3 --retry-delay 2 \
+            https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx \
+            -o models/kokoro-v1.0.onnx
+          curl -fL --retry 3 --retry-delay 2 \
+            https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin \
+            -o models/voices-v1.0.bin
+
+      - name: Render original Brazilian voice, score and scene compositions
+        run: python audio.py
+
+      - name: Check HyperFrames contract (errors are fatal)
+        run: |
+          "$RUNNER_TEMP/hyperframes-tools/node_modules/.bin/hyperframes" check --json > check.json
+          python - <<'PY'
+          import json
+          x=json.load(open('check.json'))
+          print('HyperFrames check:', 'ok='+str(x.get('ok')),
+                'lint errors='+str(x.get('lint',{}).get('errorCount')),
+                'runtime errors='+str(x.get('runtime',{}).get('errorCount')))
+          assert x.get('ok') is True, 'HyperFrames check failed'
+          PY
+
+      - name: Render video with HyperFrames on public GitHub Actions
+        run: |
+          "$RUNNER_TEMP/hyperframes-tools/node_modules/.bin/hyperframes" render \
+            --output raw.mp4 --fps 24 --quality draft --workers 2
+          ffmpeg -y -loglevel error -i raw.mp4 \
+            -vf scale=1280:720 \
+            -c:v libx264 -preset medium -crf 25 -pix_fmt yuv420p \
+            -c:a aac -b:a 112k -movflags +faststart filme.mp4
+          ffmpeg -y -loglevel error -i filme.mp4 \
+            -vf "fps=1/15,scale=640:360,tile=2x4" \
+            -frames:v 1 -q:v 3 quadros-chave.jpg
+          ffprobe -v error -show_streams -show_format -of json filme.mp4 > probe.json
+
+      - name: Verify real video, audio, caption coverage and duration
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          p=json.load(open('probe.json'))
+          video=[s for s in p['streams'] if s['codec_type']=='video']
+          audio=[s for s in p['streams'] if s['codec_type']=='audio']
+          duration=float(p['format']['duration'])
+          size=pathlib.Path('filme.mp4').stat().st_size
+          assert len(video)==1 and len(audio)>=1, 'MP4 must contain video and voice'
+          assert video[0]['width']==1280 and video[0]['height']==720, 'wrong dimensions'
+          assert 110 < duration < 120, f'wrong duration {duration}'
+          assert 100_000 < size < 80_000_000, f'invalid video file size {size}'
+          assert pathlib.Path('legendas.vtt').read_text().count('-->')==14, 'missing caption segments'
+          print(f'QA PASS: {duration:.2f}s, {size/1e6:.2f} MB, 720p, narrated audio and 14 captions')
+          PY
+
+      - name: Attach reviewable video, evidence and narration timings
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ruinas-cinema-v2-${{ github.run_id }}
+          path: |
+            scripts/videos/ruinas-cinema-v2/filme.mp4
+            scripts/videos/ruinas-cinema-v2/quadros-chave.jpg
+            scripts/videos/ruinas-cinema-v2/legendas.vtt
+            scripts/videos/ruinas-cinema-v2/check.json
+            scripts/videos/ruinas-cinema-v2/probe.json
+            scripts/videos/ruinas-cinema-v2/voice-report.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Add validated video to the existing draft PR (never publish to main)
+        if: github.ref == 'refs/heads/feat/ruinas-circulares-cinema-v2'
+        env:
+          TARGET_BRANCH: feat/ruinas-circulares-cinema-v2
+        run: |
+          mkdir -p ../../../public/videos/ruinas-cinema-v2
+          cp filme.mp4 ../../../public/videos/ruinas-cinema-v2/filme.mp4
+          cp legendas.vtt ../../../public/videos/ruinas-cinema-v2/legendas.vtt
+          git -C ../../.. config user.name "github-actions[bot]"
+          git -C ../../.. config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C ../../.. add public/videos/ruinas-cinema-v2/filme.mp4 public/videos/ruinas-cinema-v2/legendas.vtt
+          if ! git -C ../../.. diff --cached --quiet; then
+            git -C ../../.. commit -m "build(video): attach validated HyperFrames 720p review"
+            git -C ../../.. push origin "HEAD:refs/heads/$TARGET_BRANCH"
+          fi
