@@ -1,0 +1,36 @@
+name: Lean 4 — Lara Resende e MMT
+
+on:
+  pull_request:
+    paths:
+      - "experiments/juros-mmt-lean4/**"
+      - ".github/workflows/lean4-monetary-models.yml"
+  push:
+    paths:
+      - "experiments/juros-mmt-lean4/**"
+      - ".github/workflows/lean4-monetary-models.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compile-models:
+    name: Compilar provas Lean 4
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rejeitar lacunas e novos axiomas
+        run: |
+          if grep -R -n -E '(^|[^[:alnum:]_])(sorry|admit|axiom)([^[:alnum:]_]|$)' \
+            experiments/juros-mmt-lean4 --include='*.lean'; then
+            echo 'Foi encontrada uma lacuna de prova ou um axioma explícito.'
+            exit 1
+          fi
+      - name: Compilar todas as demonstrações no Lean 4
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: experiments/juros-mmt-lean4
+          build: "true"
+          build-args: "--wfail"
+          test: "false"
