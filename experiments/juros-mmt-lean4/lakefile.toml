@@ -1,0 +1,6 @@
+name = "juros_mmt"
+version = "0.1.0"
+defaultTargets = ["JurosMMT"]
+
+[[lean_lib]]
+name = "JurosMMT"
