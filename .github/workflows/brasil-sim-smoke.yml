@@ -12,24 +12,26 @@ permissions:
 jobs:
   official-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Python and offline unit tests
         run: |
           python3 --version
           python3 -m unittest discover -s experiments/brasil-sim/tests -v
-      - name: Query official Banco Central and forecast (reduced population)
+      - name: Query official Banco Central and forecast (full 100k-person sample)
         run: |
-          python3 experiments/brasil-sim/model.py --agents 1000 --categories 127 --horizon 3 --output /tmp/brasil-sim-smoke
+          python3 experiments/brasil-sim/model.py --agents 100000 --categories 127 --horizon 24 --output /tmp/brasil-sim-smoke
           python3 - <<'PY'
           import json
           from pathlib import Path
           p=json.loads(Path("/tmp/brasil-sim-smoke/latest.json").read_text())
           assert p["official_series"]["provider"] == "Banco Central do Brasil - SGS"
-          assert len(p["synthetic_products"]["selic_constante"]) == 3*127
-          assert len(p["scenarios"]["selic_menos_2pp"]) == 3
+          assert len(p["synthetic_products"]["selic_constante"]) == 24*127
+          assert len(p["scenarios"]["selic_menos_2pp"]) == 24
           assert p["backtest"]["months"] >= 1
+          assert p["agents"] == 100000
+          assert p["population"] == 215000000
           print("SOURCE", p["data_as_of_month"], p["official_latest_policy_pct"])
           print("MCMC", p["posterior"]["diagnostic"])
           print("BACKTEST", p["backtest"])
