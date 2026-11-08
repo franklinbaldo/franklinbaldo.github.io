@@ -64,9 +64,7 @@ theorem income_only_separates (transferDelta exposure : Int)
       (incomeOnly transferDelta exposure).inflationDelta := by
   have h : (incomeOnly transferDelta exposure).inflationDelta =
       transferDelta := by
-    have hx := FiscalTransmission.income_only_effect
-      (incomeOnly transferDelta exposure) (by rfl) (by rfl)
-    simpa [incomeOnly, fiscal, FiscalTransmission.model] using hx
+    simp [incomeOnly, fiscal, FiscalTransmission.model]
   rw [neo_change, h]
   exact Ne.symm changed
 
@@ -136,13 +134,13 @@ theorem gap_decomposition (f : FiscalTransmission.Response)
           (f.exposure * f.policyDelta + f.compensationDelta) =
         (f.sensitivity * f.exposure) * f.policyDelta +
           f.sensitivity * f.compensationDelta := by
-    simp only [mul_add, mul_assoc]
+    rw [Int.mul_add, Int.mul_assoc]
   rw [hdist] at hp
   have hsub :
       (f.sensitivity * f.exposure - 1) * f.policyDelta =
         (f.sensitivity * f.exposure) * f.policyDelta -
           f.policyDelta := by
-    rw [sub_mul, one_mul]
+    rw [Int.sub_mul, Int.one_mul]
   dsimp [predictedGap]
   omega
 
