@@ -211,4 +211,80 @@ theorem original_design_full_rank :
   apply nonzero_determinant_identifies
   decide
 
+
+/-- When the determinant vanishes, (y1,-d1) produces the same two
+responses as (0,0). This witness may itself be zero, so it is not
+alone a proof of non-identifiability. -/
+theorem first_row_kernel_witness
+    (d1 y1 d2 y2 : Int)
+    (detZero : d1 * y2 - d2 * y1 = 0) :
+    twoObservations d1 y1 d2 y2 (y1, -d1) =
+      twoObservations d1 y1 d2 y2 (0, 0) := by
+  apply Prod.ext
+  · change y1 * d1 + (-d1) * y1 = 0 * d1 + 0 * y1
+    rw [Int.neg_mul, Int.mul_comm y1 d1]
+    omega
+  · change y1 * d2 + (-d1) * y2 = 0 * d2 + 0 * y2
+    rw [Int.neg_mul, Int.mul_comm y1 d2]
+    omega
+
+/-- The analogous kernel witness taken from the second intervention. -/
+theorem second_row_kernel_witness
+    (d1 y1 d2 y2 : Int)
+    (detZero : d1 * y2 - d2 * y1 = 0) :
+    twoObservations d1 y1 d2 y2 (y2, -d2) =
+      twoObservations d1 y1 d2 y2 (0, 0) := by
+  apply Prod.ext
+  · change y2 * d1 + (-d2) * y1 = 0 * d1 + 0 * y1
+    rw [Int.neg_mul, Int.mul_comm y2 d1]
+    omega
+  · change y2 * d2 + (-d2) * y2 = 0 * d2 + 0 * y2
+    rw [Int.neg_mul, Int.mul_comm y2 d2]
+    omega
+
+/-- If the experimental design has zero determinant, there are
+distinct integer coefficient pairs generating identical outcomes. -/
+theorem zero_determinant_not_identifying
+    (d1 y1 d2 y2 : Int)
+    (detZero : d1 * y2 - d2 * y1 = 0) :
+    ¬ Function.Injective (twoObservations d1 y1 d2 y2) := by
+  intro hinj
+  by_cases hFirst : d1 = 0 ∧ y1 = 0
+  · by_cases hSecond : d2 = 0 ∧ y2 = 0
+    · have hSame :
+          twoObservations d1 y1 d2 y2 (1, 0) =
+            twoObservations d1 y1 d2 y2 (0, 0) := by
+        simp [twoObservations, response, hFirst.1, hFirst.2,
+          hSecond.1, hSecond.2]
+      have hEq : ((1, 0) : Int × Int) = (0, 0) := hinj hSame
+      have hBad : (1 : Int) = 0 := congrArg Prod.fst hEq
+      omega
+    · have hSame :=
+        second_row_kernel_witness d1 y1 d2 y2 detZero
+      have hEq : ((y2, -d2) : Int × Int) = (0, 0) :=
+        hinj hSame
+      have hy2 : y2 = 0 := congrArg Prod.fst hEq
+      have hd2neg : -d2 = 0 := congrArg Prod.snd hEq
+      have hd2 : d2 = 0 := by omega
+      exact hSecond ⟨hd2, hy2⟩
+  · have hSame := first_row_kernel_witness d1 y1 d2 y2 detZero
+    have hEq : ((y1, -d1) : Int × Int) = (0, 0) := hinj hSame
+    have hy1 : y1 = 0 := congrArg Prod.fst hEq
+    have hd1neg : -d1 = 0 := congrArg Prod.snd hEq
+    have hd1 : d1 = 0 := by omega
+    exact hFirst ⟨hd1, hy1⟩
+
+/-- Exact rank criterion for uniqueness over integer coefficients.
+It does not claim that every possible observation has an integer solution. -/
+theorem identifiable_iff_nonzero_determinant
+    (d1 y1 d2 y2 : Int) :
+    Function.Injective (twoObservations d1 y1 d2 y2) ↔
+      d1 * y2 - d2 * y1 ≠ 0 := by
+  constructor
+  · intro hinj
+    by_contra h
+    have hzero : d1 * y2 - d2 * y1 = 0 := by omega
+    exact (zero_determinant_not_identifying d1 y1 d2 y2 hzero) hinj
+  · exact nonzero_determinant_identifies d1 y1 d2 y2
+
 end JurosMMT.HybridIdentification
