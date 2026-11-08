@@ -29,3 +29,15 @@ No GitHub, o workflow `lean4-monetary-models.yml` executa a compilação em PR/p
 Veja o artigo no blog: `/blog/lara-resende-mmt-lean4-compatibilidade/`.
 
 **Fontes:** [Eu Acuso — Lara Resende (2026)](https://andrelararesende.substack.com/p/eu-acuso-uma-proposta-para-eliminar), [L. Randall Wray — MMT](https://www.levyinstitute.org/blog/modern-money-theory-how-i-came-to-mmt-and-what-i-include-in-mmt/).
+
+## Experimentos discriminantes (2026-11-08)
+
+Os módulos adicionais implementam **hipóteses condicionais**, não interpretações universais de MMT:
+
+- `JurosMMT/NeoFisherian.lean`: impõe `Δi = Δr + Δπ`. Com `Δr = 0`, prova `Δπ = Δi`.
+- `JurosMMT/FiscalTransmission.lean`: postula `ΔJ = exposição × Δi`, `ΔY = ΔJ + compensação` e `Δπ = sensibilidade × ΔY + outros`. A última equação é uma hipótese estilizada de transmissão fiscal inspirada na MMT — **não** um teorema geral da teoria.
+- `JurosMMT/Identification.lean`: confronta ambos os mecanismos sob intervenções idênticas. Prova divergência no corte totalmente compensado e na transferência com juros constantes, convergência sob exposição unitária e efeitos heterogêneos para exposições zero e dois. Inclui os quatro braços de experimento com números sintéticos.
+
+A compensação elimina **apenas** o canal de renda explicitamente modelado, mantendo os demais canais em zero por hipótese. Não há modelagem de financiamento, distribuição, substituição de portfólio, expectativa, credibilidade do regime ou câmbio. Os parâmetros são inteiros em unidades arbitrárias, **não** elasticidades estimadas ou percentuais do PIB. O experimento distingue duas especificações formais condicionais: observar o mesmo sinal de inflação não confirma a identidade do mecanismo, e uma divergência no modelo não refuta MMT ou o neofisherianismo empiricamente.
+
+A CI compila `JurosMMT.lean` que importa todos os módulos; novas demonstrações somente estão verificadas depois do `lake build --wfail` passar na revisão correspondente.
