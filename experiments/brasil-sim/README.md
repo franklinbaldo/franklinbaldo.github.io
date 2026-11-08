@@ -29,6 +29,21 @@ Ainda não é um SFC completo nem uma formalização de todas as equações do U
 
 Referências locais: [UEKG](./references/universal_equation_knowledge_graph.md) e [MMT](./references/mmt-minimal-core-lean4.md).
 
+## Inputs estruturais: magnitude e shape
+
+O arquivo versionado [config.json](./config.json) oferece **dois aspectos configuráveis para cada elemento primitivo**:
+
+| Primitivo | Magnitude | Formato de distribuição |
+| --- | --- | --- |
+| População | 215 milhões de pessoas ponderadas | Amostra de 100 mil agentes na execução |
+| Produtividade | Capacidade máxima (unidades sintéticas/hora) | Beta(α, β) normalizada entre 0 e 1 |
+| Tempo produtivo | Limite mensal de horas por pessoa | Beta(α, β) da fração trabalhada |
+| Patrimônio | Média inicial em unidades de índice | Lognormal com dispersão configurável |
+
+Os valores iniciais de distribuição são **hipóteses ilustrativas**, não distribuições oficiais estimadas. A renda e suas correlações com produtividade e patrimônio são **derivadas**, não impostas como inputs independentes. O MCMC atual estima os **nove parâmetros livres da dinâmica macro**; formas de distribuição individuais só poderão ser inferidas quando houver observações que as identifiquem.
+
+Para experimentar uma economia com diferente produtividade máxima, concentração de riqueza ou disponibilidade de horas, basta editar `config.json` e executar novamente. Não há entidade `empresa` no motor.
+
 ## Previsões públicas e outputs
 
 Após a publicação: [Painel BrasilSim](https://franklinbaldo.github.io/brasil-sim/).
