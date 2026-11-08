@@ -281,9 +281,7 @@ theorem identifiable_iff_nonzero_determinant
     Function.Injective (twoObservations d1 y1 d2 y2) ↔
       d1 * y2 - d2 * y1 ≠ 0 := by
   constructor
-  · intro hinj
-    by_contra h
-    have hzero : d1 * y2 - d2 * y1 = 0 := by omega
+  · intro hinj hzero
     exact (zero_determinant_not_identifying d1 y1 d2 y2 hzero) hinj
   · exact nonzero_determinant_identifies d1 y1 d2 y2
 
