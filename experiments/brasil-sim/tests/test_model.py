@@ -77,5 +77,24 @@ class BrasilSimTests(unittest.TestCase):
         self.assertEqual(results["population"], 215_000_000)
 
 
+    def test_primitive_magnitudes_and_shapes_are_inputs(self):
+        shape = {
+            "productivity": {"type": "beta", "alpha": 5.0, "beta": 2.0,
+                             "maximum_units_per_hour": 30.0},
+            "time": {"type": "beta", "alpha": 3.0, "beta": 2.0,
+                     "max_hours_per_month": 180.0},
+            "wealth": {"type": "lognormal", "log_sigma": .65, "mean_index": 200.0},
+        }
+        result = run(fixture(), agents=120, categories=12, horizon=2,
+                     seed=77, mcmc_draws=30, mcmc_warmup=12,
+                     shape=shape, population_total=1_200_000)
+        self.assertEqual(result["population"], 1_200_000)
+        self.assertEqual(result["shapes"], shape)
+        self.assertEqual(result["synthetic_micro"]["selic_constante"][0]["population_weight"], 10_000)
+        with self.assertRaises(ValueError):
+            run(fixture(), agents=120, categories=12, horizon=2,
+                shape={**shape, "productivity": {**shape["productivity"], "alpha": -1.0}},
+                mcmc_draws=20, mcmc_warmup=10)
+
 if __name__ == "__main__":
     unittest.main()
