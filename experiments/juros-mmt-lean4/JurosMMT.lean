@@ -4,6 +4,7 @@ import JurosMMT.Compatibility
 import JurosMMT.NeoFisherian
 import JurosMMT.FiscalTransmission
 import JurosMMT.Identification
+import JurosMMT.HybridIdentification
 
 /-!
 The root library checks the independent monetary fragments and the
