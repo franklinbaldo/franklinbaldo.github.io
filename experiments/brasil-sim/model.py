@@ -300,12 +300,18 @@ def correlation(xs: list[float], ys: list[float]) -> float | None:
 
 def population(seed: int, size: int, categories: int, shape: dict) -> list[tuple]:
     rng = random.Random(seed)
-    return [(rng.randrange(categories),
-             rng.betavariate(shape["productivity"]["alpha"], shape["productivity"]["beta"]),
-             shape["time"]["max_hours_per_month"] * rng.betavariate(shape["time"]["alpha"], shape["time"]["beta"]),
-             rng.lognormvariate(-.5 * shape["wealth"]["log_sigma"] ** 2, shape["wealth"]["log_sigma"]),
-             rng.betavariate(2, 3))
-            for _ in range(size)]
+    sample = [(rng.randrange(categories),
+               rng.betavariate(shape["productivity"]["alpha"], shape["productivity"]["beta"]),
+               shape["time"]["max_hours_per_month"] * rng.betavariate(shape["time"]["alpha"], shape["time"]["beta"]),
+               rng.lognormvariate(-.5 * shape["wealth"]["log_sigma"] ** 2, shape["wealth"]["log_sigma"]),
+               rng.betavariate(2, 3))
+              for _ in range(size)]
+    # The highest observed productivity in each activity is exactly 1.
+    peaks = [0.0] * categories
+    for category, productivity, *_ in sample:
+        peaks[category] = max(peaks[category], productivity)
+    return [(j, p / peaks[j] if peaks[j] else 0.0, h, k, need)
+            for j, p, h, k, need in sample]
 
 
 def micro_simulation(rows: list[dict], agents: list[tuple], size: int, categories: int,
@@ -434,6 +440,24 @@ def run(snapshot: dict, *, agents: int = AGENTS, categories: int = CATEGORIES,
            shape["time"]["max_hours_per_month"], shape["wealth"]["mean_index"]) <= 0:
         raise ValueError("Primitive magnitudes must be positive")
     people = population(seed + 7, agents, categories, shape)
+    productivity_values = [agent[1] for agent in people]
+    time_values = [agent[2] for agent in people]
+    wealth_values = [agent[3] for agent in people]
+    initial_distributions = {
+        "productivity_relative": {"p10": quantile(productivity_values, .1),
+                                  "p50": quantile(productivity_values, .5),
+                                  "p90": quantile(productivity_values, .9),
+                                  "mean": statistics.fmean(productivity_values),
+                                  "max": max(productivity_values)},
+        "productive_hours": {"p10": quantile(time_values, .1),
+                             "p50": quantile(time_values, .5),
+                             "p90": quantile(time_values, .9),
+                             "mean": statistics.fmean(time_values)},
+        "wealth_relative": {"p10": quantile(wealth_values, .1),
+                            "p50": quantile(wealth_values, .5),
+                            "p90": quantile(wealth_values, .9),
+                            "mean": statistics.fmean(wealth_values)},
+    }
     paths = {}
     micro = {}
     products = {}
@@ -459,6 +483,7 @@ def run(snapshot: dict, *, agents: int = AGENTS, categories: int = CATEGORIES,
                             "raw_observations": snapshot["series"], "sha256": hashes},
         "population": population_total, "agents": agents, "product_categories": categories,
         "horizon_months": horizon, "seed": seed, "shapes": shape,
+        "synthetic_initial_distributions": initial_distributions,
         "posterior": {"diagnostic": diagnostic,
                       "median_parameters": {name: quantile([s[i] for s in posterior], .5) for i,name in enumerate(PARAMS)},
                       "posterior_draw_count": len(posterior)},
