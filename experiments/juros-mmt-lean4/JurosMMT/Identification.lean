@@ -104,4 +104,53 @@ theorem four_arm_outcomes :
     (neo 0).inflationDelta = 0 := by
   decide
 
+
+/-- A signed prediction gap, fiscal channel minus neo-Fisherian channel. -/
+def predictedGap (f : FiscalTransmission.Response)
+    (n : NeoFisherian.Response) : Int :=
+  f.inflationDelta - n.inflationDelta
+
+/--
+General algebraic decomposition of disagreement, assuming the same
+nominal rate change in both models.
+
+  gap = (s * e - 1) * rateDelta + s * compensation + other + realDelta
+
+This identity localizes the assumptions that can produce disagreement.
+It is NOT an empirical law; all price-channel equalities are premises.
+-/
+theorem gap_decomposition (f : FiscalTransmission.Response)
+    (n : NeoFisherian.Response)
+    (sameRate : n.policyDelta = f.policyDelta) :
+    predictedGap f n =
+      (f.sensitivity * f.exposure - 1) * f.policyDelta +
+      f.sensitivity * f.compensationDelta +
+      f.otherPriceDelta + n.realDelta := by
+  have hp := f.priceResponse
+  have hnet := f.netIncomeAccounting
+  have hint := f.interestPassThrough
+  have hn := n.fisherChange
+  rw [hnet, hint] at hp
+  have hdist :
+      f.sensitivity *
+          (f.exposure * f.policyDelta + f.compensationDelta) =
+        (f.sensitivity * f.exposure) * f.policyDelta +
+          f.sensitivity * f.compensationDelta := by
+    simp only [mul_add, mul_assoc]
+  rw [hdist] at hp
+  have hsub :
+      (f.sensitivity * f.exposure - 1) * f.policyDelta =
+        (f.sensitivity * f.exposure) * f.policyDelta -
+          f.policyDelta := by
+    rw [sub_mul, one_mul]
+  dsimp [predictedGap]
+  omega
+
+/-- Two records predict distinct inflation precisely when their gap is nonzero. -/
+theorem disagreement_iff_nonzero_gap
+    (f : FiscalTransmission.Response) (n : NeoFisherian.Response) :
+    f.inflationDelta ≠ n.inflationDelta ↔ predictedGap f n ≠ 0 := by
+  dsimp [predictedGap]
+  omega
+
 end JurosMMT.Identification
