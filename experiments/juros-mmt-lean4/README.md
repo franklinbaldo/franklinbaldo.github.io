@@ -41,3 +41,21 @@ Os módulos adicionais implementam **hipóteses condicionais**, não interpreta�
 A compensação elimina **apenas** o canal de renda explicitamente modelado, mantendo os demais canais em zero por hipótese. Não há modelagem de financiamento, distribuição, substituição de portfólio, expectativa, credibilidade do regime ou câmbio. Os parâmetros são inteiros em unidades arbitrárias, **não** elasticidades estimadas ou percentuais do PIB. O experimento distingue duas especificações formais condicionais: observar o mesmo sinal de inflação não confirma a identidade do mecanismo, e uma divergência no modelo não refuta MMT ou o neofisherianismo empiricamente.
 
 A CI compila `JurosMMT.lean` que importa todos os módulos; novas demonstrações somente estão verificadas depois do `lake build --wfail` passar na revisão correspondente.
+
+### Identidade geral da divergência
+
+Com a mesma variação da taxa nominal nos dois modelos, o novo teorema
+`gap_decomposition` identifica precisamente a diferença de previsões:
+
+```text
+Δπ_fiscal - Δπ_neo =
+    (sensibilidade * exposição - 1) * Δi
+  + sensibilidade * compensação
+  + outros_canais
+  + Δr_neofisheriano
+```
+
+O teorema utiliza as relações assumidas de cada modelo e álgebra de inteiros.
+Ele não estima os parâmetros nem define uma teoria completa de inflação.
+O teorema `disagreement_iff_nonzero_gap` especifica o critério formal de
+divergência: a diferença de previsões é distinta de zero.
