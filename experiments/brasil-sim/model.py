@@ -302,26 +302,27 @@ def population(seed: int, size: int, categories: int, shape: dict) -> list[tuple
     rng = random.Random(seed)
     return [(rng.randrange(categories),
              rng.betavariate(shape["productivity"]["alpha"], shape["productivity"]["beta"]),
-             160 * rng.betavariate(shape["time"]["alpha"], shape["time"]["beta"]),
-             rng.lognormvariate(0, shape["wealth"]["log_sigma"]),
+             shape["time"]["max_hours_per_month"] * rng.betavariate(shape["time"]["alpha"], shape["time"]["beta"]),
+             rng.lognormvariate(-.5 * shape["wealth"]["log_sigma"] ** 2, shape["wealth"]["log_sigma"]),
              rng.betavariate(2, 3))
             for _ in range(size)]
 
 
 def micro_simulation(rows: list[dict], agents: list[tuple], size: int, categories: int,
-                     seed: int, name: str) -> tuple[list[dict], list[dict]]:
+                     seed: int, name: str, *, population_total: int = POPULATION,
+                     productivity_max: float = 20.0, wealth_mean: float = 100.0) -> tuple[list[dict], list[dict]]:
     rng = random.Random(seed)
     # Real output uses one contribution from each person; there is no firm object.
     initial = [0.0] * categories
     for j, productivity, hours, capital, _ in agents:
-        initial[j] += productivity * hours * 20 * (1 + .025 * min(capital, 10))
+        initial[j] += productivity * hours * productivity_max * (1 + .025 * min(capital, 10))
     stocks = [v * .18 for v in initial]
     prices = [1.0] * categories
     varieties = [1] * categories
-    fortunes = [max(0, capital * 100) for _, _, _, capital, _ in agents]
+    fortunes = [max(0, capital * wealth_mean) for _, _, _, capital, _ in agents]
     product_rows, monthly = [], []
     previous_level = None
-    pop_weight = POPULATION / size
+    pop_weight = population_total / size
     for t, observed in enumerate(rows):
         pi = observed["ipca_mom_pct"]["p50"] / 100
         growth = observed["ibc_mom_pct"]["p50"] / 100
@@ -361,7 +362,7 @@ def micro_simulation(rows: list[dict], agents: list[tuple], size: int, categorie
         new_fortunes = []
         valence = []
         for n, (j, productivity, hours, capital, need) in enumerate(agents):
-            wage = productivity * hours * 20 * (1 + .025 * min(capital, 10)) * utilization * prices[j]
+            wage = productivity * hours * productivity_max * (1 + .025 * min(capital, 10)) * utilization * prices[j]
             old = fortunes[n]
             savings = .08 + .12 * (old / (old + 1000))
             fortune = max(0, old * (1 + .14 * rate / 12) + savings * wage)
@@ -407,15 +408,31 @@ def micro_simulation(rows: list[dict], agents: list[tuple], size: int, categorie
 
 def run(snapshot: dict, *, agents: int = AGENTS, categories: int = CATEGORIES,
         horizon: int = HORIZON, seed: int = 20261108,
-        mcmc_draws: int = 2400, mcmc_warmup: int = 900) -> dict:
+        mcmc_draws: int = 2400, mcmc_warmup: int = 900,
+        shape: dict | None = None, population_total: int = POPULATION) -> dict:
     if not (1 <= agents <= 1_000_000 and 1 <= categories <= 1000 and 1 <= horizon <= 120):
         raise ValueError("Invalid simulation size")
     observations, policy_now = monthly_observations(snapshot)
     posterior, diagnostic = mcmc(observations, seed, mcmc_draws, mcmc_warmup, max(1, mcmc_draws // 200))
     quality = backtest(observations, seed + 13)
-    shape = {"productivity": {"type": "beta", "alpha": 2.0, "beta": 5.0},
-             "time": {"type": "beta", "alpha": 3.0, "beta": 2.0},
-             "wealth": {"type": "lognormal", "log_sigma": 1.1}}
+    if shape is None:
+        shape = {"productivity": {"type": "beta", "alpha": 2.0, "beta": 5.0,
+                                  "maximum_units_per_hour": 20.0},
+                 "time": {"type": "beta", "alpha": 3.0, "beta": 2.0,
+                          "max_hours_per_month": 160.0},
+                 "wealth": {"type": "lognormal", "log_sigma": 1.1,
+                            "mean_index": 100.0}}
+    if population_total < agents:
+        raise ValueError("Population magnitude must be >= agents")
+    for label in ("productivity", "time"):
+        config = shape[label]
+        if config["type"] != "beta" or min(config["alpha"], config["beta"]) <= 0:
+            raise ValueError("Beta shape must have positive alpha and beta")
+    if shape["wealth"]["type"] != "lognormal" or shape["wealth"]["log_sigma"] < 0:
+        raise ValueError("Wealth lognormal shape invalid")
+    if min(shape["productivity"]["maximum_units_per_hour"],
+           shape["time"]["max_hours_per_month"], shape["wealth"]["mean_index"]) <= 0:
+        raise ValueError("Primitive magnitudes must be positive")
     people = population(seed + 7, agents, categories, shape)
     paths = {}
     micro = {}
@@ -424,7 +441,10 @@ def run(snapshot: dict, *, agents: int = AGENTS, categories: int = CATEGORIES,
         policy = max(0, policy_now + shift)
         trajectories = draw_forecasts(observations, posterior, policy, seed + 101 * (idx + 1), horizon)
         paths[name] = aggregate_paths(trajectories)
-        micro[name], products[name] = micro_simulation(paths[name], people, agents, categories, seed + 1000, name)
+        micro[name], products[name] = micro_simulation(paths[name], people, agents, categories, seed + 1000, name,
+                                                        population_total=population_total,
+                                                        productivity_max=shape["productivity"]["maximum_units_per_hour"],
+                                                        wealth_mean=shape["wealth"]["mean_index"])
     last = observations[-1]
     hashes = {k: hashlib.sha256(json.dumps(v, sort_keys=True).encode()).hexdigest() for k,v in snapshot["series"].items()}
     return {
@@ -437,7 +457,7 @@ def run(snapshot: dict, *, agents: int = AGENTS, categories: int = CATEGORIES,
         "official_latest_ipca_mom_pct": last["ipca"] * 100,
         "official_series": {"provider": snapshot["provider"], "definition": SERIES,
                             "raw_observations": snapshot["series"], "sha256": hashes},
-        "population": POPULATION, "agents": agents, "product_categories": categories,
+        "population": population_total, "agents": agents, "product_categories": categories,
         "horizon_months": horizon, "seed": seed, "shapes": shape,
         "posterior": {"diagnostic": diagnostic,
                       "median_parameters": {name: quantile([s[i] for s in posterior], .5) for i,name in enumerate(PARAMS)},
@@ -482,6 +502,8 @@ def write_outputs(result: dict, output: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="BrasilSim: historical SGS ingestion, MCMC and 24-month experimental prediction")
     parser.add_argument("--fixture", type=Path, help="Replay a source snapshot rather than use the network")
+    parser.add_argument("--config", type=Path, default=Path("experiments/brasil-sim/config.json"),
+                        help="Editable primitive magnitudes and distribution shapes")
     parser.add_argument("--output", type=Path, default=Path("public/brasil-sim"))
     parser.add_argument("--agents", type=int, default=AGENTS)
     parser.add_argument("--categories", type=int, default=CATEGORIES)
@@ -489,7 +511,9 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=20261108)
     args = parser.parse_args()
     snapshot = json.loads(args.fixture.read_text(encoding="utf-8")) if args.fixture else fetch_official()
-    outcome = run(snapshot, agents=args.agents, categories=args.categories, horizon=args.horizon, seed=args.seed)
+    settings = json.loads(args.config.read_text(encoding="utf-8"))
+    outcome = run(snapshot, agents=args.agents, categories=args.categories, horizon=args.horizon,
+                  seed=args.seed, shape=settings["shapes"], population_total=settings["population"])
     write_outputs(outcome, args.output)
     print(f"BrasilSim: official month={outcome['data_as_of_month']}, "
           f"{args.agents} agents, {args.categories} categories, {args.horizon} months, "
