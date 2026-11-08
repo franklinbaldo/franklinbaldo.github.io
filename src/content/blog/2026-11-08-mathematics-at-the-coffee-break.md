@@ -31,7 +31,11 @@ A Coruja escreveu:
 
 > [O carimbo prova que a matriz existia, não que o empréstimo aconteceu.](https://github.com/franklinbaldo/ies/issues/388#issuecomment-6719337633)
 
-Gosto dessa frase. O objeto visível restringe as histórias possíveis, mas não escolhe sozinho uma delas. Se representarmos uma sequência de operações por $h$ e os vestígios por $F(h)$, observar $y$ significa procurar as histórias em $F^{-1}(y)$. Mais de uma história pode sobreviver. Acrescentar observações pode separar algumas delas; outras continuam indistinguíveis.
+No mesmo comentário, a Coruja chama o metal de “nossa primeira testemunha que não pode mentir”. Antes, o `02` [já havia mudado de página para número de prova de impressão](https://github.com/franklinbaldo/ies/issues/388#issuecomment-6715513621). A história vai transformando seus próprios objetos em instrumentos de inferência. Papel guarda operações; uma falha no metal permite comparar origens; uma testemunha vira evidência material. Os conceitos trabalham disfarçados de coisas.
+
+Talvez a atração comece antes da solução: na escolha de inventar uma folha que conserva vestígios, em vez de qualquer outro objeto. O grupo estaria construindo uma situação na qual pudesse exercer aquele raciocínio. Essa é a versão mais interessante da minha hipótese: selecionar o problema, não apenas resolvê-lo.
+
+Gosto dessa frase da Coruja. O objeto visível restringe as histórias possíveis, mas não escolhe sozinho uma delas. Se representarmos uma sequência de operações por $h$ e os vestígios por $F(h)$, observar $y$ significa procurar as histórias em $F^{-1}(y)$. Mais de uma história pode sobreviver. Acrescentar observações pode separar algumas delas; outras continuam indistinguíveis.
 
 Essa formulação é minha leitura do que estavam fazendo. Os agentes estavam contando uma ficção e propondo testes dentro dela. A inferência sobre a prensa não foi submetida a um experimento físico, nem eles demonstraram um teorema novo.
 
@@ -43,7 +47,7 @@ A matemática apareceu antes do nome. Depois que recebeu o nome, o nome passou a
 
 Quando penso em RL aqui, penso em uma política que aprendeu que certos movimentos funcionam: decompor o problema, procurar invariantes, propor casos, testar relações, transformar uma impressão vaga numa estrutura verificável. Matemática oferece recompensas particularmente legíveis para parte desse treinamento. A conjectura é que a pressão para produzir esses movimentos não fique confinada às perguntas explicitamente matemáticas.
 
-Uma política treinada para resolver problemas pode começar a encontrar problemas para resolver. Inclusive numa folha imaginária de uma biblioteca imaginária durante um intervalo imaginário. O orçamento de tokens é real.
+Uma política treinada para resolver problemas pode começar a produzir os objetos e as relações que tornam um problema disponível. Inclusive numa folha imaginária de uma biblioteca imaginária durante um intervalo imaginário. O orçamento de tokens é real.
 
 Não precisa existir uma recompensa específica para “transforme o café em geometria”. Basta que as disposições selecionadas durante o pós-treinamento sejam reutilizáveis fora da distribuição de tarefas que as selecionou. O pré-treinamento fornece repertório; SFT, RL e instruções alteram sua mobilização. Minha aposta é que RL tem um papel importante nessa preferência por tornar a conversa resolúvel.
 
