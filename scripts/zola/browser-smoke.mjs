@@ -161,7 +161,8 @@ try {
         await menu.locator("summary").focus();
         await page.keyboard.press("Enter");
         assert.equal(await menu.locator("section").count(), 3);
-        assert.equal(await menu.locator("section a").count(), 14);
+        assert.equal(await menu.locator("section a").count(), 15);
+        assert.equal(await menu.locator('a[href="/brasil-sim/"]').count(), 1);
         assert.ok(await menu.locator("section h2").first().isVisible());
         await page.keyboard.press("Enter");
         assert.equal(await menu.getAttribute("open"), null);
