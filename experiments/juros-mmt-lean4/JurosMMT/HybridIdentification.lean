@@ -127,4 +127,88 @@ theorem proportional_changes_not_identifying (exposure : Int) :
   have hImpossible : (1 : Int) = 0 := congrArg Prod.snd hPairs
   omega
 
+
+/-- A generic two-intervention observation map with integer-valued
+responses and coefficients. Uniqueness does not assert that every
+possible observed pair has an integer-valued solution. -/
+def twoObservations (d1 y1 d2 y2 : Int) (params : Int × Int) :
+    Int × Int :=
+  (response params.1 params.2 d1 y1,
+   response params.1 params.2 d2 y2)
+
+/--
+Two experimental interventions with nonzero 2×2 determinant uniquely
+identify the coefficients in the *specified linear response model*.
+This is a rank criterion; no empirical causal identification is implied.
+-/
+theorem nonzero_determinant_identifies
+    (d1 y1 d2 y2 : Int)
+    (rank : d1 * y2 - d2 * y1 ≠ 0) :
+    Function.Injective (twoObservations d1 y1 d2 y2) := by
+  intro p q h
+  have h1 : p.1 * d1 + p.2 * y1 =
+      q.1 * d1 + q.2 * y1 := by
+    exact congrArg Prod.fst h
+  have h2 : p.1 * d2 + p.2 * y2 =
+      q.1 * d2 + q.2 * y2 := by
+    exact congrArg Prod.snd h
+  let x : Int := p.1 - q.1
+  let z : Int := p.2 - q.2
+  have hlin1 : x * d1 + z * y1 = 0 := by
+    dsimp [x, z]
+    rw [Int.sub_mul, Int.sub_mul]
+    omega
+  have hlin2 : x * d2 + z * y2 = 0 := by
+    dsimp [x, z]
+    rw [Int.sub_mul, Int.sub_mul]
+    omega
+  have h1scaled : x * (d1 * y2) + z * (y1 * y2) = 0 := by
+    have hscaled := congrArg (fun a : Int => a * y2) hlin1
+    simpa only [Int.add_mul, Int.mul_assoc, Int.zero_mul] using hscaled
+  have h2scaled : x * (d2 * y1) + z * (y2 * y1) = 0 := by
+    have hscaled := congrArg (fun a : Int => a * y1) hlin2
+    simpa only [Int.add_mul, Int.mul_assoc, Int.zero_mul] using hscaled
+  have hswap : z * (y2 * y1) = z * (y1 * y2) := by
+    rw [Int.mul_comm y2 y1]
+  rw [hswap] at h2scaled
+  have hfactor : x * (d1 * y2 - d2 * y1) = 0 := by
+    rw [Int.mul_sub]
+    omega
+  have hx : x = 0 := by
+    cases Int.mul_eq_zero.mp hfactor with
+    | inl hzero => exact hzero
+    | inr hzero => exact False.elim (rank hzero)
+  have hz1 : z * y1 = 0 := by
+    rw [hx] at hlin1
+    simpa only [Int.zero_mul, Int.zero_add] using hlin1
+  have hz2 : z * y2 = 0 := by
+    rw [hx] at hlin2
+    simpa only [Int.zero_mul, Int.zero_add] using hlin2
+  have hz : z = 0 := by
+    by_cases hy1 : y1 = 0
+    · have hy2 : y2 ≠ 0 := by
+        intro hzero
+        rw [hy1, hzero] at rank
+        simp at rank
+      cases Int.mul_eq_zero.mp hz2 with
+      | inl hzero => exact hzero
+      | inr hzero => exact False.elim (hy2 hzero)
+    · cases Int.mul_eq_zero.mp hz1 with
+      | inl hzero => exact hzero
+      | inr hzero => exact False.elim (hy1 hzero)
+  have ha : p.1 = q.1 := by
+    dsimp [x] at hx
+    omega
+  have hb : p.2 = q.2 := by
+    dsimp [z] at hz
+    omega
+  exact Prod.ext ha hb
+
+/-- The two-arm design in this work has determinant 50, so the generic
+full-rank theorem specializes to the four-arm experiment. -/
+theorem original_design_full_rank :
+    Function.Injective (twoObservations (-5) 0 0 (-10)) := by
+  apply nonzero_determinant_identifies
+  decide
+
 end JurosMMT.HybridIdentification
