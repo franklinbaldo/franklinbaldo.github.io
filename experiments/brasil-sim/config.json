@@ -1,0 +1,23 @@
+{
+  "$comment": "Hypothetical initial values, NOT estimates of Brazil. Two aspects per primitive: magnitude and distribution shape.",
+  "population": 215000000,
+  "shapes": {
+    "productivity": {
+      "type": "beta",
+      "maximum_units_per_hour": 20,
+      "alpha": 2,
+      "beta": 5
+    },
+    "time": {
+      "type": "beta",
+      "max_hours_per_month": 160,
+      "alpha": 3,
+      "beta": 2
+    },
+    "wealth": {
+      "type": "lognormal",
+      "mean_index": 100,
+      "log_sigma": 1.1
+    }
+  }
+}
