@@ -41,6 +41,7 @@
 </div></div>
 <div class="panel"><h2>Trajetória probabilística</h2><canvas id="plot" role="img" aria-label="Gráfico com mediana e faixas de 5 e 95 por cento para o indicador selecionado"></canvas><p class="small">A faixa representa quantis marginais de uma previsão simulada com parâmetros e choques incertos, não um intervalo de confiança simultâneo.</p></div>
 <div class="panel"><h2>Indicadores macroeconômicos</h2><div class="cards" id="macroCards"></div></div>
+<div class="panel"><h2>Distribuições primitivas — magnitude + shape</h2><p class="small">Percentis obtidos dos 100 mil agentes sintéticos a partir dos shapes configurados, não levantamentos observados no Brasil.</p><div class="cards" id="primitiveCards"></div></div>
 <div class="panel"><h2>Indicadores sintéticos — população, produção e bem-estar</h2><p class="small">Valores em unidades ou índices simulados, não reais (R$). Os 127 identificadores ainda não são categorias IBGE mapeadas. Valência é proxy sintético; longevidade não é estimada.</p><div class="cards" id="microCards"></div></div>
 <div class="panel"><h2>127 produtos, estoques e variedades</h2><div class="row controls"><label>Filtrar categoria<input id="productFilter" type="search" placeholder="ex.: 001, 035, 127"></label></div><div class="scroll"><table><thead><tr><th>Categoria</th><th>Variedades</th><th>Produção¹</th><th>Vendas¹</th><th>Escassez¹</th><th>Estoque¹</th><th>Preço²</th></tr></thead><tbody id="productRows"></tbody></table></div><p class="small">¹ Quantidades sintéticas; ² índice de preço sintético. Categorias inicialmente fictícias até integrar a tabela oficial de insumo-produto.</p></div>
 <div class="panel"><h2>Histórico oficial usado na estimação</h2><p class="small">Valores brutos apresentados com data de referência, sem substituir meses ainda não divulgados.</p><div class="scroll"><table><thead><tr><th>Mês</th><th>IPCA mensal (%)</th><th>IBC-Br a.s.</th><th>Meta Selic no mês (%)</th></tr></thead><tbody id="historyRows"></tbody></table></div></div>
@@ -99,6 +100,16 @@ function renderCards(){
  ["wealth_income_correlation","Correlação patrimônio × renda (emergente)","",3]
  ];
  for(const [key,title,unit,digits] of fields)micro.append(card(title,fmt(m[key],digits),unit));
+}
+function renderPrimitives(){
+ const out=$("primitiveCards");out.replaceChildren();
+ const groups=data.synthetic_initial_distributions||{};
+ const titles={productivity_relative:"Produtividade normalizada",productive_hours:"Horas disponíveis/mês",wealth_relative:"Patrimônio relativo"};
+ for(const [key,group] of Object.entries(groups)){
+  for(const metric of ["p10","p50","p90","mean"]){
+   out.append(card(titles[key]+" · "+metric,fmt(group[metric],key==="productivity_relative"?3:1)));
+  }
+ }
 }
 function renderProducts(){
  const items=data.synthetic_products[selected()].slice(monthIndex()*data.product_categories,(monthIndex()+1)*data.product_categories);
@@ -171,7 +182,7 @@ Promise.resolve().then(async()=>{
  $("provenance").textContent="Dados: Banco Central do Brasil · Último mês comum IPCA/IBC-Br: "+last+" · Coleta: "+dt.toLocaleString("pt-BR")+".";
  $("sampleMeta").textContent=fmt(data.population,0)+" pessoas representadas · "+fmt(data.agents,0)+" agentes · "+data.product_categories+" categorias · "+data.horizon_months+" meses · "+data.posterior.diagnostic.method+".";
  $("month").max=data.horizon_months-1;
- history();diagnostics();redraw();
+ history();diagnostics();renderPrimitives();redraw();
  $("scenario").addEventListener("change",redraw);
  $("metric").addEventListener("change",plot);
  $("month").addEventListener("input",redraw);
