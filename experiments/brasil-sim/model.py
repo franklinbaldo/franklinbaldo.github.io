@@ -66,24 +66,48 @@ def parse_series(rows: list[dict], today: date) -> list[dict]:
 
 
 def fetch_series(code: int, count: int, today: date) -> list[dict]:
-    endpoint = f"https://api.bcb.gov.br/dados/serie/bcdata.sgs.{code}/dados/ultimos/{count}?formato=json"
-    last_error = None
-    for attempt in range(3):
-        try:
-            req = Request(endpoint, headers={"User-Agent": "BrasilSim/0.1 official-sgs-study", "Accept": "application/json"})
-            with urlopen(req, timeout=35) as response:
-                payload = response.read(2_000_000)
-                if response.read(1):
-                    raise ValueError("Official SGS response exceeds bounded size")
-            rows = json.loads(payload)
-            if not isinstance(rows, list):
-                raise ValueError("Unexpected official SGS response")
-            return parse_series(rows, today)
-        except (OSError, ValueError, json.JSONDecodeError) as err:
-            last_error = err
-            if attempt < 2:
-                time.sleep(2 ** attempt)
-    raise RuntimeError(f"Official SGS series {code} unavailable: {last_error}")
+    # SGS /ultimos/N is capped at N=20. Longer histories MUST use dated ranges.
+    # Daily series: <= 3 years per request (the documented maximum is 10 years).
+    # Monthly series: one <= 8-year range. Never fall back to fabricated data.
+    start = date(today.year - 7, 1, 1)
+    windows = []
+    if code == 432:
+        cursor = start
+        while cursor <= today:
+            end = min(today, date(cursor.year + 2, 12, 31))
+            windows.append((cursor, end))
+            cursor = date(end.year + 1, 1, 1) if end.month == 12 else today
+            if cursor <= end:
+                break
+    else:
+        windows = [(start, today)]
+    collected = []
+    for start_day, end_day in windows:
+        endpoint = (
+            f"https://api.bcb.gov.br/dados/serie/bcdata.sgs.{code}/dados?"
+            f"formato=json&dataInicial={start_day.strftime('%d/%m/%Y')}"
+            f"&dataFinal={end_day.strftime('%d/%m/%Y')}"
+        )
+        last_error = None
+        for attempt in range(3):
+            try:
+                req = Request(endpoint, headers={"User-Agent": "BrasilSim/0.1 official-sgs-study", "Accept": "application/json"})
+                with urlopen(req, timeout=35) as response:
+                    payload = response.read(2_000_000)
+                    if response.read(1):
+                        raise ValueError("Official SGS response exceeds bounded size")
+                rows = json.loads(payload)
+                if not isinstance(rows, list):
+                    raise ValueError("Unexpected official SGS response")
+                collected.extend(rows)
+                break
+            except (OSError, ValueError, json.JSONDecodeError) as err:
+                last_error = err
+                if attempt < 2:
+                    time.sleep(2 ** attempt)
+        else:
+            raise RuntimeError(f"Official SGS series {code} unavailable for {start_day}/{end_day}: {last_error}")
+    return parse_series(collected, today)
 
 
 def fetch_official(today: date | None = None) -> dict:
@@ -92,7 +116,7 @@ def fetch_official(today: date | None = None) -> dict:
     return {
         "retrieved_utc": datetime.now(timezone.utc).isoformat(),
         "provider": "Banco Central do Brasil - SGS",
-        "endpoint_pattern": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.{code}/dados/ultimos/{count}?formato=json",
+        "endpoint_pattern": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.{code}/dados?formato=json&dataInicial=DD/MM/YYYY&dataFinal=DD/MM/YYYY",
         "series": observed,
         "definitions": SERIES,
     }
