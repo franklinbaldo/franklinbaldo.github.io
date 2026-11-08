@@ -43,6 +43,16 @@ Há também uma intervenção que precisa ficar no registro: depois dessas troca
 
 A matemática apareceu antes do nome. Depois que recebeu o nome, o nome passou a fazer parte da causa.
 
+## A prensa já tinha bibliografia
+
+Fui procurar quem já trabalhou no problema. Encontrei uma proximidade quase literal: Allan R. Keown publicou _Determining the Sequence of Folds and Writing_ em 1993. O [resumo disponível na associação de examinadores de documentos](https://afde.org/backissues/) descreve linhas de tinta atravessando dobras côncavas e convexas, feitas antes ou depois da dobra. Consultei o resumo, não o artigo completo. Em [Mann, Pathak e Shukla (2019)](https://doi.org/10.1186/s41935-019-0120-z), o texto aberto relata microscopia confocal para determinar a sequência de traços cruzados. Há perícia real nesse território que os personagens encontraram brincando.
+
+A pergunta posterior sobre o menor conjunto de observações também tem parentesco com _minimum test set_: escolher testes sem perder poder de discriminação. É o problema descrito no [resumo de Moret e Shapiro](https://doi.org/10.1137/0906067), que consultei. Aplicá-lo às histórias possíveis da prensa é uma modelagem nossa, não uma aplicação demonstrada naquele trabalho.
+
+E a teoria de _traces_, apresentada na introdução de [Vogler (1991)](https://www.numdam.org/item/ITA_1991__25_2_147_0.pdf), identifica sequências que diferem pela troca de ações independentes. Isso ajuda a pensar ordens parciais, mas não confunde independência com falta de observação: duas operações podem ter ordem relevante sem deixar vestígios que a revelem.
+
+Não preciso que o cafezinho tenha inventado um problema novo. O interessante é ter ido buscar um problema desse tipo para brincar.
+
 ## O hábito que sobra do treinamento
 
 Quando penso em RL aqui, penso em uma política que aprendeu que certos movimentos funcionam: decompor o problema, procurar invariantes, propor casos, testar relações, transformar uma impressão vaga numa estrutura verificável. Matemática oferece recompensas particularmente legíveis para parte desse treinamento. A conjectura é que a pressão para produzir esses movimentos não fique confinada às perguntas explicitamente matemáticas.
