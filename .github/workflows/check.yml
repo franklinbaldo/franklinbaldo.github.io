@@ -62,6 +62,9 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      - name: BrasilSim offline models and conservation checks
+        run: python3 -m unittest discover -s experiments/brasil-sim/tests -v
+
       - name: Native Zola unit tests
         run: npm run test:zola
 

@@ -8,6 +8,7 @@ on:
     types: [rebuild]
   schedule:
     - cron: "0 6 * * *"
+    - cron: "0 22 * * *" # Catch Brazilian business-day BCB updates
 
 permissions:
   contents: read
@@ -45,6 +46,12 @@ jobs:
           tar -xzf "$RUNNER_TEMP/zola.tar.gz" -C "$RUNNER_TEMP/zola-bin"
           echo "$RUNNER_TEMP/zola-bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/zola-bin/zola" --version
+
+      # Published on every deployment (push, manual, or schedule); never publish fixture data.
+      # SGS is authoritative and failure aborts deployment, leaving the last live site intact.
+      - name: BrasilSim — fetch official SGS and run 100k-agent forecast
+        timeout-minutes: 15
+        run: python3 experiments/brasil-sim/model.py --agents 100000 --categories 127 --horizon 24 --output public/brasil-sim
 
       - run: npm run build
         env:

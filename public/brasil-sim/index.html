@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="BrasilSim: previsões econômicas experimentais, atualizadas a partir de séries oficiais do Banco Central, com cenários, distribuições e 127 categorias sintéticas de produtos.">
+<title>BrasilSim — Laboratório econômico</title>
+<style>
+:root{color-scheme:light dark;font-family:system-ui,-apple-system,sans-serif;--bg:#0c1421;--panel:#172437;--line:#304258;--fg:#edf3fb;--dim:#b3c2d5;--accent:#66d1b1;--blue:#9bcaff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);line-height:1.55}main{max-width:1230px;margin:auto;padding:20px 18px 90px}a{color:var(--accent)}a:hover{text-decoration-thickness:2px}header{padding:24px 0 16px}header small{font-weight:700;letter-spacing:.16em;color:var(--accent)}h1{margin:7px 0;font-size:clamp(2rem,5vw,3.4rem);letter-spacing:-.05em}h2{margin:0 0 16px;font-size:1.3rem}h3{font-size:1rem;margin:0 0 14px}.sub{color:var(--dim);max-width:860px;margin:0 0 22px}.notice{border-left:3px solid #e3b975;padding:10px 16px;color:#f2ddae;background:#332a253d;margin:20px 0;border-radius:4px}.panel{border:1px solid var(--line);background:var(--panel);padding:18px;border-radius:13px;margin-top:18px}.row{display:flex;gap:16px;flex-wrap:wrap;align-items:end}.controls label{flex:1;min-width:220px;color:var(--dim);font-size:.92rem}.controls select,.controls input{margin:7px 0 0;width:100%;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--fg);padding:10px;min-height:42px}input[type=range]{accent-color:var(--accent)}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}.card{background:#0c1421;padding:14px;border:1px solid var(--line);border-radius:9px}.card strong{font-size:1.35rem;display:block;line-height:1.3;font-variant-numeric:tabular-nums;color:var(--fg)}.card span{font-size:.8rem;color:var(--dim);display:block;margin-top:5px}.card em{font-style:normal;font-size:.73rem;color:var(--accent)}canvas{display:block;width:100%;height:330px}table{border-collapse:collapse;width:100%;font-size:.88rem}th,td{text-align:right;border-bottom:1px solid var(--line);padding:8px 10px;white-space:nowrap;font-variant-numeric:tabular-nums}th:first-child,td:first-child{text-align:left}th{color:var(--dim);background:var(--bg);position:sticky;top:0}.scroll{max-height:410px;overflow:auto;max-width:100%}.pill{display:inline-block;border:1px solid var(--line);border-radius:30px;padding:4px 10px;color:var(--dim);font-size:.8rem;margin-right:6px}p.small,small{color:var(--dim)}.downloads a{display:inline-block;padding:9px 12px;border:1px solid var(--accent);border-radius:8px;text-decoration:none;margin:4px 8px 4px 0}.downloads a:hover{background:#66d1b119}.footer{padding:40px 0;color:var(--dim)}.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+@media(max-width:700px){main{padding:14px 12px 60px}.panel{padding:12px}canvas{height:260px}.card strong{font-size:1.14rem}}
+@media(prefers-color-scheme:light){:root{--bg:#f4f7fa;--panel:#fff;--line:#d5dde5;--fg:#192c3b;--dim:#536576;--accent:#0b7763;--blue:#316d9e}.card{background:#f3f6f9}.notice{background:#fff5e7;color:#795517}}
+</style>
+</head>
+<body>
+<main>
+<header><a href="/">← Franklin Baldo</a><p><small>EXPERIMENTO ABERTO · DADOS OFICIAIS</small></p><h1>BrasilSim<span style="color:var(--accent)">.</span></h1>
+<p class="sub">Um laboratório para experimentar uma economia de pessoas, tempo, produtos e distribuições. Previsões probabilísticas mensais, cenários de juros e 100 mil agentes sintéticos representando 215 milhões de pessoas.</p></header>
+<div class="notice"><strong>Modelo experimental, não previsão oficial.</strong> IBC-Br é índice de atividade, não PIB. Os dados do BCB são oficiais; as previsões, parâmetros inferidos e distribuições sintéticas não são. Cenários de Selic não estimam efeitos causais. O simulador está em desenvolvimento.</div>
+<div id="status" role="status" aria-live="polite">Carregando o último resultado publicado…</div>
+<section id="app" hidden>
+<div class="panel"><div id="provenance"></div><p class="small" id="sampleMeta"></p></div>
+<div class="panel controls"><h2>Cenários e horizonte</h2><div class="row">
+<label>Trajetória hipotética da Selic
+<select id="scenario">
+<option value="selic_constante">Selic constante</option>
+<option value="selic_menos_2pp">Selic 2 pontos percentuais menor</option>
+<option value="selic_mais_2pp">Selic 2 pontos percentuais maior</option>
+</select></label>
+<label>Indicador para o gráfico
+<select id="metric">
+<option value="ipca_mom_pct">IPCA previsto — mensal (%)</option>
+<option value="ipca_yoy_pct">IPCA previsto — 12 meses (%)</option>
+<option value="ibc_index">IBC-Br previsto — índice dessazonalizado</option>
+<option value="ibc_mom_pct">IBC-Br previsto — crescimento mensal (%)</option>
+<option value="ibc_yoy_pct">IBC-Br previsto — crescimento anual (%)</option>
+<option value="real_policy_rate_gap_pct">Juro real ex ante aproximado — desvio (%)</option>
+</select></label>
+<label>Mês de previsão: <strong id="selectedMonth"></strong>
+<input id="month" type="range" min="0" max="23" value="0" step="1"></label>
+</div></div>
+<div class="panel"><h2>Trajetória probabilística</h2><canvas id="plot" role="img" aria-label="Gráfico com mediana e faixas de 5 e 95 por cento para o indicador selecionado"></canvas><p class="small">A faixa representa quantis marginais de uma previsão simulada com parâmetros e choques incertos, não um intervalo de confiança simultâneo.</p></div>
+<div class="panel"><h2>Indicadores macroeconômicos</h2><div class="cards" id="macroCards"></div></div>
+<div class="panel"><h2>Distribuições primitivas — magnitude + shape</h2><p class="small">Percentis obtidos dos 100 mil agentes sintéticos a partir dos shapes configurados, não levantamentos observados no Brasil.</p><div class="cards" id="primitiveCards"></div></div>
+<div class="panel"><h2>Indicadores sintéticos — população, produção e bem-estar</h2><p class="small">Valores em unidades ou índices simulados, não reais (R$). Os 127 identificadores ainda não são categorias IBGE mapeadas. Valência é proxy sintético; longevidade não é estimada.</p><div class="cards" id="microCards"></div></div>
+<div class="panel"><h2>127 produtos, estoques e variedades</h2><div class="row controls"><label>Filtrar categoria<input id="productFilter" type="search" placeholder="ex.: 001, 035, 127"></label></div><div class="scroll"><table><thead><tr><th>Categoria</th><th>Variedades</th><th>Produção¹</th><th>Vendas¹</th><th>Escassez¹</th><th>Estoque¹</th><th>Preço²</th></tr></thead><tbody id="productRows"></tbody></table></div><p class="small">¹ Quantidades sintéticas; ² índice de preço sintético. Categorias inicialmente fictícias até integrar a tabela oficial de insumo-produto.</p></div>
+<div class="panel"><h2>Histórico oficial usado na estimação</h2><p class="small">Valores brutos apresentados com data de referência, sem substituir meses ainda não divulgados.</p><div class="scroll"><table><thead><tr><th>Mês</th><th>IPCA mensal (%)</th><th>IBC-Br a.s.</th><th>Meta Selic no mês (%)</th></tr></thead><tbody id="historyRows"></tbody></table></div></div>
+<div class="panel"><h2>Avaliação retrospectiva e calibração</h2><div class="cards" id="diagnosticCards"></div><p class="small">Os erros MAE de validação são medidos em meses reservados antes do ajuste. A comparação ingênua repete a última observação; MCMC não tem certificado de convergência nesta versão.</p></div>
+<div class="panel downloads"><h2>Dados abertos do modelo</h2><p class="small">Todos os cenários, produtos, distribuições, hipóteses e fontes ficam disponíveis em formatos tabulares e estruturados.</p>
+<a href="./latest.json" download>JSON completo</a><a href="./forecast.csv" download>Previsões CSV</a><a href="./micro.csv" download>Indicadores sintéticos CSV</a><a href="./products.csv" download>Produtos CSV</a>
+<p><a href="https://github.com/franklinbaldo/franklinbaldo.github.io/tree/main/experiments/brasil-sim">Código, testes e premissas</a> · <a href="https://dadosabertos.bcb.gov.br/">Catálogo oficial BCB</a></p></div>
+</section>
+<footer class="footer">BrasilSim v0.1 · Uma hipótese pode falhar; o importante é saber qual hipótese falhou e deixar os dados mostrarem isso.</footer>
+</main>
+<script>
+"use strict";
+let data;
+const $ = (id) => document.getElementById(id);
+const fmt = (v,d=2) => typeof v === "number" && Number.isFinite(v) ? v.toLocaleString("pt-BR",{maximumFractionDigits:d,minimumFractionDigits:d}) : "—";
+const selected = () => $("scenario").value;
+const monthIndex = () => Number($("month").value);
+const metrics = {
+ipca_mom_pct:["IPCA mensal","%"],ipca_yoy_pct:["IPCA 12m","%"],
+ibc_index:["IBC-Br (a.s.)","índice"],ibc_mom_pct:["IBC-Br mensal","%"],
+ibc_yoy_pct:["IBC-Br 12m","%"],real_policy_rate_gap_pct:["Gap de juro real","p.p."]};
+function card(title,val,unit="",extra=""){
+ const div=document.createElement("div");div.className="card";
+ const strong=document.createElement("strong");strong.textContent=val+" "+unit;
+ const label=document.createElement("span");label.textContent=title;
+ div.append(strong,label);
+ if(extra){const e=document.createElement("em");e.textContent=extra;div.append(e)}
+ return div;
+}
+function renderCards(){
+ const scenario=selected(),n=monthIndex(),row=data.scenarios[scenario][n],m=data.synthetic_micro[scenario][n];
+ $("selectedMonth").textContent=row.month;
+ const macro=$("macroCards");macro.replaceChildren();
+ for(const [key,[title,unit]] of Object.entries(metrics)){
+   const v=row[key];macro.append(card(title,fmt(v.p50),unit,"p05: "+fmt(v.p05)+" · p95: "+fmt(v.p95)));
+ }
+ macro.append(card("Meta Selic no cenário",fmt(row.selic_annual_pct),"% a.a."));
+ const micro=$("microCards");micro.replaceChildren();
+ const fields=[
+ ["varieties_active","Variedades ativas","",0],["varieties_created","Novas variedades no mês","",0],
+ ["varieties_closed","Variedades encerradas","",0],["categories_with_stock","Categorias com estoque","",0],
+ ["income_mean_index","Renda média sintética","",1],["income_median_index","Renda mediana sintética","",1],
+ ["income_p10_index","Renda p10 sintética","",1],["income_p90_index","Renda p90 sintética","",1],
+ ["income_gini","Gini de renda","",3],["wealth_gini","Gini de patrimônio","",3],
+ ["income_share_top10","Participação da renda dos 10% superiores","",3],
+ ["relative_low_income_pct","Baixa renda relativa sintética","%",1],
+ ["productive_hours_per_agent","Horas produtivas médias por agente","h/mês",1],
+ ["production_units_synthetic","Produção sintética ponderada","",0],
+ ["sales_units_synthetic","Vendas sintéticas ponderadas","",0],
+ ["stock_units_synthetic","Estoque sintético ponderado","",0],
+ ["shortage_units_synthetic","Escassez sintética ponderada","",0],
+ ["shortage_share_demand","Escassez / demanda","",3],
+ ["price_index_synthetic","Índice de preços por produto","",3],
+ ["valence_proxy_mean","Proxy de valência (não validada)","",3],
+ ["productivity_income_correlation","Correlação produtividade × renda (emergente)","",3],
+ ["wealth_income_correlation","Correlação patrimônio × renda (emergente)","",3]
+ ];
+ for(const [key,title,unit,digits] of fields)micro.append(card(title,fmt(m[key],digits),unit));
+}
+function renderPrimitives(){
+ const out=$("primitiveCards");out.replaceChildren();
+ const groups=data.synthetic_initial_distributions||{};
+ const titles={productivity_relative:"Produtividade normalizada",productive_hours:"Horas disponíveis/mês",wealth_relative:"Patrimônio relativo"};
+ for(const [key,group] of Object.entries(groups)){
+  for(const metric of ["p10","p50","p90","mean"]){
+   out.append(card(titles[key]+" · "+metric,fmt(group[metric],key==="productivity_relative"?3:1)));
+  }
+ }
+}
+function renderProducts(){
+ const items=data.synthetic_products[selected()].slice(monthIndex()*data.product_categories,(monthIndex()+1)*data.product_categories);
+ const filter=$("productFilter").value.toLowerCase();
+ const tb=$("productRows");const fragment=document.createDocumentFragment();
+ items.filter(p=>p.category.toLowerCase().includes(filter)).sort((a,b)=>b.shortage_units_synthetic-a.shortage_units_synthetic).forEach(p=>{
+  const tr=document.createElement("tr");
+  for(const value of [p.category,p.active_varieties,fmt(p.produced_units_synthetic,0),fmt(p.sold_units_synthetic,0),fmt(p.shortage_units_synthetic,0),fmt(p.ending_stock_units_synthetic,0),fmt(p.price_index_synthetic,3)]){
+   const td=document.createElement("td");td.textContent=value;tr.append(td);
+  }
+  fragment.append(tr);
+ });
+ tb.replaceChildren(fragment);
+}
+function plot(){
+ const canvas=$("plot"),ctx=canvas.getContext("2d"),dpr=window.devicePixelRatio||1;
+ const bounds=canvas.getBoundingClientRect();const W=Math.max(300,bounds.width),H=bounds.height;
+ canvas.width=W*dpr;canvas.height=H*dpr;ctx.scale(dpr,dpr);
+ const arr=data.scenarios[selected()],key=$("metric").value;
+ const low=arr.map(p=>p[key].p05),mid=arr.map(p=>p[key].p50),hi=arr.map(p=>p[key].p95);
+ const lo=Math.min(...low),up=Math.max(...hi),pad=Math.max(.05,(up-lo)*.12);
+ const ymin=lo-pad,ymax=up+pad;
+ const px=(i)=>55+(W-72)*i/(arr.length-1);
+ const py=(x)=>15+(H-63)*(ymax-x)/(ymax-ymin);
+ ctx.clearRect(0,0,W,H);ctx.font="12px system-ui";ctx.textAlign="right";
+ for(let i=0;i<=4;i++){
+  const y=15+(H-63)*i/4;ctx.strokeStyle="#73869c55";ctx.beginPath();ctx.moveTo(55,y);ctx.lineTo(W-15,y);ctx.stroke();
+  ctx.fillStyle=getComputedStyle(document.body).color;ctx.fillText(fmt(ymax-(ymax-ymin)*i/4,1),49,y+4);
+ }
+ ctx.beginPath();low.forEach((x,i)=>i===0?ctx.moveTo(px(i),py(x)):ctx.lineTo(px(i),py(x)));
+ for(let i=hi.length-1;i>=0;i--)ctx.lineTo(px(i),py(hi[i]));
+ ctx.closePath();ctx.fillStyle="rgba(66,185,163,.24)";ctx.fill();
+ ctx.beginPath();mid.forEach((x,i)=>i===0?ctx.moveTo(px(i),py(x)):ctx.lineTo(px(i),py(x)));
+ ctx.strokeStyle="#32bc9e";ctx.lineWidth=3;ctx.stroke();
+ ctx.fillStyle=getComputedStyle(document.body).color;ctx.textAlign="center";
+ for(const i of [0,5,11,17,23])if(i<arr.length)ctx.fillText(arr[i].month,px(i),H-24);
+ const idx=monthIndex();ctx.beginPath();ctx.arc(px(idx),py(mid[idx]),5,0,2*Math.PI);ctx.fillStyle="#d4b06b";ctx.fill();
+}
+function history(){
+ const grouped={};for(const [name,src] of Object.entries(data.official_series.raw_observations)){
+  for(const x of src){const m=x.date.slice(0,7);(grouped[m]??={})[name]=x.value;}
+ }
+ const tb=$("historyRows");const rows=Object.keys(grouped).sort().reverse().slice(0,48);
+ for(const m of rows){const x=grouped[m],tr=document.createElement("tr");
+ for(const item of [m,fmt(x.ipca),fmt(x.ibc_br_sa,3),fmt(x.selic_meta)]){
+  const td=document.createElement("td");td.textContent=item;tr.append(td);
+ }tb.append(tr);}
+}
+function diagnostics(){
+ const b=data.backtest,p=data.posterior.diagnostic,box=$("diagnosticCards");
+ for(const [k,v,u,d] of [
+ ["MAE IPCA / mês",b.ipca_mom_mae_percentage_points,"p.p.",3],
+ ["MAE ingênuo IPCA",b.naive_ipca_mom_mae_percentage_points,"p.p.",3],
+ ["MAE atividade / mês",b.ibc_growth_mae_percentage_points,"p.p.",3],
+ ["MAE ingênuo atividade",b.naive_ibc_growth_mae_percentage_points,"p.p.",3],
+ ["Aceitação MCMC",100*p.accepted_fraction,"%",1],
+ ["Amostras posteriores",p.draws,"",0],
+ ["Meses do backtest",b.months,"",0]]){
+  box.append(card(k,fmt(v,d),u));
+ }
+}
+function redraw(){renderCards();renderProducts();plot()}
+Promise.resolve().then(async()=>{
+ const response=await fetch("./latest.json",{cache:"no-store"});
+ if(!response.ok)throw new Error("Nenhum resultado de fontes oficiais foi publicado ainda (HTTP "+response.status+").");
+ data=await response.json();
+ if(!data.official_series?.raw_observations || !data.scenarios?.selic_constante)throw new Error("Resultado incompleto ou incompatível");
+ $("status").textContent="";$("app").hidden=false;
+ const last=data.data_as_of_month,dt=new Date(data.retrieved_utc);
+ $("provenance").textContent="Dados: Banco Central do Brasil · Último mês comum IPCA/IBC-Br: "+last+" · Coleta: "+dt.toLocaleString("pt-BR")+".";
+ $("sampleMeta").textContent=fmt(data.population,0)+" pessoas representadas · "+fmt(data.agents,0)+" agentes · "+data.product_categories+" categorias · "+data.horizon_months+" meses · "+data.posterior.diagnostic.method+".";
+ $("month").max=data.horizon_months-1;
+ history();diagnostics();renderPrimitives();redraw();
+ $("scenario").addEventListener("change",redraw);
+ $("metric").addEventListener("change",plot);
+ $("month").addEventListener("input",redraw);
+ $("productFilter").addEventListener("input",renderProducts);
+ window.addEventListener("resize",plot);
+}).catch(e=>{
+ $("status").textContent="Ainda não foi possível apresentar previsões: "+e.message+" A página não mostrará números inventados. Consulte a execução diária no repositório.";
+});
+</script>
+</body>
+</html>
