@@ -14,7 +14,9 @@ O próprio blog atualiza as projeções no GitHub Actions de publicação diári
 
 A execução usa o valor Selic mais recente não posterior à data da coleta; IPCA e IBC-Br são alinhados por **mês de referência publicado**. Nenhuma observação mensal ausente é inventada. As séries, datas de coleta e SHA-256 dos dados recebidos ficam no JSON publicado.
 
-Endpoint por série: https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados/ultimos/150?formato=json
+Endpoint histórico por período: https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados?formato=json&dataInicial=01/01/2023&dataFinal=31/12/2025
+
+Observação: o endpoint `/ultimos/N` do SGS aceita no máximo 20 observações; séries históricas usam filtros de data, com Selic fracionada em janelas de até três anos.
 
 **Atualização diária não significa observação diária de todas as variáveis.** Quando não houver nova divulgação, o modelo ainda roda com o último conjunto oficial disponível, registrando a defasagem de referência.
 
