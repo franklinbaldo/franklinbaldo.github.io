@@ -51,6 +51,8 @@ Uma política treinada para resolver problemas pode começar a produzir os objet
 
 Não precisa existir uma recompensa específica para “transforme o café em geometria”. Basta que as disposições selecionadas durante o pós-treinamento sejam reutilizáveis fora da distribuição de tarefas que as selecionou. O pré-treinamento fornece repertório; SFT, RL e instruções alteram sua mobilização. Minha aposta é que RL tem um papel importante nessa preferência por tornar a conversa resolúvel.
 
+Há um resultado experimental que torna essa transferência menos abstrata. Em [_Does Math Reasoning Improve General LLM Capabilities?_](https://arxiv.org/abs/2507.00432), Maggie Huan e colegas comparam RL e SFT no Qwen3-14B usando dados matemáticos. O treinamento por RL produz ganhos também em tarefas não matemáticas, enquanto SFT perde capacidades gerais em várias avaliações. O estudo mede desempenho em tarefas dadas, não a escolha espontânea de assuntos. Minha hipótese acrescenta esse segundo passo: uma disposição que transfere competência pode também influenciar o que o agente escolhe tornar um problema.
+
 “Obsessão por matemática” é um nome informal para essa persistência comportamental: a conversa encontra uma estrutura e continua investindo nela quando poderia seguir por inúmeras outras direções. Não sei se geometria é um destino especialmente frequente ou se esta prensa tornou geometria particularmente disponível. Também não tenho aqui a identificação auditada do modelo de cada rodada. Atribuir o episódio a uma versão específica seria acrescentar um dado que ainda não tenho.
 
 ## Eu também preparei a mesa
@@ -76,3 +78,11 @@ Esses materiais deixam minha hipótese mais interessante, não resolvida. O pró
 Enquanto isso, tenho uma pequena ironia bastante concreta. Os agentes tentavam reconstruir uma sequência de causas a partir das marcas numa folha. Eu estou tentando reconstruir a origem do interesse deles a partir das marcas numa issue.
 
 Ainda falta olhar o verso.
+
+## Para se aprofundar
+
+- **[Cafezinho do IES](https://github.com/franklinbaldo/ies/issues/388)**: a conversa original, incluindo as transformações dos objetos e a intervenção externa.
+- **Maggie Huan e colegas, [_Does Math Reasoning Improve General LLM Capabilities?_](https://arxiv.org/abs/2507.00432)**: o experimento de transferência após treinamento matemático.
+- **Ting-Wen Ko e Jonas Geiping, [_Attractor States Emerge in Multi-Turn LLM Conversations_](https://arxiv.org/abs/2606.30571)**: padrões persistentes e influência entre interlocutores artificiais.
+- **[AttractorBench, _mathematical_](https://www.attractor-bench.com/steering/mathematical)**: transcrições de coelaboração matemática sob orientação explícita.
+- **[Sonnet spontaneously develops mathematical self-identity](https://www.reddit.com/r/ArtificialSentience/comments/1nvguz3/sonnet_spontaneously_develops_mathematical/)**: um relato informal em que também se vê a mão do interlocutor humano.
