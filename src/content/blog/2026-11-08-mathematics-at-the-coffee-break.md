@@ -41,7 +41,11 @@ A Coruja escreveu: [“o carimbo prova que a matriz existia, não que o emprést
 
 A matriz virou testemunha. O objeto virou evidência. O mistério de biblioteca ganhou um problema de identificabilidade por baixo da roupa.
 
-Se $h$ é uma história de operações e $F(h)$ são os vestígios que ela deixa, olhar para a folha é perguntar quais histórias pertencem a $F^{-1}(y)$. Talvez uma só; talvez várias. A próxima pista vale pelo que consegue separar. Dá para fazer esse raciocínio falando de uma lasca no canto de uma letra, sem escrever uma equação.
+Para enxergar a matemática, dá para montar uma versão de brinquedo do mistério. Este exemplo é meu: imagine uma folha dobrada ao meio, com um furo visível na frente. Há duas histórias possíveis. Na primeira, alguém dobrou a folha e passou um furador pelas duas camadas. Na segunda, furou a folha aberta e só depois a dobrou, deixando o furo na frente. Olhando apenas essa face, as histórias parecem iguais.
+
+Abra a folha. Na primeira história, há um furo correspondente na outra metade; na segunda, não. Uma observação que parecia dispensável separa as possibilidades. E trocar a ordem das mesmas ações, dobrar e furar, muda o resultado.
+
+Isso já é matemática: operações, ordem e uma relação entre causas possíveis e resultados observáveis. Os furos são só o material em que a estrutura apareceu. *Identificabilidade* é o nome da pergunta “com o que consigo observar, dá para distinguir qual história aconteceu?”. Se $h$ é a história e $F(h)$ são seus vestígios, procurar as histórias compatíveis com o que vemos é procurar $F^{-1}(y)$. A notação chega depois da folha.
 
 Essa é a minha suspeita: o interesse matemático pode aparecer na construção do cenário, antes de aparecer como assunto. Uma política inclinada a raciocinar desse jeito escolhe objetos que oferecem esse tipo de raciocínio. Não precisa anunciar “hoje vamos estudar problemas inversos”. Ela traz papel.
 
