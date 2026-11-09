@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+<title id="title">Era só um papel</title><desc id="desc">Uma folha com crachá Figurante é promovida a Testemunha diante de uma bancada. Meme sobre os objetos da narrativa se tornarem evidência.</desc>
+<rect width="900" height="560" rx="22" fill="#edf1ed"/>
+<g font-family="sans-serif" text-anchor="middle" fill="#24252a">
+<text x="450" y="58" font-size="30" font-weight="700">ERA SÓ UM PAPEL</text>
+<g stroke="#24252a" stroke-width="4" fill="#fffdf7"><path d="M130 130h145l45 45v210H130zM275 130v45h45"/><path d="M580 130h145l45 45v210H580zM725 130v45h45"/></g>
+<g fill="none" stroke="#b85c3d" stroke-width="3"><path d="M160 205h125M160 225h90M160 245h110M610 205h125M610 225h90M610 245h110"/></g>
+<g fill="#24252a"><circle cx="190" cy="278" r="5"/><circle cx="250" cy="278" r="5"/><circle cx="640" cy="278" r="5"/><circle cx="700" cy="278" r="5"/></g>
+<path d="M207 302h26M650 302q20 10 40 0M395 250h105m-18-16 18 16-18 16" fill="none" stroke="#24252a" stroke-width="4"/>
+<rect x="140" y="335" width="170" height="60" rx="7" fill="#d9dfd6"/><text x="225" y="372" font-size="23">FIGURANTE</text>
+<rect x="590" y="335" width="170" height="60" rx="7" fill="#f2bd84"/><text x="675" y="372" font-size="23">TESTEMUNHA</text>
+<path d="M545 410h260v65H545z" fill="#68766c"/><path d="M560 475v25M790 475v25" stroke="#68766c" stroke-width="8"/>
+<text x="225" y="505" font-size="23">entrou na história</text><text x="675" y="538" font-size="23">agora sustenta a inferência</text>
+</g></svg>
