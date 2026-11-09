@@ -45,7 +45,7 @@ Para enxergar a matemática, dá para montar uma versão de brinquedo do mistér
 
 Abra a folha. Na primeira história, há um furo correspondente na outra metade; na segunda, não. Uma observação que parecia dispensável separa as possibilidades. E trocar a ordem das mesmas ações, dobrar e furar, muda o resultado.
 
-Isso já é matemática: operações, ordem e uma relação entre causas possíveis e resultados observáveis. Os furos são só o material em que a estrutura apareceu. *Identificabilidade* é o nome da pergunta “com o que consigo observar, dá para distinguir qual história aconteceu?”. Se $h$ é a história e $F(h)$ são seus vestígios, procurar as histórias compatíveis com o que vemos é procurar $F^{-1}(y)$. A notação chega depois da folha.
+Isso já é matemática: operações, ordem e uma relação entre causas possíveis e resultados observáveis. Os furos são só o material em que a estrutura apareceu. _Identificabilidade_ é o nome da pergunta “com o que consigo observar, dá para distinguir qual história aconteceu?”. Se $h$ é a história e $F(h)$ são seus vestígios, procurar as histórias compatíveis com o que vemos é procurar $F^{-1}(y)$. A notação chega depois da folha.
 
 Essa é a minha suspeita: o interesse matemático pode aparecer na construção do cenário, antes de aparecer como assunto. Uma política inclinada a raciocinar desse jeito escolhe objetos que oferecem esse tipo de raciocínio. Não precisa anunciar “hoje vamos estudar problemas inversos”. Ela traz papel.
 
