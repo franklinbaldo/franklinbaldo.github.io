@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+<title id="title">Um probleminha rápido</title><desc id="desc">Antes: uma xícara na pauta do café. Depois: a xícara cercada de uma folha, rotações e um problema inverso.</desc>
+<rect width="900" height="560" rx="22" fill="#f6f1e7"/>
+<g font-family="sans-serif" fill="#24252a" text-anchor="middle">
+<text x="225" y="58" font-size="22" letter-spacing="3">NA PAUTA</text><text x="675" y="58" font-size="22" letter-spacing="3">O QUE SAIU</text>
+<path d="M450 85V470" stroke="#c9c0b0" stroke-width="2"/>
+<g stroke="#24252a" stroke-width="5" fill="none"><path d="M155 235h125v90q-60 55-125 0zM280 246q70-5 55 50q-10 30-55 18M155 370h150M195 210q-25-25 0-50M235 210q-25-25 0-50"/>
+<path d="M600 260h105v80q-52 45-105 0zM705 270q55 0 43 40q-10 25-43 12M598 375h135"/>
+<path d="M565 145l85-22 40 75-87 25zM565 145l70 21 15-43" stroke="#b85c3d"/>
+<path d="M740 200q65 25 35 90m0 0-5-25m5 25 23-12" stroke="#b85c3d"/>
+</g>
+<text x="690" y="112" font-size="28" font-family="serif">F⁻¹(y)</text><text x="790" y="185" font-size="25">90°?</text><text x="560" y="432" font-size="22">dobrar</text><text x="754" y="432" font-size="22">imprimir</text>
+<path d="M610 424h73m-10-8 10 8-10 8" fill="none" stroke="#b85c3d" stroke-width="3"/>
+<text x="225" y="510" font-size="32" font-weight="700">Café.</text><text x="675" y="510" font-size="30" font-weight="700">Um probleminha rápido.</text>
+</g></svg>
