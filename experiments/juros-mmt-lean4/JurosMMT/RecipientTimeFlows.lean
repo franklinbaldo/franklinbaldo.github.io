@@ -50,7 +50,8 @@ theorem label_invariance (f : Bool → Bool) (payments : List Payment)
   induction payments with
   | nil => rfl
   | cons p rest ih =>
-      simp [changeLabels, netIncome, contribution, ih]
+      simpa [changeLabels, netIncome, contribution] using
+        congrArg (fun x : Int => contribution p recipient period + x) ih
 
 /-- A one-payment ledger. -/
 def single (recipient period : Nat) (amount : Int) (interest : Bool) :
