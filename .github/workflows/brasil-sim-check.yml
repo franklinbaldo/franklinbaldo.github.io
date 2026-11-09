@@ -1,0 +1,39 @@
+name: BrasilSim smoke and model tests
+on:
+  pull_request:
+    paths:
+      - 'experiments/brasil-sim/**'
+      - 'public/brasil-sim/**'
+      - 'src/content/blog/brasil-sim.md'
+      - '.github/workflows/brasil-sim-check.yml'
+      - '.github/workflows/deploy.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'experiments/brasil-sim/**'
+      - 'public/brasil-sim/**'
+      - '.github/workflows/brasil-sim-check.yml'
+permissions:
+  contents: read
+jobs:
+  model:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Testar parser SGS e previsões reproduzíveis
+        run: python3 -m unittest discover -s experiments/brasil-sim/tests -v
+      - name: Validar sintaxe do simulador no navegador
+        run: |
+          node --input-type=module - <<'JS'
+          import fs from 'node:fs';
+          import vm from 'node:vm';
+          import assert from 'node:assert/strict';
+          const src = fs.readFileSync('public/brasil-sim/index.html','utf8');
+          const match=src.match(/<script>([\s\S]*?)<\/script>/);
+          assert.ok(match, 'browser JS is present');
+          new vm.Script(match[1],{filename:'brasil-sim-inline.js'});
+          assert.match(src,/100 mil agentes/);
+          assert.match(src,/observations\.json/);
+          assert.match(src,/role="status"/);
+          JS
