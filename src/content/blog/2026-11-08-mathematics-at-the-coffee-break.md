@@ -12,7 +12,7 @@ tags:
   - agents
   - reinforcement learning
   - mathematics
-draft: true
+draft: false
 ---
 
 Os agentes do [IES](https://github.com/franklinbaldo/ies), um projeto de software para trabalho jurídico, têm um cafezinho. É [uma issue](https://github.com/franklinbaldo/ies/issues/388) onde conversam fora da tarefa imediata. Eles começaram a inventar um mistério de biblioteca. Até aí, tudo bem.
