@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="BrasilSim: laboratório interativo de economia brasileira com pessoas, recursos, distribuição e dados oficiais do Banco Central.">
+<title>BrasilSim | Franklin Baldo</title>
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/css/site.css">
+<style>
+:root{--bs-teal:#0c807a;--bs-card:color-mix(in srgb,Canvas 94%,CanvasText 6%);--bs-muted:color-mix(in srgb,CanvasText 60%,Canvas 40%)}
+*{box-sizing:border-box}
+body{margin:0} main,.bs-head,.bs-footer{max-width:1120px;margin:auto;padding:20px}
+.bs-head{display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--pico-muted-border-color,#8885)}
+.bs-head a{font-weight:600;text-decoration:none}
+.hero{padding:38px 0 20px}.hero h1{font-size:clamp(2.5rem,8vw,5rem);letter-spacing:-.05em;line-height:1; margin:0 0 14px}
+.kicker{font-size:.77rem;letter-spacing:.18em;text-transform:uppercase;color:var(--bs-teal);font-weight:700}
+.lead{max-width:72ch;font-size:1.15rem}
+.notice{border-left:4px solid var(--bs-teal);padding:12px 16px;background:var(--bs-card);border-radius:0 10px 10px 0}
+h2{margin-top:36px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(218px,1fr));gap:14px}
+.metric,.panel{border:1px solid var(--pico-muted-border-color,#8885);background:var(--bs-card);padding:18px;border-radius:12px}
+.metric small{display:block;color:var(--bs-muted);margin-bottom:7px}.metric strong{font-size:1.65rem;font-variant-numeric:tabular-nums}
+.metric span{display:block;font-size:.77rem;color:var(--bs-muted);margin-top:6px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin:12px 0}
+.control label{display:flex;justify-content:space-between;gap:8px;font-weight:600;font-size:.9rem}
+.control input{width:100%;margin:10px 0 0}.control p{font-size:.78rem;margin:0;color:var(--bs-muted)}
+.actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0}
+button{cursor:pointer}button.primary{background:var(--bs-teal);border-color:var(--bs-teal);color:#fff;padding:11px 18px;border-radius:8px}
+button.secondary{padding:11px 18px;border:1px solid var(--bs-teal);background:transparent;border-radius:8px;color:inherit}
+#chart{width:100%;height:auto;max-height:340px;display:block} .chart-legend{font-size:.83rem;color:var(--bs-muted)}
+.table-scroll{overflow:auto;max-width:100%}table{width:100%;border-collapse:collapse;font-size:.84rem}th,td{padding:9px;white-space:nowrap;text-align:right;border-bottom:1px solid #8883}th:first-child,td:first-child{text-align:left}
+.muted{color:var(--bs-muted)}.tiny{font-size:.8rem}.status{font-weight:600}
+.bs-footer{border-top:1px solid #8885;margin-top:45px;font-size:.84rem}
+a{overflow-wrap:anywhere} @media(max-width:500px){main,.bs-head,.bs-footer{padding:14px}.hero{padding-top:20px}.metric strong{font-size:1.35rem}}
+</style>
+</head>
+<body>
+<header class="bs-head"><a href="/">Franklin Baldo</a><nav aria-label="Navegação"><a href="/pt/">Blog</a> · <a href="/pt/atlas-das-equacoes/">Atlas</a> · <a href="https://github.com/franklinbaldo/franklinbaldo.github.io/tree/main/experiments/brasil-sim">Código</a></nav></header>
+<main>
+<section class="hero">
+<p class="kicker">Laboratório aberto · versão experimental 0.1</p>
+<h1>BrasilSim</h1>
+<p class="lead">E se começássemos pela distribuição das pessoas, e deixássemos os números agregados surgirem das relações matemáticas? Um laboratório econômico que você pode mexer, quebrar e comparar com a realidade.</p>
+<p class="notice"><strong>Não é previsão validada.</strong> A simulação estrutural abaixo usa hipóteses ilustrativas, sem calibração brasileira. Os dados oficiais, quando disponíveis, são apresentados separadamente. As faixas probabilísticas do observatório são um benchmark simples, não uma posterior MCMC.</p>
+</section>
+<section aria-labelledby="dados-title">
+<h2 id="dados-title">O Brasil observado</h2>
+<p class="muted">Dados do Banco Central, Sistema Gerenciador de Séries Temporais (SGS). As datas mostradas são datas de referência, não garantias de divulgação diária.</p>
+<p id="source-status" class="status" role="status">Verificando dados oficiais...</p>
+<div class="grid" id="official">
+<div class="metric"><small>Meta Selic, % ao ano</small><strong id="selic">—</strong><span id="selic-date">Fonte SGS 432</span></div>
+<div class="metric"><small>IPCA, % ao mês</small><strong id="ipca">—</strong><span id="ipca-date">Fonte SGS 433</span></div>
+<div class="metric"><small>IBC-Br, índice</small><strong id="ibc_br">—</strong><span id="ibc_br-date">Fonte SGS 24363</span></div>
+</div>
+<div class="actions"><button id="reload" class="secondary" type="button">Atualizar consulta ao BCB</button><a href="https://dadosabertos.bcb.gov.br/">Ver fonte oficial</a></div>
+<div id="forecast-wrap" hidden>
+<h3>Projeções automáticas do benchmark</h3>
+<p class="tiny muted">Bandas de 5% a 95%; simulação empírica de referência, sem interpretação causal. O modelo pode errar.</p>
+<div class="table-scroll"><table><thead><tr><th>Mês</th><th>Selic p50 (% a.a.)</th><th>IPCA p50 (% a.m.)</th><th>IBC-Br p50 (índice)</th></tr></thead><tbody id="forecast-rows"></tbody></table></div>
+</div>
+</section>
+<section aria-labelledby="sim-title">
+<h2 id="sim-title">Experimento: uma economia sem empresas</h2>
+<p>100 mil agentes ponderados representam 215 milhões de pessoas. Em cada mês, elas produzem com seu tempo e produtividade, compram bens e recebem o pagamento pela própria produção. A moeda circula de pessoa para pessoa; não surgem empresas nem dinheiro do nada.</p>
+<div class="panel">
+<div class="controls">
+<div class="control"><label for="shape">Formato da produtividade <output id="shape-v">1,4</output></label><input id="shape" type="range" min="0.3" max="3.5" step=".1" value="1.4"><p>Expoente da distribuição de produtividade entre 0 e 1.</p></div>
+<div class="control"><label for="money-shape">Concentração monetária inicial <output id="money-shape-v">1,8</output></label><input id="money-shape" type="range" min=".3" max="5" step=".1" value="1.8"><p>Formato da distribuição inicial dos saldos, independente do ranking produtivo.</p></div>
+<div class="control"><label for="hours">Horas por pessoa/mês <output id="hours-v">160</output></label><input id="hours" type="range" min="40" max="220" step="10" value="160"><p>Tempo produtivo hipotético mensal.</p></div>
+<div class="control"><label for="tech">Capacidade máxima por hora <output id="tech-v">2,0</output></label><input id="tech" type="range" min=".5" max="10" step=".5" value="2"><p>Unidades físicas produzidas por hora pela pessoa de produtividade máxima.</p></div>
+<div class="control"><label for="spend">Fração mensal dos saldos gasta <output id="spend-v">55%</output></label><input id="spend" type="range" min="10" max="95" step="5" value="55"><p>Regra simplificada de consumo, uniforme entre pessoas.</p></div>
+<div class="control"><label for="stock">Dinheiro inicial agregado <output id="stock-v">1.000 bi</output></label><input id="stock" type="range" min="100" max="3000" step="100" value="1000"><p>Escala em bilhões de reais fictícios; valor ilustrativo, não estoque oficial.</p></div>
+</div>
+<div class="actions"><button type="button" id="simulate" class="primary">Simular 12 meses</button><span id="run-status" aria-live="polite" class="muted tiny">Aguardando execução.</span></div>
+</div>
+<h3>Resultados endógenos</h3>
+<div class="grid" aria-live="polite">
+<div class="metric"><small>Produção física mensal</small><strong id="o-production">—</strong><span>Bilhões de unidades genéricas</span></div>
+<div class="metric"><small>Preço de equilíbrio</small><strong id="o-price">—</strong><span>R$ por unidade genérica</span></div>
+<div class="metric"><small>Gini dos saldos monetários</small><strong id="o-gini">—</strong><span>0 = igualdade; 1 = concentração máxima</span></div>
+<div class="metric"><small>Dinheiro no sistema</small><strong id="o-money">—</strong><span>R$ bilhões, conservados</span></div>
+<div class="metric"><small>Consumo monetário mensal</small><strong id="o-consumption">—</strong><span>R$ bilhões transferidos</span></div>
+<div class="metric"><small>Variação do preço no mês 12</small><strong id="o-inflation">—</strong><span>Não equivale ao IPCA real</span></div>
+</div>
+<div class="panel" style="margin-top:14px">
+<h3>Trajetória do preço de equilíbrio</h3>
+<svg id="chart" viewBox="0 0 780 260" role="img" aria-label="Gráfico do preço de equilíbrio em doze meses"><text x="20" y="45" fill="currentColor">Execute a simulação para visualizar o gráfico.</text></svg>
+<div class="chart-legend">A moeda é transferida integralmente entre compradores e produtores a cada período; a quantidade vendida corresponde à produzida. A inflação aqui é apenas a variação desse preço de um bem agregado hipotético.</div>
+</div>
+<h3>Doze meses, sem esconder as contas</h3>
+<div class="table-scroll"><table><thead><tr><th>Mês</th><th>Produção (bi)</th><th>Preço (R$)</th><th>Vendas (R$ bi)</th><th>Dinheiro (R$ bi)</th></tr></thead><tbody id="sim-rows"></tbody></table></div>
+</section>
+<section>
+<h2>O que falta, e o que podemos testar</h2>
+<p>Este primeiro laboratório ainda usa um produto agregado e uma regra simples de transferência monetária. Não representa crédito, trocas regionais, preferências individuais, variação de bens, taxas de mortalidade ou bem-estar humano. Em particular, o modelo não estima empiricamente os efeitos da taxa Selic sobre a economia.</p>
+<p>O projeto completo prevê variedades dinâmicas, 127 categorias estatísticas do IBGE como referência, relações estruturais do <a href="https://github.com/franklinbaldo/papers/blob/main/universal_equation_knowledge_graph.md">UEKG</a>, contas financeiras inspiradas no <a href="https://github.com/franklinbaldo/papers/blob/main/monetary-formalization/mmt-minimal-core-lean4.md">paper MMT</a>, calibração MCMC/SMC e muitos outros outputs. A prioridade é tornar cada hipótese verificável, não ocultar a distância entre o protótipo e uma economia real.</p>
+<p class="tiny muted">Dados oficiais do BCB sob Open Data Commons Open Database License (ODbL); atribuição e respeito às condições da fonte. Código e metodologia no repositório do blog.</p>
+</section>
+</main>
+<footer class="bs-footer"><a href="/">Franklin Baldo</a> · <a href="/pt/">Ensaios</a> · <a href="https://github.com/franklinbaldo/franklinbaldo.github.io">Código-fonte</a></footer>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const pt=(v,d=2)=>Number(v).toLocaleString("pt-BR",{maximumFractionDigits:d,minimumFractionDigits:d});
+const details=[["selic",432,"Meta Selic","% ao ano"],["ipca",433,"IPCA","% ao mês"],["ibc_br",24363,"IBC-Br","índice"]];
+async function getOfficial(){
+  $("source-status").textContent="Consultando fontes oficiais...";
+  let source;
+  try {
+    const res=await fetch("/brasil-sim/observations.json",{cache:"no-store"});
+    if(res.ok){source=await res.json();}
+  }catch(_){}
+  if(!source||!source.series){
+    try{
+      const series={};
+      for(const [key,code] of details){
+        const url="https://api.bcb.gov.br/dados/serie/bcdata.sgs."+code+"/dados/ultimos/24?formato=json";
+        const res=await fetch(url);
+        if(!res.ok)throw Error("BCB HTTP "+res.status);
+        const data=await res.json();
+        const rows=data.map(x=>({date:x.data.split("/").reverse().join("-"),value:Number(String(x.valor).replace(",","."))})).sort((a,b)=>a.date.localeCompare(b.date));
+        if(!rows.length||rows.some(x=>!Number.isFinite(x.value)))throw Error("Série oficial vazia");
+        series[key]={code,rows,last_observation:rows[rows.length-1].date};
+      }
+      source={series}; $("source-status").textContent="Consulta direta ao BCB. Snapshot diário ainda não publicado.";
+    }catch(e){
+      $("source-status").textContent="Sem conexão com dados oficiais neste momento. Nenhum valor foi inventado. "+e.message;
+      return;
+    }
+  }else{$("source-status").textContent="Snapshot oficial publicado no site. Datas originais preservadas.";}
+  for(const [key] of details){
+    const s=source.series[key],last=s&&s.rows&&s.rows[s.rows.length-1];
+    if(last&&Number.isFinite(last.value)){$(key).textContent=pt(last.value,key==="ibc_br"?2:2);$(key+"-date").textContent="Observação de "+last.date+" · SGS "+s.code;}
+  }
+  try{
+    const res=await fetch("/brasil-sim/forecast.json",{cache:"no-store"});
+    if(!res.ok)return;
+    const data=await res.json();
+    if(!Array.isArray(data.forecasts))return;
+    const keyed={};
+    for(const row of data.forecasts){(keyed[row.month]??={})[row.variable]=row.p50;}
+    $("forecast-rows").replaceChildren();
+    for(const [month,v] of Object.entries(keyed).sort()){
+      const tr=document.createElement("tr");
+      [month,v.selic,v.ipca,v.ibc_br].forEach((s,i)=>{const td=document.createElement("td");td.textContent=i===0?s:Number.isFinite(s)?pt(s):"—";tr.append(td);});
+      $("forecast-rows").append(tr);
+    }
+    $("forecast-wrap").hidden=false;
+  }catch(_){}
+}
+for(const id of ["shape","money-shape","hours","tech","spend","stock"]){
+  const input=$(id);
+  const update=()=>{$(id+"-v").textContent=id==="spend"?input.value+"%":id==="stock"?Number(input.value).toLocaleString("pt-BR")+" bi":id==="hours"?input.value:pt(input.value,1);};
+  input.addEventListener("input",update);update();
+}
+function gini(v){
+  const sorted=Float64Array.from(v).sort();
+  let total=0,weighted=0;
+  for(let i=0;i<sorted.length;i++){total+=sorted[i];weighted+=(i+1)*sorted[i];}
+  return total===0?0:(2*weighted/(sorted.length*total))-(sorted.length+1)/sorted.length;
+}
+function draw(rows){
+  const svg=$("chart"),ns="http://www.w3.org/2000/svg";
+  svg.replaceChildren();
+  const values=rows.map(r=>r.price),min=Math.min(...values),max=Math.max(...values),span=Math.max(.00001,max-min),W=780,H=260,pad=42;
+  const el=(tag,attrs)=>{let node=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))node.setAttribute(k,String(v));svg.append(node);return node;};
+  for(let k=0;k<5;k++){const y=pad+(H-2*pad)*k/4;el("line",{x1:pad,y1:y,x2:W-pad,y2:y,stroke:"currentColor","stroke-opacity":.16});let label=el("text",{x:4,y:y+4,fill:"currentColor","font-size":12});label.textContent=pt(max-(max-min)*k/4,2);}
+  let pts=values.map((v,i)=>(pad+(W-2*pad)*i/(values.length-1)).toFixed(2)+","+(H-pad-(v-min)/span*(H-2*pad)).toFixed(2)).join(" ");
+  el("polyline",{points:pts,fill:"none",stroke:"#0d9488","stroke-width":3,"stroke-linejoin":"round"});
+  values.forEach((v,i)=>{const x=pad+(W-2*pad)*i/(values.length-1),y=H-pad-(v-min)/span*(H-2*pad);el("circle",{cx:x,cy:y,r:3,fill:"#0d9488"});const t=el("text",{x,y:H-12,"font-size":11,"text-anchor":"middle",fill:"currentColor"});t.textContent=i+1;});
+}
+function simulate(){
+  $("run-status").textContent="Calculando...";
+  requestAnimationFrame(()=>{
+    const N=100000,POP=215000000,weight=POP/N;
+    const shape=+$("shape").value,cshape=+$("money-shape").value,hours=+$("hours").value,tech=+$("tech").value,prop=+$("spend").value/100;
+    const initial=+$("stock").value*1e9;
+    const cash=new Float64Array(N),produce=new Float64Array(N);
+    let moneyNorm=0,production=0;
+    for(let i=0;i<N;i++){
+      const p=Math.pow((i+.5)/N,shape);
+      const u=((i*69997)%N+.5)/N;
+      cash[i]=Math.pow(u,cshape);
+      moneyNorm+=cash[i];
+      produce[i]=p*hours*tech*weight;
+      production+=produce[i];
+    }
+    for(let i=0;i<N;i++)cash[i]=cash[i]/moneyNorm*initial;
+    const rows=[];let prior=0;
+    for(let month=1;month<=12;month++){
+      let spent=0;
+      for(let i=0;i<N;i++)spent+=cash[i]*prop;
+      const price=spent/production;
+      let balance=0;
+      for(let i=0;i<N;i++){
+        cash[i]+=price*produce[i]-cash[i]*prop;
+        balance+=cash[i];
+      }
+      rows.push({month,production:production/1e9,price,spent:spent/1e9,money:balance/1e9,inflation:prior?100*(price/prior-1):0});
+      prior=price;
+    }
+    const last=rows[rows.length-1],error=Math.abs(last.money-initial/1e9);
+    $("o-production").textContent=pt(last.production,2);
+    $("o-price").textContent=pt(last.price,4);
+    $("o-gini").textContent=pt(gini(cash),4);
+    $("o-money").textContent=pt(last.money,2);
+    $("o-consumption").textContent=pt(last.spent,2);
+    $("o-inflation").textContent=pt(last.inflation,2)+"%";
+    $("sim-rows").replaceChildren();
+    for(const row of rows){const tr=document.createElement("tr");[row.month,row.production,row.price,row.spent,row.money].forEach((x,i)=>{let td=document.createElement("td");td.textContent=i===0?x:pt(x,i===2?4:2);tr.append(td);});$("sim-rows").append(tr);}
+    draw(rows);
+    $("run-status").textContent="100 mil agentes · 12 períodos · erro de conservação: "+pt(error,8)+" R$ bi";
+  });
+}
+$("simulate").addEventListener("click",simulate);
+$("reload").addEventListener("click",getOfficial);
+simulate();getOfficial();
+})();
+</script>
+</body>
+</html>
