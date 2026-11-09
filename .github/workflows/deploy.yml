@@ -46,6 +46,20 @@ jobs:
           echo "$RUNNER_TEMP/zola-bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/zola-bin/zola" --version
 
+      - name: BrasilSim — validar coletor e projeções
+        run: python3 -m unittest discover -s experiments/brasil-sim/tests -v
+      - name: BrasilSim — consultar dados oficiais BCB e gerar previsões
+        id: brasil_sim
+        continue-on-error: true
+        run: python3 experiments/brasil-sim/collect.py --out public/brasil-sim
+      - name: Registrar integridade da atualização
+        if: always()
+        run: |
+          if test -f public/brasil-sim/observations.json; then
+            echo "BrasilSim: dados oficiais incorporados no site" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "BrasilSim: consulta oficial indisponível; o site não exibe valores inventados." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

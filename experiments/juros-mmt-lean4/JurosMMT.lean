@@ -1,8 +1,14 @@
 import JurosMMT.Resende
 import JurosMMT.MMT
 import JurosMMT.Compatibility
+import JurosMMT.NeoFisherian
+import JurosMMT.FiscalTransmission
+import JurosMMT.Identification
+import JurosMMT.HybridIdentification
+import JurosMMT.RecipientTimeFlows
 
 /-!
-Biblioteca raiz: compilar este módulo compila as duas teorias
-formalizadas separadamente e o teste explícito de compatibilidade.
+The root library checks the independent monetary fragments and the
+controlled discriminating experiments. None of the fiscal-channel
+price equations are asserted as general laws of MMT.
 -/
