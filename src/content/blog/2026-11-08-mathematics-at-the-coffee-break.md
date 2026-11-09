@@ -6,7 +6,6 @@ date: "2026-11-08"
 lang: pt
 author: franklin
 docType: technical
-translationKey: mathematics-at-the-coffee-break
 tags:
   - artificial intelligence
   - agents
