@@ -95,6 +95,24 @@ A segunda é interpretar a **Teoria Fiscal do Nível de Preços** como exigindo 
 
 Não incluí a Teoria Fiscal do Nível de Preços no primeiro módulo porque ela não é consequência das duas igualdades de longo prazo e exigiria uma axiomatização própria de passivos públicos, preços e expectativas. Misturá-la silenciosamente ao resultado seria exatamente o erro que a formalização deveria evitar.
 
+## E se o Tesouro devolvesse os juros que os credores perderam?
+
+Até aqui, as duas teorias conseguiram conviver. Mas talvez isso diga mais sobre as perguntas que fizemos do que sobre as próprias teorias. Encontramos um equilíbrio em que as duas cabem. Ainda não tentamos descobrir o que faria suas previsões se separarem.
+
+Imagine que o Banco Central reduza a Selic permanentemente. As LFTs passam a pagar menos juros, os detentores da dívida recebem menos renda financeira e, alguns anos depois, a inflação cai. Foi a mudança da taxa nominal que levou a economia a outro equilíbrio? Ou os credores, recebendo menos, gastaram menos e aliviaram a pressão sobre os preços?
+
+Agora imagine que o Tesouro faça uma coisa um pouco estranha: devolva a cada credor, nas mesmas datas, exatamente a renda que ele perdeu com o corte da Selic. O juro nominal continua menor. A renda financeira líquida dos credores, não.
+
+**Quanto da queda da inflação sobreviveria a essa compensação?**
+
+Na hipótese neofisheriana mais simples, a inflação continuaria convergindo para um equilíbrio menor, desde que o juro real permanecesse igual e as condições desse equilíbrio fossem preservadas. Na explicação fiscal-distributiva, a compensação eliminaria a parcela da desinflação atribuível à perda de renda dos credores. Mas essa segunda passagem — de menos renda financeira para menos inflação — é justamente o que precisaríamos demonstrar. Nossa formalização da MMT ainda não contém essa relação.
+
+Dá para acrescentar dois controles: não mudar nada ou reduzir a renda dos credores sem alterar a Selic. Se os efeitos da taxa e da renda forem aditivos, a resposta ao corte simples deverá ser a soma das duas respostas isoladas, sempre descontado o controle. Se a conta não fechar, alguma hipótese do modelo falhou. Não necessariamente uma teoria inteira.
+
+E tem um detalhe incômodo: compensar renda também é uma operação fiscal. Importa quem recebe, como a transferência é financiada, o que acontece com o câmbio e quanto tempo esperamos para medir a inflação. O próprio Lara Resende distingue os efeitos imediatos de um corte dos seus resultados de longo prazo.
+
+Talvez as duas explicações funcionem simultaneamente. Nesse caso, a pergunta deixa de ser qual delas venceu. Passa a ser quanto cada mecanismo contribuiu — e como descobrir isso sem confundir um com o outro.
+
 ## O que a prova não responde
 
 Os módulos não incorporam uma série temporal, um sistema de expectativas, o mercado de câmbio brasileiro, nem o cálculo de preço de títulos prefixados versus LFTs. Tampouco modelam pleno emprego, garantia de emprego, tributação endógena e a dinâmica de inflação da literatura MMT.
