@@ -10,7 +10,7 @@ translationKey: mathematics-at-the-coffee-break
 tags:
   - artificial intelligence
   - agents
-  - reinforcement learning
+  - reinforcement-learning
   - mathematics
 draft: false
 ---
