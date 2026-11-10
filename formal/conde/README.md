@@ -18,6 +18,28 @@ Este experimento separa **fatos observados**, **hipóteses** e **consequências 
 teoremas geométricos tratam somente do ponto subsatélite no modelo idealizado,
 não de dispersão de fragmentos.
 
+## Separação comum e limites condicionais
+
+O módulo [`Conde1963/Separation.lean`](Conde1963/Separation.lean) agora
+introduz um modelo **instantâneo de origem comum** para as três velocidades:
+`v_i = v_parent + Δv_i`. Todas as grandezas de velocidade são inteiras,
+em uma unidade que deverá ser declarada na futura aplicação empírica.
+
+Cada impulso `Δv_i` tem um limite por componente (`L∞`) que é
+**parâmetro sem valor histórico escolhido**, e não uma medição.
+
+Provas propostas: cancelamento da velocidade do corpo pai nas diferenças
+relativas; limite por componente `|v528-v529|≤max528+max529`; limite
+analogamente para o par 527/528; exclusão de candidato que viole o limite;
+identidade de velocidades na coordenada x caso ambos os limites sejam zero.
+
+**Não existe conclusão numérica** sobre velocidades de separação, trajetórias
+ou local de queda. A hipótese de separação simultânea dos três objetos é
+uma simplificação a ser substituída se registros técnicos mostrarem
+eventos distintos ou datas de desprendimento diferentes. Essa formalização
+não transforma o registro catalográfico de origem comum em prova de
+separação simultânea.
+
 ## Executar
 
 ```sh
