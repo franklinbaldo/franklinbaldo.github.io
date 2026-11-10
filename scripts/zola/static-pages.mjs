@@ -73,56 +73,20 @@ function emitModule(file, source = readFileSync(file, "utf8")) {
   write(`static/${path}`, js);
   return path;
 }
-for (const [file, path, title, lang] of [
-  ["src/pages/games/index.astro", "/games/", "Games", "en"],
-  [
-    "src/pages/games/rug-pull.astro",
-    "/games/rug-pull/",
-    "Rug Pull Simulator",
-    "en",
-  ],
+for (const [name, path, title] of [
+  ["games-index", "/games/", "Games"],
+  ["rug-pull", "/games/rug-pull/", "Rug Pull Simulator"],
 ]) {
-  const source = readFileSync(file, "utf8");
-  const body = source.match(/<PageLayout\b[^>]*>([\s\S]*?)<\/PageLayout>/)?.[1];
-  if (!body || /[{}]/.test(body))
-    throw new Error(`Static page acquired dynamic markup: ${file}`);
-  const css = source.match(/<style[^>]*>([\s\S]*?)<\/style>/)?.[1] ?? "";
-  const script = source.match(/<script>([\s\S]*?)<\/script>/)?.[1];
-  const scriptUrl = script ? emitModule(resolve(file), script) : null;
-  page(
-    path,
-    title,
-    `${body}\n<style>${css}</style>\n${scriptUrl ? `<script type="module" src="${scriptUrl}"></script>` : ""}`,
-    lang
-  );
+  const body = readFileSync(`scripts/zola/source/pages/${name}.html`, "utf8");
+  const css = readFileSync(`scripts/zola/source/pages/${name}.css`, "utf8");
+  const scriptUrl = name === "rug-pull"
+    ? emitModule(resolve("src/pages/games/rug-pull-client.ts"))
+    : null;
+  page(path, title, `${body}\n<style>${css}</style>\n${scriptUrl ? `<script type="module" src="${scriptUrl}"></script>` : ""}`);
 }
 for (const lang of ["en", "pt"]) {
-  const source = readFileSync(
-    `src/pages/${lang === "pt" ? "pt/" : ""}about.astro`,
-    "utf8"
-  );
-  let body = source.match(
-    /<article data-pagefind-body>([\s\S]*?)<\/article>/
-  )?.[1];
-  if (!body || /[{}]/.test(body))
-    throw new Error("About page is no longer literal HTML");
-  body = body
-    .replace(/<h1>[\s\S]*?<\/h1>/, "")
-    .replace(
-      '<a href="https://astro.build/">Astro</a>',
-      '<a href="https://www.getzola.org/">Zola</a>'
-    )
-    .replace(
-      /(?: and vanilla | e )<a href="https:\/\/picocss.com\/">Pico.css<\/a>/,
-      ""
-    )
-    .replace(/\s+vanilla —/, " —");
-  page(
-    `${lang === "pt" ? "/pt" : ""}/about/`,
-    lang === "pt" ? "Sobre" : "About",
-    body,
-    lang
-  );
+  const body = readFileSync(`scripts/zola/source/pages/about-${lang}.html`, "utf8");
+  page(`${lang === "pt" ? "/pt" : ""}/about/`, lang === "pt" ? "Sobre" : "About", body, lang);
 }
 const entries = [];
 for (const dir of ["changelog", "changelog/changes"]) {

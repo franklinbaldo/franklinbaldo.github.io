@@ -1,0 +1,140 @@
+
+  <section class="rug-shell" aria-labelledby="rug-title">
+    <header class="rug-hero">
+      <p class="rug-kicker">A tiny adversarial trading game</p>
+      <h1 id="rug-title">Rug Pull Simulator</h1>
+      <p class="rug-deck">The chart is not the puzzle. The developer is.</p>
+    </header>
+
+    <section id="rug-intro" class="rug-intro" aria-label="Game introduction">
+      <p class="rug-terminal">You bought <strong>$1,000</strong> of a shitcoin.</p>
+      <p>You don't know who made it.</p>
+      <p>You don't know if they're going to rug.</p>
+      <p>You are already down <strong>7%</strong>.</p>
+      <button id="rug-start" type="button" class="rug-primary">ENTER TELEGRAM →</button>
+      <p class="rug-fineprint">Fictional money, fictional token, real bad vibes.</p>
+    </section>
+
+    <section id="rug-game" class="rug-game" hidden aria-label="Rug Pull Simulator game">
+      <div class="rug-marketbar">
+        <div>
+          <p class="rug-label">TOKEN</p>
+          <h2 id="rug-symbol">$DUCK</h2>
+          <p id="rug-name" class="rug-muted">Duck Protocol</p>
+        </div>
+        <div class="rug-price-block">
+          <p class="rug-label">PRICE</p>
+          <strong id="rug-price">$0.93</strong>
+          <span id="rug-change" class="rug-change">−7.0%</span>
+        </div>
+      </div>
+
+      <div class="rug-grid rug-stats" aria-label="Market and portfolio statistics">
+        <article>
+          <span>Portfolio</span>
+          <strong id="rug-portfolio">$1,180</strong>
+        </article>
+        <article>
+          <span>Cash</span>
+          <strong id="rug-cash">$250</strong>
+        </article>
+        <article>
+          <span>Liquidity</span>
+          <strong id="rug-liquidity">$120k</strong>
+        </article>
+        <article>
+          <span>Holders</span>
+          <strong id="rug-holders">2.5k</strong>
+        </article>
+      </div>
+
+      <section class="rug-chart-card" aria-labelledby="rug-chart-title">
+        <div class="rug-card-head">
+          <div>
+            <p id="rug-chart-title" class="rug-label">PRICE TRACE</p>
+            <span class="rug-muted">supporting evidence, not the puzzle</span>
+          </div>
+          <span id="rug-beat" class="rug-beat">T+00</span>
+        </div>
+        <svg id="rug-chart" viewBox="0 0 320 72" role="img" aria-label="Token price history">
+          <line x1="0" y1="36" x2="320" y2="36" class="rug-chart-mid"></line>
+          <polyline id="rug-chart-line" points="0,36 320,36" fill="none" vector-effect="non-scaling-stroke"></polyline>
+        </svg>
+      </section>
+
+      <section class="rug-feed-card" aria-labelledby="rug-feed-title">
+        <div class="rug-card-head">
+          <div>
+            <p id="rug-feed-title" class="rug-label">LIVE FEED</p>
+            <span class="rug-live"><i></i> live simulation</span>
+          </div>
+          <span id="rug-attention" class="rug-attention">Research ●●</span>
+        </div>
+        <ol id="rug-feed" class="rug-feed" aria-live="polite" aria-relevant="additions"></ol>
+      </section>
+
+      <section class="rug-controls" aria-label="Trading controls">
+        <p class="rug-label">TRADE</p>
+        <div class="rug-action-grid">
+          <button type="button" data-rug-action="buy">BUY 50% CASH</button>
+          <button type="button" data-rug-action="hold">HOLD</button>
+          <button type="button" data-rug-action="sell25">SELL 25%</button>
+          <button type="button" data-rug-action="sell50">SELL 50%</button>
+          <button type="button" data-rug-action="sell100" class="rug-danger">SELL ALL</button>
+        </div>
+      </section>
+
+      <section class="rug-controls" aria-label="Investigation controls">
+        <div class="rug-control-head">
+          <p class="rug-label">INVESTIGATE</p>
+          <span class="rug-muted">costs one research charge and advances time</span>
+        </div>
+        <div class="rug-action-grid rug-investigate-grid">
+          <button type="button" data-rug-investigate="wallet">WALLET</button>
+          <button type="button" data-rug-investigate="liquidity">LP</button>
+          <button type="button" data-rug-investigate="contract">CONTRACT</button>
+          <button type="button" data-rug-investigate="creator">CREATOR</button>
+        </div>
+      </section>
+
+      <section id="rug-result" class="rug-result" hidden aria-labelledby="rug-result-title">
+        <p class="rug-kicker">POST-MORTEM</p>
+        <h2 id="rug-result-title">Session complete</h2>
+        <p id="rug-verdict" class="rug-verdict"></p>
+        <div class="rug-grid rug-result-stats">
+          <article>
+            <span>Final value</span>
+            <strong id="rug-final-value"></strong>
+          </article>
+          <article>
+            <span>P/L</span>
+            <strong id="rug-final-pnl"></strong>
+          </article>
+          <article>
+            <span>Creator</span>
+            <strong id="rug-archetype"></strong>
+          </article>
+          <article>
+            <span>Peak captured</span>
+            <strong id="rug-capture"></strong>
+          </article>
+        </div>
+        <h3>What the dev was thinking</h3>
+        <ol id="rug-timeline" class="rug-timeline"></ol>
+        <div class="rug-result-actions">
+          <button id="rug-replay" type="button">REPLAY THIS SEED</button>
+          <button id="rug-new" type="button" class="rug-primary">NEW SHITCOIN →</button>
+        </div>
+      </section>
+
+      <footer class="rug-session-meta">
+        <span>seed: <code id="rug-seed"></code></span>
+        <button id="rug-reset" type="button" class="rug-link-button">new seed</button>
+      </footer>
+    </section>
+
+    <aside class="rug-note">
+      <strong>Prototype rule:</strong> the creator can choose actions and messages, but the deterministic game engine owns price, liquidity and your balance. No real crypto is involved.
+    </aside>
+  </section>
+

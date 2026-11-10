@@ -1,0 +1,38 @@
+
+  .games-head {
+    max-width: 720px;
+    margin: 2rem 0 2.5rem;
+  }
+
+  .games-head h1 {
+    margin: 0.25rem 0;
+  }
+
+  .games-kicker,
+  .game-card-tag {
+    margin: 0;
+    color: var(--pico-muted-color);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 1rem;
+  }
+
+  .game-card {
+    margin: 0;
+  }
+
+  .game-card h2 {
+    margin-top: 0.35rem;
+  }
+
+  .game-card footer {
+    margin-top: 1.25rem;
+  }
+

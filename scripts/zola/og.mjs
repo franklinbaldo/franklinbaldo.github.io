@@ -1,7 +1,7 @@
 // OG rendering is a Node media projection, independent of Astro rendering.
-import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { pathToFileURL } from "node:url";
+import { pageCards } from "./og-page-cards.mjs";
 import { renderOgCard } from "../../src/lib/og-card.ts";
 import { READING_PATHS } from "../../src/lib/reading-paths-data.mjs";
 import { getQrPng } from "../../src/lib/og-qr.ts";
@@ -27,25 +27,12 @@ for (const p of manifest.posts) {
   });
   writeFileSync(join(out, `${p.id}.png`), png);
 }
-for (const name of readdirSync("src/pages/og")) {
-  if (!name.endsWith(".png.ts") || name.includes("[")) continue;
-  const module = await import(
-    pathToFileURL(join(process.cwd(), "src/pages/og", name)).href
-  );
-  const entries = module.getStaticPaths ? await module.getStaticPaths() : [{}];
-  for (const entry of entries) {
-    const response = await module.GET({
-      props: entry.props ?? {},
-      params: entry.params ?? {},
-    });
-    const filename = name
-      .replace(/\[([^\]]+)\]/g, (_, key) => entry.params[key])
-      .replace(/\.ts$/, "");
-    writeFileSync(
-      join(out, filename),
-      Buffer.from(await response.arrayBuffer())
-    );
-  }
+for (const { filename, qrSlug, fallbackSlug, card } of pageCards) {
+  const png = await renderOgCard({
+    ...card,
+    qrPng: getQrPng({ slug: qrSlug, fallbackSlug }) ?? undefined,
+  });
+  writeFileSync(join(out, filename), png);
 }
 console.log(
   `Zola OG media: ${manifest.posts.length} post images plus existing page cards`
