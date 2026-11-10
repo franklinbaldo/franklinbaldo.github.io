@@ -1,4 +1,5 @@
 ---
+tldr: "Uma tentativa de licenciar skills de agentes evolui de uma ideia de cobrança automática para um protocolo de conformidade verificável. O desenho separa autorização de preço, define a unidade de uso, vincula medições à versão exata da política e registra alegações auditáveis de uso e cobrança sem exigir vigilância central. Discute limites do direito autoral e a diferença entre software aberto e código apenas disponível. O resultado proposto não é uma licença autoexecutável nem um sistema de faturamento, mas uma licença acompanhada de instruções para que os agentes deixem provas do próprio cumprimento."
 type: Blog Post
 title: 'A licença que bate na porta'
 description: >-

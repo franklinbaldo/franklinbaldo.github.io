@@ -1,4 +1,5 @@
 ---
+tldr: "A tentativa de examinar filosoficamente a Seicho-No-Ie da infância leva o autor, que continua ateu, a reconsiderar o que descartou aos quinze anos. Ele separa doutrinas metafísicas, rituais, transmissão cultural e o valor vivido de uma comunidade, aproximando certas intuições da ontologia de processos e do budismo sem aderir integralmente à religião. O desfecho é pessoal: como pai, não quer transmitir aos filhos uma tradição sem crítica, mas também não quer perder a linguagem, a memória e os gestos que a tornam parte de sua história."
 type: Blog Post
 author: franklin
 title: "Está Chovendo Verdade"

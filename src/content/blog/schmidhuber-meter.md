@@ -1,4 +1,5 @@
 ---
+tldr: "The Schmidhuber Meter is proposed as a reproducible way to evaluate missing scholarly credit when a later work overlaps an earlier, specific, public and findable claim. It scores dimensions such as priority, technical overlap, discoverability and absent citation, while explicitly excluding intent, plagiarism judgments and raw scientific impact. The result is a methodology for narrowing attribution disputes into auditable comparisons, not an automated verdict about theft."
 type: Blog Post
 title: "Precisamos falar sobre o Schmidhuber Meter"
 description: "Uma tentativa semi-séria de medir quanto crédito bibliográfico parece estar faltando quando um trabalho posterior redescobre uma claim pública, específica e encontrável sem citar o antecedente."

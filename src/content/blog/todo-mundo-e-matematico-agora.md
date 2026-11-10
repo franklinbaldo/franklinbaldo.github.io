@@ -1,4 +1,5 @@
 ---
+tldr: "Um desenho animado de nove minutos mostra por que modelos de IA podem propor argumentos matemáticos, mas um assistente de provas como Lean exige demonstrações formais para aceitá-los. O artigo expõe exemplos verificados e a produção técnica do vídeo, guiada pela duração real da narração. O desfecho brinca com a vitória da avó numa cena pós-créditos e defende uma conclusão prática: formalizar ideias matemáticas se tornou mais acessível a não especialistas."
 type: Blog Post
 title: "Todo mundo é matemático agora!"
 description: "Um desenho animado de nove minutos sobre IA, Lean e o fiscal que só sabe fazer uma pergunta."

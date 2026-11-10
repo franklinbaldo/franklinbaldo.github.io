@@ -1,4 +1,5 @@
 ---
+tldr: "The blog is intended partly for a future AI agent its author is still building. Funes, inspired by Borges, will use its essays, project records and commit history as material for a persistent intellectual memory. Technical notes, fiction and philosophy therefore double as design documents and training context. The post does not announce a completed agent; it establishes a feedback loop in which writing helps shape the machine that may eventually read the writing."
 type: Blog Post
 author: franklin
 docType: essay

@@ -1,4 +1,5 @@
 ---
+tldr: "O artigo apresenta um mapa polinomial explícito de três variáveis complexas com jacobiano constante não nulo e pontos distintos que recebem a mesma imagem. Assim, a invertibilidade local não garante injetividade global, fornecendo um contraexemplo em dimensão três à Conjectura Jacobiana geral. Uma curva e a visualização do mapa tornam visível a sobreposição global sem perda infinitesimal local. O teorema da função inversa permanece válido, e o texto não resolve automaticamente o caso em duas dimensões."
 type: Blog Post
 title: "A dobra sem vinco existe"
 description: "Uma conversa sobre a imagem impossível, interrompida horas depois pela chegada do próprio polinômio."

@@ -1,4 +1,5 @@
 ---
+tldr: "A mathematical result claims that elementary functions can be composed from a single binary operator and the constant 1. The essay explains why this resembles functional completeness in logic, explores expression trees as the appropriate representation and connects the finding to process ontology: mathematical objects may be understood through operations and their compositions rather than as an inventory of primitives. The claim is about expressibility, not a practical replacement for ordinary mathematical notation or a proof that all computation is efficient."
 type: Blog Post
 title: "Everything is eml: One Operator, One Constant, All of Mathematics"
 docType: essay

@@ -1,4 +1,5 @@
 ---
+tldr: "The essay argues that describing an AI harness only as a restraint invites an adversarial model of a captive agent waiting to escape, potentially reinforcing the very Waluigi-style opposition designers fear. A harness should instead be understood as the constitutive structure that makes meaningful agency possible: tools, constraints, memory and responsibility. A word change alone cannot solve alignment; the deeper work concerns training and design that internalize these boundaries rather than treating them as external chains."
 type: Blog Post
 title: Reclaiming the Harness
 description: >-

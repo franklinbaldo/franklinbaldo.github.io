@@ -1,4 +1,5 @@
 ---
+tldr: "Inspired by Jim Rutt's habit of stating his biggest unanswered questions, the author identifies two guiding concerns: what probability distributions really are and what justifies treating a theoretical object as real. The essay explores why neither question is settled by choosing a familiar philosophical label. It offers no final solution; its point is to state the questions precisely enough that future work can be judged against them."
 type: Blog Post
 title: "Two Questions, Out Loud"
 description: "Two pivot questions, declared out loud because someone else has been declaring his for a decade and the consistency, in the end, was the argument."

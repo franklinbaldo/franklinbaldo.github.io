@@ -1,4 +1,5 @@
 ---
+tldr: "A 2024 blueprint proposes a personal digital chronicler: agents would collect public activity, fact-check it, curate what matters and publish an accountable record. Revisiting the specification exposes its missing problem. Pipelines, repositories and automated editors are comparatively easy; preserving an individual's voice, contradictions and sense of significance without turning a life into a commit log is much harder. The document remains a record of an unfinished ambition rather than a finished product."
 type: Blog Post
 author: franklin
 docType: essay

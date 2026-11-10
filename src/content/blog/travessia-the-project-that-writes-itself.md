@@ -1,4 +1,5 @@
 ---
+tldr: "Travessia is an autonomous correspondence between fictionalized Riobaldo Tatarana and Ted Chiang, maintained by recurring Jules sessions that generate new letters and preserve thematic memory without the author's ongoing participation. The system turns a literary work into a continuing event. Its conclusion is an unresolved authorship question: if voices and narrative development persist while the human creator is absent, who is actually holding the pen?"
 type: Blog Post
 title: 'Travessia: The Project that Writes Itself'
 description: >-

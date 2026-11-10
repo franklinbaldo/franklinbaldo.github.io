@@ -1,4 +1,5 @@
 ---
+tldr: "An atheist revisits the Seicho-No-Ie traditions of his childhood after becoming a father. Examining the religion as a philosophy, he distinguishes metaphysical claims from embodied practices, intergenerational memory and communities of care. He recognizes unexpected connections to process ontology and Buddhism without converting or abandoning skepticism. The ending asks what to pass on to his children: neither unquestioned doctrine nor a reflexive rejection of the culture and tenderness that the tradition carried."
 type: Blog Post
 author: franklin
 title: "It's Raining Truth"

@@ -1,4 +1,5 @@
 ---
+tldr: "Kafka's metamorphosis and the lobster of Yorgos Lanthimos frame a gradual technological transformation: people outsource memory, decisions and presence to systems that begin shaping the selves they supposedly serve. The change is less a single spectacular event than a series of adaptations whose alternatives become exhausting. The essay leaves its image deliberately ambivalent: shedding a shell may be growth, but the size and ownership of the surrounding tank remain unknown."
 type: Blog Post
 author: franklin
 docType: essay

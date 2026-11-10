@@ -1,4 +1,5 @@
 ---
+tldr: "O núcleo formalizado em Lean 4 da hipótese de André Lara Resende e de operações monetárias da MMT não produz contradição lógica. A incompatibilidade dependeria de premissas econômicas adicionais, não de um choque inevitável entre os dois vocabulários. A análise mostra também que compensações fiscais às perdas de rendimentos de juros devem ser examinadas pelos destinatários e pela distribuição. A prova certifica consequências das hipóteses, mas não valida empiricamente seus efeitos."
 type: Blog Post
 title: "André Lara Resende e MMT: uma incompatibilidade que não aparece"
 description: "Formalizando em Lean 4 o mecanismo neofisheriano de Lara Resende e um núcleo operacional da MMT, para distinguir divergência de hipótese e contradição lógica."

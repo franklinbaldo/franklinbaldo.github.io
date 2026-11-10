@@ -1,4 +1,5 @@
 ---
+tldr: "The essay compares evolution and transformer attention as related mathematical forms of adaptation while stressing a crucial asymmetry: organisms adapt in an environment changed by other organisms, whereas many optimization problems are posed against a fixed target. Drawing on process ontology, Price's equation and the original asymmetric-evolution argument, it concludes that similar gradient mathematics does not erase the difference between a fixed landscape and a landscape that evolves back."
 type: Blog Post
 title: "The Landscape That Walks"
 docType: essay

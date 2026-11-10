@@ -1,4 +1,5 @@
 ---
+tldr: "Escher e o jogo Lights Out ilustram que o espaço aparente de um problema pode diferir radicalmente do espaço em que sua solução existe. A álgebra linear identifica relações entre estados que a intuição visual não percebe, e transformações geométricas revelam que proximidade local não garante geometria global simples. A conclusão aplica a lição a IA: ferramentas projetadas para representações planas podem falhar quando os problemas vivem em espaços deformados ou dobrados."
 type: Blog Post
 title: "The Game on the Folded Grid"
 docType: essay

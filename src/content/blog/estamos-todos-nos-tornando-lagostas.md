@@ -1,4 +1,5 @@
 ---
+tldr: "A lagosta de um filme de Yorgos Lanthimos e a metamorfose de Kafka servem para pensar a transformação humana sob sistemas tecnológicos. O autor argumenta que delegamos memória, escolhas e presença a infraestruturas que pouco a pouco passam a constituir a própria identidade. A mudança não é um evento único, mas uma sucessão de adaptações aceitas porque o custo de resistir parece maior. A conclusão permanece ambivalente: crescer exige abandonar uma casca, mas ninguém sabe o tamanho do aquário que está sendo construído."
 type: Blog Post
 author: franklin
 docType: essay

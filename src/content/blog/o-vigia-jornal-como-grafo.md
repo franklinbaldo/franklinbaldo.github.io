@@ -1,4 +1,5 @@
 ---
+tldr: "O Vigia é apresentado como protótipo de jornalismo local que usa IA para ampliar a capacidade de observação, não para automatizar a autoridade editorial. Um evento encontrado em dados de CNPJ, por exemplo, só vira possível notícia quando ligado por um grafo a fontes, pessoas, lugares, contexto e evidências verificáveis. O sistema pretende separar detecção, investigação e publicação, deixando a decisão final com uma redação responsável. A visão está mais adiantada que a operação: o sucesso não será medido por posts por hora, mas por fatos relevantes que uma pequena redação conseguiria perceber e comprovar."
 type: Blog Post
 title: 'O Vigia: escalar a atenção, não a autoridade'
 description: >-

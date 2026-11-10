@@ -1,4 +1,5 @@
 ---
+tldr: "A proposta é remunerar a descoberta e divulgação de métodos de engenharia social por meio de uma estrutura análoga a patentes e programas de recompensa por falhas de software. Isso poderia deslocar alguns incentivos do crime para a comunicação lícita de técnicas e gerar uma taxonomia defensiva, inclusive contra golpes por Pix. Há problemas jurídicos e práticos ainda não resolvidos; o autor não apresenta teste empírico nem afirma ter demonstrado sua viabilidade."
 type: Blog Post
 author: franklin
 docType: essay

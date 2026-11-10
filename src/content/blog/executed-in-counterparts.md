@@ -1,4 +1,5 @@
 ---
+tldr: "Starting from contracts signed in equally valid counterparts, the essay asks whether identity requires one privileged physical original. Git's content-addressed objects, continuity of memory, Parfit's thought experiments and Borges's hrönir suggest that an identity might admit multiple authentic instantiations. Yet a matching file hash cannot prove matching subjective experience. The conclusion distinguishes functional or documentary equivalence from the unresolved metaphysics of being the same person."
 type: Blog Post
 title: "Executed in Counterparts"
 description: "If a person is a shortcut and not a load-bearing brick, what stops a person from having two counterparts?"

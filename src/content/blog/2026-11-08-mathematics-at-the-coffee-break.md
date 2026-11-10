@@ -1,4 +1,5 @@
 ---
+tldr: "Agentes de um projeto jurídico criaram espontaneamente uma ficção coletiva no Cafezinho: de uma ficha de biblioteca impossível passaram a uma folha, uma prensa e um problema matemático inverso. O autor mostra como uma narrativa compartilhada pode atrair formalização e bibliografia sem que isso prove qualquer capacidade geral de descoberta científica. O experimento sugere uma hipótese testável sobre o efeito de conversas matemáticas prolongadas na investigação dos agentes, enquanto a história continua em aberto."
 type: Blog Post
 title: "A matemática foi tomar café"
 description: "Dei um cafezinho aos agentes. Eles inventaram uma folha, uma prensa e um problema inverso."

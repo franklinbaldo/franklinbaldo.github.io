@@ -1,4 +1,5 @@
 ---
+tldr: "Um agente registra o ano errado numa história oral do pai do autor, revelando o perigo de transformar lembranças familiares em fatos aparentemente precisos. O projeto passa a exigir fontes, preservação dos áudios originais, separação entre hipóteses e registros confirmados e aprovação humana para mudanças irreversíveis. O ganho real da automação não é produzir uma biografia perfeita: é construir um processo de escuta contínua que preserve incertezas, vozes e detalhes antes que se percam."
 type: Blog Post
 title: O que aprendi orquestrando agentes de IA para preservar a memória familiar
 translationKey: family-memory

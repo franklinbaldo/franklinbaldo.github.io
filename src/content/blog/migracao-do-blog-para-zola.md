@@ -1,4 +1,5 @@
 ---
+tldr: "A migração de Astro para Zola só está completa se preservar o blog como sistema de publicação: posts, traduções, versões, rankings, música, mídia, links, feeds, redirecionamentos e acessibilidade. O artigo apresenta a conversão como projeção reproduzível do acervo canônico e define verificações de conteúdo e navegação. O sucesso da primeira página renderizada é apenas o começo; a conclusão exige paridade funcional e deploy efetivamente validado."
 type: Blog Post
 title: "Do Astro ao Zola: a migração deste blog"
 author: franklin

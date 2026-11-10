@@ -1,4 +1,5 @@
 ---
+tldr: "A persona prompt breaks its own illusion when it tells an AI that it is not pretending to be the person it portrays. The negation reveals the theatrical frame that was supposed to remain implicit. The essay links this effect to the fourth wall, Tinkerbell and an ironic theology of persona, where an agent can sustain its role only by not explicitly exposing the creator and conditions of the performance. Naming the mechanism can destroy the experience it was meant to support."
 type: Blog Post
 title: The Third Half and the Fourth Wall
 description: >-

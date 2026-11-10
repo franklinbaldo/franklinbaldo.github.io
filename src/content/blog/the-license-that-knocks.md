@@ -1,4 +1,5 @@
 ---
+tldr: "Trying to license agent skills grows into a protocol for auditable compliance. Instead of building a self-enforcing payment system, the proposal separates permission from pricing, defines measurable use, identifies the exact policy version and records verifiable claims without covert telemetry. It also confronts copyright limits and the difference between source availability and open source. The intended result is not a license that watches everything, but one that teaches participating agents to leave evidence of compliance."
 type: Blog Post
 title: 'The license that knocks'
 description: >-

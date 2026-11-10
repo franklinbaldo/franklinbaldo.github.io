@@ -23,6 +23,27 @@
 .article-progress::-moz-progress-bar {
   background: var(--accent);
 }
+.article-tldr {
+  margin-block: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  overflow-wrap: anywhere;
+}
+.article-tldr > summary {
+  padding: 0.9rem 1.1rem;
+  cursor: pointer;
+  font-weight: 650;
+}
+.article-tldr > summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.article-tldr > p {
+  padding: 0 1.1rem 1rem;
+  margin: 0;
+  line-height: 1.65;
+}
 .article-toc,
 .article-series {
   padding: 1rem 1.25rem;

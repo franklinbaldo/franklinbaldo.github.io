@@ -1,4 +1,5 @@
 ---
+tldr: "After almost missing a legal deadline because a completed draft was mistaken for a filed act, the author separates agent preparation from authorized execution. Sandboxes, signatures and review gates preserve accountable control, but they can also become empty rituals if the reviewer fails to inspect the work. The key conclusion is that automating production does not transfer responsibility for irreversible acts: someone must still verify that the intended action happened."
 type: Blog Post
 title: 'The Art of Delegation: Signatures and Sandboxes'
 description: >-

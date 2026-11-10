@@ -1,4 +1,5 @@
 ---
+tldr: "A aparição de Uqbar em dados históricos do Google Ngram anteriores ao conto de Borges provavelmente decorre de erros de catalogação, OCR ou coincidências, não de uma antecipação inexplicável. O fenômeno, no entanto, reproduz a ficção borgiana em miniatura: um índice confere aparência de passado documental a algo inventado. O texto termina sem atribuir causa definitiva aos pontos do gráfico, destacando a facilidade com que bases confiáveis fabricam uma memória ilusória."
 type: Blog Post
 title: 'O banco de dados que se lembrou de Uqbar'
 description: >-

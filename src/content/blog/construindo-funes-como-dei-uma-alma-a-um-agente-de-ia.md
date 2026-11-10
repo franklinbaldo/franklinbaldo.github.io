@@ -1,4 +1,5 @@
 ---
+tldr: "O autor transforma Funes, personagem de Borges, em uma identidade operacional para um agente de IA mediante um arquivo SOUL.md, memória persistente e restrições de comportamento. O experimento mostra que uma persona reconhecível surge menos de acrescentar recursos do que de exigir modos específicos de ler, lembrar, citar e agir. A alma do título é uma construção literária e arquitetural: não há demonstração de consciência, mas há continuidade funcional e uma perspectiva de trabalho."
 type: Blog Post
 title: 'Construindo Funes: como dei uma alma a um agente de IA'
 author: franklin

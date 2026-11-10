@@ -1,4 +1,5 @@
 ---
+tldr: "The essay argues that Article 489 of Brazil's Code of Civil Procedure, which demands reasoned judicial decisions, can become the serpent's egg of judicial patrimonialism when formal reasoning requirements are invoked selectively or left without enforcement. Against the backdrop of elite judicial reproduction, it examines how an apparently virtuous rule can shelter discretion and hierarchy when oversight is weak. The problem is not the duty to give reasons itself, but the gap between a normative ideal and the institutions tasked with applying it."
 type: Blog Post
 author: franklin
 title: "The Serpent's Egg"

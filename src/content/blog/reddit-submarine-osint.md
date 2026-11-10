@@ -1,4 +1,5 @@
 ---
+tldr: "A Reddit post appeared to locate a possible Iranian naval target, prompting claims that internet users were assisting military strikes. The article finds no demonstrated causal link between that post and an attack. Its more defensible conclusion is about the perceptual environment of war: public satellite imagery and amateur OSINT can make military assets visible, searchable and collectively interpreted, even when the observers never control the weapons."
 type: Blog Post
 title: "Are they really using a Reddit post to help bomb a submarine in Iran?"
 author: franklin

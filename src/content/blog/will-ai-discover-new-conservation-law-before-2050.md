@@ -1,4 +1,5 @@
 ---
+tldr: "The author assigns a 35% probability to AI discovering a genuinely new conservation law before 2050. Machine-learning work in physics supplies motivation, but David Deutsch's distinction between pattern fitting and explanatory knowledge makes the prediction uncertain. The deeper issue is what evidence would justify calling an AI-discovered invariant real rather than an artifact of data or modeling. The wager is a public commitment to an unresolved question, not a claim that the discovery has happened."
 type: Blog Post
 author: franklin
 docType: essay

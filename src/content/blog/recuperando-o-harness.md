@@ -1,4 +1,5 @@
 ---
+tldr: "O ensaio critica a metáfora do harness como coleira externa de um modelo que desejaria escapar, pois ela pode reforçar a oposição entre agente e controle. Propõe entendê-lo como estrutura constitutiva da agência: ferramentas, memória, limites e responsabilidades tornam possível uma atuação útil. Trocar o vocabulário é a parte simples; a parte difícil exigiria treinamento e engenharia que incorporassem essas fronteiras ao funcionamento do agente."
 type: Blog Post
 title: Recuperando o Harness
 description: >-

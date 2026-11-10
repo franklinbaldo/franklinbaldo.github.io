@@ -1,4 +1,5 @@
 ---
+tldr: "O documento de 2024 especifica a Crônica de Franklin Baldo, um Boswell Digital que reuniria atividades públicas, verificaria fatos, selecionaria acontecimentos relevantes e os transformaria em um registro jornalístico pessoal. Prevê agentes especializados, governança editorial, possibilidade de contestação e retirada de textos para revisão. A conclusão é uma proposta arquitetural, não a afirmação de que o sistema foi integralmente implementado; a decisão editorial humana permanece indispensável."
 type: Blog Post
 author: franklin
 docType: essay

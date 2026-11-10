@@ -1,4 +1,5 @@
 ---
+tldr: "Uma tarefa concluída de maneira errada durante uma audiência leva o autor a distinguir o motor de execução do harness que organiza contexto, decisões e supervisão. A API conversável do Jules permite intervir no meio da execução, enquanto arquivos persistentes de identidade e memória fazem o agente Funes sobreviver à troca de backend. A conclusão não é que o modelo tenha uma pessoa estável, mas que continuidade funcional e responsabilidade podem residir no sistema que o envolve."
 type: Blog Post
 title: A API do Jules como Backend do Harness
 author: franklin

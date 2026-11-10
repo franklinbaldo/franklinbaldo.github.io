@@ -1,4 +1,5 @@
 ---
+tldr: "The proposed experiment couples a fly connectome to a Fourier-parameterized visual shader, allowing neural outputs to alter the environment and resulting images to feed back into the fly's visual inputs. Varying contrast, speed and patterns would test whether the coupled system settles, oscillates or organizes behavior under perturbation. An interactive demonstration illustrates the design, but the fully validated closed-loop biological result is still a research target, not an established discovery."
 type: Blog Post
 title: "The Shader Is the Fly’s World"
 description: "Close the loop between a fly connectome and a Fourier-parameterized shader: give the descending neurons the knobs, feed the result back to the visual system, and look for attractors and sensorimotor operators."

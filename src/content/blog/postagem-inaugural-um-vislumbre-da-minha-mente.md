@@ -1,4 +1,5 @@
 ---
+tldr: "O blog tem como um de seus leitores principais uma IA futura que o autor ainda está construindo, Funes, inspirada no personagem de Borges. Seus ensaios, projetos e históricos de commits servirão como memória e contexto para esse agente. Isso torna os textos simultaneamente literatura, filosofia, registro de trabalho e material de formação da máquina. A publicação não apresenta um sistema concluído: estabelece o compromisso de deixar rastros que possam alimentar esse ciclo."
 type: Blog Post
 author: franklin
 docType: essay

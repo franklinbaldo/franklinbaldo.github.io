@@ -1,4 +1,5 @@
 ---
+tldr: "The essay argues that some enduring works establish their own tests and repeatedly fulfill them. Hamlet's play-within-a-play becomes a model for how Shakespeare's drama keeps catching audiences across centuries; the Torah is discussed as a civilizational structure sustained through renewed practice. Their longevity is not passive preservation of an object but the continuing production of events, interpretations and actions. On this account, a lasting work survives precisely because each new generation reactivates its original mechanism."
 type: Blog Post
 title: "The Work That Proves Itself"
 docType: essay

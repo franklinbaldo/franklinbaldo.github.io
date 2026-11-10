@@ -1,4 +1,5 @@
 ---
+tldr: "O autor aposta com probabilidade de 35% que uma inteligência artificial descobrirá uma nova lei de conservação antes de 2050. A aposta parte de resultados de aprendizado de máquina em física e da distinção entre reconhecer padrões e produzir explicações genuínas, especialmente à luz da crítica de David Deutsch. A questão decisiva não é só se uma IA achará uma regularidade útil, mas que evidência bastará para chamá-la de lei real. O texto não anuncia nenhuma descoberta: assume publicamente uma previsão incerta e suas consequências filosóficas."
 type: Blog Post
 author: franklin
 docType: essay

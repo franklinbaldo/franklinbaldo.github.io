@@ -1,4 +1,5 @@
 ---
+tldr: "A partir da trajetória de elites judiciais brasileiras, o artigo sustenta que o art. 489 do Código de Processo Civil, concebido para exigir fundamentação racional, pode ser apropriado como instrumento de patrimonialismo quando as exigências formais são aplicadas seletivamente e sem controle efetivo. A metáfora do ovo de serpente marca essa transformação de um princípio aparentemente virtuoso em proteção institucional de decisões arbitrárias. O alvo da crítica não é a obrigação de fundamentar, mas a distância entre sua promessa e sua aplicação."
 type: Blog Post
 author: franklin
 title: "O Ovo de Serpente"

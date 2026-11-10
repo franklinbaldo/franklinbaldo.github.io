@@ -1,4 +1,5 @@
 ---
+tldr: "Asking who one sees in the mirror leads to a comparison between human selfhood and AI personas. The essay argues that identities are performed, context-sensitive patterns rather than evidence of an immutable owner underneath. The Waluigi effect, masks, Buddhist no-self and philosophical emptiness complicate attempts to find an authentic face behind the simulation. The twist is that calling the underlying reality a void may be one more mask. Personhood remains a useful pattern, not a simple substance discoverable by removing roles."
 type: Blog Post
 title: Who Am I?
 description: 'Persona is performance, is ''as if it were'', until it is,'

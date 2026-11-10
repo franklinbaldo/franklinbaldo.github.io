@@ -311,6 +311,7 @@ for (const p of posts) {
       source: p.source,
       hero_image: p.hero,
       hero_image_alt: p.data.heroImageAlt ?? "",
+      tldr: typeof p.data.tldr === "string" ? p.data.tldr.trim() : "",
       tags: p.data.tags ?? [],
       tag_links: Object.fromEntries(
         (p.data.tags ?? []).map((tag) => [

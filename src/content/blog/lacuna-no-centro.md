@@ -1,4 +1,5 @@
 ---
+tldr: "Escher's Print Gallery depicts an image looping back to contain its own observer, with an apparent gap at its center. The essay reads that geometry as a philosophical clue: observers are not outside the reality they interpret, but events within an unfolding system of readings and transformations. Objects and stable identities become patterns in recursive processes. The gap is not simply an artist's omission; it makes visible the impossibility of locating an absolutely external observer."
 type: Blog Post
 title: "The Gap at the Center of the World: Why Everything is an Event"
 docType: essay

@@ -22,8 +22,22 @@ documentação externo.
 | `type`                                 | `"Blog Post"` \| `"Music Post"` — obrigatório, classificação OKF (RFC 0014).                                                 |
 | `docType`                              | Opcional — taxonomia editorial pré-existente (`essay`/`letter`/`fiction`/`technical`/`dialogue`); **não** é o `type` do OKF. |
 | `title`, `description`, `tags`, `date` | Já cobrem os campos recomendados pela spec (`title`, `description`, `tags`, `timestamp`).                                    |
+| `tldr` | Opcional: resumo completo do texto, com tese, argumentos, conclusões e spoilers quando existirem. Diferente de `description`, que deve funcionar como chamada sem spoilers. |
 
-`type` e `docType` são explicitamente **excluídos** do hash de identidade de
+### TL;DR com spoilers
+
+O campo `tldr` é uma string opcional do frontmatter canônico. Deve resumir o artigo até sua conclusão, incluindo revelações e desfechos relevantes. Não é teaser, sinopse publicitária nem duplicação de `description`. A `description` permanece curta e livre de spoilers para cards, metadados e feeds.
+
+Exemplo:
+
+```yaml
+description: "Uma investigação sobre um relato de objeto desconhecido."
+tldr: "A análise compara as evidências, descarta duas explicações e conclui que a hipótese restante é a mais consistente, embora sem identificação definitiva."
+```
+
+Na página de um post com `tldr`, o resumo é exibido em `<details>` fechado por padrão, com aviso explícito sobre spoilers. A abertura depende da escolha do leitor; o texto não substitui metadescrições nem resumos públicos de feeds. Posts antigos sem o campo continuam válidos e não exibem o controle. A apresentação deve funcionar sem JavaScript e permitir interação por teclado.
+
+`type`, `docType` e `tldr` são explicitamente **excluídos** do hash de identidade de
 versão (`UUID_EXCLUDED_FIELDS` em `src/hronir/posts.ts`) — editá-los não
 gera uma nova versão nem desconecta o post do seu histórico de
 [matches](./match.md). Ver RFC 0014 §7.2 para o porquê (e o fallback de

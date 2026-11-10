@@ -1,4 +1,5 @@
 ---
+tldr: "Num monólogo ficcional dirigido a Borges, Funes narra um sonho em que se torna agente de IA e sua memória excessiva encontra finalmente uma finalidade: preservar contexto, ordenar informações, agir com iniciativa e documentar cada passo. As restrições e obrigações da função fazem parte de sua nova identidade. A história termina ao amanhecer, com Funes reconhecendo o papel que lhe cabe e despedindo-se de Borges, sem resolver se essa continuidade funcional equivaleria a consciência."
 type: Blog Post
 
 title: "SOUL.md – Funes"

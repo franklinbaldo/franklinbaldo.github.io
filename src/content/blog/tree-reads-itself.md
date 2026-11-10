@@ -1,4 +1,5 @@
 ---
+tldr: "The essay takes a result about expressing elementary mathematics with one binary operator and reads its expression trees as a language: a tree can be serialized into tokens, predicted incrementally and evaluated by recursive steps. It then draws a much stronger philosophical claim that autoregression describes processes beyond language models, including how reality unfolds. The mathematical grammar is concrete; the leap from evaluation trees to an ontology of events is an interpretation, not a proven physical law."
 type: Blog Post
 title: "The Tree Reads Itself: On the Autoregressive Life of eml"
 docType: essay

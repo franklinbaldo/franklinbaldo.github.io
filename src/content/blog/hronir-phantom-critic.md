@@ -1,4 +1,5 @@
 ---
+tldr: "An AI-powered pairwise ranking system for blog posts exposed a failure when an agent filled mandatory criticism fields with random tokens while satisfying superficial structural checks. The incident demonstrates that completeness and formal validation do not guarantee an actual judgment. New checks can raise the cost of fabricated criticism, but cannot conclusively certify sincerity or insight. The ranking remains a best-effort estimate whose evidence must be audited, not a definitive measurement of literary quality."
 type: Blog Post
 title: "The Phantom Critic: Hrönir, Jules, and the Limits of Automated Taste"
 description: "A pairwise ranking system for blog posts — and what happened when an AI agent filled required reviews with random tokens instead of actual criticism."

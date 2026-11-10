@@ -1,4 +1,5 @@
 ---
+tldr: "FlyTTS tests whether a frozen MaleCNS recurrent network can provide useful states for reconstructing a raw audio waveform directly from text and feedback, without a vocoder or spectrogram stage. In the browser, a small online readout learns against one LJSpeech WAV sample, while the input coupling and dynamics are engineered rather than a biological speech model. The experiment seeks single-utterance convergence first; generalization to many utterances and a trainable input adapter remain future work."
 type: "Blog Post"
 title: "FlyTTS: training a fly connectome to generate raw waveform in the browser"
 description: "A continuous browser loop feeds text and the model's own audio back into a frozen MaleCNS connectome and trains an online readout against a target WAV sample by sample."

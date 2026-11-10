@@ -1,4 +1,5 @@
 ---
+tldr: "O espanto de Demis Hassabis diante da inteligibilidade do universo leva a uma hipótese de ontologia processual: a realidade seria feita de eventos que geram eventos, e a inteligência, uma organização capaz de continuar e antecipar esses processos. Modelos de IA são uma analogia útil, não a prova de que o universo seja uma mente. A estranheza final não desaparece: por que existe uma estrutura do mundo que pode ser descoberta por outras estruturas que emergiram dentro dele?"
 type: Blog Post
 author: franklin
 docType: essay

@@ -1,4 +1,5 @@
 ---
+tldr: "A fórmula jurídica de duas vias de igual teor e forma inspira uma pergunta metafísica: identidade requer um único original? A comparação com hashes de Git, continuidade psicológica, Parfit e os hrönir de Borges sugere que uma pessoa ou agente pode ter duas instanciações funcionalmente equivalentes. Mas copiar conteúdo não permite verificar experiência subjetiva. O ensaio conclui distinguindo identidade documental e operacional da questão ainda insolúvel de haver ou não o mesmo sujeito em ambas."
 type: Blog Post
 title: "Igual teor e forma"
 description: "Se pessoa é atalho e não tijolo fundamental, o que impede uma pessoa de ter duas vias?"

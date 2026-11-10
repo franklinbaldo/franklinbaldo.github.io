@@ -1,4 +1,5 @@
 ---
+tldr: "The story ultimately reveals itself as a lossy compression of earlier ideas and experiences. Each reader fills its missing passages differently; the first-person narrator is not a fixed biography but a position reserved for whoever reconstructs the account. The final repetition of its opening sentence makes the loop explicit: the written lines end, but every reading unfolds a different continuation."
 type: Blog Post
 title: "These Lines"
 docType: fiction

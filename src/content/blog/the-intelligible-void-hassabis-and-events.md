@@ -1,4 +1,5 @@
 ---
+tldr: "Demis Hassabis's astonishment at an intelligible universe leads the author to a process ontology: reality may consist of events that generate further events, with intelligence understood as one organized way of continuing and anticipating them. AI models supply an analogy and convergent representations provide a suggestive empirical clue, but neither establishes that the universe is itself a mind. The unresolved question is why the world admits descriptions by systems that arose within it."
 type: Blog Post
 author: franklin
 docType: essay

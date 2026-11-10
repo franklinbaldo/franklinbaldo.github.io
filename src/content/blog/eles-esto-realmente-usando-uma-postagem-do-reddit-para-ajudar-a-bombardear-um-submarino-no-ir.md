@@ -1,4 +1,5 @@
 ---
+tldr: "Uma postagem do Reddit com coordenadas de um possível ativo militar iraniano gerou a alegação de que usuários da internet estariam ajudando a selecionar alvos. O artigo separa o que pode ser observado da inferência causal que não foi demonstrada: não há prova de que a postagem tenha orientado um ataque. O resultado mais relevante é outro: imagens, mapas e discussões públicas transformam a guerra num acontecimento permanentemente observado e documentado por civis, ainda que eles não controlem as operações militares."
 type: Blog Post
 
 title: "Eles estão realmente usando uma postagem do Reddit para ajudar a bombardear um submarino no Irã?"
