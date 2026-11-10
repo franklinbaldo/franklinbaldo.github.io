@@ -1,5 +1,5 @@
 ---
-tldr: "O ensaio faz três maneiras de explicar, testar e intervir no mundo entrarem em conflito para perguntar que tipo de ferramenta intelectual realmente produz conhecimento. Nenhum martelo serve para todo prego: formalização, observação e interpretação têm forças distintas e pontos cegos. O resultado não é escolher um vencedor universal, mas compreender que um problema muda conforme o instrumento usado e que a boa investigação precisa saber quando trocar de ferramenta."
+tldr: "Um advogado, um brasileiro e um servidor público respondem de maneiras diferentes à pergunta sobre como alinhar agentes de IA. Suas perspectivas oferecem três ingredientes: documentação formal dos atos, atenção às condições institucionais reais e limites de responsabilidade. Um quarto componente, a verificabilidade por endereçamento de conteúdo, vem de outra tradição técnica. O ensaio acompanha a origem biográfica das propriedades de uma proposta de alinhamento e rejeita a ideia de que uma única ferramenta intelectual basta para todos os problemas."
 type: Blog Post
 title: "Três Martelos Entram num Bar"
 description: "Sobre três posturas profissionais, quatro propriedades de alinhamento e a propriedade que teve que vir de fora."
