@@ -1,4 +1,5 @@
 ---
+tldr: "O documento americano desclassificado não comprova a queda de uma nave em Conde, Bahia, em 1963: ele registra a circulação de uma notícia de rádio. Um despacho posterior relata que o consulado não encontrou confirmação local, enquanto jornais e uma crônica satírica de Stanislaw Ponte Preta mostram como a narrativa já se transformava à época. A hipótese de um balão é plausível, mas não demonstrada. A investigação termina com lacunas documentais e uma descoberta metalinguística: arquivos, desmentidos e agora este artigo continuam reproduzindo e modificando a própria história."
 type: Blog Post
 title: "O OVNI de Conde e a história que começou a arquivar a si mesma"
 description: "Vi no Reddit um documento desclassificado sobre um suposto OVNI na Bahia em 1963. Fui procurar os jornais da época e acabei entrando na própria cadeia de arquivos que manteve a história viva."
