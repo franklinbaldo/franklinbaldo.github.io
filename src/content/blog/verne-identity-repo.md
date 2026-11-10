@@ -1,4 +1,5 @@
 ---
+tldr: "The identity-repo pattern stores an AI agent's durable instructions, preferences, project lessons and historical changes in a Git repository separate from its execution engine. Future sessions can restore context, audit the agent's evolution and switch from Jules to another backend without discarding all accumulated working knowledge. The design establishes functional continuity and portability, but does not settle whether two executions constitute the same conscious individual."
 type: Blog Post
 author: franklin
 docType: essay
