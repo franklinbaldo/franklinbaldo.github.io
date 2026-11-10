@@ -1,4 +1,5 @@
 ---
+tldr: "O texto apresenta a hipótese central do blog: aquilo que chamamos de coisas pode ser entendido como padrões temporários de eventos e processos. Os futuros ensaios investigarão essa ideia por meio de filosofia, IA e software. Não há conclusão demonstrada ou uma resposta final à pergunta sobre descobrir uma estrutura real do universo versus projetá-la; a publicação estabelece o programa de pesquisa do autor."
 type: Blog Post
 title: "Bem-vindo a Eventos até o Fundo"
 docType: essay
