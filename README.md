@@ -1,6 +1,6 @@
 # franklinbaldo.github.io
 
-Personal blog and digital garden of Franklin Baldo. Built with **Astro 7** and **Pico.css v2**.
+Personal blog and digital garden of Franklin Baldo. Published with **Zola 0.23.6** and **Pico.css v2**. The former Astro renderer is retained only for migration reference.
 
 **Live site:** https://franklinbaldo.github.io/
 
@@ -44,14 +44,14 @@ Native templates and browser assets live in `zola/`; exporters and the static pr
 
 ```
 src/
-├── components/        Astro components
 ├── content/
-│   └── blog/          Posts (.md/.mdx) — slug = filename = URL
-├── content.config.ts  Zod schema for the blog collection
-├── lib/               Build-time TypeScript helpers
-└── pages/             Routes (bilingual: / and /pt/)
+│   └── blog/          Canonical bilingual Markdown/MDX source
+├── lib/               Reusable editorial and media helpers
+└── hronir/           Ranking and editorial projections
 
+zola/                   Published templates and browser assets
 scripts/
+├── zola/              Production projections, build and browser tests
 ├── hronir/            Hrönir perspectives/skills and legacy support resources
 ├── lib/               Shared helpers (content.mjs, blog-links.mjs)
 └── oneoff/            One-shot scripts, not part of the build
