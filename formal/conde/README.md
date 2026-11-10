@@ -40,6 +40,28 @@ eventos distintos ou datas de desprendimento diferentes. Essa formalização
 não transforma o registro catalográfico de origem comum em prova de
 separação simultânea.
 
+## Alcançabilidade e ligação com observações
+
+O módulo `Conde1963/Reachability.lean` formaliza uma dinâmica relativa
+**discreta e unidimensional**: atualização de velocidade pela aceleração
+relativa e atualização do deslocamento pela velocidade. Demonstra, por
+indução e com inteiros exatos, intervalos que contêm todos os estados
+compatíveis com limites `K` (impulso inicial) e `A` (aceleração relativa
+máxima por passo). Inclui provas de exclusão de observações externas ao
+intervalo.
+
+O módulo `Conde1963/Bridge.lean` conecta efetivamente esses teoremas
+aos limites `max528 + max529` derivados da separação comum. Assim,
+**sob as premissas explicitadas**, uma observação futura de separação
+relativa maior que o raio admissível poderá falsificar uma hipótese.
+
+Nenhum `A`, `K` ou duração de passo foi obtido da documentação histórica,
+e a discretização não corresponde ainda à dinâmica orbital real (nem TEME,
+nem SGP4). O caderno
+[`docs/research/conde-orbital-constraints-provenance.md`](../../docs/research/conde-orbital-constraints-provenance.md)
+documenta o que os catálogos permitem afirmar, a divergência de
+etiqueta Agena D vs. lançador Agena B e os dados ainda ausentes.
+
 ## Executar
 
 ```sh
@@ -53,9 +75,8 @@ como premissas explícitas.
 
 ## Próxima fatia
 
-1. Transformar TLEs e suas incertezas em estados intervalares separados por objeto.
-2. Formalizar o acoplamento inicial e limites de impulso de separação
-   **após** obter informações mecânicas que fundamentem esses limites.
+1. Transformar TLEs e suas incertezas em estados intervalares separados por objeto, com validação independente.
+2. Substituir limites simbólicos de impulso por intervalos fisicamente documentados, apenas após identificar mecanismos de separação.
 3. Definir solução dinâmica certificada: integração validada e aritmética
    intervalar para arrasto e gravitação.
 4. Construir certificado reproduzível para inexistência de solução
