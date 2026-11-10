@@ -351,6 +351,20 @@ A identificação do lançamento está no [catálogo GCAT de Jonathan McDowell](
 
 A coincidência do dia da reentrada com a transmissão no Rio permanece intrigante; a identidade militar do lançamento não demonstra que qualquer pedaço tenha atravessado a atmosfera sobre a Bahia, muito menos que tenha sido encontrado intacto em Conde. Se o satélite principal continuou em órbita por mais cinco anos, a suposta esfera com janelas e cadáver certamente não era *o satélite principal*. O fragmento 528 pode ter sido uma peça separada, mas precisamos descobrir qual, e onde caiu ou se desintegrou.
 
+## Três datas de reentrada não são três coordenadas
+
+Uma ideia tentadora seria pegar o segundo fragmento, que reentrou em dezembro, e o conjunto satélite/Agena, que reentrou em 1969, e usar os dois para reconstruir a trajetória do primeiro detrito em novembro de 1963. O problema é que **essas datas não informam o ponto geográfico de reentrada**. E, depois que se separam, objetos de massas, áreas e atitudes diferentes sofrem arrasto diferente. Não são três pontos conhecidos de uma mesma curva.
+
+Mas encontramos três conjuntos de elementos orbitais históricos, um para cada objeto. Eles têm épocas diferentes: **NORAD 528** em **27 de outubro de 1963, 14h40 UTC**; **NORAD 529** em **30 de dezembro de 1963, 11h25 UTC**; e **NORAD 527**, conjunto principal, em **8 de janeiro de 1969, 12h44 UTC**. Para cada um, converti o movimento médio do TLE em um período e uma altitude orbital média aproximada: **91,43 minutos e 345 km** para o 528; **89,45 minutos e 247 km** para o 529; **88,19 minutos e 185 km** para o 527.
+
+![Três mapas mundiais mostrando arcos orbitais calculados separadamente nas épocas dos TLEs dos objetos NORAD 528, 529 e 527](/images/conde-ferret-tres-orbitas-tle.svg)
+
+Os três mapas usam as fronteiras vetoriais do [Natural Earth](https://www.naturalearthdata.com/downloads/110m-cultural-vectors/). Os arcos foram calculados diretamente dos elementos orbitais com uma aproximação Kepleriana de dois corpos e a rotação sideral da Terra, **apenas para uma volta ao redor da época de cada TLE**. Eles servem para mostrar o que é uma trajetória orbital geográfica calculada, com longitude, diferentemente da faixa de latitudes da figura anterior. Não são uma propagação SGP4 validada, não representam o percurso em 8 de novembro e **não mostram o lugar de reentrada**.
+
+Para calcular a trajetória de novembro seria preciso obter os elementos do **528** suficientemente próximos do dia 8, ou observações de rastreamento capazes de ajustar um modelo atmosférico e orbital com incerteza quantificada. Os elementos de dezembro do 529 e os de 1969 do 527 não substituem esse dado: pertencem a corpos diferentes que seguiram evoluções orbitais independentes.
+
+Os TLEs históricos podem ser conferidos individualmente nos registros [528](https://www.itau.magnetic-declination.com/satellite/?s=528), [529](https://www.itau.magnetic-declination.com/satellite/?s=529) e [527](https://www.itau.magnetic-declination.com/satellite/?s=527). O [GCAT](https://planet4589.org/space/gcat/data/derived/currentcat.html) confirma a relação de origem entre os três objetos e suas reentradas registradas.
+
 ## Até onde a órbita de um fragmento poderia chegar?
 
 Uma outra pista surgiu durante a pesquisa: o catálogo orbital registra a reentrada, em **8 de novembro de 1963**, de um fragmento americano identificado como **FTV 2313 DEB**, número **NORAD 528**, designação internacional **1963-003B**. É a mesma data da transmissão da Rádio Tupi. Mas uma coincidência de calendário não é uma trajetória.
