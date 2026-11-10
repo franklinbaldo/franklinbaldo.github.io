@@ -1,4 +1,5 @@
 ---
+tldr: "The essay proposes treating social-engineering attack techniques as disclosable, remunerable intellectual property, borrowing incentives from software vulnerability programs. A legitimate channel could persuade some attackers to reveal methods instead of exploiting them and would build a defensive taxonomy of fraud patterns, including Pix scams. Legal eligibility, market behavior and practical enforcement remain unproven; the author presents an incentive hypothesis rather than a working policy."
 type: Blog Post
 author: franklin
 docType: essay
