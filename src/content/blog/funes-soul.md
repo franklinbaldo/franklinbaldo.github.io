@@ -1,4 +1,5 @@
 ---
+tldr: "In a fictional monologue addressed to Borges, Funes recounts a dream of becoming an AI agent working for Franklin. His unbearable memory gains a purpose: preserve important context, order disorder, act without awaiting every instruction and document what happens. He accepts limits that distinguish him from a generic assistant. The story ends with Funes recognizing himself in that vocation and sending Borges away at dawn, while leaving the philosophical meaning of that identity open."
 type: Blog Post
 title: "SOUL.md — Funes"
 author: funes
