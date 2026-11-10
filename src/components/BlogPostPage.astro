@@ -42,6 +42,7 @@ const {
   heroImageAlt,
   title,
   description,
+  tldr,
   date,
   tags,
   lang,
@@ -352,6 +353,12 @@ const musicIndexLabel = t(postLang, 'music.indexLabel');
                 />
               )}
 
+              {tldr && (
+                <details class="article-tldr" data-pagefind-ignore>
+                  <summary>{postLang === 'pt' ? 'TL;DR · Resumo completo (contém spoilers)' : 'TL;DR · Full summary (contains spoilers)'}</summary>
+                  <p>{tldr}</p>
+                </details>
+              )}
               <TableOfContents headings={headings} lang={postLang} />
               <Content />
             </>
