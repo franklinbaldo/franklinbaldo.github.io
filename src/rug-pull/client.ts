@@ -8,7 +8,7 @@
     type InvestigationKind,
     type PlayerAction,
     type PublicGameState,
-  } from "../../rug-pull/engine";
+  } from "./engine";
 
   let state: GameState | null = null;
   let initialPrice = 0.93;
@@ -204,5 +204,5 @@
     }
   }
 
-  document.addEventListener("astro:page-load", bind);
+  document.addEventListener("zola:page-load", bind);
 

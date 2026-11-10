@@ -1,6 +1,6 @@
 // Pure id-generation for the `blog` content collection's glob loader
 // (src/content.config.ts). Extracted so it's unit-testable without pulling
-// in the astro:content virtual module.
+// in the retired content collection.
 //
 // A legacy slug lives in its own folder <slug>/ holding peer version files
 // (v-<timestamp>.md) or an index.md; the collection loads exactly the file

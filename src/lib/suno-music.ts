@@ -1,6 +1,6 @@
 // Pure transforms shared between the build-time music content loader
 // (src/content.config.ts) and its unit tests. Kept dependency-free so it's
-// testable without pulling in astro:content.
+// testable without pulling in retired content collection.
 
 export function slugify(str: string): string {
   return str

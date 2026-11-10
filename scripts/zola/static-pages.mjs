@@ -67,7 +67,7 @@ function emitModule(file, source = readFileSync(file, "utf8")) {
     'function bind() { const root = document.querySelector("#rug-start"); if (!root || root.dataset.bound) return; root.dataset.bound = "true";'
   );
   js = js.replace(
-    'document.addEventListener("astro:page-load", bind);',
+    'document.addEventListener("zola:page-load", bind);',
     'if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bind, {once:true}); else bind();'
   );
   write(`static/${path}`, js);
@@ -80,7 +80,7 @@ for (const [name, path, title] of [
   const body = readFileSync(`scripts/zola/source/pages/${name}.html`, "utf8");
   const css = readFileSync(`scripts/zola/source/pages/${name}.css`, "utf8");
   const scriptUrl = name === "rug-pull"
-    ? emitModule(resolve("src/pages/games/rug-pull-client.ts"))
+    ? emitModule(resolve("src/rug-pull/client.ts"))
     : null;
   page(path, title, `${body}\n<style>${css}</style>\n${scriptUrl ? `<script type="module" src="${scriptUrl}"></script>` : ""}`);
 }

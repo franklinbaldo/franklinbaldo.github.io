@@ -1,4 +1,4 @@
-name: Zola migration preview
+name: Zola preview
 
 on:
   pull_request:

@@ -6,7 +6,7 @@
  * the next sync automatically instead of needing a separate cleanup step.
  *
  * Rendering (slug, genre parsing, YAML/markdown) happens at Astro build
- * time in src/content.config.ts's music loader, not here — this script's
+ * time in scripts/zola/prepare.mjs, not here — this script's
  * only job is "what does Suno currently say," kept close to the raw API
  * shape.
  *

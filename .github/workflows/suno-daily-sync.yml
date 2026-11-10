@@ -3,7 +3,7 @@ name: Suno Daily Sync
 # Daily: fetch the full Suno catalog (public + private — see
 # scripts/sync-suno-catalog.mjs's --include-private) and overwrite
 # data/suno-catalog.jsonl with exactly what Suno currently reports. Music
-# posts are synthesized from that file at build time (src/content.config.ts)
+# posts are synthesized from that file at build time (scripts/zola/prepare.mjs)
 # — this workflow only updates the raw data, never writes to
 # src/content/blog/. Commits straight to main with no human review step —
 # a deliberate choice (see PR discussion), not the repo's usual PR-based

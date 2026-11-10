@@ -1,4 +1,4 @@
-# Dependabot config. Two ecosystems: npm (this is a Node/Astro project) and
+# Dependabot config. Two ecosystems: npm (this is a Node/Zola project) and
 # github-actions (the workflows under .github/workflows/). Both run weekly.
 #
 # Minor and patch bumps are grouped into a single PR per ecosystem per run —

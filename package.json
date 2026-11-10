@@ -21,9 +21,8 @@
     "dev": "node scripts/zola/serve.mjs --build --watch",
     "build": "node scripts/zola/build.mjs",
     "preview": "node scripts/zola/serve.mjs",
-    "astro": "astro",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
+    "format": "prettier --write scripts src zola",
+    "format:check": "prettier --check scripts src zola",
     "lint": "oxlint",
     "music:sync": "node scripts/sync-suno-catalog.mjs",
     "suno-rank": "node --import tsx/esm scripts/suno-rank/index.js",
@@ -39,22 +38,14 @@
     "tiers:check:malecns": "uv run --with 'okf-parser @ git+https://github.com/franklinbaldo/okf-parser@e8ed6bbd93846a40ac17a0be88c658020e85443a' okf-parser check knowledge/malecns-projects --require-spec ../../specs/okf-types/{slug}.md --normative-spec",
     "tiers:check": "npm run tiers:check:posts && npm run tiers:check:music && npm run tiers:check:projects && npm run tiers:check:malecns",
     "build:zola": "node scripts/zola/build.mjs",
-    "check:zola:parity": "node scripts/zola/parity.mjs",
     "test:zola": "node --test scripts/zola/*.test.mjs scripts/zola/apps/*.test.mjs",
-    "build:astro": "node scripts/pregen.mjs && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/check-player-payload.mjs dist && node scripts/fix-redirect-html.mjs && pagefind --site dist && node --import tsx/esm scripts/generate-ranking-snapshot.mjs",
-    "dev:astro": "node scripts/pregen.mjs && ASTRO_TELEMETRY_DISABLED=1 astro dev",
-    "preview:astro": "ASTRO_TELEMETRY_DISABLED=1 astro preview"
+    "check:no-astro": "node scripts/check-no-astro.mjs"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^7.3.5",
-    "@astrojs/mdx": "^8.1.2",
-    "@astrojs/rss": "^4.0.19",
-    "@astrojs/sitemap": "^3.7.4",
     "@fontsource/fraunces": "^5.3.0",
     "@fontsource/inter": "^5.3.0",
     "@franklinbaldo/okf-parser": "0.45.7",
     "@picocss/pico": "^2.1.1",
-    "astro": "^7.4.4",
     "dompurify": "^3.4.17",
     "fast-xml-parser": "^5.11.2",
     "github-slugger": "^2.0.0",
@@ -78,16 +69,15 @@
     "yaml": "^2.9.1"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.12",
     "@lhci/cli": "^0.15.1",
     "depcheck": "^1.4.7",
     "esbuild": "^0.28.2",
     "gray-matter": "^4.0.3",
     "openskill": "^5.0.1",
-    "oxfmt": "0.75.0",
     "oxlint": "^1.90.0",
     "playwright": "^1.64.1",
     "remark": "15.0.1",
-    "tsx": "^4.23.15"
+    "tsx": "^4.23.15",
+    "prettier": "3.9.10"
   }
 }

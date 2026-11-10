@@ -2,7 +2,7 @@
 
 ## Project overview
 
-Static site currently deployed with **Zola 0.23.6**; **SSG 0.0.68 is an experimental migration candidate** in PR #2394. Astro remains as an explicit legacy parity fallback, not the production generator. Canonical article content lives in `src/content/blog/`.
+Static site currently deployed with **Zola 0.23.6**; **SSG 0.0.68 is an experimental migration candidate** in PR #2394. The old renderer is no longer a build dependency. Canonical article content lives in `src/content/blog/`.
 
 Hrönir is an **OKF-first editorial evidence system**. Its persistent state is
 Markdown under `.routines/hronir/evaluations/`; agents create and complete evaluations
@@ -90,10 +90,10 @@ The parser owns structural completeness. The evaluator owns semantic quality:
 
 ```bash
 npm ci                    # install deps
-npm run format:check      # auditoria Oxfmt (não é gate obrigatório do CI)
-npm run format            # formatar com Oxfmt; revisar o diff antes de commitar
+npm run format:check      # auditoria Prettier (não é gate obrigatório do CI)
+npm run format            # formatar com Prettier; revisar o diff antes de commitar
 npm run build             # Zola production static build
-npm run build:astro       # parity fallback only
+npm run check:no-astro    # guard contra reintrodução de Astro
 node --test scripts/ssg/*.test.mjs  # SSG migration tests
 ```
 
@@ -107,7 +107,7 @@ node --test scripts/ssg/*.test.mjs  # SSG migration tests
 ## Convenções do repo
 
 Estas são as convenções load-bearing. Todas são enforçadas por CI (check:hygiene,
-prettier, astro check, doctor) ou documentadas aqui. Convenções em prosa sem
+prettier, build Zola, doctor) ou documentadas aqui. Convenções em prosa sem
 check derivam — veja RFC 0004.
 
 ### Línguas
@@ -154,8 +154,8 @@ Formato frouxo mas nomeado:
 
 ### `.ts` vs `.mjs` em `src/lib/`
 
-- `.mjs`: arquivos importáveis por scripts Node e por `astro.config.mjs` (sem transpile).
-- `.ts`: código que só o site Astro importa (transpilado pelo build).
+- `.mjs`: arquivos importáveis por scripts Node e por `scripts/zola/prepare.mjs` (sem transpile).
+- `.ts`: código tipado compartilhado, transpilado por ferramentas Node.
 
 ### Processo de RFC
 
@@ -196,7 +196,7 @@ O `check:hygiene` valida o nome.
   `scripts/ssg/` contém adaptadores e gates de pré-visualização.
   `.cache/ssg-native/` e `dist-ssg/` são descartáveis.
 - **Fronteira**: `scripts/ssg/**` não importa `scripts/zola/**`,
-  componentes Astro ou código de páginas; a lógica editorial compartilhada
+  componentes de apresentação ou código de páginas; a lógica editorial compartilhada
   pertence a `scripts/lib/publication.mjs` ou aos domínios canônicos.
 - **Decisão arquitetural e plano de limpeza**:
   [`docs/architecture/ssg-native.md`](docs/architecture/ssg-native.md).
@@ -210,7 +210,6 @@ O `check:hygiene` valida o nome.
 
 ```
 src/content/blog/         Blog posts (markdown + frontmatter)
-src/components/           Astro components
 src/lib/                  Build-time TypeScript helpers
 src/hronir/               Projeções de leitura/build do Hrönir (ranking, matches, seleção legada)
   __tests__/              Testes das projeções (node:test)

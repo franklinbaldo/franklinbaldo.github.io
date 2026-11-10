@@ -2,9 +2,7 @@
 
 ## Estado
 
-Esta branch configura `deploy.yml` para gerar e publicar `dist-zola/`. O cutover
-só ocorre após merge e deploy verificados. Um build local verde, isoladamente,
-não significa que a migração esteja concluída.
+A publicação está em Zola 0.23.6; este documento preserva os contratos e as evidências da migração.
 
 ## Executar
 
@@ -26,7 +24,7 @@ A entrada descartável vive em `.cache/zola-site/`; a saída é `dist-zola/`.
 **Nunca execute Zola com a saída padrão sobre o diretório `public/` deste
 repositório**: ele contém assets-fonte, não um artefato descartável.
 
-Não é necessário gerar HTML com Astro para executar `build:zola`. Node continua
+O build Zola não executa nenhuma etapa Astro. Node continua
 responsável por projeções editoriais, KaTeX, imagens sociais e Pagefind; Zola
 renderiza os templates e o conteúdo das páginas.
 
@@ -45,20 +43,19 @@ renderiza os templates e o conteúdo das páginas.
 - Capítulos de audiolivro só entram quando `publication.status` é `published`
 - OG continua usando os renderizadores e fontes existentes
 
-O artigo `/pt/blog/migracao-do-blog-para-zola/` explica a mudança sem anunciar
-um cutover que ainda não aconteceu.
+O artigo `/pt/blog/migracao-do-blog-para-zola/` documenta a mudança.
 
 ## Gate de publicação
 
 ```sh
-npm run build:astro
-npm run build:zola
-npm run check:zola:parity
+npm run build
+npm run test:zola
+npm run check:no-astro
 ```
 
-O último comando compara rotas/artefatos existentes e todos os assets públicos,
-gera `.cache/zola-parity.json` e retorna erro se houver ausências. O relatório
-não transforma páginas genéricas em equivalência funcional. Além de zerar ou
+A paridade histórica foi registrada na PR #2374. O último comando impede
+reintrodução de Astro; regressões funcionais são cobertas pelos testes
+Zola, pela auditoria de artefatos e pelos smoke tests do navegador. Além de zerar ou
 justificar explicitamente cada diferença, é obrigatório testar:
 
 1. Homes, posts EN/PT, Markdown/KaTeX/iframes, imagens e links de tradução
@@ -69,8 +66,7 @@ justificar explicitamente cada diferença, é obrigatório testar:
 6. Demos, jogos, apresentações e seus scripts/artefatos
 7. Preview visual desktop/mobile e ausência de erros de console
 
-Somente após esses gates deve-se integrar a alteração de `deploy.yml` para
-Zola e `dist-zola`. O workflow de preview não tem permissão de Pages e nunca publica.
+O deploy já utiliza exclusivamente `dist-zola`. O workflow de preview não tem permissão de Pages e nunca publica.
 Não há migração automática de configuração de segurança ou permissões.
 
 ## Referências
