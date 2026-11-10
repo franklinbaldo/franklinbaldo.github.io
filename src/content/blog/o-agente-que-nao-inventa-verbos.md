@@ -1,4 +1,5 @@
 ---
+tldr: "O artigo propõe restringir agentes de IA a um catálogo explícito de ações autorizadas, descritas em procedimentos verificáveis, em vez de permitir que decidam e executem qualquer operação que consigam formular. O agente pode interpretar um expediente e propor uma ação, mas a execução deve pertencer a verbos predefinidos, com proveniência e etapas de revisão humana. Catálogos em Gherkin e conteúdo endereçado por hash tornam escolhas e justificativas auditáveis. O desafio remanescente é representar situações novas sem transformar o catálogo em uma falsa garantia de alinhamento."
 type: Blog Post
 title: O Agente que Não Inventa Verbos
 description: >-
