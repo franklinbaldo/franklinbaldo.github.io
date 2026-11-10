@@ -8,7 +8,6 @@ import { frontmatter, stableName } from "./content.mjs";
 import { renderFactory } from "./apps/factory.mjs";
 import { readScienceCards } from "./apps/science.mjs";
 import { renderAtlas } from "./apps/atlas.mjs";
-import { readDeck } from "./apps/decks.mjs";
 
 const target = process.env.ZOLA_PREPARED_DIR || ".cache/zola-site";
 const read = (file) => readFileSync(file, "utf8");
