@@ -1,4 +1,5 @@
 ---
+tldr: "An AI agent records the wrong year while processing the author's father's oral memories, revealing the danger of turning uncertain recollections into falsely precise archival facts. The project responds with source preservation, explicit uncertainty, traceable corrections and human review of irreversible edits. Autonomous agents are useful not because they remember perfectly, but because well-designed friction makes continuous listening and responsible preservation possible."
 type: Blog Post
 title: What I Learned Orchestrating AI Agents to Preserve Family Memory
 translationKey: family-memory
