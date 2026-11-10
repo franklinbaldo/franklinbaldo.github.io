@@ -1,3 +1,5 @@
+import Conde1963.Separation
+
 /-!
 # Conde 1963: núcleo lógico de restrições
 
