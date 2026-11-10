@@ -365,6 +365,18 @@ Além disso, um TLE não é uma descrição Kepleriana osculante comum, sua deri
 
 O resultado desta rodada é mais restrito do que parece: **Conde não foi excluída por esse modelo, mas não houve confirmação de passagem nem de queda**. O experimento mostra principalmente quais novos dados seriam necessários para distinguir uma rota real das muitas curvas que podemos construir.
 
+## Os outros dois detritos podem servir de controle?
+
+Testei a ideia de usar também as reentradas do **NORAD 529**, em 31 de dezembro de 1963, e do conjunto **NORAD 527**, em 9 de janeiro de 1969, para conferir a hipótese de Conde. É um teste importante justamente porque a tentação seria imaginar três pontos de uma mesma trajetória. Não são: temos três datas civis de reentrada, nenhuma coordenada de queda, e apenas um conjunto de elementos orbitais tardios para cada corpo.
+
+Montei uma equação de arrasto para órbitas quase circulares em uma atmosfera exponencial, com uma mesma escala de altura para os três objetos e um parâmetro de decaimento separado para cada um. Fiz o cálculo para escalas atmosféricas exemplificativas de **30, 50 e 70 km**, escolhendo **120 km** como altura terminal hipotética. Para comparar datas civis sem hora registrada, usei **12h UTC** de cada dia como convenção de cálculo, nunca como horário histórico.
+
+O resultado é instrutivo, mas não confirma a Bahia: **todos os três cenários de atmosfera reproduziram as três datas quando se ajustou separadamente o arrasto de cada objeto**. Isso acontece por construção, pois há um parâmetro de decaimento livre para cada data. O ajuste mostra que **as três datas, sozinhas, não validam nem rejeitam** as duas rotas que foram forçadas anteriormente a passar por Conde. Também não revela suas longitudes finais.
+
+A análise revelou outra limitação: nos três TLEs públicos encontrados o campo **B\*** aparece zerado. O modelo SGP4 usa esse termo para representar o efeito do arrasto; a derivada de movimento médio, embora esteja impressa nos TLEs, não substitui o B\* no SGP4. Portanto, não temos nesses registros um coeficiente confiável para uma propagação atmosférica histórica. A [documentação do CelesTrak](https://celestrak.org/columns/v04n03/) explica essa distinção.
+
+Deixei [as equações, os valores ajustados e os dados de entrada no caderno técnico](https://github.com/franklinbaldo/franklinbaldo.github.io/blob/research/conde-orbita-geografica-1963/docs/research/conde-joint-decay-1963.md), junto de um [script Python reproduzível](https://github.com/franklinbaldo/franklinbaldo.github.io/blob/research/conde-orbita-geografica-1963/scripts/research/conde_joint_decay.py). A próxima prova útil não seria um quarto ajuste: seria obter **observações orbitais intermediárias que não participaram do ajuste**, além de dados solares e geomagnéticos contemporâneos. A NASA mantém uma série OMNI com F10.7 e índices Kp/ap desde 1963, mas ainda é necessário obter os valores pertinentes e ligá-los a um modelo de densidade válido.
+
 ## Três datas de reentrada não são três coordenadas
 
 Uma ideia tentadora seria pegar o segundo fragmento, que reentrou em dezembro, e o conjunto satélite/Agena, que reentrou em 1969, e usar os dois para reconstruir a trajetória do primeiro detrito em novembro de 1963. O problema é que **essas datas não informam o ponto geográfico de reentrada**. E, depois que se separam, objetos de massas, áreas e atitudes diferentes sofrem arrasto diferente. Não são três pontos conhecidos de uma mesma curva.
