@@ -46,13 +46,6 @@ function css(source, name) {
     source.replace(/:global\(([^)]+)\)/g, "$1")
   );
 }
-function extract(source, tag) {
-  const found = source.match(
-    new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${tag}>`)
-  );
-  if (!found) throw new Error(`Missing ${tag} block in app source`);
-  return found[1];
-}
 function page(
   id,
   path,
