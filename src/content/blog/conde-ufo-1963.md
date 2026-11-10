@@ -365,6 +365,12 @@ Além disso, um TLE não é uma descrição Kepleriana osculante comum, sua deri
 
 O resultado desta rodada é mais restrito do que parece: **Conde não foi excluída por esse modelo, mas não houve confirmação de passagem nem de queda**. O experimento mostra principalmente quais novos dados seriam necessários para distinguir uma rota real das muitas curvas que podemos construir.
 
+## Um pequeno teorema contra a tentação de preencher os espaços
+
+Resolvi formalizar em [Lean 4 um núcleo da investigação](https://github.com/franklinbaldo/franklinbaldo.github.io/tree/research/conde-orbita-geografica-1963/formal/conde). A primeira distinção é quase elementar, mas importante: os registros de uma origem comum e de três datas de reentrada **não implicam uma longitude de queda**. No modelo lógico, é possível atribuir localidades distintas ao objeto 528 mantendo idênticas todas essas observações. Isso não significa que as duas trajetórias sejam fisicamente realizáveis. Significa que **os fatos registrados não bastam, sozinhos, para decidir entre elas**.
+
+O arquivo Lean separa essas observações das hipóteses, demonstra a faixa idealizada de latitude subsatélite, constrói o contraexemplo de não identificabilidade e prova uma regra útil para o resto da pesquisa: adicionar uma restrição só pode reduzir o conjunto de cenários admissíveis, nunca recuperar um cenário que já foi excluído. A geometria orbital, os TLEs como estados intervalares e a dinâmica atmosférica ainda não estão formalizados. Há um [workflow de compilação](https://github.com/franklinbaldo/franklinbaldo.github.io/blob/research/conde-orbita-geografica-1963/.github/workflows/conde-lean.yml) específico para essas provas.
+
 ## Os outros dois detritos podem servir de controle?
 
 Testei a ideia de usar também as reentradas do **NORAD 529**, em 31 de dezembro de 1963, e do conjunto **NORAD 527**, em 9 de janeiro de 1969, para conferir a hipótese de Conde. É um teste importante justamente porque a tentação seria imaginar três pontos de uma mesma trajetória. Não são: temos três datas civis de reentrada, nenhuma coordenada de queda, e apenas um conjunto de elementos orbitais tardios para cada corpo.
