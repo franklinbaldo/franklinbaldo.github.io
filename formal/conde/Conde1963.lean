@@ -1,4 +1,5 @@
 import Conde1963.Separation
+import Conde1963.Reachability
 
 /-!
 # Conde 1963: núcleo lógico de restrições
