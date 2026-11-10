@@ -1,4 +1,5 @@
 ---
+tldr: "O conto revela que o próprio texto é uma compressão com perdas de ideias, histórias e experiências. Cada leitor reconstrói as partes ausentes de modo diferente, de forma que a primeira pessoa narrativa não identifica um autor biográfico: é o espaço reservado a quem lê e descomprime o relato. A repetição da frase inicial no final expõe a circularidade: estas linhas terminam, mas o texto continua a ser reconstruído a cada leitura."
 type: Blog Post
 title: "Estas linhas"
 docType: fiction
