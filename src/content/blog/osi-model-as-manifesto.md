@@ -1,4 +1,5 @@
 ---
+tldr: "The OSI networking model becomes an argument about reality: each layer interprets signals from another layer without direct access to the whole, and communication depends on translations between distinct perspectives. The essay extends this architecture to minds, language and process ontology, treating identity and understanding as layered events rather than fixed objects. It is a philosophical analogy drawn from engineering, not evidence that the OSI model alone proves a metaphysical theory."
 type: Blog Post
 title: "The OSI Model as Manifesto"
 docType: essay
