@@ -365,6 +365,20 @@ Além disso, um TLE não é uma descrição Kepleriana osculante comum, sua deri
 
 O resultado desta rodada é mais restrito do que parece: **Conde não foi excluída por esse modelo, mas não houve confirmação de passagem nem de queda**. O experimento mostra principalmente quais novos dados seriam necessários para distinguir uma rota real das muitas curvas que podemos construir.
 
+## Quando a órbita começa a acelerar, a previsão erra
+
+Conseguimos recuperar e processar em Kaggle um arquivo histórico com **45 TLEs do NORAD 528**, de janeiro a 27 de outubro de 1963. Há ainda 57 registros do fragmento 529 e 21 do conjunto principal 527 no mesmo ano. O espelho consultado deriva de exportações do Space-Track e foi identificado por hash. Ele não contém TLE do 528 depois de 27 de outubro.
+
+Ajustei aos registros do 528 três modelos de evolução do movimento médio: exponencial, quadrático e um modelo simplificado de arrasto com densidade exponencial. **Não usei Conde para calibrar nenhum deles.** Reservei observações posteriores a diferentes datas de corte para testar previsões genuinamente fora da amostra.
+
+O modelo físico simplificado foi o melhor dos três, mas não acertou a fase final. Quando calibrado apenas até 11 de outubro, errou os quatro TLEs seguintes com RMSE de **0,0615 revoluções/dia** e subestimou em **0,0861 revoluções/dia** o movimento médio de 27 de outubro. A aceleração terminal estava escapando ao modelo.
+
+Ao extrapolar até novembro, a previsão ficou instável. Calibrado com os 45 TLEs, o modelo cruza um limite terminal **arbitrário** de 120 km por volta de **9 de novembro**. Calibrado só com os últimos 25, 15 ou 10 registros, cruza entre **1º e 4 de novembro**. Não são datas históricas: são saídas de um modelo sensível à janela de treinamento. A equação também não calcula longitude de queda.
+
+Esse fracasso parcial é útil. **A ausência de rastreamento do 528 entre 27 de outubro e 8 de novembro não é uma lacuna que podemos preencher com uma curva aparentemente bem comportada.** Os modelos divergem justamente na fase para a qual precisamos de uma previsão independente.
+
+O [relatório com a validação temporal](https://github.com/franklinbaldo/franklinbaldo.github.io/blob/research/conde-orbita-geografica-1963/docs/research/conde-528-backtest-1963.md) e o [script reproduzível](https://github.com/franklinbaldo/franklinbaldo.github.io/blob/research/conde-orbita-geografica-1963/scripts/research/conde_528_fit.py) estão na PR. Por enquanto, nem Conde nem qualquer outro lugar foi excluído por essas contas.
+
 ## Um pequeno teorema contra a tentação de preencher os espaços
 
 Resolvi formalizar em [Lean 4 um núcleo da investigação](https://github.com/franklinbaldo/franklinbaldo.github.io/tree/research/conde-orbita-geografica-1963/formal/conde). A primeira distinção é quase elementar, mas importante: os registros de uma origem comum e de três datas de reentrada **não implicam uma longitude de queda**. No modelo lógico, é possível atribuir localidades distintas ao objeto 528 mantendo idênticas todas essas observações. Isso não significa que as duas trajetórias sejam fisicamente realizáveis. Significa que **os fatos registrados não bastam, sozinhos, para decidir entre elas**.
