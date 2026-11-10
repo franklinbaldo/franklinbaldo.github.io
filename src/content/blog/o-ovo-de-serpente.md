@@ -1,4 +1,5 @@
 ---
+tldr: "O artigo usa a imagem do ovo de serpente para examinar como práticas e justificativas aparentemente pequenas podem preparar consequências políticas e morais graves. A questão não é localizar retrospectivamente um único culpado, mas perceber quais decisões normalizam uma estrutura antes de ela revelar integralmente seus resultados. O ensaio alerta para a responsabilidade de quem reconhece um padrão emergente e precisa decidir o que fazer antes que os efeitos se tornem incontornáveis."
 type: Blog Post
 author: franklin
 title: "O Ovo de Serpente"
