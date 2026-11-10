@@ -1,6 +1,6 @@
 # franklinbaldo.github.io
 
-Personal blog and digital garden of Franklin Baldo. Published with **Zola 0.23.6** and **Pico.css v2**. The former Astro renderer is retained only for migration reference.
+Personal blog and digital garden of Franklin Baldo. Published with **Zola 0.23.6** and **Pico.css v2**. The Astro renderer was retired after the parity-verified migration.
 
 **Live site:** https://franklinbaldo.github.io/
 
@@ -36,7 +36,7 @@ Hrönir is both repository machinery and a public-facing curation artifact: eval
 | `npm run preview`       | Preview the built site locally            |
 | `npm run check:hygiene` | Repo hygiene (root files, lockfile, etc.) |
 
-Requires Node `>=24.0.0` and the official Zola **0.23.6** binary in PATH (or `ZOLA_BIN=/path/to/zola`). See [migration and verification instructions](docs/migrations/zola.md). `npm run build:astro` is an explicit legacy parity fallback; it is not the production generator.
+Requires Node `>=24.0.0` and the official Zola **0.23.6** binary in PATH (or `ZOLA_BIN=/path/to/zola`). See [migration and verification instructions](docs/migrations/zola.md). The former Astro build and its parity fallback have been removed.
 
 Native templates and browser assets live in `zola/`; exporters and the static preview server live in `scripts/zola/`. The disposable input is `.cache/zola-site/`. Never use the source `public/` directory as Zola output.
 

@@ -2,7 +2,7 @@
 type: Data Schema
 title: Post
 description: Um post do blog (ou música) — desde a RFC 0014 (r1), o próprio arquivo carrega o campo type do OKF.
-resource: ../../../src/content.config.ts
+resource: ../../../scripts/zola/prepare.mjs
 tags: [hronir, post, schema]
 timestamp: 2026-07-03T00:00:00Z
 ---
@@ -10,7 +10,7 @@ timestamp: 2026-07-03T00:00:00Z
 # Post
 
 Cada arquivo em `src/content/blog/<slug>/` (canônico ou versão `v-<timestamp>.md`)
-segue o schema `postSchema` de `src/content.config.ts`. Desde a RFC 0014 (r1),
+é projetado e validado durante o build por `scripts/zola/prepare.mjs`. Desde a RFC 0014 (r1),
 todo post carrega **literalmente** o campo `type` do OKF — obrigatório,
 `"Blog Post"` ou `"Music Post"` — em vez de só ser descrito por um bundle de
 documentação externo.

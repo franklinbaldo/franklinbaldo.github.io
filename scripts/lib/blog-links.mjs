@@ -2,8 +2,7 @@
 //
 // Background: blog files used to be named `YYYY-MM-DD-<slug>.md` and served at
 // `/blog/YYYY-MM-DD-<slug>/`. A cleanup renamed every file to a plain `<slug>`
-// (the URL is now literally the filename — see src/pages/blog/[...slug].astro,
-// which maps `params.slug = post.id`), but many inter-post links kept the old
+// (the URL now derives from the canonical post ID via the Zola publication projection), but many inter-post links kept the old
 // date-prefixed form and silently 404'd. This module is the single source of
 // truth for both the CI link check (scripts/check-links.mjs) and the redirect
 // generator (scripts/generate-redirects.mjs).

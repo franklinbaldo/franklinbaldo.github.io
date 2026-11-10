@@ -1,4 +1,3 @@
-import type { CollectionEntry } from "astro:content";
 import { DEFAULT_LANG as _DEFAULT_LANG, LANG_META } from "./languages.mjs";
 
 export { DEFAULT_LANG } from "./languages.mjs";
@@ -374,7 +373,7 @@ export function urlPrefix(lang: string | undefined): string {
   return configFor(lang).urlPrefix;
 }
 
-export function postUrl(entry: CollectionEntry<"blog">): string {
+export function postUrl(entry: { id: string; data: { lang?: string; slug?: string } }): string {
   const lang = entry.data.lang ?? _DEFAULT_LANG;
   const slug = entry.data.slug ?? entry.id;
   return `${urlPrefix(lang)}/blog/${slug}/`;

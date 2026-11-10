@@ -1,7 +1,7 @@
 // Scans src/content/blog/*.{md,mdx} frontmatter and emits
 // src/generated/blog-translation-pairs.json — a bidirectional map
 // { "/blog/slug/": { en: "/blog/en-slug/", pt: "/blog/pt-slug/" } }
-// Used by astro.config.mjs to inject hreflang links into the sitemap.
+// Used by the publication pipeline to emit hreflang links.
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";

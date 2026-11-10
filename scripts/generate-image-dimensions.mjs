@@ -3,7 +3,7 @@
 // syntax in post bodies. Astro's built-in Markdown image pipeline already
 // injects width/height for *local* images automatically, but it can't probe
 // *remote* URLs — those render as plain `<img>` with no dimensions, causing
-// CLS. astro.config.mjs's rehypeImageDims plugin reads this cache at build
+// CLS. This cache is available for future image dimension audits at build
 // time (no network I/O during the actual Astro build) to fill them in.
 //
 // Run manually whenever a post adds a new remote image:

@@ -122,7 +122,7 @@ for (const { file, versionString, parts } of entries) {
     );
   }
   // Mirrors the astro:content collection schema's `z.coerce.date()` (see
-  // src/content.config.ts) so a bad date fails here, with an actionable
+  // scripts/zola/prepare.mjs) so a bad date fails here, with an actionable
   // message, instead of surfacing later as a generic Zod error from
   // `astro check` for the same file.
   if (data.date) {

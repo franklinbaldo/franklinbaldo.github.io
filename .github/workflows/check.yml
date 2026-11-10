@@ -27,34 +27,10 @@ jobs:
       - name: Changelog and version check
         run: npm run check:changelog
 
-      # Guards against phantom dependencies (imported but undeclared — works
-      # today only because some other package pulls it in transitively and
-      # npm flat-installs it into node_modules/, e.g. the `sharp` incident)
-      # and dead dependencies (declared but unused). The --ignores list below
-      # is for *verified* false positives depcheck's static import scanner
-      # cannot see, not a place to silence real findings:
-      #   - @fontsource/fraunces, @fontsource/inter, @picocss/pico: loaded via
-      #     CSS @import (src/styles/*.css) or raw fs paths into node_modules
-      #     (src/lib/og-card.ts), never a JS import.
-      #   - dompurify, highlight.js, katex, marked, mermaid: only imported
-      #     from .astro component frontmatter/script blocks — depcheck has no
-      #     .astro parser (see "Special" in its README), so it can't see them.
-      #   - pagefind: invoked as a CLI in the `build` script and its generated
-      #     dist/pagefind assets are fetched by the browser at runtime via
-      #     absolute URL, never imported as a JS module.
-      #   - typescript: needed by depcheck's own TypeScript syntax support and
-      #     by `astro check` / editor tooling, not directly imported anywhere.
-      #   - @astrojs/check, @lhci/cli, tsx: CLI/loader tools invoked via
-      #     `npx astro check`, `npx lhci autorun`, and `node --import tsx/esm`
-      #     respectively — none are ever `import`ed.
-      #   - depcheck: this step's own tool, invoked via npx — self-referential
-      #     blind spot.
-      #   - astro:content, astro:container: Astro virtual modules (content
-      #     collections / Container API), not real npm packages, so they can
-      #     never be "declared" in package.json.
+      # CSS, dynamic bundles and CLI consumers are excluded from static depcheck.
       - name: Dependency check
         run: |
-          npx depcheck --ignores="@fontsource/fraunces,@fontsource/inter,@picocss/pico,dompurify,highlight.js,katex,marked,mermaid,pagefind,typescript,@astrojs/check,@lhci/cli,depcheck,tsx,astro:content,astro:container"
+          npx depcheck --ignores="@fontsource/fraunces,@fontsource/inter,@picocss/pico,dompurify,highlight.js,katex,marked,mermaid,pagefind,typescript,@lhci/cli,depcheck,tsx"
 
       - name: Lint
         run: npm run lint
@@ -109,10 +85,8 @@ jobs:
         env:
           BASE_REF: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || '' }}
 
-      # Legacy templates remain available for explicit parity comparisons.
-      # Their type check stays separate from the native production generator.
-      - name: Astro type check (legacy compatibility)
-        run: npx astro check
+      - name: No Astro dependency regression
+        run: npm run check:no-astro
 
   # Roda em paralelo ao job `check` acima (não depende dele) — build + pagefind
   # + Lighthouse são, de longe, a parte mais lenta do pipeline (~2min de build

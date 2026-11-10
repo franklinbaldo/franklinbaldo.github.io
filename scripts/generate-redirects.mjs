@@ -8,7 +8,7 @@
 //      the id-based URL the post used to live at before the override was
 //      added redirects to the new slug-based URL;
 //   4. explicit tag aliases retired by deliberate taxonomy migrations.
-// astro.config.mjs spreads this into its `redirects` so old links and
+// The Zola publication pipeline consumes this redirect map so old links and
 // external bookmarks keep resolving.
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
