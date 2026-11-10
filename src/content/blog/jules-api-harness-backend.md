@@ -1,4 +1,5 @@
 ---
+tldr: "A coding agent completes the wrong refactor during a court hearing, exposing the difference between a passing test suite and an authorized result. The Jules API makes it possible to converse with an asynchronous worker mid-task; a separate harness supplies identity, context, constraints and oversight. Funes can then change execution engines without losing project memory. This is functional persistence grounded in files and procedures, not evidence that the underlying model has a continuous self."
 type: Blog Post
 title: The Jules API as a Harness Backend
 author: franklin
