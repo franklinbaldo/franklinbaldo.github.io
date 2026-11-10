@@ -23,3 +23,4 @@ jobs:
           build: 'true'
           test: 'false'
           use-mathlib-cache: 'false'
+          auto-config: 'false'
