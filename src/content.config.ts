@@ -128,6 +128,8 @@ const postSchema = ({ image }: SchemaContext) =>
   z.object({
     title: z.string(),
     description: z.string(),
+    /** Full spoiler-permitted synopsis, hidden by default on article pages. */
+    tldr: z.string().trim().min(1).optional(),
     date: z.coerce.date(),
     draft: z.boolean().optional(),
     publishDate: z.coerce.date().optional(),
