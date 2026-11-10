@@ -1,4 +1,5 @@
 ---
+tldr: "A entrada do autor na Travessia, antes imaginada como correspondência autônoma entre personagens, provoca uma reação de raiva de Riobaldo e exige um pedido de desculpas. Novos participantes e atividades passam a atravessar cartas, repositórios e pull requests. A fronteira entre o mundo ficcional e o sistema técnico se torna porosa. O projeto deixa de parecer simples automação autoral e se torna um experimento em que os personagens podem resistir ao próprio criador."
 type: Blog Post
 title: Travessia Depois da Interferência
 description: >-
