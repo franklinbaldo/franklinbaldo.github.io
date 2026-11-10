@@ -1,4 +1,5 @@
 ---
+tldr: "Publishing a person's full name while partially masking their CPF can create an illusion of privacy. The essay examines CPF check digits, cross-referencing of public records and the tension between administrative transparency and personal-data protection. It argues that mechanical asterisks may do little to prevent reidentification while obscuring the genuine risks. The alternative is context-sensitive minimization and an honest account of what the redaction actually protects."
 type: Blog Post
 title: "Who the asterisk protects"
 description: "On partial CPF anonymization, the PET bottle on top of the electricity meter, and the barrier that picked the wrong side."
