@@ -1,0 +1,123 @@
+{
+  "model": "time-varying empirical weather multiplier of simple circular-decay law; NOT NRLMSISE-00 or JB2008",
+  "sources": {
+    "tle": "https://huggingface.co/datasets/oxzoid/space-track-tle-history/resolve/main/data/tle_1963.parquet",
+    "tle_sha256": "c4bf072a8fc1084506a6146ec79f97d8f8a918fdbe2fabdd16e8cc077f3ddc09",
+    "celestrak": "https://celestrak.org/SpaceData/SW-All.csv",
+    "weather_sha256": "8f3d32bf88d106a803788bfc3f8d2ed5ee209e6cd42e4eab04b89d3d976f398c"
+  },
+  "weather_oct27": [
+    {
+      "DATE": "1963-10-27 00:00:00+00:00",
+      "F10.7_ADJ": "87.9",
+      "AP_AVG": "4.0"
+    }
+  ],
+  "weather_nov8": [
+    {
+      "DATE": "1963-11-08 00:00:00+00:00",
+      "F10.7_ADJ": "74.0",
+      "AP_AVG": "46.0"
+    }
+  ],
+  "splits": [
+    {
+      "cutoff": "Aug31",
+      "train_n": 29,
+      "test_n": 16,
+      "constant_parameters": {
+        "K_kmday": 0.17448990115700017,
+        "H_km": 58.926919384775736,
+        "beta_F": 0.0,
+        "beta_A": 0.0
+      },
+      "constant_status": "valid",
+      "constant_rmse_revday": 0.04964899427020551,
+      "constant_last_error_revday": -0.1277161171536374,
+      "solar_parameters": {
+        "K_kmday": 0.17503512485795383,
+        "H_km": 61.98861445721382,
+        "beta_F": 0.9461346210238777,
+        "beta_A": -0.19469021244037363
+      },
+      "solar_status": "valid",
+      "solar_rmse_revday": 0.05814880278766361,
+      "solar_last_error_revday": -0.1435554002624162
+    },
+    {
+      "cutoff": "Sep28",
+      "train_n": 36,
+      "test_n": 9,
+      "constant_parameters": {
+        "K_kmday": 0.17024450692680312,
+        "H_km": 55.689756541840474,
+        "beta_F": 0.0,
+        "beta_A": 0.0
+      },
+      "constant_status": "valid",
+      "constant_rmse_revday": 0.05683003655878433,
+      "constant_last_error_revday": -0.11328241531099259,
+      "solar_parameters": {
+        "K_kmday": 0.17644202006505652,
+        "H_km": 71.3630776346926,
+        "beta_F": 1.3454442731619276,
+        "beta_A": 0.5271775892045268
+      },
+      "solar_status": "valid",
+      "solar_rmse_revday": 0.056801723345871545,
+      "solar_last_error_revday": -0.11576760874882197
+    },
+    {
+      "cutoff": "Oct11",
+      "train_n": 40,
+      "test_n": 5,
+      "constant_parameters": {
+        "K_kmday": 0.16544998678007106,
+        "H_km": 52.1301817185711,
+        "beta_F": 0.0,
+        "beta_A": 0.0
+      },
+      "constant_status": "valid",
+      "constant_rmse_revday": 0.05658847764167727,
+      "constant_last_error_revday": -0.08822377644117729,
+      "solar_parameters": {
+        "K_kmday": 0.1756947291993258,
+        "H_km": 70.24242115419815,
+        "beta_F": 1.1713961638045045,
+        "beta_A": 0.575870096470245
+      },
+      "solar_status": "valid",
+      "solar_rmse_revday": 0.0710102692242743,
+      "solar_last_error_revday": -0.10950334828240749
+    },
+    {
+      "cutoff": "Oct21",
+      "train_n": 42,
+      "test_n": 3,
+      "constant_parameters": {
+        "K_kmday": 0.16138226822741403,
+        "H_km": 49.71994942796371,
+        "beta_F": 0.0,
+        "beta_A": 0.0
+      },
+      "constant_status": "valid",
+      "constant_rmse_revday": 0.05552888737201507,
+      "constant_last_error_revday": -0.06974064943737268,
+      "solar_parameters": {
+        "K_kmday": 0.16829491115557974,
+        "H_km": 60.03432291514784,
+        "beta_F": 0.6685380667963624,
+        "beta_A": 0.48601424786791786
+      },
+      "solar_status": "valid",
+      "solar_rmse_revday": 0.06987070286283598,
+      "solar_last_error_revday": -0.0873890469756411
+    }
+  ],
+  "notes": [
+    "No use of Conde coordinates, no phase, no longitude",
+    "4 parameters vs 2; regularized solar terms",
+    "Ap one-day lag, daily sampled; solar effects empirical, not causal identification",
+    "TLEs are mean elements without covariance. No valid reentry prediction yet."
+  ]
+}
