@@ -351,6 +351,20 @@ A identificação do lançamento está no [catálogo GCAT de Jonathan McDowell](
 
 A coincidência do dia da reentrada com a transmissão no Rio permanece intrigante; a identidade militar do lançamento não demonstra que qualquer pedaço tenha atravessado a atmosfera sobre a Bahia, muito menos que tenha sido encontrado intacto em Conde. Se o satélite principal continuou em órbita por mais cinco anos, a suposta esfera com janelas e cadáver certamente não era *o satélite principal*. O fragmento 528 pode ter sido uma peça separada, mas precisamos descobrir qual, e onde caiu ou se desintegrou.
 
+## Se tivesse sido em Conde, que órbita seria necessária?
+
+Resolvi inverter a pergunta. Em vez de extrapolar o fragmento às cegas, fixei a posição geográfica de Conde como **hipótese de chegada** e procurei trajetórias que passassem ali em **8 de novembro de 1963**. Não se trata de descobrir a rota real, mas de testar se as condições iniciais registradas obrigam o objeto a passar longe da Bahia.
+
+O TLE do **NORAD 528** é de 27 de outubro, 14h40 UTC. Naquela data o movimento médio era de **15,749 revoluções por dia**, equivalente a uma altitude orbital circular de aproximadamente **345 km**. Para simular uma entrada atmosférica, escolhi **16,5 revoluções por dia** no fim, equivalente a cerca de **139 km**. Essa altitude terminal é uma condição hipotética, não um dado observado.
+
+Usei uma família de curvas de movimento médio que parte do TLE, respeita formalmente seu termo inicial de derivada e acelera o decaimento por uma potência ajustável. Integrei a fase e uma aproximação secular da perturbação gravitacional **J2**, com rotação terrestre. Ajustei o expoente da curva e a hora da chegada, procurando coincidência com as coordenadas de Conde. Apareceram, entre outras, duas soluções matemáticas: uma perto de **11h32 UTC**, outra perto de **23h42 UTC** do dia 8.
+
+A parte mais importante não são os horários, que **não são horários históricos**. É que encontrei mais de uma solução mesmo impondo o mesmo estado inicial e a mesma altitude terminal. Isso demonstra a **não identificabilidade** com os dados atuais. Como a cidade foi usada para ajustar a rota, o resultado não corrobora a notícia de 1963. Há duas incógnitas livres suficientes para ajustar duas coordenadas; sem medidas independentes de arrasto ou posição posterior, a coincidência é construída pelo método.
+
+Além disso, um TLE não é uma descrição Kepleriana osculante comum, sua derivada de movimento médio não é utilizada pelo SGP4 e o modelo secular simplificado empregado aqui **não foi validado** contra observações posteriores. Um ajuste fisicamente defensável precisaria de densidade atmosférica, área por massa do fragmento e rastreamento próximo a 8 de novembro. Registrei os valores, as fórmulas, os ajustes e essas limitações no [caderno do experimento inverso](https://github.com/franklinbaldo/franklinbaldo.github.io/blob/research/conde-orbita-geografica-1963/docs/research/conde-inverse-orbit-1963.md).
+
+O resultado desta rodada é mais restrito do que parece: **Conde não foi excluída por esse modelo, mas não houve confirmação de passagem nem de queda**. O experimento mostra principalmente quais novos dados seriam necessários para distinguir uma rota real das muitas curvas que podemos construir.
+
 ## Três datas de reentrada não são três coordenadas
 
 Uma ideia tentadora seria pegar o segundo fragmento, que reentrou em dezembro, e o conjunto satélite/Agena, que reentrou em 1969, e usar os dois para reconstruir a trajetória do primeiro detrito em novembro de 1963. O problema é que **essas datas não informam o ponto geográfico de reentrada**. E, depois que se separam, objetos de massas, áreas e atitudes diferentes sofrem arrasto diferente. Não são três pontos conhecidos de uma mesma curva.
