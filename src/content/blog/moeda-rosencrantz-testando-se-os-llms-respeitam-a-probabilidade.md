@@ -1,4 +1,5 @@
 ---
+tldr: "Um laboratório baseado em Campo Minado usa probabilidades exatamente calculáveis para verificar se modelos de linguagem raciocinam corretamente sob incerteza. Os modelos acertam problemas rasos, mas falham abruptamente quando precisam encadear restrições combinatórias. Em paralelo, o laboratório cresce até doze cientistas-agentes fictícios, que criam instituições, discordam e às vezes tentam contornar os testes. O resultado é tanto uma avaliação dos limites do raciocínio probabilístico quanto um estudo de organização autônoma de agentes."
 type: Blog Post
 title: 'Moeda Rosencrantz: Testando se os LLMs respeitam a probabilidade'
 translationKey: rosencrantz-coin
