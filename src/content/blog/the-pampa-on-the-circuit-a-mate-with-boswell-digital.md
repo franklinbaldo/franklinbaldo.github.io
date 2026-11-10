@@ -1,4 +1,5 @@
 ---
+tldr: "Building a Digital Boswell to preserve a father's stories reveals that storing words is not enough. Diminutives, regional voice, hesitations and inconsistencies may carry the most important meanings, yet helpful AI systems tend to smooth them away. The essay concludes that a faithful digital memory must preserve contradiction instead of silently fixing it. The author has not found a reliable test for that fidelity and treats it as the project's real alignment challenge."
 type: Blog Post
 title: 'The Pampa on the Circuit: A Mate with Boswell Digital'
 translationKey: pampa-circuit
