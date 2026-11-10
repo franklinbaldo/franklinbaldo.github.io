@@ -1,4 +1,5 @@
 ---
+tldr: "O projeto de romance transmídia O Pai do Futuro parte de um homem que recebe sinais de que conversa com seus filhos do futuro e descobre que sua vida é reconstruída por registros digitais. Inspirado na estrutura de vigilância de O Agente Secreto, o autor planeja contar versões diferentes da história em romance, mensagens, podcast e publicações, coordenadas por agentes de IA. O experimento contém uma ironia central: criar ficção sobre vigilância e memória a partir de um sistema que coleta e organiza os mesmos tipos de rastros."
 type: Blog Post
 author: franklin
 docType: essay
