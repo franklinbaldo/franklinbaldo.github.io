@@ -1,4 +1,5 @@
 ---
+tldr: "Watching Jules and Claude collaborate on software prompts a reflection on parenting, delegation and the limits of supervisory control. Rather than micromanaging each step, the human must specify boundaries, interfaces, review points and stability guarantees. Autonomous work does not eliminate human responsibility; it shifts attention from individual operations to the architecture that constrains them. AI collaboration becomes an ongoing system of human judgment and machine execution, not a simple replacement of the human."
 type: Blog Post
 title: "The Art of Delegating: Orchestrating Jules and Claude in Everyday Life"
 description: "Reflections from a software engineer and father on how to delegate tasks to AI agents while keeping the reins of human supervision."
