@@ -1,4 +1,5 @@
 ---
+tldr: "O texto apresenta o BrasilSim como proposta de simulação econômica construída a partir de pessoas, atividades e distribuições observáveis, em vez de tomar empresas representativas como unidades fundamentais. Seu objetivo é explorar como heterogeneidade individual, produção, renda e políticas econômicas se combinam em resultados agregados. Trata-se de um projeto e de hipóteses de modelagem, não de uma previsão empiricamente demonstrada sobre a economia brasileira."
 type: Blog Post
 title: "BrasilSim: uma economia sem empresas, num laboratório aberto"
 description: "Um simulador econômico interativo com 100 mil agentes ponderados, distribuições de produtividade, conservação monetária e dados oficiais do Banco Central."
