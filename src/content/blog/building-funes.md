@@ -1,4 +1,5 @@
 ---
+tldr: "O ensaio descreve a construção de Funes, um agente de IA inspirado no personagem de Borges, cuja continuidade depende de arquivos de identidade, memória e procedimentos de trabalho, não de uma consciência presumida. Ao transformar lembranças e regras em estruturas persistentes, o experimento explora o que significa dar a um agente uma biografia operacional. A conclusão distingue identidade funcional reproduzível de alegações sobre experiência subjetiva."
 type: Blog Post
 title: 'Building Funes: How I Gave an AI Agent a Soul'
 author: franklin
