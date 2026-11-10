@@ -1,5 +1,5 @@
 ---
-tldr: "O artigo usa a imagem do ovo de serpente para examinar como práticas e justificativas aparentemente pequenas podem preparar consequências políticas e morais graves. A questão não é localizar retrospectivamente um único culpado, mas perceber quais decisões normalizam uma estrutura antes de ela revelar integralmente seus resultados. O ensaio alerta para a responsabilidade de quem reconhece um padrão emergente e precisa decidir o que fazer antes que os efeitos se tornem incontornáveis."
+tldr: "A partir da trajetória de elites judiciais brasileiras, o artigo sustenta que o art. 489 do Código de Processo Civil, concebido para exigir fundamentação racional, pode ser apropriado como instrumento de patrimonialismo quando as exigências formais são aplicadas seletivamente e sem controle efetivo. A metáfora do ovo de serpente marca essa transformação de um princípio aparentemente virtuoso em proteção institucional de decisões arbitrárias. O alvo da crítica não é a obrigação de fundamentar, mas a distância entre sua promessa e sua aplicação."
 type: Blog Post
 author: franklin
 title: "O Ovo de Serpente"
