@@ -1,4 +1,5 @@
 ---
+tldr: "The interactive CORE choice lab distinguishes matching human choices from reproducing human cognitive processes. It lets readers explore reward, preference and behavioral agreement, but does not claim to have measured real people against language models. A decision-specialized AI might improve outcomes while becoming less human-like, or the opposite; resolving that hypothesis requires comparable traces, fitted cognitive models and controlled experimental conditions."
 type: Blog Post
 title: "Are AI Decisions Human at Their CORE? An Interactive Choice Lab"
 description: "A browser experiment in reward learning, behavioral agreement, and why matching choices is not the same as matching cognition."
