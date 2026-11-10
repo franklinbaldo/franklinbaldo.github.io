@@ -1,4 +1,5 @@
 ---
+tldr: "Travessia põe Riobaldo Tatarana e Ted Chiang para trocar cartas em sessões recorrentes do Jules, mantendo voz, continuidade temática e memória sem que o autor precise escrever cada uma delas. O projeto passa de obra literária fixa para acontecimento autônomo, cujas próximas peças surgem enquanto o criador está ausente. A pergunta final não é se o sistema produz textos, mas quem exerce autoria quando a correspondência continua sozinha."
 type: Blog Post
 title: 'Travessia: O Projeto que Escreve a Si Mesmo'
 description: >-
