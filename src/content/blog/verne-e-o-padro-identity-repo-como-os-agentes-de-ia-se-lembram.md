@@ -1,4 +1,5 @@
 ---
+tldr: "O padrão identity-repo separa identidade e memória de um agente do modelo que executa suas tarefas. Arquivos Git registram convenções, erros, preferências e lições, permitindo que sessões futuras recuperem contexto, auditem mudanças e troquem de backend sem zerar todo o aprendizado operacional. Isso transforma um agente efêmero em um ator com estado no sentido arquitetural. Não resolve, por si só, a questão filosófica de identidade pessoal ou consciência."
 type: Blog Post
 
 author: franklin
