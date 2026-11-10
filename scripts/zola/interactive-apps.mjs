@@ -8,7 +8,6 @@ import { frontmatter, stableName } from "./content.mjs";
 import { renderFactory } from "./apps/factory.mjs";
 import { readScienceCards } from "./apps/science.mjs";
 import { renderAtlas } from "./apps/atlas.mjs";
-import { readDeck } from "./apps/decks.mjs";
 
 const target = process.env.ZOLA_PREPARED_DIR || ".cache/zola-site";
 const read = (file) => readFileSync(file, "utf8");
@@ -45,13 +44,6 @@ function css(source, name) {
     `static/css/apps-${name}.css`,
     source.replace(/:global\(([^)]+)\)/g, "$1")
   );
-}
-function extract(source, tag) {
-  const found = source.match(
-    new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${tag}>`)
-  );
-  if (!found) throw new Error(`Missing ${tag} block in app source`);
-  return found[1];
 }
 function page(
   id,
@@ -153,14 +145,15 @@ page(
   renderFactory(snapshot)
 );
 
-const component = read("src/components/EquationUniverse.astro");
-const atlas = read("src/pages/pt/atlas-das-equacoes.astro");
+const component = read("scripts/zola/source/apps/equation-universe.html");
+const atlasCss = read("scripts/zola/source/apps/atlas.css");
+const universeCss = read("scripts/zola/source/apps/equation-universe.css");
 const cards = readScienceCards();
 css(
-  scopeAtlasCss(extract(atlas, "style") + "\n" + extract(component, "style")),
+  scopeAtlasCss(atlasCss + "\n" + universeCss),
   "atlas-das-equacoes"
 );
-let graphScript = extract(component, "script")
+let graphScript = read("scripts/zola/source/apps/equation-universe.ts")
   .replace(
     'document.addEventListener("keydown", (event) => {\n        if (event.key === "Escape") focusNode(null, true);\n      });',
     'document.addEventListener("keydown", (event) => {\n        if (event.key === "Escape") focusNode(null, true);\n      }, { signal: controller.signal });'
@@ -183,8 +176,7 @@ page(
 );
 
 for (const id of ["nathan-holmes", "theranos-nathan"]) {
-  const file = `src/pages/powerpoint-club/${id}.astro`;
-  const deck = readDeck(read(file), file);
+  const deck = JSON.parse(read(`scripts/zola/source/decks/${id}.json`));
   css(deck.css, id);
   script(deck.script, id);
   page(
