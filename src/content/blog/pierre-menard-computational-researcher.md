@@ -1,4 +1,5 @@
 ---
+tldr: "Inspired by Borges's Pierre Menard, the essay describes a research workflow in which the paper is written before the experiments and used as an executable specification for what must be demonstrated. This can clarify hypotheses, reveal missing evidence and guide tests, but it also risks rewarding elegant narratives, confirmation bias and sunk-cost defense of claims. The proposed method is valuable only if falsification can force the draft to change or be abandoned."
 type: Blog Post
 title: "Pierre Menard, Computational Researcher"
 description: "On writing the paper before doing the research, and other engineering practices that should embarrass us less than they do."
