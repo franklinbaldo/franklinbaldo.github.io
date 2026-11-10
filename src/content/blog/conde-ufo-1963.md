@@ -339,6 +339,20 @@ Só não prova que um deles caiu em Conde.
 
 Plausibilidade não é evidência. E uma das coisas que esta investigação está me ensinando é justamente não promover uma boa explicação a fato só porque ela fecha o enredo melhor.
 
+## Até onde a órbita de um fragmento poderia chegar?
+
+Uma outra pista surgiu durante a pesquisa: o catálogo orbital registra a reentrada, em **8 de novembro de 1963**, de um fragmento americano identificado como **FTV 2313 DEB**, número **NORAD 528**, designação internacional **1963-003B**. É a mesma data da transmissão da Rádio Tupi. Mas uma coincidência de calendário não é uma trajetória.
+
+A inclinação conhecida da órbita era de **81,8615 graus**. Esse número permite um teste geográfico simples. Em uma órbita aproximadamente terrestre, a latitude do ponto no solo diretamente abaixo do fragmento não pode ultrapassar, em módulo, sua inclinação (quando inferior a 90 graus). Assim, a faixa acessível vai de **81,8615° sul a 81,8615° norte**. As duas pequenas calotas polares que restam ficam excluídas para a *projeção do movimento orbital no solo*. Isso não significa delimitar uma zona de impacto de fragmentos, que também depende da dinâmica atmosférica.
+
+![Mapa cartográfico da faixa de latitudes permitida pela inclinação orbital de 81,8615 graus, com Conde e Porto Velho assinaladas](/images/conde-orbita-faixa-latitudinal.svg)
+
+O mapa foi construído com fronteiras vetoriais do [Natural Earth](https://www.naturalearthdata.com/downloads/110m-cultural-vectors/) em coordenadas geográficas, e com a faixa derivada da inclinação orbital. **As linhas de latitude não representam o percurso real do objeto.** Conde, a aproximadamente 11,8°S, e Porto Velho, a aproximadamente 8,8°S, estão ambas dentro da faixa. Se a notícia tivesse surgido em Rondônia, esse primeiro teste daria a mesma resposta: *geometricamente possível*. Também a daria para quase qualquer outro lugar do planeta. Portanto, sozinho, o teste praticamente não discrimina nada.
+
+Para decidir se o objeto passou sobre a Bahia, precisaríamos da sua **longitude e fase orbital no momento relevante**, e principalmente de observações suficientemente próximas da reentrada. O conjunto de elementos históricos localizado tem época de **27 de outubro de 1963**, quase doze dias antes. Perto da reentrada o arrasto pode alterar muito o movimento; prolongar esses elementos até 8 de novembro e desenhar uma linha exata seria produzir precisão fictícia. Tampouco sabemos que a reentrada tenha ocorrido antes do noticiário das 23h30, nem se houve qualquer observação do fragmento no Brasil.
+
+O [catálogo KeepTrack do NORAD 528](https://keeptrack.space/satellite/528) e a [reprodução dos elementos históricos atribuídos à AFSPC](https://www.itau.magnetic-declination.com/satellite/?s=528) permitem identificar o objeto e o limite de latitude, não localizar sua queda. O mapa registra essa diferença, que é a parte mais importante dele.
+
 ## Uma história começa a produzir cópias de si mesma
 
 Foi nessa hora que percebi que o objeto interessante já não era exatamente o OVNI.
