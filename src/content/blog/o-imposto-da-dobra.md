@@ -1,4 +1,5 @@
 ---
+tldr: "Um artigo e uma formalização em Lean afirmam oferecer um algoritmo subexponencial para 3-SAT, o que contrariaria a Hipótese do Tempo Exponencial (ETH) se a demonstração estiver correta. O ensaio explica por que esse resultado não implica P = NP, quais consequências teóricas teria e por que isso não quebraria automaticamente a criptografia cotidiana. A surpresa conceitual está numa técnica que reduz o custo do problema sem torná-lo fácil em tempo polinomial. O texto é uma explicação condicional da alegação apresentada, não uma validação independente de toda a prova."
 type: Blog Post
 title: "O imposto da dobra"
 description: "Uma suposta prova diz que um dos problemas mais difíceis da computação é um pouquinho menos difícil. O pouquinho é enorme."
