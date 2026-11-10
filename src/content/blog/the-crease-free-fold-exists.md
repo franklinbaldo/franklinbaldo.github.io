@@ -1,4 +1,5 @@
 ---
+tldr: "The article presents an explicit polynomial map in three complex variables with a nonzero constant Jacobian and distinct points mapped to the same image. It therefore supplies a three-dimensional counterexample to the general Jacobian Conjecture: local invertibility does not guarantee global injectivity. A visualized curve makes the overlapping regions apparent without any infinitesimal collapse. The inverse function theorem remains valid, and the result does not automatically settle the two-dimensional case."
 type: Blog Post
 title: "The Crease-Free Fold Exists"
 description: "A conversation about the impossible image, interrupted hours later by the arrival of the polynomial itself."
