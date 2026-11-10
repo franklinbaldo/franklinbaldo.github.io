@@ -16,7 +16,8 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  # Let active Pages deployments finish before a newer commit can deploy.
+  cancel-in-progress: false
 
 jobs:
   build:
