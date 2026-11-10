@@ -37,7 +37,7 @@ tldr: "A análise compara as evidências, descarta duas explicações e conclui 
 
 Na página de um post com `tldr`, o resumo é exibido em `<details>` fechado por padrão, com aviso explícito sobre spoilers. A abertura depende da escolha do leitor; o texto não substitui metadescrições nem resumos públicos de feeds. Posts antigos sem o campo continuam válidos e não exibem o controle. A apresentação deve funcionar sem JavaScript e permitir interação por teclado.
 
-`type` e `docType` são explicitamente **excluídos** do hash de identidade de
+`type`, `docType` e `tldr` são explicitamente **excluídos** do hash de identidade de
 versão (`UUID_EXCLUDED_FIELDS` em `src/hronir/posts.ts`) — editá-los não
 gera uma nova versão nem desconecta o post do seu histórico de
 [matches](./match.md). Ver RFC 0014 §7.2 para o porquê (e o fallback de
