@@ -365,6 +365,16 @@ Além disso, um TLE não é uma descrição Kepleriana osculante comum, sua deri
 
 O resultado desta rodada é mais restrito do que parece: **Conde não foi excluída por esse modelo, mas não houve confirmação de passagem nem de queda**. O experimento mostra principalmente quais novos dados seriam necessários para distinguir uma rota real das muitas curvas que podemos construir.
 
+## O que aconteceu com a atmosfera em novembro de 1963?
+
+Consegui uma nova série histórica, desta vez sobre o próprio ambiente pelo qual o fragmento passava. O [arquivo do CelesTrak](https://celestrak.org/SpaceData/SW-All.csv) contém fluxo solar F10.7 e índices geomagnéticos Ap diários desde antes de 1963. Em **27 de outubro**, dia do último TLE disponível do fragmento 528, o índice Ap médio foi **4**. Em **8 de novembro**, data catalogada da reentrada, ele foi **46**. Houve atividade geomagnética substancialmente mais elevada naquele dia, mas o registro não estabelece se ela antecedeu a desintegração nem qual foi o efeito na trajetória.
+
+Incorporei as duas séries a uma versão do modelo de decaimento cuja resposta à atividade solar e geomagnética é ajustável. Repeti os testes usando observações orbitais posteriores que não entraram na calibração. A [comparação documentada](https://github.com/franklinbaldo/franklinbaldo.github.io/blob/research/conde-orbita-geografica-1963/docs/research/conde-528-solar-backtest-1963.md) não confirmou a melhoria esperada. Em três cortes temporais, **o modelo com clima espacial previu pior** do que o controle de atmosfera exponencial sem essa correção; no quarto, a diferença foi desprezível.
+
+Isso não mostra que a atividade solar ou geomagnética seja irrelevante para o arrasto. Mostra que **a função empírica simples que tentamos não conseguiu extrair dos dados uma previsão mais confiável**. Seria preciso uma descrição física real da termosfera, e mesmo assim não recuperaríamos automaticamente uma longitude de reentrada sem observações terminais.
+
+É tentador olhar para o Ap de 46 justamente em 8 de novembro e achar que encontramos a peça que faltava. Pode ser uma peça. Mas o cálculo que fizemos ainda não a encaixa.
+
 ## Quando a órbita começa a acelerar, a previsão erra
 
 Conseguimos recuperar e processar em Kaggle um arquivo histórico com **45 TLEs do NORAD 528**, de janeiro a 27 de outubro de 1963. Há ainda 57 registros do fragmento 529 e 21 do conjunto principal 527 no mesmo ano. O espelho consultado deriva de exportações do Space-Track e foi identificado por hash. Ele não contém TLE do 528 depois de 27 de outubro.
