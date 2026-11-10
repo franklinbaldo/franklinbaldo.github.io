@@ -12,6 +12,12 @@
     </ul>
     {% endif %}
   </header>
+  {% if page_kind == "post" and page.extra.tldr %}
+  <details class="article-tldr" data-pagefind-ignore>
+    <summary>{% if site_lang == "pt" %}TL;DR · Resumo completo (contém spoilers){% else %}TL;DR · Full summary (contains spoilers){% endif %}</summary>
+    <p>{{ page.extra.tldr }}</p>
+  </details>
+  {% endif %}
   {% if page.extra.article_intro %}<div data-pagefind-ignore>{{ page.extra.article_intro | safe }}</div>{% endif %}
   {% if page.extra.hero_image %}
   <figure class="hero-image"><img src="{{ page.extra.hero_image }}" alt="{{ page.extra.hero_image_alt | default(value='') }}" decoding="async" fetchpriority="high"></figure>
