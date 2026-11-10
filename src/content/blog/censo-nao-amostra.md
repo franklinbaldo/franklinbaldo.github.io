@@ -1,4 +1,5 @@
 ---
+tldr: "Contra a ideia de que o Estado precise comprar participações em empresas de IA para distribuir a riqueza de uma economia automatizada, o texto propõe pensar como arrecadador: tributar sistematicamente o capital e usar a arrecadação para financiar participação ou dividendos sociais. O argumento é que um censo fiscal evita os problemas de seleção de ativos, avaliação de empresas privadas e composição de carteiras. Persistem dificuldades políticas, de incidência tributária e de governança, mas o ponto central é substituir a compra seletiva pela tributação abrangente."
 type: Blog Post
 title: 'Censo, Não Amostra'
 description: >-
