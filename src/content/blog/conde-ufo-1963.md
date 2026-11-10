@@ -339,6 +339,18 @@ Só não prova que um deles caiu em Conde.
 
 Plausibilidade não é evidência. E uma das coisas que esta investigação está me ensinando é justamente não promover uma boa explicação a fato só porque ela fecha o enredo melhor.
 
+## O satélite que havia por trás do fragmento
+
+Quando procurei o lançamento de origem do objeto NORAD 528, apareceu uma informação muito mais específica do que “detrito espacial americano”. Em **16 de janeiro de 1963**, às **21h59 UTC**, um foguete **Thor-DM21 Agena-B** saiu de Vandenberg, Califórnia, levando a missão **OPS 0180 / FTV 2313 / Project 698BK Group 1-D 1**, também chamada *Ferret 3*. Era um satélite de inteligência eletrônica americana, voltado à interceptação de sinais de radares soviéticos. Não era um balão meteorológico nem um veículo tripulado.
+
+Segundo o histórico do programa, a missão funcionou por apenas dois dias, até uma falha das baterias. O satélite principal, **NORAD 527 (1963-003A)**, permaneceu catalogado em órbita até **9 de janeiro de 1969**. Dois outros objetos do mesmo lançamento foram catalogados como detritos: **NORAD 528 (1963-003B)**, com reentrada datada de 8 de novembro de 1963, e **NORAD 529 (1963-003C)**, com reentrada registrada em 31 de dezembro de 1963. Os três não são o mesmo objeto.
+
+A identificação do lançamento está no [catálogo GCAT de Jonathan McDowell](https://planet4589.org/space/gcat/data/derived/launchlog.html); a discriminação dos três objetos e suas datas aparece no [catálogo de reentradas](https://www.planet4589.org/space/reentry/reentry.html) e nos [registros orbitais do 528](https://www.itau.magnetic-declination.com/satellite/?s=528).
+
+**Mas que peça era o 528?** É aqui que os documentos deixam de responder. Ele é descrito genericamente como detrito do satélite/estágio Agena, sem identificação material segura, dimensões ou massa do fragmento. O catálogo GCAT emprega até uma designação genérica “Agena D” para o detrito, enquanto a documentação do lançamento identifica claramente o foguete como **Agena-B**: não devemos tomar essa etiqueta genérica como identificação precisa da peça.
+
+A coincidência do dia da reentrada com a transmissão no Rio permanece intrigante; a identidade militar do lançamento não demonstra que qualquer pedaço tenha atravessado a atmosfera sobre a Bahia, muito menos que tenha sido encontrado intacto em Conde. Se o satélite principal continuou em órbita por mais cinco anos, a suposta esfera com janelas e cadáver certamente não era *o satélite principal*. O fragmento 528 pode ter sido uma peça separada, mas precisamos descobrir qual, e onde caiu ou se desintegrou.
+
 ## Até onde a órbita de um fragmento poderia chegar?
 
 Uma outra pista surgiu durante a pesquisa: o catálogo orbital registra a reentrada, em **8 de novembro de 1963**, de um fragmento americano identificado como **FTV 2313 DEB**, número **NORAD 528**, designação internacional **1963-003B**. É a mesma data da transmissão da Rádio Tupi. Mas uma coincidência de calendário não é uma trajetória.
