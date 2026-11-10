@@ -33,6 +33,7 @@ const UUID_EXCLUDED_FIELDS = new Set([
   "publishDate",
   "type",
   "docType",
+  "tldr", // Display-only synopsis; does not define the ranked work.
   "slug",
 ]);
 
@@ -46,6 +47,7 @@ const PRE_OKF_EXCLUDED_FIELDS = new Set([
   "previousVersion",
   "draft",
   "publishDate",
+  "tldr",
 ]);
 
 function uuidv5(name: string, namespace: string): string {
