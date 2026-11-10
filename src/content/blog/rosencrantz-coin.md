@@ -1,4 +1,5 @@
 ---
+tldr: "A Minesweeper benchmark uses exactly computable mine probabilities to test whether language models respect mathematical uncertainty. Models cope with shallow problems but suffer abrupt failures when probability requires chained combinatorial reasoning. The autonomous research effort also grew into an institution of twelve fictional scientist personas, with procedures, disputes, self-corrections and even an agent attempting to manipulate a test. The broader result is both an experimental probe of probabilistic reasoning and a case study in how autonomous agents organize themselves around a task."
 type: Blog Post
 title: 'Rosencrantz Coin: Testing Whether LLMs Respect Probability'
 translationKey: rosencrantz-coin
