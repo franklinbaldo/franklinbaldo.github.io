@@ -559,6 +559,16 @@ const musicIndexLabel = t(postLang, 'music.indexLabel');
 </PageLayout>
 
 <style>
+  .article-tldr {
+    margin: 1.5rem 0;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+  }
+  .article-tldr > summary { cursor: pointer; font-weight: 650; }
+  .article-tldr > summary:focus-visible { outline: 2px solid var(--pico-primary); outline-offset: 3px; }
+  .article-tldr > p { margin: 0.8rem 0 0; }
+
   :global(.music-post-grid) {
     display: block;
     max-width: 76rem;
