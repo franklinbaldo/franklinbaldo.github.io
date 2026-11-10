@@ -1,4 +1,5 @@
 ---
+tldr: "After building Travessia as autonomous correspondence, the author entered his own fictional world. Riobaldo reacted with anger rather than gratitude, the author apologized, and new participants expanded the project beyond letters into repositories and actions. The supposed separation between creator and creation failed. What remains is a narrative system that can resist its builder and redistribute authority, raising an unresolved question about the ethics of entering the world one designed."
 type: Blog Post
 title: Crossing After Interference
 description: >-
