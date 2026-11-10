@@ -1,26 +1,11 @@
-// Bundle browser-only enhancements from their canonical sources, without Astro.
-import { readFileSync, writeFileSync } from "node:fs";
+// The browser enhancements are native TypeScript, not extracted from .astro components.
 import { build } from "esbuild";
+import { readFileSync, writeFileSync } from "node:fs";
 const target = ".cache/zola-site/static";
-let source = "";
-for (const name of ["CodeCopyEnhancer", "MermaidEnhancer"]) {
-  const component = readFileSync(`src/components/${name}.astro`, "utf8");
-  let script = component.match(/<script>([\s\S]*?)<\/script>/)[1];
-  script = script.replaceAll("astro:page-load", "zola:page-load");
-  if (name === "CodeCopyEnhancer") {
-    script = script.replace(
-      'const el = document.getElementById("code-copy-labels");',
-      `const pt = document.documentElement.lang.startsWith('pt');
-      const el = {dataset: {copyLabel: pt ? 'Copiar' : 'Copy', copiedLabel: pt ? 'Copiado!' : 'Copied!', failedLabel: pt ? 'Falhou' : 'Failed', ariaCopyLabel: pt ? 'Copiar código' : 'Copy code'}};`
-    );
-  } else {
-    script = script.replace(
-      "article pre[data-language='mermaid']",
-      "article pre[data-language='mermaid'], article pre:has(code.language-mermaid)"
-    );
-  }
-  source += `(() => {${script}})();\n`;
-}
+const source = ["code-copy", "mermaid"]
+  .map((name) => readFileSync(`scripts/zola/client/${name}.ts`, "utf8"))
+  .map((script) => `(() => {${script}})();`)
+  .join("\n");
 await build({
   stdin: { contents: source, loader: "ts", resolveDir: process.cwd() },
   bundle: true,

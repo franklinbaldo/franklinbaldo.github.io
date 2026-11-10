@@ -14,7 +14,7 @@ if (
 function run(bin, args) {
   const r = spawnSync(bin, args, {
     stdio: "inherit",
-    env: { ...process.env, ASTRO_TELEMETRY_DISABLED: "1" },
+    env: process.env,
   });
   if (r.error) throw r.error;
   if (r.status !== 0) process.exit(r.status ?? 1);

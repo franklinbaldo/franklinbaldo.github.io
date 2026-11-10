@@ -4,13 +4,12 @@
 // package.json. This runs the same steps, in the same order, from a single
 // place: copy KaTeX assets, refresh the public GitHub factory snapshot on
 // main-branch builds, refresh the legacy Hrönir read projection, then regenerate
-// the translation-pairs and legacy-redirect JSON files that astro.config.mjs
-// and the content layer read at build time.
+// the translation-pairs and legacy-redirect JSON files consumed by the publication projection.
+// The build is independent of the retired Astro configuration.
 //
 // Failure semantics match the old `&&` chain for required steps. Repo Factory
 // uses the committed public snapshot on pull requests and local development;
-// scheduled/repository-dispatch builds of main refresh it before Astro renders
-// the site. Ordinary pushes reuse the committed snapshot so a blog/content
+// scheduled/repository-dispatch builds of main refresh it before the Zola projection renders the site. Ordinary pushes reuse the committed snapshot so a blog/content
 // deploy does not spend ~2 minutes polling dozens of unrelated repositories.
 import { spawnSync } from "node:child_process";
 import { dirname, resolve } from "node:path";
