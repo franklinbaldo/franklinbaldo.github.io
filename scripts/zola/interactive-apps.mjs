@@ -153,14 +153,15 @@ page(
   renderFactory(snapshot)
 );
 
-const component = read("src/components/EquationUniverse.astro");
-const atlas = read("src/pages/pt/atlas-das-equacoes.astro");
+const component = read("scripts/zola/source/apps/equation-universe.html");
+const atlasCss = read("scripts/zola/source/apps/atlas.css");
+const universeCss = read("scripts/zola/source/apps/equation-universe.css");
 const cards = readScienceCards();
 css(
-  scopeAtlasCss(extract(atlas, "style") + "\n" + extract(component, "style")),
+  scopeAtlasCss(atlasCss + "\n" + universeCss),
   "atlas-das-equacoes"
 );
-let graphScript = extract(component, "script")
+let graphScript = read("scripts/zola/source/apps/equation-universe.ts")
   .replace(
     'document.addEventListener("keydown", (event) => {\n        if (event.key === "Escape") focusNode(null, true);\n      });',
     'document.addEventListener("keydown", (event) => {\n        if (event.key === "Escape") focusNode(null, true);\n      }, { signal: controller.signal });'
@@ -183,8 +184,7 @@ page(
 );
 
 for (const id of ["nathan-holmes", "theranos-nathan"]) {
-  const file = `src/pages/powerpoint-club/${id}.astro`;
-  const deck = readDeck(read(file), file);
+  const deck = JSON.parse(read(`scripts/zola/source/decks/${id}.json`));
   css(deck.css, id);
   script(deck.script, id);
   page(

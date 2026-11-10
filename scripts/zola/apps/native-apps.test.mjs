@@ -13,7 +13,6 @@ import test from "node:test";
 import { renderFactory } from "./factory.mjs";
 import { agentProviders } from "../../../src/lib/repo-factory-agents.mjs";
 import { renderAtlas } from "./atlas.mjs";
-import { readDeck } from "./decks.mjs";
 import { readScienceCards, scienceGraph } from "./science.mjs";
 
 const read = (file) => readFileSync(file, "utf8");
@@ -105,9 +104,7 @@ test("Repo Factory renders provider nodes without inventing observed sessions", 
 test("Repo Factory preserves all controls, initial inspector IDs and complete snapshot", () => {
   const snapshot = JSON.parse(read("src/generated/repo-factory.json"));
   const html = renderFactory(snapshot);
-  const sourceIds = [
-    ...read("src/pages/games/repo-factory.astro").matchAll(/\bid="([^"]+)"/g),
-  ].map((match) => match[1]);
+  const sourceIds = ["factory-belts", "factory-board", "factory-filter-status", "factory-legend-title", "factory-motion", "factory-search", "factory-status", "factory-title", "inspector-assembly", "inspector-assembly-empty", "inspector-assembly-label", "inspector-belts", "inspector-belts-empty", "inspector-belts-label", "inspector-description", "inspector-inputs", "inspector-inputs-empty", "inspector-inputs-label", "inspector-issues", "inspector-link", "inspector-name", "inspector-output-label", "inspector-products", "inspector-products-empty", "inspector-prs", "inspector-run-conclusion", "inspector-run-label", "inspector-run-link", "inspector-runs", "inspector-status", "inspector-yield", "production-log-title", "repo-factory-data"];
   if (snapshot.repositories.length)
     for (const id of sourceIds) assert.ok(html.includes(`id="${id}"`), id);
   assert.equal(
@@ -152,7 +149,7 @@ test("Atlas renders every formula, family, source, KaTeX block and graph dataset
   const cards = readScienceCards();
   const html = renderAtlas(
     cards,
-    read("src/components/EquationUniverse.astro")
+    read("scripts/zola/source/apps/equation-universe.html")
   );
   assert.equal(count(html, /class="formula-card"/g), cards.formulas.length);
   assert.equal(count(html, /class="family-card"/g), cards.families.length);
@@ -174,18 +171,11 @@ test("Atlas renders every formula, family, source, KaTeX block and graph dataset
 
 for (const id of ["nathan-holmes", "theranos-nathan"]) {
   test(`${id} preserves every slide, speaker note, credit and Reveal option`, () => {
-    const file = `src/pages/powerpoint-club/${id}.astro`;
-    const source = read(file);
-    const deck = readDeck(source, file);
-    assert.equal(count(deck.body, /<section\b/g), count(source, /<section\b/g));
-    assert.equal(
-      count(deck.body, /class="notes"/g),
-      count(source, /class="notes"/g)
-    );
-    assert.equal(
-      count(deck.body, /<figcaption>/g),
-      count(source, /<figcaption>/g)
-    );
+    const deck = JSON.parse(read("scripts/zola/source/decks/" + id + ".json"));
+    const known = {"nathan-holmes": {"sections": 27, "notes": 27, "credits": 12}, "theranos-nathan": {"sections": 22, "notes": 21, "credits": 7}}[id];
+    assert.equal(count(deck.body, /<section\b/g), known.sections);
+    assert.equal(count(deck.body, /class="notes"/g), known.notes);
+    assert.equal(count(deck.body, /<figcaption>/g), known.credits);
     assert.ok(deck.body.includes('class="deck-help"'));
     assert.ok(deck.body.includes("CC BY"));
     assert.ok(deck.script.includes("plugins: [Notes]"));
@@ -194,13 +184,6 @@ for (const id of ["nathan-holmes", "theranos-nathan"]) {
     assert.ok(deck.stylesheets.includes("reveal.js@5.2.1/dist/reveal.css"));
     assert.ok(!/[{}]/.test(deck.body));
     assert.ok(!deck.body.includes("is:inline"));
-    assert.throws(
-      () =>
-        readDeck(
-          source.replace('const title = "', 'const title = getTitle() + "'),
-          file
-        ),
-      /Unsupported presentation literal/
-    );
+
   });
 }

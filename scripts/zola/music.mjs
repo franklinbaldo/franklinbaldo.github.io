@@ -1,6 +1,5 @@
 // Native music projection: only public local catalog records are publishable.
-// Astro's literal client script/styles remain reusable source assets, without
-// importing or compiling any Astro component or requiring a network request.
+// Browser scripts and styles are owned by native Zola source assets.
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import matter from "gray-matter";
@@ -307,21 +306,8 @@ for (const lang of ["en", "pt"]) {
   );
 }
 
-function literal(source, tag) {
-  const match = source.match(
-    new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${tag}>`)
-  );
-  if (!match) throw new Error(`Missing literal ${tag} asset`);
-  return match[1];
-}
-const playerSource = readFileSync(
-  "src/components/GlobalMusicPlayer.astro",
-  "utf8"
-);
-let playerScript = literal(playerSource, "script").replaceAll(
-  "astro:page-load",
-  "zola:page-load"
-);
+const playerScriptSource = readFileSync("scripts/zola/source/music/player.ts", "utf8");
+let playerScript = playerScriptSource;
 // Persisted chrome must reflect the active language after native navigation.
 playerScript = playerScript.replace(
   "    upgradeLegacyAudio();",
@@ -391,17 +377,11 @@ const tokens = `:root{--pico-background-color:var(--paper);--pico-card-backgroun
 write(
   "static/css/music-player.css",
   tokens +
-    literal(playerSource, "style") +
+    readFileSync("scripts/zola/source/music/player.css", "utf8") +
     "\n#gmp{translate:none!important;width:auto!important}body.gmp-active{padding-bottom:310px!important}\n"
 );
-const galleryCss = literal(
-  readFileSync("src/pages/music.astro", "utf8"),
-  "style"
-);
-const tierCss = literal(
-  readFileSync("src/components/TierBoard.astro", "utf8"),
-  "style"
-);
+const galleryCss = readFileSync("scripts/zola/source/music/gallery.css", "utf8");
+const tierCss = readFileSync("scripts/zola/source/music/tiers.css", "utf8");
 const modernCss = readFileSync("src/styles/music.css", "utf8").replaceAll(
   "main:has(#songs-grid) > hgroup",
   "main:has(#songs-grid) .music-content > hgroup"

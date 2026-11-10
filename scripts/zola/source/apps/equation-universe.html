@@ -1,0 +1,43 @@
+<section class="uekg-universe" id="uekg-universe" data-graph="__GRAPH_JSON__" aria-labelledby="uekg-universe-title">
+  <div class="universe-backdrop" aria-hidden="true"></div>
+  <div class="universe-grid" aria-hidden="true"></div>
+
+  <div class="universe-copy">
+    <p class="universe-kicker">UEKG · UNIVERSAL EQUATION KNOWLEDGE GRAPH</p>
+    <h2 id="uekg-universe-title">A mesma matemática.<br /><span>Outros mundos.</span></h2>
+    <p class="universe-deck">
+      Veja as mesmas equações se reorganizarem por disciplina — e depois pelo esqueleto matemático que compartilham.
+    </p>
+  </div>
+
+  <div class="universe-controls" aria-label="Modo de visualização">
+    <button type="button" class="mode-button is-active" data-mode="discipline" aria-pressed="true">
+      Por disciplina
+    </button>
+    <button type="button" class="mode-button" data-mode="structure" aria-pressed="false">
+      Por estrutura
+    </button>
+  </div>
+
+  <div class="universe-stage" data-stage>
+    <svg class="universe-edges" data-edges aria-hidden="true"></svg>
+    <div class="universe-nodes" data-nodes></div>
+
+    <aside class="universe-panel" data-panel aria-live="polite">
+      <p class="panel-kind" data-panel-kind>Explore o grafo</p>
+      <h3 data-panel-title>Uma fórmula pode pertencer a dois mundos.</h3>
+      <div class="panel-equation" data-panel-equation></div>
+      <p data-panel-summary>
+        Clique em qualquer nó. Em “por disciplina”, o mapa mostra onde a equação é usada. Em “por estrutura”, ele revela famílias matemáticas compartilhadas entre áreas.
+      </p>
+      <a class="panel-source" data-panel-source hidden>Ver fonte ↗</a>
+    </aside>
+
+    <div class="universe-legend" aria-hidden="true">
+      <span><i class="dot formula"></i> equação</span>
+      <span><i class="dot anchor"></i> agrupador</span>
+      <span><i class="line"></i> relação</span>
+    </div>
+  </div>
+
+  <div class="universe-footer">

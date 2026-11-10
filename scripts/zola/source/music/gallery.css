@@ -1,0 +1,141 @@
+/* src/styles/music.css overrides most of these rules for real (it wins
+     on CSS specificity via a `:has(#songs-grid)` selector) — this block is
+     the pre-redesign fallback styling, kept as-is. If a change here has no
+     visible effect, check music.css first. */
+  .songs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .songs-header h2 { margin: 0; }
+  .songs-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .songs-controls button {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.85rem;
+    border-radius: var(--pico-border-radius);
+    cursor: pointer;
+    border: 1px solid var(--pico-muted-border-color);
+    background: var(--pico-card-background-color);
+    color: var(--pico-color);
+  }
+  .songs-controls button:hover {
+    background: var(--pico-primary);
+    color: var(--pico-primary-inverse, #fff);
+    border-color: var(--pico-primary);
+  }
+  .songs-controls select {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.85rem;
+    border-radius: var(--pico-border-radius);
+    border: 1px solid var(--pico-muted-border-color);
+    background: var(--pico-card-background-color);
+    color: var(--pico-color);
+    cursor: pointer;
+  }
+  .playlists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .playlist-card img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: var(--pico-border-radius);
+  }
+  .playlist-card h3 { font-size: 1rem; margin: 0.5rem 0 0.25rem; }
+
+  .songs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+  .song-card { display: flex; flex-direction: column; }
+  .song-card .cover img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: var(--pico-border-radius);
+  }
+  .song-card h3 { font-size: 1.05rem; margin: 0.5rem 0 0.25rem; }
+  .song-card audio { width: 100%; margin: 0.5rem 0; }
+  .song-card .tags { margin: 0.25rem 0; display: flex; flex-wrap: wrap; gap: 0.25rem; }
+  .song-card .tags kbd { font-size: 0.7rem; }
+  .song-card .lyrics {
+    white-space: pre-wrap;
+    font-size: 0.85rem;
+    max-height: 20rem;
+    overflow-y: auto;
+    background: var(--pico-code-background-color);
+    padding: 0.75rem;
+    border-radius: var(--pico-border-radius);
+  }
+  .card-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+  }
+  .fav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0.1rem 0.3rem;
+    line-height: 1;
+    color: var(--pico-muted-color);
+    transition: color 0.15s;
+  }
+  .fav-btn.active { color: #e53e3e; }
+  .fav-btn:hover { color: #e53e3e; }
+  .genre-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.4rem;
+  }
+  .genre-filter-status {
+    font-size: 0.78rem;
+    color: var(--pico-muted-color);
+    margin: 0 0 1rem;
+  }
+  .genre-chip {
+    padding: 0.2rem 0.65rem;
+    font-size: 0.78rem;
+    border-radius: 999px;
+    border: 1px solid var(--pico-muted-border-color);
+    background: var(--pico-card-background-color);
+    color: var(--pico-muted-color);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .genre-chip.active,
+  .genre-chip:hover {
+    background: var(--pico-primary);
+    color: var(--pico-primary-inverse, #fff);
+    border-color: var(--pico-primary);
+  }
+  .history-rail {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  .history-item { display: flex; flex-direction: column; align-items: center; }
+  #favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
