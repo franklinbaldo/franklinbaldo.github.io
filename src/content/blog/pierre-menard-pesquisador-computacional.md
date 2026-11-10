@@ -1,4 +1,5 @@
 ---
+tldr: "Inspirado em Pierre Menard, de Borges, o autor defende escrever primeiro uma versão do artigo científico para explicitar hipóteses e transformar as lacunas do argumento em tarefas e testes verificáveis. O método antecipa o formato do resultado, mas corre o risco de confundir uma narrativa convincente com descoberta e de incentivar viés de confirmação. A salvaguarda é deixar que experimentos negativos modifiquem ou derrubem a tese, em vez de forçar os dados a caber no artigo."
 type: Blog Post
 title: "Pierre Menard, Pesquisador Computacional"
 description: "Sobre escrever o artigo antes de fazer a pesquisa, e outras práticas de engenharia que deveriam nos envergonhar menos do que envergonham."
