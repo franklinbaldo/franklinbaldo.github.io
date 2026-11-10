@@ -1,4 +1,5 @@
 ---
+tldr: "Inspirado pela insistência de Jim Rutt em formular suas grandes questões, o autor explicita duas perguntas que orientam sua própria investigação: o que são, ontologicamente, as distribuições de probabilidade e que critérios tornam legítimo chamar algo de real. O ensaio examina por que essas questões são mais difíceis que escolher um lado entre realismo e subjetivismo. Não oferece respostas definitivas; seu resultado é tornar explícitas as perguntas e assumir o compromisso de testá-las ao longo do tempo."
 type: Blog Post
 title: "Duas Perguntas, em Voz Alta"
 description: "Duas perguntas-pivô, declaradas em voz alta porque alguém mais vem declarando as dele há uma década e a consistência, no fim, era o argumento."
