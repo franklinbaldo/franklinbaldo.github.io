@@ -1,4 +1,5 @@
 ---
+tldr: "The project compresses the 165,122-neuron MaleCNS fly connectome from roughly 37 MB to 4.98 MB using FlatBuffers and four-bit lookup tables, allowing a cache-resident controller to navigate a Doom-like environment. The reported compact version runs at 335.4 FPS with about 99.4% wall avoidance and at most one collision in 300 ticks; a shuffled-connectivity control collides 34 times. The experiment suggests that biological wiring matters for the simulated sensorimotor task, not that a living fly literally plays Doom or that the model reproduces all of its biology."
 type: "Blog Post"
 title: "How We Ran Doom on a Fly's Brain Connectome (Real-Time at 300 FPS)"
 description: "We compressed all 165,122 neurons of the MaleCNS connectome from 37MB down to 4.98MB via FlatBuffers and a 4-bit LUT to fit inside L3 cache, enabling Drosophila to play Doom using bilateral olfaction and vision."
