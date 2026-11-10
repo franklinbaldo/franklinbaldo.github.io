@@ -1,4 +1,5 @@
 ---
+tldr: "The Delphic maxims of self-knowledge and moderation, together with the enigmatic letter E, become an inquiry into the limits of knowledge and agency. Socrates illustrates the importance of recognizing what one does not know, while the essay draws a parallel to AI agents that need boundaries as well as capability. The mysterious inscription remains unresolved, but the broader lesson is that an actor should not confuse the capacity to answer or act with the authority to do so."
 type: Blog Post
 title: "The Three Imperatives at Delphi"
 description: "On the temple that demanded self-knowledge, the philosopher who took it literally, and the letter at the entrance that nobody could read."
