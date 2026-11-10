@@ -1,4 +1,5 @@
 ---
+tldr: "A pergunta sobre se o token final de uma LLM seria uma singularidade evolui para uma hipótese mais interessante: obras têm regiões semânticas de abertura e encerramento que se estendem muito além do primeiro e do último token. Um campo de terminação poderia indicar quando um texto começou a resolver possibilidades em vez de ampliá-las, e ajudar o modelo a saber quando parar. O artigo propõe condições para testar a ideia, sem demonstrar uma singularidade matemática real."
 type: Blog Post
 title: 'Toda obra tem uma cabeça e uma cauda semântica'
 description: >-
