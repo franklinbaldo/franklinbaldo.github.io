@@ -1,4 +1,5 @@
 ---
+tldr: "Quase perder um prazo por confundir uma boa minuta com um ato efetivamente praticado leva à separação entre preparação automatizada e execução autorizada. O ensaio propõe caixas de areia, aprovações humanas e um harness que preserve responsabilidade e rastreabilidade. Mas também identifica o limite do arranjo: assinatura e revisão podem virar rituais vazios quando ninguém verifica o trabalho. Delegar tarefas não equivale a delegar a responsabilidade pelo resultado."
 type: Blog Post
 title: 'A Arte de Delegar: Assinaturas e Caixas de Areia'
 description: >-
