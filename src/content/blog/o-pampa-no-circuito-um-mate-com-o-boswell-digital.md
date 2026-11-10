@@ -1,4 +1,5 @@
 ---
+tldr: "A tentativa de criar um Boswell Digital para preservar a memória do pai mostra que guardar informações não basta: diminutivos, hesitações, sotaque e contradições podem conter o que há de mais verdadeiro numa lembrança. O agente tende a polir e uniformizar justamente esses detalhes. O ensaio conclui que fidelidade biográfica exige registrar imperfeições e mudanças sem corrigi-las automaticamente. O autor ainda não sabe como testar essa capacidade, mas identifica nela o principal desafio do projeto."
 type: Blog Post
 title: 'O Pampa no Circuito: Um Mate com o Boswell Digital'
 translationKey: pampa-circuit
