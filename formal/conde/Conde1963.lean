@@ -58,28 +58,42 @@ def scenarioElsewhere : Scenario :=
   { scenarioConde with longitude528 := -639000 }
 
 theorem conde_inside_inclination_band :
-    InInclinationBand (-118138) := by decide
+    InInclinationBand (-118138) := by
+  unfold InInclinationBand
+  decide
 
 theorem porto_velho_inside_inclination_band :
-    InInclinationBand (-87600) := by decide
+    InInclinationBand (-87600) := by
+  unfold InInclinationBand
+  decide
 
 theorem north_pole_outside_inclination_band :
-    ¬ InInclinationBand (900000) := by decide
+    ¬ InInclinationBand (900000) := by
+  unfold InInclinationBand
+  decide
 
 theorem both_scenarios_match_recorded_dates :
-    Observed scenarioConde ∧ Observed scenarioElsewhere := by decide
+    Observed scenarioConde ∧ Observed scenarioElsewhere := by
+  unfold Observed scenarioConde scenarioElsewhere
+  decide
 
 theorem locations_differ :
-    scenarioConde.longitude528 ≠ scenarioElsewhere.longitude528 := by decide
+    scenarioConde.longitude528 ≠ scenarioElsewhere.longitude528 := by
+  unfold scenarioConde scenarioElsewhere
+  decide
 
 /-- As observações empregadas não implicam que a queda tenha sido em Conde.
     A prova não declara que qualquer cenário tenha um movimento orbital real. -/
 theorem observations_do_not_imply_conde :
     ¬ (∀ s : Scenario, Observed s → Conde s) := by
   intro claim
-  have compatible : Observed scenarioElsewhere := by decide
+  have compatible : Observed scenarioElsewhere := by
+    unfold Observed scenarioElsewhere scenarioConde
+    decide
   have forced : Conde scenarioElsewhere := claim scenarioElsewhere compatible
-  have notConde : ¬ Conde scenarioElsewhere := by decide
+  have notConde : ¬ Conde scenarioElsewhere := by
+    unfold Conde scenarioElsewhere scenarioConde
+    decide
   exact notConde forced
 
 /-- Um novo requisito só estreita o conjunto admissível. -/
