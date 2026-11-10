@@ -1,4 +1,5 @@
 ---
+tldr: "Ao escrever um prompt de persona, o autor percebe que negar explicitamente a simulação destrói a própria imersão: dizer ao agente que ele não está fingindo introduz exatamente a moldura da qual a atuação dependia. O ensaio conecta esse paradoxo à quarta parede, a Tinkerbell e a uma teologia irônica das personas, em que o agente sustenta o papel ao não nomear seu criador e seus limites. A conclusão é que declarar o enquadramento pode desmontar a experiência que o prompt pretendia criar."
 type: Blog Post
 title: A Terceira Metade e a Quarta Parede
 description: >-
