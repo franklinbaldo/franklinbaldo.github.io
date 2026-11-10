@@ -1,4 +1,5 @@
 ---
+tldr: "O ensaio investiga as máximas inscritas em Delfos: conhece-te a ti mesmo, nada em excesso e o enigmático E. A história de Sócrates e as leituras da inscrição sugerem que uma pergunta decisiva pode ser reconhecer os limites do próprio saber. O texto transporta essa disciplina para agentes de IA e suas regras de ação: competência não é licença para agir sem restrição. A inscrição misteriosa permanece aberta, mas a combinação de autoconhecimento, medida e recusa da certeza indevida fornece um modelo para sistemas corrigíveis."
 type: Blog Post
 title: "Os Três Imperativos em Delfos"
 description: "Sobre o templo que exigia autoconhecimento, o filósofo que o levou a sério, e a letra na entrada que ninguém conseguia ler."
