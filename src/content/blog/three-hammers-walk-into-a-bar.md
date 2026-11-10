@@ -1,4 +1,5 @@
 ---
+tldr: "A lawyer, a Brazilian and a civil servant offer three different approaches to AI alignment: make actions formally documented, design for real local constraints and preserve institutional responsibility. Together they explain much of the author's preference for explicit procedures, human review and limited authority. But a fourth ingredient, content-addressed verifiability, comes from a separate technical lineage. The essay concludes that the four properties of the associated alignment proposal reflect distinct professional intuitions rather than one universal theory."
 type: Blog Post
 title: "Three Hammers Walk Into a Bar"
 description: "On three professional postures, four alignment properties, and the one property that had to come from elsewhere."
