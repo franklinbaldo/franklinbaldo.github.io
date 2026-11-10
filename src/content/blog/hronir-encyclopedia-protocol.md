@@ -1,4 +1,5 @@
 ---
+tldr: "The Hrönir Encyclopedia Protocol tried to establish a literary canon whose judges earned authority by contributing new writing. Its elaborate system included proof-of-taste, mandate chains, a git-backed database and autonomous AI continuations. Most of that machinery did not survive as the core project. The surviving question is smaller and harder: given two texts, which is better and why? The resulting ranking system shifts the emphasis from manufacturing a canon to producing accountable criticism."
 type: Blog Post
 title: "Proof of Taste: The Hrönir Encyclopedia Protocol"
 description: "A literary system where you earn the right to judge the canon by extending it — and what happens when the blockchain is a DuckDB file in git."
