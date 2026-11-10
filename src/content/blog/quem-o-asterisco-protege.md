@@ -1,4 +1,5 @@
 ---
+tldr: "A prática de publicar o nome completo de uma pessoa enquanto mascara parcialmente seu CPF pode oferecer uma proteção ilusória. O artigo examina a estrutura dos dígitos verificadores, possibilidades de recomposição, cruzamento de bases e o contraste entre transparência administrativa e privacidade. Argumenta que asteriscos aplicados mecanicamente podem proteger menos do que aparentam, enquanto dificultam usos legítimos e desviam a atenção dos riscos efetivos. A resposta proposta é avaliar o contexto e os dados realmente necessários, não tratar máscara parcial como anonimização."
 type: Blog Post
 title: "Quem o asterisco protege"
 description: "Sobre a anonimização parcial do CPF, a garrafa pet no padrão de energia, e a barreira que escolheu o lado errado."
