@@ -1,4 +1,5 @@
 ---
+tldr: "An AI assistant handling legal matters may read, classify and propose, but must not invent new executable actions. Every operative verb comes from a predefined, auditable catalog of procedures, with Gherkin-style steps, content-addressed records and human approval where appropriate. This separates the agent's interpretive power from authority to act. The remaining challenge is accommodating novel cases without pretending that a fixed catalog alone guarantees safe or correct judgment."
 type: Blog Post
 title: The Agent That Doesn't Invent Verbs
 description: >-
