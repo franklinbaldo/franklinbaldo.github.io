@@ -1,4 +1,5 @@
 ---
+tldr: "O ensaio faz três maneiras de explicar, testar e intervir no mundo entrarem em conflito para perguntar que tipo de ferramenta intelectual realmente produz conhecimento. Nenhum martelo serve para todo prego: formalização, observação e interpretação têm forças distintas e pontos cegos. O resultado não é escolher um vencedor universal, mas compreender que um problema muda conforme o instrumento usado e que a boa investigação precisa saber quando trocar de ferramenta."
 type: Blog Post
 title: "Três Martelos Entram num Bar"
 description: "Sobre três posturas profissionais, quatro propriedades de alinhamento e a propriedade que teve que vir de fora."
