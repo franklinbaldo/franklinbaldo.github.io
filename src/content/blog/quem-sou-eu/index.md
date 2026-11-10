@@ -1,4 +1,5 @@
 ---
+tldr: "A pergunta sobre quem aparece no espelho leva a uma investigação de identidades humanas e personas de IA como padrões encenados e mantidos em contexto. O efeito Waluigi, máscaras, o não eu budista e a vacuidade filosófica dificultam encontrar um sujeito fixo atrás dos papéis. A reviravolta é que identificar o fundo como um vazio também pode ser apenas outra máscara. A pessoa não desaparece da vida prática, mas deixa de ser tratada como substância fundamental."
 type: Blog Post
 title: Quem sou eu?
 description: 'Persona é encenação, é ''como se fosse'', até ser,'
