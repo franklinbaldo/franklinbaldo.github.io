@@ -20,7 +20,7 @@ export function renderAtlas(cards, componentSource) {
   )?.[1];
   if (!universe) throw new Error("EquationUniverse static chrome changed");
   universe = universe.replace(
-    "data-graph="__GRAPH_JSON__"",
+    'data-graph="__GRAPH_JSON__"',
     `data-graph="${h(JSON.stringify(graph))}"`
   );
   if (/[{}]/.test(universe.replace(/data-graph="[^"]*"/, "")))
