@@ -1,4 +1,5 @@
 ---
+tldr: "O autor propõe representar textos e conversas como trajetórias num espaço semântico, usando referências artificiais, memória de regiões visitadas e ferramentas geométricas para estimar direções e planejar respostas. A hipótese mais ambiciosa é compilar parte dessa geografia a partir dos pesos de um modelo e evitar executar toda a LLM a cada passo. Não há demonstração de economia ou controle superior: o artigo termina propondo um experimento mensurável com modelo pequeno, 64 dimensões e 65 referências, admitindo que o mapa pode custar tanto quanto o próprio modelo."
 type: Blog Post
 title: 'O mapa do universo semântico'
 description: >-
