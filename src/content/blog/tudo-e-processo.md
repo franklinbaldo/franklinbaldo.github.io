@@ -1,4 +1,5 @@
 ---
+tldr: "O ensaio defende uma ontologia em que aquilo que chamamos de objetos são configurações temporariamente estáveis de processos. Aproxima Heráclito, tradições orientais e a teoria contemporânea da montagem para mostrar como identidade e persistência podem emergir de transformações contínuas. A consequência prática é projetar sistemas e compreender pessoas e histórias pelo que fazem e reproduzem, não por essências imóveis. A proposta é filosófica e explicativa, não uma prova física de que objetos não existem."
 type: Blog Post
 title: 'Eventos Até o Fim: Notas Sobre a Arquitetura de Processos'
 description: >-
