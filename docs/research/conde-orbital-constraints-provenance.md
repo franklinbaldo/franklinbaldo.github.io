@@ -73,3 +73,14 @@ Cada TLE é uma observação média em época distinta; conversão TLE→estado 
 ## Status
 
 Nenhum limite de impulso, massa, área, arrasto, estado cartesiano inicial, erro de TLE ou longitude final pode ser preenchido numericamente pelas fontes localizadas até agora. A investigação ainda não pode excluir Conde por física orbital.
+
+
+## 10/11/2026: arquivo de observações históricas identificado
+
+Localizado o conjunto público [Space-Track TLE History](https://huggingface.co/datasets/juliensimon/space-track-tle-history), derivado de exportações anuais do Space-Track. O arquivo `data/tle_1963.parquet` tem aproximadamente 275 kB e contém potencialmente mais de um TLE para os NORAD 527/528/529. **Sua existência não demonstra cobertura entre 27/10 e 08/11/1963.**
+
+O script `scripts/research/conde_tle_archive.py` e o workflow `.github/workflows/conde-tle-history.yml` foram introduzidos para filtrar exatamente os IDs 527, 528 e 529 e imprimir suas épocas e parâmetros. A aquisição e o cálculo de corredor de reentrada permanecem bloqueados até análise dos dados efetivos.
+
+A proveniência é indireta: catálogo Space-Track → exportação anual → espelho Hugging Face; deve-se verificar integridade e campos antes de comparar com outros catálogos. Um TLE médio ainda não é um estado cartesiano com covariância conhecida.
+
+**Mudança de prioridade:** obter séries independentes e usá-las como validação de propagação é mais informativo que escolher limites ad hoc para impulso de separação ou coeficiente balístico. Não há até aqui documento que identifique mecanicamente os objetos 528 ou 529.
