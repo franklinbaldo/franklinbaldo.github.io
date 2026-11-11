@@ -339,6 +339,102 @@ Só não prova que um deles caiu em Conde.
 
 Plausibilidade não é evidência. E uma das coisas que esta investigação está me ensinando é justamente não promover uma boa explicação a fato só porque ela fecha o enredo melhor.
 
+## O satélite que havia por trás do fragmento
+
+Quando procurei o lançamento de origem do objeto NORAD 528, apareceu uma informação muito mais específica do que “detrito espacial americano”. Em **16 de janeiro de 1963**, às **21h59 UTC**, um foguete **Thor-DM21 Agena-B** saiu de Vandenberg, Califórnia, levando a missão **OPS 0180 / FTV 2313 / Project 698BK Group 1-D 1**, também chamada *Ferret 3*. Era um satélite de inteligência eletrônica americana, voltado à interceptação de sinais de radares soviéticos. Não era um balão meteorológico nem um veículo tripulado.
+
+Segundo o histórico do programa, a missão funcionou por apenas dois dias, até uma falha das baterias. O satélite principal, **NORAD 527 (1963-003A)**, permaneceu catalogado em órbita até **9 de janeiro de 1969**. Dois outros objetos do mesmo lançamento foram catalogados como detritos: **NORAD 528 (1963-003B)**, com reentrada datada de 8 de novembro de 1963, e **NORAD 529 (1963-003C)**, com reentrada registrada em 31 de dezembro de 1963. Os três não são o mesmo objeto.
+
+A identificação do lançamento está no [catálogo GCAT de Jonathan McDowell](https://planet4589.org/space/gcat/data/derived/launchlog.html); a discriminação dos três objetos e suas datas aparece no [catálogo de reentradas](https://www.planet4589.org/space/reentry/reentry.html) e nos [registros orbitais do 528](https://www.itau.magnetic-declination.com/satellite/?s=528).
+
+**Mas que peça era o 528?** É aqui que os documentos deixam de responder. Ele é descrito genericamente como detrito do satélite/estágio Agena, sem identificação material segura, dimensões ou massa do fragmento. O catálogo GCAT emprega até uma designação genérica “Agena D” para o detrito, enquanto a documentação do lançamento identifica claramente o foguete como **Agena-B**: não devemos tomar essa etiqueta genérica como identificação precisa da peça.
+
+A coincidência do dia da reentrada com a transmissão no Rio permanece intrigante; a identidade militar do lançamento não demonstra que qualquer pedaço tenha atravessado a atmosfera sobre a Bahia, muito menos que tenha sido encontrado intacto em Conde. Se o satélite principal continuou em órbita por mais cinco anos, a suposta esfera com janelas e cadáver certamente não era *o satélite principal*. O fragmento 528 pode ter sido uma peça separada, mas precisamos descobrir qual, e onde caiu ou se desintegrou.
+
+## Se tivesse sido em Conde, que órbita seria necessária?
+
+Resolvi inverter a pergunta. Em vez de extrapolar o fragmento às cegas, fixei a posição geográfica de Conde como **hipótese de chegada** e procurei trajetórias que passassem ali em **8 de novembro de 1963**. Não se trata de descobrir a rota real, mas de testar se as condições iniciais registradas obrigam o objeto a passar longe da Bahia.
+
+O TLE do **NORAD 528** é de 27 de outubro, 14h40 UTC. Naquela data o movimento médio era de **15,749 revoluções por dia**, equivalente a uma altitude orbital circular de aproximadamente **345 km**. Para simular uma entrada atmosférica, escolhi **16,5 revoluções por dia** no fim, equivalente a cerca de **139 km**. Essa altitude terminal é uma condição hipotética, não um dado observado.
+
+Usei uma família de curvas de movimento médio que parte do TLE, respeita formalmente seu termo inicial de derivada e acelera o decaimento por uma potência ajustável. Integrei a fase e uma aproximação secular da perturbação gravitacional **J2**, com rotação terrestre. Ajustei o expoente da curva e a hora da chegada, procurando coincidência com as coordenadas de Conde. Apareceram, entre outras, duas soluções matemáticas: uma perto de **11h32 UTC**, outra perto de **23h42 UTC** do dia 8.
+
+A parte mais importante não são os horários, que **não são horários históricos**. É que encontrei mais de uma solução mesmo impondo o mesmo estado inicial e a mesma altitude terminal. Isso demonstra a **não identificabilidade** com os dados atuais. Como a cidade foi usada para ajustar a rota, o resultado não corrobora a notícia de 1963. Há duas incógnitas livres suficientes para ajustar duas coordenadas; sem medidas independentes de arrasto ou posição posterior, a coincidência é construída pelo método.
+
+Além disso, um TLE não é uma descrição Kepleriana osculante comum, sua derivada de movimento médio não é utilizada pelo SGP4 e o modelo secular simplificado empregado aqui **não foi validado** contra observações posteriores. Um ajuste fisicamente defensável precisaria de densidade atmosférica, área por massa do fragmento e rastreamento próximo a 8 de novembro. Registrei os valores, as fórmulas, os ajustes e essas limitações no [caderno do experimento inverso](https://github.com/franklinbaldo/franklinbaldo.github.io/blob/research/conde-orbita-geografica-1963/docs/research/conde-inverse-orbit-1963.md).
+
+O resultado desta rodada é mais restrito do que parece: **Conde não foi excluída por esse modelo, mas não houve confirmação de passagem nem de queda**. O experimento mostra principalmente quais novos dados seriam necessários para distinguir uma rota real das muitas curvas que podemos construir.
+
+## O que aconteceu com a atmosfera em novembro de 1963?
+
+Consegui uma nova série histórica, desta vez sobre o próprio ambiente pelo qual o fragmento passava. O [arquivo do CelesTrak](https://celestrak.org/SpaceData/SW-All.csv) contém fluxo solar F10.7 e índices geomagnéticos Ap diários desde antes de 1963. Em **27 de outubro**, dia do último TLE disponível do fragmento 528, o índice Ap médio foi **4**. Em **8 de novembro**, data catalogada da reentrada, ele foi **46**. Houve atividade geomagnética substancialmente mais elevada naquele dia, mas o registro não estabelece se ela antecedeu a desintegração nem qual foi o efeito na trajetória.
+
+Incorporei as duas séries a uma versão do modelo de decaimento cuja resposta à atividade solar e geomagnética é ajustável. Repeti os testes usando observações orbitais posteriores que não entraram na calibração. A [comparação documentada](https://github.com/franklinbaldo/franklinbaldo.github.io/blob/research/conde-orbita-geografica-1963/docs/research/conde-528-solar-backtest-1963.md) não confirmou a melhoria esperada. Em três cortes temporais, **o modelo com clima espacial previu pior** do que o controle de atmosfera exponencial sem essa correção; no quarto, a diferença foi desprezível.
+
+Isso não mostra que a atividade solar ou geomagnética seja irrelevante para o arrasto. Mostra que **a função empírica simples que tentamos não conseguiu extrair dos dados uma previsão mais confiável**. Seria preciso uma descrição física real da termosfera, e mesmo assim não recuperaríamos automaticamente uma longitude de reentrada sem observações terminais.
+
+É tentador olhar para o Ap de 46 justamente em 8 de novembro e achar que encontramos a peça que faltava. Pode ser uma peça. Mas o cálculo que fizemos ainda não a encaixa.
+
+## Quando a órbita começa a acelerar, a previsão erra
+
+Conseguimos recuperar e processar em Kaggle um arquivo histórico com **45 TLEs do NORAD 528**, de janeiro a 27 de outubro de 1963. Há ainda 57 registros do fragmento 529 e 21 do conjunto principal 527 no mesmo ano. O espelho consultado deriva de exportações do Space-Track e foi identificado por hash. Ele não contém TLE do 528 depois de 27 de outubro.
+
+Ajustei aos registros do 528 três modelos de evolução do movimento médio: exponencial, quadrático e um modelo simplificado de arrasto com densidade exponencial. **Não usei Conde para calibrar nenhum deles.** Reservei observações posteriores a diferentes datas de corte para testar previsões genuinamente fora da amostra.
+
+O modelo físico simplificado foi o melhor dos três, mas não acertou a fase final. Quando calibrado apenas até 11 de outubro, errou os quatro TLEs seguintes com RMSE de **0,0615 revoluções/dia** e subestimou em **0,0861 revoluções/dia** o movimento médio de 27 de outubro. A aceleração terminal estava escapando ao modelo.
+
+Ao extrapolar até novembro, a previsão ficou instável. Calibrado com os 45 TLEs, o modelo cruza um limite terminal **arbitrário** de 120 km por volta de **9 de novembro**. Calibrado só com os últimos 25, 15 ou 10 registros, cruza entre **1º e 4 de novembro**. Não são datas históricas: são saídas de um modelo sensível à janela de treinamento. A equação também não calcula longitude de queda.
+
+Esse fracasso parcial é útil. **A ausência de rastreamento do 528 entre 27 de outubro e 8 de novembro não é uma lacuna que podemos preencher com uma curva aparentemente bem comportada.** Os modelos divergem justamente na fase para a qual precisamos de uma previsão independente.
+
+O [relatório com a validação temporal](https://github.com/franklinbaldo/franklinbaldo.github.io/blob/research/conde-orbita-geografica-1963/docs/research/conde-528-backtest-1963.md) e o [script reproduzível](https://github.com/franklinbaldo/franklinbaldo.github.io/blob/research/conde-orbita-geografica-1963/scripts/research/conde_528_fit.py) estão na PR. Por enquanto, nem Conde nem qualquer outro lugar foi excluído por essas contas.
+
+## Um pequeno teorema contra a tentação de preencher os espaços
+
+Resolvi formalizar em [Lean 4 um núcleo da investigação](https://github.com/franklinbaldo/franklinbaldo.github.io/tree/research/conde-orbita-geografica-1963/formal/conde). A primeira distinção é quase elementar, mas importante: os registros de uma origem comum e de três datas de reentrada **não implicam uma longitude de queda**. No modelo lógico, é possível atribuir localidades distintas ao objeto 528 mantendo idênticas todas essas observações. Isso não significa que as duas trajetórias sejam fisicamente realizáveis. Significa que **os fatos registrados não bastam, sozinhos, para decidir entre elas**.
+
+O arquivo Lean separa essas observações das hipóteses, demonstra a faixa idealizada de latitude subsatélite, constrói o contraexemplo de não identificabilidade e prova uma regra útil para o resto da pesquisa: adicionar uma restrição só pode reduzir o conjunto de cenários admissíveis, nunca recuperar um cenário que já foi excluído. A geometria orbital, os TLEs como estados intervalares e a dinâmica atmosférica ainda não estão formalizados. Há um [workflow de compilação](https://github.com/franklinbaldo/franklinbaldo.github.io/blob/research/conde-orbita-geografica-1963/.github/workflows/conde-lean.yml) específico para essas provas.
+
+## Os outros dois detritos podem servir de controle?
+
+Testei a ideia de usar também as reentradas do **NORAD 529**, em 31 de dezembro de 1963, e do conjunto **NORAD 527**, em 9 de janeiro de 1969, para conferir a hipótese de Conde. É um teste importante justamente porque a tentação seria imaginar três pontos de uma mesma trajetória. Não são: temos três datas civis de reentrada, nenhuma coordenada de queda, e apenas um conjunto de elementos orbitais tardios para cada corpo.
+
+Montei uma equação de arrasto para órbitas quase circulares em uma atmosfera exponencial, com uma mesma escala de altura para os três objetos e um parâmetro de decaimento separado para cada um. Fiz o cálculo para escalas atmosféricas exemplificativas de **30, 50 e 70 km**, escolhendo **120 km** como altura terminal hipotética. Para comparar datas civis sem hora registrada, usei **12h UTC** de cada dia como convenção de cálculo, nunca como horário histórico.
+
+O resultado é instrutivo, mas não confirma a Bahia: **todos os três cenários de atmosfera reproduziram as três datas quando se ajustou separadamente o arrasto de cada objeto**. Isso acontece por construção, pois há um parâmetro de decaimento livre para cada data. O ajuste mostra que **as três datas, sozinhas, não validam nem rejeitam** as duas rotas que foram forçadas anteriormente a passar por Conde. Também não revela suas longitudes finais.
+
+A análise revelou outra limitação: nos três TLEs públicos encontrados o campo **B\*** aparece zerado. O modelo SGP4 usa esse termo para representar o efeito do arrasto; a derivada de movimento médio, embora esteja impressa nos TLEs, não substitui o B\* no SGP4. Portanto, não temos nesses registros um coeficiente confiável para uma propagação atmosférica histórica. A [documentação do CelesTrak](https://celestrak.org/columns/v04n03/) explica essa distinção.
+
+Deixei [as equações, os valores ajustados e os dados de entrada no caderno técnico](https://github.com/franklinbaldo/franklinbaldo.github.io/blob/research/conde-orbita-geografica-1963/docs/research/conde-joint-decay-1963.md), junto de um [script Python reproduzível](https://github.com/franklinbaldo/franklinbaldo.github.io/blob/research/conde-orbita-geografica-1963/scripts/research/conde_joint_decay.py). A próxima prova útil não seria um quarto ajuste: seria obter **observações orbitais intermediárias que não participaram do ajuste**, além de dados solares e geomagnéticos contemporâneos. A NASA mantém uma série OMNI com F10.7 e índices Kp/ap desde 1963, mas ainda é necessário obter os valores pertinentes e ligá-los a um modelo de densidade válido.
+
+## Três datas de reentrada não são três coordenadas
+
+Uma ideia tentadora seria pegar o segundo fragmento, que reentrou em dezembro, e o conjunto satélite/Agena, que reentrou em 1969, e usar os dois para reconstruir a trajetória do primeiro detrito em novembro de 1963. O problema é que **essas datas não informam o ponto geográfico de reentrada**. E, depois que se separam, objetos de massas, áreas e atitudes diferentes sofrem arrasto diferente. Não são três pontos conhecidos de uma mesma curva.
+
+Mas encontramos três conjuntos de elementos orbitais históricos, um para cada objeto. Eles têm épocas diferentes: **NORAD 528** em **27 de outubro de 1963, 14h40 UTC**; **NORAD 529** em **30 de dezembro de 1963, 11h25 UTC**; e **NORAD 527**, conjunto principal, em **8 de janeiro de 1969, 12h44 UTC**. Para cada um, converti o movimento médio do TLE em um período e uma altitude orbital média aproximada: **91,43 minutos e 345 km** para o 528; **89,45 minutos e 247 km** para o 529; **88,19 minutos e 185 km** para o 527.
+
+![Três mapas mundiais mostrando arcos orbitais calculados separadamente nas épocas dos TLEs dos objetos NORAD 528, 529 e 527](/images/conde-ferret-tres-orbitas-tle.svg)
+
+Os três mapas usam as fronteiras vetoriais do [Natural Earth](https://www.naturalearthdata.com/downloads/110m-cultural-vectors/). Os arcos foram calculados diretamente dos elementos orbitais com uma aproximação Kepleriana de dois corpos e a rotação sideral da Terra, **apenas para uma volta ao redor da época de cada TLE**. Eles servem para mostrar o que é uma trajetória orbital geográfica calculada, com longitude, diferentemente da faixa de latitudes da figura anterior. Não são uma propagação SGP4 validada, não representam o percurso em 8 de novembro e **não mostram o lugar de reentrada**.
+
+Para calcular a trajetória de novembro seria preciso obter os elementos do **528** suficientemente próximos do dia 8, ou observações de rastreamento capazes de ajustar um modelo atmosférico e orbital com incerteza quantificada. Os elementos de dezembro do 529 e os de 1969 do 527 não substituem esse dado: pertencem a corpos diferentes que seguiram evoluções orbitais independentes.
+
+Os TLEs históricos podem ser conferidos individualmente nos registros [528](https://www.itau.magnetic-declination.com/satellite/?s=528), [529](https://www.itau.magnetic-declination.com/satellite/?s=529) e [527](https://www.itau.magnetic-declination.com/satellite/?s=527). O [GCAT](https://planet4589.org/space/gcat/data/derived/currentcat.html) confirma a relação de origem entre os três objetos e suas reentradas registradas.
+
+## Até onde a órbita de um fragmento poderia chegar?
+
+Uma outra pista surgiu durante a pesquisa: o catálogo orbital registra a reentrada, em **8 de novembro de 1963**, de um fragmento americano identificado como **FTV 2313 DEB**, número **NORAD 528**, designação internacional **1963-003B**. É a mesma data da transmissão da Rádio Tupi. Mas uma coincidência de calendário não é uma trajetória.
+
+A inclinação conhecida da órbita era de **81,8615 graus**. Esse número permite um teste geográfico simples. Em uma órbita aproximadamente terrestre, a latitude do ponto no solo diretamente abaixo do fragmento não pode ultrapassar, em módulo, sua inclinação (quando inferior a 90 graus). Assim, a faixa acessível vai de **81,8615° sul a 81,8615° norte**. As duas pequenas calotas polares que restam ficam excluídas para a *projeção do movimento orbital no solo*. Isso não significa delimitar uma zona de impacto de fragmentos, que também depende da dinâmica atmosférica.
+
+![Mapa cartográfico da faixa de latitudes permitida pela inclinação orbital de 81,8615 graus, com Conde e Porto Velho assinaladas](/images/conde-orbita-faixa-latitudinal.svg)
+
+O mapa foi construído com fronteiras vetoriais do [Natural Earth](https://www.naturalearthdata.com/downloads/110m-cultural-vectors/) em coordenadas geográficas, e com a faixa derivada da inclinação orbital. **As linhas de latitude não representam o percurso real do objeto.** Conde, a aproximadamente 11,8°S, e Porto Velho, a aproximadamente 8,8°S, estão ambas dentro da faixa. Se a notícia tivesse surgido em Rondônia, esse primeiro teste daria a mesma resposta: *geometricamente possível*. Também a daria para quase qualquer outro lugar do planeta. Portanto, sozinho, o teste praticamente não discrimina nada.
+
+Para decidir se o objeto passou sobre a Bahia, precisaríamos da sua **longitude e fase orbital no momento relevante**, e principalmente de observações suficientemente próximas da reentrada. O conjunto de elementos históricos localizado tem época de **27 de outubro de 1963**, quase doze dias antes. Perto da reentrada o arrasto pode alterar muito o movimento; prolongar esses elementos até 8 de novembro e desenhar uma linha exata seria produzir precisão fictícia. Tampouco sabemos que a reentrada tenha ocorrido antes do noticiário das 23h30, nem se houve qualquer observação do fragmento no Brasil.
+
+O [catálogo KeepTrack do NORAD 528](https://keeptrack.space/satellite/528) e a [reprodução dos elementos históricos atribuídos à AFSPC](https://www.itau.magnetic-declination.com/satellite/?s=528) permitem identificar o objeto e o limite de latitude, não localizar sua queda. O mapa registra essa diferença, que é a parte mais importante dele.
+
 ## Uma história começa a produzir cópias de si mesma
 
 Foi nessa hora que percebi que o objeto interessante já não era exatamente o OVNI.

@@ -1,0 +1,26 @@
+name: Conde orbital constraints (Lean)
+
+on:
+  pull_request:
+    paths:
+      - 'formal/conde/**'
+      - '.github/workflows/conde-lean.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'formal/conde/**'
+      - '.github/workflows/conde-lean.yml'
+  workflow_dispatch:
+
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: formal/conde
+          build: 'true'
+          test: 'false'
+          use-mathlib-cache: 'false'
+          auto-config: 'false'
