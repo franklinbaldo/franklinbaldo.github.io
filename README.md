@@ -70,6 +70,21 @@ docs/
 RSS feed at [`/rss.xml`](https://franklinbaldo.github.io/rss.xml), generated
 from the exact rendered article HTML via `scripts/zola/finish.mjs`. Portuguese RSS is at `/pt/rss.xml`; JSON Feeds are at `/feed.json` and `/pt/feed.json`.
 
+## SSG (Rust) migration
+
+The repository already has a native **[SSG](https://docs.rs/ssg/latest/ssg/)** migration candidate. The canonical Markdown source remains `src/content/blog/`. The experimental build produces `dist-ssg/` and does not publish it to Pages while the full route, media and browser parity gates remain incomplete.
+
+The official `ssg` **0.0.75** binary is required; the preview workflow downloads it with an upstream SHA-256 pin. With Node 24, `npm ci` and that binary installed:
+
+```sh
+npm run test:ssg
+npm run build:ssg
+```
+
+The native build runs shared pregeneration, page and historical redirect projections, SSG validation and compilation, asset preservation, archive/project/redirect checks, and route inventory. GitHub Actions also builds the Zola reference separately to measure remaining gaps. See [the migration contract](docs/migrations/ssg.md) and [the architecture plan](docs/architecture/ssg-native.md).
+
+**Do not change the Pages artifact from `dist-zola/` to `dist-ssg/` until the end-to-end migration gates pass.** The current candidate still omits specialized pages and interactions.
+
 ## Notes on the modernization migration
 
 A couple of legacy standalone routes were dropped during the Astro modernization:

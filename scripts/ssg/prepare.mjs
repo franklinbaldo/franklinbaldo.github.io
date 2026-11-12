@@ -139,7 +139,7 @@ export function prepareNativeSite({ now = new Date(), output = OUTPUT } = {}) {
   for (const page of archive.pages)
     write(content, page.target, markdownDocument(page.metadata, page.body));
   const manifest = {
-    generator: "ssg", pinned_version: "0.0.68", source: "src/content/blog",
+    generator: "ssg", pinned_version: "0.0.75", source: "src/content/blog",
     entries, excluded, unsupported,
     archive: { pages: archive.pages.map((page) => page.route), counts: archive.counts, per_page: archive.perPage },
     projects: { count: projects.count, generatedAt: projects.generatedAt, source: projects.source, routes: projects.pages.map((page) => page.route) },

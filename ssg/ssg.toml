@@ -1,4 +1,4 @@
-# SSG 0.0.68 native preview. The public Pages workflow remains on Zola
+# SSG 0.0.75 native preview. The public Pages workflow remains on Zola
 # until the native candidate passes complete route and behaviour parity.
 site_name = "franklinbaldo"
 site_title = "Franklin Baldo"

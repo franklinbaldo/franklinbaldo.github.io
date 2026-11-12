@@ -2,7 +2,7 @@
 
 **State: experimental. Public Pages still uses Zola.**
 **Architecture:** [SSG boundaries and cleanup](../architecture/ssg-native.md).  
-**Target:** SSG 0.0.68, SHA-256-pinned from the official GitHub release.
+**Target:** SSG 0.0.75, SHA-256-pinned from the official GitHub release. Historical checkpoints below describe SSG 0.0.68.
 **Canonical content:** src/content/blog/ (never edit generated .cache/ssg-native).
 
 ## Goal
@@ -27,17 +27,18 @@ handling and specialized interactive experiences.
 
 ## Test from the repository root
 
-Requires Node 24, npm ci and the official ssg v0.0.68 binary.
+Requires Node 24, `npm ci` and the official `ssg` v0.0.75 binary.
 
-    node scripts/ssg/check-architecture.mjs
-    node --test scripts/ssg/*.test.mjs
-    node scripts/pregen.mjs
-    node scripts/ssg/prepare.mjs
-    ssg --validate -c .cache/ssg-native/content
-    ssg -f ssg/ssg.toml -c .cache/ssg-native/content -o dist-ssg -t ssg/templates
-    node scripts/ssg/finish.mjs
-    node scripts/ssg/parity.mjs
+    npm run test:ssg
+    npm run build:ssg
     ssg audit --output dist-ssg --sarif
+
+The build command is a **candidate-only** pipeline: it prepares native
+Markdown, checks the version, validates the schema, compiles, copies source
+assets and verifies archives, projects, redirects and projected article routes.
+The PR preview also builds a full Zola reference separately and records
+`full-parity.json` and `article-parity.json`; it must not publish until
+the full site and browser parity gates pass.
 
 Never direct SSG output to the repository's public/ directory: it contains
 SOURCE assets. Dist output is dist-ssg/ only. The preview workflow uploads
