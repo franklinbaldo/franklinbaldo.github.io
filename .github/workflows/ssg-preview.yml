@@ -6,6 +6,11 @@ on:
     paths:
       - "ssg/**"
       - "scripts/ssg/**"
+      - "scripts/lib/**"
+      - "scripts/pregen.mjs"
+      - "public/**"
+      - "src/generated/**"
+      - "package.json"
       - "src/content/blog/**"
       - "src/generated/versions-selected.json"
       - "docs/migrations/ssg.md"
@@ -28,45 +33,22 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - name: Enforce generator architecture boundaries
-        run: node scripts/ssg/check-architecture.mjs
-      - name: Test native projection invariants
-        run: node --test scripts/ssg/*.test.mjs
-      - name: Build canonical Hrönir and translation read projections
-        run: node scripts/pregen.mjs
-      - name: Prepare canonical published posts for SSG
-        run: node scripts/ssg/prepare.mjs
-      - name: Prepare historical published aliases as native SSG pages
-        run: node scripts/ssg/prepare-redirects.mjs
-      - name: Install official SHA-256 pinned SSG v0.0.68
+      - name: Test SSG projection, routes and architecture
+        run: npm run test:ssg
+
+      - name: Install official SHA-256 pinned SSG v0.0.75
         shell: bash
         run: |
-          curl --fail --location --retry 3 \
-            https://github.com/sebastienrousseau/static-site-generator/releases/download/v0.0.68/ssg-v0.0.68-x86_64-unknown-linux-musl.tar.gz \
-            --output "$RUNNER_TEMP/ssg.tar.gz"
-          echo "2959c5fd6b9149a1017f9959c654a09444c9419ba2c237454656d6214805991a  $RUNNER_TEMP/ssg.tar.gz" | sha256sum --check
+          curl --fail --location --retry 3 "https://github.com/sebastienrousseau/static-site-generator/releases/download/v0.0.75/ssg-v0.0.75-x86_64-unknown-linux-musl.tar.gz" --output "$RUNNER_TEMP/ssg.tar.gz"
+          echo "2fedae111f8cb9a18c38a42c3f4f2ad70a3fd1222ad34dd849ba2a993341f6e3  $RUNNER_TEMP/ssg.tar.gz" | sha256sum --check
           mkdir -p "$RUNNER_TEMP/ssg-bin"
           tar -xzf "$RUNNER_TEMP/ssg.tar.gz" -C "$RUNNER_TEMP/ssg-bin"
           echo "$RUNNER_TEMP/ssg-bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/ssg-bin/ssg" --version
-      - name: Native content schema validation
-        run: ssg --validate -c .cache/ssg-native/content
-      - name: Native SSG compilation (SEO, a11y, search, feeds, i18n)
-        run: ssg -f ssg/ssg.toml -c .cache/ssg-native/content -o dist-ssg -t ssg/templates
-      - name: Preserve static public assets without replacing native output
-        run: node scripts/ssg/finish.mjs
-      - name: Normalize SSG canonical headers on redirects only
-        run: node scripts/ssg/fix-redirect-headers.mjs
-      - name: Verify rendered redirect canonicals, noindex and actual destinations
-        run: node scripts/ssg/verify-redirects.mjs
-      - name: Verify native bilingual project HTML against canonical public data
-        run: node scripts/ssg/verify-projects.mjs
-      - name: Verify native bilingual archive pages and article pagination
-        run: node scripts/ssg/verify-archive.mjs
-      - name: Assert projected route coverage and record cutover gaps
-        run: node scripts/ssg/parity.mjs
-      - name: Summarize native quality and prioritize findings
-        run: node scripts/ssg/quality-summary.mjs
+
+      - name: Build SSG native candidate and verify projected routes
+        run: npm run build:ssg
+
       - name: Install pinned Zola reference generator
         shell: bash
         run: |

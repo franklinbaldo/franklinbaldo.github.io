@@ -37,7 +37,7 @@ const absentSpecial = specialRoutes.filter((route) => {
   return !existsSync(join(site, f));
 });
 const report = {
-  generator: "ssg-0.0.68",
+  generator: "ssg-0.0.75",
   posts_projected: manifest.entries.length,
   excluded_unpublished: manifest.excluded.length,
   unsupported_posts: manifest.unsupported.length,

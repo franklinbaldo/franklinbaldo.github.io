@@ -2,7 +2,7 @@
 
 ## Project overview
 
-Static site currently deployed with **Zola 0.23.6**; **SSG 0.0.68 is an experimental migration candidate** in PR #2394. The old renderer is no longer a build dependency. Canonical article content lives in `src/content/blog/`.
+Static site currently deployed with **Zola 0.23.6**; **SSG 0.0.75 is the experimental migration candidate** in PR #2394. The old renderer is no longer a build dependency. Canonical article content lives in `src/content/blog/`.
 
 Hrönir is an **OKF-first editorial evidence system**. Its persistent state is
 Markdown under `.routines/hronir/evaluations/`; agents create and complete evaluations
@@ -94,7 +94,8 @@ npm run format:check      # auditoria Prettier (não é gate obrigatório do CI)
 npm run format            # formatar com Prettier; revisar o diff antes de commitar
 npm run build             # Zola production static build
 npm run check:no-astro    # guard contra reintrodução de Astro
-node --test scripts/ssg/*.test.mjs  # SSG migration tests
+npm run test:ssg        # SSG architecture and migration tests
+npm run build:ssg       # SSG native output in dist-ssg (candidate only)
 ```
 
 ## Git & PR conventions
