@@ -1,0 +1,149 @@
+{
+  "method": "exponential-density circular-orbit model with independent fits and holdouts",
+  "source_sha256": "c4bf072a8fc1084506a6146ec79f97d8f8a918fdbe2fabdd16e8cc077f3ddc09",
+  "count": 45,
+  "splits": [
+    {
+      "split": "train_to_Aug31",
+      "train_count": 29,
+      "holdout_count": 16,
+      "first_holdout": "1963-08-31 20:49:14.452896+00:00",
+      "last_holdout": "1963-10-27 14:40:16.132512+00:00",
+      "physical_K_kmd": 0.17449018157485155,
+      "physical_H_km": 58.926410050714416,
+      "physical_train_rmse_alt_km": 1.487058732624796,
+      "physical_rmse_revday": 0.04964533759222574,
+      "physical_mae_revday": 0.032823775013151923,
+      "physical_last_error_revday": -0.1277088471872947,
+      "exponential_tau_days": 253.334583890251,
+      "exponential_rmse_revday": 0.075545259219372,
+      "exponential_mae_revday": 0.05262344389904705,
+      "exponential_last_error_revday": -0.1801658786433631,
+      "quadratic_rmse_revday": 0.08042752598739182,
+      "quadratic_mae_revday": 0.057217558335023844,
+      "quadratic_last_error_revday": -0.18922373070808263
+    },
+    {
+      "split": "train_to_Sep28",
+      "train_count": 37,
+      "holdout_count": 8,
+      "first_holdout": "1963-10-02 16:35:51.689472+00:00",
+      "last_holdout": "1963-10-27 14:40:16.132512+00:00",
+      "physical_K_kmd": 0.1683582989997423,
+      "physical_H_km": 54.19466232259366,
+      "physical_train_rmse_alt_km": 1.8994435361706228,
+      "physical_rmse_revday": 0.0539318287606344,
+      "physical_mae_revday": 0.04034475500925061,
+      "physical_last_error_revday": -0.10342252132063479,
+      "exponential_tau_days": 179.09315999634651,
+      "exponential_rmse_revday": 0.08080897737018103,
+      "exponential_mae_revday": 0.06513499695717173,
+      "exponential_last_error_revday": -0.14795384046090732,
+      "quadratic_rmse_revday": 0.09061467957633536,
+      "quadratic_mae_revday": 0.07489189291575493,
+      "quadratic_last_error_revday": -0.16262986520988676
+    },
+    {
+      "split": "train_to_Oct11",
+      "train_count": 41,
+      "holdout_count": 4,
+      "first_holdout": "1963-10-17 11:05:09.990816+00:00",
+      "last_holdout": "1963-10-27 14:40:16.132512+00:00",
+      "physical_K_kmd": 0.16499312254714935,
+      "physical_H_km": 51.83837125874235,
+      "physical_train_rmse_alt_km": 1.8874970789673295,
+      "physical_rmse_revday": 0.0615145079391056,
+      "physical_mae_revday": 0.05654838072175217,
+      "physical_last_error_revday": -0.08605607838434004,
+      "exponential_tau_days": 149.42172799828148,
+      "exponential_rmse_revday": 0.09370362379298146,
+      "exponential_mae_revday": 0.08794458856303722,
+      "exponential_last_error_revday": -0.12759281610150275,
+      "quadratic_rmse_revday": 0.10835896024056979,
+      "quadratic_mae_revday": 0.10268010936713123,
+      "quadratic_last_error_revday": -0.14506059763973944
+    },
+    {
+      "split": "train_to_Oct21",
+      "train_count": 43,
+      "holdout_count": 2,
+      "first_holdout": "1963-10-25 13:47:47.539392+00:00",
+      "last_holdout": "1963-10-27 14:40:16.132512+00:00",
+      "physical_K_kmd": 0.15733614584246175,
+      "physical_H_km": 47.57260510053977,
+      "physical_train_rmse_alt_km": 2.29480468164889,
+      "physical_rmse_revday": 0.04609072244938534,
+      "physical_mae_revday": 0.04590911365104766,
+      "physical_last_error_revday": -0.04999665321433788,
+      "exponential_tau_days": 119.89768157127483,
+      "exponential_rmse_revday": 0.09326391709631089,
+      "exponential_mae_revday": 0.09288100954229783,
+      "exponential_last_error_revday": -0.10132353869837019,
+      "quadratic_rmse_revday": 0.11685716383828212,
+      "quadratic_mae_revday": 0.11647231475214159,
+      "quadratic_last_error_revday": -0.12594842347910173
+    }
+  ],
+  "last5": [
+    {
+      "epoch": "1963-10-11 11:57:48.241728+00:00",
+      "observed": 15.5928114,
+      "predicted": 15.589269939056917,
+      "error": -0.0035414609430830524
+    },
+    {
+      "epoch": "1963-10-17 11:05:09.990816+00:00",
+      "observed": 15.63894377,
+      "predicted": 15.612520330573634,
+      "error": -0.026423439426364936
+    },
+    {
+      "epoch": "1963-10-21 14:51:52.226208+00:00",
+      "observed": 15.67417893,
+      "predicted": 15.630739766112743,
+      "error": -0.04343916388725688
+    },
+    {
+      "epoch": "1963-10-25 13:47:47.539392+00:00",
+      "observed": 15.72504091,
+      "predicted": 15.649995992607115,
+      "error": -0.07504491739288532
+    },
+    {
+      "epoch": "1963-10-27 14:40:16.132512+00:00",
+      "observed": 15.7490146,
+      "predicted": 15.660784030019196,
+      "error": -0.08823056998080503
+    }
+  ],
+  "forecasts_extrapolation_NOT_VALIDATED": [
+    {
+      "model": "all_45",
+      "train_count": 45,
+      "K_km_per_day": 0.15056196964259466,
+      "H_km": 44.41011483366211,
+      "insample_rmse_alt_km": 2.692737237708762,
+      "terminal_120km_day_after_origin": 296.52821188182804,
+      "nov8_altitude_km": 238.76370164707444,
+      "nov8_mean_motion": 16.129497442094646
+    },
+    {
+      "model": "last_25",
+      "error": "model reached 120 km at day 290.294 before validation time"
+    },
+    {
+      "model": "last_15",
+      "error": "model reached 120 km at day 291.808 before validation time"
+    },
+    {
+      "model": "last_10",
+      "error": "model reached 120 km at day 288.047 before validation time"
+    }
+  ],
+  "limitations": [
+    "No SGP4, no TEME phase validation, no BSTAR drag",
+    "Do not use forecasts to assert reentry longitude/time",
+    "Per-TLE mean motion is model-fitted and contains errors and changes in atmospheric density",
+    "Nov 8 extrapolation has no terminal observation"
+  ]
+}
